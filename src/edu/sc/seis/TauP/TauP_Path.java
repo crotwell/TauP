@@ -148,7 +148,9 @@ public class TauP_Path extends TauP_Pierce {
                     + outForms.formatDistance(currArrival.getDistDeg())
                     + " degrees for a "
                     + outForms.formatDepth(currArrival.sourceDepth)
-                    + " km deep source in the " + modelName + " model.\n");
+                    + " km deep source in the " + modelName + " model arriving at "
+                    + outForms.formatTime(currArrival.getTime())
+                    + " s with rayParam "+outForms.formatRayParam(currArrival.getRayParam())+" s/rad.\n");
             longWayRound = false;
             if((currArrival.dist * 180 / Math.PI) % 360 > 180) {
                 longWayRound = true;
