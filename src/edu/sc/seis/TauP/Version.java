@@ -52,7 +52,7 @@ public class Version {
         return minorNum;
     }
 
-    private static int touchNum = 3;
+    private static int touchNum = 5;
 
     /** returns the touch version number for the package. The touch number
      *  is changed between versions for every release and is mainly used for
