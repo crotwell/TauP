@@ -3,8 +3,8 @@
 <project>
   <pomVersion>3</pomVersion>
   <name>TauP</name>
+  <id>TauP</id>
   <groupId>TauP</groupId>
-  <artifactId>TauP</artifactId>
   <organization>
     <name>Seismology at the University of South Carolina</name>
     <url>http://www.seis.sc.edu</url>
