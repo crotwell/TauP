@@ -27,9 +27,22 @@
 
 package edu.sc.seis.TauP;
 
-import java.io.*;
-import java.util.*;
-import java.util.zip.*;
+import java.io.BufferedOutputStream;
+import java.io.BufferedWriter;
+import java.io.DataOutputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.InvalidClassException;
+import java.io.OptionalDataException;
+import java.io.OutputStreamWriter;
+import java.io.StreamCorruptedException;
+import java.io.StreamTokenizer;
+import java.io.Writer;
+import java.util.Properties;
+import java.util.Vector;
 
 /**
   *  Calculate travel times for different branches using linear interpolation

@@ -27,8 +27,10 @@
 
 package edu.sc.seis.TauP;
 
-import java.util.Vector;
-import java.io.*;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.Serializable;
 
 /**
   * provides storage and methods for distance, time and tau increments for

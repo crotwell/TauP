@@ -40,9 +40,10 @@
 
 package edu.sc.seis.TauP;
 
-import java.io.*;
-import java.util.*;
-import java.util.zip.*;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.OptionalDataException;
+import java.io.StreamCorruptedException;
 
 public class TauP_WKBJ extends TauP_Time {
     

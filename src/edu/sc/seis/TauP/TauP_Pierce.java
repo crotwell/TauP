@@ -28,8 +28,12 @@
  
 package edu.sc.seis.TauP;
  
-import java.io.*;
-import java.util.Vector;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.OptionalDataException;
+import java.io.StreamCorruptedException;
+import java.io.Writer;
 
 /**
   * Calculate pierce points for different branches using linear interpolation

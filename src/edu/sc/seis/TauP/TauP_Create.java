@@ -27,8 +27,8 @@
 
 package edu.sc.seis.TauP;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.util.Properties;
 
 /**
   * TauP_Create - Re-implementation of the seismic travel time calculation

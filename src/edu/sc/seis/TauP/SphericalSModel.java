@@ -27,8 +27,9 @@
 
 package edu.sc.seis.TauP;
 
-import java.util.Vector;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.Serializable;
 
 /**
   * This class provides storage and methods for generating slowness-depth

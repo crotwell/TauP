@@ -28,7 +28,7 @@
 
 package edu.sc.seis.TauP;
 
-import java.io.*;
+import java.io.Serializable;
 
 /** Utility class to keep track of criticalpoints (discontinuities or
  *  reversals in slowness gradient) within slowness and velocity models.

@@ -27,8 +27,10 @@
 
 package edu.sc.seis.TauP;
 
-import java.io.*;
-import java.net.*;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.Socket;
 
 /** example TauP client. Connects to the TauPDaemon and calculates times.
   *

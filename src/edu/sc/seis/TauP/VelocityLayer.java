@@ -32,8 +32,10 @@
 package edu.sc.seis.TauP;
 
 
-import java.io.*;
-import java.util.Vector;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.Serializable;
 
 /**
   * The VelocityModelLayer class stores and manipulates a singly layer.

@@ -1,7 +1,9 @@
 package edu.sc.seis.TauP;
 
-import javax.swing.table.*;
-import javax.swing.*;
+import javax.swing.DefaultListModel;
+import javax.swing.ListSelectionModel;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingUtilities;
 
 /*
  The TauP Toolkit: Flexible Seismic Travel-Time and Raypath Utilities.

@@ -27,8 +27,14 @@
  
 package edu.sc.seis.TauP;
  
-import java.io.*;
-import java.util.Vector;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OptionalDataException;
+import java.io.StreamCorruptedException;
+import java.io.StreamTokenizer;
+import java.io.Writer;
 
 /**
   * Calculates travel time curves

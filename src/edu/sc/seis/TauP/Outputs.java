@@ -27,7 +27,7 @@
 
 package edu.sc.seis.TauP;
 
-import java.util.*;
+import java.util.Properties;
 
 /**
  * Outputs.java contains formating, similar to printf, routines for

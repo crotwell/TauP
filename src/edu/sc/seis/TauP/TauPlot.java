@@ -27,9 +27,9 @@
 
 package edu.sc.seis.TauP;
 
-import java.io.*;
-import java.awt.*;
-import java.util.*;
+import java.awt.Container;
+import java.awt.Graphics;
+import java.util.Vector;
 
 /** generic xy plot. Probably should be subclass to get better behavior.
   *

@@ -40,7 +40,6 @@ package edu.sc.seis.TauP;
  *
  */
 
-import java.io.*;
 
 public class Format
 

@@ -27,7 +27,7 @@
 
 package edu.sc.seis.TauP;
 
-import java.io.*;
+import java.io.Serializable;
 
 /** Convenience class for storing a depth range. It has a top and
   * a bottom and can have an associated ray parameter.

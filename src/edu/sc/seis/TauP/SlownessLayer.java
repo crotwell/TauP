@@ -27,8 +27,7 @@
 
 package edu.sc.seis.TauP;
 
-import java.util.Vector;
-import java.io.*;
+import java.io.Serializable;
 
 /**
   * Class to hold a single slowness layer sample.

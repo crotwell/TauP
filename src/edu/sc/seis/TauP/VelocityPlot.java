@@ -27,9 +27,8 @@
 
 package edu.sc.seis.TauP;
 
-import java.io.*;
-import java.awt.*;
-import java.util.*;
+import java.awt.Container;
+import java.util.Vector;
 
 /**
   * Velocity versus depth plot.

@@ -1,6 +1,6 @@
 package edu.sc.seis.TauP;
-import java.awt.Graphics;
 import java.awt.Color;
+import java.awt.Graphics;
 
 
 

@@ -1,8 +1,7 @@
 package edu.sc.seis.TauP;
 
-import javax.swing.*;
-import java.util.Vector;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics;
 
 /*
  The TauP Toolkit: Flexible Seismic Travel-Time and Raypath Utilities.

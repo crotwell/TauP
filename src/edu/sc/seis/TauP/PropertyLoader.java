@@ -28,9 +28,15 @@
 
 package edu.sc.seis.TauP;
 
-import java.util.*;
-import java.util.zip.*;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 /** convenience class for loading properties.
   *

@@ -27,8 +27,15 @@
 
 package edu.sc.seis.TauP;
 
-import java.io.*;
-import java.util.zip.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InvalidClassException;
+import java.io.OptionalDataException;
+import java.io.StreamCorruptedException;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 /** static class that loads a tau model, after searching for it. It can 
   * be extended to change the search mechanism. 

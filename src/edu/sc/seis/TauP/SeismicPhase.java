@@ -28,7 +28,11 @@
 
 package edu.sc.seis.TauP;
 
-import java.io.*;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.OptionalDataException;
+import java.io.Serializable;
+import java.io.StreamCorruptedException;
 import java.util.Vector;
 
 /** Stores and transforms seismic phase names to and from their

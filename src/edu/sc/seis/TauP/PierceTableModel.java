@@ -1,7 +1,7 @@
 
 package edu.sc.seis.TauP;
 
-import javax.swing.table.*;
+import javax.swing.table.AbstractTableModel;
 
 /*
   The TauP Toolkit: Flexible Seismic Travel-Time and Raypath Utilities.

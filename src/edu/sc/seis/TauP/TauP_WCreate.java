@@ -27,11 +27,18 @@
 
 package edu.sc.seis.TauP;
 
-import java.io.*;
-import java.awt.*;
-import java.awt.event.*;
 import java.applet.Applet;
-import java.util.*;
+import java.awt.Button;
+import java.awt.CardLayout;
+import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.Frame;
+import java.awt.Panel;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.io.IOException;
 
 /**
   * GUI for TauP_Create, a re-implementation of the seismic travel time 

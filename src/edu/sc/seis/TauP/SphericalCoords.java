@@ -27,7 +27,6 @@
 
 package edu.sc.seis.TauP;
 
-import java.io.*;
 
 /** Utility class for spherical coordinate (lat-lon) transformations. Given
  *  lat, lon, lat, lon you can find the distance or azimuth and

@@ -27,7 +27,13 @@
 
 package edu.sc.seis.TauP;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.StreamTokenizer;
 
 /** Creates a table of travel times for a phase. Only uses the first arrival at any distance.
   *

@@ -27,9 +27,14 @@
 
 package edu.sc.seis.TauP;
 
-import java.io.*;
-import java.awt.*;
-import java.util.*;
+import java.awt.Canvas;
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Insets;
+import java.util.Vector;
 
 /**
   * Simple polar plot widget.

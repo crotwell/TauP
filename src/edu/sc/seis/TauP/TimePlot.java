@@ -27,9 +27,9 @@
 
 package edu.sc.seis.TauP;
 
-import java.io.*;
-import java.awt.*;
-import java.util.*;
+import java.awt.Container;
+import java.awt.Graphics;
+import java.util.Vector;
 
 /**
   * time versus ray parameter plot.

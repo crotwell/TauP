@@ -27,8 +27,12 @@
 
 package edu.sc.seis.TauP;
 
-import java.util.Vector;
-import java.io.*;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OptionalDataException;
+import java.io.StreamCorruptedException;
+import java.io.StreamTokenizer;
 
 /**
   * Allows peeking into the taumodel, slowness model and velocity model
