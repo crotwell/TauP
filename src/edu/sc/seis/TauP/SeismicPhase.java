@@ -1619,13 +1619,15 @@ public class SeismicPhase implements Serializable, Cloneable {
 		    }
 		    diffTD[i] = currArrival.pierce[i];
 		    double diffractDist = currArrival.dist - dist[0];
+            double diffractTime = diffractDist*diffTD[i].p;
 		    diffTD[i+1] = new TimeDist(diffTD[i].p,
-					       diffTD[i].time+diffractDist*diffTD[i].p,
+                                       diffTD[i].time+diffractTime,
 					       diffTD[i].dist+diffractDist, tMod.cmbDepth);
 		    i++;
 		    System.arraycopy(currArrival.pierce,i,diffTD,i+1,numAdded-i);
 		    for (int j=i+1; j<diffTD.length; j++) {
 			diffTD[j].dist += diffractDist;
+            diffTD[j].time += diffractTime;
 		    }
 		    numAdded++;
 		} else {
