@@ -40,7 +40,6 @@ The TauP Toolkit, flexible seismic traveltime utilities.
     <developer>
       <name>Philip Crotwell</name>
       <id>crotwell</id>
-      <email>crotwell@seis.sc.edu</email>
       <organization>University of South Carolina</organization>
       <roles>
       <role>Module Maintainer</role>
