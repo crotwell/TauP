@@ -51,6 +51,10 @@ The TauP Toolkit, flexible seismic traveltime utilities.
     </developers>
 
   <dependencies>
+    <dependency>
+      <id>log4j</id>
+      <version>1.2.6</version>
+    </dependency>
   </dependencies>
 
   <build>
