@@ -45,14 +45,14 @@ import java.awt.*;
  */
 
 public class PathPlot extends ArrivalPlot {
-    
+
     public PathPlot() {
         super();
         //  setDebugGraphicsOptions(DebugGraphics.LOG_OPTION);
         setOpaque(true);
         //  setBackground(java.awt.Color.white);
     }
-    
+
     public void paintBackground(Graphics g) {
         int xOffset = getSize().width/2;
         int yOffset = getSize().height/2;
@@ -60,13 +60,13 @@ public class PathPlot extends ArrivalPlot {
                                 yOffset);
         double roe = 6371;
         Color origColor = g.getColor();
-        
+
         Color aColor, bColor, fillColor;
         aColor = new Color(220, 220, 220);
         bColor = Color.white;
         fillColor = aColor;
         boolean whichColor = true;
-        
+
         int disconRad;
         if (tMod != null) {
             roe = tMod.getRadiusOfEarth();
@@ -102,16 +102,16 @@ public class PathPlot extends ArrivalPlot {
                 }
             }
         }
-        
+
         g.setColor(origColor);
     }
-    
+
     public void paintArrivals(Graphics g) {
         for (int i=0;i<arrivals.size(); i++) {
             paintPaths(g, i);
         }
     }
-    
+
     public void paintForeground(Graphics g) {
         if (selectedIndex >= 0 && selectedIndex < arrivals.size()) {
             Color orig = g.getColor();
@@ -120,7 +120,7 @@ public class PathPlot extends ArrivalPlot {
             g.setColor(orig);
         }
     }
-    
+
     protected void paintPaths(Graphics g, int i) {
         Arrival a;
         int[] x, y;
@@ -129,12 +129,11 @@ public class PathPlot extends ArrivalPlot {
         int pixelRad = Math.min(xOffset,
                                 yOffset);
         double roe = 6371;
-        
-        
+
         a = (Arrival)arrivals.elementAt(i);
         x = new int[a.getNumPathPoints()];
         y = new int[a.getNumPathPoints()];
-        
+
         if ((a.dist*180/Math.PI) % 360 > 180) {
             // long way around
             for (int j = 0; j < x.length; j++) {
@@ -155,8 +154,8 @@ public class PathPlot extends ArrivalPlot {
                                                    roe * pixelRad);
             }
         }
-        
+
         g.drawPolyline(x, y, x.length);
     }
-    
+
 } // PathPlot
