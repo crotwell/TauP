@@ -1,0 +1,129 @@
+<?xml version="1.0"?>
+<document>
+
+  <properties>
+    <author>Philip Crotwell</author>
+    <title>Testing the Global Earthquake Explorer</title>
+  </properties>
+
+<body>
+
+<section name="Modifications to TauP">
+Vers Date Description<br/>
+<ul>
+<li>
+1.1.4   4/5/02
+<ul>
+<li>1) Added fix for models with S vel in Mantle higher than P vel in core,
+                 which happens in some Mars models. (Jadhav)
+</li>
+<li>2) Added time to both taup_pierce and taup_path (Rivera)
+</li>
+</ul>
+</li>
+<li>
+1.1.3   7/19/01
+<ul>
+<li>1) Fixed bug with TauP_Path ignoring model specified on cmd line (Pulliam).
+</ul>
+</li>
+<li>
+1.1.2   2/9/01
+<ul>
+<li>1) Allowed TauP GUI to be called from other tools, no system.exit</li>
+<li>2) Fixed bug in TauP_Path with outFile being null</li>
+<li>3) Added model text files to distribution(Ritsema)</li>
+</ul>
+</li>
+<li>
+1.1.1   4/19/00
+<ul>
+<li> 1) fixed problem with p^mP type phases for deep sources (Owens,Zandt,Ritsema)</li>
+<li>       2) added getSlownessModel and getVelocityModel to TauModel and 
+                getVelocityModel to SlownessModel
+</li>
+</ul>
+</li>
+<li>1.1.0   2/2/00
+<ul>
+<li>      1) several fixes to documentation (Snoke)
+<li>      2) now GPL'ed
+<li>      3) with source code
+<li>      4) add a GUI for times, pierce points and paths, not very advanced but interesting
+</ul>
+<li>1.0.9   12/16/99
+<ul>
+<li>                1) fixed TauP_SetSac broken by bug in 1.0.8
+</ul>
+<li>1.0.8   11/29/99
+<ul>
+<li>                1) fixed path bug for S at 180
+<li>                2) fixed SphericalCoords.lonFor() to be between -180 and 180
+<li>                3) changed PropertyLoader and TauModelLoader to use             
+                        getResourceAsStream to work with JDK1.2 where the       
+                        jar may not be in the classpath
+<li>                4) fixed bug with loading models from user generated jar files,
+                        manual said Models/modelname but code had 
+                        StdModels/modelname
+<li>                5) small changes and updates to manual, including adding
+                        license info
+<li>                6) added java2 install instructions and Mac and Windows
+                         specific instructions
+<li>                7) fixed problems with jacl scripts
+<li>                8) added configurable precision for outputs, see standard 
+                        properties
+<li>                9) redid formating of manual, used TimesRoman and pdf is now
+                        usable, plus has hyperlinked table of contents, etc
+<li>                10) fixed null pointer bug with -help in TauP_Time
+
+</ul>
+<li>1.0.7   2/9/99
+<ul>
+<li> 1)  forgot to flush BufferedOutputWriter, resulting in no output at all
+</ul>
+
+<li>1.0.6       2/8/99  
+<ul>
+<li>1) fixed bug with very small layers and power law, now very 
+                    small (< 1 micron) layers are just 0 time and distance
+                    (Firpo)
+<li>            2) fixed bug with pierce depths being printed below turning 
+                    depth (Ritsema)
+<li>            3) changed from printResult(StringWriter) to 
+                    printResult(Writer) to fix out of memory bug
+<li>            4) added radius of earth to verbose option in 
+                    taup_create (Owens)
+<li>            5) fixed bug with power law depth finder giving depths just
+                    outside the layer
+<li>            6) general cleanup of source code
+</ul>
+<li>1.0.5  12/3/98 
+<ul>
+<li>1)Speed improvement in TauP_SetSac, replaced readData with new
+                   method directly calling intbitstofloat.
+<li>               2)fixed bug in TauP_Time, it was not depth correcting in some 
+                   cases
+</ul>
+<li>1.0.4  11/23/98 
+<ul>
+<li>Removed unneeded printlns from TauP_SetSac
+</ul>
+<li>1.0.3  11/17/98 Bug fix
+<ul>
+               <li>1) fixed (hopefully) a numerical instability in SlownessLayer
+                   due to using the power law v=Ar^B in very thin layers
+</ul>
+<li>1.0.1  10/28/98 Bug fixes
+<ul>
+      <li>1) fixed bug in formatter that rounded incorrectly, 14.99 would
+               print as 14.0 when formatted %5.1f
+       <li>2) fixed taup_table bug when Pdiff was only arrival and distance
+              was greater than 105 degrees 
+       <li>3) fixed bug with depth of 15km in iasp91, indexP and indexS
+                   were being incorrectly swapped
+</ul>
+<li>1.0    9/9/98  First Public release
+</ul>
+</section>
+</body>
+</document>
