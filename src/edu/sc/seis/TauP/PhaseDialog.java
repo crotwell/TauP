@@ -205,7 +205,6 @@ public class PhaseDialog extends javax.swing.JDialog {
         for (int i = 0; i < phases.length; i++){
             for(int j = 0; j < phaseListModel.size(); j++) {
                 if(phases[i].equals(phaseListModel.elementAt(j))){
-                    System.out.println("equal");
                     sel.addSelectionInterval(j,j);
                 }
             }
