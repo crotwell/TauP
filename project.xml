@@ -10,13 +10,11 @@
     <url>http://www.seis.sc.edu</url>
     <logo>http://www.seis.sc.edu/images/header.gif</logo>
   </organization>
-  <currentVersion>1.1.5Beta</currentVersion>
+  <currentVersion>1.1.5beta</currentVersion>
   <inceptionYear>1999</inceptionYear>
 
   <package>edu.sc.seis.TauP</package>
-  <shortDescription>
-The TauP Toolkit, flexible seismic traveltime utilities.
-</shortDescription>
+  <shortDescription>The TauP Toolkit.</shortDescription>
   <gumpRepositoryId>TauP</gumpRepositoryId>
   <description> 
 The TauP Toolkit, flexible seismic traveltime utilities.
@@ -28,9 +26,9 @@ The TauP Toolkit, flexible seismic traveltime utilities.
   <distributionSite>www.seis.sc.edu</distributionSite>
   <distributionDirectory>/seis/raid1/Apache/htdocs/software/mavenRepository</distributionDirectory>
   <mailingList>
-    <name>taup</name>
-    <subscribe>majordomo@iris.washington.edu</subscribe>
-    <unsubscribe>majordomo@iris.washington.edu</unsubscribe>
+    <name>TauP</name>
+    <subscribe>taup-request@seis.sc.edu</subscribe>
+    <unsubscribe>taup-request@seis.sc.edu</unsubscribe>
   </mailingList>
 
   <repository>
