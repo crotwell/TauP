@@ -28,6 +28,7 @@
         <item name="JEvalResp"     href="http://www.isti.com/JEvalResp/"/>
         <item name="VASE"        href="http://www.iris.washington.edu/DHI/clients.html"/>
         <item name="TauP"          item="/../TauP"/>
+        <item name="FMI"      item="http://www.ess.washington.edu/SIES/FMI"/>
     </menu>
 
   </body>
