@@ -4,31 +4,31 @@ import javax.swing.table.*;
 import javax.swing.*;
 
 /*
-  The TauP Toolkit: Flexible Seismic Travel-Time and Raypath Utilities.
-  Copyright (C) 1998-2000 University of South Carolina
+ The TauP Toolkit: Flexible Seismic Travel-Time and Raypath Utilities.
+ Copyright (C) 1998-2000 University of South Carolina
 
-  This program is free software; you can redistribute it and/or
-  modify it under the terms of the GNU General Public License
-  as published by the Free Software Foundation; either version 2
-  of the License, or (at your option) any later version.
+ This program is free software; you can redistribute it and/or
+ modify it under the terms of the GNU General Public License
+ as published by the Free Software Foundation; either version 2
+ of the License, or (at your option) any later version.
 
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License
-  along with this program; if not, write to the Free Software
-  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software
+ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-  The current version can be found at 
-  <A HREF="www.seis.sc.edu">http://www.seis.sc.edu</A>
+ The current version can be found at
+ <A HREF="www.seis.sc.edu">http://www.seis.sc.edu</A>
 
-  Bug reports and comments should be directed to 
-  H. Philip Crotwell, crotwell@seis.sc.edu or
-  Tom Owens, owens@seis.sc.edu
+ Bug reports and comments should be directed to
+ H. Philip Crotwell, crotwell@seis.sc.edu or
+ Tom Owens, owens@seis.sc.edu
 
-*/
+ */
 
 /**
  *
@@ -60,11 +60,11 @@ public class PhaseDialog extends javax.swing.JDialog {
 
         setBackground (new java.awt.Color (192, 192, 192));
         addWindowListener (new java.awt.event.WindowAdapter () {
-                public void windowClosing (java.awt.event.WindowEvent evt) {
-                    closeDialog (evt);
+                    public void windowClosing (java.awt.event.WindowEvent evt) {
+                        closeDialog (evt);
+                    }
                 }
-            }
-                           );
+                          );
         getContentPane ().setLayout (new java.awt.BorderLayout ());
 
         jLabel1 = new javax.swing.JLabel ();
@@ -83,11 +83,11 @@ public class PhaseDialog extends javax.swing.JDialog {
         addPhaseTextField.setPreferredSize (new java.awt.Dimension(100, 21));
         addPhaseTextField.setMinimumSize (new java.awt.Dimension(100, 21));
         addPhaseTextField.addActionListener (new java.awt.event.ActionListener () {
-                public void actionPerformed (java.awt.event.ActionEvent evt) {
-                    addPhaseActionPerformed (evt);
+                    public void actionPerformed (java.awt.event.ActionEvent evt) {
+                        addPhaseActionPerformed (evt);
+                    }
                 }
-            }
-                                             );
+                                            );
         jPanel1.add (addPhaseTextField);
 
         closeButton = new javax.swing.JButton ();
@@ -95,11 +95,11 @@ public class PhaseDialog extends javax.swing.JDialog {
         closeButton.setActionCommand ("ClosePhaseDialog");
         closeButton.setLabel ("Close");
         closeButton.addActionListener (new java.awt.event.ActionListener () {
-                public void actionPerformed (java.awt.event.ActionEvent evt) {
-                    closeActionPerformed (evt);
+                    public void actionPerformed (java.awt.event.ActionEvent evt) {
+                        closeActionPerformed (evt);
+                    }
                 }
-            }
-                                       );
+                                      );
         jPanel1.add (closeButton);
 
         getContentPane ().add (jPanel1, "South");
@@ -111,11 +111,11 @@ public class PhaseDialog extends javax.swing.JDialog {
 
         phaseList = new javax.swing.JList ();
         phaseList.addKeyListener (new java.awt.event.KeyAdapter () {
-                public void keyTyped (java.awt.event.KeyEvent evt) {
-                    phaseListKeyTyped (evt);
+                    public void keyTyped (java.awt.event.KeyEvent evt) {
+                        phaseListKeyTyped (evt);
+                    }
                 }
-            }
-                                  );
+                                 );
         jScrollPane1.add (phaseList);
 
         jScrollPane1.setViewportView (phaseList);
@@ -142,15 +142,15 @@ public class PhaseDialog extends javax.swing.JDialog {
     private void addPhaseActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addPhaseActionPerformed
         // Add your handling code here:
         phaseListModel.addElement(evt.getActionCommand());
-        ListSelectionModel sel = 
+        ListSelectionModel sel =
             phaseList.getSelectionModel();
-        sel.addSelectionInterval(phaseListModel.getSize()-1, 
+        sel.addSelectionInterval(phaseListModel.getSize()-1,
                                  phaseListModel.getSize()-1);
         SwingUtilities.invokeLater(new Runnable() {
-                public void run() {
-                    phaseList.ensureIndexIsVisible(phaseListModel.getSize()-1);
-                }
-            });
+                    public void run() {
+                        phaseList.ensureIndexIsVisible(phaseListModel.getSize()-1);
+                    }
+                });
     }//GEN-LAST:event_addPhaseActionPerformed
 
     private void closeActionPerformed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeActionPerformed
@@ -192,11 +192,24 @@ public class PhaseDialog extends javax.swing.JDialog {
         for (int i=0; i<phases.length; i++) {
             phaseListModel.addElement(phases[i]);
         }
-        ListSelectionModel sel = 
+        ListSelectionModel sel =
             phaseList.getSelectionModel();
-        sel.addSelectionInterval(0, 
+        sel.addSelectionInterval(0,
                                  phaseListModel.getSize()-1);
 
+    }
+
+    public void setSelectedPhases(String[] phases){
+        ListSelectionModel sel = phaseList.getSelectionModel();
+        sel.clearSelection();
+        for (int i = 0; i < phases.length; i++){
+            for(int j = 0; j < phaseListModel.size(); j++) {
+                if(phases[i].equals(phaseListModel.elementAt(j))){
+                    System.out.println("equal");
+                    sel.addSelectionInterval(j,j);
+                }
+            }
+        }
     }
 
     public static void main(java.lang.String[] args) {
