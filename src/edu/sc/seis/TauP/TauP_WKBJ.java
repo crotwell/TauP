@@ -16,10 +16,10 @@
   along with this program; if not, write to the Free Software
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-  The current version can be found at 
+  The current version can be found at
   <A HREF="www.seis.sc.edu">http://www.seis.sc.edu</A>
 
-  Bug reports and comments should be directed to 
+  Bug reports and comments should be directed to
   H. Philip Crotwell, crotwell@seis.sc.edu or
   Tom Owens, owens@seis.sc.edu
 
@@ -29,7 +29,7 @@
  * TauP_WKBJ.java
  *
  *
- * 
+ *
  *
  * @author Philip Crotwell
  * @version 1.1.3 Wed Jul 18 15:00:35 GMT 2001
@@ -47,26 +47,26 @@ import java.util.zip.*;
 public class TauP_WKBJ extends TauP_Time {
     
     /** deltaT of the seismogram, default is .05 which gives
-	20 sps. */
+    20 sps. */
     protected double deltaT = .05;
 
     /** number of samples in the seismogram. Default is 100. */
     protected int numSamples = 1000;
 
-    /** start time of the seismogram relative to the origin time. 
-	default is 0. */
+    /** start time of the seismogram relative to the origin time.
+    default is 0. */
     protected double startTime = 0;
 
     public TauP_WKBJ() {
-	super();
+    super();
     }
     
     public TauP_WKBJ(TauModel tMod) throws TauModelException {
-	super(tMod);
+    super(tMod);
     }
     
     public TauP_WKBJ(String modelName) throws TauModelException {
-	super(modelName);
+    super(modelName);
     }
     
     /**
@@ -107,98 +107,98 @@ public class TauP_WKBJ extends TauP_Time {
     
 
     public void calculate(double degrees) throws TauModelException {
-	recalcPhases();
-	clearArrivals();
-	calcWKBJ(degrees);
+    recalcPhases();
+    clearArrivals();
+    calcWKBJ(degrees);
     }
 
     public void calcWKBJ(double degrees) throws TauModelException {
-	this.degrees = degrees;
+    this.degrees = degrees;
  System.out.println("In calcWKBJ for "+degrees+" degrees.");
  
-	SeismicPhase phase;
-	Arrival[] phaseArrivals;
-	double calcTime, calcDist;
-	Theta thetaAtX;
-	double rayParam, nextRayParam, minRayParam;
-	double theta, nextTheta;
-	WKBJArrival seismogramArrival;
-	ReflTransCoefficient rtCoeff;
+    SeismicPhase phase;
+    Arrival[] phaseArrivals;
+    double calcTime, calcDist;
+    Theta thetaAtX;
+    double rayParam, nextRayParam, minRayParam;
+    double theta, nextTheta;
+//  WKBJArrival seismogramArrival;
+    ReflTransCoefficient rtCoeff;
 
-	for (int phaseNum=0;phaseNum<phases.size(); phaseNum++) {
+    for (int phaseNum=0;phaseNum<phases.size(); phaseNum++) {
 System.out.println("Phase "+((SeismicPhase)phases.elementAt(phaseNum)).getName()+".");
-	    phase = (SeismicPhase)phases.elementAt(phaseNum);
-	    phase.setDEBUG(DEBUG);
-	    phase.calcTime(degrees);
-	    minRayParam = phase.getMinRayParam();
-	    rtCoeff = new ReflTransCoefficient(phase);
-	    if (phase.hasArrivals()) {
-	
+        phase = (SeismicPhase)phases.elementAt(phaseNum);
+        phase.setDEBUG(DEBUG);
+        phase.calcTime(degrees);
+        minRayParam = phase.getMinRayParam();
+//      rtCoeff = new ReflTransCoefficient(phase);
+        if (phase.hasArrivals()) {
+    
 
-		phaseArrivals = phase.getArrivals();
+        phaseArrivals = phase.getArrivals();
 
-		for (int i=0;i<phaseArrivals.length;i++) {
+        for (int i=0;i<phaseArrivals.length;i++) {
 System.out.println("Arrival number "+i);
-		    thetaAtX = new Theta(phase, phaseArrivals[i].getDist());
+            thetaAtX = new Theta(phase, phaseArrivals[i].getDist());
 System.out.println("Got Theta");
-		    float[] seismogramPoints = new float[numSamples];
-		    rayParam = thetaAtX.getMaxRayParam();
+            float[] seismogramPoints = new float[numSamples];
+            rayParam = thetaAtX.getMaxRayParam();
 System.out.println("Got ray param");
-		    theta = thetaAtX.getTheta(rayParam);
+            theta = thetaAtX.getTheta(rayParam);
 System.out.println("Got theta for ray param");
-		    setStartTime(320);
-		    nextRayParam = thetaAtX.getStepRayParam(rayParam, 
-							    getDeltaT());
-		    nextTheta = thetaAtX.getTheta(nextRayParam);
-		    int n = 0;
-		    try {
-			while (nextRayParam >= minRayParam) {
-			    //System.out.println(n+"  "+rayParam+"  "+theta+"  "+nextRayParam+"  "+nextTheta);
-			    n = (int)Math.round((theta-getStartTime()) /
-						getDeltaT());
-			    if (n >= 0 && n < seismogramPoints.length) {
-				seismogramPoints[n] += (float)(
-				    Math.sqrt(rayParam)*
-				    rtCoeff.getCoefficient(rayParam)*
-				    (rayParam- nextRayParam));
+            setStartTime(320);
+            nextRayParam = thetaAtX.getStepRayParam(rayParam,
+                                getDeltaT());
+            nextTheta = thetaAtX.getTheta(nextRayParam);
+            int n = 0;
+            try {
+            while (nextRayParam >= minRayParam) {
+                //System.out.println(n+"  "+rayParam+"  "+theta+"  "+nextRayParam+"  "+nextTheta);
+                n = (int)Math.round((theta-getStartTime()) /
+                        getDeltaT());
+                if (n >= 0 && n < seismogramPoints.length) {
+//              seismogramPoints[n] += (float)(
+//                  Math.sqrt(rayParam)*
+//                  rtCoeff.getCoefficient(rayParam)*
+//                  (rayParam- nextRayParam));
 System.out.println(n+"  "+seismogramPoints[n]);
  
-			    }
-			    rayParam = nextRayParam;
-			    theta = nextTheta;
-			    nextRayParam = thetaAtX.getStepRayParam(rayParam, 
-								    getDeltaT());
-			    nextTheta = thetaAtX.getTheta(nextRayParam);
-			}
-		    } catch (ArrayIndexOutOfBoundsException e) {
-			// must have dropped off of end of theta curve
+                }
+                rayParam = nextRayParam;
+                theta = nextTheta;
+                nextRayParam = thetaAtX.getStepRayParam(rayParam,
+                                    getDeltaT());
+                nextTheta = thetaAtX.getTheta(nextRayParam);
+            }
+            } catch (ArrayIndexOutOfBoundsException e) {
+            // must have dropped off of end of theta curve
 System.out.println("ArrayIndexOutOfBoundsException: "+e);
-		    }
-		    seismogramArrival = new WKBJArrival( phaseArrivals[i],
-							 seismogramPoints); 
-		    SacTimeSeries sac = new SacTimeSeries();
-		    sac.y = seismogramPoints;
-		    sac.npts = seismogramPoints.length;
-		    sac.leven = SacTimeSeries.TRUE;
-		    sac.iftype = SacTimeSeries.ITIME;
-		    sac.delta = (float)getDeltaT();
-		    sac.t0 = (float)phaseArrivals[i].getTime();
-		    sac.kt0 = phaseArrivals[i].getName();
-		    sac.o = 0;
-		    sac.b = 320;
-		    sac.e = sac.b + (sac.npts-1)* sac.delta;
+            }
+//          seismogramArrival = new WKBJArrival( phaseArrivals[i],
+//                           seismogramPoints);
+            SacTimeSeries sac = new SacTimeSeries();
+            sac.y = seismogramPoints;
+            sac.npts = seismogramPoints.length;
+            sac.leven = SacTimeSeries.TRUE;
+            sac.iftype = SacTimeSeries.ITIME;
+            sac.delta = (float)getDeltaT();
+            sac.t0 = (float)phaseArrivals[i].getTime();
+            sac.kt0 = phaseArrivals[i].getName();
+            sac.o = 0;
+            sac.b = 320;
+            sac.e = sac.b + (sac.npts-1)* sac.delta;
 
-		    try {
-			sac.write("tempsacfile");
-		    } catch (IOException e) {
-		    }
-		    arrivals.addElement(seismogramArrival);
-		}
-	    }
-	}
+            try {
+            sac.write("tempsacfile");
+            } catch (IOException e) {
+            }
+//          arrivals.addElement(seismogramArrival);
+        }
+        }
+    }
     }
 
-     /** Allows TauP_Time to run as an application. Creates an instance 
+     /** Allows TauP_Time to run as an application. Creates an instance
        * of TauP_Time.
        * . */
    public static void main(String[] args)
@@ -218,7 +218,7 @@ System.out.println("ArrayIndexOutOfBoundsException: "+e);
          if (noComprendoArgs.length > 0) {
             for (int i=0;i<noComprendoArgs.length;i++) {
                if (noComprendoArgs[i].equals("-help") ||
-					noComprendoArgs[i].equals("-version")) {
+                    noComprendoArgs[i].equals("-version")) {
                   System.exit(0);
                }
             }
@@ -243,11 +243,11 @@ System.out.println("ArrayIndexOutOfBoundsException: "+e);
 
       } catch (TauModelException e) {
          System.out.println("Caught: "+e.getMessage());
-			e.printStackTrace();
+            e.printStackTrace();
       } catch (TauPException e) {
          System.out.println("Caught: "+e.getMessage());
-			e.printStackTrace();
-      } 
+            e.printStackTrace();
+      }
 
    }
 

@@ -16,14 +16,16 @@
   along with this program; if not, write to the Free Software
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-  The current version can be found at 
+  The current version can be found at
   <A HREF="www.seis.sc.edu">http://www.seis.sc.edu</A>
 
-  Bug reports and comments should be directed to 
+  Bug reports and comments should be directed to
   H. Philip Crotwell, crotwell@seis.sc.edu or
   Tom Owens, owens@seis.sc.edu
 
 */
+
+package edu.sc.seis.TauP;
 
 import java.io.*;
 import java.net.*;
@@ -39,24 +41,24 @@ import java.net.*;
   */
 public class TauPClient {
 
-	public static void main(String[] args) {
-		DataInputStream fromServer;
-		DataOutputStream toServer;
-		try {
-			Socket timeSocket = new Socket("localhost", 6371, true);
-			fromServer = new DataInputStream(timeSocket.getInputStream());
-			toServer =  new DataOutputStream(timeSocket.getOutputStream());
-			
-			toServer.writeBytes("MODEL prem\n");
-			toServer.writeBytes("PHASES P,S\n");
-			toServer.writeBytes("DEPTH 100.0\n");
-			toServer.writeBytes("DISTANCE 60.0\n");
-			String outString;
-			while ((outString = fromServer.readLine()) != null) {
-				System.out.println(outString);
-			}
-		} catch (IOException e) {
-		}
-		
-	}
+    public static void main(String[] args) {
+        DataInputStream fromServer;
+        DataOutputStream toServer;
+        try {
+            Socket timeSocket = new Socket("localhost", 6371, true);
+            fromServer = new DataInputStream(timeSocket.getInputStream());
+            toServer =  new DataOutputStream(timeSocket.getOutputStream());
+            
+            toServer.writeBytes("MODEL prem\n");
+            toServer.writeBytes("PHASES P,S\n");
+            toServer.writeBytes("DEPTH 100.0\n");
+            toServer.writeBytes("DISTANCE 60.0\n");
+            String outString;
+            while ((outString = fromServer.readLine()) != null) {
+                System.out.println(outString);
+            }
+        } catch (IOException e) {
+        }
+        
+    }
 }

@@ -16,10 +16,10 @@
   along with this program; if not, write to the Free Software
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-  The current version can be found at 
+  The current version can be found at
   <A HREF="www.seis.sc.edu">http://www.seis.sc.edu</A>
 
-  Bug reports and comments should be directed to 
+  Bug reports and comments should be directed to
   H. Philip Crotwell, crotwell@seis.sc.edu or
   Tom Owens, owens@seis.sc.edu
 
@@ -31,7 +31,7 @@ import java.io.*;
 import java.util.Vector;
 
 /**
-  * Calculates travel time curves 
+  * Calculates travel time curves
   * at known slowness samples.
   *
   * @version 1.1.3 Wed Jul 18 15:00:35 GMT 2001
@@ -114,9 +114,9 @@ public class TauP_Curve extends TauP_Time {
     }
  
     public void calculate(double degrees) {
-        /* no need to do any calculations, just check the phases since 
+        /* no need to do any calculations, just check the phases since
          * they have already been
-         * done within the seismic phase. So, this just overrides 
+         * done within the seismic phase. So, this just overrides
          * TauP_Time.calculate. printResult handles everything else. */
         recalcPhases();
     }
@@ -161,7 +161,7 @@ public class TauP_Curve extends TauP_Time {
     }
    
     public void printStdUsageTail() {
-   	System.out.println(
+    System.out.println(
                            "\n-o outfile         -- output is redirected to \"outfile\" instead of taup_curve.gmt\n"+
                            "-debug             -- enable debugging output\n"+
                            "-verbose           -- enable verbose output\n"+
@@ -199,7 +199,7 @@ public class TauP_Curve extends TauP_Time {
             if (tempDepth < 0.0 || depth > tMod.getRadiusOfEarth()) {
                 System.out.println("Depth must be >= 0.0 and "+
                                    "<= tMod.getRadiusOfEarth().\ndepth = "+tempDepth);
-                return;;
+                return;
             }
  
             depthCorrect(tempDepth);
@@ -244,7 +244,7 @@ public class TauP_Curve extends TauP_Time {
                             (float)(180.0/Math.PI*arcDistance)
                             +"  "+ (float)(time[dist.length-1]-arcDistance/reduceVel)+
                             " 10 0 0 9 "+phase.getName()+"\n";
-	
+    
                         // find max and min time
                         for (int i=0;i<time.length;i++) {
                             timeReduced = time[i]-Math.acos(Math.cos(dist[i]))/reduceVel;
@@ -256,7 +256,7 @@ public class TauP_Curve extends TauP_Time {
                             (float)(180.0/Math.PI*arcDistance)
                             +"  "+ (float)time[dist.length-1]+
                             " 10 0 0 1 "+phase.getName()+"\n";
-	
+    
                         // find max and min time
                         for (int i=0;i<time.length;i++) {
                             if (time[i] > maxTime) {maxTime = time[i];}
@@ -265,7 +265,7 @@ public class TauP_Curve extends TauP_Time {
                     }
                 }
             }
-				// round max and min time to nearest 100 seconds
+                // round max and min time to nearest 100 seconds
             maxTime = Math.ceil(maxTime/100)*100;
             minTime = Math.floor(minTime/100)*100;
             out.write("pstext -JX6 -P -R0/180/"+minTime+"/"+maxTime+
@@ -298,7 +298,7 @@ public class TauP_Curve extends TauP_Time {
                 out.write((float)(180.0/Math.PI*arcDistance)
                           +"  "+ (float)timeReduced+"\n");
 
-                if (i<dist.length-1 && (rayParams[i] == rayParams[i+1]) && 
+                if (i<dist.length-1 && (rayParams[i] == rayParams[i+1]) &&
                     rayParams.length > 2) {
                     /* Here we have a shadow zone, so put a break in the curve. */
                     out.write("> Shadow Zone\n");
@@ -307,7 +307,7 @@ public class TauP_Curve extends TauP_Time {
 
                 /* Here we check to see if we cross a 180 degree mark, in which
                  * case sin changes sign. */
-                if (i<dist.length-1 && Math.sin(dist[i]) > 0 && 
+                if (i<dist.length-1 && Math.sin(dist[i]) > 0 &&
                     Math.sin(dist[i+1]) <0) {
                     phase.calcTime(180.0);
                     phaseArrivals = phase.getArrivals();
@@ -329,7 +329,7 @@ public class TauP_Curve extends TauP_Time {
 
                 /* Here we check to see if we cross a 0 degree mark, in which
                  * case sin changes sign. No need for reduce vel at 0 distance.*/
-                if (i<dist.length-1 && Math.sin(dist[i]) < 0 && 
+                if (i<dist.length-1 && Math.sin(dist[i]) < 0 &&
                     Math.sin(dist[i+1]) > 0) {
                     phase.calcTime(0.0);
                     phaseArrivals = phase.getArrivals();
@@ -385,7 +385,7 @@ public class TauP_Curve extends TauP_Time {
         }
     }
 
-    /** Allows TauP_Curve to run as an application. Creates an instance 
+    /** Allows TauP_Curve to run as an application. Creates an instance
      * of TauP_Curve.
      * . */
     public static void main(String[] args)
@@ -446,7 +446,7 @@ public class TauP_Curve extends TauP_Time {
         } catch (TauModelException e) {
             System.out.println("Caught TauModelException: "+e.getMessage());
             e.printStackTrace();
-        } 
+        }
 
     }
 }
