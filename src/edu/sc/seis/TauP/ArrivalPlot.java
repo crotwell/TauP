@@ -22,10 +22,10 @@ import java.awt.*;
   along with this program; if not, write to the Free Software
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-  The current version can be found at 
+  The current version can be found at
   <A HREF="www.seis.sc.edu">http://www.seis.sc.edu</A>
 
-  Bug reports and comments should be directed to 
+  Bug reports and comments should be directed to
   H. Philip Crotwell, crotwell@seis.sc.edu or
   Tom Owens, owens@seis.sc.edu
 
@@ -45,23 +45,23 @@ import java.awt.*;
  */
 
 public abstract class ArrivalPlot extends JPanel {
-    
+
     public void setSelectedIndex(int index) {
-	this.selectedIndex = index;
-	repaint();
+    this.selectedIndex = index;
+    repaint();
     }
 
     public void addElement(Arrival a) {
-	arrivals.addElement(a);
+    arrivals.addElement(a);
     }
 
     public void removeAllElements() {
-	arrivals.removeAllElements();
-	repaint();
+    arrivals.removeAllElements();
+    repaint();
     }
 
     public void setTauModel(TauModel tMod) {
-	this.tMod = tMod;
+    this.tMod = tMod;
     }
 
     public abstract void paintBackground(Graphics g);
@@ -71,7 +71,7 @@ public abstract class ArrivalPlot extends JPanel {
     public abstract void paintForeground(Graphics g);
 
     public void paintComponent(Graphics g) {
-	super.paintComponent(g);
+    super.paintComponent(g);
         paintBackground(g);
         paintArrivals(g);
         paintForeground(g);
@@ -79,6 +79,6 @@ public abstract class ArrivalPlot extends JPanel {
 
     protected Vector arrivals = new Vector();
     protected TauModel tMod;
-    protected int selectedIndex = 0;
+    protected int selectedIndex = -1;
 
 } // ArrivalPlot
