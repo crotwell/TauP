@@ -29,8 +29,8 @@ package edu.sc.seis.TauP;
 
 
 import java.io.*;
-import java.lang.*;
-import java.util.*;
+
+import java.text.DecimalFormat;
 
 /** Class that represents a sac file. All headers are have the same names
  * as within the Sac program. Can read the whole file or just the header
@@ -277,11 +277,12 @@ public class SacTimeSeries {
         if (sacFile.length() != npts*4+data_offset) {
             if (sacFile.length() == swapBytes(npts)*4+data_offset ) {
                 // must be little endian
+                System.out.println("Swap bytes for linux: swapBytes(npts) ("+swapBytes(npts)+"*4) + header("+data_offset+") =  file length="+sacFile.length());
                 byteOrder = IntelByteOrder;
                 swapHeader();
             } else {
                 throw new IOException(filename+
-                                          " does not appear to be a sac file!");
+                                          " does not appear to be a sac file! npts("+npts+") + header("+data_offset+") !=  file length="+sacFile.length()+"\n  as linux: npts("+swapBytes(npts)+") + header("+data_offset+") !=  file length="+sacFile.length());
             } // end of else
         }
         readData(dis);
@@ -1010,138 +1011,163 @@ public class SacTimeSeries {
         }
     }
 
+
+    public static final DecimalFormat decimalFormat = new DecimalFormat("#####.####");
+
+    public static String format(String label, float f) {
+        String s = label+" = ";
+        String fString = decimalFormat.format(f);
+        while (fString.length() < 8) {
+            fString = " "+fString;
+        }
+        s = s+fString;
+        while (s.length() < 21) {
+            s = " "+s;
+        }
+        return s;
+    }
+
+    public static String formatLine(String s1, float f1, String s2, float f2, String s3, float f3, String s4, float f4, String s5, float f5) {
+
+        return format(s1,f1)+
+            format(s2,f2)+
+            format(s3,f3)+
+            format(s4,f4)+
+            format(s5,f5);
+    }
+
     public void printHeader() {
-        System.out.println("delta = "+delta+
-                               " depmin = "+depmin+
-                               " depmax = "+depmax+
-                               " scale = "+scale+
-                               " odelta = "+odelta);
+        System.out.println(formatLine("delta",delta,
+                                      "depmin",depmin,
+                                      "depmax",depmax,
+                                      "scale",scale,
+                                      "odelta",odelta));
 
-        System.out.println("b = "+b+
-                               " e = "+e+
-                               " o = "+o+
-                               " a = "+a+
-                               " fmt = "+fmt);
+        System.out.println(formatLine("b",b,
+                                      "e",e,
+                                      "o",o,
+                                      "a",a,
+                                      "fmt",fmt));
 
-        System.out.println("t0 = "+t0+
-                               " t1 = "+t1+
-                               " t2 = "+t2+
-                               " t3 = "+t3+
-                               " t4 = "+t4);
+        System.out.println(formatLine("t0",t0,
+                                      "t1",t1,
+                                      "t2",t2,
+                                      "t3",t3,
+                                      "t4",t4));
 
-        System.out.println("t5 = "+t5+
-                               " t6 = "+t6+
-                               " t7 = "+t7+
-                               " t8 = "+t8+
-                               " t9 = "+t9);
+        System.out.println(formatLine("t5",t5,
+                                      "t6",t6,
+                                      "t7",t7,
+                                      "t8",t8,
+                                      "t9",t9));
 
-        System.out.println("f = "+f+
-                               " resp0 = "+resp0+
-                               " resp1 = "+resp1+
-                               " resp2 = "+resp2+
-                               " resp3 = "+resp3);
+        System.out.println(formatLine("f",f,
+                                      "resp0",resp0,
+                                      "resp1",resp1,
+                                      "resp2",resp2,
+                                      "resp3",resp3));
 
-        System.out.println("resp4 = "+resp4+
-                               " resp5 = "+resp5+
-                               " resp6 = "+resp6+
-                               " resp7 = "+resp7+
-                               " resp8 = "+resp8);
+        System.out.println(formatLine("resp4",resp4,
+                                      "resp5",resp5,
+                                      "resp6",resp6,
+                                      "resp7",resp7,
+                                      "resp8",resp8));
 
-        System.out.println("resp9 = "+resp9+
-                               " stla = "+stla+
-                               " stlo = "+stlo+
-                               " stel = "+stel+
-                               " stdp = "+stdp);
+        System.out.println(formatLine("resp9",resp9,
+                                      "stla",stla,
+                                      "stlo",stlo,
+                                      "stel",stel,
+                                      "stdp",stdp));
 
-        System.out.println("evla = "+evla+
-                               " evlo = "+evlo+
-                               " evel = "+evel+
-                               " evdp = "+evdp+
-                               " mag = "+mag);
+        System.out.println(formatLine("evla",evla,
+                                      "evlo",evlo,
+                                      "evel",evel,
+                                      "evdp",evdp,
+                                      "mag",mag));
 
-        System.out.println("user0 = "+user0+
-                               " user1 = "+user1+
-                               " user2 = "+user2+
-                               " user3 = "+user3+
-                               " user4 = "+user4);
+        System.out.println(formatLine("user0",user0,
+                                      "user1",user1,
+                                      "user2",user2,
+                                      "user3",user3,
+                                      "user4",user4));
 
-        System.out.println("user5 = "+user5+
-                               " user6 = "+user6+
-                               " user7 = "+user7+
-                               " user8 = "+user8+
-                               " user9 = "+user9);
+        System.out.println(formatLine("user5",user5,
+                                      "user6",user6,
+                                      "user7",user7,
+                                      "user8",user8,
+                                      "user9",user9));
 
-        System.out.println("dist = "+dist+
-                               " az = "+az+
-                               " baz = "+baz+
-                               " gcarc = "+gcarc+
-                               " sb = "+sb);
+        System.out.println(formatLine("dist",dist,
+                                      "az",az,
+                                      "baz",baz,
+                                      "gcarc",gcarc,
+                                      "sb",sb));
 
-        System.out.println("sdelta = "+sdelta+
-                               " depmen = "+depmen+
-                               " cmpaz = "+cmpaz+
-                               " cmpinc = "+cmpinc+
-                               " xminimum = "+xminimum);
+        System.out.println(formatLine("sdelta",sdelta,
+                                      "depmen",depmen,
+                                      "cmpaz",cmpaz,
+                                      "cmpinc",cmpinc,
+                                      "xminimum",xminimum));
 
-        System.out.println("xmaximum = "+xmaximum+
-                               " yminimum = "+yminimum+
-                               " ymaximum = "+ymaximum+
-                               " unused6 = "+unused6+
-                               " unused7 = "+unused7);
+        System.out.println(formatLine("xmaximum",xmaximum,
+                                      "yminimum",yminimum,
+                                      "ymaximum",ymaximum,
+                                      "unused6",unused6,
+                                      "unused7",unused7));
 
-        System.out.println("unused8 = "+unused8+
-                               " unused9 = "+unused9+
-                               " unused10 = "+unused10+
-                               " unused11 = "+unused11+
-                               " unused12 = "+unused12);
+        System.out.println(formatLine("unused8",unused8,
+                                      "unused9",unused9,
+                                      "unused10",unused10,
+                                      "unused11",unused11,
+                                      "unused12",unused12));
 
-        System.out.println("nzyear = "+nzyear+
-                               " nzjday = "+nzjday+
-                               " nzhour = "+nzhour+
-                               " nzmin = "+nzmin+
-                               " nzsec = "+nzsec);
+        System.out.println(formatLine("nzyear",nzyear,
+                                      "nzjday",nzjday,
+                                      "nzhour",nzhour,
+                                      "nzmin",nzmin,
+                                      "nzsec",nzsec));
 
-        System.out.println("nzmsec = "+nzmsec+
-                               " nvhdr = "+nvhdr+
-                               " norid = "+norid+
-                               " nevid = "+nevid+
-                               " npts = "+npts);
+        System.out.println(formatLine("nzmsec",nzmsec,
+                                      "nvhdr",nvhdr,
+                                      "norid",norid,
+                                      "nevid",nevid,
+                                      "npts",npts));
 
-        System.out.println("nsnpts = "+nsnpts+
-                               " nwfid = "+nwfid+
-                               " nxsize = "+nxsize+
-                               " nysize = "+nysize+
-                               " unused15 = "+unused15);
+        System.out.println(formatLine("nsnpts",nsnpts,
+                                      "nwfid",nwfid,
+                                      "nxsize",nxsize,
+                                      "nysize",nysize,
+                                      "unused15",unused15));
 
-        System.out.println("iftype = "+iftype+
-                               " idep = "+idep+
-                               " iztype = "+iztype+
-                               " unused16 = "+unused16+
-                               " iinst = "+iinst);
+        System.out.println(formatLine("iftype",iftype,
+                                      "idep",idep,
+                                      "iztype",iztype,
+                                      "unused16",unused16,
+                                      "iinst",iinst));
 
-        System.out.println("istreg = "+istreg+
-                               " ievreg = "+ievreg+
-                               " ievtyp = "+ievtyp+
-                               " iqual = "+iqual+
-                               " isynth = "+isynth);
+        System.out.println(formatLine("istreg",istreg,
+                                      "ievreg",ievreg,
+                                      "ievtyp",ievtyp,
+                                      "iqual",iqual,
+                                      "isynth",isynth));
 
-        System.out.println("imagtyp = "+imagtyp+
-                               " imagsrc = "+imagsrc+
-                               " unused19 = "+unused19+
-                               " unused20 = "+unused20+
-                               " unused21 = "+unused21);
+        System.out.println(formatLine("imagtyp",imagtyp,
+                                      "imagsrc",imagsrc,
+                                      "unused19",unused19,
+                                      "unused20",unused20,
+                                      "unused21",unused21));
 
-        System.out.println("unused22 = "+unused22+
-                               " unused23 = "+unused23+
-                               " unused24 = "+unused24+
-                               " unused25 = "+unused25+
-                               " unused26 = "+unused26);
+        System.out.println(formatLine("unused22",unused22,
+                                      "unused23",unused23,
+                                      "unused24",unused24,
+                                      "unused25",unused25,
+                                      "unused26",unused26));
 
-        System.out.println("leven = "+leven+
-                               " lpspol = "+lpspol+
-                               " lovrok = "+lovrok+
-                               " lcalda = "+lcalda+
-                               " unused27 = "+unused27);
+        System.out.println(formatLine("leven",leven,
+                                      "lpspol",lpspol,
+                                      "lovrok",lovrok,
+                                      "lcalda",lcalda,
+                                      "unused27",unused27));
 
         System.out.println(
             " kstnm = "+kstnm+
@@ -1200,6 +1226,7 @@ public class SacTimeSeries {
             //     data.npts = data.y.length;
 
             data.printHeader();
+            data.byteOrder = IntelByteOrder;
             data.write("outsacfile");
             System.out.println("Done writing");
         } catch (FileNotFoundException e) {
