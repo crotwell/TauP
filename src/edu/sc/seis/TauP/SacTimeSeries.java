@@ -25,7 +25,7 @@
 
  */
 
-package edu.sc.seis.fissuresUtil.sac;
+package edu.sc.seis.TauP;
 
 
 import java.io.*;
