@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project>
+  <pomVersion>3</pomVersion>
+  <name>TauP</name>
+  <groupId>TauP</groupId>
+  <artifactId>TauP</artifactId>
+  <organization>
+    <name>Seismology at the University of South Carolina</name>
+    <url>http://www.seis.sc.edu</url>
+    <logo>http://www.seis.sc.edu/images/header.gif</logo>
+  </organization>
+  <currentVersion>1.1.5Beta</currentVersion>
+  <inceptionYear>1999</inceptionYear>
+
+  <package>edu.sc.seis.TauP</package>
+  <shortDescription>
+The TauP Toolkit, flexible seismic traveltime utilities.
+</shortDescription>
+  <gumpRepositoryId>TauP</gumpRepositoryId>
+  <description> 
+The TauP Toolkit, flexible seismic traveltime utilities.
+</description>
+  
+  <url>http://www.seis.sc.edu/software/${pom.artifactId}</url>
+  <siteAddress>www.seis.sc.edu</siteAddress>
+  <siteDirectory>/seis/raid1/Apache/htdocs/software/${pom.artifactId}</siteDirectory>
+  <distributionSite>www.seis.sc.edu</distributionSite>
+  <distributionDirectory>/seis/raid1/Apache/htdocs/software/mavenRepository</distributionDirectory>
+  <mailingList>
+    <name>taup</name>
+    <subscribe>majordomo@iris.washington.edu</subscribe>
+    <unsubscribe>majordomo@iris.washington.edu</unsubscribe>
+  </mailingList>
+
+  <repository>
+    <connection>scm:cvs:local:anonymous@cvs.seis.sc.edu:/opt/local/Internal/CvsRoot:${pom.artifactId}</connection>
+        <url>http://www.seis.sc.edu/cgi-bin/viewcvs.cgi/${pom.artifactId}</url>
+    </repository>
+
+
+  <developers>
+    <developer>
+      <name>Philip Crotwell</name>
+      <id>crotwell</id>
+      <email>crotwell@seis.sc.edu</email>
+      <organization>University of South Carolina</organization>
+      <roles>
+      <role>Module Maintainer</role>
+      <role>Java Developer</role>
+      </roles>
+    </developer>
+    </developers>
+
+  <dependencies>
+  </dependencies>
+
+  <build>
+    <nagEmailAddress>crotwell@seis.sc.edu</nagEmailAddress>
+    <unitTestSourceDirectory>test</unitTestSourceDirectory>
+    <sourceDirectory>src</sourceDirectory>
+    <resources>
+       <resource>
+          <directory>StdModels</directory>
+          <targetPath>edu/sc/seis/TauP/StdModels</targetPath>
+          <includes>
+             <include>**</include>
+          </includes>
+       </resource>
+    </resources>
+  </build>
+
+</project>
+
