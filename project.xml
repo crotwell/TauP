@@ -32,8 +32,8 @@ The TauP Toolkit, flexible seismic traveltime utilities.
   </mailingList>
 
   <repository>
-    <connection>scm:cvs:local:anonymous@cvs.seis.sc.edu:/opt/local/Internal/CvsRoot:${pom.artifactId}</connection>
-        <url>http://www.seis.sc.edu/cgi-bin/viewcvs.cgi/${pom.artifactId}</url>
+    <connection>scm:cvs:local:anonymous@cvs.seis.sc.edu:/opt/local/Internal/CvsRoot:seis/${pom.artifactId}</connection>
+        <url>http://www.seis.sc.edu/cgi-bin/viewcvs.cgi/seis/${pom.artifactId}</url>
     </repository>
 
 
