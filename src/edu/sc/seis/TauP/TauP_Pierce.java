@@ -16,19 +16,15 @@
  */
 package edu.sc.seis.TauP;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.OptionalDataException;
-import java.io.StreamCorruptedException;
-import java.io.Writer;
+import java.io.*;
+import java.util.Vector;
 
 /**
  * Calculate pierce points for different branches using linear interpolation
  * between known slowness samples. A pierce point is where a ray pierces a tau
  * branch. This gives a (very) rough path through the model for a ray.
  * 
- * @version 1.1.3 Wed Jul 18 15:00:35 GMT 2001
+ * @version 1.1.3 Fri Apr 5 14:12:19 GMT 2002
  * @author H. Philip Crotwell
  */
 public class TauP_Pierce extends TauP_Time {
@@ -266,6 +262,7 @@ public class TauP_Pierce extends TauP_Time {
                                 || (onlyTurnPoints && j != 0 && ((prevDepth - currArrival.pierce[j].depth) <= 0 && (currArrival.pierce[j].depth - nextDepth) >= 0)) || (onlyUnderPoints && ((prevDepth - currArrival.pierce[j].depth) >= 0 && (currArrival.pierce[j].depth - nextDepth) <= 0)))) {
                     out.write(outForms.formatDistance(calcDist));
                     out.write(outForms.formatDepth(currArrival.pierce[j].depth));
+                    out.write(outForms.formatDepth(currArrival.pierce[j].time));
                     if(eventLat != Double.MAX_VALUE
                             && eventLon != Double.MAX_VALUE
                             && azimuth != Double.MAX_VALUE) {
