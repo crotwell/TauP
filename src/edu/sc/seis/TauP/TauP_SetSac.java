@@ -16,17 +16,17 @@
   along with this program; if not, write to the Free Software
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-  The current version can be found at 
+  The current version can be found at
   <A HREF="www.seis.sc.edu">http://www.seis.sc.edu</A>
 
-  Bug reports and comments should be directed to 
+  Bug reports and comments should be directed to
   H. Philip Crotwell, crotwell@seis.sc.edu or
   Tom Owens, owens@seis.sc.edu
 
 */
- 
+
 package edu.sc.seis.TauP;
- 
+
 import java.io.*;
 import java.util.Vector;
 
@@ -41,7 +41,7 @@ import java.util.Vector;
   *
   *  Warning: I assume the evdp header has depth in meters unless the -evdpkm
   *  flag is set, in which case I assume kilometers. This may be a problem for
-  *  users that improperly use kilometers for the depth units. Due to much 
+  *  users that improperly use kilometers for the depth units. Due to much
   *  abuse of the sac depth header units I output a warning message if the depth
   *  appears to be in kilometers, ie it is < 1000. This can be safely ignored
   *  if the event really is less than 1000 meters deep.
@@ -82,9 +82,9 @@ public class TauP_SetSac extends TauP_Time {
       super(tMod);
    }
 
-	public TauP_SetSac(String modelName) throws TauModelException {
-		super(modelName);
-	}
+    public TauP_SetSac(String modelName) throws TauModelException {
+        super(modelName);
+    }
 
    protected void setSacVarNums() {
       boolean[] headersUsed = new boolean[10];
@@ -112,13 +112,13 @@ public class TauP_SetSac extends TauP_Time {
    }
 
    public void calculate(double degrees) {
-		recalcPhases();
+        recalcPhases();
       calcTime(degrees);
    }
 
-	public void init() throws IOException {
-		super.init();
-		setSacVarNums();
+    public void init() throws IOException {
+        super.init();
+        setSacVarNums();
    }
 
    public void start() throws IOException, TauModelException {
@@ -168,7 +168,7 @@ public class TauP_SetSac extends TauP_Time {
              continue;
          }
 
-         if (!((evdpkm && depth == sacFile.evdp) || 
+         if (!((evdpkm && depth == sacFile.evdp) ||
          (!evdpkm && depth == 1000*sacFile.evdp))) {
             if (!evdpkm && sacFile.evdp != 0 && sacFile.evdp < 1000.0) {
                Alert.warning("Sac header evdp is < 1000 in "+
@@ -212,43 +212,52 @@ public class TauP_SetSac extends TauP_Time {
                   case 0:
                      sacFile.t0 = sacFile.o + (float)getArrival(arrivalNum).time;
                      sacFile.kt0 = getArrival(arrivalNum).name;
-System.out.println("0 "+sacFile.t0+"  "+sacFile.kt0);
+                       sacFile.user0 = (float)getArrival(arrivalNum).getRayParam();
                      break;
                   case 1:
                      sacFile.t1 = sacFile.o + (float)getArrival(arrivalNum).time;
                      sacFile.kt1 = getArrival(arrivalNum).name;
+                       sacFile.user1 = (float)getArrival(arrivalNum).getRayParam();
                      break;
                   case 2:
                      sacFile.t2 = sacFile.o + (float)getArrival(arrivalNum).time;
                      sacFile.kt2 = getArrival(arrivalNum).name;
+                       sacFile.user2 = (float)getArrival(arrivalNum).getRayParam();
                      break;
                   case 3:
                      sacFile.t3 = sacFile.o + (float)getArrival(arrivalNum).time;
                      sacFile.kt3 = getArrival(arrivalNum).name;
+                       sacFile.user3 = (float)getArrival(arrivalNum).getRayParam();
                      break;
                   case 4:
                      sacFile.t4 = sacFile.o + (float)getArrival(arrivalNum).time;
                      sacFile.kt4 = getArrival(arrivalNum).name;
+                       sacFile.user4 = (float)getArrival(arrivalNum).getRayParam();
                      break;
                   case 5:
                      sacFile.t5 = sacFile.o + (float)getArrival(arrivalNum).time;
                      sacFile.kt5 = getArrival(arrivalNum).name;
+                       sacFile.user5 = (float)getArrival(arrivalNum).getRayParam();
                      break;
                   case 6:
                      sacFile.t6 = sacFile.o + (float)getArrival(arrivalNum).time;
                      sacFile.kt6 = getArrival(arrivalNum).name;
+                       sacFile.user6 = (float)getArrival(arrivalNum).getRayParam();
                      break;
                   case 7:
                      sacFile.t7 = sacFile.o + (float)getArrival(arrivalNum).time;
                      sacFile.kt7 = getArrival(arrivalNum).name;
+                       sacFile.user7 = (float)getArrival(arrivalNum).getRayParam();
                      break;
                   case 8:
                      sacFile.t8 = sacFile.o + (float)getArrival(arrivalNum).time;
                      sacFile.kt8 = getArrival(arrivalNum).name;
+                       sacFile.user8 = (float)getArrival(arrivalNum).getRayParam();
                      break;
                   case 9:
                      sacFile.t9 = sacFile.o + (float)getArrival(arrivalNum).time;
                      sacFile.kt9 = getArrival(arrivalNum).name;
+                       sacFile.user9 = (float)getArrival(arrivalNum).getRayParam();
                      break;
                   default:
                      break;
@@ -263,12 +272,12 @@ System.out.println("0 "+sacFile.t0+"  "+sacFile.kt0);
       String className = this.getClass().getName();
       className =
          className.substring(className.lastIndexOf('.')+1,className.length());
- 
+
       System.out.println("Usage: "+className.toLowerCase()+" [arguments]");
       System.out.println("  or, for purists, java "+this.getClass().getName()+
          " [arguments]");
       System.out.println("\nArguments are:");
- 
+
       System.out.println(
          "-ph phase list     -- comma separated phase list,\n"+
          "                      use phase-# to specify the sac header,\n"+
@@ -277,13 +286,13 @@ System.out.println("0 "+sacFile.t0+"  "+sacFile.kt0);
          "-mod[el] modelname -- use velocity model \"modelname\" for calculations\n"+
          "                      Default is iasp91.\n\n");
    }
-   
+
    public void printStdUsageTail() {
-   	System.out.println(
+    System.out.println(
          "\n-debug             -- enable debugging output\n"+
          "-verbose           -- enable verbose output\n"+
-			"-version           -- print the version\n"+
-      	"-help              -- print this out, but you already know that!\n");
+            "-version           -- print the version\n"+
+        "-help              -- print this out, but you already know that!\n");
    }
 
    public void printUsage() {
@@ -303,7 +312,7 @@ System.out.println("0 "+sacFile.t0+"  "+sacFile.kt0);
       String[] leftOverArgs;
       int numNoComprendoArgs = 0;
       File tempFile;
- 
+
       leftOverArgs = super.parseCmdLineArgs(args);
       String[] noComprendoArgs = new String[leftOverArgs.length];
 
@@ -332,7 +341,7 @@ System.out.println("0 "+sacFile.t0+"  "+sacFile.kt0);
       }
    }
 
-     /** Allows TauP_SetSac to run as an application. Creates an instance 
+     /** Allows TauP_SetSac to run as an application. Creates an instance
        * of TauP_SetSac.
        * . */
    public static void main(String[] args)
@@ -352,7 +361,7 @@ System.out.println("0 "+sacFile.t0+"  "+sacFile.kt0);
          if (noComprendoArgs.length > 0) {
             for (int i=0;i<noComprendoArgs.length;i++) {
                if (noComprendoArgs[i].equals("-help") ||
-					noComprendoArgs[i].equals("-version")) {
+                    noComprendoArgs[i].equals("-version")) {
                   System.exit(0);
                }
             }
@@ -360,7 +369,7 @@ System.out.println("0 "+sacFile.t0+"  "+sacFile.kt0);
             for (int i=0;i<noComprendoArgs.length;i++) {
                System.out.print(noComprendoArgs[i]+" ");
                if (noComprendoArgs[i].equals("-help") ||
-					noComprendoArgs[i].equals("-version")) {
+                    noComprendoArgs[i].equals("-version")) {
                   System.out.println();
                   System.exit(0);
                }
@@ -368,7 +377,7 @@ System.out.println("0 "+sacFile.t0+"  "+sacFile.kt0);
             System.out.println();
             noComprendoArgs = null;
          }
- 
+
          if (tauPSetSac.DEBUG) {
             System.out.println("Done reading "+tauPSetSac.modelName);
          }
@@ -379,8 +388,8 @@ System.out.println("0 "+sacFile.t0+"  "+sacFile.kt0);
 
       } catch (TauModelException e) {
          System.out.println("Caught TauModelException: "+e.getMessage());
-			e.printStackTrace();
-      } 
+            e.printStackTrace();
+      }
 
    }
 }
