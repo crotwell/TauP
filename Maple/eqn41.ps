@@ -1,0 +1,419 @@
+%!PS-Adobe-2.0
+%%Title: Maple V Session
+%%Creator: Maple V irisVxm
+%%DocumentFonts: Helvetica-Bold Symbol Times-Italic Times-Roman
+%%Pages: (atend)
+%%EndComments
+/fsf    %% stk: size font
+{ findfont exch scalefont setfont } def
+/sepline   %% stk: x y
+{ gsave newpath moveto 1 setlinewidth
+468 0 rlineto stroke grestore } def
+/pagenum   %% stk: string
+{ /Courier findfont 10 scalefont setfont
+306 36 moveto
+  dup stringwidth pop 2 div neg
+  0 rmoveto show
+} def
+/nf /Times-Roman findfont def  %% Normal font
+/vf /Times-Italic findfont def  %% Variable font
+/sf /Symbol findfont def  %% Symbol font
+/showatom      %% stk: font size x y string
+{ 5 -2 roll    %% stk: x y string font size
+  scalefont setfont
+  3 1 roll moveto show
+} def
+/showvnote      %% stk: scale x y string
+{ sf 5 -1 roll  %% stk: x y string symfont scale
+  makefont setfont
+  3 1 roll moveto show
+} def
+/vnc                   %% stk: ch h x1 y1 x2 y2
+{ gsave newpath
+  4 copy dup 3 1 roll  %% stk: .. x1 y1 y2 x2 y2
+  4 index 4 1 roll     %% stk: .. x1 y1 x1 y2 x2 y2
+  1 index 5 index      %% stk: .. x1 y1 x1 y2 x2 y2 x2 y1
+  moveto lineto lineto lineto
+  closepath clip newpath  %% stk: ch h x1 y1 x2 y2
+  exch pop 4 -1 roll exch %% stk: ch x1 y1 h y2
+  { 1 index exch moveto 1 index show } for
+  pop pop grestore
+} def
+%%EndProlog
+%%Page: 1 1
+/pagesave save def
+(1) pagenum
+12 /Helvetica-Bold fsf
+72 708.77 moveto
+(> ) show
+82.33 708.77 moveto
+(with\(student\):) show
+72 705.12 sepline
+12 /Helvetica-Bold fsf
+72 692.89 moveto
+(> ) show
+82.33 692.89 moveto
+(x := Int\( p / \(r * sqrt\(u\(r\)^2 - p^2\)\), r=rb..rt\);) show
+nf 18 228.51 632.17 ( := ) showatom
+vf 18 220.59 632.17 (x) showatom
+vf 18 375.47 632.17 (d) showatom
+sf 18 scalefont setfont
+252.66 663.13 moveto (\363) show
+252.66 599 moveto (\365) show
+(\364) 17.2 252.66 611.98 261.71 665.23 vnc
+vf 12 261.3 589.44 (rb) showatom
+vf 12 265 672.26 (rt) showatom
+newpath 273 638.64 moveto 370.97 638.64 lineto 0.88 setlinewidth stroke
+vf 18 317.55 645.63 (p) showatom
+vf 18 275.25 610.36 (r) showatom
+gsave 1.76 setlinewidth newpath
+286.75 609.59 moveto 4.5 -4.5 rlineto stroke newpath
+0.88 setlinewidth 291.25 605.09 moveto 4.5 30.95 rlineto
+72.97 0 rlineto stroke grestore
+nf 18 336.48 610.36 ( - ) showatom
+nf 18 307 610.36 (\() showatom
+nf 18 324.49 610.36 (\)) showatom
+nf 18 298 610.36 (u) showatom
+vf 18 315.24 610.36 (r) showatom
+nf 12 330.48 621.08 (2) showatom
+vf 18 351.54 610.36 (p) showatom
+nf 12 360.47 616.42 (2) showatom
+vf 18 384.47 632.17 (r) showatom
+72 579.07 sepline
+12 /Helvetica-Bold fsf
+72 566.84 moveto
+(> ) show
+82.33 566.84 moveto
+(u := r -> A*r^B;) show
+nf 18 266.63 540.15 ( := ) showatom
+vf 18 257.63 540.15 (u) showatom
+sf 18 302.28 540.15 (\256) showatom
+vf 18 290.78 540.15 (r) showatom
+vf 18 324.55 540.15 (A) showatom
+vf 18 340.03 540.15 (r) showatom
+vf 12 347.04 546.21 (B) showatom
+72 528.02 sepline
+12 /Helvetica-Bold fsf
+72 515.79 moveto
+(> ) show
+82.33 515.79 moveto
+('x' = x;) show
+sf 18 225.74 455.07 (=) showatom
+vf 18 213.32 455.07 (x) showatom
+vf 18 382.75 455.07 (d) showatom
+sf 18 scalefont setfont
+240.12 486.03 moveto (\363) show
+240.12 421.9 moveto (\365) show
+(\364) 17.2 240.12 434.88 249.17 488.13 vnc
+vf 12 248.76 412.34 (rb) showatom
+vf 12 252.46 495.16 (rt) showatom
+newpath 260.46 461.54 moveto 378.25 461.54 lineto 0.88 setlinewidth stroke
+vf 18 314.92 468.53 (p) showatom
+vf 18 262.71 433.26 (r) showatom
+gsave 1.76 setlinewidth newpath
+274.21 432.49 moveto 4.5 -4.5 rlineto stroke newpath
+0.88 setlinewidth 278.71 427.99 moveto 4.5 30.95 rlineto
+92.79 0 rlineto stroke grestore
+nf 18 343.76 433.26 ( - ) showatom
+vf 18 285.47 433.26 (A) showatom
+nf 12 296.45 439.32 (2) showatom
+nf 18 306.95 433.26 (\() showatom
+nf 18 331.77 433.26 (\)) showatom
+vf 18 315.19 433.26 (r) showatom
+vf 12 322.2 439.32 (B) showatom
+nf 12 337.76 443.98 (2) showatom
+vf 18 358.82 433.26 (p) showatom
+nf 12 367.75 439.32 (2) showatom
+vf 18 391.75 455.07 (r) showatom
+72 401.97 sepline
+12 /Helvetica-Bold fsf
+72 389.74 moveto
+(> ) show
+82.33 389.74 moveto
+(x := changevar\(A*r^B = u, x\);) show
+nf 18 222.9 331.35 ( := ) showatom
+vf 18 214.98 331.35 (x) showatom
+vf 18 379.08 331.35 (d) showatom
+sf 18 scalefont setfont
+247.05 359.98 moveto (\363) show
+247.05 300.51 moveto (\365) show
+(\364) 17.2 247.05 313.49 256.1 362.08 vnc
+vf 12 255.75 290.95 (A) showatom
+vf 12 266.02 290.95 (rb) showatom
+vf 8 276.74 294.99 (B) showatom
+vf 12 259.45 369.11 (A) showatom
+vf 12 269.72 369.11 (rt) showatom
+vf 8 277.78 373.15 (B) showatom
+newpath 282.6 337.82 moveto 374.58 337.82 lineto 0.88 setlinewidth stroke
+vf 18 324.16 344.81 (p) showatom
+gsave 1.76 setlinewidth newpath
+284.85 313.43 moveto 4.5 -4.5 rlineto stroke newpath
+0.88 setlinewidth 289.35 308.93 moveto 4.5 26.29 rlineto
+49.49 0 rlineto stroke grestore
+nf 18 311.1 314.2 ( - ) showatom
+vf 18 296.1 314.2 (u) showatom
+nf 12 305.1 320.26 (2) showatom
+vf 18 326.16 314.2 (p) showatom
+nf 12 335.09 320.26 (2) showatom
+vf 18 347.86 314.2 (B) showatom
+vf 18 363.33 314.2 (u) showatom
+vf 18 388.08 331.35 (u) showatom
+72 280.58 sepline
+12 /Helvetica-Bold fsf
+72 268.35 moveto
+(> ) show
+82.33 268.35 moveto
+(assume\( p , nonneg\): additionally\(ut >0\): additionally\(ut >= p\): additionally\(ub) show
+82.33 254.47 moveto
+(>0\):additionally\(ub >= p\): ) show
+12 /Helvetica-Bold fsf
+72 240.59 moveto
+(> ) show
+82.33 240.59 moveto
+(dist :=  simplify\(factor\(subs\(A*rt^B = ut, A*rb^B = ub, x\)\)\);) show
+nf 18 224.62 130.1 ( := ) showatom
+vf 18 198.61 130.1 (dist) showatom
+newpath 248.77 136.57 moveto 413.38 136.57 lineto 0.88 setlinewidth stroke
+vf 18 251.09 182.2 (p~) showatom
+vf 18 393.13 182.2 (d) showatom
+sf 18 scalefont setfont
+274.25 210.83 moveto (\363) show
+274.25 151.36 moveto (\365) show
+(\364) 17.2 274.25 164.34 283.3 212.93 vnc
+vf 12 282.89 141.8 (ub~) showatom
+vf 12 286.59 219.96 (ut~) showatom
+newpath 302.41 188.67 moveto 388.63 188.67 lineto 0.88 setlinewidth stroke
+nf 18 341.02 195.66 (1) showatom
+gsave 1.76 setlinewidth newpath
+304.66 164.28 moveto 4.5 -4.5 rlineto stroke newpath
+0.88 setlinewidth 309.16 159.78 moveto 4.5 26.29 rlineto
+59.22 0 rlineto stroke grestore
+nf 18 330.91 165.05 ( - ) showatom
+vf 18 315.91 165.05 (u) showatom
+nf 12 324.91 171.11 (2) showatom
+vf 18 345.97 165.05 (p~) showatom
+nf 12 364.63 171.11 (2) showatom
+vf 18 377.38 165.05 (u) showatom
+vf 18 402.13 182.2 (u) showatom
+vf 18 325.6 115.79 (B) showatom
+12 /Helvetica-Bold fsf
+72 93.43 moveto
+(> ) show
+82.33 93.43 moveto
+(dist := simplify\(value\( dist\), assume=real, additionally\(p, nonneg\)\);) show
+pagesave restore
+showpage
+%%Page: 2 2
+/pagesave save def
+(2) pagenum
+nf 18 140.19 657.75 ( := ) showatom
+vf 18 114.18 657.75 (dist) showatom
+nf 18 164.34 657.75 (-) showatom
+newpath 174.83 664.22 moveto 497.81 664.22 lineto 0.88 setlinewidth stroke
+nf 18 326.83 688.36 ( - ) showatom
+sf 18 scalefont setfont
+221.05 703.34 moveto (\346) show
+221.05 671.21 moveto (\350) show
+(\347) 16.36 221.05 683.51 224.23 702.43 vnc
+sf 18 scalefont setfont
+319.92 703.34 moveto (\366) show
+319.92 671.21 moveto (\370) show
+(\367) 16.36 319.92 683.51 329.55 702.43 vnc
+nf 18 177.08 688.36 (arctan) showatom
+newpath 230.21 694.83 moveto 317.67 694.83 lineto 0.88 setlinewidth stroke
+vf 18 264.64 701.82 (p~) showatom
+gsave 1.76 setlinewidth newpath
+232.46 670.44 moveto 4.5 -4.5 rlineto stroke newpath
+0.88 setlinewidth 236.96 665.94 moveto 4.5 26.29 rlineto
+73.96 0 rlineto stroke grestore
+nf 18 273.45 671.21 ( - ) showatom
+vf 18 243.71 671.21 (ut~) showatom
+nf 12 267.45 677.27 (2) showatom
+vf 18 288.51 671.21 (p~) showatom
+nf 12 307.17 677.27 (2) showatom
+sf 18 scalefont setfont
+385.79 703.34 moveto (\346) show
+385.79 671.21 moveto (\350) show
+(\347) 16.36 385.79 683.51 388.97 702.43 vnc
+sf 18 scalefont setfont
+488.65 703.34 moveto (\366) show
+488.65 671.21 moveto (\370) show
+(\367) 16.36 488.65 683.51 498.28 702.43 vnc
+nf 18 341.82 688.36 (arctan) showatom
+newpath 394.95 694.83 moveto 486.4 694.83 lineto 0.88 setlinewidth stroke
+vf 18 431.38 701.82 (p~) showatom
+gsave 1.76 setlinewidth newpath
+397.2 670.44 moveto 4.5 -4.5 rlineto stroke newpath
+0.88 setlinewidth 401.7 665.94 moveto 4.5 26.29 rlineto
+77.95 0 rlineto stroke grestore
+nf 18 442.18 671.21 ( - ) showatom
+vf 18 408.45 671.21 (ub~) showatom
+nf 12 436.18 677.27 (2) showatom
+vf 18 457.24 671.21 (p~) showatom
+nf 12 475.9 677.27 (2) showatom
+vf 18 330.84 643.44 (B) showatom
+pagesave restore
+showpage
+%%Page: 3 3
+/pagesave save def
+(3) pagenum
+12 /Helvetica-Bold fsf
+72 708.77 moveto
+(> ) show
+82.33 708.77 moveto
+(u:='u': ut:='ut': ub:='ub':) show
+12 /Helvetica-Bold fsf
+72 694.89 moveto
+(> ) show
+82.33 694.89 moveto
+(t := Int\( u\(r\)^2 / \(r * sqrt\(u\(r\)^2 - p^2\)\), r=rb..rt\);) show
+nf 18 222.15 631.84 ( := ) showatom
+vf 18 217.15 631.84 (t) showatom
+vf 18 378.84 631.84 (d) showatom
+sf 18 scalefont setfont
+246.3 665.13 moveto (\363) show
+246.3 596.34 moveto (\365) show
+(\364) 17.2 246.3 609.32 255.35 667.23 vnc
+vf 12 254.94 586.78 (rb) showatom
+vf 12 258.64 674.26 (rt) showatom
+newpath 266.64 638.31 moveto 374.34 638.31 lineto 0.88 setlinewidth stroke
+nf 18 310.25 645.3 (\() showatom
+nf 18 327.74 645.3 (\)) showatom
+nf 18 301.25 645.3 (u) showatom
+vf 18 318.49 645.3 (r) showatom
+nf 12 333.73 656.02 (2) showatom
+vf 18 268.89 610.03 (r) showatom
+gsave 1.76 setlinewidth newpath
+280.39 609.26 moveto 4.5 -4.5 rlineto stroke newpath
+0.88 setlinewidth 284.89 604.76 moveto 4.5 30.95 rlineto
+82.7 0 rlineto stroke grestore
+nf 18 330.12 610.03 ( - ) showatom
+nf 18 300.64 610.03 (\() showatom
+nf 18 318.13 610.03 (\)) showatom
+nf 18 291.64 610.03 (u) showatom
+vf 18 308.88 610.03 (r) showatom
+nf 12 324.12 620.75 (2) showatom
+vf 18 345.18 610.03 (p~) showatom
+nf 12 363.84 616.09 (2) showatom
+vf 18 387.84 631.84 (r) showatom
+72 576.41 sepline
+12 /Helvetica-Bold fsf
+72 564.18 moveto
+(> ) show
+82.33 564.18 moveto
+(u:=r->A*r^B;) show
+nf 18 266.63 537.49 ( := ) showatom
+vf 18 257.63 537.49 (u) showatom
+sf 18 302.28 537.49 (\256) showatom
+vf 18 290.78 537.49 (r) showatom
+vf 18 324.55 537.49 (A) showatom
+vf 18 340.03 537.49 (r) showatom
+vf 12 347.04 543.55 (B) showatom
+72 525.36 sepline
+12 /Helvetica-Bold fsf
+72 513.13 moveto
+(> ) show
+82.33 513.13 moveto
+('t'=t;) show
+sf 18 219.38 450.08 (=) showatom
+vf 18 209.88 450.08 (t) showatom
+vf 18 386.12 450.08 (d) showatom
+sf 18 scalefont setfont
+233.76 483.37 moveto (\363) show
+233.76 414.58 moveto (\365) show
+(\364) 17.2 233.76 427.56 242.81 485.47 vnc
+vf 12 242.4 405.02 (rb) showatom
+vf 12 246.1 492.5 (rt) showatom
+newpath 254.1 456.55 moveto 381.62 456.55 lineto 0.88 setlinewidth stroke
+vf 18 288.72 463.54 (A) showatom
+nf 12 299.7 469.6 (2) showatom
+nf 18 310.2 463.54 (\() showatom
+nf 18 335.02 463.54 (\)) showatom
+vf 18 318.44 463.54 (r) showatom
+vf 12 325.45 469.6 (B) showatom
+nf 12 341.01 474.26 (2) showatom
+vf 18 256.35 428.27 (r) showatom
+gsave 1.76 setlinewidth newpath
+267.85 427.5 moveto 4.5 -4.5 rlineto stroke newpath
+0.88 setlinewidth 272.35 423 moveto 4.5 30.95 rlineto
+102.52 0 rlineto stroke grestore
+nf 18 337.4 428.27 ( - ) showatom
+vf 18 279.11 428.27 (A) showatom
+nf 12 290.09 434.33 (2) showatom
+nf 18 300.59 428.27 (\() showatom
+nf 18 325.41 428.27 (\)) showatom
+vf 18 308.83 428.27 (r) showatom
+vf 12 315.84 434.33 (B) showatom
+nf 12 331.4 438.99 (2) showatom
+vf 18 352.46 428.27 (p~) showatom
+nf 12 371.12 434.33 (2) showatom
+vf 18 395.12 450.08 (r) showatom
+12 /Helvetica-Bold fsf
+72 384.42 moveto
+(> ) show
+82.33 384.42 moveto
+(t := changevar\(A*r^B=u, t\);) show
+nf 18 223.29 326.03 ( := ) showatom
+vf 18 218.29 326.03 (t) showatom
+vf 18 375.7 326.03 (d) showatom
+sf 18 scalefont setfont
+247.44 354.66 moveto (\363) show
+247.44 295.19 moveto (\365) show
+(\364) 17.2 247.44 308.17 256.49 356.76 vnc
+vf 12 256.14 285.63 (A) showatom
+vf 12 266.41 285.63 (rb) showatom
+vf 8 277.13 289.67 (B) showatom
+vf 12 259.84 363.79 (A) showatom
+vf 12 270.11 363.79 (rt) showatom
+vf 8 278.17 367.83 (B) showatom
+newpath 282.99 332.5 moveto 371.2 332.5 lineto 0.88 setlinewidth stroke
+vf 18 322.59 339.49 (u) showatom
+gsave 1.76 setlinewidth newpath
+285.24 308.11 moveto 4.5 -4.5 rlineto stroke newpath
+0.88 setlinewidth 289.74 303.61 moveto 4.5 26.29 rlineto
+59.22 0 rlineto stroke grestore
+nf 18 311.49 308.88 ( - ) showatom
+vf 18 296.49 308.88 (u) showatom
+nf 12 305.49 314.94 (2) showatom
+vf 18 326.55 308.88 (p~) showatom
+nf 12 345.21 314.94 (2) showatom
+vf 18 357.98 308.88 (B) showatom
+vf 18 384.7 326.03 (u) showatom
+72 275.26 sepline
+12 /Helvetica-Bold fsf
+72 263.03 moveto
+(> ) show
+82.33 263.03 moveto
+(value\(subs\(A*rt^B=ut, A*rb^B=ub, t\)\);) show
+nf 18 296.5 220.04 ( - ) showatom
+newpath 218.78 226.51 moveto 296.5 226.51 lineto 0.88 setlinewidth stroke
+gsave 1.76 setlinewidth newpath
+221.03 232.73 moveto 4.5 -4.5 rlineto stroke newpath
+0.88 setlinewidth 225.53 228.23 moveto 4.5 26.29 rlineto
+64.22 0 rlineto stroke grestore
+nf 18 252.28 233.5 ( - ) showatom
+vf 18 232.28 233.5 (ut) showatom
+nf 12 246.28 239.56 (2) showatom
+vf 18 267.34 233.5 (p~) showatom
+nf 12 286 239.56 (2) showatom
+vf 18 252.16 205.73 (B) showatom
+newpath 311.49 226.51 moveto 393.21 226.51 lineto 0.88 setlinewidth stroke
+gsave 1.76 setlinewidth newpath
+313.74 232.73 moveto 4.5 -4.5 rlineto stroke newpath
+0.88 setlinewidth 318.24 228.23 moveto 4.5 26.29 rlineto
+68.22 0 rlineto stroke grestore
+nf 18 348.99 233.5 ( - ) showatom
+vf 18 324.99 233.5 (ub) showatom
+nf 12 342.99 239.56 (2) showatom
+vf 18 364.05 233.5 (p~) showatom
+nf 12 382.71 239.56 (2) showatom
+vf 18 346.87 205.73 (B) showatom
+72 193.6 sepline
+12 /Helvetica-Bold fsf
+72 181.37 moveto
+(> ) show
+pagesave restore
+showpage
+%%Trailer
+%%Pages: 3
+%% END of MapleV Session Output

@@ -1,0 +1,111 @@
+
+\section{Distribution}
+
+
+\subsection{What and Where}
+The current distribution of the TauP package is 1.1, dated February 9, 2001.
+
+The distribution directory obtained from either the gzipped tar file or the jar file contains:
+
+\begin{center}
+\begin{tabular}{lp{4in}}
+README & getting started information \\
+taup.jar & the jar file with all the classes and standard models \\
+taup.html & a simple web page that loads a rudimentary applet to use the TauP
+package. Be warned that this is not really meant to be used over the Internet
+as the download time for 1.5Mb may be too great and most browsers do not yet
+support the 1.1 version of Java. \\
+exampleProperties & example properties file \\
+HISTORY & change log \\
+License & the free for non-commercial license \\
+bin & a directory with wrapper scripts appropriate for 
+\textsc{Unix} installations\\
+doc & a directory with Postscript and pdf versions of this manual. \\
+html & a directory with the javadoc output from
+the source code, mainly useful
+for writing new java programs that use the TauP package. \\
+jacl & a directory with Jacl examples for accessing the TauP package directly within scripts. \\
+native & a directory with a C library and example program that use the
+Java Native Interface, providing a basic interface between C programs
+and the TauP package. \\
+Maple & a directory with Maple scripts showing the time and distance equations
+used. \\
+src & a directory with all of the java source code. \\
+modelFiles & a directory with the text files for each of the velocity models.
+\end{tabular}
+\end{center}
+
+The taup.jar file contains everything needed for a working version of the package.
+This greatly simplifies the installation process and reduces potential errors.
+See appendix \ref{install} for detailed installation instructions.
+
+\subsection{Pros and Cons of the Current Release}
+The increased flexibility of this package provides significant advantages. Among
+these are:
+\begin{enumerate}
+\item The ability to use many different models. We include a variety of previously created
+models as well as the option of creating your own models. A conscious effort 
+was made to make as few assumptions as possible about the nature of the model. 
+Therefore,
+even models that have very different structures than common global models can be
+used.
+
+\item Phase parsing. Phases are not hard coded into the program, instead the phase
+names are parsed. This creates an opportunity for the study of less common
+phases that are not present in previous travel time calculators. 
+
+\item Programming interface for Java. Because of the use of the Java programming
+language, all of the tools exist simultaneously as both applications and libraries.
+Thus, any Java code that has a need for travel times can load and manipulate
+the objects within this package. In addition, Jacl, the Java implementation of the popular Tcl scripting language, provides a simple means of directly accessing the public methods within the package.
+
+\end{enumerate}
+
+Of course, there are always drawbacks. The main difficulty at present is speed. 
+The tools in this package are not as fast as natively compiled \textit{C} or
+\textsc{Fortran}. Execution speed, however, is not always the best measure 
+of usefulness. A extremely fast code that can't use your velocity model, or that
+won't run on your machine is worse than a slower, but more flexible tool. In
+addition, processor speed is increasing at a fast rate, and codes 
+that were considered
+too slow yesterday, are usable today, and will have insignificant execution times
+tomorrow. One last point is that there is a significant effort within the 
+commercial world to improve the speed of Java. 
+The educational and research
+world will benefit significantly from these efforts without incurring any cost.
+
+ 
+\subsection{Future Plans}
+
+There are several ideas for improvements that we may pursue, such as:
+
+\begin{enumerate}
+\item A GUI. A graphical user interface would greatly improve the usefulness
+of this package, especially for non command line uses such as on the Macintosh
+or within web browsers. The beginings of such a GUI are there in the TauP tool,
+but at present it cannot access all of the functionality of the tools.
+
+\item Non-\textsc{Unix} platforms. In spite of Java's platform neutral nature,
+our installation instructions and reliance on command line style input and output limits the usability of the package on non-\textsc{Unix} operating systems. 
+We would like to extend support as much as possible to other operating
+systems. This should not be a large effort, and thus should be completed soon.
+
+\item Use of the $\tau$ function. In spite of the name, TauP does not yet use
+Tau splines. At present I do not believe that this would provide a large
+improvement over the current linear interpolation, but it is likely worth doing.
+
+\item Web based applet. One of Java's main uses currently is for the development of web based applets. An applet is a small application that is downloaded and
+executed within a web browser. This is an attractive opportunity and we have a simple
+example of one included in this distribution. 
+There are difficulties as the network time to download the 
+model files may be unacceptable, as well as the lack of support for Java~1.1 in current browsers. A client server architecture as well as the continued improvement of commercial web browsers
+may be able to address these issues.
+
+\item 1.1D models. There is nothing in the method that requires the source and
+receiver velocity models to be the same. With this idea, a separate crustal 
+model appropriate to each region could be used for the source and receiver.
+
+\item WKBJ synthetics. The calculation of $\tau$ is a necessary step for WKBJ 
+synthetics, and so this is a natural direction. It likely involves significant 
+effort, however.
+\end{enumerate}

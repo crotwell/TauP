@@ -1,0 +1,103 @@
+
+From crotwell@seis.sc.edu Thu Mar 12 17:11:48 1998
+Date: Thu, 12 Mar 1998 16:45:49 -0500 (EST)
+From: Philip Crotwell <crotwell@seis.sc.edu>
+To: TauP beta test list <benz@usgs.gov>, Tim Ahern <tim@iris.washington.edu>,
+    Jeroen Ritsema <jeroen@gps.caltech.edu>, kcc@geophys.washington.edu,
+    kent@giseis.alaska.edu, "Mark E. Powers" <mpowers@geo.Arizona.EDU>,
+    mcnamara@giseis.alaska.edu, Tom McSweeney <tjm@iris.washington.edu>,
+    Philip Crotwell <crotwell@seis.sc.edu>, Tom Owens <owens@seis.sc.edu>,
+    pavlis@geology.indiana.edu,
+    John Winchester <winch@geophys.washington.edu>, zandt@geo.arizona.edu
+Subject: Beta release of TauP
+
+
+Hi
+
+We have recently completed work on our seismic travel time utility 
+package, TauP, and are interested in having a select group of people 
+beta test it. Hopefully you are interested and willing to give some 
+constructive feedback.
+
+At our web site, http://www.geol.sc.edu/seis/software, there is a gzip'ed 
+tar file containing the Java classes and documentation. Unfortunately,
+there is a problem with our ftp server, and so http is the best method at
+present. Hopefully that will be straightened out tomorrow.
+
+The installation is straightforward on Unix but should work on any system
+that has a Java 1.1 or better installation. Unfortunately, at this point it has
+only been used under Unix, and the installation instructions reflect that.
+
+While I am fairly satisfied with the internal workings, knock on wood, the
+user interface leaves something to be desired. I am continuing to work on it
+and would appreciate any feedback as to what type of interface is most desired.
+In particular, TauP_Pierce seems somewhat clumsy at present, and I would
+very much appreciate any ideas on improving it. The documentation is
+another area that is quite important. Any feedback, positive or negative,
+is welcome.
+
+Because this is a beta test, we ask that you do not redistribute this package 
+to others at this point. If you would like to install it
+in a central place to allow others on your system use it, that is fine, but
+this is beta software and almost certainly contains bugs. We therefore would
+prefer to know where it has been installed in order to make sure it is
+replaced with the version 1.0 release, which should be in a few weeks.
+If you know of someone that is very interested in obtaining a copy, please
+refer them directly to me.
+
+Please send any comments, ideas for features and bugs to me, 
+at crotwell@seis.sc.edu. 
+
+Thank you in advance for your comments,
+Philip Crotwell
+
+
+---------------------------------------------------------
+Things I know about, and maybe you should know about:
+
+1) Speed. Depending on your machine, the package may be slow. If you have only
+a Sun LX, it may be very slow. If you have a Sun Ultra, you may not even notice.
+There is a fair but of overhead with Java that I have no control over, and
+so there is a limited amount that I can do about it. In addition,
+I intentionally did very little towards optimizing the code, flexibility was 
+my main goal. Fortunately, machines are becoming more powerful by the day, and
+there is a large effort in the commercial world to improve the speed of Java
+in general. Hopefully this will become less of an issue over time.
+
+2) TauP_SetSac. Currently it is very slow and brutal in overwriting header
+variables. It reads in the whole sac file, changes the header variables,
+and then writes it back out. This can be improved dramatically with random
+access files, but there just has not been time. Hopefully this will be
+worked on before the final release. Also, there should be some protection
+from accidentally overwriting already set header variables.
+
+3) TauPApplet. This is really just a proof of concept, and isn't intended to
+be a serious attempt at web based travel time calculations. For one thing,
+browsers are not yet completely Java 1.1 compliant. In addition, I know
+that there are bugs and poorly done features. Still, it is interesting.
+
+4) Model files and changes. This will hopefully not be a significant problem,
+but due to the way the model files are saved, new versions of the package
+may not be compatible with previous model files. Hopefully this will not happen
+often, and at worst means that the .taup file will need to be regenerated from
+the velocity model file. This should not affect the standard models in the
+distribution, since I will regenerate them each time.
+
+5) Extra features. They are quite a few extra features that are already
+in the code, but haven't made there way into the user interface yet. Mainly,
+there are quite a few parameters that determine the coarseness of sampling
+when creating new models. The GUI is a natural place to put these, as they 
+can be hidden if they are not needed. Again, this is on the todo list, but
+feedback on how important that is would be useful.
+
+6) Programming interface. While I have tried to comment all of the methods
+that might be used by other Java programs, there is are significant holes.
+See the javadoc generated html pages in the html directory. Likely this 
+will not be an issue for most users, but is, nevertheless, important. 
+
+
+------------------------------------------------------
+Philip Crotwell   (803)777-0955   crotwell@seis.sc.edu
+------------------------------------------------------
+
+

@@ -1,0 +1,5 @@
+
+- move distance check, depth check, etc to SlowCheck subclasses so
+	they can be easily changed
+
+- use jdk1.2 weak references to cache depth corrected models

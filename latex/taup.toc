@@ -1,0 +1,36 @@
+\contentsline {section}{\numberline {1}Overview}{1}
+\contentsline {section}{\numberline {2}Distribution}{2}
+\contentsline {subsection}{\numberline {2.1}What and Where}{2}
+\contentsline {subsection}{\numberline {2.2}Pros and Cons of the Current Release}{2}
+\contentsline {subsection}{\numberline {2.3}Future Plans}{3}
+\contentsline {section}{\numberline {3}Tools}{4}
+\contentsline {subsection}{\numberline {3.1}Default Parameters}{4}
+\contentsline {subsection}{\numberline {3.2}TauP\_Time}{6}
+\contentsline {subsection}{\numberline {3.3}TauP\_Pierce}{7}
+\contentsline {subsection}{\numberline {3.4}TauP\_Path}{8}
+\contentsline {subsection}{\numberline {3.5}TauP}{9}
+\contentsline {subsection}{\numberline {3.6}TauP\_Curve}{9}
+\contentsline {subsection}{\numberline {3.7}TauP\_SetSac}{10}
+\contentsline {subsection}{\numberline {3.8}TauP\_Table}{11}
+\contentsline {subsection}{\numberline {3.9}TauP\_Create}{12}
+\contentsline {subsection}{\numberline {3.10}TauP\_Peek}{12}
+\contentsline {section}{\numberline {4}Phase naming in TauP}{14}
+\contentsline {section}{\numberline {5}Creating and Saving Velocity Models}{17}
+\contentsline {subsection}{\numberline {5.1}Velocity Model Files}{17}
+\contentsline {subsection}{\numberline {5.2}Using Saved Tau Models}{18}
+\contentsline {section}{\numberline {6}Programming Interface}{19}
+\contentsline {subsection}{\numberline {6.1}Java}{19}
+\contentsline {subsection}{\numberline {6.2}Jacl}{20}
+\contentsline {subsection}{\numberline {6.3}C}{22}
+\contentsline {section}{\numberline {7}Examples}{24}
+\contentsline {subsection}{\numberline {7.1}Velocity Model Files}{24}
+\contentsline {subsection}{\numberline {7.2}Creating the Model}{24}
+\contentsline {subsection}{\numberline {7.3}Travel Times}{25}
+\contentsline {subsection}{\numberline {7.4}Pierce Points}{26}
+\contentsline {subsection}{\numberline {7.5}Path}{27}
+\contentsline {subsection}{\numberline {7.6}Travel Time Curves}{27}
+\contentsline {section}{\numberline {A}Installing}{28}
+\contentsline {subsection}{\numberline {A.1}Unix}{28}
+\contentsline {subsection}{\numberline {A.2}MacOS}{29}
+\contentsline {subsection}{\numberline {A.3}Windows}{29}
+\contentsline {section}{\numberline {B}Troubleshooting}{31}

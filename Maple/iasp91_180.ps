@@ -1,0 +1,421 @@
+%!PS-Adobe-2.0
+%%Title: Maple V Session
+%%Creator: Maple V irisVxm
+%%DocumentFonts: Helvetica-Bold Times-Roman
+%%Pages: (atend)
+%%EndComments
+/fsf    %% stk: size font
+{ findfont exch scalefont setfont } def
+/sepline   %% stk: x y
+{ gsave newpath moveto 1 setlinewidth
+468 0 rlineto stroke grestore } def
+/pagenum   %% stk: string
+{ /Courier findfont 10 scalefont setfont
+306 36 moveto
+  dup stringwidth pop 2 div neg
+  0 rmoveto show
+} def
+/nf /Times-Roman findfont def  %% Normal font
+/vf /Times-Italic findfont def  %% Variable font
+/sf /Symbol findfont def  %% Symbol font
+/showatom      %% stk: font size x y string
+{ 5 -2 roll    %% stk: x y string font size
+  scalefont setfont
+  3 1 roll moveto show
+} def
+/showvnote      %% stk: scale x y string
+{ sf 5 -1 roll  %% stk: x y string symfont scale
+  makefont setfont
+  3 1 roll moveto show
+} def
+/vnc                   %% stk: ch h x1 y1 x2 y2
+{ gsave newpath
+  4 copy dup 3 1 roll  %% stk: .. x1 y1 y2 x2 y2
+  4 index 4 1 roll     %% stk: .. x1 y1 x1 y2 x2 y2
+  1 index 5 index      %% stk: .. x1 y1 x1 y2 x2 y2 x2 y1
+  moveto lineto lineto lineto
+  closepath clip newpath  %% stk: ch h x1 y1 x2 y2
+  exch pop 4 -1 roll exch %% stk: ch x1 y1 h y2
+  { 1 index exch moveto 1 index show } for
+  pop pop grestore
+} def
+%%EndProlog
+%%Page: 1 1
+/pagesave save def
+(1) pagenum
+12 /Helvetica-Bold fsf
+72 708.77 moveto
+(> ) show
+12 /Helvetica-Bold fsf
+72 694.89 moveto
+(> ) show
+82.33 694.89 moveto
+(R := 6371;) show
+nf 18 281.42 668.2 ( := ) showatom
+vf 18 270.52 668.2 (R) showatom
+nf 18 305.57 668.2 (6371) showatom
+12 /Times-Roman fsf
+82 646.32 moveto
+(This is the IASP91 P wave velocity model) show
+12 /Helvetica-Bold fsf
+72 632.42 moveto
+(> ) show
+82.33 632.42 moveto
+(v := r -> piecewise\(-1, r<=1217.1, 11.24094 - 4.09689*\(r/R\)^2,) show
+12 /Helvetica-Bold fsf
+72 618.54 moveto
+(> ) show
+82.33 618.54 moveto
+(r<=3482, 10.03904 + 3.75665*\(r/R\)-13.67046*\(r/R\)^2,) show
+12 /Helvetica-Bold fsf
+72 604.66 moveto
+(> ) show
+82.33 604.66 moveto
+(r<=3631, 14.49470-1.47089*\(r/R\),) show
+12 /Helvetica-Bold fsf
+72 590.78 moveto
+(> ) show
+82.33 590.78 moveto
+(r<=5611, 25.1486-41.1538*\(r/R\)+51.9932*\(r/R\)^2-26.6083*\(r/R\)^3,) show
+12 /Helvetica-Bold fsf
+72 576.9 moveto
+(> ) show
+82.33 576.9 moveto
+(r<=5711, 25.96984-16.93412*\(r/R\),) show
+12 /Helvetica-Bold fsf
+72 563.02 moveto
+(> ) show
+82.33 563.02 moveto
+(r<=5961, 29.38896-21.40656*\(r/R\),) show
+12 /Helvetica-Bold fsf
+72 549.14 moveto
+(> ) show
+82.33 549.14 moveto
+(r<=6161, 30.78765-23.25415*\(r/R\),) show
+12 /Helvetica-Bold fsf
+72 535.26 moveto
+(> ) show
+82.33 535.26 moveto
+(r<=6251, 25.41389-17.69722*\(r/R\),) show
+12 /Helvetica-Bold fsf
+72 521.38 moveto
+(> ) show
+82.33 521.38 moveto
+(r<=6336, 8.78541-0.74953*\(r/R\),) show
+12 /Helvetica-Bold fsf
+72 507.5 moveto
+(> ) show
+82.33 507.5 moveto
+(r<=6351, 6.5,) show
+12 /Helvetica-Bold fsf
+72 493.62 moveto
+(> ) show
+82.33 493.62 moveto
+(r<=7371, 5.8\):) show
+12 /Helvetica-Bold fsf
+72 479.74 moveto
+(> ) show
+12 /Times-Roman fsf
+82 466.34 moveto
+(Below are the same layers as above, just split into separate functions.) show
+12 /Helvetica-Bold fsf
+72 452.44 moveto
+(> ) show
+82.33 452.44 moveto
+(v1 := r -> 11.24094 - 4.09689*\(r/R\)^2;) show
+nf 18 202.05 412.29 ( := ) showatom
+vf 18 185.06 412.29 (v1) showatom
+sf 18 237.7 412.29 (\256) showatom
+vf 18 226.2 412.29 (r) showatom
+nf 18 327.46 412.29 ( - ) showatom
+nf 18 259.96 412.29 (11.24094) showatom
+nf 18 342.45 412.29 (4.09689) showatom
+newpath 405.45 418.76 moveto 426.94 418.76 lineto 0.88 setlinewidth stroke
+vf 18 409.69 425.75 (r) showatom
+nf 12 416.69 431.81 (2) showatom
+vf 18 407.79 397.98 (R) showatom
+nf 12 418.69 404.04 (2) showatom
+12 /Helvetica-Bold fsf
+72 375.62 moveto
+(> ) show
+82.33 375.62 moveto
+(v2 := r -> 10.03904 + 3.75665*\(r/R\)-13.67046*\(r/R\)^2;) show
+nf 18 148.73 335.47 ( := ) showatom
+vf 18 131.74 335.47 (v2) showatom
+sf 18 184.38 335.47 (\256) showatom
+vf 18 172.88 335.47 (r) showatom
+nf 18 274.14 335.47 ( + ) showatom
+nf 18 371.78 335.47 ( - ) showatom
+nf 18 206.64 335.47 (10.03904) showatom
+nf 18 293.29 335.47 (3.75665) showatom
+newpath 356.29 341.94 moveto 371.78 341.94 lineto 0.88 setlinewidth stroke
+vf 18 360.53 348.93 (r) showatom
+vf 18 358.63 321.16 (R) showatom
+nf 18 386.77 335.47 (13.67046) showatom
+newpath 458.77 341.94 moveto 480.26 341.94 lineto 0.88 setlinewidth stroke
+vf 18 463.01 348.93 (r) showatom
+nf 12 470.01 354.99 (2) showatom
+vf 18 461.11 321.16 (R) showatom
+nf 12 472.01 327.22 (2) showatom
+12 /Helvetica-Bold fsf
+72 298.8 moveto
+(> ) show
+82.33 298.8 moveto
+(v3 := r -> 14.49470-1.47089*\(r/R\);) show
+nf 18 205.05 258.65 ( := ) showatom
+vf 18 188.06 258.65 (v3) showatom
+sf 18 240.7 258.65 (\256) showatom
+vf 18 229.2 258.65 (r) showatom
+nf 18 330.46 258.65 ( - ) showatom
+nf 18 262.96 258.65 (14.49470) showatom
+nf 18 345.45 258.65 (1.47089) showatom
+newpath 408.45 265.12 moveto 423.94 265.12 lineto 0.88 setlinewidth stroke
+vf 18 412.69 272.11 (r) showatom
+vf 18 410.79 244.34 (R) showatom
+12 /Helvetica-Bold fsf
+72 221.98 moveto
+(> ) show
+82.33 221.98 moveto
+(v4:= r ->  25.1486-41.1538*\(r/R\)+51.9932*\(r/R\)^2-26.6083*\(r/R\)^3;) show
+nf 18 107.99 181.83 ( := ) showatom
+vf 18 91 181.83 (v4) showatom
+sf 18 143.64 181.83 (\256) showatom
+vf 18 132.14 181.83 (r) showatom
+nf 18 224.4 181.83 ( - ) showatom
+nf 18 317.88 181.83 ( + ) showatom
+nf 18 421.52 181.83 ( - ) showatom
+nf 18 165.9 181.83 (25.1486) showatom
+nf 18 239.39 181.83 (41.1538) showatom
+newpath 302.39 188.3 moveto 317.88 188.3 lineto 0.88 setlinewidth stroke
+vf 18 306.63 195.29 (r) showatom
+vf 18 304.73 167.52 (R) showatom
+nf 18 337.03 181.83 (51.9932) showatom
+newpath 400.03 188.3 moveto 421.52 188.3 lineto 0.88 setlinewidth stroke
+vf 18 404.27 195.29 (r) showatom
+nf 12 411.27 201.35 (2) showatom
+vf 18 402.37 167.52 (R) showatom
+nf 12 413.27 173.58 (2) showatom
+nf 18 436.51 181.83 (26.6083) showatom
+newpath 499.51 188.3 moveto 521 188.3 lineto 0.88 setlinewidth stroke
+vf 18 503.75 195.29 (r) showatom
+nf 12 510.75 201.35 (3) showatom
+vf 18 501.85 167.52 (R) showatom
+nf 12 512.75 173.58 (3) showatom
+12 /Helvetica-Bold fsf
+72 145.16 moveto
+(> ) show
+82.33 145.16 moveto
+(v5:= r ->  25.96984-16.93412*\(r/R\);) show
+nf 18 200.55 105.01 ( := ) showatom
+vf 18 183.56 105.01 (v5) showatom
+sf 18 236.2 105.01 (\256) showatom
+vf 18 224.7 105.01 (r) showatom
+nf 18 325.96 105.01 ( - ) showatom
+nf 18 258.46 105.01 (25.96984) showatom
+nf 18 340.95 105.01 (16.93412) showatom
+newpath 412.95 111.48 moveto 428.44 111.48 lineto 0.88 setlinewidth stroke
+vf 18 417.19 118.47 (r) showatom
+vf 18 415.29 90.7 (R) showatom
+12 /Helvetica-Bold fsf
+pagesave restore
+showpage
+%%Page: 2 2
+/pagesave save def
+(2) pagenum
+12 /Helvetica-Bold fsf
+72 708.77 moveto
+(> ) show
+82.33 708.77 moveto
+(v6:= r ->  29.38896-21.40656*\(r/R\);) show
+nf 18 200.55 668.62 ( := ) showatom
+vf 18 183.56 668.62 (v6) showatom
+sf 18 236.2 668.62 (\256) showatom
+vf 18 224.7 668.62 (r) showatom
+nf 18 325.96 668.62 ( - ) showatom
+nf 18 258.46 668.62 (29.38896) showatom
+nf 18 340.95 668.62 (21.40656) showatom
+newpath 412.95 675.09 moveto 428.44 675.09 lineto 0.88 setlinewidth stroke
+vf 18 417.19 682.08 (r) showatom
+vf 18 415.29 654.31 (R) showatom
+12 /Helvetica-Bold fsf
+72 631.95 moveto
+(> ) show
+82.33 631.95 moveto
+(v7:= r ->  30.78765-23.25415*\(r/R\);) show
+nf 18 200.55 591.8 ( := ) showatom
+vf 18 183.56 591.8 (v7) showatom
+sf 18 236.2 591.8 (\256) showatom
+vf 18 224.7 591.8 (r) showatom
+nf 18 325.96 591.8 ( - ) showatom
+nf 18 258.46 591.8 (30.78765) showatom
+nf 18 340.95 591.8 (23.25415) showatom
+newpath 412.95 598.27 moveto 428.44 598.27 lineto 0.88 setlinewidth stroke
+vf 18 417.19 605.26 (r) showatom
+vf 18 415.29 577.49 (R) showatom
+12 /Helvetica-Bold fsf
+72 555.13 moveto
+(> ) show
+82.33 555.13 moveto
+(v8:= r ->  25.41389-17.69722*\(r/R\);) show
+nf 18 200.55 514.98 ( := ) showatom
+vf 18 183.56 514.98 (v8) showatom
+sf 18 236.2 514.98 (\256) showatom
+vf 18 224.7 514.98 (r) showatom
+nf 18 325.96 514.98 ( - ) showatom
+nf 18 258.46 514.98 (25.41389) showatom
+nf 18 340.95 514.98 (17.69722) showatom
+newpath 412.95 521.45 moveto 428.44 521.45 lineto 0.88 setlinewidth stroke
+vf 18 417.19 528.44 (r) showatom
+vf 18 415.29 500.67 (R) showatom
+12 /Helvetica-Bold fsf
+72 478.31 moveto
+(> ) show
+82.33 478.31 moveto
+(v9:= r ->  8.78541-0.74953*\(r/R\);) show
+nf 18 214.05 438.16 ( := ) showatom
+vf 18 197.06 438.16 (v9) showatom
+sf 18 249.7 438.16 (\256) showatom
+vf 18 238.2 438.16 (r) showatom
+nf 18 330.46 438.16 ( - ) showatom
+nf 18 271.96 438.16 (8.78541) showatom
+nf 18 345.45 438.16 (.74953) showatom
+newpath 399.45 444.63 moveto 414.94 444.63 lineto 0.88 setlinewidth stroke
+vf 18 403.69 451.62 (r) showatom
+vf 18 401.79 423.85 (R) showatom
+12 /Helvetica-Bold fsf
+72 401.49 moveto
+(> ) show
+82.33 401.49 moveto
+(v10:= r ->  6.5;) show
+nf 18 295.67 374.8 ( := ) showatom
+vf 18 269.68 374.8 (v10) showatom
+nf 18 319.82 374.8 (6.5) showatom
+12 /Helvetica-Bold fsf
+72 352.44 moveto
+(> ) show
+82.33 352.44 moveto
+(v11:= r ->  5.8;) show
+nf 18 295.67 325.75 ( := ) showatom
+vf 18 269.68 325.75 (v11) showatom
+nf 18 319.82 325.75 (5.8) showatom
+72 313.62 sepline
+12 /Times-Roman fsf
+82 301.87 moveto
+(Now integrate through each layer, multiplying by 2 for down and back up.) show
+12 /Helvetica-Bold fsf
+72 287.97 moveto
+(> ) show
+82.33 287.97 moveto
+(t1 := 2*evalf\(Int \(1.0/v1\(r\), r=0..1217.1\),10\);) show
+nf 18 253.67 261.28 ( := ) showatom
+vf 18 239.67 261.28 (t1) showatom
+nf 18 277.82 261.28 (217.5155732) showatom
+12 /Helvetica-Bold fsf
+72 238.92 moveto
+(> ) show
+82.33 238.92 moveto
+(t2 := 2*evalf\(Int \(1.0/v2\(r\), r=1217.1..3482\),10\);) show
+nf 18 253.67 212.23 ( := ) showatom
+vf 18 239.67 212.23 (t2) showatom
+nf 18 277.82 212.23 (483.2913642) showatom
+12 /Helvetica-Bold fsf
+72 189.87 moveto
+(> ) show
+82.33 189.87 moveto
+(t3 := 2*evalf\(Int \(1.0/v3\(r\), r=3482..3631\),10\);) show
+nf 18 253.67 163.18 ( := ) showatom
+vf 18 239.67 163.18 (t3) showatom
+nf 18 277.82 163.18 (21.79383122) showatom
+12 /Helvetica-Bold fsf
+72 140.82 moveto
+(> ) show
+82.33 140.82 moveto
+(t4 := 2*evalf\(Int \(1.0/v4\(r\), r=3631..5611\),10\);) show
+nf 18 253.67 114.13 ( := ) showatom
+vf 18 239.67 114.13 (t4) showatom
+nf 18 277.82 114.13 (319.1498456) showatom
+12 /Helvetica-Bold fsf
+72 91.77 moveto
+(> ) show
+82.33 91.77 moveto
+(t5 := 2*evalf\(Int \(1.0/v5\(r\), r=5611..5711\),10\);) show
+pagesave restore
+showpage
+%%Page: 3 3
+/pagesave save def
+(3) pagenum
+nf 18 253.67 701.82 ( := ) showatom
+vf 18 239.67 701.82 (t5) showatom
+nf 18 277.82 701.82 (18.31105897) showatom
+12 /Helvetica-Bold fsf
+72 679.46 moveto
+(> ) show
+82.33 679.46 moveto
+(t6 := 2*evalf\(Int \(1.0/v6\(r\), r=5711..5961\),10\);) show
+nf 18 253.67 652.77 ( := ) showatom
+vf 18 239.67 652.77 (t6) showatom
+nf 18 277.82 652.77 (51.15620824) showatom
+12 /Helvetica-Bold fsf
+72 630.41 moveto
+(> ) show
+82.33 630.41 moveto
+(t7 := 2*evalf\(Int \(1.0/v7\(r\), r=5961..6161\),10\);) show
+nf 18 253.67 603.72 ( := ) showatom
+vf 18 239.67 603.72 (t7) showatom
+nf 18 277.82 603.72 (46.19005626) showatom
+12 /Helvetica-Bold fsf
+72 581.36 moveto
+(> ) show
+82.33 581.36 moveto
+(t8 := 2*evalf\(Int \(1.0/v8\(r\), r=6161..6251\),10\);) show
+nf 18 253.67 554.67 ( := ) showatom
+vf 18 239.67 554.67 (t8) showatom
+nf 18 277.82 554.67 (22.02005600) showatom
+12 /Helvetica-Bold fsf
+72 532.31 moveto
+(> ) show
+82.33 532.31 moveto
+(t9 := 2*evalf\(Int \(1.0/v9\(r\), r=6251..6336\),10\);) show
+nf 18 253.67 505.62 ( := ) showatom
+vf 18 239.67 505.62 (t9) showatom
+nf 18 277.82 505.62 (21.13114624) showatom
+12 /Helvetica-Bold fsf
+72 483.26 moveto
+(> ) show
+82.33 483.26 moveto
+(t10 := 2*evalf\(Int \(1.0/v10\(r\), r=6336..6351\),10\);) show
+nf 18 258.17 456.57 ( := ) showatom
+vf 18 235.17 456.57 (t10) showatom
+nf 18 282.32 456.57 (4.615384614) showatom
+12 /Helvetica-Bold fsf
+72 434.21 moveto
+(> ) show
+82.33 434.21 moveto
+(t11 := 2*evalf\(Int \(1.0/v11\(r\), r=6351..6371\),10\);) show
+nf 18 258.17 407.52 ( := ) showatom
+vf 18 235.17 407.52 (t11) showatom
+nf 18 282.32 407.52 (6.896551724) showatom
+12 /Times-Roman fsf
+82 385.64 moveto
+(Sum these up and we get the time for PKIKP at 180 degrees. ttimes predicts 1212.12, while ) show
+82 372.22 moveto
+(taup_time) show
+82 358.8 moveto
+(predicts 1212.08) show
+12 /Helvetica-Bold fsf
+72 344.9 moveto
+(> ) show
+82.33 344.9 moveto
+(t := t1+t2+t3+t4+t5+t6+t7+t8+t9+t10+t11;) show
+nf 18 249.17 318.21 ( := ) showatom
+vf 18 244.17 318.21 (t) showatom
+nf 18 273.32 318.21 (1212.071076) showatom
+72 306.08 sepline
+12 /Helvetica-Bold fsf
+72 293.85 moveto
+(> ) show
+pagesave restore
+showpage
+%%Trailer
+%%Pages: 3
+%% END of MapleV Session Output

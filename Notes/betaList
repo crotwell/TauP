@@ -1,0 +1,48 @@
+
+From owens@sc.edu Tue Mar  3 10:20:21 1998
+Date: Tue, 17 Feb 1998 11:52:26 -0500 (EST)
+From: Tom Owens 803-777-4530 <owens@sc.edu>
+To: Philip Crotwell <crotwell@seis.sc.edu>
+Subject: Re: jtau email list
+
+
+I'd cast this as:
+
+University of Alaska:      kent@giseis.alaska.edu Kent Lindquist
+                           mcnamara@giseis.alaska.edu  Dan McNamara
+
+University of Washington:  kcc@geophys.washington.edu  Ken Creager
+									winch@geophys.washington.edu John Winchester
+
+Indiana University:        pavlis@geology.indiana.edu  Gary Pavlis
+
+Caltech:                   jeroen@                     Jeroen Ritsema
+
+IRIS DMC:                                              Tom McSweeney
+                           tim@iris.washington.edu     Tim Ahern
+
+University of Arizona:     zandt@geo.arizona.edu       George Zandt
+                           mpowers@geo.arizona.edu     Mark Powers
+
+USGS								benz@usgs.gov					 Harley Benz
+
+> > 
+> > On the actual distribution ... Source code should NOT be released for a
+> >    good while.  Two reasons:  1) We don't want the code to bifurcate too
+> >    soon; 2) it will be a good test of the "runs anywhere" philosophy.
+> > 
+> > On copyrighting ... notice that sac and datascope have copyright
+> > statements with them.  I think we should look into how/why we might do
+> > this before we release it to the general public via ftp or whatever.  A
+
+    I still think we need to deal with this.  Now that you are an
+    employee, it may be easier.  I'll go read some of those old emails.
+    Maybe just some notice is enough for now.
+
+bye, tjo
+
+
+
+
+
+

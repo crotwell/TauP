@@ -1,0 +1,3 @@
+#!/bin/sh
+exec java -Dtaup.model.path=${TAUPPATH} edu.sc.seis.TauP.TauP_Pierce $*
+

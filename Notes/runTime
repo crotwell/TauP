@@ -1,0 +1,17 @@
+
+Versus ttimes
+
+single source depth, 100km for ttp,PcP,PKiKP not including startup
+1 degree steps, 0 to 179
+ttimes: 1943334 microseconds per iteration  taup_time: 7759456 microseconds per iteration
+
+one distance (50 deg) for 1 source depth (0 km) not including startup
+ttimes: 55287 microseconds per iteration  taup_time: 87834 microseconds per iteration
+
+
+18 distances (0 to 170 deg) for 1 source depth (100 km) not including startup
+ttimes: 326250 microseconds per iteration  taup_time: 2528526 microseconds per iteration
+
+
+depth inc 100, 0 to 400, dist incr 10, 0 to 170 not including startup
+ttimes: 1344987 microseconds per iteration  taup_time: 18049114 microseconds per iteration

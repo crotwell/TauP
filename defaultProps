@@ -1,0 +1,52 @@
+#---Properties for the TauP toolkit---
+#Thu Feb 11 15:52:44 GMT 1999
+taup.model.name=iasp91
+taup.phase.list=p,s,P,S,pP,sS,Pn,Sn,PcP,ScS,Pdiff,Sdiff,PKP,SKS,PKiKP,SKiKS,PKIKP,SKIKS
+
+# default source depth on startup, note that depth 0 is faster than
+# any other depths as no calculations need to be done
+taup.source.depth=0.0
+
+# precision for depth output, default is 1 decimal digits
+# note that this is precision, not accuracy. Just because you get more
+# digits doesn't imply that they have any meaning
+taup.depth.precision=1
+
+# precision for distance output, default is 2 decimal digits.
+# note that this is precision, not accuracy. Just because you get more
+# digits doesn't imply that they have any meaning
+taup.distance.precision=2
+
+# precision for latitude and longitude output, default is 2 decimal digits.
+# note that this is precision, not accuracy. Just because you get more
+# digits doesn't imply that they have any meaning
+taup.latlon.precision=2
+
+# precision for time, default is 2 decimal digits.
+# note that this is precision, not accuracy. Just because you get more
+# digits doesn't imply that they have any meaning
+taup.time.precision=2
+
+# precision for ray parameter, default is 3 decimal digits.
+# note that this is precision, not accuracy. Just because you get more
+# digits doesn't imply that they have any meaning
+taup.rayparam.precision=3
+
+# the cutoff in degrees for P and Sdiff when using the -locsat
+# option to TauP_Table
+taup.table.locsat.maxdiff=105.0
+
+# max and min delta p in seconds per radian
+taup.create.minDeltaP=0.1
+taup.create.maxDeltaP=8.0
+
+# max depth interval in kilometers
+taup.create.maxDepthInterval=115.0
+
+# max range interval in degrees
+taup.create.maxRangeInterval=1.75
+
+# max estimate of error due to linear interpolation, in seconds
+taup.create.maxInterpError=0.03
+
+taup.create.allowInnerCoreS=true

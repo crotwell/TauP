@@ -1,0 +1,74 @@
+#!/bin/sh
+# \
+exec jacl $0 $*
+
+package require java
+
+set slat(0) -5
+set slon(0) 35
+
+set elat(0) 105
+set elon(0) 5
+set edepth(0) 100
+set elat(1) -40
+set elon(1) 70
+set edepth(1) 100
+set elat(2) 40
+set elon(2) 40
+set edepth(2) 200
+set elat(3) 65
+set elon(3) -5
+set edepth(3) 10
+
+set taup [java::new [list edu.sc.seis.TauP.TauP_Pierce String] "prem"]
+$taup clearPhaseNames
+$taup {parsePhaseList java.lang.String} "P,S"
+
+set disconArray [$taup getDisconDepths]
+set maxDiff 99999999
+set bestDepth 0
+for {set i 0} {$i < [$disconArray length]} {incr i} {
+   set depth [$disconArray get $i]
+   if { [expr abs($depth - 400)] < $maxDiff} {
+      set maxDiff [expr abs($depth - 400)]
+      set bestDepth $depth
+   }
+}
+
+for {set eventIndex 0} {$eventIndex < [array size elat]} {incr eventIndex} {
+   $taup setSourceDepth $edepth($eventIndex)
+   for {set staIndex 0} {$staIndex < [array size slat]} {incr staIndex} {
+      set gcarc [java::call edu.sc.seis.TauP.SphericalCoords distance \
+         $elat($eventIndex) $elon($eventIndex) \
+         $slat($staIndex) $slon($staIndex)]
+      set az     [java::call edu.sc.seis.TauP.SphericalCoords azimuth \
+         $elat($eventIndex) $elon($eventIndex) \
+         $slat($staIndex) $slon($staIndex)]
+      $taup calculate $gcarc
+      set numArrivals [$taup getNumArrivals]
+
+      if {$numArrivals == 0} {
+         puts "No arrivals for event $eventIndex"
+      }
+      for {set k 0} {$k< $numArrivals} {incr k} {
+         set OneArrival [$taup getArrival $k]
+         set name [ $OneArrival getName]
+
+         if [ catch \
+         {set OnePierce [$OneArrival getLastPiercePoint $bestDepth] }] {
+				puts "$name doesn't pierce $bestDepth for event $eventIndex"
+            continue
+         }
+
+         set dist [java::field $OnePierce dist]
+         set dist [expr $dist * (180./3.14159)]
+         set plat [java::call edu.sc.seis.TauP.SphericalCoords latFor \
+            $elat($eventIndex) $elon($eventIndex) $dist $az ]
+         set plon [java::call edu.sc.seis.TauP.SphericalCoords lonFor \
+            $elat($eventIndex) $elon($eventIndex) $dist $az ]
+         puts [format "(%-7.3f, %-7.3f) $name from event number $eventIndex" \
+            $plat $plon ]
+      }
+   }
+}
+

@@ -1,0 +1,45 @@
+p
+P
+PmP
+PvmP
+Pvmp
+P^mP
+PmPPmP
+p^mP
+Pv410P
+P^410P
+Pv410P^mP Pv400P
+# this is a comment
+// so is this
+Pv670P /* this is a comment also */
+P^670P
+Pv670P^410P
+Pv670P^410Pv670P
+PcP
+PKP
+PKKP PK^CKP     // these two phases should be the same
+PKKKP
+PKKKKP
+PKKKKKP
+PKKKKKKP
+PKKKKKKKP
+PKiKP
+PKIKP
+PKIIKP
+PKIKPPKIKP
+PKIKIKP
+PKP^410PKP
+PKP^670PKP
+PKiKKIKP
+#
+# and now for some head and diffracted waves
+# these haven't been implemented yet, and will likely be skipped
+Pn
+PnPn
+PnPmP
+PmPPn
+Pdiff
+#
+# some non-phases that are still useful
+firstP           // the first arrival between p, Pn, P, Pdiff, PKP, and PKIKP
+2.0kmps     // a surface wave with phase velocity of 2.0 km per sec

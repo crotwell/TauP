@@ -1,0 +1,133 @@
+
+-------------------------------------------------------------------------------
+                       Modifications to TauP
+Vers  Date    Description
+-------------------------------------------------------------------------------
+1.1.3  Jul 18, 2001
+      1) Fixed bug with taup_path always using iasp91 (Pulliam)
+1.1.2  Feb 9, 2001
+      1) Allowed TauP GUI to be called from other tools
+      2) Fixed bug in TauP_Path with outFile being null
+      3) Added model text files to distribution(Ritsema)
+1.1.1  April 19, 2000
+      1) fixed problem with p^mP type phases for deep sources (Owens,Zandt,Ritsema)
+      2) added getSlownessModel and getVelocityModel to TauModel and 
+                getVelocityModel to SlownessModel
+1.1    February 2, 2000
+      1) several fixes to documentation (Snoke)
+      2) now GPL'ed
+      3) with source code
+      4) add a GUI for times, pierce points and paths, not very advanced but 
+               interesting
+1.0.9 12/15/99
+      1) fixed bug with taup_setsac not finding any arrivals
+1.0.8 11/29/99
+		1) fixed path bug for S at 180
+		2) fixed SphericalCoords.lonFor() to be between -180 and 180
+		3) changed PropertyLoader and TauModelLoader to use					getResourceAsStream to work with JDK1.2 where the				jar may not be in the classpath
+		4) fixed bug with loading models from user generated jar files,
+			manual said Models/modelname but code had 
+			StdModels/modelname
+		5) small changes and updates to manual, including adding
+			license info
+		6) added java2 install instructions and Mac and Windows
+			 specific instructions
+		7) fixed problems with jacl scripts
+                8) added configurable precision for outputs, see standard 
+                        properties
+                9) redid formating of manual, used TimesRoman and pdf is now
+                        usable, plus has hyperlinked table of contents, etc
+                10) fixed null pointer bug with -help in TauP_Time
+1.0.7 2/9/99   
+      1) forgot to flush BufferedOutputWriter, resulting in no output at all
+1.0.6	2/8/99 	1) fixed bug with very small layers and power law, now very 
+		    small (< 1 micron) layers are just 0 time and distance
+		    (Firpo)
+		2) fixed bug with pierce depths being printed below turning 
+		    depth (Ritsema)
+		3) changed from printResult(StringWriter) to 
+		    printResult(Writer) to fix out of memory bug
+		4) added radius of earth to verbose option in 
+		    taup_create (Owens)
+		5) fixed bug with power law depth finder giving depths just
+		    outside the layer
+		6) general cleanup of source code
+1.0.5  12/3/98 1)Speed improvement in TauP_SetSac, replaced readData with new
+                   method directly calling intbitstofloat.
+               2)fixed bug in TauP_Time, it was not depth correcting in some 
+                   cases
+1.0.4  11/23/98 Removed unneeded printlns from TauP_SetSac
+1.0.3  11/17/98 Bug fix
+               1) fixed (hopefully) a numerical instability in SlownessLayer
+                   due to using the power law v=Ar^B in very thin layers
+1.0.1  10/28/98 Bug fixes
+               1) fixed bug in formater that rounded incorectly, 14.99 would
+                   print as 14.0 when formatted %5.1f
+               2) fixed taup_table bug when Pdiff was only arrival and distance
+                   was greater than 105 degrees 
+               3) fixed bug with depth of 15km in iasp91, indexP and indexS
+                   were being incorrectly swapped
+
+1.0    9/9/98  Public release
+               1) added purist's phase names
+               2) added taup_table tool
+               3) fixed bug with taup_path not going all the way to the surface
+               4) user's guide updated
+               5) added get methods to Arrival and made attributes protected
+               6) made time and distance calculations for layers more effecient
+               7) added coarsely sampled qdt model for quick and dirty times
+               8) several minor fixes
+
+0.96.3 8/26/98 1) fixed taup.path to taup.model.path changes that were forgotten
+
+0.96.2 8/25/98 1) added ScS to tts+
+
+0.96.1 8/19/98 1) added check for max error due to linear interpolation
+
+0.96.0 8/18/98 1) P410S is no illegal if this leg starts below the 410 and is downgoing.
+                 This also makes P410P illegal in the same area, which seems reasonable
+                 to me.
+              3) space - comma bug when inputing new phases in interactive mode
+              5) km/s is nomore, kmps is the only method now.
+              8) taup_pierce goes backwards for phases that go between 180 and 360
+                 degrees. (Fixed a week ago)
+              9) P410P type phases have been fixed. They were getting a path that was
+                 really Pv410P.
+
+0.95.8  7/23/98 Changed phase naming convention so that moho, "m", phases are
+                 treated like 410 type phases instead of like c and i phases
+0.95.7  6/30/98 Fifth Beta
+              fixed bug with P410S and P410s type phase names, was not creating the
+                 correct "path" through the model.
+              fixed ArrayOutOfBoundsException bug in SeismicPhase
+              turned J phases on by default
+0.95   5/13/98 Forth Beta
+              changed taup.path property to taup.model.path
+				  fixed bugs with improperly named Properties
+              fixed bug with pPdiff at 0 source depth
+              added missing PKKPdf type phases to the ttall phase option
+0.94   5/8/98  Third beta 
+              fixed path bug with PKIKP at 180 degrees
+              Disabled path interpolation for 0.0 ray parameter at CoEarth
+              disabled searching for 360n-dist if dist==180.0 to avoid
+                 getting same phase twice
+              Added native support for calling basic travel time routines 
+                 from C
+              Fixed bug for quiting taup_time, hanging when a quit was 
+                 typed instead of q
+              rewrote TauP_Time.recalcPhases so it only does it if needed, so
+                 recalcPhases can be called from calculate without time penalty
+              removed .phases file support in favor of more generic .taup file
+                 the uses the standard Properties style of Java
+              fixed bug with models whose name starts with a a number, eg 1066a
+              added Alert class to handle warning and error reports to user,
+                 ie System.err.println is replaced with a dialog if using a GUI
+              fixed divide by zero bug in bullenDepthFor in SlownessLayer
+
+0.93   3/25/98 Second beta 
+              added support for sSdiff and PnPnPn type of phases
+              Docs updated to include programming support.
+              TauPDaemon in distribution, but not in docs.
+              Cleaned up the output of TauP_Pierce, removed radius as output
+
+0.92   3/12/98 First Beta release

@@ -1,0 +1,138 @@
+
+\section{Installing}
+\label{install}
+
+The installation for TauP under \textsc{Unix} is quite simple. And with Java's 
+platform independence, the package should be usable on a Mac or Windows
+machine.
+
+\subsection{Unix}
+
+\begin{enumerate}
+\item Install a Java 1.1 or better virtual machine. If your system already has Java 1.1
+or better installed then you can skip to the next step. You can test this
+with ``java -version''. If it isn't there or the version is less than 1.1
+you need to get and install Java.
+
+If you have a Sun Solaris
+workstation, you need only down load the version from JavaSoft. Point
+your browser to http://www.javasoft.com/products/ and download either
+the Java Development Kit or the Java Runtime Environment.
+
+The Java Runtime Environment (jre)
+is the smaller of the two, only allowing you to run java applications and applets.
+The Java Development Kit (jdk) is larger but allows you
+to compile and run java programs. 
+Unless space is at a
+premium, I suggest getting the jdk. A quick test to see if you have
+the jdk is to see if javac, the java compiler is installed. The command
+``which javac'' or just ``javac'' should tell you. 
+
+There are ports of Java for many other operating systems, and as long as
+they are a Java 1.1 or better compatible implementation, the tools 
+should execute correctly.
+JavaSoft maintains a list of these ports at\newline
+http://www.javasoft.com/cgi-bin/java-ports.cgi.
+
+Just follow the instructions that come with your Java distribution.
+
+\item Download TauP.X.X.X.tar.gz or TauP.X.X.X.jar. Make sure to get the most recent version, replacing the X's  in the file name. They can be found at
+
+\texttt{http://www.seis.sc.edu}
+
+\item Unpack the distribution.
+\texttt{\newline gunzip TauP.X.X.X.tar.gz\newline tar -xvf TauP.X.X.X.tar\newline}
+or
+\texttt{\newline jar -xvf TauP.X.X.X.jar\newline}
+This will create a directory called TauP. Inside
+will be the following:
+\begin{center}
+\begin{tabular}{lp{4in}}
+README & getting started information \\
+License & license information, free for non-commercial \\
+taup.jar & the jar file with all the classes \\
+taup.html & a simple web page that loads a rudimentary applet to use the TauP
+package. Be warned that this is not really meant to be used over the Internet
+as the download time for 1.5Mb may be too great and most browsers do not yet
+support the 1.1 version of Java. \\
+exampleProperties & example properties file \\
+HISTORY & change log \\
+bin & a directory with wrapper scripts appropriate for 
+\textsc{Unix} installations\\
+doc & a directory with Postscript and pdf versions of this manual. \\
+html & a directory with the javadoc output from
+the source code, mainly useful
+for writing new java programs that use the TauP package. \\
+jacl & a directory with example Jacl scripts for accessing the TauP package. \\
+native & a directory with a C library and example program that use the
+Java Native Interface, providing a basic interface between C programs
+and the TauP package. \\
+Maple & a directory with Maple scripts showing the time and distance equations
+used.
+\end{tabular}
+\end{center}
+
+\item Put the taup.jar file someplace. It really doesn't matter where, although
+a central place might make administration easier, /usr/local/classes or 
+/usr/local/lib are good choices. If you don't have superuser privileges
+then your home directory is fine. 
+
+For java 2 (a.k.a java 1.2) you can install taup.jar as a \textit{standard extension} by placing the jar file into the jre/lib/ext subdirectory of your java installation. If you do this then you do not need to add it to your CLASSPATH and can skip the next step.
+
+\item Add the location of taup.jar to your CLASSPATH environment variable.
+This should be done in your .cshrc or .login. For instance, if you put taup.jar in
+/usr/local/classes, then you could set the CLASSPATH to be:
+\begin{verbatim}
+setenv CLASSPATH /usr/local/classes/taup.jar:/usr/local/jdk1.1.6/lib/classes.zip
+\end{verbatim} 
+
+This should be all one line, of course.
+The java virtual machine also uses the CLASSPATH environment variable to find
+its class files, so make sure this is set up correctly.
+
+\item Put the wrapper scripts in a directory referenced by your PATH environment
+variable, /usr/local/bin for instance. These wrapper 
+scripts are not essential, but they cut down on 
+typing. They are in the bin directory of the distribution 
+and are simple \textsc{Unix} sh scripts.
+Of course, they will only work on \textsc{Unix}.
+
+\item Lastly, you may need to either source your .login and .cshrc files or
+execute the \texttt{rehash} command to make the shell reevaluate the 
+contents of your PATH.
+
+\end{enumerate}
+
+That's it. If you have problems or encounter bugs, please mail them to me.
+Please try to be as specific as possible. I am also interested in ideas for
+additional features that might make this a more useful program. 
+Of course, I can make no promises,
+but I would be glad to hear about them.
+
+I can be reached via email at \textit{crotwell@seis.sc.edu}.
+
+\subsection{MacOS}
+
+Please read the Unix instructions, since much of it is applicable to all platforms.
+
+For MacOS users, you can add taup.jar to your classpath by putting it in the
+MRJclasses folder which is located in the MRJ libraries folder within the Extensions folder within the System Folder. You may also wish to change the file type and creator to ``ZIP '' and
+``java'' in order to fix the icon. Note that ZIP has a space at the end. This can be done with the DataViz FileViewer application that is, or at least was, bundled with the system. Also note that you must haveMacOS~8 or better in order to run Apple's java 1.1 compatible java, MRJ 2.1. Lastly, JBindary is the MacOS version of the java command. With it you can create double-clickable applications that accomplish the same thing as the sh scripts under unix. If you do not have MRJ installed, or would like to get a more recent version, it can be downloaded from Apple's web site, \verb+http://www.apple.com/java+.
+
+\subsection{Windows}
+
+Please read the Unix instructions, since much of it is applicable to all platforms.
+
+For Java 1.1, you need to add taup.jar to your CLASSPATH. This should likely 
+be done in you autoexec.bat file for window 95 or 98 and in the Control Panel 
+under windows NT, start the Control Panel, select System, then click the 
+Environment tab. The other difference with \textsc{Unix} is that the separator is a semicolon and the forward slashes should be replaced with backslashes.
+
+For Java 1.2, aka Java 2, you can skip the CLASSPATH step by putting the taup.jar file into the \verb+jre\lib\ext+ directory of your java installation.
+ 
+In either case you will likely want to add the bat files that start up the 
+tools to your PATH. You can either put them in and existing directory 
+referenced in you PATH, or add the distribution bat directory to the 
+PATH environment variable. I have put the bat files in the bat directory to 
+ keep them separate from the \textsc{Unix} sh scripts, and so you may wish 
+to delete bin and rename bat to bin.

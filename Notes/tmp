@@ -1,0 +1,52 @@
+
+From crotwell@seis.sc.edu Tue Aug 18 16:51:40 1998
+Date: Tue, 18 Aug 1998 16:44:16 -0400 (EDT)
+From: Philip Crotwell <crotwell@seis.sc.edu>
+To: Tom Owens <owens@seis.sc.edu>
+Cc: Philip Crotwell <crotwell@seis.sc.edu>
+Subject: TauP status report/ bug fixes
+
+
+Hi
+
+Any beta testing that you want to do is appreciated!
+
+thanks,
+Philip
+
+Recent bug fixes to TauP:
+
+1) P410S is no illegal if this leg starts below the 410 and is downgoing.
+This also makes P410P illegal in the same area, which seems reasonable
+to me.
+
+3) space - comma bug when inputing new phases in interactive mode
+
+5) km/s is nomore, kmps is the only method now.
+
+8) taup_pierce goes backwards for phases that go between 180 and 360
+degrees. (Fixed a week ago)
+
+9) P410P type phases have been fixed. They were getting a path that was
+really Pv410P.
+
+---------------------------------------
+Left to fix:
+
+2) P410S -> P409S on last column
+
+4) taup_table
+
+6) taup_path and last little section to the surface
+
+7) different P and S linestyle in taup_path
+
+10) review and update user's guide
+
+11) add check at cusps of triplications to be sure the corner has been
+found.
+
+------------------------------------------------------------------------
+Philip Crotwell   (803)777-0955  (803)777-0906 fax  crotwell@seis.sc.edu
+------------------------------------------------------------------------
+

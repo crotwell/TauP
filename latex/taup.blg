@@ -1,0 +1,59 @@
+This is BibTeX, Version 0.99c (Web2C 7.3.1)
+The top-level auxiliary file: taup.aux
+A level-1 auxiliary file: titlepage.aux
+A level-1 auxiliary file: disclaimer.aux
+A level-1 auxiliary file: overview.aux
+A level-1 auxiliary file: distribution.aux
+A level-1 auxiliary file: tools.aux
+A level-1 auxiliary file: phaseNaming.aux
+A level-1 auxiliary file: models.aux
+A level-1 auxiliary file: programming.aux
+A level-1 auxiliary file: examples.aux
+A level-1 auxiliary file: install.aux
+A level-1 auxiliary file: trouble.aux
+The style file: bssa_usc.bst
+Database file #1: refs_taup.bib
+Warning--no number and no volume in taupsrl
+Warning--page numbers missing in taupsrl
+You've used 14 entries,
+            2875 wiz_defined-function locations,
+            723 strings with 7134 characters,
+and the built_in function-call counts, 9509 in all, are:
+= -- 816
+> -- 692
+< -- 3
++ -- 214
+- -- 254
+* -- 833
+:= -- 1747
+add.period$ -- 35
+call.type$ -- 14
+change.case$ -- 84
+chr.to.int$ -- 13
+cite$ -- 16
+duplicate$ -- 246
+empty$ -- 566
+format.name$ -- 301
+if$ -- 1768
+int.to.chr$ -- 2
+int.to.str$ -- 0
+missing$ -- 12
+newline$ -- 65
+num.names$ -- 140
+pop$ -- 60
+preamble$ -- 1
+purify$ -- 180
+quote$ -- 0
+skip$ -- 297
+stack$ -- 0
+substring$ -- 471
+swap$ -- 81
+text.length$ -- 3
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 266
+warning$ -- 2
+while$ -- 141
+width$ -- 0
+write$ -- 186
+(There were 2 warnings)

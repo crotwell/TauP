@@ -1,0 +1,9 @@
+#---Properties for the TauP toolkit---
+#
+# this file should be named .taup and placed in either the current directory
+# or the users home directory in order for the taup tools to find it.
+#
+taup.model.name=iasp91
+taup.phase.list=p,s,P,S,Pn,Sn,PcP,ScS,Pdiff,Sdiff,PKP,SKS,PKiKP,SKiKS,PKIKP,SKIKS
+taup.phase.file=/home/crotwell/.phases
+taup.source.depth=0.0

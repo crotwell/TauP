@@ -1,0 +1,50 @@
+ 
+\section{Troubleshooting}
+
+There are a few idiosyncrocies about the codes and Java in general that you may
+run into.
+
+\begin{enumerate}
+
+\item Out of memory errors. By default Java sets its maximum memory to be
+16 megabytes. For most uses this is sufficient, but some very complicated
+models using a large number of phases may exceed this limit. A simple fix is
+to change the maximum memory to be a larger amount. The -mx command line argument
+to the java command does this. So, to set the maximum amount of memory to
+32 megabytes you could say \texttt{java -mx32m edu.sc.seis.TauP.TauP\_Path}.
+For convenience you may wish to make this change more permanent by adding it
+to the scripts, i.e. taup\_time, etc.
+
+\item Garbled jar files. Care should be taken with the jar files when 
+transferring them
+from one operating system to another. Certain file transfer utilities 
+make an attempt
+to \textit{fix} text files by changing \texttt{RETURN LINEFEED} sequences to
+just \texttt{LINEFEED} or just \texttt{RETURN} or vice versa. This is useful for
+real text files, but dangerous for jar files. I have noticed this when 
+transferring
+files between \textsc{Unix} and Macintosh, and it likely can happen 
+between any two
+operating systems with differing end of line identifiers. Using binary mode for
+ftp transactions is likely wise.
+
+\item Trouble with applet and appletviewer. There have been problems with 
+appletviewer
+and the applet related to the CLASSPATH. For the applet to work, 
+taup.jar needs to
+be in the CLASSPATH. However, other files in the CLASSPATH may confuse either
+the applet when it looks for models, or cause the appletviewer to not run at all
+with any applets. If you experience any problems with TauPApplet or 
+appletviewer in
+general, try running with a simplified CLASSPATH.  For example, on
+\textsc{Unix} machines in the csh:
+\begin{verbatim}
+setenv CLASSPATH /path/to/the/jar/taup.jar
+appletviewer taup.html
+\end{verbatim}
+
+\item Trouble with bat files. I don't use windows and so I do not know if the
+bat files are really useful or not. If you find a better method, I would be 
+happy to include it.
+\end{enumerate}
+

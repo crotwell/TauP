@@ -1,0 +1,282 @@
+This is TeX, Version 3.14159 (Web2C 7.3.1) (format=latex 1999.9.21)  9 FEB 2001 09:56
+**taup
+(taup.tex
+LaTeX2e <1998/12/01> patch level 1
+Babel <v3.6x> and hyphenation patterns for american, french, german, ngerman, n
+ohyphenation, loaded.
+(/opt/local/External/teTeX/share/texmf/tex/latex/base/article.cls
+Document Class: article 1999/01/07 v1.4a Standard LaTeX document class
+(/opt/local/External/teTeX/share/texmf/tex/latex/base/size10.clo
+File: size10.clo 1999/01/07 v1.4a Standard LaTeX file (size option)
+)
+\c@part=\count79
+\c@section=\count80
+\c@subsection=\count81
+\c@subsubsection=\count82
+\c@paragraph=\count83
+\c@subparagraph=\count84
+\c@figure=\count85
+\c@table=\count86
+\abovecaptionskip=\skip41
+\belowcaptionskip=\skip42
+\bibindent=\dimen102
+)
+(bssa_usc.sty
+Using BSSA (USC) Style bibliography: 31 August 1998
+\bibhang=\skip43
+\bibindent=\dimen103
+) (/opt/local/External/teTeX/share/texmf/tex/latex/psnfss/times.sty
+Package: times 1999/03/29 PSNFSS v.7.2 Times font as default roman : S Rahtz
+) (taup.aux
+(titlepage.aux) (disclaimer.aux) (overview.aux) (distribution.aux) (tools.aux)
+(phaseNaming.aux) (models.aux) (programming.aux) (examples.aux) (install.aux)
+(trouble.aux))
+\openout1 = `taup.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 24.
+LaTeX Font Info:    ... okay on input line 24.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 24.
+LaTeX Font Info:    ... okay on input line 24.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 24.
+LaTeX Font Info:    ... okay on input line 24.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 24.
+LaTeX Font Info:    ... okay on input line 24.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 24.
+LaTeX Font Info:    ... okay on input line 24.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 24.
+LaTeX Font Info:    ... okay on input line 24.
+LaTeX Font Info:    Try loading font information for OT1+ptm on input line 24.
+
+(/opt/local/External/teTeX/share/texmf/tex/latex/psnfss/ot1ptm.fd
+File: ot1ptm.fd 1998/07/06 Fontinst v1.800 font definitions for OT1/ptm.
+)
+\openout2 = `titlepage.aux'.
+
+
+(titlepage.tex
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <17.28> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 11.
+ [1
+
+
+])
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <14.4> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 36.
+ (taup.toc
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <10> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 1.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <7> on input line 3.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <5> on input line 3.
+ [1
+
+])
+\tf@toc=\write3
+\openout3 = `taup.toc'.
+
+ [2]
+\openout2 = `disclaimer.aux'.
+
+ (disclaimer.tex
+LaTeX Font Info:    Try loading font information for OT1+pcr on input line 3.
+
+(/opt/local/External/teTeX/share/texmf/tex/latex/psnfss/ot1pcr.fd
+File: ot1pcr.fd 1998/07/06 Fontinst v1.800 font definitions for OT1/pcr.
+)
+Overfull \hbox (8.595pt too wide) in paragraph at lines 29--29
+[]  \OT1/pcr/m/n/10 Foun-da-tion, Inc., 59 Tem-ple Place - Suite 330, Boston, M
+A  02111-1307, USA.[] 
+ []
+
+) [3
+
+]
+\openout2 = `overview.aux'.
+
+ (overview.tex) [1
+
+
+]
+\openout2 = `distribution.aux'.
+
+ (distribution.tex
+LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <12> not available
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 5.
+ [2
+
+
+]) [3]
+\openout2 = `tools.aux'.
+
+ (tools.tex
+LaTeX Font Info:    Try loading font information for OMS+pcr on input line 34.
+
+(/opt/local/External/teTeX/share/texmf/tex/latex/psnfss/omspcr.fd
+File: omspcr.fd 
+)
+LaTeX Font Info:    Font shape `OMS/pcr/m/n' in size <10> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 34.
+ [4
+
+
+] [5]
+[6]
+Overfull \hbox (26.595pt too wide) in paragraph at lines 277--277
+[]\OT1/pcr/m/n/10 -rev               -- only prints un-der-side and bot-tom tur
+n points, e.g. ^ and v[] 
+ []
+
+[7]
+Overfull \hbox (32.595pt too wide) in paragraph at lines 277--277
+[]\OT1/pcr/m/n/10 -nodiscon          -- only prints pierce points for the depth
+s added with -pierce[] 
+ []
+
+
+Overfull \hbox (42.195pt too wide) in paragraph at lines 304--305
+[]\OT1/pcr/m/n/10 taup[]pierce -mod prem -h 200 -ph S -sta 12 34.2 -evt -28 122
+ -pierce 2591 -nodiscon 
+ []
+
+
+Overfull \hbox (44.595pt too wide) in paragraph at lines 318--318
+[]\OT1/pcr/m/n/10 > S at 1424.1 sec-onds at 93.7 de-grees for a 200.0 km deep s
+ource in the prem model.[] 
+ []
+
+[8] [9]
+Overfull \hbox (32.595pt too wide) in paragraph at lines 430--430
+[]\OT1/pcr/m/n/10 -o out-file         -- out-put is redi-rected to "out-file" i
+n-stead of taup_curve.gmt[] 
+ []
+
+[10] [11] [12]) [13]
+\openout2 = `phaseNaming.aux'.
+
+ (phaseNaming.tex [14
+
+
+] [15]) [16]
+\openout2 = `models.aux'.
+
+ (models.tex
+Overfull \hbox (20.595pt too wide) in paragraph at lines 70--70
+[]\OT1/pcr/m/n/10 outer-core      # "outer-core" des-ig-nates that this is the 
+core man-tle boundary[] 
+ []
+
+[17
+
+
+]) [18]
+\openout2 = `programming.aux'.
+
+ (programming.tex [19
+
+
+] [20]
+Overfull \hbox (2.595pt too wide) in paragraph at lines 206--206
+[]\OT1/pcr/m/n/10 for {set eventIn-dex 0} {$eventIn-dex < [ar-ray size elat]} {
+incr eventIn-dex} {[] 
+ []
+
+
+Overfull \hbox (14.595pt too wide) in paragraph at lines 206--206
+[]         \OT1/pcr/m/n/10 puts [for-mat "(%-7.3f, %-7.3f) $name from event num
+-ber $eventIn-dex" \[] 
+ []
+
+[21] [22]) [23]
+\openout2 = `examples.aux'.
+
+ (examples.tex [24
+
+
+] [25]
+Overfull \hbox (32.595pt too wide) in paragraph at lines 168--168
+[]\OT1/pcr/m/n/10 piglet 5>taup_time -mod sim-ple-Mod -h 143.2 -deg 75 -ph P,S,
+PcP,ScS,SKS,sS,SS,PKKP[] 
+ []
+
+
+Overfull \hbox (2.595pt too wide) in paragraph at lines 196--196
+[]\OT1/pcr/m/n/10 > P at 686.33 sec-onds at 75.0 de-grees for a 143.2 km deep s
+ource in the sim-
+ []
+
+
+Overfull \hbox (8.595pt too wide) in paragraph at lines 196--196
+[]\OT1/pcr/m/n/10 > S at 1263.17 sec-onds at 75.0 de-grees for a 143.2 km deep 
+source in the sim-
+ []
+
+
+Overfull \hbox (14.595pt too wide) in paragraph at lines 196--196
+[]\OT1/pcr/m/n/10 > PcP at 700.51 sec-onds at 75.0 de-grees for a 143.2 km deep
+ source in the sim-
+ []
+
+[26]
+Overfull \hbox (20.595pt too wide) in paragraph at lines 196--196
+[]\OT1/pcr/m/n/10 > ScS at 1298.74 sec-onds at 75.0 de-grees for a 143.2 km dee
+p source in the sim-
+ []
+
+
+Overfull \hbox (20.595pt too wide) in paragraph at lines 196--196
+[]\OT1/pcr/m/n/10 > SKS at 1293.35 sec-onds at 75.0 de-grees for a 143.2 km dee
+p source in the sim-
+ []
+
+
+Overfull \hbox (14.595pt too wide) in paragraph at lines 196--196
+[]\OT1/pcr/m/n/10 > sS at 1326.73 sec-onds at 75.0 de-grees for a 143.2 km deep
+ source in the sim-
+ []
+
+
+Overfull \hbox (14.595pt too wide) in paragraph at lines 196--196
+[]\OT1/pcr/m/n/10 > SS at 1571.74 sec-onds at 75.0 de-grees for a 143.2 km deep
+ source in the sim-
+ []
+
+
+Overfull \hbox (8.595pt too wide) in paragraph at lines 238--238
+[]\OT1/pcr/m/n/10 piglet 12>taup_curve -mod sim-ple-Mod -h 143.2 -ph P,S,PcP,Sc
+S,SKS,sS,SS,PKKP \[] 
+ []
+
+) [27]
+\openout2 = `install.aux'.
+
+ (install.tex [28
+
+
+]
+Overfull \hbox (51.59503pt too wide) in paragraph at lines 87--87
+ []\OT1/pcr/m/n/10 setenv CLASS-PATH /usr/local/classes/taup.jar:/usr/local/jdk
+1.1.6/lib/classes.zip[] 
+ []
+
+) [29] [30]
+\openout2 = `trouble.aux'.
+
+ (trouble.tex) [31
+
+
+] (taup.bbl) [32
+
+] (taup.aux (titlepage.aux)
+(disclaimer.aux) (overview.aux) (distribution.aux) (tools.aux) (phaseNaming.aux
+) (models.aux) (programming.aux) (examples.aux) (install.aux) (trouble.aux)) ) 
+Here is how much of TeX's memory you used:
+ 401 strings out of 10901
+ 4541 string characters out of 71897
+ 53627 words of memory out of 263001
+ 3354 multiletter control sequences out of 10000+0
+ 10231 words of font info for 27 fonts, out of 400000 for 1000
+ 14 hyphenation exceptions out of 1000
+ 24i,9n,19p,654b,329s stack positions out of 300i,100n,500p,50000b,4000s
+
+Output written on taup.dvi (36 pages, 120556 bytes).

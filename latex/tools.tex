@@ -1,0 +1,596 @@
+
+\section{Tools}
+
+Tools included with the TauP package:
+
+\begin{center}
+\begin{tabular}{lp{3.2in}}
+
+\texttt{taup\_time} & 
+  calculates travel times. \\
+\texttt{taup\_pierce} & 
+  calculates pierce points at model discontinuities and specified depths. \\
+\texttt{taup\_path} & calculates ray paths, depth versus epicentral distance. \\
+\texttt{taup} & a GUI that incorporates the time, pierce and path tools. This
+requires swing, and hence may not work on some java1.1 systems. \\
+\texttt{taup\_curve} & 
+  calculates travel time curves, time versus epicentral distance. \\
+\texttt{taup\_table} & outputs travel times for a range of depths and distances in an ASCII file \\
+\texttt{taup\_setsac} & 
+  puts theoretical arrival times into sac header variables. \\
+\texttt{taup\_create} & 
+  creates a .taup model from a velocity model. \\
+\texttt{taup\_peek} & peeks at a saved model, useful only for debugging. \\
+\end{tabular}
+\end{center}
+
+Each tool is a Java application and has an associated wrapper to make
+execution easier: sh scripts 
+for \textsc{Unix}, JBindary double-clickable app;ications for MacOS, and
+bat files for windows.  The applications are machine independent but the 
+wrappers are OS specific. 
+For example, to invoke TauP\_Time under \textsc{Unix}, you could type
+
+\texttt{java -Dtaup.model.path=\$\{TAUPPATH\} edu.sc.seis.TauP.TauP\_Time -mod prem}
+
+or simply use the script that does the same thing,
+
+\texttt{taup\_time -mod prem}
+
+Each tool has a \texttt{-help} flag that will print a usage summary, as well
+as a \texttt{-version} flag that will print the version.
+
+\subsection{Default Parameters} \label{properties}
+
+Each of the tools use Java Properties to allow the user to specify values 
+for various
+parameters. The properties all have default values, which are overridden by
+values from a Properties file. The tools use \texttt{.taup} in the 
+current directory, which overwrites values read in from 
+\texttt{.taup} in the user's home directory.
+In addition, many of the properties can be overridden by command line arguments.
+
+The form of the properties file is very simple. Each property is set using
+the form 
+\begin{verbatim}
+taup.property.name=value
+\end{verbatim}
+ one property per line.
+Comment lines are allowed, and begin with a \texttt{\#}.
+Additionally, the names of all of the properties follow a convention of
+prepending ``\texttt{taup.}'' to the name of the property. 
+This helps to avoid name collisions when new properties
+are added.
+
+The currently used properties are:
+\begin{description}
+
+\item[taup.model.name] the name of the initial model to be loaded, 
+iasp91 by default. 
+\item[taup.model.path] search path for models. There is no default, 
+but the value
+in the .taup file will be concatinated with any value of taup.model.path 
+from the system properties. For example, the environment variable TAUPPATH
+is put into the system property taup.model.path by the wrapper shell scripts. 
+\item[taup.source.depth] initial depth of the source, 0.0 km by default. 
+\item[taup.phase.list] initial phase list, combined with taup.phase.file. The
+defaults are p, s, P, S, Pn, Sn, PcP, ScS, Pdiff, Sdiff, PKP, SKS, PKiKP, 
+SKiKS, PKIKP, SKIKS.  
+\item[taup.phase.file] initial phase list, combined with taup.phase.list. There
+is no default value, but the default value for taup.phase.list will not be 
+used if there is a taup.phase.file property.
+\item[taup.depth.precision] precision for depth output, the default is 1 decimal digit.
+ Note that this is precision, not accuracy. Just 
+because you get more digits doesn't imply that they have any meaning.
+\item[taup.distance.precision] precision for distance output, 
+the default is 2 decimal digits.
+Note that this 
+is precision, not accuracy. Just because you get more
+digits doesn't imply that they have any meaning.
+\item[taup.latlon.precision] precision for latitude and longitude output, the
+default is 2 decimal digits. 
+Note that this is precision, not accuracy. Just because you get more
+digits doesn't imply that they have any meaning.
+\item[taup.time.precision] precision for time, the default is 2 decimal digits.
+Note that this is precision, not accuracy. Just because you get more
+digits doesn't imply that they have any meaning.
+\item[taup.rayparam.precision] precision for ray parameter, the default is 3 decimal digits.
+Note that this is precision, not accuracy. Just because you get more
+ digits doesn't imply that they have any meaning.
+\item[taup.table.locsat.maxdiff] maximum distance in degrees for which Pdiff 
+or Sdiff are put into a locsat table. Beyond this distance Pdiff and Sdiff will 
+not be added to the table, even though they may show up in the output of 
+TauP\_Time. Instead, the next later arriving phase, if any, will be used 
+instead. The default is 105 degrees.
+\item[taup.create.minDeltaP] Minimum difference in slowness between 
+successive slowness samples. This is used to decide when to stop adding new 
+samples due to the distance check.
+Used by TauP\_Create to create new models. 
+The default is 0.1 sec/rad. 
+\item[taup.create.maxDeltaP] Maximum difference in slowness between 
+successive slowness samples. This is used to split any layers that exceed
+this slowness gap.
+Used by TauP\_Create to create new models. 
+ The default is 8.0 sec/rad. 
+\item[taup.create.maxDepthInterval] Maximum difference between successive depth 
+samples. This is used immediately after reading in a velocity model, with
+layers being split as needed.
+Used by TauP\_Create to create new models. 
+ The default is 115 km. 
+\item[taup.create.maxRangeInterval] Maximum difference between successive 
+ranges, in degrees. If the difference in distance for two adjacent rays
+is greater than this, then a new slowness sample is inserted halfway between
+the two existing slowness samples.
+The default is 1.75 degrees.
+\item[taup.create.maxInterpError] Maximum error for linear interpolation
+ between successive sample in seconds. TauP\_Create uses this to try to insure
+that the maximum error due to linear interpolation is less than this amount.
+Of course, this is only an approximation based upon an estimate of the
+ curvature of the travel time curve for surface focus turning waves. 
+In particular, the error for more complicated phases is greater. For instance,
+if the true error for P at 30 degrees is 0.03 seconds, then the error for
+PP at 60 degrees would be twice that, 0.06 seconds.
+Used by TauP\_Create to create new models. The default is 0.03 seconds.
+\item[taup.create.allowInnerCoreS] Should we allow J phases, S in 
+the inner core?
+Used by TauP\_Create to create new models. 
+ The default is true. Setting it to false slightly reduces storage and model 
+load time.
+\end{description}
+
+Phase files, specified with the taup.phase.file property,
+ are just text files with phase names, separated by either 
+spaces, commas or newlines. In section \ref{phasenaming} the details of 
+the phase naming convention are introduced. 
+By and large, it is compatible with traditional 
+seismological naming conventions, with a few additions and exceptions.
+Also, for compatiblity with \textit{ttimes}, you may specify 
+\texttt{ttp}, \texttt{ttp+}, \texttt{tts}, \texttt{tts+},
+\texttt{ttbasic} or \texttt{ttall} to get a phase list corresponding 
+to the \textit{ttimes} options.
+
+\subsection{TauP\_Time}
+TauP\_Time takes a {\texttt .taup} file generated by TauP\_Create and generates 
+travel times for specified phases through the given earth model. 
+
+The usage is:
+\begin{verbatim}
+piglet 1>taup_time -help
+Usage: taup_time [arguments]
+  or, for purists, java edu.sc.seis.TauP.TauP_Time [arguments]
+
+Arguments are:
+-ph phase list     -- comma separated phase list
+-pf phasefile      -- file containing phases
+
+-mod[el] modelname -- use velocity model "modelname" for calculations
+                      Default is iasp91.
+
+-h depth           -- source depth in km
+
+Distance is given by:
+
+-deg degrees       -- distance in degrees,
+-km kilometers     -- distance in kilometers,
+                      assumes radius of earth is 6371km,
+
+or by giving the station and event latitude and lonitude,
+                      assumes a spherical earth,
+
+-sta[tion] lat lon -- sets the station latitude and longitude
+-evt       lat lon -- sets the event latitude and longitude
+
+
+-rayp              -- only output the ray parameter
+-time              -- only output travel time
+
+-o outfile         -- output is redirected to "outfile"
+-debug             -- enable debugging output
+-verbose           -- enable verbose output
+-version           -- print the version
+-help              -- print this out, but you already know that!
+\end{verbatim} 
+
+The modelname is from \texttt{modelname.taup}, a previously created file 
+from TauP\_Create. 
+If there is insufficient information given on the command line, then you start
+in interactive mode, otherwise it assumes you only want one set of times.
+
+The phases are specified on the command line with the -ph option,
+in a phase file with the -pf option, or in a properties file.
+The model, phases, depth and distance can be changed within the interactive
+section of TauP\_Time.
+
+For example: \texttt{taup\_time -mod prem -h 200 -ph S,P -deg 57.4}
+
+gives you arrival times for S and P for a 200 kilometer
+deep source at a distance of 57.4 degrees.
+\begin{verbatim}
+piglet 2>taup_time -mod prem -h 200 -ph S,P -deg 57.4
+
+Model: prem
+Distance   Depth   Phase   Travel    Ray Param   Purist    Purist
+  (deg)     (km)   Name    Time (s)  p (s/deg)  Distance   Name
+----------------------------------------------------------------
+    57.4   200.0   P        566.77     6.968       57.4  = P    
+    57.4   200.0   S       1028.60    13.018       57.4  = S
+\end{verbatim}
+
+\subsection{TauP\_Pierce}
+
+TauP\_Pierce uses a \texttt{.taup} file generated by 
+TauP\_Create to determine the
+angular distances from the epicenter at which the specified rays pierce 
+discontinuities or specified depths in the model.
+
+The usage is:
+\begin{verbatim}
+piglet 3>taup_pierce -help
+Usage: taup_pierce [arguments]
+  or, for purists, java edu.sc.seis.TauP.TauP_Pierce [arguments]
+
+Arguments are:
+-ph phase list     -- comma separated phase list
+-pf phasefile      -- file containing phases
+
+-mod[el] modelname -- use velocity model "modelname" for calculations
+                      Default is iasp91.
+
+-h depth           -- source depth in km
+
+Distance is given by:
+
+-deg degrees       -- distance in degrees,
+-km kilometers     -- distance in kilometers,
+                      assumes radius of earth is 6371km,
+
+or by giving the station and event latitude and lonitude,
+                      assumes a spherical earth,
+
+-sta[tion] lat lon -- sets the station latitude and longitude
+-evt       lat lon -- sets the event latitude and longitude
+
+
+-az azimuth        -- sets the azimuth (event to station)
+                      used to output lat and lon of pierce points
+                      if the event lat lon and distance are also
+                      given. Calculated if station and event
+                      lat and lon are given.
+-baz backazimuth   -- sets the back azimuth (station to event)
+                      used to output lat and lon of pierce points
+                      if the station lat lon and distance are also
+                      given. Calculated if station and event
+                      lat and lon are given.
+
+-rev               -- only prints underside and bottom turn points, e.g. ^ and v
+-turn              -- only prints bottom turning points, e.g. v
+-under             -- only prints underside reflection points, e.g. ^
+
+-pierce depth      -- adds depth for calculating pierce points
+-nodiscon          -- only prints pierce points for the depths added with -pierce
+
+-o outfile         -- output is redirected to "outfile"
+-debug             -- enable debugging output
+-verbose           -- enable verbose output
+-version           -- print the version
+-help              -- print this out, but you already know that!
+\end{verbatim} 
+ 
+The \texttt{-rev}, \texttt{-turn} and \texttt{-under} flags are useful 
+for limiting the output
+to just those points you care about. The \texttt{-pierce depth} option 
+allows you
+to specify a ``pierce'' depth that does not correspond to an
+actual discontinuity. For instance, where does a ray pierce 300 kilometers
+above the CMB?
+
+For example:
+
+\texttt{taup\_pierce -mod prem -h 200 -ph S,P -deg 57.4}
+
+would give you pierce points for S, and P for a 200 kilometer
+deep source at a distance of 57.4 degrees. 
+
+While
+
+\texttt{taup\_pierce -turn -mod prem -h 200 -ph S,P -deg 57.4}
+
+would give you just the points that each ray turns from downgoing to upgoing.
+
+Using \texttt{-rev} would give you all points that the ray changes direction and \texttt{-under} gives just the underside reflections. 
+
+Using the \texttt{-pierce} option
+
+\texttt{taup\_pierce -mod prem -h 200 -ph S -sta 12 34.2 -evt -28 122 -pierce 2591 -nodiscon}
+
+would give you just the points at which S crossed a depth of 2591 kilometers
+from an event at ($28^\circ$ S, $122^\circ$ E)
+to a station at ($12^\circ$ N, $34.2^\circ$ E). 
+Because we specified the latitudes and longitudes, we also get the 
+latitudes and longitudes of 
+the pierce points, useful for making
+a map view of where the rays encounter the chosen depth. Here is the output,
+distance, depth, latitude and longitude, respectively.
+\begin{verbatim}
+> S at 1424.1 seconds at 93.7 degrees for a 200.0 km deep source in the prem model.
+   31.58 2591.00    -17.86     89.39
+   61.44 2591.00     -3.90     62.43
+\end{verbatim}
+
+\subsection{TauP\_Path}
+TauP\_Path takes a \texttt{.taup} file generated by TauP\_Create and generates the
+path that the phases travel. The output is in GMT~\cite{GMT} ``psxy'' format, and is
+placed into the file ``taup\_path.gmt''. 
+If you specify the ``-gmt'' flag then this 
+is a complete script with the appropriate ``psxy'' command prepended, so if you
+have GMT installed, you can just:
+
+\begin{verbatim}
+taup_path -mod iasp91 -h 550 -deg 74 -ph S,ScS,sS,sScS -gmt
+sh taup_path.gmt
+ghostview taup_path.ps
+\end{verbatim}
+
+and you have a plot of the ray paths. To avoid possible plotting errors for
+phases like \texttt{Sdiff}, the ray paths are interpolated to less than 
+1 degree increments.
+
+The usage is:
+\begin{verbatim}
+piglet 5>taup_path -help
+Usage: taup_path [arguments]
+  or, for purists, java edu.sc.seis.TauP.TauP_Path [arguments]
+
+Arguments are:
+-ph phase list     -- comma separated phase list
+-pf phasefile      -- file containing phases
+
+-mod[el] modelname -- use velocity model "modelname" for calculations
+                      Default is iasp91.
+
+-h depth           -- source depth in km
+
+Distance is given by:
+
+-deg degrees       -- distance in degrees,
+-km kilometers     -- distance in kilometers,
+                      assumes radius of earth is 6371km,
+
+or by giving the station and event latitude and lonitude,
+                      assumes a spherical earth,
+
+-sta[tion] lat lon -- sets the station latitude and longitude
+-evt       lat lon -- sets the event latitude and longitude
+
+
+-gmt             -- outputs path as a complete GMT script.
+
+-o outfile         -- output is redirected to "outfile"
+-debug             -- enable debugging output
+-verbose           -- enable verbose output
+-version           -- print the version
+-help              -- print this out, but you already know that!
+\end{verbatim} 
+
+\subsection{TauP}
+TauP is unlike the rest of the tools in that it doesn't have any functionality
+ beyond the other tools. It is just a GUI that uses TauP\_Time, TauP\_Pierce
+and TauP\_Path. This is a nice feature of the java language in that each of 
+these applications exists simultaneously as a library. The GUI does not 
+currently have full access to all the things that these 
+three tools can do, and certainly has a few rough edges, but can be useful
+for browsing. Lastly, it currently does more work than it has to in that it
+always calculates times, pierce points and paths, even if only one is actually
+needed. So, it may be a bit pokey.
+
+\subsection{TauP\_Curve}
+TauP\_Curve creates a GMT style xy formated file of time versus distance. 
+This can be used to create the familar travel time curves, but for
+only the specified phases and depth. The curves are linearly interpolated 
+between known sample points, and can thus be used to get a feel for the 
+coarseness of sampling. For example, curves for s, S, ScS and Sdiff
+for a 500 kilometer deep event in PREM could be generated by:
+
+\texttt{taup\_curve -mod prem -h 500 -ph s,S,ScS,Sdiff -gmt}
+
+The \texttt{-gmt} option prepends a GMT \texttt{psxy} command to the output 
+file, creating a runnable script instead of just a data file. 
+The output is put in taup\_curve.gmt by default, so to view the results:
+
+\begin{verbatim}
+sh taup_curve.gmt
+ghostview taup_curve.ps
+\end{verbatim}
+
+The uasage is:
+\begin{verbatim}
+piglet 6>taup_curve -help
+Usage: taup_curve [arguments]
+  or, for purists, java edu.sc.seis.TauP.TauP_Curve [arguments]
+
+Arguments are:
+-ph phase list     -- comma separated phase list
+-pf phasefile      -- file containing phases
+
+-mod[el] modelname -- use velocity model "modelname" for calculations
+                      Default is iasp91.
+
+-h depth           -- source depth in km
+
+
+-gmt               -- outputs curves as a complete GMT script.
+-reddeg velocity   -- outputs curves with a reducing velocity (deg/sec).
+-redkm velocity    -- outputs curves with a reducing velocity (km/sec).
+
+-o outfile         -- output is redirected to "outfile" instead of taup_curve.gmt
+-debug             -- enable debugging output
+-verbose           -- enable verbose output
+-version           -- print the version
+-help              -- print this out, but you already know that!
+\end{verbatim} 
+ 
+\subsection{TauP\_SetSac}
+TauP\_SetSac uses the depth and distance information in 
+\textsc{sac}~\cite{sacmanual}
+ file headers to
+put theoretical arrival times into the \texttt{t0}--\texttt{t9}
+header variables. The header variable for a phase can be specified with by
+a dash followed by a number, for instance \texttt{S-9} puts the S arrival time
+in \texttt{t9}. If no header is specified then the time will be inserted in the
+first header variable not allocated to another phase, starting with 0.
+If there are no header variables not already allocated to a phase, then the
+additional phases will not be added to the header. Note that this does not refer to times that are already in the \textsc{sac} file before TauP\_SetSac is run. They will be overwritten. 
+
+Note that triplicated phases are a problem as there is only one
+spot to put a time. For example, in iasp91 S has three arrivals at 20~degrees but only
+one can be put into the choosen header. TauP\_SetSac assumes that the first arrival
+is the most important, and uses it. An improved method would allow a phase to have several
+header variables associated with it, so that all arrivals could be marked. Currently
+however, only the first arrival for a phase name is used.
+ 
+\textbf{Warning:} TauP\_SetSac assumes the \textsc{evdp} header has depth in meters unless 
+the -evdpkm
+flag is used, in which case kilometers are assumed. This may be a problem for
+users that improperly use kilometers for the depth units. Due to much
+abuse of the \textsc{sac} depth header units, a warning message is
+printed if the depth
+appears to be in kilometers, i.e. it is $< 1000$, and -evdpkm is not used.
+This can be safely ignored
+if the event really is less than 1000 meters deep. See the \textsc{sac} 
+manual~\cite{sacmanual} for confirmation.
+ 
+The \textsc{sac} files must have \textsc{evdp} and the \textsc{o} marker set. 
+Also, if \textsc{gcarc} or \textsc{dist} is not
+set then TauP\_SetSac can calculate a distance only if 
+\textsc{stla}, \textsc{stlo}, \textsc{evla} and \textsc{evlo}
+are set.
+ 
+The user should be very careful about previously set header variables. 
+TauP\_SetSac will
+overwrite any previously set \texttt{t} headers. A future feature may do
+more careful checking, but the current version makes no effort to verify that 
+the header is undefined before writing.
+
+
+The usage is:
+\begin{verbatim}
+piglet 7>taup_setsac -help
+Usage: taup_setsac [arguments]
+  or, for purists, java edu.sc.seis.TauP.TauP_SetSac [arguments]
+
+Arguments are:
+-ph phase list     -- comma separated phase list,
+                      use phase-# to specify the sac header,
+                      for example, ScS-8 puts ScS in t8
+-pf phasefile      -- file containing phases
+
+-mod[el] modelname -- use velocity model "modelname" for calculations
+                      Default is iasp91.
+
+-evdpkm            -- sac depth header is in km, default is meters
+
+
+-debug             -- enable debugging output
+-verbose           -- enable verbose output
+-version           -- print the version
+-help              -- print this out, but you already know that!
+
+sacfilename [sacfilename ...]
+
+Ex: taup_setsac -mod S_prem -ph S-8,ScS-9 wmq.r wmq.t wmq.z
+puts the first S arrival in T8 and ScS in T9
+\end{verbatim} 
+
+\subsection{TauP\_Table}
+
+TauP\_Table creates an ASCII table of arrival times for a range of depths and
+distances. Its main use is for generating travel time tables for earthquake
+location programs such as LOCSAT. The \texttt{-generic} flag generates a flat
+table with all arrivals at each depth and distance, one arrival per line.
+The \texttt{-locsat} flag generates a LOCSAT style travel time table with
+only the first arrival of all the phases listed at each distance and depth.
+Thus, the program must be run several times in order to generate files for 
+several phases. Also, both options write to standard out unless a file is
+given with the -o flag.
+
+The usage is:
+\begin{verbatim}
+piglet 1>taup_table -help
+Usage: taup_table [arguments]
+  or, for purists, java edu.sc.seis.TauP.TauP_Table [arguments]
+
+Arguments are:
+-ph phase list     -- comma separated phase list
+-pf phasefile      -- file containing phases
+
+-mod[el] modelname -- use velocity model "modelname" for calculations
+                      Default is iasp91.
+
+
+-header filename   -- reads depth and distance spacing data
+                      from a LOCSAT style file.
+-generic           -- outputs a "generic" ascii table
+-locsat            -- outputs a "locsat" style ascii table
+
+
+-o outfile         -- output is redirected to "outfile"
+-debug             -- enable debugging output
+-verbose           -- enable verbose output
+-version           -- print the version
+-help              -- print this out, but you already know that!
+\end{verbatim}
+
+\subsection{TauP\_Create}
+
+TauP\_Create takes a ASCII velocity model file, samples the model
+ and saves the tau model to a binary file. 
+The output file holds all 
+information about the model and need only be computed once. It
+is used by all of the other tools. There are several parameters controlling
+the density of sampling. Their values can be set with properties. See section
+\ref{properties}, above.
+
+The usage is:
+\begin{verbatim}
+piglet 8>taup_create -help
+TauP_Create starting...
+Usage: taup_create [arguments]
+  or, for purists, java edu.sc.seis.TauP.TauP_Create [arguments]
+
+Arguments are:
+
+   To specify the velocity model:
+-nd modelfile       -- "named discontinuities" velocity file
+-tvel modelfile     -- ".tvel" velocity file, ala ttimes
+
+-debug              -- enable debugging output
+-verbose            -- enable verbose output
+-version            -- print the version
+-help               -- print this out, but you already know that!
+\end{verbatim} 
+ 
+\texttt{modelfile} is the ASCII text file holding the velocity model.
+The \texttt{-nd} format is preferred 
+because the depths, and thus identities, of the major internal boundaries can 
+be unambiguously determined, making phase name parsing easier. 
+See section \ref{exampleCreate} for an example.
+For compatiblity, we support the \texttt{-tvel} format 
+currently used by the latest ttimes package,~\shortcite{kennett:ak135}. 
+
+The output will be a file named after the name of the 
+velocity file, followed by \texttt{.taup}. For example
+
+\texttt{taup\_create -nd prem.nd}
+
+produces \texttt{prem.taup}.
+
+\subsection{TauP\_Peek}
+TauP\_Peek is mainly for debugging, it just lets you peek at the insides
+of a model generated with TauP\_Create. The user interface (if you can call it
+that) is pretty weak, but it came in handy as I was building the codes.
+
+The usage is:
+\begin{verbatim}
+taup_peek -mod[el] modelfile
+\end{verbatim} 
+

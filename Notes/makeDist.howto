@@ -1,0 +1,25 @@
+in src:
+	update version number and date in headers
+	update Version.java
+	make jar
+	make jdoc
+		or javadoc -d ../html edu.sc.seis.TauP 
+         with CLASSPATH set correctly
+	rm ../edu/sc/seis/TauP/*.java
+
+in latex:
+	texclean
+	rm taup.ps
+	make 
+
+in distribution
+	update version number in Makefile
+	make 
+	tar -tf TauP.x.xx.tar.gz and look for files
+		
+
+put TauPx.xx.tar.gz on the web page, using BINARY ftp
+update links for ftp and http transfer
+ftp it back from www.geol to make sure it was sent bin instead of ascii
+
+

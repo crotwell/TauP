@@ -1,0 +1,36 @@
+\BOOKMARK [1]{section.1}{Overview}{}
+\BOOKMARK [1]{section.2}{Distribution}{}
+\BOOKMARK [2]{subsection.2.1}{What and Where}{section.2}
+\BOOKMARK [2]{subsection.2.2}{Pros and Cons of the Current Release}{section.2}
+\BOOKMARK [2]{subsection.2.3}{Future Plans}{section.2}
+\BOOKMARK [1]{section.3}{Tools}{}
+\BOOKMARK [2]{subsection.3.1}{Default Parameters}{section.3}
+\BOOKMARK [2]{subsection.3.2}{TauP\137Time}{section.3}
+\BOOKMARK [2]{subsection.3.3}{TauP\137Pierce}{section.3}
+\BOOKMARK [2]{subsection.3.4}{TauP\137Path}{section.3}
+\BOOKMARK [2]{subsection.3.5}{TauP}{section.3}
+\BOOKMARK [2]{subsection.3.6}{TauP\137Curve}{section.3}
+\BOOKMARK [2]{subsection.3.7}{TauP\137SetSac}{section.3}
+\BOOKMARK [2]{subsection.3.8}{TauP\137Table}{section.3}
+\BOOKMARK [2]{subsection.3.9}{TauP\137Create}{section.3}
+\BOOKMARK [2]{subsection.3.10}{TauP\137Peek}{section.3}
+\BOOKMARK [1]{section.4}{Phase naming in TauP}{}
+\BOOKMARK [1]{section.5}{Creating and Saving Velocity Models}{}
+\BOOKMARK [2]{subsection.5.1}{Velocity Model Files}{section.5}
+\BOOKMARK [2]{subsection.5.2}{Using Saved Tau Models}{section.5}
+\BOOKMARK [1]{section.6}{Programming Interface}{}
+\BOOKMARK [2]{subsection.6.1}{Java}{section.6}
+\BOOKMARK [2]{subsection.6.2}{Jacl}{section.6}
+\BOOKMARK [2]{subsection.6.3}{C}{section.6}
+\BOOKMARK [1]{section.7}{Examples}{}
+\BOOKMARK [2]{subsection.7.1}{Velocity Model Files}{section.7}
+\BOOKMARK [2]{subsection.7.2}{Creating the Model}{section.7}
+\BOOKMARK [2]{subsection.7.3}{Travel Times}{section.7}
+\BOOKMARK [2]{subsection.7.4}{Pierce Points}{section.7}
+\BOOKMARK [2]{subsection.7.5}{Path}{section.7}
+\BOOKMARK [2]{subsection.7.6}{Travel Time Curves}{section.7}
+\BOOKMARK [1]{section.A}{Installing}{}
+\BOOKMARK [2]{subsection.A.1}{Unix}{section.A}
+\BOOKMARK [2]{subsection.A.2}{MacOS}{section.A}
+\BOOKMARK [2]{subsection.A.3}{Windows}{section.A}
+\BOOKMARK [1]{section.B}{Troubleshooting}{}

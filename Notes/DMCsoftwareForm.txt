@@ -1,0 +1,48 @@
+
+
+SOFTWARE INFORMATION FORM
+
+Contributor Name: 
+	
+Institution: 
+
+Email address: 
+ 	
+Program Name: 
+
+Version Number: 
+
+Distribution Date: 
+ 
+Description: ( 1 line):   	
+
+Details:  
+
+
+
+
+	
+Associated Programs:
+(Complete Program Name, Version Number and Description as needed  
+for each associated program, if any)
+	
+
+
+Computer and OS:   	
+
+Special Hardware or Other Software Needed: 
+______________________________________________________________
+
+Distribution Contains: 
+
+	MANDATORY					
+		Statically Linked Executable - Enter Name(s):
+		UNIX Style Manual Page: 
+
+	DESIRABLE (Answer Yes or No )
+		Detailed Reference Manual: 
+		Tutorial Text: 		
+		Tutorial Code or script: 	
+		Source Code: 	
+		Makefile: 			
+		Special or extra libraries: 

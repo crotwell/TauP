@@ -1,0 +1,242 @@
+
+\section{Examples} \label{exampleCreate}
+
+Here is a walk through of a use of the tools on a \textsc{Unix} system. 
+
+\subsection{Velocity Model Files} \label{exampleND} 
+First, we want to create a model. There are several models contained within
+the TauP distribution, but for completeness we will create a new one 
+from scratch.
+
+A very simple model file might look like this:
+
+\begin{verbatim}
+0.0     5.0  3.0   2.7
+20      5.0  3.0   2.7
+20      6.5  3.7   2.9
+33      6.5  3.7   2.9
+mantle
+33      7.8  4.4   3.3
+410     8.9  4.7   3.5
+410     9.1  4.9   3.7
+670    10.2  5.5   4.0
+670    10.7  5.9   4.4
+1000   11.5  6.4   4.6
+2000   12.9  6.9   5.1
+2891   13.7  7.2   5.6
+outer-core
+2891    8.0  0.0   9.9
+3500    9.0  0.0  10.8
+5149.5 10.3  0.0  12.2
+inner-core
+5149.5 11    3.5  12.7
+5500   11.1  3.6  12.9
+6371   11.3  3.7  13
+\end{verbatim}
+
+Note that we have chosen the ``named discontinuities'' format so
+that we could specify the location of the major boundaries.
+The file consists of two types of lines, those that specify velocity at a depth,
+and those that specify the name of a discontinuity. See section \ref{velfile}
+for more details.
+
+\subsection{Creating the Model}
+
+If we put this into a file called ``simpleMod.nd'' then we can run 
+\texttt{taup\_create} to create a model sampling. We use the 
+\texttt{-verbose} option to get some additional output. In particular,
+it outputs the radius to the surface for this model. Having an incorrect
+radius, which could happen for instance 
+if the last line of the model file was lost,
+will generate incorrect times for phases that otherwise appear fine.
+This can be a difficult error to track down after the fact because
+there is nothing wrong with the model, it is just not what was intended.
+As they say, ``garbage in, garbage out.''
+
+\begin{verbatim}
+piglet 10>taup_create -nd simpleMod.nd -verbose
+TauP_Create starting...
+filename =./simpleMod.nd
+Done reading velocity model.
+Radius of model simpleMod is 6371.0
+Parameters are:
+taup.create.minDeltaP = 0.1 sec / radian
+taup.create.maxDeltaP = 8.0 sec / radian
+taup.create.maxDepthInterval = 115.0 kilometers
+taup.create.maxRangeInterval = 1.75 degrees
+taup.create.maxInterpError = 0.03 seconds
+taup.create.allowInnerCoreS = true
+Slow model time=39714 801 P layers,907 S layers
+T model time=7480
+Done Saving ./simpleMod.taup
+Done!
+Done!
+piglet 11>ls
+simpleMod.nd     simpleMod.taup
+\end{verbatim}
+
+The file \texttt{simpleMod.taup} contains all of the information about the
+model. This process needs to be done only once for each velocity model.
+The times appearing in the output are in milliseconds, and do not reflect the
+startup time for Java.
+
+\subsection{Travel Times}
+
+Now that we have the model sampled, computing travel times is easy.
+We will use taup\_time to get the travel times for some familiar phases, 
+P, S, PcP, ScS, SKS, sS, and SS 
+in our simple model for a 143.2 kilometer deep 
+source and at a distance of 75 degrees. We use the ``-mod'' command line
+flag to specify the model, and then do the rest after it starts.
+
+First taup\_time reads a standard Java Properties file, ``.taup'', 
+that it finds in my home directory. See section \ref{properties} for 
+more details.
+If there are phases you are interested in frequently, or model you use often,
+or source depth, then you can put them in this file as your defaults.
+Then we enter a depth for the source, 143.2 kilometers, using the \texttt{h}
+option. By default, the model is for a surface source.
+
+Some phase names have been read in from the file, but
+we want to specify our own phase list, so we use the `c' option
+to clear the phases and are prompted to enter the new phases. Enter them 
+separated by commas or spaces. After that we just need to enter the distance,
+75 degrees. The arrivals are printed as distance, depth, phase name, time and then
+ray parameter. 
+The last two entries represent a ``purists'' view of the distance and phase name. For instance, PKKP travels the long way around the earth, and so the 
+true distance traveled is not the event to station distance. The purist's 
+view of the name is to show the difference between the true depths of discontinuities and the depth specified in the phase name. For instance, 
+Pv400P in our simple model is really a reflection off of the discontinuity 
+at 410 kilometers depth. The purist's name reflects this and is preceded 
+by an asterisk to make the difference easier to notice. 
+The distance is repeated to make it easier to parse the output
+from within scripts.
+
+\begin{verbatim}
+piglet 4>taup_time -mod simpleMod
+Enter:
+h for new depth
+r to recalculate
+p to append phases, 
+c to clear phases
+l to list phases
+s for new station lat lon
+e for new event lat lon
+a for new azimuth
+b for new back azimuth
+m for new model or 
+q to quit.
+
+Enter Distance or Option [hrpclseabmq]: h
+Enter Depth: 143.2
+Enter Distance or Option [hrpclseabmq]: c
+Enter phases (ie P,p,PcP,S): P,S,PcP,ScS,SKS,sS,SS,PKKP
+Enter Distance or Option [hrpclseabmq]: 75
+
+Model: simpleMod
+Distance   Depth   Phase   Travel    Ray Param   Purist    Purist
+  (deg)     (km)   Name    Time (s)  p (s/deg)  Distance   Name
+----------------------------------------------------------------
+    75.0   143.2   P        686.33     5.721       75.0  = P    
+    75.0   143.2   PcP      700.51     4.312       75.0  = PcP  
+    75.0   143.2   S       1263.17    11.040       75.0  = S    
+    75.0   143.2   SKS     1293.35     7.283       75.0  = SKS  
+    75.0   143.2   ScS     1298.74     8.135       75.0  = ScS  
+    75.0   143.2   sS      1326.73    11.152       75.0  = sS   
+    75.0   143.2   SS      1571.74    14.640       75.0  = SS   
+
+Enter Distance or Option [hrpclseabmq]: q
+\end{verbatim}
+
+We could also have done this same example by just using the command line
+options.
+
+\begin{verbatim}
+piglet 5>taup_time -mod simpleMod -h 143.2 -deg 75 -ph P,S,PcP,ScS,SKS,sS,SS,PKKP
+
+Model: simpleMod
+Distance   Depth   Phase   Travel    Ray Param   Purist    Purist
+  (deg)     (km)   Name    Time (s)  p (s/deg)  Distance   Name
+----------------------------------------------------------------
+    75.0   143.2   P        686.33     5.721       75.0  = P    
+    75.0   143.2   PcP      700.51     4.312       75.0  = PcP  
+    75.0   143.2   S       1263.17    11.040       75.0  = S    
+    75.0   143.2   SKS     1293.35     7.283       75.0  = SKS  
+    75.0   143.2   ScS     1298.74     8.135       75.0  = ScS  
+    75.0   143.2   sS      1326.73    11.152       75.0  = sS   
+    75.0   143.2   SS      1571.74    14.640       75.0  = SS
+\end{verbatim}
+
+\subsection{Pierce Points}
+
+Now, where are the turning points for these rays? We can run taup\_pierce with
+the ``-turn'' flag and
+find out. Lets specify the parameters on the command line.
+The output is distance in degrees followed by depth in kilometers. 
+Note that SS has two turning points. 
+
+\begin{verbatim}
+piglet 7>taup_pierce -mod simpleMod -h 143.2 -deg 75 \
+? -ph P,S,PcP,ScS,SKS,sS,SS,PKKP -turn
+> P at 686.33 seconds at 75.0 degrees for a 143.2 km deep source in the simpleMod model.
+   37.23 2110.32
+> S at 1263.17 seconds at 75.0 degrees for a 143.2 km deep source in the simpleMod model.
+   37.20 2005.24
+> PcP at 700.51 seconds at 75.0 degrees for a 143.2 km deep source in the simpleMod model.
+   37.30 2891.00
+> ScS at 1298.74 seconds at 75.0 degrees for a 143.2 km deep source in the simpleMod model.
+   37.29 2891.00
+> SKS at 1293.35 seconds at 75.0 degrees for a 143.2 km deep source in the simpleMod model.
+   37.31 2975.11
+> sS at 1326.73 seconds at 75.0 degrees for a 143.2 km deep source in the simpleMod model.
+   37.81 1971.17
+> SS at 1571.74 seconds at 75.0 degrees for a 143.2 km deep source in the simpleMod model.
+   18.09 1001.76
+   56.03 1001.76
+\end{verbatim}
+
+\subsection{Path}
+
+Perhaps now we should make a plot of the
+paths. Lets use only command line options and send the output to the file 
+``simpleModPaths.gmt'' instead of the default ``taup\_path.gmt''.
+
+\begin{verbatim}
+piglet 8>taup_path -mod simpleMod -h 143.2 -deg 75 \
+? -ph P,S,PcP,ScS,SKS,sS,SS,PKKP \
+? -o simpleModPaths.gmt -gmt
+piglet 9>ls
+simpleMod.taup       simpleMod.nd         simpleModPaths.gmt
+piglet 10>sh simpleModPaths.gmt
+piglet 11>ls
+simpleMod.taup       simpleModPaths.ps
+simpleMod.nd         simpleModPaths.gmt
+\end{verbatim}
+
+Now we have a Postscript file, simpleModPaths.ps, that we can look at or print.
+Notice that we used the \texttt{-gmt} flag so that the output is a complete 
+GMT script. If you don't use \texttt{-gmt}, then the output is just the XY 
+points, which might be later used by another script.
+Of course, this only works if you have GMT installed.
+
+\subsection{Travel Time Curves}
+
+If we want to see the travel time curves for these phases, we can do that using
+taup\_curve. It works very similarly to taup\_path except that we don't need to
+specify a distance.
+
+\begin{verbatim}
+piglet 12>taup_curve -mod simpleMod -h 143.2 -ph P,S,PcP,ScS,SKS,sS,SS,PKKP \
+? -o simpleModCurves.gmt -gmt
+piglet 13>ls
+simpleModCurves.gmt   simpleMod.nd          simpleModPaths.gmt
+simpleMod.taup        simpleModPaths.ps
+piglet 14>sh simpleModCurves.gmt
+piglet 15>ls
+simpleMod.nd          simpleModCurves.gmt   simpleModPaths.gmt
+simpleMod.taup        simpleModCurves.ps    simpleModPaths.ps
+\end{verbatim}
+
+Again we have a Postscript file to view. Both of these commands generate scripts
+that are ok for a quick look, but you will almost certainly want to modify
+them for any important use.

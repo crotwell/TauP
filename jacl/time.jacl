@@ -1,0 +1,20 @@
+#!/bin/sh
+# \
+exec jacl $0 $*
+
+package require java
+
+set tt [java::new [list edu.sc.seis.TauP.TauP_Time String] "prem"]
+$tt clearPhaseNames
+$tt {parsePhaseList java.lang.String} "P,PcP,S,ScS"
+$tt setSourceDepth 100
+
+$tt calculate 60
+set numArrivals [$tt getNumArrivals]
+for {set i 0} {$i< $numArrivals} {incr i} {
+   set a [$tt getArrival $i]
+   set time [ $a getTime]
+   set name [ $a getName]
+   puts "Time for $name is [expr (round(100*$time))/100.0] seconds."
+}
+

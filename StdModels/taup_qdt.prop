@@ -1,0 +1,17 @@
+#---Properties for the TauP toolkit---
+#Wed Aug 19 15:41:14 GMT 1998
+
+# max and min delta p in seconds per radian
+taup.create.minDeltaP=0.5
+taup.create.maxDeltaP=50.0
+
+# max depth interval in kilometers
+taup.create.maxDepthInterval=915.0
+
+# max range interval in degrees
+taup.create.maxRangeInterval=10.00
+
+# max estimate of error due to linear interpolation
+taup.create.maxInterpError=1.000
+
+taup.create.allowInnerCoreS=false
