@@ -54,7 +54,7 @@ The TauP Toolkit, flexible seismic traveltime utilities.
   </dependencies>
 
   <build>
-    <nagEmailAddress>crotwell@seis.sc.edu</nagEmailAddress>
+    <nagEmailAddress>jaster@seis.sc.edu</nagEmailAddress>
     <unitTestSourceDirectory>test</unitTestSourceDirectory>
     <sourceDirectory>src</sourceDirectory>
     <resources>
