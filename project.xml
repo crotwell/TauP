@@ -64,7 +64,7 @@ The TauP Toolkit, flexible seismic traveltime utilities.
           <directory>StdModels</directory>
           <targetPath>edu/sc/seis/TauP/StdModels</targetPath>
           <includes>
-             <include>**</include>
+             <include>*</include>
           </includes>
        </resource>
     </resources>
