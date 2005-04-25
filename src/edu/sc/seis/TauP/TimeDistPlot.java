@@ -100,7 +100,7 @@ public class TimeDistPlot extends XYPlot {
             y=0;
             x=0;
             for (int k=0;k<=i;k++) {
-               x += 2*tModel.tauBranches[waveNum][k].dist[j];
+               x += 2*tModel.tauBranches[waveNum][k].getDist(j);
                y += 2*tModel.tauBranches[waveNum][k].time[j];
             }
             x*=180/Math.PI;

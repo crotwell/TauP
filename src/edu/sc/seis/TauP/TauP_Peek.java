@@ -204,13 +204,13 @@ public class TauP_Peek {
                         System.out.println(
                            "ray parameter="+tModDepth.rayParams[rayNum]+
                            " distance="+
-                              tModDepth.tauBranches[0][branch].dist[rayNum]+
+                              tModDepth.tauBranches[0][branch].getDist(rayNum)+
                            " time="+tModDepth.tauBranches[0][branch].time[rayNum]+
                            " tau="+tModDepth.tauBranches[0][branch].tau[rayNum]);
                         System.out.println(
                            "ray parameter="+tModDepth.rayParams[rayNum]+
                            " distance="+
-                              tModDepth.tauBranches[1][branch].dist[rayNum]+
+                              tModDepth.tauBranches[1][branch].getDist(rayNum)+
                            " time="+tModDepth.tauBranches[1][branch].time[rayNum]+
                            " tau="+tModDepth.tauBranches[1][branch].tau[rayNum]);
                      }

@@ -97,10 +97,10 @@ public class DistPlot extends XYPlot {
             x=tModel.rayParams[j];
             y=0;
             for (int k=0;k<=i;k++) {
-               y += 2*tModel.tauBranches[waveNum][k].dist[j];
+               y += 2*tModel.tauBranches[waveNum][k].getDist(j);
             }
             y*=180/Math.PI;
-            if ((y!=0 || x==0 ) && tModel.tauBranches[waveNum][i].dist[j] != 0.0) {
+            if ((y!=0 || x==0 ) && tModel.tauBranches[waveNum][i].getDist(j) != 0.0) {
                tempXData[jj]=x;
                tempYData[jj]=y;
                if (DEBUG) System.out.println(x+" "+y);
