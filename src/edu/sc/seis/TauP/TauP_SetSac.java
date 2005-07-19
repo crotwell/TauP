@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.io.OptionalDataException;
 import java.io.StreamCorruptedException;
 import java.util.Vector;
+import edu.sc.seis.seisFile.sac.SacTimeSeries;
 
 /**
   *  Calculate times for phases and set sac headers based on gcarc or dist or

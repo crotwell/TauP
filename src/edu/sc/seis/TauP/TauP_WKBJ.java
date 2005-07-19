@@ -44,6 +44,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OptionalDataException;
 import java.io.StreamCorruptedException;
+import edu.sc.seis.seisFile.sac.SacTimeSeries;
 
 public class TauP_WKBJ extends TauP_Time {
     
