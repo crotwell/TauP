@@ -169,14 +169,14 @@ public class SphericalSModel extends SlownessModel
       TimeDist timedist = new TimeDist(sphericalRayParam);
 
       SlownessLayer sphericalLayer = getSlownessLayer(layerNum, isPWave);
-      double topRadius = radiusOfEarth-sphericalLayer.topDepth; // radius to top
-      double botRadius = radiusOfEarth-sphericalLayer.botDepth; // radius to bot
+      double topRadius = radiusOfEarth-sphericalLayer.getTopDepth(); // radius to top
+      double botRadius = radiusOfEarth-sphericalLayer.getBotDepth(); // radius to bot
 
          /* First we make sure that a ray with this ray parameter can propagate
           * within this layer and doesn't turn in the middle of the layer.
           * If not, then throw an exception. */
       if (sphericalRayParam > 
-          Math.max(sphericalLayer.topP,sphericalLayer.botP)) {
+          Math.max(sphericalLayer.getTopP(),sphericalLayer.getBotP())) {
          throw new SlownessModelException("Ray cannot propagate within this"+
             " layer. layerNum = "+ layerNum+
             " sphericalRayParam="+sphericalRayParam+"\n"+sphericalLayer);
@@ -186,14 +186,14 @@ public class SphericalSModel extends SlownessModel
             sphericalRayParam);
       } 
       if (sphericalRayParam > 
-            Math.min(sphericalLayer.topP,sphericalLayer.botP)) {
+            Math.min(sphericalLayer.getTopP(),sphericalLayer.getBotP())) {
          if (DEBUG) {
             System.out.println("Ray Turns in layer, velocities: "+
                topRadius/sphericalRayParam+" "+
-               topRadius/sphericalLayer.topP+" "+
-               botRadius/sphericalLayer.botP);
-            System.out.println("depths        top "+sphericalLayer.topDepth+
-               "  bot "+sphericalLayer.botDepth);
+               topRadius/sphericalLayer.getTopP()+" "+
+               botRadius/sphericalLayer.getBotP());
+            System.out.println("depths        top "+sphericalLayer.getTopDepth()+
+               "  bot "+sphericalLayer.getBotDepth());
          }
          throw new SlownessModelException("Ray turns in the middle of this"+
             " layer. \nlayerNum = "+ layerNum+
@@ -204,7 +204,7 @@ public class SphericalSModel extends SlownessModel
          /* Check to see if this layer has zero thickness, if so then it is
           * from a critically reflected slowness sample. So we should just
           * return 0.0 for time and distance increments. */
-      if (sphericalLayer.topDepth == sphericalLayer.botDepth) {
+      if (sphericalLayer.getTopDepth() == sphericalLayer.getBotDepth()) {
          timedist.time = 0.0;
          timedist.dist = 0.0;
          return timedist;
@@ -231,12 +231,12 @@ public class SphericalSModel extends SlownessModel
           * half way through a sphere of constant velocity is just the spherical
           * slowness at the top of the sphere. An amazingly simple result!
           */
-      if (sphericalRayParam == 0.0 && sphericalLayer.botDepth == radiusOfEarth){
+      if (sphericalRayParam == 0.0 && sphericalLayer.getBotDepth() == radiusOfEarth){
          if (layerNum != getNumLayers(isPWave)-1) throw new SlownessModelException(
              "There are layers deeper than the center of the earth!");
              
          timedist.dist = Math.PI/2.0;
-         timedist.time = sphericalLayer.topP;
+         timedist.time = sphericalLayer.getTopP();
         
          if (DEBUG) {
             System.out.println("Center of Earth: dist "+timedist.dist+
@@ -246,7 +246,7 @@ public class SphericalSModel extends SlownessModel
              Double.isNaN(timedist.time) || Double.isNaN(timedist.dist)) {
             throw new SlownessModelException("CoE timedist <0.0 or NaN: "+
                "sphericalRayParam= "+sphericalRayParam+
-               " botDepth = "+sphericalLayer.botDepth+
+               " botDepth = "+sphericalLayer.getBotDepth()+
                " dist="+timedist.dist+
                " time="+timedist.time);
          }
@@ -263,11 +263,11 @@ public class SphericalSModel extends SlownessModel
           * the velocity. To get the distance we first find the angular 
           * distance traveled, using law of sines.
           */
-      if (Math.abs(topRadius/sphericalLayer.topP -
-                   botRadius/sphericalLayer.botP) < slownessTolerance ) {
+      if (Math.abs(topRadius/sphericalLayer.getTopP() -
+                   botRadius/sphericalLayer.getBotP()) < slownessTolerance ) {
 
             // temp variables
-         double vel = botRadius / sphericalLayer.botP;              // velocity
+         double vel = botRadius / sphericalLayer.getBotP();              // velocity
             /* In cases of a ray turning at the bottom of the layer numerical
              * roundoff can cause botTerm to be very small (1e-9) but negative
              * which causes the sqrt to return NaN. We check for values that
@@ -278,7 +278,7 @@ public class SphericalSModel extends SlownessModel
             sphericalRayParam*sphericalRayParam*vel*vel;
          if (Math.abs(topTerm) < slownessTolerance) {topTerm = 0.0;}
 
-         if (sphericalRayParam == sphericalLayer.botP) {
+         if (sphericalRayParam == sphericalLayer.getBotP()) {
                /* In this case the ray turns at the bottom of this layer
                 * so sphericalRayParam*vel == botRadius and botTerm should
                 * be zero. We check for this case specially because numerical
@@ -301,8 +301,8 @@ public class SphericalSModel extends SlownessModel
              Double.isNaN(timedist.time) || Double.isNaN(timedist.dist)) {
             throw new SlownessModelException("CVL timedist <0.0 or NaN: "+
                "\nsphericalRayParam= "+sphericalRayParam+
-               "\n botDepth = "+sphericalLayer.botDepth+
-               "\n topDepth = "+sphericalLayer.topDepth+
+               "\n botDepth = "+sphericalLayer.getBotDepth()+
+               "\n topDepth = "+sphericalLayer.getTopDepth()+
                "\n topRadius="+topRadius+" botRadius="+botRadius+
                "\n dist="+timedist.dist+
                "\n time="+timedist.time+
@@ -345,7 +345,7 @@ public class SphericalSModel extends SlownessModel
       for (int j=0;j<2; j++, isPWave = false) {
          for (int i=0;i<getNumLayers(isPWave);i++) {
             sLayer = getSlownessLayer(i,isPWave);
-            prevDepth = sLayer.botDepth;
+            prevDepth = sLayer.getBotDepth();
          
          /* No slowness layer should have a depth greater than radiusOfEarth.*/
             if (prevDepth > radiusOfEarth) {

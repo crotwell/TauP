@@ -40,18 +40,6 @@ import java.io.Serializable;
  */
 public class SlownessLayer implements Serializable, Cloneable {
 
-      /** Slowness at the top of the layer. */
-   public double topP;
-
-      /** Slowness at the bottom of the layer. */
-   public double botP;
-
-      /** Depth at the top of the layer. */
-   public double topDepth;
-
-      /** Depth at the bottom of the layer. */
-   public double botDepth;
-
     /** top slowness, top depth, bottom slowness, bottom depth */
     public SlownessLayer(double topP, double topDepth, 
                          double botP, double botDepth) {
@@ -65,10 +53,10 @@ public class SlownessLayer implements Serializable, Cloneable {
                   || Double.isNaN(botDepth) 
                   || Double.isInfinite(botDepth),
 	               "botDepth is not a number or is negative: "+botDepth);
-	this.topP = topP;
-	this.topDepth=topDepth;
-	this.botP = botP;
-	this.botDepth=botDepth;
+	this.setTopP(topP);
+	this.setTopDepth(topDepth);
+	this.setBotP(botP);
+	this.setBotDepth(botDepth);
     }
 
     /** Compute the slowness layer from a velocity layer.
@@ -78,8 +66,8 @@ public class SlownessLayer implements Serializable, Cloneable {
 	Assert.isFalse(vLayer.topDepth > vLayer.botDepth,
 		       "vLayer.topDepth > vLayer.botDepth :"+
 		       vLayer.topDepth+ " "+vLayer.botDepth);
-	topDepth = vLayer.topDepth;
-	botDepth = vLayer.botDepth;
+	setTopDepth(vLayer.topDepth);
+	setBotDepth(vLayer.botDepth);
 
 	char waveType;
 	if (isPWave) { waveType = 'P';
@@ -87,17 +75,17 @@ public class SlownessLayer implements Serializable, Cloneable {
 		
 	try {
 	    if (spherical) {
-		topP = (radiusOfEarth-topDepth) /
-		    vLayer.evaluateAtTop(waveType);
-		botP = (radiusOfEarth-botDepth) /
-		    vLayer.evaluateAtBottom(waveType);
+		setTopP((radiusOfEarth-getTopDepth()) /
+		    vLayer.evaluateAtTop(waveType));
+		setBotP((radiusOfEarth-getBotDepth()) /
+		    vLayer.evaluateAtBottom(waveType));
 
 	    } else {
-		topP = 1.0/vLayer.evaluateAtTop(waveType);
-		botP = 1.0/vLayer.evaluateAtBottom(waveType);
+		setTopP(1.0/vLayer.evaluateAtTop(waveType));
+		setBotP(1.0/vLayer.evaluateAtBottom(waveType));
 	    }
-	    Assert.isFalse(Double.isNaN(topP) || Double.isNaN(botP),
-			   "Slowness sample is NaN: topP="+topP+" botP="+botP);
+	    Assert.isFalse(Double.isNaN(getTopP()) || Double.isNaN(getBotP()),
+			   "Slowness sample is NaN: topP="+getTopP()+" botP="+getBotP());
 	} catch (NoSuchMatPropException e) {
 	    // Can't happen
 	    e.printStackTrace();
@@ -119,9 +107,41 @@ public class SlownessLayer implements Serializable, Cloneable {
       this(vLayer, false, 0.0, isPWave);
    }
 
-      /** Is the layer a zero thickness layer, ie a total reflection? */
+   public void setTopP(double topP) {
+        this.topP = topP;
+    }
+
+    public double getTopP() {
+        return topP;
+    }
+
+    public void setBotP(double botP) {
+        this.botP = botP;
+    }
+
+    public double getBotP() {
+        return botP;
+    }
+
+    public void setTopDepth(double topDepth) {
+        this.topDepth = topDepth;
+    }
+
+    public double getTopDepth() {
+        return topDepth;
+    }
+
+    public void setBotDepth(double botDepth) {
+        this.botDepth = botDepth;
+    }
+
+    public double getBotDepth() {
+        return botDepth;
+    }
+
+    /** Is the layer a zero thickness layer, ie a total reflection? */
    public boolean isZeroThickness() {
-      if (topDepth == botDepth) {
+      if (getTopDepth() == getBotDepth()) {
          return true;
       } else {
          return false;
@@ -140,36 +160,36 @@ public class SlownessLayer implements Serializable, Cloneable {
    public double evaluateAt_bullen(double depth, double radiusOfEarth) 
          throws SlownessModelException
    {
-      Assert.isFalse(botDepth>radiusOfEarth,
+      Assert.isFalse(getBotDepth()>radiusOfEarth,
             "SlownessLayer.evaluateAt_bullen:"+
             " radiusOfEarth="+radiusOfEarth+
             " is smaller than the maximum depth of this layer."+
-            " topDepth="+topDepth+" botDepth="+botDepth);
+            " topDepth="+getTopDepth()+" botDepth="+getBotDepth());
 
-      Assert.isFalse((topDepth-depth)*(depth-botDepth)<0.0,
+      Assert.isFalse((getTopDepth()-depth)*(depth-getBotDepth())<0.0,
             "SlownessLayer.evaluateAt_bullen:"+
             " depth="+depth+" is not contained within this layer."+
-            " topDepth="+topDepth+" botDepth="+botDepth);
+            " topDepth="+getTopDepth()+" botDepth="+getBotDepth());
 
-      if (depth == topDepth) {
-	  return topP;
-      } else if (depth == botDepth) {
-	  return botP;
+      if (depth == getTopDepth()) {
+	  return getTopP();
+      } else if (depth == getBotDepth()) {
+	  return getBotP();
       } else {
-	  double B = Math.log(topP/botP) /
-	      Math.log((radiusOfEarth-topDepth) / 
-		       (radiusOfEarth-botDepth));
-	  double A = topP/Math.pow((radiusOfEarth-topDepth), B);
+	  double B = Math.log(getTopP()/getBotP()) /
+	      Math.log((radiusOfEarth-getTopDepth()) / 
+		       (radiusOfEarth-getBotDepth()));
+	  double A = getTopP()/Math.pow((radiusOfEarth-getTopDepth()), B);
 	  double answer = A * Math.pow((radiusOfEarth-depth), B);
 	  if (answer < 0.0 
 	      || Double.isNaN(answer) 
 	      || Double.isInfinite(answer)) {
 	      // numerical instability in power law calculation???
 	      // try a linear interpolation if the layer is small ( <2 km).
-	      if ((botDepth- topDepth) < 2.0) {
+	      if ((getBotDepth()- getTopDepth()) < 2.0) {
 		  double linear = 
-		      (botP-topP)/(botDepth-topDepth)*(depth-topDepth) 
-		      + topP;
+		      (getBotP()-getTopP())/(getBotDepth()-getTopDepth())*(depth-getTopDepth()) 
+		      + getTopP();
 		  if (linear < 0.0 
 		      || Double.isNaN(linear) 
 		      || Double.isInfinite(linear)) {
@@ -201,7 +221,7 @@ answer+"\n"+this.toString()+"\n A="+A+"   B="+B);
          // To hold the return values.
       TimeDist timedist = new TimeDist(p);
  
-      if (topDepth == botDepth) {
+      if (getTopDepth() == getBotDepth()) {
 	  timedist.dist = 0.0;
 	  timedist.time = 0.0;
 	  return timedist;
@@ -210,15 +230,15 @@ answer+"\n"+this.toString()+"\n A="+A+"   B="+B);
       // only do bullen radial slowness if the layer is not too thin
       // here we use 1 micron = .000000001
       // just return 0 in this case
-      if (botDepth - topDepth < .000000001) {
+      if (getBotDepth() - getTopDepth() < .000000001) {
 	  return timedist;
       }
 	  
-      double B = Math.log(topP/botP) /
-         Math.log((radiusOfEarth-topDepth) /
-                  (radiusOfEarth-botDepth));
-      double sqrtTopTopMpp = Math.sqrt(topP*topP-p*p);
-      double sqrtBotBotMpp = Math.sqrt(botP*botP-p*p);
+      double B = Math.log(getTopP()/getBotP()) /
+         Math.log((radiusOfEarth-getTopDepth()) /
+                  (radiusOfEarth-getBotDepth()));
+      double sqrtTopTopMpp = Math.sqrt(getTopP()*getTopP()-p*p);
+      double sqrtBotBotMpp = Math.sqrt(getBotP()*getBotP()-p*p);
  
       timedist.dist = 1/B*( 
 			   Math.atan2(p, sqrtBotBotMpp)-
@@ -230,12 +250,12 @@ answer+"\n"+this.toString()+"\n A="+A+"   B="+B);
              Double.isNaN(timedist.time) || Double.isNaN(timedist.dist)) {
          throw new SlownessModelException("timedist <0.0 or NaN: "+
             "\n RayParam= "+p+
-            "\n topDepth = "+topDepth+
-            "\n botDepth = "+botDepth+
+            "\n topDepth = "+getTopDepth()+
+            "\n botDepth = "+getBotDepth()+
             "\n dist="+timedist.dist+
             "\n time="+timedist.time+
-            "\n topP = "+topP+
-            "\n botP = "+botP+
+            "\n topP = "+getTopP()+
+            "\n botP = "+getBotP()+
             "\n B = "+B+" "+toString());
       }
       return timedist;
@@ -248,18 +268,18 @@ answer+"\n"+this.toString()+"\n A="+A+"   B="+B);
      *  case. */
    public double bullenDepthFor(double rayParam, double radiusOfEarth) 
    throws SlownessModelException {
-      if ((topP-rayParam)*(rayParam-botP) >= 0) {
+      if ((getTopP()-rayParam)*(rayParam-getBotP()) >= 0) {
 	  double tempDepth;
 
 	  // easy case for 0 thickness layer
-	  if (topDepth == botDepth) {
-	      return botDepth;
+	  if (getTopDepth() == getBotDepth()) {
+	      return getBotDepth();
 	  }
 
-	  if (botP != 0.0 && botDepth != radiusOfEarth) {
-	      double B = Math.log(topP/botP) /
-		  Math.log((radiusOfEarth-topDepth)/(radiusOfEarth-botDepth));
-	      double A = topP/Math.pow((radiusOfEarth-topDepth), B);
+	  if (getBotP() != 0.0 && getBotDepth() != radiusOfEarth) {
+	      double B = Math.log(getTopP()/getBotP()) /
+		  Math.log((radiusOfEarth-getTopDepth())/(radiusOfEarth-getBotDepth()));
+	      double A = getTopP()/Math.pow((radiusOfEarth-getTopDepth()), B);
 	      tempDepth = radiusOfEarth - Math.exp(1.0/B * Math.log(rayParam/A) );
 /*
 	      tempDepth = radiusOfEarth - Math.pow(rayParam/A, 1.0/B);
@@ -267,14 +287,14 @@ answer+"\n"+this.toString()+"\n A="+A+"   B="+B);
 	      if (tempDepth < 0.0 
 		  || Double.isNaN(tempDepth) 
 		  || Double.isInfinite(tempDepth)
-		  || tempDepth < topDepth
-		  || tempDepth > botDepth) {
+		  || tempDepth < getTopDepth()
+		  || tempDepth > getBotDepth()) {
 		  // numerical instability in power law calculation???
 		  // try a linear interpolation if the layer is small ( <5 km).
-		  if ((botDepth- topDepth) < 5.0) {
+		  if ((getBotDepth()- getTopDepth()) < 5.0) {
 		      double linear = 
-			  (botDepth-topDepth)/(botP-topP)*(rayParam-topP) 
-			  + topDepth;
+			  (getBotDepth()-getTopDepth())/(getBotP()-getTopP())*(rayParam-getTopP()) 
+			  + getTopDepth();
 		      if (linear < 0.0 
 			  || Double.isNaN(linear) 
 			  || Double.isInfinite(linear)) {
@@ -285,29 +305,29 @@ answer+"\n"+this.toString()+"\n A="+A+"   B="+B);
 		  throw new SlownessModelException("claculated depth is not a number or is negative: "+tempDepth+"\n"+this+"\n"+A+"  "+B+"\n"+rayParam);
 	      }
 	      // check for tempDepth just above top depth
-	      if (tempDepth < topDepth && (topDepth - tempDepth) < 1e-10) {
-		  return topDepth;
+	      if (tempDepth < getTopDepth() && (getTopDepth() - tempDepth) < 1e-10) {
+		  return getTopDepth();
 	      }
 	      // check for tempDepth just below bottom depth
-	      if (tempDepth > botDepth && (tempDepth- botDepth) < 1e-10) {
-		  return botDepth;
+	      if (tempDepth > getBotDepth() && (tempDepth- getBotDepth()) < 1e-10) {
+		  return getBotDepth();
 	      }
 	      return tempDepth;
 	  } else {
 	      // a special case for the center of the earth, since ar^b 
 	      // might blow up at r=0
-	      if (topP != botP) {
-		  return botDepth + (rayParam - botP) * (topDepth - botDepth) /
-		      (topP - botP);
+	      if (getTopP() != getBotP()) {
+		  return getBotDepth() + (rayParam - getBotP()) * (getTopDepth() - getBotDepth()) /
+		      (getTopP() - getBotP());
 	      } else {
 		  // weird case, return botDepth???
-		  return botDepth;
+		  return getBotDepth();
 	      }
 	  }
       } else {
 	  throw new SlownessModelException("Ray parameter = "+rayParam+
                   " is not contained within this slowness layer. topP="+
-		  topP+" botP="+botP);
+		  getTopP()+" botP="+getBotP());
       }
    }
  
@@ -328,25 +348,37 @@ answer+"\n"+this.toString()+"\n A="+A+"   B="+B);
    public String toString() {
 //      String desc = "top p "+ (float)topP +", topDepth " + (float)topDepth
 //                   +", bot p "+ (float)botP +", botDepth " + (float)botDepth;
-      String desc = "top p "+ topP +", topDepth " + topDepth
-                   +", bot p "+ botP +", botDepth " + botDepth;
+      String desc = "top p "+ getTopP() +", topDepth " + getTopDepth()
+                   +", bot p "+ getBotP() +", botDepth " + getBotDepth();
       return desc;
    }
 
 	public boolean validate() throws SlownessModelException {
-      if (Double.isNaN(topP) || Double.isNaN(topDepth) ||
-		Double.isNaN(botP) || Double.isNaN(botDepth)) {
+      if (Double.isNaN(getTopP()) || Double.isNaN(getTopDepth()) ||
+		Double.isNaN(getBotP()) || Double.isNaN(getBotDepth())) {
          throw new SlownessModelException(
             "Slowness layer has NaN values."+"\n "+this);
 		}
-      if (topP < 0.0 || botP < 0.0) {
+      if (getTopP() < 0.0 || getBotP() < 0.0) {
          throw new SlownessModelException(
             "Slowness layer has negative slownesses. \n "+this);
       }
-      if (topDepth > botDepth) {
+      if (getTopDepth() > getBotDepth()) {
          throw new SlownessModelException
             ("Slowness layer has negative thickness. \n"+this);
       }
 		return true;
 	}
+
+    /** Slowness at the top of the layer. */
+ private double topP;
+
+    /** Slowness at the bottom of the layer. */
+ private double botP;
+
+    /** Depth at the top of the layer. */
+ private double topDepth;
+
+    /** Depth at the bottom of the layer. */
+ private double botDepth;
 }

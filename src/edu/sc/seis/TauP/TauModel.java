@@ -313,7 +313,7 @@ public class TauModel implements Serializable, Cloneable {
          * been constructed to be a subset of the S samples.
          */
         int rayNum = 0;
-        double minPSoFar = sMod.getSlownessLayerClone(0, false).topP;
+        double minPSoFar = sMod.getSlownessLayerClone(0, false).getTopP();
         double[] tempRayParams = new double[2 * sMod.getNumLayers(false)
                 + sMod.getNumCriticalDepths()];
         // make sure we get the top slowness of the very top layer
@@ -326,20 +326,20 @@ public class TauModel implements Serializable, Cloneable {
              * Note that this will not be added if the slowness is continuous
              * across the layer boundary.
              */
-            if(currSLayer.topP < minPSoFar) {
-                tempRayParams[rayNum] = currSLayer.topP;
+            if(currSLayer.getTopP() < minPSoFar) {
+                tempRayParams[rayNum] = currSLayer.getTopP();
                 rayNum++;
-                minPSoFar = currSLayer.topP;
+                minPSoFar = currSLayer.getTopP();
             }
             /*
              * Add the bottom if it is strictly less than the last sample added.
              * This will always happen unless we are within a high slowness
              * zone.
              */
-            if(currSLayer.botP < minPSoFar) {
-                tempRayParams[rayNum] = currSLayer.botP;
+            if(currSLayer.getBotP() < minPSoFar) {
+                tempRayParams[rayNum] = currSLayer.getBotP();
                 rayNum++;
-                minPSoFar = currSLayer.botP;
+                minPSoFar = currSLayer.getBotP();
             }
         }
         /* Copy tempRayParams to rayParams so the the size is exactly right. */
@@ -354,7 +354,7 @@ public class TauModel implements Serializable, Cloneable {
         boolean isPWave;
         for(waveNum = 0, isPWave = true; waveNum < 2; waveNum++, isPWave = false) {
             // The minimum slowness seen so far
-            minPSoFar = sMod.getSlownessLayerClone(0, isPWave).topP;
+            minPSoFar = sMod.getSlownessLayerClone(0, isPWave).getTopP();
             // loop over critical slowness layers since they form the branches
             for(int critNum = 0; critNum < sMod.getNumCriticalDepths() - 1; critNum++) {
                 topCritDepth = sMod.getCriticalDepth(critNum);
@@ -383,12 +383,12 @@ public class TauModel implements Serializable, Cloneable {
                  */
                 topSLayer = sMod.getSlownessLayer(topCritLayerNum, isPWave);
                 botSLayer = sMod.getSlownessLayer(botCritLayerNum, isPWave);
-                minPSoFar = Math.min(minPSoFar, Math.min(topSLayer.topP,
-                                                         botSLayer.botP));
+                minPSoFar = Math.min(minPSoFar, Math.min(topSLayer.getTopP(),
+                                                         botSLayer.getBotP()));
                 botSLayer = sMod.getSlownessLayer(sMod.layerNumberAbove(botCritDepth.depth,
                                                                         isPWave),
                                                   isPWave);
-                minPSoFar = Math.min(minPSoFar, botSLayer.botP);
+                minPSoFar = Math.min(minPSoFar, botSLayer.getBotP());
             }
         }
         /*
