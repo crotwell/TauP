@@ -213,64 +213,68 @@ public class TauP_SetSac extends TauP_Time {
                        ((PhaseName)phaseNames.elementAt(phaseNum)).sacTNum +
                        ", travel time=" + (float)getArrival(arrivalNum).time);
                }
-               switch(((PhaseName)phaseNames.elementAt(phaseNum)).sacTNum) {
-                  case 0:
-                     sacFile.t0 = sacFile.o + (float)getArrival(arrivalNum).time;
-                     sacFile.kt0 = getArrival(arrivalNum).name;
-                       sacFile.user0 = (float)getArrival(arrivalNum).getRayParam();
-                     break;
-                  case 1:
-                     sacFile.t1 = sacFile.o + (float)getArrival(arrivalNum).time;
-                     sacFile.kt1 = getArrival(arrivalNum).name;
-                       sacFile.user1 = (float)getArrival(arrivalNum).getRayParam();
-                     break;
-                  case 2:
-                     sacFile.t2 = sacFile.o + (float)getArrival(arrivalNum).time;
-                     sacFile.kt2 = getArrival(arrivalNum).name;
-                       sacFile.user2 = (float)getArrival(arrivalNum).getRayParam();
-                     break;
-                  case 3:
-                     sacFile.t3 = sacFile.o + (float)getArrival(arrivalNum).time;
-                     sacFile.kt3 = getArrival(arrivalNum).name;
-                       sacFile.user3 = (float)getArrival(arrivalNum).getRayParam();
-                     break;
-                  case 4:
-                     sacFile.t4 = sacFile.o + (float)getArrival(arrivalNum).time;
-                     sacFile.kt4 = getArrival(arrivalNum).name;
-                       sacFile.user4 = (float)getArrival(arrivalNum).getRayParam();
-                     break;
-                  case 5:
-                     sacFile.t5 = sacFile.o + (float)getArrival(arrivalNum).time;
-                     sacFile.kt5 = getArrival(arrivalNum).name;
-                       sacFile.user5 = (float)getArrival(arrivalNum).getRayParam();
-                     break;
-                  case 6:
-                     sacFile.t6 = sacFile.o + (float)getArrival(arrivalNum).time;
-                     sacFile.kt6 = getArrival(arrivalNum).name;
-                       sacFile.user6 = (float)getArrival(arrivalNum).getRayParam();
-                     break;
-                  case 7:
-                     sacFile.t7 = sacFile.o + (float)getArrival(arrivalNum).time;
-                     sacFile.kt7 = getArrival(arrivalNum).name;
-                       sacFile.user7 = (float)getArrival(arrivalNum).getRayParam();
-                     break;
-                  case 8:
-                     sacFile.t8 = sacFile.o + (float)getArrival(arrivalNum).time;
-                     sacFile.kt8 = getArrival(arrivalNum).name;
-                       sacFile.user8 = (float)getArrival(arrivalNum).getRayParam();
-                     break;
-                  case 9:
-                     sacFile.t9 = sacFile.o + (float)getArrival(arrivalNum).time;
-                     sacFile.kt9 = getArrival(arrivalNum).name;
-                       sacFile.user9 = (float)getArrival(arrivalNum).getRayParam();
-                     break;
-                  default:
-                     break;
-               }
+               setSacTHeader(sacFile, ((PhaseName)phaseNames.elementAt(phaseNum)).sacTNum, getArrival(arrivalNum));
             }
          }
          sacFile.write((String)sacFileNames.elementAt(i));
       }
+   }
+   
+   public static void setSacTHeader(SacTimeSeries sacFile, int headerNum, Arrival arrival) {
+       switch(headerNum) {
+           case 0:
+              sacFile.t0 = sacFile.o + (float)arrival.time;
+              sacFile.kt0 = arrival.name;
+                sacFile.user0 = (float)arrival.getRayParam();
+              break;
+           case 1:
+              sacFile.t1 = sacFile.o + (float)arrival.time;
+              sacFile.kt1 = arrival.name;
+                sacFile.user1 = (float)arrival.getRayParam();
+              break;
+           case 2:
+              sacFile.t2 = sacFile.o + (float)arrival.time;
+              sacFile.kt2 = arrival.name;
+                sacFile.user2 = (float)arrival.getRayParam();
+              break;
+           case 3:
+              sacFile.t3 = sacFile.o + (float)arrival.time;
+              sacFile.kt3 = arrival.name;
+                sacFile.user3 = (float)arrival.getRayParam();
+              break;
+           case 4:
+              sacFile.t4 = sacFile.o + (float)arrival.time;
+              sacFile.kt4 = arrival.name;
+                sacFile.user4 = (float)arrival.getRayParam();
+              break;
+           case 5:
+              sacFile.t5 = sacFile.o + (float)arrival.time;
+              sacFile.kt5 = arrival.name;
+                sacFile.user5 = (float)arrival.getRayParam();
+              break;
+           case 6:
+              sacFile.t6 = sacFile.o + (float)arrival.time;
+              sacFile.kt6 = arrival.name;
+                sacFile.user6 = (float)arrival.getRayParam();
+              break;
+           case 7:
+              sacFile.t7 = sacFile.o + (float)arrival.time;
+              sacFile.kt7 = arrival.name;
+                sacFile.user7 = (float)arrival.getRayParam();
+              break;
+           case 8:
+              sacFile.t8 = sacFile.o + (float)arrival.time;
+              sacFile.kt8 = arrival.name;
+                sacFile.user8 = (float)arrival.getRayParam();
+              break;
+           case 9:
+              sacFile.t9 = sacFile.o + (float)arrival.time;
+              sacFile.kt9 = arrival.name;
+                sacFile.user9 = (float)arrival.getRayParam();
+              break;
+           default:
+              break;
+        }
    }
 
    public void printStdUsage() {
