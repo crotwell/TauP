@@ -51,12 +51,18 @@ public class VelocityLayer
    implements Cloneable, Serializable
 {
    private int myLayerNumber;
-   public double topDepth, botDepth;
-   public double topPVelocity, botPVelocity;
-   public double topSVelocity, botSVelocity;
-   public double topDensity=2.6, botDensity=2.6;
-   public double topQp=1000, botQp=1000;
-   public double topQs=2000, botQs=2000;
+   private double topDepth;
+   private double botDepth;
+   private double topPVelocity;
+   private double botPVelocity;
+   private double topSVelocity;
+   private double botSVelocity;
+   private double topDensity=2.6;
+   private double botDensity=2.6;
+   private double topQp=1000;
+   private double botQp=1000;
+   private double topQs=2000;
+   private double botQs=2000;
 
    public VelocityLayer() {
       this.myLayerNumber = 0;
@@ -64,6 +70,79 @@ public class VelocityLayer
 
    public VelocityLayer(int myLayerNumber) {
       this.myLayerNumber = myLayerNumber;
+   }
+
+   public VelocityLayer(int myLayerNumber,
+                         double topDepth,
+                         double botDepth,
+                         double topPVelocity,
+                         double botPVelocity,
+                         double topSVelocity,
+                         double botSVelocity) {
+        this(myLayerNumber,
+             topDepth,
+             botDepth,
+             topPVelocity,
+             botPVelocity,
+             topSVelocity,
+             botSVelocity,
+             2.6,
+             2.6);
+    }
+   public VelocityLayer(int myLayerNumber,
+                         double topDepth,
+                         double botDepth,
+                         double topPVelocity,
+                         double botPVelocity,
+                         double topSVelocity,
+                         double botSVelocity,
+                         double topDensity,
+                         double bottomDensity) {
+        this(myLayerNumber,
+             topDepth,
+             botDepth,
+             topPVelocity,
+             botPVelocity,
+             topSVelocity,
+             botSVelocity,
+             topDensity,
+             bottomDensity,
+             1000,
+             1000,
+             2000,
+             2000);
+    }
+   
+   public VelocityLayer(int myLayerNumber,
+                         double topDepth,
+                         double botDepth,
+                         double topPVelocity,
+                         double botPVelocity,
+                         double topSVelocity,
+                         double botSVelocity,
+                         double topDensity,
+                         double botDensity,
+                         double topQp,
+                         double botQp,
+                         double topQs,
+                         double botQs) {
+       if (topPVelocity <=0) { throw new IllegalArgumentException("topPVelocity must be positive: "+topPVelocity);}
+       if (botPVelocity <=0) { throw new IllegalArgumentException("botPVelocity must be positive: "+botPVelocity);}
+       if (topSVelocity <0) { throw new IllegalArgumentException("topSVelocity must be nonnegative: "+topSVelocity);}
+       if (botSVelocity <0) { throw new IllegalArgumentException("botSVelocity must be nonnegative: "+botSVelocity);}
+       this.myLayerNumber = myLayerNumber;
+       this.topDepth = topDepth;
+       this.botDepth = botDepth;
+       this.topPVelocity = topPVelocity;
+       this.botPVelocity = botPVelocity;
+       this.topSVelocity = topSVelocity;
+       this.botSVelocity = botSVelocity;
+       this.topDensity = topDensity;
+       this.botDensity = botDensity;
+       this.topQp = topQp;
+       this.botQp = botQp;
+       this.topQs = topQs;
+       this.botQs = botQs;
    }
 
    public Object clone() {
@@ -85,15 +164,15 @@ public class VelocityLayer
       switch (materialProperty) {
          case 'P':
          case 'p':
-            answer = botPVelocity;
+            answer = getBotPVelocity();
             break;
          case 's':
          case 'S':
-            answer = botSVelocity;
+            answer = getBotSVelocity();
             break;
          case 'r': case 'R':
          case 'D': case 'd':
-            answer = botDensity;
+            answer = getBotDensity();
             break;
          default:
             throw new NoSuchMatPropException(materialProperty);
@@ -109,15 +188,15 @@ public class VelocityLayer
       switch (materialProperty) {
          case 'P':
          case 'p':
-            answer = topPVelocity;
+            answer = getTopPVelocity();
             break;
          case 's':
          case 'S':
-            answer = topSVelocity;
+            answer = getTopSVelocity();
             break;
          case 'r': case 'R':
          case 'D': case 'd':
-            answer = topDensity;
+            answer = getTopDensity();
             break;
          default:
             throw new NoSuchMatPropException(materialProperty);
@@ -133,21 +212,21 @@ public class VelocityLayer
       switch (materialProperty) {
          case 'P':
          case 'p':
-            slope = (botPVelocity - topPVelocity)/
-                     (botDepth - topDepth);
-            answer = slope*(depth - topDepth)+topPVelocity;
+            slope = (getBotPVelocity() - getTopPVelocity())/
+                     (getBotDepth() - getTopDepth());
+            answer = slope*(depth - getTopDepth())+getTopPVelocity();
             break;
          case 's':
          case 'S':
-            slope = (botSVelocity - topSVelocity)/
-                     (botDepth - topDepth);
-            answer = slope*(depth - topDepth)+topSVelocity;
+            slope = (getBotSVelocity() - getTopSVelocity())/
+                     (getBotDepth() - getTopDepth());
+            answer = slope*(depth - getTopDepth())+getTopSVelocity();
             break;
          case 'r': case 'R':
          case 'D': case 'd':
-            slope = (botDensity - topDensity)/
-                     (botDepth - topDepth);
-            answer = slope*(depth - topDepth)+topDensity;
+            slope = (getBotDensity() - getTopDensity())/
+                     (getBotDepth() - getTopDepth());
+            answer = slope*(depth - getTopDepth())+getTopDensity();
             break;
          default:
             System.out.println("I don't understand this material property: " +
@@ -157,61 +236,110 @@ public class VelocityLayer
       }
       return answer;
    }
-
-
-   public void writeToStream(DataOutputStream dos) throws IOException {
-      dos.writeInt(getClass().getName().length());
-      dos.writeBytes(getClass().getName());
-      dos.writeInt(myLayerNumber);
-      dos.writeDouble(topDepth);
-      dos.writeDouble(botDepth);
-      dos.writeDouble(topPVelocity);
-      dos.writeDouble(botPVelocity);
-      dos.writeDouble(topSVelocity);
-      dos.writeDouble(botSVelocity);
-      dos.writeDouble(topDensity);
-      dos.writeDouble(botDensity);
-      dos.writeDouble(topQp);
-      dos.writeDouble(botQp);
-      dos.writeDouble(topQs);
-      dos.writeDouble(botQs);
-
-   }
-   
-   public static VelocityLayer readFromStream(DataInputStream dis) 
-   throws IOException, ClassNotFoundException, IllegalAccessException,
-   InstantiationException {
-      int length;
-      
-      byte[] classString = new byte[dis.readInt()];
-      dis.read(classString);
-      Class vLayerClass = Class.forName(new String(classString));
-      VelocityLayer vLayer = (VelocityLayer)vLayerClass.newInstance();
-      
-      vLayer.myLayerNumber = dis.readInt();
-      vLayer.topDepth = dis.readDouble();
-      vLayer.botDepth = dis.readDouble();
-      vLayer.topPVelocity = dis.readDouble();
-      vLayer.botPVelocity = dis.readDouble();
-      vLayer.topSVelocity = dis.readDouble();
-      vLayer.botSVelocity = dis.readDouble();
-      vLayer.topDensity = dis.readDouble();
-      vLayer.botDensity = dis.readDouble();
-      vLayer.topQp = dis.readDouble();
-      vLayer.botQp = dis.readDouble();
-      vLayer.topQs = dis.readDouble();
-      vLayer.botQs = dis.readDouble();
-      
-      return vLayer;
-   }
    
    public String toString() {
       String description;
 
-      description = myLayerNumber + " " + topDepth + " " + botDepth;
-      description += " P " + topPVelocity + " " + botPVelocity;
-      description += " S " + topSVelocity + " " + botSVelocity;
-      description += " Density " + topDensity + " " + botDensity;
+      description = myLayerNumber + " " + getTopDepth() + " " + getBotDepth();
+      description += " P " + getTopPVelocity() + " " + getBotPVelocity();
+      description += " S " + getTopSVelocity() + " " + getBotSVelocity();
+      description += " Density " + getTopDensity() + " " + getBotDensity();
       return description;
    }
+
+public void setTopDepth(double topDepth) {
+    this.topDepth = topDepth;
+}
+
+public double getTopDepth() {
+    return topDepth;
+}
+
+public void setBotDepth(double botDepth) {
+    this.botDepth = botDepth;
+}
+
+public double getBotDepth() {
+    return botDepth;
+}
+
+public void setTopPVelocity(double topPVelocity) {
+    this.topPVelocity = topPVelocity;
+}
+
+public double getTopPVelocity() {
+    return topPVelocity;
+}
+
+public void setBotPVelocity(double botPVelocity) {
+    this.botPVelocity = botPVelocity;
+}
+
+public double getBotPVelocity() {
+    return botPVelocity;
+}
+
+public void setTopSVelocity(double topSVelocity) {
+    this.topSVelocity = topSVelocity;
+}
+
+public double getTopSVelocity() {
+    return topSVelocity;
+}
+
+public void setBotSVelocity(double botSVelocity) {
+    this.botSVelocity = botSVelocity;
+}
+
+public double getBotSVelocity() {
+    return botSVelocity;
+}
+
+public void setTopDensity(double topDensity) {
+    this.topDensity = topDensity;
+}
+
+public double getTopDensity() {
+    return topDensity;
+}
+
+public void setBotDensity(double botDensity) {
+    this.botDensity = botDensity;
+}
+
+public double getBotDensity() {
+    return botDensity;
+}
+
+public void setTopQp(double topQp) {
+    this.topQp = topQp;
+}
+
+public double getTopQp() {
+    return topQp;
+}
+
+public void setBotQp(double botQp) {
+    this.botQp = botQp;
+}
+
+public double getBotQp() {
+    return botQp;
+}
+
+public void setTopQs(double topQs) {
+    this.topQs = topQs;
+}
+
+public double getTopQs() {
+    return topQs;
+}
+
+public void setBotQs(double botQs) {
+    this.botQs = botQs;
+}
+
+public double getBotQs() {
+    return botQs;
+}
 }

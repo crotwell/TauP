@@ -35,6 +35,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
+import org.apache.log4j.BasicConfigurator;
 
 /**
  * Calculate travel times for different branches using linear interpolation
@@ -137,18 +138,18 @@ public class TauP_Time {
             loadTauModel(modelName);
         } catch(FileNotFoundException e) {
             throw new TauModelException("FileNotFoundException:"
-                    + e.getMessage());
+                    + e.getMessage(), e);
         } catch(InvalidClassException e) {
             throw new TauModelException("InvalidClassException:"
-                    + e.getMessage());
+                    + e.getMessage(), e);
         } catch(StreamCorruptedException e) {
             throw new TauModelException("StreamCorruptedException:"
-                    + e.getMessage());
+                    + e.getMessage(), e);
         } catch(OptionalDataException e) {
             throw new TauModelException("OptionalDataException:"
-                    + e.getMessage());
+                    + e.getMessage(), e);
         } catch(IOException e) {
-            throw new TauModelException("IOException:" + e.getMessage());
+            throw new TauModelException("IOException:" + e.getMessage(), e);
         }
     }
 
@@ -1312,6 +1313,7 @@ public class TauP_Time {
     public static void main(String[] args) throws FileNotFoundException,
             IOException, StreamCorruptedException, ClassNotFoundException,
             OptionalDataException {
+        BasicConfigurator.configure();
         try {
             long prevTime = 0;
             long currTime;

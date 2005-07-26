@@ -158,17 +158,17 @@ public class VelocityModel
 		double[] disconDepths = new double[getNumLayers()+2];
 		int numFound = 0;
 		VelocityLayer aboveLayer, belowLayer;
-		disconDepths[numFound++] = getVelocityLayer(0).topDepth;
+		disconDepths[numFound++] = getVelocityLayer(0).getTopDepth();
 		for (int layerNum = 0; layerNum < getNumLayers()-1; layerNum++) {
 			aboveLayer = getVelocityLayer(layerNum);
 			belowLayer = getVelocityLayer(layerNum+1);
-			if (aboveLayer.botPVelocity != belowLayer.topPVelocity ||
-	      aboveLayer.botSVelocity != belowLayer.topSVelocity) {
+			if (aboveLayer.getBotPVelocity() != belowLayer.getTopPVelocity() ||
+	      aboveLayer.getBotSVelocity() != belowLayer.getTopSVelocity()) {
 					// a discontinuity
-				disconDepths[numFound++] = aboveLayer.botDepth;
+				disconDepths[numFound++] = aboveLayer.getBotDepth();
 			}
 		}
-		disconDepths[numFound++] = getVelocityLayer(getNumLayers()-1).botDepth;
+		disconDepths[numFound++] = getVelocityLayer(getNumLayers()-1).getBotDepth();
 		double[] temp = new double[numFound];
 		System.arraycopy(disconDepths, 0, temp, 0, numFound);
 		return temp;
@@ -286,7 +286,7 @@ public class VelocityModel
 
          /* first check to see if depth is at top of top layer. */
       tempLayer = (VelocityLayer)getVelocityLayer(0);
-      if (depth == tempLayer.topDepth) {
+      if (depth == tempLayer.getTopDepth()) {
          return 0;
       } else {
 			int tooSmallNum = 0;
@@ -294,8 +294,8 @@ public class VelocityModel
 	      int currentNum = 0;
 	      boolean found = false;
 
-	      if (depth < tempLayer.topDepth ||
-	      getVelocityLayer(tooLargeNum).botDepth < depth) {
+	      if (depth < tempLayer.getTopDepth() ||
+	      getVelocityLayer(tooLargeNum).getBotDepth() < depth) {
 	         throw new NoSuchLayerException(depth);
 	      }
 
@@ -303,9 +303,9 @@ public class VelocityModel
 	         currentNum = Math.round((tooSmallNum + tooLargeNum) / 2.0f);
 	         tempLayer = getVelocityLayer(currentNum);
  
-	         if (tempLayer.topDepth >= depth) {
+	         if (tempLayer.getTopDepth() >= depth) {
 	            tooLargeNum = currentNum-1;
-	         } else if (tempLayer.botDepth < depth) {
+	         } else if (tempLayer.getBotDepth() < depth) {
 	            tooSmallNum = currentNum+1;
 	         } else {
 	            found = true;
@@ -334,15 +334,15 @@ public class VelocityModel
       boolean found = false;
  
          /* first check to see if depth is at top of top layer. */
-      if (depth == tempLayer.topDepth) {
+      if (depth == tempLayer.getTopDepth()) {
          return 0;
-      } else if (getVelocityLayer(tooLargeNum).botDepth == depth) {
+      } else if (getVelocityLayer(tooLargeNum).getBotDepth() == depth) {
             /* and check the bottommost layer. */
          return tooLargeNum;
       } else {
  
-         if (depth < tempLayer.topDepth ||
-         getVelocityLayer(tooLargeNum).botDepth < depth) {
+         if (depth < tempLayer.getTopDepth() ||
+         getVelocityLayer(tooLargeNum).getBotDepth() < depth) {
             throw new NoSuchLayerException(depth);
          }
  
@@ -350,9 +350,9 @@ public class VelocityModel
             currentNum = Math.round((tooSmallNum + tooLargeNum) / 2.0f);
             tempLayer = getVelocityLayer(currentNum);
  
-            if (tempLayer.topDepth > depth) {
+            if (tempLayer.getTopDepth() > depth) {
                tooLargeNum = currentNum-1;
-            } else if (tempLayer.botDepth <= depth) {
+            } else if (tempLayer.getBotDepth() <= depth) {
                tooSmallNum = currentNum+1;
             } else {
                found = true;
@@ -443,7 +443,7 @@ public class VelocityModel
       VelocityLayer tempLayer;
 
       tempLayer = (VelocityLayer)getVelocityLayer(layerNumber);
-      return tempLayer.topDepth;
+      return tempLayer.getTopDepth();
    }
 
       /** 
@@ -458,7 +458,7 @@ public class VelocityModel
       VelocityLayer tempLayer;
 
       tempLayer = (VelocityLayer)getVelocityLayer(layerNumber);
-      return tempLayer.botDepth;
+      return tempLayer.getBotDepth();
    }
 
       /* replaces layers in the velocity model with new layers. The number
@@ -472,17 +472,17 @@ public class VelocityModel
       boolean matchBot) throws NoSuchLayerException
    {
 
-      int topLayerNum = layerNumberBelow(newLayers[0].topDepth);
+      int topLayerNum = layerNumberBelow(newLayers[0].getTopDepth());
       VelocityLayer topLayer = getVelocityLayer(topLayerNum);
-      int botLayerNum = layerNumberAbove(newLayers[newLayers.length-1].botDepth);
+      int botLayerNum = layerNumberAbove(newLayers[newLayers.length-1].getBotDepth());
       VelocityLayer botLayer = getVelocityLayer(botLayerNum);
 
       if (matchTop) {
          try {
-            newLayers[0].topPVelocity = topLayer.evaluateAt(
-               newLayers[0].topDepth, 'P');
-            newLayers[0].topSVelocity = topLayer.evaluateAt(
-               newLayers[0].topDepth, 'S');
+            newLayers[0].setTopPVelocity(topLayer.evaluateAt(
+               newLayers[0].getTopDepth(), 'P'));
+            newLayers[0].setTopSVelocity(topLayer.evaluateAt(
+               newLayers[0].getTopDepth(), 'S'));
          } catch (NoSuchMatPropException e) {
                // can't happen, but...
             System.err.println("Caught NoSuchMatPropException: "+
@@ -493,10 +493,8 @@ public class VelocityModel
 
       if (matchBot) {
          try {
-            newLayers[newLayers.length-1].botPVelocity =
-               botLayer.evaluateAt(newLayers[newLayers.length-1].botDepth, 'P');
-            newLayers[newLayers.length-1].botSVelocity =
-               botLayer.evaluateAt(newLayers[newLayers.length-1].botDepth, 'S');
+            newLayers[newLayers.length-1].setBotPVelocity(botLayer.evaluateAt(newLayers[newLayers.length-1].getBotDepth(), 'P'));
+            newLayers[newLayers.length-1].setBotSVelocity(botLayer.evaluateAt(newLayers[newLayers.length-1].getBotDepth(), 'S'));
          } catch (NoSuchMatPropException e) {
                // can't happen, but...
             System.err.println("Caught NoSuchMatPropException: "+
@@ -505,16 +503,16 @@ e.printStackTrace();
          }
       }
 
-      if (topLayer.botDepth > newLayers[0].topDepth) {
+      if (topLayer.getBotDepth() > newLayers[0].getTopDepth()) {
             /* need to split this layer. */
          VelocityLayer newVLayer = (VelocityLayer)topLayer.clone();
 
          try {
-            topLayer.botPVelocity = topLayer.evaluateAt(
-               newLayers[0].topDepth, 'P');
-            topLayer.botSVelocity = topLayer.evaluateAt(
-               newLayers[0].topDepth, 'S');
-            topLayer.botDepth = newLayers[0].topDepth;
+            topLayer.setBotPVelocity(topLayer.evaluateAt(
+               newLayers[0].getTopDepth(), 'P'));
+            topLayer.setBotSVelocity(topLayer.evaluateAt(
+               newLayers[0].getTopDepth(), 'S'));
+            topLayer.setBotDepth(newLayers[0].getTopDepth());
          } catch (NoSuchMatPropException e) {
                // can't happen, but...
             System.err.println("Caught NoSuchMatPropException: "+
@@ -522,23 +520,23 @@ e.printStackTrace();
 			e.printStackTrace();
          }
 
-         newVLayer.topPVelocity = topLayer.botPVelocity;
-         newVLayer.topSVelocity = topLayer.botSVelocity;
-         newVLayer.topDepth = topLayer.botDepth;
+         newVLayer.setTopPVelocity(topLayer.getBotPVelocity());
+         newVLayer.setTopSVelocity(topLayer.getBotSVelocity());
+         newVLayer.setTopDepth(topLayer.getBotDepth());
          layer.insertElementAt(newVLayer, topLayerNum+1);
          botLayerNum++;
          topLayerNum++;
       }
-      if (botLayer.botDepth > newLayers[newLayers.length-1].botDepth) {
+      if (botLayer.getBotDepth() > newLayers[newLayers.length-1].getBotDepth()) {
             /* need to split this layer. */
          VelocityLayer newVLayer = (VelocityLayer)botLayer.clone();
 
          try {
-            botLayer.botPVelocity = botLayer.evaluateAt(
-               newLayers[newLayers.length-1].botDepth, 'P');
-            botLayer.botSVelocity = botLayer.evaluateAt(
-               newLayers[newLayers.length-1].botDepth, 'S');
-            botLayer.botDepth = newLayers[newLayers.length-1].botDepth;
+            botLayer.setBotPVelocity(botLayer.evaluateAt(
+               newLayers[newLayers.length-1].getBotDepth(), 'P'));
+            botLayer.setBotSVelocity(botLayer.evaluateAt(
+               newLayers[newLayers.length-1].getBotDepth(), 'S'));
+            botLayer.setBotDepth(newLayers[newLayers.length-1].getBotDepth());
          } catch (NoSuchMatPropException e) {
                // can't happen, but...
             System.err.println("Caught NoSuchMatPropException: "+
@@ -546,9 +544,9 @@ e.printStackTrace();
 			e.printStackTrace();
          }
  
-         newVLayer.topPVelocity = botLayer.botPVelocity;
-         newVLayer.topSVelocity = botLayer.botSVelocity;
-         newVLayer.topDepth = botLayer.botDepth;
+         newVLayer.setTopPVelocity(botLayer.getBotPVelocity());
+         newVLayer.setTopSVelocity(botLayer.getBotSVelocity());
+         newVLayer.setTopDepth(botLayer.getBotDepth());
          layer.insertElementAt(newVLayer, botLayerNum+1);
          botLayerNum++;
       }
@@ -584,25 +582,25 @@ e.printStackTrace();
       dos.writeBytes("> P velocity for "+modelName+"  below\n");
       for (int layerNum=0;layerNum<getNumLayers();layerNum++) {
          currVelocityLayer = getVelocityLayer(layerNum);
-         if (currVelocityLayer.topPVelocity != pVel) {
-            dos.writeBytes((float)currVelocityLayer.topDepth+" "+
-               (float)currVelocityLayer.topPVelocity+"\n");
+         if (currVelocityLayer.getTopPVelocity() != pVel) {
+            dos.writeBytes((float)currVelocityLayer.getTopDepth()+" "+
+               (float)currVelocityLayer.getTopPVelocity()+"\n");
          }
-         dos.writeBytes((float)currVelocityLayer.botDepth+" "+
-            (float)currVelocityLayer.botPVelocity+"\n");
-         pVel = currVelocityLayer.botPVelocity;
+         dos.writeBytes((float)currVelocityLayer.getBotDepth()+" "+
+            (float)currVelocityLayer.getBotPVelocity()+"\n");
+         pVel = currVelocityLayer.getBotPVelocity();
       }
       
       dos.writeBytes("> S velocity for "+modelName+"  below\n");
       for (int layerNum=0;layerNum<getNumLayers();layerNum++) {
          currVelocityLayer = getVelocityLayer(layerNum);
-         if (currVelocityLayer.topSVelocity != sVel) {
-            dos.writeBytes((float)currVelocityLayer.topDepth+" "+
-               (float)currVelocityLayer.topSVelocity+"\n");
+         if (currVelocityLayer.getTopSVelocity() != sVel) {
+            dos.writeBytes((float)currVelocityLayer.getTopDepth()+" "+
+               (float)currVelocityLayer.getTopSVelocity()+"\n");
          }
-         dos.writeBytes((float)currVelocityLayer.botDepth+" "+
-            (float)currVelocityLayer.botSVelocity+"\n");
-         sVel = currVelocityLayer.botSVelocity;
+         dos.writeBytes((float)currVelocityLayer.getBotDepth()+" "+
+            (float)currVelocityLayer.getBotSVelocity()+"\n");
+         sVel = currVelocityLayer.getBotSVelocity();
       }
    }
 
@@ -672,15 +670,15 @@ e.printStackTrace();
 
       currVelocityLayer = getVelocityLayer(0);
       prevVelocityLayer = new VelocityLayer();
-      prevVelocityLayer.botDepth = currVelocityLayer.topDepth;
-      prevVelocityLayer.botPVelocity = currVelocityLayer.topPVelocity;
-      prevVelocityLayer.botSVelocity = currVelocityLayer.topSVelocity;
-      prevVelocityLayer.botDensity = currVelocityLayer.topDensity;
+      prevVelocityLayer.setBotDepth(currVelocityLayer.getTopDepth());
+      prevVelocityLayer.setBotPVelocity(currVelocityLayer.getTopPVelocity());
+      prevVelocityLayer.setBotSVelocity(currVelocityLayer.getTopSVelocity());
+      prevVelocityLayer.setBotDensity(currVelocityLayer.getTopDensity());
 
       for (int layerNum=0;layerNum<getNumLayers();layerNum++) {
          currVelocityLayer = getVelocityLayer(layerNum);
 
-         if (prevVelocityLayer.botDepth != currVelocityLayer.topDepth) {
+         if (prevVelocityLayer.getBotDepth() != currVelocityLayer.getTopDepth()) {
             /*
              * There is a gap in the velocity model!
              */
@@ -690,7 +688,7 @@ e.printStackTrace();
             System.err.println("currVelocityLayer="+currVelocityLayer);
             return false;
          }
-         if (currVelocityLayer.botDepth == currVelocityLayer.topDepth) {
+         if (currVelocityLayer.getBotDepth() == currVelocityLayer.getTopDepth()) {
             /*
              * This layer has zero thickness.
              */
@@ -700,8 +698,8 @@ e.printStackTrace();
             System.err.println("currVelocityLayer="+currVelocityLayer);
             return false;
          }
-         if (currVelocityLayer.topPVelocity <= 0.0 ||
-             currVelocityLayer.botPVelocity <= 0.0) {
+         if (currVelocityLayer.getTopPVelocity() <= 0.0 ||
+             currVelocityLayer.getBotPVelocity() <= 0.0) {
             /*
              * This layer has a negative or zero P velocity.
              */
@@ -709,8 +707,8 @@ e.printStackTrace();
                "velocity model at layer "+layerNum);
             return false;
          }
-         if (currVelocityLayer.topSVelocity < 0.0 ||
-             currVelocityLayer.botSVelocity < 0.0) {
+         if (currVelocityLayer.getTopSVelocity() < 0.0 ||
+             currVelocityLayer.getBotSVelocity() < 0.0) {
             /*
              * This layer has a negative S velocity.
              */
@@ -718,10 +716,10 @@ e.printStackTrace();
                "velocity model at layer "+layerNum);
             return false;
          }
-         if ((currVelocityLayer.topPVelocity != 0.0 &&
-             currVelocityLayer.botPVelocity == 0.0) || (
-             currVelocityLayer.topPVelocity == 0.0 &&
-             currVelocityLayer.botPVelocity != 0.0)) {
+         if ((currVelocityLayer.getTopPVelocity() != 0.0 &&
+             currVelocityLayer.getBotPVelocity() == 0.0) || (
+             currVelocityLayer.getTopPVelocity() == 0.0 &&
+             currVelocityLayer.getBotPVelocity() != 0.0)) {
             /*
              * This layer goes to zero P velocity without a discontinuity.
              */
@@ -733,10 +731,10 @@ e.printStackTrace();
                "discontinuity to zero velocity.");
             return false;
          }
-         if ((currVelocityLayer.topSVelocity != 0.0 &&
-             currVelocityLayer.botSVelocity == 0.0) || (
-             currVelocityLayer.topSVelocity == 0.0 &&
-             currVelocityLayer.botSVelocity != 0.0)) {
+         if ((currVelocityLayer.getTopSVelocity() != 0.0 &&
+             currVelocityLayer.getBotSVelocity() == 0.0) || (
+             currVelocityLayer.getTopSVelocity() == 0.0 &&
+             currVelocityLayer.getBotSVelocity() != 0.0)) {
             /*
              * This layer goes to zero S velocity without a discontinuity.
              */
@@ -918,20 +916,20 @@ e.printStackTrace();
          while (tokenIn.ttype != StreamTokenizer.TT_EOF) { 
                // Loop until we hit the end of file
 
-            tempLayer.topDepth = depth;
-            tempLayer.topPVelocity = pVel;
-            tempLayer.topSVelocity = sVel;
-            tempLayer.topDensity = density;
+            tempLayer.setTopDepth(depth);
+            tempLayer.setTopPVelocity(pVel);
+            tempLayer.setTopSVelocity(sVel);
+            tempLayer.setTopDensity(density);
            
-            tempLayer.botDepth = depth = tokenIn.nval;
+            tempLayer.setBotDepth(depth = tokenIn.nval);
             tokenIn.nextToken();
-            tempLayer.botPVelocity = pVel = tokenIn.nval;
+            tempLayer.setBotPVelocity(pVel = tokenIn.nval);
             tokenIn.nextToken();
-            tempLayer.botSVelocity = sVel = tokenIn.nval;
+            tempLayer.setBotSVelocity(sVel = tokenIn.nval);
             tokenIn.nextToken();
             if (tokenIn.ttype != StreamTokenizer.TT_EOL) { 
                  // density is not used and is optional
-               tempLayer.botDensity = density = tokenIn.nval;
+               tempLayer.setBotDensity(density = tokenIn.nval);
                tokenIn.nextToken();
             }
             if (tokenIn.ttype != StreamTokenizer.TT_EOL) { 
@@ -941,7 +939,7 @@ e.printStackTrace();
                  " Layer="+myLayerNumber+
                  " tokenIn="+tokenIn);
             } else {tokenIn.nextToken();}
-            if (tempLayer.topDepth != tempLayer.botDepth) {
+            if (tempLayer.getTopDepth() != tempLayer.getBotDepth()) {
                  /*
                   * Don't use zero thickness layers, first order discontinuities
                   * are taken care of by storing top and bottom depths.
@@ -1057,31 +1055,31 @@ e.printStackTrace();
                }
                tokenIn.nextToken();
             }
-            tempLayer.topDepth = depth;
-            tempLayer.topPVelocity = pVel;
-            tempLayer.topSVelocity = sVel;
-            tempLayer.topDensity = density;
-            tempLayer.topQp = qp;
-            tempLayer.topQs = qs;
+            tempLayer.setTopDepth(depth);
+            tempLayer.setTopPVelocity(pVel);
+            tempLayer.setTopSVelocity(sVel);
+            tempLayer.setTopDensity(density);
+            tempLayer.setTopQp(qp);
+            tempLayer.setTopQs(qs);
            
-            tempLayer.botDepth = depth = tokenIn.nval;
+            tempLayer.setBotDepth(depth = tokenIn.nval);
             tokenIn.nextToken();
-            tempLayer.botPVelocity = pVel = tokenIn.nval;
+            tempLayer.setBotPVelocity(pVel = tokenIn.nval);
             tokenIn.nextToken();
-            tempLayer.botSVelocity = sVel = tokenIn.nval;
+            tempLayer.setBotSVelocity(sVel = tokenIn.nval);
             tokenIn.nextToken();
 
             if (tokenIn.ttype != StreamTokenizer.TT_EOL) {
                   // density is not used and so is optional
-               tempLayer.botDensity = density = tokenIn.nval;
+               tempLayer.setBotDensity(density = tokenIn.nval);
                tokenIn.nextToken();
                if (tokenIn.ttype != StreamTokenizer.TT_EOL) {
                      // Qp is not used and so is optional
-                  tempLayer.botQp = qp = tokenIn.nval;
+                  tempLayer.setBotQp(qp = tokenIn.nval);
                   tokenIn.nextToken();
                   if (tokenIn.ttype != StreamTokenizer.TT_EOL) {
                         // Qs is not used and so is optional
-                     tempLayer.botQs = qs = tokenIn.nval;
+                     tempLayer.setBotQs(qs = tokenIn.nval);
                      tokenIn.nextToken();
                   }
                }
@@ -1093,7 +1091,7 @@ e.printStackTrace();
                  " Layer="+myLayerNumber+
                  " tokenIn="+tokenIn);
             } else {tokenIn.nextToken();}
-            if (tempLayer.topDepth != tempLayer.botDepth) {
+            if (tempLayer.getTopDepth() != tempLayer.getBotDepth()) {
                  /*
                   * Don't use zero thickness layers, first order discontinuities
                   * are taken care of by storing top and bottom depths.
@@ -1127,22 +1125,22 @@ e.printStackTrace();
 		for (int layerNum = 0; layerNum < getNumLayers()-1; layerNum++) {
 			aboveLayer = getVelocityLayer(layerNum);
 			belowLayer = getVelocityLayer(layerNum+1);
-			if (aboveLayer.botPVelocity != belowLayer.topPVelocity ||
-	      aboveLayer.botSVelocity != belowLayer.topSVelocity) {
+			if (aboveLayer.getBotPVelocity() != belowLayer.getTopPVelocity() ||
+	      aboveLayer.getBotSVelocity() != belowLayer.getTopSVelocity()) {
 					// a discontinuity
-				if (Math.abs(mohoDepth - aboveLayer.botDepth) < mohoMin) {
-					tempMohoDepth = aboveLayer.botDepth;
-					mohoMin = Math.abs(mohoDepth - aboveLayer.botDepth);
+				if (Math.abs(mohoDepth - aboveLayer.getBotDepth()) < mohoMin) {
+					tempMohoDepth = aboveLayer.getBotDepth();
+					mohoMin = Math.abs(mohoDepth - aboveLayer.getBotDepth());
 				}
-				if (Math.abs(cmbDepth - aboveLayer.botDepth) < cmbMin) {
-					tempCmbDepth = aboveLayer.botDepth;
-					cmbMin = Math.abs(cmbDepth - aboveLayer.botDepth);
+				if (Math.abs(cmbDepth - aboveLayer.getBotDepth()) < cmbMin) {
+					tempCmbDepth = aboveLayer.getBotDepth();
+					cmbMin = Math.abs(cmbDepth - aboveLayer.getBotDepth());
 				}
-				if (aboveLayer.botSVelocity == 0.0 &&
-				belowLayer.topSVelocity > 0.0 &&
-				Math.abs(iocbDepth - aboveLayer.botDepth) < iocbMin) {
-					tempIocbDepth = aboveLayer.botDepth;
-					iocbMin = Math.abs(iocbDepth - aboveLayer.botDepth);
+				if (aboveLayer.getBotSVelocity() == 0.0 &&
+				belowLayer.getTopSVelocity() > 0.0 &&
+				Math.abs(iocbDepth - aboveLayer.getBotDepth()) < iocbMin) {
+					tempIocbDepth = aboveLayer.getBotDepth();
+					iocbMin = Math.abs(iocbDepth - aboveLayer.getBotDepth());
 				}
 			}
 		}
@@ -1157,111 +1155,44 @@ e.printStackTrace();
 	}
 
    /**
-    * Returns a flat velocity model object equivalent to the spherical
-    * velocity model via the earth flattening transform.
-    *
+    * Returns a flat velocity model object equivalent to the spherical velocity
+    * model via the earth flattening transform.
+    * 
     * @return the flattened VelocityModel object.
-    * @exception VelocityModelException occurs ???.
-    */ 
-   public VelocityModel earthFlattenTransform() 
-      throws VelocityModelException
-   {
-      VelocityModel flatModel;
-      VelocityLayer newLayer;
-
-      flatModel = (VelocityModel)this.clone();
-      flatModel.spherical = false;
-      flatModel.layer = new Vector(vectorLength);
-
-      for (int i=0;i<getNumLayers();i++) {
-         newLayer = getVelocityLayerClone(i);
-         newLayer.topDepth=radiusOfEarth*
-                            Math.log(newLayer.topDepth/radiusOfEarth);
-         newLayer.botDepth=radiusOfEarth*
-                            Math.log(newLayer.botDepth/radiusOfEarth);
-         newLayer.topPVelocity=radiusOfEarth * newLayer.topPVelocity/
-                            newLayer.topDepth;
-         newLayer.botPVelocity=radiusOfEarth * newLayer.botPVelocity/
-                            newLayer.botDepth;
-         newLayer.topSVelocity=radiusOfEarth * newLayer.topSVelocity/
-                            newLayer.topDepth;
-         newLayer.botSVelocity=radiusOfEarth * newLayer.botSVelocity/
-                            newLayer.botDepth;
-         flatModel.layer.addElement(newLayer);
-      }
-      return flatModel;
-   }
-
-   public void writeToStream(String filename) throws IOException {
-      DataOutputStream dos = new DataOutputStream(
-         new BufferedOutputStream(
-         new FileOutputStream(filename)));
-      writeToStream(dos);
-      dos.close();
-   }
-   
-   public void writeToStream(DataOutputStream dos) throws IOException {
-      dos.writeInt(getClass().getName().length());
-      dos.writeBytes(getClass().getName());
-      dos.writeInt(modelName.length());
-      dos.writeBytes(modelName);
-      dos.writeDouble(radiusOfEarth);
-      dos.writeDouble(mohoDepth);
-      dos.writeDouble(cmbDepth);
-      dos.writeDouble(iocbDepth);
-      dos.writeDouble(meanDensity);
-      dos.writeDouble(G);
-      dos.writeDouble(minRadius);
-      dos.writeDouble(maxRadius);
-      dos.writeBoolean(spherical);
-      dos.writeInt(layer.size());
-      for (int i=0;i<layer.size();i++) {
-         ((VelocityLayer)layer.elementAt(i)).writeToStream(dos);
-      }
-   }
-   
-   public static VelocityModel readFromStream(String filename) 
-   throws FileNotFoundException, IOException,  ClassNotFoundException, 
-   InstantiationException, IllegalAccessException
-   {
-      DataInputStream dis = new DataInputStream(
-         new BufferedInputStream( new FileInputStream(filename)));
-      VelocityModel vMod = readFromStream(dis);
-      dis.close();
-      return vMod;
-   }
-   
-   public static VelocityModel readFromStream(DataInputStream dis) 
-   throws IOException, ClassNotFoundException, IllegalAccessException,
-   InstantiationException {
-      int length;
-      
-      byte[] classString = new byte[dis.readInt()];
-      dis.read(classString);
-      Class vModClass = Class.forName(new String(classString));
-      VelocityModel vMod = (VelocityModel)vModClass.newInstance();
-      
-      byte[] modelString = new byte[dis.readInt()];
-      dis.read(modelString);
-      vMod.modelName = new String(modelString);
-      vMod.radiusOfEarth = dis.readDouble();
-      vMod.mohoDepth = dis.readDouble();
-      vMod.cmbDepth = dis.readDouble();
-      vMod.iocbDepth = dis.readDouble();
-      vMod.meanDensity = dis.readDouble();
-      vMod.G = dis.readDouble();
-      vMod.minRadius = dis.readDouble();
-      vMod.maxRadius = dis.readDouble();
-      vMod.spherical = dis.readBoolean();
-            
-      length = dis.readInt();
-      vMod.layer = new Vector(length);
-      for (int i=0;i<length;i++) {
-         vMod.layer.addElement(VelocityLayer.readFromStream(dis));
-      }
-      
-      return vMod;
-   }
+    * @exception VelocityModelException
+    *                occurs ???.
+    */
+    public VelocityModel earthFlattenTransform() throws VelocityModelException {
+        VelocityModel flatModel;
+        VelocityLayer newLayer, oldLayer;
+        flatModel = (VelocityModel)this.clone();
+        flatModel.spherical = false;
+        flatModel.layer = new Vector(vectorLength);
+        for(int i = 0; i < getNumLayers(); i++) {
+            oldLayer = getVelocityLayer(i);
+            newLayer = new VelocityLayer(i,
+                                         radiusOfEarth
+                                                 * Math.log(oldLayer.getTopDepth()
+                                                         / radiusOfEarth),
+                                         radiusOfEarth
+                                                 * Math.log(oldLayer.getBotDepth()
+                                                         / radiusOfEarth),
+                                         radiusOfEarth
+                                                 * oldLayer.getTopPVelocity()
+                                                 / oldLayer.getTopDepth(),
+                                         radiusOfEarth
+                                                 * oldLayer.getBotPVelocity()
+                                                 / oldLayer.getBotDepth(),
+                                         radiusOfEarth
+                                                 * oldLayer.getTopSVelocity()
+                                                 / oldLayer.getTopDepth(),
+                                         radiusOfEarth
+                                                 * oldLayer.getBotSVelocity()
+                                                 / oldLayer.getBotDepth());
+            flatModel.layer.addElement(newLayer);
+        }
+        return flatModel;
+    }
    
       /** Just for debugging purposes. */
    public static void main(String[] args) {

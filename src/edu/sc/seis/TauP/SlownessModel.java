@@ -647,13 +647,14 @@ public abstract class SlownessModel implements Serializable, Cloneable {
 	
 	// Initialize the current velocity layer
 	// to be zero thickness layer with values at the surface
-	currVLayer = (VelocityLayer)vMod.getVelocityLayerClone(0);
-	currVLayer.botDepth = currVLayer.topDepth;
-	currVLayer.botPVelocity = currVLayer.topPVelocity;
-	currVLayer.botSVelocity = currVLayer.topSVelocity;
-	currVLayer.botDensity = currVLayer.topDensity;
-	currVLayer.botQp = currVLayer.topQp;
-	currVLayer.botQs = currVLayer.topQs;
+    currVLayer = vMod.getVelocityLayer(0);
+    currVLayer = new VelocityLayer(0,
+                                   currVLayer.getTopDepth(), currVLayer.getTopDepth(),
+                                   currVLayer.getTopPVelocity(), currVLayer.getTopPVelocity(),
+                                   currVLayer.getTopSVelocity(), currVLayer.getTopSVelocity(),
+                                   currVLayer.getTopDensity(), currVLayer.getTopDensity(),
+                                   currVLayer.getTopQp(), currVLayer.getTopQp(),
+                                   currVLayer.getTopQs(),currVLayer.getTopQs());
 	
 	currSLayer =  toSlownessLayer(currVLayer, SWAVE);
 	currPLayer =  toSlownessLayer(currVLayer, PWAVE);
@@ -663,10 +664,10 @@ public abstract class SlownessModel implements Serializable, Cloneable {
 	criticalDepthVector.addElement(new CriticalDepth(0.0, 0, 0, 0));
 	
 	/* Check to see if we start in a fluid zone. */
-	if (!inFluidZone && currVLayer.topSVelocity==0.0 )  {
+	if (!inFluidZone && currVLayer.getTopSVelocity()==0.0 )  {
 	    inFluidZone = true;
 	    fluidZone = new DepthRange();
-	    fluidZone.topDepth = currVLayer.topDepth;
+	    fluidZone.topDepth = currVLayer.getTopDepth();
 	    currSLayer = currPLayer;
 	}
 	if (minSSoFar > currSLayer.getTopP()) {
@@ -687,20 +688,20 @@ public abstract class SlownessModel implements Serializable, Cloneable {
 
             /* If we are not already in a fluid check to see if we have 
              * just entered a fluid zone. */
-	    if (!inFluidZone && currVLayer.topSVelocity==0.0 )  {
+	    if (!inFluidZone && currVLayer.getTopSVelocity()==0.0 )  {
 		inFluidZone = true;
 		fluidZone = new DepthRange();
-		fluidZone.topDepth = currVLayer.topDepth;
+		fluidZone.topDepth = currVLayer.getTopDepth();
 	    }
 
             /* If we are already in a fluid check to see if we have 
              * just exited it. */
-	    if (inFluidZone && currVLayer.topSVelocity!=0.0)  {
-		if (prevVLayer.botDepth > vMod.getIocbDepth() ) {
+	    if (inFluidZone && currVLayer.getTopSVelocity()!=0.0)  {
+		if (prevVLayer.getBotDepth() > vMod.getIocbDepth() ) {
 		    belowOuterCore = true;
 		}
 		inFluidZone = false;
-		fluidZone.botDepth = prevVLayer.botDepth;
+		fluidZone.botDepth = prevVLayer.getBotDepth();
 		fluidLayerDepths.addElement(fluidZone);
 	    }
 
@@ -871,11 +872,11 @@ public abstract class SlownessModel implements Serializable, Cloneable {
 	// Check if the bottommost depth is contained within a high slowness
 	// zone, might happen in a flat non-whole-earth model
 	if (inHighSlownessZoneS) {
-	    highSlownessZoneS.botDepth = currVLayer.botDepth;
+	    highSlownessZoneS.botDepth = currVLayer.getBotDepth();
 	    highSlownessLayerDepthsS.addElement(highSlownessZoneS);
 	}
 	if (inHighSlownessZoneP) {
-	    highSlownessZoneP.botDepth = currVLayer.botDepth;
+	    highSlownessZoneP.botDepth = currVLayer.getBotDepth();
 	    highSlownessLayerDepthsP.addElement(highSlownessZoneP);
 	}
 
@@ -884,7 +885,7 @@ public abstract class SlownessModel implements Serializable, Cloneable {
 	 * the bottom in the outer core or if allowInnerCoreS == false
 	 * and we want to use the P velocity structure in the inner core. */
 	if (inFluidZone ) {
-	    fluidZone.botDepth = currVLayer.botDepth;
+	    fluidZone.botDepth = currVLayer.getBotDepth();
 	    fluidLayerDepths.addElement(fluidZone);
 	}
 
@@ -934,7 +935,7 @@ public abstract class SlownessModel implements Serializable, Cloneable {
 			    boolean isPWave) throws SlownessModelException {
 	try {
 	    int topLayerNum = vMod.layerNumberBelow(topDepth);
-	    if (vMod.getVelocityLayer(topLayerNum).botDepth == topDepth) {
+	    if (vMod.getVelocityLayer(topLayerNum).getBotDepth() == topDepth) {
 		topLayerNum++;
 	    }
 	    int botLayerNum = vMod.layerNumberAbove(botDepth);
@@ -992,16 +993,16 @@ public abstract class SlownessModel implements Serializable, Cloneable {
 		topVelocity = velLayer.evaluateAtTop(waveType);
 		botVelocity = velLayer.evaluateAtBottom(waveType);
 
-		topP = toSlowness(topVelocity, velLayer.topDepth);
-		botP = toSlowness(botVelocity, velLayer.botDepth);
+		topP = toSlowness(topVelocity, velLayer.getTopDepth());
+		botP = toSlowness(botVelocity, velLayer.getBotDepth());
 	 
 		/* check to see if we are within chatter level of the top or bottom
 		 * and if so then return that depth. */
 		if (Math.abs(topP - p) < slownessTolerance) {
-	            return velLayer.topDepth;
+	            return velLayer.getTopDepth();
 		} 
 		if (Math.abs(p - botP) < slownessTolerance) {
-	            return velLayer.botDepth;
+	            return velLayer.getBotDepth();
 		} 
 
 		if ((topP - p)*(p - botP) >= 0.0) {  // found the layer containing p
@@ -1011,15 +1012,15 @@ public abstract class SlownessModel implements Serializable, Cloneable {
 		     * for velocity versus depth.
 		     */
 	            slope = (botVelocity-topVelocity)/
-			(velLayer.botDepth-velLayer.topDepth);
-	            depth = interpolate(p, topVelocity, velLayer.topDepth, slope);
+			(velLayer.getBotDepth()-velLayer.getTopDepth());
+	            depth = interpolate(p, topVelocity, velLayer.getTopDepth(), slope);
 	            return depth;
 
 		} else if (layerNum==topCriticalLayer && 
 			   Math.abs(p-topP)<slownessTolerance) {
 		    /* Check to see if p is just outside the topmost layer.
 		     * If so than return the top depth.  */
-	            return velLayer.topDepth;
+	            return velLayer.getTopDepth();
 		}
 
 		/* Is p a total reflection? 
@@ -1032,15 +1033,15 @@ public abstract class SlownessModel implements Serializable, Cloneable {
 	            topVelocity = velLayer.evaluateAtTop(waveType);
 	   
 	            if (! isPWave &&
-			depthInFluid(velLayer.topDepth)){
+			depthInFluid(velLayer.getTopDepth())){
 			/* Special case for S waves above a fluid. If 
 			 * top next layer is in a fluid then we should set topVelocity
 			 * to be the P velocity at the top of the layer. */
 			topVelocity = velLayer.evaluateAtTop('P');
 	            } 
-	            topP = toSlowness(topVelocity, velLayer.topDepth);
+	            topP = toSlowness(topVelocity, velLayer.getTopDepth());
 	            if (botP >= p && p >= topP) {
-	                return velLayer.topDepth;
+	                return velLayer.getTopDepth();
 	            }
 		}
 	    }
@@ -1050,7 +1051,7 @@ public abstract class SlownessModel implements Serializable, Cloneable {
 		 * If so than return the bottom depth.  */
 		System.out.println(" p is just outside the bottommost layer."+
 				   " This probably shouldn't be allowed to happen!\n");
-		return velLayer.botDepth;
+		return velLayer.getBotDepth();
 	    }
 	} catch (NoSuchMatPropException e) {
 	    // can't happen...
@@ -1141,7 +1142,7 @@ public abstract class SlownessModel implements Serializable, Cloneable {
     protected void coarseSample() 
 	throws SlownessModelException, NoSuchLayerException {
 	VelocityLayer prevVLayer;
-	VelocityLayer origVLayer = vMod.getVelocityLayerClone(0);
+	VelocityLayer origVLayer;
 	VelocityLayer currVLayer = new VelocityLayer();
 	SlownessLayer currPLayer, currSLayer;
 
@@ -1149,12 +1150,14 @@ public abstract class SlownessModel implements Serializable, Cloneable {
 	SLayers.removeAllElements();
       
       	// to initialize prevVLayer
-	origVLayer.botDepth = origVLayer.topDepth;
-	origVLayer.botPVelocity = origVLayer.topPVelocity;
-	origVLayer.botSVelocity = origVLayer.topSVelocity;
-	origVLayer.botDensity = origVLayer.topDensity;
-	origVLayer.botQp = origVLayer.topQp;
-	origVLayer.botQs = origVLayer.topQs;
+    origVLayer = vMod.getVelocityLayer(0);
+    origVLayer = new VelocityLayer(0, 
+                                   origVLayer.getTopDepth(), origVLayer.getTopDepth(),
+                                   origVLayer.getTopPVelocity(), origVLayer.getTopPVelocity(),
+                                   origVLayer.getTopSVelocity(), origVLayer.getTopSVelocity(),
+                                   origVLayer.getTopDensity(), origVLayer.getTopDensity(),
+                                   origVLayer.getTopQp(), origVLayer.getTopQp(),
+                                   origVLayer.getTopQs(),origVLayer.getTopQs());
 
 	try {
 	    for (int layerNum=0; layerNum < vMod.getNumLayers(); layerNum++) {
@@ -1164,32 +1167,28 @@ public abstract class SlownessModel implements Serializable, Cloneable {
 		/* Check for first order discontinuity. However, we only 
 		 * consider S discontinuities in the inner core if 
 		 * allowInnerCoreS is true. */
-		if (prevVLayer.botPVelocity != origVLayer.topPVelocity ||
-		    (prevVLayer.botSVelocity != origVLayer.topSVelocity &&
+		if (prevVLayer.getBotPVelocity() != origVLayer.getTopPVelocity() ||
+		    (prevVLayer.getBotSVelocity() != origVLayer.getTopSVelocity() &&
 		     (allowInnerCoreS || 
-		      origVLayer.topDepth < vMod.getIocbDepth()))) {
-		    currVLayer.topDepth = prevVLayer.botDepth;
-		    currVLayer.botDepth = prevVLayer.botDepth;
-		    currVLayer.topPVelocity = prevVLayer.evaluateAtBottom('P');
-		    currVLayer.botPVelocity = origVLayer.evaluateAtTop('P');
+		      origVLayer.getTopDepth() < vMod.getIocbDepth()))) {
+		    currVLayer.setTopDepth(prevVLayer.getBotDepth());
+		    currVLayer.setBotDepth(prevVLayer.getBotDepth());
+		    currVLayer.setTopPVelocity(prevVLayer.evaluateAtBottom('P'));
+		    currVLayer.setBotPVelocity(origVLayer.evaluateAtTop('P'));
 	         	
 		    /* if we are going from a fluid to a solid or
                        solid to fluid, ex core mantle or outer core to
                        inner core then we need to use the P velocity
                        for determining the S discontinuity. */
-		    if (prevVLayer.botSVelocity == 0.0) {
-			currVLayer.topSVelocity = 
-			    prevVLayer.evaluateAtBottom('P');
+		    if (prevVLayer.getBotSVelocity() == 0.0) {
+			currVLayer.setTopSVelocity(prevVLayer.evaluateAtBottom('P'));
 		    } else {
-			currVLayer.topSVelocity = 
-			    prevVLayer.evaluateAtBottom('S');
+			currVLayer.setTopSVelocity(prevVLayer.evaluateAtBottom('S'));
 		    }
-		    if (origVLayer.topSVelocity == 0.0) {
-			currVLayer.botSVelocity = 
-			    origVLayer.evaluateAtTop('P');
+		    if (origVLayer.getTopSVelocity() == 0.0) {
+			currVLayer.setBotSVelocity(origVLayer.evaluateAtTop('P'));
 		    } else {
-			currVLayer.botSVelocity = 
-			    origVLayer.evaluateAtTop('S');
+			currVLayer.setBotSVelocity(origVLayer.evaluateAtTop('S'));
 		    }
 	         	
 		    /* Add the zero thickness, but with nonzero
@@ -1197,10 +1196,10 @@ public abstract class SlownessModel implements Serializable, Cloneable {
                        discontinuity. */
 		    currPLayer = toSlownessLayer(currVLayer, PWAVE);
 		    PLayers.addElement(currPLayer);
-		    if ((prevVLayer.botSVelocity == 0.0 && 
-			 origVLayer.topSVelocity == 0.0) || 
+		    if ((prevVLayer.getBotSVelocity() == 0.0 && 
+			 origVLayer.getTopSVelocity() == 0.0) || 
 			(! allowInnerCoreS && 
-			 currVLayer.topDepth >= vMod.getIocbDepth())) {
+			 currVLayer.getTopDepth() >= vMod.getIocbDepth())) {
 			currSLayer = currPLayer;
 		    } else {
 			currSLayer = toSlownessLayer(currVLayer, SWAVE);
@@ -1211,8 +1210,8 @@ public abstract class SlownessModel implements Serializable, Cloneable {
 		currPLayer = toSlownessLayer(origVLayer, PWAVE);
 		PLayers.addElement(currPLayer);
 	         
-		if (depthInFluid(origVLayer.topDepth) || 
-		    (! allowInnerCoreS && origVLayer.topDepth >= vMod.getIocbDepth())) {
+		if (depthInFluid(origVLayer.getTopDepth()) || 
+		    (! allowInnerCoreS && origVLayer.getTopDepth() >= vMod.getIocbDepth())) {
 		    currSLayer = currPLayer;
 		} else {
 		    currSLayer = toSlownessLayer(origVLayer, SWAVE);

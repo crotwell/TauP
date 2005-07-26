@@ -63,11 +63,11 @@ public class SlownessLayer implements Serializable, Cloneable {
        *       */
     public SlownessLayer(VelocityLayer vLayer, boolean spherical,
 			 double radiusOfEarth, boolean isPWave) {
-	Assert.isFalse(vLayer.topDepth > vLayer.botDepth,
+	Assert.isFalse(vLayer.getTopDepth() > vLayer.getBotDepth(),
 		       "vLayer.topDepth > vLayer.botDepth :"+
-		       vLayer.topDepth+ " "+vLayer.botDepth);
-	setTopDepth(vLayer.topDepth);
-	setBotDepth(vLayer.botDepth);
+		       vLayer.getTopDepth()+ " "+vLayer.getBotDepth());
+	setTopDepth(vLayer.getTopDepth());
+	setBotDepth(vLayer.getBotDepth());
 
 	char waveType;
 	if (isPWave) { waveType = 'P';

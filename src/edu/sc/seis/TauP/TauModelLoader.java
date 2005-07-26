@@ -82,7 +82,7 @@ public class TauModelLoader {
         try {
             Class c=null;
 
-            c = Class.forName("edu.sc.seis.TauP.PropertyLoader");
+            c = Class.forName("edu.sc.seis.TauP.TauModelLoader");
 
             InputStream in = c.getResourceAsStream(packageName+"/"+filename);
             if (in != null) {
