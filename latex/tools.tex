@@ -440,7 +440,7 @@ in \texttt{t9}. If no header is specified then the time will be inserted in the
 first header variable not allocated to another phase, starting with 0.
 If there are no header variables not already allocated to a phase, then the
 additional phases will not be added to the header. Note that this does not refer to times that are already in the \textsc{sac} file before TauP\_SetSac is run. They will be overwritten. The ray parameter, in seconds per radian, is also
-inserted into the corresponding \testtt{user0-user9} header.
+inserted into the corresponding \texttt{user0}-\texttt{user9} header.
 
 Note that triplicated phases are a problem as there is only one
 spot to put a time. For example, in iasp91 S has three arrivals at 20~degrees but only
@@ -468,7 +468,7 @@ are set.
  
 The user should be very careful about previously set header variables. 
 TauP\_SetSac will
-overwrite any previously set \texttt{t} \textt{user} headers. A future feature may do
+overwrite any previously set \texttt{t} \texttt{user} headers. A future feature may do
 more careful checking, but the current version makes no effort to verify that 
 the header is undefined before writing.
 
