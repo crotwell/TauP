@@ -10,21 +10,24 @@ http://www.seis.sc.edu
 
 What's where:
 README      -- this file
-taup.jar    -- all the Java classes included in the package, along with
+lib         -- all the Java classes included in the package, along with
                saved models for prem, iasp91, and several other earth models.
-               This needs to be in your CLASSPATH to be used.
 COPYING     -- The GNU General Public License
 bin         -- directory containing "wrapper scripts" to start the tools
-               each will print a usage with a -help command line argument
-bat         -- bat scripts for PCs
+               each will print a usage with a -help command line argument.
+               The TAUP_HOME environment variable needs to be set for these
+               scripts to work. .bat files for windows are also included.
 
 doc         -- directory containing postscript and pdf versions of the manual,
-               installation instructions are in the appendix. A PDF version
-               is in progress and will be availible on the web site.
-html        -- javadoc output for the classes, mostly useful for writing Java
+               installation instructions are in the appendix.
+apidocs     -- javadoc output for the classes, mostly useful for writing Java
                programs that use these classes
 src         -- source code for all objects in the package
 modelFiles  -- text files for the velocity models
+native      -- example of calling TauP from C
+jacl        -- example of using TauP within a jacl (Java TCL) script
+Maple       -- some Maple files used in deriving equations used in TauP
+exampleProperties -- example configuration of TauP
 
 Installation:
 
