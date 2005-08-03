@@ -3,6 +3,13 @@
                        Modifications to TauP
 Vers  Date    Description
 -------------------------------------------------------------------------------
+1.1.5  Aug 3, 2005
+      1) Fixed bug with pierce points and upgoing Pdiff leg
+      2) Autodetect byte swapping in SAC files
+      3) Put ray param into user headers in TauP_SetSac
+1.1.4  Apr 5, 2002
+      1) Added fix for models with S vel in Mantle higher than P vel in core, which happens in some Mars models. (Jadhav)
+      2) Added time to both taup_pierce and taup_path (Rivera)
 1.1.3  Jul 18, 2001
       1) Fixed bug with taup_path always using iasp91 (Pulliam)
 1.1.2  Feb 9, 2001
