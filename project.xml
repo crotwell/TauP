@@ -21,10 +21,10 @@ The TauP Toolkit, flexible seismic traveltime utilities.
 </description>
   
   <url>http://www.seis.sc.edu/software/${pom.artifactId}</url>
-  <siteAddress>www.seis.sc.edu</siteAddress>
-  <siteDirectory>/seis/raid1/Apache/htdocs/software/${pom.artifactId}</siteDirectory>
+  <siteAddress>roo.seis.sc.edu</siteAddress>
+  <siteDirectory>/Library/WebServer/software/${pom.artifactId}</siteDirectory>
   <distributionSite>www.seis.sc.edu</distributionSite>
-  <distributionDirectory>/seis/raid1/Apache/htdocs/software/mavenRepository</distributionDirectory>
+  <distributionDirectory>/Library/WebServer/software/mavenRepository</distributionDirectory>
   <mailingList>
     <name>TauP</name>
     <subscribe>taup-request@seis.sc.edu</subscribe>
