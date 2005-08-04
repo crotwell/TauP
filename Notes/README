@@ -13,6 +13,7 @@ README      -- this file
 lib         -- all the Java classes included in the package, along with
                saved models for prem, iasp91, and several other earth models.
 COPYING     -- The GNU General Public License
+HISTORY     -- change log
 bin         -- directory containing "wrapper scripts" to start the tools
                each will print a usage with a -help command line argument.
                The TAUP_HOME environment variable needs to be set for these
@@ -20,8 +21,9 @@ bin         -- directory containing "wrapper scripts" to start the tools
 
 doc         -- directory containing postscript and pdf versions of the manual,
                installation instructions are in the appendix.
-apidocs     -- javadoc output for the classes, mostly useful for writing Java
-               programs that use these classes
+apidocs     -- a directory with the javadoc output from the source code, 
+               mainly useful for writing new java programs that use the 
+               TauP package.
 src         -- source code for all objects in the package
 modelFiles  -- text files for the velocity models
 native      -- example of calling TauP from C
@@ -31,26 +33,6 @@ exampleProperties -- example configuration of TauP
 
 Installation:
 
-More detailed installation instructions (and possibly more up to date) can be found in the manual. But for the impatent, here are the basics.
-
-Unix:
-1) Make sure a Java 1.1 virtual machine is installed. You can test this with 
-      >java -version
-2) Unzip and Untar the distribution, (you have likely already done this).
-      >gunzip TauP.tar.gz
-      >tar xvf TauP.tar
-3) Add taup.jar to your CLASSPATH environment variable. For csh,
-      >setenv CLASSPATH /home/me/TauP/taup.jar:${CLASSPATH}
-4) Copy the wrapper scripts in TauP/bin to a directory referenced by your PATH
-   environment variable.
-      >cp TauP/bin/* /home/me/bin/.
-5) Possibly resource your .cshrc and/or run the rehash command.
-      >source ~/.cshrc
-      >rehash
-6) Run it.
-      >taup_time -mod prem -h 100 -ph P,S,PcP,ScS,PKP,SKS,PKIKP,SKIKS
-        ...
-
-More detailed installation instructions are in an appendix to the manual, 
+Detailed installation instructions are in an appendix to the manual, 
 in the doc directory.
 
