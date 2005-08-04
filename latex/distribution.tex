@@ -10,18 +10,17 @@ The distribution directory obtained from either the gzipped tar file or the jar 
 \begin{center}
 \begin{tabular}{lp{4in}}
 README & getting started information \\
-taup.jar & the jar file with all the classes and standard models \\
-taup.html & a simple web page that loads a rudimentary applet to use the TauP
-package. Be warned that this is not really meant to be used over the Internet
-as the download time for 1.5Mb may be too great and most browsers do not yet
-support the 1.1 version of Java. \\
 exampleProperties & example properties file \\
 HISTORY & change log \\
-License & the free for non-commercial license \\
-bin & a directory with wrapper scripts appropriate for 
-\textsc{Unix} installations\\
-doc & a directory with Postscript and pdf versions of this manual. \\
-html & a directory with the javadoc output from
+COPYING & the GNU GPL license \\
+bin & directory containing "wrapper scripts" to start the tools
+               each will print a usage with a -help command line argument.
+               The TAUP_HOME environment variable needs to be set for these\\
+lib & all the Java classes included in the package, along with
+               saved models for prem, iasp91, and several other earth models. \\
+doc & a directory with Postscript and pdf versions of this manual,
+installation instructions are in the appendix. \\
+apidocs & a directory with the javadoc output from
 the source code, mainly useful
 for writing new java programs that use the TauP package. \\
 jacl & a directory with Jacl examples for accessing the TauP package directly within scripts. \\
@@ -39,7 +38,7 @@ The taup.jar file contains everything needed for a working version of the packag
 This greatly simplifies the installation process and reduces potential errors.
 See appendix \ref{install} for detailed installation instructions.
 
-\subsection{Pros and Cons of the Current Release}
+\subsection{Advantages of the Current Release}
 The increased flexibility of this package provides significant advantages. Among
 these are:
 \begin{enumerate}
@@ -61,19 +60,6 @@ the objects within this package. In addition, Jacl, the Java implementation of t
 
 \end{enumerate}
 
-Of course, there are always drawbacks. The main difficulty at present is speed. 
-The tools in this package are not as fast as natively compiled \textit{C} or
-\textsc{Fortran}. Execution speed, however, is not always the best measure 
-of usefulness. A extremely fast code that can't use your velocity model, or that
-won't run on your machine is worse than a slower, but more flexible tool. In
-addition, processor speed is increasing at a fast rate, and codes 
-that were considered
-too slow yesterday, are usable today, and will have insignificant execution times
-tomorrow. One last point is that there is a significant effort within the 
-commercial world to improve the speed of Java. 
-The educational and research
-world will benefit significantly from these efforts without incurring any cost.
-
  
 \subsection{Future Plans}
 
@@ -84,11 +70,6 @@ There are several ideas for improvements that we may pursue, such as:
 of this package, especially for non command line uses such as on the Macintosh
 or within web browsers. The beginings of such a GUI are there in the TauP tool,
 but at present it cannot access all of the functionality of the tools.
-
-\item Non-\textsc{Unix} platforms. In spite of Java's platform neutral nature,
-our installation instructions and reliance on command line style input and output limits the usability of the package on non-\textsc{Unix} operating systems. 
-We would like to extend support as much as possible to other operating
-systems. This should not be a large effort, and thus should be completed soon.
 
 \item Use of the $\tau$ function. In spite of the name, TauP does not yet use
 Tau splines. At present I do not believe that this would provide a large
