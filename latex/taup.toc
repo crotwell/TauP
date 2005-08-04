@@ -1,7 +1,7 @@
 \contentsline {section}{\numberline {1}Overview}{1}
 \contentsline {section}{\numberline {2}Distribution}{2}
 \contentsline {subsection}{\numberline {2.1}What and Where}{2}
-\contentsline {subsection}{\numberline {2.2}Pros and Cons of the Current Release}{2}
+\contentsline {subsection}{\numberline {2.2}Advantages of the Current Release}{2}
 \contentsline {subsection}{\numberline {2.3}Future Plans}{3}
 \contentsline {section}{\numberline {3}Tools}{4}
 \contentsline {subsection}{\numberline {3.1}Default Parameters}{4}
@@ -33,4 +33,4 @@
 \contentsline {subsection}{\numberline {A.1}Unix}{28}
 \contentsline {subsection}{\numberline {A.2}MacOS}{29}
 \contentsline {subsection}{\numberline {A.3}Windows}{29}
-\contentsline {section}{\numberline {B}Troubleshooting}{31}
+\contentsline {section}{\numberline {B}Troubleshooting}{30}
