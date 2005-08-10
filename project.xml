@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
+<?xml version="1.0"?>
 <project>
   <pomVersion>3</pomVersion>
   <name>TauP</name>
@@ -8,18 +7,16 @@
   <organization>
     <name>Seismology at the University of South Carolina</name>
     <url>http://www.seis.sc.edu</url>
-    <logo>http://www.seis.sc.edu/images/header.gif</logo>
+    <logo>http://www.seis.sc.edu/images/seislogo.gif</logo>
   </organization>
   <currentVersion>1.1.5</currentVersion>
   <inceptionYear>1999</inceptionYear>
-
   <package>edu.sc.seis.TauP</package>
   <shortDescription>The TauP Toolkit.</shortDescription>
   <gumpRepositoryId>TauP</gumpRepositoryId>
   <description> 
 The TauP Toolkit, flexible seismic traveltime utilities.
 </description>
-  
   <url>http://www.seis.sc.edu/software/${pom.artifactId}</url>
   <siteAddress>roo.seis.sc.edu</siteAddress>
   <siteDirectory>/Library/WebServer/software/${pom.artifactId}</siteDirectory>
@@ -30,12 +27,9 @@ The TauP Toolkit, flexible seismic traveltime utilities.
     <subscribe>taup-request@seis.sc.edu</subscribe>
     <unsubscribe>taup-request@seis.sc.edu</unsubscribe>
   </mailingList>
-
   <repository>
         <url>http://roo.seis.sc.edu/fisheye/viewrep/CVS/seis/${pom.artifactId}</url>
     </repository>
-
-
   <developers>
     <developer>
       <name>Philip Crotwell</name>
@@ -47,7 +41,6 @@ The TauP Toolkit, flexible seismic traveltime utilities.
       </roles>
     </developer>
     </developers>
-
   <dependencies>
     <dependency>
       <id>log4j</id>
@@ -56,10 +49,9 @@ The TauP Toolkit, flexible seismic traveltime utilities.
     <dependency>
       <artifactId>seisFile</artifactId>
       <groupId>seisFile</groupId>
-      <version>1.0beta</version>
+      <version>1.0</version>
     </dependency>
   </dependencies>
-
   <build>
     <nagEmailAddress>jaster@seis.sc.edu</nagEmailAddress>
     <unitTestSourceDirectory>test</unitTestSourceDirectory>
@@ -74,6 +66,4 @@ The TauP Toolkit, flexible seismic traveltime utilities.
        </resource>
     </resources>
   </build>
-
 </project>
-
