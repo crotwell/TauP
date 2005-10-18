@@ -105,9 +105,9 @@ public class Test
 	    Arrival[] phaseArrivals;
 	    TimeDist[] path;
 	    TimeDist[] pierce;
-	    Vector isDownGoing;
-	    Vector isPWave;
-	    Vector legAction;
+	    boolean[] isDownGoing;
+	    boolean[] isPWave;
+	    int[] legAction;
 	    int branchAction = ACTION_NOTHING;
 	    ReflTransCoefficient coeff;
 	    double totalDistance;	// total path length in km
@@ -134,16 +134,16 @@ public class Test
 		    
 		    path = phaseArrivals[i].getPath();
 		    pierce = phaseArrivals[i].getPierce();
-		    isDownGoing = (Vector)phase.getDownGoing();
-		    isPWave = (Vector)phase.getWaveType();
-		    legAction = (Vector)phase.getLegAction();
+		    isDownGoing = phase.getDownGoing();
+		    isPWave = phase.getWaveType();
+		    legAction = phase.getLegAction();
 		    
 		    //System.out.print( "Der Pfad hat " + phaseArrivals[i].getNumPathPoints() + " Punkte\n" );
 		    System.out.print( "The path contains " + path.length + " points\n" );
 		    
-		    System.out.print( "isDownGoing: " + isDownGoing.size() + " entries\n" );
-		    System.out.print( "isPWave: " + isPWave.size() + " entries\n" );
-		    System.out.print( "legAction: " + legAction.size() + " entries\n" );
+		    System.out.print( "isDownGoing: " + isDownGoing.length + " entries\n" );
+		    System.out.print( "isPWave: " + isPWave.length + " entries\n" );
+		    System.out.print( "legAction: " + legAction.length + " entries\n" );
 
 		    
 		    
@@ -183,9 +183,9 @@ public class Test
 			    // show all the information
 			    System.out.println( "\n# " + j );
 			    System.out.println( "Depth: " + pierce[j].depth );
-			    System.out.println( "Direction: " + (((Boolean)isDownGoing.get(j)).booleanValue() ? "down" : "up") );
-			    System.out.println( "Wave Type: " + (((Boolean)isPWave.get(j)).booleanValue() ? "P" : "S") );
-			    System.out.println( "Action: " + stringLegAction( ((Integer)legAction.get(j)).intValue() ) );
+			    System.out.println( "Direction: " + (isDownGoing[j] ? "down" : "up") );
+			    System.out.println( "Wave Type: " + (isPWave[j] ? "P" : "S") );
+			    System.out.println( "Action: " + stringLegAction( legAction[j] ) );
 			    System.out.println( "v_P above/below: " + pVelocityAbove + "/" + pVelocityBelow );
 			    System.out.println( "v_S above/below: " + sVelocityAbove + "/" + sVelocityBelow );
 			    System.out.println( "Density above/below: " + densityAbove + "/" + densityBelow );
@@ -196,7 +196,7 @@ public class Test
 			    // calculate reflection/transmission coefficients
 			    // initialize values; therefore, consider the direction in the previous path segment
 			    // if bottom-up-direction: flip values
-			    if( ((Boolean)isDownGoing.get(j - 1)).booleanValue() )	
+			    if( isDownGoing[j - 1] )	
 			    {
 			    	coeff = new ReflTransCoefficient( pVelocityAbove, sVelocityAbove, densityAbove, pVelocityBelow, sVelocityBelow, densityBelow );
 			    }
@@ -206,8 +206,8 @@ public class Test
 			    }
 
 			    // reflection: if legAction is REFLECTTOP or REFLECTBOT and the branch is the last one in the current leg
-			    if( ( ( ((Integer)legAction.get(j - 1)).intValue() == phase.REFLECTTOP ) || ( ((Integer)legAction.get(j - 1)).intValue() == phase.REFLECTBOT ) )
-					    && (((Integer)legAction.get(j - 1)).intValue() != ((Integer)legAction.get(j)).intValue() ) )
+			    if(  legAction[j - 1] == phase.REFLECTTOP  ||  legAction[j - 1] == phase.REFLECTBOT  
+					    && legAction[j - 1] != legAction[j]  )
 			    {
 				    if( pierce[j].depth == 0.0 )
 				    {
@@ -219,12 +219,12 @@ public class Test
 				    }
 			    }
 			    // transmission: if legAction is TRANSUP or TRANSDOWN or anything else -- if it is not the last branch in the leg (i.e. branch[j] and branch[j-1] have the same legAction)
-			    else if( ( ((Integer)legAction.get(j - 1)).intValue() == phase.TRANSUP ) 
-					    || ( ((Integer)legAction.get(j - 1)).intValue() == phase.TRANSDOWN ) 
-					    || ( ( ((Integer)legAction.get(j - 1)).intValue() == ((Integer)legAction.get(j)).intValue() ) &&
-							    ( ( ((Integer)legAction.get(j - 1)).intValue() == phase.TURN )
-							      || ( ((Integer)legAction.get(j - 1)).intValue() == phase.REFLECTTOP )
-							      || ( ((Integer)legAction.get(j - 1)).intValue() == phase.REFLECTBOT ) ) ) )
+			    else if( ( legAction[j - 1] == phase.TRANSUP ) 
+					    || ( legAction[j - 1] == phase.TRANSDOWN ) 
+					    || ( ( legAction[j - 1] == legAction[j] ) &&
+							    ( ( legAction[j - 1] == phase.TURN )
+							      || ( legAction[j - 1] == phase.REFLECTTOP )
+							      || ( legAction[j - 1] == phase.REFLECTBOT ) ) ) )
 			    {
 				    branchAction = ACTION_TRANSMISSION;
 			    }
@@ -237,9 +237,9 @@ public class Test
 			    // use reflection formula, consider free surface; the previous legAction entry (= the previous path segment) says what happens at the pierce point
 			    if( branchAction == ACTION_REFLECTION )
 			    {
-				    if( ((Boolean)isPWave.get(j)).booleanValue() )	// P wave
+				    if( isPWave[j] )	// P wave
 				    {
-					    if( ((Boolean)isPWave.get(j - 1)).booleanValue() )	// no conversion
+					    if( isPWave[j - 1] )	// no conversion
 					    {
 						    dRT_PSV = coeff.getPtoPRefl( pierce[j].p );
 						    dRT_SH = 0;
@@ -252,7 +252,7 @@ public class Test
 				    }
 				    else		// S wave
 				    {
-					    if( ! ((Boolean)isPWave.get(j - 1)).booleanValue() )	// no conversion
+					    if( ! isPWave[j - 1] )	// no conversion
 					    {
 						    dRT_PSV = coeff.getSVtoSVRefl( pierce[j].p );
 						    dRT_SH = coeff.getSHtoSHRefl( pierce[j].p );
@@ -268,9 +268,9 @@ public class Test
 			    }
 			    else if( branchAction == ACTION_REFLECTION_FREE_SURFACE )
 			    {
-				    if( ((Boolean)isPWave.get(j)).booleanValue() )	// P wave
+				    if( isPWave[j] )	// P wave
 				    {
-					    if( ((Boolean)isPWave.get(j - 1)).booleanValue() )	// no conversion
+					    if( isPWave[j - 1] )	// no conversion
 					    {
 						    dRT_PSV = coeff.getFreePtoPRefl( pierce[j].p );
 						    dRT_SH = 0;
@@ -283,7 +283,7 @@ public class Test
 				    }
 				    else		// S wave
 				    {
-					    if( ! ((Boolean)isPWave.get(j - 1)).booleanValue() )	// no conversion
+					    if( ! isPWave[j - 1] )	// no conversion
 					    {
 						    dRT_PSV = coeff.getFreeSVtoSVRefl( pierce[j].p );
 						    dRT_SH = coeff.getFreeSHtoSHRefl( pierce[j].p );
@@ -299,9 +299,9 @@ public class Test
 			    }
 			    else if( branchAction == ACTION_TRANSMISSION )
 			    {
-				    if( ((Boolean)isPWave.get(j)).booleanValue() )	// P wave
+				    if( isPWave[j] )	// P wave
 				    {
-					    if( ((Boolean)isPWave.get(j - 1)).booleanValue() )	// no conversion
+					    if( isPWave[j - 1] )	// no conversion
 					    {
 						    dRT_PSV = coeff.getPtoPTrans( pierce[j].p );
 						    dRT_SH = 0;
@@ -314,7 +314,7 @@ public class Test
 				    }
 				    else		// S wave
 				    {
-					    if( ! ((Boolean)isPWave.get(j - 1)).booleanValue() )	// no conversion
+					    if( ! isPWave[j - 1] )	// no conversion
 					    {
 						    dRT_PSV = coeff.getSVtoSVTrans( pierce[j].p );
 						    dRT_SH = coeff.getSHtoSHTrans( pierce[j].p );
