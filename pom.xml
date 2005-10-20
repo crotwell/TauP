@@ -1,0 +1,30 @@
+<project 
+    xmlns="http://maven.apache.org/POM/4.0.0" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <parent>
+        <artifactId>seisFile</artifactId>
+        <groupId>edu.sc.seis</groupId>
+        <version>1.0</version>
+        <relativePath>../seisFile/pom.xml</relativePath>
+    </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>TauP</artifactId>
+  <version>1.1.5</version>
+  <name>TauP</name>
+  <url>http://www.seis.sc.edu/software/TauP/</url>
+  <dependencies>
+    <dependency>
+        <groupId>edu.sc.seis</groupId>
+        <artifactId>seisFile</artifactId>
+    </dependency>
+     <dependency>
+        <groupId>log4j</groupId>
+        <artifactId>log4j</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+    </dependency>
+  </dependencies>
+</project>
