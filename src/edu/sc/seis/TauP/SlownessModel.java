@@ -194,6 +194,10 @@ public abstract class SlownessModel implements Serializable, Cloneable {
 
     // get accessor methods
 
+    public VelocityModel getVelocityModel() {
+	return vMod;
+    }
+    
     public final double getRadiusOfEarth() {
 	return radiusOfEarth;
     }

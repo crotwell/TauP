@@ -1,5 +1,5 @@
 /*
- * The TauP Toolkit: Flexible Seismic Travel-Time and Raypath Utilities.
+ * <pre> The TauP Toolkit: Flexible Seismic Travel-Time and Raypath Utilities.
  * Copyright (C) 1998-2000 University of South Carolina This program is free
  * software; you can redistribute it and/or modify it under the terms of the GNU
  * General Public License as published by the Free Software Foundation; either
@@ -12,7 +12,7 @@
  * Suite 330, Boston, MA 02111-1307, USA. The current version can be found at <A
  * HREF="www.seis.sc.edu">http://www.seis.sc.edu </A> Bug reports and comments
  * should be directed to H. Philip Crotwell, crotwell@seis.sc.edu or Tom Owens,
- * owens@seis.sc.edu
+ * owens@seis.sc.edu </pre>
  */
 package edu.sc.seis.TauP;
 
@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.io.OptionalDataException;
 import java.io.Serializable;
 import java.io.StreamCorruptedException;
-import java.util.Vector;
+import java.util.ArrayList;
 
 /**
  * Stores and transforms seismic phase names to and from their corresponding
@@ -46,31 +46,31 @@ public class SeismicPhase implements Serializable, Cloneable {
      * no ray will turn downward so turning implies turning from downward to
      * upward, ie U.
      */
-    protected static final int TURN = 0;
+    public static final int TURN = 0;
 
     /**
      * Used by addToBranch when the path reflects off the top of the end of a
      * segment, ie ^.
      */
-    protected static final int REFLECTTOP = 1;
+    public static final int REFLECTTOP = 1;
 
     /**
      * Used by addToBranch when the path reflects off the bottom of the end of a
      * segment, ie v.
      */
-    protected static final int REFLECTBOT = 2;
+    public static final int REFLECTBOT = 2;
 
     /**
      * Used by addToBranch when the path transmits up through the end of a
      * segment.
      */
-    protected static final int TRANSUP = 3;
+    public static final int TRANSUP = 3;
 
     /**
      * Used by addToBranch when the path transmits down through the end of a
      * segment.
      */
-    protected static final int TRANSDOWN = 4;
+    public static final int TRANSDOWN = 4;
 
     /**
      * The maximum degrees that a Pn or Sn can refract along the moho. Note this
@@ -133,7 +133,7 @@ public class SeismicPhase implements Serializable, Cloneable {
     protected double maxDistance = Double.MAX_VALUE;
 
     /**
-     * Vector holding all arrivals for this phase at the given distance. They
+     * ArrayList holding all arrivals for this phase at the given distance. They
      * are stored as Arrival objects.
      * 
      * @see Arrival
@@ -141,13 +141,13 @@ public class SeismicPhase implements Serializable, Cloneable {
      * @see calcPierce(TauModel)
      * @see calcPath(TauModel)
      */
-    protected Vector arrivals = new Vector();
+    protected ArrayList arrivals = new ArrayList();
 
     /**
      * Array of branch numbers for the given phase. Note that this depends upon
      * both the earth model and the source depth.
      */
-    protected Vector branchSeq = new Vector();
+    protected ArrayList branchSeq = new ArrayList();
 
     /** The phase name, ie PKiKP. */
     protected String name;
@@ -157,8 +157,8 @@ public class SeismicPhase implements Serializable, Cloneable {
      */
     protected String puristName;
 
-    /** Vector containing Strings for each leg. */
-    protected Vector legs = new Vector();
+    /** ArrayList containing Strings for each leg. */
+    protected ArrayList legs = new ArrayList();
 
     /**
      * temporary branch number so we know where to start add to the branch
@@ -178,20 +178,20 @@ public class SeismicPhase implements Serializable, Cloneable {
      * SeismicPhase.REFLECTBOT, or SeismicPhase.REFLECTTOP. This allows a check
      * to make sure the path is correct. Used in addToBranch() and parseName().
      */
-    protected Vector legAction = new Vector();
+    protected ArrayList legAction = new ArrayList();
 
     /**
      * true if the current leg of the phase is down going. This allows a check
      * to make sure the path is correct. Used in addToBranch() and parseName().
      */
-    protected Vector downGoing = new Vector();
+    protected ArrayList downGoing = new ArrayList();
 
     /**
-     * Vector of wave types corresponding to each leg of the phase.
+     * ArrayList of wave types corresponding to each leg of the phase.
      * 
      * @see legs
      */
-    protected Vector waveType = new Vector();
+    protected ArrayList waveType = new ArrayList();
 
     public static final boolean PWAVE = true;
 
@@ -224,7 +224,7 @@ public class SeismicPhase implements Serializable, Cloneable {
     public Arrival[] getArrivals() {
         Arrival[] returnArrivals = new Arrival[arrivals.size()];
         for(int i = 0; i < arrivals.size(); i++) {
-            returnArrivals[i] = (Arrival)((Arrival)arrivals.elementAt(i));
+            returnArrivals[i] = (Arrival)((Arrival)arrivals.get(i));
         }
         return returnArrivals;
     }
@@ -285,7 +285,7 @@ public class SeismicPhase implements Serializable, Cloneable {
     public String[] getLegs() {
         String[] legsArray = new String[legs.size()];
         for(int i = 0; i < legs.size(); i++) {
-            legsArray[i] = (String)legs.elementAt(i);
+            legsArray[i] = (String)legs.get(i);
         }
         return legsArray;
     }
@@ -310,6 +310,42 @@ public class SeismicPhase implements Serializable, Cloneable {
         return tau;
     }
 
+    /**
+     * Direction of the leg between pierce point i and i+1, true is downgoing, false if upgoing
+     */
+    public boolean[] getDownGoing() {
+        Boolean[] b = (Boolean[])downGoing.toArray(new Boolean[0]);
+        boolean[] out = new boolean[b.length];
+        for(int i = 0; i < b.length; i++) {
+            out[i] = b[i].booleanValue();
+        }
+        return out;
+    }
+
+    /**
+     * Wave type of the leg between pierce point i and i+1, true is P, false if S
+     */
+    public boolean[] getWaveType() {
+        Boolean[] b = (Boolean[])waveType.toArray(new Boolean[0]);
+        boolean[] out = new boolean[b.length];
+        for(int i = 0; i < b.length; i++) {
+            out[i] = b[i].booleanValue();
+        }
+        return out;
+    }
+
+    /**
+     * Leg type i layer interaction, one of TURN, REFLECTTOP, REFLECTBOT, TRANSUP, TRANSDOWN
+     */
+    public int[] getLegAction() {
+        Integer[] b = (Integer[])legAction.toArray(new Integer[0]);
+        int[] out = new int[b.length];
+        for(int i = 0; i < b.length; i++) {
+            out[i] = b[i].intValue();
+        }
+        return out;
+    }
+
     // Normal methods
     public void init() throws TauModelException {
         legPuller();
@@ -332,7 +368,7 @@ public class SeismicPhase implements Serializable, Cloneable {
         } // make sure less than or equal to 180
         // now we have 0.0 <= deg <= 180
         double radDist = tempDeg * Math.PI / 180.0;
-        arrivals.removeAllElements();
+        arrivals.clear();
         /*
          * Search all distances 2n*PI+radDist and 2(n+1)*PI-radDist that are
          * less than the maximum distance for this phase. This insures that we
@@ -388,7 +424,7 @@ public class SeismicPhase implements Serializable, Cloneable {
                                              name,
                                              puristName,
                                              sourceDepth);
-                    arrivals.addElement(newArrival);
+                    arrivals.add(newArrival);
                 }
             }
             /*
@@ -436,7 +472,7 @@ public class SeismicPhase implements Serializable, Cloneable {
                                                  name,
                                                  puristName,
                                                  sourceDepth);
-                        arrivals.addElement(newArrival);
+                        arrivals.add(newArrival);
                     }
                 }
             }
@@ -561,10 +597,10 @@ public class SeismicPhase implements Serializable, Cloneable {
         if(isDownGoing) {
             /* Must be downgoing, so use i++. */
             for(int i = startBranch; i <= endBranch; i++) {
-                branchSeq.addElement(new Integer(i));
-                downGoing.addElement(new Boolean(isDownGoing));
-                waveType.addElement(new Boolean(isPWave));
-                legAction.addElement(new Integer(endAction));
+                branchSeq.add(new Integer(i));
+                downGoing.add(new Boolean(isDownGoing));
+                waveType.add(new Boolean(isPWave));
+                legAction.add(new Integer(endAction));
             }
             if(DEBUG) {
                 for(int i = startBranch; i <= endBranch; i++) {
@@ -577,10 +613,10 @@ public class SeismicPhase implements Serializable, Cloneable {
         } else {
             /* Must be up going so use i--. */
             for(int i = startBranch; i >= endBranch; i--) {
-                branchSeq.addElement(new Integer(i));
-                downGoing.addElement(new Boolean(isDownGoing));
-                waveType.addElement(new Boolean(isPWave));
-                legAction.addElement(new Integer(endAction));
+                branchSeq.add(new Integer(i));
+                downGoing.add(new Boolean(isDownGoing));
+                waveType.add(new Boolean(isPWave));
+                legAction.add(new Integer(endAction));
             }
             if(DEBUG) {
                 for(int i = startBranch; i >= endBranch; i--) {
@@ -627,9 +663,9 @@ public class SeismicPhase implements Serializable, Cloneable {
      */
     protected void parseName(TauModel tMod) throws TauModelException {
         String prevLeg;
-        String currLeg = (String)legs.elementAt(0);
+        String currLeg = (String)legs.get(0);
         String nextLeg = currLeg;
-        branchSeq.removeAllElements();
+        branchSeq.clear();
         boolean isDownGoing;
         boolean isPWave = PWAVE;
         boolean isPWavePrev = isPWave;
@@ -711,7 +747,7 @@ public class SeismicPhase implements Serializable, Cloneable {
         for(int legNum = 0; legNum < legs.size() - 1; legNum++) {
             prevLeg = currLeg;
             currLeg = nextLeg;
-            nextLeg = (String)legs.elementAt(legNum + 1);
+            nextLeg = (String)legs.get(legNum + 1);
             if(DEBUG) {
                 System.out.println(legNum + "  " + prevLeg + "  " + currLeg
                         + "  " + nextLeg);
@@ -748,7 +784,7 @@ public class SeismicPhase implements Serializable, Cloneable {
             // check to see if there has been a phase conversion
             if(branchSeq.size() > 0 && isPWavePrev != isPWave) {
                 phaseConversion(tMod,
-                                ((Integer)branchSeq.elementAt(branchSeq.size() - 1)).intValue(),
+                                ((Integer)branchSeq.get(branchSeq.size() - 1)).intValue(),
                                 endAction,
                                 isPWavePrev);
             }
@@ -909,7 +945,7 @@ public class SeismicPhase implements Serializable, Cloneable {
                         // leg to determine whether to convert on the downgoing
                         // or
                         // upgoing part of the path
-                        String nextNextLeg = (String)legs.elementAt(legNum + 2);
+                        String nextNextLeg = (String)legs.get(legNum + 2);
                         if(nextNextLeg.equals("p") || nextNextLeg.equals("s")) {
                             // convert on upgoing section
                             addToBranch(tMod,
@@ -1161,13 +1197,13 @@ public class SeismicPhase implements Serializable, Cloneable {
      */
     protected void legPuller() throws TauModelException {
         int offset = 0;
-        legs.removeAllElements();
+        legs.clear();
         /* Special case for surface wave velocity. */
         if(name.endsWith("kmps")) {
             try {
                 double vel = Double.valueOf(name.substring(0, name.length() - 4))
                         .doubleValue();
-                legs.addElement(name);
+                legs.add(name);
             } catch(NumberFormatException e) {
                 throw new TauModelException("Invalid phase name:\n" + name);
             }
@@ -1177,7 +1213,7 @@ public class SeismicPhase implements Serializable, Cloneable {
                     || name.charAt(offset) == 's' || name.charAt(offset) == 'm'
                     || name.charAt(offset) == 'c' || name.charAt(offset) == 'i') {
                 // Do the easy ones, ie K,I,J,p,s,m,c,i
-                legs.addElement(name.substring(offset, offset + 1));
+                legs.add(name.substring(offset, offset + 1));
                 offset = offset + 1;
             } else if(name.charAt(offset) == 'P' || name.charAt(offset) == 'S') {
                 /*
@@ -1195,19 +1231,19 @@ public class SeismicPhase implements Serializable, Cloneable {
                         || name.charAt(offset + 1) == '^'
                         || name.charAt(offset + 1) == 'v'
                         || Character.isDigit(name.charAt(offset + 1))) {
-                    legs.addElement(name.substring(offset, offset + 1));
+                    legs.add(name.substring(offset, offset + 1));
                     offset++;
                 } else if(name.charAt(offset + 1) == 'g'
                         || name.charAt(offset + 1) == 'b'
                         || name.charAt(offset + 1) == 'n') {
                     /* The leg is not described by one letter, check for 2. */
-                    legs.addElement(name.substring(offset, offset + 2));
+                    legs.add(name.substring(offset, offset + 2));
                     offset = offset + 2;
                 } else if(name.length() >= offset + 5
                         && (name.substring(offset, offset + 5).equals("Sdiff") || name.substring(offset,
                                                                                                  offset + 5)
                                 .equals("Pdiff"))) {
-                    legs.addElement(name.substring(offset, offset + 5));
+                    legs.add(name.substring(offset, offset + 5));
                     offset = offset + 5;
                 } else {
                     throw new TauModelException("Invalid phase name:\n"
@@ -1221,7 +1257,7 @@ public class SeismicPhase implements Serializable, Cloneable {
                 if(name.charAt(offset + 1) == 'm'
                         || name.charAt(offset + 1) == 'c'
                         || name.charAt(offset + 1) == 'i') {
-                    legs.addElement(name.substring(offset, offset + 2));
+                    legs.add(name.substring(offset, offset + 2));
                     offset = offset + 2;
                 } else if(Character.isDigit(name.charAt(offset + 1))) {
                     int numDigits = 1;
@@ -1230,8 +1266,7 @@ public class SeismicPhase implements Serializable, Cloneable {
                                     + 1))) {
                         numDigits++;
                     }
-                    legs.addElement(name.substring(offset, offset + numDigits
-                            + 1));
+                    legs.add(name.substring(offset, offset + numDigits + 1));
                     offset = offset + numDigits + 1;
                 } else {
                     throw new TauModelException("Invalid phase name:\n"
@@ -1248,7 +1283,7 @@ public class SeismicPhase implements Serializable, Cloneable {
                 }
                 try {
                     Double d = new Double(numString);
-                    legs.addElement(numString);
+                    legs.add(numString);
                 } catch(NumberFormatException e) {
                     throw new TauModelException("Invalid phase name: "
                             + numString + "\n" + e.getMessage() + " in " + name);
@@ -1258,13 +1293,13 @@ public class SeismicPhase implements Serializable, Cloneable {
                         + name.substring(offset) + " in " + name);
             }
         }
-        legs.addElement(new String("END"));
+        legs.add(new String("END"));
         if(!phaseValidate()) { throw new TauModelException("Phase failed validation: "
                 + name); }
     }
 
     protected void createPuristName(TauModel tMod) {
-        String currLeg = (String)legs.elementAt(0);
+        String currLeg = (String)legs.get(0);
         /*
          * Deal with surface wave velocities first, since they are a special
          * case.
@@ -1279,7 +1314,7 @@ public class SeismicPhase implements Serializable, Cloneable {
         int disconBranch;
         // only loop to size()-1 as last leg is always "END"
         for(int legNum = 0; legNum < legs.size() - 1; legNum++) {
-            currLeg = (String)legs.elementAt(legNum);
+            currLeg = (String)legs.get(legNum);
             // find out if the next leg represents a
             // phase conversion or reflection depth
             if(currLeg.startsWith("v") || currLeg.startsWith("^")) {
@@ -1418,10 +1453,10 @@ public class SeismicPhase implements Serializable, Cloneable {
         }
         /* Count how many times each branch appears in the path. */
         for(int i = 0; i < branchSeq.size(); i++) {
-            if(((Boolean)waveType.elementAt(i)).booleanValue()) {
-                timesBranches[0][((Integer)branchSeq.elementAt(i)).intValue()]++;
+            if(((Boolean)waveType.get(i)).booleanValue()) {
+                timesBranches[0][((Integer)branchSeq.get(i)).intValue()]++;
             } else {
-                timesBranches[1][((Integer)branchSeq.elementAt(i)).intValue()]++;
+                timesBranches[1][((Integer)branchSeq.get(i)).intValue()]++;
             }
         }
         /* Sum the branches with the appropriate multiplier. */
@@ -1513,12 +1548,12 @@ public class SeismicPhase implements Serializable, Cloneable {
                         // check for downgoing legs that cross the high slowness
                         // zone
                         // with the same wave type
-                        if(((Integer)branchSeq.elementAt(legNum)).intValue() == branchNum
-                                && ((Boolean)waveType.elementAt(legNum)).booleanValue() == isPWave
-                                && ((Boolean)downGoing.elementAt(legNum)).booleanValue() == true
-                                && ((Integer)branchSeq.elementAt(legNum - 1)).intValue() == branchNum - 1
-                                && ((Boolean)waveType.elementAt(legNum - 1)).booleanValue() == isPWave
-                                && ((Boolean)downGoing.elementAt(legNum - 1)).booleanValue() == true) {
+                        if(((Integer)branchSeq.get(legNum)).intValue() == branchNum
+                                && ((Boolean)waveType.get(legNum)).booleanValue() == isPWave
+                                && ((Boolean)downGoing.get(legNum)).booleanValue() == true
+                                && ((Integer)branchSeq.get(legNum - 1)).intValue() == branchNum - 1
+                                && ((Boolean)waveType.get(legNum - 1)).booleanValue() == isPWave
+                                && ((Boolean)downGoing.get(legNum - 1)).booleanValue() == true) {
                             foundOverlap = true;
                             break;
                         }
@@ -1609,7 +1644,7 @@ public class SeismicPhase implements Serializable, Cloneable {
         double turnDepth;
         Arrival currArrival;
         for(int arrivalNum = 0; arrivalNum < arrivals.size(); arrivalNum++) {
-            currArrival = (Arrival)arrivals.elementAt(arrivalNum);
+            currArrival = (Arrival)arrivals.get(arrivalNum);
             branchDist = 0.0;
             branchTime = 0.0;
             prevBranchTime = branchTime;
@@ -1648,11 +1683,11 @@ public class SeismicPhase implements Serializable, Cloneable {
              * between rays that we know.
              */
             for(int i = 0; i < branchSeq.size(); i++) {
-                branchNum = ((Integer)branchSeq.elementAt(i)).intValue();
-                isPWave = ((Boolean)waveType.elementAt(i)).booleanValue();
+                branchNum = ((Integer)branchSeq.get(i)).intValue();
+                isPWave = ((Boolean)waveType.get(i)).booleanValue();
                 if(DEBUG) {
                     System.out.println(i + " branchNum =" + branchNum
-                            + " downGoing=" + (Boolean)downGoing.elementAt(i)
+                            + " downGoing=" + (Boolean)downGoing.get(i)
                             + "  isPWave=" + isPWave);
                 }
                 /*
@@ -1725,7 +1760,7 @@ public class SeismicPhase implements Serializable, Cloneable {
                 branchDist += distRatio * (distB - distA) + distA;
                 prevBranchTime = branchTime;
                 branchTime += distRatio * (timeB - timeA) + timeA;
-                if(((Boolean)downGoing.elementAt(i)).booleanValue()) {
+                if(((Boolean)downGoing.get(i)).booleanValue()) {
                     branchDepth = Math.min(tMod.getTauBranch(branchNum, isPWave)
                                                    .getBotDepth(),
                                            turnDepth);
@@ -1842,15 +1877,15 @@ public class SeismicPhase implements Serializable, Cloneable {
     /** calculates the path this phase takes through the earth model. */
     public void calcPath(TauModel tMod) {
         TimeDist[] tempTimeDist;
-        Vector pathList = new Vector(10);
+        ArrayList pathList = new ArrayList(10);
         int arraySize;
         Arrival currArrival;
         int rayNum = 0;
         int branchNum;
         boolean isPWave;
         for(int arrivalNum = 0; arrivalNum < arrivals.size(); arrivalNum++) {
-            pathList.removeAllElements();
-            currArrival = (Arrival)arrivals.elementAt(arrivalNum);
+            pathList.clear();
+            currArrival = (Arrival)arrivals.get(arrivalNum);
             /*
              * Find the ray parameter index that corresponds to the arrival ray
              * parameter in the TauModel, ie it is between rayNum and rayNum+1.
@@ -1865,34 +1900,29 @@ public class SeismicPhase implements Serializable, Cloneable {
                                            0.0,
                                            0.0,
                                            tMod.sourceDepth);
-            pathList.addElement(tempTimeDist);
+            pathList.add(tempTimeDist);
             try {
                 for(int i = 0; i < branchSeq.size(); i++) {
-                    branchNum = ((Integer)branchSeq.elementAt(i)).intValue();
-                    isPWave = ((Boolean)waveType.elementAt(i)).booleanValue();
+                    branchNum = ((Integer)branchSeq.get(i)).intValue();
+                    isPWave = ((Boolean)waveType.get(i)).booleanValue();
                     if(DEBUG) {
-                        System.out.println("i="
-                                + i
-                                + " branchNum="
-                                + branchNum
-                                + " isPWave="
-                                + isPWave
-                                + " downgoing="
-                                + ((Boolean)downGoing.elementAt(i)).booleanValue());
+                        System.out.println("i=" + i + " branchNum=" + branchNum
+                                + " isPWave=" + isPWave + " downgoing="
+                                + ((Boolean)downGoing.get(i)).booleanValue());
                     }
                     tempTimeDist = tMod.getTauBranch(branchNum, isPWave)
                             .path(currArrival.rayParam,
-                                  ((Boolean)downGoing.elementAt(i)).booleanValue(),
+                                  ((Boolean)downGoing.get(i)).booleanValue(),
                                   tMod.sMod);
                     if(tempTimeDist != null) {
-                        pathList.addElement(tempTimeDist);
+                        pathList.add(tempTimeDist);
                     }
                     /*
                      * Here we worry about the special case for head and
                      * diffracted waves.
                      */
                     if(branchNum == tMod.cmbBranch - 1
-                            && ((Integer)branchSeq.elementAt(i + 1)).intValue() == tMod.cmbBranch - 1
+                            && ((Integer)branchSeq.get(i + 1)).intValue() == tMod.cmbBranch - 1
                             && (name.indexOf("Pdiff") != -1 || name.indexOf("Sdiff") != -1)) {
                         TimeDist[] diffTD = new TimeDist[1];
                         diffTD[0] = new TimeDist(currArrival.rayParam,
@@ -1900,9 +1930,9 @@ public class SeismicPhase implements Serializable, Cloneable {
                                                          * currArrival.rayParam,
                                                  currArrival.dist - dist[0],
                                                  tMod.cmbDepth);
-                        pathList.addElement(diffTD);
+                        pathList.add(diffTD);
                     } else if(branchNum == tMod.mohoBranch - 1
-                            && ((Integer)branchSeq.elementAt(i + 1)).intValue() == tMod.mohoBranch - 1
+                            && ((Integer)branchSeq.get(i + 1)).intValue() == tMod.mohoBranch - 1
                             && (name.indexOf("Pn") != -1 || name.indexOf("Sn") != -1)) {
                         int numFound = 0;
                         int indexInString = -1;
@@ -1924,12 +1954,12 @@ public class SeismicPhase implements Serializable, Cloneable {
                                                  (currArrival.dist - dist[0])
                                                          / numFound,
                                                  tMod.mohoDepth);
-                        pathList.addElement(headTD);
+                        pathList.add(headTD);
                     }
                 }
                 arraySize = 0;
                 for(int i = 0; i < pathList.size(); i++) {
-                    arraySize += ((TimeDist[])pathList.elementAt(i)).length;
+                    arraySize += ((TimeDist[])pathList.get(i)).length;
                 }
                 currArrival.path = new TimeDist[arraySize];
                 TimeDist cummulative = new TimeDist(currArrival.rayParam,
@@ -1939,7 +1969,7 @@ public class SeismicPhase implements Serializable, Cloneable {
                 TimeDist[] branchPath;
                 int numAdded = 0;
                 for(int i = 0; i < pathList.size(); i++) {
-                    branchPath = (TimeDist[])pathList.elementAt(i);
+                    branchPath = (TimeDist[])pathList.get(i);
                     for(int j = 0; j < branchPath.length; j++) {
                         cummulative.add(branchPath[j]);
                         cummulative.depth = branchPath[j].depth;
@@ -1962,13 +1992,13 @@ public class SeismicPhase implements Serializable, Cloneable {
      * in legs.
      */
     public boolean phaseValidate() {
-        String currToken = (String)legs.elementAt(0);
+        String currToken = (String)legs.get(0);
         String prevToken;
         boolean prevIsReflect = false;
         /* Special cases for diffracted waves. */
         if(legs.size() == 2
                 && (currToken.equals("Pdiff") || currToken.equals("Sdiff") || currToken.endsWith("kmps"))
-                && ((String)legs.elementAt(1)).equals("END")) { return true; }
+                && ((String)legs.get(1)).equals("END")) { return true; }
         /* Check first leg. */
         if(!(currToken.equals("Pg") || currToken.equals("Pb")
                 || currToken.equals("Pn") || currToken.equals("Pdiff")
@@ -1978,7 +2008,7 @@ public class SeismicPhase implements Serializable, Cloneable {
                 || currToken.equals("p") || currToken.equals("s"))) { return false; }
         for(int i = 1; i < legs.size(); i++) {
             prevToken = currToken;
-            currToken = (String)legs.elementAt(i);
+            currToken = (String)legs.get(i);
             /* Check for 2 reflections with no leg between them. */
             if(currToken.startsWith("^") || currToken.startsWith("v")
                     || currToken.equals("m") || currToken.equals("c")
@@ -2014,11 +2044,11 @@ public class SeismicPhase implements Serializable, Cloneable {
     public String toString() {
         String desc = name + ": ";
         for(int i = 0; i < legs.size(); i++) {
-            desc += legs.elementAt(i) + " ";
+            desc += legs.get(i) + " ";
         }
         desc += "\n";
         for(int i = 0; i < branchSeq.size(); i++) {
-            desc += (Integer)branchSeq.elementAt(i) + " ";
+            desc += (Integer)branchSeq.get(i) + " ";
         }
         desc += "\n";
         desc += "minRayParam=" + minRayParam + " maxRayParam=" + maxRayParam;
@@ -2039,18 +2069,18 @@ public class SeismicPhase implements Serializable, Cloneable {
         SeismicPhase newObject;
         try {
             newObject = (SeismicPhase)super.clone();
-            newObject.branchSeq = new Vector(branchSeq.size());
+            newObject.branchSeq = new ArrayList(branchSeq.size());
             for(int i = 0; i < branchSeq.size(); i++) {
-                newObject.branchSeq.addElement(new Integer(((Integer)branchSeq.elementAt(i)).intValue()));
+                newObject.branchSeq.add(new Integer(((Integer)branchSeq.get(i)).intValue()));
             }
             for(int i = 0; i < legs.size(); i++) {
-                newObject.legs.addElement(new Integer(((Integer)legs.elementAt(i)).intValue()));
+                newObject.legs.add(new Integer(((Integer)legs.get(i)).intValue()));
             }
             newObject.dist = (double[])dist.clone();
             newObject.time = (double[])time.clone();
             newObject.rayParams = (double[])rayParams.clone();
             for(int i = 0; i < arrivals.size(); i++) {
-                newObject.arrivals.addElement((Arrival)((Arrival)arrivals.elementAt(i)).clone());
+                newObject.arrivals.add((Arrival)((Arrival)arrivals.get(i)).clone());
             }
             return newObject;
         } catch(CloneNotSupportedException e) {

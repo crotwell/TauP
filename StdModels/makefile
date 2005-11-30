@@ -1,5 +1,5 @@
 
-CLASSPATH = -classpath /opt/local/External/Java/lib/classes.zip:..:/opt/local/Internal/Java/taup.jar
+CLASSPATH = -classpath ../target/classes
 #DEBUG = -debug
 DEBUG = 
 
