@@ -33,9 +33,7 @@ int TauPInit(TauPStruct *taupptr, char *modelName) {
 	jthrowable exception;
    int classpathlength;
 
-fprintf(stderr, "Before get java vm init\n");
    envclasspath = (char*)getenv("CLASSPATH");
-fprintf(stderr, "got env cp \n");
 	if (envclasspath == NULL) {
       envclasspath = ".";
 	}
@@ -53,7 +51,6 @@ fprintf(stderr, "got env cp \n");
    vm_args.options = options;
    vm_args.ignoreUnrecognized = JNI_FALSE;
 
-fprintf(stderr, "Before create Java VM\n");
    res = JNI_CreateJavaVM(&jvm, (void **)&env, &vm_args);
 
 	if (res < 0) {
@@ -62,7 +59,6 @@ fprintf(stderr, "Before create Java VM\n");
 	}
    taupptr->env = env;
 
-fprintf(stderr, "Before get class\n");
 		/* get the class of the travel time tool. */
 	tempClass = (*taupptr->env)->FindClass(taupptr->env, "edu/sc/seis/TauP/TauP_Time");
 	if (tempClass == 0) {
@@ -71,7 +67,6 @@ fprintf(stderr, "Before get class\n");
 	}
 	taupptr->toolClass = (*taupptr->env)->NewGlobalRef(taupptr->env, tempClass);
  
-fprintf(stderr, "Before tauppath\n");
 		/* if the TAUPPATH env variable is defined, then add it to the properties.
 		 */
 	if ((envtauppath = (char*)getenv("TAUPPATH")) != NULL) {
@@ -89,7 +84,6 @@ fprintf(stderr, "Before tauppath\n");
 			props, tempMethodID, jstr, jstrvalue);
 	}
 
-fprintf(stderr, "Before const\n");
 		/* get the constructor for the tool */
 	constrID = (*taupptr->env)->GetMethodID(taupptr->env, taupptr->toolClass, 
 		"<init>", "(Ljava/lang/String;)V");
