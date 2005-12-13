@@ -11,42 +11,58 @@
  *  If an error occurs, then a nonzero error code is returned. */
 int TauPInit(TauPStruct *taupptr, char *modelName) {
 
-	JDK1_1InitArgs vm_args;
+   JavaVM* jvm;
+   JNIEnv* env;
+   JavaVMInitArgs vm_args;
+   JavaVMOption options[1];
+
 	jint res;
 	jmethodID constrID;
 	jstring jstr;
 	jobject tempTool;
 	jclass tempClass;
 	jobjectArray args;
-	char * envclasspath;
-	char * envtauppath;
+	char *envclasspath;
+	char *classpath;
+   char *classpath_prefix = "-Djava.class.path=";
+	char *envtauppath;
 	jmethodID tempMethodID;
 	jobject tempobject;
 	jstring jstrvalue;
 	jobject props;
 	jthrowable exception;
+   int classpathlength;
 
-
-	/* IMPORTANT: specify vm_args version # if you use JDK1.1.2 and beyond */
-	vm_args.version = 0x00010001;
-
-		/* added environment variable CLASSPATH to vm_args.classpath */
-	JNI_GetDefaultJavaVMInitArgs(&vm_args);
-	if ((envclasspath = getenv("CLASSPATH")) != NULL) {
-		int classpathlength = strlen(envclasspath) + strlen(vm_args.classpath) +1;
-		char * newclasspath = (char*)malloc(classpathlength * sizeof(char));
-		strcpy(newclasspath, envclasspath);
-		strcat(newclasspath, vm_args.classpath);
-		vm_args.classpath = newclasspath;
+fprintf(stderr, "Before get java vm init\n");
+   envclasspath = (char*)getenv("CLASSPATH");
+fprintf(stderr, "got env cp \n");
+	if (envclasspath == NULL) {
+      envclasspath = ".";
 	}
 
-		/* create the Java Virtual Machine. */
-	res = JNI_CreateJavaVM(&(taupptr->jvm), &(taupptr->env), &vm_args);
+
+   classpathlength = strlen(envclasspath) + strlen(classpath_prefix) +1;
+   classpath = (char*)malloc(classpathlength * sizeof(char));
+   strcpy(classpath, classpath_prefix);
+   strcat(classpath, envclasspath);
+
+
+   vm_args.version = JNI_VERSION_1_2;
+   vm_args.nOptions = 1;
+   options[0].optionString = classpath;
+   vm_args.options = options;
+   vm_args.ignoreUnrecognized = JNI_FALSE;
+
+fprintf(stderr, "Before create Java VM\n");
+   res = JNI_CreateJavaVM(&jvm, (void **)&env, &vm_args);
+
 	if (res < 0) {
-		fprintf(stderr, "Can't create Java VM\n");
+		fprintf(stderr, "Can't create Java VM: %d\n", res);
 		return(1);
 	}
+   taupptr->env = env;
 
+fprintf(stderr, "Before get class\n");
 		/* get the class of the travel time tool. */
 	tempClass = (*taupptr->env)->FindClass(taupptr->env, "edu/sc/seis/TauP/TauP_Time");
 	if (tempClass == 0) {
@@ -55,9 +71,10 @@ int TauPInit(TauPStruct *taupptr, char *modelName) {
 	}
 	taupptr->toolClass = (*taupptr->env)->NewGlobalRef(taupptr->env, tempClass);
  
+fprintf(stderr, "Before tauppath\n");
 		/* if the TAUPPATH env variable is defined, then add it to the properties.
 		 */
-	if ((envtauppath = getenv("TAUPPATH")) != NULL) {
+	if ((envtauppath = (char*)getenv("TAUPPATH")) != NULL) {
 		jstr = (*taupptr->env)->NewStringUTF(taupptr->env,"taup.model.path");
 		jstrvalue = (*taupptr->env)->NewStringUTF(taupptr->env, envtauppath);
 		tempClass = (*taupptr->env)->FindClass(taupptr->env, "java/lang/System");
@@ -72,6 +89,7 @@ int TauPInit(TauPStruct *taupptr, char *modelName) {
 			props, tempMethodID, jstr, jstrvalue);
 	}
 
+fprintf(stderr, "Before const\n");
 		/* get the constructor for the tool */
 	constrID = (*taupptr->env)->GetMethodID(taupptr->env, taupptr->toolClass, 
 		"<init>", "(Ljava/lang/String;)V");
