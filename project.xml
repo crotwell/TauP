@@ -28,7 +28,7 @@ The TauP Toolkit, flexible seismic traveltime utilities.
     <unsubscribe>taup-request@seis.sc.edu</unsubscribe>
   </mailingList>
   <repository>
-        <url>http://roo.seis.sc.edu/fisheye/viewrep/CVS/seis/${pom.artifactId}</url>
+        <url>http://roo.seis.sc.edu/fisheye/viewrep/seis/trunk/${pom.artifactId}</url>
     </repository>
   <developers>
     <developer>
