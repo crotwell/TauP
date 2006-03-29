@@ -179,14 +179,17 @@ public class SlownessLayer implements Serializable, Cloneable {
 	  double B = Math.log(getTopP()/getBotP()) /
 	      Math.log((radiusOfEarth-getTopDepth()) / 
 		       (radiusOfEarth-getBotDepth()));
-	  double A = getTopP()/Math.pow((radiusOfEarth-getTopDepth()), B);
+      double ADenominator = Math.pow((radiusOfEarth-getTopDepth()), B);
+      double A = getTopP()/ADenominator;
 	  double answer = A * Math.pow((radiusOfEarth-depth), B);
 	  if (answer < 0.0 
 	      || Double.isNaN(answer) 
 	      || Double.isInfinite(answer)) {
 	      // numerical instability in power law calculation???
-	      // try a linear interpolation if the layer is small ( <2 km).
-	      if ((getBotDepth()- getTopDepth()) < 2.0) {
+	      // try a linear interpolation if the layer is small ( <2 km)
+          // or if denominator of A is infinity as we probably overflowed 
+          // the double in that case.
+	      if ((getBotDepth()- getTopDepth()) < 2.0 || Double.isInfinite(ADenominator)) {
 		  double linear = 
 		      (getBotP()-getTopP())/(getBotDepth()-getTopDepth())*(depth-getTopDepth()) 
 		      + getTopP();
@@ -198,8 +201,9 @@ public class SlownessLayer implements Serializable, Cloneable {
 		  }
 	      }
 	      throw new SlownessModelException(
-"calculated slowness is not a number or is negative: "+
-answer+"\n"+this.toString()+"\n A="+A+"   B="+B);
+"calculated slowness at depth="+depth+" is not a number or is negative: "+
+answer+"\n"+this.toString()+"\n A="+A+"   B="+B+" rad-dep="+(radiusOfEarth-depth)+
+"  a demon="+ADenominator);
 	  }
 	  return answer;
       }
