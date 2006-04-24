@@ -3,6 +3,10 @@
                        Modifications to TauP
 Vers  Date    Description
 -------------------------------------------------------------------------------
+1.1.7  Apr 22, 2006
+      1) Dumb rerelease due to compiling under java1.5
+1.1.6  Apr 21, 2006
+      1) Fix bug with corrupted data in little-endian sac files due to NaN translation by Java
 1.1.5  Aug 3, 2005
       1) Fixed bug with pierce points and upgoing Pdiff leg
       2) Autodetect byte swapping in SAC files
