@@ -9,7 +9,7 @@
     <url>http://www.seis.sc.edu</url>
     <logo>http://www.seis.sc.edu/images/seislogo.gif</logo>
   </organization>
-  <currentVersion>1.1.7</currentVersion>
+  <currentVersion>1.2beta</currentVersion>
   <inceptionYear>1999</inceptionYear>
   <package>edu.sc.seis.TauP</package>
   <shortDescription>The TauP Toolkit.</shortDescription>
