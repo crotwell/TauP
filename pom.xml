@@ -9,13 +9,20 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>TauP</artifactId>
     <name>TauP</name>
-    <groupId>edu.sc.seis</groupId>
     <version>1.1.5</version>
     <dependencies>
         <dependency>
             <artifactId>seisFile</artifactId>
             <groupId>edu.sc.seis</groupId>
         </dependency>
+	<dependency>
+	  <artifactId>SeedCodec</artifactId>
+	  <groupId>edu.iris.dmc</groupId>
+	</dependency>
+            <dependency>
+                <artifactId>junit</artifactId>
+                <groupId>junit</groupId>
+	    </dependency>
     </dependencies>
     <build>
         <testSourceDirectory>test</testSourceDirectory>
