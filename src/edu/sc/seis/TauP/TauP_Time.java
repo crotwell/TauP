@@ -498,6 +498,15 @@ public class TauP_Time {
                                                   Integer.valueOf(phaseEntry.substring(phaseSepIndex + 1,
                                                                                        phaseEntry.length()))
                                                           .intValue()));
+                } else if(phaseSepIndex == phaseEntry.length() - 2
+                        && phaseEntry.charAt(phaseEntry.length() - 1) == 'a') {
+                    /*
+                     * There is an optional argument, use 10 for sac A, so store it and the phase
+                     * name.
+                     */
+                    appendPhaseName(new PhaseName(phaseEntry.substring(0,
+                                                                       phaseSepIndex),
+                                                  TauP_SetSac.A_HEADER));
                 } else {
                     Alert.warning("Problem with phase=" + phaseEntry,
                                   "Skipping this phase.");
