@@ -64,6 +64,8 @@ public class TauP_SetSac extends TauP_Time {
 
    protected boolean evdpkm = false;
 
+   public static final int A_HEADER = 10;
+   
    public boolean getEvdpkm() {
       return evdpkm;
    }
@@ -222,6 +224,12 @@ public class TauP_SetSac extends TauP_Time {
    
    public static void setSacTHeader(SacTimeSeries sacFile, int headerNum, Arrival arrival) {
        switch(headerNum) {
+           case A_HEADER:
+               // there is no t10, so use that for the A header
+               sacFile.a = sacFile.o + (float)arrival.time;
+               sacFile.ka = arrival.name;
+               // no place to put the ray param
+               break;
            case 0:
               sacFile.t0 = sacFile.o + (float)arrival.time;
               sacFile.kt0 = arrival.name;
