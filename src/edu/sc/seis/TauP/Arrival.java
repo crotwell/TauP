@@ -130,6 +130,10 @@ public class Arrival implements Cloneable {
 	return rayParam;
     }
 
+    public int getRayParamIndex() {
+        return rayParamIndex;
+    }
+    
     /** returns phase name */
     public String getName() {
 	return name;
@@ -183,7 +187,7 @@ public class Arrival implements Cloneable {
     }
 
     public String toString() {
-	String desc = "time="+time+" dist="+dist+" rayParam="+rayParam+" rayParamIndex="+rayParamIndex+" name="+name;
+	String desc = "time="+getTime()+" dist="+getDist()+" rayParam="+getRayParam()+" rayParamIndex="+rayParamIndex+" name="+getName();
 	if (pierce != null) {
 	    System.out.println("\nPierce:");
 	    for (int i=0;i<pierce.length;i++) {
@@ -252,4 +256,6 @@ public class Arrival implements Cloneable {
     protected static final double TWOPI = 2.0 * Math.PI;
     protected static final double DtoR = Math.PI / 180.0;
     protected static final double RtoD = 180.0 / Math.PI;
+
+    
 }

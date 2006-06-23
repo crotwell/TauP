@@ -144,20 +144,20 @@ public class TauP_Path extends TauP_Pierce {
         Format float12_5 = new Format("%12.5f");
         for(int i = 0; i < arrivals.size(); i++) {
             currArrival = (Arrival)arrivals.elementAt(i);
-            out.write("> " + currArrival.name + " at "
+            out.write("> " + currArrival.getName() + " at "
                     + outForms.formatDistance(currArrival.getDistDeg())
                     + " degrees for a "
-                    + outForms.formatDepth(currArrival.sourceDepth)
+                    + outForms.formatDepth(currArrival.getSourceDepth())
                     + " km deep source in the " + modelName + " model arriving at "
                     + outForms.formatTime(currArrival.getTime())
                     + " s with rayParam "+outForms.formatRayParam(Math.PI/180*currArrival.getRayParam())+" s/deg.\n");
             longWayRound = false;
-            if((currArrival.dist * 180 / Math.PI) % 360 > 180) {
+            if((currArrival.getDist() * 180 / Math.PI) % 360 > 180) {
                 longWayRound = true;
             }
             calcTime = 0.0;
             calcDist = 0.0;
-            calcDepth = currArrival.sourceDepth;
+            calcDepth = currArrival.getSourceDepth();
             for(int j = 0; j < currArrival.path.length; j++) {
                 calcTime = currArrival.path[j].time;
                 calcDepth = currArrival.path[j].depth;
@@ -173,7 +173,7 @@ public class TauP_Path extends TauP_Pierce {
                 }
                 out.write("\n");
                 if(j < currArrival.path.length - 1
-                        && (currArrival.rayParam != 0.0 && 180.0
+                        && (currArrival.getRayParam() != 0.0 && 180.0
                                 / Math.PI
                                 * (currArrival.path[j + 1].dist - currArrival.path[j].dist) > maxPathInc)) {
                     // interpolate to steps of at most maxPathInc degrees for

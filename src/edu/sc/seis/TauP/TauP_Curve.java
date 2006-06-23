@@ -319,13 +319,13 @@ public class TauP_Curve extends TauP_Time {
                     phaseArrivals = phase.getArrivals();
                     int j=0;
                     while (j<phaseArrivals.length) {
-                        if ((phase.rayParams[i]-phaseArrivals[j].rayParam)*
-                            (phaseArrivals[j].rayParam-phase.rayParams[i+1])>0) {
+                        if ((phase.rayParams[i]-phaseArrivals[j].getRayParam())*
+                            (phaseArrivals[j].getRayParam()-phase.rayParams[i+1])>0) {
                             if (reduceTime) {
                                 out.write("180.0  "+
-                                          (float)(phaseArrivals[j].time- Math.PI/reduceVel)+"\n");
+                                          (float)(phaseArrivals[j].getTime()- Math.PI/reduceVel)+"\n");
                             } else {
-                                out.write("180.0  "+(float)phaseArrivals[j].time+"\n");
+                                out.write("180.0  "+(float)phaseArrivals[j].getTime()+"\n");
                             }
                             break;
                         }
@@ -341,9 +341,9 @@ public class TauP_Curve extends TauP_Time {
                     phaseArrivals = phase.getArrivals();
                     int j=0;
                     while (j<phaseArrivals.length) {
-                        if ((phase.rayParams[i]-phaseArrivals[j].rayParam)*
-                            (phaseArrivals[j].rayParam-phase.rayParams[i+1])>0) {
-                            out.write("0.0  "+(float)phaseArrivals[j].time+"\n");
+                        if ((phase.rayParams[i]-phaseArrivals[j].getRayParam())*
+                            (phaseArrivals[j].getRayParam()-phase.rayParams[i+1])>0) {
+                            out.write("0.0  "+(float)phaseArrivals[j].getTime()+"\n");
                             break;
                         }
                         j++;

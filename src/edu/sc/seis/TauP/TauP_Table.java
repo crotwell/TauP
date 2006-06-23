@@ -193,12 +193,6 @@ public class TauP_Table extends TauP_Time {
     protected void genericTable(DataOutputStream dos) 
 	throws TauModelException,IOException {
 	Arrival[] arrivals;
-	Format decimal7 = new Format("%-7d");
-	Format float6_1 = new Format("%6.1f");
-	Format float8_1 = new Format("%8.1f");
-	Format float8_2 = new Format("%8.2f");
-	Format float8_3 = new Format("%8.3f");
-	Format float8_4 = new Format("%8.4f");
 	int aNum;
 	double moduloDist;
 	Arrival currArrival;
@@ -216,12 +210,12 @@ public class TauP_Table extends TauP_Time {
 			dos.writeBytes(modelName+" "+ outForms.formatDistance(moduloDist)+
 				       " "+outForms.formatDepth(depth)+" ");
 			
-			dos.writeBytes(currArrival.name);
-			dos.writeBytes("  "+outForms.formatTime(currArrival.time)+"  ");
+			dos.writeBytes(currArrival.getName());
+			dos.writeBytes("  "+outForms.formatTime(currArrival.getTime())+"  ");
 			dos.writeBytes(outForms.formatRayParam(
-						      Math.PI/180.0*currArrival.rayParam)+"   ");
+						      Math.PI/180.0*currArrival.getRayParam())+"   ");
 			dos.writeBytes(outForms.formatDistance(currArrival.getDistDeg()));
-			dos.writeBytes("  "+currArrival.puristName+"\n");
+			dos.writeBytes("  "+currArrival.getPuristName()+"\n");
 		    }
 		}
 	    }
@@ -264,16 +258,16 @@ public class TauP_Table extends TauP_Time {
 		if (getNumArrivals() > 0) {
 		    arrivals = getArrivals();
 		    if (distances[distNum] > maxDiff && 
-			(arrivals[0].name.endsWith("diff") )) {
+			(arrivals[0].getName().endsWith("diff") )) {
 			if (getNumArrivals() > 1) {
 			    int aNum=1;
-			    while (arrivals[aNum].name.endsWith("diff") && 
+			    while (arrivals[aNum].getName().endsWith("diff") && 
 				   aNum < getNumArrivals()-1) {
 				aNum++;
 			    }
-			    if ( ! arrivals[aNum].name.endsWith("diff")) {
-				dos.writeBytes(float15_4.form(arrivals[aNum].time)+
-					       "    "+arrivals[aNum].name+
+			    if ( ! arrivals[aNum].getName().endsWith("diff")) {
+				dos.writeBytes(float15_4.form(arrivals[aNum].getTime())+
+					       "    "+arrivals[aNum].getName()+
 					       "\n");
 			    } else {
 				dos.writeBytes(float15_4.form(-1.0)+
@@ -283,8 +277,8 @@ public class TauP_Table extends TauP_Time {
 			    dos.writeBytes(float15_4.form(-1.0)+"    none\n");
 			}
 		    } else {
-			dos.writeBytes(float15_4.form(arrivals[0].time)+"    "+
-				       arrivals[0].name+"\n");
+			dos.writeBytes(float15_4.form(arrivals[0].getTime())+"    "+
+				       arrivals[0].getName()+"\n");
 		    }
 		} else {
 		    dos.writeBytes(float15_4.form(-1.0)+"    none\n");

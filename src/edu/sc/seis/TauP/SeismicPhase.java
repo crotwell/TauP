@@ -1655,7 +1655,7 @@ public class SeismicPhase implements Serializable, Cloneable {
              * ray parameter sample is 0, at least in a spherical model...
              */
             for(int i = 0; i < tMod.rayParams.length - 1; i++) {
-                if(tMod.rayParams[i] >= currArrival.rayParam) {
+                if(tMod.rayParams[i] >= currArrival.getRayParam()) {
                     rayNum = i;
                 } else {
                     break;
@@ -1665,11 +1665,11 @@ public class SeismicPhase implements Serializable, Cloneable {
             // here we use ray parameter and dist info stored within the
             // SeismicPhase so we can use currArrival.rayParamIndex, which
             // may not correspond to rayNum (for tMod.rayParams).
-            rayParamA = rayParams[currArrival.rayParamIndex];
-            rayParamB = rayParams[currArrival.rayParamIndex + 1];
-            distA = dist[currArrival.rayParamIndex];
-            distB = dist[currArrival.rayParamIndex + 1];
-            distRatio = (currArrival.dist - distA) / (distB - distA);
+            rayParamA = rayParams[currArrival.getRayParamIndex()];
+            rayParamB = rayParams[currArrival.getRayParamIndex() + 1];
+            distA = dist[currArrival.getRayParamIndex()];
+            distB = dist[currArrival.getRayParamIndex() + 1];
+            distRatio = (currArrival.getDist() - distA) / (distB - distA);
             distRayParam = distRatio * (rayParamB - rayParamA) + rayParamA;
             /* First pierce point is always 0 distance at the source depth. */
             currArrival.pierce[0] = new TimeDist(distRayParam,
@@ -1803,7 +1803,7 @@ public class SeismicPhase implements Serializable, Cloneable {
                         i++;
                     }
                     diffTD[i] = currArrival.pierce[i];
-                    double diffractDist = currArrival.dist - dist[0];
+                    double diffractDist = currArrival.getDist() - dist[0];
                     double diffractTime = diffractDist * diffTD[i].p;
                     diffTD[i + 1] = new TimeDist(diffTD[i].p,
                                                  diffTD[i].time + diffractTime,
@@ -1832,7 +1832,7 @@ public class SeismicPhase implements Serializable, Cloneable {
                     while((indexInString = name.indexOf("Sn", indexInString + 1)) != -1) {
                         numFound++;
                     }
-                    double refractDist = currArrival.dist - dist[0];
+                    double refractDist = currArrival.getDist() - dist[0];
                     diffTD = new TimeDist[numAdded + numFound];
                     int j = 0;
                     while(j < numFound) {
@@ -1891,12 +1891,12 @@ public class SeismicPhase implements Serializable, Cloneable {
              * parameter in the TauModel, ie it is between rayNum and rayNum+1.
              */
             for(int i = 0; i < tMod.rayParams.length; i++) {
-                if(tMod.rayParams[i] >= currArrival.rayParam) {
+                if(tMod.rayParams[i] >= currArrival.getRayParam()) {
                     rayNum = i;
                 }
             }
             tempTimeDist = new TimeDist[1];
-            tempTimeDist[0] = new TimeDist(currArrival.rayParam,
+            tempTimeDist[0] = new TimeDist(currArrival.getRayParam(),
                                            0.0,
                                            0.0,
                                            tMod.sourceDepth);
@@ -1911,7 +1911,7 @@ public class SeismicPhase implements Serializable, Cloneable {
                                 + ((Boolean)downGoing.get(i)).booleanValue());
                     }
                     tempTimeDist = tMod.getTauBranch(branchNum, isPWave)
-                            .path(currArrival.rayParam,
+                            .path(currArrival.getRayParam(),
                                   ((Boolean)downGoing.get(i)).booleanValue(),
                                   tMod.sMod);
                     if(tempTimeDist != null) {
@@ -1925,10 +1925,10 @@ public class SeismicPhase implements Serializable, Cloneable {
                             && ((Integer)branchSeq.get(i + 1)).intValue() == tMod.cmbBranch - 1
                             && (name.indexOf("Pdiff") != -1 || name.indexOf("Sdiff") != -1)) {
                         TimeDist[] diffTD = new TimeDist[1];
-                        diffTD[0] = new TimeDist(currArrival.rayParam,
-                                                 (currArrival.dist - dist[0])
-                                                         * currArrival.rayParam,
-                                                 currArrival.dist - dist[0],
+                        diffTD[0] = new TimeDist(currArrival.getRayParam(),
+                                                 (currArrival.getDist() - dist[0])
+                                                         * currArrival.getRayParam(),
+                                                 currArrival.getDist() - dist[0],
                                                  tMod.cmbDepth);
                         pathList.add(diffTD);
                     } else if(branchNum == tMod.mohoBranch - 1
@@ -1947,11 +1947,11 @@ public class SeismicPhase implements Serializable, Cloneable {
                             numFound++;
                         }
                         TimeDist[] headTD = new TimeDist[1];
-                        headTD[0] = new TimeDist(currArrival.rayParam,
-                                                 (currArrival.dist - dist[0])
+                        headTD[0] = new TimeDist(currArrival.getRayParam(),
+                                                 (currArrival.getDist() - dist[0])
                                                          / numFound
-                                                         * currArrival.rayParam,
-                                                 (currArrival.dist - dist[0])
+                                                         * currArrival.getRayParam(),
+                                                 (currArrival.getDist() - dist[0])
                                                          / numFound,
                                                  tMod.mohoDepth);
                         pathList.add(headTD);
@@ -1962,10 +1962,10 @@ public class SeismicPhase implements Serializable, Cloneable {
                     arraySize += ((TimeDist[])pathList.get(i)).length;
                 }
                 currArrival.path = new TimeDist[arraySize];
-                TimeDist cummulative = new TimeDist(currArrival.rayParam,
+                TimeDist cummulative = new TimeDist(currArrival.getRayParam(),
                                                     0.0,
                                                     0.0,
-                                                    currArrival.sourceDepth);
+                                                    currArrival.getSourceDepth());
                 TimeDist[] branchPath;
                 int numAdded = 0;
                 for(int i = 0; i < pathList.size(); i++) {
@@ -1982,7 +1982,7 @@ public class SeismicPhase implements Serializable, Cloneable {
                 System.out.println("Caught SlownessModelException in "
                         + "SeismicPhase.calcPath(): " + e.getMessage());
                 e.printStackTrace();
-                System.out.println("Skipping phase " + currArrival.name);
+                System.out.println("Skipping phase " + currArrival.getName());
             }
         }
     }

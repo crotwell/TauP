@@ -133,7 +133,7 @@ public class PathPlot extends ArrivalPlot {
         x = new int[a.getNumPathPoints()];
         y = new int[a.getNumPathPoints()];
 
-        if ((a.dist*180/Math.PI) % 360 > 180) {
+        if ((a.getDist()*180/Math.PI) % 360 > 180) {
             // long way around
             for (int j = 0; j < x.length; j++) {
                 x[j] = xOffset +(int)Math.rint(Math.sin(-1*a.getPathPoint(j).dist)

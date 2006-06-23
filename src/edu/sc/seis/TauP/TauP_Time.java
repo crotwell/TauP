@@ -678,7 +678,7 @@ public class TauP_Time {
             for(int j = 0; j < arrivals.size() - 1; j++) {
                 prevArrival = currArrival;
                 currArrival = (Arrival)arrivals.elementAt(j + 1);
-                if(prevArrival.time > currArrival.time) {
+                if(prevArrival.getTime() > currArrival.getTime()) {
                     sorted = false;
                     arrivals.setElementAt(currArrival, j);
                     arrivals.setElementAt(prevArrival, j + 1);
@@ -787,11 +787,11 @@ public class TauP_Time {
         int maxNameLength = 5;
         int maxPuristNameLength = 5;
         for(int j = 0; j < arrivals.size(); j++) {
-            if(((Arrival)arrivals.elementAt(j)).name.length() > maxNameLength) {
-                maxNameLength = ((Arrival)arrivals.elementAt(j)).name.length();
+            if(((Arrival)arrivals.elementAt(j)).getName().length() > maxNameLength) {
+                maxNameLength = ((Arrival)arrivals.elementAt(j)).getName().length();
             }
-            if(((Arrival)arrivals.elementAt(j)).puristName.length() > maxPuristNameLength) {
-                maxPuristNameLength = ((Arrival)arrivals.elementAt(j)).puristName.length();
+            if(((Arrival)arrivals.elementAt(j)).getPuristName().length() > maxPuristNameLength) {
+                maxPuristNameLength = ((Arrival)arrivals.elementAt(j)).getPuristName().length();
             }
         }
         double moduloDist;
@@ -811,30 +811,30 @@ public class TauP_Time {
                 currArrival = (Arrival)arrivals.elementAt(j);
                 out.write(outForms.formatDistance(currArrival.getModuloDistDeg())
                         + outForms.formatDepth(depth) + "   ");
-                out.write(phaseFormat.form(currArrival.name));
+                out.write(phaseFormat.form(currArrival.getName()));
                 out.write("  "
-                        + outForms.formatTime(currArrival.time)
+                        + outForms.formatTime(currArrival.getTime())
                         + "  "
                         + outForms.formatRayParam(Math.PI / 180.0
-                                * currArrival.rayParam) + "   ");
+                                * currArrival.getRayParam()) + "   ");
                 out.write(outForms.formatDistance(currArrival.getDistDeg()));
-                if(currArrival.name.equals(currArrival.puristName)) {
+                if(currArrival.getName().equals(currArrival.getPuristName())) {
                     out.write("  = ");
                 } else {
                     out.write("  * ");
                 }
-                out.write(phasePuristFormat.form(currArrival.puristName) + "\n");
+                out.write(phasePuristFormat.form(currArrival.getPuristName()) + "\n");
             }
         } else if(onlyPrintTime) {
             for(int j = 0; j < arrivals.size(); j++) {
                 currArrival = (Arrival)arrivals.elementAt(j);
-                out.write(String.valueOf((float)(currArrival.time)) + " ");
+                out.write(String.valueOf((float)(currArrival.getTime())) + " ");
             }
             out.write("\n");
         } else if(onlyPrintRayP) {
             for(int j = 0; j < arrivals.size(); j++) {
                 currArrival = (Arrival)arrivals.elementAt(j);
-                out.write(String.valueOf((float)(Math.PI / 180.0 * currArrival.rayParam))
+                out.write(String.valueOf((float)(Math.PI / 180.0 * currArrival.getRayParam()))
                         + " ");
             }
             out.write("\n");

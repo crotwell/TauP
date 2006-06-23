@@ -225,27 +225,25 @@ public class TauP_Pierce extends TauP_Time {
     }
 
     public void printResult(Writer out) throws IOException {
-        double calcTime, calcDist;
+        double calcDist;
         double prevDepth, nextDepth;
         double lat, lon;
         Arrival currArrival;
-        String tempString;
         boolean longWayRound = false;
         for(int i = 0; i < arrivals.size(); i++) {
             currArrival = (Arrival)arrivals.elementAt(i);
-            out.write("> " + currArrival.name + " at "
-                    + outForms.formatTime(currArrival.time) + " seconds at "
+            out.write("> " + currArrival.getName() + " at "
+                    + outForms.formatTime(currArrival.getTime()) + " seconds at "
                     + outForms.formatDistance(currArrival.getDistDeg())
                     + " degrees for a "
-                    + outForms.formatDepth(currArrival.sourceDepth)
+                    + outForms.formatDepth(currArrival.getSourceDepth())
                     + " km deep source in the " + modelName + " model.\n");
             longWayRound = false;
-            if((currArrival.dist * 180 / Math.PI) % 360 > 180) {
+            if((currArrival.getDist() * 180 / Math.PI) % 360 > 180) {
                 longWayRound = true;
             }
             prevDepth = currArrival.pierce[0].depth;
             for(int j = 0; j < currArrival.pierce.length; j++) {
-                calcTime = currArrival.pierce[j].time;
                 calcDist = currArrival.pierce[j].dist * 180.0 / Math.PI;
                 if(longWayRound && calcDist != 0.0) {
                     calcDist *= -1.0;
