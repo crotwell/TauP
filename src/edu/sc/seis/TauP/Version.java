@@ -45,14 +45,14 @@ public class Version {
         return majorNum;
     }
 
-    private static int minorNum = 1;
+    private static int minorNum = 2;
 
     /** returns the minor version number for the package. */
     public static int getMinorNum() {
         return minorNum;
     }
 
-    private static int touchNum = 5;
+    private static int touchNum = 0;
 
     /** returns the touch version number for the package. The touch number
      *  is changed between versions for every release and is mainly used for
@@ -63,7 +63,7 @@ public class Version {
     }
 
     /** use date -u to get immediately prior to recompiling. */
-    private static String dateCreated = "$Date: 2006-10-03 13:15:36 -0400 (Tue, 03 Oct 2006) $"; 
+    private static String dateCreated = "$Date: 2006-10-03 13:16:18 -0400 (Tue, 03 Oct 2006) $"; 
 
 
     /** returns a string with version number and date created. The format
