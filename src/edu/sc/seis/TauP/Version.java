@@ -63,7 +63,7 @@ public class Version {
     }
 
     /** use date -u to get immediately prior to recompiling. */
-    private static String dateCreated = "$Date: 2005-08-02 12:44:21 -0400 (Tue, 02 Aug 2005) $"; 
+    private static String dateCreated = "$Date: 2006-10-03 13:15:36 -0400 (Tue, 03 Oct 2006) $"; 
 
 
     /** returns a string with version number and date created. The format
@@ -73,4 +73,4 @@ public class Version {
     public static String getVersion() {
         return majorNum+"."+minorNum+"."+touchNum+",  "+dateCreated;
     }
-}
+} 
