@@ -898,11 +898,11 @@ public abstract class SlownessModel implements Serializable, Cloneable {
 	    String desc = 
 		"**** Critical Velocity Layers ************************\n";
 	    botCriticalLayerNum = 
-		((CriticalDepth)criticalDepthVector.elementAt(0)).velLayerNum-1;
+		((CriticalDepth)criticalDepthVector.elementAt(0)).getVelLayerNum()-1;
 	    for (int criticalNum=1; criticalNum<criticalDepthVector.size(); criticalNum++) {
 		topCriticalLayerNum = botCriticalLayerNum+1;
 		botCriticalLayerNum = 
-		    ((CriticalDepth)criticalDepthVector.elementAt(criticalNum)).velLayerNum-1;
+		    ((CriticalDepth)criticalDepthVector.elementAt(criticalNum)).getVelLayerNum()-1;
 		desc += " "+topCriticalLayerNum+","+botCriticalLayerNum;
 	    }
 	    System.out.println(desc);
@@ -1560,16 +1560,16 @@ public abstract class SlownessModel implements Serializable, Cloneable {
    	for (int i=0; i< criticalDepthVector.size() ; i++) {
 	    cd = (CriticalDepth)criticalDepthVector.elementAt(i);
 
-	    cd.PLayerNum = layerNumberBelow(cd.depth, PWAVE);
-	    sLayer = getSlownessLayer(cd.PLayerNum, PWAVE);
-	    if (cd.PLayerNum == PLayers.size()-1 && sLayer.getBotDepth() == cd.depth) {
-		cd.PLayerNum++;	// want the last critical point to be the bottom of the last layer
+	    cd.setPLayerNum(layerNumberBelow(cd.getDepth(), PWAVE));
+	    sLayer = getSlownessLayer(cd.getPLayerNum(), PWAVE);
+	    if (cd.getPLayerNum() == PLayers.size()-1 && sLayer.getBotDepth() == cd.getDepth()) {
+		cd.setPLayerNum(cd.getPLayerNum()+1);	// want the last critical point to be the bottom of the last layer
 	    }
    		
-	    cd.SLayerNum = layerNumberBelow(cd.depth, SWAVE);
-	    sLayer = getSlownessLayer(cd.SLayerNum, SWAVE);
-	    if (cd.SLayerNum == SLayers.size()-1 && sLayer.getBotDepth() == cd.depth) {
-		cd.SLayerNum++;	// want the last critical point to be the bottom of the last layer
+	    cd.setSLayerNum(layerNumberBelow(cd.getDepth(), SWAVE));
+	    sLayer = getSlownessLayer(cd.getSLayerNum(), SWAVE);
+	    if (cd.getSLayerNum() == SLayers.size()-1 && sLayer.getBotDepth() == cd.getDepth()) {
+		cd.setSLayerNum(cd.getSLayerNum()+1);	// want the last critical point to be the bottom of the last layer
 	    }
      	}
     }
@@ -2025,12 +2025,12 @@ public abstract class SlownessModel implements Serializable, Cloneable {
 	if (criticalDepthVector.size()!=0) {
 	    desc += ("**** Critical Depth Layers ************************\n");
 	    botCriticalLayerNum = 
-		((CriticalDepth)criticalDepthVector.elementAt(0)).velLayerNum-1;
+		((CriticalDepth)criticalDepthVector.elementAt(0)).getVelLayerNum()-1;
 	    for (int criticalNum=1;criticalNum<criticalDepthVector.size();
 		 criticalNum++) {
 		topCriticalLayerNum = botCriticalLayerNum+1;
 		botCriticalLayerNum = 
-		    ((CriticalDepth)criticalDepthVector.elementAt(criticalNum)).velLayerNum-1;
+		    ((CriticalDepth)criticalDepthVector.elementAt(criticalNum)).getVelLayerNum()-1;
 		desc += " "+topCriticalLayerNum+","+botCriticalLayerNum;
 	    }
 	}

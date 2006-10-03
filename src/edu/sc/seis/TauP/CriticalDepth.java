@@ -42,18 +42,18 @@ import java.io.Serializable;
 public class CriticalDepth implements Cloneable, Serializable {
 
       /** depth in kilometers at which there is a critical point. */
-   public double depth;
+   private double depth;
 
       /** layer number within the velocity model with this depth at its top. */
-   public int velLayerNum;
+   private int velLayerNum;
 
       /** slowness layer for P waves with this depth at its top. This can be PLayers.size() for
        *  the last critical layer. */
-   public int PLayerNum;
+   private int PLayerNum;
 
       /** slowness layer for S waves with this depth at its top. This can be SLayers.size() for
        *  the last critical layer. */
-   public int SLayerNum;
+   private int SLayerNum;
 
 // Constructors
 
@@ -62,7 +62,7 @@ public class CriticalDepth implements Cloneable, Serializable {
 
    public CriticalDepth(double depth, int velLayerNum, int PLayerNum, 
    int SLayerNum) {
-      this.depth = depth;
+      this.setDepth(depth);
       this.velLayerNum = velLayerNum;
       this.PLayerNum = PLayerNum;
       this.SLayerNum = SLayerNum;
@@ -127,4 +127,12 @@ public class CriticalDepth implements Cloneable, Serializable {
          throw new InternalError(e.toString());
       }
    }
+
+public void setDepth(double depth) {
+    this.depth = depth;
+}
+
+public double getDepth() {
+    return depth;
+}
 }

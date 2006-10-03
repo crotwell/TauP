@@ -368,8 +368,8 @@ public class TauModel implements Serializable, Cloneable {
                             + " botCritLayerNum=" + botCritLayerNum
                             + "\nminPSoFar=" + minPSoFar);
                 }
-                tauBranches[waveNum][critNum] = new TauBranch(topCritDepth.depth,
-                                                              botCritDepth.depth,
+                tauBranches[waveNum][critNum] = new TauBranch(topCritDepth.getDepth(),
+                                                              botCritDepth.getDepth(),
                                                               isPWave);
                 tauBranches[waveNum][critNum].DEBUG = DEBUG;
                 tauBranches[waveNum][critNum].createBranch(sMod,
@@ -385,7 +385,7 @@ public class TauModel implements Serializable, Cloneable {
                 botSLayer = sMod.getSlownessLayer(botCritLayerNum, isPWave);
                 minPSoFar = Math.min(minPSoFar, Math.min(topSLayer.getTopP(),
                                                          botSLayer.getBotP()));
-                botSLayer = sMod.getSlownessLayer(sMod.layerNumberAbove(botCritDepth.depth,
+                botSLayer = sMod.getSlownessLayer(sMod.layerNumberAbove(botCritDepth.getDepth(),
                                                                         isPWave),
                                                   isPWave);
                 minPSoFar = Math.min(minPSoFar, botSLayer.getBotP());
