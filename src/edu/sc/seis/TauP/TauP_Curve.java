@@ -258,9 +258,10 @@ public class TauP_Curve extends TauP_Time {
                             if (timeReduced < minTime) {minTime = timeReduced;}
                         }
                     } else {
+			int lix = (dist[1]>Math.PI) ? 1 : dist.length-1;
+			double ldel = 180.0/Math.PI*Math.acos(Math.cos(dist[lix]));
                         scriptStuff +=
-                            (float)(180.0/Math.PI*arcDistance)
-                            +"  "+ (float)time[dist.length-1]+
+                            (float)ldel+"  "+(float)time[lix]+
                             " 10 0 0 1 "+phase.getName()+"\n";
     
                         // find max and min time

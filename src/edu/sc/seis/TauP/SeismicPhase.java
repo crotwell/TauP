@@ -29,6 +29,15 @@ import java.util.ArrayList;
  * 
  * @version 1.1.3 Wed Jul 18 15:00:35 GMT 2001
  * @author H. Philip Crotwell
+ *
+ * Modified to add "expert" mode wherein paths may
+ * start in the core.  Principal use is to calculate leg contributions for
+ * scattered phases.
+ * Nomenclature:
+ *    "K" - downgoing wave from source in core;
+ *    "k" - upgoing wave from source in core.
+ *
+ * G. Helffrich/U. Bristol 24 Feb. 2007
  */
 public class SeismicPhase implements Serializable, Cloneable {
 
@@ -37,6 +46,9 @@ public class SeismicPhase implements Serializable, Cloneable {
 
     /** Enables verbose output. */
     public transient boolean verbose = false;
+
+    /** Enables phases originating in core. */
+    public transient boolean expert = false;
 
     /** TauModel to generate phase for. */
     protected TauModel tMod;
@@ -240,6 +252,10 @@ public class SeismicPhase implements Serializable, Cloneable {
 
     public void setDEBUG(boolean DEBUG) {
         this.DEBUG = DEBUG;
+    }
+
+    public void setEXPERT(boolean EXPERT) {
+        this.expert = EXPERT;
     }
 
     public double getMinDistance() {
@@ -679,7 +695,8 @@ public class SeismicPhase implements Serializable, Cloneable {
                 + name); }
         /* set currWave to be the wave type for this leg, 'P' or 'S'. */
         if(currLeg.equals("p") || currLeg.startsWith("P")
-                || currLeg.equals("K") || currLeg.equals("I")) {
+                || currLeg.equals("K")
+                || currLeg.equals("k")) {
             isPWave = PWAVE;
             isPWavePrev = isPWave;
         } else if(currLeg.equals("s") || currLeg.startsWith("S")
@@ -693,13 +710,23 @@ public class SeismicPhase implements Serializable, Cloneable {
          * tMod.getSourceBranch()-1 and downgoing would be
          * tMod.getSourceBranch().
          */
-        if(currLeg.startsWith("P") || currLeg.startsWith("S")) {
+        if(currLeg.startsWith("s") || currLeg.startsWith("S")) {
+            // Exclude S sources in fluids
+           double sdep = tMod.getSourceDepth();
+           if(sdep>tMod.getCmbDepth() && sdep<tMod.getIocbDepth()) {
+                maxRayParam = minRayParam = -1;
+                return;
+           }
+       }
+        if(currLeg.startsWith("P") || currLeg.startsWith("S") ||
+          (expert && (currLeg.startsWith("K") || currLeg.startsWith("I")))) {
             // Downgoing from source
             currBranch = tMod.getSourceBranch();
             isDownGoing = true;
             endAction = REFLECTBOT; // treat initial downgoing as if it were a
             // underside reflection
-        } else if(currLeg.equals("p") || currLeg.equals("s")) {
+        } else if(currLeg.equals("p") || currLeg.equals("s") ||
+          (expert && currLeg.startsWith("k"))) {
             // Up going from source
             isDownGoing = false;
             endAction = REFLECTTOP; // treat initial upgoing as if it were a
@@ -764,8 +791,10 @@ public class SeismicPhase implements Serializable, Cloneable {
             }
             /* set currWave to be the wave type for this leg, 'P' or 'S'. */
             isPWavePrev = isPWave;
-            if(currLeg.equals("p") || currLeg.startsWith("P")
-                    || currLeg.equals("I")) {
+            if(currLeg.equals("p") ||
+              currLeg.startsWith("P") ||
+              currLeg.equals("k") ||
+               currLeg.equals("I")) {
                 isPWave = PWAVE;
             } else if(currLeg.equals("s") || currLeg.startsWith("S")
                     || currLeg.equals("J")) {
@@ -789,7 +818,7 @@ public class SeismicPhase implements Serializable, Cloneable {
                                 isPWavePrev);
             }
             /* Deal with p and s case first. */
-            if(currLeg.equals("p") || currLeg.equals("s")) {
+            if(currLeg.equals("p") || currLeg.equals("s") || currLeg.equals("k")) {
                 if(nextLeg.startsWith("v")) {
                     throw new TauModelException("p and s must always be up going "
                             + " and cannot come immediately before a top-side reflection."
@@ -816,9 +845,15 @@ public class SeismicPhase implements Serializable, Cloneable {
                                 tMod.getMohoBranch(),
                                 isPWave,
                                 TRANSUP);
-                } else if(nextLeg.startsWith("P") || nextLeg.startsWith("S")
-                        || nextLeg.equals("END")) {
-                    addToBranch(tMod, currBranch, 0, isPWave, REFLECTTOP);
+                } else if(nextLeg.startsWith("P") ||
+                         nextLeg.startsWith("S") ||
+                         nextLeg.equals("K") ||
+                          nextLeg.equals("END")) {
+                    disconBranch = nextLeg.equals("K") ? tMod.getCmbBranch():0;
+                    addToBranch(tMod, currBranch, disconBranch, isPWave,
+                      (currLeg.equals("k")&!nextLeg.equals("K") ?
+                         TRANSUP:REFLECTTOP)
+                   );
                 } else if(isNextLegDepth) {
                     disconBranch = closestBranchToDepth(tMod, nextLeg);
                     addToBranch(tMod,
@@ -1114,8 +1149,11 @@ public class SeismicPhase implements Serializable, Cloneable {
             } else if(currLeg.equals("K")) {
                 /* Now deal with K. */
                 if(nextLeg.equals("P") || nextLeg.equals("S")) {
-                    if(prevLeg.equals("P") || prevLeg.equals("S")
-                            || prevLeg.equals("K")) {
+                    if(prevLeg.equals("P") ||
+                      prevLeg.equals("S") ||
+                      prevLeg.equals("K") ||
+                      prevLeg.equals("k") ||
+                      prevLeg.equals("START")) {
                         addToBranch(tMod,
                                     currBranch,
                                     tMod.getIocbBranch() - 1,
@@ -1208,11 +1246,16 @@ public class SeismicPhase implements Serializable, Cloneable {
                 throw new TauModelException("Invalid phase name:\n" + name);
             }
         } else while(offset < name.length()) {
-            if(name.charAt(offset) == 'K' || name.charAt(offset) == 'I'
-                    || name.charAt(offset) == 'J' || name.charAt(offset) == 'p'
-                    || name.charAt(offset) == 's' || name.charAt(offset) == 'm'
-                    || name.charAt(offset) == 'c' || name.charAt(offset) == 'i') {
-                // Do the easy ones, ie K,I,J,p,s,m,c,i
+            if(name.charAt(offset) == 'K' ||
+              name.charAt(offset) == 'I' ||
+              name.charAt(offset) == 'k' ||
+               name.charAt(offset) == 'J' ||
+              name.charAt(offset) == 'p' ||
+               name.charAt(offset) == 's' ||
+              name.charAt(offset) == 'm' ||
+               name.charAt(offset) == 'c' ||
+              name.charAt(offset) == 'i') {
+                // Do the easy ones, ie K,k,I,J,p,s,m,c,i
                 legs.add(name.substring(offset, offset + 1));
                 offset = offset + 1;
             } else if(name.charAt(offset) == 'P' || name.charAt(offset) == 'S') {
@@ -2005,7 +2048,11 @@ public class SeismicPhase implements Serializable, Cloneable {
                 || currToken.equals("Sg") || currToken.equals("Sb")
                 || currToken.equals("Sn") || currToken.equals("Sdiff")
                 || currToken.equals("P") || currToken.equals("S")
-                || currToken.equals("p") || currToken.equals("s"))) { return false; }
+                || currToken.equals("p") || currToken.equals("s")
+                || (expert && (currToken.equals("K") ||
+                              currToken.equals("k") ||
+                              currToken.equals("I")))
+       )) { return false; }
         for(int i = 1; i < legs.size(); i++) {
             prevToken = currToken;
             currToken = (String)legs.get(i);

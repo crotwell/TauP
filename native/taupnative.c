@@ -3,7 +3,98 @@
 /** C interface to the TauP package.
   * @version 0.94 Mon May 11 15:01:34 GMT 1998
   * @author H. Philip Crotwell
+  *
+  * Fortran interface by G. Helffrich/U. Bristol 26 Feb. 2007
+  *
+  * Fortran declarations:
+  *   integer function taupinit(model)
+  *   - return value zero means failure, otherwise model index (mix)
+  *   integer function taupdestroy(model)
+  *   - return value zero means OK, otherwise failure
+  *   integer function taupsetdepth(mix, depth)
+  *   - return value zero for OK
+  *   integer function taupcleararrivals(mix)
+  *   - return value zero for OK
+  *   integer function taupappendarrivals(mix, list)
+  *   - list is comma-separated phase name list character string; 
+  *     return value zero for OK
+  *   integer function taupcalculate(mix)
+  *   - return value zero for OK
+  *   integer function taupnumarrivals(mix)
+  *   - returns number of arrivals after taupcalculate; -1 if error, >=0
+  *     if OK
+  *   character*(*) function taupgetarrivalname(mix, i)
+  *   - returns name in model mix for arrival i (first i is 1)
+  *   character*(*) function taupgetarrivalpuristname(mix, i)
+  *   - returns purist name in model mix for arrival i (first i is 1)
+  *   real function taupgetarrivaltime(mix, i)
+  *   - returns arrival time (s) in model mix for arrival i (first i is 1)
+  *   real function taupgetarrivalrayparam(mix, i)
+  *   - returns arrival p (s/deg) in model mix for arrival i (first i is 1)
+  *   real function taupgetarrivalsourcedepth(mix, i)
+  *   - returns source depth for arrival (km) in model mix for arrival i
+  *     (first i is 1)
+  *   real function taupgetarrivaldist(mix, i)
+  *   - returns distance for arrival (deg) in model mix for arrival i
+  *     (first i is 1)
   */
+
+
+struct tent {
+   int num, used;
+   TauPStruct ptr[];
+};
+
+static struct tent *ents = NULL;
+
+int taupinit_(char *model, int mlen) {
+
+   int i, ret;
+   char *ptr;
+
+   /* Make sure space exists in table for new entry */
+
+   if (!ents || ents->used >= ents->num) {
+      /* Get or expand table */
+      struct tent *pent;
+      int nent = 5;
+
+      if (ents) nent = ents->used * 2;
+      pent = malloc(sizeof(struct tent) + nent*sizeof(TauPStruct));
+      if (pent == NULL) return 0;
+      pent->num = nent;
+      if (ents) {
+	 pent->used = ents->used;
+	 for(i=0; i<ents->num; i++) pent->ptr[i] = ents->ptr[i];
+	 free(ents);
+      } else {
+         pent->used = 0;
+      }
+      ents = pent;
+   }
+
+   /* Check model name is zero-terminated or blank terminated; if not, copy
+      and zero-terminate. */
+   for (i=0; i<mlen; i++)
+      if (model[i] == '\0' || model[i] == ' ') break;
+   if (model[i]) {
+      char *mptr = malloc(mlen+1);
+      if (mptr == NULL) return 0;
+      strncpy(mptr, model, mlen);
+      mptr[model[i]==' '?i:mlen] = '\0';
+      ptr = mptr;
+   } else
+      ptr = model;
+
+   /* Initialize model, free pointer copy if needed, return*/
+   ret = TauPInit(ents->ptr + ents->used, ptr);
+   if (ptr != model) free(ptr);
+
+   if (!ret) ret = 1 + ++ents->used;
+
+   return ret;
+
+}
 
 /** Initializes the Java Virtual Machine as well as initializes the 
  *  travel time tool with the given modelname. A properly filled in TauPStruct
@@ -11,11 +102,8 @@
  *  If an error occurs, then a nonzero error code is returned. */
 int TauPInit(TauPStruct *taupptr, char *modelName) {
 
-   JavaVM* jvm;
-   JNIEnv* env;
-   JavaVMInitArgs vm_args;
-   JavaVMOption options[1];
-
+	JavaVMInitArgs vm_args;
+	JavaVMOption options[2];
 	jint res;
 	jmethodID constrID;
 	jstring jstr;
@@ -38,21 +126,36 @@ int TauPInit(TauPStruct *taupptr, char *modelName) {
       envclasspath = ".";
 	}
 
+	/* IMPORTANT: specify vm_args version # if you use JDK1.1.2 and beyond */
+	vm_args.version = JNI_VERSION_1_2;
 
-   classpathlength = strlen(envclasspath) + strlen(classpath_prefix) +1;
-   classpath = (char*)malloc(classpathlength * sizeof(char));
-   strcpy(classpath, classpath_prefix);
-   strcat(classpath, envclasspath);
+	/* added environment variable CLASSPATH to vm_args.classpath */
+#if 0
+	JNI_GetDefaultJavaVMInitArgs(&vm_args);
+	if ((envclasspath = getenv("CLASSPATH")) != NULL) {
+		int classpathlength = strlen(envclasspath) + strlen(vm_args.classpath) +1;
+		char * newclasspath = (char*)malloc(classpathlength * sizeof(char));
+		strcpy(newclasspath, envclasspath);
+		strcat(newclasspath, vm_args.classpath);
+		vm_args.classpath = newclasspath;
+	}
+#else
+	vm_args.nOptions = 0;
+	vm_args.options = options;
+#if 1
+#define CPNAME "-Djava.class.path="
+	if ((envclasspath = getenv("CLASSPATH")) != NULL) {
+        	int classpathlength = strlen(envclasspath) + strlen(CPNAME) + 1;
+		char * newclasspath = (char*)malloc(classpathlength * sizeof(char));
+		strcpy(newclasspath, CPNAME);
+		strcat(newclasspath, envclasspath);
+		options[vm_args.nOptions++].optionString = newclasspath;
+	}
+#endif
+#endif
 
-
-   vm_args.version = JNI_VERSION_1_2;
-   vm_args.nOptions = 1;
-   options[0].optionString = classpath;
-   vm_args.options = options;
-   vm_args.ignoreUnrecognized = JNI_FALSE;
-
-   res = JNI_CreateJavaVM(&jvm, (void **)&env, &vm_args);
-
+		/* create the Java Virtual Machine. */
+	res = JNI_CreateJavaVM(&(taupptr->jvm), (void *)&(taupptr->env), &vm_args);
 	if (res < 0) {
 		fprintf(stderr, "Can't create Java VM: %d\n", res);
 		return(1);
@@ -195,6 +298,16 @@ int TauPInit(TauPStruct *taupptr, char *modelName) {
 	return 0;
 }
 
+int taupsetdepth_(int *pid, float *depth) {
+
+   int id = *pid - 1;
+
+   if (ents == NULL || id < 1 || id > ents->used)
+      return 1;
+
+   return TauPSetDepth(ents->ptr[id-1], (double)*depth);
+}
+
 	/** set the source depth within the model, performing any needed
 	 *  layer splitting, etc. */
 int TauPSetDepth(TauPStruct taup, double depth) {
@@ -223,6 +336,16 @@ int TauPSetDepth(TauPStruct taup, double depth) {
 	return 0;
 }
 
+int taupclearphases_(int *pid) {
+
+   int id = *pid - 1;
+
+   if (ents == NULL || id < 1 || id > ents->used)
+      return 1;
+
+   return TauPClearPhases(ents->ptr[id-1]);
+}
+
 /** clears the phases from the tool. Sould be followed by a call to
  *  TauPAppendPhases. returns 0 if successful, 1 if not. */
 int TauPClearPhases(TauPStruct taup) {
@@ -248,6 +371,33 @@ int TauPClearPhases(TauPStruct taup) {
    }
  
    return(0);
+}
+
+int taupappendphases_(int *pid, char *str, int slen) {
+
+   int i, ret, id = *pid - 1;
+   char *ptr = NULL;
+
+   if (ents == NULL || id < 1 || id > ents->used)
+      return 1;
+
+   /* Check model name is zero-terminated; if not, copy and zero-terminate. */
+   for (i=0; i<slen; i++)
+      if (str[i] == '\0') break;
+   if (str[i]) {
+      char *pptr = malloc(slen+1);
+      if (pptr == NULL) return 1;
+      strncpy(pptr, str, slen);
+      str[slen] = '\0';
+      ptr = pptr;
+   } else
+      ptr = str;
+
+   /* Initialize model, free pointer copy if needed, return*/
+   ret = TauPAppendPhases(ents->ptr[id-1], ptr);
+   if (ptr != str) free(ptr);
+
+   return ret;
 }
 
 	/** Appends the comma or space separated list of phase names that 
@@ -284,6 +434,16 @@ int TauPAppendPhases(TauPStruct taup, char *phaseString) {
 	return(0);
 }
 
+int taupcalculate_(int *pid, float *degrees) {
+
+   int id = *pid - 1;
+
+   if (ents == NULL || id < 1 || id > ents->used)
+      return 1;
+
+   return TauPCalculate(ents->ptr[id-1], (double)*degrees);
+}
+
 	/** Calculates travel times. Retrieval of the times is done by using
 	 *  TauPGetNumArrivals, TauPGetArrivalTime and TauPGetArrivalName. */
 int TauPCalculate(TauPStruct taup, double degrees) {
@@ -311,6 +471,16 @@ int TauPCalculate(TauPStruct taup, double degrees) {
 	}
 
 	return(0);
+}
+
+int taupgetnumarrivals_(int *pid) {
+
+   int id = *pid - 1;
+
+   if (ents == NULL || id < 1 || id > ents->used)
+      return -1;
+
+   return TauPGetNumArrivals(ents->ptr[id-1]);
 }
 
 	/** gets number of arrivals from last TauPCalculate call. */
@@ -368,6 +538,25 @@ jobject TauPGetArrival(TauPStruct taup, int arrivalNum) {
    return arrival;
 }
 
+void taupgetarrivalname_(char *__g77_result, int __g77_length,
+   int *pid, int *pnum) {
+
+   int i, id = *pid - 1;
+   int num = *pnum;
+   char *res;
+
+   if (ents == NULL || id < 1 || id > ents->used)
+      i = 0;  /* Bad id?  Just pad with blanks */
+   else {
+      res = TauPGetArrivalName(ents->ptr[id-1], num-1);
+      if (res == NULL)
+	 i = 0;
+      else
+	 for(i = 0; i<__g77_length && res[i]; i++) __g77_result[i] = res[i];
+   }
+   for(; i<__g77_length; i++) __g77_result[i] = ' '; /* blank pad */
+}
+
 	/** returns the name of the ith arrival. Returns NULL if there is an error.
 	 */
 char * TauPGetArrivalName(TauPStruct taup, int arrivalNum) {
@@ -411,6 +600,25 @@ char * TauPGetArrivalName(TauPStruct taup, int arrivalNum) {
    }
  
 	return arrivalName;
+}
+
+void taupgetarrivalpuristname_(char *__g77_result, int __g77_length,
+   int *pid, int *pnum) {
+
+   int i, id = *pid - 1;
+   int num = *pnum;
+   char *res;
+
+   if (ents == NULL || id < 1 || id > ents->used)
+      i = 0;  /* Bad id?  Just pad with blanks */
+   else {
+      res = TauPGetArrivalPuristName(ents->ptr[id-1], num-1);
+      if (res == NULL)
+	 i = 0;
+      else
+	 for(i = 0; i<__g77_length && res[i]; i++) __g77_result[i] = res[i];
+   }
+   for(; i<__g77_length; i++) __g77_result[i] = ' '; /* blank pad */
 }
 
 	/** returns the purist name of the ith arrival. 
@@ -459,6 +667,16 @@ char * TauPGetArrivalPuristName(TauPStruct taup, int arrivalNum) {
 	return arrivalName;
 }
 
+float taupgetarrivaltime_(int *pid, int *n) {
+
+   int id = *pid - 1;
+
+   if (ents == NULL || id < 1 || id > ents->used)
+      return -1;
+
+   return (float)TauPGetArrivalTime(ents->ptr[id-1], *n - 1);
+}
+
 	/** returns time from ith arrival. Returns -1 if error. */
 double TauPGetArrivalTime(TauPStruct taup, int arrivalNum) {
    jthrowable exception;
@@ -492,6 +710,16 @@ double TauPGetArrivalTime(TauPStruct taup, int arrivalNum) {
    }
  
 	return arrivalTime;
+}
+
+float taupgetarrivaldist_(int *pid, int *n) {
+
+   int id = *pid - 1;
+
+   if (ents == NULL || id < 1 || id > ents->used)
+      return -1;
+
+   return (float)TauPGetArrivalDist(ents->ptr[id-1], *n - 1)*180/3.141592;
 }
 
 	/** returns distance from ith arrival. Returns -1 if error. */
@@ -529,6 +757,16 @@ double TauPGetArrivalDist(TauPStruct taup, int arrivalNum) {
 	return arrivalDist;
 }
 
+float taupgetarrivalrayparam_(int *pid, int *n) {
+
+   int id = *pid - 1;
+
+   if (ents == NULL || id < 1 || id > ents->used)
+      return -1;
+
+   return (float)TauPGetArrivalRayParam(ents->ptr[id-1], *n - 1)*3.141592/180;
+}
+
 	/** returns ray parameter from ith arrival. Returns -1 if error. */
 double TauPGetArrivalRayParam(TauPStruct taup, int arrivalNum) {
    jthrowable exception;
@@ -564,6 +802,16 @@ double TauPGetArrivalRayParam(TauPStruct taup, int arrivalNum) {
 	return arrivalRayParam;
 }
 
+float taupgetarrivalsourcedepth_(int *pid, int *n) {
+
+   int id = *pid - 1;
+
+   if (ents == NULL || id < 1 || id > ents->used)
+      return -1;
+
+   return (float)TauPGetArrivalSourceDepth(ents->ptr[id-1], *n - 1);
+}
+
 	/** returns source depth from ith arrival. Returns -1 if error. */
 double TauPGetArrivalSourceDepth(TauPStruct taup, int arrivalNum) {
    jthrowable exception;
@@ -597,6 +845,16 @@ double TauPGetArrivalSourceDepth(TauPStruct taup, int arrivalNum) {
    }
  
 	return arrivalSourceDepth;
+}
+
+int taupdestroy_(int *pid) {
+
+   int id = *pid - 1;
+
+   if (ents == NULL || id < 1 || id > ents->used)
+      return -1;
+
+   return TauPDestroy(ents->ptr[id-1]);
 }
 
 	/** Destroys the Java Virtual Machine and frees the TauPStruct. */

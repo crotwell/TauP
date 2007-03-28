@@ -458,8 +458,8 @@ public class TauModel implements Serializable, Cloneable {
     public TauModel depthCorrect(double depth) throws TauModelException {
         if(sourceDepth != 0.0) { throw new TauModelException("depthCorrect: Can't depth correct "
                 + "a tau model that is not for a surface source."); }
-        if(depth > getCmbDepth()) { throw new TauModelException("depthCorrect: Can't depth correct "
-                + "for a depth in the core."); }
+        //**GRH** if(depth > getCmbDepth()) { throw new TauModelException("depthCorrect: Can't depth correct "
+        //**GRH**        + "for a depth in the core."); }
         TauModel tMod = splitBranch(depth);
         tMod.sourceDepth = depth;
         tMod.sourceBranch = tMod.findBranch(depth);

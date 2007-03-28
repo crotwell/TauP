@@ -211,7 +211,7 @@ public class TauBranch implements Serializable, Cloneable {
                 botDepth = botSLayer.getBotDepth();
             } else {
                 // bad match, throw exception
-                throw new TauModelException("createBranch: TauBranch not compatible with slowness sampling:"
+                throw new TauModelException("createBranch: TauBranch not compatible with slowness sampling for " + "SP".charAt(isPWave?1:0) + ":"
                         + "\ntopDepth: "
                         + getTopDepth()
                         + " "
@@ -356,7 +356,7 @@ public class TauBranch implements Serializable, Cloneable {
                 topDepth = topBranch.getTopDepth();
             } else {
                 // bad match, throw exception
-                throw new TauModelException("createBranch: TauBranch not compatible with slowness sampling:"
+                throw new TauModelException("difference: TauBranch not compatible with slowness sampling:"
                         + "\ntopDepth: "
                         + getTopDepth()
                         + " "

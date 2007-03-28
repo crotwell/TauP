@@ -60,6 +60,15 @@ public class TauModelLoader {
         IOException,
         StreamCorruptedException,
         OptionalDataException {
+	return load(modelName, searchPath, false);
+    }
+
+    public static TauModel load(String modelName, String searchPath, boolean verbose) throws FileNotFoundException,
+        ClassNotFoundException,
+        InvalidClassException,
+        IOException,
+        StreamCorruptedException,
+        OptionalDataException {
         String filename;
 
         /* Append ".taup" to modelname if it isn't already there. */
@@ -90,7 +99,8 @@ public class TauModelLoader {
             }
         } catch (Exception ex) {
             // couldn't get as a resource, so keep going
-            logger.debug("couldn't load as resource: ", ex);
+            if (verbose) System.out.println("couldn't load as resource: " +
+	       filename + "\n message: " + ex.getMessage());
         }
 
         /* couldn't find as a resource, try in classpath. */
@@ -163,6 +173,6 @@ public class TauModelLoader {
     }
 
 
-    private static final org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(TauModelLoader.class);
+//  private static final org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(TauModelLoader.class);
 
 }

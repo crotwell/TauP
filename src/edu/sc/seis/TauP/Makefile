@@ -1,7 +1,8 @@
+TGT=1.1
 
 DESTDIR = ..
 INSTALLDIR = /opt/local/External/Java/jre/lib/ext
-VPATH = $(DESTDIR)/edu/sc/seis/TauP:${DESTDIR}
+VPATH = $(DESTDIR)/src/edu/sc/seis/TauP
 
 XOBJS =	XYPlot.class \
 	VelocityPlot.class \
@@ -72,8 +73,9 @@ DOCOBJS = ${OBJS}
 .SUFFIXES : .class .html .java
 
 .java.class :
-	javac -target 1.1 -classpath .:${DESTDIR} \
-		-d ${DESTDIR} $<
+	javac -target ${TGT} ${CLASSPATH} \
+	   -sourcepath ${DESTDIR}/src \
+	   -d ${DESTDIR}/src $<
 
 all:	${OBJS} ${ALPHAOBJS}
 
@@ -83,7 +85,6 @@ jdoc:
 	cp ${OBJS:.class=.java} $(DESTDIR)/edu/sc/seis/TauP/.
 	javadoc -sourcepath .. -public \
 		-d ../html edu.sc.seis.TauP
-	/bin/rm -f $(DESTDIR)/edu/sc/seis/TauP/*.java
 
 install: jar
 	cp -f $(DESTDIR)/taup.jar ${INSTALLDIR}/taup.jar
@@ -141,11 +142,8 @@ rebuild:
 	all
 
 clean:
-	rm -f *.class $(DESTDIR)/edu/sc/seis/TauP/*.class $(DESTDIR)/edu/sc/seis/TauP/*.java ../html/*.html
+	rm -f *.class $(VPATH)/*.class ../html/*.html
 	rm -rf ../html/edu
-	rm -rf  $(DESTDIR)/edu/sc/seis/TauP/StdModels
 
 distclean:	clean
 	cd ../distribution ; make clean
-
-

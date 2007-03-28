@@ -3,6 +3,19 @@
                        Modifications to TauP
 Vers  Date    Description
 -------------------------------------------------------------------------------
+1.1.7-grh1 Feb. 25, 2007 G. Helffrich/U. Bristol
+      1) Eliminate use of log4j package; only used one place in code for
+	 diagnostic message.  Diagnostic replaced with output under verbose
+	 control.
+      2) Add Makefile to main directory, change source directory Makefile to
+	 invoke java compiler javac properly.
+      3) Add -expert mode to TauP_{Time,Pierce,Path} to allow sources in the
+	 core.  This is to provide a straightforward way to do point
+	 scattering calculations.
+      4) Fix typo in PREM model depths.
+      5) Improve label positions on reverse branches in TauP_Curve.
+      6) Add fortran call interface to subroutine call interface to TauP_Time
+      7) Compile and install dynamically loadable library for interface routines
 1.1.7  Apr 22, 2006
       1) Dumb rerelease due to compiling under java1.5
 1.1.6  Apr 21, 2006

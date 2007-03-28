@@ -60,6 +60,7 @@ main() {
 			TauPGetArrivalPuristName(taup, i));
 	}
 
+	return TauPDestroy(taup);
 }
 
 

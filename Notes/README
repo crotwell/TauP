@@ -36,3 +36,11 @@ Installation:
 Detailed installation instructions are in an appendix to the manual, 
 in the doc directory.
 
+Edit Makefile in this directory, and change BINDIR and LIBDIR as appropriate.
+LIBDIR will contain the tau-p tables and java programs, and BINDIR will contain
+a command called "taup" (shell script) to access the tools from the command
+line.
+
+make test
+
+make install

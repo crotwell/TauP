@@ -208,6 +208,7 @@ public class TauP_Pierce extends TauP_Time {
             phase = (SeismicPhase)phases.elementAt(phaseNum);
             try {
                 phase.setDEBUG(DEBUG);
+                phase.setEXPERT(expert);
                 phase.calcTime(degrees);
                 if(phase.hasArrivals()) {
                     phase.calcPierce(tModDepth);

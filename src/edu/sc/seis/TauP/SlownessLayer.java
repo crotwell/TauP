@@ -189,7 +189,7 @@ public class SlownessLayer implements Serializable, Cloneable {
 	      // try a linear interpolation if the layer is small ( <2 km)
           // or if denominator of A is infinity as we probably overflowed 
           // the double in that case.
-	      if ((getBotDepth()- getTopDepth()) < 2.0 || Double.isInfinite(ADenominator)) {
+	      if ((getBotDepth()- getTopDepth()) < 2.0 || Double.isInfinite(ADenominator) || getBotP() == 0.0) {
 		  double linear = 
 		      (getBotP()-getTopP())/(getBotDepth()-getTopDepth())*(depth-getTopDepth()) 
 		      + getTopP();

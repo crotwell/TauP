@@ -35,7 +35,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
-import org.apache.log4j.BasicConfigurator;
+//import org.apache.log4j.BasicConfigurator;
 
 /**
  * Calculate travel times for different branches using linear interpolation
@@ -51,6 +51,9 @@ public class TauP_Time {
 
     /** Turns on verbose output. */
     public boolean verbose = false;
+
+    /** Turns on expert mode. */
+    public boolean expert = false;
 
     protected String modelName = "iasp91";
 
@@ -383,7 +386,7 @@ public class TauP_Time {
             OptionalDataException, TauModelException {
         try {
             TauModel tModLoad = TauModelLoader.load(modelName,
-                                                    toolProps.getProperty("taup.model.path"));
+                                                    toolProps.getProperty("taup.model.path"),verbose);
             if(tModLoad != null) {
                 tMod = tModLoad;
                 tModDepth = tMod;
@@ -565,6 +568,8 @@ public class TauP_Time {
                 noComprendoArgs[numNoComprendoArgs++] = args[i];
             } else if(args[i].equalsIgnoreCase("-verbose")) {
                 verbose = true;
+            } else if(args[i].equalsIgnoreCase("-expert")) {
+                expert = true;
             } else if(args[i].equalsIgnoreCase("-debug")) {
                 verbose = true;
                 DEBUG = true;
@@ -701,7 +706,7 @@ public class TauP_Time {
         arrivals.removeAllElements();
         for(int phaseNum = 0; phaseNum < phases.size(); phaseNum++) {
             phase = (SeismicPhase)phases.elementAt(phaseNum);
-            phase.setDEBUG(DEBUG);
+            phase.setDEBUG(DEBUG); phase.setEXPERT(expert);
             phase.calcTime(degrees);
             phaseArrivals = phase.getArrivals();
             for(int i = 0; i < phaseArrivals.length; i++) {
@@ -758,6 +763,7 @@ public class TauP_Time {
                 try {
                     seismicPhase = new SeismicPhase(tempPhaseName, tModDepth);
                     seismicPhase.setDEBUG(DEBUG);
+                    seismicPhase.setEXPERT(expert);
                     seismicPhase.init();
                     newPhases.addElement(seismicPhase);
                     if(verbose) {
@@ -1322,7 +1328,7 @@ public class TauP_Time {
     public static void main(String[] args) throws FileNotFoundException,
             IOException, StreamCorruptedException, ClassNotFoundException,
             OptionalDataException {
-        BasicConfigurator.configure();
+//      BasicConfigurator.configure();
         try {
             long prevTime = 0;
             long currTime;
