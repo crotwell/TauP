@@ -29,14 +29,11 @@ import java.util.ArrayList;
  * 
  * @version 1.1.3 Wed Jul 18 15:00:35 GMT 2001
  * @author H. Philip Crotwell
- *
- * Modified to add "expert" mode wherein paths may
- * start in the core.  Principal use is to calculate leg contributions for
- * scattered phases.
- * Nomenclature:
- *    "K" - downgoing wave from source in core;
- *    "k" - upgoing wave from source in core.
- *
+ * 
+ * Modified to add "expert" mode wherein paths may start in the core. Principal
+ * use is to calculate leg contributions for scattered phases. Nomenclature: "K" -
+ * downgoing wave from source in core; "k" - upgoing wave from source in core.
+ * 
  * G. Helffrich/U. Bristol 24 Feb. 2007
  */
 public class SeismicPhase implements Serializable, Cloneable {
@@ -327,7 +324,8 @@ public class SeismicPhase implements Serializable, Cloneable {
     }
 
     /**
-     * Direction of the leg between pierce point i and i+1, true is downgoing, false if upgoing
+     * Direction of the leg between pierce point i and i+1, true is downgoing,
+     * false if upgoing
      */
     public boolean[] getDownGoing() {
         Boolean[] b = (Boolean[])downGoing.toArray(new Boolean[0]);
@@ -339,7 +337,8 @@ public class SeismicPhase implements Serializable, Cloneable {
     }
 
     /**
-     * Wave type of the leg between pierce point i and i+1, true is P, false if S
+     * Wave type of the leg between pierce point i and i+1, true is P, false if
+     * S
      */
     public boolean[] getWaveType() {
         Boolean[] b = (Boolean[])waveType.toArray(new Boolean[0]);
@@ -351,7 +350,8 @@ public class SeismicPhase implements Serializable, Cloneable {
     }
 
     /**
-     * Leg type i layer interaction, one of TURN, REFLECTTOP, REFLECTBOT, TRANSUP, TRANSDOWN
+     * Leg type i layer interaction, one of TURN, REFLECTTOP, REFLECTBOT,
+     * TRANSUP, TRANSDOWN
      */
     public int[] getLegAction() {
         Integer[] b = (Integer[])legAction.toArray(new Integer[0]);
@@ -657,7 +657,9 @@ public class SeismicPhase implements Serializable, Cloneable {
             return tMod.getMohoBranch();
         } else if(depthString.equals("c")) {
             return tMod.getCmbBranch();
-        } else if(depthString.equals("i")) { return tMod.getIocbBranch(); }
+        } else if(depthString.equals("i")) {
+            return tMod.getIocbBranch();
+        }
         // nonstandard boundary, given by a number, so we must look for it
         int disconBranch = -1;
         double disconMax = Double.MAX_VALUE;
@@ -689,14 +691,17 @@ public class SeismicPhase implements Serializable, Cloneable {
          * Deal with surface wave velocities first, since they are a special
          * case.
          */
-        if(legs.size() == 2 && currLeg.endsWith("kmps")) { return; }
+        if(legs.size() == 2 && currLeg.endsWith("kmps")) {
+            return;
+        }
         /* Make a check for J legs if the model doesn not allow J */
-        if(name.indexOf('J') != -1 && !tMod.sMod.isAllowInnerCoreS()) { throw new TauModelException("'J' phases were not created for this model: "
-                + name); }
+        if(name.indexOf('J') != -1 && !tMod.sMod.isAllowInnerCoreS()) {
+            throw new TauModelException("'J' phases were not created for this model: "
+                    + name);
+        }
         /* set currWave to be the wave type for this leg, 'P' or 'S'. */
         if(currLeg.equals("p") || currLeg.startsWith("P")
-                || currLeg.equals("K")
-                || currLeg.equals("k")) {
+                || currLeg.equals("K") || currLeg.equals("k")) {
             isPWave = PWAVE;
             isPWavePrev = isPWave;
         } else if(currLeg.equals("s") || currLeg.startsWith("S")
@@ -712,21 +717,22 @@ public class SeismicPhase implements Serializable, Cloneable {
          */
         if(currLeg.startsWith("s") || currLeg.startsWith("S")) {
             // Exclude S sources in fluids
-           double sdep = tMod.getSourceDepth();
-           if(sdep>tMod.getCmbDepth() && sdep<tMod.getIocbDepth()) {
+            double sdep = tMod.getSourceDepth();
+            if(sdep > tMod.getCmbDepth() && sdep < tMod.getIocbDepth()) {
                 maxRayParam = minRayParam = -1;
                 return;
-           }
-       }
-        if(currLeg.startsWith("P") || currLeg.startsWith("S") ||
-          (expert && (currLeg.startsWith("K") || currLeg.startsWith("I")))) {
+            }
+        }
+        if(currLeg.startsWith("P")
+                || currLeg.startsWith("S")
+                || (expert && (currLeg.startsWith("K") || currLeg.startsWith("I")))) {
             // Downgoing from source
             currBranch = tMod.getSourceBranch();
             isDownGoing = true;
             endAction = REFLECTBOT; // treat initial downgoing as if it were a
             // underside reflection
-        } else if(currLeg.equals("p") || currLeg.equals("s") ||
-          (expert && currLeg.startsWith("k"))) {
+        } else if(currLeg.equals("p") || currLeg.equals("s")
+                || (expert && currLeg.startsWith("k"))) {
             // Up going from source
             isDownGoing = false;
             endAction = REFLECTTOP; // treat initial upgoing as if it were a
@@ -791,10 +797,8 @@ public class SeismicPhase implements Serializable, Cloneable {
             }
             /* set currWave to be the wave type for this leg, 'P' or 'S'. */
             isPWavePrev = isPWave;
-            if(currLeg.equals("p") ||
-              currLeg.startsWith("P") ||
-              currLeg.equals("k") ||
-               currLeg.equals("I")) {
+            if(currLeg.equals("p") || currLeg.startsWith("P")
+                    || currLeg.equals("k") || currLeg.equals("I")) {
                 isPWave = PWAVE;
             } else if(currLeg.equals("s") || currLeg.startsWith("S")
                     || currLeg.equals("J")) {
@@ -818,7 +822,8 @@ public class SeismicPhase implements Serializable, Cloneable {
                                 isPWavePrev);
             }
             /* Deal with p and s case first. */
-            if(currLeg.equals("p") || currLeg.equals("s") || currLeg.equals("k")) {
+            if(currLeg.equals("p") || currLeg.equals("s")
+                    || currLeg.equals("k")) {
                 if(nextLeg.startsWith("v")) {
                     throw new TauModelException("p and s must always be up going "
                             + " and cannot come immediately before a top-side reflection."
@@ -845,15 +850,16 @@ public class SeismicPhase implements Serializable, Cloneable {
                                 tMod.getMohoBranch(),
                                 isPWave,
                                 TRANSUP);
-                } else if(nextLeg.startsWith("P") ||
-                         nextLeg.startsWith("S") ||
-                         nextLeg.equals("K") ||
-                          nextLeg.equals("END")) {
-                    disconBranch = nextLeg.equals("K") ? tMod.getCmbBranch():0;
-                    addToBranch(tMod, currBranch, disconBranch, isPWave,
-                      (currLeg.equals("k")&!nextLeg.equals("K") ?
-                         TRANSUP:REFLECTTOP)
-                   );
+                } else if(nextLeg.startsWith("P") || nextLeg.startsWith("S")
+                        || nextLeg.equals("K") || nextLeg.equals("END")) {
+                    disconBranch = nextLeg.equals("K") ? tMod.getCmbBranch()
+                            : 0;
+                    addToBranch(tMod,
+                                currBranch,
+                                disconBranch,
+                                isPWave,
+                                (currLeg.equals("k") & !nextLeg.equals("K") ? TRANSUP
+                                        : REFLECTTOP));
                 } else if(isNextLegDepth) {
                     disconBranch = closestBranchToDepth(tMod, nextLeg);
                     addToBranch(tMod,
@@ -1149,11 +1155,9 @@ public class SeismicPhase implements Serializable, Cloneable {
             } else if(currLeg.equals("K")) {
                 /* Now deal with K. */
                 if(nextLeg.equals("P") || nextLeg.equals("S")) {
-                    if(prevLeg.equals("P") ||
-                      prevLeg.equals("S") ||
-                      prevLeg.equals("K") ||
-                      prevLeg.equals("k") ||
-                      prevLeg.equals("START")) {
+                    if(prevLeg.equals("P") || prevLeg.equals("S")
+                            || prevLeg.equals("K") || prevLeg.equals("k")
+                            || prevLeg.equals("START")) {
                         addToBranch(tMod,
                                     currBranch,
                                     tMod.getIocbBranch() - 1,
@@ -1245,100 +1249,105 @@ public class SeismicPhase implements Serializable, Cloneable {
             } catch(NumberFormatException e) {
                 throw new TauModelException("Invalid phase name:\n" + name);
             }
-        } else while(offset < name.length()) {
-            if(name.charAt(offset) == 'K' ||
-              name.charAt(offset) == 'I' ||
-              name.charAt(offset) == 'k' ||
-               name.charAt(offset) == 'J' ||
-              name.charAt(offset) == 'p' ||
-               name.charAt(offset) == 's' ||
-              name.charAt(offset) == 'm' ||
-               name.charAt(offset) == 'c' ||
-              name.charAt(offset) == 'i') {
-                // Do the easy ones, ie K,k,I,J,p,s,m,c,i
-                legs.add(name.substring(offset, offset + 1));
-                offset = offset + 1;
-            } else if(name.charAt(offset) == 'P' || name.charAt(offset) == 'S') {
-                /*
-                 * Now it gets complicated, first see if the next char is part
-                 * of a different leg or we are at the end.
-                 */
-                if(offset + 1 == name.length()
-                        || name.charAt(offset + 1) == 'P'
-                        || name.charAt(offset + 1) == 'S'
-                        || name.charAt(offset + 1) == 'K'
-                        || name.charAt(offset + 1) == 'p'
-                        || name.charAt(offset + 1) == 's'
-                        || name.charAt(offset + 1) == 'm'
-                        || name.charAt(offset + 1) == 'c'
-                        || name.charAt(offset + 1) == '^'
-                        || name.charAt(offset + 1) == 'v'
-                        || Character.isDigit(name.charAt(offset + 1))) {
+        } else
+            while(offset < name.length()) {
+                if(name.charAt(offset) == 'K' || name.charAt(offset) == 'I'
+                        || name.charAt(offset) == 'k'
+                        || name.charAt(offset) == 'J'
+                        || name.charAt(offset) == 'p'
+                        || name.charAt(offset) == 's'
+                        || name.charAt(offset) == 'm'
+                        || name.charAt(offset) == 'c'
+                        || name.charAt(offset) == 'i') {
+                    // Do the easy ones, ie K,k,I,J,p,s,m,c,i
                     legs.add(name.substring(offset, offset + 1));
-                    offset++;
-                } else if(name.charAt(offset + 1) == 'g'
-                        || name.charAt(offset + 1) == 'b'
-                        || name.charAt(offset + 1) == 'n') {
-                    /* The leg is not described by one letter, check for 2. */
-                    legs.add(name.substring(offset, offset + 2));
-                    offset = offset + 2;
-                } else if(name.length() >= offset + 5
-                        && (name.substring(offset, offset + 5).equals("Sdiff") || name.substring(offset,
-                                                                                                 offset + 5)
-                                .equals("Pdiff"))) {
-                    legs.add(name.substring(offset, offset + 5));
-                    offset = offset + 5;
-                } else {
-                    throw new TauModelException("Invalid phase name:\n"
-                            + name.substring(offset) + " in " + name);
-                }
-            } else if(name.charAt(offset) == '^' || name.charAt(offset) == 'v') {
-                /*
-                 * Top side or bottom side reflections, check for standard
-                 * boundaries and then check for numerical ones.
-                 */
-                if(name.charAt(offset + 1) == 'm'
-                        || name.charAt(offset + 1) == 'c'
-                        || name.charAt(offset + 1) == 'i') {
-                    legs.add(name.substring(offset, offset + 2));
-                    offset = offset + 2;
-                } else if(Character.isDigit(name.charAt(offset + 1))) {
-                    int numDigits = 1;
-                    while(offset + numDigits + 1 < name.length()
-                            && Character.isDigit(name.charAt(offset + numDigits
-                                    + 1))) {
-                        numDigits++;
+                    offset = offset + 1;
+                } else if(name.charAt(offset) == 'P'
+                        || name.charAt(offset) == 'S') {
+                    /*
+                     * Now it gets complicated, first see if the next char is
+                     * part of a different leg or we are at the end.
+                     */
+                    if(offset + 1 == name.length()
+                            || name.charAt(offset + 1) == 'P'
+                            || name.charAt(offset + 1) == 'S'
+                            || name.charAt(offset + 1) == 'K'
+                            || name.charAt(offset + 1) == 'p'
+                            || name.charAt(offset + 1) == 's'
+                            || name.charAt(offset + 1) == 'm'
+                            || name.charAt(offset + 1) == 'c'
+                            || name.charAt(offset + 1) == '^'
+                            || name.charAt(offset + 1) == 'v'
+                            || Character.isDigit(name.charAt(offset + 1))) {
+                        legs.add(name.substring(offset, offset + 1));
+                        offset++;
+                    } else if(name.charAt(offset + 1) == 'g'
+                            || name.charAt(offset + 1) == 'b'
+                            || name.charAt(offset + 1) == 'n') {
+                        /* The leg is not described by one letter, check for 2. */
+                        legs.add(name.substring(offset, offset + 2));
+                        offset = offset + 2;
+                    } else if(name.length() >= offset + 5
+                            && (name.substring(offset, offset + 5)
+                                    .equals("Sdiff") || name.substring(offset,
+                                                                       offset + 5)
+                                    .equals("Pdiff"))) {
+                        legs.add(name.substring(offset, offset + 5));
+                        offset = offset + 5;
+                    } else {
+                        throw new TauModelException("Invalid phase name:\n"
+                                + name.substring(offset) + " in " + name);
                     }
-                    legs.add(name.substring(offset, offset + numDigits + 1));
-                    offset = offset + numDigits + 1;
+                } else if(name.charAt(offset) == '^'
+                        || name.charAt(offset) == 'v') {
+                    /*
+                     * Top side or bottom side reflections, check for standard
+                     * boundaries and then check for numerical ones.
+                     */
+                    if(name.charAt(offset + 1) == 'm'
+                            || name.charAt(offset + 1) == 'c'
+                            || name.charAt(offset + 1) == 'i') {
+                        legs.add(name.substring(offset, offset + 2));
+                        offset = offset + 2;
+                    } else if(Character.isDigit(name.charAt(offset + 1))) {
+                        int numDigits = 1;
+                        while(offset + numDigits + 1 < name.length()
+                                && Character.isDigit(name.charAt(offset
+                                        + numDigits + 1))) {
+                            numDigits++;
+                        }
+                        legs.add(name.substring(offset, offset + numDigits + 1));
+                        offset = offset + numDigits + 1;
+                    } else {
+                        throw new TauModelException("Invalid phase name:\n"
+                                + name.substring(offset) + " in " + name);
+                    }
+                } else if(Character.isDigit(name.charAt(offset))
+                        || name.charAt(offset) == '.') {
+                    String numString = name.substring(offset, offset + 1);
+                    offset++;
+                    while(Character.isDigit(name.charAt(offset))
+                            || name.charAt(offset) == '.') {
+                        numString += name.substring(offset, offset + 1);
+                        offset++;
+                    }
+                    try {
+                        Double d = new Double(numString);
+                        legs.add(numString);
+                    } catch(NumberFormatException e) {
+                        throw new TauModelException("Invalid phase name: "
+                                + numString + "\n" + e.getMessage() + " in "
+                                + name);
+                    }
                 } else {
                     throw new TauModelException("Invalid phase name:\n"
                             + name.substring(offset) + " in " + name);
                 }
-            } else if(Character.isDigit(name.charAt(offset))
-                    || name.charAt(offset) == '.') {
-                String numString = name.substring(offset, offset + 1);
-                offset++;
-                while(Character.isDigit(name.charAt(offset))
-                        || name.charAt(offset) == '.') {
-                    numString += name.substring(offset, offset + 1);
-                    offset++;
-                }
-                try {
-                    Double d = new Double(numString);
-                    legs.add(numString);
-                } catch(NumberFormatException e) {
-                    throw new TauModelException("Invalid phase name: "
-                            + numString + "\n" + e.getMessage() + " in " + name);
-                }
-            } else {
-                throw new TauModelException("Invalid phase name:\n"
-                        + name.substring(offset) + " in " + name);
             }
-        }
         legs.add(new String("END"));
-        if(!phaseValidate()) { throw new TauModelException("Phase failed validation: "
-                + name); }
+        if(!phaseValidate()) {
+            throw new TauModelException("Phase failed validation: " + name);
+        }
     }
 
     protected void createPuristName(TauModel tMod) {
@@ -1971,7 +1980,8 @@ public class SeismicPhase implements Serializable, Cloneable {
                         diffTD[0] = new TimeDist(currArrival.getRayParam(),
                                                  (currArrival.getDist() - dist[0])
                                                          * currArrival.getRayParam(),
-                                                 currArrival.getDist() - dist[0],
+                                                 currArrival.getDist()
+                                                         - dist[0],
                                                  tMod.cmbDepth);
                         pathList.add(diffTD);
                     } else if(branchNum == tMod.mohoBranch - 1
@@ -2041,18 +2051,19 @@ public class SeismicPhase implements Serializable, Cloneable {
         /* Special cases for diffracted waves. */
         if(legs.size() == 2
                 && (currToken.equals("Pdiff") || currToken.equals("Sdiff") || currToken.endsWith("kmps"))
-                && ((String)legs.get(1)).equals("END")) { return true; }
+                && ((String)legs.get(1)).equals("END")) {
+            return true;
+        }
         /* Check first leg. */
         if(!(currToken.equals("Pg") || currToken.equals("Pb")
                 || currToken.equals("Pn") || currToken.equals("Pdiff")
                 || currToken.equals("Sg") || currToken.equals("Sb")
                 || currToken.equals("Sn") || currToken.equals("Sdiff")
                 || currToken.equals("P") || currToken.equals("S")
-                || currToken.equals("p") || currToken.equals("s")
-                || (expert && (currToken.equals("K") ||
-                              currToken.equals("k") ||
-                              currToken.equals("I")))
-       )) { return false; }
+                || currToken.equals("p") || currToken.equals("s") || (expert && (currToken.equals("K")
+                || currToken.equals("k") || currToken.equals("I"))))) {
+            return false;
+        }
         for(int i = 1; i < legs.size(); i++) {
             prevToken = currToken;
             currToken = (String)legs.get(i);
@@ -2069,22 +2080,34 @@ public class SeismicPhase implements Serializable, Cloneable {
                 prevIsReflect = false;
             }
             /* Check for "END" before the end. */
-            if(prevToken.equals("END")) { return false; }
+            if(prevToken.equals("END")) {
+                return false;
+            }
             /* Check for P or S next to I or J */
             if((currToken.startsWith("P") || currToken.startsWith("S")
                     || currToken.startsWith("p") || currToken.startsWith("s")
                     || currToken.equals("m") || currToken.equals("c"))
-                    && (prevToken.equals("I") || prevToken.equals("J") || prevToken.equals("i"))) { return false; }
+                    && (prevToken.equals("I") || prevToken.equals("J") || prevToken.equals("i"))) {
+                return false;
+            }
             if((prevToken.startsWith("P") || prevToken.startsWith("S")
                     || prevToken.startsWith("p") || prevToken.startsWith("s")
                     || prevToken.equals("m") || prevToken.equals("c"))
-                    && (currToken.equals("I") || currToken.equals("J") || currToken.equals("i"))) { return false; }
+                    && (currToken.equals("I") || currToken.equals("J") || currToken.equals("i"))) {
+                return false;
+            }
             /* Check for m next to K. */
-            if(prevToken.equals("m") && currToken.equals("K")) { return false; }
-            if(currToken.equals("m") && prevToken.equals("K")) { return false; }
+            if(prevToken.equals("m") && currToken.equals("K")) {
+                return false;
+            }
+            if(currToken.equals("m") && prevToken.equals("K")) {
+                return false;
+            }
         }
         /* Make sure legs end in "END". */
-        if(!currToken.equals("END")) { return false; }
+        if(!currToken.equals("END")) {
+            return false;
+        }
         return true;
     }
 

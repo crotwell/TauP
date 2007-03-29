@@ -1,30 +1,28 @@
 /*
-  The TauP Toolkit: Flexible Seismic Travel-Time and Raypath Utilities.
-  Copyright (C) 1998-2000 University of South Carolina
-
-  This program is free software; you can redistribute it and/or
-  modify it under the terms of the GNU General Public License
-  as published by the Free Software Foundation; either version 2
-  of the License, or (at your option) any later version.
-
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
-
-  You should have received a copy of the GNU General Public License
-  along with this program; if not, write to the Free Software
-  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-
-  The current version can be found at 
-  <A HREF="www.seis.sc.edu">http://www.seis.sc.edu</A>
-
-  Bug reports and comments should be directed to 
-  H. Philip Crotwell, crotwell@seis.sc.edu or
-  Tom Owens, owens@seis.sc.edu
-
-*/
-
+ * The TauP Toolkit: Flexible Seismic Travel-Time and Raypath Utilities.
+ * Copyright (C) 1998-2000 University of South Carolina
+ * 
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ * 
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+ * Place - Suite 330, Boston, MA 02111-1307, USA.
+ * 
+ * The current version can be found at <A
+ * HREF="www.seis.sc.edu">http://www.seis.sc.edu</A>
+ * 
+ * Bug reports and comments should be directed to H. Philip Crotwell,
+ * crotwell@seis.sc.edu or Tom Owens, owens@seis.sc.edu
+ * 
+ */
 package edu.sc.seis.TauP;
 
 import java.applet.Applet;
@@ -41,191 +39,174 @@ import java.awt.event.WindowListener;
 import java.io.IOException;
 
 /**
-  * GUI for TauP_Create, a re-implementation of the seismic travel time 
-  * calculation method described in "The Computation of Seismic Travel Times"
-  * by Buland and Chapman, BSSA vol. 73, No. 5, October 1983, pp 1271-1302
-  *
-  * TauP_WCreate can run as an applet or as a java application, except for
-  * the security restrictions on file access.
-  *
-  * @version 1.1.3 Wed Jul 18 15:00:35 GMT 2001
-
-
-
-  * @author H. Philip Crotwell
-  */
+ * GUI for TauP_Create, a re-implementation of the seismic travel time
+ * calculation method described in "The Computation of Seismic Travel Times" by
+ * Buland and Chapman, BSSA vol. 73, No. 5, October 1983, pp 1271-1302
+ * 
+ * TauP_WCreate can run as an applet or as a java application, except for the
+ * security restrictions on file access.
+ * 
+ * @version 1.1.3 Wed Jul 18 15:00:35 GMT 2001
+ * 
+ * 
+ * 
+ * @author H. Philip Crotwell
+ */
 public class TauP_WCreate extends Applet implements ActionListener {
-   VelocityPlot velocityPlot;
-   SlownessPlot slownessPlot;
-   TauPlot tauPPlot;
-   DistPlot distPlot;
-   TimePlot timePlot;
-   TimeDistPlot timeDistPlot;
-   String modelFilename = "iasp91.tvel";
-   String directory = ".";
-   TauP_Create tauPCreate = new TauP_Create();
 
-   Panel cardPanel = new Panel();
-   CardLayout cards = new CardLayout();
-   Button nextButton;
-   Button previousButton;
-   Button quitButton;
+    VelocityPlot velocityPlot;
 
-   public void init() {
-      setBackground(Color.white); 
-      setLayout(new FlowLayout());
+    SlownessPlot slownessPlot;
 
-      cardPanel.setLayout(cards);
-      add(cardPanel);
+    TauPlot tauPPlot;
 
-      previousButton = new Button("Previous");
-      add( previousButton);
-      previousButton.addActionListener(this);
+    DistPlot distPlot;
 
-      nextButton = new Button("Next");
-      add( nextButton);
-      nextButton.addActionListener(this);
+    TimePlot timePlot;
 
-      quitButton = new Button("Quit");
-      add( quitButton);
-      quitButton.addActionListener(this);
+    TimeDistPlot timeDistPlot;
 
-      velocityPlot = new VelocityPlot(this);
-      velocityPlot.DEBUG = false;
-      cardPanel.add("Velocity",velocityPlot);
+    String modelFilename = "iasp91.tvel";
 
-      slownessPlot = new SlownessPlot(this);
-      slownessPlot.DEBUG = false;
-      cardPanel.add("Slowness",slownessPlot);
+    String directory = ".";
 
-      tauPPlot = new TauPlot(this);
-      tauPPlot.DEBUG = false;
-      cardPanel.add("Tau", tauPPlot);
+    TauP_Create tauPCreate = new TauP_Create();
 
-      distPlot = new DistPlot(this);
-      distPlot.DEBUG = false;
-      cardPanel.add("Dist", distPlot);
+    Panel cardPanel = new Panel();
 
-      timePlot = new TimePlot(this);
-      timePlot.DEBUG = false;
-      cardPanel.add("Time", timePlot);
+    CardLayout cards = new CardLayout();
 
-      timeDistPlot = new TimeDistPlot(this);
-      timeDistPlot.DEBUG = false;
-      cardPanel.add("TimeDist", timeDistPlot);
+    Button nextButton;
 
-      validate();
+    Button previousButton;
 
-      tauPCreate.modelFilename = modelFilename;
-      tauPCreate.directory = directory;
+    Button quitButton;
 
-		try {
-	      tauPCreate.init();
-		} catch (VelocityModelException e) {
-			System.err.println("Caught VelocityModelException: "+e.getMessage());
-		} catch (IOException e) {
-			System.err.println("Caught IOException: "+e.getMessage());
-		}
-   }
+    public void init() {
+        setBackground(Color.white);
+        setLayout(new FlowLayout());
+        cardPanel.setLayout(cards);
+        add(cardPanel);
+        previousButton = new Button("Previous");
+        add(previousButton);
+        previousButton.addActionListener(this);
+        nextButton = new Button("Next");
+        add(nextButton);
+        nextButton.addActionListener(this);
+        quitButton = new Button("Quit");
+        add(quitButton);
+        quitButton.addActionListener(this);
+        velocityPlot = new VelocityPlot(this);
+        velocityPlot.DEBUG = false;
+        cardPanel.add("Velocity", velocityPlot);
+        slownessPlot = new SlownessPlot(this);
+        slownessPlot.DEBUG = false;
+        cardPanel.add("Slowness", slownessPlot);
+        tauPPlot = new TauPlot(this);
+        tauPPlot.DEBUG = false;
+        cardPanel.add("Tau", tauPPlot);
+        distPlot = new DistPlot(this);
+        distPlot.DEBUG = false;
+        cardPanel.add("Dist", distPlot);
+        timePlot = new TimePlot(this);
+        timePlot.DEBUG = false;
+        cardPanel.add("Time", timePlot);
+        timeDistPlot = new TimeDistPlot(this);
+        timeDistPlot.DEBUG = false;
+        cardPanel.add("TimeDist", timeDistPlot);
+        validate();
+        tauPCreate.modelFilename = modelFilename;
+        tauPCreate.directory = directory;
+        try {
+            tauPCreate.init();
+        } catch(VelocityModelException e) {
+            System.err.println("Caught VelocityModelException: "
+                    + e.getMessage());
+        } catch(IOException e) {
+            System.err.println("Caught IOException: " + e.getMessage());
+        }
+    }
 
-   public void start() {
+    public void start() {
+        try {
+            tauPCreate.start();
+        } catch(SlownessModelException e) {
+            System.err.println("Caught SlownessModelException: "
+                    + e.getMessage());
+            e.printStackTrace();
+        } catch(TauModelException e) {
+            System.err.println("Caught TauModelException: " + e.getMessage());
+            e.printStackTrace();
+        }
+        try {
+            velocityPlot.plot(tauPCreate.vMod, 'P', 'S');
+        } catch(NoSuchMatPropException e) {
+            // Can't happen...
+            System.err.println("Caught NoSuchMatPropException: "
+                    + e.getMessage());
+            e.printStackTrace();
+        }
+        slownessPlot.plot(tauPCreate.sMod, true);
+        tauPPlot.plot(tauPCreate.tMod, true);
+        timePlot.plot(tauPCreate.tMod, true);
+        distPlot.plot(tauPCreate.tMod, true);
+        timeDistPlot.plot(tauPCreate.tMod, true);
+    }
 
-		try {
-	      tauPCreate.start();
-		} catch (SlownessModelException e) {
-			System.err.println("Caught SlownessModelException: "+e.getMessage());
-e.printStackTrace();
-		} catch (TauModelException e) {
-			System.err.println("Caught TauModelException: "+e.getMessage());
-e.printStackTrace();
-		}
+    public void actionPerformed(ActionEvent action) {
+        String arg = action.getActionCommand();
+        if("Previous".equals(arg)) {
+            cards.previous(cardPanel);
+        } else if("Next".equals(arg)) {
+            cards.next(cardPanel);
+        } else if("Quit".equals(arg)) {
+            System.exit(0);
+        }
+    }
 
-		try {
-      	velocityPlot.plot(tauPCreate.vMod,'P','S');
-		} catch (NoSuchMatPropException e) {
-				// Can't happen...
-			System.err.println("Caught NoSuchMatPropException: "+e.getMessage());
-e.printStackTrace();
-		}
-      slownessPlot.plot(tauPCreate.sMod, true);
-      tauPPlot.plot(tauPCreate.tMod, true);
-      timePlot.plot(tauPCreate.tMod, true);
-      distPlot.plot(tauPCreate.tMod, true);
-      timeDistPlot.plot(tauPCreate.tMod, true);
-   }
-
-   public void actionPerformed(ActionEvent action) {
-      String arg = action.getActionCommand();
-
-      if ("Previous".equals(arg)) {
-         cards.previous(cardPanel);
-      } else if ("Next".equals(arg)) {
-         cards.next(cardPanel);
-      } else if ("Quit".equals(arg)) {
-         System.exit(0);
-      }
-   }
-
-   public static void main(String[] args) {
-
-      if (args.length!=1 ) {
-         System.out.println("Usage java TauP_WCreate velocitymodel.tvel [wavetype]");
-         System.exit(1);
-      }
-
-      MainFrame f = new MainFrame("TauP_WCreate");
-
-      TauP_WCreate tauPWCreate = new TauP_WCreate();
-
-      int j = args[0].lastIndexOf(System.getProperty("file.separator"));
-      if (j== -1) {
-         tauPWCreate.modelFilename = args[0];
-         tauPWCreate.directory = ".";
-      } else {
-         tauPWCreate.modelFilename = args[0].substring(j+1);
-         tauPWCreate.directory = args[0].substring(0,j);
-      }
-
-      tauPWCreate.init();
-
-      f.add("Center", tauPWCreate);
-      f.pack();
-      f.show();
-
-      tauPWCreate.start();
-   }
-
-   
+    public static void main(String[] args) {
+        if(args.length != 1) {
+            System.out.println("Usage java TauP_WCreate velocitymodel.tvel [wavetype]");
+            System.exit(1);
+        }
+        MainFrame f = new MainFrame("TauP_WCreate");
+        TauP_WCreate tauPWCreate = new TauP_WCreate();
+        int j = args[0].lastIndexOf(System.getProperty("file.separator"));
+        if(j == -1) {
+            tauPWCreate.modelFilename = args[0];
+            tauPWCreate.directory = ".";
+        } else {
+            tauPWCreate.modelFilename = args[0].substring(j + 1);
+            tauPWCreate.directory = args[0].substring(0, j);
+        }
+        tauPWCreate.init();
+        f.add("Center", tauPWCreate);
+        f.pack();
+        f.show();
+        tauPWCreate.start();
+    }
 }
 
-class MainFrame extends Frame 
-      implements WindowListener
-   {
-   MainFrame(String title) {
-      super(title);
-      addWindowListener(this);
-   }
+class MainFrame extends Frame implements WindowListener {
 
-   public void windowClosed(WindowEvent event) {
-   }
+    MainFrame(String title) {
+        super(title);
+        addWindowListener(this);
+    }
 
-   public void windowDeiconified(WindowEvent event) {
-   }
+    public void windowClosed(WindowEvent event) {}
 
-   public void windowIconified(WindowEvent event) {
-   }
+    public void windowDeiconified(WindowEvent event) {}
 
-   public void windowActivated(WindowEvent event) {
-   }
+    public void windowIconified(WindowEvent event) {}
 
-   public void windowDeactivated(WindowEvent event) {
-   }
+    public void windowActivated(WindowEvent event) {}
 
-   public void windowOpened(WindowEvent event) {
-   }
+    public void windowDeactivated(WindowEvent event) {}
 
-   public void windowClosing(WindowEvent event) {
-      System.exit(0);
-   }
+    public void windowOpened(WindowEvent event) {}
 
+    public void windowClosing(WindowEvent event) {
+        System.exit(0);
+    }
 }

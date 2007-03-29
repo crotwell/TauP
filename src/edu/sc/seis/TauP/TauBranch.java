@@ -84,7 +84,7 @@ public class TauBranch implements Serializable, Cloneable {
     }
 
     // Methods -------------------------------------------------------------
-    //Accessor methods
+    // Accessor methods
     /** @returns the minimum (top) depth of this layer. */
     public double getTopDepth() {
         return topDepth;
@@ -129,8 +129,8 @@ public class TauBranch implements Serializable, Cloneable {
     }
 
     /**
-     * @returns the distance (radians) evaluated at the
-     *          i_th ray parameter for this branch.
+     * @returns the distance (radians) evaluated at the i_th ray parameter for
+     *          this branch.
      */
     public double getDist(int i) {
         return dist[i];
@@ -145,8 +145,8 @@ public class TauBranch implements Serializable, Cloneable {
     }
 
     /**
-     * @returns the time (seconds) evaluated at the
-     *          i_th ray parameter for this branch.
+     * @returns the time (seconds) evaluated at the i_th ray parameter for this
+     *          branch.
      */
     public double getTime(int i) {
         return time[i];
@@ -161,8 +161,8 @@ public class TauBranch implements Serializable, Cloneable {
     }
 
     /**
-     * @returns tau (seconds) evaluated at the i_th
-     *          ray parameter for this branch.
+     * @returns tau (seconds) evaluated at the i_th ray parameter for this
+     *          branch.
      */
     public double getTau(int i) {
         return tau[i];
@@ -194,29 +194,37 @@ public class TauBranch implements Serializable, Cloneable {
                                                              isPWave);
         SlownessLayer botSLayer = sMod.getSlownessLayerClone(botLayerNum,
                                                              isPWave);
-        if(topSLayer.getTopDepth() != getTopDepth() || botSLayer.getBotDepth() != getBotDepth()) {
+        if(topSLayer.getTopDepth() != getTopDepth()
+                || botSLayer.getBotDepth() != getBotDepth()) {
             if(topSLayer.getTopDepth() != getTopDepth()
                     && Math.abs(topSLayer.getTopDepth() - getTopDepth()) < 0.000001) {
                 // really close, so just move top
                 System.err.println("Changing topDepth: " + "\ntopDepth: "
-                        + getTopDepth() + " " + topSLayer.getTopDepth() + "\nbotDepth: "
-                        + getBotDepth() + " " + botSLayer.getBotDepth());
+                        + getTopDepth() + " " + topSLayer.getTopDepth()
+                        + "\nbotDepth: " + getBotDepth() + " "
+                        + botSLayer.getBotDepth());
                 topDepth = topSLayer.getTopDepth();
             } else if(botSLayer.getBotDepth() != getBotDepth()
                     && Math.abs(botSLayer.getBotDepth() - getBotDepth()) < 0.000001) {
                 // really close, so just move bottom
                 System.err.println("Changing botDepth: " + "\ntopDepth: "
-                        + getTopDepth() + " " + topSLayer.getTopDepth() + "\nbotDepth: "
-                        + getBotDepth() + " " + botSLayer.getBotDepth());
+                        + getTopDepth() + " " + topSLayer.getTopDepth()
+                        + "\nbotDepth: " + getBotDepth() + " "
+                        + botSLayer.getBotDepth());
                 botDepth = botSLayer.getBotDepth();
             } else {
                 // bad match, throw exception
-                throw new TauModelException("createBranch: TauBranch not compatible with slowness sampling for " + "SP".charAt(isPWave?1:0) + ":"
+                throw new TauModelException("createBranch: TauBranch not compatible with slowness sampling for "
+                        + "SP".charAt(isPWave ? 1 : 0)
+                        + ":"
                         + "\ntopDepth: "
                         + getTopDepth()
                         + " "
                         + topSLayer.getTopDepth()
-                        + "\nbotDepth: " + getBotDepth() + " " + botSLayer.getBotDepth());
+                        + "\nbotDepth: "
+                        + getBotDepth()
+                        + " "
+                        + botSLayer.getBotDepth());
             }
         }
         /*
@@ -267,18 +275,20 @@ public class TauBranch implements Serializable, Cloneable {
         if(p <= getMaxRayParam()) {
             layerNum = topLayerNum;
             layer = sMod.getSlownessLayer(layerNum, isPWave);
-            while(layerNum <= botLayerNum && p <= layer.getTopP() && p <= layer.getBotP()) {
+            while(layerNum <= botLayerNum && p <= layer.getTopP()
+                    && p <= layer.getBotP()) {
                 timeDist.add(sMod.layerTimeDist(p, layerNum, isPWave));
                 layerNum++;
                 if(layerNum <= botLayerNum) {
                     layer = sMod.getSlownessLayerClone(layerNum, isPWave);
                 }
             }
-            if((layer.getTopP() - p) * (p - layer.getBotP()) > 0) { throw new SlownessModelException("Ray turns in the middle of this"
-                    + " layer. layerNum = "
-                    + layerNum
-                    + " sphericalRayParam "
-                    + p + " layer =" + layer); }
+            if((layer.getTopP() - p) * (p - layer.getBotP()) > 0) {
+                throw new SlownessModelException("Ray turns in the middle of this"
+                        + " layer. layerNum = "
+                        + layerNum
+                        + " sphericalRayParam " + p + " layer =" + layer);
+            }
         }
         return timeDist;
     }
@@ -302,12 +312,17 @@ public class TauBranch implements Serializable, Cloneable {
                                                              isPWave);
         SlownessLayer botSLayer = sMod.getSlownessLayerClone(botLayerNum,
                                                              isPWave);
-        if(topSLayer.getTopDepth() != getTopDepth() || botSLayer.getBotDepth() != getBotDepth()) { throw new TauModelException("insert: TauBranch depths not compatible with slowness sampling:"
-                + "\ntopDepth: "
-                + getTopDepth()
-                + " "
-                + topSLayer.getTopDepth()
-                + "\nbotDepth: " + getBotDepth() + " " + botSLayer.getBotDepth()); }
+        if(topSLayer.getTopDepth() != getTopDepth()
+                || botSLayer.getBotDepth() != getBotDepth()) {
+            throw new TauModelException("insert: TauBranch depths not compatible with slowness sampling:"
+                    + "\ntopDepth: "
+                    + getTopDepth()
+                    + " "
+                    + topSLayer.getTopDepth()
+                    + "\nbotDepth: "
+                    + getBotDepth()
+                    + " " + botSLayer.getBotDepth());
+        }
         TimeDist td = new TimeDist(rayParam, 0.0, 0.0);
         TimeDist temptd;
         if(topSLayer.getBotP() >= rayParam && topSLayer.getTopP() >= rayParam) {
@@ -349,7 +364,8 @@ public class TauBranch implements Serializable, Cloneable {
                                    double rayParams[])
             throws NoSuchLayerException, SlownessModelException,
             TauModelException {
-        if(topBranch.getTopDepth() != getTopDepth() || topBranch.getBotDepth() > getBotDepth()) {
+        if(topBranch.getTopDepth() != getTopDepth()
+                || topBranch.getBotDepth() > getBotDepth()) {
             if(topBranch.getTopDepth() != getTopDepth()
                     && Math.abs(topBranch.getTopDepth() - getTopDepth()) < 0.000001) {
                 // really close, so just move top
@@ -361,66 +377,72 @@ public class TauBranch implements Serializable, Cloneable {
                         + getTopDepth()
                         + " "
                         + topBranch.getTopDepth()
-                        + "\nbotDepth: " + getBotDepth() + " " + topBranch.getBotDepth());
+                        + "\nbotDepth: "
+                        + getBotDepth() + " " + topBranch.getBotDepth());
             }
         }
-        if(topBranch.isPWave != isPWave) { throw new TauModelException("Can't difference branches: "
-                + "topBranch.topDepth="
-                + topBranch.getTopDepth()
-                + " topDepth="
-                + getTopDepth()
-                + " topBranch.botDepth="
-                + topBranch.getBotDepth()
-                + " botDepth="
-                + getBotDepth()
-                + " waveTypes:"
-                + topBranch.isPWave
-                + " " + isPWave); }
+        if(topBranch.isPWave != isPWave) {
+            throw new TauModelException("Can't difference branches: "
+                    + "topBranch.topDepth=" + topBranch.getTopDepth()
+                    + " topDepth=" + getTopDepth() + " topBranch.botDepth="
+                    + topBranch.getBotDepth() + " botDepth=" + getBotDepth()
+                    + " waveTypes:" + topBranch.isPWave + " " + isPWave);
+        }
         // find the top and bottom slowness layers of bottom half
-        int topLayerNum = sMod.layerNumberBelow(topBranch.getBotDepth(), isPWave);
+        int topLayerNum = sMod.layerNumberBelow(topBranch.getBotDepth(),
+                                                isPWave);
         int botLayerNum = sMod.layerNumberAbove(getBotDepth(), isPWave);
         SlownessLayer topSLayer = sMod.getSlownessLayer(topLayerNum, isPWave);
         SlownessLayer botSLayer = sMod.getSlownessLayer(botLayerNum, isPWave);
         if(topSLayer.getTopDepth() != topBranch.getBotDepth()
-                || botSLayer.getBotDepth() != getBotDepth()) { throw new TauModelException("difference: TauBranch not compatible with slowness sampling:"
-                + "\ntopDepth: "
-                + topBranch.getBotDepth()
-                + " "
-                + topSLayer.getTopDepth()
-                + "\nbotDepth: "
-                + getBotDepth()
-                + " "
-                + botSLayer.getBotDepth() + "\n" + topSLayer + "\n" + botSLayer); }
+                || botSLayer.getBotDepth() != getBotDepth()) {
+            throw new TauModelException("difference: TauBranch not compatible with slowness sampling:"
+                    + "\ntopDepth: "
+                    + topBranch.getBotDepth()
+                    + " "
+                    + topSLayer.getTopDepth()
+                    + "\nbotDepth: "
+                    + getBotDepth()
+                    + " "
+                    + botSLayer.getBotDepth()
+                    + "\n"
+                    + topSLayer
+                    + "\n"
+                    + botSLayer);
+        }
         // make sure indexP and indexS really correspond to
         // new ray parameters at the top of this branch
         SlownessLayer sLayer = sMod.getSlownessLayer(sMod.layerNumberBelow(topBranch.getBotDepth(),
                                                                            true),
                                                      true);
-        if(indexP >= 0 && sLayer.getTopP() != rayParams[indexP]) { throw new TauModelException("difference: P wave index doesn't match top layer.\n "
-                + sMod.layerNumberBelow(topBranch.getBotDepth(), true)
-                + "\n"
-                + rayParams[indexP - 1]
-                + "\n"
-                + rayParams[indexP]
-                + "\n"
-                + rayParams[indexP + 1]
-                + "\nP="
-                + sLayer
-                + "\nS="
-                + sMod.getSlownessLayer(sMod.layerNumberBelow(topBranch.getBotDepth(),
-                                                              false),
-                                        false)); }
+        if(indexP >= 0 && sLayer.getTopP() != rayParams[indexP]) {
+            throw new TauModelException("difference: P wave index doesn't match top layer.\n "
+                    + sMod.layerNumberBelow(topBranch.getBotDepth(), true)
+                    + "\n"
+                    + rayParams[indexP - 1]
+                    + "\n"
+                    + rayParams[indexP]
+                    + "\n"
+                    + rayParams[indexP + 1]
+                    + "\nP="
+                    + sLayer
+                    + "\nS="
+                    + sMod.getSlownessLayer(sMod.layerNumberBelow(topBranch.getBotDepth(),
+                                                                  false),
+                                            false));
+        }
         sLayer = sMod.getSlownessLayer(sMod.layerNumberBelow(topBranch.getBotDepth(),
                                                              false),
                                        false);
-        if(indexS >= 0 && sLayer.getTopP() != rayParams[indexS]) { throw new TauModelException("difference: S wave index doesn't match top layer. "
-                + sMod.layerNumberBelow(topBranch.getBotDepth(), false)
-                + " "
-                + rayParams[indexS - 1]
-                + " "
-                + rayParams[indexS]
-                + " "
-                + rayParams[indexS + 1] + "\n" + sLayer); }
+        if(indexS >= 0 && sLayer.getTopP() != rayParams[indexS]) {
+            throw new TauModelException("difference: S wave index doesn't match top layer. "
+                    + sMod.layerNumberBelow(topBranch.getBotDepth(), false)
+                    + " "
+                    + rayParams[indexS - 1]
+                    + " "
+                    + rayParams[indexS]
+                    + " " + rayParams[indexS + 1] + "\n" + sLayer);
+        }
         sLayer = null;
         // construct the new TauBranch, going from the bottom of
         // the top half to the bottom of the whole branch
@@ -534,7 +556,9 @@ public class TauBranch implements Serializable, Cloneable {
     public TimeDist[] path(double rayParam,
                            boolean downgoing,
                            SlownessModel sMod) throws SlownessModelException {
-        if(rayParam > getMaxRayParam()) { return null; }
+        if(rayParam > getMaxRayParam()) {
+            return null;
+        }
         Assert.isTrue(rayParam >= 0.0, "ray parameter must not be negative.");
         int topLayerNum;
         int botLayerNum;
@@ -553,11 +577,21 @@ public class TauBranch implements Serializable, Cloneable {
         SlownessLayer sLayer, turnSLayer;
         /** check to make sure layers and branches are compatable. */
         sLayer = sMod.getSlownessLayer(topLayerNum, isPWave);
-        if(sLayer.getTopDepth() != getTopDepth()) { throw new SlownessModelException("Branch and Slowness model are not compatible! "
-                + sLayer.getTopDepth() + " != " + getTopDepth() + "=topDepth"); }
+        if(sLayer.getTopDepth() != getTopDepth()) {
+            throw new SlownessModelException("Branch and Slowness model are not compatible! "
+                    + sLayer.getTopDepth()
+                    + " != "
+                    + getTopDepth()
+                    + "=topDepth");
+        }
         sLayer = sMod.getSlownessLayer(botLayerNum, isPWave);
-        if(sLayer.getBotDepth() != getBotDepth()) { throw new SlownessModelException("Branch and Slowness model are not compatible! "
-                + sLayer.getBotDepth() + " != " + getBotDepth() + "=botDepth"); }
+        if(sLayer.getBotDepth() != getBotDepth()) {
+            throw new SlownessModelException("Branch and Slowness model are not compatible! "
+                    + sLayer.getBotDepth()
+                    + " != "
+                    + getBotDepth()
+                    + "=botDepth");
+        }
         if(downgoing) {
             sLayerNum = topLayerNum;
             sLayer = sMod.getSlownessLayer(sLayerNum, isPWave);

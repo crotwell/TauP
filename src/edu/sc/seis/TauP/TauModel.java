@@ -146,7 +146,9 @@ public class TauModel implements Serializable, Cloneable {
      */
     public boolean isNoDisconBranch(int branchNum) {
         for(int i = 0; i < noDisconDepths.length; i++) {
-            if(noDisconDepths[i] == getTauBranch(branchNum, true).getTopDepth()) { return true; }
+            if(noDisconDepths[i] == getTauBranch(branchNum, true).getTopDepth()) {
+                return true;
+            }
         }
         return false;
     }
@@ -156,7 +158,9 @@ public class TauModel implements Serializable, Cloneable {
      */
     public boolean isNoDisconDepth(double noDisconDepth) {
         for(int i = 0; i < noDisconDepths.length; i++) {
-            if(noDisconDepths[i] == noDisconDepth) { return true; }
+            if(noDisconDepths[i] == noDisconDepth) {
+                return true;
+            }
         }
         return false;
     }
@@ -290,10 +294,14 @@ public class TauModel implements Serializable, Cloneable {
                     + " sMod.getNumLayers('P') = " + sMod.getNumLayers(true)
                     + ", sMod.getNumLayers('S') = " + sMod.getNumLayers(false));
         }
-        if(sMod.getNumLayers(true) == 0 || sMod.getNumLayers(false) == 0) { throw new SlownessModelException("Can't calculate tauInc when getNumLayers() = 0. "
-                + "I need more slowness samples."); }
-        if(!sMod.validate()) { throw new SlownessModelException("Validation failed: "
-                + "Something is wrong with the slowness model."); }
+        if(sMod.getNumLayers(true) == 0 || sMod.getNumLayers(false) == 0) {
+            throw new SlownessModelException("Can't calculate tauInc when getNumLayers() = 0. "
+                    + "I need more slowness samples.");
+        }
+        if(!sMod.validate()) {
+            throw new SlownessModelException("Validation failed: "
+                    + "Something is wrong with the slowness model.");
+        }
         this.sMod = (SlownessModel)sMod.clone();
         radiusOfEarth = sMod.getRadiusOfEarth();
         sourceDepth = 0.0;
@@ -423,7 +431,9 @@ public class TauModel implements Serializable, Cloneable {
         mohoDepth = tauBranches[0][mohoBranch].getTopDepth();
         cmbDepth = tauBranches[0][cmbBranch].getTopDepth();
         iocbDepth = tauBranches[0][iocbBranch].getTopDepth();
-        if(!validate()) { throw new TauModelException("calcTauIncFrom: Validation failed!"); }
+        if(!validate()) {
+            throw new TauModelException("calcTauIncFrom: Validation failed!");
+        }
     }
 
     /**
@@ -435,7 +445,9 @@ public class TauModel implements Serializable, Cloneable {
     public int findBranch(double depth) throws TauModelException {
         for(int i = 0; i < tauBranches[0].length; i++) {
             if(tauBranches[0][i].getTopDepth() <= depth
-                    && tauBranches[0][i].getBotDepth() > depth) { return i; }
+                    && tauBranches[0][i].getBotDepth() > depth) {
+                return i;
+            }
         }
         /* Check to see if depth is center of earth. */
         if(tauBranches[0][tauBranches[0].length - 1].getBotDepth() == depth) {
@@ -456,10 +468,13 @@ public class TauModel implements Serializable, Cloneable {
      * Chapman p 1290.
      */
     public TauModel depthCorrect(double depth) throws TauModelException {
-        if(sourceDepth != 0.0) { throw new TauModelException("depthCorrect: Can't depth correct "
-                + "a tau model that is not for a surface source."); }
-        //**GRH** if(depth > getCmbDepth()) { throw new TauModelException("depthCorrect: Can't depth correct "
-        //**GRH**        + "for a depth in the core."); }
+        if(sourceDepth != 0.0) {
+            throw new TauModelException("depthCorrect: Can't depth correct "
+                    + "a tau model that is not for a surface source.");
+        }
+        // **GRH** if(depth > getCmbDepth()) { throw new
+        // TauModelException("depthCorrect: Can't depth correct "
+        // **GRH** + "for a depth in the core."); }
         TauModel tMod = splitBranch(depth);
         tMod.sourceDepth = depth;
         tMod.sourceBranch = tMod.findBranch(depth);
@@ -484,7 +499,9 @@ public class TauModel implements Serializable, Cloneable {
              */
             for(int branchNum = 0; branchNum < tMod.tauBranches[0].length; branchNum++) {
                 if(tMod.tauBranches[0][branchNum].getTopDepth() == depth
-                        || tMod.tauBranches[0][branchNum].getBotDepth() == depth) { return tMod; }
+                        || tMod.tauBranches[0][branchNum].getBotDepth() == depth) {
+                    return tMod;
+                }
             }
             /*
              * depth is not a branch boundary, so we must modify the tau model.
@@ -647,12 +664,18 @@ public class TauModel implements Serializable, Cloneable {
              * We have split a branch so possibly sourceBranch, mohoBranch,
              * cmbBranch, and iocbBranch are off by 1.
              */
-            if(tMod.sourceDepth > depth) tMod.sourceBranch++;
-            if(tMod.mohoDepth > depth) tMod.mohoBranch++;
-            if(tMod.cmbDepth > depth) tMod.cmbBranch++;
-            if(tMod.iocbDepth > depth) tMod.iocbBranch++;
-            if(!tMod.validate()) { throw new TauModelException("splitBranch("
-                    + depth + "): Validation failed!"); }
+            if(tMod.sourceDepth > depth)
+                tMod.sourceBranch++;
+            if(tMod.mohoDepth > depth)
+                tMod.mohoBranch++;
+            if(tMod.cmbDepth > depth)
+                tMod.cmbBranch++;
+            if(tMod.iocbDepth > depth)
+                tMod.iocbBranch++;
+            if(!tMod.validate()) {
+                throw new TauModelException("splitBranch(" + depth
+                        + "): Validation failed!");
+            }
         } catch(NoSuchLayerException e) {
             throw new TauModelException("TauModel.depthCorrect - "
                     + "NoSuchLayerException", e);
@@ -760,7 +783,8 @@ public class TauModel implements Serializable, Cloneable {
                     + tauBranches[0].length + " " + tauBranches[1].length);
             return false;
         }
-        if(tauBranches[0][0].getTopDepth() != 0 || tauBranches[1][0].getTopDepth() != 0) {
+        if(tauBranches[0][0].getTopDepth() != 0
+                || tauBranches[1][0].getTopDepth() != 0) {
             System.err.println("branch 0 topDepth != 0");
             return false;
         }
@@ -787,15 +811,17 @@ public class TauModel implements Serializable, Cloneable {
                 System.err.println("branch " + i
                         + " P maxRayParam != minRayParam of " + (i - 1)
                         + "\nmaxRayParam=" + tauBranches[0][i].getMaxRayParam()
-                        + "\nminRayParam=" + tauBranches[0][i - 1].getMinRayParam());
+                        + "\nminRayParam="
+                        + tauBranches[0][i - 1].getMinRayParam());
                 return false;
             }
             if(tauBranches[1][i].getMaxRayParam() != tauBranches[1][i - 1].getMinRayParam()) {
                 System.err.println("branch " + i
                         + " S maxRayParam != minRayParam of " + (i - 1)
                         + "\nmaxRayParam=" + tauBranches[1][i].getMaxRayParam()
-                        + "\nminRayParam=" + tauBranches[1][i - 1].getMinRayParam()
-                        + "\ndepth = " + tauBranches[1][i].getTopDepth());
+                        + "\nminRayParam="
+                        + tauBranches[1][i - 1].getMinRayParam() + "\ndepth = "
+                        + tauBranches[1][i].getTopDepth());
                 return false;
             }
         }
@@ -812,7 +838,8 @@ public class TauModel implements Serializable, Cloneable {
 
     public void print() {
         double deg, time;
-        if(DEBUG) System.out.println("Starting print() in TauModel");
+        if(DEBUG)
+            System.out.println("Starting print() in TauModel");
         System.out.println("Delta tau for each slowness sample and layer.");
         for(int j = 0; j < rayParams.length; j++) {
             deg = 0;
@@ -856,7 +883,8 @@ public class TauModel implements Serializable, Cloneable {
     }
 
     public String toString() {
-        if(DEBUG) System.out.println("Starting toString() in TauModel");
+        if(DEBUG)
+            System.out.println("Starting toString() in TauModel");
         String desc = "Delta tau for each slowness sample and layer.\n";
         for(int j = 0; j < rayParams.length; j++) {
             for(int i = 0; i < tauBranches[0].length; i++) {
@@ -899,9 +927,9 @@ public class TauModel implements Serializable, Cloneable {
                 rayNum = (int)tokenIn.nval;
                 System.out.println("ray parameter=" + tMod.rayParams[rayNum]
                         + " distance="
-                        + tMod.tauBranches[0][branch].getDist(rayNum) + " time="
-                        + tMod.tauBranches[0][branch].time[rayNum] + " tau="
-                        + tMod.tauBranches[0][branch].tau[rayNum]);
+                        + tMod.tauBranches[0][branch].getDist(rayNum)
+                        + " time=" + tMod.tauBranches[0][branch].time[rayNum]
+                        + " tau=" + tMod.tauBranches[0][branch].tau[rayNum]);
                 System.out.println("Enter branch rayNum");
                 tokenIn.nextToken();
             }

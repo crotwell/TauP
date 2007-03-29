@@ -234,7 +234,8 @@ public class TauP_Pierce extends TauP_Time {
         for(int i = 0; i < arrivals.size(); i++) {
             currArrival = (Arrival)arrivals.elementAt(i);
             out.write("> " + currArrival.getName() + " at "
-                    + outForms.formatTime(currArrival.getTime()) + " seconds at "
+                    + outForms.formatTime(currArrival.getTime())
+                    + " seconds at "
                     + outForms.formatDistance(currArrival.getDistDeg())
                     + " degrees for a "
                     + outForms.formatDepth(currArrival.getSourceDepth())
@@ -323,7 +324,9 @@ public class TauP_Pierce extends TauP_Time {
      */
     public synchronized boolean isAddDepth(double depth) {
         for(int i = 0; i < addDepth.length; i++) {
-            if(depth == addDepth[i]) { return true; }
+            if(depth == addDepth[i]) {
+                return true;
+            }
         }
         return false;
     }

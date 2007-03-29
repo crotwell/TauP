@@ -35,8 +35,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
-//import org.apache.log4j.BasicConfigurator;
 
+// import org.apache.log4j.BasicConfigurator;
 /**
  * Calculate travel times for different branches using linear interpolation
  * between known slowness samples.
@@ -167,7 +167,8 @@ public class TauP_Time {
 
     public String getPhaseNameString() {
         // in case of empty phase list
-        if(getNumPhases() == 0) return "";
+        if(getNumPhases() == 0)
+            return "";
         String phases = ((PhaseName)phaseNames.elementAt(0)).getName();
         for(int i = 1; i < getNumPhases(); i++) {
             phases += "," + ((PhaseName)phaseNames.elementAt(i)).getName();
@@ -386,7 +387,8 @@ public class TauP_Time {
             OptionalDataException, TauModelException {
         try {
             TauModel tModLoad = TauModelLoader.load(modelName,
-                                                    toolProps.getProperty("taup.model.path"),verbose);
+                                                    toolProps.getProperty("taup.model.path"),
+                                                    verbose);
             if(tModLoad != null) {
                 tMod = tModLoad;
                 tModDepth = tMod;
@@ -504,8 +506,8 @@ public class TauP_Time {
                 } else if(phaseSepIndex == phaseEntry.length() - 2
                         && phaseEntry.charAt(phaseEntry.length() - 1) == 'a') {
                     /*
-                     * There is an optional argument, use 10 for sac A, so store it and the phase
-                     * name.
+                     * There is an optional argument, use 10 for sac A, so store
+                     * it and the phase name.
                      */
                     appendPhaseName(new PhaseName(phaseEntry.substring(0,
                                                                        phaseSepIndex),
@@ -673,7 +675,9 @@ public class TauP_Time {
     }
 
     public synchronized void sortArrivals() {
-        if(arrivals.size() < 2) { return; }
+        if(arrivals.size() < 2) {
+            return;
+        }
         boolean sorted = false;
         int i, k = 0;
         Arrival currArrival, prevArrival;
@@ -706,7 +710,8 @@ public class TauP_Time {
         arrivals.removeAllElements();
         for(int phaseNum = 0; phaseNum < phases.size(); phaseNum++) {
             phase = (SeismicPhase)phases.elementAt(phaseNum);
-            phase.setDEBUG(DEBUG); phase.setEXPERT(expert);
+            phase.setDEBUG(DEBUG);
+            phase.setEXPERT(expert);
             phase.calcTime(degrees);
             phaseArrivals = phase.getArrivals();
             for(int i = 0; i < phaseArrivals.length; i++) {
@@ -794,10 +799,12 @@ public class TauP_Time {
         int maxPuristNameLength = 5;
         for(int j = 0; j < arrivals.size(); j++) {
             if(((Arrival)arrivals.elementAt(j)).getName().length() > maxNameLength) {
-                maxNameLength = ((Arrival)arrivals.elementAt(j)).getName().length();
+                maxNameLength = ((Arrival)arrivals.elementAt(j)).getName()
+                        .length();
             }
             if(((Arrival)arrivals.elementAt(j)).getPuristName().length() > maxPuristNameLength) {
-                maxPuristNameLength = ((Arrival)arrivals.elementAt(j)).getPuristName().length();
+                maxPuristNameLength = ((Arrival)arrivals.elementAt(j)).getPuristName()
+                        .length();
             }
         }
         double moduloDist;
@@ -829,7 +836,8 @@ public class TauP_Time {
                 } else {
                     out.write("  * ");
                 }
-                out.write(phasePuristFormat.form(currArrival.getPuristName()) + "\n");
+                out.write(phasePuristFormat.form(currArrival.getPuristName())
+                        + "\n");
             }
         } else if(onlyPrintTime) {
             for(int j = 0; j < arrivals.size(); j++) {
@@ -1109,7 +1117,7 @@ public class TauP_Time {
                         readMode = 'd';
                         break;
                     case 'b':
-                        //event to station back azimuth (ie station to event
+                        // event to station back azimuth (ie station to event
                         // azimuth)
                         System.out.print("Enter back azimuth: ");
                         tokenIn.nextToken();
@@ -1328,7 +1336,7 @@ public class TauP_Time {
     public static void main(String[] args) throws FileNotFoundException,
             IOException, StreamCorruptedException, ClassNotFoundException,
             OptionalDataException {
-//      BasicConfigurator.configure();
+        // BasicConfigurator.configure();
         try {
             long prevTime = 0;
             long currTime;
