@@ -35,7 +35,7 @@ package edu.sc.seis.TauP;
  * @author H. Philip Crotwell
  * 
  */
-public class Arrival implements Cloneable {
+public class Arrival {
 
     public Arrival(SeismicPhase phase,
                    double time,
@@ -163,32 +163,6 @@ public class Arrival implements Cloneable {
     /** returns pierce points as TimeDist objects. */
     public TimeDist[] getPath() {
         return path;
-    }
-
-    public Object clone() {
-        try {
-            Arrival newObject = (Arrival)super.clone();
-            if(pierce != null) {
-                newObject.pierce = new TimeDist[pierce.length];
-                for(int i = 0; i < pierce.length; i++) {
-                    if(pierce[i] != null) {
-                        newObject.pierce[i] = (TimeDist)pierce[i].clone();
-                    } else {
-                        newObject.pierce[i] = null;
-                    }
-                }
-            }
-            if(path != null) {
-                newObject.path = new TimeDist[path.length];
-                for(int i = 0; i < path.length; i++) {
-                    newObject.path[i] = (TimeDist)path[i].clone();
-                }
-            }
-            return newObject;
-        } catch(CloneNotSupportedException e) {
-            // Can't happen, but...
-            throw new InternalError(e.toString());
-        }
     }
 
     public String toString() {

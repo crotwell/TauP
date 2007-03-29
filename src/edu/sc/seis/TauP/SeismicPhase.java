@@ -2134,33 +2134,6 @@ public class SeismicPhase implements Serializable, Cloneable {
         }
     }
 
-    /** Returns an independent clone of the SeismicPhase. */
-    public Object clone() {
-        SeismicPhase newObject;
-        try {
-            newObject = (SeismicPhase)super.clone();
-            newObject.branchSeq = new ArrayList(branchSeq.size());
-            for(int i = 0; i < branchSeq.size(); i++) {
-                newObject.branchSeq.add(new Integer(((Integer)branchSeq.get(i)).intValue()));
-            }
-            for(int i = 0; i < legs.size(); i++) {
-                newObject.legs.add(new Integer(((Integer)legs.get(i)).intValue()));
-            }
-            newObject.dist = (double[])dist.clone();
-            newObject.time = (double[])time.clone();
-            newObject.rayParams = (double[])rayParams.clone();
-            for(int i = 0; i < arrivals.size(); i++) {
-                newObject.arrivals.add((Arrival)((Arrival)arrivals.get(i)).clone());
-            }
-            return newObject;
-        } catch(CloneNotSupportedException e) {
-            // Can't happen, but...
-            System.err.println("Caught CloneNotSupportedException: "
-                    + e.getMessage());
-            throw new InternalError(e.toString());
-        }
-    }
-
     public static void main(String args[]) {
         TauModel tMod;
         TauModel tModDepth;

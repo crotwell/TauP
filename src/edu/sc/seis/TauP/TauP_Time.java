@@ -365,13 +365,13 @@ public class TauP_Time {
     }
 
     public Arrival getArrival(int i) {
-        return (Arrival)((Arrival)arrivals.elementAt(i)).clone();
+        return (Arrival)arrivals.elementAt(i);
     }
 
     public Arrival[] getArrivals() {
         Arrival[] returnArrivals = new Arrival[arrivals.size()];
         for(int i = 0; i < arrivals.size(); i++) {
-            returnArrivals[i] = (Arrival)((Arrival)arrivals.elementAt(i)).clone();
+            returnArrivals[i] = getArrival(i);
         }
         return returnArrivals;
     }
