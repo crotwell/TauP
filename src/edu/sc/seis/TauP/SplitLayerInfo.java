@@ -39,74 +39,38 @@ package edu.sc.seis.TauP;
 
 public class SplitLayerInfo implements java.io.Serializable, Cloneable {
 
-    boolean neededSplit;
+    private SlownessModel sMod;
+    
+    private boolean neededSplit;
 
-    boolean movedSample;
+    private boolean movedSample;
 
-    double rayParam;
+    private double rayParam;
 
-    public SplitLayerInfo(boolean neededSplit,
+    public SplitLayerInfo(SlownessModel sMod,
+                          boolean neededSplit,
                           boolean movedSample,
                           double rayParam) {
+        this.sMod = sMod;
         this.neededSplit = neededSplit;
         this.movedSample = movedSample;
         this.rayParam = rayParam;
     }
 
-    /**
-     * Get the value of neededSplit.
-     * 
-     * @return Value of neededSplit.
-     */
     public boolean getNeededSplit() {
         return neededSplit;
     }
-
-    /**
-     * Set the value of neededSplit.
-     * 
-     * @param v
-     *            Value to assign to neededSplit.
-     */
-    public void setNeededSplit(boolean v) {
-        this.neededSplit = v;
-    }
-
-    /**
-     * Get the value of movedSample.
-     * 
-     * @return Value of movedSample.
-     */
+    
     public boolean getMovedSample() {
         return movedSample;
     }
 
-    /**
-     * Set the value of movedSample.
-     * 
-     * @param v
-     *            Value to assign to movedSample.
-     */
-    public void setMovedSample(boolean v) {
-        this.movedSample = v;
-    }
-
-    /**
-     * Get the value of rayParam.
-     * 
-     * @return Value of rayParam.
-     */
     public double getRayParam() {
         return rayParam;
     }
-
-    /**
-     * Set the value of rayParam.
-     * 
-     * @param v
-     *            Value to assign to rayParam.
-     */
-    public void setRayParam(double v) {
-        this.rayParam = v;
+    
+    public SlownessModel getSlownessModel() {
+        return sMod;
     }
-} // SplitLayerInfo
+    
+}

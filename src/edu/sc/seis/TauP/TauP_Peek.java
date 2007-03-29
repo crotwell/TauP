@@ -145,12 +145,12 @@ public class TauP_Peek {
                         break;
                     case 's':
                     case 'S':
-                        System.out.println(peek.tMod.sMod);
+                        System.out.println(peek.tMod.getSlownessModel());
                         System.out.println("Enter slowness layer");
                         break;
                     case 'v':
                     case 'V':
-                        System.out.println(peek.tMod.sMod.vMod);
+                        System.out.println(peek.tMod.getVelocityModel());
                         System.out.println("Enter velocity layer");
                         break;
                     case 'p':
@@ -215,16 +215,16 @@ public class TauP_Peek {
                         case 's':
                         case 'S':
                             layer = (int)tokenIn.nval;
-                            if(layer >= peek.tMod.sMod.getNumLayers(true)) {
+                            if(layer >= peek.tMod.getSlownessModel().getNumLayers(true)) {
                                 System.out.println("P wave Out of bounds!");
                             } else {
-                                System.out.println(peek.tMod.sMod.getSlownessLayer(layer,
+                                System.out.println(peek.tMod.getSlownessModel().getSlownessLayer(layer,
                                                                                    true));
                             }
-                            if(layer >= peek.tMod.sMod.getNumLayers(false)) {
+                            if(layer >= peek.tMod.getSlownessModel().getNumLayers(false)) {
                                 System.out.println("S wave Out of bounds!");
                             } else {
-                                System.out.println(peek.tMod.sMod.getSlownessLayer(layer,
+                                System.out.println(peek.tMod.getSlownessModel().getSlownessLayer(layer,
                                                                                    false));
                             }
                             System.out.println("Enter slowness layer");
@@ -243,10 +243,10 @@ public class TauP_Peek {
                         case 'v':
                         case 'V':
                             layer = (int)tokenIn.nval;
-                            if(layer >= peek.tMod.sMod.vMod.getNumLayers()) {
+                            if(layer >= peek.tMod.getSlownessModel().vMod.getNumLayers()) {
                                 System.out.println("Out of bounds!");
                             } else {
-                                System.out.println(peek.tMod.sMod.vMod.getVelocityLayerClone(layer));
+                                System.out.println(peek.tMod.getSlownessModel().vMod.getVelocityLayerClone(layer));
                             }
                             System.out.println("Enter velocity layer");
                             break;

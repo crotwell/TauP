@@ -28,6 +28,7 @@ package edu.sc.seis.TauP;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Vector;
 
 /**
  * This class provides storage and methods for generating slowness-depth pairs
@@ -40,56 +41,61 @@ import java.io.Serializable;
  * @author H. Philip Crotwell
  * 
  */
-public class SphericalSModel extends SlownessModel implements Serializable,
-        Cloneable {
+public class SphericalSModel extends SlownessModel implements Serializable {
 
-    // METHODS ----------------------------------------------------------------
-    /** Just for debugging purposes. */
-    public static void main(String[] args) {
-        System.out.println("Starting main");
-        VelocityModel vMod = new VelocityModel();
-        SphericalSModel sMod = new SphericalSModel();
-        String modelFilename;
-        if(args.length == 1) {
-            modelFilename = args[0];
-        } else {
-            vMod.setFileType("tvel");
-            modelFilename = File.separator + "MacintoshHD" + File.separator
-                    + "Philip" + File.separator + "TauP" + File.separator
-                    + "VModels" + File.separator + "iasp91.tvel";
-        }
-        boolean DEBUG = true;
-        try {
-            DEBUG = true;
-            vMod.readVelocityFile(modelFilename);
-            System.out.println("Done reading.");
-            if(DEBUG)
-                System.out.println(vMod);
-            DEBUG = true;
-            sMod.DEBUG = true;
-            sMod.createSample(vMod);
-            if(sMod.DEBUG)
-                System.out.println(sMod);
-            sMod.validate();
-        } catch(IOException e) {
-            System.out.println("Tried to read!\n Caught IOException "
-                    + e.getMessage() + "\n" + e.getClass().getName());
-            e.printStackTrace();
-        } catch(VelocityModelException e) {
-            System.out.println("Tried to read!\n Caught VelocityModelException "
-                    + e.getMessage());
-            e.printStackTrace();
-        } catch(SlownessModelException e) {
-            System.out.println(vMod);
-            System.out.println(sMod);
-            System.out.println("Tried to create slowness!\n Caught SlownessModelException "
-                    + e.getMessage());
-            e.printStackTrace();
-        } finally {
-            System.out.println("Done!\n");
-        }
+    public SphericalSModel(VelocityModel vMod,
+                           double minDeltaP,
+                           double maxDeltaP,
+                           double maxDepthInterval,
+                           double maxRangeInterval,
+                           double maxInterpError,
+                           boolean allowInnerCoreS,
+                           double slownessTolerance)
+            throws NoSuchMatPropException, NoSuchLayerException,
+            SlownessModelException {
+        super(vMod,
+              minDeltaP,
+              maxDeltaP,
+              maxDepthInterval,
+              maxRangeInterval,
+              maxInterpError,
+              allowInnerCoreS,
+              slownessTolerance);
     }
 
+    public SphericalSModel(double radiusOfEarth,
+                           VelocityModel vMod,
+                           Vector criticalDepthVector,
+                           Vector highSlownessLayerDepthsP,
+                           Vector highSlownessLayerDepthsS,
+                           Vector fluidLayerDepths,
+                           Vector pLayers,
+                           Vector sLayers,
+                           double minDeltaP,
+                           double maxDeltaP,
+                           double maxDepthInterval,
+                           double maxRangeInterval,
+                           double maxInterpError,
+                           boolean allowInnerCoreS,
+                           double slownessTolerance) {
+        super(radiusOfEarth,
+              vMod,
+              criticalDepthVector,
+              highSlownessLayerDepthsP,
+              highSlownessLayerDepthsS,
+              fluidLayerDepths,
+              pLayers,
+              sLayers,
+              minDeltaP,
+              maxDeltaP,
+              maxDepthInterval,
+              maxRangeInterval,
+              maxInterpError,
+              allowInnerCoreS,
+              slownessTolerance);
+    }
+
+    // METHODS ----------------------------------------------------------------
     /**
      * Returns the slowness for a velocity at a depth.
      * 
@@ -187,11 +193,11 @@ public class SphericalSModel extends SlownessModel implements Serializable,
         TimeDist timedist = new TimeDist(sphericalRayParam);
         SlownessLayer sphericalLayer = getSlownessLayer(layerNum, isPWave);
         double topRadius = radiusOfEarth - sphericalLayer.getTopDepth(); // radius
-                                                                            // to
-                                                                            // top
+        // to
+        // top
         double botRadius = radiusOfEarth - sphericalLayer.getBotDepth(); // radius
-                                                                            // to
-                                                                            // bot
+        // to
+        // bot
         /*
          * First we make sure that a ray with this ray parameter can propagate
          * within this layer and doesn't turn in the middle of the layer. If
@@ -350,7 +356,6 @@ public class SphericalSModel extends SlownessModel implements Serializable,
     public boolean validate() throws SlownessModelException {
         boolean isOK = super.validate();
         double prevDepth = 0.0;
-        DepthRange highSZoneDepth, fluidZone;
         SlownessLayer sLayer;
         boolean isPWave = true;
         for(int j = 0; j < 2; j++, isPWave = false) {
@@ -375,18 +380,7 @@ public class SphericalSModel extends SlownessModel implements Serializable,
         return isOK;
     }
 
-    /*
-     * Returns a clone of this slowness model. All fields are correctly copied
-     * so modifications to the clone do not affect the original.
-     */
-    public Object clone() {
-        SphericalSModel newObject = (SphericalSModel)super.clone();
-        return newObject;
-    }
-
     public String toString() {
-        int topCriticalLayerNum;
-        int botCriticalLayerNum;
         String desc = "spherical model:\n" + super.toString();
         return desc;
     }

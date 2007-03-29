@@ -27,6 +27,7 @@ package edu.sc.seis.TauP;
 
 import java.io.Serializable;
 import java.util.Vector;
+import sun.security.action.GetLongAction;
 
 /**
  * This class provides storage and methods for generating slowness-depth pairs.
@@ -38,13 +39,63 @@ import java.util.Vector;
  * @author H. Philip Crotwell
  * 
  */
-public abstract class SlownessModel implements Serializable, Cloneable {
+public abstract class SlownessModel implements Serializable {
+
+    public SlownessModel(VelocityModel vMod,
+                         double minDeltaP,
+                         double maxDeltaP,
+                         double maxDepthInterval,
+                         double maxRangeInterval,
+                         double maxInterpError,
+                         boolean allowInnerCoreS,
+                         double slownessTolerance) throws NoSuchMatPropException, NoSuchLayerException, SlownessModelException {
+        this.vMod = vMod;
+        this.minDeltaP = minDeltaP;
+        this.maxDeltaP = maxDeltaP;
+        this.maxDepthInterval = maxDepthInterval;
+        this.maxRangeInterval = maxRangeInterval;
+        this.maxInterpError = maxInterpError;
+        this.allowInnerCoreS = allowInnerCoreS;
+        this.slownessTolerance = slownessTolerance;
+        createSample();
+    }
+    public SlownessModel(double radiusOfEarth,
+                         VelocityModel vMod,
+                         Vector criticalDepthVector,
+                         Vector highSlownessLayerDepthsP,
+                         Vector highSlownessLayerDepthsS,
+                         Vector fluidLayerDepths,
+                         Vector pLayers,
+                         Vector sLayers,
+                         double minDeltaP,
+                         double maxDeltaP,
+                         double maxDepthInterval,
+                         double maxRangeInterval,
+                         double maxInterpError,
+                         boolean allowInnerCoreS,
+                         double slownessTolerance) {
+        this.radiusOfEarth = radiusOfEarth;
+        this.vMod = vMod;
+        this.criticalDepthVector = criticalDepthVector;
+        this.highSlownessLayerDepthsP = highSlownessLayerDepthsP;
+        this.highSlownessLayerDepthsS = highSlownessLayerDepthsS;
+        this.fluidLayerDepths = fluidLayerDepths;
+        this.PLayers = pLayers;
+        this.SLayers = sLayers;
+        this.minDeltaP = minDeltaP;
+        this.maxDeltaP = maxDeltaP;
+        this.maxDepthInterval = maxDepthInterval;
+        this.maxRangeInterval = maxRangeInterval;
+        this.maxInterpError = maxInterpError;
+        this.allowInnerCoreS = allowInnerCoreS;
+        this.slownessTolerance = slownessTolerance;
+    }
 
     /** True to enable debugging output. */
-    transient public boolean DEBUG = false;
+    transient static public boolean DEBUG = false;
 
     /** True to enable verbose output. */
-    transient public boolean verbose = false;
+    transient static public boolean verbose = false;
 
     /** Radius of the Earth in km, usually input from the velocity model. */
     protected double radiusOfEarth = 6371.0;
@@ -158,12 +209,14 @@ public abstract class SlownessModel implements Serializable, Cloneable {
      */
     protected boolean allowInnerCoreS = true;
 
+    public static final double DEFAULT_SLOWNESS_TOLERANCE = 1e-16;
+    
     /**
      * Tolerance for slownesses. If two slownesses are closer that this value,
      * then we consider them to be identical. Basically this just provides some
      * protection against numerical "chatter".
      */
-    protected double slownessTolerance = 1e-16;
+    protected double slownessTolerance = DEFAULT_SLOWNESS_TOLERANCE;
 
     /**
      * Just useful for calling methods that need to know whether to use P or S
@@ -390,6 +443,14 @@ public abstract class SlownessModel implements Serializable, Cloneable {
         }
     }
 
+    protected Vector getAllSlownessLayers(boolean isPWave) {
+        if(isPWave) {
+            return PLayers;
+        } else {
+            return SLayers;
+        }
+    }
+
     // Abstract methods
     public abstract double toSlowness(double velocity, double depth)
             throws SlownessModelException;
@@ -557,14 +618,6 @@ public abstract class SlownessModel implements Serializable, Cloneable {
      */
     public SplitLayerInfo splitLayer(double depth, boolean isPWave)
             throws SlownessModelException, NoSuchLayerException {
-        Vector layers, otherLayers;
-        if(isPWave) {
-            layers = PLayers;
-            otherLayers = SLayers;
-        } else {
-            layers = SLayers;
-            otherLayers = PLayers;
-        }
         boolean otherWaveType = !isPWave;
         boolean changeMade = false;
         int layerNum = layerNumberAbove(depth, isPWave);
@@ -574,81 +627,209 @@ public abstract class SlownessModel implements Serializable, Cloneable {
              * depth is already on a slowness layer boundary so we don't need to
              * split any slowness layers.
              */
-            return new SplitLayerInfo(false, false, 0.0);
+            return new SplitLayerInfo(this, false, false, 0.0);
         } else if(Math.abs(sLayer.getTopDepth() - depth) < 0.000001) {
             /*
              * check for very thin layers, just move the layer to hit the
              * boundary
              */
-            sLayer.setTopDepth(depth);
+            Vector allLayers = getAllSlownessLayers(isPWave);
+            Vector outLayers = new Vector(allLayers.size());
+            outLayers.addAll(allLayers);
+            outLayers.set(layerNum, new SlownessLayer(sLayer.getTopP(),
+                                                      depth,
+                                                      sLayer.getBotP(),
+                                                      sLayer.getBotDepth()));
             sLayer = getSlownessLayer(layerNum - 1, isPWave);
-            sLayer.setBotDepth(depth);
-            return new SplitLayerInfo(false, true, sLayer.getBotP());
+            outLayers.set(layerNum - 1, new SlownessLayer(sLayer.getTopP(),
+                                                          sLayer.getTopDepth(),
+                                                          sLayer.getBotP(),
+                                                          depth));
+            Vector outPLayers, outSLayers;
+            if(isPWave) {
+                outPLayers = outLayers;
+                outSLayers = SLayers;
+            } else {
+                outPLayers = PLayers;
+                outSLayers = outLayers;
+            }
+            SlownessModel out = new SphericalSModel(radiusOfEarth,
+                                                    vMod,
+                                                    criticalDepthVector,
+                                                    highSlownessLayerDepthsP,
+                                                    highSlownessLayerDepthsS,
+                                                    fluidLayerDepths,
+                                                    outPLayers,
+                                                    outSLayers,
+                                                    minDeltaP,
+                                                    maxDeltaP,
+                                                    maxDepthInterval,
+                                                    maxRangeInterval,
+                                                    maxInterpError,
+                                                    allowInnerCoreS,
+                                                    slownessTolerance);
+            return new SplitLayerInfo(out, false, true, sLayer.getBotP());
         } else if(Math.abs(depth - sLayer.getBotDepth()) < 0.000001) {
             /*
              * check for very thin layers, just move the layer to hit the
              * boundary
              */
-            sLayer.setBotDepth(depth);
+            Vector allLayers = getAllSlownessLayers(isPWave);
+            Vector outLayers = new Vector(allLayers.size());
+            outLayers.addAll(allLayers);
+            outLayers.set(layerNum, new SlownessLayer(sLayer.getTopP(),
+                                                      sLayer.getTopDepth(),
+                                                      sLayer.getBotP(),
+                                                      depth));
             sLayer = getSlownessLayer(layerNum + 1, isPWave);
-            sLayer.setTopDepth(depth);
-            return new SplitLayerInfo(false, true, sLayer.getTopP());
+            outLayers.set(layerNum + 1, new SlownessLayer(sLayer.getTopP(),
+                                                          depth,
+                                                          sLayer.getBotP(),
+                                                          sLayer.getBotDepth()));
+            Vector outPLayers, outSLayers;
+            if(isPWave) {
+                outPLayers = outLayers;
+                outSLayers = SLayers;
+            } else {
+                outPLayers = PLayers;
+                outSLayers = outLayers;
+            }
+            SlownessModel out = new SphericalSModel(radiusOfEarth,
+                                                    vMod,
+                                                    criticalDepthVector,
+                                                    highSlownessLayerDepthsP,
+                                                    highSlownessLayerDepthsS,
+                                                    fluidLayerDepths,
+                                                    outPLayers,
+                                                    outSLayers,
+                                                    minDeltaP,
+                                                    maxDeltaP,
+                                                    maxDepthInterval,
+                                                    maxRangeInterval,
+                                                    maxInterpError,
+                                                    allowInnerCoreS,
+                                                    slownessTolerance);
+            return new SplitLayerInfo(out, false, true, sLayer.getBotP());
         } else {
             double p = sLayer.evaluateAt_bullen(depth, radiusOfEarth);
-            int index = -1;
-            int otherIndex = -1;
             SlownessLayer topLayer, botLayer;
-            topLayer = (SlownessLayer)sLayer.clone();
-            topLayer.setBotP(p);
-            topLayer.setBotDepth(depth);
-            botLayer = (SlownessLayer)sLayer.clone();
-            botLayer.setTopP(p);
-            botLayer.setTopDepth(topLayer.getBotDepth());
-            layers.removeElementAt(layerNum);
-            layers.insertElementAt(botLayer, layerNum);
-            layers.insertElementAt(topLayer, layerNum);
+            topLayer = new SlownessLayer(sLayer.getTopP(),
+                                         sLayer.getTopDepth(),
+                                         p,
+                                         depth);
+            botLayer = new SlownessLayer(p,
+                                         depth,
+                                         sLayer.getBotP(),
+                                         sLayer.getBotDepth());
+            Vector allLayers = getAllSlownessLayers(isPWave);
+            Vector outLayers = new Vector(allLayers.size());
+            outLayers.addAll(allLayers);
+            outLayers.removeElementAt(layerNum);
+            outLayers.insertElementAt(botLayer, layerNum);
+            outLayers.insertElementAt(topLayer, layerNum);
+            Vector outPLayers, outSLayers;
             // fix critical layers since we have added a slowness layer
-            for(int i = 0; i < getNumCriticalDepths(); i++) {
-                CriticalDepth cd = getCriticalDepth(i);
-                if(cd.getLayerNum(isPWave) > layerNum) {
-                    cd.setLayerNum(cd.getLayerNum(isPWave) + 1, isPWave);
-                }
-            }
+            Vector outCriticalDepths = new Vector();
+            outCriticalDepths.addAll(criticalDepthVector);
+            fixCriticalDepths(outCriticalDepths, layerNum, isPWave);
             // now make sure we keep the sampling consistant
             // if in a fluid, then both wavetypes will share a single
             // slowness layer object. Otherwise indexOf returns -1
-            otherIndex = otherLayers.indexOf(sLayer);
-            if(otherIndex != -1) {
-                otherLayers.removeElementAt(otherIndex);
-                otherLayers.insertElementAt(botLayer, otherIndex);
-                otherLayers.insertElementAt(topLayer, otherIndex);
+            if(isPWave) {
+                outPLayers = outLayers;
+                outSLayers = fixOtherLayers(SLayers,
+                                            p,
+                                            sLayer,
+                                            topLayer,
+                                            botLayer,
+                                            outCriticalDepths,
+                                            ! isPWave);
+            } else {
+                outPLayers = fixOtherLayers(PLayers,
+                                            p,
+                                            sLayer,
+                                            topLayer,
+                                            botLayer,
+                                            outCriticalDepths,
+                                            ! isPWave);
+                outSLayers = outLayers;
             }
-            for(int otherLayerNum = 0; otherLayerNum < otherLayers.size(); otherLayerNum++) {
-                sLayer = (SlownessLayer)otherLayers.elementAt(otherLayerNum);
-                if((sLayer.getTopP() - p) * (p - sLayer.getBotP()) > 0.0) {
-                    // found the slowness layer with the other wave type that
-                    // contains the new slowness sample
-                    topLayer = (SlownessLayer)sLayer.clone();
-                    topLayer.setBotP(p);
-                    topLayer.setBotDepth(sLayer.bullenDepthFor(p, radiusOfEarth));
-                    botLayer = (SlownessLayer)sLayer.clone();
-                    botLayer.setTopP(p);
-                    botLayer.setTopDepth(topLayer.getBotDepth());
-                    otherLayers.removeElementAt(otherLayerNum);
-                    otherLayers.insertElementAt(botLayer, otherLayerNum);
-                    otherLayers.insertElementAt(topLayer, otherLayerNum);
-                    // fix critical layers since we have added a slowness layer
-                    for(int critNum = 0; critNum < getNumCriticalDepths(); critNum++) {
-                        CriticalDepth cd = getCriticalDepth(critNum);
-                        if(cd.getLayerNum(otherWaveType) > otherLayerNum) {
-                            cd.setLayerNum(cd.getLayerNum(otherWaveType) + 1,
-                                           otherWaveType);
-                        }
-                    }
+            SlownessModel out = new SphericalSModel(radiusOfEarth,
+                                                    vMod,
+                                                    outCriticalDepths,
+                                                    highSlownessLayerDepthsP,
+                                                    highSlownessLayerDepthsS,
+                                                    fluidLayerDepths,
+                                                    outPLayers,
+                                                    outSLayers,
+                                                    minDeltaP,
+                                                    maxDeltaP,
+                                                    maxDepthInterval,
+                                                    maxRangeInterval,
+                                                    maxInterpError,
+                                                    allowInnerCoreS,
+                                                    slownessTolerance);
+            return new SplitLayerInfo(out, true, false, p);
+        }
+    }
+
+    private void fixCriticalDepths(Vector criticalDepths, int layerNum, boolean isPWave) {
+        for(int i = 0; i < criticalDepths.size(); i++) {
+            CriticalDepth cd = (CriticalDepth)criticalDepths.elementAt(i);
+            if(cd.getLayerNum(isPWave) > layerNum) {
+                if(isPWave) {
+                    criticalDepths.set(i,
+                                          new CriticalDepth(cd.getDepth(),
+                                                            cd.getVelLayerNum(),
+                                                            cd.getPLayerNum() + 1,
+                                                            cd.getSLayerNum()));
+                } else {
+                    criticalDepths.set(i,
+                                          new CriticalDepth(cd.getDepth(),
+                                                            cd.getVelLayerNum(),
+                                                            cd.getPLayerNum(),
+                                                            cd.getSLayerNum() + 1));
                 }
             }
-            return new SplitLayerInfo(true, false, p);
         }
+    }
+    private Vector fixOtherLayers(Vector otherLayers,
+                                  double p,
+                                  SlownessLayer changedLayer,
+                                  SlownessLayer newTopLayer,
+                                  SlownessLayer newBotLayer,
+                                  Vector criticalDepths,
+                                  boolean isPWave) throws SlownessModelException {
+        Vector out = new Vector();
+        out.addAll(otherLayers);
+        int otherIndex = otherLayers.indexOf(changedLayer);
+        if(otherIndex != -1) {
+            out.removeElementAt(otherIndex);
+            out.insertElementAt(newBotLayer, otherIndex);
+            out.insertElementAt(newTopLayer, otherIndex);
+        }
+        for(int otherLayerNum = 0; otherLayerNum < otherLayers.size(); otherLayerNum++) {
+            SlownessLayer sLayer = (SlownessLayer)otherLayers.elementAt(otherLayerNum);
+            if((sLayer.getTopP() - p) * (p - sLayer.getBotP()) > 0.0) {
+                // found the slowness layer with the other wave type that
+                // contains the new slowness sample
+                SlownessLayer topLayer, botLayer;
+                topLayer = new SlownessLayer(sLayer.getTopP(),
+                                             sLayer.getTopDepth(),
+                                             p,
+                                             sLayer.bullenDepthFor(p, radiusOfEarth));
+                botLayer = new SlownessLayer(p,
+                                             topLayer.getBotDepth(),
+                                             sLayer.getBotP(),
+                                             sLayer.getBotDepth());
+                out.removeElementAt(otherLayerNum);
+                out.insertElementAt(botLayer, otherLayerNum);
+                out.insertElementAt(topLayer, otherLayerNum);
+                // fix critical layers since we have added a slowness layer
+                fixCriticalDepths(criticalDepths, otherLayerNum, ! isPWave);
+            }
+        }
+        return out;
     }
 
     /**
@@ -1058,7 +1239,7 @@ public abstract class SlownessModel implements Serializable, Cloneable {
                     return velLayer.getBotDepth();
                 }
                 if((topP - p) * (p - botP) >= 0.0) { // found the layer
-                                                        // containing p
+                    // containing p
                     /*
                      * We interpolate assuming that velocity is linear within
                      * this interval. So slope is the slope for velocity versus
@@ -1136,26 +1317,20 @@ public abstract class SlownessModel implements Serializable, Cloneable {
      * @exception NoSuchMatPropException
      *                occurs if wavetype is not recognized.
      */
-    public void createSample(VelocityModel velModel)
+    private void createSample()
             throws SlownessModelException, NoSuchMatPropException,
             NoSuchLayerException {
-        VelocityLayer velLayer;
-        double maxVelSoFar = 0.0;
-        double previousBotVel;
-        int botCriticalLayerNum, topCriticalLayerNum;
-        DepthRange highSZoneDepth = new DepthRange();
         // First check to make sure velocity model is ok.
-        if(velModel.validate() == false) {
+        if(vMod.validate() == false) {
             throw new SlownessModelException("Error in velocity model!");
         }
-        if(velModel.getNumLayers() == 0) {
+        if(vMod.getNumLayers() == 0) {
             throw new SlownessModelException("velModel.getNumLayers()==0");
         }
         if(DEBUG) {
             System.out.println("start createSample");
         }
-        vMod = velModel;
-        setRadiusOfEarth(velModel.getRadiusOfEarth());
+        setRadiusOfEarth(vMod.getRadiusOfEarth());
         if(DEBUG) {
             System.out.println("findCriticalPoints");
         }
@@ -1452,7 +1627,7 @@ public abstract class SlownessModel implements Serializable, Cloneable {
             isPrevOK = false;
             j = 0;
             sLayer = getSlownessLayer(0, currWaveType); // preset sLayer so
-                                                        // prevSLayer is ok
+            // prevSLayer is ok
             while(j < getNumLayers(currWaveType)) {
                 prevSLayer = sLayer;
                 sLayer = getSlownessLayer(j, currWaveType);
@@ -1642,18 +1817,18 @@ public abstract class SlownessModel implements Serializable, Cloneable {
             if(cd.getPLayerNum() == PLayers.size() - 1
                     && sLayer.getBotDepth() == cd.getDepth()) {
                 cd.setPLayerNum(cd.getPLayerNum() + 1); // want the last
-                                                        // critical point to be
-                                                        // the bottom of the
-                                                        // last layer
+                // critical point to be
+                // the bottom of the
+                // last layer
             }
             cd.setSLayerNum(layerNumberBelow(cd.getDepth(), SWAVE));
             sLayer = getSlownessLayer(cd.getSLayerNum(), SWAVE);
             if(cd.getSLayerNum() == SLayers.size() - 1
                     && sLayer.getBotDepth() == cd.getDepth()) {
                 cd.setSLayerNum(cd.getSLayerNum() + 1); // want the last
-                                                        // critical point to be
-                                                        // the bottom of the
-                                                        // last layer
+                // critical point to be
+                // the bottom of the
+                // last layer
             }
         }
     }
@@ -1969,46 +2144,6 @@ public abstract class SlownessModel implements Serializable, Cloneable {
      * dis.readBoolean(); sMod.minInnerCoreDepth = dis.readDouble();
      * sMod.slownessTolerance = dis.readDouble(); return sMod; }
      */
-    /*
-     * Returns a clone of this slowness model. All fields are correctly copied
-     * so modifications to the clone do not affect the original.
-     */
-    public Object clone() {
-        SlownessModel newObject;
-        try {
-            newObject = (SlownessModel)super.clone();
-            newObject.criticalDepthVector = new Vector(criticalDepthVector.size());
-            for(int i = 0; i < criticalDepthVector.size(); i++) {
-                newObject.criticalDepthVector.addElement(((CriticalDepth)criticalDepthVector.elementAt(i)).clone());
-            }
-            newObject.highSlownessLayerDepthsP = new Vector(highSlownessLayerDepthsP.size());
-            for(int i = 0; i < highSlownessLayerDepthsP.size(); i++) {
-                newObject.highSlownessLayerDepthsP.addElement(((DepthRange)highSlownessLayerDepthsP.elementAt(i)).clone());
-            }
-            newObject.highSlownessLayerDepthsS = new Vector(highSlownessLayerDepthsS.size());
-            for(int i = 0; i < highSlownessLayerDepthsS.size(); i++) {
-                newObject.highSlownessLayerDepthsS.addElement(((DepthRange)highSlownessLayerDepthsS.elementAt(i)).clone());
-            }
-            newObject.fluidLayerDepths = new Vector(fluidLayerDepths.size());
-            for(int i = 0; i < fluidLayerDepths.size(); i++) {
-                newObject.fluidLayerDepths.addElement(((DepthRange)fluidLayerDepths.elementAt(i)).clone());
-            }
-            newObject.PLayers = new Vector(getNumLayers(PWAVE));
-            for(int i = 0; i < getNumLayers(PWAVE); i++) {
-                newObject.PLayers.addElement(getSlownessLayerClone(i, PWAVE));
-            }
-            newObject.SLayers = new Vector(getNumLayers(SWAVE));
-            for(int i = 0; i < getNumLayers(SWAVE); i++) {
-                newObject.SLayers.addElement(getSlownessLayerClone(i, SWAVE));
-            }
-            return newObject;
-        } catch(CloneNotSupportedException e) {
-            // Can't happen, but...
-            System.err.println("Caught CloneNotSupportedException: "
-                    + e.getMessage());
-            throw new InternalError(e.toString());
-        }
-    }
 
     public String toString() {
         int topCriticalLayerNum;

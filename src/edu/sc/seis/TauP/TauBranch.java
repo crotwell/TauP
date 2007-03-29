@@ -308,9 +308,9 @@ public class TauBranch implements Serializable, Cloneable {
             TauModelException {
         int topLayerNum = sMod.layerNumberBelow(getTopDepth(), isPWave);
         int botLayerNum = sMod.layerNumberAbove(getBotDepth(), isPWave);
-        SlownessLayer topSLayer = sMod.getSlownessLayerClone(topLayerNum,
+        SlownessLayer topSLayer = sMod.getSlownessLayer(topLayerNum,
                                                              isPWave);
-        SlownessLayer botSLayer = sMod.getSlownessLayerClone(botLayerNum,
+        SlownessLayer botSLayer = sMod.getSlownessLayer(botLayerNum,
                                                              isPWave);
         if(topSLayer.getTopDepth() != getTopDepth()
                 || botSLayer.getBotDepth() != getBotDepth()) {

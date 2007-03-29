@@ -125,7 +125,7 @@ public class TauP_Time {
         this();
         this.tMod = tMod;
         this.tModDepth = tMod;
-        modelName = tMod.sMod.vMod.getModelName();
+        modelName = tMod.getModelName();
     }
 
     /**
@@ -340,7 +340,7 @@ public class TauP_Time {
     public void setTauModel(TauModel tMod) {
         this.tMod = tMod;
         this.tModDepth = tMod;
-        modelName = tMod.sMod.vMod.getModelName();
+        modelName = tMod.getModelName();
         toolProps.put("taup.model.name", modelName);
     }
 
@@ -349,11 +349,11 @@ public class TauP_Time {
             OptionalDataException, TauModelException {
         this.modelName = modelName;
         readTauModel();
-        this.modelName = tMod.sMod.vMod.getModelName();
+        this.modelName = tMod.getModelName();
     }
 
     public double[] getDisconDepths() {
-        return tMod.sMod.vMod.getDisconDepths();
+        return tMod.getVelocityModel().getDisconDepths();
     }
 
     public void clearArrivals() {
@@ -392,7 +392,7 @@ public class TauP_Time {
             if(tModLoad != null) {
                 tMod = tModLoad;
                 tModDepth = tMod;
-                this.modelName = tMod.sMod.vMod.getModelName();
+                this.modelName = tMod.getModelName();
             }
         } catch(ClassNotFoundException e) {
             Alert.error("Caught ClassNotFoundException",
@@ -888,7 +888,7 @@ public class TauP_Time {
         depth = Double.valueOf(toolProps.getProperty("taup.source.depth", "0.0"))
                 .doubleValue();
         if(tMod == null
-                || tMod.sMod.vMod.getModelName() != toolProps.getProperty("taup.model.name",
+                || tMod.getVelocityModel().getModelName() != toolProps.getProperty("taup.model.name",
                                                                           "iasp91")) {
             modelName = toolProps.getProperty("taup.model.name", "iasp91");
             try {
@@ -922,9 +922,18 @@ public class TauP_Time {
                 + "a for new azimuth\nb for new back azimuth\n"
                 + "m for new model or \nq to quit.\n");
     }
+    
+    void doLotsODepths() {
+        for(int ii = 0; ii < 1000; ii++) {
+            try{
+            depthCorrect(Math.random()*200);
+            }catch(TauModelException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
 
     public void start() throws IOException, TauModelException, TauPException {
-        boolean didDepthCorrect;
         if((degrees != Double.MAX_VALUE || (stationLat != Double.MAX_VALUE
                 && stationLon != Double.MAX_VALUE
                 && eventLat != Double.MAX_VALUE && eventLon != Double.MAX_VALUE))) {
@@ -964,6 +973,8 @@ public class TauP_Time {
             printHelp();
             do {
                 switch(readMode){
+                    case 'x':
+                    doLotsODepths();
                     case 'h':
                         // new source depth
                         System.out.print("Enter Depth: ");
@@ -1024,6 +1035,8 @@ public class TauP_Time {
                                     readMode = 'm';
                                 } else if(tokenIn.sval.equalsIgnoreCase("h")) {
                                     readMode = 'h';
+                                } else if(tokenIn.sval.equalsIgnoreCase("x")) {
+                                    readMode = 'x';
                                 } else if(tokenIn.sval.equalsIgnoreCase("?")) {
                                     printHelp();
                                 } else {

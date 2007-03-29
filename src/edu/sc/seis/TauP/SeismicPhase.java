@@ -695,7 +695,7 @@ public class SeismicPhase implements Serializable, Cloneable {
             return;
         }
         /* Make a check for J legs if the model doesn not allow J */
-        if(name.indexOf('J') != -1 && !tMod.sMod.isAllowInnerCoreS()) {
+        if(name.indexOf('J') != -1 && !tMod.getSlownessModel().isAllowInnerCoreS()) {
             throw new TauModelException("'J' phases were not created for this model: "
                     + name);
         }
@@ -1531,7 +1531,7 @@ public class SeismicPhase implements Serializable, Cloneable {
             }
         }
         if(name.indexOf("Sdiff") != -1 || name.indexOf("Pdiff") != -1) {
-            if(tMod.sMod.depthInHighSlowness(tMod.cmbDepth - 1e-10,
+            if(tMod.getSlownessModel().depthInHighSlowness(tMod.cmbDepth - 1e-10,
                                              minRayParam,
                                              (name.charAt(0) == 'P'))) {
                 /*
@@ -1582,7 +1582,7 @@ public class SeismicPhase implements Serializable, Cloneable {
         int branchNum;
         int dummy;
         for(dummy = 0, isPWave = true; dummy < 2; dummy++, isPWave = false) {
-            hsz = tMod.sMod.getHighSlowness(isPWave);
+            hsz = tMod.getSlownessModel().getHighSlowness(isPWave);
             hSZIndex = 0;
             indexOffset = 0;
             for(int i = 0; i < hsz.length; i++) {
@@ -1760,12 +1760,12 @@ public class SeismicPhase implements Serializable, Cloneable {
                                 .getBotDepth();
                     } else {
                         if(isPWave
-                                || tMod.sMod.depthInFluid((tMod.getTauBranch(branchNum,
+                                || tMod.getSlownessModel().depthInFluid((tMod.getTauBranch(branchNum,
                                                                              isPWave)
                                         .getTopDepth() + tMod.getTauBranch(branchNum,
                                                                            isPWave)
                                         .getBotDepth()) / 2.0)) {
-                            turnDepth = tMod.sMod.findDepth(distRayParam,
+                            turnDepth = tMod.getSlownessModel().findDepth(distRayParam,
                                                             tMod.getTauBranch(branchNum,
                                                                               isPWave)
                                                                     .getTopDepth(),
@@ -1774,7 +1774,7 @@ public class SeismicPhase implements Serializable, Cloneable {
                                                                     .getBotDepth(),
                                                             PWAVE);
                         } else {
-                            turnDepth = tMod.sMod.findDepth(distRayParam,
+                            turnDepth = tMod.getSlownessModel().findDepth(distRayParam,
                                                             tMod.getTauBranch(branchNum,
                                                                               isPWave)
                                                                     .getTopDepth(),
@@ -1965,7 +1965,7 @@ public class SeismicPhase implements Serializable, Cloneable {
                     tempTimeDist = tMod.getTauBranch(branchNum, isPWave)
                             .path(currArrival.getRayParam(),
                                   ((Boolean)downGoing.get(i)).booleanValue(),
-                                  tMod.sMod);
+                                  tMod.getSlownessModel());
                     if(tempTimeDist != null) {
                         pathList.add(tempTimeDist);
                     }

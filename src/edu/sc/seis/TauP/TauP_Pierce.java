@@ -136,7 +136,7 @@ public class TauP_Pierce extends TauP_Time {
 
     /** override depthCorrect so that we can put the pierce depths in. */
     public void depthCorrect(double depth) throws TauModelException {
-        TauModel tModOrig = (TauModel)tMod.clone();
+        TauModel tModOrig = tMod;
         TauModel tModDepthOrig = tModDepth;
         boolean mustRecalc = false;
         // first see if tModDepth is correct as is

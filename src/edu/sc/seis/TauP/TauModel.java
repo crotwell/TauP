@@ -38,10 +38,46 @@ import java.io.StreamTokenizer;
  * @version 1.1.3 Wed Jul 18 15:00:35 GMT 2001
  * @author H. Philip Crotwell
  */
-public class TauModel implements Serializable, Cloneable {
+public class TauModel implements Serializable {
+
+    public TauModel(SlownessModel sMod) throws NoSuchLayerException,
+            NoSuchMatPropException, SlownessModelException, TauModelException {
+        this.sMod = (SlownessModel)sMod;
+        calcTauIncFrom();
+    }
+
+    public TauModel(boolean spherical,
+                    double sourceDepth,
+                    int sourceBranch,
+                    double[] noDisconDepths,
+                    double mohoDepth,
+                    int mohoBranch,
+                    double cmbDepth,
+                    int cmbBranch,
+                    double iocbDepth,
+                    int iocbBranch,
+                    double radiusOfEarth,
+                    SlownessModel mod,
+                    double[] rayParams,
+                    TauBranch[][] tauBranches) {
+        this.spherical = spherical;
+        this.sourceDepth = sourceDepth;
+        this.sourceBranch = sourceBranch;
+        this.noDisconDepths = noDisconDepths;
+        this.mohoDepth = mohoDepth;
+        this.mohoBranch = mohoBranch;
+        this.cmbDepth = cmbDepth;
+        this.cmbBranch = cmbBranch;
+        this.iocbDepth = iocbDepth;
+        this.iocbBranch = iocbBranch;
+        this.radiusOfEarth = radiusOfEarth;
+        sMod = mod;
+        this.rayParams = rayParams;
+        this.tauBranches = tauBranches;
+    }
 
     /** True to enable debugging output. */
-    transient public boolean DEBUG = false;
+    transient public static boolean DEBUG = false;
 
     /** True if this is a spherical slowness model. False if flat. */
     public boolean spherical = true;
@@ -88,7 +124,7 @@ public class TauModel implements Serializable, Cloneable {
      * an event at depth. This is normally be set when the tau model is
      * generated to be a clone of the slowness model.
      */
-    public SlownessModel sMod;
+    private SlownessModel sMod;
 
     /**
      * ray parameters used to construct the tau branches. This may only be a
@@ -279,11 +315,9 @@ public class TauModel implements Serializable, Cloneable {
      *                occurs if getNumLayers() < 1 as we cannot compute a
      *                distance without a layer.
      */
-    public void calcTauIncFrom(SlownessModel sMod)
-            throws SlownessModelException, NoSuchLayerException,
-            TauModelException, NoSuchMatPropException {
+    private void calcTauIncFrom() throws SlownessModelException,
+            NoSuchLayerException, TauModelException, NoSuchMatPropException {
         SlownessLayer topSLayer, botSLayer, currSLayer;
-        TimeDist timedist = new TimeDist();
         int topCritLayerNum, botCritLayerNum;
         /*
          * First, we must have at least 1 slowness layer to calculate a
@@ -302,7 +336,6 @@ public class TauModel implements Serializable, Cloneable {
             throw new SlownessModelException("Validation failed: "
                     + "Something is wrong with the slowness model.");
         }
-        this.sMod = (SlownessModel)sMod.clone();
         radiusOfEarth = sMod.getRadiusOfEarth();
         sourceDepth = 0.0;
         sourceBranch = 0;
@@ -488,19 +521,15 @@ public class TauModel implements Serializable, Cloneable {
      * a branch boundary.
      */
     public TauModel splitBranch(double depth) throws TauModelException {
-        TauModel tMod;
-        int topCritLayerNum, botCritLayerNum;
-        SlownessLayer topSLayer, botSLayer;
         try {
-            tMod = (TauModel)clone();
             /*
              * first check to see if depth is already a branch boundary. If so
-             * then we need only return the clone.
+             * then we need only return this.
              */
-            for(int branchNum = 0; branchNum < tMod.tauBranches[0].length; branchNum++) {
-                if(tMod.tauBranches[0][branchNum].getTopDepth() == depth
-                        || tMod.tauBranches[0][branchNum].getBotDepth() == depth) {
-                    return tMod;
+            for(int branchNum = 0; branchNum < tauBranches[0].length; branchNum++) {
+                if(tauBranches[0][branchNum].getTopDepth() == depth
+                        || tauBranches[0][branchNum].getBotDepth() == depth) {
+                    return this;
                 }
             }
             /*
@@ -513,41 +542,41 @@ public class TauModel implements Serializable, Cloneable {
             int waveNum;
             boolean isPWave;
             SplitLayerInfo splitInfo;
+            SlownessModel outSMod = sMod;
+            double[] outRayParams = rayParams;
             /*
              * do S wave first (isPWave=false) since the S wave ray parameter is >
              * P wave ray parameter and thus comes before it in the rayParams
              * array
              */
             for(waveNum = 1, isPWave = false; waveNum >= 0; waveNum--, isPWave = true) {
-                splitInfo = tMod.sMod.splitLayer(depth, isPWave);
-                if(splitInfo.movedSample) {} else if(splitInfo.neededSplit) {
+                splitInfo = outSMod.splitLayer(depth, isPWave);
+                outSMod = splitInfo.getSlownessModel();
+                if(splitInfo.getMovedSample()) {} else if(splitInfo.getNeededSplit()) {
                     /*
                      * We split the slowness layers containing depth into 2
                      * layers each.
                      */
-                    int layerNum = tMod.sMod.layerNumberAbove(depth, isPWave);
-                    SlownessLayer sLayer = tMod.sMod.getSlownessLayer(layerNum,
-                                                                      isPWave);
                     double newRayParam = splitInfo.getRayParam();
                     int index = -1;
                     // add the new ray parameters to the rayParams array
                     // Only loop to length-1 as last sample is always 0
                     // and negative is not allowed
-                    for(int i = 0; i < tMod.rayParams.length - 1; i++) {
-                        if(tMod.rayParams[i] < newRayParam
-                                && tMod.rayParams[i + 1] > newRayParam) {
+                    for(int i = 0; i < outRayParams.length - 1; i++) {
+                        if(outRayParams[i] < newRayParam
+                                && outRayParams[i + 1] > newRayParam) {
                             index = i;
-                            double[] oldRayParams = tMod.rayParams;
-                            tMod.rayParams = new double[oldRayParams.length + 1];
+                            double[] oldRayParams = outRayParams;
+                            outRayParams = new double[oldRayParams.length + 1];
                             System.arraycopy(oldRayParams,
                                              0,
-                                             tMod.rayParams,
+                                             outRayParams,
                                              0,
                                              index);
-                            tMod.rayParams[index] = newRayParam;
+                            outRayParams[index] = newRayParam;
                             System.arraycopy(oldRayParams,
                                              index,
-                                             tMod.rayParams,
+                                             outRayParams,
                                              index + 1,
                                              oldRayParams.length - index);
                             if(isPWave) {
@@ -567,115 +596,109 @@ public class TauModel implements Serializable, Cloneable {
              * branch containing the depth, and add a sample to each deeper
              * branch.
              */
-            int branchToSplit = tMod.findBranch(depth);
-            int topCritLayerNumP, botCritLayerNumP;
-            int topCritLayerNumS, botCritLayerNumS;
-            int splitLayerNumP, splitLayerNumS;
-            TauBranch[][] newtauBranches = new TauBranch[2][tMod.getNumBranches() + 1];
+            int branchToSplit = findBranch(depth);
+            TauBranch[][] newtauBranches = new TauBranch[2][getNumBranches() + 1];
             for(int i = 0; i < branchToSplit; i++) {
-                newtauBranches[0][i] = (TauBranch)tMod.tauBranches[0][i].clone();
-                newtauBranches[1][i] = (TauBranch)tMod.tauBranches[1][i].clone();
-                topCritLayerNumP = tMod.sMod.layerNumberBelow(newtauBranches[0][i].getTopDepth(),
-                                                              true);
-                botCritLayerNumP = tMod.sMod.layerNumberAbove(newtauBranches[0][i].getBotDepth(),
-                                                              true);
-                topCritLayerNumS = tMod.sMod.layerNumberBelow(newtauBranches[1][i].getTopDepth(),
-                                                              false);
-                botCritLayerNumS = tMod.sMod.layerNumberAbove(newtauBranches[1][i].getBotDepth(),
-                                                              false);
+                newtauBranches[0][i] = (TauBranch)tauBranches[0][i].clone();
+                newtauBranches[1][i] = (TauBranch)tauBranches[1][i].clone();
                 if(indexS != -1) {
                     // add the new ray parameter from splitting the S Wave
                     // slowness layer to both the P and S wave Tau branches
                     newtauBranches[0][i].insert(SWaveRayParam,
-                                                tMod.sMod,
+                                                outSMod,
                                                 indexS);
                     newtauBranches[1][i].insert(SWaveRayParam,
-                                                tMod.sMod,
+                                                outSMod,
                                                 indexS);
                 }
                 if(indexP != -1) {
                     // add the new ray parameter from splitting the P Wave
                     // slowness layer to both the P and S wave Tau branches
                     newtauBranches[0][i].insert(PWaveRayParam,
-                                                tMod.sMod,
+                                                outSMod,
                                                 indexP);
                     newtauBranches[1][i].insert(PWaveRayParam,
-                                                tMod.sMod,
+                                                outSMod,
                                                 indexP);
                 }
             }
-            tMod.appendNoDisconDepth(depth);
-            topCritLayerNumS = tMod.sMod.layerNumberBelow(tMod.tauBranches[1][branchToSplit].getTopDepth(),
-                                                          false);
-            splitLayerNumS = tMod.sMod.layerNumberAbove(depth, false);
-            newtauBranches[1][branchToSplit] = new TauBranch(tMod.tauBranches[1][branchToSplit].getTopDepth(),
-                                                             depth,
-                                                             false);
-            newtauBranches[1][branchToSplit].createBranch(tMod.sMod,
-                                                          tMod.tauBranches[1][branchToSplit].getMaxRayParam(),
-                                                          tMod.rayParams);
-            newtauBranches[1][branchToSplit + 1] = tMod.tauBranches[1][branchToSplit].difference(newtauBranches[1][branchToSplit],
-                                                                                                 indexP,
-                                                                                                 indexS,
-                                                                                                 tMod.sMod,
-                                                                                                 newtauBranches[1][branchToSplit].getMinRayParam(),
-                                                                                                 tMod.rayParams);
-            topCritLayerNumP = tMod.sMod.layerNumberBelow(tMod.tauBranches[0][branchToSplit].getTopDepth(),
-                                                          true);
-            splitLayerNumP = tMod.sMod.layerNumberAbove(depth, true);
-            newtauBranches[0][branchToSplit] = new TauBranch(tMod.tauBranches[0][branchToSplit].getTopDepth(),
-                                                             depth,
-                                                             true);
-            newtauBranches[0][branchToSplit].createBranch(tMod.sMod,
-                                                          tMod.tauBranches[0][branchToSplit].getMaxRayParam(),
-                                                          tMod.rayParams);
-            newtauBranches[0][branchToSplit + 1] = tMod.tauBranches[0][branchToSplit].difference(newtauBranches[0][branchToSplit],
-                                                                                                 indexP,
-                                                                                                 indexS,
-                                                                                                 tMod.sMod,
-                                                                                                 newtauBranches[0][branchToSplit].getMinRayParam(),
-                                                                                                 tMod.rayParams);
-            for(int i = branchToSplit + 1; i < tMod.tauBranches[0].length; i++) {
-                newtauBranches[1][i + 1] = tMod.tauBranches[1][i];
-                newtauBranches[0][i + 1] = tMod.tauBranches[0][i];
+            for(int pOrS = 0; pOrS < 2; pOrS++) {
+                newtauBranches[pOrS][branchToSplit] = new TauBranch(tauBranches[pOrS][branchToSplit].getTopDepth(),
+                                                                 depth,
+                                                                 pOrS == 0);
+                newtauBranches[pOrS][branchToSplit].createBranch(outSMod,
+                                                              tauBranches[pOrS][branchToSplit].getMaxRayParam(),
+                                                              outRayParams);
+                newtauBranches[pOrS][branchToSplit + 1] = tauBranches[pOrS][branchToSplit].difference(newtauBranches[pOrS][branchToSplit],
+                                                                                                indexP,
+                                                                                                indexS,
+                                                                                                outSMod,
+                                                                                                newtauBranches[pOrS][branchToSplit].getMinRayParam(),
+                                                                                                outRayParams);
+            }
+            for(int i = branchToSplit + 1; i < tauBranches[0].length; i++) {
+                for(int pOrS = 0; pOrS < 2; pOrS++) {
+                    newtauBranches[pOrS][i + 1] = (TauBranch)tauBranches[pOrS][i].clone();
+                }
                 if(indexS != -1) {
                     // add the new ray parameter from splitting the S Wave
                     // slowness layer to both the P and S wave Tau branches
-                    newtauBranches[0][i + 1].insert(SWaveRayParam,
-                                                    tMod.sMod,
-                                                    indexS);
-                    newtauBranches[1][i + 1].insert(SWaveRayParam,
-                                                    tMod.sMod,
-                                                    indexS);
+                    for(int pOrS = 0; pOrS < 2; pOrS++) {
+                        newtauBranches[pOrS][i + 1].insert(SWaveRayParam,
+                                                           outSMod,
+                                                           indexS);
+                    }
                 }
                 if(indexP != -1) {
                     // add the new ray parameter from splitting the P Wave
                     // slowness layer to both the P and S wave Tau branches
-                    newtauBranches[0][i + 1].insert(PWaveRayParam,
-                                                    tMod.sMod,
-                                                    indexP);
-                    newtauBranches[1][i + 1].insert(PWaveRayParam,
-                                                    tMod.sMod,
-                                                    indexP);
+                    for(int pOrS = 0; pOrS < 2; pOrS++) {
+                        newtauBranches[pOrS][i + 1].insert(PWaveRayParam,
+                                                           outSMod,
+                                                           indexP);
+                    }
                 }
             }
-            tMod.tauBranches = newtauBranches;
             /*
              * We have split a branch so possibly sourceBranch, mohoBranch,
              * cmbBranch, and iocbBranch are off by 1.
              */
-            if(tMod.sourceDepth > depth)
-                tMod.sourceBranch++;
-            if(tMod.mohoDepth > depth)
-                tMod.mohoBranch++;
-            if(tMod.cmbDepth > depth)
-                tMod.cmbBranch++;
-            if(tMod.iocbDepth > depth)
-                tMod.iocbBranch++;
+            int outSourceBranch = sourceBranch;
+            if(sourceDepth > depth) {
+                outSourceBranch++;
+            }
+            int outMohoBranch = mohoBranch;
+            if(mohoDepth > depth) {
+                outMohoBranch++;
+            }
+            int outCmbBranch = cmbBranch;
+            if(cmbDepth > depth) {
+                outCmbBranch++;
+            }
+            int outIocbBranch = iocbBranch;
+            if(iocbDepth > depth) {
+                outIocbBranch++;
+            }
+            TauModel tMod = new TauModel(spherical,
+                                         depth,
+                                         outSourceBranch,
+                                         noDisconDepths,
+                                         mohoDepth,
+                                         outMohoBranch,
+                                         cmbDepth,
+                                         outCmbBranch,
+                                         iocbDepth,
+                                         outIocbBranch,
+                                         radiusOfEarth,
+                                         outSMod,
+                                         outRayParams,
+                                         newtauBranches);
+            tMod.appendNoDisconDepth(depth);
             if(!tMod.validate()) {
                 throw new TauModelException("splitBranch(" + depth
                         + "): Validation failed!");
             }
+            return tMod;
         } catch(NoSuchLayerException e) {
             throw new TauModelException("TauModel.depthCorrect - "
                     + "NoSuchLayerException", e);
@@ -683,8 +706,7 @@ public class TauModel implements Serializable, Cloneable {
             e.printStackTrace();
             throw new TauModelException("TauModel.depthCorrect - "
                     + "SlownessModelException", e);
-        } finally {}
-        return tMod;
+        }
     }
 
     public void writeModel(String filename) throws IOException {
@@ -858,30 +880,6 @@ public class TauModel implements Serializable, Cloneable {
         }
     }
 
-    /**
-     * Returns a clone of the tau model so that changes to the clone do not
-     * affect the original.
-     */
-    public Object clone() {
-        TauModel newObject;
-        try {
-            newObject = (TauModel)super.clone();
-            newObject.rayParams = (double[])rayParams.clone();
-            newObject.sMod = (SlownessModel)sMod.clone();
-            newObject.tauBranches = new TauBranch[2][getNumBranches()];
-            for(int i = 0; i < getNumBranches(); i++) {
-                newObject.tauBranches[0][i] = (TauBranch)tauBranches[0][i].clone();
-                newObject.tauBranches[1][i] = (TauBranch)tauBranches[1][i].clone();
-            }
-            return newObject;
-        } catch(CloneNotSupportedException e) {
-            // Can't happen, but...
-            System.err.println("Caught CloneNotSupportedException: "
-                    + e.getMessage());
-            throw new InternalError(e.toString());
-        }
-    }
-
     public String toString() {
         if(DEBUG)
             System.out.println("Starting toString() in TauModel");
@@ -897,57 +895,5 @@ public class TauModel implements Serializable, Cloneable {
             desc += "\n";
         }
         return desc;
-    }
-
-    public static void main(String[] args) {
-        VelocityModel vMod = new VelocityModel();
-        SphericalSModel sMod = new SphericalSModel();
-        TauModel tMod = new TauModel();
-        int branch, rayNum;
-        String modelFilename;
-        if(args.length == 1) {
-            modelFilename = args[0];
-        } else {
-            modelFilename = "iasp91.tvel";
-        }
-        boolean DEBUG = false;
-        try {
-            vMod.setFileType("tvel");
-            vMod.readVelocityFile(modelFilename);
-            System.out.println("Done reading.");
-            sMod.createSample(vMod);
-            tMod.calcTauIncFrom(sMod);
-            StreamTokenizer tokenIn = new StreamTokenizer(new InputStreamReader(System.in));
-            tokenIn.parseNumbers();
-            System.out.println("Enter branch rayNum");
-            tokenIn.nextToken();
-            while(tokenIn.ttype == StreamTokenizer.TT_NUMBER) {
-                branch = (int)tokenIn.nval;
-                tokenIn.nextToken();
-                rayNum = (int)tokenIn.nval;
-                System.out.println("ray parameter=" + tMod.rayParams[rayNum]
-                        + " distance="
-                        + tMod.tauBranches[0][branch].getDist(rayNum)
-                        + " time=" + tMod.tauBranches[0][branch].time[rayNum]
-                        + " tau=" + tMod.tauBranches[0][branch].tau[rayNum]);
-                System.out.println("Enter branch rayNum");
-                tokenIn.nextToken();
-            }
-        } catch(IOException e) {
-            System.out.println("Tried to read!\n Caught IOException "
-                    + e.getMessage());
-        } catch(VelocityModelException e) {
-            System.out.println("Tried to read!\n Caught VelocityModelException "
-                    + e.getMessage());
-        } catch(SlownessModelException e) {
-            System.out.println("Caught SlownessModelException "
-                    + e.getMessage());
-            e.printStackTrace();
-        } catch(TauModelException e) {
-            System.out.println("Caught TauModelException " + e.getMessage());
-            e.printStackTrace();
-        } finally {
-            System.out.println("Done!\n");
-        }
     }
 }

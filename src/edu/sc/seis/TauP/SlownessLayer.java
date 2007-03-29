@@ -91,7 +91,7 @@ public class SlownessLayer implements Serializable, Cloneable {
                                    + " botP=" + getBotP());
         } catch(NoSuchMatPropException e) {
             // Can't happen
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 
@@ -256,9 +256,10 @@ public class SlownessLayer implements Serializable, Cloneable {
                         / (radiusOfEarth - getBotDepth()));
         double sqrtTopTopMpp = Math.sqrt(getTopP() * getTopP() - p * p);
         double sqrtBotBotMpp = Math.sqrt(getBotP() * getBotP() - p * p);
-        timedist.dist = 1 / B
-                * (Math.atan2(p, sqrtBotBotMpp) - Math.atan2(p, sqrtTopTopMpp));
-        timedist.time = 1 / B * (sqrtTopTopMpp - sqrtBotBotMpp);
+        timedist.dist = (Math.atan2(p, sqrtBotBotMpp) - Math.atan2(p,
+                                                                   sqrtTopTopMpp))
+                / B;
+        timedist.time = (sqrtTopTopMpp - sqrtBotBotMpp) / B;
         if(timedist.dist < 0.0 || timedist.time < 0.0
                 || Double.isNaN(timedist.time) || Double.isNaN(timedist.dist)) {
             throw new SlownessModelException("timedist <0.0 or NaN: "
