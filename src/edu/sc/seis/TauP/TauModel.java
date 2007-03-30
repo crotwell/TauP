@@ -359,7 +359,7 @@ public class TauModel implements Serializable {
          * been constructed to be a subset of the S samples.
          */
         int rayNum = 0;
-        double minPSoFar = sMod.getSlownessLayerClone(0, false).getTopP();
+        double minPSoFar = sMod.getSlownessLayer(0, false).getTopP();
         double[] tempRayParams = new double[2 * sMod.getNumLayers(false)
                 + sMod.getNumCriticalDepths()];
         // make sure we get the top slowness of the very top layer
@@ -400,7 +400,7 @@ public class TauModel implements Serializable {
         boolean isPWave;
         for(waveNum = 0, isPWave = true; waveNum < 2; waveNum++, isPWave = false) {
             // The minimum slowness seen so far
-            minPSoFar = sMod.getSlownessLayerClone(0, isPWave).getTopP();
+            minPSoFar = sMod.getSlownessLayer(0, isPWave).getTopP();
             // loop over critical slowness layers since they form the branches
             for(int critNum = 0; critNum < sMod.getNumCriticalDepths() - 1; critNum++) {
                 topCritDepth = sMod.getCriticalDepth(critNum);

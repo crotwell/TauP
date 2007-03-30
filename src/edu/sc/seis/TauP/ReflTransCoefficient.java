@@ -36,7 +36,7 @@ package edu.sc.seis.TauP;
 
 import java.io.Serializable;
 
-public class ReflTransCoefficient implements Serializable, Cloneable {
+public class ReflTransCoefficient implements Serializable {
 
     // IMPORTANT!!!!
     // Where ever "CX" appears in this class, it is used as a shorthand for

@@ -47,7 +47,7 @@ import java.util.Vector;
 public class TauP_Time {
 
     /** Turns on debugging output. */
-    public boolean DEBUG = false;
+    public static boolean DEBUG = false;
 
     /** Turns on verbose output. */
     public boolean verbose = false;
@@ -110,7 +110,7 @@ public class TauP_Time {
     protected Outputs outForms;
 
     /* Constructors */
-    public TauP_Time() {
+    protected TauP_Time() {
         try {
             toolProps = PropertyLoader.load();
         } catch(Exception e) {

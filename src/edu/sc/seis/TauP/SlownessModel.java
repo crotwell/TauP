@@ -419,19 +419,6 @@ public abstract class SlownessModel implements Serializable {
     }
 
     /**
-     * @returns a clone of the requested waveType slowness layer. Note that as
-     *          this is a clone, no changes made to the layer will be
-     *          incorporated into the slowness model.
-     */
-    public SlownessLayer getSlownessLayerClone(int layerNum, boolean isPWave) {
-        if(isPWave) {
-            return (SlownessLayer)((SlownessLayer)PLayers.elementAt(layerNum)).clone();
-        } else {
-            return (SlownessLayer)((SlownessLayer)SLayers.elementAt(layerNum)).clone();
-        }
-    }
-
-    /**
      * Returns the SlownessLayer of the requested waveType. This is NOT a clone
      * and any changes will possibly corrupt the SlownessModel.
      */
@@ -1774,7 +1761,7 @@ public abstract class SlownessModel implements Serializable {
             }
             if((sLayer.getTopP() - p) * (p - sLayer.getBotP()) > 0) {
                 madeAChange = true;
-                topLayer = (SlownessLayer)sLayer.clone();
+                topLayer = (SlownessLayer)sLayer;
                 topLayer.setBotP(p);
                 if(sLayer.getBotDepth() != sLayer.getTopDepth()) {
                     /*
@@ -1788,7 +1775,7 @@ public abstract class SlownessModel implements Serializable {
                                                      sLayer.getTopDepth(),
                                                      slope));
                 }
-                botLayer = (SlownessLayer)sLayer.clone();
+                botLayer = (SlownessLayer)sLayer;
                 botLayer.setTopP(p);
                 botLayer.setTopDepth(topLayer.getBotDepth());
                 layers.removeElementAt(i);

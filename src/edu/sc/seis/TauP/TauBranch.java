@@ -184,15 +184,13 @@ public class TauBranch implements Serializable, Cloneable {
                              double minPSoFar,
                              double rayParams[]) throws NoSuchLayerException,
             SlownessModelException, TauModelException {
-        int layerNum;
         TimeDist timeDist;
-        SlownessLayer layer;
         double p;
         int topLayerNum = sMod.layerNumberBelow(getTopDepth(), isPWave);
         int botLayerNum = sMod.layerNumberAbove(getBotDepth(), isPWave);
-        SlownessLayer topSLayer = sMod.getSlownessLayerClone(topLayerNum,
+        SlownessLayer topSLayer = sMod.getSlownessLayer(topLayerNum,
                                                              isPWave);
-        SlownessLayer botSLayer = sMod.getSlownessLayerClone(botLayerNum,
+        SlownessLayer botSLayer = sMod.getSlownessLayer(botLayerNum,
                                                              isPWave);
         if(topSLayer.getTopDepth() != getTopDepth()
                 || botSLayer.getBotDepth() != getBotDepth()) {
@@ -280,7 +278,7 @@ public class TauBranch implements Serializable, Cloneable {
                 timeDist.add(sMod.layerTimeDist(p, layerNum, isPWave));
                 layerNum++;
                 if(layerNum <= botLayerNum) {
-                    layer = sMod.getSlownessLayerClone(layerNum, isPWave);
+                    layer = sMod.getSlownessLayer(layerNum, isPWave);
                 }
             }
             if((layer.getTopP() - p) * (p - layer.getBotP()) > 0) {

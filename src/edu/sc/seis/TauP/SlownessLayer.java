@@ -36,7 +36,7 @@ import java.io.Serializable;
  * 
  * @author H. Philip Crotwell
  */
-public class SlownessLayer implements Serializable, Cloneable {
+public class SlownessLayer implements Serializable {
 
     /** top slowness, top depth, bottom slowness, bottom depth */
     public SlownessLayer(double topP,
@@ -350,19 +350,6 @@ public class SlownessLayer implements Serializable, Cloneable {
             throw new SlownessModelException("Ray parameter = " + rayParam
                     + " is not contained within this slowness layer. topP="
                     + getTopP() + " botP=" + getBotP());
-        }
-    }
-
-    public Object clone() {
-        SlownessLayer newObject;
-        try {
-            newObject = (SlownessLayer)super.clone();
-            return newObject;
-        } catch(CloneNotSupportedException e) {
-            // Can't happen, but...
-            System.err.println("Caught CloneNotSupportedException: "
-                    + e.getMessage());
-            throw new InternalError(e.toString());
         }
     }
 

@@ -84,7 +84,7 @@ public class SlownessPlot extends XYPlot {
         }
         int j = 0;
         for(int i = 0; i < sModel.getNumLayers(isPWave); i++) {
-            ss = sModel.getSlownessLayerClone(i, isPWave);
+            ss = sModel.getSlownessLayer(i, isPWave);
             yData[j] = sModel.getRadiusOfEarth() - ss.getTopDepth();
             xData[j] = ss.getTopP();
             if(DEBUG)
