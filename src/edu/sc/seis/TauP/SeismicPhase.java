@@ -684,7 +684,6 @@ public class SeismicPhase implements Serializable, Cloneable {
         String currLeg = (String)legs.get(0);
         String nextLeg = currLeg;
         branchSeq.clear();
-        boolean isDownGoing;
         boolean isPWave = PWAVE;
         boolean isPWavePrev = isPWave;
         /*
@@ -728,13 +727,11 @@ public class SeismicPhase implements Serializable, Cloneable {
                 || (expert && (currLeg.startsWith("K") || currLeg.startsWith("I")))) {
             // Downgoing from source
             currBranch = tMod.getSourceBranch();
-            isDownGoing = true;
             endAction = REFLECTBOT; // treat initial downgoing as if it were a
             // underside reflection
         } else if(currLeg.equals("p") || currLeg.equals("s")
                 || (expert && currLeg.startsWith("k"))) {
             // Up going from source
-            isDownGoing = false;
             endAction = REFLECTTOP; // treat initial upgoing as if it were a
             // topside reflection
             if(tMod.getSourceBranch() != 0) {
@@ -769,7 +766,7 @@ public class SeismicPhase implements Serializable, Cloneable {
         }
         minRayParam = 0.0;
         int disconBranch = 0;
-        double legDepth, nextLegDepth = 0.0;
+        double nextLegDepth = 0.0;
         boolean isLegDepth, isNextLegDepth = false;
         endAction = TRANSDOWN;
         /*
@@ -785,7 +782,6 @@ public class SeismicPhase implements Serializable, Cloneable {
                 System.out.println(legNum + "  " + prevLeg + "  " + currLeg
                         + "  " + nextLeg);
             }
-            legDepth = nextLegDepth;
             isLegDepth = isNextLegDepth;
             // find out if the next leg represents a phase conversion depth
             try {
@@ -1243,8 +1239,6 @@ public class SeismicPhase implements Serializable, Cloneable {
         /* Special case for surface wave velocity. */
         if(name.endsWith("kmps")) {
             try {
-                double vel = Double.valueOf(name.substring(0, name.length() - 4))
-                        .doubleValue();
                 legs.add(name);
             } catch(NumberFormatException e) {
                 throw new TauModelException("Invalid phase name:\n" + name);
@@ -1332,7 +1326,6 @@ public class SeismicPhase implements Serializable, Cloneable {
                         offset++;
                     }
                     try {
-                        Double d = new Double(numString);
                         legs.add(numString);
                     } catch(NumberFormatException e) {
                         throw new TauModelException("Invalid phase name: "
@@ -1346,7 +1339,7 @@ public class SeismicPhase implements Serializable, Cloneable {
             }
         legs.add(new String("END"));
         if(!phaseValidate()) {
-            throw new TauModelException("Phase failed validation: " + name);
+            throw new TauModelException("Phase failed validation: " + name+"  "+validationFailMessage);
         }
     }
 
@@ -1574,8 +1567,6 @@ public class SeismicPhase implements Serializable, Cloneable {
          */
         DepthRange[] hsz;
         int hSZIndex;
-        TimeDist tempTD;
-        int layerNum;
         int indexOffset;
         boolean foundOverlap = false;
         boolean isPWave;
@@ -1932,7 +1923,6 @@ public class SeismicPhase implements Serializable, Cloneable {
         ArrayList pathList = new ArrayList(10);
         int arraySize;
         Arrival currArrival;
-        int rayNum = 0;
         int branchNum;
         boolean isPWave;
         for(int arrivalNum = 0; arrivalNum < arrivals.size(); arrivalNum++) {
@@ -1942,11 +1932,6 @@ public class SeismicPhase implements Serializable, Cloneable {
              * Find the ray parameter index that corresponds to the arrival ray
              * parameter in the TauModel, ie it is between rayNum and rayNum+1.
              */
-            for(int i = 0; i < tMod.rayParams.length; i++) {
-                if(tMod.rayParams[i] >= currArrival.getRayParam()) {
-                    rayNum = i;
-                }
-            }
             tempTimeDist = new TimeDist[1];
             tempTimeDist[0] = new TimeDist(currArrival.getRayParam(),
                                            0.0,
@@ -2039,6 +2024,12 @@ public class SeismicPhase implements Serializable, Cloneable {
             }
         }
     }
+    
+    private String validationFailMessage = "";
+    
+    public String getValidationFailMessage() {
+    	return validationFailMessage;
+    }
 
     /**
      * Performs consistency checks on the previously tokenized phase name stored
@@ -2062,6 +2053,10 @@ public class SeismicPhase implements Serializable, Cloneable {
                 || currToken.equals("P") || currToken.equals("S")
                 || currToken.equals("p") || currToken.equals("s") || (expert && (currToken.equals("K")
                 || currToken.equals("k") || currToken.equals("I"))))) {
+        	validationFailMessage = "First leg ("+currToken+") must be one of Pg, Pb, Pn, Pdiff, Sg, Sb, Sn, Sdiff, P, S, p, s";
+        	if (expert) {
+        		validationFailMessage+=", K, k, I";
+        	}
             return false;
         }
         for(int i = 1; i < legs.size(); i++) {
@@ -2072,6 +2067,7 @@ public class SeismicPhase implements Serializable, Cloneable {
                     || currToken.equals("m") || currToken.equals("c")
                     || currToken.equals("i")) {
                 if(prevIsReflect) {
+                	validationFailMessage = "Two reflections with no leg in between: "+prevToken+", "+currToken;
                     return false;
                 } else {
                     prevIsReflect = true;
@@ -2081,6 +2077,7 @@ public class SeismicPhase implements Serializable, Cloneable {
             }
             /* Check for "END" before the end. */
             if(prevToken.equals("END")) {
+            	validationFailMessage = "Legs ended but more tokens exist: "+currToken;
                 return false;
             }
             /* Check for P or S next to I or J */
@@ -2088,24 +2085,29 @@ public class SeismicPhase implements Serializable, Cloneable {
                     || currToken.startsWith("p") || currToken.startsWith("s")
                     || currToken.equals("m") || currToken.equals("c"))
                     && (prevToken.equals("I") || prevToken.equals("J") || prevToken.equals("i"))) {
+            	validationFailMessage = "Cannot have I,J,i followed by P,S,p,s,m,c: "+prevToken+", "+currToken;
                 return false;
             }
             if((prevToken.startsWith("P") || prevToken.startsWith("S")
                     || prevToken.startsWith("p") || prevToken.startsWith("s")
                     || prevToken.equals("m") || prevToken.equals("c"))
                     && (currToken.equals("I") || currToken.equals("J") || currToken.equals("i"))) {
+            	validationFailMessage = "Cannot have P,S,p,s,m,c followed by I,J,i: "+prevToken+", "+currToken;
                 return false;
             }
             /* Check for m next to K. */
             if(prevToken.equals("m") && currToken.equals("K")) {
+            	validationFailMessage = "Cannot have m followed by K";
                 return false;
             }
             if(currToken.equals("m") && prevToken.equals("K")) {
+            	validationFailMessage = "Cannot have K followed by m";
                 return false;
             }
         }
         /* Make sure legs end in "END". */
         if(!currToken.equals("END")) {
+        	validationFailMessage = "Last token must be END";
             return false;
         }
         return true;

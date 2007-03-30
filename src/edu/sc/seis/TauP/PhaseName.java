@@ -38,7 +38,7 @@ import java.io.Serializable;
  * @author H. Philip Crotwell
  * 
  */
-public class PhaseName implements Serializable, Cloneable {
+public class PhaseName implements Serializable {
 
     /** name of the phase, ie PKIKP */
     public String name;

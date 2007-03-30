@@ -80,7 +80,7 @@ public class TauModel implements Serializable {
     transient public static boolean DEBUG = false;
 
     /** True if this is a spherical slowness model. False if flat. */
-    public boolean spherical = true;
+    protected boolean spherical = true;
 
     /** Depth for which tau model was constructed. */
     protected double sourceDepth = 0.0;
@@ -145,6 +145,11 @@ public class TauModel implements Serializable {
 
     // Methods -----------------------------------------------------------
     // accessor methods
+    
+    public boolean isSpherical() {
+    	return spherical;
+    }
+    
     /** @returns the name of the earth model used to construct the tau model. */
     public String getModelName() {
         return sMod.vMod.getModelName();

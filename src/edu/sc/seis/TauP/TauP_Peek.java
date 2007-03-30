@@ -119,7 +119,7 @@ public class TauP_Peek {
                         break;
                     case 't':
                     case 'T':
-                        System.out.println("spherical=" + peek.tMod.spherical
+                        System.out.println("spherical=" + peek.tMod.isSpherical()
                                 + " sourceDepth=" + peek.tMod.getSourceDepth()
                                 + " radiusOfEarth="
                                 + peek.tMod.getRadiusOfEarth() + " DEBUG="
