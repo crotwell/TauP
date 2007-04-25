@@ -58,7 +58,7 @@ public class Test
 		toolProps.put( "taup.source.depth", Double.toString( depth ) );
                 tMod = tModLoad;
                 tModDepth = tMod;
-                this.modelName = tMod.sMod.vMod.getModelName();
+                this.modelName = tMod.getModelName();
 
 		//this.phaseNames.addElement( new PhaseName( stringPhaseName ) );
             }
