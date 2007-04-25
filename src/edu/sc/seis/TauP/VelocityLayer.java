@@ -29,9 +29,6 @@
  */
 package edu.sc.seis.TauP;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
 import java.io.Serializable;
 
 /**
@@ -71,14 +68,6 @@ public class VelocityLayer implements Cloneable, Serializable {
     private double topQs = 2000;
 
     private double botQs = 2000;
-
-    public VelocityLayer() {
-        this.myLayerNumber = 0;
-    }
-
-    public VelocityLayer(int myLayerNumber) {
-        this.myLayerNumber = myLayerNumber;
-    }
 
     public VelocityLayer(int myLayerNumber,
                          double topDepth,
@@ -264,6 +253,10 @@ public class VelocityLayer implements Cloneable, Serializable {
         description += " S " + getTopSVelocity() + " " + getBotSVelocity();
         description += " Density " + getTopDensity() + " " + getBotDensity();
         return description;
+    }
+    
+    public int getLayerNum() {
+        return myLayerNumber;
     }
 
     public void setTopDepth(double topDepth) {

@@ -246,7 +246,7 @@ public class TauP_Peek {
                             if(layer >= peek.tMod.getSlownessModel().vMod.getNumLayers()) {
                                 System.out.println("Out of bounds!");
                             } else {
-                                System.out.println(peek.tMod.getSlownessModel().vMod.getVelocityLayerClone(layer));
+                                System.out.println(peek.tMod.getSlownessModel().vMod.getVelocityLayer(layer));
                             }
                             System.out.println("Enter velocity layer");
                             break;

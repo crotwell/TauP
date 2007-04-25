@@ -51,10 +51,10 @@ public class SlownessLayer implements Serializable {
         Assert.isFalse(botDepth < 0.0 || Double.isNaN(botDepth)
                                || Double.isInfinite(botDepth),
                        "botDepth is not a number or is negative: " + botDepth);
-        this.setTopP(topP);
-        this.setTopDepth(topDepth);
-        this.setBotP(botP);
-        this.setBotDepth(botDepth);
+        this.topP = topP;
+        this.topDepth = topDepth;
+        this.botP = botP;
+        this.botDepth = botDepth;
     }
 
     /**
@@ -68,8 +68,8 @@ public class SlownessLayer implements Serializable {
                        "vLayer.topDepth > vLayer.botDepth :"
                                + vLayer.getTopDepth() + " "
                                + vLayer.getBotDepth());
-        setTopDepth(vLayer.getTopDepth());
-        setBotDepth(vLayer.getBotDepth());
+        topDepth = vLayer.getTopDepth();
+        botDepth = vLayer.getBotDepth();
         char waveType;
         if(isPWave) {
             waveType = 'P';
@@ -78,13 +78,13 @@ public class SlownessLayer implements Serializable {
         }
         try {
             if(spherical) {
-                setTopP((radiusOfEarth - getTopDepth())
-                        / vLayer.evaluateAtTop(waveType));
-                setBotP((radiusOfEarth - getBotDepth())
-                        / vLayer.evaluateAtBottom(waveType));
+                topP = (radiusOfEarth - getTopDepth())
+                        / vLayer.evaluateAtTop(waveType);
+                botP = (radiusOfEarth - getBotDepth())
+                        / vLayer.evaluateAtBottom(waveType);
             } else {
-                setTopP(1.0 / vLayer.evaluateAtTop(waveType));
-                setBotP(1.0 / vLayer.evaluateAtBottom(waveType));
+                topP = 1.0 / vLayer.evaluateAtTop(waveType);
+                botP = 1.0 / vLayer.evaluateAtBottom(waveType);
             }
             Assert.isFalse(Double.isNaN(getTopP()) || Double.isNaN(getBotP()),
                            "Slowness sample is NaN: topP=" + getTopP()
@@ -113,32 +113,16 @@ public class SlownessLayer implements Serializable {
         this(vLayer, false, 0.0, isPWave);
     }
 
-    public void setTopP(double topP) {
-        this.topP = topP;
-    }
-
     public double getTopP() {
         return topP;
-    }
-
-    public void setBotP(double botP) {
-        this.botP = botP;
     }
 
     public double getBotP() {
         return botP;
     }
 
-    public void setTopDepth(double topDepth) {
-        this.topDepth = topDepth;
-    }
-
     public double getTopDepth() {
         return topDepth;
-    }
-
-    public void setBotDepth(double botDepth) {
-        this.botDepth = botDepth;
     }
 
     public double getBotDepth() {

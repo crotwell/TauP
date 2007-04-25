@@ -726,6 +726,7 @@ public class TauP_Time {
      * correction of the model is not already corrected to that depth.
      */
     public void depthCorrect(double depth) throws TauModelException {
+        logger.debug("before depth correct: "+tMod.getSourceDepth());
         if(tModDepth == null || tModDepth.getSourceDepth() != depth) {
             tModDepth = tMod.depthCorrect(depth);
             clearArrivals();
@@ -1388,4 +1389,6 @@ public class TauP_Time {
             e.printStackTrace();
         }
     }
+    
+    private static final org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(TauP_Time.class);
 }

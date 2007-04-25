@@ -145,11 +145,10 @@ public class TauModel implements Serializable {
 
     // Methods -----------------------------------------------------------
     // accessor methods
-    
     public boolean isSpherical() {
-    	return spherical;
+        return spherical;
     }
-    
+
     /** @returns the name of the earth model used to construct the tau model. */
     public String getModelName() {
         return sMod.vMod.getModelName();
@@ -508,7 +507,8 @@ public class TauModel implements Serializable {
     public TauModel depthCorrect(double depth) throws TauModelException {
         if(sourceDepth != 0.0) {
             throw new TauModelException("depthCorrect: Can't depth correct "
-                    + "a tau model that is not for a surface source.");
+                    + "a tau model that is not for a surface source. Depth="
+                    + sourceDepth);
         }
         // **GRH** if(depth > getCmbDepth()) { throw new
         // TauModelException("depthCorrect: Can't depth correct "
@@ -516,7 +516,7 @@ public class TauModel implements Serializable {
         TauModel tMod = splitBranch(depth);
         tMod.sourceDepth = depth;
         tMod.sourceBranch = tMod.findBranch(depth);
-        validate();
+        tMod.validate();
         return tMod;
     }
 
@@ -534,7 +534,20 @@ public class TauModel implements Serializable {
             for(int branchNum = 0; branchNum < tauBranches[0].length; branchNum++) {
                 if(tauBranches[0][branchNum].getTopDepth() == depth
                         || tauBranches[0][branchNum].getBotDepth() == depth) {
-                    return this;
+                    return new TauModel(spherical,
+                                        depth,
+                                        sourceBranch,
+                                        noDisconDepths,
+                                        mohoDepth,
+                                        mohoBranch,
+                                        cmbDepth,
+                                        cmbBranch,
+                                        iocbDepth,
+                                        iocbBranch,
+                                        radiusOfEarth,
+                                        sMod,
+                                        rayParams,
+                                        tauBranches);
                 }
             }
             /*
@@ -609,37 +622,29 @@ public class TauModel implements Serializable {
                 if(indexS != -1) {
                     // add the new ray parameter from splitting the S Wave
                     // slowness layer to both the P and S wave Tau branches
-                    newtauBranches[0][i].insert(SWaveRayParam,
-                                                outSMod,
-                                                indexS);
-                    newtauBranches[1][i].insert(SWaveRayParam,
-                                                outSMod,
-                                                indexS);
+                    newtauBranches[0][i].insert(SWaveRayParam, outSMod, indexS);
+                    newtauBranches[1][i].insert(SWaveRayParam, outSMod, indexS);
                 }
                 if(indexP != -1) {
                     // add the new ray parameter from splitting the P Wave
                     // slowness layer to both the P and S wave Tau branches
-                    newtauBranches[0][i].insert(PWaveRayParam,
-                                                outSMod,
-                                                indexP);
-                    newtauBranches[1][i].insert(PWaveRayParam,
-                                                outSMod,
-                                                indexP);
+                    newtauBranches[0][i].insert(PWaveRayParam, outSMod, indexP);
+                    newtauBranches[1][i].insert(PWaveRayParam, outSMod, indexP);
                 }
             }
             for(int pOrS = 0; pOrS < 2; pOrS++) {
                 newtauBranches[pOrS][branchToSplit] = new TauBranch(tauBranches[pOrS][branchToSplit].getTopDepth(),
-                                                                 depth,
-                                                                 pOrS == 0);
+                                                                    depth,
+                                                                    pOrS == 0);
                 newtauBranches[pOrS][branchToSplit].createBranch(outSMod,
-                                                              tauBranches[pOrS][branchToSplit].getMaxRayParam(),
-                                                              outRayParams);
+                                                                 tauBranches[pOrS][branchToSplit].getMaxRayParam(),
+                                                                 outRayParams);
                 newtauBranches[pOrS][branchToSplit + 1] = tauBranches[pOrS][branchToSplit].difference(newtauBranches[pOrS][branchToSplit],
-                                                                                                indexP,
-                                                                                                indexS,
-                                                                                                outSMod,
-                                                                                                newtauBranches[pOrS][branchToSplit].getMinRayParam(),
-                                                                                                outRayParams);
+                                                                                                      indexP,
+                                                                                                      indexS,
+                                                                                                      outSMod,
+                                                                                                      newtauBranches[pOrS][branchToSplit].getMinRayParam(),
+                                                                                                      outRayParams);
             }
             for(int i = branchToSplit + 1; i < tauBranches[0].length; i++) {
                 for(int pOrS = 0; pOrS < 2; pOrS++) {

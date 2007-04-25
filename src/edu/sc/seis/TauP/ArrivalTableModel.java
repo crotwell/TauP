@@ -108,13 +108,10 @@ public class ArrivalTableModel extends AbstractTableModel {
         fireTableDataChanged();
     }
 
-    private static Format float6_1 = new Format("%6.1f");
-
     private static Format float8_1 = new Format("%8.1f");
 
     private static Format float8_2 = new Format("%8.2f");
 
     private static Format float8_3 = new Format("%8.3f");
 
-    private static Format float8_4 = new Format("%8.4f");
 }

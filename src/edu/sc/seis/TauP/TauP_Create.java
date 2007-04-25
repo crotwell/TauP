@@ -45,18 +45,24 @@ public class TauP_Create {
     public transient boolean verbose = false;
 
     String modelFilename = "iasp91.tvel";
+    
+    String overlayModelFilename = null;
 
     protected String velFileType = "tvel";
+    
+    String overlayVelFileType;
 
     String directory = ".";
 
     SlownessModel sMod;
 
     VelocityModel vMod;
+    
+    VelocityModel overlayVMod;
 
     TauModel tMod;
 
-    boolean DEBUG = false;
+    boolean DEBUG = true;
 
     protected boolean GUI = false;
 
@@ -169,6 +175,9 @@ public class TauP_Create {
                 velFileType = "tvel";
                 parseFileName(args[i + 1]);
                 i++;
+            } else if (args[i].equals("--overlayND")) {
+               overlayVelFileType = "nd";
+               overlayModelFilename = args[i+1];
             } else if(args[i].startsWith("GB.")) {
                 velFileType = "nd";
                 parseFileName(args[i]);
@@ -242,20 +251,26 @@ public class TauP_Create {
 
     public void init() throws IOException, VelocityModelException {
         String file_sep = System.getProperty("file.separator");
-        vMod = new VelocityModel();
         // Read the velocity model file.
-        vMod.setFileType(velFileType);
         if(verbose)
             System.out.println("filename =" + directory + file_sep
                     + modelFilename);
-        vMod.readVelocityFile(directory + file_sep + modelFilename);
+        vMod = VelocityModel.readVelocityFile(directory + file_sep + modelFilename, velFileType);
         if(verbose) {
             System.out.println("Done reading velocity model.");
             System.out.println("Radius of model " + vMod.getModelName()
                     + " is " + vMod.getRadiusOfEarth());
         }
+        if (overlayModelFilename != null) {
+
+            if(DEBUG) {
+                System.out.println("orig model: "+vMod);
+            }
+            overlayVMod = VelocityModel.readVelocityFile(directory + file_sep + overlayModelFilename, overlayVelFileType);
+            vMod = vMod.replaceLayers(overlayVMod.getLayers(), overlayVMod.getModelName(), true, true);
+        }
         if(DEBUG)
-            System.out.println(vMod);
+            System.out.println("velocity mode: "+vMod);
     }
 
     public void start() throws SlownessModelException, TauModelException {
@@ -266,7 +281,7 @@ public class TauP_Create {
             if(!vMod.getSpherical()) {
                 throw new SlownessModelException("Flat slowness model not yet implemented.");
             }
-            sMod.DEBUG = DEBUG;
+            SlownessModel.DEBUG = DEBUG;
             sMod = new SphericalSModel(vMod,
                                        Double.valueOf(toolProps.getProperty("taup.create.minDeltaP",
                                                                             "0.1"))

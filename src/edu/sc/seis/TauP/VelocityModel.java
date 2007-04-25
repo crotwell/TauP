@@ -29,12 +29,8 @@
  */
 package edu.sc.seis.TauP;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
@@ -53,20 +49,41 @@ import java.util.Vector;
  */
 public class VelocityModel implements Cloneable, Serializable {
 
+    public VelocityModel(String modelName,
+                         double radiusOfEarth,
+                         double mohoDepth,
+                         double cmbDepth,
+                         double iocbDepth,
+                         double minRadius,
+                         double maxRadius,
+                         boolean spherical,
+                         Vector layer) {
+        super();
+        this.modelName = modelName;
+        this.radiusOfEarth = radiusOfEarth;
+        this.mohoDepth = mohoDepth;
+        this.cmbDepth = cmbDepth;
+        this.iocbDepth = iocbDepth;
+        this.minRadius = minRadius;
+        this.maxRadius = maxRadius;
+        this.spherical = spherical;
+        this.layer = layer;
+    }
+
     /** name of the velocity model. */
     protected String modelName = "unknown";
-
-    /**
-     * type of velocity file to be read in, either "nd" for named
-     * discontinuities or "tvel" for ttimes style files.
-     */
-    protected String fileType = "nd";
 
     /**
      * reference radius (km), usually radius of the earth, by default 6371
      * kilometers.
      */
     protected double radiusOfEarth = 6371.0; // kilometers
+
+    public static final double DEFAULT_MOHO = 35;
+
+    public static final double DEFAULT_CMB = 2889.0;
+
+    public static final double DEFAULT_IOCB = 5153.9;
 
     /**
      * Depth (km) of the moho. It can be input from velocity model (*.nd) or
@@ -76,7 +93,7 @@ public class VelocityModel implements Cloneable, Serializable {
      * satisfactory. Take proper care if your model has a thicker crust and a
      * discontinuity near 35 km depth.
      */
-    protected double mohoDepth = 35.0; // kilometers
+    protected double mohoDepth = DEFAULT_MOHO; // kilometers
 
     /**
      * Depth (km) of the cmb (core mantle boundary). It can be input from
@@ -85,7 +102,7 @@ public class VelocityModel implements Cloneable, Serializable {
      * closest 1st order discontinuity. Thus for most simple earth models these
      * values are satisfactory.
      */
-    protected double cmbDepth = 2889.0; // kilometers
+    protected double cmbDepth = DEFAULT_CMB; // kilometers
 
     /**
      * Depth (km) of the iocb (inner core outer core boundary). It can be input
@@ -94,13 +111,7 @@ public class VelocityModel implements Cloneable, Serializable {
      * choose the closest 1st order discontinuity. Thus for most simple earth
      * models these values are satisfactory.
      */
-    protected double iocbDepth = 5153.9; // kilometers
-
-    /** Not used, mean Density (kg/m^3), default 5517.0 */
-    protected double meanDensity = 5517.0; // kg / m^3
-
-    /** Not used, gravitational constant, default 6.67e-11 m^3 / kg s^2 */
-    protected double G = 6.67e-11; // m^3 / kg s^2
+    protected double iocbDepth = DEFAULT_IOCB; // kilometers
 
     /** minimum radius of the model (km), default 0.0 */
     protected double minRadius = 0.0; // kilometers
@@ -138,14 +149,6 @@ public class VelocityModel implements Cloneable, Serializable {
         } else {
             this.modelName = "unknown";
         }
-    }
-
-    /**
-     * sets file type, either "nd" for named discontinuities or "tvel" for
-     * ttimes tvel models.
-     */
-    public void setFileType(String fileType) {
-        this.fileType = fileType;
     }
 
     /**
@@ -231,14 +234,6 @@ public class VelocityModel implements Cloneable, Serializable {
         this.iocbDepth = iocbDepth;
     }
 
-    public double getMeanDensity() {
-        return meanDensity;
-    }
-
-    public void setMeanDensity(double meanDensity) {
-        this.meanDensity = meanDensity;
-    }
-
     public double getMinRadius() {
         return minRadius;
     }
@@ -253,14 +248,6 @@ public class VelocityModel implements Cloneable, Serializable {
 
     public void setMaxRadius(double maxRadius) {
         this.maxRadius = maxRadius;
-    }
-
-    public double getG() {
-        return G;
-    }
-
-    public void setG(double G) {
-        this.G = G;
     }
 
     public boolean getSpherical() {
@@ -282,6 +269,10 @@ public class VelocityModel implements Cloneable, Serializable {
     /** Returns the number of layers in this velocity model. */
     public int getNumLayers() {
         return layer.size();
+    }
+    
+    public VelocityLayer[] getLayers() {
+        return (VelocityLayer[])layer.toArray(new VelocityLayer[0]);
     }
 
     // normal methods
@@ -460,58 +451,82 @@ public class VelocityModel implements Cloneable, Serializable {
      * match the existing velocity at the top. @param matchBot similar for the
      * bottom.
      */
-    public void replaceLayers(VelocityLayer[] newLayers,
-                              boolean matchTop,
-                              boolean matchBot) throws NoSuchLayerException {
+    public VelocityModel replaceLayers(VelocityLayer[] newLayers,
+                                       String name,
+                                       boolean matchTop,
+                                       boolean matchBot)
+            throws NoSuchLayerException {
         int topLayerNum = layerNumberBelow(newLayers[0].getTopDepth());
         VelocityLayer topLayer = getVelocityLayer(topLayerNum);
         int botLayerNum = layerNumberAbove(newLayers[newLayers.length - 1].getBotDepth());
         VelocityLayer botLayer = getVelocityLayer(botLayerNum);
-        if(matchTop) {
-            try {
-                newLayers[0].setTopPVelocity(topLayer.evaluateAt(newLayers[0].getTopDepth(),
-                                                                 'P'));
-                newLayers[0].setTopSVelocity(topLayer.evaluateAt(newLayers[0].getTopDepth(),
-                                                                 'S'));
-            } catch(NoSuchMatPropException e) {
-                // can't happen, but...
-                System.err.println("Caught NoSuchMatPropException: "
-                        + e.getMessage());
-                e.printStackTrace();
+        Vector outLayers = new Vector();
+        outLayers.addAll(layer);
+        try {
+            if(matchTop) {
+                newLayers[0] = new VelocityLayer(newLayers[0].getLayerNum(),
+                                                 newLayers[0].getTopDepth(),
+                                                 newLayers[0].getBotDepth(),
+                                                 topLayer.evaluateAt(newLayers[0].getTopDepth(),
+                                                                     'P'),
+                                                 newLayers[0].getBotPVelocity(),
+                                                 topLayer.evaluateAt(newLayers[0].getTopDepth(),
+                                                                     'S'),
+                                                 newLayers[0].getBotSVelocity(),
+                                                 newLayers[0].getTopDensity(),
+                                                 newLayers[0].getBotDensity(),
+                                                 newLayers[0].getTopQp(),
+                                                 newLayers[0].getBotQp(),
+                                                 newLayers[0].getTopQs(),
+                                                 newLayers[0].getBotQs());
             }
-        }
-        if(matchBot) {
-            try {
-                newLayers[newLayers.length - 1].setBotPVelocity(botLayer.evaluateAt(newLayers[newLayers.length - 1].getBotDepth(),
-                                                                                    'P'));
-                newLayers[newLayers.length - 1].setBotSVelocity(botLayer.evaluateAt(newLayers[newLayers.length - 1].getBotDepth(),
-                                                                                    'S'));
-            } catch(NoSuchMatPropException e) {
-                // can't happen, but...
-                System.err.println("Caught NoSuchMatPropException: "
-                        + e.getMessage());
-                e.printStackTrace();
+            if(matchBot) {
+                VelocityLayer end = newLayers[newLayers.length - 1];
+                newLayers[newLayers.length - 1] = new VelocityLayer(end.getLayerNum(),
+                                                                    end.getTopDepth(),
+                                                                    end.getBotDepth(),
+                                                                    end.getTopPVelocity(),
+                                                                    botLayer.evaluateAt(newLayers[newLayers.length - 1].getBotDepth(),
+                                                                                        'P'),
+                                                                    end.getTopSVelocity(),
+                                                                    botLayer.evaluateAt(newLayers[newLayers.length - 1].getBotDepth(),
+                                                                                        'S'),
+                                                                    end.getTopDensity(),
+                                                                    end.getBotDensity(),
+                                                                    end.getTopQp(),
+                                                                    end.getBotQp(),
+                                                                    end.getTopQs(),
+                                                                    end.getBotQs());
             }
+        } catch(NoSuchMatPropException e) {
+            // can't happen, but...
+            throw new RuntimeException(e);
         }
         if(topLayer.getBotDepth() > newLayers[0].getTopDepth()) {
             /* need to split this layer. */
             VelocityLayer newVLayer = (VelocityLayer)topLayer.clone();
             try {
-                topLayer.setBotPVelocity(topLayer.evaluateAt(newLayers[0].getTopDepth(),
-                                                             'P'));
-                topLayer.setBotSVelocity(topLayer.evaluateAt(newLayers[0].getTopDepth(),
-                                                             'S'));
-                topLayer.setBotDepth(newLayers[0].getTopDepth());
+                int topIndex = outLayers.indexOf(topLayer);
+                topLayer = new VelocityLayer(topLayer.getLayerNum(),
+                                             topLayer.getTopDepth(),
+                                             newLayers[0].getTopDepth(),
+                                             topLayer.getTopPVelocity(),
+                                             topLayer.evaluateAt(newLayers[0].getTopDepth(),
+                                                                 'P'),
+                                             topLayer.getTopSVelocity(),
+                                             topLayer.evaluateAt(newLayers[0].getTopDepth(),
+                                                                 'S'),
+                                             topLayer.getTopDensity(),
+                                             topLayer.getBotDensity());
+                outLayers.set(topIndex, topLayer);
             } catch(NoSuchMatPropException e) {
                 // can't happen, but...
-                System.err.println("Caught NoSuchMatPropException: "
-                        + e.getMessage());
-                e.printStackTrace();
+                throw new RuntimeException(e);
             }
             newVLayer.setTopPVelocity(topLayer.getBotPVelocity());
             newVLayer.setTopSVelocity(topLayer.getBotSVelocity());
             newVLayer.setTopDepth(topLayer.getBotDepth());
-            layer.insertElementAt(newVLayer, topLayerNum + 1);
+            outLayers.insertElementAt(newVLayer, topLayerNum + 1);
             botLayerNum++;
             topLayerNum++;
         }
@@ -533,16 +548,27 @@ public class VelocityModel implements Cloneable, Serializable {
             newVLayer.setTopPVelocity(botLayer.getBotPVelocity());
             newVLayer.setTopSVelocity(botLayer.getBotSVelocity());
             newVLayer.setTopDepth(botLayer.getBotDepth());
-            layer.insertElementAt(newVLayer, botLayerNum + 1);
+            outLayers.insertElementAt(newVLayer, botLayerNum + 1);
             botLayerNum++;
         }
         for(int i = topLayerNum; i <= botLayerNum; i++) {
-            layer.removeElementAt(topLayerNum);
+            outLayers.removeElementAt(topLayerNum);
         }
         for(int i = 0; i < newLayers.length; i++) {
-            layer.insertElementAt(newLayers[i], topLayerNum + i);
+            outLayers.insertElementAt(newLayers[i], topLayerNum + i);
         }
-        validate();
+        VelocityModel outVMod = new VelocityModel(name,
+                                                  getRadiusOfEarth(),
+                                                  getMohoDepth(),
+                                                  getCmbDepth(),
+                                                  getIocbDepth(),
+                                                  getMinRadius(),
+                                                  getMaxRadius(),
+                                                  getSpherical(),
+                                                  outLayers);
+        outVMod.fixDisconDepths();
+        outVMod.validate();
+        return outVMod;
     }
 
     /**
@@ -560,7 +586,6 @@ public class VelocityModel implements Cloneable, Serializable {
      * with GMT.
      */
     public void printGMT(DataOutputStream dos) throws IOException {
-        double depth = 0.0;
         double pVel = -1.0;
         double sVel = -1.0;
         VelocityLayer currVelocityLayer;
@@ -648,11 +673,15 @@ public class VelocityModel implements Cloneable, Serializable {
             return false;
         }
         currVelocityLayer = getVelocityLayer(0);
-        prevVelocityLayer = new VelocityLayer();
-        prevVelocityLayer.setBotDepth(currVelocityLayer.getTopDepth());
-        prevVelocityLayer.setBotPVelocity(currVelocityLayer.getTopPVelocity());
-        prevVelocityLayer.setBotSVelocity(currVelocityLayer.getTopSVelocity());
-        prevVelocityLayer.setBotDensity(currVelocityLayer.getTopDensity());
+        prevVelocityLayer = new VelocityLayer(0,
+                                              currVelocityLayer.getTopDepth(),
+                                              currVelocityLayer.getTopDepth(),
+                                              currVelocityLayer.getTopPVelocity(),
+                                              currVelocityLayer.getTopPVelocity(),
+                                              currVelocityLayer.getTopSVelocity(),
+                                              currVelocityLayer.getTopSVelocity(),
+                                              currVelocityLayer.getTopDensity(),
+                                              currVelocityLayer.getTopDensity());
         for(int layerNum = 0; layerNum < getNumLayers(); layerNum++) {
             currVelocityLayer = getVelocityLayer(layerNum);
             if(prevVelocityLayer.getBotDepth() != currVelocityLayer.getTopDepth()) {
@@ -730,27 +759,11 @@ public class VelocityModel implements Cloneable, Serializable {
     public String toString() {
         String desc = "modelName=" + modelName + "\n" + "\n radiusOfEarth="
                 + radiusOfEarth + "\n mohoDepth=" + mohoDepth + "\n cmbDepth="
-                + cmbDepth + "\n iocbDepth=" + iocbDepth + "\n meanDensity="
-                + meanDensity + "\n G=" + G + "\n minRadius=" + minRadius
-                + "\n maxRadius=" + maxRadius + "\n spherical=" + spherical;
+                + cmbDepth + "\n iocbDepth=" + iocbDepth + "\n minRadius="
+                + minRadius + "\n maxRadius=" + maxRadius + "\n spherical="
+                + spherical;
         desc += "\ngetNumLayers()=" + getNumLayers() + "\n";
         return desc;
-    }
-
-    public Object clone() {
-        VelocityModel newObject;
-        try {
-            newObject = (VelocityModel)super.clone();
-            newObject.layer = new Vector(getNumLayers());
-            for(int i = 0; i < getNumLayers(); i++) {
-                newObject.layer.addElement(getVelocityLayerClone(i));
-            }
-            return newObject;
-        } catch(CloneNotSupportedException e) {
-            // Cannot happen, we support clone
-            // and so do vectors.
-            throw new InternalError(e.toString());
-        }
     }
 
     public void print() {
@@ -759,17 +772,10 @@ public class VelocityModel implements Cloneable, Serializable {
         }
     }
 
-    /**
-     * Reads in a velocity file. The type of file is determined by the fileType
-     * var. Calls readTVelFile or readNDFile.
-     * 
-     * @exception VelocityModelException
-     *                if the type of file cannot be determined.
-     */
-    public void readVelocityFile(String filename) throws IOException,
-            VelocityModelException {
+    public static String getModelNameFromFileName(String filename) {
         int j = filename.lastIndexOf(System.getProperty("file.separator"));
         String modelFilename = filename.substring(j + 1);
+        String modelName = modelFilename;
         if(modelFilename.endsWith("tvel")) {
             modelName = modelFilename.substring(0, modelFilename.length() - 5);
         } else if(modelFilename.endsWith(".nd")) {
@@ -779,24 +785,29 @@ public class VelocityModel implements Cloneable, Serializable {
         } else {
             modelName = modelFilename;
         }
-        if(fileType.equalsIgnoreCase("nd")) {
-            readNDFile(filename);
-        } else if(fileType.equalsIgnoreCase("tvel")) {
-            readTVelFile(filename);
-        } else {
-            throw new VelocityModelException("What type of velocity file, .tvel or .nd?");
-        }
-        boolean changeMade = fixDisconDepths();
+        return modelName;
     }
 
     /**
-     * Reads in a cubic spline file, the original format of the ttimes code.
-     * <em>not yet implemented since linear interpolation (.tvel)
-     * files are conceptually simpler.
+     * Reads in a velocity file. The type of file is determined by the fileType
+     * var. Calls readTVelFile or readNDFile.
+     * 
+     * @exception VelocityModelException
+     *                if the type of file cannot be determined.
      */
-    public void readCubicSplineFile(String filename, String lookForModelName)
-            throws IOException {
-        System.err.println("readCubicSplineFile not yet implemented.");
+    public static VelocityModel readVelocityFile(String filename,
+                                                 String fileType)
+            throws IOException, VelocityModelException {
+        VelocityModel vMod;
+        if(fileType.equalsIgnoreCase("nd")) {
+            vMod = readNDFile(filename);
+        } else if(fileType.equalsIgnoreCase("tvel")) {
+            vMod = readTVelFile(filename);
+        } else {
+            throw new VelocityModelException("What type of velocity file, .tvel or .nd?");
+        }
+        vMod.fixDisconDepths();
+        return vMod;
     }
 
     /**
@@ -820,8 +831,8 @@ public class VelocityModel implements Cloneable, Serializable {
      *                occurs if an EOL should have been read but wasn't. This
      *                may indicate a poorly formatted tvel file.
      */
-    public void readTVelFile(String filename) throws IOException,
-            VelocityModelException {
+    public static VelocityModel readTVelFile(String filename)
+            throws IOException, VelocityModelException {
         FileReader fileIn = new FileReader(filename);
         StreamTokenizer tokenIn = new StreamTokenizer(fileIn);
         tokenIn.commentChar('#'); // '#' means ignore to end of line
@@ -845,22 +856,23 @@ public class VelocityModel implements Cloneable, Serializable {
          * the current layer.
          */
         int myLayerNumber = 0;
-        VelocityLayer tempLayer = new VelocityLayer(myLayerNumber);
-        double depth, pVel, sVel, density;
+        VelocityLayer tempLayer;
+        double topDepth, topPVel, topSVel, topDensity;
+        double botDepth, botPVel, botSVel, botDensity;
         /* Preload the first line of the model */
         tokenIn.nextToken();
-        depth = tokenIn.nval;
+        topDepth = tokenIn.nval;
         tokenIn.nextToken();
-        pVel = tokenIn.nval;
+        topPVel = tokenIn.nval;
         tokenIn.nextToken();
-        sVel = tokenIn.nval;
+        topSVel = tokenIn.nval;
         tokenIn.nextToken();
         if(tokenIn.ttype != StreamTokenizer.TT_EOL) {
             // density is not used and so is optional
-            density = tokenIn.nval;
+            topDensity = tokenIn.nval;
             tokenIn.nextToken();
         } else {
-            density = 5571.0;
+            topDensity = 5571.0;
         }
         if(tokenIn.ttype != StreamTokenizer.TT_EOL) {
             // this token should be an EOL, if not
@@ -869,23 +881,35 @@ public class VelocityModel implements Cloneable, Serializable {
         } else {
             tokenIn.nextToken();
         }
+        Vector layers = new Vector();
         while(tokenIn.ttype != StreamTokenizer.TT_EOF) {
             // Loop until we hit the end of file
-            tempLayer.setTopDepth(depth);
-            tempLayer.setTopPVelocity(pVel);
-            tempLayer.setTopSVelocity(sVel);
-            tempLayer.setTopDensity(density);
-            tempLayer.setBotDepth(depth = tokenIn.nval);
+            botDepth = tokenIn.nval;
             tokenIn.nextToken();
-            tempLayer.setBotPVelocity(pVel = tokenIn.nval);
+            botPVel = tokenIn.nval;
             tokenIn.nextToken();
-            tempLayer.setBotSVelocity(sVel = tokenIn.nval);
+            botSVel = tokenIn.nval;
             tokenIn.nextToken();
             if(tokenIn.ttype != StreamTokenizer.TT_EOL) {
                 // density is not used and is optional
-                tempLayer.setBotDensity(density = tokenIn.nval);
+                botDensity = tokenIn.nval;
                 tokenIn.nextToken();
+            } else {
+                botDensity = topDensity;
             }
+            tempLayer = new VelocityLayer(myLayerNumber,
+                                          topDepth,
+                                          botDepth,
+                                          topPVel,
+                                          botPVel,
+                                          topSVel,
+                                          botSVel,
+                                          topDensity,
+                                          botDensity);
+            topDepth = botDepth;
+            topPVel = botPVel;
+            topSVel = botSVel;
+            topDensity = botDensity;
             if(tokenIn.ttype != StreamTokenizer.TT_EOL) {
                 // this token should be an EOL, if not
                 throw new VelocityModelException("Should have found an EOL but didn't"
@@ -898,15 +922,24 @@ public class VelocityModel implements Cloneable, Serializable {
                  * Don't use zero thickness layers, first order discontinuities
                  * are taken care of by storing top and bottom depths.
                  */
-                layer.addElement(tempLayer);
+                layers.addElement(tempLayer);
                 myLayerNumber++;
-                tempLayer = new VelocityLayer(myLayerNumber);
             }
         }
-        radiusOfEarth = depth;
-        maxRadius = depth; // I assume that this is a whole earth model
+        double radiusOfEarth = topDepth;
+        double maxRadius = topDepth; // I assume that this is a whole earth
+        // model
         // so the maximum depth is equal to the
         // maximum radius is equal to the earth radius.
+        return new VelocityModel(getModelNameFromFileName(filename),
+                                 radiusOfEarth,
+                                 DEFAULT_MOHO,
+                                 DEFAULT_CMB,
+                                 DEFAULT_IOCB,
+                                 0,
+                                 maxRadius,
+                                 true,
+                                 layers);
     }
 
     /**
@@ -932,7 +965,7 @@ public class VelocityModel implements Cloneable, Serializable {
      *                occurs if an EOL should have been read but wasn't. This
      *                may indicate a poorly formatted model file.
      */
-    public void readNDFile(String filename) throws IOException,
+    public static VelocityModel readNDFile(String filename) throws IOException,
             VelocityModelException {
         FileReader fileIn = new FileReader(filename);
         StreamTokenizer tokenIn = new StreamTokenizer(fileIn);
@@ -950,27 +983,28 @@ public class VelocityModel implements Cloneable, Serializable {
          * the current layer.
          */
         int myLayerNumber = 0;
-        VelocityLayer tempLayer = new VelocityLayer(myLayerNumber);
-        double depth, pVel, sVel, density = 2.6, qp = 1000, qs = 2000;
+        VelocityLayer tempLayer;
+        double topDepth, topPVel, topSVel, topDensity = 2.6, topQp = 1000, topQs = 2000;
+        double botDepth, botPVel, botSVel, botDensity = topDensity, botQp = topQp, botQs = topQs;
         /* Preload the first line of the model */
         tokenIn.nextToken();
-        depth = tokenIn.nval;
+        topDepth = tokenIn.nval;
         tokenIn.nextToken();
-        pVel = tokenIn.nval;
+        topPVel = tokenIn.nval;
         tokenIn.nextToken();
-        sVel = tokenIn.nval;
+        topSVel = tokenIn.nval;
         tokenIn.nextToken();
         if(tokenIn.ttype != StreamTokenizer.TT_EOL) {
             // density is not used and so is optional
-            density = tokenIn.nval;
+            topDensity = tokenIn.nval;
             tokenIn.nextToken();
             if(tokenIn.ttype != StreamTokenizer.TT_EOL) {
                 // Qp is not used and so is optional
-                qp = tokenIn.nval;
+                topQp = tokenIn.nval;
                 tokenIn.nextToken();
                 if(tokenIn.ttype != StreamTokenizer.TT_EOL) {
                     // Qs is not used and so is optional
-                    qs = tokenIn.nval;
+                    topQs = tokenIn.nval;
                     tokenIn.nextToken();
                 }
             }
@@ -982,50 +1016,69 @@ public class VelocityModel implements Cloneable, Serializable {
         } else {
             tokenIn.nextToken();
         }
+        double mohoDepth = DEFAULT_MOHO;
+        double cmbDepth = DEFAULT_CMB;
+        double iocbDepth = DEFAULT_IOCB;
+        Vector layers = new Vector();
         while(tokenIn.ttype != StreamTokenizer.TT_EOF) {
             // Loop until we hit the end of file
             if(tokenIn.ttype == StreamTokenizer.TT_WORD) {
                 if(tokenIn.sval.equalsIgnoreCase("mantle")) {
-                    mohoDepth = depth; // Moho
+                    mohoDepth = topDepth; // Moho
                 }
                 if(tokenIn.sval.equalsIgnoreCase("outer-core")) {
-                    cmbDepth = depth; // Core Mantle Boundary
+                    cmbDepth = topDepth; // Core Mantle Boundary
                 }
                 if(tokenIn.sval.equalsIgnoreCase("inner-core")) {
-                    iocbDepth = depth; // Inner Outer Core Boundary
+                    iocbDepth = topDepth; // Inner Outer Core Boundary
                 }
                 while(tokenIn.ttype != StreamTokenizer.TT_EOL) {
                     tokenIn.nextToken();
                 }
                 tokenIn.nextToken();
+                continue;
             }
-            tempLayer.setTopDepth(depth);
-            tempLayer.setTopPVelocity(pVel);
-            tempLayer.setTopSVelocity(sVel);
-            tempLayer.setTopDensity(density);
-            tempLayer.setTopQp(qp);
-            tempLayer.setTopQs(qs);
-            tempLayer.setBotDepth(depth = tokenIn.nval);
+            botDepth = tokenIn.nval;
             tokenIn.nextToken();
-            tempLayer.setBotPVelocity(pVel = tokenIn.nval);
+            botPVel = tokenIn.nval;
             tokenIn.nextToken();
-            tempLayer.setBotSVelocity(sVel = tokenIn.nval);
+            botSVel = tokenIn.nval;
             tokenIn.nextToken();
             if(tokenIn.ttype != StreamTokenizer.TT_EOL) {
                 // density is not used and so is optional
-                tempLayer.setBotDensity(density = tokenIn.nval);
+                botDensity = tokenIn.nval;
                 tokenIn.nextToken();
                 if(tokenIn.ttype != StreamTokenizer.TT_EOL) {
                     // Qp is not used and so is optional
-                    tempLayer.setBotQp(qp = tokenIn.nval);
+                    botQp = tokenIn.nval;
                     tokenIn.nextToken();
                     if(tokenIn.ttype != StreamTokenizer.TT_EOL) {
                         // Qs is not used and so is optional
-                        tempLayer.setBotQs(qs = tokenIn.nval);
+                        botQs = tokenIn.nval;
                         tokenIn.nextToken();
                     }
                 }
             }
+            tempLayer = new VelocityLayer(myLayerNumber,
+                                          topDepth,
+                                          botDepth,
+                                          topPVel,
+                                          botPVel,
+                                          topSVel,
+                                          botSVel,
+                                          topDensity,
+                                          botDensity,
+                                          topQp,
+                                          botQp,
+                                          topQs,
+                                          botQs);
+            System.out.println("Addind "+tempLayer);
+            topDepth = botDepth;
+            topPVel = botPVel;
+            topSVel = botSVel;
+            topDensity = botDensity;
+            topQp = botQp;
+            topQs = botQs;
             if(tokenIn.ttype != StreamTokenizer.TT_EOL) {
                 // this token should be an EOL, if not
                 throw new VelocityModelException("Should have found an EOL but didn't"
@@ -1038,15 +1091,24 @@ public class VelocityModel implements Cloneable, Serializable {
                  * Don't use zero thickness layers, first order discontinuities
                  * are taken care of by storing top and bottom depths.
                  */
-                layer.addElement(tempLayer);
+                layers.addElement(tempLayer);
                 myLayerNumber++;
-                tempLayer = new VelocityLayer(myLayerNumber);
             }
         }
-        radiusOfEarth = depth;
-        maxRadius = depth; // I assume that this is a whole earth model
+        double radiusOfEarth = topDepth;
+        double maxRadius = topDepth; // I assume that this is a whole earth
+        // model
         // so the maximum depth is equal to the
         // maximum radius is equal to the earth radius.
+        return new VelocityModel(getModelNameFromFileName(filename),
+                                 radiusOfEarth,
+                                 mohoDepth,
+                                 cmbDepth,
+                                 iocbDepth,
+                                 0,
+                                 maxRadius,
+                                 true,
+                                 layers);
     }
 
     /**
@@ -1105,11 +1167,9 @@ public class VelocityModel implements Cloneable, Serializable {
      *                occurs ???.
      */
     public VelocityModel earthFlattenTransform() throws VelocityModelException {
-        VelocityModel flatModel;
         VelocityLayer newLayer, oldLayer;
-        flatModel = (VelocityModel)this.clone();
-        flatModel.spherical = false;
-        flatModel.layer = new Vector(vectorLength);
+        boolean spherical = false;
+        Vector layers = new Vector(vectorLength);
         for(int i = 0; i < getNumLayers(); i++) {
             oldLayer = getVelocityLayer(i);
             newLayer = new VelocityLayer(i,
@@ -1131,37 +1191,16 @@ public class VelocityModel implements Cloneable, Serializable {
                                          radiusOfEarth
                                                  * oldLayer.getBotSVelocity()
                                                  / oldLayer.getBotDepth());
-            flatModel.layer.addElement(newLayer);
+            layers.addElement(newLayer);
         }
-        return flatModel;
-    }
-
-    /** Just for debugging purposes. */
-    public static void main(String[] args) {
-        VelocityModel vMod = new VelocityModel();
-        String modelFilename;
-        if(args.length >= 1) {
-            modelFilename = args[0];
-        } else {
-            modelFilename = "iasp91.tvel";
-        }
-        boolean DEBUG = true;
-        try {
-            vMod.readVelocityFile(modelFilename);
-            System.out.println("Done reading.");
-            if(!vMod.validate()) {
-                System.out.println("FAILED VELOCITY MODEL VALIDATION!");
-            }
-            vMod.printGMT(vMod.modelName + ".gmt");
-        } catch(IOException e) {
-            System.out.println("Tried to read!\n Caught IOException "
-                    + e.getMessage());
-        } catch(VelocityModelException e) {
-            System.out.println("Tried to read!\n Caught VelocityModelException "
-                    + e.getMessage());
-            e.printStackTrace();
-        } finally {
-            System.out.println("Done!\n");
-        }
+        return new VelocityModel(modelName,
+                                 getRadiusOfEarth(),
+                                 getMohoDepth(),
+                                 getCmbDepth(),
+                                 getIocbDepth(),
+                                 getMinRadius(),
+                                 getMaxRadius(),
+                                 spherical,
+                                 layers);
     }
 }
