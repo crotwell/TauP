@@ -1303,15 +1303,21 @@ public class SeismicPhase implements Serializable, Cloneable {
                             || name.charAt(offset + 1) == 'i') {
                         legs.add(name.substring(offset, offset + 2));
                         offset = offset + 2;
-                    } else if(Character.isDigit(name.charAt(offset + 1))) {
-                        int numDigits = 1;
-                        while(offset + numDigits + 1 < name.length()
-                                && Character.isDigit(name.charAt(offset
-                                        + numDigits + 1))) {
-                            numDigits++;
+                    } else if(Character.isDigit(name.charAt(offset + 1)) || name.charAt(offset+1) == '.') {
+                        String numString = name.substring(offset, offset + 1);
+                        offset++;
+                        while(Character.isDigit(name.charAt(offset))
+                                || name.charAt(offset) == '.') {
+                            numString += name.substring(offset, offset + 1);
+                            offset++;
                         }
-                        legs.add(name.substring(offset, offset + numDigits + 1));
-                        offset = offset + numDigits + 1;
+                        try {
+                            legs.add(numString);
+                        } catch(NumberFormatException e) {
+                            throw new TauModelException("Invalid phase name: "
+                                    + numString + "\n" + e.getMessage() + " in "
+                                    + name);
+                        }
                     } else {
                         throw new TauModelException("Invalid phase name:\n"
                                 + name.substring(offset) + " in " + name);
