@@ -273,66 +273,63 @@ public class TauP_Create {
             System.out.println("velocity mode: "+vMod);
     }
 
+    public TauModel createTauModel() throws VelocityModelException, SlownessModelException, TauModelException {
+        if(!vMod.getSpherical()) {
+            throw new SlownessModelException("Flat slowness model not yet implemented.");
+        }
+
+        SlownessModel.DEBUG = DEBUG;
+        sMod = new SphericalSModel(vMod,
+                                   Double.valueOf(toolProps.getProperty("taup.create.minDeltaP",
+                                                                        "0.1"))
+                                           .doubleValue(),
+                                   Double.valueOf(toolProps.getProperty("taup.create.maxDeltaP",
+                                                                        "11.0"))
+                                           .doubleValue(),
+                                   Double.valueOf(toolProps.getProperty("taup.create.maxDepthInterval",
+                                                                        "115.0"))
+                                           .doubleValue(),
+                                   Double.valueOf(toolProps.getProperty("taup.create.maxRangeInterval",
+                                                                        "1.75"))
+                                           .doubleValue(),
+                                   Double.valueOf(toolProps.getProperty("taup.create.maxInterpError",
+                                                                        "0.05"))
+                                           .doubleValue(),
+                                   Boolean.valueOf(toolProps.getProperty("taup.create.allowInnerCoreS",
+                                                                         "true"))
+                                           .booleanValue(),
+                                   SlownessModel.DEFAULT_SLOWNESS_TOLERANCE);
+        if(verbose) {
+            System.out.println("Parameters are:");
+            System.out.println("taup.create.minDeltaP = "
+                    + sMod.getMinDeltaP() + " sec / radian");
+            System.out.println("taup.create.maxDeltaP = "
+                    + sMod.getMaxDeltaP() + " sec / radian");
+            System.out.println("taup.create.maxDepthInterval = "
+                    + sMod.getMaxDepthInterval() + " kilometers");
+            System.out.println("taup.create.maxRangeInterval = "
+                    + sMod.getMaxRangeInterval() + " degrees");
+            System.out.println("taup.create.maxInterpError = "
+                    + sMod.getMaxInterpError() + " seconds");
+            System.out.println("taup.create.allowInnerCoreS = "
+                    + sMod.isAllowInnerCoreS());
+            System.out.println("Slow model " 
+                               + " " + sMod.getNumLayers(true) + " P layers,"
+                               + sMod.getNumLayers(false) + " S layers");
+        }
+        if(DEBUG) {
+            System.out.println(sMod);
+        }
+        TauModel.DEBUG = DEBUG;
+        // Creates tau model from slownesses
+        tMod = new TauModel(sMod);
+        return tMod;
+    }
+    
     public void start() throws SlownessModelException, TauModelException {
         try {
-            long currTime;
-            long prevTime = System.currentTimeMillis();
             String file_sep = System.getProperty("file.separator");
-            if(!vMod.getSpherical()) {
-                throw new SlownessModelException("Flat slowness model not yet implemented.");
-            }
-            SlownessModel.DEBUG = DEBUG;
-            sMod = new SphericalSModel(vMod,
-                                       Double.valueOf(toolProps.getProperty("taup.create.minDeltaP",
-                                                                            "0.1"))
-                                               .doubleValue(),
-                                       Double.valueOf(toolProps.getProperty("taup.create.maxDeltaP",
-                                                                            "11.0"))
-                                               .doubleValue(),
-                                       Double.valueOf(toolProps.getProperty("taup.create.maxDepthInterval",
-                                                                            "115.0"))
-                                               .doubleValue(),
-                                       Double.valueOf(toolProps.getProperty("taup.create.maxRangeInterval",
-                                                                            "1.75"))
-                                               .doubleValue(),
-                                       Double.valueOf(toolProps.getProperty("taup.create.maxInterpError",
-                                                                            "0.05"))
-                                               .doubleValue(),
-                                       Boolean.valueOf(toolProps.getProperty("taup.create.allowInnerCoreS",
-                                                                             "true"))
-                                               .booleanValue(),
-                                       SlownessModel.DEFAULT_SLOWNESS_TOLERANCE);
-            currTime = System.currentTimeMillis();
-            if(verbose) {
-                System.out.println("Parameters are:");
-                System.out.println("taup.create.minDeltaP = "
-                        + sMod.getMinDeltaP() + " sec / radian");
-                System.out.println("taup.create.maxDeltaP = "
-                        + sMod.getMaxDeltaP() + " sec / radian");
-                System.out.println("taup.create.maxDepthInterval = "
-                        + sMod.getMaxDepthInterval() + " kilometers");
-                System.out.println("taup.create.maxRangeInterval = "
-                        + sMod.getMaxRangeInterval() + " degrees");
-                System.out.println("taup.create.maxInterpError = "
-                        + sMod.getMaxInterpError() + " seconds");
-                System.out.println("taup.create.allowInnerCoreS = "
-                        + sMod.isAllowInnerCoreS());
-                System.out.println("Slow model time=" + (currTime - prevTime)
-                                   + " " + sMod.getNumLayers(true) + " P layers,"
-                                   + sMod.getNumLayers(false) + " S layers");
-            }
-            prevTime = currTime;
-            if(DEBUG) {
-                System.out.println(sMod);
-            }
-            TauModel.DEBUG = DEBUG;
-            // Creates tau model from slownesses
-            tMod = new TauModel(sMod);
-            currTime = System.currentTimeMillis();
-            if(verbose) {
-                System.out.println("T model time=" + (currTime - prevTime));
-            }
-            prevTime = currTime;
+            createTauModel();
             if(DEBUG)
                 System.out.println("Done calculating Tau branches.");
             if(DEBUG)
