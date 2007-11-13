@@ -505,7 +505,7 @@ public class TauModel implements Serializable {
      * Chapman p 1290.
      */
     public TauModel depthCorrect(double depth) throws TauModelException {
-        if(sourceDepth != 0.0) {
+        if(getSourceDepth() != 0.0) {
             throw new TauModelException("depthCorrect: Can't depth correct "
                     + "a tau model that is not for a surface source. Depth="
                     + sourceDepth);
@@ -535,8 +535,8 @@ public class TauModel implements Serializable {
                 if(tauBranches[0][branchNum].getTopDepth() == depth
                         || tauBranches[0][branchNum].getBotDepth() == depth) {
                     return new TauModel(spherical,
-                                        depth,
-                                        sourceBranch,
+                                        getSourceDepth(),
+                                        getSourceBranch(),
                                         noDisconDepths,
                                         mohoDepth,
                                         mohoBranch,
@@ -690,7 +690,7 @@ public class TauModel implements Serializable {
                 outIocbBranch++;
             }
             TauModel tMod = new TauModel(spherical,
-                                         depth,
+                                         getSourceDepth(),
                                          outSourceBranch,
                                          noDisconDepths,
                                          mohoDepth,
