@@ -1326,7 +1326,6 @@ public abstract class SlownessModel implements Serializable {
             System.out.println("coarseSample");
         }
         coarseSample();
-        System.out.println("Coarse model:\n\n"+this+"\n\n");
         boolean isOK = false;
         if(DEBUG) {
             isOK = validate();

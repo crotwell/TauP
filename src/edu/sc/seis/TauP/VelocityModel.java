@@ -1072,7 +1072,6 @@ public class VelocityModel implements Cloneable, Serializable {
                                           botQp,
                                           topQs,
                                           botQs);
-            System.out.println("Addind "+tempLayer);
             topDepth = botDepth;
             topPVel = botPVel;
             topSVel = botSVel;
