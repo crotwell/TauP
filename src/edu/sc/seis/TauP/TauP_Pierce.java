@@ -137,12 +137,11 @@ public class TauP_Pierce extends TauP_Time {
     /** override depthCorrect so that we can put the pierce depths in. */
     public void depthCorrect(double depth) throws TauModelException {
         TauModel tModOrig = tMod;
-        TauModel tModDepthOrig = tModDepth;
         boolean mustRecalc = false;
         // first see if tModDepth is correct as is
         // first check to make sure source depth is the same, and then
         // check to make sure each addDepth is in the model
-        if(tModDepth.sourceDepth == depth) {
+        if(tModDepth.getSourceDepth() == depth) {
             if(addDepth != null) {
                 double[] branchDepths = tModDepth.getBranchDepths();
                 for(int i = 0; i < addDepth.length; i++) {
@@ -174,18 +173,10 @@ public class TauP_Pierce extends TauP_Time {
             super.depthCorrect(depth);
             return;
         }
-        try {
-            if(addDepth != null) {
-                for(int i = 0; i < addDepth.length; i++) {
-                    tMod = tMod.splitBranch(addDepth[i]);
-                }
+        if(addDepth != null) {
+            for(int i = 0; i < addDepth.length; i++) {
+                tMod = tMod.splitBranch(addDepth[i]);
             }
-        } catch(TauModelException e) {
-            System.err.println("depthCorrect: caught TauModelException: "
-                    + e.getMessage() + "\nSkipping added depth"
-                    + " pierce points.");
-            tMod = tModOrig;
-            tMod = tModDepthOrig;
         }
         super.depthCorrect(depth);
         tMod = tModOrig;
@@ -431,4 +422,6 @@ public class TauP_Pierce extends TauP_Time {
             e.printStackTrace();
         }
     }
+    
+    private static final org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(TauP_Pierce.class);
 }
