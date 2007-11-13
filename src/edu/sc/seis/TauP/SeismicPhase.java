@@ -216,7 +216,7 @@ public class SeismicPhase implements Serializable, Cloneable {
      */
     public SeismicPhase(String name, TauModel tMod) {
         this.name = name;
-        this.sourceDepth = tMod.sourceDepth;
+        this.sourceDepth = tMod.getSourceDepth();
         this.tMod = tMod;
     }
 
@@ -1724,7 +1724,7 @@ public class SeismicPhase implements Serializable, Cloneable {
             currArrival.pierce[0] = new TimeDist(distRayParam,
                                                  0.0,
                                                  0.0,
-                                                 tMod.sourceDepth);
+                                                 tMod.getSourceDepth());
             numAdded = 1;
             /*
              * Loop from 0 but already done 0, so the pierce point when the ray
@@ -1942,7 +1942,7 @@ public class SeismicPhase implements Serializable, Cloneable {
             tempTimeDist[0] = new TimeDist(currArrival.getRayParam(),
                                            0.0,
                                            0.0,
-                                           tMod.sourceDepth);
+                                           tMod.getSourceDepth());
             pathList.add(tempTimeDist);
             try {
                 for(int i = 0; i < branchSeq.size(); i++) {
