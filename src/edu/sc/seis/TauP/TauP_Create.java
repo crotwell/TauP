@@ -62,7 +62,7 @@ public class TauP_Create {
 
     TauModel tMod;
 
-    boolean DEBUG = true;
+    boolean DEBUG = false;
 
     protected boolean GUI = false;
 
