@@ -45,7 +45,7 @@ public class SeismicPhase implements Serializable, Cloneable {
     public transient boolean verbose = false;
 
     /** Enables phases originating in core. */
-    public transient boolean expert = false;
+    public static transient boolean expert = false;
 
     /** TauModel to generate phase for. */
     protected TauModel tMod;
@@ -364,7 +364,7 @@ public class SeismicPhase implements Serializable, Cloneable {
 
     // Normal methods
     public void init() throws TauModelException {
-        legPuller();
+        legs = legPuller(name);
         createPuristName(tMod);
         parseName(tMod);
         sumBranches(tMod);
@@ -694,7 +694,8 @@ public class SeismicPhase implements Serializable, Cloneable {
             return;
         }
         /* Make a check for J legs if the model doesn not allow J */
-        if(name.indexOf('J') != -1 && !tMod.getSlownessModel().isAllowInnerCoreS()) {
+        if(name.indexOf('J') != -1
+                && !tMod.getSlownessModel().isAllowInnerCoreS()) {
             throw new TauModelException("'J' phases were not created for this model: "
                     + name);
         }
@@ -1233,9 +1234,9 @@ public class SeismicPhase implements Serializable, Cloneable {
      * @throws TauModelException
      *             if the phase name cannot be tokenized.
      */
-    protected void legPuller() throws TauModelException {
+    protected static ArrayList legPuller(String name) throws TauModelException {
         int offset = 0;
-        legs.clear();
+        ArrayList legs = new ArrayList();
         /* Special case for surface wave velocity. */
         if(name.endsWith("kmps")) {
             try {
@@ -1266,8 +1267,6 @@ public class SeismicPhase implements Serializable, Cloneable {
                             || name.charAt(offset + 1) == 'P'
                             || name.charAt(offset + 1) == 'S'
                             || name.charAt(offset + 1) == 'K'
-                            || name.charAt(offset + 1) == 'p'
-                            || name.charAt(offset + 1) == 's'
                             || name.charAt(offset + 1) == 'm'
                             || name.charAt(offset + 1) == 'c'
                             || name.charAt(offset + 1) == '^'
@@ -1275,6 +1274,12 @@ public class SeismicPhase implements Serializable, Cloneable {
                             || Character.isDigit(name.charAt(offset + 1))) {
                         legs.add(name.substring(offset, offset + 1));
                         offset++;
+                    } else if(name.charAt(offset + 1) == 'p'
+                            || name.charAt(offset + 1) == 's') {
+                        throw new TauModelException("Invalid phase name:\n"
+                                + name.charAt(offset)
+                                + " cannot be followed by "
+                                + name.charAt(offset + 1) + " in " + name);
                     } else if(name.charAt(offset + 1) == 'g'
                             || name.charAt(offset + 1) == 'b'
                             || name.charAt(offset + 1) == 'n') {
@@ -1303,7 +1308,8 @@ public class SeismicPhase implements Serializable, Cloneable {
                             || name.charAt(offset + 1) == 'i') {
                         legs.add(name.substring(offset, offset + 2));
                         offset = offset + 2;
-                    } else if(Character.isDigit(name.charAt(offset + 1)) || name.charAt(offset+1) == '.') {
+                    } else if(Character.isDigit(name.charAt(offset + 1))
+                            || name.charAt(offset + 1) == '.') {
                         String numString = name.substring(offset, offset + 1);
                         offset++;
                         while(Character.isDigit(name.charAt(offset))
@@ -1315,8 +1321,8 @@ public class SeismicPhase implements Serializable, Cloneable {
                             legs.add(numString);
                         } catch(NumberFormatException e) {
                             throw new TauModelException("Invalid phase name: "
-                                    + numString + "\n" + e.getMessage() + " in "
-                                    + name);
+                                    + numString + "\n" + e.getMessage()
+                                    + " in " + name);
                         }
                     } else {
                         throw new TauModelException("Invalid phase name:\n"
@@ -1344,9 +1350,12 @@ public class SeismicPhase implements Serializable, Cloneable {
                 }
             }
         legs.add(new String("END"));
-        if(!phaseValidate()) {
-            throw new TauModelException("Phase failed validation: " + name+"  "+validationFailMessage);
+        String validationMsg = phaseValidate(legs);
+        if(validationMsg != null) {
+            throw new TauModelException("Phase failed validation: " + name
+                    + "  " + validationMsg);
         }
+        return legs;
     }
 
     protected void createPuristName(TauModel tMod) {
@@ -1530,9 +1539,10 @@ public class SeismicPhase implements Serializable, Cloneable {
             }
         }
         if(name.indexOf("Sdiff") != -1 || name.indexOf("Pdiff") != -1) {
-            if(tMod.getSlownessModel().depthInHighSlowness(tMod.cmbDepth - 1e-10,
-                                             minRayParam,
-                                             (name.charAt(0) == 'P'))) {
+            if(tMod.getSlownessModel()
+                    .depthInHighSlowness(tMod.cmbDepth - 1e-10,
+                                         minRayParam,
+                                         (name.charAt(0) == 'P'))) {
                 /*
                  * No diffraction if there is a high slowness zone at the CMB.
                  */
@@ -1757,28 +1767,31 @@ public class SeismicPhase implements Serializable, Cloneable {
                                 .getBotDepth();
                     } else {
                         if(isPWave
-                                || tMod.getSlownessModel().depthInFluid((tMod.getTauBranch(branchNum,
-                                                                             isPWave)
-                                        .getTopDepth() + tMod.getTauBranch(branchNum,
-                                                                           isPWave)
-                                        .getBotDepth()) / 2.0)) {
-                            turnDepth = tMod.getSlownessModel().findDepth(distRayParam,
-                                                            tMod.getTauBranch(branchNum,
-                                                                              isPWave)
-                                                                    .getTopDepth(),
-                                                            tMod.getTauBranch(branchNum,
-                                                                              isPWave)
-                                                                    .getBotDepth(),
-                                                            PWAVE);
+                                || tMod.getSlownessModel()
+                                        .depthInFluid((tMod.getTauBranch(branchNum,
+                                                                         isPWave)
+                                                .getTopDepth() + tMod.getTauBranch(branchNum,
+                                                                                   isPWave)
+                                                .getBotDepth()) / 2.0)) {
+                            turnDepth = tMod.getSlownessModel()
+                                    .findDepth(distRayParam,
+                                               tMod.getTauBranch(branchNum,
+                                                                 isPWave)
+                                                       .getTopDepth(),
+                                               tMod.getTauBranch(branchNum,
+                                                                 isPWave)
+                                                       .getBotDepth(),
+                                               PWAVE);
                         } else {
-                            turnDepth = tMod.getSlownessModel().findDepth(distRayParam,
-                                                            tMod.getTauBranch(branchNum,
-                                                                              isPWave)
-                                                                    .getTopDepth(),
-                                                            tMod.getTauBranch(branchNum,
-                                                                              isPWave)
-                                                                    .getBotDepth(),
-                                                            isPWave);
+                            turnDepth = tMod.getSlownessModel()
+                                    .findDepth(distRayParam,
+                                               tMod.getTauBranch(branchNum,
+                                                                 isPWave)
+                                                       .getTopDepth(),
+                                               tMod.getTauBranch(branchNum,
+                                                                 isPWave)
+                                                       .getBotDepth(),
+                                               isPWave);
                         }
                     }
                 } catch(SlownessModelException e) {
@@ -2030,18 +2043,18 @@ public class SeismicPhase implements Serializable, Cloneable {
             }
         }
     }
-    
+
     private String validationFailMessage = "";
-    
+
     public String getValidationFailMessage() {
-    	return validationFailMessage;
+        return validationFailMessage;
     }
 
     /**
      * Performs consistency checks on the previously tokenized phase name stored
-     * in legs.
+     * in legs. Returns null if all is ok, a message if there is a problem.
      */
-    public boolean phaseValidate() {
+    public static String phaseValidate(ArrayList legs) {
         String currToken = (String)legs.get(0);
         String prevToken;
         boolean prevIsReflect = false;
@@ -2049,7 +2062,7 @@ public class SeismicPhase implements Serializable, Cloneable {
         if(legs.size() == 2
                 && (currToken.equals("Pdiff") || currToken.equals("Sdiff") || currToken.endsWith("kmps"))
                 && ((String)legs.get(1)).equals("END")) {
-            return true;
+            return null;
         }
         /* Check first leg. */
         if(!(currToken.equals("Pg") || currToken.equals("Pb")
@@ -2059,11 +2072,13 @@ public class SeismicPhase implements Serializable, Cloneable {
                 || currToken.equals("P") || currToken.equals("S")
                 || currToken.equals("p") || currToken.equals("s") || (expert && (currToken.equals("K")
                 || currToken.equals("k") || currToken.equals("I"))))) {
-        	validationFailMessage = "First leg ("+currToken+") must be one of Pg, Pb, Pn, Pdiff, Sg, Sb, Sn, Sdiff, P, S, p, s";
-        	if (expert) {
-        		validationFailMessage+=", K, k, I";
-        	}
-            return false;
+            String validationFailMessage = "First leg ("
+                    + currToken
+                    + ") must be one of Pg, Pb, Pn, Pdiff, Sg, Sb, Sn, Sdiff, P, S, p, s";
+            if(expert) {
+                validationFailMessage += ", K, k, I";
+            }
+            return validationFailMessage;
         }
         for(int i = 1; i < legs.size(); i++) {
             prevToken = currToken;
@@ -2073,8 +2088,8 @@ public class SeismicPhase implements Serializable, Cloneable {
                     || currToken.equals("m") || currToken.equals("c")
                     || currToken.equals("i")) {
                 if(prevIsReflect) {
-                	validationFailMessage = "Two reflections with no leg in between: "+prevToken+", "+currToken;
-                    return false;
+                    return "Two reflections with no leg in between: "
+                            + prevToken + ", " + currToken;
                 } else {
                     prevIsReflect = true;
                 }
@@ -2083,40 +2098,36 @@ public class SeismicPhase implements Serializable, Cloneable {
             }
             /* Check for "END" before the end. */
             if(prevToken.equals("END")) {
-            	validationFailMessage = "Legs ended but more tokens exist: "+currToken;
-                return false;
+                return "Legs ended but more tokens exist: " + currToken;
             }
             /* Check for P or S next to I or J */
             if((currToken.startsWith("P") || currToken.startsWith("S")
                     || currToken.startsWith("p") || currToken.startsWith("s")
                     || currToken.equals("m") || currToken.equals("c"))
                     && (prevToken.equals("I") || prevToken.equals("J") || prevToken.equals("i"))) {
-            	validationFailMessage = "Cannot have I,J,i followed by P,S,p,s,m,c: "+prevToken+", "+currToken;
-                return false;
+                return "Cannot have I,J,i followed by P,S,p,s,m,c: "
+                        + prevToken + ", " + currToken;
             }
             if((prevToken.startsWith("P") || prevToken.startsWith("S")
                     || prevToken.startsWith("p") || prevToken.startsWith("s")
                     || prevToken.equals("m") || prevToken.equals("c"))
                     && (currToken.equals("I") || currToken.equals("J") || currToken.equals("i"))) {
-            	validationFailMessage = "Cannot have P,S,p,s,m,c followed by I,J,i: "+prevToken+", "+currToken;
-                return false;
+                return "Cannot have P,S,p,s,m,c followed by I,J,i: "
+                        + prevToken + ", " + currToken;
             }
             /* Check for m next to K. */
             if(prevToken.equals("m") && currToken.equals("K")) {
-            	validationFailMessage = "Cannot have m followed by K";
-                return false;
+                return "Cannot have m followed by K";
             }
             if(currToken.equals("m") && prevToken.equals("K")) {
-            	validationFailMessage = "Cannot have K followed by m";
-                return false;
+                return "Cannot have K followed by m";
             }
         }
         /* Make sure legs end in "END". */
         if(!currToken.equals("END")) {
-        	validationFailMessage = "Last token must be END";
-            return false;
+            return "Last token must be END";
         }
-        return true;
+        return null;
     }
 
     public String toString() {

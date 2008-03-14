@@ -176,7 +176,7 @@ public class TauP_Time {
         return phases;
     }
 
-    public void setPhaseNames(String[] phaseNames) {
+    public void setPhaseNames(String[] phaseNames) throws TauModelException {
         this.phaseNames.removeAllElements();
         for(int i = 0; i < phaseNames.length; i++) {
             appendPhaseName(phaseNames[i]);
@@ -285,7 +285,8 @@ public class TauP_Time {
         return names;
     }
 
-    public synchronized void appendPhaseName(String phaseName) {
+    public synchronized void appendPhaseName(String phaseName)
+            throws TauModelException {
         List names = getPhaseNames(phaseName);
         Iterator it = names.iterator();
         while(it.hasNext()) {
@@ -451,20 +452,14 @@ public class TauP_Time {
      * T2, SS in T3, and S^410S in T5.
      */
     public void parsePhaseList(String phaseList) {
-        int offset = 0;
-        int phaseSepIndex;
-        String phaseEntry;
+        String phaseEntry = "";
+        phaseList = phaseList.trim();
         phaseList = phaseList.replace(' ', ',');
         // remove any empty phases, ie two commas next to each other
         // should be replaced with one comma
-        phaseSepIndex = phaseList.indexOf(",,", offset);
-        while(phaseSepIndex != -1) {
-            phaseList = phaseList.substring(0, phaseSepIndex)
-                    + phaseList.substring(phaseSepIndex + 1);
-            phaseSepIndex = phaseList.indexOf(",,", offset);
-        }
-        // remove comma at begining
-        if(phaseList.charAt(0) == ',') {
+        phaseList = phaseList.replaceAll(",,+", ",");
+        // remove comma at beginning
+        if(phaseList.startsWith(",")) {
             if(phaseList.length() > 1) {
                 phaseList = phaseList.substring(1);
             } else {
@@ -478,44 +473,39 @@ public class TauP_Time {
             // returned from the previous if
             phaseList = phaseList.substring(0, phaseList.length() - 1);
         }
-        while(offset < phaseList.length()) {
-            phaseSepIndex = phaseList.indexOf(',', offset);
-            if(phaseSepIndex != -1) {
-                phaseEntry = phaseList.substring(offset, phaseSepIndex);
-                offset = phaseSepIndex + 1;
-            } else {
-                phaseEntry = phaseList.substring(offset);
-                offset = phaseList.length();
-            }
-            phaseSepIndex = phaseEntry.indexOf('-');
-            if(phaseSepIndex == -1) {
-                /* no optional dash argument, so just add the name. */
-                appendPhaseName(phaseEntry);
-            } else {
-                if(phaseSepIndex == phaseEntry.length() - 2
-                        && Character.isDigit(phaseEntry.charAt(phaseEntry.length() - 1))) {
-                    /*
-                     * There is an optional argument, so store it and the phase
-                     * name.
-                     */
-                    appendPhaseName(new PhaseName(phaseEntry.substring(0,
-                                                                       phaseSepIndex),
-                                                  Integer.valueOf(phaseEntry.substring(phaseSepIndex + 1,
-                                                                                       phaseEntry.length()))
-                                                          .intValue()));
-                } else if(phaseSepIndex == phaseEntry.length() - 2
-                        && phaseEntry.charAt(phaseEntry.length() - 1) == 'a') {
-                    /*
-                     * There is an optional argument, use 10 for sac A, so store
-                     * it and the phase name.
-                     */
-                    appendPhaseName(new PhaseName(phaseEntry.substring(0,
-                                                                       phaseSepIndex),
-                                                  TauP_SetSac.A_HEADER));
+        String[] namesInList = phaseList.split(",");
+        for(int i = 0; i < namesInList.length; i++) {
+            String[] phaseAndHeader = namesInList[i].split("-");
+            try {
+                if(phaseAndHeader.length == 1) {
+                    /* no optional dash argument, so just add the name. */
+                    appendPhaseName(phaseAndHeader[0]);
                 } else {
-                    Alert.warning("Problem with phase=" + phaseEntry,
-                                  "Skipping this phase.");
+                    if(phaseAndHeader[1].length() == 1
+                            && Character.isDigit(phaseAndHeader[1].charAt(0))) {
+                        /*
+                         * There is an optional argument, so store it and the
+                         * phase name.
+                         */
+                        appendPhaseName(new PhaseName(phaseAndHeader[0],
+                                                      Integer.valueOf(phaseAndHeader[1])
+                                                              .intValue()));
+                    } else if(phaseAndHeader[1].length() == 1
+                            && phaseEntry.charAt(phaseEntry.length() - 1) == 'a') {
+                        /*
+                         * There is an optional argument, use 10 for sac A, so
+                         * store it and the phase name.
+                         */
+                        appendPhaseName(new PhaseName(phaseAndHeader[0],
+                                                      TauP_SetSac.A_HEADER));
+                    } else {
+                        Alert.warning("Problem with phase=" + phaseEntry,
+                                      "Skipping this phase.");
+                    }
                 }
+            } catch(TauModelException e) {
+                Alert.warning("Problem with phase=" + phaseEntry + " "
+                        + e.getMessage(), "Skipping this phase: ");
             }
         }
     }
@@ -726,7 +716,7 @@ public class TauP_Time {
      * correction of the model is not already corrected to that depth.
      */
     public void depthCorrect(double depth) throws TauModelException {
-        logger.debug("before depth correct: "+tMod.getSourceDepth());
+        logger.debug("before depth correct: " + tMod.getSourceDepth());
         if(tModDepth == null || tModDepth.getSourceDepth() != depth) {
             tModDepth = tMod.depthCorrect(depth);
             clearArrivals();
@@ -890,7 +880,7 @@ public class TauP_Time {
                 .doubleValue();
         if(tMod == null
                 || tMod.getVelocityModel().getModelName() != toolProps.getProperty("taup.model.name",
-                                                                          "iasp91")) {
+                                                                                   "iasp91")) {
             modelName = toolProps.getProperty("taup.model.name", "iasp91");
             try {
                 readTauModel();
@@ -923,12 +913,12 @@ public class TauP_Time {
                 + "a for new azimuth\nb for new back azimuth\n"
                 + "m for new model or \nq to quit.\n");
     }
-    
+
     void doLotsODepths() {
         for(int ii = 0; ii < 1000; ii++) {
-            try{
-            depthCorrect(Math.random()*200);
-            }catch(TauModelException e) {
+            try {
+                depthCorrect(Math.random() * 200);
+            } catch(TauModelException e) {
                 throw new RuntimeException(e);
             }
         }
@@ -975,7 +965,7 @@ public class TauP_Time {
             do {
                 switch(readMode){
                     case 'x':
-                    doLotsODepths();
+                        doLotsODepths();
                     case 'h':
                         // new source depth
                         System.out.print("Enter Depth: ");
@@ -1389,6 +1379,6 @@ public class TauP_Time {
             e.printStackTrace();
         }
     }
-    
+
     private static final org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(TauP_Time.class);
 }

@@ -46,12 +46,14 @@ public class PhaseName implements Serializable {
     /** sac t header to be associated with the phase */
     public int sacTNum = -1;
 
-    public PhaseName(String name) {
+    public PhaseName(String name) throws TauModelException {
         this.name = name;
+        // check name is valid
+        SeismicPhase.legPuller(name);
     }
 
-    public PhaseName(String name, int sacTNum) {
-        this.name = name;
+    public PhaseName(String name, int sacTNum) throws TauModelException {
+        this(name);
         this.sacTNum = sacTNum;
     }
 
