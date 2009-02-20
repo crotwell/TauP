@@ -1056,7 +1056,8 @@ public class SeismicPhase implements Serializable, Cloneable {
                                     isPWave,
                                     TURN);
                         maxRayParam = minRayParam;
-                        if(nextLeg.equals("END")) {
+                        if(nextLeg.equals("END") || nextLeg.startsWith("P")
+                                || nextLeg.startsWith("S")) {
                             addToBranch(tMod,
                                         currBranch,
                                         0,
@@ -1796,10 +1797,8 @@ public class SeismicPhase implements Serializable, Cloneable {
                     }
                 } catch(SlownessModelException e) {
                     // shouldn't happen but...
-                    System.err.println("SeismicPhase.calcPierce: Caught SlownessModelException: "
-                            + e.getMessage());
-                    e.printStackTrace();
-                    turnDepth = 0.0;
+                    throw new RuntimeException("SeismicPhase.calcPierce: Caught SlownessModelException. "
+                            , e);
                 }
                 if(name.indexOf("Pdiff") != -1 || name.indexOf("Pn") != -1
                         || name.indexOf("Sdiff") != -1
@@ -1848,92 +1847,84 @@ public class SeismicPhase implements Serializable, Cloneable {
                     }
                 }
             }
-            /*
-             * Here we worry about the special case for head and diffracted
-             * waves. It is assumed that a phase can be a diffracted wave or a
-             * head wave, but not both. Nor can it be a head wave or diffracted
-             * wave for both P and S.
-             */
             if(name.indexOf("Pdiff") != -1 || name.indexOf("Pn") != -1
                     || name.indexOf("Sdiff") != -1 || name.indexOf("Sn") != -1) {
-                TimeDist[] diffTD;
-                int i = 0;
-                if(name.indexOf("Pdiff") != -1 || name.indexOf("Sdiff") != -1) {
-                    diffTD = new TimeDist[numAdded + 1];
-                    while(currArrival.pierce[i].depth != tMod.cmbDepth) {
-                        diffTD[i] = currArrival.pierce[i];
-                        i++;
-                    }
-                    diffTD[i] = currArrival.pierce[i];
-                    double diffractDist = currArrival.getDist() - dist[0];
-                    double diffractTime = diffractDist * diffTD[i].p;
-                    diffTD[i + 1] = new TimeDist(diffTD[i].p,
-                                                 diffTD[i].time + diffractTime,
-                                                 diffTD[i].dist + diffractDist,
-                                                 tMod.cmbDepth);
-                    i++;
-                    System.arraycopy(currArrival.pierce,
-                                     i,
-                                     diffTD,
-                                     i + 1,
-                                     numAdded - i);
-                    for(int j = i + 1; j < diffTD.length; j++) {
-                        diffTD[j].dist += diffractDist;
-                        diffTD[j].time += diffractTime;
-                    }
-                    numAdded++;
-                } else {
-                    // now deal with Pn and Sn case
-                    int numFound = 0;
-                    int indexInString = -1;
-                    // can't have both Pn and Sn in a phase, so one of these
-                    // should do nothing
-                    while((indexInString = name.indexOf("Pn", indexInString + 1)) != -1) {
-                        numFound++;
-                    }
-                    while((indexInString = name.indexOf("Sn", indexInString + 1)) != -1) {
-                        numFound++;
-                    }
-                    double refractDist = currArrival.getDist() - dist[0];
-                    diffTD = new TimeDist[numAdded + numFound];
-                    int j = 0;
-                    while(j < numFound) {
-                        while(currArrival.pierce[i].depth != tMod.mohoDepth) {
-                            diffTD[i + j] = currArrival.pierce[i];
-                            diffTD[i + j].dist += j * refractDist / numFound;
-                            i++;
-                        }
-                        diffTD[i + j] = currArrival.pierce[i];
-                        diffTD[i + j].dist += j * refractDist / numFound;
-                        diffTD[i + j + 1] = new TimeDist(diffTD[i].p,
-                                                         diffTD[i + j].time
-                                                                 + refractDist
-                                                                 / numFound
-                                                                 * diffTD[i].p,
-                                                         diffTD[i + j].dist
-                                                                 + refractDist
-                                                                 / numFound,
-                                                         tMod.mohoDepth);
-                        i++;
-                        j++;
-                    }
-                    System.arraycopy(currArrival.pierce,
-                                     i,
-                                     diffTD,
-                                     i + j,
-                                     numAdded - i);
-                    for(int k = i + j; k < diffTD.length; k++) {
-                        diffTD[k].dist += refractDist;
-                    }
-                    numAdded += j;
-                }
-                currArrival.pierce = diffTD;
+                currArrival.pierce = handleHeadOrDiffractedWave(currArrival, numAdded);;
             } else {
                 TimeDist[] temp = new TimeDist[numAdded];
                 System.arraycopy(currArrival.pierce, 0, temp, 0, numAdded);
                 currArrival.pierce = temp;
             }
         }
+    }
+
+    /**
+     * Here we worry about the special case for head and diffracted
+     * waves. It is assumed that a phase can be a diffracted wave or a
+     * head wave, but not both. Nor can it be a head wave or diffracted
+     * wave for both P and S.
+     */
+    TimeDist[] handleHeadOrDiffractedWave(Arrival currArrival, int numAdded) {
+        String[] phaseSegments = new String[] {"Pn", "Sn", "Pdiff", "Sdiff"};
+        String phaseSeg = "";
+        for (int i = 0; i < phaseSegments.length; i++) {
+            if (name.indexOf(phaseSegments[i]) != -1) {
+                phaseSeg = phaseSegments[i];
+                break;
+            }
+        }
+        if (phaseSeg.equals("")) {throw new RuntimeException("no head/diff segment in "+name); }
+        double headDepth;
+        if (phaseSeg.equals("Pn") || phaseSeg.equals("Sn")) {
+            headDepth = tMod.getMohoDepth();
+        } else {
+            headDepth = tMod.getCmbDepth();
+        }
+        TimeDist[] diffTD;
+        int i = 0;
+        int numFound = 0;
+        int indexInString = -1;
+        // can't have both Pxxx and Sxxx in a head wave phase, so one of these
+        // should do nothing
+        while((indexInString = name.indexOf(phaseSeg, indexInString + 1)) != -1) {
+            numFound++;
+        }
+        double refractDist = currArrival.getDist() - dist[0];
+        double refractTime = refractDist*currArrival.getRayParam();
+        diffTD = new TimeDist[numAdded + numFound];
+        int j = 0;
+        while(j < numFound) {
+            while(currArrival.pierce[i].depth != headDepth) {
+                diffTD[i + j] = currArrival.pierce[i];
+                diffTD[i + j].dist += j * refractDist / numFound;
+                diffTD[i + j].time += j * refractTime / numFound;
+                i++;
+            }
+            diffTD[i + j] = currArrival.pierce[i];
+            diffTD[i + j].dist += j * refractDist / numFound;
+            diffTD[i + j].time += j * refractTime / numFound;
+            diffTD[i + j + 1] = new TimeDist(diffTD[i].p,
+                                             diffTD[i + j].time
+                                                     + refractTime
+                                                     / numFound,
+                                             diffTD[i + j].dist
+                                                     + refractDist
+                                                     / numFound,
+                                             headDepth);
+            i++;
+            j++;
+        }
+        System.arraycopy(currArrival.pierce,
+                         i,
+                         diffTD,
+                         i + j,
+                         numAdded - i);
+        for(int k = i + j; k < diffTD.length; k++) {
+            diffTD[k].dist += refractDist;
+            diffTD[k].time += refractTime;
+        }
+        numAdded += j;
+        return diffTD;
     }
 
     /** calculates the path this phase takes through the earth model. */
