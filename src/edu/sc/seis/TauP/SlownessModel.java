@@ -1602,11 +1602,10 @@ public abstract class SlownessModel implements Serializable {
         TimeDist prevPrevTD;
         boolean isCurrOK;
         boolean isPrevOK;
-        boolean currWaveType, otherWaveType; // TRUE=P and FALSE=S
+        boolean currWaveType; // TRUE=P and FALSE=S
         /* do SWAVE and then PWAVE, waveN is ONLY used on the next 2 lines */
         for(int waveN = 0; waveN < 2; waveN++) {
             currWaveType = waveN == 0 ? SWAVE : PWAVE;
-            otherWaveType = !currWaveType;
             prevPrevTD = null;
             prevTD = null;
             currTD = null;
