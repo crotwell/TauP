@@ -36,7 +36,6 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
 
-// import org.apache.log4j.BasicConfigurator;
 /**
  * Calculate travel times for different branches using linear interpolation
  * between known slowness samples.
@@ -714,7 +713,6 @@ public class TauP_Time {
      * correction of the model is not already corrected to that depth.
      */
     public void depthCorrect(double depth) throws TauModelException {
-        logger.debug("before depth correct: " + tMod.getSourceDepth());
         if(tModDepth == null || tModDepth.getSourceDepth() != depth) {
             tModDepth = tMod.depthCorrect(depth);
             clearArrivals();
@@ -1375,5 +1373,4 @@ public class TauP_Time {
         }
     }
 
-    private static final org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(TauP_Time.class);
 }

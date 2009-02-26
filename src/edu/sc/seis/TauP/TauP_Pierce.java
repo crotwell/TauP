@@ -420,5 +420,4 @@ public class TauP_Pierce extends TauP_Time {
         }
     }
     
-    private static final org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(TauP_Pierce.class);
 }
