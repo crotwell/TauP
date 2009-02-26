@@ -39,13 +39,13 @@ import java.util.ArrayList;
 public class SeismicPhase implements Serializable, Cloneable {
 
     /** Enables debugging output. */
-    public transient boolean DEBUG = false;
+    public transient boolean DEBUG = TauP_Time.DEBUG;
 
     /** Enables verbose output. */
     public transient boolean verbose = false;
 
     /** Enables phases originating in core. */
-    public static transient boolean expert = false;
+    public static transient boolean expert = TauP_Time.expert;
 
     /** TauModel to generate phase for. */
     protected TauModel tMod;
@@ -213,11 +213,13 @@ public class SeismicPhase implements Serializable, Cloneable {
      *            String containing a name of the phase.
      * @param tMod
      *            Tau model to be used to construct the phase.
+     * @throws TauModelException 
      */
-    public SeismicPhase(String name, TauModel tMod) {
+    public SeismicPhase(String name, TauModel tMod) throws TauModelException {
         this.name = name;
         this.sourceDepth = tMod.getSourceDepth();
         this.tMod = tMod;
+        init();
     }
 
     // Accessor methods
@@ -245,14 +247,6 @@ public class SeismicPhase implements Serializable, Cloneable {
 
     public TauModel getTauModel() {
         return tMod;
-    }
-
-    public void setDEBUG(boolean DEBUG) {
-        this.DEBUG = DEBUG;
-    }
-
-    public void setEXPERT(boolean EXPERT) {
-        this.expert = EXPERT;
     }
 
     public double getMinDistance() {
@@ -363,7 +357,7 @@ public class SeismicPhase implements Serializable, Cloneable {
     }
 
     // Normal methods
-    public void init() throws TauModelException {
+    private void init() throws TauModelException {
         legs = legPuller(name);
         createPuristName(tMod);
         parseName(tMod);
@@ -2003,7 +1997,17 @@ public class SeismicPhase implements Serializable, Cloneable {
                                                          / numFound,
                                                  tMod.mohoDepth);
                         pathList.add(headTD);
-                    }
+                    } 
+                }
+                if (name.indexOf("kmps") != -1) {
+                    // kmps phases have no branches, so need to end them at the arrival distance
+                    TimeDist[] headTD = new TimeDist[1];
+                    headTD[0] = new TimeDist(currArrival.getRayParam(),
+                                             currArrival.getDist()
+                                             * currArrival.getRayParam(),
+                                             currArrival.getDist(),
+                                             0);
+                    pathList.add(headTD);
                 }
                 arraySize = 0;
                 for(int i = 0; i < pathList.size(); i++) {
@@ -2158,7 +2162,6 @@ public class SeismicPhase implements Serializable, Cloneable {
                 offset = 0;
                 System.out.println("-----");
                 SeismicPhase sp = new SeismicPhase(args[i], tModDepth);
-                sp.init();
                 System.out.println(sp);
                 sp.dump();
             }
