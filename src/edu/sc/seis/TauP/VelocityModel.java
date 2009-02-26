@@ -36,7 +36,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.StreamTokenizer;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class defines basic classes to store and manipulate a velocity model.
@@ -57,7 +58,7 @@ public class VelocityModel implements Cloneable, Serializable {
                          double minRadius,
                          double maxRadius,
                          boolean spherical,
-                         Vector layer) {
+                         List<VelocityLayer> layer) {
         super();
         this.modelName = modelName;
         this.radiusOfEarth = radiusOfEarth;
@@ -131,7 +132,7 @@ public class VelocityModel implements Cloneable, Serializable {
      * @see java.util.Vector
      * @see edu.sc.seis.TauP.VelocityLayer
      */
-    protected Vector layer = new Vector(vectorLength);
+    protected List<VelocityLayer> layer;
 
     /*----------------------------------------
      METHODS
@@ -259,11 +260,11 @@ public class VelocityModel implements Cloneable, Serializable {
     }
 
     public VelocityLayer getVelocityLayerClone(int layerNum) {
-        return (VelocityLayer)((VelocityLayer)layer.elementAt(layerNum)).clone();
+        return (VelocityLayer)(layer.get(layerNum)).clone();
     }
 
     public VelocityLayer getVelocityLayer(int layerNum) {
-        return (VelocityLayer)layer.elementAt(layerNum);
+        return layer.get(layerNum);
     }
 
     /** Returns the number of layers in this velocity model. */
@@ -460,7 +461,7 @@ public class VelocityModel implements Cloneable, Serializable {
         VelocityLayer topLayer = getVelocityLayer(topLayerNum);
         int botLayerNum = layerNumberAbove(newLayers[newLayers.length - 1].getBotDepth());
         VelocityLayer botLayer = getVelocityLayer(botLayerNum);
-        Vector outLayers = new Vector();
+        List<VelocityLayer> outLayers = new ArrayList<VelocityLayer>();
         outLayers.addAll(layer);
         try {
             if(matchTop) {
@@ -526,7 +527,7 @@ public class VelocityModel implements Cloneable, Serializable {
             newVLayer.setTopPVelocity(topLayer.getBotPVelocity());
             newVLayer.setTopSVelocity(topLayer.getBotSVelocity());
             newVLayer.setTopDepth(topLayer.getBotDepth());
-            outLayers.insertElementAt(newVLayer, topLayerNum + 1);
+            outLayers.add(topLayerNum+1, newVLayer);
             botLayerNum++;
             topLayerNum++;
         }
@@ -548,14 +549,14 @@ public class VelocityModel implements Cloneable, Serializable {
             newVLayer.setTopPVelocity(botLayer.getBotPVelocity());
             newVLayer.setTopSVelocity(botLayer.getBotSVelocity());
             newVLayer.setTopDepth(botLayer.getBotDepth());
-            outLayers.insertElementAt(newVLayer, botLayerNum + 1);
+            outLayers.add(botLayerNum+1, newVLayer);
             botLayerNum++;
         }
         for(int i = topLayerNum; i <= botLayerNum; i++) {
-            outLayers.removeElementAt(topLayerNum);
+            outLayers.remove(topLayerNum);
         }
         for(int i = 0; i < newLayers.length; i++) {
-            outLayers.insertElementAt(newLayers[i], topLayerNum + i);
+            outLayers.add(topLayerNum+i, newLayers[i]);
         }
         VelocityModel outVMod = new VelocityModel(name,
                                                   getRadiusOfEarth(),
@@ -881,7 +882,7 @@ public class VelocityModel implements Cloneable, Serializable {
         } else {
             tokenIn.nextToken();
         }
-        Vector layers = new Vector();
+        List<VelocityLayer> layers = new ArrayList<VelocityLayer>();
         while(tokenIn.ttype != StreamTokenizer.TT_EOF) {
             // Loop until we hit the end of file
             botDepth = tokenIn.nval;
@@ -922,7 +923,7 @@ public class VelocityModel implements Cloneable, Serializable {
                  * Don't use zero thickness layers, first order discontinuities
                  * are taken care of by storing top and bottom depths.
                  */
-                layers.addElement(tempLayer);
+                layers.add(tempLayer);
                 myLayerNumber++;
             }
         }
@@ -1019,7 +1020,7 @@ public class VelocityModel implements Cloneable, Serializable {
         double mohoDepth = DEFAULT_MOHO;
         double cmbDepth = DEFAULT_CMB;
         double iocbDepth = DEFAULT_IOCB;
-        Vector layers = new Vector();
+        List<VelocityLayer> layers = new ArrayList<VelocityLayer>();
         while(tokenIn.ttype != StreamTokenizer.TT_EOF) {
             // Loop until we hit the end of file
             if(tokenIn.ttype == StreamTokenizer.TT_WORD) {
@@ -1090,7 +1091,7 @@ public class VelocityModel implements Cloneable, Serializable {
                  * Don't use zero thickness layers, first order discontinuities
                  * are taken care of by storing top and bottom depths.
                  */
-                layers.addElement(tempLayer);
+                layers.add(tempLayer);
                 myLayerNumber++;
             }
         }
@@ -1168,7 +1169,7 @@ public class VelocityModel implements Cloneable, Serializable {
     public VelocityModel earthFlattenTransform() throws VelocityModelException {
         VelocityLayer newLayer, oldLayer;
         boolean spherical = false;
-        Vector layers = new Vector(vectorLength);
+        List<VelocityLayer> layers = new ArrayList<VelocityLayer>(vectorLength);
         for(int i = 0; i < getNumLayers(); i++) {
             oldLayer = getVelocityLayer(i);
             newLayer = new VelocityLayer(i,
@@ -1190,7 +1191,7 @@ public class VelocityModel implements Cloneable, Serializable {
                                          radiusOfEarth
                                                  * oldLayer.getBotSVelocity()
                                                  / oldLayer.getBotDepth());
-            layers.addElement(newLayer);
+            layers.add(newLayer);
         }
         return new VelocityModel(modelName,
                                  getRadiusOfEarth(),
