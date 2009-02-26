@@ -1844,6 +1844,12 @@ public class SeismicPhase implements Serializable, Cloneable {
             if(name.indexOf("Pdiff") != -1 || name.indexOf("Pn") != -1
                     || name.indexOf("Sdiff") != -1 || name.indexOf("Sn") != -1) {
                 currArrival.pierce = handleHeadOrDiffractedWave(currArrival, numAdded);;
+            } else if(name.indexOf("kmps") != -1) {
+                currArrival.pierce[1] = new TimeDist(distRayParam,
+                                                     currArrival.getTime(),
+                                                     currArrival.getDist(),
+                                                     0);
+                numAdded = 2;
             } else {
                 TimeDist[] temp = new TimeDist[numAdded];
                 System.arraycopy(currArrival.pierce, 0, temp, 0, numAdded);
