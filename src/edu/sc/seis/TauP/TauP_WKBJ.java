@@ -149,7 +149,6 @@ public class TauP_WKBJ extends TauP_Time {
                     + ((SeismicPhase)phases.elementAt(phaseNum)).getName()
                     + ".");
             phase = (SeismicPhase)phases.elementAt(phaseNum);
-            phase.setDEBUG(DEBUG);
             phase.calcTime(degrees);
             minRayParam = phase.getMinRayParam();
             // rtCoeff = new ReflTransCoefficient(phase);

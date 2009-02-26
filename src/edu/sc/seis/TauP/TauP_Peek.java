@@ -74,7 +74,6 @@ public class TauP_Peek {
             tModDepth = peek.tMod;
             // just so sp is initialized for compiler
             sp = new SeismicPhase("S", tModDepth);
-            sp.init();
             StreamTokenizer tokenIn = new StreamTokenizer(new InputStreamReader(System.in));
             tokenIn.parseNumbers();
             System.out.print("seismic (p)hase or (t)au model or (s)lowness model "
@@ -162,8 +161,6 @@ public class TauP_Peek {
                         System.out.println("Enter phase name");
                         tokenIn.nextToken();
                         sp = new SeismicPhase(tokenIn.sval, tModDepth);
-                        sp.setDEBUG(true);
-                        sp.init();
                         System.out.println("Enter degrees");
                         break;
                     case 'b':

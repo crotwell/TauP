@@ -53,7 +53,7 @@ public class TauP_Time {
     public boolean verbose = false;
 
     /** Turns on expert mode. */
-    public boolean expert = false;
+    public static boolean expert = false;
 
     protected String modelName = "iasp91";
 
@@ -700,8 +700,6 @@ public class TauP_Time {
         arrivals.removeAllElements();
         for(int phaseNum = 0; phaseNum < phases.size(); phaseNum++) {
             phase = (SeismicPhase)phases.elementAt(phaseNum);
-            phase.setDEBUG(DEBUG);
-            phase.setEXPERT(expert);
             phase.calcTime(degrees);
             phaseArrivals = phase.getArrivals();
             for(int i = 0; i < phaseArrivals.length; i++) {
@@ -758,9 +756,6 @@ public class TauP_Time {
                 // didn't find it precomputed, so recalculate
                 try {
                     seismicPhase = new SeismicPhase(tempPhaseName, tModDepth);
-                    seismicPhase.setDEBUG(DEBUG);
-                    seismicPhase.setEXPERT(expert);
-                    seismicPhase.init();
                     newPhases.addElement(seismicPhase);
                     if(verbose) {
                         Alert.info(seismicPhase.toString());
