@@ -6,7 +6,7 @@ import java.util.List;
 import junit.framework.TestCase;
 
 
-public class ConstantModel extends TestCase {
+public class ConstantModelTest extends TestCase {
 
     protected void setUp() throws Exception {
         float step = .00000001f;
