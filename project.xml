@@ -43,10 +43,6 @@ The TauP Toolkit, flexible seismic traveltime utilities.
     </developers>
   <dependencies>
     <dependency>
-      <id>log4j</id>
-      <version>1.2.15</version>
-    </dependency>
-    <dependency>
       <artifactId>seisFile</artifactId>
       <groupId>seisFile</groupId>
       <version>1.0.4beta</version>
@@ -55,6 +51,21 @@ The TauP Toolkit, flexible seismic traveltime utilities.
   <build>
     <nagEmailAddress>jaster@seis.sc.edu</nagEmailAddress>
     <unitTestSourceDirectory>test/unit</unitTestSourceDirectory>
+    <unitTest>
+            <includes>
+                <include>edu/**/*Test.java</include>
+            </includes>
+            <resources>
+                <resource>
+                    <directory>test/unit/edu/sc/seis/TauP</directory>
+                    <targetPath>edu/sc/seis/TauP</targetPath>
+                    <includes>
+                        <include>*.txt</include>
+                    </includes>
+                    <filtering>false</filtering>
+                </resource>
+            </resources>
+    </unitTest>
     <sourceDirectory>src</sourceDirectory>
     <resources>
        <resource>
