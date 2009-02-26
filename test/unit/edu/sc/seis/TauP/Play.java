@@ -21,7 +21,7 @@ import java.io.*;
 import java.util.*;
 //import java.util.zip.*;
 
-public class Test
+public class Play
 {
     protected TauModel tMod;
     protected transient TauModel tModDepth;
@@ -37,7 +37,7 @@ public class Test
     protected static final int ACTION_REFLECTION_FREE_SURFACE = 2;
     protected static final int ACTION_TRANSMISSION = 3;
 	
-    public Test()
+    public Play()
     {
 	try {
 	    toolProps = PropertyLoader.load();
@@ -48,7 +48,7 @@ public class Test
 	outForms = new Outputs(toolProps);
     }
 	
-    public Test( String modelName, String stringPhaseName, double deg, double depth ) throws TauModelException
+    public Play( String modelName, String stringPhaseName, double deg, double depth ) throws TauModelException
     {
 	this();
 	
@@ -353,7 +353,7 @@ public class Test
     public static void main(String[] args) throws FileNotFoundException, IOException, StreamCorruptedException, ClassNotFoundException, OptionalDataException, NoSuchLayerException, NoSuchMatPropException
     {
 	try {
-	    Test test = new Test( "prem", "P", 90.0, 0 );
+	    Play test = new Play( "prem", "P", 90.0, 0 );
 	    test.start();
 	} catch (TauModelException e) {
 	    Alert.error("Caught TauModelException", e.getMessage());
