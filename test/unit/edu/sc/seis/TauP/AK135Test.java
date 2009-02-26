@@ -3,7 +3,6 @@ package edu.sc.seis.TauP;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -12,7 +11,7 @@ import junit.framework.TestCase;
 
 /** test data from http://rses.anu.edu.au/~brian/AK135tables.pdf
  */
-public class AK135Test extends TestCase {
+public class AK135Test extends TestCase { 
 
     protected void setUp() throws Exception {
         taup = new TauP_Time("ak135");
@@ -23,8 +22,10 @@ public class AK135Test extends TestCase {
         readTable("ak135_S_deep.txt", "S");
     }
 
-    public void testTable() throws TauModelException {
+    public void testTableP() throws TauModelException {
         doTable("P");
+    }
+    public void testTableS() throws TauModelException {
         doTable("S");
     }
 
