@@ -67,7 +67,6 @@ public class Test
 	    //sourceDepth = depth;
 	    tMod.depthCorrect( depth );
 	    phase = new SeismicPhase( stringPhaseName, tMod );
-	    phase.init();
 	    
         } catch (FileNotFoundException e) {
             throw new TauModelException("FileNotFoundException:"+e.getMessage());
