@@ -163,6 +163,4 @@ public class TauModelLoader {
                     + modelName);
         }
     }
-    // private static final org.apache.log4j.Logger logger =
-    // org.apache.log4j.Logger.getLogger(TauModelLoader.class);
 }
