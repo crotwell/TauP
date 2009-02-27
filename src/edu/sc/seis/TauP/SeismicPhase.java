@@ -1930,7 +1930,7 @@ public class SeismicPhase implements Serializable, Cloneable {
     /** calculates the path this phase takes through the earth model. */
     public void calcPath(TauModel tMod) {
         TimeDist[] tempTimeDist;
-        ArrayList pathList = new ArrayList(10);
+        ArrayList<TimeDist[]> pathList = new ArrayList<TimeDist[]>(10);
         int arraySize;
         Arrival currArrival;
         int branchNum;
@@ -1968,7 +1968,7 @@ public class SeismicPhase implements Serializable, Cloneable {
                      * Here we worry about the special case for head and
                      * diffracted waves.
                      */
-                    if(branchNum == tMod.cmbBranch - 1
+                    if(branchNum == tMod.cmbBranch - 1 && i < branchSeq.size()-1
                             && ((Integer)branchSeq.get(i + 1)).intValue() == tMod.cmbBranch - 1
                             && (name.indexOf("Pdiff") != -1 || name.indexOf("Sdiff") != -1)) {
                         TimeDist[] diffTD = new TimeDist[1];
@@ -1979,7 +1979,7 @@ public class SeismicPhase implements Serializable, Cloneable {
                                                          - dist[0],
                                                  tMod.cmbDepth);
                         pathList.add(diffTD);
-                    } else if(branchNum == tMod.mohoBranch - 1
+                    } else if(branchNum == tMod.mohoBranch - 1 && i < branchSeq.size()-1
                             && ((Integer)branchSeq.get(i + 1)).intValue() == tMod.mohoBranch - 1
                             && (name.indexOf("Pn") != -1 || name.indexOf("Sn") != -1)) {
                         int numFound = 0;
