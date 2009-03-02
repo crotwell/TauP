@@ -118,7 +118,7 @@ public class TauP_WCreate extends Applet implements ActionListener {
         tauPCreate.modelFilename = modelFilename;
         tauPCreate.directory = directory;
         try {
-            tauPCreate.init();
+            tauPCreate.loadVMod();
         } catch(VelocityModelException e) {
             System.err.println("Caught VelocityModelException: "
                     + e.getMessage());

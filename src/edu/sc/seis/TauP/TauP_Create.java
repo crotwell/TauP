@@ -235,7 +235,7 @@ public class TauP_Create {
             noComprendoArgs = null;
         }
         try {
-            tauPCreate.init();
+            tauPCreate.loadVMod();
             tauPCreate.start();
             System.out.println("Done!");
         } catch(IOException e) {
@@ -258,7 +258,7 @@ public class TauP_Create {
         }
     }
 
-    public void init() throws IOException, VelocityModelException {
+    public void loadVMod() throws IOException, VelocityModelException {
         String file_sep = System.getProperty("file.separator");
         // Read the velocity model file.
         if(verbose)
