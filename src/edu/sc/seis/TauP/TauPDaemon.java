@@ -68,13 +68,14 @@ public class TauPDaemon extends Thread {
      * @InvalidClassException if class invalid
      * @throws OptionalDataException
      *             if...
+     * @throws TauModelException 
      * @StreamCorruptedException if...
      * @ClassNotFoundException if...
      * @IOException if...
      */
     static TauModel getTauModel(String modelName) throws FileNotFoundException,
             InvalidClassException, OptionalDataException,
-            StreamCorruptedException, ClassNotFoundException, IOException {
+            StreamCorruptedException, ClassNotFoundException, IOException, TauModelException {
         for(int i = 0; i < tauModels.length; i++) {
             if(tauModels[i] != null
                     && tauModels[i].getModelName().equals(modelName)) {
@@ -114,17 +115,7 @@ public class TauPDaemon extends Thread {
         for(int i = 0; i < modelnames.length; i++) {
             try {
                 tempTMod = getTauModel(modelnames[i]);
-            } catch(ClassNotFoundException e) {
-                System.err.println("Couldn't load tau model. " + e.getMessage());
-            } catch(InvalidClassException e) {
-                System.err.println("Couldn't load tau model. " + e.getMessage());
-            } catch(StreamCorruptedException e) {
-                System.err.println("Couldn't load tau model. " + e.getMessage());
-            } catch(FileNotFoundException e) {
-                System.err.println("Couldn't load tau model. " + e.getMessage());
-            } catch(OptionalDataException e) {
-                System.err.println("Couldn't load tau model. " + e.getMessage());
-            } catch(IOException e) {
+            } catch(Exception e) {
                 System.err.println("Couldn't load tau model. " + e.getMessage());
             }
         }
