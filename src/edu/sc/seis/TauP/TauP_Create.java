@@ -25,6 +25,8 @@
  */
 package edu.sc.seis.TauP;
 
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
@@ -167,6 +169,13 @@ public class TauP_Create {
                 verbose = true;
             } else if(args[i].equalsIgnoreCase("-gui")) {
                 GUI = true;
+            } else if(i < args.length - 1 && args[i].equalsIgnoreCase("-p")) {
+                try {
+                toolProps.load(new BufferedInputStream(new FileInputStream(args[i + 1])));
+                i++;
+                } catch(IOException e) {
+                    noComprendoArgs[numNoComprendoArgs++] = args[i+1];
+                }
             } else if(i < args.length - 1 && args[i].equalsIgnoreCase("-nd")) {
                 velFileType = "nd";
                 parseFileName(args[i + 1]);
@@ -290,10 +299,10 @@ public class TauP_Create {
                                                                         "115.0"))
                                            .doubleValue(),
                                    Double.valueOf(toolProps.getProperty("taup.create.maxRangeInterval",
-                                                                        "1.75"))
+                                                                        "2.5"))
                                            .doubleValue()*Math.PI/180,
                                    Double.valueOf(toolProps.getProperty("taup.create.maxInterpError",
-                                                                        "0.01"))
+                                                                        "0.05"))
                                            .doubleValue(),
                                    Boolean.valueOf(toolProps.getProperty("taup.create.allowInnerCoreS",
                                                                          "true"))
