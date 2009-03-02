@@ -57,7 +57,7 @@ public class TauModelLoader {
     public static TauModel load(String modelName, String searchPath)
             throws FileNotFoundException, ClassNotFoundException,
             InvalidClassException, IOException, StreamCorruptedException,
-            OptionalDataException {
+            OptionalDataException, TauModelException {
         return load(modelName, searchPath, false);
     }
 
@@ -65,7 +65,7 @@ public class TauModelLoader {
                                 String searchPath,
                                 boolean verbose) throws FileNotFoundException,
             ClassNotFoundException, InvalidClassException, IOException,
-            StreamCorruptedException, OptionalDataException {
+            StreamCorruptedException, OptionalDataException, TauModelException {
         String filename;
         /* Append ".taup" to modelname if it isn't already there. */
         if(modelName.endsWith(".taup")) {
@@ -158,9 +158,39 @@ public class TauModelLoader {
         modelFile = new File(filename);
         if(modelFile.exists() && modelFile.isFile() && modelFile.canRead()) {
             return TauModel.readModel(modelFile.getCanonicalPath());
-        } else {
-            throw new FileNotFoundException("Can't find any saved models for "
-                    + modelName);
         }
+        // try to load velocity model of same name and do a create
+        try {
+            System.out.println("try to load "+modelName);
+            VelocityModel vmod = loadVelocityModel(modelName);
+            if (vmod != null) {
+                TauP_Create tauPCreate = new TauP_Create();
+                tauPCreate.setVelocityModel(vmod);
+                tauPCreate.start();
+                return tauPCreate.getTauModel();
+            }
+        } catch(Exception e) {
+            e.printStackTrace();
+            throw new TauModelException("Can't find any saved models for "
+                                            + modelName+" and creation from velocity model failed.", e);
+        }
+            
+        throw new FileNotFoundException("Can't find any saved models for "
+                                        + modelName);
+        
+    }
+    
+    static VelocityModel loadVelocityModel(String modelName) throws IOException, VelocityModelException {
+     // try a .tvel or .nd file in current directory
+        String[] types = new String[] {"nd", "tvel"};
+        for (int i = 0; i < types.length; i++) {
+            String vmodFile = modelName+"."+types[i];
+            File modelFile = new File(vmodFile);
+            if(modelFile.exists() && modelFile.isFile() && modelFile.canRead()) {
+                VelocityModel vMod = VelocityModel.readVelocityFile(modelFile.getPath(), types[i]);
+                return vMod;
+            }
+        }
+        return null;
     }
 }
