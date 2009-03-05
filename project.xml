@@ -22,11 +22,6 @@ The TauP Toolkit, flexible seismic traveltime utilities.
   <siteDirectory>/var/www/html/software/${pom.artifactId}</siteDirectory>
   <distributionSite>hopalong.seis.sc.edu</distributionSite>
   <distributionDirectory>/var/www/html/software/mavenRepository</distributionDirectory>
-  <mailingList>
-    <name>TauP</name>
-    <subscribe>taup-request@seis.sc.edu</subscribe>
-    <unsubscribe>taup-request@seis.sc.edu</unsubscribe>
-  </mailingList>
   <repository>
         <url>http://roo.seis.sc.edu/fisheye/viewrep/seis/trunk/${pom.artifactId}</url>
     </repository>
@@ -45,7 +40,7 @@ The TauP Toolkit, flexible seismic traveltime utilities.
     <dependency>
       <artifactId>seisFile</artifactId>
       <groupId>seisFile</groupId>
-      <version>1.0.4beta</version>
+      <version>1.0.4</version>
     </dependency>
   </dependencies>
   <build>
