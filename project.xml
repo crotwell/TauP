@@ -40,7 +40,7 @@ The TauP Toolkit, flexible seismic traveltime utilities.
     <dependency>
       <artifactId>seisFile</artifactId>
       <groupId>seisFile</groupId>
-      <version>1.0.4</version>
+      <version>1.0.5beta</version>
     </dependency>
   </dependencies>
   <build>
