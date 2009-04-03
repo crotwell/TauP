@@ -42,7 +42,7 @@ public class ConstantModelTest extends TestCase {
                 dist +=  tMod.getTauBranch(j, isPWave).getDist(i);
                 time +=  tMod.getTauBranch(j, isPWave).time[i];
             }
-            assertEquals(R*Math.sin(dist)/velocity, time, 0.001);
+            assertEquals(R*Math.sin(dist)/velocity, time, 0.01);
         }
     }
     
@@ -58,10 +58,8 @@ public class ConstantModelTest extends TestCase {
         boolean isPWave = true;
         for(int i = 0; i < tMod.rayParams.length; i++) {
             float dist=0;
-            float time = 0;
             for(int j = 0; j < tMod.getNumBranches(); j++) {
                 dist +=  tMod.getTauBranch(j, isPWave).getDist(i);
-                time +=  tMod.getTauBranch(j, isPWave).time[i];
             }
             doSeismicPhase(2*dist, velocity, "P");
         }
@@ -79,7 +77,7 @@ public class ConstantModelTest extends TestCase {
         Arrival[] arrivals = pPhase.getArrivals();
         assertEquals("one arrival", 1, arrivals.length);
         Arrival a = arrivals[0];
-        assertEquals("travel time for "+dist, 2*R*Math.sin(dist/2*3.1415/180)/velocity, a.getTime(), 0.01);
+        assertEquals("travel time for "+dist, 2*R*Math.sin(dist/2*3.1415/180)/velocity, a.getTime(), 0.001);
     }
     
     protected void tearDown() throws Exception {
