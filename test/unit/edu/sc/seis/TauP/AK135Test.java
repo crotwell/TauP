@@ -20,6 +20,9 @@ public class AK135Test extends TestCase {
         readTable("ak135_P_deep.txt", "P");
         readTable("ak135_S_shallow.txt", "S");
         readTable("ak135_S_deep.txt", "S");
+        readTable("ak135_PcP.txt", "PcP");
+        readTable("ak135_ScS.txt", "ScS");
+        readTable("ak135_ScP.txt", "ScP");
     }
 
     public void testTableP() throws TauModelException {
@@ -27,6 +30,16 @@ public class AK135Test extends TestCase {
     }
     public void testTableS() throws TauModelException {
         doTable("S");
+    }
+
+    public void testTablePcP() throws TauModelException {
+        doTable("PcP");
+    }
+    public void testTableScS() throws TauModelException {
+        doTable("ScS");
+    }
+    public void testTableScP() throws TauModelException {
+        doTable("ScP");
     }
 
     public void doTable(String phase) throws TauModelException {
@@ -42,17 +55,19 @@ public class AK135Test extends TestCase {
             for (TimeDist timeDist : atDepth) {
                 taup.calculate(timeDist.dist);
                 Arrival[] arrivals = taup.getArrivals();
+                if (timeDist.time > 0) {
                 assertTrue(phase + " has arrivals for depth " + timeDist.depth + " at dist " + timeDist.dist,
                            arrivals.length > 0);
                 // assume first?
                 assertEquals(phase + " time for depth " + timeDist.depth + " at dist " + timeDist.dist,
                              timeDist.time,
                              arrivals[0].time,
-                             0.04f);
+                             0.03f);
                 assertEquals(phase + " rp for depth " + timeDist.depth + " at dist " + timeDist.dist,
                              timeDist.p,
                              arrivals[0].rayParam * Math.PI / 180,
                              0.1f);
+                }
             }
         }
     }
@@ -72,12 +87,18 @@ public class AK135Test extends TestCase {
             phaseTable.put(depths[i], new ArrayList<TimeDist>());
         }
         while ((line = in.readLine()) != null) {
+            String timeLine = line;
             float[] time = parseLine(line);
             line = in.readLine();
             float[] rayParam = parseLine(line);
             float dist = time[0];
             for (int i = 0; i < rayParam.length; i++) {
+                try {
                 time[i] = time[2 * i + 1] * 60 + time[2 * i + 2];
+                }catch(Exception e) {
+                    System.out.println(timeLine);
+                    throw new RuntimeException(e);
+                }
             }
             for (int i = 0; i < rayParam.length; i++) {
                 TimeDist td = new TimeDist(rayParam[i], time[i], dist, depths[i]);
