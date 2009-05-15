@@ -299,10 +299,10 @@ public class TauP_Create {
                                                                         "115.0"))
                                            .doubleValue(),
                                    Double.valueOf(toolProps.getProperty("taup.create.maxRangeInterval",
-                                                                        "2.5"))
+                                                                        "1.0"))
                                            .doubleValue()*Math.PI/180,
                                    Double.valueOf(toolProps.getProperty("taup.create.maxInterpError",
-                                                                        "0.05"))
+                                                                        "0.01"))
                                            .doubleValue(),
                                    Boolean.valueOf(toolProps.getProperty("taup.create.allowInnerCoreS",
                                                                          "true"))

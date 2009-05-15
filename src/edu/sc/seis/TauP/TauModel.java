@@ -873,6 +873,7 @@ public class TauModel implements Serializable {
         if(DEBUG)
             System.out.println("Starting print() in TauModel");
         System.out.println("Delta tau for each slowness sample and layer.");
+        int count = 0;
         for(int j = 0; j < rayParams.length; j++) {
             deg = 0;
             time = 0;
@@ -885,6 +886,8 @@ public class TauModel implements Serializable {
                         + tauBranches[0][i].getDist(j) + " degrees "
                         + (tauBranches[0][i].getDist(j) * 180 / Math.PI));
             }
+            if (deg > 0) {count++;}
+            if (count > 10) {break;}
             System.out.println();
             System.out.println("deg= " + deg + "  time=" + time);
         }
