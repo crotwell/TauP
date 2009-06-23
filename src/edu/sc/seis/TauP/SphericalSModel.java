@@ -25,8 +25,6 @@
  */
 package edu.sc.seis.TauP;
 
-import java.io.File;
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.Vector;
 
