@@ -1659,11 +1659,21 @@ public abstract class SlownessModel implements Serializable {
                         // of adding extra samples in the neighborhood of poorly
                         // sampled
                         // caustics
-                        if(prevPrevTD != null
-                                && Math.abs(prevTD.time
-                                        - ((currTD.time - prevPrevTD.time)
-                                                * (prevTD.dist - prevPrevTD.dist)
-                                                / (currTD.dist - prevPrevTD.dist) + prevPrevTD.time)) > maxInterpError) {
+                        long begin = System.currentTimeMillis();
+                        double splitRayParam = (sLayer.getTopP()+sLayer.getBotP())/2;
+                        TimeDist allButLayer = approxDistance(j-1, splitRayParam, currWaveType);
+                        SlownessLayer splitLayer = new SlownessLayer(sLayer.getTopP(), sLayer.getTopDepth(), splitRayParam, sLayer.bullenDepthFor(splitRayParam, getRadiusOfEarth()));
+                        TimeDist justLayer = splitLayer.bullenRadialSlowness(splitRayParam, getRadiusOfEarth());
+                        TimeDist splitTD = new TimeDist(splitRayParam, allButLayer.time+2*justLayer.time, allButLayer.dist+2*justLayer.dist);
+System.out.println("ray time calc "+(System.currentTimeMillis()-begin));
+                        //                        if(Math.abs(prevTD.time
+//                                    - ((currTD.time - prevPrevTD.time)
+//                                            * (prevTD.dist - prevPrevTD.dist)
+//                                            / (currTD.dist - prevPrevTD.dist) + prevPrevTD.time)) > maxInterpError) {
+                        if(Math.abs(currTD.time
+                                        - ((splitTD.time - prevTD.time)
+                                                * (currTD.dist - prevTD.dist)
+                                                / (splitTD.dist - prevTD.dist) + prevTD.time)) > maxInterpError) {
                             addSlowness((prevSLayer.getTopP() + prevSLayer.getBotP()) / 2.0,
                                         PWAVE);
                             addSlowness((prevSLayer.getTopP() + prevSLayer.getBotP()) / 2.0,

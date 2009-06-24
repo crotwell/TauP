@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src"/>
-	<classpathentry output="target/test-classes" kind="src" path="test/unit"/>
+	<classpathentry kind="src" path="src/main/java"/>
+	<classpathentry kind="src" output="build/test-classes" path="src/test/java"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/seisFile"/>
-	<classpathentry kind="output" path="target/classes"/>
+	<classpathentry kind="output" path="build/classes"/>
 </classpath>

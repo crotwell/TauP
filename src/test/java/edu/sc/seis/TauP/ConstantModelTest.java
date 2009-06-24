@@ -8,17 +8,21 @@ import junit.framework.TestCase;
 
 public class ConstantModelTest extends TestCase {
 
-    protected void setUp() throws Exception {
+    public void setUp() throws Exception {
+        vmod = createVelMod(vp, vs);
+        smod = new SphericalSModel(vmod,0.1,11.0,115.0,2.5*Math.PI/180,0.01,true,
+                                   SlownessModel.DEFAULT_SLOWNESS_TOLERANCE);
+        tMod = new TauModel(smod);
+    }
+    
+    public static VelocityModel createVelMod(double vp, double vs) {
         float step = .00000001f;
         List<VelocityLayer> layers = new ArrayList<VelocityLayer>();
         layers.add(new VelocityLayer(0, 0, 30, vp, vp, vs, vs));
         layers.add(new VelocityLayer(0, 30, 2890, vp, vp, vs, vs));
         layers.add(new VelocityLayer(0, 2890, 4000, vp+step, vp, vs, vs));
         layers.add(new VelocityLayer(0, 4000, R, vp+step, vp, vs, vs));
-        vmod = new VelocityModel("constant", R, 30, 2890, 4000,0, R, true, layers);
-        smod = new SphericalSModel(vmod,0.1,11.0,115.0,200/R,0.05,true,
-                                                   SlownessModel.DEFAULT_SLOWNESS_TOLERANCE);
-        tMod = new TauModel(smod);
+        return new VelocityModel("constant", R, 30, 2890, 4000,0, R, true, layers);
     }
 
     public void testDirectP() {
@@ -77,8 +81,9 @@ public class ConstantModelTest extends TestCase {
         Arrival[] arrivals = pPhase.getArrivals();
         assertEquals("one arrival", 1, arrivals.length);
         Arrival a = arrivals[0];
-        assertEquals("travel time for "+dist, 2*R*Math.sin(dist/2*3.1415/180)/velocity, a.getTime(), 0.001);
+        assertEquals("travel time for "+dist, 2*R*Math.sin(dist/2*Math.PI/180)/velocity, a.getTime(), 0.01);
     }
+    
     
     protected void tearDown() throws Exception {
         vmod = null;
@@ -88,7 +93,7 @@ public class ConstantModelTest extends TestCase {
     SphericalSModel smod;
     TauModel tMod;
     
-    double R = 6371;
+    static final double R = 6371;
     double vp = 5.8;
     double vs = 3.5;
 }
