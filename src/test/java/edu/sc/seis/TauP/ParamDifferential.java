@@ -1,7 +1,16 @@
 package edu.sc.seis.TauP;
 
+import java.io.BufferedOutputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 
 import junit.framework.TestCase;
 
@@ -13,7 +22,8 @@ public class ParamDifferential extends TestCase {
         ParamDifferential pd = new ParamDifferential();
         //pd.testcalc(pd.getConstVelModel());
         System.out.println("ak135");
-        pd.testcalc(pd.getAK135VelModel());
+        VelocityModel vmod = pd.getAK135VelModel();
+        pd.dotestcalc(vmod, new AK135CorrectTime());
     }
 
     public VelocityModel getConstVelModel() {
@@ -29,7 +39,17 @@ public class ParamDifferential extends TestCase {
         }
     }
     
-    public void testcalc(VelocityModel vMod) throws Exception {
+    public void txxxestConstVelModel() throws Exception {
+        VelocityModel vmod = getConstVelModel();
+        dotestcalc(vmod, new ConstCorrectTime(vmod));
+    }
+    
+    public void testAK135() throws Exception {
+        System.err.println("testAK135: "+getAK135VelModel().getModelName());
+        dotestcalc(getAK135VelModel(), new AK135CorrectTime());
+    }
+    
+    public void dotestcalc(VelocityModel vMod, CorrectTime correctTime) throws Exception {
         double minDeltaP = 0.1;
         double maxDeltaP = 11.0;
         double maxDepthInterval = 115.0;
@@ -90,22 +110,23 @@ public class ParamDifferential extends TestCase {
             pPhase[i] = new SeismicPhase("P", deltaTMod[i]);
             System.err.println("tmod size="+deltaTMod[i].getRayParams().length);
         }
-        double[][] errors = new double[deltaTMod.length][180];
         double R = 6371;
-        float deltaDeg = .02f;
-        for (float d = deltaDeg; d < 113; d+=deltaDeg) {
-            String distResult = d+" ";
-            for (int t = 0; t < errors.length; t++) {
+        float deltaDeg = 0.01f;
+        System.err.println("woking on "+"/tmp/"+deltaTMod[0].getVelocityModel().getModelName()+".deltaTau");
+        PrintStream out = new PrintStream(new BufferedOutputStream(new FileOutputStream("/tmp/"+deltaTMod[0].getVelocityModel().getModelName()+".deltaTau")));
+        for (float d = deltaDeg; d < 99; d+=deltaDeg) {
+            String distResult = d+" "+ correctTime.getCorrectTime(d)+" ";
+            for (int t = 0; t < deltaTMod.length; t++) {
                 pPhase[t].calcTime(d);
-                Arrival[] arrivals = pPhase[t].getArrivals();
-                Arrival a = arrivals[0];
-                double correct = 2*R*Math.sin(d/2.0*Math.PI/180)/vp;
-                double error = (correct - a.getTime() ) ; 
-                //errors[t][d] = (correct - a.getTime() ) / correct *100; 
-                distResult += nf.format(error) +" ";
+                Arrival a = pPhase[t].getEarliestArrival();
+                if (a != null) {
+                    distResult += nf.format(a.getTime()) +" ";
+                } else { distResult += " ?? ";}
+                
             }
-            System.out.println(distResult);
+            out.println(distResult);
         }
+        out.close();
     }
     
     NumberFormat nf = new DecimalFormat("0.0000000");
@@ -122,8 +143,7 @@ public class ParamDifferential extends TestCase {
                                   boolean allowInnerCoreS,
                                   double slownessTolerance) throws NoSuchMatPropException, NoSuchLayerException,
             SlownessModelException, TauModelException {
-        VelocityModel vmod = ConstantModelTest.createVelMod(vp, vs);
-        SlownessModel smod = new SphericalSModel(vmod,
+        SlownessModel smod = new SphericalSModel(vMod,
                                                  minDeltaP,
                                                  maxDeltaP,
                                                  maxDepthInterval,
@@ -133,4 +153,53 @@ public class ParamDifferential extends TestCase {
                                                  SlownessModel.DEFAULT_SLOWNESS_TOLERANCE);
         return new TauModel(smod);
     }
+}
+
+abstract class CorrectTime {
+    
+    public abstract double getCorrectTime(double dist);
+}
+
+class ConstCorrectTime extends CorrectTime {
+
+    ConstCorrectTime(VelocityModel vMod) {
+        this.vMod = vMod;
+    }
+    VelocityModel vMod;
+    
+    @Override
+    public double getCorrectTime(double dist) {
+        return 2*vMod.getRadiusOfEarth()*Math.sin(dist/2.0*Math.PI/180)/vMod.getVelocityLayer(0).getTopPVelocity();
+    }
+    
+}
+
+class AK135CorrectTime extends CorrectTime {
+
+    AK135CorrectTime() throws Exception {
+        AK135Test ak135Test = new AK135Test();
+        ak135Test.loadTable();
+        table = ak135Test.getTable();
+        zeroDepth = table.get("P").get(new Float(0));
+    }
+    HashMap<String, HashMap<Float, List<TimeDist>>> table;
+    List<TimeDist> zeroDepth;
+    
+    @Override
+    public double getCorrectTime(double dist) {
+        TimeDist prev = zeroDepth.get(0);
+        for (TimeDist td : zeroDepth) {
+            if (td.dist == dist) {
+                System.out.println("Match: "+td.dist+" "+td.time);
+                return td.time;
+            } else if (td.dist > dist) {
+                System.out.println("interp "+td.dist+" "+prev.dist+"  "+dist+"    "+td.time+"  "+prev.time);
+                return (td.time-prev.time)/(td.dist-prev.dist)*(dist-prev.dist) + prev.time;
+            }
+            prev=td;
+        }
+        System.out.println("Miss "+dist);
+        return -999999;
+    }
+    
 }

@@ -15,6 +15,10 @@ public class AK135Test extends TestCase {
 
     protected void setUp() throws Exception {
         taup = new TauP_Time("ak135");
+        loadTable();
+    }
+    
+    public void loadTable() throws Exception {
         table = new HashMap<String, HashMap<Float, List<TimeDist>>>();
         readTable("ak135_P_shallow.txt", "P");
         readTable("ak135_P_deep.txt", "P");
@@ -24,21 +28,25 @@ public class AK135Test extends TestCase {
         readTable("ak135_ScS.txt", "ScS");
         readTable("ak135_ScP.txt", "ScP");
     }
+    
+    public HashMap<String, HashMap<Float, List<TimeDist>>> getTable() {
+        return table;
+    }
 
-    public void testTableP() throws TauModelException {
+    public void tXXXestTableP() throws TauModelException {
         doTable("P");
     }
-    public void testTableS() throws TauModelException {
+    public void tXXXestTableS() throws TauModelException {
         doTable("S");
     }
 
-    public void testTablePcP() throws TauModelException {
+    public void tXXXestTablePcP() throws TauModelException {
         doTable("PcP");
     }
-    public void testTableScS() throws TauModelException {
+    public void tXXXestTableScS() throws TauModelException {
         doTable("ScS");
     }
-    public void testTableScP() throws TauModelException {
+    public void tXXXestTableScP() throws TauModelException {
         doTable("ScP");
     }
 
