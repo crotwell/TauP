@@ -1,0 +1,6 @@
+
+dependencies {
+    compile project(':seisFile')
+}
+version = '1.2beta'
+
