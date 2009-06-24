@@ -150,7 +150,7 @@ public class SeismicPhase implements Serializable, Cloneable {
      * @see calcPierce(TauModel)
      * @see calcPath(TauModel)
      */
-    protected ArrayList arrivals = new ArrayList();
+    protected ArrayList<Arrival> arrivals = new ArrayList<Arrival>();
 
     /**
      * Array of branch numbers for the given phase. Note that this depends upon
@@ -238,6 +238,18 @@ public class SeismicPhase implements Serializable, Cloneable {
             returnArrivals[i] = (Arrival)((Arrival)arrivals.get(i));
         }
         return returnArrivals;
+    }
+    
+    public Arrival getEarliestArrival() {
+        double soonest = 999999999.0;
+        Arrival a = null;
+        for (Arrival tmpA : arrivals) {
+            if (tmpA.getTime() < soonest) {
+                a = tmpA;
+                soonest = a.getTime();
+            }
+        }
+        return a;
     }
 
     public void setTauModel(TauModel tMod) throws TauModelException {
