@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.junit.Test;
+
 import junit.framework.TestCase;
 
 /** test data from http://rses.anu.edu.au/~brian/AK135tables.pdf
@@ -27,27 +29,40 @@ public class AK135Test extends TestCase {
         readTable("ak135_PcP.txt", "PcP");
         readTable("ak135_ScS.txt", "ScS");
         readTable("ak135_ScP.txt", "ScP");
+        readTable("ak135_PKIKP.txt", "PKIKP");
     }
     
     public HashMap<String, HashMap<Float, List<TimeDist>>> getTable() {
         return table;
     }
 
-    public void tXXXestTableP() throws TauModelException {
+    @Test
+    public void testTableP() throws TauModelException {
         doTable("P");
     }
-    public void tXXXestTableS() throws TauModelException {
+    @Test
+    public void testTableS() throws TauModelException {
         doTable("S");
     }
 
-    public void tXXXestTablePcP() throws TauModelException {
+    @Test
+    public void testTablePcP() throws TauModelException {
         doTable("PcP");
     }
-    public void tXXXestTableScS() throws TauModelException {
+    
+    @Test
+    public void testTableScS() throws TauModelException {
         doTable("ScS");
     }
-    public void tXXXestTableScP() throws TauModelException {
+    
+    @Test
+    public void testTableScP() throws TauModelException {
         doTable("ScP");
+    }
+    
+    @Test
+    public void testTablePKIKP() throws TauModelException {
+        doTable("PKIKP");
     }
 
     public void doTable(String phase) throws TauModelException {
@@ -70,11 +85,11 @@ public class AK135Test extends TestCase {
                 assertEquals(phase + " time for depth " + timeDist.depth + " at dist " + timeDist.dist,
                              timeDist.time,
                              arrivals[0].time,
-                             0.03f);
+                             0.07f);
                 assertEquals(phase + " rp for depth " + timeDist.depth + " at dist " + timeDist.dist,
                              timeDist.p,
                              arrivals[0].rayParam * Math.PI / 180,
-                             0.1f);
+                             0.11f);
                 }
             }
         }
