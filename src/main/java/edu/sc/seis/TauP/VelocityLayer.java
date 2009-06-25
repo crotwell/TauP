@@ -354,4 +354,8 @@ public class VelocityLayer implements Cloneable, Serializable {
     public double getBotQs() {
         return botQs;
     }
+
+    public double getThickness() {
+        return getBotDepth()-getTopDepth();
+    }
 }
