@@ -1,15 +1,15 @@
 #!/bin/bash
 
-OUT=ak135
+OUT=ak135_P
 rm -f ${OUT}.ps
 
-DELTA=/tmp/ak135.deltaTau
+DELTA=/tmp/${OUT}.deltaTau
 
-psxy -P -B10/.01 -JX6/6 -R0/100/-0.093/0.095 -St.003i -G255 -K > ${OUT}.ps <<END
+psxy -P -B10/.01:.${OUT}: -JX6/6 -R0/100/-0.093/0.095 -St.003i -G255 -K > ${OUT}.ps <<END
 END
 groovy -na -e 'println(split[0]+" "+(split[2].toFloat()-split[1].toFloat()))' $DELTA | psxy -JX -R -Wdefault/red -K -O >> ${OUT}.ps
 
-groovy -na -e 'println(split[0]+" "+(split[3].toFloat()-split[2].toFloat()))' $DELTA | psxy -JX -R -P -Wdefault/green -O -K -Y1 >> ${OUT}.ps
+groovy -na -e 'println(split[0]+" "+(split[3].toFloat()-split[2].toFloat()))' $DELTA | psxy -JX -R -P -Wdefault/green -O -K >> ${OUT}.ps
 groovy -na -e 'println(split[0]+" "+(split[4].toFloat()-split[2].toFloat()))' $DELTA | psxy -JX -R -P -Wdefault/yellow -O -K  >> ${OUT}.ps
 groovy -na -e 'println(split[0]+" "+(split[5].toFloat()-split[2].toFloat()))' $DELTA | psxy -JX -R -P -Wdefault/black -O -K  >> ${OUT}.ps
 groovy -na -e 'println(split[0]+" "+(split[6].toFloat()-split[2].toFloat()))' $DELTA | psxy -JX -R -P -Wdefault/cyan -O -K  >> ${OUT}.ps
