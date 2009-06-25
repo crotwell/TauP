@@ -12,6 +12,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import org.junit.Ignore;
+import org.junit.Test;
+
 import junit.framework.TestCase;
 
 public class ParamDifferential extends TestCase {
@@ -20,10 +23,10 @@ public class ParamDifferential extends TestCase {
     
     public static void main(String[] args) throws Exception {
         ParamDifferential pd = new ParamDifferential();
-        //pd.testcalc(pd.getConstVelModel());
         System.out.println("ak135");
         VelocityModel vmod = pd.getAK135VelModel();
-        pd.dotestcalc(vmod, new AK135CorrectTime());
+        pd.dotestcalc("P", vmod, new AK135CorrectTime());
+        pd.dotestcalc("S", vmod, new AK135CorrectTime());
     }
 
     public VelocityModel getConstVelModel() {
@@ -39,17 +42,21 @@ public class ParamDifferential extends TestCase {
         }
     }
     
-    public void txxxestConstVelModel() throws Exception {
+    @Test
+    @Ignore
+    public void testConstVelModel() throws Exception {
         VelocityModel vmod = getConstVelModel();
-        dotestcalc(vmod, new ConstCorrectTime(vmod));
+        dotestcalc("P", vmod, new ConstCorrectTime(vmod));
     }
     
+    @Test
     public void testAK135() throws Exception {
         System.err.println("testAK135: "+getAK135VelModel().getModelName());
-        dotestcalc(getAK135VelModel(), new AK135CorrectTime());
+        dotestcalc("P", getAK135VelModel(), new AK135CorrectTime());
+        dotestcalc("S", getAK135VelModel(), new AK135CorrectTime());
     }
     
-    public void dotestcalc(VelocityModel vMod, CorrectTime correctTime) throws Exception {
+    public void dotestcalc(String phaseName, VelocityModel vMod, CorrectTime correctTime) throws Exception {
         double minDeltaP = 0.1;
         double maxDeltaP = 11.0;
         double maxDepthInterval = 115.0;
@@ -107,15 +114,16 @@ public class ParamDifferential extends TestCase {
                               SlownessModel.DEFAULT_SLOWNESS_TOLERANCE);
         SeismicPhase[] pPhase = new SeismicPhase[deltaTMod.length];
         for (int i = 0; i < pPhase.length; i++) {
-            pPhase[i] = new SeismicPhase("P", deltaTMod[i]);
+            pPhase[i] = new SeismicPhase(phaseName, deltaTMod[i]);
             System.err.println("tmod size="+deltaTMod[i].getRayParams().length);
         }
         double R = 6371;
-        float deltaDeg = 0.01f;
-        System.err.println("woking on "+"/tmp/"+deltaTMod[0].getVelocityModel().getModelName()+".deltaTau");
-        PrintStream out = new PrintStream(new BufferedOutputStream(new FileOutputStream("/tmp/"+deltaTMod[0].getVelocityModel().getModelName()+".deltaTau")));
+        float deltaDeg = 1.0f;
+        String outName = "/tmp/"+deltaTMod[0].getVelocityModel().getModelName()+"_"+phaseName+".deltaTau";
+        System.err.println("woking on "+outName);
+        PrintStream out = new PrintStream(new BufferedOutputStream(new FileOutputStream(outName)));
         for (float d = deltaDeg; d < 99; d+=deltaDeg) {
-            String distResult = d+" "+ correctTime.getCorrectTime(d)+" ";
+            String distResult = d+" "+ correctTime.getCorrectTime(phaseName, d)+" ";
             for (int t = 0; t < deltaTMod.length; t++) {
                 pPhase[t].calcTime(d);
                 Arrival a = pPhase[t].getEarliestArrival();
@@ -157,7 +165,7 @@ public class ParamDifferential extends TestCase {
 
 abstract class CorrectTime {
     
-    public abstract double getCorrectTime(double dist);
+    public abstract double getCorrectTime(String phase, double dist);
 }
 
 class ConstCorrectTime extends CorrectTime {
@@ -168,8 +176,16 @@ class ConstCorrectTime extends CorrectTime {
     VelocityModel vMod;
     
     @Override
-    public double getCorrectTime(double dist) {
-        return 2*vMod.getRadiusOfEarth()*Math.sin(dist/2.0*Math.PI/180)/vMod.getVelocityLayer(0).getTopPVelocity();
+    public double getCorrectTime(String phase, double dist) {
+        double v;
+        if (phase.equals("P") || phase.equals("PKP") || phase.equals("PKIKP")) {
+            v = vMod.getVelocityLayer(0).getTopPVelocity();
+        } else if (phase.equals("S")) {
+            v = vMod.getVelocityLayer(0).getTopSVelocity();
+        } else {
+            throw new RuntimeException("Unknown phase: "+phase);
+        }
+        return 2*vMod.getRadiusOfEarth()*Math.sin(dist/2.0*Math.PI/180)/v;
     }
     
 }
@@ -180,13 +196,13 @@ class AK135CorrectTime extends CorrectTime {
         AK135Test ak135Test = new AK135Test();
         ak135Test.loadTable();
         table = ak135Test.getTable();
-        zeroDepth = table.get("P").get(new Float(0));
     }
     HashMap<String, HashMap<Float, List<TimeDist>>> table;
-    List<TimeDist> zeroDepth;
+    
     
     @Override
-    public double getCorrectTime(double dist) {
+    public double getCorrectTime(String phase, double dist) {
+        List<TimeDist> zeroDepth = table.get(phase).get(new Float(0));
         TimeDist prev = zeroDepth.get(0);
         for (TimeDist td : zeroDepth) {
             if (td.dist == dist) {
