@@ -31,6 +31,7 @@ package edu.sc.seis.TauP;
 
 import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
@@ -799,11 +800,17 @@ public class VelocityModel implements Cloneable, Serializable {
     public static VelocityModel readVelocityFile(String filename,
                                                  String fileType)
             throws IOException, VelocityModelException {
+
+        File f = new File(filename);
+        if ( ! f.exists() && ! filename.endsWith("."+fileType)) {
+            f = new File(filename+"."+fileType);
+        }
+        
         VelocityModel vMod;
         if(fileType.equalsIgnoreCase("nd")) {
-            vMod = readNDFile(filename);
+            vMod = readNDFile(f);
         } else if(fileType.equalsIgnoreCase("tvel")) {
-            vMod = readTVelFile(filename);
+            vMod = readTVelFile(f);
         } else {
             throw new VelocityModelException("What type of velocity file, .tvel or .nd?");
         }
@@ -832,9 +839,9 @@ public class VelocityModel implements Cloneable, Serializable {
      *                occurs if an EOL should have been read but wasn't. This
      *                may indicate a poorly formatted tvel file.
      */
-    public static VelocityModel readTVelFile(String filename)
+    public static VelocityModel readTVelFile(File file)
             throws IOException, VelocityModelException {
-        FileReader fileIn = new FileReader(filename);
+        FileReader fileIn = new FileReader(file);
         StreamTokenizer tokenIn = new StreamTokenizer(fileIn);
         tokenIn.commentChar('#'); // '#' means ignore to end of line
         tokenIn.slashStarComments(true); // '/*...*/' means a comment
@@ -932,7 +939,7 @@ public class VelocityModel implements Cloneable, Serializable {
         // model
         // so the maximum depth is equal to the
         // maximum radius is equal to the earth radius.
-        return new VelocityModel(getModelNameFromFileName(filename),
+        return new VelocityModel(getModelNameFromFileName(file.getName()),
                                  radiusOfEarth,
                                  DEFAULT_MOHO,
                                  DEFAULT_CMB,
@@ -966,9 +973,9 @@ public class VelocityModel implements Cloneable, Serializable {
      *                occurs if an EOL should have been read but wasn't. This
      *                may indicate a poorly formatted model file.
      */
-    public static VelocityModel readNDFile(String filename) throws IOException,
-            VelocityModelException {
-        FileReader fileIn = new FileReader(filename);
+    public static VelocityModel readNDFile(File file) throws IOException,
+        VelocityModelException {
+        FileReader fileIn = new FileReader(file);
         StreamTokenizer tokenIn = new StreamTokenizer(fileIn);
         tokenIn.commentChar('#'); // '#' means ignore to end of line
         tokenIn.slashStarComments(true); // '/*...*/' means a comment
@@ -1100,7 +1107,7 @@ public class VelocityModel implements Cloneable, Serializable {
         // model
         // so the maximum depth is equal to the
         // maximum radius is equal to the earth radius.
-        return new VelocityModel(getModelNameFromFileName(filename),
+        return new VelocityModel(getModelNameFromFileName(file.getName()),
                                  radiusOfEarth,
                                  mohoDepth,
                                  cmbDepth,
