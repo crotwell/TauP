@@ -61,7 +61,7 @@ The TauP Toolkit, flexible seismic traveltime utilities.
                 </resource>
             </resources>
     </unitTest>
-    <sourceDirectory>src</sourceDirectory>
+    <sourceDirectory>src/main/java</sourceDirectory>
     <resources>
        <resource>
           <directory>StdModels</directory>
