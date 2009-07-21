@@ -1,6 +1,58 @@
 
 dependencies {
-    compile project(':seisFile')
+    compile project(':seisFile') {
+        transitive = true
+    }
+
 }
+
+group = 'edu.sc.seis'
 version = '1.2beta'
 
+task copyToLib(dependsOn: uploadArchives) << {
+    libDir = new File('test/output/lib')
+    libDir.mkdirs()
+    configurations.default.each { File file -> ant.copy(file: file.path, toDir: libDir) }
+    repositories { flatDir(dirs: libDir) }
+}
+
+uploadArchives {
+    libDir = new File('test/output/lib')
+    repositories {
+       flatDir(dirs: libDir)
+    }
+}
+
+createTask('play') {
+    println Project.class
+    println Configuration.class
+    def classLoader = new GroovyClassLoader(Project.class.classLoader)
+    def sb = classLoader.parseClass(new File("../devTools/gradle/ScriptBuilder/ScriptBuilder.groovy")).newInstance(project)
+    sb.play()
+}
+
+task genModels(dependsOn: compile) << {
+    println "Generate models"
+    def dir = 'src/main/resources/edu/sc/seis/TauP/StdModels/'
+    String[] tvelModelNames = ['iasp91', 'ak135']
+    String[] ndModelNames = ['prem']
+    def classLoader = new GroovyClassLoader(Project.class.classLoader)
+    classLoader.addURL(new File('build/classes').toURL())
+    configurations.default.each { File file -> classLoader.addURL(file.toURL()) }
+    def taupCreate = classLoader.loadClass('edu.sc.seis.TauP.TauP_Create').newInstance()
+    taupCreate.setDirectory(dir)
+    taupCreate.setVelFileType('tvel')
+    tvelModelNames.each { String model ->
+        taupCreate.setModelFilename(model)
+        taupCreate.loadVMod()
+        taupCreate.createTauModel()
+        taupCreate.getTauModel().writeModel(new File(dir+model+'.taup').path)
+    }
+    taupCreate.setVelFileType('nd')
+    ndModelNames.each { String model ->
+        taupCreate.setModelFilename(model)
+        taupCreate.loadVMod()
+        taupCreate.createTauModel()
+        taupCreate.getTauModel().writeModel(new File(dir+model+'.taup').path)
+    }
+}

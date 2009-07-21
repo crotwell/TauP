@@ -98,6 +98,14 @@ public class TauP_Create {
     public String getModelFilename() {
         return modelFilename;
     }
+    
+    public String getVelFileType() {
+        return velFileType;
+    }
+    
+    public void setVelFileType(String type) {
+        this.velFileType = type;
+    }
 
     public void setDEBUG(boolean DEBUG) {
         this.DEBUG = DEBUG;
