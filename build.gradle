@@ -9,22 +9,6 @@ dependencies {
 group = 'edu.sc.seis'
 version = '1.2beta'
 
-task copyToLib(dependsOn: libs) << {
-    libDir = new File('test/output/lib')
-    libDir.mkdirs()
-    configurations.default.each { File file -> 
-        outFile = ''
-        splitPath = file.path.split("/")
-                if (splitPath[-6] == 'internal-repository') {
-                    outFile = splitPath[-4]+'-'+splitPath[-3]+'.jar'
-                } else {
-                    outFile = file.name
-                }
-        ant.copy(file: file.path, toFile: new File(libDir, outFile)) 
-    }
-    configurations.default.allArtifacts.each { artifact -> ant.copy(file: artifact.file, todir: libDir) }
-}
-
 createTask('play') {
     println Project.class
     println Configuration.class
