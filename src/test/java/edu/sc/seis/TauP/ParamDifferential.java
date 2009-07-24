@@ -17,7 +17,8 @@ import org.junit.Test;
 
 import junit.framework.TestCase;
 
-public class ParamDifferential extends TestCase {
+//extends TestCase
+public class ParamDifferential  {
 
     public ParamDifferential() {}
     
