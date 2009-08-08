@@ -7,14 +7,31 @@ dependencies {
 }
 
 group = 'edu.sc.seis'
-version = '1.2beta'
+version = '1.2beta1'
 
-createTask('play') {
-    println Project.class
-    println Configuration.class
-    def classLoader = new GroovyClassLoader(Project.class.classLoader)
-    def sb = classLoader.parseClass(new File("../devTools/gradle/ScriptBuilder/ScriptBuilder.groovy")).newInstance(project)
-    sb.play()
+task zipDist(type: Zip) {
+    zipFileSet(dir: '../seisFile/build/docs') {
+        include('javadoc/**')
+        prefix = 'TauP-1.2beta1'
+    }
+    zipFileSet(dir: 'build/docs') {
+        include('javadoc/**')
+        prefix = 'TauP-1.2beta1'
+    }
+    zipFileSet(dir: '.') {
+        include('LICENSE.txt')
+        include('Maple/*')
+        include('Notes/History')
+        include('defaultProps')
+        include('doc/**')
+        include('exampleProperties')
+        include('jacl/**')
+        include('native/**')
+        include('src/**')
+        include('srl/*.pdf')
+        exclude('**/*.svn')
+        prefix = 'TauP-1.2beta1'
+    }
 }
 
 task makeScript(dependsOn: copyToLib) << { task ->
