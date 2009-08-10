@@ -53,7 +53,7 @@ task genModels(dependsOn: compile) << {
     String[] ndModelNames = ['prem']
     def classLoader = new GroovyClassLoader(Project.class.classLoader)
     classLoader.addURL(new File('build/classes').toURL())
-    configurations.default.each { File file -> classLoader.addURL(file.toURL()) }
+    configurations.default.each { File file -> classLoader.addURL(file.toURL())}
     def taupCreate = classLoader.loadClass('edu.sc.seis.TauP.TauP_Create').newInstance()
     taupCreate.setDirectory(dir)
     taupCreate.setVelFileType('tvel')
