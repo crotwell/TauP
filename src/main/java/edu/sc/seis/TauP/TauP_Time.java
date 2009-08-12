@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.InvalidClassException;
 import java.io.OptionalDataException;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.StreamCorruptedException;
 import java.io.StreamTokenizer;
@@ -71,10 +72,10 @@ public class TauP_Time {
     /**
      * vector to hold the SeismicPhases for the phases named in phaseNames.
      */
-    protected Vector phases = new Vector(10);
+    protected List<SeismicPhase> phases = new ArrayList<SeismicPhase>(10);
 
     /** names of phases to be used, ie PKIKP. */
-    protected Vector phaseNames = new Vector(10);
+    protected List<PhaseName> phaseNames = new ArrayList<PhaseName>();
 
     protected double depth = 0.0;
 
@@ -99,6 +100,10 @@ public class TauP_Time {
     protected boolean onlyPrintRayP = false;
 
     protected boolean onlyPrintTime = false;
+    
+    protected String relativePhaseName = "";
+    
+    protected Arrival relativeArrival;
 
     protected String outFile = "";
 
@@ -159,7 +164,7 @@ public class TauP_Time {
     public String[] getPhaseNames() {
         String[] phases = new String[phaseNames.size()];
         for(int i = 0; i < phaseNames.size(); i++) {
-            phases[i] = ((PhaseName)phaseNames.elementAt(i)).getName();
+            phases[i] = phaseNames.get(i).getName();
         }
         return phases;
     }
@@ -168,29 +173,29 @@ public class TauP_Time {
         // in case of empty phase list
         if(getNumPhases() == 0)
             return "";
-        String phases = ((PhaseName)phaseNames.elementAt(0)).getName();
+        String phases = phaseNames.get(0).getName();
         for(int i = 1; i < getNumPhases(); i++) {
-            phases += "," + ((PhaseName)phaseNames.elementAt(i)).getName();
+            phases += "," + phaseNames.get(i).getName();
         }
         return phases;
     }
 
     public void setPhaseNames(String[] phaseNames) throws TauModelException {
-        this.phaseNames.removeAllElements();
+        this.phaseNames.clear();
         for(int i = 0; i < phaseNames.length; i++) {
             appendPhaseName(phaseNames[i]);
         }
     }
 
     public void setPhaseNames(PhaseName[] phaseNames) {
-        this.phaseNames.removeAllElements();
+        this.phaseNames.clear();
         for(int i = 0; i < phaseNames.length; i++) {
-            this.phaseNames.addElement(phaseNames[i]);
+            this.phaseNames.add(phaseNames[i]);
         }
     }
 
-    public static List getPhaseNames(String phaseName) {
-        List names = new ArrayList();
+    public static List<String> getPhaseNames(String phaseName) {
+        List<String> names = new ArrayList<String>();
         if(phaseName.equalsIgnoreCase("ttp")
                 || phaseName.equalsIgnoreCase("tts")
                 || phaseName.equalsIgnoreCase("ttbasic")
@@ -286,7 +291,7 @@ public class TauP_Time {
 
     public synchronized void appendPhaseName(String phaseName)
             throws TauModelException {
-        List names = getPhaseNames(phaseName);
+        List<String> names = getPhaseNames(phaseName);
         Iterator it = names.iterator();
         while(it.hasNext()) {
             appendPhaseName(new PhaseName((String)it.next()));
@@ -300,13 +305,13 @@ public class TauP_Time {
             return;
         }
         for(int i = 0; i < phaseNames.size(); i++) {
-            if(((PhaseName)phaseNames.elementAt(i)).equals(phaseName)) {
+            if(phaseNames.get(i).equals(phaseName)) {
                 unique = false;
                 return;
             }
         }
         if(unique) {
-            this.phaseNames.addElement(phaseName);
+            this.phaseNames.add(phaseName);
         }
     }
 
@@ -315,8 +320,8 @@ public class TauP_Time {
     }
 
     public void clearPhaseNames() {
-        phases.removeAllElements();
-        phaseNames.removeAllElements();
+        phases.clear();
+        phaseNames.clear();
     }
 
     public double getSourceDepth() {
@@ -596,6 +601,9 @@ public class TauP_Time {
                 } else if(args[i].equalsIgnoreCase("-o")) {
                     outFile = args[i + 1];
                     i++;
+                } else if(args[i].equalsIgnoreCase("-rel")) {
+                    relativePhaseName = args[i + 1];
+                    i++;
                 } else if(args[i].equalsIgnoreCase("-ph")) {
                     if(cmdLineArgPhase) {
                         // previous cmd line -ph so append
@@ -690,6 +698,15 @@ public class TauP_Time {
         depthCorrect(getSourceDepth());
         recalcPhases();
         calcTime(degrees);
+        if (relativePhaseName != "") {
+            List<SeismicPhase> relPhases = new ArrayList<SeismicPhase>();
+            List<String> splitNames = getPhaseNames(relativePhaseName);
+            for (String sName : splitNames) {
+                SeismicPhase relPhase = new SeismicPhase(sName, tModDepth);
+                relPhases.add(relPhase);
+            }
+            relativeArrival = SeismicPhase.getEarliestArrival(relPhases, degrees);
+        }
     }
 
     public void calcTime(double degrees) {
@@ -698,7 +715,7 @@ public class TauP_Time {
         Arrival[] phaseArrivals;
         arrivals.removeAllElements();
         for(int phaseNum = 0; phaseNum < phases.size(); phaseNum++) {
-            phase = (SeismicPhase)phases.elementAt(phaseNum);
+            phase = phases.get(phaseNum);
             phase.calcTime(degrees);
             phaseArrivals = phase.getArrivals();
             for(int i = 0; i < phaseArrivals.length; i++) {
@@ -728,20 +745,20 @@ public class TauP_Time {
      */
     public synchronized void recalcPhases() {
         SeismicPhase seismicPhase;
-        Vector newPhases = new Vector(phases.size());
+        List<SeismicPhase> newPhases = new ArrayList<SeismicPhase>(phases.size());
         boolean alreadyAdded;
         String tempPhaseName;
         for(int phaseNameNum = 0; phaseNameNum < phaseNames.size(); phaseNameNum++) {
-            tempPhaseName = ((PhaseName)phaseNames.elementAt(phaseNameNum)).name;
+            tempPhaseName = phaseNames.get(phaseNameNum).getName();
             alreadyAdded = false;
             for(int phaseNum = 0; phaseNum < phases.size(); phaseNum++) {
-                seismicPhase = (SeismicPhase)phases.elementAt(phaseNum);
+                seismicPhase = phases.get(phaseNum);
                 if(seismicPhase.name.equals(tempPhaseName)) {
-                    phases.removeElementAt(phaseNum);
+                    phases.remove(phaseNum);
                     if(seismicPhase.sourceDepth == depth
                             && seismicPhase.tMod.equals(tModDepth)) {
                         // ok so copy to newPhases
-                        newPhases.addElement(seismicPhase);
+                        newPhases.add(seismicPhase);
                         alreadyAdded = true;
                         if(verbose) {
                             Alert.info(seismicPhase.toString());
@@ -754,7 +771,7 @@ public class TauP_Time {
                 // didn't find it precomputed, so recalculate
                 try {
                     seismicPhase = new SeismicPhase(tempPhaseName, tModDepth);
-                    newPhases.addElement(seismicPhase);
+                    newPhases.add(seismicPhase);
                     if(verbose) {
                         Alert.info(seismicPhase.toString());
                     }
@@ -771,7 +788,7 @@ public class TauP_Time {
         phases = newPhases;
     }
 
-    public void printResult(DataOutputStream dos) throws IOException {
+    public void printResult(OutputStream dos) throws IOException {
         Writer s = new BufferedWriter(new OutputStreamWriter(dos));
         printResult(s);
         s.flush();
@@ -791,16 +808,24 @@ public class TauP_Time {
                         .length();
             }
         }
-        double moduloDist;
         Format phaseFormat = new Format("%-" + maxNameLength + "s");
         Format phasePuristFormat = new Format("%-" + maxPuristNameLength + "s");
         if(!(onlyPrintRayP || onlyPrintTime)) {
             out.write("\nModel: " + modelName + "\n");
-            out.write("Distance   Depth   " + phaseFormat.form("Phase")
-                    + "   Travel    Ray Param   Purist    Purist\n");
-            out.write("  (deg)     (km)   " + phaseFormat.form("Name ")
-                    + "   Time (s)  p (s/deg)  Distance   Name\n");
-            for(int i = 0; i < maxNameLength + maxPuristNameLength + 54; i++) {
+            String lineOne = "Distance   Depth   " + phaseFormat.form("Phase")
+                    + "   Travel    Ray Param   Purist    Purist";
+            String lineTwo = "  (deg)     (km)   " + phaseFormat.form("Name ")
+                    + "   Time (s)  p (s/deg)  Distance   Name ";
+            if (relativePhaseName != "") {
+                lineOne += " Relative to";
+                for (int s=0; s<(11-relativePhaseName.length())/2;s++) {
+                    lineTwo += " ";
+                }
+                lineTwo += "  "+phaseFormat.form(relativePhaseName);
+            }
+            out.write(lineOne+ "\n");
+            out.write(lineTwo+ "\n");
+            for(int i = 0; i < lineOne.length(); i++) {
                 out.write("-");
             }
             out.write("\n");
@@ -820,8 +845,11 @@ public class TauP_Time {
                 } else {
                     out.write("  * ");
                 }
-                out.write(phasePuristFormat.form(currArrival.getPuristName())
-                        + "\n");
+                out.write(phasePuristFormat.form(currArrival.getPuristName()));
+                if (relativePhaseName != "") {
+                    out.write(outForms.formatTime(currArrival.getTime() - relativeArrival.getTime()));
+                }
+                out.write("\n");
             }
         } else if(onlyPrintTime) {
             for(int j = 0; j < arrivals.size(); j++) {
@@ -1072,7 +1100,7 @@ public class TauP_Time {
                         Alert.info(output);
                         output = "";
                         for(int i = 0; i < numPhases; i++) {
-                            output += ((PhaseName)phaseNames.elementAt(i)).name;
+                            output += phaseNames.get(i).getName();
                             if(i < numPhases - 1) {
                                 output += ",";
                             }
@@ -1322,7 +1350,8 @@ public class TauP_Time {
     public void printUsage() {
         printStdUsage();
         Alert.info("-rayp              -- only output the ray parameter\n"
-                + "-time              -- only output travel time");
+                 + "-time              -- only output travel time\n"
+                 + "-rel phasename     -- also output relative travel time");
         printStdUsageTail();
     }
 

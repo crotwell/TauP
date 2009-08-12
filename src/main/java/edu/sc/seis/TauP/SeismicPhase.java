@@ -22,6 +22,7 @@ import java.io.OptionalDataException;
 import java.io.Serializable;
 import java.io.StreamCorruptedException;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Stores and transforms seismic phase names to and from their corresponding
@@ -86,14 +87,14 @@ public class SeismicPhase implements Serializable, Cloneable {
      * is not the total distance, only the segment along the moho. The default
      * is 20 degrees.
      */
-    protected double maxRefraction = 20;
+    protected static double maxRefraction = 20;
 
     /**
      * The maximum degrees that a Pdiff or Sdiff can diffract along the CMB.
      * Note this is not the total distance, only the segment along the CMB. The
      * default is 60 degrees.
      */
-    protected double maxDiffraction = 60;
+    protected static double maxDiffraction = 60;
 
     /**
      * The source depth within the TauModel that was used to generate this
@@ -285,12 +286,20 @@ public class SeismicPhase implements Serializable, Cloneable {
         return minRayParamIndex;
     }
 
-    public double getMaxDiffraction() {
+    public static double getMaxRefraction() {
+        return maxRefraction;
+    }
+
+    public static void setMaxRefraction(double max) {
+        maxRefraction = max;
+    }
+
+    public static double getMaxDiffraction() {
         return maxDiffraction;
     }
 
-    public void setMaxDiffraction(double maxDiffraction) {
-        this.maxDiffraction = maxDiffraction;
+    public static void setMaxDiffraction(double max) {
+        maxDiffraction = max;
     }
 
     public String getName() {
@@ -1561,8 +1570,8 @@ public class SeismicPhase implements Serializable, Cloneable {
                 rayParams = new double[0];
                 return;
             } else {
-                dist[1] = dist[0] + maxDiffraction * Math.PI / 180.0;
-                time[1] = time[0] + maxDiffraction * Math.PI / 180.0
+                dist[1] = dist[0] + getMaxDiffraction() * Math.PI / 180.0;
+                time[1] = time[0] + getMaxDiffraction() * Math.PI / 180.0
                         * minRayParam;
             }
         } else if(name.indexOf("Pn") != -1 || name.indexOf("Sn") != -1) {
@@ -2141,6 +2150,18 @@ public class SeismicPhase implements Serializable, Cloneable {
             return "Last token must be END";
         }
         return null;
+    }
+    
+    public static Arrival getEarliestArrival(List<SeismicPhase> phases, double degrees) {
+        Arrival minArrival = null;
+        for (SeismicPhase seismicPhase : phases) {
+            seismicPhase.calcTime(degrees);
+            Arrival currArrival = seismicPhase.getEarliestArrival();
+            if (currArrival != null && ( minArrival == null || minArrival.getTime() > currArrival.getTime())) {
+                minArrival = currArrival;
+            }
+        }
+        return minArrival;
     }
 
     public String toString() {

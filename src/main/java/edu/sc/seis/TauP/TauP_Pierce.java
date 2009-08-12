@@ -195,7 +195,7 @@ public class TauP_Pierce extends TauP_Time {
         SeismicPhase phase;
         Arrival[] phaseArrivals;
         for(int phaseNum = 0; phaseNum < phases.size(); phaseNum++) {
-            phase = (SeismicPhase)phases.elementAt(phaseNum);
+            phase = phases.get(phaseNum);
             try {
                 phase.calcTime(degrees);
                 if(phase.hasArrivals()) {

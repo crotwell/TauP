@@ -97,17 +97,17 @@ public class TauP_SetSac extends TauP_Time {
             headersUsed[i] = false;
         }
         for(int i = 0; i < phaseNames.size() && i < 10; i++) {
-            if(((PhaseName)phaseNames.elementAt(i)).sacTNum != -1) {
-                headersUsed[((PhaseName)phaseNames.elementAt(i)).sacTNum] = true;
+            if(((PhaseName)phaseNames.get(i)).sacTNum != -1) {
+                headersUsed[((PhaseName)phaseNames.get(i)).sacTNum] = true;
             }
         }
         int j;
         for(int i = 0; i < phaseNames.size(); i++) {
-            if(((PhaseName)phaseNames.elementAt(i)).sacTNum == -1) {
+            if(((PhaseName)phaseNames.get(i)).sacTNum == -1) {
                 // find a j that hasn't been used
                 for(j = 0; j < headersUsed.length && headersUsed[j]; j++) {}
                 if(j < 10) {
-                    ((PhaseName)phaseNames.elementAt(i)).sacTNum = j;
+                    ((PhaseName)phaseNames.get(i)).sacTNum = j;
                     headersUsed[j] = true;
                 }
             }
@@ -197,7 +197,7 @@ public class TauP_SetSac extends TauP_Time {
                 phaseNum = -1;
                 for(int j = phaseNames.size() - 1; j >= 0; j--) {
                     if(getArrival(arrivalNum).getName()
-                            .equals(((PhaseName)phaseNames.elementAt(j)).name)) {
+                            .equals(((PhaseName)phaseNames.get(j)).name)) {
                         phaseNum = j;
                         break;
                     }
@@ -208,12 +208,12 @@ public class TauP_SetSac extends TauP_Time {
                                 + " phase found "
                                 + getArrival(arrivalNum).getName()
                                 + " -> t"
-                                + ((PhaseName)phaseNames.elementAt(phaseNum)).sacTNum
+                                + ((PhaseName)phaseNames.get(phaseNum)).sacTNum
                                 + ", travel time="
                                 + (float)getArrival(arrivalNum).getTime());
                     }
                     setSacTHeader(sacFile,
-                                  ((PhaseName)phaseNames.elementAt(phaseNum)).sacTNum,
+                                  ((PhaseName)phaseNames.get(phaseNum)).sacTNum,
                                   getArrival(arrivalNum));
                 }
             }

@@ -139,6 +139,7 @@ public class PropertyLoader {
             applicationProps.load(new FileInputStream(System.getProperty("user.dir")
                     + System.getProperty("file.separator") + ".taup"));
         } catch(FileNotFoundException e) {
+            System.out.println("no .taup in cur dir");
             // file doesn't exist, so go on
         }
         // check for taup.model.path in system properties
@@ -152,6 +153,12 @@ public class PropertyLoader {
             } else {
                 applicationProps.put(taupPath, sysProps.getProperty(taupPath));
             }
+        }
+        if (applicationProps.containsKey("taup.maxRefraction")) {
+            SeismicPhase.setMaxRefraction(Double.parseDouble(applicationProps.getProperty("taup.maxRefraction")));
+        }
+        if (applicationProps.containsKey("taup.maxDiffraction")) {
+            SeismicPhase.setMaxDiffraction(Double.parseDouble(applicationProps.getProperty("taup.maxDiffraction")));
         }
         return applicationProps;
     }

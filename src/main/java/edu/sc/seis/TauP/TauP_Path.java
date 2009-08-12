@@ -119,7 +119,7 @@ public class TauP_Path extends TauP_Pierce {
 		SeismicPhase phase;
 		Arrival[] phaseArrivals;
 		for (int phaseNum = 0; phaseNum < phases.size(); phaseNum++) {
-			phase = (SeismicPhase) phases.elementAt(phaseNum);
+			phase = phases.get(phaseNum);
 			phase.calcTime(degrees);
 			if (phase.hasArrivals()) {
 				phase.calcPath(tModDepth);

@@ -33,6 +33,8 @@ import java.io.OptionalDataException;
 import java.io.StreamCorruptedException;
 import java.io.StreamTokenizer;
 import java.io.Writer;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Calculates travel time curves at known slowness samples.
@@ -180,6 +182,7 @@ public class TauP_Curve extends TauP_Time {
         System.out.println("-gmt               -- outputs curves as a complete GMT script.");
         System.out.println("-reddeg velocity   -- outputs curves with a reducing velocity (deg/sec).");
         System.out.println("-redkm velocity    -- outputs curves with a reducing velocity (km/sec).");
+        System.out.println("-rel phasename     -- outputs relative travel time");
         printStdUsageTail();
     }
 
@@ -220,11 +223,21 @@ public class TauP_Curve extends TauP_Time {
 
     public void printResult(Writer out) throws IOException {
         SeismicPhase phase;
-        Arrival currArrival;
         double[] dist, time, rayParams;
         double arcDistance, timeReduced;
-        Arrival[] phaseArrivals;
         double maxTime = -1 * Double.MAX_VALUE, minTime = Double.MAX_VALUE;
+        List<SeismicPhase> relPhases = new ArrayList<SeismicPhase>();
+        if (relativePhaseName != "") {
+            try {
+                List<String> splitNames = getPhaseNames(relativePhaseName);
+                for (String sName : splitNames) {
+                    relPhases.add(new SeismicPhase(sName, tModDepth));
+                }
+            } catch(TauModelException e) {
+                Alert.warning("Error with phase=" + relativePhaseName,
+                              e.getMessage() + "\nSkipping relative phase");
+            }
+        }
         if(gmtScript) {
             String scriptStuff = "";
             String psFile;
@@ -233,44 +246,52 @@ public class TauP_Curve extends TauP_Time {
             } else {
                 psFile = outFile + ".ps";
             }
+            String title = modelName;
+            if(reduceTime) {
+                title += " reduce vel "+reduceVel;
+            } else if (relativePhaseName != "") {
+                title += " relative phase "+relativePhaseName;
+            }
             for(int phaseNum = 0; phaseNum < phases.size(); phaseNum++) {
-                phase = (SeismicPhase)phases.elementAt(phaseNum);
+                phase = (SeismicPhase)phases.get(phaseNum);
                 dist = phase.getDist();
                 time = phase.getTime();
+                int phaseMinIndex = 0;
+                int phaseMaxIndex = 0;
+                double phaseMaxTime = -1 * Double.MAX_VALUE;
+                double phaseMinTime = Double.MAX_VALUE;
                 if(dist.length > 0) {
-                    arcDistance = Math.acos(Math.cos(dist[dist.length - 1]));
-                    if(reduceTime) {
+                    // find max and min time
+                    for(int i = 0; i < time.length; i++) {
+                        double[] timeValue = calcTimeValue(dist[i], time[i], relPhases);
+                        if (timeValue.length == 0) {continue;}
+                        if(timeValue[0] > maxTime) {
+                            maxTime = timeValue[0];
+                        }
+                        if(timeValue[0] < minTime) {
+                            minTime = timeValue[0];
+                        }
+                        if(timeValue[0] > phaseMaxTime) {
+                            phaseMaxTime = timeValue[0];
+                            phaseMaxIndex = i;
+                        }
+                        if(timeValue[0] < phaseMinTime) {
+                            phaseMinTime = timeValue[0];
+                            phaseMinIndex = i;
+                        }
+                    }
+                    arcDistance = Math.acos(Math.cos(dist[phaseMaxIndex]));
+                    if(reduceTime || relativePhaseName != "") {
                         scriptStuff += (float)(180.0 / Math.PI * arcDistance)
                                 + "  "
-                                + (float)(time[dist.length - 1] - arcDistance
-                                        / reduceVel) + " 10 0 0 9 "
+                                + (float)(phaseMaxTime) + " 10 0 0 9 "
                                 + phase.getName() + "\n";
-                        // find max and min time
-                        for(int i = 0; i < time.length; i++) {
-                            timeReduced = time[i]
-                                    - Math.acos(Math.cos(dist[i])) / reduceVel;
-                            if(timeReduced > maxTime) {
-                                maxTime = timeReduced;
-                            }
-                            if(timeReduced < minTime) {
-                                minTime = timeReduced;
-                            }
-                        }
                     } else {
                         int lix = (dist[1] > Math.PI) ? 1 : dist.length - 1;
                         double ldel = 180.0 / Math.PI
                                 * Math.acos(Math.cos(dist[lix]));
                         scriptStuff += (float)ldel + "  " + (float)time[lix]
                                 + " 10 0 0 1 " + phase.getName() + "\n";
-                        // find max and min time
-                        for(int i = 0; i < time.length; i++) {
-                            if(time[i] > maxTime) {
-                                maxTime = time[i];
-                            }
-                            if(time[i] < minTime) {
-                                minTime = time[i];
-                            }
-                        }
                     }
                 }
             }
@@ -278,87 +299,131 @@ public class TauP_Curve extends TauP_Time {
             maxTime = Math.ceil(maxTime / 100) * 100;
             minTime = Math.floor(minTime / 100) * 100;
             out.write("pstext -JX6 -P -R0/180/" + minTime + "/" + maxTime
-                    + " -B20/100/:.'" + modelName + "': -K > " + psFile
+                    + " -B20/100/:.'" + title + "': -K > " + psFile
                     + " <<END\n");
             out.write(scriptStuff);
             out.write("END\n\n");
             out.write("psxy -JX -R -M -O >> " + psFile + " <<END\n");
         }
+        double minDist = 0;
+        double maxDist = Math.PI;
+        if(relativePhaseName != "") {
+            for (SeismicPhase seismicPhase : relPhases) {
+                double[] relDist = seismicPhase.getDist();
+                if (relDist.length == 0) {
+                    continue;
+                }
+                minDist = relDist[0];
+                maxDist = relDist[0];
+                for (int i = 0; i < relDist.length; i++) {
+                    if (relDist[i] < minDist) {minDist = relDist[i];}
+                    if (relDist[i] > maxDist) {maxDist = relDist[i];}
+                }
+            }
+        }
         for(int phaseNum = 0; phaseNum < phases.size(); phaseNum++) {
-            phase = (SeismicPhase)phases.elementAt(phaseNum);
+            phase = phases.get(phaseNum);
             dist = phase.getDist();
             time = phase.getTime();
             rayParams = phase.getRayParams();
+            double minPhaseDist = dist[0];
+            double maxPhaseDist = dist[0];
+            if(relativePhaseName != "") {
+                for (int i = 0; i < dist.length; i++) {
+                    if (dist[i] < minPhaseDist) {minDist = dist[i];}
+                    if (dist[i] > maxPhaseDist) {maxDist = dist[i];}
+                }
+            }
             if(dist.length > 0) {
                 out.write("> " + phase.getName() + " for a source depth of "
                         + depth + " kilometers in the " + modelName
-                        + " model\n");
+                        + " model");
+                if(relativePhaseName != "") {
+                    out.write(" relative to "+relativePhaseName);
+                }
+                out.write("\n");
             }
             for(int i = 0; i < dist.length; i++) {
                 /* Here we use a trig trick to make sure the dist is 0 to PI. */
                 arcDistance = Math.acos(Math.cos(dist[i]));
-                if(reduceTime) {
-                    timeReduced = time[i] - arcDistance / reduceVel;
-                } else {
-                    timeReduced = time[i];
-                }
-                out.write((float)(180.0 / Math.PI * arcDistance) + "  "
-                        + (float)timeReduced + "\n");
+                writeValue(arcDistance, time[i], relPhases, out);
                 if(i < dist.length - 1 && (rayParams[i] == rayParams[i + 1])
                         && rayParams.length > 2) {
                     /* Here we have a shadow zone, so put a break in the curve. */
                     out.write("> Shadow Zone\n");
                     continue;
                 }
-                /*
-                 * Here we check to see if we cross a 180 degree mark, in which
-                 * case sin changes sign.
-                 */
-                if(i < dist.length - 1 && Math.sin(dist[i]) > 0
-                        && Math.sin(dist[i + 1]) < 0) {
-                    phase.calcTime(180.0);
-                    phaseArrivals = phase.getArrivals();
-                    int j = 0;
-                    while(j < phaseArrivals.length) {
-                        if((phase.rayParams[i] - phaseArrivals[j].getRayParam())
-                                * (phaseArrivals[j].getRayParam() - phase.rayParams[i + 1]) > 0) {
-                            if(reduceTime) {
-                                out.write("180.0  "
-                                        + (float)(phaseArrivals[j].getTime() - Math.PI
-                                                / reduceVel) + "\n");
-                            } else {
-                                out.write("180.0  "
-                                        + (float)phaseArrivals[j].getTime()
-                                        + "\n");
-                            }
-                            break;
-                        }
-                        j++;
-                    }
+                checkBoundary(0, i, phase, relPhases, out);
+                checkBoundary(Math.PI, i, phase, relPhases, out);
+                if (minDist != 0 && minDist != Math.PI) {
+                    checkBoundary(minDist, i, phase, relPhases, out);
                 }
-                /*
-                 * Here we check to see if we cross a 0 degree mark, in which
-                 * case sin changes sign. No need for reduce vel at 0 distance.
-                 */
-                if(i < dist.length - 1 && Math.sin(dist[i]) < 0
-                        && Math.sin(dist[i + 1]) > 0) {
-                    phase.calcTime(0.0);
-                    phaseArrivals = phase.getArrivals();
-                    int j = 0;
-                    while(j < phaseArrivals.length) {
-                        if((phase.rayParams[i] - phaseArrivals[j].getRayParam())
-                                * (phaseArrivals[j].getRayParam() - phase.rayParams[i + 1]) > 0) {
-                            out.write("0.0  "
-                                    + (float)phaseArrivals[j].getTime() + "\n");
-                            break;
-                        }
-                        j++;
-                    }
+                if (maxDist != 0 && maxDist != Math.PI) {
+                    checkBoundary(maxDist, i, phase, relPhases, out);
                 }
             }
         }
     }
+    
+    protected void checkBoundary(double boundaryDistRadian,
+                                 int distIndex,
+                                 SeismicPhase phase,
+                                 List<SeismicPhase> relPhase,
+                                 Writer out) throws IOException {
+        double arcDistance = Math.acos(Math.cos(boundaryDistRadian));
+        if (distIndex < phase.getDist().length-1 && 
+                (isBetween(Math.acos(Math.cos(phase.getDist()[distIndex])),
+                           Math.acos(Math.cos(phase.getDist()[distIndex+1])),
+                           arcDistance))) {
+            phase.calcTime(arcDistance*180/Math.PI);
+            Arrival[] phaseArrivals = phase.getArrivals();
+            int j = 0;
+            while(j < phaseArrivals.length) {
+                if((phase.rayParams[distIndex] - phaseArrivals[j].getRayParam())
+                        * (phaseArrivals[j].getRayParam() - phase.rayParams[distIndex + 1]) > 0) {
+                    if(reduceTime) {
+                        writeValue(arcDistance, phaseArrivals[j].getTime() - arcDistance
+                                / reduceVel, relPhase, out);
+                    } else {
+                        writeValue(arcDistance, phaseArrivals[j].getTime(), relPhase, out);
+                    }
+                    break;
+                }
+                j++;
+            }
+        }
+    }
+    
+    protected double[] calcTimeValue(double distRadian, double time, List<SeismicPhase> relPhase) throws IOException {
+        double timeReduced = time;
+        double distDeg = distRadian*180/Math.PI;
+        if(reduceTime) {
+            timeReduced = time - distRadian / reduceVel;
+        } else if(relativePhaseName != "") {
+            relativeArrival = SeismicPhase.getEarliestArrival(relPhase, distDeg);
+            if (relativeArrival == null) {
+                // no relative arrival at this dist, skip
+                return new double[0];
+            }
+            timeReduced = time - relativeArrival.getTime();
+        } else {
+            timeReduced = time;
+        }
+        return new double[] { timeReduced };
+    }
+    
+    public void writeValue(double distRadian, double time, List<SeismicPhase> relPhase, Writer out) throws IOException {
+        double[] timeReduced = calcTimeValue(distRadian, time, relPhase);
+        if (timeReduced.length == 0) {return; }
+        double distDeg = distRadian*180/Math.PI;
+        out.write(outForms.formatDistance(distDeg) + "  "
+                + outForms.formatTime(timeReduced[0]) + "\n");
+    }
 
+    public static final boolean isBetween(double a, double b, double value) {
+        return (a < value && value < b) || (a > value && value > b);
+    }
+    
     public String[] parseCmdLineArgs(String[] args) throws IOException {
         int i = 0;
         String[] leftOverArgs;
