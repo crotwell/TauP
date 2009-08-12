@@ -7,16 +7,22 @@ dependencies {
 }
 
 group = 'edu.sc.seis'
-version = '1.2beta1'
+version = '1.2beta2'
 
 task zipDist(type: Zip) {
-    zipFileSet(dir: '../seisFile/build/docs') {
-        include('javadoc/**')
-        prefix = 'TauP-1.2beta1'
+
+//    zipFileSet(dir: '../seisFile/build/docs') {
+//        include('javadoc/**')
+//        prefix = 'TauP-1.2beta2'
+//    }
+    zipFileSet(dir: 'build/output') {
+        include('bin/**')
+        include('lib/**')
+        prefix = 'TauP-1.2beta2'
     }
     zipFileSet(dir: 'build/docs') {
         include('javadoc/**')
-        prefix = 'TauP-1.2beta1'
+        prefix = 'TauP-1.2beta2'
     }
     zipFileSet(dir: '.') {
         include('LICENSE.txt')
@@ -30,7 +36,7 @@ task zipDist(type: Zip) {
         include('src/**')
         include('srl/*.pdf')
         exclude('**/*.svn')
-        prefix = 'TauP-1.2beta1'
+        prefix = 'TauP-1.2beta2'
     }
 }
 
