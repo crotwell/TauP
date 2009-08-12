@@ -97,6 +97,10 @@ digits doesn't imply that they have any meaning.
 \item[taup.rayparam.precision] precision for ray parameter, the default is 3 decimal digits.
 Note that this is precision, not accuracy. Just because you get more
  digits doesn't imply that they have any meaning.
+\item[taup.maxRefraction] The maximum degrees that a Pn or Sn can refract along the moho. Note this
+ is not the total distance, only the segment along the moho. The default is 20 degrees.
+\item[taup.maxDiffraction] The maximum degrees that a Pdiff or Sdiff can diffract along the CMB.
+ Note this is not the total distance, only the segment along the CMB. The default is 60 degrees.
 \item[taup.table.locsat.maxdiff] maximum distance in degrees for which Pdiff 
 or Sdiff are put into a locsat table. Beyond this distance Pdiff and Sdiff will 
 not be added to the table, even though they may show up in the output of 
