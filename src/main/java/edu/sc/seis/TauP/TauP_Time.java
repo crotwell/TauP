@@ -556,25 +556,25 @@ public class TauP_Time {
         boolean cmdLineArgPhase = false;
         boolean cmdLineArgPhaseFile = false;
         while(i < args.length) {
-            if(args[i].equalsIgnoreCase("-help")) {
+            if(args[i].equalsIgnoreCase("--help") || args[i].equalsIgnoreCase("-help")) {
                 printUsage();
                 noComprendoArgs[numNoComprendoArgs++] = args[i];
-            } else if(args[i].equalsIgnoreCase("-version")) {
+            } else if(args[i].equalsIgnoreCase("--version") || args[i].equalsIgnoreCase("-version")) {
                 Alert.info(Version.getVersion());
                 noComprendoArgs[numNoComprendoArgs++] = args[i];
-            } else if(args[i].equalsIgnoreCase("-verbose")) {
+            } else if(args[i].equalsIgnoreCase("--verbose") || args[i].equalsIgnoreCase("-verbose")) {
                 verbose = true;
-            } else if(args[i].equalsIgnoreCase("-expert")) {
+            } else if(args[i].equalsIgnoreCase("--expert") || args[i].equalsIgnoreCase("-expert")) {
                 expert = true;
-            } else if(args[i].equalsIgnoreCase("-debug")) {
+            } else if(args[i].equalsIgnoreCase("--debug") || args[i].equalsIgnoreCase("-debug")) {
                 verbose = true;
                 DEBUG = true;
-            } else if(args[i].equalsIgnoreCase("-gui")) {
+            } else if(args[i].equalsIgnoreCase("--gui") || args[i].equalsIgnoreCase("-gui")) {
                 GUI = true;
-            } else if(args[i].equalsIgnoreCase("-rayp")) {
+            } else if(args[i].equalsIgnoreCase("--rayp") || args[i].equalsIgnoreCase("-rayp")) {
                 onlyPrintRayP = true;
                 onlyPrintTime = false;
-            } else if(args[i].equalsIgnoreCase("-time")) {
+            } else if(args[i].equalsIgnoreCase("--time") || args[i].equalsIgnoreCase("-time")) {
                 onlyPrintTime = true;
                 onlyPrintRayP = false;
             } else if(i < args.length - 1) {
@@ -1371,8 +1371,9 @@ public class TauP_Time {
             String[] noComprendoArgs = tauPTime.parseCmdLineArgs(args);
             if(noComprendoArgs.length > 0) {
                 for(int i = 0; i < noComprendoArgs.length; i++) {
-                    if(noComprendoArgs[i].equals("-help")
-                            || noComprendoArgs[i].equals("-version")) {
+                    if(noComprendoArgs[i].equals("-help") || noComprendoArgs[i].equals("--help")
+                            || noComprendoArgs[i].equals("-version")
+                            || noComprendoArgs[i].equals("--version")) {
                         System.exit(0);
                     }
                 }
