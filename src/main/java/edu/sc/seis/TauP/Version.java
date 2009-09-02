@@ -33,7 +33,7 @@ package edu.sc.seis.TauP;
  * 
  * @author H. Philip Crotwell
  * 
- */
+ */ 
 public class Version {
 
     private static int majorNum = 1;
@@ -62,7 +62,7 @@ public class Version {
     }
 
     /** use date -u to get immediately prior to recompiling. */
-    private static String dateCreated = "$Date: 2009-08-12 14:55:06 -0400 (Wed, 12 Aug 2009) $";
+    private static String dateCreated = "$Date: 2009-09-02 14:28:32 -0400 (Wed, 02 Sep 2009) $";
 
     /**
      * returns a string with version number and date created. The format is
