@@ -9,7 +9,7 @@ dependencies {
 group = 'edu.sc.seis'
 version = '1.2beta2'
 
-task zipDist(type: Zip) {
+task zipDist(type: Zip, dependsOn: ['makeScript', 'genModels']) {
 
 //    zipFileSet(dir: '../seisFile/build/docs') {
 //        include('javadoc/**')
