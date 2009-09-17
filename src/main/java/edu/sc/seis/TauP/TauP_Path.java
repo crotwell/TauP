@@ -36,7 +36,7 @@ public class TauP_Path extends TauP_Pierce {
 
 	protected boolean gmtScript = false;
 
-	protected double maxPathInc = 1.0;
+	protected static double maxPathInc = 1.0;
 
 	protected static Format float8_4 = new Format("%8.4f");
 
@@ -99,12 +99,12 @@ public class TauP_Path extends TauP_Pierce {
 		this.gmtScript = gmtScript;
 	}
 
-	public double getMaxPathInc() {
+	public static double getMaxPathInc() {
 		return maxPathInc;
 	}
 
-	public void setMaxPathInc(double maxPathInc) {
-		this.maxPathInc = maxPathInc;
+	public static void setMaxPathInc(double max) {
+		maxPathInc = max;
 	}
 
 	public void calculate(double degrees) throws TauModelException {
