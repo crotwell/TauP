@@ -7,22 +7,26 @@ dependencies {
 }
 
 group = 'edu.sc.seis'
-version = '1.2beta2'
+version = '1.2beta3'
 
-task zipDist(type: Zip, dependsOn: ['makeScript', 'genModels']) {
-
+task zipDist(type: Zip, dependsOn: ['makeScript', 'genModels', 'createBuildScript', 'wrapper']) {
+    dirName = project.name+'-'+version+'-src'
 //    zipFileSet(dir: '../seisFile/build/docs') {
 //        include('javadoc/**')
 //        prefix = 'TauP-1.2beta2'
 //    }
+    zipFileSet(dir: 'build') {
+        include('build.gradle')
+        prefix = dirName
+    }
     zipFileSet(dir: 'build/output') {
         include('bin/**')
         include('lib/**')
-        prefix = 'TauP-1.2beta2'
+        prefix = dirName
     }
     zipFileSet(dir: 'build/docs') {
         include('javadoc/**')
-        prefix = 'TauP-1.2beta2'
+        prefix = dirName
     }
     zipFileSet(dir: '.') {
         include('LICENSE.txt')
@@ -35,8 +39,11 @@ task zipDist(type: Zip, dependsOn: ['makeScript', 'genModels']) {
         include('native/**')
         include('src/**')
         include('srl/*.pdf')
+        include('gradleWrapper/**')
+        include('gradlew')
+        include('gradlew.bat')
         exclude('**/*.svn')
-        prefix = 'TauP-1.2beta2'
+        prefix = dirName
     }
 }
 
