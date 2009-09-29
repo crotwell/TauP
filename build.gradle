@@ -29,7 +29,7 @@ task zipDist(type: Zip, dependsOn: ['makeScript', 'genModels', 'createBuildScrip
         prefix = dirName
     }
     zipFileSet(dir: '.') {
-        include('LICENSE.txt')
+        include('gpl-3.0.txt')
         include('Maple/*')
         include('Notes/History')
         include('defaultProps')
@@ -59,7 +59,7 @@ task makeScript(dependsOn: copyToLib) << { task ->
 }
 
 
-task genModels(dependsOn: compile) << {
+task genModels(dependsOn: compileJava) << {
     println "Generate models"
     def dir = 'src/main/resources/edu/sc/seis/TauP/StdModels/'
     String[] tvelModelNames = ['iasp91', 'ak135']
