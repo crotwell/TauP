@@ -212,6 +212,22 @@ public class TauP_Pierce extends TauP_Time {
             }
         }
     }
+    
+    String getCommentLine(Arrival currArrival) {
+        String outName = currArrival.getName();
+        if ( ! currArrival.getName().equals(currArrival.getPuristName())) {
+            outName+="("+currArrival.getPuristName()+")";
+        }
+        return "> " + outName + " at "
+                + outForms.formatTime(currArrival.getTime())
+                + " seconds at "
+                + outForms.formatDistance(currArrival.getDistDeg())
+                + " degrees for a "
+                + outForms.formatDepth(currArrival.getSourceDepth())
+                + " km deep source in the " + modelName + " model with rayParam "
+                + outForms.formatRayParam(Math.PI / 180 * currArrival.getRayParam()) 
+                + " s/deg.\n";
+    }
 
     public void printResult(Writer out) throws IOException {
         double calcDist;
@@ -221,13 +237,7 @@ public class TauP_Pierce extends TauP_Time {
         boolean longWayRound = false;
         for(int i = 0; i < arrivals.size(); i++) {
             currArrival = (Arrival)arrivals.elementAt(i);
-            out.write("> " + currArrival.getName() + " at "
-                    + outForms.formatTime(currArrival.getTime())
-                    + " seconds at "
-                    + outForms.formatDistance(currArrival.getDistDeg())
-                    + " degrees for a "
-                    + outForms.formatDepth(currArrival.getSourceDepth())
-                    + " km deep source in the " + modelName + " model.\n");
+            out.write(getCommentLine(currArrival));
             longWayRound = false;
             if((currArrival.getDist() * 180 / Math.PI) % 360 > 180) {
                 longWayRound = true;
