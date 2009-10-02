@@ -9,26 +9,35 @@ dependencies {
 group = 'edu.sc.seis'
 version = '1.2beta3'
 
-task zipDist(type: Zip, dependsOn: ['makeScript', 'genModels', 'createBuildScript', 'wrapper']) {
-    dirName = project.name+'-'+version+'-src'
-//    zipFileSet(dir: '../seisFile/build/docs') {
-//        include('javadoc/**')
-//        prefix = 'TauP-1.2beta2'
-//    }
-    zipFileSet(dir: 'build') {
+task testTarDist(type: Tar, dependsOn: 'wrapper') {
+    dirName = 'testWrapper'
+    tarFileSet(dir: '.') {
+        include('gradleWrapper/**')
+        include('gradlew')
+        include('gradlew.bat')
+        prefix = dirName
+    }
+}
+
+task tarDist(type: Tar, dependsOn: ['makeScript', 'genModels', 'createBuildScript', 'wrapper']) {
+    dirName = project.name+'-'+version
+    tarFileSet(dir: 'build') {
         include('build.gradle')
         prefix = dirName
     }
-    zipFileSet(dir: 'build/output') {
+    tarFileSet(dir: 'build/output',fileMode: '755') {
         include('bin/**')
+        prefix = dirName
+    }
+    tarFileSet(dir: 'build/output') {
         include('lib/**')
         prefix = dirName
     }
-    zipFileSet(dir: 'build/docs') {
+    tarFileSet(dir: 'build/docs') {
         include('javadoc/**')
         prefix = dirName
     }
-    zipFileSet(dir: '.') {
+    tarFileSet(dir: '.') {
         include('gpl-3.0.txt')
         include('Maple/*')
         include('Notes/History')
@@ -65,7 +74,7 @@ task genModels(dependsOn: compileJava) << {
     String[] tvelModelNames = ['iasp91', 'ak135']
     String[] ndModelNames = ['prem']
     def classLoader = new GroovyClassLoader(Project.class.classLoader)
-    classLoader.addURL(new File('build/classes').toURL())
+    classLoader.addURL(new File('build/classes/main').toURL())
     configurations.default.each { File file -> classLoader.addURL(file.toURL())}
     def taupCreate = classLoader.loadClass('edu.sc.seis.TauP.TauP_Create').newInstance()
     taupCreate.setDirectory(dir)
