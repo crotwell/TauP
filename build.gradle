@@ -9,14 +9,8 @@ dependencies {
 group = 'edu.sc.seis'
 version = '1.2beta3'
 
-task testTarDist(type: Tar, dependsOn: 'wrapper') {
-    dirName = 'testWrapper'
-    tarFileSet(dir: '.') {
-        include('gradleWrapper/**')
-        include('gradlew')
-        include('gradlew.bat')
-        prefix = dirName
-    }
+artifacts {
+    archives jar
 }
 
 task tarDist(type: Tar, dependsOn: ['makeScript', 'genModels', 'createBuildScript', 'wrapper']) {
