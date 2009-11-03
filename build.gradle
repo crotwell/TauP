@@ -7,7 +7,7 @@ dependencies {
 }
 
 group = 'edu.sc.seis'
-version = '1.2beta3'
+version = '1.2beta4'
 
 artifacts {
     archives jar
