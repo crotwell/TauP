@@ -16,23 +16,23 @@ artifacts {
 task tarDist(type: Tar, dependsOn: ['makeScript', 'genModels', 'createBuildScript', 'wrapper']) {
     compression = Compression.GZIP
     dirName = project.name+'-'+version
-    tarFileSet(dir: 'build') {
+    from('build') {
         include('build.gradle')
-        prefix = dirName
+        into dirName
     }
-    tarFileSet(dir: 'build/output',fileMode: '755') {
+    from('build/output',fileMode: '755') {
         include('bin/**')
-        prefix = dirName
+        into dirName
     }
-    tarFileSet(dir: 'build/output') {
+    from('build/output') {
         include('lib/**')
-        prefix = dirName
+        into dirName
     }
-    tarFileSet(dir: 'build/docs') {
+    from('build/docs') {
         include('javadoc/**')
-        prefix = dirName
+        into dirName
     }
-    tarFileSet(dir: '.') {
+    from('.') {
         include('gpl-3.0.txt')
         include('Maple/*')
         include('Notes/History')
@@ -47,7 +47,7 @@ task tarDist(type: Tar, dependsOn: ['makeScript', 'genModels', 'createBuildScrip
         include('gradlew')
         include('gradlew.bat')
         exclude('**/*.svn')
-        prefix = dirName
+        into dirName
     }
 }
 
