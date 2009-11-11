@@ -513,6 +513,12 @@ public class TauModel implements Serializable {
         // **GRH** if(depth > getCmbDepth()) { throw new
         // TauModelException("depthCorrect: Can't depth correct "
         // **GRH** + "for a depth in the core."); }
+
+        if(depth > getRadiusOfEarth()) {
+            throw new TauModelException("depthCorrect: Can't depth correct "
+                    + "for a source deeper than the radius of the earth. Depth="
+                    + sourceDepth+" radius="+getRadiusOfEarth());
+        }
         TauModel tMod = splitBranch(depth);
         tMod.sourceDepth = depth;
         tMod.sourceBranch = tMod.findBranch(depth);
