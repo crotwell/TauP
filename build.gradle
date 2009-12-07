@@ -52,14 +52,14 @@ task tarDist(type: Tar, dependsOn: ['makeScript', 'genModels', 'createBuildScrip
 }
 
 task makeScript(dependsOn: copyToLib) << { task ->
-    scriptBuild('taup_time', 'edu.sc.seis.TauP.TauP_Time', task.project)
-    scriptBuild('taup_pierce', 'edu.sc.seis.TauP.TauP_Pierce', task.project)
-    scriptBuild('taup_path', 'edu.sc.seis.TauP.TauP_Path', task.project)
-    scriptBuild('taup_create', 'edu.sc.seis.TauP.TauP_Create', task.project)
-    scriptBuild('taup_curve', 'edu.sc.seis.TauP.TauP_Curve', task.project)
-    scriptBuild('taup_setsac', 'edu.sc.seis.TauP.TauP_SetSac', task.project)
-    scriptBuild('taup_table', 'edu.sc.seis.TauP.TauP_Table', task.project)
-    scriptBuild('taup', 'edu.sc.seis.TauP.TauP', task.project)
+    ScriptBuilder.create('taup_time', 'edu.sc.seis.TauP.TauP_Time', task.project)
+    ScriptBuilder.create('taup_pierce', 'edu.sc.seis.TauP.TauP_Pierce', task.project)
+    ScriptBuilder.create('taup_path', 'edu.sc.seis.TauP.TauP_Path', task.project)
+    ScriptBuilder.create('taup_create', 'edu.sc.seis.TauP.TauP_Create', task.project)
+    ScriptBuilder.create('taup_curve', 'edu.sc.seis.TauP.TauP_Curve', task.project)
+    ScriptBuilder.create('taup_setsac', 'edu.sc.seis.TauP.TauP_SetSac', task.project)
+    ScriptBuilder.create('taup_table', 'edu.sc.seis.TauP.TauP_Table', task.project)
+    ScriptBuilder.create('taup', 'edu.sc.seis.TauP.TauP', task.project)
 }
 
 
