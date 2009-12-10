@@ -20,7 +20,8 @@ task tarDist(type: Tar, dependsOn: ['makeScript', 'genModels', 'createBuildScrip
         include('build.gradle')
         into dirName
     }
-    from('build/output',fileMode: '755') {
+    from('build/output') {
+        fileMode=0755
         include('bin/**')
         into dirName
     }
