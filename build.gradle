@@ -66,14 +66,14 @@ task makeScript(dependsOn: copyToLib) << { task ->
 
 task genModels(dependsOn: compileJava) << {
     println "Generate models"
-    def dir = 'src/main/resources/edu/sc/seis/TauP/StdModels/'
+    def dir = new File(Project.getProjectDir(), 'src/main/resources/edu/sc/seis/TauP/StdModels/')
     String[] tvelModelNames = ['iasp91', 'ak135']
     String[] ndModelNames = ['prem']
     def classLoader = new GroovyClassLoader(Project.class.classLoader)
-    classLoader.addURL(new File('build/classes/main').toURL())
+    classLoader.addURL(new File(Project.getBuildDir(), '/classes/main').toURL())
     configurations.default.each { File file -> classLoader.addURL(file.toURL())}
     def taupCreate = classLoader.loadClass('edu.sc.seis.TauP.TauP_Create').newInstance()
-    taupCreate.setDirectory(dir)
+    taupCreate.setDirectory(dir.getPath())
     taupCreate.setVelFileType('tvel')
     tvelModelNames.each { String model ->
         taupCreate.setModelFilename(model)
