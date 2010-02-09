@@ -89,3 +89,6 @@ task genModels(dependsOn: compileJava) << {
         taupCreate.getTauModel().writeModel(new File(dir, model+'.taup').path)
     }
 }
+
+assemble.dependsOn(tarDist)
+
