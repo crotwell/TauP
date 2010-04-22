@@ -17,9 +17,13 @@
 
 package edu.sc.seis.TauP;
  
-import java.io.*;
-import java.util.*;
-//import java.util.zip.*;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InvalidClassException;
+import java.io.OptionalDataException;
+import java.io.StreamCorruptedException;
+import java.util.List;
+import java.util.Properties;
 
 public class Play
 {
@@ -29,7 +33,6 @@ public class Play
     protected Outputs outForms;
     protected String modelName = "prem";
     protected SeismicPhase phase;
-    protected Vector phaseNames = new Vector(10);
     protected double degrees = Double.MAX_VALUE;
 	    
     protected static final int ACTION_NOTHING = 0;
@@ -85,15 +88,15 @@ public class Play
 
     protected String stringLegAction( int action )
     {
-	    if( action == phase.TURN )
+	    if( action == SeismicPhase.TURN )
 		    return new String( "TURN" );
-	    else if( action == phase.REFLECTTOP )
+	    else if( action == SeismicPhase.REFLECTTOP )
 		    return new String( "REFLECTTOP" );
-	    else if( action == phase.REFLECTBOT )
+	    else if( action == SeismicPhase.REFLECTBOT )
 		    return new String( "REFLECTBOT" );
-	    else if( action == phase.TRANSUP )
+	    else if( action == SeismicPhase.TRANSUP )
 		    return new String( "TRANSUP" );
-	    else if( action == phase.TRANSDOWN )
+	    else if( action == SeismicPhase.TRANSDOWN )
 		    return new String( "TRANSDOWN" );
 	    else
 		    return new String( "unknown" );
@@ -113,7 +116,7 @@ public class Play
 	    double radiusOfEarth = tMod.getRadiusOfEarth();
 	    double old_depth = 0.0, new_depth = 0.0;
 	    double RT_PSV = 1, RT_SH = 1;	// transmission and reflection coefficients for P/SV and SH waves
-	    String[] legs;
+	    List<String> legs;
 
 	    //phase.DEBUG = true;
 
@@ -205,7 +208,7 @@ public class Play
 			    }
 
 			    // reflection: if legAction is REFLECTTOP or REFLECTBOT and the branch is the last one in the current leg
-			    if(  legAction[j - 1] == phase.REFLECTTOP  ||  legAction[j - 1] == phase.REFLECTBOT  
+			    if(  legAction[j - 1] == SeismicPhase.REFLECTTOP  ||  legAction[j - 1] == SeismicPhase.REFLECTBOT  
 					    && legAction[j - 1] != legAction[j]  )
 			    {
 				    if( pierce[j].depth == 0.0 )
@@ -218,12 +221,12 @@ public class Play
 				    }
 			    }
 			    // transmission: if legAction is TRANSUP or TRANSDOWN or anything else -- if it is not the last branch in the leg (i.e. branch[j] and branch[j-1] have the same legAction)
-			    else if( ( legAction[j - 1] == phase.TRANSUP ) 
-					    || ( legAction[j - 1] == phase.TRANSDOWN ) 
+			    else if( ( legAction[j - 1] == SeismicPhase.TRANSUP ) 
+					    || ( legAction[j - 1] == SeismicPhase.TRANSDOWN ) 
 					    || ( ( legAction[j - 1] == legAction[j] ) &&
-							    ( ( legAction[j - 1] == phase.TURN )
-							      || ( legAction[j - 1] == phase.REFLECTTOP )
-							      || ( legAction[j - 1] == phase.REFLECTBOT ) ) ) )
+							    ( ( legAction[j - 1] == SeismicPhase.TURN )
+							      || ( legAction[j - 1] == SeismicPhase.REFLECTTOP )
+							      || ( legAction[j - 1] == SeismicPhase.REFLECTBOT ) ) ) )
 			    {
 				    branchAction = ACTION_TRANSMISSION;
 			    }
@@ -342,10 +345,8 @@ public class Play
 		    // Now: show the legs of the phase (e.g. PCP: P, c, P, END)
 		    legs = phase.getLegs();
 		    System.out.println( "\nLegs of this phase:" );
-		    
-		    for( int j = 0; j < legs.length; j++ )
-		    {
-			    System.out.print( "Leg: " + legs[j] + "\n" );
+		    for (String leg : legs) {
+			    System.out.print( "Leg: " + leg + "\n" );
 		    }
 	    }
     }

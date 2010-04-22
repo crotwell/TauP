@@ -1,12 +1,12 @@
 package edu.sc.seis.TauP;
 
 
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
-import sun.rmi.runtime.GetThreadPoolAction;
-import static org.junit.Assert.* ;
+import java.util.List;
+
+import org.junit.Before;
+import org.junit.Test;
 
 public class Dist180Test {
 
@@ -50,8 +50,8 @@ public class Dist180Test {
         time.clearPhaseNames();
         time.appendPhaseName("PKIKP");
         time.calculate(180);
-        Arrival[] arrivals = time.getArrivals();
-        assertEquals(integrateVelocity(time.getTauModel().getVelocityModel()), arrivals[0].getTime(), 0.005);
+        List<Arrival> arrivals = time.getArrivals();
+        assertEquals(integrateVelocity(time.getTauModel().getVelocityModel()), arrivals.get(0).getTime(), 0.005);
     }
     
     /** integrates the velocity model, works for a zero ray parameter ray. */

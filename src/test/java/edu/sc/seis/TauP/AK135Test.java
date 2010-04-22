@@ -77,18 +77,18 @@ public class AK135Test extends TestCase {
             taup.depthCorrect(atDepth.get(0).depth);
             for (TimeDist timeDist : atDepth) {
                 taup.calculate(timeDist.dist);
-                Arrival[] arrivals = taup.getArrivals();
+                List<Arrival> arrivals = taup.getArrivals();
                 if (timeDist.time > 0) {
                 assertTrue(phase + " has arrivals for depth " + timeDist.depth + " at dist " + timeDist.dist,
-                           arrivals.length > 0);
+                           arrivals.size() > 0);
                 // assume first?
                 assertEquals(phase + " time for depth " + timeDist.depth + " at dist " + timeDist.dist,
                              timeDist.time,
-                             arrivals[0].time,
+                             arrivals.get(0).time,
                              0.07f);
                 assertEquals(phase + " rp for depth " + timeDist.depth + " at dist " + timeDist.dist,
                              timeDist.p,
-                             arrivals[0].rayParam * Math.PI / 180,
+                             arrivals.get(0).rayParam * Math.PI / 180,
                              0.11f);
                 }
             }
