@@ -30,7 +30,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OptionalDataException;
 import java.io.StreamCorruptedException;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
+
 import edu.sc.seis.seisFile.sac.SacTimeSeries;
 
 /**
@@ -58,7 +60,7 @@ import edu.sc.seis.seisFile.sac.SacTimeSeries;
  */
 public class TauP_SetSac extends TauP_Time {
 
-    protected Vector sacFileNames = new Vector(10);
+    protected List<String> sacFileNames;
 
     protected boolean evdpkm = false;
 
@@ -73,9 +75,9 @@ public class TauP_SetSac extends TauP_Time {
     }
 
     public void setSacFileNames(String[] sacFileNames) {
-        this.sacFileNames.removeAllElements();
+        this.sacFileNames = new ArrayList<String>();
         for(int i = 0; i < sacFileNames.length; i++) {
-            this.sacFileNames.addElement(sacFileNames[i]);
+            this.sacFileNames.add(sacFileNames[i]);
         }
     }
 
@@ -129,16 +131,16 @@ public class TauP_SetSac extends TauP_Time {
         int phaseNum;
         double deg;
         for(int i = 0; i < sacFileNames.size(); i++) {
-            System.out.println((String)sacFileNames.elementAt(i));
-            sacFile.read((String)sacFileNames.elementAt(i));
+            System.out.println((String)sacFileNames.get(i));
+            sacFile.read((String)sacFileNames.get(i));
             if(sacFile.evdp == -12345.0f) {
                 System.out.println("Depth not set in "
-                        + (String)sacFileNames.elementAt(i) + ", skipping");
+                        + (String)sacFileNames.get(i) + ", skipping");
                 continue;
             }
             if(sacFile.o == -12345.0f) {
                 System.out.println("O marker not set in "
-                        + (String)sacFileNames.elementAt(i) + ", skipping");
+                        + (String)sacFileNames.get(i) + ", skipping");
                 continue;
             }
             if(sacFile.gcarc != -12345.0f) {
@@ -167,13 +169,13 @@ public class TauP_SetSac extends TauP_Time {
             } else {
                 /* can't get a distance, skipping */
                 Alert.warning("Can't get a distance, all distance fields are undef.",
-                              "skipping " + (String)sacFileNames.elementAt(i));
+                              "skipping " + (String)sacFileNames.get(i));
                 continue;
             }
             if(!((evdpkm && depth == sacFile.evdp) || (!evdpkm && depth == 1000 * sacFile.evdp))) {
                 if(!evdpkm && sacFile.evdp != 0 && sacFile.evdp < 1000.0) {
                     Alert.warning("Sac header evdp is < 1000 in "
-                                          + (String)sacFileNames.elementAt(i),
+                                          + sacFileNames.get(i),
                                   "If the depth is in kilometers instead of meters "
                                           + "(default), you should use the -evdpkm flag");
                 }
@@ -184,13 +186,13 @@ public class TauP_SetSac extends TauP_Time {
                 }
             }
             if(verbose) {
-                System.out.println(sacFileNames.elementAt(i)
+                System.out.println(sacFileNames.get(i)
                         + " searching for " + getPhaseNameString());
             }
             calculate(deg);
             // calcTime(deg);
             if(verbose) {
-                System.out.println(sacFileNames.elementAt(i) + " "
+                System.out.println(sacFileNames.get(i) + " "
                         + arrivals.size() + " arrivals found.");
             }
             for(int arrivalNum = arrivals.size() - 1; arrivalNum >= 0; arrivalNum--) {
@@ -204,7 +206,7 @@ public class TauP_SetSac extends TauP_Time {
                 }
                 if(phaseNum != -1) {
                     if(verbose) {
-                        System.out.println(sacFileNames.elementAt(i)
+                        System.out.println(sacFileNames.get(i)
                                 + " phase found "
                                 + getArrival(arrivalNum).getName()
                                 + " -> t"
@@ -217,7 +219,7 @@ public class TauP_SetSac extends TauP_Time {
                                   getArrival(arrivalNum));
                 }
             }
-            sacFile.write((String)sacFileNames.elementAt(i));
+            sacFile.write((String)sacFileNames.get(i));
         }
     }
 
@@ -334,7 +336,7 @@ public class TauP_SetSac extends TauP_Time {
             } else {
                 tempFile = new File(leftOverArgs[i]);
                 if(tempFile.exists() && tempFile.isFile() && tempFile.canRead()) {
-                    sacFileNames.addElement(leftOverArgs[i]);
+                    sacFileNames.add(leftOverArgs[i]);
                 } else {
                     noComprendoArgs[numNoComprendoArgs++] = leftOverArgs[i];
                 }
@@ -383,7 +385,7 @@ public class TauP_SetSac extends TauP_Time {
                     System.out.println();
                     noComprendoArgs = null;
                 }
-                if(tauPSetSac.DEBUG) {
+                if(TauP_Time.DEBUG) {
                     System.out.println("Done reading " + tauPSetSac.modelName);
                 }
                 tauPSetSac.init();

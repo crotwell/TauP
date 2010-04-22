@@ -50,6 +50,7 @@ import java.io.StringWriter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -361,7 +362,6 @@ public class TauPApplet extends Applet implements ActionListener, ItemListener {
     public void actionPerformed(ActionEvent e) {
         String target = e.getActionCommand();
         if(target == "Calculate") {
-            String text;
             try {
                 // make sure we have loaded the model
                 if(tMod == null) {
@@ -423,11 +423,11 @@ public class TauPApplet extends Applet implements ActionListener, ItemListener {
                                     - disconDepths[i];
                         }
                         plotArea.setCircles(disconRadius);
-                        Arrival[] arrivals = tool.getArrivals();
+                        List<Arrival> arrivals = tool.getArrivals();
                         plotArea.clearSegments();
-                        for(int i = 0; i < arrivals.length; i++) {
-                            if(arrivals[i].pierce != null) {
-                                plotArea.appendSegment(arrivals[i].pierce);
+                        for (Arrival arrival : arrivals) {
+                            if(arrival.pierce != null) {
+                                plotArea.appendSegment(arrival.pierce);
                             }
                         }
                         plotArea.repaint();
@@ -442,11 +442,11 @@ public class TauPApplet extends Applet implements ActionListener, ItemListener {
                                     - disconDepths[i];
                         }
                         plotArea.setCircles(disconRadius);
-                        Arrival[] arrivals = tool.getArrivals();
+                        List<Arrival> arrivals = tool.getArrivals();
                         plotArea.clearSegments();
-                        for(int i = 0; i < arrivals.length; i++) {
-                            if(arrivals[i].path != null) {
-                                plotArea.appendSegment(arrivals[i].path);
+                        for (Arrival arrival : arrivals) {
+                            if(arrival.path != null) {
+                                plotArea.appendSegment(arrival.path);
                             }
                         }
                         plotArea.repaint();

@@ -16,8 +16,11 @@
  */
 package edu.sc.seis.TauP;
 
-import java.io.*;
-import java.util.Vector;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.OptionalDataException;
+import java.io.StreamCorruptedException;
+import java.io.Writer;
 
 /**
  * Calculate pierce points for different branches using linear interpolation
@@ -202,7 +205,7 @@ public class TauP_Pierce extends TauP_Time {
                     phase.calcPierce(tModDepth);
                     phaseArrivals = phase.getArrivals();
                     for(int i = 0; i < phaseArrivals.length; i++) {
-                        arrivals.addElement(phaseArrivals[i]);
+                        arrivals.add(phaseArrivals[i]);
                     }
                 }
             } catch(TauModelException e) {
@@ -236,7 +239,7 @@ public class TauP_Pierce extends TauP_Time {
         Arrival currArrival;
         boolean longWayRound = false;
         for(int i = 0; i < arrivals.size(); i++) {
-            currArrival = (Arrival)arrivals.elementAt(i);
+            currArrival = (Arrival)arrivals.get(i);
             out.write(getCommentLine(currArrival));
             longWayRound = false;
             if((currArrival.getDist() * 180 / Math.PI) % 360 > 180) {
@@ -354,7 +357,6 @@ public class TauP_Pierce extends TauP_Time {
         int i = 0;
         String[] leftOverArgs;
         int numNoComprendoArgs = 0;
-        File tempFile;
         leftOverArgs = super.parseCmdLineArgs(args);
         String[] noComprendoArgs = new String[leftOverArgs.length];
         while(i < leftOverArgs.length) {
@@ -415,7 +417,7 @@ public class TauP_Pierce extends TauP_Time {
                 System.out.println();
                 noComprendoArgs = null;
             }
-            if(tauPPierce.DEBUG) {
+            if(TauP_Time.DEBUG) {
                 System.out.println("Done reading " + tauPPierce.modelName);
             }
             tauPPierce.init();

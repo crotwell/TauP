@@ -32,10 +32,11 @@ import java.io.StreamCorruptedException;
 import java.io.StreamTokenizer;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
-import java.util.Vector;
 
 /**
  * Calculate travel times for different branches using linear interpolation
@@ -93,7 +94,7 @@ public class TauP_Time {
 
     protected double eventLon = Double.MAX_VALUE;
 
-    protected Vector arrivals = new Vector(10);
+    protected List<Arrival> arrivals;
 
     protected boolean GUI = false;
 
@@ -291,10 +292,9 @@ public class TauP_Time {
 
     public synchronized void appendPhaseName(String phaseName)
             throws TauModelException {
-        List<String> names = getPhaseNames(phaseName);
-        Iterator it = names.iterator();
+        Iterator<String> it = getPhaseNames(phaseName).iterator();
         while(it.hasNext()) {
-            appendPhaseName(new PhaseName((String)it.next()));
+            appendPhaseName(new PhaseName(it.next()));
         }
     }
 
@@ -362,7 +362,7 @@ public class TauP_Time {
     }
 
     public void clearArrivals() {
-        arrivals.removeAllElements();
+        arrivals = new ArrayList<Arrival>();
     }
 
     public int getNumArrivals() {
@@ -370,15 +370,11 @@ public class TauP_Time {
     }
 
     public Arrival getArrival(int i) {
-        return (Arrival)arrivals.elementAt(i);
+        return (Arrival)arrivals.get(i);
     }
 
-    public Arrival[] getArrivals() {
-        Arrival[] returnArrivals = new Arrival[arrivals.size()];
-        for(int i = 0; i < arrivals.size(); i++) {
-            returnArrivals[i] = getArrival(i);
-        }
-        return returnArrivals;
+    public List<Arrival> getArrivals() {
+        return Collections.unmodifiableList(arrivals);
     }
 
     /* Normal methods */
@@ -672,26 +668,11 @@ public class TauP_Time {
     }
 
     public synchronized void sortArrivals() {
-        if(arrivals.size() < 2) {
-            return;
-        }
-        boolean sorted = false;
-        int i, k = 0;
-        Arrival currArrival, prevArrival;
-        while(!sorted) {
-            sorted = true;
-            currArrival = (Arrival)arrivals.elementAt(0);
-            for(int j = 0; j < arrivals.size() - 1; j++) {
-                prevArrival = currArrival;
-                currArrival = (Arrival)arrivals.elementAt(j + 1);
-                if(prevArrival.getTime() > currArrival.getTime()) {
-                    sorted = false;
-                    arrivals.setElementAt(currArrival, j);
-                    arrivals.setElementAt(prevArrival, j + 1);
-                    currArrival = prevArrival;
-                }
+        Collections.sort(arrivals, new Comparator<Arrival>() {
+            public int compare(Arrival o1, Arrival o2) {
+                return Double.compare(o1.getTime(), o2.getTime());
             }
-        }
+        });
     }
 
     public void calculate(double degrees) throws TauModelException {
@@ -713,13 +694,13 @@ public class TauP_Time {
         this.degrees = degrees;
         SeismicPhase phase;
         Arrival[] phaseArrivals;
-        arrivals.removeAllElements();
+        clearArrivals();
         for(int phaseNum = 0; phaseNum < phases.size(); phaseNum++) {
             phase = phases.get(phaseNum);
             phase.calcTime(degrees);
             phaseArrivals = phase.getArrivals();
             for(int i = 0; i < phaseArrivals.length; i++) {
-                arrivals.addElement(phaseArrivals[i]);
+                arrivals.add(phaseArrivals[i]);
             }
         }
         sortArrivals();
@@ -799,12 +780,12 @@ public class TauP_Time {
         int maxNameLength = 5;
         int maxPuristNameLength = 5;
         for(int j = 0; j < arrivals.size(); j++) {
-            if(((Arrival)arrivals.elementAt(j)).getName().length() > maxNameLength) {
-                maxNameLength = ((Arrival)arrivals.elementAt(j)).getName()
+            if(((Arrival)arrivals.get(j)).getName().length() > maxNameLength) {
+                maxNameLength = ((Arrival)arrivals.get(j)).getName()
                         .length();
             }
-            if(((Arrival)arrivals.elementAt(j)).getPuristName().length() > maxPuristNameLength) {
-                maxPuristNameLength = ((Arrival)arrivals.elementAt(j)).getPuristName()
+            if(((Arrival)arrivals.get(j)).getPuristName().length() > maxPuristNameLength) {
+                maxPuristNameLength = ((Arrival)arrivals.get(j)).getPuristName()
                         .length();
             }
         }
@@ -813,9 +794,9 @@ public class TauP_Time {
         if(!(onlyPrintRayP || onlyPrintTime)) {
             out.write("\nModel: " + modelName + "\n");
             String lineOne = "Distance   Depth   " + phaseFormat.form("Phase")
-                    + "   Travel    Ray Param   Purist    Purist";
+                    + "   Travel    Ray Param   Takeoff Incident  Purist    Purist";
             String lineTwo = "  (deg)     (km)   " + phaseFormat.form("Name ")
-                    + "   Time (s)  p (s/deg)  Distance   Name ";
+                    + "   Time (s)  p (s/deg)    (deg)   (deg)   Distance   Name ";
             if (relativePhaseName != "") {
                 lineOne += " Relative to";
                 for (int s=0; s<(11-relativePhaseName.length())/2;s++) {
@@ -830,7 +811,7 @@ public class TauP_Time {
             }
             out.write("\n");
             for(int j = 0; j < arrivals.size(); j++) {
-                currArrival = (Arrival)arrivals.elementAt(j);
+                currArrival = (Arrival)arrivals.get(j);
                 out.write(outForms.formatDistance(currArrival.getModuloDistDeg())
                         + outForms.formatDepth(depth) + "   ");
                 out.write(phaseFormat.form(currArrival.getName()));
@@ -838,12 +819,14 @@ public class TauP_Time {
                         + outForms.formatTime(currArrival.getTime())
                         + "  "
                         + outForms.formatRayParam(Math.PI / 180.0
-                                * currArrival.getRayParam()) + "   ");
+                                * currArrival.getRayParam()) + "  ");
+                out.write(outForms.formatDistance(currArrival.getTakeoffAngle())+" ");
+                out.write(outForms.formatDistance(currArrival.getIncidentAngle())+" ");
                 out.write(outForms.formatDistance(currArrival.getDistDeg()));
                 if(currArrival.getName().equals(currArrival.getPuristName())) {
-                    out.write("  = ");
+                    out.write("   = ");
                 } else {
-                    out.write("  * ");
+                    out.write("   * ");
                 }
                 out.write(phasePuristFormat.form(currArrival.getPuristName()));
                 if (relativePhaseName != "") {
@@ -853,13 +836,13 @@ public class TauP_Time {
             }
         } else if(onlyPrintTime) {
             for(int j = 0; j < arrivals.size(); j++) {
-                currArrival = (Arrival)arrivals.elementAt(j);
+                currArrival = (Arrival)arrivals.get(j);
                 out.write(String.valueOf((float)(currArrival.getTime())) + " ");
             }
             out.write("\n");
         } else if(onlyPrintRayP) {
             for(int j = 0; j < arrivals.size(); j++) {
-                currArrival = (Arrival)arrivals.elementAt(j);
+                currArrival = (Arrival)arrivals.get(j);
                 out.write(String.valueOf((float)(Math.PI / 180.0 * currArrival.getRayParam()))
                         + " ");
             }
@@ -1021,12 +1004,12 @@ public class TauP_Time {
                             calculate(degrees);
                             printResult(dos);
                         } else {
-                            if(tokenIn.ttype == tokenIn.TT_EOF
-                                    || (tokenIn.ttype == tokenIn.TT_WORD && (tokenIn.sval.equalsIgnoreCase("q")
+                            if(tokenIn.ttype == StreamTokenizer.TT_EOF
+                                    || (tokenIn.ttype == StreamTokenizer.TT_WORD && (tokenIn.sval.equalsIgnoreCase("q")
                                             || tokenIn.sval.equalsIgnoreCase("quit")
                                             || tokenIn.sval.equalsIgnoreCase("exit") || tokenIn.sval.equalsIgnoreCase("bye")))) {
                                 readMode = 'q';
-                            } else if(tokenIn.ttype == tokenIn.TT_WORD) {
+                            } else if(tokenIn.ttype == StreamTokenizer.TT_WORD) {
                                 if(tokenIn.sval.equalsIgnoreCase("l")) {
                                     readMode = 'l';
                                 } else if(tokenIn.sval.equalsIgnoreCase("c")) {
@@ -1389,7 +1372,7 @@ public class TauP_Time {
             prevTime = System.currentTimeMillis();
             tauPTime.init();
             currTime = System.currentTimeMillis();
-            if(tauPTime.DEBUG) {
+            if(TauP_Time.DEBUG) {
                 Alert.info("taup model read time=" + (currTime - prevTime));
             }
             tauPTime.start();

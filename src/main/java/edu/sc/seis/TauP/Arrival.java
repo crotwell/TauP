@@ -44,7 +44,9 @@ public class Arrival {
                    int rayParamIndex,
                    String name,
                    String puristName,
-                   double sourceDepth) {
+                   double sourceDepth,
+                   double takeoffAngle,
+                   double incidentAngle) {
         this.phase = phase;
         this.time = time;
         this.dist = dist;
@@ -53,6 +55,8 @@ public class Arrival {
         this.name = name;
         this.puristName = puristName;
         this.sourceDepth = sourceDepth;
+        this.takeoffAngle = takeoffAngle;
+        this.incidentAngle = incidentAngle;
     }
 
     /** phase that generated this arrival. */
@@ -81,6 +85,10 @@ public class Arrival {
     /** pierce and path points */
     protected TimeDist[] pierce, path;
 
+    protected double incidentAngle;
+    
+    protected double takeoffAngle;
+    
     // get set methods
     /** @returns the phase used to calculate this arrival. */
     public SeismicPhase getPhase() {
@@ -131,6 +139,14 @@ public class Arrival {
     /** returns ray parameter in seconds per radian */
     public double getRayParam() {
         return rayParam;
+    }
+
+    public double getIncidentAngle() {
+        return incidentAngle;
+    }
+    
+    public double getTakeoffAngle() {
+        return takeoffAngle;
     }
 
     public int getRayParamIndex() {

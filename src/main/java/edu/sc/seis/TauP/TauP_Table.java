@@ -27,11 +27,11 @@ package edu.sc.seis.TauP;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.StreamTokenizer;
+import java.util.List;
 
 /**
  * Creates a table of travel times for a phase. Only uses the first arrival at
@@ -406,33 +406,26 @@ public class TauP_Table extends TauP_Time {
 
     protected void genericTable(DataOutputStream dos) throws TauModelException,
             IOException {
-        Arrival[] arrivals;
-        int aNum;
-        double moduloDist;
-        Arrival currArrival;
         for(int depthNum = 0; depthNum < depths.length; depthNum++) {
             depthCorrect(depths[depthNum]);
             for(int distNum = 0; distNum < distances.length; distNum++) {
                 calculate(distances[distNum]);
-                if(getNumArrivals() > 0) {
-                    arrivals = getArrivals();
-                    for(aNum = 0; aNum < getNumArrivals(); aNum++) {
-                        currArrival = arrivals[aNum];
-                        moduloDist = currArrival.getModuloDistDeg();
-                        dos.writeBytes(modelName + " "
-                                + outForms.formatDistance(moduloDist) + " "
-                                + outForms.formatDepth(depth) + " ");
-                        dos.writeBytes(currArrival.getName());
-                        dos.writeBytes("  "
-                                + outForms.formatTime(currArrival.getTime())
-                                + "  ");
-                        dos.writeBytes(outForms.formatRayParam(Math.PI / 180.0
-                                * currArrival.getRayParam())
-                                + "   ");
-                        dos.writeBytes(outForms.formatDistance(currArrival.getDistDeg()));
-                        dos.writeBytes("  " + currArrival.getPuristName()
-                                + "\n");
-                    }
+                List<Arrival> arrivals = getArrivals();
+                for (Arrival currArrival : arrivals) {
+                    double moduloDist = currArrival.getModuloDistDeg();
+                    dos.writeBytes(modelName + " "
+                                   + outForms.formatDistance(moduloDist) + " "
+                                   + outForms.formatDepth(depth) + " ");
+                    dos.writeBytes(currArrival.getName());
+                    dos.writeBytes("  "
+                                   + outForms.formatTime(currArrival.getTime())
+                                   + "  ");
+                    dos.writeBytes(outForms.formatRayParam(Math.PI / 180.0
+                                                           * currArrival.getRayParam())
+                                                           + "   ");
+                    dos.writeBytes(outForms.formatDistance(currArrival.getDistDeg()));
+                    dos.writeBytes("  " + currArrival.getPuristName()
+                                   + "\n");
                 }
             }
         }
@@ -441,7 +434,6 @@ public class TauP_Table extends TauP_Time {
 
     protected void locsatTable(DataOutputStream dos) throws TauModelException,
             IOException {
-        Arrival[] arrivals;
         Format float15_4 = new Format("%15.4f");
         Format float7_2 = new Format("%7.2f");
         Format decimal7 = new Format("%-7d");
@@ -479,35 +471,18 @@ public class TauP_Table extends TauP_Time {
                     + "\n");
             for(int distNum = 0; distNum < distances.length; distNum++) {
                 calculate(distances[distNum]);
-                if(getNumArrivals() > 0) {
-                    arrivals = getArrivals();
+                List<Arrival>arrivals = getArrivals();
+                String outString = float15_4.form(-1.0) + "    none\n";
+                for (Arrival arrival : arrivals) {
                     if(distances[distNum] > maxDiff
-                            && (arrivals[0].getName().endsWith("diff"))) {
-                        if(getNumArrivals() > 1) {
-                            int aNum = 1;
-                            while(arrivals[aNum].getName().endsWith("diff")
-                                    && aNum < getNumArrivals() - 1) {
-                                aNum++;
-                            }
-                            if(!arrivals[aNum].getName().endsWith("diff")) {
-                                dos.writeBytes(float15_4.form(arrivals[aNum].getTime())
-                                        + "    "
-                                        + arrivals[aNum].getName()
-                                        + "\n");
-                            } else {
-                                dos.writeBytes(float15_4.form(-1.0)
-                                        + "    none\n");
-                            }
-                        } else {
-                            dos.writeBytes(float15_4.form(-1.0) + "    none\n");
-                        }
+                            && (arrival.getName().endsWith("diff"))) {
+                        continue;
                     } else {
-                        dos.writeBytes(float15_4.form(arrivals[0].getTime())
-                                + "    " + arrivals[0].getName() + "\n");
+                        outString = float15_4.form(arrival.getTime())+ "    " + arrival.getName() + "\n";
+                        break;
                     }
-                } else {
-                    dos.writeBytes(float15_4.form(-1.0) + "    none\n");
                 }
+                dos.writeBytes(outString);
             }
         }
         dos.close();
@@ -530,7 +505,6 @@ public class TauP_Table extends TauP_Time {
         int i = 0;
         String[] leftOverArgs;
         int numNoComprendoArgs = 0;
-        File tempFile;
         leftOverArgs = super.parseCmdLineArgs(args);
         String[] noComprendoArgs = new String[leftOverArgs.length];
         while(i < leftOverArgs.length) {

@@ -22,6 +22,7 @@ import java.io.OptionalDataException;
 import java.io.Serializable;
 import java.io.StreamCorruptedException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -157,7 +158,7 @@ public class SeismicPhase implements Serializable, Cloneable {
      * Array of branch numbers for the given phase. Note that this depends upon
      * both the earth model and the source depth.
      */
-    protected ArrayList branchSeq = new ArrayList();
+    protected ArrayList<Integer> branchSeq = new ArrayList<Integer>();
 
     /** The phase name, ie PKiKP. */
     protected String name;
@@ -168,7 +169,7 @@ public class SeismicPhase implements Serializable, Cloneable {
     protected String puristName;
 
     /** ArrayList containing Strings for each leg. */
-    protected ArrayList legs = new ArrayList();
+    protected ArrayList<String> legs = new ArrayList<String>();
 
     /**
      * temporary branch number so we know where to start add to the branch
@@ -188,20 +189,20 @@ public class SeismicPhase implements Serializable, Cloneable {
      * SeismicPhase.REFLECTBOT, or SeismicPhase.REFLECTTOP. This allows a check
      * to make sure the path is correct. Used in addToBranch() and parseName().
      */
-    protected ArrayList legAction = new ArrayList();
+    protected ArrayList<Integer> legAction = new ArrayList<Integer>();
 
     /**
      * true if the current leg of the phase is down going. This allows a check
      * to make sure the path is correct. Used in addToBranch() and parseName().
      */
-    protected ArrayList downGoing = new ArrayList();
+    protected ArrayList<Boolean> downGoing = new ArrayList<Boolean>();
 
     /**
      * ArrayList of wave types corresponding to each leg of the phase.
      * 
      * @see legs
      */
-    protected ArrayList waveType = new ArrayList();
+    protected ArrayList<Boolean> waveType = new ArrayList<Boolean>();
 
     public static final boolean PWAVE = true;
 
@@ -310,12 +311,8 @@ public class SeismicPhase implements Serializable, Cloneable {
         return name;
     }
 
-    public String[] getLegs() {
-        String[] legsArray = new String[legs.size()];
-        for(int i = 0; i < legs.size(); i++) {
-            legsArray[i] = (String)legs.get(i);
-        }
-        return legsArray;
+    public List<String> getLegs() {
+        return Collections.unmodifiableList(legs);
     }
 
     public double[] getRayParams() {
@@ -385,7 +382,9 @@ public class SeismicPhase implements Serializable, Cloneable {
         sumBranches(tMod);
     }
 
-    /** calculates arrival times for this phase. */
+    /** calculates arrival times for this phase. 
+     * @throws NoSuchMatPropException 
+     * @throws NoSuchLayerException */
     public void calcTime(double deg) {
         double tempDeg = deg;
         if(tempDeg < 0.0) {
@@ -409,7 +408,6 @@ public class SeismicPhase implements Serializable, Cloneable {
          * tempDeg==180.
          */
         int n = 0;
-        Arrival newArrival;
         double searchDist;
         while(n * 2.0 * Math.PI + radDist <= maxDistance) {
             /*
@@ -440,22 +438,7 @@ public class SeismicPhase implements Serializable, Cloneable {
                                 + (float)(180 / Math.PI * searchDist) + " "
                                 + (float)(180 / Math.PI * dist[rayNum + 1]));
                     }
-                    double arrivalTime = (searchDist - dist[rayNum])
-                            / (dist[rayNum + 1] - dist[rayNum])
-                            * (time[rayNum + 1] - time[rayNum]) + time[rayNum];
-                    double arrivalRayParam = (searchDist - dist[rayNum + 1])
-                            * (rayParams[rayNum] - rayParams[rayNum + 1])
-                            / (dist[rayNum] - dist[rayNum + 1])
-                            + rayParams[rayNum + 1];
-                    newArrival = new Arrival(this,
-                                             arrivalTime,
-                                             searchDist,
-                                             arrivalRayParam,
-                                             rayNum,
-                                             name,
-                                             puristName,
-                                             sourceDepth);
-                    arrivals.add(newArrival);
+                    arrivals.add(linearInterpArrival(searchDist, rayNum, name, puristName, sourceDepth));
                 }
             }
             /*
@@ -487,28 +470,55 @@ public class SeismicPhase implements Serializable, Cloneable {
                                     + " "
                                     + (float)(180 / Math.PI * dist[rayNum + 1]));
                         }
-                        double arrivalTime = (searchDist - dist[rayNum])
-                                / (dist[rayNum + 1] - dist[rayNum])
-                                * (time[rayNum + 1] - time[rayNum])
-                                + time[rayNum];
-                        double arrivalRayParam = (searchDist - dist[rayNum])
-                                * (rayParams[rayNum + 1] - rayParams[rayNum])
-                                / (dist[rayNum + 1] - dist[rayNum])
-                                + rayParams[rayNum];
-                        newArrival = new Arrival(this,
-                                                 arrivalTime,
-                                                 searchDist,
-                                                 arrivalRayParam,
-                                                 rayNum,
-                                                 name,
-                                                 puristName,
-                                                 sourceDepth);
-                        arrivals.add(newArrival);
+                        arrivals.add(linearInterpArrival(searchDist, rayNum, name, puristName, sourceDepth));
+                        
                     }
                 }
             }
             n++;
         }
+    }
+    
+    private Arrival linearInterpArrival(double searchDist,
+                                        int rayNum,
+                                        String name,
+                                        String puristName,
+                                        double sourceDepth) {
+        double arrivalTime = (searchDist - dist[rayNum])
+                / (dist[rayNum + 1] - dist[rayNum])
+                * (time[rayNum + 1] - time[rayNum]) + time[rayNum];
+        double arrivalRayParam = (searchDist - dist[rayNum + 1])
+                * (rayParams[rayNum] - rayParams[rayNum + 1])
+                / (dist[rayNum] - dist[rayNum + 1])
+                + rayParams[rayNum + 1];
+        double takeoffVelocity;
+        double takeoffAngle = -1;
+        double incidentAngle = -1;
+        VelocityModel vMod = getTauModel().getVelocityModel();
+        try {
+            if (getDownGoing()[0]) {
+                takeoffVelocity = vMod.evaluateBelow(sourceDepth, name.charAt(0));
+            } else { 
+                takeoffVelocity = vMod.evaluateAbove(sourceDepth, name.charAt(0));
+            }
+            takeoffAngle = 180/Math.PI*Math.asin(takeoffVelocity*arrivalRayParam/(getTauModel().getRadiusOfEarth()-sourceDepth));
+            char lastLeg = getLegs().get(getLegs().size()-2).charAt(0); // last item is "E", assume first char is P or S
+            incidentAngle = 180/Math.PI*Math.asin(vMod.evaluateBelow(0, lastLeg)*arrivalRayParam/getTauModel().getRadiusOfEarth());
+        } catch(NoSuchLayerException e) {
+            throw new RuntimeException("Should not happen", e);
+        } catch(NoSuchMatPropException e) {
+            throw new RuntimeException("Should not happen", e);
+        }
+        return new Arrival(this,
+                                 arrivalTime,
+                                 searchDist,
+                                 arrivalRayParam,
+                                 rayNum,
+                                 name,
+                                 puristName,
+                                 sourceDepth,
+                                 takeoffAngle,
+                                 incidentAngle);
     }
 
     /**
@@ -1250,9 +1260,9 @@ public class SeismicPhase implements Serializable, Cloneable {
      * @throws TauModelException
      *             if the phase name cannot be tokenized.
      */
-    protected static ArrayList legPuller(String name) throws TauModelException {
+    protected static ArrayList<String> legPuller(String name) throws TauModelException {
         int offset = 0;
-        ArrayList legs = new ArrayList();
+        ArrayList<String> legs = new ArrayList<String>();
         /* Special case for surface wave velocity. */
         if(name.endsWith("kmps")) {
             try {
@@ -2076,7 +2086,7 @@ public class SeismicPhase implements Serializable, Cloneable {
      * Performs consistency checks on the previously tokenized phase name stored
      * in legs. Returns null if all is ok, a message if there is a problem.
      */
-    public static String phaseValidate(ArrayList legs) {
+    public static String phaseValidate(ArrayList<String> legs) {
         String currToken = (String)legs.get(0);
         String prevToken;
         boolean prevIsReflect = false;
@@ -2196,9 +2206,7 @@ public class SeismicPhase implements Serializable, Cloneable {
             }
             tMod = TauModel.readModel(args[0]);
             tModDepth = tMod.depthCorrect(Double.valueOf(args[1]).doubleValue());
-            int offset;
             for(int i = 2; i < args.length; i++) {
-                offset = 0;
                 System.out.println("-----");
                 SeismicPhase sp = new SeismicPhase(args[i], tModDepth);
                 System.out.println(sp);

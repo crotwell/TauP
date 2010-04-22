@@ -1,5 +1,8 @@
 package edu.sc.seis.TauP;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.swing.table.AbstractTableModel;
 
 /*
@@ -44,8 +47,8 @@ public class PierceTableModel extends AbstractTableModel {
     public PierceTableModel() {}
 
     public int getRowCount() {
-        if(arrivals.length != 0) {
-            return arrivals[selectedIndex].getNumPiercePoints();
+        if(arrivals.size() != 0) {
+            return arrivals.get(selectedIndex).getNumPiercePoints();
         } else {
             return 0;
         }
@@ -58,14 +61,14 @@ public class PierceTableModel extends AbstractTableModel {
     public Object getValueAt(int row, int col) {
         switch(col){
             case 0:
-                double dist = (180.0 / Math.PI * arrivals[selectedIndex].getPiercePoint(row).dist);
-                if(arrivals[selectedIndex].getDistDeg() % 360 > 180
+                double dist = (180.0 / Math.PI * arrivals.get(selectedIndex).getPiercePoint(row).dist);
+                if(arrivals.get(selectedIndex).getDistDeg() % 360 > 180
                         && dist != 0.0) {
                     dist *= -1.0;
                 }
                 return float8_2.form(dist);
             case 1:
-                return float8_2.form(arrivals[selectedIndex].getPiercePoint(row).depth);
+                return float8_2.form(arrivals.get(selectedIndex).getPiercePoint(row).depth);
             default:
                 return "";
         }
@@ -82,7 +85,7 @@ public class PierceTableModel extends AbstractTableModel {
         }
     }
 
-    public void setArrivals(Arrival[] arrivals) {
+    public void setArrivals(List<Arrival> arrivals) {
         this.arrivals = arrivals;
         setSelectedIndex(0);
         fireTableDataChanged();
@@ -95,7 +98,7 @@ public class PierceTableModel extends AbstractTableModel {
 
     private int selectedIndex = 0;
 
-    private Arrival[] arrivals = new Arrival[0];
+    private List<Arrival> arrivals = new ArrayList<Arrival>();
 
     private static Format float8_2 = new Format("%8.2f");
 } // PierceTableModel

@@ -16,7 +16,6 @@
  */
 package edu.sc.seis.TauP;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OptionalDataException;
@@ -125,7 +124,7 @@ public class TauP_Path extends TauP_Pierce {
 				phase.calcPath(tModDepth);
 				phaseArrivals = phase.getArrivals();
 				for (int i = 0; i < phaseArrivals.length; i++) {
-					arrivals.addElement(phaseArrivals[i]);
+					arrivals.add(phaseArrivals[i]);
 				}
 			}
 		}
@@ -138,7 +137,7 @@ public class TauP_Path extends TauP_Pierce {
 		double radiusOfEarth = tModDepth.getRadiusOfEarth();
 		boolean longWayRound;
 		for (int i = 0; i < arrivals.size(); i++) {
-			currArrival = (Arrival) arrivals.elementAt(i);
+			currArrival = (Arrival) arrivals.get(i);
 			out.write(getCommentLine(currArrival));
 			longWayRound = false;
 			if ((currArrival.getDist() * 180 / Math.PI) % 360 > 180) {
@@ -346,7 +345,7 @@ public class TauP_Path extends TauP_Pierce {
 				noComprendoArgs = null;
 			}
 			tauPPath.init();
-			if (tauPPath.DEBUG) {
+			if (TauP_Time.DEBUG) {
 				System.out.println("Done reading " + tauPPath.modelName);
 			}
 			tauPPath.start();

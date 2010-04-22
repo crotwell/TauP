@@ -1,5 +1,8 @@
 package edu.sc.seis.TauP;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.swing.table.AbstractTableModel;
 
 /*
@@ -36,12 +39,12 @@ import javax.swing.table.AbstractTableModel;
  */
 public class ArrivalTableModel extends AbstractTableModel {
 
-    protected Arrival[] arrivals = new Arrival[0];
+    protected List<Arrival> arrivals = new ArrayList<Arrival>();
 
     public ArrivalTableModel() {}
 
     public int getRowCount() {
-        return arrivals.length;
+        return arrivals.size();
     }
 
     public int getColumnCount() {
@@ -51,28 +54,28 @@ public class ArrivalTableModel extends AbstractTableModel {
     public Object getValueAt(int row, int col) {
         switch(col){
             case 0:
-                return float8_1.form(arrivals[row].getModuloDistDeg());
+                return float8_1.form(arrivals.get(row).getModuloDistDeg());
             case 1:
-                return float8_1.form(arrivals[row].getModuloDist()
-                        * arrivals[row].getPhase()
+                return float8_1.form(arrivals.get(row).getModuloDist()
+                        * arrivals.get(row).getPhase()
                                 .getTauModel()
                                 .getRadiusOfEarth());
             case 2:
-                return float8_1.form(arrivals[row].getSourceDepth());
+                return float8_1.form(arrivals.get(row).getSourceDepth());
             case 3:
-                return arrivals[row].getName();
+                return arrivals.get(row).getName();
             case 4:
-                return float8_2.form(arrivals[row].getTime());
+                return float8_2.form(arrivals.get(row).getTime());
             case 5:
                 return float8_3.form(Math.PI / 180.0
-                        * arrivals[row].getRayParam());
+                        * arrivals.get(row).getRayParam());
             case 6:
-                return float8_1.form(arrivals[row].getDistDeg());
+                return float8_1.form(arrivals.get(row).getDistDeg());
             case 7:
-                return (arrivals[row].getName()
-                        .equals(arrivals[row].getPuristName()) ? "=" : "*");
+                return (arrivals.get(row).getName()
+                        .equals(arrivals.get(row).getPuristName()) ? "=" : "*");
             case 8:
-                return arrivals[row].getPuristName();
+                return arrivals.get(row).getPuristName();
             default:
                 return "";
         }
@@ -103,7 +106,7 @@ public class ArrivalTableModel extends AbstractTableModel {
         }
     }
 
-    public void setArrivals(Arrival[] arrivals) {
+    public void setArrivals(List<Arrival> arrivals) {
         this.arrivals = arrivals;
         fireTableDataChanged();
     }
