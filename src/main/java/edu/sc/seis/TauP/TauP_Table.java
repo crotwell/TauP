@@ -516,7 +516,7 @@ public class TauP_Table extends TauP_Time {
                 outputType = LOCSAT;
             } else if(leftOverArgs[i].equals("-generic")) {
                 outputType = GENERIC;
-            } else if(leftOverArgs[i].equals("-help")) {
+            } else if(leftOverArgs[i].equals("-help") || leftOverArgs[i].equals("--help")) {
                 noComprendoArgs[numNoComprendoArgs++] = leftOverArgs[i];
             } else {
                 noComprendoArgs[numNoComprendoArgs++] = leftOverArgs[i];
@@ -540,6 +540,7 @@ public class TauP_Table extends TauP_Time {
             if(noComprendoArgs.length > 0) {
                 for(int i = 0; i < noComprendoArgs.length; i++) {
                     if(noComprendoArgs[i].equals("-help")
+                            || noComprendoArgs[i].equals("--help")
                             || noComprendoArgs[i].equals("-version")) {
                         System.exit(0);
                     }
