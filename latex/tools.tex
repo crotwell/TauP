@@ -519,6 +519,14 @@ Thus, the program must be run several times in order to generate files for
 several phases. Also, both options write to standard out unless a file is
 given with the -o flag.
 
+There is a default phase, distance and depth list, but this is easily 
+customizable with the \texttt{-header} option. An example LOCSAT style 
+file for use as a header can be generated with 
+\texttt{taup\_table -locsat -o example.locsat}. The first 
+three sections specify the phase list, distances and depths to use. 
+After editing, a custom table can be created with 
+\texttt{taup\_table -header example.locsat}.
+
 The usage is:
 \begin{verbatim}
 piglet 1>taup_table -help
