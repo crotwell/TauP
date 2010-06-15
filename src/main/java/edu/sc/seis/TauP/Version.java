@@ -36,14 +36,14 @@ package edu.sc.seis.TauP;
  */ 
 public class Version {
 
-    private static int majorNum = 1;
+    private static int majorNum = 2;
 
     /** returns the major version number for the package. */
     public static int getMajorNum() {
         return majorNum;
     }
 
-    private static int minorNum = 2;
+    private static int minorNum = 0;
 
     /** returns the minor version number for the package. */
     public static int getMinorNum() {
@@ -62,7 +62,7 @@ public class Version {
     }
 
     /** use date -u to get immediately prior to recompiling. */
-    private static String dateCreated = "$Date: 2009-11-03 14:21:12 -0500 (Tue, 03 Nov 2009) $";
+    private static String dateCreated = "$Date: 2010-06-15 14:09:24 -0400 (Tue, 15 Jun 2010) $";
 
     /**
      * returns a string with version number and date created. The format is
