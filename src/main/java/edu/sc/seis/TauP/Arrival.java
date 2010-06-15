@@ -173,11 +173,17 @@ public class Arrival {
 
     /** returns pierce points as TimeDist objects. */
     public TimeDist[] getPierce() {
+        if (pierce == null) {
+            this.pierce = getPhase().calcPierce(this).getPierce();
+        }
         return pierce;
     }
 
     /** returns pierce points as TimeDist objects. */
     public TimeDist[] getPath() {
+        if (path == null) {
+            this.path = getPhase().calcPath(this).getPath();
+        }
         return path;
     }
 
