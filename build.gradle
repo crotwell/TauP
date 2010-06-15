@@ -3,11 +3,12 @@ dependencies {
     compile project(':seisFile') {
         transitive = true
     }
-
+    compile "JSAP:JSAP:2.1"
+    compile 'jython:jython:2.5.1'
 }
 
 group = 'edu.sc.seis'
-version = '1.2beta4'
+version = '2.0beta5'
 
 artifacts {
     archives jar
@@ -61,6 +62,7 @@ task makeScript(dependsOn: copyToLib) << { task ->
     ScriptBuilder.create('taup_setsac', 'edu.sc.seis.TauP.TauP_SetSac', task.project)
     ScriptBuilder.create('taup_table', 'edu.sc.seis.TauP.TauP_Table', task.project)
     ScriptBuilder.create('taup', 'edu.sc.seis.TauP.TauP', task.project)
+    ScriptBuilder.create('taup_console', 'edu.sc.seis.TauP.TauP_Console', task.project)
 }
 
 
@@ -77,16 +79,16 @@ task genModels(dependsOn: compileJava) << {
     taupCreate.setVelFileType('tvel')
     tvelModelNames.each { String model ->
         taupCreate.setModelFilename(model)
-        taupCreate.loadVMod()
-        taupCreate.createTauModel()
-        taupCreate.getTauModel().writeModel(new File(dir, model+'.taup').path)
+        vMod = taupCreate.loadVMod()
+        tMod = taupCreate.createTauModel(vMod)
+        tMod.writeModel(new File(dir, model+'.taup').path)
     }
     taupCreate.setVelFileType('nd')
     ndModelNames.each { String model ->
         taupCreate.setModelFilename(model)
-        taupCreate.loadVMod()
-        taupCreate.createTauModel()
-        taupCreate.getTauModel().writeModel(new File(dir, model+'.taup').path)
+        vMod = taupCreate.loadVMod()
+        tMod = taupCreate.createTauModel(vMod)
+        tMod.writeModel(new File(dir, model+'.taup').path)
     }
 }
 
