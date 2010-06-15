@@ -88,7 +88,7 @@ public class SlownessLayer implements Serializable {
             }
             Assert.isFalse(Double.isNaN(getTopP()) || Double.isNaN(getBotP()),
                            "Slowness sample is NaN: topP=" + getTopP()
-                                   + " botP=" + getBotP());
+                                   + " botP=" + getBotP()+" depth "+topDepth+" to "+botDepth);
         } catch(NoSuchMatPropException e) {
             // Can't happen
             throw new RuntimeException(e);
@@ -225,7 +225,7 @@ public class SlownessLayer implements Serializable {
         // To hold the return values.
         TimeDist timedist = new TimeDist(p);
         if(getTopDepth() == getBotDepth()) {
-            timedist.dist = 0.0;
+            timedist.distRadian = 0.0;
             timedist.time = 0.0;
             return timedist;
         }
@@ -240,16 +240,16 @@ public class SlownessLayer implements Serializable {
                         / (radiusOfEarth - getBotDepth()));
         double sqrtTopTopMpp = Math.sqrt(getTopP() * getTopP() - p * p);
         double sqrtBotBotMpp = Math.sqrt(getBotP() * getBotP() - p * p);
-        timedist.dist = (Math.atan2(p, sqrtBotBotMpp) - Math.atan2(p,
+        timedist.distRadian = (Math.atan2(p, sqrtBotBotMpp) - Math.atan2(p,
                                                                    sqrtTopTopMpp))
                 / B;
         timedist.time = (sqrtTopTopMpp - sqrtBotBotMpp) / B;
-        if(timedist.dist < 0.0 || timedist.time < 0.0
-                || Double.isNaN(timedist.time) || Double.isNaN(timedist.dist)) {
+        if(timedist.distRadian < 0.0 || timedist.time < 0.0
+                || Double.isNaN(timedist.time) || Double.isNaN(timedist.distRadian)) {
             throw new SlownessModelException("timedist <0.0 or NaN: "
                     + "\n RayParam= " + p + "\n topDepth = " + getTopDepth()
                     + "\n botDepth = " + getBotDepth() + "\n dist="
-                    + timedist.dist + "\n time=" + timedist.time + "\n topP = "
+                    + timedist.distRadian + "\n time=" + timedist.time + "\n topP = "
                     + getTopP() + "\n botP = " + getBotP() + "\n B = " + B
                     + " " + toString());
         }

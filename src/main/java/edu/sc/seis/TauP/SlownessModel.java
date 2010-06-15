@@ -504,7 +504,7 @@ public abstract class SlownessModel implements Serializable {
          * Return 2.0*distance and time because there is a downgoing as well as
          * up going leg, which are equal because this is for a surface source.
          */
-        td.dist *= 2.0;
+        td.distRadian *= 2.0;
         td.time *= 2.0;
         return td;
     }
@@ -835,9 +835,6 @@ public abstract class SlownessModel implements Serializable {
      *                in the code.
      */
     protected void findCriticalPoints() throws SlownessModelException {
-        double topP, botP;
-        double topDepth, botDepth = getRadiusOfEarth();
-        double topVelocity, botVelocity;
         double minPSoFar = Double.MAX_VALUE;
         double minSSoFar = Double.MAX_VALUE;
         DepthRange highSlownessZoneP = new DepthRange();
@@ -895,8 +892,6 @@ public abstract class SlownessModel implements Serializable {
             prevSLayer = currSLayer;
             prevPLayer = currPLayer;
             currVLayer = vMod.getVelocityLayerClone(layerNum);
-            currSLayer = toSlownessLayer(currVLayer, SWAVE);
-            currPLayer = toSlownessLayer(currVLayer, PWAVE);
             /*
              * If we are not already in a fluid check to see if we have just
              * entered a fluid zone.
@@ -918,6 +913,9 @@ public abstract class SlownessModel implements Serializable {
                 fluidZone.botDepth = prevVLayer.getBotDepth();
                 fluidLayerDepths.addElement(fluidZone);
             }
+
+            currPLayer = toSlownessLayer(currVLayer, PWAVE);
+            
             /*
              * If we are in a fluid zone ( S velocity = 0.0 ) or if we are below
              * the outer core and allowInnerCoreS=false then use the P velocity
@@ -925,6 +923,8 @@ public abstract class SlownessModel implements Serializable {
              */
             if(inFluidZone || (belowOuterCore && !allowInnerCoreS)) {
                 currSLayer = currPLayer;
+            } else {
+                currSLayer = toSlownessLayer(currVLayer, SWAVE);
             }
             if(prevSLayer.getBotP() != currSLayer.getTopP()
                     || prevPLayer.getBotP() != currPLayer.getTopP()) {
@@ -1641,7 +1641,7 @@ public abstract class SlownessModel implements Serializable {
                     currTD = approxDistance(j, sLayer.getBotP(), currWaveType);
                     isCurrOK = true;
                     // check for too great of distance jump
-                    if(Math.abs(prevTD.dist - currTD.dist) > maxRangeInterval
+                    if(Math.abs(prevTD.distRadian - currTD.distRadian) > maxRangeInterval
                             && Math.abs(sLayer.getTopP() - sLayer.getBotP()) > 2 * minDeltaP) {
                         addSlowness((sLayer.getTopP() + sLayer.getBotP()) / 2.0,
                                     PWAVE);
@@ -1663,15 +1663,15 @@ public abstract class SlownessModel implements Serializable {
                         TimeDist allButLayer = approxDistance(j-1, splitRayParam, currWaveType);
                         SlownessLayer splitLayer = new SlownessLayer(sLayer.getTopP(), sLayer.getTopDepth(), splitRayParam, sLayer.bullenDepthFor(splitRayParam, getRadiusOfEarth()));
                         TimeDist justLayer = splitLayer.bullenRadialSlowness(splitRayParam, getRadiusOfEarth());
-                        TimeDist splitTD = new TimeDist(splitRayParam, allButLayer.time+2*justLayer.time, allButLayer.dist+2*justLayer.dist);
+                        TimeDist splitTD = new TimeDist(splitRayParam, allButLayer.time+2*justLayer.time, allButLayer.distRadian+2*justLayer.distRadian);
                         //                        if(Math.abs(prevTD.time
 //                                    - ((currTD.time - prevPrevTD.time)
 //                                            * (prevTD.dist - prevPrevTD.dist)
 //                                            / (currTD.dist - prevPrevTD.dist) + prevPrevTD.time)) > maxInterpError) {
                         if(Math.abs(currTD.time
                                         - ((splitTD.time - prevTD.time)
-                                                * (currTD.dist - prevTD.dist)
-                                                / (splitTD.dist - prevTD.dist) + prevTD.time)) > maxInterpError) {
+                                                * (currTD.distRadian - prevTD.distRadian)
+                                                / (splitTD.distRadian - prevTD.distRadian) + prevTD.time)) > maxInterpError) {
                             addSlowness((prevSLayer.getTopP() + prevSLayer.getBotP()) / 2.0,
                                         PWAVE);
                             addSlowness((prevSLayer.getTopP() + prevSLayer.getBotP()) / 2.0,

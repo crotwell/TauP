@@ -76,17 +76,17 @@ public class AK135Test extends TestCase {
         for (List<TimeDist> atDepth : table.get(phase).values()) {
             taup.depthCorrect(atDepth.get(0).depth);
             for (TimeDist timeDist : atDepth) {
-                taup.calculate(timeDist.dist);
+                taup.calculate(timeDist.getDistDeg());
                 List<Arrival> arrivals = taup.getArrivals();
                 if (timeDist.time > 0) {
-                assertTrue(phase + " has arrivals for depth " + timeDist.depth + " at dist " + timeDist.dist,
+                assertTrue(phase + " has arrivals for depth " + timeDist.depth + " at dist " + timeDist.getDistDeg(),
                            arrivals.size() > 0);
                 // assume first?
-                assertEquals(phase + " time for depth " + timeDist.depth + " at dist " + timeDist.dist,
+                assertEquals(phase + " time for depth " + timeDist.depth + " at dist " + timeDist.getDistDeg(),
                              timeDist.time,
                              arrivals.get(0).time,
                              0.07f);
-                assertEquals(phase + " rp for depth " + timeDist.depth + " at dist " + timeDist.dist,
+                assertEquals(phase + " rp for depth " + timeDist.depth + " at dist " + timeDist.getDistDeg(),
                              timeDist.p,
                              arrivals.get(0).rayParam * Math.PI / 180,
                              0.11f);
@@ -124,7 +124,7 @@ public class AK135Test extends TestCase {
                 }
             }
             for (int i = 0; i < rayParam.length; i++) {
-                TimeDist td = new TimeDist(rayParam[i], time[i], dist, depths[i]);
+                TimeDist td = new TimeDist(rayParam[i], time[i], Arrival.DtoR*dist, depths[i]);
                 phaseTable.get(depths[i]).add(td);
             }
         }

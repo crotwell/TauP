@@ -234,7 +234,7 @@ public class SphericalSModel extends SlownessModel implements Serializable {
          */
         if(sphericalLayer.getTopDepth() == sphericalLayer.getBotDepth()) {
             timedist.time = 0.0;
-            timedist.dist = 0.0;
+            timedist.distRadian = 0.0;
             return timedist;
         }
         /*
@@ -256,19 +256,19 @@ public class SphericalSModel extends SlownessModel implements Serializable {
                 && sphericalLayer.getBotDepth() == radiusOfEarth) {
             if(layerNum != getNumLayers(isPWave) - 1)
                 throw new SlownessModelException("There are layers deeper than the center of the earth!");
-            timedist.dist = Math.PI / 2.0;
+            timedist.distRadian = Math.PI / 2.0;
             timedist.time = sphericalLayer.getTopP();
             if(DEBUG) {
-                System.out.println("Center of Earth: dist " + timedist.dist
+                System.out.println("Center of Earth: dist " + timedist.distRadian
                         + " time " + timedist.time);
             }
-            if(timedist.dist < 0.0 || timedist.time < 0.0
+            if(timedist.distRadian < 0.0 || timedist.time < 0.0
                     || Double.isNaN(timedist.time)
-                    || Double.isNaN(timedist.dist)) {
+                    || Double.isNaN(timedist.distRadian)) {
                 throw new SlownessModelException("CoE timedist <0.0 or NaN: "
                         + "sphericalRayParam= " + sphericalRayParam
                         + " botDepth = " + sphericalLayer.getBotDepth()
-                        + " dist=" + timedist.dist + " time=" + timedist.time);
+                        + " dist=" + timedist.distRadian + " time=" + timedist.time);
             }
             return timedist;
         }
@@ -314,17 +314,17 @@ public class SphericalSModel extends SlownessModel implements Serializable {
             // Use b for temp storage of the length of the ray path.
             b = Math.sqrt(topTerm) - Math.sqrt(botTerm);
             timedist.time = b / vel;
-            timedist.dist = Math.asin(b * sphericalRayParam * vel
+            timedist.distRadian = Math.asin(b * sphericalRayParam * vel
                     / (topRadius * botRadius));
-            if(timedist.dist < 0.0 || timedist.time < 0.0
+            if(timedist.distRadian < 0.0 || timedist.time < 0.0
                     || Double.isNaN(timedist.time)
-                    || Double.isNaN(timedist.dist)) {
+                    || Double.isNaN(timedist.distRadian)) {
                 throw new SlownessModelException("CVL timedist <0.0 or NaN: "
                         + "\nsphericalRayParam= " + sphericalRayParam
                         + "\n botDepth = " + sphericalLayer.getBotDepth()
                         + "\n topDepth = " + sphericalLayer.getTopDepth()
                         + "\n topRadius=" + topRadius + " botRadius="
-                        + botRadius + "\n dist=" + timedist.dist + "\n time="
+                        + botRadius + "\n dist=" + timedist.distRadian + "\n time="
                         + timedist.time + "\n b=" + b + "\n topTerm=" + topTerm
                         + "\n botTerm=" + botTerm + "\n vel    =" + vel + "\n"
                         + "\n bR^2   =" + (botRadius * botRadius)

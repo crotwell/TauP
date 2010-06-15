@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.OptionalDataException;
 import java.io.StreamCorruptedException;
 import java.io.Writer;
+import java.util.List;
 
 /**
  * Calculate pierce points for different branches using linear interpolation
@@ -196,17 +197,13 @@ public class TauP_Pierce extends TauP_Time {
     protected void calcPierce(double degrees) {
         this.degrees = degrees;
         SeismicPhase phase;
-        Arrival[] phaseArrivals;
+        
         for(int phaseNum = 0; phaseNum < phases.size(); phaseNum++) {
             phase = phases.get(phaseNum);
             try {
-                phase.calcTime(degrees);
-                if(phase.hasArrivals()) {
-                    phase.calcPierce(tModDepth);
-                    phaseArrivals = phase.getArrivals();
-                    for(int i = 0; i < phaseArrivals.length; i++) {
-                        arrivals.add(phaseArrivals[i]);
-                    }
+                List<Arrival> phaseArrivals = phase.calcPierce(degrees);
+                for (Arrival arrival : phaseArrivals) {
+                    arrivals.add(arrival);
                 }
             } catch(TauModelException e) {
                 System.err.println("Caught TauModelException: "
@@ -247,7 +244,7 @@ public class TauP_Pierce extends TauP_Time {
             }
             prevDepth = currArrival.pierce[0].depth;
             for(int j = 0; j < currArrival.pierce.length; j++) {
-                calcDist = currArrival.pierce[j].dist * 180.0 / Math.PI;
+                calcDist = currArrival.pierce[j].getDistDeg();
                 if(longWayRound && calcDist != 0.0) {
                     calcDist *= -1.0;
                 }

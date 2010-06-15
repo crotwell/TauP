@@ -43,45 +43,69 @@ public class TimeDist implements Cloneable {
 
     public double time;
 
-    public double dist;
+    public double distRadian;
 
     public TimeDist() {
         this.p = 0;
         this.depth = 0;
         this.time = 0;
-        this.dist = 0;
+        this.distRadian = 0;
     }
 
     public TimeDist(double p) {
         this.p = p;
         this.depth = 0;
         this.time = 0;
-        this.dist = 0;
+        this.distRadian = 0;
     }
 
     public TimeDist(double p, double time, double dist) {
         this.p = p;
         this.depth = 0;
         this.time = time;
-        this.dist = dist;
+        this.distRadian = dist;
     }
 
     public TimeDist(double p, double time, double dist, double depth) {
         this.p = p;
         this.depth = depth;
         this.time = time;
-        this.dist = dist;
+        this.distRadian = dist;
     }
 
     public void add(TimeDist td) {
         this.time += td.time;
-        this.dist += td.dist;
+        this.distRadian += td.distRadian;
     }
 
     public String toString() {
-        String desc = "p= " + p + " time=" + time + " dist=" + dist + " depth="
+        String desc = "p= " + p + " time=" + time + " dist=" +getDistDeg()+"("+distRadian+" rad) depth="
                 + depth;
         return desc;
+    }
+
+    
+    public double getP() {
+        return p;
+    }
+
+    
+    public double getDepth() {
+        return depth;
+    }
+
+    
+    public double getTime() {
+        return time;
+    }
+
+
+    public double getDistRadian() {
+        return distRadian;
+    }
+    
+    public double getDistDeg() {
+        return Arrival.RtoD * getDistRadian();
     }
 
     public Object clone() {

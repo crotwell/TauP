@@ -21,8 +21,7 @@ public class Dist180Test {
                                    SlownessModel.DEFAULT_SLOWNESS_TOLERANCE);
         TauModel tMod = new TauModel(smod);
         SeismicPhase PKIKP = new SeismicPhase("PKIKP", tMod);
-        PKIKP.calcTime(180.0);
-        Arrival a = PKIKP.getEarliestArrival();
+        Arrival a = PKIKP.getEarliestArrival(180.0);
         assertEquals(vMod.getRadiusOfEarth()*2/VP, a.getTime(), 0.00001);
     }
     

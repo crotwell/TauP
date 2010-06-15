@@ -119,26 +119,6 @@ public class TauP_Create {
         this.vMod = vMod;
     }
 
-    public VelocityModel getVelocityModel() {
-        return vMod;
-    }
-
-    public void setSlownessModel(SlownessModel sMod) {
-        this.sMod = sMod;
-    }
-
-    public SlownessModel getSlownessModel() {
-        return sMod;
-    }
-
-    public void setTauModel(TauModel tMod) {
-        this.tMod = tMod;
-    }
-
-    public TauModel getTauModel() {
-        return tMod;
-    }
-
     public void printUsage() {
         String className = this.getClass().getName();
         className = className.substring(className.lastIndexOf('.') + 1,
@@ -266,7 +246,7 @@ public class TauP_Create {
         }
     }
 
-    public void loadVMod() throws IOException, VelocityModelException {
+    public VelocityModel loadVMod() throws IOException, VelocityModelException {
         String file_sep = System.getProperty("file.separator");
         // Read the velocity model file.
         if(verbose)
@@ -288,9 +268,10 @@ public class TauP_Create {
         }
         if(DEBUG)
             System.out.println("velocity mode: "+vMod);
+        return vMod;
     }
 
-    public TauModel createTauModel() throws VelocityModelException, SlownessModelException, TauModelException {
+    public TauModel createTauModel(VelocityModel vMod) throws VelocityModelException, SlownessModelException, TauModelException {
         if(!vMod.getSpherical()) {
             throw new SlownessModelException("Flat slowness model not yet implemented.");
         }
@@ -339,14 +320,13 @@ public class TauP_Create {
         }
         TauModel.DEBUG = DEBUG;
         // Creates tau model from slownesses
-        tMod = new TauModel(sMod);
-        return tMod;
+        return new TauModel(sMod);
     }
     
     public void start() throws SlownessModelException, TauModelException {
         try {
             String file_sep = System.getProperty("file.separator");
-            createTauModel();
+            TauModel tMod = createTauModel(vMod);
             if(DEBUG)
                 System.out.println("Done calculating Tau branches.");
             if(DEBUG)

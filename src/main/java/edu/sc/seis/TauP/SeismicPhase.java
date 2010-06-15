@@ -144,17 +144,6 @@ public class SeismicPhase implements Serializable, Cloneable {
     protected double maxDistance = Double.MAX_VALUE;
 
     /**
-     * ArrayList holding all arrivals for this phase at the given distance. They
-     * are stored as Arrival objects.
-     * 
-     * @see Arrival
-     * @see calcTime(double)
-     * @see calcPierce(TauModel)
-     * @see calcPath(TauModel)
-     */
-    protected ArrayList<Arrival> arrivals = new ArrayList<Arrival>();
-
-    /**
      * Array of branch numbers for the given phase. Note that this depends upon
      * both the earth model and the source depth.
      */
@@ -214,49 +203,31 @@ public class SeismicPhase implements Serializable, Cloneable {
      * @param phaseName
      *            String containing a name of the phase.
      * @param tMod
-     *            Tau model to be used to construct the phase.
+     *            Tau model to be used to construct the phase. This should be corrected for the source
+     *            depth.
      * @throws TauModelException 
      */
     public SeismicPhase(String name, TauModel tMod) throws TauModelException {
         this.name = name;
         this.sourceDepth = tMod.getSourceDepth();
         this.tMod = tMod;
-        init();
-    }
-
-    // Accessor methods
-    public boolean hasArrivals() {
-        if(arrivals.size() > 0) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /** Returns arrival time array. */
-    public Arrival[] getArrivals() {
-        Arrival[] returnArrivals = new Arrival[arrivals.size()];
-        for(int i = 0; i < arrivals.size(); i++) {
-            returnArrivals[i] = (Arrival)((Arrival)arrivals.get(i));
-        }
-        return returnArrivals;
+        legs = legPuller(name);
+        createPuristName(tMod);
+        parseName(tMod);
+        sumBranches(tMod);
     }
     
-    public Arrival getEarliestArrival() {
+    public Arrival getEarliestArrival(double degrees) {
         double soonest = 999999999.0;
-        Arrival a = null;
-        for (Arrival tmpA : arrivals) {
-            if (tmpA.getTime() < soonest) {
-                a = tmpA;
+        Arrival soonestArrival = null;
+        List<Arrival> arrivals = calcTime(degrees);
+        for (Arrival a : arrivals) {
+            if (a.getTime() < soonest) {
+                soonestArrival = a;
                 soonest = a.getTime();
             }
         }
-        return a;
-    }
-
-    public void setTauModel(TauModel tMod) throws TauModelException {
-        this.tMod = tMod;
-        init();
+        return soonestArrival;
     }
 
     public TauModel getTauModel() {
@@ -375,17 +346,11 @@ public class SeismicPhase implements Serializable, Cloneable {
     }
 
     // Normal methods
-    private void init() throws TauModelException {
-        legs = legPuller(name);
-        createPuristName(tMod);
-        parseName(tMod);
-        sumBranches(tMod);
-    }
 
     /** calculates arrival times for this phase. 
      * @throws NoSuchMatPropException 
      * @throws NoSuchLayerException */
-    public void calcTime(double deg) {
+    public List<Arrival> calcTime(double deg) {
         double tempDeg = deg;
         if(tempDeg < 0.0) {
             tempDeg *= -1.0;
@@ -398,7 +363,7 @@ public class SeismicPhase implements Serializable, Cloneable {
         } // make sure less than or equal to 180
         // now we have 0.0 <= deg <= 180
         double radDist = tempDeg * Math.PI / 180.0;
-        arrivals.clear();
+        List<Arrival> arrivals = new ArrayList<Arrival>();
         /*
          * Search all distances 2n*PI+radDist and 2(n+1)*PI-radDist that are
          * less than the maximum distance for this phase. This insures that we
@@ -477,6 +442,7 @@ public class SeismicPhase implements Serializable, Cloneable {
             }
             n++;
         }
+        return arrivals;
     }
     
     private Arrival linearInterpArrival(double searchDist,
@@ -499,7 +465,8 @@ public class SeismicPhase implements Serializable, Cloneable {
             if (getDownGoing()[0]) {
                 takeoffVelocity = vMod.evaluateBelow(sourceDepth, name.charAt(0));
             } else { 
-                takeoffVelocity = vMod.evaluateAbove(sourceDepth, name.charAt(0));
+                //fake neg velocity so angle is neg in case of upgoing
+                takeoffVelocity = -1*vMod.evaluateAbove(sourceDepth, name.charAt(0));
             }
             takeoffAngle = 180/Math.PI*Math.asin(takeoffVelocity*arrivalRayParam/(getTauModel().getRadiusOfEarth()-sourceDepth));
             char lastLeg = getLegs().get(getLegs().size()-2).charAt(0); // last item is "E", assume first char is P or S
@@ -1715,178 +1682,176 @@ public class SeismicPhase implements Serializable, Cloneable {
      * Calculates the "pierce points" for the arrivals stored in arrivals. The
      * pierce points are stored within each arrival object.
      */
-    public void calcPierce(TauModel tMod) throws TauModelException {
-        double rayParamA, rayParamB;
-        double distRayParam;
-        double distA, distB;
-        double timeA, timeB;
-        double distRatio;
+    public List<Arrival> calcPierce(double deg) throws TauModelException {
+        List<Arrival> arrivals = calcTime(deg);
+        for (Arrival a : arrivals) {
+            calcPierce(a);
+        }
+        return arrivals;
+    }
+    
+    /** Calculates the pierce points for a particular arrival. The returned arrival is the same
+     * as the input arguement but now has the pierce points filled in.
+     * @param currArrival
+     * @return same arrival with pierce points
+     */
+    public Arrival calcPierce(Arrival currArrival) {
+        double branchDist = 0.0;
+        double branchTime = 0.0;
+        double prevBranchTime = 0.0;
+        List<TimeDist> pierce = new ArrayList<TimeDist>();
+        /*
+         * Find the ray parameter index that corresponds to the arrival ray
+         * parameter in the TauModel, ie it is between rayNum and rayNum+1,
+         * We know that it must be <tMod.rayParams.length-1 since the last
+         * ray parameter sample is 0, at least in a spherical model...
+         */
         int rayNum = 0;
-        int branchNum;
-        boolean isPWave;
-        int numAdded;
-        double branchDist, branchTime, branchDepth, prevBranchTime;
-        double turnDepth;
-        Arrival currArrival;
-        for(int arrivalNum = 0; arrivalNum < arrivals.size(); arrivalNum++) {
-            currArrival = (Arrival)arrivals.get(arrivalNum);
-            branchDist = 0.0;
-            branchTime = 0.0;
-            prevBranchTime = branchTime;
-            /*
-             * Find the ray parameter index that corresponds to the arrival ray
-             * parameter in the TauModel, ie it is between rayNum and rayNum+1,
-             * We know that it must be <tMod.rayParams.length-1 since the last
-             * ray parameter sample is 0, at least in a spherical model...
-             */
-            for(int i = 0; i < tMod.rayParams.length - 1; i++) {
-                if(tMod.rayParams[i] >= currArrival.getRayParam()) {
-                    rayNum = i;
-                } else {
-                    break;
-                }
-            }
-            currArrival.pierce = new TimeDist[branchSeq.size() + 2];
-            // here we use ray parameter and dist info stored within the
-            // SeismicPhase so we can use currArrival.rayParamIndex, which
-            // may not correspond to rayNum (for tMod.rayParams).
-            rayParamA = rayParams[currArrival.getRayParamIndex()];
-            rayParamB = rayParams[currArrival.getRayParamIndex() + 1];
-            distA = dist[currArrival.getRayParamIndex()];
-            distB = dist[currArrival.getRayParamIndex() + 1];
-            distRatio = (currArrival.getDist() - distA) / (distB - distA);
-            distRayParam = distRatio * (rayParamB - rayParamA) + rayParamA;
-            /* First pierce point is always 0 distance at the source depth. */
-            currArrival.pierce[0] = new TimeDist(distRayParam,
-                                                 0.0,
-                                                 0.0,
-                                                 tMod.getSourceDepth());
-            numAdded = 1;
-            /*
-             * Loop from 0 but already done 0, so the pierce point when the ray
-             * leaves branch i is stored in i+1. Use linear interpolation
-             * between rays that we know.
-             */
-            for(int i = 0; i < branchSeq.size(); i++) {
-                branchNum = ((Integer)branchSeq.get(i)).intValue();
-                isPWave = ((Boolean)waveType.get(i)).booleanValue();
-                if(DEBUG) {
-                    System.out.println(i + " branchNum =" + branchNum
-                            + " downGoing=" + (Boolean)downGoing.get(i)
-                            + "  isPWave=" + isPWave);
-                }
-                /*
-                 * Save the turning depths for the ray parameter for both P and
-                 * S waves. This way we get the depth correct for any rays that
-                 * turn within a layer. We have to do this on a per branch basis
-                 * because of converted phases, e.g. SKS.
-                 */
-                try {
-                    if(distRayParam > tMod.getTauBranch(branchNum, isPWave)
-                            .getMaxRayParam()) {
-                        turnDepth = tMod.getTauBranch(branchNum, isPWave)
-                                .getTopDepth();
-                    } else if(distRayParam <= tMod.getTauBranch(branchNum,
-                                                                isPWave)
-                            .getMinRayParam()) {
-                        turnDepth = tMod.getTauBranch(branchNum, isPWave)
-                                .getBotDepth();
-                    } else {
-                        if(isPWave
-                                || tMod.getSlownessModel()
-                                        .depthInFluid((tMod.getTauBranch(branchNum,
-                                                                         isPWave)
-                                                .getTopDepth() + tMod.getTauBranch(branchNum,
-                                                                                   isPWave)
-                                                .getBotDepth()) / 2.0)) {
-                            turnDepth = tMod.getSlownessModel()
-                                    .findDepth(distRayParam,
-                                               tMod.getTauBranch(branchNum,
-                                                                 isPWave)
-                                                       .getTopDepth(),
-                                               tMod.getTauBranch(branchNum,
-                                                                 isPWave)
-                                                       .getBotDepth(),
-                                               PWAVE);
-                        } else {
-                            turnDepth = tMod.getSlownessModel()
-                                    .findDepth(distRayParam,
-                                               tMod.getTauBranch(branchNum,
-                                                                 isPWave)
-                                                       .getTopDepth(),
-                                               tMod.getTauBranch(branchNum,
-                                                                 isPWave)
-                                                       .getBotDepth(),
-                                               isPWave);
-                        }
-                    }
-                } catch(SlownessModelException e) {
-                    // shouldn't happen but...
-                    throw new RuntimeException("SeismicPhase.calcPierce: Caught SlownessModelException. "
-                            , e);
-                }
-                if(name.indexOf("Pdiff") != -1 || name.indexOf("Pn") != -1
-                        || name.indexOf("Sdiff") != -1
-                        || name.indexOf("Sn") != -1) {
-                    /* head waves and diffracted waves are a special case. */
-                    distA = tMod.getTauBranch(branchNum, isPWave)
-                            .getDist(rayNum);
-                    timeA = tMod.getTauBranch(branchNum, isPWave).time[rayNum];
-                    distB = tMod.getTauBranch(branchNum, isPWave)
-                            .getDist(rayNum);
-                    timeB = tMod.getTauBranch(branchNum, isPWave).time[rayNum];
-                } else {
-                    distA = tMod.getTauBranch(branchNum, isPWave)
-                            .getDist(rayNum);
-                    timeA = tMod.getTauBranch(branchNum, isPWave).time[rayNum];
-                    distB = tMod.getTauBranch(branchNum, isPWave)
-                            .getDist(rayNum + 1);
-                    timeB = tMod.getTauBranch(branchNum, isPWave).time[rayNum + 1];
-                }
-                branchDist += distRatio * (distB - distA) + distA;
-                prevBranchTime = branchTime;
-                branchTime += distRatio * (timeB - timeA) + timeA;
-                if(((Boolean)downGoing.get(i)).booleanValue()) {
-                    branchDepth = Math.min(tMod.getTauBranch(branchNum, isPWave)
-                                                   .getBotDepth(),
-                                           turnDepth);
-                } else {
-                    branchDepth = Math.min(tMod.getTauBranch(branchNum, isPWave)
-                                                   .getTopDepth(),
-                                           turnDepth);
-                }
-                // make sure ray actually propagates in this branch, leave
-                // a little room for numerical "chatter"
-                if(Math.abs(prevBranchTime - branchTime) > 1e-10) {
-                    currArrival.pierce[numAdded++] = new TimeDist(distRayParam,
-                                                                  branchTime,
-                                                                  branchDist,
-                                                                  branchDepth);
-                    if(DEBUG) {
-                        System.out.println(" branchTime=" + branchTime
-                                + " branchDist=" + branchDist + " branchDepth="
-                                + branchDepth);
-                        System.out.println("incrementTime = "
-                                + (distRatio * (timeB - timeA)) + " timeB="
-                                + timeB + " timeA=" + timeA);
-                    }
-                }
-            }
-            if(name.indexOf("Pdiff") != -1 || name.indexOf("Pn") != -1
-                    || name.indexOf("Sdiff") != -1 || name.indexOf("Sn") != -1) {
-                currArrival.pierce = handleHeadOrDiffractedWave(currArrival, numAdded);;
-            } else if(name.indexOf("kmps") != -1) {
-                currArrival.pierce[1] = new TimeDist(distRayParam,
-                                                     currArrival.getTime(),
-                                                     currArrival.getDist(),
-                                                     0);
-                numAdded = 2;
+        for(int i = 0; i < tMod.rayParams.length - 1; i++) {
+            if(tMod.rayParams[i] >= currArrival.getRayParam()) {
+                rayNum = i;
             } else {
-                TimeDist[] temp = new TimeDist[numAdded];
-                System.arraycopy(currArrival.pierce, 0, temp, 0, numAdded);
-                currArrival.pierce = temp;
+                break;
             }
         }
+        // here we use ray parameter and dist info stored within the
+        // SeismicPhase so we can use currArrival.rayParamIndex, which
+        // may not correspond to rayNum (for tMod.rayParams).
+        double rayParamA = rayParams[currArrival.getRayParamIndex()];
+        double rayParamB = rayParams[currArrival.getRayParamIndex() + 1];
+        double distA = dist[currArrival.getRayParamIndex()];
+        double distB = dist[currArrival.getRayParamIndex() + 1];
+        double distRatio = (currArrival.getDist() - distA) / (distB - distA);
+        double distRayParam = distRatio * (rayParamB - rayParamA) + rayParamA;
+        /* First pierce point is always 0 distance at the source depth. */
+        pierce.add(new TimeDist(distRayParam,
+                                             0.0,
+                                             0.0,
+                                             tMod.getSourceDepth()));
+        /*
+         * Loop from 0 but already done 0, so the pierce point when the ray
+         * leaves branch i is stored in i+1. Use linear interpolation
+         * between rays that we know.
+         */
+        for(int i = 0; i < branchSeq.size(); i++) {
+            int branchNum = ((Integer)branchSeq.get(i)).intValue();
+            boolean isPWave = ((Boolean)waveType.get(i)).booleanValue();
+            if(DEBUG) {
+                System.out.println(i + " branchNum =" + branchNum
+                        + " downGoing=" + (Boolean)downGoing.get(i)
+                        + "  isPWave=" + isPWave);
+            }
+            /*
+             * Save the turning depths for the ray parameter for both P and
+             * S waves. This way we get the depth correct for any rays that
+             * turn within a layer. We have to do this on a per branch basis
+             * because of converted phases, e.g. SKS.
+             */
+            double turnDepth;
+            try {
+                if(distRayParam > tMod.getTauBranch(branchNum, isPWave)
+                        .getMaxRayParam()) {
+                    turnDepth = tMod.getTauBranch(branchNum, isPWave)
+                            .getTopDepth();
+                } else if(distRayParam <= tMod.getTauBranch(branchNum,
+                                                            isPWave)
+                        .getMinRayParam()) {
+                    turnDepth = tMod.getTauBranch(branchNum, isPWave)
+                            .getBotDepth();
+                } else {
+                    if(isPWave
+                            || tMod.getSlownessModel()
+                                    .depthInFluid((tMod.getTauBranch(branchNum,
+                                                                     isPWave)
+                                            .getTopDepth() + tMod.getTauBranch(branchNum,
+                                                                               isPWave)
+                                            .getBotDepth()) / 2.0)) {
+                        turnDepth = tMod.getSlownessModel()
+                                .findDepth(distRayParam,
+                                           tMod.getTauBranch(branchNum,
+                                                             isPWave)
+                                                   .getTopDepth(),
+                                           tMod.getTauBranch(branchNum,
+                                                             isPWave)
+                                                   .getBotDepth(),
+                                           PWAVE);
+                    } else {
+                        turnDepth = tMod.getSlownessModel()
+                                .findDepth(distRayParam,
+                                           tMod.getTauBranch(branchNum,
+                                                             isPWave)
+                                                   .getTopDepth(),
+                                           tMod.getTauBranch(branchNum,
+                                                             isPWave)
+                                                   .getBotDepth(),
+                                           isPWave);
+                    }
+                }
+            } catch(SlownessModelException e) {
+                // shouldn't happen but...
+                throw new RuntimeException("SeismicPhase.calcPierce: Caught SlownessModelException. "
+                        , e);
+            }
+            double timeA, timeB;
+            if(name.indexOf("Pdiff") != -1 || name.indexOf("Pn") != -1
+                    || name.indexOf("Sdiff") != -1
+                    || name.indexOf("Sn") != -1) {
+                /* head waves and diffracted waves are a special case. */
+                distA = tMod.getTauBranch(branchNum, isPWave)
+                        .getDist(rayNum);
+                timeA = tMod.getTauBranch(branchNum, isPWave).time[rayNum];
+                distB = tMod.getTauBranch(branchNum, isPWave)
+                        .getDist(rayNum);
+                timeB = tMod.getTauBranch(branchNum, isPWave).time[rayNum];
+            } else {
+                distA = tMod.getTauBranch(branchNum, isPWave)
+                        .getDist(rayNum);
+                timeA = tMod.getTauBranch(branchNum, isPWave).time[rayNum];
+                distB = tMod.getTauBranch(branchNum, isPWave)
+                        .getDist(rayNum + 1);
+                timeB = tMod.getTauBranch(branchNum, isPWave).time[rayNum + 1];
+            }
+            branchDist += distRatio * (distB - distA) + distA;
+            prevBranchTime = branchTime;
+            branchTime += distRatio * (timeB - timeA) + timeA;
+            double branchDepth;
+            if(((Boolean)downGoing.get(i)).booleanValue()) {
+                branchDepth = Math.min(tMod.getTauBranch(branchNum, isPWave)
+                                               .getBotDepth(),
+                                       turnDepth);
+            } else {
+                branchDepth = Math.min(tMod.getTauBranch(branchNum, isPWave)
+                                               .getTopDepth(),
+                                       turnDepth);
+            }
+            // make sure ray actually propagates in this branch, leave
+            // a little room for numerical "chatter"
+            if(Math.abs(prevBranchTime - branchTime) > 1e-10) {
+                pierce.add(new TimeDist(distRayParam,
+                                                              branchTime,
+                                                              branchDist,
+                                                              branchDepth));
+                if(DEBUG) {
+                    System.out.println(" branchTime=" + branchTime
+                            + " branchDist=" + branchDist + " branchDepth="
+                            + branchDepth);
+                    System.out.println("incrementTime = "
+                            + (distRatio * (timeB - timeA)) + " timeB="
+                            + timeB + " timeA=" + timeA);
+                }
+            }
+        }
+        if(name.indexOf("Pdiff") != -1 || name.indexOf("Pn") != -1
+                || name.indexOf("Sdiff") != -1 || name.indexOf("Sn") != -1) {
+            pierce = handleHeadOrDiffractedWave(currArrival, pierce);
+        } else if(name.indexOf("kmps") != -1) {
+            pierce.add(new TimeDist(distRayParam,
+                                                 currArrival.getTime(),
+                                                 currArrival.getDist(),
+                                                 0));
+        }
+        currArrival.pierce = pierce.toArray(new TimeDist[0]);
+        return currArrival;
     }
 
     /**
@@ -1895,7 +1860,7 @@ public class SeismicPhase implements Serializable, Cloneable {
      * head wave, but not both. Nor can it be a head wave or diffracted
      * wave for both P and S.
      */
-    TimeDist[] handleHeadOrDiffractedWave(Arrival currArrival, int numAdded) {
+    List<TimeDist> handleHeadOrDiffractedWave(Arrival currArrival, List<TimeDist> orig) {
         String[] phaseSegments = new String[] {"Pn", "Sn", "Pdiff", "Sdiff"};
         String phaseSeg = "";
         for (int i = 0; i < phaseSegments.length; i++) {
@@ -1911,7 +1876,6 @@ public class SeismicPhase implements Serializable, Cloneable {
         } else {
             headDepth = tMod.getCmbDepth();
         }
-        TimeDist[] diffTD;
         int i = 0;
         int numFound = 0;
         int indexInString = -1;
@@ -1922,158 +1886,146 @@ public class SeismicPhase implements Serializable, Cloneable {
         }
         double refractDist = currArrival.getDist() - dist[0];
         double refractTime = refractDist*currArrival.getRayParam();
-        diffTD = new TimeDist[numAdded + numFound];
+        List<TimeDist> out = new ArrayList<TimeDist>();
         int j = 0;
-        while(j < numFound) {
-            while(currArrival.pierce[i].depth != headDepth) {
-                diffTD[i + j] = currArrival.pierce[i];
-                diffTD[i + j].dist += j * refractDist / numFound;
-                diffTD[i + j].time += j * refractTime / numFound;
-                i++;
+        for (TimeDist td : orig) {
+            // this is a little weird as we are not checking where we are in the phase name, but simply
+            // if the depth matches. This likely works in most cases, but may not for head/diffracted
+            // waves that undergo a phase change, if that type of phase can even exist
+            out.add(new TimeDist(td.p, td.time+j * refractTime / numFound, td.distRadian + j * refractDist / numFound, td.depth));
+            if (td.depth == headDepth) {
+                j++;
+                out.add(new TimeDist(td.p, td.time+j * refractTime / numFound, td.distRadian + j * refractDist / numFound, td.depth));
             }
-            diffTD[i + j] = currArrival.pierce[i];
-            diffTD[i + j].dist += j * refractDist / numFound;
-            diffTD[i + j].time += j * refractTime / numFound;
-            diffTD[i + j + 1] = new TimeDist(diffTD[i].p,
-                                             diffTD[i + j].time
-                                                     + refractTime
-                                                     / numFound,
-                                             diffTD[i + j].dist
-                                                     + refractDist
-                                                     / numFound,
-                                             headDepth);
-            i++;
-            j++;
         }
-        System.arraycopy(currArrival.pierce,
-                         i,
-                         diffTD,
-                         i + j,
-                         numAdded - i);
-        for(int k = i + j; k < diffTD.length; k++) {
-            diffTD[k].dist += refractDist;
-            diffTD[k].time += refractTime;
-        }
-        numAdded += j;
-        return diffTD;
+        return out;
     }
 
-    /** calculates the path this phase takes through the earth model. */
-    public void calcPath(TauModel tMod) {
-        TimeDist[] tempTimeDist;
-        ArrayList<TimeDist[]> pathList = new ArrayList<TimeDist[]>(10);
-        int arraySize;
-        Arrival currArrival;
-        int branchNum;
-        boolean isPWave;
-        for(int arrivalNum = 0; arrivalNum < arrivals.size(); arrivalNum++) {
-            pathList.clear();
-            currArrival = (Arrival)arrivals.get(arrivalNum);
-            /*
-             * Find the ray parameter index that corresponds to the arrival ray
-             * parameter in the TauModel, ie it is between rayNum and rayNum+1.
-             */
-            tempTimeDist = new TimeDist[1];
-            tempTimeDist[0] = new TimeDist(currArrival.getRayParam(),
-                                           0.0,
-                                           0.0,
-                                           tMod.getSourceDepth());
-            pathList.add(tempTimeDist);
-            try {
-                for(int i = 0; i < branchSeq.size(); i++) {
-                    branchNum = ((Integer)branchSeq.get(i)).intValue();
-                    isPWave = ((Boolean)waveType.get(i)).booleanValue();
-                    if(DEBUG) {
-                        System.out.println("i=" + i + " branchNum=" + branchNum
-                                + " isPWave=" + isPWave + " downgoing="
-                                + ((Boolean)downGoing.get(i)).booleanValue());
-                    }
+    /** calculates the paths this phase takes through the earth model. */
+    public List<Arrival> calcPath(double deg) {
+        
+        List<Arrival> arrivals = calcTime(deg);
+        for (Arrival a : arrivals) {
+            calcPath(a);
+        }
+        return arrivals;
+    }
+    
+    public Arrival calcPath(Arrival currArrival) {
+        ArrayList<TimeDist[]> pathList = new ArrayList<TimeDist[]>();
+        /*
+         * Find the ray parameter index that corresponds to the arrival ray
+         * parameter in the TauModel, ie it is between rayNum and rayNum+1.
+         */
+        TimeDist[] tempTimeDist = new TimeDist[1];
+        tempTimeDist[0] = new TimeDist(currArrival.getRayParam(),
+                                       0.0,
+                                       0.0,
+                                       tMod.getSourceDepth());
+        pathList.add(tempTimeDist);
+        TimeDist prevTimeDist = tempTimeDist[0];
+            for(int i = 0; i < branchSeq.size(); i++) {
+                int branchNum = ((Integer)branchSeq.get(i)).intValue();
+                boolean isPWave = ((Boolean)waveType.get(i)).booleanValue();
+                if(DEBUG) {
+                    System.out.println("i=" + i + " branchNum=" + branchNum
+                            + " isPWave=" + isPWave + " downgoing="
+                            + ((Boolean)downGoing.get(i)).booleanValue());
+                }
+                try {
                     tempTimeDist = tMod.getTauBranch(branchNum, isPWave)
                             .path(currArrival.getRayParam(),
                                   ((Boolean)downGoing.get(i)).booleanValue(),
                                   tMod.getSlownessModel());
-                    if(tempTimeDist != null) {
-                        pathList.add(tempTimeDist);
-                    }
-                    /*
-                     * Here we worry about the special case for head and
-                     * diffracted waves.
-                     */
-                    if(branchNum == tMod.cmbBranch - 1 && i < branchSeq.size()-1
-                            && ((Integer)branchSeq.get(i + 1)).intValue() == tMod.cmbBranch - 1
-                            && (name.indexOf("Pdiff") != -1 || name.indexOf("Sdiff") != -1)) {
-                        TimeDist[] diffTD = new TimeDist[1];
-                        diffTD[0] = new TimeDist(currArrival.getRayParam(),
-                                                 (currArrival.getDist() - dist[0])
-                                                         * currArrival.getRayParam(),
-                                                 currArrival.getDist()
-                                                         - dist[0],
-                                                 tMod.cmbDepth);
-                        pathList.add(diffTD);
-                    } else if(branchNum == tMod.mohoBranch - 1 && i < branchSeq.size()-1
-                            && ((Integer)branchSeq.get(i + 1)).intValue() == tMod.mohoBranch - 1
-                            && (name.indexOf("Pn") != -1 || name.indexOf("Sn") != -1)) {
-                        int numFound = 0;
-                        int indexInString = -1;
-                        // can't have both Pn and Sn in a phase, so one of these
-                        // should do nothing
-                        while((indexInString = name.indexOf("Pn",
-                                                            indexInString + 1)) != -1) {
-                            numFound++;
-                        }
-                        while((indexInString = name.indexOf("Sn",
-                                                            indexInString + 1)) != -1) {
-                            numFound++;
-                        }
-                        TimeDist[] headTD = new TimeDist[1];
-                        headTD[0] = new TimeDist(currArrival.getRayParam(),
-                                                 (currArrival.getDist() - dist[0])
-                                                         / numFound
-                                                         * currArrival.getRayParam(),
-                                                 (currArrival.getDist() - dist[0])
-                                                         / numFound,
-                                                 tMod.mohoDepth);
-                        pathList.add(headTD);
-                    } 
+                } catch(SlownessModelException e) {
+                    // shouldn't happen but...
+                    throw new RuntimeException("SeismicPhase.calcPath: Caught SlownessModelException. "
+                            , e);
                 }
-                if (name.indexOf("kmps") != -1) {
-                    // kmps phases have no branches, so need to end them at the arrival distance
+                if(tempTimeDist != null) {
+                    pathList.add(tempTimeDist);
+                    for (int j = 0; j < tempTimeDist.length; j++) {
+                        if (tempTimeDist[j].getDistDeg() < 0) {
+                            throw new RuntimeException("Path is backtracking, no possible: "+j+" ("+tempTimeDist[j]+")");
+                        }
+                        prevTimeDist = tempTimeDist[j];
+                    }
+                }
+                /*
+                 * Here we worry about the special case for head and
+                 * diffracted waves.
+                 */
+                if(branchNum == tMod.cmbBranch - 1 && i < branchSeq.size()-1
+                        && ((Integer)branchSeq.get(i + 1)).intValue() == tMod.cmbBranch - 1
+                        && (name.indexOf("Pdiff") != -1 || name.indexOf("Sdiff") != -1)) {
+                    TimeDist[] diffTD = new TimeDist[1];
+                    diffTD[0] = new TimeDist(currArrival.getRayParam(),
+                                             (currArrival.getDist() - dist[0])
+                                                     * currArrival.getRayParam(),
+                                             currArrival.getDist()
+                                                     - dist[0],
+                                             tMod.cmbDepth);
+                    pathList.add(diffTD);
+                } else if(branchNum == tMod.mohoBranch - 1 && i < branchSeq.size()-1
+                        && ((Integer)branchSeq.get(i + 1)).intValue() == tMod.mohoBranch - 1
+                        && (name.indexOf("Pn") != -1 || name.indexOf("Sn") != -1)) {
+                    int numFound = 0;
+                    int indexInString = -1;
+                    // can't have both Pn and Sn in a phase, so one of these
+                    // should do nothing
+                    while((indexInString = name.indexOf("Pn",
+                                                        indexInString + 1)) != -1) {
+                        numFound++;
+                    }
+                    while((indexInString = name.indexOf("Sn",
+                                                        indexInString + 1)) != -1) {
+                        numFound++;
+                    }
                     TimeDist[] headTD = new TimeDist[1];
                     headTD[0] = new TimeDist(currArrival.getRayParam(),
-                                             currArrival.getDist()
-                                             * currArrival.getRayParam(),
-                                             currArrival.getDist(),
-                                             0);
+                                             (currArrival.getDist() - dist[0])
+                                                     / numFound
+                                                     * currArrival.getRayParam(),
+                                             (currArrival.getDist() - dist[0])
+                                                     / numFound,
+                                             tMod.mohoDepth);
                     pathList.add(headTD);
-                }
-                arraySize = 0;
-                for(int i = 0; i < pathList.size(); i++) {
-                    arraySize += ((TimeDist[])pathList.get(i)).length;
-                }
-                currArrival.path = new TimeDist[arraySize];
-                TimeDist cummulative = new TimeDist(currArrival.getRayParam(),
-                                                    0.0,
-                                                    0.0,
-                                                    currArrival.getSourceDepth());
-                TimeDist[] branchPath;
-                int numAdded = 0;
-                for(int i = 0; i < pathList.size(); i++) {
-                    branchPath = (TimeDist[])pathList.get(i);
-                    for(int j = 0; j < branchPath.length; j++) {
-                        cummulative.add(branchPath[j]);
-                        cummulative.depth = branchPath[j].depth;
-                        currArrival.path[numAdded] = (TimeDist)cummulative.clone();
-                        numAdded++;
-                    }
-                }
-            } catch(SlownessModelException e) {
-                // This shouldn't happen
-                System.out.println("Caught SlownessModelException in "
-                        + "SeismicPhase.calcPath(): " + e.getMessage());
-                e.printStackTrace();
-                System.out.println("Skipping phase " + currArrival.getName());
+                } 
             }
-        }
+            if (name.indexOf("kmps") != -1) {
+                // kmps phases have no branches, so need to end them at the arrival distance
+                TimeDist[] headTD = new TimeDist[1];
+                headTD[0] = new TimeDist(currArrival.getRayParam(),
+                                         currArrival.getDist()
+                                         * currArrival.getRayParam(),
+                                         currArrival.getDist(),
+                                         0);
+                pathList.add(headTD);
+            }
+            int arraySize = 0;
+            for(int i = 0; i < pathList.size(); i++) {
+                arraySize += ((TimeDist[])pathList.get(i)).length;
+            }
+            currArrival.path = new TimeDist[arraySize];
+            TimeDist cummulative = new TimeDist(currArrival.getRayParam(),
+                                                0.0,
+                                                0.0,
+                                                currArrival.getSourceDepth());
+            TimeDist[] branchPath;
+            int numAdded = 0;
+            for(int i = 0; i < pathList.size(); i++) {
+                branchPath = (TimeDist[])pathList.get(i);
+                for(int j = 0; j < branchPath.length; j++) {
+                    cummulative.add(branchPath[j]);
+                    cummulative.depth = branchPath[j].depth;
+                    currArrival.path[numAdded] = (TimeDist)cummulative.clone();
+                    if (numAdded > 0 && currArrival.path[numAdded].getDistRadian() < currArrival.path[numAdded-1].getDistRadian()) {
+                        throw new RuntimeException("Backtracking ray, not possible: "+numAdded+" "+currArrival.path[numAdded-1]+") > ("+currArrival.path[numAdded]+")");
+                    }
+                    numAdded++;
+                }
+            }
+        return currArrival;
     }
 
     private String validationFailMessage = "";
@@ -2166,7 +2118,7 @@ public class SeismicPhase implements Serializable, Cloneable {
         Arrival minArrival = null;
         for (SeismicPhase seismicPhase : phases) {
             seismicPhase.calcTime(degrees);
-            Arrival currArrival = seismicPhase.getEarliestArrival();
+            Arrival currArrival = seismicPhase.getEarliestArrival(degrees);
             if (currArrival != null && ( minArrival == null || minArrival.getTime() > currArrival.getTime())) {
                 minArrival = currArrival;
             }

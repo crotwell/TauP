@@ -161,16 +161,12 @@ public class TauModelLoader {
         }
         // try to load velocity model of same name and do a create
         try {
-            System.out.println("try to load "+modelName);
             VelocityModel vmod = loadVelocityModel(modelName);
             if (vmod != null) {
                 TauP_Create tauPCreate = new TauP_Create();
-                tauPCreate.setVelocityModel(vmod);
-                tauPCreate.start();
-                return tauPCreate.getTauModel();
+                return tauPCreate.createTauModel(vmod);
             }
         } catch(Exception e) {
-            e.printStackTrace();
             throw new TauModelException("Can't find any saved models for "
                                             + modelName+" and creation from velocity model failed.", e);
         }

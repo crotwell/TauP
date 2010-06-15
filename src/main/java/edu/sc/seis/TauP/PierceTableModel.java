@@ -61,7 +61,7 @@ public class PierceTableModel extends AbstractTableModel {
     public Object getValueAt(int row, int col) {
         switch(col){
             case 0:
-                double dist = (180.0 / Math.PI * arrivals.get(selectedIndex).getPiercePoint(row).dist);
+                double dist = (arrivals.get(selectedIndex).getPiercePoint(row).getDistDeg());
                 if(arrivals.get(selectedIndex).getDistDeg() % 360 > 180
                         && dist != 0.0) {
                     dist *= -1.0;

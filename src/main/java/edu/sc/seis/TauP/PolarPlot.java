@@ -188,19 +188,19 @@ public class PolarPlot extends Canvas {
             for(int i = 0; i < data.length - 1; i++) {
                 g.drawLine(centerX
                                    - (int)Math.rint((outsideRadius - data[i].depth)
-                                           * Math.cos(data[i].dist + Math.PI
+                                           * Math.cos(data[i].distRadian + Math.PI
                                                    / 2) * scale),
                            centerY
                                    - (int)Math.rint((outsideRadius - data[i].depth)
-                                           * Math.sin(data[i].dist + Math.PI
+                                           * Math.sin(data[i].distRadian + Math.PI
                                                    / 2) * scale),
                            centerX
                                    - (int)Math.rint((outsideRadius - data[i + 1].depth)
-                                           * Math.cos(data[i + 1].dist
+                                           * Math.cos(data[i + 1].distRadian
                                                    + Math.PI / 2) * scale),
                            centerY
                                    - (int)Math.rint((outsideRadius - data[i + 1].depth)
-                                           * Math.sin(data[i + 1].dist
+                                           * Math.sin(data[i + 1].distRadian
                                                    + Math.PI / 2) * scale));
             }
         }

@@ -126,8 +126,7 @@ public class ParamDifferential  {
         for (float d = deltaDeg; d < 99; d+=deltaDeg) {
             String distResult = d+" "+ correctTime.getCorrectTime(phaseName, d)+" ";
             for (int t = 0; t < deltaTMod.length; t++) {
-                pPhase[t].calcTime(d);
-                Arrival a = pPhase[t].getEarliestArrival();
+                Arrival a = pPhase[t].getEarliestArrival(d);
                 if (a != null) {
                     distResult += nf.format(a.getTime()) +" ";
                 } else { distResult += " ?? ";}
@@ -206,12 +205,12 @@ class AK135CorrectTime extends CorrectTime {
         List<TimeDist> zeroDepth = table.get(phase).get(new Float(0));
         TimeDist prev = zeroDepth.get(0);
         for (TimeDist td : zeroDepth) {
-            if (td.dist == dist) {
-                System.out.println("Match: "+td.dist+" "+td.time);
+            if (td.getDistDeg() == dist) {
+                System.out.println("Match: "+td.getDistDeg()+" "+td.time);
                 return td.time;
-            } else if (td.dist > dist) {
-                System.out.println("interp "+td.dist+" "+prev.dist+"  "+dist+"    "+td.time+"  "+prev.time);
-                return (td.time-prev.time)/(td.dist-prev.dist)*(dist-prev.dist) + prev.time;
+            } else if (td.getDistDeg() > dist) {
+                System.out.println("interp "+td.getDistDeg()+" "+prev.getDistDeg()+"  "+dist+"    "+td.time+"  "+prev.time);
+                return (td.time-prev.time)/(td.getDistDeg()-prev.getDistDeg())*(dist-prev.getDistDeg()) + prev.time;
             }
             prev=td;
         }

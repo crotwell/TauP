@@ -261,7 +261,7 @@ public class TauBranch implements Serializable, Cloneable {
         for(int rayNum = 0; rayNum < rayParams.length; rayNum++) {
             p = rayParams[rayNum];
             timeDist = calcTimeDist(sMod, topLayerNum, botLayerNum, p);
-            dist[rayNum] = timeDist.dist;
+            dist[rayNum] = timeDist.distRadian;
             time[rayNum] = timeDist.time;
             tau[rayNum] = time[rayNum] - p * dist[rayNum];
             if(DEBUG && (rayNum % ((int)rayParams.length / 10) == 0)) {
@@ -350,15 +350,15 @@ public class TauBranch implements Serializable, Cloneable {
                     break;
                 } else {
                     temptd = sMod.layerTimeDist(rayParam, i, isPWave);
-                    td.dist += temptd.dist;
+                    td.distRadian += temptd.distRadian;
                     td.time += temptd.time;
                 }
             }
         }
         shiftBranch(index);
-        dist[index] = td.dist;
+        dist[index] = td.distRadian;
         time[index] = td.time;
-        tau[index] = td.time - rayParam * td.dist;
+        tau[index] = td.time - rayParam * td.distRadian;
     }
 
     /**
@@ -512,10 +512,10 @@ public class TauBranch implements Serializable, Cloneable {
                     botBranch.time[i] = time[i] - topBranch.time[i];
                     botBranch.tau[i] = tau[i] - topBranch.tau[i];
                 }
-                botBranch.dist[indexP] = timeDistP.dist;
+                botBranch.dist[indexP] = timeDistP.distRadian;
                 botBranch.time[indexP] = timeDistP.time;
                 botBranch.tau[indexP] = timeDistP.time - PRayParam
-                        * timeDistP.dist;
+                        * timeDistP.distRadian;
                 for(int i = indexP; i < dist.length; i++) {
                     botBranch.dist[i + 1] = dist[i] - topBranch.dist[i + 1];
                     botBranch.time[i + 1] = time[i] - topBranch.time[i + 1];
@@ -528,10 +528,10 @@ public class TauBranch implements Serializable, Cloneable {
                     botBranch.time[i] = time[i] - topBranch.time[i];
                     botBranch.tau[i] = tau[i] - topBranch.tau[i];
                 }
-                botBranch.dist[indexS] = timeDistS.dist;
+                botBranch.dist[indexS] = timeDistS.distRadian;
                 botBranch.time[indexS] = timeDistS.time;
                 botBranch.tau[indexS] = timeDistS.time - SRayParam
-                        * timeDistS.dist;
+                        * timeDistS.distRadian;
                 for(int i = indexS; i < indexP; i++) {
                     botBranch.dist[i + 1] = dist[i] - topBranch.dist[i + 1];
                     botBranch.time[i + 1] = time[i] - topBranch.time[i + 1];
@@ -539,10 +539,10 @@ public class TauBranch implements Serializable, Cloneable {
                 }
                 // put into indexP+1 as we have already shifted by 1
                 // due to indexS
-                botBranch.dist[indexP + 1] = timeDistP.dist;
+                botBranch.dist[indexP + 1] = timeDistP.distRadian;
                 botBranch.time[indexP + 1] = timeDistP.time;
                 botBranch.tau[indexP + 1] = timeDistP.time - PRayParam
-                        * timeDistP.dist;
+                        * timeDistP.distRadian;
                 for(int i = indexP; i < dist.length; i++) {
                     botBranch.dist[i + 2] = dist[i] - topBranch.dist[i + 2];
                     botBranch.time[i + 2] = time[i] - topBranch.time[i + 2];

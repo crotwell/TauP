@@ -21,6 +21,9 @@ import java.io.IOException;
 import java.io.OptionalDataException;
 import java.io.StreamCorruptedException;
 import java.io.Writer;
+import java.util.List;
+
+import sun.reflect.ReflectionFactory.GetReflectionFactoryAction;
 
 /**
  * Calculate travel paths for different phases using a linear interpolated ray
@@ -79,7 +82,8 @@ public class TauP_Path extends TauP_Pierce {
 	 * Sets the gmt map width to be used with the output script and for creating
 	 * the circles for each discontinuity. Default is 6 inches.
 	 */
-	public void setMapWidth() {
+	public void setMapWidth(float mapWidth) {
+	    this.mapWidth = mapWidth;
 	}
 
 	/**
@@ -116,41 +120,37 @@ public class TauP_Path extends TauP_Pierce {
 	public void calcPath(double degrees) {
 		this.degrees = degrees;
 		SeismicPhase phase;
-		Arrival[] phaseArrivals;
 		for (int phaseNum = 0; phaseNum < phases.size(); phaseNum++) {
 			phase = phases.get(phaseNum);
-			phase.calcTime(degrees);
-			if (phase.hasArrivals()) {
-				phase.calcPath(tModDepth);
-				phaseArrivals = phase.getArrivals();
-				for (int i = 0; i < phaseArrivals.length; i++) {
-					arrivals.add(phaseArrivals[i]);
-				}
+			List<Arrival> phaseArrivals = phase.calcPath(degrees);
+			for (Arrival arrival : phaseArrivals) {
+			    arrivals.add(arrival);
 			}
 		}
 	}
 
 	public void printResult(Writer out) throws IOException {
-		double calcTime, calcDist, prevDepth, calcDepth;
-		Arrival currArrival;
-		int interpNum, maxInterpNum;
 		double radiusOfEarth = tModDepth.getRadiusOfEarth();
 		boolean longWayRound;
 		for (int i = 0; i < arrivals.size(); i++) {
-			currArrival = (Arrival) arrivals.get(i);
+		    Arrival currArrival = (Arrival) arrivals.get(i);
 			out.write(getCommentLine(currArrival));
 			longWayRound = false;
-			if ((currArrival.getDist() * 180 / Math.PI) % 360 > 180) {
+			if ((currArrival.getDistDeg()) % 360 > 180) {
 				longWayRound = true;
 			}
-			calcTime = 0.0;
-			calcDist = 0.0;
-			calcDepth = currArrival.getSourceDepth();
+			double calcTime = 0.0;
+			double calcDist = 0.0;
+			TimeDist prevTimeDist = new TimeDist(0,0,0,0);
+			double calcDepth = currArrival.getSourceDepth();
 			for (int j = 0; j < currArrival.path.length; j++) {
+			    if (currArrival.path[j].getDistRadian() < prevTimeDist.getDistRadian()) {
+			        throw new RuntimeException("ray path is backtracking, not possible: "+j+" ("+currArrival.path[j] +") < ("+ prevTimeDist+")");
+			    }
 				calcTime = currArrival.path[j].time;
 				calcDepth = currArrival.path[j].depth;
-				prevDepth = calcDepth; // only used if interpolate
-				calcDist = currArrival.path[j].dist * 180.0 / Math.PI;
+				double prevDepth = calcDepth; // only used if interpolate
+				calcDist = currArrival.path[j].getDistDeg();
 				if (longWayRound && calcDist != 0.0) {
 					calcDist = -1.0 * calcDist;
 				}
@@ -161,23 +161,22 @@ public class TauP_Path extends TauP_Pierce {
 				}
 				out.write("\n");
 				if (j < currArrival.path.length - 1
-						&& (currArrival.getRayParam() != 0.0 && 180.0
-								/ Math.PI
-								* (currArrival.path[j + 1].dist - currArrival.path[j].dist) > maxPathInc)) {
+						&& (currArrival.getRayParam() != 0.0 && 
+						   (currArrival.path[j + 1].getDistDeg() - currArrival.path[j].getDistDeg()) > maxPathInc)) {
 					// interpolate to steps of at most maxPathInc degrees for
 					// path
-					maxInterpNum = (int) Math
-							.ceil((currArrival.path[j + 1].dist - currArrival.path[j].dist)
-									* 180.0 / Math.PI / maxPathInc);
-					for (interpNum = 1; interpNum < maxInterpNum; interpNum++) {
+					int maxInterpNum = (int) Math
+							.ceil((currArrival.path[j + 1].getDistDeg() - currArrival.path[j].getDistDeg())
+									 / maxPathInc);
+					for (int interpNum = 1; interpNum < maxInterpNum; interpNum++) {
 						calcTime += (currArrival.path[j + 1].time - currArrival.path[j].time)
 								/ maxInterpNum;
 						if (longWayRound) {
-							calcDist -= (currArrival.path[j + 1].dist - currArrival.path[j].dist)
-									/ maxInterpNum * 180.0 / Math.PI;
+							calcDist -= (currArrival.path[j + 1].getDistDeg() - currArrival.path[j].getDistDeg())
+									 / maxInterpNum;
 						} else {
-							calcDist += (currArrival.path[j + 1].dist - currArrival.path[j].dist)
-									/ maxInterpNum * 180.0 / Math.PI;
+							calcDist += (currArrival.path[j + 1].getDistDeg() - currArrival.path[j].getDistDeg())
+									 / maxInterpNum;
 						}
 						calcDepth = prevDepth + interpNum
 								* (currArrival.path[j + 1].depth - prevDepth)
@@ -246,7 +245,7 @@ public class TauP_Path extends TauP_Pierce {
 							+ "\n# first lines, to the last psxy, as well as the last line.\n#\n");
 			dos.writeBytes("/bin/rm -f " + psFile + "\n\n");
 			dos.writeBytes("# draw surface and label distances.\n"
-					+ "psbasemap -K -P -R0/360/0/6371 -JP" + mapWidth
+					+ "psbasemap -K -P -R0/360/0/"+getTauModel().getRadiusOfEarth()+" -JP" + mapWidth
 					+ " -B30p/500N > " + psFile + "\n\n");
 			dos.writeBytes("# draw circles for branches, note these are scaled for a \n"
 							+ "# map using -JP"
@@ -261,8 +260,8 @@ public class TauP_Path extends TauP_Pierce {
 			double[] branchDepths = tMod.getBranchDepths();
 			for (int i = 0; i < branchDepths.length; i++) {
 				dos.writeBytes("0.0 0.0 "
-						+ (float) ((tMod.getRadiusOfEarth() - branchDepths[i])
-								* mapWidth / tMod.getRadiusOfEarth()) + "\n");
+						+ (float) ((getTauModel().getRadiusOfEarth() - branchDepths[i])
+								* mapWidth / getTauModel().getRadiusOfEarth()) + "\n");
 			}
 			dos.writeBytes("ENDLAYERS\n\n");
 			dos.writeBytes("# draw paths\n");

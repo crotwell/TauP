@@ -31,6 +31,7 @@ import java.io.InputStreamReader;
 import java.io.OptionalDataException;
 import java.io.StreamCorruptedException;
 import java.io.StreamTokenizer;
+import java.util.List;
 
 /**
  * Allows peeking into the taumodel, slowness model and velocity model
@@ -249,15 +250,13 @@ public class TauP_Peek {
                             break;
                         case 'p':
                         case 'P':
-                            sp.calcTime(tokenIn.nval);
-                            sp.calcPierce(tModDepth);
+                            List<Arrival> arr = sp.calcPierce(tokenIn.nval);
                             System.out.println("MaxRayParamIndex="
                                     + sp.getMaxRayParamIndex()
                                     + " MinRayParamIndex="
                                     + sp.getMinRayParamIndex());
-                            Arrival[] arr = sp.getArrivals();
-                            for(int i = 0; i < arr.length; i++) {
-                                System.out.println(arr[i]);
+                            for (Arrival arrival : arr) {
+                                System.out.println(arrival);
                             }
                             System.out.println("Enter degrees");
                     }

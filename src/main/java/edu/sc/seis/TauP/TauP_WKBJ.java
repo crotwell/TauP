@@ -41,6 +41,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OptionalDataException;
 import java.io.StreamCorruptedException;
+import java.util.List;
+
 import edu.sc.seis.seisFile.sac.SacTimeSeries;
 
 public class TauP_WKBJ extends TauP_Time {
@@ -137,7 +139,6 @@ public class TauP_WKBJ extends TauP_Time {
         this.degrees = degrees;
         System.out.println("In calcWKBJ for " + degrees + " degrees.");
         SeismicPhase phase;
-        Arrival[] phaseArrivals;
         double calcTime, calcDist;
         Theta thetaAtX;
         double rayParam, nextRayParam, minRayParam;
@@ -149,14 +150,12 @@ public class TauP_WKBJ extends TauP_Time {
                     + phases.get(phaseNum).getName()
                     + ".");
             phase = phases.get(phaseNum);
-            phase.calcTime(degrees);
+            List<Arrival> phaseArrivals = phase.calcTime(degrees);
             minRayParam = phase.getMinRayParam();
             // rtCoeff = new ReflTransCoefficient(phase);
-            if(phase.hasArrivals()) {
-                phaseArrivals = phase.getArrivals();
-                for(int i = 0; i < phaseArrivals.length; i++) {
-                    System.out.println("Arrival number " + i);
-                    thetaAtX = new Theta(phase, phaseArrivals[i].getDist());
+            for (Arrival arrival : phaseArrivals) {
+                    System.out.println("Arrival  " + arrival);
+                    thetaAtX = new Theta(phase, arrival.getDist());
                     System.out.println("Got Theta");
                     float[] seismogramPoints = new float[numSamples];
                     rayParam = thetaAtX.getMaxRayParam();
@@ -201,8 +200,8 @@ public class TauP_WKBJ extends TauP_Time {
                     sac.leven = SacTimeSeries.TRUE;
                     sac.iftype = SacTimeSeries.ITIME;
                     sac.delta = (float)getDeltaT();
-                    sac.t0 = (float)phaseArrivals[i].getTime();
-                    sac.kt0 = phaseArrivals[i].getName();
+                    sac.t0 = (float)arrival.getTime();
+                    sac.kt0 = arrival.getName();
                     sac.o = 0;
                     sac.b = 320;
                     sac.e = sac.b + (sac.npts - 1) * sac.delta;
@@ -211,7 +210,6 @@ public class TauP_WKBJ extends TauP_Time {
                     } catch(IOException e) {}
                     // arrivals.addElement(seismogramArrival);
                 }
-            }
         }
     }
 

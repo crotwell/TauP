@@ -115,42 +115,31 @@ public class TauP_WCreate extends Applet implements ActionListener {
         timeDistPlot.DEBUG = false;
         cardPanel.add("TimeDist", timeDistPlot);
         validate();
-        tauPCreate.modelFilename = modelFilename;
-        tauPCreate.directory = directory;
-        try {
-            tauPCreate.loadVMod();
-        } catch(VelocityModelException e) {
-            System.err.println("Caught VelocityModelException: "
-                    + e.getMessage());
-        } catch(IOException e) {
-            System.err.println("Caught IOException: " + e.getMessage());
-        }
     }
 
     public void start() {
+        tauPCreate.modelFilename = modelFilename;
+        tauPCreate.directory = directory;
         try {
-            tauPCreate.start();
-        } catch(SlownessModelException e) {
-            System.err.println("Caught SlownessModelException: "
-                    + e.getMessage());
-            e.printStackTrace();
-        } catch(TauModelException e) {
-            System.err.println("Caught TauModelException: " + e.getMessage());
-            e.printStackTrace();
-        }
-        try {
-            velocityPlot.plot(tauPCreate.vMod, 'P', 'S');
+            VelocityModel vMod = tauPCreate.loadVMod();
+            TauModel tMod = tauPCreate.createTauModel(vMod);
+            velocityPlot.plot(vMod, 'P', 'S');
+            slownessPlot.plot(tMod.getSlownessModel(), true);
+            tauPPlot.plot(tMod, true);
+            timePlot.plot(tMod, true);
+            distPlot.plot(tMod, true);
+            timeDistPlot.plot(tMod, true);
         } catch(NoSuchMatPropException e) {
-            // Can't happen...
-            System.err.println("Caught NoSuchMatPropException: "
-                    + e.getMessage());
-            e.printStackTrace();
+            throw new RuntimeException("Can't happen", e);
+        } catch(VelocityModelException e) {
+            throw new RuntimeException("Can't happen", e);
+        } catch(IOException e) {
+            throw new RuntimeException("Can't happen", e);
+        } catch(SlownessModelException e) {
+            throw new RuntimeException("Can't happen", e);
+        } catch(TauModelException e) {
+            throw new RuntimeException("Can't happen", e);
         }
-        slownessPlot.plot(tauPCreate.sMod, true);
-        tauPPlot.plot(tauPCreate.tMod, true);
-        timePlot.plot(tauPCreate.tMod, true);
-        distPlot.plot(tauPCreate.tMod, true);
-        timeDistPlot.plot(tauPCreate.tMod, true);
     }
 
     public void actionPerformed(ActionEvent action) {

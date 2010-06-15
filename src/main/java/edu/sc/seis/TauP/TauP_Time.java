@@ -94,7 +94,7 @@ public class TauP_Time {
 
     protected double eventLon = Double.MAX_VALUE;
 
-    protected List<Arrival> arrivals;
+    protected List<Arrival> arrivals = new ArrayList<Arrival>();
 
     protected boolean GUI = false;
 
@@ -375,6 +375,10 @@ public class TauP_Time {
 
     public List<Arrival> getArrivals() {
         return Collections.unmodifiableList(arrivals);
+    }
+    
+    public List<SeismicPhase> getSeismicPhases() {
+        return Collections.unmodifiableList(phases);
     }
 
     /* Normal methods */
@@ -693,14 +697,12 @@ public class TauP_Time {
     public void calcTime(double degrees) {
         this.degrees = degrees;
         SeismicPhase phase;
-        Arrival[] phaseArrivals;
         clearArrivals();
         for(int phaseNum = 0; phaseNum < phases.size(); phaseNum++) {
             phase = phases.get(phaseNum);
-            phase.calcTime(degrees);
-            phaseArrivals = phase.getArrivals();
-            for(int i = 0; i < phaseArrivals.length; i++) {
-                arrivals.add(phaseArrivals[i]);
+            List<Arrival> phaseArrivals = phase.calcTime(degrees);
+            for (Arrival arrival : phaseArrivals) {
+                arrivals.add(arrival);
             }
         }
         sortArrivals();
@@ -794,9 +796,9 @@ public class TauP_Time {
         if(!(onlyPrintRayP || onlyPrintTime)) {
             out.write("\nModel: " + modelName + "\n");
             String lineOne = "Distance   Depth   " + phaseFormat.form("Phase")
-                    + "   Travel    Ray Param   Takeoff Incident  Purist    Purist";
+                    + "   Travel    Ray Param  Takeoff  Incident  Purist    Purist";
             String lineTwo = "  (deg)     (km)   " + phaseFormat.form("Name ")
-                    + "   Time (s)  p (s/deg)    (deg)   (deg)   Distance   Name ";
+                    + "   Time (s)  p (s/deg)   (deg)    (deg)   Distance   Name ";
             if (relativePhaseName != "") {
                 lineOne += " Relative to";
                 for (int s=0; s<(11-relativePhaseName.length())/2;s++) {

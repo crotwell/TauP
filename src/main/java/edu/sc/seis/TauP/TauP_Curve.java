@@ -375,21 +375,18 @@ public class TauP_Curve extends TauP_Time {
                 (isBetween(Math.acos(Math.cos(phase.getDist()[distIndex])),
                            Math.acos(Math.cos(phase.getDist()[distIndex+1])),
                            arcDistance))) {
-            phase.calcTime(arcDistance*180/Math.PI);
-            Arrival[] phaseArrivals = phase.getArrivals();
-            int j = 0;
-            while(j < phaseArrivals.length) {
-                if((phase.rayParams[distIndex] - phaseArrivals[j].getRayParam())
-                        * (phaseArrivals[j].getRayParam() - phase.rayParams[distIndex + 1]) > 0) {
+            List<Arrival> phaseArrivals = phase.calcTime(arcDistance*180/Math.PI);
+            for (Arrival arrival : phaseArrivals) {
+                if((phase.rayParams[distIndex] - arrival.getRayParam())
+                        * (arrival.getRayParam() - phase.rayParams[distIndex + 1]) > 0) {
                     if(reduceTime) {
-                        writeValue(arcDistance, phaseArrivals[j].getTime() - arcDistance
+                        writeValue(arcDistance, arrival.getTime() - arcDistance
                                 / reduceVel, relPhase, out);
                     } else {
-                        writeValue(arcDistance, phaseArrivals[j].getTime(), relPhase, out);
+                        writeValue(arcDistance, arrival.getTime(), relPhase, out);
                     }
                     break;
                 }
-                j++;
             }
         }
     }
