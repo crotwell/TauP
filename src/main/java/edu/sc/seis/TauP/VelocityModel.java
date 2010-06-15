@@ -956,14 +956,18 @@ public class VelocityModel implements Cloneable, Serializable {
      * should be "modelname.nd". The format of the file is: depth pVel sVel
      * Density Qp Qs depth pVel sVel Density Qp Qs . . . with each major
      * boundary separated with a line with "mantle", "outer-core" or
-     * "inner-core". This feature makes phase interpretation much easier to
+     * "inner-core". "moho", "cmb" and "icocb" are allowed as synonyms respectively.
+     * This feature makes phase interpretation much easier to
      * code. Also, as they are not needed for travel time calculations, the
      * density, Qp and Qs may be omitted.
      * 
      * The velocities are assumed to be linear between sample points. Because
      * this type of model file doesn't give complete information we make the
-     * following assumptions: modelname - from the filename, with ".nd" dropped,
-     * if present radiusOfEarth - the largest depth in the model
+     * following assumptions: 
+     * 
+     * modelname - from the filename, with ".nd" dropped, if present 
+     * 
+     * radiusOfEarth - the largest depth in the model
      * 
      * Also, because this method makes use of the string tokenizer, comments are
      * allowed. # as well as // signify that the rest of the line is a comment.
@@ -1031,13 +1035,13 @@ public class VelocityModel implements Cloneable, Serializable {
         while(tokenIn.ttype != StreamTokenizer.TT_EOF) {
             // Loop until we hit the end of file
             if(tokenIn.ttype == StreamTokenizer.TT_WORD) {
-                if(tokenIn.sval.equalsIgnoreCase("mantle")) {
+                if(tokenIn.sval.equalsIgnoreCase("mantle") || tokenIn.sval.equalsIgnoreCase("moho")) {
                     mohoDepth = topDepth; // Moho
                 }
-                if(tokenIn.sval.equalsIgnoreCase("outer-core")) {
+                if(tokenIn.sval.equalsIgnoreCase("outer-core") || tokenIn.sval.equalsIgnoreCase("cmb")) {
                     cmbDepth = topDepth; // Core Mantle Boundary
                 }
-                if(tokenIn.sval.equalsIgnoreCase("inner-core")) {
+                if(tokenIn.sval.equalsIgnoreCase("inner-core") || tokenIn.sval.equalsIgnoreCase("icocb")) {
                     iocbDepth = topDepth; // Inner Outer Core Boundary
                 }
                 while(tokenIn.ttype != StreamTokenizer.TT_EOL) {
