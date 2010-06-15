@@ -1,0 +1,51 @@
+#
+#
+# example of using the taupConsole, which is actually an instance of jython with TauP preloaded
+#
+#
+# Set up some parameters
+stla = 13
+stlo = 14
+evla = -6
+evlo = -3
+evdp = 100
+dist = ellipDist(stla, stlo, evla, evlo)
+phNameList = ['P', 'S', 'p', 's']
+
+#
+# simple higher level interaction
+#
+taup.sourceDepth = evdp
+taup.clearPhaseNames()
+taup.setPhaseNames( phNameList )
+taup.calculate(ellipDist(stla, stlo, evla, evlo))
+print "Arrivals at %3.2f degrees in the %s model"%(dist, evdp)
+for a in taup.arrivals:
+    print "%s %3.2f"%(a.phase.name, a.time)
+
+
+#
+# lower level interaction, but with more control
+#
+tMod = loadTauModel('ak135')
+tModDepth = tMod.depthCorrect(evdp)
+phases = []
+for phName in phNameList:
+  phases.append(SeismicPhase(phName, tModDepth))
+
+for phase in phases:
+  a = phase.getEarliestArrival(dist)
+  if a != None:
+    print "%s %3.2f"%(phase.name, a.time)
+
+for phase in phases:
+  arrivals = phase.calcTime(dist)
+  for a in arrivals:
+    print "pierce points for %s %3.2f"%(a.phase.name, a.time)
+    pierce = a.getPierce()
+    for td in pierce:
+      print "%3.2f %3.2f %3.2f"%(td.getDistDeg(), td.getDepth(), td.getTime())
+
+
+   
+
