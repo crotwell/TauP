@@ -28,7 +28,6 @@ package edu.sc.seis.TauP;
 /**
  * convenience class for storing the version of the TauP stuff.
  * 
- * @version 1.1.5 Tue Aug 2 15:22:44 GMT 2005
  * 
  * 
  * @author H. Philip Crotwell
@@ -62,7 +61,7 @@ public class Version {
     }
 
     /** use date -u to get immediately prior to recompiling. */
-    private static String dateCreated = "$Date: 2010-06-15 14:09:24 -0400 (Tue, 15 Jun 2010) $";
+    private static String dateCreated = "$Date: 2010-06-15 14:16:49 -0400 (Tue, 15 Jun 2010) $";
 
     /**
      * returns a string with version number and date created. The format is
