@@ -21,9 +21,9 @@ import org.python.util.InteractiveConsole;
 
 //import edu.sc.seis.fissuresUtil.simple.Initializer;
 
-public class JythonConsole extends InteractiveConsole {
+public class TauP_Console extends InteractiveConsole {
 
-    public JythonConsole() throws IOException {
+    public TauP_Console() throws IOException {
         super();
         // get some defaults
        // Initializer.loadProps((JythonConsole.class).getClassLoader()
@@ -37,7 +37,7 @@ public class JythonConsole extends InteractiveConsole {
         //cflags.generator_allowed = true;
         systemState.ps1 = new PyString("taup> ");
         exec("import sys");
-        exec("sys.path.append('"+formatForJythonSysPath(JythonConsole.class, "edu/sc/seis/TauP/jython")+"')");
+        exec("sys.path.append('"+formatForJythonSysPath(TauP_Console.class, "edu/sc/seis/TauP/jython")+"')");
         //exec("print sys.path");
         exec("from taup import *");
         set("history", PyJavaType.wrapJavaObject(reader.getHistory()));
@@ -113,7 +113,7 @@ public class JythonConsole extends InteractiveConsole {
 
     public static void main(String[] args) throws IOException {
         
-        JythonConsole ic = new JythonConsole();
+        TauP_Console ic = new TauP_Console();
         if(args.length > 0) {
             ic.execfile(args[0]);
         } else {
