@@ -31,6 +31,8 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.io.StreamCorruptedException;
 import java.io.StreamTokenizer;
+import java.lang.ref.SoftReference;
+import java.util.HashMap;
 
 /**
  * provides storage all of the TauBranch's comprising a model.
@@ -519,11 +521,15 @@ public class TauModel implements Serializable {
                     + "for a source deeper than the radius of the earth. Depth="
                     + sourceDepth+" radius="+getRadiusOfEarth());
         }
-        TauModel tMod = splitBranch(depth);
-        tMod.sourceDepth = depth;
-        tMod.sourceBranch = tMod.findBranch(depth);
-        tMod.validate();
-        return tMod;
+        TauModel depthCorrected = loadFromDepthCache(depth);
+        if (depthCorrected == null) {
+            depthCorrected = splitBranch(depth);
+            depthCorrected.sourceDepth = depth;
+            depthCorrected.sourceBranch = depthCorrected.findBranch(depth);
+            depthCorrected.validate();
+            depthCache.put(depth, new SoftReference<TauModel>(depthCorrected));
+        }
+        return depthCorrected;
     }
 
     /**
@@ -912,4 +918,19 @@ public class TauModel implements Serializable {
         }
         return desc;
     }
+    
+    protected static TauModel loadFromDepthCache(Double depth) {
+        SoftReference<TauModel> sr = depthCache.get(depth);
+        if (sr != null) {
+            TauModel out = sr.get();
+            if (out == null) {
+                depthCache.remove(depth);
+            }
+            return out;
+        }
+        return null;
+    }
+    
+    static HashMap<Double, SoftReference<TauModel>> depthCache = new HashMap<Double, SoftReference<TauModel>>();
+
 }
