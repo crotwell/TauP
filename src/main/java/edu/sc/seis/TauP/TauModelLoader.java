@@ -29,9 +29,13 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.InvalidClassException;
 import java.io.OptionalDataException;
+import java.io.Reader;
 import java.io.StreamCorruptedException;
+import java.lang.ref.SoftReference;
+import java.util.HashMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -49,23 +53,35 @@ import java.util.zip.ZipFile;
 public class TauModelLoader {
 
     protected static String packageName = "/edu/sc/seis/TauP/StdModels";
-
+    
+    public static TauModel load(String modelName) throws TauModelException {
+        return load(modelName, System.getProperty("taup.model.path"));
+    }
+    
     /**
      * Reads the velocity model, slowness model, and tau model from a file saved
      * using Java's Serializable interface.
      */
     public static TauModel load(String modelName, String searchPath)
-            throws FileNotFoundException, ClassNotFoundException,
-            InvalidClassException, IOException, StreamCorruptedException,
-            OptionalDataException, TauModelException {
+            throws TauModelException {
         return load(modelName, searchPath, false);
     }
 
     public static TauModel load(String modelName,
                                 String searchPath,
-                                boolean verbose) throws FileNotFoundException,
-            ClassNotFoundException, InvalidClassException, IOException,
-            StreamCorruptedException, OptionalDataException, TauModelException {
+                                boolean verbose) throws TauModelException {
+        TauModel out = loadFromCache(modelName);
+        if (out == null) {
+            out = internalLoad(modelName, searchPath, verbose);
+            tModCache.put(modelName, new SoftReference<TauModel>(out));
+        }
+        return out;
+    }
+
+    public static TauModel internalLoad(String modelName,
+                                String searchPath,
+                                boolean verbose) throws TauModelException {
+        try {
         String filename;
         /* Append ".taup" to modelname if it isn't already there. */
         if(modelName.endsWith(".taup")) {
@@ -171,13 +187,50 @@ public class TauModelLoader {
                                             + modelName+" and creation from velocity model failed.", e);
         }
             
-        throw new FileNotFoundException("Can't find any saved models for "
+        throw new TauModelException("Can't find any saved models for "
                                         + modelName);
-        
+
+        } catch(InvalidClassException e) {
+            throw new TauModelException("Unable to load '"+modelName+"'", e);
+        } catch(StreamCorruptedException e) {
+            throw new TauModelException("Unable to load '"+modelName+"'", e);
+        } catch(OptionalDataException e) {
+            throw new TauModelException("Unable to load '"+modelName+"'", e);
+        } catch(FileNotFoundException e) {
+            throw new TauModelException("Unable to load '"+modelName+"'", e);
+        } catch(ClassNotFoundException e) {
+            throw new TauModelException("Unable to load '"+modelName+"'", e);
+        } catch(IOException e) {
+            throw new TauModelException("Unable to load '"+modelName+"'", e);
+        }
     }
     
     static VelocityModel loadVelocityModel(String modelName) throws IOException, VelocityModelException {
-     // try a .tvel or .nd file in current directory
+        /* First we try to find the model in the distributed taup.jar file. */
+        try {
+            Class c = Class.forName("edu.sc.seis.TauP.TauModelLoader");
+            String filename = modelName+".nd";
+            InputStream in = c.getResourceAsStream(packageName + "/" + filename);
+            if(in != null) {
+                Reader inReader = new InputStreamReader(in);
+                VelocityModel vmod = VelocityModel.readNDFile(inReader, modelName);
+                inReader.close();
+                return vmod;
+            } else {
+                // try tvel
+                filename = modelName+".tvel";
+                in = c.getResourceAsStream(packageName + "/" + filename);
+                if(in != null) {
+                    Reader inReader = new InputStreamReader(in);
+                    VelocityModel vmod =  VelocityModel.readTVelFile(inReader, modelName);
+                    inReader.close();
+                    return vmod;
+                }
+            }
+        } catch(Exception ex) {
+            // couldn't get as a resource, so keep going
+        }
+        // try a .tvel or .nd file in current directory
         String[] types = new String[] {"nd", "tvel"};
         for (int i = 0; i < types.length; i++) {
             String vmodFile = modelName+"."+types[i];
@@ -189,4 +242,18 @@ public class TauModelLoader {
         }
         return null;
     }
+    
+    protected static TauModel loadFromCache(String modelName) {
+        SoftReference<TauModel> sr = tModCache.get(modelName);
+        if (sr != null) {
+            TauModel out = sr.get();
+            if (out == null) {
+                tModCache.remove(modelName);
+            }
+            return out;
+        }
+        return null;
+    }
+    
+    static HashMap<String, SoftReference<TauModel>> tModCache = new HashMap<String, SoftReference<TauModel>>();
 }
