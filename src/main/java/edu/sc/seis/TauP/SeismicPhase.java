@@ -23,6 +23,7 @@ import java.io.Serializable;
 import java.io.StreamCorruptedException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -197,8 +198,9 @@ public class SeismicPhase implements Serializable, Cloneable {
 
     public static final boolean SWAVE = false;
 
-    // Methods ----------------------------------------------------------
-    // Constructors
+    public SeismicPhase(String name, String modelName, double depth) throws TauModelException {
+        this(name, TauModelLoader.load(modelName).depthCorrect(depth));
+    }
     /**
      * @param phaseName
      *            String containing a name of the phase.
@@ -347,7 +349,7 @@ public class SeismicPhase implements Serializable, Cloneable {
 
     // Normal methods
 
-    /** calculates arrival times for this phase. 
+    /** calculates arrival times for this phase, sorted by time. 
      * @throws NoSuchMatPropException 
      * @throws NoSuchLayerException */
     public List<Arrival> calcTime(double deg) {
@@ -442,6 +444,11 @@ public class SeismicPhase implements Serializable, Cloneable {
             }
             n++;
         }
+        Collections.sort(arrivals, new Comparator<Arrival>() {
+            @Override
+            public int compare(Arrival o1, Arrival o2) {
+                return Double.compare(o1.getTime(), o2.getTime());
+            }});
         return arrivals;
     }
     
