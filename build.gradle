@@ -14,11 +14,12 @@ artifacts {
     archives jar
 }
 
-task tarDist(type: Tar, dependsOn: ['makeScript', 'genModels', 'createBuildScript', 'wrapper']) {
+task tarDist(type: Tar, dependsOn: ['makeScript', 'genModels', 'wrapper']) {
     compression = Compression.GZIP
     dirName = project.name+'-'+version
     from('build') {
         include('build.gradle')
+        include('settings.gradle')
         into dirName
     }
     from('build/output') {
