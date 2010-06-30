@@ -35,6 +35,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.Reader;
 import java.io.Serializable;
 import java.io.StreamTokenizer;
 import java.util.ArrayList;
@@ -842,7 +843,14 @@ public class VelocityModel implements Cloneable, Serializable {
     public static VelocityModel readTVelFile(File file)
             throws IOException, VelocityModelException {
         FileReader fileIn = new FileReader(file);
-        StreamTokenizer tokenIn = new StreamTokenizer(fileIn);
+        VelocityModel vmod = readTVelFile(fileIn, getModelNameFromFileName(file.getName()));
+        fileIn.close();
+        return vmod;
+    }
+
+    public static VelocityModel readTVelFile(Reader in, String modelName)
+            throws IOException, VelocityModelException {
+        StreamTokenizer tokenIn = new StreamTokenizer(in);
         tokenIn.commentChar('#'); // '#' means ignore to end of line
         tokenIn.slashStarComments(true); // '/*...*/' means a comment
         tokenIn.slashSlashComments(true); // '//' means ignore to end of line
@@ -939,7 +947,7 @@ public class VelocityModel implements Cloneable, Serializable {
         // model
         // so the maximum depth is equal to the
         // maximum radius is equal to the earth radius.
-        return new VelocityModel(getModelNameFromFileName(file.getName()),
+        return new VelocityModel(modelName,
                                  radiusOfEarth,
                                  DEFAULT_MOHO,
                                  DEFAULT_CMB,
@@ -980,7 +988,14 @@ public class VelocityModel implements Cloneable, Serializable {
     public static VelocityModel readNDFile(File file) throws IOException,
         VelocityModelException {
         FileReader fileIn = new FileReader(file);
-        StreamTokenizer tokenIn = new StreamTokenizer(fileIn);
+        VelocityModel vmod = readNDFile(fileIn, getModelNameFromFileName(file.getName()));
+        fileIn.close();
+        return vmod;
+    }
+
+    public static VelocityModel readNDFile(Reader in, String modelName) throws IOException,
+        VelocityModelException {
+        StreamTokenizer tokenIn = new StreamTokenizer(in);
         tokenIn.commentChar('#'); // '#' means ignore to end of line
         tokenIn.slashStarComments(true); // '/*...*/' means a comment
         tokenIn.slashSlashComments(true); // '//' means ignore to end of line
@@ -1111,7 +1126,7 @@ public class VelocityModel implements Cloneable, Serializable {
         // model
         // so the maximum depth is equal to the
         // maximum radius is equal to the earth radius.
-        return new VelocityModel(getModelNameFromFileName(file.getName()),
+        return new VelocityModel(modelName,
                                  radiusOfEarth,
                                  mohoDepth,
                                  cmbDepth,
