@@ -387,10 +387,7 @@ public class TauP_Time {
      * using Java's Serializable interface. Performs a depth correction if the
      * current depth is not 0.0
      */
-    protected void readTauModel() throws FileNotFoundException,
-            InvalidClassException, IOException, StreamCorruptedException,
-            OptionalDataException, TauModelException {
-        try {
+    protected void readTauModel() throws TauModelException {
             TauModel tModLoad = TauModelLoader.load(modelName,
                                                     toolProps.getProperty("taup.model.path"),
                                                     verbose);
@@ -399,23 +396,6 @@ public class TauP_Time {
                 tModDepth = tMod;
                 this.modelName = tMod.getModelName();
             }
-        } catch(ClassNotFoundException e) {
-            Alert.error("Caught ClassNotFoundException",
-                        e.getMessage()
-                                + "\nThere must be something wrong with your installation of TauP.");
-            throw new RuntimeException("Caught ClassNotFoundException"
-                                               + e.getMessage()
-                                               + "\nThere must be something wrong with your installation of TauP.",
-                                       e);
-        } catch(InvalidClassException e) {
-            Alert.error("Model file "
-                                + modelName
-                                + " is not compatible with the current version.",
-                        "Recreate using taup_create.");
-            throw new RuntimeException("Model file " + modelName
-                    + " is not compatible with the current version."
-                    + "Recreate using taup_create.", e);
-        }
     }
 
     /**
@@ -891,17 +871,15 @@ public class TauP_Time {
             try {
                 readTauModel();
             } catch(TauModelException ee) {
-                Alert.error("Caught TauModelException", ee.getMessage());
-            } catch(FileNotFoundException ee) {
-                Alert.error("Can't find saved model file for model "
-                        + modelName + ".", "");
-                System.exit(1);
-            } catch(InvalidClassException ee) {
-                Alert.error("Model file "
-                                    + modelName
-                                    + " is not compatible with the current version.",
-                            "Recreate using taup_create.");
-                System.exit(1);
+                if (ee.getCause() instanceof InvalidClassException) {
+                    Alert.error("Model file "
+                                + modelName
+                                + " is not compatible with the current version.",
+                        "Recreate using taup_create.");
+                } else {
+                    Alert.error("Caught TauModelException", ee.getMessage());
+                }
+                throw new RuntimeException(ee);
             }
         }
         if(outFile != null && outFile.length() != 0) {
@@ -1261,19 +1239,18 @@ public class TauP_Time {
                             try {
                                 readTauModel();
                                 depthCorrect(depth);
-                            } catch(FileNotFoundException e) {
-                                Alert.warning("I can't find model file "
-                                        + modelName, "Still using model "
-                                        + oldModelName + ".");
-                                modelName = oldModelName;
-                                tMod = oldTMod;
-                                tModDepth = oldTModDepth;
-                            } catch(InvalidClassException ee) {
-                                Alert.warning("Model file "
-                                                      + modelName
-                                                      + " is not compatible with the current version.",
-                                              "Recreate using taup_create. Still using model "
-                                                      + oldModelName + ".");
+                            } catch(TauModelException e) {
+                                if (e.getCause() instanceof InvalidClassException) {
+                                    Alert.warning("Model file "
+                                                  + modelName
+                                                  + " is not compatible with the current version.",
+                                          "Recreate using taup_create. Still using model "
+                                                  + oldModelName + ".");
+                                } else {
+                                    Alert.warning("I can't load model file "
+                                                  + modelName, "Still using model "
+                                                  + oldModelName + ".");
+                                }
                                 modelName = oldModelName;
                                 tMod = oldTMod;
                                 tModDepth = oldTModDepth;
