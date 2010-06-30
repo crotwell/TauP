@@ -93,4 +93,5 @@ task genModels(dependsOn: compileJava) << {
 }
 
 assemble.dependsOn(tarDist)
+processResources.dependsOn(genModels)
 
