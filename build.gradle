@@ -93,6 +93,13 @@ task genModels(dependsOn: compileJava) << {
     }
 }
 
+genModels.inputs.files 'src/main/resources/edu/sc/seis/TauP/StdModels/ak135.tvel'
+genModels.inputs.files 'src/main/resources/edu/sc/seis/TauP/StdModels/iasp91.tvel'
+genModels.inputs.files 'src/main/resources/edu/sc/seis/TauP/StdModels/prem.nd'
+genModels.outputs.files 'src/main/resources/edu/sc/seis/TauP/StdModels/ak135.taup'
+genModels.outputs.files 'src/main/resources/edu/sc/seis/TauP/StdModels/iasp91.taup'
+genModels.outputs.files 'src/main/resources/edu/sc/seis/TauP/StdModels/prem.taup'
+
 assemble.dependsOn(tarDist)
 processResources.dependsOn(genModels)
 
