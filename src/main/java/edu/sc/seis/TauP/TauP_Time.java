@@ -123,7 +123,7 @@ public class TauP_Time {
                           e.getMessage());
             toolProps = new Properties();
         }
-        outForms = new Outputs(toolProps);
+        Outputs.configure(toolProps);
     }
 
     public TauP_Time(TauModel tMod) throws TauModelException {

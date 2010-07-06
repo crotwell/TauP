@@ -41,8 +41,8 @@ import java.util.Properties;
  * 
  */
 public class Outputs {
-
-    public Outputs(Properties props) {
+    
+    public static void configure(Properties props) {
         String formString;
         formString = "%8." + props.getProperty("taup.depth.precision", "1")
                 + "f";
@@ -61,33 +61,33 @@ public class Outputs {
         latLonFormat = new Format(formString);
     }
 
-    public String formatDepth(double depth) {
+    public static String formatDepth(double depth) {
         return depthFormat.form(depth);
     }
 
-    public String formatDistance(double distance) {
+    public static String formatDistance(double distance) {
         return distanceFormat.form(distance);
     }
 
-    public String formatTime(double time) {
+    public static String formatTime(double time) {
         return timeFormat.form(time);
     }
 
-    public String formatRayParam(double rayParam) {
+    public static String formatRayParam(double rayParam) {
         return rayParamFormat.form(rayParam);
     }
 
-    public String formatLatLon(double latlon) {
+    public static String formatLatLon(double latlon) {
         return latLonFormat.form(latlon);
     }
 
-    protected Format depthFormat;
+    protected static Format depthFormat = new Format("%8.1");
 
-    protected Format distanceFormat;
+    protected static Format distanceFormat = new Format("%8.2");;
 
-    protected Format timeFormat;
+    protected static Format timeFormat = new Format("%8.2");;
 
-    protected Format rayParamFormat;
+    protected static Format rayParamFormat = new Format("%8.3");;
 
-    protected Format latLonFormat;
+    protected static Format latLonFormat = new Format("%8.2");;
 } // Outputs

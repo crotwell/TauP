@@ -141,6 +141,11 @@ public class Arrival {
         return rayParam;
     }
 
+    /** returns ray parameter in seconds per deg */
+    public double getRayParamDeg() {
+        return getRayParam()/RtoD;
+    }
+
     public double getIncidentAngle() {
         return incidentAngle;
     }
@@ -188,15 +193,16 @@ public class Arrival {
     }
 
     public String toString() {
-        String desc = "time=" + getTime() + " dist=" + getDist() + " rayParam="
-                + getRayParam() + " rayParamIndex=" + rayParamIndex + " name="
-                + getName();
-        if(pierce != null) {
-            System.out.println("\nPierce:");
-            for(int i = 0; i < pierce.length; i++) {
-                System.out.println(pierce[i]);
-            }
+        String desc =  Outputs.formatDistance(getModuloDistDeg()) + Outputs.formatDepth(getSourceDepth()) + "   " + getName()
+                + "  " + Outputs.formatTime(getTime()) + "  " + Outputs.formatRayParam(Math.PI / 180.0 * getRayParam())
+                + "  " + Outputs.formatDistance(getTakeoffAngle()) + " " + Outputs.formatDistance(getIncidentAngle())
+                + " " + Outputs.formatDistance(getDistDeg());
+        if (getName().equals(getPuristName())) {
+            desc += "   = ";
+        } else {
+            desc += "   * ";
         }
+        desc += getPuristName();
         return desc;
     }
 
