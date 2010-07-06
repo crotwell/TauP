@@ -127,100 +127,114 @@ public class TauP_SetSac extends TauP_Time {
     }
 
     public void start() throws IOException, TauModelException {
-        SacTimeSeries sacFile = new SacTimeSeries();
-        int phaseNum;
-        double deg;
-        for(int i = 0; i < sacFileNames.size(); i++) {
-            System.out.println((String)sacFileNames.get(i));
-            sacFile.read((String)sacFileNames.get(i));
-            if(sacFile.evdp == -12345.0f) {
-                System.out.println("Depth not set in "
-                        + (String)sacFileNames.get(i) + ", skipping");
-                continue;
-            }
-            if(sacFile.o == -12345.0f) {
-                System.out.println("O marker not set in "
-                        + (String)sacFileNames.get(i) + ", skipping");
-                continue;
-            }
-            if(sacFile.gcarc != -12345.0f) {
-                if(verbose) {
-                    System.out.println("Using gcarc: " + sacFile.gcarc);
-                }
-                deg = sacFile.gcarc;
-            } else if(sacFile.dist != -12345.0f) {
-                if(verbose) {
-                    System.out.println("Using dist: " + sacFile.dist);
-                }
-                deg = sacFile.dist / 6371.0 * 180.0 / Math.PI;
-            } else if(sacFile.stla != -12345.0f && sacFile.stlo != -12345.0f
-                    && sacFile.evla != -12345.0f && sacFile.evlo != -12345.0f) {
-                if(verbose) {
-                    System.out.println("Using stla,stlo, evla,evlo to calculate");
-                }
-                Alert.warning("Warning: Sac header gcarc is not set,",
-                              "using lat and lons to calculate distance.");
-                Alert.warning("No ellipticity correction will be applied.",
-                              "This may introduce errors. Please see the manual.");
-                deg = SphericalCoords.distance(sacFile.stla,
-                                               sacFile.stlo,
-                                               sacFile.evla,
-                                               sacFile.evlo);
-            } else {
-                /* can't get a distance, skipping */
-                Alert.warning("Can't get a distance, all distance fields are undef.",
-                              "skipping " + (String)sacFileNames.get(i));
-                continue;
-            }
-            if(!((evdpkm && depth == sacFile.evdp) || (!evdpkm && depth == 1000 * sacFile.evdp))) {
-                if(!evdpkm && sacFile.evdp != 0 && sacFile.evdp < 1000.0) {
-                    Alert.warning("Sac header evdp is < 1000 in "
-                                          + sacFileNames.get(i),
-                                  "If the depth is in kilometers instead of meters "
-                                          + "(default), you should use the -evdpkm flag");
-                }
-                if(evdpkm) {
-                    depthCorrect(sacFile.evdp);
-                } else {
-                    depthCorrect(sacFile.evdp / 1000.0);
-                }
-            }
-            if(verbose) {
-                System.out.println(sacFileNames.get(i)
-                        + " searching for " + getPhaseNameString());
-            }
-            calculate(deg);
-            // calcTime(deg);
-            if(verbose) {
-                System.out.println(sacFileNames.get(i) + " "
-                        + arrivals.size() + " arrivals found.");
-            }
-            for(int arrivalNum = arrivals.size() - 1; arrivalNum >= 0; arrivalNum--) {
-                phaseNum = -1;
-                for(int j = phaseNames.size() - 1; j >= 0; j--) {
-                    if(getArrival(arrivalNum).getName()
-                            .equals(((PhaseName)phaseNames.get(j)).name)) {
-                        phaseNum = j;
-                        break;
-                    }
-                }
-                if(phaseNum != -1) {
-                    if(verbose) {
-                        System.out.println(sacFileNames.get(i)
-                                + " phase found "
-                                + getArrival(arrivalNum).getName()
-                                + " -> t"
-                                + ((PhaseName)phaseNames.get(phaseNum)).sacTNum
-                                + ", travel time="
-                                + (float)getArrival(arrivalNum).getTime());
-                    }
-                    setSacTHeader(sacFile,
-                                  ((PhaseName)phaseNames.get(phaseNum)).sacTNum,
-                                  getArrival(arrivalNum));
-                }
-            }
-            sacFile.write((String)sacFileNames.get(i));
+        for (String filename : sacFileNames) {
+            System.out.println(filename);
+            processSacFile(new File(filename));
         }
+    }
+    
+    public void processSacFile(File f) throws FileNotFoundException, IOException, TauModelException {
+        
+        if (f.isDirectory()) {
+            File[] subfiles = f.listFiles();
+            for (int j = 0; j < subfiles.length; j++) {
+                if (subfiles[j].getName().startsWith(".")) {
+                    continue;
+                }
+                processSacFile(subfiles[j]);
+            }
+            return;
+        }
+        // regular file, hopefully
+        SacTimeSeries sacFile = new SacTimeSeries(f);
+        if(sacFile.evdp == -12345.0f) {
+            System.out.println("Depth not set in "
+                    + f.getName() + ", skipping");
+            return;
+        }
+        if(sacFile.o == -12345.0f) {
+            System.out.println("O marker not set in "
+                    + f + ", skipping");
+            return;
+        }
+        double deg;
+        if(sacFile.gcarc != -12345.0f) {
+            if(verbose) {
+                System.out.println("Using gcarc: " + sacFile.gcarc);
+            }
+            deg = sacFile.gcarc;
+        } else if(sacFile.dist != -12345.0f) {
+            if(verbose) {
+                System.out.println("Using dist: " + sacFile.dist);
+            }
+            deg = sacFile.dist / 6371.0 * 180.0 / Math.PI;
+        } else if(sacFile.stla != -12345.0f && sacFile.stlo != -12345.0f
+                && sacFile.evla != -12345.0f && sacFile.evlo != -12345.0f) {
+            if(verbose) {
+                System.out.println("Using stla,stlo, evla,evlo to calculate");
+            }
+            Alert.warning("Warning: Sac header gcarc is not set,",
+                          "using lat and lons to calculate distance.");
+            Alert.warning("No ellipticity correction will be applied.",
+                          "This may introduce errors. Please see the manual.");
+            deg = SphericalCoords.distance(sacFile.stla,
+                                           sacFile.stlo,
+                                           sacFile.evla,
+                                           sacFile.evlo);
+        } else {
+            /* can't get a distance, skipping */
+            Alert.warning("Can't get a distance, all distance fields are undef.",
+                          "skipping " + f);
+            return;
+        }
+        if(!((evdpkm && depth == sacFile.evdp) || (!evdpkm && depth == 1000 * sacFile.evdp))) {
+            if(!evdpkm && sacFile.evdp != 0 && sacFile.evdp < 1000.0) {
+                Alert.warning("Sac header evdp is < 1000 in "
+                                      + f,
+                              "If the depth is in kilometers instead of meters "
+                                      + "(default), you should use the -evdpkm flag");
+            }
+            if(evdpkm) {
+                depthCorrect(sacFile.evdp);
+            } else {
+                depthCorrect(sacFile.evdp / 1000.0);
+            }
+        }
+        if(verbose) {
+            System.out.println(f
+                    + " searching for " + getPhaseNameString());
+        }
+        calculate(deg);
+        // calcTime(deg);
+        if(verbose) {
+            System.out.println(f + " "
+                    + arrivals.size() + " arrivals found.");
+        }
+        for(int arrivalNum = arrivals.size() - 1; arrivalNum >= 0; arrivalNum--) {
+            int phaseNum = -1;
+            for(int j = phaseNames.size() - 1; j >= 0; j--) {
+                if(getArrival(arrivalNum).getName()
+                        .equals(((PhaseName)phaseNames.get(j)).name)) {
+                    phaseNum = j;
+                    break;
+                }
+            }
+            if(phaseNum != -1) {
+                if(verbose) {
+                    System.out.println(f
+                            + " phase found "
+                            + getArrival(arrivalNum).getName()
+                            + " -> t"
+                            + ((PhaseName)phaseNames.get(phaseNum)).sacTNum
+                            + ", travel time="
+                            + (float)getArrival(arrivalNum).getTime());
+                }
+                setSacTHeader(sacFile,
+                              ((PhaseName)phaseNames.get(phaseNum)).sacTNum,
+                              getArrival(arrivalNum));
+            }
+        }
+        sacFile.write(f);
     }
 
     public static void setSacTHeader(SacTimeSeries sacFile,
