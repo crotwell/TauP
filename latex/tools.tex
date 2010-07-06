@@ -477,6 +477,8 @@ overwrite any previously set \texttt{t} \texttt{user} headers. A future feature 
 more careful checking, but the current version makes no effort to verify that 
 the header is undefined before writing.
 
+If the given filename is a directory, TauP\_SetSac will recursively look for files within that directory to process. Thus,
+a large directory structure of Sac files can be processed easily.
 
 The usage is:
 \begin{verbatim}
