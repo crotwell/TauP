@@ -70,8 +70,6 @@ public class TauP_Console extends InteractiveConsole {
     protected String prompt = "TauP " + Version.getVersion();
 
     protected String historyFilename = ".jline-taup.history";
-
-    private static Properties props = System.getProperties();
     
     public static final String DEFAULT_PROPS = "edu/sc/seis/bag/bag.props";
     
@@ -112,7 +110,6 @@ public class TauP_Console extends InteractiveConsole {
     }
 
     public static void main(String[] args) throws IOException {
-        
         TauP_Console ic = new TauP_Console();
         if(args.length > 0) {
             ic.execfile(args[0]);
