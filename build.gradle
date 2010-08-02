@@ -55,51 +55,65 @@ task tarDist(type: Tar, dependsOn: ['makeScript', 'genModels', 'wrapper']) {
 }
 
 task makeScript(dependsOn: copyToLib) << { task ->
-    ScriptBuilder.create('taup_time', 'edu.sc.seis.TauP.TauP_Time', task.project)
-    ScriptBuilder.create('taup_pierce', 'edu.sc.seis.TauP.TauP_Pierce', task.project)
-    ScriptBuilder.create('taup_path', 'edu.sc.seis.TauP.TauP_Path', task.project)
-    ScriptBuilder.create('taup_create', 'edu.sc.seis.TauP.TauP_Create', task.project)
-    ScriptBuilder.create('taup_curve', 'edu.sc.seis.TauP.TauP_Curve', task.project)
-    ScriptBuilder.create('taup_setsac', 'edu.sc.seis.TauP.TauP_SetSac', task.project)
-    ScriptBuilder.create('taup_table', 'edu.sc.seis.TauP.TauP_Table', task.project)
-    ScriptBuilder.create('taup', 'edu.sc.seis.TauP.TauP', task.project)
-    ScriptBuilder.create('taup_console', 'edu.sc.seis.TauP.TauP_Console', task.project)
+    doBat = false
+    ScriptBuilder.create('taup_time', 'edu.sc.seis.TauP.TauP_Time', task.project, bat:doBat)
+    ScriptBuilder.create('taup_pierce', 'edu.sc.seis.TauP.TauP_Pierce', task.project, bat:doBat)
+    ScriptBuilder.create('taup_path', 'edu.sc.seis.TauP.TauP_Path', task.project, bat:doBat)
+    ScriptBuilder.create('taup_create', 'edu.sc.seis.TauP.TauP_Create', task.project, bat:doBat)
+    ScriptBuilder.create('taup_curve', 'edu.sc.seis.TauP.TauP_Curve', task.project, bat:doBat)
+    ScriptBuilder.create('taup_setsac', 'edu.sc.seis.TauP.TauP_SetSac', task.project, bat:doBat)
+    ScriptBuilder.create('taup_table', 'edu.sc.seis.TauP.TauP_Table', task.project, bat:doBat)
+    ScriptBuilder.create('taup', 'edu.sc.seis.TauP.TauP', task.project, bat:doBat)
+    ScriptBuilder.create('taup_console', 'edu.sc.seis.TauP.TauP_Console', task.project, bat:doBat)
 }
 
 
+def generatedSrcDir = new File(project.buildDir, 'generated-src/StdModels')
+def resourceDir = new File(generatedSrcDir, '/resources')
+def outDir = new File(resourceDir, 'edu/sc/seis/TauP/StdModels/')
+
 task genModels(dependsOn: compileJava) << {
     println "Generate models"
-    def dir = new File(getProjectDir(), 'src/main/resources/edu/sc/seis/TauP/StdModels/')
+    outDir.mkdirs()
+    inDir = new File(getProjectDir(), 'src/main/resources/edu/sc/seis/TauP/StdModels/')
     String[] tvelModelNames = ['iasp91', 'ak135']
     String[] ndModelNames = ['prem']
     def classLoader = new GroovyClassLoader(Project.class.classLoader)
     classLoader.addURL(new File(getBuildDir(), '/classes/main').toURL())
     configurations.default.each { File file -> classLoader.addURL(file.toURL())}
     def taupCreate = classLoader.loadClass('edu.sc.seis.TauP.TauP_Create').newInstance()
-    taupCreate.setDirectory(dir.getPath())
+    taupCreate.setDirectory(inDir.getPath())
     taupCreate.setVelFileType('tvel')
     tvelModelNames.each { String model ->
         taupCreate.setModelFilename(model)
         vMod = taupCreate.loadVMod()
         tMod = taupCreate.createTauModel(vMod)
-        tMod.writeModel(new File(dir, model+'.taup').path)
+        tMod.writeModel(new File(outDir, model+'.taup').path)
     }
     taupCreate.setVelFileType('nd')
     ndModelNames.each { String model ->
         taupCreate.setModelFilename(model)
         vMod = taupCreate.loadVMod()
         tMod = taupCreate.createTauModel(vMod)
-        tMod.writeModel(new File(dir, model+'.taup').path)
+        tMod.writeModel(new File(outDir, model+'.taup').path)
     }
 }
 
 genModels.inputs.files 'src/main/resources/edu/sc/seis/TauP/StdModels/ak135.tvel'
 genModels.inputs.files 'src/main/resources/edu/sc/seis/TauP/StdModels/iasp91.tvel'
 genModels.inputs.files 'src/main/resources/edu/sc/seis/TauP/StdModels/prem.nd'
-genModels.outputs.files 'src/main/resources/edu/sc/seis/TauP/StdModels/ak135.taup'
-genModels.outputs.files 'src/main/resources/edu/sc/seis/TauP/StdModels/iasp91.taup'
-genModels.outputs.files 'src/main/resources/edu/sc/seis/TauP/StdModels/prem.taup'
+genModels.outputs.files new File(outDir, 'ak135.taup')
+genModels.outputs.files new File(outDir, 'iasp91.taup')
+genModels.outputs.files new File(outDir, 'prem.taup')
 
 assemble.dependsOn(tarDist)
-processResources.dependsOn(genModels)
 
+sourceSets {
+    StdModels {
+        resources { resourceDir }
+    }
+    main {
+       resources.srcDirs += resourceDir 
+    }
+}
+processResources.dependsOn(genModels)
