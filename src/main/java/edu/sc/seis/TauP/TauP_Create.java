@@ -142,20 +142,20 @@ public class TauP_Create {
         String[] noComprendoArgs = new String[args.length];
         int numNoComprendoArgs = 0;
         while(i < args.length) {
-            if(args[i].equalsIgnoreCase("-help")) {
+            if(args[i].equalsIgnoreCase("-help") || args[i].equalsIgnoreCase("--help")) {
                 printUsage();
                 noComprendoArgs[numNoComprendoArgs++] = args[i];
                 return noComprendoArgs;
-            } else if(args[i].equalsIgnoreCase("-version")) {
+            } else if(args[i].equalsIgnoreCase("-version") || args[i].equalsIgnoreCase("--version")) {
                 System.out.println(Version.getVersion());
                 noComprendoArgs[numNoComprendoArgs++] = args[i];
                 return noComprendoArgs;
-            } else if(args[i].equalsIgnoreCase("-debug")) {
+            } else if(args[i].equalsIgnoreCase("-debug") || args[i].equalsIgnoreCase("--debug")) {
                 verbose = true;
                 DEBUG = true;
-            } else if(args[i].equalsIgnoreCase("-verbose")) {
+            } else if(args[i].equalsIgnoreCase("-verbose") || args[i].equalsIgnoreCase("--verbose")) {
                 verbose = true;
-            } else if(args[i].equalsIgnoreCase("-gui")) {
+            } else if(args[i].equalsIgnoreCase("-gui") || args[i].equalsIgnoreCase("--gui")) {
                 GUI = true;
             } else if(i < args.length - 1 && args[i].equalsIgnoreCase("-p")) {
                 try {
