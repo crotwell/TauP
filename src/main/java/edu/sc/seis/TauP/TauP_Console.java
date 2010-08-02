@@ -3,7 +3,6 @@ package edu.sc.seis.TauP;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -112,6 +111,19 @@ public class TauP_Console extends InteractiveConsole {
     public static void main(String[] args) throws IOException {
         TauP_Console ic = new TauP_Console();
         if(args.length > 0) {
+            File f = new File(args[0]);
+            if ( ! f.exists()) {
+                System.err.println("Can't find file '"+args[0]+"'");
+                System.exit(1);
+            }
+            if ( ! f.isFile()) {
+                System.err.println("'"+args[0]+"' is not a file.");
+                System.exit(1);
+            }
+            if ( ! f.canRead()) {
+                System.err.println("Can't read file '"+args[0]+"'");
+                System.exit(1);
+            }
             ic.execfile(args[0]);
         } else {
             ic.interact();
