@@ -43,6 +43,23 @@ public class Dist180Test {
         straightThroughRay("prem");
     }
     
+    /** integrates the velocity model to obtain the travel time for a zero ray parameter ray
+     * through the center of the model and back to the surface. As the model is piecewise linear,
+     * and the ray parameter is zero and hence the path does not curve, we can obtain an 
+     * analytic solution as if the model was a flat stack of layers by using:
+     * t = time
+     * z = depth in layer
+     * d = layer thickness
+     * v = velocity, linearly interp a*z+b
+     * time = Int_0^d (1/v)
+     *      = Int_0^d (1/(a*z+b))
+     *      = 1/a * Math.log((a*d+b)/b)
+     *      
+     * We test to be within 0.005 seconds on this PKIKP ray.
+     * 
+     * @param modelName
+     * @throws TauModelException
+     */
     public void straightThroughRay(String modelName) throws TauModelException {
         TauP_Time time = new TauP_Time(modelName);
         time.setSourceDepth(0);
@@ -53,7 +70,7 @@ public class Dist180Test {
         assertEquals(integrateVelocity(time.getTauModel().getVelocityModel()), arrivals.get(0).getTime(), 0.005);
     }
     
-    /** integrates the velocity model, works for a zero ray parameter ray. */
+    /** integrates the velocity model, only works for a zero ray parameter ray. */
     double integrateVelocity(VelocityModel vMod) {
         VelocityLayer[] layers = vMod.getLayers();
         double time = 0;
