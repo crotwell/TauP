@@ -7,32 +7,28 @@ dependencies {
 }
 
 group = 'edu.sc.seis'
-version = '2.0beta5'
+version = '2.0beta6'
 
 artifacts {
     archives jar
 }
 
-task tarDist(type: Tar, dependsOn: ['makeScript', 'genModels', 'wrapper']) {
-    compression = Compression.GZIP
-    dirName = project.name+'-'+version
+dirName = project.name+'-'+version
+
+distFiles = copySpec {
     from('build') {
         include('build.gradle')
         include('settings.gradle')
-        into dirName
     }
     from('build/output') {
         fileMode=0755
         include('bin/**')
-        into dirName
     }
     from('build/output') {
         include('lib/**')
-        into dirName
     }
     from('build/docs') {
         include('javadoc/**')
-        into dirName
     }
     from('.') {
         include('gpl-3.0.txt')
@@ -49,7 +45,18 @@ task tarDist(type: Tar, dependsOn: ['makeScript', 'genModels', 'wrapper']) {
         include('gradlew')
         include('gradlew.bat')
         exclude('**/*.svn')
-        into dirName
+    }
+}
+
+task explodeDist(type: Sync, dependsOn: ['makeScript', 'genModels', 'wrapper']) {
+    with distFiles
+    into file("$buildDir/explode")
+}
+
+task tarDist(type: Tar, dependsOn: ['makeScript', 'genModels', 'wrapper']) {
+    compression = Compression.GZIP
+    into(dirName) {
+        with distFiles
     }
 }
 
