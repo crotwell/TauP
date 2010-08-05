@@ -445,7 +445,6 @@ public class SeismicPhase implements Serializable, Cloneable {
             n++;
         }
         Collections.sort(arrivals, new Comparator<Arrival>() {
-            @Override
             public int compare(Arrival o1, Arrival o2) {
                 return Double.compare(o1.getTime(), o2.getTime());
             }});
