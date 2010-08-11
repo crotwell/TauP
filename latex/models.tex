@@ -157,5 +157,11 @@ or even just
 as TauP can add the taup suffix if necessary. A relative or absolute pathname
 may precede the model, e.g. 
 \texttt{taup\_time -mod ../OtherDir/newModel.taup}.
+New in version 2.0 is the ability of the tools to load a velocity model directly
+and handle the create functionality internall, so in addition to .taup files,
+the .nd and .tvel model files can be loaded if there is not a .taup file found.
+Note that there is extra work involved in processing the velocity file, and so
+frequently used models should still be converted using TauP\_Create to avoid 
+reprocessing them each time the tool starts.
 
 \end{enumerate}
