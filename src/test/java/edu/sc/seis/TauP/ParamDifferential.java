@@ -2,23 +2,19 @@ package edu.sc.seis.TauP;
 
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.io.PrintStream;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
+
+import junit.framework.TestCase;
 
 import org.junit.Ignore;
 import org.junit.Test;
 
-import junit.framework.TestCase;
 
-//extends TestCase
-public class ParamDifferential  {
+public class ParamDifferential extends TestCase {
 
     public ParamDifferential() {}
     
@@ -44,7 +40,6 @@ public class ParamDifferential  {
     }
     
     @Test
-    @Ignore
     public void testConstVelModel() throws Exception {
         VelocityModel vmod = getConstVelModel();
         dotestcalc("P", vmod, new ConstCorrectTime(vmod));
