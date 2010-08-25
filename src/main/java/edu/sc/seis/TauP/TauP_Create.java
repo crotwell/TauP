@@ -147,7 +147,7 @@ public class TauP_Create {
                 noComprendoArgs[numNoComprendoArgs++] = args[i];
                 return noComprendoArgs;
             } else if(args[i].equalsIgnoreCase("-version") || args[i].equalsIgnoreCase("--version")) {
-                System.out.println(Version.getVersion());
+                System.out.println(BuildVersion.getDetailedVersion());
                 noComprendoArgs[numNoComprendoArgs++] = args[i];
                 return noComprendoArgs;
             } else if(args[i].equalsIgnoreCase("-debug") || args[i].equalsIgnoreCase("--debug")) {

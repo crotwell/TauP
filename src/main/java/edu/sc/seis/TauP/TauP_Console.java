@@ -66,7 +66,7 @@ public class TauP_Console extends InteractiveConsole {
         return out;
     }
 
-    protected String prompt = "TauP " + Version.getVersion();
+    protected String prompt = "TauP " + BuildVersion.getVersion();
 
     protected String historyFilename = ".jline-taup.history";
     

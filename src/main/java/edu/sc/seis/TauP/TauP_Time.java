@@ -540,7 +540,7 @@ public class TauP_Time {
                 printUsage();
                 noComprendoArgs[numNoComprendoArgs++] = args[i];
             } else if(args[i].equalsIgnoreCase("--version") || args[i].equalsIgnoreCase("-version")) {
-                Alert.info(Version.getVersion());
+                Alert.info(BuildVersion.getDetailedVersion());
                 noComprendoArgs[numNoComprendoArgs++] = args[i];
             } else if(args[i].equalsIgnoreCase("--verbose") || args[i].equalsIgnoreCase("-verbose")) {
                 verbose = true;
