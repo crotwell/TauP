@@ -137,6 +137,10 @@ public class SlownessLayer implements Serializable {
             return false;
         }
     }
+    
+    public boolean containsDepth(double depth) {
+        return depth >= getTopDepth() && depth <= getBotDepth();
+    }
 
     /**
      * Finds the slowness at the given depth. radiusOfEarth is needed as a
