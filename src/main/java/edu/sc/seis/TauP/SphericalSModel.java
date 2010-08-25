@@ -41,6 +41,12 @@ import java.util.Vector;
  */
 public class SphericalSModel extends SlownessModel implements Serializable {
 
+    public SphericalSModel(VelocityModel vMod) throws NoSuchMatPropException, NoSuchLayerException, SlownessModelException {
+        this(vMod, 
+             0.1, 11.0, 115.0, 2.5*Math.PI/180, 0.05, true,
+             SlownessModel.DEFAULT_SLOWNESS_TOLERANCE);
+    }
+    
     public SphericalSModel(VelocityModel vMod,
                            double minDeltaP,
                            double maxDeltaP,
