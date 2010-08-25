@@ -409,9 +409,14 @@ public class TauBranch implements Serializable, Cloneable {
         // find the top and bottom slowness layers of bottom half
         int topLayerNum = sMod.layerNumberBelow(topBranch.getBotDepth(),
                                                 isPWave);
-        int botLayerNum = sMod.layerNumberAbove(getBotDepth(), isPWave);
+        int botLayerNum = sMod.layerNumberBelow(getBotDepth(), isPWave); // branch include zero thickness layers at bottom
         SlownessLayer topSLayer = sMod.getSlownessLayer(topLayerNum, isPWave);
         SlownessLayer botSLayer = sMod.getSlownessLayer(botLayerNum, isPWave);
+        if (botSLayer.getTopDepth() == getBotDepth() && botSLayer.getBotDepth() > getBotDepth()) {
+            // gone one too far
+            botLayerNum--;
+            botSLayer = sMod.getSlownessLayer(botLayerNum, isPWave);
+        }
         if(topSLayer.getTopDepth() != topBranch.getBotDepth()
                 || botSLayer.getBotDepth() != getBotDepth()) {
             throw new TauModelException("difference: TauBranch not compatible with slowness sampling:"
