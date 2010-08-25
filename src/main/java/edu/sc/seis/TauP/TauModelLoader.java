@@ -230,10 +230,10 @@ public class TauModelLoader {
         } catch(Exception ex) {
             // couldn't get as a resource, so keep going
         }
-        // try a .tvel or .nd file in current directory
-        String[] types = new String[] {"nd", "tvel"};
+        // try a .tvel or .nd file in current directory, or no suffix
+        String[] types = new String[] {"", ".nd", ".tvel"};
         for (int i = 0; i < types.length; i++) {
-            String vmodFile = modelName+"."+types[i];
+            String vmodFile = modelName+types[i];
             File modelFile = new File(vmodFile);
             if(modelFile.exists() && modelFile.isFile() && modelFile.canRead()) {
                 VelocityModel vMod = VelocityModel.readVelocityFile(modelFile.getPath(), types[i]);
