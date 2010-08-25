@@ -28,7 +28,6 @@ package edu.sc.seis.TauP;
 import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Vector;
-import sun.security.action.GetLongAction;
 
 /**
  * This class provides storage and methods for generating slowness-depth pairs.
@@ -606,8 +605,6 @@ public abstract class SlownessModel implements Serializable {
      */
     public SplitLayerInfo splitLayer(double depth, boolean isPWave)
             throws SlownessModelException, NoSuchLayerException {
-        boolean otherWaveType = !isPWave;
-        boolean changeMade = false;
         int layerNum = layerNumberAbove(depth, isPWave);
         SlownessLayer sLayer = getSlownessLayer(layerNum, isPWave);
         if(sLayer.getTopDepth() == depth || sLayer.getBotDepth() == depth) {
@@ -709,20 +706,19 @@ public abstract class SlownessModel implements Serializable {
                                          depth,
                                          sLayer.getBotP(),
                                          sLayer.getBotDepth());
+            
             Vector allLayers = getAllSlownessLayers(isPWave);
             Vector outLayers = new Vector(allLayers.size());
             outLayers.addAll(allLayers);
             outLayers.removeElementAt(layerNum);
             outLayers.insertElementAt(botLayer, layerNum);
             outLayers.insertElementAt(topLayer, layerNum);
+            
             Vector outPLayers, outSLayers;
             // fix critical layers since we have added a slowness layer
             Vector outCriticalDepths = new Vector();
             outCriticalDepths.addAll(criticalDepthVector);
             fixCriticalDepths(outCriticalDepths, layerNum, isPWave);
-            // now make sure we keep the sampling consistant
-            // if in a fluid, then both wavetypes will share a single
-            // slowness layer object. Otherwise indexOf returns -1
             if(isPWave) {
                 outPLayers = outLayers;
                 outSLayers = fixOtherLayers(SLayers,
@@ -791,15 +787,18 @@ public abstract class SlownessModel implements Serializable {
         Vector out = new Vector();
         out.addAll(otherLayers);
         int otherIndex = otherLayers.indexOf(changedLayer);
+        // now make sure we keep the sampling consistant
+        // if in a fluid, then both wavetypes will share a single
+        // slowness layer object. Otherwise indexOf returns -1
         if(otherIndex != -1) {
             out.removeElementAt(otherIndex);
             out.insertElementAt(newBotLayer, otherIndex);
             out.insertElementAt(newTopLayer, otherIndex);
         }
-        for(int otherLayerNum = 0; otherLayerNum < otherLayers.size(); otherLayerNum++) {
-            SlownessLayer sLayer = (SlownessLayer)otherLayers.elementAt(otherLayerNum);
+        for(int otherLayerNum = 0; otherLayerNum < out.size(); otherLayerNum++) {
+            SlownessLayer sLayer = (SlownessLayer)out.elementAt(otherLayerNum);
             if((sLayer.getTopP() - p) * (p - sLayer.getBotP()) > 0.0) {
-                // found the slowness layer with the other wave type that
+                // found a slowness layer with the other wave type that
                 // contains the new slowness sample
                 SlownessLayer topLayer, botLayer;
                 topLayer = new SlownessLayer(sLayer.getTopP(),
@@ -813,8 +812,10 @@ public abstract class SlownessModel implements Serializable {
                 out.removeElementAt(otherLayerNum);
                 out.insertElementAt(botLayer, otherLayerNum);
                 out.insertElementAt(topLayer, otherLayerNum);
+                
                 // fix critical layers since we have added a slowness layer
                 fixCriticalDepths(criticalDepths, otherLayerNum, ! isPWave);
+                otherLayerNum++; // skip next layer as it was just added
             }
         }
         return out;
@@ -1825,6 +1826,52 @@ public abstract class SlownessModel implements Serializable {
         }
     }
 
+    /** finds a layer that contains the depth. This may not be unique in the case of a depth on
+     * a boundary in the velocity model due to zero thickness layers. If the uppermost or
+     * lowermost layer containing the depth is needed, use layerNumberAbove() or layerNumberBelow().
+     */
+    public int layerNumForDepth(double depth, boolean isPWave)  throws NoSuchLayerException {
+        SlownessLayer tempLayer;
+        Vector layers;
+        if(isPWave) {
+            layers = PLayers;
+        } else {
+            layers = SLayers;
+        }
+        // check to make sure depth is within the range available
+        if(depth < ((SlownessLayer)layers.elementAt(0)).getTopDepth()
+                || ((SlownessLayer)layers.elementAt(layers.size() - 1)).getBotDepth() < depth) {
+            throw new NoSuchLayerException(depth);
+        }
+        int tooSmallNum = 0;
+        int tooLargeNum = layers.size() - 1;
+        int currentNum = 0;
+        while(true) {
+            if (tooLargeNum - tooSmallNum < 3) {
+                // end of Newton, just check
+                for (currentNum = tooSmallNum; currentNum <= tooLargeNum; currentNum++) {
+                    tempLayer = getSlownessLayer(currentNum, isPWave);
+                    if (tempLayer.containsDepth(depth)) {
+                        return currentNum;
+                    }
+                }
+            } else {
+                currentNum = Math.round((tooSmallNum + tooLargeNum) / 2.0f);
+            }
+            tempLayer = getSlownessLayer(currentNum, isPWave);
+            if(tempLayer.getTopDepth() > depth) {
+                tooLargeNum = currentNum - 1;
+            } else if(tempLayer.getBotDepth() < depth) {
+                tooSmallNum = currentNum + 1;
+            } else {
+                return currentNum;
+            }
+            if (tooSmallNum > tooLargeNum) {
+                throw new RuntimeException("tooSmallNum ("+tooSmallNum+") >= tooLargeNum ("+tooLargeNum+")");
+            }
+        }
+    }
+    
     /**
      * Finds the index of the slowness layer that contains the given depth Note
      * that if the depth is a layer boundary, it returns the shallower of the
@@ -1838,38 +1885,19 @@ public abstract class SlownessModel implements Serializable {
      */
     public int layerNumberAbove(double depth, boolean isPWave)
             throws NoSuchLayerException {
-        SlownessLayer tempLayer;
+        int foundLayerNum = layerNumForDepth(depth, isPWave);
         Vector layers;
         if(isPWave) {
             layers = PLayers;
         } else {
             layers = SLayers;
         }
-        // check surface first
-        tempLayer = (SlownessLayer)layers.elementAt(0);
-        if(tempLayer.getTopDepth() == depth) {
-            return 0;
+        SlownessLayer tempLayer = getSlownessLayer(foundLayerNum, isPWave);
+        while(tempLayer.getTopDepth() == depth && foundLayerNum > 0) {
+            foundLayerNum--;
+            tempLayer = getSlownessLayer(foundLayerNum, isPWave);
         }
-        if(depth < tempLayer.getTopDepth()
-                || ((SlownessLayer)layers.elementAt(layers.size() - 1)).getBotDepth() < depth) {
-            throw new NoSuchLayerException(depth);
-        }
-        int tooSmallNum = 0;
-        int tooLargeNum = layers.size() - 1;
-        int currentNum = 0;
-        boolean found = false;
-        while(!found) {
-            currentNum = Math.round((tooSmallNum + tooLargeNum) / 2.0f);
-            tempLayer = getSlownessLayer(currentNum, isPWave);
-            if(tempLayer.getTopDepth() >= depth) {
-                tooLargeNum = currentNum - 1;
-            } else if(tempLayer.getBotDepth() < depth) {
-                tooSmallNum = currentNum + 1;
-            } else {
-                found = true;
-            }
-        }
-        return currentNum;
+        return foundLayerNum;
     }
 
     /**
@@ -1885,44 +1913,19 @@ public abstract class SlownessModel implements Serializable {
      */
     public int layerNumberBelow(double depth, boolean isPWave)
             throws NoSuchLayerException {
-        SlownessLayer tempLayer;
+        int foundLayerNum = layerNumForDepth(depth, isPWave);
         Vector layers;
         if(isPWave) {
             layers = PLayers;
         } else {
             layers = SLayers;
         }
-        // check surface first
-        tempLayer = (SlownessLayer)layers.elementAt(0);
-        if(tempLayer.getTopDepth() == depth) {
-            return 0;
+        SlownessLayer tempLayer = getSlownessLayer(foundLayerNum, isPWave);
+        while(tempLayer.getBotDepth() == depth && foundLayerNum < layers.size()-1) {
+            foundLayerNum++;
+            tempLayer = getSlownessLayer(foundLayerNum, isPWave);
         }
-        // check bottommost layer
-        tempLayer = (SlownessLayer)layers.elementAt(layers.size() - 1);
-        if(tempLayer.getBotDepth() == depth) {
-            return layers.size() - 1;
-        }
-        // check to make sure depth is within the range available
-        if(depth < ((SlownessLayer)layers.elementAt(0)).getTopDepth()
-                || ((SlownessLayer)layers.elementAt(layers.size() - 1)).getBotDepth() < depth) {
-            throw new NoSuchLayerException(depth);
-        }
-        int tooSmallNum = 0;
-        int tooLargeNum = layers.size() - 1;
-        int currentNum = 0;
-        boolean found = false;
-        while(!found) {
-            currentNum = Math.round((tooSmallNum + tooLargeNum) / 2.0f);
-            tempLayer = getSlownessLayer(currentNum, isPWave);
-            if(tempLayer.getTopDepth() > depth) {
-                tooLargeNum = currentNum - 1;
-            } else if(tempLayer.getBotDepth() <= depth) {
-                tooSmallNum = currentNum + 1;
-            } else {
-                found = true;
-            }
-        }
-        return currentNum;
+        return foundLayerNum;
     }
 
     /**
@@ -2021,9 +2024,9 @@ public abstract class SlownessModel implements Serializable {
                     throw new SlownessModelException("Gap of "
                             + (sLayer.getTopDepth() - prevDepth)
                             + " between slowness layers. Num " + i
-                            + " isPWave=" + isPWave + " top depth "
-                            + sLayer.getTopDepth() + " bottom depth "
-                            + sLayer.getBotDepth());
+                            + " isPWave=" + isPWave + "  top "
+                            + prevSLayer+ " bottom "
+                            + sLayer);
                 }
                 if(sLayer.getTopDepth() < prevDepth) {
                     throw new SlownessModelException("Slowness layer overlaps previous layer by "
