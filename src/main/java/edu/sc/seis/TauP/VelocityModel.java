@@ -801,9 +801,18 @@ public class VelocityModel implements Cloneable, Serializable {
     public static VelocityModel readVelocityFile(String filename,
                                                  String fileType)
             throws IOException, VelocityModelException {
-
+        if (fileType == null || fileType.equals("")) {
+            if (filename.endsWith(".nd")) {
+                fileType = ".nd";
+            } else if (filename.endsWith(".tvel")) {
+                fileType = ".tvel";
+            }
+        }
+        if (fileType.startsWith(".")) {
+            fileType = fileType.substring(1, fileType.length());
+        }
         File f = new File(filename);
-        if ( ! f.exists() && ! filename.endsWith("."+fileType)) {
+        if ( ! f.exists() && ! filename.endsWith("."+fileType) && new File(filename+"."+fileType).exists()) {
             f = new File(filename+"."+fileType);
         }
         
