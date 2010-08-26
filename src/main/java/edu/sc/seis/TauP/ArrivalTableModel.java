@@ -1,5 +1,6 @@
 package edu.sc.seis.TauP;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,23 +55,23 @@ public class ArrivalTableModel extends AbstractTableModel {
     public Object getValueAt(int row, int col) {
         switch(col){
             case 0:
-                return float8_1.form(arrivals.get(row).getModuloDistDeg());
+                return Outputs.formatDistance(arrivals.get(row).getModuloDistDeg());
             case 1:
-                return float8_1.form(arrivals.get(row).getModuloDist()
+                return Outputs.formatDistance(arrivals.get(row).getModuloDist()
                         * arrivals.get(row).getPhase()
                                 .getTauModel()
                                 .getRadiusOfEarth());
             case 2:
-                return float8_1.form(arrivals.get(row).getSourceDepth());
+                return Outputs.formatDepth(arrivals.get(row).getSourceDepth());
             case 3:
                 return arrivals.get(row).getName();
             case 4:
-                return float8_2.form(arrivals.get(row).getTime());
+                return Outputs.formatTime(arrivals.get(row).getTime());
             case 5:
-                return float8_3.form(Math.PI / 180.0
+                return Outputs.formatRayParam(Math.PI / 180.0
                         * arrivals.get(row).getRayParam());
             case 6:
-                return float8_1.form(arrivals.get(row).getDistDeg());
+                return Outputs.formatDistance(arrivals.get(row).getDistDeg());
             case 7:
                 return (arrivals.get(row).getName()
                         .equals(arrivals.get(row).getPuristName()) ? "=" : "*");
@@ -110,11 +111,4 @@ public class ArrivalTableModel extends AbstractTableModel {
         this.arrivals = arrivals;
         fireTableDataChanged();
     }
-
-    private static Format float8_1 = new Format("%8.1f");
-
-    private static Format float8_2 = new Format("%8.2f");
-
-    private static Format float8_3 = new Format("%8.3f");
-
 }
