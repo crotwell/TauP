@@ -66,9 +66,9 @@ public class PierceTableModel extends AbstractTableModel {
                         && dist != 0.0) {
                     dist *= -1.0;
                 }
-                return float8_2.form(dist);
+                return Outputs.formatDistance(dist);
             case 1:
-                return float8_2.form(arrivals.get(selectedIndex).getPiercePoint(row).depth);
+                return Outputs.formatDepth(arrivals.get(selectedIndex).getPiercePoint(row).depth);
             default:
                 return "";
         }
@@ -99,6 +99,5 @@ public class PierceTableModel extends AbstractTableModel {
     private int selectedIndex = 0;
 
     private List<Arrival> arrivals = new ArrayList<Arrival>();
-
-    private static Format float8_2 = new Format("%8.2f");
+    
 } // PierceTableModel
