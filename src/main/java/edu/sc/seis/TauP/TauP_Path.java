@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.OptionalDataException;
 import java.io.StreamCorruptedException;
 import java.io.Writer;
+import java.text.DecimalFormat;
 import java.util.List;
 
 /**
@@ -37,8 +38,6 @@ public class TauP_Path extends TauP_Pierce {
 	protected boolean gmtScript = false;
 
 	protected static double maxPathInc = 1.0;
-
-	protected static Format float8_4 = new Format("%8.4f");
 
 	protected TauP_Path() {
 		super();
