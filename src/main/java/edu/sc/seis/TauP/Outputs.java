@@ -81,13 +81,13 @@ public class Outputs {
         return latLonFormat.form(latlon);
     }
 
-    protected static Format depthFormat = new Format("%8.1");
+    protected static Format depthFormat = new Format("%8.1f");
 
-    protected static Format distanceFormat = new Format("%8.2");;
+    protected static Format distanceFormat = new Format("%8.2f");;
 
-    protected static Format timeFormat = new Format("%8.2");;
+    protected static Format timeFormat = new Format("%8.2f");;
 
-    protected static Format rayParamFormat = new Format("%8.3");;
+    protected static Format rayParamFormat = new Format("%8.3f");;
 
-    protected static Format latLonFormat = new Format("%8.2");;
+    protected static Format latLonFormat = new Format("%8.2f");;
 } // Outputs
