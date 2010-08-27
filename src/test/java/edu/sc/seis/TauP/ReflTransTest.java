@@ -3,8 +3,6 @@
 // ReflTransTest.java ReflTransCoefficient.java Complex.java Sfun.java
 package edu.sc.seis.TauP;
 
-import java.io.*;
-import java.util.*;
 import junit.framework.TestCase;
 
 /*
