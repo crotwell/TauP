@@ -2,6 +2,7 @@ package edu.sc.seis.TauP;
 
 import java.awt.Graphics;
 import java.util.Vector;
+
 import javax.swing.JPanel;
 
 /*

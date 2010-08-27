@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.io.OptionalDataException;
 import java.io.StreamCorruptedException;
 import java.io.Writer;
-import java.text.DecimalFormat;
 import java.util.List;
 
 /**
