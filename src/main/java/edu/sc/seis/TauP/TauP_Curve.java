@@ -60,6 +60,8 @@ public class TauP_Curve extends TauP_Time {
      */
     protected double reduceVel = .125 * Math.PI / 180;
 
+    protected float mapWidth = (float) 6.0;
+
     protected TauP_Curve() {
         super();
     }
@@ -128,6 +130,22 @@ public class TauP_Curve extends TauP_Time {
         }
     }
 
+    /**
+     * Sets the gmt map width to be used with the output script and for creating
+     * the circles for each discontinuity. Default is 6 inches.
+     */
+    public void setMapWidth(float mapWidth) {
+        this.mapWidth = mapWidth;
+    }
+
+    /**
+     * Gets the gmt map width to be used with the output script and for creating
+     * the circles for each discontinuity.
+     */
+    public float getMapWidth() {
+        return mapWidth;
+    }
+
     public void calculate(double degrees) {
         /*
          * no need to do any calculations, just check the phases since they have
@@ -183,6 +201,7 @@ public class TauP_Curve extends TauP_Time {
         System.out.println("-reddeg velocity   -- outputs curves with a reducing velocity (deg/sec).");
         System.out.println("-redkm velocity    -- outputs curves with a reducing velocity (km/sec).");
         System.out.println("-rel phasename     -- outputs relative travel time");
+        System.out.println("-mapwidth width    -- sets map width for GMT script.");
         printStdUsageTail();
     }
 
@@ -298,12 +317,12 @@ public class TauP_Curve extends TauP_Time {
             // round max and min time to nearest 100 seconds
             maxTime = Math.ceil(maxTime / 100) * 100;
             minTime = Math.floor(minTime / 100) * 100;
-            out.write("pstext -JX6i -P -R0/180/" + minTime + "/" + maxTime
+            out.write("pstext -JX6 -P -R0/180/" + minTime + "/" + maxTime
                     + " -B20/100/:.'" + title + "': -K > " + psFile
                     + " <<END\n");
             out.write(scriptStuff);
             out.write("END\n\n");
-            out.write("psxy -JX -R -M -O >> " + psFile + " <<END\n");
+            out.write("psxy -JX -R -m -O >> " + psFile + " <<END\n");
         }
         double minDist = 0;
         double maxDist = Math.PI;
@@ -437,15 +456,18 @@ public class TauP_Curve extends TauP_Time {
         while(i < leftOverArgs.length) {
             if(leftOverArgs[i].equalsIgnoreCase("-gmt")) {
                 gmtScript = true;
-            } else if(leftOverArgs[i].equals("-reddeg")) {
+            } else if(leftOverArgs[i].equals("-reddeg") && i < leftOverArgs.length - 1) {
                 setReduceTime(true);
                 setReduceVelDeg(Double.valueOf(leftOverArgs[i + 1])
                         .doubleValue());
                 i++;
-            } else if(leftOverArgs[i].equals("-redkm")) {
+            } else if(leftOverArgs[i].equals("-redkm") && i < leftOverArgs.length - 1) {
                 setReduceTime(true);
                 setReduceVelKm(Double.valueOf(leftOverArgs[i + 1])
                         .doubleValue());
+                i++;
+            } else if(leftOverArgs[i].equalsIgnoreCase("-mapwidth") && i < leftOverArgs.length - 1) {
+                setMapWidth(Float.parseFloat(leftOverArgs[i + 1]));
                 i++;
             } else if(leftOverArgs[i].equals("-help")) {
                 noComprendoArgs[numNoComprendoArgs++] = leftOverArgs[i];

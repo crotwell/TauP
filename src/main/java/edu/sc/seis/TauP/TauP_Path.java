@@ -241,10 +241,10 @@ public class TauP_Path extends TauP_Pierce {
 							+ "\n# first lines, to the last psxy, as well as the last line.\n#\n");
 			dos.writeBytes("/bin/rm -f " + psFile + "\n\n");
 			dos.writeBytes("# draw surface and label distances.\n"
-					+ "psbasemap -K -P -R0/360/0/"+getTauModel().getRadiusOfEarth()+" -JP" + mapWidth +"i"
+					+ "psbasemap -K -P -R0/360/0/"+getTauModel().getRadiusOfEarth()+" -JP" + mapWidth
 					+ " -B30p/500N > " + psFile + "\n\n");
 			dos.writeBytes("# draw circles for branches, note these are scaled for a \n"
-							+ "# map using -JP" + mapWidth + "i\n"
+							+ "# map using -JP" + mapWidth + "\n"
 							+ "psxy -K -O -P -R -JP -Sc -A >> " + psFile
 							+ " <<ENDLAYERS\n");
 			// whole earth radius (scales to mapWidth)
@@ -258,14 +258,14 @@ public class TauP_Path extends TauP_Pierce {
 			}
 			dos.writeBytes("ENDLAYERS\n\n");
 			dos.writeBytes("# draw paths\n");
-			dos.writeBytes("psxy -P -R -O -JP -M -A >> " + psFile + " <<END\n");
+			dos.writeBytes("psxy -P -R -O -JP -m -A >> " + psFile + " <<END\n");
 		}
 	}
 
 	public void printUsage() {
 		printStdUsage();
-		System.out
-				.println("-gmt             -- outputs path as a complete GMT script.");
+        System.out.println("-gmt             -- outputs path as a complete GMT script.");
+        System.out.println("-mapwidth        -- sets map width for GMT script.");
 		printStdUsageTail();
 	}
 
@@ -278,6 +278,9 @@ public class TauP_Path extends TauP_Pierce {
 		while (i < leftOverArgs.length) {
 			if (leftOverArgs[i].equalsIgnoreCase("-gmt")) {
 				gmtScript = true;
+            } else if(leftOverArgs[i].equalsIgnoreCase("-mapwidth") && i < leftOverArgs.length - 1) {
+                setMapWidth(Float.parseFloat(leftOverArgs[i + 1]));
+                i++;
 			} else if (leftOverArgs[i].equals("-help")) {
 				noComprendoArgs[numNoComprendoArgs++] = leftOverArgs[i];
 			} else {
