@@ -226,20 +226,7 @@ public class TauP_WKBJ extends TauP_Time {
             prevTime = System.currentTimeMillis();
             TauP_Time tauPTime = new TauP_WKBJ();
             String[] noComprendoArgs = tauPTime.parseCmdLineArgs(args);
-            if(noComprendoArgs.length > 0) {
-                for(int i = 0; i < noComprendoArgs.length; i++) {
-                    if(noComprendoArgs[i].equals("-help")
-                            || noComprendoArgs[i].equals("-version")) {
-                        System.exit(0);
-                    }
-                }
-                System.out.println("I don't understand the following arguments, continuing:");
-                for(int i = 0; i < noComprendoArgs.length; i++) {
-                    System.out.print(noComprendoArgs[i] + " ");
-                }
-                System.out.println();
-                noComprendoArgs = null;
-            }
+            printNoComprendoArgs(noComprendoArgs);
             currTime = System.currentTimeMillis();
             prevTime = System.currentTimeMillis();
             tauPTime.init();

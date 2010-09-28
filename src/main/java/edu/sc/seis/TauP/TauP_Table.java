@@ -537,26 +537,7 @@ public class TauP_Table extends TauP_Time {
         try {
             me = new TauP_Table();
             String[] noComprendoArgs = me.parseCmdLineArgs(args);
-            if(noComprendoArgs.length > 0) {
-                for(int i = 0; i < noComprendoArgs.length; i++) {
-                    if(noComprendoArgs[i].equals("-help")
-                            || noComprendoArgs[i].equals("--help")
-                            || noComprendoArgs[i].equals("-version")) {
-                        System.exit(0);
-                    }
-                }
-                System.out.println("I don't understand the following arguments, continuing:");
-                for(int i = 0; i < noComprendoArgs.length; i++) {
-                    System.out.print(noComprendoArgs[i] + " ");
-                    if(noComprendoArgs[i].equals("-help")
-                            || noComprendoArgs[i].equals("-version")) {
-                        System.out.println();
-                        System.exit(0);
-                    }
-                }
-                System.out.println();
-                noComprendoArgs = null;
-            }
+            printNoComprendoArgs(noComprendoArgs);
             me.init();
             me.start();
         } catch(TauModelException e) {

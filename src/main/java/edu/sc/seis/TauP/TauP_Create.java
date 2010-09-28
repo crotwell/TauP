@@ -208,20 +208,7 @@ public class TauP_Create {
         System.out.println("TauP_Create starting...");
         TauP_Create tauPCreate = new TauP_Create();
         String[] noComprendoArgs = tauPCreate.parseCmdLineArgs(args);
-        if(noComprendoArgs.length > 0) {
-            for(int i = 0; i < noComprendoArgs.length; i++) {
-                if(noComprendoArgs[i].equals("-help")
-                        || noComprendoArgs[i].equals("-version")) {
-                    System.exit(0);
-                }
-            }
-            System.out.println("I don't understand the following arguments, continuing:");
-            for(int i = 0; i < noComprendoArgs.length; i++) {
-                System.out.print(noComprendoArgs[i] + " ");
-            }
-            System.out.println();
-            noComprendoArgs = null;
-        }
+        TauP_Time.printNoComprendoArgs(noComprendoArgs);
         try {
             tauPCreate.loadVMod();
             tauPCreate.start();

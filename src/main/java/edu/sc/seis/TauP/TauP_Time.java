@@ -497,31 +497,12 @@ public class TauP_Time {
     /**
      * Parses a comma separated list of distances and returns them in an array.
      */
-    public double[] parseDegreeList(String degList) {
-        int offset = 0;
-        int commaIndex;
-        String degEntry;
-        int numDegrees = 0;
-        double[] degreesFound = new double[degList.length()];
-        while(offset < degList.length()) {
-            commaIndex = degList.indexOf(',', offset);
-            if(commaIndex != -1) {
-                degEntry = degList.substring(offset, commaIndex);
-                degreesFound[numDegrees] = Double.valueOf(degEntry)
-                        .doubleValue();
-                offset = commaIndex + 1;
-                numDegrees++;
-            } else {
-                degEntry = degList.substring(offset);
-                degreesFound[numDegrees] = Double.valueOf(degEntry)
-                        .doubleValue();
-                offset = degList.length();
-                numDegrees++;
-            }
+    public List<Double> parseDegreeList(String degList) {
+        String[] split = degList.split(",");
+        List<Double> degreesFound = new ArrayList<Double>(split.length);
+        for (int i = 0; i < split.length; i++) {
+            degreesFound.add(Double.parseDouble(split[i]));
         }
-        double[] temp = new double[numDegrees];
-        System.arraycopy(degreesFound, 0, temp, 0, numDegrees);
-        degreesFound = temp;
         return degreesFound;
     }
 
@@ -794,16 +775,16 @@ public class TauP_Time {
             out.write("\n");
             for(int j = 0; j < arrivals.size(); j++) {
                 currArrival = (Arrival)arrivals.get(j);
-                out.write(outForms.formatDistance(currArrival.getModuloDistDeg())
-                        + outForms.formatDepth(depth) + "   ");
+                out.write(Outputs.formatDistance(currArrival.getModuloDistDeg())
+                        + Outputs.formatDepth(depth) + "   ");
                 out.write(phaseFormat.form(currArrival.getName()));
                 out.write("  "
-                        + outForms.formatTime(currArrival.getTime())
+                        + Outputs.formatTime(currArrival.getTime())
                         + "  "
-                        + outForms.formatRayParam(Math.PI / 180.0
+                        + Outputs.formatRayParam(Math.PI / 180.0
                                 * currArrival.getRayParam()) + "  ");
-                out.write(outForms.formatDistance(currArrival.getTakeoffAngle())+" ");
-                out.write(outForms.formatDistance(currArrival.getIncidentAngle())+" ");
+                out.write(Outputs.formatDistance(currArrival.getTakeoffAngle())+" ");
+                out.write(Outputs.formatDistance(currArrival.getIncidentAngle())+" ");
                 out.write(outForms.formatDistance(currArrival.getDistDeg()));
                 if(currArrival.getName().equals(currArrival.getPuristName())) {
                     out.write("   = ");
@@ -1317,6 +1298,24 @@ public class TauP_Time {
         printStdUsageTail();
     }
 
+    public static void printNoComprendoArgs(String[] noComprendoArgs) {
+        if(noComprendoArgs.length > 0) {
+            for(int i = 0; i < noComprendoArgs.length; i++) {
+                if(noComprendoArgs[i].equals("-help") || noComprendoArgs[i].equals("--help")
+                        || noComprendoArgs[i].equals("-version")
+                        || noComprendoArgs[i].equals("--version")) {
+                    System.exit(0);
+                }
+            }
+            String outStringA = "I don't understand the following arguments, continuing:";
+            String outStringB = "";
+            for(int i = 0; i < noComprendoArgs.length; i++) {
+                outStringB += noComprendoArgs[i] + " ";
+            }
+            Alert.warning(outStringA, outStringB);
+            noComprendoArgs = null;
+        }
+    }
     /**
      * Allows TauP_Time to run as an application. Creates an instance of
      * TauP_Time. .
@@ -1331,22 +1330,7 @@ public class TauP_Time {
             prevTime = System.currentTimeMillis();
             TauP_Time tauPTime = new TauP_Time();
             String[] noComprendoArgs = tauPTime.parseCmdLineArgs(args);
-            if(noComprendoArgs.length > 0) {
-                for(int i = 0; i < noComprendoArgs.length; i++) {
-                    if(noComprendoArgs[i].equals("-help") || noComprendoArgs[i].equals("--help")
-                            || noComprendoArgs[i].equals("-version")
-                            || noComprendoArgs[i].equals("--version")) {
-                        System.exit(0);
-                    }
-                }
-                String outStringA = "I don't understand the following arguments, continuing:";
-                String outStringB = "";
-                for(int i = 0; i < noComprendoArgs.length; i++) {
-                    outStringB += noComprendoArgs[i] + " ";
-                }
-                Alert.warning(outStringA, outStringB);
-                noComprendoArgs = null;
-            }
+            printNoComprendoArgs(noComprendoArgs);
             currTime = System.currentTimeMillis();
             prevTime = System.currentTimeMillis();
             tauPTime.init();

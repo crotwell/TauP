@@ -319,26 +319,7 @@ public class TauP_Path extends TauP_Pierce {
 			TauP_Path tauPPath = new TauP_Path();
 			tauPPath.setOutFileBase("taup_path");
 			String[] noComprendoArgs = tauPPath.parseCmdLineArgs(args);
-			if (noComprendoArgs.length > 0) {
-				for (int i = 0; i < noComprendoArgs.length; i++) {
-					if (noComprendoArgs[i].equals("-help")
-							|| noComprendoArgs[i].equals("-version")) {
-						System.exit(0);
-					}
-				}
-				System.out
-						.println("I don't understand the following arguments, continuing:");
-				for (int i = 0; i < noComprendoArgs.length; i++) {
-					System.out.print(noComprendoArgs[i] + " ");
-					if (noComprendoArgs[i].equals("-help")
-							|| noComprendoArgs[i].equals("-version")) {
-						System.out.println();
-						System.exit(0);
-					}
-				}
-				System.out.println();
-				noComprendoArgs = null;
-			}
+            printNoComprendoArgs(noComprendoArgs);
 			tauPPath.init();
 			if (TauP_Time.DEBUG) {
 				System.out.println("Done reading " + tauPPath.modelName);

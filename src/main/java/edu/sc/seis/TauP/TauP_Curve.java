@@ -469,24 +469,7 @@ public class TauP_Curve extends TauP_Time {
             TauP_Curve tauPCurve = new TauP_Curve();
             tauPCurve.outFile = "taup_curve.gmt";
             String[] noComprendoArgs = tauPCurve.parseCmdLineArgs(args);
-            if(noComprendoArgs.length > 0) {
-                for(int i = 0; i < noComprendoArgs.length; i++) {
-                    if(noComprendoArgs[i].equals("-help")
-                            || noComprendoArgs[i].equals("-version")) {
-                        System.exit(0);
-                    }
-                }
-                System.out.println("I don't understand the following arguments, continuing:");
-                for(int i = 0; i < noComprendoArgs.length; i++) {
-                    System.out.print(noComprendoArgs[i] + " ");
-                    if(noComprendoArgs[i].equals("-help")) {
-                        System.out.println();
-                        System.exit(0);
-                    }
-                }
-                System.out.println();
-                noComprendoArgs = null;
-            }
+            printNoComprendoArgs(noComprendoArgs);
             for(int i = 0; i < args.length; i++) {
                 if(args[i] == "-h") {
                     doInteractive = false;

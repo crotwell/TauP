@@ -60,7 +60,7 @@ import edu.sc.seis.seisFile.sac.SacTimeSeries;
  */
 public class TauP_SetSac extends TauP_Time {
 
-    protected List<String> sacFileNames;
+    protected List<String> sacFileNames = new ArrayList<String>();
 
     protected boolean evdpkm = false;
 
@@ -128,7 +128,9 @@ public class TauP_SetSac extends TauP_Time {
 
     public void start() throws IOException, TauModelException {
         for (String filename : sacFileNames) {
-            System.out.println(filename);
+            if(verbose) {
+                System.out.println(filename);
+            }
             processSacFile(new File(filename));
         }
     }
@@ -352,6 +354,13 @@ public class TauP_SetSac extends TauP_Time {
                 if(tempFile.exists() && tempFile.isFile() && tempFile.canRead()) {
                     sacFileNames.add(leftOverArgs[i]);
                 } else {
+                    if(! tempFile.exists()) {
+                        System.err.println(leftOverArgs[i]+" does not exist. "+tempFile.getAbsolutePath() );
+                    } else if( ! tempFile.isFile() ) {
+                        System.err.println(leftOverArgs[i]+" is not a file.");
+                    } else if( ! tempFile.canRead()) {
+                        System.err.println(leftOverArgs[i]+" is not readable.");
+                    }
                     noComprendoArgs[numNoComprendoArgs++] = leftOverArgs[i];
                 }
             }
@@ -380,25 +389,7 @@ public class TauP_SetSac extends TauP_Time {
         } else
             try {
                 String[] noComprendoArgs = tauPSetSac.parseCmdLineArgs(args);
-                if(noComprendoArgs.length > 0) {
-                    for(int i = 0; i < noComprendoArgs.length; i++) {
-                        if(noComprendoArgs[i].equals("-help")
-                                || noComprendoArgs[i].equals("-version")) {
-                            System.exit(0);
-                        }
-                    }
-                    System.out.println("I don't understand the following arguments, continuing:");
-                    for(int i = 0; i < noComprendoArgs.length; i++) {
-                        System.out.print(noComprendoArgs[i] + " ");
-                        if(noComprendoArgs[i].equals("-help")
-                                || noComprendoArgs[i].equals("-version")) {
-                            System.out.println();
-                            System.exit(0);
-                        }
-                    }
-                    System.out.println();
-                    noComprendoArgs = null;
-                }
+                printNoComprendoArgs(noComprendoArgs);
                 if(TauP_Time.DEBUG) {
                     System.out.println("Done reading " + tauPSetSac.modelName);
                 }
