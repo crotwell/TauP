@@ -254,13 +254,13 @@ public class TauP_Curve extends TauP_Time {
             }
             for(int phaseNum = 0; phaseNum < phases.size(); phaseNum++) {
                 phase = (SeismicPhase)phases.get(phaseNum);
-                dist = phase.getDist();
-                time = phase.getTime();
-                int phaseMinIndex = 0;
-                int phaseMaxIndex = 0;
-                double phaseMaxTime = -1 * Double.MAX_VALUE;
-                double phaseMinTime = Double.MAX_VALUE;
-                if(dist.length > 0) {
+                if(phase.hasArrivals()) {
+                    dist = phase.getDist();
+                    time = phase.getTime();
+                    int phaseMinIndex = 0;
+                    int phaseMaxIndex = 0;
+                    double phaseMaxTime = -1 * Double.MAX_VALUE;
+                    double phaseMinTime = Double.MAX_VALUE;
                     // find max and min time
                     for(int i = 0; i < time.length; i++) {
                         double[] timeValue = calcTimeValue(dist[i], time[i], relPhases);
@@ -298,7 +298,7 @@ public class TauP_Curve extends TauP_Time {
             // round max and min time to nearest 100 seconds
             maxTime = Math.ceil(maxTime / 100) * 100;
             minTime = Math.floor(minTime / 100) * 100;
-            out.write("pstext -JX6 -P -R0/180/" + minTime + "/" + maxTime
+            out.write("pstext -JX6i -P -R0/180/" + minTime + "/" + maxTime
                     + " -B20/100/:.'" + title + "': -K > " + psFile
                     + " <<END\n");
             out.write(scriptStuff);
@@ -323,43 +323,49 @@ public class TauP_Curve extends TauP_Time {
         }
         for(int phaseNum = 0; phaseNum < phases.size(); phaseNum++) {
             phase = phases.get(phaseNum);
-            dist = phase.getDist();
-            time = phase.getTime();
-            rayParams = phase.getRayParams();
-            double minPhaseDist = dist[0];
-            double maxPhaseDist = dist[0];
-            if(relativePhaseName != "") {
-                for (int i = 0; i < dist.length; i++) {
-                    if (dist[i] < minPhaseDist) {minDist = dist[i];}
-                    if (dist[i] > maxPhaseDist) {maxDist = dist[i];}
-                }
-            }
-            if(dist.length > 0) {
-                out.write("> " + phase.getName() + " for a source depth of "
-                        + depth + " kilometers in the " + modelName
-                        + " model");
+            if(phase.hasArrivals()) {
+                dist = phase.getDist();
+                time = phase.getTime();
+                rayParams = phase.getRayParams();
+                double minPhaseDist = dist[0];
+                double maxPhaseDist = dist[0];
                 if(relativePhaseName != "") {
-                    out.write(" relative to "+relativePhaseName);
+                    for (int i = 0; i < dist.length; i++) {
+                        if (dist[i] < minPhaseDist) {minDist = dist[i];}
+                        if (dist[i] > maxPhaseDist) {maxDist = dist[i];}
+                    }
                 }
-                out.write("\n");
-            }
-            for(int i = 0; i < dist.length; i++) {
-                /* Here we use a trig trick to make sure the dist is 0 to PI. */
-                arcDistance = Math.acos(Math.cos(dist[i]));
-                writeValue(arcDistance, time[i], relPhases, out);
-                if(i < dist.length - 1 && (rayParams[i] == rayParams[i + 1])
-                        && rayParams.length > 2) {
-                    /* Here we have a shadow zone, so put a break in the curve. */
-                    out.write("> Shadow Zone\n");
-                    continue;
+                if(dist.length > 0) {
+                    out.write("> " + phase.getName() + " for a source depth of "
+                              + depth + " kilometers in the " + modelName
+                              + " model");
+                    if(relativePhaseName != "") {
+                        out.write(" relative to "+relativePhaseName);
+                    }
+                    out.write("\n");
                 }
-                checkBoundary(0, i, phase, relPhases, out);
-                checkBoundary(Math.PI, i, phase, relPhases, out);
-                if (minDist != 0 && minDist != Math.PI) {
-                    checkBoundary(minDist, i, phase, relPhases, out);
+                for(int i = 0; i < dist.length; i++) {
+                    /* Here we use a trig trick to make sure the dist is 0 to PI. */
+                    arcDistance = Math.acos(Math.cos(dist[i]));
+                    writeValue(arcDistance, time[i], relPhases, out);
+                    if(i < dist.length - 1 && (rayParams[i] == rayParams[i + 1])
+                            && rayParams.length > 2) {
+                        /* Here we have a shadow zone, so put a break in the curve. */
+                        out.write("> Shadow Zone\n");
+                        continue;
+                    }
+                    checkBoundary(0, i, phase, relPhases, out);
+                    checkBoundary(Math.PI, i, phase, relPhases, out);
+                    if (minDist != 0 && minDist != Math.PI) {
+                        checkBoundary(minDist, i, phase, relPhases, out);
+                    }
+                    if (maxDist != 0 && maxDist != Math.PI) {
+                        checkBoundary(maxDist, i, phase, relPhases, out);
+                    }
                 }
-                if (maxDist != 0 && maxDist != Math.PI) {
-                    checkBoundary(maxDist, i, phase, relPhases, out);
+            } else {
+                if (verbose) {
+                    System.out.println("Phase "+phase.getName()+" does not exist in "+phase.getTauModel().getModelName()+" for depth "+phase.getTauModel().getSourceDepth());
                 }
             }
         }
