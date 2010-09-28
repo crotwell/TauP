@@ -346,6 +346,10 @@ public class SeismicPhase implements Serializable, Cloneable {
         }
         return out;
     }
+    
+    public boolean hasArrivals() {
+        return dist != null && dist.length != 0;
+    }
 
     // Normal methods
 
