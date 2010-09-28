@@ -59,6 +59,8 @@ public class TauP_Curve extends TauP_Time {
      * radians/second .
      */
     protected double reduceVel = .125 * Math.PI / 180;
+    
+    protected String redVelString = ".125 deg/s";
 
     protected float mapWidth = (float) 6.0;
 
@@ -104,6 +106,7 @@ public class TauP_Curve extends TauP_Time {
      */
     public void setReduceVelDeg(double reduceVel) {
         if(reduceVel > 0.0) {
+            redVelString = reduceVel+" deg/s";
             this.reduceVel = Math.PI / 180.0 * reduceVel;
         }
     }
@@ -113,6 +116,7 @@ public class TauP_Curve extends TauP_Time {
      *          radians/second.
      */
     public double getReduceVelKm() {
+        redVelString = reduceVel+" km/s";
         return reduceVel * tMod.getRadiusOfEarth();
     }
 
@@ -243,7 +247,7 @@ public class TauP_Curve extends TauP_Time {
     public void printResult(Writer out) throws IOException {
         SeismicPhase phase;
         double[] dist, time, rayParams;
-        double arcDistance, timeReduced;
+        double arcDistance;
         double maxTime = -1 * Double.MAX_VALUE, minTime = Double.MAX_VALUE;
         List<SeismicPhase> relPhases = new ArrayList<SeismicPhase>();
         if (relativePhaseName != "") {
@@ -267,7 +271,7 @@ public class TauP_Curve extends TauP_Time {
             }
             String title = modelName;
             if(reduceTime) {
-                title += " reduce vel "+reduceVel;
+                title += " reduce vel "+redVelString;
             } else if (relativePhaseName != "") {
                 title += " relative phase "+relativePhaseName;
             }
@@ -364,9 +368,7 @@ public class TauP_Curve extends TauP_Time {
                     out.write("\n");
                 }
                 for(int i = 0; i < dist.length; i++) {
-                    /* Here we use a trig trick to make sure the dist is 0 to PI. */
-                    arcDistance = Math.acos(Math.cos(dist[i]));
-                    writeValue(arcDistance, time[i], relPhases, out);
+                    writeValue(dist[i], time[i], relPhases, out);
                     if(i < dist.length - 1 && (rayParams[i] == rayParams[i + 1])
                             && rayParams.length > 2) {
                         /* Here we have a shadow zone, so put a break in the curve. */
@@ -404,12 +406,7 @@ public class TauP_Curve extends TauP_Time {
             for (Arrival arrival : phaseArrivals) {
                 if((phase.rayParams[distIndex] - arrival.getRayParam())
                         * (arrival.getRayParam() - phase.rayParams[distIndex + 1]) > 0) {
-                    if(reduceTime) {
-                        writeValue(arcDistance, arrival.getTime() - arcDistance
-                                / reduceVel, relPhase, out);
-                    } else {
-                        writeValue(arcDistance, arrival.getTime(), relPhase, out);
-                    }
+                    writeValue(arcDistance, arrival.getTime(), relPhase, out);
                     break;
                 }
             }
@@ -418,9 +415,11 @@ public class TauP_Curve extends TauP_Time {
     
     protected double[] calcTimeValue(double distRadian, double time, List<SeismicPhase> relPhase) throws IOException {
         double timeReduced = time;
-        double distDeg = distRadian*180/Math.PI;
+        /* Here we use a trig trick to make sure the dist is 0 to PI. */
+        double arcDistance = Math.acos(Math.cos(distRadian));
+        double distDeg = arcDistance*180/Math.PI;
         if(reduceTime) {
-            timeReduced = time - distRadian / reduceVel;
+            timeReduced = time - arcDistance / reduceVel;
         } else if(relativePhaseName != "") {
             relativeArrival = SeismicPhase.getEarliestArrival(relPhase, distDeg);
             if (relativeArrival == null) {
@@ -437,9 +436,10 @@ public class TauP_Curve extends TauP_Time {
     public void writeValue(double distRadian, double time, List<SeismicPhase> relPhase, Writer out) throws IOException {
         double[] timeReduced = calcTimeValue(distRadian, time, relPhase);
         if (timeReduced.length == 0) {return; }
-        double distDeg = distRadian*180/Math.PI;
-        out.write(outForms.formatDistance(distDeg) + "  "
-                + outForms.formatTime(timeReduced[0]) + "\n");
+        double arcDistance = Math.acos(Math.cos(distRadian));
+        double distDeg = arcDistance*180/Math.PI;
+        out.write(Outputs.formatDistance(distDeg) + "  "
+                + Outputs.formatTime(timeReduced[0]) + "\n");
     }
 
     public static final boolean isBetween(double a, double b, double value) {
