@@ -317,7 +317,7 @@ public class TauP_Curve extends TauP_Time {
             // round max and min time to nearest 100 seconds
             maxTime = Math.ceil(maxTime / 100) * 100;
             minTime = Math.floor(minTime / 100) * 100;
-            out.write("pstext -JX6 -P -R0/180/" + minTime + "/" + maxTime
+            out.write("pstext -JX"+getMapWidth()+" -P -R0/180/" + minTime + "/" + maxTime
                     + " -B20/100/:.'" + title + "': -K > " + psFile
                     + " <<END\n");
             out.write(scriptStuff);
