@@ -160,10 +160,9 @@ int TauPInit(TauPStruct *taupptr, char *modelName) {
 		fprintf(stderr, "Can't create Java VM: %d\n", res);
 		return(1);
 	}
-   taupptr->env = env;
 
 		/* get the class of the travel time tool. */
-	tempClass = (*taupptr->env)->FindClass(taupptr->env, "edu/sc/seis/TauP/TauP_Time");
+	tempClass = (*taupptr->env)->FindClass(taupptr->env, "edu.sc.seis.TauP.TauP_Time");
 	if (tempClass == 0) {
 		fprintf(stderr, "Can't find edu.sc.seis.TauP.TauP_Time class\n");
 		return(1);

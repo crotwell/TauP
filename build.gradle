@@ -42,9 +42,13 @@ distFiles = copySpec {
         include('src/**')
         include('srl/*.pdf')
         include('gradleWrapper/**')
-        include('gradlew')
         include('gradlew.bat')
+        include('README')
         exclude('**/*.svn')
+    }
+    from('.') {
+        fileMode=0755
+        include('gradlew')
     }
 }
 

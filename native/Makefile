@@ -11,6 +11,7 @@ LIBF = libtaup.dylib
 #
 # modify INCLUDES for your local installation directories. We use:
 # INCLUDES = -I /opt/local/External/Java/include -I /opt/local/External/Java/include/solaris
+#INCLUDES = -I /seis/local/linux/stow/sun-jdk-1.5.0_09/java/jdk1.5.0_09/include -I /seis/local/linux/stow/sun-jdk-1.5.0_09/java/jdk1.5.0_09/include/linux
 #
 
 # works for the default installation of the JDK1.1.6 production release
@@ -21,10 +22,12 @@ LIBF = libtaup.dylib
 # Solaris JDK. It may be named differently for other java virtual machines.
 #
 # for the default installation of the JDK1.4.2 release on solaris
-LIBS = -L/opt/local/External/j2sdk1.4.2_01/jre/lib/sparc -ljava  -ljvm
+JAVALIB=/seis/local/linux/stow/sun-jdk-1.5.0_09/java/jdk1.5.0_09
+#LIBS = -L${JAVALIB}/jre/lib/amd64 -L${JAVALIB}/jre/lib/amd64/server -L${JAVALIB}/xawt -L${JAVALIB}/native_threads -ljava  -ljvm  -lverify
+#LIBS = -L${JAVALIB}/jre/lib/amd64  -ljava    -lverify
 # for MacOS X 10.2 we use:
-# INCLUDES = -isystem /System/Library/Frameworks/JavaVM.framework/Headers
-INCLUDES = -isystem /System/Library/Frameworks/JavaVM.framework/Versions/1.3.1/Headers
+INCLUDES = -isystem /System/Library/Frameworks/JavaVM.framework/Headers
+#INCLUDES = -isystem /System/Library/Frameworks/JavaVM.framework/Versions/1.3.1/Headers
 LIBS = -Wl,-framework -Wl,JavaVM
 #
 
@@ -35,15 +38,9 @@ CFLAGS = ${FLAGS} ${INCLUDES}
 FFLAGS = ${FLAGS} ${INCLUDES}
 
 # compiles both the library and the test program
-all:	tauplib gettimes 
+all:	taupnative.o gettimes 
 
 # create the shared library
-tauplib ${LIBF}: taupnative.o
-	if [ "`uname -r -s`" = "Darwin 8.8.0" ]; then \
-	   libtool -dynamic -o ${LIBF} $? -framework JavaVM -lSystem -lSystemStubs ; \
-	else \
-	   libtool -dynamic -o ${LIBF} $? -framework JavaVM -lSystem ; \
-	fi
 
 # create the test application using the shared library
 gettimes: gettimes.c taupnative.o

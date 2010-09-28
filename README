@@ -1,0 +1,6 @@
+
+The manual for the TauP Toolkit can be found in the doc directory.
+
+We use gradle to compile TauP. Should you wish to recompile, the gradlew wrapper will download gradle and compile. For example 'gradlew jar' will compile the java source and create a new jar. 'gradle eclipse' will generate an eclipse project files for importing. More information can be found at http://www.gradle.org.
+
+
