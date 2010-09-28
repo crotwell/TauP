@@ -241,14 +241,11 @@ public class TauP_Path extends TauP_Pierce {
 							+ "\n# first lines, to the last psxy, as well as the last line.\n#\n");
 			dos.writeBytes("/bin/rm -f " + psFile + "\n\n");
 			dos.writeBytes("# draw surface and label distances.\n"
-					+ "psbasemap -K -P -R0/360/0/"+getTauModel().getRadiusOfEarth()+" -JP" + mapWidth
+					+ "psbasemap -K -P -R0/360/0/"+getTauModel().getRadiusOfEarth()+" -JP" + mapWidth +"i"
 					+ " -B30p/500N > " + psFile + "\n\n");
 			dos.writeBytes("# draw circles for branches, note these are scaled for a \n"
-							+ "# map using -JP"
-							+ mapWidth
-							+ "\n"
-							+ "psxy -K -O -P -R -JP -Sc -A >> "
-							+ psFile
+							+ "# map using -JP" + mapWidth + "i\n"
+							+ "psxy -K -O -P -R -JP -Sc -A >> " + psFile
 							+ " <<ENDLAYERS\n");
 			// whole earth radius (scales to mapWidth)
 			dos.writeBytes("0.0 0.0 " + (float) (mapWidth) + "\n");
