@@ -495,7 +495,6 @@ public abstract class SlownessModel implements Serializable {
          * distance, hopefully without errors.
          */
         TimeDist td = new TimeDist(p);
-        TimeDist layerTD;
         for(int layerNum = 0; layerNum <= slownessTurnLayer; layerNum++) {
             td.add(layerTimeDist(p, layerNum, isPWave));
         }
@@ -1315,6 +1314,9 @@ public abstract class SlownessModel implements Serializable {
         if(vMod.getNumLayers() == 0) {
             throw new SlownessModelException("velModel.getNumLayers()==0");
         }
+        if (vMod.getVelocityLayer(0).getTopSVelocity() == 0) {
+            throw new SlownessModelException("Unable to handle zero S velocity layers at surface. This should be fixed at some point, but is a limitation of TauP at this point.");
+        }
         if(DEBUG) {
             System.out.println("start createSample");
         }
@@ -1584,8 +1586,7 @@ public abstract class SlownessModel implements Serializable {
                 }
             }
         } catch(NoSuchMatPropException e) {
-            // can't happen
-            e.printStackTrace();
+            throw new RuntimeException("can't happen", e);
         }
     }
 
@@ -1644,6 +1645,10 @@ public abstract class SlownessModel implements Serializable {
                     // check for too great of distance jump
                     if(Math.abs(prevTD.distRadian - currTD.distRadian) > maxRangeInterval
                             && Math.abs(sLayer.getTopP() - sLayer.getBotP()) > 2 * minDeltaP) {
+                        if (DEBUG) {
+                            System.out.println(" " + j+"Dist jump too great: "+Math.abs(prevTD.distRadian - currTD.distRadian)+" > "+maxRangeInterval
+                                               +"  adding slowness: "+(sLayer.getTopP() + sLayer.getBotP()) / 2.0);
+                        }
                         addSlowness((sLayer.getTopP() + sLayer.getBotP()) / 2.0,
                                     PWAVE);
                         addSlowness((sLayer.getTopP() + sLayer.getBotP()) / 2.0,
@@ -1673,6 +1678,13 @@ public abstract class SlownessModel implements Serializable {
                                         - ((splitTD.time - prevTD.time)
                                                 * (currTD.distRadian - prevTD.distRadian)
                                                 / (splitTD.distRadian - prevTD.distRadian) + prevTD.time)) > maxInterpError) {
+
+                            if(DEBUG ) {
+                                System.out.print(" " + j+" add slowness "+Math.abs(currTD.time
+                                                                                   - ((splitTD.time - prevTD.time)
+                                                                                           * (currTD.distRadian - prevTD.distRadian)
+                                                                                           / (splitTD.distRadian - prevTD.distRadian) + prevTD.time))+" > "+maxInterpError);
+                            }
                             addSlowness((prevSLayer.getTopP() + prevSLayer.getBotP()) / 2.0,
                                         PWAVE);
                             addSlowness((prevSLayer.getTopP() + prevSLayer.getBotP()) / 2.0,
@@ -1689,8 +1701,8 @@ public abstract class SlownessModel implements Serializable {
                             // ^^^ make sure j != 0
                         } else {
                             j++;
-                            if(DEBUG && (j % 100 == 0)) {
-                                System.out.print(" " + j);
+                            if(DEBUG && (j % 10 == 0)) {
+                                System.out.println(j);
                             }
                         }
                     }
