@@ -15,17 +15,21 @@ artifacts {
 
 dirName = project.name+'-'+version
 
-distFiles = copySpec {
-    from('build') {
-        include('build.gradle')
-        include('settings.gradle')
-    }
+binDistFiles = copySpec {
     from('build/output') {
         fileMode=0755
         include('bin/**')
     }
     from('build/output') {
         include('lib/**')
+    }
+}
+
+distFiles = copySpec {
+    with(binDistFiles)
+    from('build') {
+        include('build.gradle')
+        include('settings.gradle')
     }
     from('build/docs') {
         include('javadoc/**')
@@ -52,7 +56,12 @@ distFiles = copySpec {
     }
 }
 
-task explodeDist(type: Sync, dependsOn: ['makeScript', 'genModels', 'wrapper']) {
+task explodeBin(type: Sync, dependsOn: ['makeScript', 'genModels']) {
+    with binDistFiles
+    into file("$buildDir/explode")
+}
+
+task explodeDist(type: Sync, dependsOn: ['explodeBin', 'wrapper']) {
     with distFiles
     into file("$buildDir/explode")
 }
