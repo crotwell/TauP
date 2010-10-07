@@ -306,6 +306,7 @@ public class TauP_Create {
             System.out.println(sMod);
         }
         TauModel.DEBUG = DEBUG;
+        SlownessModel.DEBUG = DEBUG;
         // Creates tau model from slownesses
         return new TauModel(sMod);
     }
