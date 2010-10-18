@@ -1059,10 +1059,11 @@ public abstract class SlownessModel implements Serializable {
                             + "high slowness zone. minSSoFar=" + minSSoFar
                             + " " + currSLayer);
                 }
+                // in fluid layers we want to check PWAVE structure when looking for S wave critical points
                 highSlownessZoneS.botDepth = findDepth(minSSoFar,
                                                        layerNum,
                                                        layerNum,
-                                                       SWAVE);
+                                                       (currSLayer == currPLayer)?PWAVE:SWAVE);
                 highSlownessLayerDepthsS.addElement(highSlownessZoneS);
                 inHighSlownessZoneS = false;
             }
