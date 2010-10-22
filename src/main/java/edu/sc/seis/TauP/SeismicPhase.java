@@ -470,21 +470,26 @@ public class SeismicPhase implements Serializable, Cloneable {
         double takeoffVelocity;
         double takeoffAngle = -1;
         double incidentAngle = -1;
-        VelocityModel vMod = getTauModel().getVelocityModel();
-        try {
-            if (getDownGoing()[0]) {
-                takeoffVelocity = vMod.evaluateBelow(sourceDepth, name.charAt(0));
-            } else { 
-                //fake neg velocity so angle is neg in case of upgoing
-                takeoffVelocity = -1*vMod.evaluateAbove(sourceDepth, name.charAt(0));
+        if (name.endsWith("kmps")) {
+            takeoffAngle = 0;
+            incidentAngle = 0;
+        } else {
+            VelocityModel vMod = getTauModel().getVelocityModel();
+            try {
+                if (getDownGoing()[0]) {
+                    takeoffVelocity = vMod.evaluateBelow(sourceDepth, name.charAt(0));
+                } else { 
+                    //fake neg velocity so angle is neg in case of upgoing
+                    takeoffVelocity = -1*vMod.evaluateAbove(sourceDepth, name.charAt(0));
+                }
+                takeoffAngle = 180/Math.PI*Math.asin(takeoffVelocity*arrivalRayParam/(getTauModel().getRadiusOfEarth()-sourceDepth));
+                char lastLeg = getLegs().get(getLegs().size()-2).charAt(0); // last item is "E", assume first char is P or S
+                incidentAngle = 180/Math.PI*Math.asin(vMod.evaluateBelow(0, lastLeg)*arrivalRayParam/getTauModel().getRadiusOfEarth());
+            } catch(NoSuchLayerException e) {
+                throw new RuntimeException("Should not happen", e);
+            } catch(NoSuchMatPropException e) {
+                throw new RuntimeException("Should not happen", e);
             }
-            takeoffAngle = 180/Math.PI*Math.asin(takeoffVelocity*arrivalRayParam/(getTauModel().getRadiusOfEarth()-sourceDepth));
-            char lastLeg = getLegs().get(getLegs().size()-2).charAt(0); // last item is "E", assume first char is P or S
-            incidentAngle = 180/Math.PI*Math.asin(vMod.evaluateBelow(0, lastLeg)*arrivalRayParam/getTauModel().getRadiusOfEarth());
-        } catch(NoSuchLayerException e) {
-            throw new RuntimeException("Should not happen", e);
-        } catch(NoSuchMatPropException e) {
-            throw new RuntimeException("Should not happen", e);
         }
         return new Arrival(this,
                                  arrivalTime,
@@ -1449,6 +1454,7 @@ public class SeismicPhase implements Serializable, Cloneable {
             rayParams[1] = rayParams[0];
             minDistance = 0.0;
             maxDistance = 2 * Math.PI;
+            downGoing.add(true);
             return;
         }
         /*
