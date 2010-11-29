@@ -48,11 +48,16 @@ distFiles = copySpec {
         include('gradleWrapper/**')
         include('gradlew.bat')
         include('README')
+        include('build/generated-src')
         exclude('**/*.svn')
     }
     from('.') {
         fileMode=0755
         include('gradlew')
+    }
+    from('src/main/resources/edu/sc/seis/TauP') {
+        include('StdModels/*.tvel')
+        include('StdModels/*.nd')
     }
 }
 
