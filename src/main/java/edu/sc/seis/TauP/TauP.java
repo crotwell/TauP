@@ -81,6 +81,7 @@ public class TauP extends javax.swing.JFrame {
         timePanel.add(timeTableScrollPane, java.awt.BorderLayout.CENTER);
         modelComboBox.addItem("iasp91");
         modelComboBox.addItem("prem");
+        modelComboBox.addItem("ak135");
         modelComboBox.addItem("qdt");
         setSize(new java.awt.Dimension(500, 300));
         pierceTableModel = new PierceTableModel();
