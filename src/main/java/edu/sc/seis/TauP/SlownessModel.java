@@ -1696,10 +1696,17 @@ public abstract class SlownessModel implements Serializable {
                                         SWAVE);
                             currTD = prevPrevTD;
                             isPrevOK = false;
-                            j--;
-                            sLayer = getSlownessLayer(((j - 1 >= 0) ? j - 1 : 0),
-                                                      currWaveType);
-                            // ^^^ make sure j != 0
+                            if (j>0) {
+                                // back up one step unless we are at beginning, then stay put
+                                j--;
+                                sLayer = getSlownessLayer(((j - 1 >= 0) ? j - 1 : 0),
+                                                          currWaveType);
+                                // ^^^ make sure j != 0
+                                // this sLayer will become prevSLayer in next loop
+                            } else {
+                                isPrevOK = false;
+                                isCurrOK = false;
+                            }
                         } else {
                             j++;
                             if(DEBUG && (j % 10 == 0)) {
