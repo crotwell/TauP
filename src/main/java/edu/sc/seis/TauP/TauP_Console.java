@@ -108,9 +108,22 @@ public class TauP_Console extends InteractiveConsole {
         Pattern rightmostPeriod = Pattern.compile(".*(\\.)[^.]*");
     }
 
+
+    public void printUsage() {
+        TauP_Time.printStdUsageHead(this.getClass());
+        Alert.info("\n scriptfile         -- jython script is read in from \"scriptfile\"\n"
+                   + "-help              -- print this out, but you already know that!\n");
+    }
+
     public static void main(String[] args) throws IOException {
         TauP_Console ic = new TauP_Console();
         if(args.length > 0) {
+            for (int i = 0; i < args.length; i++) {
+                if (args[i].equals("-h") || args[i].equals("--help")) {
+                    ic.printUsage();
+                    return;
+                }
+            }
             File f = new File(args[0]);
             if ( ! f.exists()) {
                 System.err.println("Can't find file '"+args[0]+"'");

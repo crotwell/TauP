@@ -1255,7 +1255,11 @@ public class TauP_Time {
     }
 
     public void printStdUsageHead() {
-        String className = this.getClass().getName();
+        printStdUsageHead(this.getClass());
+    }
+    
+    public static void printStdUsageHead(Class toolClass) {
+        String className = toolClass.getName();
         className = className.substring(className.lastIndexOf('.') + 1,
                                         className.length());
         Alert.info("Usage: " + className.toLowerCase() + " [arguments]");
