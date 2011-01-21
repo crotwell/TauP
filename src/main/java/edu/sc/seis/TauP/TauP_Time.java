@@ -1263,7 +1263,7 @@ public class TauP_Time {
         className = className.substring(className.lastIndexOf('.') + 1,
                                         className.length());
         Alert.info("Usage: " + className.toLowerCase() + " [arguments]");
-        Alert.info("  or, for purists, java " + this.getClass().getName()
+        Alert.info("  or, for purists, java " + className
                 + " [arguments]");
         Alert.info("\nArguments are:");
     }
