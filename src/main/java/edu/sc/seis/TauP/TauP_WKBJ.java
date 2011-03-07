@@ -43,6 +43,7 @@ import java.io.OptionalDataException;
 import java.io.StreamCorruptedException;
 import java.util.List;
 
+import edu.sc.seis.seisFile.sac.SacHeader;
 import edu.sc.seis.seisFile.sac.SacTimeSeries;
 
 public class TauP_WKBJ extends TauP_Time {
@@ -194,17 +195,13 @@ public class TauP_WKBJ extends TauP_Time {
                     }
                     // seismogramArrival = new WKBJArrival( phaseArrivals[i],
                     // seismogramPoints);
-                    SacTimeSeries sac = new SacTimeSeries();
-                    sac.y = seismogramPoints;
-                    sac.npts = seismogramPoints.length;
-                    sac.leven = SacTimeSeries.TRUE;
-                    sac.iftype = SacTimeSeries.ITIME;
-                    sac.delta = (float)getDeltaT();
-                    sac.t0 = (float)arrival.getTime();
-                    sac.kt0 = arrival.getName();
-                    sac.o = 0;
-                    sac.b = 320;
-                    sac.e = sac.b + (sac.npts - 1) * sac.delta;
+                    SacHeader header = SacHeader.createEmptyEvenSampledTimeSeriesHeader();
+                    SacTimeSeries sac = new SacTimeSeries(header, seismogramPoints);
+                    header.setDelta( (float)getDeltaT());
+                    header.setTHeader(0, (float)arrival.getTime(), arrival.getName());
+                    header.setO( 0);
+                    header.setB( 320);
+                    header.setE( header.getB() + (header.getNpts() - 1) * header.getDelta());
                     try {
                         sac.write("tempsacfile");
                     } catch(IOException e) {}

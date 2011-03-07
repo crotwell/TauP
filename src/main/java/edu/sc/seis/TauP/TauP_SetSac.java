@@ -33,6 +33,8 @@ import java.io.StreamCorruptedException;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.sc.seis.seisFile.sac.SacConstants;
+import edu.sc.seis.seisFile.sac.SacHeader;
 import edu.sc.seis.seisFile.sac.SacTimeSeries;
 
 /**
@@ -149,29 +151,30 @@ public class TauP_SetSac extends TauP_Time {
         }
         // regular file, hopefully
         SacTimeSeries sacFile = new SacTimeSeries(f);
-        if(sacFile.evdp == -12345.0f) {
+        SacHeader header = sacFile.getHeader();
+        if(SacConstants.isUndef(header.getEvdp())) {
             System.out.println("Depth not set in "
                     + f.getName() + ", skipping");
             return;
         }
-        if(sacFile.o == -12345.0f) {
+        if(SacConstants.isUndef(header.getO())) {
             System.out.println("O marker not set in "
                     + f + ", skipping");
             return;
         }
         double deg;
-        if(sacFile.gcarc != -12345.0f) {
+        if(! SacConstants.isUndef(header.getGcarc())) {
             if(verbose) {
-                System.out.println("Using gcarc: " + sacFile.gcarc);
+                System.out.println("Using gcarc: " + header.getGcarc());
             }
-            deg = sacFile.gcarc;
-        } else if(sacFile.dist != -12345.0f) {
+            deg = header.getGcarc();
+        } else if(! SacConstants.isUndef(header.getDist())) {
             if(verbose) {
-                System.out.println("Using dist: " + sacFile.dist);
+                System.out.println("Using dist: " + header.getDist());
             }
-            deg = sacFile.dist / 6371.0 * 180.0 / Math.PI;
-        } else if(sacFile.stla != -12345.0f && sacFile.stlo != -12345.0f
-                && sacFile.evla != -12345.0f && sacFile.evlo != -12345.0f) {
+            deg = header.getDist() / 6371.0 * 180.0 / Math.PI;
+        } else if( ! SacConstants.isUndef(sacFile.getHeader().getStla()) && ! SacConstants.isUndef(sacFile.getHeader().getStlo())
+                && ! SacConstants.isUndef(sacFile.getHeader().getEvla()) && ! SacConstants.isUndef(sacFile.getHeader().getEvlo())) {
             if(verbose) {
                 System.out.println("Using stla,stlo, evla,evlo to calculate");
             }
@@ -179,27 +182,27 @@ public class TauP_SetSac extends TauP_Time {
                           "using lat and lons to calculate distance.");
             Alert.warning("No ellipticity correction will be applied.",
                           "This may introduce errors. Please see the manual.");
-            deg = SphericalCoords.distance(sacFile.stla,
-                                           sacFile.stlo,
-                                           sacFile.evla,
-                                           sacFile.evlo);
+            deg = SphericalCoords.distance(header.getStla(),
+                                           header.getStlo(),
+                                           header.getEvla(),
+                                           header.getEvlo());
         } else {
             /* can't get a distance, skipping */
             Alert.warning("Can't get a distance, all distance fields are undef.",
                           "skipping " + f);
             return;
         }
-        if(!((evdpkm && depth == sacFile.evdp) || (!evdpkm && depth == 1000 * sacFile.evdp))) {
-            if(!evdpkm && sacFile.evdp != 0 && sacFile.evdp < 1000.0) {
+        if(!((evdpkm && depth == header.getEvdp()) || (!evdpkm && depth == 1000 * header.getEvdp()))) {
+            if(!evdpkm && header.getEvdp() != 0 && header.getEvdp() < 1000.0) {
                 Alert.warning("Sac header evdp is < 1000 in "
                                       + f,
                               "If the depth is in kilometers instead of meters "
                                       + "(default), you should use the -evdpkm flag");
             }
             if(evdpkm) {
-                depthCorrect(sacFile.evdp);
+                depthCorrect(header.getEvdp());
             } else {
-                depthCorrect(sacFile.evdp / 1000.0);
+                depthCorrect(header.getEvdp() / 1000.0);
             }
         }
         if(verbose) {
@@ -242,65 +245,15 @@ public class TauP_SetSac extends TauP_Time {
     public static void setSacTHeader(SacTimeSeries sacFile,
                                      int headerNum,
                                      Arrival arrival) {
-        switch(headerNum){
-            case A_HEADER:
+        float arrivalTime = sacFile.getHeader().getO() + (float)arrival.getTime();
+        if(headerNum == A_HEADER) {
                 // there is no t10, so use that for the A header
-                sacFile.a = sacFile.o + (float)arrival.getTime();
-                sacFile.ka = arrival.getName();
+            sacFile.getHeader().setA( arrivalTime);
+            sacFile.getHeader().setKa( arrival.getName());
                 // no place to put the ray param
-                break;
-            case 0:
-                sacFile.t0 = sacFile.o + (float)arrival.getTime();
-                sacFile.kt0 = arrival.getName();
-                sacFile.user0 = (float)arrival.getRayParam();
-                break;
-            case 1:
-                sacFile.t1 = sacFile.o + (float)arrival.getTime();
-                sacFile.kt1 = arrival.getName();
-                sacFile.user1 = (float)arrival.getRayParam();
-                break;
-            case 2:
-                sacFile.t2 = sacFile.o + (float)arrival.getTime();
-                sacFile.kt2 = arrival.getName();
-                sacFile.user2 = (float)arrival.getRayParam();
-                break;
-            case 3:
-                sacFile.t3 = sacFile.o + (float)arrival.getTime();
-                sacFile.kt3 = arrival.getName();
-                sacFile.user3 = (float)arrival.getRayParam();
-                break;
-            case 4:
-                sacFile.t4 = sacFile.o + (float)arrival.getTime();
-                sacFile.kt4 = arrival.getName();
-                sacFile.user4 = (float)arrival.getRayParam();
-                break;
-            case 5:
-                sacFile.t5 = sacFile.o + (float)arrival.getTime();
-                sacFile.kt5 = arrival.getName();
-                sacFile.user5 = (float)arrival.getRayParam();
-                break;
-            case 6:
-                sacFile.t6 = sacFile.o + (float)arrival.getTime();
-                sacFile.kt6 = arrival.getName();
-                sacFile.user6 = (float)arrival.getRayParam();
-                break;
-            case 7:
-                sacFile.t7 = sacFile.o + (float)arrival.getTime();
-                sacFile.kt7 = arrival.getName();
-                sacFile.user7 = (float)arrival.getRayParam();
-                break;
-            case 8:
-                sacFile.t8 = sacFile.o + (float)arrival.getTime();
-                sacFile.kt8 = arrival.getName();
-                sacFile.user8 = (float)arrival.getRayParam();
-                break;
-            case 9:
-                sacFile.t9 = sacFile.o + (float)arrival.getTime();
-                sacFile.kt9 = arrival.getName();
-                sacFile.user9 = (float)arrival.getRayParam();
-                break;
-            default:
-                break;
+        } else {
+            sacFile.getHeader().setTHeader(headerNum, arrivalTime, arrival.getName());
+            sacFile.getHeader().setUserHeader(headerNum, (float)arrival.getRayParam());
         }
     }
 
