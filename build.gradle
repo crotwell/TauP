@@ -7,7 +7,7 @@ dependencies {
 }
 
 group = 'edu.sc.seis'
-version = '2.0beta9'
+version = '2.0beta10'
 
 artifacts {
     archives jar
@@ -59,6 +59,10 @@ distFiles = copySpec {
         include('StdModels/*.tvel')
         include('StdModels/*.nd')
     }
+    from(project.rootDir.path+'/..') {
+        include('buildSrc')
+        exclude('buildSrc/build')
+    }
 }
 
 task explodeBin(type: Sync, dependsOn: ['makeScript', 'genModels']) {
@@ -71,7 +75,7 @@ task explodeDist(type: Sync, dependsOn: ['explodeBin', 'wrapper']) {
     into file("$buildDir/explode")
 }
 
-task tarDist(type: Tar, dependsOn: ['makeScript', 'genModels', 'wrapper']) {
+task tarDist(type: Tar, dependsOn: ['explodeDist']) {
     compression = Compression.GZIP
     into(dirName) {
         with distFiles
