@@ -63,6 +63,10 @@ distFiles = copySpec {
         include('buildSrc')
         exclude('buildSrc/build')
     }
+    from('build/generated-src/modVersion') {
+        include('java/**')
+        into('src/main')
+    }
 }
 
 task explodeBin(type: Sync, dependsOn: ['makeScript', 'genModels']) {
@@ -70,7 +74,7 @@ task explodeBin(type: Sync, dependsOn: ['makeScript', 'genModels']) {
     into file("$buildDir/explode")
 }
 
-task explodeDist(type: Sync, dependsOn: ['explodeBin', 'wrapper']) {
+task explodeDist(type: Sync, dependsOn: ['explodeBin', 'javadoc', 'modVersionClass', 'createBuildScript']) {
     with distFiles
     into file("$buildDir/explode")
 }
