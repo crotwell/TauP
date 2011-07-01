@@ -119,6 +119,31 @@ public class TauP_Create {
         this.vMod = vMod;
     }
 
+    public void setMinDeltaP(float minDeltaP) {
+        toolProps.setProperty("taup.create.minDeltaP", ""+minDeltaP);
+    }
+    
+    public void setMaxDeltaP(float maxDeltaP) {
+        toolProps.setProperty("taup.create.maxDeltaP", ""+maxDeltaP);
+    }
+    
+    public void setMaxDepthInterval(float maxDepthInterval) {
+        toolProps.setProperty("taup.create.maxDepthInterval", ""+maxDepthInterval);
+    }
+    
+    public void setMaxRangeInterval(float maxRangeInterval) {
+        toolProps.setProperty("taup.create.maxRangeInterval", ""+maxRangeInterval);
+    }
+    
+    public void setMaxInterpError(float maxInterpError) {
+        toolProps.setProperty("taup.create.maxInterpError", ""+maxInterpError);
+    }
+    
+    public void setAllowInnerCoreS(boolean allowInnerCoreS) {
+        toolProps.setProperty("taup.create.allowInnerCoreS", ""+allowInnerCoreS);
+    }
+    
+    
     public void printUsage() {
         String className = this.getClass().getName();
         className = className.substring(className.lastIndexOf('.') + 1,
