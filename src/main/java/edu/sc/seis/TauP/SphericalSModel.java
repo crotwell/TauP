@@ -26,7 +26,7 @@
 package edu.sc.seis.TauP;
 
 import java.io.Serializable;
-import java.util.Vector;
+import java.util.List;
 
 /**
  * This class provides storage and methods for generating slowness-depth pairs
@@ -69,12 +69,12 @@ public class SphericalSModel extends SlownessModel implements Serializable {
 
     public SphericalSModel(double radiusOfEarth,
                            VelocityModel vMod,
-                           Vector criticalDepthVector,
-                           Vector highSlownessLayerDepthsP,
-                           Vector highSlownessLayerDepthsS,
-                           Vector fluidLayerDepths,
-                           Vector pLayers,
-                           Vector sLayers,
+                           List<CriticalDepth> criticalDepths,
+                           List<DepthRange> highSlownessLayerDepthsP,
+                           List<DepthRange> highSlownessLayerDepthsS,
+                           List<DepthRange> fluidLayerDepths,
+                           List<SlownessLayer> pLayers,
+                           List<SlownessLayer> sLayers,
                            double minDeltaP,
                            double maxDeltaP,
                            double maxDepthInterval,
@@ -84,7 +84,7 @@ public class SphericalSModel extends SlownessModel implements Serializable {
                            double slownessTolerance) {
         super(radiusOfEarth,
               vMod,
-              criticalDepthVector,
+              criticalDepths,
               highSlownessLayerDepthsP,
               highSlownessLayerDepthsS,
               fluidLayerDepths,

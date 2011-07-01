@@ -90,12 +90,12 @@ public class Arrival {
     protected double takeoffAngle;
     
     // get set methods
-    /** @returns the phase used to calculate this arrival. */
+    /** @return the phase used to calculate this arrival. */
     public SeismicPhase getPhase() {
         return phase;
     }
 
-    /** returns travel time in seconds */
+    /** @return travel time in seconds */
     public double getTime() {
         return time;
     }

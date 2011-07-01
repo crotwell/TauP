@@ -149,7 +149,7 @@ public class TauModel implements Serializable {
         return spherical;
     }
 
-    /** @returns the name of the earth model used to construct the tau model. */
+    /** @return the name of the earth model used to construct the tau model. */
     public String getModelName() {
         return sMod.vMod.getModelName();
     }
@@ -162,12 +162,12 @@ public class TauModel implements Serializable {
         return sMod.vMod;
     }
 
-    /** @returns depth for which tau model was constructed. */
+    /** @return depth for which tau model was constructed. */
     public double getSourceDepth() {
         return sourceDepth;
     }
 
-    /** @returns branch number with the source at its top. */
+    /** @return branch number with the source at its top. */
     public int getSourceBranch() {
         return sourceBranch;
     }
@@ -216,38 +216,38 @@ public class TauModel implements Serializable {
         noDisconDepths[noDisconDepths.length - 1] = noDisconDepth;
     }
 
-    /** @returns depth of the moho. */
+    /** @return depth of the moho. */
     public double getMohoDepth() {
         return mohoDepth;
     }
 
-    /** @returns branch number with the moho at its top. */
+    /** @return branch number with the moho at its top. */
     public int getMohoBranch() {
         return mohoBranch;
     }
 
-    /** @returns depth of the cmb. */
+    /** @return depth of the cmb. */
     public double getCmbDepth() {
         return cmbDepth;
     }
 
-    /** @returns branch number with the cmb at its top. */
+    /** @return branch number with the cmb at its top. */
     public int getCmbBranch() {
         return cmbBranch;
     }
 
-    /** @returns depth of the iocb. */
+    /** @return depth of the iocb. */
     public double getIocbDepth() {
         return iocbDepth;
     }
 
-    /** @returns branch number with the iocb at its top. */
+    /** @return branch number with the iocb at its top. */
     public int getIocbBranch() {
         return iocbBranch;
     }
 
     /**
-     * @returns the radius of the Earth in km, usually input from the velocity
+     * @return the radius of the Earth in km, usually input from the velocity
      *          model.
      */
     public double getRadiusOfEarth() {
@@ -255,7 +255,7 @@ public class TauModel implements Serializable {
     }
 
     /**
-     * @returns an array, cloned, of the ray parameters used to construct the
+     * @return an array, cloned, of the ray parameters used to construct the
      *          tau branches. This may only be a subset of the slownesses/ray
      *          parameters saved in the slowness model due to high slowness
      *          zones (low velocity zones).

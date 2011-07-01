@@ -26,8 +26,8 @@
 package edu.sc.seis.TauP;
 
 import java.io.Serializable;
-import java.util.Iterator;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class provides storage and methods for generating slowness-depth pairs.
@@ -61,12 +61,12 @@ public abstract class SlownessModel implements Serializable {
     }
     public SlownessModel(double radiusOfEarth,
                          VelocityModel vMod,
-                         Vector criticalDepthVector,
-                         Vector highSlownessLayerDepthsP,
-                         Vector highSlownessLayerDepthsS,
-                         Vector fluidLayerDepths,
-                         Vector pLayers,
-                         Vector sLayers,
+                         List<CriticalDepth> criticalDepth,
+                         List<DepthRange> highSlownessLayerDepthsP,
+                         List<DepthRange> highSlownessLayerDepthsS,
+                         List<DepthRange> fluidLayerDepths,
+                         List<SlownessLayer> pLayers,
+                         List<SlownessLayer> sLayers,
                          double minDeltaP,
                          double maxDeltaP,
                          double maxDepthInterval,
@@ -76,7 +76,7 @@ public abstract class SlownessModel implements Serializable {
                          double slownessTolerance) {
         this.radiusOfEarth = radiusOfEarth;
         this.vMod = vMod;
-        this.criticalDepthVector = criticalDepthVector;
+        this.criticalDepths = criticalDepth;
         this.highSlownessLayerDepthsP = highSlownessLayerDepthsP;
         this.highSlownessLayerDepthsS = highSlownessLayerDepthsS;
         this.fluidLayerDepths = fluidLayerDepths;
@@ -112,7 +112,7 @@ public abstract class SlownessModel implements Serializable {
      * 
      * @see edu.sc.seis.TauP.CriticalDepth
      */
-    protected Vector criticalDepthVector = new Vector();
+    protected List<CriticalDepth> criticalDepths = new ArrayList<CriticalDepth>();
 
     /**
      * Stores depth ranges that contains a high slowness zone for P. Stored as
@@ -120,7 +120,7 @@ public abstract class SlownessModel implements Serializable {
      * 
      * @see DepthRange
      */
-    protected Vector highSlownessLayerDepthsP = new Vector();
+    protected List<DepthRange> highSlownessLayerDepthsP = new ArrayList<DepthRange>();
 
     /**
      * Stores depth ranges that contains a high slowness zone for S. Stored as
@@ -128,7 +128,7 @@ public abstract class SlownessModel implements Serializable {
      * 
      * @see DepthRange
      */
-    protected Vector highSlownessLayerDepthsS = new Vector();
+    protected List<DepthRange> highSlownessLayerDepthsS = new ArrayList<DepthRange>();
 
     /**
      * Stores depth ranges that are fluid, ie S velocity is zero. Stored as
@@ -136,7 +136,7 @@ public abstract class SlownessModel implements Serializable {
      * 
      * @see DepthRange
      */
-    protected Vector fluidLayerDepths = new Vector();
+    protected List<DepthRange> fluidLayerDepths = new ArrayList<DepthRange>();
 
     /** Initial length of the slowness vectors. */
     protected static int vectorLength = 256;
@@ -147,7 +147,7 @@ public abstract class SlownessModel implements Serializable {
      * 
      * @see edu.sc.seis.TauP.SlownessLayer
      */
-    protected Vector PLayers = new Vector(vectorLength);
+    protected List<SlownessLayer> PLayers = new ArrayList<SlownessLayer>(vectorLength);
 
     /**
      * Stores the final slowness-depth layers for S waves. Stored as
@@ -157,7 +157,7 @@ public abstract class SlownessModel implements Serializable {
      * 
      * @see edu.sc.seis.TauP.SlownessLayer
      */
-    protected Vector SLayers = new Vector(vectorLength);
+    protected List<SlownessLayer> SLayers = new ArrayList<SlownessLayer>(vectorLength);
 
     /**
      * Minimum difference between successive slowness samples. The default is
@@ -296,7 +296,7 @@ public abstract class SlownessModel implements Serializable {
     }
 
     /**
-     * @returns the maximum range interval for surface focus turning waves
+     * @return the maximum range interval for surface focus turning waves
      *          between slowness samples output in degrees.
      */
     public final double getMaxRangeInterval() {
@@ -322,11 +322,11 @@ public abstract class SlownessModel implements Serializable {
     }
 
     public final int getNumCriticalDepths() {
-        return criticalDepthVector.size();
+        return criticalDepths.size();
     }
 
     public final CriticalDepth getCriticalDepth(int i) {
-        return (CriticalDepth)criticalDepthVector.elementAt(i);
+        return criticalDepths.get(i);
     }
 
     public final int getNumLayers(boolean isPWave) {
@@ -338,7 +338,7 @@ public abstract class SlownessModel implements Serializable {
     }
 
     /**
-     * @returns the minimum ray parameter that turns, but is not reflected, at
+     * @return the minimum ray parameter that turns, but is not reflected, at
      *          or above the given depth. Normally this is the slowness sample
      *          at the given depth, but if the depth is within a high slowness
      *          zone, then it may be smaller.
@@ -347,7 +347,7 @@ public abstract class SlownessModel implements Serializable {
             throws NoSuchLayerException, SlownessModelException {
         double minPSoFar = Double.MAX_VALUE;
         SlownessLayer sLayer;
-        Vector layers;
+        List<SlownessLayer> layers;
         if(isPWave) {
             layers = PLayers;
         } else {
@@ -380,7 +380,7 @@ public abstract class SlownessModel implements Serializable {
     }
 
     /**
-     * @returns the minimum ray parameter that turns or is reflected at or above
+     * @return the minimum ray parameter that turns or is reflected at or above
      *          the given depth. Normally this is the slowness sample at the
      *          given depth, but if the depth is within a high slowness zone,
      *          then it may be smaller. Also, at first order discontinuities,
@@ -401,11 +401,11 @@ public abstract class SlownessModel implements Serializable {
     }
 
     /**
-     * @returns the DepthRange objects for all high slowness zones within the
+     * @return the DepthRange objects for all high slowness zones within the
      *          slowness model.
      */
     public DepthRange[] getHighSlowness(boolean isPWave) {
-        Vector highSlownessLayerDepths;
+        List<DepthRange> highSlownessLayerDepths;
         if(isPWave) {
             highSlownessLayerDepths = highSlownessLayerDepthsP;
         } else {
@@ -413,7 +413,7 @@ public abstract class SlownessModel implements Serializable {
         }
         DepthRange[] hsz = new DepthRange[highSlownessLayerDepths.size()];
         for(int i = 0; i < highSlownessLayerDepths.size(); i++) {
-            hsz[i] = (DepthRange)(((DepthRange)highSlownessLayerDepths.elementAt(i)).clone());
+            hsz[i] = (DepthRange)highSlownessLayerDepths.get(i).clone();
         }
         return hsz;
     }
@@ -424,13 +424,13 @@ public abstract class SlownessModel implements Serializable {
      */
     protected SlownessLayer getSlownessLayer(int layerNum, boolean isPWave) {
         if(isPWave) {
-            return (SlownessLayer)PLayers.elementAt(layerNum);
+            return PLayers.get(layerNum);
         } else {
-            return (SlownessLayer)SLayers.elementAt(layerNum);
+            return SLayers.get(layerNum);
         }
     }
 
-    protected Vector getAllSlownessLayers(boolean isPWave) {
+    protected List<SlownessLayer> getAllSlownessLayers(boolean isPWave) {
         if(isPWave) {
             return PLayers;
         } else {
@@ -542,14 +542,14 @@ public abstract class SlownessModel implements Serializable {
                                        DepthRange highSZoneDepth,
                                        boolean isPWave) {
         DepthRange tempRange;
-        Vector highSlownessLayerDepths;
+        List<DepthRange> highSlownessLayerDepths;
         if(isPWave) {
             highSlownessLayerDepths = highSlownessLayerDepthsP;
         } else {
             highSlownessLayerDepths = highSlownessLayerDepthsS;
         }
         for(int i = 0; i < highSlownessLayerDepths.size(); i++) {
-            tempRange = (DepthRange)highSlownessLayerDepths.elementAt(i);
+            tempRange = highSlownessLayerDepths.get(i);
             if(tempRange.topDepth <= depth && depth <= tempRange.botDepth) {
                 highSZoneDepth.topDepth = tempRange.topDepth;
                 highSZoneDepth.botDepth = tempRange.botDepth;
@@ -583,7 +583,7 @@ public abstract class SlownessModel implements Serializable {
     public boolean depthInFluid(double depth, DepthRange fluidZoneDepth) {
         DepthRange tempRange;
         for(int i = 0; i < fluidLayerDepths.size(); i++) {
-            tempRange = (DepthRange)fluidLayerDepths.elementAt(i);
+            tempRange = fluidLayerDepths.get(i);
             if(tempRange.topDepth <= depth && depth < tempRange.botDepth) {
                 fluidZoneDepth.topDepth = tempRange.topDepth;
                 fluidZoneDepth.botDepth = tempRange.botDepth;
@@ -617,8 +617,8 @@ public abstract class SlownessModel implements Serializable {
              * check for very thin layers, just move the layer to hit the
              * boundary
              */
-            Vector allLayers = getAllSlownessLayers(isPWave);
-            Vector outLayers = new Vector(allLayers.size());
+            List<SlownessLayer> allLayers = getAllSlownessLayers(isPWave);
+            List<SlownessLayer> outLayers = new ArrayList<SlownessLayer>(allLayers.size());
             outLayers.addAll(allLayers);
             outLayers.set(layerNum, new SlownessLayer(sLayer.getTopP(),
                                                       depth,
@@ -629,7 +629,8 @@ public abstract class SlownessModel implements Serializable {
                                                           sLayer.getTopDepth(),
                                                           sLayer.getBotP(),
                                                           depth));
-            Vector outPLayers, outSLayers;
+            List<SlownessLayer> outPLayers;
+            List<SlownessLayer> outSLayers;
             if(isPWave) {
                 outPLayers = outLayers;
                 outSLayers = SLayers;
@@ -639,7 +640,7 @@ public abstract class SlownessModel implements Serializable {
             }
             SlownessModel out = new SphericalSModel(radiusOfEarth,
                                                     vMod,
-                                                    criticalDepthVector,
+                                                    criticalDepths,
                                                     highSlownessLayerDepthsP,
                                                     highSlownessLayerDepthsS,
                                                     fluidLayerDepths,
@@ -658,8 +659,8 @@ public abstract class SlownessModel implements Serializable {
              * check for very thin layers, just move the layer to hit the
              * boundary
              */
-            Vector allLayers = getAllSlownessLayers(isPWave);
-            Vector outLayers = new Vector(allLayers.size());
+            List<SlownessLayer> allLayers = getAllSlownessLayers(isPWave);
+            List<SlownessLayer> outLayers = new ArrayList<SlownessLayer>(allLayers.size());
             outLayers.addAll(allLayers);
             outLayers.set(layerNum, new SlownessLayer(sLayer.getTopP(),
                                                       sLayer.getTopDepth(),
@@ -670,7 +671,7 @@ public abstract class SlownessModel implements Serializable {
                                                           depth,
                                                           sLayer.getBotP(),
                                                           sLayer.getBotDepth()));
-            Vector outPLayers, outSLayers;
+            List<SlownessLayer> outPLayers, outSLayers;
             if(isPWave) {
                 outPLayers = outLayers;
                 outSLayers = SLayers;
@@ -680,7 +681,7 @@ public abstract class SlownessModel implements Serializable {
             }
             SlownessModel out = new SphericalSModel(radiusOfEarth,
                                                     vMod,
-                                                    criticalDepthVector,
+                                                    criticalDepths,
                                                     highSlownessLayerDepthsP,
                                                     highSlownessLayerDepthsS,
                                                     fluidLayerDepths,
@@ -706,17 +707,17 @@ public abstract class SlownessModel implements Serializable {
                                          sLayer.getBotP(),
                                          sLayer.getBotDepth());
             
-            Vector allLayers = getAllSlownessLayers(isPWave);
-            Vector outLayers = new Vector(allLayers.size());
+            List<SlownessLayer> allLayers = getAllSlownessLayers(isPWave);
+            List<SlownessLayer> outLayers = new ArrayList<SlownessLayer>(allLayers.size());
             outLayers.addAll(allLayers);
-            outLayers.removeElementAt(layerNum);
-            outLayers.insertElementAt(botLayer, layerNum);
-            outLayers.insertElementAt(topLayer, layerNum);
+            outLayers.remove(layerNum);
+            outLayers.add(layerNum, botLayer);
+            outLayers.add(layerNum, topLayer);
             
-            Vector outPLayers, outSLayers;
+            List<SlownessLayer> outPLayers, outSLayers;
             // fix critical layers since we have added a slowness layer
-            Vector outCriticalDepths = new Vector();
-            outCriticalDepths.addAll(criticalDepthVector);
+            List<CriticalDepth> outCriticalDepths = new ArrayList<CriticalDepth>();
+            outCriticalDepths.addAll(criticalDepths);
             fixCriticalDepths(outCriticalDepths, layerNum, isPWave);
             if(isPWave) {
                 outPLayers = outLayers;
@@ -756,9 +757,9 @@ public abstract class SlownessModel implements Serializable {
         }
     }
 
-    private void fixCriticalDepths(Vector criticalDepths, int layerNum, boolean isPWave) {
+    private void fixCriticalDepths(List<CriticalDepth> criticalDepths, int layerNum, boolean isPWave) {
         for(int i = 0; i < criticalDepths.size(); i++) {
-            CriticalDepth cd = (CriticalDepth)criticalDepths.elementAt(i);
+            CriticalDepth cd = criticalDepths.get(i);
             if(cd.getLayerNum(isPWave) > layerNum) {
                 if(isPWave) {
                     criticalDepths.set(i,
@@ -776,26 +777,26 @@ public abstract class SlownessModel implements Serializable {
             }
         }
     }
-    private Vector fixOtherLayers(Vector otherLayers,
+    private List<SlownessLayer> fixOtherLayers(List<SlownessLayer> otherLayers,
                                   double p,
                                   SlownessLayer changedLayer,
                                   SlownessLayer newTopLayer,
                                   SlownessLayer newBotLayer,
-                                  Vector criticalDepths,
+                                  List<CriticalDepth> criticalDepths,
                                   boolean isPWave) throws SlownessModelException {
-        Vector out = new Vector();
+        List<SlownessLayer> out = new ArrayList<SlownessLayer>();
         out.addAll(otherLayers);
         int otherIndex = otherLayers.indexOf(changedLayer);
         // now make sure we keep the sampling consistant
         // if in a fluid, then both wavetypes will share a single
         // slowness layer object. Otherwise indexOf returns -1
         if(otherIndex != -1) {
-            out.removeElementAt(otherIndex);
-            out.insertElementAt(newBotLayer, otherIndex);
-            out.insertElementAt(newTopLayer, otherIndex);
+            out.remove(otherIndex);
+            out.add(otherIndex, newBotLayer);
+            out.add(otherIndex, newTopLayer);
         }
         for(int otherLayerNum = 0; otherLayerNum < out.size(); otherLayerNum++) {
-            SlownessLayer sLayer = (SlownessLayer)out.elementAt(otherLayerNum);
+            SlownessLayer sLayer = out.get(otherLayerNum);
             if((sLayer.getTopP() - p) * (p - sLayer.getBotP()) > 0.0) {
                 // found a slowness layer with the other wave type that
                 // contains the new slowness sample
@@ -808,9 +809,9 @@ public abstract class SlownessModel implements Serializable {
                                              topLayer.getBotDepth(),
                                              sLayer.getBotP(),
                                              sLayer.getBotDepth());
-                out.removeElementAt(otherLayerNum);
-                out.insertElementAt(botLayer, otherLayerNum);
-                out.insertElementAt(topLayer, otherLayerNum);
+                out.remove(otherLayerNum);
+                out.add(otherLayerNum, botLayer);
+                out.add(otherLayerNum, topLayer);
                 
                 // fix critical layers since we have added a slowness layer
                 fixCriticalDepths(criticalDepths, otherLayerNum, ! isPWave);
@@ -850,10 +851,10 @@ public abstract class SlownessModel implements Serializable {
         VelocityLayer prevVLayer, currVLayer;
         SlownessLayer prevSLayer, currSLayer, prevPLayer, currPLayer;
         // First remove any critical points previously stored
-        highSlownessLayerDepthsP.removeAllElements();
-        highSlownessLayerDepthsS.removeAllElements();
-        criticalDepthVector.removeAllElements();
-        fluidLayerDepths.removeAllElements();
+        highSlownessLayerDepthsP.clear();
+        highSlownessLayerDepthsS.clear();
+        criticalDepths.clear();
+        fluidLayerDepths.clear();
         // Initialize the current velocity layer
         // to be zero thickness layer with values at the surface
         currVLayer = vMod.getVelocityLayer(0);
@@ -873,7 +874,7 @@ public abstract class SlownessModel implements Serializable {
         currSLayer = toSlownessLayer(currVLayer, SWAVE);
         currPLayer = toSlownessLayer(currVLayer, PWAVE);
         // We know that the top is always a critical slowness so add 0
-        criticalDepthVector.addElement(new CriticalDepth(0.0, 0, 0, 0));
+        criticalDepths.add(new CriticalDepth(0.0, 0, 0, 0));
         /* Check to see if we start in a fluid zone. */
         if(!inFluidZone && currVLayer.getTopSVelocity() == 0.0) {
             inFluidZone = true;
@@ -911,7 +912,7 @@ public abstract class SlownessModel implements Serializable {
                 }
                 inFluidZone = false;
                 fluidZone.botDepth = prevVLayer.getBotDepth();
-                fluidLayerDepths.addElement(fluidZone);
+                fluidLayerDepths.add(fluidZone);
             }
 
             currPLayer = toSlownessLayer(currVLayer, PWAVE);
@@ -929,7 +930,7 @@ public abstract class SlownessModel implements Serializable {
             if(prevSLayer.getBotP() != currSLayer.getTopP()
                     || prevPLayer.getBotP() != currPLayer.getTopP()) {
                 // first order discontinuity
-                criticalDepthVector.addElement(new CriticalDepth(currSLayer.getTopDepth(),
+                criticalDepths.add(new CriticalDepth(currSLayer.getTopDepth(),
                                                                  layerNum,
                                                                  -1,
                                                                  -1));
@@ -947,7 +948,7 @@ public abstract class SlownessModel implements Serializable {
                                 + " of a high slowness zone.");
                     }
                     highSlownessZoneS.botDepth = currSLayer.getTopDepth();
-                    highSlownessLayerDepthsS.addElement(highSlownessZoneS);
+                    highSlownessLayerDepthsS.add(highSlownessZoneS);
                     inHighSlownessZoneS = false;
                 }
                 if(inHighSlownessZoneP && (currPLayer.getTopP() < minPSoFar)) {
@@ -958,7 +959,7 @@ public abstract class SlownessModel implements Serializable {
                                 + " of a high slowness zone.");
                     }
                     highSlownessZoneP.botDepth = currSLayer.getTopDepth();
-                    highSlownessLayerDepthsP.addElement(highSlownessZoneP);
+                    highSlownessLayerDepthsP.add(highSlownessZoneP);
                     inHighSlownessZoneP = false;
                 }
                 /*
@@ -1002,7 +1003,7 @@ public abstract class SlownessModel implements Serializable {
                         || (prevPLayer.getTopP() - prevPLayer.getBotP())
                                 * (prevPLayer.getBotP() - currPLayer.getBotP()) < 0.0) {
                     // local slowness extrema
-                    criticalDepthVector.addElement(new CriticalDepth(currSLayer.getTopDepth(),
+                    criticalDepths.add(new CriticalDepth(currSLayer.getTopDepth(),
                                                                      layerNum,
                                                                      -1,
                                                                      -1));
@@ -1049,7 +1050,7 @@ public abstract class SlownessModel implements Serializable {
                                                        layerNum,
                                                        layerNum,
                                                        PWAVE);
-                highSlownessLayerDepthsP.addElement(highSlownessZoneP);
+                highSlownessLayerDepthsP.add(highSlownessZoneP);
                 inHighSlownessZoneP = false;
             }
             if(inHighSlownessZoneS && (currSLayer.getBotP() < minSSoFar)) {
@@ -1064,7 +1065,7 @@ public abstract class SlownessModel implements Serializable {
                                                        layerNum,
                                                        layerNum,
                                                        (currSLayer == currPLayer)?PWAVE:SWAVE);
-                highSlownessLayerDepthsS.addElement(highSlownessZoneS);
+                highSlownessLayerDepthsS.add(highSlownessZoneS);
                 inHighSlownessZoneS = false;
             }
             if(minPSoFar > currPLayer.getBotP()) {
@@ -1090,7 +1091,7 @@ public abstract class SlownessModel implements Serializable {
         }
         // We know that the bottommost depth is always a critical slowness,
         // so we add vMod.getNumLayers()
-        criticalDepthVector.addElement(new CriticalDepth(getRadiusOfEarth(),
+        criticalDepths.add(new CriticalDepth(getRadiusOfEarth(),
                                                          vMod.getNumLayers(),
                                                          -1,
                                                          -1));
@@ -1098,11 +1099,11 @@ public abstract class SlownessModel implements Serializable {
         // zone, might happen in a flat non-whole-earth model
         if(inHighSlownessZoneS) {
             highSlownessZoneS.botDepth = currVLayer.getBotDepth();
-            highSlownessLayerDepthsS.addElement(highSlownessZoneS);
+            highSlownessLayerDepthsS.add(highSlownessZoneS);
         }
         if(inHighSlownessZoneP) {
             highSlownessZoneP.botDepth = currVLayer.getBotDepth();
-            highSlownessLayerDepthsP.addElement(highSlownessZoneP);
+            highSlownessLayerDepthsP.add(highSlownessZoneP);
         }
         /*
          * Check if the bottommost depth is contained within a fluid zone, this
@@ -1112,27 +1113,27 @@ public abstract class SlownessModel implements Serializable {
          */
         if(inFluidZone) {
             fluidZone.botDepth = currVLayer.getBotDepth();
-            fluidLayerDepths.addElement(fluidZone);
+            fluidLayerDepths.add(fluidZone);
         }
-        if(DEBUG && criticalDepthVector.size() != 0) {
+        if(DEBUG && criticalDepths.size() != 0) {
             int botCriticalLayerNum, topCriticalLayerNum;
             String desc = "**** Critical Velocity Layers ************************\n";
-            botCriticalLayerNum = ((CriticalDepth)criticalDepthVector.elementAt(0)).getVelLayerNum() - 1;
-            for(int criticalNum = 1; criticalNum < criticalDepthVector.size(); criticalNum++) {
+            botCriticalLayerNum = criticalDepths.get(0).getVelLayerNum() - 1;
+            for(int criticalNum = 1; criticalNum < criticalDepths.size(); criticalNum++) {
                 topCriticalLayerNum = botCriticalLayerNum + 1;
-                botCriticalLayerNum = ((CriticalDepth)criticalDepthVector.elementAt(criticalNum)).getVelLayerNum() - 1;
+                botCriticalLayerNum = criticalDepths.get(criticalNum).getVelLayerNum() - 1;
                 desc += " " + topCriticalLayerNum + "," + botCriticalLayerNum;
             }
             System.out.println(desc);
         }
         if(DEBUG && highSlownessLayerDepthsP.size() != 0) {
             for(int layerNum = 0; layerNum < highSlownessLayerDepthsP.size(); layerNum++) {
-                System.out.println((DepthRange)highSlownessLayerDepthsP.elementAt(layerNum));
+                System.out.println(highSlownessLayerDepthsP.get(layerNum));
             }
         }
         if(DEBUG && highSlownessLayerDepthsS.size() != 0) {
             for(int layerNum = 0; layerNum < highSlownessLayerDepthsS.size(); layerNum++) {
-                System.out.println((DepthRange)highSlownessLayerDepthsS.elementAt(layerNum));
+                System.out.println(highSlownessLayerDepthsS.get(layerNum));
             }
         }
         if(!validate()) {
@@ -1368,8 +1369,8 @@ public abstract class SlownessModel implements Serializable {
         VelocityLayer origVLayer;
         VelocityLayer currVLayer;
         SlownessLayer currPLayer, currSLayer;
-        PLayers.removeAllElements();
-        SLayers.removeAllElements();
+        PLayers.clear();
+        SLayers.clear();
         // to initialize prevVLayer
         origVLayer = vMod.getVelocityLayer(0);
         origVLayer = new VelocityLayer(0,
@@ -1425,24 +1426,24 @@ public abstract class SlownessModel implements Serializable {
                  * layer corresponding to the discontinuity.
                  */
                 currPLayer = toSlownessLayer(currVLayer, PWAVE);
-                PLayers.addElement(currPLayer);
+                PLayers.add(currPLayer);
                 if((prevVLayer.getBotSVelocity() == 0.0 && origVLayer.getTopSVelocity() == 0.0)
                         || (!allowInnerCoreS && currVLayer.getTopDepth() >= vMod.getIocbDepth())) {
                     currSLayer = currPLayer;
                 } else {
                     currSLayer = toSlownessLayer(currVLayer, SWAVE);
                 }
-                SLayers.addElement(currSLayer);
+                SLayers.add(currSLayer);
             }
             currPLayer = toSlownessLayer(origVLayer, PWAVE);
-            PLayers.addElement(currPLayer);
+            PLayers.add(currPLayer);
             if(depthInFluid(origVLayer.getTopDepth())
                     || (!allowInnerCoreS && origVLayer.getTopDepth() >= vMod.getIocbDepth())) {
                 currSLayer = currPLayer;
             } else {
                 currSLayer = toSlownessLayer(origVLayer, SWAVE);
             }
-            SLayers.addElement(currSLayer);
+            SLayers.add(currSLayer);
         }
         // make sure that all high slowness layers are sampled exactly
         // at their bottom
@@ -1450,7 +1451,7 @@ public abstract class SlownessModel implements Serializable {
         SlownessLayer highSLayer;
         DepthRange highZone;
         for(highZoneNum = 0; highZoneNum < highSlownessLayerDepthsS.size(); highZoneNum++) {
-            highZone = (DepthRange)highSlownessLayerDepthsS.elementAt(highZoneNum);
+            highZone = highSlownessLayerDepthsS.get(highZoneNum);
             SLayerNum = layerNumberAbove(highZone.botDepth, SWAVE);
             highSLayer = getSlownessLayer(SLayerNum, SWAVE);
             while(highSLayer.getTopDepth() == highSLayer.getBotDepth()
@@ -1464,7 +1465,7 @@ public abstract class SlownessModel implements Serializable {
             }
         }
         for(highZoneNum = 0; highZoneNum < highSlownessLayerDepthsP.size(); highZoneNum++) {
-            highZone = (DepthRange)highSlownessLayerDepthsP.elementAt(highZoneNum);
+            highZone = highSlownessLayerDepthsP.get(highZoneNum);
             SLayerNum = layerNumberAbove(highZone.botDepth, PWAVE);
             highSLayer = getSlownessLayer(SLayerNum, PWAVE);
             while(highSLayer.getTopDepth() == highSLayer.getBotDepth()
@@ -1481,20 +1482,20 @@ public abstract class SlownessModel implements Serializable {
         double botP = -1;
         double topP = -1;
         for(int j = 0; j < PLayers.size(); j++) {
-            topP = ((SlownessLayer)PLayers.elementAt(j)).getTopP();
+            topP = PLayers.get(j).getTopP();
             if(topP != botP) {
                 addSlowness(topP, SWAVE);
             }
-            botP = ((SlownessLayer)PLayers.elementAt(j)).getBotP();
+            botP = PLayers.get(j).getBotP();
             addSlowness(botP, SWAVE);
         }
         botP = -1;
         for(int j = 0; j < SLayers.size(); j++) {
-            topP = ((SlownessLayer)SLayers.elementAt(j)).getTopP();
+            topP = SLayers.get(j).getTopP();
             if(topP != botP) {
                 addSlowness(topP, PWAVE);
             }
-            botP = ((SlownessLayer)SLayers.elementAt(j)).getBotP();
+            botP = SLayers.get(j).getBotP();
             addSlowness(botP, PWAVE);
         }
     }
@@ -1508,7 +1509,7 @@ public abstract class SlownessModel implements Serializable {
         double numNewP;
         double deltaP;
         for(int j = 0; j < SLayers.size(); j++) {
-            sLayer = (SlownessLayer)SLayers.elementAt(j);
+            sLayer = SLayers.get(j);
             if(Math.abs(sLayer.getTopP() - sLayer.getBotP()) > maxDeltaP) {
                 numNewP = Math.ceil(Math.abs(sLayer.getTopP()
                         - sLayer.getBotP())
@@ -1521,7 +1522,7 @@ public abstract class SlownessModel implements Serializable {
             }
         }
         for(int j = 0; j < PLayers.size(); j++) {
-            sLayer = (SlownessLayer)PLayers.elementAt(j);
+            sLayer = PLayers.get(j);
             if(Math.abs(sLayer.getTopP() - sLayer.getBotP()) > maxDeltaP) {
                 numNewP = Math.ceil(Math.abs(sLayer.getTopP()
                         - sLayer.getBotP())
@@ -1547,7 +1548,7 @@ public abstract class SlownessModel implements Serializable {
         double p;
         try {
             for(int j = 0; j < SLayers.size(); j++) {
-                sLayer = (SlownessLayer)SLayers.elementAt(j);
+                sLayer = SLayers.get(j);
                 if((sLayer.getBotDepth() - sLayer.getTopDepth()) > maxDepthInterval) {
                     numNewDepths = (int)Math.ceil((sLayer.getBotDepth() - sLayer.getTopDepth())
                             / maxDepthInterval);
@@ -1570,7 +1571,7 @@ public abstract class SlownessModel implements Serializable {
                 }
             }
             for(int j = 0; j < PLayers.size(); j++) {
-                sLayer = (SlownessLayer)PLayers.elementAt(j);
+                sLayer = PLayers.get(j);
                 if((sLayer.getBotDepth() - sLayer.getTopDepth()) > maxDepthInterval) {
                     numNewDepths = (int)Math.ceil((sLayer.getBotDepth() - sLayer.getTopDepth())
                             / maxDepthInterval);
@@ -1739,12 +1740,10 @@ public abstract class SlownessModel implements Serializable {
      * consistant within fluid layers. Note, this makes use of the velocity
      * model, so all interpolation is linear in velocity, not in slowness!
      * 
-     * @returns true if a change was made, false otherwise.
      */
     protected void addSlowness(double p, boolean isPWave)
             throws SlownessModelException, NoSuchLayerException {
-        boolean madeAChange = false;
-        Vector layers, otherLayers;
+        List<SlownessLayer> layers, otherLayers;
         SlownessLayer sLayer, topLayer, botLayer;
         double slope;
         double topVelocity, botVelocity;
@@ -1757,7 +1756,7 @@ public abstract class SlownessModel implements Serializable {
             otherLayers = PLayers;
         }
         for(int i = 0; i < layers.size(); i++) {
-            sLayer = (SlownessLayer)layers.elementAt(i);
+            sLayer = layers.get(i);
             try {
                 if(sLayer.getTopDepth() != sLayer.getBotDepth()) {
                     topVelocity = vMod.evaluateBelow(sLayer.getTopDepth(),
@@ -1788,7 +1787,6 @@ public abstract class SlownessModel implements Serializable {
                 }
             }
             if((sLayer.getTopP() - p) * (p - sLayer.getBotP()) > 0) {
-                madeAChange = true;
                 double botDepth = sLayer.getBotDepth();
                 if(sLayer.getBotDepth() != sLayer.getTopDepth()) {
                     /*
@@ -1804,14 +1802,14 @@ public abstract class SlownessModel implements Serializable {
                 }
                 botLayer = new SlownessLayer(p, botDepth, sLayer.getBotP(), sLayer.getBotDepth() );
                 topLayer = new SlownessLayer(sLayer.getTopP(), sLayer.getTopDepth(), p, botDepth);
-                layers.removeElementAt(i);
-                layers.insertElementAt(botLayer, i);
-                layers.insertElementAt(topLayer, i);
+                layers.remove(i);
+                layers.add(i, botLayer);
+                layers.add(i, topLayer);
                 otherIndex = otherLayers.indexOf(sLayer);
                 if(otherIndex != -1) {
-                    otherLayers.removeElementAt(otherIndex);
-                    otherLayers.insertElementAt(botLayer, otherIndex);
-                    otherLayers.insertElementAt(topLayer, otherIndex);
+                    otherLayers.remove(otherIndex);
+                    otherLayers.add(otherIndex, botLayer);
+                    otherLayers.add(otherIndex, topLayer);
                 }
             }
         }
@@ -1823,8 +1821,8 @@ public abstract class SlownessModel implements Serializable {
     protected void fixCriticalPoints() throws NoSuchLayerException {
         CriticalDepth cd;
         SlownessLayer sLayer;
-        for(int i = 0; i < criticalDepthVector.size(); i++) {
-            cd = (CriticalDepth)criticalDepthVector.elementAt(i);
+        for(int i = 0; i < criticalDepths.size(); i++) {
+            cd = criticalDepths.get(i);
             cd.setPLayerNum(layerNumberBelow(cd.getDepth(), PWAVE));
             sLayer = getSlownessLayer(cd.getPLayerNum(), PWAVE);
             if(cd.getPLayerNum() == PLayers.size() - 1
@@ -1852,15 +1850,15 @@ public abstract class SlownessModel implements Serializable {
      */
     public int layerNumForDepth(double depth, boolean isPWave)  throws NoSuchLayerException {
         SlownessLayer tempLayer;
-        Vector layers;
+        List<SlownessLayer> layers;
         if(isPWave) {
             layers = PLayers;
         } else {
             layers = SLayers;
         }
         // check to make sure depth is within the range available
-        if(depth < ((SlownessLayer)layers.elementAt(0)).getTopDepth()
-                || ((SlownessLayer)layers.elementAt(layers.size() - 1)).getBotDepth() < depth) {
+        if(depth < layers.get(0).getTopDepth()
+                || layers.get(layers.size() - 1).getBotDepth() < depth) {
             throw new NoSuchLayerException(depth);
         }
         int tooSmallNum = 0;
@@ -1906,12 +1904,6 @@ public abstract class SlownessModel implements Serializable {
     public int layerNumberAbove(double depth, boolean isPWave)
             throws NoSuchLayerException {
         int foundLayerNum = layerNumForDepth(depth, isPWave);
-        Vector layers;
-        if(isPWave) {
-            layers = PLayers;
-        } else {
-            layers = SLayers;
-        }
         SlownessLayer tempLayer = getSlownessLayer(foundLayerNum, isPWave);
         while(tempLayer.getTopDepth() == depth && foundLayerNum > 0) {
             foundLayerNum--;
@@ -1934,7 +1926,7 @@ public abstract class SlownessModel implements Serializable {
     public int layerNumberBelow(double depth, boolean isPWave)
             throws NoSuchLayerException {
         int foundLayerNum = layerNumForDepth(depth, isPWave);
-        Vector layers;
+        List<SlownessLayer> layers;
         if(isPWave) {
             layers = PLayers;
         } else {
@@ -1970,7 +1962,7 @@ public abstract class SlownessModel implements Serializable {
                     + maxDepthInterval);
         }
         /* Check for inconsistencies in high slowness zones. */
-        Vector highSlownessLayerDepths = highSlownessLayerDepthsP;
+        List<DepthRange> highSlownessLayerDepths = highSlownessLayerDepthsP;
         boolean isPWave = PWAVE;
         for(int j = 0; j < 2; j++, isPWave = SWAVE) {
             if(isPWave) {
@@ -1980,7 +1972,7 @@ public abstract class SlownessModel implements Serializable {
             }
             prevDepth = -1 * Double.MAX_VALUE;
             for(int i = 0; i < highSlownessLayerDepths.size(); i++) {
-                highSZoneDepth = (DepthRange)highSlownessLayerDepths.elementAt(i);
+                highSZoneDepth = highSlownessLayerDepths.get(i);
                 if(highSZoneDepth.topDepth >= highSZoneDepth.botDepth) {
                     throw new SlownessModelException("High slowness zone has zero or negative thickness. Num "
                             + i
@@ -2007,7 +1999,7 @@ public abstract class SlownessModel implements Serializable {
         /* Check for inconsistencies in fluid zones. */
         prevDepth = -1 * Double.MAX_VALUE;
         for(int i = 0; i < fluidLayerDepths.size(); i++) {
-            fluidZone = (DepthRange)fluidLayerDepths.elementAt(i);
+            fluidZone = fluidLayerDepths.get(i);
             if(fluidZone.topDepth >= fluidZone.botDepth) {
                 throw new SlownessModelException("Fluid zone has zero or negative thickness. Num "
                         + i
@@ -2085,84 +2077,6 @@ public abstract class SlownessModel implements Serializable {
         return isOK;
     }
 
-    /*
-     * 
-     * public void writeToStream(String filename) throws IOException {
-     * DataOutputStream dos = new DataOutputStream( new BufferedOutputStream(
-     * new FileOutputStream(filename))); writeToStream(dos); dos.close(); }
-     * 
-     * public void writeToStream(DataOutputStream dos) throws IOException{
-     * DepthRange dr; SlownessLayer sl;
-     * 
-     * dos.writeInt(getClass().getName().length());
-     * dos.writeBytes(getClass().getName());
-     * 
-     * dos.writeDouble(radiusOfEarth); vMod.writeToStream(dos);
-     * dos.writeInt(criticalVelLayers.size()); for (int i=0;i<criticalVelLayers.size();i++) {
-     * dos.writeInt(((Integer)criticalVelLayers.elementAt(i)).intValue()); }
-     * dos.writeInt(criticalLayers.size()); for (int i=0;i<criticalLayers.size();i++) {
-     * dos.writeInt(((Integer)criticalLayers.elementAt(i)).intValue()); }
-     * dos.writeInt(highSlownessLayerDepths.size()); for (int i=0;i<highSlownessLayerDepths.size();i++) {
-     * dr = (DepthRange)highSlownessLayerDepths.elementAt(i);
-     * dos.writeDouble(dr.topDepth); dos.writeDouble(dr.botDepth);
-     * dos.writeDouble(dr.rayParam); } dos.writeInt(fluidLayerDepths.size());
-     * for (int i=0;i<fluidLayerDepths.size();i++) { dr =
-     * (DepthRange)fluidLayerDepths.elementAt(i); dos.writeDouble(dr.topDepth);
-     * dos.writeDouble(dr.botDepth); dos.writeDouble(dr.rayParam); }
-     * dos.writeInt(slowness.size()); for (int i=0;i<slowness.size();i++) { sl =
-     * (SlownessLayer)slowness.elementAt(i); dos.writeDouble(sl.topDepth);
-     * dos.writeDouble(sl.botDepth); dos.writeDouble(sl.topP);
-     * dos.writeDouble(sl.botP); } dos.writeDouble(maxDeltaP);
-     * dos.writeDouble(minDeltaP); dos.writeDouble(maxDepthInterval);
-     * dos.writeDouble(maxRangeInterval); dos.writeDouble(minRangeInterval);
-     * dos.writeDouble(minRadiusCheck); dos.writeBoolean(allowInnerCoreS);
-     * dos.writeDouble(minInnerCoreDepth); dos.writeDouble(slownessTolerance); }
-     * 
-     * public static SlownessModel readFromStream(String filename) throws
-     * FileNotFoundException, IOException, ClassNotFoundException,
-     * IllegalAccessException, InstantiationException { DataInputStream dis =
-     * new DataInputStream( new BufferedInputStream( new
-     * FileInputStream(filename))); SlownessModel sMod = readFromStream(dis);
-     * dis.close(); return sMod; }
-     * 
-     * public static SlownessModel readFromStream(DataInputStream dis) throws
-     * IOException, InstantiationException, IllegalAccessException,
-     * ClassNotFoundException { int length;
-     * 
-     * 
-     * byte[] classString = new byte[dis.readInt()]; dis.read(classString);
-     * Class sModClass = Class.forName(new String(classString)); SlownessModel
-     * sMod = (SlownessModel)sModClass.newInstance();
-     * 
-     * sMod.vMod = VelocityModel.readFromStream(dis); length = dis.readInt();
-     * sMod.criticalVelLayers = new Vector(length); for (int i=0;i<length;i++) {
-     * sMod.criticalVelLayers.addElement(new Integer(dis.readInt())); } length =
-     * dis.readInt(); sMod.criticalLayers = new Vector(length); for (int i=0;i<length;i++) {
-     * sMod.criticalLayers.addElement(new Integer(dis.readInt())); } length =
-     * dis.readInt(); sMod.highSlownessLayerDepths = new Vector(length);
-     * DepthRange dr; for (int i=0;i<length;i++) { dr = new DepthRange();
-     * dr.topDepth = dis.readDouble(); dr.botDepth = dis.readDouble();
-     * dr.rayParam = dis.readDouble();
-     * sMod.highSlownessLayerDepths.addElement(dr); } length = dis.readInt();
-     * sMod.fluidLayerDepths = new Vector(length); for (int i=0;i<length;i++) {
-     * dr = new DepthRange(); dr.topDepth = dis.readDouble(); dr.botDepth =
-     * dis.readDouble(); dr.rayParam = dis.readDouble();
-     * sMod.fluidLayerDepths.addElement(dr); }
-     * 
-     * length = dis.readInt(); sMod.slowness = new Vector(length); SlownessLayer
-     * sl; for (int i=0;i<length;i++) { sl = new SlownessLayer(); sl.topDepth =
-     * dis.readDouble(); sl.botDepth = dis.readDouble(); sl.topP =
-     * dis.readDouble(); sl.botP = dis.readDouble();
-     * sMod.slowness.addElement(sl); }
-     * 
-     * sMod.maxDeltaP = dis.readDouble(); sMod.minDeltaP = dis.readDouble();
-     * sMod.maxDepthInterval = dis.readDouble(); sMod.maxRangeInterval =
-     * dis.readDouble(); sMod.minRangeInterval = dis.readDouble();
-     * sMod.minRadiusCheck = dis.readDouble(); sMod.allowInnerCoreS =
-     * dis.readBoolean(); sMod.minInnerCoreDepth = dis.readDouble();
-     * sMod.slownessTolerance = dis.readDouble(); return sMod; }
-     */
-
     public String toString() {
         int topCriticalLayerNum;
         int botCriticalLayerNum;
@@ -2179,14 +2093,14 @@ public abstract class SlownessModel implements Serializable {
                 + highSlownessLayerDepthsP.size()
                 + "\n highSlownessLayerDepthsS.size()="
                 + highSlownessLayerDepthsS.size()
-                + "\n criticalDepthVector.size()=" + criticalDepthVector.size()
+                + "\n criticalDepths.size()=" + criticalDepths.size()
                 + "\n";
-        if(criticalDepthVector.size() != 0) {
+        if(criticalDepths.size() != 0) {
             desc += ("**** Critical Depth Layers ************************\n");
-            botCriticalLayerNum = ((CriticalDepth)criticalDepthVector.elementAt(0)).getVelLayerNum() - 1;
-            for(int criticalNum = 1; criticalNum < criticalDepthVector.size(); criticalNum++) {
+            botCriticalLayerNum = criticalDepths.get(0).getVelLayerNum() - 1;
+            for(int criticalNum = 1; criticalNum < criticalDepths.size(); criticalNum++) {
                 topCriticalLayerNum = botCriticalLayerNum + 1;
-                botCriticalLayerNum = ((CriticalDepth)criticalDepthVector.elementAt(criticalNum)).getVelLayerNum() - 1;
+                botCriticalLayerNum = criticalDepths.get(criticalNum).getVelLayerNum() - 1;
                 desc += " " + topCriticalLayerNum + "," + botCriticalLayerNum;
             }
         }
@@ -2194,9 +2108,9 @@ public abstract class SlownessModel implements Serializable {
         if(fluidLayerDepths.size() != 0) {
             desc += "\n**** Fluid Layer Depths ************************\n";
             for(int i = 0; i < fluidLayerDepths.size(); i++) {
-                desc += ((DepthRange)fluidLayerDepths.elementAt(i)).topDepth
+                desc += fluidLayerDepths.get(i).topDepth
                         + ","
-                        + ((DepthRange)fluidLayerDepths.elementAt(i)).botDepth
+                        + fluidLayerDepths.get(i).botDepth
                         + " ";
             }
         }
@@ -2204,9 +2118,9 @@ public abstract class SlownessModel implements Serializable {
         if(highSlownessLayerDepthsP.size() != 0) {
             desc += "\n**** P High Slowness Layer Depths ****************\n";
             for(int i = 0; i < highSlownessLayerDepthsP.size(); i++) {
-                desc += ((DepthRange)highSlownessLayerDepthsP.elementAt(i)).topDepth
+                desc += highSlownessLayerDepthsP.get(i).topDepth
                         + ","
-                        + ((DepthRange)highSlownessLayerDepthsP.elementAt(i)).botDepth
+                        + highSlownessLayerDepthsP.get(i).botDepth
                         + " ";
             }
         }
@@ -2214,17 +2128,15 @@ public abstract class SlownessModel implements Serializable {
         if(highSlownessLayerDepthsS.size() != 0) {
             desc += "\n**** S High Slowness Layer Depths ****************\n";
             for(int i = 0; i < highSlownessLayerDepthsS.size(); i++) {
-                desc += ((DepthRange)highSlownessLayerDepthsS.elementAt(i)).topDepth
+                desc += highSlownessLayerDepthsS.get(i).topDepth
                         + ","
-                        + ((DepthRange)highSlownessLayerDepthsS.elementAt(i)).botDepth
+                        + highSlownessLayerDepthsS.get(i).botDepth
                         + " ";
             }
         }
         desc += "\n";
         desc += "\n**** P Layers ****************\n";
-        Iterator it = PLayers.iterator();
-        while(it.hasNext()) {
-            SlownessLayer l = (SlownessLayer)it.next();
+        for (SlownessLayer l : PLayers) {
             desc+=l.toString()+"\n";
         }
         return desc;

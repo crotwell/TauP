@@ -93,7 +93,7 @@ public class TauP_Curve extends TauP_Time {
     }
 
     /**
-     * @returns reducing velocity in degrees/second. The internal usage is
+     * @return reducing velocity in degrees/second. The internal usage is
      *          radians/second.
      */
     public double getReduceVelDeg() {
@@ -112,7 +112,7 @@ public class TauP_Curve extends TauP_Time {
     }
 
     /**
-     * @returns reducing velocity in kilometers/second. The internal usage is
+     * @return reducing velocity in kilometers/second. The internal usage is
      *          radians/second.
      */
     public double getReduceVelKm() {

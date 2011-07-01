@@ -107,7 +107,7 @@ public class CriticalDepth implements Cloneable, Serializable {
     }
 
     /**
-     * @returns slowness layer for waveType waves with this depth at its top.
+     * @return slowness layer for waveType waves with this depth at its top.
      */
     public int getLayerNum(boolean isPWave) {
         if(isPWave) {

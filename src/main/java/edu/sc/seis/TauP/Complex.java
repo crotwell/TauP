@@ -433,8 +433,7 @@ public class Complex implements java.io.Serializable, Cloneable {
     /**
      * Returns the difference of this Complex object and a double, this-y.
      * 
-     * @param y
-     *            A double value.
+     * @param x   A double value.
      * @return A newly constructed Complex initialized to x-this.
      */
     public Complex minusReverse(double x) {
@@ -608,8 +607,7 @@ public class Complex implements java.io.Serializable, Cloneable {
     /**
      * Returns the product of a double and this Complex, x*this.
      * 
-     * @param y
-     *            A double value.
+     * @param x   A double value.
      * @return A newly constructed Complex initialized to x*this.
      */
     public Complex timesReverse(double x) {

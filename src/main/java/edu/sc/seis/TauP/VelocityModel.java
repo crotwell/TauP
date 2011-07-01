@@ -131,8 +131,6 @@ public class VelocityModel implements Cloneable, Serializable {
     /**
      * expandable array to hold the layers
      * 
-     * @see java.util.Vector
-     * @see edu.sc.seis.TauP.VelocityLayer
      */
     protected List<VelocityLayer> layer;
 
@@ -168,7 +166,7 @@ public class VelocityModel implements Cloneable, Serializable {
         return radiusOfEarth;
     }
 
-    /** @returns the depths of discontinuities within the velocity model */
+    /** @return the depths of discontinuities within the velocity model */
     public double[] getDisconDepths() {
         double[] disconDepths = new double[getNumLayers() + 2];
         int numFound = 0;
@@ -190,7 +188,7 @@ public class VelocityModel implements Cloneable, Serializable {
     }
 
     /**
-     * @returns depth (km) of the moho. It can be input from velocity model
+     * @return depth (km) of the moho. It can be input from velocity model
      *          (*.nd) or should be explicitly set. By default it is 35
      *          kilometers (from Iasp91). For phase naming, the tau model will
      *          choose the closest 1st order discontinuity. Thus for most simple
@@ -207,7 +205,7 @@ public class VelocityModel implements Cloneable, Serializable {
     }
 
     /**
-     * @returns depth (km) of the cmb (core mantle boundary). It can be input
+     * @return depth (km) of the cmb (core mantle boundary). It can be input
      *          from velocity model (*.nd) or should be explicitly set. By
      *          default it is 2889 kilometers (from Iasp91). For phase naming,
      *          the tau model will choose the closest 1st order discontinuity.
@@ -222,7 +220,7 @@ public class VelocityModel implements Cloneable, Serializable {
     }
 
     /**
-     * @returns the depth (km) of the iocb (inner core outer core boundary). It
+     * @return the depth (km) of the iocb (inner core outer core boundary). It
      *          can be input from velocity model (*.nd) or should be explicitly
      *          set. By default it is 5153.9 kilometers (from Iasp91). For phase
      *          naming, the tau model will choose the closest 1st order

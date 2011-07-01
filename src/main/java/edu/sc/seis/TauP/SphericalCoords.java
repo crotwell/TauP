@@ -79,7 +79,7 @@ public class SphericalCoords {
      * Find the rotation pole required to rotate the first lat lon pair to the
      * second. Just does a cross product.
      * 
-     * @returns a 3 element double array with the X, Y and Z components of the
+     * @return a 3 element double array with the X, Y and Z components of the
      *          pole.
      */
     public static double[] rotationPole(double latA,
@@ -108,7 +108,7 @@ public class SphericalCoords {
      * @param pole
      *            is a 3 element double array with X, Y and Z components of the
      *            pole.
-     * @returns [lat, lon] in array.
+     * @return [lat, lon] in array.
      */
     public static double[] rotate(double latA,
                                   double lonA,

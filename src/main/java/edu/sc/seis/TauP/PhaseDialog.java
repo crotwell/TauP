@@ -30,14 +30,7 @@ import javax.swing.SwingUtilities;
  * crotwell@seis.sc.edu or Tom Owens, owens@seis.sc.edu
  * 
  */
-/**
- * 
- * @author
- * @version 1.1.3 Wed Jul 18 15:00:35 GMT 2001
- * 
- * 
- * 
- */
+
 public class PhaseDialog extends javax.swing.JDialog {
 
     /** Initializes the Form */

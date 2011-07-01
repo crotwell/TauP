@@ -105,18 +105,18 @@ public class TauBranch implements Serializable, Cloneable {
 
     // Methods -------------------------------------------------------------
     // Accessor methods
-    /** @returns the minimum (top) depth of this layer. */
+    /** @return the minimum (top) depth of this layer. */
     public double getTopDepth() {
         return topDepth;
     }
 
-    /** @returns the maximum (bottom) depth of this layer. */
+    /** @return the maximum (bottom) depth of this layer. */
     public double getBotDepth() {
         return botDepth;
     }
 
     /**
-     * @returns the maximum ray parameter that can penetrate into this branch.
+     * @return the maximum ray parameter that can penetrate into this branch.
      *          Time, distance, and tau increments are undefined, set to 0.0,
      *          for ray parameters larger than this.
      */
@@ -125,7 +125,7 @@ public class TauBranch implements Serializable, Cloneable {
     }
 
     /**
-     * @returns the minimum ray parameter that is turned, but not reflected, in
+     * @return the minimum ray parameter that is turned, but not reflected, in
      *          this branch.
      */
     public double getMinTurnRayParam() {
@@ -133,7 +133,7 @@ public class TauBranch implements Serializable, Cloneable {
     }
 
     /**
-     * @returns the minimum ray parameter that is turned or reflected in this
+     * @return the minimum ray parameter that is turned or reflected in this
      *          branch.
      */
     public double getMinRayParam() {
@@ -141,7 +141,7 @@ public class TauBranch implements Serializable, Cloneable {
     }
 
     /**
-     * @returns an array, cloned, containing distance (radians) evaluated at the
+     * @return an array, cloned, containing distance (radians) evaluated at the
      *          i_th ray parameter for this branch.
      */
     public double[] getDist() {
@@ -149,7 +149,7 @@ public class TauBranch implements Serializable, Cloneable {
     }
 
     /**
-     * @returns the distance (radians) evaluated at the i_th ray parameter for
+     * @return the distance (radians) evaluated at the i_th ray parameter for
      *          this branch.
      */
     public double getDist(int i) {
@@ -157,7 +157,7 @@ public class TauBranch implements Serializable, Cloneable {
     }
 
     /**
-     * @returns an array, cloned, containing time (seconds) evaluated at the
+     * @return an array, cloned, containing time (seconds) evaluated at the
      *          i_th ray parameter for this branch.
      */
     public double[] getTime() {
@@ -165,7 +165,7 @@ public class TauBranch implements Serializable, Cloneable {
     }
 
     /**
-     * @returns the time (seconds) evaluated at the i_th ray parameter for this
+     * @return the time (seconds) evaluated at the i_th ray parameter for this
      *          branch.
      */
     public double getTime(int i) {
@@ -173,7 +173,7 @@ public class TauBranch implements Serializable, Cloneable {
     }
 
     /**
-     * @returns an array, cloned, containing tau (seconds) evaluated at the i_th
+     * @return an array, cloned, containing tau (seconds) evaluated at the i_th
      *          ray parameter for this branch.
      */
     public double[] getTau() {
@@ -181,7 +181,7 @@ public class TauBranch implements Serializable, Cloneable {
     }
 
     /**
-     * @returns tau (seconds) evaluated at the i_th ray parameter for this
+     * @return tau (seconds) evaluated at the i_th ray parameter for this
      *          branch.
      */
     public double getTau(int i) {

@@ -657,7 +657,7 @@ public class SeismicPhase implements Serializable, Cloneable {
      * Finds the closest discontinuity to the given depth that can have
      * refletions and phase transformations.
      * 
-     * @returns the branch number with the closest top depth.
+     * @return the branch number with the closest top depth.
      */
     public int closestBranchToDepth(TauModel tMod, String depthString) {
         if(depthString.equals("m")) {
