@@ -3,7 +3,7 @@ dependencies {
     compile project(':seisFile') {
         transitive = true
     }
-    compile 'jython:jython:2.5.1'
+    compile 'org.python:jython-standalone:2.5.2'
 }
 
 group = 'edu.sc.seis'
@@ -45,7 +45,7 @@ distFiles = copySpec {
         include('native/**')
         include('src/**')
         include('srl/*.pdf')
-        include('gradleWrapper/**')
+        include('gradle/**')
         include('gradlew.bat')
         include('README')
         include('build/generated-src')
