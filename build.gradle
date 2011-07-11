@@ -33,35 +33,34 @@ distFiles = copySpec {
     }
     from('build/docs') {
         include('javadoc/**')
+        into('doc')
     }
     from('.') {
         include('gpl-3.0.txt')
-        include('Maple/*')
-        include('Notes/History')
-        include('defaultProps')
         include('doc/**')
-        include('exampleProperties')
         include('jacl/**')
         include('native/**')
         include('src/**')
-        include('srl/*.pdf')
-        include('gradle/**')
-        include('gradlew.bat')
         include('README')
-        include('build/generated-src')
         exclude('**/*.svn')
+    }
+    from('srl') {
+        include('taup_srl_with_figs.pdf')
+        into('doc')
+    }
+    from('.') {
+        include('wrapper/**')
+        include('gradlew.bat')
+        into('gradle')
     }
     from('.') {
         fileMode=0755
         include('gradlew')
+        into('gradle')
     }
     from('src/main/resources/edu/sc/seis/TauP') {
         include('StdModels/*.tvel')
         include('StdModels/*.nd')
-    }
-    from(project.rootDir.path+'/..') {
-        include('buildSrc')
-        exclude('buildSrc/build')
     }
     from('build/generated-src/modVersion') {
         include('java/**')
@@ -74,7 +73,7 @@ task explodeBin(type: Sync, dependsOn: ['makeScript', 'genModels']) {
     into file("$buildDir/explode")
 }
 
-task explodeDist(type: Sync, dependsOn: ['explodeBin', 'javadoc', 'modVersionClass', 'createBuildScript']) {
+task explodeDist(type: Sync, dependsOn: ['explodeBin', 'javadoc', 'modVersionClass', 'wrapper', 'createBuildScript']) {
     with distFiles
     into file("$buildDir/explode")
 }
