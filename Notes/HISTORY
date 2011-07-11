@@ -3,6 +3,10 @@
                        Modifications to TauP
 Vers  Date    Description
 -------------------------------------------------------------------------------
+2.0  July 11, 2011
+      1) Code modernization
+      2) Build with Gradle
+      3) Add taup_console for jython integration
 1.1.7-grh1 Feb. 25, 2007 G. Helffrich/U. Bristol
       1) Eliminate use of log4j package; only used one place in code for
 	 diagnostic message.  Diagnostic replaced with output under verbose
