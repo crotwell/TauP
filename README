@@ -1,4 +1,12 @@
 
+
+                           The TauP Toolkit
+
+            Flexible Seismic Travel-Time and Raypath Utilities
+                              Version 2.0
+                      http://www.seis.sc.edu/taup/
+
+
 The manual for the TauP Toolkit can be found in doc/taup.pdf. A copy of the TauP paper published in SRL can be found in doc/SRL_paper/taup_srl_with_figs.pdf.
 
 Scripts for the various tool for both unix (sh) and windows (bat) are in the bin directory.
