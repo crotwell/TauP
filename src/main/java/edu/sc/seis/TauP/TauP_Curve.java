@@ -30,6 +30,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OptionalDataException;
+import java.io.PrintWriter;
 import java.io.StreamCorruptedException;
 import java.io.StreamTokenizer;
 import java.io.Writer;
@@ -158,9 +159,9 @@ public class TauP_Curve extends TauP_Time {
          */
         recalcPhases();
     }
+    
 
-    public void init() throws IOException {
-        super.init();
+    public void printScriptBeginning(PrintWriter out)  throws IOException {
         if(gmtScript) {
             String psFile;
             if(outFile.endsWith(".gmt")) {
@@ -168,11 +169,11 @@ public class TauP_Curve extends TauP_Time {
             } else {
                 psFile = outFile + ".ps";
             }
-            dos.writeBytes("#!/bin/sh\n");
-            dos.writeBytes("#\n# This script will plot curves using GMT. If you want to\n"
+            getWriter().println("#!/bin/sh");
+            getWriter().println("#\n# This script will plot curves using GMT. If you want to\n"
                     + "#use this as a data file for psxy in another script, delete these"
-                    + "\n# first lines, as well as the last line.\n#\n");
-            dos.writeBytes("/bin/rm -f " + psFile + "\n\n");
+                    + "\n# first lines, as well as the last line.\n#");
+            getWriter().println("/bin/rm -f " + psFile + "\n");
         }
     }
 
@@ -217,7 +218,7 @@ public class TauP_Curve extends TauP_Time {
                                                               "0.0"))
                     .doubleValue());
             calculate(degrees);
-            printResult(dos);
+            printResult(getWriter());
         } else {
             StreamTokenizer tokenIn = new StreamTokenizer(new InputStreamReader(System.in));
             tokenIn.parseNumbers();
@@ -233,18 +234,19 @@ public class TauP_Curve extends TauP_Time {
             }
             depthCorrect(tempDepth);
             calculate(degrees);
-            printResult(dos);
+            printResult(getWriter());
         }
     }
 
     public void destroy() throws IOException {
-        if(gmtScript) {
-            dos.writeBytes("END\n");
+        if(gmtScript && writer != null) {
+            getWriter().println("END");
+            getWriter().close();
         }
         super.destroy();
     }
 
-    public void printResult(Writer out) throws IOException {
+    public void printResult(PrintWriter out) throws IOException {
         SeismicPhase phase;
         double[] dist, time, rayParams;
         double arcDistance;
@@ -321,12 +323,12 @@ public class TauP_Curve extends TauP_Time {
             // round max and min time to nearest 100 seconds
             maxTime = Math.ceil(maxTime / 100) * 100;
             minTime = Math.floor(minTime / 100) * 100;
-            out.write("pstext -JX"+getMapWidth()+" -P -R0/180/" + minTime + "/" + maxTime
+            out.println("pstext -JX"+getMapWidth()+" -P -R0/180/" + minTime + "/" + maxTime
                     + " -B20/100/:.'" + title + "': -K > " + psFile
-                    + " <<END\n");
-            out.write(scriptStuff);
-            out.write("END\n\n");
-            out.write("psxy -JX -R -m -O >> " + psFile + " <<END\n");
+                    + " <<END");
+            out.print(scriptStuff);
+            out.println("END\n");
+            out.println("psxy -JX -R -m -O >> " + psFile + " <<END");
         }
         double minDist = 0;
         double maxDist = Math.PI;
@@ -359,20 +361,20 @@ public class TauP_Curve extends TauP_Time {
                     }
                 }
                 if(dist.length > 0) {
-                    out.write("> " + phase.getName() + " for a source depth of "
+                    out.print("> " + phase.getName() + " for a source depth of "
                               + depth + " kilometers in the " + modelName
                               + " model");
                     if(relativePhaseName != "") {
-                        out.write(" relative to "+relativePhaseName);
+                        out.print(" relative to "+relativePhaseName);
                     }
-                    out.write("\n");
+                    out.println();
                 }
                 for(int i = 0; i < dist.length; i++) {
                     writeValue(dist[i], time[i], relPhases, out);
                     if(i < dist.length - 1 && (rayParams[i] == rayParams[i + 1])
                             && rayParams.length > 2) {
                         /* Here we have a shadow zone, so put a break in the curve. */
-                        out.write("> Shadow Zone\n");
+                        out.println("> Shadow Zone");
                         continue;
                     }
                     checkBoundary(0, i, phase, relPhases, out);
@@ -396,7 +398,7 @@ public class TauP_Curve extends TauP_Time {
                                  int distIndex,
                                  SeismicPhase phase,
                                  List<SeismicPhase> relPhase,
-                                 Writer out) throws IOException {
+                                 PrintWriter out) throws IOException {
         double arcDistance = Math.acos(Math.cos(boundaryDistRadian));
         if (distIndex < phase.getDist().length-1 && 
                 (isBetween(Math.acos(Math.cos(phase.getDist()[distIndex])),
@@ -433,13 +435,13 @@ public class TauP_Curve extends TauP_Time {
         return new double[] { timeReduced };
     }
     
-    public void writeValue(double distRadian, double time, List<SeismicPhase> relPhase, Writer out) throws IOException {
+    public void writeValue(double distRadian, double time, List<SeismicPhase> relPhase, PrintWriter out) throws IOException {
         double[] timeReduced = calcTimeValue(distRadian, time, relPhase);
         if (timeReduced.length == 0) {return; }
         double arcDistance = Math.acos(Math.cos(distRadian));
         double distDeg = arcDistance*180/Math.PI;
-        out.write(Outputs.formatDistance(distDeg) + "  "
-                + Outputs.formatTime(timeReduced[0]) + "\n");
+        out.println(Outputs.formatDistance(distDeg) + "  "
+                + Outputs.formatTime(timeReduced[0]));
     }
 
     public static final boolean isBetween(double a, double b, double value) {
@@ -499,7 +501,7 @@ public class TauP_Curve extends TauP_Time {
             String[] noComprendoArgs = tauPCurve.parseCmdLineArgs(args);
             printNoComprendoArgs(noComprendoArgs);
             for(int i = 0; i < args.length; i++) {
-                if(args[i] == "-h") {
+                if("-h".equals(args[i])) {
                     doInteractive = false;
                 }
             }
@@ -515,7 +517,7 @@ public class TauP_Curve extends TauP_Time {
                                                                                       "0.0"))
                         .doubleValue());
                 tauPCurve.calculate(tauPCurve.degrees);
-                tauPCurve.printResult(tauPCurve.dos);
+                tauPCurve.printResult(tauPCurve.getWriter());
             }
             tauPCurve.destroy();
         } catch(TauModelException e) {

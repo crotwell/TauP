@@ -188,7 +188,7 @@ public class TauPDaemon extends Thread {
                         phaseString = tool.getPhaseNameString();
                     }
                     tool.calculate(distance);
-                    tool.printResult(out);
+                    tool.printResult(tool.getWriter());
                 }
             }
         } catch(IOException e) {

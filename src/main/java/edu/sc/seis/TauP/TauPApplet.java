@@ -45,6 +45,7 @@ import java.awt.event.ItemListener;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InvalidClassException;
+import java.io.PrintWriter;
 import java.io.StreamTokenizer;
 import java.io.StringWriter;
 import java.lang.reflect.Constructor;
@@ -97,9 +98,7 @@ public class TauPApplet extends Applet implements ActionListener, ItemListener {
     String modelName, phases = "";
 
     double distance, depth;
-
-    StringWriter result = new StringWriter();
-
+    
     protected void resetInputPanel() {
         String modelName = getModel.getSelectedItem();
         inputPanel.removeAll();
@@ -396,8 +395,8 @@ public class TauPApplet extends Applet implements ActionListener, ItemListener {
                 tool.calculate(distance);
                 if(textOrPlot.getLabel().equals("Plot")) {
                     // print it out
-                    result = new StringWriter();
-                    tool.printResult(result);
+                    StringWriter result = new StringWriter();
+                    tool.printResult(new PrintWriter(result));
                     textArea.append(result.toString());
                     textArea.append("Done!\n");
                 } else {
@@ -408,8 +407,8 @@ public class TauPApplet extends Applet implements ActionListener, ItemListener {
                         outputCards.show(outputPanel, "Text");
                         textOrPlot.setLabel("Plot");
                         validate();
-                        result = new StringWriter();
-                        tool.printResult(result);
+                        StringWriter result = new StringWriter();
+                        tool.printResult(new PrintWriter(result));
                         textArea.append(result.toString());
                         textArea.append("Done!\n");
                     } else if(tool.getClass()

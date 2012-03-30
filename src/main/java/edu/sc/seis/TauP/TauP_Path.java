@@ -19,6 +19,7 @@ package edu.sc.seis.TauP;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OptionalDataException;
+import java.io.PrintWriter;
 import java.io.StreamCorruptedException;
 import java.io.Writer;
 import java.util.List;
@@ -31,11 +32,15 @@ import java.util.List;
  * @author H. Philip Crotwell
  */
 public class TauP_Path extends TauP_Pierce {
+    
+    protected String mapWidthUnit = "i";
 
 	protected float mapWidth = (float) 6.0;
 
 	protected boolean gmtScript = false;
-
+	
+	protected String psFile;
+	
 	protected static double maxPathInc = 1.0;
 
 	protected TauP_Path() {
@@ -90,7 +95,7 @@ public class TauP_Path extends TauP_Pierce {
 		return mapWidth;
 	}
 
-	public boolean getGmtScript() {
+	public boolean isGmtScript() {
 		return gmtScript;
 	}
 
@@ -126,6 +131,9 @@ public class TauP_Path extends TauP_Pierce {
 	}
 
 	public void printResult(Writer out) throws IOException {
+        if (gmtScript) {
+            out.write("psxy -P -R -K -O -JP -m -A >> " + psFile + " <<END\n");
+        }
 		double radiusOfEarth = tModDepth.getRadiusOfEarth();
 		boolean longWayRound;
 		for (int i = 0; i < arrivals.size(); i++) {
@@ -190,6 +198,11 @@ public class TauP_Path extends TauP_Pierce {
 				prevDepth = currArrival.path[j].depth;
 			}
 		}
+        if (gmtScript) {
+            out.write("END\n");
+            out.write("psxy -P -R -O -JP -m -A >> " + psFile + " <<END\n");
+            out.write("END\n");
+        }
 	}
 
 	protected void printLatLon(Writer out, double calcDist) throws IOException {
@@ -222,44 +235,41 @@ public class TauP_Path extends TauP_Pierce {
 					+ outForms.formatLatLon(lon));
 		}
 	}
-
-	public void init() throws IOException {
-		super.init();
-		if (gmtScript) {
-			String psFile;
-			if (outFile == null) {
-				outFile = "taup_path.gmt";
-				psFile = "taup_path.ps";
-			} else if (outFile.endsWith(".gmt")) {
-				psFile = outFile.substring(0, outFile.length() - 4) + ".ps";
-			} else {
-				psFile = outFile + ".ps";
-			}
-			dos.writeBytes("#!/bin/sh\n");
-			dos.writeBytes("#\n# This script will plot ray paths using GMT. If you want to\n"
-							+ "#use this as a data file for psxy in another script, delete these"
-							+ "\n# first lines, to the last psxy, as well as the last line.\n#\n");
-			dos.writeBytes("/bin/rm -f " + psFile + "\n\n");
-			dos.writeBytes("# draw surface and label distances.\n"
-					+ "psbasemap -K -P -R0/360/0/"+getTauModel().getRadiusOfEarth()+" -JP" + mapWidth
-					+ " -B30p/500N > " + psFile + "\n\n");
-			dos.writeBytes("# draw circles for branches, note these are scaled for a \n"
-							+ "# map using -JP" + mapWidth + "\n"
-							+ "psxy -K -O -P -R -JP -Sc -A >> " + psFile
-							+ " <<ENDLAYERS\n");
-			// whole earth radius (scales to mapWidth)
-			dos.writeBytes("0.0 0.0 " + (float) (mapWidth) + "\n");
-			// other boundaries
-			double[] branchDepths = tMod.getBranchDepths();
-			for (int i = 0; i < branchDepths.length; i++) {
-				dos.writeBytes("0.0 0.0 "
-						+ (float) ((getTauModel().getRadiusOfEarth() - branchDepths[i])
-								* mapWidth / getTauModel().getRadiusOfEarth()) + "\n");
-			}
-			dos.writeBytes("ENDLAYERS\n\n");
-			dos.writeBytes("# draw paths\n");
-			dos.writeBytes("psxy -P -R -O -JP -m -A >> " + psFile + " <<END\n");
-		}
+	
+	public void printScriptBeginning(PrintWriter out)  throws IOException {
+        if ( ! gmtScript) { return; }
+        
+        if (outFile == null) {
+            outFile = "taup_path.gmt";
+            psFile = "taup_path.ps";
+        } else if (outFile.endsWith(".gmt")) {
+            psFile = outFile.substring(0, outFile.length() - 4) + ".ps";
+        } else {
+            psFile = outFile + ".ps";
+        }
+	    out.println("#!/bin/sh");
+	    out.print("#\n# This script will plot ray paths using GMT. If you want to\n"
+	            + "#use this as a data file for psxy in another script, delete these"
+	            + "\n# first lines, to the last psxy, as well as the last line.\n#");
+	    out.print("/bin/rm -f " + psFile + "\n");
+	    out.print("# draw surface and label distances.\n"
+	            + "psbasemap -K -P -R0/360/0/"+getTauModel().getRadiusOfEarth()+" -JP" + mapWidth + mapWidthUnit
+	            + " -B30p/500N > " + psFile + "\n");
+	    out.print("# draw circles for branches, note these are scaled for a \n"
+	            + "# map using -JP" + mapWidth + mapWidthUnit + "\n"
+	            + "psxy -K -O -P -R -JP -Sc -A >> " + psFile
+	            + " <<ENDLAYERS");
+	    // whole earth radius (scales to mapWidth)
+	    out.println("0.0 0.0 " + (float) (mapWidth) + mapWidthUnit);
+	    // other boundaries
+	    double[] branchDepths = tMod.getBranchDepths();
+	    for (int i = 0; i < branchDepths.length; i++) {
+	        out.println("0.0 0.0 "
+	                + (float) ((getTauModel().getRadiusOfEarth() - branchDepths[i])
+	                        * mapWidth / getTauModel().getRadiusOfEarth()) + mapWidthUnit);
+	    }
+	    out.println("ENDLAYERS\n");
+	    out.println("# draw paths");
 	}
 
 	public void printUsage() {
@@ -302,9 +312,6 @@ public class TauP_Path extends TauP_Pierce {
 	}
 
 	public void destroy() throws IOException {
-		if (gmtScript) {
-			dos.writeBytes("END\n");
-		}
 		super.destroy();
 	}
 

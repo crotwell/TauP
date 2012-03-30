@@ -30,6 +30,7 @@ import java.io.DataOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.StreamTokenizer;
 import java.util.List;
 
@@ -393,10 +394,10 @@ public class TauP_Table extends TauP_Time {
     public void start() throws TauModelException, TauPException, IOException {
         switch(outputType){
             case TauP_Table.GENERIC:
-                genericTable(dos);
+                genericTable(getWriter());
                 break;
             case TauP_Table.LOCSAT:
-                locsatTable(dos);
+                locsatTable(getWriter());
                 break;
             default:
                 throw new TauPException("TauP_Table: undefined state for output type: "
@@ -404,7 +405,7 @@ public class TauP_Table extends TauP_Time {
         }
     }
 
-    protected void genericTable(DataOutputStream dos) throws TauModelException,
+    protected void genericTable(PrintWriter out) throws TauModelException,
             IOException {
         for(int depthNum = 0; depthNum < depths.length; depthNum++) {
             depthCorrect(depths[depthNum]);
@@ -413,26 +414,26 @@ public class TauP_Table extends TauP_Time {
                 List<Arrival> arrivals = getArrivals();
                 for (Arrival currArrival : arrivals) {
                     double moduloDist = currArrival.getModuloDistDeg();
-                    dos.writeBytes(modelName + " "
+                    out.print(modelName + " "
                                    + outForms.formatDistance(moduloDist) + " "
                                    + outForms.formatDepth(depth) + " ");
-                    dos.writeBytes(currArrival.getName());
-                    dos.writeBytes("  "
+                    out.print(currArrival.getName());
+                    out.print("  "
                                    + outForms.formatTime(currArrival.getTime())
                                    + "  ");
-                    dos.writeBytes(outForms.formatRayParam(Math.PI / 180.0
+                    out.print(outForms.formatRayParam(Math.PI / 180.0
                                                            * currArrival.getRayParam())
                                                            + "   ");
-                    dos.writeBytes(outForms.formatDistance(currArrival.getDistDeg()));
-                    dos.writeBytes("  " + currArrival.getPuristName()
-                                   + "\n");
+                    out.print(outForms.formatDistance(currArrival.getDistDeg()));
+                    out.print("  " + currArrival.getPuristName());
+                    out.println();
                 }
             }
         }
-        dos.close();
+        out.flush();
     }
 
-    protected void locsatTable(DataOutputStream dos) throws TauModelException,
+    protected void locsatTable(PrintWriter out) throws TauModelException,
             IOException {
         Format float15_4 = new Format("%15.4f");
         Format float7_2 = new Format("%7.2f");
@@ -440,35 +441,34 @@ public class TauP_Table extends TauP_Time {
         double maxDiff = Double.valueOf(toolProps.getProperty("taup.table.locsat.maxdiff",
                                                               "105.0"))
                 .doubleValue();
-        dos.writeBytes("n # " + getPhaseNameString()
+        out.print("n # " + getPhaseNameString()
                 + " travel-time tables for " + modelName
                 + " structure. (From TauP_Table)\n");
-        dos.writeBytes(decimal7.form(depths.length)
+        out.print(decimal7.form(depths.length)
                 + "# number of depth samples\n");
         for(int depthNum = 0; depthNum < depths.length; depthNum++) {
-            dos.writeBytes(float7_2.form(depths[depthNum]));
+            out.print(float7_2.form(depths[depthNum]));
             if(depthNum % 10 == 9) {
-                dos.writeBytes("\n");
+                out.println();
             }
         }
         if((depths.length - 1) % 10 != 9) {
-            dos.writeBytes("\n");
+            out.println();
         }
-        dos.writeBytes(decimal7.form(distances.length)
-                + "# number of distances\n");
+        out.println(decimal7.form(distances.length)
+                + "# number of distances");
         for(int distNum = 0; distNum < distances.length; distNum++) {
-            dos.writeBytes(float7_2.form(distances[distNum]));
+            out.print(float7_2.form(distances[distNum]));
             if(distNum % 10 == 9) {
-                dos.writeBytes("\n");
+                out.println();
             }
         }
         if((distances.length - 1) % 10 != 9) {
-            dos.writeBytes("\n");
+            out.println();
         }
         for(int depthNum = 0; depthNum < depths.length; depthNum++) {
             depthCorrect(depths[depthNum]);
-            dos.writeBytes("#  Travel time for z =    " + depths[depthNum]
-                    + "\n");
+            out.println("#  Travel time for z =    " + depths[depthNum]);
             for(int distNum = 0; distNum < distances.length; distNum++) {
                 calculate(distances[distNum]);
                 List<Arrival>arrivals = getArrivals();
@@ -482,10 +482,10 @@ public class TauP_Table extends TauP_Time {
                         break;
                     }
                 }
-                dos.writeBytes(outString);
+                out.print(outString);
             }
         }
-        dos.close();
+        out.flush();
     }
 
     public void printUsage() {

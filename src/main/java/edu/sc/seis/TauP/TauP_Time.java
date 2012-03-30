@@ -22,12 +22,14 @@ import java.io.DataOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.InvalidClassException;
 import java.io.OptionalDataException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.io.StreamCorruptedException;
 import java.io.StreamTokenizer;
 import java.io.Writer;
@@ -108,7 +110,7 @@ public class TauP_Time {
 
     protected String outFile = "";
 
-    protected DataOutputStream dos;
+    protected PrintWriter writer;
 
     protected Properties toolProps;
 
@@ -732,13 +734,7 @@ public class TauP_Time {
         phases = newPhases;
     }
 
-    public void printResult(OutputStream dos) throws IOException {
-        Writer s = new BufferedWriter(new OutputStreamWriter(dos));
-        printResult(s);
-        s.flush();
-    }
-
-    public void printResult(Writer out) throws IOException {
+    public void printResult(PrintWriter out) throws IOException {
         Arrival currArrival;
         int maxNameLength = 5;
         int maxPuristNameLength = 5;
@@ -755,7 +751,7 @@ public class TauP_Time {
         Format phaseFormat = new Format("%-" + maxNameLength + "s");
         Format phasePuristFormat = new Format("%-" + maxPuristNameLength + "s");
         if(!(onlyPrintRayP || onlyPrintTime)) {
-            out.write("\nModel: " + modelName + "\n");
+            out.println("\nModel: " + modelName);
             String lineOne = "Distance   Depth   " + phaseFormat.form("Phase")
                     + "   Travel    Ray Param  Takeoff  Incident  Purist    Purist";
             String lineTwo = "  (deg)     (km)   " + phaseFormat.form("Name ")
@@ -767,51 +763,51 @@ public class TauP_Time {
                 }
                 lineTwo += "  "+phaseFormat.form(relativePhaseName);
             }
-            out.write(lineOne+ "\n");
-            out.write(lineTwo+ "\n");
+            out.println(lineOne);
+            out.println(lineTwo);
             for(int i = 0; i < lineOne.length(); i++) {
                 out.write("-");
             }
             out.write("\n");
             for(int j = 0; j < arrivals.size(); j++) {
                 currArrival = (Arrival)arrivals.get(j);
-                out.write(Outputs.formatDistance(currArrival.getModuloDistDeg())
+                out.print(Outputs.formatDistance(currArrival.getModuloDistDeg())
                         + Outputs.formatDepth(depth) + "   ");
-                out.write(phaseFormat.form(currArrival.getName()));
-                out.write("  "
+                out.print(phaseFormat.form(currArrival.getName()));
+                out.print("  "
                         + Outputs.formatTime(currArrival.getTime())
                         + "  "
                         + Outputs.formatRayParam(Math.PI / 180.0
                                 * currArrival.getRayParam()) + "  ");
-                out.write(Outputs.formatDistance(currArrival.getTakeoffAngle())+" ");
-                out.write(Outputs.formatDistance(currArrival.getIncidentAngle())+" ");
-                out.write(outForms.formatDistance(currArrival.getDistDeg()));
+                out.print(Outputs.formatDistance(currArrival.getTakeoffAngle())+" ");
+                out.print(Outputs.formatDistance(currArrival.getIncidentAngle())+" ");
+                out.print(outForms.formatDistance(currArrival.getDistDeg()));
                 if(currArrival.getName().equals(currArrival.getPuristName())) {
-                    out.write("   = ");
+                    out.print("   = ");
                 } else {
-                    out.write("   * ");
+                    out.print("   * ");
                 }
-                out.write(phasePuristFormat.form(currArrival.getPuristName()));
+                out.print(phasePuristFormat.form(currArrival.getPuristName()));
                 if (relativePhaseName != "") {
-                    out.write(outForms.formatTime(currArrival.getTime() - relativeArrival.getTime()));
+                    out.print(outForms.formatTime(currArrival.getTime() - relativeArrival.getTime()));
                 }
-                out.write("\n");
+                out.println();
             }
         } else if(onlyPrintTime) {
             for(int j = 0; j < arrivals.size(); j++) {
                 currArrival = (Arrival)arrivals.get(j);
-                out.write(String.valueOf((float)(currArrival.getTime())) + " ");
+                out.print(String.valueOf((float)(currArrival.getTime())) + " ");
             }
-            out.write("\n");
+            out.println();
         } else if(onlyPrintRayP) {
             for(int j = 0; j < arrivals.size(); j++) {
                 currArrival = (Arrival)arrivals.get(j);
                 out.write(String.valueOf((float)(Math.PI / 180.0 * currArrival.getRayParam()))
                         + " ");
             }
-            out.write("\n");
+            out.println();
         }
-        out.write("\n");
+        out.println();
     }
 
     /**
@@ -863,12 +859,26 @@ public class TauP_Time {
                 throw new RuntimeException(ee);
             }
         }
-        if(outFile != null && outFile.length() != 0) {
-            dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(outFile)));
-        } else {
-            dos = new DataOutputStream(System.out);
-        }
     }
+    
+    public PrintWriter getWriter() throws IOException {
+        if (writer == null) {
+            if(outFile != null && outFile.length() != 0) {
+                writer = new PrintWriter(new BufferedWriter(new FileWriter(outFile)));
+            } else {
+                writer = new PrintWriter(new OutputStreamWriter(System.out));
+            }
+            printScriptBeginning(writer);
+        }
+        return writer;
+    }
+    
+    /** a noop that allows overriding classes to print things
+     * before results are calculated. For example to set up GMT commands before drawing paths.
+     * @param out
+     * @throws IOException
+     */
+    public void printScriptBeginning(PrintWriter out)  throws IOException {}
 
     public void printHelp() {
         Alert.info("Enter:\nh for new depth\nr to recalculate\n"
@@ -910,7 +920,7 @@ public class TauP_Time {
             }
             depthCorrect(depth);
             calculate(degrees);
-            printResult(dos);
+            printResult(getWriter());
         } else {
             /* interactive mode... */
             long prevTime = 0;
@@ -963,7 +973,7 @@ public class TauP_Time {
                                 Alert.info("degrees=" + degrees);
                             }
                             calculate(degrees);
-                            printResult(dos);
+                            printResult(getWriter());
                         } else {
                             if(tokenIn.ttype == StreamTokenizer.TT_EOF
                                     || (tokenIn.ttype == StreamTokenizer.TT_WORD && (tokenIn.sval.equalsIgnoreCase("q")
@@ -1009,7 +1019,7 @@ public class TauP_Time {
                         // recalulate
                         if(degrees != Double.MAX_VALUE) {
                             calculate(degrees);
-                            printResult(dos);
+                            printResult(getWriter());
                         }
                         readMode = 'd';
                         break;
@@ -1081,7 +1091,7 @@ public class TauP_Time {
                             readMode = 'd';
                         } else {
                             calculate(degrees);
-                            printResult(dos);
+                            printResult(getWriter());
                         }
                         readMode = 'd';
                         break;
@@ -1110,7 +1120,7 @@ public class TauP_Time {
                             readMode = 'd';
                         } else {
                             calculate(degrees);
-                            printResult(dos);
+                            printResult(getWriter());
                         }
                         readMode = 'd';
                         break;
@@ -1150,7 +1160,7 @@ public class TauP_Time {
                                                                   eventLat,
                                                                   eventLon);
                             calculate(degrees);
-                            printResult(dos);
+                            printResult(getWriter());
                         }
                         readMode = 'd';
                         break;
@@ -1192,7 +1202,7 @@ public class TauP_Time {
                                                                   eventLat,
                                                                   eventLon);
                             calculate(degrees);
-                            printResult(dos);
+                            printResult(getWriter());
                         }
                         readMode = 'd';
                         break;
@@ -1249,8 +1259,9 @@ public class TauP_Time {
     }
 
     public void destroy() throws IOException {
-        if(dos != null) {
-            dos.close();
+        if(writer != null) {
+            writer.close();
+            writer = null;
         }
     }
 
