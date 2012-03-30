@@ -236,10 +236,18 @@ public class SeismicPhase implements Serializable, Cloneable {
         return tMod;
     }
 
+    public double getMinDistanceDeg() {
+        return getMinDistance() * 180.0 / Math.PI;
+    }
+    
     public double getMinDistance() {
         return minDistance;
     }
 
+    public double getMaxDistanceDeg() {
+        return getMaxDistance() * 180.0 / Math.PI;
+    }
+    
     public double getMaxDistance() {
         return maxDistance;
     }
