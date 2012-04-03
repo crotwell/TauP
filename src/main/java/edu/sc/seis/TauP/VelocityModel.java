@@ -889,6 +889,9 @@ public class VelocityModel implements Cloneable, Serializable {
         topPVel = tokenIn.nval;
         tokenIn.nextToken();
         topSVel = tokenIn.nval;
+        if (topSVel > topPVel) {
+            throw new VelocityModelException("S velocity, "+topSVel+" at depth "+topDepth+" is greater than the P velocity, "+topPVel);
+        }
         tokenIn.nextToken();
         if(tokenIn.ttype != StreamTokenizer.TT_EOL) {
             // density is not used and so is optional
@@ -912,6 +915,9 @@ public class VelocityModel implements Cloneable, Serializable {
             botPVel = tokenIn.nval;
             tokenIn.nextToken();
             botSVel = tokenIn.nval;
+            if (botSVel > botPVel) {
+                throw new VelocityModelException("S velocity, "+botSVel+" at depth "+botDepth+" is greater than the P velocity, "+botPVel);
+            }
             tokenIn.nextToken();
             if(tokenIn.ttype != StreamTokenizer.TT_EOL) {
                 // density is not used and is optional
@@ -1027,6 +1033,9 @@ public class VelocityModel implements Cloneable, Serializable {
         topPVel = tokenIn.nval;
         tokenIn.nextToken();
         topSVel = tokenIn.nval;
+        if (topSVel > topPVel) {
+            throw new VelocityModelException("S velocity, "+topSVel+" at depth "+topDepth+" is greater than the P velocity, "+topPVel);
+        }
         tokenIn.nextToken();
         if(tokenIn.ttype != StreamTokenizer.TT_EOL) {
             // density is not used and so is optional
@@ -1077,6 +1086,9 @@ public class VelocityModel implements Cloneable, Serializable {
             botPVel = tokenIn.nval;
             tokenIn.nextToken();
             botSVel = tokenIn.nval;
+            if (botSVel > botPVel) {
+                throw new VelocityModelException("S velocity, "+botSVel+" at depth "+botDepth+" is greater than the P velocity, "+botPVel);
+            }
             tokenIn.nextToken();
             if(tokenIn.ttype != StreamTokenizer.TT_EOL) {
                 // density is not used and so is optional
