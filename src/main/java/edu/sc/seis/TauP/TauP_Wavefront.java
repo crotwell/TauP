@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OptionalDataException;
+import java.io.PrintWriter;
 import java.io.StreamCorruptedException;
 import java.io.Writer;
 import java.util.ArrayList;
@@ -35,6 +36,17 @@ public class TauP_Wavefront extends TauP_Path {
         System.out.println("--timestep  num  -- steps in time (seconds) for output.");
         System.out.println("--phasecolor     -- steps in time (seconds) for output.");
         printStdUsageTail();
+    }
+    
+    @Override
+    public void printScriptBeginning(PrintWriter out)  throws IOException {
+        if ( ! gmtScript) { return; }
+        
+        if (outFile == null) {
+            outFile = "taup_wavefront.gmt";
+            psFile = "taup_wavefront.ps";
+        }
+        super.printScriptBeginning(out);
     }
     
     @Override
@@ -199,7 +211,7 @@ public class TauP_Wavefront extends TauP_Path {
             String[] noComprendoArgs = tauP_isochron.parseCmdLineArgs(args);
             printNoComprendoArgs(noComprendoArgs);
             for (int i = 0; i < args.length; i++) {
-                if ("-h".equals(args[i])) {
+                if (dashEquals("h", args[i])) {
                     doInteractive = false;
                 }
             }
