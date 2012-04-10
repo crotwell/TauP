@@ -34,7 +34,6 @@ public class TauP_Wavefront extends TauP_Path {
         printStdUsage();
         System.out.println("--rays  num      -- number of raypaths/distances to sample.");
         System.out.println("--timestep  num  -- steps in time (seconds) for output.");
-        System.out.println("--phasecolor     -- steps in time (seconds) for output.");
         printStdUsageTail();
     }
     
