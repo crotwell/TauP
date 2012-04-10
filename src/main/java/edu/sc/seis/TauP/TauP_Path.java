@@ -274,8 +274,8 @@ public class TauP_Path extends TauP_Pierce {
 
 	public void printUsage() {
 		printStdUsage();
-        System.out.println("-gmt             -- outputs path as a complete GMT script.");
-        System.out.println("-mapwidth        -- sets map width for GMT script.");
+        System.out.println("--gmt             -- outputs path as a complete GMT script.");
+        System.out.println("--mapwidth        -- sets map width for GMT script.");
 		printStdUsageTail();
 	}
 
@@ -286,12 +286,12 @@ public class TauP_Path extends TauP_Pierce {
 		leftOverArgs = super.parseCmdLineArgs(args);
 		String[] noComprendoArgs = new String[leftOverArgs.length];
 		while (i < leftOverArgs.length) {
-			if (leftOverArgs[i].equalsIgnoreCase("-gmt")) {
+			if (dashEquals("gmt", leftOverArgs[i])) {
 				gmtScript = true;
-            } else if(leftOverArgs[i].equalsIgnoreCase("-mapwidth") && i < leftOverArgs.length - 1) {
+            } else if((dashEquals("mapwidth", leftOverArgs[i])) && i < leftOverArgs.length - 1) {
                 setMapWidth(Float.parseFloat(leftOverArgs[i + 1]));
                 i++;
-			} else if (leftOverArgs[i].equals("-help")) {
+			} else if (dashEquals("help", leftOverArgs[i])) {
 				noComprendoArgs[numNoComprendoArgs++] = leftOverArgs[i];
 			} else {
 				noComprendoArgs[numNoComprendoArgs++] = leftOverArgs[i];

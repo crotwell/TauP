@@ -507,6 +507,10 @@ public class TauP_Time {
         }
         return degreesFound;
     }
+    
+    public static boolean dashEquals(String argName, String arg) {
+        return arg.equalsIgnoreCase("-"+argName) || arg.equalsIgnoreCase("--"+argName);
+    }
 
     /*
      * parses the standard command line args for the taup package. Other tools
@@ -519,55 +523,54 @@ public class TauP_Time {
         boolean cmdLineArgPhase = false;
         boolean cmdLineArgPhaseFile = false;
         while(i < args.length) {
-            if(args[i].equalsIgnoreCase("--help") || args[i].equalsIgnoreCase("-help")) {
+            if(dashEquals("help", args[i])) {
                 printUsage();
                 noComprendoArgs[numNoComprendoArgs++] = args[i];
-            } else if(args[i].equalsIgnoreCase("--version") || args[i].equalsIgnoreCase("-version")) {
+            } else if(dashEquals("version", args[i])) {
                 Alert.info(BuildVersion.getDetailedVersion());
                 noComprendoArgs[numNoComprendoArgs++] = args[i];
-            } else if(args[i].equalsIgnoreCase("--verbose") || args[i].equalsIgnoreCase("-verbose")) {
+            } else if(dashEquals("verbose", args[i])) {
                 verbose = true;
-            } else if(args[i].equalsIgnoreCase("--expert") || args[i].equalsIgnoreCase("-expert")) {
+            } else if(dashEquals("expert", args[i])) {
                 expert = true;
-            } else if(args[i].equalsIgnoreCase("--debug") || args[i].equalsIgnoreCase("-debug")) {
+            } else if(dashEquals("debug", args[i])) {
                 verbose = true;
                 DEBUG = true;
-            } else if(args[i].equalsIgnoreCase("--gui") || args[i].equalsIgnoreCase("-gui")) {
+            } else if(dashEquals("gui", args[i])) {
                 GUI = true;
-            } else if(args[i].equalsIgnoreCase("--rayp") || args[i].equalsIgnoreCase("-rayp")) {
+            } else if(dashEquals("rayp", args[i])) {
                 onlyPrintRayP = true;
                 onlyPrintTime = false;
-            } else if(args[i].equalsIgnoreCase("--time") || args[i].equalsIgnoreCase("-time")) {
+            } else if(dashEquals("time", args[i])) {
                 onlyPrintTime = true;
                 onlyPrintRayP = false;
             } else if(i < args.length - 1) {
-                if(args[i].equalsIgnoreCase("-mod")
-                        || args[i].equalsIgnoreCase("-model")) {
+                if(dashEquals("mod", args[i]) || dashEquals("model", args[i])) {
                     toolProps.put("taup.model.name", args[i + 1]);
                     i++;
                 } else if(args[i].equalsIgnoreCase("-h")) {
                     toolProps.put("taup.source.depth", args[i + 1]);
                     i++;
-                } else if(args[i].equalsIgnoreCase("-deg")) {
+                } else if(dashEquals("deg", args[i])) {
                     degrees = Double.valueOf(args[i + 1]).doubleValue();
                     i++;
-                } else if(args[i].equalsIgnoreCase("-km")) {
+                } else if(dashEquals("km", args[i])) {
                     degrees = Double.valueOf(args[i + 1]).doubleValue() / 6371
                             * 180.0 / Math.PI;
                     i++;
-                } else if(args[i].equalsIgnoreCase("-az")) {
+                } else if(dashEquals("az", args[i])) {
                     azimuth = Double.valueOf(args[i + 1]).doubleValue();
                     i++;
-                } else if(args[i].equalsIgnoreCase("-baz")) {
+                } else if(dashEquals("baz", args[i])) {
                     backAzimuth = Double.valueOf(args[i + 1]).doubleValue();
                     i++;
                 } else if(args[i].equalsIgnoreCase("-o")) {
                     outFile = args[i + 1];
                     i++;
-                } else if(args[i].equalsIgnoreCase("-rel")) {
+                } else if(dashEquals("rel", args[i])) {
                     relativePhaseName = args[i + 1];
                     i++;
-                } else if(args[i].equalsIgnoreCase("-ph")) {
+                } else if(dashEquals("ph", args[i])) {
                     if(cmdLineArgPhase) {
                         // previous cmd line -ph so append
                         toolProps.put("taup.phase.list",
@@ -580,7 +583,7 @@ public class TauP_Time {
                     }
                     cmdLineArgPhase = true;
                     i++;
-                } else if(args[i].equalsIgnoreCase("-pf")) {
+                } else if(dashEquals("pf", args[i])) {
                     cmdLineArgPhaseFile = true;
                     toolProps.put("taup.phase.file", args[i + 1]);
                     i++;
@@ -1299,10 +1302,10 @@ public class TauP_Time {
 
     public void printStdUsageTail() {
         Alert.info("\n-o outfile         -- output is redirected to \"outfile\"\n"
-                + "-debug             -- enable debugging output\n"
-                + "-verbose           -- enable verbose output\n"
-                + "-version           -- print the version\n"
-                + "-help              -- print this out, but you already know that!\n");
+                + "--debug             -- enable debugging output\n"
+                + "--verbose           -- enable verbose output\n"
+                + "--version           -- print the version\n"
+                + "--help              -- print this out, but you already know that!\n");
     }
 
     public void printUsage() {

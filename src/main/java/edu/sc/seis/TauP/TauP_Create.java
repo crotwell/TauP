@@ -160,6 +160,10 @@ public class TauP_Create {
                 + "-version            -- print the version\n"
                 + "-help               -- print this out, but you already know that!\n\n");
     }
+    
+    public static boolean dashEquals(String argName, String arg) {
+        return TauP_Time.dashEquals(argName, arg);
+    }
 
     /* parses the command line args for TauP_Create. */
     protected String[] parseCmdLineArgs(String[] args) {
@@ -167,37 +171,37 @@ public class TauP_Create {
         String[] noComprendoArgs = new String[args.length];
         int numNoComprendoArgs = 0;
         while(i < args.length) {
-            if(args[i].equalsIgnoreCase("-help") || args[i].equalsIgnoreCase("--help")) {
+            if(dashEquals("help", args[i])) {
                 printUsage();
                 noComprendoArgs[numNoComprendoArgs++] = args[i];
                 return noComprendoArgs;
-            } else if(args[i].equalsIgnoreCase("-version") || args[i].equalsIgnoreCase("--version")) {
+            } else if(dashEquals("version", args[i])) {
                 System.out.println(BuildVersion.getDetailedVersion());
                 noComprendoArgs[numNoComprendoArgs++] = args[i];
                 return noComprendoArgs;
-            } else if(args[i].equalsIgnoreCase("-debug") || args[i].equalsIgnoreCase("--debug")) {
+            } else if(dashEquals("debug", args[i])) {
                 verbose = true;
                 DEBUG = true;
-            } else if(args[i].equalsIgnoreCase("-verbose") || args[i].equalsIgnoreCase("--verbose")) {
+            } else if(dashEquals("verbose", args[i])) {
                 verbose = true;
-            } else if(args[i].equalsIgnoreCase("-gui") || args[i].equalsIgnoreCase("--gui")) {
+            } else if(dashEquals("gui", args[i])) {
                 GUI = true;
-            } else if(i < args.length - 1 && args[i].equalsIgnoreCase("-p")) {
+            } else if(i < args.length - 1 && dashEquals("p", args[i])) {
                 try {
                 toolProps.load(new BufferedInputStream(new FileInputStream(args[i + 1])));
                 i++;
                 } catch(IOException e) {
                     noComprendoArgs[numNoComprendoArgs++] = args[i+1];
                 }
-            } else if(i < args.length - 1 && args[i].equalsIgnoreCase("-nd")) {
+            } else if(i < args.length - 1 && dashEquals("nd", args[i])) {
                 velFileType = "nd";
                 parseFileName(args[i + 1]);
                 i++;
-            } else if(i < args.length - 1 && args[i].equalsIgnoreCase("-tvel")) {
+            } else if(i < args.length - 1 && dashEquals("tvel", args[i])) {
                 velFileType = "tvel";
                 parseFileName(args[i + 1]);
                 i++;
-            } else if (args[i].equals("--overlayND")) {
+            } else if (dashEquals("overlayND", args[i])) {
                overlayVelFileType = "nd";
                overlayModelFilename = args[i+1];
             } else if(args[i].startsWith("GB.")) {

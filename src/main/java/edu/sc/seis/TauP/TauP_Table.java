@@ -508,15 +508,15 @@ public class TauP_Table extends TauP_Time {
         leftOverArgs = super.parseCmdLineArgs(args);
         String[] noComprendoArgs = new String[leftOverArgs.length];
         while(i < leftOverArgs.length) {
-            if(leftOverArgs[i].equalsIgnoreCase("-header")
+            if(dashEquals("header", leftOverArgs[i])
                     && i < leftOverArgs.length - 1) {
                 headerFile = leftOverArgs[i + 1];
                 i++;
-            } else if(leftOverArgs[i].equals("-locsat")) {
+            } else if(dashEquals("locsat", leftOverArgs[i])) {
                 outputType = LOCSAT;
-            } else if(leftOverArgs[i].equals("-generic")) {
+            } else if(dashEquals("generic", leftOverArgs[i])) {
                 outputType = GENERIC;
-            } else if(leftOverArgs[i].equals("-help") || leftOverArgs[i].equals("--help")) {
+            } else if(dashEquals("help", leftOverArgs[i])) {
                 noComprendoArgs[numNoComprendoArgs++] = leftOverArgs[i];
             } else {
                 noComprendoArgs[numNoComprendoArgs++] = leftOverArgs[i];

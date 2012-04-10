@@ -298,9 +298,9 @@ public class TauP_SetSac extends TauP_Time {
         leftOverArgs = super.parseCmdLineArgs(args);
         String[] noComprendoArgs = new String[leftOverArgs.length];
         while(i < leftOverArgs.length) {
-            if(leftOverArgs[i].equalsIgnoreCase("-evdpkm")) {
+            if(dashEquals("evdpkm", leftOverArgs[i])) {
                 evdpkm = true;
-            } else if(leftOverArgs[i].equals("-help")) {
+            } else if(dashEquals("help", leftOverArgs[i])) {
                 noComprendoArgs[numNoComprendoArgs++] = leftOverArgs[i];
             } else {
                 tempFile = new File(leftOverArgs[i]);

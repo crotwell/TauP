@@ -357,19 +357,19 @@ public class TauP_Pierce extends TauP_Time {
         leftOverArgs = super.parseCmdLineArgs(args);
         String[] noComprendoArgs = new String[leftOverArgs.length];
         while(i < leftOverArgs.length) {
-            if(leftOverArgs[i].equalsIgnoreCase("-turn")) {
+            if(dashEquals("turn", leftOverArgs[i])) {
                 onlyTurnPoints = true;
-            } else if(leftOverArgs[i].equalsIgnoreCase("-rev")) {
+            } else if(dashEquals("rev", leftOverArgs[i])) {
                 onlyRevPoints = true;
-            } else if(leftOverArgs[i].equalsIgnoreCase("-under")) {
+            } else if(dashEquals("under", leftOverArgs[i])) {
                 onlyUnderPoints = true;
-            } else if(leftOverArgs[i].equalsIgnoreCase("-pierce")
+            } else if(dashEquals("pierce", leftOverArgs[i])
                     && i < leftOverArgs.length - 1) {
                 appendAddDepths(leftOverArgs[i + 1]);
                 i++;
-            } else if(leftOverArgs[i].equalsIgnoreCase("-nodiscon")) {
+            } else if(dashEquals("nodiscon", leftOverArgs[i])) {
                 onlyAddPoints = true;
-            } else if(leftOverArgs[i].equals("-help")) {
+            } else if(dashEquals("help", leftOverArgs[i])) {
                 noComprendoArgs[numNoComprendoArgs++] = leftOverArgs[i];
             } else {
                 noComprendoArgs[numNoComprendoArgs++] = leftOverArgs[i];

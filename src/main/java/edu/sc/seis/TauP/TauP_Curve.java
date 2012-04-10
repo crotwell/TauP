@@ -194,19 +194,19 @@ public class TauP_Curve extends TauP_Time {
 
     public void printStdUsageTail() {
         System.out.println("\n-o outfile         -- output is redirected to \"outfile\" instead of taup_curve.gmt\n"
-                + "-debug             -- enable debugging output\n"
-                + "-verbose           -- enable verbose output\n"
-                + "-version           -- print the version\n"
-                + "-help              -- print this out, but you already know that!\n\n");
+                + "--debug            -- enable debugging output\n"
+                + "--verbose          -- enable verbose output\n"
+                + "--version          -- print the version\n"
+                + "--help             -- print this out, but you already know that!\n\n");
     }
 
     public void printUsage() {
         printStdUsage();
-        System.out.println("-gmt               -- outputs curves as a complete GMT script.");
+        System.out.println("--gmt              -- outputs curves as a complete GMT script.");
         System.out.println("-reddeg velocity   -- outputs curves with a reducing velocity (deg/sec).");
         System.out.println("-redkm velocity    -- outputs curves with a reducing velocity (km/sec).");
         System.out.println("-rel phasename     -- outputs relative travel time");
-        System.out.println("-mapwidth width    -- sets map width for GMT script.");
+        System.out.println("--mapwidth width   -- sets map width for GMT script.");
         printStdUsageTail();
     }
 
@@ -452,26 +452,25 @@ public class TauP_Curve extends TauP_Time {
         int i = 0;
         String[] leftOverArgs;
         int numNoComprendoArgs = 0;
-        File tempFile;
         leftOverArgs = super.parseCmdLineArgs(args);
         String[] noComprendoArgs = new String[leftOverArgs.length];
         while(i < leftOverArgs.length) {
-            if(leftOverArgs[i].equalsIgnoreCase("-gmt")) {
+            if(dashEquals("gmt", leftOverArgs[i])) {
                 gmtScript = true;
-            } else if(leftOverArgs[i].equals("-reddeg") && i < leftOverArgs.length - 1) {
+            } else if(dashEquals("reddeg", leftOverArgs[i]) && i < leftOverArgs.length - 1) {
                 setReduceTime(true);
                 setReduceVelDeg(Double.valueOf(leftOverArgs[i + 1])
                         .doubleValue());
                 i++;
-            } else if(leftOverArgs[i].equals("-redkm") && i < leftOverArgs.length - 1) {
+            } else if(dashEquals("redkm", leftOverArgs[i]) && i < leftOverArgs.length - 1) {
                 setReduceTime(true);
                 setReduceVelKm(Double.valueOf(leftOverArgs[i + 1])
                         .doubleValue());
                 i++;
-            } else if(leftOverArgs[i].equalsIgnoreCase("-mapwidth") && i < leftOverArgs.length - 1) {
+            } else if(dashEquals("mapwidth", leftOverArgs[i]) && i < leftOverArgs.length - 1) {
                 setMapWidth(Float.parseFloat(leftOverArgs[i + 1]));
                 i++;
-            } else if(leftOverArgs[i].equals("-help")) {
+            } else if(dashEquals("help", leftOverArgs[i])) {
                 noComprendoArgs[numNoComprendoArgs++] = leftOverArgs[i];
             } else {
                 noComprendoArgs[numNoComprendoArgs++] = leftOverArgs[i];
