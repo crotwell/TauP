@@ -11,6 +11,7 @@ Tools included with the TauP package:
 \texttt{taup\_pierce} & 
   calculates pierce points at model discontinuities and specified depths. \\
 \texttt{taup\_path} & calculates ray paths, depth versus epicentral distance. \\
+\texttt{taup\_wavefront} & calculates wavefronts in steps of time, depth versus epicentral distance. \\
 \texttt{taup} & a GUI that incorporates the time, pierce and path tools. This
 requires swing, and hence may not work on some java1.1 systems. \\
 \texttt{taup\_curve} & 
@@ -161,7 +162,7 @@ travel times for specified phases through the given earth model.
 
 The usage is:
 \begin{verbatim}
-piglet 1>taup_time -help
+piglet 1>taup_time --help
 Usage: taup_time [arguments]
   or, for purists, java edu.sc.seis.TauP.TauP_Time [arguments]
 
@@ -187,14 +188,14 @@ or by giving the station and event latitude and lonitude,
 -evt       lat lon -- sets the event latitude and longitude
 
 
--rayp              -- only output the ray parameter
--time              -- only output travel time
+--rayp              -- only output the ray parameter
+--time              -- only output travel time
 
 -o outfile         -- output is redirected to "outfile"
--debug             -- enable debugging output
--verbose           -- enable verbose output
--version           -- print the version
--help              -- print this out, but you already know that!
+--debug             -- enable debugging output
+--verbose           -- enable verbose output
+--version           -- print the version
+--help              -- print this out, but you already know that!
 \end{verbatim} 
 
 The modelname is from \texttt{modelname.taup}, a previously created file 
@@ -231,7 +232,7 @@ discontinuities or specified depths in the model.
 
 The usage is:
 \begin{verbatim}
-piglet 3>taup_pierce -help
+piglet 3>taup_pierce --help
 Usage: taup_pierce [arguments]
   or, for purists, java edu.sc.seis.TauP.TauP_Pierce [arguments]
 
@@ -268,18 +269,18 @@ or by giving the station and event latitude and lonitude,
                       given. Calculated if station and event
                       lat and lon are given.
 
--rev               -- only prints underside and bottom turn points, e.g. ^ and v
--turn              -- only prints bottom turning points, e.g. v
--under             -- only prints underside reflection points, e.g. ^
+--rev               -- only prints underside and bottom turn points, e.g. ^ and v
+--turn              -- only prints bottom turning points, e.g. v
+--under             -- only prints underside reflection points, e.g. ^
 
--pierce depth      -- adds depth for calculating pierce points
--nodiscon          -- only prints pierce points for the depths added with -pierce
+--pierce depth      -- adds depth for calculating pierce points
+--nodiscon          -- only prints pierce points for the depths added with -pierce
 
 -o outfile         -- output is redirected to "outfile"
--debug             -- enable debugging output
--verbose           -- enable verbose output
--version           -- print the version
--help              -- print this out, but you already know that!
+--debug             -- enable debugging output
+--verbose           -- enable verbose output
+--version           -- print the version
+--help              -- print this out, but you already know that!
 \end{verbatim} 
  
 The \texttt{-rev}, \texttt{-turn} and \texttt{-under} flags are useful 
@@ -307,7 +308,7 @@ Using \texttt{-rev} would give you all points that the ray changes direction and
 
 Using the \texttt{-pierce} option
 
-\texttt{taup\_pierce -mod prem -h 200 -ph S -sta 12 34.2 -evt -28 122 -pierce 2591 -nodiscon}
+\texttt{taup\_pierce -mod prem -h 200 -ph S -sta 12 34.2 -evt -28 122 --pierce 2591 --nodiscon}
 
 would give you just the points at which S crossed a depth of 2591 kilometers
 from an event at ($28^\circ$ S, $122^\circ$ E)
@@ -345,7 +346,7 @@ phases like \texttt{Sdiff}, the ray paths are interpolated to less than
 
 The usage is:
 \begin{verbatim}
-piglet 5>taup_path -help
+piglet 5>taup_path --help
 Usage: taup_path [arguments]
   or, for purists, java edu.sc.seis.TauP.TauP_Path [arguments]
 
@@ -371,13 +372,63 @@ or by giving the station and event latitude and lonitude,
 -evt       lat lon -- sets the event latitude and longitude
 
 
--gmt             -- outputs path as a complete GMT script.
+--gmt             -- outputs path as a complete GMT script.
 
 -o outfile         -- output is redirected to "outfile"
--debug             -- enable debugging output
--verbose           -- enable verbose output
--version           -- print the version
--help              -- print this out, but you already know that!
+--debug             -- enable debugging output
+--verbose           -- enable verbose output
+--version           -- print the version
+--help              -- print this out, but you already know that!
+\end{verbatim} 
+
+\subsection{TauP\_Path}
+TauP\_Wavefront is similar to TauP\_Path, but plots the wavefront at timesteps instead of the
+ray paths. It also uses a model like TauP\_Time and
+generates  depth versus
+angular distances from the epicenter for the phases, but done at time slices instaed of depth slices. 
+The output is in GMT~\cite{GMT} ``psxy'' format, and is
+placed into the file ``taup\_.gmt''. 
+If you specify the ``-gmt'' flag then this 
+is a complete script with the appropriate ``psxy'' command prepended, so if you
+have GMT installed, you can just:
+
+\begin{verbatim}
+piglet 5>taup_wavefront --help
+Usage: taup_wavefront [arguments]
+  or, for purists, java edu.sc.seis.TauP.TauP_Wavefront [arguments]
+
+Arguments are:
+-ph phase list     -- comma separated phase list
+-pf phasefile      -- file containing phases
+
+-mod[el] modelname -- use velocity model "modelname" for calculations
+                      Default is iasp91.
+
+-h depth           -- source depth in km
+
+Distance is given by:
+
+-deg degrees       -- distance in degrees,
+-km kilometers     -- distance in kilometers,
+                      assumes radius of earth is 6371km,
+
+or by giving the station and event latitude and lonitude,
+                      assumes a spherical earth,
+
+-sta[tion] lat lon -- sets the station latitude and longitude
+-evt       lat lon -- sets the event latitude and longitude
+
+
+--rays  num      -- number of raypaths/distances to sample.
+--timestep  num  -- steps in time (seconds) for output.
+--phasecolor     -- steps in time (seconds) for output.
+
+-o outfile         -- output is redirected to "outfile"
+--debug             -- enable debugging output
+--verbose           -- enable verbose output
+--version           -- print the version
+--help              -- print this out, but you already know that!
+
 \end{verbatim} 
 
 \subsection{TauP}
@@ -399,7 +450,7 @@ between known sample points, and can thus be used to get a feel for the
 coarseness of sampling. For example, curves for s, S, ScS and Sdiff
 for a 500 kilometer deep event in PREM could be generated by:
 
-\texttt{taup\_curve -mod prem -h 500 -ph s,S,ScS,Sdiff -gmt}
+\texttt{taup\_curve -mod prem -h 500 -ph s,S,ScS,Sdiff --gmt}
 
 The \texttt{-gmt} option prepends a GMT \texttt{psxy} command to the output 
 file, creating a runnable script instead of just a data file. 
@@ -412,7 +463,7 @@ ghostview taup_curve.ps
 
 The uasage is:
 \begin{verbatim}
-piglet 6>taup_curve -help
+piglet 6>taup_curve --help
 Usage: taup_curve [arguments]
   or, for purists, java edu.sc.seis.TauP.TauP_Curve [arguments]
 
@@ -426,15 +477,15 @@ Arguments are:
 -h depth           -- source depth in km
 
 
--gmt               -- outputs curves as a complete GMT script.
--reddeg velocity   -- outputs curves with a reducing velocity (deg/sec).
--redkm velocity    -- outputs curves with a reducing velocity (km/sec).
+--gmt               -- outputs curves as a complete GMT script.
+--reddeg velocity   -- outputs curves with a reducing velocity (deg/sec).
+--redkm velocity    -- outputs curves with a reducing velocity (km/sec).
 
 -o outfile         -- output is redirected to "outfile" instead of taup_curve.gmt
--debug             -- enable debugging output
--verbose           -- enable verbose output
--version           -- print the version
--help              -- print this out, but you already know that!
+--debug             -- enable debugging output
+--verbose           -- enable verbose output
+--version           -- print the version
+--help              -- print this out, but you already know that!
 \end{verbatim} 
  
 \subsection{TauP\_SetSac}
@@ -485,7 +536,7 @@ a large directory structure of Sac files can be processed easily.
 
 The usage is:
 \begin{verbatim}
-piglet 7>taup_setsac -help
+piglet 7>taup_setsac --help
 Usage: taup_setsac [arguments]
   or, for purists, java edu.sc.seis.TauP.TauP_SetSac [arguments]
 
@@ -498,13 +549,13 @@ Arguments are:
 -mod[el] modelname -- use velocity model "modelname" for calculations
                       Default is iasp91.
 
--evdpkm            -- sac depth header is in km, default is meters
+--evdpkm            -- sac depth header is in km, default is meters
 
 
--debug             -- enable debugging output
--verbose           -- enable verbose output
--version           -- print the version
--help              -- print this out, but you already know that!
+--debug             -- enable debugging output
+--verbose           -- enable verbose output
+--version           -- print the version
+--help              -- print this out, but you already know that!
 
 sacfilename [sacfilename ...]
 
@@ -546,17 +597,17 @@ Arguments are:
                       Default is iasp91.
 
 
--header filename   -- reads depth and distance spacing data
+--header filename   -- reads depth and distance spacing data
                       from a LOCSAT style file.
--generic           -- outputs a "generic" ascii table
--locsat            -- outputs a "locsat" style ascii table
+--generic           -- outputs a "generic" ascii table
+--locsat            -- outputs a "locsat" style ascii table
 
 
 -o outfile         -- output is redirected to "outfile"
--debug             -- enable debugging output
--verbose           -- enable verbose output
--version           -- print the version
--help              -- print this out, but you already know that!
+--debug             -- enable debugging output
+--verbose           -- enable verbose output
+--version           -- print the version
+--help              -- print this out, but you already know that!
 \end{verbatim}
 
 \subsection{TauP\_Create}
@@ -586,10 +637,10 @@ Arguments are:
 -nd modelfile       -- "named discontinuities" velocity file
 -tvel modelfile     -- ".tvel" velocity file, ala ttimes
 
--debug              -- enable debugging output
--verbose            -- enable verbose output
--version            -- print the version
--help               -- print this out, but you already know that!
+--debug              -- enable debugging output
+--verbose            -- enable verbose output
+--version            -- print the version
+--help               -- print this out, but you already know that!
 \end{verbatim} 
  
 \texttt{modelfile} is the ASCII text file holding the velocity model.
