@@ -93,7 +93,7 @@ task makeScript(dependsOn: copyToLib) << { task ->
     ScriptBuilder.create('taup_create', 'edu.sc.seis.TauP.TauP_Create', task.project, bat:doBat)
     ScriptBuilder.create('taup_curve', 'edu.sc.seis.TauP.TauP_Curve', task.project, bat:doBat)
     ScriptBuilder.create('taup_setsac', 'edu.sc.seis.TauP.TauP_SetSac', task.project, bat:doBat)
-    ScriptBuilder.create('taup_isochron', 'edu.sc.seis.TauP.TauP_Isochron', task.project, bat:doBat)
+    ScriptBuilder.create('taup_wavefront', 'edu.sc.seis.TauP.TauP_Wavefront', task.project, bat:doBat)
     ScriptBuilder.create('taup_table', 'edu.sc.seis.TauP.TauP_Table', task.project, bat:doBat)
     ScriptBuilder.create('taup', 'edu.sc.seis.TauP.TauP', task.project, bat:doBat)
     ScriptBuilder.create('taup_console', 'edu.sc.seis.TauP.TauP_Console', task.project, bat:doBat)
