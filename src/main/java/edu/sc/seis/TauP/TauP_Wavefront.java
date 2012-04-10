@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class TauP_Isochron extends TauP_Path {
+public class TauP_Wavefront extends TauP_Path {
 
     int numRays = 10;
 
@@ -194,7 +194,7 @@ public class TauP_Isochron extends TauP_Path {
             ClassNotFoundException, OptionalDataException {
         boolean doInteractive = true;
         try {
-            TauP_Isochron tauP_isochron = new TauP_Isochron();
+            TauP_Wavefront tauP_isochron = new TauP_Wavefront();
             tauP_isochron.outFile = "taup_isochron.gmt";
             String[] noComprendoArgs = tauP_isochron.parseCmdLineArgs(args);
             printNoComprendoArgs(noComprendoArgs);
