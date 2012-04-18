@@ -245,7 +245,8 @@ public class TauP_Curve extends TauP_Time {
         }
         super.destroy();
     }
-
+    
+    @Override
     public void printResult(PrintWriter out) throws IOException {
         SeismicPhase phase;
         double[] dist, time, rayParams;

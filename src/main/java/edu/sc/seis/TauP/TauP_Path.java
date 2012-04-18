@@ -130,7 +130,8 @@ public class TauP_Path extends TauP_Pierce {
 		}
 	}
 
-	public void printResult(Writer out) throws IOException {
+	@Override
+	public void printResult(PrintWriter out) throws IOException {
         if (gmtScript) {
             out.write("psxy -P -R -K -O -JP -m -A >> " + psFile + " <<END\n");
         }

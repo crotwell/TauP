@@ -49,7 +49,7 @@ public class TauP_Wavefront extends TauP_Path {
     }
     
     @Override
-    public void printResult(Writer out) throws IOException {
+    public void printResult(PrintWriter out) throws IOException {
         double radiusOfEarth = tModDepth.getRadiusOfEarth();
         for (SeismicPhase phase : result.keySet()) {
             if (gmtScript) {

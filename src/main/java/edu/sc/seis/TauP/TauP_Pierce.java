@@ -19,8 +19,8 @@ package edu.sc.seis.TauP;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OptionalDataException;
+import java.io.PrintWriter;
 import java.io.StreamCorruptedException;
-import java.io.Writer;
 import java.util.List;
 
 /**
@@ -186,6 +186,7 @@ public class TauP_Pierce extends TauP_Time {
         tMod = tModOrig;
     }
 
+    @Override
     public void calculate(double degrees) throws TauModelException {
         depthCorrect(getSourceDepth());
         recalcPhases();
@@ -229,7 +230,8 @@ public class TauP_Pierce extends TauP_Time {
                 + " s/deg.\n";
     }
 
-    public void printResult(Writer out) throws IOException {
+    @Override
+    public void printResult(PrintWriter out) throws IOException {
         double calcDist;
         double prevDepth, nextDepth;
         double lat, lon;
