@@ -72,7 +72,9 @@ public class TauP_Path extends TauP_Pierce {
 
 	/** Sets the output file base, appending ".gmt" for the filename. */
 	public void setOutFileBase(String outFileBase) {
-		if (outFileBase != null && outFileBase.length() != 0) {
+	    if ("stdout".equals(outFileBase)) {
+	        outFile = "stdout";
+	    } else if (outFileBase != null && outFileBase.length() != 0) {
 			outFile = outFileBase + ".gmt";
 		} else {
 			outFile = "taup_path.gmt";
