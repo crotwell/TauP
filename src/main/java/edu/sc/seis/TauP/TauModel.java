@@ -917,7 +917,7 @@ public class TauModel implements Serializable {
         return desc;
     }
     
-    protected static TauModel loadFromDepthCache(Double depth) {
+    protected TauModel loadFromDepthCache(Double depth) {
         SoftReference<TauModel> sr = depthCache.get(depth);
         if (sr != null) {
             TauModel out = sr.get();
@@ -929,6 +929,6 @@ public class TauModel implements Serializable {
         return null;
     }
     
-    static HashMap<Double, SoftReference<TauModel>> depthCache = new HashMap<Double, SoftReference<TauModel>>();
+    private HashMap<Double, SoftReference<TauModel>> depthCache = new HashMap<Double, SoftReference<TauModel>>();
 
 }
