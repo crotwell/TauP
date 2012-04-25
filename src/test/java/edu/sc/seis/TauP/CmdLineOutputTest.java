@@ -19,11 +19,15 @@ import org.junit.Test;
 
 public class CmdLineOutputTest {
 
+    
     @Test
     public void testTauPTime() throws Exception {
         runTests(new String[] {"taup_time -h 10 -ph P -deg 35 -mod prem",
                                "taup_time -h 10 -ph P -deg 35",
-                               "taup_time -h 10 -ph P -deg 35 -mod ak135"});
+                               "taup_time -h 10 -ph P -deg 35 -mod ak135",
+                               "taup_time -h 10 -ph ttall -deg 35 -mod prem",
+                               "taup_time -h 10 -ph ttall -deg 35",
+                               "taup_time -h 10 -ph ttall -deg 35 -mod ak135"});
     }
 
     @Test
@@ -45,6 +49,11 @@ public class CmdLineOutputTest {
         runTests(new String[] {"taup_curve -o stdout -h 10 -ph P -mod prem",
                                "taup_curve -o stdout -h 10 -ph P",
                                "taup_curve -o stdout -h 10 -ph P -mod ak135"});
+    }
+    
+    @Test
+    public void testTauPTable() throws Exception {
+        runTests(new String[] {"taup_table -ph ttall -generic"});
     }
 
     public void runTests(String[] cmds) throws Exception {
