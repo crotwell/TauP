@@ -397,6 +397,8 @@ public class TauP_Time {
                 tMod = tModLoad;
                 tModDepth = tMod;
                 this.modelName = tMod.getModelName();
+            } else {
+                throw new TauModelException("Unable to load "+modelName);
             }
     }
 
