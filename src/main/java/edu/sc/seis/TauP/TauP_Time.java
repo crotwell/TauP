@@ -868,7 +868,7 @@ public class TauP_Time {
     
     public PrintWriter getWriter() throws IOException {
         if (writer == null) {
-            if(outFile != null && outFile.length() != 0) {
+            if(outFile != null && outFile.length() != 0 && !outFile.equals("stdout")) {
                 writer = new PrintWriter(new BufferedWriter(new FileWriter(outFile)));
             } else {
                 writer = new PrintWriter(new OutputStreamWriter(System.out));
@@ -1303,7 +1303,7 @@ public class TauP_Time {
     }
 
     public void printStdUsageTail() {
-        Alert.info("\n-o outfile         -- output is redirected to \"outfile\"\n"
+        Alert.info("\n-o [stdout|outfile]         -- output is redirected to stdout or to the \"outfile\" file\n"
                 + "--debug             -- enable debugging output\n"
                 + "--verbose           -- enable verbose output\n"
                 + "--version           -- print the version\n"
