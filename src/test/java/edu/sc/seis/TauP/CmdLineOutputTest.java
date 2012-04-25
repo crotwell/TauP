@@ -40,6 +40,13 @@ public class CmdLineOutputTest {
                                "taup_path -o stdout -h 10 -ph P -deg 35 -mod ak135"});
     }
 
+    @Test
+    public void testTauPCurve() throws Exception {
+        runTests(new String[] {"taup_curve -o stdout -h 10 -ph P -mod prem",
+                               "taup_curve -o stdout -h 10 -ph P",
+                               "taup_curve -o stdout -h 10 -ph P -mod ak135"});
+    }
+
     public void runTests(String[] cmds) throws Exception {
         for (int i = 0; i < cmds.length; i++) {
             testCmd(cmds[i]);
