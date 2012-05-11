@@ -381,17 +381,26 @@ or by giving the station and event latitude and lonitude,
 --help              -- print this out, but you already know that!
 \end{verbatim} 
 
-\subsection{TauP\_Path}
+\subsection{TauP\_Wavefront}
 TauP\_Wavefront is similar to TauP\_Path, but plots the wavefront at timesteps instead of the
 ray paths. It also uses a model like TauP\_Time and
 generates  depth versus
 angular distances from the epicenter for the phases, but done at time slices instaed of depth slices. 
 The output is in GMT~\cite{GMT} ``psxy'' format, and is
-placed into the file ``taup\_.gmt''. 
+placed into the file ``taup\_wavefront.gmt''. 
 If you specify the ``-gmt'' flag then this 
 is a complete script with the appropriate ``psxy'' command prepended, so if you
 have GMT installed, you can just:
 
+\begin{verbatim}
+taup_wavefront -mod iasp91 -h 550 -ph S,ScS,sS,sScS --gmt
+sh taup_wavefront.gmt
+ghostview taup_wavefront.ps
+\end{verbatim}
+
+and you have a plot of the wavefronts.
+
+The usage is:
 \begin{verbatim}
 piglet 5>taup_wavefront --help
 Usage: taup_wavefront [arguments]
