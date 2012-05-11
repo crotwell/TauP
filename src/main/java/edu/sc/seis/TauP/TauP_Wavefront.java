@@ -61,14 +61,14 @@ public class TauP_Wavefront extends TauP_Path {
             Collections.sort(keys);
             for (Float time : keys) {
                 out.write("> " + phase.getName() + " at " + time + " seconds\n");
-                List<TimeDist> isochron = phaseResult.get(time);
-                Collections.sort(isochron, new Comparator<TimeDist>() {
-                    @Override
+                List<TimeDist> wavefront = phaseResult.get(time);
+                Collections.sort(wavefront, new Comparator<TimeDist>() {
+                   // @Override
                     public int compare(TimeDist arg0, TimeDist arg1) {
                         return new Double(arg0.getP()).compareTo(arg1.getP());
                     }
                 });
-                for (TimeDist td : isochron) {
+                for (TimeDist td : wavefront) {
                     out.write(Outputs.formatDistance(td.getDistDeg()) + "  "
                             + Outputs.formatDepth(radiusOfEarth - td.getDepth()) + " " 
                             + Outputs.formatTime(time) + " " 
@@ -205,29 +205,29 @@ public class TauP_Wavefront extends TauP_Path {
             ClassNotFoundException, OptionalDataException {
         boolean doInteractive = true;
         try {
-            TauP_Wavefront tauP_isochron = new TauP_Wavefront();
-            tauP_isochron.outFile = "taup_isochron.gmt";
-            String[] noComprendoArgs = tauP_isochron.parseCmdLineArgs(args);
+            TauP_Wavefront tauP_wavefront = new TauP_Wavefront();
+            tauP_wavefront.outFile = "taup_wavefront.gmt";
+            String[] noComprendoArgs = tauP_wavefront.parseCmdLineArgs(args);
             printNoComprendoArgs(noComprendoArgs);
             for (int i = 0; i < args.length; i++) {
                 if (dashEquals("h", args[i])) {
                     doInteractive = false;
                 }
             }
-            if (tauP_isochron.DEBUG) {
-                System.out.println("Done reading " + tauP_isochron.modelName);
+            if (tauP_wavefront.DEBUG) {
+                System.out.println("Done reading " + tauP_wavefront.modelName);
             }
-            tauP_isochron.init();
+            tauP_wavefront.init();
             if (doInteractive) {
-                tauP_isochron.start();
+                tauP_wavefront.start();
             } else {
                 /* enough info given on cmd line, so just do one calc. */
-                tauP_isochron.depthCorrect(Double.valueOf(tauP_isochron.toolProps.getProperty("taup.source.depth",
+                tauP_wavefront.depthCorrect(Double.valueOf(tauP_wavefront.toolProps.getProperty("taup.source.depth",
                                                                                               "0.0")).doubleValue());
-                tauP_isochron.calculate(tauP_isochron.degrees);
-                tauP_isochron.printResult(tauP_isochron.getWriter());
+                tauP_wavefront.calculate(tauP_wavefront.degrees);
+                tauP_wavefront.printResult(tauP_wavefront.getWriter());
             }
-            tauP_isochron.destroy();
+            tauP_wavefront.destroy();
         } catch(TauModelException e) {
             System.out.println("Caught TauModelException: " + e.getMessage());
             e.printStackTrace();
