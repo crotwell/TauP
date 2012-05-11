@@ -75,7 +75,6 @@ public class ConstantModelTest extends TestCase {
     }
     
     public void doSeismicPhase(float dist, double velocity, String phase) throws TauModelException {
-        TauP_Time.DEBUG = true;
         SeismicPhase pPhase = new SeismicPhase(phase, tMod);
         
         List<Arrival> arrivals = pPhase.calcTime(dist);
