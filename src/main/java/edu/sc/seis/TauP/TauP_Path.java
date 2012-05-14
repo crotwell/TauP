@@ -251,14 +251,14 @@ public class TauP_Path extends TauP_Pierce {
             psFile = outFile + ".ps";
         }
 	    out.println("#!/bin/sh");
-	    out.print("#\n# This script will plot ray paths using GMT. If you want to\n"
+	    out.println("#\n# This script will plot ray paths using GMT. If you want to\n"
 	            + "#use this as a data file for psxy in another script, delete these"
 	            + "\n# first lines, to the last psxy, as well as the last line.\n#");
-	    out.print("/bin/rm -f " + psFile + "\n");
-	    out.print("# draw surface and label distances.\n"
+	    out.println("/bin/rm -f " + psFile);
+	    out.println("# draw surface and label distances.\n"
 	            + "psbasemap -K -P -R0/360/0/"+getTauModel().getRadiusOfEarth()+" -JP" + mapWidth + mapWidthUnit
-	            + " -B30p/500N > " + psFile + "\n");
-	    out.print("# draw circles for branches, note these are scaled for a \n"
+	            + " -B30p/500N > " + psFile);
+	    out.println("# draw circles for branches, note these are scaled for a \n"
 	            + "# map using -JP" + mapWidth + mapWidthUnit + "\n"
 	            + "psxy -K -O -P -R -JP -Sc -A >> " + psFile
 	            + " <<ENDLAYERS");
