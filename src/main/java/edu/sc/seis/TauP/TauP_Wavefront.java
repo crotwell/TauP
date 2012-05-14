@@ -7,10 +7,12 @@ import java.io.OptionalDataException;
 import java.io.PrintWriter;
 import java.io.StreamCorruptedException;
 import java.io.Writer;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -19,6 +21,8 @@ public class TauP_Wavefront extends TauP_Path {
     int numRays = 10;
 
     float timeStep = 100;
+
+    boolean separateFilesByTime;
 
     Map<SeismicPhase, Map<Float, List<TimeDist>>> result;
 
@@ -36,53 +40,81 @@ public class TauP_Wavefront extends TauP_Path {
         System.out.println("--timestep  num  -- steps in time (seconds) for output.");
         printStdUsageTail();
     }
-    
+
     @Override
-    public void printScriptBeginning(PrintWriter out)  throws IOException {
-        if ( ! gmtScript) { return; }
-        
+    public void printScriptBeginning(PrintWriter out) throws IOException {
+        if (!gmtScript) {
+            return;
+        }
         if (outFile == null) {
             outFile = "taup_wavefront.gmt";
             psFile = "taup_wavefront.ps";
         }
         super.printScriptBeginning(out);
     }
-    
+
     @Override
     public void printResult(PrintWriter out) throws IOException {
+        String byTimePsFile = psFile;
         double radiusOfEarth = tModDepth.getRadiusOfEarth();
+        HashSet<Float> keySet = new HashSet<Float>();
         for (SeismicPhase phase : result.keySet()) {
-            if (gmtScript) {
-                out.write("psxy -P -R -K -O -JP -m -A >> " + psFile + " <<END\n");
-            }
-            List<Float> keys = new ArrayList<Float>();
             Map<Float, List<TimeDist>> phaseResult = result.get(phase);
-            keys.addAll(phaseResult.keySet());
-            Collections.sort(keys);
-            for (Float time : keys) {
-                out.write("> " + phase.getName() + " at " + time + " seconds\n");
+            keySet.addAll(phaseResult.keySet());
+        }
+        List<Float> keys = new ArrayList<Float>();
+        keys.addAll(keySet);
+        Collections.sort(keys);
+        Float lastTime = keys.get(keys.size() - 1);
+        int numDigits = 1;
+        String formatStr = "0";
+        while (Math.pow(10, numDigits) < lastTime) {
+            numDigits++;
+            formatStr += "0";
+        }
+        if (lastTime < 1) {
+            formatStr += ".0";
+            int fracDigits = 0;
+            while (Math.pow(10, fracDigits) > lastTime) {
+                fracDigits--;
+                formatStr += "0";
+            }
+        }
+        DecimalFormat format = new DecimalFormat(formatStr);
+        for (Float time : keys) {
+            if (separateFilesByTime) {
+                byTimePsFile = format.format(time) + "_" + psFile;
+                printScriptBeginning(out, byTimePsFile);
+            }
+            if (gmtScript) {
+                out.println("# timestep = " + time);
+                out.println("psxy -P -R -K -O -JP -m -A >> " + byTimePsFile + " <<END");
+            }
+            for (SeismicPhase phase : result.keySet()) {
+                Map<Float, List<TimeDist>> phaseResult = result.get(phase);
                 List<TimeDist> wavefront = phaseResult.get(time);
+                if (wavefront == null || wavefront.size() == 0) {continue;}
+                out.write("> " + phase.getName() + " at " + time + " seconds\n");
                 Collections.sort(wavefront, new Comparator<TimeDist>() {
-                   // @Override
+
+                    // @Override
                     public int compare(TimeDist arg0, TimeDist arg1) {
                         return new Double(arg0.getP()).compareTo(arg1.getP());
                     }
                 });
                 for (TimeDist td : wavefront) {
-                    out.write(Outputs.formatDistance(td.getDistDeg()) + "  "
-                            + Outputs.formatDepth(radiusOfEarth - td.getDepth()) + " " 
-                            + Outputs.formatTime(time) + " " 
-                            + Outputs.formatRayParam(td.getP())
-                            + "\n");
+                    out.println(Outputs.formatDistance(td.getDistDeg()) + "  "
+                            + Outputs.formatDepth(radiusOfEarth - td.getDepth()) + " " + Outputs.formatTime(time) + " "
+                            + Outputs.formatRayParam(td.getP()));
                 }
             }
             if (gmtScript) {
-                out.write("END\n");
+                out.println("END");
+                if (separateFilesByTime) {
+                    out.println("psxy -P -R -O -JP -m -A >> " + byTimePsFile + " <<END");
+                    out.println("END");
+                }
             }
-        }
-        if (gmtScript) {
-            out.write("psxy -P -R -O -JP -m -A >> " + psFile + " <<END\n");
-            out.write("END\n");
         }
     }
 
@@ -94,7 +126,7 @@ public class TauP_Wavefront extends TauP_Path {
         for (int phaseNum = 0; phaseNum < phases.size(); phaseNum++) {
             phase = phases.get(phaseNum);
             if (verbose) {
-                System.out.println("Work on "+phase.getName());
+                System.out.println("Work on " + phase.getName());
             }
             double minDist = phase.getMinDistanceDeg();
             double maxDist = phase.getMaxDistanceDeg();
@@ -114,12 +146,12 @@ public class TauP_Wavefront extends TauP_Path {
                 done = true;
                 timeVal += timeStep;
                 if (verbose) {
-                    System.out.println("Time "+timeVal+" for "+phase.getName()+" "+firstArrival.size());
+                    System.out.println("Time " + timeVal + " for " + phase.getName() + " " + firstArrival.size());
                 }
                 for (Arrival arrival : firstArrival) {
                     TimeDist[] path = arrival.getPath();
                     for (int i = 0; i < path.length; i++) {
-                        if (path[i].getTime() <= timeVal && i < path.length-1 && timeVal < path[i + 1].getTime()) {
+                        if (path[i].getTime() <= timeVal && i < path.length - 1 && timeVal < path[i + 1].getTime()) {
                             TimeDist interp = interp(path[i], path[i + 1], timeVal);
                             List<TimeDist> tdList = out.get(timeVal);
                             if (tdList == null) {
@@ -139,10 +171,15 @@ public class TauP_Wavefront extends TauP_Path {
 
     TimeDist interp(TimeDist x, TimeDist y, float t) {
         // this is probably wrong...
-        return new TimeDist(x.getP(),
-                            t,
-                            Theta.linInterp(x.getTime(), y.getTime(), x.getDistRadian(), y.getDistRadian(), t),
-                            Theta.linInterp(x.getTime(), y.getTime(), x.getDepth(), y.getDepth(), t));
+        return new TimeDist(x.getP(), t, Theta.linInterp(x.getTime(),
+                                                         y.getTime(),
+                                                         x.getDistRadian(),
+                                                         y.getDistRadian(),
+                                                         t), Theta.linInterp(x.getTime(),
+                                                                             y.getTime(),
+                                                                             x.getDepth(),
+                                                                             y.getDepth(),
+                                                                             t));
     }
 
     public void setNumRays(int numRays) {
@@ -153,12 +190,10 @@ public class TauP_Wavefront extends TauP_Path {
         return numRays;
     }
 
-    
     public float getTimeStep() {
         return timeStep;
     }
 
-    
     public void setTimeStep(float timeStep) {
         this.timeStep = timeStep;
     }
@@ -172,6 +207,8 @@ public class TauP_Wavefront extends TauP_Path {
         while (i < leftOverArgs.length) {
             if (dashEquals("gmt", leftOverArgs[i])) {
                 gmtScript = true;
+            } else if (dashEquals("timefiles", leftOverArgs[i])) {
+                    separateFilesByTime = true;
             } else if (dashEquals("rays", leftOverArgs[i]) && i < leftOverArgs.length - 1) {
                 setNumRays(Integer.parseInt(leftOverArgs[i + 1]));
                 i++;
@@ -223,7 +260,7 @@ public class TauP_Wavefront extends TauP_Path {
             } else {
                 /* enough info given on cmd line, so just do one calc. */
                 tauP_wavefront.depthCorrect(Double.valueOf(tauP_wavefront.toolProps.getProperty("taup.source.depth",
-                                                                                              "0.0")).doubleValue());
+                                                                                                "0.0")).doubleValue());
                 tauP_wavefront.calculate(tauP_wavefront.degrees);
                 tauP_wavefront.printResult(tauP_wavefront.getWriter());
             }

@@ -250,6 +250,10 @@ public class TauP_Path extends TauP_Pierce {
         } else {
             psFile = outFile + ".ps";
         }
+        printScriptBeginning(out, psFile);
+	}
+
+    public void printScriptBeginning(PrintWriter out, String psFile)  throws IOException {
 	    out.println("#!/bin/sh");
 	    out.println("#\n# This script will plot ray paths using GMT. If you want to\n"
 	            + "#use this as a data file for psxy in another script, delete these"
