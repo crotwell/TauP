@@ -171,15 +171,10 @@ public class TauP_Wavefront extends TauP_Path {
 
     TimeDist interp(TimeDist x, TimeDist y, float t) {
         // this is probably wrong...
-        return new TimeDist(x.getP(), t, Theta.linInterp(x.getTime(),
-                                                         y.getTime(),
-                                                         x.getDistRadian(),
-                                                         y.getDistRadian(),
-                                                         t), Theta.linInterp(x.getTime(),
-                                                                             y.getTime(),
-                                                                             x.getDepth(),
-                                                                             y.getDepth(),
-                                                                             t));
+        return new TimeDist(x.getP(),
+                            t,
+                            Theta.linInterp(x.getTime(), y.getTime(), x.getDistRadian(), y.getDistRadian(), t),
+                            Theta.linInterp(x.getTime(), y.getTime(), x.getDepth(), y.getDepth(), t));
     }
 
     public void setNumRays(int numRays) {
