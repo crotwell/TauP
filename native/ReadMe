@@ -1,0 +1,9 @@
+
+Warning!!!
+
+Here be MONSTERS!
+
+The native interface to the TauP Toolkit has not been maintained for many years. The source code here is provided as a starting point for someone who wants to try interfacing a C program with the TauP Toolkit, but the current code does not work. It is based off of Java version 1.1 and things in the java JNI world seem to have changed in the meantime.
+
+Good luck...
+
