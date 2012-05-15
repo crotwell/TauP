@@ -1,12 +1,10 @@
 package edu.sc.seis.TauP;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OptionalDataException;
 import java.io.PrintWriter;
 import java.io.StreamCorruptedException;
-import java.io.Writer;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,11 +16,13 @@ import java.util.Map;
 
 public class TauP_Wavefront extends TauP_Path {
 
-    int numRays = 10;
+    int numRays = 30;
 
     float timeStep = 100;
 
-    boolean separateFilesByTime;
+    boolean separateFilesByTime = false;
+
+    boolean negDistance = true;
 
     Map<SeismicPhase, Map<Float, List<TimeDist>>> result;
 
@@ -30,7 +30,8 @@ public class TauP_Wavefront extends TauP_Path {
     public void calculate(double degrees) throws TauModelException {
         depthCorrect(getSourceDepth());
         recalcPhases();
-        result = calcIsochron(degrees);
+        // ignore degrees as we need a suite of distances
+        result = calcIsochron();
     }
 
     @Override
@@ -38,6 +39,8 @@ public class TauP_Wavefront extends TauP_Path {
         printStdUsage();
         System.out.println("--rays  num      -- number of raypaths/distances to sample.");
         System.out.println("--timestep  num  -- steps in time (seconds) for output.");
+        System.out.println("--timefiles      -- outputs each time into a separate .ps file within the gmt script.");
+        System.out.println("--negdist        -- outputs negative distance as well so wavefronts are in both halves.");
         printStdUsageTail();
     }
 
@@ -83,17 +86,23 @@ public class TauP_Wavefront extends TauP_Path {
         DecimalFormat format = new DecimalFormat(formatStr);
         for (Float time : keys) {
             if (separateFilesByTime) {
-                byTimePsFile = format.format(time) + "_" + psFile;
+                String psFileBase = psFile;
+                if (psFile.endsWith(".ps")) {
+                    psFileBase = psFile.substring(0, psFile.length() - 3);
+                }
+                byTimePsFile = psFileBase + "_" + format.format(time) + ".ps";
                 printScriptBeginning(out, byTimePsFile);
             }
             if (gmtScript) {
                 out.println("# timestep = " + time);
-                out.println("psxy -P -R -K -O -JP -m -A >> " + byTimePsFile + " <<END");
+                out.println("psxy -P -R -K -O -Wblue -JP -m -A >> " + byTimePsFile + " <<END");
             }
             for (SeismicPhase phase : result.keySet()) {
                 Map<Float, List<TimeDist>> phaseResult = result.get(phase);
                 List<TimeDist> wavefront = phaseResult.get(time);
-                if (wavefront == null || wavefront.size() == 0) {continue;}
+                if (wavefront == null || wavefront.size() == 0) {
+                    continue;
+                }
                 out.write("> " + phase.getName() + " at " + time + " seconds\n");
                 Collections.sort(wavefront, new Comparator<TimeDist>() {
 
@@ -107,6 +116,14 @@ public class TauP_Wavefront extends TauP_Path {
                             + Outputs.formatDepth(radiusOfEarth - td.getDepth()) + " " + Outputs.formatTime(time) + " "
                             + Outputs.formatRayParam(td.getP()));
                 }
+                if (isNegDistance()) {
+                    out.write("> " + phase.getName() + " at " + time + " seconds (neg distance)\n");
+                    for (TimeDist td : wavefront) {
+                        out.println(Outputs.formatDistance(-1*td.getDistDeg()) + "  "
+                                + Outputs.formatDepth(radiusOfEarth - td.getDepth()) + " " + Outputs.formatTime(time) + " "
+                                + Outputs.formatRayParam(td.getP()));
+                    }
+                }
             }
             if (gmtScript) {
                 out.println("END");
@@ -118,8 +135,7 @@ public class TauP_Wavefront extends TauP_Path {
         }
     }
 
-    public Map<SeismicPhase, Map<Float, List<TimeDist>>> calcIsochron(double degrees) {
-        // ignore degrees as we need a suite of distances
+    public Map<SeismicPhase, Map<Float, List<TimeDist>>> calcIsochron() {
         Map<SeismicPhase, Map<Float, List<TimeDist>>> resultOut = new HashMap<SeismicPhase, Map<Float, List<TimeDist>>>();
         SeismicPhase phase;
         clearArrivals();
@@ -132,11 +148,11 @@ public class TauP_Wavefront extends TauP_Path {
             double maxDist = phase.getMaxDistanceDeg();
             double deltaDist = (maxDist - minDist) / (numRays - 1);
             degrees = minDist;
-            List<Arrival> firstArrival = new ArrayList<Arrival>();
+            List<Arrival> allArrival = new ArrayList<Arrival>();
             for (int r = 0; r < getNumRays(); r++) {
                 degrees = minDist + r * deltaDist;
                 List<Arrival> phaseArrivals = phase.calcTime(degrees);
-                firstArrival.addAll(phaseArrivals);
+                allArrival.addAll(phaseArrivals);
             }
             Map<Float, List<TimeDist>> out = new HashMap<Float, List<TimeDist>>();
             resultOut.put(phase, out);
@@ -146,9 +162,9 @@ public class TauP_Wavefront extends TauP_Path {
                 done = true;
                 timeVal += timeStep;
                 if (verbose) {
-                    System.out.println("Time " + timeVal + " for " + phase.getName() + " " + firstArrival.size());
+                    System.out.println("Time " + timeVal + " for " + phase.getName() + " " + allArrival.size());
                 }
-                for (Arrival arrival : firstArrival) {
+                for (Arrival arrival : allArrival) {
                     TimeDist[] path = arrival.getPath();
                     for (int i = 0; i < path.length; i++) {
                         if (path[i].getTime() <= timeVal && i < path.length - 1 && timeVal < path[i + 1].getTime()) {
@@ -193,6 +209,22 @@ public class TauP_Wavefront extends TauP_Path {
         this.timeStep = timeStep;
     }
 
+    public boolean isSeparateFilesByTime() {
+        return separateFilesByTime;
+    }
+
+    public void setSeparateFilesByTime(boolean separateFilesByTime) {
+        this.separateFilesByTime = separateFilesByTime;
+    }
+
+    public boolean isNegDistance() {
+        return negDistance;
+    }
+
+    public void setNegDistance(boolean negDistance) {
+        this.negDistance = negDistance;
+    }
+
     public String[] parseCmdLineArgs(String[] args) throws IOException {
         int i = 0;
         String[] leftOverArgs;
@@ -203,7 +235,9 @@ public class TauP_Wavefront extends TauP_Path {
             if (dashEquals("gmt", leftOverArgs[i])) {
                 gmtScript = true;
             } else if (dashEquals("timefiles", leftOverArgs[i])) {
-                    separateFilesByTime = true;
+                separateFilesByTime = true;
+            } else if (dashEquals("negdist", leftOverArgs[i])) {
+                negDistance = true;
             } else if (dashEquals("rays", leftOverArgs[i]) && i < leftOverArgs.length - 1) {
                 setNumRays(Integer.parseInt(leftOverArgs[i + 1]));
                 i++;
