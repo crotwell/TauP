@@ -90,18 +90,18 @@ public class TauP_Wavefront extends TauP_Path {
         for (Float time : keys) {
             if (separateFilesByTime) {
                 String psFileBase = psFile;
-                if (psFile.endsWith(".ps")) {
+                if (gmtScript && psFile.endsWith(".ps")) {
                     psFileBase = psFile.substring(0, psFile.length() - 3);
                 }
                 String timeExt = "_" + format.format(time);
                 byTimePsFile = psFileBase + timeExt + ".ps";
                 String timeOutName = outFile+timeExt;
                 if (outFile.endsWith(".gmt")) {
-                    timeOutName = outFile.substring(0, psFile.length() - 3)+timeExt + ".gmt";
+                    timeOutName = outFile.substring(0, outFile.length() - 4)+timeExt + ".gmt";
                 }
                 if (timeOut != null && timeOut != out) {timeOut.close();}
                 timeOut = new PrintWriter(new BufferedWriter(new FileWriter(timeOutName)));
-                printScriptBeginning(timeOut, byTimePsFile);
+                if (gmtScript) {printScriptBeginning(timeOut, byTimePsFile);}
             }
             if (gmtScript) {
                 timeOut.println("# timestep = " + time);
