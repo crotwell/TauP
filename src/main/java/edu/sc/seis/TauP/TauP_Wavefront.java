@@ -1,6 +1,8 @@
 package edu.sc.seis.TauP;
 
+import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OptionalDataException;
 import java.io.PrintWriter;
@@ -22,7 +24,7 @@ public class TauP_Wavefront extends TauP_Path {
 
     boolean separateFilesByTime = false;
 
-    boolean negDistance = true;
+    boolean negDistance = false;
 
     Map<SeismicPhase, Map<Float, List<TimeDist>>> result;
 
@@ -84,18 +86,26 @@ public class TauP_Wavefront extends TauP_Path {
             }
         }
         DecimalFormat format = new DecimalFormat(formatStr);
+        PrintWriter timeOut = out;
         for (Float time : keys) {
             if (separateFilesByTime) {
                 String psFileBase = psFile;
                 if (psFile.endsWith(".ps")) {
                     psFileBase = psFile.substring(0, psFile.length() - 3);
                 }
-                byTimePsFile = psFileBase + "_" + format.format(time) + ".ps";
-                printScriptBeginning(out, byTimePsFile);
+                String timeExt = "_" + format.format(time);
+                byTimePsFile = psFileBase + timeExt + ".ps";
+                String timeOutName = outFile+timeExt;
+                if (outFile.endsWith(".gmt")) {
+                    timeOutName = outFile.substring(0, psFile.length() - 3)+timeExt + ".gmt";
+                }
+                if (timeOut != null && timeOut != out) {timeOut.close();}
+                timeOut = new PrintWriter(new BufferedWriter(new FileWriter(timeOutName)));
+                printScriptBeginning(timeOut, byTimePsFile);
             }
             if (gmtScript) {
-                out.println("# timestep = " + time);
-                out.println("psxy -P -R -K -O -Wblue -JP -m -A >> " + byTimePsFile + " <<END");
+                timeOut.println("# timestep = " + time);
+                timeOut.println("psxy -P -R -K -O -Wblue -JP -m -A >> " + byTimePsFile + " <<END");
             }
             for (SeismicPhase phase : result.keySet()) {
                 Map<Float, List<TimeDist>> phaseResult = result.get(phase);
@@ -103,7 +113,7 @@ public class TauP_Wavefront extends TauP_Path {
                 if (wavefront == null || wavefront.size() == 0) {
                     continue;
                 }
-                out.write("> " + phase.getName() + " at " + time + " seconds\n");
+                timeOut.println("> " + phase.getName() + " at " + time + " seconds");
                 Collections.sort(wavefront, new Comparator<TimeDist>() {
 
                     // @Override
@@ -112,27 +122,33 @@ public class TauP_Wavefront extends TauP_Path {
                     }
                 });
                 for (TimeDist td : wavefront) {
-                    out.println(Outputs.formatDistance(td.getDistDeg()) + "  "
+                    timeOut.println(Outputs.formatDistance(td.getDistDeg()) + "  "
                             + Outputs.formatDepth(radiusOfEarth - td.getDepth()) + " " + Outputs.formatTime(time) + " "
                             + Outputs.formatRayParam(td.getP()));
                 }
                 if (isNegDistance()) {
-                    out.write("> " + phase.getName() + " at " + time + " seconds (neg distance)\n");
+                    timeOut.write("> " + phase.getName() + " at " + time + " seconds (neg distance)\n");
                     for (TimeDist td : wavefront) {
-                        out.println(Outputs.formatDistance(-1*td.getDistDeg()) + "  "
+                        timeOut.println(Outputs.formatDistance(-1*td.getDistDeg()) + "  "
                                 + Outputs.formatDepth(radiusOfEarth - td.getDepth()) + " " + Outputs.formatTime(time) + " "
                                 + Outputs.formatRayParam(td.getP()));
                     }
                 }
             }
             if (gmtScript) {
-                out.println("END");
+                timeOut.println("END");
                 if (separateFilesByTime) {
-                    out.println("psxy -P -R -O -JP -m -A >> " + byTimePsFile + " <<END");
-                    out.println("END");
+                    timeOut.println("psxy -P -R -O -JP -m -A >> " + byTimePsFile + " <<END");
+                    timeOut.println("END");
                 }
             }
         }
+        if (gmtScript && out != timeOut) {
+            out.println("psxy -P -R -O -JP -m -A >> " + byTimePsFile + " <<END");
+            out.println("END");
+        }
+        timeOut.flush();
+        out.flush();
     }
 
     public Map<SeismicPhase, Map<Float, List<TimeDist>>> calcIsochron() {
