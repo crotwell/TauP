@@ -274,6 +274,8 @@ public class SlownessLayer implements Serializable {
             if(getTopDepth() == getBotDepth()) {
                 return getBotDepth();
             }
+            if (getTopP() == rayParam) {return getTopDepth();}
+            if (getBotP() == rayParam) {return getBotDepth();}
             if(getBotP() != 0.0 && getBotDepth() != radiusOfEarth) {
                 double B = Math.log(getTopP() / getBotP())
                         / Math.log((radiusOfEarth - getTopDepth())
@@ -285,6 +287,9 @@ public class SlownessLayer implements Serializable {
                 /*
                  * tempDepth = radiusOfEarth - Math.pow(rayParam/A, 1.0/B);
                  */
+                // check for slightly outside layer due to rounding or numerical instability
+                if (tempDepth < getTopDepth() && tempDepth > getTopDepth()-0.000001) {tempDepth = getTopDepth();}
+                if (tempDepth > getBotDepth() && tempDepth < getBotDepth()+0.000001) {tempDepth = getBotDepth();}
                 if(tempDepth < 0.0 || Double.isNaN(tempDepth)
                         || Double.isInfinite(tempDepth)
                         || tempDepth < getTopDepth()
@@ -301,7 +306,7 @@ public class SlownessLayer implements Serializable {
                             return linear;
                         }
                     }
-                    throw new SlownessModelException("claculated depth is not a number or is negative: "
+                    throw new SlownessModelException("claculated depth is outside layer, not a number or is negative: "
                             + tempDepth
                             + "\n"
                             + this
