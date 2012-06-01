@@ -162,7 +162,7 @@ int TauPInit(TauPStruct *taupptr, char *modelName) {
 	}
 
 		/* get the class of the travel time tool. */
-	tempClass = (*taupptr->env)->FindClass(taupptr->env, "edu.sc.seis.TauP.TauP_Time");
+	tempClass = (*taupptr->env)->FindClass(taupptr->env, "edu/sc/seis/TauP/TauP_Time");
 	if (tempClass == 0) {
 		fprintf(stderr, "Can't find edu.sc.seis.TauP.TauP_Time class\n");
 		return(1);
