@@ -200,6 +200,9 @@ public class TauP_Path extends TauP_Pierce {
 					printLatLon(out, calcDist);
 				}
 				out.write("\n");
+				if (calcTime >= maxPathTime) {
+				    break;
+				}
 				if (j < currArrival.path.length - 1
 						&& (currArrival.getRayParam() != 0.0 && 
 						   (currArrival.path[j + 1].getDistDeg() - currArrival.path[j].getDistDeg()) > maxPathInc)) {
@@ -208,9 +211,10 @@ public class TauP_Path extends TauP_Pierce {
 					int maxInterpNum = (int) Math
 							.ceil((currArrival.path[j + 1].getDistDeg() - currArrival.path[j].getDistDeg())
 									 / maxPathInc);
-					for (int interpNum = 1; interpNum < maxInterpNum && calcTime <= maxPathTime; interpNum++) {
+					for (int interpNum = 1; interpNum < maxInterpNum && calcTime < maxPathTime; interpNum++) {
 						calcTime += (currArrival.path[j + 1].time - currArrival.path[j].time)
 								/ maxInterpNum;
+						if (calcTime > maxPathTime) { break; }
 						if (longWayRound) {
 							calcDist -= (currArrival.path[j + 1].getDistDeg() - currArrival.path[j].getDistDeg())
 									 / maxInterpNum;
