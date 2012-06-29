@@ -41,6 +41,8 @@ public class TauP_Path extends TauP_Pierce {
 	
 	protected String psFile;
 	
+	protected float maxPathTime = Float.MAX_VALUE;
+	
 	protected static double maxPathInc = 1.0;
 
 	protected TauP_Path() {
@@ -96,8 +98,24 @@ public class TauP_Path extends TauP_Pierce {
 	public float getMapWidth() {
 		return mapWidth;
 	}
+    
+    public String getMapWidthUnit() {
+        return mapWidthUnit;
+    }
+    
+    public void setMapWidthUnit(String mapWidthUnit) {
+        this.mapWidthUnit = mapWidthUnit;
+    }
 
-	public boolean isGmtScript() {
+    public float getMaxPathTime() {
+        return maxPathTime;
+    }
+    
+    public void setMaxPathTime(float maxPathTime) {
+        this.maxPathTime = maxPathTime;
+    }
+
+    public boolean isGmtScript() {
 		return gmtScript;
 	}
 
@@ -156,8 +174,23 @@ public class TauP_Path extends TauP_Pierce {
 			    }
 				calcTime = currArrival.path[j].time;
 				calcDepth = currArrival.path[j].depth;
-				double prevDepth = calcDepth; // only used if interpolate
+				double prevDepth = calcDepth; // only used if interpolate due to maxPathInc
 				calcDist = currArrival.path[j].getDistDeg();
+                if (calcTime > maxPathTime) { 
+                    if (j != 0 && currArrival.path[j-1].time < maxPathTime) {
+                        // past max time, so interpolate to maxPathTime
+                        calcDist = linearInterp(currArrival.path[j-1].time, currArrival.path[j-1].getDistDeg(),
+                                                currArrival.path[j].time, currArrival.path[j].getDistDeg(),
+                                                maxPathTime);
+                        calcDepth = linearInterp(currArrival.path[j-1].time, currArrival.path[j-1].depth,
+                                                 currArrival.path[j].time, currArrival.path[j].depth,
+                                                 maxPathTime);
+                        prevDepth = calcDepth; // only used if interpolate due to maxPathInc
+                        calcTime = maxPathTime;
+                    } else {
+                        break;
+                    }
+                }
 				if (longWayRound && calcDist != 0.0) {
 					calcDist = -1.0 * calcDist;
 				}
@@ -175,7 +208,7 @@ public class TauP_Path extends TauP_Pierce {
 					int maxInterpNum = (int) Math
 							.ceil((currArrival.path[j + 1].getDistDeg() - currArrival.path[j].getDistDeg())
 									 / maxPathInc);
-					for (int interpNum = 1; interpNum < maxInterpNum; interpNum++) {
+					for (int interpNum = 1; interpNum < maxInterpNum && calcTime <= maxPathTime; interpNum++) {
 						calcTime += (currArrival.path[j + 1].time - currArrival.path[j].time)
 								/ maxInterpNum;
 						if (longWayRound) {
@@ -297,6 +330,9 @@ public class TauP_Path extends TauP_Pierce {
 				gmtScript = true;
             } else if((dashEquals("mapwidth", leftOverArgs[i])) && i < leftOverArgs.length - 1) {
                 setMapWidth(Float.parseFloat(leftOverArgs[i + 1]));
+                i++;
+            } else if((dashEquals("maxPathTime", leftOverArgs[i])) && i < leftOverArgs.length - 1) {
+                setMaxPathTime(Float.parseFloat(leftOverArgs[i + 1]));
                 i++;
 			} else if (dashEquals("help", leftOverArgs[i])) {
 				noComprendoArgs[numNoComprendoArgs++] = leftOverArgs[i];
