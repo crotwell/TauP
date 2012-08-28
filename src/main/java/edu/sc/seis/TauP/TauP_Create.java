@@ -26,8 +26,10 @@
 package edu.sc.seis.TauP;
 
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Properties;
 
 /**
@@ -69,6 +71,15 @@ public class TauP_Create {
     protected boolean GUI = false;
 
     protected Properties toolProps;
+
+    protected boolean plotVmod = false;
+    protected String plotVmodFilename;
+    
+    protected boolean plotSmod = false;
+    protected String plotSmodFilename;
+    
+    protected boolean plotTmod = false;
+    protected String plotTmodFilename;
 
     /* constructor */
     public TauP_Create() {
@@ -155,6 +166,10 @@ public class TauP_Create {
         System.out.println("\n   To specify the velocity model:");
         System.out.println("-nd modelfile       -- \"named discontinuities\" velocity file");
         System.out.println("-tvel modelfile     -- \".tvel\" velocity file, ala ttimes\n");
+        System.out.println("--vplot file.gmt     -- plot velocity as a GMT script\n");
+       // plotting sMod and tMod not yet implemented
+        // System.out.println("--splot file.gmt     -- plot slowness as a GMT script\n");
+       // System.out.println("--tplot file.gmt     -- plot tau as a GMT script\n");
         System.out.println("-debug              -- enable debugging output\n"
                 + "-verbose            -- enable verbose output\n"
                 + "-version            -- print the version\n"
@@ -201,9 +216,22 @@ public class TauP_Create {
                 velFileType = "tvel";
                 parseFileName(args[i + 1]);
                 i++;
-            } else if (dashEquals("overlayND", args[i])) {
+            } else if (i < args.length - 1 && dashEquals("overlayND", args[i])) {
                overlayVelFileType = "nd";
                overlayModelFilename = args[i+1];
+               i++;
+            } else if (i < args.length - 1 && dashEquals("vplot", args[i])) {
+                plotVmod = true;
+                plotVmodFilename = args[i+1];
+                i++;
+            } else if (i < args.length - 1 && dashEquals("splot", args[i])) {
+                plotSmod = true;
+                plotSmodFilename = args[i+1];
+                i++;
+            } else if (i < args.length - 1 && dashEquals("tplot", args[i])) {
+                plotTmod = true;
+                plotTmodFilename = args[i+1];
+                i++;
             } else if(args[i].startsWith("GB.")) {
                 velFileType = "nd";
                 parseFileName(args[i]);
@@ -265,15 +293,23 @@ public class TauP_Create {
     public VelocityModel loadVMod() throws IOException, VelocityModelException {
         String file_sep = System.getProperty("file.separator");
         // Read the velocity model file.
+        String filename = directory + file_sep + modelFilename;
+        File f = new File(filename);
+        if (f.exists() && f.canRead() && ! f.isDirectory()) {
         if(verbose)
             System.out.println("filename =" + directory + file_sep
                     + modelFilename);
-        vMod = VelocityModel.readVelocityFile(directory + file_sep + modelFilename, velFileType);
+        vMod = VelocityModel.readVelocityFile(filename, velFileType);
+        } else {
+            // maybe try an load interally???
+            vMod = TauModelLoader.loadVelocityModel(modelFilename);
+        }
         if(verbose) {
             System.out.println("Done reading velocity model.");
             System.out.println("Radius of model " + vMod.getModelName()
                     + " is " + vMod.getRadiusOfEarth());
         }
+        
         if (overlayModelFilename != null) {
 
             if(DEBUG) {
@@ -342,21 +378,28 @@ public class TauP_Create {
     
     public void start() throws SlownessModelException, TauModelException {
         try {
-            String file_sep = System.getProperty("file.separator");
-            TauModel tMod = createTauModel(vMod);
-            if(DEBUG)
-                System.out.println("Done calculating Tau branches.");
-            if(DEBUG)
-                tMod.print();
-            String outFile;
-            if(directory.equals(".")) {
-                outFile = directory + file_sep + vMod.getModelName() + ".taup";
+            if (plotVmod || plotSmod || plotTmod) {
+                if (plotVmod) {
+                    vMod.printGMT(plotVmodFilename);
+                }
+                // need to implement sMod and tMod plotting
             } else {
-                outFile = vMod.getModelName() + ".taup";
-            }
+                String file_sep = System.getProperty("file.separator");
+                TauModel tMod = createTauModel(vMod);
+                if(DEBUG)
+                    System.out.println("Done calculating Tau branches.");
+                if(DEBUG)
+                    tMod.print();
+                String outFile;
+                if(directory.equals(".")) {
+                    outFile = directory + file_sep + vMod.getModelName() + ".taup";
+                } else {
+                    outFile = vMod.getModelName() + ".taup";
+                }
             tMod.writeModel(outFile);
             if(verbose) {
                 System.out.println("Done Saving " + outFile);
+            }
             }
         } catch(IOException e) {
             System.out.println("Tried to write!\n Caught IOException "
@@ -371,4 +414,5 @@ public class TauP_Create {
             }
         }
     }
+    
 }

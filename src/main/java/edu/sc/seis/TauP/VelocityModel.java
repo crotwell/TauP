@@ -30,11 +30,14 @@
 package edu.sc.seis.TauP;
 
 import java.io.BufferedOutputStream;
+import java.io.BufferedWriter;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.Serializable;
 import java.io.StreamTokenizer;
@@ -577,8 +580,42 @@ public class VelocityModel implements Cloneable, Serializable {
      * with GMT.
      */
     public void printGMT(String filename) throws IOException {
-        DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(filename)));
-        printGMT(dos);
+        String psFile;
+        if(filename.endsWith(".gmt")) {
+            psFile = filename.substring(0, filename.length() - 4) + ".ps";
+        } else {
+            psFile = filename + ".ps";
+        }
+        PrintWriter dos = new PrintWriter(new BufferedWriter(new FileWriter(filename)));
+        
+        dos.println("#!/bin/sh");
+        dos.println("#\n# This script will plot the "+getModelName()+" velocity model using GMT. If you want to\n"
+                + "#use this as a data file for psxy in another script, delete these"
+                + "\n# first lines, as well as the last line.\n#");
+        dos.println("/bin/rm -f " + psFile + "\n");
+        double maxVel=0;
+        for (VelocityLayer vLayer : layer) {
+            if (vLayer.getTopPVelocity() > maxVel) { maxVel = vLayer.getTopPVelocity();}
+            if (vLayer.getBotPVelocity() > maxVel) { maxVel = vLayer.getBotPVelocity();}
+            if (vLayer.getTopSVelocity() > maxVel) { maxVel = vLayer.getTopSVelocity();}
+            if (vLayer.getBotSVelocity() > maxVel) { maxVel = vLayer.getBotSVelocity();}
+        }
+        maxVel *= 1.05; // make little bit larger
+        dos.println("PCOLOR=0/0/255");
+        dos.println("SCOLOR=255/0/0");
+        dos.println();
+        dos.println("psbasemap -JX6i/-9i -P -R0/"+maxVel+"/0/" + getMaxRadius() 
+                + " -B1a2:'Velocity (km/s)':/200a400:'Depth (km)':/:.'" + getModelName() + "':WSen  -K > " + psFile);
+        dos.println();
+        
+        dos.println("psxy -JX -P -R -W2p,${PCOLOR} -: -m -O -K >> " + psFile
+                + " <<END");
+        printGMTforP(dos);
+        dos.println("END\n");
+        dos.println("psxy -JX -P -R -W2p,${SCOLOR} -: -m -O >> " + psFile
+                + " <<END");
+        printGMTforS(dos);
+        dos.println("END\n");
         dos.close();
     }
 
@@ -586,30 +623,37 @@ public class VelocityModel implements Cloneable, Serializable {
      * prints out the velocity model into a file in a for suitable for plotting
      * with GMT.
      */
-    public void printGMT(DataOutputStream dos) throws IOException {
+    public void printGMT(PrintWriter dos) throws IOException {
+        dos.println("> P velocity for " + modelName + "  below");
+        printGMTforP(dos);
+        dos.println("> S velocity for " + modelName + "  below");
+        printGMTforP(dos);
+    }
+    
+    void printGMTforP(PrintWriter dos) throws IOException {
         double pVel = -1.0;
-        double sVel = -1.0;
-        VelocityLayer currVelocityLayer;
-        dos.writeBytes("> P velocity for " + modelName + "  below\n");
         for(int layerNum = 0; layerNum < getNumLayers(); layerNum++) {
-            currVelocityLayer = getVelocityLayer(layerNum);
+            VelocityLayer currVelocityLayer = getVelocityLayer(layerNum);
             if(currVelocityLayer.getTopPVelocity() != pVel) {
-                dos.writeBytes((float)currVelocityLayer.getTopDepth() + " "
-                        + (float)currVelocityLayer.getTopPVelocity() + "\n");
+                dos.println((float)currVelocityLayer.getTopDepth() + " "
+                        + (float)currVelocityLayer.getTopPVelocity());
             }
-            dos.writeBytes((float)currVelocityLayer.getBotDepth() + " "
-                    + (float)currVelocityLayer.getBotPVelocity() + "\n");
+            dos.println((float)currVelocityLayer.getBotDepth() + " "
+                    + (float)currVelocityLayer.getBotPVelocity());
             pVel = currVelocityLayer.getBotPVelocity();
         }
-        dos.writeBytes("> S velocity for " + modelName + "  below\n");
+    }
+    
+    void printGMTforS(PrintWriter dos) throws IOException {
+        double sVel = -1.0;
         for(int layerNum = 0; layerNum < getNumLayers(); layerNum++) {
-            currVelocityLayer = getVelocityLayer(layerNum);
+            VelocityLayer currVelocityLayer = getVelocityLayer(layerNum);
             if(currVelocityLayer.getTopSVelocity() != sVel) {
-                dos.writeBytes((float)currVelocityLayer.getTopDepth() + " "
-                        + (float)currVelocityLayer.getTopSVelocity() + "\n");
+                dos.println((float)currVelocityLayer.getTopDepth() + " "
+                        + (float)currVelocityLayer.getTopSVelocity());
             }
-            dos.writeBytes((float)currVelocityLayer.getBotDepth() + " "
-                    + (float)currVelocityLayer.getBotSVelocity() + "\n");
+            dos.println((float)currVelocityLayer.getBotDepth() + " "
+                    + (float)currVelocityLayer.getBotSVelocity());
             sVel = currVelocityLayer.getBotSVelocity();
         }
     }
