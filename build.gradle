@@ -105,7 +105,7 @@ def outDir = new File(resourceDir, 'edu/sc/seis/TauP/StdModels/')
 task genModels(dependsOn: compileJava) << {
     println "Generate models"
     outDir.mkdirs()
-    inDir = new File(getProjectDir(), 'src/main/resources/edu/sc/seis/TauP/StdModels/')
+    def inDir = new File(getProjectDir(), 'src/main/resources/edu/sc/seis/TauP/StdModels/')
     String[] tvelModelNames = ['iasp91', 'ak135']
     String[] ndModelNames = ['prem']
     def classLoader = new GroovyClassLoader(Project.class.classLoader)
