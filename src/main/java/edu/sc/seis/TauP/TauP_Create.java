@@ -247,6 +247,12 @@ public class TauP_Create {
             }
             i++;
         }
+        if (modelFilename == null) {
+            System.out.println("Velocity model not specified, use one of -nd or -tvel");
+            printUsage();
+            // bad, should do something else here...
+            System.exit(1);
+        }
         if(numNoComprendoArgs > 0) {
             String[] temp = new String[numNoComprendoArgs];
             System.arraycopy(noComprendoArgs, 0, temp, 0, numNoComprendoArgs);
@@ -295,14 +301,16 @@ public class TauP_Create {
         // Read the velocity model file.
         String filename = directory + file_sep + modelFilename;
         File f = new File(filename);
-        if (f.exists() && f.canRead() && ! f.isDirectory()) {
         if(verbose)
             System.out.println("filename =" + directory + file_sep
                     + modelFilename);
         vMod = VelocityModel.readVelocityFile(filename, velFileType);
-        } else {
+        if (vMod == null) {
             // maybe try an load interally???
             vMod = TauModelLoader.loadVelocityModel(modelFilename);
+        }
+        if (vMod == null) {
+            throw new IOException("Velocity model file not found: "+modelFilename+", tried internally and from file: "+f);
         }
         if(verbose) {
             System.out.println("Done reading velocity model.");
@@ -324,6 +332,7 @@ public class TauP_Create {
     }
 
     public TauModel createTauModel(VelocityModel vMod) throws VelocityModelException, SlownessModelException, TauModelException {
+        if (vMod == null) {throw new IllegalArgumentException("vMod cannot be null");}
         if(!vMod.getSpherical()) {
             throw new SlownessModelException("Flat slowness model not yet implemented.");
         }
