@@ -1312,9 +1312,9 @@ public class TauP_Time {
 
     public void printUsage() {
         printStdUsage();
-        Alert.info("-rayp              -- only output the ray parameter\n"
-                 + "-time              -- only output travel time\n"
-                 + "-rel phasename     -- also output relative travel time");
+        Alert.info("--rayp             -- only output the ray parameter\n"
+                 + "--time             -- only output travel time\n"
+                 + "--rel phasename    -- also output relative travel time");
         printStdUsageTail();
     }
 
