@@ -647,7 +647,7 @@ public class TauBranch implements Serializable, Cloneable {
             // upgoing
             sLayerNum = botLayerNum;
             sLayer = sMod.getSlownessLayer(sLayerNum, isPWave);
-            while(sLayer.getTopP() <= rayParam || sLayer.isZeroThickness()) {
+            while((sLayer.getTopP() <= rayParam || sLayer.isZeroThickness()) && sLayerNum > topLayerNum) {
                 sLayerNum--;
                 sLayer = sMod.getSlownessLayer(sLayerNum, isPWave);
             }
