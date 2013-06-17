@@ -405,6 +405,11 @@ public class TauP_Table extends TauP_Time {
         }
     }
 
+    @Override
+    public String getOutFileExtension() {
+        return "";
+    }
+    
     protected void genericTable(PrintWriter out) throws TauModelException,
             IOException {
         for(int depthNum = 0; depthNum < depths.length; depthNum++) {

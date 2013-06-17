@@ -39,6 +39,8 @@ public class TauP_Path extends TauP_Pierce {
 
 	protected boolean gmtScript = false;
 	
+	protected boolean svgOutput = false;
+	
 	protected String psFile;
 	
 	protected float maxPathTime = Float.MAX_VALUE;
@@ -47,17 +49,17 @@ public class TauP_Path extends TauP_Pierce {
 
 	protected TauP_Path() {
 		super();
-		outFile = null;
+		setOutFileBase("stdout");
 	}
 
 	public TauP_Path(TauModel tMod) throws TauModelException {
 		super(tMod);
-		outFile = null;
+        setOutFileBase("stdout");
 	}
 
 	public TauP_Path(String modelName) throws TauModelException {
 		super(modelName);
-		outFile = null;
+        setOutFileBase("stdout");
 	}
 
 	public TauP_Path(TauModel tMod, String outFileBase)
@@ -72,16 +74,15 @@ public class TauP_Path extends TauP_Pierce {
 		setOutFileBase(outFileBase);
 	}
 
-	/** Sets the output file base, appending ".gmt" for the filename. */
-	public void setOutFileBase(String outFileBase) {
-	    if ("stdout".equals(outFileBase)) {
-	        outFile = "stdout";
-	    } else if (outFileBase != null && outFileBase.length() != 0) {
-			outFile = outFileBase + ".gmt";
-		} else {
-			outFile = "taup_path.gmt";
-		}
-	}
+	
+	@Override
+    public String getOutFileExtension() {
+        String extention = "gmt";
+        if (svgOutput) {
+            extention = "svg";
+        }
+        return extention;
+    }
 
 	/**
 	 * Sets the gmt map width to be used with the output script and for creating
@@ -159,7 +160,12 @@ public class TauP_Path extends TauP_Pierce {
 		boolean longWayRound;
 		for (int i = 0; i < arrivals.size(); i++) {
 		    Arrival currArrival = (Arrival) arrivals.get(i);
-			out.write(getCommentLine(currArrival));
+		    if (svgOutput) {
+	            out.println("<!-- "+getCommentLine(currArrival)+" -->");
+	            out.write("<polyline points=\"\n");
+		    } else {
+		        out.print(getCommentLine(currArrival));
+		    }
 			longWayRound = false;
 			if ((currArrival.getDistDeg()) % 360 > 180) {
 				longWayRound = true;
@@ -194,12 +200,8 @@ public class TauP_Path extends TauP_Pierce {
 				if (longWayRound && calcDist != 0.0) {
 					calcDist = -1.0 * calcDist;
 				}
-				out.write(outForms.formatDistance(calcDist) + "  "
-						+ outForms.formatDepth(radiusOfEarth - calcDepth));
-				if (!gmtScript) {
-					printLatLon(out, calcDist);
-				}
-				out.write("\n");
+                printDistRadius(out, calcDist, radiusOfEarth - calcDepth);
+                out.write("\n");
 				if (calcTime >= maxPathTime) {
 				    break;
 				}
@@ -225,26 +227,43 @@ public class TauP_Path extends TauP_Pierce {
 						calcDepth = prevDepth + interpNum
 								* (currArrival.path[j + 1].depth - prevDepth)
 								/ maxInterpNum;
-						out.write(outForms.formatDistance(calcDist)
-								+ "  "
-								+ outForms.formatDepth(radiusOfEarth
-										- calcDepth));
-						if (!gmtScript) {
-							printLatLon(out, calcDist);
-						}
-						out.write("\n");
+						printDistRadius(out, calcDist, radiusOfEarth - calcDepth);
+				        out.write("\n");
 					}
 				}
 				prevDepth = currArrival.path[j].depth;
+			}
+			if (svgOutput) {
+			    out.println("\" />");
 			}
 		}
         if (gmtScript) {
             out.write("END\n");
             out.write("psxy -P -R -O -JP -m -A >> " + psFile + " <<END\n");
             out.write("END\n");
+        } else if (svgOutput) {
+            out.println("</g>");
+            out.println("</svg>");
         }
 	}
 
+    protected void printDistRadius(Writer out, double calcDist, double radius) throws IOException {
+        if (svgOutput) {
+            double radian = (calcDist-90)*Math.PI/180;
+            double x = radius*Math.cos(radian);
+            double y = radius*Math.sin(radian);
+            out.write(outForms.formatDistance(x)
+                      + "  "
+                      + outForms.formatDistance(y));
+        } else {
+            out.write(outForms.formatDistance(calcDist)
+                      + "  "
+                      + outForms.formatDepth(radius));
+        }
+        if (!gmtScript && !svgOutput) {
+            printLatLon(out, calcDist);
+        }
+    }
 	protected void printLatLon(Writer out, double calcDist) throws IOException {
 		double lat, lon;
 		if (eventLat != Double.MAX_VALUE && eventLon != Double.MAX_VALUE
@@ -277,48 +296,95 @@ public class TauP_Path extends TauP_Pierce {
 	}
 	
 	public void printScriptBeginning(PrintWriter out)  throws IOException {
-        if ( ! gmtScript) { return; }
+	    if (svgOutput) {
+	        printScriptBeginningSVG(out);
+	    } else if ( gmtScript) {
         
-        if (outFile == null) {
-            outFile = "taup_path.gmt";
+        if (getOutFileBase().equals("stdout")) {
             psFile = "taup_path.ps";
-        } else if (outFile.endsWith(".gmt")) {
-            psFile = outFile.substring(0, outFile.length() - 4) + ".ps";
+        } else if (getOutFile().endsWith(".gmt")) {
+            psFile = getOutFile().substring(0, getOutFile().length() - 4) + ".ps";
         } else {
-            psFile = outFile + ".ps";
+            psFile = getOutFile() + ".ps";
         }
         printScriptBeginning(out, psFile);
+	    } else {
+	        return; 
+	    }
 	}
 
-    public void printScriptBeginning(PrintWriter out, String psFile)  throws IOException {
-	    out.println("#!/bin/sh");
-	    out.println("#\n# This script will plot ray paths using GMT. If you want to\n"
-	            + "#use this as a data file for psxy in another script, delete these"
-	            + "\n# first lines, to the last psxy, as well as the last line.\n#");
-	    out.println("/bin/rm -f " + psFile);
-	    out.println("# draw surface and label distances.\n"
-	            + "psbasemap -K -P -R0/360/0/"+getTauModel().getRadiusOfEarth()+" -JP" + mapWidth + mapWidthUnit
-	            + " -B30p/500N > " + psFile);
-	    out.println("# draw circles for branches, note these are scaled for a \n"
-	            + "# map using -JP" + mapWidth + mapWidthUnit + "\n"
-	            + "psxy -K -O -P -R -JP -Sc -A >> " + psFile
-	            + " <<ENDLAYERS");
+    public void printScriptBeginningSVG(PrintWriter out)  throws IOException {
+        float R = (float)getTauModel().getRadiusOfEarth();
+        float plotSize =R  * 1.1f;
+        out.println("<svg version=\"1.1\" baseProfile=\"full\" xmlns=\"http://www.w3.org/2000/svg\" width=\"500\" height=\"500\" viewBox=\"0 0 "+(2*plotSize)+" "+(2*plotSize)+"\">");
+        
+	    out.println("<!--\n This script will plot ray paths generated by TauP using SVG. -->");
+        out.println("<defs>");
+        out.println("    <style type=\"text/css\"><![CDATA[");
+        out.println("        circle {");
+        out.println("            vector-effect: non-scaling-stroke;");
+        out.println("            stroke: grey;");
+        out.println("            fill: none;");
+        out.println("        }");
+        out.println("        polyline {");
+        out.println("            vector-effect: non-scaling-stroke;");
+        out.println("            stroke: black;");
+        out.println("            fill: none;");
+        out.println("        }");
+        out.println("    ]]></style>");
+        out.println("</defs>");
+        out.println("<g transform=\"translate("+plotSize+","+plotSize+")\" >");
+        out.println("<!-- draw surface and label distances.-->");
 	    // whole earth radius (scales to mapWidth)
-	    out.println("0.0 0.0 " + (float) (mapWidth) + mapWidthUnit);
+        int step = 30;
+        out.println("<!-- tick marks every "+step+" degrees.-->");
+        for (int i = 0; i < 360; i+= step) {
+            out.print("  <polyline points=\"");
+            printDistRadius(out, i, R);
+            out.print(", ");
+            printDistRadius(out, i, R*1.05);
+            out.println("\" />");
+        }
+	    out.println("  <circle cx=\"0.0\" cy=\"0.0\" r=\"" + R+"\" />");
 	    // other boundaries
 	    double[] branchDepths = tMod.getBranchDepths();
 	    for (int i = 0; i < branchDepths.length; i++) {
-	        out.println("0.0 0.0 "
-	                + (float) ((getTauModel().getRadiusOfEarth() - branchDepths[i])
-	                        * mapWidth / getTauModel().getRadiusOfEarth()) + mapWidthUnit);
+
+	        out.println("  <circle cx=\"0.0\" cy=\"0.0\" r=\"" + (R- branchDepths[i])+"\" />");
 	    }
-	    out.println("ENDLAYERS\n");
-	    out.println("# draw paths");
+	    out.println("<!-- draw paths, coordinates are x,y not degree,radiue due to SVG using only cartesian -->");
 	}
+
+    public void printScriptBeginning(PrintWriter out, String psFile)  throws IOException {
+        out.println("#!/bin/sh");
+        out.println("#\n# This script will plot ray paths using GMT. If you want to\n"
+                + "#use this as a data file for psxy in another script, delete these"
+                + "\n# first lines, to the last psxy, as well as the last line.\n#");
+        out.println("/bin/rm -f " + psFile);
+        out.println("# draw surface and label distances.\n"
+                + "psbasemap -K -P -R0/360/0/"+getTauModel().getRadiusOfEarth()+" -JP" + mapWidth + mapWidthUnit
+                + " -B30p/500N > " + psFile);
+        out.println("# draw circles for branches, note these are scaled for a \n"
+                + "# map using -JP" + mapWidth + mapWidthUnit + "\n"
+                + "psxy -K -O -P -R -JP -Sc -A >> " + psFile
+                + " <<ENDLAYERS");
+        // whole earth radius (scales to mapWidth)
+        out.println("0.0 0.0 " + (float) (mapWidth) + mapWidthUnit);
+        // other boundaries
+        double[] branchDepths = tMod.getBranchDepths();
+        for (int i = 0; i < branchDepths.length; i++) {
+            out.println("0.0 0.0 "
+                    + (float) ((getTauModel().getRadiusOfEarth() - branchDepths[i])
+                            * mapWidth / getTauModel().getRadiusOfEarth()) + mapWidthUnit);
+        }
+        out.println("ENDLAYERS\n");
+        out.println("# draw paths");
+    }
 
 	public void printUsage() {
 		printStdUsage();
         System.out.println("--gmt             -- outputs path as a complete GMT script.");
+        System.out.println("--svg             -- outputs path as a complete SVG file.");
         System.out.println("--mapwidth        -- sets map width for GMT script.");
 		printStdUsageTail();
 	}
@@ -332,6 +398,8 @@ public class TauP_Path extends TauP_Pierce {
 		while (i < leftOverArgs.length) {
 			if (dashEquals("gmt", leftOverArgs[i])) {
 				gmtScript = true;
+			} else if (dashEquals("svg", leftOverArgs[i])) {
+	                svgOutput = true;
             } else if((dashEquals("mapwidth", leftOverArgs[i])) && i < leftOverArgs.length - 1) {
                 setMapWidth(Float.parseFloat(leftOverArgs[i + 1]));
                 i++;

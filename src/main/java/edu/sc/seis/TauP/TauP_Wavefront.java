@@ -51,8 +51,7 @@ public class TauP_Wavefront extends TauP_Path {
         if (!gmtScript) {
             return;
         }
-        if (outFile == null) {
-            outFile = "taup_wavefront.gmt";
+        if (getOutFile().equals("stdout")) {
             psFile = "taup_wavefront.ps";
         }
         super.printScriptBeginning(out);
@@ -95,9 +94,9 @@ public class TauP_Wavefront extends TauP_Path {
                 }
                 String timeExt = "_" + format.format(time);
                 byTimePsFile = psFileBase + timeExt + ".ps";
-                String timeOutName = outFile+timeExt;
-                if (outFile.endsWith(".gmt")) {
-                    timeOutName = outFile.substring(0, outFile.length() - 4)+timeExt + ".gmt";
+                String timeOutName = getOutFileBase()+timeExt;
+                if (getOutFile().endsWith(".gmt")) {
+                    timeOutName = getOutFile().substring(0, getOutFile().length() - 4)+timeExt + ".gmt";
                 }
                 if (timeOut != null && timeOut != out) {timeOut.close();}
                 timeOut = new PrintWriter(new BufferedWriter(new FileWriter(timeOutName)));
@@ -288,7 +287,7 @@ public class TauP_Wavefront extends TauP_Path {
         boolean doInteractive = true;
         try {
             TauP_Wavefront tauP_wavefront = new TauP_Wavefront();
-            tauP_wavefront.outFile = "taup_wavefront.gmt";
+            tauP_wavefront.setOutFileBase("taup_wavefront");
             String[] noComprendoArgs = tauP_wavefront.parseCmdLineArgs(args);
             printNoComprendoArgs(noComprendoArgs);
             for (int i = 0; i < args.length; i++) {

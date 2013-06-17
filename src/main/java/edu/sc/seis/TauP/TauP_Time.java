@@ -108,7 +108,7 @@ public class TauP_Time {
     
     protected Arrival relativeArrival;
 
-    protected String outFile = "";
+    protected String outFileBase = "";
 
     protected PrintWriter writer;
 
@@ -567,7 +567,7 @@ public class TauP_Time {
                     backAzimuth = Double.valueOf(args[i + 1]).doubleValue();
                     i++;
                 } else if(args[i].equalsIgnoreCase("-o")) {
-                    outFile = args[i + 1];
+                    outFileBase = args[i + 1];
                     i++;
                 } else if(dashEquals("rel", args[i])) {
                     relativePhaseName = args[i + 1];
@@ -866,10 +866,34 @@ public class TauP_Time {
         }
     }
     
+    public String getOutFileBase() {
+        return outFileBase;
+    }
+    
+    public void setOutFileBase(String outFileBase) {
+        this.outFileBase = outFileBase;
+    }
+    
+    public String getOutFileExtension() {
+        return "gmt";
+    }
+    
+    public String getOutFile() {
+        if(getOutFileBase() == null || getOutFileBase().length() == 0 || getOutFileBase().equals("stdout")) {
+            return "stdout";
+        } else {
+            if (getOutFileExtension() == null || getOutFileExtension().length() == 0) {
+                // don't do a dot if no extension
+                return getOutFileBase();
+            }
+            return getOutFileBase()+"."+getOutFileExtension();
+        }
+    }
+    
     public PrintWriter getWriter() throws IOException {
         if (writer == null) {
-            if(outFile != null && outFile.length() != 0 && !outFile.equals("stdout")) {
-                writer = new PrintWriter(new BufferedWriter(new FileWriter(outFile)));
+            if(!getOutFile().equals("stdout")) {
+                writer = new PrintWriter(new BufferedWriter(new FileWriter(getOutFile())));
             } else {
                 writer = new PrintWriter(new OutputStreamWriter(System.out));
             }

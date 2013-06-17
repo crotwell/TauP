@@ -41,6 +41,7 @@ public class CmdLineOutputTest {
     public void testTauPPath() throws Exception {
         runTests(new String[] {"taup_path -o stdout -h 10 -ph P -deg 35 -mod prem",
                                "taup_path -o stdout -h 10 -ph P -deg 35",
+                               "taup_path -o stdout -h 10 -ph P -deg 35 --svg",
                                "taup_path -o stdout -h 10 -ph P -deg 35 -mod ak135"});
     }
 
