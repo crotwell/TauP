@@ -27,6 +27,7 @@ typedef struct TauPStruct {
 
 int TauPInit(TauPStruct*, char *);
 int TauPSetDepth(TauPStruct, double);
+int TauPClearPhases(TauPStruct, double);
 int TauPAppendPhases(TauPStruct, char *);
 int TauPCalculate(TauPStruct, double);
 int TauPGetNumArrivals(TauPStruct);
