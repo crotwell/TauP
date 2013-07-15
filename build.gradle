@@ -1,7 +1,7 @@
 
 dependencies {
     compile project(':seisFile')
-    compile 'org.python:jython-standalone:2.5.2'
+    compile 'org.python:jython-standalone:2.5.3'
 }
 
 group = 'edu.sc.seis'
