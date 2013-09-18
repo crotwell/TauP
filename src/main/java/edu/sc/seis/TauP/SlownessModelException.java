@@ -39,4 +39,8 @@ public class SlownessModelException extends Exception {
     public SlownessModelException(String message) {
         super("SlownessModel Exception: " + message);
     }
+
+    public SlownessModelException(String message, Exception e) {
+        super(message, e);
+    }
 }
