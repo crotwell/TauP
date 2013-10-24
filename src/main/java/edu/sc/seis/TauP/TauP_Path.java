@@ -133,7 +133,7 @@ public class TauP_Path extends TauP_Pierce {
 	}
 
 	public void calculate(double degrees) throws TauModelException {
-		depthCorrect(getSourceDepth());
+		depthCorrect(getSourceDepth(), getReceiverDepth());
 		recalcPhases();
 		clearArrivals();
 		calcPath(degrees);
@@ -161,10 +161,11 @@ public class TauP_Path extends TauP_Pierce {
 		for (int i = 0; i < arrivals.size(); i++) {
 		    Arrival currArrival = (Arrival) arrivals.get(i);
 		    if (svgOutput) {
-	            out.println("<!-- "+getCommentLine(currArrival)+" -->");
-	            out.write("<polyline points=\"\n");
+	            out.println("<!-- "+getCommentLine(currArrival));
+	            out.println(" -->");
+	            out.println("<polyline points=\"");
 		    } else {
-		        out.print(getCommentLine(currArrival));
+		        out.println(getCommentLine(currArrival));
 		    }
 			longWayRound = false;
 			if ((currArrival.getDistDeg()) % 360 > 180) {

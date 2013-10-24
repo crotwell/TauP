@@ -105,6 +105,13 @@ public class SeismicPhase implements Serializable, Cloneable {
     protected double sourceDepth;
 
     /**
+     * The receiver depth within the TauModel that was used to generate this
+     * phase. Normally this is 0.0 for a surface stations, but can be different
+     * for borehole or scattering calculations.
+     */
+    protected double receiverDepth = 0.0;
+
+    /**
      * Array of distances corresponding to the ray parameters stored in
      * rayParams.
      */
@@ -148,7 +155,7 @@ public class SeismicPhase implements Serializable, Cloneable {
      * Array of branch numbers for the given phase. Note that this depends upon
      * both the earth model and the source depth.
      */
-    protected ArrayList<Integer> branchSeq = new ArrayList<Integer>();
+    protected List<Integer> branchSeq = new ArrayList<Integer>();
 
     /** The phase name, ie PKiKP. */
     protected String name;
@@ -210,13 +217,65 @@ public class SeismicPhase implements Serializable, Cloneable {
      * @throws TauModelException 
      */
     public SeismicPhase(String name, TauModel tMod) throws TauModelException {
+        this(name, tMod, 0.0, false); //surface receiver
+    }
+
+    public SeismicPhase(String name, TauModel tMod, double receiverDepth, boolean endsDowngoing) throws TauModelException {
+        if (endsDowngoing && receiverDepth < tMod.getSourceDepth()) {
+            throw new IllegalArgumentException("Receiver depth ("+receiverDepth+") must be greater than source depth ("+tMod.getSourceDepth()+") for an only downgoing phase.");
+        }
         this.name = name;
         this.sourceDepth = tMod.getSourceDepth();
+        this.receiverDepth = receiverDepth;
         this.tMod = tMod;
         legs = legPuller(name);
         createPuristName(tMod);
         parseName(tMod);
+        if (receiverDepth != 0.0) {
+            boolean lastIsPWave = legs.get(legs.size()-2).charAt(0)=='P' || legs.get(legs.size()-2).charAt(0)=='p';
+            SlownessLayer receiverLayer;
+            try {
+                receiverLayer = tMod.getSlownessModel().getSlownessLayer(tMod.getSlownessModel().layerNumberAbove(receiverDepth, lastIsPWave), lastIsPWave);
+                maxRayParam = Math.min(maxRayParam, receiverLayer.evaluateAt_bullen(receiverDepth, tMod.getRadiusOfEarth()));    
+            } catch(NoSuchLayerException e) {
+                throw new TauModelException("Problem calculating maxRayParam", e);
+            } catch(SlownessModelException e) {
+                throw new TauModelException("Problem calculating maxRayParam", e);
+            }     
+             // not a surface receiver, pull off branches from the calculated list until we hit
+            // the receiver depth
+            double[] branchDepths = tMod.getBranchDepths();
+            int i=branchSeq.size()-1;
+            while(i >= 0 && branchDepths[branchSeq.get(i)] < receiverDepth) {
+                if (DEBUG) {
+                    System.out.println(i+" "+branchSeq.get(i)+" "+branchDepths[branchSeq.get(i)]+" >  "+receiverDepth);
+                }
+                i--;
+            }
+            if (endsDowngoing && i>0 && branchDepths[branchSeq.get(i-1)] > receiverDepth) {
+                // also must peal off branches for any turning phase below the receiver depth
+                i--;
+                while(i >= 0 && branchDepths[branchSeq.get(i)] >= receiverDepth) {
+                    if (DEBUG) {
+                        System.out.println(i+" "+branchSeq.get(i)+" "+branchDepths[branchSeq.get(i)]+" >  "+receiverDepth);
+                    }
+                    i--;
+                }
+            }
+            branchSeq = branchSeq.subList(0, i+1);
+            if (DEBUG) {
+                System.out.println("Remove branches orig: "+branchSeq.size()+" after:"+i+" branchSeq:"+branchSeq.size());
+                for (int b : branchSeq) {
+                    System.out.print(" "+b);
+                }
+                System.out.println();
+                if (i>=0) {
+                    System.out.println("Last branch: "+branchSeq.get(branchSeq.size()-1)+" "+tMod.getTauBranch(branchSeq.get(branchSeq.size()-1), PWAVE));
+                }
+            }
+        }
         sumBranches(tMod);
+        
     }
     
     public Arrival getEarliestArrival(double degrees) {
@@ -476,6 +535,7 @@ public class SeismicPhase implements Serializable, Cloneable {
                 / (dist[rayNum] - dist[rayNum + 1])
                 + rayParams[rayNum + 1];
         double takeoffVelocity;
+        double incidentVelocity;
         double takeoffAngle = -1;
         double incidentAngle = -1;
         if (name.endsWith("kmps")) {
@@ -492,7 +552,14 @@ public class SeismicPhase implements Serializable, Cloneable {
                 }
                 takeoffAngle = 180/Math.PI*Math.asin(takeoffVelocity*arrivalRayParam/(getTauModel().getRadiusOfEarth()-sourceDepth));
                 char lastLeg = getLegs().get(getLegs().size()-2).charAt(0); // last item is "E", assume first char is P or S
-                incidentAngle = 180/Math.PI*Math.asin(vMod.evaluateBelow(0, lastLeg)*arrivalRayParam/getTauModel().getRadiusOfEarth());
+                
+                if (getDownGoing()[getDownGoing().length-1]) {
+                    //fake neg velocity so angle is neg in case of downgoing
+                    incidentVelocity = -1*vMod.evaluateAbove(receiverDepth, lastLeg);
+                } else {
+                    incidentVelocity = vMod.evaluateBelow(receiverDepth, lastLeg);
+                }
+                incidentAngle = 180/Math.PI*Math.asin(incidentVelocity*arrivalRayParam/(getTauModel().getRadiusOfEarth()-receiverDepth));
             } catch(NoSuchLayerException e) {
                 throw new RuntimeException("Should not happen", e);
             } catch(NoSuchMatPropException e) {
@@ -1900,7 +1967,6 @@ public class SeismicPhase implements Serializable, Cloneable {
         } else {
             headDepth = tMod.getCmbDepth();
         }
-        int i = 0;
         int numFound = 0;
         int indexInString = -1;
         // can't have both Pxxx and Sxxx in a head wave phase, so one of these
