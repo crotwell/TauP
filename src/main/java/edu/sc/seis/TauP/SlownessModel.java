@@ -1773,8 +1773,7 @@ public abstract class SlownessModel implements Serializable {
                 }
             } catch(NoSuchMatPropException e) {
                 // Can't happen but...
-                throw new SlownessModelException("Caught NoSuchMatPropException: "
-                        + e.getMessage());
+                throw new SlownessModelException("Caught NoSuchMatPropException: ", e);
             }
             // We don't need to check for S waves in a fluid or
             // in inner core if allowInnerCoreS==false.
@@ -1799,6 +1798,10 @@ public abstract class SlownessModel implements Serializable {
                                                      topVelocity,
                                                      sLayer.getTopDepth(),
                                                      slope);
+                    // check for floating point fuzziness
+                    if (botDepth < sLayer.getTopDepth() && botDepth > sLayer.getTopDepth() - .00000000001) {
+                        botDepth = sLayer.getTopDepth();
+                    }
                 }
                 botLayer = new SlownessLayer(p, botDepth, sLayer.getBotP(), sLayer.getBotDepth() );
                 topLayer = new SlownessLayer(sLayer.getTopP(), sLayer.getTopDepth(), p, botDepth);
