@@ -707,13 +707,13 @@ public class TauP_Time {
     }
     
     public void depthCorrect(double depth, double receiverDepth) throws TauModelException {
-        if(tModDepth == null || tModDepth.getSourceDepth() != depth || receiverDepth != getReceiverDepth()) {
+        if(tModDepth == null || tModDepth.getSourceDepth() != depth) {
             setReceiverDepth(receiverDepth);
             tModDepth = tMod.depthCorrect(depth);
-            tModDepth = tModDepth.splitBranch(receiverDepth);
             clearArrivals();
             phases = null;
         }
+        tModDepth = tModDepth.splitBranch(receiverDepth); // if already split on reciever depth this does nothing
         setSourceDepth(depth);
     }
 
