@@ -154,8 +154,9 @@ public class TauP_Wavefront extends TauP_Path {
         Map<SeismicPhase, Map<Float, List<TimeDist>>> resultOut = new HashMap<SeismicPhase, Map<Float, List<TimeDist>>>();
         SeismicPhase phase;
         clearArrivals();
-        for (int phaseNum = 0; phaseNum < phases.size(); phaseNum++) {
-            phase = phases.get(phaseNum);
+        List<SeismicPhase> phaseList = getSeismicPhases();
+        for (int phaseNum = 0; phaseNum < phaseList.size(); phaseNum++) {
+            phase = phaseList.get(phaseNum);
             if (verbose) {
                 System.out.println("Work on " + phase.getName());
             }

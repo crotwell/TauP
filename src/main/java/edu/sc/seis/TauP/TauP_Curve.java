@@ -156,11 +156,9 @@ public class TauP_Curve extends TauP_Time {
 
     public void calculate(double degrees) {
         /*
-         * no need to do any calculations, just check the phases since they have
-         * already been done within the seismic phase. So, this just overrides
+         * no need to do any calculations. So, this just overrides
          * TauP_Time.calculate. printResult handles everything else.
          */
-        recalcPhases();
     }
     
 
@@ -289,6 +287,7 @@ public class TauP_Curve extends TauP_Time {
                               e.getMessage() + "\nSkipping relative phase");
             }
         }
+        List<SeismicPhase> phaseList = getSeismicPhases();
         if(gmtScript) {
             String scriptStuff = "";
             String psFile;
@@ -303,8 +302,8 @@ public class TauP_Curve extends TauP_Time {
             } else if (relativePhaseName != "") {
                 title += " relative phase "+relativePhaseName;
             }
-            for(int phaseNum = 0; phaseNum < phases.size(); phaseNum++) {
-                phase = (SeismicPhase)phases.get(phaseNum);
+            for(int phaseNum = 0; phaseNum < phaseList.size(); phaseNum++) {
+                phase = (SeismicPhase)phaseList.get(phaseNum);
                 if(phase.hasArrivals()) {
                     dist = phase.getDist();
                     time = phase.getTime();
@@ -372,8 +371,8 @@ public class TauP_Curve extends TauP_Time {
                 }
             }
         }
-        for(int phaseNum = 0; phaseNum < phases.size(); phaseNum++) {
-            phase = phases.get(phaseNum);
+        for(int phaseNum = 0; phaseNum < phaseList.size(); phaseNum++) {
+            phase = phaseList.get(phaseNum);
             if(phase.hasArrivals()) {
                 dist = phase.getDist();
                 time = phase.getTime();

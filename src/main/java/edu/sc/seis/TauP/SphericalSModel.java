@@ -189,12 +189,11 @@ public class SphericalSModel extends SlownessModel implements Serializable {
      */
     public TimeDist layerTimeDist(double sphericalRayParam,
                                   int layerNum,
-                                  boolean isPWave)
+                                  boolean isPWave,
+                                  boolean downgoing)
             throws SlownessModelException {
         double swapDouble;
         double b; // temporary variable makes the calculations less ugly.
-        // To hold the return values.
-        TimeDist timedist = new TimeDist(sphericalRayParam);
         SlownessLayer sphericalLayer = getSlownessLayer(layerNum, isPWave);
         double topRadius = radiusOfEarth - sphericalLayer.getTopDepth(); // radius
         // to
@@ -202,6 +201,13 @@ public class SphericalSModel extends SlownessModel implements Serializable {
         double botRadius = radiusOfEarth - sphericalLayer.getBotDepth(); // radius
         // to
         // bot
+
+        double outDepth;
+        if (downgoing) {
+            outDepth = sphericalLayer.getBotDepth();
+        } else {
+            outDepth = sphericalLayer.getTopDepth();
+        }
         /*
          * First we make sure that a ray with this ray parameter can propagate
          * within this layer and doesn't turn in the middle of the layer. If
@@ -239,9 +245,7 @@ public class SphericalSModel extends SlownessModel implements Serializable {
          * for time and distance increments.
          */
         if(sphericalLayer.getTopDepth() == sphericalLayer.getBotDepth()) {
-            timedist.time = 0.0;
-            timedist.distRadian = 0.0;
-            return timedist;
+            return new TimeDist(sphericalRayParam, 0.0, 0.0, outDepth);
         }
         /*
          * Check to see if this layer contains the center of the earth. If so
@@ -260,23 +264,25 @@ public class SphericalSModel extends SlownessModel implements Serializable {
          */
         if(sphericalRayParam == 0.0
                 && sphericalLayer.getBotDepth() == radiusOfEarth) {
+            double distRadian;
+            double time;
             if(layerNum != getNumLayers(isPWave) - 1)
                 throw new SlownessModelException("There are layers deeper than the center of the earth!");
-            timedist.distRadian = Math.PI / 2.0;
-            timedist.time = sphericalLayer.getTopP();
+            distRadian = Math.PI / 2.0;
+            time = sphericalLayer.getTopP();
             if(DEBUG) {
-                System.out.println("Center of Earth: dist " + timedist.distRadian
-                        + " time " + timedist.time);
+                System.out.println("Center of Earth: dist " + distRadian
+                        + " time " + time);
             }
-            if(timedist.distRadian < 0.0 || timedist.time < 0.0
-                    || Double.isNaN(timedist.time)
-                    || Double.isNaN(timedist.distRadian)) {
+            if(distRadian < 0.0 || time < 0.0
+                    || Double.isNaN(time)
+                    || Double.isNaN(distRadian)) {
                 throw new SlownessModelException("CoE timedist <0.0 or NaN: "
                         + "sphericalRayParam= " + sphericalRayParam
                         + " botDepth = " + sphericalLayer.getBotDepth()
-                        + " dist=" + timedist.distRadian + " time=" + timedist.time);
+                        + " dist=" + distRadian + " time=" + time);
             }
-            return timedist;
+            return new TimeDist(sphericalRayParam, time, distRadian, outDepth);
         }
         /*
          * Now we check to see if this is a constant velocity layer and if so
@@ -319,19 +325,19 @@ public class SphericalSModel extends SlownessModel implements Serializable {
             }
             // Use b for temp storage of the length of the ray path.
             b = Math.sqrt(topTerm) - Math.sqrt(botTerm);
-            timedist.time = b / vel;
-            timedist.distRadian = Math.asin(b * sphericalRayParam * vel
+            double time = b / vel;
+            double distRadian = Math.asin(b * sphericalRayParam * vel
                     / (topRadius * botRadius));
-            if(timedist.distRadian < 0.0 || timedist.time < 0.0
-                    || Double.isNaN(timedist.time)
-                    || Double.isNaN(timedist.distRadian)) {
+            if(distRadian < 0.0 || time < 0.0
+                    || Double.isNaN(time)
+                    || Double.isNaN(distRadian)) {
                 throw new SlownessModelException("CVL timedist <0.0 or NaN: "
                         + "\nsphericalRayParam= " + sphericalRayParam
                         + "\n botDepth = " + sphericalLayer.getBotDepth()
                         + "\n topDepth = " + sphericalLayer.getTopDepth()
                         + "\n topRadius=" + topRadius + " botRadius="
-                        + botRadius + "\n dist=" + timedist.distRadian + "\n time="
-                        + timedist.time + "\n b=" + b + "\n topTerm=" + topTerm
+                        + botRadius + "\n dist=" + distRadian + "\n time="
+                        + time + "\n b=" + b + "\n topTerm=" + topTerm
                         + "\n botTerm=" + botTerm + "\n vel    =" + vel + "\n"
                         + "\n bR^2   =" + (botRadius * botRadius)
                         + "\n p^2v^2 =" + sphericalRayParam * sphericalRayParam
@@ -339,7 +345,7 @@ public class SphericalSModel extends SlownessModel implements Serializable {
                         + "\n p^2v^2 =" + sphericalRayParam * sphericalRayParam
                         * vel * vel);
             }
-            return timedist;
+            return new TimeDist(sphericalRayParam, time, distRadian, outDepth);
         }
         /*
          * OK, the layer is not a constant velocity layer or the center of the
@@ -347,7 +353,8 @@ public class SphericalSModel extends SlownessModel implements Serializable {
          * 
          */
         return sphericalLayer.bullenRadialSlowness(sphericalRayParam,
-                                                   radiusOfEarth);
+                                                   radiusOfEarth,
+                                                   downgoing);
     }
 
     /**

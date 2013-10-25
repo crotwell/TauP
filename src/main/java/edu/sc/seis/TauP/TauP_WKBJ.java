@@ -146,11 +146,12 @@ public class TauP_WKBJ extends TauP_Time {
         double theta, nextTheta;
         // WKBJArrival seismogramArrival;
         ReflTransCoefficient rtCoeff;
-        for(int phaseNum = 0; phaseNum < phases.size(); phaseNum++) {
+        List<SeismicPhase> phaseList = getSeismicPhases();
+        for(int phaseNum = 0; phaseNum < phaseList.size(); phaseNum++) {
             System.out.println("Phase "
-                    + phases.get(phaseNum).getName()
+                    + phaseList.get(phaseNum).getName()
                     + ".");
-            phase = phases.get(phaseNum);
+            phase = phaseList.get(phaseNum);
             List<Arrival> phaseArrivals = phase.calcTime(degrees);
             minRayParam = phase.getMinRayParam();
             // rtCoeff = new ReflTransCoefficient(phase);

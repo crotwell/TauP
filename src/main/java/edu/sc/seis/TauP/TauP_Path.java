@@ -133,22 +133,10 @@ public class TauP_Path extends TauP_Pierce {
 	}
 
 	public void calculate(double degrees) throws TauModelException {
-		depthCorrect(getSourceDepth(), getReceiverDepth());
-		recalcPhases();
-		clearArrivals();
-		calcPath(degrees);
-	}
-
-	public void calcPath(double degrees) {
-		this.degrees = degrees;
-		SeismicPhase phase;
-		for (int phaseNum = 0; phaseNum < phases.size(); phaseNum++) {
-			phase = phases.get(phaseNum);
-			List<Arrival> phaseArrivals = phase.calcPath(degrees);
-			for (Arrival arrival : phaseArrivals) {
-			    arrivals.add(arrival);
-			}
-		}
+	    super.calculate(degrees);
+	    for (Arrival arrival : getArrivals()) {
+            arrival.getPath(); // side effect of calculating path
+        }
 	}
 
 	@Override
@@ -175,22 +163,23 @@ public class TauP_Path extends TauP_Pierce {
 			double calcDist = 0.0;
 			TimeDist prevTimeDist = new TimeDist(0,0,0,0);
 			double calcDepth = currArrival.getSourceDepth();
-			for (int j = 0; j < currArrival.path.length; j++) {
-			    if (currArrival.path[j].getDistRadian() < prevTimeDist.getDistRadian()) {
-			        throw new RuntimeException("ray path is backtracking, not possible: "+j+" ("+currArrival.path[j] +") < ("+ prevTimeDist+")");
+			TimeDist[] path = currArrival.getPath();
+			for (int j = 0; j < path.length; j++) {
+			    if (path[j].getDistRadian() < prevTimeDist.getDistRadian()) {
+			        throw new RuntimeException("ray path is backtracking, not possible: "+j+" ("+path[j] +") < ("+ prevTimeDist+")");
 			    }
-				calcTime = currArrival.path[j].time;
-				calcDepth = currArrival.path[j].depth;
+				calcTime = path[j].getTime();
+				calcDepth = path[j].getDepth();
 				double prevDepth = calcDepth; // only used if interpolate due to maxPathInc
-				calcDist = currArrival.path[j].getDistDeg();
+				calcDist = path[j].getDistDeg();
                 if (calcTime > maxPathTime) { 
-                    if (j != 0 && currArrival.path[j-1].time < maxPathTime) {
+                    if (j != 0 && path[j-1].getTime() < maxPathTime) {
                         // past max time, so interpolate to maxPathTime
-                        calcDist = linearInterp(currArrival.path[j-1].time, currArrival.path[j-1].getDistDeg(),
-                                                currArrival.path[j].time, currArrival.path[j].getDistDeg(),
+                        calcDist = linearInterp(path[j-1].getTime(), path[j-1].getDistDeg(),
+                                                path[j].getTime(), path[j].getDistDeg(),
                                                 maxPathTime);
-                        calcDepth = linearInterp(currArrival.path[j-1].time, currArrival.path[j-1].depth,
-                                                 currArrival.path[j].time, currArrival.path[j].depth,
+                        calcDepth = linearInterp(path[j-1].getTime(), path[j-1].getDepth(),
+                                                 path[j].getTime(), path[j].getDepth(),
                                                  maxPathTime);
                         prevDepth = calcDepth; // only used if interpolate due to maxPathInc
                         calcTime = maxPathTime;
@@ -206,33 +195,33 @@ public class TauP_Path extends TauP_Pierce {
 				if (calcTime >= maxPathTime) {
 				    break;
 				}
-				if (j < currArrival.path.length - 1
+				if (j < path.length - 1
 						&& (currArrival.getRayParam() != 0.0 && 
-						   (currArrival.path[j + 1].getDistDeg() - currArrival.path[j].getDistDeg()) > maxPathInc)) {
+						   (path[j + 1].getDistDeg() - path[j].getDistDeg()) > maxPathInc)) {
 					// interpolate to steps of at most maxPathInc degrees for
 					// path
 					int maxInterpNum = (int) Math
-							.ceil((currArrival.path[j + 1].getDistDeg() - currArrival.path[j].getDistDeg())
+							.ceil((path[j + 1].getDistDeg() - path[j].getDistDeg())
 									 / maxPathInc);
 					for (int interpNum = 1; interpNum < maxInterpNum && calcTime < maxPathTime; interpNum++) {
-						calcTime += (currArrival.path[j + 1].time - currArrival.path[j].time)
+						calcTime += (path[j + 1].getTime() - path[j].getTime())
 								/ maxInterpNum;
 						if (calcTime > maxPathTime) { break; }
 						if (longWayRound) {
-							calcDist -= (currArrival.path[j + 1].getDistDeg() - currArrival.path[j].getDistDeg())
+							calcDist -= (path[j + 1].getDistDeg() - path[j].getDistDeg())
 									 / maxInterpNum;
 						} else {
-							calcDist += (currArrival.path[j + 1].getDistDeg() - currArrival.path[j].getDistDeg())
+							calcDist += (path[j + 1].getDistDeg() - path[j].getDistDeg())
 									 / maxInterpNum;
 						}
 						calcDepth = prevDepth + interpNum
-								* (currArrival.path[j + 1].depth - prevDepth)
+								* (path[j + 1].getDepth() - prevDepth)
 								/ maxInterpNum;
 						printDistRadius(out, calcDist, radiusOfEarth - calcDepth);
 				        out.write("\n");
 					}
 				}
-				prevDepth = currArrival.path[j].depth;
+				prevDepth = path[j].getDepth();
 			}
 			if (svgOutput) {
 			    out.println("\" />");

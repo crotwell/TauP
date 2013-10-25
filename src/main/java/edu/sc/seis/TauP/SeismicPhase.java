@@ -254,6 +254,9 @@ public class SeismicPhase implements Serializable, Cloneable {
             }
             if (endsDowngoing && i>0 && branchDepths[branchSeq.get(i-1)] > receiverDepth) {
                 // also must peal off branches for any turning phase below the receiver depth
+                if (DEBUG) {
+                    System.out.println(i+" "+branchSeq.get(i)+" "+branchDepths[branchSeq.get(i)]+" >  "+receiverDepth);
+                }
                 i--;
                 while(i >= 0 && branchDepths[branchSeq.get(i)] >= receiverDepth) {
                     if (DEBUG) {
@@ -266,7 +269,7 @@ public class SeismicPhase implements Serializable, Cloneable {
             if (DEBUG) {
                 System.out.println("Remove branches orig: "+branchSeq.size()+" after:"+i+" branchSeq:"+branchSeq.size());
                 for (int b : branchSeq) {
-                    System.out.print(" "+b);
+                    System.out.print(" "+b+" "+branchSeq.get(b)+" "+tMod.getTauBranch(branchSeq.get(branchSeq.size()-1), PWAVE));
                 }
                 System.out.println();
                 if (i>=0) {
@@ -1772,11 +1775,13 @@ public class SeismicPhase implements Serializable, Cloneable {
     /**
      * Calculates the "pierce points" for the arrivals stored in arrivals. The
      * pierce points are stored within each arrival object.
+     * @deprecated  Use the getPierce() method on each Arrival from calcTime()
      */
+    @Deprecated
     public List<Arrival> calcPierce(double deg) throws TauModelException {
         List<Arrival> arrivals = calcTime(deg);
         for (Arrival a : arrivals) {
-            calcPierce(a);
+            a.getPierce(); // side effect calc pierce
         }
         return arrivals;
     }
@@ -1785,8 +1790,15 @@ public class SeismicPhase implements Serializable, Cloneable {
      * as the input arguement but now has the pierce points filled in.
      * @param currArrival
      * @return same arrival with pierce points
+     * @deprecated  Use the getPierce() method on each Arrival from calcTime()
      */
+    @Deprecated
     public Arrival calcPierce(Arrival currArrival) {
+        currArrival.getPierce();
+        return currArrival;
+    }
+    
+    protected List<TimeDist> calcPierceTimeDist(Arrival currArrival) {
         double branchDist = 0.0;
         double branchTime = 0.0;
         double prevBranchTime = 0.0;
@@ -1941,8 +1953,7 @@ public class SeismicPhase implements Serializable, Cloneable {
                                                  currArrival.getDist(),
                                                  0));
         }
-        currArrival.pierce = pierce.toArray(new TimeDist[0]);
-        return currArrival;
+        return pierce;
     }
 
     /**
@@ -1982,26 +1993,40 @@ public class SeismicPhase implements Serializable, Cloneable {
             // this is a little weird as we are not checking where we are in the phase name, but simply
             // if the depth matches. This likely works in most cases, but may not for head/diffracted
             // waves that undergo a phase change, if that type of phase can even exist
-            out.add(new TimeDist(td.p, td.time+j * refractTime / numFound, td.distRadian + j * refractDist / numFound, td.depth));
-            if (td.depth == headDepth) {
+            out.add(new TimeDist(td.getP(), td.getTime()+j * refractTime / numFound, td.getDistRadian() + j * refractDist / numFound, td.getDepth()));
+            if (td.getDepth() == headDepth) {
                 j++;
-                out.add(new TimeDist(td.p, td.time+j * refractTime / numFound, td.distRadian + j * refractDist / numFound, td.depth));
+                out.add(new TimeDist(td.getP(), td.getTime()+j * refractTime / numFound, td.getDistRadian() + j * refractDist / numFound, td.getDepth()));
             }
         }
         return out;
     }
 
-    /** calculates the paths this phase takes through the earth model. */
+    /** calculates the paths this phase takes through the earth model. 
+     * @deprecated  Use the getPath() method on each Arrival from calcTime()
+     */
+    @Deprecated
     public List<Arrival> calcPath(double deg) {
-        
         List<Arrival> arrivals = calcTime(deg);
         for (Arrival a : arrivals) {
-            calcPath(a);
+            a.getPath(); // side effect calculates path
         }
         return arrivals;
     }
     
+    /**
+     * 
+     * @param currArrival
+     * @return
+     * @deprecated use the getPath() method on the arrival.
+     */
+    @Deprecated
     public Arrival calcPath(Arrival currArrival) {
+        currArrival.getPath(); // side effect calculates path
+        return currArrival;
+    }
+    
+    protected List<TimeDist> calcPathTimeDist(Arrival currArrival) {
         ArrayList<TimeDist[]> pathList = new ArrayList<TimeDist[]>();
         /*
          * Find the ray parameter index that corresponds to the arrival ray
@@ -2013,7 +2038,6 @@ public class SeismicPhase implements Serializable, Cloneable {
                                        0.0,
                                        tMod.getSourceDepth());
         pathList.add(tempTimeDist);
-        TimeDist prevTimeDist = tempTimeDist[0];
             for(int i = 0; i < branchSeq.size(); i++) {
                 int branchNum = ((Integer)branchSeq.get(i)).intValue();
                 boolean isPWave = ((Boolean)waveType.get(i)).booleanValue();
@@ -2038,7 +2062,6 @@ public class SeismicPhase implements Serializable, Cloneable {
                         if (tempTimeDist[j].getDistDeg() < 0) {
                             throw new RuntimeException("Path is backtracking, no possible: "+j+" ("+tempTimeDist[j]+")");
                         }
-                        prevTimeDist = tempTimeDist[j];
                     }
                 }
                 /*
@@ -2092,30 +2115,30 @@ public class SeismicPhase implements Serializable, Cloneable {
                                          0);
                 pathList.add(headTD);
             }
-            int arraySize = 0;
-            for(int i = 0; i < pathList.size(); i++) {
-                arraySize += ((TimeDist[])pathList.get(i)).length;
-            }
-            currArrival.path = new TimeDist[arraySize];
+            List<TimeDist> outPath = new ArrayList<TimeDist>();
             TimeDist cummulative = new TimeDist(currArrival.getRayParam(),
                                                 0.0,
                                                 0.0,
                                                 currArrival.getSourceDepth());
+            TimeDist prev = cummulative;
             TimeDist[] branchPath;
             int numAdded = 0;
             for(int i = 0; i < pathList.size(); i++) {
                 branchPath = (TimeDist[])pathList.get(i);
                 for(int j = 0; j < branchPath.length; j++) {
-                    cummulative.add(branchPath[j]);
-                    cummulative.depth = branchPath[j].depth;
-                    currArrival.path[numAdded] = (TimeDist)cummulative.clone();
-                    if (numAdded > 0 && currArrival.path[numAdded].getDistRadian() < currArrival.path[numAdded-1].getDistRadian()) {
-                        throw new RuntimeException("Backtracking ray, not possible: "+numAdded+" "+currArrival.path[numAdded-1]+") > ("+currArrival.path[numAdded]+")");
+                    prev = cummulative;
+                    cummulative = new TimeDist(cummulative.getP(),
+                                               cummulative.getTime()+branchPath[j].getTime(),
+                                               cummulative.getDistRadian()+branchPath[j].getDistRadian(),
+                                               branchPath[j].getDepth());
+                    outPath.add(cummulative);
+                    if (numAdded > 0 && cummulative.getDistRadian() < prev.getDistRadian()) {
+                        throw new RuntimeException("Backtracking ray, not possible: "+numAdded+" "+cummulative+") < ("+prev+")");
                     }
                     numAdded++;
                 }
             }
-        return currArrival;
+        return outPath;
     }
 
     private String validationFailMessage = "";

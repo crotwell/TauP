@@ -261,8 +261,8 @@ public class TauBranch implements Serializable, Cloneable {
         for(int rayNum = 0; rayNum < rayParams.length; rayNum++) {
             p = rayParams[rayNum];
             timeDist = calcTimeDist(sMod, topLayerNum, botLayerNum, p);
-            dist[rayNum] = timeDist.distRadian;
-            time[rayNum] = timeDist.time;
+            dist[rayNum] = timeDist.getDistRadian();
+            time[rayNum] = timeDist.getTime();
             tau[rayNum] = time[rayNum] - p * dist[rayNum];
             if(DEBUG && (rayNum % ((int)rayParams.length / 10) == 0)) {
                 System.out.print(rayNum + ", ");
@@ -295,7 +295,7 @@ public class TauBranch implements Serializable, Cloneable {
             layer = sMod.getSlownessLayer(layerNum, isPWave);
             while(layerNum <= botLayerNum && p <= layer.getTopP()
                     && p <= layer.getBotP()) {
-                timeDist.add(sMod.layerTimeDist(p, layerNum, isPWave));
+                timeDist = timeDist.add(sMod.layerTimeDist(p, layerNum, isPWave));
                 layerNum++;
                 if(layerNum <= botLayerNum) {
                     layer = sMod.getSlownessLayer(layerNum, isPWave);
@@ -350,15 +350,14 @@ public class TauBranch implements Serializable, Cloneable {
                     break;
                 } else {
                     temptd = sMod.layerTimeDist(rayParam, i, isPWave);
-                    td.distRadian += temptd.distRadian;
-                    td.time += temptd.time;
+                    td = td.add(temptd);
                 }
             }
         }
         shiftBranch(index);
-        dist[index] = td.distRadian;
-        time[index] = td.time;
-        tau[index] = td.time - rayParam * td.distRadian;
+        dist[index] = td.getDistRadian();
+        time[index] = td.getTime();
+        tau[index] = td.getTime() - rayParam * td.getDistRadian();
     }
 
     /**
@@ -517,10 +516,10 @@ public class TauBranch implements Serializable, Cloneable {
                     botBranch.time[i] = time[i] - topBranch.time[i];
                     botBranch.tau[i] = tau[i] - topBranch.tau[i];
                 }
-                botBranch.dist[indexP] = timeDistP.distRadian;
-                botBranch.time[indexP] = timeDistP.time;
-                botBranch.tau[indexP] = timeDistP.time - PRayParam
-                        * timeDistP.distRadian;
+                botBranch.dist[indexP] = timeDistP.getDistRadian();
+                botBranch.time[indexP] = timeDistP.getTime();
+                botBranch.tau[indexP] = timeDistP.getTime() - PRayParam
+                        * timeDistP.getDistRadian();
                 for(int i = indexP; i < dist.length; i++) {
                     botBranch.dist[i + 1] = dist[i] - topBranch.dist[i + 1];
                     botBranch.time[i + 1] = time[i] - topBranch.time[i + 1];
@@ -533,10 +532,10 @@ public class TauBranch implements Serializable, Cloneable {
                     botBranch.time[i] = time[i] - topBranch.time[i];
                     botBranch.tau[i] = tau[i] - topBranch.tau[i];
                 }
-                botBranch.dist[indexS] = timeDistS.distRadian;
-                botBranch.time[indexS] = timeDistS.time;
-                botBranch.tau[indexS] = timeDistS.time - SRayParam
-                        * timeDistS.distRadian;
+                botBranch.dist[indexS] = timeDistS.getDistRadian();
+                botBranch.time[indexS] = timeDistS.getTime();
+                botBranch.tau[indexS] = timeDistS.getTime() - SRayParam
+                        * timeDistS.getDistRadian();
                 for(int i = indexS; i < indexP; i++) {
                     botBranch.dist[i + 1] = dist[i] - topBranch.dist[i + 1];
                     botBranch.time[i + 1] = time[i] - topBranch.time[i + 1];
@@ -544,10 +543,10 @@ public class TauBranch implements Serializable, Cloneable {
                 }
                 // put into indexP+1 as we have already shifted by 1
                 // due to indexS
-                botBranch.dist[indexP + 1] = timeDistP.distRadian;
-                botBranch.time[indexP + 1] = timeDistP.time;
-                botBranch.tau[indexP + 1] = timeDistP.time - PRayParam
-                        * timeDistP.distRadian;
+                botBranch.dist[indexP + 1] = timeDistP.getDistRadian();
+                botBranch.time[indexP + 1] = timeDistP.getTime();
+                botBranch.tau[indexP + 1] = timeDistP.getTime() - PRayParam
+                        * timeDistP.getDistRadian();
                 for(int i = indexP; i < dist.length; i++) {
                     botBranch.dist[i + 2] = dist[i] - topBranch.dist[i + 2];
                     botBranch.time[i + 2] = time[i] - topBranch.time[i + 2];
@@ -622,8 +621,8 @@ public class TauBranch implements Serializable, Cloneable {
                 if(!sLayer.isZeroThickness()) {
                     thePath[pathIndex] = sMod.layerTimeDist(rayParam,
                                                             sLayerNum,
-                                                            isPWave);
-                    thePath[pathIndex].depth = sLayer.getBotDepth();
+                                                            isPWave,
+                                                            downgoing);
                     pathIndex++;
                 }
                 sLayerNum++;
@@ -639,8 +638,8 @@ public class TauBranch implements Serializable, Cloneable {
                                                rayParam,
                                                turnDepth);
                 thePath[pathIndex] = turnSLayer.bullenRadialSlowness(rayParam,
-                                                                     sMod.getRadiusOfEarth());
-                thePath[pathIndex].depth = turnSLayer.getBotDepth();
+                                                                     sMod.getRadiusOfEarth(),
+                                                                     downgoing);
                 pathIndex++;
             }
         } else {
@@ -659,8 +658,8 @@ public class TauBranch implements Serializable, Cloneable {
                                                rayParam,
                                                turnDepth);
                 thePath[pathIndex] = turnSLayer.bullenRadialSlowness(rayParam,
-                                                                     sMod.getRadiusOfEarth());
-                thePath[pathIndex].depth = turnSLayer.getTopDepth();
+                                                                     sMod.getRadiusOfEarth(),
+                                                                     downgoing);
                 pathIndex++;
                 sLayerNum--;
                 if(sLayerNum >= topLayerNum) {
@@ -671,8 +670,8 @@ public class TauBranch implements Serializable, Cloneable {
                 if(!sLayer.isZeroThickness()) {
                     thePath[pathIndex] = sMod.layerTimeDist(rayParam,
                                                             sLayerNum,
-                                                            isPWave);
-                    thePath[pathIndex].depth = sLayer.getTopDepth();
+                                                            isPWave,
+                                                            downgoing);
                     pathIndex++;
                 }
                 sLayerNum--;

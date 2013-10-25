@@ -49,11 +49,11 @@ public class CurvePlot extends ArrivalPlot {
         y = new int[a.getNumPathPoints()];
         for(int j = 0; j < x.length; j++) {
             x[j] = xOffset
-                    + (int)Math.rint(Math.sin(a.getPathPoint(j).distRadian)
-                            * (roe - a.getPathPoint(j).depth) / roe * pixelRad);
+                    + (int)Math.rint(Math.sin(a.getPathPoint(j).getDistRadian())
+                            * (roe - a.getPathPoint(j).getDepth()) / roe * pixelRad);
             y[j] = yOffset
-                    - (int)Math.rint(Math.cos(a.getPathPoint(j).distRadian)
-                            * (roe - a.getPathPoint(j).depth) / roe * pixelRad);
+                    - (int)Math.rint(Math.cos(a.getPathPoint(j).getDistRadian())
+                            * (roe - a.getPathPoint(j).getDepth()) / roe * pixelRad);
         }
         g.drawPolyline(x, y, x.length);
     }

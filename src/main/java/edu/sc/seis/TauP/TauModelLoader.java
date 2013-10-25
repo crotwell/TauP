@@ -64,7 +64,7 @@ public class TauModelLoader {
      */
     public static TauModel load(String modelName, String searchPath)
             throws TauModelException {
-        return load(modelName, searchPath, false);
+        return load(modelName, searchPath, true);
     }
 
     public static TauModel load(String modelName,
@@ -97,13 +97,16 @@ public class TauModelLoader {
         File jarFile;
         File modelFile;
         /* First we try to find the model in the distributed taup.jar file. */
+        Class c = null;
         try {
-            Class c = null;
             c = Class.forName("edu.sc.seis.TauP.TauModelLoader");
             InputStream in = c.getResourceAsStream(packageName + "/" + filename);
             if(in != null) {
                 return TauModel.readModelFromStream(in);
             }
+        } catch( InvalidClassException ex) {
+            throw new TauModelException("TauModel file not compatible with current version, recreate: "
+                    +c.getResource(packageName + "/" + filename),  ex);
         } catch(Exception ex) {
             // couldn't get as a resource, so keep going
             if(verbose)
@@ -228,6 +231,10 @@ public class TauModelLoader {
                 }
             }
         } catch(Exception ex) {
+            if (true) {
+                System.err.println("Problem loading velocity model: "+ex.getMessage());
+                ex.printStackTrace();
+            }
             // couldn't get as a resource, so keep going
         }
         // try a .tvel or .nd file in current directory, or no suffix

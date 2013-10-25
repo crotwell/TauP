@@ -224,40 +224,42 @@ public class SlownessLayer implements Serializable {
      *                negative or NaN, this indicates a bug in the code (and
      *                hopefully will never happen).
      */
-    public TimeDist bullenRadialSlowness(double p, double radiusOfEarth)
+    public TimeDist bullenRadialSlowness(double p, double radiusOfEarth, boolean downgoing)
             throws SlownessModelException {
-        // To hold the return values.
-        TimeDist timedist = new TimeDist(p);
+        double outDepth;
+        if (downgoing) {
+            outDepth = getBotDepth();
+        } else {
+            outDepth = getTopDepth();
+            }
         if(getTopDepth() == getBotDepth()) {
-            timedist.distRadian = 0.0;
-            timedist.time = 0.0;
-            return timedist;
+            return new TimeDist(p, 0.0, 0.0, outDepth);
         }
         // only do bullen radial slowness if the layer is not too thin
         // here we use 1 micron = .000000001
         // just return 0 in this case
         if(getBotDepth() - getTopDepth() < .000000001) {
-            return timedist;
+            return new TimeDist(p, 0.0, 0.0, outDepth);
         }
         double B = Math.log(getTopP() / getBotP())
                 / Math.log((radiusOfEarth - getTopDepth())
                         / (radiusOfEarth - getBotDepth()));
         double sqrtTopTopMpp = Math.sqrt(getTopP() * getTopP() - p * p);
         double sqrtBotBotMpp = Math.sqrt(getBotP() * getBotP() - p * p);
-        timedist.distRadian = (Math.atan2(p, sqrtBotBotMpp) - Math.atan2(p,
+        double distRadian = (Math.atan2(p, sqrtBotBotMpp) - Math.atan2(p,
                                                                    sqrtTopTopMpp))
                 / B;
-        timedist.time = (sqrtTopTopMpp - sqrtBotBotMpp) / B;
-        if(timedist.distRadian < 0.0 || timedist.time < 0.0
-                || Double.isNaN(timedist.time) || Double.isNaN(timedist.distRadian)) {
+        double time = (sqrtTopTopMpp - sqrtBotBotMpp) / B;
+        if(distRadian < 0.0 || time < 0.0
+                || Double.isNaN(time) || Double.isNaN(distRadian)) {
             throw new SlownessModelException("timedist <0.0 or NaN: "
                     + "\n RayParam= " + p + "\n topDepth = " + getTopDepth()
                     + "\n botDepth = " + getBotDepth() + "\n dist="
-                    + timedist.distRadian + "\n time=" + timedist.time + "\n topP = "
+                    + distRadian + "\n time=" + time + "\n topP = "
                     + getTopP() + "\n botP = " + getBotP() + "\n B = " + B
                     + " " + toString());
         }
-        return timedist;
+        return new TimeDist(p, time, distRadian, outDepth);
     }
 
     /**

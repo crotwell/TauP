@@ -37,13 +37,13 @@ package edu.sc.seis.TauP;
  */
 public class TimeDist implements Cloneable {
 
-    public double p;
+    private double p;
 
-    public double depth;
+    private double depth;
 
-    public double time;
+    private double time;
 
-    public double distRadian;
+    private double distRadian;
 
     public TimeDist() {
         this.p = 0;
@@ -73,9 +73,11 @@ public class TimeDist implements Cloneable {
         this.distRadian = dist;
     }
 
-    public void add(TimeDist td) {
-        this.time += td.time;
-        this.distRadian += td.distRadian;
+    public TimeDist add(TimeDist td) {
+        return new TimeDist(getP(),
+                            getTime()+td.getTime(),
+                            getDistRadian()+td.getDistRadian(),
+                            td.getDepth());
     }
 
     public String toString() {

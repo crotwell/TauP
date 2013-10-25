@@ -68,7 +68,7 @@ public class PierceTableModel extends AbstractTableModel {
                 }
                 return Outputs.formatDistance(dist);
             case 1:
-                return Outputs.formatDepth(arrivals.get(selectedIndex).getPiercePoint(row).depth);
+                return Outputs.formatDepth(arrivals.get(selectedIndex).getPiercePoint(row).getDepth());
             default:
                 return "";
         }

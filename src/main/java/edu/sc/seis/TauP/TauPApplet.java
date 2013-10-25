@@ -425,8 +425,8 @@ public class TauPApplet extends Applet implements ActionListener, ItemListener {
                         List<Arrival> arrivals = tool.getArrivals();
                         plotArea.clearSegments();
                         for (Arrival arrival : arrivals) {
-                            if(arrival.pierce != null) {
-                                plotArea.appendSegment(arrival.pierce);
+                            if(arrival.getPierce() != null) {
+                                plotArea.appendSegment(arrival.getPierce());
                             }
                         }
                         plotArea.repaint();
@@ -444,8 +444,8 @@ public class TauPApplet extends Applet implements ActionListener, ItemListener {
                         List<Arrival> arrivals = tool.getArrivals();
                         plotArea.clearSegments();
                         for (Arrival arrival : arrivals) {
-                            if(arrival.path != null) {
-                                plotArea.appendSegment(arrival.path);
+                            if(arrival.getPath() != null) {
+                                plotArea.appendSegment(arrival.getPath());
                             }
                         }
                         plotArea.repaint();

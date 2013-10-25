@@ -75,7 +75,7 @@ public class TauP_Time {
     /**
      * vector to hold the SeismicPhases for the phases named in phaseNames.
      */
-    protected List<SeismicPhase> phases = new ArrayList<SeismicPhase>(10);
+    private List<SeismicPhase> phases = null;
 
     /** names of phases to be used, ie PKIKP. */
     protected List<PhaseName> phaseNames = new ArrayList<PhaseName>();
@@ -324,7 +324,7 @@ public class TauP_Time {
     }
 
     public void clearPhaseNames() {
-        phases.clear();
+        phases = null;
         phaseNames.clear();
     }
 
@@ -345,6 +345,9 @@ public class TauP_Time {
 
     
     public void setReceiverDepth(double receiverDepth) {
+        if (this.receiverDepth != receiverDepth) {
+            phases = null;
+        }
         this.receiverDepth = receiverDepth;
     }
 
@@ -392,6 +395,9 @@ public class TauP_Time {
     }
     
     public List<SeismicPhase> getSeismicPhases() {
+        if (phases == null) {
+            recalcPhases();
+        }
         return Collections.unmodifiableList(phases);
     }
 
@@ -566,7 +572,7 @@ public class TauP_Time {
                     toolProps.put("taup.source.depth", args[i + 1]);
                     i++;
                 } else if(args[i].equalsIgnoreCase("--staDepth")) {
-                    receiverDepth = Double.parseDouble(args[i + 1]);
+                    setReceiverDepth(Double.parseDouble(args[i + 1]));
                     i++;
                 } else if(dashEquals("deg", args[i])) {
                     degrees = Double.valueOf(args[i + 1]).doubleValue();
@@ -664,7 +670,7 @@ public class TauP_Time {
 
     public void calculate(double degrees) throws TauModelException {
         depthCorrect(getSourceDepth(), getReceiverDepth());
-        recalcPhases();
+        clearArrivals();
         calcTime(degrees);
         if (relativePhaseName != "") {
             List<SeismicPhase> relPhases = new ArrayList<SeismicPhase>();
@@ -681,8 +687,9 @@ public class TauP_Time {
         this.degrees = degrees;
         SeismicPhase phase;
         clearArrivals();
-        for(int phaseNum = 0; phaseNum < phases.size(); phaseNum++) {
-            phase = phases.get(phaseNum);
+        List<SeismicPhase> phaseList = getSeismicPhases();
+        for(int phaseNum = 0; phaseNum < phaseList.size(); phaseNum++) {
+            phase = phaseList.get(phaseNum);
             List<Arrival> phaseArrivals = phase.calcTime(degrees);
             for (Arrival arrival : phaseArrivals) {
                 arrivals.add(arrival);
@@ -696,15 +703,16 @@ public class TauP_Time {
      * correction of the model is not already corrected to that depth.
      */
     public void depthCorrect(double depth) throws TauModelException {
-        depthCorrect(depth, receiverDepth);
+        depthCorrect(depth, getReceiverDepth());
     }
     
     public void depthCorrect(double depth, double receiverDepth) throws TauModelException {
-        if(tModDepth == null || tModDepth.getSourceDepth() != depth) {
+        if(tModDepth == null || tModDepth.getSourceDepth() != depth || receiverDepth != getReceiverDepth()) {
+            setReceiverDepth(receiverDepth);
             tModDepth = tMod.depthCorrect(depth);
             tModDepth = tModDepth.splitBranch(receiverDepth);
             clearArrivals();
-            recalcPhases();
+            phases = null;
         }
         setSourceDepth(depth);
     }
@@ -716,7 +724,7 @@ public class TauP_Time {
      */
     public synchronized void recalcPhases() {
         SeismicPhase seismicPhase;
-        List<SeismicPhase> newPhases = new ArrayList<SeismicPhase>(phases.size());
+        List<SeismicPhase> newPhases = new ArrayList<SeismicPhase>();
         boolean alreadyAdded;
         String tempPhaseName;
         for(int phaseNameNum = 0; phaseNameNum < phaseNames.size(); phaseNameNum++) {
@@ -743,11 +751,11 @@ public class TauP_Time {
             if(!alreadyAdded) {
                 // didn't find it precomputed, so recalculate
                 try {
-                    seismicPhase = new SeismicPhase(tempPhaseName, tModDepth, receiverDepth, false);
+                    seismicPhase = new SeismicPhase(tempPhaseName, tModDepth, getReceiverDepth(), false);
                     newPhases.add(seismicPhase);
-                    if (receiverDepth > tModDepth.getSourceDepth()) {
+                    if (getReceiverDepth() > tModDepth.getSourceDepth()) {
                         // also add only downgoing phase
-                        SeismicPhase endsDowngoingPhase = new SeismicPhase(tempPhaseName, tModDepth, receiverDepth, true);
+                        SeismicPhase endsDowngoingPhase = new SeismicPhase(tempPhaseName, tModDepth, getReceiverDepth(), true);
                         newPhases.add(endsDowngoingPhase);
                         if(DEBUG) {
                             System.out.println("Added ends downgoing phase: "+endsDowngoingPhase);
@@ -787,8 +795,8 @@ public class TauP_Time {
         Format phasePuristFormat = new Format("%-" + maxPuristNameLength + "s");
         if(!(onlyPrintRayP || onlyPrintTime)) {
             String modelLine =  "\nModel: " + modelName;
-            if (receiverDepth != 0.0) {
-                modelLine += "  Receiver Depth: "+receiverDepth+" km";
+            if (getReceiverDepth() != 0.0) {
+                modelLine += "  Receiver Depth: "+getReceiverDepth()+" km";
             }
             out.println(modelLine);
             String lineOne = "Distance   Depth   " + phaseFormat.form("Phase")

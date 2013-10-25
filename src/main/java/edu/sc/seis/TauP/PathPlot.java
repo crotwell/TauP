@@ -127,23 +127,23 @@ public class PathPlot extends ArrivalPlot {
             // long way around
             for(int j = 0; j < x.length; j++) {
                 x[j] = xOffset
-                        + (int)Math.rint(Math.sin(-1 * a.getPathPoint(j).distRadian)
-                                * (roe - a.getPathPoint(j).depth) / roe
+                        + (int)Math.rint(Math.sin(-1 * a.getPathPoint(j).getDistRadian())
+                                * (roe - a.getPathPoint(j).getDepth()) / roe
                                 * pixelRad);
                 y[j] = yOffset
-                        - (int)Math.rint(Math.cos(-1 * a.getPathPoint(j).distRadian)
-                                * (roe - a.getPathPoint(j).depth) / roe
+                        - (int)Math.rint(Math.cos(-1 * a.getPathPoint(j).getDistRadian())
+                                * (roe - a.getPathPoint(j).getDepth()) / roe
                                 * pixelRad);
             }
         } else {
             for(int j = 0; j < x.length; j++) {
                 x[j] = xOffset
-                        + (int)Math.rint(Math.sin(a.getPathPoint(j).distRadian)
-                                * (roe - a.getPathPoint(j).depth) / roe
+                        + (int)Math.rint(Math.sin(a.getPathPoint(j).getDistRadian())
+                                * (roe - a.getPathPoint(j).getDepth()) / roe
                                 * pixelRad);
                 y[j] = yOffset
-                        - (int)Math.rint(Math.cos(a.getPathPoint(j).distRadian)
-                                * (roe - a.getPathPoint(j).depth) / roe
+                        - (int)Math.rint(Math.cos(a.getPathPoint(j).getDistRadian())
+                                * (roe - a.getPathPoint(j).getDepth()) / roe
                                 * pixelRad);
             }
         }

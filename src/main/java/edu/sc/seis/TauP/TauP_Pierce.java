@@ -188,29 +188,9 @@ public class TauP_Pierce extends TauP_Time {
 
     @Override
     public void calculate(double degrees) throws TauModelException {
-        depthCorrect(getSourceDepth(), getReceiverDepth());
-        recalcPhases();
-        clearArrivals();
-        calcPierce(degrees);
-    }
-
-    /** calculates the pierce points for phases at the given distance. */
-    protected void calcPierce(double degrees) {
-        this.degrees = degrees;
-        SeismicPhase phase;
-        
-        for(int phaseNum = 0; phaseNum < phases.size(); phaseNum++) {
-            phase = phases.get(phaseNum);
-            try {
-                List<Arrival> phaseArrivals = phase.calcPierce(degrees);
-                for (Arrival arrival : phaseArrivals) {
-                    arrivals.add(arrival);
-                }
-            } catch(TauModelException e) {
-                System.err.println("Caught TauModelException: "
-                        + e.getMessage());
-                System.err.println("Skipping phase " + phase.getName());
-            }
+        super.calculate(degrees);
+        for (Arrival arrival : getArrivals()) {
+            arrival.getPierce(); // side effect of calculating pierce points
         }
     }
     
@@ -248,25 +228,26 @@ public class TauP_Pierce extends TauP_Time {
             if((currArrival.getDist() * 180 / Math.PI) % 360 > 180) {
                 longWayRound = true;
             }
-            prevDepth = currArrival.pierce[0].depth;
-            for(int j = 0; j < currArrival.pierce.length; j++) {
-                calcDist = currArrival.pierce[j].getDistDeg();
+            TimeDist[] pierce = currArrival.getPierce();
+            prevDepth = pierce[0].getDepth();
+            for(int j = 0; j < pierce.length; j++) {
+                calcDist = pierce[j].getDistDeg();
                 if(longWayRound && calcDist != 0.0) {
                     calcDist *= -1.0;
                 }
-                if(j < currArrival.pierce.length - 1) {
-                    nextDepth = currArrival.pierce[j + 1].depth;
+                if(j < pierce.length - 1) {
+                    nextDepth = pierce[j + 1].getDepth();
                 } else {
-                    nextDepth = currArrival.pierce[j].depth;
+                    nextDepth = pierce[j].getDepth();
                 }
                 if(!(onlyTurnPoints || onlyRevPoints || onlyUnderPoints || onlyAddPoints)
-                        || ((onlyAddPoints && isAddDepth(currArrival.pierce[j].depth))
-                                || (onlyRevPoints && ((prevDepth - currArrival.pierce[j].depth)
-                                        * (currArrival.pierce[j].depth - nextDepth) < 0))
-                                || (onlyTurnPoints && j != 0 && ((prevDepth - currArrival.pierce[j].depth) <= 0 && (currArrival.pierce[j].depth - nextDepth) >= 0)) || (onlyUnderPoints && ((prevDepth - currArrival.pierce[j].depth) >= 0 && (currArrival.pierce[j].depth - nextDepth) <= 0)))) {
+                        || ((onlyAddPoints && isAddDepth(pierce[j].getDepth()))
+                                || (onlyRevPoints && ((prevDepth - pierce[j].getDepth())
+                                        * (pierce[j].getDepth() - nextDepth) < 0))
+                                || (onlyTurnPoints && j != 0 && ((prevDepth - pierce[j].getDepth()) <= 0 && (pierce[j].getDepth() - nextDepth) >= 0)) || (onlyUnderPoints && ((prevDepth - pierce[j].getDepth()) >= 0 && (pierce[j].getDepth() - nextDepth) <= 0)))) {
                     out.write(outForms.formatDistance(calcDist));
-                    out.write(outForms.formatDepth(currArrival.pierce[j].depth));
-                    out.write(outForms.formatDepth(currArrival.pierce[j].time));
+                    out.write(outForms.formatDepth(pierce[j].getDepth()));
+                    out.write(outForms.formatDepth(pierce[j].getTime()));
                     if(eventLat != Double.MAX_VALUE
                             && eventLon != Double.MAX_VALUE
                             && azimuth != Double.MAX_VALUE) {
@@ -318,7 +299,7 @@ public class TauP_Pierce extends TauP_Time {
                     }
                     out.write("\n");
                 }
-                prevDepth = currArrival.pierce[j].depth;
+                prevDepth = pierce[j].getDepth();
             }
         }
     }

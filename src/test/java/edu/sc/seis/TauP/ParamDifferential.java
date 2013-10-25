@@ -200,11 +200,11 @@ class AK135CorrectTime extends CorrectTime {
         TimeDist prev = zeroDepth.get(0);
         for (TimeDist td : zeroDepth) {
             if (td.getDistDeg() == dist) {
-                System.out.println("Match: "+td.getDistDeg()+" "+td.time);
-                return td.time;
+                System.out.println("Match: "+td.getDistDeg()+" "+td.getTime());
+                return td.getTime();
             } else if (td.getDistDeg() > dist) {
-                System.out.println("interp "+td.getDistDeg()+" "+prev.getDistDeg()+"  "+dist+"    "+td.time+"  "+prev.time);
-                return (td.time-prev.time)/(td.getDistDeg()-prev.getDistDeg())*(dist-prev.getDistDeg()) + prev.time;
+                System.out.println("interp "+td.getDistDeg()+" "+prev.getDistDeg()+"  "+dist+"    "+td.getTime()+"  "+prev.getTime());
+                return (td.getTime()-prev.getTime())/(td.getDistDeg()-prev.getDistDeg())*(dist-prev.getDistDeg()) + prev.getTime();
             }
             prev=td;
         }

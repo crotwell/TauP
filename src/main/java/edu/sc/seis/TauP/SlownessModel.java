@@ -445,9 +445,17 @@ public abstract class SlownessModel implements Serializable {
     public abstract double toVelocity(double slowness, double depth)
             throws SlownessModelException;
 
-    public abstract TimeDist layerTimeDist(double rayParam,
+    public final TimeDist layerTimeDist(double rayParam,
                                            int layerNum,
                                            boolean isPWave)
+            throws SlownessModelException {
+        return layerTimeDist(rayParam, layerNum, isPWave, true);
+    }
+
+    public abstract TimeDist layerTimeDist(double rayParam,
+                                           int layerNum,
+                                           boolean isPWave,
+                                           boolean downgoing)
             throws SlownessModelException;
 
     public abstract SlownessLayer toSlownessLayer(VelocityLayer vLayer,
@@ -496,15 +504,13 @@ public abstract class SlownessModel implements Serializable {
          */
         TimeDist td = new TimeDist(p);
         for(int layerNum = 0; layerNum <= slownessTurnLayer; layerNum++) {
-            td.add(layerTimeDist(p, layerNum, isPWave));
+            td = td.add(layerTimeDist(p, layerNum, isPWave));
         }
         /*
          * Return 2.0*distance and time because there is a downgoing as well as
          * up going leg, which are equal because this is for a surface source.
          */
-        td.distRadian *= 2.0;
-        td.time *= 2.0;
-        return td;
+        return new TimeDist(td.getP(), 2.0 * td.getTime(), 2.0 * td.getDistRadian());
     }
 
     /**
@@ -1645,10 +1651,10 @@ public abstract class SlownessModel implements Serializable {
                     currTD = approxDistance(j, sLayer.getBotP(), currWaveType);
                     isCurrOK = true;
                     // check for too great of distance jump
-                    if(Math.abs(prevTD.distRadian - currTD.distRadian) > maxRangeInterval
+                    if(Math.abs(prevTD.getDistRadian() - currTD.getDistRadian()) > maxRangeInterval
                             && Math.abs(sLayer.getTopP() - sLayer.getBotP()) > 2 * minDeltaP) {
                         if (DEBUG) {
-                            System.out.println(" " + j+"Dist jump too great: "+Math.abs(prevTD.distRadian - currTD.distRadian)+" > "+maxRangeInterval
+                            System.out.println(" " + j+"Dist jump too great: "+Math.abs(prevTD.getDistRadian() - currTD.getDistRadian())+" > "+maxRangeInterval
                                                +"  adding slowness: "+(sLayer.getTopP() + sLayer.getBotP()) / 2.0);
                         }
                         addSlowness((sLayer.getTopP() + sLayer.getBotP()) / 2.0,
@@ -1670,22 +1676,22 @@ public abstract class SlownessModel implements Serializable {
                         double splitRayParam = (sLayer.getTopP()+sLayer.getBotP())/2;
                         TimeDist allButLayer = approxDistance(j-1, splitRayParam, currWaveType);
                         SlownessLayer splitLayer = new SlownessLayer(sLayer.getTopP(), sLayer.getTopDepth(), splitRayParam, sLayer.bullenDepthFor(splitRayParam, getRadiusOfEarth()));
-                        TimeDist justLayer = splitLayer.bullenRadialSlowness(splitRayParam, getRadiusOfEarth());
-                        TimeDist splitTD = new TimeDist(splitRayParam, allButLayer.time+2*justLayer.time, allButLayer.distRadian+2*justLayer.distRadian);
+                        TimeDist justLayer = splitLayer.bullenRadialSlowness(splitRayParam, getRadiusOfEarth(), true);
+                        TimeDist splitTD = new TimeDist(splitRayParam, allButLayer.getTime()+2*justLayer.getTime(), allButLayer.getDistRadian()+2*justLayer.getDistRadian());
                         //                        if(Math.abs(prevTD.time
 //                                    - ((currTD.time - prevPrevTD.time)
 //                                            * (prevTD.dist - prevPrevTD.dist)
 //                                            / (currTD.dist - prevPrevTD.dist) + prevPrevTD.time)) > maxInterpError) {
-                        if(Math.abs(currTD.time
-                                        - ((splitTD.time - prevTD.time)
-                                                * (currTD.distRadian - prevTD.distRadian)
-                                                / (splitTD.distRadian - prevTD.distRadian) + prevTD.time)) > maxInterpError) {
+                        if(Math.abs(currTD.getTime()
+                                        - ((splitTD.getTime() - prevTD.getTime())
+                                                * (currTD.getDistRadian() - prevTD.getDistRadian())
+                                                / (splitTD.getDistRadian() - prevTD.getDistRadian()) + prevTD.getTime())) > maxInterpError) {
 
                             if(DEBUG ) {
-                                System.out.print(" " + j+" add slowness "+Math.abs(currTD.time
-                                                                                   - ((splitTD.time - prevTD.time)
-                                                                                           * (currTD.distRadian - prevTD.distRadian)
-                                                                                           / (splitTD.distRadian - prevTD.distRadian) + prevTD.time))+" > "+maxInterpError);
+                                System.out.print(" " + j+" add slowness "+Math.abs(currTD.getTime()
+                                                                                   - ((splitTD.getTime() - prevTD.getTime())
+                                                                                           * (currTD.getDistRadian() - prevTD.getDistRadian())
+                                                                                           / (splitTD.getDistRadian() - prevTD.getDistRadian()) + prevTD.getTime()))+" > "+maxInterpError);
                             }
                             addSlowness((prevSLayer.getTopP() + prevSLayer.getBotP()) / 2.0,
                                         PWAVE);

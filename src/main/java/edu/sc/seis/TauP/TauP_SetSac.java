@@ -118,8 +118,9 @@ public class TauP_SetSac extends TauP_Time {
         }
     }
 
-    public void calculate(double degrees) {
-        recalcPhases();
+    public void calculate(double degrees) throws TauModelException {
+        depthCorrect(getSourceDepth(), getReceiverDepth());
+        clearArrivals();
         calcTime(degrees);
     }
 

@@ -187,20 +187,20 @@ public class PolarPlot extends Canvas {
             TimeDist[] data = (TimeDist[])segments.elementAt(segNum);
             for(int i = 0; i < data.length - 1; i++) {
                 g.drawLine(centerX
-                                   - (int)Math.rint((outsideRadius - data[i].depth)
-                                           * Math.cos(data[i].distRadian + Math.PI
+                                   - (int)Math.rint((outsideRadius - data[i].getDepth())
+                                           * Math.cos(data[i].getDistRadian() + Math.PI
                                                    / 2) * scale),
                            centerY
-                                   - (int)Math.rint((outsideRadius - data[i].depth)
-                                           * Math.sin(data[i].distRadian + Math.PI
+                                   - (int)Math.rint((outsideRadius - data[i].getDepth())
+                                           * Math.sin(data[i].getDistRadian() + Math.PI
                                                    / 2) * scale),
                            centerX
-                                   - (int)Math.rint((outsideRadius - data[i + 1].depth)
-                                           * Math.cos(data[i + 1].distRadian
+                                   - (int)Math.rint((outsideRadius - data[i + 1].getDepth())
+                                           * Math.cos(data[i + 1].getDistRadian()
                                                    + Math.PI / 2) * scale),
                            centerY
-                                   - (int)Math.rint((outsideRadius - data[i + 1].depth)
-                                           * Math.sin(data[i + 1].distRadian
+                                   - (int)Math.rint((outsideRadius - data[i + 1].getDepth())
+                                           * Math.sin(data[i + 1].getDistRadian()
                                                    + Math.PI / 2) * scale));
             }
         }

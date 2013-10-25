@@ -60,34 +60,34 @@ public class Arrival {
     }
 
     /** phase that generated this arrival. */
-    protected SeismicPhase phase;
+    private SeismicPhase phase;
 
     /** travel time in seconds */
-    protected double time;
+    private double time;
 
     /** angular distance (great circle) in radians */
-    protected double dist;
+    private double dist;
 
     /** ray parameter in seconds per radians. */
-    protected double rayParam;
+    private double rayParam;
 
-    protected int rayParamIndex;
+    private int rayParamIndex;
 
     /** phase name */
-    protected String name;
+    private String name;
 
     /** phase name changed for true depths */
-    protected String puristName;
+    private String puristName;
 
     /** source depth in kilometers */
-    protected double sourceDepth;
+    private double sourceDepth;
 
     /** pierce and path points */
-    protected TimeDist[] pierce, path;
+    private TimeDist[] pierce, path;
 
-    protected double incidentAngle;
+    private double incidentAngle;
     
-    protected double takeoffAngle;
+    private double takeoffAngle;
     
     // get set methods
     /** @return the phase used to calculate this arrival. */
@@ -179,7 +179,7 @@ public class Arrival {
     /** returns pierce points as TimeDist objects. */
     public TimeDist[] getPierce() {
         if (pierce == null) {
-            this.pierce = getPhase().calcPierce(this).getPierce();
+            this.pierce = getPhase().calcPierceTimeDist(this).toArray(new TimeDist[0]);
         }
         return pierce;
     }
@@ -187,7 +187,7 @@ public class Arrival {
     /** returns pierce points as TimeDist objects. */
     public TimeDist[] getPath() {
         if (path == null) {
-            this.path = getPhase().calcPath(this).getPath();
+            this.path = getPhase().calcPathTimeDist(this).toArray(new TimeDist[0]);
         }
         return path;
     }
@@ -235,7 +235,7 @@ public class Arrival {
      */
     public TimeDist getFirstPiercePoint(double depth) {
         for(int i = 0; i < pierce.length; i++) {
-            if(pierce[i].depth == depth) {
+            if(pierce[i].getDepth() == depth) {
                 return pierce[i];
             }
         }
@@ -252,7 +252,7 @@ public class Arrival {
     public TimeDist getLastPiercePoint(double depth) {
         TimeDist piercepoint = null;
         for(int i = 0; i < pierce.length; i++) {
-            if(pierce[i].depth == depth) {
+            if(pierce[i].getDepth() == depth) {
                 piercepoint = pierce[i];
             }
         }

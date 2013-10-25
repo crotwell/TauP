@@ -32,12 +32,12 @@ public class SurfaceWaveTest  extends TestCase {
                        arrivals.size() > 0);
             assertEquals(phaseName + " time for depth " + depth + " at dist " + deg,
                          1111.95f,
-                         arrivals.get(0).time,
+                         arrivals.get(0).getTime(),
                          0.07f);
             // long way around
             assertEquals(phaseName + " time for depth " + depth + " at dist " + deg,
                          12231.44f,
-                         arrivals.get(1).time,
+                         arrivals.get(1).getTime(),
                          0.07f);
     }
 }
