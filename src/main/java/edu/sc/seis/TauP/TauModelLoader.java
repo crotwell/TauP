@@ -263,4 +263,8 @@ public class TauModelLoader {
     }
     
     static HashMap<String, SoftReference<TauModel>> tModCache = new HashMap<String, SoftReference<TauModel>>();
+
+    public static void clearCache() {
+        tModCache.clear();
+    }
 }
