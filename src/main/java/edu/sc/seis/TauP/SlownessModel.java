@@ -1634,7 +1634,7 @@ public abstract class SlownessModel implements Serializable {
                                                 sLayer.getTopP(),
                                                 currWaveType)) {
                     // Don't calculate prevTD if we can avoid it
-                    if(isCurrOK) {
+                    if(isCurrOK && currTD != null) {
                         if(isPrevOK) {
                             prevPrevTD = prevTD;
                         } else {
@@ -1662,7 +1662,10 @@ public abstract class SlownessModel implements Serializable {
                         addSlowness((sLayer.getTopP() + sLayer.getBotP()) / 2.0,
                                     SWAVE);
                         currTD = prevTD;
+                        isCurrOK = isPrevOK;
                         prevTD = prevPrevTD;
+                        prevPrevTD = null;
+                        isPrevOK = (prevTD != null);
                     } else {
                         // make guess as to error estimate due to linear
                         // interpolation
@@ -1702,6 +1705,7 @@ public abstract class SlownessModel implements Serializable {
                             addSlowness((sLayer.getTopP() + sLayer.getBotP()) / 2.0,
                                         SWAVE);
                             currTD = prevPrevTD;
+                            isCurrOK = (currTD != null);
                             isPrevOK = false;
                             if (j>0) {
                                 // back up one step unless we are at beginning, then stay put
