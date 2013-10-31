@@ -160,7 +160,7 @@ public class ConstantModelTest extends TestCase {
         assertEquals("travel time for " + dist + " depth=" + depth + " at " + velocity,
                      lawCosinesLength(R, depth, dist * Math.PI / 180) / velocity,
                      a.getTime(),
-                     0.01);
+                     0.02);
     }
 
     public static double lawCosinesLength(double R, double depth, double theta) {
