@@ -101,7 +101,7 @@ public class TauBranch implements Serializable, Cloneable {
         this.topDepth = topDepth;
         this.botDepth = botDepth;
         this.isPWave = isPWave;
-    }
+        }
 
     // Methods -------------------------------------------------------------
     // Accessor methods
@@ -264,8 +264,8 @@ public class TauBranch implements Serializable, Cloneable {
             dist[rayNum] = timeDist.getDistRadian();
             time[rayNum] = timeDist.getTime();
             tau[rayNum] = time[rayNum] - p * dist[rayNum];
-            if(DEBUG && (rayNum % ((int)rayParams.length / 10) == 0)) {
-                System.out.print(rayNum + ", ");
+            if(DEBUG &&( (rayNum % ((int)rayParams.length / 10) == 0) || p == minRayParam || p == maxRayParam)) {
+                System.out.println(p+" "+rayNum +", "+dist[rayNum]+" "+time[rayNum]+" ");
             }
         }
     }
@@ -520,10 +520,10 @@ public class TauBranch implements Serializable, Cloneable {
                 botBranch.time[indexP] = timeDistP.getTime();
                 botBranch.tau[indexP] = timeDistP.getTime() - PRayParam
                         * timeDistP.getDistRadian();
-                for(int i = indexP; i < dist.length; i++) {
-                    botBranch.dist[i + 1] = dist[i] - topBranch.dist[i + 1];
-                    botBranch.time[i + 1] = time[i] - topBranch.time[i + 1];
-                    botBranch.tau[i + 1] = tau[i] - topBranch.tau[i + 1];
+                for(int i = indexP+1; i < topBranch.dist.length; i++) {
+                    botBranch.dist[i] = dist[i-1] - topBranch.dist[i];
+                    botBranch.time[i] = time[i-1] - topBranch.time[i];
+                    botBranch.tau[i] = tau[i-1] - topBranch.tau[i];
                 }
             } else {
                 // both indexP and indexS != -1 so we have two new samples
@@ -536,21 +536,19 @@ public class TauBranch implements Serializable, Cloneable {
                 botBranch.time[indexS] = timeDistS.getTime();
                 botBranch.tau[indexS] = timeDistS.getTime() - SRayParam
                         * timeDistS.getDistRadian();
-                for(int i = indexS; i < indexP; i++) {
-                    botBranch.dist[i + 1] = dist[i] - topBranch.dist[i + 1];
-                    botBranch.time[i + 1] = time[i] - topBranch.time[i + 1];
-                    botBranch.tau[i + 1] = tau[i] - topBranch.tau[i + 1];
+                for(int i = indexS+1; i < indexP; i++) {
+                    botBranch.dist[i] = dist[i-1] - topBranch.dist[i];
+                    botBranch.time[i] = time[i-1] - topBranch.time[i];
+                    botBranch.tau[i] = tau[i-1] - topBranch.tau[i];
                 }
-                // put into indexP+1 as we have already shifted by 1
-                // due to indexS
-                botBranch.dist[indexP + 1] = timeDistP.getDistRadian();
-                botBranch.time[indexP + 1] = timeDistP.getTime();
-                botBranch.tau[indexP + 1] = timeDistP.getTime() - PRayParam
+                botBranch.dist[indexP] = timeDistP.getDistRadian();
+                botBranch.time[indexP] = timeDistP.getTime();
+                botBranch.tau[indexP] = timeDistP.getTime() - PRayParam
                         * timeDistP.getDistRadian();
-                for(int i = indexP; i < dist.length; i++) {
-                    botBranch.dist[i + 2] = dist[i] - topBranch.dist[i + 2];
-                    botBranch.time[i + 2] = time[i] - topBranch.time[i + 2];
-                    botBranch.tau[i + 2] = tau[i] - topBranch.tau[i + 2];
+                for(int i = indexP+1; i < topBranch.dist.length; i++) {
+                    botBranch.dist[i] = dist[i-2] - topBranch.dist[i];
+                    botBranch.time[i] = time[i-2] - topBranch.time[i];
+                    botBranch.tau[i] = tau[i-2] - topBranch.tau[i];
                 }
             }
         }

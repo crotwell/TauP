@@ -591,9 +591,12 @@ public class TauModel implements Serializable {
                     // Only loop to length-1 as last sample is always 0
                     // and negative is not allowed
                     for(int i = 0; i < outRayParams.length - 1; i++) {
-                        if(outRayParams[i] < newRayParam
-                                && outRayParams[i + 1] > newRayParam) {
-                            index = i;
+                        if (outRayParams[i] == newRayParam) {
+                            // already there
+                            break;
+                        } else if(outRayParams[i] > newRayParam
+                                && outRayParams[i + 1] < newRayParam) {
+                            index = i+1; // put new value one past ith ray param
                             double[] oldRayParams = outRayParams;
                             outRayParams = new double[oldRayParams.length + 1];
                             System.arraycopy(oldRayParams,
@@ -606,7 +609,7 @@ public class TauModel implements Serializable {
                                              index,
                                              outRayParams,
                                              index + 1,
-                                             oldRayParams.length - index);
+                                             oldRayParams.length - index );
                             if(isPWave) {
                                 indexP = index;
                                 PWaveRayParam = newRayParam;

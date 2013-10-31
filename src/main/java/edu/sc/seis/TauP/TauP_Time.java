@@ -186,14 +186,14 @@ public class TauP_Time {
     }
 
     public void setPhaseNames(String[] phaseNames) throws TauModelException {
-        this.phaseNames.clear();
+        clearPhaseNames();
         for(int i = 0; i < phaseNames.length; i++) {
             appendPhaseName(phaseNames[i]);
         }
     }
 
     public void setPhaseNames(PhaseName[] phaseNames) {
-        this.phaseNames.clear();
+        clearPhaseNames();
         for(int i = 0; i < phaseNames.length; i++) {
             this.phaseNames.add(phaseNames[i]);
         }
@@ -336,6 +336,7 @@ public class TauP_Time {
     public void setSourceDepth(double depth) {
         this.depth = depth;
         toolProps.put("taup.source.depth", Double.toString(depth));
+        phases = null;
     }
 
     
@@ -360,6 +361,7 @@ public class TauP_Time {
     }
 
     public void setTauModel(TauModel tMod) {
+        phases = null;
         this.tMod = tMod;
         this.tModDepth = tMod;
         modelName = tMod.getModelName();
@@ -412,9 +414,7 @@ public class TauP_Time {
                                                     toolProps.getProperty("taup.model.path"),
                                                     verbose);
             if(tModLoad != null) {
-                tMod = tModLoad;
-                tModDepth = tMod;
-                this.modelName = tMod.getModelName();
+                setTauModel(tModLoad);
             } else {
                 throw new TauModelException("Unable to load "+modelName);
             }
@@ -512,6 +512,9 @@ public class TauP_Time {
             } catch(TauModelException e) {
                 Alert.warning("Problem with phase=" + phaseEntry + " "
                         + e.getMessage(), "Skipping this phase: ");
+                if (verbose || DEBUG) {
+                    e.printStackTrace();
+                }
             }
         }
     }
@@ -722,7 +725,7 @@ public class TauP_Time {
      * This should not need to be called by outside classes as it is called by
      * depthCorrect, and calculate.
      */
-    public synchronized void recalcPhases() {
+    protected synchronized void recalcPhases() {
         SeismicPhase seismicPhase;
         List<SeismicPhase> newPhases = new ArrayList<SeismicPhase>();
         boolean alreadyAdded;
@@ -751,22 +754,18 @@ public class TauP_Time {
             if(!alreadyAdded) {
                 // didn't find it precomputed, so recalculate
                 try {
-                    seismicPhase = new SeismicPhase(tempPhaseName, tModDepth, getReceiverDepth(), false);
+                    seismicPhase = new SeismicPhase(tempPhaseName, tModDepth, getReceiverDepth());
                     newPhases.add(seismicPhase);
-                    if (getReceiverDepth() > tModDepth.getSourceDepth()) {
-                        // also add only downgoing phase
-                        SeismicPhase endsDowngoingPhase = new SeismicPhase(tempPhaseName, tModDepth, getReceiverDepth(), true);
-                        newPhases.add(endsDowngoingPhase);
-                        if(DEBUG) {
-                            System.out.println("Added ends downgoing phase: "+endsDowngoingPhase);
-                        }
-                    }
+
                     if(verbose) {
                         Alert.info(seismicPhase.toString());
                     }
                 } catch(TauModelException e) {
                     Alert.warning("Error with phase=" + tempPhaseName,
                                   e.getMessage() + "\nSkipping this phase");
+                    if (verbose || DEBUG) {
+                        e.printStackTrace();
+                    }
                 } finally {
                     if(verbose) {
                         Alert.info("-----------------");
