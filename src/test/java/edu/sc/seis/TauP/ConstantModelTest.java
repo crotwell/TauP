@@ -49,7 +49,7 @@ public class ConstantModelTest extends TestCase {
  */
     @Test
     public void testDepthP() throws TauModelException {
-        for (int depth = 0; depth < 1000; depth++) {
+        for (int depth = 0; depth < 400; depth++) {
             for (int deg = 0; deg < 90; deg++) {
                 doSeismicPhase(depth, deg, vp, "P");
             }
