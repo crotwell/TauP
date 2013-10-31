@@ -59,7 +59,7 @@ public class ReceiverAtDepth {
             upFlippedPhase = new SeismicPhase(phaseName.toLowerCase(), tModRec, tMod.getSourceDepth());
             endsDowngoingFlippedPhase = null;
         }
-        double distStep = 101;
+        double distStep = 11;
         for (double degrees = 0; degrees < phase.getMaxDistance() && degrees < flippedPhase.getMaxDistance(); degrees+= distStep) {
             String pre = "sd="+tMod.getSourceDepth()+" rd="+receiverDepth+" deg="+degrees;
             List<Arrival> phaseArrivals = phase.calcTime(degrees);
