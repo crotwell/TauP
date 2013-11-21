@@ -8,12 +8,14 @@ import java.io.OptionalDataException;
 import java.io.PrintWriter;
 import java.io.StreamCorruptedException;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class TauP_Wavefront extends TauP_Path {
@@ -84,7 +86,7 @@ public class TauP_Wavefront extends TauP_Path {
                 formatStr += "0";
             }
         }
-        DecimalFormat format = new DecimalFormat(formatStr);
+        DecimalFormat format = new DecimalFormat(formatStr, new DecimalFormatSymbols(Locale.US));
         PrintWriter timeOut = out;
         for (Float time : keys) {
             if (separateFilesByTime) {
