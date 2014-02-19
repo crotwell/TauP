@@ -1383,7 +1383,27 @@ public class SeismicPhase implements Serializable, Cloneable {
                                 isPWave,
                                 endAction);
                 }
-            } else if(currLeg.equals("m")) {} else if(currLeg.equals("c")) {} else if(currLeg.equals("i")) {} else if(currLeg.startsWith("^")) {} else if(currLeg.startsWith("v")) {} else if(isLegDepth) {} else {
+            } else if(currLeg.equals("m")) {
+                
+            } else if(currLeg.equals("c")) {
+                
+            } else if(currLeg.equals("i")) {
+                
+            } else if(currLeg.startsWith("^")) {
+                
+            } else if(currLeg.startsWith("v")) {
+                int b = closestBranchToDepth(tMod, currLeg.substring(1));
+                if (b == 0) {
+                    throw new TauModelException("Phase not recognized: "+currLeg+" looks like a top side reflection at the free surface.");
+                }
+            } else if(isLegDepth) {
+                // check for phase like P0s, but could also be P2s if first discon is deeper
+                int b = closestBranchToDepth(tMod, currLeg);
+                if (b == 0 && (nextLeg.equals("p") || nextLeg.equals("s"))) {
+                    throw new TauModelException("Phase not recognized: "+currLeg
+                                                + " followed by " + nextLeg+" looks like a upgoing wave from the free surface as closest discontinuity to "+currLeg+" is zero depth.");
+                }
+            } else {
                 throw new TauModelException("Phase not recognized: " + currLeg
                         + " followed by " + nextLeg);
             }
