@@ -120,7 +120,6 @@ public class TauP_Curve extends TauP_Time {
      *          radians/second.
      */
     public double getReduceVelKm() {
-        redVelString = reduceVel+" km/s";
         return reduceVel * tMod.getRadiusOfEarth();
     }
 
@@ -129,12 +128,15 @@ public class TauP_Curve extends TauP_Time {
      * representation is radians/second.
      */
     public void setReduceVelKm(double reduceVel) {
+        redVelString = reduceVel+" km/s";
         if(reduceVel > 0.0) {
             if(tMod != null) {
                 this.reduceVel = reduceVel / tMod.getRadiusOfEarth();
             } else {
                 this.reduceVel = reduceVel / 6371.0;
             }
+        } else {
+            throw new IllegalArgumentException("Reducing velocity must be positive: "+reduceVel);
         }
     }
 
