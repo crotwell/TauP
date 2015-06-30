@@ -284,8 +284,16 @@ public class SlownessLayer implements Serializable {
                                 / (radiusOfEarth - getBotDepth()));
                 double A = getTopP()
                         / Math.pow((radiusOfEarth - getTopDepth()), B);
+                if (A != 0 && B != 0) {
                 tempDepth = radiusOfEarth
                         - Math.exp(1.0 / B * Math.log(rayParam / A));
+                } else {
+                    // overflow double, maybe B so large? use linear interp
+                    double linear = (getBotDepth() - getTopDepth())
+                            / (getBotP() - getTopP())
+                            * (rayParam - getTopP()) + getTopDepth();
+                    tempDepth = linear;
+                }
                 /*
                  * tempDepth = radiusOfEarth - Math.pow(rayParam/A, 1.0/B);
                  */

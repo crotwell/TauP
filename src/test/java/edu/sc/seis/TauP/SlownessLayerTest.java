@@ -41,6 +41,13 @@ public class SlownessLayerTest {
     }
     
     @Test
+    public void testQianguoMod() throws SlownessModelException {
+        SlownessLayer sl = new SlownessLayer(2548.4, 6.546970605878823, 1846.2459389213773, 13.798727310994103);
+        double depth = sl.bullenDepthFor(2197.322969460689, 6371);
+        assertFalse("depth no NaN", Double.isNaN(depth));
+    }
+    
+    @Test
     public void testSplitLayer() throws Exception {
         TauModel tMod = TauModelLoader.load("iasp91");
         double depth = 119;
