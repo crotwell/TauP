@@ -192,15 +192,55 @@ public class SphericalSModel extends SlownessModel implements Serializable {
                                   boolean isPWave,
                                   boolean downgoing)
             throws SlownessModelException {
-        double swapDouble;
+        SlownessLayer sphericalLayer = getSlownessLayer(layerNum, isPWave);
+        // radius to top
+        double topRadius = radiusOfEarth - sphericalLayer.getTopDepth(); 
+        // radius to bot
+        double botRadius = radiusOfEarth - sphericalLayer.getBotDepth();
+        if(sphericalRayParam > Math.min(sphericalLayer.getTopP(),
+                                        sphericalLayer.getBotP())) {
+            if(DEBUG) {
+                System.out.println("Ray Turns in layer, velocities: "
+                        + topRadius / sphericalRayParam + " " + topRadius
+                        / sphericalLayer.getTopP() + " " + botRadius
+                        / sphericalLayer.getBotP());
+                System.out.println("depths        top "
+                        + sphericalLayer.getTopDepth() + "  bot "
+                        + sphericalLayer.getBotDepth());
+            }
+            throw new SlownessModelException("Ray turns in the middle of this"
+                    + " layer. \nlayerNum = " + layerNum
+                    + " sphericalRayParam " + sphericalRayParam
+                    + " sphericalLayer =  " + sphericalLayer + "\n");
+        }
+        return layerTimeDistAllowTurn(sphericalRayParam, layerNum, isPWave, downgoing);
+    }
+    
+
+    public TimeDist layerTimeDistAllowTurn(double sphericalRayParam,
+                                           int layerNum,
+                                           boolean isPWave,
+                                           boolean downgoing)
+                     throws SlownessModelException {
         double b; // temporary variable makes the calculations less ugly.
         SlownessLayer sphericalLayer = getSlownessLayer(layerNum, isPWave);
-        double topRadius = radiusOfEarth - sphericalLayer.getTopDepth(); // radius
-        // to
-        // top
-        double botRadius = radiusOfEarth - sphericalLayer.getBotDepth(); // radius
-        // to
-        // bot
+
+        if(sphericalRayParam > sphericalLayer.getTopP()) {
+            throw new SlownessModelException("Ray cannot propagate within this"
+                    + " layer. layerNum = " + layerNum + " sphericalRayParam="
+                    + sphericalRayParam + "\n" + sphericalLayer);
+        } else if (sphericalRayParam > sphericalLayer.getBotP()) {
+            // turn in layer, create temp layer with p at bottom
+            double turnDepth = sphericalLayer.bullenDepthFor(sphericalRayParam, radiusOfEarth);
+            sphericalLayer = new SlownessLayer(sphericalLayer.getTopP(),
+                                               sphericalLayer.getTopDepth(),
+                                               sphericalRayParam,
+                                               turnDepth);
+        }
+        // radius to top
+        double topRadius = radiusOfEarth - sphericalLayer.getTopDepth(); 
+        // radius to bot
+        double botRadius = radiusOfEarth - sphericalLayer.getBotDepth(); 
 
         double outDepth;
         if (downgoing) {
@@ -222,22 +262,6 @@ public class SphericalSModel extends SlownessModel implements Serializable {
         if(sphericalRayParam < 0.0) {
             throw new SlownessModelException("Ray Parameter is negative!!! "
                     + sphericalRayParam);
-        }
-        if(sphericalRayParam > Math.min(sphericalLayer.getTopP(),
-                                        sphericalLayer.getBotP())) {
-            if(DEBUG) {
-                System.out.println("Ray Turns in layer, velocities: "
-                        + topRadius / sphericalRayParam + " " + topRadius
-                        / sphericalLayer.getTopP() + " " + botRadius
-                        / sphericalLayer.getBotP());
-                System.out.println("depths        top "
-                        + sphericalLayer.getTopDepth() + "  bot "
-                        + sphericalLayer.getBotDepth());
-            }
-            throw new SlownessModelException("Ray turns in the middle of this"
-                    + " layer. \nlayerNum = " + layerNum
-                    + " sphericalRayParam " + sphericalRayParam
-                    + " sphericalLayer =  " + sphericalLayer + "\n");
         }
         /*
          * Check to see if this layer has zero thickness, if so then it is from

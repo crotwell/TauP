@@ -476,6 +476,63 @@ public class SeismicPhase implements Serializable, Cloneable {
         return arrivals;
     }
     
+    public Arrival shootRay(double rayParam) throws SlownessModelException, NoSuchLayerException {
+        if(name.indexOf("Sdiff") != -1 
+                || name.indexOf("Pdiff") != -1 
+                || name.indexOf("Pn") != -1 
+                || name.indexOf("Sn") != -1
+                || name.endsWith("kmps")) {
+            throw new SlownessModelException("Unable to shoot ray in non-body waves");
+        }
+        if (rayParam < minRayParam || maxRayParam < rayParam) {
+            throw new SlownessModelException("Ray param "+rayParam+" is outside range for this phase: min="+minRayParam+" max="+maxRayParam);
+        }
+        // looks like a body wave and can ray param can propagate
+
+        /* counter for passes through each branch. 0 is P and 1 is S. */
+        int[][] timesBranches = calcBranchMultiplier();
+        TimeDist sum = new TimeDist(rayParam);
+        /* Sum the branches with the appropriate multiplier. */
+        for(int j = 0; j < tMod.getNumBranches(); j++) {
+            if(timesBranches[0][j] != 0) {
+                int topLayerNum = tMod.getSlownessModel().layerNumberBelow(tMod.getTauBranch(j, PWAVE).getTopDepth(), true);
+                int botLayerNum = tMod.getSlownessModel().layerNumberAbove(tMod.getTauBranch(j, PWAVE).getBotDepth(), true);
+                TimeDist td = tMod.getTauBranch(j, PWAVE).calcTimeDist(tMod.getSlownessModel(),
+                                                                       topLayerNum,
+                                                                       botLayerNum,
+                                                                       rayParam,
+                                                                       true);
+                td = new TimeDist(rayParam,
+                                  timesBranches[0][j]*td.getTime(),
+                                  timesBranches[0][j]*td.getDistRadian(),
+                                  td.getDepth());
+                sum = sum.add(td);
+            }
+            if(timesBranches[1][j] != 0) {
+                int topLayerNum = tMod.getSlownessModel().layerNumberBelow(tMod.getTauBranch(j, SWAVE).getTopDepth(), true);
+                int botLayerNum = tMod.getSlownessModel().layerNumberAbove(tMod.getTauBranch(j, SWAVE).getBotDepth(), true);
+                TimeDist td = tMod.getTauBranch(j, SWAVE).calcTimeDist(tMod.getSlownessModel(),
+                                                                       topLayerNum,
+                                                                       botLayerNum,
+                                                                       rayParam,
+                                                                       true);
+                td = new TimeDist(rayParam,
+                                  timesBranches[0][j]*td.getTime(),
+                                  timesBranches[0][j]*td.getDistRadian(),
+                                  td.getDepth());
+                sum = sum.add(td);
+            }
+        }
+        return new Arrival(this,
+                           sum.getTime(),
+                           sum.getDistRadian(),
+                           rayParam,
+                           -1,
+                           name,
+                           puristName,
+                           sourceDepth);
+    }
+    
     private Arrival linearInterpArrival(double searchDist,
                                         int rayNum,
                                         String name,
@@ -501,38 +558,6 @@ public class SeismicPhase implements Serializable, Cloneable {
                 * (rayParams[rayNum] - rayParams[rayNum + 1])
                 / (dist[rayNum] - dist[rayNum + 1])
                 + rayParams[rayNum + 1];
-        double takeoffVelocity;
-        double incidentVelocity;
-        double takeoffAngle = -1;
-        double incidentAngle = -1;
-        if (name.endsWith("kmps")) {
-            takeoffAngle = 0;
-            incidentAngle = 0;
-        } else {
-            VelocityModel vMod = getTauModel().getVelocityModel();
-            try {
-                if (getDownGoing()[0]) {
-                    takeoffVelocity = vMod.evaluateBelow(sourceDepth, name.charAt(0));
-                } else { 
-                    //fake neg velocity so angle is neg in case of upgoing
-                    takeoffVelocity = -1*vMod.evaluateAbove(sourceDepth, name.charAt(0));
-                }
-                takeoffAngle = 180/Math.PI*Math.asin(takeoffVelocity*arrivalRayParam/(getTauModel().getRadiusOfEarth()-sourceDepth));
-                char lastLeg = getLegs().get(getLegs().size()-2).charAt(0); // last item is "END", assume first char is P or S
-                
-                if (getDownGoing()[getDownGoing().length-1]) {
-                    //fake neg velocity so angle is neg in case of downgoing
-                    incidentVelocity = -1*vMod.evaluateAbove(receiverDepth, lastLeg);
-                } else {
-                    incidentVelocity = vMod.evaluateBelow(receiverDepth, lastLeg);
-                }
-                incidentAngle = 180/Math.PI*Math.asin(incidentVelocity*arrivalRayParam/(getTauModel().getRadiusOfEarth()-receiverDepth));
-            } catch(NoSuchLayerException e) {
-                throw new RuntimeException("Should not happen", e);
-            } catch(NoSuchMatPropException e) {
-                throw new RuntimeException("Should not happen", e);
-            }
-        }
         return new Arrival(this,
                                  arrivalTime,
                                  searchDist,
@@ -540,10 +565,55 @@ public class SeismicPhase implements Serializable, Cloneable {
                                  rayNum,
                                  name,
                                  puristName,
-                                 sourceDepth,
-                                 takeoffAngle,
-                                 incidentAngle);
+                                 sourceDepth);
     }
+    
+    public double calcTakeoffAngle(double arrivalRayParam) {
+        double takeoffVelocity;
+        if (name.endsWith("kmps")) {
+            return 0;
+        }
+        VelocityModel vMod = getTauModel().getVelocityModel();
+        try {
+            if (getDownGoing()[0]) {
+                takeoffVelocity = vMod.evaluateBelow(sourceDepth, name.charAt(0));
+            } else { 
+                //fake neg velocity so angle is neg in case of upgoing
+                takeoffVelocity = -1*vMod.evaluateAbove(sourceDepth, name.charAt(0));
+            }
+            double takeoffAngle = 180/Math.PI*Math.asin(takeoffVelocity*arrivalRayParam/(getTauModel().getRadiusOfEarth()-sourceDepth));
+            return takeoffAngle;
+        } catch(NoSuchLayerException e) {
+            throw new RuntimeException("Should not happen", e);
+        } catch(NoSuchMatPropException e) {
+            throw new RuntimeException("Should not happen", e);
+        }
+    }
+    
+    public double calcIncidentAngle(double arrivalRayParam) {
+        if (name.endsWith("kmps")) {
+            return 0;
+        }
+        double incidentVelocity;
+        VelocityModel vMod = getTauModel().getVelocityModel();
+        try {
+            char lastLeg = getLegs().get(getLegs().size()-2).charAt(0); // last item is "END", assume first char is P or S
+            
+            if (getDownGoing()[getDownGoing().length-1]) {
+                //fake neg velocity so angle is neg in case of downgoing
+                incidentVelocity = -1*vMod.evaluateAbove(receiverDepth, lastLeg);
+            } else {
+                incidentVelocity = vMod.evaluateBelow(receiverDepth, lastLeg);
+            }
+            double incidentAngle = 180/Math.PI*Math.asin(incidentVelocity*arrivalRayParam/(getTauModel().getRadiusOfEarth()-receiverDepth));
+            return incidentAngle;
+        } catch(NoSuchLayerException e) {
+            throw new RuntimeException("Should not happen", e);
+        } catch(NoSuchMatPropException e) {
+            throw new RuntimeException("Should not happen", e);
+        }
+    }
+        
     /**
      * changes maxRayParam and minRayParam whenever there is a phase conversion.
      * For instance, SKP needs to change the maxRayParam because there are SKS
@@ -1636,6 +1706,29 @@ public class SeismicPhase implements Serializable, Cloneable {
             }
         }
     }
+    
+    /**
+     * Calculates how many times the phase passes through a branch, up or down,
+     * so that we can just multiply instead of doing the ray calc for each time.
+     * @return
+     */
+    protected int[][] calcBranchMultiplier() {
+        /* initialize the counter for each branch to 0. 0 is P and 1 is S. */
+        int[][] timesBranches = new int[2][tMod.getNumBranches()];
+        for(int i = 0; i < timesBranches[0].length; i++) {
+            timesBranches[0][i] = 0;
+            timesBranches[1][i] = 0;
+        }
+        /* Count how many times each branch appears in the path. */
+        for(int i = 0; i < branchSeq.size(); i++) {
+            if(((Boolean)waveType.get(i)).booleanValue()) {
+                timesBranches[0][((Integer)branchSeq.get(i)).intValue()]++;
+            } else {
+                timesBranches[1][((Integer)branchSeq.get(i)).intValue()]++;
+            }
+        }
+        return timesBranches;
+    }
 
     /**
      * Sums the appropriate branches for this phase.
@@ -1737,20 +1830,8 @@ public class SeismicPhase implements Serializable, Cloneable {
         }
         dist = new double[rayParams.length];
         time = new double[rayParams.length];
-        /* initialize the counter for each branch to 0. 0 is P and 1 is S. */
-        int[][] timesBranches = new int[2][tMod.getNumBranches()];
-        for(int i = 0; i < timesBranches[0].length; i++) {
-            timesBranches[0][i] = 0;
-            timesBranches[1][i] = 0;
-        }
-        /* Count how many times each branch appears in the path. */
-        for(int i = 0; i < branchSeq.size(); i++) {
-            if(((Boolean)waveType.get(i)).booleanValue()) {
-                timesBranches[0][((Integer)branchSeq.get(i)).intValue()]++;
-            } else {
-                timesBranches[1][((Integer)branchSeq.get(i)).intValue()]++;
-            }
-        }
+        /* counter for passes through each branch. 0 is P and 1 is S. */
+        int[][] timesBranches = calcBranchMultiplier();
         /* Sum the branches with the appropriate multiplier. */
         for(int j = 0; j < tMod.getNumBranches(); j++) {
             if(timesBranches[0][j] != 0) {
@@ -1915,7 +1996,7 @@ public class SeismicPhase implements Serializable, Cloneable {
                 }
             }
         }
-            }
+    }
 
     /**
      * Calculates the "pierce points" for the arrivals stored in arrivals. The

@@ -457,6 +457,12 @@ public abstract class SlownessModel implements Serializable {
                                            boolean isPWave,
                                            boolean downgoing)
             throws SlownessModelException;
+    
+    public abstract TimeDist layerTimeDistAllowTurn(double rayParam,
+                                                    int layerNum,
+                                                    boolean isPWave,
+                                                    boolean downgoing)
+                     throws SlownessModelException;
 
     public abstract SlownessLayer toSlownessLayer(VelocityLayer vLayer,
                                                   boolean isPWave)

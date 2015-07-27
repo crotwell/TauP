@@ -37,6 +37,27 @@ package edu.sc.seis.TauP;
  */
 public class Arrival {
 
+
+    public Arrival(SeismicPhase phase,
+                   double time,
+                   double dist,
+                   double rayParam,
+                   int rayParamIndex,
+                   String name,
+                   String puristName,
+                   double sourceDepth) {
+        this(phase,
+             time,
+             dist,
+             rayParam,
+             rayParamIndex,
+             name,
+             puristName,
+             sourceDepth,
+             phase.calcTakeoffAngle(rayParam),
+             phase.calcIncidentAngle(rayParam));
+    }
+
     public Arrival(SeismicPhase phase,
                    double time,
                    double dist,

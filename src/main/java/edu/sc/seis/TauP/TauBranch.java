@@ -287,6 +287,15 @@ public class TauBranch implements Serializable, Cloneable {
                                  int botLayerNum,
                                  double p) throws NoSuchLayerException,
             SlownessModelException {
+        return calcTimeDist(sMod, topLayerNum, botLayerNum, p, false);
+    }
+
+    public TimeDist calcTimeDist(SlownessModel sMod,
+                                 int topLayerNum,
+                                 int botLayerNum,
+                                 double p,
+                                 boolean allowTurnInLayer) throws NoSuchLayerException,
+            SlownessModelException {
         int layerNum;
         TimeDist timeDist = new TimeDist(p);
         SlownessLayer layer;
@@ -302,10 +311,14 @@ public class TauBranch implements Serializable, Cloneable {
                 }
             }
             if((layer.getTopP() - p) * (p - layer.getBotP()) > 0) {
-                throw new SlownessModelException("Ray turns in the middle of this"
-                        + " layer. layerNum = "
-                        + layerNum
-                        + " sphericalRayParam " + p + " layer =" + layer);
+                if (allowTurnInLayer) {
+                    timeDist = timeDist.add(sMod.layerTimeDistAllowTurn(p, layerNum, isPWave, true));
+                } else {
+                    throw new SlownessModelException("Ray turns in the middle of this"
+                            + " layer. layerNum = "
+                            + layerNum
+                            + " sphericalRayParam " + p + " layer =" + layer);
+                }
             }
         }
         return timeDist;
