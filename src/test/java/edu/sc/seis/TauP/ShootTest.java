@@ -36,7 +36,7 @@ public class ShootTest {
             double timeTol = Math.abs(phase.getTime()[i]-phase.getTime()[i+1]);
             Arrival maxRPArrival = phase.shootRay(rp);
             assertEquals(i+"th ray param dist", phase.getDist()[i], maxRPArrival.getDist(), 0.1);
-            assertEquals(i+"th ray param time, neighbors: "+phase.getTime()[i]+" "+phase.getTime()[i+1], phase.getTime()[i], maxRPArrival.getTime(), timeTol);
+            assertEquals(i+"th ray param time", phase.getTime()[i], maxRPArrival.getTime(), timeTol);
             assertEquals(i+"th+1 ray param dist", phase.getDist()[i+1], maxRPArrival.getDist(), 0.1);
             assertEquals(i+"th+1 ray param time", phase.getTime()[i+1], maxRPArrival.getTime(), timeTol);
         }
