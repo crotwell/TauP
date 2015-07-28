@@ -992,16 +992,6 @@ public class TauP_Time {
                 + "m for new model or \nq to quit.\n");
     }
 
-    void doLotsODepths() {
-        for(int ii = 0; ii < 1000; ii++) {
-            try {
-                depthCorrect(Math.random() * 200);
-            } catch(TauModelException e) {
-                throw new RuntimeException(e);
-            }
-        }
-    }
-
     public void start() throws IOException, TauModelException, TauPException {
         if((degrees != Double.MAX_VALUE || takeoffAngle != Double.MAX_VALUE 
                 || (stationLat != Double.MAX_VALUE
@@ -1047,8 +1037,6 @@ public class TauP_Time {
             printHelp();
             do {
                 switch(readMode){
-                    case 'x':
-                        doLotsODepths();
                     case 'h':
                         // new source depth
                         System.out.print("Enter Depth: ");
@@ -1073,7 +1061,7 @@ public class TauP_Time {
                         break;
                     case 'd':
                         // new distance or option
-                        System.out.print("Enter Distance or Option [hrpclseabmqxt]: ");
+                        System.out.print("Enter Distance or Option [hrpclseabmqt]: ");
                         tokenIn.nextToken();
                         if(tokenIn.ttype == StreamTokenizer.TT_NUMBER) {
                             degrees = tokenIn.nval;
