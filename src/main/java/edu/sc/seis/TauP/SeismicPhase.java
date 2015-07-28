@@ -575,8 +575,7 @@ public class SeismicPhase implements Serializable, Cloneable {
             if (getDownGoing()[0]) {
                 takeoffVelocity = vMod.evaluateBelow(sourceDepth, name.charAt(0));
             } else { 
-                //fake neg velocity so angle is neg in case of upgoing
-                takeoffVelocity = -1*vMod.evaluateAbove(sourceDepth, name.charAt(0));
+                takeoffVelocity = vMod.evaluateAbove(sourceDepth, name.charAt(0));
             }
             double rayParam = (getTauModel().getRadiusOfEarth()-sourceDepth)*Math.sin(takeoffDegree*Math.PI/180)/takeoffVelocity;
             return rayParam;
@@ -597,10 +596,13 @@ public class SeismicPhase implements Serializable, Cloneable {
             if (getDownGoing()[0]) {
                 takeoffVelocity = vMod.evaluateBelow(sourceDepth, name.charAt(0));
             } else { 
-                //fake neg velocity so angle is neg in case of upgoing
-                takeoffVelocity = -1*vMod.evaluateAbove(sourceDepth, name.charAt(0));
+                takeoffVelocity = vMod.evaluateAbove(sourceDepth, name.charAt(0));
             }
             double takeoffAngle = 180/Math.PI*Math.asin(takeoffVelocity*arrivalRayParam/(getTauModel().getRadiusOfEarth()-sourceDepth));
+            if ( ! getDownGoing()[0]) {
+                // upgoing, so angle is in 90-180 range
+                takeoffAngle = 180-takeoffAngle;
+            }
             return takeoffAngle;
         } catch(NoSuchLayerException e) {
             throw new RuntimeException("Should not happen", e);

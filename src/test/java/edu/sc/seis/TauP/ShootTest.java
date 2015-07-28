@@ -11,6 +11,8 @@ public class ShootTest {
     public void testShootExistingRayParam() throws Exception {
         testShootExistingRayParamForPhase("P");
         testShootExistingRayParamForPhase("S");
+        testShootExistingRayParamForPhase("p");
+        testShootExistingRayParamForPhase("s");
     }
     
     public void testShootExistingRayParamForPhase(String phaseName) throws Exception {

@@ -718,15 +718,18 @@ public class TauP_Time {
         List<SeismicPhase> phaseList = getSeismicPhases();
         for(int phaseNum = 0; phaseNum < phaseList.size(); phaseNum++) {
             phase = phaseList.get(phaseNum);
-            double rayParam = phase.calcRayParamForTakeoffAngle(takeoffAngle);
-            Arrival phaseArrival;
-            try {
-                phaseArrival = phase.shootRay(rayParam);
-                arrivals.add(phaseArrival);
-            } catch(NoSuchLayerException e) {
-                Alert.warning("NoSuchLayerException", e.getMessage());
-            } catch(SlownessModelException e) {
-                Alert.warning("SlownessModelException", e.getMessage());
+            if (phase.getDownGoing()[0] == (takeoffAngle <= 90) ) {
+                // check both downgoing or both upgoing
+                double rayParam = phase.calcRayParamForTakeoffAngle(takeoffAngle);
+                Arrival phaseArrival;
+                try {
+                    phaseArrival = phase.shootRay(rayParam);
+                    arrivals.add(phaseArrival);
+                } catch(NoSuchLayerException e) {
+                    Alert.warning("NoSuchLayerException", e.getMessage());
+                } catch(SlownessModelException e) {
+                    Alert.warning("SlownessModelException", e.getMessage());
+                }
             }
         }
         sortArrivals();
