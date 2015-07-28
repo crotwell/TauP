@@ -13,6 +13,14 @@ public class ShootTest {
         testShootExistingRayParamForPhase("S");
         testShootExistingRayParamForPhase("p");
         testShootExistingRayParamForPhase("s");
+        testShootExistingRayParamForPhase("PP");
+        testShootExistingRayParamForPhase("SS");
+        testShootExistingRayParamForPhase("PcP");
+        testShootExistingRayParamForPhase("ScS");
+        testShootExistingRayParamForPhase("PKP");
+        testShootExistingRayParamForPhase("SKS");
+        testShootExistingRayParamForPhase("PKIKP");
+        testShootExistingRayParamForPhase("SKIKS");
     }
     
     public void testShootExistingRayParamForPhase(String phaseName) throws Exception {
