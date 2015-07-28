@@ -495,8 +495,8 @@ public class SeismicPhase implements Serializable, Cloneable {
         /* Sum the branches with the appropriate multiplier. */
         for(int j = 0; j < tMod.getNumBranches(); j++) {
             if(timesBranches[0][j] != 0) {
-                int topLayerNum = tMod.getSlownessModel().layerNumberBelow(tMod.getTauBranch(j, PWAVE).getTopDepth(), true);
-                int botLayerNum = tMod.getSlownessModel().layerNumberAbove(tMod.getTauBranch(j, PWAVE).getBotDepth(), true);
+                int topLayerNum = tMod.getSlownessModel().layerNumberBelow(tMod.getTauBranch(j, PWAVE).getTopDepth(), PWAVE);
+                int botLayerNum = tMod.getSlownessModel().layerNumberAbove(tMod.getTauBranch(j, PWAVE).getBotDepth(), PWAVE);
                 TimeDist td = tMod.getTauBranch(j, PWAVE).calcTimeDist(tMod.getSlownessModel(),
                                                                        topLayerNum,
                                                                        botLayerNum,
@@ -509,16 +509,16 @@ public class SeismicPhase implements Serializable, Cloneable {
                 sum = sum.add(td);
             }
             if(timesBranches[1][j] != 0) {
-                int topLayerNum = tMod.getSlownessModel().layerNumberBelow(tMod.getTauBranch(j, SWAVE).getTopDepth(), true);
-                int botLayerNum = tMod.getSlownessModel().layerNumberAbove(tMod.getTauBranch(j, SWAVE).getBotDepth(), true);
+                int topLayerNum = tMod.getSlownessModel().layerNumberBelow(tMod.getTauBranch(j, SWAVE).getTopDepth(), SWAVE);
+                int botLayerNum = tMod.getSlownessModel().layerNumberAbove(tMod.getTauBranch(j, SWAVE).getBotDepth(), SWAVE);
                 TimeDist td = tMod.getTauBranch(j, SWAVE).calcTimeDist(tMod.getSlownessModel(),
                                                                        topLayerNum,
                                                                        botLayerNum,
                                                                        rayParam,
                                                                        true);
                 td = new TimeDist(rayParam,
-                                  timesBranches[0][j]*td.getTime(),
-                                  timesBranches[0][j]*td.getDistRadian(),
+                                  timesBranches[1][j]*td.getTime(),
+                                  timesBranches[1][j]*td.getDistRadian(),
                                   td.getDepth());
                 sum = sum.add(td);
             }
@@ -566,6 +566,25 @@ public class SeismicPhase implements Serializable, Cloneable {
                                  name,
                                  puristName,
                                  sourceDepth);
+    }
+    
+    public double calcRayParamForTakeoffAngle(double takeoffDegree) {
+        double takeoffVelocity;
+        VelocityModel vMod = getTauModel().getVelocityModel();
+        try {
+            if (getDownGoing()[0]) {
+                takeoffVelocity = vMod.evaluateBelow(sourceDepth, name.charAt(0));
+            } else { 
+                //fake neg velocity so angle is neg in case of upgoing
+                takeoffVelocity = -1*vMod.evaluateAbove(sourceDepth, name.charAt(0));
+            }
+            double rayParam = (getTauModel().getRadiusOfEarth()-sourceDepth)*Math.sin(takeoffDegree*Math.PI/180)/takeoffVelocity;
+            return rayParam;
+        } catch(NoSuchLayerException e) {
+            throw new RuntimeException("Should not happen", e);
+        } catch(NoSuchMatPropException e) {
+            throw new RuntimeException("Should not happen", e);
+        }
     }
     
     public double calcTakeoffAngle(double arrivalRayParam) {

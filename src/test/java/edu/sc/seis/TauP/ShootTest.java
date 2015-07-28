@@ -9,9 +9,14 @@ public class ShootTest {
 
     @Test
     public void testShootExistingRayParam() throws Exception {
+        testShootExistingRayParamForPhase("P");
+        testShootExistingRayParamForPhase("S");
+    }
+    
+    public void testShootExistingRayParamForPhase(String phaseName) throws Exception {
         TauModelLoader.clearCache();
         double depth = 119;
-        SeismicPhase phase = new SeismicPhase("P", "iasp91", depth);
+        SeismicPhase phase = new SeismicPhase(phaseName, "iasp91", depth);
         for (int i = 0; i < phase.getRayParams().length; i++) {
             Arrival maxRPArrival = phase.shootRay(phase.getRayParams()[i]);
             assertEquals(i+"th ray param dist", phase.getDist()[i], maxRPArrival.getDist(), 0.0001);

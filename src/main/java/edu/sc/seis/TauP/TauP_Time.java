@@ -89,6 +89,8 @@ public class TauP_Time {
     protected double azimuth = Double.MAX_VALUE;
 
     protected double backAzimuth = Double.MAX_VALUE;
+    
+    protected double takeoffAngle = Double.MAX_VALUE;
 
     protected double stationLat = Double.MAX_VALUE;
 
@@ -590,6 +592,9 @@ public class TauP_Time {
                 } else if(dashEquals("baz", args[i])) {
                     backAzimuth = Double.valueOf(args[i + 1]).doubleValue();
                     i++;
+                } else if(dashEquals("takeoff", args[i])) {
+                    takeoffAngle = Double.valueOf(args[i + 1]).doubleValue();
+                    i++;
                 } else if(args[i].equalsIgnoreCase("-o")) {
                     outFileBase = args[i + 1];
                     i++;
@@ -696,6 +701,32 @@ public class TauP_Time {
             List<Arrival> phaseArrivals = phase.calcTime(degrees);
             for (Arrival arrival : phaseArrivals) {
                 arrivals.add(arrival);
+            }
+        }
+        sortArrivals();
+    }
+    
+    public void calcTakeoff(double takeoffAngle) throws TauModelException {
+        stationLat = Double.MAX_VALUE;
+        stationLon = Double.MAX_VALUE;
+        if(DEBUG) {
+            Alert.info("takeoffAngle=" + takeoffAngle);
+        }
+        depthCorrect(getSourceDepth(), getReceiverDepth());
+        clearArrivals();
+        SeismicPhase phase;
+        List<SeismicPhase> phaseList = getSeismicPhases();
+        for(int phaseNum = 0; phaseNum < phaseList.size(); phaseNum++) {
+            phase = phaseList.get(phaseNum);
+            double rayParam = phase.calcRayParamForTakeoffAngle(takeoffAngle);
+            Arrival phaseArrival;
+            try {
+                phaseArrival = phase.shootRay(rayParam);
+                arrivals.add(phaseArrival);
+            } catch(NoSuchLayerException e) {
+                Alert.warning("NoSuchLayerException", e.getMessage());
+            } catch(SlownessModelException e) {
+                Alert.warning("SlownessModelException", e.getMessage());
             }
         }
         sortArrivals();
@@ -854,6 +885,7 @@ public class TauP_Time {
             out.println();
         }
         out.println();
+        out.flush();
     }
 
     /**
@@ -956,6 +988,7 @@ public class TauP_Time {
                 + "l to list phases\n"
                 + "s for new station lat lon\ne for new event lat lon\n"
                 + "a for new azimuth\nb for new back azimuth\n"
+                + "t for takeoff angle\n"
                 + "m for new model or \nq to quit.\n");
     }
 
@@ -970,26 +1003,31 @@ public class TauP_Time {
     }
 
     public void start() throws IOException, TauModelException, TauPException {
-        if((degrees != Double.MAX_VALUE || (stationLat != Double.MAX_VALUE
+        if((degrees != Double.MAX_VALUE || takeoffAngle != Double.MAX_VALUE 
+                || (stationLat != Double.MAX_VALUE
                 && stationLon != Double.MAX_VALUE
                 && eventLat != Double.MAX_VALUE && eventLon != Double.MAX_VALUE))) {
             /* enough info given on cmd line, so just do one calc. */
-            if(degrees == Double.MAX_VALUE) {
-                degrees = SphericalCoords.distance(stationLat,
-                                                   stationLon,
-                                                   eventLat,
-                                                   eventLon);
-                azimuth = SphericalCoords.azimuth(eventLat,
-                                                  eventLon,
-                                                  stationLat,
-                                                  stationLon);
-                backAzimuth = SphericalCoords.azimuth(stationLat,
-                                                      stationLon,
-                                                      eventLat,
-                                                      eventLon);
+            if (takeoffAngle != Double.MAX_VALUE) {
+                calcTakeoff(takeoffAngle);
+            } else {
+                if(degrees == Double.MAX_VALUE) {
+                    degrees = SphericalCoords.distance(stationLat,
+                                                       stationLon,
+                                                       eventLat,
+                                                       eventLon);
+                    azimuth = SphericalCoords.azimuth(eventLat,
+                                                      eventLon,
+                                                      stationLat,
+                                                      stationLon);
+                    backAzimuth = SphericalCoords.azimuth(stationLat,
+                                                          stationLon,
+                                                          eventLat,
+                                                          eventLon);
+                }
+                depthCorrect(depth);
+                calculate(degrees);
             }
-            depthCorrect(depth);
-            calculate(degrees);
             printResult(getWriter());
         } else {
             /* interactive mode... */
@@ -1035,7 +1073,7 @@ public class TauP_Time {
                         break;
                     case 'd':
                         // new distance or option
-                        System.out.print("Enter Distance or Option [hrpclseabmq]: ");
+                        System.out.print("Enter Distance or Option [hrpclseabmqxt]: ");
                         tokenIn.nextToken();
                         if(tokenIn.ttype == StreamTokenizer.TT_NUMBER) {
                             degrees = tokenIn.nval;
@@ -1073,6 +1111,8 @@ public class TauP_Time {
                                     readMode = 'h';
                                 } else if(tokenIn.sval.equalsIgnoreCase("x")) {
                                     readMode = 'x';
+                                } else if(tokenIn.sval.equalsIgnoreCase("t")) {
+                                    readMode = 't';
                                 } else if(tokenIn.sval.equalsIgnoreCase("?")) {
                                     printHelp();
                                 } else {
@@ -1316,6 +1356,23 @@ public class TauP_Time {
                                 tMod = oldTMod;
                                 tModDepth = oldTModDepth;
                             }
+                        }
+                        readMode = 'd';
+                        break;
+                    case 't':
+                        System.out.print("Enter takeoff angle (deg): ");
+                        // takeoff angle
+                        double takeoffAngle;
+                        tokenIn.nextToken();
+                        if(tokenIn.ttype == StreamTokenizer.TT_NUMBER) {
+                            takeoffAngle = tokenIn.nval;
+                            calcTakeoff(takeoffAngle);
+                            printResult(getWriter());
+                        } else {
+                            Alert.warning("Expected a number.", "got "
+                                    + tokenIn + " instead.");
+                            printHelp();
+                            break;
                         }
                         readMode = 'd';
                         break;
