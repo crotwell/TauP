@@ -60,10 +60,12 @@ the depth to an interface involved in an interaction.
 \texttt{diff} & appended to P or S to represent a diffracted wave along the core mantle boundary \\
 \texttt{kmps} & appended to a velocity to represent a horizontal phase velocity (see
 \ref{kmps} below)\\
+\texttt{ed} & appended to P or S to represent a exclusively downgoing path, for a receiver below the source (see
+\ref{Ped} below)\\
 \end{tabular}
 %\end{center}
 
-\item The characters \texttt{p} and \texttt{s} \textbf{always} represent 
+\item \label{Ped} The characters \texttt{p} and \texttt{s} \textbf{always} represent 
 up-going legs. 
 An example is the source to surface leg of the phase \texttt{pP}
 from a source at depth. 
@@ -78,6 +80,11 @@ represent a upgoing leg in certain cases.
 For instance, \texttt{PcP} is 
 allowed since the direction of the phase is unambiguously determined by the symbol
 \texttt{c}, but would be named \texttt{Pcp} by a purist using our nomenclature.
+
+With the ability to have sources at depth, there is a need to specify the difference between a wave that is
+exclusively downgoing to the receiver from one that turns and is upgoing at the receiver. The suffix \texttt{ed}
+can be appended to indicate exclusively downgoing. So for a source at 10 km depth and a receiver at 20 km depth
+at 0 degree distance \texttt{P} does nat have an arrival but \texttt{Ped} does.
 
 \item Numbers, except velocities for \texttt{kmps} 
 phases (see \ref{kmps} below), 
