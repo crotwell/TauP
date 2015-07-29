@@ -1,4 +1,4 @@
-> P at   411.68 seconds at    35.00 degrees for a     10.0 km deep source in the prem model with rayParam    8.603 s/deg.
+> P at   411.69 seconds at    35.00 degrees for a     10.0 km deep source in the prem model with rayParam    8.604 s/deg.
     0.00    10.0     0.0
     0.02    15.0     1.0
     0.08    24.4     2.6
@@ -13,7 +13,7 @@
    34.93    15.0   408.8
    34.95    10.0   409.8
    35.00     0.0   411.7
-> P at   479.97 seconds at    35.00 degrees for a     10.0 km deep source in the prem model with rayParam   13.489 s/deg.
+> P at   479.97 seconds at    35.00 degrees for a     10.0 km deep source in the prem model with rayParam   13.490 s/deg.
     0.00    10.0     0.0
     0.04    15.0     1.2
     0.17    24.4     3.7

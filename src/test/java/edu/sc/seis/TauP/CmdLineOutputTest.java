@@ -5,51 +5,82 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.junit.Test;
 
 public class CmdLineOutputTest {
 
+    String[] timeTestCmds = new String[] {"taup_time -h 10 -ph P -deg 35 -mod prem",
+                                          "taup_time -h 10 -ph P -deg 35",
+                                          "taup_time -h 10 -ph P -deg 35 -mod ak135",
+                                          "taup_time -h 10 -ph ttall -deg 35 -mod prem",
+                                          "taup_time -h 10 -ph ttall -deg 35",
+                                          "taup_time -h 10 -ph ttall -deg 35 -mod ak135"};
+    
+    String[] pierceTestCmds = new String[] {"taup_pierce -h 10 -ph P -deg 35 -mod prem",
+                                            "taup_pierce -h 10 -ph P -deg 35",
+                                            "taup_pierce -h 10 -ph P -deg 35 -mod ak135"};
+    
+    String[] pathTestCmds = new String[] {"taup_path -o stdout -h 10 -ph P -deg 35 -mod prem",
+                                          "taup_path -o stdout -h 10 -ph P -deg 35",
+                                          "taup_path -o stdout -h 10 -ph P -deg 35 --svg",
+                                          "taup_path -o stdout -h 10 -ph P -deg 35 -mod ak135"};
+    
+    String[] curveTestCmds = new String[] {"taup_curve -o stdout -h 10 -ph P -mod prem",
+                                           "taup_curve -o stdout -h 10 -ph P",
+                                           "taup_curve -o stdout -h 10 -ph P -mod ak135"};
+    
+
+    /** disable unless regenerating the cmd line output test resources. 
+     * new text files will be in cmdLineTest in cwd
+     *     
+     * @throws Exception
+     */
+    // @Test
+    public void testSaveOutput() throws Exception {
+        List<String> allList = new ArrayList<String>();
+        allList.addAll(Arrays.asList(timeTestCmds));
+        allList.addAll(Arrays.asList(pierceTestCmds));
+        allList.addAll(Arrays.asList(pathTestCmds));
+        allList.addAll(Arrays.asList(curveTestCmds));
+        for (String cmd : allList) {
+            System.err.println(cmd);
+            saveOutputToFile(cmd);
+        }
+    }
     
     @Test
     public void testTauPTime() throws Exception {
-        runTests(new String[] {"taup_time -h 10 -ph P -deg 35 -mod prem",
-                               "taup_time -h 10 -ph P -deg 35",
-                               "taup_time -h 10 -ph P -deg 35 -mod ak135",
-                               "taup_time -h 10 -ph ttall -deg 35 -mod prem",
-                               "taup_time -h 10 -ph ttall -deg 35",
-                               "taup_time -h 10 -ph ttall -deg 35 -mod ak135"});
+        runTests(timeTestCmds);
     }
 
     @Test
     public void testTauPPierce() throws Exception {
-        runTests(new String[] {"taup_pierce -h 10 -ph P -deg 35 -mod prem",
-                               "taup_pierce -h 10 -ph P -deg 35",
-                               "taup_pierce -h 10 -ph P -deg 35 -mod ak135"});
+        runTests(pierceTestCmds);
     }
 
     @Test
     public void testTauPPath() throws Exception {
-        runTests(new String[] {"taup_path -o stdout -h 10 -ph P -deg 35 -mod prem",
-                               "taup_path -o stdout -h 10 -ph P -deg 35",
-                               "taup_path -o stdout -h 10 -ph P -deg 35 --svg",
-                               "taup_path -o stdout -h 10 -ph P -deg 35 -mod ak135"});
+        runTests(pathTestCmds);
     }
 
     @Test
     public void testTauPCurve() throws Exception {
-        runTests(new String[] {"taup_curve -o stdout -h 10 -ph P -mod prem",
-                               "taup_curve -o stdout -h 10 -ph P",
-                               "taup_curve -o stdout -h 10 -ph P -mod ak135"});
+        runTests(curveTestCmds);
     }
     
     @Test
@@ -63,14 +94,12 @@ public class CmdLineOutputTest {
             testCmd(cmds[i]);
         }
     }
-
-    public void testCmd(String cmd) throws Exception {
+    
+    public void runCmd(String cmd) throws Exception {
         String[] s = cmd.split(" +");
         String tool = s[0];
         String[] cmdArgs = new String[s.length - 1];
         System.arraycopy(s, 1, cmdArgs, 0, cmdArgs.length);
-        setUpStreams();
-        assertEquals("sysout is not empty", 0, outContent.toByteArray().length);
         if (tool.equals("taup_time")) {
             TauP_Time.main(cmdArgs);
         } else if (tool.equals("taup_pierce")) {
@@ -84,6 +113,12 @@ public class CmdLineOutputTest {
         } else { 
             throw new Exception("Unknown tool: "+tool);
         }
+    }
+
+    public void testCmd(String cmd) throws Exception {
+        setUpStreams();
+        assertEquals("sysout is not empty", 0, outContent.toByteArray().length);
+        runCmd(cmd);
         BufferedReader prior = getPriorOutput(cmd);
         BufferedReader current = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(outContent.toByteArray())));
         int lineNum = 0;
@@ -113,10 +148,26 @@ public class CmdLineOutputTest {
         origErr.println("Done with " + cmd);
     }
     
+    /**
+     * test loading prior results text file from test resources. Kind of a meta-test... :)
+     * @throws Exception
+     */
     @Test
     public void loadTest() throws Exception {
         BufferedReader s = getPriorOutput("taup_path -o stdout -h 10 -ph P -deg 35 -mod prem");
-        assertEquals("line one", "> P at   411.68 seconds at    35.00 degrees for a     10.0 km deep source in the prem model with rayParam    8.603 s/deg.", s.readLine());
+        assertEquals("line one", "> P at   411.69 seconds at    35.00 degrees for a     10.0 km deep source in the prem model with rayParam    8.604 s/deg.", s.readLine());
+    }
+    
+    public void saveOutputToFile(String cmd) throws Exception {
+        File dir = new File("cmdLineTest");
+        if ( ! dir.isDirectory()) {dir.mkdir(); }
+        String filename = fileizeCmd(cmd);
+        PrintStream fileOut = new PrintStream(new BufferedOutputStream(new FileOutputStream(new File(dir, filename))));
+        System.setOut(fileOut);
+        runCmd(cmd);
+        fileOut.flush();
+        System.setOut(origOut);
+        fileOut.close();
     }
 
     private ByteArrayOutputStream outContent;
