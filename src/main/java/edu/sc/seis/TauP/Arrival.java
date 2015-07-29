@@ -68,6 +68,12 @@ public class Arrival {
                    double sourceDepth,
                    double takeoffAngle,
                    double incidentAngle) {
+        if (Double.isNaN(time)) {
+            throw new IllegalArgumentException("Time cannot be NaN");
+        }
+        if (rayParamIndex < 0) {
+            throw new IllegalArgumentException("rayParamIndex cannot be negative: "+rayParamIndex);
+        }
         this.phase = phase;
         this.time = time;
         this.dist = dist;
@@ -217,7 +223,7 @@ public class Arrival {
         String desc =  Outputs.formatDistance(getModuloDistDeg()) + Outputs.formatDepth(getSourceDepth()) + "   " + getName()
                 + "  " + Outputs.formatTime(getTime()) + "  " + Outputs.formatRayParam(Math.PI / 180.0 * getRayParam())
                 + "  " + Outputs.formatDistance(getTakeoffAngle()) + " " + Outputs.formatDistance(getIncidentAngle())
-                + " " + Outputs.formatDistance(getDistDeg());
+                + " " + Outputs.formatDistance(getDistDeg())+" "+getRayParamIndex();
         if (getName().equals(getPuristName())) {
             desc += "   = ";
         } else {
