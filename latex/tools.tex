@@ -162,7 +162,8 @@ travel times for specified phases through the given earth model.
 
 The usage is:
 \begin{verbatim}
-piglet 1>taup_time --helpUsage: taup_time [arguments]
+piglet 1>bin/taup_time --help
+Usage: taup_time [arguments]
   or, for purists, java edu.sc.seis.TauP.TauP_Time [arguments]
 
 Arguments are:
@@ -174,7 +175,7 @@ Arguments are:
 
 -h depth           -- source depth in km
 
---staDepth depth   -- receiver depth in km
+--stadepth depth   -- receiver depth in km
 
 Distance is given by:
 
@@ -218,11 +219,11 @@ deep source at a distance of 57.4 degrees.
 piglet 2>taup_time -mod prem -h 200 -ph S,P -deg 57.4
 
 Model: prem
-Distance   Depth   Phase   Travel    Ray Param   Purist    Purist
-  (deg)     (km)   Name    Time (s)  p (s/deg)  Distance   Name
-----------------------------------------------------------------
-    57.4   200.0   P        566.77     6.968       57.4  = P    
-    57.4   200.0   S       1028.60    13.018       57.4  = S
+Distance   Depth   Phase   Travel    Ray Param  Takeoff  Incident  Purist    Purist
+  (deg)     (km)   Name    Time (s)  p (s/deg)   (deg)    (deg)   Distance   Name 
+-----------------------------------------------------------------------------------
+   57.40   200.0   P        566.77     6.968     31.18    21.31    57.40   = P    
+   57.40   200.0   S       1028.59    13.017     32.34    22.00    57.40   = S    
 \end{verbatim}
 
 \subsection{TauP\_Pierce}
@@ -247,7 +248,7 @@ Arguments are:
 
 -h depth           -- source depth in km
 
---staDepth depth   -- receiver depth in km
+--stadepth depth   -- receiver depth in km
 
 Distance is given by:
 
@@ -364,7 +365,7 @@ Arguments are:
 
 -h depth           -- source depth in km
 
---staDepth depth   -- receiver depth in km
+--stadepth depth   -- receiver depth in km
 
 Distance is given by:
 
@@ -424,7 +425,7 @@ Arguments are:
 
 -h depth           -- source depth in km
 
---staDepth depth   -- receiver depth in km
+--stadepth depth   -- receiver depth in km
 
 Distance is given by:
 
@@ -608,7 +609,7 @@ After editing, a custom table can be created with
 
 The usage is:
 \begin{verbatim}
-piglet 1>taup_table -help
+piglet 1>taup_table --help
 Usage: taup_table [arguments]
   or, for purists, java edu.sc.seis.TauP.TauP_Table [arguments]
 
@@ -650,7 +651,7 @@ precomputed {\texttt .taup} file is more efficient.
 
 The usage is:
 \begin{verbatim}
-piglet 8>taup_create -help
+piglet 8>taup_create --help
 TauP_Create starting...
 Usage: taup_create [arguments]
   or, for purists, java edu.sc.seis.TauP.TauP_Create [arguments]
