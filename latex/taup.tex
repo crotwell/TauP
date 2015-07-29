@@ -1,13 +1,8 @@
 \documentclass[titlepage]{article}
-\usepackage{bssa_usc, times}
+\usepackage{bssa_usc, times, ifpdf}
 
 % check to see if running latex or pdflatex
-\newif\ifpdf
-\ifx\pdfoutput\undefined
-        \pdffalse
-\else
-        \pdfoutput=1
-        \pdftrue
+\ifpdf
         \usepackage[pdftitle={The TauP Toolkit Manual}, 
                     pdftex, 
                     colorlinks=true]{hyperref}
