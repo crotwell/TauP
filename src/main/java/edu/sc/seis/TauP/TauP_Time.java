@@ -576,7 +576,7 @@ public class TauP_Time {
                 } else if(args[i].equalsIgnoreCase("-h")) {
                     toolProps.put("taup.source.depth", args[i + 1]);
                     i++;
-                } else if(args[i].equalsIgnoreCase("--staDepth")) {
+                } else if(args[i].equalsIgnoreCase("--stadepth")) {
                     setReceiverDepth(Double.parseDouble(args[i + 1]));
                     i++;
                 } else if(dashEquals("deg", args[i])) {
@@ -709,9 +709,6 @@ public class TauP_Time {
     public void calcTakeoff(double takeoffAngle) throws TauModelException {
         stationLat = Double.MAX_VALUE;
         stationLon = Double.MAX_VALUE;
-        if(DEBUG) {
-            Alert.info("takeoffAngle=" + takeoffAngle);
-        }
         depthCorrect(getSourceDepth(), getReceiverDepth());
         clearArrivals();
         SeismicPhase phase;
@@ -1405,7 +1402,7 @@ public class TauP_Time {
                 + "-mod[el] modelname -- use velocity model \"modelname\" for calculations\n"
                 + "                      Default is iasp91.\n\n"
                 + "-h depth           -- source depth in km\n\n"
-                + "--staDepth depth   -- receiver depth in km\n\n"
+                + "--stadepth depth   -- receiver depth in km\n\n"
                 + "Distance is given by:\n\n"
                 + "-deg degrees       -- distance in degrees,\n"
                 + "-km kilometers     -- distance in kilometers,\n"
