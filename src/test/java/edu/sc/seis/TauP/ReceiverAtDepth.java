@@ -61,7 +61,7 @@ public class ReceiverAtDepth {
         }
         double distStep = 11;
         for (double degrees = 0; degrees < phase.getMaxDistance() && degrees < flippedPhase.getMaxDistance(); degrees+= distStep) {
-            String pre = "sd="+tMod.getSourceDepth()+" rd="+receiverDepth+" deg="+degrees;
+            String pre = phaseName+" sd="+tMod.getSourceDepth()+" rd="+receiverDepth+" deg="+degrees;
             List<Arrival> phaseArrivals = phase.calcTime(degrees);
             if (upPhase != null) {
                 phaseArrivals.addAll(upPhase.calcTime(degrees));
