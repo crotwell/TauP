@@ -747,7 +747,11 @@ public class TauP_Time {
             clearArrivals();
             phases = null;
         }
-        tModDepth = tModDepth.splitBranch(receiverDepth); // if already split on reciever depth this does nothing
+        if (receiverDepth != getReceiverDepth()) {
+            tModDepth = tModDepth.splitBranch(receiverDepth); // if already split on reciever depth this does nothing
+            clearArrivals();
+            phases = null;
+        }
         setSourceDepth(depth);
     }
 
