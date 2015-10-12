@@ -50,7 +50,7 @@ import edu.sc.seis.seisFile.sac.SacTimeSeries;
  * is set, in which case I assume kilometers. This may be a problem for users
  * that improperly use kilometers for the depth units. Due to much abuse of the
  * sac depth header units I output a warning message if the depth appears to be
- * in kilometers, ie it is < 1000. This can be safely ignored if the event
+ * in kilometers, ie it is less than 1000. This can be safely ignored if the event
  * really is less than 1000 meters deep.
  * 
  * @version 1.1.3 Wed Jul 18 15:00:35 GMT 2001

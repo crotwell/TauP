@@ -332,7 +332,7 @@ public class TauBranch implements Serializable, Cloneable {
      * @throws TauModelException
      *             if the tau branch is not compatable with the slowness
      *             sampling
-     * @see edu.sc.seis.TauP.TauModel.depthCorrect(double)
+     * see edu.sc.seis.TauP.TauModel.depthCorrect(double)
      */
     protected void insert(double rayParam, SlownessModel sMod, int index)
             throws NoSuchLayerException, SlownessModelException,
@@ -378,10 +378,10 @@ public class TauBranch implements Serializable, Cloneable {
      * this tau branch. The given tau branch is assumed to by the upper part of
      * this branch.
      * 
-     * @argument indexP specifies where a new ray coresponding to a P wave
+     *  indexP specifies where a new ray coresponding to a P wave
      *           sample has been added, it is -1 if no ray parameter has been
      *           added to topBranch.
-     * @arguement indexS is similar to indexP except for a S wave sample. Note
+     *  indexS is similar to indexP except for a S wave sample. Note
      *            that although the ray parameters for indexP and indexS were
      *            for the P and S waves that turned at the source depth, both
      *            ray parameters need to be added to both P and S branches.
