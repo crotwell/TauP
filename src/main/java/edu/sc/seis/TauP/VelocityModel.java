@@ -29,11 +29,8 @@
  */
 package edu.sc.seis.TauP;
 
-import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
-import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -169,6 +166,16 @@ public class VelocityModel implements Cloneable, Serializable {
         return radiusOfEarth;
     }
 
+    public boolean isDisconDepth(double depth) {
+        double[] discons = getDisconDepths();
+        for (int i = 0; i < discons.length; i++) {
+            if (depth == discons[i]) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
     /** @return the depths of discontinuities within the velocity model */
     public double[] getDisconDepths() {
         double[] disconDepths = new double[getNumLayers() + 2];
