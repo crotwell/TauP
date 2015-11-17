@@ -133,14 +133,14 @@ public class SeismicPhase implements Serializable, Cloneable {
 
     /**
      * Index within TauModel.rayParams that corresponds to maxRayParam. Note
-     * that maxRayParamIndex < minRayParamIndex as ray parameter decreases with
+     * that maxRayParamIndex &lt; minRayParamIndex as ray parameter decreases with
      * increasing index.
      */
     protected int maxRayParamIndex = -1;
 
     /**
      * Index within TauModel.rayParams that corresponds to minRayParam. Note
-     * that maxRayParamIndex < minRayParamIndex as ray parameter decreases with
+     * that maxRayParamIndex &lt; minRayParamIndex as ray parameter decreases with
      * increasing index.
      */
     protected int minRayParamIndex = -1;
@@ -213,7 +213,7 @@ public class SeismicPhase implements Serializable, Cloneable {
         this(name, TauModelLoader.load(modelName).depthCorrect(depth));
     }
     /**
-     * @param phaseName
+     * @param name
      *            String containing a name of the phase.
      * @param tMod
      *            Tau model to be used to construct the phase. This should be corrected for the source
@@ -396,8 +396,7 @@ public class SeismicPhase implements Serializable, Cloneable {
     // Normal methods
 
     /** calculates arrival times for this phase, sorted by time. 
-     * @throws NoSuchMatPropException 
-     * @throws NoSuchLayerException */
+     *  */
     public List<Arrival> calcTime(double deg) {
         double tempDeg = deg;
         if(tempDeg < 0.0) {

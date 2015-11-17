@@ -205,7 +205,6 @@ public abstract class SlownessModel implements Serializable {
      * the large geometrical spreading of S waves in the inner core. The default
      * is false.
      * 
-     * @see minInnerCoreDepth
      */
     protected boolean allowInnerCoreS = true;
 
@@ -529,7 +528,7 @@ public abstract class SlownessModel implements Serializable {
      * the high slowness zone. Calls depthInHighSlowness(double, double,
      * DepthRange).
      * 
-     * @see depthInHighSlowness.
+     * @see SlownessModel#depthInHighSlowness(double, double, DepthRange, boolean)
      */
     public boolean depthInHighSlowness(double depth,
                                        double rayParam,
@@ -580,7 +579,7 @@ public abstract class SlownessModel implements Serializable {
      * zone includes its upper boundary but not its lower boundary. Calls
      * depthInFluid(double, DepthRange).
      * 
-     * @see depthInFluid(double, DepthRange).
+     * @see SlownessModel#depthInFluid(double, DepthRange)
      */
     public boolean depthInFluid(double depth) {
         DepthRange fluidZoneDepth = new DepthRange();
@@ -841,8 +840,6 @@ public abstract class SlownessModel implements Serializable {
      * high slowness zone and thus does not exhibit any of the pathological
      * behavior of a low velocity zone.
      * 
-     * @exception NoSuchMatPropException
-     *                occurs if wavetype is not recognized.
      * @exception SlownessModelException
      *                occurs if validate() returns false, this indicates a bug
      *                in the code.
@@ -1194,7 +1191,7 @@ public abstract class SlownessModel implements Serializable {
      * return the first depth that we find.
      * 
      * @exception SlownessModelException
-     *                occurs if topCriticalLayer > botCriticalLayer because
+     *                occurs if topCriticalLayer &gt; botCriticalLayer because
      *                there are no layers to search, or if there is an increase
      *                in slowness, ie a negative velocity gradient, that just
      *                balances the decrease in slowness due to the spherical

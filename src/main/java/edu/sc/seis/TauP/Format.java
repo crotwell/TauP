@@ -397,7 +397,7 @@ public class Format {
     /**
      * Formats a character into a string (like sprintf in C)
      * 
-     * @param x
+     * @param c
      *            the value to format
      * @return the formatted string
      */
@@ -411,7 +411,7 @@ public class Format {
     /**
      * Formats a string into a larger string (like sprintf in C)
      * 
-     * @param x
+     * @param s
      *            the value to format
      * @return the formatted string
      */

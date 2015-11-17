@@ -343,7 +343,7 @@ public class Sfun {
      * 
      * @param x
      *            A double value.
-     * @return The arc hyperbolic tangent of x. If x is NaN or |x|>1, the result
+     * @return The arc hyperbolic tangent of x. If x is NaN or |x|&gt;1, the result
      *         is NaN.
      */
     static public double atanh(double x) {
