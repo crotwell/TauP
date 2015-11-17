@@ -2002,7 +2002,8 @@ public abstract class SlownessModel implements Serializable {
                             + " bottom depth "
                             + highSZoneDepth.botDepth);
                 }
-                if(highSZoneDepth.topDepth <= prevDepth) {
+                if(highSZoneDepth.topDepth <= prevDepth 
+                        && ! (highSZoneDepth.topDepth == prevDepth && vMod.isDisconDepth(highSZoneDepth.topDepth))) {
                     throw new SlownessModelException("High slowness zone overlaps previous zone. Num "
                             + i
                             + " isPWave="
