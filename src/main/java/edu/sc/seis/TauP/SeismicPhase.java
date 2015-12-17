@@ -527,7 +527,8 @@ public class SeismicPhase implements Serializable, Cloneable {
             return linInterp;
         }
         if(DEBUG) {
-            System.err.println("Refine: "+maxRecursion+"\nleft:  "+leftEstimate+"\nright: "+rightEstimate);
+            System.err.println("Phase: "+this);
+            System.err.println("Refine: "+maxRecursion+"\nleft:  "+leftEstimate+"\nright: "+rightEstimate+"\nlinInterp: "+linInterp);
         }
         try {
             Arrival shoot = shootRay(linInterp.getRayParam());
@@ -1001,6 +1002,12 @@ public class SeismicPhase implements Serializable, Cloneable {
             try {
                 int sLayerNum = tMod.getSlownessModel().layerNumberAbove(tMod.getSourceDepth(), isPWavePrev);
                 maxRayParam = tMod.getSlownessModel().getSlownessLayer(sLayerNum, isPWavePrev).getBotP();
+                // check if source is in high slowness zone
+                DepthRange highSZoneDepth = new DepthRange();
+                if (tMod.getSlownessModel().depthInHighSlowness(tMod.getSourceDepth(), maxRayParam, highSZoneDepth, isPWavePrev)) {   
+                    // need to reduce maxRayParam until it can propagate out of high slowness zone
+                    maxRayParam = Math.min(maxRayParam, highSZoneDepth.rayParam);
+                }
             } catch(NoSuchLayerException e) {
                 throw new RuntimeException("Should not happen", e);
             }
@@ -1890,7 +1897,6 @@ public class SeismicPhase implements Serializable, Cloneable {
                 maxRayParamIndex = i;
             }
         }
-        
         
         if(maxRayParamIndex == 0
                 && minRayParamIndex == tMod.rayParams.length - 1) {
