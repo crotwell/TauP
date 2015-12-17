@@ -1224,6 +1224,9 @@ public abstract class SlownessModel implements Serializable {
                 velLayer = (VelocityLayer)vMod.getVelocityLayer(layerNum);
                 topVelocity = velLayer.evaluateAtTop(waveType);
                 botVelocity = velLayer.evaluateAtBottom(waveType);
+                if (topVelocity == 0.0 && botVelocity == 0.0) {
+                    continue;
+                }
                 topP = toSlowness(topVelocity, velLayer.getTopDepth());
                 botP = toSlowness(botVelocity, velLayer.getBotDepth());
                 /*
@@ -1291,7 +1294,7 @@ public abstract class SlownessModel implements Serializable {
             }
         } catch(NoSuchMatPropException e) {
             // can't happen...
-            e.printStackTrace();
+            throw new RuntimeException("Should never happen...", e);
         }
         throw new SlownessModelException("slowness p=" + p
                 + " is not contained within the specified layers." + "\np=" + p
