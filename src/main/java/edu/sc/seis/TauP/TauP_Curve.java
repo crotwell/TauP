@@ -67,6 +67,8 @@ public class TauP_Curve extends TauP_Time {
     protected String redVelString = ".125 deg/s";
 
     protected float mapWidth = (float) 6.0;
+    
+    protected String mapWidthUnit = "i";
 
     protected TauP_Curve() {
         super();
@@ -154,6 +156,14 @@ public class TauP_Curve extends TauP_Time {
      */
     public float getMapWidth() {
         return mapWidth;
+    }
+    
+    public String getMapWidthUnit() {
+        return mapWidthUnit;
+    }
+    
+    public void setMapWidthUnit(String mapWidthUnit) {
+        this.mapWidthUnit = mapWidthUnit;
     }
 
     public void calculate(double degrees) {
@@ -350,7 +360,7 @@ public class TauP_Curve extends TauP_Time {
             // round max and min time to nearest 100 seconds
             maxTime = Math.ceil(maxTime / 100) * 100;
             minTime = Math.floor(minTime / 100) * 100;
-            out.println("pstext -JX"+getMapWidth()+" -P -R0/180/" + minTime + "/" + maxTime
+            out.println("pstext -JX"+getMapWidth()+getMapWidthUnit()+" -P -R0/180/" + minTime + "/" + maxTime
                     + " -B20/100/:.'" + title + "': -K > " + psFile
                     + " <<END");
             out.print(scriptStuff);
