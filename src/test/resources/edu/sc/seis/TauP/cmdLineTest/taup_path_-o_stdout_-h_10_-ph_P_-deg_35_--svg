@@ -39,7 +39,7 @@
   <circle cx="0.0" cy="0.0" r="5711.0" />
   <circle cx="0.0" cy="0.0" r="3482.0" />
   <circle cx="0.0" cy="0.0" r="1217.1000000000004" />
-<!-- draw paths, coordinates are x,y not degree,radiue due to SVG using only cartesian -->
+<!-- draw paths, coordinates are x,y not degree,radius due to SVG using only cartesian -->
 <!-- > P at   412.43 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    8.613 s/deg.
  -->
 <polyline points="
