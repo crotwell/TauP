@@ -1,4 +1,7 @@
 
+apply plugin: 'maven'
+apply plugin: 'signing'
+
 dependencies {
     compile project(':seisFile')
     compile 'org.python:jython-standalone:2.5.3'
@@ -81,6 +84,55 @@ task tarDist(type: Tar, dependsOn: ['explodeDist']) {
     into(dirName) {
         with distFiles
     }
+}
+
+signing {
+    sign configurations.archives
+}
+
+uploadArchives {
+  repositories {
+    mavenDeployer {
+      beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+      repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+        authentication(userName: ossrhUsername, password: ossrhPassword)
+      }
+
+      snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+        authentication(userName: ossrhUsername, password: ossrhPassword)
+      }
+
+      pom.project {
+        name 'TauP'
+        packaging 'jar'
+        // optionally artifactId can be defined here 
+        description 'A seismic travel time calculator.'
+        url 'http://www.seis.sc.edu/TauP'
+
+        scm {
+          connection 'scm:git:https://github.com/crotwell/TauP.git'
+          developerConnection 'scm:git:https://github.com/crotwell/TauP.git'
+          url 'https://github.com/crotwell/TauP'
+        }
+
+        licenses {
+          license {
+            name 'The GNU General Public License, Version 3'
+            url 'http://www.gnu.org/licenses/gpl-3.0.html'
+          }
+        }
+
+        developers {
+          developer {
+            id 'crotwell'
+            name 'Philip Crotwell'
+            email 'crotwell@seis.sc.edu'
+          }
+        }
+      }
+    }
+  }
 }
 
 task makeScript(dependsOn: copyToLib) << { task ->
