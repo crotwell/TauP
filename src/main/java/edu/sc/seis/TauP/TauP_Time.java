@@ -524,7 +524,7 @@ public class TauP_Time {
     /**
      * Parses a comma separated list of distances and returns them in an array.
      */
-    public List<Double> parseDegreeList(String degList) {
+    public static List<Double> parseDegreeList(String degList) {
         String[] split = degList.split(",");
         List<Double> degreesFound = new ArrayList<Double>(split.length);
         for (int i = 0; i < split.length; i++) {
