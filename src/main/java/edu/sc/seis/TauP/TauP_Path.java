@@ -342,7 +342,7 @@ public class TauP_Path extends TauP_Pierce {
 
 	        out.println("  <circle cx=\"0.0\" cy=\"0.0\" r=\"" + (R- branchDepths[i])+"\" />");
 	    }
-	    out.println("<!-- draw paths, coordinates are x,y not degree,radiue due to SVG using only cartesian -->");
+	    out.println("<!-- draw paths, coordinates are x,y not degree,radius due to SVG using only cartesian -->");
 	}
 
     public void printScriptBeginning(PrintWriter out, String psFile)  throws IOException {
