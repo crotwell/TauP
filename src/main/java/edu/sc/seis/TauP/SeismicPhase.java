@@ -2418,8 +2418,8 @@ public class SeismicPhase implements Serializable, Cloneable {
                                                      - dist[0],
                                              tMod.cmbDepth);
                     pathList.add(diffTD);
-                } else if(branchNum == tMod.mohoBranch - 1 && i < branchSeq.size()-1
-                        && ((Integer)branchSeq.get(i + 1)).intValue() == tMod.mohoBranch - 1
+                } else if(branchNum == tMod.mohoBranch  && i < branchSeq.size()-1
+                        && ((Integer)branchSeq.get(i + 1)).intValue() == tMod.mohoBranch 
                         && (name.indexOf("Pn") != -1 || name.indexOf("Sn") != -1)) {
                     int numFound = 0;
                     int indexInString = -1;
@@ -2442,7 +2442,7 @@ public class SeismicPhase implements Serializable, Cloneable {
                                                      / numFound,
                                              tMod.mohoDepth);
                     pathList.add(headTD);
-                } 
+                }
             }
             if (name.indexOf("kmps") != -1) {
                 // kmps phases have no branches, so need to end them at the arrival distance
