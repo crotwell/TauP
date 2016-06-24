@@ -117,7 +117,7 @@ The default is 0.1 sec/rad.
 successive slowness samples. This is used to split any layers that exceed
 this slowness gap.
 Used by TauP\_Create to create new models. 
- The default is 8.0 sec/rad. 
+ The default is 11.0 sec/rad. 
 \item[taup.create.maxDepthInterval] Maximum difference between successive depth 
 samples. This is used immediately after reading in a velocity model, with
 layers being split as needed.
@@ -127,7 +127,7 @@ Used by TauP\_Create to create new models.
 ranges, in degrees. If the difference in distance for two adjacent rays
 is greater than this, then a new slowness sample is inserted halfway between
 the two existing slowness samples.
-The default is 1.75 degrees.
+The default is 2.5 degrees.
 \item[taup.create.maxInterpError] Maximum error for linear interpolation
  between successive sample in seconds. TauP\_Create uses this to try to insure
 that the maximum error due to linear interpolation is less than this amount.
@@ -136,7 +136,7 @@ Of course, this is only an approximation based upon an estimate of the
 In particular, the error for more complicated phases is greater. For instance,
 if the true error for P at 30 degrees is 0.03 seconds, then the error for
 PP at 60 degrees would be twice that, 0.06 seconds.
-Used by TauP\_Create to create new models. The default is 0.03 seconds.
+Used by TauP\_Create to create new models. The default is 0.05 seconds.
 \item[taup.create.allowInnerCoreS] Should we allow J phases, S in 
 the inner core?
 Used by TauP\_Create to create new models. 

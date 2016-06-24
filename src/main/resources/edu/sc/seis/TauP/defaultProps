@@ -38,15 +38,15 @@ taup.table.locsat.maxdiff=105.0
 
 # max and min delta p in seconds per radian
 taup.create.minDeltaP=0.1
-taup.create.maxDeltaP=8.0
+taup.create.maxDeltaP=11.0
 
 # max depth interval in kilometers
 taup.create.maxDepthInterval=115.0
 
 # max range interval in degrees
-taup.create.maxRangeInterval=1.75
+taup.create.maxRangeInterval=2.5
 
 # max estimate of error due to linear interpolation, in seconds
-taup.create.maxInterpError=0.03
+taup.create.maxInterpError=0.05
 
 taup.create.allowInnerCoreS=true
