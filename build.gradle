@@ -60,6 +60,10 @@ def distFiles = copySpec {
         into('gradle')
     }
     from('src/main/resources/edu/sc/seis/TauP') {
+        include('defaultProps')
+        into('doc')
+    }
+    from('src/main/resources/edu/sc/seis/TauP') {
         include('StdModels/*.tvel')
         include('StdModels/*.nd')
     }
