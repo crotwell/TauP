@@ -1,0 +1,6 @@
+/bin/
+*.aux
+taup.blg
+taup.log
+taup.out
+taup.toc
