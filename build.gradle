@@ -200,6 +200,7 @@ task genModels(dependsOn: compileJava) << {
     tMod.writeModel(new File(outDir, 'qdt.taup').path)
 }
 
+genModels.inputs.files 'src/main/resources/edu/sc/seis/TauP/defaultProps'
 genModels.inputs.files 'src/main/resources/edu/sc/seis/TauP/StdModels/ak135.tvel'
 genModels.inputs.files 'src/main/resources/edu/sc/seis/TauP/StdModels/iasp91.tvel'
 genModels.inputs.files 'src/main/resources/edu/sc/seis/TauP/StdModels/prem.nd'
