@@ -208,7 +208,7 @@ public class SphericalSModel extends SlownessModel implements Serializable {
                         + sphericalLayer.getTopDepth() + "  bot "
                         + sphericalLayer.getBotDepth());
             }
-            throw new SlownessModelException("Ray turns in the middle of this"
+            throw new SlownessModelException((isPWave?"P":"S")+ " Ray turns in the middle of this"
                     + " layer. \nlayerNum = " + layerNum
                     + " sphericalRayParam " + sphericalRayParam
                     + " sphericalLayer =  " + sphericalLayer + "\n");
