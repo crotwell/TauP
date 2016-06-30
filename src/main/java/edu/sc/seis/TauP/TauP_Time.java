@@ -735,11 +735,24 @@ public class TauP_Time {
     /**
      * corrects the TauModel for the given source depth. It only performs the
      * correction of the model is not already corrected to that depth.
+     * In general, this is called by each tool's calculate methods, and so should
+     * not need to be called by outside code. Most of the time calling setSourceDepth
+     * is preferred, allowing the tool to choose when to call depthCorrect.
      */
     public void depthCorrect(double depth) throws TauModelException {
         depthCorrect(depth, getReceiverDepth());
     }
     
+    /**
+     * 
+     * In general, this is called by each tool's calculate methods, and so should
+     * not need to be called by outside code. Most of the time calling setSourceDepth
+     * and setReceiverDepth is preferred, allowing the tool to choose when to call depthCorrect.
+     * 
+     * @param depth the source depth
+     * @param receiverDepth the receiver depth
+     * @throws TauModelException
+     */
     public void depthCorrect(double depth, double receiverDepth) throws TauModelException {
         if(tModDepth == null || tModDepth.getSourceDepth() != depth) {
             setReceiverDepth(receiverDepth);
