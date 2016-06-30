@@ -339,7 +339,7 @@ public class TauPApplet extends Applet implements ActionListener, ItemListener {
                 }
                 phases = phasesField.getText();
                 tool.parsePhaseList(phases);
-                tool.depthCorrect(depth);
+                tool.setSourceDepth(depth);
             } else if(event.getItemSelectable() == toolChoice) {
                 if(tMod == null) {
                     loadTauModel(getModel.getSelectedItem());
@@ -347,11 +347,8 @@ public class TauPApplet extends Applet implements ActionListener, ItemListener {
                 loadTool(toolChoice.getSelectedItem(), tMod);
                 phases = phasesField.getText();
                 tool.parsePhaseList(phases);
-                tool.depthCorrect(depth);
+                tool.setSourceDepth(depth);
             }
-        } catch(TauModelException e) {
-            textArea.append("\n\ndepthCorrection failed, TauModelException: "
-                    + e.getMessage());
         } catch(IOException e) {
             textArea.append("\n\ndepthCorrection failed, IOException: "
                     + e.getMessage());
@@ -369,14 +366,13 @@ public class TauPApplet extends Applet implements ActionListener, ItemListener {
                         tool.setTauModel(tMod);
                         phases = phasesField.getText();
                         tool.parsePhaseList(phases);
-                        tool.recalcPhases();
                     }
                 }
                 if(tool == null) {
                     loadTool(toolChoice.getSelectedItem(), tMod);
                     phases = phasesField.getText();
                     tool.parsePhaseList(phases);
-                    tool.depthCorrect(depth);
+                    tool.setSourceDepth(depth);
                 }
                 // update the phase list if it has changed
                 if(phases != phasesField.getText()) {
@@ -388,7 +384,7 @@ public class TauPApplet extends Applet implements ActionListener, ItemListener {
                 // update depth. Note this only recomputes the TauModel if the
                 // depth has changed
                 depth = Double.valueOf(depthField.getText()).doubleValue();
-                tool.depthCorrect(depth);
+                tool.setSourceDepth(depth);
                 // calculate the times for each phase at the given distance
                 distance = Double.valueOf(distanceField.getText())
                         .doubleValue();
@@ -463,16 +459,8 @@ public class TauPApplet extends Applet implements ActionListener, ItemListener {
                 exptn.printStackTrace();
             }
         } else if(target == "depthField") {
-            try {
-                // update depth. Note this only recomputes the TauModel if the
-                // depth has changed
                 depth = Double.valueOf(depthField.getText()).doubleValue();
-                tool.depthCorrect(depth);
-            } catch(TauModelException exptn) {
-                System.out.println("actionPerformed: caught TauModelException:"
-                        + exptn.getMessage());
-                exptn.printStackTrace();
-            }
+                tool.setSourceDepth(depth);
         } else if(target == "Clear") {
             textArea.setText("");
         } else if(target == "Plot") {

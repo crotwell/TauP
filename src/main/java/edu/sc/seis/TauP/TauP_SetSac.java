@@ -119,8 +119,6 @@ public class TauP_SetSac extends TauP_Time {
     }
 
     public void calculate(double degrees) throws TauModelException {
-        depthCorrect(getSourceDepth(), getReceiverDepth());
-        clearArrivals();
         calcTime(degrees);
     }
 
@@ -201,9 +199,9 @@ public class TauP_SetSac extends TauP_Time {
                                       + "(default), you should use the -evdpkm flag");
             }
             if(evdpkm) {
-                depthCorrect(header.getEvdp());
+                setSourceDepth(header.getEvdp());
             } else {
-                depthCorrect(header.getEvdp() / 1000.0);
+                setSourceDepth(header.getEvdp() / 1000.0);
             }
         }
         if(verbose) {

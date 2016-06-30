@@ -131,13 +131,14 @@ public class TauP_WKBJ extends TauP_Time {
     }
 
     public void calculate(double degrees) throws TauModelException {
-        recalcPhases();
-        clearArrivals();
         calcWKBJ(degrees);
     }
 
     public void calcWKBJ(double degrees) throws TauModelException {
         this.degrees = degrees;
+        depthCorrect(getSourceDepth(), getReceiverDepth());
+        recalcPhases();
+        clearArrivals();
         System.out.println("In calcWKBJ for " + degrees + " degrees.");
         SeismicPhase phase;
         double calcTime, calcDist;

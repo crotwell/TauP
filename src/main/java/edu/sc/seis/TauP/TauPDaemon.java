@@ -176,7 +176,7 @@ public class TauPDaemon extends Thread {
                     if(tool == null
                             || !tool.getClass().getName().endsWith(toolString)) {
                         tool = loadTool(toolString, tMod);
-                        tool.depthCorrect(depth);
+                        tool.setSourceDepth(depth);
                     }
                     if(!tMod.equals(tool.getTauModel())) {
                         tool.setTauModel(tMod);
@@ -184,7 +184,7 @@ public class TauPDaemon extends Thread {
                     }
                     if(phaseString != tool.getPhaseNameString()) {
                         tool.parsePhaseList(phaseString);
-                        tool.depthCorrect(depth);
+                        tool.setSourceDepth(depth);
                         phaseString = tool.getPhaseNameString();
                     }
                     tool.calculate(distance);

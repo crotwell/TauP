@@ -677,8 +677,6 @@ public class TauP_Time {
     }
 
     public void calculate(double degrees) throws TauModelException {
-        depthCorrect(getSourceDepth(), getReceiverDepth());
-        clearArrivals();
         calcTime(degrees);
         if (relativePhaseName != "") {
             List<SeismicPhase> relPhases = new ArrayList<SeismicPhase>();
@@ -691,7 +689,9 @@ public class TauP_Time {
         }
     }
 
-    public void calcTime(double degrees) {
+    public void calcTime(double degrees) throws TauModelException {
+        depthCorrect(getSourceDepth(), getReceiverDepth());
+        clearArrivals();
         this.degrees = degrees;
         SeismicPhase phase;
         clearArrivals();
@@ -1019,7 +1019,6 @@ public class TauP_Time {
                                                           eventLat,
                                                           eventLon);
                 }
-                depthCorrect(depth);
                 calculate(degrees);
             }
             printResult(getWriter());
@@ -1029,7 +1028,7 @@ public class TauP_Time {
             long currTime;
             char readMode = 'd';
             double tempDepth = depth;
-            depthCorrect(depth);
+            setSourceDepth(depth);
             StreamTokenizer tokenIn = new StreamTokenizer(new InputStreamReader(System.in));
             tokenIn.parseNumbers();
             tokenIn.wordChars(',', ',');
@@ -1055,7 +1054,7 @@ public class TauP_Time {
                             continue;
                         }
                         prevTime = System.currentTimeMillis();
-                        depthCorrect(tempDepth);
+                        setSourceDepth(tempDepth);
                         currTime = System.currentTimeMillis();
                         if(verbose) {
                             Alert.info("depthCorrect time="
@@ -1331,7 +1330,7 @@ public class TauP_Time {
                         if(!modelName.equals(oldModelName)) {
                             try {
                                 readTauModel();
-                                depthCorrect(depth);
+                                setSourceDepth(depth);
                             } catch(TauModelException e) {
                                 if (e.getCause() instanceof InvalidClassException) {
                                     Alert.warning("Model file "

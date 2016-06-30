@@ -32,8 +32,6 @@ public class TauP_Wavefront extends TauP_Path {
 
     @Override
     public void calculate(double degrees) throws TauModelException {
-        depthCorrect(getSourceDepth());
-        recalcPhases();
         // ignore degrees as we need a suite of distances
         result = calcIsochron();
     }
@@ -152,7 +150,8 @@ public class TauP_Wavefront extends TauP_Path {
         out.flush();
     }
 
-    public Map<SeismicPhase, Map<Float, List<TimeDist>>> calcIsochron() {
+    public Map<SeismicPhase, Map<Float, List<TimeDist>>> calcIsochron() throws TauModelException {
+        depthCorrect(getSourceDepth());
         Map<SeismicPhase, Map<Float, List<TimeDist>>> resultOut = new HashMap<SeismicPhase, Map<Float, List<TimeDist>>>();
         SeismicPhase phase;
         clearArrivals();

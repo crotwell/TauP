@@ -25,7 +25,7 @@ public class SurfaceWaveTest  extends TestCase {
         float depth = 23;
         float deg = 30;
             taup.setPhaseNames(new String[] {phaseName});
-            taup.depthCorrect(depth);
+            taup.setSourceDepth(depth);
             taup.calculate(deg);
             List<Arrival> arrivals = taup.getArrivals();
             assertTrue(phaseName + " has arrivals for depth " + depth + " at dist " + deg,

@@ -413,7 +413,7 @@ public class TauP_Table extends TauP_Time {
     protected void genericTable(PrintWriter out) throws TauModelException,
             IOException {
         for(int depthNum = 0; depthNum < depths.length; depthNum++) {
-            depthCorrect(depths[depthNum]);
+            depthCorrect(depths[depthNum], getReceiverDepth());
             for(int distNum = 0; distNum < distances.length; distNum++) {
                 calculate(distances[distNum]);
                 List<Arrival> arrivals = getArrivals();
@@ -472,7 +472,7 @@ public class TauP_Table extends TauP_Time {
             out.println();
         }
         for(int depthNum = 0; depthNum < depths.length; depthNum++) {
-            depthCorrect(depths[depthNum]);
+            depthCorrect(depths[depthNum], getReceiverDepth());
             out.println("#  Travel time for z =    " + depths[depthNum]);
             for(int distNum = 0; distNum < distances.length; distNum++) {
                 calculate(distances[distNum]);

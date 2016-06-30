@@ -166,11 +166,12 @@ public class TauP_Curve extends TauP_Time {
         this.mapWidthUnit = mapWidthUnit;
     }
 
-    public void calculate(double degrees) {
+    public void calculate(double degrees) throws TauModelException {
         /*
          * no need to do any calculations. So, this just overrides
          * TauP_Time.calculate. printResult handles everything else.
          */
+        depthCorrect(getSourceDepth(), getReceiverDepth());
     }
     
 
@@ -249,7 +250,7 @@ public class TauP_Curve extends TauP_Time {
         double tempDepth;
         if(depth != -1 * Double.MAX_VALUE) {
             /* enough info given on cmd line, so just do one calc. */
-            depthCorrect(Double.valueOf(toolProps.getProperty("taup.source.depth",
+            setSourceDepth(Double.valueOf(toolProps.getProperty("taup.source.depth",
                                                               "0.0"))
                     .doubleValue());
             calculate(degrees);
@@ -267,7 +268,7 @@ public class TauP_Curve extends TauP_Time {
                         + "<= tMod.getRadiusOfEarth().\ndepth = " + tempDepth);
                 return;
             }
-            depthCorrect(tempDepth);
+            setSourceDepth(tempDepth);
             calculate(degrees);
             printResult(getWriter());
         }
@@ -549,7 +550,7 @@ public class TauP_Curve extends TauP_Time {
                 tauPCurve.start();
             } else {
                 /* enough info given on cmd line, so just do one calc. */
-                tauPCurve.depthCorrect(Double.valueOf(tauPCurve.toolProps.getProperty("taup.source.depth",
+                tauPCurve.setSourceDepth(Double.valueOf(tauPCurve.toolProps.getProperty("taup.source.depth",
                                                                                       "0.0"))
                         .doubleValue());
                 tauPCurve.calculate(tauPCurve.degrees);

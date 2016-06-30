@@ -74,7 +74,7 @@ public class AK135Test extends TestCase {
             taup.setPhaseNames(new String[] {phase});
         }
         for (List<TimeDist> atDepth : table.get(phase).values()) {
-            taup.depthCorrect(atDepth.get(0).getDepth());
+            taup.setSourceDepth(atDepth.get(0).getDepth());
             for (TimeDist timeDist : atDepth) {
                 taup.calculate(timeDist.getDistDeg());
                 List<Arrival> arrivals = taup.getArrivals();
