@@ -46,15 +46,15 @@ this is done at a later stage. Of additional interest are
 
 The next step is to correct the TauModel for the source depth. 
 The TauModel is created with a surface source, but can be corrected for 
-a source at depth, given in kilometers, with the \texttt{depthCorrect(double)} 
-method. In addition, 
+a source at depth, given in kilometers, with the \texttt{setSourceDepth(double)} 
+method. The actual depth correction is time consuming, and so is delayed until the calculate method is called. In addition, 
 if a correction was actually needed, it
 calls \texttt{recalcPhases()} which verifies that the times and distances for 
 the phases in the phase list are compatible with the current model and depth. 
 \texttt{recalcPhases()} is also called
 by \texttt{calculate()} in case changes were made to the list of phase names.
 
-\texttt{timeTool.depthCorrect(100.0);}
+\texttt{timeTool.setSourceDepth(100.0);}
 
 It remains only to calculate arrivals for a particular distance using the 
 \texttt{calculate(double)} method, which takes an angular distance in degrees.
