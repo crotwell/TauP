@@ -151,7 +151,7 @@ public class TauP_Wavefront extends TauP_Path {
     }
 
     public Map<SeismicPhase, Map<Float, List<TimeDist>>> calcIsochron() throws TauModelException {
-        depthCorrect(getSourceDepth());
+        depthCorrect(getSourceDepth(), getReceiverDepth());
         Map<SeismicPhase, Map<Float, List<TimeDist>>> resultOut = new HashMap<SeismicPhase, Map<Float, List<TimeDist>>>();
         SeismicPhase phase;
         clearArrivals();
@@ -305,8 +305,6 @@ public class TauP_Wavefront extends TauP_Path {
                 tauP_wavefront.start();
             } else {
                 /* enough info given on cmd line, so just do one calc. */
-                tauP_wavefront.depthCorrect(Double.valueOf(tauP_wavefront.toolProps.getProperty("taup.source.depth",
-                                                                                                "0.0")).doubleValue());
                 tauP_wavefront.calculate(tauP_wavefront.degrees);
                 tauP_wavefront.printResult(tauP_wavefront.getWriter());
             }

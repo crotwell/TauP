@@ -738,7 +738,9 @@ public class TauP_Time {
      * In general, this is called by each tool's calculate methods, and so should
      * not need to be called by outside code. Most of the time calling setSourceDepth
      * is preferred, allowing the tool to choose when to call depthCorrect.
+     * @deprecated use setSourceDepth instead
      */
+    @Deprecated
     public void depthCorrect(double depth) throws TauModelException {
         depthCorrect(depth, getReceiverDepth());
     }
