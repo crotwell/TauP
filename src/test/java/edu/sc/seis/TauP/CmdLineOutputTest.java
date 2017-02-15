@@ -29,7 +29,8 @@ public class CmdLineOutputTest {
                                           "taup_time -h 10 -ph P -deg 35 -mod ak135",
                                           "taup_time -h 10 -ph ttall -deg 35 -mod prem",
                                           "taup_time -h 10 -ph ttall -deg 35",
-                                          "taup_time -h 10 -ph ttall -deg 35 -mod ak135"};
+                                          "taup_time -h 10 -ph ttall -deg 35 -mod ak135",
+                                          "taup_time -h 10 -ph ttall -deg 35 -mod ak135 --json"};
     
     String[] pierceTestCmds = new String[] {"taup_pierce -h 10 -ph P -deg 35 -mod prem",
                                             "taup_pierce -h 10 -ph P -deg 35",
@@ -62,6 +63,17 @@ public class CmdLineOutputTest {
             System.err.println(cmd);
             saveOutputToFile(cmd);
         }
+    }
+    
+    /** disable unless regenerating the cmd line output test resources. 
+     * new text files will be in cmdLineTest in cwd.
+     * This one just does a single test for when adding new output test.
+     *     
+     * @throws Exception
+     */
+     // @Test
+    public void testSaveOutputSingle() throws Exception {
+        saveOutputToFile(timeTestCmds[6]);
     }
     
     @Test

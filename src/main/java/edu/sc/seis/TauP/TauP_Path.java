@@ -39,13 +39,13 @@ public class TauP_Path extends TauP_Pierce {
 
 	protected boolean gmtScript = false;
 	
-	protected boolean svgOutput = false;
-	
 	protected String psFile;
 	
 	protected float maxPathTime = Float.MAX_VALUE;
 	
 	protected static double maxPathInc = 1.0;
+	
+	public static final String SVG = "svg";
 
 	protected TauP_Path() {
 		super();
@@ -78,7 +78,7 @@ public class TauP_Path extends TauP_Pierce {
 	@Override
     public String getOutFileExtension() {
         String extention = "gmt";
-        if (svgOutput) {
+        if (outputStyle.equals(SVG)) {
             extention = "svg";
         }
         return extention;
@@ -148,7 +148,7 @@ public class TauP_Path extends TauP_Pierce {
 		boolean longWayRound;
 		for (int i = 0; i < arrivals.size(); i++) {
 		    Arrival currArrival = (Arrival) arrivals.get(i);
-		    if (svgOutput) {
+		    if (outputStyle.equals(SVG)) {
 	            out.println("<!-- "+getCommentLine(currArrival));
 	            out.println(" -->");
 	            out.println("<polyline points=\"");
@@ -223,7 +223,7 @@ public class TauP_Path extends TauP_Pierce {
 				}
 				prevDepth = path[j].getDepth();
 			}
-			if (svgOutput) {
+			if (outputStyle.equals(SVG)) {
 			    out.println("\" />");
 			}
 		}
@@ -231,14 +231,14 @@ public class TauP_Path extends TauP_Pierce {
             out.write("END\n");
             out.write("psxy -P -R -O -JP -m -A >> " + psFile + " <<END\n");
             out.write("END\n");
-        } else if (svgOutput) {
+        } else if (outputStyle.equals(SVG)) {
             out.println("</g>");
             out.println("</svg>");
         }
 	}
 
     protected void printDistRadius(Writer out, double calcDist, double radius) throws IOException {
-        if (svgOutput) {
+        if (outputStyle.equals(SVG)) {
             double radian = (calcDist-90)*Math.PI/180;
             double x = radius*Math.cos(radian);
             double y = radius*Math.sin(radian);
@@ -250,7 +250,7 @@ public class TauP_Path extends TauP_Pierce {
                       + "  "
                       + outForms.formatDepth(radius));
         }
-        if (!gmtScript && !svgOutput) {
+        if (!gmtScript && !outputStyle.equals(SVG)) {
             printLatLon(out, calcDist);
         }
     }
@@ -286,7 +286,7 @@ public class TauP_Path extends TauP_Pierce {
 	}
 	
 	public void printScriptBeginning(PrintWriter out)  throws IOException {
-	    if (svgOutput) {
+	    if (outputStyle.equals(SVG)) {
 	        printScriptBeginningSVG(out);
 	    } else if ( gmtScript) {
         
@@ -389,7 +389,7 @@ public class TauP_Path extends TauP_Pierce {
 			if (dashEquals("gmt", leftOverArgs[i])) {
 				gmtScript = true;
 			} else if (dashEquals("svg", leftOverArgs[i])) {
-	                svgOutput = true;
+	                outputStyle = SVG;
             } else if((dashEquals("mapwidth", leftOverArgs[i])) && i < leftOverArgs.length - 1) {
                 setMapWidth(Float.parseFloat(leftOverArgs[i + 1]));
                 i++;
