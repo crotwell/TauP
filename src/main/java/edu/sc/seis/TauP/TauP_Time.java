@@ -62,7 +62,7 @@ public class TauP_Time {
     
     public static final String TEXT = "text";
     
-    public String outputStyle = TEXT;
+    public String outputFormat = TEXT;
 
     protected String modelName = "iasp91";
 
@@ -563,7 +563,7 @@ public class TauP_Time {
             } else if(dashEquals("verbose", args[i])) {
                 verbose = true;
             } else if(dashEquals("json", args[i])) {
-                outputStyle = JSON;
+                outputFormat = JSON;
             } else if(dashEquals("expert", args[i])) {
                 expert = true;
             } else if(dashEquals("debug", args[i])) {
@@ -835,7 +835,7 @@ public class TauP_Time {
     }
 
     public void printResult(PrintWriter out) throws IOException {
-        if (outputStyle.equals(JSON)) {
+        if (outputFormat.equals(JSON)) {
             printResultJSON(out);
         } else {
             printResultText(out);
@@ -924,44 +924,46 @@ public class TauP_Time {
     }
     
     public void printResultJSON(PrintWriter out) {
-        char Q = '"';
-        String C = ",";
-        String QC = Q+C;
-        String QCQ = Q+": "+Q;
+        String Q = ""+'"';
+        String COMMA = ",";
+        String QCOMMA = Q+COMMA;
+        String COLON = ""+':';
         String S = "  ";
+        String QC = Q+COLON+S;
+        String QCQ = QC+Q;
         String SS = S+S;
         String SQ = S+Q;
         String SSQ = S+SQ;
         String SSSQ = S+SSQ;
         // use cast to float to limit digits printed
         out.println("{");
-        out.println(SQ+"model"+QCQ+modelName+QC);
-        out.println(SQ+"sourcedepth"+QCQ+(float)depth+QC);
-        out.println(SQ+"receiverdepth"+QCQ+(float)getReceiverDepth()+QC);
+        out.println(SQ+"model"+QCQ+modelName+QCOMMA);
+        out.println(SQ+"sourcedepth"+QC+(float)depth+COMMA);
+        out.println(SQ+"receiverdepth"+QC+(float)getReceiverDepth()+COMMA);
         out.print(SQ+"phases"+Q+": [");
         String[] phases = getPhaseNames();
         for(int p=0; p<phases.length; p++) {
             out.print(" "+Q+phases[p]+Q);
             if ( p != phases.length-1) {
-                out.print(C);
+                out.print(COMMA);
             }
         }
-        out.println(" ]"+C);
+        out.println(" ]"+COMMA);
         out.println(SQ+"arrivals"+Q+": [");
         for(int j = 0; j < arrivals.size(); j++) {
             Arrival currArrival = (Arrival)arrivals.get(j);
             out.println(SS+"{");
-            out.println(SSSQ+"distdeg"+QCQ+(float)currArrival.getModuloDistDeg()+QC);
-            out.println(SSSQ+"phase"+QCQ+currArrival.getName()+QC);
-            out.println(SSSQ+"time"+QCQ+(float)currArrival.getTime()+QC);
-            out.println(SSSQ+"rayparam"+QCQ+(float)(Math.PI / 180.0 * currArrival.getRayParam())+QC);
-            out.println(SSSQ+"takeoff"+QCQ+(float)currArrival.getTakeoffAngle()+QC);
-            out.println(SSSQ+"incident"+QCQ+(float)currArrival.getIncidentAngle()+QC);
-            out.println(SSSQ+"puristdist"+QCQ+(float)currArrival.getDistDeg()+QC);
+            out.println(SSSQ+"distdeg"+QC+(float)currArrival.getModuloDistDeg()+COMMA);
+            out.println(SSSQ+"phase"+QCQ+currArrival.getName()+QCOMMA);
+            out.println(SSSQ+"time"+QC+(float)currArrival.getTime()+COMMA);
+            out.println(SSSQ+"rayparam"+QC+(float)(Math.PI / 180.0 * currArrival.getRayParam())+COMMA);
+            out.println(SSSQ+"takeoff"+QC+(float)currArrival.getTakeoffAngle()+COMMA);
+            out.println(SSSQ+"incident"+QC+(float)currArrival.getIncidentAngle()+COMMA);
+            out.println(SSSQ+"puristdist"+QC+(float)currArrival.getDistDeg()+COMMA);
             out.println(SSSQ+"puristname"+QCQ+currArrival.getPuristName()+Q);
             out.print(SS+"}");
             if (j != arrivals.size()-1) {
-                out.print(C);
+                out.print(COMMA);
             }
             out.println();
         }
@@ -1018,6 +1020,18 @@ public class TauP_Time {
                 throw new RuntimeException(ee);
             }
         }
+    }
+    
+    public String getOutputFormat() {
+        return outputFormat;
+    }
+    
+    /** usually one of TauP_Time.TEXT or TauP_Time.JSON. Subclasses may add
+     * additional types, for example TauP_Path.SVG.
+     * @param val output format for results
+     */
+    public void setOutputFormat(String val) {
+        this.outputFormat = val;
     }
     
     public String getOutFileBase() {
