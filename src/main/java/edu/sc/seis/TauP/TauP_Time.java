@@ -927,9 +927,9 @@ public class TauP_Time {
         String Q = ""+'"';
         String COMMA = ",";
         String QCOMMA = Q+COMMA;
-        String COLON = ""+':';
+        String COLON = ": "; // plus space
         String S = "  ";
-        String QC = Q+COLON+S;
+        String QC = Q+COLON;
         String QCQ = QC+Q;
         String SS = S+S;
         String SQ = S+Q;
