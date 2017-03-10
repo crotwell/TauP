@@ -20,6 +20,9 @@ import org.python.util.InteractiveConsole;
 
 //import edu.sc.seis.fissuresUtil.simple.Initializer;
 
+/** Console for running TauP, requires org.python:jython-standalone:2.5.3 jar
+to be on the classpath. Removed from the main TauP distribution to avoid keeping this
+large jar in the dist tarball. */
 public class TauP_Console extends InteractiveConsole {
 
     public TauP_Console() throws IOException {

@@ -4,7 +4,6 @@ apply plugin: 'signing'
 
 dependencies {
     compile project(':seisFile')
-    compile 'org.python:jython-standalone:2.5.3'
 }
 
 group = 'edu.sc.seis'
@@ -76,6 +75,13 @@ def distFiles = copySpec {
 task explodeBin(type: Sync, dependsOn: ['makeScript', 'genModels']) {
     with binDistFiles
     into file("$buildDir/explode")
+}
+
+task tarBin(type: Tar, dependsOn: ['explodeBin']) {
+    compression = Compression.GZIP
+    into(dirName) {
+        with binDistFiles
+    }
 }
 
 task explodeDist(type: Sync, dependsOn: ['explodeBin', 'javadoc', 'modVersionClass', 'wrapper', 'createBuildScript']) {
