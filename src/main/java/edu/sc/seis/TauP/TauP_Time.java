@@ -1523,7 +1523,8 @@ public class TauP_Time {
         printStdUsage();
         Alert.info("--rayp             -- only output the ray parameter\n"
                  + "--time             -- only output travel time\n"
-                 + "--rel phasename    -- also output relative travel time");
+                 + "--rel phasename    -- also output relative travel time\n\n"
+                 + "--json             -- output travel times as json\n");
         printStdUsageTail();
     }
 

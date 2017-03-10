@@ -194,6 +194,8 @@ or by giving the station and event latitude and lonitude,
 --time             -- only output travel time
 --rel phasename    -- also output relative travel time
 
+--json             -- output travel times as json
+
 -o [stdout|outfile]         -- output is redirected to stdout or to the "outfile" file
 --debug             -- enable debugging output
 --verbose           -- enable verbose output
@@ -689,6 +691,8 @@ produces \texttt{prem.taup}.
 \subsection{TauP\_Console}
 TauP\_Console is an instance of the Jython, http://www.jython.org, interpreter with the TauP classes
 preloaded along with some helper functionality. This allows python scripting with TauP.
+
+Note, to make the distribution smaller, TauP\_Console is no longer compiled as the Jython jar was large. It is included in the source in the src/extras directory and also requires the jython jar.
 
 The usage is:
 \begin{verbatim}

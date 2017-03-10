@@ -1,0 +1,26 @@
+Usage: taup_curve [arguments]
+  or, for purists, java edu.sc.seis.TauP.TauP_Curve [arguments]
+
+Arguments are:
+-ph phase list     -- comma separated phase list
+-pf phasefile      -- file containing phases
+
+-mod[el] modelname -- use velocity model "modelname" for calculations
+                      Default is iasp91.
+
+-h depth           -- source depth in km
+
+
+--gmt              -- outputs curves as a complete GMT script.
+-reddeg velocity   -- outputs curves with a reducing velocity (deg/sec).
+-redkm velocity    -- outputs curves with a reducing velocity (km/sec).
+-rel phasename     -- outputs relative travel time
+--mapwidth width   -- sets map width for GMT script.
+
+-o outfile         -- output is redirected to "outfile" instead of taup_curve.gmt
+--debug            -- enable debugging output
+--verbose          -- enable verbose output
+--version          -- print the version
+--help             -- print this out, but you already know that!
+
+

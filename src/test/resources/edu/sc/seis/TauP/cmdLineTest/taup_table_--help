@@ -1,0 +1,24 @@
+Usage: taup_table [arguments]
+  or, for purists, java edu.sc.seis.TauP.TauP_Table [arguments]
+
+Arguments are:
+-ph phase list     -- comma separated phase list
+-pf phasefile      -- file containing phases
+
+-mod[el] modelname -- use velocity model "modelname" for calculations
+                      Default is iasp91.
+
+
+-header filename   -- reads depth and distance spacing data
+                      from a LOCSAT style file.
+-generic           -- outputs a "generic" ascii table
+
+-locsat            -- outputs a "locsat" style ascii table
+
+
+-o [stdout|outfile]         -- output is redirected to stdout or to the "outfile" file
+--debug             -- enable debugging output
+--verbose           -- enable verbose output
+--version           -- print the version
+--help              -- print this out, but you already know that!
+

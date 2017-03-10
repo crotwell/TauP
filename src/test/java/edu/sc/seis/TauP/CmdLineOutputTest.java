@@ -46,6 +46,14 @@ public class CmdLineOutputTest {
                                            "taup_curve -o stdout -h 10 -ph P",
                                            "taup_curve -o stdout -h 10 -ph P -mod ak135"};
     
+    String[] helpTestCmds = new String[] {"taup_time --help",
+                                          "taup_pierce --help",
+                                          "taup_path --help",
+                                          "taup_curve --help",
+                                          "taup_wavefront --help",
+                                          "taup_table --help",
+                                          "taup_create --help"};
+    
 
     /** disable unless regenerating the cmd line output test resources. 
      * new text files will be in cmdLineTest in cwd
@@ -55,6 +63,7 @@ public class CmdLineOutputTest {
     // @Test
     public void testSaveOutput() throws Exception {
         List<String> allList = new ArrayList<String>();
+        allList.addAll(Arrays.asList(helpTestCmds));
         allList.addAll(Arrays.asList(timeTestCmds));
         allList.addAll(Arrays.asList(pierceTestCmds));
         allList.addAll(Arrays.asList(pathTestCmds));
@@ -73,7 +82,7 @@ public class CmdLineOutputTest {
      */
      // @Test
     public void testSaveOutputSingle() throws Exception {
-        saveOutputToFile(timeTestCmds[6]);
+        saveOutputToFile(helpTestCmds[0]);
     }
     
     @Test
