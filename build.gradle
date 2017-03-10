@@ -7,7 +7,7 @@ dependencies {
 }
 
 group = 'edu.sc.seis'
-version = '2.4.2.SNAPSHOT'
+version = '2.4.2'
 
 artifacts {
     archives jar
@@ -156,7 +156,7 @@ task makeScript(dependsOn: copyToLib) << { task ->
     ScriptBuilder.create('taup_wavefront', 'edu.sc.seis.TauP.TauP_Wavefront', task.project, bat:doBat)
     ScriptBuilder.create('taup_table', 'edu.sc.seis.TauP.TauP_Table', task.project, bat:doBat)
     ScriptBuilder.create('taup', 'edu.sc.seis.TauP.TauP', task.project, bat:doBat)
-    ScriptBuilder.create('taup_console', 'edu.sc.seis.TauP.TauP_Console', task.project, bat:doBat)
+//    ScriptBuilder.create('taup_console', 'edu.sc.seis.TauP.TauP_Console', task.project, bat:doBat)
 }
 
 
