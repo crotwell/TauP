@@ -2,6 +2,16 @@
 apply plugin: 'maven'
 apply plugin: 'signing'
 
+configurations {
+    // we need seisFile for sac output, but not all the other functionality
+    all*.exclude group: "com.martiansoftware", module: "jsap"
+    all*.exclude group: "org.rxtx", module: "rxtx"
+    all*.exclude group: "org.codehaus.woodstox", module: "woodstox-core-lgpl"
+    all*.exclude group: "net.java.dev.msv", module: "msv-core"
+    all*.exclude group: "org.apache.httpcomponents", module: "httpclient"
+    all*.exclude group: "mysql", module: "mysql-connector-java"
+}
+
 dependencies {
     compile project(':seisFile')
 }
