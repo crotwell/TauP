@@ -88,4 +88,56 @@ public class ReceiverAtDepth {
             }
         }
     }
+    
+
+    @Test
+    public void testOneDepthPcP() throws Exception {
+        String modelName = "prem";
+        TauModel tMod = TauModelLoader.load(modelName);
+        testOneDepthPcPForModel(tMod);
+    }
+    
+    @Test
+    public void testOneDepthPcPConst() throws Exception {
+        VelocityModel vMod = ConstantModelTest.createVelModLiquidOuterCore(1,  1);
+        SphericalSModel smod = new SphericalSModel(vMod,
+                                   0.1,
+                                   11.0,
+                                   115.0,
+                                   2.5 * Math.PI / 180,
+                                   0.01,
+                                   true,
+                                   SlownessModel.DEFAULT_SLOWNESS_TOLERANCE);
+        TauModel tMod = new TauModel(smod);
+        testOneDepthPcPForModel(tMod);
+    }
+    
+    public void testOneDepthPcPForModel(TauModel tMod) throws TauModelException {
+        double depth = 500;
+        TauModel tModDepth = tMod.depthCorrect(depth);
+        double recDepth = 200;
+        TauModel tModRecDepth = tModDepth.splitBranch(recDepth);
+                
+        TauModel flippedMod = tMod.depthCorrect(recDepth);
+        flippedMod = flippedMod.splitBranch(depth);
+                
+
+        SeismicPhase PcP = new SeismicPhase("Pcp", tModRecDepth, 0);
+        SeismicPhase p = new SeismicPhase("p", flippedMod, 0);
+        SeismicPhase PcP200 = new SeismicPhase("Pcp", tModRecDepth, recDepth);
+        double degrees = 0;
+        List<Arrival> PcPArrivals = PcP.calcTime(degrees);
+        List<Arrival> pArrivals = p.calcTime(degrees);
+        List<Arrival> PcP200Arrivals = PcP200.calcTime(degrees);
+        String pre = "PcP "+recDepth;
+
+        Arrival aPcP = PcPArrivals.get(0);
+        Arrival ap = pArrivals.get(0);
+        Arrival aPcP200 = PcP200Arrivals.get(0);
+        assertEquals(pre+" time",  aPcP.getTime(), aPcP200.getTime()+ap.getTime(), 0.0001);
+        assertEquals(pre+" dist",  aPcP.getDist(), aPcP200.getDist()+ap.getDist(), 0.0001);
+        assertEquals(pre+" rayParam PcP PcP200",  aPcP.getRayParam(), aPcP200.getRayParam(), 0.0001);
+        assertEquals(pre+" rayParam PcP p",  aPcP.getRayParam(), ap.getRayParam(), 0.0001);
+    }
+    
 }

@@ -228,8 +228,9 @@ public class SeismicPhase implements Serializable, Cloneable {
         this.name = name;
         this.sourceDepth = tMod.getSourceDepth();
         this.receiverDepth = receiverDepth;
-        this.tMod = tMod;
-        //this.distTolRadian = tMod.getSlownessModel().getMaxRangeInterval()*Math.PI/180;
+        // make sure we have layer boundary at receiver
+        // this does nothing if already split at receiver
+        this.tMod = tMod.splitBranch(receiverDepth);
         legs = legPuller(name);
         createPuristName(tMod);
         parseName(tMod);
@@ -2159,12 +2160,25 @@ public class SeismicPhase implements Serializable, Cloneable {
         // here we use ray parameter and dist info stored within the
         // SeismicPhase so we can use currArrival.rayParamIndex, which
         // may not correspond to rayNum (for tMod.rayParams).
-        double rayParamA = rayParams[currArrival.getRayParamIndex()];
-        double rayParamB = rayParams[currArrival.getRayParamIndex() + 1];
-        double distA = dist[currArrival.getRayParamIndex()];
-        double distB = dist[currArrival.getRayParamIndex() + 1];
-        double distRatio = (currArrival.getDist() - distA) / (distB - distA);
-        double distRayParam = distRatio * (rayParamB - rayParamA) + rayParamA;
+        double distRayParam;
+        double distA;
+        double distB;
+        double distRatio;
+        if (currArrival.getRayParamIndex() == rayParams.length-1) {
+            // special case for exactly matching last ray param (often rayparam==0)
+            distRayParam = rayParams[currArrival.getRayParamIndex()];
+            distA = dist[currArrival.getRayParamIndex()];
+            distB = dist[currArrival.getRayParamIndex()];
+            distRatio = 1;
+        } else {
+            // normal case, in middle of ray param space
+            double rayParamA = rayParams[currArrival.getRayParamIndex()];
+            double rayParamB = rayParams[currArrival.getRayParamIndex() + 1];
+            distA = dist[currArrival.getRayParamIndex()];
+            distB = dist[currArrival.getRayParamIndex() + 1];
+            distRatio = (currArrival.getDist() - distA) / (distB - distA);
+            distRayParam = distRatio * (rayParamB - rayParamA) + rayParamA;
+        }
         /* First pierce point is always 0 distance at the source depth. */
         pierce.add(new TimeDist(distRayParam,
                                              0.0,

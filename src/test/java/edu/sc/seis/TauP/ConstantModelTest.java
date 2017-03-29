@@ -33,6 +33,16 @@ public class ConstantModelTest extends TestCase {
         return new VelocityModel("constant", R, 30, 2890, 4000, 0, R, true, layers);
     }
 
+    public static VelocityModel createVelModLiquidOuterCore(double vp, double vs) {
+        float step = .00000001f;
+        List<VelocityLayer> layers = new ArrayList<VelocityLayer>();
+        layers.add(new VelocityLayer(0, 0, 30, vp, vp, vs, vs));
+        layers.add(new VelocityLayer(0, 30, 2890, vp, vp, vs, vs));
+        layers.add(new VelocityLayer(0, 2890, 4000, vp + step, vp, 0, 0));
+        layers.add(new VelocityLayer(0, 4000, R, vp + step, vp, vs, vs));
+        return new VelocityModel("constant", R, 30, 2890, 4000, 0, R, true, layers);
+    }
+
     @Test
     public void testDirectP() {
         doDirectTest(SeismicPhase.PWAVE);

@@ -174,4 +174,19 @@ public class TauBranchTest {
                                                orig.getTime().length - 1);
         }
     }
+    
+    @Test
+    public void testSplitBranch() throws TauModelException { 
+        double splitDepth = 200;
+        TauModel tMod = TauModelLoader.load("prem");
+        TauModel splitTMod = tMod.splitBranch(splitDepth);
+        boolean found = false;
+        for (int i = 0; i < splitTMod.getBranchDepths().length; i++) {
+            if (splitDepth == splitTMod.getBranchDepths()[i]) {
+                found = true;
+                System.out.println("split: "+splitTMod.getTauBranch(i, true));
+            }
+        }
+        assertTrue("Found split depth after split tmod", found);
+    }
 }

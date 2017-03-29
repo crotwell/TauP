@@ -344,7 +344,7 @@ public class TauP_Time {
     public void setSourceDepth(double depth) {
         this.depth = depth;
         toolProps.put("taup.source.depth", Double.toString(depth));
-        phases = null;
+        clearPhases();
     }
 
     
@@ -355,7 +355,7 @@ public class TauP_Time {
     
     public void setReceiverDepth(double receiverDepth) {
         if (this.receiverDepth != receiverDepth) {
-            phases = null;
+            clearPhases();
         }
         this.receiverDepth = receiverDepth;
     }
@@ -369,9 +369,9 @@ public class TauP_Time {
     }
 
     public void setTauModel(TauModel tMod) {
-        phases = null;
+        clearPhases();
         this.tMod = tMod;
-        this.tModDepth = tMod;
+        this.tModDepth = null;
         modelName = tMod.getModelName();
         toolProps.put("taup.model.name", modelName);
     }
@@ -386,6 +386,11 @@ public class TauP_Time {
 
     public double[] getDisconDepths() {
         return tMod.getVelocityModel().getDisconDepths();
+    }
+    
+    public void clearPhases() {
+        clearArrivals();
+        phases = null;
     }
 
     public void clearArrivals() {
@@ -767,13 +772,13 @@ public class TauP_Time {
         if(tModDepth == null || tModDepth.getSourceDepth() != depth) {
             setReceiverDepth(receiverDepth);
             tModDepth = tMod.depthCorrect(depth);
-            clearArrivals();
-            phases = null;
+            tModDepth = tModDepth.splitBranch(receiverDepth);
+            clearPhases();
         }
         if (receiverDepth != getReceiverDepth()) {
-            tModDepth = tModDepth.splitBranch(receiverDepth); // if already split on reciever depth this does nothing
-            clearArrivals();
-            phases = null;
+            setReceiverDepth(receiverDepth);
+            tModDepth = tModDepth.splitBranch(receiverDepth); // if already split on receiver depth this does nothing
+            clearPhases();
         }
         setSourceDepth(depth);
     }
