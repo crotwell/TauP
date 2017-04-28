@@ -1256,10 +1256,11 @@ public class VelocityModel implements Cloneable, Serializable {
         double tempMohoDepth = 0.0, tempCmbDepth = radiusOfEarth, tempIocbDepth = radiusOfEarth;
         // fake layer above surface
         VelocityLayer topLayer = getVelocityLayer(0);
-        belowLayer = new VelocityLayer(-1, -1, 0, topLayer.getTopPVelocity(), topLayer.getTopPVelocity(), topLayer.getTopSVelocity(), topLayer.getTopSVelocity(), topLayer.getTopDensity(), topLayer.getTopDensity());
-        for(int layerNum = 0; layerNum < getNumLayers() - 1; layerNum++) {
+        double deltaV = 0.0001; // dummy to make discon at surface
+        belowLayer = new VelocityLayer(-1, -1, 0, topLayer.getTopPVelocity()-deltaV, topLayer.getTopPVelocity()-deltaV, topLayer.getTopSVelocity()-deltaV, topLayer.getTopSVelocity()-deltaV, topLayer.getTopDensity(), topLayer.getTopDensity());
+        for(int layerNum = 0; layerNum < getNumLayers() ; layerNum++) {
             aboveLayer = belowLayer;
-            belowLayer = getVelocityLayer(layerNum + 1);
+            belowLayer = getVelocityLayer(layerNum);
             if(aboveLayer.getBotPVelocity() != belowLayer.getTopPVelocity()
                     || aboveLayer.getBotSVelocity() != belowLayer.getTopSVelocity()) {
                 // a discontinuity

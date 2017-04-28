@@ -43,6 +43,17 @@ public class VelocityModelTest {
     }
 
     @Test
+    public void testCN01() throws IOException, VelocityModelException {
+        String modelName = "cn01.tvel";
+        VelocityModel vMod = loadTestVelMod(modelName);
+
+        assertEquals("cmb=moho, moho at 36", 36, vMod.getMohoDepth(), 0.00000001);
+        assertEquals("cmb=moho, cmb at center", vMod.getRadiusOfEarth(), vMod.getCmbDepth(), 0.00000001);
+        assertEquals("cmb=moho, iocb at center", vMod.getRadiusOfEarth(), vMod.getIocbDepth(), 0.00000001);
+        
+    }
+
+    @Test
     public void testAllCore() throws IOException, VelocityModelException {
         String modelName = "allCore.nd";
         VelocityModel vMod = loadTestVelMod(modelName);
