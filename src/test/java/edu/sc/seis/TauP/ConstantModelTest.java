@@ -45,12 +45,12 @@ public class ConstantModelTest extends TestCase {
 
     @Test
     public void testDirectP() {
-        doDirectTest(SeismicPhase.PWAVE);
+        doDirectTest(tMod, SeismicPhase.PWAVE);
     }
 
     @Test
     public void testDirectS() {
-        doDirectTest(SeismicPhase.SWAVE);
+        doDirectTest(tMod, SeismicPhase.SWAVE);
     }
     
 /**
@@ -59,9 +59,9 @@ public class ConstantModelTest extends TestCase {
  */
     @Test
     public void testDepthP() throws TauModelException {
-        for (int depth = 0; depth < 400; depth++) {
+        for (int depth = 0; depth < 400; depth+=5) {
             for (int deg = 0; deg < 90; deg++) {
-                doSeismicPhase(depth, deg, vp, "P");
+                doSeismicPhase(depth, deg, vp, "P", tMod);
             }
         }
     }
@@ -106,8 +106,10 @@ public class ConstantModelTest extends TestCase {
      * @param isPWave
      *            true for P false for S
      */
-    void doDirectTest(boolean isPWave) {
-        double velocity = isPWave ? vp : vs;
+    public static void doDirectTest(TauModel tMod, boolean isPWave) {
+        VelocityModel vMod = tMod.getVelocityModel();
+        VelocityLayer topLayer = vMod.getVelocityLayer(0);
+        double velocity = isPWave ? topLayer.getTopPVelocity() : topLayer.getTopSVelocity();
         for (int i = 0; i < tMod.rayParams.length; i++) {
             float dist = 0;
             float time = 0;
@@ -119,12 +121,14 @@ public class ConstantModelTest extends TestCase {
         }
     }
 
+    @Test
     public void testSeismicPhaseDirectP() throws TauModelException {
         float dist = 3;
         double velocity = vp;
-        doSeismicPhase(dist, velocity, "P");
+        doSeismicPhase(dist, velocity, "P", tMod);
     }
 
+    @Test
     public void testNoInterpSeismicPhaseDirectP() throws TauModelException {
         double velocity = vp;
         boolean isPWave = true;
@@ -133,7 +137,7 @@ public class ConstantModelTest extends TestCase {
             for (int j = 0; j < tMod.getNumBranches(); j++) {
                 dist += tMod.getTauBranch(j, isPWave).getDist(i);
             }
-            doSeismicPhase(2 * dist, velocity, "P");
+            doSeismicPhase(2 * dist, velocity, "P", tMod);
         }
     }
 
@@ -142,7 +146,7 @@ public class ConstantModelTest extends TestCase {
         tMod.print();
     }
 
-    public void doSeismicPhase(float dist, double velocity, String phase) throws TauModelException {
+    public static void doSeismicPhase(float dist, double velocity, String phase, TauModel tMod) throws TauModelException {
         SeismicPhase pPhase = new SeismicPhase(phase, tMod);
         List<Arrival> arrivals = pPhase.calcTime(dist);
         assertEquals("one arrival", 1, arrivals.size());
@@ -151,10 +155,6 @@ public class ConstantModelTest extends TestCase {
                      2 * R * Math.sin(dist / 2 * Math.PI / 180) / velocity,
                      a.getTime(),
                      0.01);
-    }
-
-    public void doSeismicPhase(double depth, double dist, double velocity, String phase) throws TauModelException {
-        doSeismicPhase(depth, dist, velocity, phase, tMod);
     }
 
     public static void doSeismicPhase(double depth, double dist, double velocity, String phase, TauModel tMod)

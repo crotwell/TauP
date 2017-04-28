@@ -1,9 +1,6 @@
 package edu.sc.seis.TauP;
 
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-
 import junit.framework.TestCase;
 
 import org.junit.Before;
@@ -20,10 +17,7 @@ public class MoonTest extends TestCase {
     
     @Before
     public void setUp() throws Exception {
-        BufferedReader in = new BufferedReader(new InputStreamReader(this.getClass()
-                                                                     .getClassLoader()
-                                                                     .getResourceAsStream("edu/sc/seis/TauP/" + lunarModelFile)));
-        VelocityModel vmod = VelocityModel.readNDFile(in, lunarModel);
+        VelocityModel vmod = VelocityModelTest.loadTestVelMod(lunarModelFile);
         smod = new SphericalSModel(vmod);
     }
     

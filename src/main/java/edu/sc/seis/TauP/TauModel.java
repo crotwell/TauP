@@ -462,12 +462,26 @@ public class TauModel implements Serializable {
                         - sMod.vMod.getIocbDepth());
             }
         }
+        // check bottom of last layer, zero radius, in case no core for cmb and iocb
+        TauBranch tBranch = (TauBranch)tauBranches[0][tauBranches[0].length-1];
+        if(Math.abs(tBranch.getBotDepth() - sMod.vMod.getCmbDepth()) < bestCmb) {
+            cmbBranch = tauBranches[0].length;
+            cmbDepth = tBranch.getBotDepth();
+        }
+        if(Math.abs(tBranch.getBotDepth() - sMod.vMod.getIocbDepth()) < bestIocb) {
+            iocbBranch = tauBranches[0].length;
+            iocbDepth = tBranch.getBotDepth();
+        }
         /*
          * Now set mohoDepth, etc to the top of the branches we have decided on.
          */
         mohoDepth = tauBranches[0][mohoBranch].getTopDepth();
-        cmbDepth = tauBranches[0][cmbBranch].getTopDepth();
-        iocbDepth = tauBranches[0][iocbBranch].getTopDepth();
+        if (cmbBranch < tauBranches[0].length) {
+            cmbDepth = tauBranches[0][cmbBranch].getTopDepth();
+        }
+        if(iocbBranch < tauBranches[0].length) {
+            iocbDepth = tauBranches[0][iocbBranch].getTopDepth();
+        }
         if(!validate()) {
             throw new TauModelException("calcTauIncFrom: Validation failed!");
         }

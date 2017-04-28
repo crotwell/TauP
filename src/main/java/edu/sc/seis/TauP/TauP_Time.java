@@ -140,9 +140,7 @@ public class TauP_Time {
 
     public TauP_Time(TauModel tMod) throws TauModelException {
         this();
-        this.tMod = tMod;
-        this.tModDepth = tMod;
-        modelName = tMod.getModelName();
+        setTauModel(tMod);
     }
 
     /**
@@ -374,6 +372,12 @@ public class TauP_Time {
         this.tModDepth = null;
         modelName = tMod.getModelName();
         toolProps.put("taup.model.name", modelName);
+        if (verbose) {
+            Alert.info("Model set to "+tMod.getModelName()
+            +" with moho="+tMod.getMohoDepth()
+            +" cmb="+tMod.getCmbDepth()
+            +" iocb="+tMod.getIocbDepth());
+        }
     }
 
     public void loadTauModel(String modelName) throws FileNotFoundException,

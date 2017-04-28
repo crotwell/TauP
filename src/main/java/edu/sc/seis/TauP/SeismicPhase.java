@@ -971,8 +971,12 @@ public class SeismicPhase implements Serializable, Cloneable {
         if(currLeg.startsWith("s") || currLeg.startsWith("S")) {
             // Exclude S sources in fluids
             double sdep = tMod.getSourceDepth();
-            if(sdep > tMod.getCmbDepth() && sdep < tMod.getIocbDepth()) {
+            if(tMod.getSlownessModel().depthInFluid(sdep, new DepthRange())) {
                 maxRayParam = minRayParam = -1;
+                if(DEBUG) {
+                    System.out.println("Cannot have S wave with starting depth in fluid layer"
+                            + currLeg + " within phase " + name);
+                }
                 return;
             }
         }
@@ -1494,6 +1498,26 @@ public class SeismicPhase implements Serializable, Cloneable {
                 }
             } else if(currLeg.equals("K")) {
                 /* Now deal with K. */
+                if (tMod.getCmbDepth() == tMod.getRadiusOfEarth()) {
+                    // degenerate case, CMB is at center, so model without a core
+                    maxRayParam = -1;
+                    if(DEBUG) {
+                        System.out.println("Cannot have K phase "
+                                + currLeg + " within phase " + name
+                                + " for this model as it has no core, cmb depth = radius of Earth.");
+                    }
+                    return;
+                }
+                if (tMod.getCmbDepth() == tMod.getIocbDepth()) {
+                    // degenerate case, CMB is same as IOCB, so model without an outer core
+                    maxRayParam = -1;
+                    if(DEBUG) {
+                        System.out.println("Cannot have K phase "
+                                + currLeg + " within phase " + name
+                                + " for this model as it has no outer core, cmb depth = iocb depth, "+tMod.getCmbDepth());
+                    }
+                    return;
+                }
                 if(nextLeg.equals("P") || nextLeg.equals("S")) {
                     if(prevLeg.equals("P") || prevLeg.equals("S")
                             || prevLeg.equals("K") || prevLeg.equals("k")
@@ -1547,6 +1571,16 @@ public class SeismicPhase implements Serializable, Cloneable {
                 }
             } else if(currLeg.equals("I") || currLeg.equals("J")) {
                 /* And now consider inner core, I and J. */
+                if (tMod.getIocbDepth() == tMod.getRadiusOfEarth()) {
+                    // degenerate case, IOCB is at center, so model without a inner core
+                    maxRayParam = -1;
+                    if(DEBUG) {
+                        System.out.println("Cannot have I or J phase "
+                                + currLeg + " within phase " + name
+                                + " for this model as it has no inner core, iocb depth = radius of Earth.");
+                    }
+                    return;
+                }
                 endAction = TURN;
                 addToBranch(tMod,
                             currBranch,

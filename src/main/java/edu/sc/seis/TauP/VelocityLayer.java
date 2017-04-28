@@ -126,7 +126,7 @@ public class VelocityLayer implements Cloneable, Serializable {
                          double botQs) {
         if(topPVelocity <= 0) {
             throw new IllegalArgumentException("topPVelocity must be positive: "
-                    + topPVelocity);
+                    + topPVelocity+" in layer "+myLayerNumber+" topDepth "+topDepth+" topS"+topSVelocity+" botDepth "+botDepth+" botP "+botPVelocity+" botS"+botSVelocity);
         }
         if(botPVelocity <= 0) {
             throw new IllegalArgumentException("botPVelocity must be positive: "

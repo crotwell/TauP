@@ -688,9 +688,9 @@ public class VelocityModel implements Cloneable, Serializable {
                     + " mohoDepth = " + mohoDepth);
             return false;
         }
-        /* is cmbDepth positive? */
-        if(cmbDepth <= 0.0) {
-            System.err.println("cmbDepth is not positive. cmbDepth = "
+        /* is cmbDepth non-negative? */
+        if(cmbDepth < 0.0) {
+            System.err.println("cmbDepth is negative. cmbDepth = "
                     + cmbDepth);
             return false;
         }
@@ -700,9 +700,9 @@ public class VelocityModel implements Cloneable, Serializable {
                     + " cmbDepth = " + cmbDepth);
             return false;
         }
-        /* is iocbDepth positive? */
-        if(iocbDepth <= 0.0) {
-            System.err.println("iocbDepth is not positive. iocbDepth = "
+        /* is iocbDepth non-negative? */
+        if(iocbDepth < 0.0) {
+            System.err.println("iocbDepth is negative. iocbDepth = "
                     + iocbDepth);
             return false;
         }
@@ -873,7 +873,6 @@ public class VelocityModel implements Cloneable, Serializable {
         } else {
             throw new VelocityModelException("What type of velocity file, .tvel or .nd?");
         }
-        vMod.fixDisconDepths();
         return vMod;
     }
 
@@ -1011,7 +1010,7 @@ public class VelocityModel implements Cloneable, Serializable {
         // model
         // so the maximum depth is equal to the
         // maximum radius is equal to the earth radius.
-        return new VelocityModel(modelName,
+        VelocityModel vMod = new VelocityModel(modelName,
                                  radiusOfEarth,
                                  DEFAULT_MOHO,
                                  DEFAULT_CMB,
@@ -1020,6 +1019,8 @@ public class VelocityModel implements Cloneable, Serializable {
                                  maxRadius,
                                  true,
                                  layers);
+        vMod.fixDisconDepths();
+        return vMod;
     }
 
     /**
@@ -1056,6 +1057,22 @@ public class VelocityModel implements Cloneable, Serializable {
         fileIn.close();
         return vmod;
     }
+    
+    static double readNumber(StreamTokenizer tokenIn) throws IOException, VelocityModelException {
+        if(tokenIn.ttype == StreamTokenizer.TT_NUMBER) {
+            double out = tokenIn.nval;
+            tokenIn.nextToken();
+            return out;
+        }
+        throw new VelocityModelException("expected number but saw "+tokenIn);
+    }
+    
+    static void readTillEOL(StreamTokenizer tokenIn) throws IOException {
+        while(tokenIn.ttype != StreamTokenizer.TT_EOL) {
+            tokenIn.nextToken();
+        }
+        tokenIn.nextToken();
+    }
 
     public static VelocityModel readNDFile(Reader in, String modelName) throws IOException,
         VelocityModelException {
@@ -1077,29 +1094,49 @@ public class VelocityModel implements Cloneable, Serializable {
         VelocityLayer tempLayer;
         double topDepth, topPVel, topSVel, topDensity = 2.6, topQp = 1000, topQs = 2000;
         double botDepth, botPVel, botSVel, botDensity = topDensity, botQp = topQp, botQs = topQs;
-        /* Preload the first line of the model */
+
+        double mohoDepth = DEFAULT_MOHO;
+        double cmbDepth = DEFAULT_CMB;
+        double iocbDepth = DEFAULT_IOCB;
+        
+        /* Preload the first line of the model, first pulling any EOL from comments */
         tokenIn.nextToken();
-        topDepth = tokenIn.nval;
-        tokenIn.nextToken();
-        topPVel = tokenIn.nval;
-        tokenIn.nextToken();
-        topSVel = tokenIn.nval;
+        while(tokenIn.ttype == StreamTokenizer.TT_EOL) {
+            tokenIn.nextToken();
+        }
+        // check for crustless model, moho or core at surface
+        while(tokenIn.ttype == StreamTokenizer.TT_WORD) {
+            if(tokenIn.sval.equalsIgnoreCase("mantle") || tokenIn.sval.equalsIgnoreCase("moho")) {
+                mohoDepth = 0; // Moho
+                readTillEOL(tokenIn);
+            } else if(tokenIn.sval.equalsIgnoreCase("outer-core") || tokenIn.sval.equalsIgnoreCase("cmb")) {
+                mohoDepth = 0; // Moho above Core Mantle Boundary
+                cmbDepth = 0; // Core Mantle Boundary
+                readTillEOL(tokenIn);
+            } else if(tokenIn.sval.equalsIgnoreCase("inner-core") || tokenIn.sval.equalsIgnoreCase("icocb")) {
+                mohoDepth = 0; // Moho above Core Mantle Boundary
+                cmbDepth = 0; // Core Mantle Boundary above iocb
+                iocbDepth = 0; // Inner Outer Core Boundary
+                readTillEOL(tokenIn);
+            } else {
+                throw new VelocityModelException("expected number as first depth but saw word: "+tokenIn.sval);
+            }
+        }
+        topDepth = readNumber(tokenIn);
+        topPVel = readNumber(tokenIn);
+        topSVel = readNumber(tokenIn);
         if (topSVel > topPVel) {
             throw new VelocityModelException("S velocity, "+topSVel+" at depth "+topDepth+" is greater than the P velocity, "+topPVel);
         }
-        tokenIn.nextToken();
         if(tokenIn.ttype != StreamTokenizer.TT_EOL) {
             // density is not used and so is optional
-            topDensity = tokenIn.nval;
-            tokenIn.nextToken();
+            topDensity = readNumber(tokenIn);
             if(tokenIn.ttype != StreamTokenizer.TT_EOL) {
                 // Qp is not used and so is optional
-                topQp = tokenIn.nval;
-                tokenIn.nextToken();
+                topQp = readNumber(tokenIn);
                 if(tokenIn.ttype != StreamTokenizer.TT_EOL) {
                     // Qs is not used and so is optional
-                    topQs = tokenIn.nval;
-                    tokenIn.nextToken();
+                    topQs = readNumber(tokenIn);
                 }
             }
         }
@@ -1110,12 +1147,14 @@ public class VelocityModel implements Cloneable, Serializable {
         } else {
             tokenIn.nextToken();
         }
-        double mohoDepth = DEFAULT_MOHO;
-        double cmbDepth = DEFAULT_CMB;
-        double iocbDepth = DEFAULT_IOCB;
         List<VelocityLayer> layers = new ArrayList<VelocityLayer>();
         while(tokenIn.ttype != StreamTokenizer.TT_EOF) {
             // Loop until we hit the end of file
+            if (tokenIn.ttype == StreamTokenizer.TT_EOL) {
+                //probably a comment or blank line
+                tokenIn.nextToken();
+                continue;
+            }
             if(tokenIn.ttype == StreamTokenizer.TT_WORD) {
                 if(tokenIn.sval.equalsIgnoreCase("mantle") || tokenIn.sval.equalsIgnoreCase("moho")) {
                     mohoDepth = topDepth; // Moho
@@ -1132,27 +1171,21 @@ public class VelocityModel implements Cloneable, Serializable {
                 tokenIn.nextToken();
                 continue;
             }
-            botDepth = tokenIn.nval;
-            tokenIn.nextToken();
-            botPVel = tokenIn.nval;
-            tokenIn.nextToken();
-            botSVel = tokenIn.nval;
+            botDepth = readNumber(tokenIn);
+            botPVel = readNumber(tokenIn);
+            botSVel = readNumber(tokenIn);
             if (botSVel > botPVel) {
                 throw new VelocityModelException("S velocity, "+botSVel+" at depth "+botDepth+" is greater than the P velocity, "+botPVel);
             }
-            tokenIn.nextToken();
             if(tokenIn.ttype != StreamTokenizer.TT_EOL) {
                 // density is not used and so is optional
-                botDensity = tokenIn.nval;
-                tokenIn.nextToken();
+                botDensity = readNumber(tokenIn);
                 if(tokenIn.ttype != StreamTokenizer.TT_EOL) {
                     // Qp is not used and so is optional
-                    botQp = tokenIn.nval;
-                    tokenIn.nextToken();
+                    botQp = readNumber(tokenIn);
                     if(tokenIn.ttype != StreamTokenizer.TT_EOL) {
                         // Qs is not used and so is optional
-                        botQs = tokenIn.nval;
-                        tokenIn.nextToken();
+                        botQs = readNumber(tokenIn);
                     }
                 }
             }
@@ -1221,8 +1254,11 @@ public class VelocityModel implements Cloneable, Serializable {
         VelocityLayer aboveLayer, belowLayer;
         double mohoMin = 65.0, cmbMin = radiusOfEarth, iocbMin = radiusOfEarth - 100.0;
         double tempMohoDepth = 0.0, tempCmbDepth = radiusOfEarth, tempIocbDepth = radiusOfEarth;
+        // fake layer above surface
+        VelocityLayer topLayer = getVelocityLayer(0);
+        belowLayer = new VelocityLayer(-1, -1, 0, topLayer.getTopPVelocity(), topLayer.getTopPVelocity(), topLayer.getTopSVelocity(), topLayer.getTopSVelocity(), topLayer.getTopDensity(), topLayer.getTopDensity());
         for(int layerNum = 0; layerNum < getNumLayers() - 1; layerNum++) {
-            aboveLayer = getVelocityLayer(layerNum);
+            aboveLayer = belowLayer;
             belowLayer = getVelocityLayer(layerNum + 1);
             if(aboveLayer.getBotPVelocity() != belowLayer.getTopPVelocity()
                     || aboveLayer.getBotSVelocity() != belowLayer.getTopSVelocity()) {
@@ -1231,7 +1267,8 @@ public class VelocityModel implements Cloneable, Serializable {
                     tempMohoDepth = aboveLayer.getBotDepth();
                     mohoMin = Math.abs(mohoDepth - aboveLayer.getBotDepth());
                 }
-                if(Math.abs(cmbDepth - aboveLayer.getBotDepth()) < cmbMin) {
+                // don't set cmb to be same as moho
+                if(aboveLayer.getBotDepth() > tempMohoDepth && Math.abs(cmbDepth - aboveLayer.getBotDepth()) < cmbMin) {
                     tempCmbDepth = aboveLayer.getBotDepth();
                     cmbMin = Math.abs(cmbDepth - aboveLayer.getBotDepth());
                 }
