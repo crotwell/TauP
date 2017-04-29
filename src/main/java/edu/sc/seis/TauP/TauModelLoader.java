@@ -244,8 +244,6 @@ public class TauModelLoader {
                 File modelFile = new File(vmodFile);
                 if(modelFile.exists() && modelFile.isFile() && modelFile.canRead()) {
                     vMod = VelocityModel.readVelocityFile(modelFile.getPath(), types[i]);
-                } else {
-                    System.out.println("File not exist "+modelFile);
                 }
             }
         }
