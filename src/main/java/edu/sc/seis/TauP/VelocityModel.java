@@ -1098,6 +1098,7 @@ public class VelocityModel implements Cloneable, Serializable {
         double mohoDepth = DEFAULT_MOHO;
         double cmbDepth = DEFAULT_CMB;
         double iocbDepth = DEFAULT_IOCB;
+        boolean previousLineNamedDiscon = false;
         
         /* Preload the first line of the model, first pulling any EOL from comments */
         tokenIn.nextToken();
@@ -1110,14 +1111,11 @@ public class VelocityModel implements Cloneable, Serializable {
                 mohoDepth = 0; // Moho
                 readTillEOL(tokenIn);
             } else if(tokenIn.sval.equalsIgnoreCase("outer-core") || tokenIn.sval.equalsIgnoreCase("cmb")) {
-                mohoDepth = 0; // Moho above Core Mantle Boundary
-                cmbDepth = 0; // Core Mantle Boundary
-                readTillEOL(tokenIn);
+                throw new VelocityModelException("Cannot have model with only outer and inner core due to phase naming rules. "
+                        +"Use model with all mantle instead.");
             } else if(tokenIn.sval.equalsIgnoreCase("inner-core") || tokenIn.sval.equalsIgnoreCase("icocb")) {
-                mohoDepth = 0; // Moho above Core Mantle Boundary
-                cmbDepth = 0; // Core Mantle Boundary above iocb
-                iocbDepth = 0; // Inner Outer Core Boundary
-                readTillEOL(tokenIn);
+                throw new VelocityModelException("Cannot have model with only inner core due to phase naming rules. "
+                        +"Use model with all mantle instead.");
             } else {
                 throw new VelocityModelException("expected number as first depth but saw word: "+tokenIn.sval);
             }
@@ -1156,6 +1154,7 @@ public class VelocityModel implements Cloneable, Serializable {
                 continue;
             }
             if(tokenIn.ttype == StreamTokenizer.TT_WORD) {
+                previousLineNamedDiscon = true;
                 if(tokenIn.sval.equalsIgnoreCase("mantle") || tokenIn.sval.equalsIgnoreCase("moho")) {
                     mohoDepth = topDepth; // Moho
                 }
@@ -1189,6 +1188,14 @@ public class VelocityModel implements Cloneable, Serializable {
                     }
                 }
             }
+            if (previousLineNamedDiscon && topDepth != botDepth) {
+                throw new VelocityModelException("Named discontinuities must be between a repeated depth, but was top="
+                        +topDepth+" bot="+botDepth);
+            }
+            if (previousLineNamedDiscon && topPVel == botPVel && topSVel == botSVel) {
+                throw new VelocityModelException("Named discontinuities must be a velocity contrast (a very small one is sufficient), but at depth="
+                          +topDepth+" P="+topPVel+", "+botPVel+" S="+topSVel+", "+botSVel);
+            }
             tempLayer = new VelocityLayer(myLayerNumber,
                                           topDepth,
                                           botDepth,
@@ -1208,6 +1215,7 @@ public class VelocityModel implements Cloneable, Serializable {
             topDensity = botDensity;
             topQp = botQp;
             topQs = botQs;
+            previousLineNamedDiscon = false;
             if(tokenIn.ttype != StreamTokenizer.TT_EOL) {
                 // this token should be an EOL, if not
                 throw new VelocityModelException("Should have found an EOL but didn't"
@@ -1229,7 +1237,7 @@ public class VelocityModel implements Cloneable, Serializable {
         // model
         // so the maximum depth is equal to the
         // maximum radius is equal to the earth radius.
-        return new VelocityModel(modelName,
+        VelocityModel vMod = new VelocityModel(modelName,
                                  radiusOfEarth,
                                  mohoDepth,
                                  cmbDepth,
@@ -1238,6 +1246,9 @@ public class VelocityModel implements Cloneable, Serializable {
                                  maxRadius,
                                  true,
                                  layers);
+
+        vMod.fixDisconDepths();
+        return vMod;
     }
 
     /**
@@ -1264,22 +1275,36 @@ public class VelocityModel implements Cloneable, Serializable {
             if(aboveLayer.getBotPVelocity() != belowLayer.getTopPVelocity()
                     || aboveLayer.getBotSVelocity() != belowLayer.getTopSVelocity()) {
                 // a discontinuity
-                if(Math.abs(mohoDepth - aboveLayer.getBotDepth()) < mohoMin) {
+                if( Math.abs(mohoDepth - aboveLayer.getBotDepth()) < mohoMin) {
                     tempMohoDepth = aboveLayer.getBotDepth();
                     mohoMin = Math.abs(mohoDepth - aboveLayer.getBotDepth());
                 }
-                // don't set cmb to be same as moho
-                if(aboveLayer.getBotDepth() > tempMohoDepth && Math.abs(cmbDepth - aboveLayer.getBotDepth()) < cmbMin) {
+                // don't set cmb to be same as moho, unless fixed
+                if( aboveLayer.getBotDepth() > tempMohoDepth && Math.abs(cmbDepth - aboveLayer.getBotDepth()) < cmbMin) {
                     tempCmbDepth = aboveLayer.getBotDepth();
                     cmbMin = Math.abs(cmbDepth - aboveLayer.getBotDepth());
                 }
-                if(aboveLayer.getBotSVelocity() == 0.0
+                // iocb is either below a fluid layer or is equal to cmb
+                if(aboveLayer.getBotDepth()  == tempCmbDepth || (aboveLayer.getBotSVelocity() == 0.0
                         && belowLayer.getTopSVelocity() > 0.0
-                        && Math.abs(iocbDepth - aboveLayer.getBotDepth()) < iocbMin) {
+                        && Math.abs(iocbDepth - aboveLayer.getBotDepth()) < iocbMin)) {
                     tempIocbDepth = aboveLayer.getBotDepth();
                     iocbMin = Math.abs(iocbDepth - aboveLayer.getBotDepth());
                 }
             }
+        }
+        // may need to set named discon to center of earth in case of degenerate model without a core
+        if( belowLayer.getBotDepth() > tempMohoDepth && Math.abs(cmbDepth - belowLayer.getBotDepth()) < cmbMin) {
+            tempCmbDepth = belowLayer.getBotDepth();
+            cmbMin = Math.abs(cmbDepth - belowLayer.getBotDepth());
+        }
+        // iocb is either below a fluid layer or is equal to cmb or center of earth
+        // belowLayer is bottommost layer, so belowLayer.botDepth == radius of earth
+        if(belowLayer.getBotDepth()  == tempCmbDepth || (belowLayer.getBotSVelocity() == 0.0
+                && belowLayer.getTopSVelocity() > 0.0
+                && Math.abs(iocbDepth - belowLayer.getBotDepth()) < iocbMin)) {
+            tempIocbDepth = belowLayer.getBotDepth();
+            iocbMin = Math.abs(iocbDepth - belowLayer.getBotDepth());
         }
         if(mohoDepth != tempMohoDepth || cmbDepth != tempCmbDepth
                 || iocbDepth != tempIocbDepth) {
@@ -1287,8 +1312,7 @@ public class VelocityModel implements Cloneable, Serializable {
         }
         mohoDepth = tempMohoDepth;
         cmbDepth = tempCmbDepth;
-        iocbDepth = (tempCmbDepth != tempIocbDepth ? tempIocbDepth
-                : radiusOfEarth);
+        iocbDepth = tempIocbDepth;
         return changeMade;
     }
 

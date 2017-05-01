@@ -55,13 +55,24 @@ public class VelocityModelTest {
 
     @Test
     public void testAllCore() throws IOException, VelocityModelException {
+        try {
         String modelName = "allCore.nd";
         VelocityModel vMod = loadTestVelMod(modelName);
+        fail("should throw VelocityModelException");
+        } catch (VelocityModelException e) {
+            // this is supposed to happen
+        }
+    }
 
-        assertEquals("cmb=moho, moho at curface", 0, vMod.getMohoDepth(), 0.00000001);
-        assertEquals("cmb=moho, cmb at curface", 0, vMod.getCmbDepth(), 0.00000001);
-        assertEquals("cmb=moho, iocb at curface", 0, vMod.getIocbDepth(), 0.00000001);
-        
+    @Test
+    public void testAllInnerCoreCore() throws IOException, VelocityModelException {
+        try {
+        String modelName = "allInnerCore.nd";
+        VelocityModel vMod = loadTestVelMod(modelName);
+        fail("should throw VelocityModelException");
+        } catch (VelocityModelException e) {
+            // this is supposed to happen
+        }
     }
 
     @Test
@@ -72,6 +83,17 @@ public class VelocityModelTest {
         assertEquals(modelName+" moho ", 35, vMod.getMohoDepth(), 0.00000001);
         assertEquals(modelName+"cmb ", 2889, vMod.getCmbDepth(), 0.00000001);
         assertEquals(modelName+"cmb=iocb, iocb ", vMod.getCmbDepth(), vMod.getIocbDepth(), 0.00000001);
+        
+    }
+
+    @Test
+    public void testNDWithoutLabels() throws IOException, VelocityModelException {
+        String modelName = "NDNoLabels.nd";
+        VelocityModel vMod = loadTestVelMod(modelName);
+
+        assertEquals(modelName+" moho ", 36, vMod.getMohoDepth(), 0.00000001);
+        assertEquals(modelName+"cmb ", 2890, vMod.getCmbDepth(), 0.00000001);
+        assertEquals(modelName+"iocb", 5154.9, vMod.getIocbDepth(), 0.00000001);
         
     }
 }

@@ -42,6 +42,17 @@ public class ConstantModelWithoutCore {
         ConstantModelTest.doDirectTest(tMod, SeismicPhase.SWAVE);
     }
     
+    @Test
+    public void testNoCorePhase() throws TauModelException {
+        String[] badPhaseList = new String[] {"PKP", "PKIKP", "PIP", "PcP", "PKiKP", "SKS" };
+        for (String phaseName : badPhaseList) {
+                SeismicPhase pPhase = new SeismicPhase(phaseName, tMod);
+                assertFalse(phaseName+" should not exist in model", pPhase.phasesExistsInModel());
+                List<Arrival> arrivals = pPhase.calcTime(130);
+                assertEquals("no arrival", 0, arrivals.size());
+        }
+    }
+    
 /**
  * Error increases with depth, so 
  * @throws TauModelException

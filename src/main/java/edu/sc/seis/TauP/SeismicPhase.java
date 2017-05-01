@@ -238,6 +238,10 @@ public class SeismicPhase implements Serializable, Cloneable {
         
     }
     
+    public boolean phasesExistsInModel() {
+        return getMaxRayParam() >= 0;
+    }
+    
     public Arrival getEarliestArrival(double degrees) {
         double soonest = 999999999.0;
         Arrival soonestArrival = null;
@@ -1217,6 +1221,11 @@ public class SeismicPhase implements Serializable, Cloneable {
                 } else if(nextLeg.startsWith("^")) {
                     disconBranch = closestBranchToDepth(tMod,
                                                         nextLeg.substring(1));
+                    if (disconBranch == tMod.getNumBranches()) {
+                        maxRayParam = -1;
+                        if(DEBUG) {System.out.println("Attempt to underside reflect from center of earth: "+nextLeg);}
+                        return;
+                    }
                     if(prevLeg.equals("K")) {
                         endAction = REFLECT_UNDERSIDE;
                         addToBranch(tMod,
@@ -1243,6 +1252,11 @@ public class SeismicPhase implements Serializable, Cloneable {
                                                                                               prevLeg.substring(1)))
                             || (prevLeg.equals("m") && disconBranch < tMod.getMohoBranch())
                             || (prevLeg.equals("c") && disconBranch < tMod.getCmbBranch())) {
+                        if (disconBranch == tMod.getNumBranches()) {
+                            maxRayParam = -1;
+                            if(DEBUG) {System.out.println("Attempt to reflect from center of earth: "+nextLeg);}
+                            return;
+                        }
                         endAction = REFLECT_UNDERSIDE;
                         addToBranch(tMod,
                                     currBranch,
@@ -1256,6 +1270,11 @@ public class SeismicPhase implements Serializable, Cloneable {
                                 + " > disconBranch=" + disconBranch);
                     }
                 } else if(nextLeg.equals("c")) {
+                    if (tMod.getCmbBranch() == tMod.getNumBranches()) {
+                        maxRayParam = -1;
+                        if(DEBUG) {System.out.println("Attempt to reflect from center of earth: "+nextLeg);}
+                        return;
+                    }
                     endAction = REFLECT_TOPSIDE;
                     addToBranch(tMod,
                                 currBranch,
@@ -1269,6 +1288,20 @@ public class SeismicPhase implements Serializable, Cloneable {
                                 tMod.getCmbBranch() - 1,
                                 isPWave,
                                 endAction);
+                } else if( nextLeg.equals("I") || nextLeg.equals("J")) {
+                    if(tMod.getCmbDepth() == tMod.getIocbDepth()) {
+                    // degenerate case of no fluid outer core, so allow phases like PIP or SJS 
+                    endAction = TRANSDOWN;
+                    addToBranch(tMod,
+                                currBranch,
+                                tMod.getCmbBranch() - 1,
+                                isPWave,
+                                endAction);
+                    } else {
+                        maxRayParam = -1;
+                        if(DEBUG) {System.out.println("P or S followed by I or J can only exist if model has no outer core");}
+                        return;
+                    }
                 } else if(nextLeg.equals("m")
                         || (isNextLegDepth && nextLegDepth < tMod.getCmbDepth())) {
                     // treat the moho in the same wasy as 410 type
@@ -1559,6 +1592,11 @@ public class SeismicPhase implements Serializable, Cloneable {
                                 isPWave,
                                 endAction);
                 } else if(nextLeg.equals("i")) {
+                    if (tMod.getIocbBranch() == tMod.getNumBranches()) {
+                        maxRayParam = -1;
+                        if(DEBUG) {System.out.println("Attempt to reflect from center of earth: "+nextLeg);}
+                        return;
+                    }
                     endAction = REFLECT_TOPSIDE;
                     addToBranch(tMod,
                                 currBranch,
@@ -1601,6 +1639,24 @@ public class SeismicPhase implements Serializable, Cloneable {
                                 tMod.getIocbBranch(),
                                 isPWave,
                                 endAction);
+                } else if(nextLeg.equalsIgnoreCase("P") || nextLeg.equalsIgnoreCase("S")) {
+                    if (tMod.getCmbDepth() == tMod.getIocbDepth()) {
+                        // degenerate case of no fluid outer core, so allow phases like PIP or SJS 
+                        endAction = TRANSUP;
+                        addToBranch(tMod,
+                                    currBranch,
+                                    tMod.getIocbBranch(),
+                                    isPWave,
+                                    endAction);
+                    } else {
+                        maxRayParam = -1;
+                        if(DEBUG) {
+                            System.out.println("Cannot have I or J phase "
+                                    + currLeg + " within phase " + name
+                                    + " for this model as it has an outer core so need K in between.");
+                        }
+                        return;
+                    }
                 }
             } else if(currLeg.equals("m")) {
                 
@@ -1655,7 +1711,7 @@ public class SeismicPhase implements Serializable, Cloneable {
      * would become 'p'+'^410'+'P'. Once a phase name has been broken into
      * tokens we can begin to construct the sequence of branches to which it
      * corresponds. Only minor error checking is done at this point, for
-     * instance PIP generates an exception but ^410 doesn't. It also appends
+     * instance pIP generates an exception but ^410 doesn't. It also appends
      * "END" as the last leg.
      * 
      * @throws TauModelException
@@ -1686,8 +1742,8 @@ public class SeismicPhase implements Serializable, Cloneable {
                             + name.charAt(offset)
                             + " cannot be followed by "
                             + "'ed' in " + name);
-                } else 
-                if(name.charAt(offset) == 'K' || name.charAt(offset) == 'I'
+                } else if(name.charAt(offset) == 'K' 
+                        || name.charAt(offset) == 'I'
                         || name.charAt(offset) == 'k'
                         || name.charAt(offset) == 'J'
                         || name.charAt(offset) == 'p'
@@ -1708,6 +1764,8 @@ public class SeismicPhase implements Serializable, Cloneable {
                             || name.charAt(offset + 1) == 'P'
                             || name.charAt(offset + 1) == 'S'
                             || name.charAt(offset + 1) == 'K'
+                            || name.charAt(offset + 1) == 'I' // I,J might be allowed if no outer core
+                            || name.charAt(offset + 1) == 'J'
                             || name.charAt(offset + 1) == 'm'
                             || name.charAt(offset + 1) == 'c'
                             || name.charAt(offset + 1) == '^'
@@ -2589,27 +2647,27 @@ public class SeismicPhase implements Serializable, Cloneable {
             if ((prevToken.equals("Ped") || prevToken.equals("Sed")) && ! currToken.equals("END")) {
                 return "'Ped' or 'Sed' can only be second to last token immediately before END";
             }
-            /* Check for P or S next to I or J */
-            if((currToken.startsWith("P") || currToken.startsWith("S")
-                    || currToken.startsWith("p") || currToken.startsWith("s")
-                    || currToken.equals("m") || currToken.equals("c"))
-                    && (prevToken.equals("I") || prevToken.equals("J") || prevToken.equals("i"))) {
-                return "Cannot have I,J,i followed by P,S,p,s,m,c: "
-                        + prevToken + ", " + currToken;
-            }
-            if((prevToken.startsWith("P") || prevToken.startsWith("S")
-                    || prevToken.startsWith("p") || prevToken.startsWith("s")
+            // Cannot have p,s before I, i, or J
+            if((prevToken.startsWith("p") || prevToken.startsWith("s")
                     || prevToken.equals("m") || prevToken.equals("c"))
                     && (currToken.equals("I") || currToken.equals("J") || currToken.equals("i"))) {
                 return "Cannot have P,S,p,s,m,c followed by I,J,i: "
                         + prevToken + ", " + currToken;
             }
-            /* Check for m next to K. */
-            if(prevToken.equals("m") && currToken.equals("K")) {
-                return "Cannot have m followed by K";
+            // Cannot have m,c after I, i, or J
+            if((prevToken.equals("I") || prevToken.equals("J") || prevToken.equals("i"))
+                   && (currToken.equals("m") || currToken.equals("c"))) {
+                return "Cannot have I,J,i followed by  m,c: "
+                        + prevToken + ", " + currToken;
             }
-            if(currToken.equals("m") && prevToken.equals("K")) {
-                return "Cannot have K followed by m";
+            /* Check for m, c before K. */
+            if((prevToken.equals("m") || prevToken.equals("c") ) 
+                    && (currToken.equals("K") || currToken.equals("I") || currToken.equals("J") || currToken.equals("i"))) {
+                return "Cannot have m,c followed by K,I,i,J";
+            }
+            if((currToken.equals("m") || currToken.equals("c")) 
+                    && (prevToken.equals("K") || prevToken.equals("I") || prevToken.equals("J") || prevToken.equals("i"))) {
+                return "Cannot have K,I,i,J followed by m,c";
             }
         }
         /* Make sure legs end in "END". */
