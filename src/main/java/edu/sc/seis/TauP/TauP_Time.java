@@ -902,7 +902,7 @@ public class TauP_Time {
                                 * currArrival.getRayParam()) + "  ");
                 out.print(Outputs.formatDistance(currArrival.getTakeoffAngle())+" ");
                 out.print(Outputs.formatDistance(currArrival.getIncidentAngle())+" ");
-                out.print(outForms.formatDistance(currArrival.getDistDeg()));
+                out.print(Outputs.formatDistance(currArrival.getDistDeg()));
                 if(currArrival.getName().equals(currArrival.getPuristName())) {
                     out.print("   = ");
                 } else {
@@ -910,7 +910,7 @@ public class TauP_Time {
                 }
                 out.print(phasePuristFormat.form(currArrival.getPuristName()));
                 if (relativePhaseName != "") {
-                    out.print(outForms.formatTime(currArrival.getTime() - relativeArrival.getTime()));
+                    out.print(Outputs.formatTime(currArrival.getTime() - relativeArrival.getTime()));
                 }
                 out.println();
             }
