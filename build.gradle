@@ -181,7 +181,7 @@ task genModels(dependsOn: compileJava) << {
     String[] tvelModelNames = ['iasp91', 'ak135']
     String[] ndModelNames = ['prem']
     def classLoader = new GroovyClassLoader(Project.class.classLoader)
-    classLoader.addURL(new File(getBuildDir(), '/classes/main').toURL())
+    classLoader.addURL(new File(getBuildDir(), '/classes/java/main').toURL())
     configurations.default.each { File file -> classLoader.addURL(file.toURL())}
     def taupCreate = classLoader.loadClass('edu.sc.seis.TauP.TauP_Create').newInstance()
     taupCreate.setDirectory(inDir.getPath())
