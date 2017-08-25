@@ -13,11 +13,12 @@ configurations {
 }
 
 dependencies {
-    compile project(':seisFile')
+//    compile project(':seisFile')
+    compile 'edu.sc.seis:seisFile:1.7.4'
 }
 
 group = 'edu.sc.seis'
-version = '2.4.4-SNAPSHOT'
+version = '2.4.4'
 
 artifacts {
     archives jar
