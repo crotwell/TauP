@@ -25,6 +25,8 @@
  */
 package edu.sc.seis.TauP;
 
+import java.time.Duration;
+
 /**
  * convenience class for storing the parameters associated with a phase arrival.
  * 
@@ -125,6 +127,11 @@ public class Arrival {
     /** @return travel time in seconds */
     public double getTime() {
         return time;
+    }
+    
+    /**@return travel time as a Duration */
+    public Duration getDuration() {
+        return Duration.ofNanos(Math.round(getTime()*1000000000));
     }
 
     /** returns travel distance in radians */
