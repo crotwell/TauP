@@ -366,6 +366,14 @@ public class TauP_Time {
         return tMod;
     }
 
+    /** Gets depth corrected TauModel. */
+    public TauModel getTauModelDepthCorrected() {
+        if (tModDepth == null) {
+            tModDepth = tMod;
+        }
+        return tModDepth;
+    }
+    
     public void setTauModel(TauModel tMod) {
         clearPhases();
         this.tMod = tMod;
@@ -699,7 +707,7 @@ public class TauP_Time {
             List<SeismicPhase> relPhases = new ArrayList<SeismicPhase>();
             List<String> splitNames = getPhaseNames(relativePhaseName);
             for (String sName : splitNames) {
-                SeismicPhase relPhase = new SeismicPhase(sName, tModDepth);
+                SeismicPhase relPhase = new SeismicPhase(sName, getTauModelDepthCorrected());
                 relPhases.add(relPhase);
             }
             relativeArrival = SeismicPhase.getEarliestArrival(relPhases, degrees);
@@ -821,7 +829,7 @@ public class TauP_Time {
             if(!alreadyAdded) {
                 // didn't find it precomputed, so recalculate
                 try {
-                    seismicPhase = new SeismicPhase(tempPhaseName, tModDepth, getReceiverDepth());
+                    seismicPhase = new SeismicPhase(tempPhaseName, getTauModelDepthCorrected(), getReceiverDepth());
                     newPhases.add(seismicPhase);
 
                     if(verbose) {

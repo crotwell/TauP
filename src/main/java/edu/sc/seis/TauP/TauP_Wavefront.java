@@ -60,7 +60,7 @@ public class TauP_Wavefront extends TauP_Path {
     @Override
     public void printResult(PrintWriter out) throws IOException {
         String byTimePsFile = psFile;
-        double radiusOfEarth = tModDepth.getRadiusOfEarth();
+        double radiusOfEarth = getTauModelDepthCorrected().getRadiusOfEarth();
         HashSet<Float> keySet = new HashSet<Float>();
         for (SeismicPhase phase : result.keySet()) {
             Map<Float, List<TimeDist>> phaseResult = result.get(phase);
