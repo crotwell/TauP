@@ -17,8 +17,10 @@
 package edu.sc.seis.TauP;
 
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -30,6 +32,7 @@ import java.io.OptionalDataException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.Reader;
 import java.io.StreamCorruptedException;
 import java.io.StreamTokenizer;
 import java.io.Writer;
@@ -642,6 +645,16 @@ public class TauP_Time {
                 } else if(dashEquals("pf", args[i])) {
                     cmdLineArgPhaseFile = true;
                     toolProps.put("taup.phase.file", args[i + 1]);
+                    i++;
+                } else if(dashEquals("prop", args[i])) {
+                    File f = new File(args[i+1]);
+                    if (! f.exists()) {
+                        throw new FileNotFoundException(args[i+1]); // ToDo better error msg
+                    }
+                    Reader r = new BufferedReader(new FileReader(args[i + 1]));
+                    toolProps.load(r);
+                    System.out.println("taup.depth.precision: "+toolProps.getProperty("taup.depth.precision"));
+                    Outputs.configure(toolProps);
                     i++;
                 } else if(i < args.length - 2) {
                     if(args[i].equalsIgnoreCase("-sta")
