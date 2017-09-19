@@ -964,14 +964,15 @@ public class SeismicPhase implements Serializable, Cloneable {
         } else {
             throw new TauModelException("Unknown starting phase: "+currLeg);
         }
+        // where we end up, depending on if we end going down or up
+        int upgoingRecBranch = tMod.findBranch(receiverDepth);
+        int downgoingRecBranch = upgoingRecBranch-1; // one branch shallower
         /*
          * First, decide whether the ray is up going or downgoing from the
          * source. If it is up going then the first branch number would be
          * tMod.getSourceBranch()-1 and downgoing would be
          * tMod.getSourceBranch().
          */
-        int upgoingRecBranch = tMod.findBranch(receiverDepth);
-        int downgoingRecBranch = upgoingRecBranch-1; // one branch shallower
         if(currLeg.startsWith("s") || currLeg.startsWith("S")) {
             // Exclude S sources in fluids
             double sdep = tMod.getSourceDepth();
@@ -1047,7 +1048,7 @@ public class SeismicPhase implements Serializable, Cloneable {
                 // upgoing at receiver
                 maxRayParam = Math.min(tMod.getTauBranch(upgoingRecBranch,
                                                          isPWave)
-                                               .getMinTurnRayParam(),
+                                               .getMaxRayParam(),
                                        maxRayParam);
             }
             

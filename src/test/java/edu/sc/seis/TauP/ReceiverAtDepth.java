@@ -9,7 +9,7 @@ import org.junit.Test;
 
 public class ReceiverAtDepth {
 
-    @Test
+    // @ Test
     public void test() throws TauModelException {
         double depthStep = 30;
         
@@ -28,8 +28,13 @@ public class ReceiverAtDepth {
             }
         }
     }
-    
+
     void check(TauModel tMod, TauModel tModRec, String phaseName) throws TauModelException {
+        double distStep = 11;
+        check(tMod, tModRec, phaseName, distStep);
+    }
+    
+    void check(TauModel tMod, TauModel tModRec, String phaseName, double distStep) throws TauModelException {
         double receiverDepth = tModRec.getSourceDepth();
         SeismicPhase phase;
         SeismicPhase upPhase;
@@ -59,7 +64,6 @@ public class ReceiverAtDepth {
             upFlippedPhase = new SeismicPhase(phaseName.toLowerCase(), tModRec, tMod.getSourceDepth());
             endsDowngoingFlippedPhase = null;
         }
-        double distStep = 11;
         for (double degrees = 0; degrees < phase.getMaxDistance() && degrees < flippedPhase.getMaxDistance(); degrees+= distStep) {
             String pre = phaseName+" sd="+tMod.getSourceDepth()+" rd="+receiverDepth+" deg="+degrees;
             List<Arrival> phaseArrivals = phase.calcTime(degrees);
@@ -140,4 +144,19 @@ public class ReceiverAtDepth {
         assertEquals(pre+" rayParam PcP p",  aPcP.getRayParam(), ap.getRayParam(), 0.0001);
     }
     
+    @Test
+    public void testCloseDepths()  throws Exception {
+        float srcDepth = 2.39f;
+        float recDepth = 2.4f;
+        String modelName = "iasp91";
+        TauModel tMod = TauModelLoader.load(modelName);
+        TauModel tModDepth = tMod.depthCorrect(srcDepth);
+        TauModel tModRecDepth = tModDepth.splitBranch(recDepth);
+        TauModel flippedMod = tMod.depthCorrect(recDepth);
+        flippedMod = flippedMod.splitBranch(srcDepth);
+        System.out.println("Check P source="+srcDepth+" receiver="+recDepth);
+        check(tModRecDepth, flippedMod, "P", .1);
+        System.out.println("Check S source="+srcDepth+" receiver="+recDepth);
+        check(tModRecDepth, flippedMod, "S", .1);
+    }
 }
