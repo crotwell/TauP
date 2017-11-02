@@ -156,7 +156,8 @@ uploadArchives {
   }
 }
 
-task makeScript(dependsOn: copyToLib) << { task ->
+task makeScript(dependsOn: copyToLib) { 
+  doLast { task ->
     def doBat = true
     ScriptBuilder.create('taup_time', 'edu.sc.seis.TauP.TauP_Time', task.project, bat:doBat, yourkit:false)
     ScriptBuilder.create('taup_pierce', 'edu.sc.seis.TauP.TauP_Pierce', task.project, bat:doBat)
@@ -168,6 +169,7 @@ task makeScript(dependsOn: copyToLib) << { task ->
     ScriptBuilder.create('taup_table', 'edu.sc.seis.TauP.TauP_Table', task.project, bat:doBat)
     ScriptBuilder.create('taup', 'edu.sc.seis.TauP.TauP', task.project, bat:doBat)
 //    ScriptBuilder.create('taup_console', 'edu.sc.seis.TauP.TauP_Console', task.project, bat:doBat)
+  }
 }
 
 
@@ -175,7 +177,8 @@ def generatedSrcDir = new File(project.buildDir, 'generated-src/StdModels')
 def resourceDir = new File(generatedSrcDir, '/resources')
 def outDir = new File(resourceDir, 'edu/sc/seis/TauP/StdModels/')
 
-task genModels(dependsOn: compileJava) << {
+task genModels(dependsOn: compileJava) { 
+  doLast {
     println "Generate models"
     outDir.mkdirs()
     def inDir = new File(getProjectDir(), 'src/main/resources/edu/sc/seis/TauP/StdModels/')
@@ -215,6 +218,7 @@ task genModels(dependsOn: compileJava) << {
     vMod.setModelName("qdt")
     tMod = taupCreate.createTauModel(vMod)
     tMod.writeModel(new File(outDir, 'qdt.taup').path)
+  }
 }
 
 genModels.inputs.files 'src/main/resources/edu/sc/seis/TauP/defaultProps'
