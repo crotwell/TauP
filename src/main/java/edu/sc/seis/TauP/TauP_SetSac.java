@@ -273,19 +273,21 @@ public class TauP_SetSac extends TauP_Time {
     }
 
     public void printStdUsageTail() {
-        System.out.println("\n-debug             -- enable debugging output\n"
-                + "-verbose           -- enable verbose output\n"
-                + "-version           -- print the version\n"
-                + "-help              -- print this out, but you already know that!\n");
+        System.out.println("\n"
+                + "--prop [propfile]   -- set configuration properties\n"
+                + "--debug             -- enable debugging output\n"
+                + "--verbose           -- enable verbose output\n"
+                + "--version           -- print the version\n"
+                + "--help              -- print this out, but you already know that!\n");
     }
 
     public void printUsage() {
         printStdUsage();
-        System.out.println("-evdpkm            -- sac depth header is in km, default is meters\n");
+        System.out.println("--evdpkm            -- sac depth header is in km, default is meters\n");
         printStdUsageTail();
         System.out.println("sacfilename [sacfilename ...]");
         System.out.println("\nEx: taup_setsac "
-                + "-mod S_prem -ph S-8,ScS-9 wmq.r wmq.t wmq.z");
+                + "--mod S_prem -ph S-8,ScS-9 wmq.r wmq.t wmq.z");
         System.out.println("puts the first S arrival in T8 and ScS in T9");
     }
 
