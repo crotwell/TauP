@@ -135,44 +135,46 @@ signing {
     sign configurations.archives
 }
 
-uploadArchives {
-  repositories {
-    mavenDeployer {
-      beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+if (project.hasProperty('ossrhUsername') && project.hasProperty('ossrhPassword') ) {
+  uploadArchives {
+    repositories {
+      mavenDeployer {
+        beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
 
-      repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-        authentication(userName: ossrhUsername, password: ossrhPassword)
-      }
-
-      snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-        authentication(userName: ossrhUsername, password: ossrhPassword)
-      }
-
-      pom.project {
-        name 'TauP'
-        packaging 'jar'
-        // optionally artifactId can be defined here
-        description 'A seismic travel time calculator.'
-        url 'http://www.seis.sc.edu/TauP'
-
-        scm {
-          connection 'scm:git:https://github.com/crotwell/TauP.git'
-          developerConnection 'scm:git:https://github.com/crotwell/TauP.git'
-          url 'https://github.com/crotwell/TauP'
+        repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+          authentication(userName: ossrhUsername, password: ossrhPassword)
         }
 
-        licenses {
-          license {
-            name 'The GNU General Public License, Version 3'
-            url 'http://www.gnu.org/licenses/gpl-3.0.html'
+        snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+          authentication(userName: ossrhUsername, password: ossrhPassword)
+        }
+
+        pom.project {
+          name 'TauP'
+          packaging 'jar'
+          // optionally artifactId can be defined here
+          description 'A seismic travel time calculator.'
+          url 'http://www.seis.sc.edu/TauP'
+
+          scm {
+            connection 'scm:git:https://github.com/crotwell/TauP.git'
+            developerConnection 'scm:git:https://github.com/crotwell/TauP.git'
+            url 'https://github.com/crotwell/TauP'
           }
-        }
 
-        developers {
-          developer {
-            id 'crotwell'
-            name 'Philip Crotwell'
-            email 'crotwell@seis.sc.edu'
+          licenses {
+            license {
+              name 'The GNU General Public License, Version 3'
+              url 'http://www.gnu.org/licenses/gpl-3.0.html'
+            }
+          }
+
+          developers {
+            developer {
+              id 'crotwell'
+              name 'Philip Crotwell'
+              email 'crotwell@seis.sc.edu'
+            }
           }
         }
       }
