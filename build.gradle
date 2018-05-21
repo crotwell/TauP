@@ -1,5 +1,11 @@
 
+plugins {
+  id "edu.sc.seis.version-class" version "1.0.0"
+}
+apply plugin: 'java'
 apply plugin: 'maven'
+apply plugin: 'eclipse'
+apply plugin: 'project-report'
 apply plugin: 'signing'
 
 configurations {
@@ -13,32 +19,50 @@ configurations {
 }
 
 dependencies {
-//    compile project(':seisFile')
     compile 'edu.sc.seis:seisFile:1.8.0'
 }
 
 group = 'edu.sc.seis'
-version = '2.4.5'
+version = '2.4.6-SNAPSHOT'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
 
 artifacts {
     archives jar
 }
 
+jar {
+    manifest {
+        attributes("Implementation-Title": "TauP",
+                   "Implementation-Version": version,
+                   "TauP-Compile-Date": new Date())
+    }
+}
+
 def dirName = project.name+'-'+version
 
 def binDistFiles = copySpec {
-    from('build/output') {
+    from('build/scripts') {
         fileMode=0755
-        include('bin/**')
+        include('*')
+        into('bin')
     }
-    from('build/output') {
-        include('lib/**')
+    from(configurations.runtime) {
+        into "lib"
+    }
+    from(jar) {
+        into "lib"
     }
 }
 
 def distFiles = copySpec {
     with(binDistFiles)
-    from('build') {
+    from('.') {
         include('build.gradle')
         include('settings.gradle')
     }
@@ -83,7 +107,7 @@ def distFiles = copySpec {
     }
 }
 
-task explodeBin(type: Sync, dependsOn: ['makeScript', 'genModels']) {
+task explodeBin(type: Sync, dependsOn: ['jar', 'createAllStartScripts', 'genModels']) {
     with binDistFiles
     into file("$buildDir/explode")
 }
@@ -95,7 +119,7 @@ task tarBin(type: Tar, dependsOn: ['explodeBin']) {
     }
 }
 
-task explodeDist(type: Sync, dependsOn: ['explodeBin', 'javadoc', 'modVersionClass', 'wrapper', 'createBuildScript']) {
+task explodeDist(type: Sync, dependsOn: ['explodeBin', 'javadoc',  'wrapper']) {
     with distFiles
     into file("$buildDir/explode")
 }
@@ -127,7 +151,7 @@ uploadArchives {
       pom.project {
         name 'TauP'
         packaging 'jar'
-        // optionally artifactId can be defined here 
+        // optionally artifactId can be defined here
         description 'A seismic travel time calculator.'
         url 'http://www.seis.sc.edu/TauP'
 
@@ -156,20 +180,30 @@ uploadArchives {
   }
 }
 
-task makeScript(dependsOn: copyToLib) { 
-  doLast { task ->
-    def doBat = true
-    ScriptBuilder.create('taup_time', 'edu.sc.seis.TauP.TauP_Time', task.project, bat:doBat, yourkit:false)
-    ScriptBuilder.create('taup_pierce', 'edu.sc.seis.TauP.TauP_Pierce', task.project, bat:doBat)
-    ScriptBuilder.create('taup_path', 'edu.sc.seis.TauP.TauP_Path', task.project, bat:doBat)
-    ScriptBuilder.create('taup_create', 'edu.sc.seis.TauP.TauP_Create', task.project, bat:doBat)
-    ScriptBuilder.create('taup_curve', 'edu.sc.seis.TauP.TauP_Curve', task.project, bat:doBat)
-    ScriptBuilder.create('taup_setsac', 'edu.sc.seis.TauP.TauP_SetSac', task.project, bat:doBat)
-    ScriptBuilder.create('taup_wavefront', 'edu.sc.seis.TauP.TauP_Wavefront', task.project, bat:doBat)
-    ScriptBuilder.create('taup_table', 'edu.sc.seis.TauP.TauP_Table', task.project, bat:doBat)
-    ScriptBuilder.create('taup', 'edu.sc.seis.TauP.TauP', task.project, bat:doBat)
-//    ScriptBuilder.create('taup_console', 'edu.sc.seis.TauP.TauP_Console', task.project, bat:doBat)
-  }
+
+task createAllStartScripts() {
+     // just a placeholder
+}
+def scripts = [
+    'taup_time': 'edu.sc.seis.TauP.TauP_Time',
+    'taup_pierce': 'edu.sc.seis.TauP.TauP_Pierce',
+    'taup_path': 'edu.sc.seis.TauP.TauP_Path',
+    'taup_create': 'edu.sc.seis.TauP.TauP_Create',
+    'taup_curve': 'edu.sc.seis.TauP.TauP_Curve',
+    'taup_setsac': 'edu.sc.seis.TauP.TauP_SetSac',
+    'taup_wavefront': 'edu.sc.seis.TauP.TauP_Wavefront',
+    'taup_table': 'edu.sc.seis.TauP.TauP_Table',
+    'taup': 'edu.sc.seis.TauP.TauP'
+]
+
+  scripts.each() { scriptName, className ->
+          def t = tasks.create(name: scriptName+'StartScript', type: CreateStartScripts) {
+        mainClassName = className
+        applicationName = scriptName
+        outputDir = new File(project.buildDir, 'scripts')
+        classpath = jar.outputs.files + project.configurations.runtime
+    }
+    createAllStartScripts.dependsOn(t)
 }
 
 
@@ -177,7 +211,7 @@ def generatedSrcDir = new File(project.buildDir, 'generated-src/StdModels')
 def resourceDir = new File(generatedSrcDir, '/resources')
 def outDir = new File(resourceDir, 'edu/sc/seis/TauP/StdModels/')
 
-task genModels(dependsOn: compileJava) { 
+task genModels(dependsOn: compileJava) {
   doLast {
     println "Generate models"
     outDir.mkdirs()
@@ -230,6 +264,7 @@ genModels.outputs.files new File(outDir, 'iasp91.taup')
 genModels.outputs.files new File(outDir, 'prem.taup')
 genModels.outputs.files new File(outDir, 'qdt.taup')
 
+
 assemble.dependsOn(tarDist)
 
 sourceSets {
@@ -237,7 +272,7 @@ sourceSets {
         resources { resourceDir }
     }
     main {
-       resources.srcDirs += resourceDir 
+       resources.srcDirs += resourceDir
     }
 }
 processResources.dependsOn(genModels)
