@@ -1,4 +1,6 @@
 /bin/
+build
+.gradle
 *.aux
 taup.blg
 taup.log
