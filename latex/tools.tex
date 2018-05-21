@@ -46,7 +46,7 @@ as a \texttt{--version} flag that will print the version.
 Each of the tools use Java Properties to allow the user to specify values 
 for various
 parameters. The properties all have default values, which are overridden by
-values from a Properties file. The tools use \texttt{.taup} in the 
+values from a Properties file. The tools use a text file to load the properties. It reads  \texttt{.taup} in the 
 current directory, which overwrites values read in from 
 \texttt{.taup} in the user's home directory. Properties may also be specified by
 the \texttt{--prop} command line argument.
