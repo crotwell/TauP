@@ -230,6 +230,7 @@ public class TauP_Curve extends TauP_Time {
 
     public void printStdUsageTail() {
         System.out.println("\n-o outfile         -- output is redirected to \"outfile\" instead of taup_curve.gmt\n"
+                + "--prop [propfile]  -- set configuration properties\n"
                 + "--debug            -- enable debugging output\n"
                 + "--verbose          -- enable verbose output\n"
                 + "--version          -- print the version\n"

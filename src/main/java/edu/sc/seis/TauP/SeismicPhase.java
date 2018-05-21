@@ -2059,12 +2059,12 @@ public class SeismicPhase implements Serializable, Cloneable {
             }
         }
         if(name.indexOf("Sdiff") != -1 || name.indexOf("Pdiff") != -1) {
-            if(tMod.getSlownessModel()
+            if(tMod.cmbDepth == tMod.radiusOfEarth || tMod.getSlownessModel()
                     .depthInHighSlowness(tMod.cmbDepth - 1e-10,
                                          minRayParam,
                                          (name.charAt(0) == 'P'))) {
                 /*
-                 * No diffraction if there is a high slowness zone at the CMB.
+                 * No diffraction if cmb is zero radius or there is a high slowness zone at the CMB.
                  */
                 minRayParam = -1;
                 maxRayParam = -1;

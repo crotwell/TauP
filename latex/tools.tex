@@ -48,7 +48,8 @@ for various
 parameters. The properties all have default values, which are overridden by
 values from a Properties file. The tools use \texttt{.taup} in the 
 current directory, which overwrites values read in from 
-\texttt{.taup} in the user's home directory.
+\texttt{.taup} in the user's home directory. Properties may also be specified by
+the \texttt{--prop} command line argument.
 In addition, many of the properties can be overridden by command line arguments.
 
 The form of the properties file is very simple. Each property is set using
@@ -197,6 +198,7 @@ or by giving the station and event latitude and lonitude,
 --json             -- output travel times as json
 
 -o [stdout|outfile]         -- output is redirected to stdout or to the "outfile" file
+--prop [propfile]   -- set configuration properties
 --debug             -- enable debugging output
 --verbose           -- enable verbose output
 --version           -- print the version
@@ -285,6 +287,7 @@ or by giving the station and event latitude and lonitude,
 
 
 -o [stdout|outfile]         -- output is redirected to stdout or to the "outfile" file
+--prop [propfile]   -- set configuration properties
 --debug             -- enable debugging output
 --verbose           -- enable verbose output
 --version           -- print the version
@@ -387,6 +390,7 @@ or by giving the station and event latitude and lonitude,
 --mapwidth        -- sets map width for GMT script.
 
 -o [stdout|outfile]         -- output is redirected to stdout or to the "outfile" file
+--prop [propfile]   -- set configuration properties
 --debug             -- enable debugging output
 --verbose           -- enable verbose output
 --version           -- print the version
@@ -449,6 +453,7 @@ or by giving the station and event latitude and lonitude,
 --negdist        -- outputs negative distance as well so wavefronts are in both halves.
 
 -o [stdout|outfile]         -- output is redirected to stdout or to the "outfile" file
+--prop [propfile]   -- set configuration properties
 --debug             -- enable debugging output
 --verbose           -- enable verbose output
 --version           -- print the version
@@ -508,6 +513,7 @@ Arguments are:
 --mapwidth width   -- sets map width for GMT script.
 
 -o outfile         -- output is redirected to "outfile" instead of taup_curve.gmt
+--prop [propfile]   -- set configuration properties
 --debug            -- enable debugging output
 --verbose          -- enable verbose output
 --version          -- print the version
@@ -572,17 +578,18 @@ Arguments are:
                       for example, ScS-8 puts ScS in t8
 -pf phasefile      -- file containing phases
 
--mod[el] modelname -- use velocity model "modelname" for calculations
+--mod[el] modelname -- use velocity model "modelname" for calculations
                       Default is iasp91.
 
 
--evdpkm            -- sac depth header is in km, default is meters
+--evdpkm            -- sac depth header is in km, default is meters
 
 
--debug             -- enable debugging output
--verbose           -- enable verbose output
--version           -- print the version
--help              -- print this out, but you already know that!
+--prop [propfile]   -- set configuration properties
+--debug             -- enable debugging output
+--verbose           -- enable verbose output
+--version           -- print the version
+--help              -- print this out, but you already know that!
 
 sacfilename [sacfilename ...]
 
@@ -632,6 +639,7 @@ Arguments are:
 
 
 -o [stdout|outfile]         -- output is redirected to stdout or to the "outfile" file
+--prop [propfile]   -- set configuration properties
 --debug             -- enable debugging output
 --verbose           -- enable verbose output
 --version           -- print the version
@@ -667,10 +675,11 @@ Arguments are:
 
 --vplot file.gmt     -- plot velocity as a GMT script
 
--debug              -- enable debugging output
--verbose            -- enable verbose output
--version            -- print the version
--help               -- print this out, but you already know that!
+--prop [propfile]    -- set configuration properties
+--debug              -- enable debugging output
+--verbose            -- enable verbose output
+--version            -- print the version
+--help               -- print this out, but you already know that!
 \end{verbatim} 
  
 \texttt{modelfile} is the ASCII text file holding the velocity model.

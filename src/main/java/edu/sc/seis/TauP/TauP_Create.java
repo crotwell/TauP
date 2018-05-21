@@ -170,10 +170,11 @@ public class TauP_Create {
        // plotting sMod and tMod not yet implemented
         // System.out.println("--splot file.gmt     -- plot slowness as a GMT script\n");
        // System.out.println("--tplot file.gmt     -- plot tau as a GMT script\n");
-        System.out.println("-debug              -- enable debugging output\n"
-                + "-verbose            -- enable verbose output\n"
-                + "-version            -- print the version\n"
-                + "-help               -- print this out, but you already know that!\n\n");
+        System.out.println("--debug              -- enable debugging output\n"
+                + "--prop [propfile]    -- set configuration properties\n"
+                + "--verbose            -- enable verbose output\n"
+                + "--version            -- print the version\n"
+                + "--help               -- print this out, but you already know that!\n\n");
     }
     
     public static boolean dashEquals(String argName, String arg) {
@@ -201,7 +202,7 @@ public class TauP_Create {
                 verbose = true;
             } else if(dashEquals("gui", args[i])) {
                 GUI = true;
-            } else if(i < args.length - 1 && dashEquals("p", args[i])) {
+            } else if(i < args.length - 1 && (dashEquals("prop", args[i]) || dashEquals("p", args[i]))) {
                 try {
                 toolProps.load(new BufferedInputStream(new FileInputStream(args[i + 1])));
                 i++;
