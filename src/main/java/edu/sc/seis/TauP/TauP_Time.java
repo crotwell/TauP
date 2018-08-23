@@ -1080,8 +1080,8 @@ public class TauP_Time {
         if(getOutFileBase() == null || getOutFileBase().length() == 0 || getOutFileBase().equals("stdout")) {
             return "stdout";
         } else {
-            if (getOutFileExtension() == null || getOutFileExtension().length() == 0) {
-                // don't do a dot if no extension
+            if (getOutFileExtension() == null || getOutFileExtension().length() == 0 || getOutFileBase().endsWith("."+getOutFileExtension())) {
+                // don't do a dot if no extension or already there
                 return getOutFileBase();
             }
             return getOutFileBase()+"."+getOutFileExtension();
