@@ -168,7 +168,7 @@ public class TauP_Create {
         System.out.println("-tvel modelfile     -- \".tvel\" velocity file, ala ttimes\n");
         System.out.println("--vplot file.gmt     -- plot velocity as a GMT script\n");
        // plotting sMod and tMod not yet implemented
-        // System.out.println("--splot file.gmt     -- plot slowness as a GMT script\n");
+         System.out.println("--splot file.gmt     -- plot slowness as a GMT script\n");
        // System.out.println("--tplot file.gmt     -- plot tau as a GMT script\n");
         System.out.println("--debug              -- enable debugging output\n"
                 + "--prop [propfile]    -- set configuration properties\n"
@@ -388,28 +388,36 @@ public class TauP_Create {
     
     public void start() throws SlownessModelException, TauModelException {
         try {
-            if (plotVmod || plotSmod || plotTmod) {
+            if (plotVmod) {
                 if (plotVmod) {
                     vMod.printGMT(plotVmodFilename);
                 }
-                // need to implement sMod and tMod plotting
             } else {
                 String file_sep = System.getProperty("file.separator");
                 TauModel tMod = createTauModel(vMod);
-                if(DEBUG)
-                    System.out.println("Done calculating Tau branches.");
-                if(DEBUG)
-                    tMod.print();
-                String outFile;
-                if(directory.equals(".")) {
-                    outFile = directory + file_sep + vMod.getModelName() + ".taup";
+
+                if (plotSmod) {
+                    sMod.printGMT(plotSmodFilename);
+                } else if (plotTmod) {
+
+                    // need to implement sMod and tMod plotting
+                    throw new TauModelException("Plot of tau Model is not implemented.");
                 } else {
-                    outFile = vMod.getModelName() + ".taup";
+                    if(DEBUG)
+                        System.out.println("Done calculating Tau branches.");
+                    if(DEBUG)
+                        tMod.print();
+                    String outFile;
+                    if(directory.equals(".")) {
+                        outFile = directory + file_sep + vMod.getModelName() + ".taup";
+                    } else {
+                        outFile = vMod.getModelName() + ".taup";
+                    }
+                    tMod.writeModel(outFile);
+                    if(verbose) {
+                        System.out.println("Done Saving " + outFile);
+                    }
                 }
-            tMod.writeModel(outFile);
-            if(verbose) {
-                System.out.println("Done Saving " + outFile);
-            }
             }
         } catch(IOException e) {
             System.out.println("Tried to write!\n Caught IOException "

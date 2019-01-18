@@ -25,6 +25,10 @@
  */
 package edu.sc.seis.TauP;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -1959,6 +1963,79 @@ public abstract class SlownessModel implements Serializable {
         return foundLayerNum;
     }
 
+
+    /**
+     * prints out the velocity model into a file in a form suitable for plotting
+     * with GMT.
+     */
+    public void printGMT(String filename) throws IOException {
+        String psFile;
+        if(filename.endsWith(".gmt")) {
+            psFile = filename.substring(0, filename.length() - 4) + ".ps";
+        } else {
+            psFile = filename + ".ps";
+        }
+        PrintWriter dos = new PrintWriter(new BufferedWriter(new FileWriter(filename)));
+        
+        dos.println("#!/bin/sh");
+        dos.println("#\n# This script will plot the "+vMod.getModelName()+" velocity model using GMT. If you want to\n"
+                + "#use this as a data file for psxy in another script, delete these"
+                + "\n# first lines, as well as the last line.\n#");
+        dos.println("/bin/rm -f " + psFile + "\n");
+        double maxP=0;
+        for (SlownessLayer sLayer : PLayers) {
+            if (sLayer.getTopP() > maxP) { maxP = sLayer.getTopP();}
+            if (sLayer.getBotP() > maxP) { maxP = sLayer.getBotP();}
+        }
+        for (SlownessLayer sLayer : SLayers) {
+            if (sLayer.getTopP() > maxP) { maxP = sLayer.getTopP();}
+            if (sLayer.getBotP() > maxP) { maxP = sLayer.getBotP();}
+        }
+        maxP *= 1.05; // make little bit larger
+        dos.println("PCOLOR=0/0/255");
+        dos.println("SCOLOR=255/0/0");
+        dos.println();
+        dos.println("psbasemap -JX6i/-9i -P -R0/"+maxP+"/0/" + vMod.getMaxRadius() 
+                + " -B1a2:'Velocity (km/s)':/200a400:'Depth (km)':/:.'" + vMod.getModelName() + "':WSen  -K > " + psFile);
+        dos.println();
+        
+        dos.println("psxy -JX -P -R -W2p,${PCOLOR} -: -m -O -K >> " + psFile
+                + " <<END");
+        printGMT(dos, true);
+        dos.println("END\n");
+        dos.println("psxy -JX -P -R -W2p,${SCOLOR} -: -m -O >> " + psFile
+                + " <<END");
+        printGMT(dos, false);
+        dos.println("END\n");
+        dos.close();
+    }
+
+    /**
+     * prints out the velocity model into a file in a for suitable for plotting
+     * with GMT.
+     */
+    public void printGMT(PrintWriter dos) throws IOException {
+        dos.println("> P velocity for " + vMod.modelName + "  below");
+        printGMT(dos, true);
+        dos.println("> S velocity for " + vMod.modelName + "  below");
+        printGMT(dos, false);
+    }
+    
+    void printGMT(PrintWriter dos, boolean isPWave) throws IOException {
+        double pVel = -1.0;
+        for(int layerNum = 0; layerNum < getNumLayers(true); layerNum++) {
+            SlownessLayer currVelocityLayer = getSlownessLayer(layerNum, isPWave);
+            if(currVelocityLayer.getTopP() != pVel) {
+                dos.println((float)currVelocityLayer.getTopDepth() + " "
+                        + (float)currVelocityLayer.getTopP());
+            }
+            dos.println((float)currVelocityLayer.getBotDepth() + " "
+                    + (float)currVelocityLayer.getBotP());
+            pVel = currVelocityLayer.getBotP();
+        }
+    }
+    
+    
     /**
      * Performs consistency check on the slowness model.
      * 
