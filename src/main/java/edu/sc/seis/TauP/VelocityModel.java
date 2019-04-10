@@ -1284,7 +1284,7 @@ public class VelocityModel implements Cloneable, Serializable {
                     tempCmbDepth = aboveLayer.getBotDepth();
                     cmbMin = Math.abs(cmbDepth - aboveLayer.getBotDepth());
                 }
-                // iocb is either below a fluid layer or is equal to cmb
+                // iocb is either below a fluid layer or is equal to cmb, or is center of earth
                 if(aboveLayer.getBotDepth()  == tempCmbDepth || (aboveLayer.getBotSVelocity() == 0.0
                         && belowLayer.getTopSVelocity() > 0.0
                         && Math.abs(iocbDepth - aboveLayer.getBotDepth()) < iocbMin)) {
@@ -1301,8 +1301,7 @@ public class VelocityModel implements Cloneable, Serializable {
         // iocb is either below a fluid layer or is equal to cmb or center of earth
         // belowLayer is bottommost layer, so belowLayer.botDepth == radius of earth
         if(belowLayer.getBotDepth()  == tempCmbDepth || (belowLayer.getBotSVelocity() == 0.0
-                && belowLayer.getTopSVelocity() > 0.0
-                && Math.abs(iocbDepth - belowLayer.getBotDepth()) < iocbMin)) {
+                && tempIocbDepth == tempCmbDepth )) {
             tempIocbDepth = belowLayer.getBotDepth();
             iocbMin = Math.abs(iocbDepth - belowLayer.getBotDepth());
         }

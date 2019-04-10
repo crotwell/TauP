@@ -87,6 +87,17 @@ public class VelocityModelTest {
     }
 
     @Test
+    public void testNoInnerCore() throws IOException, VelocityModelException {
+        String modelName = "noInnerCore.nd";
+        VelocityModel vMod = loadTestVelMod(modelName);
+
+        assertEquals(modelName+" moho ", 35, vMod.getMohoDepth(), 0.00000001);
+        assertEquals(modelName+"cmb ", 2889, vMod.getCmbDepth(), 0.00000001);
+        assertEquals(modelName+"iocb=center of earth, iocb ", vMod.getRadiusOfEarth(), vMod.getIocbDepth(), 0.00000001);
+        
+    }
+
+    @Test
     public void testNDWithoutLabels() throws IOException, VelocityModelException {
         String modelName = "NDNoLabels.nd";
         VelocityModel vMod = loadTestVelMod(modelName);
