@@ -83,6 +83,14 @@ public class SeismicPhase implements Serializable, Cloneable {
      * segment.
      */
     public static final int TRANSDOWN = 4;
+    
+
+    /**
+     * Used by addToBranch when the path transmits down through the end of a
+     * segment.
+     */
+    public static final int DIFFRACT = 5;
+
 
     /**
      * The maximum degrees that a Pn or Sn can refract along the moho. Note this
@@ -156,6 +164,12 @@ public class SeismicPhase implements Serializable, Cloneable {
      * both the earth model and the source depth.
      */
     protected List<Integer> branchSeq = new ArrayList<Integer>();
+
+
+    /**
+     * Array of branchSeq positions where a head or diffracted segment occurs.
+     */
+    protected List<Integer> headOrDiffractSeq = new ArrayList<Integer>();
 
     /** The phase name, ie PKiKP. */
     protected String name;
@@ -788,6 +802,8 @@ public class SeismicPhase implements Serializable, Cloneable {
             return "TRANSUP";
         } else if(endAction == TRANSDOWN) {
             return "TRANSDOWN";
+        } else if(endAction == DIFFRACT) {
+            return "DIFFRACT";
         } else {
             throw new RuntimeException("UNKNOWN Action: "+endAction);
         }
@@ -845,6 +861,12 @@ public class SeismicPhase implements Serializable, Cloneable {
             maxRayParam = Math.min(maxRayParam, tMod.getTauBranch(endBranch,
                                                                   isPWave)
                     .getMinRayParam());
+        } else if(endAction == DIFFRACT) {
+            endOffset = 0;
+            isDownGoing = true;
+            maxRayParam = Math.min(maxRayParam, tMod.getTauBranch(endBranch,
+                                                                  isPWave)
+                    .getMinTurnRayParam());
         } else {
             throw new TauModelException("Illegal endAction: endAction="
                     + endAction);
@@ -895,7 +917,12 @@ public class SeismicPhase implements Serializable, Cloneable {
             }
         }
         currBranch = endBranch + endOffset;
+
+        if(DEBUG) {
+            System.out.println("after addToBranch: minRP="+minRayParam+"  maxRP="+maxRayParam);
         }
+
+    }
 
     /**
      * Finds the closest discontinuity to the given depth that can have
@@ -1116,8 +1143,57 @@ public class SeismicPhase implements Serializable, Cloneable {
                         minRayParam = -1;
                         return;
                     }
+                    
+                } else if(nextLeg.equals("Pdiff") || nextLeg.equals("Sdiff")) {
+                    endAction = DIFFRACT;
+                    addToBranch(tMod,
+                                currBranch,
+                                tMod.getCmbBranch() - 1,
+                                isPWave,
+                                endAction);
+                    if (currLeg.charAt(0) != nextLeg.charAt(0)) {
+                        // like Sed Pdiff conversion
+                        isPWave = ! isPWave;
+                    }
+                } else if(nextLeg.equals("K")) {
+                    endAction = TRANSDOWN;
+                    addToBranch(tMod,
+                                currBranch,
+                                tMod.getCmbBranch() - 1,
+                                isPWave,
+                                endAction);
+                } else if(nextLeg.startsWith("v")) {
+                        disconBranch = closestBranchToDepth(tMod,
+                                                            nextLeg.substring(1));
+                        if(currBranch <= disconBranch - 1) {
+                            endAction = REFLECT_TOPSIDE;
+                            addToBranch(tMod,
+                                        currBranch,
+                                        disconBranch - 1,
+                                        isPWave,
+                                        endAction);
+                        } else {
+                            throw new TauModelException("Phase not recognized (4): "
+                                    + currLeg + " followed by " + nextLeg
+                                    + " when currBranch=" + currBranch
+                                    + " < disconBranch=" + disconBranch);
+                        }
+                } else if( nextLeg.equals("I") || nextLeg.equals("J")) {
+                    if(tMod.getCmbDepth() == tMod.getIocbDepth()) {
+                    // degenerate case of no fluid outer core, so allow phases like PIP or SJS 
+                    endAction = TRANSDOWN;
+                    addToBranch(tMod,
+                                currBranch,
+                                tMod.getCmbBranch() - 1,
+                                isPWave,
+                                endAction);
+                    } else {
+                        maxRayParam = -1;
+                        if(DEBUG) {System.out.println("P or S followed by I or J can only exist if model has no outer core");}
+                        return;
+                    }
                 } else {
-                    throw new TauModelException("Phase not recognized: "
+                    throw new TauModelException("Phase not recognized (1): "
                             + currLeg + " followed by " + nextLeg);
                 }
             /* Deal with p and s case . */
@@ -1138,7 +1214,7 @@ public class SeismicPhase implements Serializable, Cloneable {
                                     isPWave,
                                     endAction);
                     } else {
-                        throw new TauModelException("Phase not recognized: "
+                        throw new TauModelException("Phase not recognized (2): "
                                 + currLeg + " followed by " + nextLeg
                                 + " when currBranch=" + currBranch
                                 + " > disconBranch=" + disconBranch);
@@ -1179,7 +1255,7 @@ public class SeismicPhase implements Serializable, Cloneable {
                                 isPWave,
                                 endAction);
                 } else {
-                    throw new TauModelException("Phase not recognized: "
+                    throw new TauModelException("Phase not recognized (3): "
                             + currLeg + " followed by " + nextLeg);
                 }
                 /* Now deal with P and S case. */
@@ -1214,7 +1290,7 @@ public class SeismicPhase implements Serializable, Cloneable {
                                     isPWave,
                                     endAction);
                     } else {
-                        throw new TauModelException("Phase not recognized: "
+                        throw new TauModelException("Phase not recognized (4): "
                                 + currLeg + " followed by " + nextLeg
                                 + " when currBranch=" + currBranch
                                 + " < disconBranch=" + disconBranch);
@@ -1265,7 +1341,7 @@ public class SeismicPhase implements Serializable, Cloneable {
                                     isPWave,
                                     endAction);
                     } else {
-                        throw new TauModelException("Phase not recognized: "
+                        throw new TauModelException("Phase not recognized (5): "
                                 + currLeg + " followed by " + nextLeg
                                 + " when currBranch=" + currBranch
                                 + " > disconBranch=" + disconBranch);
@@ -1321,7 +1397,7 @@ public class SeismicPhase implements Serializable, Cloneable {
                         if(disconBranch > currBranch) {
                             // check for discontinuity below the current branch
                             // when the ray should be upgoing
-                            throw new TauModelException("Phase not recognized: "
+                            throw new TauModelException("Phase not recognized (6): "
                                     + currLeg
                                     + " followed by "
                                     + nextLeg
@@ -1387,7 +1463,7 @@ public class SeismicPhase implements Serializable, Cloneable {
                                 return;
                             }
                         } else {
-                            throw new TauModelException("Phase not recognized: "
+                            throw new TauModelException("Phase not recognized (7): "
                                     + currLeg
                                     + " followed by "
                                     + nextLeg
@@ -1395,7 +1471,7 @@ public class SeismicPhase implements Serializable, Cloneable {
                         }
                     }
                 } else {
-                    throw new TauModelException("Phase not recognized: "
+                    throw new TauModelException("Phase not recognized (8): "
                             + currLeg + " followed by " + nextLeg);
                 }
             } else if(currLeg.startsWith("P") || currLeg.startsWith("S")) {
@@ -1411,13 +1487,22 @@ public class SeismicPhase implements Serializable, Cloneable {
                             && minRayParam <= tMod.getTauBranch(tMod.getCmbBranch() - 1,
                                                                 isPWave)
                                     .getMinTurnRayParam()) {
-                        endAction = TURN;
-                        addToBranch(tMod,
-                                    currBranch,
-                                    tMod.getCmbBranch() - 1,
-                                    isPWave,
-                                    endAction);
-                        maxRayParam = minRayParam;
+
+                        if (currBranch < tMod.getCmbBranch() - 1 
+                                || (currBranch == tMod.getCmbBranch() - 1 && endAction != DIFFRACT)) {
+                            endAction = TURN;
+                            addToBranch(tMod,
+                                        currBranch,
+                                        tMod.getCmbBranch() - 1,
+                                        isPWave,
+                                        endAction);
+                        } // otherwise we are already at the right branch to diffract
+                        // remember where the diff or head happened (one less than size)
+                        headOrDiffractSeq.add(new Integer(branchSeq.size()-1));
+                        maxRayParam = tMod.getTauBranch(tMod.getCmbBranch() - 1,
+                                                        isPWave)
+                            .getMinTurnRayParam();
+                        minRayParam = maxRayParam;
                         if(nextLeg.equals("END")) {
                             endAction = REFLECT_UNDERSIDE;
                             addToBranch(tMod,
@@ -1425,22 +1510,35 @@ public class SeismicPhase implements Serializable, Cloneable {
                                         upgoingRecBranch,
                                         isPWave,
                                         endAction);
-                            } else if (nextLeg.startsWith("P") || nextLeg.startsWith("S")) {
-                                endAction = REFLECT_UNDERSIDE;
+                        } else if (nextLeg.equals("K")) {
+                            endAction = TRANSDOWN;
+                            currBranch++;
+                        } else if (nextLeg.startsWith("P") || nextLeg.startsWith("S")) {
+                            endAction = REFLECT_UNDERSIDE;
                             addToBranch(tMod,
                                         currBranch,
                                         0,
                                         isPWave,
                                         endAction);
+                        } else {
+                            throw new TauModelException("Phase not recognized (12): "
+                                    + currLeg + " followed by " + nextLeg
+                                    + " when currBranch=" + currBranch);
                         }
                     } else {
                         // can't have head wave as ray param is not within range
-                        maxRayParam = -1;
                         if(DEBUG) {
                             System.out.println("Cannot have the head wave "
                                     + currLeg + " within phase " + name
                                     + " for this sourceDepth and/or path.");
+                            System.out.println(maxRayParam+" >= "+tMod.getTauBranch(tMod.getCmbBranch() - 1,
+                                                        isPWave)
+                            .getMinTurnRayParam()+" "+
+                            "&& "+minRayParam+" <= "+tMod.getTauBranch(tMod.getCmbBranch() - 1,
+                                                                isPWave)
+                                    .getMinTurnRayParam());
                         }
+                        maxRayParam = -1;
                         return;
                     }
                 } else if(currLeg.equals("Pg") || currLeg.equals("Sg")
@@ -1527,7 +1625,7 @@ public class SeismicPhase implements Serializable, Cloneable {
                         }
                     }
                 } else {
-                    throw new TauModelException("Phase not recognized: "
+                    throw new TauModelException("Phase not recognized for P,S: "
                             + currLeg + " followed by " + nextLeg);
                 }
             } else if(currLeg.equals("K")) {
@@ -1554,6 +1652,7 @@ public class SeismicPhase implements Serializable, Cloneable {
                 }
                 if(nextLeg.equals("P") || nextLeg.equals("S")) {
                     if(prevLeg.equals("P") || prevLeg.equals("S")
+                            || prevLeg.equals("Pdiff") || prevLeg.equals("Sdiff")
                             || prevLeg.equals("K") || prevLeg.equals("k")
                             || prevLeg.equals("START")) {
                         endAction = TURN;
@@ -1605,7 +1704,7 @@ public class SeismicPhase implements Serializable, Cloneable {
                                 isPWave,
                                 endAction);
                 } else {
-                    throw new TauModelException("Phase not recognized: "
+                    throw new TauModelException("Phase not recognized (9): "
                             + currLeg + " followed by " + nextLeg);
                 }
             } else if(currLeg.equals("I") || currLeg.equals("J")) {
@@ -1680,7 +1779,7 @@ public class SeismicPhase implements Serializable, Cloneable {
                                                 + " followed by " + nextLeg+" looks like a upgoing wave from the free surface as closest discontinuity to "+currLeg+" is zero depth.");
                 }
             } else {
-                throw new TauModelException("Phase not recognized: " + currLeg
+                throw new TauModelException("Phase not recognized (10): " + currLeg
                         + " followed by " + nextLeg);
             }
         }
@@ -2058,7 +2157,7 @@ public class SeismicPhase implements Serializable, Cloneable {
                 }
             }
         }
-        if(name.indexOf("Sdiff") != -1 || name.indexOf("Pdiff") != -1) {
+        if(name.indexOf("Sdiff") != -1 || name.indexOf("Pdiff") != -1 || name.indexOf("Sd") != -1 || name.indexOf("Pd") != -1) {
             if(tMod.cmbDepth == tMod.radiusOfEarth || tMod.getSlownessModel()
                     .depthInHighSlowness(tMod.cmbDepth - 1e-10,
                                          minRayParam,
@@ -2389,11 +2488,27 @@ public class SeismicPhase implements Serializable, Cloneable {
                             + timeB + " timeA=" + timeA);
                 }
             }
+            for(int diffBranchIdx = 0; diffBranchIdx < headOrDiffractSeq.size(); diffBranchIdx++) {
+                int diffBranchNum = headOrDiffractSeq.get(diffBranchIdx);
+                if (DEBUG) {
+                    System.out.println("diff check: "+diffBranchNum+" "+i + " branchNum =" + branchNum
+                                       + " downGoing=" + (Boolean)downGoing.get(i)
+                                       + "  isPWave=" + isPWave);
+                }
+                if (i == diffBranchNum) {
+                    double refractDist = (currArrival.getDist() - dist[0]) / headOrDiffractSeq.size();
+                    double refractTime = (refractDist*currArrival.getRayParam()) / headOrDiffractSeq.size();
+                    pierce.add(new TimeDist(distRayParam,
+                                            branchTime + refractTime,
+                                            branchDist + refractDist,
+                                            branchDepth));
+                    branchDist += refractDist;
+                    prevBranchTime = branchTime;
+                    branchTime += refractTime;
+                }
+            }
         }
-        if(name.indexOf("Pdiff") != -1 || name.indexOf("Pn") != -1
-                || name.indexOf("Sdiff") != -1 || name.indexOf("Sn") != -1) {
-            pierce = handleHeadOrDiffractedWave(currArrival, pierce);
-        } else if(name.indexOf("kmps") != -1) {
+        if(name.indexOf("kmps") != -1) {
             pierce.add(new TimeDist(distRayParam,
                                                  currArrival.getTime(),
                                                  currArrival.getDist(),
@@ -2514,41 +2629,33 @@ public class SeismicPhase implements Serializable, Cloneable {
                  * Here we worry about the special case for head and
                  * diffracted waves.
                  */
-                if(branchNum == tMod.cmbBranch - 1 && i < branchSeq.size()-1
-                        && ((Integer)branchSeq.get(i + 1)).intValue() == tMod.cmbBranch - 1
-                        && (name.indexOf("Pdiff") != -1 || name.indexOf("Sdiff") != -1)) {
-                    TimeDist[] diffTD = new TimeDist[1];
-                    diffTD[0] = new TimeDist(currArrival.getRayParam(),
-                                             (currArrival.getDist() - dist[0])
-                                                     * currArrival.getRayParam(),
-                                             currArrival.getDist()
-                                                     - dist[0],
-                                             tMod.cmbDepth);
-                    pathList.add(diffTD);
-                } else if(branchNum == tMod.mohoBranch  && i < branchSeq.size()-1
-                        && ((Integer)branchSeq.get(i + 1)).intValue() == tMod.mohoBranch 
-                        && (name.indexOf("Pn") != -1 || name.indexOf("Sn") != -1)) {
-                    int numFound = 0;
-                    int indexInString = -1;
-                    // can't have both Pn and Sn in a phase, so one of these
-                    // should do nothing
-                    while((indexInString = name.indexOf("Pn",
-                                                        indexInString + 1)) != -1) {
-                        numFound++;
+
+                for(int diffBranchIdx = 0; diffBranchIdx < headOrDiffractSeq.size(); diffBranchIdx++) {
+                    int diffBranchNum = headOrDiffractSeq.get(diffBranchIdx);
+                    if (DEBUG) {
+                        System.out.println("diff check: "+diffBranchNum+" "+i + " branchNum =" + branchNum
+                                           + " downGoing=" + (Boolean)downGoing.get(i)
+                                           + "  isPWave=" + isPWave);
                     }
-                    while((indexInString = name.indexOf("Sn",
-                                                        indexInString + 1)) != -1) {
-                        numFound++;
+                    if (i == diffBranchNum) {
+                        double refractDist = (currArrival.getDist() - dist[0]) / headOrDiffractSeq.size();
+                        double refractTime = (refractDist*currArrival.getRayParam()) / headOrDiffractSeq.size();
+                        TimeDist[] diffTD = new TimeDist[1];
+                        if (name.indexOf("Pdiff") != -1 || name.indexOf("Sdiff") != -1) {
+                            diffTD[0] = new TimeDist(currArrival.getRayParam(),
+                                                    refractTime,
+                                                    refractDist,
+                                                    tMod.cmbDepth);
+                        } else if (name.indexOf("Pn") != -1 || name.indexOf("Sn") != -1) {
+                            diffTD[0] = new TimeDist(currArrival.getRayParam(),
+                                                     refractTime,
+                                                     refractDist,
+                                                     tMod.mohoDepth);
+                        } else {
+                            throw new RuntimeException("Path adding head and diffracted wave, but did not find P/Sdiff or P/Sn, expected: "+headOrDiffractSeq.size());
+                        }
+                        pathList.add(diffTD);
                     }
-                    TimeDist[] headTD = new TimeDist[1];
-                    headTD[0] = new TimeDist(currArrival.getRayParam(),
-                                             (currArrival.getDist() - dist[0])
-                                                     / numFound
-                                                     * currArrival.getRayParam(),
-                                             (currArrival.getDist() - dist[0])
-                                                     / numFound,
-                                             tMod.mohoDepth);
-                    pathList.add(headTD);
                 }
             }
             if (name.indexOf("kmps") != -1) {
@@ -2645,8 +2752,12 @@ public class SeismicPhase implements Serializable, Cloneable {
                 return "Legs ended but more tokens exist: " + currToken;
             }
             /* Check for ! not second to last token */
-            if ((prevToken.equals("Ped") || prevToken.equals("Sed")) && ! currToken.equals("END")) {
-                return "'Ped' or 'Sed' can only be second to last token immediately before END";
+            if ((prevToken.equals("Ped") || prevToken.equals("Sed")) 
+                    && ! ( currToken.equals("END") 
+                            || currToken.equals("Pdiff") || currToken.equals("Sdiff")
+                            || currToken.equals("P") || currToken.equals("S")
+                            || currToken.equals("K") || currToken.startsWith("v"))) {
+                return "'Ped' or 'Sed' can only be before Pdiff,P,S,Sdiff,K or second to last token immediately before END or ";
             }
             // Cannot have p,s before I, i, or J
             if((prevToken.startsWith("p") || prevToken.startsWith("s")
