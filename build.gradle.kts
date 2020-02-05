@@ -236,6 +236,7 @@ for (key in scriptNames.keys) {
 
 
 tasks.register<JavaExec>("genModels") {
+  description = "generate TauP default model files"
   classpath = sourceSets.getByName("main").runtimeClasspath
   main = "edu.sc.seis.TauP.StdModelGenerator"
 
