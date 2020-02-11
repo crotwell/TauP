@@ -240,7 +240,7 @@ tasks.register<JavaExec>("genModels") {
   classpath = sourceSets.getByName("main").runtimeClasspath
   main = "edu.sc.seis.TauP.StdModelGenerator"
 
-  val generatedSrcDir = File(project.buildDir, "generated-src/stdmodels")
+  val generatedSrcDir = File(project.buildDir, "generated-src/StdModels")
   val resourceDir =  File(generatedSrcDir, "/resources")
   val outDir =  File(resourceDir, "edu/sc/seis/TauP/StdModels/")
   outDir.mkdirs()
