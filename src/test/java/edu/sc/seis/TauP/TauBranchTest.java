@@ -1,8 +1,9 @@
 package edu.sc.seis.TauP;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Test;
 
-import org.junit.Test;
 
 public class TauBranchTest {
 
@@ -34,21 +35,21 @@ public class TauBranchTest {
             slNum++;
             tmpSL = tMod.getSlownessModel().getSlownessLayer(slNum, true);
         }
-        assertEquals("rp orig length", rayParams.length, orig.dist.length);
-        assertEquals("rp new branch length", rayParams.length, tBranch.dist.length - 1);
-        assertEquals("dist length", orig.dist.length, tBranch.dist.length - 1);
-        assertEquals("time length", orig.time.length, tBranch.time.length - 1);
+        assertEquals( rayParams.length, orig.dist.length);
+        assertEquals(rayParams.length, tBranch.dist.length - 1);
+        assertEquals( orig.dist.length, tBranch.dist.length - 1);
+        assertEquals( orig.time.length, tBranch.time.length - 1);
         int i = 0;
         while (i < rpIndex) {
-            assertEquals(i + " pre dist", orig.dist[i], tBranch.dist[i], 0.000000001);
-            assertEquals(i + " pre time", orig.time[i], tBranch.time[i], 0.000000001);
+            assertEquals( orig.dist[i], tBranch.dist[i], 0.000000001, i + " pre dist");
+            assertEquals( orig.time[i], tBranch.time[i], 0.000000001, i + " pre time");
             i++;
         }
-        assertEquals("new val dist", newRPTimeDist.getDistRadian(), tBranch.dist[rpIndex], 0.000001);
-        assertEquals("new val time", newRPTimeDist.getTime(), tBranch.time[rpIndex], 0.000001);
+        assertEquals( newRPTimeDist.getDistRadian(), tBranch.dist[rpIndex], 0.000001, "new val dist");
+        assertEquals( newRPTimeDist.getTime(), tBranch.time[rpIndex], 0.000001, "new val time");
         while (i < orig.dist.length) {
-            assertEquals(i + " post dist", orig.dist[i], tBranch.dist[i + 1], 0.000000001);
-            assertEquals(i + " post time", orig.time[i], tBranch.time[i + 1], 0.000000001);
+            assertEquals(orig.dist[i], tBranch.dist[i + 1], 0.000000001, i + " post dist");
+            assertEquals( orig.time[i], tBranch.time[i + 1], 0.000000001, i + " post time");
             i++;
         }
     }
@@ -60,15 +61,15 @@ public class TauBranchTest {
         double depth = 120;
         int layerNum = tMod.getSlownessModel().layerNumberBelow(depth, true);
         SlownessLayer sLayer = tMod.getSlownessModel().getSlownessLayer(layerNum, true);
-        assertEquals("depth in slowness model", depth, sLayer.getTopDepth(), 0.00000000001);
+        assertEquals( depth, sLayer.getTopDepth(), 0.00000000001, "depth in slowness model");
         double rp = sLayer.getTopP();
         double[] rayParams = tMod.getRayParams();
         int rpIndex = 0;
         while (rayParams[rpIndex] > rp) {
             rpIndex++;
         }
-        assertTrue("rpIndex rp length", rpIndex < rayParams.length);
-        assertEquals("rp rpIndex", rp, rayParams[rpIndex], 0.000000000001);
+        assertTrue( rpIndex < rayParams.length, "rpIndex rp length");
+        assertEquals( rp, rayParams[rpIndex], 0.000000000001, "rp rpIndex");
         TauBranch orig = tMod.getTauBranch(tMod.findBranch(depth), true);
         
 
@@ -78,9 +79,9 @@ public class TauBranchTest {
         topBranch.createBranch(tMod.getSlownessModel(),
                                orig.getMaxRayParam(),
                                rayParams);
-        assertEquals("orig branch dist length", rayParams.length, orig.dist.length);
-        assertEquals("new branch dist length", rayParams.length, topBranch.dist.length);
-        assertEquals("new branch time length", rayParams.length, topBranch.time.length);
+        assertEquals( rayParams.length, orig.dist.length, "orig branch dist length");
+        assertEquals(rayParams.length, topBranch.dist.length, "new branch dist length");
+        assertEquals(rayParams.length, topBranch.time.length, "new branch time length");
         TauBranch botBranch = orig.difference(topBranch,
                                               -1,
                                               -1,
@@ -88,14 +89,14 @@ public class TauBranchTest {
                                               topBranch.getMinRayParam(),
                                               rayParams);
         for (int i = 0; i <= rpIndex; i++) {
-            assertEquals(i+" dist", orig.getDist()[i], topBranch.getDist(i)+botBranch.getDist(i), 0.000000001);
-            assertEquals(i+" time", orig.getTime()[i], topBranch.getTime(i)+botBranch.getTime(i), 0.000000001);
-            assertEquals(i+" below zero dist", botBranch.getDist(i), 0, 0.000000001);
-            assertEquals(i+" below zero time", botBranch.getTime(i), 0, 0.000000001);
+            assertEquals(orig.getDist()[i], topBranch.getDist(i)+botBranch.getDist(i), 0.000000001);
+            assertEquals( orig.getTime()[i], topBranch.getTime(i)+botBranch.getTime(i), 0.000000001);
+            assertEquals( botBranch.getDist(i), 0, 0.000000001);
+            assertEquals( botBranch.getTime(i), 0, 0.000000001);
         }
         for (int i = rpIndex+1; i<rayParams.length; i++) {
-            assertEquals(i+" dist", orig.getDist()[i], topBranch.getDist(i)+botBranch.getDist(i), 0.000000001);
-            assertEquals(i+" time", orig.getTime()[i], topBranch.getTime(i)+botBranch.getTime(i), 0.000000001);
+            assertEquals( orig.getDist()[i], topBranch.getDist(i)+botBranch.getDist(i), 0.000000001);
+            assertEquals( orig.getTime()[i], topBranch.getTime(i)+botBranch.getTime(i), 0.000000001);
         }
         
     }
@@ -107,15 +108,15 @@ public class TauBranchTest {
         double depth = 119;
         int layerNum = tMod.getSlownessModel().layerNumForDepth(depth, true);
         SlownessLayer sLayer = tMod.getSlownessModel().getSlownessLayer(layerNum, true);
-        assertTrue("depth in slowness model", depth > sLayer.getTopDepth());
-        assertTrue("depth in slowness model", depth < sLayer.getBotDepth());
+        assertTrue( depth > sLayer.getTopDepth(), "depth in slowness model");
+        assertTrue(depth < sLayer.getBotDepth(), "depth in slowness model");
         double rp = sLayer.evaluateAt_bullen(depth, tMod.getRadiusOfEarth());
         double[] rayParams = tMod.getRayParams();
         int rpIndex = 0;
         while (rayParams[rpIndex] > rp) {
             rpIndex++;
         }
-        assertTrue("rpIndex rp length", rpIndex < rayParams.length);
+        assertTrue( rpIndex < rayParams.length, "rpIndex rp length");
         double[] outRayParams = new double[tMod.getRayParams().length+1];
         System.arraycopy(tMod.getRayParams(), 0, outRayParams, 0, rpIndex);
         outRayParams[rpIndex] = rp;
@@ -140,12 +141,12 @@ public class TauBranchTest {
                                               topBranch.getMinRayParam(),
                                               outRayParams);
         for (int i = 0; i < rpIndex; i++) {
-            assertEquals(i+" dist", orig.getDist()[i], topBranch.getDist(i)+botBranch.getDist(i), 0.000000001);
-            assertEquals(i+" time", orig.getTime()[i], topBranch.getTime(i)+botBranch.getTime(i), 0.000000001);
+            assertEquals( orig.getDist()[i], topBranch.getDist(i)+botBranch.getDist(i), 0.000000001);
+            assertEquals( orig.getTime()[i], topBranch.getTime(i)+botBranch.getTime(i), 0.000000001);
         }
         for (int i = rpIndex; i<rayParams.length; i++) {
-            assertEquals(i+" dist", orig.getDist()[i], topBranch.getDist(i+1)+botBranch.getDist(i+1), 0.000000001);
-            assertEquals(i+" time", orig.getTime()[i], topBranch.getTime(i+1)+botBranch.getTime(i+1), 0.000000001);
+            assertEquals( orig.getDist()[i], topBranch.getDist(i+1)+botBranch.getDist(i+1), 0.000000001);
+            assertEquals( orig.getTime()[i], topBranch.getTime(i+1)+botBranch.getTime(i+1), 0.000000001);
         }
         
     }
@@ -187,6 +188,6 @@ public class TauBranchTest {
                 System.out.println("split: "+splitTMod.getTauBranch(i, true));
             }
         }
-        assertTrue("Found split depth after split tmod", found);
+        assertTrue( found, "Found split depth after split tmod");
     }
 }

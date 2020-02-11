@@ -1,11 +1,14 @@
 package edu.sc.seis.TauP;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Test;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 
 public class ConstantModelWithoutCore {
@@ -28,8 +31,8 @@ public class ConstantModelWithoutCore {
 
     @Test
     public void testCMBatCenter() {
-        assertEquals("moho", 0.0, tMod.getMohoDepth(), 0.000001);
-        assertEquals("cmb", tMod.getRadiusOfEarth(), tMod.getCmbDepth(), 0.000001);
+        assertEquals( 0.0, tMod.getMohoDepth(), 0.000001);
+        assertEquals( tMod.getRadiusOfEarth(), tMod.getCmbDepth(), 0.000001);
     }
 
     @Test
@@ -47,9 +50,9 @@ public class ConstantModelWithoutCore {
         String[] badPhaseList = new String[] {"PKP", "PKIKP", "PIP", "PcP", "PKiKP", "SKS" };
         for (String phaseName : badPhaseList) {
                 SeismicPhase pPhase = new SeismicPhase(phaseName, tMod);
-                assertFalse(phaseName+" should not exist in model", pPhase.phasesExistsInModel());
+                assertFalse( pPhase.phasesExistsInModel(), phaseName+" should not exist in model");
                 List<Arrival> arrivals = pPhase.calcTime(130);
-                assertEquals("no arrival", 0, arrivals.size());
+                assertEquals( 0, arrivals.size());
         }
     }
     

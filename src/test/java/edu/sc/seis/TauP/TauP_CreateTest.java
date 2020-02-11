@@ -1,17 +1,14 @@
 package edu.sc.seis.TauP;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-import org.junit.Before;
-import org.junit.Test;
 
 
 public class TauP_CreateTest {
-
-    @Before
-    public void setUp() throws Exception {}
 
     @Test
     public void testGetCmbDepth() throws IOException, VelocityModelException, SlownessModelException, TauModelException {
@@ -19,9 +16,9 @@ public class TauP_CreateTest {
         for (String modelName : VelocityModelTest.modelNames) {
             VelocityModel vMod = VelocityModelTest.loadTestVelMod(modelName);
             TauModel tMod = taupCreate.createTauModel(vMod);
-            assertEquals("moho depth", vMod.getMohoDepth(), tMod.getMohoDepth(), 0.000001);
-            assertEquals("cmb", vMod.getCmbDepth(), tMod.getCmbDepth(), 0.000001);
-            assertEquals("iocb depth", vMod.getIocbDepth(), tMod.getIocbDepth(), 0.000001);
+            assertEquals( vMod.getMohoDepth(), tMod.getMohoDepth(), 0.000001);
+            assertEquals( vMod.getCmbDepth(), tMod.getCmbDepth(), 0.000001);
+            assertEquals( vMod.getIocbDepth(), tMod.getIocbDepth(), 0.000001);
         }
     }
 }

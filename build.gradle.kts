@@ -4,7 +4,7 @@ plugins {
   id("edu.sc.seis.version-class") version "1.1.1"
   "java"
   "maven"
-  "eclipse"
+  eclipse
   "project-report"
   "signing"
   application

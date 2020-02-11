@@ -1,13 +1,17 @@
 package edu.sc.seis.TauP;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import org.junit.Before;
-import org.junit.Test;
 
 public class VelocityModelTest {
 
@@ -16,7 +20,7 @@ public class VelocityModelTest {
                                                       "cn01.tvel",
                                                       "constant.tvel"};
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {}
 
     public static VelocityModel loadTestVelMod(String name) throws IOException, VelocityModelException {
@@ -35,9 +39,9 @@ public class VelocityModelTest {
     public void testDisconDepths() throws IOException, VelocityModelException {
         for (String modelName : modelNames) {
             VelocityModel vMod = loadTestVelMod(modelName);
-            assertNotEquals(modelName + " Moho != CMB", vMod.getMohoDepth(), vMod.getCmbDepth());
+            assertNotEquals( vMod.getMohoDepth(), vMod.getCmbDepth(), modelName + " Moho != CMB");
             if (vMod.getCmbDepth() == vMod.getIocbDepth()) {
-                assertEquals(modelName+" cmb=iocb means both at center", vMod.getRadiusOfEarth(), vMod.getCmbDepth(), 0.00000001);
+                assertEquals( vMod.getRadiusOfEarth(), vMod.getCmbDepth(), 0.00000001, modelName+" cmb=iocb means both at center");
             }
         }
     }
@@ -47,32 +51,25 @@ public class VelocityModelTest {
         String modelName = "cn01.tvel";
         VelocityModel vMod = loadTestVelMod(modelName);
 
-        assertEquals("cmb=moho, moho at 36", 36, vMod.getMohoDepth(), 0.00000001);
-        assertEquals("cmb=moho, cmb at center", vMod.getRadiusOfEarth(), vMod.getCmbDepth(), 0.00000001);
-        assertEquals("cmb=moho, iocb at center", vMod.getRadiusOfEarth(), vMod.getIocbDepth(), 0.00000001);
+        assertEquals( 36, vMod.getMohoDepth(), 0.00000001, "cmb=moho, moho at 36");
+        assertEquals( vMod.getRadiusOfEarth(), vMod.getCmbDepth(), 0.00000001, "cmb=moho, cmb at center");
+        assertEquals( vMod.getRadiusOfEarth(), vMod.getIocbDepth(), 0.00000001, "cmb=moho, iocb at center");
         
     }
 
     @Test
     public void testAllCore() throws IOException, VelocityModelException {
-        try {
         String modelName = "allCore.nd";
-        VelocityModel vMod = loadTestVelMod(modelName);
-        fail("should throw VelocityModelException");
-        } catch (VelocityModelException e) {
-            // this is supposed to happen
-        }
+        Exception exception = assertThrows(VelocityModelException.class, () ->
+    	    loadTestVelMod(modelName));
     }
 
     @Test
-    public void testAllInnerCoreCore() throws IOException, VelocityModelException {
-        try {
+    public void testAllInnerCoreCore() throws IOException {
         String modelName = "allInnerCore.nd";
-        VelocityModel vMod = loadTestVelMod(modelName);
-        fail("should throw VelocityModelException");
-        } catch (VelocityModelException e) {
-            // this is supposed to happen
-        }
+        Exception exception = assertThrows(VelocityModelException.class, () ->
+        	loadTestVelMod(modelName));
+        
     }
 
     @Test
@@ -80,9 +77,9 @@ public class VelocityModelTest {
         String modelName = "noOuterCore.nd";
         VelocityModel vMod = loadTestVelMod(modelName);
 
-        assertEquals(modelName+" moho ", 35, vMod.getMohoDepth(), 0.00000001);
-        assertEquals(modelName+"cmb ", 2889, vMod.getCmbDepth(), 0.00000001);
-        assertEquals(modelName+"cmb=iocb, iocb ", vMod.getCmbDepth(), vMod.getIocbDepth(), 0.00000001);
+        assertEquals( 35, vMod.getMohoDepth(), 0.00000001, modelName+" moho ");
+        assertEquals( 2889, vMod.getCmbDepth(), 0.00000001, modelName+"cmb ");
+        assertEquals( vMod.getCmbDepth(), vMod.getIocbDepth(), 0.00000001, modelName+"cmb=iocb, iocb ");
         
     }
 
@@ -91,9 +88,9 @@ public class VelocityModelTest {
         String modelName = "noInnerCore.nd";
         VelocityModel vMod = loadTestVelMod(modelName);
 
-        assertEquals(modelName+" moho ", 35, vMod.getMohoDepth(), 0.00000001);
-        assertEquals(modelName+"cmb ", 2889, vMod.getCmbDepth(), 0.00000001);
-        assertEquals(modelName+"iocb=center of earth, iocb ", vMod.getRadiusOfEarth(), vMod.getIocbDepth(), 0.00000001);
+        assertEquals( 35, vMod.getMohoDepth(), 0.00000001, modelName+" moho ");
+        assertEquals( 2889, vMod.getCmbDepth(), 0.00000001, modelName+"cmb ");
+        assertEquals( vMod.getRadiusOfEarth(), vMod.getIocbDepth(), 0.00000001, modelName+"iocb=center of earth, iocb ");
         
     }
 
@@ -102,9 +99,9 @@ public class VelocityModelTest {
         String modelName = "NDNoLabels.nd";
         VelocityModel vMod = loadTestVelMod(modelName);
 
-        assertEquals(modelName+" moho ", 36, vMod.getMohoDepth(), 0.00000001);
-        assertEquals(modelName+"cmb ", 2890, vMod.getCmbDepth(), 0.00000001);
-        assertEquals(modelName+"iocb", 5154.9, vMod.getIocbDepth(), 0.00000001);
+        assertEquals( 36, vMod.getMohoDepth(), 0.00000001, modelName+" moho ");
+        assertEquals(2890, vMod.getCmbDepth(), 0.00000001, modelName+"cmb ");
+        assertEquals( 5154.9, vMod.getIocbDepth(), 0.00000001, modelName+"iocb");
         
     }
 }

@@ -1,9 +1,9 @@
 package edu.sc.seis.TauP;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Test;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Test;
 
 public class CmdLineOutputTest {
 
@@ -139,14 +138,14 @@ public class CmdLineOutputTest {
 
     public void testCmd(String cmd) throws Exception {
         setUpStreams();
-        assertEquals("sysout is not empty", 0, outContent.toByteArray().length);
+        assertEquals( 0, outContent.toByteArray().length, "sysout is not empty");
         runCmd(cmd);
         BufferedReader prior = getPriorOutput(cmd);
         BufferedReader current = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(outContent.toByteArray())));
         int lineNum = 0;
         String priorLine;
         String currentLine;
-        assertTrue("Current output is empty.", current.ready());
+        assertTrue( current.ready() , "Current output is empty.");
         while (prior.ready() && current.ready()) {
             priorLine = prior.readLine();
             currentLine = current.readLine();
@@ -156,15 +155,11 @@ public class CmdLineOutputTest {
         }
         while (prior.ready()) {
             priorLine = prior.readLine();
-            if (priorLine.trim().length() != 0) {
-                fail("Prior has extra lines: " + priorLine);
-            }
+            assertEquals(0, priorLine.trim().length(), "Prior has extra lines: " + priorLine);
         }
         while (current.ready()) {
             currentLine = current.readLine();
-            if (currentLine.trim().length() != 0) {
-                fail("Current has extra lines: " + currentLine);
-            }
+            assertEquals(0, currentLine.trim().length(), "Current has extra lines: " + currentLine);
         }
         cleanUpStreams();
         origErr.println("Done with " + cmd);
@@ -217,13 +212,11 @@ public class CmdLineOutputTest {
     public BufferedReader getPriorOutput(String cmd) throws IOException {
         String resource = "edu/sc/seis/TauP/cmdLineTest/" + fileizeCmd(cmd);
         URL res = this.getClass().getClassLoader().getResource(resource);
-        assertNotNull("Resource " + resource + " for " + cmd + " not found.", res);
+        assertNotNull( res, "Resource " + resource + " for " + cmd + " not found.");
         InputStream inStream = this.getClass()
                 .getClassLoader()
                 .getResourceAsStream("edu/sc/seis/TauP/cmdLineTest/" + fileizeCmd(cmd));
-        if (inStream == null) {
-            fail("Resource " + fileizeCmd(cmd) + " for " + cmd + " not found.");
-        }
+        assertNotNull(inStream, "Resource " + fileizeCmd(cmd) + " for " + cmd + " not found.");
         System.err.println("Load "+resource);
         BufferedReader in = new BufferedReader(new InputStreamReader(inStream));
         return in;

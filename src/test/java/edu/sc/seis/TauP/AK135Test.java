@@ -1,5 +1,9 @@
 package edu.sc.seis.TauP;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Test;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -7,13 +11,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import junit.framework.TestCase;
-
-import org.junit.Test;
 
 /** test data from http://rses.anu.edu.au/~brian/AK135tables.pdf
  */
-public class AK135Test extends TestCase { 
+public class AK135Test  { 
 
     protected void setUp() throws Exception {
         taup = new TauP_Time("ak135");
@@ -79,15 +80,12 @@ public class AK135Test extends TestCase {
                 taup.calculate(timeDist.getDistDeg());
                 List<Arrival> arrivals = taup.getArrivals();
                 if (timeDist.getTime() > 0) {
-                assertTrue(phase + " has arrivals for depth " + timeDist.getDepth() + " at dist " + timeDist.getDistDeg(),
-                           arrivals.size() > 0);
+                assertTrue(arrivals.size() > 0);
                 // assume first?
-                assertEquals(phase + " time for depth " + timeDist.getDepth() + " at dist " + timeDist.getDistDeg(),
-                             timeDist.getTime(),
+                assertEquals(timeDist.getTime(),
                              arrivals.get(0).getTime(),
                              0.07f);
-                assertEquals(phase + " rp for depth " + timeDist.getDepth() + " at dist " + timeDist.getDistDeg(),
-                             timeDist.getP(),
+                assertEquals(timeDist.getP(),
                              arrivals.get(0).getRayParam() * Math.PI / 180,
                              0.11f);
                 }

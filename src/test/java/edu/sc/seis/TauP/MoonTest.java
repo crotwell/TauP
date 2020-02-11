@@ -1,28 +1,28 @@
 package edu.sc.seis.TauP;
 
 
-import junit.framework.TestCase;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 
-public class MoonTest extends TestCase {
+
+public class MoonTest {
 
     public static final String lunarModel = "MoonQR420.0";
     public static final String lunarModelFile = lunarModel+".nd";
     
     public SlownessModel smod;
     
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         VelocityModel vmod = VelocityModelTest.loadTestVelMod(lunarModelFile);
         smod = new SphericalSModel(vmod);
     }
     
-    @Test
-    @Ignore
+    //@Test
     public void testlayerNumberForDepth() throws Exception {
         boolean SWave = false;
         boolean PWave = true;

@@ -1,17 +1,18 @@
 package edu.sc.seis.TauP;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
 
 import java.util.List;
 
-import junit.framework.TestCase;
 
-import org.junit.Before;
-import org.junit.Test;
+public class SurfaceWaveTest {
 
-public class SurfaceWaveTest  extends TestCase {
-
-    @Before
-    @Test
+    @BeforeAll
     protected void setUp() throws Exception {
         taup = new TauP_Time("ak135");
     }
@@ -28,16 +29,16 @@ public class SurfaceWaveTest  extends TestCase {
             taup.setSourceDepth(depth);
             taup.calculate(deg);
             List<Arrival> arrivals = taup.getArrivals();
-            assertTrue(phaseName + " has arrivals for depth " + depth + " at dist " + deg,
-                       arrivals.size() > 0);
-            assertEquals(phaseName + " time for depth " + depth + " at dist " + deg,
-                         1111.95f,
+            assertTrue(arrivals.size() > 0,
+                       phaseName + " has arrivals for depth " + depth + " at dist " + deg);
+            assertEquals(1111.95f,
                          arrivals.get(0).getTime(),
-                         0.07f);
+                         0.07f,
+                         phaseName + " time for depth " + depth + " at dist " + deg);
             // long way around
-            assertEquals(phaseName + " time for depth " + depth + " at dist " + deg,
-                         12231.44f,
+            assertEquals(12231.44f,
                          arrivals.get(1).getTime(),
-                         0.07f);
+                         0.07f,
+                         phaseName + " time for depth " + depth + " at dist " + deg);
     }
 }

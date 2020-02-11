@@ -3,7 +3,12 @@
 // ReflTransTest.java ReflTransCoefficient.java Complex.java Sfun.java
 package edu.sc.seis.TauP;
 
-import junit.framework.TestCase;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 
 /*
  * Results from Aki and Richards, p. 147 Reflection down-up: PP 0.1065 SS
@@ -21,14 +26,10 @@ import junit.framework.TestCase;
  * -0.23076922189870933 P to SV: -4.8097192981283884E-5 SV to P :
  * -2.8056695987942995E-5
  */
-public class ReflTransTest extends TestCase {
+public class ReflTransTest {
 
-    public ReflTransTest(String name) {
-        super(name);
-    }
-
+    @BeforeEach
     protected void setUp() throws Exception {
-        super.setUp();
         coeff = new ReflTransCoefficient(pVelocityAbove,
                                          sVelocityAbove,
                                          densityAbove,

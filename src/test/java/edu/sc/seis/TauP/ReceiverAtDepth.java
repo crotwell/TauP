@@ -1,10 +1,10 @@
 package edu.sc.seis.TauP;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
-
-import org.junit.Test;
 
 
 public class ReceiverAtDepth {
@@ -80,15 +80,15 @@ public class ReceiverAtDepth {
             if (upFlippedPhase != null) {
                 flippedArrivals.addAll(upFlippedPhase.calcTime(degrees));
             }
-            assertEquals(pre+" arrival size "+phase.getName()+" "+flippedPhase.getName(),  phaseArrivals.size(), flippedArrivals.size());
+            assertEquals(  phaseArrivals.size(), flippedArrivals.size(), pre+" arrival size "+phase.getName()+" "+flippedPhase.getName());
             for (int i = 0; i < phaseArrivals.size(); i++) {
                 Arrival a = phaseArrivals.get(i);
                 Arrival f = flippedArrivals.get(i);
-                assertEquals(pre+" time",  a.getTime(), f.getTime(), 0.0001);
-                assertEquals(pre+" takeoff/incident",  a.getTakeoffAngle(), f.getIncidentAngle(), 0.0001);
-                assertEquals(pre+" incident/takeoff",  a.getIncidentAngle(), f.getTakeoffAngle(), 0.0001);
-                assertEquals(pre+" dist",  a.getDist(), f.getDist(), 0.0001);
-                assertEquals(pre+" rayParam",  a.getRayParam(), f.getRayParam(), 0.0001);
+                assertEquals(  a.getTime(), f.getTime(), 0.0001);
+                assertEquals(  a.getTakeoffAngle(), f.getIncidentAngle(), 0.0001);
+                assertEquals(  a.getIncidentAngle(), f.getTakeoffAngle(), 0.0001);
+                assertEquals(  a.getDist(), f.getDist(), 0.0001);
+                assertEquals(  a.getRayParam(), f.getRayParam(), 0.0001);
             }
         }
     }
@@ -138,10 +138,10 @@ public class ReceiverAtDepth {
         Arrival aPcP = PcPArrivals.get(0);
         Arrival ap = pArrivals.get(0);
         Arrival aPcP200 = PcP200Arrivals.get(0);
-        assertEquals(pre+" time",  aPcP.getTime(), aPcP200.getTime()+ap.getTime(), 0.0001);
-        assertEquals(pre+" dist",  aPcP.getDist(), aPcP200.getDist()+ap.getDist(), 0.0001);
-        assertEquals(pre+" rayParam PcP PcP200",  aPcP.getRayParam(), aPcP200.getRayParam(), 0.0001);
-        assertEquals(pre+" rayParam PcP p",  aPcP.getRayParam(), ap.getRayParam(), 0.0001);
+        assertEquals(  aPcP.getTime(), aPcP200.getTime()+ap.getTime(), 0.0001);
+        assertEquals(  aPcP.getDist(), aPcP200.getDist()+ap.getDist(), 0.0001);
+        assertEquals(  aPcP.getRayParam(), aPcP200.getRayParam(), 0.0001);
+        assertEquals(  aPcP.getRayParam(), ap.getRayParam(), 0.0001);
     }
     
     @Test

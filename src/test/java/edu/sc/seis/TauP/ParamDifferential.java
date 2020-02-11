@@ -1,5 +1,9 @@
 package edu.sc.seis.TauP;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Test;
+
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
@@ -8,14 +12,9 @@ import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.List;
 
-import junit.framework.TestCase;
-
-import org.junit.Test;
 
 
-public class ParamDifferential extends TestCase {
-
-    public ParamDifferential() {}
+public class ParamDifferential {
     
     public static void main(String[] args) throws Exception {
         ParamDifferential pd = new ParamDifferential();

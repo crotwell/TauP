@@ -1,14 +1,15 @@
 package edu.sc.seis.TauP;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Test;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import junit.framework.TestCase;
 
-import org.junit.Test;
-
-public class ConstantModelTest extends TestCase {
+public class ConstantModelTest {
 
     public void setUp() throws Exception {
         vmod = createVelMod(vp, vs);
@@ -91,10 +92,10 @@ public class ConstantModelTest extends TestCase {
                     minRPdiff = Math.abs(arrival.getRayParam() - sourceRP);
                 }
             }
-            assertEquals("travel time for " + dist + " depth=" + depth + " at " + velocity,
-                         lawCosinesLength(R, depth, dist * Math.PI / 180) / velocity,
+            assertEquals(lawCosinesLength(R, depth, dist * Math.PI / 180) / velocity,
                          a.getTime(),
-                         0.0001);
+                         0.0001,
+                         "travel time for " + dist + " depth=" + depth + " at " + velocity);
         }
         }
     }
@@ -149,10 +150,9 @@ public class ConstantModelTest extends TestCase {
     public static void doSeismicPhase(float dist, double velocity, String phase, TauModel tMod) throws TauModelException {
         SeismicPhase pPhase = new SeismicPhase(phase, tMod);
         List<Arrival> arrivals = pPhase.calcTime(dist);
-        assertEquals("one arrival", 1, arrivals.size());
+        assertEquals( 1, arrivals.size());
         Arrival a = arrivals.get(0);
-        assertEquals("travel time for " + dist,
-                     2 * R * Math.sin(dist / 2 * Math.PI / 180) / velocity,
+        assertEquals(2 * R * Math.sin(dist / 2 * Math.PI / 180) / velocity,
                      a.getTime(),
                      0.01);
     }
@@ -167,8 +167,7 @@ public class ConstantModelTest extends TestCase {
         // assertEquals("one arrival for "+dist+" depth="+depth+" at "+velocity,
         // 1, arrivals.size());
         Arrival a = arrivals.get(0);
-        assertEquals("travel time for " + dist + " depth=" + depth + " at " + velocity,
-                     lawCosinesLength(R, depth, dist * Math.PI / 180) / velocity,
+        assertEquals(lawCosinesLength(R, depth, dist * Math.PI / 180) / velocity,
                      a.getTime(),
                      0.02);
     }

@@ -1,8 +1,9 @@
 package edu.sc.seis.TauP;
 
-import static org.junit.Assert.*;
-
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Test;
 
 
 public class SlownessLayerTest {
@@ -24,10 +25,10 @@ public class SlownessLayerTest {
         double B = Bnum / Bdenom;
         double A = sl.getTopP()
                 / Math.pow((radiusOfEarth - sl.getTopDepth()), B);
-        assertFalse("Bnum", Double.isNaN(Bnum));
-        assertFalse("Bdenom", Double.isNaN(Bdenom));
-        assertFalse("B", Double.isNaN(B));
-        assertFalse("A", Double.isNaN(A));
+        assertFalse( Double.isNaN(Bnum));
+        assertFalse( Double.isNaN(Bdenom));
+        assertFalse( Double.isNaN(B));
+        assertFalse( Double.isNaN(A));
         System.out.println("A="+A+" B="+B+" Bnum="+Bnum+" Bedenom="+Bdenom);
         
         // #########################
@@ -44,7 +45,7 @@ public class SlownessLayerTest {
     public void testQianguoMod() throws SlownessModelException {
         SlownessLayer sl = new SlownessLayer(2548.4, 6.546970605878823, 1846.2459389213773, 13.798727310994103);
         double depth = sl.bullenDepthFor(2197.322969460689, 6371);
-        assertFalse("depth no NaN", Double.isNaN(depth));
+        assertFalse( Double.isNaN(depth));
     }
     
     @Test

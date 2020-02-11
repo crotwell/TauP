@@ -1,18 +1,15 @@
 package edu.sc.seis.TauP;
 
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
 
 public class Dist180Test {
 
-    @Before
-    public void setUp() throws Exception {}
-    
     @Test
     public void constantModelTest() throws NoSuchMatPropException, NoSuchLayerException, SlownessModelException, TauModelException {
         double VP = 5.8;
