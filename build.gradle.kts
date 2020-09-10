@@ -29,12 +29,12 @@ java {
 dependencies {
     implementation("edu.sc.seis:seisFile:1.8.0") {
       // we need seisFile for sac output, but not all the other functionality
-      exclude("com.martiansoftware:jsap")
-      exclude("org.rxtx:rxtx")
-      exclude("org.codehaus.woodstox:woodstox-core-lgpl")
-      exclude("net.java.dev.msv:msv-core")
-      exclude("org.apache.httpcomponents:httpclient")
-      exclude("mysql:mysql-connector-java")
+      exclude(group = "com.martiansoftware", module = "jsap")
+      exclude(group = "org.rxtx", module = "rxtx")
+      exclude(group = "org.codehaus.woodstox", module = "woodstox-core-lgpl")
+      exclude(group = "net.java.dev.msv", module = "msv-core")
+      exclude(group = "org.apache.httpcomponents", module = "httpclient")
+      exclude(group = "mysql", module = "mysql-connector-java")
     }
     // Use JUnit Jupiter API for testing.
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.5.1")
