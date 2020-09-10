@@ -39,6 +39,8 @@ public class TauP_Path extends TauP_Pierce {
 
 	protected boolean gmtScript = false;
 	
+	protected boolean withTime = false;
+	
 	protected String psFile;
 	
 	protected float maxPathTime = Float.MAX_VALUE;
@@ -141,6 +143,7 @@ public class TauP_Path extends TauP_Pierce {
 
 	@Override
 	public void printResult(PrintWriter out) throws IOException {
+		boolean doPrintTime = withTime && ! outputFormat.equals(SVG);
         if (gmtScript) {
             out.write("psxy -P -R -K -O -JP -m -A >> " + psFile + " <<END\n");
         }
@@ -193,6 +196,12 @@ public class TauP_Path extends TauP_Pierce {
 					calcDist = -1.0 * calcDist;
 				}
                 printDistRadius(out, calcDist, radiusOfEarth - calcDepth);
+				if (doPrintTime) {
+					out.write("  " + outForms.formatTime(calcTime));
+				}
+		        if (!gmtScript && !outputFormat.equals(SVG)) {
+		            printLatLon(out, calcDist);
+		        }
                 out.write("\n");
 				if (calcTime >= maxPathTime) {
 				    break;
@@ -220,6 +229,12 @@ public class TauP_Path extends TauP_Pierce {
 								* (path[j + 1].getDepth() - prevDepth)
 								/ maxInterpNum;
 						printDistRadius(out, calcDist, radiusOfEarth - calcDepth);
+						if (doPrintTime) {
+							out.write("  " + outForms.formatTime(calcTime));
+						}
+				        if (!gmtScript && !outputFormat.equals(SVG)) {
+				            printLatLon(out, calcDist);
+				        }
 				        out.write("\n");
 					}
 				}
@@ -253,9 +268,6 @@ public class TauP_Path extends TauP_Pierce {
             out.write(outForms.formatDistance(calcDist)
                       + "  "
                       + outForms.formatDepth(radius));
-        }
-        if (!gmtScript && !outputFormat.equals(SVG)) {
-            printLatLon(out, calcDist);
         }
     }
 	protected void printLatLon(Writer out, double calcDist) throws IOException {
@@ -379,6 +391,7 @@ public class TauP_Path extends TauP_Pierce {
 
 	public void printUsage() {
 		printStdUsage();
+        System.out.println("--withtime        -- include time for each path point");
         System.out.println("--gmt             -- outputs path as a complete GMT script.");
         System.out.println("--svg             -- outputs path as a complete SVG file.");
         System.out.println("--mapwidth        -- sets map width for GMT script.");
@@ -402,6 +415,8 @@ public class TauP_Path extends TauP_Pierce {
             } else if((dashEquals("maxPathTime", leftOverArgs[i])) && i < leftOverArgs.length - 1) {
                 setMaxPathTime(Float.parseFloat(leftOverArgs[i + 1]));
                 i++;
+			} else if (dashEquals("withtime", leftOverArgs[i])) {
+				withTime = true;
 			} else if (dashEquals("help", leftOverArgs[i])) {
 				noComprendoArgs[numNoComprendoArgs++] = leftOverArgs[i];
 			} else {
