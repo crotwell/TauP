@@ -62,7 +62,6 @@ val dirName = project.name+"-"+version
 
 val binDistFiles: CopySpec = copySpec {
     from("build/scripts") {
-        fileMode = 755
         include("*")
         into("bin")
     }
@@ -103,7 +102,6 @@ val distFiles: CopySpec = copySpec {
         include("gradlew.bat")
     }
     from(".") {
-        fileMode=755
         include("gradlew")
         into("gradle")
     }
