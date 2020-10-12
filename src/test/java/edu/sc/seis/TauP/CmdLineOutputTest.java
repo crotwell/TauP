@@ -3,6 +3,7 @@ package edu.sc.seis.TauP;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.BufferedOutputStream;
@@ -30,21 +31,21 @@ public class CmdLineOutputTest {
                                           "taup_time -h 10 -ph ttall -deg 35",
                                           "taup_time -h 10 -ph ttall -deg 35 -mod ak135",
                                           "taup_time -h 10 -ph ttall -deg 35 -mod ak135 --json"};
-    
+
     String[] pierceTestCmds = new String[] {"taup_pierce -h 10 -ph P -deg 35 -mod prem",
                                             "taup_pierce -h 10 -ph P -deg 35",
                                             "taup_pierce -h 10 -ph P -deg 35 -mod ak135",
                                             "taup_pierce -mod prem -h 600 -deg 45 -ph PKiKP -pierce 5049.5"};
-    
+
     String[] pathTestCmds = new String[] {"taup_path -o stdout -h 10 -ph P -deg 35 -mod prem",
                                           "taup_path -o stdout -h 10 -ph P -deg 35",
                                           "taup_path -o stdout -h 10 -ph P -deg 35 --svg",
                                           "taup_path -o stdout -h 10 -ph P -deg 35 -mod ak135"};
-    
+
     String[] curveTestCmds = new String[] {"taup_curve -o stdout -h 10 -ph P -mod prem",
                                            "taup_curve -o stdout -h 10 -ph P",
                                            "taup_curve -o stdout -h 10 -ph P -mod ak135"};
-    
+
     String[] helpTestCmds = new String[] {"taup_time --help",
                                           "taup_pierce --help",
                                           "taup_path --help",
@@ -52,11 +53,11 @@ public class CmdLineOutputTest {
                                           "taup_wavefront --help",
                                           "taup_table --help",
                                           "taup_create --help"};
-    
 
-    /** disable unless regenerating the cmd line output test resources. 
+
+    /** disable unless regenerating the cmd line output test resources.
      * new text files will be in cmdLineTest in cwd
-     *     
+     *
      * @throws Exception
      */
     // @Test
@@ -72,18 +73,18 @@ public class CmdLineOutputTest {
             saveOutputToFile(cmd);
         }
     }
-    
-    /** disable unless regenerating the cmd line output test resources. 
+
+    /** disable unless regenerating the cmd line output test resources.
      * new text files will be in cmdLineTest in cwd.
      * This one just does a single test for when adding new output test.
-     *     
+     *
      * @throws Exception
      */
      // @Test
     public void testSaveOutputSingle() throws Exception {
         saveOutputToFile(helpTestCmds[0]);
     }
-    
+
     @Test
     public void testTauPTime() throws Exception {
         runTests(timeTestCmds);
@@ -103,7 +104,7 @@ public class CmdLineOutputTest {
     public void testTauPCurve() throws Exception {
         runTests(curveTestCmds);
     }
-    
+
     @Test
     public void testTauPTable() throws Exception {
         // this one takes a lot of memory
@@ -115,7 +116,7 @@ public class CmdLineOutputTest {
             testCmd(cmds[i]);
         }
     }
-    
+
     public void runCmd(String cmd) throws Exception {
         String[] s = cmd.split(" +");
         String tool = s[0];
@@ -131,7 +132,7 @@ public class CmdLineOutputTest {
             TauP_Curve.main(cmdArgs);
         } else if (tool.equals("taup_table")) {
             TauP_Table.main(cmdArgs);
-        } else { 
+        } else {
             throw new Exception("Unknown tool: "+tool);
         }
     }
@@ -150,7 +151,7 @@ public class CmdLineOutputTest {
             priorLine = prior.readLine();
             currentLine = current.readLine();
             origOut.println(currentLine);
-            assertEquals(cmd + " line " + lineNum, priorLine, currentLine);
+            assertEquals(priorLine, currentLine, cmd + " line " + lineNum);
             lineNum++;
         }
         while (prior.ready()) {
@@ -164,7 +165,7 @@ public class CmdLineOutputTest {
         cleanUpStreams();
         origErr.println("Done with " + cmd);
     }
-    
+
     /**
      * test loading prior results text file from test resources. Kind of a meta-test... :)
      * @throws Exception
@@ -172,9 +173,12 @@ public class CmdLineOutputTest {
     @Test
     public void loadTest() throws Exception {
         BufferedReader s = getPriorOutput("taup_path -o stdout -h 10 -ph P -deg 35 -mod prem");
-        assertEquals("line one", "> P at   411.69 seconds at    35.00 degrees for a     10.0 km deep source in the prem model with rayParam    8.604 s/deg.", s.readLine());
+        String priorS = s.readLine();
+        String shouldBeS = "> P at   411.69 seconds at    35.00 degrees for a     10.0 km deep source in the prem model with rayParam    8.604 s/deg.";
+        assertEquals(shouldBeS.length(), priorS.length(), "line one length" );
+        assertEquals("> P at   411.69 seconds at    35.00 degrees for a     10.0 km deep source in the prem model with rayParam    8.604 s/deg.", priorS, "line one");
     }
-    
+
     public void saveOutputToFile(String cmd) throws Exception {
         File dir = new File("cmdLineTest");
         if ( ! dir.isDirectory()) {dir.mkdir(); }

@@ -2,6 +2,7 @@ package edu.sc.seis.TauP;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.BufferedReader;
@@ -14,13 +15,14 @@ import java.util.List;
 
 /** test data from http://rses.anu.edu.au/~brian/AK135tables.pdf
  */
-public class AK135Test  { 
+public class AK135Test  {
 
+    @BeforeEach
     protected void setUp() throws Exception {
         taup = new TauP_Time("ak135");
         loadTable();
     }
-    
+
     public void loadTable() throws Exception {
         table = new HashMap<String, HashMap<Float, List<TimeDist>>>();
         readTable("ak135_P_shallow.txt", "P");
@@ -32,7 +34,7 @@ public class AK135Test  {
         readTable("ak135_ScP.txt", "ScP");
         readTable("ak135_PKIKP.txt", "PKIKP");
     }
-    
+
     public HashMap<String, HashMap<Float, List<TimeDist>>> getTable() {
         return table;
     }
@@ -50,17 +52,17 @@ public class AK135Test  {
     public void testTablePcP() throws TauModelException {
         doTable("PcP");
     }
-    
+
     @Test
     public void testTableScS() throws TauModelException {
         doTable("ScS");
     }
-    
+
     @Test
     public void testTableScP() throws TauModelException {
         doTable("ScP");
     }
-    
+
     @Test
     public void testTablePKIKP() throws TauModelException {
         doTable("PKIKP");

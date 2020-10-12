@@ -3,7 +3,7 @@ package edu.sc.seis.TauP;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 
@@ -12,14 +12,14 @@ import java.util.List;
 
 public class SurfaceWaveTest {
 
-    @BeforeAll
+    @BeforeEach
     protected void setUp() throws Exception {
         taup = new TauP_Time("ak135");
     }
-    
+
     TauP_Time taup;
 
-    
+
     @Test
     public void testSurfaceWave() throws TauModelException {
         String phaseName = "3.0kmps";

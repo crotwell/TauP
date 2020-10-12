@@ -2,6 +2,7 @@ package edu.sc.seis.TauP;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -11,6 +12,7 @@ import java.util.List;
 
 public class ConstantModelTest {
 
+    @BeforeEach
     public void setUp() throws Exception {
         vmod = createVelMod(vp, vs);
         smod = new SphericalSModel(vmod,
@@ -53,9 +55,9 @@ public class ConstantModelTest {
     public void testDirectS() {
         doDirectTest(tMod, SeismicPhase.SWAVE);
     }
-    
+
 /**
- * Error increases with depth, so 
+ * Error increases with depth, so
  * @throws TauModelException
  */
     @Test
@@ -103,7 +105,7 @@ public class ConstantModelTest {
     /**
      * dist is from source at surface to turning point. Model is constant, so
      * can use sin and velocity to get travel time independently.
-     * 
+     *
      * @param isPWave
      *            true for P false for S
      */
