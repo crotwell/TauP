@@ -37,10 +37,11 @@ dependencies {
       exclude(group = "mysql", module = "mysql-connector-java")
     }
     // Use JUnit Jupiter API for testing.
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.5.1")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.0")
 
     // Use JUnit Jupiter Engine for testing.
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.5.1")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
+
 }
 
 
@@ -53,11 +54,19 @@ tasks {
       manifest {
         attributes(
             mapOf("Implementation-Title" to project.name,
-                  "Implementation-Version" to version,
+                  "Implementation-Version" to archiveVersion,
                   "TauP-Compile-Date" to Date()))
       }
   }
 }
+
+
+
+tasks.named<Test>("test") {
+    useJUnitPlatform()
+}
+
+
 val dirName = project.name+"-"+version
 
 val binDistFiles: CopySpec = copySpec {
