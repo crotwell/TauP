@@ -160,6 +160,13 @@ tasks.register<Tar>("tarDist") {
     }
 }
 
+
+tasks.register<Zip>("zipDist") {
+  dependsOn("explodeDist")
+    into(dirName) {
+        with( distFiles)
+    }
+}
 /*
 signing {
     sign configurations.archives
