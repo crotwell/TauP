@@ -27,7 +27,7 @@ java {
 
 
 dependencies {
-    implementation("edu.sc.seis:seisFile:1.8.0") {
+    implementation("edu.sc.seis:seisFile:1.8.5") {
       // we need seisFile for sac output, but not all the other functionality
       exclude(group = "com.martiansoftware", module = "jsap")
       exclude(group = "org.rxtx", module = "rxtx")
