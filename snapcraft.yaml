@@ -1,0 +1,66 @@
+name: taup
+title: The TauP Toolkit
+version: 2.4.6-SNAPSHOT
+summary: "The TauP Toolkit: Flexible Seismic Travel-Time and Raypath Utilities"
+description: |
+  The TauP Toolkit is a seismic travel time calculator. In addition to travel
+  times, it can calculate derivative information such as ray paths through the
+  earth, pierce and turning points. It handles many types of velocity models and
+  can calculate times for virtually any seismic phase with a phase parser.
+  It is written in Java so it should run on any Java enabled platform.
+base: core18
+confinement: devmode
+grade: devel
+apps:
+  time:
+    command: TauP-$SNAPCRAFT_PROJECT_VERSION/bin/taup_time
+    environment:
+      JAVA_HOME: $SNAP/usr/lib/jvm/java-11-openjdk-amd64
+      PATH: $JAVA_HOME/jre/bin:$PATH
+  pierce:
+    command: TauP-$SNAPCRAFT_PROJECT_VERSION/bin/taup_pierce
+    environment:
+      JAVA_HOME: $SNAP/usr/lib/jvm/java-11-openjdk-amd64
+      PATH: $JAVA_HOME/jre/bin:$PATH
+  path:
+    command: TauP-$SNAPCRAFT_PROJECT_VERSION/bin/taup_path
+    environment:
+      JAVA_HOME: $SNAP/usr/lib/jvm/java-11-openjdk-amd64
+      PATH: $JAVA_HOME/jre/bin:$PATH
+  curve:
+    command: TauP-$SNAPCRAFT_PROJECT_VERSION/bin/taup_curve
+    environment:
+      JAVA_HOME: $SNAP/usr/lib/jvm/java-11-openjdk-amd64
+      PATH: $JAVA_HOME/jre/bin:$PATH
+  create:
+    command: TauP-$SNAPCRAFT_PROJECT_VERSION/bin/taup_create
+    environment:
+      JAVA_HOME: $SNAP/usr/lib/jvm/java-11-openjdk-amd64
+      PATH: $JAVA_HOME/jre/bin:$PATH
+  setsac:
+    command: TauP-$SNAPCRAFT_PROJECT_VERSION/bin/taup_setsac
+    environment:
+      JAVA_HOME: $SNAP/usr/lib/jvm/java-11-openjdk-amd64
+      PATH: $JAVA_HOME/jre/bin:$PATH
+  table:
+    command: TauP-$SNAPCRAFT_PROJECT_VERSION/bin/taup_table
+    environment:
+      JAVA_HOME: $SNAP/usr/lib/jvm/java-11-openjdk-amd64
+      PATH: $JAVA_HOME/jre/bin:$PATH
+  wavefront:
+    command: TauP-$SNAPCRAFT_PROJECT_VERSION/bin/taup_wavefront
+    environment:
+      JAVA_HOME: $SNAP/usr/lib/jvm/java-11-openjdk-amd64
+      PATH: $JAVA_HOME/jre/bin:$PATH
+parts:
+  taup:
+    plugin: gradle
+    source: https://github.com/crotwell/taup.git
+    source-branch: master
+    gradle-version: '6.6.1'
+    gradle-options: [zipDist]
+    override-build: |
+      snapcraftctl build
+      unzip -o build/distributions/TauP-$SNAPCRAFT_PROJECT_VERSION.zip -d $SNAPCRAFT_PART_INSTALL/
+    build-packages:
+      - unzip
