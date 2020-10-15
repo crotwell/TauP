@@ -2007,8 +2007,6 @@ public class SeismicPhase implements Serializable, Cloneable {
         if(validationMsg != null) {
             throw new TauModelException("Phase failed validation: " + name
                     + "  " + validationMsg);
-        } else {
-        	System.out.println("Phase validation returned null, meaning ok for "+name);
         }
         return legs;
     }
@@ -2789,7 +2787,6 @@ public class SeismicPhase implements Serializable, Cloneable {
             } else {
             	nextToken = "";
             }
-            System.out.println("phase validate: "+prevToken+" - "+currToken+" - "+nextToken);
             /* Check for 2 reflections with no leg between them. */
             if(currToken.startsWith("^") || currToken.startsWith("v")
                     || currToken.equals("m") || currToken.equals("c")
@@ -2823,8 +2820,6 @@ public class SeismicPhase implements Serializable, Cloneable {
             	
                 return "Cannot have P,S,p,s preceeded and followed by K,k:  "
                         + prevToken + ", " + currToken +", "+nextToken;
-            } else {
-            	System.out.println("K-P-K test ok phase validate: "+prevToken+" - "+currToken+" - "+nextToken);
             }
             // Cannot have I,J before K and followed by another I,J as K leg must turn to get back to IOCB
             if((prevToken.startsWith("I") || prevToken.startsWith("J") )

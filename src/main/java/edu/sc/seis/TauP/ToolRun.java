@@ -32,7 +32,18 @@ public class ToolRun {
 		String[] restOfArgs = Arrays.copyOfRange(args, 1, args.length);
 		try {
 		if (toolToRun.contentEquals(CREATE)) {
-			
+	        TauP_Create tauPCreate = new TauP_Create();
+	        String[] noComprendoArgs = tauPCreate.parseCmdLineArgs(restOfArgs);
+	        TauP_Time.printNoComprendoArgs(noComprendoArgs);
+	        if (tauPCreate.verbose) {
+	        	System.out.println("TauP_Create starting...");
+	        }
+
+	        tauPCreate.loadVMod();
+	        tauPCreate.start();
+	        if (tauPCreate.verbose) {
+	        	System.out.println("Done!");
+	        }
 		} else if (toolToRun.contentEquals(CURVE)) {
 			
 		} else if (toolToRun.contentEquals(PATH)) {
