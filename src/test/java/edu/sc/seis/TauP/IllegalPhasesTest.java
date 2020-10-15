@@ -38,7 +38,7 @@ class IllegalPhasesTest {
 		double receiverDepth = 0;
 		for (String phaseName : noArrivalPhases) {
 			SeismicPhase phase = new SeismicPhase(phaseName, tMod, receiverDepth);
-		    assertFalse(phase.hasArrivals(), phaseName+" shouldn't have any ray parameters that could generate arrivals");
+		    assertFalse(phase.phasesExistsInModel(), phaseName+" shouldn't have any ray parameters that could generate arrivals");
 		}
 	}
 
@@ -51,7 +51,7 @@ class IllegalPhasesTest {
 		double receiverDepth = 0;
 		for (String phaseName : mantleSourceNoArrivalPhases) {
 			SeismicPhase phase = new SeismicPhase(phaseName, tModDepth, receiverDepth);
-		    assertFalse(phase.hasArrivals(), phaseName+" shouldn't have arrivals for mantle source, "+sourceDepth);
+		    assertFalse(phase.phasesExistsInModel(), phaseName+" shouldn't have arrivals for mantle source, "+sourceDepth);
 		}
 	}
 
