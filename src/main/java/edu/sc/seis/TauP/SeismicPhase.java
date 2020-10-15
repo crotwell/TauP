@@ -1535,7 +1535,8 @@ public class SeismicPhase implements Serializable, Cloneable {
                                     .getMinTurnRayParam()) {
 
                         if (currBranch < tMod.getCmbBranch() - 1 
-                                || (currBranch == tMod.getCmbBranch() - 1 && endAction != DIFFRACT)) {
+                                || (currBranch == tMod.getCmbBranch() - 1 && endAction != DIFFRACT)
+                                || (currBranch == tMod.getCmbBranch() && endAction != TRANSUP)) {
                             endAction = TURN;
                             addToBranch(tMod,
                                         currBranch,
@@ -1704,8 +1705,10 @@ public class SeismicPhase implements Serializable, Cloneable {
                     }
                     return;
                 }
-                if(nextLeg.equals("P") || nextLeg.equals("S")) {
+                if(nextLeg.equals("P") || nextLeg.equals("S")
+                        || nextLeg.equals("Pdiff") || nextLeg.equals("Sdiff")) {
                     if(prevLeg.equals("P") || prevLeg.equals("S")
+                            || prevLeg.equals("Ped") || prevLeg.equals("Sed")
                             || prevLeg.equals("Pdiff") || prevLeg.equals("Sdiff")
                             || prevLeg.equals("K") || prevLeg.equals("k")
                             || prevLeg.equals("START")) {
@@ -2220,7 +2223,7 @@ public class SeismicPhase implements Serializable, Cloneable {
                 }
             }
         }
-        if(name.indexOf("Sdiff") != -1 || name.indexOf("Pdiff") != -1 || name.indexOf("Sd") != -1 || name.indexOf("Pd") != -1) {
+        if(name.indexOf("Sdiff") != -1 || name.indexOf("Pdiff") != -1 ) {
             if(tMod.cmbDepth == tMod.radiusOfEarth || tMod.getSlownessModel()
                     .depthInHighSlowness(tMod.cmbDepth - 1e-10,
                                          minRayParam,

@@ -9,46 +9,51 @@ description: |
   can calculate times for virtually any seismic phase with a phase parser.
   It is written in Java so it should run on any Java enabled platform.
 base: core18
-confinement: devmode
+confinement: strict
 grade: devel
 apps:
+  play:
+    command: bin/taup_time
+    environment:
+      JAVA_HOME: $SNAP/usr/lib/jvm/java-11-openjdk-amd64
+      PATH: $JAVA_HOME/jre/bin:$PATH
   time:
-    command: TauP-$SNAPCRAFT_PROJECT_VERSION/bin/taup_time
+    command: bin/taup_time
     environment:
       JAVA_HOME: $SNAP/usr/lib/jvm/java-11-openjdk-amd64
       PATH: $JAVA_HOME/jre/bin:$PATH
   pierce:
-    command: TauP-$SNAPCRAFT_PROJECT_VERSION/bin/taup_pierce
+    command: bin/taup_pierce
     environment:
       JAVA_HOME: $SNAP/usr/lib/jvm/java-11-openjdk-amd64
       PATH: $JAVA_HOME/jre/bin:$PATH
   path:
-    command: TauP-$SNAPCRAFT_PROJECT_VERSION/bin/taup_path
+    command: bin/taup_path
     environment:
       JAVA_HOME: $SNAP/usr/lib/jvm/java-11-openjdk-amd64
       PATH: $JAVA_HOME/jre/bin:$PATH
   curve:
-    command: TauP-$SNAPCRAFT_PROJECT_VERSION/bin/taup_curve
+    command: bin/taup_curve
     environment:
       JAVA_HOME: $SNAP/usr/lib/jvm/java-11-openjdk-amd64
       PATH: $JAVA_HOME/jre/bin:$PATH
   create:
-    command: TauP-$SNAPCRAFT_PROJECT_VERSION/bin/taup_create
+    command: bin/taup_create
     environment:
       JAVA_HOME: $SNAP/usr/lib/jvm/java-11-openjdk-amd64
       PATH: $JAVA_HOME/jre/bin:$PATH
   setsac:
-    command: TauP-$SNAPCRAFT_PROJECT_VERSION/bin/taup_setsac
+    command: bin/taup_setsac
     environment:
       JAVA_HOME: $SNAP/usr/lib/jvm/java-11-openjdk-amd64
       PATH: $JAVA_HOME/jre/bin:$PATH
   table:
-    command: TauP-$SNAPCRAFT_PROJECT_VERSION/bin/taup_table
+    command: bin/taup_table
     environment:
       JAVA_HOME: $SNAP/usr/lib/jvm/java-11-openjdk-amd64
       PATH: $JAVA_HOME/jre/bin:$PATH
   wavefront:
-    command: TauP-$SNAPCRAFT_PROJECT_VERSION/bin/taup_wavefront
+    command: bin/taup_wavefront
     environment:
       JAVA_HOME: $SNAP/usr/lib/jvm/java-11-openjdk-amd64
       PATH: $JAVA_HOME/jre/bin:$PATH
@@ -58,9 +63,12 @@ parts:
     source: https://github.com/crotwell/taup.git
     source-branch: master
     gradle-version: '6.6.1'
-    gradle-options: [zipDist]
+    gradle-options: [explodeBin]
     override-build: |
       snapcraftctl build
-      unzip -o build/distributions/TauP-$SNAPCRAFT_PROJECT_VERSION.zip -d $SNAPCRAFT_PART_INSTALL/
+      mkdir -p $SNAPCRAFT_PART_INSTALL/bin
+      mkdir -p $SNAPCRAFT_PART_INSTALL/lib
+      cp -f build/explode/bin/* $SNAPCRAFT_PART_INSTALL/bin/.
+      cp -f build/explode/lib/* $SNAPCRAFT_PART_INSTALL/lib/.
     build-packages:
       - unzip
