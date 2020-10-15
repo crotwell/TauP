@@ -22,7 +22,7 @@ public class ToolRun {
 		System.out.println("Usage: taup <tool> <options>");
 		System.out.println(" where tool is one of "+Arrays.deepToString(toolnames));
 	}
-	
+
 	public static void main(String[] args) throws IOException {
 		if (args.length == 0) {
 			printUsage();
@@ -31,52 +31,102 @@ public class ToolRun {
 		String toolToRun = args[0];
 		String[] restOfArgs = Arrays.copyOfRange(args, 1, args.length);
 		try {
-		if (toolToRun.contentEquals(CREATE)) {
-	        TauP_Create tauPCreate = new TauP_Create();
-	        String[] noComprendoArgs = tauPCreate.parseCmdLineArgs(restOfArgs);
-	        TauP_Time.printNoComprendoArgs(noComprendoArgs);
-	        if (tauPCreate.verbose) {
-	        	System.out.println("TauP_Create starting...");
-	        }
+			if (toolToRun.contentEquals(CREATE)) {
+				TauP_Create tauPCreate = new TauP_Create();
+				String[] noComprendoArgs = tauPCreate.parseCmdLineArgs(restOfArgs);
+				TauP_Time.printNoComprendoArgs(noComprendoArgs);
+				if (tauPCreate.verbose) {
+					System.out.println("TauP_Create starting...");
+				}
 
-	        tauPCreate.loadVMod();
-	        tauPCreate.start();
-	        if (tauPCreate.verbose) {
-	        	System.out.println("Done!");
-	        }
-		} else if (toolToRun.contentEquals(CURVE)) {
-			
-		} else if (toolToRun.contentEquals(PATH)) {
-			
-		} else if (toolToRun.contentEquals(PHASE)) {
-			TauP_Time timetool = new TauP_Time();
-			timetool.parseCmdLineArgs(restOfArgs);
-			timetool.init();
-			List<SeismicPhase> phaseList = timetool.getSeismicPhases();
-			for (SeismicPhase phase: phaseList) {
-				System.out.println(phase.describe());
-				System.out.println("--------");
+				tauPCreate.loadVMod();
+				tauPCreate.start();
+				if (tauPCreate.verbose) {
+					System.out.println("Done!");
+				}
+			} else if (toolToRun.contentEquals(CURVE)) {
+				TauP_Curve tauPCurve = new TauP_Curve();
+				tauPCurve.setOutFileBase("taup_curve");
+				String[] noComprendoArgs = tauPCurve.parseCmdLineArgs(restOfArgs);
+				TauP_Curve.printNoComprendoArgs(noComprendoArgs);
+				if(tauPCurve.DEBUG) {
+					System.out.println("Done reading " + tauPCurve.modelName);
+				}
+				tauPCurve.init();
+				tauPCurve.start();
+				tauPCurve.destroy();
+			} else if (toolToRun.contentEquals(PATH)) {
+				TauP_Path tauPPath = new TauP_Path();
+				tauPPath.setOutFileBase("taup_path");
+				String[] noComprendoArgs = tauPPath.parseCmdLineArgs(restOfArgs);
+				TauP_Path.printNoComprendoArgs(noComprendoArgs);
+				tauPPath.init();
+				if (TauP_Time.DEBUG) {
+					System.out.println("Done reading " + tauPPath.modelName);
+				}
+				tauPPath.start();
+				tauPPath.destroy();
+			} else if (toolToRun.contentEquals(PHASE)) {
+				TauP_Time timetool = new TauP_Time();
+				timetool.parseCmdLineArgs(restOfArgs);
+				timetool.init();
+				List<SeismicPhase> phaseList = timetool.getSeismicPhases();
+				for (SeismicPhase phase: phaseList) {
+					System.out.println(phase.describe());
+					System.out.println("--------");
+				}
+			} else if (toolToRun.contentEquals(PIERCE)) {
+				TauP_Pierce tauPPierce = new TauP_Pierce();
+				String[] noComprendoArgs = tauPPierce.parseCmdLineArgs(restOfArgs);
+				TauP_Pierce.printNoComprendoArgs(noComprendoArgs);
+				if(TauP_Time.DEBUG) {
+					System.out.println("Done reading " + tauPPierce.modelName);
+				}
+				tauPPierce.init();
+				tauPPierce.start();
+				tauPPierce.destroy();
+			} else if (toolToRun.contentEquals(SETSAC)) {
+				TauP_SetSac tauPSetSac = new TauP_SetSac();
+				String[] noComprendoArgs = tauPSetSac.parseCmdLineArgs(restOfArgs);
+				TauP_SetSac.printNoComprendoArgs(noComprendoArgs);
+				if(TauP_Time.DEBUG) {
+					System.out.println("Done reading " + tauPSetSac.modelName);
+				}
+				tauPSetSac.init();
+				tauPSetSac.start();
+				if (tauPSetSac.sacFileNames.size() == 0) {
+					tauPSetSac.printUsage();
+				}
+			} else if (toolToRun.contentEquals(TABLE)) {
+				TauP_Table me;
+				me = new TauP_Table();
+				String[] noComprendoArgs = me.parseCmdLineArgs(restOfArgs);
+				TauP_Table.printNoComprendoArgs(noComprendoArgs);
+				me.init();
+				me.start();
+			} else if (toolToRun.contentEquals(TIME)) {
+				TauP_Time tauPTime = new TauP_Time();
+				String[] noComprendoArgs = tauPTime.parseCmdLineArgs(restOfArgs);
+				TauP_Time.printNoComprendoArgs(noComprendoArgs);
+				tauPTime.init();
+				tauPTime.start();
+				tauPTime.destroy();
+			} else if (toolToRun.contentEquals(WAVEFRONT)) {
+				TauP_Wavefront tauP_wavefront = new TauP_Wavefront();
+	            tauP_wavefront.setOutFileBase("taup_wavefront");
+	            String[] noComprendoArgs = tauP_wavefront.parseCmdLineArgs(restOfArgs);
+	            TauP_Wavefront.printNoComprendoArgs(noComprendoArgs);
+	            if (tauP_wavefront.DEBUG) {
+	                System.out.println("Done reading " + tauP_wavefront.modelName);
+	            }
+	            tauP_wavefront.init();
+	            tauP_wavefront.start();
+	            tauP_wavefront.destroy();
+			} else {
+				System.err.println("Tool "+toolToRun+" not recognized.");
+				printUsage();
+				return;
 			}
-		} else if (toolToRun.contentEquals(PIERCE)) {
-			
-		} else if (toolToRun.contentEquals(SETSAC)) {
-			
-		} else if (toolToRun.contentEquals(TABLE)) {
-			
-		} else if (toolToRun.contentEquals(TIME)) {
-			TauP_Time tauPTime = new TauP_Time();
-            String[] noComprendoArgs = tauPTime.parseCmdLineArgs(args);
-            TauP_Time.printNoComprendoArgs(noComprendoArgs);
-            tauPTime.init();
-            tauPTime.start();
-            tauPTime.destroy();
-		} else if (toolToRun.contentEquals(WAVEFRONT)) {
-			
-		} else {
-			System.err.println("Tool "+toolToRun+" not recognized.");
-			printUsage();
-			return;
-		}
 		} catch(Exception e) {
 			System.err.println("Error starting tool: "+e);
 			e.printStackTrace();
