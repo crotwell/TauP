@@ -2888,8 +2888,16 @@ public class SeismicPhase implements Serializable, Cloneable {
     
     public String describe( ) {
         String desc = name + ":\n";
-        desc += "  exists from "+Outputs.formatDistance(getMinDistanceDeg())+" to "+Outputs.formatDistance(getMaxDistanceDeg())+" degrees.\n";
-        desc += "  with ray parameter from "+Outputs.formatRayParam(getMaxRayParam())+" down to "+Outputs.formatRayParam(getMinRayParam())+" sec/rad.\n";
+        if (phasesExistsInModel()) {
+        	desc += "  exists from "+Outputs.formatDistance(getMinDistanceDeg())+" to "+Outputs.formatDistance(getMaxDistanceDeg())+" degrees.\n";
+        	if (getMaxRayParam() > getMinRayParam()) {
+        		desc += "  with ray parameter from "+Outputs.formatRayParam(getMaxRayParam())+" down to "+Outputs.formatRayParam(getMinRayParam())+" sec/rad.\n";
+        	} else {
+        		desc += "  with degenerate ray parameter of "+Outputs.formatRayParam(getMaxRayParam())+"\n";
+        	}
+        } else {
+        	desc += "  FAILS to exist, because no ray parameters satisfy the path.\n";
+        }
         for(SeismicPhaseSegment segment : getPhaseSegments()) {
         	desc += segment.toString()+"\n";
         }
