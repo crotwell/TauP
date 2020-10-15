@@ -12,51 +12,12 @@ base: core18
 confinement: strict
 grade: devel
 apps:
-  play:
-    command: bin/taup_time
+  taup:
+    command: bin/taup
     environment:
       JAVA_HOME: $SNAP/usr/lib/jvm/java-11-openjdk-amd64
       PATH: $JAVA_HOME/jre/bin:$PATH
-  time:
-    command: bin/taup_time
-    environment:
-      JAVA_HOME: $SNAP/usr/lib/jvm/java-11-openjdk-amd64
-      PATH: $JAVA_HOME/jre/bin:$PATH
-  pierce:
-    command: bin/taup_pierce
-    environment:
-      JAVA_HOME: $SNAP/usr/lib/jvm/java-11-openjdk-amd64
-      PATH: $JAVA_HOME/jre/bin:$PATH
-  path:
-    command: bin/taup_path
-    environment:
-      JAVA_HOME: $SNAP/usr/lib/jvm/java-11-openjdk-amd64
-      PATH: $JAVA_HOME/jre/bin:$PATH
-  curve:
-    command: bin/taup_curve
-    environment:
-      JAVA_HOME: $SNAP/usr/lib/jvm/java-11-openjdk-amd64
-      PATH: $JAVA_HOME/jre/bin:$PATH
-  create:
-    command: bin/taup_create
-    environment:
-      JAVA_HOME: $SNAP/usr/lib/jvm/java-11-openjdk-amd64
-      PATH: $JAVA_HOME/jre/bin:$PATH
-  setsac:
-    command: bin/taup_setsac
-    environment:
-      JAVA_HOME: $SNAP/usr/lib/jvm/java-11-openjdk-amd64
-      PATH: $JAVA_HOME/jre/bin:$PATH
-  table:
-    command: bin/taup_table
-    environment:
-      JAVA_HOME: $SNAP/usr/lib/jvm/java-11-openjdk-amd64
-      PATH: $JAVA_HOME/jre/bin:$PATH
-  wavefront:
-    command: bin/taup_wavefront
-    environment:
-      JAVA_HOME: $SNAP/usr/lib/jvm/java-11-openjdk-amd64
-      PATH: $JAVA_HOME/jre/bin:$PATH
+    plugs: [home]
 parts:
   taup:
     plugin: gradle
