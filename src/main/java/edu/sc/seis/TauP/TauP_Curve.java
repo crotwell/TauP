@@ -532,31 +532,16 @@ public class TauP_Curve extends TauP_Time {
     public static void main(String[] args) throws FileNotFoundException,
             IOException, StreamCorruptedException, ClassNotFoundException,
             OptionalDataException {
-        boolean doInteractive = true;
         try {
             TauP_Curve tauPCurve = new TauP_Curve();
             tauPCurve.setOutFileBase("taup_curve");
             String[] noComprendoArgs = tauPCurve.parseCmdLineArgs(args);
             printNoComprendoArgs(noComprendoArgs);
-            for(int i = 0; i < args.length; i++) {
-                if("-h".equals(args[i])) {
-                    doInteractive = false;
-                }
-            }
             if(tauPCurve.DEBUG) {
                 System.out.println("Done reading " + tauPCurve.modelName);
             }
             tauPCurve.init();
-            if(doInteractive) {
-                tauPCurve.start();
-            } else {
-                /* enough info given on cmd line, so just do one calc. */
-                tauPCurve.setSourceDepth(Double.valueOf(tauPCurve.toolProps.getProperty("taup.source.depth",
-                                                                                      "0.0"))
-                        .doubleValue());
-                tauPCurve.calculate(tauPCurve.degrees);
-                tauPCurve.printResult(tauPCurve.getWriter());
-            }
+            tauPCurve.start();
             tauPCurve.destroy();
         } catch(TauModelException e) {
             System.out.println("Caught TauModelException: " + e.getMessage());

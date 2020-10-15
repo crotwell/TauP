@@ -349,6 +349,9 @@ public class TauP_SetSac extends TauP_Time {
                 }
                 tauPSetSac.init();
                 tauPSetSac.start();
+                if (tauPSetSac.sacFileNames.size() == 0) {
+                	tauPSetSac.printUsage();
+                }
             } catch(TauModelException e) {
                 System.out.println("Caught TauModelException: "
                         + e.getMessage());

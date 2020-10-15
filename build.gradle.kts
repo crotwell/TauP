@@ -226,6 +226,7 @@ tasks.named("startScripts") {
 }
 
 val scriptNames = mapOf(
+    "taup" to "edu.sc.seis.TauP.ToolRun",
     "taup_time" to "edu.sc.seis.TauP.TauP_Time",
     "taup_pierce" to "edu.sc.seis.TauP.TauP_Pierce",
     "taup_path" to "edu.sc.seis.TauP.TauP_Path",

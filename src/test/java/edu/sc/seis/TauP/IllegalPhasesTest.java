@@ -1,16 +1,22 @@
 package edu.sc.seis.TauP;
 
-import static org.junit.jupiter.api.Assertions.fail;
-import org.junit.jupiter.api.Test;
-
-import java.util.ArrayList;
-import java.util.List;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
+
 
 class IllegalPhasesTest {
 
-	String[] illegalPhases = { "PKIKPKIKP", "PnPdiff" };
+	String[] illegalPhases = { "PDDDDD", "PKIKPKIKP", "PPPdiff", "PKIKIKP", "SIKS", "SKIS" };
+	
+	// phases that are kind of wrong, but are handled by simply no arrivals, eg no ray params actually work,
+	// rather than being so bad as to cause an exception
+	String[] noArrivalPhases = { "PnPdiff" };
+
+	// similar, but due to source being in mantle (below moho), these should have not ray params that
+	// can generate arrivals
+	String[] mantleSourceNoArrivalPhases = { "Pn", "Pvmp", "Sn", "Svms" };
 
 	@Test
 	void checkIllegalPhasesTest() throws TauModelException {
@@ -18,12 +24,34 @@ class IllegalPhasesTest {
 		TauModel tMod = TauModelLoader.load(modelName);
 		float receiverDepth = 100;
 		for (String phaseName : illegalPhases) {
-			try {
+			Exception exception = assertThrows(TauModelException.class, () -> {
 				SeismicPhase phase = new SeismicPhase(phaseName, tMod, receiverDepth);
-				fail("Phase '"+phaseName+"' should not be allowed");
-			} catch (TauModelException e) {
+		    }, phaseName+" shouldn't pass validation.");
+		}
+	}
+	
 
-			}
+	@Test
+	void checkNoArrivalPhasesTest() throws TauModelException {
+		String modelName = "iasp91";
+		TauModel tMod = TauModelLoader.load(modelName);
+		double receiverDepth = 0;
+		for (String phaseName : noArrivalPhases) {
+			SeismicPhase phase = new SeismicPhase(phaseName, tMod, receiverDepth);
+		    assertFalse(phase.hasArrivals(), phaseName+" shouldn't have any ray parameters that could generate arrivals");
+		}
+	}
+
+	@Test
+	void checkNoArrivalMantleSourcePhasesTest() throws TauModelException {
+		String modelName = "iasp91";
+		TauModel tMod = TauModelLoader.load(modelName);
+		double sourceDepth = tMod.getMohoDepth()+10; // 10 km below moho
+		final TauModel tModDepth = tMod.depthCorrect(sourceDepth);
+		double receiverDepth = 0;
+		for (String phaseName : mantleSourceNoArrivalPhases) {
+			SeismicPhase phase = new SeismicPhase(phaseName, tModDepth, receiverDepth);
+		    assertFalse(phase.hasArrivals(), phaseName+" shouldn't have arrivals for mantle source, "+sourceDepth);
 		}
 	}
 
