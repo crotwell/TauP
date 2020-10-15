@@ -83,7 +83,6 @@ public class SeismicPhase implements Serializable, Cloneable {
      * segment.
      */
     public static final int TRANSDOWN = 4;
-    
 
     /**
      * Used by addToBranch when the path transmits down through the end of a
@@ -91,6 +90,11 @@ public class SeismicPhase implements Serializable, Cloneable {
      */
     public static final int DIFFRACT = 5;
 
+    /**
+     * Used by addToBranch for the last segment of a phase.
+     */
+    public static final int END = 6;
+    
 
     /**
      * The maximum degrees that a Pn or Sn can refract along the moho. Note this
@@ -803,6 +807,8 @@ public class SeismicPhase implements Serializable, Cloneable {
             return "TURN";
         } else if(endAction == REFLECT_UNDERSIDE) {
             return "REFLECT_UNDERSIDE";
+        } else if(endAction == END) {
+            return "END";
         } else if(endAction == REFLECT_TOPSIDE) {
             return "REFLECT_TOPSIDE";
         } else if(endAction == TRANSUP) {
@@ -845,7 +851,7 @@ public class SeismicPhase implements Serializable, Cloneable {
             minRayParam = Math.max(minRayParam, tMod.getTauBranch(endBranch,
                                                                   isPWave)
                     .getMinTurnRayParam());
-        } else if(endAction == REFLECT_UNDERSIDE) {
+        } else if(endAction == REFLECT_UNDERSIDE || endAction == END) {
             endOffset = 0;
             isDownGoing = false;
             maxRayParam = Math.min(maxRayParam, tMod.getTauBranch(endBranch,
@@ -1099,13 +1105,23 @@ public class SeismicPhase implements Serializable, Cloneable {
          * sequence.
          */
         currLeg = "START"; // So the prevLeg isn't wrong on the first pass
-        for(int legNum = 0; legNum < legs.size() - 1; legNum++) {
+        for(int legNum = 0; legNum < legs.size(); legNum++) {
             prevLeg = currLeg;
             currLeg = nextLeg;
-            nextLeg = (String)legs.get(legNum + 1);
+            if (legNum < legs.size() - 1) {
+            	nextLeg = legs.get(legNum + 1);
+            } else {
+            	nextLeg = "END";
+            }
             if(DEBUG) {
                 System.out.println(legNum + "  " + prevLeg + "  " + currLeg
                         + "  " + nextLeg);
+            }
+            if (currLeg.contentEquals("END")) {
+            	if (segmentList.size() > 0) {
+            		segmentList.get(segmentList.size()-1).endAction = END;
+            		continue;
+            	}
             }
             isLegDepth = isNextLegDepth;
             // find out if the next leg represents a phase conversion depth

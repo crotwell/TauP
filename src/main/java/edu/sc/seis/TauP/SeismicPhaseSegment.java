@@ -46,6 +46,9 @@ public class SeismicPhaseSegment {
     	case SeismicPhase.DIFFRACT:
     		action = "diffract";
     		break;
+    	case SeismicPhase.END:
+    		action = "end";
+    		break;
     	default: 
     		// should never happen
     		action = "unknown";
