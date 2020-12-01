@@ -1397,6 +1397,12 @@ public class SeismicPhase implements Serializable, Cloneable {
                                 isPWave,
                                 endAction,
                                 currLeg);
+                } else if(nextLeg.equals("K") && prevLeg.equals("K")) {
+                        throw new TauModelException("Phase not recognized (5.5): "
+                                + currLeg + " followed by " + nextLeg
+                                + " and preceeded by "+prevLeg
+                                + " when currBranch=" + currBranch
+                                + " > disconBranch=" + disconBranch);
                 } else if(nextLeg.equals("K")) {
                     endAction = TRANSDOWN;
                     addToBranch(tMod,
