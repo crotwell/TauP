@@ -8,15 +8,17 @@ plugins {
   "project-report"
   "signing"
   application
+    `maven-publish`
+  
 }
 
 application {
-  mainClassName = "edu.sc.seis.TauP.TauP"
+  mainClass.set("edu.sc.seis.TauP.TauP")
   applicationName = "taup"
 }
 
 group = "edu.sc.seis"
-version = "2.4.6-SNAPSHOT"
+version = "2.5.0-SNAPSHOT"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
@@ -26,15 +28,23 @@ java {
 }
 
 
+
+publishing {
+    publications {
+        create<MavenPublication>("mavenJava") {
+            from(components["java"])
+        }
+    }
+}
+
+
 dependencies {
-    implementation("edu.sc.seis:seisFile:1.8.5") {
+    implementation("edu.sc.seis:seisFile:2.0.0-SNAPSHOT") {
       // we need seisFile for sac output, but not all the other functionality
       exclude(group = "com.martiansoftware", module = "jsap")
-      exclude(group = "org.rxtx", module = "rxtx")
-      exclude(group = "org.codehaus.woodstox", module = "woodstox-core-lgpl")
+      exclude(group = "com.fasterxml.woodstox", module = "woodstox-core")
       exclude(group = "net.java.dev.msv", module = "msv-core")
       exclude(group = "org.apache.httpcomponents", module = "httpclient")
-      exclude(group = "mysql", module = "mysql-connector-java")
     }
     // Use JUnit Jupiter API for testing.
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.0")
@@ -47,6 +57,7 @@ dependencies {
 
 repositories {
     mavenCentral()
+        mavenLocal()
 }
 
 tasks {
@@ -60,8 +71,6 @@ tasks {
   }
 }
 
-
-
 tasks.named<Test>("test") {
     useJUnitPlatform()
 }
@@ -74,10 +83,10 @@ val binDistFiles: CopySpec = copySpec {
         include("*")
         into("bin")
     }
-    from(configurations.default) {
+    from(configurations.runtimeClasspath) {
         into("lib")
     }
-    from(configurations.default.allArtifacts.files) {
+    from(configurations.runtimeClasspath.allArtifacts.files) {
         into("lib")
     }
 }
