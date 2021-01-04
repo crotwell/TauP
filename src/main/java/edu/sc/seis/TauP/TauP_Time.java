@@ -94,7 +94,13 @@ public class TauP_Time {
     protected double receiverDepth = 0.0;
 
     protected double degrees = Double.MAX_VALUE;
-
+    
+    /**
+     * For when command line args uses --km for distance. Have to wait until
+     * after the model is read in to get radius of earth.
+     */
+    protected double distKilometers = Double.MAX_VALUE; 
+    
     protected double azimuth = Double.MAX_VALUE;
 
     protected double backAzimuth = Double.MAX_VALUE;
@@ -611,8 +617,7 @@ public class TauP_Time {
                     degrees = Double.valueOf(args[i + 1]).doubleValue();
                     i++;
                 } else if(dashEquals("km", args[i])) {
-                    degrees = Double.valueOf(args[i + 1]).doubleValue() / 6371
-                            * 180.0 / Math.PI;
+                    distKilometers = Double.valueOf(args[i + 1]).doubleValue();
                     i++;
                 } else if(dashEquals("az", args[i])) {
                     azimuth = Double.valueOf(args[i + 1]).doubleValue();
@@ -1050,6 +1055,11 @@ public class TauP_Time {
                 throw new RuntimeException(ee);
             }
         }
+        // check for command line arg distance in km
+    	if (degrees == Double.MAX_VALUE && distKilometers != Double.MAX_VALUE) {
+    		degrees = distKilometers / getTauModel().getRadiusOfEarth()
+    				* 180.0 / Math.PI;
+    	}
     }
     
     public String getOutputFormat() {
