@@ -586,6 +586,9 @@ public class Format {
         int e = 0;
         double dd = d;
         double factor = 1;
+        if ( ! Double.isFinite(d)) {
+        	return ""+d;
+        }
         while(dd > 10) {
             e++;
             factor /= 10;
