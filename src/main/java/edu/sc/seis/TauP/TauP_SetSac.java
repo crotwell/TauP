@@ -305,13 +305,13 @@ public class TauP_SetSac extends TauP_Time {
                 noComprendoArgs[numNoComprendoArgs++] = leftOverArgs[i];
             } else {
                 tempFile = new File(leftOverArgs[i]);
-                if(tempFile.exists() && tempFile.isFile() && tempFile.canRead()) {
+                if(tempFile.exists() && (tempFile.isFile() || tempFile.isDirectory() ) && tempFile.canRead()) {
                     sacFileNames.add(leftOverArgs[i]);
                 } else {
                     if(! tempFile.exists()) {
                         System.err.println(leftOverArgs[i]+" does not exist. "+tempFile.getAbsolutePath() );
-                    } else if( ! tempFile.isFile() ) {
-                        System.err.println(leftOverArgs[i]+" is not a file.");
+                    } else if( ! (tempFile.isFile() || tempFile.isDirectory())) {
+                        System.err.println(leftOverArgs[i]+" is not a file or directory.");
                     } else if( ! tempFile.canRead()) {
                         System.err.println(leftOverArgs[i]+" is not readable.");
                     }
