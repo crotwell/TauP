@@ -246,7 +246,15 @@ public class SeismicPhase implements Serializable, Cloneable {
     }
 
     public SeismicPhase(String name, TauModel tMod, double receiverDepth) throws TauModelException {
-        this.name = name;
+    	this(name, tMod, receiverDepth, false);
+    }
+    
+    public SeismicPhase(String name, TauModel tMod, double receiverDepth, boolean debug) throws TauModelException {
+        if (debug) {this.DEBUG = debug;}
+        if (name == null || name.length() == 0) {
+        	throw new TauModelException("Phase name cannot be empty to null: "+name);
+        }
+    	this.name = name;
         this.sourceDepth = tMod.getSourceDepth();
         this.receiverDepth = receiverDepth;
         // make sure we have layer boundary at receiver
