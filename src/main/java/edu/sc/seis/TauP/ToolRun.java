@@ -68,7 +68,11 @@ public class ToolRun {
 				tauPPath.destroy();
 			} else if (toolToRun.contentEquals(PHASE)) {
 				TauP_Time timetool = new TauP_Time();
-				timetool.parseCmdLineArgs(restOfArgs);
+				String[] noComprendoArgs = timetool.parseCmdLineArgs(restOfArgs);
+				TauP_Time.printNoComprendoArgs(noComprendoArgs);
+				if (noComprendoArgs.length != 0) {
+					return;
+				}
 				timetool.init();
 				List<SeismicPhase> phaseList = timetool.getSeismicPhases();
 				for (SeismicPhase phase: phaseList) {
