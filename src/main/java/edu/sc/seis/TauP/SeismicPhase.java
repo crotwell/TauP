@@ -890,10 +890,43 @@ public class SeismicPhase implements Serializable, Cloneable {
                                                                   isPWave)
                     .getMinTurnRayParam());
         } else {
-            throw new TauModelException("Illegal endAction: endAction="
+            throw new TauModelException(getName()+": Illegal endAction: endAction="
                     + endAction);
         }
         SeismicPhaseSegment segment = new SeismicPhaseSegment(tMod, startBranch, endBranch, isPWave, endAction, isDownGoing, currLeg);
+        if (segmentList.size() > 0) {
+        	SeismicPhaseSegment prevSegment = segmentList.get(segmentList.size()-1);
+        	if (isDownGoing) {
+        		if (prevSegment.endBranch > startBranch) {
+        			throw new TauModelException(getName()+": Segment is downgoing, but we are already below the start: "+currLeg);
+        		}
+        		if (prevSegment.endAction == REFLECT_TOPSIDE) {
+        			throw new TauModelException(getName()+": Segment is downgoing, but previous action was to reflect up: "+currLeg);
+        		}
+        		if (prevSegment.endAction == TURN) {
+        			throw new TauModelException(getName()+": Segment is downgoing, but previous action was to turn: "+currLeg);
+        		}
+        		if (prevSegment.endAction == TRANSUP) {
+        			throw new TauModelException(getName()+": Segment is downgoing, but previous action was to transmit up: "+currLeg);
+        		}
+        		if (prevSegment.endBranch == startBranch && prevSegment.isDownGoing == false && prevSegment.endAction != REFLECT_UNDERSIDE) {
+        			throw new TauModelException(getName()+": Segment "+currLeg+" is downgoing, but previous action was not to reflect underside: "+currLeg+" "+endActionString(prevSegment.endAction));
+        		}
+        	} else {
+        		if (prevSegment.endBranch < startBranch) {
+        			throw new TauModelException(getName()+": Segment is upgoing, but we are already above the start: "+currLeg);
+        		}
+        		if (prevSegment.endAction == REFLECT_UNDERSIDE) {
+        			throw new TauModelException(getName()+": Segment is upgoing, but previous action was to underside reflect down: "+currLeg);
+        		}
+        		if (prevSegment.endAction == TRANSDOWN) {
+        			throw new TauModelException(getName()+": Segment is upgoing, but previous action was  to trans down: "+currLeg);
+        		}
+        		if (prevSegment.endBranch == startBranch && prevSegment.isDownGoing == true && ! ( prevSegment.endAction == TURN || prevSegment.endAction == REFLECT_TOPSIDE)) {
+        			throw new TauModelException(getName()+": Segment is upgoing, but previous action was not to reflect topside: "+currLeg+" "+endActionString(prevSegment.endAction));
+        		}
+        	}
+    	}
         segmentList.add(segment);
         if(isDownGoing) {
             if (startBranch > endBranch) {
@@ -1198,7 +1231,33 @@ public class SeismicPhase implements Serializable, Cloneable {
                                 isPWave,
                                 endAction,
                                 currLeg);
-                } else if(nextLeg.startsWith("v")) {
+                } else if(nextLeg.equals("m")) {
+                    endAction = TRANSDOWN;
+                    addToBranch(tMod,
+                                currBranch,
+                                tMod.getMohoBranch() - 1,
+                                isPWave,
+                                endAction,
+                                currLeg);
+                } else if( isLegDepth) {
+                	disconBranch = closestBranchToDepth(tMod, nextLeg);
+                    endAction = TRANSDOWN;
+                    addToBranch(tMod,
+                                currBranch,
+                                disconBranch - 1,
+                                isPWave,
+                                endAction,
+                                currLeg);
+                } else if(nextLeg.equals("c") || nextLeg.equals("i")) {
+                    disconBranch = closestBranchToDepth(tMod, nextLeg);
+                    endAction = REFLECT_TOPSIDE;
+                    addToBranch(tMod,
+                    		currBranch,
+                    		disconBranch - 1,
+                    		isPWave,
+                    		endAction,
+                    		currLeg);
+                } else if(nextLeg.startsWith("v") ) {
                         disconBranch = closestBranchToDepth(tMod,
                                                             nextLeg.substring(1));
                         if(currBranch <= disconBranch - 1) {
@@ -1355,7 +1414,8 @@ public class SeismicPhase implements Serializable, Cloneable {
                                     currLeg);
                     } else if(prevLeg.startsWith("^") || prevLeg.equals("P")
                             || prevLeg.equals("S") || prevLeg.equals("p")
-                            || prevLeg.equals("s") || prevLeg.equals("START")) {
+                            || prevLeg.equals("s") || prevLeg.equals("m") 
+                            || prevLeg.equals("START")) {
                         endAction = TURN;
                         addToBranch(tMod,
                                     currBranch,
@@ -2820,12 +2880,12 @@ public class SeismicPhase implements Serializable, Cloneable {
             } else {
             	nextToken = "";
             }
-            /* Check for 2 reflections with no leg between them. */
+            /* Check for 2 reflections/depths with no leg between them. */
             if(currToken.startsWith("^") || currToken.startsWith("v")
-                    || currToken.equals("m") || currToken.equals("c")
+            		|| currToken.equals("m") || currToken.equals("c")
                     || currToken.equals("i")) {
                 if(prevIsReflect) {
-                    return "Two reflections with no leg in between: "
+                    return "Two reflections or depths with no leg in between: "
                             + prevToken + ", " + currToken;
                 } else {
                     prevIsReflect = true;
@@ -2842,8 +2902,9 @@ public class SeismicPhase implements Serializable, Cloneable {
                     && ! ( currToken.equals("END") 
                             || currToken.equals("Pdiff") || currToken.equals("Sdiff")
                             || currToken.equals("P") || currToken.equals("S")
-                            || currToken.equals("K") || currToken.startsWith("v"))) {
-                return "'Ped' or 'Sed' can only be before Pdiff,P,S,Sdiff,K or second to last token immediately before END or ";
+                            || currToken.equals("K") || currToken.startsWith("v")
+                            || currToken.equals("c") || currToken.equals("m") )) {
+                return "'Ped' or 'Sed' can only be before Pdiff,P,S,Sdiff,K,c,v,m or second to last token immediately before END or ";
             }
 
             // Cannot have K before P,S and followed by another K as P,S leg must turn to get back to CMB
