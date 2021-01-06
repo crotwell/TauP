@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.BufferedOutputStream;
@@ -60,7 +61,8 @@ public class CmdLineOutputTest {
      *
      * @throws Exception
      */
-    // @Test
+    @Disabled("disable unless regenerating the cmd line output test resources.")
+    @Test
     public void testSaveOutput() throws Exception {
         List<String> allList = new ArrayList<String>();
         allList.addAll(Arrays.asList(helpTestCmds));
@@ -80,7 +82,8 @@ public class CmdLineOutputTest {
      *
      * @throws Exception
      */
-     // @Test
+    @Disabled("disable unless regenerating the cmd line output test resources for one test.")
+    @Test
     public void testSaveOutputSingle() throws Exception {
         saveOutputToFile(helpTestCmds[0]);
     }
