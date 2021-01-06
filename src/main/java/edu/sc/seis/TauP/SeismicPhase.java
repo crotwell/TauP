@@ -843,7 +843,7 @@ public class SeismicPhase implements Serializable, Cloneable {
                                int endAction,
                                String currLeg) throws TauModelException {
         if (endBranch < 0 || endBranch > tMod.getNumBranches()) {
-            throw new IllegalArgumentException("end branch outside range: "+endBranch);
+            throw new IllegalArgumentException(getName()+": end branch outside range: "+endBranch);
         }
         int endOffset;
         boolean isDownGoing;
@@ -1122,7 +1122,7 @@ public class SeismicPhase implements Serializable, Cloneable {
             	nextLeg = "END";
             }
             if(DEBUG) {
-                System.out.println(legNum + "  " + prevLeg + "  " + currLeg
+                System.out.println(legNum + "  " + prevLeg + "  cur=" + currLeg
                         + "  " + nextLeg);
             }
             if (currLeg.contentEquals("END")) {
@@ -1210,7 +1210,7 @@ public class SeismicPhase implements Serializable, Cloneable {
                                         endAction,
                                         currLeg);
                         } else {
-                            throw new TauModelException("Phase not recognized (4): "
+                            throw new TauModelException(getName()+" Phase not recognized (4): "
                                     + currLeg + " followed by " + nextLeg
                                     + " when currBranch=" + currBranch
                                     + " < disconBranch=" + disconBranch);
@@ -1231,14 +1231,14 @@ public class SeismicPhase implements Serializable, Cloneable {
                         return;
                     }
                 } else {
-                    throw new TauModelException("Phase not recognized (1): "
+                    throw new TauModelException(getName()+" Phase not recognized (1): "
                             + currLeg + " followed by " + nextLeg);
                 }
             /* Deal with p and s case . */
             } else if(currLeg.equals("p") || currLeg.equals("s")
                     || currLeg.equals("k")) {
                 if(nextLeg.startsWith("v")) {
-                    throw new TauModelException("p and s and k must always be up going "
+                    throw new TauModelException(getName()+" p and s and k must always be up going "
                             + " and cannot come immediately before a top-side reflection."
                             + " currLeg=" + currLeg + " nextLeg=" + nextLeg);
                 } else if(nextLeg.startsWith("^")) {
@@ -1253,7 +1253,7 @@ public class SeismicPhase implements Serializable, Cloneable {
                                     endAction,
                                     currLeg);
                     } else {
-                        throw new TauModelException("Phase not recognized (2): "
+                        throw new TauModelException(getName()+" Phase not recognized (2): "
                                 + currLeg + " followed by " + nextLeg
                                 + " when currBranch=" + currBranch
                                 + " > disconBranch=" + disconBranch);
@@ -1297,7 +1297,7 @@ public class SeismicPhase implements Serializable, Cloneable {
                                 endAction,
                                 currLeg);
                 } else {
-                    throw new TauModelException("Phase not recognized (3): "
+                    throw new TauModelException(getName()+" Phase not recognized (3): "
                             + currLeg + " followed by " + nextLeg);
                 }
                 /* Now deal with P and S case. */
@@ -1387,10 +1387,10 @@ public class SeismicPhase implements Serializable, Cloneable {
                                     endAction,
                                     currLeg);
                     } else {
-                        throw new TauModelException("Phase not recognized (5): "
+                        throw new TauModelException(getName()+" Phase not recognized (5): "
                                 + currLeg + " followed by " + nextLeg
                                 + " when currBranch=" + currBranch
-                                + " > disconBranch=" + disconBranch);
+                                + " > disconBranch=" + disconBranch+" , prev="+prevLeg);
                     }
                 } else if(nextLeg.equals("c")) {
                     if (tMod.getCmbBranch() == tMod.getNumBranches()) {
@@ -1406,7 +1406,7 @@ public class SeismicPhase implements Serializable, Cloneable {
                                 endAction,
                                 currLeg);
                 } else if(nextLeg.equals("K") && prevLeg.equals("K")) {
-                        throw new TauModelException("Phase not recognized (5.5): "
+                        throw new TauModelException(getName()+" Phase not recognized (5.5): "
                                 + currLeg + " followed by " + nextLeg
                                 + " and preceeded by "+prevLeg
                                 + " when currBranch=" + currBranch
@@ -1430,7 +1430,7 @@ public class SeismicPhase implements Serializable, Cloneable {
                                 endAction,
                                 currLeg);
                     } else {
-                        throw new TauModelException("P or S followed by I or J can only exist if model has no outer core: "
+                        throw new TauModelException(getName()+" P or S followed by I or J can only exist if model has no outer core: "
                         		+ currLeg
                                 + " followed by "
                                 + nextLeg);
@@ -1453,7 +1453,7 @@ public class SeismicPhase implements Serializable, Cloneable {
                         if(disconBranch > currBranch) {
                             // check for discontinuity below the current branch
                             // when the ray should be upgoing
-                            throw new TauModelException("Phase not recognized (6): "
+                            throw new TauModelException(getName()+" Phase not recognized (6): "
                                     + currLeg
                                     + " followed by "
                                     + nextLeg
@@ -1523,7 +1523,7 @@ public class SeismicPhase implements Serializable, Cloneable {
                                 return;
                             }
                         } else {
-                            throw new TauModelException("Phase not recognized (7): "
+                            throw new TauModelException(getName()+" Phase not recognized (7): "
                                     + currLeg
                                     + " followed by "
                                     + nextLeg
@@ -1531,7 +1531,7 @@ public class SeismicPhase implements Serializable, Cloneable {
                         }
                     }
                 } else {
-                    throw new TauModelException("Phase not recognized (8): "
+                    throw new TauModelException(getName()+" Phase not recognized (8): "
                             + currLeg + " followed by " + nextLeg);
                 }
             } else if(currLeg.startsWith("P") || currLeg.startsWith("S")) {
@@ -1585,7 +1585,7 @@ public class SeismicPhase implements Serializable, Cloneable {
                                         endAction,
                                         currLeg);
                         } else {
-                            throw new TauModelException("Phase not recognized (12): "
+                            throw new TauModelException(getName()+" Phase not recognized (12): "
                                     + currLeg + " followed by " + nextLeg
                                     + " when currBranch=" + currBranch);
                         }
@@ -1694,7 +1694,7 @@ public class SeismicPhase implements Serializable, Cloneable {
                         }
                     }
                 } else {
-                    throw new TauModelException("Phase not recognized for P,S: "
+                    throw new TauModelException(getName()+" Phase not recognized for P,S: "
                             + currLeg + " followed by " + nextLeg);
                 }
             } else if(currLeg.equals("K")) {
@@ -1781,7 +1781,7 @@ public class SeismicPhase implements Serializable, Cloneable {
                                 endAction,
                                 currLeg);
                 } else {
-                    throw new TauModelException("Phase not recognized (9): "
+                    throw new TauModelException(getName()+" Phase not recognized (9): "
                             + currLeg + " followed by " + nextLeg);
                 }
             } else if(currLeg.equals("I") || currLeg.equals("J")) {
@@ -1831,7 +1831,7 @@ public class SeismicPhase implements Serializable, Cloneable {
                                     currLeg);
                     } else {
                         maxRayParam = -1;
-                        throw new TauModelException("Cannot have I or J phase "
+                        throw new TauModelException(getName()+" Cannot have I or J phase "
                                     + currLeg 
                                     + " followed by "+nextLeg
                                     + " within phase " + name
@@ -1849,17 +1849,17 @@ public class SeismicPhase implements Serializable, Cloneable {
             } else if(currLeg.startsWith("v")) {
                 int b = closestBranchToDepth(tMod, currLeg.substring(1));
                 if (b == 0) {
-                    throw new TauModelException("Phase not recognized: "+currLeg+" looks like a top side reflection at the free surface.");
+                    throw new TauModelException(getName()+" Phase not recognized: "+currLeg+" looks like a top side reflection at the free surface.");
                 }
             } else if(isLegDepth) {
                 // check for phase like P0s, but could also be P2s if first discon is deeper
                 int b = closestBranchToDepth(tMod, currLeg);
                 if (b == 0 && (nextLeg.equals("p") || nextLeg.equals("s"))) {
-                    throw new TauModelException("Phase not recognized: "+currLeg
+                    throw new TauModelException(getName()+" Phase not recognized: "+currLeg
                                                 + " followed by " + nextLeg+" looks like a upgoing wave from the free surface as closest discontinuity to "+currLeg+" is zero depth.");
                 }
             } else {
-                throw new TauModelException("Phase not recognized (10): " + currLeg
+                throw new TauModelException(getName()+" Phase not recognized (10): " + currLeg
                         + " followed by " + nextLeg);
             }
         }
