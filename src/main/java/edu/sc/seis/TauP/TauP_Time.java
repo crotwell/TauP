@@ -658,7 +658,6 @@ public class TauP_Time {
                     }
                     Reader r = new BufferedReader(new FileReader(args[i + 1]));
                     toolProps.load(r);
-                    System.out.println("taup.depth.precision: "+toolProps.getProperty("taup.depth.precision"));
                     Outputs.configure(toolProps);
                     i++;
                 } else if(i < args.length - 2) {
@@ -671,6 +670,10 @@ public class TauP_Time {
                             || args[i].equalsIgnoreCase("-event")) {
                         eventLat = Double.valueOf(args[i + 1]).doubleValue();
                         eventLon = Double.valueOf(args[i + 2]).doubleValue();
+                        i += 2;
+                    } else if (args[i].contains("set") && args[i+1].startsWith("taup.")) {
+                        toolProps.setProperty(args[i+1], args[i+2]);
+                        Outputs.configure(toolProps);
                         i += 2;
                     } else {
                         /*
