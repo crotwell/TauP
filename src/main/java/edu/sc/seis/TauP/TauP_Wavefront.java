@@ -66,6 +66,11 @@ public class TauP_Wavefront extends TauP_Path {
             Map<Float, List<TimeDist>> phaseResult = result.get(phase);
             keySet.addAll(phaseResult.keySet());
         }
+        if (keySet.size() == 0) {
+            // no phases successful?
+            System.err.println("taup wavefront, no phases successful...");
+            return;
+        }
         List<Float> keys = new ArrayList<Float>();
         keys.addAll(keySet);
         Collections.sort(keys);
