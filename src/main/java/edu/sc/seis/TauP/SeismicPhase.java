@@ -587,9 +587,9 @@ public class SeismicPhase implements Serializable, Cloneable {
                 }
             }
         } catch(NoSuchLayerException e) {
-            throw new RuntimeException("Should not happen", e);
+            throw new RuntimeException("Should not happen: "+getName(), e);
         } catch(SlownessModelException e) {
-            throw new RuntimeException("Should not happen", e);
+            throw new RuntimeException("Should not happen: "+getName(), e);
         }
     }
     
@@ -602,7 +602,7 @@ public class SeismicPhase implements Serializable, Cloneable {
             throw new SlownessModelException("Unable to shoot ray in non-body waves");
         }
         if (rayParam < minRayParam || maxRayParam < rayParam) {
-            throw new SlownessModelException("Ray param "+rayParam+" is outside range for this phase: min="+minRayParam+" max="+maxRayParam);
+            throw new SlownessModelException("Ray param "+rayParam+" is outside range for this phase: "+getName()+" min="+minRayParam+" max="+maxRayParam);
         }
         // looks like a body wave and can ray param can propagate
         int rayParamIndex = -1;
