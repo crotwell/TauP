@@ -135,6 +135,10 @@ public class CmdLineOutputTest {
             TauP_Curve.main(cmdArgs);
         } else if (tool.equals("taup_table")) {
             TauP_Table.main(cmdArgs);
+        } else if (tool.equals("taup_wavefront")) {
+            TauP_Wavefront.main(cmdArgs);
+        } else if (tool.equals("taup_create")) {
+            TauP_Create.main(cmdArgs);
         } else {
             throw new Exception("Unknown tool: "+tool);
         }
