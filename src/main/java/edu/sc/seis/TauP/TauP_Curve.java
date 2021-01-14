@@ -527,25 +527,10 @@ public class TauP_Curve extends TauP_Time {
 
     /**
      * Allows TauP_Curve to run as an application. Creates an instance of
-     * TauP_Curve. .
+     * TauP_Curve. 
+     * ToolRun.main should be used instead.
      */
-    public static void main(String[] args) throws FileNotFoundException,
-            IOException, StreamCorruptedException, ClassNotFoundException,
-            OptionalDataException {
-        try {
-            TauP_Curve tauPCurve = new TauP_Curve();
-            tauPCurve.setOutFileBase("taup_curve");
-            String[] noComprendoArgs = tauPCurve.parseCmdLineArgs(args);
-            printNoComprendoArgs(noComprendoArgs);
-            if(tauPCurve.DEBUG) {
-                System.out.println("Done reading " + tauPCurve.modelName);
-            }
-            tauPCurve.init();
-            tauPCurve.start();
-            tauPCurve.destroy();
-        } catch(TauModelException e) {
-            System.out.println("Caught TauModelException: " + e.getMessage());
-            e.printStackTrace();
-        }
+    public static void main(String[] args) throws IOException {
+        ToolRun.legacyRunTool(ToolRun.CURVE, args);
     }
 }

@@ -1610,35 +1610,12 @@ public class TauP_Time {
     
     /**
      * Allows TauP_Time to run as an application. Creates an instance of
-     * TauP_Time. .
+     * TauP_Time. 
+     * 
+     * ToolRun.main should be used instead.
      */
-    public static void main(String[] args) throws FileNotFoundException,
-            IOException, StreamCorruptedException, ClassNotFoundException,
-            OptionalDataException {
-        // BasicConfigurator.configure();
-        try {
-            long prevTime = 0;
-            long currTime;
-            prevTime = System.currentTimeMillis();
-            TauP_Time tauPTime = new TauP_Time();
-            String[] noComprendoArgs = tauPTime.parseCmdLineArgs(args);
-            printNoComprendoArgs(noComprendoArgs);
-            currTime = System.currentTimeMillis();
-            prevTime = System.currentTimeMillis();
-            tauPTime.init();
-            currTime = System.currentTimeMillis();
-            if(TauP_Time.DEBUG) {
-                Alert.info("taup model read time=" + (currTime - prevTime));
-            }
-            tauPTime.start();
-            tauPTime.destroy();
-        } catch(TauModelException e) {
-            Alert.error("Caught TauModelException", e.getMessage());
-            e.printStackTrace();
-        } catch(TauPException e) {
-            Alert.error("Caught TauPException", e.getMessage());
-            e.printStackTrace();
-        }
+    public static void main(String[] args) throws IOException {
+        ToolRun.legacyRunTool(ToolRun.TIME, args);
     }
 
 }

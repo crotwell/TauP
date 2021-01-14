@@ -258,25 +258,11 @@ public class TauP_Create {
     /**
      * Allows TauP_Create to run as an application. Creates an instance of
      * TauP_Create and calls tauPCreate.init() and tauPCreate.start().
+     * 
+     * ToolRun.main should be used instead.
      */
-    public static void main(String[] args) throws SlownessModelException,
-            TauModelException {
-        System.out.println("TauP_Create starting...");
-        TauP_Create tauPCreate = new TauP_Create();
-        String[] noComprendoArgs = tauPCreate.parseCmdLineArgs(args);
-        TauP_Time.printNoComprendoArgs(noComprendoArgs);
-        try {
-            tauPCreate.loadVMod();
-            tauPCreate.start();
-            System.out.println("Done!");
-        } catch(IOException e) {
-            System.out.println("Tried to read!\n Caught IOException "
-                    + e.getMessage()
-                    + "\nCheck that the file exists and is readable.");
-        } catch(VelocityModelException e) {
-            System.out.println("Caught VelocityModelException "
-                    + e.getMessage() + "\nCheck your velocity model.");
-        }
+    public static void main(String[] args) throws IOException {
+        ToolRun.legacyRunTool(ToolRun.CREATE, args);
     }
 
     public void parseFileName(String modelFilename) {

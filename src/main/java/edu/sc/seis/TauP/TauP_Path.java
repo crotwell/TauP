@@ -444,27 +444,9 @@ public class TauP_Path extends TauP_Pierce {
 	/**
 	 * Allows TauP_Path to run as an application. Creates an instance of
 	 * TauP_Path and calls TauP_Path.init() and TauP_Path.start().
-	 */
-	public static void main(String[] args) throws FileNotFoundException,
-			IOException, StreamCorruptedException, ClassNotFoundException,
-			OptionalDataException {
-		try {
-			TauP_Path tauPPath = new TauP_Path();
-			tauPPath.setOutFileBase("taup_path");
-			String[] noComprendoArgs = tauPPath.parseCmdLineArgs(args);
-            printNoComprendoArgs(noComprendoArgs);
-			tauPPath.init();
-			if (TauP_Time.DEBUG) {
-				System.out.println("Done reading " + tauPPath.modelName);
-			}
-			tauPPath.start();
-			tauPPath.destroy();
-		} catch (TauModelException e) {
-			System.out.println("Caught TauModelException: " + e.getMessage());
-			e.printStackTrace();
-		} catch (TauPException e) {
-			System.out.println("Caught TauPException: " + e.getMessage());
-			e.printStackTrace();
-		}
-	}
+     * ToolRun.main should be used instead.
+     */
+    public static void main(String[] args) throws IOException {
+        ToolRun.legacyRunTool(ToolRun.PATH, args);
+    }
 }

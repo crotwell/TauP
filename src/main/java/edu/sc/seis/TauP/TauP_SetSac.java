@@ -331,31 +331,11 @@ public class TauP_SetSac extends TauP_Time {
 
     /**
      * Allows TauP_SetSac to run as an application. Creates an instance of
-     * TauP_SetSac. .
+     * TauP_SetSac. 
+     * 
+     * ToolRun.main should be used instead.
      */
-    public static void main(String[] args) throws FileNotFoundException,
-            IOException, StreamCorruptedException, ClassNotFoundException,
-            OptionalDataException {
-        TauP_SetSac tauPSetSac = new TauP_SetSac();
-        if(args.length == 0) {
-            tauPSetSac.printUsage();
-            System.exit(1);
-        } else
-            try {
-                String[] noComprendoArgs = tauPSetSac.parseCmdLineArgs(args);
-                printNoComprendoArgs(noComprendoArgs);
-                if(TauP_Time.DEBUG) {
-                    System.out.println("Done reading " + tauPSetSac.modelName);
-                }
-                tauPSetSac.init();
-                tauPSetSac.start();
-                if (tauPSetSac.sacFileNames.size() == 0) {
-                	tauPSetSac.printUsage();
-                }
-            } catch(TauModelException e) {
-                System.out.println("Caught TauModelException: "
-                        + e.getMessage());
-                e.printStackTrace();
-            }
+    public static void main(String[] args) throws IOException {
+        ToolRun.legacyRunTool(ToolRun.SETSAC, args);
     }
 }

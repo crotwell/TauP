@@ -537,23 +537,10 @@ public class TauP_Table extends TauP_Time {
         }
     }
 
-    public static void main(String[] args) {
-        TauP_Table me;
-        try {
-            me = new TauP_Table();
-            String[] noComprendoArgs = me.parseCmdLineArgs(args);
-            printNoComprendoArgs(noComprendoArgs);
-            me.init();
-            me.start();
-        } catch(TauModelException e) {
-            System.err.println("Caught TauModelException: " + e.getMessage());
-            e.printStackTrace();
-        } catch(TauPException e) {
-            System.err.println("Caught TauModelException: " + e.getMessage());
-            e.printStackTrace();
-        } catch(IOException e) {
-            System.err.println("Caught IOException: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
+    /**
+    * ToolRun.main should be used instead.
+    */
+   public static void main(String[] args) throws IOException {
+       ToolRun.legacyRunTool(ToolRun.TABLE, args);
+   }
 }

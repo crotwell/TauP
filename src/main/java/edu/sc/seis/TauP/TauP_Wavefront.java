@@ -287,39 +287,11 @@ public class TauP_Wavefront extends TauP_Path {
 
     /**
      * Allows TauP_Isochron to run as an application. Creates an instance of
-     * TauP_Isochron. .
+     * TauP_Wavefront.
+     *  
+     * ToolRun.main should be used instead.
      */
-    public static void main(String[] args) throws FileNotFoundException, IOException, StreamCorruptedException,
-            ClassNotFoundException, OptionalDataException {
-        boolean doInteractive = true;
-        try {
-            TauP_Wavefront tauP_wavefront = new TauP_Wavefront();
-            tauP_wavefront.setOutFileBase("taup_wavefront");
-            String[] noComprendoArgs = tauP_wavefront.parseCmdLineArgs(args);
-            printNoComprendoArgs(noComprendoArgs);
-            for (int i = 0; i < args.length; i++) {
-                if (dashEquals("h", args[i])) {
-                    doInteractive = false;
-                }
-            }
-            if (tauP_wavefront.DEBUG) {
-                System.out.println("Done reading " + tauP_wavefront.modelName);
-            }
-            tauP_wavefront.init();
-            if (doInteractive) {
-                tauP_wavefront.start();
-            } else {
-                /* enough info given on cmd line, so just do one calc. */
-                tauP_wavefront.calculate(tauP_wavefront.degrees);
-                tauP_wavefront.printResult(tauP_wavefront.getWriter());
-            }
-            tauP_wavefront.destroy();
-        } catch(TauModelException e) {
-            System.out.println("Caught TauModelException: " + e.getMessage());
-            e.printStackTrace();
-        } catch(TauPException e) {
-            System.out.println("Caught TauPException: " + e.getMessage());
-            e.printStackTrace();
-        }
+    public static void main(String[] args) throws IOException {
+        ToolRun.legacyRunTool(ToolRun.WAVEFRONT, args);
     }
 }

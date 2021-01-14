@@ -374,28 +374,11 @@ public class TauP_Pierce extends TauP_Time {
 
     /**
      * Allows TauP_Pierce to run as an application. Creates an instance of
-     * TauP_Pierce. .
+     * TauP_Pierce. 
+     * ToolRun.main should be used instead.
      */
-    public static void main(String[] args) throws FileNotFoundException,
-            IOException, StreamCorruptedException, ClassNotFoundException,
-            OptionalDataException {
-        try {
-            TauP_Pierce tauPPierce = new TauP_Pierce();
-            String[] noComprendoArgs = tauPPierce.parseCmdLineArgs(args);
-            printNoComprendoArgs(noComprendoArgs);
-            if(TauP_Time.DEBUG) {
-                System.out.println("Done reading " + tauPPierce.modelName);
-            }
-            tauPPierce.init();
-            tauPPierce.start();
-            tauPPierce.destroy();
-        } catch(TauModelException e) {
-            System.out.println("Caught TauModelException: " + e.getMessage());
-            e.printStackTrace();
-        } catch(TauPException e) {
-            System.out.println("Caught TauPException: " + e.getMessage());
-            e.printStackTrace();
-        }
+    public static void main(String[] args) throws IOException {
+        ToolRun.legacyRunTool(ToolRun.PIERCE, args);
     }
     
 }

@@ -188,11 +188,23 @@ public class ToolRun {
                 if (noComprendoArgs.length != 0) {
                     return;
                 }
+                boolean doInteractive = true;
+                for (int i = 0; i < args.length; i++) {
+                    if (dashEquals("h", args[i])) {
+                        doInteractive = false;
+                    }
+                }
+                tauP_wavefront.init();
+                if (doInteractive) {
+                    tauP_wavefront.start();
+                } else {
+                    /* enough info given on cmd line, so just do one calc. */
+                    tauP_wavefront.calculate(tauP_wavefront.degrees);
+                    tauP_wavefront.printResult(tauP_wavefront.getWriter());
+                }
 	            if (tauP_wavefront.DEBUG) {
 	                System.out.println("Done reading " + tauP_wavefront.modelName);
 	            }
-	            tauP_wavefront.init();
-	            tauP_wavefront.start();
 	            tauP_wavefront.destroy();
 			} else {
 				System.err.println("Tool "+toolToRun+" not recognized.");
@@ -202,7 +214,15 @@ public class ToolRun {
 		} catch(Exception e) {
 			System.err.println("Error starting tool: "+e);
 			e.printStackTrace();
+			System.exit(1);
 		}
+	}
+	
+	static void legacyRunTool(String toolname, String[] args) throws IOException {
+	    String[] argsPlusName = new String[args.length+1];
+	    argsPlusName[0] = toolname;
+	    System.arraycopy(args, 0, argsPlusName, 1, args.length);
+	    ToolRun.main(argsPlusName);
 	}
 
 }
