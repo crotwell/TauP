@@ -46,7 +46,7 @@ import java.util.Properties;
  */
 public class TauP_Create {
 
-    public transient boolean verbose = false;
+    public transient boolean verbose = ToolRun.VERBOSE;
 
     String modelFilename = "iasp91.tvel";
     
@@ -66,7 +66,7 @@ public class TauP_Create {
 
     TauModel tMod;
 
-    boolean DEBUG = false;
+    boolean DEBUG = ToolRun.DEBUG;
 
     protected boolean GUI = false;
 
@@ -182,7 +182,8 @@ public class TauP_Create {
     }
 
     /* parses the command line args for TauP_Create. */
-    protected String[] parseCmdLineArgs(String[] args) {
+    protected String[] parseCmdLineArgs(String[] origArgs) {
+        String[] args = ToolRun.parseCommonCmdLineArgs(origArgs);
         int i = 0;
         String[] noComprendoArgs = new String[args.length];
         int numNoComprendoArgs = 0;
@@ -191,15 +192,6 @@ public class TauP_Create {
                 printUsage();
                 noComprendoArgs[numNoComprendoArgs++] = args[i];
                 return noComprendoArgs;
-            } else if(dashEquals("version", args[i])) {
-                System.out.println(BuildVersion.getDetailedVersion());
-                noComprendoArgs[numNoComprendoArgs++] = args[i];
-                return noComprendoArgs;
-            } else if(dashEquals("debug", args[i])) {
-                verbose = true;
-                DEBUG = true;
-            } else if(dashEquals("verbose", args[i])) {
-                verbose = true;
             } else if(dashEquals("gui", args[i])) {
                 GUI = true;
             } else if(i < args.length - 1 && (dashEquals("prop", args[i]) || dashEquals("p", args[i]))) {

@@ -96,10 +96,10 @@ public abstract class SlownessModel implements Serializable {
     }
 
     /** True to enable debugging output. */
-    transient static public boolean DEBUG = false;
+    transient static public boolean DEBUG = ToolRun.DEBUG;
 
     /** True to enable verbose output. */
-    transient static public boolean verbose = false;
+    transient static public boolean verbose = ToolRun.VERBOSE;
 
     /** Radius of the Earth in km, usually input from the velocity model. */
     protected double radiusOfEarth = 6371.0;

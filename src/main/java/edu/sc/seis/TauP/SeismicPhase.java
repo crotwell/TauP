@@ -42,7 +42,7 @@ import java.util.List;
 public class SeismicPhase implements Serializable, Cloneable {
 
     /** Enables debugging output. */
-    public transient boolean DEBUG = TauP_Time.DEBUG;
+    public transient boolean DEBUG = ToolRun.DEBUG;
 
     /** Enables verbose output. */
     public transient boolean verbose = false;

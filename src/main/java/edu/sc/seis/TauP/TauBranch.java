@@ -32,7 +32,7 @@ import java.io.Serializable;
 public class TauBranch implements Serializable, Cloneable {
 
     /** Turns on debugging output. */
-    transient public boolean DEBUG = false;
+    transient public boolean DEBUG = ToolRun.DEBUG;
 
     /** The type of wave for this branch, P or S. */
     protected boolean isPWave;

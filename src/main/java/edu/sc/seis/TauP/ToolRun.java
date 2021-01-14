@@ -5,6 +5,9 @@ import java.util.Arrays;
 import java.util.List;
 
 public class ToolRun {
+    
+    public static boolean DEBUG = false;
+    public static boolean VERBOSE = false;
 
 	public static String PHASE = "phase";
 	public static String TIME = "time";
@@ -23,6 +26,45 @@ public class ToolRun {
 		System.out.println(" where tool is one of "+Arrays.deepToString(toolnames));
 	}
 
+
+	/**
+	 * Handles version, verbose and debug cmd line flags.
+	 * 
+	 * @param args
+	 * @return
+	 * @throws IOException
+	 */
+    protected static String[] parseCommonCmdLineArgs(String[] args) {
+        int i = 0;
+        String[] noComprendoArgs = new String[args.length];
+        int numNoComprendoArgs = 0;
+        while(i < args.length) {
+            if(dashEquals("version", args[i])) {
+                Alert.info(BuildVersion.getDetailedVersion());
+                noComprendoArgs[numNoComprendoArgs++] = args[i];
+            } else if(dashEquals("verbose", args[i])) {
+                VERBOSE = true;
+            } else if(dashEquals("debug", args[i])) {
+                VERBOSE = true;
+                DEBUG = true;
+            } else {
+                noComprendoArgs[numNoComprendoArgs++] = args[i];
+            }
+            i++;
+        }
+        if(numNoComprendoArgs > 0) {
+            String[] temp = new String[numNoComprendoArgs];
+            System.arraycopy(noComprendoArgs, 0, temp, 0, numNoComprendoArgs);
+            return temp;
+        } else {
+            return new String[0];
+        }
+    }
+    
+    public static boolean dashEquals(String argName, String arg) {
+        return arg.equalsIgnoreCase("-"+argName) || arg.equalsIgnoreCase("--"+argName);
+    }
+    
 	public static void main(String[] args) throws IOException {
 		if (args.length == 0) {
 			printUsage();

@@ -53,10 +53,10 @@ import java.util.Properties;
 public class TauP_Time {
 
     /** Turns on debugging output. */
-    public static boolean DEBUG = false;
+    public static boolean DEBUG = ToolRun.DEBUG;
 
     /** Turns on verbose output. */
-    public boolean verbose = false;
+    public boolean verbose = ToolRun.VERBOSE;
 
     /** Turns on expert mode. */
     public static boolean expert = false;
@@ -565,16 +565,18 @@ public class TauP_Time {
         return degreesFound;
     }
     
+    @Deprecated
     public static boolean dashEquals(String argName, String arg) {
-        return arg.equalsIgnoreCase("-"+argName) || arg.equalsIgnoreCase("--"+argName);
+        return ToolRun.dashEquals(argName, arg);
     }
 
     /*
      * parses the standard command line args for the taup package. Other tools
      * that subclass this class will likely override this.
      */
-    protected String[] parseCmdLineArgs(String[] args) throws IOException {
+    protected String[] parseCmdLineArgs(String[] origArgs) throws IOException {
         int i = 0;
+        String[] args = ToolRun.parseCommonCmdLineArgs(origArgs);
         String[] noComprendoArgs = new String[args.length];
         int numNoComprendoArgs = 0;
         boolean cmdLineArgPhase = false;
@@ -583,18 +585,10 @@ public class TauP_Time {
             if(dashEquals("help", args[i])) {
                 printUsage();
                 noComprendoArgs[numNoComprendoArgs++] = args[i];
-            } else if(dashEquals("version", args[i])) {
-                Alert.info(BuildVersion.getDetailedVersion());
-                noComprendoArgs[numNoComprendoArgs++] = args[i];
-            } else if(dashEquals("verbose", args[i])) {
-                verbose = true;
             } else if(dashEquals("json", args[i])) {
                 outputFormat = JSON;
             } else if(dashEquals("expert", args[i])) {
                 expert = true;
-            } else if(dashEquals("debug", args[i])) {
-                verbose = true;
-                DEBUG = true;
             } else if(dashEquals("gui", args[i])) {
                 GUI = true;
             } else if(dashEquals("rayp", args[i])) {
@@ -1017,6 +1011,9 @@ public class TauP_Time {
      * the setTauModel(TauModel) method.
      */
     public void init() throws IOException {
+        TauP_Time.DEBUG = TauP_Time.DEBUG || ToolRun.DEBUG;
+        this.verbose = this.verbose || TauP_Time.DEBUG || ToolRun.VERBOSE;
+        
         if(phaseNames.size() == 0) {
             if(toolProps.containsKey("taup.phase.file")) {
                 if(toolProps.containsKey("taup.phase.list")) {
@@ -1571,14 +1568,14 @@ public class TauP_Time {
                  + "--json             -- output travel times as json\n");
         printStdUsageTail();
     }
-
+    
     public static void printNoComprendoArgs(String[] noComprendoArgs) {
         if(noComprendoArgs.length > 0) {
             for(int i = 0; i < noComprendoArgs.length; i++) {
-                if(noComprendoArgs[i].equals("-help") || noComprendoArgs[i].equals("--help")
-                        || noComprendoArgs[i].equals("-version")
-                        || noComprendoArgs[i].equals("--version")) {
-                    System.exit(0);
+                if(dashEquals("help", noComprendoArgs[i]) 
+                        || dashEquals("version", noComprendoArgs[i])) {
+                    // short circuit for these args
+                    return;
                 }
             }
             String outStringA = "I don't understand the following arguments, continuing:";
