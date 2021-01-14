@@ -145,7 +145,7 @@ public class TauP_Path extends TauP_Pierce {
 	public void printResult(PrintWriter out) throws IOException {
 		boolean doPrintTime = withTime && ! outputFormat.equals(SVG);
         if (gmtScript) {
-            out.write("psxy -P -R -K -O -JP -m -A >> " + psFile + " <<END\n");
+            out.write("gmt psxy -P -R -K -O -JP -m -A >> " + psFile + " <<END\n");
         }
 		double radiusOfEarth = getTauModelDepthCorrected().getRadiusOfEarth();
 		boolean longWayRound;
@@ -246,7 +246,7 @@ public class TauP_Path extends TauP_Pierce {
 		}
         if (gmtScript) {
             out.write("END\n");
-            out.write("psxy -P -R -O -JP -m -A >> " + psFile + " <<END\n");
+            out.write("gmt psxy -P -R -O -JP -m -A >> " + psFile + " <<END\n");
             out.write("END\n");
         } else if (outputFormat.equals(SVG)) {
             out.println("</g>");
@@ -370,11 +370,11 @@ public class TauP_Path extends TauP_Pierce {
                 + "\n# first lines, to the last psxy, as well as the last line.\n#");
         out.println("/bin/rm -f " + psFile);
         out.println("# draw surface and label distances.\n"
-                + "psbasemap -K -P -R0/360/0/"+getTauModel().getRadiusOfEarth()+" -JP" + mapWidth + mapWidthUnit
+                + "gmt psbasemap -K -P -R0/360/0/"+getTauModel().getRadiusOfEarth()+" -JP" + mapWidth + mapWidthUnit
                 + " -B30p/500N > " + psFile);
         out.println("# draw circles for branches, note these are scaled for a \n"
                 + "# map using -JP" + mapWidth + mapWidthUnit + "\n"
-                + "psxy -K -O -P -R -JP -Sc -A >> " + psFile
+                + "gmt psxy -K -O -P -R -JP -Sc -A >> " + psFile
                 + " <<ENDLAYERS");
         // whole earth radius (scales to mapWidth)
         out.println("0.0 0.0 " + (float) (mapWidth) + mapWidthUnit);

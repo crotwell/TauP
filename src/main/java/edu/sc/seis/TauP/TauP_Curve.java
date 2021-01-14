@@ -362,12 +362,12 @@ public class TauP_Curve extends TauP_Time {
             // round max and min time to nearest 100 seconds
             maxTime = Math.ceil(maxTime / 100) * 100;
             minTime = Math.floor(minTime / 100) * 100;
-            out.println("pstext -JX"+getMapWidth()+getMapWidthUnit()+" -P -R0/180/" + minTime + "/" + maxTime
+            out.println("gmt pstext -JX"+getMapWidth()+getMapWidthUnit()+" -P -R0/180/" + minTime + "/" + maxTime
                     + " -B20/100/:.'" + title + "': -K > " + psFile
                     + " <<END");
             out.print(scriptStuff);
             out.println("END\n");
-            out.println("psxy -JX -R -m -O >> " + psFile + " <<END");
+            out.println("gmt psxy -JX -R -m -O >> " + psFile + " <<END");
         }
         double minDist = 0;
         double maxDist = Math.PI;

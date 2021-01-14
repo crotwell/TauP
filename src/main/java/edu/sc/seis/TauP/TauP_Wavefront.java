@@ -109,7 +109,7 @@ public class TauP_Wavefront extends TauP_Path {
             }
             if (gmtScript) {
                 timeOut.println("# timestep = " + time);
-                timeOut.println("psxy -P -R -K -O -Wblue -JP -m -A >> " + byTimePsFile + " <<END");
+                timeOut.println("gmt psxy -P -R -K -O -Wblue -JP -m -A >> " + byTimePsFile + " <<END");
             }
             for (SeismicPhase phase : result.keySet()) {
                 Map<Float, List<TimeDist>> phaseResult = result.get(phase);
@@ -142,13 +142,13 @@ public class TauP_Wavefront extends TauP_Path {
             if (gmtScript) {
                 timeOut.println("END");
                 if (separateFilesByTime) {
-                    timeOut.println("psxy -P -R -O -JP -m -A >> " + byTimePsFile + " <<END");
+                    timeOut.println("gmt psxy -P -R -O -JP -m -A >> " + byTimePsFile + " <<END");
                     timeOut.println("END");
                 }
             }
         }
         if (gmtScript && out != timeOut) {
-            out.println("psxy -P -R -O -JP -m -A >> " + byTimePsFile + " <<END");
+            out.println("gmt psxy -P -R -O -JP -m -A >> " + byTimePsFile + " <<END");
             out.println("END");
         }
         timeOut.flush();
