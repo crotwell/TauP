@@ -2180,6 +2180,22 @@ public abstract class SlownessModel implements Serializable {
                 prevDepth = sLayer.getBotDepth();
             }
         }
+        isPWave = true;
+        if (getNumLayers(isPWave) != 0) {
+            SlownessLayer sLayer = getSlownessLayer(getNumLayers(isPWave)-1, isPWave);
+            if (sLayer.getBotP() != 0) {
+                throw new SlownessModelException("Bot ray param of bottom layer should be zero, "
+                        + " waveType=" + (isPWave ? 'P' : 'S')+"  "+sLayer);
+            }
+        }
+        isPWave = false;
+        if (getNumLayers(isPWave) != 0) {
+            SlownessLayer sLayer = getSlownessLayer(getNumLayers(isPWave)-1, isPWave);
+            if (sLayer.getBotP() != 0) {
+                throw new SlownessModelException("Bot ray param of bottom layer should be zero, "
+                        + " waveType=" + (isPWave ? 'P' : 'S')+"  "+sLayer);
+            }
+        }
         /* Everything checks out OK so return true. */
         return isOK;
     }
