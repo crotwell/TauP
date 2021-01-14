@@ -30,9 +30,8 @@ public class ToolRun {
 	/**
 	 * Handles version, verbose and debug cmd line flags.
 	 * 
-	 * @param args
-	 * @return
-	 * @throws IOException
+	 * @param args command line args to parse
+	 * @return all unrecognized args
 	 */
     protected static String[] parseCommonCmdLineArgs(String[] args) {
         int i = 0;
