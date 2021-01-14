@@ -1497,21 +1497,24 @@ public abstract class SlownessModel implements Serializable {
         // make sure P and S sampling are consistant
         double botP = -1;
         double topP = -1;
-        for(int j = 0; j < PLayers.size(); j++) {
-            topP = PLayers.get(j).getTopP();
+        // temp copy as may change list while looping over it
+        List<SlownessLayer> tmpLayers = new ArrayList<SlownessLayer>(PLayers);
+        for(int j = 0; j < tmpLayers.size(); j++) {
+            topP = tmpLayers.get(j).getTopP();
             if(topP != botP) {
                 addSlowness(topP, SWAVE);
             }
-            botP = PLayers.get(j).getBotP();
+            botP = tmpLayers.get(j).getBotP();
             addSlowness(botP, SWAVE);
         }
         botP = -1;
-        for(int j = 0; j < SLayers.size(); j++) {
-            topP = SLayers.get(j).getTopP();
+        tmpLayers = new ArrayList<SlownessLayer>(SLayers);
+        for(int j = 0; j < tmpLayers.size(); j++) {
+            topP = tmpLayers.get(j).getTopP();
             if(topP != botP) {
                 addSlowness(topP, PWAVE);
             }
-            botP = SLayers.get(j).getBotP();
+            botP = tmpLayers.get(j).getBotP();
             addSlowness(botP, PWAVE);
         }
     }
@@ -1524,8 +1527,9 @@ public abstract class SlownessModel implements Serializable {
         SlownessLayer sLayer;
         double numNewP;
         double deltaP;
-        for(int j = 0; j < SLayers.size(); j++) {
-            sLayer = SLayers.get(j);
+        List<SlownessLayer> tempLayers = new ArrayList<SlownessLayer>(SLayers);
+        for(int j = 0; j < tempLayers.size(); j++) {
+            sLayer = tempLayers.get(j);
             if(Math.abs(sLayer.getTopP() - sLayer.getBotP()) > maxDeltaP) {
                 numNewP = Math.ceil(Math.abs(sLayer.getTopP()
                         - sLayer.getBotP())
@@ -1537,8 +1541,9 @@ public abstract class SlownessModel implements Serializable {
                 }
             }
         }
-        for(int j = 0; j < PLayers.size(); j++) {
-            sLayer = PLayers.get(j);
+        tempLayers = new ArrayList<SlownessLayer>(PLayers);
+        for(int j = 0; j < tempLayers.size(); j++) {
+            sLayer = tempLayers.get(j);
             if(Math.abs(sLayer.getTopP() - sLayer.getBotP()) > maxDeltaP) {
                 numNewP = Math.ceil(Math.abs(sLayer.getTopP()
                         - sLayer.getBotP())
@@ -1562,9 +1567,12 @@ public abstract class SlownessModel implements Serializable {
         double deltaDepth;
         double velocity;
         double p;
+        // temp copy as may change list while looping over it
+        List<SlownessLayer> tmpLayers = new ArrayList<SlownessLayer>(SLayers);
         try {
-            for(int j = 0; j < SLayers.size(); j++) {
-                sLayer = SLayers.get(j);
+            // S layers
+            for(int j = 0; j < tmpLayers.size(); j++) {
+                sLayer = tmpLayers.get(j);
                 if((sLayer.getBotDepth() - sLayer.getTopDepth()) > maxDepthInterval) {
                     numNewDepths = (int)Math.ceil((sLayer.getBotDepth() - sLayer.getTopDepth())
                             / maxDepthInterval);
@@ -1586,8 +1594,10 @@ public abstract class SlownessModel implements Serializable {
                     }
                 }
             }
-            for(int j = 0; j < PLayers.size(); j++) {
-                sLayer = PLayers.get(j);
+            // P layers
+            tmpLayers = new ArrayList<SlownessLayer>(PLayers);
+            for(int j = 0; j < tmpLayers.size(); j++) {
+                sLayer = tmpLayers.get(j);
                 if((sLayer.getBotDepth() - sLayer.getTopDepth()) > maxDepthInterval) {
                     numNewDepths = (int)Math.ceil((sLayer.getBotDepth() - sLayer.getTopDepth())
                             / maxDepthInterval);
