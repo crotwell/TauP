@@ -718,10 +718,16 @@ public class SeismicPhase implements Serializable, Cloneable {
         }
         VelocityModel vMod = getTauModel().getVelocityModel();
         try {
+            char firstLeg = name.charAt(0);
+            if (firstLeg == 'P' || firstLeg == 'p' || firstLeg == 'K' || firstLeg == 'k' || firstLeg == 'I') {
+                firstLeg = 'P';
+            } else if (firstLeg == 'S' || firstLeg == 's' || firstLeg == 'J' ) {
+                firstLeg = 'S';
+            }
             if (getDownGoing()[0]) {
-                takeoffVelocity = vMod.evaluateBelow(sourceDepth, name.charAt(0));
+                takeoffVelocity = vMod.evaluateBelow(sourceDepth, firstLeg);
             } else { 
-                takeoffVelocity = vMod.evaluateAbove(sourceDepth, name.charAt(0));
+                takeoffVelocity = vMod.evaluateAbove(sourceDepth, firstLeg);
             }
             double takeoffAngle = 180/Math.PI*Math.asin(takeoffVelocity*arrivalRayParam/(getTauModel().getRadiusOfEarth()-sourceDepth));
             if ( ! getDownGoing()[0]) {
@@ -744,7 +750,11 @@ public class SeismicPhase implements Serializable, Cloneable {
         VelocityModel vMod = getTauModel().getVelocityModel();
         try {
             char lastLeg = getLegs().get(getLegs().size()-2).charAt(0); // last item is "END", assume first char is P or S
-            
+            if (lastLeg == 'P' || lastLeg == 'p' || lastLeg == 'K' || lastLeg == 'k' || lastLeg == 'I') {
+                lastLeg = 'P';
+            } else if (lastLeg == 'S' || lastLeg == 's' || lastLeg == 'J' ) {
+                lastLeg = 'S';
+            }
             if (getDownGoing()[getDownGoing().length-1]) {
                 incidentVelocity = vMod.evaluateAbove(receiverDepth, lastLeg);
             } else {
