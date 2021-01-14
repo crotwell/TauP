@@ -1801,19 +1801,27 @@ public abstract class SlownessModel implements Serializable {
                     botVelocity = vMod.evaluateBelow(sLayer.getTopDepth(),
                                                      (isPWave ? 'P' : 'S'));
                 }
+                
+                if(!isPWave && topVelocity == 0.0 ) {
+                    // use P vel structure in for S in fluid
+                    if(sLayer.getTopDepth() != sLayer.getBotDepth()) {
+                        topVelocity = vMod.evaluateBelow(sLayer.getTopDepth(), 'P');
+                        botVelocity = vMod.evaluateAbove(sLayer.getBotDepth(), 'P');
+                    } else {
+                        // if depths are same we really only need topVelocity
+                        topVelocity = vMod.evaluateAbove(sLayer.getBotDepth(), 'P');
+                        botVelocity = vMod.evaluateBelow(sLayer.getTopDepth(), 'P');
+                    }
+                }
             } catch(NoSuchMatPropException e) {
                 // Can't happen but...
                 throw new SlownessModelException("Caught NoSuchMatPropException: ", e);
             }
             // We don't need to check for S waves in a fluid or
             // in inner core if allowInnerCoreS==false.
-            if(!isPWave) {
-                if(!allowInnerCoreS
+            if(!isPWave && !allowInnerCoreS
                         && sLayer.getBotDepth() > vMod.getIocbDepth()) {
-                    break;
-                } else if(topVelocity == 0.0) {
-                    continue;
-                }
+                break;
             }
             if((sLayer.getTopP() - p) * (p - sLayer.getBotP()) > 0) {
                 double botDepth = sLayer.getBotDepth();
