@@ -561,13 +561,24 @@ public class SeismicPhase implements Serializable, Cloneable {
                 || name.indexOf("Pn") != -1 
                 || name.indexOf("Sn") != -1
                 || name.endsWith("kmps")) {
-            // can't shoot/refine for non-body waves
+            // can't shoot/refine for diffracted, head and non-body waves
             return linInterp;
         }
+        if (linInterp.getRayParam() == leftEstimate.getRayParam()) { return leftEstimate;}
+        if (linInterp.getRayParam() == rightEstimate.getRayParam()) { return rightEstimate;}
+
         if(DEBUG) {
             System.err.println("Phase: "+this);
             System.err.println("Refine: "+maxRecursion+"\nleft:  "+leftEstimate+"\nright: "+rightEstimate+"\nlinInterp: "+linInterp);
         }
+
+        if (leftEstimate.getRayParam() < minRayParam || maxRayParam < leftEstimate.getRayParam()) {
+            throw new RuntimeException("Left Ray param "+leftEstimate.getRayParam()+" is outside range for this phase: "+getName()+" min="+minRayParam+" max="+maxRayParam);
+        }
+        if (rightEstimate.getRayParam() < minRayParam || maxRayParam < rightEstimate.getRayParam()) {
+            throw new RuntimeException("Left Ray param "+rightEstimate.getRayParam()+" is outside range for this phase: "+getName()+" min="+minRayParam+" max="+maxRayParam);
+        }
+        
         try {
             Arrival shoot = shootRay(linInterp.getRayParam());
             if ((leftEstimate.getDist() - searchDist)
@@ -654,21 +665,11 @@ public class SeismicPhase implements Serializable, Cloneable {
     private Arrival linearInterpArrival(double searchDist,
                                         Arrival left,
                                         Arrival right) {
-        if (left.getRayParamIndex() == 0 && searchDist == dist[0]) {
-            // degenerate case
-            return new Arrival(this,
-                                 time[0],
-                                 searchDist,
-                                 rayParams[0],
-                                 0,
-                                 name,
-                                 puristName,
-                                 sourceDepth,
-                                 0,
-                                 0);
-        }
         if (left.getDist() == searchDist) {
             return left;
+        }
+        if (right.getDist() == searchDist) {
+            return right;
         }
         double arrivalTime = (searchDist - left.getDist())
                 / (right.getDist() - left.getDist())
@@ -681,6 +682,7 @@ public class SeismicPhase implements Serializable, Cloneable {
                 * (left.getRayParam() - right.getRayParam())
                 / (left.getDist() - right.getDist())
                 + right.getRayParam();
+        
         return new Arrival(this,
                            arrivalTime,
                            searchDist,
@@ -2231,6 +2233,14 @@ public class SeismicPhase implements Serializable, Cloneable {
             }
         }
         
+        if(maxRayParamIndex < 0) {
+        	throw new RuntimeException(getName()+" Should not happen, did not find max ray param"+maxRayParam);
+        }
+        
+        if(minRayParamIndex < 0) {
+        	throw new RuntimeException(getName()+" Should not happen, did not find min ray param"+minRayParam);
+        }
+        
         if(maxRayParamIndex == 0
                 && minRayParamIndex == tMod.rayParams.length - 1) {
             // all ray parameters are valid so just copy
@@ -2260,10 +2270,14 @@ public class SeismicPhase implements Serializable, Cloneable {
             }
         } else {
             if(DEBUG) {
-                System.out.println("maxRayParamIndex=" + maxRayParamIndex
+                System.out.println("SumBranches() maxRayParamIndex=" + maxRayParamIndex
                         + " minRayParamIndex=" + minRayParamIndex
                         + " tMod.rayParams.length=" + tMod.rayParams.length
                         + " tMod.rayParams[0]=" + tMod.rayParams[0]
+                        +"\n"
+                        + " tMod.rayParams["+minRayParamIndex+"]=" + tMod.rayParams[minRayParamIndex]
+                        +"\n"
+                        + " tMod.rayParams["+maxRayParamIndex+"]=" + tMod.rayParams[maxRayParamIndex]
                         + " maxRayParam=" + maxRayParam);
             }
             // only a subset of ray parameters are valid so only use those
@@ -2973,6 +2987,7 @@ public class SeismicPhase implements Serializable, Cloneable {
         	} else {
         		desc += "  with degenerate ray parameter of "+Outputs.formatRayParam(getMaxRayParam())+"\n";
         	}
+        	desc += "  travel times from "+Outputs.formatTime(time[0])+" to "+Outputs.formatTime(time[time.length-1])+" sec/rad.\n";
         } else {
         	desc += "  FAILS to exist, because no ray parameters satisfy the path.\n";
         }
