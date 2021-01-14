@@ -64,7 +64,7 @@ public class Dist180Test {
         time.appendPhaseName("PKIKP");
         time.calculate(180);
         List<Arrival> arrivals = time.getArrivals();
-        assertEquals(integrateVelocity(time.getTauModel().getVelocityModel()), arrivals.get(0).getTime(), 0.005);
+        assertEquals(integrateVelocity(time.getTauModel().getVelocityModel()), arrivals.get(0).getTime(), 0.006);
     }
     
     /** integrates the velocity model, only works for a zero ray parameter ray. */
