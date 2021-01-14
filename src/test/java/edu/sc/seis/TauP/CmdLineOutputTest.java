@@ -61,7 +61,7 @@ public class CmdLineOutputTest {
      *
      * @throws Exception
      */
-    @Disabled("disable unless regenerating the cmd line output test resources.")
+    @Disabled("disable unless regenerating the cmd line output test resources for one test.")
     @Test
     public void testSaveOutput() throws Exception {
         List<String> allList = new ArrayList<String>();
@@ -125,8 +125,11 @@ public class CmdLineOutputTest {
         String tool = s[0];
         String[] cmdArgs = new String[s.length - 1];
         System.arraycopy(s, 1, cmdArgs, 0, cmdArgs.length);
+        System.err.println(cmd);
         if (tool.equals("taup_time")) {
+            System.err.println("before taup_time");
             TauP_Time.main(cmdArgs);
+            System.err.println("after taup_time");
         } else if (tool.equals("taup_pierce")) {
             TauP_Pierce.main(cmdArgs);
         } else if (tool.equals("taup_path")) {
@@ -235,5 +238,10 @@ public class CmdLineOutputTest {
 
     public String fileizeCmd(String cmd) {
         return cmd.replaceAll(" ", "_");
+    }
+    
+    public static void main(String[] args) throws Exception {
+        CmdLineOutputTest me = new CmdLineOutputTest();
+        me.testSaveOutput();
     }
 }
