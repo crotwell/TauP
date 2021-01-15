@@ -208,19 +208,19 @@ public class TauModelLoader {
         }
     }
     
-    static VelocityModel loadVelocityModel(String inModelName) throws IOException, VelocityModelException {
+    static VelocityModel loadVelocityModel(String modelName) throws IOException, VelocityModelException {
 
-        String modelName = inModelName;
-        if (modelName.endsWith(".tvel")) {
-            modelName = modelName.substring(0, modelName.length()-5);
-        } else if (modelName.endsWith(".nd")) {
-            modelName = modelName.substring(0, modelName.length()-3);
+        String basemodelName = modelName;
+        if (basemodelName.endsWith(".tvel")) {
+            basemodelName = basemodelName.substring(0, basemodelName.length()-5);
+        } else if (basemodelName.endsWith(".nd")) {
+            basemodelName = basemodelName.substring(0, basemodelName.length()-3);
         }
         /* First we try to find the model in the distributed taup.jar file. */
         VelocityModel vMod = null;
         try {
             Class c = Class.forName("edu.sc.seis.TauP.TauModelLoader");
-            String filename = modelName+".nd";
+            String filename = basemodelName+".nd";
             InputStream in = c.getResourceAsStream(packageName + "/" + filename);
             if(in != null) {
                 Reader inReader = new InputStreamReader(in);
@@ -228,7 +228,7 @@ public class TauModelLoader {
                 inReader.close();
             } else {
                 // try tvel
-                filename = modelName+".tvel";
+                filename = basemodelName+".tvel";
                 in = c.getResourceAsStream(packageName + "/" + filename);
                 if(in != null) {
                     Reader inReader = new InputStreamReader(in);
