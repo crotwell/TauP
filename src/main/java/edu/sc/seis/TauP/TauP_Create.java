@@ -168,7 +168,7 @@ public class TauP_Create {
         System.out.println("-nd modelfile       -- \"named discontinuities\" velocity file");
         System.out.println("-tvel modelfile     -- \".tvel\" velocity file, ala ttimes\n");
         System.out.println("--vplot file.gmt     -- plot velocity as a GMT script\n");
-       // plotting sMod and tMod not yet implemented
+       // plotting tMod not yet implemented
          System.out.println("--splot file.gmt     -- plot slowness as a GMT script\n");
        // System.out.println("--tplot file.gmt     -- plot tau as a GMT script\n");
         System.out.println("--debug              -- enable debugging output\n"
