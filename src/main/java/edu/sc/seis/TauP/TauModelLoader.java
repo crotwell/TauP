@@ -208,7 +208,14 @@ public class TauModelLoader {
         }
     }
     
-    static VelocityModel loadVelocityModel(String modelName) throws IOException, VelocityModelException {
+    static VelocityModel loadVelocityModel(String inModelName) throws IOException, VelocityModelException {
+
+        String modelName = inModelName;
+        if (modelName.endsWith(".tvel")) {
+            modelName = modelName.substring(0, modelName.length()-5);
+        } else if (modelName.endsWith(".nd")) {
+            modelName = modelName.substring(0, modelName.length()-3);
+        }
         /* First we try to find the model in the distributed taup.jar file. */
         VelocityModel vMod = null;
         try {
