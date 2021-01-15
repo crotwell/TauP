@@ -1999,7 +1999,7 @@ public abstract class SlownessModel implements Serializable {
         dos.println("#\n# This script will plot the "+vMod.getModelName()+" velocity model using GMT. If you want to\n"
                 + "#use this as a data file for psxy in another script, delete these"
                 + "\n# first lines, as well as the last line.\n#");
-        dos.println("/bin/rm -f " + psFile + "\n");
+        dos.println("/bin/rm -f " + psFile + "gmt.history\n");
         double maxP=0;
         for (SlownessLayer sLayer : PLayers) {
             if (sLayer.getTopP() > maxP) { maxP = sLayer.getTopP();}
@@ -2014,7 +2014,7 @@ public abstract class SlownessModel implements Serializable {
         dos.println("SCOLOR=255/0/0");
         dos.println();
         dos.println("gmt psbasemap -JX6i/-9i -P -R0/"+maxP+"/0/" + vMod.getMaxRadius() 
-                + " -B1a2:'Velocity (km/s)':/200a400:'Depth (km)':/:.'" + vMod.getModelName() + "':WSen  -K > " + psFile);
+                + " -Bxf100a200+l'Slowness (s/rad)' -Byf200a400+l'Depth (km)' -BWSen+t'" + vMod.getModelName() + "'  -K > " + psFile);
         dos.println();
         
         dos.println("gmt psxy -JX -P -R -W2p,${PCOLOR} -: -m -O -K >> " + psFile
@@ -2025,11 +2025,12 @@ public abstract class SlownessModel implements Serializable {
                 + " <<END");
         printGMT(dos, false);
         dos.println("END\n");
+        dos.println("/bin/rm gmt.history");
         dos.close();
     }
 
     /**
-     * prints out the velocity model into a file in a for suitable for plotting
+     * prints out the slowness model into a file in a for suitable for plotting
      * with GMT.
      */
     public void printGMT(PrintWriter dos) throws IOException {
@@ -2041,7 +2042,7 @@ public abstract class SlownessModel implements Serializable {
     
     void printGMT(PrintWriter dos, boolean isPWave) throws IOException {
         double pVel = -1.0;
-        for(int layerNum = 0; layerNum < getNumLayers(true); layerNum++) {
+        for(int layerNum = 0; layerNum < getNumLayers(isPWave); layerNum++) {
             SlownessLayer currVelocityLayer = getSlownessLayer(layerNum, isPWave);
             if(currVelocityLayer.getTopP() != pVel) {
                 dos.println((float)currVelocityLayer.getTopDepth() + " "

@@ -612,7 +612,7 @@ public class VelocityModel implements Cloneable, Serializable {
         dos.println("SCOLOR=255/0/0");
         dos.println();
         dos.println("gmt psbasemap -JX6i/-9i -P -R0/"+maxVel+"/0/" + getMaxRadius() 
-                + " -B1a2:'Velocity (km/s)':/200a400:'Depth (km)':/:.'" + getModelName() + "':WSen  -K > " + psFile);
+                + " -Bxa2f1+l'Velocity (km/s)' -Byf200a400+l'Depth (km)' -BWSen+t'" + getModelName() + "'  -K > " + psFile);
         dos.println();
         
         dos.println("gmt psxy -JX -P -R -W2p,${PCOLOR} -: -m -O -K >> " + psFile
@@ -623,6 +623,7 @@ public class VelocityModel implements Cloneable, Serializable {
                 + " <<END");
         printGMTforS(dos);
         dos.println("END\n");
+        dos.println("/bin/rm -f gmt.history");
         dos.close();
     }
 

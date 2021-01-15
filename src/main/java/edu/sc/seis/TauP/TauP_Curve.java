@@ -187,7 +187,7 @@ public class TauP_Curve extends TauP_Time {
             getWriter().println("#\n# This script will plot curves using GMT. If you want to\n"
                     + "#use this as a data file for psxy in another script, delete these"
                     + "\n# first lines, as well as the last line.\n#");
-            getWriter().println("/bin/rm -f " + psFile + "\n");
+            getWriter().println("/bin/rm -f " + psFile + "\n");            
         } else if (svgOutput) {
             int plotOffset = 20;
             int plotSize = 500;
@@ -277,7 +277,6 @@ public class TauP_Curve extends TauP_Time {
 
     public void destroy() throws IOException {
         if(gmtScript && writer != null) {
-            getWriter().println("END");
             getWriter().close();
         }
         super.destroy();
@@ -302,15 +301,15 @@ public class TauP_Curve extends TauP_Time {
             }
         }
         List<SeismicPhase> phaseList = getSeismicPhases();
+        String psFile = null;
         if(gmtScript) {
             String scriptStuff = "";
-            String psFile;
             if(getOutFile().endsWith(".gmt")) {
                 psFile = getOutFile().substring(0, getOutFile().length() - 4) + ".ps";
             } else {
                 psFile = getOutFile() + ".ps";
             }
-            String title = modelName;
+            String title = modelName+" (h="+getSourceDepth()+")";
             if(reduceTime) {
                 title += " reduce vel "+redVelString;
             } else if (relativePhaseName != "") {
@@ -344,8 +343,18 @@ public class TauP_Curve extends TauP_Time {
                             phaseMinIndex = i;
                         }
                     }
-                    arcDistance = Math.acos(Math.cos(dist[phaseMaxIndex]));
+                    int midSample = dist.length / 2 ;
+                    arcDistance = Math.acos(Math.cos(dist[midSample]));
                     if(reduceTime || relativePhaseName != "") {
+                        double[] timeValue = calcTimeValue(dist[midSample], time[midSample], relPhases);
+                        double labelTime;
+                        if (timeValue.length == 0) {
+                            // can't use mid point, due to rel phase, use max from above
+                            arcDistance = Math.acos(Math.cos(dist[phaseMaxIndex]));
+                            labelTime = phaseMaxTime;
+                        } else {
+                            labelTime = timeValue[0];
+                        }
                         scriptStuff += (float)(180.0 / Math.PI * arcDistance)
                                 + "  "
                                 + (float)(phaseMaxTime) + " 10 0 0 9 "
@@ -353,8 +362,8 @@ public class TauP_Curve extends TauP_Time {
                     } else {
                         int lix = (dist[1] > Math.PI) ? 1 : dist.length - 1;
                         double ldel = 180.0 / Math.PI
-                                * Math.acos(Math.cos(dist[lix]));
-                        scriptStuff += (float)ldel + "  " + (float)time[lix]
+                                * Math.acos(Math.cos(dist[midSample]));
+                        scriptStuff += (float)ldel + "  " + (float)time[midSample]
                                 + " 10 0 0 1 " + phase.getName() + "\n";
                     }
                 }
@@ -362,12 +371,12 @@ public class TauP_Curve extends TauP_Time {
             // round max and min time to nearest 100 seconds
             maxTime = Math.ceil(maxTime / 100) * 100;
             minTime = Math.floor(minTime / 100) * 100;
-            out.println("gmt pstext -JX"+getMapWidth()+getMapWidthUnit()+" -P -R0/180/" + minTime + "/" + maxTime
-                    + " -B20/100/:.'" + title + "': -K > " + psFile
-                    + " <<END");
+            out.println("gmt psbasemap -JX"+getMapWidth()+getMapWidthUnit()+" -P -R0/180/" + minTime + "/" + maxTime
+                        + " -Bxa20+l'Degrees' -Bya100+l'Seconds' -BWSne+t'" + title + "' -K > " + psFile);
+            out.println("gmt pstext -JX -P -R  -O -K >> " + psFile + " <<END");
             out.print(scriptStuff);
             out.println("END\n");
-            out.println("gmt psxy -JX -R -m -O >> " + psFile + " <<END");
+            out.println("gmt psxy -JX -R -m -O -K >> " + psFile + " <<END");
         }
         double minDist = 0;
         double maxDist = Math.PI;
@@ -431,6 +440,13 @@ public class TauP_Curve extends TauP_Time {
                 }
             }
         }
+        if (isGmtScript()) {
+            out.println("END");
+            out.println("gmt psxy -JX -R -m -O -T >> " + psFile );
+            out.println("# clean up after gmt...");
+            out.println("/bin/rm gmt.history");
+        }
+        out.flush();
     }
     
     protected void checkBoundary(double boundaryDistRadian,
