@@ -28,6 +28,7 @@ package edu.sc.seis.TauP;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Properties;
@@ -283,7 +284,13 @@ public class TauP_Create {
         if(verbose)
             System.out.println("filename =" + directory + file_sep
                     + modelFilename);
-        vMod = VelocityModel.readVelocityFile(filename, velFileType);
+        try {
+            vMod = VelocityModel.readVelocityFile(filename, velFileType);
+        } catch(FileNotFoundException e) {
+            if (DEBUG) {
+                System.out.println("Unable to load from directory "+filename);
+            }
+        }
         if (vMod == null) {
             // maybe try an load interally???
             vMod = TauModelLoader.loadVelocityModel(modelFilename);
