@@ -127,9 +127,7 @@ public class CmdLineOutputTest {
         System.arraycopy(s, 1, cmdArgs, 0, cmdArgs.length);
         System.err.println(cmd);
         if (tool.equals("taup_time")) {
-            System.err.println("before taup_time");
             TauP_Time.main(cmdArgs);
-            System.err.println("after taup_time");
         } else if (tool.equals("taup_pierce")) {
             TauP_Pierce.main(cmdArgs);
         } else if (tool.equals("taup_path")) {
