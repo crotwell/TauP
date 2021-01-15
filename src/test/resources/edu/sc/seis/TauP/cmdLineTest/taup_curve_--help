@@ -18,6 +18,7 @@ Arguments are:
 --mapwidth width   -- sets map width for GMT script.
 
 -o outfile         -- output is redirected to "outfile" instead of taup_curve.gmt
+--prop [propfile]  -- set configuration properties
 --debug            -- enable debugging output
 --verbose          -- enable verbose output
 --version          -- print the version

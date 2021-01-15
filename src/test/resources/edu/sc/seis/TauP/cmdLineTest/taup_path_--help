@@ -25,11 +25,13 @@ or by giving the station and event latitude and lonitude,
 -evt       lat lon -- sets the event latitude and longitude
 
 
+--withtime        -- include time for each path point
 --gmt             -- outputs path as a complete GMT script.
 --svg             -- outputs path as a complete SVG file.
 --mapwidth        -- sets map width for GMT script.
 
 -o [stdout|outfile]         -- output is redirected to stdout or to the "outfile" file
+--prop [propfile]   -- set configuration properties
 --debug             -- enable debugging output
 --verbose           -- enable verbose output
 --version           -- print the version

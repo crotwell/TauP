@@ -1,4 +1,3 @@
-TauP_Create starting...
 Usage: taup_create [arguments]
   or, for purists, java edu.sc.seis.TauP.TauP_Create [arguments]
 
@@ -10,9 +9,12 @@ Arguments are:
 
 --vplot file.gmt     -- plot velocity as a GMT script
 
--debug              -- enable debugging output
--verbose            -- enable verbose output
--version            -- print the version
--help               -- print this out, but you already know that!
+--splot file.gmt     -- plot slowness as a GMT script
+
+--debug              -- enable debugging output
+--prop [propfile]    -- set configuration properties
+--verbose            -- enable verbose output
+--version            -- print the version
+--help               -- print this out, but you already know that!
 
 
