@@ -309,7 +309,7 @@ public class TauP_Curve extends TauP_Time {
             } else {
                 psFile = getOutFile() + ".ps";
             }
-            String title = modelName+" (h="+getSourceDepth()+")";
+            String title = modelName+" (h="+getSourceDepth()+" km)";
             if(reduceTime) {
                 title += " reduce vel "+redVelString;
             } else if (relativePhaseName != "") {
@@ -372,7 +372,7 @@ public class TauP_Curve extends TauP_Time {
             maxTime = Math.ceil(maxTime / 100) * 100;
             minTime = Math.floor(minTime / 100) * 100;
             out.println("gmt psbasemap -JX"+getMapWidth()+getMapWidthUnit()+" -P -R0/180/" + minTime + "/" + maxTime
-                        + " -Bxa20+l'Degrees' -Bya100+l'Seconds' -BWSne+t'" + title + "' -K > " + psFile);
+                        + " -Bxa20+l'Distance (deg)' -Bya100+l'Time (sec)' -BWSne+t'" + title + "' -K > " + psFile);
             out.println("gmt pstext -JX -P -R  -O -K >> " + psFile + " <<END");
             out.print(scriptStuff);
             out.println("END\n");
@@ -442,7 +442,11 @@ public class TauP_Curve extends TauP_Time {
         }
         if (isGmtScript()) {
             out.println("END");
-            out.println("gmt psxy -JX -R -m -O -T >> " + psFile );
+            out.println("# end postscript"); 
+            out.println("gmt psxy -JX -R -m -O -T  >> " + psFile);
+            out.println("# run ps2pdf, if ps2pdf is in PATH, clean up .ps file"); 
+            out.println("which ps2pdf >> /dev/null && ps2pdf " + psFile+" && rm " + psFile);
+            
             out.println("# clean up after gmt...");
             out.println("/bin/rm gmt.history");
         }

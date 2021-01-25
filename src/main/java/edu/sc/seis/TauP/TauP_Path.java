@@ -282,10 +282,12 @@ public class TauP_Path extends TauP_Pierce {
         }
         
         if (gmtScript) {
-            out.write("# tell gmt to end postscript...\n");
-            out.write("gmt psxy -P -R -O -JP -m -A -T >> " + psFile + "\n");
-            out.write("# clean up after gmt...\n");
-            out.write("/bin/rm gmt.history\n");
+            out.println("# end postscript"); 
+            out.println("gmt psxy -P -R -O -JP -m -A -T  >> " + psFile);
+            out.println("# run ps2pdf, if ps2pdf is in PATH, clean up .ps file"); 
+            out.println("which ps2pdf >> /dev/null && ps2pdf " + psFile+" && rm " + psFile);
+            out.println("# clean up after gmt...");
+            out.println("/bin/rm gmt.history");
         } else if (outputFormat.equals(SVG)) {
             out.println("</g> <!-- end translate -->");
             out.println("</svg>");
@@ -456,7 +458,7 @@ public class TauP_Path extends TauP_Pierce {
         out.println("/bin/rm -f " + psFile);
         out.println("# draw surface and label distances.\n"
                 + "gmt psbasemap -K -P -R0/360/0/"+getTauModel().getRadiusOfEarth()+" -JP" + mapWidth + mapWidthUnit
-                + " -B30p/500N > " + psFile);
+                + " -Bx30  > " + psFile);
         out.println("# draw circles for branches, note these are scaled for a \n"
                 + "# map using -JP" + mapWidth + mapWidthUnit + "\n"
                 + "gmt psxy -K -O -P -R -JP -Sc -A >> " + psFile
