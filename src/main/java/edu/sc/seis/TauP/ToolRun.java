@@ -16,14 +16,18 @@ public class ToolRun {
 	public static String CURVE = "curve";
 	public static String CREATE = "create";
 	public static String SETSAC = "setsac";
+    public static String SPLOT = "slowplot";
 	public static String TABLE = "table";
+    public static String VPLOT = "velplot";
 	public static String WAVEFRONT = "wavefront";
 	
-	static String[] toolnames = { CREATE, CURVE, PATH, PHASE, PIERCE, SETSAC, TABLE, TIME, WAVEFRONT };
+	static String[] toolnames = { CREATE, CURVE, PATH, PHASE, PIERCE, SETSAC, SPLOT, TABLE, TIME, VPLOT, WAVEFRONT };
 	
 	public static void printUsage() {
 		System.out.println("Usage: taup <tool> <options>");
 		System.out.println(" where tool is one of "+Arrays.deepToString(toolnames));
+		System.out.println(" taup <tool> --help");
+        System.out.println(" for help with a particular tool.");
 	}
 
 
@@ -159,6 +163,14 @@ public class ToolRun {
 				if (tauPSetSac.sacFileNames.size() == 0) {
 					tauPSetSac.printUsage();
 				}
+            } else if (toolToRun.contentEquals(SPLOT)) {
+                TauP_SlownessPlot tauPSPlot = new TauP_SlownessPlot();
+                String[] noComprendoArgs = tauPSPlot.parseCmdLineArgs(restOfArgs);
+                TauP_Time.printNoComprendoArgs(noComprendoArgs);
+                if (noComprendoArgs.length != 0) {
+                    return;
+                }
+                tauPSPlot.start();
 			} else if (toolToRun.contentEquals(TABLE)) {
 				TauP_Table me;
 				me = new TauP_Table();
@@ -179,7 +191,16 @@ public class ToolRun {
 				tauPTime.init();
 				tauPTime.start();
 				tauPTime.destroy();
-			} else if (toolToRun.contentEquals(WAVEFRONT)) {
+				
+			} else if (toolToRun.contentEquals(VPLOT)) {
+                TauP_VelocityPlot tauPVPlot = new TauP_VelocityPlot();
+                String[] noComprendoArgs = tauPVPlot.parseCmdLineArgs(restOfArgs);
+                TauP_Time.printNoComprendoArgs(noComprendoArgs);
+                if (noComprendoArgs.length != 0) {
+                    return;
+                }
+                tauPVPlot.start();
+            } else if (toolToRun.contentEquals(WAVEFRONT)) {
 				TauP_Wavefront tauP_wavefront = new TauP_Wavefront();
 	            tauP_wavefront.setOutFileBase("taup_wavefront");
 	            String[] noComprendoArgs = tauP_wavefront.parseCmdLineArgs(restOfArgs);

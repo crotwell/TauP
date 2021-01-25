@@ -73,15 +73,6 @@ public class TauP_Create {
 
     protected Properties toolProps;
 
-    protected boolean plotVmod = false;
-    protected String plotVmodFilename;
-    
-    protected boolean plotSmod = false;
-    protected String plotSmodFilename;
-    
-    protected boolean plotTmod = false;
-    protected String plotTmodFilename;
-
     /* constructor */
     public TauP_Create() {
         Alert.setGUI(GUI);
@@ -167,10 +158,6 @@ public class TauP_Create {
         System.out.println("\n   To specify the velocity model:");
         System.out.println("-nd modelfile       -- \"named discontinuities\" velocity file");
         System.out.println("-tvel modelfile     -- \".tvel\" velocity file, ala ttimes\n");
-        System.out.println("--vplot file.gmt     -- plot velocity as a GMT script\n");
-       // plotting tMod not yet implemented
-         System.out.println("--splot file.gmt     -- plot slowness as a GMT script\n");
-       // System.out.println("--tplot file.gmt     -- plot tau as a GMT script\n");
         System.out.println("--debug              -- enable debugging output\n"
                 + "--prop [propfile]    -- set configuration properties\n"
                 + "--verbose            -- enable verbose output\n"
@@ -215,16 +202,12 @@ public class TauP_Create {
                overlayModelFilename = args[i+1];
                i++;
             } else if (i < args.length - 1 && dashEquals("vplot", args[i])) {
-                plotVmod = true;
-                plotVmodFilename = args[i+1];
+                System.err.println("vplot is deprecated, please use: taup "+ToolRun.VPLOT);
+                noComprendoArgs[numNoComprendoArgs++] = args[i];
                 i++;
             } else if (i < args.length - 1 && dashEquals("splot", args[i])) {
-                plotSmod = true;
-                plotSmodFilename = args[i+1];
-                i++;
-            } else if (i < args.length - 1 && dashEquals("tplot", args[i])) {
-                plotTmod = true;
-                plotTmodFilename = args[i+1];
+                System.err.println("vplot is deprecated, please use: taup "+ToolRun.SPLOT);
+                noComprendoArgs[numNoComprendoArgs++] = args[i];
                 i++;
             } else if(args[i].startsWith("GB.")) {
                 velFileType = "nd";
@@ -371,46 +354,31 @@ public class TauP_Create {
         return new TauModel(sMod);
     }
     
-    public void start() throws SlownessModelException, TauModelException {
+    public void start() throws SlownessModelException, TauModelException, VelocityModelException, IOException {
         try {
-            if (plotVmod) {
-                if (plotVmod) {
-                    vMod.printGMT(plotVmodFilename);
-                }
+            String file_sep = System.getProperty("file.separator");
+            TauModel tMod = createTauModel(vMod);
+
+            if(DEBUG)
+                System.out.println("Done calculating Tau branches.");
+            if(DEBUG)
+                tMod.print();
+            String outFile;
+            if(directory.equals(".")) {
+                outFile = directory + file_sep + vMod.getModelName() + ".taup";
             } else {
-                String file_sep = System.getProperty("file.separator");
-                TauModel tMod = createTauModel(vMod);
-
-                if (plotSmod) {
-                    sMod.printGMT(plotSmodFilename);
-                } else if (plotTmod) {
-
-                    // need to implement sMod and tMod plotting
-                    throw new TauModelException("Plot of tau Model is not implemented.");
-                } else {
-                    if(DEBUG)
-                        System.out.println("Done calculating Tau branches.");
-                    if(DEBUG)
-                        tMod.print();
-                    String outFile;
-                    if(directory.equals(".")) {
-                        outFile = directory + file_sep + vMod.getModelName() + ".taup";
-                    } else {
-                        outFile = vMod.getModelName() + ".taup";
-                    }
-                    tMod.writeModel(outFile);
-                    if(verbose) {
-                        System.out.println("Done Saving " + outFile);
-                    }
-                }
+                outFile = vMod.getModelName() + ".taup";
             }
+            tMod.writeModel(outFile);
+            if(verbose) {
+                System.out.println("Done Saving " + outFile);
+            }
+
         } catch(IOException e) {
             System.out.println("Tried to write!\n Caught IOException "
                     + e.getMessage()
                     + "\nDo you have write permission in this directory?");
-        } catch(VelocityModelException e) {
-            System.out.println("Caught VelocityModelException "
-                    + e.getMessage());
+            throw e;
         } finally {
             if(verbose) {
                 System.out.println("Done!");

@@ -2025,6 +2025,9 @@ public abstract class SlownessModel implements Serializable {
                 + " <<END");
         printGMT(dos, false);
         dos.println("END\n");
+        dos.println("# run ps2pdf, if ps2pdf is in PATH, clean up .ps file"); 
+        dos.println("which ps2pdf >> /dev/null && ps2pdf " + psFile+" && rm " + psFile);
+        dos.println("# clean up after gmt...");
         dos.println("/bin/rm gmt.history");
         dos.close();
     }
