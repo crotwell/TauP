@@ -1272,7 +1272,7 @@ public class VelocityModel implements Cloneable, Serializable {
         // fake layer above surface
         VelocityLayer topLayer = getVelocityLayer(0);
         double deltaV = 0.0001; // dummy to make discon at surface
-        belowLayer = new VelocityLayer(-1, -1, 0, topLayer.getTopPVelocity()-deltaV, topLayer.getTopPVelocity()-deltaV, topLayer.getTopSVelocity()-deltaV, topLayer.getTopSVelocity()-deltaV, topLayer.getTopDensity(), topLayer.getTopDensity());
+        belowLayer = new VelocityLayer(-1, -1, 0, topLayer.getTopPVelocity()-deltaV, topLayer.getTopPVelocity()-deltaV, topLayer.getTopSVelocity(), topLayer.getTopSVelocity(), topLayer.getTopDensity(), topLayer.getTopDensity());
         for(int layerNum = 0; layerNum < getNumLayers() ; layerNum++) {
             aboveLayer = belowLayer;
             belowLayer = getVelocityLayer(layerNum);
