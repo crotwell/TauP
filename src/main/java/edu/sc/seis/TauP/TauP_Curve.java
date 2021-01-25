@@ -444,8 +444,8 @@ public class TauP_Curve extends TauP_Time {
             out.println("END");
             out.println("# end postscript"); 
             out.println("gmt psxy -JX -R -m -O -T  >> " + psFile);
-            out.println("# run ps2pdf, if ps2pdf is in PATH, clean up .ps file"); 
-            out.println("which ps2pdf >> /dev/null && ps2pdf " + psFile+" && rm " + psFile);
+            out.println("# convert ps to pdf, clean up .ps file"); 
+            out.println("gmt psconvert -P -Tf  " + psFile+" && rm " + psFile);
             
             out.println("# clean up after gmt...");
             out.println("/bin/rm gmt.history");

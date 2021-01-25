@@ -144,8 +144,8 @@ public class TauP_Wavefront extends TauP_Path {
                 if (separateFilesByTime) {
                     timeOut.println("# end postscript"); 
                     timeOut.println("gmt psxy -P -R -O -JP -m -A -T >> " + byTimePsFile );
-                    timeOut.println("# run ps2pdf, if ps2pdf is in PATH, clean up .ps file"); 
-                    timeOut.println("which ps2pdf >> /dev/null && ps2pdf " + byTimePsFile+" && rm " + byTimePsFile);
+                    timeOut.println("# convert ps to pdf, clean up .ps file"); 
+                    timeOut.println("gmt psconvert -P -Tf  " + byTimePsFile+" && rm " + byTimePsFile);
                     timeOut.println("# clean up after gmt...");
                     timeOut.println("/bin/rm gmt.history");
                 }
@@ -154,8 +154,8 @@ public class TauP_Wavefront extends TauP_Path {
         if (gmtScript && ! separateFilesByTime) {
             out.println("# end postscript"); 
             out.println("gmt psxy -P -R -O -JP -m -A -T >> " + byTimePsFile);
-            out.println("# run ps2pdf, if ps2pdf is in PATH, clean up .ps file"); 
-            out.println("which ps2pdf >> /dev/null && ps2pdf " + byTimePsFile+" && rm " + byTimePsFile);
+            out.println("# convert ps to pdf, clean up .ps file"); 
+            out.println("gmt psconvert -P -Tf  " + byTimePsFile+" && rm " + byTimePsFile);
             out.println("# clean up after gmt...");
             out.println("/bin/rm gmt.history");
         }
