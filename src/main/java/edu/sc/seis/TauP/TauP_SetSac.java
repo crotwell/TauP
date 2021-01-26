@@ -122,7 +122,7 @@ public class TauP_SetSac extends TauP_Time {
         calcTime(degrees);
     }
 
-    public void init() throws IOException {
+    public void init() throws TauPException {
         super.init();
         setSacVarNums();
     }

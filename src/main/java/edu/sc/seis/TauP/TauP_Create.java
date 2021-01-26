@@ -45,7 +45,7 @@ import java.util.Properties;
  * 
  * @author H. Philip Crotwell
  */
-public class TauP_Create {
+public class TauP_Create extends TauP_Tool {
 
     public transient boolean verbose = ToolRun.VERBOSE;
 
@@ -356,6 +356,9 @@ public class TauP_Create {
     
     public void start() throws SlownessModelException, TauModelException, VelocityModelException, IOException {
         try {
+            if (verbose) {
+                System.out.println("TauP_Create starting...");
+            }
             String file_sep = System.getProperty("file.separator");
             TauModel tMod = createTauModel(vMod);
 
@@ -384,6 +387,23 @@ public class TauP_Create {
                 System.out.println("Done!");
             }
         }
+    }
+
+    @Override
+    public void init() throws TauPException {
+        try {
+            loadVMod();
+        } catch (VelocityModelException e) {
+            throw new TauPException("Problem with velocity model", e);
+        } catch (IOException e) {
+            throw new TauPException("Problem loading velocity model", e);
+        }
+    }
+
+    @Override
+    public void destroy() throws TauPException {
+        // TODO Auto-generated method stub
+        
     }
     
 }

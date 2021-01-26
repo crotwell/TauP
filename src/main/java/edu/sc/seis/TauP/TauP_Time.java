@@ -50,7 +50,7 @@ import java.util.Properties;
  * @version 1.1.3 Wed Jul 18 15:00:35 GMT 2001
  * @author H. Philip Crotwell
  */
-public class TauP_Time {
+public class TauP_Time extends TauP_Tool {
 
     /** Turns on debugging output. */
     public static boolean DEBUG = ToolRun.DEBUG;
@@ -1010,7 +1010,7 @@ public class TauP_Time {
      * appropriate for Applets. Applets should load TauModels themselves and use
      * the setTauModel(TauModel) method.
      */
-    public void init() throws IOException {
+    public void init() throws TauPException {
         TauP_Time.DEBUG = TauP_Time.DEBUG || ToolRun.DEBUG;
         this.verbose = this.verbose || TauP_Time.DEBUG || ToolRun.VERBOSE;
         
@@ -1511,7 +1511,7 @@ public class TauP_Time {
         }
     }
 
-    public void destroy() throws IOException {
+    public void destroy() throws TauPException {
         if(writer != null) {
             writer.close();
             writer = null;

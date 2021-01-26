@@ -1,5 +1,7 @@
 package edu.sc.seis.TauP;
 
+import java.io.IOException;
+
 import javax.swing.DefaultListModel;
 import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
@@ -68,9 +70,7 @@ public class TauP extends javax.swing.JFrame {
             pathPlotArea.setPreferredSize(new java.awt.Dimension(500, 300));
             pathPlotArea.setMinimumSize(new java.awt.Dimension(500, 200));
             pathPanel.add(pathPlotArea, java.awt.BorderLayout.CENTER);
-        } catch(TauModelException e) {
-            System.out.println(e);
-        } catch(java.io.IOException e) {
+        } catch(TauPException e) {
             System.out.println(e);
         }
         arrivalTM = new ArrivalTableModel();
@@ -464,8 +464,11 @@ public class TauP extends javax.swing.JFrame {
     }
 
     public static void main(java.lang.String[] args) {
-        TauP t = new TauP();
-        t.setQuitExits(true);
-        t.show();
+        try {
+        ToolRun.legacyRunTool(ToolRun.GUI, args);
+        } catch(IOException e) {
+            // should not happen
+            throw new RuntimeException("should never happen, but....", e);
+        }
     }
 }

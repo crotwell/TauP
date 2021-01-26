@@ -51,17 +51,17 @@ public class TauP_Path extends TauP_Pierce {
 
 	protected TauP_Path() {
 		super();
-		setOutFileBase("stdout");
+        setOutFileBase("taup_path");
 	}
 
 	public TauP_Path(TauModel tMod) throws TauModelException {
 		super(tMod);
-        setOutFileBase("stdout");
+        setOutFileBase("taup_path");
 	}
 
 	public TauP_Path(String modelName) throws TauModelException {
 		super(modelName);
-        setOutFileBase("stdout");
+        setOutFileBase("taup_path");
 	}
 
 	public TauP_Path(TauModel tMod, String outFileBase)
@@ -287,7 +287,7 @@ public class TauP_Path extends TauP_Pierce {
             out.println("# convert ps to pdf, clean up .ps file"); 
             out.println("gmt psconvert -P -Tf  " + psFile+" && rm " + psFile);
             out.println("# clean up after gmt...");
-            out.println("/bin/rm gmt.history");
+            out.println("rm gmt.history");
         } else if (outputFormat.equals(SVG)) {
             out.println("</g> <!-- end translate -->");
             out.println("</svg>");
@@ -524,9 +524,6 @@ public class TauP_Path extends TauP_Pierce {
 		super.start();
 	}
 
-	public void destroy() throws IOException {
-		super.destroy();
-	}
 
 	/**
 	 * Allows TauP_Path to run as an application. Creates an instance of

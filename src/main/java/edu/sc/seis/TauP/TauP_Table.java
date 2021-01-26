@@ -26,7 +26,6 @@
 package edu.sc.seis.TauP;
 
 import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -308,7 +307,7 @@ public class TauP_Table extends TauP_Time {
         super();
     }
 
-    public void init() throws IOException {
+    public void init() throws TauPException {
         super.init();
         if(headerFile != null) {
             try {

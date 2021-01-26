@@ -72,6 +72,7 @@ public class TauP_Curve extends TauP_Time {
 
     protected TauP_Curve() {
         super();
+        setOutFileBase("taup_curve");
     }
 
     public TauP_Curve(TauModel tMod) throws TauModelException {
@@ -275,9 +276,9 @@ public class TauP_Curve extends TauP_Time {
         }
     }
 
-    public void destroy() throws IOException {
+    public void destroy() throws TauPException {
         if(gmtScript && writer != null) {
-            getWriter().close();
+            writer.close();
         }
         super.destroy();
     }
@@ -442,13 +443,7 @@ public class TauP_Curve extends TauP_Time {
         }
         if (isGmtScript()) {
             out.println("END");
-            out.println("# end postscript"); 
-            out.println("gmt psxy -JX -R -m -O -T  >> " + psFile);
-            out.println("# convert ps to pdf, clean up .ps file"); 
-            out.println("gmt psconvert -P -Tf  " + psFile+" && rm " + psFile);
-            
-            out.println("# clean up after gmt...");
-            out.println("/bin/rm gmt.history");
+            endGmtAndCleanUp(out, psFile, "X");
         }
         out.flush();
     }

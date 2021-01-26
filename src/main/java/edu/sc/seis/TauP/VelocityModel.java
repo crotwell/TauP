@@ -599,7 +599,7 @@ public class VelocityModel implements Cloneable, Serializable {
         dos.println("#\n# This script will plot the "+getModelName()+" velocity model using GMT. If you want to\n"
                 + "#use this as a data file for psxy in another script, delete these"
                 + "\n# first lines, as well as the last line.\n#");
-        dos.println("/bin/rm -f " + psFile + "\n");
+        dos.println("/bin/rm -f " + psFile + " gmt.history\n");
         double maxVel=0;
         for (VelocityLayer vLayer : layer) {
             if (vLayer.getTopPVelocity() > maxVel) { maxVel = vLayer.getTopPVelocity();}

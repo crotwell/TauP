@@ -25,35 +25,35 @@ import java.util.List;
 
 public class CmdLineOutputTest {
 
-    String[] timeTestCmds = new String[] {"taup_time -h 10 -ph P -deg 35 -mod prem",
-                                          "taup_time -h 10 -ph P -deg 35",
-                                          "taup_time -h 10 -ph P -deg 35 -mod ak135",
-                                          "taup_time -h 10 -ph ttall -deg 35 -mod prem",
-                                          "taup_time -h 10 -ph ttall -deg 35",
-                                          "taup_time -h 10 -ph ttall -deg 35 -mod ak135",
-                                          "taup_time -h 10 -ph ttall -deg 35 -mod ak135 --json"};
+    String[] timeTestCmds = new String[] {"taup time -h 10 -ph P -deg 35 -mod prem",
+                                          "taup time -h 10 -ph P -deg 35",
+                                          "taup time -h 10 -ph P -deg 35 -mod ak135",
+                                          "taup time -h 10 -ph ttall -deg 35 -mod prem",
+                                          "taup time -h 10 -ph ttall -deg 35",
+                                          "taup time -h 10 -ph ttall -deg 35 -mod ak135",
+                                          "taup time -h 10 -ph ttall -deg 35 -mod ak135 --json"};
 
-    String[] pierceTestCmds = new String[] {"taup_pierce -h 10 -ph P -deg 35 -mod prem",
-                                            "taup_pierce -h 10 -ph P -deg 35",
-                                            "taup_pierce -h 10 -ph P -deg 35 -mod ak135",
-                                            "taup_pierce -mod prem -h 600 -deg 45 -ph PKiKP -pierce 5049.5"};
+    String[] pierceTestCmds = new String[] {"taup pierce -h 10 -ph P -deg 35 -mod prem",
+                                            "taup pierce -h 10 -ph P -deg 35",
+                                            "taup pierce -h 10 -ph P -deg 35 -mod ak135",
+                                            "taup pierce -mod prem -h 600 -deg 45 -ph PKiKP -pierce 5049.5"};
 
-    String[] pathTestCmds = new String[] {"taup_path -o stdout -h 10 -ph P -deg 35 -mod prem",
-                                          "taup_path -o stdout -h 10 -ph P -deg 35",
-                                          "taup_path -o stdout -h 10 -ph P -deg 35 --svg",
-                                          "taup_path -o stdout -h 10 -ph P -deg 35 -mod ak135"};
+    String[] pathTestCmds = new String[] {"taup path -o stdout -h 10 -ph P -deg 35 -mod prem",
+                                          "taup path -o stdout -h 10 -ph P -deg 35",
+                                          "taup path -o stdout -h 10 -ph P -deg 35 --svg",
+                                          "taup path -o stdout -h 10 -ph P -deg 35 -mod ak135"};
 
-    String[] curveTestCmds = new String[] {"taup_curve -o stdout -h 10 -ph P -mod prem",
-                                           "taup_curve -o stdout -h 10 -ph P",
-                                           "taup_curve -o stdout -h 10 -ph P -mod ak135"};
+    String[] curveTestCmds = new String[] {"taup curve -o stdout -h 10 -ph P -mod prem",
+                                           "taup curve -o stdout -h 10 -ph P",
+                                           "taup curve -o stdout -h 10 -ph P -mod ak135"};
 
-    String[] helpTestCmds = new String[] {"taup_time --help",
-                                          "taup_pierce --help",
-                                          "taup_path --help",
-                                          "taup_curve --help",
-                                          "taup_wavefront --help",
-                                          "taup_table --help",
-                                          "taup_create --help"};
+    String[] helpTestCmds = new String[] {"taup time --help",
+                                          "taup pierce --help",
+                                          "taup path --help",
+                                          "taup curve --help",
+                                          "taup wavefront --help",
+                                          "taup table --help",
+                                          "taup create --help"};
 
 
     /** disable unless regenerating the cmd line output test resources.
@@ -111,7 +111,7 @@ public class CmdLineOutputTest {
     @Test
     public void testTauPTable() throws Exception {
         // this one takes a lot of memory
-       // runTests(new String[] {"taup_table -ph ttall -generic"});
+       // runTests(new String[] {"taup table -ph ttall -generic"});
     }
 
     public void runTests(String[] cmds) throws Exception {
@@ -123,26 +123,13 @@ public class CmdLineOutputTest {
     public void runCmd(String cmd) throws Exception {
         String[] s = cmd.split(" +");
         String tool = s[0];
+        if ( ! tool.equalsIgnoreCase("taup")) {
+            throw new Exception("Unknown first word of command: "+tool+", should be taup");
+        }
         String[] cmdArgs = new String[s.length - 1];
         System.arraycopy(s, 1, cmdArgs, 0, cmdArgs.length);
         System.err.println(cmd);
-        if (tool.equals("taup_time")) {
-            TauP_Time.main(cmdArgs);
-        } else if (tool.equals("taup_pierce")) {
-            TauP_Pierce.main(cmdArgs);
-        } else if (tool.equals("taup_path")) {
-            TauP_Path.main(cmdArgs);
-        } else if (tool.equals("taup_curve")) {
-            TauP_Curve.main(cmdArgs);
-        } else if (tool.equals("taup_table")) {
-            TauP_Table.main(cmdArgs);
-        } else if (tool.equals("taup_wavefront")) {
-            TauP_Wavefront.main(cmdArgs);
-        } else if (tool.equals("taup_create")) {
-            TauP_Create.main(cmdArgs);
-        } else {
-            throw new Exception("Unknown tool: "+tool);
-        }
+        ToolRun.main(cmdArgs);
     }
 
     public void testCmd(String cmd) throws Exception {

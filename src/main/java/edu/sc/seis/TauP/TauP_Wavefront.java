@@ -28,7 +28,34 @@ public class TauP_Wavefront extends TauP_Path {
 
     boolean negDistance = false;
 
+    boolean doInteractive = true;
+    
     Map<SeismicPhase, Map<Float, List<TimeDist>>> result;
+
+    
+    
+    public TauP_Wavefront() {
+        super();
+        setOutFileBase("taup_wavefront");
+    }
+
+    public TauP_Wavefront(String modelName, String outFileBase) throws TauModelException {
+        super(modelName, outFileBase);
+    }
+
+    public TauP_Wavefront(String modelName) throws TauModelException {
+        super(modelName);
+        setOutFileBase("taup_wavefront");
+    }
+
+    public TauP_Wavefront(TauModel tMod, String outFileBase) throws TauModelException {
+        super(tMod, outFileBase);
+    }
+
+    public TauP_Wavefront(TauModel tMod) throws TauModelException {
+        super(tMod);
+        setOutFileBase("taup_wavefront");
+    }
 
     @Override
     public void calculate(double degrees) throws TauModelException {
@@ -157,7 +184,7 @@ public class TauP_Wavefront extends TauP_Path {
             out.println("# convert ps to pdf, clean up .ps file"); 
             out.println("gmt psconvert -P -Tf  " + byTimePsFile+" && rm " + byTimePsFile);
             out.println("# clean up after gmt...");
-            out.println("/bin/rm gmt.history");
+            out.println("rm gmt.history");
         }
         timeOut.flush();
         out.flush();
@@ -259,6 +286,14 @@ public class TauP_Wavefront extends TauP_Path {
         int i = 0;
         String[] leftOverArgs;
         int numNoComprendoArgs = 0;
+
+        for (int j = 0; j < args.length; j++) {
+            // setting source depth is enough???
+            if (dashEquals("h", args[j])) {
+                doInteractive = false;
+            }
+        }
+        
         leftOverArgs = super.parseCmdLineArgs(args);
         String[] noComprendoArgs = new String[leftOverArgs.length];
         while (i < leftOverArgs.length) {
@@ -290,6 +325,24 @@ public class TauP_Wavefront extends TauP_Path {
             return temp;
         } else {
             return new String[0];
+        }
+    }
+
+    @Override
+    public void init() throws TauPException {
+        // TODO Auto-generated method stub
+        super.init();
+    }
+
+    @Override
+    public void start() throws IOException, TauModelException, TauPException {
+
+        if (doInteractive) {
+            super.start();
+        } else {
+            /* enough info given on cmd line, so just do one calc. */
+            calculate(degrees);
+            printResult(getWriter());
         }
     }
 
