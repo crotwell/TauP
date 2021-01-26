@@ -1999,7 +1999,7 @@ public abstract class SlownessModel implements Serializable {
         dos.println("#\n# This script will plot the "+vMod.getModelName()+" velocity model using GMT. If you want to\n"
                 + "#use this as a data file for psxy in another script, delete these"
                 + "\n# first lines, as well as the last line.\n#");
-        dos.println("/bin/rm -f " + psFile + "gmt.history\n");
+        dos.println("/bin/rm -f " + psFile + " gmt.history\n");
         double maxP=0;
         for (SlownessLayer sLayer : PLayers) {
             if (sLayer.getTopP() > maxP) { maxP = sLayer.getTopP();}
