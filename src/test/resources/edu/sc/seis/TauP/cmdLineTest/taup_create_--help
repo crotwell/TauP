@@ -7,10 +7,6 @@ Arguments are:
 -nd modelfile       -- "named discontinuities" velocity file
 -tvel modelfile     -- ".tvel" velocity file, ala ttimes
 
---vplot file.gmt     -- plot velocity as a GMT script
-
---splot file.gmt     -- plot slowness as a GMT script
-
 --debug              -- enable debugging output
 --prop [propfile]    -- set configuration properties
 --verbose            -- enable verbose output
