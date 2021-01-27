@@ -197,7 +197,7 @@ public class TauP_Path extends TauP_Pierce {
 				}
                 printDistRadius(out, calcDist, radiusOfEarth - calcDepth);
 				if (doPrintTime) {
-					out.write("  " + outForms.formatTime(calcTime));
+					out.write("  " + Outputs.formatTime(calcTime));
 				}
 		        if (!gmtScript && !outputFormat.equals(SVG)) {
 		            printLatLon(out, calcDist);
@@ -230,7 +230,7 @@ public class TauP_Path extends TauP_Pierce {
 								/ maxInterpNum;
 						printDistRadius(out, calcDist, radiusOfEarth - calcDepth);
 						if (doPrintTime) {
-							out.write("  " + outForms.formatTime(calcTime));
+							out.write("  " + Outputs.formatTime(calcTime));
 						}
 				        if (!gmtScript && !outputFormat.equals(SVG)) {
 				            printLatLon(out, calcDist);
@@ -271,7 +271,7 @@ public class TauP_Path extends TauP_Pierce {
                     double radian = (calcDist-90)*Math.PI/180;
                     double x = radius*Math.cos(radian);
                     double y = radius*Math.sin(radian);
-                    out.println("<text x=\""+outForms.formatDistance(x)+"\" y=\""+outForms.formatDistance(y)+"\">"+currArrival.getName() + "</text>");
+                    out.println("<text x=\""+Outputs.formatDistance(x)+"\" y=\""+Outputs.formatDistance(y)+"\">"+currArrival.getName() + "</text>");
                 }
             }
         }
@@ -295,19 +295,19 @@ public class TauP_Path extends TauP_Pierce {
 	}
 
     protected void printDistRadius(Writer out, double calcDist, double radius) throws IOException {
-        if (outputFormat.equals(JSON)) {
+        if (outputFormat.equals(TauP_Tool.JSON)) {
             throw new RuntimeException("JSON output for TauP_Path not yet supported.");
         } else if (outputFormat.equals(SVG)) {
             double radian = (calcDist-90)*Math.PI/180;
             double x = radius*Math.cos(radian);
             double y = radius*Math.sin(radian);
-            out.write(outForms.formatDistance(x)
+            out.write(Outputs.formatDistance(x)
                       + "  "
-                      + outForms.formatDistance(y));
+                      + Outputs.formatDistance(y));
         } else {
-            out.write(outForms.formatDistance(calcDist)
+            out.write(Outputs.formatDistance(calcDist)
                       + "  "
-                      + outForms.formatDepth(radius));
+                      + Outputs.formatDepth(radius));
         }
     }
 	protected void printLatLon(Writer out, double calcDist) throws IOException {
@@ -316,8 +316,8 @@ public class TauP_Path extends TauP_Pierce {
 				&& azimuth != Double.MAX_VALUE) {
 			lat = SphericalCoords.latFor(eventLat, eventLon, calcDist, azimuth);
 			lon = SphericalCoords.lonFor(eventLat, eventLon, calcDist, azimuth);
-			out.write("  " + outForms.formatLatLon(lat) + "  "
-					+ outForms.formatLatLon(lon));
+			out.write("  " + Outputs.formatLatLon(lat) + "  "
+					+ Outputs.formatLatLon(lon));
 		} else if (stationLat != Double.MAX_VALUE
 				&& stationLon != Double.MAX_VALUE
 				&& backAzimuth != Double.MAX_VALUE) {
@@ -325,8 +325,8 @@ public class TauP_Path extends TauP_Pierce {
 					- calcDist, backAzimuth);
 			lon = SphericalCoords.lonFor(stationLat, stationLon, degrees
 					- calcDist, backAzimuth);
-			out.write("  " + outForms.formatLatLon(lat) + "  "
-					+ outForms.formatLatLon(lon));
+			out.write("  " + Outputs.formatLatLon(lat) + "  "
+					+ Outputs.formatLatLon(lon));
 		} else if (stationLat != Double.MAX_VALUE
 				&& stationLon != Double.MAX_VALUE
 				&& eventLat != Double.MAX_VALUE && eventLon != Double.MAX_VALUE) {
@@ -336,13 +336,13 @@ public class TauP_Path extends TauP_Pierce {
 					eventLat, eventLon);
 			lat = SphericalCoords.latFor(eventLat, eventLon, calcDist, azimuth);
 			lon = SphericalCoords.lonFor(eventLat, eventLon, calcDist, azimuth);
-			out.write("  " + outForms.formatLatLon(lat) + "  "
-					+ outForms.formatLatLon(lon));
+			out.write("  " + Outputs.formatLatLon(lat) + "  "
+					+ Outputs.formatLatLon(lon));
 		}
 	}
 	
 	public void printScriptBeginning(PrintWriter out)  throws IOException {
-	    if (outputFormat.equals(JSON)) {
+	    if (outputFormat.equals(TauP_Tool.JSON)) {
             throw new RuntimeException("JSON output for TauP_Path not yet supported.");
         } else if (outputFormat.equals(SVG)) {
 	        printScriptBeginningSVG(out);
@@ -434,10 +434,10 @@ public class TauP_Path extends TauP_Pierce {
                 alignBaseline = "baseline";
             }
             
-            out.write(outForms.formatDistance(x)
+            out.write(Outputs.formatDistance(x)
                       + "  "
-                      + outForms.formatDistance(y));
-            out.println("  <text dominant-baseline=\""+alignBaseline+"\" text-anchor=\""+anchor+"\" class=\"label\" x=\""+outForms.formatDistance(x).strip()+"\" y=\""+outForms.formatDistance(y).strip()+"\">"+i+"</text>");
+                      + Outputs.formatDistance(y));
+            out.println("  <text dominant-baseline=\""+alignBaseline+"\" text-anchor=\""+anchor+"\" class=\"label\" x=\""+Outputs.formatDistance(x).strip()+"\" y=\""+Outputs.formatDistance(y).strip()+"\">"+i+"</text>");
      
         }
 	    out.println("  <circle cx=\"0.0\" cy=\"0.0\" r=\"" + R+"\" />");

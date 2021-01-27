@@ -200,13 +200,13 @@ public class TauP_Pierce extends TauP_Time {
             outName+="("+currArrival.getPuristName()+")";
         }
         String out = "> " + outName + " at "
-                + outForms.formatTime(currArrival.getTime())
+                + Outputs.formatTime(currArrival.getTime())
                 + " seconds at "
-                + outForms.formatDistance(currArrival.getDistDeg())
+                + Outputs.formatDistance(currArrival.getDistDeg())
                 + " degrees for a "
-                + outForms.formatDepth(currArrival.getSourceDepth())
+                + Outputs.formatDepth(currArrival.getSourceDepth())
                 + " km deep source in the " + modelName + " model with rayParam "
-                + outForms.formatRayParam(Math.PI / 180 * currArrival.getRayParam()) 
+                + Outputs.formatRayParam(Math.PI / 180 * currArrival.getRayParam()) 
                 + " s/deg.";
         if (getReceiverDepth() != 0.0) {
             out += " Receiver at depth: "+getReceiverDepth()+" km.";
@@ -245,9 +245,9 @@ public class TauP_Pierce extends TauP_Time {
                                 || (onlyRevPoints && ((prevDepth - pierce[j].getDepth())
                                         * (pierce[j].getDepth() - nextDepth) < 0))
                                 || (onlyTurnPoints && j != 0 && ((prevDepth - pierce[j].getDepth()) <= 0 && (pierce[j].getDepth() - nextDepth) >= 0)) || (onlyUnderPoints && ((prevDepth - pierce[j].getDepth()) >= 0 && (pierce[j].getDepth() - nextDepth) <= 0)))) {
-                    out.write(outForms.formatDistance(calcDist));
-                    out.write(outForms.formatDepth(pierce[j].getDepth()));
-                    out.write(outForms.formatDepth(pierce[j].getTime()));
+                    out.write(Outputs.formatDistance(calcDist));
+                    out.write(Outputs.formatDepth(pierce[j].getDepth()));
+                    out.write(Outputs.formatDepth(pierce[j].getTime()));
                     if(eventLat != Double.MAX_VALUE
                             && eventLon != Double.MAX_VALUE
                             && azimuth != Double.MAX_VALUE) {
@@ -259,8 +259,8 @@ public class TauP_Pierce extends TauP_Time {
                                                      eventLon,
                                                      calcDist,
                                                      azimuth);
-                        out.write("  " + outForms.formatLatLon(lat) + "  "
-                                + outForms.formatLatLon(lon));
+                        out.write("  " + Outputs.formatLatLon(lat) + "  "
+                                + Outputs.formatLatLon(lon));
                     } else if(stationLat != Double.MAX_VALUE
                             && stationLon != Double.MAX_VALUE
                             && backAzimuth != Double.MAX_VALUE) {
@@ -272,8 +272,8 @@ public class TauP_Pierce extends TauP_Time {
                                                      stationLon,
                                                      degrees - calcDist,
                                                      backAzimuth);
-                        out.write("  " + outForms.formatLatLon(lat) + "  "
-                                + outForms.formatLatLon(lon));
+                        out.write("  " + Outputs.formatLatLon(lat) + "  "
+                                + Outputs.formatLatLon(lon));
                     } else if(stationLat != Double.MAX_VALUE
                             && stationLon != Double.MAX_VALUE
                             && eventLat != Double.MAX_VALUE
@@ -294,8 +294,8 @@ public class TauP_Pierce extends TauP_Time {
                                                      eventLon,
                                                      calcDist,
                                                      azimuth);
-                        out.write("  " + outForms.formatLatLon(lat) + "  "
-                                + outForms.formatLatLon(lon));
+                        out.write("  " + Outputs.formatLatLon(lat) + "  "
+                                + Outputs.formatLatLon(lon));
                     }
                     out.write("\n");
                 }

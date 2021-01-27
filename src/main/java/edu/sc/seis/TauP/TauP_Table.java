@@ -419,16 +419,16 @@ public class TauP_Table extends TauP_Time {
                 for (Arrival currArrival : arrivals) {
                     double moduloDist = currArrival.getModuloDistDeg();
                     out.print(modelName + " "
-                                   + outForms.formatDistance(moduloDist) + " "
-                                   + outForms.formatDepth(depth) + " ");
+                                   + Outputs.formatDistance(moduloDist) + " "
+                                   + Outputs.formatDepth(depth) + " ");
                     out.print(currArrival.getName());
                     out.print("  "
-                                   + outForms.formatTime(currArrival.getTime())
+                                   + Outputs.formatTime(currArrival.getTime())
                                    + "  ");
-                    out.print(outForms.formatRayParam(Math.PI / 180.0
+                    out.print(Outputs.formatRayParam(Math.PI / 180.0
                                                            * currArrival.getRayParam())
                                                            + "   ");
-                    out.print(outForms.formatDistance(currArrival.getDistDeg()));
+                    out.print(Outputs.formatDistance(currArrival.getDistDeg()));
                     out.print("  " + currArrival.getPuristName());
                     out.println();
                 }
