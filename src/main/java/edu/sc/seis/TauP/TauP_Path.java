@@ -151,7 +151,7 @@ public class TauP_Path extends TauP_Pierce {
 		boolean longWayRound;
 		for (int i = 0; i < arrivals.size(); i++) {
 		    Arrival currArrival = (Arrival) arrivals.get(i);
-		    if (outputFormat.equals(JSON)) {
+		    if (outputFormat.equals(TauP_Tool.JSON)) {
 	            throw new RuntimeException("JSON output for TauP_Path not yet supported.");
 	        } else if (outputFormat.equals(SVG)) {
 	            out.println("<!-- "+getCommentLine(currArrival));

@@ -47,8 +47,6 @@ import java.util.Properties;
  */
 public class TauP_Create extends TauP_Tool {
 
-    public transient boolean verbose = ToolRun.VERBOSE;
-
     String modelFilename = "iasp91.tvel";
     
     String overlayModelFilename = null;
@@ -66,8 +64,6 @@ public class TauP_Create extends TauP_Tool {
     VelocityModel overlayVMod;
 
     TauModel tMod;
-
-    boolean DEBUG = ToolRun.DEBUG;
 
     protected boolean GUI = false;
 

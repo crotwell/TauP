@@ -128,6 +128,10 @@ public class TauP_SetSac extends TauP_Time {
     }
 
     public void start() throws IOException, TauModelException {
+        if (sacFileNames.size() == 0) {
+            printUsage();
+            return;
+        }
         for (String filename : sacFileNames) {
             if(verbose) {
                 System.out.println(filename);

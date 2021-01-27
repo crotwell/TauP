@@ -51,22 +51,8 @@ import java.util.Properties;
  * @author H. Philip Crotwell
  */
 public class TauP_Time extends TauP_Tool {
-
-    /** Turns on debugging output. */
-    public static boolean DEBUG = ToolRun.DEBUG;
-
-    /** Turns on verbose output. */
-    public boolean verbose = ToolRun.VERBOSE;
-
-    /** Turns on expert mode. */
-    public static boolean expert = false;
     
-    public static final String JSON = "json";
     
-    public static final String TEXT = "text";
-    
-    public String outputFormat = TEXT;
-
     protected String modelName = "iasp91";
 
     /**
@@ -127,28 +113,11 @@ public class TauP_Time extends TauP_Tool {
     
     protected Arrival relativeArrival;
 
-    protected String outFileBase = "";
-
-    protected PrintWriter writer;
-
-    protected Properties toolProps;
-
-    protected Outputs outForms;
-
-    /* Constructors */
-    protected TauP_Time() {
-        try {
-            toolProps = PropertyLoader.load();
-        } catch(Exception e) {
-            Alert.warning("Unable to load properties, using defaults.",
-                          e.getMessage());
-            toolProps = new Properties();
-        }
-        Outputs.configure(toolProps);
+    public TauP_Time() {
+    
     }
-
-    public TauP_Time(TauModel tMod) throws TauModelException {
-        this();
+    
+    public TauP_Time(TauModel tMod)  {
         setTauModel(tMod);
     }
 
@@ -160,7 +129,6 @@ public class TauP_Time extends TauP_Tool {
      *             if the file can't be found or is corrupted in some way.
      */
     public TauP_Time(String modelName) throws TauModelException {
-        this();
         try {
             loadTauModel(modelName);
         } catch(FileNotFoundException e) {
@@ -564,11 +532,6 @@ public class TauP_Time extends TauP_Tool {
         }
         return degreesFound;
     }
-    
-    @Deprecated
-    public static boolean dashEquals(String argName, String arg) {
-        return ToolRun.dashEquals(argName, arg);
-    }
 
     /*
      * parses the standard command line args for the taup package. Other tools
@@ -576,19 +539,14 @@ public class TauP_Time extends TauP_Tool {
      */
     protected String[] parseCmdLineArgs(String[] origArgs) throws IOException {
         int i = 0;
-        String[] args = ToolRun.parseCommonCmdLineArgs(origArgs);
+        String[] args = super.parseCommonCmdLineArgs(origArgs);
         String[] noComprendoArgs = new String[args.length];
         int numNoComprendoArgs = 0;
         boolean cmdLineArgPhase = false;
         boolean cmdLineArgPhaseFile = false;
         while(i < args.length) {
-            if(dashEquals("help", args[i])) {
-                printUsage();
-                noComprendoArgs[numNoComprendoArgs++] = args[i];
-            } else if(dashEquals("json", args[i])) {
-                outputFormat = JSON;
-            } else if(dashEquals("expert", args[i])) {
-                expert = true;
+            if(dashEquals("json", args[i])) {
+                outputFormat = TauP_Tool.JSON;
             } else if(dashEquals("gui", args[i])) {
                 GUI = true;
             } else if(dashEquals("rayp", args[i])) {
@@ -622,9 +580,6 @@ public class TauP_Time extends TauP_Tool {
                 } else if(dashEquals("takeoff", args[i])) {
                     takeoffAngle = Double.valueOf(args[i + 1]).doubleValue();
                     i++;
-                } else if(args[i].equalsIgnoreCase("-o")) {
-                    outFileBase = args[i + 1];
-                    i++;
                 } else if(dashEquals("rel", args[i])) {
                     relativePhaseName = args[i + 1];
                     i++;
@@ -645,15 +600,6 @@ public class TauP_Time extends TauP_Tool {
                     cmdLineArgPhaseFile = true;
                     toolProps.put("taup.phase.file", args[i + 1]);
                     i++;
-                } else if(dashEquals("prop", args[i])) {
-                    File f = new File(args[i+1]);
-                    if (! f.exists()) {
-                        throw new FileNotFoundException(args[i+1]); // ToDo better error msg
-                    }
-                    Reader r = new BufferedReader(new FileReader(args[i + 1]));
-                    toolProps.load(r);
-                    Outputs.configure(toolProps);
-                    i++;
                 } else if(i < args.length - 2) {
                     if(args[i].equalsIgnoreCase("-sta")
                             || args[i].equalsIgnoreCase("-station")) {
@@ -664,10 +610,6 @@ public class TauP_Time extends TauP_Tool {
                             || args[i].equalsIgnoreCase("-event")) {
                         eventLat = Double.valueOf(args[i + 1]).doubleValue();
                         eventLon = Double.valueOf(args[i + 2]).doubleValue();
-                        i += 2;
-                    } else if (args[i].contains("set") && args[i+1].startsWith("taup.")) {
-                        toolProps.setProperty(args[i+1], args[i+2]);
-                        Outputs.configure(toolProps);
                         i += 2;
                     } else {
                         /*
@@ -867,7 +809,7 @@ public class TauP_Time extends TauP_Tool {
     }
 
     public void printResult(PrintWriter out) throws IOException {
-        if (outputFormat.equals(JSON)) {
+        if (outputFormat.equals(TauP_Tool.JSON)) {
             printResultJSON(out);
         } else {
             printResultText(out);
@@ -1062,65 +1004,6 @@ public class TauP_Time extends TauP_Tool {
     	}
     }
     
-    public String getOutputFormat() {
-        return outputFormat;
-    }
-    
-    /** usually one of TauP_Time.TEXT or TauP_Time.JSON. Subclasses may add
-     * additional types, for example TauP_Path.SVG.
-     * @param val output format for results
-     */
-    public void setOutputFormat(String val) {
-        this.outputFormat = val;
-    }
-    
-    public String getOutFileBase() {
-        return outFileBase;
-    }
-    
-    public void setOutFileBase(String outFileBase) {
-        this.outFileBase = outFileBase;
-    }
-    
-    public String getOutFileExtension() {
-        return "gmt";
-    }
-    
-    public String getOutFile() {
-        if(getOutFileBase() == null || getOutFileBase().length() == 0 || getOutFileBase().equals("stdout")) {
-            return "stdout";
-        } else {
-            if (getOutFileExtension() == null || getOutFileExtension().length() == 0 || getOutFileBase().endsWith("."+getOutFileExtension())) {
-                // don't do a dot if no extension or already there
-                return getOutFileBase();
-            }
-            return getOutFileBase()+"."+getOutFileExtension();
-        }
-    }
-    
-    public PrintWriter getWriter() throws IOException {
-        if (writer == null) {
-            if(!getOutFile().equals("stdout")) {
-                writer = new PrintWriter(new BufferedWriter(new FileWriter(getOutFile())));
-            } else {
-                writer = new PrintWriter(new OutputStreamWriter(System.out));
-            }
-            printScriptBeginning(writer);
-        }
-        return writer;
-    }
-    
-    public void setWriter(PrintWriter writer) {
-        this.writer = writer;
-    }
-    
-    /** a noop that allows overriding classes to print things
-     * before results are calculated. For example to set up GMT commands before drawing paths.
-     * @param out
-     * @throws IOException
-     */
-    public void printScriptBeginning(PrintWriter out)  throws IOException {}
-
     public void printHelp() {
         Alert.info("Enter:\nh for new depth\nr to recalculate\n"
                 + "p to append phases, \nc to clear phases\n"
@@ -1519,19 +1402,9 @@ public class TauP_Time extends TauP_Tool {
     }
 
     public void printStdUsageHead() {
-        printStdUsageHead(this.getClass());
+        TauP_Tool.printStdUsageHead(this.getClass());
     }
     
-    public static void printStdUsageHead(Class toolClass) {
-        String className = toolClass.getName();
-        className = className.substring(className.lastIndexOf('.') + 1,
-                                        className.length());
-        Alert.info("Usage: " + className.toLowerCase() + " [arguments]");
-        Alert.info("  or, for purists, java " + toolClass.getName()
-                + " [arguments]");
-        Alert.info("\nArguments are:");
-    }
-
     /** Prints the command line arguments common to all TauP tools. */
     public void printStdUsage() {
         printStdUsageHead();
@@ -1551,15 +1424,6 @@ public class TauP_Time extends TauP_Tool {
                 + "-evt       lat lon -- sets the event latitude and longitude\n\n");
     }
 
-    public void printStdUsageTail() {
-        Alert.info("\n-o [stdout|outfile]         -- output is redirected to stdout or to the \"outfile\" file\n"
-                + "--prop [propfile]   -- set configuration properties\n"
-                + "--debug             -- enable debugging output\n"
-                + "--verbose           -- enable verbose output\n"
-                + "--version           -- print the version\n"
-                + "--help              -- print this out, but you already know that!\n");
-    }
-
     public void printUsage() {
         printStdUsage();
         Alert.info("--rayp             -- only output the ray parameter\n"
@@ -1569,25 +1433,6 @@ public class TauP_Time extends TauP_Tool {
         printStdUsageTail();
     }
     
-    public static void printNoComprendoArgs(String[] noComprendoArgs) {
-        if(noComprendoArgs.length > 0) {
-            for(int i = 0; i < noComprendoArgs.length; i++) {
-                if(dashEquals("help", noComprendoArgs[i]) 
-                        || dashEquals("version", noComprendoArgs[i])) {
-                    // short circuit for these args
-                    return;
-                }
-            }
-            String outStringA = "I don't understand the following arguments, continuing:";
-            String outStringB = "";
-            for(int i = 0; i < noComprendoArgs.length; i++) {
-                outStringB += noComprendoArgs[i] + " ";
-            }
-            Alert.warning(outStringA, outStringB);
-            noComprendoArgs = null;
-        }
-    }
-
     /**
      * solves the equation (yb-ya)/(xb-xa) = (y-ya)/(x-xa) for y given x. Useful
      * for finding the pixel for a value given the dimension of the area and the

@@ -1,0 +1,4 @@
+Usage: taup <tool> <options>
+ where tool is one of [gui, create, curve, path, phase, pierce, setsac, slowplot, table, time, velplot, wavefront]
+ taup <tool> --help
+ for help with a particular tool.

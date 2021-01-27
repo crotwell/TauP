@@ -47,7 +47,8 @@ public class CmdLineOutputTest {
                                            "taup curve -o stdout -h 10 -ph P",
                                            "taup curve -o stdout -h 10 -ph P -mod ak135"};
 
-    String[] helpTestCmds = new String[] {"taup time --help",
+    String[] helpTestCmds = new String[] {"taup --help",
+                                          "taup --version",
                                           "taup pierce --help",
                                           "taup path --help",
                                           "taup curve --help",
