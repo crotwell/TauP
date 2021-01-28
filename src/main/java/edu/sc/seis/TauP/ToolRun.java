@@ -86,7 +86,7 @@ public class ToolRun {
 
 		try {
             if (toolToRun.contentEquals(GUI)) {
-                TauP t = new TauP();
+                TauP_GUI t = new TauP_GUI();
                 t.setQuitExits(true);
                 t.show();
                 return;
