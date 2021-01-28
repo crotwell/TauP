@@ -208,7 +208,7 @@ public abstract class TauP_Tool {
 
 
 
-    public void printStdUsageTail() {
+    public static void printStdUsageTail() {
         Alert.info("\n-o [stdout|outfile]         -- output is redirected to stdout or to the \"outfile\" file\n"
                 + "--prop [propfile]   -- set configuration properties\n"
                 + "--debug             -- enable debugging output\n"

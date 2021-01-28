@@ -276,7 +276,7 @@ public class TauP_SetSac extends TauP_Time {
                 + "                      Default is iasp91.\n\n");
     }
 
-    public void printStdUsageTail() {
+    public void printUsageTail() {
         System.out.println("\n"
                 + "--prop [propfile]   -- set configuration properties\n"
                 + "--debug             -- enable debugging output\n"
@@ -288,7 +288,7 @@ public class TauP_SetSac extends TauP_Time {
     public void printUsage() {
         printStdUsage();
         System.out.println("--evdpkm            -- sac depth header is in km, default is meters\n");
-        printStdUsageTail();
+        printUsageTail();
         System.out.println("sacfilename [sacfilename ...]");
         System.out.println("\nEx: taup_setsac "
                 + "--mod S_prem -ph S-8,ScS-9 wmq.r wmq.t wmq.z");
