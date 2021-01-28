@@ -208,18 +208,38 @@ public class TauModelLoader {
         }
     }
     
-    static VelocityModel loadVelocityModel(String modelName) throws IOException, VelocityModelException {
+    public static VelocityModel loadVelocityModel(String modelName) throws IOException, VelocityModelException {
+        return loadVelocityModel(modelName, null);
+    }
+    
+    /**
+     * Loads velocity mode, either by name. Looking inside jar for standard models, 
+     * as file from current directory.
+     * 
+     * @param modelName name of model or file name
+     * @return
+     * @throws IOException
+     * @throws VelocityModelException
+     */
+    public static VelocityModel loadVelocityModel(String modelName, String fileType) throws IOException, VelocityModelException {
 
         String basemodelName = modelName;
+        int dirSepIndex = modelName.lastIndexOf(System.getProperty("file.separator"));
+        if(dirSepIndex != -1) {
+            // assume a full filename, look as a regular file
+            basemodelName = modelName.substring(dirSepIndex + 1);
+        }
         if (basemodelName.endsWith(".tvel")) {
+            if (fileType == null) { fileType = "tvel";}
             basemodelName = basemodelName.substring(0, basemodelName.length()-5);
         } else if (basemodelName.endsWith(".nd")) {
+            if (fileType == null) { fileType = "nd";}
             basemodelName = basemodelName.substring(0, basemodelName.length()-3);
         }
         /* First we try to find the model in the distributed taup.jar file. */
         VelocityModel vMod = null;
-        try {
-            Class c = Class.forName("edu.sc.seis.TauP.TauModelLoader");
+        if (dirSepIndex == -1) {
+            Class c = new TauModelLoader().getClass();
             String filename = basemodelName+".nd";
             InputStream in = c.getResourceAsStream(packageName + "/" + filename);
             if(in != null) {
@@ -236,21 +256,20 @@ public class TauModelLoader {
                     inReader.close();
                 }
             }
-        } catch(Exception ex) {
-            if (TauP_Time.DEBUG) {
-                System.err.println("Problem loading velocity model: "+ex.getMessage());
-                ex.printStackTrace();
-            }
         }
         if (vMod == null) {
             // couldn't get as a resource, so keep going
             // try a .tvel or .nd file in current directory, or no suffix
-            String[] types = new String[] {"", ".nd", ".tvel"};
+            String[] types = new String[] {"", "."+fileType};
+            if (fileType == null) {
+                types = new String[] {"", ".nd", ".tvel"};
+            }
             for (int i = 0; i < types.length; i++) {
                 String vmodFile = modelName+types[i];
                 File modelFile = new File(vmodFile);
                 if(modelFile.exists() && modelFile.isFile() && modelFile.canRead()) {
                     vMod = VelocityModel.readVelocityFile(modelFile.getPath(), types[i]);
+                    break;
                 }
             }
         }
