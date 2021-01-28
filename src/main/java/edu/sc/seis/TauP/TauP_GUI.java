@@ -40,7 +40,7 @@ import javax.swing.event.ListSelectionListener;
  * 
  * 
  */
-public class TauP extends javax.swing.JFrame {
+public class TauP_GUI extends javax.swing.JFrame {
 
     /** Initializes the Form */
     protected double distance = 0;
@@ -53,7 +53,7 @@ public class TauP extends javax.swing.JFrame {
 
     protected PathPlot pathPlotArea;
 
-    public TauP() {
+    public TauP_GUI() {
         super("The TauP Toolkit");
         initComponents();
         pack();
