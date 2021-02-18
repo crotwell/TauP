@@ -1,7 +1,7 @@
 import java.util.Date;
 
 plugins {
-  id("edu.sc.seis.version-class") version "1.1.1"
+  id("edu.sc.seis.version-class") version "1.2.0"
   "java"
   "maven"
   eclipse
@@ -9,7 +9,7 @@ plugins {
   "signing"
   application
     `maven-publish`
-  
+
 }
 
 application {
