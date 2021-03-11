@@ -281,6 +281,10 @@ tasks.register<JavaExec>("genModels") {
   outputs.files(File(outDir, "iasp91.taup"))
   outputs.files(File(outDir, "prem.taup"))
   outputs.files(File(outDir, "qdt.taup"))
+  inputs.files("src/main/resources/edu/sc/seis/TauP/StdModels/ak135favg.nd")
+  inputs.files("src/main/resources/edu/sc/seis/TauP/StdModels/ak135fcont.nd")
+  outputs.files(File(outDir, "ak135favg.taup"))
+  outputs.files(File(outDir, "ak135fcont.taup"))
 }
 /*
 tasks.register<JavaExec>("genModels") {
