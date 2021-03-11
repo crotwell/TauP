@@ -39,7 +39,7 @@ publishing {
 
 
 dependencies {
-    implementation("edu.sc.seis:seisFile:2.0.0-SNAPSHOT") {
+    implementation("edu.sc.seis:seisFile:2.0.0") {
       // we need seisFile for sac output, but not all the other functionality
       exclude(group = "com.martiansoftware", module = "jsap")
       exclude(group = "com.fasterxml.woodstox", module = "woodstox-core")
@@ -48,7 +48,7 @@ dependencies {
     }
     // Use JUnit Jupiter API for testing.
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.0")
-    testCompile("org.junit.jupiter:junit-jupiter-params:5.7.0")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:5.7.0")
 
     // Use JUnit Jupiter Engine for testing.
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
