@@ -202,7 +202,7 @@ public class TauP_Create extends TauP_Tool {
                 noComprendoArgs[numNoComprendoArgs++] = args[i];
                 i++;
             } else if (i < args.length - 1 && dashEquals("splot", args[i])) {
-                System.err.println("vplot is deprecated, please use: taup "+ToolRun.SPLOT);
+                System.err.println("splot is deprecated, please use: taup "+ToolRun.SPLOT);
                 noComprendoArgs[numNoComprendoArgs++] = args[i];
                 i++;
             } else if(args[i].startsWith("GB.")) {
