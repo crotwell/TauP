@@ -43,13 +43,7 @@ public class ToolRun {
         String[] noComprendoArgs = new String[args.length];
         int numNoComprendoArgs = 0;
         while(i < args.length) {
-            if(dashEquals("version", args[i])) {
-                Alert.info(BuildVersion.getDetailedVersion());
-                noComprendoArgs[numNoComprendoArgs++] = args[i];
-            } else if(dashEquals("help", args[i])) {
-                printUsage();
-                noComprendoArgs[numNoComprendoArgs++] = args[i];
-            } else if(dashEquals("verbose", args[i])) {
+            if(dashEquals("verbose", args[i])) {
                 VERBOSE = true;
             } else if(dashEquals("debug", args[i])) {
                 VERBOSE = true;
@@ -112,10 +106,13 @@ public class ToolRun {
 			    tool = new TauP_VelocityPlot();
             } else if (toolToRun.contentEquals(WAVEFRONT)) {
                 tool = new TauP_Wavefront();
-			} else if (TauP_Tool.dashEquals("help", toolToRun)
-			        || dashEquals("version", toolToRun)) {
+			} else if (TauP_Tool.dashEquals("help", toolToRun) || toolToRun.equals("help")) {
+                // short circuit for these args
+			    printUsage();
+                return;
+			} else if (dashEquals("version", toolToRun) || toolToRun.equals("version")) {
 			    // this handles help and version
-			    parseCommonCmdLineArgs(args);
+                Alert.info(BuildVersion.getDetailedVersion());
                 // short circuit for these args
 			    return;
 			} else {

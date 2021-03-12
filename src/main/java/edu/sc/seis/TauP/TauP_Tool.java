@@ -144,7 +144,10 @@ public abstract class TauP_Tool {
         String[] noComprendoArgs = new String[args.length];
         int numNoComprendoArgs = 0;
         while(i < args.length) {
-            if(dashEquals("help", args[i])) {
+            if(dashEquals("version", args[i])) {
+                Alert.info(BuildVersion.getDetailedVersion());
+                noComprendoArgs[numNoComprendoArgs++] = args[i];
+            } else if(dashEquals("help", args[i])) {
                 printUsage();
                 noComprendoArgs[numNoComprendoArgs++] = args[i];
             } else if(dashEquals("expert", args[i])) {
@@ -200,7 +203,11 @@ public abstract class TauP_Tool {
         String className = toolClass.getName();
         className = className.substring(className.lastIndexOf('.') + 1,
                                         className.length());
-        Alert.info("Usage: " + className.toLowerCase() + " [arguments]");
+        String toolName = className;
+        if (toolName.startsWith("TauP_")) {
+            toolName = toolName.replace('_', ' ');
+        }
+        Alert.info("Usage: " + toolName.toLowerCase() + " [arguments]");
         Alert.info("  or, for purists, java " + toolClass.getName()
                 + " [arguments]");
         Alert.info("\nArguments are:");
