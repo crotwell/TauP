@@ -2,7 +2,7 @@
 \section{Installing}
 \label{install}
 
-The installation for TauP under \textsc{Unix} is quite simple. And with Java's 
+The installation for TauP under \textsc{Unix} is quite simple. And with Java's
 platform independence, the package should be usable on a Mac or Windows
 machine.
 
@@ -10,8 +10,8 @@ machine.
 \item Install a Java 1.8 or better virtual machine. If your system already has Java 1.8
 or better installed then you can skip to the next step. You can test this
 with ``java -version''. If it isn't there or the version is less than 1.8
-you need to get and install Java. Most operating systems come with a version 
-of Java, and so this should not be an issue. If you do need to download Java, 
+you need to get and install Java. Most operating systems come with a version
+of Java, and so this should not be an issue. If you do need to download Java,
 point
 your browser to http://www.oracle.com/technetwork/java and download and install
 the Java SE Development Kit for Macintosh, Linux or Windows. TauP may run under earlier version of Java, but they are no longer supported.
@@ -28,9 +28,9 @@ This will create a directory called TauP-X.X.X. Inside
 will be the files and directories listed in chapter 2, Distribution.
 
 \item Put this directory someplace. It really doesn't matter where, although
-a central place might make administration easier, /usr/local or 
+a central place might make administration easier, /usr/local or
 /usr/local/share are good choices. If you don't have superuser privileges
-then your home directory is fine. 
+then your home directory is fine.
 
 Previous versions of TauP recommended installing taup.jar as a \textit{standard extension} by placing the jar file into the jre/lib/ext subdirectory of your java installation. We no longer believe this is a good
 practice, and if you have done this in the past you will need to remove the old version in order to
@@ -41,32 +41,31 @@ This should be done in your .cshrc or .login. For instance, if you put Taup-1.2.
 /usr/local/share, then you could set the TAUP\_HOME to be:
 \begin{verbatim}
 setenv TAUP_HOME /usr/local/share/TauP-1.2.0
-\end{verbatim} 
+\end{verbatim}
 for csh/tcsh or for bash
 \begin{verbatim}
 export TAUP_HOME=/usr/local/share/TauP-1.2.0
-\end{verbatim} 
+\end{verbatim}
 
-Please make sure that an old version of taup.jar is not on your CLASSPATH as this will cause a 
+Please make sure that an old version of taup.jar is not on your CLASSPATH as this will cause a
 conflict.
 
 \item Put the bin directory of the distribution directory in your PATH environment
-variable, \begin{verbatim}${TAUP_HOME}/bin\end{verbatim} for instance. These wrapper 
-scripts are not essential, but they cut down on 
-typing. They are in the bin directory of the distribution 
+variable, \begin{verbatim}${TAUP_HOME}/bin\end{verbatim} for instance. These wrapper
+scripts are not essential, but they cut down on
+typing. They are in the bin directory of the distribution
 and are simple \textsc{Unix} sh scripts and \texttt{bat} files for windows.
 
 \item Lastly, you may need to either source your .login and .cshrc files or
-execute the \texttt{rehash} command to make the shell reevaluate the 
+execute the \texttt{rehash} command to make the shell reevaluate the
 contents of your PATH.
 
 \end{enumerate}
 
 That's it. If you have problems or encounter bugs, please mail them to me.
 Please try to be as specific as possible. I am also interested in ideas for
-additional features that might make this a more useful program. 
+additional features that might make this a more useful program.
 Of course, I can make no promises,
 but I would be glad to hear about them.
 
 I can be reached via email at \textit{crotwell@seis.sc.edu}.
-

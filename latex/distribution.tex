@@ -15,9 +15,9 @@ StdModels & standard models included in the jar in lib \\
 bin & directory containing ``wrapper scripts'' to start the tools,
    each will print a usage with a --help command line argument. \\
 lib & all the Java classes included in the package, along with
-               saved models for prem, iasp91, and ak135 in the TauP jar file. 
+               saved models for prem, iasp91, and ak135 in the TauP jar file.
                Also included are dependancy jars. \\
-doc & a directory with the TauP paper published in SRL and this manual,  
+doc & a directory with the TauP paper published in SRL and this manual,
 installation instructions are in the appendix. Also included are javadocs,
 example properties, example taup console script, history, Maple version of equations used, and a simple model file.\\
 jacl & a directory with Jacl examples for accessing the TauP package directly within scripts. \\
@@ -39,15 +39,15 @@ The increased flexibility of this package provides significant advantages. Among
 these are:
 \begin{enumerate}
 \item The ability to use many different models. We include a variety of previously created
-models as well as the option of creating your own models. A conscious effort 
-was made to make as few assumptions as possible about the nature of the model. 
+models as well as the option of creating your own models. A conscious effort
+was made to make as few assumptions as possible about the nature of the model.
 Therefore,
 even models that have very different structures than common global models can be
 used.
 
 \item Phase parsing. Phases are not hard coded into the program, instead the phase
 names are parsed. This creates an opportunity for the study of less common
-phases that are not present in previous travel time calculators. 
+phases that are not present in previous travel time calculators.
 
 \item Programming interface for Java. Because of the use of the Java programming
 language, all of the tools exist simultaneously as both applications and libraries.
@@ -56,7 +56,7 @@ the objects within this package. In addition, Jacl, the Java implementation of t
 
 \end{enumerate}
 
- 
+
 \subsection{Future Plans}
 
 There are several ideas for improvements that we may pursue, such as:
@@ -73,16 +73,16 @@ improvement over the current linear interpolation, but it is likely worth doing.
 
 \item Web based applet. One of Java's main uses currently is for the development of web based applets. An applet is a small application that is downloaded and
 executed within a web browser. This is an attractive opportunity and we have a simple
-example of one included in this distribution. 
-There are difficulties as the network time to download the 
+example of one included in this distribution.
+There are difficulties as the network time to download the
 model files may be unacceptable, as well as the lack of support for Java~1.1 in current browsers. A client server architecture as well as the continued improvement of commercial web browsers
 may be able to address these issues.
 
 \item 1.1D models. There is nothing in the method that requires the source and
-receiver velocity models to be the same. With this idea, a separate crustal 
+receiver velocity models to be the same. With this idea, a separate crustal
 model appropriate to each region could be used for the source and receiver.
 
-\item WKBJ synthetics. The calculation of $\tau$ is a necessary step for WKBJ 
-synthetics, and so this is a natural direction. It likely involves significant 
+\item WKBJ synthetics. The calculation of $\tau$ is a necessary step for WKBJ
+synthetics, and so this is a natural direction. It likely involves significant
 effort, however.
 \end{enumerate}
