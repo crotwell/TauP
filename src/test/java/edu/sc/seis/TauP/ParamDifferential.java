@@ -1,9 +1,5 @@
 package edu.sc.seis.TauP;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import org.junit.jupiter.api.Test;
-
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
@@ -11,6 +7,8 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.List;
+
+import org.junit.jupiter.api.Test;
 
 
 
@@ -111,7 +109,6 @@ public class ParamDifferential {
             pPhase[i] = new SeismicPhase(phaseName, deltaTMod[i]);
             System.err.println("tmod size="+deltaTMod[i].getRayParams().length);
         }
-        double R = 6371;
         float deltaDeg = 1.0f;
         String outName = "/tmp/"+deltaTMod[0].getVelocityModel().getModelName()+"_"+phaseName+".deltaTau";
         System.err.println("woking on "+outName);
@@ -195,7 +192,7 @@ class AK135CorrectTime extends CorrectTime {
     
     @Override
     public double getCorrectTime(String phase, double dist) {
-        List<TimeDist> zeroDepth = table.get(phase).get(new Float(0));
+        List<TimeDist> zeroDepth = table.get(phase).get(Float.valueOf(0));
         TimeDist prev = zeroDepth.get(0);
         for (TimeDist td : zeroDepth) {
             if (td.getDistDeg() == dist) {
