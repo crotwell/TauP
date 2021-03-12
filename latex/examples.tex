@@ -43,7 +43,7 @@ for more details.
 \subsection{Creating the Model}
 
 If we put this into a file called ``simpleMod.nd'' then we can run
-\texttt{taup\_create} to create a model sampling. We use the
+\texttt{taup create} to create a model sampling. We use the
 \texttt{-verbose} option to get some additional output. In particular,
 it outputs the radius to the surface for this model. Having an incorrect
 radius, which could happen for instance
@@ -54,7 +54,7 @@ there is nothing wrong with the model, it is just not what was intended.
 As they say, ``garbage in, garbage out.''
 
 \begin{verbatim}
-piglet 10>taup_create -nd simpleMod.nd --verbose
+piglet 10>taup create -nd simpleMod.nd --verbose
 TauP_Create starting...
 filename =./simpleMod.nd
 Done reading velocity model.
@@ -82,13 +82,13 @@ startup time for Java.
 \subsection{Travel Times}
 
 Now that we have the model sampled, computing travel times is easy.
-We will use taup\_time to get the travel times for some familiar phases,
+We will use taup time to get the travel times for some familiar phases,
 P, S, PcP, ScS, SKS, sS, and SS
 in our simple model for a 143.2 kilometer deep
 source and at a distance of 75 degrees. We use the ``-mod'' command line
 flag to specify the model, and then do the rest after it starts.
 
-First taup\_time reads a standard Java Properties file, ``.taup'',
+First taup time reads a standard Java Properties file, ``.taup'',
 that it finds in my home directory. See section \ref{properties} for
 more details.
 If there are phases you are interested in frequently, or model you use often,
@@ -112,7 +112,7 @@ The distance is repeated to make it easier to parse the output
 from within scripts.
 
 \begin{verbatim}
-piglet 4>ttaup_time --mod simpleMod
+piglet 4>taup time --mod simpleMod
 Enter:
 h for new depth
 r to recalculate
@@ -152,7 +152,7 @@ We could also have done this same example by just using the command line
 options.
 
 \begin{verbatim}
-piglet 5>ttaup_time -mod simpleMod -h 143.2 -deg 75 -ph P,S,PcP,ScS,SKS,sS,SS,PKKP
+piglet 5>taup time -mod simpleMod -h 143.2 -deg 75 -ph P,S,PcP,ScS,SKS,sS,SS,PKKP
 
 Model: simpleMod
 Distance   Depth   Phase   Travel    Ray Param  Takeoff  Incident  Purist    Purist
@@ -169,14 +169,14 @@ Distance   Depth   Phase   Travel    Ray Param  Takeoff  Incident  Purist    Pur
 
 \subsection{Pierce Points}
 
-Now, where are the turning points for these rays? We can run taup\_pierce with
+Now, where are the turning points for these rays? We can run taup pierce with
 the ``-turn'' flag and
 find out. Lets specify the parameters on the command line.
 The output is distance in degrees followed by depth in kilometers.
 Note that SS has two turning points.
 
 \begin{verbatim}
-piglet 7>taup_pierce -mod simpleMod -h 143.2 -deg 75 -ph P,S,PcP,ScS,SKS,sS,SS,PKKP -turn
+piglet 7>taup pierce -mod simpleMod -h 143.2 -deg 75 -ph P,S,PcP,ScS,SKS,sS,SS,PKKP -turn
 > P at   686.34 seconds at    75.00 degrees for a    143.2 km deep source in the simpleMod model with rayParam    5.722 s/deg.
    37.23  2110.8   332.4
 > PcP at   700.51 seconds at    75.00 degrees for a    143.2 km deep source in the simpleMod model with rayParam    4.312 s/deg.
@@ -201,7 +201,7 @@ paths. Lets use only command line options and send the output to the file
 ``simpleModPaths.gmt'' instead of the default ``taup\_path.gmt''.
 
 \begin{verbatim}
-piglet 8>taup_path -mod simpleMod -h 143.2 -deg 75 \
+piglet 8>taup path -mod simpleMod -h 143.2 -deg 75 \
 ? -ph P,S,PcP,ScS,SKS,sS,SS,PKKP \
 ? -o simpleModPaths.gmt -gmt
 piglet 9>ls
@@ -221,11 +221,11 @@ Of course, this only works if you have GMT installed.
 \subsection{Travel Time Curves}
 
 If we want to see the travel time curves for these phases, we can do that using
-taup\_curve. It works very similarly to taup\_path except that we don't need to
+taup curve. It works very similarly to taup\_path except that we don't need to
 specify a distance.
 
 \begin{verbatim}
-piglet 12>taup_curve -mod simpleMod -h 143.2 -ph P,S,PcP,ScS,SKS,sS,SS,PKKP \
+piglet 12>taup curve -mod simpleMod -h 143.2 -ph P,S,PcP,ScS,SKS,sS,SS,PKKP \
 ? -o simpleModCurves.gmt -gmt
 piglet 13>ls
 simpleModCurves.gmt   simpleMod.nd          simpleModPaths.gmt
