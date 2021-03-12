@@ -78,6 +78,7 @@ tasks.named<Test>("test") {
 
 
 val dirName = project.name+"-"+version
+val binDirName = project.name+"_bin-"+version
 
 val binDistFiles: CopySpec = copySpec {
     from("build/scripts") {
@@ -147,11 +148,19 @@ tasks.register<Sync>("explodeBin") {
 }
 
 tasks.register<Tar>("tarBin") {
+  archiveAppendix.set("bin")
   dependsOn("explodeBin")
   compression = Compression.GZIP
   into(dirName) {
       with( binDistFiles)
   }
+}
+tasks.register<Zip>("zipBin") {
+  archiveAppendix.set("bin")
+  dependsOn("explodeBin")
+    into(dirName) {
+        with( binDistFiles)
+    }
 }
 
 tasks.register<Sync>("explodeDist") {
