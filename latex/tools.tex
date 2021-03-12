@@ -358,7 +358,7 @@ taup path -mod iasp91 -h 550 -deg 74 -ph S,ScS,sS,sScS --gmt
 sh taup_path.gmt
 \end{verbatim}
 
-and you have a plot of the ray paths in ``taup_path.pdf''. To avoid possible plotting errors for
+and you have a plot of the ray paths in ``taup\_path.pdf''. To avoid possible plotting errors for
 phases like \texttt{Sdiff}, the ray paths are interpolated to less than
 1 degree increments.
 
@@ -422,7 +422,7 @@ taup wavefront -mod iasp91 -h 550 -ph S,ScS,sS,sScS --gmt
 sh taup_wavefront.gmt
 \end{verbatim}
 
-and you have a plot of the wavefronts in ``taup_wavefront.pdf''.
+and you have a plot of the wavefronts in ``taup\_wavefront.pdf''.
 
 The usage is:
 \begin{verbatim}
@@ -467,8 +467,8 @@ or by giving the station and event latitude and lonitude,
 --help              -- print this out, but you already know that!
 \end{verbatim}
 
-\subsection{TauP_GUI}
-TauP_GUI is unlike the rest of the tools in that it doesn't have any functionality
+\subsection{TauP\_GUI}
+TauP\_GUI is unlike the rest of the tools in that it doesn't have any functionality
  beyond the other tools. It is just a GUI that uses TauP\_Time, TauP\_Pierce
 and TauP\_Path. This is a nice feature of the java language in that each of
 these applications exists simultaneously as a library. The GUI does not
@@ -498,7 +498,7 @@ The output is put in taup\_curve.gmt by default, so to view the results:
 sh taup_curve.gmt
 \end{verbatim}
 
-and you have a plot of the wavefronts in ``taup_curve.pdf''.
+and you have a plot of the wavefronts in ``taup\_curve.pdf''.
 
 The uasage is:
 \begin{verbatim}
@@ -695,7 +695,7 @@ because the depths, and thus identities, of the major internal boundaries can
 be unambiguously determined, making phase name parsing easier.
 See section \ref{exampleCreate} for an example.
 For compatiblity, we support the \texttt{-tvel} format
-currently used by the latest ttimes package,~\shortcite{kennett:ak135}.
+currently used by the latest ttimes package,~\cite{kennett:ak135}.
 
 The output will be a file named after the name of the
 velocity file, followed by \texttt{.taup}. For example

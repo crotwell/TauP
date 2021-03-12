@@ -83,7 +83,7 @@ ray parameters are stored as seconds per radian.
 
 
 
-\subsection{Jacl}
+\subsection{Scripting}
 
 One of the problems with Java based tools is that there is overhead associated
 with starting a Java program due to the fact that the virtual machine must
@@ -92,6 +92,19 @@ a large problem, it can become very wastful when repeated calling a tool
 from within a script. Significant time savings can be had if the tool
 and its associated virtual machine can be kept alive for the duration
 of the script.
+
+There are several scriptling languages available that allow access to compiled
+java code, including Groovy, http://www.groovy-lang.org/, and kotlin,
+https://kotlinlang.org/. These may be used to create more complicated
+calculations than are possible with the command line tools, or to do repeated
+tasks much more efficiently.
+
+\subsubsection{Jacl}
+
+Note: Jacl might still be a useful scripting choice, but it does not appear to have
+been updated in many years. We include this section is included for reference,
+but you may wish to choose another language.
+
 Jacl, a Java implementation of the popular Tool Command Language or Tcl,
 makes writing scripts that use the TauP Toolkit easy, and allows one
 instance of both the
