@@ -99,6 +99,39 @@ https://kotlinlang.org/. These may be used to create more complicated
 calculations than are possible with the command line tools, or to do repeated
 tasks much more efficiently.
 
+One point to keep in mind when scripting TauP is that the depth correction is much more expensive than the distance calculation. So looping over all stations for each earthquake is much faster
+than looping over all earthquakes for each station.
+
+\subsubsection{Groovy}
+
+Groovy is a nice scripting language that interfaces very well with java. Even nicer, with the '@Grab' functionality, it can download needed jar files automatically, so you do
+not even have to install TauP in order to run this script.
+
+Here we calculate travel times for a few phases at 60 degrees distance
+for a 100 km deep source. For each arrival, we print the phase name
+and arrival time, then print the pierce points that show the very coarse
+path through the model.
+
+\begin{verbatim}
+@Grab('edu.sc.seis:TauP:2.5.0')
+import edu.sc.seis.TauP.TauP_Time
+import edu.sc.seis.TauP.Arrival
+import edu.sc.seis.TauP.TimeDist
+
+def taup_time = new TauP_Time("prem")
+
+taup_time.clearPhaseNames()
+taup_time.parsePhaseList("P,PcP,S,ScS")
+taup_time.setSourceDepth(100)
+taup_time.calculate(60)
+for(Arrival a: taup_time.getArrivals()) {
+  println a.name+"  "+a.time
+  for(TimeDist piercePoint : a.getPierce()) {
+    println "  "+piercePoint.distDeg +" "+piercePoint.time
+  }
+}
+\end{verbatim}
+
 \subsubsection{Jacl}
 
 Note: Jacl might still be a useful scripting choice, but it does not appear to have
