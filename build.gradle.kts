@@ -101,33 +101,29 @@ val distFiles: CopySpec = copySpec {
     }
     from("build/docs") {
         include("javadoc/**")
-        into("doc")
+        into("docs")
+    }
+    from("doc") {
+      include("*")
+      into("docs")
     }
     from(".") {
-        include("gpl-3.0.txt")
-        include("doc/**")
+        include("LICENSE")
         include("jacl/**")
+        include("groovy/**")
         include("native/**")
         include("src/**")
         include("README")
         exclude("**/*.svn")
-    }
-    from("srl") {
-        include("taup_srl_with_figs.pdf")
-        into("doc")
     }
     from(".") {
         include("gradle/**")
         include("gradlew")
         include("gradlew.bat")
     }
-    from(".") {
-        include("gradlew")
-        into("gradle")
-    }
     from("src/main/resources/edu/sc/seis/TauP") {
         include("defaultProps")
-        into("doc")
+        into("docs")
     }
     from("src/main/resources/edu/sc/seis/TauP") {
         include("StdModels/*.tvel")
