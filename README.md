@@ -26,6 +26,18 @@ Crotwell, H. P., T. J. Owens, and J. Ritsema (1999). The TauP Toolkit: Flexible 
 
 Comments, criticism and random remarks may be sent to taup@seis.sc.edu.
 
+### Install
+
+## Macintosh
+
+Using [homebrew](https://brew.sh/):
+```
+brew tap crotwell/crotwell
+brew install taup
+taup --help
+```
+
+
 
 ### Rebuilding
 
