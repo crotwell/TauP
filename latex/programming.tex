@@ -3,7 +3,7 @@
 
 In addition to the command line interface, there are three ways to access
 the toolkit from within other programs. The most straightforward is
-through Java. Using Jacl provides a very nice way to write scripts that
+through Java. Using Groovy or Jacl provides a very nice way to write scripts that
 use the tools without repeatedly starting up the Java virtual machine and
 reloading models. Lastly, there is a C language interface, but it is
 a bit less friendly. Descriptions of all three, with example programs
@@ -94,13 +94,18 @@ and its associated virtual machine can be kept alive for the duration
 of the script.
 
 There are several scriptling languages available that allow access to compiled
-java code, including Groovy, http://www.groovy-lang.org/, and kotlin,
-https://kotlinlang.org/. These may be used to create more complicated
+java code, including Groovy, http://www.groovy-lang.org/, and Kotlin,
+https://kotlinlang.org/ along with ports of existing scripting
+languages to the JVM like
+Jython, https://www.jython.org/ and JACL, https://wiki.tcl-lang.org/page/Jacl.
+These may be used to create more complicated
 calculations than are possible with the command line tools, or to do repeated
 tasks much more efficiently.
 
-One point to keep in mind when scripting TauP is that the depth correction is much more expensive than the distance calculation. So looping over all stations for each earthquake is much faster
-than looping over all earthquakes for each station.
+One point to keep in mind when scripting TauP is that the depth correction is
+much more expensive than the distance calculation. So looping over all
+stations for each earthquake is much faster than looping over all earthquakes
+for each station.
 
 \subsubsection{Groovy}
 

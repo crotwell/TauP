@@ -13,6 +13,7 @@ For Mac OSX, we recommend Homebrew. Installation is easy with:
 \begin{verbatim}
   brew tap crotwell/crotwell
   brew install taup
+  taup help
 \end{verbatim}
 
 \subsubsection{Manual Install}
@@ -24,7 +25,7 @@ with ``java -version''. If it isn't there or the version is less than 1.8
 you need to get and install Java. Most operating systems come with a version
 of Java, and so this should not be an issue. If you do need to download Java,
 point
-your browser to http://www.oracle.com/technetwork/java and download and install
+your browser to https://openjdk.java.net/ and download and install
 the Java SE Development Kit for Macintosh, Linux or Windows. TauP may run under earlier version of Java, but they are no longer supported.
 
 \item Download TauP.X.X.X.tar.gz or TauP.X.X.X.zip. Make sure to get the most recent version, replacing the X's  in the file name. They can be found at
@@ -48,14 +49,14 @@ practice, and if you have done this in the past you will need to remove the old 
 prevent a conflict.
 
 \item Set the location of the TauP directory in your TAUP\_HOME environment variable.
-This should be done in your .cshrc or .login. For instance, if you put Taup-1.2.0 in
+This should be done in your .cshrc or .login. For instance, if you put Taup-2.5.0 in
 /usr/local/share, then you could set the TAUP\_HOME to be:
 \begin{verbatim}
-setenv TAUP_HOME /usr/local/share/TauP-1.2.0
+setenv TAUP_HOME /usr/local/share/TauP-2.5.0
 \end{verbatim}
 for csh/tcsh or for bash
 \begin{verbatim}
-export TAUP_HOME=/usr/local/share/TauP-1.2.0
+export TAUP_HOME=/usr/local/share/TauP-2.5.0
 \end{verbatim}
 
 Please make sure that an old version of taup.jar is not on your CLASSPATH as this will cause a
