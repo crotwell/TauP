@@ -1,13 +1,13 @@
 package edu.sc.seis.TauP;
 
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 
 public class TauP_VelocityPlot extends TauP_Tool {
 
+    public static final String DEFAULT_OUTFILE = "taup_velocitymodel";
+    
     public TauP_VelocityPlot() {
-        setOutFileBase("taup_velocitymodel");
+        setOutFileBase(DEFAULT_OUTFILE);
     }
     
     @Override
@@ -15,6 +15,9 @@ public class TauP_VelocityPlot extends TauP_Tool {
         VelocityModel vMod = TauModelLoader.loadVelocityModel(modelName, modelType);
         if (vMod == null) {
             throw new IOException("Velocity model file not found: "+modelName+", tried internally and from file");
+        }
+        if (getOutFileBase() == DEFAULT_OUTFILE) {
+            setOutFileBase(vMod.modelName+"_vel");
         }
         vMod.printGMT(getOutFile());
     }
@@ -27,18 +30,7 @@ public class TauP_VelocityPlot extends TauP_Tool {
         String[] noComprendoArgs = new String[args.length];
         int numNoComprendoArgs = 0;
         while(i < args.length) {
-            if(dashEquals("help", args[i])) {
-                printUsage();
-                noComprendoArgs[numNoComprendoArgs++] = args[i];
-                return noComprendoArgs;
-            } else if(i < args.length - 1 && (dashEquals("prop", args[i]) || dashEquals("p", args[i]))) {
-                try {
-                toolProps.load(new BufferedInputStream(new FileInputStream(args[i + 1])));
-                i++;
-                } catch(IOException e) {
-                    noComprendoArgs[numNoComprendoArgs++] = args[i+1];
-                }
-            } else if(i < args.length - 1 && dashEquals("nd", args[i])) {
+            if(i < args.length - 1 && dashEquals("nd", args[i])) {
                 modelName = args[i + 1];
                 modelType = "nd";
                 i++;
@@ -58,12 +50,6 @@ public class TauP_VelocityPlot extends TauP_Tool {
                 noComprendoArgs[numNoComprendoArgs++] = args[i];
             }
             i++;
-        }
-        if (modelName == null) {
-            System.out.println("Velocity model not specified, use one of --nd or --tvel or --mod");
-            printUsage();
-            // bad, should do something else here...
-            System.exit(1);
         }
         if(numNoComprendoArgs > 0) {
             String[] temp = new String[numNoComprendoArgs];

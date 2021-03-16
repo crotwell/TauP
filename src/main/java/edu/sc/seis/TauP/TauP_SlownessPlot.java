@@ -4,8 +4,10 @@ import java.io.IOException;
 
 public class TauP_SlownessPlot extends TauP_VelocityPlot {
 
+    public static final String DEFAULT_OUTFILE = "taup_slownessmodel";
+    
     public TauP_SlownessPlot() {
-        setOutFileBase("taup_slownessmodel");
+        setOutFileBase(DEFAULT_OUTFILE);
     }
     
     @Override
@@ -15,6 +17,9 @@ public class TauP_SlownessPlot extends TauP_VelocityPlot {
             throw new IOException("Velocity model file not found: "+modelName+", tried internally and from file");
         }
 
+        if (getOutFileBase() == DEFAULT_OUTFILE) {
+            setOutFileBase(vMod.modelName+"_slow");
+        }
         TauP_Create taup_create = new TauP_Create();
         TauModel tMod = taup_create.createTauModel(vMod);
         tMod.getSlownessModel().printGMT(getOutFile());
