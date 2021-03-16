@@ -2997,7 +2997,7 @@ public class SeismicPhase implements Serializable, Cloneable {
         	} else {
         		desc += "  with degenerate ray parameter of "+Outputs.formatRayParam(getMaxRayParam())+"\n";
         	}
-        	desc += "  travel times from "+Outputs.formatTime(time[0])+" to "+Outputs.formatTime(time[time.length-1])+" sec/rad.\n";
+        	desc += "  travel times from "+Outputs.formatTime(time[0])+" to "+Outputs.formatTime(time[time.length-1])+" sec.\n";
         } else {
         	desc += "  FAILS to exist, because no ray parameters satisfy the path.\n";
         }
