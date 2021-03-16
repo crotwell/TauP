@@ -198,8 +198,8 @@ public abstract class TauP_Tool {
             return new String[0];
         }
     }
-
-    public static void printStdUsageHead(Class toolClass) {
+    
+    public static String toolNameFromClass(Class toolClass) {
         String className = toolClass.getName();
         className = className.substring(className.lastIndexOf('.') + 1,
                                         className.length());
@@ -207,7 +207,20 @@ public abstract class TauP_Tool {
         if (toolName.startsWith("TauP_")) {
             toolName = toolName.replace('_', ' ');
         }
-        Alert.info("Usage: " + toolName.toLowerCase() + " [arguments]");
+        if (toolClass.equals(TauP_VelocityPlot.class) ) {
+            toolName = "taup velplot";
+        } else if (toolClass.equals(TauP_SlownessPlot.class) ) {
+            toolName = "taup slowplot";
+        } else if (toolClass.equals(TauP_PhaseDescribe.class) ) {
+            toolName = "taup phase";
+        } 
+        
+        return toolName.toLowerCase();
+    }
+
+    public static void printStdUsageHead(Class toolClass) {
+        String toolName = toolNameFromClass(toolClass);
+        Alert.info("Usage: " + toolName + " [arguments]");
         Alert.info("  or, for purists, java " + toolClass.getName()
                 + " [arguments]");
         Alert.info("\nArguments are:");
