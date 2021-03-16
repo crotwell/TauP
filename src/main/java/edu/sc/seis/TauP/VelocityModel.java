@@ -466,8 +466,8 @@ public class VelocityModel implements Cloneable, Serializable {
      */
     public VelocityModel replaceLayers(VelocityLayer[] newLayers,
                                        String name,
-                                       boolean matchTop,
-                                       boolean matchBot)
+                                       boolean smoothTop,
+                                       boolean smoothBot)
             throws VelocityModelException {
         try {
             List<VelocityLayer> outLayers = new ArrayList<VelocityLayer>();
@@ -540,48 +540,17 @@ public class VelocityModel implements Cloneable, Serializable {
             // now should have velocity layers with breaks matching top and bottom of new layers
             
             
-            if(matchTop && (newLayers[0].getTopDepth() != topLayer.getTopDepth())) {
-                // only match top if new layer is not already same as top existing layer
-                newLayers[0] = new VelocityLayer(newLayers[0].getLayerNum(),
-                                                 newLayers[0].getTopDepth(),
-                                                 newLayers[0].getBotDepth(),
-                                                 topLayer.evaluateAt(newLayers[0].getTopDepth(),
-                                                                     'P'),
-                                                 newLayers[0].getBotPVelocity(),
-                                                 topLayer.evaluateAt(newLayers[0].getTopDepth(),
-                                                                     'S'),
-                                                 newLayers[0].getBotSVelocity(),
-                                                 newLayers[0].getTopDensity(),
-                                                 newLayers[0].getBotDensity(),
-                                                 newLayers[0].getTopQp(),
-                                                 newLayers[0].getBotQp(),
-                                                 newLayers[0].getTopQs(),
-                                                 newLayers[0].getBotQs());
-            }
-            if(matchBot && (lastNewLayer.getBotDepth() != botLayer.getBotDepth())) {
-                // only match bottom if new bottom layer is not already same as bottom existing layer
-                VelocityLayer end = newLayers[newLayers.length - 1];
-                newLayers[newLayers.length - 1] = new VelocityLayer(end.getLayerNum(),
-                                                                    end.getTopDepth(),
-                                                                    end.getBotDepth(),
-                                                                    end.getTopPVelocity(),
-                                                                    botLayer.evaluateAt(newLayers[newLayers.length - 1].getBotDepth(),
-                                                                                        'P'),
-                                                                    end.getTopSVelocity(),
-                                                                    botLayer.evaluateAt(newLayers[newLayers.length - 1].getBotDepth(),
-                                                                                        'S'),
-                                                                    end.getTopDensity(),
-                                                                    end.getBotDensity(),
-                                                                    end.getTopQp(),
-                                                                    end.getBotQp(),
-                                                                    end.getTopQs(),
-                                                                    end.getBotQs());
-            }
             List<VelocityLayer> replaceoutLayers = new ArrayList<VelocityLayer>();
             numAdded = 0;
             for(VelocityLayer vlay : outLayers) {
                 if (vlay.getTopDepth() < newLayers[0].getTopDepth()) {
-                    replaceoutLayers.add(vlay.cloneRenumber(numAdded++));
+                    vlay = vlay.cloneRenumber(numAdded++);
+                    if (smoothTop && vlay.getBotDepth() == newLayers[0].getTopDepth()) {
+                        vlay.setBotPVelocity(newLayers[0].getTopPVelocity());
+                        vlay.setBotSVelocity(newLayers[0].getTopSVelocity());
+                        vlay.setBotDensity(newLayers[0].getTopDensity());
+                    }
+                    replaceoutLayers.add(vlay);
                 }
             }
             for(VelocityLayer vlay : newLayers) {
@@ -590,7 +559,13 @@ public class VelocityModel implements Cloneable, Serializable {
 
             for(VelocityLayer vlay : outLayers) {
                 if (vlay.getBotDepth() > lastNewLayer.getBotDepth()) { 
-                    replaceoutLayers.add(vlay.cloneRenumber(numAdded++));
+                    vlay = vlay.cloneRenumber(numAdded++);
+                    if (smoothBot && vlay.getTopDepth() == lastNewLayer.getBotDepth()) {
+                        vlay.setTopPVelocity(lastNewLayer.getBotPVelocity());
+                        vlay.setTopSVelocity(lastNewLayer.getBotSVelocity());
+                        vlay.setTopDensity(lastNewLayer.getBotDensity());
+                    }
+                    replaceoutLayers.add(vlay);
                 }
             }
             VelocityModel outVMod = new VelocityModel(name,
@@ -604,14 +579,6 @@ public class VelocityModel implements Cloneable, Serializable {
                                                       replaceoutLayers);
             outVMod.fixDisconDepths();
             boolean isValid = outVMod.validate();
-            try {
-                OutputStreamWriter out = new OutputStreamWriter(System.out);
-                outVMod.writeToND(out);
-                out.flush();
-                
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
             if ( ! isValid) {
                 throw new VelocityModelException("replace layers but now is not valid.");
             }

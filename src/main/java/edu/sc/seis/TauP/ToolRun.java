@@ -20,9 +20,10 @@ public class ToolRun {
     public static String SPLOT = "slowplot";
 	public static String TABLE = "table";
     public static String VPLOT = "velplot";
+    public static String VELMERGE = "velmerge";
 	public static String WAVEFRONT = "wavefront";
 	
-	static String[] toolnames = { GUI, CREATE, CURVE, PATH, PHASE, PIERCE, SETSAC, SPLOT, TABLE, TIME, VPLOT, WAVEFRONT };
+	static String[] toolnames = { GUI, CREATE, CURVE, PATH, PHASE, PIERCE, SETSAC, SPLOT, TABLE, TIME, VPLOT, VELMERGE, WAVEFRONT };
 	
 	public static void printUsage() {
 		System.out.println("Usage: taup <tool> <options>");
@@ -102,8 +103,10 @@ public class ToolRun {
 			    tool = new TauP_Table();
 			} else if (toolToRun.contentEquals(TIME)) {
 			    tool = new TauP_Time();
-			} else if (toolToRun.contentEquals(VPLOT)) {
-			    tool = new TauP_VelocityPlot();
+            } else if (toolToRun.contentEquals(VPLOT)) {
+                tool = new TauP_VelocityPlot();
+            } else if (toolToRun.contentEquals(VELMERGE)) {
+                tool = new TauP_VelocityMerge();
             } else if (toolToRun.contentEquals(WAVEFRONT)) {
                 tool = new TauP_Wavefront();
 			} else if (TauP_Tool.dashEquals("help", toolToRun) || toolToRun.equals("help")) {

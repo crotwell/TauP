@@ -12,8 +12,7 @@ Tools included with the TauP package:
   calculates pierce points at model discontinuities and specified depths. \\
 \texttt{taup path} & calculates ray paths, depth versus epicentral distance. \\
 \texttt{taup wavefront} & calculates wavefronts in steps of time, depth versus epicentral distance. \\
-\texttt{taup gui} & a GUI that incorporates the time, pierce and path tools. This
-requires swing, and hence may not work on some java1.1 systems. \\
+\texttt{taup gui} & a GUI that incorporates the time, pierce and path tools. \\
 \texttt{taup curve} &
   calculates travel time curves, time versus epicentral distance. \\
 \texttt{taup table} & outputs travel times for a range of depths and distances in an ASCII file \\
@@ -21,8 +20,10 @@ requires swing, and hence may not work on some java1.1 systems. \\
   puts theoretical arrival times into sac header variables. \\
 \texttt{taup velplot} &
   output velocity model as a gmt script. \\
-\texttt{taup setsac} &
+\texttt{taup slowplot} &
   output slowness model as a gmt script. \\
+\texttt{taup phase} &
+textual description of the path the phase takes through the model. \\
 \texttt{taup create} &
   creates a .taup model from a velocity model. \\
 \end{tabular}
@@ -658,6 +659,135 @@ Arguments are:
 --verbose           -- enable verbose output
 --version           -- print the version
 --help              -- print this out, but you already know that!
+\end{verbatim}
+
+\subsection{TauP\_PhaseDescribe}
+
+TauP\_PhaseDescribe outputs a textual description of the path the
+phase takes through the model.
+
+For example:
+\begin{verbatim}
+  taup phase -mod prem -h 200 -ph PKiKP
+  PKiKP:
+    exists from     0.00 to   152.44 degrees.
+    with ray parameter from  117.955 down to    0.000 sec/rad.
+    travel times from  1170.37 to   966.27 sec.
+  P going down as a P in the mantle, layer 3 to 6, then transmit down
+  K going down as a P in the outer core, layer 7, then reflect topside
+  K going up   as a P in the outer core, layer 7, then transmit up
+  P going up   as a P in the crust/mantle, layer 6 to 0, then end
+\end{verbatim}
+
+The usage is:
+\begin{verbatim}
+piglet 1> taup phase --help
+Usage: arraylist [arguments]
+  or, for purists, java java.util.ArrayList [arguments]
+
+Arguments are:
+-ph phase list     -- comma separated phase list
+-pf phasefile      -- file containing phases
+
+-mod[el] modelname -- use velocity model "modelname" for calculations
+                      Default is iasp91.
+
+-h depth           -- source depth in km
+
+--stadepth depth   -- receiver depth in km
+
+
+
+-o [stdout|outfile]         -- output is redirected to stdout or to the "outfile" file
+--prop [propfile]   -- set configuration properties
+--debug             -- enable debugging output
+--verbose           -- enable verbose output
+--version           -- print the version
+--help              -- print this out, but you already know that!
+\end{verbatim}
+
+\subsection{TauP\_VelocityMerge}
+
+TauP\_VelocityMerge overlays a partial velocity model over the given base velocity model.
+
+The usage is:
+\begin{verbatim}
+taup velmerge --help
+Usage: taup velmerge [arguments]
+  or, for purists, java edu.sc.seis.TauP.TauP_VelocityMerge [arguments]
+
+Arguments are:
+-mod[el] modelname -- base velocity model "modelname" for calculations
+                      Default is iasp91.
+
+
+-nd modelfile       -- base "named discontinuities" velocity file
+-tvel modelfile     -- base ".tvel" velocity file, ala ttimes
+
+-mergend modelfile       -- "named discontinuities" velocity file to merge
+-mergetvel modelfile     -- ".tvel" velocity file to merge, ala ttimes
+
+-smtop              -- smooth merge at top
+
+-smbot              -- smooth merge at bottom
+
+
+-o [stdout|outfile]         -- output is redirected to stdout or to the "outfile" file
+--prop [propfile]   -- set configuration properties
+--debug             -- enable debugging output
+--verbose           -- enable verbose output
+--version           -- print the version
+--help              -- print this out, but you already know that!
+\end{verbatim}
+
+\subsection{TauP\_VelocityPlot}
+
+TauP\_VelocityPlot outputs a gmt script that plots the given velocity model.
+
+The usage is:
+\begin{verbatim}
+piglet 1>taup velplot --help
+Usage: taup velplot [arguments]
+  or, for purists, java edu.sc.seis.TauP.TauP_VelocityPlot [arguments]
+
+Arguments are:
+-mod[el] modelname -- use velocity model "modelname" for calculations
+                      Default is iasp91.
+
+
+-nd modelfile       -- "named discontinuities" velocity file
+-tvel modelfile     -- ".tvel" velocity file, ala ttimes
+
+
+-o [stdout|outfile]         -- output is redirected to stdout or to the "outfile" file
+--prop [propfile]   -- set configuration properties
+--debug             -- enable debugging output
+--verbose           -- enable verbose output
+--version           -- print the version
+--help              -- print this out, but you already know that!
+\end{verbatim}
+
+\subsection{TauP\_SlownessPlot}
+
+TauP\_SlownessPlot outputs a gmt script that plots the given slowness model.
+
+The usage is:
+\begin{verbatim}
+piglet 1>taup slowplot --help
+Usage: taup_slownessplot [arguments]
+  or, for purists, java edu.sc.seis.TauP.TauP_SlownessPlot [arguments]
+
+Arguments are:
+
+   To specify the velocity model:
+-nd modelfile       -- "named discontinuities" velocity file
+-tvel modelfile     -- ".tvel" velocity file, ala ttimes
+
+--debug              -- enable debugging output
+--prop [propfile]    -- set configuration properties
+--verbose            -- enable verbose output
+--version            -- print the version
+--help               -- print this out, but you already know that!
 \end{verbatim}
 
 \subsection{TauP\_Create}

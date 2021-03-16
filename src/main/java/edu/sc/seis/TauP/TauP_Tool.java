@@ -211,6 +211,8 @@ public abstract class TauP_Tool {
             toolName = "taup velplot";
         } else if (toolClass.equals(TauP_SlownessPlot.class) ) {
             toolName = "taup slowplot";
+        } else if (toolClass.equals(TauP_VelocityMerge.class) ) {
+            toolName = "taup velmerge";
         } else if (toolClass.equals(TauP_PhaseDescribe.class) ) {
             toolName = "taup phase";
         } 
