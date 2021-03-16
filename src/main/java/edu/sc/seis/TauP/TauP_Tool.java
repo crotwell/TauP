@@ -38,6 +38,8 @@ public abstract class TauP_Tool {
     protected Properties toolProps;
 
     protected Outputs outForms;
+
+    private String outFileExtension = "gmt";
     
 
     /* Constructors */
@@ -75,9 +77,15 @@ public abstract class TauP_Tool {
     }
     
     public String getOutFileExtension() {
-        return "gmt";
+        return outFileExtension ;
     }
     
+    public void setOutFileExtension(String outFileExtension) {
+        this.outFileExtension = outFileExtension;
+    }
+
+
+
     public String getOutFile() {
         if(getOutFileBase() == null || getOutFileBase().length() == 0 || getOutFileBase().equals("stdout")) {
             return "stdout";

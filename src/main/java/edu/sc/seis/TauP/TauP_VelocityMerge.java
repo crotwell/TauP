@@ -11,6 +11,8 @@ import java.io.PrintWriter;
 public class TauP_VelocityMerge extends TauP_Tool {
 
     public TauP_VelocityMerge() {
+        setOutputFormat("nd");
+        setOutFileExtension("nd");
         setOutFileBase("velmerge");
     }
     
@@ -33,7 +35,6 @@ public class TauP_VelocityMerge extends TauP_Tool {
             outVMod = vMod.replaceLayers(overlayVMod.getLayers(), overlayVMod.getModelName(), smoothTop, smoothBottom);
             outVMod.setModelName(vMod.modelName+"_"+overlayVMod.getModelName());
             setOutFileBase(outVMod.modelName);
-            setOutputFormat("nd");
         }
 
         try {
@@ -120,8 +121,8 @@ public class TauP_VelocityMerge extends TauP_Tool {
                 + "                      Default is iasp91.\n\n");
         System.out.println("-nd modelfile       -- base \"named discontinuities\" velocity file");
         System.out.println("-tvel modelfile     -- base \".tvel\" velocity file, ala ttimes\n");
-        System.out.println("-mergend modelfile       -- \"named discontinuities\" velocity file to merge");
-        System.out.println("-mergetvel modelfile     -- \".tvel\" velocity file to merge, ala ttimes\n");
+        System.out.println("-ndmerge modelfile       -- \"named discontinuities\" velocity file to merge");
+        System.out.println("-tvelmerge modelfile     -- \".tvel\" velocity file to merge, ala ttimes\n");
         System.out.println("-smtop              -- smooth merge at top\n");
         System.out.println("-smbot              -- smooth merge at bottom\n");
         TauP_Tool.printStdUsageTail();
