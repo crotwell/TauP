@@ -6,6 +6,9 @@ import java.io.IOException;
 
 public class TauP_VelocityPlot extends TauP_Tool {
 
+    public TauP_VelocityPlot() {
+        setOutFileBase("taup_velocitymodel");
+    }
     
     @Override
     public void start() throws SlownessModelException, TauModelException, VelocityModelException, IOException {
@@ -13,14 +16,13 @@ public class TauP_VelocityPlot extends TauP_Tool {
         if (vMod == null) {
             throw new IOException("Velocity model file not found: "+modelName+", tried internally and from file");
         }
-
-        vMod.printGMT("taup_velocitymodel.gmt");
+        vMod.printGMT(getOutFile());
     }
 
     @Override
     protected String[] parseCmdLineArgs(String[] origArgs) throws IOException {
 
-        String[] args = ToolRun.parseCommonCmdLineArgs(origArgs);
+        String[] args = super.parseCommonCmdLineArgs(origArgs);
         int i = 0;
         String[] noComprendoArgs = new String[args.length];
         int numNoComprendoArgs = 0;

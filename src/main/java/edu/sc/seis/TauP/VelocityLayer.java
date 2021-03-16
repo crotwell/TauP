@@ -166,6 +166,19 @@ public class VelocityLayer implements Cloneable, Serializable {
         }
     }
 
+    public VelocityLayer cloneRenumber(int layerNum) {
+        try {
+            VelocityLayer newObject = (VelocityLayer)super.clone();
+            newObject.myLayerNumber = layerNum;
+            return newObject;
+        } catch(CloneNotSupportedException e) {
+            // Cannot happen, we support clone
+            // and our parent is Object, which supports clone.
+            throw new InternalError(e.toString());
+        }
+    }
+
+
     public double evaluateAtBottom(char materialProperty)
             throws NoSuchMatPropException {
         double answer;
