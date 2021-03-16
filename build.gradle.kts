@@ -113,7 +113,7 @@ val distFiles: CopySpec = copySpec {
         include("groovy/**")
         include("native/**")
         include("src/**")
-        include("README")
+        include("README.md")
         exclude("**/*.svn")
     }
     from(".") {
