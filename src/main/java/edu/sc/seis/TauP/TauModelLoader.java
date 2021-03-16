@@ -222,7 +222,7 @@ public class TauModelLoader {
      * @throws VelocityModelException
      */
     public static VelocityModel loadVelocityModel(String modelName, String fileType) throws IOException, VelocityModelException {
-
+        if (modelName == null) {modelName = "iasp91"; fileType = "tvel";}
         String basemodelName = modelName;
         int dirSepIndex = modelName.lastIndexOf(System.getProperty("file.separator"));
         if(dirSepIndex != -1) {
