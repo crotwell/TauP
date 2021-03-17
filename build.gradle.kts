@@ -1,7 +1,9 @@
 import java.util.Date;
+import org.gradle.crypto.checksum.Checksum
 
 plugins {
   id("edu.sc.seis.version-class") version "1.2.0"
+  id("org.gradle.crypto.checksum") version "1.2.0"
   "java"
   eclipse
   "project-report"
@@ -164,13 +166,21 @@ tasks.register<Tar>("tarDist") {
 }
 
 
+tasks.register<Checksum>("checksumDist") {
+  dependsOn("tarBin")
+  dependsOn("tarDist")
+  dependsOn("zipDist")
+  files = tasks.getByName("tarBin").outputs.files + tasks.getByName("tarDist").outputs.files + tasks.getByName("zipDist").outputs.files
+  outputDir=File(project.buildDir, "distributions")
+  algorithm = Checksum.Algorithm.SHA256
+}
+
 tasks.register<Zip>("zipDist") {
   dependsOn("explodeDist")
     into(dirName) {
         with( distFiles)
     }
 }
-
 
 publishing {
     publications {
@@ -223,6 +233,9 @@ publishing {
 
 signing {
     sign(publishing.publications["mavenJava"])
+    sign(tasks.getByName("tarDist"))
+    sign(tasks.getByName("zipDist"))
+    sign(tasks.getByName("tarBin"))
 }
 
 tasks.register("createRunScripts"){}
@@ -291,7 +304,10 @@ tasks.register<Sync>("copyCmdLineTestFiles") {
   dependsOn("genCmdLineTestFiles")
 }
 
-tasks.get("assemble").dependsOn(tasks.get("tarDist"))
+tasks.get("assemble").dependsOn(tasks.get("signTarBin"))
+tasks.get("assemble").dependsOn(tasks.get("signTarDist"))
+tasks.get("assemble").dependsOn(tasks.get("signZipDist"))
+tasks.get("assemble").dependsOn(tasks.get("checksumDist"))
 
 val generatedSrcDir = file("$buildDir/generated-src/StdModels")
 val resourceDir =  File(generatedSrcDir, "/resources")
