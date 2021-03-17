@@ -84,8 +84,8 @@ val binDistFiles: CopySpec = copySpec {
 val distFiles: CopySpec = copySpec {
     with(binDistFiles)
     from(".") {
-        include("build.gradle")
-        include("settings.gradle")
+        include("build.gradle.kts")
+        include("settings.gradle.kts")
     }
     from("build/docs") {
         include("javadoc/**")
