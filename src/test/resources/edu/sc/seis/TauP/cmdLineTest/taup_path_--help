@@ -1,4 +1,4 @@
-Usage: taup_path [arguments]
+Usage: taup path [arguments]
   or, for purists, java edu.sc.seis.TauP.TauP_Path [arguments]
 
 Arguments are:

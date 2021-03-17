@@ -1,4 +1,4 @@
-Usage: taup_time [arguments]
+Usage: taup time [arguments]
   or, for purists, java edu.sc.seis.TauP.TauP_Time [arguments]
 
 Arguments are:

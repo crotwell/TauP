@@ -49,22 +49,25 @@ public class CmdLineOutputTest {
 
     String[] helpTestCmds = new String[] {"taup --help",
                                           "taup --version",
+                                          "taup time --help",
                                           "taup pierce --help",
                                           "taup path --help",
                                           "taup curve --help",
                                           "taup wavefront --help",
                                           "taup table --help",
+                                          "taup velmerge --help",
+                                          "taup velplot --help",
+                                          "taup slowplot --help",
                                           "taup create --help"};
 
 
-    /** disable unless regenerating the cmd line output test resources.
+    /** 
+     * regenerating the cmd line output test resources.
      * new text files will be in cmdLineTest in cwd
      *
      * @throws Exception
      */
-    @Disabled("disable unless regenerating the cmd line output test resources for one test.")
-    @Test
-    public void testSaveOutput() throws Exception {
+    public void regenSavedOutput() throws Exception {
         List<String> allList = new ArrayList<String>();
         allList.addAll(Arrays.asList(helpTestCmds));
         allList.addAll(Arrays.asList(timeTestCmds));
@@ -77,16 +80,20 @@ public class CmdLineOutputTest {
         }
     }
 
-    /** disable unless regenerating the cmd line output test resources.
+    /** 
+     * regenerating the cmd line output test resources.
      * new text files will be in cmdLineTest in cwd.
      * This one just does a single test for when adding new output test.
      *
      * @throws Exception
      */
-    @Disabled("disable unless regenerating the cmd line output test resources for one test.")
-    @Test
-    public void testSaveOutputSingle() throws Exception {
+    public void regenSavedOutputSingle() throws Exception {
         saveOutputToFile(helpTestCmds[0]);
+    }
+
+    @Test
+    public void testTauPHelp() throws Exception {
+        runTests(helpTestCmds);
     }
 
     @Test
@@ -228,6 +235,6 @@ public class CmdLineOutputTest {
     
     public static void main(String[] args) throws Exception {
         CmdLineOutputTest me = new CmdLineOutputTest();
-        me.testSaveOutput();
+        me.regenSavedOutput();
     }
 }

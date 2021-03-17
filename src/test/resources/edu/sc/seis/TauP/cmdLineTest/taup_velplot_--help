@@ -1,19 +1,13 @@
-Usage: taup table [arguments]
-  or, for purists, java edu.sc.seis.TauP.TauP_Table [arguments]
+Usage: taup velplot [arguments]
+  or, for purists, java edu.sc.seis.TauP.TauP_VelocityPlot [arguments]
 
 Arguments are:
--ph phase list     -- comma separated phase list
--pf phasefile      -- file containing phases
-
 -mod[el] modelname -- use velocity model "modelname" for calculations
                       Default is iasp91.
 
 
--header filename   -- reads depth and distance spacing data
-                      from a LOCSAT style file.
--generic           -- outputs a "generic" ascii table
-
--locsat            -- outputs a "locsat" style ascii table
+-nd modelfile       -- "named discontinuities" velocity file
+-tvel modelfile     -- ".tvel" velocity file, ala ttimes
 
 
 -o [stdout|outfile]         -- output is redirected to stdout or to the "outfile" file

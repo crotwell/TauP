@@ -1,4 +1,4 @@
-Usage: taup_pierce [arguments]
+Usage: taup pierce [arguments]
   or, for purists, java edu.sc.seis.TauP.TauP_Pierce [arguments]
 
 Arguments are:

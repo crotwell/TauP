@@ -1,4 +1,4 @@
-Usage: taup_wavefront [arguments]
+Usage: taup wavefront [arguments]
   or, for purists, java edu.sc.seis.TauP.TauP_Wavefront [arguments]
 
 Arguments are:
