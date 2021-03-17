@@ -3,13 +3,11 @@ import java.util.Date;
 plugins {
   id("edu.sc.seis.version-class") version "1.2.0"
   "java"
-  "maven"
   eclipse
   "project-report"
-  "signing"
+  `maven-publish`
+  signing
   application
-    `maven-publish`
-
 }
 
 application {
@@ -27,25 +25,15 @@ java {
     withSourcesJar()
 }
 
-
-
-publishing {
-    publications {
-        create<MavenPublication>("mavenJava") {
-            from(components["java"])
-        }
-    }
-}
-
-
 dependencies {
     implementation("edu.sc.seis:seisFile:2.0.0") {
       // we need seisFile for sac output, but not all the other functionality
-      exclude(group = "com.martiansoftware", module = "jsap")
+      exclude(group = "info.picocli", module = "picocli")
       exclude(group = "com.fasterxml.woodstox", module = "woodstox-core")
-      exclude(group = "net.java.dev.msv", module = "msv-core")
       exclude(group = "org.apache.httpcomponents", module = "httpclient")
     }
+    runtimeOnly( "org.slf4j:slf4j-log4j12:1.7.30")
+
     // Use JUnit Jupiter API for testing.
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.0")
     testImplementation("org.junit.jupiter:junit-jupiter-params:5.7.0")
@@ -182,58 +170,60 @@ tasks.register<Zip>("zipDist") {
         with( distFiles)
     }
 }
-/*
-signing {
-    sign configurations.archives
-}
 
-if (project.hasProperty("ossrhUsername") && project.hasProperty("ossrhPassword") ) {
-  uploadArchives {
+
+publishing {
+    publications {
+        create<MavenPublication>("mavenJava") {
+            from(components["java"])
+            pom {
+              name.set("TauP")
+              description.set("Flexible Seismic Travel-Time and Raypath Utilities.")
+              url.set("https://www.seis.sc.edu/TauP/")
+
+              scm {
+                connection.set("scm:git:https://github.com/crotwell/TauP.git")
+                developerConnection.set("scm:git:https://github.com/crotwell/TauP.git")
+                url.set("https://github.com/crotwell/TauP")
+              }
+
+              licenses {
+                license {
+                  name.set("GNU Lesser General Public License, Version 3")
+                  url.set("https://www.gnu.org/licenses/lgpl-3.0.txt")
+                }
+              }
+
+              developers {
+                developer {
+                  id.set("crotwell")
+                  name.set("Philip Crotwell")
+                  email.set("crotwell@seis.sc.edu")
+                }
+              }
+            }
+        }
+    }
     repositories {
-      mavenDeployer {
-        beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-
-        repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-          authentication(userName: ossrhUsername, password: ossrhPassword)
-        }
-
-        snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-          authentication(userName: ossrhUsername, password: ossrhPassword)
-        }
-
-        pom.project {
-          name "TauP"
-          packaging "jar"
-          // optionally artifactId can be defined here
-          description "A seismic travel time calculator."
-          url "http://www.seis.sc.edu/TauP"
-
-          scm {
-            connection "scm:git:https://github.com/crotwell/TauP.git"
-            developerConnection "scm:git:https://github.com/crotwell/TauP.git"
-            url "https://github.com/crotwell/TauP"
-          }
-
-          licenses {
-            license {
-              name "The GNU General Public License, Version 3"
-              url "http://www.gnu.org/licenses/gpl-3.0.html"
-            }
-          }
-
-          developers {
-            developer {
-              id "crotwell"
-              name "Philip Crotwell"
-              email "crotwell@seis.sc.edu"
-            }
-          }
-        }
+      maven {
+        name = "TestDeploy"
+        url = uri("$buildDir/repos/test-deploy")
+      }
+      maven {
+          val releaseRepo = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+          val snapshotRepo = "https://oss.sonatype.org/content/repositories/snapshots/"
+          url = uri(if ( version.toString().toLowerCase().endsWith("snapshot")) snapshotRepo else releaseRepo)
+          name = "ossrh"
+          // credentials in gradle.properties as ossrhUsername and ossrhPassword
+          credentials(PasswordCredentials::class)
       }
     }
-  }
+
 }
-*/
+
+signing {
+    sign(publishing.publications["mavenJava"])
+}
 
 tasks.register("createRunScripts"){}
 tasks.named("startScripts") {
