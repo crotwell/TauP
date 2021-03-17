@@ -287,61 +287,19 @@ tasks.register<JavaExec>("genModels") {
   outputs.files(File(outDir, "prem.taup"))
   outputs.files(File(outDir, "qdt.taup"))
 }
-/*
-tasks.register<JavaExec>("genModels") {
-  dependsOn("compileJava")
-  doLast {
-    println("Generate models")
-    outDir.mkdirs()
-    val inDir = File(getProjectDir(), "src/main/resources/edu/sc/seis/TauP/StdModels/")
-    String[] tvelModelNames = ["iasp91", "ak135"]
-    String[] ndModelNames = ["prem"]
-    val classLoader = new GroovyClassLoader(Project.class.classLoader)
-    classLoader.addURL( File(getBuildDir(), "/classes/java/main").toURL())
-    configurations.default.each { File file -> classLoader.addURL(file.toURL())}
-    val taupCreate = classLoader.loadClass("edu.sc.seis.TauP.TauP_Create").newInstance()
-    taupCreate.setDirectory(inDir.getPath())
-    taupCreate.setVelFileType("tvel")
-    val vMod
-    val tMod
-    tvelModelNames.each { String model ->
-        taupCreate.setModelFilename(model)
-        vMod = taupCreate.loadVMod()
-        tMod = taupCreate.createTauModel(vMod)
-        tMod.writeModel(new File(outDir, model+".taup").path)
-    }
-    taupCreate.setVelFileType("nd")
-    ndModelNames.each { String model ->
-        taupCreate.setModelFilename(model)
-        vMod = taupCreate.loadVMod()
-        tMod = taupCreate.createTauModel(vMod)
-        tMod.writeModel(new File(outDir, model+".taup").path)
-    }
-    // qdt with bigger tol.
-    taupCreate.setVelFileType("tvel")
-    taupCreate.setMinDeltaP(0.5)
-    taupCreate.setMaxDeltaP(50.0)
-    taupCreate.setMaxDepthInterval(915.0)
-    taupCreate.setMaxRangeInterval(10.0)
-    taupCreate.setMaxInterpError(1.0)
-    taupCreate.setAllowInnerCoreS(false)
-    taupCreate.setModelFilename("iasp91")
-    vMod = taupCreate.loadVMod()
-    vMod.setModelName("qdt")
-    tMod = taupCreate.createTauModel(vMod)
-    tMod.writeModel(new File(outDir, "qdt.taup").path)
-  }
-}
 
-genModels.inputs.files "src/main/resources/edu/sc/seis/TauP/defaultProps"
-genModels.inputs.files "src/main/resources/edu/sc/seis/TauP/StdModels/ak135.tvel"
-genModels.inputs.files "src/main/resources/edu/sc/seis/TauP/StdModels/iasp91.tvel"
-genModels.inputs.files "src/main/resources/edu/sc/seis/TauP/StdModels/prem.nd"
-genModels.outputs.files new File(outDir, "ak135.taup")
-genModels.outputs.files new File(outDir, "iasp91.taup")
-genModels.outputs.files new File(outDir, "prem.taup")
-genModels.outputs.files new File(outDir, "qdt.taup")
-*/
+tasks.register<JavaExec>("genCmdLineTestFiles") {
+    description = "generate TauP cmd line test output files"
+    classpath = sourceSets.getByName("test").runtimeClasspath
+    main = "edu.sc.seis.TauP.CmdLineOutputTest"
+    dependsOn += tasks.getByName("testClasses")
+    outputs.files(fileTree("cmdLineTest"))
+}
+tasks.register<Sync>("copyCmdLineTestFiles") {
+  from(tasks.getByName("genCmdLineTestFiles").outputs)
+  into("src/test/resources/edu/sc/seis/TauP/cmdLineTest")
+  dependsOn("genCmdLineTestFiles")
+}
 
 tasks.get("assemble").dependsOn(tasks.get("tarDist"))
 
