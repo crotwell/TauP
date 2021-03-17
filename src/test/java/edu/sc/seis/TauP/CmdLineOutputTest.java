@@ -1,6 +1,7 @@
 package edu.sc.seis.TauP;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
@@ -48,7 +49,6 @@ public class CmdLineOutputTest {
                                            "taup curve -o stdout -h 10 -ph P -mod ak135"};
 
     String[] helpTestCmds = new String[] {"taup --help",
-                                          "taup --version",
                                           "taup time --help",
                                           "taup pierce --help",
                                           "taup path --help",
@@ -60,6 +60,7 @@ public class CmdLineOutputTest {
                                           "taup slowplot --help",
                                           "taup create --help"};
 
+    String versionCmd = "taup --version";
 
     /** 
      * regenerating the cmd line output test resources.
@@ -89,6 +90,31 @@ public class CmdLineOutputTest {
      */
     public void regenSavedOutputSingle() throws Exception {
         saveOutputToFile(helpTestCmds[0]);
+    }
+    
+    /**
+     * version test needs to be separate because act of committing an update to the version cmd line output
+     * changes the git version making the test fail.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testVersion() throws Exception {
+        setUpStreams();
+        assertEquals( 0, outContent.toByteArray().length, "sysout is not empty");
+        runCmd(versionCmd);
+        BufferedReader current = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(outContent.toByteArray())));
+        int lineNum = 0;
+        String currentLine;
+        assertTrue(current.ready());
+        currentLine = current.readLine();
+        BuildVersion ver;
+        // should only be one line
+        assertFalse(current.ready());
+        assertTrue(currentLine.contains(BuildVersion.getGroup()));
+        assertTrue(currentLine.contains(BuildVersion.getName()));
+        assertTrue(currentLine.contains(BuildVersion.getVersion()));
+        cleanUpStreams();
     }
 
     @Test
