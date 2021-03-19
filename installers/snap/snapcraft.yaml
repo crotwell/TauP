@@ -1,6 +1,6 @@
 name: taup
 title: The TauP Toolkit
-version: 2.4.6-SNAPSHOT
+version: 2.5.0
 summary: "The TauP Toolkit: Flexible Seismic Travel-Time and Raypath Utilities"
 description: |
   The TauP Toolkit is a seismic travel time calculator. In addition to travel
@@ -8,6 +8,7 @@ description: |
   earth, pierce and turning points. It handles many types of velocity models and
   can calculate times for virtually any seismic phase with a phase parser.
   It is written in Java so it should run on any Java enabled platform.
+  More info and docs at https://www.seis.sc.edu/TauP
 base: core18
 confinement: strict
 grade: devel
@@ -22,8 +23,8 @@ parts:
   taup:
     plugin: gradle
     source: https://github.com/crotwell/taup.git
-    source-branch: master
-    gradle-version: '6.6.1'
+    source-tag: v2.5.0
+    gradle-version: '6.8.3'
     gradle-options: [explodeBin]
     override-build: |
       snapcraftctl build
