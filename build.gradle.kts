@@ -93,7 +93,7 @@ val distFiles: CopySpec = copySpec {
         include("javadoc/**")
         into("docs")
     }
-    from("doc") {
+    from("docs") {
       include("*")
       into("docs")
     }
