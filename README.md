@@ -37,6 +37,29 @@ brew install taup
 taup --help
 ```
 
+## Linux
+
+Using [snap](https://snapcraft.io):
+```
+sudo snap install taup
+taup --help
+```
+
+Note: I have only tested this on Ubuntu on amd64.
+
+You may also get the lastest development version via
+```
+sudo snap install taup --channel=--channel=latest/edge
+```
+
+## Manually
+
+Download tarball here:
+https://www.seis.sc.edu/downloads/TauP/TauP-2.5.0.tgz
+or from the releases section on Github
+https://github.com/crotwell/TauP/releases
+
+`tar zxf` and add the bin to your PATH.
 
 
 ### Rebuilding
