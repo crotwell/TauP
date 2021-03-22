@@ -2,7 +2,7 @@ import java.util.Date;
 import org.gradle.crypto.checksum.Checksum
 
 plugins {
-  id("edu.sc.seis.version-class") version "1.2.0"
+  id("edu.sc.seis.version-class") version "1.2.1"
   id("org.gradle.crypto.checksum") version "1.2.0"
   "java"
   eclipse
