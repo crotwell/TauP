@@ -16,7 +16,7 @@ apps:
   taup:
     command: bin/taup
     environment:
-      JAVA_HOME: "$SNAP/usr/lib/jvm/java-11-openjdk-amd64"
+      JAVA_HOME: "$SNAP/usr/lib/jvm/java-11-openjdk-${SNAP_ARCH}"
       PATH: "$SNAP/bin:$PATH:$JAVA_HOME/jre/bin"
     plugs: [home]
 parts:
