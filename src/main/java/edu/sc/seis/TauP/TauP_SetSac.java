@@ -28,8 +28,6 @@ package edu.sc.seis.TauP;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.OptionalDataException;
-import java.io.StreamCorruptedException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -153,7 +151,7 @@ public class TauP_SetSac extends TauP_Time {
             return;
         }
         // regular file, hopefully
-        SacTimeSeries sacFile = new SacTimeSeries(f);
+        SacTimeSeries sacFile = SacTimeSeries.read(f);
         SacHeader header = sacFile.getHeader();
         if(SacConstants.isUndef(header.getEvdp())) {
             System.out.println("Depth not set in "

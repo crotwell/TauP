@@ -1,6 +1,7 @@
 package edu.sc.seis.TauP;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
@@ -48,23 +49,26 @@ public class CmdLineOutputTest {
                                            "taup curve -o stdout -h 10 -ph P -mod ak135"};
 
     String[] helpTestCmds = new String[] {"taup --help",
-                                          "taup --version",
+                                          "taup time --help",
                                           "taup pierce --help",
                                           "taup path --help",
                                           "taup curve --help",
                                           "taup wavefront --help",
                                           "taup table --help",
+                                          "taup velmerge --help",
+                                          "taup velplot --help",
+                                          "taup slowplot --help",
                                           "taup create --help"};
 
+    String versionCmd = "taup --version";
 
-    /** disable unless regenerating the cmd line output test resources.
+    /** 
+     * regenerating the cmd line output test resources.
      * new text files will be in cmdLineTest in cwd
      *
      * @throws Exception
      */
-    @Disabled("disable unless regenerating the cmd line output test resources for one test.")
-    @Test
-    public void testSaveOutput() throws Exception {
+    public void regenSavedOutput() throws Exception {
         List<String> allList = new ArrayList<String>();
         allList.addAll(Arrays.asList(helpTestCmds));
         allList.addAll(Arrays.asList(timeTestCmds));
@@ -77,16 +81,45 @@ public class CmdLineOutputTest {
         }
     }
 
-    /** disable unless regenerating the cmd line output test resources.
+    /** 
+     * regenerating the cmd line output test resources.
      * new text files will be in cmdLineTest in cwd.
      * This one just does a single test for when adding new output test.
      *
      * @throws Exception
      */
-    @Disabled("disable unless regenerating the cmd line output test resources for one test.")
-    @Test
-    public void testSaveOutputSingle() throws Exception {
+    public void regenSavedOutputSingle() throws Exception {
         saveOutputToFile(helpTestCmds[0]);
+    }
+    
+    /**
+     * version test needs to be separate because act of committing an update to the version cmd line output
+     * changes the git version making the test fail.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testVersion() throws Exception {
+        setUpStreams();
+        assertEquals( 0, outContent.toByteArray().length, "sysout is not empty");
+        runCmd(versionCmd);
+        BufferedReader current = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(outContent.toByteArray())));
+        int lineNum = 0;
+        String currentLine;
+        assertTrue(current.ready());
+        currentLine = current.readLine();
+        BuildVersion ver;
+        // should only be one line
+        assertFalse(current.ready());
+        assertTrue(currentLine.contains(BuildVersion.getGroup()));
+        assertTrue(currentLine.contains(BuildVersion.getName()));
+        assertTrue(currentLine.contains(BuildVersion.getVersion()));
+        cleanUpStreams();
+    }
+
+    @Test
+    public void testTauPHelp() throws Exception {
+        runTests(helpTestCmds);
     }
 
     @Test
@@ -228,6 +261,6 @@ public class CmdLineOutputTest {
     
     public static void main(String[] args) throws Exception {
         CmdLineOutputTest me = new CmdLineOutputTest();
-        me.testSaveOutput();
+        me.regenSavedOutput();
     }
 }

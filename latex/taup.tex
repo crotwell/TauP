@@ -3,18 +3,18 @@
 
 % check to see if running latex or pdflatex
 \ifpdf
-        \usepackage[pdftitle={The TauP Toolkit Manual}, 
-                    pdftex, 
+        \usepackage[pdftitle={The TauP Toolkit Manual},
+                    pdftex,
                     colorlinks=true]{hyperref}
 \fi
 
- 
+
 \setlength{\parindent}{0in}
 \setlength{\parskip}{.1in}
 \setlength{\oddsidemargin}{0in}
 \setlength{\evensidemargin}{0in}
 \addtolength{\textwidth}{1.5in}
-\addtolength{\textheight}{1.5in}
+\addtolength{\textheight}{1.0in}
 
 \begin{document}
 
@@ -41,7 +41,7 @@
 \include{phaseNaming}
 
 \include{models}
- 
+
 \include{programming}
 
 \include{examples}
@@ -53,5 +53,5 @@
 
 \bibliographystyle{bssa_usc}
 \bibliography{refs_taup}
- 
+
 \end{document}

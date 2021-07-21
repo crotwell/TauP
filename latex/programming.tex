@@ -2,68 +2,68 @@
 \section{Programming Interface}
 
 In addition to the command line interface, there are three ways to access
-the toolkit from within other programs. The most straightforward is 
-through Java. Using Jacl provides a very nice way to write scripts that
+the toolkit from within other programs. The most straightforward is
+through Java. Using Groovy or Jacl provides a very nice way to write scripts that
 use the tools without repeatedly starting up the Java virtual machine and
-reloading models. Lastly, there is a C language interface, but it is 
+reloading models. Lastly, there is a C language interface, but it is
 a bit less friendly. Descriptions of all three, with example programs
 are below.
 
 \subsection{Java}
 
-The TauP package should be easily used by future Java programs. An 
-example is given illustrating the basics of using the package to 
+The TauP package should be easily used by future Java programs. An
+example is given illustrating the basics of using the package to
 generate travel times.
 
-First, instantiate a TauP\_Time object. This provides methods for 
-generating and 
+First, instantiate a TauP\_Time object. This provides methods for
+generating and
 using travel times and should be sufficient for most purposes.
-However, in order to actually generate anything useful, the TauP\_Time 
+However, in order to actually generate anything useful, the TauP\_Time
 object needs a TauModel. It can be loaded within the constructor for TauP\_Time
 as a TauModel or with the model name.
-It can changed later using either the \texttt{TauP\_Time.setTauModel(TauModel)} method of 
-TauP\_Time, or by passing the modelname to \texttt{TauP\_Time.loadTauModel(String)}. 
-The later is likely easier, and has the advantage of searching for the model in 
-the distribution jar file, the locations in the taup.model.path property, 
+It can changed later using either the \texttt{TauP\_Time.setTauModel(TauModel)} method of
+TauP\_Time, or by passing the modelname to \texttt{TauP\_Time.loadTauModel(String)}.
+The later is likely easier, and has the advantage of searching for the model in
+the distribution jar file, the locations in the taup.model.path property,
 and the current directory.
 
 \texttt{TauP\_Time timeTool = new TauP\_Time("mymodel");}
 
-In addition to the TauModel, a collection of phases is also needed. Again, 
-there are several ways of accomplishing this. 
+In addition to the TauModel, a collection of phases is also needed. Again,
+there are several ways of accomplishing this.
 \texttt{parsePhaseList(String)} is likely the easiest method. A String is passed
 with the phase names separated by commas and the phases are extracted and
 appended. Phases can also be input more
 directly with \texttt{setPhaseNames(String[])} ,
-which sets the phases to be those in the array, and 
-\texttt{appendPhaseName(String)} which appends a phase to the list. Note that 
-these methods do not do any checking to assure the names are valid phases, 
-this is done at a later stage. Of additional interest are 
-\texttt{clearPhaseNames()} which deletes all current phase names, and 
+which sets the phases to be those in the array, and
+\texttt{appendPhaseName(String)} which appends a phase to the list. Note that
+these methods do not do any checking to assure the names are valid phases,
+this is done at a later stage. Of additional interest are
+\texttt{clearPhaseNames()} which deletes all current phase names, and
 \texttt{getPhaseNames()} which returns an array of Strings with the phase names.
 
 \texttt{timeTool.parsePhaseList("P,Pdiff,S,Sdiff,PKP,SKS");}
 
-The next step is to correct the TauModel for the source depth. 
-The TauModel is created with a surface source, but can be corrected for 
-a source at depth, given in kilometers, with the \texttt{setSourceDepth(double)} 
-method. The actual depth correction is time consuming, and so is delayed until the calculate method is called. In addition, 
+The next step is to correct the TauModel for the source depth.
+The TauModel is created with a surface source, but can be corrected for
+a source at depth, given in kilometers, with the \texttt{setSourceDepth(double)}
+method. The actual depth correction is time consuming, and so is delayed until the calculate method is called. In addition,
 if a correction was actually needed, it
-calls \texttt{recalcPhases()} which verifies that the times and distances for 
-the phases in the phase list are compatible with the current model and depth. 
+calls \texttt{recalcPhases()} which verifies that the times and distances for
+the phases in the phase list are compatible with the current model and depth.
 \texttt{recalcPhases()} is also called
 by \texttt{calculate()} in case changes were made to the list of phase names.
 
 \texttt{timeTool.setSourceDepth(100.0);}
 
-It remains only to calculate arrivals for a particular distance using the 
+It remains only to calculate arrivals for a particular distance using the
 \texttt{calculate(double)} method, which takes an angular distance in degrees.
-The arrivals are stored as Arrival objects, which contain \texttt{time}, 
-\texttt{dist}, \texttt{rayParam}, \texttt{sourceDepth}, and \texttt{name} 
-fields. The Arrivals can be accessed through either the 
-\texttt{getArrival(int)} method which returns the ith arrival, or 
-the \texttt{getArrivals()} method which returns an array of Arrivals. 
-Of additional interest is the \texttt{getNumArrivals()} method that returns 
+The arrivals are stored as Arrival objects, which contain \texttt{time},
+\texttt{dist}, \texttt{rayParam}, \texttt{sourceDepth}, and \texttt{name}
+fields. The Arrivals can be accessed through either the
+\texttt{getArrival(int)} method which returns the ith arrival, or
+the \texttt{getArrivals()} method which returns an array of Arrivals.
+Of additional interest is the \texttt{getNumArrivals()} method that returns
 the number of arrivals.
 
 \begin{verbatim}
@@ -76,14 +76,14 @@ for (int i=0; i<arrivals.length; i++) {
 }
 \end{verbatim}
 
-It is important to realize that all internal angular distances are 
-stored as radians, hence the conversion, and times in seconds. 
-This also means that the 
+It is important to realize that all internal angular distances are
+stored as radians, hence the conversion, and times in seconds.
+This also means that the
 ray parameters are stored as seconds per radian.
 
 
 
-\subsection{Jacl}
+\subsection{Scripting}
 
 One of the problems with Java based tools is that there is overhead associated
 with starting a Java program due to the fact that the virtual machine must
@@ -92,10 +92,61 @@ a large problem, it can become very wastful when repeated calling a tool
 from within a script. Significant time savings can be had if the tool
 and its associated virtual machine can be kept alive for the duration
 of the script.
+
+There are several scriptling languages available that allow access to compiled
+java code, including Groovy, http://www.groovy-lang.org/, and Kotlin,
+https://kotlinlang.org/ along with ports of existing scripting
+languages to the JVM like
+Jython, https://www.jython.org/ and JACL, https://wiki.tcl-lang.org/page/Jacl.
+These may be used to create more complicated
+calculations than are possible with the command line tools, or to do repeated
+tasks much more efficiently.
+
+One point to keep in mind when scripting TauP is that the depth correction is
+much more expensive than the distance calculation. So looping over all
+stations for each earthquake is much faster than looping over all earthquakes
+for each station.
+
+\subsubsection{Groovy}
+
+Groovy is a nice scripting language that interfaces very well with java. Even nicer, with the '@Grab' functionality, it can download needed jar files automatically, so you do
+not even have to install TauP in order to run this script.
+
+Here we calculate travel times for a few phases at 60 degrees distance
+for a 100 km deep source. For each arrival, we print the phase name
+and arrival time, then print the pierce points that show the very coarse
+path through the model.
+
+\begin{verbatim}
+@Grab('edu.sc.seis:TauP:2.5.0')
+import edu.sc.seis.TauP.TauP_Time
+import edu.sc.seis.TauP.Arrival
+import edu.sc.seis.TauP.TimeDist
+
+def taup_time = new TauP_Time("prem")
+
+taup_time.clearPhaseNames()
+taup_time.parsePhaseList("P,PcP,S,ScS")
+taup_time.setSourceDepth(100)
+taup_time.calculate(60)
+for(Arrival a: taup_time.getArrivals()) {
+  println a.name+"  "+a.time
+  for(TimeDist piercePoint : a.getPierce()) {
+    println "  "+piercePoint.distDeg +" "+piercePoint.time
+  }
+}
+\end{verbatim}
+
+\subsubsection{Jacl}
+
+Note: Jacl might still be a useful scripting choice, but it does not appear to have
+been updated in many years. We include this section is included for reference,
+but you may wish to choose another language.
+
 Jacl, a Java implementation of the popular Tool Command Language or Tcl,
 makes writing scripts that use the TauP Toolkit easy, and allows one
 instance of both the
-virtual machine as well as the tool to remain active for the whole script. 
+virtual machine as well as the tool to remain active for the whole script.
 You may download jacl from http://www.scriptics.com/java.
 
 Jacl allows a script to create Java objects, call any public method of
@@ -105,11 +156,11 @@ usable in the way you want is as easy as writing a tcl script. We present a
 brief walkthrough of a Jacl script that calculates pierce points for
 numerous station event pairs.
 
-The first three lines of the script should start up jacl. The second line is 
+The first three lines of the script should start up jacl. The second line is
 a bit of trickery, it hides the third line from jacl while allowing sh to see
 it. Jacl takes the backslash to be a line continuation marker, and therefore
-accepts the third line as part of the comment started on the second line. 
-This just makes it easier to start up jacl without having to know the exact 
+accepts the third line as part of the comment started on the second line.
+This just makes it easier to start up jacl without having to know the exact
 path in advance.
 
 \begin{verbatim}
@@ -118,8 +169,8 @@ path in advance.
 exec jacl $0 $*
 \end{verbatim}
 
-Next, we will set up latitudes and longitudes for our stations and events. 
-This was modified from a script that read from a CSS database, but in 
+Next, we will set up latitudes and longitudes for our stations and events.
+This was modified from a script that read from a CSS database, but in
 order to keep the script self contained, we have hardwired it here.
 \begin{verbatim}
 set slat(0) 35
@@ -162,7 +213,7 @@ for {set i 0} {$i < [$disconArray length]} {incr i} {
 }
 \end{verbatim}
 
-Loop over all events and stations and output the pierce point at the 400 
+Loop over all events and stations and output the pierce point at the 400
 kilometer discontinuity. We use the getLastPiercePoint(depth) method as
 we want the receiver side pierce point. If we wanted the source side point
 we could have used the getFirstPiercePoint(depth) method.
@@ -220,13 +271,13 @@ No arrivals for event 0
 This script, along with another simple travel time script, is included in the
 distribution in the jacl subdirectory.
 
- 
+
 \subsection{C}
- 
+
 Here be monsters!
 
 A C language interface to the TauP package is provided. A shared library
-libtaup.so, provides access to the core functionality for generating travel 
+libtaup.so, provides access to the core functionality for generating travel
 times. An example program using these interface routines is also provided,
 gettimes.c.
 
@@ -239,14 +290,14 @@ been maintained and comes with no expectation that it will compile, much less wo
 
 The native interface is distributed as C source code that you must compile
 on your local machine. A makefile is provided to generate a shared library
-and an example code to call the library. The makefile was created for use under 
+and an example code to call the library. The makefile was created for use under
 Solaris, but doesn't do anything particularly special, and should be
 easily modifiable for other operating systems.
 
-Of course, the system must be able to find this library, as well as the 
-Java libraries. Under Solaris, this can be accomplished with the 
+Of course, the system must be able to find this library, as well as the
+Java libraries. Under Solaris, this can be accomplished with the
 \texttt{LD\_LIBRARY\_PATH} environment variable. Other systems may vary.
-The \texttt{CLASSPATH}  environment variable must also contain the taup.jar 
+The \texttt{CLASSPATH}  environment variable must also contain the taup.jar
 file as well as the default java jar files. Note that under Java1.2 the command
 line tools may work fine while the C interface has problems. This is due to
 the java executable finding the standard files without the \texttt{CLASSPATH}.
@@ -266,7 +317,7 @@ the first argument to all of the method calls. While I believe this is the
 least complicated style of interaction, it is not particularly memory
 or processor efficient for uses involving more than one travel time calculator
 active simultaneously. Primarily this is due to having more than one
-java virtual machine running at the same time. Still, it is a 
+java virtual machine running at the same time. Still, it is a
 good example of how C can interact with Java.
 
 The currently implemented method calls are:
@@ -310,7 +361,7 @@ error. An initialized TauPStruct is passed as the first argument.
 The method signature is\newline
 int TauPGetNumArrivals(TauPStruct taup) {};
 
-\item[TauPGetArrival] returns the ith arrival found with the last 
+\item[TauPGetArrival] returns the ith arrival found with the last
 call to TauPCalculate, above. The arrival is returned as a jobject, which
 is mainly useful if it will be used as an argument for another java method
 call. NULL is returned if an
@@ -318,21 +369,21 @@ error occurs. An initialized TauPStruct is passed as the first argument.
 The method signature is\newline
 jobject TauPGetArrival(TauPStruct taup, int arrivalNum) {};
 
-\item[TauPGetArrivalName] returns the name of the ith arrival 
+\item[TauPGetArrivalName] returns the name of the ith arrival
 found with the last call to TauPCalculate, above, as a
-character pointer. An initialized TauPStruct is passed as the 
+character pointer. An initialized TauPStruct is passed as the
 first argument and the arrival number is passed as the second.
 NULL is returned if there is an error.
 The method signature is\newline
 char * TauPGetArrivalName(TauPStruct taup, int arrivalNum) {};
 
 \item[TauPGetArrivalPuristName] returns the purist's version of the
-name of the ith arrival 
+name of the ith arrival
 found with the last call to TauPCalculate, above, as a
 character pointer. The puris's name replaces depths with the true depth
 of interfaces in the phase name, for example Pv410P might really be
 Pv400P.
-An initialized TauPStruct is passed as the 
+An initialized TauPStruct is passed as the
 first argument and the arrival number is passed as the second.
 NULL is returned if there is an error.
 The method signature is\newline
@@ -340,7 +391,7 @@ char * TauPGetArrivalPuristName(TauPStruct taup, int arrivalNum) {};
 
 \item[TauPGetArrivalTime] returns the travel time of the ith arrival
 found with the last call to TauPCalculate, above.
-An initialized TauPStruct is passed as the first argument and 
+An initialized TauPStruct is passed as the first argument and
 the arrival number is passed as the second.
 A negative number is returned if there is an error.
 The method signature is\newline
@@ -348,7 +399,7 @@ double TauPGetArrivalTime(TauPStruct taup, int arrivalNum) {};
 
 \item[TauPGetArrivalDist] returns the travel distance of the ith arrival
 found with the last call to TauPCalculate, above.
-An initialized TauPStruct is passed as the first argument and 
+An initialized TauPStruct is passed as the first argument and
 the arrival number is passed as the second.
 A negative number is returned if there is an error.
 The method signature is\newline
@@ -356,7 +407,7 @@ double TauPGetArrivalDist(TauPStruct taup, int arrivalNum) {};
 
 \item[TauPGetArrivalRayParam] returns the ray parameter of the ith arrival
 found with the last call to TauPCalculate, above.
-An initialized TauPStruct is passed as the first argument and 
+An initialized TauPStruct is passed as the first argument and
 the arrival number is passed as the second.
 A negative number is returned if there is an error.
 The method signature is\newline
@@ -364,7 +415,7 @@ double TauPGetArrivalRayParam(TauPStruct taup, int arrivalNum) {};
 
 \item[TauPGetArrivalSourceDepth] returns the source depth of the ith arrival
 found with the last call to TauPCalculate, above.
-An initialized TauPStruct is passed as the first argument and 
+An initialized TauPStruct is passed as the first argument and
 the arrival number is passed as the second.
 A negative number is returned if there is an error.
 The method signature is\newline
@@ -378,4 +429,3 @@ int TauPDestroy(TauPStruct taup) {};
 
 \end{description}
 \end{center}
-

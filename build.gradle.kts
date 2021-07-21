@@ -1,15 +1,15 @@
 import java.util.Date;
+import org.gradle.crypto.checksum.Checksum
 
 plugins {
-  id("edu.sc.seis.version-class") version "1.2.0"
+  id("edu.sc.seis.version-class") version "1.2.1"
+  id("org.gradle.crypto.checksum") version "1.2.0"
   "java"
-  "maven"
   eclipse
   "project-report"
-  "signing"
+  `maven-publish`
+  signing
   application
-    `maven-publish`
-
 }
 
 application {
@@ -18,7 +18,7 @@ application {
 }
 
 group = "edu.sc.seis"
-version = "2.5.0-SNAPSHOT"
+version = "2.5.0"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
@@ -27,28 +27,18 @@ java {
     withSourcesJar()
 }
 
-
-
-publishing {
-    publications {
-        create<MavenPublication>("mavenJava") {
-            from(components["java"])
-        }
-    }
-}
-
-
 dependencies {
-    implementation("edu.sc.seis:seisFile:2.0.0-SNAPSHOT") {
+    implementation("edu.sc.seis:seisFile:2.0.0") {
       // we need seisFile for sac output, but not all the other functionality
-      exclude(group = "com.martiansoftware", module = "jsap")
+      exclude(group = "info.picocli", module = "picocli")
       exclude(group = "com.fasterxml.woodstox", module = "woodstox-core")
-      exclude(group = "net.java.dev.msv", module = "msv-core")
       exclude(group = "org.apache.httpcomponents", module = "httpclient")
     }
+    runtimeOnly( "org.slf4j:slf4j-log4j12:1.7.30")
+
     // Use JUnit Jupiter API for testing.
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.0")
-    testCompile("org.junit.jupiter:junit-jupiter-params:5.7.0")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:5.7.0")
 
     // Use JUnit Jupiter Engine for testing.
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
@@ -78,6 +68,7 @@ tasks.named<Test>("test") {
 
 
 val dirName = project.name+"-"+version
+val binDirName = project.name+"_bin-"+version
 
 val binDistFiles: CopySpec = copySpec {
     from("build/scripts") {
@@ -95,38 +86,34 @@ val binDistFiles: CopySpec = copySpec {
 val distFiles: CopySpec = copySpec {
     with(binDistFiles)
     from(".") {
-        include("build.gradle")
-        include("settings.gradle")
+        include("build.gradle.kts")
+        include("settings.gradle.kts")
     }
     from("build/docs") {
         include("javadoc/**")
-        into("doc")
+        into("docs")
+    }
+    from("docs") {
+      include("*")
+      into("docs")
     }
     from(".") {
-        include("gpl-3.0.txt")
-        include("doc/**")
+        include("LICENSE")
         include("jacl/**")
+        include("groovy/**")
         include("native/**")
         include("src/**")
-        include("README")
+        include("README.md")
         exclude("**/*.svn")
-    }
-    from("srl") {
-        include("taup_srl_with_figs.pdf")
-        into("doc")
     }
     from(".") {
         include("gradle/**")
         include("gradlew")
         include("gradlew.bat")
     }
-    from(".") {
-        include("gradlew")
-        into("gradle")
-    }
     from("src/main/resources/edu/sc/seis/TauP") {
         include("defaultProps")
-        into("doc")
+        into("docs")
     }
     from("src/main/resources/edu/sc/seis/TauP") {
         include("StdModels/*.tvel")
@@ -147,11 +134,19 @@ tasks.register<Sync>("explodeBin") {
 }
 
 tasks.register<Tar>("tarBin") {
+  archiveAppendix.set("bin")
   dependsOn("explodeBin")
   compression = Compression.GZIP
   into(dirName) {
       with( binDistFiles)
   }
+}
+tasks.register<Zip>("zipBin") {
+  archiveAppendix.set("bin")
+  dependsOn("explodeBin")
+    into(dirName) {
+        with( binDistFiles)
+    }
 }
 
 tasks.register<Sync>("explodeDist") {
@@ -171,64 +166,77 @@ tasks.register<Tar>("tarDist") {
 }
 
 
+tasks.register<Checksum>("checksumDist") {
+  dependsOn("tarBin")
+  dependsOn("tarDist")
+  dependsOn("zipDist")
+  files = tasks.getByName("tarBin").outputs.files + tasks.getByName("tarDist").outputs.files + tasks.getByName("zipDist").outputs.files
+  outputDir=File(project.buildDir, "distributions")
+  algorithm = Checksum.Algorithm.SHA256
+}
+
 tasks.register<Zip>("zipDist") {
   dependsOn("explodeDist")
     into(dirName) {
         with( distFiles)
     }
 }
-/*
-signing {
-    sign configurations.archives
-}
 
-if (project.hasProperty("ossrhUsername") && project.hasProperty("ossrhPassword") ) {
-  uploadArchives {
+publishing {
+    publications {
+        create<MavenPublication>("mavenJava") {
+            from(components["java"])
+            pom {
+              name.set("TauP")
+              description.set("Flexible Seismic Travel-Time and Raypath Utilities.")
+              url.set("https://www.seis.sc.edu/TauP/")
+
+              scm {
+                connection.set("scm:git:https://github.com/crotwell/TauP.git")
+                developerConnection.set("scm:git:https://github.com/crotwell/TauP.git")
+                url.set("https://github.com/crotwell/TauP")
+              }
+
+              licenses {
+                license {
+                  name.set("GNU Lesser General Public License, Version 3")
+                  url.set("https://www.gnu.org/licenses/lgpl-3.0.txt")
+                }
+              }
+
+              developers {
+                developer {
+                  id.set("crotwell")
+                  name.set("Philip Crotwell")
+                  email.set("crotwell@seis.sc.edu")
+                }
+              }
+            }
+        }
+    }
     repositories {
-      mavenDeployer {
-        beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-
-        repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-          authentication(userName: ossrhUsername, password: ossrhPassword)
-        }
-
-        snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-          authentication(userName: ossrhUsername, password: ossrhPassword)
-        }
-
-        pom.project {
-          name "TauP"
-          packaging "jar"
-          // optionally artifactId can be defined here
-          description "A seismic travel time calculator."
-          url "http://www.seis.sc.edu/TauP"
-
-          scm {
-            connection "scm:git:https://github.com/crotwell/TauP.git"
-            developerConnection "scm:git:https://github.com/crotwell/TauP.git"
-            url "https://github.com/crotwell/TauP"
-          }
-
-          licenses {
-            license {
-              name "The GNU General Public License, Version 3"
-              url "http://www.gnu.org/licenses/gpl-3.0.html"
-            }
-          }
-
-          developers {
-            developer {
-              id "crotwell"
-              name "Philip Crotwell"
-              email "crotwell@seis.sc.edu"
-            }
-          }
-        }
+      maven {
+        name = "TestDeploy"
+        url = uri("$buildDir/repos/test-deploy")
+      }
+      maven {
+          val releaseRepo = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+          val snapshotRepo = "https://oss.sonatype.org/content/repositories/snapshots/"
+          url = uri(if ( version.toString().toLowerCase().endsWith("snapshot")) snapshotRepo else releaseRepo)
+          name = "ossrh"
+          // credentials in gradle.properties as ossrhUsername and ossrhPassword
+          credentials(PasswordCredentials::class)
       }
     }
-  }
+
 }
-*/
+
+signing {
+    sign(publishing.publications["mavenJava"])
+    sign(tasks.getByName("tarDist"))
+    sign(tasks.getByName("zipDist"))
+    sign(tasks.getByName("tarBin"))
+}
 
 tasks.register("createRunScripts"){}
 tasks.named("startScripts") {
@@ -286,63 +294,24 @@ tasks.register<JavaExec>("genModels") {
   outputs.files(File(outDir, "ak135favg.taup"))
   outputs.files(File(outDir, "ak135fcont.taup"))
 }
-/*
-tasks.register<JavaExec>("genModels") {
-  dependsOn("compileJava")
-  doLast {
-    println("Generate models")
-    outDir.mkdirs()
-    val inDir = File(getProjectDir(), "src/main/resources/edu/sc/seis/TauP/StdModels/")
-    String[] tvelModelNames = ["iasp91", "ak135"]
-    String[] ndModelNames = ["prem"]
-    val classLoader = new GroovyClassLoader(Project.class.classLoader)
-    classLoader.addURL( File(getBuildDir(), "/classes/java/main").toURL())
-    configurations.default.each { File file -> classLoader.addURL(file.toURL())}
-    val taupCreate = classLoader.loadClass("edu.sc.seis.TauP.TauP_Create").newInstance()
-    taupCreate.setDirectory(inDir.getPath())
-    taupCreate.setVelFileType("tvel")
-    val vMod
-    val tMod
-    tvelModelNames.each { String model ->
-        taupCreate.setModelFilename(model)
-        vMod = taupCreate.loadVMod()
-        tMod = taupCreate.createTauModel(vMod)
-        tMod.writeModel(new File(outDir, model+".taup").path)
-    }
-    taupCreate.setVelFileType("nd")
-    ndModelNames.each { String model ->
-        taupCreate.setModelFilename(model)
-        vMod = taupCreate.loadVMod()
-        tMod = taupCreate.createTauModel(vMod)
-        tMod.writeModel(new File(outDir, model+".taup").path)
-    }
-    // qdt with bigger tol.
-    taupCreate.setVelFileType("tvel")
-    taupCreate.setMinDeltaP(0.5)
-    taupCreate.setMaxDeltaP(50.0)
-    taupCreate.setMaxDepthInterval(915.0)
-    taupCreate.setMaxRangeInterval(10.0)
-    taupCreate.setMaxInterpError(1.0)
-    taupCreate.setAllowInnerCoreS(false)
-    taupCreate.setModelFilename("iasp91")
-    vMod = taupCreate.loadVMod()
-    vMod.setModelName("qdt")
-    tMod = taupCreate.createTauModel(vMod)
-    tMod.writeModel(new File(outDir, "qdt.taup").path)
-  }
+
+tasks.register<JavaExec>("genCmdLineTestFiles") {
+    description = "generate TauP cmd line test output files"
+    classpath = sourceSets.getByName("test").runtimeClasspath
+    main = "edu.sc.seis.TauP.CmdLineOutputTest"
+    dependsOn += tasks.getByName("testClasses")
+    outputs.files(fileTree("cmdLineTest"))
+}
+tasks.register<Sync>("copyCmdLineTestFiles") {
+  from(tasks.getByName("genCmdLineTestFiles").outputs)
+  into("src/test/resources/edu/sc/seis/TauP/cmdLineTest")
+  dependsOn("genCmdLineTestFiles")
 }
 
-genModels.inputs.files "src/main/resources/edu/sc/seis/TauP/defaultProps"
-genModels.inputs.files "src/main/resources/edu/sc/seis/TauP/StdModels/ak135.tvel"
-genModels.inputs.files "src/main/resources/edu/sc/seis/TauP/StdModels/iasp91.tvel"
-genModels.inputs.files "src/main/resources/edu/sc/seis/TauP/StdModels/prem.nd"
-genModels.outputs.files new File(outDir, "ak135.taup")
-genModels.outputs.files new File(outDir, "iasp91.taup")
-genModels.outputs.files new File(outDir, "prem.taup")
-genModels.outputs.files new File(outDir, "qdt.taup")
-*/
-
-tasks.get("assemble").dependsOn(tasks.get("tarDist"))
+tasks.get("assemble").dependsOn(tasks.get("signTarBin"))
+tasks.get("assemble").dependsOn(tasks.get("signTarDist"))
+tasks.get("assemble").dependsOn(tasks.get("signZipDist"))
+tasks.get("assemble").dependsOn(tasks.get("checksumDist"))
 
 val generatedSrcDir = file("$buildDir/generated-src/StdModels")
 val resourceDir =  File(generatedSrcDir, "/resources")

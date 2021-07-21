@@ -38,6 +38,8 @@ public abstract class TauP_Tool {
     protected Properties toolProps;
 
     protected Outputs outForms;
+
+    private String outFileExtension = "gmt";
     
 
     /* Constructors */
@@ -75,9 +77,15 @@ public abstract class TauP_Tool {
     }
     
     public String getOutFileExtension() {
-        return "gmt";
+        return outFileExtension ;
     }
     
+    public void setOutFileExtension(String outFileExtension) {
+        this.outFileExtension = outFileExtension;
+    }
+
+
+
     public String getOutFile() {
         if(getOutFileBase() == null || getOutFileBase().length() == 0 || getOutFileBase().equals("stdout")) {
             return "stdout";
@@ -144,7 +152,10 @@ public abstract class TauP_Tool {
         String[] noComprendoArgs = new String[args.length];
         int numNoComprendoArgs = 0;
         while(i < args.length) {
-            if(dashEquals("help", args[i])) {
+            if(dashEquals("version", args[i])) {
+                Alert.info(BuildVersion.getDetailedVersion());
+                noComprendoArgs[numNoComprendoArgs++] = args[i];
+            } else if(dashEquals("help", args[i])) {
                 printUsage();
                 noComprendoArgs[numNoComprendoArgs++] = args[i];
             } else if(dashEquals("expert", args[i])) {
@@ -195,12 +206,31 @@ public abstract class TauP_Tool {
             return new String[0];
         }
     }
-
-    public static void printStdUsageHead(Class toolClass) {
+    
+    public static String toolNameFromClass(Class toolClass) {
         String className = toolClass.getName();
         className = className.substring(className.lastIndexOf('.') + 1,
                                         className.length());
-        Alert.info("Usage: " + className.toLowerCase() + " [arguments]");
+        String toolName = className;
+        if (toolName.startsWith("TauP_")) {
+            toolName = toolName.replace('_', ' ');
+        }
+        if (toolClass.equals(TauP_VelocityPlot.class) ) {
+            toolName = "taup velplot";
+        } else if (toolClass.equals(TauP_SlownessPlot.class) ) {
+            toolName = "taup slowplot";
+        } else if (toolClass.equals(TauP_VelocityMerge.class) ) {
+            toolName = "taup velmerge";
+        } else if (toolClass.equals(TauP_PhaseDescribe.class) ) {
+            toolName = "taup phase";
+        } 
+        
+        return toolName.toLowerCase();
+    }
+
+    public static void printStdUsageHead(Class toolClass) {
+        String toolName = toolNameFromClass(toolClass);
+        Alert.info("Usage: " + toolName + " [arguments]");
         Alert.info("  or, for purists, java " + toolClass.getName()
                 + " [arguments]");
         Alert.info("\nArguments are:");

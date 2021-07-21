@@ -1,9 +1,11 @@
-
+![Alt TauP](https://crotwell.github.io/TauP/taupLogo.svg)
+[![Maven Central](https://img.shields.io/maven-central/v/edu.sc.seis/TauP.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22edu.sc.seis%22%20AND%20a:%22TauP%22)
+ [![javadoc](https://javadoc.io/badge2/edu.sc.seis/TauP/javadoc.svg)](https://javadoc.io/doc/edu.sc.seis/TauP)
 
                            The TauP Toolkit
 
             Flexible Seismic Travel-Time and Raypath Utilities
-                              Version 2.0
+                              Version 2.5
                       http://www.seis.sc.edu/taup/
 
 The TauP Toolkit is a seismic travel time calculator. In addition to travel
@@ -19,12 +21,45 @@ Scripts for the various tool for both unix (sh) and windows (bat) are in the bin
 The website for the TauP Toolkit is:
 http://www.seis.sc.edu/TauP
 
-We use gradle to compile TauP. Should you wish to recompile, the gradlew wrapper will download gradle and compile. For example 'gradle/gradlew jar' will compile the java source and create a new jar. 'gradle eclipse' will generate an eclipse project files for importing. More information can be found at http://www.gradle.org.
-
 If you like TauP and would like to cite it, please use the following:
 Crotwell, H. P., T. J. Owens, and J. Ritsema (1999). The TauP Toolkit: Flexible seismic travel-time and ray-path utilities, Seismological Research Letters 70, 154–160.
 
 Comments, criticism and random remarks may be sent to taup@seis.sc.edu.
+
+### Install
+
+## Macintosh
+
+Using [homebrew](https://brew.sh/):
+```
+brew tap crotwell/crotwell
+brew install taup
+taup --help
+```
+
+## Linux
+
+Using [snap](https://snapcraft.io):
+```
+sudo snap install taup
+taup --help
+```
+
+Note: I have only tested this on Ubuntu on amd64.
+
+You may also get the lastest development version via
+```
+sudo snap install taup --channel=--channel=latest/edge
+```
+
+## Manually
+
+Download tarball here:
+https://www.seis.sc.edu/downloads/TauP/TauP-2.5.0.tgz
+or from the releases section on Github
+https://github.com/crotwell/TauP/releases
+
+`tar zxf` and add the bin to your PATH.
 
 
 ### Rebuilding

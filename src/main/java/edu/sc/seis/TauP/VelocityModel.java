@@ -34,10 +34,12 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.Serializable;
 import java.io.StreamTokenizer;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -464,122 +466,127 @@ public class VelocityModel implements Cloneable, Serializable {
      */
     public VelocityModel replaceLayers(VelocityLayer[] newLayers,
                                        String name,
-                                       boolean matchTop,
-                                       boolean matchBot)
-            throws NoSuchLayerException {
-        int topLayerNum = layerNumberBelow(newLayers[0].getTopDepth());
-        VelocityLayer topLayer = getVelocityLayer(topLayerNum);
-        int botLayerNum = layerNumberAbove(newLayers[newLayers.length - 1].getBotDepth());
-        VelocityLayer botLayer = getVelocityLayer(botLayerNum);
-        List<VelocityLayer> outLayers = new ArrayList<VelocityLayer>();
-        outLayers.addAll(layer);
+                                       boolean smoothTop,
+                                       boolean smoothBot)
+            throws VelocityModelException {
         try {
-            if(matchTop) {
-                newLayers[0] = new VelocityLayer(newLayers[0].getLayerNum(),
-                                                 newLayers[0].getTopDepth(),
-                                                 newLayers[0].getBotDepth(),
-                                                 topLayer.evaluateAt(newLayers[0].getTopDepth(),
-                                                                     'P'),
-                                                 newLayers[0].getBotPVelocity(),
-                                                 topLayer.evaluateAt(newLayers[0].getTopDepth(),
-                                                                     'S'),
-                                                 newLayers[0].getBotSVelocity(),
-                                                 newLayers[0].getTopDensity(),
-                                                 newLayers[0].getBotDensity(),
-                                                 newLayers[0].getTopQp(),
-                                                 newLayers[0].getBotQp(),
-                                                 newLayers[0].getTopQs(),
-                                                 newLayers[0].getBotQs());
+            List<VelocityLayer> outLayers = new ArrayList<VelocityLayer>();
+            int topLayerNum = layerNumberBelow(newLayers[0].getTopDepth());
+            int numAdded = 0;
+            for(int i = 0; i<topLayerNum; i++) {
+                numAdded++;
+                outLayers.add(getVelocityLayer(i));
             }
-            if(matchBot) {
-                VelocityLayer end = newLayers[newLayers.length - 1];
-                newLayers[newLayers.length - 1] = new VelocityLayer(end.getLayerNum(),
-                                                                    end.getTopDepth(),
-                                                                    end.getBotDepth(),
-                                                                    end.getTopPVelocity(),
-                                                                    botLayer.evaluateAt(newLayers[newLayers.length - 1].getBotDepth(),
-                                                                                        'P'),
-                                                                    end.getTopSVelocity(),
-                                                                    botLayer.evaluateAt(newLayers[newLayers.length - 1].getBotDepth(),
-                                                                                        'S'),
-                                                                    end.getTopDensity(),
-                                                                    end.getBotDensity(),
-                                                                    end.getTopQp(),
-                                                                    end.getBotQp(),
-                                                                    end.getTopQs(),
-                                                                    end.getBotQs());
+            VelocityLayer topLayer = getVelocityLayer(topLayerNum);
+            int botLayerNum = layerNumberAbove(newLayers[newLayers.length - 1].getBotDepth());
+            VelocityLayer botLayer = getVelocityLayer(botLayerNum);
+            if(topLayer.getTopDepth() < newLayers[0].getTopDepth()
+                    && topLayer.getBotDepth() > newLayers[0].getTopDepth()) {
+                /* need to split this layer. */
+                outLayers.add(new VelocityLayer(numAdded++,
+                                                topLayer.getTopDepth(),
+                                                newLayers[0].getTopDepth(),
+                                                topLayer.getTopPVelocity(),
+                                                topLayer.evaluateAt(newLayers[0].getTopDepth(), 'P'),
+                                                topLayer.getTopSVelocity(),
+                                                topLayer.evaluateAt(newLayers[0].getTopDepth(), 'S'),
+                                                topLayer.getTopDensity(),
+                                                topLayer.evaluateAt(newLayers[0].getTopDepth(), 'R')));
+                outLayers.add(new VelocityLayer(numAdded++,
+                                                newLayers[0].getTopDepth(),
+                                                topLayer.getBotDepth(),
+                                                topLayer.evaluateAt(newLayers[0].getTopDepth(), 'P'),
+                                                topLayer.getBotPVelocity(),
+                                                topLayer.evaluateAt(newLayers[0].getTopDepth(), 'S'),
+                                                topLayer.getBotSVelocity(),
+                                                topLayer.evaluateAt(newLayers[0].getTopDepth(), 'R'),
+                                                topLayer.getBotDensity()));
+            } else {
+                // already a discon at our new layer top depth
+                outLayers.add(topLayer.cloneRenumber(numAdded++));
             }
+            for(int i = topLayerNum+1; i < botLayerNum; i++) {
+                outLayers.add(getVelocityLayer(i).cloneRenumber(numAdded++));
+            }
+            VelocityLayer lastNewLayer = newLayers[newLayers.length - 1];
+            if(botLayer.getTopDepth() < lastNewLayer.getBotDepth()
+                    && botLayer.getBotDepth() > lastNewLayer.getBotDepth()) {
+                /* need to split this layer. */
+                outLayers.add(new VelocityLayer(numAdded++,
+                                                botLayer.getTopDepth(),
+                                                lastNewLayer.getBotDepth(),
+                                                botLayer.getTopPVelocity(),
+                                                botLayer.evaluateAt(lastNewLayer.getBotDepth(), 'P'),
+                                                botLayer.getTopSVelocity(),
+                                                botLayer.evaluateAt(lastNewLayer.getBotDepth(), 'S'),
+                                                botLayer.getTopDensity(),
+                                                botLayer.evaluateAt(lastNewLayer.getBotDepth(), 'R')));
+                outLayers.add(new VelocityLayer(numAdded++,
+                                                lastNewLayer.getBotDepth(),
+                                                botLayer.getBotDepth(),
+                                                botLayer.evaluateAt(lastNewLayer.getBotDepth(), 'P'),
+                                                botLayer.getBotPVelocity(),
+                                                botLayer.evaluateAt(lastNewLayer.getBotDepth(), 'S'),
+                                                botLayer.getBotSVelocity(),
+                                                botLayer.evaluateAt(lastNewLayer.getBotDepth(), 'R'),
+                                                botLayer.getBotDensity()));
+            } else {
+                // already a discon at our new layer top depth
+                outLayers.add(botLayer.cloneRenumber(numAdded++));
+            }
+            for(int i = botLayerNum+1; i< getNumLayers(); i++) {
+                outLayers.add(getVelocityLayer(i).cloneRenumber(numAdded++));
+            }
+            // now should have velocity layers with breaks matching top and bottom of new layers
+            
+            
+            List<VelocityLayer> replaceoutLayers = new ArrayList<VelocityLayer>();
+            numAdded = 0;
+            for(VelocityLayer vlay : outLayers) {
+                if (vlay.getTopDepth() < newLayers[0].getTopDepth()) {
+                    vlay = vlay.cloneRenumber(numAdded++);
+                    if (smoothTop && vlay.getBotDepth() == newLayers[0].getTopDepth()) {
+                        vlay.setBotPVelocity(newLayers[0].getTopPVelocity());
+                        vlay.setBotSVelocity(newLayers[0].getTopSVelocity());
+                        vlay.setBotDensity(newLayers[0].getTopDensity());
+                    }
+                    replaceoutLayers.add(vlay);
+                }
+            }
+            for(VelocityLayer vlay : newLayers) {
+                replaceoutLayers.add(vlay.cloneRenumber(numAdded++));
+            }
+
+            for(VelocityLayer vlay : outLayers) {
+                if (vlay.getBotDepth() > lastNewLayer.getBotDepth()) { 
+                    vlay = vlay.cloneRenumber(numAdded++);
+                    if (smoothBot && vlay.getTopDepth() == lastNewLayer.getBotDepth()) {
+                        vlay.setTopPVelocity(lastNewLayer.getBotPVelocity());
+                        vlay.setTopSVelocity(lastNewLayer.getBotSVelocity());
+                        vlay.setTopDensity(lastNewLayer.getBotDensity());
+                    }
+                    replaceoutLayers.add(vlay);
+                }
+            }
+            VelocityModel outVMod = new VelocityModel(name,
+                                                      getRadiusOfEarth(),
+                                                      getMohoDepth(),
+                                                      getCmbDepth(),
+                                                      getIocbDepth(),
+                                                      getMinRadius(),
+                                                      getMaxRadius(),
+                                                      getSpherical(),
+                                                      replaceoutLayers);
+            outVMod.fixDisconDepths();
+            boolean isValid = outVMod.validate();
+            if ( ! isValid) {
+                throw new VelocityModelException("replace layers but now is not valid.");
+            }
+            return outVMod;
         } catch(NoSuchMatPropException e) {
             // can't happen, but...
             throw new RuntimeException(e);
         }
-        if(topLayer.getBotDepth() > newLayers[0].getTopDepth()) {
-            /* need to split this layer. */
-            VelocityLayer newVLayer = (VelocityLayer)topLayer.clone();
-            try {
-                int topIndex = outLayers.indexOf(topLayer);
-                topLayer = new VelocityLayer(topLayer.getLayerNum(),
-                                             topLayer.getTopDepth(),
-                                             newLayers[0].getTopDepth(),
-                                             topLayer.getTopPVelocity(),
-                                             topLayer.evaluateAt(newLayers[0].getTopDepth(),
-                                                                 'P'),
-                                             topLayer.getTopSVelocity(),
-                                             topLayer.evaluateAt(newLayers[0].getTopDepth(),
-                                                                 'S'),
-                                             topLayer.getTopDensity(),
-                                             topLayer.getBotDensity());
-                outLayers.set(topIndex, topLayer);
-            } catch(NoSuchMatPropException e) {
-                // can't happen, but...
-                throw new RuntimeException(e);
-            }
-            newVLayer.setTopPVelocity(topLayer.getBotPVelocity());
-            newVLayer.setTopSVelocity(topLayer.getBotSVelocity());
-            newVLayer.setTopDepth(topLayer.getBotDepth());
-            outLayers.add(topLayerNum+1, newVLayer);
-            botLayerNum++;
-            topLayerNum++;
-        }
-        if(botLayer.getBotDepth() > newLayers[newLayers.length - 1].getBotDepth()) {
-            /* need to split this layer. */
-            VelocityLayer newVLayer = (VelocityLayer)botLayer.clone();
-            try {
-                botLayer.setBotPVelocity(botLayer.evaluateAt(newLayers[newLayers.length - 1].getBotDepth(),
-                                                             'P'));
-                botLayer.setBotSVelocity(botLayer.evaluateAt(newLayers[newLayers.length - 1].getBotDepth(),
-                                                             'S'));
-                botLayer.setBotDepth(newLayers[newLayers.length - 1].getBotDepth());
-            } catch(NoSuchMatPropException e) {
-                // can't happen, but...
-                System.err.println("Caught NoSuchMatPropException: "
-                        + e.getMessage());
-                e.printStackTrace();
-            }
-            newVLayer.setTopPVelocity(botLayer.getBotPVelocity());
-            newVLayer.setTopSVelocity(botLayer.getBotSVelocity());
-            newVLayer.setTopDepth(botLayer.getBotDepth());
-            outLayers.add(botLayerNum+1, newVLayer);
-            botLayerNum++;
-        }
-        for(int i = topLayerNum; i <= botLayerNum; i++) {
-            outLayers.remove(topLayerNum);
-        }
-        for(int i = 0; i < newLayers.length; i++) {
-            outLayers.add(topLayerNum+i, newLayers[i]);
-        }
-        VelocityModel outVMod = new VelocityModel(name,
-                                                  getRadiusOfEarth(),
-                                                  getMohoDepth(),
-                                                  getCmbDepth(),
-                                                  getIocbDepth(),
-                                                  getMinRadius(),
-                                                  getMaxRadius(),
-                                                  getSpherical(),
-                                                  outLayers);
-        outVMod.fixDisconDepths();
-        outVMod.validate();
-        return outVMod;
     }
 
     /**
@@ -588,12 +595,20 @@ public class VelocityModel implements Cloneable, Serializable {
      */
     public void printGMT(String filename) throws IOException {
         String psFile;
-        if(filename.endsWith(".gmt")) {
+        if (filename == "stdout") { 
+            psFile = "taup_velocitymodel";
+        } else if(filename.endsWith(".gmt")) {
             psFile = filename.substring(0, filename.length() - 4) + ".ps";
         } else {
             psFile = filename + ".ps";
         }
-        PrintWriter dos = new PrintWriter(new BufferedWriter(new FileWriter(filename)));
+
+        PrintWriter dos;
+        if (filename == "stdout") {
+            dos = new PrintWriter(new OutputStreamWriter(System.out));
+        } else {
+            dos = new PrintWriter(new BufferedWriter(new FileWriter(filename)));
+        }
         
         dos.println("#!/bin/sh");
         dos.println("#\n# This script will plot the "+getModelName()+" velocity model using GMT. If you want to\n"
@@ -822,6 +837,29 @@ public class VelocityModel implements Cloneable, Serializable {
         return desc;
     }
 
+    public void writeToND(Writer out) throws IOException {
+        VelocityLayer prev = null;
+        for(VelocityLayer vlay: getLayers() ) {
+            if (prev == null || 
+                    prev.getBotPVelocity()!=vlay.getTopPVelocity() ||
+                    prev.getBotSVelocity()!=vlay.getTopSVelocity() ||
+                    prev.getBotDensity()!=vlay.getTopDensity()) {
+                out.write(vlay.getTopDepth()+" "+vlay.getTopPVelocity()+" "+vlay.getTopSVelocity()+" "+vlay.getTopDensity()+"\n");
+            }
+            out.write(vlay.getBotDepth()+" "+vlay.getBotPVelocity()+" "+vlay.getBotSVelocity()+" "+vlay.getBotDensity()+"\n");
+            if (vlay.getBotDepth() == getMohoDepth()) {
+                out.write("mantle\n");
+            }
+            if (vlay.getBotDepth() == getCmbDepth()) {
+                out.write("outer-core\n");
+            }
+            if (vlay.getBotDepth() == getIocbDepth()) {
+                out.write("inner-core\n");
+            }
+            prev = vlay;
+        }
+    }
+    
     public void print() {
         for(int i = 0; i < getNumLayers(); i++) {
             System.out.println(getVelocityLayer(i));

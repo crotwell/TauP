@@ -1,4 +1,4 @@
-Usage: taup_table [arguments]
+Usage: taup table [arguments]
   or, for purists, java edu.sc.seis.TauP.TauP_Table [arguments]
 
 Arguments are:

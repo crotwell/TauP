@@ -28,6 +28,7 @@ package edu.sc.seis.TauP;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -1988,12 +1989,19 @@ public abstract class SlownessModel implements Serializable {
      */
     public void printGMT(String filename) throws IOException {
         String psFile;
-        if(filename.endsWith(".gmt")) {
+        if (filename == "stdout") { 
+            psFile = "taup_slownessmodel";
+        } else if(filename.endsWith(".gmt")) {
             psFile = filename.substring(0, filename.length() - 4) + ".ps";
         } else {
             psFile = filename + ".ps";
         }
-        PrintWriter dos = new PrintWriter(new BufferedWriter(new FileWriter(filename)));
+        PrintWriter dos;
+        if (filename == "stdout") {
+            dos = new PrintWriter(new OutputStreamWriter(System.out));
+        } else {
+            dos = new PrintWriter(new BufferedWriter(new FileWriter(filename)));
+        }
         
         dos.println("#!/bin/sh");
         dos.println("#\n# This script will plot the "+vMod.getModelName()+" velocity model using GMT. If you want to\n"
