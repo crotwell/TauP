@@ -34,9 +34,15 @@ public class SeismicPhaseSegment {
     	case SeismicPhase.REFLECT_UNDERSIDE:
     		action = "reflect underside";
     		break;
+    	case SeismicPhase.REFLECT_UNDERSIDE_CRITICAL:
+			action = "critical reflect underside";
+			break;
     	case SeismicPhase.REFLECT_TOPSIDE:
     		action = "reflect topside";
     		break;
+    	case SeismicPhase.REFLECT_TOPSIDE_CRITICAL:
+			action = "critical reflect topside";
+			break;
     	case SeismicPhase.TRANSUP:
     		action = "transmit up";
     		break;
@@ -81,13 +87,24 @@ public class SeismicPhaseSegment {
     	String upDown = isDownGoing ? "down" : "up  ";
     	String action = endActionToString(endAction);
     	String isPString = isPWave ? "P" : "S";
+    	if (! isPWave && (startBranch == tMod.getCmbBranch() || endBranch == tMod.getCmbBranch())) {
+    		// in outer core, SeismicPhase uses fake S, equal to P velocity structure, in fluid layers
+			// to make "high slowness zone" calculations easier
+			isPString = "P";
+		}
     	String branchRange = startBranch == endBranch ? " layer "+startBranch : " layer "+startBranch+" to "+endBranch;
-    	
+		String depthRange;
+		if (isDownGoing) {
+			depthRange = tMod.getTauBranch(startBranch, isPWave).getTopDepth() + " to " + tMod.getTauBranch(endBranch, isPWave).getBotDepth();
+		} else {
+			depthRange = tMod.getTauBranch(startBranch, isPWave).getBotDepth() + " to " + tMod.getTauBranch(endBranch, isPWave).getTopDepth();
+		}
     	if ( ! legName.contentEquals("END")) {
     		desc += legName +" going "+upDown
     				+ " as a "+ isPString 
     				+ " in the "+describeBranchRange(startBranch, endBranch)+","
     	    	    + branchRange+","
+					+ " depths "+depthRange+","
     				+ " then " +action;
     	} else {
     		desc += "END";
