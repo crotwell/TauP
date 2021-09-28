@@ -438,24 +438,30 @@ public class TauP_Curve extends TauP_Time {
         }
         out.flush();
     }
-    
+
     protected void checkBoundary(double boundaryDistRadian,
                                  int distIndex,
                                  SeismicPhase phase,
                                  List<SeismicPhase> relPhase,
                                  PrintWriter out) throws IOException {
         double arcDistance = Math.acos(Math.cos(boundaryDistRadian));
-        if (distIndex < phase.getDist().length-1 && 
-                (isBetween(Math.acos(Math.cos(phase.getDist()[distIndex])),
-                           Math.acos(Math.cos(phase.getDist()[distIndex+1])),
-                           arcDistance))) {
-            List<Arrival> phaseArrivals = phase.calcTime(arcDistance*180/Math.PI);
-            for (Arrival arrival : phaseArrivals) {
-                if((phase.rayParams[distIndex] - arrival.getRayParam())
-                        * (arrival.getRayParam() - phase.rayParams[distIndex + 1]) > 0) {
-                    writeValue(arcDistance, arrival.getTime(), relPhase, out);
-                    break;
+        double distCheck = boundaryDistRadian;
+        if (distIndex < phase.getDist().length-1) {
+            while (distCheck < phase.getMaxDistance()) {
+                if ((phase.getDist()[distIndex] < distCheck && distCheck < phase.getDist()[distIndex + 1])
+                        || (phase.getDist()[distIndex + 1] < distCheck && distCheck < phase.getDist()[distIndex])) {
+                    List<Arrival> phaseArrivals = phase.calcTime(arcDistance * 180 / Math.PI);
+                    // find arrival with ray param between original two rays, write it out
+                    for (Arrival arrival : phaseArrivals) {
+                        // can be equal in case of Pdiff where rayparam is const
+                        if ((phase.rayParams[distIndex] - arrival.getRayParam())
+                                * (arrival.getRayParam() - phase.rayParams[distIndex + 1]) >= 0) {
+                            writeValue(arcDistance, arrival.getTime(), relPhase, out);
+                            break;
+                        }
+                    }
                 }
+                distCheck += 2 * Math.PI;
             }
         }
     }

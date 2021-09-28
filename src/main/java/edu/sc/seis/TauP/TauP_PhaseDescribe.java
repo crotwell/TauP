@@ -20,10 +20,12 @@ public class TauP_PhaseDescribe extends TauP_Time {
                 + "-mod[el] modelname -- use velocity model \"modelname\" for calculations\n"
                 + "                      Default is iasp91.\n\n"
                 + "-h depth           -- source depth in km\n\n"
-                + "--stadepth depth   -- receiver depth in km\n\n");
+                + "--stadepth depth   -- receiver depth in km\n\n"
+                + "--dump             -- dump raw sample points\n\n");
     }
 
-
+    /** Dumps raw interpolation points for phase. */
+    public boolean dump = false;
 
     public void printUsage() {
         printStdUsage();
@@ -42,6 +44,8 @@ public class TauP_PhaseDescribe extends TauP_Time {
             if(dashEquals("help", args[i])) {
                 printUsage();
                 noComprendoArgs[numNoComprendoArgs++] = args[i];
+            } else if(dashEquals("dump", args[i])) {
+                dump = true;
             } else if(dashEquals("expert", args[i])) {
                 expert = true;
             } else if(i < args.length - 1) {
@@ -138,6 +142,17 @@ public class TauP_PhaseDescribe extends TauP_Time {
         List<SeismicPhase> phaseList = getSeismicPhases();
         for (SeismicPhase phase: phaseList) {
             writer.println(phase.describe());
+            if (dump) {
+                double[] dist = phase.getDist();
+                double[] time = phase.getTime();
+                double[] rayParam = phase.getRayParams();
+                writer.println("Dist (deg)  Time (s)  RayParam(rad/sec)");
+                writer.println("----------------------------------------");
+                for (int i = 0; i < dist.length; i++) {
+                    writer.println((dist[i]*Arrival.RtoD)+"  "+time[i]+"  "+rayParam[i]);
+                }
+                writer.println("----------------------------------------");
+            }
             writer.println("--------");
         }
     }

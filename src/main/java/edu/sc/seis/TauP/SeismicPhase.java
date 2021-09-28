@@ -595,7 +595,7 @@ public class SeismicPhase implements Serializable, Cloneable {
             throw new RuntimeException("Left Ray param "+leftEstimate.getRayParam()+" is outside range for this phase: "+getName()+" min="+minRayParam+" max="+maxRayParam);
         }
         if (rightEstimate.getRayParam() < minRayParam || maxRayParam < rightEstimate.getRayParam()) {
-            throw new RuntimeException("Left Ray param "+rightEstimate.getRayParam()+" is outside range for this phase: "+getName()+" min="+minRayParam+" max="+maxRayParam);
+            throw new RuntimeException("Right Ray param "+rightEstimate.getRayParam()+" is outside range for this phase: "+getName()+" min="+minRayParam+" max="+maxRayParam);
         }
         
         try {
@@ -902,7 +902,19 @@ public class SeismicPhase implements Serializable, Cloneable {
             minRayParam = Math.max(minRayParam, tMod.getTauBranch(endBranch,
                     isPWave)
                     .getMinTurnRayParam());
-        } else if(endAction == REFLECT_UNDERSIDE || endAction == REFLECT_UNDERSIDE_CRITICAL || endAction == END) {
+            // careful if the ray param cannot turn due to high slowness at bottom. Do not use these
+            // layers if their top in in high slowness for the given ray parameter
+            int bNum = endBranch;
+            while (bNum >= startBranch) {
+                if (tMod.getSlownessModel().depthInHighSlowness(tMod.getTauBranch(bNum, isPWave).getTopDepth(),
+                        minRayParam, isPWave)) {
+                    // tau branch is in high slowness, so turn is not possible, only
+                    // non-critical reflect, so do not add these branches
+                    endBranch = bNum-1;
+                }
+                bNum--;
+            }
+        } else if(endAction == REFLECT_UNDERSIDE || endAction == REFLECT_UNDERSIDE_CRITICAL) {
             endOffset = 0;
             isDownGoing = false;
             maxRayParam = Math.min(maxRayParam,
@@ -999,7 +1011,7 @@ public class SeismicPhase implements Serializable, Cloneable {
         			throw new TauModelException(getName()+": Segment is upgoing, but previous action was  to trans down: "+currLeg);
         		}
         		if (prevSegment.endBranch == startBranch && prevSegment.isDownGoing == true
-                        && ! ( prevSegment.endAction == TURN || prevSegment.endAction == REFLECT_TOPSIDE || prevSegment.endAction == REFLECT_TOPSIDE_CRITICAL)) {
+                        && ! ( prevSegment.endAction == TURN || prevSegment.endAction == DIFFRACT || prevSegment.endAction == REFLECT_TOPSIDE || prevSegment.endAction == REFLECT_TOPSIDE_CRITICAL)) {
         			throw new TauModelException(getName()+": Segment is upgoing, but previous action was not to reflect topside: "+currLeg+" "+endActionString(prevSegment.endAction));
         		}
         	}
@@ -1733,7 +1745,7 @@ public class SeismicPhase implements Serializable, Cloneable {
                         if (currBranch < tMod.getCmbBranch() - 1 
                                 || (currBranch == tMod.getCmbBranch() - 1 && endAction != DIFFRACT)
                                 || (currBranch == tMod.getCmbBranch() && endAction != TRANSUP)) {
-                            endAction = TURN;
+                            endAction = DIFFRACT;
                             addToBranch(tMod,
                                         currBranch,
                                         tMod.getCmbBranch() - 1,
