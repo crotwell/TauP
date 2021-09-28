@@ -437,7 +437,7 @@ public class TauP_Path extends TauP_Pierce {
             out.write(Outputs.formatDistance(x)
                       + "  "
                       + Outputs.formatDistance(y));
-            out.println("  <text dominant-baseline=\""+alignBaseline+"\" text-anchor=\""+anchor+"\" class=\"label\" x=\""+Outputs.formatDistance(x).trim()+"\" y=\""+Outputs.formatDistance(y).strip()+"\">"+i+"</text>");
+            out.println("  <text dominant-baseline=\""+alignBaseline+"\" text-anchor=\""+anchor+"\" class=\"label\" x=\""+Outputs.formatDistance(x).trim()+"\" y=\""+Outputs.formatDistance(y).trim()+"\">"+i+"</text>");
      
         }
 	    out.println("  <circle cx=\"0.0\" cy=\"0.0\" r=\"" + R+"\" />");
