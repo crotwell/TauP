@@ -52,6 +52,7 @@ public class CmdLineOutputTest {
                                           "taup time --help",
                                           "taup pierce --help",
                                           "taup path --help",
+                                          "taup phase --help",
                                           "taup curve --help",
                                           "taup wavefront --help",
                                           "taup table --help",
