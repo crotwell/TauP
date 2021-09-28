@@ -25,6 +25,8 @@ or by giving the station and event latitude and lonitude,
 -evt       lat lon -- sets the event latitude and longitude
 
 
+--gmt             -- outputs path as a complete GMT script.
+--mapwidth        -- sets map width for GMT script.
 --rays  num      -- number of raypaths/distances to sample.
 --timestep  num  -- steps in time (seconds) for output.
 --timefiles      -- outputs each time into a separate .ps file within the gmt script.
