@@ -129,6 +129,7 @@ public class ToolRun {
             if (noComprendoArgs.length != 0) {
                 return;
             }
+            if (DEBUG) {tool.DEBUG = DEBUG;}
             tool.init();
             tool.start();
             tool.destroy();
