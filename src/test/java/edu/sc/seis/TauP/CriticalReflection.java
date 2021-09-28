@@ -18,6 +18,7 @@ public class CriticalReflection {
         compareReflections("Sv660s", "SV660s", 25.0);
         compareReflections("Sv410s", "SV410s", 15.0);
         compareReflections("Svms", "SVms", 1.0);
+        compareReflections("SPvmp", "SPVmp", 45.0);
     }
     @Test
     @Disabled
@@ -30,17 +31,24 @@ public class CriticalReflection {
         compareReflections( reflPhase,  critReflPhase,  degrees, 0.0);
     }
 
-    public void compareReflections(String reflPhase, String critReflPhase, double degrees, double depth) throws Exception {
+    public void compareReflections(String reflPhaseName, String critReflPhaseName, double degrees, double depth) throws Exception {
         String modelName = "iasp91";
         TauModel tMod = TauModelLoader.load(modelName);
-        SeismicPhase PcP = new SeismicPhase(reflPhase, tMod);
-        SeismicPhase PcP_crit = new SeismicPhase(critReflPhase, tMod);
+        SeismicPhase reflPhase = new SeismicPhase(reflPhaseName, tMod);
+        SeismicPhase critPhase = new SeismicPhase(critReflPhaseName, tMod);
 
-        List<Arrival> ScSArrivals = PcP.calcTime(degrees);
-        List<Arrival> ScS_crit_Arrivals = PcP_crit.calcTime(degrees);
+        // critcial is subset of uncrit reflection
+        assertTrue(reflPhase.getMinDistanceDeg() <= critPhase.getMinDistanceDeg());
+        assertTrue(critPhase.getMaxDistanceDeg() <= reflPhase.getMaxDistanceDeg());
+        assertTrue(reflPhase.getMinRayParam() <= critPhase.getMinRayParam());
+        assertTrue(critPhase.getMaxRayParam() <= reflPhase.getMaxRayParam());
+        assertEquals(reflPhase.branchSeq.size(), critPhase.branchSeq.size());
 
-        Arrival aScS = ScSArrivals.get(0);
-        Arrival aScS_crit = ScS_crit_Arrivals.get(0);
+        List<Arrival> reflArrivals = reflPhase.calcTime(degrees);
+        List<Arrival> critArrivals = critPhase.calcTime(degrees);
+
+        Arrival aScS = reflArrivals.get(0);
+        Arrival aScS_crit = critArrivals.get(0);
         assertEquals(  aScS.getTime(), aScS_crit.getTime(), 0.0001);
         assertEquals(  aScS.getDist(), aScS_crit.getDist(), 0.0001);
         assertEquals(  aScS.getRayParam(), aScS_crit.getRayParam(), 0.0001);
