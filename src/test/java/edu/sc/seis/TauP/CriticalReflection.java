@@ -13,11 +13,11 @@ public class CriticalReflection {
 
     @Test
     public void testTopCricitalReflections() throws Exception {
-        compareReflections("PKviKP", "PKvxiKP", 120.0);
-        compareReflections("Svcs", "Svxcs", 99.2);
-        compareReflections("Sv660s", "Svx660s", 25.0);
-        compareReflections("Sv410s", "Svx410s", 15.0);
-        compareReflections("Svms", "Svxms", 1.0);
+        compareReflections("PKviKP", "PKViKP", 120.0);
+        compareReflections("Svcs", "SVcs", 99.2);
+        compareReflections("Sv660s", "SV660s", 25.0);
+        compareReflections("Sv410s", "SV410s", 15.0);
+        compareReflections("Svms", "SVms", 1.0);
     }
     @Test
     @Disabled
