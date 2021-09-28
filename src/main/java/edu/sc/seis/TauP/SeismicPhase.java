@@ -946,7 +946,7 @@ public class SeismicPhase implements Serializable, Cloneable {
         		if (prevSegment.endAction == TRANSDOWN) {
         			throw new TauModelException(getName()+": Segment is upgoing, but previous action was  to trans down: "+currLeg);
         		}
-        		if (prevSegment.endBranch == startBranch && prevSegment.isDownGoing == true && ! ( prevSegment.endAction == TURN || prevSegment.endAction == REFLECT_TOPSIDE)) {
+        		if (prevSegment.endBranch == startBranch && prevSegment.isDownGoing == true && ! ( prevSegment.endAction == TURN || prevSegment.endAction == DIFFRACT || prevSegment.endAction == REFLECT_TOPSIDE)) {
         			throw new TauModelException(getName()+": Segment is upgoing, but previous action was not to reflect topside: "+currLeg+" "+endActionString(prevSegment.endAction));
         		}
         	}
@@ -1635,7 +1635,7 @@ public class SeismicPhase implements Serializable, Cloneable {
                         if (currBranch < tMod.getCmbBranch() - 1 
                                 || (currBranch == tMod.getCmbBranch() - 1 && endAction != DIFFRACT)
                                 || (currBranch == tMod.getCmbBranch() && endAction != TRANSUP)) {
-                            endAction = TURN;
+                            endAction = DIFFRACT;
                             addToBranch(tMod,
                                         currBranch,
                                         tMod.getCmbBranch() - 1,
