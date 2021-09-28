@@ -75,10 +75,13 @@ val binDistFiles: CopySpec = copySpec {
         include("*")
         into("bin")
     }
+    from(tasks.named("jar")) {
+        into("lib")
+    }
     from(configurations.runtimeClasspath) {
         into("lib")
     }
-    from(configurations.runtimeClasspath.allArtifacts.files) {
+    from(configurations.runtimeClasspath.get().allArtifacts.files) {
         into("lib")
     }
 }
@@ -129,7 +132,7 @@ tasks.register<Sync>("explodeBin") {
   dependsOn("jar")
   dependsOn("createRunScripts")
   dependsOn("genModels")
-  with( binDistFiles)
+    with( binDistFiles)
   into( file("$buildDir/explode"))
 }
 
