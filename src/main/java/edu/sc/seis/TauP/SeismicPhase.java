@@ -576,7 +576,7 @@ public class SeismicPhase implements Serializable, Cloneable {
             throw new RuntimeException("Left Ray param "+leftEstimate.getRayParam()+" is outside range for this phase: "+getName()+" min="+minRayParam+" max="+maxRayParam);
         }
         if (rightEstimate.getRayParam() < minRayParam || maxRayParam < rightEstimate.getRayParam()) {
-            throw new RuntimeException("Left Ray param "+rightEstimate.getRayParam()+" is outside range for this phase: "+getName()+" min="+minRayParam+" max="+maxRayParam);
+            throw new RuntimeException("Right Ray param "+rightEstimate.getRayParam()+" is outside range for this phase: "+getName()+" min="+minRayParam+" max="+maxRayParam);
         }
         
         try {
@@ -871,6 +871,18 @@ public class SeismicPhase implements Serializable, Cloneable {
             minRayParam = Math.max(minRayParam, tMod.getTauBranch(endBranch,
                                                                   isPWave)
                     .getMinTurnRayParam());
+            // careful if the ray param cannot turn due to high slowness at bottom. Do not use these
+            // layers if their top in in high slowness for the given ray parameter
+            int bNum = endBranch;
+            while (bNum >= startBranch) {
+                if (tMod.getSlownessModel().depthInHighSlowness(tMod.getTauBranch(bNum, isPWave).getTopDepth(),
+                        minRayParam, isPWave)) {
+                    // tau branch is in high slowness, so turn is not possible, only
+                    // non-critical reflect, so do not add these branches
+                    endBranch = bNum-1;
+                }
+                bNum--;
+            }
         } else if(endAction == REFLECT_UNDERSIDE || endAction == END) {
             endOffset = 0;
             isDownGoing = false;
