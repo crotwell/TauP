@@ -15,7 +15,7 @@ plugins {
 }
 
 application {
-  mainClass.set("edu.sc.seis.TauP.TauP")
+  mainClass.set("edu.sc.seis.TauP.ToolRun")
   applicationName = "taup"
 }
 
@@ -83,9 +83,12 @@ val binDistFiles: CopySpec = copySpec {
     from(configurations.runtimeClasspath) {
         into("lib")
     }
+    /*
+    // don't think this is needed...
     from(configurations.runtimeClasspath.get().allArtifacts.files) {
         into("lib")
     }
+     */
 }
 
 val distFiles: CopySpec = copySpec {
@@ -132,7 +135,7 @@ val distFiles: CopySpec = copySpec {
 
 tasks.register<Sync>("explodeBin") {
   dependsOn("jar")
-  dependsOn("createRunScripts")
+  dependsOn("startScripts")
   dependsOn("genModels")
     with( binDistFiles)
   into( file("$buildDir/explode"))
@@ -249,7 +252,8 @@ tasks.named("startScripts") {
 }
 
 val scriptNames = mapOf(
-    "taup" to "edu.sc.seis.TauP.ToolRun",
+// taup is created via startScripts as default for assemble plugin
+//    "taup" to "edu.sc.seis.TauP.ToolRun",
     "taup_time" to "edu.sc.seis.TauP.TauP_Time",
     "taup_pierce" to "edu.sc.seis.TauP.TauP_Pierce",
     "taup_path" to "edu.sc.seis.TauP.TauP_Path",
@@ -258,12 +262,11 @@ val scriptNames = mapOf(
     "taup_setsac" to "edu.sc.seis.TauP.TauP_SetSac",
     "taup_wavefront" to "edu.sc.seis.TauP.TauP_Wavefront",
     "taup_table" to "edu.sc.seis.TauP.TauP_Table"
-    //"taup" to  "edu.sc.seis.TauP.TauP"
 )
 for (key in scriptNames.keys) {
   tasks.register<CreateStartScripts>(key) {
     outputDir = file("build/scripts")
-    mainClassName = scriptNames[key]
+    getMainClass().set(scriptNames[key])
     applicationName = key
     classpath = sourceSets["main"].runtimeClasspath + project.tasks[JavaPlugin.JAR_TASK_NAME].outputs.files
   }
@@ -276,7 +279,7 @@ for (key in scriptNames.keys) {
 tasks.register<JavaExec>("genModels") {
   description = "generate TauP default model files"
   classpath = sourceSets.getByName("main").runtimeClasspath
-  main = "edu.sc.seis.TauP.StdModelGenerator"
+    getMainClass().set("edu.sc.seis.TauP.StdModelGenerator")
 
   val generatedSrcDir = File(project.buildDir, "generated-src/StdModels")
   val resourceDir =  File(generatedSrcDir, "/resources")
@@ -299,7 +302,7 @@ tasks.register<JavaExec>("genModels") {
 tasks.register<JavaExec>("genCmdLineTestFiles") {
     description = "generate TauP cmd line test output files"
     classpath = sourceSets.getByName("test").runtimeClasspath
-    main = "edu.sc.seis.TauP.CmdLineOutputTest"
+    getMainClass().set("edu.sc.seis.TauP.CmdLineOutputTest")
     dependsOn += tasks.getByName("testClasses")
     outputs.files(fileTree("cmdLineTest"))
 }
@@ -308,6 +311,8 @@ tasks.register<Sync>("copyCmdLineTestFiles") {
   into("src/test/resources/edu/sc/seis/TauP/cmdLineTest")
   dependsOn("genCmdLineTestFiles")
 }
+
+tasks.get("assemble").dependsOn(tasks.get("dependencyUpdates"))
 
 tasks.get("assemble").dependsOn(tasks.get("signTarBin"))
 tasks.get("assemble").dependsOn(tasks.get("signTarDist"))
