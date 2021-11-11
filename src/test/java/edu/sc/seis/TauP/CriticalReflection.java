@@ -49,10 +49,10 @@ public class CriticalReflection {
         List<Arrival> reflArrivals = reflPhase.calcTime(degrees);
         List<Arrival> critArrivals = critPhase.calcTime(degrees);
 
-        Arrival aScS = reflArrivals.get(0);
-        Arrival aScS_crit = critArrivals.get(0);
-        assertEquals(  aScS.getTime(), aScS_crit.getTime(), 0.0001);
-        assertEquals(  aScS.getDist(), aScS_crit.getDist(), 0.0001);
-        assertEquals(  aScS.getRayParam(), aScS_crit.getRayParam(), 0.0001);
+        Arrival reflArrive = reflArrivals.get(0);
+        Arrival critArrive = critArrivals.get(0);
+        assertEquals(  reflArrive.getTime(), critArrive.getTime(), 0.0001);
+        assertEquals(  reflArrive.getDist(), critArrive.getDist(), 0.0001);
+        assertEquals(  reflArrive.getRayParam(), critArrive.getRayParam(), 0.0001);
     }
  }

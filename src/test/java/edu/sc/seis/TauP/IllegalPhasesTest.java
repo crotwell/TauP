@@ -23,10 +23,12 @@ class IllegalPhasesTest {
 			"PedKP",
 			"PedcS",
 			"PmP^410P" });
+
+	String[] disabledPhases = {"S^xmS", "P^xmP"};
 	
 	String[] illegalPhases = { "null", "ScScS", "PDDDDD", "PKIKPKIKP", "PPPdiff", 
 			"PKIKIKP", "SIKS", "SKIS", "Pcv410S", "Pmv410P", "Pcv410P", "Pm^410P",
-			"SKviKviKS","SK^iKS","SK^mKS" };
+			"SKviKviKS","SK^iKS","SK^mKS", "S^S", "SVS" };
 	
 	// phases that are kind of wrong, but are handled by simply no arrivals, eg no ray params actually work,
 	// rather than being so bad as to cause an exception
@@ -38,11 +40,20 @@ class IllegalPhasesTest {
 
 	@Test
 	void checkIllegalPhasesTest() throws TauModelException {
+		phasesShouldFail(illegalPhases);
+	}
+
+	@Test
+	void checkDisabledPhasesTest() throws TauModelException {
+		phasesShouldFail(disabledPhases);
+	}
+
+	void phasesShouldFail(String[] phaseList) throws TauModelException {
 		boolean DEBUG = true;
 		String modelName = "iasp91";
 		TauModel tMod = TauModelLoader.load(modelName);
 		float receiverDepth = 100;
-		for (String phaseName : illegalPhases) {
+		for (String phaseName : phaseList) {
 			Exception exception = assertThrows(TauModelException.class, () -> {
 				SeismicPhase phase = new SeismicPhase(phaseName, tMod, receiverDepth, DEBUG);
 		    }, phaseName+" shouldn't pass validation.");

@@ -104,7 +104,8 @@ public class SeismicPhase implements Serializable, Cloneable {
 
     /**
      * Used by addToBranch when the path critically reflects off the top of the end of a
-     * segment, ie "^x".
+     * segment, ie "^x". Note this is disabled as it is hard to create a model where this
+     * phase interaction is physically possible, delay implement this feature for now.
      */
     public static final int REFLECT_UNDERSIDE_CRITICAL = 8;
 
@@ -1390,7 +1391,7 @@ public class SeismicPhase implements Serializable, Cloneable {
             /* Deal with p and s case . */
             } else if(currLeg.equals("p") || currLeg.equals("s")
                     || currLeg.equals("k")) {
-                if(nextLeg.startsWith("v")) {
+                if(nextLeg.startsWith("v") || nextLeg.startsWith("V")) {
                     throw new TauModelException(getName()+" p and s and k must always be up going "
                             + " and cannot come immediately before a top-side reflection."
                             + " currLeg=" + currLeg + " nextLeg=" + nextLeg);
@@ -1399,6 +1400,8 @@ public class SeismicPhase implements Serializable, Cloneable {
                     if (currLeg.startsWith("^x")) {
                         depthString = currLeg.substring(2);
                         endAction = REFLECT_UNDERSIDE_CRITICAL;
+                        throw new TauModelException(getName()+" Phase not recognized (2): "
+                                + currLeg);
                     } else {
                         depthString = currLeg.substring(1);
                         endAction = REFLECT_UNDERSIDE;
@@ -1519,6 +1522,8 @@ public class SeismicPhase implements Serializable, Cloneable {
                     if (nextLeg.startsWith("^x")) {
                         depthString = nextLeg.substring(2);
                         endAction = REFLECT_UNDERSIDE_CRITICAL ;
+                        throw new TauModelException(getName()+" Phase not recognized (2): "
+                                + currLeg+" followed by "+nextLeg);
                     } else {
                         depthString = nextLeg.substring(1);
                         endAction = REFLECT_UNDERSIDE;
@@ -1552,8 +1557,8 @@ public class SeismicPhase implements Serializable, Cloneable {
                                     isPWave,
                                     endAction,
                                     currLeg);
-                    } else if((prevLeg.startsWith("v") && disconBranch < closestBranchToDepth(tMod,
-                                                                                              prevLeg.substring(1)))
+                    } else if(((prevLeg.startsWith("v") || prevLeg.startsWith("V"))
+                            && disconBranch < closestBranchToDepth(tMod, prevLeg.substring(1)))
                             || (prevLeg.equals("m") && disconBranch < tMod.getMohoBranch())
                             || (prevLeg.equals("c") && disconBranch < tMod.getCmbBranch())) {
                         if (disconBranch == tMod.getNumBranches()) {
@@ -2004,6 +2009,8 @@ public class SeismicPhase implements Serializable, Cloneable {
                     if (nextLeg.startsWith("^x")) {
                         depthString = nextLeg.substring(2);
                         endAction = REFLECT_UNDERSIDE_CRITICAL;
+                        throw new TauModelException(getName()+" Phase not recognized (2): "
+                                + currLeg+" followed by "+nextLeg);
                     } else {
                         depthString = nextLeg.substring(1);
                         endAction = REFLECT_UNDERSIDE;
@@ -2051,13 +2058,8 @@ public class SeismicPhase implements Serializable, Cloneable {
                                 isPWave,
                                 endAction,
                                 currLeg);
-                    } else if(prevLeg.startsWith("v")) {
-                        String prevDepthString;
-                        if (prevLeg.startsWith("^x")) {
-                            prevDepthString = prevLeg.substring(2);
-                        } else {
-                            prevDepthString = prevLeg.substring(1);
-                        }
+                    } else if(prevLeg.startsWith("v") || prevLeg.startsWith("V") ) {
+                        String prevDepthString = prevLeg.substring(1);
                         int prevdisconBranch = closestBranchToDepth(tMod, prevDepthString);
                         if (disconBranch < prevdisconBranch) {
                             // upgoind K leg
@@ -2132,6 +2134,8 @@ public class SeismicPhase implements Serializable, Cloneable {
                     if (nextLeg.startsWith("^x")) {
                         depthString = nextLeg.substring(2);
                         endAction = REFLECT_UNDERSIDE_CRITICAL;
+                        throw new TauModelException(getName()+" Phase not recognized (2): "
+                                + currLeg+" followed by "+nextLeg);
                     } else {
                         depthString = nextLeg.substring(1);
                         endAction = REFLECT_UNDERSIDE;
@@ -2429,7 +2433,7 @@ public class SeismicPhase implements Serializable, Cloneable {
             // phase conversion or reflection depth
             Matcher m = reflectDepthPattern.matcher(currLeg);
             if(m.matches()) {
-                if(currLeg.startsWith("V") || currLeg.startsWith("^x")) {
+                if(currLeg.startsWith("^x")) {
                     puristName += currLeg.substring(0, 2);
                     disconBranch = closestBranchToDepth(tMod, currLeg.substring(2));
                 } else {
@@ -3232,9 +3236,9 @@ public class SeismicPhase implements Serializable, Cloneable {
                     && ! ( currToken.equals("END") 
                             || currToken.equals("Pdiff") || currToken.equals("Sdiff")
                             || currToken.equals("P") || currToken.equals("S")
-                            || currToken.equals("K") || currToken.startsWith("v")
+                            || currToken.equals("K") || currToken.startsWith("v") || currToken.startsWith("V")
                             || currToken.equals("c") || currToken.equals("m") )) {
-                return "'Ped' or 'Sed' can only be before Pdiff,P,S,Sdiff,K,c,v,m or second to last token immediately before END or ";
+                return "'Ped' or 'Sed' can only be before Pdiff,P,S,Sdiff,K,c,v,V,m or second to last token immediately before END or ";
             }
 
             // Cannot have K before P,S and followed by another K as P,S leg must turn to get back to CMB
