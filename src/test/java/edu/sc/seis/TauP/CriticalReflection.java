@@ -24,8 +24,10 @@ public class CriticalReflection {
     @Disabled
     public void testUnderCricitalReflections() throws Exception {
         // doesn't work as phase has to be able to get to surface,
-        // maybe try with receiver at depth?
-        compareReflections("P^mP", "P^xmP", 99.2, 100.0);
+        // and requires low velocity zone to have ray parameters that
+        // generate critical reflection
+        // maybe try with receiver at depth under LVZ?
+        compareReflections("P^mS", "P^xmS", 90, 100.0);
     }
     public void compareReflections(String reflPhase, String critReflPhase, double degrees) throws Exception {
         compareReflections( reflPhase,  critReflPhase,  degrees, 0.0);
@@ -33,7 +35,7 @@ public class CriticalReflection {
 
     public void compareReflections(String reflPhaseName, String critReflPhaseName, double degrees, double depth) throws Exception {
         String modelName = "iasp91";
-        TauModel tMod = TauModelLoader.load(modelName);
+        TauModel tMod = TauModelLoader.load(modelName).depthCorrect(depth);
         SeismicPhase reflPhase = new SeismicPhase(reflPhaseName, tMod);
         SeismicPhase critPhase = new SeismicPhase(critReflPhaseName, tMod);
 
