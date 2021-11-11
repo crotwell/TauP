@@ -314,6 +314,7 @@ tasks.register<Sync>("copyCmdLineTestFiles") {
 
 tasks.get("assemble").dependsOn(tasks.get("dependencyUpdates"))
 
+// note can pass password for signing in with -Psigning.password=secret
 tasks.get("assemble").dependsOn(tasks.get("signTarBin"))
 tasks.get("assemble").dependsOn(tasks.get("signTarDist"))
 tasks.get("assemble").dependsOn(tasks.get("signZipDist"))
@@ -335,4 +336,13 @@ tasks.get("processStdmodelsResources").dependsOn("genModels")
 tasks.jar {
     dependsOn("processStdmodelsResources")
     from(sourceSets["stdmodels"].output)
+}
+
+// this is really dumb, but gradle wants something....
+gradle.taskGraph.whenReady {
+    allTasks
+        .filter { it.hasProperty("duplicatesStrategy") } // Because it's some weird decorated wrapper that I can't cast.
+        .forEach {
+            it.setProperty("duplicatesStrategy", "EXCLUDE")
+        }
 }
