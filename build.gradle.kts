@@ -2,7 +2,7 @@ import java.util.Date
 import org.gradle.crypto.checksum.Checksum
 
 plugins {
-  id("edu.sc.seis.version-class") version "1.2.1"
+  id("edu.sc.seis.version-class") version "1.2.2"
   id("org.gradle.crypto.checksum") version "1.2.0"
   `java-library`
     `java-library-distribution`
@@ -11,6 +11,7 @@ plugins {
   `maven-publish`
   signing
   application
+  id("com.github.ben-manes.versions") version "0.39.0"
 }
 
 application {
@@ -29,7 +30,7 @@ java {
 }
 
 dependencies {
-    implementation("edu.sc.seis:seisFile:2.0.0") {
+    implementation("edu.sc.seis:seisFile:2.0.2") {
       // we need seisFile for sac output, but not all the other functionality
       exclude(group = "info.picocli", module = "picocli")
       exclude(group = "com.fasterxml.woodstox", module = "woodstox-core")
@@ -38,8 +39,8 @@ dependencies {
     runtimeOnly( "org.slf4j:slf4j-log4j12:1.7.30")
 
     // Use JUnit Jupiter API for testing.
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.0")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:5.7.0")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.1")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:5.8.1")
 
     // Use JUnit Jupiter Engine for testing.
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
