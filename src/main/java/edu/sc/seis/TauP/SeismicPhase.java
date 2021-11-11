@@ -216,12 +216,6 @@ public class SeismicPhase implements Serializable, Cloneable {
     protected transient int currBranch;
 
     /**
-     * temporary end action so we know what we did at the end of the last
-     * section of the branch sequence. Used in addToBranch() and parseName().
-     */
-  //  protected transient int endAction;
-
-    /**
      * records the end action for the current leg. Will be one of
      * SeismicPhase.TURN, SeismicPhase.TRANSDOWN, SeismicPhase.TRANSUP,
      * SeismicPhase.REFLECTBOT, or SeismicPhase.REFLECTTOP. This allows a check
@@ -237,8 +231,7 @@ public class SeismicPhase implements Serializable, Cloneable {
 
     /**
      * ArrayList of wave types corresponding to each leg of the phase.
-     * 
-     * @see legs
+     *
      */
     protected ArrayList<Boolean> waveType = new ArrayList<Boolean>();
     
