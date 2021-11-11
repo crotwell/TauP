@@ -2,6 +2,7 @@
 build
 .gradle
 *.aux
+taup.bbl
 taup.blg
 taup.log
 taup.out
