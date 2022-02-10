@@ -28,6 +28,7 @@ java {
     withJavadocJar()
     withSourcesJar()
 }
+tasks.withType<JavaCompile>().configureEach { options.compilerArgs.addAll(arrayOf("-Xlint:deprecation")) }
 
 dependencies {
     implementation("edu.sc.seis:seisFile:2.0.4") {
