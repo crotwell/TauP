@@ -1020,10 +1020,10 @@ public class SeismicPhase implements Serializable, Cloneable {
             } else {
             /* Must be downgoing, so use i++. */
             for(int i = startBranch; i <= endBranch; i++) {
-                branchSeq.add(new Integer(i));
-                downGoing.add(new Boolean(isDownGoing));
-                waveType.add(new Boolean(isPWave));
-                legAction.add(new Integer(endAction));
+                branchSeq.add(i);
+                downGoing.add(isDownGoing);
+                waveType.add(isPWave);
+                legAction.add(endAction);
             }
             if(DEBUG) {
                 for(int i = startBranch; i <= endBranch; i++) {
@@ -1043,10 +1043,10 @@ public class SeismicPhase implements Serializable, Cloneable {
             } else {
             /* Must be up going so use i--. */
             for(int i = startBranch; i >= endBranch; i--) {
-                branchSeq.add(new Integer(i));
-                downGoing.add(new Boolean(isDownGoing));
-                waveType.add(new Boolean(isPWave));
-                legAction.add(new Integer(endAction));
+                branchSeq.add(i);
+                downGoing.add(isDownGoing);
+                waveType.add(isPWave);
+                legAction.add(endAction);
             }
             if(DEBUG) {
                 for(int i = startBranch; i >= endBranch; i--) {
@@ -1739,7 +1739,7 @@ public class SeismicPhase implements Serializable, Cloneable {
                                         currLeg);
                         } // otherwise we are already at the right branch to diffract
                         // remember where the diff or head happened (one less than size)
-                        headOrDiffractSeq.add(new Integer(branchSeq.size()-1));
+                        headOrDiffractSeq.add(branchSeq.size() - 1);
                         maxRayParam = tMod.getTauBranch(tMod.getCmbBranch() - 1,
                                                         isPWave)
                             .getMinTurnRayParam();
