@@ -1251,7 +1251,7 @@ public class SeismicPhase implements Serializable, Cloneable {
             isLegDepth = isNextLegDepth;
             // find out if the next leg represents a phase conversion depth
             try {
-                nextLegDepth = (new Double(nextLeg)).doubleValue();
+                nextLegDepth = Double.parseDouble(nextLeg);
                 isNextLegDepth = true;
             } catch(NumberFormatException e) {
                 nextLegDepth = -1;
@@ -2450,7 +2450,7 @@ public class SeismicPhase implements Serializable, Cloneable {
                 }
             } else {
                 try {
-                    legDepth = (new Double(currLeg)).doubleValue();
+                    legDepth = Double.parseDouble(currLeg);
                     // only get this far if the currLeg is a number,
                     // otherwise exception
                     disconBranch = closestBranchToDepth(tMod, currLeg);

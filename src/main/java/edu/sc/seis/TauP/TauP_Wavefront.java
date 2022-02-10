@@ -152,7 +152,7 @@ public class TauP_Wavefront extends TauP_Path {
 
                     // @Override
                     public int compare(TimeDist arg0, TimeDist arg1) {
-                        return new Double(arg0.getP()).compareTo(arg1.getP());
+                        return Double.valueOf(arg0.getP()).compareTo(arg1.getP());
                     }
                 });
                 for (TimeDist td : wavefront) {
