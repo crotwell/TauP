@@ -25,6 +25,10 @@ public abstract class TauP_Tool {
 
     protected String outFileBase = "";
 
+    public static final String GMT = "gmt";
+
+    public static final String SVG = "svg";
+
     public static final String JSON = "json";
 
     public static final String TEXT = "text";
