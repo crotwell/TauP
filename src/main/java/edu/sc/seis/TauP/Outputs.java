@@ -53,6 +53,12 @@ public class Outputs {
         formString = "%8." + props.getProperty("taup.time.precision", "2")
                 + "f";
         timeFormat = new Format(formString);
+        formString = "%0." + props.getProperty("taup.distance.precision", "2")
+                + "f";
+        distanceFormatNoPad = new Format(formString);
+        formString = "%0." + props.getProperty("taup.time.precision", "2")
+                + "f";
+        timeFormatNoPad = new Format(formString);
         formString = "%8." + props.getProperty("taup.rayparam.precision", "3")
                 + "f";
         rayParamFormat = new Format(formString);
@@ -73,6 +79,14 @@ public class Outputs {
         return timeFormat.form(time);
     }
 
+    public static String formatDistanceNoPad(double distance) {
+        return distanceFormat.form(distance);
+    }
+
+    public static String formatTimeNoPad(double time) {
+        return timeFormat.form(time);
+    }
+
     public static String formatRayParam(double rayParam) {
         return rayParamFormat.form(rayParam);
     }
@@ -86,6 +100,10 @@ public class Outputs {
     protected static Format distanceFormat = new Format("%8.2f");
 
     protected static Format timeFormat = new Format("%8.2f");
+
+    protected static Format distanceFormatNoPad = new Format("%0.2f");
+
+    protected static Format timeFormatNoPad = new Format("%0.2f");
 
     protected static Format rayParamFormat = new Format("%8.3f");
 

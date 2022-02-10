@@ -46,8 +46,6 @@ public class TauP_Path extends TauP_Pierce {
 	protected float maxPathTime = Float.MAX_VALUE;
 	
 	protected static double maxPathInc = 1.0;
-	
-	public static final String SVG = "svg";
 
 	protected TauP_Path() {
 		super();
@@ -495,7 +493,7 @@ public class TauP_Path extends TauP_Pierce {
 			if (dashEquals("gmt", leftOverArgs[i])) {
 				gmtScript = true;
 			} else if (dashEquals("svg", leftOverArgs[i])) {
-	                outputFormat = SVG;
+				outputFormat = SVG;
             } else if((dashEquals("mapwidth", leftOverArgs[i])) && i < leftOverArgs.length - 1) {
                 setMapWidth(Float.parseFloat(leftOverArgs[i + 1]));
                 i++;
