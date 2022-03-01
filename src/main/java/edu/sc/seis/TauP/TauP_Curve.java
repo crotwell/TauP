@@ -388,11 +388,21 @@ public class TauP_Curve extends TauP_Time {
                 float pixelWidth =  (72.0f*getMapWidth());
                 out.println("<text x=\""+(pixelWidth/2)+"\" y=\""+(10)+"\">"+title+"</text>");
                 out.println("<g transform=\"scale(1,-1) translate(0, -"+pixelWidth+")\">");
-                out.println("<g transform=\"scale("+(pixelWidth/180)+","+(pixelWidth/maxTime)+")\" >");
                 out.println("<g> <!-- scale bar -->");
-                out.println("<line x1=\"0\" y1=\"0\" x2=\"0\" y2=\""+maxTime+"\" />");
-                out.println("<line x1=\"0\" y1=\"0\" x2=\"180\" y2=\"0\" />");
+                out.println("<line x1=\"0\" y1=\"0\" x2=\"0\" y2=\""+pixelWidth+"\" />");
+                ArrayList<Double> yticks = PlotTicks.getTicks(0, maxTime,10);
+                for (double tick: yticks) {
+                    double tick_pixel = tick/maxTime*pixelWidth;
+                    out.println("<line x1=\"0\" y1=\""+tick_pixel+"\" x2=\"10\" y2=\""+tick_pixel+"\" />");
+                }
+                out.println("<line x1=\"0\" y1=\"0\" x2=\""+(pixelWidth)+"\" y2=\"0\" />");
+                ArrayList<Double> xticks = PlotTicks.getTicks(0, 180,9);
+                for (double tick: xticks) {
+                    double tick_pixel = tick/180*pixelWidth;
+                    out.println("<line x1=\""+tick_pixel+"\" y1=\"0\" x2=\""+tick_pixel+"\" y2=\"10\" />");
+                }
                 out.println("</g> <!-- scale bar -->");
+                out.println("<g transform=\"scale("+(pixelWidth/180)+","+(pixelWidth/maxTime)+")\" >");
             }
         }
         double minDist = 0;
