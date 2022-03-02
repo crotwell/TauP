@@ -69,15 +69,22 @@ public class TauP_Curve extends TauP_Time {
 
     protected TauP_Curve() {
         super();
-        setOutFileBase("taup_curve");
+        initFields();
     }
 
     public TauP_Curve(TauModel tMod) throws TauModelException {
         super(tMod);
+        initFields();
     }
 
     public TauP_Curve(String modelName) throws TauModelException {
         super(modelName);
+        initFields();
+    }
+
+    void initFields() {
+        setOutFileBase("taup_curve");
+        setOutputFormat(GMT);
     }
 
     @Override

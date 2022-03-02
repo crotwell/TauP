@@ -49,17 +49,22 @@ public class TauP_Path extends TauP_Pierce {
 
 	protected TauP_Path() {
 		super();
-        setOutFileBase("taup_path");
+		initFields();
 	}
 
 	public TauP_Path(TauModel tMod) throws TauModelException {
 		super(tMod);
-        setOutFileBase("taup_path");
+		initFields();
 	}
 
 	public TauP_Path(String modelName) throws TauModelException {
 		super(modelName);
-        setOutFileBase("taup_path");
+		initFields();
+	}
+
+	void initFields() {
+		setOutFileBase("taup_path");
+		setOutputFormat(GMT);
 	}
 
 	public TauP_Path(TauModel tMod, String outFileBase)
