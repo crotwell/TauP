@@ -81,7 +81,6 @@ public class PhaseDialog extends javax.swing.JDialog {
         closeButton = new javax.swing.JButton();
         closeButton.setText("Close");
         closeButton.setActionCommand("ClosePhaseDialog");
-        closeButton.setLabel("Close");
         closeButton.addActionListener(new java.awt.event.ActionListener() {
 
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -192,10 +191,5 @@ public class PhaseDialog extends javax.swing.JDialog {
                 }
             }
         }
-    }
-
-    public static void main(java.lang.String[] args) {
-        System.out.println(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
-        new PhaseDialog(new java.awt.Frame(), false).show();
     }
 }
