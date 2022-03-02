@@ -23,8 +23,6 @@ class IllegalPhasesTest {
 			"PedKP",
 			"PedcS",
 			"PmP^410P" });
-
-	String[] disabledPhases = {"S^xmS", "P^xmP"};
 	
 	String[] illegalPhases = { "null", "ScScS", "PDDDDD", "PKIKPKIKP", "PPPdiff", 
 			"PKIKIKP", "SIKS", "SKIS", "Pcv410S", "Pmv410P", "Pcv410P", "Pm^410P",
@@ -41,11 +39,6 @@ class IllegalPhasesTest {
 	@Test
 	void checkIllegalPhasesTest() throws TauModelException {
 		phasesShouldFail(illegalPhases);
-	}
-
-	@Test
-	void checkDisabledPhasesTest() throws TauModelException {
-		phasesShouldFail(disabledPhases);
 	}
 
 	void phasesShouldFail(String[] phaseList) throws TauModelException {

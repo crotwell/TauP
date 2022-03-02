@@ -1390,15 +1390,8 @@ public class SeismicPhase implements Serializable, Cloneable {
                             + " currLeg=" + currLeg + " nextLeg=" + nextLeg);
                 } else if(nextLeg.startsWith("^")) {
                     String depthString;
-                    if (currLeg.startsWith("^x")) {
-                        depthString = currLeg.substring(2);
-                        endAction = REFLECT_UNDERSIDE_CRITICAL;
-                        throw new TauModelException(getName()+" Phase not recognized (2): "
-                                + currLeg);
-                    } else {
-                        depthString = currLeg.substring(1);
-                        endAction = REFLECT_UNDERSIDE;
-                    }
+                    depthString = currLeg.substring(1);
+                    endAction = REFLECT_UNDERSIDE;
                     disconBranch = closestBranchToDepth(tMod, depthString);
                     if(currBranch >= disconBranch) {
                         addToBranch(tMod,
@@ -1512,15 +1505,8 @@ public class SeismicPhase implements Serializable, Cloneable {
                     }
                 } else if(nextLeg.startsWith("^")) {
                     String depthString;
-                    if (nextLeg.startsWith("^x")) {
-                        depthString = nextLeg.substring(2);
-                        endAction = REFLECT_UNDERSIDE_CRITICAL ;
-                        throw new TauModelException(getName()+" Phase not recognized (2): "
-                                + currLeg+" followed by "+nextLeg);
-                    } else {
-                        depthString = nextLeg.substring(1);
-                        endAction = REFLECT_UNDERSIDE;
-                    }
+                    depthString = nextLeg.substring(1);
+                    endAction = REFLECT_UNDERSIDE;
                     disconBranch = closestBranchToDepth(tMod, depthString);
                     if (disconBranch == tMod.getNumBranches()) {
                         maxRayParam = -1;
@@ -1999,15 +1985,8 @@ public class SeismicPhase implements Serializable, Cloneable {
                     }
                 } else if(nextLeg.startsWith("^")) {
                     String depthString;
-                    if (nextLeg.startsWith("^x")) {
-                        depthString = nextLeg.substring(2);
-                        endAction = REFLECT_UNDERSIDE_CRITICAL;
-                        throw new TauModelException(getName()+" Phase not recognized (2): "
-                                + currLeg+" followed by "+nextLeg);
-                    } else {
-                        depthString = nextLeg.substring(1);
-                        endAction = REFLECT_UNDERSIDE;
-                    }
+                    depthString = nextLeg.substring(1);
+                    endAction = REFLECT_UNDERSIDE;
                     disconBranch = closestBranchToDepth(tMod, depthString);
                     if (disconBranch < tMod.getCmbBranch()) {
                         throw new TauModelException(getName()+" Phase not recognized (5a): "
@@ -2124,15 +2103,8 @@ public class SeismicPhase implements Serializable, Cloneable {
                                 currLeg);
                 } else if(nextLeg.startsWith("^")) {
                     String depthString;
-                    if (nextLeg.startsWith("^x")) {
-                        depthString = nextLeg.substring(2);
-                        endAction = REFLECT_UNDERSIDE_CRITICAL;
-                        throw new TauModelException(getName()+" Phase not recognized (2): "
-                                + currLeg+" followed by "+nextLeg);
-                    } else {
-                        depthString = nextLeg.substring(1);
-                        endAction = REFLECT_UNDERSIDE;
-                    }
+                    depthString = nextLeg.substring(1);
+                    endAction = REFLECT_UNDERSIDE;
                     disconBranch = closestBranchToDepth(tMod, depthString);
                     if (disconBranch < tMod.getIocbBranch()) {
                         throw new TauModelException(getName()+" Phase not recognized (6a): "
@@ -2417,7 +2389,7 @@ public class SeismicPhase implements Serializable, Cloneable {
         double legDepth;
         int intLegDepth;
         int disconBranch;
-        Pattern reflectDepthPattern = Pattern.compile("[Vv^(^x)][0-9\\.]+");
+        Pattern reflectDepthPattern = Pattern.compile("[Vv^][0-9\\.]+");
 
         // only loop to size()-1 as last leg is always "END"
         for(int legNum = 0; legNum < legs.size() - 1; legNum++) {
@@ -2426,13 +2398,9 @@ public class SeismicPhase implements Serializable, Cloneable {
             // phase conversion or reflection depth
             Matcher m = reflectDepthPattern.matcher(currLeg);
             if(m.matches()) {
-                if(currLeg.startsWith("^x")) {
-                    puristName += currLeg.substring(0, 2);
-                    disconBranch = closestBranchToDepth(tMod, currLeg.substring(2));
-                } else {
-                    puristName += currLeg.substring(0, 1);
-                    disconBranch = closestBranchToDepth(tMod, currLeg.substring(1));
-                }
+                puristName += currLeg.substring(0, 1);
+                disconBranch = closestBranchToDepth(tMod, currLeg.substring(1));
+
                 if (disconBranch == tMod.getMohoBranch()) {
                     puristName += "m";
                 } else if (disconBranch == tMod.getCmbBranch()) {
