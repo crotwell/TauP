@@ -82,7 +82,7 @@ public class AK135Test  {
                 taup.calculate(timeDist.getDistDeg());
                 List<Arrival> arrivals = taup.getArrivals();
                 if (timeDist.getTime() > 0) {
-                assertTrue(arrivals.size() > 0);
+                assertTrue(arrivals.size() > 0, "got no arrivals for "+phase+" at deg="+timeDist.getDistDeg()+" depth="+taup.getSourceDepth());
                 // assume first?
                 assertEquals(timeDist.getTime(),
                              arrivals.get(0).getTime(),

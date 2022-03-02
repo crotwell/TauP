@@ -255,7 +255,7 @@ public class Format {
      */
     public static long atol(String s) {
         int i = 0;
-        while(i < s.length() && Character.isSpace(s.charAt(i)))
+        while(i < s.length() && Character.isWhitespace(s.charAt(i)))
             i++;
         if(i < s.length() && s.charAt(i) == '0') {
             if(i + 1 < s.length()
@@ -271,7 +271,7 @@ public class Format {
         int i = 0;
         int sign = 1;
         long r = 0;
-        while(i < s.length() && Character.isSpace(s.charAt(i)))
+        while(i < s.length() && Character.isWhitespace(s.charAt(i)))
             i++;
         if(i < s.length() && s.charAt(i) == '-') {
             sign = -1;
@@ -307,7 +307,7 @@ public class Format {
         double f = 0; // fractional part
         double p = 1; // exponent of fractional part
         int state = 0; // 0 = int part, 1 = frac part
-        while(i < s.length() && Character.isSpace(s.charAt(i)))
+        while(i < s.length() && Character.isWhitespace(s.charAt(i)))
             i++;
         if(i < s.length() && s.charAt(i) == '-') {
             sign = -1;

@@ -12,6 +12,9 @@ import java.io.PrintWriter;
 import java.io.Reader;
 import java.util.Properties;
 
+/**
+ * Base class for tools within the TauP Toolkit.
+ */
 public abstract class TauP_Tool {
 
 
@@ -24,6 +27,10 @@ public abstract class TauP_Tool {
     public String outputFormat = TEXT;
 
     protected String outFileBase = "";
+
+    public static final String GMT = "gmt";
+
+    public static final String SVG = "svg";
 
     public static final String JSON = "json";
 

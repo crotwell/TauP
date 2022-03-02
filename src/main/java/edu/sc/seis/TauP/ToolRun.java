@@ -83,7 +83,7 @@ public class ToolRun {
             if (toolToRun.contentEquals(GUI)) {
                 TauP_GUI t = new TauP_GUI();
                 t.setQuitExits(true);
-                t.show();
+                t.setVisible(true);
                 return;
             } else if (toolToRun.contentEquals(CREATE)) {
 				tool = new TauP_Create();

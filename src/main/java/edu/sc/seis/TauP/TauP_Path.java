@@ -46,22 +46,25 @@ public class TauP_Path extends TauP_Pierce {
 	protected float maxPathTime = Float.MAX_VALUE;
 	
 	protected static double maxPathInc = 1.0;
-	
-	public static final String SVG = "svg";
 
 	protected TauP_Path() {
 		super();
-        setOutFileBase("taup_path");
+		initFields();
 	}
 
 	public TauP_Path(TauModel tMod) throws TauModelException {
 		super(tMod);
-        setOutFileBase("taup_path");
+		initFields();
 	}
 
 	public TauP_Path(String modelName) throws TauModelException {
 		super(modelName);
-        setOutFileBase("taup_path");
+		initFields();
+	}
+
+	void initFields() {
+		setOutFileBase("taup_path");
+		setOutputFormat(GMT);
 	}
 
 	public TauP_Path(TauModel tMod, String outFileBase)
@@ -433,10 +436,7 @@ public class TauP_Path extends TauP_Pierce {
             } else {
                 alignBaseline = "baseline";
             }
-            
-            out.write(Outputs.formatDistance(x)
-                      + "  "
-                      + Outputs.formatDistance(y));
+
             out.println("  <text dominant-baseline=\""+alignBaseline+"\" text-anchor=\""+anchor+"\" class=\"label\" x=\""+Outputs.formatDistance(x).trim()+"\" y=\""+Outputs.formatDistance(y).trim()+"\">"+i+"</text>");
      
         }
@@ -495,7 +495,7 @@ public class TauP_Path extends TauP_Pierce {
 			if (dashEquals("gmt", leftOverArgs[i])) {
 				gmtScript = true;
 			} else if (dashEquals("svg", leftOverArgs[i])) {
-	                outputFormat = SVG;
+				outputFormat = SVG;
             } else if((dashEquals("mapwidth", leftOverArgs[i])) && i < leftOverArgs.length - 1) {
                 setMapWidth(Float.parseFloat(leftOverArgs[i + 1]));
                 i++;

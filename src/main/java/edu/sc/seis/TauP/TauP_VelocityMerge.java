@@ -8,6 +8,9 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 
+/**
+ * Replaces part of a velocity model with layers from another.
+ */
 public class TauP_VelocityMerge extends TauP_Tool {
 
     public TauP_VelocityMerge() {

@@ -13,10 +13,20 @@ import org.junit.jupiter.api.Test;
 
 class IllegalPhasesTest {
 
-	List<String> otherLegalPhases = Arrays.asList(new String[] { "PmPv410P", "ScSScSScSScS", "PedKP", "PedcS", "PmP^410P" });
+	List<String> otherLegalPhases = Arrays.asList(new String[] {
+			"SKviKS",
+			"SKviKKviKS",
+			"SK^cKS",
+			"SK^cK^cKS",
+			"PmPv410P",
+			"ScSScSScSScS",
+			"PedKP",
+			"PedcS",
+			"PmP^410P" });
 	
 	String[] illegalPhases = { "null", "ScScS", "PDDDDD", "PKIKPKIKP", "PPPdiff", 
-			"PKIKIKP", "SIKS", "SKIS", "Pcv410S", "Pmv410P", "Pcv410P", "Pm^410P" };
+			"PKIKIKP", "SIKS", "SKIS", "Pcv410S", "Pmv410P", "Pcv410P", "Pm^410P",
+			"SKviKviKS","SK^iKS","SK^mKS", "S^S", "SVS" };
 	
 	// phases that are kind of wrong, but are handled by simply no arrivals, eg no ray params actually work,
 	// rather than being so bad as to cause an exception
@@ -28,11 +38,15 @@ class IllegalPhasesTest {
 
 	@Test
 	void checkIllegalPhasesTest() throws TauModelException {
+		phasesShouldFail(illegalPhases);
+	}
+
+	void phasesShouldFail(String[] phaseList) throws TauModelException {
 		boolean DEBUG = true;
 		String modelName = "iasp91";
 		TauModel tMod = TauModelLoader.load(modelName);
 		float receiverDepth = 100;
-		for (String phaseName : illegalPhases) {
+		for (String phaseName : phaseList) {
 			Exception exception = assertThrows(TauModelException.class, () -> {
 				SeismicPhase phase = new SeismicPhase(phaseName, tMod, receiverDepth, DEBUG);
 		    }, phaseName+" shouldn't pass validation.");

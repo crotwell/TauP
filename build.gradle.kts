@@ -1,24 +1,26 @@
-import java.util.Date;
+import java.util.Date
 import org.gradle.crypto.checksum.Checksum
 
 plugins {
-  id("edu.sc.seis.version-class") version "1.2.1"
-  id("org.gradle.crypto.checksum") version "1.2.0"
-  "java"
+  id("edu.sc.seis.version-class") version "1.2.2"
+  id("org.gradle.crypto.checksum") version "1.4.0"
+  `java-library`
+    `java-library-distribution`
   eclipse
-  "project-report"
+  `project-report`
   `maven-publish`
   signing
   application
+  id("com.github.ben-manes.versions") version "0.42.0"
 }
 
 application {
-  mainClass.set("edu.sc.seis.TauP.TauP")
+  mainClass.set("edu.sc.seis.TauP.ToolRun")
   applicationName = "taup"
 }
 
 group = "edu.sc.seis"
-version = "2.5.1"
+version = "2.6.0"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
@@ -26,19 +28,20 @@ java {
     withJavadocJar()
     withSourcesJar()
 }
+tasks.withType<JavaCompile>().configureEach { options.compilerArgs.addAll(arrayOf("-Xlint:deprecation")) }
 
 dependencies {
-    implementation("edu.sc.seis:seisFile:2.0.0") {
+    implementation("edu.sc.seis:seisFile:2.0.4") {
       // we need seisFile for sac output, but not all the other functionality
       exclude(group = "info.picocli", module = "picocli")
       exclude(group = "com.fasterxml.woodstox", module = "woodstox-core")
       exclude(group = "org.apache.httpcomponents", module = "httpclient")
     }
-    runtimeOnly( "org.slf4j:slf4j-log4j12:1.7.30")
+    runtimeOnly( "org.slf4j:slf4j-reload4j:1.7.35")
 
     // Use JUnit Jupiter API for testing.
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.0")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:5.7.0")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:5.8.2")
 
     // Use JUnit Jupiter Engine for testing.
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
@@ -81,9 +84,12 @@ val binDistFiles: CopySpec = copySpec {
     from(configurations.runtimeClasspath) {
         into("lib")
     }
+    /*
+    // don't think this is needed...
     from(configurations.runtimeClasspath.get().allArtifacts.files) {
         into("lib")
     }
+     */
 }
 
 val distFiles: CopySpec = copySpec {
@@ -130,7 +136,7 @@ val distFiles: CopySpec = copySpec {
 
 tasks.register<Sync>("explodeBin") {
   dependsOn("jar")
-  dependsOn("createRunScripts")
+  dependsOn("startScripts")
   dependsOn("genModels")
     with( binDistFiles)
   into( file("$buildDir/explode"))
@@ -173,6 +179,7 @@ tasks.register<Checksum>("checksumDist") {
   dependsOn("tarBin")
   dependsOn("tarDist")
   dependsOn("zipDist")
+  dependsOn("distZip")
   files = tasks.getByName("tarBin").outputs.files + tasks.getByName("tarDist").outputs.files + tasks.getByName("zipDist").outputs.files
   outputDir=File(project.buildDir, "distributions")
   algorithm = Checksum.Algorithm.SHA256
@@ -247,7 +254,8 @@ tasks.named("startScripts") {
 }
 
 val scriptNames = mapOf(
-    "taup" to "edu.sc.seis.TauP.ToolRun",
+// taup is created via startScripts as default for assemble plugin
+//    "taup" to "edu.sc.seis.TauP.ToolRun",
     "taup_time" to "edu.sc.seis.TauP.TauP_Time",
     "taup_pierce" to "edu.sc.seis.TauP.TauP_Pierce",
     "taup_path" to "edu.sc.seis.TauP.TauP_Path",
@@ -256,12 +264,11 @@ val scriptNames = mapOf(
     "taup_setsac" to "edu.sc.seis.TauP.TauP_SetSac",
     "taup_wavefront" to "edu.sc.seis.TauP.TauP_Wavefront",
     "taup_table" to "edu.sc.seis.TauP.TauP_Table"
-    //"taup" to  "edu.sc.seis.TauP.TauP"
 )
 for (key in scriptNames.keys) {
   tasks.register<CreateStartScripts>(key) {
     outputDir = file("build/scripts")
-    mainClassName = scriptNames[key]
+    getMainClass().set(scriptNames[key])
     applicationName = key
     classpath = sourceSets["main"].runtimeClasspath + project.tasks[JavaPlugin.JAR_TASK_NAME].outputs.files
   }
@@ -274,7 +281,7 @@ for (key in scriptNames.keys) {
 tasks.register<JavaExec>("genModels") {
   description = "generate TauP default model files"
   classpath = sourceSets.getByName("main").runtimeClasspath
-  main = "edu.sc.seis.TauP.StdModelGenerator"
+    getMainClass().set("edu.sc.seis.TauP.StdModelGenerator")
 
   val generatedSrcDir = File(project.buildDir, "generated-src/StdModels")
   val resourceDir =  File(generatedSrcDir, "/resources")
@@ -297,7 +304,7 @@ tasks.register<JavaExec>("genModels") {
 tasks.register<JavaExec>("genCmdLineTestFiles") {
     description = "generate TauP cmd line test output files"
     classpath = sourceSets.getByName("test").runtimeClasspath
-    main = "edu.sc.seis.TauP.CmdLineOutputTest"
+    getMainClass().set("edu.sc.seis.TauP.CmdLineOutputTest")
     dependsOn += tasks.getByName("testClasses")
     outputs.files(fileTree("cmdLineTest"))
 }
@@ -307,10 +314,15 @@ tasks.register<Sync>("copyCmdLineTestFiles") {
   dependsOn("genCmdLineTestFiles")
 }
 
+tasks.get("assemble").dependsOn(tasks.get("dependencyUpdates"))
+
+// note can pass password for signing in with -Psigning.password=secret
 tasks.get("assemble").dependsOn(tasks.get("signTarBin"))
 tasks.get("assemble").dependsOn(tasks.get("signTarDist"))
 tasks.get("assemble").dependsOn(tasks.get("signZipDist"))
-tasks.get("assemble").dependsOn(tasks.get("checksumDist"))
+tasks.get("signTarBin").dependsOn(tasks.get("checksumDist"))
+tasks.get("signTarDist").dependsOn(tasks.get("checksumDist"))
+tasks.get("signZipDist").dependsOn(tasks.get("checksumDist"))
 
 val generatedSrcDir = file("$buildDir/generated-src/StdModels")
 val resourceDir =  File(generatedSrcDir, "/resources")
@@ -328,4 +340,13 @@ tasks.get("processStdmodelsResources").dependsOn("genModels")
 tasks.jar {
     dependsOn("processStdmodelsResources")
     from(sourceSets["stdmodels"].output)
+}
+
+// this is really dumb, but gradle wants something....
+gradle.taskGraph.whenReady {
+    allTasks
+        .filter { it.hasProperty("duplicatesStrategy") } // Because it's some weird decorated wrapper that I can't cast.
+        .forEach {
+            it.setProperty("duplicatesStrategy", "EXCLUDE")
+        }
 }

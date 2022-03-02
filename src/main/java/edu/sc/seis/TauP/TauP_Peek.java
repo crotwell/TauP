@@ -250,7 +250,7 @@ public class TauP_Peek {
                             break;
                         case 'p':
                         case 'P':
-                            List<Arrival> arr = sp.calcPierce(tokenIn.nval);
+                            List<Arrival> arr = sp.calcTime(tokenIn.nval);
                             System.out.println("MaxRayParamIndex="
                                     + sp.getMaxRayParamIndex()
                                     + " MinRayParamIndex="

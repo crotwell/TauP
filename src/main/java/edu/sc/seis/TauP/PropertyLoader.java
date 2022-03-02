@@ -174,7 +174,7 @@ public class PropertyLoader {
     public static void save(Properties props, String filename)
             throws IOException {
         FileOutputStream propFile = new FileOutputStream(filename);
-        props.save(propFile, "---Properties for the TauP toolkit---");
+        props.store(propFile, "---Properties for the TauP toolkit---");
         propFile.close();
     }
 

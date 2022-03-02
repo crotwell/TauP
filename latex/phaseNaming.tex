@@ -41,6 +41,7 @@ the depth to an interface involved in an interaction.
 \texttt{S} & shear wave, upgoing or downgoing, in the crust or mantle \\
 \texttt{s} & strictly upgoing S wave in the crust or mantle \\
 \texttt{K} & compressional wave in the outer core \\
+\texttt{k} & strictly upgoing compressional wave in the outer core \\
 \texttt{I} & compressional wave in the inner core \\
 \texttt{J} & shear wave in the inner core \\
 \end{tabular}
@@ -57,6 +58,7 @@ the depth to an interface involved in an interaction.
 \texttt{i} & topside reflection off the inner core outer core boundary \\
 \texttt{\^\,} & underside reflection, used primarily for crustal and mantle interfaces \\
 \texttt{v} & topside reflection, used primarily for crustal and mantle interfaces \\
+\texttt{V} & critical topside reflection, used primarily for crustal and mantle interfaces \\
 \texttt{diff} & appended to P or S to represent a diffracted wave along the core mantle boundary \\
 \texttt{kmps} & appended to a velocity to represent a horizontal phase velocity (see
 \ref{kmps} below)\\
@@ -65,7 +67,7 @@ the depth to an interface involved in an interaction.
 \end{tabular}
 %\end{center}
 
-\item \label{Ped} The characters \texttt{p} and \texttt{s} \textbf{always} represent
+\item \label{Ped} The characters \texttt{p}, \texttt{s} and \texttt{k} \textbf{always} represent
 up-going legs.
 An example is the source to surface leg of the phase \texttt{pP}
 from a source at depth.
@@ -79,7 +81,8 @@ However, \texttt{P} may
 represent a upgoing leg in certain cases.
 For instance, \texttt{PcP} is
 allowed since the direction of the phase is unambiguously determined by the symbol
-\texttt{c}, but would be named \texttt{Pcp} by a purist using our nomenclature.
+\texttt{c}, but would be named \texttt{Pcp} by a purist using our nomenclature. The phase
+\texttt{k} is similar to \texttt{p} but is an upgoing compressional wave in the outer core.
 
 With the ability to have sources at depth, there is a need to specify the difference between a wave that is
 exclusively downgoing to the receiver from one that turns and is upgoing at the receiver. The suffix \texttt{ed}
@@ -147,11 +150,17 @@ limit arrivals to just those that turn deeper than a discontinuity (thus avoidin
 travel time curve triplications), even though they have no real interaction with it.
 
 \item \label{carrotv}
-The characters \texttt{\^\,} and \texttt{v} are new symbols introduced here to
+The characters \texttt{\^\,}, \texttt{v} and \texttt{V} are new symbols introduced here to
 represent bottom-side and top-side reflections, respectively.
 They are followed by a number to
 represent the approximate depth of the reflection or
 a letter for standard discontinuities, \texttt{m}, \texttt{c} or \texttt{i}.
+The lower-case \texttt{v} represents a generic reflection while \texttt{V} is
+a critical reflection. Note however, that  \texttt{V} is critical in the sense of
+without phase conversion. In other words, \texttt{PVmp} is critical for ray parameters
+where a P wave cannot propagate into the mantle, regardless of whether
+or not S can propagate. A critical reflection phase using \texttt{V} is always
+a subset of the non-critical reflection using \texttt{v}.
 Reflections from discontinuities besides the
 core-mantle boundary, \texttt{c};
 or inner-core outer-core boundary, \texttt{i}, must use the \texttt{\^\,}
@@ -168,6 +177,8 @@ be specified with the \texttt{\^\,} notation.
 For example, \texttt{P\^\,410P} and
 \texttt{P\^\,mP} would both be underside
 reflections from the 410km discontinuity and the Moho, respectively.
+Because of the difficultly of creating interfaces where critical underside reflections
+can occur in earth-like models, we have not added this capability.
 
 The phase \texttt{PmP}, the traditional name for a top-side reflection from the Moho
 discontinuity, must change names under our new convention.

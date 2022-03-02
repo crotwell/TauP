@@ -40,6 +40,10 @@ public class TauModelException extends TauPException {
         super("TauModel Exception: " + message);
     }
 
+    public TauModelException(Exception t) {
+        super( t);
+    }
+
     public TauModelException(String message, Exception t) {
         super("TauModel Exception: " + message, t);
     }
