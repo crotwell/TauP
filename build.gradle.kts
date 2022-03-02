@@ -20,7 +20,7 @@ application {
 }
 
 group = "edu.sc.seis"
-version = "2.6.0-SNAPSHOT"
+version = "2.6.0"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
@@ -320,7 +320,9 @@ tasks.get("assemble").dependsOn(tasks.get("dependencyUpdates"))
 tasks.get("assemble").dependsOn(tasks.get("signTarBin"))
 tasks.get("assemble").dependsOn(tasks.get("signTarDist"))
 tasks.get("assemble").dependsOn(tasks.get("signZipDist"))
-tasks.get("assemble").dependsOn(tasks.get("checksumDist"))
+tasks.get("signTarBin").dependsOn(tasks.get("checksumDist"))
+tasks.get("signTarDist").dependsOn(tasks.get("checksumDist"))
+tasks.get("signZipDist").dependsOn(tasks.get("checksumDist"))
 
 val generatedSrcDir = file("$buildDir/generated-src/StdModels")
 val resourceDir =  File(generatedSrcDir, "/resources")
