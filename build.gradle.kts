@@ -179,6 +179,7 @@ tasks.register<Checksum>("checksumDist") {
   dependsOn("tarBin")
   dependsOn("tarDist")
   dependsOn("zipDist")
+  dependsOn("distZip")
   files = tasks.getByName("tarBin").outputs.files + tasks.getByName("tarDist").outputs.files + tasks.getByName("zipDist").outputs.files
   outputDir=File(project.buildDir, "distributions")
   algorithm = Checksum.Algorithm.SHA256
