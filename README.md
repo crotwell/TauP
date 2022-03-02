@@ -5,7 +5,7 @@
                            The TauP Toolkit
 
             Flexible Seismic Travel-Time and Raypath Utilities
-                              Version 2.5
+                              Version 2.6
                       http://www.seis.sc.edu/taup/
 
 The TauP Toolkit is a seismic travel time calculator. In addition to travel
@@ -55,7 +55,7 @@ sudo snap install taup --channel=--channel=latest/edge
 ## Manually
 
 Download tarball here:
-https://www.seis.sc.edu/downloads/TauP/TauP-2.5.0.tgz
+https://www.seis.sc.edu/downloads/TauP/TauP-2.6.0.tgz
 or from the releases section on Github
 https://github.com/crotwell/TauP/releases
 
