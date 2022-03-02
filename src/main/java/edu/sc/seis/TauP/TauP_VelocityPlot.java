@@ -2,6 +2,9 @@ package edu.sc.seis.TauP;
 
 import java.io.IOException;
 
+/**
+ * Creates plots of a velocity model.
+ */
 public class TauP_VelocityPlot extends TauP_Tool {
 
     public static final String DEFAULT_OUTFILE = "taup_velocitymodel";

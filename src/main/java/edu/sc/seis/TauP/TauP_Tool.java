@@ -12,6 +12,9 @@ import java.io.PrintWriter;
 import java.io.Reader;
 import java.util.Properties;
 
+/**
+ * Base class for tools within the TauP Toolkit.
+ */
 public abstract class TauP_Tool {
 
 
