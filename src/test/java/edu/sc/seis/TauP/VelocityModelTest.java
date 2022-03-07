@@ -104,4 +104,18 @@ public class VelocityModelTest {
         assertEquals( 5154.9, vMod.getIocbDepth(), 0.00000001, modelName+"iocb");
         
     }
+
+    @Test
+    public void testMergeMyCrust() throws IOException, VelocityModelException, TauModelException {
+        boolean smoothTop = false;
+        boolean smoothBot = true;
+        String crustModelName = "mycrust.nd";
+        VelocityModel crustVMod = loadTestVelMod(crustModelName);
+        TauModel tMod = TauModelLoader.load("ak135");
+        SlownessModel sMod = tMod.getSlownessModel();
+        VelocityModel baseVMod = sMod.getVelocityModel();
+        VelocityModel outVMod = baseVMod.replaceLayers(crustVMod.getLayers(), crustModelName, smoothTop, smoothBot);
+
+        assertEquals( 39, outVMod.getMohoDepth(), 0.00000001, crustModelName+" moho ");
+    }
 }

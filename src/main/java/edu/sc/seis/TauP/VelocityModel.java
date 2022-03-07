@@ -1297,7 +1297,7 @@ public class VelocityModel implements Cloneable, Serializable {
      * resets depths of major discontinuities to match those existing in the
      * input velocity model. The initial values are set such that if there is no
      * discontinuity within the top 65 km then the moho is set to 0.0.
-     * Similarly, if there are no discontinuities at al then the cmb is set to
+     * Similarly, if there are no discontinuities at all then the cmb is set to
      * the radius of the earth. Similarly for the iocb, except it must be a
      * fluid to solid boundary and deeper than 100km to avoid problems with
      * shallower fluid layers, eg oceans.
@@ -1317,7 +1317,7 @@ public class VelocityModel implements Cloneable, Serializable {
             if(aboveLayer.getBotPVelocity() != belowLayer.getTopPVelocity()
                     || aboveLayer.getBotSVelocity() != belowLayer.getTopSVelocity()) {
                 // a discontinuity
-                if( Math.abs(mohoDepth - aboveLayer.getBotDepth()) < mohoMin) {
+                if( Math.abs(tempMohoDepth - aboveLayer.getBotDepth()) < mohoMin) {
                     tempMohoDepth = aboveLayer.getBotDepth();
                     mohoMin = Math.abs(mohoDepth - aboveLayer.getBotDepth());
                 }
