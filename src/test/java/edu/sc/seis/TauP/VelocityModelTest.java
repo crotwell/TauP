@@ -117,5 +117,7 @@ public class VelocityModelTest {
         VelocityModel outVMod = baseVMod.replaceLayers(crustVMod.getLayers(), crustModelName, smoothTop, smoothBot);
 
         assertEquals( 39, outVMod.getMohoDepth(), 0.00000001, crustModelName+" moho ");
+        assertEquals( baseVMod.getCmbDepth(), outVMod.getCmbDepth(), 0.00000001, crustModelName+" cmb ");
+        assertEquals( baseVMod.getIocbDepth(), outVMod.getIocbDepth(), 0.00000001, crustModelName+" iocb ");
     }
 }

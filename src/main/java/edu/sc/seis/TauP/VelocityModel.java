@@ -538,7 +538,27 @@ public class VelocityModel implements Cloneable, Serializable {
                 outLayers.add(getVelocityLayer(i).cloneRenumber(numAdded++));
             }
             // now should have velocity layers with breaks matching top and bottom of new layers
-            
+
+            VelocityLayer lastOverlayLayer = newLayers[newLayers.length-1];
+            if (lastOverlayLayer.getTopDepth()==lastOverlayLayer.getBotDepth()) {
+                // bottom is halfspace layer, expand to use bot vel from existing layer
+                for(VelocityLayer vlay : outLayers) {
+                    if (vlay.getTopDepth()==lastOverlayLayer.getBotDepth()) {
+                        lastOverlayLayer.setTopPVelocity(lastOverlayLayer.getBotPVelocity());
+                        lastOverlayLayer.setTopSVelocity(lastOverlayLayer.getBotSVelocity());
+                        lastOverlayLayer.setTopDensity(lastOverlayLayer.getBotDensity());
+                        lastOverlayLayer.setTopDepth(lastOverlayLayer.getBotDepth());
+                        lastOverlayLayer.setBotPVelocity(vlay.getBotPVelocity());
+                        lastOverlayLayer.setBotSVelocity(vlay.getBotSVelocity());
+                        lastOverlayLayer.setBotDensity(vlay.getBotDensity());
+                        lastOverlayLayer.setBotDepth(vlay.getBotDepth());
+                        break;
+                    }
+                    if (vlay.getBotDepth()>lastOverlayLayer.getBotDepth()) {
+                        throw new VelocityModelException("Passed the half space: "+lastOverlayLayer);
+                    }
+                }
+            }
             
             List<VelocityLayer> replaceoutLayers = new ArrayList<VelocityLayer>();
             numAdded = 0;
@@ -999,6 +1019,7 @@ public class VelocityModel implements Cloneable, Serializable {
         } else {
             tokenIn.nextToken();
         }
+        VelocityLayer lastZeroThickLayer = null;
         List<VelocityLayer> layers = new ArrayList<VelocityLayer>();
         while(tokenIn.ttype != StreamTokenizer.TT_EOF) {
             // Loop until we hit the end of file
@@ -1045,7 +1066,18 @@ public class VelocityModel implements Cloneable, Serializable {
                  */
                 layers.add(tempLayer);
                 myLayerNumber++;
+                lastZeroThickLayer = null;
+            } else {
+                lastZeroThickLayer = tempLayer;
             }
+        }
+        if (lastZeroThickLayer != null) {
+            // last layer was zero thickness, add to model in case it is halfspace in partial model
+            // set top vel to be same as bottom
+            lastZeroThickLayer.setTopPVelocity(lastZeroThickLayer.getBotPVelocity());
+            lastZeroThickLayer.setTopSVelocity(lastZeroThickLayer.getBotSVelocity());
+            lastZeroThickLayer.setTopDensity(lastZeroThickLayer.getBotDensity());
+            layers.add(lastZeroThickLayer);
         }
         double radiusOfEarth = topDepth;
         double maxRadius = topDepth; // I assume that this is a whole earth
@@ -1134,6 +1166,7 @@ public class VelocityModel implements Cloneable, Serializable {
          */
         int myLayerNumber = 0;
         VelocityLayer tempLayer;
+        VelocityLayer lastZeroThickLayer = null;
         double topDepth, topPVel, topSVel, topDensity = 2.6, topQp = 1000, topQs = 2000;
         double botDepth, botPVel, botSVel, botDensity = topDensity, botQp = topQp, botQs = topQs;
 
@@ -1272,7 +1305,18 @@ public class VelocityModel implements Cloneable, Serializable {
                  */
                 layers.add(tempLayer);
                 myLayerNumber++;
+                lastZeroThickLayer = null;
+            } else {
+                lastZeroThickLayer = tempLayer;
             }
+        }
+        if (lastZeroThickLayer != null) {
+            // last layer was zero thickness, add to model in case it is halfspace in partial model
+            // set top vel to be same as bottom
+            lastZeroThickLayer.setTopPVelocity(lastZeroThickLayer.getBotPVelocity());
+            lastZeroThickLayer.setTopSVelocity(lastZeroThickLayer.getBotSVelocity());
+            lastZeroThickLayer.setTopDensity(lastZeroThickLayer.getBotDensity());
+            layers.add(lastZeroThickLayer);
         }
         double radiusOfEarth = topDepth;
         double maxRadius = topDepth; // I assume that this is a whole earth
@@ -1305,6 +1349,7 @@ public class VelocityModel implements Cloneable, Serializable {
     public boolean fixDisconDepths() {
         boolean changeMade = false;
         VelocityLayer aboveLayer, belowLayer;
+        double maxCrustVp = 7.5;
         double mohoMin = 65.0, cmbMin = radiusOfEarth, iocbMin = radiusOfEarth - 100.0;
         double tempMohoDepth = 0.0, tempCmbDepth = radiusOfEarth, tempIocbDepth = radiusOfEarth;
         // fake layer above surface
@@ -1317,9 +1362,8 @@ public class VelocityModel implements Cloneable, Serializable {
             if(aboveLayer.getBotPVelocity() != belowLayer.getTopPVelocity()
                     || aboveLayer.getBotSVelocity() != belowLayer.getTopSVelocity()) {
                 // a discontinuity
-                if( Math.abs(tempMohoDepth - aboveLayer.getBotDepth()) < mohoMin) {
+                if( aboveLayer.getBotDepth() < mohoMin && aboveLayer.getBotPVelocity() <= maxCrustVp) {
                     tempMohoDepth = aboveLayer.getBotDepth();
-                    mohoMin = Math.abs(mohoDepth - aboveLayer.getBotDepth());
                 }
                 // don't set cmb to be same as moho, unless fixed
                 if( aboveLayer.getBotDepth() > tempMohoDepth && Math.abs(cmbDepth - aboveLayer.getBotDepth()) < cmbMin) {
