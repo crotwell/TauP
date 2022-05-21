@@ -93,6 +93,8 @@ public class TauP_Time extends TauP_Tool {
     
     protected double takeoffAngle = Double.MAX_VALUE;
 
+    protected double shootRayp = Double.MAX_VALUE;
+
     protected double stationLat = Double.MAX_VALUE;
 
     protected double stationLon = Double.MAX_VALUE;
@@ -580,6 +582,9 @@ public class TauP_Time extends TauP_Tool {
                 } else if(dashEquals("takeoff", args[i])) {
                     takeoffAngle = Double.valueOf(args[i + 1]).doubleValue();
                     i++;
+                } else if(dashEquals("shootray", args[i])) {
+                    shootRayp = Double.valueOf(args[i + 1]).doubleValue();
+                    i++;
                 } else if(dashEquals("rel", args[i])) {
                     relativePhaseName = args[i + 1];
                     i++;
@@ -702,13 +707,44 @@ public class TauP_Time extends TauP_Tool {
                 double rayParam = phase.calcRayParamForTakeoffAngle(takeoffAngle);
                 Arrival phaseArrival;
                 try {
-                    phaseArrival = phase.shootRay(rayParam);
-                    arrivals.add(phaseArrival);
+                    if (phase.getMinRayParam() <= rayParam && rayParam <= phase.getMaxRayParam()) {
+                        phaseArrival = phase.shootRay(rayParam);
+                        arrivals.add(phaseArrival);
+                    }
                 } catch(NoSuchLayerException e) {
                     Alert.warning("NoSuchLayerException", e.getMessage());
                 } catch(SlownessModelException e) {
                     Alert.warning("SlownessModelException", e.getMessage());
                 }
+            }
+        }
+        sortArrivals();
+    }
+
+    /**
+     * Shoots ray parameter for each phases from the source.
+     * @param rayParam ray parameter in s/radian
+     * @throws TauModelException
+     */
+    public void shootRayParameter(double rayParam) throws TauModelException {
+        stationLat = Double.MAX_VALUE;
+        stationLon = Double.MAX_VALUE;
+        depthCorrect(getSourceDepth(), getReceiverDepth());
+        clearArrivals();
+        SeismicPhase phase;
+        List<SeismicPhase> phaseList = getSeismicPhases();
+        for(int phaseNum = 0; phaseNum < phaseList.size(); phaseNum++) {
+            phase = phaseList.get(phaseNum);
+            Arrival phaseArrival;
+            try {
+                if (phase.getMinRayParam() <= rayParam && rayParam <= phase.getMaxRayParam()) {
+                    phaseArrival = phase.shootRay(rayParam);
+                    arrivals.add(phaseArrival);
+                }
+            } catch (NoSuchLayerException e) {
+                Alert.warning("NoSuchLayerException", e.getMessage());
+            } catch (SlownessModelException e) {
+                Alert.warning("SlownessModelException", e.getMessage());
             }
         }
         sortArrivals();
@@ -1015,13 +1051,16 @@ public class TauP_Time extends TauP_Tool {
     }
 
     public void start() throws IOException, TauModelException, TauPException {
-        if((degrees != Double.MAX_VALUE || takeoffAngle != Double.MAX_VALUE 
+        if((degrees != Double.MAX_VALUE || takeoffAngle != Double.MAX_VALUE
+                || shootRayp != Double.MAX_VALUE
                 || (stationLat != Double.MAX_VALUE
                 && stationLon != Double.MAX_VALUE
                 && eventLat != Double.MAX_VALUE && eventLon != Double.MAX_VALUE))) {
             /* enough info given on cmd line, so just do one calc. */
             if (takeoffAngle != Double.MAX_VALUE) {
                 calcTakeoff(takeoffAngle);
+            } else if (shootRayp != Double.MAX_VALUE) {
+                shootRayParameter(shootRayp/SphericalCoords.dtor);
             } else {
                 if(degrees == Double.MAX_VALUE) {
                     degrees = SphericalCoords.distance(stationLat,
@@ -1385,6 +1424,23 @@ public class TauP_Time extends TauP_Tool {
                         }
                         readMode = 'd';
                         break;
+                    case 'z':
+                        System.out.print("Enter ray parameter (s/deg): ");
+                        // takeoff angle
+                        double shootRayp;
+                        tokenIn.nextToken();
+                        if(tokenIn.ttype == StreamTokenizer.TT_NUMBER) {
+                            shootRayp = tokenIn.nval;
+                            shootRayParameter(shootRayp/SphericalCoords.dtor);
+                            printResult(getWriter());
+                        } else {
+                            Alert.warning("Expected a number.", "got "
+                                    + tokenIn + " instead.");
+                            printHelp();
+                            break;
+                        }
+                        readMode = 'd';
+                        break;
                     case 'q':
                         return;
                 }
@@ -1421,7 +1477,13 @@ public class TauP_Time extends TauP_Tool {
                 + "or by giving the station and event latitude and lonitude,\n"
                 + "                      assumes a spherical earth,\n\n"
                 + "-sta[tion] lat lon -- sets the station latitude and longitude\n"
-                + "-evt       lat lon -- sets the event latitude and longitude\n\n");
+                + "-evt       lat lon -- sets the event latitude and longitude\n\n"
+                + "or by giving the takeoff angle,\n"
+                + "--takeoff angle    -- takeoff angle from the source\n"
+                + "                      zero is down, 90 horizontal, 180 is up\n\n"
+                + "or by giving the ray parameter,\n"
+                + "--shootray param   -- ray parameter from the source in s/deg\n"
+                + "                      up or down is determined by the phase\n\n");
     }
 
     public void printUsage() {
