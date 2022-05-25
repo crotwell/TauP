@@ -66,6 +66,13 @@ public class TauP_Wavefront extends TauP_Path {
         result = calcIsochron();
     }
 
+    /** Prints the command line arguments common to all TauP tools. */
+    @Override
+    public void printStdUsage() {
+        printStdUsageHead();
+        printPhaseUsage();
+    }
+
     @Override
     public void printUsage() {
         printStdUsage();

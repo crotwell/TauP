@@ -1464,13 +1464,22 @@ public class TauP_Time extends TauP_Tool {
     /** Prints the command line arguments common to all TauP tools. */
     public void printStdUsage() {
         printStdUsageHead();
+        printPhaseUsage();
+        printDistanceUsage();
+    }
+
+    public void printPhaseUsage() {
         Alert.info("-ph phase list     -- comma separated phase list\n"
                 + "-pf phasefile      -- file containing phases\n\n"
                 + "-mod[el] modelname -- use velocity model \"modelname\" for calculations\n"
                 + "                      Default is iasp91.\n\n"
                 + "-h depth           -- source depth in km\n\n"
-                + "--stadepth depth   -- receiver depth in km\n\n"
-                + "Distance is given by:\n\n"
+                + "--stadepth depth   -- receiver depth in km\n"
+        );
+    }
+
+    public void printDistanceUsage() {
+        Alert.info("Distance is given by:\n\n"
                 + "-deg degrees       -- distance in degrees,\n"
                 + "-km kilometers     -- distance in kilometers,\n"
                 + "                      assumes radius of earth is 6371km,\n\n"
