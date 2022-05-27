@@ -896,17 +896,26 @@ public class SeismicPhase implements Serializable, Cloneable {
             minRayParam = Math.max(minRayParam, tMod.getTauBranch(endBranch,
                     isPWave)
                     .getMinTurnRayParam());
-            // careful if the ray param cannot turn due to high slowness at bottom. Do not use these
-            // layers if their top in in high slowness for the given ray parameter
+            // careful if the ray param cannot turn due to high slowness. Do not use these
+            // layers if their top is in high slowness for the given ray parameter
+            // and the bottom is not a critical reflection, rp > max rp in next branch
             int bNum = endBranch;
             while (bNum >= startBranch) {
                 if (tMod.getSlownessModel().depthInHighSlowness(tMod.getTauBranch(bNum, isPWave).getTopDepth(),
-                        minRayParam, isPWave)) {
+                        minRayParam, isPWave) && (
+                                bNum+1>=tMod.getNumBranches()
+                                        || minRayParam <= tMod.getTauBranch(bNum+1, isPWave).getMaxRayParam())) {
                     // tau branch is in high slowness, so turn is not possible, only
                     // non-critical reflect, so do not add these branches
+                    if (DEBUG) {
+                        System.out.println("Warn, ray cannot turn in layer "+bNum+" due to high slowness layer at bottom depth "+tMod.getTauBranch(bNum, isPWave).getBotDepth());
+                    }
                     endBranch = bNum-1;
+                    bNum--;
+                } else {
+                    // can turn in bNum layer, so don't worry about shallower high slowness layers
+                    break;
                 }
-                bNum--;
             }
         } else if(endAction == REFLECT_UNDERSIDE || endAction == REFLECT_UNDERSIDE_CRITICAL) {
             endOffset = 0;
