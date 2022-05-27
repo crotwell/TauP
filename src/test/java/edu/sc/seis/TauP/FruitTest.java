@@ -34,11 +34,11 @@ public class FruitTest {
     public void noMantleP() throws Exception {
         SeismicPhase P = new SeismicPhase("P", tMod);
         double tol = 0.01;
-        assertEquals(P.getMinDistanceDeg(), 0.0, tol);
-        assertEquals(P.getMaxDistanceDeg(), 72.66, tol);
-        assertEquals(P.branchSeq.size(), 2);
-        assertEquals(P.branchSeq.get(0), 0);
-        assertEquals(P.branchSeq.get(1), 0);
+        assertEquals(0.0, P.getMinDistanceDeg(), tol);
+        assertEquals(72.66, P.getMaxDistanceDeg(), tol);
+        assertEquals(2, P.branchSeq.size());
+        assertEquals(0, P.branchSeq.get(0));
+        assertEquals(0, P.branchSeq.get(1));
     }
 
 }
