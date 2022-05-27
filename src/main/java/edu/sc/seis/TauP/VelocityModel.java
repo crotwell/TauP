@@ -1052,7 +1052,9 @@ public class VelocityModel implements Cloneable, Serializable {
             topPVel = botPVel;
             topSVel = botSVel;
             topDensity = botDensity;
-            if(tokenIn.ttype != StreamTokenizer.TT_EOL) {
+            if(tokenIn.ttype == StreamTokenizer.TT_EOF) {
+                // do nothing, EOF will end loop
+            } else if(tokenIn.ttype != StreamTokenizer.TT_EOL) {
                 // this token should be an EOL, if not
                 throw new VelocityModelException("Should have found an EOL but didn't"
                         + " Layer=" + myLayerNumber + " tokenIn=" + tokenIn);
