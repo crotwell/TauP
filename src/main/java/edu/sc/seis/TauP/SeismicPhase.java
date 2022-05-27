@@ -1908,6 +1908,7 @@ public class SeismicPhase implements Serializable, Cloneable {
                     return;
                 }
                 if(nextLeg.equals("P") || nextLeg.equals("S")
+                        || nextLeg.equals("p") || nextLeg.equals("s")
                         || nextLeg.equals("Pdiff") || nextLeg.equals("Sdiff")) {
                     if(prevLeg.equals("P") || prevLeg.equals("S")
                             || prevLeg.equals("Ped") || prevLeg.equals("Sed")

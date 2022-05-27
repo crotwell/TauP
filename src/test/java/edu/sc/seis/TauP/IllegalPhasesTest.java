@@ -22,10 +22,14 @@ class IllegalPhasesTest {
 			"ScSScSScSScS",
 			"PedKP",
 			"PedcS",
+			"Pedcs",
 			"PmP^410P",
 			"Pedcp",
 			"PdiffKP",
-			"PedPdiffKP"
+			"PedPdiffKP",
+			"PKp",
+			"PKs"
+
 	});
 
 	String[] illegalPhases = { "null", "ScScS", "PDDDDD", "PKIKPKIKP", "PPPdiff",
