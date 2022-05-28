@@ -569,10 +569,7 @@ public class SeismicPhase implements Serializable, Cloneable {
         
     public Arrival refineArrival(Arrival leftEstimate, Arrival rightEstimate, double searchDist, double distTolRadian, int maxRecursion) {
         Arrival linInterp = linearInterpArrival(searchDist, leftEstimate, rightEstimate);
-        if(maxRecursion <= 0 || name.indexOf("Sdiff") != -1 
-                || name.indexOf("Pdiff") != -1 
-                || name.indexOf("Pn") != -1 
-                || name.indexOf("Sn") != -1
+        if(maxRecursion <= 0 || headOrDiffractSeq.size() > 0
                 || name.endsWith("kmps")) {
             // can't shoot/refine for diffracted, head and non-body waves
             return linInterp;
@@ -2961,6 +2958,8 @@ public class SeismicPhase implements Serializable, Cloneable {
             }
         }
         if(name.indexOf("kmps") != -1) {
+            // just so kmps waves can be indentified as special
+            headOrDiffractSeq.add(0);
             pierce.add(new TimeDist(distRayParam,
                                                  currArrival.getTime(),
                                                  currArrival.getDist(),
