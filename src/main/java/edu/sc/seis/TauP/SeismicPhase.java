@@ -674,7 +674,14 @@ public class SeismicPhase implements Serializable, Cloneable {
                            puristName,
                            sourceDepth);
     }
-    
+
+    /**
+     * Interprets between two arrivals to find new arrival at given distance.
+     * @param searchDist new arrival distance
+     * @param left known arrival to left
+     * @param right known arrival to right
+     * @return Arrival at searchDist
+     */
     private Arrival linearInterpArrival(double searchDist,
                                         Arrival left,
                                         Arrival right) {
