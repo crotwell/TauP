@@ -1144,7 +1144,7 @@ public class VelocityModel implements Cloneable, Serializable {
     }
     
     static void readTillEOL(StreamTokenizer tokenIn) throws IOException {
-        while(tokenIn.ttype != StreamTokenizer.TT_EOL) {
+        while(tokenIn.ttype != StreamTokenizer.TT_EOL && tokenIn.ttype != StreamTokenizer.TT_EOF) {
             tokenIn.nextToken();
         }
         tokenIn.nextToken();
@@ -1215,6 +1215,7 @@ public class VelocityModel implements Cloneable, Serializable {
                 }
             }
         }
+
         if(tokenIn.ttype != StreamTokenizer.TT_EOL) {
             // this token should be an EOL, if not
             throw new VelocityModelException("Should have found an EOL but didn't"
@@ -1253,13 +1254,13 @@ public class VelocityModel implements Cloneable, Serializable {
             if (botSVel > botPVel) {
                 throw new VelocityModelException("S velocity, "+botSVel+" at depth "+botDepth+" is greater than the P velocity, "+botPVel);
             }
-            if(tokenIn.ttype != StreamTokenizer.TT_EOL) {
+            if(tokenIn.ttype != StreamTokenizer.TT_EOL && tokenIn.ttype != StreamTokenizer.TT_EOF) {
                 // density is not used and so is optional
                 botDensity = readNumber(tokenIn);
-                if(tokenIn.ttype != StreamTokenizer.TT_EOL) {
+                if(tokenIn.ttype != StreamTokenizer.TT_EOL && tokenIn.ttype != StreamTokenizer.TT_EOF) {
                     // Qp is not used and so is optional
                     botQp = readNumber(tokenIn);
-                    if(tokenIn.ttype != StreamTokenizer.TT_EOL) {
+                    if(tokenIn.ttype != StreamTokenizer.TT_EOL && tokenIn.ttype != StreamTokenizer.TT_EOF) {
                         // Qs is not used and so is optional
                         botQs = readNumber(tokenIn);
                     }
@@ -1293,7 +1294,9 @@ public class VelocityModel implements Cloneable, Serializable {
             topQp = botQp;
             topQs = botQs;
             previousLineNamedDiscon = false;
-            if(tokenIn.ttype != StreamTokenizer.TT_EOL) {
+            if(tokenIn.ttype == StreamTokenizer.TT_EOF) {
+                // do nothing, EOF will end loop
+            } else if(tokenIn.ttype != StreamTokenizer.TT_EOL) {
                 // this token should be an EOL, if not
                 throw new VelocityModelException("Should have found an EOL but didn't"
                         + " Layer=" + myLayerNumber + " tokenIn=" + tokenIn);
