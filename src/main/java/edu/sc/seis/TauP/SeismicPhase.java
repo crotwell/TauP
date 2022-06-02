@@ -3091,7 +3091,7 @@ public class SeismicPhase implements Serializable, Cloneable {
                     }
                     if (i == diffBranchNum) {
                         double refractDist = (currArrival.getDist() - dist[0]) / headOrDiffractSeq.size();
-                        double refractTime = (refractDist*currArrival.getRayParam()) / headOrDiffractSeq.size();
+                        double refractTime = refractDist*currArrival.getRayParam();
                         TimeDist[] diffTD = new TimeDist[1];
                         if (name.indexOf("Pdiff") != -1 || name.indexOf("Sdiff") != -1) {
                             diffTD[0] = new TimeDist(currArrival.getRayParam(),

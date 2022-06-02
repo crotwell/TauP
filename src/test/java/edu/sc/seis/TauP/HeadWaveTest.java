@@ -17,29 +17,40 @@ public class HeadWaveTest {
         String modelName = "iasp91";
         tMod = TauModelLoader.load(modelName);
     }
-    @Test
-    public void pierce() throws TauModelException {
-        String phaseName = "PdiffPdiff";
+
+    public void checkHeadWave(String phaseName, int numHeadLegs, double distDeg) throws TauModelException {
         double receiverDepth = 0;
         SeismicPhase phase = new SeismicPhase(phaseName, tMod, receiverDepth, DEBUG);
-        assertEquals(2, phase.headOrDiffractSeq.size());
-        List<Arrival> arrivalList = phase.calcTime(210);
-        Arrival a = arrivalList.get(0);
-        TimeDist[] td = a.getPierce();
-        assertEquals(a.getDist(), td[td.length-1].getDistRadian());
-        assertEquals(a.getTime(), td[td.length-1].getTime(), 0.000001);
+        assertEquals(numHeadLegs, phase.headOrDiffractSeq.size());
+        List<Arrival> arrivalList = phase.calcTime(distDeg);
+        for (Arrival a : arrivalList) {
+            TimeDist[] td = a.getPierce();
+            assertEquals(a.getDist(), td[td.length-1].getDistRadian(), 0.000000001);
+            assertEquals(a.getTime(), td[td.length-1].getTime(), 0.000001);
+            TimeDist[] path_td = a.getPath();
+            assertEquals(a.getDist(), path_td[path_td.length-1].getDistRadian(), 0.000000001);
+            assertEquals(a.getTime(), path_td[path_td.length-1].getTime(), 0.000001);
+        }
+    }
+
+    @Test
+    public void pierce_Pdiff() throws TauModelException {
+        checkHeadWave("Pdiff", 1, 210);
+    }
+
+    @Test
+    public void pierce_PdiffPdiff() throws TauModelException {
+        checkHeadWave("PdiffPdiff", 2, 210);
     }
 
     @Test
     public void pierce_Pn() throws TauModelException {
-        String phaseName = "Pn";
-        double receiverDepth = 0;
-        SeismicPhase phase = new SeismicPhase(phaseName, tMod, receiverDepth, DEBUG);
-        assertEquals(1, phase.headOrDiffractSeq.size());
-        List<Arrival> arrivalList = phase.calcTime(1);
-        Arrival a = arrivalList.get(0);
-        TimeDist[] td = a.getPierce();
-        assertEquals(a.getDist(), td[td.length-1].getDistRadian());
-        assertEquals(a.getTime(), td[td.length-1].getTime(), 0.000001);
+        checkHeadWave("Pn", 1, 1);
     }
+
+    @Test
+    public void pierce_PnPn() throws TauModelException {
+        checkHeadWave("PnPn", 2, 2.5);
+    }
+
 }
