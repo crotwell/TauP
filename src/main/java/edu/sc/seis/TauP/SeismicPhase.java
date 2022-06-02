@@ -1135,8 +1135,8 @@ public class SeismicPhase implements Serializable, Cloneable {
         /* Make a check for J legs if the model doesn not allow J */
         if(name.indexOf('J') != -1
                 && !tMod.getSlownessModel().isAllowInnerCoreS()) {
-            throw new TauModelException("'J' phases were not created for this model: "
-                    + name);
+            throw new TauModelException(getName()+" 'J' phases were not created for this model: "
+                    + tMod.getModelName());
         }
         /* set currWave to be the wave type for this leg, 'P' or 'S'. */
         if(currLeg.equals("p") || currLeg.startsWith("P")
@@ -1145,11 +1145,11 @@ public class SeismicPhase implements Serializable, Cloneable {
             isPWave = PWAVE;
             isPWavePrev = isPWave;
         } else if(currLeg.equals("s") || currLeg.startsWith("S")
-                || currLeg.equals("J")) {
+                || currLeg.equals("J") || currLeg.equals("j")) {
             isPWave = SWAVE;
             isPWavePrev = isPWave;
         } else {
-            throw new TauModelException("Unknown starting phase: "+currLeg);
+            throw new TauModelException(getName()+" Unknown starting phase: "+currLeg);
         }
         // where we end up, depending on if we end going down or up
         int upgoingRecBranch = tMod.findBranch(receiverDepth);
