@@ -890,8 +890,8 @@ public class SeismicPhase implements Serializable, Cloneable {
         boolean isDownGoing;
         if(DEBUG) {
             System.out.println("before addToBranch: minRP="+minRayParam+"  maxRP="+maxRayParam);
-            System.out.println("addToBranch start=" + startBranch + " end=" + endBranch
-                    + " endAction="+endActionString(endAction)+" ");
+            System.out.println("addToBranch( start=" + startBranch + " end=" + endBranch
+                    + " endAction="+endActionString(endAction)+" "+currLeg+")");
             
         }
         if(endAction == TURN) {
@@ -1074,7 +1074,7 @@ public class SeismicPhase implements Serializable, Cloneable {
         currBranch = endBranch + endOffset;
 
         if(DEBUG) {
-            System.out.println("after addToBranch: minRP="+minRayParam+"  maxRP="+maxRayParam);
+            System.out.println("after addToBranch: minRP="+minRayParam+"  maxRP="+maxRayParam+" endOffset="+endOffset+" isDownGoing="+isDownGoing);
         }
 
     }
