@@ -1034,7 +1034,7 @@ public class SeismicPhase implements Serializable, Cloneable {
                 // can't be downgoing as we are already below
                 minRayParam = -1;
                 maxRayParam = -1;
-                throw new TauModelException("can't be downgoing as we are already below: "+startBranch+" "+endBranch);
+                throw new TauModelException("can't be downgoing as we are already below: "+startBranch+" "+endBranch+" in "+getName());
             } else {
             /* Must be downgoing, so use i++. */
             for(int i = startBranch; i <= endBranch; i++) {
@@ -1057,7 +1057,7 @@ public class SeismicPhase implements Serializable, Cloneable {
                 // can't be upgoing as we are already above
                 minRayParam = -1;
                 maxRayParam = -1;
-                throw new TauModelException("can't be upgoing as we are already above: "+startBranch+" "+endBranch);
+                throw new TauModelException("can't be upgoing as we are already above: "+startBranch+" "+endBranch+" "+currLeg+" in "+getName());
             } else {
             /* Must be up going so use i--. */
             for(int i = startBranch; i >= endBranch; i--) {
@@ -1219,9 +1219,9 @@ public class SeismicPhase implements Serializable, Cloneable {
                 return;
             }
         } else {
-            throw new TauModelException("First phase not recognized: "
-                    + currLeg
-                    + " must be one of P, Pg, Pn, Pdiff, p, Ped or the S equivalents");
+            throw new TauModelException(getName()+" First phase not recognized: "
+                    +currLeg
+                    + " Must be one of P, Pg, Pn, Pdiff, p, Ped or the S equivalents");
         }
         if (receiverDepth != 0) {
             if (legs.get(legs.size()-2).equals("Ped") || legs.get(legs.size()-2).equals("Sed")) {
