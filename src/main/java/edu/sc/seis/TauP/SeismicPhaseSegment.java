@@ -5,7 +5,7 @@ public class SeismicPhaseSegment {
 	int startBranch;
     int endBranch;
     boolean isPWave;
-    int endAction;
+    PhaseInteraction endAction;
     boolean isDownGoing;
     String legName;
     
@@ -13,7 +13,7 @@ public class SeismicPhaseSegment {
 			                   int startBranch,
                                int endBranch,
                                boolean isPWave,
-                               int endAction,
+                               PhaseInteraction endAction,
                                boolean isDownGoing,
                                String legName) {
 		this.tMod = tMod;
@@ -25,36 +25,39 @@ public class SeismicPhaseSegment {
 		this.legName = legName;
 	}
 	
-	public static String endActionToString(int endAction) {
+	public static String endActionToString(PhaseInteraction endAction) {
 		String action;
 		switch(endAction) {
-    	case SeismicPhase.TURN:
+    	case TURN:
     		action = "turn";
     		break;
-    	case SeismicPhase.REFLECT_UNDERSIDE:
+    	case REFLECT_UNDERSIDE:
     		action = "reflect underside";
     		break;
-    	case SeismicPhase.REFLECT_UNDERSIDE_CRITICAL:
+    	case REFLECT_UNDERSIDE_CRITICAL:
 			action = "critical reflect underside";
 			break;
-    	case SeismicPhase.REFLECT_TOPSIDE:
+    	case REFLECT_TOPSIDE:
     		action = "reflect topside";
     		break;
-    	case SeismicPhase.REFLECT_TOPSIDE_CRITICAL:
+    	case REFLECT_TOPSIDE_CRITICAL:
 			action = "critical reflect topside";
 			break;
-    	case SeismicPhase.TRANSUP:
+    	case TRANSUP:
     		action = "transmit up";
     		break;
-    	case SeismicPhase.TRANSDOWN:
+    	case TRANSDOWN:
     		action = "transmit down";
     		break;
-    	case SeismicPhase.DIFFRACT:
+    	case DIFFRACT:
     		action = "diffract";
     		break;
-    	case SeismicPhase.END:
+    	case END:
     		action = "end";
-    		break;
+    		break; 
+		case FAIL:
+			action = "fail";
+			break;
     	default: 
     		// should never happen
     		action = "unknown";

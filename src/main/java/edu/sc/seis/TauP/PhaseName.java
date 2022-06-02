@@ -49,7 +49,7 @@ public class PhaseName implements Serializable {
     public PhaseName(String name) throws TauModelException {
         this.name = name;
         // check name is valid
-        SeismicPhase.legPuller(name);
+        LegPuller.legPuller(name);
     }
 
     public PhaseName(String name, int sacTNum) throws TauModelException {
