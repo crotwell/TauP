@@ -1838,6 +1838,7 @@ public class SeismicPhase implements Serializable, Cloneable {
                                         isPWave,
                                         endAction,
                                         currLeg);
+                            headOrDiffractSeq.add(branchSeq.size() - 1);
                             endAction = TRANSUP;
                             addToBranch(tMod,
                                         currBranch,
@@ -2946,7 +2947,7 @@ public class SeismicPhase implements Serializable, Cloneable {
                 }
                 if (i == diffBranchNum) {
                     double refractDist = (currArrival.getDist() - dist[0]) / headOrDiffractSeq.size();
-                    double refractTime = (refractDist*currArrival.getRayParam()) / headOrDiffractSeq.size();
+                    double refractTime = refractDist*currArrival.getRayParam();
                     pierce.add(new TimeDist(distRayParam,
                                             branchTime + refractTime,
                                             branchDist + refractDist,
