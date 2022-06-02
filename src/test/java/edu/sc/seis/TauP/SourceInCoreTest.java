@@ -16,6 +16,7 @@ public class SourceInCoreTest {
     List<String> innerCoreSourcePhases = Arrays.asList(new String[] { "IKP", "IkKIKs", "IKKiKP", "IIIKS" });
 
     @Test
+    @Disabled
     public void sourceInCore() throws TauModelException {
         boolean DEBUG = true;
         TauP_Tool.expert = true;
