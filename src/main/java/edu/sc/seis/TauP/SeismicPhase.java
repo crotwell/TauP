@@ -688,18 +688,23 @@ public class SeismicPhase implements Serializable, Cloneable {
         if (right.getDist() == searchDist) {
             return right;
         }
-        double arrivalTime = (searchDist - left.getDist())
-                / (right.getDist() - left.getDist())
-                * (right.getTime() - left.getTime()) + left.getTime();
-        if (Double.isNaN(arrivalTime)) {
-            throw new RuntimeException("Time is NaN, search "+searchDist +" leftDist "+ left.getDist()+ " leftTime "+left.getTime()
-                               +"  rightDist "+right.getDist()+"  rightTime "+right.getTime());
-        }
         double arrivalRayParam = (searchDist - right.getDist())
                 * (left.getRayParam() - right.getRayParam())
                 / (left.getDist() - right.getDist())
                 + right.getRayParam();
-        
+
+        // use closest edge to interpolate time
+        double arrivalTime;
+        if (Math.abs(searchDist - left.getDist()) < Math.abs(searchDist - right.getDist())) {
+            arrivalTime = left.getTime() + arrivalRayParam * (searchDist - left.getDist());
+        } else {
+            arrivalTime = right.getTime() + arrivalRayParam * (searchDist - right.getDist());
+        }
+        if (Double.isNaN(arrivalTime)) {
+            throw new RuntimeException("Time is NaN, search "+searchDist +" leftDist "+ left.getDist()+ " leftTime "+left.getTime()
+                               +"  rightDist "+right.getDist()+"  rightTime "+right.getTime());
+        }
+
         return new Arrival(this,
                            arrivalTime,
                            searchDist,

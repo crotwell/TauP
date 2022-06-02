@@ -7,7 +7,7 @@
     {
       "distdeg": 35.0,
       "phase": "P",
-      "time": 412.51172,
+      "time": 412.51175,
       "rayparam": 8.625121,
       "takeoff": 26.782135,
       "incident": 26.736752,
@@ -67,7 +67,7 @@
     {
       "distdeg": 35.0,
       "phase": "PP",
-      "time": 493.25824,
+      "time": 493.25827,
       "rayparam": 13.57786,
       "takeoff": 45.18152,
       "incident": 45.091087,
@@ -77,7 +77,7 @@
     {
       "distdeg": 35.0,
       "phase": "PP",
-      "time": 493.28925,
+      "time": 493.2891,
       "rayparam": 13.5504875,
       "takeoff": 45.0654,
       "incident": 44.975334,
@@ -87,7 +87,7 @@
     {
       "distdeg": 35.0,
       "phase": "PcP",
-      "time": 564.6105,
+      "time": 564.61035,
       "rayparam": 2.9099839,
       "takeoff": 8.744313,
       "incident": 8.73048,
@@ -147,7 +147,7 @@
     {
       "distdeg": 35.0,
       "phase": "ScP",
-      "time": 790.1855,
+      "time": 790.18524,
       "rayparam": 3.6025045,
       "takeoff": 6.4463987,
       "incident": 10.83078,
@@ -157,7 +157,7 @@
     {
       "distdeg": 35.0,
       "phase": "PcS",
-      "time": 791.364,
+      "time": 791.36383,
       "rayparam": 3.6029665,
       "takeoff": 10.8494215,
       "incident": 6.4370666,
@@ -167,7 +167,7 @@
     {
       "distdeg": 35.0,
       "phase": "SS",
-      "time": 879.7145,
+      "time": 879.71454,
       "rayparam": 24.228548,
       "takeoff": 49.03354,
       "incident": 48.93007,
@@ -177,7 +177,7 @@
     {
       "distdeg": 35.0,
       "phase": "SS",
-      "time": 896.29974,
+      "time": 896.2998,
       "rayparam": 20.35258,
       "takeoff": 39.367878,
       "incident": 39.294132,
@@ -187,7 +187,7 @@
     {
       "distdeg": 35.0,
       "phase": "SS",
-      "time": 898.70416,
+      "time": 898.70404,
       "rayparam": 21.075018,
       "takeoff": 41.057213,
       "incident": 40.978924,
@@ -197,7 +197,7 @@
     {
       "distdeg": 35.0,
       "phase": "SS",
-      "time": 930.74365,
+      "time": 930.7437,
       "rayparam": 16.722582,
       "takeoff": 31.410543,
       "incident": 31.355642,
@@ -207,7 +207,7 @@
     {
       "distdeg": 35.0,
       "phase": "SS",
-      "time": 930.79065,
+      "time": 930.7906,
       "rayparam": 16.83158,
       "takeoff": 31.638874,
       "incident": 31.58348,
@@ -257,7 +257,7 @@
     {
       "distdeg": 35.0,
       "phase": "SKiKP",
-      "time": 1218.1918,
+      "time": 1218.1917,
       "rayparam": 0.8012509,
       "takeoff": 1.430901,
       "incident": 2.3953042,
