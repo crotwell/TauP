@@ -247,7 +247,7 @@ public class TauP_Pierce extends TauP_Time {
                                 || (onlyTurnPoints && j != 0 && ((prevDepth - pierce[j].getDepth()) <= 0 && (pierce[j].getDepth() - nextDepth) >= 0)) || (onlyUnderPoints && ((prevDepth - pierce[j].getDepth()) >= 0 && (pierce[j].getDepth() - nextDepth) <= 0)))) {
                     out.write(Outputs.formatDistance(calcDist));
                     out.write(Outputs.formatDepth(pierce[j].getDepth()));
-                    out.write(Outputs.formatDepth(pierce[j].getTime()));
+                    out.write(Outputs.formatTime(pierce[j].getTime()));
                     if(eventLat != Double.MAX_VALUE
                             && eventLon != Double.MAX_VALUE
                             && azimuth != Double.MAX_VALUE) {
