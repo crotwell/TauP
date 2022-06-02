@@ -1180,6 +1180,34 @@ public class SeismicPhase implements Serializable, Cloneable {
                 || currLeg.startsWith("S")
                 || (expert && (currLeg.startsWith("K") || currLeg.startsWith("I") || currLeg.startsWith("J")))) {
             // Downgoing from source
+            if ((currLeg.startsWith("P") || currLeg.startsWith("S")) && tMod.getSourceDepth() > tMod.getCmbDepth()  ) {
+                // not possible
+                maxRayParam = -1;
+                minRayParam = -1;
+                if(DEBUG) {
+                    System.out.println("Source must be in crust/mantle for "
+                            + currLeg + " within phase " + name);
+                }
+                return;
+            } else if ((currLeg.startsWith("K")) && (tMod.getSourceDepth() < tMod.getCmbDepth() || tMod.getSourceDepth() > tMod.getIocbDepth() )) {
+                // not possible
+                maxRayParam = -1;
+                minRayParam = -1;
+                if(DEBUG) {
+                    System.out.println("Source must be in outer core for "
+                            + currLeg + " within phase " + name);
+                }
+                return;
+            } else if ((currLeg.startsWith("I") || currLeg.startsWith("J")) && (tMod.getSourceDepth() < tMod.getIocbDepth() )) {
+                // not possible
+                maxRayParam = -1;
+                minRayParam = -1;
+                if(DEBUG) {
+                    System.out.println("Source must be in inner core for "
+                            + currLeg + " within phase " + name);
+                }
+                return;
+            }
             currBranch = tMod.getSourceBranch();
             endAction = REFLECT_UNDERSIDE; // treat initial downgoing as if it were a
             // underside reflection
@@ -1194,6 +1222,35 @@ public class SeismicPhase implements Serializable, Cloneable {
         } else if(currLeg.equals("p") || currLeg.equals("s")
                 || (expert && currLeg.startsWith("k"))) {
             // Up going from source
+            if ((currLeg.startsWith("p") || currLeg.startsWith("s")) && tMod.getSourceDepth() > tMod.getCmbDepth()  ) {
+                // not possible
+                maxRayParam = -1;
+                minRayParam = -1;
+                if(DEBUG) {
+                    System.out.println("Source must be in crust/mantle for "
+                            + currLeg + " within phase " + name);
+                }
+                return;
+            } else if ((currLeg.startsWith("k")) && (tMod.getSourceDepth() < tMod.getCmbDepth() || tMod.getSourceDepth() > tMod.getIocbDepth() )) {
+                // not possible
+                maxRayParam = -1;
+                minRayParam = -1;
+                if(DEBUG) {
+                    System.out.println("Source must be in outer core for "
+                            + currLeg + " within phase " + name);
+                }
+                return;
+            } else if ((currLeg.startsWith("Ieu") || currLeg.startsWith("j")) && (tMod.getSourceDepth() < tMod.getIocbDepth() )) {
+                // not possible
+                maxRayParam = -1;
+                minRayParam = -1;
+                if(DEBUG) {
+                    System.out.println("Source must be in inner core for "
+                            + currLeg + " within phase " + name);
+                }
+                return;
+            }
+
             endAction = REFLECT_TOPSIDE; // treat initial upgoing as if it were a topside reflection
             try {
                 int sLayerNum = tMod.getSlownessModel().layerNumberAbove(tMod.getSourceDepth(), isPWavePrev);
