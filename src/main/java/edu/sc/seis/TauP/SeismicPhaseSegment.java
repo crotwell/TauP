@@ -27,47 +27,47 @@ public class SeismicPhaseSegment {
 	
 	public static String endActionToString(PhaseInteraction endAction) {
 		String action;
-		switch(endAction) {
-		case START:
-			action = "start";
-			break;
-		case TURN:
-    		action = "turn";
-    		break;
-    	case REFLECT_UNDERSIDE:
-    		action = "reflect underside";
-    		break;
-		case END_DOWN:
-			action = "end downward";
-			break;
-		case REFLECT_UNDERSIDE_CRITICAL:
-			action = "critical reflect underside";
-			break;
-    	case REFLECT_TOPSIDE:
-    		action = "reflect topside";
-    		break;
-    	case REFLECT_TOPSIDE_CRITICAL:
-			action = "critical reflect topside";
-			break;
-    	case TRANSUP:
-    		action = "transmit up";
-    		break;
-    	case TRANSDOWN:
-    		action = "transmit down";
-    		break;
-    	case DIFFRACT:
-    		action = "diffract";
-    		break;
-    	case END:
-    		action = "end";
-    		break;
-		case FAIL:
-			action = "fail";
-			break;
-    	default: 
-    		// should never happen
-    		action = "unknown";
-    	}
+		switch (endAction) {
+			case START:
+				action = "start";
+				break;
+			case TURN:
+				action = "turn";
+				break;
+			case REFLECT_UNDERSIDE:
+				action = "reflect underside";
+				break;
+			case END_DOWN:
+				action = "end downward";
+				break;
+			case REFLECT_UNDERSIDE_CRITICAL:
+				action = "critical reflect underside";
+				break;
+			case REFLECT_TOPSIDE:
+				action = "reflect topside";
+				break;
+			case REFLECT_TOPSIDE_CRITICAL:
+				action = "critical reflect topside";
+				break;
+			case TRANSUP:
+				action = "transmit up";
+				break;
+			case TRANSDOWN:
+				action = "transmit down";
+				break;
+			case DIFFRACT:
+				action = "diffract";
+				break;
+			case END:
+				action = "end";
+				break;
+			case FAIL:
+				action = "fail";
+				break;
+			default:
+				// should never happen
+				action = "unknown";
+		}
 		return action;
 	}
 	
