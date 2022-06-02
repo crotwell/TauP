@@ -34,7 +34,7 @@ class IllegalPhasesTest {
 	String[] illegalPhases = { "null", "ScScS", "PDDDDD", "PKIKPKIKP", "PPPdiff",
 			"PKIKIKP", "SIKS", "SKIS", "Pcv410S", "Pmv410P", "Pcv410P", "Pm^410P",
 			"SKviKviKS","SK^iKS","SK^mKS", "S^S", "SVS", "Pdiffdiff", "SVS", "SccS",
-			"SIKS", "Siks", "SiKS", "Kdiff"
+			"SIKS", "Siks", "SiKS", "Kdiff", "pp", "sp", "ss", "Ss", "Ps", "Sp", "Pp"
 	};
 
 	// phases that are kind of wrong, but are handled by simply no arrivals, eg no ray params actually work,
@@ -54,10 +54,12 @@ class IllegalPhasesTest {
 		boolean DEBUG = true;
 		String modelName = "iasp91";
 		TauModel tMod = TauModelLoader.load(modelName);
+		TauModel tModDepth = tMod.depthCorrect(10);
 		float receiverDepth = 100;
 		for (String phaseName : phaseList) {
 			Exception exception = assertThrows(TauModelException.class, () -> {
 				SeismicPhase phase = new SeismicPhase(phaseName, tMod, receiverDepth, DEBUG);
+				SeismicPhase phase_depth = new SeismicPhase(phaseName, tModDepth, receiverDepth, DEBUG);
 		    }, phaseName+" shouldn't pass validation.");
 		}
 	}
@@ -67,12 +69,14 @@ class IllegalPhasesTest {
 		boolean DEBUG = true;
 		String modelName = "iasp91";
 		TauModel tMod = TauModelLoader.load(modelName);
+		TauModel tModDepth = tMod.depthCorrect(10);
 		float receiverDepth = 100;
 		List<String> legalPhases = TauP_Time.getPhaseNames("ttall");
 		legalPhases.addAll(otherLegalPhases);
 		for (String phaseName : legalPhases) {
 			try {
 				SeismicPhase phase = new SeismicPhase(phaseName, tMod, receiverDepth, DEBUG);
+				SeismicPhase phase_depth = new SeismicPhase(phaseName, tModDepth, receiverDepth, DEBUG);
 			} catch(TauModelException ex) {
 				System.err.println("Working on phase: "+phaseName);
 				throw ex;
@@ -82,12 +86,15 @@ class IllegalPhasesTest {
 
 	@Test
 	void checkNoArrivalPhasesTest() throws TauModelException {
+		boolean DEBUG = false;
 		String modelName = "iasp91";
 		TauModel tMod = TauModelLoader.load(modelName);
+		TauModel tModDepth = tMod.depthCorrect(10);
 		double receiverDepth = 0;
 		for (String phaseName : noArrivalPhases) {
-			SeismicPhase phase = new SeismicPhase(phaseName, tMod, receiverDepth);
+			SeismicPhase phase = new SeismicPhase(phaseName, tMod, receiverDepth, DEBUG);
 		    assertFalse(phase.phasesExistsInModel(), phaseName+" shouldn't have any ray parameters that could generate arrivals");
+			SeismicPhase phase_depth = new SeismicPhase(phaseName, tModDepth, receiverDepth, DEBUG);
 		}
 	}
 
