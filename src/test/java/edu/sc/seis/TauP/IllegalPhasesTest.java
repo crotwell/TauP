@@ -60,8 +60,8 @@ class IllegalPhasesTest {
 		float receiverDepth = 100;
 		for (String phaseName : phaseList) {
 			Exception exception = assertThrows(TauModelException.class, () -> {
-				SeismicPhase phase = new SeismicPhase(phaseName, tMod, receiverDepth, DEBUG);
-				SeismicPhase phase_depth = new SeismicPhase(phaseName, tModDepth, receiverDepth, DEBUG);
+				SeismicPhase phase = SeismicPhaseFactory.createPhase(phaseName, tMod, tMod.getSourceDepth(), receiverDepth, DEBUG);
+				SeismicPhase phase_depth = SeismicPhaseFactory.createPhase(phaseName, tModDepth, tModDepth.getSourceDepth(), receiverDepth, DEBUG);
 		    }, phaseName+" shouldn't pass validation.");
 		}
 	}
@@ -77,8 +77,8 @@ class IllegalPhasesTest {
 		legalPhases.addAll(otherLegalPhases);
 		for (String phaseName : legalPhases) {
 			try {
-				SeismicPhase phase = new SeismicPhase(phaseName, tMod, receiverDepth, DEBUG);
-				SeismicPhase phase_depth = new SeismicPhase(phaseName, tModDepth, receiverDepth, DEBUG);
+				SeismicPhase phase = SeismicPhaseFactory.createPhase(phaseName, tMod, tMod.getSourceDepth(), receiverDepth, DEBUG);
+				SeismicPhase phase_depth = SeismicPhaseFactory.createPhase(phaseName, tModDepth, tModDepth.getSourceDepth(), receiverDepth, DEBUG);
 			} catch(TauModelException ex) {
 				System.err.println("Working on phase: "+phaseName);
 				throw ex;
@@ -94,9 +94,9 @@ class IllegalPhasesTest {
 		TauModel tModDepth = tMod.depthCorrect(10);
 		double receiverDepth = 0;
 		for (String phaseName : noArrivalPhases) {
-			SeismicPhase phase = new SeismicPhase(phaseName, tMod, receiverDepth, DEBUG);
+			SeismicPhase phase = SeismicPhaseFactory.createPhase(phaseName, tMod, tMod.getSourceDepth(), receiverDepth, DEBUG);
 		    assertFalse(phase.phasesExistsInModel(), phaseName+" shouldn't have any ray parameters that could generate arrivals");
-			SeismicPhase phase_depth = new SeismicPhase(phaseName, tModDepth, receiverDepth, DEBUG);
+			SeismicPhase phase_depth = SeismicPhaseFactory.createPhase(phaseName, tModDepth, tModDepth.getSourceDepth(), receiverDepth, DEBUG);
 		}
 	}
 
@@ -108,7 +108,7 @@ class IllegalPhasesTest {
 		final TauModel tModDepth = tMod.depthCorrect(sourceDepth);
 		double receiverDepth = 0;
 		for (String phaseName : mantleSourceNoArrivalPhases) {
-			SeismicPhase phase = new SeismicPhase(phaseName, tModDepth, receiverDepth);
+			SeismicPhase phase = SeismicPhaseFactory.createPhase(phaseName, tModDepth, sourceDepth, receiverDepth);
 		    assertFalse(phase.phasesExistsInModel(), phaseName+" shouldn't have arrivals for mantle source, "+sourceDepth+" phase: "+phase);
 		}
 	}

@@ -26,8 +26,9 @@ public class ShootTest {
     
     public void testShootExistingRayParamForPhase(String phaseName) throws Exception {
         TauModelLoader.clearCache();
+        TauModel tMod = TauModelLoader.load("iasp91");
         double depth = 119;
-        SeismicPhase phase = new SeismicPhase(phaseName, "iasp91", depth);
+        SeismicPhase phase = SeismicPhaseFactory.createPhase(phaseName, tMod, depth);
         for (int i = 0; i < phase.getRayParams().length; i++) {
             Arrival maxRPArrival = phase.shootRay(phase.getRayParams()[i]);
             assertEquals(phase.getDist()[i], maxRPArrival.getDist(), 0.0001, i+"th ray param dist");
@@ -38,8 +39,9 @@ public class ShootTest {
     @Test
     public void testShootMiddleRayParam() throws Exception {
         TauModelLoader.clearCache();
+        TauModel tMod = TauModelLoader.load("iasp91");
         double depth = 119;
-        SeismicPhase phase = new SeismicPhase("P", "iasp91", depth);
+        SeismicPhase phase = SeismicPhaseFactory.createPhase("P", tMod, depth);
         for (int i = 0; i < phase.getRayParams().length-1; i++) {
             double rp = (phase.getRayParams()[i]+phase.getRayParams()[i+1])/2;
             double timeTol = Math.abs(phase.getTime()[i]-phase.getTime()[i+1]);

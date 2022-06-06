@@ -32,7 +32,7 @@ public class FruitTest {
 
     @Test
     public void noMantleP() throws Exception {
-        SeismicPhase P = new SeismicPhase("P", tMod);
+        SeismicPhase P = SeismicPhaseFactory.createPhase("P", tMod);
         double tol = 0.01;
         assertEquals(0.0, P.getMinDistanceDeg(), tol);
         assertEquals(72.66, P.getMaxDistanceDeg(), tol);

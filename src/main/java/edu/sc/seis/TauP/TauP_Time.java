@@ -669,7 +669,7 @@ public class TauP_Time extends TauP_Tool {
             List<SeismicPhase> relPhases = new ArrayList<SeismicPhase>();
             List<String> splitNames = getPhaseNames(relativePhaseName);
             for (String sName : splitNames) {
-                SeismicPhase relPhase = new SeismicPhase(sName, getTauModelDepthCorrected());
+                SeismicPhase relPhase = SeismicPhaseFactory.createPhase(sName, getTauModelDepthCorrected(), this.getSourceDepth(), this.getReceiverDepth(), this.DEBUG);
                 relPhases.add(relPhase);
             }
             relativeArrival = SeismicPhase.getEarliestArrival(relPhases, degrees);
@@ -822,7 +822,7 @@ public class TauP_Time extends TauP_Tool {
             if(!alreadyAdded) {
                 // didn't find it precomputed, so recalculate
                 try {
-                    seismicPhase = new SeismicPhase(tempPhaseName, getTauModelDepthCorrected(), getReceiverDepth());
+                    seismicPhase = SeismicPhaseFactory.createPhase(tempPhaseName, getTauModelDepthCorrected(), getSourceDepth(), getReceiverDepth());
                     newPhases.add(seismicPhase);
 
                     if(verbose) {

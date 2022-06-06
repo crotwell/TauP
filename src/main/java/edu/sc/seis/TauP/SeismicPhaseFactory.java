@@ -84,25 +84,44 @@ public class SeismicPhaseFactory {
 
     public static final boolean SWAVE = SeismicPhase.SWAVE;
 
-    public SeismicPhaseFactory() {
-
-    }
-
-    public SeismicPhase createPhase(String name, TauModel tMod, double receiverDepth, boolean debug) throws TauModelException {
+    SeismicPhaseFactory(String name, TauModel tMod, double sourceDepth, double receiverDepth, boolean debug) throws TauModelException {
         this.DEBUG = debug ;
         if (name == null || name.length() == 0) {
             throw new TauModelException("Phase name cannot be empty to null: "+name);
         }
+        // make sure we have layer boundary at source and receiver
+        // this does nothing if already split
+        TauModel sourceDepthTMod;
+        if (sourceDepth == tMod.getSourceDepth()) {
+            sourceDepthTMod = tMod;
+        } else {
+            sourceDepthTMod = tMod.depthCorrect(sourceDepth);
+        }
+        this.tMod = sourceDepthTMod.splitBranch(receiverDepth);
         this.name = name;
-        this.sourceDepth = tMod.getSourceDepth();
+        this.sourceDepth = sourceDepth;
         this.receiverDepth = receiverDepth;
-        // make sure we have layer boundary at receiver
-        // this does nothing if already split at receiver
-        this.tMod = tMod.splitBranch(receiverDepth);
+    }
+
+    public static SeismicPhase createPhase(String name, TauModel tMod) throws TauModelException {
+        return createPhase(name, tMod, tMod.getSourceDepth());
+    }
+    public static SeismicPhase createPhase(String name, TauModel tMod, double sourceDepth) throws TauModelException {
+        return createPhase(name, tMod, sourceDepth, 0.0);
+    }
+    public static SeismicPhase createPhase(String name, TauModel tMod, double sourceDepth, double receiverDepth) throws TauModelException {
+        return createPhase(name, tMod, sourceDepth, receiverDepth, false);
+    }
+    public static SeismicPhase createPhase(String name, TauModel tMod, double sourceDepth, double receiverDepth, boolean debug) throws TauModelException {
+        SeismicPhaseFactory factory = new SeismicPhaseFactory(name, tMod, sourceDepth, receiverDepth, debug);
+        return factory.internalCreatePhase();
+    }
+
+    SeismicPhase internalCreatePhase() throws TauModelException {
         legs = LegPuller.legPuller(name);
         this.puristName = LegPuller.createPuristName(tMod, legs);
         parseName(tMod);
-        SeismicPhase phase = new SeismicPhase(name, tMod, receiverDepth, legs, puristName, debug);
+        SeismicPhase phase = new SeismicPhase(name, tMod, receiverDepth, legs, puristName, DEBUG);
         phase.minRayParam = minRayParam;
         phase.maxRayParam = maxRayParam;
         phase.minRayParamIndex = minRayParamIndex;

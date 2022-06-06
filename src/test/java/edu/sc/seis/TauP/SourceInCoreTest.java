@@ -33,7 +33,7 @@ public class SourceInCoreTest {
             TauModel tModDepth = tMod.depthCorrect(sourceDepth);
             for (String phaseName : legalPhases) {
                 try {
-                    SeismicPhase phase = new SeismicPhase(phaseName, tModDepth, receiverDepth, DEBUG);
+                    SeismicPhase phase = SeismicPhaseFactory.createPhase(phaseName, tModDepth, tModDepth.getSourceDepth(), receiverDepth, DEBUG);
                     if (sourceDepth > tMod.getCmbDepth() && mantlePhases.contains(phaseName)) {
                         assertEquals(-1, phase.getMaxRayParam());
                     }

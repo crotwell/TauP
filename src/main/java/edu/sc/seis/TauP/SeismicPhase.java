@@ -178,10 +178,20 @@ public class SeismicPhase implements Serializable, Cloneable {
 
     public static final boolean SWAVE = false;
 
+    /**
+     *
+     *  @deprecated use SeismicPhaseFactory.create()
+     * @param name
+     * @param modelName
+     * @param depth
+     * @throws TauModelException
+     */
+    @Deprecated
     public SeismicPhase(String name, String modelName, double depth) throws TauModelException {
         this(name, TauModelLoader.load(modelName).depthCorrect(depth));
     }
     /**
+     *  @deprecated use SeismicPhaseFactory.create()
      * @param name
      *            String containing a name of the phase.
      * @param tMod
@@ -189,17 +199,35 @@ public class SeismicPhase implements Serializable, Cloneable {
      *            depth.
      * @throws TauModelException 
      */
+    @Deprecated
     public SeismicPhase(String name, TauModel tMod) throws TauModelException {
         this(name, tMod, 0.0); //surface receiver
     }
 
+    /**
+     *
+     *  @deprecated use SeismicPhaseFactory.create()
+     * @param name
+     * @param tMod
+     * @param receiverDepth
+     * @throws TauModelException
+     */
+    @Deprecated
     public SeismicPhase(String name, TauModel tMod, double receiverDepth) throws TauModelException {
     	this(name, tMod, receiverDepth, ToolRun.DEBUG);
     }
-    
+
+    /**
+     *  @deprecated use SeismicPhaseFactory.create()
+     * @param name
+     * @param tMod
+     * @param receiverDepth
+     * @param debug
+     * @throws TauModelException
+     */
+    @Deprecated
     public SeismicPhase(String name, TauModel tMod, double receiverDepth, boolean debug) throws TauModelException {
-        SeismicPhaseFactory factory = new SeismicPhaseFactory();
-        SeismicPhase phase = factory.createPhase(name, tMod, receiverDepth, debug);
+        SeismicPhase phase = SeismicPhaseFactory.createPhase(name, tMod, tMod.sourceDepth, receiverDepth, debug);
 
         this.DEBUG = phase.DEBUG ;
         this.verbose = phase.verbose;
@@ -1669,7 +1697,7 @@ public class SeismicPhase implements Serializable, Cloneable {
             tModDepth = tMod.depthCorrect(Double.valueOf(args[1]).doubleValue());
             for(int i = 2; i < args.length; i++) {
                 System.out.println("-----");
-                SeismicPhase sp = new SeismicPhase(args[i], tModDepth);
+                SeismicPhase sp = SeismicPhaseFactory.createPhase(args[i], tModDepth);
                 System.out.println(sp);
                 sp.dump();
             }
