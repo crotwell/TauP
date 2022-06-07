@@ -46,18 +46,18 @@ import java.util.Properties;
 /**
  * Calculate travel times for different branches using linear interpolation
  * between known slowness samples.
- * 
+ *
  * @version 1.1.3 Wed Jul 18 15:00:35 GMT 2001
  * @author H. Philip Crotwell
  */
 public class TauP_Time extends TauP_Tool {
-    
-    
+
+
     protected String modelName = "iasp91";
 
     /**
      * Tau model calculated previously.
-     * 
+     *
      * @see TauModel
      */
     protected TauModel tMod;
@@ -76,21 +76,21 @@ public class TauP_Time extends TauP_Tool {
     protected List<PhaseName> phaseNames = new ArrayList<PhaseName>();
 
     protected double depth = 0.0;
-    
+
     protected double receiverDepth = 0.0;
 
     protected double degrees = Double.MAX_VALUE;
-    
+
     /**
      * For when command line args uses --km for distance. Have to wait until
      * after the model is read in to get radius of earth.
      */
-    protected double distKilometers = Double.MAX_VALUE; 
-    
+    protected double distKilometers = Double.MAX_VALUE;
+
     protected double azimuth = Double.MAX_VALUE;
 
     protected double backAzimuth = Double.MAX_VALUE;
-    
+
     protected double takeoffAngle = Double.MAX_VALUE;
 
     protected double shootRayp = Double.MAX_VALUE;
@@ -110,15 +110,15 @@ public class TauP_Time extends TauP_Tool {
     protected boolean onlyPrintRayP = false;
 
     protected boolean onlyPrintTime = false;
-    
+
     protected String relativePhaseName = "";
-    
+
     protected Arrival relativeArrival;
 
     public TauP_Time() {
-    
+
     }
-    
+
     public TauP_Time(TauModel tMod)  {
         setTauModel(tMod);
     }
@@ -126,7 +126,7 @@ public class TauP_Time extends TauP_Tool {
     /**
      * creates a TauP_Time object with the tau model specified by modelName
      * already loaded.
-     * 
+     *
      * @throws TauModelException
      *             if the file can't be found or is corrupted in some way.
      */
@@ -324,12 +324,12 @@ public class TauP_Time extends TauP_Tool {
         clearPhases();
     }
 
-    
+
     public double getReceiverDepth() {
         return receiverDepth;
     }
 
-    
+
     public void setReceiverDepth(double receiverDepth) {
         if (this.receiverDepth != receiverDepth) {
             clearPhases();
@@ -352,7 +352,7 @@ public class TauP_Time extends TauP_Tool {
         }
         return tModDepth;
     }
-    
+
     public void setTauModel(TauModel tMod) {
         clearPhases();
         this.tMod = tMod;
@@ -378,7 +378,7 @@ public class TauP_Time extends TauP_Tool {
     public double[] getDisconDepths() {
         return tMod.getVelocityModel().getDisconDepths();
     }
-    
+
     public void clearPhases() {
         clearArrivals();
         phases = null;
@@ -399,7 +399,7 @@ public class TauP_Time extends TauP_Tool {
     public List<Arrival> getArrivals() {
         return Collections.unmodifiableList(arrivals);
     }
-    
+
     public List<SeismicPhase> getSeismicPhases() {
         if (phases == null) {
             recalcPhases();
@@ -692,7 +692,7 @@ public class TauP_Time extends TauP_Tool {
         }
         sortArrivals();
     }
-    
+
     public void calcTakeoff(double takeoffAngle) throws TauModelException {
         stationLat = Double.MAX_VALUE;
         stationLon = Double.MAX_VALUE;
@@ -762,13 +762,13 @@ public class TauP_Time extends TauP_Tool {
     public void depthCorrect(double depth) throws TauModelException {
         depthCorrect(depth, getReceiverDepth());
     }
-    
+
     /**
-     * 
+     *
      * In general, this is called by each tool's calculate methods, and so should
      * not need to be called by outside code. Most of the time calling setSourceDepth
      * and setReceiverDepth is preferred, allowing the tool to choose when to call depthCorrect.
-     * 
+     *
      * @param depth the source depth
      * @param receiverDepth the receiver depth
      * @throws TauModelException
@@ -932,7 +932,7 @@ public class TauP_Time extends TauP_Tool {
         out.println();
         out.flush();
     }
-    
+
     public void printResultJSON(PrintWriter out) {
         String Q = ""+'"';
         String COMMA = ",";
@@ -991,7 +991,7 @@ public class TauP_Time extends TauP_Tool {
     public void init() throws TauPException {
         TauP_Time.DEBUG = TauP_Time.DEBUG || ToolRun.DEBUG;
         this.verbose = this.verbose || TauP_Time.DEBUG || ToolRun.VERBOSE;
-        
+
         if(phaseNames.size() == 0) {
             if(toolProps.containsKey("taup.phase.file")) {
                 if(toolProps.containsKey("taup.phase.list")) {
@@ -1039,7 +1039,7 @@ public class TauP_Time extends TauP_Tool {
     				* 180.0 / Math.PI;
     	}
     }
-    
+
     public void printHelp() {
         Alert.info("Enter:\nh for new depth\nr to recalculate\n"
                 + "p to append phases, \nc to clear phases\n"
@@ -1460,7 +1460,7 @@ public class TauP_Time extends TauP_Tool {
     public void printStdUsageHead() {
         TauP_Tool.printStdUsageHead(this.getClass());
     }
-    
+
     /** Prints the command line arguments common to all TauP tools. */
     public void printStdUsage() {
         printStdUsageHead();
@@ -1503,7 +1503,7 @@ public class TauP_Time extends TauP_Tool {
                  + "--json             -- output travel times as json\n");
         printStdUsageTail();
     }
-    
+
     /**
      * solves the equation (yb-ya)/(xb-xa) = (y-ya)/(x-xa) for y given x. Useful
      * for finding the pixel for a value given the dimension of the area and the
@@ -1523,11 +1523,11 @@ public class TauP_Time extends TauP_Tool {
         }
         return (yb - ya) * (x - xa) / (xb - xa) + ya;
     }
-    
+
     /**
      * Allows TauP_Time to run as an application. Creates an instance of
-     * TauP_Time. 
-     * 
+     * TauP_Time.
+     *
      * ToolRun.main should be used instead.
      */
     public static void main(String[] args) throws IOException {
