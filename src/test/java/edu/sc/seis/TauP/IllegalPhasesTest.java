@@ -34,13 +34,13 @@ class IllegalPhasesTest {
 	String[] illegalPhases = { "null", "ScScS", "PDDDDD", "PKIKPKIKP", "PPPdiff",
 			"PKIKIKP", "SIKS", "SKIS", "Pcv410S", "Pmv410P", "Pcv410P", "Pm^410P",
 			"SKviKviKS","SK^iKS","SK^mKS", "S^S", "SVS", "Pdiffdiff", "SVS", "SccS",
-			"SIKS", "Siks", "SiKS", "Kdiff", "pp", "sp", "ss", "Ss", "Ps", "Sp", "Pp"
+			"SIKS", "Siks", "SiKS", "Kdiff", "pp", "sp", "ss", "Ss", "Ps", "Sp", "Pp",
+			"scS", "pcP"
 	};
 
 	// phases that are kind of wrong, but are handled by simply no arrivals, eg no ray params actually work,
 	// rather than being so bad as to cause an exception
 	String[] noArrivalPhases = { "PnPdiff",
-			//"scS",
 			"PdiffSdiff" };
 
 	// similar, but due to source being in mantle (below moho), these should have not ray params that
