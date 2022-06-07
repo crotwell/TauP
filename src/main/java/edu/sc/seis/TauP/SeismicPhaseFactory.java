@@ -159,7 +159,7 @@ public class SeismicPhaseFactory {
         return createPhase(name, tMod, sourceDepth, 0.0);
     }
     public static SeismicPhase createPhase(String name, TauModel tMod, double sourceDepth, double receiverDepth) throws TauModelException {
-        return createPhase(name, tMod, sourceDepth, receiverDepth, false);
+        return createPhase(name, tMod, sourceDepth, receiverDepth, ToolRun.DEBUG);
     }
     public static SeismicPhase createPhase(String name, TauModel tMod, double sourceDepth, double receiverDepth, boolean debug) throws TauModelException {
         SeismicPhaseFactory factory = new SeismicPhaseFactory(name, tMod, sourceDepth, receiverDepth, debug);
@@ -439,19 +439,22 @@ public class SeismicPhaseFactory {
                         isPWavePrev);
             }
             if (currLeg.equals("Ped") || currLeg.equals("Sed")) {
+                /* Deal with P and S exclusively downgoing case . */
                 endAction = currLegIs_Ped_Sed(prevLeg, currLeg, nextLeg, isPWave, isPWavePrev, legNum);
+            } else if(currLeg.equals("p") || currLeg.equals("s")) {
                 /* Deal with p and s case . */
-            } else if(currLeg.equals("p") || currLeg.equals("s")
-                    || currLeg.equals("k")) {
                 endAction = currLegIs_p_s(prevLeg, currLeg, nextLeg, isPWave, isPWavePrev, legNum);
-                /* Now deal with P and S case. */
             } else if(currLeg.equals("P") || currLeg.equals("S")) {
+                /* Now deal with P and S case. */
                 endAction = currLegIs_P_S(prevLeg, currLeg, nextLeg, isPWave, isPWavePrev, legNum);
             } else if(currLeg.startsWith("P") || currLeg.startsWith("S")) {
                 endAction = currLegIs_Pxx_Sxx(prevLeg, currLeg, nextLeg, isPWave, isPWavePrev, legNum);
             } else if(currLeg.equals("K")) {
                 /* Now deal with K. */
                 endAction = currLegIs_K(prevLeg, currLeg, nextLeg, isPWave, isPWavePrev, legNum);
+            } else if(currLeg.equals("k")) {
+                /* Deal with k case . */
+                endAction = currLegIs_k(prevLeg, currLeg, nextLeg, isPWave, isPWavePrev, legNum);
             } else if(currLeg.equals("I") || currLeg.equals("J")) {
                 /* And now consider inner core, I and J. */
                 endAction = currLegIs_I_J(prevLeg, currLeg, nextLeg, isPWave, isPWavePrev, legNum);
@@ -1341,6 +1344,114 @@ public class SeismicPhaseFactory {
         return endAction;
     }
 
+    PhaseInteraction currLegIs_k(String prevLeg, String currLeg, String nextLeg,
+                                   boolean isPWave, boolean isPWavePrev, int legNum)
+            throws TauModelException {
+        PhaseInteraction endAction;
+        if(nextLeg.startsWith("v") || nextLeg.startsWith("V")) {
+            throw new TauModelException(getName()+" k must always be up going "
+                    + " and cannot come immediately before a top-side reflection."
+                    + " currLeg=" + currLeg + " nextLeg=" + nextLeg);
+        } else if(nextLeg.startsWith("^")) {
+            String depthString;
+            depthString = nextLeg.substring(1);
+            endAction = REFLECT_UNDERSIDE;
+            disconBranch = LegPuller.closestBranchToDepth(tMod, depthString);
+            if (disconBranch < tMod.getCmbBranch() || disconBranch >= tMod.getIocbBranch()) {
+                throw new TauModelException(getName()+" Phase not recognized (2): "
+                        + currLeg + " followed by " + nextLeg
+                        + ", discon not in outer core.");
+            }
+            if(currBranch >= disconBranch) {
+                addToBranch(tMod,
+                        currBranch,
+                        disconBranch,
+                        isPWave,
+                        endAction,
+                        currLeg);
+            } else {
+                throw new TauModelException(getName()+" Phase not recognized (2): "
+                        + currLeg + " followed by " + nextLeg
+                        + " when currBranch=" + currBranch
+                        + " > disconBranch=" + disconBranch);
+            }
+        } else if(nextLeg.startsWith("P") || nextLeg.startsWith("S")
+                || nextLeg.equals("p") || nextLeg.equals("s")
+                || nextLeg.equals("c")
+                || nextLeg.equals("K") || nextLeg.equals("END")) {
+            if (nextLeg.equals("END")) {
+                disconBranch = upgoingRecBranch;
+                if (currBranch < upgoingRecBranch) {
+                    maxRayParam = -1;
+                    if (DEBUG) {
+                        System.out.println(name+" (currBranch >= receiverBranch() "
+                                + currBranch
+                                + " "
+                                + upgoingRecBranch
+                                + " so there cannot be a "
+                                + currLeg
+                                + " phase for this sourceDepth, receiverDepth and/or path.");
+                    }
+                    return FAIL;
+                }
+            } else  {
+                disconBranch = tMod.getCmbBranch();
+            }
+            if (nextLeg.startsWith("P") || nextLeg.startsWith("S")
+               || nextLeg.startsWith("p") || nextLeg.startsWith("s")
+                    || nextLeg.equals("c")) {
+                endAction = TRANSUP;
+            } else if (nextLeg.equals("END")) {
+                endAction = END;
+            } else if (nextLeg.equals("K")) {
+                endAction = REFLECT_UNDERSIDE;
+            } else {
+                throw new TauModelException(getName()+" Phase not recognized (3): "
+                        + currLeg + " followed by " + nextLeg);
+            }
+            addToBranch(tMod,
+                    currBranch,
+                    disconBranch,
+                    isPWave,
+                    endAction,
+                    currLeg);
+
+        } else if(nextLeg.equals("c") ) {
+            throw new TauModelException(getName()+" Phase not recognized (3): "
+                    + currLeg + " followed by " + nextLeg+", k must be upgoing in outer core and so cannot hit cmb from above.");
+        } else if(nextLeg.equals("i")
+                || nextLeg.equals("I") || nextLeg.equals("J") || nextLeg.equals("j")) {
+            throw new TauModelException(getName()+" Phase not recognized (3): "
+                    + currLeg + " followed by " + nextLeg+", k must be upgoing in outer core and so cannot hit inner core.");
+        } else if(nextLeg.equals("k")) {
+            throw new TauModelException(getName()+" Phase not recognized (3): "
+                    + currLeg + " followed by " + nextLeg+", k must be upgoing in outer core and so repeat.");
+        } else if(isLegDepth(currLeg)) {
+            double nextLegDepth = Double.parseDouble(currLeg);
+            if (nextLegDepth >= tMod.getCmbDepth()) {
+                throw new TauModelException(getName()+" Phase not recognized (3): "
+                        + currLeg + " followed by " + nextLeg+", p and s must be upgoing in mantle and so cannot hit core.");
+            }
+            disconBranch = LegPuller.closestBranchToDepth(tMod, nextLeg);
+            if (disconBranch < tMod.getCmbBranch() || disconBranch >= tMod.getIocbBranch()) {
+                throw new TauModelException(getName()+" Phase not recognized (2): "
+                        + currLeg + " followed by " + nextLeg
+                        + ", discon not in outer core.");
+            }
+            endAction = TRANSUP;
+            addToBranch(tMod,
+                    currBranch,
+                    disconBranch,
+                    isPWave,
+                    endAction,
+                    currLeg);
+        } else {
+            throw new TauModelException(getName()+" Phase not recognized (3): "
+                    + currLeg + " followed by " + nextLeg);
+        }
+        return endAction;
+    }
+
     PhaseInteraction currLegIs_I_J(String prevLeg, String currLeg, String nextLeg,
                                    boolean isPWave, boolean isPWavePrev, int legNum)
             throws TauModelException {
@@ -1370,7 +1481,7 @@ public class SeismicPhaseFactory {
                     isPWave,
                     endAction,
                     currLeg);
-        } else if(nextLeg.equals("K")) {
+        } else if(nextLeg.equals("K") || nextLeg.equals("k")) {
             endAction = TRANSUP;
             addToBranch(tMod,
                     currBranch,
@@ -1394,12 +1505,13 @@ public class SeismicPhaseFactory {
                 if(DEBUG) {System.out.println("Attempt to underside reflect from center of earth: "+nextLeg);}
                 return FAIL;
             }
-            if(prevLeg.equals("K") || prevLeg.equals("I") || prevLeg.equals("J")) {
+            if(prevLeg.equals("K") || prevLeg.equals("I") || prevLeg.equals("J") || prevLeg.startsWith("^")) {
+                endAction = REFLECT_UNDERSIDE;
                 addToBranch(tMod,
                         currBranch,
-                        tMod.getNumBranches() - 1,
+                        tMod.getIocbBranch(),
                         isPWave,
-                        TURN,
+                        endAction,
                         currLeg);
             } else {
                 throw new TauModelException(getName()+" Phase not recognized (5c): "
@@ -1423,7 +1535,7 @@ public class SeismicPhaseFactory {
                         + currLeg
                         + " followed by "+nextLeg
                         + " within phase " + name
-                        + " for this model as it has an outer core so need K in between.");
+                        + " for this model as it has an outer core so need K,k in between.");
             }
         }
         return endAction;

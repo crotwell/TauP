@@ -299,7 +299,8 @@ public class LegPuller {
                 || currToken.equals("Sn") || currToken.equals("Sdiff")
                 || currToken.equals("Ped") || currToken.equals("Sed")
                 || currToken.equals("P") || currToken.equals("S")
-                || currToken.equals("p") || currToken.equals("s") || (SeismicPhaseFactory.expert && (currToken.equals("K")
+                || currToken.equals("p") || currToken.equals("s")
+                || (SeismicPhaseFactory.expert && (currToken.equals("K")
                 || currToken.equals("k") || currToken.equals("I"))))) {
             String validationFailMessage = "First leg ("
                     + currToken

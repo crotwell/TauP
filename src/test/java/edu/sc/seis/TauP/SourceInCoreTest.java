@@ -12,14 +12,14 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class SourceInCoreTest {
 
-    List<String> outerCoreSourcePhases = Arrays.asList(new String[] { "KP", "kp", "KKs", "KiKP", "kKIKS" });
+    List<String> outerCoreSourcePhases = Arrays.asList(new String[] { "KP", "kp", "KKs", "KiKP", "kKIKS", "KI^iIKP" });
     List<String> innerCoreSourcePhases = Arrays.asList(new String[] { "IKP", "IkKIKs", "IKKiKP", "IIIKS" });
 
     @Test
-    @Disabled
     public void sourceInCore() throws TauModelException {
         boolean DEBUG = true;
         TauP_Tool.expert = true;
+        SeismicPhaseFactory.expert = true;
         String modelName = "iasp91";
         TauModel tMod = TauModelLoader.load(modelName);
         float[] sourceDepths = {0, 1000, 2000, 3500, 6000 };
@@ -44,7 +44,6 @@ public class SourceInCoreTest {
                     if (sourceDepth > tMod.getIocbDepth() && (mantlePhases.contains(phaseName) || outerCoreSourcePhases.contains(phaseName))) {
                         assertEquals(-1, phase.getMaxRayParam());
                     }
-
                 } catch (TauModelException ex) {
                     System.err.println("Working on phase: " + phaseName);
                     throw ex;
