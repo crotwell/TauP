@@ -1209,12 +1209,6 @@ public class SeismicPhase implements Serializable, Cloneable {
         return outPath;
     }
 
-    private String validationFailMessage = "";
-
-    public String getValidationFailMessage() {
-        return validationFailMessage;
-    }
-
     public static Arrival getEarliestArrival(List<SeismicPhase> phases, double degrees) {
         Arrival minArrival = null;
         for (SeismicPhase seismicPhase : phases) {
