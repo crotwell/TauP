@@ -174,7 +174,7 @@ public class LegPuller {
                 }
             }
         legs.add(new String("END"));
-        String validationMsg = SeismicPhase.phaseValidate(legs);
+        String validationMsg = phaseValidate(legs);
         if(validationMsg != null) {
             throw new TauModelException("Phase failed validation: " + name
                     + "  " + validationMsg);
@@ -276,4 +276,117 @@ public class LegPuller {
         }
         return puristName.toString();
     }
+
+    /**
+     * Performs consistency checks on the previously tokenized phase name stored
+     * in legs. Returns null if all is ok, a message if there is a problem.
+     */
+    public static String phaseValidate(ArrayList<String> legs) {
+        String currToken = (String)legs.get(0);
+        String prevToken;
+        String nextToken = "";
+        boolean prevIsReflect = false;
+        /* Special cases for diffracted waves. */
+        if(legs.size() == 2
+                && (currToken.equals("Pdiff") || currToken.equals("Sdiff") || currToken.endsWith("kmps"))
+                && ((String)legs.get(1)).equals("END")) {
+            return null;
+        }
+        /* Check first leg. */
+        if(!(currToken.equals("Pg") || currToken.equals("Pb")
+                || currToken.equals("Pn") || currToken.equals("Pdiff")
+                || currToken.equals("Sg") || currToken.equals("Sb")
+                || currToken.equals("Sn") || currToken.equals("Sdiff")
+                || currToken.equals("Ped") || currToken.equals("Sed")
+                || currToken.equals("P") || currToken.equals("S")
+                || currToken.equals("p") || currToken.equals("s") || (SeismicPhaseFactory.expert && (currToken.equals("K")
+                || currToken.equals("k") || currToken.equals("I"))))) {
+            String validationFailMessage = "First leg ("
+                    + currToken
+                    + ") must be one of Pg, Pb, Pn, Pdiff, Sg, Sb, Sn, Sdiff, P, S, p, s";
+            if(SeismicPhaseFactory.expert) {
+                validationFailMessage += ", K, k, I";
+            }
+            return validationFailMessage;
+        }
+        for(int i = 1; i < legs.size(); i++) {
+            prevToken = currToken;
+            currToken = legs.get(i);
+            if (i < legs.size()-1) {
+                nextToken = legs.get(i+1);
+            } else {
+                nextToken = "";
+            }
+            /* Check for 2 reflections/depths with no leg between them. */
+            if(currToken.startsWith("^") || currToken.startsWith("v")
+                    || currToken.equals("m") || currToken.equals("c")
+                    || currToken.equals("i")) {
+                if(prevIsReflect) {
+                    return "Two reflections or depths with no leg in between: "
+                            + prevToken + ", " + currToken;
+                } else {
+                    prevIsReflect = true;
+                }
+            } else {
+                prevIsReflect = false;
+            }
+            /* Check for "END" before the end. */
+            if(prevToken.equals("END")) {
+                return "Legs ended but more tokens exist: " + currToken;
+            }
+            /* Check for ! not second to last token */
+            if ((prevToken.equals("Ped") || prevToken.equals("Sed"))
+                    && ! ( currToken.equals("END")
+                    || currToken.equals("Pdiff") || currToken.equals("Sdiff")
+                    || currToken.equals("P") || currToken.equals("S")
+                    || currToken.equals("K") || currToken.startsWith("v") || currToken.startsWith("V")
+                    || currToken.equals("c") || currToken.equals("m") )) {
+                return "'Ped' or 'Sed' can only be before Pdiff,P,S,Sdiff,K,c,v,V,m or second to last token immediately before END or ";
+            }
+
+            // Cannot have K before P,S and followed by another K as P,S leg must turn to get back to CMB
+            if((prevToken.startsWith("k") || prevToken.startsWith("K"))
+                    && (currToken.startsWith("P") || currToken.startsWith("S") || currToken.startsWith("p") || currToken.startsWith("s"))
+                    && (nextToken.startsWith("k") || nextToken.startsWith("K"))) {
+
+                return "Cannot have P,S,p,s preceeded and followed by K,k:  "
+                        + prevToken + ", " + currToken +", "+nextToken;
+            }
+            // Cannot have I,J before K and followed by another I,J as K leg must turn to get back to IOCB
+            if((prevToken.startsWith("I") || prevToken.startsWith("J") )
+                    && (currToken.startsWith("K") || currToken.startsWith("k"))
+                    && (nextToken.startsWith("I") || nextToken.startsWith("J"))) {
+                return "Cannot have K,k preceeded and followed by I,J:  "
+                        + prevToken + ", " + currToken +", "+nextToken;
+            }
+            // Cannot have p,s before I, i, or J
+            if((prevToken.startsWith("p") || prevToken.startsWith("s")
+                    || prevToken.equals("m") || prevToken.equals("c"))
+                    && (currToken.equals("I") || currToken.equals("J") || currToken.equals("i"))) {
+                return "Cannot have P,S,p,s,m,c followed by I,J,i: "
+                        + prevToken + ", " + currToken;
+            }
+            // Cannot have m,c after I, i, or J
+            if((prevToken.equals("I") || prevToken.equals("J") || prevToken.equals("i"))
+                    && (currToken.equals("m") || currToken.equals("c"))) {
+                return "Cannot have I,J,i followed by  m,c: "
+                        + prevToken + ", " + currToken;
+            }
+            /* Check for m, c before K. */
+            if((prevToken.equals("m") || prevToken.equals("c") )
+                    && (currToken.equals("K") || currToken.equals("I") || currToken.equals("J") || currToken.equals("i"))) {
+                return "Cannot have m,c followed by K,I,i,J";
+            }
+            if((currToken.equals("m") || currToken.equals("c"))
+                    && (prevToken.equals("K") || prevToken.equals("I") || prevToken.equals("J") || prevToken.equals("i"))) {
+                return "Cannot have K,I,i,J followed by m,c";
+            }
+        }
+        /* Make sure legs end in "END". */
+        if(!currToken.equals("END")) {
+            return "Last token must be END";
+        }
+        return null;
+    }
+
 }

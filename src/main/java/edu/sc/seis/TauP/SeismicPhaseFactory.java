@@ -26,6 +26,9 @@ public class SeismicPhaseFactory {
     double nextLegDepth = 0.0;
     boolean isLegDepth, isNextLegDepth = false;
     PhaseInteraction prevEndAction = START;
+    double[] dist;
+    double[] time;
+    double[] rayParams;
 
     /** Minimum ray parameter that exists for this phase. */
     protected double minRayParam;
@@ -46,6 +49,12 @@ public class SeismicPhaseFactory {
      * increasing index.
      */
     protected int minRayParamIndex = -1;
+
+    /** The minimum distance that this phase can be theoretically observed. */
+    protected double minDistance = 0.0;
+
+    /** The maximum distance that this phase can be theoretically observed. */
+    protected double maxDistance = Double.MAX_VALUE;
 
     /**
      * temporary branch number so we know where to start add to the branch
@@ -91,6 +100,36 @@ public class SeismicPhaseFactory {
 
     public static final boolean SWAVE = SeismicPhase.SWAVE;
 
+    /**
+     * The maximum degrees that a Pn or Sn can refract along the moho. Note this
+     * is not the total distance, only the segment along the moho. The default
+     * is 20 degrees.
+     */
+    protected static double maxRefraction = 20;
+
+    /**
+     * The maximum degrees that a Pdiff or Sdiff can diffract along the CMB.
+     * Note this is not the total distance, only the segment along the CMB. The
+     * default is 60 degrees.
+     */
+    protected static double maxDiffraction = 60;
+
+    public static double getMaxRefraction() {
+        return maxRefraction;
+    }
+
+    public static void setMaxRefraction(double max) {
+        maxRefraction = max;
+    }
+
+    public static double getMaxDiffraction() {
+        return maxDiffraction;
+    }
+
+    public static void setMaxDiffraction(double max) {
+        maxDiffraction = max;
+    }
+
     SeismicPhaseFactory(String name, TauModel tMod, double sourceDepth, double receiverDepth, boolean debug) throws TauModelException {
         this.DEBUG = debug;
         if (name == null || name.length() == 0) {
@@ -131,20 +170,29 @@ public class SeismicPhaseFactory {
         legs = LegPuller.legPuller(name);
         this.puristName = LegPuller.createPuristName(tMod, legs);
 
-
         parseName(tMod);
-        SeismicPhase phase = new SeismicPhase(name, tMod, receiverDepth, legs, puristName, DEBUG);
-        phase.minRayParam = minRayParam;
-        phase.maxRayParam = maxRayParam;
-        phase.minRayParamIndex = minRayParamIndex;
-        phase.maxRayParamIndex = maxRayParamIndex;
-        phase.branchSeq = branchSeq;
-        phase.headOrDiffractSeq = headOrDiffractSeq;
-        phase.segmentList = segmentList;
-        phase.legAction = legAction;
-        phase.downGoing = downGoing;
-        phase.waveType = waveType;
-        phase.sumBranches(tMod);
+        sumBranches(tMod);
+        SeismicPhase phase = new SeismicPhase(name,
+                tMod,
+                receiverDepth,
+                legs,
+                puristName,
+                rayParams,
+                time,
+                dist,
+                minRayParam,
+                maxRayParam,
+                minRayParamIndex,
+                maxRayParamIndex,
+                minDistance,
+                maxDistance,
+                branchSeq,
+                headOrDiffractSeq,
+                segmentList,
+                legAction,
+                downGoing,
+                waveType,
+                DEBUG);
         return phase;
     }
 
@@ -453,13 +501,13 @@ public class SeismicPhaseFactory {
                 // last action was downgoing, so last branch should be downgoingRecBranch
                 if (DEBUG) {
                     System.out.println("Phase ends downgoing, but receiver is not on downgoing end of last branch");
-                    System.out.println(SeismicPhase.endActionString(endAction)+" upgoingRecBranch="+upgoingRecBranch+"  bs="+branchSeq.get(branchSeq.size()-1));
+                    System.out.println(endActionString(endAction)+" upgoingRecBranch="+upgoingRecBranch+"  bs="+branchSeq.get(branchSeq.size()-1));
                 }
                 minRayParam = -1;
                 maxRayParam = -1;
             } else {
                 if (DEBUG) {
-                    System.out.println("Last action is: "+SeismicPhase.endActionString(endAction)+" upR="+upgoingRecBranch+" downR="+downgoingRecBranch+" last="+branchSeq.get(branchSeq.size()-1));
+                    System.out.println("Last action is: "+endActionString(endAction)+" upR="+upgoingRecBranch+" downR="+downgoingRecBranch+" last="+branchSeq.get(branchSeq.size()-1));
                 }
             }
         }
@@ -1457,7 +1505,7 @@ public class SeismicPhaseFactory {
         if(DEBUG) {
             System.out.println("before addToBranch: minRP="+minRayParam+"  maxRP="+maxRayParam);
             System.out.println("addToBranch( start=" + startBranch + " end=" + endBranch
-                    + " endAction="+SeismicPhase.endActionString(endAction)+" "+currLeg+")");
+                    + " endAction="+endActionString(endAction)+" "+currLeg+")");
 
         }
         if(endAction == TURN) {
@@ -1571,7 +1619,7 @@ public class SeismicPhaseFactory {
                 }
                 if (prevSegment.endBranch == startBranch && prevSegment.isDownGoing == false &&
                         ! (prevSegment.endAction == REFLECT_UNDERSIDE || prevSegment.endAction == REFLECT_UNDERSIDE_CRITICAL)) {
-                    throw new TauModelException(getName()+": Segment "+currLeg+" is downgoing, but previous action was not to reflect underside: "+currLeg+" "+SeismicPhase.endActionString(prevSegment.endAction));
+                    throw new TauModelException(getName()+": Segment "+currLeg+" is downgoing, but previous action was not to reflect underside: "+currLeg+" "+endActionString(prevSegment.endAction));
                 }
             } else {
                 if (prevSegment.endBranch < startBranch) {
@@ -1585,7 +1633,7 @@ public class SeismicPhaseFactory {
                 }
                 if (prevSegment.endBranch == startBranch && prevSegment.isDownGoing == true
                         && ! ( prevSegment.endAction == TURN || prevSegment.endAction == DIFFRACT || prevSegment.endAction == REFLECT_TOPSIDE || prevSegment.endAction == REFLECT_TOPSIDE_CRITICAL)) {
-                    throw new TauModelException(getName()+": Segment is upgoing, but previous action was not to reflect topside: "+currLeg+" "+SeismicPhase.endActionString(prevSegment.endAction));
+                    throw new TauModelException(getName()+": Segment is upgoing, but previous action was not to reflect topside: "+currLeg+" "+endActionString(prevSegment.endAction));
                 }
             }
         }
@@ -1609,7 +1657,7 @@ public class SeismicPhaseFactory {
                         System.out.println("i=" + i + " isDownGoing=" + isDownGoing
                                 + " isPWave=" + isPWave + " startBranch="
                                 + startBranch + " endBranch=" + endBranch + " "
-                                + SeismicPhase.endActionString(endAction));
+                                + endActionString(endAction));
                     }
                 }
             }
@@ -1632,7 +1680,7 @@ public class SeismicPhaseFactory {
                         System.out.println("i=" + i + " isDownGoing=" + isDownGoing
                                 + " isPWave=" + isPWave + " startBranch="
                                 + startBranch + " endBranch=" + endBranch + " "
-                                + SeismicPhase.endActionString(endAction));
+                                + endActionString(endAction));
                     }
                 }
             }
@@ -1642,6 +1690,309 @@ public class SeismicPhaseFactory {
             System.out.println("after addToBranch: minRP="+minRayParam+"  maxRP="+maxRayParam+" endOffset="+endOffset+" isDownGoing="+isDownGoing);
         }
 
+    }
+
+
+    /**
+     * Calculates how many times the phase passes through a branch, up or down,
+     * so that we can just multiply instead of doing the ray calc for each time.
+     * @return
+     */
+    protected static int[][] calcBranchMultiplier(TauModel tMod, List<Integer> branchSeq, List<Boolean> waveType) {
+        /* initialize the counter for each branch to 0. 0 is P and 1 is S. */
+        int[][] timesBranches = new int[2][tMod.getNumBranches()];
+        for(int i = 0; i < timesBranches[0].length; i++) {
+            timesBranches[0][i] = 0;
+            timesBranches[1][i] = 0;
+        }
+        /* Count how many times each branch appears in the path. */
+        for(int i = 0; i < branchSeq.size(); i++) {
+            if(((Boolean)waveType.get(i)).booleanValue()) {
+                timesBranches[0][((Integer)branchSeq.get(i)).intValue()]++;
+            } else {
+                timesBranches[1][((Integer)branchSeq.get(i)).intValue()]++;
+            }
+        }
+        return timesBranches;
+    }
+
+    /**
+     * Sums the appropriate branches for this phase.
+     *
+     * @throws TauModelException
+     *             if the topDepth of the high slowness zone is not contained
+     *             within the TauModel. This should never happen and would
+     *             indicate an invalid TauModel.
+     */
+    protected void sumBranches(TauModel tMod) throws TauModelException {
+        if(maxRayParam < 0.0 || minRayParam > maxRayParam) {
+            /* Phase has no arrivals, possibly due to source depth. */
+            rayParams = new double[0];
+            minRayParam = -1;
+            maxRayParam = -1;
+            dist = new double[0];
+            time = new double[0];
+            maxDistance = -1;
+            return;
+        }
+        /* Special case for surface waves. */
+        if(name.endsWith("kmps")) {
+            dist = new double[2];
+            time = new double[2];
+            rayParams = new double[2];
+            dist[0] = 0.0;
+            time[0] = 0.0;
+            rayParams[0] = tMod.radiusOfEarth
+                    / Double.valueOf(name.substring(0, name.length() - 4))
+                    .doubleValue();
+            dist[1] = 2 * Math.PI;
+            time[1] = 2
+                    * Math.PI
+                    * tMod.radiusOfEarth
+                    / Double.valueOf(name.substring(0, name.length() - 4))
+                    .doubleValue();
+            rayParams[1] = rayParams[0];
+            minDistance = 0.0;
+            maxDistance = 2 * Math.PI;
+            downGoing.add(true);
+            return;
+        }
+        /*
+         * Find the ray parameter index that corresponds to the minRayParam and
+         * maxRayParam.
+         */
+        for(int i = 0; i < tMod.rayParams.length; i++) {
+            if(tMod.rayParams[i] >= minRayParam) {
+                minRayParamIndex = i;
+            }
+            if(tMod.rayParams[i] >= maxRayParam) {
+                maxRayParamIndex = i;
+            }
+        }
+
+        if(maxRayParamIndex < 0) {
+            throw new RuntimeException(getName()+" Should not happen, did not find max ray param"+maxRayParam);
+        }
+
+        if(minRayParamIndex < 0) {
+            throw new RuntimeException(getName()+" Should not happen, did not find min ray param"+minRayParam);
+        }
+
+        if(maxRayParamIndex == 0
+                && minRayParamIndex == tMod.rayParams.length - 1) {
+            // all ray parameters are valid so just copy
+            rayParams = new double[tMod.rayParams.length];
+            System.arraycopy(tMod.rayParams,
+                    0,
+                    rayParams,
+                    0,
+                    tMod.rayParams.length);
+        } else if(maxRayParamIndex == minRayParamIndex) {
+            if(name.indexOf("Sdiff") != -1 || name.indexOf("Pdiff") != -1) {
+                rayParams = new double[2];
+                rayParams[0] = minRayParam;
+                rayParams[1] = minRayParam;
+            } else if(name.indexOf("Pn") != -1 || name.indexOf("Sn") != -1) {
+                rayParams = new double[2];
+                rayParams[0] = minRayParam;
+                rayParams[1] = minRayParam;
+            } else if(name.endsWith("kmps")) {
+                rayParams = new double[2];
+                rayParams[0] = 0;
+                rayParams[1] = maxRayParam;
+            } else {
+                rayParams = new double[2];
+                rayParams[0] = minRayParam;
+                rayParams[1] = minRayParam;
+            }
+        } else {
+            if(DEBUG) {
+                System.out.println("SumBranches() maxRayParamIndex=" + maxRayParamIndex
+                        + " minRayParamIndex=" + minRayParamIndex
+                        + " tMod.rayParams.length=" + tMod.rayParams.length
+                        + " tMod.rayParams[0]=" + tMod.rayParams[0]
+                        +"\n"
+                        + " tMod.rayParams["+minRayParamIndex+"]=" + tMod.rayParams[minRayParamIndex]
+                        +"\n"
+                        + " tMod.rayParams["+maxRayParamIndex+"]=" + tMod.rayParams[maxRayParamIndex]
+                        + " maxRayParam=" + maxRayParam);
+            }
+            // only a subset of ray parameters are valid so only use those
+            rayParams = new double[minRayParamIndex - maxRayParamIndex + 1];
+            System.arraycopy(tMod.rayParams,
+                    maxRayParamIndex,
+                    rayParams,
+                    0,
+                    minRayParamIndex - maxRayParamIndex + 1);
+        }
+        dist = new double[rayParams.length];
+        time = new double[rayParams.length];
+        /* counter for passes through each branch. 0 is P and 1 is S. */
+        int[][] timesBranches = calcBranchMultiplier(tMod, branchSeq, waveType);
+        /* Sum the branches with the appropriate multiplier. */
+        for(int j = 0; j < tMod.getNumBranches(); j++) {
+            if(timesBranches[0][j] != 0) {
+                for(int i = maxRayParamIndex; i < minRayParamIndex + 1; i++) {
+                    dist[i - maxRayParamIndex] += timesBranches[0][j]
+                            * tMod.getTauBranch(j, PWAVE).getDist(i);
+                    time[i - maxRayParamIndex] += timesBranches[0][j]
+                            * tMod.getTauBranch(j, PWAVE).time[i];
+                }
+            }
+            if(timesBranches[1][j] != 0) {
+                for(int i = maxRayParamIndex; i < minRayParamIndex + 1; i++) {
+                    dist[i - maxRayParamIndex] += timesBranches[1][j]
+                            * tMod.getTauBranch(j, SWAVE).getDist(i);
+                    time[i - maxRayParamIndex] += timesBranches[1][j]
+                            * tMod.getTauBranch(j, SWAVE).time[i];
+                }
+            }
+        }
+        if(name.indexOf("Sdiff") != -1 || name.indexOf("Pdiff") != -1 ) {
+            if(tMod.cmbDepth == tMod.radiusOfEarth || tMod.getSlownessModel()
+                    .depthInHighSlowness(tMod.cmbDepth - 1e-10,
+                            minRayParam,
+                            (name.charAt(0) == 'P'))) {
+                /*
+                 * No diffraction if cmb is zero radius or there is a high slowness zone at the CMB.
+                 */
+                minRayParam = -1;
+                maxRayParam = -1;
+                maxDistance = -1;
+                dist = new double[0];
+                time = new double[0];
+                rayParams = new double[0];
+                return;
+            } else {
+                dist[1] = dist[0] + getMaxDiffraction() * Math.PI / 180.0;
+                time[1] = time[0] + getMaxDiffraction() * Math.PI / 180.0
+                        * minRayParam;
+            }
+        } else if(name.indexOf("Pn") != -1 || name.indexOf("Sn") != -1) {
+            dist[1] = dist[0] + maxRefraction * Math.PI / 180.0;
+            time[1] = time[0] + maxRefraction * Math.PI / 180.0 * minRayParam;
+        } else if(maxRayParamIndex == minRayParamIndex) {
+            dist[1] = dist[0];
+            time[1] = time[0];
+        }
+        minDistance = Double.MAX_VALUE;
+        maxDistance = 0.0;
+        for(int j = 0; j < dist.length; j++) {
+            if(dist[j] < minDistance) {
+                minDistance = dist[j];
+            }
+            if(dist[j] > maxDistance) {
+                maxDistance = dist[j];
+            }
+        }
+        /*
+         * Now check to see if our ray parameter range includes any ray
+         * parameters that are associated with high slowness zones. If so, then
+         * we will need to insert a "shadow zone" into our time and distance
+         * arrays. It is represented by a repeated ray parameter.
+         */
+        DepthRange[] hsz;
+        int hSZIndex;
+        int indexOffset;
+        boolean foundOverlap = false;
+        boolean isPWave;
+        int branchNum;
+        int dummy;
+        for(dummy = 0, isPWave = true; dummy < 2; dummy++, isPWave = false) {
+            hsz = tMod.getSlownessModel().getHighSlowness(isPWave);
+            hSZIndex = 0;
+            indexOffset = 0;
+            for(int i = 0; i < hsz.length; i++) {
+                if(maxRayParam > hsz[i].rayParam
+                        && hsz[i].rayParam > minRayParam) {
+                    /*
+                     * There is a high slowness zone within our ray parameter
+                     * range so we might need to add a shadow zone. We need to
+                     * check to see if this wave type, P or S, is part of the
+                     * phase at this depth/ray parameter.
+                     */
+                    branchNum = tMod.findBranch(hsz[i].topDepth);
+                    foundOverlap = false;
+                    for(int legNum = 0; legNum < branchSeq.size(); legNum++) {
+                        // check for downgoing legs that cross the high slowness
+                        // zone
+                        // with the same wave type
+                        if(((Integer)branchSeq.get(legNum)).intValue() == branchNum
+                                && ((Boolean)waveType.get(legNum)).booleanValue() == isPWave
+                                && ((Boolean)downGoing.get(legNum)).booleanValue() == true
+                                && ((Integer)branchSeq.get(legNum - 1)).intValue() == branchNum - 1
+                                && ((Boolean)waveType.get(legNum - 1)).booleanValue() == isPWave
+                                && ((Boolean)downGoing.get(legNum - 1)).booleanValue() == true) {
+                            foundOverlap = true;
+                            break;
+                        }
+                    }
+                    if(foundOverlap) {
+                        double[] newdist = new double[dist.length + 1];
+                        double[] newtime = new double[time.length + 1];
+                        double[] newrayParams = new double[rayParams.length + 1];
+                        for(int j = 0; j < rayParams.length; j++) {
+                            if(rayParams[j] == hsz[i].rayParam) {
+                                hSZIndex = j;
+                                break;
+                            }
+                        }
+                        System.arraycopy(dist, 0, newdist, 0, hSZIndex);
+                        System.arraycopy(time, 0, newtime, 0, hSZIndex);
+                        System.arraycopy(rayParams,
+                                0,
+                                newrayParams,
+                                0,
+                                hSZIndex);
+                        newrayParams[hSZIndex] = hsz[i].rayParam;
+                        /* Sum the branches with the appropriate multiplier. */
+                        newdist[hSZIndex] = 0.0;
+                        newtime[hSZIndex] = 0.0;
+                        for(int j = 0; j < tMod.getNumBranches(); j++) {
+                            if(timesBranches[0][j] != 0
+                                    && tMod.getTauBranch(j, PWAVE)
+                                    .getTopDepth() < hsz[i].topDepth) {
+                                newdist[hSZIndex] += timesBranches[0][j]
+                                        * tMod.getTauBranch(j, PWAVE).dist[maxRayParamIndex
+                                        + hSZIndex - indexOffset];
+                                newtime[hSZIndex] += timesBranches[0][j]
+                                        * tMod.getTauBranch(j, PWAVE).time[maxRayParamIndex
+                                        + hSZIndex - indexOffset];
+                            }
+                            if(timesBranches[1][j] != 0
+                                    && tMod.getTauBranch(j, SWAVE)
+                                    .getTopDepth() < hsz[i].topDepth) {
+                                newdist[hSZIndex] += timesBranches[1][j]
+                                        * tMod.getTauBranch(j, SWAVE).dist[maxRayParamIndex
+                                        + hSZIndex - indexOffset];
+                                newtime[hSZIndex] += timesBranches[1][j]
+                                        * tMod.getTauBranch(j, SWAVE).time[maxRayParamIndex
+                                        + hSZIndex - indexOffset];
+                            }
+                        }
+                        System.arraycopy(dist,
+                                hSZIndex,
+                                newdist,
+                                hSZIndex + 1,
+                                dist.length - hSZIndex);
+                        System.arraycopy(time,
+                                hSZIndex,
+                                newtime,
+                                hSZIndex + 1,
+                                time.length - hSZIndex);
+                        System.arraycopy(rayParams,
+                                hSZIndex,
+                                newrayParams,
+                                hSZIndex + 1,
+                                rayParams.length - hSZIndex);
+                        indexOffset++;
+                        dist = newdist;
+                        time = newtime;
+                        rayParams = newrayParams;
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -1659,4 +2010,34 @@ public class SeismicPhaseFactory {
         }
         return isNextLegDepth;
     }
+
+    public static final String endActionString(PhaseInteraction endAction) {
+        if(endAction == TURN) {
+            return "TURN";
+        } else if(endAction == REFLECT_UNDERSIDE) {
+            return "REFLECT_UNDERSIDE";
+        } else if(endAction == REFLECT_UNDERSIDE_CRITICAL) {
+            return "REFLECT_UNDERSIDE_CRITICAL";
+        } else if(endAction == END ) {
+            return "END";
+        } else if(endAction == END_DOWN) {
+            return "END_DOWN";
+        } else if(endAction == REFLECT_TOPSIDE) {
+            return "REFLECT_TOPSIDE";
+        } else if(endAction == REFLECT_TOPSIDE_CRITICAL) {
+            return "REFLECT_TOPSIDE_CRITICAL";
+        } else if(endAction == TRANSUP) {
+            return "TRANSUP";
+        } else if(endAction == TRANSDOWN) {
+            return "TRANSDOWN";
+        } else if(endAction == DIFFRACT) {
+            return "DIFFRACT";
+        } else if(endAction == FAIL) {
+            return "FAIL";
+        } else {
+            throw new RuntimeException("UNKNOWN Action: "+endAction);
+        }
+    }
+
+
 }

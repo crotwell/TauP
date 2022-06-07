@@ -51,25 +51,8 @@ public class SeismicPhase implements Serializable, Cloneable {
     /** Enables verbose output. */
     public transient boolean verbose = false;
 
-    /** Enables phases originating in core. */
-    public static transient boolean expert = TauP_Time.expert;
-
     /** TauModel to generate phase for. */
     protected TauModel tMod;
-
-    /**
-     * The maximum degrees that a Pn or Sn can refract along the moho. Note this
-     * is not the total distance, only the segment along the moho. The default
-     * is 20 degrees.
-     */
-    protected static double maxRefraction = 20;
-
-    /**
-     * The maximum degrees that a Pdiff or Sdiff can diffract along the CMB.
-     * Note this is not the total distance, only the segment along the CMB. The
-     * default is 60 degrees.
-     */
-    protected static double maxDiffraction = 60;
 
     /**
      * The source depth within the TauModel that was used to generate this
@@ -156,19 +139,19 @@ public class SeismicPhase implements Serializable, Cloneable {
      * SeismicPhase.REFLECTBOT, or SeismicPhase.REFLECTTOP. This allows a check
      * to make sure the path is correct. Used in addToBranch() and parseName().
      */
-    protected ArrayList<PhaseInteraction> legAction = new ArrayList<PhaseInteraction>();
+    protected List<PhaseInteraction> legAction = new ArrayList<PhaseInteraction>();
 
     /**
      * true if the current leg of the phase is down going. This allows a check
      * to make sure the path is correct. Used in addToBranch() and parseName().
      */
-    protected ArrayList<Boolean> downGoing = new ArrayList<Boolean>();
+    protected List<Boolean> downGoing = new ArrayList<Boolean>();
 
     /**
      * ArrayList of wave types corresponding to each leg of the phase.
      *
      */
-    protected ArrayList<Boolean> waveType = new ArrayList<Boolean>();
+    protected List<Boolean> waveType = new ArrayList<Boolean>();
     
     protected double refineDistToleranceRadian = 0.0049*Math.PI/180;
     
@@ -255,7 +238,27 @@ public class SeismicPhase implements Serializable, Cloneable {
         this.rayParams = phase.rayParams;
     }
 
-    SeismicPhase(String name, TauModel tMod, double receiverDepth, ArrayList<String> legs, String puristName, boolean debug) throws TauModelException {
+    public SeismicPhase(String name,
+                 TauModel tMod,
+                 double receiverDepth,
+                 ArrayList<String> legs,
+                 String puristName,
+                 double[] rayParams,
+                 double[] time,
+                 double[] dist,
+                 double minRayParam,
+                 double maxRayParam,
+                 int minRayParamIndex,
+                 int maxRayParamIndex,
+                 double minDistance,
+                 double maxDistance,
+                 List<Integer> branchSeq,
+                 List<Integer> headOrDiffractSeq,
+                 List<SeismicPhaseSegment> segmentList,
+                 List<PhaseInteraction> legAction,
+                 List<Boolean> downGoing,
+                 List<Boolean> waveType,
+                 boolean debug) throws TauModelException {
         this.DEBUG = debug ;
         this.name = name;
         this.tMod = tMod;
@@ -263,8 +266,25 @@ public class SeismicPhase implements Serializable, Cloneable {
         this.sourceDepth = tMod.getSourceDepth();
         this.receiverDepth = receiverDepth;
         this.legs = legs;
+        this.rayParams = rayParams;
+        this.time = time;
+        this.dist = dist;
+        this.minRayParam = minRayParam;
+        this.maxRayParam = maxRayParam;
+        this.minRayParamIndex = minRayParamIndex;
+        this.maxRayParamIndex = maxRayParamIndex;
+        this.minDistance = minDistance;
+        this.maxDistance = maxDistance;
+        this.branchSeq = branchSeq;
+        this.headOrDiffractSeq = headOrDiffractSeq;
+        this.segmentList = segmentList;
+        this.legAction = legAction;
+        this.downGoing = downGoing;
+        this.waveType = waveType;
+
     }
-    
+
+
     public boolean phasesExistsInModel() {
         return getMaxRayParam() >= 0;
     }
@@ -318,20 +338,36 @@ public class SeismicPhase implements Serializable, Cloneable {
         return minRayParamIndex;
     }
 
+    /**
+     * @deprecated see SeismicPhaseFactory
+     * @return max refractions distance for head waves
+     */
     public static double getMaxRefraction() {
-        return maxRefraction;
+        return SeismicPhaseFactory.getMaxRefraction();
     }
 
+    /**
+     * set max refractions distance for head waves
+     * @deprecated see SeismicPhaseFactory
+     */
     public static void setMaxRefraction(double max) {
-        maxRefraction = max;
+        SeismicPhaseFactory.setMaxRefraction(max);
     }
 
+    /**
+     * @deprecated see SeismicPhaseFactory
+     * @return max diffraction distance for diff waves
+     */
     public static double getMaxDiffraction() {
-        return maxDiffraction;
+        return SeismicPhaseFactory.getMaxDiffraction();
     }
 
+    /**
+     * set max diffraction distance for diff waves
+     * @deprecated see SeismicPhaseFactory
+     */
     public static void setMaxDiffraction(double max) {
-        maxDiffraction = max;
+        SeismicPhaseFactory.setMaxDiffraction(max);
     }
 
     public String getName() {
@@ -614,7 +650,7 @@ public class SeismicPhase implements Serializable, Cloneable {
         int rayParamIndex = -1;
         for (rayParamIndex = 0; rayParamIndex < rayParams.length-1 && rayParams[rayParamIndex+1] >= rayParam; rayParamIndex++) {}
         /* counter for passes through each branch. 0 is P and 1 is S. */
-        int[][] timesBranches = calcBranchMultiplier();
+        int[][] timesBranches = SeismicPhaseFactory.calcBranchMultiplier(tMod, branchSeq, waveType);
         TimeDist sum = new TimeDist(rayParam);
         /* Sum the branches with the appropriate multiplier. */
         for(int j = 0; j < tMod.getNumBranches(); j++) {
@@ -780,337 +816,6 @@ public class SeismicPhase implements Serializable, Cloneable {
     }
         
 
-
-    public static final String endActionString(PhaseInteraction endAction) {
-        if(endAction == TURN) {
-            return "TURN";
-        } else if(endAction == REFLECT_UNDERSIDE) {
-            return "REFLECT_UNDERSIDE";
-        } else if(endAction == REFLECT_UNDERSIDE_CRITICAL) {
-            return "REFLECT_UNDERSIDE_CRITICAL";
-        } else if(endAction == END ) {
-            return "END";
-        } else if(endAction == END_DOWN) {
-            return "END_DOWN";
-        } else if(endAction == REFLECT_TOPSIDE) {
-            return "REFLECT_TOPSIDE";
-        } else if(endAction == REFLECT_TOPSIDE_CRITICAL) {
-            return "REFLECT_TOPSIDE_CRITICAL";
-        } else if(endAction == TRANSUP) {
-            return "TRANSUP";
-        } else if(endAction == TRANSDOWN) {
-            return "TRANSDOWN";
-        } else if(endAction == DIFFRACT) {
-            return "DIFFRACT";
-        } else if(endAction == FAIL) {
-            return "FAIL";
-        } else {
-            throw new RuntimeException("UNKNOWN Action: "+endAction);
-        }
-    }
-    
-
-    /**
-     * Calculates how many times the phase passes through a branch, up or down,
-     * so that we can just multiply instead of doing the ray calc for each time.
-     * @return
-     */
-    protected int[][] calcBranchMultiplier() {
-        /* initialize the counter for each branch to 0. 0 is P and 1 is S. */
-        int[][] timesBranches = new int[2][tMod.getNumBranches()];
-        for(int i = 0; i < timesBranches[0].length; i++) {
-            timesBranches[0][i] = 0;
-            timesBranches[1][i] = 0;
-        }
-        /* Count how many times each branch appears in the path. */
-        for(int i = 0; i < branchSeq.size(); i++) {
-            if(((Boolean)waveType.get(i)).booleanValue()) {
-                timesBranches[0][((Integer)branchSeq.get(i)).intValue()]++;
-            } else {
-                timesBranches[1][((Integer)branchSeq.get(i)).intValue()]++;
-            }
-        }
-        return timesBranches;
-    }
-
-    /**
-     * Sums the appropriate branches for this phase.
-     * 
-     * @throws TauModelException
-     *             if the topDepth of the high slowness zone is not contained
-     *             within the TauModel. This should never happen and would
-     *             indicate an invalid TauModel.
-     */
-    protected void sumBranches(TauModel tMod) throws TauModelException {
-        if(maxRayParam < 0.0 || minRayParam > maxRayParam) {
-            /* Phase has no arrivals, possibly due to source depth. */
-            rayParams = new double[0];
-            minRayParam = -1;
-            maxRayParam = -1;
-            dist = new double[0];
-            time = new double[0];
-            maxDistance = -1;
-            return;
-        }
-        /* Special case for surface waves. */
-        if(name.endsWith("kmps")) {
-            dist = new double[2];
-            time = new double[2];
-            rayParams = new double[2];
-            dist[0] = 0.0;
-            time[0] = 0.0;
-            rayParams[0] = tMod.radiusOfEarth
-                    / Double.valueOf(name.substring(0, name.length() - 4))
-                            .doubleValue();
-            dist[1] = 2 * Math.PI;
-            time[1] = 2
-                    * Math.PI
-                    * tMod.radiusOfEarth
-                    / Double.valueOf(name.substring(0, name.length() - 4))
-                            .doubleValue();
-            rayParams[1] = rayParams[0];
-            minDistance = 0.0;
-            maxDistance = 2 * Math.PI;
-            downGoing.add(true);
-            return;
-        }
-        /*
-         * Find the ray parameter index that corresponds to the minRayParam and
-         * maxRayParam.
-         */
-        for(int i = 0; i < tMod.rayParams.length; i++) {
-            if(tMod.rayParams[i] >= minRayParam) {
-                minRayParamIndex = i;
-            }
-            if(tMod.rayParams[i] >= maxRayParam) {
-                maxRayParamIndex = i;
-            }
-        }
-        
-        if(maxRayParamIndex < 0) {
-        	throw new RuntimeException(getName()+" Should not happen, did not find max ray param"+maxRayParam);
-        }
-        
-        if(minRayParamIndex < 0) {
-        	throw new RuntimeException(getName()+" Should not happen, did not find min ray param"+minRayParam);
-        }
-        
-        if(maxRayParamIndex == 0
-                && minRayParamIndex == tMod.rayParams.length - 1) {
-            // all ray parameters are valid so just copy
-            rayParams = new double[tMod.rayParams.length];
-            System.arraycopy(tMod.rayParams,
-                             0,
-                             rayParams,
-                             0,
-                             tMod.rayParams.length);
-        } else if(maxRayParamIndex == minRayParamIndex) {
-            if(name.indexOf("Sdiff") != -1 || name.indexOf("Pdiff") != -1) {
-                rayParams = new double[2];
-                rayParams[0] = minRayParam;
-                rayParams[1] = minRayParam;
-            } else if(name.indexOf("Pn") != -1 || name.indexOf("Sn") != -1) {
-                rayParams = new double[2];
-                rayParams[0] = minRayParam;
-                rayParams[1] = minRayParam;
-            } else if(name.endsWith("kmps")) {
-                rayParams = new double[2];
-                rayParams[0] = 0;
-                rayParams[1] = maxRayParam;
-            } else {
-                rayParams = new double[2];
-                rayParams[0] = minRayParam;
-                rayParams[1] = minRayParam;
-            }
-        } else {
-            if(DEBUG) {
-                System.out.println("SumBranches() maxRayParamIndex=" + maxRayParamIndex
-                        + " minRayParamIndex=" + minRayParamIndex
-                        + " tMod.rayParams.length=" + tMod.rayParams.length
-                        + " tMod.rayParams[0]=" + tMod.rayParams[0]
-                        +"\n"
-                        + " tMod.rayParams["+minRayParamIndex+"]=" + tMod.rayParams[minRayParamIndex]
-                        +"\n"
-                        + " tMod.rayParams["+maxRayParamIndex+"]=" + tMod.rayParams[maxRayParamIndex]
-                        + " maxRayParam=" + maxRayParam);
-            }
-            // only a subset of ray parameters are valid so only use those
-            rayParams = new double[minRayParamIndex - maxRayParamIndex + 1];
-            System.arraycopy(tMod.rayParams,
-                             maxRayParamIndex,
-                             rayParams,
-                             0,
-                             minRayParamIndex - maxRayParamIndex + 1);
-        }
-        dist = new double[rayParams.length];
-        time = new double[rayParams.length];
-        /* counter for passes through each branch. 0 is P and 1 is S. */
-        int[][] timesBranches = calcBranchMultiplier();
-        /* Sum the branches with the appropriate multiplier. */
-        for(int j = 0; j < tMod.getNumBranches(); j++) {
-            if(timesBranches[0][j] != 0) {
-                for(int i = maxRayParamIndex; i < minRayParamIndex + 1; i++) {
-                    dist[i - maxRayParamIndex] += timesBranches[0][j]
-                            * tMod.getTauBranch(j, PWAVE).getDist(i);
-                    time[i - maxRayParamIndex] += timesBranches[0][j]
-                            * tMod.getTauBranch(j, PWAVE).time[i];
-                }
-            }
-            if(timesBranches[1][j] != 0) {
-                for(int i = maxRayParamIndex; i < minRayParamIndex + 1; i++) {
-                    dist[i - maxRayParamIndex] += timesBranches[1][j]
-                            * tMod.getTauBranch(j, SWAVE).getDist(i);
-                    time[i - maxRayParamIndex] += timesBranches[1][j]
-                            * tMod.getTauBranch(j, SWAVE).time[i];
-                }
-            }
-        }
-        if(name.indexOf("Sdiff") != -1 || name.indexOf("Pdiff") != -1 ) {
-            if(tMod.cmbDepth == tMod.radiusOfEarth || tMod.getSlownessModel()
-                    .depthInHighSlowness(tMod.cmbDepth - 1e-10,
-                                         minRayParam,
-                                         (name.charAt(0) == 'P'))) {
-                /*
-                 * No diffraction if cmb is zero radius or there is a high slowness zone at the CMB.
-                 */
-                minRayParam = -1;
-                maxRayParam = -1;
-                maxDistance = -1;
-                dist = new double[0];
-                time = new double[0];
-                rayParams = new double[0];
-                return;
-            } else {
-                dist[1] = dist[0] + getMaxDiffraction() * Math.PI / 180.0;
-                time[1] = time[0] + getMaxDiffraction() * Math.PI / 180.0
-                        * minRayParam;
-            }
-        } else if(name.indexOf("Pn") != -1 || name.indexOf("Sn") != -1) {
-            dist[1] = dist[0] + maxRefraction * Math.PI / 180.0;
-            time[1] = time[0] + maxRefraction * Math.PI / 180.0 * minRayParam;
-        } else if(maxRayParamIndex == minRayParamIndex) {
-            dist[1] = dist[0];
-            time[1] = time[0];
-        }
-        minDistance = Double.MAX_VALUE;
-        maxDistance = 0.0;
-        for(int j = 0; j < dist.length; j++) {
-            if(dist[j] < minDistance) {
-                minDistance = dist[j];
-            }
-            if(dist[j] > maxDistance) {
-                maxDistance = dist[j];
-            }
-        }
-        /*
-         * Now check to see if our ray parameter range includes any ray
-         * parameters that are associated with high slowness zones. If so, then
-         * we will need to insert a "shadow zone" into our time and distance
-         * arrays. It is represented by a repeated ray parameter.
-         */
-        DepthRange[] hsz;
-        int hSZIndex;
-        int indexOffset;
-        boolean foundOverlap = false;
-        boolean isPWave;
-        int branchNum;
-        int dummy;
-        for(dummy = 0, isPWave = true; dummy < 2; dummy++, isPWave = false) {
-            hsz = tMod.getSlownessModel().getHighSlowness(isPWave);
-            hSZIndex = 0;
-            indexOffset = 0;
-            for(int i = 0; i < hsz.length; i++) {
-                if(maxRayParam > hsz[i].rayParam
-                        && hsz[i].rayParam > minRayParam) {
-                    /*
-                     * There is a high slowness zone within our ray parameter
-                     * range so we might need to add a shadow zone. We need to
-                     * check to see if this wave type, P or S, is part of the
-                     * phase at this depth/ray parameter.
-                     */
-                    branchNum = tMod.findBranch(hsz[i].topDepth);
-                    foundOverlap = false;
-                    for(int legNum = 0; legNum < branchSeq.size(); legNum++) {
-                        // check for downgoing legs that cross the high slowness
-                        // zone
-                        // with the same wave type
-                        if(((Integer)branchSeq.get(legNum)).intValue() == branchNum
-                                && ((Boolean)waveType.get(legNum)).booleanValue() == isPWave
-                                && ((Boolean)downGoing.get(legNum)).booleanValue() == true
-                                && ((Integer)branchSeq.get(legNum - 1)).intValue() == branchNum - 1
-                                && ((Boolean)waveType.get(legNum - 1)).booleanValue() == isPWave
-                                && ((Boolean)downGoing.get(legNum - 1)).booleanValue() == true) {
-                            foundOverlap = true;
-                            break;
-                        }
-                    }
-                    if(foundOverlap) {
-                        double[] newdist = new double[dist.length + 1];
-                        double[] newtime = new double[time.length + 1];
-                        double[] newrayParams = new double[rayParams.length + 1];
-                        for(int j = 0; j < rayParams.length; j++) {
-                            if(rayParams[j] == hsz[i].rayParam) {
-                                hSZIndex = j;
-                                break;
-                            }
-                        }
-                        System.arraycopy(dist, 0, newdist, 0, hSZIndex);
-                        System.arraycopy(time, 0, newtime, 0, hSZIndex);
-                        System.arraycopy(rayParams,
-                                         0,
-                                         newrayParams,
-                                         0,
-                                         hSZIndex);
-                        newrayParams[hSZIndex] = hsz[i].rayParam;
-                        /* Sum the branches with the appropriate multiplier. */
-                        newdist[hSZIndex] = 0.0;
-                        newtime[hSZIndex] = 0.0;
-                        for(int j = 0; j < tMod.getNumBranches(); j++) {
-                            if(timesBranches[0][j] != 0
-                                    && tMod.getTauBranch(j, PWAVE)
-                                            .getTopDepth() < hsz[i].topDepth) {
-                                newdist[hSZIndex] += timesBranches[0][j]
-                                        * tMod.getTauBranch(j, PWAVE).dist[maxRayParamIndex
-                                                + hSZIndex - indexOffset];
-                                newtime[hSZIndex] += timesBranches[0][j]
-                                        * tMod.getTauBranch(j, PWAVE).time[maxRayParamIndex
-                                                + hSZIndex - indexOffset];
-                            }
-                            if(timesBranches[1][j] != 0
-                                    && tMod.getTauBranch(j, SWAVE)
-                                            .getTopDepth() < hsz[i].topDepth) {
-                                newdist[hSZIndex] += timesBranches[1][j]
-                                        * tMod.getTauBranch(j, SWAVE).dist[maxRayParamIndex
-                                                + hSZIndex - indexOffset];
-                                newtime[hSZIndex] += timesBranches[1][j]
-                                        * tMod.getTauBranch(j, SWAVE).time[maxRayParamIndex
-                                                + hSZIndex - indexOffset];
-                            }
-                        }
-                        System.arraycopy(dist,
-                                         hSZIndex,
-                                         newdist,
-                                         hSZIndex + 1,
-                                         dist.length - hSZIndex);
-                        System.arraycopy(time,
-                                         hSZIndex,
-                                         newtime,
-                                         hSZIndex + 1,
-                                         time.length - hSZIndex);
-                        System.arraycopy(rayParams,
-                                         hSZIndex,
-                                         newrayParams,
-                                         hSZIndex + 1,
-                                         rayParams.length - hSZIndex);
-                        indexOffset++;
-                        dist = newdist;
-                        time = newtime;
-                        rayParams = newrayParams;
-                    }
-                }
-            }
-        }
-    }
 
     /**
      * Calculates the "pierce points" for the arrivals stored in arrivals. The
@@ -1510,118 +1215,6 @@ public class SeismicPhase implements Serializable, Cloneable {
         return validationFailMessage;
     }
 
-    /**
-     * Performs consistency checks on the previously tokenized phase name stored
-     * in legs. Returns null if all is ok, a message if there is a problem.
-     */
-    public static String phaseValidate(ArrayList<String> legs) {
-        String currToken = (String)legs.get(0);
-        String prevToken;
-        String nextToken = "";
-        boolean prevIsReflect = false;
-        /* Special cases for diffracted waves. */
-        if(legs.size() == 2
-                && (currToken.equals("Pdiff") || currToken.equals("Sdiff") || currToken.endsWith("kmps"))
-                && ((String)legs.get(1)).equals("END")) {
-            return null;
-        }
-        /* Check first leg. */
-        if(!(currToken.equals("Pg") || currToken.equals("Pb")
-                || currToken.equals("Pn") || currToken.equals("Pdiff")
-                || currToken.equals("Sg") || currToken.equals("Sb")
-                || currToken.equals("Sn") || currToken.equals("Sdiff")
-                || currToken.equals("Ped") || currToken.equals("Sed")
-                || currToken.equals("P") || currToken.equals("S")
-                || currToken.equals("p") || currToken.equals("s") || (expert && (currToken.equals("K")
-                || currToken.equals("k") || currToken.equals("I"))))) {
-            String validationFailMessage = "First leg ("
-                    + currToken
-                    + ") must be one of Pg, Pb, Pn, Pdiff, Sg, Sb, Sn, Sdiff, P, S, p, s";
-            if(expert) {
-                validationFailMessage += ", K, k, I";
-            }
-            return validationFailMessage;
-        }
-        for(int i = 1; i < legs.size(); i++) {
-            prevToken = currToken;
-            currToken = legs.get(i);
-            if (i < legs.size()-1) {
-            	nextToken = legs.get(i+1);
-            } else {
-            	nextToken = "";
-            }
-            /* Check for 2 reflections/depths with no leg between them. */
-            if(currToken.startsWith("^") || currToken.startsWith("v")
-            		|| currToken.equals("m") || currToken.equals("c")
-                    || currToken.equals("i")) {
-                if(prevIsReflect) {
-                    return "Two reflections or depths with no leg in between: "
-                            + prevToken + ", " + currToken;
-                } else {
-                    prevIsReflect = true;
-                }
-            } else {
-                prevIsReflect = false;
-            }
-            /* Check for "END" before the end. */
-            if(prevToken.equals("END")) {
-                return "Legs ended but more tokens exist: " + currToken;
-            }
-            /* Check for ! not second to last token */
-            if ((prevToken.equals("Ped") || prevToken.equals("Sed")) 
-                    && ! ( currToken.equals("END") 
-                            || currToken.equals("Pdiff") || currToken.equals("Sdiff")
-                            || currToken.equals("P") || currToken.equals("S")
-                            || currToken.equals("K") || currToken.startsWith("v") || currToken.startsWith("V")
-                            || currToken.equals("c") || currToken.equals("m") )) {
-                return "'Ped' or 'Sed' can only be before Pdiff,P,S,Sdiff,K,c,v,V,m or second to last token immediately before END or ";
-            }
-
-            // Cannot have K before P,S and followed by another K as P,S leg must turn to get back to CMB
-            if((prevToken.startsWith("k") || prevToken.startsWith("K"))
-                    && (currToken.startsWith("P") || currToken.startsWith("S") || currToken.startsWith("p") || currToken.startsWith("s"))
-                    && (nextToken.startsWith("k") || nextToken.startsWith("K"))) {
-            	
-                return "Cannot have P,S,p,s preceeded and followed by K,k:  "
-                        + prevToken + ", " + currToken +", "+nextToken;
-            }
-            // Cannot have I,J before K and followed by another I,J as K leg must turn to get back to IOCB
-            if((prevToken.startsWith("I") || prevToken.startsWith("J") )
-                    && (currToken.startsWith("K") || currToken.startsWith("k"))
-                    && (nextToken.startsWith("I") || nextToken.startsWith("J"))) {
-                return "Cannot have K,k preceeded and followed by I,J:  "
-                        + prevToken + ", " + currToken +", "+nextToken;
-            }
-            // Cannot have p,s before I, i, or J
-            if((prevToken.startsWith("p") || prevToken.startsWith("s")
-                    || prevToken.equals("m") || prevToken.equals("c"))
-                    && (currToken.equals("I") || currToken.equals("J") || currToken.equals("i"))) {
-                return "Cannot have P,S,p,s,m,c followed by I,J,i: "
-                        + prevToken + ", " + currToken;
-            }
-            // Cannot have m,c after I, i, or J
-            if((prevToken.equals("I") || prevToken.equals("J") || prevToken.equals("i"))
-                   && (currToken.equals("m") || currToken.equals("c"))) {
-                return "Cannot have I,J,i followed by  m,c: "
-                        + prevToken + ", " + currToken;
-            }
-            /* Check for m, c before K. */
-            if((prevToken.equals("m") || prevToken.equals("c") ) 
-                    && (currToken.equals("K") || currToken.equals("I") || currToken.equals("J") || currToken.equals("i"))) {
-                return "Cannot have m,c followed by K,I,i,J";
-            }
-            if((currToken.equals("m") || currToken.equals("c")) 
-                    && (prevToken.equals("K") || prevToken.equals("I") || prevToken.equals("J") || prevToken.equals("i"))) {
-                return "Cannot have K,I,i,J followed by m,c";
-            }
-        }
-        /* Make sure legs end in "END". */
-        if(!currToken.equals("END")) {
-            return "Last token must be END";
-        }
-        return null;
-    }
-    
     public static Arrival getEarliestArrival(List<SeismicPhase> phases, double degrees) {
         Arrival minArrival = null;
         for (SeismicPhase seismicPhase : phases) {

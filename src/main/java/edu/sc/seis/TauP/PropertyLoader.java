@@ -154,10 +154,10 @@ public class PropertyLoader {
             }
         }
         if (applicationProps.containsKey("taup.maxRefraction")) {
-            SeismicPhase.setMaxRefraction(Double.parseDouble(applicationProps.getProperty("taup.maxRefraction")));
+            SeismicPhaseFactory.setMaxRefraction(Double.parseDouble(applicationProps.getProperty("taup.maxRefraction")));
         }
         if (applicationProps.containsKey("taup.maxDiffraction")) {
-            SeismicPhase.setMaxDiffraction(Double.parseDouble(applicationProps.getProperty("taup.maxDiffraction")));
+            SeismicPhaseFactory.setMaxDiffraction(Double.parseDouble(applicationProps.getProperty("taup.maxDiffraction")));
         }
         if (applicationProps.containsKey("taup.path.maxPathInc")) {
             TauP_Path.setMaxPathInc(Double.parseDouble(applicationProps.getProperty("taup.path.maxPathInc")));
