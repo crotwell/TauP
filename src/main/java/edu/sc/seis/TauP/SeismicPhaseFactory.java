@@ -491,7 +491,13 @@ public class SeismicPhaseFactory {
                 prevEndAction = endAction;
             }
         }
-        if (maxRayParam != -1) {
+        if (endAction != FAIL && maxRayParam != -1) {
+            if (branchSeq.size() > 0 &&
+                    branchSeq.get(branchSeq.size()-1) != upgoingRecBranch &&
+                    branchSeq.get(branchSeq.size()-1) != downgoingRecBranch) {
+                throw new TauModelException(getName()+" Phase does not end at the receiver branch, last: "+branchSeq.get(branchSeq.size()-1)
+                        +" down Rec: "+downgoingRecBranch+" up Rec: "+upgoingRecBranch);
+            }
             if ((endAction == REFLECT_UNDERSIDE || endAction == REFLECT_UNDERSIDE) && downgoingRecBranch == branchSeq.get(branchSeq.size()-1) ) {
                 // last action was upgoing, so last branch should be upgoingRecBranch
                 if (DEBUG) {

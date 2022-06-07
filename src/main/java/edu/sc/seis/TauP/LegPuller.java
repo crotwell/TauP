@@ -58,6 +58,11 @@ public class LegPuller {
                         || name.charAt(offset) == 'i') {
                     // note c and i are different from m as they must be reflection
                     // check m,c,i for critical refl with x
+                    if(offset == name.length()-1) {
+                        throw new TauModelException("Invalid phase name:\n"
+                                + name.charAt(offset)
+                                + " cannot be last char in " + name);
+                    }
                     if (name.charAt(offset+1) == 'x') {
                         legs.add(name.substring(offset, offset + 2));
                         offset = offset + 2;
@@ -118,6 +123,11 @@ public class LegPuller {
                 } else if(name.charAt(offset) == '^'
                         || name.charAt(offset) == 'v'
                         || name.charAt(offset) == 'V') {
+                    if(offset == name.length()-1) {
+                        throw new TauModelException("Invalid phase name:\n"
+                                + name.charAt(offset)
+                                + " cannot be last char in " + name);
+                    }
                     // check m,c,i for critical refl with x
                     int criticalOffset = 0;
                     if (name.charAt(offset+1) == 'x') {
@@ -136,8 +146,9 @@ public class LegPuller {
                             || name.charAt(offset + criticalOffset + 1) == '.') {
                         String numString = name.substring(offset, offset + criticalOffset + 1);
                         offset = offset + criticalOffset +1;
-                        while(Character.isDigit(name.charAt(offset))
-                                || name.charAt(offset) == '.') {
+                        while(offset < name.length() && (
+                            Character.isDigit(name.charAt(offset))
+                                        || name.charAt(offset) == '.')) {
                             numString += name.substring(offset, offset + 1);
                             offset++;
                         }
@@ -148,16 +159,27 @@ public class LegPuller {
                                     + numString + "\n" + e.getMessage()
                                     + " in " + name);
                         }
+                        if(offset == name.length()) {
+                            throw new TauModelException("Invalid phase name:\n"
+                                    + numString
+                                    + " cannot be last in " + name);
+                        }
                     } else {
                         throw new TauModelException("Invalid phase name:\n"
                                 + name.substring(offset) + " in " + name);
                     }
                 } else if(Character.isDigit(name.charAt(offset))
                         || name.charAt(offset) == '.') {
+                    if(offset == name.length()-1) {
+                        throw new TauModelException("Invalid phase name:\n"
+                                + name.charAt(offset)
+                                + " cannot be last char in " + name);
+                    }
                     String numString = name.substring(offset, offset + 1);
                     offset++;
-                    while(Character.isDigit(name.charAt(offset))
-                            || name.charAt(offset) == '.') {
+                    while(offset < name.length() &&
+                            (Character.isDigit(name.charAt(offset))
+                            || name.charAt(offset) == '.')) {
                         numString += name.substring(offset, offset + 1);
                         offset++;
                     }
@@ -168,6 +190,12 @@ public class LegPuller {
                                 + numString + "\n" + e.getMessage() + " in "
                                 + name);
                     }
+                    if(offset == name.length()) {
+                        throw new TauModelException("Invalid phase name:\n"
+                                + numString
+                                + " cannot be last in " + name);
+                    }
+
                 } else {
                     throw new TauModelException("Invalid phase name:\n"
                             + name.substring(offset) + " in " + name);

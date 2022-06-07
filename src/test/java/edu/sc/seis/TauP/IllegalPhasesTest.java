@@ -31,11 +31,14 @@ class IllegalPhasesTest {
 			"PKs"
 	});
 
-	String[] illegalPhases = { "null", "ScScS", "PDDDDD", "PKIKPKIKP", "PPPdiff",
+	String[] illegalPhases = { "", "null", "ScScS", "PDDDDD", "PKIKPKIKP", "PPPdiff",
 			"PKIKIKP", "SIKS", "SKIS", "Pcv410S", "Pmv410P", "Pcv410P", "Pm^410P",
 			"SKviKviKS","SK^iKS","SK^mKS", "S^S", "SVS", "Pdiffdiff", "SVS", "SccS",
 			"SIKS", "Siks", "SiKS", "Kdiff", "pp", "sp", "ss", "Ss", "Ps", "Sp", "Pp",
-			"scS", "pcP"
+			"scS", "pcP", "kiKP", "kkP", "iKP", "m", "c", "mP", "cS",
+			"i", "ii", "Icp", "P^iP", "P^", "Pv", "PV", "k^mP",
+			"k^iKP", "P300", "PK3500", "PKI5500", "Pv410", "PKv", "PKV", "PK^", "Pdif",
+			"PVi", "Pvi", "PKPab", "PKPbc", "PKPdf"
 	};
 
 	// phases that are kind of wrong, but are handled by simply no arrivals, eg no ray params actually work,

@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class SourceInCoreTest {
 
-    List<String> outerCoreSourcePhases = Arrays.asList(new String[] { "KP", "kp", "KKs", "KiKP", "kKIKS", "KI^iIKP" });
+    List<String> outerCoreSourcePhases = Arrays.asList(new String[] { "KP", "kp", "KKs", "KiKP", "kKIKS", "k^cKP", "KI^iIKP" });
     List<String> innerCoreSourcePhases = Arrays.asList(new String[] { "IKP", "IkKIKs", "IKKiKP", "IIIKS" });
 
     @Test
