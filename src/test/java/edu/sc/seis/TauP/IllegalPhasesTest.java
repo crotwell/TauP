@@ -1,14 +1,13 @@
 package edu.sc.seis.TauP;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 
 class IllegalPhasesTest {
@@ -28,15 +27,31 @@ class IllegalPhasesTest {
 			"PdiffKP",
 			"PedPdiffKP",
 			"PKp",
-			"PKs"
+			"PKs",
+			"Pn^20P",
+			"Pdiff^410P",
+			"PK^cKP",
+			"PKI^iIKP",
+			"Pvmp",
+			"PVmp",
+			"Pvcp",
+			"PVcp",
+			"PKviKP",
+			"PKViKP",
+			"2kmps", "2.5kmps", ".5kmps", "10kmps"
 	});
 
-	String[] illegalPhases = { "", "null", "ScScS", "PDDDDD", "PKIKPKIKP", "PPPdiff",
+	String[] illegalStartEndings = {
+			"m", "c", "i", "^", "^20", "v", "v300", "V", "V300", "dif"
+	};
+
+	String[] illegalPhases = { "", "null", "blablabla should fail", "kmps",
+			"ScScS", "PDDDDD", "PKIKPKIKP", "PPPdiff",
 			"PKIKIKP", "SIKS", "SKIS", "Pcv410S", "Pmv410P", "Pcv410P", "Pm^410P",
 			"SKviKviKS","SK^iKS","SK^mKS", "S^S", "SVS", "Pdiffdiff", "SVS", "SccS",
 			"SIKS", "Siks", "SiKS", "Kdiff", "pp", "sp", "ss", "Ss", "Ps", "Sp", "Pp",
-			"scS", "pcP", "kiKP", "kkP", "iKP", "m", "c", "mP", "cS",
-			"i", "ii", "Icp", "P^iP", "P^", "Pv", "PV", "k^mP",
+			"scS", "pcP", "kiKP", "kkP", "iKP",
+			"Icp", "P^iP", "P^", "Pv", "PV", "k^mP",
 			"k^iKP", "P300", "PK3500", "PKI5500", "Pv410", "PKv", "PKV", "PK^", "Pdif",
 			"PVi", "Pvi", "PKPab", "PKPbc", "PKPdf"
 	};
@@ -44,18 +59,34 @@ class IllegalPhasesTest {
 	// phases that are kind of wrong, but are handled by simply no arrivals, eg no ray params actually work,
 	// rather than being so bad as to cause an exception
 	String[] noArrivalPhases = { "PnPdiff",
-			"PdiffSdiff" };
+			"PdiffSdiff",
+			"PVcP" // oc is lvz so no crit refl
+	};
 
 	// similar, but due to source being in mantle (below moho), these should have not ray params that
 	// can generate arrivals
 	String[] mantleSourceNoArrivalPhases = { "Pn", "Pvmp", "Sn", "Svms", "PmPv410P", "PmP^410P" };
 
-	@Test
-	void checkIllegalPhasesTest() throws TauModelException {
-		phasesShouldFail(illegalPhases);
+	ArrayList<String> createIllegalPhases() {
+		List<String> legalPhases = TauP_Time.getPhaseNames("ttall");
+		ArrayList<String> illegalEndPhases = new ArrayList<>();
+		legalPhases.addAll(otherLegalPhases);
+		for (String phaseName : legalPhases) {
+			for (String illEnd : illegalStartEndings) {
+				illegalEndPhases.add(phaseName+illEnd);
+				illegalEndPhases.add(illEnd+phaseName);
+			}
+		}
+		illegalEndPhases.addAll(Arrays.asList(illegalPhases));
+		return illegalEndPhases;
 	}
 
-	void phasesShouldFail(String[] phaseList) throws TauModelException {
+	@Test
+	void checkIllegalPhasesTest() throws TauModelException {
+		phasesShouldFail(createIllegalPhases());
+	}
+
+	void phasesShouldFail(List<String> phaseList) throws TauModelException {
 		boolean DEBUG = true;
 		String modelName = "iasp91";
 		TauModel tMod = TauModelLoader.load(modelName);

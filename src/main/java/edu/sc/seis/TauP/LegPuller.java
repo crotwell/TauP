@@ -1,11 +1,33 @@
 package edu.sc.seis.TauP;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class LegPuller {
+
+    public static final String number = "(\\d+|(\\d*\\.\\d+))";
+
+    public static final String travelSuffix = "((diff)|(ed)|n|g)?";
+
+    public static final String travelLeg = "([PpSsKkIJj]"+travelSuffix+")";
+
+    public static final String interactPrefix = "[vV\\^]";
+
+    public static final String interactPointsRE = "(("+interactPrefix+")?([mci]|"+number+"))";
+
+    public static final String surfaceWave = "("+number+"kmps)";
+    public static final String bodyWave = travelLeg+"(("+interactPointsRE+")?"+travelLeg+")*";
+
+    public static final Pattern phaseRegEx =
+            Pattern.compile("^("+surfaceWave+"|"+ bodyWave+")$");
+
+    public static boolean regExCheck(String name) {
+        Matcher m = phaseRegEx.matcher(name);
+        return m.matches();
+    }
 
     /**
      * Tokenizes a phase name into legs, ie PcS becomes 'P'+'c'+'S' while p^410P
@@ -19,6 +41,11 @@ public class LegPuller {
      *             if the phase name cannot be tokenized.
      */
     protected static ArrayList<String> legPuller(String name) throws TauModelException {
+        // check against regex for coarse validation
+        if ( ! regExCheck(name)) {
+            throw new TauModelException("Phase "+name+" doesn't match phase regex: "+phaseRegEx);
+        }
+
         int offset = 0;
         ArrayList<String> legs = new ArrayList<String>();
         /* Special case for surface wave velocity. */

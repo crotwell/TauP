@@ -240,6 +240,12 @@ public class SeismicPhaseFactory {
          * case.
          */
         if(legs.size() == 2 && currLeg.endsWith("kmps")) {
+            try {
+                double velocity = Double.valueOf(currLeg.substring(0, name.length() - 4))
+                    .doubleValue();
+            } catch (NumberFormatException e) {
+                throw new TauModelException(getName()+" Illegal surface wave velocity "+name.substring(0, name.length() - 4), e);
+            }
             return;
         }
         /* Make a check for J legs if the model doesn not allow J */
@@ -482,15 +488,20 @@ public class SeismicPhaseFactory {
             } else if(currLeg.equals("I") || currLeg.equals("J")) {
                 /* And now consider inner core, I and J. */
                 endAction = currLegIs_I_J(prevLeg, currLeg, nextLeg, isPWave, isPWavePrev, legNum);
-            } else if(currLeg.equals("m")) {
-
-            } else if(currLeg.equals("c") || currLeg.equals("cx")) {
-
-            } else if(currLeg.equals("i") || currLeg.equals("ix")) {
-
-            } else if(currLeg.startsWith("^")) {
-
+            } else if(currLeg.equals("m")
+                    || currLeg.equals("c") || currLeg.equals("cx")
+                    || currLeg.equals("i") || currLeg.equals("ix")
+                    || currLeg.startsWith("^")) {
+                if (nextLeg.equals("END")) {
+                    throw new TauModelException(getName()+" Phase not recognized (12): "
+                            + currLeg + " as last leg, then " + nextLeg);
+                }
+                // nothing to do as will have been handled by previous leg
             } else if(currLeg.startsWith("v") || currLeg.startsWith("V")) {
+                if (nextLeg.equals("END")) {
+                    throw new TauModelException(getName()+" Phase not recognized (12): "
+                            + currLeg + " as last leg, then " + nextLeg);
+                }
                 String depthString;
                 depthString = currLeg.substring(1);
                 int b = LegPuller.closestBranchToDepth(tMod, depthString);
@@ -1038,6 +1049,26 @@ public class SeismicPhaseFactory {
                 } else if (nextLeg.equals("K")) {
                     endAction = TRANSDOWN;
                     currBranch++;
+                } else if(nextLeg.startsWith("^")) {
+                    String depthString;
+                    depthString = nextLeg.substring(1);
+                    endAction = REFLECT_UNDERSIDE;
+                    disconBranch = LegPuller.closestBranchToDepth(tMod, depthString);
+                    if (disconBranch >= tMod.getCmbBranch()) {
+                        maxRayParam = -1;
+                        if(DEBUG) {
+                            System.out.println(getName()+" Attempt to underside reflect "+currLeg
+                                    +" from deeper layer: "+nextLeg);
+                        }
+                        return FAIL;
+                    }
+                    addToBranch(tMod,
+                            currBranch,
+                            disconBranch,
+                            isPWave,
+                            endAction,
+                            currLeg);
+
                 } else if (nextLeg.startsWith("P") || nextLeg.startsWith("S")) {
                     endAction = REFLECT_UNDERSIDE;
                     addToBranch(tMod,
@@ -1099,10 +1130,34 @@ public class SeismicPhaseFactory {
                         currLeg);
                 if(nextLeg.equals("END")) {
                     endAction = END;
-                } else {
+                    addToBranch(tMod, currBranch, upgoingRecBranch, isPWave, endAction, currLeg);
+                } else if(nextLeg.startsWith("P") || nextLeg.startsWith("S")) {
                     endAction = REFLECT_UNDERSIDE;
+                    addToBranch(tMod, currBranch, 0, isPWave, endAction, currLeg);
+                } else if(nextLeg.startsWith("^")) {
+                    String depthString;
+                    depthString = nextLeg.substring(1);
+                    endAction = REFLECT_UNDERSIDE;
+                    disconBranch = LegPuller.closestBranchToDepth(tMod, depthString);
+                    if (disconBranch >= tMod.getMohoBranch()) {
+                        maxRayParam = -1;
+                        if(DEBUG) {
+                            System.out.println(getName()+" Attempt to underside reflect "+currLeg
+                                    +" from deeper layer: "+nextLeg);
+                        }
+                        return FAIL;
+                    }
+                    addToBranch(tMod,
+                                currBranch,
+                                disconBranch,
+                                isPWave,
+                                endAction,
+                                currLeg);
+
+                } else {
+                    throw new TauModelException(getName()+" Phase not recognized (12): "
+                            + currLeg + " followed by " + nextLeg);
                 }
-                addToBranch(tMod, currBranch, upgoingRecBranch, isPWave, endAction, currLeg);
             } else if(currLeg.equals("Pn") || currLeg.equals("Sn")) {
                 /*
                  * in the refracted case we trick addToBranch into
@@ -1158,6 +1213,28 @@ public class SeismicPhaseFactory {
                                 isPWave,
                                 endAction,
                                 currLeg);
+                    } else if(nextLeg.startsWith("^")) {
+                        String depthString;
+                        depthString = nextLeg.substring(1);
+                        endAction = REFLECT_UNDERSIDE;
+                        disconBranch = LegPuller.closestBranchToDepth(tMod, depthString);
+                        if (disconBranch >= tMod.getMohoBranch()) {
+                            maxRayParam = -1;
+                            if(DEBUG) {
+                                System.out.println(getName()+" Attempt to underside reflect "+currLeg
+                                        +" from deeper layer: "+nextLeg);
+                            }
+                            return FAIL;
+                        }
+                        addToBranch(tMod,
+                                currBranch,
+                                disconBranch,
+                                isPWave,
+                                endAction,
+                                currLeg);
+                    } else {
+                        throw new TauModelException(getName()+" Phase not recognized (12): "
+                                + currLeg + " followed by " + nextLeg);
                     }
                 } else {
                     // can't have head wave as ray param is not within
@@ -1879,25 +1956,27 @@ public class SeismicPhaseFactory {
         }
         /* Special case for surface waves. */
         if(name.endsWith("kmps")) {
+            try {
             dist = new double[2];
             time = new double[2];
             rayParams = new double[2];
             dist[0] = 0.0;
             time[0] = 0.0;
-            rayParams[0] = tMod.radiusOfEarth
-                    / Double.valueOf(name.substring(0, name.length() - 4))
+            double velocity = Double.valueOf(name.substring(0, name.length() - 4))
                     .doubleValue();
-            dist[1] = 2 * Math.PI;
-            time[1] = 2
-                    * Math.PI
-                    * tMod.radiusOfEarth
-                    / Double.valueOf(name.substring(0, name.length() - 4))
-                    .doubleValue();
+            rayParams[0] = tMod.radiusOfEarth / velocity;
+            dist[1] = getMaxKmpsLaps() * 2 * Math.PI;
+            time[1] = getMaxKmpsLaps() * 2 * Math.PI * tMod.radiusOfEarth / velocity;
             rayParams[1] = rayParams[0];
-            minDistance = 0.0;
-            maxDistance = 2 * Math.PI;
+            minDistance = dist[0];
+            maxDistance = dist[1];
+            minRayParam = rayParams[0];
+            maxRayParam = rayParams[0];
             downGoing.add(true);
             return;
+            } catch (NumberFormatException e) {
+                throw new TauModelException(getName()+" Illegal surface wave velocity "+name.substring(0, name.length() - 4), e);
+            }
         }
         /*
          * Find the ray parameter index that corresponds to the minRayParam and
@@ -1940,7 +2019,7 @@ public class SeismicPhaseFactory {
                 rayParams[1] = minRayParam;
             } else if(name.endsWith("kmps")) {
                 rayParams = new double[2];
-                rayParams[0] = 0;
+                rayParams[0] = maxRayParam;
                 rayParams[1] = maxRayParam;
             } else {
                 rayParams = new double[2];
