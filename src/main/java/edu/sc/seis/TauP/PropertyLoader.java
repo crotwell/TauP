@@ -25,12 +25,7 @@
  */
 package edu.sc.seis.TauP;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -88,44 +83,17 @@ public class PropertyLoader {
             InputStream in = c.getResourceAsStream(packageName + "/"
                     + defaultPropFileName);
             if(in != null) {
-                defaultProps.load(in);
+                defaultProps.load(new BufferedInputStream(in));
             } else {
-                // didn't find as a resource so
-                // loop over each entry in the CLASSPATH, looking for taup.jar
-                while(offset < classPath.length()) {
-                    pathSepIndex = classPath.indexOf(File.pathSeparatorChar,
-                                                     offset);
-                    if(pathSepIndex != -1) {
-                        pathEntry = classPath.substring(offset, pathSepIndex);
-                        offset = pathSepIndex + 1;
-                    } else {
-                        pathEntry = classPath.substring(offset);
-                        offset = classPath.length();
-                    }
-                    if(pathEntry.endsWith(jarFileName)) {
-                        jarFile = new File(pathEntry);
-                        if(jarFile.exists() && jarFile.isFile()
-                                && jarFile.getName().equals(jarFileName)
-                                && jarFile.canRead()) {
-                            ZipFile zippy = new ZipFile(jarFile);
-                            ZipEntry zipEntry = zippy.getEntry(defaultPropFileName);
-                            if(zipEntry != null) {
-                                defaultProps.load(zippy.getInputStream(zipEntry));
-                                zippy.close();
-                                // we've found the path to the jar, so exit the
-                                // while
-                                offset = classPath.length() + 1;
-                            }
-                        }
-                    }
-                }
+                System.err.println("Warning: unable to load default configuration properties from jar, "+packageName+"/"+defaultPropFileName);
             }
         } catch(FileNotFoundException e) {
             // can't find defaults, so we'll just have to use an empty
             // properties object
         }
         // create program properties with default
-        Properties applicationProps = new Properties(defaultProps);
+        Properties applicationProps = new Properties();
+        applicationProps.putAll(defaultProps);
         // append/overwrite with user's directory .taup
         try {
             applicationProps.load(new FileInputStream(System.getProperty("user.home")
@@ -152,15 +120,6 @@ public class PropertyLoader {
             } else {
                 applicationProps.put(taupPath, sysProps.getProperty(taupPath));
             }
-        }
-        if (applicationProps.containsKey("taup.maxRefraction")) {
-            SeismicPhaseFactory.setMaxRefraction(Double.parseDouble(applicationProps.getProperty("taup.maxRefraction")));
-        }
-        if (applicationProps.containsKey("taup.maxDiffraction")) {
-            SeismicPhaseFactory.setMaxDiffraction(Double.parseDouble(applicationProps.getProperty("taup.maxDiffraction")));
-        }
-        if (applicationProps.containsKey("taup.path.maxPathInc")) {
-            TauP_Path.setMaxPathInc(Double.parseDouble(applicationProps.getProperty("taup.path.maxPathInc")));
         }
         return applicationProps;
     }

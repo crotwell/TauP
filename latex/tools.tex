@@ -115,6 +115,11 @@ Note that this is precision, not accuracy. Just because you get more
  is not the total distance, only the segment along the moho. The default is 20 degrees.
 \item[taup.maxDiffraction] The maximum degrees that a Pdiff or Sdiff can diffract along the CMB.
  Note this is not the total distance, only the segment along the CMB. The default is 60 degrees.
+ \item[taup.maxKmpsLaps] The maximum number of laps around the earth for
+  kpms style phases.
+  Note this is the number of laps, not number of arrivals, so a value of 1
+  would give 2 arrivals, one going the short path and one the long way around. This can be fractional, so 0.5 would exclude the long way around
+  path. The default is 1.
 \item[taup.path.maxPathInc] maximum distance in degrees between points of a path. This does a simple linear interpolant between nearby values in order to make plots look better. There is noo improvement in the accuracy of the path.
 \item[taup.table.locsat.maxdiff] maximum distance in degrees for which Pdiff
 or Sdiff are put into a locsat table. Beyond this distance Pdiff and Sdiff will

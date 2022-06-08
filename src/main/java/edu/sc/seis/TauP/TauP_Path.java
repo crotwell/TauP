@@ -511,6 +511,9 @@ public class TauP_Path extends TauP_Pierce {
 			}
 			i++;
 		}
+		if (toolProps.containsKey("taup.path.maxPathInc")) {
+			TauP_Path.setMaxPathInc(Double.parseDouble(toolProps.getProperty("taup.path.maxPathInc")));
+		}
 		if (numNoComprendoArgs > 0) {
 			String[] temp = new String[numNoComprendoArgs];
 			System.arraycopy(noComprendoArgs, 0, temp, 0, numNoComprendoArgs);

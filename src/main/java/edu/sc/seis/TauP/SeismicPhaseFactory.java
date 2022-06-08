@@ -2,6 +2,7 @@ package edu.sc.seis.TauP;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import static edu.sc.seis.TauP.PhaseInteraction.*;
 import static edu.sc.seis.TauP.PhaseInteraction.REFLECT_TOPSIDE_CRITICAL;
@@ -130,6 +131,17 @@ public class SeismicPhaseFactory {
         maxDiffraction = max;
     }
 
+    static double maxKmpsLaps = 1;
+
+    public static double getMaxKmpsLaps() {
+        return maxKmpsLaps;
+    }
+
+    public static void setMaxKmpsLaps(double max) {
+        maxKmpsLaps = max;
+    }
+
+
     SeismicPhaseFactory(String name, TauModel tMod, double sourceDepth, double receiverDepth, boolean debug) throws TauModelException {
         this.DEBUG = debug;
         if (name == null || name.length() == 0) {
@@ -164,6 +176,18 @@ public class SeismicPhaseFactory {
     public static SeismicPhase createPhase(String name, TauModel tMod, double sourceDepth, double receiverDepth, boolean debug) throws TauModelException {
         SeismicPhaseFactory factory = new SeismicPhaseFactory(name, tMod, sourceDepth, receiverDepth, debug);
         return factory.internalCreatePhase();
+    }
+
+    public static void configure(Properties toolProps) {
+        if (toolProps.containsKey("taup.maxRefraction")) {
+            SeismicPhaseFactory.setMaxRefraction(Double.parseDouble(toolProps.getProperty("taup.maxRefraction")));
+        }
+        if (toolProps.containsKey("taup.maxDiffraction")) {
+            SeismicPhaseFactory.setMaxDiffraction(Double.parseDouble(toolProps.getProperty("taup.maxDiffraction")));
+        }
+        if (toolProps.containsKey("taup.maxKmpsLaps")) {
+            SeismicPhaseFactory.setMaxKmpsLaps(Double.parseDouble(toolProps.getProperty("taup.maxKmpsLaps")));
+        }
     }
 
     SeismicPhase internalCreatePhase() throws TauModelException {
