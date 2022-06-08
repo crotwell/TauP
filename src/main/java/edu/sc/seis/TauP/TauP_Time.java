@@ -531,12 +531,84 @@ public class TauP_Time extends TauP_Tool {
     }
 
     /*
+     * parses the standard command line args for the model, phase source and other
+     * common items used by most tools. Does not do args related to distance or
+     * output file.
+     */
+    protected String[] parseSourceModelCmdLineArgs(String[] origArgs) throws IOException {
+        int i = 0;
+        String[] args = super.parseCommonCmdLineArgs(origArgs);
+        String[] noComprendoArgs = new String[args.length];
+        int numNoComprendoArgs = 0;
+        boolean cmdLineArgPhase = false;
+        boolean cmdLineArgPhaseFile = false;
+        while(i < args.length) {
+            if(i < args.length - 1) {
+                if(dashEquals("mod", args[i]) || dashEquals("model", args[i])) {
+                    toolProps.put("taup.model.name", args[i + 1]);
+                    i++;
+                } else if(args[i].equalsIgnoreCase("-h")) {
+                    toolProps.put("taup.source.depth", args[i + 1]);
+                    i++;
+                } else if(args[i].equalsIgnoreCase("--stadepth")) {
+                    setReceiverDepth(Double.parseDouble(args[i + 1]));
+                    i++;
+                } else if(dashEquals("ph", args[i])) {
+                    if(cmdLineArgPhase) {
+                        // previous cmd line -ph so append
+                        toolProps.put("taup.phase.list",
+                                toolProps.getProperty("taup.phase.list",
+                                        "")
+                                        + "," + args[i + 1]);
+                    } else {
+                        // no previous cmd line -ph so replace defaults
+                        toolProps.put("taup.phase.list", args[i + 1]);
+                    }
+                    cmdLineArgPhase = true;
+                    i++;
+                } else if(dashEquals("pf", args[i])) {
+                    cmdLineArgPhaseFile = true;
+                    toolProps.put("taup.phase.file", args[i + 1]);
+                    i++;
+                } else {
+                    /*
+                     * I don't know how to interpret this argument, so pass it
+                     * back
+                     */
+                    noComprendoArgs[numNoComprendoArgs++] = args[i];
+                }
+            } else {
+                /* I don't know how to interpret this argument, so pass it back */
+                noComprendoArgs[numNoComprendoArgs++] = args[i];
+            }
+            i++;
+        }
+        // check to see if there were phases or a phase file as an argument.
+        // if so then dump the defaults
+        if(cmdLineArgPhaseFile || cmdLineArgPhase) {
+            if(cmdLineArgPhaseFile && !cmdLineArgPhase) {
+                toolProps.remove("taup.phase.list");
+            }
+            if(!cmdLineArgPhaseFile && cmdLineArgPhase) {
+                toolProps.remove("taup.phase.file");
+            }
+        }
+        if(numNoComprendoArgs > 0) {
+            String[] temp = new String[numNoComprendoArgs];
+            System.arraycopy(noComprendoArgs, 0, temp, 0, numNoComprendoArgs);
+            return temp;
+        } else {
+            return new String[0];
+        }
+    }
+
+    /*
      * parses the standard command line args for the taup package. Other tools
      * that subclass this class will likely override this.
      */
     protected String[] parseCmdLineArgs(String[] origArgs) throws IOException {
         int i = 0;
-        String[] args = super.parseCommonCmdLineArgs(origArgs);
+        String[] args = parseSourceModelCmdLineArgs(origArgs);
         String[] noComprendoArgs = new String[args.length];
         int numNoComprendoArgs = 0;
         boolean cmdLineArgPhase = false;
@@ -553,16 +625,7 @@ public class TauP_Time extends TauP_Tool {
                 onlyPrintTime = true;
                 onlyPrintRayP = false;
             } else if(i < args.length - 1) {
-                if(dashEquals("mod", args[i]) || dashEquals("model", args[i])) {
-                    toolProps.put("taup.model.name", args[i + 1]);
-                    i++;
-                } else if(args[i].equalsIgnoreCase("-h")) {
-                    toolProps.put("taup.source.depth", args[i + 1]);
-                    i++;
-                } else if(args[i].equalsIgnoreCase("--stadepth")) {
-                    setReceiverDepth(Double.parseDouble(args[i + 1]));
-                    i++;
-                } else if(dashEquals("deg", args[i])) {
+                if(dashEquals("deg", args[i])) {
                     degrees = Double.valueOf(args[i + 1]).doubleValue();
                     i++;
                 } else if(dashEquals("km", args[i])) {
@@ -582,23 +645,6 @@ public class TauP_Time extends TauP_Tool {
                     i++;
                 } else if(dashEquals("rel", args[i])) {
                     relativePhaseName = args[i + 1];
-                    i++;
-                } else if(dashEquals("ph", args[i])) {
-                    if(cmdLineArgPhase) {
-                        // previous cmd line -ph so append
-                        toolProps.put("taup.phase.list",
-                                      toolProps.getProperty("taup.phase.list",
-                                                            "")
-                                              + "," + args[i + 1]);
-                    } else {
-                        // no previous cmd line -ph so replace defaults
-                        toolProps.put("taup.phase.list", args[i + 1]);
-                    }
-                    cmdLineArgPhase = true;
-                    i++;
-                } else if(dashEquals("pf", args[i])) {
-                    cmdLineArgPhaseFile = true;
-                    toolProps.put("taup.phase.file", args[i + 1]);
                     i++;
                 } else if(i < args.length - 2) {
                     if(args[i].equalsIgnoreCase("-sta")

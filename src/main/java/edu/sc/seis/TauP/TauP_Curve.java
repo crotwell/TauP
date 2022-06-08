@@ -626,7 +626,7 @@ public class TauP_Curve extends TauP_Time {
         int i = 0;
         String[] leftOverArgs;
         int numNoComprendoArgs = 0;
-        leftOverArgs = super.parseCmdLineArgs(args);
+        leftOverArgs = super.parseSourceModelCmdLineArgs(args);
         String[] noComprendoArgs = new String[leftOverArgs.length];
         while(i < leftOverArgs.length) {
             if(dashEquals("gmt", leftOverArgs[i])) {
