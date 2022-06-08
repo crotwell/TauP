@@ -36,12 +36,7 @@ import java.io.Reader;
 import java.io.StreamCorruptedException;
 import java.io.StreamTokenizer;
 import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * Calculate travel times for different branches using linear interpolation
@@ -899,8 +894,7 @@ public class TauP_Time extends TauP_Tool {
                 out.print("  "
                         + Outputs.formatTime(currArrival.getTime())
                         + "  "
-                        + Outputs.formatRayParam(Math.PI / 180.0
-                                * currArrival.getRayParam()) + "  ");
+                        + Outputs.formatRayParam(currArrival.getRayParam() / Arrival.RtoD) + "  ");
                 out.print(Outputs.formatDistance(currArrival.getTakeoffAngle())+" ");
                 out.print(Outputs.formatDistance(currArrival.getIncidentAngle())+" ");
                 out.print(Outputs.formatDistance(currArrival.getDistDeg()));

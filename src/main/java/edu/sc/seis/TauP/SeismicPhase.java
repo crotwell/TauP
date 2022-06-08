@@ -1226,9 +1226,10 @@ public class SeismicPhase implements Serializable, Cloneable {
         if (phasesExistsInModel()) {
         	desc += "  exists from "+Outputs.formatDistance(getMinDistanceDeg())+" to "+Outputs.formatDistance(getMaxDistanceDeg())+" degrees.\n";
         	if (getMaxRayParam() > getMinRayParam()) {
-        		desc += "  with ray parameter from "+Outputs.formatRayParam(getMaxRayParam())+" down to "+Outputs.formatRayParam(getMinRayParam())+" sec/rad.\n";
+        		desc += "  with ray parameter from "+Outputs.formatRayParam(getMaxRayParam() / Arrival.RtoD)
+                        +" down to "+Outputs.formatRayParam(getMinRayParam() / Arrival.RtoD)+" sec/deg.\n";
         	} else {
-        		desc += "  with degenerate ray parameter of "+Outputs.formatRayParam(getMaxRayParam())+"\n";
+        		desc += "  with degenerate ray parameter of "+Outputs.formatRayParam(getMaxRayParam() / Arrival.RtoD)+" sec/deg.\n";
         	}
         	desc += "  travel times from "+Outputs.formatTime(time[0])+" to "+Outputs.formatTime(time[time.length-1])+" sec";
             for(int i = 0; i < dist.length; i++) {
