@@ -1140,14 +1140,18 @@ public abstract class SlownessModel implements Serializable {
             }
             System.out.println(desc);
         }
-        if(DEBUG && highSlownessLayerDepthsP.size() != 0) {
-            for(int layerNum = 0; layerNum < highSlownessLayerDepthsP.size(); layerNum++) {
-                System.out.println(highSlownessLayerDepthsP.get(layerNum));
+        if (DEBUG) {
+            if (highSlownessLayerDepthsP.size() != 0) {
+                System.out.println("high slowness layer depths P: ");
+                for (int layerNum = 0; layerNum < highSlownessLayerDepthsP.size(); layerNum++) {
+                    System.out.println(highSlownessLayerDepthsP.get(layerNum));
+                }
             }
-        }
-        if(DEBUG && highSlownessLayerDepthsS.size() != 0) {
-            for(int layerNum = 0; layerNum < highSlownessLayerDepthsS.size(); layerNum++) {
-                System.out.println(highSlownessLayerDepthsS.get(layerNum));
+            if (highSlownessLayerDepthsS.size() != 0) {
+                System.out.println("high slowness layer depths S: ");
+                for (int layerNum = 0; layerNum < highSlownessLayerDepthsS.size(); layerNum++) {
+                    System.out.println(highSlownessLayerDepthsS.get(layerNum));
+                }
             }
         }
         if(!validate()) {

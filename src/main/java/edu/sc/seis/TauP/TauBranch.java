@@ -265,9 +265,6 @@ public class TauBranch implements Serializable, Cloneable {
             dist[rayNum] = timeDist.getDistRadian();
             time[rayNum] = timeDist.getTime();
             tau[rayNum] = time[rayNum] - p * dist[rayNum];
-            if(DEBUG &&( (rayNum % ((int)rayParams.length / 10) == 0) || p == minRayParam || p == maxRayParam)) {
-                System.out.println(p+" "+rayNum +", "+dist[rayNum]+" "+time[rayNum]+" ");
-            }
         }
     }
 

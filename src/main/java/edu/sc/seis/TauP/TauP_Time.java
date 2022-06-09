@@ -358,7 +358,8 @@ public class TauP_Time extends TauP_Tool {
             Alert.info("Model set to "+tMod.getModelName()
             +" with moho="+tMod.getMohoDepth()
             +" cmb="+tMod.getCmbDepth()
-            +" iocb="+tMod.getIocbDepth());
+            +" iocb="+tMod.getIocbDepth()
+            +" radius="+tMod.getRadiusOfEarth());
         }
     }
 
@@ -1030,8 +1031,8 @@ public class TauP_Time extends TauP_Tool {
      * the setTauModel(TauModel) method.
      */
     public void init() throws TauPException {
-        TauP_Time.DEBUG = TauP_Time.DEBUG || ToolRun.DEBUG;
-        this.verbose = this.verbose || TauP_Time.DEBUG || ToolRun.VERBOSE;
+        DEBUG = DEBUG || ToolRun.DEBUG;
+        this.verbose = this.verbose || DEBUG || ToolRun.VERBOSE;
 
         if(phaseNames.size() == 0) {
             if(toolProps.containsKey("taup.phase.file")) {
