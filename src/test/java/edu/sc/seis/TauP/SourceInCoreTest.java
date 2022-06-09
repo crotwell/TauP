@@ -18,8 +18,6 @@ public class SourceInCoreTest {
     @Test
     public void sourceInCore() throws TauModelException {
         boolean DEBUG = true;
-        TauP_Tool.expert = true;
-        SeismicPhaseFactory.expert = true;
         String modelName = "iasp91";
         TauModel tMod = TauModelLoader.load(modelName);
         float[] sourceDepths = {0, 1000, 2000, 3500, 6000 };

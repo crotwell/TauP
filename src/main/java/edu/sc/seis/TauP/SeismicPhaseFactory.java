@@ -9,9 +9,6 @@ import static edu.sc.seis.TauP.PhaseInteraction.REFLECT_TOPSIDE_CRITICAL;
 
 public class SeismicPhaseFactory {
 
-    /** Enables phases originating in core. */
-    public static transient boolean expert = TauP_Time.expert;
-
     boolean DEBUG;
     String name;
     double sourceDepth;
@@ -277,7 +274,8 @@ public class SeismicPhaseFactory {
             // Exclude S sources in fluids
             double sdep = tMod.getSourceDepth();
             if(tMod.getSlownessModel().depthInFluid(sdep, new DepthRange())) {
-                maxRayParam = minRayParam = -1;
+                maxRayParam = -1;
+                minRayParam = -1;
                 if(DEBUG) {
                     System.out.println("Cannot have S wave with starting depth in fluid layer"
                             + currLeg + " within phase " + name);
@@ -291,7 +289,9 @@ public class SeismicPhaseFactory {
          */
         if(currLeg.startsWith("P")
                 || currLeg.startsWith("S")
-                || (expert && (currLeg.startsWith("K") || currLeg.startsWith("I") || currLeg.startsWith("J")))) {
+                || currLeg.startsWith("K")
+                || currLeg.startsWith("I")
+                || currLeg.startsWith("J")) {
             // Downgoing from source
             if ((currLeg.startsWith("P") || currLeg.startsWith("S")) && tMod.getSourceDepth() > tMod.getCmbDepth()  ) {
                 // not possible
@@ -333,7 +333,7 @@ public class SeismicPhaseFactory {
             maxRayParam = tMod.getTauBranch(tMod.getSourceBranch(),
                     isPWave).getMaxRayParam();
         } else if(currLeg.equals("p") || currLeg.equals("s")
-                || (expert && currLeg.startsWith("k"))) {
+                || currLeg.startsWith("k")) {
             // Up going from source
             if ((currLeg.startsWith("p") || currLeg.startsWith("s")) && tMod.getSourceDepth() > tMod.getCmbDepth()  ) {
                 // not possible
@@ -344,7 +344,9 @@ public class SeismicPhaseFactory {
                             + currLeg + " within phase " + name);
                 }
                 return;
-            } else if ((currLeg.startsWith("k")) && (tMod.getSourceDepth() < tMod.getCmbDepth() || tMod.getSourceDepth() > tMod.getIocbDepth() )) {
+            } else if ((currLeg.startsWith("k"))
+                    && (tMod.getSourceDepth() < tMod.getCmbDepth()
+                        || tMod.getSourceDepth() > tMod.getIocbDepth() )) {
                 // not possible
                 maxRayParam = -1;
                 minRayParam = -1;
@@ -386,12 +388,16 @@ public class SeismicPhaseFactory {
                  */
                 maxRayParam = -1;
                 minRayParam = -1;
+                if (DEBUG) {
+                    System.out.println(getName()+" Upgoing initial leg but already at surface, so no ray parameters satisfy path.");
+                }
                 return;
             }
         } else {
             throw new TauModelException(getName()+" First phase not recognized: "
                     +currLeg
-                    + " Must be one of P, Pg, Pn, Pdiff, p, Ped or the S equivalents");
+                    + " Must be one of P, Pg, Pn, Pdiff, p, Ped or the S equivalents in crust/mantle, "
+                    + "or k, K, I, J, j for core sources.");
         }
         if (receiverDepth != 0) {
             if (legs.get(legs.size()-2).equals("Ped") || legs.get(legs.size()-2).equals("Sed")) {
@@ -410,6 +416,9 @@ public class SeismicPhaseFactory {
 
         }
         minRayParam = 0.0;
+        if (maxRayParam < 0) {
+            minRayParam = maxRayParam;
+        }
         /*
          * Now loop over all of the phase legs and construct the proper branch
          * sequence.
@@ -424,7 +433,7 @@ public class SeismicPhaseFactory {
                 nextLeg = "END";
             }
             if(DEBUG) {
-                System.out.println(legNum + "  " + prevLeg + "  cur=" + currLeg
+                System.out.println("Iterate legs: "+legNum + "  " + prevLeg + "  cur=" + currLeg
                         + "  " + nextLeg);
             }
             if (currLeg.contentEquals("END")) {
@@ -565,6 +574,9 @@ public class SeismicPhaseFactory {
             throw new TauModelException(getName()+" p and s and k must always be up going "
                     + " and cannot come immediately before a top-side reflection."
                     + " currLeg=" + currLeg + " nextLeg=" + nextLeg);
+        } else if(nextLeg.equals("p") || nextLeg.equals("s")) {
+            throw new TauModelException(getName()+" Phase not recognized (2): "
+                    + currLeg + " followed by " + nextLeg);
         } else if(nextLeg.startsWith("^")) {
             String depthString;
             depthString = nextLeg.substring(1);

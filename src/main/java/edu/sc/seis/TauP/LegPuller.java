@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 
 public class LegPuller {
 
-    public static final String number = "(\\d+|(\\d*\\.\\d+))";
+    public static final String number = "((([0-9]*[.])?[0-9]+)|([0-9]*[.]))";
 
     public static final String travelSuffix = "((diff)|(ed)|n|g)?";
 
@@ -355,14 +355,12 @@ public class LegPuller {
                 || currToken.equals("Ped") || currToken.equals("Sed")
                 || currToken.equals("P") || currToken.equals("S")
                 || currToken.equals("p") || currToken.equals("s")
-                || (SeismicPhaseFactory.expert && (currToken.equals("K")
-                || currToken.equals("k") || currToken.equals("I"))))) {
+                || currToken.equals("K")|| currToken.equals("k")
+                || currToken.equals("I") || currToken.equals("J")
+                || currToken.equals("j"))) {
             String validationFailMessage = "First leg ("
                     + currToken
-                    + ") must be one of Pg, Pb, Pn, Pdiff, Sg, Sb, Sn, Sdiff, P, S, p, s";
-            if(SeismicPhaseFactory.expert) {
-                validationFailMessage += ", K, k, I";
-            }
+                    + ") must be one of Pg, Pb, Pn, Pdiff, Sg, Sb, Sn, Sdiff, P, S, p, s, k, K, I, J";
             return validationFailMessage;
         }
         for(int i = 1; i < legs.size(); i++) {
@@ -390,7 +388,16 @@ public class LegPuller {
             if(prevToken.equals("END")) {
                 return "Legs ended but more tokens exist: " + currToken;
             }
-            /* Check for ! not second to last token */
+            /* two upgoing crust/mantle legs in a row */
+            if ((prevToken.equals("p") || prevToken.equals("s"))
+                && (currToken.equals("p") || currToken.equals("s"))) {
+                return "Two upgoing depth phase legs in a row: "+prevToken+" "+currToken;
+            }
+            /* two upgoing outer core legs in a row */
+            if (prevToken.equals("k") && currToken.equals("k") ) {
+                return "Two upgoing depth phase legs in a row: "+prevToken+" "+currToken;
+            }
+            /* Check for ed not second to last token */
             if ((prevToken.equals("Ped") || prevToken.equals("Sed"))
                     && ! ( currToken.equals("END")
                     || currToken.equals("Pdiff") || currToken.equals("Sdiff")
@@ -433,9 +440,15 @@ public class LegPuller {
                     && (currToken.equals("K") || currToken.equals("I") || currToken.equals("J") || currToken.equals("i"))) {
                 return "Cannot have m,c followed by K,I,i,J";
             }
-            if((currToken.equals("m") || currToken.equals("c"))
-                    && (prevToken.equals("K") || prevToken.equals("I") || prevToken.equals("J") || prevToken.equals("i"))) {
-                return "Cannot have K,I,i,J followed by m,c";
+            if((currToken.equals("c") || currToken.equals("i"))
+                    && (prevToken.equals("p") || prevToken.equals("s"))) {
+                return "Cannot have p,s followed by c,i "+prevToken+" "+currToken;
+            }
+            if(currToken.equals("i") && prevToken.equals("k")) {
+                return "Cannot have i followed by k";
+            }
+            if(currToken.equals("i") && prevToken.equals("k")) {
+                return "Cannot have i followed by k";
             }
         }
         /* Make sure legs end in "END". */

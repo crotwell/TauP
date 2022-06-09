@@ -35,9 +35,6 @@ public abstract class TauP_Tool {
     public static final String JSON = "json";
 
     public static final String TEXT = "text";
-
-    /** Turns on expert mode. */
-    public static boolean expert = false;
     
 
     protected PrintWriter writer;
@@ -173,7 +170,7 @@ public abstract class TauP_Tool {
                 printUsage();
                 noComprendoArgs[numNoComprendoArgs++] = args[i];
             } else if(dashEquals("expert", args[i])) {
-                expert = true;
+                System.err.println("expert mode is not longer required for core sources or interactions.");
             } else if(i < args.length - 1) {
                 if(args[i].equalsIgnoreCase("-o")) {
                     outFileBase = args[i + 1];

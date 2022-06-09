@@ -93,10 +93,19 @@ class IllegalPhasesTest {
 		TauModel tModDepth = tMod.depthCorrect(10);
 		float receiverDepth = 100;
 		for (String phaseName : phaseList) {
-			Exception exception = assertThrows(TauModelException.class, () -> {
+			// either throws or has no arrivals, maxRayParam == -1
+			try {
 				SeismicPhase phase = SeismicPhaseFactory.createPhase(phaseName, tMod, tMod.getSourceDepth(), receiverDepth, DEBUG);
+				assertFalse(phase.phasesExistsInModel(), phaseName + " shouldn't pass validation, source: " + tModDepth.getSourceDepth());
+			} catch(TauModelException e) {
+				// ok
+			}
+			try {
 				SeismicPhase phase_depth = SeismicPhaseFactory.createPhase(phaseName, tModDepth, tModDepth.getSourceDepth(), receiverDepth, DEBUG);
-		    }, phaseName+" shouldn't pass validation.");
+				assertFalse(phase_depth.phasesExistsInModel(), phaseName + " shouldn't pass validation, source: " + tModDepth.getSourceDepth());
+			} catch(TauModelException e) {
+				// ok
+			}
 		}
 	}
 	

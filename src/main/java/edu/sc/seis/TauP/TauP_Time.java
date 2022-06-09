@@ -863,7 +863,8 @@ public class TauP_Time extends TauP_Tool {
             if(!alreadyAdded) {
                 // didn't find it precomputed, so recalculate
                 try {
-                    seismicPhase = SeismicPhaseFactory.createPhase(tempPhaseName, getTauModelDepthCorrected(), getSourceDepth(), getReceiverDepth());
+                    seismicPhase = SeismicPhaseFactory.createPhase(tempPhaseName,
+                            getTauModelDepthCorrected(), getSourceDepth(), getReceiverDepth(), DEBUG);
                     newPhases.add(seismicPhase);
 
                     if(verbose) {
