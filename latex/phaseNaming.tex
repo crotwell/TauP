@@ -87,7 +87,7 @@ allowed since the direction of the phase is unambiguously determined by the symb
 With the ability to have sources at depth, there is a need to specify the difference between a wave that is
 exclusively downgoing to the receiver from one that turns and is upgoing at the receiver. The suffix \texttt{ed}
 can be appended to indicate exclusively downgoing. So for a source at 10 km depth and a receiver at 20 km depth
-at 0 degree distance \texttt{P} does nat have an arrival but \texttt{Ped} does.
+at 0 degree distance the turning ray \texttt{P} does not have an arrival but \texttt{Ped} does.
 
 \item Numbers, except velocities for \texttt{kmps}
 phases (see \ref{kmps} below),
@@ -102,7 +102,7 @@ discontinuity in the model will be used.
 For example, if the time for \texttt{P410s} is requested in a model where the discontinuity
 was really located at 406.7 kilometers depth, the time returned would actually be for
 \texttt{P406.7s}.
-The code ``taup\_time'' would note that this had been done.
+The code ``taup time'' would note that this had been done via the ``Purist Name''.
 Obviously, care should be taken to ensure that there are no other discontinuities
 closer than the one of interest, but this approach allows generic interface
 names like ``410'' and ``660'' to be used without knowing the exact depth in a given
@@ -195,13 +195,13 @@ In all other respects, the \texttt{\^\,}-\texttt{v} nomenclature is maintained.
 \item
 Currently, \texttt{\^\,} and \texttt{v} for non-standard
 discontinuities are allowed only in
-the crust and mantle. Thus there are no reflections off non-standard
-discontinuities within the core, (reflections such as \texttt{PKKP},
-\texttt{PKiKP} and \texttt{PKIIKP} are
-still fine).
+the crust, mantle and outer core. Thus there are no reflections off non-standard
+discontinuities within the inner core, primarily due to the lack of naming convention.
+Reflections such as \texttt{PKiKP} and \texttt{PKIIKP} are
+still fine.
 There is no
 reason in principle to restrict reflections off discontinuities in the
-core, but until there is interest expressed, these phases will not be added.
+inner core, but until there is interest expressed, these phases will not be added.
 Also, a naming convention would have to be created since
 ``\texttt{p}~is~to~\texttt{P}'' is not the same as
 ``\texttt{i}~is~to~\texttt{I}''.
@@ -209,7 +209,9 @@ Also, a naming convention would have to be created since
 \item Currently there is no support for \texttt{PKPab}, \texttt{PKPbc},
 or \texttt{PKPdf} phase names.
 They lead to increased algorithmic complexity that at this point seems
-unwarranted.
+unwarranted, and TauP uses phase names to describe paths, but
+\texttt{PKPab} and \texttt{PKPbc} differentiate between two arrivals from
+the same path, \texttt{PKP}.
 Currently, in regions where triplications develop, the triplicated phase will have multiple
 arrivals at a given distance.
 So, \texttt{PKPab} and \texttt{PKPbc} are

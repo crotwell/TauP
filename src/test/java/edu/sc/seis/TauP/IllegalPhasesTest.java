@@ -38,7 +38,9 @@ class IllegalPhasesTest {
 			"PVcp",
 			"PKviKP",
 			"PKViKP",
-			"2kmps", "2.5kmps", ".5kmps", "10kmps"
+			"2kmps", "2.5kmps", ".5kmps", "10kmps",
+			"PKedikp",
+			"PedKedIkp"
 	});
 
 	String[] illegalStartEndings = {
