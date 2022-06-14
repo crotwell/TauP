@@ -866,6 +866,7 @@ public class TauP_Time extends TauP_Tool {
                 try {
                     seismicPhase = SeismicPhaseFactory.createPhase(tempPhaseName,
                             getTauModelDepthCorrected(), getSourceDepth(), getReceiverDepth(), DEBUG);
+                    seismicPhase.verbose = verbose;
                     newPhases.add(seismicPhase);
 
                     if(verbose) {
