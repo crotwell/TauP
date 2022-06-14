@@ -498,6 +498,9 @@ public class SeismicPhaseFactory {
             } else if(currLeg.equals("I") || currLeg.equals("J")) {
                 /* And now consider inner core, I and J. */
                 endAction = currLegIs_I_J(prevLeg, currLeg, nextLeg, isPWave, isPWavePrev, legNum);
+            } else if(currLeg.equals("y") || currLeg.equals("j")) {
+                /* And now consider upgoing inner core, y and j. */
+                endAction = currLegIs_y_j(prevLeg, currLeg, nextLeg, isPWave, isPWavePrev, legNum);
             } else if(currLeg.equals("m")
                     || currLeg.equals("c") || currLeg.equals("cx")
                     || currLeg.equals("i") || currLeg.equals("ix")
@@ -1311,7 +1314,7 @@ public class SeismicPhaseFactory {
                     isPWave,
                     endAction,
                     currLeg);
-        } else if(nextLeg.equals("K") || nextLeg.equals("Ked")) {
+        } else if(nextLeg.equals("K") || nextLeg.equals("Ked") || nextLeg.equals("END")) {
             if(prevLeg.equals("P") || prevLeg.equals("S")
                     || prevLeg.equals("K")) {
                 endAction = TURN;
@@ -1322,13 +1325,18 @@ public class SeismicPhaseFactory {
                         endAction,
                         currLeg);
             }
-            endAction = REFLECT_UNDERSIDE;
-            addToBranch(tMod,
-                    currBranch,
-                    tMod.getCmbBranch(),
-                    isPWave,
-                    endAction,
-                    currLeg);
+            if (nextLeg.equals("END")) {
+                endAction = END;
+                addToBranch(tMod, currBranch, upgoingRecBranch, isPWave, endAction, currLeg);
+            } else {
+                endAction = REFLECT_UNDERSIDE;
+                addToBranch(tMod,
+                        currBranch,
+                        tMod.getCmbBranch(),
+                        isPWave,
+                        endAction,
+                        currLeg);
+            }
         } else if(nextLeg.equals("I") || nextLeg.equals("J")) {
             endAction = TRANSDOWN;
             addToBranch(tMod,
@@ -1582,13 +1590,18 @@ public class SeismicPhaseFactory {
             }
             return FAIL;
         }
-        endAction = TURN;
-        addToBranch(tMod,
-                currBranch,
-                tMod.getNumBranches() - 1,
-                isPWave,
-                endAction,
-                currLeg);
+        if( ! nextLeg.startsWith("v") && ! nextLeg.startsWith("V")
+                && (prevEndAction == START || prevEndAction == TRANSDOWN || prevEndAction == REFLECT_UNDERSIDE || prevEndAction == REFLECT_UNDERSIDE_CRITICAL)) {
+            // was downgoing, so must first turn in inner core
+            endAction = TURN;
+            addToBranch(tMod,
+                    currBranch,
+                    tMod.getNumBranches() - 1,
+                    isPWave,
+                    endAction,
+                    currLeg);
+
+        }
         if(nextLeg.equals("I") || nextLeg.equals("J")) {
             endAction = REFLECT_UNDERSIDE;
             addToBranch(tMod,
@@ -1605,6 +1618,27 @@ public class SeismicPhaseFactory {
                     isPWave,
                     endAction,
                     currLeg);
+        } else if(nextLeg.startsWith("v") || nextLeg.startsWith("V") ) {
+            if (nextLeg.startsWith("V")) {
+                endAction = REFLECT_TOPSIDE_CRITICAL;
+            } else {
+                endAction = REFLECT_TOPSIDE;
+            }
+            disconBranch = LegPuller.closestBranchToDepth(tMod,
+                    nextLeg.substring(1));
+            if(currBranch <= disconBranch - 1) {
+                addToBranch(tMod,
+                        currBranch,
+                        disconBranch - 1,
+                        isPWave,
+                        endAction,
+                        currLeg);
+            } else {
+                throw new TauModelException(getName()+" Phase not recognized (4): "
+                        + currLeg + " followed by " + nextLeg
+                        + " when currBranch=" + currBranch
+                        + " < disconBranch=" + disconBranch);
+            }
         } else if(nextLeg.startsWith("^")) {
             String depthString;
             depthString = nextLeg.substring(1);
@@ -1621,19 +1655,12 @@ public class SeismicPhaseFactory {
                 if(DEBUG) {System.out.println("Attempt to underside reflect from center of earth: "+nextLeg);}
                 return FAIL;
             }
-            if(prevLeg.equals("K") || prevLeg.equals("Ked") || prevLeg.equals("I") || prevLeg.equals("J") || prevLeg.startsWith("^")) {
-                endAction = REFLECT_UNDERSIDE;
-                addToBranch(tMod,
-                        currBranch,
-                        tMod.getIocbBranch(),
-                        isPWave,
-                        endAction,
-                        currLeg);
-            } else {
-                throw new TauModelException(getName()+" Phase not recognized (5c): "
-                        + currLeg + " followed by " + nextLeg
-                        + " when disconBranch=" + disconBranch+" , prev="+prevLeg);
-            }
+            addToBranch(tMod,
+                    currBranch,
+                    disconBranch,
+                    isPWave,
+                    endAction,
+                    currLeg);
         } else if(nextLeg.equalsIgnoreCase("P") || nextLeg.equalsIgnoreCase("S")) {
             if (tMod.getCmbDepth() == tMod.getIocbDepth()) {
                 // degenerate case of no fluid outer core, so allow phases like PIP or SJS
@@ -1653,10 +1680,134 @@ public class SeismicPhaseFactory {
                         + " within phase " + name
                         + " for this model as it has an outer core so need K,k in between.");
             }
+        } else {
+            throw new TauModelException(getName()+" Phase not recognized (6a): "
+                    + currLeg + " followed by " + nextLeg);
         }
         return endAction;
     }
 
+
+    PhaseInteraction currLegIs_y_j(String prevLeg, String currLeg, String nextLeg,
+                                 boolean isPWave, boolean isPWavePrev, int legNum)
+            throws TauModelException {
+        PhaseInteraction endAction;
+        if(nextLeg.startsWith("v") || nextLeg.startsWith("V")) {
+            throw new TauModelException(getName()+" y,j must always be up going "
+                    + " and cannot come immediately before a top-side reflection."
+                    + " currLeg=" + currLeg + " nextLeg=" + nextLeg);
+        } else if(nextLeg.startsWith("^")) {
+            String depthString;
+            depthString = nextLeg.substring(1);
+            endAction = REFLECT_UNDERSIDE;
+            disconBranch = LegPuller.closestBranchToDepth(tMod, depthString);
+            if (disconBranch < tMod.getIocbBranch() ) {
+                throw new TauModelException(getName()+" Phase not recognized (2): "
+                        + currLeg + " followed by " + nextLeg
+                        + ", discon not in inner core.");
+            }
+            if(currBranch >= disconBranch) {
+                addToBranch(tMod,
+                        currBranch,
+                        disconBranch,
+                        isPWave,
+                        endAction,
+                        currLeg);
+            } else {
+                throw new TauModelException(getName()+" Phase not recognized (2): "
+                        + currLeg + " followed by " + nextLeg
+                        + " when currBranch=" + currBranch
+                        + " > disconBranch=" + disconBranch);
+            }
+        } else if(nextLeg.startsWith("P") || nextLeg.startsWith("S")
+                || nextLeg.equals("p") || nextLeg.equals("s")
+                || nextLeg.equals("c")
+                || nextLeg.equals("K") || nextLeg.equals("Ked")
+                || nextLeg.equals("k") || nextLeg.equals("Ked")
+                || nextLeg.equals("I") || nextLeg.equals("Ied")
+                || nextLeg.equals("J") || nextLeg.equals("Jed")
+                || nextLeg.equals("END")) {
+            if (nextLeg.equals("END")) {
+                disconBranch = upgoingRecBranch;
+                if (currBranch < upgoingRecBranch) {
+                    maxRayParam = -1;
+                    if (DEBUG) {
+                        System.out.println(name+" (currBranch >= receiverBranch() "
+                                + currBranch
+                                + " "
+                                + upgoingRecBranch
+                                + " so there cannot be a "
+                                + currLeg
+                                + " phase for this sourceDepth, receiverDepth and/or path.");
+                    }
+                    return FAIL;
+                }
+            } else  {
+                disconBranch = tMod.getIocbBranch();
+            }
+            if (nextLeg.startsWith("K") || nextLeg.startsWith("k")) {
+                endAction = TRANSUP;
+
+            } else if (nextLeg.startsWith("P") || nextLeg.startsWith("S")
+                    || nextLeg.startsWith("p") || nextLeg.startsWith("s")
+                    || nextLeg.equals("c")) {
+                if (tMod.getCmbBranch() == tMod.getIocbBranch()) {
+                    // no outer core
+                    endAction = TRANSUP;
+                } else {
+                    throw new TauModelException(getName()+" Phase not recognized (3): "
+                            + currLeg + " followed by " + nextLeg+", outer core leg would be K or k");
+                }
+            } else if (nextLeg.equals("END")) {
+                endAction = END;
+            } else if (nextLeg.equals("I") || nextLeg.equals("Ied")
+                || nextLeg.equals("J") || nextLeg.equals("Jed")) {
+                endAction = REFLECT_UNDERSIDE;
+            } else {
+                throw new TauModelException(getName()+" Phase not recognized (3): "
+                        + currLeg + " followed by " + nextLeg);
+            }
+            addToBranch(tMod,
+                    currBranch,
+                    disconBranch,
+                    isPWave,
+                    endAction,
+                    currLeg);
+
+        } else if(nextLeg.equals("i") ) {
+            throw new TauModelException(getName()+" Phase not recognized (3): "
+                    + currLeg + " followed by " + nextLeg+", y,j must be upgoing in inner core and so cannot hit iomb from above.");
+        } else if(nextLeg.equals("I") || nextLeg.equals("J") ) {
+            throw new TauModelException(getName()+" Phase not recognized (3): "
+                    + currLeg + " followed by " + nextLeg+", y,j must be upgoing in outer core and so cannot hit inner core.");
+        } else if(nextLeg.equals("y") || nextLeg.equals("j")) {
+            throw new TauModelException(getName()+" Phase not recognized (3): "
+                    + currLeg + " followed by " + nextLeg+", y,j must be upgoing in inner core and so cannot repeat.");
+        } else if(isLegDepth(currLeg)) {
+            double nextLegDepth = Double.parseDouble(currLeg);
+            if (nextLegDepth >= tMod.getCmbDepth()) {
+                throw new TauModelException(getName()+" Phase not recognized (3): "
+                        + currLeg + " followed by " + nextLeg+", y and j must be upgoing in inner core and so cannot hit depth "+nextLegDepth);
+            }
+            disconBranch = LegPuller.closestBranchToDepth(tMod, nextLeg);
+            if (disconBranch < tMod.getIocbBranch() ) {
+                throw new TauModelException(getName()+" Phase not recognized (2): "
+                        + currLeg + " followed by " + nextLeg
+                        + ", discon not in inner core.");
+            }
+            endAction = TRANSUP;
+            addToBranch(tMod,
+                    currBranch,
+                    disconBranch,
+                    isPWave,
+                    endAction,
+                    currLeg);
+        } else {
+            throw new TauModelException(getName()+" Phase not recognized (3): "
+                    + currLeg + " followed by " + nextLeg);
+        }
+        return endAction;
+    }
 
     /**
      * changes maxRayParam and minRayParam whenever there is a phase conversion.

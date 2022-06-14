@@ -10,16 +10,16 @@ public class LegPuller {
 
     public static final String number = "((([0-9]*[.])?[0-9]+)|([0-9]*[.]))";
 
-    public static final String travelSuffix = "((diff)|(ed)|n|g)?";
+    public static final String travelSuffix = "((diff)|(ed)|n|g)";
 
-    public static final String travelLeg = "([PpSsKkIJj]"+travelSuffix+")";
+    public static final String travelLeg = "([PpSsKkIyJj]"+travelSuffix+"?)";
 
-    public static final String interactPrefix = "[vV\\^]";
+    public static final String interactPrefix = "[vV^]";
 
     public static final String interactPointsRE = "(("+interactPrefix+")?([mci]|"+number+"))";
 
     public static final String surfaceWave = "("+number+"kmps)";
-    public static final String bodyWave = travelLeg+"(("+interactPointsRE+")?"+travelLeg+")*";
+    public static final String bodyWave = travelLeg+"("+interactPointsRE+"?"+travelLeg+")*";
 
     public static final Pattern phaseRegEx =
             Pattern.compile("^("+surfaceWave+"|"+ bodyWave+")$");
@@ -47,7 +47,7 @@ public class LegPuller {
         }
 
         int offset = 0;
-        ArrayList<String> legs = new ArrayList<String>();
+        ArrayList<String> legs = new ArrayList<>();
         /* Special case for surface wave velocity. */
         if(name.endsWith("kmps")) {
             try {
@@ -61,6 +61,8 @@ public class LegPuller {
                         && (name.charAt(offset) == 'p'
                         || name.charAt(offset) == 's'
                         || name.charAt(offset) == 'k'
+                        || name.charAt(offset) == 'y'
+                        || name.charAt(offset) == 'j'
                         || name.charAt(offset) == 'm'
                         || name.charAt(offset) == 'c'
                         || name.charAt(offset) == 'i'
@@ -72,12 +74,14 @@ public class LegPuller {
                             + " cannot be followed by "
                             + "'ed' in " + name);
                 } else if(name.charAt(offset) == 'I'
+                        || name.charAt(offset) == 'y'
+                        || name.charAt(offset) == 'j'
                         || name.charAt(offset) == 'k'
                         || name.charAt(offset) == 'J'
                         || name.charAt(offset) == 'p'
                         || name.charAt(offset) == 's'
                         || name.charAt(offset) == 'm') {
-                    // Do the easy ones, ie K,k,I,J,p,s,m
+                    // Do the easy ones, ie K,k,I,y,J,j,p,s,m
                     legs.add(name.substring(offset, offset + 1));
                     offset = offset + 1;
                 } else if(name.charAt(offset) == 'c'

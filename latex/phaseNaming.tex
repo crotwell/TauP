@@ -43,7 +43,9 @@ the depth to an interface involved in an interaction.
 \texttt{K} & compressional wave in the outer core \\
 \texttt{k} & strictly upgoing compressional wave in the outer core \\
 \texttt{I} & compressional wave in the inner core \\
+\texttt{y} & strictly upgoing compressional wave in the inner core \\
 \texttt{J} & shear wave in the inner core \\
+\texttt{j} & strictly upgoing shear wave in the inner core \\
 \end{tabular}
 %\end{center}
 
@@ -193,18 +195,17 @@ without knowing its exact depth.
 In all other respects, the \texttt{\^\,}-\texttt{v} nomenclature is maintained.
 
 \item
-Currently, \texttt{\^\,} and \texttt{v} for non-standard
-discontinuities are allowed only in
-the crust, mantle and outer core. Thus there are no reflections off non-standard
-discontinuities within the inner core, primarily due to the lack of naming convention.
-Reflections such as \texttt{PKiKP} and \texttt{PKIIKP} are
-still fine.
-There is no
-reason in principle to restrict reflections off discontinuities in the
-inner core, but until there is interest expressed, these phases will not be added.
-Also, a naming convention would have to be created since
+Starting in version 2.7, \texttt{\^\,} and \texttt{v} are now allowed
+for for all disconuities in the model, including
+the crust, mantle and core.
+However, because
 ``\texttt{p}~is~to~\texttt{P}'' is not the same as
-``\texttt{i}~is~to~\texttt{I}''.
+``\texttt{i}~is~to~\texttt{I}'',
+a naming convention was created to use \texttt{y} as an exclusively
+upgoing leg in the inner core. For example in a model with a discontinuity at 5500 km depth in the inner core, the phases
+\texttt{PKIv5500IKP} and \texttt{PKIv5500ykp} are the same. Note that
+because standard models do not have discontuities in the core, these
+phases have not received the same level of testing.
 
 \item Currently there is no support for \texttt{PKPab}, \texttt{PKPbc},
 or \texttt{PKPdf} phase names.

@@ -21,16 +21,33 @@ public class OuterCoreDisconTest {
     String modelName = "outerCoreDiscon.nd";
     VelocityModel vMod;
     TauModel tMod;
-    String[] phaseNames = { "PKiKP", "PKv3000kp", "PKik^3000KiKP", "PKv3000kKiKP"};
+    // all should have arrival at 0
+    String[] zeroDistPhaseNames = {
+            "PKiKP", "PKv3000kp", "PKik^3000KiKP", "PKv3000kKiKP",
+            "PKIIKP", "PKIv5500Ikp", "PKI^5500IKP", "PKIv5500IKP",
+            "PKIIkp", "PKIv5500ykp"
+    };
+    String[] otherPhaseNames = {
+            "PKIv5500yIkpPKIKP"
+    };
 
 
     @Test
-    void dicsonPhasesTest() throws TauModelException {
-        for(String name : phaseNames) {
-            SeismicPhase phase = SeismicPhaseFactory.createPhase(name, tMod);
+    void zeroDistPhasesTest() throws TauModelException {
+        for(String name : zeroDistPhaseNames) {
+            SeismicPhase phase = SeismicPhaseFactory.createPhase(name, tMod, tMod.getSourceDepth(), 0, true);
             List<Arrival> arrivals = phase.calcTime(0);
             assertEquals( 1, arrivals.size(), name);
+        }
+    }
 
+    @Test
+    void PhasesExistTest() throws TauModelException {
+        for(String name : otherPhaseNames) {
+            SeismicPhase phase = SeismicPhaseFactory.createPhase(name, tMod, tMod.getSourceDepth(), 0, true);
+            List<Arrival> arrivals = phase.calcTime(120);
+            // dumb check, just to make sure calc happens without exception
+            assertNotNull( arrivals, name);
         }
     }
 
