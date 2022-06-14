@@ -530,7 +530,7 @@ public class SeismicPhase implements Serializable, Cloneable {
              * done more than one half lap plus some number of whole laps.
              */
             searchDist = (n + 1) * 2.0 * Math.PI - radDist;
-            if(tempDeg != 180) {
+            if(tempDeg != 180 && radDist != 0 && searchDist <= maxDistance) {
                 for(int rayNum = 0; rayNum < (dist.length - 1); rayNum++) {
                     if(searchDist == dist[rayNum + 1]
                             && rayNum + 1 != dist.length - 1) {
