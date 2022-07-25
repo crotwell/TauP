@@ -2954,53 +2954,7 @@ public class SeismicPhase implements Serializable, Cloneable {
         return pierce;
     }
 
-    /**
-     * Here we worry about the special case for head and diffracted
-     * waves. It is assumed that a phase can be a diffracted wave or a
-     * head wave, but not both. Nor can it be a head wave or diffracted
-     * wave for both P and S.
-     */
-    List<TimeDist> handleHeadOrDiffractedWave(Arrival currArrival, List<TimeDist> orig) {
-        String[] phaseSegments = new String[] {"Pn", "Sn", "Pdiff", "Sdiff"};
-        String phaseSeg = "";
-        for (int i = 0; i < phaseSegments.length; i++) {
-            if (name.indexOf(phaseSegments[i]) != -1) {
-                phaseSeg = phaseSegments[i];
-                break;
-            }
-        }
-        if (phaseSeg.equals("")) {throw new RuntimeException("no head/diff segment in "+name); }
-        double headDepth;
-        if (phaseSeg.equals("Pn") || phaseSeg.equals("Sn")) {
-            headDepth = tMod.getMohoDepth();
-        } else {
-            headDepth = tMod.getCmbDepth();
-        }
-        int numFound = 0;
-        int indexInString = -1;
-        // can't have both Pxxx and Sxxx in a head wave phase, so one of these
-        // should do nothing
-        while((indexInString = name.indexOf(phaseSeg, indexInString + 1)) != -1) {
-            numFound++;
-        }
-        double refractDist = currArrival.getDist() - dist[0];
-        double refractTime = refractDist*currArrival.getRayParam();
-        List<TimeDist> out = new ArrayList<TimeDist>();
-        int j = 0;
-        for (TimeDist td : orig) {
-            // this is a little weird as we are not checking where we are in the phase name, but simply
-            // if the depth matches. This likely works in most cases, but may not for head/diffracted
-            // waves that undergo a phase change, if that type of phase can even exist
-            out.add(new TimeDist(td.getP(), td.getTime()+j * refractTime / numFound, td.getDistRadian() + j * refractDist / numFound, td.getDepth()));
-            if (td.getDepth() == headDepth) {
-                j++;
-                out.add(new TimeDist(td.getP(), td.getTime()+j * refractTime / numFound, td.getDistRadian() + j * refractDist / numFound, td.getDepth()));
-            }
-        }
-        return out;
-    }
-
-    /** calculates the paths this phase takes through the earth model. 
+    /** calculates the paths this phase takes through the earth model.
      * @deprecated  Use the getPath() method on each Arrival from calcTime()
      */
     @Deprecated
