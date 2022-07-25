@@ -13,13 +13,13 @@ public class HeadDiffWaveTest {
     String modelName = "iasp91";
     double depth = 0;
     TauModel tMod = TauModelLoader.load(modelName).depthCorrect(depth);
-    SeismicPhase pnPhase = new SeismicPhase("Pn", tMod);
+    SeismicPhase pnPhase = SeismicPhaseFactory.createPhase("Pn", tMod);
     assertEquals(1, pnPhase.headOrDiffractSeq.size());
-    SeismicPhase pdiffPhase = new SeismicPhase("Pdiff", tMod);
+    SeismicPhase pdiffPhase = SeismicPhaseFactory.createPhase("Pdiff", tMod);
     assertEquals(1, pdiffPhase.headOrDiffractSeq.size());
-    SeismicPhase pdiffpdiffPhase = new SeismicPhase("PdiffPdiff", tMod);
+    SeismicPhase pdiffpdiffPhase = SeismicPhaseFactory.createPhase("PdiffPdiff", tMod);
     assertEquals(2, pdiffpdiffPhase.headOrDiffractSeq.size());
-    SeismicPhase pvmppnPhase = new SeismicPhase("PvmpPn", tMod);
+    SeismicPhase pvmppnPhase = SeismicPhaseFactory.createPhase("PvmpPn", tMod);
     assertEquals(1, pnPhase.headOrDiffractSeq.size());
   }
 
@@ -29,7 +29,7 @@ public class HeadDiffWaveTest {
     double depth = 0;
     double deg = 6;
     TauModel tMod = TauModelLoader.load(modelName).depthCorrect(depth);
-    SeismicPhase pnPhase = new SeismicPhase("Pn", tMod);
+    SeismicPhase pnPhase = SeismicPhaseFactory.createPhase("Pn", tMod);
 
     List<Arrival> arrivals = pnPhase.calcTime(deg);
     assertEquals(1, arrivals.size());
