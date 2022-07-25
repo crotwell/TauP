@@ -37,7 +37,10 @@ public class CmdLineOutputTest {
     String[] pierceTestCmds = new String[] {"taup pierce -h 10 -ph P -deg 35 -mod prem",
                                             "taup pierce -h 10 -ph P -deg 35",
                                             "taup pierce -h 10 -ph P -deg 35 -mod ak135",
-                                            "taup pierce -mod prem -h 600 -deg 45 -ph PKiKP -pierce 5049.5"};
+                                            "taup pierce -mod prem -h 600 -deg 45 -ph PKiKP -pierce 5049.5",
+                                            "taup pierce -h 0 -ph Pn -deg 6",
+                                            "taup pierce -h 0 -ph Pdiff -deg 120"
+                                          };
 
     String[] pathTestCmds = new String[] {"taup path -o stdout -h 10 -ph P -deg 35 -mod prem",
                                           "taup path -o stdout -h 10 -ph P -deg 35",

@@ -1825,6 +1825,8 @@ public class SeismicPhase implements Serializable, Cloneable {
                                         isPWave,
                                         endAction,
                                         currLeg);
+                            // remember where the diff or head happened (one less than size)
+                            headOrDiffractSeq.add(branchSeq.size() - 1);
                             endAction = TRANSUP;
                             addToBranch(tMod,
                                         currBranch,
