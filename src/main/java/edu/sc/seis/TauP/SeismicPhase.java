@@ -33,14 +33,14 @@ import static edu.sc.seis.TauP.PhaseInteraction.*;
 /**
  * Stores and transforms seismic phase names to and from their corresponding
  * sequence of branches.
- * 
+ *
  * @version 1.1.3 Wed Jul 18 15:00:35 GMT 2001
  * @author H. Philip Crotwell
- * 
+ *
  * Modified to add "expert" mode wherein paths may start in the core. Principal
  * use is to calculate leg contributions for scattered phases. Nomenclature: "K" -
  * downgoing wave from source in core; "k" - upgoing wave from source in core.
- * 
+ *
  * G. Helffrich/U. Bristol 24 Feb. 2007
  */
 public class SeismicPhase implements Serializable, Cloneable {
@@ -152,9 +152,9 @@ public class SeismicPhase implements Serializable, Cloneable {
      *
      */
     protected List<Boolean> waveType = new ArrayList<Boolean>();
-    
+
     protected double refineDistToleranceRadian = 0.0049*Math.PI/180;
-    
+
     protected int maxRecursion = 5;
 
     public static final boolean PWAVE = true;
@@ -180,7 +180,7 @@ public class SeismicPhase implements Serializable, Cloneable {
      * @param tMod
      *            Tau model to be used to construct the phase. This should be corrected for the source
      *            depth.
-     * @throws TauModelException 
+     * @throws TauModelException
      */
     @Deprecated
     public SeismicPhase(String name, TauModel tMod) throws TauModelException {
@@ -288,7 +288,7 @@ public class SeismicPhase implements Serializable, Cloneable {
     public boolean phasesExistsInModel() {
         return getMaxRayParam() >= 0;
     }
-    
+
     public Arrival getEarliestArrival(double degrees) {
         double soonest = Double.MAX_VALUE;
         Arrival soonestArrival = null;
@@ -309,7 +309,7 @@ public class SeismicPhase implements Serializable, Cloneable {
     public double getMinDistanceDeg() {
         return getMinDistance() * 180.0 / Math.PI;
     }
-    
+
     public double getMinDistance() {
         return minDistance;
     }
@@ -317,7 +317,7 @@ public class SeismicPhase implements Serializable, Cloneable {
     public double getMaxDistanceDeg() {
         return getMaxDistance() * 180.0 / Math.PI;
     }
-    
+
     public double getMaxDistance() {
         return maxDistance;
     }
@@ -381,7 +381,7 @@ public class SeismicPhase implements Serializable, Cloneable {
     public List<String> getLegs() {
         return Collections.unmodifiableList(legs);
     }
-    
+
     public List<SeismicPhaseSegment> getPhaseSegments() {
     	return Collections.unmodifiableList(segmentList);
     }
@@ -397,7 +397,7 @@ public class SeismicPhase implements Serializable, Cloneable {
     public double getDist(int i) {
         return dist[i];
     }
-    
+
     public double[] getDist() {
         return (double[])dist.clone();
     }
@@ -405,7 +405,7 @@ public class SeismicPhase implements Serializable, Cloneable {
     public double getTime(int i) {
         return time[i];
     }
-    
+
     public double[] getTime() {
         return (double[])time.clone();
     }
@@ -413,7 +413,7 @@ public class SeismicPhase implements Serializable, Cloneable {
     public double getTau(int i) {
         return time[i] - rayParams[i] * dist[i];
     }
-    
+
     public double[] getTau() {
         double[] tau = new double[dist.length];
         for(int i = 0; i < dist.length; i++) {
@@ -460,14 +460,14 @@ public class SeismicPhase implements Serializable, Cloneable {
         }
         return out;
     }
-    
+
     public boolean hasArrivals() {
         return dist != null && dist.length != 0;
     }
 
     // Normal methods
 
-    /** calculates arrival times for this phase, sorted by time. 
+    /** calculates arrival times for this phase, sorted by time.
      *  */
     public List<Arrival> calcTime(double deg) {
         double tempDeg = deg;
@@ -555,7 +555,7 @@ public class SeismicPhase implements Serializable, Cloneable {
                                     + (float)(180 / Math.PI * dist[rayNum + 1]));
                         }
                         arrivals.add(refineArrival(rayNum, searchDist, refineDistToleranceRadian, maxRecursion));
-                        
+
                     }
                 }
             }
@@ -567,7 +567,7 @@ public class SeismicPhase implements Serializable, Cloneable {
             }});
         return arrivals;
     }
-    
+
     public Arrival refineArrival(int rayNum, double distRadian, double distTolRadian, int maxRecursion) {
         Arrival left = new Arrival(this,
                                    getTime(rayNum),
@@ -587,7 +587,7 @@ public class SeismicPhase implements Serializable, Cloneable {
                                    sourceDepth);
         return refineArrival(left, right, distRadian, distTolRadian, maxRecursion);
     }
-        
+
     public Arrival refineArrival(Arrival leftEstimate, Arrival rightEstimate, double searchDist, double distTolRadian, int maxRecursion) {
         Arrival linInterp = linearInterpArrival(searchDist, leftEstimate, rightEstimate);
         if(maxRecursion <= 0 || headOrDiffractSeq.size() > 0
@@ -609,7 +609,7 @@ public class SeismicPhase implements Serializable, Cloneable {
         if (rightEstimate.getRayParam() < minRayParam || maxRayParam < rightEstimate.getRayParam()) {
             throw new RuntimeException("Right Ray param "+rightEstimate.getRayParam()+" is outside range for this phase: "+getName()+" min="+minRayParam+" max="+maxRayParam);
         }
-        
+
         try {
             Arrival shoot = shootRay(linInterp.getRayParam());
             if ((leftEstimate.getDist() - searchDist)
@@ -634,11 +634,11 @@ public class SeismicPhase implements Serializable, Cloneable {
             throw new RuntimeException("Should not happen: "+getName(), e);
         }
     }
-    
+
     public Arrival shootRay(double rayParam) throws SlownessModelException, NoSuchLayerException {
-        if(name.indexOf("Sdiff") != -1 
-                || name.indexOf("Pdiff") != -1 
-                || name.indexOf("Pn") != -1 
+        if(name.indexOf("Sdiff") != -1
+                || name.indexOf("Pdiff") != -1
+                || name.indexOf("Pn") != -1
                 || name.indexOf("Sn") != -1
                 || name.endsWith("kmps")) {
             throw new SlownessModelException("Unable to shoot ray in non-body waves");
@@ -735,14 +735,14 @@ public class SeismicPhase implements Serializable, Cloneable {
                            puristName,
                            sourceDepth);
     }
-    
+
     public double calcRayParamForTakeoffAngle(double takeoffDegree) {
         double takeoffVelocity;
         VelocityModel vMod = getTauModel().getVelocityModel();
         try {
             if (getDownGoing()[0]) {
                 takeoffVelocity = vMod.evaluateBelow(sourceDepth, name.charAt(0));
-            } else { 
+            } else {
                 takeoffVelocity = vMod.evaluateAbove(sourceDepth, name.charAt(0));
             }
             double rayParam = (getTauModel().getRadiusOfEarth()-sourceDepth)*Math.sin(takeoffDegree*Math.PI/180)/takeoffVelocity;
@@ -753,7 +753,7 @@ public class SeismicPhase implements Serializable, Cloneable {
             throw new RuntimeException("Should not happen", e);
         }
     }
-    
+
     public double calcTakeoffAngle(double arrivalRayParam) {
         double takeoffVelocity;
         if (name.endsWith("kmps")) {
@@ -769,7 +769,7 @@ public class SeismicPhase implements Serializable, Cloneable {
             }
             if (getDownGoing()[0]) {
                 takeoffVelocity = vMod.evaluateBelow(sourceDepth, firstLeg);
-            } else { 
+            } else {
                 takeoffVelocity = vMod.evaluateAbove(sourceDepth, firstLeg);
             }
             double takeoffAngle = 180/Math.PI*Math.asin(takeoffVelocity*arrivalRayParam/(getTauModel().getRadiusOfEarth()-sourceDepth));
@@ -784,7 +784,7 @@ public class SeismicPhase implements Serializable, Cloneable {
             throw new RuntimeException("Should not happen", e);
         }
     }
-    
+
     public double calcIncidentAngle(double arrivalRayParam) {
         if (name.endsWith("kmps")) {
             return 0;
@@ -814,7 +814,7 @@ public class SeismicPhase implements Serializable, Cloneable {
             throw new RuntimeException("Should not happen", e);
         }
     }
-        
+
 
 
     /**
@@ -830,7 +830,7 @@ public class SeismicPhase implements Serializable, Cloneable {
         }
         return arrivals;
     }
-    
+
     /** Calculates the pierce points for a particular arrival. The returned arrival is the same
      * as the input arguement but now has the pierce points filled in.
      * @param currArrival
@@ -842,7 +842,7 @@ public class SeismicPhase implements Serializable, Cloneable {
         currArrival.getPierce();
         return currArrival;
     }
-    
+
     protected List<TimeDist> calcPierceTimeDist(Arrival currArrival) {
         double branchDist = 0.0;
         double branchTime = 0.0;
@@ -1078,7 +1078,7 @@ public class SeismicPhase implements Serializable, Cloneable {
         return out;
     }
 
-    /** calculates the paths this phase takes through the earth model. 
+    /** calculates the paths this phase takes through the earth model.
      * @deprecated  Use the getPath() method on each Arrival from calcTime()
      */
     @Deprecated
@@ -1089,9 +1089,9 @@ public class SeismicPhase implements Serializable, Cloneable {
         }
         return arrivals;
     }
-    
+
     /**
-     * 
+     *
      * @param currArrival
      * @return
      * @deprecated use the getPath() method on the arrival.
@@ -1101,7 +1101,7 @@ public class SeismicPhase implements Serializable, Cloneable {
         currArrival.getPath(); // side effect calculates path
         return currArrival;
     }
-    
+
     protected List<TimeDist> calcPathTimeDist(Arrival currArrival) {
         ArrayList<TimeDist[]> pathList = new ArrayList<TimeDist[]>();
         /*
@@ -1220,7 +1220,7 @@ public class SeismicPhase implements Serializable, Cloneable {
         }
         return minArrival;
     }
-    
+
     public String describe( ) {
         String desc = name + ":\n";
         if (phasesExistsInModel()) {
@@ -1247,7 +1247,7 @@ public class SeismicPhase implements Serializable, Cloneable {
         for(SeismicPhaseSegment segment : getPhaseSegments()) {
         	desc += segment.toString()+"\n";
         }
-        
+
         return desc;
     }
 
