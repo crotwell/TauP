@@ -638,6 +638,10 @@ three sections specify the phase list, distances and depths to use.
 After editing, a custom table can be created with
 \texttt{taup table -header example.locsat}.
 
+Note that the \texttt{taup.table.locsat.maxdiff} property sets the cutoff beyond which
+Pdiff and Sdiff while not be output. This is to align the output with preexisting
+locsat style travel time files.
+
 The usage is:
 \begin{verbatim}
 piglet 1>taup table --help
