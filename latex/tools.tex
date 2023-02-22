@@ -557,9 +557,11 @@ inserted into the corresponding \texttt{user0}-\texttt{user9} header.
 Note that triplicated phases are a problem as there is only one
 spot to put a time. For example, in iasp91 S has three arrivals at 20~degrees but only
 one can be put into the choosen header. TauP\_SetSac assumes that the first arrival
-is the most important, and uses it. An improved method would allow a phase to have several
-header variables associated with it, so that all arrivals could be marked. Currently
-however, only the first arrival for a phase name is used.
+is the most important, and uses it. Additional header variables may be appended for
+the times of the multiples. For example, S-458 would put the first S arrival into
+header \texttt{t4} and the second into \texttt{t5} and the thrid into \texttt{t8}.
+If there are more arrivals than headers, the later arrivals are not added. If there are
+more headers than arrivals, then the header is not set.
 
 \textbf{Warning:} TauP\_SetSac assumes the \textsc{evdp} header has depth in meters unless
 the -evdpkm
@@ -614,8 +616,9 @@ Arguments are:
 
 sacfilename [sacfilename ...]
 
-Ex: taup_setsac --mod S_prem -ph S-8,ScS-9 wmq.r wmq.t wmq.z
-puts the first S arrival in T8 and ScS in T9
+Ex: taup_setsac --mod S_prem -ph S-8,ScS-9,PKP-a2 wmq.r wmq.t wmq.z
+puts the first S arrival in T8 and ScS in T9, and the first PKP arrival into A
+and the second into T2
 \end{verbatim}
 
 \subsection{TauP\_Table}

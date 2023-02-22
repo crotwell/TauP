@@ -487,27 +487,10 @@ public class TauP_Time extends TauP_Tool {
                     /* no optional dash argument, so just add the name. */
                     appendPhaseName(phaseAndHeader[0]);
                 } else {
-                    if(phaseAndHeader[1].length() == 1
-                            && Character.isDigit(phaseAndHeader[1].charAt(0))) {
-                        /*
-                         * There is an optional argument, so store it and the
-                         * phase name.
-                         */
-                        appendPhaseName(new PhaseName(phaseAndHeader[0],
-                                                      Integer.valueOf(phaseAndHeader[1])
-                                                              .intValue()));
-                    } else if(phaseAndHeader[1].length() == 1
-                            && phaseEntry.charAt(phaseEntry.length() - 1) == 'a') {
-                        /*
-                         * There is an optional argument, use 10 for sac A, so
-                         * store it and the phase name.
-                         */
-                        appendPhaseName(new PhaseName(phaseAndHeader[0],
-                                                      TauP_SetSac.A_HEADER));
-                    } else {
-                        Alert.warning("Problem with phase=" + phaseEntry,
-                                      "Skipping this phase.");
-                    }
+                    int startHeaderRange = -9;
+                    int endHeaderRange = -9;
+                    PhaseName sacPhase = new PhaseName(phaseAndHeader[0], phaseAndHeader[1]);
+                    appendPhaseName(sacPhase);
                 }
             } catch(TauModelException e) {
                 Alert.warning("Problem with phase=" + phaseEntry + " "
