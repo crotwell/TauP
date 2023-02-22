@@ -11,7 +11,7 @@ plugins {
   `maven-publish`
   signing
   application
-  id("com.github.ben-manes.versions") version "0.42.0"
+  id("com.github.ben-manes.versions") version "0.46.0"
 }
 
 application {
@@ -31,17 +31,17 @@ java {
 tasks.withType<JavaCompile>().configureEach { options.compilerArgs.addAll(arrayOf("-Xlint:deprecation")) }
 
 dependencies {
-    implementation("edu.sc.seis:seisFile:2.0.4") {
+    implementation("edu.sc.seis:seisFile:2.0.5") {
       // we need seisFile for sac output, but not all the other functionality
       exclude(group = "info.picocli", module = "picocli")
       exclude(group = "com.fasterxml.woodstox", module = "woodstox-core")
       exclude(group = "org.apache.httpcomponents", module = "httpclient")
     }
-    runtimeOnly( "org.slf4j:slf4j-reload4j:1.7.35")
+    runtimeOnly( "org.slf4j:slf4j-reload4j:1.7.36")
 
     // Use JUnit Jupiter API for testing.
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:5.8.2")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.2")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:5.9.2")
 
     // Use JUnit Jupiter Engine for testing.
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
