@@ -179,104 +179,122 @@ public class TauP_Time extends TauP_Tool {
         }
     }
 
+    /**
+     * @deprecated see extractPhaseNames
+     * @param phaseName
+     * @return
+     */
     public static List<String> getPhaseNames(String phaseName) {
+        return extractPhaseNames(phaseName);
+    }
+
+    /**
+     * Parse comma separated list of phase names, expanding convience phase names like
+     * ttp into real phase names.
+     *
+     * @param phaseNames string to parse
+     * @return parsed list of phase names
+     */
+    public static List<String> extractPhaseNames(String phaseNames) {
         List<String> names = new ArrayList<String>();
-        if(phaseName.equalsIgnoreCase("ttp")
-                || phaseName.equalsIgnoreCase("tts")
-                || phaseName.equalsIgnoreCase("ttbasic")
-                || phaseName.equalsIgnoreCase("tts+")
-                || phaseName.equalsIgnoreCase("ttp+")
-                || phaseName.equalsIgnoreCase("ttall")) {
-            if(phaseName.equalsIgnoreCase("ttp")
-                    || phaseName.equalsIgnoreCase("ttp+")
+        for (String phaseName : splitPhaseNameList(phaseNames)) {
+            if (phaseName.equalsIgnoreCase("ttp")
+                    || phaseName.equalsIgnoreCase("tts")
                     || phaseName.equalsIgnoreCase("ttbasic")
-                    || phaseName.equalsIgnoreCase("ttall")) {
-                names.add("p");
-                names.add("P");
-                names.add("Pn");
-                names.add("Pdiff");
-                names.add("PKP");
-                names.add("PKiKP");
-                names.add("PKIKP");
-            }
-            if(phaseName.equalsIgnoreCase("tts")
                     || phaseName.equalsIgnoreCase("tts+")
-                    || phaseName.equalsIgnoreCase("ttbasic")
+                    || phaseName.equalsIgnoreCase("ttp+")
                     || phaseName.equalsIgnoreCase("ttall")) {
-                names.add("s");
-                names.add("S");
-                names.add("Sn");
-                names.add("Sdiff");
-                names.add("SKS");
-                names.add("SKIKS");
+                if (phaseName.equalsIgnoreCase("ttp")
+                        || phaseName.equalsIgnoreCase("ttp+")
+                        || phaseName.equalsIgnoreCase("ttbasic")
+                        || phaseName.equalsIgnoreCase("ttall")) {
+                    names.add("p");
+                    names.add("P");
+                    names.add("Pn");
+                    names.add("Pdiff");
+                    names.add("PKP");
+                    names.add("PKiKP");
+                    names.add("PKIKP");
+                }
+                if (phaseName.equalsIgnoreCase("tts")
+                        || phaseName.equalsIgnoreCase("tts+")
+                        || phaseName.equalsIgnoreCase("ttbasic")
+                        || phaseName.equalsIgnoreCase("ttall")) {
+                    names.add("s");
+                    names.add("S");
+                    names.add("Sn");
+                    names.add("Sdiff");
+                    names.add("SKS");
+                    names.add("SKIKS");
+                }
+                if (phaseName.equalsIgnoreCase("ttp+")
+                        || phaseName.equalsIgnoreCase("ttbasic")
+                        || phaseName.equalsIgnoreCase("ttall")) {
+                    names.add("PcP");
+                    names.add("pP");
+                    names.add("pPdiff");
+                    names.add("pPKP");
+                    names.add("pPKIKP");
+                    names.add("pPKiKP");
+                    names.add("sP");
+                    names.add("sPdiff");
+                    names.add("sPKP");
+                    names.add("sPKIKP");
+                    names.add("sPKiKP");
+                }
+                if (phaseName.equalsIgnoreCase("tts+")
+                        || phaseName.equalsIgnoreCase("ttbasic")
+                        || phaseName.equalsIgnoreCase("ttall")) {
+                    names.add("sS");
+                    names.add("sSdiff");
+                    names.add("sSKS");
+                    names.add("sSKIKS");
+                    names.add("ScS");
+                    names.add("pS");
+                    names.add("pSdiff");
+                    names.add("pSKS");
+                    names.add("pSKIKS");
+                }
+                if (phaseName.equalsIgnoreCase("ttbasic")
+                        || phaseName.equalsIgnoreCase("ttall")) {
+                    names.add("ScP");
+                    names.add("SKP");
+                    names.add("SKIKP");
+                    names.add("PKKP");
+                    names.add("PKIKKIKP");
+                    names.add("SKKP");
+                    names.add("SKIKKIKP");
+                    names.add("PP");
+                    names.add("PKPPKP");
+                    names.add("PKIKPPKIKP");
+                }
+                if (phaseName.equalsIgnoreCase("ttall")) {
+                    names.add("SKiKP");
+                    names.add("PP");
+                    names.add("ScS");
+                    names.add("PcS");
+                    names.add("PKS");
+                    names.add("PKIKS");
+                    names.add("PKKS");
+                    names.add("PKIKKIKS");
+                    names.add("SKKS");
+                    names.add("SKIKKIKS");
+                    names.add("SKSSKS");
+                    names.add("SKIKSSKIKS");
+                    names.add("SS");
+                    names.add("SP");
+                    names.add("PS");
+                }
+            } else {
+                names.add(phaseName);
             }
-            if(phaseName.equalsIgnoreCase("ttp+")
-                    || phaseName.equalsIgnoreCase("ttbasic")
-                    || phaseName.equalsIgnoreCase("ttall")) {
-                names.add("PcP");
-                names.add("pP");
-                names.add("pPdiff");
-                names.add("pPKP");
-                names.add("pPKIKP");
-                names.add("pPKiKP");
-                names.add("sP");
-                names.add("sPdiff");
-                names.add("sPKP");
-                names.add("sPKIKP");
-                names.add("sPKiKP");
-            }
-            if(phaseName.equalsIgnoreCase("tts+")
-                    || phaseName.equalsIgnoreCase("ttbasic")
-                    || phaseName.equalsIgnoreCase("ttall")) {
-                names.add("sS");
-                names.add("sSdiff");
-                names.add("sSKS");
-                names.add("sSKIKS");
-                names.add("ScS");
-                names.add("pS");
-                names.add("pSdiff");
-                names.add("pSKS");
-                names.add("pSKIKS");
-            }
-            if(phaseName.equalsIgnoreCase("ttbasic")
-                    || phaseName.equalsIgnoreCase("ttall")) {
-                names.add("ScP");
-                names.add("SKP");
-                names.add("SKIKP");
-                names.add("PKKP");
-                names.add("PKIKKIKP");
-                names.add("SKKP");
-                names.add("SKIKKIKP");
-                names.add("PP");
-                names.add("PKPPKP");
-                names.add("PKIKPPKIKP");
-            }
-            if(phaseName.equalsIgnoreCase("ttall")) {
-                names.add("SKiKP");
-                names.add("PP");
-                names.add("ScS");
-                names.add("PcS");
-                names.add("PKS");
-                names.add("PKIKS");
-                names.add("PKKS");
-                names.add("PKIKKIKS");
-                names.add("SKKS");
-                names.add("SKIKKIKS");
-                names.add("SKSSKS");
-                names.add("SKIKSSKIKS");
-                names.add("SS");
-                names.add("SP");
-                names.add("PS");
-            }
-        } else {
-            names.add(phaseName);
         }
         return names;
     }
 
     public synchronized void appendPhaseName(String phaseName)
             throws TauModelException {
-        Iterator<String> it = getPhaseNames(phaseName).iterator();
+        Iterator<String> it = extractPhaseNames(phaseName).iterator();
         while(it.hasNext()) {
             appendPhaseName(new PhaseName(it.next()));
         }
@@ -455,31 +473,11 @@ public class TauP_Time extends TauP_Tool {
      * for other unforeseen uses. This may be called multiple times to append
      * more phases. For example: P-0,PcP-1,ScP-4,Sn,SS,S^410S would, assuming no
      * previous phases have been added, put P in T0, PcP in T1, ScP in T5, Sn in
-     * T2, SS in T3, and S^410S in T5.
+     * T2, SS in T3, and S^410S in T6.
      */
     public void parsePhaseList(String phaseList) {
         String phaseEntry = "";
-        phaseList = phaseList.trim();
-        phaseList = phaseList.replace(' ', ',');
-        // remove any empty phases, ie two commas next to each other
-        // should be replaced with one comma
-        phaseList = phaseList.replaceAll(",,+", ",");
-        // remove comma at beginning
-        if(phaseList.startsWith(",")) {
-            if(phaseList.length() > 1) {
-                phaseList = phaseList.substring(1);
-            } else {
-                // phaseList is just a single comma, no phases, so just return
-                return;
-            }
-        }
-        // and comma at end
-        if(phaseList.charAt(phaseList.length() - 1) == ',') {
-            // we know that the length is > 1 as if not then we would have
-            // returned from the previous if
-            phaseList = phaseList.substring(0, phaseList.length() - 1);
-        }
-        String[] namesInList = phaseList.split(",");
+        String[] namesInList = splitPhaseNameList(phaseList);
         for(int i = 0; i < namesInList.length; i++) {
             String[] phaseAndHeader = namesInList[i].split("-");
             try {
@@ -500,6 +498,32 @@ public class TauP_Time extends TauP_Tool {
                 }
             }
         }
+    }
+
+    public static String[] splitPhaseNameList(String phaseList) {
+        String phaseEntry = "";
+        phaseList = phaseList.trim();
+        phaseList = phaseList.replace(' ', ',');
+        // remove any empty phases, ie two commas next to each other
+        // should be replaced with one comma
+        phaseList = phaseList.replaceAll(",,+", ",");
+        // remove comma at beginning
+        if (phaseList.startsWith(",")) {
+            if (phaseList.length() > 1) {
+                phaseList = phaseList.substring(1);
+            } else {
+                // phaseList is just a single comma, no phases, so just return
+                return new String[0];
+            }
+        }
+        // and comma at end
+        if (phaseList.charAt(phaseList.length() - 1) == ',') {
+            // we know that the length is > 1 as if not then we would have
+            // returned from the previous if
+            phaseList = phaseList.substring(0, phaseList.length() - 1);
+        }
+        String[] namesInList = phaseList.split(",");
+        return namesInList;
     }
 
     /**
@@ -692,7 +716,7 @@ public class TauP_Time extends TauP_Tool {
         calcTime(degrees);
         if (relativePhaseName != "") {
             List<SeismicPhase> relPhases = new ArrayList<SeismicPhase>();
-            List<String> splitNames = getPhaseNames(relativePhaseName);
+            List<String> splitNames = extractPhaseNames(relativePhaseName);
             for (String sName : splitNames) {
                 SeismicPhase relPhase = SeismicPhaseFactory.createPhase(sName, getTauModelDepthCorrected(), this.getSourceDepth(), this.getReceiverDepth(), this.DEBUG);
                 relPhases.add(relPhase);
@@ -937,7 +961,12 @@ public class TauP_Time extends TauP_Tool {
                 }
                 out.print(phasePuristFormat.form(currArrival.getPuristName()));
                 if (relativePhaseName != "") {
-                    out.print(Outputs.formatTime(currArrival.getTime() - relativeArrival.getTime()));
+                    if (relativeArrival != null) {
+                        out.print(" "+Outputs.formatTime(currArrival.getTime() - relativeArrival.getTime()));
+                        out.print(" +"+phaseFormat.form(relativeArrival.getName()));
+                    } else {
+                        out.print(phaseFormat.form("no arrival"));
+                    }
                 }
                 out.println();
             }

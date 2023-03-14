@@ -32,7 +32,10 @@ public class CmdLineOutputTest {
                                           "taup time -h 10 -ph ttall -deg 35 -mod prem",
                                           "taup time -h 10 -ph ttall -deg 35",
                                           "taup time -h 10 -ph ttall -deg 35 -mod ak135",
-                                          "taup time -h 10 -ph ttall -deg 35 -mod ak135 --json"};
+                                          "taup time -h 10 -ph ttall -deg 35 -mod ak135 --json",
+                                          "taup time -h 10 -ph ttall -deg 145 -mod ak135 --rel P",
+                                          "taup time -h 10 -ph ttall -deg 145 -mod ak135 --rel P,PKP"
+                                            };
 
     String[] pierceTestCmds = new String[] {"taup pierce -h 10 -ph P -deg 35 -mod prem",
                                             "taup pierce -h 10 -ph P -deg 35",

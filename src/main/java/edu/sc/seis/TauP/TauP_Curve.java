@@ -315,7 +315,7 @@ public class TauP_Curve extends TauP_Time {
         List<SeismicPhase> relPhases = new ArrayList<SeismicPhase>();
         if (relativePhaseName != "") {
             try {
-                List<String> splitNames = getPhaseNames(relativePhaseName);
+                List<String> splitNames = extractPhaseNames(relativePhaseName);
                 for (String sName : splitNames) {
                     relPhases.add( SeismicPhaseFactory.createPhase(sName, getTauModelDepthCorrected(),getSourceDepth(), getReceiverDepth()));
                 }
