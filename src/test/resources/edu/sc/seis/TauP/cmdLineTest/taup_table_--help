@@ -11,10 +11,10 @@ Arguments are:
 
 -header filename   -- reads depth and distance spacing data
                       from a LOCSAT style file.
--generic           -- outputs a "generic" ascii table
-
--locsat            -- outputs a "locsat" style ascii table
-
+--csv              -- outputs a CSV ascii table
+--generic          -- outputs a "generic" ascii table
+--locsat           -- outputs a "locsat" style ascii table
+--json             -- outputs a table as JSON
 
 -o [stdout|outfile]         -- output is redirected to stdout or to the "outfile" file
 --prop [propfile]   -- set configuration properties

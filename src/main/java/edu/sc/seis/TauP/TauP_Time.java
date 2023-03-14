@@ -16,26 +16,7 @@
  */
 package edu.sc.seis.TauP;
 
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.InvalidClassException;
-import java.io.OptionalDataException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.io.Reader;
-import java.io.StreamCorruptedException;
-import java.io.StreamTokenizer;
-import java.io.Writer;
+import java.io.*;
 import java.util.*;
 
 /**
@@ -989,6 +970,15 @@ public class TauP_Time extends TauP_Tool {
     }
 
     public void printResultJSON(PrintWriter out) {
+        String s = resultAsJSON(modelName, depth, getReceiverDepth(), getPhaseNames(), arrivals);
+        out.println(s);
+    }
+
+    public static String resultAsJSON(String modelName,
+                                       double depth,
+                                       double receiverDepth,
+                                       String[] phases,
+                                       List<Arrival> arrivals) {
         String Q = ""+'"';
         String COMMA = ",";
         String QCOMMA = Q+COMMA;
@@ -1001,12 +991,13 @@ public class TauP_Time extends TauP_Tool {
         String SSQ = S+SQ;
         String SSSQ = S+SSQ;
         // use cast to float to limit digits printed
+        StringWriter sw = new StringWriter();
+        PrintWriter out = new PrintWriter(sw);
         out.println("{");
         out.println(SQ+"model"+QCQ+modelName+QCOMMA);
         out.println(SQ+"sourcedepth"+QC+(float)depth+COMMA);
-        out.println(SQ+"receiverdepth"+QC+(float)getReceiverDepth()+COMMA);
+        out.println(SQ+"receiverdepth"+QC+(float)receiverDepth+COMMA);
         out.print(SQ+"phases"+Q+": [");
-        String[] phases = getPhaseNames();
         for(int p=0; p<phases.length; p++) {
             out.print(" "+Q+phases[p]+Q);
             if ( p != phases.length-1) {
@@ -1033,7 +1024,8 @@ public class TauP_Time extends TauP_Tool {
             out.println();
         }
         out.println(S+"]");
-        out.println("}");
+        out.print("}");
+        return sw.toString();
     }
 
     /**

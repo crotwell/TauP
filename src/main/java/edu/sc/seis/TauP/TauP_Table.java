@@ -46,11 +46,9 @@ import java.util.List;
  */
 public class TauP_Table extends TauP_Time {
 
-    public static final int GENERIC = 0;
+    public static final String LOCSAT = "locsat";
 
-    public static final int LOCSAT = 1;
-
-    protected int outputType = TauP_Table.GENERIC;
+    public static final String CSV = "csv";
 
     protected String headerFile;
 
@@ -391,16 +389,18 @@ public class TauP_Table extends TauP_Time {
     }
 
     public void start() throws TauModelException, TauPException, IOException {
-        switch(outputType){
-            case TauP_Table.GENERIC:
-                genericTable(getWriter());
-                break;
-            case TauP_Table.LOCSAT:
-                locsatTable(getWriter());
-                break;
-            default:
-                throw new TauPException("TauP_Table: undefined state for output type: "
-                        + outputType);
+        if(outputFormat == TEXT) {
+            // GENERIC:
+            genericTable(getWriter());
+        } else if(outputFormat == CSV) {
+            csvTable(getWriter());
+        } else if (outputFormat == TauP_Table.LOCSAT) {
+            locsatTable(getWriter());
+        } else if (outputFormat == JSON) {
+            jsonTable(getWriter());
+        } else {
+            throw new TauPException("TauP_Table: undefined state for output type: "
+                        + outputFormat);
         }
     }
 
@@ -408,7 +408,52 @@ public class TauP_Table extends TauP_Time {
     public String getOutFileExtension() {
         return "";
     }
-    
+
+
+    protected void jsonTable(PrintWriter out) throws TauModelException, IOException {
+        out.println("[");
+        for(int depthNum = 0; depthNum < depths.length; depthNum++) {
+            depthCorrect(depths[depthNum], getReceiverDepth());
+            for (int distNum = 0; distNum < distances.length; distNum++) {
+                calculate(distances[distNum]);
+                List<Arrival> arrivals = getArrivals();
+                String s = TauP_Time.resultAsJSON(getTauModelName(), depths[depthNum], getReceiverDepth(), getPhaseNames(), arrivals);
+                out.println(s+",");
+            }
+        }
+        out.println("]");
+    }
+
+    protected void csvTable(PrintWriter out) throws TauModelException,
+            IOException {
+        String sep = ",";
+        String header = "Model,Distance (deg),Depth (km),Phase,Time (s),RayParam (deg/s),Takeoff Angle,Incident Angle,Purist Distance,Purist Name";
+        out.println(header);
+        for(int depthNum = 0; depthNum < depths.length; depthNum++) {
+            depthCorrect(depths[depthNum], getReceiverDepth());
+            for(int distNum = 0; distNum < distances.length; distNum++) {
+                calculate(distances[distNum]);
+                List<Arrival> arrivals = getArrivals();
+                for (Arrival currArrival : arrivals) {
+                    double moduloDist = currArrival.getModuloDistDeg();
+                    String line = modelName + sep
+                            + Outputs.formatDistance(moduloDist).trim() + sep
+                            + Outputs.formatDepth(depth).trim() + sep
+                            + currArrival.getName().trim()+sep
+                            + Outputs.formatTime(currArrival.getTime()).trim()+ sep
+                            +Outputs.formatRayParam(Math.PI / 180.0 * currArrival.getRayParam()).trim()+ sep
+                            +Outputs.formatDistance(currArrival.getTakeoffAngle()).trim()+sep
+                            +Outputs.formatDistance(currArrival.getIncidentAngle()).trim()+sep
+                            +Outputs.formatDistance(currArrival.getDistDeg()).trim()+sep
+                            +currArrival.getPuristName().trim();
+                    out.println(line);
+                }
+            }
+        }
+        out.flush();
+
+    }
+
     protected void genericTable(PrintWriter out) throws TauModelException,
             IOException {
         for(int depthNum = 0; depthNum < depths.length; depthNum++) {
@@ -500,8 +545,10 @@ public class TauP_Table extends TauP_Time {
                 + "                      Default is iasp91.\n\n");
         System.out.println("-header filename   -- reads depth and distance spacing data\n"
                 + "                      from a LOCSAT style file.");
-        System.out.println("-generic           -- outputs a \"generic\" ascii table\n");
-        System.out.println("-locsat            -- outputs a \"locsat\" style ascii table\n");
+        System.out.println("--csv              -- outputs a CSV ascii table");
+        System.out.println("--generic          -- outputs a \"generic\" ascii table");
+        System.out.println("--locsat           -- outputs a \"locsat\" style ascii table");
+        System.out.println("--json             -- outputs a table as JSON");
         printStdUsageTail();
     }
 
@@ -517,9 +564,11 @@ public class TauP_Table extends TauP_Time {
                 headerFile = leftOverArgs[i + 1];
                 i++;
             } else if(dashEquals("locsat", leftOverArgs[i])) {
-                outputType = LOCSAT;
+                outputFormat = LOCSAT;
             } else if(dashEquals("generic", leftOverArgs[i])) {
-                outputType = GENERIC;
+                outputFormat = TEXT;
+            } else if(dashEquals(CSV, leftOverArgs[i])) {
+                outputFormat = CSV;
             } else if(dashEquals("help", leftOverArgs[i])) {
                 noComprendoArgs[numNoComprendoArgs++] = leftOverArgs[i];
             } else {

@@ -634,7 +634,7 @@ several phases. Also, both options write to standard out unless a file is
 given with the -o flag.
 
 There is a default phase, distance and depth list, but this is easily
-customizable with the \texttt{-header} option. An example LOCSAT style
+customizable with the \texttt{--header} option. An example LOCSAT style
 file for use as a header can be generated with
 \texttt{taup table -locsat -o example.locsat}. The first
 three sections specify the phase list, distances and depths to use.
@@ -661,10 +661,10 @@ Arguments are:
 
 -header filename   -- reads depth and distance spacing data
                       from a LOCSAT style file.
--generic           -- outputs a "generic" ascii table
-
--locsat            -- outputs a "locsat" style ascii table
-
+--csv              -- outputs a CSV ascii table
+--generic          -- outputs a "generic" ascii table
+--locsat           -- outputs a "locsat" style ascii table
+--json             -- outputs a table as JSON
 
 -o [stdout|outfile]         -- output is redirected to stdout or to the "outfile" file
 --prop [propfile]   -- set configuration properties
