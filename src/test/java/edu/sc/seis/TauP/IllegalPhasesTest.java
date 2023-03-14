@@ -70,7 +70,7 @@ class IllegalPhasesTest {
 	String[] mantleSourceNoArrivalPhases = { "Pn", "Pvmp", "Sn", "Svms", "PmPv410P", "PmP^410P" };
 
 	ArrayList<String> createIllegalPhases() {
-		List<String> legalPhases = TauP_Time.getPhaseNames("ttall");
+		List<String> legalPhases = TauP_Time.extractPhaseNames("ttall");
 		ArrayList<String> illegalEndPhases = new ArrayList<>();
 		legalPhases.addAll(otherLegalPhases);
 		for (String phaseName : legalPhases) {
@@ -118,7 +118,7 @@ class IllegalPhasesTest {
 		TauModel tMod = TauModelLoader.load(modelName);
 		TauModel tModDepth = tMod.depthCorrect(10);
 		float receiverDepth = 100;
-		List<String> legalPhases = TauP_Time.getPhaseNames("ttall");
+		List<String> legalPhases = TauP_Time.extractPhaseNames("ttall");
 		legalPhases.addAll(otherLegalPhases);
 		for (String phaseName : legalPhases) {
 			try {

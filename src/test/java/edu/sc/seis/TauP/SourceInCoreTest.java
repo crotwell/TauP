@@ -27,7 +27,7 @@ public class SourceInCoreTest {
         TauModel tMod = TauModelLoader.load(modelName);
         float[] sourceDepths = {0, 1000, 2000, 3500, 6000 };
         float receiverDepth = 0;
-        List<String> mantlePhases = TauP_Time.getPhaseNames("ttall");
+        List<String> mantlePhases = TauP_Time.extractPhaseNames("ttall");
         List<String> legalPhases = new ArrayList<String>();
         legalPhases.addAll(mantlePhases);
         legalPhases.addAll(outerCoreSourcePhases);
