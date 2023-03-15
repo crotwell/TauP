@@ -65,6 +65,7 @@ public class TauP_SetSac extends TauP_Time {
     protected boolean evdpkm = false;
 
     public static final int A_HEADER = 10;
+    public static final int SKIP_HEADER = 11;
 
     public boolean getEvdpkm() {
         return evdpkm;
@@ -100,7 +101,9 @@ public class TauP_SetSac extends TauP_Time {
         }
         for(PhaseName pn : phaseNames) {
             for(int t : pn.sacTNumTriplication) {
-                headersUsed[t] = true;
+                if (t != SKIP_HEADER) {
+                    headersUsed[t] = true;
+                }
             }
         }
         int j=0;
@@ -239,16 +242,27 @@ public class TauP_SetSac extends TauP_Time {
                     }
                     if (tripNum < arrivalCopy.size()) {
                         Arrival tripArrival = arrivalCopy.get(tripNum);
-                        if(verbose) {
-                            System.out.println(f
-                                    + " phase found "+pn.name+" = "
-                                    + tripArrival.getName()+ " trip("+tripNum+")"
-                                    + " -> t"
-                                    + tripHeader
-                                    + ", travel time="
-                                    + (float)tripArrival.getTime());
+                        if (tripHeader != SKIP_HEADER) {
+                            if (verbose) {
+                                System.out.println(f
+                                        + " phase found " + pn.name + " = "
+                                        + tripArrival.getName() + " trip(" + tripNum + ")"
+                                        + " -> t"
+                                        + tripHeader
+                                        + ", travel time="
+                                        + (float) tripArrival.getTime());
+                            }
+                            setSacTHeader(sacFile, tripHeader, tripArrival);
+                        } else {
+                            if (verbose) {
+                                System.out.println(f
+                                        + " phase found " + pn.name + " = "
+                                        + tripArrival.getName() + " trip(" + tripNum + ")"
+                                        + " -> skip"
+                                        + ", travel time="
+                                        + (float) tripArrival.getTime());
+                            }
                         }
-                        setSacTHeader(sacFile, tripHeader, tripArrival);
                         tripNum++;
                     }
                 }

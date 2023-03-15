@@ -73,16 +73,21 @@ public class PhaseName implements Serializable {
             int intForChar;
             if(Character.isDigit(c)) {
                 /*
-                 * There is an optional argument, so store it and the
+                 * There is an optional argument, so store it with the
                  * phase name.
                  */
                 intForChar = Integer.parseInt(""+c);
             } else if(c == 'a') {
                 /*
                  * There is an optional argument, use 10 for sac A, so
-                 * store it and the phase name.
+                 * store it with the phase name.
                  */
                 intForChar = TauP_SetSac.A_HEADER;
+            } else if(c == 'x') {
+                /*
+                 * There is an optional argument, use 11 for skipping a triplication.
+                 */
+                intForChar = TauP_SetSac.SKIP_HEADER;
             } else {
                 throw new TauModelException("Problem with phase=" + name +
                         ", unknown SAC header TNum: "+c);
