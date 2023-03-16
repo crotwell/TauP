@@ -6,7 +6,9 @@ public class SeismicPhaseSegment {
     int endBranch;
     boolean isPWave;
     PhaseInteraction endAction;
+    PhaseInteraction prevEndAction = null;
     boolean isDownGoing;
+    boolean isFlat = false;
     String legName;
     
 	public SeismicPhaseSegment(TauModel tMod,
@@ -58,6 +60,9 @@ public class SeismicPhaseSegment {
 			case DIFFRACT:
 				action = "diffract";
 				break;
+			case HEAD:
+				action = "head wave";
+				break;
 			case END:
 				action = "end";
 				break;
@@ -76,9 +81,9 @@ public class SeismicPhaseSegment {
 		if (startBranch < tMod.getMohoBranch() && endBranch < tMod.getMohoBranch()) {
 			out = "crust";
 		} else if (startBranch < tMod.getCmbBranch() && endBranch < tMod.getCmbBranch()) {
-			if (startBranch < tMod.getMohoBranch() && endBranch > tMod.getMohoBranch()) {
+			if (startBranch < tMod.getMohoBranch() && endBranch >= tMod.getMohoBranch()) {
 				out = "crust/mantle";
-			} else if (startBranch > tMod.getMohoBranch() && endBranch < tMod.getMohoBranch()) {
+			} else if (startBranch >= tMod.getMohoBranch() && endBranch < tMod.getMohoBranch()) {
 				out = "crust/mantle";
 			} else {
 				out = "mantle";
@@ -93,7 +98,8 @@ public class SeismicPhaseSegment {
 	
 	public String toString() {
 		String desc = "";
-    	String upDown = isDownGoing ? "down" : "up  ";
+    	String upDown = isFlat ? "flat" : (isDownGoing ? "down" : "up  ");
+
     	String action = endActionToString(endAction);
     	String isPString = isPWave ? "P" : "S";
     	if (! isPWave && (startBranch == tMod.getCmbBranch() || endBranch == tMod.getCmbBranch())) {
@@ -103,7 +109,18 @@ public class SeismicPhaseSegment {
 		}
     	String branchRange = startBranch == endBranch ? " layer "+startBranch : " layer "+startBranch+" to "+endBranch;
 		String depthRange;
-		if (isDownGoing) {
+
+		if (isFlat) {
+			if (prevEndAction == null) {
+				depthRange = " PrevAction is NULL ";
+			} else if (prevEndAction == PhaseInteraction.DIFFRACT) {
+				depthRange = " at "+tMod.getTauBranch(endBranch, isPWave).getBotDepth();
+			} else if (prevEndAction == PhaseInteraction.HEAD) {
+				depthRange = " at " + tMod.getTauBranch(startBranch, isPWave).getTopDepth();
+			} else {
+				throw new RuntimeException("isFlat but prev not HEAD or DIFFRACT: "+endActionToString(prevEndAction));
+			}
+		} else if (isDownGoing) {
 			depthRange = tMod.getTauBranch(startBranch, isPWave).getTopDepth() + " to " + tMod.getTauBranch(endBranch, isPWave).getBotDepth();
 		} else {
 			depthRange = tMod.getTauBranch(startBranch, isPWave).getBotDepth() + " to " + tMod.getTauBranch(endBranch, isPWave).getTopDepth();

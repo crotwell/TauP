@@ -40,9 +40,18 @@ public enum PhaseInteraction {
     DIFFRACT,
 
     /**
+     * Used by addToBranch when the path is head wave along a boundary.
+     */
+    HEAD,
+
+    /**
      * Used by addToBranch for the last segment of a phase.
      */
     END,
+
+    /**
+     * Used by addToBranch for the last segment of a phase ending downgoing, like Ped to receiver at depth.
+     */
     END_DOWN,
 
     /**

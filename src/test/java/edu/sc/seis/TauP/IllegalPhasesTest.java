@@ -24,8 +24,6 @@ class IllegalPhasesTest {
 			"Pedcs",
 			"PmP^410P",
 			"Pedcp",
-			"PdiffKP",
-			"PedPdiffKP",
 			"PKp",
 			"PKs",
 			"Pn^20P",
@@ -49,6 +47,7 @@ class IllegalPhasesTest {
 
 	String[] illegalPhases = { "", "null", "blablabla should fail", "kmps",
 			"ScScS", "PDDDDD", "PKIKPKIKP", "PPPdiff",
+			"PdiffKP", "PedPdiffKP",
 			"PKIKIKP", "SIKS", "SKIS", "Pcv410S", "Pmv410P", "Pcv410P", "Pm^410P",
 			"SKviKviKS","SK^iKS","SK^mKS", "S^S", "SVS", "Pdiffdiff", "SVS", "SccS",
 			"SIKS", "Siks", "SiKS", "Kdiff", "pp", "sp", "ss", "Ss", "Ps", "Sp", "Pp",

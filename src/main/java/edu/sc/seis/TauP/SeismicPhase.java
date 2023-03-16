@@ -481,6 +481,9 @@ public class SeismicPhase implements Serializable, Cloneable {
             tempDeg = 360.0 - tempDeg;
         } // make sure less than or equal to 180
         // now we have 0.0 <= deg <= 180
+        if (verbose) {
+            System.out.println("Calculation distance: "+tempDeg+" deg");
+        }
         double radDist = tempDeg * Math.PI / 180.0;
         List<Arrival> arrivals = new ArrayList<Arrival>();
         /*
@@ -636,12 +639,8 @@ public class SeismicPhase implements Serializable, Cloneable {
     }
 
     public Arrival shootRay(double rayParam) throws SlownessModelException, NoSuchLayerException {
-        if(name.indexOf("Sdiff") != -1
-                || name.indexOf("Pdiff") != -1
-                || name.indexOf("Pn") != -1
-                || name.indexOf("Sn") != -1
-                || name.endsWith("kmps")) {
-            throw new SlownessModelException("Unable to shoot ray in non-body waves");
+        if(headOrDiffractSeq.size() > 0) {
+            throw new SlownessModelException("Unable to shoot ray in non-body, head, diffracted waves");
         }
         if (rayParam < minRayParam || maxRayParam < rayParam) {
             throw new SlownessModelException("Ray param "+rayParam+" is outside range for this phase: "+getName()+" min="+minRayParam+" max="+maxRayParam);
@@ -762,7 +761,7 @@ public class SeismicPhase implements Serializable, Cloneable {
         VelocityModel vMod = getTauModel().getVelocityModel();
         try {
             char firstLeg = name.charAt(0);
-            if (firstLeg == 'P' || firstLeg == 'p' || firstLeg == 'K' || firstLeg == 'k' || firstLeg == 'I') {
+            if (firstLeg == 'P' || firstLeg == 'p' || firstLeg == 'K' || firstLeg == 'k' || firstLeg == 'I' || firstLeg == 'y') {
                 firstLeg = 'P';
             } else if (firstLeg == 'S' || firstLeg == 's' || firstLeg == 'J' ) {
                 firstLeg = 'S';
@@ -954,9 +953,7 @@ public class SeismicPhase implements Serializable, Cloneable {
                         , e);
             }
             double timeA, timeB;
-            if(name.indexOf("Pdiff") != -1 || name.indexOf("Pn") != -1
-                    || name.indexOf("Sdiff") != -1
-                    || name.indexOf("Sn") != -1) {
+            if(headOrDiffractSeq.size() > 0) {
                 /* head waves and diffracted waves are a special case. */
                 distA = tMod.getTauBranch(branchNum, isPWave)
                         .getDist(rayNum);
@@ -1106,22 +1103,28 @@ public class SeismicPhase implements Serializable, Cloneable {
                                            + " downGoing=" + (Boolean)downGoing.get(i)
                                            + "  isPWave=" + isPWave);
                     }
+
+
                     if (i == diffBranchNum) {
                         double refractDist = (currArrival.getDist() - dist[0]) / headOrDiffractSeq.size();
                         double refractTime = refractDist*currArrival.getRayParam();
+
+                        TauBranch branch = tMod.getTauBranch(branchNum, isPWave);
                         TimeDist[] diffTD = new TimeDist[1];
-                        if (name.indexOf("Pdiff") != -1 || name.indexOf("Sdiff") != -1) {
+                        if (legAction.get(i).equals(DIFFRACT)) {
+                            // diffraction happens at bottom of layer, like Pdiff bottom of mantle
                             diffTD[0] = new TimeDist(currArrival.getRayParam(),
-                                                    refractTime,
-                                                    refractDist,
-                                                    tMod.cmbDepth);
-                        } else if (name.indexOf("Pn") != -1 || name.indexOf("Sn") != -1) {
+                                    refractTime,
+                                    refractDist,
+                                    branch.getBotDepth());
+                        } else if (legAction.get(i).equals(HEAD)) {
+                            // head wave happens at top of layer, like Pn top of mantle
                             diffTD[0] = new TimeDist(currArrival.getRayParam(),
-                                                     refractTime,
-                                                     refractDist,
-                                                     tMod.mohoDepth);
+                                    refractTime,
+                                    refractDist,
+                                    branch.getTopDepth());
                         } else {
-                            throw new RuntimeException("Path adding head and diffracted wave, but did not find P/Sdiff or P/Sn, expected: "+headOrDiffractSeq.size());
+                            throw new RuntimeException("Should be one of DIFFRACT or HEAD: "+legAction.get(i));
                         }
                         pathList.add(diffTD);
                     }

@@ -53,4 +53,13 @@ public class HeadWaveTest {
         checkHeadWave("PnPn", 2, 2.5);
     }
 
+    @Test
+    public void pierce_PKdiffP() throws TauModelException {
+        checkHeadWave("PKdiffP", 1, 210);
+    }
+
+    @Test
+    public void pierce_PKdiffKdiffP() throws TauModelException {
+        checkHeadWave("PKdiffKdiffP", 2, 210);
+    }
 }

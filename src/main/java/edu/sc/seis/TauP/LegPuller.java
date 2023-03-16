@@ -73,11 +73,9 @@ public class LegPuller {
                             + name.charAt(offset)
                             + " cannot be followed by "
                             + "'ed' in " + name);
-                } else if(name.charAt(offset) == 'I'
-                        || name.charAt(offset) == 'y'
+                } else if(name.charAt(offset) == 'y'
                         || name.charAt(offset) == 'j'
                         || name.charAt(offset) == 'k'
-                        || name.charAt(offset) == 'J'
                         || name.charAt(offset) == 'p'
                         || name.charAt(offset) == 's'
                         || name.charAt(offset) == 'm') {
@@ -88,17 +86,42 @@ public class LegPuller {
                         || name.charAt(offset) == 'i') {
                     // note c and i are different from m as they must be reflection
                     // check m,c,i for critical refl with x
-                    if(offset == name.length()-1) {
+                    if (offset == name.length() - 1) {
                         throw new TauModelException("Invalid phase name:\n"
                                 + name.charAt(offset)
                                 + " cannot be last char in " + name);
                     }
-                    if (name.charAt(offset+1) == 'x') {
+                    if (name.charAt(offset + 1) == 'x') {
                         legs.add(name.substring(offset, offset + 2));
                         offset = offset + 2;
                     } else {
                         legs.add(name.substring(offset, offset + 1));
                         offset = offset + 1;
+                    }
+                } else if (name.charAt(offset) == 'I' || name.charAt(offset) == 'J') {
+                    if (offset + 1 == name.length()
+                            || name.charAt(offset + 1) == 'P'
+                            || name.charAt(offset + 1) == 'S'
+                            || name.charAt(offset + 1) == 'K'
+                            || name.charAt(offset + 1) == 'k'
+                            || name.charAt(offset + 1) == 'I'
+                            || name.charAt(offset + 1) == 'J'
+                            || name.charAt(offset + 1) == 'p'
+                            || name.charAt(offset + 1) == 's'
+                            || name.charAt(offset + 1) == 'c'
+                            || name.charAt(offset + 1) == '^'
+                            || name.charAt(offset + 1) == 'v'
+                            || name.charAt(offset + 1) == 'V'
+                            || Character.isDigit(name.charAt(offset + 1))) {
+                        legs.add(name.substring(offset, offset + 1));
+                        offset++;
+                    } else if(name.length() >= offset + 3
+                            && (name.substring(offset, offset + 3).equals("Ied") || name.substring(offset, offset + 3).equals("Jed"))) {
+                        legs.add(name.substring(offset, offset + 3));
+                        offset = offset + 3;
+                    } else {
+                        throw new TauModelException("Invalid phase name:\n"
+                                + name.substring(offset) + " in " + name);
                     }
                 } else if(name.charAt(offset) == 'P'
                         || name.charAt(offset) == 'S') {
@@ -171,6 +194,10 @@ public class LegPuller {
                             .equals("Ked"))) {
                         legs.add(name.substring(offset, offset + 3));
                         offset = offset + 3;
+                    } else if (name.length() >= offset + 5
+                            && name.substring(offset, offset + 5).equals("Kdiff")) {
+                        legs.add(name.substring(offset, offset + 5));
+                        offset = offset + 5;
                     } else {
                         throw new TauModelException("Invalid phase name:\n"
                                 + name.substring(offset) + " in " + name);
@@ -386,10 +413,10 @@ public class LegPuller {
                 || currToken.equals("K") || currToken.equals("Ked")
                 || currToken.equals("k")
                 || currToken.equals("I") || currToken.equals("J")
-                || currToken.equals("j"))) {
+                || currToken.equals("y") || currToken.equals("j"))) {
             String validationFailMessage = "First leg ("
                     + currToken
-                    + ") must be one of Pg, Pb, Pn, Pdiff, Sg, Sb, Sn, Sdiff, P, S, p, s, k, K, Ked, I, J";
+                    + ") must be one of Pg, Pb, Pn, Pdiff, Sg, Sb, Sn, Sdiff, P, S, p, s, k, K, Ked, I, J, y, j";
             return validationFailMessage;
         }
         for(int i = 1; i < legs.size(); i++) {
