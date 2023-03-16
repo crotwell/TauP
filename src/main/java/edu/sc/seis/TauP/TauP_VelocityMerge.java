@@ -16,7 +16,6 @@ public class TauP_VelocityMerge extends TauP_Tool {
     public TauP_VelocityMerge() {
         setOutputFormat("nd");
         setOutFileExtension("nd");
-        setOutFileBase("velmerge");
     }
     
     @Override
@@ -25,7 +24,6 @@ public class TauP_VelocityMerge extends TauP_Tool {
         if (vMod == null) {
             throw new IOException("Velocity model file not found: "+modelName+", tried internally and from file");
         }
-        setOutFileBase(vMod.modelName);
         VelocityModel overlayVMod;
         VelocityModel outVMod = vMod; // in case no overlay
         if (overlayModelName != null) {
@@ -37,7 +35,11 @@ public class TauP_VelocityMerge extends TauP_Tool {
             overlayVMod = TauModelLoader.loadVelocityModel(overlayModelName, overlayModelType);
             outVMod = vMod.replaceLayers(overlayVMod.getLayers(), overlayVMod.getModelName(), smoothTop, smoothBottom);
             outVMod.setModelName(vMod.modelName+"_"+overlayVMod.getModelName());
-            setOutFileBase(outVMod.modelName);
+        } else {
+            if (DEBUG) {
+                System.out.println("base model: "+vMod.modelName);
+                System.out.println("no merge model requested.");
+            }
         }
 
         try {
@@ -46,6 +48,9 @@ public class TauP_VelocityMerge extends TauP_Tool {
             if (getOutFile() == "stdout") {
                 dos = new PrintWriter(new OutputStreamWriter(System.out));
             } else {
+                if (DEBUG) {
+                    System.out.println("Save to "+getOutFile());
+                }
                 dos = new PrintWriter(new BufferedWriter(new FileWriter(getOutFile())));
             }
             outVMod.writeToND(dos);
