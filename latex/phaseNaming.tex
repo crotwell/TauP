@@ -61,15 +61,16 @@ the depth to an interface involved in an interaction.
 \texttt{\^\,} & underside reflection, used primarily for crustal and mantle interfaces \\
 \texttt{v} & topside reflection, used primarily for crustal and mantle interfaces \\
 \texttt{V} & critical topside reflection, used primarily for crustal and mantle interfaces \\
-\texttt{diff} & appended to P or S to represent a diffracted wave along the core mantle boundary \\
+\texttt{diff} & appended to P or S to represent a diffracted wave along the core mantle boundary, or to K for a diffracted wave along the inner-outer core boundary \\
 \texttt{kmps} & appended to a velocity to represent a horizontal phase velocity (see
 \ref{kmps} below)\\
-\texttt{ed} & appended to P or S to represent a exclusively downgoing path, for a receiver below the source (see
+\texttt{ed} & appended to P, S, K, I or J to represent a exclusively downgoing path, for a receiver below the source (see
 \ref{Ped} below)\\
 \end{tabular}
 %\end{center}
 
-\item \label{Ped} The characters \texttt{p}, \texttt{s} and \texttt{k} \textbf{always} represent
+\item \label{Ped} The characters \texttt{p}, \texttt{s}
+, \texttt{k}, \texttt{y} and \texttt{j} \textbf{always} represent
 up-going legs.
 An example is the source to surface leg of the phase \texttt{pP}
 from a source at depth.
@@ -84,7 +85,11 @@ represent a upgoing leg in certain cases.
 For instance, \texttt{PcP} is
 allowed since the direction of the phase is unambiguously determined by the symbol
 \texttt{c}, but would be named \texttt{Pcp} by a purist using our nomenclature. The phase
-\texttt{k} is similar to \texttt{p} but is an upgoing compressional wave in the outer core.
+\texttt{k} is similar to \texttt{p} but is an upgoing compressional wave in the outer core, while \texttt{y}
+and \texttt{j} are upgoing compressional and shear waves
+in the inner core. The name \texttt{y} is used as the
+lower case of the \texttt{I} phase is already used to indicate
+reflection from the inner-outer core boundary.
 
 With the ability to have sources at depth, there is a need to specify the difference between a wave that is
 exclusively downgoing to the receiver from one that turns and is upgoing at the receiver. The suffix \texttt{ed}
@@ -184,7 +189,7 @@ can occur in earth-like models, we have not added this capability.
 
 The phase \texttt{PmP}, the traditional name for a top-side reflection from the Moho
 discontinuity, must change names under our new convention.
-The new name is \texttt{PvmP} or \texttt{Pvmp}
+The new name is \texttt{PvmP} or \texttt{PVmp}
 while \texttt{PmP} just describes a P-wave that turns beneath the Moho.
 The reason the Moho must be handled differently from the core-mantle boundary is that
 traditional nomenclature did not introduce a phase symbol change at the Moho.
