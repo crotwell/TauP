@@ -34,8 +34,9 @@ public class OuterCoreDisconTest {
 
     @Test
     void zeroDistPhasesTest() throws TauModelException {
+        boolean debug = false;
         for(String name : zeroDistPhaseNames) {
-            SeismicPhase phase = SeismicPhaseFactory.createPhase(name, tMod, tMod.getSourceDepth(), 0, true);
+            SeismicPhase phase = SeismicPhaseFactory.createPhase(name, tMod, tMod.getSourceDepth(), 0, debug);
             List<Arrival> arrivals = phase.calcTime(0);
             assertEquals( 1, arrivals.size(), name);
         }
@@ -43,8 +44,9 @@ public class OuterCoreDisconTest {
 
     @Test
     void PhasesExistTest() throws TauModelException {
+        boolean debug = false;
         for(String name : otherPhaseNames) {
-            SeismicPhase phase = SeismicPhaseFactory.createPhase(name, tMod, tMod.getSourceDepth(), 0, true);
+            SeismicPhase phase = SeismicPhaseFactory.createPhase(name, tMod, tMod.getSourceDepth(), 0, debug);
             List<Arrival> arrivals = phase.calcTime(120);
             // dumb check, just to make sure calc happens without exception
             assertNotNull( arrivals, name);
