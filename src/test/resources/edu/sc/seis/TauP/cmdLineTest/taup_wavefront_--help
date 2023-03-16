@@ -12,19 +12,8 @@ Arguments are:
 
 --stadepth depth   -- receiver depth in km
 
-Distance is given by:
-
--deg degrees       -- distance in degrees,
--km kilometers     -- distance in kilometers,
-                      assumes radius of earth is 6371km,
-
-or by giving the station and event latitude and lonitude,
-                      assumes a spherical earth,
-
--sta[tion] lat lon -- sets the station latitude and longitude
--evt       lat lon -- sets the event latitude and longitude
-
-
+--gmt             -- outputs path as a complete GMT script.
+--mapwidth        -- sets map width for GMT script.
 --rays  num      -- number of raypaths/distances to sample.
 --timestep  num  -- steps in time (seconds) for output.
 --timefiles      -- outputs each time into a separate .ps file within the gmt script.

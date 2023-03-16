@@ -235,7 +235,6 @@ public class TauP_GUI extends javax.swing.JFrame {
         phaseChooserButton.setToolTipText("show phase chooser");
         phaseChooserButton.setText("Phases");
         phaseChooserButton.setActionCommand("showPhases");
-        phaseChooserButton.setLabel("Phases");
         phaseChooserButton.setName("phaseButton");
         phaseChooserButton.addActionListener(new java.awt.event.ActionListener() {
 
@@ -266,7 +265,6 @@ public class TauP_GUI extends javax.swing.JFrame {
         jButton1 = new javax.swing.JButton();
         jButton1.setText("Quit");
         jButton1.setActionCommand("quit");
-        jButton1.setLabel("Quit");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
 
             public void actionPerformed(java.awt.event.ActionEvent evt) {

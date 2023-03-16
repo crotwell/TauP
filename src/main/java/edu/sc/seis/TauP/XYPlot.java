@@ -108,11 +108,11 @@ public class XYPlot extends Canvas {
         minSize = new Dimension(width, height);
     }
 
-    public Dimension preferredSize() {
-        return minimumSize();
+    public Dimension getPreferredSize() {
+        return getMinimumSize();
     }
 
-    public synchronized Dimension minimumSize() {
+    public synchronized Dimension getMinimumSize() {
         return minSize;
     }
 

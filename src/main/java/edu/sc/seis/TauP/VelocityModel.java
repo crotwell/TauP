@@ -538,7 +538,27 @@ public class VelocityModel implements Cloneable, Serializable {
                 outLayers.add(getVelocityLayer(i).cloneRenumber(numAdded++));
             }
             // now should have velocity layers with breaks matching top and bottom of new layers
-            
+
+            VelocityLayer lastOverlayLayer = newLayers[newLayers.length-1];
+            if (lastOverlayLayer.getTopDepth()==lastOverlayLayer.getBotDepth()) {
+                // bottom is halfspace layer, expand to use bot vel from existing layer
+                for(VelocityLayer vlay : outLayers) {
+                    if (vlay.getTopDepth()==lastOverlayLayer.getBotDepth()) {
+                        lastOverlayLayer.setTopPVelocity(lastOverlayLayer.getBotPVelocity());
+                        lastOverlayLayer.setTopSVelocity(lastOverlayLayer.getBotSVelocity());
+                        lastOverlayLayer.setTopDensity(lastOverlayLayer.getBotDensity());
+                        lastOverlayLayer.setTopDepth(lastOverlayLayer.getBotDepth());
+                        lastOverlayLayer.setBotPVelocity(vlay.getBotPVelocity());
+                        lastOverlayLayer.setBotSVelocity(vlay.getBotSVelocity());
+                        lastOverlayLayer.setBotDensity(vlay.getBotDensity());
+                        lastOverlayLayer.setBotDepth(vlay.getBotDepth());
+                        break;
+                    }
+                    if (vlay.getBotDepth()>lastOverlayLayer.getBotDepth()) {
+                        throw new VelocityModelException("Passed the half space: "+lastOverlayLayer);
+                    }
+                }
+            }
             
             List<VelocityLayer> replaceoutLayers = new ArrayList<VelocityLayer>();
             numAdded = 0;
@@ -999,6 +1019,7 @@ public class VelocityModel implements Cloneable, Serializable {
         } else {
             tokenIn.nextToken();
         }
+        VelocityLayer lastZeroThickLayer = null;
         List<VelocityLayer> layers = new ArrayList<VelocityLayer>();
         while(tokenIn.ttype != StreamTokenizer.TT_EOF) {
             // Loop until we hit the end of file
@@ -1031,7 +1052,9 @@ public class VelocityModel implements Cloneable, Serializable {
             topPVel = botPVel;
             topSVel = botSVel;
             topDensity = botDensity;
-            if(tokenIn.ttype != StreamTokenizer.TT_EOL) {
+            if(tokenIn.ttype == StreamTokenizer.TT_EOF) {
+                // do nothing, EOF will end loop
+            } else if(tokenIn.ttype != StreamTokenizer.TT_EOL) {
                 // this token should be an EOL, if not
                 throw new VelocityModelException("Should have found an EOL but didn't"
                         + " Layer=" + myLayerNumber + " tokenIn=" + tokenIn);
@@ -1045,7 +1068,18 @@ public class VelocityModel implements Cloneable, Serializable {
                  */
                 layers.add(tempLayer);
                 myLayerNumber++;
+                lastZeroThickLayer = null;
+            } else {
+                lastZeroThickLayer = tempLayer;
             }
+        }
+        if (lastZeroThickLayer != null) {
+            // last layer was zero thickness, add to model in case it is halfspace in partial model
+            // set top vel to be same as bottom
+            lastZeroThickLayer.setTopPVelocity(lastZeroThickLayer.getBotPVelocity());
+            lastZeroThickLayer.setTopSVelocity(lastZeroThickLayer.getBotSVelocity());
+            lastZeroThickLayer.setTopDensity(lastZeroThickLayer.getBotDensity());
+            layers.add(lastZeroThickLayer);
         }
         double radiusOfEarth = topDepth;
         double maxRadius = topDepth; // I assume that this is a whole earth
@@ -1110,7 +1144,7 @@ public class VelocityModel implements Cloneable, Serializable {
     }
     
     static void readTillEOL(StreamTokenizer tokenIn) throws IOException {
-        while(tokenIn.ttype != StreamTokenizer.TT_EOL) {
+        while(tokenIn.ttype != StreamTokenizer.TT_EOL && tokenIn.ttype != StreamTokenizer.TT_EOF) {
             tokenIn.nextToken();
         }
         tokenIn.nextToken();
@@ -1134,6 +1168,7 @@ public class VelocityModel implements Cloneable, Serializable {
          */
         int myLayerNumber = 0;
         VelocityLayer tempLayer;
+        VelocityLayer lastZeroThickLayer = null;
         double topDepth, topPVel, topSVel, topDensity = 2.6, topQp = 1000, topQs = 2000;
         double botDepth, botPVel, botSVel, botDensity = topDensity, botQp = topQp, botQs = topQs;
 
@@ -1180,6 +1215,7 @@ public class VelocityModel implements Cloneable, Serializable {
                 }
             }
         }
+
         if(tokenIn.ttype != StreamTokenizer.TT_EOL) {
             // this token should be an EOL, if not
             throw new VelocityModelException("Should have found an EOL but didn't"
@@ -1218,13 +1254,13 @@ public class VelocityModel implements Cloneable, Serializable {
             if (botSVel > botPVel) {
                 throw new VelocityModelException("S velocity, "+botSVel+" at depth "+botDepth+" is greater than the P velocity, "+botPVel);
             }
-            if(tokenIn.ttype != StreamTokenizer.TT_EOL) {
+            if(tokenIn.ttype != StreamTokenizer.TT_EOL && tokenIn.ttype != StreamTokenizer.TT_EOF) {
                 // density is not used and so is optional
                 botDensity = readNumber(tokenIn);
-                if(tokenIn.ttype != StreamTokenizer.TT_EOL) {
+                if(tokenIn.ttype != StreamTokenizer.TT_EOL && tokenIn.ttype != StreamTokenizer.TT_EOF) {
                     // Qp is not used and so is optional
                     botQp = readNumber(tokenIn);
-                    if(tokenIn.ttype != StreamTokenizer.TT_EOL) {
+                    if(tokenIn.ttype != StreamTokenizer.TT_EOL && tokenIn.ttype != StreamTokenizer.TT_EOF) {
                         // Qs is not used and so is optional
                         botQs = readNumber(tokenIn);
                     }
@@ -1258,7 +1294,9 @@ public class VelocityModel implements Cloneable, Serializable {
             topQp = botQp;
             topQs = botQs;
             previousLineNamedDiscon = false;
-            if(tokenIn.ttype != StreamTokenizer.TT_EOL) {
+            if(tokenIn.ttype == StreamTokenizer.TT_EOF) {
+                // do nothing, EOF will end loop
+            } else if(tokenIn.ttype != StreamTokenizer.TT_EOL) {
                 // this token should be an EOL, if not
                 throw new VelocityModelException("Should have found an EOL but didn't"
                         + " Layer=" + myLayerNumber + " tokenIn=" + tokenIn);
@@ -1272,7 +1310,18 @@ public class VelocityModel implements Cloneable, Serializable {
                  */
                 layers.add(tempLayer);
                 myLayerNumber++;
+                lastZeroThickLayer = null;
+            } else {
+                lastZeroThickLayer = tempLayer;
             }
+        }
+        if (lastZeroThickLayer != null) {
+            // last layer was zero thickness, add to model in case it is halfspace in partial model
+            // set top vel to be same as bottom
+            lastZeroThickLayer.setTopPVelocity(lastZeroThickLayer.getBotPVelocity());
+            lastZeroThickLayer.setTopSVelocity(lastZeroThickLayer.getBotSVelocity());
+            lastZeroThickLayer.setTopDensity(lastZeroThickLayer.getBotDensity());
+            layers.add(lastZeroThickLayer);
         }
         double radiusOfEarth = topDepth;
         double maxRadius = topDepth; // I assume that this is a whole earth
@@ -1297,7 +1346,7 @@ public class VelocityModel implements Cloneable, Serializable {
      * resets depths of major discontinuities to match those existing in the
      * input velocity model. The initial values are set such that if there is no
      * discontinuity within the top 65 km then the moho is set to 0.0.
-     * Similarly, if there are no discontinuities at al then the cmb is set to
+     * Similarly, if there are no discontinuities at all then the cmb is set to
      * the radius of the earth. Similarly for the iocb, except it must be a
      * fluid to solid boundary and deeper than 100km to avoid problems with
      * shallower fluid layers, eg oceans.
@@ -1305,6 +1354,7 @@ public class VelocityModel implements Cloneable, Serializable {
     public boolean fixDisconDepths() {
         boolean changeMade = false;
         VelocityLayer aboveLayer, belowLayer;
+        double maxCrustVp = 7.5;
         double mohoMin = 65.0, cmbMin = radiusOfEarth, iocbMin = radiusOfEarth - 100.0;
         double tempMohoDepth = 0.0, tempCmbDepth = radiusOfEarth, tempIocbDepth = radiusOfEarth;
         // fake layer above surface
@@ -1317,9 +1367,8 @@ public class VelocityModel implements Cloneable, Serializable {
             if(aboveLayer.getBotPVelocity() != belowLayer.getTopPVelocity()
                     || aboveLayer.getBotSVelocity() != belowLayer.getTopSVelocity()) {
                 // a discontinuity
-                if( Math.abs(mohoDepth - aboveLayer.getBotDepth()) < mohoMin) {
+                if( aboveLayer.getBotDepth() < mohoMin && aboveLayer.getBotPVelocity() <= maxCrustVp) {
                     tempMohoDepth = aboveLayer.getBotDepth();
-                    mohoMin = Math.abs(mohoDepth - aboveLayer.getBotDepth());
                 }
                 // don't set cmb to be same as moho, unless fixed
                 if( aboveLayer.getBotDepth() > tempMohoDepth && Math.abs(cmbDepth - aboveLayer.getBotDepth()) < cmbMin) {

@@ -12,6 +12,9 @@ import java.io.PrintWriter;
 import java.io.Reader;
 import java.util.Properties;
 
+/**
+ * Base class for tools within the TauP Toolkit.
+ */
 public abstract class TauP_Tool {
 
 
@@ -25,12 +28,13 @@ public abstract class TauP_Tool {
 
     protected String outFileBase = "";
 
+    public static final String GMT = "gmt";
+
+    public static final String SVG = "svg";
+
     public static final String JSON = "json";
 
     public static final String TEXT = "text";
-
-    /** Turns on expert mode. */
-    public static boolean expert = false;
     
 
     protected PrintWriter writer;
@@ -44,6 +48,11 @@ public abstract class TauP_Tool {
 
     /* Constructors */
     protected TauP_Tool() {
+        toolProps = TauP_Tool.configDefaults();
+    }
+
+    public static Properties configDefaults() {
+        Properties toolProps;
         try {
             toolProps = PropertyLoader.load();
         } catch(Exception e) {
@@ -52,6 +61,8 @@ public abstract class TauP_Tool {
             toolProps = new Properties();
         }
         Outputs.configure(toolProps);
+        SeismicPhaseFactory.configure(toolProps);
+        return toolProps;
     }
 
     
@@ -159,7 +170,7 @@ public abstract class TauP_Tool {
                 printUsage();
                 noComprendoArgs[numNoComprendoArgs++] = args[i];
             } else if(dashEquals("expert", args[i])) {
-                expert = true;
+                System.err.println("expert mode is not longer required for core sources or interactions.");
             } else if(i < args.length - 1) {
                 if(args[i].equalsIgnoreCase("-o")) {
                     outFileBase = args[i + 1];
@@ -171,13 +182,17 @@ public abstract class TauP_Tool {
                     }
                     Reader r = new BufferedReader(new FileReader(args[i + 1]));
                     toolProps.load(r);
-                    Outputs.configure(toolProps);
                     i++;
                 } else if(i < args.length - 2) {
-                    if (args[i].contains("set") && args[i+1].startsWith("taup.")) {
-                        toolProps.setProperty(args[i+1], args[i+2]);
-                        Outputs.configure(toolProps);
-                        i += 2;
+                    if (dashEquals("set", args[i])
+                            && args[i+1].startsWith("taup.")) {
+                        if (toolProps.containsKey(args[i+1])) {
+                            // set a known config prop
+                            toolProps.setProperty(args[i + 1], args[i + 2]);
+                            i += 2;
+                        } else {
+                            System.err.println("Warning: Setting unknown property "+args[i+1] +" to "+args[i+2]);
+                        }
                     } else {
                         /*
                          * I don't know how to interpret this argument, so pass
@@ -198,6 +213,9 @@ public abstract class TauP_Tool {
             }
             i++;
         }
+        Outputs.configure(toolProps);
+        SeismicPhaseFactory.configure(toolProps);
+
         if(numNoComprendoArgs > 0) {
             String[] temp = new String[numNoComprendoArgs];
             System.arraycopy(noComprendoArgs, 0, temp, 0, numNoComprendoArgs);

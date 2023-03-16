@@ -1,11 +1,14 @@
 ![Alt TauP](https://crotwell.github.io/TauP/taupLogo.svg)
 [![Maven Central](https://img.shields.io/maven-central/v/edu.sc.seis/TauP.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22edu.sc.seis%22%20AND%20a:%22TauP%22)
  [![javadoc](https://javadoc.io/badge2/edu.sc.seis/TauP/javadoc.svg)](https://javadoc.io/doc/edu.sc.seis/TauP)
+[![taup](https://snapcraft.io/taup/badge.svg)](https://snapcraft.io/taup)
+
+
 
                            The TauP Toolkit
 
             Flexible Seismic Travel-Time and Raypath Utilities
-                              Version 2.5
+                              Version 2.6
                       http://www.seis.sc.edu/taup/
 
 The TauP Toolkit is a seismic travel time calculator. In addition to travel
@@ -55,7 +58,7 @@ sudo snap install taup --channel=--channel=latest/edge
 ## Manually
 
 Download tarball here:
-https://www.seis.sc.edu/downloads/TauP/TauP-2.5.0.tgz
+https://www.seis.sc.edu/downloads/TauP/TauP-2.6.0.tgz
 or from the releases section on Github
 https://github.com/crotwell/TauP/releases
 

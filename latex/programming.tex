@@ -13,7 +13,9 @@ are below.
 
 The TauP package should be easily used by future Java programs. An
 example is given illustrating the basics of using the package to
-generate travel times.
+generate travel times. You may wish to refer to the javadocs, either
+included in the distribution or available at
+https://javadoc.io/doc/edu.sc.seis/TauP.
 
 First, instantiate a TauP\_Time object. This provides methods for
 generating and
@@ -118,7 +120,7 @@ and arrival time, then print the pierce points that show the very coarse
 path through the model.
 
 \begin{verbatim}
-@Grab('edu.sc.seis:TauP:2.5.0')
+@Grab('edu.sc.seis:TauP:2.7.0')
 import edu.sc.seis.TauP.TauP_Time
 import edu.sc.seis.TauP.Arrival
 import edu.sc.seis.TauP.TimeDist
@@ -140,7 +142,7 @@ for(Arrival a: taup_time.getArrivals()) {
 \subsubsection{Jacl}
 
 Note: Jacl might still be a useful scripting choice, but it does not appear to have
-been updated in many years. We include this section is included for reference,
+been updated in many years. We include this section for reference,
 but you may wish to choose another language.
 
 Jacl, a Java implementation of the popular Tool Command Language or Tcl,

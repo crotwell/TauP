@@ -23,8 +23,8 @@ OBJS = distribution.tex \
 	bibtex $*
 
 doc:	touch taup.pdf
-	/bin/rm -f ../doc/taup.pdf
-	mv taup.pdf ../doc/.
+	/bin/rm -f ../docs/taup.pdf
+	mv taup.pdf ../docs/.
 
 touch:
 	touch taup.tex

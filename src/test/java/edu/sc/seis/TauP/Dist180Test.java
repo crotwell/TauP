@@ -17,7 +17,7 @@ public class Dist180Test {
         SlownessModel smod = new SphericalSModel(vMod,0.1,11.0,115.0,2.5*Math.PI/180,0.01,true,
                                    SlownessModel.DEFAULT_SLOWNESS_TOLERANCE);
         TauModel tMod = new TauModel(smod);
-        SeismicPhase PKIKP = new SeismicPhase("PKIKP", tMod);
+        SeismicPhase PKIKP = SeismicPhaseFactory.createPhase("PKIKP", tMod);
         Arrival a = PKIKP.getEarliestArrival(180.0);
         assertEquals(vMod.getRadiusOfEarth()*2/VP, a.getTime(), 0.00001);
     }

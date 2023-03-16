@@ -11,9 +11,11 @@ import org.junit.jupiter.api.Test;
 
 
 /*
- * Results from Aki and Richards, p. 147 Reflection down-up: PP 0.1065 SS
- * -0.0807 PS -0.1766 SP -0.1766 Transmission up-down: PP 0.9701 SS 0.9720 PS
- * -0.1277 SP 0.1326
+ * Results from Aki and Richards, p. 147
+ * Reflection down-up:
+ * PP 0.1065 SS -0.0807 PS -0.1766 SP -0.1766
+ * Transmission up-down:
+ * PP 0.9701 SS 0.9720 PS -0.1277 SP 0.1326
  */
 /*
  * Results from this program: Reflection: P to P : 0.10645629458816266 (ok) SV
@@ -38,18 +40,22 @@ public class ReflTransTest {
                                          densityBelow);
     }
 
+    @Test
     public void testgetPtoPRefl() {
         assertEquals(0.1065f, coeff.getPtoPRefl(rayParameter), 0.0001f);
     }
 
+    @Test
     public void testgetSVtoSVRefl() {
         assertEquals(-0.0807f, coeff.getSVtoSVRefl(rayParameter), 0.0001f);
     }
 
+    @Test
     public void testgetSHtoSHRefl() {
         assertEquals(-.2157f, coeff.getSHtoSHRefl(rayParameter), 0.0001f);
     }
 
+    @Test
     public void testgetPtoSVRefl() {
         double factor = Complex.sqrt(Complex.over(Complex.times(coeff.getTopVertSlownessS(rayParameter),
                                                                 sVelocityAbove
@@ -62,6 +68,7 @@ public class ReflTransTest {
                      0.0001f);
     }
 
+    @Test
     public void testgetSVtoPRefl() {
         double factor = Complex.sqrt(Complex.over(Complex.times(coeff.getTopVertSlownessP(rayParameter),
                                                                 pVelocityAbove
@@ -74,6 +81,7 @@ public class ReflTransTest {
                      0.0001f);
     }
 
+    @Test
     public void testgetPtoPTrans() {
         double factor = Complex.sqrt(Complex.over(Complex.times(coeff.getBotVertSlownessP(rayParameter),
                                                                 pVelocityBelow
@@ -86,6 +94,7 @@ public class ReflTransTest {
         assertEquals(.9701, coeff.getPtoPTrans(rayParameter) * factor, 0.0001f);
     }
 
+    @Test
     public void testgetSVtoSVTrans() {
         double factor = Complex.sqrt(Complex.over(Complex.times(coeff.getBotVertSlownessS(rayParameter),
                                                                 sVelocityBelow
@@ -100,10 +109,12 @@ public class ReflTransTest {
                      0.0001f);
     }
 
+    @Test
     public void testgetSHtoSHTrans() {
         assertEquals(.784298, coeff.getSHtoSHTrans(rayParameter), 0.0001f);
     }
 
+    @Test
     public void testgetPtoSVTrans() {
         double factor = Complex.sqrt(Complex.over(Complex.times(coeff.getBotVertSlownessS(rayParameter),
                                                                 sVelocityBelow
@@ -118,6 +129,7 @@ public class ReflTransTest {
                      0.0001f);
     }
 
+    @Test
     public void testgetSVtoPTrans() {
         double factor = Complex.sqrt(Complex.over(Complex.times(coeff.getBotVertSlownessP(rayParameter),
                                                                 pVelocityBelow

@@ -8,11 +8,20 @@ machine.
 
 \subsubsection{Max OSX Install}
 
-For Mac OSX, we recommend Homebrew. Installation is easy with:
+For Mac OSX, we recommend Homebrew, https://brew.sh/. Installation is easy with:
 
 \begin{verbatim}
   brew tap crotwell/crotwell
   brew install taup
+  taup help
+\end{verbatim}
+
+\subsubsection{Snap Install}
+
+For linux, Snap, https://snapcraft.io/taup, provides an easy alternative to a manual install.
+
+\begin{verbatim}
+  sudo snap install taup
   taup help
 \end{verbatim}
 
@@ -49,14 +58,14 @@ practice, and if you have done this in the past you will need to remove the old 
 prevent a conflict.
 
 \item Set the location of the TauP directory in your TAUP\_HOME environment variable.
-This should be done in your .cshrc or .login. For instance, if you put Taup-2.5.0 in
+This should be done in your .cshrc or .login. For instance, if you put Taup-2.6.0 in
 /usr/local/share, then you could set the TAUP\_HOME to be:
 \begin{verbatim}
-setenv TAUP_HOME /usr/local/share/TauP-2.5.0
+setenv TAUP_HOME /usr/local/share/TauP-2.6.0
 \end{verbatim}
 for csh/tcsh or for bash
 \begin{verbatim}
-export TAUP_HOME=/usr/local/share/TauP-2.5.0
+export TAUP_HOME=/usr/local/share/TauP-2.6.0
 \end{verbatim}
 
 Please make sure that an old version of taup.jar is not on your CLASSPATH as this will cause a

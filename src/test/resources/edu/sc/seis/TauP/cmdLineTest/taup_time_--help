@@ -24,6 +24,14 @@ or by giving the station and event latitude and lonitude,
 -sta[tion] lat lon -- sets the station latitude and longitude
 -evt       lat lon -- sets the event latitude and longitude
 
+or by giving the takeoff angle,
+--takeoff angle    -- takeoff angle from the source
+                      zero is down, 90 horizontal, 180 is up
+
+or by giving the ray parameter,
+--shootray param   -- ray parameter from the source in s/deg
+                      up or down is determined by the phase
+
 
 --rayp             -- only output the ray parameter
 --time             -- only output travel time

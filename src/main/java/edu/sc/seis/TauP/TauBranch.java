@@ -20,6 +20,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * provides storage and methods for distance, time and tau increments for a
@@ -264,9 +265,6 @@ public class TauBranch implements Serializable, Cloneable {
             dist[rayNum] = timeDist.getDistRadian();
             time[rayNum] = timeDist.getTime();
             tau[rayNum] = time[rayNum] - p * dist[rayNum];
-            if(DEBUG &&( (rayNum % ((int)rayParams.length / 10) == 0) || p == minRayParam || p == maxRayParam)) {
-                System.out.println(p+" "+rayNum +", "+dist[rayNum]+" "+time[rayNum]+" ");
-            }
         }
     }
 
@@ -720,12 +718,19 @@ public class TauBranch implements Serializable, Cloneable {
 
     public static TauBranch readFromStream(DataInputStream dis)
             throws IOException, ClassNotFoundException, InstantiationException,
-            IllegalAccessException {
+            IllegalAccessException, TauPException {
         int length;
         byte[] classString = new byte[dis.readInt()];
         dis.read(classString);
         Class tBranchClass = Class.forName(new String(classString));
-        TauBranch tBranch = (TauBranch)tBranchClass.newInstance();
+        TauBranch tBranch = null;
+        try {
+            tBranch = (TauBranch)tBranchClass.getDeclaredConstructor().newInstance();
+        } catch (InvocationTargetException e) {
+            throw new TauPException("Problem creating TauBranch", e);
+        } catch (NoSuchMethodException e) {
+            throw new TauPException("Problem creating TauBranch", e);
+        }
         tBranch.topDepth = dis.readDouble();
         tBranch.botDepth = dis.readDouble();
         tBranch.maxRayParam = dis.readDouble();

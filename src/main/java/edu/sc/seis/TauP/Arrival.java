@@ -218,7 +218,7 @@ public class Arrival {
         return pierce;
     }
 
-    /** returns pierce points as TimeDist objects. */
+    /** returns path points as TimeDist objects. */
     public TimeDist[] getPath() {
         if (path == null) {
             this.path = getPhase().calcPathTimeDist(this).toArray(new TimeDist[0]);

@@ -24,7 +24,7 @@ public class NoOuterCoreTest {
 
     @Test
     public void test() throws VelocityModelException, SlownessModelException, TauModelException {
-        SeismicPhase PIP = new SeismicPhase("PIP", tMod);
+        SeismicPhase PIP = SeismicPhaseFactory.createPhase("PIP", tMod);
         List<Arrival> arrivals = PIP.calcTime(180);
         assertEquals( 1, arrivals.size());
     }
@@ -33,7 +33,7 @@ public class NoOuterCoreTest {
     public void testNoOuterCorePhase() throws TauModelException {
         String[] badPhaseList = new String[] {"PKP", "PKIKP", "PKiKP", "SKS" };
         for (String phaseName : badPhaseList) {
-            SeismicPhase pPhase = new SeismicPhase(phaseName, tMod);
+            SeismicPhase pPhase = SeismicPhaseFactory.createPhase(phaseName, tMod);
             assertFalse( pPhase.phasesExistsInModel(), phaseName+" should not exist in model "+pPhase.getMaxRayParam());
             List<Arrival> arrivals = pPhase.calcTime(30);
             assertEquals( 0, arrivals.size(), phaseName+" no arrival");

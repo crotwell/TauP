@@ -36,6 +36,7 @@ public class ReceiverAtDepth {
     
     void check(TauModel tMod, TauModel tModRec, String phaseName, double distStep) throws TauModelException {
         double receiverDepth = tModRec.getSourceDepth();
+        String reversedName = new StringBuilder(phaseName).reverse().toString();
         SeismicPhase phase;
         SeismicPhase upPhase;
         SeismicPhase endsDowngoingPhase = null;
@@ -43,25 +44,26 @@ public class ReceiverAtDepth {
         SeismicPhase upFlippedPhase;
         SeismicPhase endsDowngoingFlippedPhase = null;
         if (tMod.getSourceDepth() == receiverDepth) {
-            phase = new SeismicPhase(phaseName, tMod, receiverDepth);
+            phase = SeismicPhaseFactory.createPhase(phaseName, tMod, tMod.getSourceDepth(), receiverDepth);
             upPhase = null;
             endsDowngoingPhase = null;
-            flippedPhase = new SeismicPhase(phaseName, tModRec, tMod.getSourceDepth());
+            flippedPhase = SeismicPhaseFactory.createPhase(phaseName, tModRec, tModRec.getSourceDepth(), tMod.getSourceDepth());
             upFlippedPhase = null;
             endsDowngoingFlippedPhase = null;
         } else if (tMod.getSourceDepth() > receiverDepth) {
-            phase = new SeismicPhase(phaseName.toUpperCase(), tMod, receiverDepth);
-            upPhase = new SeismicPhase(phaseName.toLowerCase(), tMod, receiverDepth);
+            phase = SeismicPhaseFactory.createPhase(phaseName.toUpperCase(), tMod, tMod.getSourceDepth(), receiverDepth);
+            upPhase = SeismicPhaseFactory.createPhase(phaseName.toLowerCase(), tMod, tMod.getSourceDepth(), receiverDepth);
             endsDowngoingPhase = null;
-            flippedPhase = new SeismicPhase(phaseName.toUpperCase(), tModRec, tMod.getSourceDepth());
-            upFlippedPhase = new SeismicPhase(phaseName.toLowerCase(), tModRec, tMod.getSourceDepth());
-            endsDowngoingFlippedPhase = new SeismicPhase(phaseName.toUpperCase()+"ed", tModRec, tMod.getSourceDepth());
+            flippedPhase = SeismicPhaseFactory.createPhase(reversedName.toUpperCase(), tModRec, tModRec.getSourceDepth(), tMod.getSourceDepth());
+            upFlippedPhase = SeismicPhaseFactory.createPhase(reversedName.toLowerCase().replace("i", "y"), tModRec, tModRec.getSourceDepth(), tMod.getSourceDepth());
+            endsDowngoingFlippedPhase = SeismicPhaseFactory.createPhase(reversedName.toUpperCase()+"ed", tModRec, tModRec.getSourceDepth(), tMod.getSourceDepth());
         } else {
-            phase = new SeismicPhase(phaseName.toUpperCase(), tMod, receiverDepth);
-            upPhase = new SeismicPhase(phaseName.toLowerCase(), tMod, receiverDepth);
-            endsDowngoingPhase = new SeismicPhase(phaseName.toUpperCase()+"ed", tMod, receiverDepth);
-            flippedPhase = new SeismicPhase(phaseName.toUpperCase(), tModRec, tMod.getSourceDepth());
-            upFlippedPhase = new SeismicPhase(phaseName.toLowerCase(), tModRec, tMod.getSourceDepth());
+            phase = SeismicPhaseFactory.createPhase(phaseName.toUpperCase(), tMod, tMod.getSourceDepth(), receiverDepth);
+            //upPhase = SeismicPhaseFactory.createPhase(phaseName.toLowerCase(), tMod, tMod.getSourceDepth(), receiverDepth);
+            upPhase = null;
+            endsDowngoingPhase = SeismicPhaseFactory.createPhase(phaseName.toUpperCase()+"ed", tMod, tMod.getSourceDepth(), receiverDepth);
+            flippedPhase = SeismicPhaseFactory.createPhase(reversedName.toUpperCase(), tModRec, tModRec.getSourceDepth(), tMod.getSourceDepth());
+            upFlippedPhase = SeismicPhaseFactory.createPhase(reversedName.toLowerCase().replace("i", "y"), tModRec, tModRec.getSourceDepth(), tMod.getSourceDepth());
             endsDowngoingFlippedPhase = null;
         }
         for (double degrees = 0; degrees < phase.getMaxDistance() && degrees < flippedPhase.getMaxDistance(); degrees+= distStep) {
@@ -84,7 +86,7 @@ public class ReceiverAtDepth {
             for (int i = 0; i < phaseArrivals.size(); i++) {
                 Arrival a = phaseArrivals.get(i);
                 Arrival f = flippedArrivals.get(i);
-                assertEquals(  a.getTime(), f.getTime(), 0.0001);
+                assertEquals(  a.getTime(), f.getTime(), 0.0001, a+" "+f);
                 assertEquals(  a.getTakeoffAngle(), f.getIncidentAngle(), 0.0001);
                 assertEquals(  a.getIncidentAngle(), f.getTakeoffAngle(), 0.0001);
                 assertEquals(  a.getDist(), f.getDist(), 0.0001);
@@ -126,9 +128,9 @@ public class ReceiverAtDepth {
         flippedMod = flippedMod.splitBranch(depth);
                 
 
-        SeismicPhase PcP = new SeismicPhase("Pcp", tModRecDepth, 0);
-        SeismicPhase p = new SeismicPhase("p", flippedMod, 0);
-        SeismicPhase PcP200 = new SeismicPhase("Pcp", tModRecDepth, recDepth);
+        SeismicPhase PcP = SeismicPhaseFactory.createPhase("Pcp", tModRecDepth, tModRecDepth.getSourceDepth(),0);
+        SeismicPhase p = SeismicPhaseFactory.createPhase("p", flippedMod, flippedMod.getSourceDepth(), 0);
+        SeismicPhase PcP200 = SeismicPhaseFactory.createPhase("Pcp", tModRecDepth, tModRecDepth.getSourceDepth(), recDepth);
         double degrees = 0;
         List<Arrival> PcPArrivals = PcP.calcTime(degrees);
         List<Arrival> pArrivals = p.calcTime(degrees);
@@ -158,5 +160,37 @@ public class ReceiverAtDepth {
         check(tModRecDepth, flippedMod, "P", .1);
         System.out.println("Check S source="+srcDepth+" receiver="+recDepth);
         check(tModRecDepth, flippedMod, "S", .1);
+    }
+
+    @Test
+    public void testOuterCoreRec() throws Exception {
+        float srcDepth = 2.39f;
+        float recDepth = 3000f;
+        String modelName = "iasp91";
+        TauModel tMod = TauModelLoader.load(modelName);
+        TauModel tModDepth = tMod.depthCorrect(srcDepth);
+        TauModel tModRecDepth = tModDepth.splitBranch(recDepth);
+        TauModel flippedMod = tMod.depthCorrect(recDepth);
+        flippedMod = flippedMod.splitBranch(srcDepth);
+        System.out.println("Check P source="+srcDepth+" receiver="+recDepth);
+        check(tModRecDepth, flippedMod, "PK", .1);
+        System.out.println("Check S source="+srcDepth+" receiver="+recDepth);
+        check(tModRecDepth, flippedMod, "SK", .1);
+    }
+
+    @Test
+    public void testInnerCoreRec() throws Exception {
+        float srcDepth = 2.39f;
+        float recDepth = 5500f;
+        String modelName = "iasp91";
+        TauModel tMod = TauModelLoader.load(modelName);
+        TauModel tModDepth = tMod.depthCorrect(srcDepth);
+        TauModel tModRecDepth = tModDepth.splitBranch(recDepth);
+        TauModel flippedMod = tMod.depthCorrect(recDepth);
+        flippedMod = flippedMod.splitBranch(srcDepth);
+        System.out.println("Check P source="+srcDepth+" receiver="+recDepth);
+        check(tModRecDepth, flippedMod, "PKI", .1);
+        System.out.println("Check S source="+srcDepth+" receiver="+recDepth);
+        check(tModRecDepth, flippedMod, "SKI", .1);
     }
 }

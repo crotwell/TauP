@@ -74,7 +74,7 @@ public class TauP_Peek {
             peek.readTauModel(modelFilename);
             tModDepth = peek.tMod;
             // just so sp is initialized for compiler
-            sp = new SeismicPhase("S", tModDepth);
+            sp = SeismicPhaseFactory.createPhase("S", tModDepth, tModDepth.sourceDepth);
             StreamTokenizer tokenIn = new StreamTokenizer(new InputStreamReader(System.in));
             tokenIn.parseNumbers();
             System.out.print("seismic (p)hase or (t)au model or (s)lowness model "
@@ -161,7 +161,7 @@ public class TauP_Peek {
                         tModDepth = peek.tMod.depthCorrect(depth);
                         System.out.println("Enter phase name");
                         tokenIn.nextToken();
-                        sp = new SeismicPhase(tokenIn.sval, tModDepth);
+                        sp = SeismicPhaseFactory.createPhase(tokenIn.sval, tModDepth, tModDepth.sourceDepth);
                         System.out.println("Enter degrees");
                         break;
                     case 'b':
@@ -250,7 +250,7 @@ public class TauP_Peek {
                             break;
                         case 'p':
                         case 'P':
-                            List<Arrival> arr = sp.calcPierce(tokenIn.nval);
+                            List<Arrival> arr = sp.calcTime(tokenIn.nval);
                             System.out.println("MaxRayParamIndex="
                                     + sp.getMaxRayParamIndex()
                                     + " MinRayParamIndex="

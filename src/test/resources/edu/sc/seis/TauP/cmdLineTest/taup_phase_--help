@@ -1,0 +1,25 @@
+Usage: arraylist [arguments]
+  or, for purists, java java.util.ArrayList [arguments]
+
+Arguments are:
+-ph phase list     -- comma separated phase list
+-pf phasefile      -- file containing phases
+
+-mod[el] modelname -- use velocity model "modelname" for calculations
+                      Default is iasp91.
+
+-h depth           -- source depth in km
+
+--stadepth depth   -- receiver depth in km
+
+--dump             -- dump raw sample points
+
+
+
+-o [stdout|outfile]         -- output is redirected to stdout or to the "outfile" file
+--prop [propfile]   -- set configuration properties
+--debug             -- enable debugging output
+--verbose           -- enable verbose output
+--version           -- print the version
+--help              -- print this out, but you already know that!
+

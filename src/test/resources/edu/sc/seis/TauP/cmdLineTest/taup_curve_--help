@@ -12,6 +12,7 @@ Arguments are:
 
 
 --gmt              -- outputs curves as a complete GMT script.
+--svg              -- outputs curves as a SVG image.
 -reddeg velocity   -- outputs curves with a reducing velocity (deg/sec).
 -redkm velocity    -- outputs curves with a reducing velocity (km/sec).
 -rel phasename     -- outputs relative travel time

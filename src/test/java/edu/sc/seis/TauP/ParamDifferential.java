@@ -106,7 +106,7 @@ public class ParamDifferential {
                               SlownessModel.DEFAULT_SLOWNESS_TOLERANCE);
         SeismicPhase[] pPhase = new SeismicPhase[deltaTMod.length];
         for (int i = 0; i < pPhase.length; i++) {
-            pPhase[i] = new SeismicPhase(phaseName, deltaTMod[i]);
+            pPhase[i] = SeismicPhaseFactory.createPhase(phaseName, deltaTMod[i]);
             System.err.println("tmod size="+deltaTMod[i].getRayParams().length);
         }
         float deltaDeg = 1.0f;

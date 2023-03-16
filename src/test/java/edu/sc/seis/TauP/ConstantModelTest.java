@@ -81,7 +81,7 @@ public class ConstantModelTest {
             String phase = "P";
             double velocity = tauMod.getVelocityModel().getVelocityLayerClone(0).getTopPVelocity();
             TauModel tModDepth = tauMod.depthCorrect(depth);
-            SeismicPhase pPhase = new SeismicPhase(phase, tModDepth);
+            SeismicPhase pPhase = SeismicPhaseFactory.createPhase(phase, tModDepth, depth);
             double dist = pPhase.getDist()[0] * 180 / Math.PI + 0.0001;
             List<Arrival> arrivals = pPhase.calcTime(dist);
             // find arrival with rp closest to horizontal ray from source
@@ -150,7 +150,7 @@ public class ConstantModelTest {
     }
 
     public static void doSeismicPhase(float dist, double velocity, String phase, TauModel tMod) throws TauModelException {
-        SeismicPhase pPhase = new SeismicPhase(phase, tMod);
+        SeismicPhase pPhase = SeismicPhaseFactory.createPhase(phase, tMod, tMod.sourceDepth);
         List<Arrival> arrivals = pPhase.calcTime(dist);
         assertEquals( 1, arrivals.size());
         Arrival a = arrivals.get(0);
@@ -162,8 +162,8 @@ public class ConstantModelTest {
     public static void doSeismicPhase(double depth, double dist, double velocity, String phase, TauModel tMod)
             throws TauModelException {
         TauModel tModDepth = tMod.depthCorrect(depth);
-        SeismicPhase PPhase = new SeismicPhase(phase.toUpperCase(), tModDepth);
-        SeismicPhase pPhase = new SeismicPhase(phase.toLowerCase(), tModDepth);
+        SeismicPhase PPhase = SeismicPhaseFactory.createPhase(phase.toUpperCase(), tModDepth, depth);
+        SeismicPhase pPhase = SeismicPhaseFactory.createPhase(phase.toLowerCase(), tModDepth, depth);
         List<Arrival> arrivals = PPhase.calcTime(dist);
         arrivals.addAll(pPhase.calcTime(dist));
         // assertEquals("one arrival for "+dist+" depth="+depth+" at "+velocity,

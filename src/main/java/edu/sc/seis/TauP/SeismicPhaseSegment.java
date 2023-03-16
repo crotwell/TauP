@@ -5,15 +5,17 @@ public class SeismicPhaseSegment {
 	int startBranch;
     int endBranch;
     boolean isPWave;
-    int endAction;
+    PhaseInteraction endAction;
+    PhaseInteraction prevEndAction = null;
     boolean isDownGoing;
+    boolean isFlat = false;
     String legName;
     
 	public SeismicPhaseSegment(TauModel tMod,
 			                   int startBranch,
                                int endBranch,
                                boolean isPWave,
-                               int endAction,
+                               PhaseInteraction endAction,
                                boolean isDownGoing,
                                String legName) {
 		this.tMod = tMod;
@@ -25,34 +27,52 @@ public class SeismicPhaseSegment {
 		this.legName = legName;
 	}
 	
-	public static String endActionToString(int endAction) {
+	public static String endActionToString(PhaseInteraction endAction) {
 		String action;
-		switch(endAction) {
-    	case SeismicPhase.TURN:
-    		action = "turn";
-    		break;
-    	case SeismicPhase.REFLECT_UNDERSIDE:
-    		action = "reflect underside";
-    		break;
-    	case SeismicPhase.REFLECT_TOPSIDE:
-    		action = "reflect topside";
-    		break;
-    	case SeismicPhase.TRANSUP:
-    		action = "transmit up";
-    		break;
-    	case SeismicPhase.TRANSDOWN:
-    		action = "transmit down";
-    		break;
-    	case SeismicPhase.DIFFRACT:
-    		action = "diffract";
-    		break;
-    	case SeismicPhase.END:
-    		action = "end";
-    		break;
-    	default: 
-    		// should never happen
-    		action = "unknown";
-    	}
+		switch (endAction) {
+			case START:
+				action = "start";
+				break;
+			case TURN:
+				action = "turn";
+				break;
+			case REFLECT_UNDERSIDE:
+				action = "reflect underside";
+				break;
+			case END_DOWN:
+				action = "end downward";
+				break;
+			case REFLECT_UNDERSIDE_CRITICAL:
+				action = "critical reflect underside";
+				break;
+			case REFLECT_TOPSIDE:
+				action = "reflect topside";
+				break;
+			case REFLECT_TOPSIDE_CRITICAL:
+				action = "critical reflect topside";
+				break;
+			case TRANSUP:
+				action = "transmit up";
+				break;
+			case TRANSDOWN:
+				action = "transmit down";
+				break;
+			case DIFFRACT:
+				action = "diffract";
+				break;
+			case HEAD:
+				action = "head wave";
+				break;
+			case END:
+				action = "end";
+				break;
+			case FAIL:
+				action = "fail";
+				break;
+			default:
+				// should never happen
+				action = "unknown";
+		}
 		return action;
 	}
 	
@@ -61,9 +81,9 @@ public class SeismicPhaseSegment {
 		if (startBranch < tMod.getMohoBranch() && endBranch < tMod.getMohoBranch()) {
 			out = "crust";
 		} else if (startBranch < tMod.getCmbBranch() && endBranch < tMod.getCmbBranch()) {
-			if (startBranch < tMod.getMohoBranch() && endBranch > tMod.getMohoBranch()) {
+			if (startBranch < tMod.getMohoBranch() && endBranch >= tMod.getMohoBranch()) {
 				out = "crust/mantle";
-			} else if (startBranch > tMod.getMohoBranch() && endBranch < tMod.getMohoBranch()) {
+			} else if (startBranch >= tMod.getMohoBranch() && endBranch < tMod.getMohoBranch()) {
 				out = "crust/mantle";
 			} else {
 				out = "mantle";
@@ -78,16 +98,39 @@ public class SeismicPhaseSegment {
 	
 	public String toString() {
 		String desc = "";
-    	String upDown = isDownGoing ? "down" : "up  ";
+    	String upDown = isFlat ? "flat" : (isDownGoing ? "down" : "up  ");
+
     	String action = endActionToString(endAction);
     	String isPString = isPWave ? "P" : "S";
+    	if (! isPWave && (startBranch == tMod.getCmbBranch() || endBranch == tMod.getCmbBranch())) {
+    		// in outer core, SeismicPhase uses fake S, equal to P velocity structure, in fluid layers
+			// to make "high slowness zone" calculations easier
+			isPString = "P";
+		}
     	String branchRange = startBranch == endBranch ? " layer "+startBranch : " layer "+startBranch+" to "+endBranch;
-    	
+		String depthRange;
+
+		if (isFlat) {
+			if (prevEndAction == null) {
+				depthRange = " PrevAction is NULL ";
+			} else if (prevEndAction == PhaseInteraction.DIFFRACT) {
+				depthRange = " at "+tMod.getTauBranch(endBranch, isPWave).getBotDepth();
+			} else if (prevEndAction == PhaseInteraction.HEAD) {
+				depthRange = " at " + tMod.getTauBranch(startBranch, isPWave).getTopDepth();
+			} else {
+				throw new RuntimeException("isFlat but prev not HEAD or DIFFRACT: "+endActionToString(prevEndAction));
+			}
+		} else if (isDownGoing) {
+			depthRange = tMod.getTauBranch(startBranch, isPWave).getTopDepth() + " to " + tMod.getTauBranch(endBranch, isPWave).getBotDepth();
+		} else {
+			depthRange = tMod.getTauBranch(startBranch, isPWave).getBotDepth() + " to " + tMod.getTauBranch(endBranch, isPWave).getTopDepth();
+		}
     	if ( ! legName.contentEquals("END")) {
     		desc += legName +" going "+upDown
     				+ " as a "+ isPString 
     				+ " in the "+describeBranchRange(startBranch, endBranch)+","
     	    	    + branchRange+","
+					+ " depths "+depthRange+","
     				+ " then " +action;
     	} else {
     		desc += "END";

@@ -18,6 +18,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+/**
+ * Plots of wavefronts, distance along the ray at points in time.
+ */
 public class TauP_Wavefront extends TauP_Path {
 
     int numRays = 30;
@@ -61,6 +64,13 @@ public class TauP_Wavefront extends TauP_Path {
     public void calculate(double degrees) throws TauModelException {
         // ignore degrees as we need a suite of distances
         result = calcIsochron();
+    }
+
+    /** Prints the command line arguments common to all TauP tools. */
+    @Override
+    public void printStdUsage() {
+        printStdUsageHead();
+        printPhaseUsage();
     }
 
     @Override
@@ -152,7 +162,7 @@ public class TauP_Wavefront extends TauP_Path {
 
                     // @Override
                     public int compare(TimeDist arg0, TimeDist arg1) {
-                        return new Double(arg0.getP()).compareTo(arg1.getP());
+                        return Double.valueOf(arg0.getP()).compareTo(arg1.getP());
                     }
                 });
                 for (TimeDist td : wavefront) {

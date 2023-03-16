@@ -65,6 +65,7 @@ public class TauP_SetSac extends TauP_Time {
     protected boolean evdpkm = false;
 
     public static final int A_HEADER = 10;
+    public static final int SKIP_HEADER = 11;
 
     public boolean getEvdpkm() {
         return evdpkm;
@@ -94,24 +95,27 @@ public class TauP_SetSac extends TauP_Time {
     }
 
     protected void setSacVarNums() {
-        boolean[] headersUsed = new boolean[10];
+        boolean[] headersUsed = new boolean[11]; // A header is 10
         for(int i = 0; i < headersUsed.length; i++) {
             headersUsed[i] = false;
         }
-        for(int i = 0; i < phaseNames.size() && i < 10; i++) {
-            if(((PhaseName)phaseNames.get(i)).sacTNum != -1) {
-                headersUsed[((PhaseName)phaseNames.get(i)).sacTNum] = true;
+        for(PhaseName pn : phaseNames) {
+            for(int t : pn.sacTNumTriplication) {
+                if (t != SKIP_HEADER) {
+                    headersUsed[t] = true;
+                }
             }
         }
-        int j;
-        for(int i = 0; i < phaseNames.size(); i++) {
-            if(((PhaseName)phaseNames.get(i)).sacTNum == -1) {
+        int j=0;
+        for(PhaseName pn : phaseNames) {
+            if(pn.sacTNumTriplication.size() == 0) {
                 // find a j that hasn't been used
-                for(j = 0; j < headersUsed.length && headersUsed[j]; j++) {}
+                while(j < headersUsed.length && headersUsed[j]){ j++; }
                 if(j < 10) {
-                    ((PhaseName)phaseNames.get(i)).sacTNum = j;
+                    // don't use A header (10) in the automatic header
+                    pn.sacTNumTriplication.add(j);
                     headersUsed[j] = true;
-                }
+                } else { break; }
             }
         }
     }
@@ -216,29 +220,60 @@ public class TauP_SetSac extends TauP_Time {
             System.out.println(f + " "
                     + arrivals.size() + " arrivals found.");
         }
-        for(int arrivalNum = arrivals.size() - 1; arrivalNum >= 0; arrivalNum--) {
+        // set arrivals in header, look for triplications if configured in phase name
+        List<Arrival> arrivalCopy = new ArrayList<Arrival>();
+        arrivalCopy.addAll(arrivals);
+        while (arrivalCopy.size() > 0) {
             int phaseNum = -1;
+            Arrival currArrival = arrivalCopy.get(0);
             for(int j = phaseNames.size() - 1; j >= 0; j--) {
-                if(getArrival(arrivalNum).getName()
+                if(currArrival.getName()
                         .equals(((PhaseName)phaseNames.get(j)).name)) {
                     phaseNum = j;
                     break;
                 }
             }
             if(phaseNum != -1) {
-                if(verbose) {
-                    System.out.println(f
-                            + " phase found "
-                            + getArrival(arrivalNum).getName()
-                            + " -> t"
-                            + ((PhaseName)phaseNames.get(phaseNum)).sacTNum
-                            + ", travel time="
-                            + (float)getArrival(arrivalNum).getTime());
+                PhaseName pn = phaseNames.get(phaseNum);
+                int tripNum = 0;
+                for (int tripHeader: pn.sacTNumTriplication) {
+                    while (tripNum < arrivalCopy.size() && ! arrivalCopy.get(tripNum).getName().equals(pn.name)) {
+                        tripNum++;
+                    }
+                    if (tripNum < arrivalCopy.size()) {
+                        Arrival tripArrival = arrivalCopy.get(tripNum);
+                        if (tripHeader != SKIP_HEADER) {
+                            if (verbose) {
+                                System.out.println(f
+                                        + " phase found " + pn.name + " = "
+                                        + tripArrival.getName() + " trip(" + tripNum + ")"
+                                        + " -> t"
+                                        + tripHeader
+                                        + ", travel time="
+                                        + (float) tripArrival.getTime());
+                            }
+                            setSacTHeader(sacFile, tripHeader, tripArrival);
+                        } else {
+                            if (verbose) {
+                                System.out.println(f
+                                        + " phase found " + pn.name + " = "
+                                        + tripArrival.getName() + " trip(" + tripNum + ")"
+                                        + " -> skip"
+                                        + ", travel time="
+                                        + (float) tripArrival.getTime());
+                            }
+                        }
+                        tripNum++;
+                    }
                 }
-                setSacTHeader(sacFile,
-                              ((PhaseName)phaseNames.get(phaseNum)).sacTNum,
-                              getArrival(arrivalNum));
             }
+            List<Arrival> cleanArrivals = new ArrayList<>();
+            for (Arrival a : arrivalCopy) {
+                if (! a.getName().equals(currArrival.getName())) {
+                    cleanArrivals.add(a);
+                }
+            }
+            arrivalCopy = cleanArrivals;
         }
         sacFile.write(f);
     }

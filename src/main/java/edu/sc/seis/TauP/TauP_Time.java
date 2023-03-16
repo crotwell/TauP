@@ -16,48 +16,24 @@
  */
 package edu.sc.seis.TauP;
 
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.InvalidClassException;
-import java.io.OptionalDataException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.io.Reader;
-import java.io.StreamCorruptedException;
-import java.io.StreamTokenizer;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Properties;
+import java.io.*;
+import java.util.*;
 
 /**
  * Calculate travel times for different branches using linear interpolation
  * between known slowness samples.
- * 
+ *
  * @version 1.1.3 Wed Jul 18 15:00:35 GMT 2001
  * @author H. Philip Crotwell
  */
 public class TauP_Time extends TauP_Tool {
-    
-    
+
+
     protected String modelName = "iasp91";
 
     /**
      * Tau model calculated previously.
-     * 
+     *
      * @see TauModel
      */
     protected TauModel tMod;
@@ -76,22 +52,24 @@ public class TauP_Time extends TauP_Tool {
     protected List<PhaseName> phaseNames = new ArrayList<PhaseName>();
 
     protected double depth = 0.0;
-    
+
     protected double receiverDepth = 0.0;
 
     protected double degrees = Double.MAX_VALUE;
-    
+
     /**
      * For when command line args uses --km for distance. Have to wait until
      * after the model is read in to get radius of earth.
      */
-    protected double distKilometers = Double.MAX_VALUE; 
-    
+    protected double distKilometers = Double.MAX_VALUE;
+
     protected double azimuth = Double.MAX_VALUE;
 
     protected double backAzimuth = Double.MAX_VALUE;
-    
+
     protected double takeoffAngle = Double.MAX_VALUE;
+
+    protected double shootRayp = Double.MAX_VALUE;
 
     protected double stationLat = Double.MAX_VALUE;
 
@@ -108,15 +86,15 @@ public class TauP_Time extends TauP_Tool {
     protected boolean onlyPrintRayP = false;
 
     protected boolean onlyPrintTime = false;
-    
+
     protected String relativePhaseName = "";
-    
+
     protected Arrival relativeArrival;
 
     public TauP_Time() {
-    
+
     }
-    
+
     public TauP_Time(TauModel tMod)  {
         setTauModel(tMod);
     }
@@ -124,7 +102,7 @@ public class TauP_Time extends TauP_Tool {
     /**
      * creates a TauP_Time object with the tau model specified by modelName
      * already loaded.
-     * 
+     *
      * @throws TauModelException
      *             if the file can't be found or is corrupted in some way.
      */
@@ -182,104 +160,122 @@ public class TauP_Time extends TauP_Tool {
         }
     }
 
+    /**
+     * @deprecated see extractPhaseNames
+     * @param phaseName
+     * @return
+     */
     public static List<String> getPhaseNames(String phaseName) {
+        return extractPhaseNames(phaseName);
+    }
+
+    /**
+     * Parse comma separated list of phase names, expanding convience phase names like
+     * ttp into real phase names.
+     *
+     * @param phaseNames string to parse
+     * @return parsed list of phase names
+     */
+    public static List<String> extractPhaseNames(String phaseNames) {
         List<String> names = new ArrayList<String>();
-        if(phaseName.equalsIgnoreCase("ttp")
-                || phaseName.equalsIgnoreCase("tts")
-                || phaseName.equalsIgnoreCase("ttbasic")
-                || phaseName.equalsIgnoreCase("tts+")
-                || phaseName.equalsIgnoreCase("ttp+")
-                || phaseName.equalsIgnoreCase("ttall")) {
-            if(phaseName.equalsIgnoreCase("ttp")
-                    || phaseName.equalsIgnoreCase("ttp+")
+        for (String phaseName : splitPhaseNameList(phaseNames)) {
+            if (phaseName.equalsIgnoreCase("ttp")
+                    || phaseName.equalsIgnoreCase("tts")
                     || phaseName.equalsIgnoreCase("ttbasic")
-                    || phaseName.equalsIgnoreCase("ttall")) {
-                names.add("p");
-                names.add("P");
-                names.add("Pn");
-                names.add("Pdiff");
-                names.add("PKP");
-                names.add("PKiKP");
-                names.add("PKIKP");
-            }
-            if(phaseName.equalsIgnoreCase("tts")
                     || phaseName.equalsIgnoreCase("tts+")
-                    || phaseName.equalsIgnoreCase("ttbasic")
+                    || phaseName.equalsIgnoreCase("ttp+")
                     || phaseName.equalsIgnoreCase("ttall")) {
-                names.add("s");
-                names.add("S");
-                names.add("Sn");
-                names.add("Sdiff");
-                names.add("SKS");
-                names.add("SKIKS");
+                if (phaseName.equalsIgnoreCase("ttp")
+                        || phaseName.equalsIgnoreCase("ttp+")
+                        || phaseName.equalsIgnoreCase("ttbasic")
+                        || phaseName.equalsIgnoreCase("ttall")) {
+                    names.add("p");
+                    names.add("P");
+                    names.add("Pn");
+                    names.add("Pdiff");
+                    names.add("PKP");
+                    names.add("PKiKP");
+                    names.add("PKIKP");
+                }
+                if (phaseName.equalsIgnoreCase("tts")
+                        || phaseName.equalsIgnoreCase("tts+")
+                        || phaseName.equalsIgnoreCase("ttbasic")
+                        || phaseName.equalsIgnoreCase("ttall")) {
+                    names.add("s");
+                    names.add("S");
+                    names.add("Sn");
+                    names.add("Sdiff");
+                    names.add("SKS");
+                    names.add("SKIKS");
+                }
+                if (phaseName.equalsIgnoreCase("ttp+")
+                        || phaseName.equalsIgnoreCase("ttbasic")
+                        || phaseName.equalsIgnoreCase("ttall")) {
+                    names.add("PcP");
+                    names.add("pP");
+                    names.add("pPdiff");
+                    names.add("pPKP");
+                    names.add("pPKIKP");
+                    names.add("pPKiKP");
+                    names.add("sP");
+                    names.add("sPdiff");
+                    names.add("sPKP");
+                    names.add("sPKIKP");
+                    names.add("sPKiKP");
+                }
+                if (phaseName.equalsIgnoreCase("tts+")
+                        || phaseName.equalsIgnoreCase("ttbasic")
+                        || phaseName.equalsIgnoreCase("ttall")) {
+                    names.add("sS");
+                    names.add("sSdiff");
+                    names.add("sSKS");
+                    names.add("sSKIKS");
+                    names.add("ScS");
+                    names.add("pS");
+                    names.add("pSdiff");
+                    names.add("pSKS");
+                    names.add("pSKIKS");
+                }
+                if (phaseName.equalsIgnoreCase("ttbasic")
+                        || phaseName.equalsIgnoreCase("ttall")) {
+                    names.add("ScP");
+                    names.add("SKP");
+                    names.add("SKIKP");
+                    names.add("PKKP");
+                    names.add("PKIKKIKP");
+                    names.add("SKKP");
+                    names.add("SKIKKIKP");
+                    names.add("PP");
+                    names.add("PKPPKP");
+                    names.add("PKIKPPKIKP");
+                }
+                if (phaseName.equalsIgnoreCase("ttall")) {
+                    names.add("SKiKP");
+                    names.add("PP");
+                    names.add("ScS");
+                    names.add("PcS");
+                    names.add("PKS");
+                    names.add("PKIKS");
+                    names.add("PKKS");
+                    names.add("PKIKKIKS");
+                    names.add("SKKS");
+                    names.add("SKIKKIKS");
+                    names.add("SKSSKS");
+                    names.add("SKIKSSKIKS");
+                    names.add("SS");
+                    names.add("SP");
+                    names.add("PS");
+                }
+            } else {
+                names.add(phaseName);
             }
-            if(phaseName.equalsIgnoreCase("ttp+")
-                    || phaseName.equalsIgnoreCase("ttbasic")
-                    || phaseName.equalsIgnoreCase("ttall")) {
-                names.add("PcP");
-                names.add("pP");
-                names.add("pPdiff");
-                names.add("pPKP");
-                names.add("pPKIKP");
-                names.add("pPKiKP");
-                names.add("sP");
-                names.add("sPdiff");
-                names.add("sPKP");
-                names.add("sPKIKP");
-                names.add("sPKiKP");
-            }
-            if(phaseName.equalsIgnoreCase("tts+")
-                    || phaseName.equalsIgnoreCase("ttbasic")
-                    || phaseName.equalsIgnoreCase("ttall")) {
-                names.add("sS");
-                names.add("sSdiff");
-                names.add("sSKS");
-                names.add("sSKIKS");
-                names.add("ScS");
-                names.add("pS");
-                names.add("pSdiff");
-                names.add("pSKS");
-                names.add("pSKIKS");
-            }
-            if(phaseName.equalsIgnoreCase("ttbasic")
-                    || phaseName.equalsIgnoreCase("ttall")) {
-                names.add("ScP");
-                names.add("SKP");
-                names.add("SKIKP");
-                names.add("PKKP");
-                names.add("PKIKKIKP");
-                names.add("SKKP");
-                names.add("SKIKKIKP");
-                names.add("PP");
-                names.add("PKPPKP");
-                names.add("PKIKPPKIKP");
-            }
-            if(phaseName.equalsIgnoreCase("ttall")) {
-                names.add("SKiKP");
-                names.add("PP");
-                names.add("ScS");
-                names.add("PcS");
-                names.add("PKS");
-                names.add("PKIKS");
-                names.add("PKKS");
-                names.add("PKIKKIKS");
-                names.add("SKKS");
-                names.add("SKIKKIKS");
-                names.add("SKSSKS");
-                names.add("SKIKSSKIKS");
-                names.add("SS");
-                names.add("SP");
-                names.add("PS");
-            }
-        } else {
-            names.add(phaseName);
         }
         return names;
     }
 
     public synchronized void appendPhaseName(String phaseName)
             throws TauModelException {
-        Iterator<String> it = getPhaseNames(phaseName).iterator();
+        Iterator<String> it = extractPhaseNames(phaseName).iterator();
         while(it.hasNext()) {
             appendPhaseName(new PhaseName(it.next()));
         }
@@ -322,12 +318,12 @@ public class TauP_Time extends TauP_Tool {
         clearPhases();
     }
 
-    
+
     public double getReceiverDepth() {
         return receiverDepth;
     }
 
-    
+
     public void setReceiverDepth(double receiverDepth) {
         if (this.receiverDepth != receiverDepth) {
             clearPhases();
@@ -350,7 +346,7 @@ public class TauP_Time extends TauP_Tool {
         }
         return tModDepth;
     }
-    
+
     public void setTauModel(TauModel tMod) {
         clearPhases();
         this.tMod = tMod;
@@ -361,7 +357,8 @@ public class TauP_Time extends TauP_Tool {
             Alert.info("Model set to "+tMod.getModelName()
             +" with moho="+tMod.getMohoDepth()
             +" cmb="+tMod.getCmbDepth()
-            +" iocb="+tMod.getIocbDepth());
+            +" iocb="+tMod.getIocbDepth()
+            +" radius="+tMod.getRadiusOfEarth());
         }
     }
 
@@ -376,7 +373,7 @@ public class TauP_Time extends TauP_Tool {
     public double[] getDisconDepths() {
         return tMod.getVelocityModel().getDisconDepths();
     }
-    
+
     public void clearPhases() {
         clearArrivals();
         phases = null;
@@ -397,7 +394,7 @@ public class TauP_Time extends TauP_Tool {
     public List<Arrival> getArrivals() {
         return Collections.unmodifiableList(arrivals);
     }
-    
+
     public List<SeismicPhase> getSeismicPhases() {
         if (phases == null) {
             recalcPhases();
@@ -457,31 +454,11 @@ public class TauP_Time extends TauP_Tool {
      * for other unforeseen uses. This may be called multiple times to append
      * more phases. For example: P-0,PcP-1,ScP-4,Sn,SS,S^410S would, assuming no
      * previous phases have been added, put P in T0, PcP in T1, ScP in T5, Sn in
-     * T2, SS in T3, and S^410S in T5.
+     * T2, SS in T3, and S^410S in T6.
      */
     public void parsePhaseList(String phaseList) {
         String phaseEntry = "";
-        phaseList = phaseList.trim();
-        phaseList = phaseList.replace(' ', ',');
-        // remove any empty phases, ie two commas next to each other
-        // should be replaced with one comma
-        phaseList = phaseList.replaceAll(",,+", ",");
-        // remove comma at beginning
-        if(phaseList.startsWith(",")) {
-            if(phaseList.length() > 1) {
-                phaseList = phaseList.substring(1);
-            } else {
-                // phaseList is just a single comma, no phases, so just return
-                return;
-            }
-        }
-        // and comma at end
-        if(phaseList.charAt(phaseList.length() - 1) == ',') {
-            // we know that the length is > 1 as if not then we would have
-            // returned from the previous if
-            phaseList = phaseList.substring(0, phaseList.length() - 1);
-        }
-        String[] namesInList = phaseList.split(",");
+        String[] namesInList = splitPhaseNameList(phaseList);
         for(int i = 0; i < namesInList.length; i++) {
             String[] phaseAndHeader = namesInList[i].split("-");
             try {
@@ -489,27 +466,10 @@ public class TauP_Time extends TauP_Tool {
                     /* no optional dash argument, so just add the name. */
                     appendPhaseName(phaseAndHeader[0]);
                 } else {
-                    if(phaseAndHeader[1].length() == 1
-                            && Character.isDigit(phaseAndHeader[1].charAt(0))) {
-                        /*
-                         * There is an optional argument, so store it and the
-                         * phase name.
-                         */
-                        appendPhaseName(new PhaseName(phaseAndHeader[0],
-                                                      Integer.valueOf(phaseAndHeader[1])
-                                                              .intValue()));
-                    } else if(phaseAndHeader[1].length() == 1
-                            && phaseEntry.charAt(phaseEntry.length() - 1) == 'a') {
-                        /*
-                         * There is an optional argument, use 10 for sac A, so
-                         * store it and the phase name.
-                         */
-                        appendPhaseName(new PhaseName(phaseAndHeader[0],
-                                                      TauP_SetSac.A_HEADER));
-                    } else {
-                        Alert.warning("Problem with phase=" + phaseEntry,
-                                      "Skipping this phase.");
-                    }
+                    int startHeaderRange = -9;
+                    int endHeaderRange = -9;
+                    PhaseName sacPhase = new PhaseName(phaseAndHeader[0], phaseAndHeader[1]);
+                    appendPhaseName(sacPhase);
                 }
             } catch(TauModelException e) {
                 Alert.warning("Problem with phase=" + phaseEntry + " "
@@ -519,6 +479,32 @@ public class TauP_Time extends TauP_Tool {
                 }
             }
         }
+    }
+
+    public static String[] splitPhaseNameList(String phaseList) {
+        String phaseEntry = "";
+        phaseList = phaseList.trim();
+        phaseList = phaseList.replace(' ', ',');
+        // remove any empty phases, ie two commas next to each other
+        // should be replaced with one comma
+        phaseList = phaseList.replaceAll(",,+", ",");
+        // remove comma at beginning
+        if (phaseList.startsWith(",")) {
+            if (phaseList.length() > 1) {
+                phaseList = phaseList.substring(1);
+            } else {
+                // phaseList is just a single comma, no phases, so just return
+                return new String[0];
+            }
+        }
+        // and comma at end
+        if (phaseList.charAt(phaseList.length() - 1) == ',') {
+            // we know that the length is > 1 as if not then we would have
+            // returned from the previous if
+            phaseList = phaseList.substring(0, phaseList.length() - 1);
+        }
+        String[] namesInList = phaseList.split(",");
+        return namesInList;
     }
 
     /**
@@ -534,12 +520,84 @@ public class TauP_Time extends TauP_Tool {
     }
 
     /*
+     * parses the standard command line args for the model, phase source and other
+     * common items used by most tools. Does not do args related to distance or
+     * output file.
+     */
+    protected String[] parseSourceModelCmdLineArgs(String[] origArgs) throws IOException {
+        int i = 0;
+        String[] args = super.parseCommonCmdLineArgs(origArgs);
+        String[] noComprendoArgs = new String[args.length];
+        int numNoComprendoArgs = 0;
+        boolean cmdLineArgPhase = false;
+        boolean cmdLineArgPhaseFile = false;
+        while(i < args.length) {
+            if(i < args.length - 1) {
+                if(dashEquals("mod", args[i]) || dashEquals("model", args[i])) {
+                    toolProps.put("taup.model.name", args[i + 1]);
+                    i++;
+                } else if(args[i].equalsIgnoreCase("-h")) {
+                    toolProps.put("taup.source.depth", args[i + 1]);
+                    i++;
+                } else if(args[i].equalsIgnoreCase("--stadepth")) {
+                    setReceiverDepth(Double.parseDouble(args[i + 1]));
+                    i++;
+                } else if(dashEquals("ph", args[i])) {
+                    if(cmdLineArgPhase) {
+                        // previous cmd line -ph so append
+                        toolProps.put("taup.phase.list",
+                                toolProps.getProperty("taup.phase.list",
+                                        "")
+                                        + "," + args[i + 1]);
+                    } else {
+                        // no previous cmd line -ph so replace defaults
+                        toolProps.put("taup.phase.list", args[i + 1]);
+                    }
+                    cmdLineArgPhase = true;
+                    i++;
+                } else if(dashEquals("pf", args[i])) {
+                    cmdLineArgPhaseFile = true;
+                    toolProps.put("taup.phase.file", args[i + 1]);
+                    i++;
+                } else {
+                    /*
+                     * I don't know how to interpret this argument, so pass it
+                     * back
+                     */
+                    noComprendoArgs[numNoComprendoArgs++] = args[i];
+                }
+            } else {
+                /* I don't know how to interpret this argument, so pass it back */
+                noComprendoArgs[numNoComprendoArgs++] = args[i];
+            }
+            i++;
+        }
+        // check to see if there were phases or a phase file as an argument.
+        // if so then dump the defaults
+        if(cmdLineArgPhaseFile || cmdLineArgPhase) {
+            if(cmdLineArgPhaseFile && !cmdLineArgPhase) {
+                toolProps.remove("taup.phase.list");
+            }
+            if(!cmdLineArgPhaseFile && cmdLineArgPhase) {
+                toolProps.remove("taup.phase.file");
+            }
+        }
+        if(numNoComprendoArgs > 0) {
+            String[] temp = new String[numNoComprendoArgs];
+            System.arraycopy(noComprendoArgs, 0, temp, 0, numNoComprendoArgs);
+            return temp;
+        } else {
+            return new String[0];
+        }
+    }
+
+    /*
      * parses the standard command line args for the taup package. Other tools
      * that subclass this class will likely override this.
      */
     protected String[] parseCmdLineArgs(String[] origArgs) throws IOException {
         int i = 0;
-        String[] args = super.parseCommonCmdLineArgs(origArgs);
+        String[] args = parseSourceModelCmdLineArgs(origArgs);
         String[] noComprendoArgs = new String[args.length];
         int numNoComprendoArgs = 0;
         boolean cmdLineArgPhase = false;
@@ -556,16 +614,7 @@ public class TauP_Time extends TauP_Tool {
                 onlyPrintTime = true;
                 onlyPrintRayP = false;
             } else if(i < args.length - 1) {
-                if(dashEquals("mod", args[i]) || dashEquals("model", args[i])) {
-                    toolProps.put("taup.model.name", args[i + 1]);
-                    i++;
-                } else if(args[i].equalsIgnoreCase("-h")) {
-                    toolProps.put("taup.source.depth", args[i + 1]);
-                    i++;
-                } else if(args[i].equalsIgnoreCase("--stadepth")) {
-                    setReceiverDepth(Double.parseDouble(args[i + 1]));
-                    i++;
-                } else if(dashEquals("deg", args[i])) {
+                if(dashEquals("deg", args[i])) {
                     degrees = Double.valueOf(args[i + 1]).doubleValue();
                     i++;
                 } else if(dashEquals("km", args[i])) {
@@ -580,25 +629,11 @@ public class TauP_Time extends TauP_Tool {
                 } else if(dashEquals("takeoff", args[i])) {
                     takeoffAngle = Double.valueOf(args[i + 1]).doubleValue();
                     i++;
+                } else if(dashEquals("shootray", args[i])) {
+                    shootRayp = Double.valueOf(args[i + 1]).doubleValue();
+                    i++;
                 } else if(dashEquals("rel", args[i])) {
                     relativePhaseName = args[i + 1];
-                    i++;
-                } else if(dashEquals("ph", args[i])) {
-                    if(cmdLineArgPhase) {
-                        // previous cmd line -ph so append
-                        toolProps.put("taup.phase.list",
-                                      toolProps.getProperty("taup.phase.list",
-                                                            "")
-                                              + "," + args[i + 1]);
-                    } else {
-                        // no previous cmd line -ph so replace defaults
-                        toolProps.put("taup.phase.list", args[i + 1]);
-                    }
-                    cmdLineArgPhase = true;
-                    i++;
-                } else if(dashEquals("pf", args[i])) {
-                    cmdLineArgPhaseFile = true;
-                    toolProps.put("taup.phase.file", args[i + 1]);
                     i++;
                 } else if(i < args.length - 2) {
                     if(args[i].equalsIgnoreCase("-sta")
@@ -662,9 +697,9 @@ public class TauP_Time extends TauP_Tool {
         calcTime(degrees);
         if (relativePhaseName != "") {
             List<SeismicPhase> relPhases = new ArrayList<SeismicPhase>();
-            List<String> splitNames = getPhaseNames(relativePhaseName);
+            List<String> splitNames = extractPhaseNames(relativePhaseName);
             for (String sName : splitNames) {
-                SeismicPhase relPhase = new SeismicPhase(sName, getTauModelDepthCorrected());
+                SeismicPhase relPhase = SeismicPhaseFactory.createPhase(sName, getTauModelDepthCorrected(), this.getSourceDepth(), this.getReceiverDepth(), this.DEBUG);
                 relPhases.add(relPhase);
             }
             relativeArrival = SeismicPhase.getEarliestArrival(relPhases, degrees);
@@ -687,7 +722,7 @@ public class TauP_Time extends TauP_Tool {
         }
         sortArrivals();
     }
-    
+
     public void calcTakeoff(double takeoffAngle) throws TauModelException {
         stationLat = Double.MAX_VALUE;
         stationLon = Double.MAX_VALUE;
@@ -702,13 +737,44 @@ public class TauP_Time extends TauP_Tool {
                 double rayParam = phase.calcRayParamForTakeoffAngle(takeoffAngle);
                 Arrival phaseArrival;
                 try {
-                    phaseArrival = phase.shootRay(rayParam);
-                    arrivals.add(phaseArrival);
+                    if (phase.getMinRayParam() <= rayParam && rayParam <= phase.getMaxRayParam()) {
+                        phaseArrival = phase.shootRay(rayParam);
+                        arrivals.add(phaseArrival);
+                    }
                 } catch(NoSuchLayerException e) {
                     Alert.warning("NoSuchLayerException", e.getMessage());
                 } catch(SlownessModelException e) {
                     Alert.warning("SlownessModelException", e.getMessage());
                 }
+            }
+        }
+        sortArrivals();
+    }
+
+    /**
+     * Shoots ray parameter for each phases from the source.
+     * @param rayParam ray parameter in s/radian
+     * @throws TauModelException
+     */
+    public void shootRayParameter(double rayParam) throws TauModelException {
+        stationLat = Double.MAX_VALUE;
+        stationLon = Double.MAX_VALUE;
+        depthCorrect(getSourceDepth(), getReceiverDepth());
+        clearArrivals();
+        SeismicPhase phase;
+        List<SeismicPhase> phaseList = getSeismicPhases();
+        for(int phaseNum = 0; phaseNum < phaseList.size(); phaseNum++) {
+            phase = phaseList.get(phaseNum);
+            Arrival phaseArrival;
+            try {
+                if (phase.getMinRayParam() <= rayParam && rayParam <= phase.getMaxRayParam()) {
+                    phaseArrival = phase.shootRay(rayParam);
+                    arrivals.add(phaseArrival);
+                }
+            } catch (NoSuchLayerException e) {
+                Alert.warning("NoSuchLayerException", e.getMessage());
+            } catch (SlownessModelException e) {
+                Alert.warning("SlownessModelException", e.getMessage());
             }
         }
         sortArrivals();
@@ -726,13 +792,13 @@ public class TauP_Time extends TauP_Tool {
     public void depthCorrect(double depth) throws TauModelException {
         depthCorrect(depth, getReceiverDepth());
     }
-    
+
     /**
-     * 
+     *
      * In general, this is called by each tool's calculate methods, and so should
      * not need to be called by outside code. Most of the time calling setSourceDepth
      * and setReceiverDepth is preferred, allowing the tool to choose when to call depthCorrect.
-     * 
+     *
      * @param depth the source depth
      * @param receiverDepth the receiver depth
      * @throws TauModelException
@@ -786,7 +852,9 @@ public class TauP_Time extends TauP_Tool {
             if(!alreadyAdded) {
                 // didn't find it precomputed, so recalculate
                 try {
-                    seismicPhase = new SeismicPhase(tempPhaseName, getTauModelDepthCorrected(), getReceiverDepth());
+                    seismicPhase = SeismicPhaseFactory.createPhase(tempPhaseName,
+                            getTauModelDepthCorrected(), getSourceDepth(), getReceiverDepth(), DEBUG);
+                    seismicPhase.verbose = verbose;
                     newPhases.add(seismicPhase);
 
                     if(verbose) {
@@ -863,8 +931,7 @@ public class TauP_Time extends TauP_Tool {
                 out.print("  "
                         + Outputs.formatTime(currArrival.getTime())
                         + "  "
-                        + Outputs.formatRayParam(Math.PI / 180.0
-                                * currArrival.getRayParam()) + "  ");
+                        + Outputs.formatRayParam(currArrival.getRayParam() / Arrival.RtoD) + "  ");
                 out.print(Outputs.formatDistance(currArrival.getTakeoffAngle())+" ");
                 out.print(Outputs.formatDistance(currArrival.getIncidentAngle())+" ");
                 out.print(Outputs.formatDistance(currArrival.getDistDeg()));
@@ -875,7 +942,12 @@ public class TauP_Time extends TauP_Tool {
                 }
                 out.print(phasePuristFormat.form(currArrival.getPuristName()));
                 if (relativePhaseName != "") {
-                    out.print(Outputs.formatTime(currArrival.getTime() - relativeArrival.getTime()));
+                    if (relativeArrival != null) {
+                        out.print(" "+Outputs.formatTime(currArrival.getTime() - relativeArrival.getTime()));
+                        out.print(" +"+phaseFormat.form(relativeArrival.getName()));
+                    } else {
+                        out.print(phaseFormat.form("no arrival"));
+                    }
                 }
                 out.println();
             }
@@ -896,8 +968,17 @@ public class TauP_Time extends TauP_Tool {
         out.println();
         out.flush();
     }
-    
+
     public void printResultJSON(PrintWriter out) {
+        String s = resultAsJSON(modelName, depth, getReceiverDepth(), getPhaseNames(), arrivals);
+        out.println(s);
+    }
+
+    public static String resultAsJSON(String modelName,
+                                       double depth,
+                                       double receiverDepth,
+                                       String[] phases,
+                                       List<Arrival> arrivals) {
         String Q = ""+'"';
         String COMMA = ",";
         String QCOMMA = Q+COMMA;
@@ -910,12 +991,13 @@ public class TauP_Time extends TauP_Tool {
         String SSQ = S+SQ;
         String SSSQ = S+SSQ;
         // use cast to float to limit digits printed
+        StringWriter sw = new StringWriter();
+        PrintWriter out = new PrintWriter(sw);
         out.println("{");
         out.println(SQ+"model"+QCQ+modelName+QCOMMA);
         out.println(SQ+"sourcedepth"+QC+(float)depth+COMMA);
-        out.println(SQ+"receiverdepth"+QC+(float)getReceiverDepth()+COMMA);
+        out.println(SQ+"receiverdepth"+QC+(float)receiverDepth+COMMA);
         out.print(SQ+"phases"+Q+": [");
-        String[] phases = getPhaseNames();
         for(int p=0; p<phases.length; p++) {
             out.print(" "+Q+phases[p]+Q);
             if ( p != phases.length-1) {
@@ -942,7 +1024,8 @@ public class TauP_Time extends TauP_Tool {
             out.println();
         }
         out.println(S+"]");
-        out.println("}");
+        out.print("}");
+        return sw.toString();
     }
 
     /**
@@ -953,9 +1036,9 @@ public class TauP_Time extends TauP_Tool {
      * the setTauModel(TauModel) method.
      */
     public void init() throws TauPException {
-        TauP_Time.DEBUG = TauP_Time.DEBUG || ToolRun.DEBUG;
-        this.verbose = this.verbose || TauP_Time.DEBUG || ToolRun.VERBOSE;
-        
+        DEBUG = DEBUG || ToolRun.DEBUG;
+        this.verbose = this.verbose || DEBUG || ToolRun.VERBOSE;
+
         if(phaseNames.size() == 0) {
             if(toolProps.containsKey("taup.phase.file")) {
                 if(toolProps.containsKey("taup.phase.list")) {
@@ -1003,7 +1086,7 @@ public class TauP_Time extends TauP_Tool {
     				* 180.0 / Math.PI;
     	}
     }
-    
+
     public void printHelp() {
         Alert.info("Enter:\nh for new depth\nr to recalculate\n"
                 + "p to append phases, \nc to clear phases\n"
@@ -1015,13 +1098,16 @@ public class TauP_Time extends TauP_Tool {
     }
 
     public void start() throws IOException, TauModelException, TauPException {
-        if((degrees != Double.MAX_VALUE || takeoffAngle != Double.MAX_VALUE 
+        if((degrees != Double.MAX_VALUE || takeoffAngle != Double.MAX_VALUE
+                || shootRayp != Double.MAX_VALUE
                 || (stationLat != Double.MAX_VALUE
                 && stationLon != Double.MAX_VALUE
                 && eventLat != Double.MAX_VALUE && eventLon != Double.MAX_VALUE))) {
             /* enough info given on cmd line, so just do one calc. */
             if (takeoffAngle != Double.MAX_VALUE) {
                 calcTakeoff(takeoffAngle);
+            } else if (shootRayp != Double.MAX_VALUE) {
+                shootRayParameter(shootRayp/SphericalCoords.dtor);
             } else {
                 if(degrees == Double.MAX_VALUE) {
                     degrees = SphericalCoords.distance(stationLat,
@@ -1385,6 +1471,23 @@ public class TauP_Time extends TauP_Tool {
                         }
                         readMode = 'd';
                         break;
+                    case 'z':
+                        System.out.print("Enter ray parameter (s/deg): ");
+                        // takeoff angle
+                        double shootRayp;
+                        tokenIn.nextToken();
+                        if(tokenIn.ttype == StreamTokenizer.TT_NUMBER) {
+                            shootRayp = tokenIn.nval;
+                            shootRayParameter(shootRayp/SphericalCoords.dtor);
+                            printResult(getWriter());
+                        } else {
+                            Alert.warning("Expected a number.", "got "
+                                    + tokenIn + " instead.");
+                            printHelp();
+                            break;
+                        }
+                        readMode = 'd';
+                        break;
                     case 'q':
                         return;
                 }
@@ -1404,24 +1507,39 @@ public class TauP_Time extends TauP_Tool {
     public void printStdUsageHead() {
         TauP_Tool.printStdUsageHead(this.getClass());
     }
-    
+
     /** Prints the command line arguments common to all TauP tools. */
     public void printStdUsage() {
         printStdUsageHead();
+        printPhaseUsage();
+        printDistanceUsage();
+    }
+
+    public void printPhaseUsage() {
         Alert.info("-ph phase list     -- comma separated phase list\n"
                 + "-pf phasefile      -- file containing phases\n\n"
                 + "-mod[el] modelname -- use velocity model \"modelname\" for calculations\n"
                 + "                      Default is iasp91.\n\n"
                 + "-h depth           -- source depth in km\n\n"
-                + "--stadepth depth   -- receiver depth in km\n\n"
-                + "Distance is given by:\n\n"
+                + "--stadepth depth   -- receiver depth in km\n"
+        );
+    }
+
+    public void printDistanceUsage() {
+        Alert.info("Distance is given by:\n\n"
                 + "-deg degrees       -- distance in degrees,\n"
                 + "-km kilometers     -- distance in kilometers,\n"
                 + "                      assumes radius of earth is 6371km,\n\n"
                 + "or by giving the station and event latitude and lonitude,\n"
                 + "                      assumes a spherical earth,\n\n"
                 + "-sta[tion] lat lon -- sets the station latitude and longitude\n"
-                + "-evt       lat lon -- sets the event latitude and longitude\n\n");
+                + "-evt       lat lon -- sets the event latitude and longitude\n\n"
+                + "or by giving the takeoff angle,\n"
+                + "--takeoff angle    -- takeoff angle from the source\n"
+                + "                      zero is down, 90 horizontal, 180 is up\n\n"
+                + "or by giving the ray parameter,\n"
+                + "--shootray param   -- ray parameter from the source in s/deg\n"
+                + "                      up or down is determined by the phase\n\n");
     }
 
     public void printUsage() {
@@ -1432,7 +1550,7 @@ public class TauP_Time extends TauP_Tool {
                  + "--json             -- output travel times as json\n");
         printStdUsageTail();
     }
-    
+
     /**
      * solves the equation (yb-ya)/(xb-xa) = (y-ya)/(x-xa) for y given x. Useful
      * for finding the pixel for a value given the dimension of the area and the
@@ -1452,11 +1570,11 @@ public class TauP_Time extends TauP_Tool {
         }
         return (yb - ya) * (x - xa) / (xb - xa) + ya;
     }
-    
+
     /**
      * Allows TauP_Time to run as an application. Creates an instance of
-     * TauP_Time. 
-     * 
+     * TauP_Time.
+     *
      * ToolRun.main should be used instead.
      */
     public static void main(String[] args) throws IOException {

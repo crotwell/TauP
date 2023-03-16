@@ -2,6 +2,7 @@
 build
 .gradle
 *.aux
+taup.bbl
 taup.blg
 taup.log
 taup.out
@@ -9,3 +10,4 @@ taup.toc
 testing
 tmp
 /cmdLineTest/
+.idea
