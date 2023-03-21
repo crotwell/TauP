@@ -1337,9 +1337,7 @@ public abstract class SlownessModel implements Serializable {
         if(vMod.getNumLayers() == 0) {
             throw new SlownessModelException("velModel.getNumLayers()==0");
         }
-        if (vMod.getVelocityLayer(0).getTopSVelocity() == 0) {
-            throw new SlownessModelException("Unable to handle zero S velocity layers at surface. This should be fixed at some point, but is a limitation of TauP at this point.");
-        }
+        VelocityLayer firstVL = vMod.getVelocityLayer(0);
         if(DEBUG) {
             System.out.println("start createSample");
         }

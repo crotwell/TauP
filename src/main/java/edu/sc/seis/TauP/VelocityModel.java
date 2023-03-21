@@ -84,6 +84,8 @@ public class VelocityModel implements Cloneable, Serializable {
      */
     protected double radiusOfEarth = 6371.0; // kilometers
 
+    public List<NamedVelocityDiscon> namedDiscon = new ArrayList<>();
+
     public static final double DEFAULT_MOHO = 35;
 
     public static final double DEFAULT_CMB = 2889.0;
@@ -1171,7 +1173,7 @@ public class VelocityModel implements Cloneable, Serializable {
         VelocityLayer lastZeroThickLayer = null;
         double topDepth, topPVel, topSVel, topDensity = 2.6, topQp = 1000, topQs = 2000;
         double botDepth, botPVel, botSVel, botDensity = topDensity, botQp = topQp, botQs = topQs;
-
+        List<NamedVelocityDiscon> namedDiscon = new ArrayList<>();
         double mohoDepth = DEFAULT_MOHO;
         double cmbDepth = DEFAULT_CMB;
         double iocbDepth = DEFAULT_IOCB;
@@ -1184,18 +1186,15 @@ public class VelocityModel implements Cloneable, Serializable {
         }
         // check for crustless model, moho or core at surface
         while(tokenIn.ttype == StreamTokenizer.TT_WORD) {
-            if(tokenIn.sval.equalsIgnoreCase("mantle") || tokenIn.sval.equalsIgnoreCase("moho")) {
+            namedDiscon.add(new NamedVelocityDiscon(tokenIn.sval, 0));
+            if(NamedVelocityDiscon.isMoho(tokenIn.sval)) {
                 mohoDepth = 0; // Moho
-                readTillEOL(tokenIn);
-            } else if(tokenIn.sval.equalsIgnoreCase("outer-core") || tokenIn.sval.equalsIgnoreCase("cmb")) {
-                throw new VelocityModelException("Cannot have model with only outer and inner core due to phase naming rules. "
-                        +"Use model with all mantle instead.");
-            } else if(tokenIn.sval.equalsIgnoreCase("inner-core") || tokenIn.sval.equalsIgnoreCase("icocb")) {
-                throw new VelocityModelException("Cannot have model with only inner core due to phase naming rules. "
-                        +"Use model with all mantle instead.");
-            } else {
-                throw new VelocityModelException("expected number as first depth but saw word: "+tokenIn.sval);
+            } else if(NamedVelocityDiscon.isCmb(tokenIn.sval)) {
+                cmbDepth = 0;
+            } else if(NamedVelocityDiscon.isIcocb(tokenIn.sval)) {
+                iocbDepth = 0;
             }
+            readTillEOL(tokenIn);
         }
         topDepth = readNumber(tokenIn);
         topPVel = readNumber(tokenIn);
@@ -1232,14 +1231,19 @@ public class VelocityModel implements Cloneable, Serializable {
                 continue;
             }
             if(tokenIn.ttype == StreamTokenizer.TT_WORD) {
+                namedDiscon.add(new NamedVelocityDiscon(tokenIn.sval, topDepth));
                 previousLineNamedDiscon = true;
-                if(tokenIn.sval.equalsIgnoreCase("mantle") || tokenIn.sval.equalsIgnoreCase("moho")) {
-                    mohoDepth = topDepth; // Moho
-                }
-                if(tokenIn.sval.equalsIgnoreCase("outer-core") || tokenIn.sval.equalsIgnoreCase("cmb")) {
+                if(tokenIn.sval.equalsIgnoreCase(NamedVelocityDiscon.ICE)) {
+                    // free surface to ice
+                } else if(NamedVelocityDiscon.isMoho(tokenIn.sval)) {
+                    mohoDepth = topDepth; // Moho, top of mantle
+                } else if(NamedVelocityDiscon.isIceBed(tokenIn.sval)) {
+                    //iceOceanDepth = 0;
+                } else if(NamedVelocityDiscon.isSeabed(tokenIn.sval)) {
+                    //oceanCrustDepth = 0;
+                } else if(NamedVelocityDiscon.isCmb(tokenIn.sval)) {
                     cmbDepth = topDepth; // Core Mantle Boundary
-                }
-                if(tokenIn.sval.equalsIgnoreCase("inner-core") || tokenIn.sval.equalsIgnoreCase("icocb")) {
+                } else if(NamedVelocityDiscon.isIcocb(tokenIn.sval)) {
                     iocbDepth = topDepth; // Inner Outer Core Boundary
                 }
                 while(tokenIn.ttype != StreamTokenizer.TT_EOL) {
@@ -1337,7 +1341,7 @@ public class VelocityModel implements Cloneable, Serializable {
                                  maxRadius,
                                  true,
                                  layers);
-
+        vMod.namedDiscon = namedDiscon;
         vMod.fixDisconDepths();
         return vMod;
     }
@@ -1349,9 +1353,10 @@ public class VelocityModel implements Cloneable, Serializable {
      * Similarly, if there are no discontinuities at all then the cmb is set to
      * the radius of the earth. Similarly for the iocb, except it must be a
      * fluid to solid boundary and deeper than 100km to avoid problems with
-     * shallower fluid layers, eg oceans.
+     * shallower fluid layers, eg oceans. Generally this is only needed for
+     * the .tvel model format as it does not have a means to name discontinuities.
      */
-    public boolean fixDisconDepths() {
+    public boolean fixDisconDepths() throws VelocityModelException {
         boolean changeMade = false;
         VelocityLayer aboveLayer, belowLayer;
         double maxCrustVp = 7.5;
@@ -1361,12 +1366,18 @@ public class VelocityModel implements Cloneable, Serializable {
         VelocityLayer topLayer = getVelocityLayer(0);
         double deltaV = 0.0001; // dummy to make discon at surface
         belowLayer = new VelocityLayer(-1, -1, 0, topLayer.getTopPVelocity()-deltaV, topLayer.getTopPVelocity()-deltaV, topLayer.getTopSVelocity(), topLayer.getTopSVelocity(), topLayer.getTopDensity(), topLayer.getTopDensity());
+        ArrayList<NamedVelocityDiscon> unverifiedNamedDiscon = new ArrayList<>(namedDiscon);
         for(int layerNum = 0; layerNum < getNumLayers() ; layerNum++) {
             aboveLayer = belowLayer;
             belowLayer = getVelocityLayer(layerNum);
             if(aboveLayer.getBotPVelocity() != belowLayer.getTopPVelocity()
                     || aboveLayer.getBotSVelocity() != belowLayer.getTopSVelocity()) {
                 // a discontinuity
+                for(NamedVelocityDiscon nl : namedDiscon) {
+                    if (nl.depth == belowLayer.getTopDepth()) {
+                        unverifiedNamedDiscon.remove(nl);
+                    }
+                }
                 if( aboveLayer.getBotDepth() < mohoMin && aboveLayer.getBotPVelocity() <= maxCrustVp) {
                     tempMohoDepth = aboveLayer.getBotDepth();
                 }
@@ -1395,6 +1406,22 @@ public class VelocityModel implements Cloneable, Serializable {
                 && tempIocbDepth == tempCmbDepth )) {
             tempIocbDepth = belowLayer.getBotDepth();
             iocbMin = Math.abs(iocbDepth - belowLayer.getBotDepth());
+        }
+        // make sure all named discontinuties are actual discontinuities
+        if (unverifiedNamedDiscon.size() != 0) {
+            throw new VelocityModelException("Named Discontinuity not at actual model discontinuity: "+unverifiedNamedDiscon.get(0));
+        }
+        for (NamedVelocityDiscon nl : namedDiscon) {
+            // reset any depths if they were actually named in the file, assume user knows best
+            if (nl.isMoho()) {
+                tempMohoDepth = mohoDepth;
+            }
+            if (nl.isCmb()) {
+                tempCmbDepth = cmbDepth;
+            }
+            if (nl.isIocb()) {
+                tempIocbDepth = iocbDepth;
+            }
         }
         if(mohoDepth != tempMohoDepth || cmbDepth != tempCmbDepth
                 || iocbDepth != tempIocbDepth) {

@@ -628,6 +628,11 @@ public class SeismicPhaseFactory {
                                    boolean isPWave, boolean isPWavePrev, int legNum)
             throws TauModelException {
         PhaseInteraction endAction;
+        if (tMod.getVelocityModel().cmbDepth == 0) {
+            // no crust or mantle, so no P or p
+            maxRayParam = -1;
+            return FAIL;
+        }
         if(nextLeg.startsWith("v") || nextLeg.startsWith("V")) {
             throw new TauModelException(getName()+" p and s and k must always be up going "
                     + " and cannot come immediately before a top-side reflection."
@@ -723,6 +728,11 @@ public class SeismicPhaseFactory {
                                    boolean isPWave, boolean isPWavePrev, int legNum)
             throws TauModelException {
         PhaseInteraction endAction;
+        if (tMod.getVelocityModel().cmbDepth == 0) {
+            // no crust or mantle, so no P or P
+            maxRayParam = -1;
+            return FAIL;
+        }
         if(nextLeg.equals("P") || nextLeg.equals("S")
                 || nextLeg.equals("Pn") || nextLeg.equals("Sn")
                 || nextLeg.equals("END")) {
@@ -966,6 +976,11 @@ public class SeismicPhaseFactory {
                                        boolean isPWave, boolean isPWavePrev, int legNum)
             throws TauModelException {
         PhaseInteraction endAction;
+        if (tMod.getVelocityModel().cmbDepth == 0) {
+            // no crust or mantle, so no P or P
+            maxRayParam = -1;
+            return FAIL;
+        }
         if(nextLeg.equals("END")) {
             if (receiverDepth > 0) {
                 endAction = END_DOWN;
@@ -1070,7 +1085,11 @@ public class SeismicPhaseFactory {
                                    boolean isPWave, boolean isPWavePrev, int legNum)
             throws TauModelException {
         PhaseInteraction endAction;
-
+        if (tMod.getVelocityModel().cmbDepth == 0) {
+            // no crust or mantle, so no P or P
+            maxRayParam = -1;
+            return FAIL;
+        }
         if(currLeg.equals("Pdiff") || currLeg.equals("Sdiff")) {
             endAction = DIFFRACT;
             /*

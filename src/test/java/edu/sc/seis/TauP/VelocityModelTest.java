@@ -57,20 +57,6 @@ public class VelocityModelTest {
         
     }
 
-    @Test
-    public void testAllCore() throws IOException, VelocityModelException {
-        String modelName = "allCore.nd";
-        Exception exception = assertThrows(VelocityModelException.class, () ->
-    	    loadTestVelMod(modelName));
-    }
-
-    @Test
-    public void testAllInnerCoreCore() throws IOException {
-        String modelName = "allInnerCore.nd";
-        Exception exception = assertThrows(VelocityModelException.class, () ->
-        	loadTestVelMod(modelName));
-        
-    }
 
     @Test
     public void testNoOuterCore() throws IOException, VelocityModelException {
