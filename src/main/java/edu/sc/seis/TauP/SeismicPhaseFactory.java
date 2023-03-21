@@ -464,7 +464,7 @@ public class SeismicPhaseFactory {
             } else if(currLeg.equals("s") || currLeg.startsWith("S")
                     || currLeg.equals("J")|| currLeg.equals("j")) {
                 isPWave = SWAVE;
-            } else if(currLeg.equals("K")|| currLeg.equals("k")) {
+            } else if(currLeg.startsWith("K") || currLeg.equals("k")) {
                 /*
                  * here we want to use whatever isPWave was on the last leg so
                  * do nothing. This makes sure we us the correct maxRayParam
@@ -2269,6 +2269,18 @@ public class SeismicPhaseFactory {
                 if (prevSegment.endBranch == startBranch && prevSegment.isDownGoing == true
                         && ! ( prevSegment.endAction == TURN || prevSegment.endAction == DIFFRACT || prevSegment.endAction == HEAD || prevSegment.endAction == REFLECT_TOPSIDE || prevSegment.endAction == REFLECT_TOPSIDE_CRITICAL)) {
                     throw new TauModelException(getName()+": Segment is upgoing, but previous action was not to reflect topside: "+currLeg+" "+endActionString(prevSegment.endAction));
+                }
+            }
+        }
+        if ( ! isPWave &&  ! (currLeg.startsWith("K") || currLeg.equals("k"))) {
+            // outer core K is treated as S wave as special case
+            for(int i = Math.min(startBranch, endBranch); i <= Math.max(startBranch,endBranch); i++) {
+                TauBranch tb = tMod.getTauBranch(i, isPWave);
+                for (DepthRange fluidDR : tMod.getSlownessModel().fluidLayerDepths) {
+                    if (tb.getTopDepth() >= fluidDR.topDepth && tb.getTopDepth() < fluidDR.botDepth
+                            || tb.getBotDepth() > fluidDR.topDepth && tb.getBotDepth() <= fluidDR.botDepth) {
+                        throw new TauModelException("S wave branch in "+getName()+" is in fluid: "+tb+" "+fluidDR);
+                    }
                 }
             }
         }
