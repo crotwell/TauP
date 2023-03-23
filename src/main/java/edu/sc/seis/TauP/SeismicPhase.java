@@ -760,10 +760,10 @@ public class SeismicPhase implements Serializable, Cloneable {
         }
         VelocityModel vMod = getTauModel().getVelocityModel();
         try {
-            char firstLeg = name.charAt(0);
-            if (firstLeg == 'P' || firstLeg == 'p' || firstLeg == 'K' || firstLeg == 'k' || firstLeg == 'I' || firstLeg == 'y') {
+            char firstLeg;
+            if (segmentList.get(0).isPWave) {
                 firstLeg = 'P';
-            } else if (firstLeg == 'S' || firstLeg == 's' || firstLeg == 'J' ) {
+            } else {
                 firstLeg = 'S';
             }
             if (getDownGoing()[0]) {
@@ -791,10 +791,10 @@ public class SeismicPhase implements Serializable, Cloneable {
         double incidentVelocity;
         VelocityModel vMod = getTauModel().getVelocityModel();
         try {
-            char lastLeg = getLegs().get(getLegs().size()-2).charAt(0); // last item is "END", assume first char is P or S
-            if (lastLeg == 'P' || lastLeg == 'p' || lastLeg == 'K' || lastLeg == 'k' || lastLeg == 'I') {
+            char lastLeg;
+            if (segmentList.get(segmentList.size()-1).isPWave) {
                 lastLeg = 'P';
-            } else if (lastLeg == 'S' || lastLeg == 's' || lastLeg == 'J' ) {
+            } else {
                 lastLeg = 'S';
             }
             if (getDownGoing()[getDownGoing().length-1]) {
