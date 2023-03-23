@@ -448,7 +448,7 @@ public class SeismicPhaseFactory {
                 }
             }
             isLegDepth = isNextLegDepth;
-            // find out if the next leg represents a phase conversion depth
+            // find out if the next leg represents a phase conversion depth or head/diff wave at discon
             try {
                 nextLegDepth = Double.parseDouble(nextLeg);
                 isNextLegDepth = true;
@@ -508,7 +508,7 @@ public class SeismicPhaseFactory {
                     endAction = FAIL;
                 }
             } else if(currLeg.equals("Kdiff")) {
-                /* Now deal with Ked. */
+                /* Now deal with Kdiff. */
                 if ( checkDegenerateOuterCore(prevLeg, currLeg, nextLeg, isPWave, isPWavePrev, legNum)) {
                     endAction = currLegIs_Kdiff(prevLeg, currLeg, nextLeg, isPWave, isPWavePrev, legNum);
                 } else {
@@ -579,9 +579,15 @@ public class SeismicPhaseFactory {
                 // check for phase like P0s, but could also be P2s if first discon is deeper
                 int b = LegPuller.closestBranchToDepth(tMod, currLeg);
                 if (b == 0 && (nextLeg.equals("p") || nextLeg.equals("s"))) {
-                    throw new TauModelException(getName()+" Phase not recognized: "+currLeg
-                            + " followed by " + nextLeg+" looks like a upgoing wave from the free surface as closest discontinuity to "+currLeg+" is zero depth.");
+                    throw new TauModelException(getName() + " Phase not recognized: " + currLeg
+                            + " followed by " + nextLeg + " looks like a upgoing wave from the free surface as closest discontinuity to " + currLeg + " is zero depth.");
                 }
+            } else if (currLeg.endsWith("n")) {
+                // non-standard head wave
+                currLegIs_OtherHead(prevLeg, currLeg, nextLeg, isPWave, isPWavePrev, legNum);
+            } else if (currLeg.endsWith("diff")) {
+                // non-standard diffraction
+                currLegIs_Otherdiff(prevLeg, currLeg, nextLeg, isPWave, isPWavePrev, legNum);
             } else {
                 throw new TauModelException(getName()+" Phase not recognized (10): " + currLeg
                         + " followed by " + nextLeg);
@@ -875,20 +881,20 @@ public class SeismicPhaseFactory {
             // treat the moho in the same wasy as 410 type
             // discontinuities
             disconBranch = LegPuller.closestBranchToDepth(tMod, nextLeg);
-            if(DEBUG) {
+            if (DEBUG) {
                 System.out.println("DisconBranch=" + disconBranch
                         + " for " + nextLeg);
                 System.out.println(tMod.getTauBranch(disconBranch,
                                 isPWave)
                         .getTopDepth());
             }
-            if(prevEndAction == TURN || prevEndAction == REFLECT_TOPSIDE
+            if (prevEndAction == TURN || prevEndAction == REFLECT_TOPSIDE
                     || prevEndAction == REFLECT_TOPSIDE_CRITICAL || prevEndAction == TRANSUP) {
                 // upgoing section
-                if(disconBranch > currBranch) {
+                if (disconBranch > currBranch) {
                     // check for discontinuity below the current branch
                     // when the ray should be upgoing
-                    throw new TauModelException(getName()+" Phase not recognized (6): "
+                    throw new TauModelException(getName() + " Phase not recognized (6): "
                             + currLeg
                             + " followed by "
                             + nextLeg
@@ -909,8 +915,8 @@ public class SeismicPhaseFactory {
                 // leg to determine whether to convert on the downgoing
                 // or
                 // upgoing part of the path
-                String nextNextLeg = (String)legs.get(legNum + 2);
-                if(nextNextLeg.equals("p") || nextNextLeg.equals("s")) {
+                String nextNextLeg = (String) legs.get(legNum + 2);
+                if (nextNextLeg.equals("p") || nextNextLeg.equals("s")) {
                     // convert on upgoing section
                     endAction = TURN;
                     addToBranch(tMod,
@@ -926,9 +932,9 @@ public class SeismicPhaseFactory {
                             isPWave,
                             endAction,
                             currLeg);
-                } else if(nextNextLeg.equals("P")
+                } else if (nextNextLeg.equals("P")
                         || nextNextLeg.equals("S")) {
-                    if(disconBranch > currBranch) {
+                    if (disconBranch > currBranch) {
                         // discon is below current loc
                         endAction = TRANSDOWN;
                         addToBranch(tMod,
@@ -942,7 +948,7 @@ public class SeismicPhaseFactory {
                         // downgoing ray, so this is an illegal ray for
                         // this source depth
                         maxRayParam = -1;
-                        if(DEBUG) {
+                        if (DEBUG) {
                             System.out.println("Cannot phase convert on the "
                                     + "downgoing side if the discontinuity is above "
                                     + "the phase leg starting point, "
@@ -958,13 +964,35 @@ public class SeismicPhaseFactory {
                         return FAIL;
                     }
                 } else {
-                    throw new TauModelException(getName()+" Phase not recognized (7): "
+                    throw new TauModelException(getName() + " Phase not recognized (7): "
                             + currLeg
                             + " followed by "
                             + nextLeg
                             + " followed by " + nextNextLeg);
                 }
             }
+        } else if (nextLeg.endsWith("n") && nextLeg.length() > 1) {
+            String numString = nextLeg.substring(0, nextLeg.length()-1);
+            double headDepth = Double.parseDouble(numString);
+            disconBranch = LegPuller.closestBranchToDepth(tMod, numString);
+            endAction = HEAD;
+            addToBranch(tMod,
+                    currBranch,
+                    disconBranch-1,
+                    isPWave,
+                    endAction,
+                    currLeg);
+        } else if (nextLeg.endsWith("diff") && nextLeg.length() > 4) {
+            String numString = nextLeg.substring(0, nextLeg.length()-4);
+            double diffDepth = Double.parseDouble(numString);
+            disconBranch = LegPuller.closestBranchToDepth(tMod, numString);
+            endAction = DIFFRACT;
+            addToBranch(tMod,
+                    currBranch,
+                    disconBranch-1,
+                    isPWave,
+                    endAction,
+                    currLeg);
         } else {
             throw new TauModelException(getName()+" Phase not recognized (8): "
                     + currLeg + " followed by " + nextLeg);
@@ -1004,6 +1032,28 @@ public class SeismicPhaseFactory {
                 // like Sed Pdiff conversion
                 isPWave = ! isPWave;
             }
+        } else if (nextLeg.endsWith("n") && nextLeg.length() > 1) {
+            String numString = nextLeg.substring(0, nextLeg.length()-1);
+            double headDepth = Double.parseDouble(numString);
+            disconBranch = LegPuller.closestBranchToDepth(tMod, numString);
+            endAction = HEAD;
+            addToBranch(tMod,
+                    currBranch,
+                    disconBranch-1,
+                    isPWave,
+                    endAction,
+                    currLeg);
+        } else if (nextLeg.endsWith("diff") && nextLeg.length() > 4) {
+            String numString = nextLeg.substring(0, nextLeg.length()-4);
+            double diffDepth = Double.parseDouble(numString);
+            disconBranch = LegPuller.closestBranchToDepth(tMod, numString);
+            endAction = DIFFRACT;
+            addToBranch(tMod,
+                    currBranch,
+                    disconBranch - 1,
+                    isPWave,
+                    endAction,
+                    currLeg);
         } else if(nextLeg.equals("K") || nextLeg.equals("Ked") || nextLeg.equals("Kdiff")) {
             endAction = TRANSDOWN;
             addToBranch(tMod,
@@ -1327,6 +1377,56 @@ public class SeismicPhaseFactory {
         return endAction;
     }
 
+    PhaseInteraction currLegIs_OtherHead(String prevLeg, String currLeg, String nextLeg,
+                                     boolean isPWave, boolean isPWavePrev, int legNum)
+            throws TauModelException {
+        PhaseInteraction endAction;
+        if (currLeg.endsWith("n")) {
+            if(nextLeg.equals("END")) {
+                endAction = END;
+                addToBranch(tMod,
+                        currBranch,
+                        upgoingRecBranch,
+                        isPWave,
+                        endAction,
+                        currLeg);
+                // should handle other nextLeg besides END ???
+            } else {
+                throw new TauModelException(getName() + " Phase not recognized for non-standard diffraction: "
+                        + currLeg + " followed by " + nextLeg);
+            }
+        } else {
+            throw new TauModelException(getName() + " Phase not recognized for non-standard diffraction: "
+                    + currLeg + " followed by " + nextLeg);
+        }
+        return endAction;
+    }
+
+    PhaseInteraction currLegIs_Otherdiff(String prevLeg, String currLeg, String nextLeg,
+                                         boolean isPWave, boolean isPWavePrev, int legNum)
+            throws TauModelException {
+        PhaseInteraction endAction;
+        if (currLeg.endsWith("diff")) {
+            if(nextLeg.equals("END")) {
+                endAction = END;
+                addToBranch(tMod,
+                        currBranch,
+                        upgoingRecBranch,
+                        isPWave,
+                        endAction,
+                        currLeg);
+                // should handle other nextLeg besides END ???
+            } else {
+                throw new TauModelException(getName() + " Phase not recognized for non-standard diffraction: "
+                        + currLeg + " followed by " + nextLeg);
+            }
+        } else {
+            throw new TauModelException(getName() + " Phase not recognized for non-standard diffraction: "
+                    + currLeg + " followed by " + nextLeg);
+        }
+        return endAction;
+    }
+
     boolean checkDegenerateOuterCore(String prevLeg, String currLeg, String nextLeg,
                                  boolean isPWave, boolean isPWavePrev, int legNum)
             throws TauModelException {
@@ -1599,6 +1699,38 @@ public class SeismicPhaseFactory {
                             + " when currBranch=" + currBranch
                             + " > disconBranch=" + disconBranch + " , prev=" + prevLeg);
                 }
+            } else if (nextLeg.endsWith("n") && nextLeg.length() > 1) {
+                String numString = nextLeg.substring(0, nextLeg.length()-1);
+                double headDepth = Double.parseDouble(numString);
+                disconBranch = LegPuller.closestBranchToDepth(tMod, numString);
+                if (disconBranch < tMod.cmbBranch) {
+                    throw new TauModelException(getName() + " Phase not recognized (5): "
+                            + currLeg + " followed by " + nextLeg
+                            + " when cmbBranch < disconBranch=" + disconBranch + " , prev=" + prevLeg);
+                }
+                endAction = HEAD;
+                addToBranch(tMod,
+                        currBranch,
+                        disconBranch-1,
+                        isPWave,
+                        endAction,
+                        currLeg);
+            } else if (nextLeg.endsWith("diff") && nextLeg.length() > 4) {
+                String numString = nextLeg.substring(0, nextLeg.length()-4);
+                double diffDepth = Double.parseDouble(numString);
+                disconBranch = LegPuller.closestBranchToDepth(tMod, numString);
+                if (disconBranch < tMod.cmbBranch) {
+                    throw new TauModelException(getName() + " Phase not recognized (5): "
+                            + currLeg + " followed by " + nextLeg
+                            + " when cmbBranch < disconBranch=" + disconBranch + " , prev=" + prevLeg);
+                }
+                endAction = DIFFRACT;
+                addToBranch(tMod,
+                        currBranch,
+                        disconBranch - 1,
+                        isPWave,
+                        endAction,
+                        currLeg);
             } else {
                 throw new TauModelException(getName()+" Phase not recognized (9b): "
                         + currLeg + " followed by " + nextLeg);
@@ -1662,6 +1794,38 @@ public class SeismicPhaseFactory {
                             + " when currBranch=" + currBranch
                             + " < disconBranch=" + disconBranch);
                 }
+            } else if (nextLeg.endsWith("n") && nextLeg.length() > 1) {
+                String numString = nextLeg.substring(0, nextLeg.length()-1);
+                double headDepth = Double.parseDouble(numString);
+                disconBranch = LegPuller.closestBranchToDepth(tMod, numString);
+                if (disconBranch < tMod.cmbBranch) {
+                    throw new TauModelException(getName() + " Phase not recognized (5): "
+                            + currLeg + " followed by " + nextLeg
+                            + " when cmbBranch < disconBranch=" + disconBranch + " , prev=" + prevLeg);
+                }
+                endAction = HEAD;
+                addToBranch(tMod,
+                        currBranch,
+                        disconBranch-1,
+                        isPWave,
+                        endAction,
+                        currLeg);
+            } else if (nextLeg.endsWith("diff") && nextLeg.length() > 4) {
+                String numString = nextLeg.substring(0, nextLeg.length()-4);
+                double diffDepth = Double.parseDouble(numString);
+                disconBranch = LegPuller.closestBranchToDepth(tMod, numString);
+                if (disconBranch < tMod.cmbBranch) {
+                    throw new TauModelException(getName() + " Phase not recognized (5): "
+                            + currLeg + " followed by " + nextLeg
+                            + " when cmbBranch < disconBranch=" + disconBranch + " , prev=" + prevLeg);
+                }
+                endAction = DIFFRACT;
+                addToBranch(tMod,
+                        currBranch,
+                        disconBranch - 1,
+                        isPWave,
+                        endAction,
+                        currLeg);
             } else {
                 throw new TauModelException(getName()+" Phase not recognized (9b): "
                         + currLeg + " followed by " + nextLeg);
@@ -1896,6 +2060,39 @@ public class SeismicPhaseFactory {
                         + " within phase " + name
                         + " for this model as it has an outer core so need K,k in between.");
             }
+        } else if (nextLeg.endsWith("n") && nextLeg.length() > 1) {
+            String numString = nextLeg.substring(0, nextLeg.length()-1);
+            double headDepth = Double.parseDouble(numString);
+            disconBranch = LegPuller.closestBranchToDepth(tMod, numString);
+            if (disconBranch < tMod.iocbBranch) {
+                throw new TauModelException(getName() + " Phase not recognized (5): "
+                        + currLeg + " followed by " + nextLeg
+                        + " when iocbBranch < disconBranch=" + disconBranch + " , prev=" + prevLeg);
+            }
+            endAction = HEAD;
+            addToBranch(tMod,
+                    currBranch,
+                    disconBranch-1,
+                    isPWave,
+                    endAction,
+                    currLeg);
+        } else if (nextLeg.endsWith("diff") && nextLeg.length() > 4) {
+            String numString = nextLeg.substring(0, nextLeg.length()-4);
+            double diffDepth = Double.parseDouble(numString);
+            disconBranch = LegPuller.closestBranchToDepth(tMod, numString);
+            if (disconBranch < tMod.iocbBranch) {
+                throw new TauModelException(getName() + " Phase not recognized (5): "
+                        + currLeg + " followed by " + nextLeg
+                        + " when iocbBranch < disconBranch=" + disconBranch + " , prev=" + prevLeg);
+            }
+            endAction = DIFFRACT;
+            addToBranch(tMod,
+                    currBranch,
+                    disconBranch - 1,
+                    isPWave,
+                    endAction,
+                    currLeg);
+
         } else {
             throw new TauModelException(getName()+" Phase not recognized (6a): "
                     + currLeg + " followed by " + nextLeg);
@@ -1933,6 +2130,38 @@ public class SeismicPhaseFactory {
                             + " when currBranch=" + currBranch
                             + " < disconBranch=" + disconBranch);
                 }
+            } else if (nextLeg.endsWith("n") && nextLeg.length() > 1) {
+                String numString = nextLeg.substring(0, nextLeg.length()-1);
+                double headDepth = Double.parseDouble(numString);
+                disconBranch = LegPuller.closestBranchToDepth(tMod, numString);
+                if (disconBranch < tMod.iocbBranch) {
+                    throw new TauModelException(getName() + " Phase not recognized (5): "
+                            + currLeg + " followed by " + nextLeg
+                            + " when iocbBranch < disconBranch=" + disconBranch + " , prev=" + prevLeg);
+                }
+                endAction = HEAD;
+                addToBranch(tMod,
+                        currBranch,
+                        disconBranch-1,
+                        isPWave,
+                        endAction,
+                        currLeg);
+            } else if (nextLeg.endsWith("diff") && nextLeg.length() > 4) {
+                String numString = nextLeg.substring(0, nextLeg.length()-4);
+                double diffDepth = Double.parseDouble(numString);
+                disconBranch = LegPuller.closestBranchToDepth(tMod, numString);
+                if (disconBranch < tMod.iocbBranch) {
+                    throw new TauModelException(getName() + " Phase not recognized (5): "
+                            + currLeg + " followed by " + nextLeg
+                            + " when iocbBranch < disconBranch=" + disconBranch + " , prev=" + prevLeg);
+                }
+                endAction = DIFFRACT;
+                addToBranch(tMod,
+                        currBranch,
+                        disconBranch - 1,
+                        isPWave,
+                        endAction,
+                        currLeg);
             } else {
                 throw new TauModelException(getName()+" Phase not recognized (9b): "
                         + currLeg + " followed by " + nextLeg);

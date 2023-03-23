@@ -38,4 +38,25 @@ public class HeadDiffWaveTest {
     assertEquals(35.0, pierce[2].getDepth());
     assertEquals(35.0, pierce[3].getDepth());
   }
+
+  @Test
+  public void testAnyDisconHeadOrDiff() throws Exception {
+    String modelName = "iasp91";
+    double depth = 0;
+    double deg = 30;
+    TauModel tMod = TauModelLoader.load(modelName).depthCorrect(depth);
+
+    int disconBranch = LegPuller.closestBranchToDepth(tMod, "410");
+    SeismicPhase diffPhase = SeismicPhaseFactory.createPhase("P410diff", tMod);
+    List<Arrival> arrivals = diffPhase.calcTime(deg);
+    assertEquals(1, arrivals.size());
+    Arrival a = arrivals.get(0);
+    assertEquals(tMod.getTauBranch(disconBranch-1, true).getMinTurnRayParam(), a.getRayParam());
+
+    SeismicPhase pnPhase = SeismicPhaseFactory.createPhase("P410n", tMod);
+    List<Arrival> headarrivals = pnPhase.calcTime(deg);
+    assertEquals(1, headarrivals.size());
+    Arrival headArr = headarrivals.get(0);
+    assertEquals(tMod.getTauBranch(disconBranch, true).getMaxRayParam(), headArr.getRayParam());
+  }
 }

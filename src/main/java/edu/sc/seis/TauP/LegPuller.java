@@ -12,7 +12,9 @@ public class LegPuller {
 
     public static final String travelSuffix = "((diff)|(ed)|n|g)";
 
-    public static final String travelLeg = "([PpSsKkIyJj]"+travelSuffix+"?)";
+    public static final String headDiffRE = "(([mci]|"+number+")((diff)|n))";
+
+    public static final String travelLeg = "(([PpSsKkIyJj]"+travelSuffix+"?)|"+headDiffRE+")";
 
     public static final String interactPrefix = "[vV^]";
 
@@ -43,7 +45,10 @@ public class LegPuller {
     protected static ArrayList<String> legPuller(String name) throws TauModelException {
         // check against regex for coarse validation
         if ( ! regExCheck(name)) {
-            throw new TauModelException("Phase "+name+" doesn't match phase regex: "+phaseRegEx);
+            if (ToolRun.DEBUG) {
+                throw new TauModelException("Do not understand Phase "+name+" doesn't match phase regex: "+phaseRegEx);
+            }
+            throw new TauModelException("Do not understand Phase "+name+", skipping.");
         }
 
         int offset = 0;
@@ -265,19 +270,32 @@ public class LegPuller {
                         numString += name.substring(offset, offset + 1);
                         offset++;
                     }
-                    try {
+                    if (name.length() >= offset + 4 && name.substring(offset, offset + 4).equals("diff")) {
+                        // diffraction off other layer
+                        numString += "diff";
+                        offset+=4;
                         legs.add(numString);
-                    } catch(NumberFormatException e) {
-                        throw new TauModelException("Invalid phase name: "
-                                + numString + "\n" + e.getMessage() + " in "
-                                + name);
-                    }
-                    if(offset == name.length()) {
-                        throw new TauModelException("Invalid phase name:\n"
-                                + numString
-                                + " cannot be last in " + name);
-                    }
+                    } else if (offset < name.length() && name.charAt(offset) == 'n') {
+                        // head wave off other layer
+                        numString+= "n";
+                        offset++;
+                        legs.add(numString);
+                    } else {
+                        // normal discon interaction
+                        try {
+                            legs.add(numString);
 
+                        } catch(NumberFormatException e) {
+                            throw new TauModelException("Invalid phase name: "
+                                    + numString + "\n" + e.getMessage() + " in "
+                                    + name);
+                        }
+                        if(offset == name.length()) {
+                            throw new TauModelException("Invalid phase name:\n"
+                                    + numString
+                                    + " cannot be last in " + name);
+                        }
+                    }
                 } else {
                     throw new TauModelException("Invalid phase name:\n"
                             + name.substring(offset) + " in " + name);
