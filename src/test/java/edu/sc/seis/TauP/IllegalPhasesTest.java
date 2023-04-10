@@ -38,7 +38,10 @@ class IllegalPhasesTest {
 			"PKViKP",
 			"2kmps", "2.5kmps", ".5kmps", "10kmps",
 			"PKedikp",
-			"PedKedIkp"
+			"PedKedIkp",
+			"PSdiff",
+			"SedPdiffKS", // literature uses "SPdiffKS", but need better name as confused with S turn in mantle, surface P to cmb then diff
+			"SKdiffKiKP"
 	});
 
 	String[] illegalStartEndings = {
@@ -47,21 +50,23 @@ class IllegalPhasesTest {
 
 	String[] illegalPhases = { "", "null", "blablabla should fail", "kmps",
 			"ScScS", "PDDDDD", "PKIKPKIKP", "PPPdiff",
-			"PdiffKP", "PedPdiffKP",
 			"PKIKIKP", "SIKS", "SKIS", "Pcv410S", "Pmv410P", "Pcv410P", "Pm^410P",
 			"SKviKviKS","SK^iKS","SK^mKS", "S^S", "SVS", "Pdiffdiff", "SVS", "SccS",
 			"SIKS", "Siks", "SiKS", "Kdiff", "pp", "sp", "ss", "Ss", "Ps", "Sp", "Pp",
 			"scS", "pcP", "kiKP", "kkP", "iKP",
 			"Icp", "P^iP", "P^", "Pv", "PV", "k^mP",
 			"k^iKP", "P300", "PK3500", "PKI5500", "Pv410", "PKv", "PKV", "PK^", "Pdif",
-			"PVi", "Pvi", "PKPab", "PKPbc", "PKPdf"
+			"PVi", "Pvi", "PKPab", "PKPbc", "PKPdf",
+			"PdiffKP", "PedPdiffKP",
 	};
 
 	// phases that are kind of wrong, but are handled by simply no arrivals, eg no ray params actually work,
 	// rather than being so bad as to cause an exception
 	String[] noArrivalPhases = { "PnPdiff",
 			"PdiffSdiff",
+			"SPdiff", // S ray param > P ray param, so P leg must turn shallower than S, so can't reach cmb
 			"PVcP" // oc is lvz so no crit refl
+
 	};
 
 	// similar, but due to source being in mantle (below moho), these should have not ray params that

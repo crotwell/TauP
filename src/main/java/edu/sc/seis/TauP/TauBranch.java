@@ -202,7 +202,6 @@ public class TauBranch implements Serializable, Cloneable {
      *                if the slownessmodel and taumodel are not compatible
      */
     public void createBranch(SlownessModel sMod,
-                             double minPSoFar,
                              double rayParams[]) throws NoSuchLayerException,
             SlownessModelException, TauModelException {
         TimeDist timeDist;
@@ -253,7 +252,13 @@ public class TauBranch implements Serializable, Cloneable {
          * branch. minRayParam is the minimum ray parameter that turns or is
          * totally reflected in this branch.
          */
-        maxRayParam = minPSoFar;
+        maxRayParam = sMod.getSlownessLayer(topLayerNum, isPWave).getTopP();
+        for (int i = topLayerNum; i < botLayerNum; i++) {
+            SlownessLayer sl = sMod.getSlownessLayer(i, isPWave);
+            maxRayParam = Math.max(maxRayParam, sl.getTopP());
+            maxRayParam = Math.max(maxRayParam, sl.getBotP());
+        }
+        //maxRayParam = Math.max(sMod.getMinRayParam(getTopDepth(), isPWave), sMod.getMinRayParam(getTopDepth(), !isPWave));
         minTurnRayParam = sMod.getMinTurnRayParam(getBotDepth(), isPWave);
         minRayParam = sMod.getMinRayParam(getBotDepth(), isPWave);
         tau = new double[rayParams.length];
@@ -388,7 +393,6 @@ public class TauBranch implements Serializable, Cloneable {
                                    int indexP,
                                    int indexS,
                                    SlownessModel sMod,
-                                   double minPSoFar,
                                    double rayParams[])
             throws NoSuchLayerException, SlownessModelException,
             TauModelException {

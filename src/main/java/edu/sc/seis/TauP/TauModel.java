@@ -410,15 +410,13 @@ public class TauModel implements Serializable {
                     System.out.println("Calculating " + (isPWave ? "P" : "S")
                             + " tau branch for branch " + critNum
                             + " topCritLayerNum=" + topCritLayerNum
-                            + " botCritLayerNum=" + botCritLayerNum
-                            + "\nminPSoFar=" + minPSoFar);
+                            + " botCritLayerNum=" + botCritLayerNum);
                 }
                 tauBranches[waveNum][critNum] = new TauBranch(topCritDepth.getDepth(),
                                                               botCritDepth.getDepth(),
                                                               isPWave);
                 tauBranches[waveNum][critNum].DEBUG = DEBUG;
                 tauBranches[waveNum][critNum].createBranch(sMod,
-                                                           minPSoFar,
                                                            rayParams);
                 /*
                  * update minPSoFar. Note that the new minPSoFar could be at the
@@ -664,13 +662,11 @@ public class TauModel implements Serializable {
                                                                     depth,
                                                                     pOrS == 0);
                 newtauBranches[pOrS][branchToSplit].createBranch(outSMod,
-                                                                 tauBranches[pOrS][branchToSplit].getMaxRayParam(),
                                                                  outRayParams);
                 newtauBranches[pOrS][branchToSplit + 1] = tauBranches[pOrS][branchToSplit].difference(newtauBranches[pOrS][branchToSplit],
                                                                                                       indexP,
                                                                                                       indexS,
                                                                                                       outSMod,
-                                                                                                      newtauBranches[pOrS][branchToSplit].getMinRayParam(),
                                                                                                       outRayParams);
             }
             for(int i = branchToSplit + 1; i < tauBranches[0].length; i++) {
@@ -864,23 +860,6 @@ public class TauModel implements Serializable {
             if(tauBranches[0][i].getTopDepth() != tauBranches[0][i - 1].getBotDepth()) {
                 System.err.println("branch " + i + " topDepth != botDepth of "
                         + (i - 1));
-                return false;
-            }
-            if(tauBranches[0][i].getMaxRayParam() != tauBranches[0][i - 1].getMinRayParam()) {
-                System.err.println("branch " + i
-                        + " P maxRayParam != minRayParam of " + (i - 1)
-                        + "\nmaxRayParam=" + tauBranches[0][i].getMaxRayParam()
-                        + "\nminRayParam="
-                        + tauBranches[0][i - 1].getMinRayParam());
-                return false;
-            }
-            if(tauBranches[1][i].getMaxRayParam() != tauBranches[1][i - 1].getMinRayParam()) {
-                System.err.println("branch " + i
-                        + " S maxRayParam != minRayParam of " + (i - 1)
-                        + "\nmaxRayParam=" + tauBranches[1][i].getMaxRayParam()
-                        + "\nminRayParam="
-                        + tauBranches[1][i - 1].getMinRayParam() + "\ndepth = "
-                        + tauBranches[1][i].getTopDepth());
                 return false;
             }
         }

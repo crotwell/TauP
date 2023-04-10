@@ -384,7 +384,7 @@ public abstract class SlownessModel implements Serializable {
     }
 
     /**
-     * @return the minimum ray parameter that turns or is reflected at or above
+     * @return the minimum ray parameter that turns or is critically reflected at or above
      *          the given depth. Normally this is the slowness sample at the
      *          given depth, but if the depth is within a high slowness zone,
      *          then it may be smaller. Also, at first order discontinuities,

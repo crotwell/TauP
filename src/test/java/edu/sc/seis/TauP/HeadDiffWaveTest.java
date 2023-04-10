@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class HeadDiffWaveTest {
@@ -58,5 +60,14 @@ public class HeadDiffWaveTest {
     assertEquals(1, headarrivals.size());
     Arrival headArr = headarrivals.get(0);
     assertEquals(tMod.getTauBranch(disconBranch, true).getMaxRayParam(), headArr.getRayParam());
+  }
+
+  @Test
+  public void testLegPull() throws Exception {
+    ArrayList<String> legs = LegPuller.legPuller("P410diff");
+    assertEquals(3, legs.size());
+    assertEquals("P", legs.get(0));
+    assertEquals("410diff", legs.get(1));
+    assertEquals("END", legs.get(2));
   }
 }
