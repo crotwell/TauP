@@ -20,7 +20,6 @@ public class SeismicPhaseFactory {
     // temp vars used in calculation of phase
     int upgoingRecBranch;
     int downgoingRecBranch;
-    int disconBranch = 0;
     double nextLegDepth = 0.0;
     boolean isLegDepth, isNextLegDepth = false;
     PhaseInteraction prevEndAction = START;
@@ -711,7 +710,7 @@ public class SeismicPhaseFactory {
             String depthString;
             depthString = nextLeg.substring(1);
             endAction = REFLECT_UNDERSIDE;
-            disconBranch = LegPuller.closestBranchToDepth(tMod, depthString);
+            int disconBranch = LegPuller.closestBranchToDepth(tMod, depthString);
             if(currBranch >= disconBranch) {
                 addToBranch(tMod,
                         currBranch,
@@ -738,6 +737,7 @@ public class SeismicPhaseFactory {
                     currLeg);
         } else if(nextLeg.startsWith("P") || nextLeg.startsWith("S")
                 || nextLeg.equals("END")) {
+            int disconBranch;
             if (nextLeg.equals("END")) {
                 disconBranch = upgoingRecBranch;
                 if (currBranch < upgoingRecBranch) {
@@ -779,7 +779,7 @@ public class SeismicPhaseFactory {
                 throw new TauModelException(getName()+" Phase not recognized (3): "
                         + currLeg + " followed by " + nextLeg+", p and s must be upgoing in mantle and so cannot hit core.");
             }
-            disconBranch = LegPuller.closestBranchToDepth(tMod, nextLeg);
+            int disconBranch = LegPuller.closestBranchToDepth(tMod, nextLeg);
             endAction = TRANSUP;
             addToBranch(tMod,
                     currBranch,
@@ -831,7 +831,7 @@ public class SeismicPhaseFactory {
             } else {
                 endAction = REFLECT_TOPSIDE;
             }
-            disconBranch = LegPuller.closestBranchToDepth(tMod,
+            int disconBranch = LegPuller.closestBranchToDepth(tMod,
                     nextLeg.substring(1));
             if(currBranch <= disconBranch - 1) {
                 addToBranch(tMod,
@@ -850,7 +850,7 @@ public class SeismicPhaseFactory {
             String depthString;
             depthString = nextLeg.substring(1);
             endAction = REFLECT_UNDERSIDE;
-            disconBranch = LegPuller.closestBranchToDepth(tMod, depthString);
+            int disconBranch = LegPuller.closestBranchToDepth(tMod, depthString);
             if (disconBranch == tMod.getNumBranches()) {
                 maxRayParam = -1;
                 if(DEBUG) {System.out.println("Attempt to underside reflect from center of earth: "+nextLeg);}
@@ -923,7 +923,7 @@ public class SeismicPhaseFactory {
                     + currLeg + " followed by " + nextLeg
                     + " and preceeded by "+prevLeg
                     + " when currBranch=" + currBranch
-                    + " > disconBranch=" + disconBranch);
+                    );
         } else if(nextLeg.equals("K") || nextLeg.equals("Ked") || nextLeg.equals("Kdiff")) {
             endAction = TRANSDOWN;
             addToBranch(tMod,
@@ -954,7 +954,7 @@ public class SeismicPhaseFactory {
                 || (isNextLegDepth && nextLegDepth < tMod.getCmbDepth())) {
             // treat the moho in the same wasy as 410 type
             // discontinuities
-            disconBranch = LegPuller.closestBranchToDepth(tMod, nextLeg);
+            int disconBranch = LegPuller.closestBranchToDepth(tMod, nextLeg);
             if (DEBUG) {
                 System.out.println("DisconBranch=" + disconBranch
                         + " for " + nextLeg);
@@ -1053,7 +1053,7 @@ public class SeismicPhaseFactory {
             String numString = nextLeg.substring(0, nextLeg.length() - 1);
             try {
                 double headDepth = Double.parseDouble(numString);
-                disconBranch = LegPuller.closestBranchToDepth(tMod, numString);
+                int disconBranch = LegPuller.closestBranchToDepth(tMod, numString);
                 endAction = HEAD;
                 addToBranch(tMod,
                         currBranch,
@@ -1083,7 +1083,7 @@ public class SeismicPhaseFactory {
             String numString = nextLeg.substring(0, nextLeg.length()-4);
             try {
                 double diffDepth = Double.parseDouble(numString);
-                disconBranch = LegPuller.closestBranchToDepth(tMod, numString);
+                int disconBranch = LegPuller.closestBranchToDepth(tMod, numString);
                 endAction = DIFFRACT;
                 addToBranch(tMod,
                         currBranch,
@@ -1141,7 +1141,7 @@ public class SeismicPhaseFactory {
         } else if (nextLeg.endsWith("n") && nextLeg.length() > 1) {
             String numString = nextLeg.substring(0, nextLeg.length()-1);
             double headDepth = Double.parseDouble(numString);
-            disconBranch = LegPuller.closestBranchToDepth(tMod, numString);
+            int disconBranch = LegPuller.closestBranchToDepth(tMod, numString);
             endAction = HEAD;
             addToBranch(tMod,
                     currBranch,
@@ -1153,7 +1153,7 @@ public class SeismicPhaseFactory {
         } else if (nextLeg.endsWith("diff") && nextLeg.length() > 4) {
             String numString = nextLeg.substring(0, nextLeg.length()-4);
             double diffDepth = Double.parseDouble(numString);
-            disconBranch = LegPuller.closestBranchToDepth(tMod, numString);
+            int disconBranch = LegPuller.closestBranchToDepth(tMod, numString);
             endAction = DIFFRACT;
             addToBranch(tMod,
                     currBranch,
@@ -1181,7 +1181,7 @@ public class SeismicPhaseFactory {
                     endAction,
                     currLeg);
         } else if( isLegDepth) {
-            disconBranch = LegPuller.closestBranchToDepth(tMod, nextLeg);
+            int disconBranch = LegPuller.closestBranchToDepth(tMod, nextLeg);
             endAction = TRANSDOWN;
             addToBranch(tMod,
                     currBranch,
@@ -1191,7 +1191,7 @@ public class SeismicPhaseFactory {
                     endAction,
                     currLeg);
         } else if(nextLeg.equals("c") || nextLeg.equals("i")) {
-            disconBranch = LegPuller.closestBranchToDepth(tMod, nextLeg);
+            int disconBranch = LegPuller.closestBranchToDepth(tMod, nextLeg);
             endAction = REFLECT_TOPSIDE;
             addToBranch(tMod,
                     currBranch,
@@ -1206,7 +1206,7 @@ public class SeismicPhaseFactory {
             } else {
                 endAction = REFLECT_TOPSIDE;
             }
-            disconBranch = LegPuller.closestBranchToDepth(tMod,
+            int disconBranch = LegPuller.closestBranchToDepth(tMod,
                     nextLeg.substring(1));
             if(currBranch <= disconBranch - 1) {
                 addToBranch(tMod,
@@ -1299,7 +1299,7 @@ public class SeismicPhaseFactory {
                     String depthString;
                     depthString = nextLeg.substring(1);
                     endAction = REFLECT_UNDERSIDE;
-                    disconBranch = LegPuller.closestBranchToDepth(tMod, depthString);
+                    int disconBranch = LegPuller.closestBranchToDepth(tMod, depthString);
                     if (disconBranch >= tMod.getCmbBranch()) {
                         maxRayParam = -1;
                         if(DEBUG) {
@@ -1387,7 +1387,7 @@ public class SeismicPhaseFactory {
                     String depthString;
                     depthString = nextLeg.substring(1);
                     endAction = REFLECT_UNDERSIDE;
-                    disconBranch = LegPuller.closestBranchToDepth(tMod, depthString);
+                    int disconBranch = LegPuller.closestBranchToDepth(tMod, depthString);
                     if (disconBranch >= tMod.getMohoBranch()) {
                         maxRayParam = -1;
                         if(DEBUG) {
@@ -1462,7 +1462,7 @@ public class SeismicPhaseFactory {
                         String depthString;
                         depthString = nextLeg.substring(1);
                         endAction = REFLECT_UNDERSIDE;
-                        disconBranch = LegPuller.closestBranchToDepth(tMod, depthString);
+                        int disconBranch = LegPuller.closestBranchToDepth(tMod, depthString);
                         if (disconBranch >= tMod.getMohoBranch()) {
                             maxRayParam = -1;
                             if(DEBUG) {
@@ -1621,7 +1621,7 @@ public class SeismicPhaseFactory {
                 String depthString;
                 depthString = nextLeg.substring(1);
                 endAction = REFLECT_UNDERSIDE;
-                disconBranch = LegPuller.closestBranchToDepth(tMod, depthString);
+                int disconBranch = LegPuller.closestBranchToDepth(tMod, depthString);
                 if (disconBranch < tMod.getCmbBranch()) {
                     throw new TauModelException(getName() + " Phase not recognized (5a): "
                             + currLeg + " followed by " + nextLeg
@@ -1750,7 +1750,7 @@ public class SeismicPhaseFactory {
                 } else {
                     endAction = REFLECT_TOPSIDE;
                 }
-                disconBranch = LegPuller.closestBranchToDepth(tMod,
+                int disconBranch = LegPuller.closestBranchToDepth(tMod,
                         nextLeg.substring(1));
                 if(currBranch <= disconBranch - 1) {
                     addToBranch(tMod,
@@ -1770,7 +1770,7 @@ public class SeismicPhaseFactory {
                 String depthString;
                 depthString = nextLeg.substring(1);
                 endAction = REFLECT_UNDERSIDE;
-                disconBranch = LegPuller.closestBranchToDepth(tMod, depthString);
+                int disconBranch = LegPuller.closestBranchToDepth(tMod, depthString);
                 if (disconBranch < tMod.getCmbBranch()) {
                     throw new TauModelException(getName() + " Phase not recognized (5a): "
                             + currLeg + " followed by " + nextLeg
@@ -1856,7 +1856,7 @@ public class SeismicPhaseFactory {
             } else if (nextLeg.endsWith("n") && nextLeg.length() > 1) {
                 String numString = nextLeg.substring(0, nextLeg.length()-1);
                 double headDepth = Double.parseDouble(numString);
-                disconBranch = LegPuller.closestBranchToDepth(tMod, numString);
+                int disconBranch = LegPuller.closestBranchToDepth(tMod, numString);
                 if (disconBranch < tMod.cmbBranch) {
                     throw new TauModelException(getName() + " Phase not recognized (5): "
                             + currLeg + " followed by " + nextLeg
@@ -1873,7 +1873,7 @@ public class SeismicPhaseFactory {
             } else if (nextLeg.endsWith("diff") && nextLeg.length() > 4) {
                 String numString = nextLeg.substring(0, nextLeg.length()-4);
                 double diffDepth = Double.parseDouble(numString);
-                disconBranch = LegPuller.closestBranchToDepth(tMod, numString);
+                int disconBranch = LegPuller.closestBranchToDepth(tMod, numString);
                 if (disconBranch < tMod.cmbBranch) {
                     throw new TauModelException(getName() + " Phase not recognized (5): "
                             + currLeg + " followed by " + nextLeg
@@ -1942,7 +1942,7 @@ public class SeismicPhaseFactory {
                 } else {
                     endAction = REFLECT_TOPSIDE;
                 }
-                disconBranch = LegPuller.closestBranchToDepth(tMod,
+                int disconBranch = LegPuller.closestBranchToDepth(tMod,
                         nextLeg.substring(1));
                 if(currBranch <= disconBranch - 1) {
                     addToBranch(tMod,
@@ -1961,7 +1961,7 @@ public class SeismicPhaseFactory {
             } else if (nextLeg.endsWith("n") && nextLeg.length() > 1) {
                 String numString = nextLeg.substring(0, nextLeg.length()-1);
                 double headDepth = Double.parseDouble(numString);
-                disconBranch = LegPuller.closestBranchToDepth(tMod, numString);
+                int disconBranch = LegPuller.closestBranchToDepth(tMod, numString);
                 if (disconBranch < tMod.cmbBranch) {
                     throw new TauModelException(getName() + " Phase not recognized (5): "
                             + currLeg + " followed by " + nextLeg
@@ -1978,7 +1978,7 @@ public class SeismicPhaseFactory {
             } else if (nextLeg.endsWith("diff") && nextLeg.length() > 4) {
                 String numString = nextLeg.substring(0, nextLeg.length()-4);
                 double diffDepth = Double.parseDouble(numString);
-                disconBranch = LegPuller.closestBranchToDepth(tMod, numString);
+                int disconBranch = LegPuller.closestBranchToDepth(tMod, numString);
                 if (disconBranch < tMod.cmbBranch) {
                     throw new TauModelException(getName() + " Phase not recognized (5): "
                             + currLeg + " followed by " + nextLeg
@@ -2015,7 +2015,7 @@ public class SeismicPhaseFactory {
             String depthString;
             depthString = nextLeg.substring(1);
             endAction = REFLECT_UNDERSIDE;
-            disconBranch = LegPuller.closestBranchToDepth(tMod, depthString);
+            int disconBranch = LegPuller.closestBranchToDepth(tMod, depthString);
             if (disconBranch < tMod.getCmbBranch() || disconBranch >= tMod.getIocbBranch()) {
                 throw new TauModelException(getName()+" Phase not recognized (2): "
                         + currLeg + " followed by " + nextLeg
@@ -2040,6 +2040,7 @@ public class SeismicPhaseFactory {
                 || nextLeg.equals("c")
                 || nextLeg.equals("K") || nextLeg.equals("Ked")
                 || nextLeg.equals("END")) {
+            int disconBranch;
             if (nextLeg.equals("END")) {
                 disconBranch = upgoingRecBranch;
                 if (currBranch < upgoingRecBranch) {
@@ -2094,7 +2095,7 @@ public class SeismicPhaseFactory {
                 throw new TauModelException(getName()+" Phase not recognized (3): "
                         + currLeg + " followed by " + nextLeg+", p and s must be upgoing in mantle and so cannot hit core.");
             }
-            disconBranch = LegPuller.closestBranchToDepth(tMod, nextLeg);
+            int disconBranch = LegPuller.closestBranchToDepth(tMod, nextLeg);
             if (disconBranch < tMod.getCmbBranch() || disconBranch >= tMod.getIocbBranch()) {
                 throw new TauModelException(getName()+" Phase not recognized (2): "
                         + currLeg + " followed by " + nextLeg
@@ -2176,7 +2177,7 @@ public class SeismicPhaseFactory {
             } else {
                 endAction = REFLECT_TOPSIDE;
             }
-            disconBranch = LegPuller.closestBranchToDepth(tMod,
+            int disconBranch = LegPuller.closestBranchToDepth(tMod,
                     nextLeg.substring(1));
             if(currBranch <= disconBranch - 1) {
                 addToBranch(tMod,
@@ -2196,7 +2197,7 @@ public class SeismicPhaseFactory {
             String depthString;
             depthString = nextLeg.substring(1);
             endAction = REFLECT_UNDERSIDE;
-            disconBranch = LegPuller.closestBranchToDepth(tMod, depthString);
+            int disconBranch = LegPuller.closestBranchToDepth(tMod, depthString);
             if (disconBranch < tMod.getIocbBranch()) {
                 throw new TauModelException(getName()+" Phase not recognized (6a): "
                         + currLeg + " followed by " + nextLeg
@@ -2238,7 +2239,7 @@ public class SeismicPhaseFactory {
         } else if (nextLeg.endsWith("n") && nextLeg.length() > 1) {
             String numString = nextLeg.substring(0, nextLeg.length()-1);
             double headDepth = Double.parseDouble(numString);
-            disconBranch = LegPuller.closestBranchToDepth(tMod, numString);
+            int disconBranch = LegPuller.closestBranchToDepth(tMod, numString);
             if (disconBranch < tMod.iocbBranch) {
                 throw new TauModelException(getName() + " Phase not recognized (5): "
                         + currLeg + " followed by " + nextLeg
@@ -2255,7 +2256,7 @@ public class SeismicPhaseFactory {
         } else if (nextLeg.endsWith("diff") && nextLeg.length() > 4) {
             String numString = nextLeg.substring(0, nextLeg.length()-4);
             double diffDepth = Double.parseDouble(numString);
-            disconBranch = LegPuller.closestBranchToDepth(tMod, numString);
+            int disconBranch = LegPuller.closestBranchToDepth(tMod, numString);
             if (disconBranch < tMod.iocbBranch) {
                 throw new TauModelException(getName() + " Phase not recognized (5): "
                         + currLeg + " followed by " + nextLeg
@@ -2292,7 +2293,7 @@ public class SeismicPhaseFactory {
                 } else {
                     endAction = REFLECT_TOPSIDE;
                 }
-                disconBranch = LegPuller.closestBranchToDepth(tMod,
+                int disconBranch = LegPuller.closestBranchToDepth(tMod,
                         nextLeg.substring(1));
                 if(currBranch <= disconBranch - 1) {
                     addToBranch(tMod,
@@ -2311,7 +2312,7 @@ public class SeismicPhaseFactory {
             } else if (nextLeg.endsWith("n") && nextLeg.length() > 1) {
                 String numString = nextLeg.substring(0, nextLeg.length()-1);
                 double headDepth = Double.parseDouble(numString);
-                disconBranch = LegPuller.closestBranchToDepth(tMod, numString);
+                int disconBranch = LegPuller.closestBranchToDepth(tMod, numString);
                 if (disconBranch < tMod.iocbBranch) {
                     throw new TauModelException(getName() + " Phase not recognized (5): "
                             + currLeg + " followed by " + nextLeg
@@ -2328,7 +2329,7 @@ public class SeismicPhaseFactory {
             } else if (nextLeg.endsWith("diff") && nextLeg.length() > 4) {
                 String numString = nextLeg.substring(0, nextLeg.length()-4);
                 double diffDepth = Double.parseDouble(numString);
-                disconBranch = LegPuller.closestBranchToDepth(tMod, numString);
+                int disconBranch = LegPuller.closestBranchToDepth(tMod, numString);
                 if (disconBranch < tMod.iocbBranch) {
                     throw new TauModelException(getName() + " Phase not recognized (5): "
                             + currLeg + " followed by " + nextLeg
@@ -2366,7 +2367,7 @@ public class SeismicPhaseFactory {
             String depthString;
             depthString = nextLeg.substring(1);
             endAction = REFLECT_UNDERSIDE;
-            disconBranch = LegPuller.closestBranchToDepth(tMod, depthString);
+            int disconBranch = LegPuller.closestBranchToDepth(tMod, depthString);
             if (disconBranch < tMod.getIocbBranch() ) {
                 throw new TauModelException(getName()+" Phase not recognized (2): "
                         + currLeg + " followed by " + nextLeg
@@ -2394,6 +2395,7 @@ public class SeismicPhaseFactory {
                 || nextLeg.equals("I") || nextLeg.equals("Ied")
                 || nextLeg.equals("J") || nextLeg.equals("Jed")
                 || nextLeg.equals("END")) {
+            int disconBranch;
             if (nextLeg.equals("END")) {
                 disconBranch = upgoingRecBranch;
                 if (currBranch < upgoingRecBranch) {
@@ -2457,7 +2459,7 @@ public class SeismicPhaseFactory {
                 throw new TauModelException(getName()+" Phase not recognized (3): "
                         + currLeg + " followed by " + nextLeg+", y and j must be upgoing in inner core and so cannot hit depth "+nextLegDepth);
             }
-            disconBranch = LegPuller.closestBranchToDepth(tMod, nextLeg);
+            int disconBranch = LegPuller.closestBranchToDepth(tMod, nextLeg);
             if (disconBranch < tMod.getIocbBranch() ) {
                 throw new TauModelException(getName()+" Phase not recognized (2): "
                         + currLeg + " followed by " + nextLeg
