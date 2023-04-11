@@ -268,7 +268,8 @@ public class SeismicPhaseFactory {
                 }
             }
             isPWaveForLegs[legNum] =currWaveType;
-                    legNum++;
+            legNum++;
+            prevWaveType = currWaveType;
         }
         return isPWaveForLegs;
     }
