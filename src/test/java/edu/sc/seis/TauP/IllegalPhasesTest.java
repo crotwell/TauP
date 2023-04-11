@@ -12,8 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class IllegalPhasesTest {
 
-	List<String> otherLegalPhases = Arrays.asList(new String[] {
-			"SKviKS",
+	List<String> otherLegalPhases = Arrays.asList("SKviKS",
 			"SKviKKviKS",
 			"SK^cKS",
 			"SK^cK^cKS",
@@ -41,23 +40,26 @@ class IllegalPhasesTest {
 			"PedKedIkp",
 			"PSdiff",
 			"SedPdiffKS", // literature uses "SPdiffKS", but need better name as confused with S turn in mantle, surface P to cmb then diff
-			"SKdiffKiKP"
-	});
+			"SKdiffKiKP",
+			"PPPdiff", // legal? degenerate and same as PdiffPdiffPdiff
+			"PdiffKP",
+			"PedPdiffKP"
+	);
 
 	String[] illegalStartEndings = {
 			"m", "c", "i", "^", "^20", "v", "v300", "V", "V300", "dif"
 	};
 
 	String[] illegalPhases = { "", "null", "blablabla should fail", "kmps",
-			"ScScS", "PDDDDD", "PKIKPKIKP", "PPPdiff",
+			"ScScS", "PDDDDD", "PKIKPKIKP",
 			"PKIKIKP", "SIKS", "SKIS", "Pcv410S", "Pmv410P", "Pcv410P", "Pm^410P",
 			"SKviKviKS","SK^iKS","SK^mKS", "S^S", "SVS", "Pdiffdiff", "SVS", "SccS",
 			"SIKS", "Siks", "SiKS", "Kdiff", "pp", "sp", "ss", "Ss", "Ps", "Sp", "Pp",
 			"scS", "pcP", "kiKP", "kkP", "iKP",
 			"Icp", "P^iP", "P^", "Pv", "PV", "k^mP",
 			"k^iKP", "P300", "PK3500", "PKI5500", "Pv410", "PKv", "PKV", "PK^", "Pdif",
-			"PVi", "Pvi", "PKPab", "PKPbc", "PKPdf",
-			"PdiffKP", "PedPdiffKP",
+			"PVi", "Pvi", "PKPab", "PKPbc", "PKPdf"
+
 	};
 
 	// phases that are kind of wrong, but are handled by simply no arrivals, eg no ray params actually work,

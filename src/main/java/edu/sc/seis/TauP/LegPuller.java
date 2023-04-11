@@ -144,10 +144,31 @@ public class LegPuller {
                             || name.charAt(offset + 1) == 'c'
                             || name.charAt(offset + 1) == '^'
                             || name.charAt(offset + 1) == 'v'
-                            || name.charAt(offset + 1) == 'V'
-                            || Character.isDigit(name.charAt(offset + 1))) {
+                            || name.charAt(offset + 1) == 'V') {
                         legs.add(name.substring(offset, offset + 1));
                         offset++;
+                    } else if (Character.isDigit(name.charAt(offset + 1))) {
+                        int digitIdx = offset+1;
+                        while(digitIdx<name.length() && Character.isDigit(name.charAt(digitIdx))) {
+                            digitIdx++;
+                        }
+                        if (digitIdx == name.length()) {
+                            // like P410 ?
+                            throw new TauModelException("Invalid phase name: "+ name.charAt(offset)
+                                    + " cannot be followed by "+ name.charAt(offset + 1) + " in " + name);
+                        }
+                        if (name.charAt(digitIdx) == 'd' && digitIdx+4 <= name.length() && name.substring(digitIdx,digitIdx+4).equals("diff")) {
+                            // like P410diff
+                            legs.add(name.substring(offset, digitIdx + 4));
+                            offset = digitIdx + 4;
+                        } else if (name.charAt(digitIdx) == 'n') {// like P410diff
+                            legs.add(name.substring(offset, digitIdx + 1));
+                            offset = digitIdx + 1;
+                        } else {
+                            // like P410s
+                            legs.add(name.substring(offset, offset + 1));
+                            offset++;
+                        }
                     } else if (name.charAt(offset + 1) == 'p'
                             || name.charAt(offset + 1) == 's') {
                         throw new TauModelException("Invalid phase name:\n"
@@ -420,6 +441,9 @@ public class LegPuller {
                 && ((String)legs.get(1)).equals("END")) {
             return null;
         }
+
+        Pattern headDiffRegEx =
+                Pattern.compile("[PS]?"+headDiffRE);
         /* Check first leg. */
         if(!(currToken.equals("Pg") || currToken.equals("Pb")
                 || currToken.equals("Pn") || currToken.equals("Pdiff")
@@ -431,10 +455,13 @@ public class LegPuller {
                 || currToken.equals("K") || currToken.equals("Ked")
                 || currToken.equals("k")
                 || currToken.equals("I") || currToken.equals("J")
-                || currToken.equals("y") || currToken.equals("j"))) {
+                || currToken.equals("y") || currToken.equals("j")
+                || headDiffRegEx.matcher(currToken).matches()
+        )) {
             String validationFailMessage = "First leg ("
                     + currToken
-                    + ") must be one of Pg, Pb, Pn, Pdiff, Sg, Sb, Sn, Sdiff, P, S, p, s, k, K, Ked, I, J, y, j";
+                    + ") must be one of Pg, Pb, Pn, Pdiff, Sg, Sb, Sn, Sdiff, P, S, p, s, k, K, Ked, I, J, y, j, "
+                    + " or like P410diff or P410n";
             return validationFailMessage;
         }
         for(int i = 1; i < legs.size(); i++) {

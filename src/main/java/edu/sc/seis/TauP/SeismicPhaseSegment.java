@@ -26,6 +26,29 @@ public class SeismicPhaseSegment {
 		this.isDownGoing = isDownGoing;
 		this.legName = legName;
 	}
+
+	public boolean endsAtTop() throws TauModelException {
+		switch(endAction) {
+			case END:
+			case HEAD:
+			case TRANSUP:
+			case REFLECT_UNDERSIDE:
+			case REFLECT_UNDERSIDE_CRITICAL:
+				return true;
+			case TURN:
+			case DIFFRACT:
+			case END_DOWN:
+			case TRANSDOWN:
+			case REFLECT_TOPSIDE:
+			case REFLECT_TOPSIDE_CRITICAL:
+				return false;
+			case START:
+				return ! isDownGoing;
+			case FAIL:
+			default:
+				throw new TauModelException("endAction should never be FAIL or default in SeismicPhaseSegment");
+		}
+	}
 	
 	public static String endActionToString(PhaseInteraction endAction) {
 		String action;
@@ -114,9 +137,9 @@ public class SeismicPhaseSegment {
 			if (prevEndAction == null) {
 				depthRange = " PrevAction is NULL ";
 			} else if (prevEndAction == PhaseInteraction.DIFFRACT) {
-				depthRange = " at "+tMod.getTauBranch(endBranch, isPWave).getBotDepth();
+				depthRange = " at "+tMod.getTauBranch(endBranch, isPWave).getBotDepth()+" (DIFF)";
 			} else if (prevEndAction == PhaseInteraction.HEAD) {
-				depthRange = " at " + tMod.getTauBranch(startBranch, isPWave).getTopDepth();
+				depthRange = " at " + tMod.getTauBranch(endBranch, isPWave).getTopDepth()+" (HEAD)";
 			} else {
 				throw new RuntimeException("isFlat but prev not HEAD or DIFFRACT: "+endActionToString(prevEndAction));
 			}
