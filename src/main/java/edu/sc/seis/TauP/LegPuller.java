@@ -12,7 +12,7 @@ public class LegPuller {
 
     public static final String travelSuffix = "((diff)|(ed)|n|g)";
 
-    public static final String headDiffRE = "(([mci]|"+number+")((diff)|n))";
+    public static final String headDiffRE = "([PSIJK]?([mci]|"+number+")((diff)|n))";
 
     public static final String travelLeg = "(([PpSsKkIyJj]"+travelSuffix+"?)|"+headDiffRE+")";
 
@@ -212,9 +212,31 @@ public class LegPuller {
                             || name.charAt(offset + 1) == '^'
                             || name.charAt(offset + 1) == 'v'
                             || name.charAt(offset + 1) == 'V'
-                            || Character.isDigit(name.charAt(offset + 1))) {
+                            ) {
                         legs.add(name.substring(offset, offset + 1));
                         offset++;
+                    } else if (Character.isDigit(name.charAt(offset + 1))) {
+                        int digitIdx = offset+1;
+                        while(digitIdx<name.length() && Character.isDigit(name.charAt(digitIdx))) {
+                            digitIdx++;
+                        }
+                        if (digitIdx == name.length()) {
+                            // like P410 ?
+                            throw new TauModelException("Invalid phase name: "+ name.charAt(offset)
+                                    + " cannot be followed by "+ name.charAt(offset + 1) + " in " + name);
+                        }
+                        if (name.charAt(digitIdx) == 'd' && digitIdx+4 <= name.length() && name.substring(digitIdx,digitIdx+4).equals("diff")) {
+                            // like P410diff
+                            legs.add(name.substring(offset, digitIdx + 4));
+                            offset = digitIdx + 4;
+                        } else if (name.charAt(digitIdx) == 'n') {// like P410diff
+                            legs.add(name.substring(offset, digitIdx + 1));
+                            offset = digitIdx + 1;
+                        } else {
+                            // like P410s
+                            legs.add(name.substring(offset, offset + 1));
+                            offset++;
+                        }
                     } else if(name.length() >= offset + 3
                             && (name.substring(offset, offset + 3)
                             .equals("Ked"))) {
@@ -443,7 +465,7 @@ public class LegPuller {
         }
 
         Pattern headDiffRegEx =
-                Pattern.compile("[PS]?"+headDiffRE);
+                Pattern.compile("[PSKIJ]?"+headDiffRE);
         /* Check first leg. */
         if(!(currToken.equals("Pg") || currToken.equals("Pb")
                 || currToken.equals("Pn") || currToken.equals("Pdiff")

@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -112,6 +113,24 @@ public class HeadDiffWaveTest {
     Arrival SedPdiff_Arr = SedPdiff_arrivals.get(0);
     assertEquals(tMod.getTauBranch(tMod.getCmbBranch()-1, true).getMinTurnRayParam(), SedPdiff_Arr.getRayParam());
   }
+
+  @Test
+  public void test_PK3000diffP() throws VelocityModelException, SlownessModelException, TauModelException, IOException {
+    String modelName = "outerCoreDiscon.nd";
+    VelocityModel vMod = VelocityModelTest.loadTestVelMod(modelName);
+    TauP_Create taupCreate = new TauP_Create();
+    TauModel tMod_OCD = taupCreate.createTauModel(vMod);
+    double deg = 150;
+    SeismicPhase SedPdiff_Phase = SeismicPhaseFactory.createPhase("PK3000diffP", tMod_OCD);
+    List<Arrival> SedPdiff_arrivals = SedPdiff_Phase.calcTime(deg);
+    assertEquals(1, SedPdiff_arrivals.size());
+    Arrival SedPdiff_Arr = SedPdiff_arrivals.get(0);
+
+    int disconBranch = LegPuller.closestBranchToDepth(tMod, "3000");
+    assertEquals(tMod_OCD.getTauBranch(disconBranch-1, true).getMinTurnRayParam(), SedPdiff_Arr.getRayParam());
+
+}
+
 
 
 
