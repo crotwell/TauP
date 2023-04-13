@@ -71,8 +71,12 @@ public class TauP_PhaseDescribe extends TauP_Time {
 
     @Override
     public void start() throws IOException, TauModelException, TauPException {
-        depthCorrect(getSourceDepth(), getReceiverDepth());
-        printResult(getWriter());
+        if (getSeismicPhases().size() > 0) {
+            depthCorrect(getSourceDepth(), getReceiverDepth());
+            printResult(getWriter());
+        } else {
+            writer.println("No phases to describe.");
+        }
     }
 
     @Override
