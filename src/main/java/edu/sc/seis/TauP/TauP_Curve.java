@@ -62,6 +62,8 @@ public class TauP_Curve extends TauP_Time {
     
     protected String mapWidthUnit = "i";
 
+    private boolean distHorizontal = true;
+
     protected TauP_Curve() {
         super();
         initFields();
@@ -262,6 +264,7 @@ public class TauP_Curve extends TauP_Time {
         System.out.println("-reddeg velocity   -- outputs curves with a reducing velocity (deg/sec).");
         System.out.println("-redkm velocity    -- outputs curves with a reducing velocity (km/sec).");
         System.out.println("-rel phasename     -- outputs relative travel time");
+        System.out.println("--distancevertical -- distance on vertical axis, time horizontal");
         System.out.println("--mapwidth width   -- sets map width for GMT script.");
         printStdUsageTail();
     }
@@ -374,16 +377,27 @@ public class TauP_Curve extends TauP_Time {
                         } else {
                             labelTime = timeValue[0];
                         }
-                        scriptStuff += (float)(180.0 / Math.PI * arcDistance)
+                        if (distHorizontal) {
+                            scriptStuff += (float)(180.0 / Math.PI * arcDistance)
                                 + "  "
-                                + (float)(phaseMaxTime) + " 10 0 0 9 "
+                                + (float)(phaseMaxTime);
+                        } else {
+                            scriptStuff += (float)(phaseMaxTime)
+                                    + "  "
+                                    + (float)(180.0 / Math.PI * arcDistance);
+                        }
+                        scriptStuff+= " 10 0 0 9 "
                                 + phase.getName() + "\n";
                     } else {
                         int lix = (dist[1] > Math.PI) ? 1 : dist.length - 1;
                         double ldel = 180.0 / Math.PI
                                 * Math.acos(Math.cos(dist[midSample]));
-                        scriptStuff += (float)ldel + "  " + (float)time[midSample]
-                                + " 10 0 0 1 " + phase.getName() + "\n";
+                        if (distHorizontal) {
+                            scriptStuff += (float) ldel + "  " + (float) time[midSample];
+                        } else {
+                            scriptStuff += (float) time[midSample]  + "  " + (float) ldel;
+                        }
+                        scriptStuff += " 10 0 0 1 " + phase.getName() + "\n";
                     }
                 }
             }
@@ -405,22 +419,40 @@ public class TauP_Curve extends TauP_Time {
                 out.println("<text x=\""+(pixelWidth/2)+"\" y=\""+(10)+"\">"+title+"</text>");
                 out.println("<g> <!-- scale bar -->");
                 out.println("<line x1=\"0\" y1=\"0\" x2=\"0\" y2=\""+pixelWidth+"\" />");
-                ArrayList<Double> yticks = PlotTicks.getTicks(0, maxTime,10);
-                for (double tick: yticks) {
+                ArrayList<Double> timeTicks = PlotTicks.getTicks(0, maxTime,10);
+                ArrayList<Double> distTicks = PlotTicks.getTicks(0, 180,9);
+                ArrayList<Double> xTicks;
+                ArrayList<Double> yTicks;
+                double maxX;
+                double maxY;
+                if (distHorizontal) {
+                    xTicks = distTicks;
+                    maxX = 180;
+                    yTicks = timeTicks;
+                    maxY = maxTime;
+                } else {
+                    xTicks = timeTicks;
+                    maxX = maxTime;
+                    yTicks = distTicks;
+                    maxY = 180;
+                }
+                for (double tick: yTicks) {
                     // Y axis
-                    double tick_pixel = tick/maxTime*pixelWidth;
+                    double tick_pixel;
+                    tick_pixel = tick/maxY*pixelWidth;
                     String tick_text = ""+tick;
-                    out.println("<text class=\"ytick\" x=\""+(-1*tick_length-2)+"\" y=\""+(pixelWidth-tick_pixel)+"\">"+tick_text+"</text>");
-                    out.println("<line x1=\"0\" y1=\""+(pixelWidth-tick_pixel)+"\" x2=\"-"+tick_length+"\" y2=\""+(pixelWidth-tick_pixel)+"\" />");
+                    out.println("<text class=\"ytick\" x=\"" + (-1 * tick_length - 2) + "\" y=\"" + (pixelWidth - tick_pixel) + "\">" + tick_text + "</text>");
+                    out.println("<line x1=\"0\" y1=\"" + (pixelWidth - tick_pixel) + "\" x2=\"-" + tick_length + "\" y2=\"" + (pixelWidth - tick_pixel) + "\" />");
                 }
                 out.println("<line x1=\"0\" y1=\""+pixelWidth+"\" x2=\""+(pixelWidth)+"\" y2=\""+pixelWidth+"\" />");
-                ArrayList<Double> xticks = PlotTicks.getTicks(0, 180,9);
-                for (double tick: xticks) {
+                for (double tick: xTicks) {
                     // X axis
-                    double tick_pixel = tick/180*pixelWidth;
+                    double tick_pixel;
+                    tick_pixel = tick / maxX * pixelWidth;
                     String tick_text = ""+tick;
-                    out.println("<text class=\"xtick\" x=\""+tick_pixel+"\" y=\""+(text_height+margin+pixelWidth)+"\">"+tick_text+"</text>");
-                    out.println("<line x1=\""+tick_pixel+"\" y1=\""+pixelWidth+"\" x2=\""+tick_pixel+"\" y2=\""+(pixelWidth+tick_length)+"\" />");
+                    out.println("<text class=\"xtick\" x=\"" + tick_pixel + "\" y=\"" + (text_height + margin + pixelWidth) + "\">" + tick_text + "</text>");
+                    out.println("<line x1=\"" + tick_pixel + "\" y1=\"" + pixelWidth + "\" x2=\"" + tick_pixel + "\" y2=\"" + (pixelWidth + tick_length) + "\" />");
+
                 }
                 out.println("</g> <!-- scale bar -->");
                 // phase labels
@@ -443,12 +475,20 @@ public class TauP_Curve extends TauP_Time {
                         }
                         double xPos = cval[0]*pixelWidth/180;
                         double yPos = pixelWidth-cval[1]*pixelWidth/maxTime;
-                        out.println("<text class=\"phaselabel\" x=\""+xPos+"\" y=\""+yPos+"\">"+phase.getName()+"</text>");
+                        if (distHorizontal) {
+                            out.println("<text class=\"phaselabel\" x=\"" + xPos + "\" y=\"" + yPos + "\">" + phase.getName() + "</text>");
+                        } else {
+                            out.println("<text class=\"phaselabel\" y=\"" + xPos + "\" x=\"" + yPos + "\">" + phase.getName() + "</text>");
+                        }
 
                     }
                 }
                 out.println("<g transform=\"scale(1,-1) translate(0, -"+pixelWidth+")\">");
-                out.println("<g transform=\"scale("+(pixelWidth/180)+","+(pixelWidth/maxTime)+")\" >");
+                if (distHorizontal) {
+                    out.println("<g transform=\"scale(" + (pixelWidth / 180) + "," + (pixelWidth / maxTime) + ")\" >");
+                } else {
+                    out.println("<g transform=\"scale(" +  (pixelWidth / maxTime) + "," + (pixelWidth / 180) + ")\" >");
+                }
             }
         }
         double minDist = 0;
@@ -497,7 +537,7 @@ public class TauP_Curve extends TauP_Time {
                     }
                 }
                 for(int i = 0; i < dist.length; i++) {
-                    writeValue(dist[i], time[i], relPhases, out);
+                    writeValue(dist[i], time[i], relPhases, out, distHorizontal);
                     if(i < dist.length - 1 && (rayParams[i] == rayParams[i + 1])
                             && rayParams.length > 2) {
                         /* Here we have a shadow zone, so put a break in the curve. */
@@ -559,7 +599,7 @@ public class TauP_Curve extends TauP_Time {
                         double[] phase_rayParams = phase.getRayParams();
                         if ((phase_rayParams[distIndex] - arrival.getRayParam())
                                 * (arrival.getRayParam() - phase_rayParams[distIndex + 1]) >= 0) {
-                            writeValue(arcDistance, arrival.getTime(), relPhase, out);
+                            writeValue(arcDistance, arrival.getTime(), relPhase, out, distHorizontal);
                             break;
                         }
                     }
@@ -598,17 +638,27 @@ public class TauP_Curve extends TauP_Time {
         double distDeg = arcDistance * 180 / Math.PI;
         return new double[]{distDeg, timeReduced[0]};
     }
-    public void writeValue(double distRadian, double time, List<SeismicPhase> relPhase, PrintWriter out) throws IOException {
+    public void writeValue(double distRadian, double time, List<SeismicPhase> relPhase, PrintWriter out, boolean distHorizontal) throws IOException {
         double[] cval = calcPlotValue(distRadian, time, relPhase);
         if (cval.length == 2) {
             double distDeg = cval[0];
             double timeReduced = cval[1];
             if (outputFormat.equals(SVG)) {
-                out.print(Outputs.formatDistanceNoPad(distDeg) + "  "
-                        + Outputs.formatTimeNoPad(timeReduced) + " ");
+                if (distHorizontal) {
+                    out.print(Outputs.formatDistanceNoPad(distDeg) + "  "
+                            + Outputs.formatTimeNoPad(timeReduced) + " ");
+                } else {
+                    out.print(Outputs.formatTimeNoPad(timeReduced) + "  "
+                            + Outputs.formatDistanceNoPad(distDeg) + "  ");
+                }
             } else {
-                out.println(Outputs.formatDistance(distDeg) + "  "
-                        + Outputs.formatTime(timeReduced));
+                if (distHorizontal) {
+                    out.print(Outputs.formatDistance(distDeg) + "  "
+                            + Outputs.formatTime(timeReduced) + " ");
+                } else {
+                    out.print(Outputs.formatTime(timeReduced) + "  "
+                            + Outputs.formatDistance(distDeg) + "  ");
+                }
             }
         }
     }
@@ -629,6 +679,8 @@ public class TauP_Curve extends TauP_Time {
                 outputFormat = GMT;
             } else if (dashEquals("svg", leftOverArgs[i])) {
                 outputFormat = SVG;
+            } else if (dashEquals("distancevertical", leftOverArgs[i])) {
+                distHorizontal = false;
             } else if(dashEquals("reddeg", leftOverArgs[i]) && i < leftOverArgs.length - 1) {
                 setReduceTime(true);
                 setReduceVelDeg(Double.valueOf(leftOverArgs[i + 1])
