@@ -36,8 +36,8 @@ public class CriticalReflection {
     public void compareReflections(String reflPhaseName, String critReflPhaseName, double degrees, double depth) throws Exception {
         String modelName = "iasp91";
         TauModel tMod = TauModelLoader.load(modelName).depthCorrect(depth);
-        SeismicPhase reflPhase = SeismicPhaseFactory.createPhase(reflPhaseName, tMod);
-        SeismicPhase critPhase = SeismicPhaseFactory.createPhase(critReflPhaseName, tMod);
+        SimpleSeismicPhase reflPhase = SeismicPhaseFactory.createPhase(reflPhaseName, tMod);
+        SimpleSeismicPhase critPhase = SeismicPhaseFactory.createPhase(critReflPhaseName, tMod);
 
         // critcial is subset of uncrit reflection
         assertTrue(reflPhase.getMinDistanceDeg() <= critPhase.getMinDistanceDeg());

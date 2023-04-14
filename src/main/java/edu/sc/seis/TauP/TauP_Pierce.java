@@ -139,7 +139,7 @@ public class TauP_Pierce extends TauP_Time {
     }
 
     /** override depthCorrect so that we can put the pierce depths in. */
-    public void depthCorrect(double depth, double receiverDepth) throws TauModelException {
+    public void depthCorrect(double depth, double receiverDepth, double scatterDepth) throws TauModelException {
         TauModel tModOrig = tMod;
         boolean mustRecalc = false;
         // first see if tModDepth is correct as is
@@ -174,7 +174,7 @@ public class TauP_Pierce extends TauP_Time {
             tModDepth = null;
         } else {
             // no depth correction needed, so just do super() and return
-            super.depthCorrect(depth, receiverDepth);
+            super.depthCorrect(depth, receiverDepth, scatterDepth);
             return;
         }
         if(addDepth != null) {
@@ -182,7 +182,7 @@ public class TauP_Pierce extends TauP_Time {
                 tMod = tMod.splitBranch(addDepth[i]);
             }
         }
-        super.depthCorrect(depth, receiverDepth);
+        super.depthCorrect(depth, receiverDepth, scatterDepth);
         tMod = tModOrig;
     }
 

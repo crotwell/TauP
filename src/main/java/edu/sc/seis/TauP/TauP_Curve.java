@@ -25,15 +25,10 @@
  */
 package edu.sc.seis.TauP;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OptionalDataException;
 import java.io.PrintWriter;
-import java.io.StreamCorruptedException;
 import java.io.StreamTokenizer;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -185,7 +180,7 @@ public class TauP_Curve extends TauP_Time {
          * no need to do any calculations. So, this just overrides
          * TauP_Time.calculate. printResult handles everything else.
          */
-        depthCorrect(getSourceDepth(), getReceiverDepth());
+        depthCorrect();
     }
     
 
@@ -308,7 +303,6 @@ public class TauP_Curve extends TauP_Time {
 
     @Override
     public void printResult(PrintWriter out) throws IOException {
-        SeismicPhase phase;
         double[] dist, time, rayParams;
         double arcDistance;
         double maxTime = -1 * Double.MAX_VALUE, minTime = Double.MAX_VALUE;
@@ -341,7 +335,7 @@ public class TauP_Curve extends TauP_Time {
                 title += " relative phase "+relativePhaseName;
             }
             for(int phaseNum = 0; phaseNum < phaseList.size(); phaseNum++) {
-                phase = (SeismicPhase)phaseList.get(phaseNum);
+                SeismicPhase phase = (SimpleSeismicPhase)phaseList.get(phaseNum);
                 if(phase.hasArrivals()) {
                     dist = phase.getDist();
                     time = phase.getTime();
@@ -433,7 +427,7 @@ public class TauP_Curve extends TauP_Time {
 
                 out.println("<!-- phase name labels -->");
                 for(int phaseNum = 0; phaseNum < phaseList.size(); phaseNum++) {
-                    phase = phaseList.get(phaseNum);
+                    SeismicPhase phase = phaseList.get(phaseNum);
                     if (phase.hasArrivals()) {
                         dist = phase.getDist();
                         time = phase.getTime();
@@ -474,7 +468,7 @@ public class TauP_Curve extends TauP_Time {
             }
         }
         for(int phaseNum = 0; phaseNum < phaseList.size(); phaseNum++) {
-            phase = phaseList.get(phaseNum);
+            SeismicPhase phase = phaseList.get(phaseNum);
             if(phase.hasArrivals()) {
                 dist = phase.getDist();
                 time = phase.getTime();
@@ -562,8 +556,9 @@ public class TauP_Curve extends TauP_Time {
                     // find arrival with ray param between original two rays, write it out
                     for (Arrival arrival : phaseArrivals) {
                         // can be equal in case of Pdiff where rayparam is const
-                        if ((phase.rayParams[distIndex] - arrival.getRayParam())
-                                * (arrival.getRayParam() - phase.rayParams[distIndex + 1]) >= 0) {
+                        double[] phase_rayParams = phase.getRayParams();
+                        if ((phase_rayParams[distIndex] - arrival.getRayParam())
+                                * (arrival.getRayParam() - phase_rayParams[distIndex + 1]) >= 0) {
                             writeValue(arcDistance, arrival.getTime(), relPhase, out);
                             break;
                         }

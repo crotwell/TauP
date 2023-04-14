@@ -26,6 +26,7 @@
 package edu.sc.seis.TauP;
 
 import java.time.Duration;
+import java.util.List;
 
 /**
  * convenience class for storing the parameters associated with a phase arrival.
@@ -39,37 +40,11 @@ import java.time.Duration;
  */
 public class Arrival {
 
-
     public Arrival(SeismicPhase phase,
                    double time,
                    double dist,
                    double rayParam,
-                   int rayParamIndex,
-                   String name,
-                   String puristName,
-                   double sourceDepth) {
-        this(phase,
-             time,
-             dist,
-             rayParam,
-             rayParamIndex,
-             name,
-             puristName,
-             sourceDepth,
-             phase.calcTakeoffAngle(rayParam),
-             phase.calcIncidentAngle(rayParam));
-    }
-
-    public Arrival(SeismicPhase phase,
-                   double time,
-                   double dist,
-                   double rayParam,
-                   int rayParamIndex,
-                   String name,
-                   String puristName,
-                   double sourceDepth,
-                   double takeoffAngle,
-                   double incidentAngle) {
+                   int rayParamIndex) {
         if (Double.isNaN(time)) {
             throw new IllegalArgumentException("Time cannot be NaN");
         }
@@ -81,12 +56,14 @@ public class Arrival {
         this.dist = dist;
         this.rayParam = rayParam;
         this.rayParamIndex = rayParamIndex;
-        this.name = name;
-        this.puristName = puristName;
-        this.sourceDepth = sourceDepth;
-        this.takeoffAngle = takeoffAngle;
-        this.incidentAngle = incidentAngle;
+        this.name = phase.getName();
+        this.puristName = phase.getPuristName();
+        this.sourceDepth = phase.getSourceDepth();
+        this.receiverDepth = phase.getReceiverDepth();
+        this.takeoffAngle = phase.calcTakeoffAngle(rayParam);
+        this.incidentAngle = phase.calcIncidentAngle(rayParam);
     }
+
 
     /** phase that generated this arrival. */
     private SeismicPhase phase;
@@ -110,6 +87,9 @@ public class Arrival {
 
     /** source depth in kilometers */
     private double sourceDepth;
+
+    /** receiver depth in kilometers */
+    private double receiverDepth;
 
     /** pierce and path points */
     private TimeDist[] pierce, path;
@@ -307,4 +287,28 @@ public class Arrival {
     protected static final double DtoR = Math.PI / 180.0;
 
     protected static final double RtoD = 180.0 / Math.PI;
+
+    public static Arrival getEarliestArrival(List<Arrival> arrivals) {
+        double soonest = Double.MAX_VALUE;
+        Arrival soonestArrival = null;
+        for (Arrival a : arrivals) {
+            if (a.getTime() < soonest) {
+                soonestArrival = a;
+                soonest = a.getTime();
+            }
+        }
+        return soonestArrival;
+    }
+    public static Arrival getLatestArrival(List<Arrival> arrivals) {
+        double latest = Double.MAX_VALUE;
+        Arrival latestArrival = null;
+        for (Arrival a : arrivals) {
+            if (a.getTime() < latest) {
+                latestArrival = a;
+                latest = a.getTime();
+            }
+        }
+        return latestArrival;
+    }
+
 }

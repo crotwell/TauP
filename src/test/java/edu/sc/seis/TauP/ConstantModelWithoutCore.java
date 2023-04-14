@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -37,12 +36,12 @@ public class ConstantModelWithoutCore {
 
     @Test
     public void testDirectP() {
-        ConstantModelTest.doDirectTest(tMod, SeismicPhase.PWAVE);
+        ConstantModelTest.doDirectTest(tMod, SimpleSeismicPhase.PWAVE);
     }
 
     @Test
     public void testDirectS() {
-        ConstantModelTest.doDirectTest(tMod, SeismicPhase.SWAVE);
+        ConstantModelTest.doDirectTest(tMod, SimpleSeismicPhase.SWAVE);
     }
     
     @Test

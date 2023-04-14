@@ -1,7 +1,6 @@
 package edu.sc.seis.TauP;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -23,8 +22,11 @@ public class LegPuller {
     public static final String surfaceWave = "("+number+"kmps)";
     public static final String bodyWave = travelLeg+"("+interactPointsRE+"?"+travelLeg+")*";
 
+    public static final char SCATTER_CODE = '%';
+    public static final String scatterWave = "("+bodyWave+")"+SCATTER_CODE+"("+bodyWave+")";
+
     public static final Pattern phaseRegEx =
-            Pattern.compile("^("+surfaceWave+"|"+ bodyWave+")$");
+            Pattern.compile("^("+surfaceWave+"|"+ scatterWave+"|"+ bodyWave+")$");
 
     public static boolean regExCheck(String name) {
         Matcher m = phaseRegEx.matcher(name);
@@ -144,7 +146,8 @@ public class LegPuller {
                             || name.charAt(offset + 1) == 'c'
                             || name.charAt(offset + 1) == '^'
                             || name.charAt(offset + 1) == 'v'
-                            || name.charAt(offset + 1) == 'V') {
+                            || name.charAt(offset + 1) == 'V'
+                            || name.charAt(offset + 1) == SCATTER_CODE) {
                         legs.add(name.substring(offset, offset + 1));
                         offset++;
                     } else if (Character.isDigit(name.charAt(offset + 1))) {
@@ -250,6 +253,11 @@ public class LegPuller {
                         throw new TauModelException("Invalid phase name:\n"
                                 + name.substring(offset) + " in " + name);
                     }
+
+                } else if(name.charAt(offset) == SCATTER_CODE) {
+                    // scatter point
+                    legs.add(name.substring(offset, offset + 1));
+                    offset++;
                 } else if(name.charAt(offset) == '^'
                         || name.charAt(offset) == 'v'
                         || name.charAt(offset) == 'V') {
@@ -373,7 +381,7 @@ public class LegPuller {
         double disconDepth = (Double.valueOf(depthString)).doubleValue();
         TauBranch tBranch;
         for(int i = 0; i < tMod.getNumBranches(); i++) {
-            tBranch = tMod.getTauBranch(i, SeismicPhase.PWAVE);
+            tBranch = tMod.getTauBranch(i, SimpleSeismicPhase.PWAVE);
             if(Math.abs(disconDepth - tBranch.getTopDepth()) < disconMax
                     && !tMod.isNoDisconDepth(tBranch.getTopDepth())) {
                 disconBranch = i;
@@ -527,7 +535,9 @@ public class LegPuller {
                     || currToken.equals("P") || currToken.equals("S")
                     || currToken.equals("K") || currToken.equals("Ked")
                     || currToken.startsWith("v") || currToken.startsWith("V")
-                    || currToken.equals("c") || currToken.equals("m") )) {
+                    || currToken.equals("c") || currToken.equals("m")
+                    || currToken.equals(""+SCATTER_CODE)
+            )) {
                 return "'Ped' or 'Sed' can only be before Pdiff,P,S,Sdiff,K,c,v,V,m or second to last token immediately before END or ";
             }
 

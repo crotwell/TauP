@@ -413,7 +413,7 @@ public class TauP_Table extends TauP_Time {
     protected void jsonTable(PrintWriter out) throws TauModelException, IOException {
         out.println("[");
         for(int depthNum = 0; depthNum < depths.length; depthNum++) {
-            depthCorrect(depths[depthNum], getReceiverDepth());
+            depthCorrect(depths[depthNum], getReceiverDepth(), getScatterDepth());
             for (int distNum = 0; distNum < distances.length; distNum++) {
                 calculate(distances[distNum]);
                 List<Arrival> arrivals = getArrivals();
@@ -430,7 +430,7 @@ public class TauP_Table extends TauP_Time {
         String header = "Model,Distance (deg),Depth (km),Phase,Time (s),RayParam (deg/s),Takeoff Angle,Incident Angle,Purist Distance,Purist Name";
         out.println(header);
         for(int depthNum = 0; depthNum < depths.length; depthNum++) {
-            depthCorrect(depths[depthNum], getReceiverDepth());
+            depthCorrect(depths[depthNum], getReceiverDepth(), getScatterDepth());
             for(int distNum = 0; distNum < distances.length; distNum++) {
                 calculate(distances[distNum]);
                 List<Arrival> arrivals = getArrivals();
@@ -457,7 +457,7 @@ public class TauP_Table extends TauP_Time {
     protected void genericTable(PrintWriter out) throws TauModelException,
             IOException {
         for(int depthNum = 0; depthNum < depths.length; depthNum++) {
-            depthCorrect(depths[depthNum], getReceiverDepth());
+            depthCorrect(depths[depthNum], getReceiverDepth(), getScatterDepth());
             for(int distNum = 0; distNum < distances.length; distNum++) {
                 calculate(distances[distNum]);
                 List<Arrival> arrivals = getArrivals();
@@ -516,7 +516,7 @@ public class TauP_Table extends TauP_Time {
             out.println();
         }
         for(int depthNum = 0; depthNum < depths.length; depthNum++) {
-            depthCorrect(depths[depthNum], getReceiverDepth());
+            depthCorrect(depths[depthNum], getReceiverDepth(), getScatterDepth());
             out.println("#  Travel time for z =    " + depths[depthNum]);
             for(int distNum = 0; distNum < distances.length; distNum++) {
                 calculate(distances[distNum]);

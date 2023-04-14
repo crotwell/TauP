@@ -21,6 +21,7 @@ public class TauP_PhaseDescribe extends TauP_Time {
                 + "                      Default is iasp91.\n\n"
                 + "-h depth           -- source depth in km\n\n"
                 + "--stadepth depth   -- receiver depth in km\n\n"
+                + "--scat depth deg   -- scattering depth and distance\n"
                 + "--dump             -- dump raw sample points\n\n");
     }
 
@@ -54,6 +55,12 @@ public class TauP_PhaseDescribe extends TauP_Time {
                      */
                     noComprendoArgs[numNoComprendoArgs++] = args[i];
                 }
+
+            } else if(i < args.length - 2 && args[i].equalsIgnoreCase("--scatter")) {
+                double scatterDepth = Double.valueOf(args[i + 1]).doubleValue();
+                double scatterDistDeg = Double.valueOf(args[i + 2]).doubleValue();
+                setScatter(scatterDepth, scatterDistDeg);
+                i += 2;
             } else {
                 /* I don't know how to interpret this argument, so pass it back */
                 noComprendoArgs[numNoComprendoArgs++] = args[i];
@@ -72,7 +79,7 @@ public class TauP_PhaseDescribe extends TauP_Time {
     @Override
     public void start() throws IOException, TauModelException, TauPException {
         if (getSeismicPhases().size() > 0) {
-            depthCorrect(getSourceDepth(), getReceiverDepth());
+            depthCorrect();
             printResult(getWriter());
         } else {
             writer.println("No phases to describe.");

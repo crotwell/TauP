@@ -4,11 +4,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class HeadDiffWaveTest {
@@ -17,11 +15,11 @@ public class HeadDiffWaveTest {
   public void testHeadOrDiffractSeqSize() throws Exception {
     double depth = 0;
     TauModel tMod = TauModelLoader.load(modelName).depthCorrect(depth);
-    SeismicPhase pnPhase = SeismicPhaseFactory.createPhase("Pn", tMod);
+    SimpleSeismicPhase pnPhase = SeismicPhaseFactory.createPhase("Pn", tMod);
     assertEquals(1, pnPhase.headOrDiffractSeq.size());
-    SeismicPhase pdiffPhase = SeismicPhaseFactory.createPhase("Pdiff", tMod);
+    SimpleSeismicPhase pdiffPhase = SeismicPhaseFactory.createPhase("Pdiff", tMod);
     assertEquals(1, pdiffPhase.headOrDiffractSeq.size());
-    SeismicPhase pdiffpdiffPhase = SeismicPhaseFactory.createPhase("PdiffPdiff", tMod);
+    SimpleSeismicPhase pdiffpdiffPhase = SeismicPhaseFactory.createPhase("PdiffPdiff", tMod);
     assertEquals(2, pdiffpdiffPhase.headOrDiffractSeq.size());
     SeismicPhase pvmppnPhase = SeismicPhaseFactory.createPhase("PvmpPn", tMod);
     assertEquals(1, pnPhase.headOrDiffractSeq.size());

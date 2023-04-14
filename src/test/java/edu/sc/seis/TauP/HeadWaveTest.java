@@ -20,7 +20,7 @@ public class HeadWaveTest {
 
     public void checkHeadWave(String phaseName, int numHeadLegs, double distDeg) throws TauModelException {
         double receiverDepth = 0;
-        SeismicPhase phase = SeismicPhaseFactory.createPhase(phaseName, tMod, tMod.getSourceDepth(), receiverDepth, DEBUG);
+        SimpleSeismicPhase phase = SeismicPhaseFactory.createPhase(phaseName, tMod, tMod.getSourceDepth(), receiverDepth, DEBUG);
         assertEquals(numHeadLegs, phase.headOrDiffractSeq.size());
         List<Arrival> arrivalList = phase.calcTime(distDeg);
         for (Arrival a : arrivalList) {

@@ -93,9 +93,9 @@ public class SeismicPhaseFactory {
      */
     protected ArrayList<Boolean> waveType = new ArrayList<Boolean>();
 
-    public static final boolean PWAVE = SeismicPhase.PWAVE;
+    public static final boolean PWAVE = SimpleSeismicPhase.PWAVE;
 
-    public static final boolean SWAVE = SeismicPhase.SWAVE;
+    public static final boolean SWAVE = SimpleSeismicPhase.SWAVE;
 
     /**
      * The maximum degrees that a Pn or Sn can refract along the moho. Note this
@@ -157,19 +157,19 @@ public class SeismicPhaseFactory {
         this.receiverDepth = receiverDepth;
 
         // where we end up, depending on if we end going down or up
-        this.upgoingRecBranch = tMod.findBranch(receiverDepth);
+        this.upgoingRecBranch = this.tMod.findBranch(receiverDepth);
         this.downgoingRecBranch = upgoingRecBranch - 1; // one branch shallower
     }
-    public static SeismicPhase createPhase(String name, TauModel tMod) throws TauModelException {
+    public static SimpleSeismicPhase createPhase(String name, TauModel tMod) throws TauModelException {
         return createPhase(name, tMod, tMod.getSourceDepth());
     }
-    public static SeismicPhase createPhase(String name, TauModel tMod, double sourceDepth) throws TauModelException {
+    public static SimpleSeismicPhase createPhase(String name, TauModel tMod, double sourceDepth) throws TauModelException {
         return createPhase(name, tMod, sourceDepth, 0.0);
     }
-    public static SeismicPhase createPhase(String name, TauModel tMod, double sourceDepth, double receiverDepth) throws TauModelException {
+    public static SimpleSeismicPhase createPhase(String name, TauModel tMod, double sourceDepth, double receiverDepth) throws TauModelException {
         return createPhase(name, tMod, sourceDepth, receiverDepth, ToolRun.DEBUG);
     }
-    public static SeismicPhase createPhase(String name, TauModel tMod, double sourceDepth, double receiverDepth, boolean debug) throws TauModelException {
+    public static SimpleSeismicPhase createPhase(String name, TauModel tMod, double sourceDepth, double receiverDepth, boolean debug) throws TauModelException {
         SeismicPhaseFactory factory = new SeismicPhaseFactory(name, tMod, sourceDepth, receiverDepth, debug);
         return factory.internalCreatePhase();
     }
@@ -186,13 +186,13 @@ public class SeismicPhaseFactory {
         }
     }
 
-    SeismicPhase internalCreatePhase() throws TauModelException {
+    SimpleSeismicPhase internalCreatePhase() throws TauModelException {
         legs = LegPuller.legPuller(name);
         this.puristName = LegPuller.createPuristName(tMod, legs);
 
         parseName(tMod);
         sumBranches(tMod);
-        SeismicPhase phase = new SeismicPhase(name,
+        SimpleSeismicPhase phase = new SimpleSeismicPhase(name,
                 tMod,
                 receiverDepth,
                 legs,

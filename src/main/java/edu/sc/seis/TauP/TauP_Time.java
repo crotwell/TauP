@@ -57,6 +57,9 @@ public class TauP_Time extends TauP_Tool {
 
     protected double degrees = Double.MAX_VALUE;
 
+    protected double scatterDepth = 0.0;
+    protected double scatterDistDeg = 0.0;
+
     /**
      * For when command line args uses --km for distance. Have to wait until
      * after the model is read in to get radius of earth.
@@ -331,6 +334,33 @@ public class TauP_Time extends TauP_Tool {
         this.receiverDepth = receiverDepth;
     }
 
+    public double getScatterDepth() {
+        return scatterDepth;
+    }
+
+    public void setScatterDepth(double depth) {
+        if (this.getScatterDepth() != depth) {
+            clearPhases();
+        }
+        this.scatterDepth = depth;
+    }
+
+    public double getScatterDistDeg() {
+        return scatterDistDeg;
+    }
+
+    public void setScatterDistDeg(double distDeg) {
+        if (this.getScatterDistDeg() != distDeg) {
+            clearPhases();
+        }
+        this.scatterDistDeg = distDeg;
+    }
+
+    public void setScatter(double depth, double degrees) {
+        setScatterDepth(depth);
+        setScatterDistDeg(degrees);
+    }
+
     public String getTauModelName() {
         return modelName;
     }
@@ -340,9 +370,9 @@ public class TauP_Time extends TauP_Tool {
     }
 
     /** Gets depth corrected TauModel. */
-    public TauModel getTauModelDepthCorrected() {
+    public TauModel getTauModelDepthCorrected() throws TauModelException {
         if (tModDepth == null) {
-            tModDepth = tMod;
+            depthCorrect();
         }
         return tModDepth;
     }
@@ -542,6 +572,11 @@ public class TauP_Time extends TauP_Tool {
                 } else if(args[i].equalsIgnoreCase("--stadepth")) {
                     setReceiverDepth(Double.parseDouble(args[i + 1]));
                     i++;
+                } else if(i < args.length - 2 && args[i].equalsIgnoreCase("--scatter")) {
+                    double scatterDepth = Double.valueOf(args[i + 1]).doubleValue();
+                    double scatterDistDeg = Double.valueOf(args[i + 2]).doubleValue();
+                    setScatter(scatterDepth, scatterDistDeg);
+                    i += 2;
                 } else if(dashEquals("ph", args[i])) {
                     if(cmdLineArgPhase) {
                         // previous cmd line -ph so append
@@ -707,7 +742,7 @@ public class TauP_Time extends TauP_Tool {
     }
 
     public void calcTime(double degrees) throws TauModelException {
-        depthCorrect(getSourceDepth(), getReceiverDepth());
+        depthCorrect();
         clearArrivals();
         this.degrees = degrees;
         SeismicPhase phase;
@@ -726,7 +761,7 @@ public class TauP_Time extends TauP_Tool {
     public void calcTakeoff(double takeoffAngle) throws TauModelException {
         stationLat = Double.MAX_VALUE;
         stationLon = Double.MAX_VALUE;
-        depthCorrect(getSourceDepth(), getReceiverDepth());
+        depthCorrect();
         clearArrivals();
         SeismicPhase phase;
         List<SeismicPhase> phaseList = getSeismicPhases();
@@ -759,7 +794,7 @@ public class TauP_Time extends TauP_Tool {
     public void shootRayParameter(double rayParam) throws TauModelException {
         stationLat = Double.MAX_VALUE;
         stationLon = Double.MAX_VALUE;
-        depthCorrect(getSourceDepth(), getReceiverDepth());
+        depthCorrect();
         clearArrivals();
         SeismicPhase phase;
         List<SeismicPhase> phaseList = getSeismicPhases();
@@ -778,6 +813,17 @@ public class TauP_Time extends TauP_Tool {
             }
         }
         sortArrivals();
+    }
+
+    /**
+     * corrects the TauModel for the source, receiver and scatter depths.
+     * In general, this is called by each tool's calculate methods, and so should
+     * not need to be called by outside code. Most of the time calling setSourceDepth,
+     * setReceiverDepth and setScatterDepth
+     * is preferred, allowing the tool to choose when to call depthCorrect.
+     */
+    public void depthCorrect() throws TauModelException {
+        depthCorrect(getSourceDepth(), getReceiverDepth(), getScatterDepth());
     }
 
     /**
@@ -804,6 +850,21 @@ public class TauP_Time extends TauP_Tool {
      * @throws TauModelException
      */
     public void depthCorrect(double depth, double receiverDepth) throws TauModelException {
+        depthCorrect(depth, receiverDepth, getScatterDepth());
+    }
+
+    /**
+     *
+     * In general, this is called by each tool's calculate methods, and so should
+     * not need to be called by outside code. Most of the time calling setSourceDepth
+     * and setReceiverDepth and setScatterDepth is preferred, allowing the tool to choose when to call depthCorrect.
+     *
+     * @param depth the source depth
+     * @param receiverDepth the receiver depth
+     * @param scatterDepth scatterer depth, set to zero if no scattering
+     * @throws TauModelException
+     */
+    public void depthCorrect(double depth, double receiverDepth, double scatterDepth) throws TauModelException {
         if(tModDepth == null || tModDepth.getSourceDepth() != depth) {
             setReceiverDepth(receiverDepth);
             tModDepth = tMod.depthCorrect(depth);
@@ -815,6 +876,11 @@ public class TauP_Time extends TauP_Tool {
             tModDepth = tModDepth.splitBranch(receiverDepth); // if already split on receiver depth this does nothing
             clearPhases();
         }
+        if (scatterDepth != getScatterDepth()) {
+            setScatterDepth(scatterDepth);
+            tModDepth = tModDepth.splitBranch(scatterDepth); // if already split on scatter depth this does nothing
+            clearPhases();
+        }
         setSourceDepth(depth);
     }
 
@@ -824,7 +890,6 @@ public class TauP_Time extends TauP_Tool {
      * depthCorrect, and calculate.
      */
     protected synchronized void recalcPhases() {
-        SeismicPhase seismicPhase;
         List<SeismicPhase> newPhases = new ArrayList<SeismicPhase>();
         boolean alreadyAdded;
         String tempPhaseName;
@@ -852,13 +917,35 @@ public class TauP_Time extends TauP_Tool {
             if(!alreadyAdded) {
                 // didn't find it precomputed, so recalculate
                 try {
-                    seismicPhase = SeismicPhaseFactory.createPhase(tempPhaseName,
-                            getTauModelDepthCorrected(), getSourceDepth(), getReceiverDepth(), DEBUG);
-                    seismicPhase.verbose = verbose;
-                    newPhases.add(seismicPhase);
+                    if (tempPhaseName.contains(""+LegPuller.SCATTER_CODE)) {
+                        String[] in_scat = tempPhaseName.split(""+LegPuller.SCATTER_CODE);
+                        if (in_scat.length != 2) {
+                            throw new TauModelException("Scatter phase doesn't have two segments: "+tempPhaseName);
+                        }
+                        if (getScatterDistDeg() == 0.0) {
+                            throw new TauModelException("Attempt to use scatter phase but scatter distance is zero: "+tempPhaseName);
+                        }
+                        SeismicPhase inPhase = SeismicPhaseFactory.createPhase(in_scat[0],
+                                getTauModelDepthCorrected(), getSourceDepth(), getScatterDepth(), DEBUG);
+                        SeismicPhase scatPhase = SeismicPhaseFactory.createPhase(in_scat[1],
+                                getTauModelDepthCorrected(), getScatterDepth(), getReceiverDepth(), DEBUG);
 
-                    if(verbose) {
-                        Alert.info(seismicPhase.toString());
+                        List<Arrival> inArrivals = inPhase.calcTime(getScatterDistDeg());
+                        for (Arrival inArr : inArrivals) {
+                            ScatteredSeismicPhase seismicPhase = new ScatteredSeismicPhase(inArr, scatPhase, getScatterDepth(), getScatterDistDeg());
+                            newPhases.add(seismicPhase);
+                            if (verbose) {
+                                Alert.info(seismicPhase.toString());
+                            }
+                        }
+                    } else {
+                        SimpleSeismicPhase seismicPhase = SeismicPhaseFactory.createPhase(tempPhaseName,
+                                getTauModelDepthCorrected(), getSourceDepth(), getReceiverDepth(), DEBUG);
+                        seismicPhase.verbose = verbose;
+                        newPhases.add(seismicPhase);
+                        if(verbose) {
+                            Alert.info(seismicPhase.toString());
+                        }
                     }
                 } catch(TauModelException e) {
                     Alert.warning("Error with phase=" + tempPhaseName,
@@ -1522,6 +1609,7 @@ public class TauP_Time extends TauP_Tool {
                 + "                      Default is iasp91.\n\n"
                 + "-h depth           -- source depth in km\n\n"
                 + "--stadepth depth   -- receiver depth in km\n"
+                + "--scat depth deg   -- scattering depth and distance\n"
         );
     }
 

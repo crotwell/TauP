@@ -48,12 +48,12 @@ public class ConstantModelTest {
 
     @Test
     public void testDirectP() {
-        doDirectTest(tMod, SeismicPhase.PWAVE);
+        doDirectTest(tMod, SimpleSeismicPhase.PWAVE);
     }
 
     @Test
     public void testDirectS() {
-        doDirectTest(tMod, SeismicPhase.SWAVE);
+        doDirectTest(tMod, SimpleSeismicPhase.SWAVE);
     }
 
 /**
