@@ -231,7 +231,7 @@ public class ScatteredSeismicPhase implements SeismicPhase {
 
     @Override
     public String describe() {
-        return inboundArrival+"\nScatter at "+scatterDepth+", "+scatterDistance+"\n"+scatteredPhase.describe();
+        return inboundArrival.getPhase().describe()+"\nArrival: "+inboundArrival+"\nScatter at "+scatterDepth+", "+scatterDistance+"\n"+scatteredPhase.describe();
     }
 
     @Override
