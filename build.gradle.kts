@@ -20,7 +20,7 @@ application {
 }
 
 group = "edu.sc.seis"
-version = "2.7.0-SNAPSHOT2"
+version = "2.7.0-SNAPSHOT3"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
