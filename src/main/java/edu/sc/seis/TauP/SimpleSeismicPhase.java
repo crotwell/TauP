@@ -880,7 +880,6 @@ public class SimpleSeismicPhase implements SeismicPhase {
          * leaves branch i is stored in i+1. Use linear interpolation
          * between rays that we know.
          */
-        System.out.println("########## Loop branchs  "+branchSeq.size());
         for(int i = 0; i < branchSeq.size(); i++) {
             int branchNum = ((Integer)branchSeq.get(i)).intValue();
             boolean isPWave = ((Boolean)waveType.get(i)).booleanValue();
@@ -987,9 +986,11 @@ public class SimpleSeismicPhase implements SeismicPhase {
                             + timeB + " timeA=" + timeA);
                 }
             } else {
-                System.out.println("Time inc in branch tiny: "+" branchTime=" + branchTime
-                        + " branchDist=" + branchDist + " branchDepth="
-                        + branchDepth);
+                if(DEBUG) {
+                    System.out.println("Time inc in branch tiny: "+" branchTime=" + branchTime
+                            + " branchDist=" + branchDist + " branchDepth="
+                            + branchDepth);
+                }
             }
             for(int diffBranchIdx = 0; diffBranchIdx < headOrDiffractSeq.size(); diffBranchIdx++) {
                 int diffBranchNum = headOrDiffractSeq.get(diffBranchIdx);
@@ -1220,7 +1221,7 @@ public class SimpleSeismicPhase implements SeismicPhase {
         TauModel tModDepth;
         try {
             if(args.length < 3) {
-                System.out.println("Usage: SeismicPhase modelfile depth phasename [phasename ...]");
+                System.out.println("Usage: SimpleSeismicPhase modelfile depth phasename [phasename ...]");
             }
             tMod = TauModel.readModel(args[0]);
             tModDepth = tMod.depthCorrect(Double.valueOf(args[1]).doubleValue());

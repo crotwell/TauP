@@ -12,6 +12,7 @@ Arguments are:
 
 --stadepth depth   -- receiver depth in km
 
+--scat depth deg   -- scattering depth and distance
 --dump             -- dump raw sample points
 
 

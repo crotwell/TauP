@@ -236,7 +236,11 @@ public class ScatteredSeismicPhase implements SeismicPhase {
 
     @Override
     public void dump() {
-
+        double[] dist = scatteredPhase.getDist();
+        double[] rayParams = scatteredPhase.getRayParams();
+        for(int j = 0; j < dist.length; j++) {
+            System.out.println(j + "  " + (scatterDistance+dist[j]) + "  " + rayParams[j]);
+        }
     }
 
     @Override
