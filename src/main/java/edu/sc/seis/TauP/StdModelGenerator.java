@@ -61,6 +61,8 @@ public class StdModelGenerator {
     tvelModelNames.add("ak135");
     ArrayList<String> ndModelNames = new ArrayList<String>();
     ndModelNames.add("prem");
+    ndModelNames.add("ak135fcont");
+    ndModelNames.add("ak135favg");
     TauP_Create taupCreate = new TauP_Create();
     taupCreate.setDirectory(inDir.getPath());
     taupCreate.setVelFileType("tvel");
