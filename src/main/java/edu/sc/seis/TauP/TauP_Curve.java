@@ -653,11 +653,11 @@ public class TauP_Curve extends TauP_Time {
                 }
             } else {
                 if (distHorizontal) {
-                    out.print(Outputs.formatDistance(distDeg) + "  "
-                            + Outputs.formatTime(timeReduced) + " ");
+                    out.println(Outputs.formatDistance(distDeg) + "  "
+                            + Outputs.formatTime(timeReduced));
                 } else {
-                    out.print(Outputs.formatTime(timeReduced) + "  "
-                            + Outputs.formatDistance(distDeg) + "  ");
+                    out.println(Outputs.formatTime(timeReduced) + "  "
+                            + Outputs.formatDistance(distDeg));
                 }
             }
         }
