@@ -1,6 +1,8 @@
 package edu.sc.seis.TauP;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.Writer;
 
 /**
  * Creates plots of a velocity model.
@@ -22,7 +24,114 @@ public class TauP_VelocityPlot extends TauP_Tool {
         if (getOutFileBase() == DEFAULT_OUTFILE) {
             setOutFileBase(vMod.modelName+"_vel");
         }
-        vMod.printGMT(getOutFile());
+        if (getOutputFormat() == SVG) {
+            printSVG(getWriter(), vMod);
+        } else {
+            vMod.printGMT(getOutFile());
+        }
+    }
+
+    public void printSVG(PrintWriter out, VelocityModel vMod) {
+        double maxVel=0;
+        for (VelocityLayer vLayer : vMod.layer) {
+            if (vLayer.getTopPVelocity() > maxVel) { maxVel = vLayer.getTopPVelocity();}
+            if (vLayer.getBotPVelocity() > maxVel) { maxVel = vLayer.getBotPVelocity();}
+            if (vLayer.getTopSVelocity() > maxVel) { maxVel = vLayer.getTopSVelocity();}
+            if (vLayer.getBotSVelocity() > maxVel) { maxVel = vLayer.getBotSVelocity();}
+        }
+        double minVel = 0.0;
+        maxVel *= 1.05; // make little bit larger
+        int numXTicks = 5;
+        double maxY = vMod.maxRadius;
+        double minY =0.0;
+        int numYTicks = 10;
+
+        float pixelWidth =  (72.0f*mapWidth)-plotOffset;
+        float margin = 40;
+        float plotWidth = pixelWidth - margin;
+        String title = vMod.modelName;
+        printSVGBeginning(out);
+        SvgUtil.createXYAxes(out, minVel, maxVel, numXTicks, maxY, minY, numYTicks, pixelWidth, margin, title);
+
+        out.println("<g transform=\"scale(1,-1) translate(0, -"+(plotWidth)+")\">");
+        out.println("<g transform=\"scale(" + (plotWidth / maxVel) + "," + (plotWidth / maxY) + ")\" >");
+
+
+        out.println("<!-- P velocity");
+        out.println(" -->");
+        out.print("<polyline class=\"pwave\" points=\"");
+        VelocityLayer prev = null;
+        for (VelocityLayer vlay : vMod.layer) {
+            if (prev == null || prev.getBotPVelocity() != vlay.getTopPVelocity()) {
+                out.print( (float)vlay.getTopPVelocity()+ " " + (maxY-(float)vlay.getTopDepth())+ " " );
+            }
+            out.print( (float)vlay.getBotPVelocity()+ " " + (maxY-(float)vlay.getBotDepth())+ " " );
+            prev = vlay;
+        }
+        out.println("\" />");
+
+        out.println("<!-- S velocity");
+        out.println(" -->");
+        out.print("<polyline class=\"swave\" points=\"");
+        prev = null;
+        for (VelocityLayer vlay : vMod.layer) {
+            if (prev == null || prev.getBotSVelocity() != vlay.getTopSVelocity()) {
+                out.print( (float)vlay.getTopSVelocity()+ " " + (maxY-(float)vlay.getTopDepth())+ " " );
+            }
+            out.print( (float)vlay.getBotSVelocity()+ " " + (maxY-(float)vlay.getBotDepth())+ " " );
+            prev = vlay;
+        }
+        out.println("\" />");
+
+        out.println("</g>");
+        out.println("</g>");
+        out.println("</g>");
+        out.println("</svg>");
+        out.flush();
+        closeWriter();
+    }
+
+    public void printSVGBeginning(PrintWriter out) {
+
+        float pixelWidth =  (72.0f*mapWidth);
+//        out.println("<svg version=\"1.1\" baseProfile=\"full\" xmlns=\"http://www.w3.org/2000/svg\" width=\"500\" height=\"500\" viewBox=\"0 0 "+(pixelWidth)+" "+(pixelWidth)+"\">");
+        out.println("<svg version=\"1.1\" baseProfile=\"full\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 "+(pixelWidth+plotOffset)+" "+(pixelWidth+plotOffset)+"\">");
+        SvgUtil.cmdLineArgAsComment(out, toolNameFromClass(this.getClass()), cmdLineArgs);
+        out.println("<defs>");
+        out.println("    <style type=\"text/css\"><![CDATA[");
+        out.println("        polyline {");
+        out.println("            vector-effect: non-scaling-stroke;");
+        out.println("            stroke: black;");
+        out.println("            fill: transparent;");
+        out.println("        }");
+        out.println("        polyline.swave {");
+        out.println("            stroke: red;");
+        out.println("        }");
+        out.println("        polyline.pwave {");
+        out.println("            stroke: blue;");
+        out.println("        }");
+        out.println("        line {");
+        out.println("            vector-effect: non-scaling-stroke;");
+        out.println("            stroke: black;");
+        out.println("            fill: transparent;");
+        out.println("        }");
+        out.println("        .xtick {");
+        out.println("            text-anchor: middle;");
+        out.println("            dominant-baseline: middle;");
+        out.println("        }");
+        out.println("        .ytick {");
+        out.println("            text-anchor: end;");
+        out.println("            dominant-baseline: middle;");
+        out.println("        }");
+        out.println("        .phaselabel {");
+        out.println("            text-anchor: end;");
+        out.println("            dominant-baseline: middle;");
+        out.println("        }");
+        out.println("    ]]></style>");
+        out.println("</defs>");
+        out.println("<g transform=\"translate("+plotOffset+","+plotOffset+")\" >");
+        out.println("<!-- draw axis and label distances.-->");
+        out.println();
     }
 
     @Override
@@ -33,7 +142,10 @@ public class TauP_VelocityPlot extends TauP_Tool {
         String[] noComprendoArgs = new String[args.length];
         int numNoComprendoArgs = 0;
         while(i < args.length) {
-            if(i < args.length - 1 && dashEquals("nd", args[i])) {
+            if(dashEquals("svg", args[i])) {
+                setOutputFormat(SVG);
+                setOutFileExtension("svg");
+            } else if(i < args.length - 1 && dashEquals("nd", args[i])) {
                 modelName = args[i + 1];
                 modelType = "nd";
                 i++;
@@ -84,10 +196,11 @@ public class TauP_VelocityPlot extends TauP_Tool {
                 + "                      Default is iasp91.\n\n");
         System.out.println("-nd modelfile       -- \"named discontinuities\" velocity file");
         System.out.println("-tvel modelfile     -- \".tvel\" velocity file, ala ttimes\n");
+        System.out.println("--svg               -- output as SVG\n");
         TauP_Tool.printStdUsageTail();
     }
-    
-    
+    float mapWidth = 6;
+    int plotOffset = 80;
     String modelName;
     String modelType;
     String overlayModelName = null;

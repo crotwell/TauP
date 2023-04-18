@@ -35,7 +35,8 @@ public abstract class TauP_Tool {
     public static final String JSON = "json";
 
     public static final String TEXT = "text";
-    
+
+    public String[] cmdLineArgs = new String[0];
 
     protected PrintWriter writer;
 
@@ -120,6 +121,13 @@ public abstract class TauP_Tool {
         }
         return writer;
     }
+
+    public void closeWriter() {
+        if (writer != null) {
+            writer.close();
+        }
+        writer = null;
+    }
     
     public void setWriter(PrintWriter writer) {
         this.writer = writer;
@@ -158,6 +166,7 @@ public abstract class TauP_Tool {
      * that subclass this class will likely override this.
      */
     protected String[] parseCommonCmdLineArgs(String[] origArgs) throws IOException {
+        cmdLineArgs = origArgs;
         int i = 0;
         String[] args = ToolRun.parseCommonCmdLineArgs(origArgs);
         String[] noComprendoArgs = new String[args.length];
