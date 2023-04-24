@@ -82,7 +82,7 @@ public class TauP_PhaseDescribe extends TauP_Time {
             depthCorrect();
             printResult(getWriter());
         } else {
-            writer.println("No phases to describe.");
+            getWriter().println("No phases to describe.");
         }
     }
 

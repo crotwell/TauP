@@ -1,13 +1,12 @@
 package edu.sc.seis.TauP;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class HeadDiffWaveTest {
 
@@ -130,6 +129,30 @@ public class HeadDiffWaveTest {
 }
 
 
+
+  @Test
+  public void test_PK5500diffP() throws VelocityModelException, SlownessModelException, TauModelException, IOException {
+    // outerCoreDiscon has discon at 3000 in outer core and at 5500 in inner core
+    String modelName = "outerCoreDiscon.nd";
+    VelocityModel vMod = VelocityModelTest.loadTestVelMod(modelName);
+    TauP_Create taupCreate = new TauP_Create();
+    TauModel tMod_OCD = taupCreate.createTauModel(vMod);
+    double deg = 150;
+    SeismicPhase ic_diff_Phase = SeismicPhaseFactory.createPhase("PKI5500diffKP", tMod_OCD);
+    List<Arrival> ic_diff_arrivals = ic_diff_Phase.calcTime(deg);
+    assertEquals(1, ic_diff_arrivals.size());
+    Arrival ic_diff_Arr = ic_diff_arrivals.get(0);
+
+    int disconBranch = LegPuller.closestBranchToDepth(tMod_OCD, "5500");
+    TauBranch tBranch = tMod_OCD.getTauBranch(disconBranch-1, true);
+    assertEquals(5500, tBranch.getBotDepth());
+    assertEquals(tBranch.getMinTurnRayParam(), ic_diff_Arr.getRayParam());
+
+    // also test reflection
+    SeismicPhase reflectPhase = SeismicPhaseFactory.createPhase("PKIv5500ykp", tMod_OCD);
+    Arrival reflectArrr = reflectPhase.getEarliestArrival(25);
+    assertNotNull(reflectArrr);
+  }
 
 
   @BeforeAll

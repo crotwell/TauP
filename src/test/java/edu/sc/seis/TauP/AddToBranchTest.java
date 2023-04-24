@@ -1,5 +1,6 @@
 package edu.sc.seis.TauP;
 
+import static edu.sc.seis.TauP.PhaseInteraction.FAIL;
 import static edu.sc.seis.TauP.PhaseInteraction.REFLECT_UNDERSIDE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -223,15 +224,6 @@ public class AddToBranchTest {
         double maxRP = Math.min(s_cmb_rp, p_ocore_rp);
         assertEquals(maxRP, seisFactory.maxRayParam, 0.0001);
         assertEquals(0, seisFactory.minRayParam, 0.0001);
-    }
-
-    @Disabled
-    @Test
-    public void transdown_P_S_core() throws TauModelException {
-        SeismicPhaseFactory seisFactory = makeSPhFactory("PKP");
-        seisFactory.addToBranch(tMod, 0,1,PWAVE,SWAVE,PhaseInteraction.TRANSDOWN, "P");
-        assertEquals(-1, seisFactory.maxRayParam, 0.0001);
-        assertEquals(-1, seisFactory.minRayParam, 0.0001);
     }
 
     @Test

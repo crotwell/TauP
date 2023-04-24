@@ -1,5 +1,6 @@
 package edu.sc.seis.TauP;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -12,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class IllegalPhasesTest {
 
-	List<String> otherLegalPhases = Arrays.asList("SKviKS",
+	static List<String> otherLegalPhases = Arrays.asList("SKviKS",
 			"SKviKKviKS",
 			"SK^cKS",
 			"SK^cK^cKS",
@@ -43,7 +44,15 @@ class IllegalPhasesTest {
 			"SKdiffKiKP",
 			"PPPdiff", // legal? degenerate and same as PdiffPdiffPdiff
 			"PdiffKP",
-			"PedPdiffKP"
+			"PedPdiffKP",
+			"PKdiffP",
+			"PK3000diffP",// assuming discon in outer core at 3000
+			"PKv3000kP",
+			"PK^3000KP",
+			"PKI5500diffkp", // assuming discon in inner core at 5500
+			"PKIv5500ykp",
+			"PKI^5500Ikp",
+			"PKIkp"
 	);
 
 	String[] illegalStartEndings = {
@@ -118,17 +127,21 @@ class IllegalPhasesTest {
 	}
 	
 	@Test
-	void checkLegalPhasesTest() throws TauModelException {
+	void checkLegalPhasesTest() throws TauModelException, VelocityModelException, SlownessModelException, IOException {
 		boolean DEBUG = true;
-		String modelName = "iasp91";
-		TauModel tMod = TauModelLoader.load(modelName);
-		TauModel tModDepth = tMod.depthCorrect(10);
+
+		String modelName = "outerCoreDiscon.nd";
+		VelocityModel vMod = VelocityModelTest.loadTestVelMod(modelName);
+		TauP_Create taupCreate = new TauP_Create();
+		TauModel tMod_OCD = taupCreate.createTauModel(vMod);
+
+		TauModel tModDepth = tMod_OCD.depthCorrect(10);
 		float receiverDepth = 100;
 		List<String> legalPhases = TauP_Time.extractPhaseNames("ttall");
 		legalPhases.addAll(otherLegalPhases);
 		for (String phaseName : legalPhases) {
 			try {
-				SeismicPhase phase = SeismicPhaseFactory.createPhase(phaseName, tMod, tMod.getSourceDepth(), receiverDepth, DEBUG);
+				SeismicPhase phase = SeismicPhaseFactory.createPhase(phaseName, tMod_OCD, tMod_OCD.getSourceDepth(), receiverDepth, DEBUG);
 				SeismicPhase phase_depth = SeismicPhaseFactory.createPhase(phaseName, tModDepth, tModDepth.getSourceDepth(), receiverDepth, DEBUG);
 			} catch(TauModelException ex) {
 				System.err.println("Working on phase: "+phaseName);
