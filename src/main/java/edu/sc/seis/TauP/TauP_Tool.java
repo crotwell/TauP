@@ -28,6 +28,8 @@ public abstract class TauP_Tool {
 
     protected String outFileBase = "";
 
+    public static final String CSV = "csv";
+
     public static final String GMT = "gmt";
 
     public static final String SVG = "svg";

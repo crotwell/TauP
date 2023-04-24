@@ -48,8 +48,6 @@ public class TauP_Table extends TauP_Time {
 
     public static final String LOCSAT = "locsat";
 
-    public static final String CSV = "csv";
-
     protected String headerFile;
 
     protected double[] depths = {0.00f,

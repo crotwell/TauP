@@ -9,6 +9,10 @@ Arguments are:
 -nd modelfile       -- "named discontinuities" velocity file
 -tvel modelfile     -- ".tvel" velocity file, ala ttimes
 
+--svg               -- output as SVG
+--csv               -- outputs a CSV ascii table
+
+
 
 -o [stdout|outfile]         -- output is redirected to stdout or to the "outfile" file
 --prop [propfile]   -- set configuration properties

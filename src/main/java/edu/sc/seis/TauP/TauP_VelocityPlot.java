@@ -26,6 +26,8 @@ public class TauP_VelocityPlot extends TauP_Tool {
         }
         if (getOutputFormat() == SVG) {
             printSVG(getWriter(), vMod);
+        } else if (getOutputFormat() == CSV) {
+            printCSV(getWriter(), vMod);
         } else {
             vMod.printGMT(getOutFile());
         }
@@ -134,6 +136,22 @@ public class TauP_VelocityPlot extends TauP_Tool {
         out.println();
     }
 
+    public void printCSV(PrintWriter out, VelocityModel vMod) {
+        double maxY = vMod.maxRadius;
+        VelocityLayer prev = null;
+        out.println("Depth,P Velocity,S Velocity");
+        for (VelocityLayer vLayer : vMod.getLayers()) {
+            if (prev == null
+                    || prev.getBotPVelocity() != vLayer.getTopPVelocity()
+                    || prev.getBotSVelocity() != vLayer.getTopSVelocity()) {
+                out.println((float)(vLayer.getTopDepth())+","+(float) vLayer.getTopPVelocity() + "," + (float)vLayer.getTopSVelocity());
+            }
+            out.println((float)(vLayer.getBotDepth())+","+(float) vLayer.getBotPVelocity() + "," + (float)vLayer.getBotSVelocity());
+            prev = vLayer;
+        }
+        out.flush();
+    }
+
     @Override
     protected String[] parseCmdLineArgs(String[] origArgs) throws IOException {
 
@@ -145,6 +163,9 @@ public class TauP_VelocityPlot extends TauP_Tool {
             if(dashEquals("svg", args[i])) {
                 setOutputFormat(SVG);
                 setOutFileExtension("svg");
+            } else if(dashEquals("csv", args[i])) {
+                setOutputFormat(CSV);
+                setOutFileExtension("csv");
             } else if(i < args.length - 1 && dashEquals("nd", args[i])) {
                 modelName = args[i + 1];
                 modelType = "nd";
@@ -196,7 +217,9 @@ public class TauP_VelocityPlot extends TauP_Tool {
                 + "                      Default is iasp91.\n\n");
         System.out.println("-nd modelfile       -- \"named discontinuities\" velocity file");
         System.out.println("-tvel modelfile     -- \".tvel\" velocity file, ala ttimes\n");
-        System.out.println("--svg               -- output as SVG\n");
+        System.out.println("--svg               -- output as SVG");
+        System.out.println("--csv               -- outputs a CSV ascii table");
+        System.out.println("\n");
         TauP_Tool.printStdUsageTail();
     }
     float mapWidth = 6;
