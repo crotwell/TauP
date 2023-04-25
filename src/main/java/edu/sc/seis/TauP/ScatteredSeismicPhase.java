@@ -90,7 +90,7 @@ public class ScatteredSeismicPhase implements SeismicPhase {
 
     @Override
     public String getPuristName() {
-        return inboundArrival.getPuristName()+"."+scatteredPhase.getPuristName();
+        return inboundArrival.getPuristName()+LegPuller.SCATTER_CODE+scatteredPhase.getPuristName();
     }
 
     @Override

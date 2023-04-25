@@ -22,7 +22,7 @@ public class LegPuller {
     public static final String surfaceWave = "("+number+"kmps)";
     public static final String bodyWave = travelLeg+"("+interactPointsRE+"?"+travelLeg+")*";
 
-    public static final char SCATTER_CODE = '%';
+    public static final char SCATTER_CODE = 'o';
     public static final String scatterWave = "("+bodyWave+")"+SCATTER_CODE+"("+bodyWave+")";
 
     public static final Pattern phaseRegEx =

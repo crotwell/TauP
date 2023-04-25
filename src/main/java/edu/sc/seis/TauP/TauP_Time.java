@@ -927,8 +927,9 @@ public class TauP_Time extends TauP_Tool {
                         }
                         SeismicPhase inPhase = SeismicPhaseFactory.createPhase(in_scat[0],
                                 getTauModelDepthCorrected(), getSourceDepth(), getScatterDepth(), DEBUG);
+                        TauModel scatTMod = getTauModel().depthCorrect(getScatterDepth());
                         SeismicPhase scatPhase = SeismicPhaseFactory.createPhase(in_scat[1],
-                                getTauModelDepthCorrected(), getScatterDepth(), getReceiverDepth(), DEBUG);
+                                scatTMod, getScatterDepth(), getReceiverDepth(), DEBUG);
 
                         List<Arrival> inArrivals = inPhase.calcTime(getScatterDistDeg());
                         for (Arrival inArr : inArrivals) {
@@ -991,6 +992,9 @@ public class TauP_Time extends TauP_Tool {
             String modelLine =  "\nModel: " + modelName;
             if (getReceiverDepth() != 0.0) {
                 modelLine += "  Receiver Depth: "+getReceiverDepth()+" km";
+            }
+            if (getScatterDistDeg() != 0.0) {
+                modelLine += "  Scatter Depth: "+getScatterDepth()+" km Dist: "+getScatterDistDeg() ;
             }
             out.println(modelLine);
             String lineOne = "Distance   Depth   " + phaseFormat.form("Phase")
