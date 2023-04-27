@@ -1,12 +1,7 @@
 package edu.sc.seis.TauP;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.Reader;
 import java.util.List;
 
 public class TauP_PhaseDescribe extends TauP_Time {
@@ -59,7 +54,7 @@ public class TauP_PhaseDescribe extends TauP_Time {
             } else if(i < args.length - 2 && args[i].equalsIgnoreCase("--scatter")) {
                 double scatterDepth = Double.valueOf(args[i + 1]).doubleValue();
                 double scatterDistDeg = Double.valueOf(args[i + 2]).doubleValue();
-                setScatter(scatterDepth, scatterDistDeg);
+                setScatterer(scatterDepth, scatterDistDeg);
                 i += 2;
             } else {
                 /* I don't know how to interpret this argument, so pass it back */

@@ -55,7 +55,7 @@ public class ScatterTest {
         SeismicPhase outboundPhase = SeismicPhaseFactory.createPhase(scatToRecPhase, tMod, scatterDepth, receiverDepth, false);
         Arrival outArr = outboundPhase.getEarliestArrival(dist-scatterDistDeg);
         assertNotNull(outArr);
-        ScatteredSeismicPhase scatPhase = new ScatteredSeismicPhase(inArr, outboundPhase, scatterDepth, scatterDistDeg);
+        ScatteredSeismicPhase scatPhase = new ScatteredSeismicPhase(inArr, outboundPhase, scatterDepth, scatterDistDeg, false);
         Arrival scatArr = scatPhase.getEarliestArrival(dist);
         assertNotNull(scatArr);
         assertEquals(dist,inArr.getDistDeg()+outArr.getDistDeg());
@@ -67,5 +67,28 @@ public class ScatterTest {
         assertEquals(sourceDepth, scatArr.getSourceDepth());
         assertEquals(receiverDepth, outArr.getPhase().getReceiverDepth());
 
+    }
+
+    @Test
+    public void calcScatterDistDegTest() {
+        // case a
+        double scatterer = 5.0;
+        double deg = 15;
+        boolean backscatter = true;
+        boolean forwardscatter = false;
+        // case A
+        assertEquals(10, ScatteredSeismicPhase.calcScatterDistDeg(deg, scatterer, forwardscatter), 1e-6);
+        // backscatter
+        assertEquals(350, ScatteredSeismicPhase.calcScatterDistDeg(deg, scatterer, backscatter), 1e-6);
+        // case B
+        scatterer = 20;
+        assertEquals(355, ScatteredSeismicPhase.calcScatterDistDeg(deg, scatterer, forwardscatter), 1e-6);
+        // backscatter
+        assertEquals(5, ScatteredSeismicPhase.calcScatterDistDeg(deg, scatterer, backscatter), 1e-6);
+        // case C
+        scatterer = -5;
+        assertEquals(340, ScatteredSeismicPhase.calcScatterDistDeg(deg, scatterer, forwardscatter), 1e-6);
+        // backscatter
+        assertEquals(20, ScatteredSeismicPhase.calcScatterDistDeg(deg, scatterer, backscatter), 1e-6);
     }
 }

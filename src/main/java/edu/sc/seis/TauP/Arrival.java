@@ -45,6 +45,30 @@ public class Arrival {
                    double dist,
                    double rayParam,
                    int rayParamIndex) {
+        this(phase,
+                time,
+                dist,
+                rayParam,
+                rayParamIndex,
+                phase.getName(),
+                phase.getPuristName(),
+                phase.getSourceDepth(),
+                phase.getReceiverDepth(),
+                phase.calcTakeoffAngle(rayParam),
+                phase.calcIncidentAngle(rayParam));
+    }
+    public Arrival(SeismicPhase phase,
+                   double time,
+                   double dist,
+                   double rayParam,
+                   int rayParamIndex,
+                   String name,
+                   String puristName,
+                   double sourceDepth,
+                   double receiverDepth,
+                   double takeoffAngle,
+                   double incidentAngle) {
+
         if (Double.isNaN(time)) {
             throw new IllegalArgumentException("Time cannot be NaN");
         }
@@ -56,12 +80,12 @@ public class Arrival {
         this.dist = dist;
         this.rayParam = rayParam;
         this.rayParamIndex = rayParamIndex;
-        this.name = phase.getName();
-        this.puristName = phase.getPuristName();
-        this.sourceDepth = phase.getSourceDepth();
-        this.receiverDepth = phase.getReceiverDepth();
-        this.takeoffAngle = phase.calcTakeoffAngle(rayParam);
-        this.incidentAngle = phase.calcIncidentAngle(rayParam);
+        this.name = name;
+        this.puristName = puristName;
+        this.sourceDepth = sourceDepth;
+        this.receiverDepth = receiverDepth;
+        this.takeoffAngle = takeoffAngle;
+        this.incidentAngle = incidentAngle;
     }
 
 
@@ -143,11 +167,7 @@ public class Arrival {
      * the actual distance traveled.
      */
     public double getModuloDistDeg() {
-        double moduloDist = (RtoD * getDist()) % 360;
-        if(moduloDist > 180) {
-            moduloDist = 360 - moduloDist;
-        }
-        return moduloDist;
+        return SeismicPhase.distanceTrim180(getDist());
     }
 
     /** returns ray parameter in seconds per radian */
@@ -309,6 +329,43 @@ public class Arrival {
             }
         }
         return latestArrival;
+    }
+
+    public String asJSON(boolean pretty, String indent) {
+        String NL = "";
+        if (pretty) {
+            NL = "\n";
+        }
+        String Q = ""+'"';
+        String COMMA = ",";
+        String QCOMMA = Q+COMMA;
+        String COLON = ": "; // plus space
+        String S = "  ";
+        String QC = Q+COLON;
+        String QCQ = QC+Q;
+        String SS = S+S;
+        String SQ = S+Q;
+        String SSQ = S+SQ;
+        StringBuilder out = new StringBuilder();
+        out.append(indent+"{"+NL);
+        out.append(indent+SQ+"distdeg"+QC+(float)getModuloDistDeg()+COMMA+NL);
+        out.append(indent+SQ+"phase"+QCQ+getName()+QCOMMA+NL);
+        out.append(indent+SQ+"time"+QC+(float)getTime()+COMMA+NL);
+        out.append(indent+SQ+"rayparam"+QC+(float)(Math.PI / 180.0 * getRayParam())+COMMA+NL);
+        out.append(indent+SQ+"takeoff"+QC+(float)getTakeoffAngle()+COMMA+NL);
+        out.append(indent+SQ+"incident"+QC+(float)getIncidentAngle()+COMMA+NL);
+        out.append(indent+SQ+"puristdist"+QC+(float)getDistDeg()+COMMA+NL);
+        out.append(indent+SQ+"puristname"+QCQ+getPuristName()+Q);
+        if (getPhase() instanceof ScatteredSeismicPhase) {
+            ScatteredSeismicPhase scatPhase = (ScatteredSeismicPhase)getPhase();
+            out.append(COMMA+NL);
+            out.append(indent+SQ+"scatterdepth"+QC+(float)scatPhase.getScattererDepth()+COMMA+NL);
+            out.append(indent+SQ+"scatterdistdeg"+QC+scatPhase.getScattererDistanceDeg()+NL);
+        } else {
+            out.append(NL);
+        }
+        out.append(indent+"}");
+        return out.toString();
     }
 
 }

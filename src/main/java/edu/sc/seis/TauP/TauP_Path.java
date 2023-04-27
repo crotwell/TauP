@@ -173,9 +173,6 @@ public class TauP_Path extends TauP_Pierce {
 			double calcDepth = currArrival.getSourceDepth();
 			TimeDist[] path = currArrival.getPath();
 			for (int j = 0; j < path.length; j++) {
-			    if (path[j].getDistRadian() < prevTimeDist.getDistRadian()) {
-			        throw new RuntimeException("ray path is backtracking, not possible: "+j+" ("+path[j] +") < ("+ prevTimeDist+")");
-			    }
 				calcTime = path[j].getTime();
 				calcDepth = path[j].getDepth();
 				double prevDepth = calcDepth; // only used if interpolate due to maxPathInc

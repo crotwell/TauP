@@ -109,6 +109,21 @@ public interface SeismicPhase extends Serializable, Cloneable {
 
     boolean hasArrivals();
 
+    static double distanceTrim180(double deg) {
+        double tempDeg = deg;
+        if(tempDeg < 0.0) {
+            tempDeg *= -1.0;
+        } // make sure deg is positive
+        while(tempDeg > 360.0) {
+            tempDeg -= 360.0;
+        } // make sure it is less than 360
+        if(tempDeg > 180.0) {
+            tempDeg = 360.0 - tempDeg;
+        } // make sure less than or equal to 180
+        // now we have 0.0 <= deg <= 180
+        return tempDeg;
+    }
+
     List<Arrival> calcTime(double deg);
 
     Arrival shootRay(double rayParam) throws SlownessModelException, NoSuchLayerException;

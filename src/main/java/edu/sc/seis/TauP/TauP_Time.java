@@ -57,8 +57,8 @@ public class TauP_Time extends TauP_Tool {
 
     protected double degrees = Double.MAX_VALUE;
 
-    protected double scatterDepth = 0.0;
-    protected double scatterDistDeg = 0.0;
+    protected double scattererDepth = 0.0;
+    protected double scattererDistDeg = 0.0;
 
     /**
      * For when command line args uses --km for distance. Have to wait until
@@ -334,31 +334,35 @@ public class TauP_Time extends TauP_Tool {
         this.receiverDepth = receiverDepth;
     }
 
-    public double getScatterDepth() {
-        return scatterDepth;
+    public double getScattererDepth() {
+        return scattererDepth;
     }
 
-    public void setScatterDepth(double depth) {
-        if (this.getScatterDepth() != depth) {
+    public void setScattererDepth(double depth) {
+        if (this.getScattererDepth() != depth) {
             clearPhases();
         }
-        this.scatterDepth = depth;
+        this.scattererDepth = depth;
     }
 
-    public double getScatterDistDeg() {
-        return scatterDistDeg;
+    public double getScattererDistDeg() {
+        return scattererDistDeg;
     }
 
-    public void setScatterDistDeg(double distDeg) {
-        if (this.getScatterDistDeg() != distDeg) {
+    public void setScattererDistDeg(double distDeg) {
+        if (distDeg > 180.0 || distDeg <= -180.0) {
+            distDeg = (180.0 + distDeg) % 360.0 - 180.0;
+        }
+        if (distDeg == -180.0) { distDeg = 180; }
+        if (this.getScattererDistDeg() != distDeg) {
             clearPhases();
         }
-        this.scatterDistDeg = distDeg;
+        this.scattererDistDeg = distDeg ;
     }
 
-    public void setScatter(double depth, double degrees) {
-        setScatterDepth(depth);
-        setScatterDistDeg(degrees);
+    public void setScatterer(double depth, double degrees) {
+        setScattererDepth(depth);
+        setScattererDistDeg(degrees);
     }
 
     public String getTauModelName() {
@@ -575,7 +579,7 @@ public class TauP_Time extends TauP_Tool {
                 } else if(i < args.length - 2 && args[i].equalsIgnoreCase("--scatter")) {
                     double scatterDepth = Double.valueOf(args[i + 1]).doubleValue();
                     double scatterDistDeg = Double.valueOf(args[i + 2]).doubleValue();
-                    setScatter(scatterDepth, scatterDistDeg);
+                    setScatterer(scatterDepth, scatterDistDeg);
                     i += 2;
                 } else if(dashEquals("ph", args[i])) {
                     if(cmdLineArgPhase) {
@@ -823,7 +827,7 @@ public class TauP_Time extends TauP_Tool {
      * is preferred, allowing the tool to choose when to call depthCorrect.
      */
     public void depthCorrect() throws TauModelException {
-        depthCorrect(getSourceDepth(), getReceiverDepth(), getScatterDepth());
+        depthCorrect(getSourceDepth(), getReceiverDepth(), getScattererDepth());
     }
 
     /**
@@ -850,7 +854,7 @@ public class TauP_Time extends TauP_Tool {
      * @throws TauModelException
      */
     public void depthCorrect(double depth, double receiverDepth) throws TauModelException {
-        depthCorrect(depth, receiverDepth, getScatterDepth());
+        depthCorrect(depth, receiverDepth, getScattererDepth());
     }
 
     /**
@@ -876,8 +880,8 @@ public class TauP_Time extends TauP_Tool {
             tModDepth = tModDepth.splitBranch(receiverDepth); // if already split on receiver depth this does nothing
             clearPhases();
         }
-        if (scatterDepth != getScatterDepth()) {
-            setScatterDepth(scatterDepth);
+        if (scatterDepth != getScattererDepth()) {
+            setScattererDepth(scatterDepth);
             tModDepth = tModDepth.splitBranch(scatterDepth); // if already split on scatter depth this does nothing
             clearPhases();
         }
@@ -917,23 +921,33 @@ public class TauP_Time extends TauP_Tool {
             if(!alreadyAdded) {
                 // didn't find it precomputed, so recalculate
                 try {
-                    if (tempPhaseName.contains(""+LegPuller.SCATTER_CODE)) {
-                        String[] in_scat = tempPhaseName.split(""+LegPuller.SCATTER_CODE);
+                    if (tempPhaseName.contains(""+LegPuller.SCATTER_CODE)
+                            || tempPhaseName.contains(""+LegPuller.BACKSCATTER_CODE)) {
+                        String[] in_scat = tempPhaseName.split("("+LegPuller.SCATTER_CODE+"|"+LegPuller.BACKSCATTER_CODE+")");
                         if (in_scat.length != 2) {
                             throw new TauModelException("Scatter phase doesn't have two segments: "+tempPhaseName);
                         }
-                        if (getScatterDistDeg() == 0.0) {
+                        if (getScattererDistDeg() == 0.0) {
                             throw new TauModelException("Attempt to use scatter phase but scatter distance is zero: "+tempPhaseName);
                         }
+                        boolean isBackscatter = false;
+                        if( tempPhaseName.contains(""+LegPuller.BACKSCATTER_CODE)) {
+                            isBackscatter = true;
+                        }
                         SeismicPhase inPhase = SeismicPhaseFactory.createPhase(in_scat[0],
-                                getTauModelDepthCorrected(), getSourceDepth(), getScatterDepth(), DEBUG);
-                        TauModel scatTMod = getTauModel().depthCorrect(getScatterDepth());
+                                getTauModelDepthCorrected(), getSourceDepth(), getScattererDepth(), DEBUG);
+                        TauModel scatTMod = getTauModelDepthCorrected().depthRecorrect(getScattererDepth());
                         SeismicPhase scatPhase = SeismicPhaseFactory.createPhase(in_scat[1],
-                                scatTMod, getScatterDepth(), getReceiverDepth(), DEBUG);
+                                scatTMod, getScattererDepth(), getReceiverDepth(), DEBUG);
 
-                        List<Arrival> inArrivals = inPhase.calcTime(getScatterDistDeg());
+                        List<Arrival> inArrivals = inPhase.calcTime(getScattererDistDeg());
                         for (Arrival inArr : inArrivals) {
-                            ScatteredSeismicPhase seismicPhase = new ScatteredSeismicPhase(inArr, scatPhase, getScatterDepth(), getScatterDistDeg());
+                            ScatteredSeismicPhase seismicPhase = new ScatteredSeismicPhase(
+                                    inArr,
+                                    scatPhase,
+                                    getScattererDepth(),
+                                    getScattererDistDeg()*Arrival.DtoR,
+                                    isBackscatter);
                             newPhases.add(seismicPhase);
                             if (verbose) {
                                 Alert.info(seismicPhase.toString());
@@ -993,8 +1007,8 @@ public class TauP_Time extends TauP_Tool {
             if (getReceiverDepth() != 0.0) {
                 modelLine += "  Receiver Depth: "+getReceiverDepth()+" km";
             }
-            if (getScatterDistDeg() != 0.0) {
-                modelLine += "  Scatter Depth: "+getScatterDepth()+" km Dist: "+getScatterDistDeg() ;
+            if (getScattererDistDeg() != 0.0) {
+                modelLine += "  Scatter Depth: "+ getScattererDepth()+" km Dist: "+ getScattererDistDeg() ;
             }
             out.println(modelLine);
             String lineOne = "Distance   Depth   " + phaseFormat.form("Phase")
@@ -1066,10 +1080,10 @@ public class TauP_Time extends TauP_Tool {
     }
 
     public static String resultAsJSON(String modelName,
-                                       double depth,
-                                       double receiverDepth,
-                                       String[] phases,
-                                       List<Arrival> arrivals) {
+                                      double depth,
+                                      double receiverDepth,
+                                      String[] phases,
+                                      List<Arrival> arrivals) {
         String Q = ""+'"';
         String COMMA = ",";
         String QCOMMA = Q+COMMA;
@@ -1099,16 +1113,7 @@ public class TauP_Time extends TauP_Tool {
         out.println(SQ+"arrivals"+Q+": [");
         for(int j = 0; j < arrivals.size(); j++) {
             Arrival currArrival = (Arrival)arrivals.get(j);
-            out.println(SS+"{");
-            out.println(SSSQ+"distdeg"+QC+(float)currArrival.getModuloDistDeg()+COMMA);
-            out.println(SSSQ+"phase"+QCQ+currArrival.getName()+QCOMMA);
-            out.println(SSSQ+"time"+QC+(float)currArrival.getTime()+COMMA);
-            out.println(SSSQ+"rayparam"+QC+(float)(Math.PI / 180.0 * currArrival.getRayParam())+COMMA);
-            out.println(SSSQ+"takeoff"+QC+(float)currArrival.getTakeoffAngle()+COMMA);
-            out.println(SSSQ+"incident"+QC+(float)currArrival.getIncidentAngle()+COMMA);
-            out.println(SSSQ+"puristdist"+QC+(float)currArrival.getDistDeg()+COMMA);
-            out.println(SSSQ+"puristname"+QCQ+currArrival.getPuristName()+Q);
-            out.print(SS+"}");
+            out.print(currArrival.asJSON(true, SS));
             if (j != arrivals.size()-1) {
                 out.print(COMMA);
             }

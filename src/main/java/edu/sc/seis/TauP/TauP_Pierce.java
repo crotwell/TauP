@@ -140,50 +140,42 @@ public class TauP_Pierce extends TauP_Time {
 
     /** override depthCorrect so that we can put the pierce depths in. */
     public void depthCorrect(double depth, double receiverDepth, double scatterDepth) throws TauModelException {
-        TauModel tModOrig = tMod;
+        TauModel tModOrig = tMod; // save original
+        tMod = splitPierceDepths(tMod); // add pierce depths
+        super.depthCorrect(depth, receiverDepth, scatterDepth); // normal depth correction
+        tMod = tModOrig; // restore orig to tMod
+    }
+
+    public TauModel splitPierceDepths(TauModel tModOrig) throws TauModelException {
         boolean mustRecalc = false;
-        // first see if tModDepth is correct as is
-        // first check to make sure source depth is the same, and then
-        // check to make sure each addDepth is in the model
-        if(tModDepth != null && tModDepth.getSourceDepth() == depth) {
-            if(addDepth != null) {
-                double[] branchDepths = tModDepth.getBranchDepths();
-                for(int i = 0; i < addDepth.length; i++) {
-                    for(int j = 0; j < branchDepths.length; j++) {
-                        if(addDepth[i] == branchDepths[j]) {
-                            // found it, so break and go to the next addDepth
-                            break;
-                        }
-                        // we only get here if we didn't find the depth as a
-                        // branch due to the break statement,
-                        // so this means we must recalculate
-                        mustRecalc = true;
-                    }
-                    if(mustRecalc) {
-                        // must recalculate, so break out of addDepth loop
+        TauModel tModOut = tModOrig;
+        if(addDepth != null) {
+            double[] branchDepths = tModOrig.getBranchDepths();
+            for(int i = 0; i < addDepth.length; i++) {
+                for(int j = 0; j < branchDepths.length; j++) {
+                    if(addDepth[i] == branchDepths[j]) {
+                        // found it, so break and go to the next addDepth
                         break;
                     }
+                    // we only get here if we didn't find the depth as a
+                    // branch due to the break statement,
+                    // so this means we must recalculate
+                    mustRecalc = true;
+                }
+                if(mustRecalc) {
+                    // must recalculate, so break out of addDepth loop
+                    break;
                 }
             }
-        } else {
-            // the depth isn't even the same so we must recalculate
-            mustRecalc = true;
         }
-        if(mustRecalc) {
-            // must do the depth correction
-            tModDepth = null;
-        } else {
-            // no depth correction needed, so just do super() and return
-            super.depthCorrect(depth, receiverDepth, scatterDepth);
-            return;
-        }
-        if(addDepth != null) {
-            for(int i = 0; i < addDepth.length; i++) {
-                tMod = tMod.splitBranch(addDepth[i]);
+        if (mustRecalc) {
+            if (addDepth != null) {
+                for (int i = 0; i < addDepth.length; i++) {
+                    tModOut = tModOut.splitBranch(addDepth[i]);
+                }
             }
         }
-        super.depthCorrect(depth, receiverDepth, scatterDepth);
-        tMod = tModOrig;
+        return tModOut;
     }
 
     @Override

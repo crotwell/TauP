@@ -23,7 +23,8 @@ public class LegPuller {
     public static final String bodyWave = travelLeg+"("+interactPointsRE+"?"+travelLeg+")*";
 
     public static final char SCATTER_CODE = 'o';
-    public static final String scatterWave = "("+bodyWave+")"+SCATTER_CODE+"("+bodyWave+")";
+    public static final char BACKSCATTER_CODE = 'O';
+    public static final String scatterWave = "("+bodyWave+")("+SCATTER_CODE+"|"+BACKSCATTER_CODE+")("+bodyWave+")";
 
     public static final Pattern phaseRegEx =
             Pattern.compile("^("+surfaceWave+"|"+ scatterWave+"|"+ bodyWave+")$");
@@ -169,7 +170,8 @@ public class LegPuller {
                             || name.charAt(offset + 1) == '^'
                             || name.charAt(offset + 1) == 'v'
                             || name.charAt(offset + 1) == 'V'
-                            || name.charAt(offset + 1) == SCATTER_CODE) {
+                            || name.charAt(offset + 1) == SCATTER_CODE
+                            || name.charAt(offset + 1) == BACKSCATTER_CODE) {
                         legs.add(name.substring(offset, offset + 1));
                         offset++;
                     } else if (Character.isDigit(name.charAt(offset + 1))) {
@@ -276,7 +278,7 @@ public class LegPuller {
                                 + name.substring(offset) + " in " + name);
                     }
 
-                } else if(name.charAt(offset) == SCATTER_CODE) {
+                } else if(name.charAt(offset) == SCATTER_CODE ||name.charAt(offset) == BACKSCATTER_CODE) {
                     // scatter point
                     legs.add(name.substring(offset, offset + 1));
                     offset++;
@@ -559,6 +561,7 @@ public class LegPuller {
                     || currToken.startsWith("v") || currToken.startsWith("V")
                     || currToken.equals("c") || currToken.equals("m")
                     || currToken.equals(""+SCATTER_CODE)
+                    || currToken.equals(""+BACKSCATTER_CODE)
             )) {
                 return "'Ped' or 'Sed' can only be before Pdiff,P,S,Sdiff,K,c,v,V,m or second to last token immediately before END or ";
             }

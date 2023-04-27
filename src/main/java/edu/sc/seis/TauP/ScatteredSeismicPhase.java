@@ -8,14 +8,36 @@ public class ScatteredSeismicPhase implements SeismicPhase {
 
     private final Arrival inboundArrival;
     private final SeismicPhase scatteredPhase;
-    private final double scatterDepth;
-    private final double scatterDistance;
+    private final double scattererDepth;
+    private final double scattererDistance;
+    private final boolean backscatter;
 
-    public ScatteredSeismicPhase(Arrival inboundArrival, SeismicPhase scatteredPhase, double scatterDepth, double scatterDistance) {
+    public ScatteredSeismicPhase(Arrival inboundArrival,
+                                 SeismicPhase scatteredPhase,
+                                 double scattererDepth,
+                                 double scattererDistance,
+                                 boolean backscatter) {
         this.inboundArrival = inboundArrival;
         this.scatteredPhase = scatteredPhase;
-        this.scatterDepth = scatterDepth;
-        this.scatterDistance = scatterDistance;
+        this.scattererDepth = scattererDepth;
+        this.scattererDistance = scattererDistance;
+        this.backscatter = backscatter;
+    }
+
+    public double getScattererDepth() {
+        return scattererDepth;
+    }
+
+    public double getScattererDistance() {
+        return scattererDistance;
+    }
+
+    public double getScattererDistanceDeg() {
+        return scattererDistance *Arrival.RtoD;
+    }
+
+    public boolean isBackscatter() {
+        return backscatter;
     }
 
     @Override
@@ -85,12 +107,14 @@ public class ScatteredSeismicPhase implements SeismicPhase {
 
     @Override
     public String getName() {
-        return inboundArrival.getName()+LegPuller.SCATTER_CODE+scatteredPhase.getName();
+        return ScatteredArrival.formScatterPhaseName(inboundArrival.getName(), scatteredPhase.getName(), isBackscatter());
     }
 
     @Override
     public String getPuristName() {
-        return inboundArrival.getPuristName()+LegPuller.SCATTER_CODE+scatteredPhase.getPuristName();
+        return ScatteredArrival.formScatterPhaseName(inboundArrival.getPuristName(),
+                scatteredPhase.getPuristName(),
+                isBackscatter());
     }
 
     @Override
@@ -197,16 +221,66 @@ public class ScatteredSeismicPhase implements SeismicPhase {
     @Override
     public List<Arrival> calcTime(double deg) {
         List<Arrival> out = new ArrayList<>();
-        List<Arrival> scat = scatteredPhase.calcTime(deg-inboundArrival.getDistDeg());
+        double calcDeg = deg % 360;
+        double calcScatDeg = (180+getScattererDistanceDeg()) % 360 - 180;
+        if (deg > 180.0) {
+            calcDeg = 360-calcDeg;
+            calcScatDeg *= -1;
+        }
+        double scatDist = calcScatterDistDeg(deg, getScattererDistanceDeg(), isBackscatter());
+        if (scatDist < 0) {
+            scatDist += 360;
+        }
+        List<Arrival> scat = scatteredPhase.calcTime(SeismicPhase.distanceTrim180(scatDist));
         for (Arrival a : scat) {
-            Arrival b = new Arrival(this,
-                    inboundArrival.getTime()+a.getTime(),
-                    inboundArrival.getDist()+a.getDist(),
-                    a.getRayParam(),
-                    a.getRayParamIndex());
-            out.add(b);
+            if (Math.abs((a.getDistDeg()-scatDist) % 360) < 1e-6) {
+                // make sure actually arrives at deg, can be messed up by neg forwardScatDist
+                Arrival b = new ScatteredArrival(
+                        this,
+                        deg,
+                        inboundArrival,
+                        a,
+                        isBackscatter());
+                out.add(b);
+            } else {
+                System.out.println("Arrival not scatter to rec: "+deg+" scat: "+getScattererDistanceDeg()+" a: "+a.getDistDeg());
+            }
         }
         return out;
+    }
+
+    public static double calcScatterDistDeg(double deg, double scattererDeg, boolean backscatter) {
+        double scatDist;
+        double calcDeg = deg % 360;
+        double calcScatDeg = (180+scattererDeg) % 360 - 180;
+        if (deg > 180.0) {
+            calcDeg = 360-calcDeg;
+            calcScatDeg *= -1;
+        }
+        if (backscatter) {
+            // back scatter
+            if (calcScatDeg >=0 &&  calcScatDeg <= calcDeg) {
+                scatDist = 360 - calcDeg + calcScatDeg;
+            } else if (calcScatDeg > calcDeg) {
+                scatDist = calcScatDeg - calcDeg;
+            } else if (calcScatDeg < 0 ) {
+                scatDist = calcDeg - calcScatDeg; // neg
+            } else {
+                throw new RuntimeException("Should never happen "+deg+" "+scattererDeg);
+            }
+        } else {
+            // forward scatter
+            if (calcScatDeg >=0 &&  calcScatDeg <= calcDeg) {
+                scatDist = calcDeg - calcScatDeg;
+            } else if (calcScatDeg > calcDeg) {
+                scatDist = 360 - calcScatDeg + calcDeg;
+            } else if (calcScatDeg < 0 ) {
+                scatDist = 360 + calcScatDeg - calcDeg; // neg
+            } else {
+                throw new RuntimeException("Should never happen "+deg+" "+scattererDeg);
+            }
+        }
+        return scatDist;
     }
 
     @Override
@@ -231,7 +305,7 @@ public class ScatteredSeismicPhase implements SeismicPhase {
 
     @Override
     public String describe() {
-        return inboundArrival.getPhase().describe()+"\nArrival: "+inboundArrival+"\nScatter at "+scatterDepth+", "+scatterDistance+"\n"+scatteredPhase.describe();
+        return inboundArrival.getPhase().describe()+"\nArrival: "+inboundArrival+"\nScatter at "+ scattererDepth +", "+ scattererDistance +"\n"+scatteredPhase.describe();
     }
 
     @Override
@@ -239,34 +313,81 @@ public class ScatteredSeismicPhase implements SeismicPhase {
         double[] dist = scatteredPhase.getDist();
         double[] rayParams = scatteredPhase.getRayParams();
         for(int j = 0; j < dist.length; j++) {
-            System.out.println(j + "  " + (scatterDistance+dist[j]) + "  " + rayParams[j]);
+            System.out.println(j + "  " + (scattererDistance +dist[j]) + "  " + rayParams[j]);
         }
     }
 
     @Override
     public List<TimeDist> calcPierceTimeDist(Arrival arrival) {
         List<TimeDist> out = new ArrayList<>();
-        out.addAll(Arrays.asList(inboundArrival.getPierce()));
-        List<TimeDist> scatPierce = scatteredPhase.calcPierceTimeDist(arrival);
+        ScatteredArrival scatA = (ScatteredArrival) arrival;
+        double scatDistance = inboundArrival.getDist();
+        if (scatA.isInboundNegativeDirection()) {
+            scatDistance = -1*scatDistance;
+            for (TimeDist td : inboundArrival.getPierce()) {
+                TimeDist btd = new TimeDist(
+                        td.getP(),
+                        td.getTime(),
+                        -1 * td.getDistRadian(),
+                        td.getDepth());
+                System.out.println("inb "+btd);
+                out.add(btd);
+            }
+        } else {
+            out.addAll(Arrays.asList(inboundArrival.getPierce()));
+        }
+
+        List<TimeDist> scatPierce = scatteredPhase.calcPierceTimeDist(scatA.getScatteredArrival());
         // first TimeDist is just the zero distance starting point, which repeats the end of the inbound
-        scatPierce = scatPierce.subList(1,scatPierce.size());
-        out.addAll(scatPierce);
+       // scatPierce = scatPierce.subList(1,scatPierce.size());
+        int scatNegative = 1;
+        if (scatA.isScatterNegativeDirection()) {
+            scatNegative = -1;
+        }
+        for (TimeDist td : scatPierce) {
+            out.add(new TimeDist(td.getP(),
+                    inboundArrival.getTime()+td.getTime(),
+                    scatDistance + scatNegative*td.getDistRadian(),
+                    td.getDepth()));
+        }
+
         return out;
     }
 
     @Override
     public List<TimeDist> calcPathTimeDist(Arrival arrival) {
         List<TimeDist> out = new ArrayList<>();
-        out.addAll(Arrays.asList(inboundArrival.getPath()));
-        List<TimeDist> scatPath = scatteredPhase.calcPathTimeDist(arrival);
+        ScatteredArrival scatA = (ScatteredArrival) arrival;
+        double scatDistance = inboundArrival.getDist();
+        if (scatA.isInboundNegativeDirection()) {
+            scatDistance = -1*scatDistance;
+            for (TimeDist td : inboundArrival.getPath()) {
+                TimeDist btd = new TimeDist(
+                        td.getP(),
+                        td.getTime(),
+                        -1 * td.getDistRadian(),
+                        td.getDepth());
+                System.out.println("inb "+btd);
+                out.add(btd);
+            }
+        } else {
+            out.addAll(Arrays.asList(inboundArrival.getPath()));
+        }
+
+        List<TimeDist> scatPath = scatteredPhase.calcPathTimeDist(scatA.getScatteredArrival());
+        // first TimeDist is just the zero distance starting point, which repeats the end of the inbound
+        scatPath = scatPath.subList(1,scatPath.size());
+        int scatNegative = 1;
+        if (scatA.isScatterNegativeDirection()) {
+            scatNegative = -1;
+        }
         for (TimeDist td : scatPath) {
-            // shift over by scatter distance
-            // weird, why is pierce increment but path is cummulative dist?
             out.add(new TimeDist(td.getP(),
-                    td.getTime(),
-                    scatterDistance*Math.PI/180 +td.getDistRadian(),
+                    inboundArrival.getTime()+td.getTime(),
+                    scatDistance + scatNegative*td.getDistRadian(),
                     td.getDepth()));
         }
+
         return out;
     }
 }

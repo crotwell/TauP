@@ -464,17 +464,7 @@ public class SimpleSeismicPhase implements SeismicPhase {
      *  */
     @Override
     public List<Arrival> calcTime(double deg) {
-        double tempDeg = deg;
-        if(tempDeg < 0.0) {
-            tempDeg *= -1.0;
-        } // make sure deg is positive
-        while(tempDeg > 360.0) {
-            tempDeg -= 360.0;
-        } // make sure it is less than 360
-        if(tempDeg > 180.0) {
-            tempDeg = 360.0 - tempDeg;
-        } // make sure less than or equal to 180
-        // now we have 0.0 <= deg <= 180
+        double tempDeg = SeismicPhase.distanceTrim180(deg);
         if (verbose) {
             System.out.println("Calculation distance: "+tempDeg+" deg");
         }
