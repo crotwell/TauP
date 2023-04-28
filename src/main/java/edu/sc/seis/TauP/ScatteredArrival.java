@@ -45,9 +45,10 @@ public class ScatteredArrival extends Arrival {
     }
 
     public boolean isInboundNegativeDirection() {
-        return (getScatteredSeismicPhase().getScattererDistanceDeg()<0) == isBackscatter();
+        return getScatteredSeismicPhase().getScattererDistanceDeg() < 0;
     }
     public boolean isScatterNegativeDirection() {
-        return (getScatteredSeismicPhase().getScattererDistanceDeg()<0) != isBackscatter();
+        double scatDist = getScatteredSeismicPhase().getScattererDistanceDeg();
+        return (scatDist >= 0 && isBackscatter()) || (scatDist < 0 && !isBackscatter());
     }
 }
