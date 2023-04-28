@@ -738,8 +738,14 @@ public class TauP_Time extends TauP_Tool {
             List<SeismicPhase> relPhases = new ArrayList<SeismicPhase>();
             List<String> splitNames = extractPhaseNames(relativePhaseName);
             for (String sName : splitNames) {
-                SeismicPhase relPhase = SeismicPhaseFactory.createPhase(sName, getTauModelDepthCorrected(), this.getSourceDepth(), this.getReceiverDepth(), this.DEBUG);
-                relPhases.add(relPhase);
+                relPhases.addAll(SeismicPhaseFactory.createSeismicPhases(
+                        sName,
+                        getTauModelDepthCorrected(),
+                        this.getSourceDepth(),
+                        this.getReceiverDepth(),
+                        this.getScattererDepth(),
+                        this.getScattererDistDeg(),
+                        this.DEBUG));
             }
             relativeArrival = SeismicPhase.getEarliestArrival(relPhases, degrees);
         }

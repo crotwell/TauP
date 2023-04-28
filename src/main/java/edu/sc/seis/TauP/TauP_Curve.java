@@ -315,7 +315,13 @@ public class TauP_Curve extends TauP_Time {
             try {
                 List<String> splitNames = extractPhaseNames(relativePhaseName);
                 for (String sName : splitNames) {
-                    relPhases.add( SeismicPhaseFactory.createPhase(sName, getTauModelDepthCorrected(),getSourceDepth(), getReceiverDepth()));
+                    relPhases.addAll( SeismicPhaseFactory.createSeismicPhases(sName,
+                            getTauModelDepthCorrected(),
+                            getSourceDepth(),
+                            getReceiverDepth(),
+                            getScattererDepth(),
+                            getScattererDistDeg(),
+                            DEBUG));
                 }
             } catch(TauModelException e) {
                 Alert.warning("Error with phase=" + relativePhaseName,
@@ -339,7 +345,7 @@ public class TauP_Curve extends TauP_Time {
                 title += " relative phase "+relativePhaseName;
             }
             for(int phaseNum = 0; phaseNum < phaseList.size(); phaseNum++) {
-                SeismicPhase phase = (SimpleSeismicPhase)phaseList.get(phaseNum);
+                SeismicPhase phase = phaseList.get(phaseNum);
                 if(phase.hasArrivals()) {
                     dist = phase.getDist();
                     time = phase.getTime();
@@ -404,6 +410,9 @@ public class TauP_Curve extends TauP_Time {
             }
             // round max and min time to nearest 100 seconds
             maxTime = Math.ceil(maxTime / 100) * 100;
+            if (minTime != 0.0) {
+                minTime = minTime - (maxTime-minTime)/20; // 5% extra
+            }
             minTime = Math.floor(minTime / 100) * 100;
             if (outputFormat.equals(GMT)) {
                 out.println("gmt psbasemap -JX" + getMapWidth() + getMapWidthUnit() + " -P -R0/180/" + minTime + "/" + maxTime
@@ -413,25 +422,31 @@ public class TauP_Curve extends TauP_Time {
                 out.println("END\n");
                 out.println("gmt psxy -JX -R -m -O -K >> " + psFile + " <<END");
             } else if (outputFormat.equals(SVG)) {
+                double minX;
                 double maxX;
                 int numXTicks;
+                double minY;
                 double maxY;
                 int numYTicks;
                 float pixelWidth =  (72.0f*mapWidth)-plotOffset;
                 if (distHorizontal) {
+                    minX = 0;
                     maxX = 180;
+                    minY = minTime;
                     maxY = maxTime;
                     numYTicks = 10;
                     numXTicks = 8;
                 } else {
+                    minY = minTime;
                     maxX = maxTime;
+                    minX = 0;
                     maxY = 180;
                     numYTicks = 9;
                     numXTicks = 8;
                 }
                 float margin = 40;
                 float plotWidth = pixelWidth - margin;
-                SvgUtil.createXYAxes(out, 0.0, maxX, numXTicks, 0.0, maxY, numYTicks, pixelWidth, margin, title);
+                SvgUtil.createXYAxes(out, minX, maxX, numXTicks, minY, maxY, numYTicks, pixelWidth, margin, title);
 
                 // phase labels
                 out.println("<!-- phase name labels -->");
@@ -671,6 +686,9 @@ public class TauP_Curve extends TauP_Time {
                 setReduceTime(true);
                 setReduceVelKm(Double.valueOf(leftOverArgs[i + 1])
                         .doubleValue());
+                i++;
+            } else if(dashEquals("rel", leftOverArgs[i]) && i < leftOverArgs.length - 1) {
+                relativePhaseName = leftOverArgs[i + 1];
                 i++;
             } else if(dashEquals("mapwidth", leftOverArgs[i]) && i < leftOverArgs.length - 1) {
                 setMapWidth(Float.parseFloat(leftOverArgs[i + 1]));
