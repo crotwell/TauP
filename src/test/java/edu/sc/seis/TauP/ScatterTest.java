@@ -48,6 +48,7 @@ public class ScatterTest {
     }
 
     public void doScatterTest(String toScatPhase, String scatToRecPhase, double sourceDepth, double receiverDepth, double scatterDepth, double scatterDistDeg, double dist) throws TauModelException {
+        boolean backscatter = false;
         TauModel tMod = TauModelLoader.load("iasp91");
         SeismicPhase inboundPhase = SeismicPhaseFactory.createPhase(toScatPhase, tMod, sourceDepth, scatterDepth, false);
         Arrival inArr = inboundPhase.getEarliestArrival(scatterDistDeg);
@@ -55,7 +56,7 @@ public class ScatterTest {
         SeismicPhase outboundPhase = SeismicPhaseFactory.createPhase(scatToRecPhase, tMod, scatterDepth, receiverDepth, false);
         Arrival outArr = outboundPhase.getEarliestArrival(dist-scatterDistDeg);
         assertNotNull(outArr);
-        ScatteredSeismicPhase scatPhase = new ScatteredSeismicPhase(inArr, outboundPhase, scatterDepth, scatterDistDeg, false);
+        ScatteredSeismicPhase scatPhase = new ScatteredSeismicPhase(inArr, outboundPhase, scatterDepth, scatterDistDeg, backscatter);
         List<Arrival> arrList = scatPhase.calcTime(dist);
         assertNotEquals(0, arrList.size());
         Arrival scatArr = scatPhase.getEarliestArrival(dist);
@@ -68,7 +69,31 @@ public class ScatterTest {
         assertEquals(sourceDepth, inArr.getSourceDepth());
         assertEquals(sourceDepth, scatArr.getSourceDepth());
         assertEquals(receiverDepth, outArr.getPhase().getReceiverDepth());
-
+        //
+        List<SeismicPhase> scatPhaseList = SeismicPhaseFactory.createSeismicPhases(
+                toScatPhase+LegPuller.SCATTER_CODE+scatToRecPhase,
+                tMod,
+                sourceDepth,
+                receiverDepth,
+                scatterDepth,
+                scatterDistDeg,
+                false
+        );
+        assertNotEquals(0, scatPhaseList.size());
+        assertInstanceOf(ScatteredSeismicPhase.class, scatPhaseList.get(0));
+        ScatteredSeismicPhase scatPhaseB = (ScatteredSeismicPhase) scatPhaseList.get(0);
+        List<Arrival> arrListB = scatPhaseB.calcTime(dist);
+        assertNotEquals(0, arrListB.size());
+        Arrival scatArrB = scatPhaseB.getEarliestArrival(dist);
+        assertNotNull(scatArrB);
+        assertEquals(dist,inArr.getDistDeg()+outArr.getDistDeg());
+        assertEquals(inArr.getTime()+outArr.getTime(), scatArrB.getTime());
+        assertEquals(inArr.getDist()+outArr.getDist(), scatArrB.getDist(), 1e-9);
+        assertEquals(outArr.getRayParam(), scatArrB.getRayParam());
+        assertEquals(scatterDepth, outArr.getSourceDepth());
+        assertEquals(sourceDepth, inArr.getSourceDepth());
+        assertEquals(sourceDepth, scatArrB.getSourceDepth());
+        assertEquals(receiverDepth, outArr.getPhase().getReceiverDepth());
     }
 
     @Test
