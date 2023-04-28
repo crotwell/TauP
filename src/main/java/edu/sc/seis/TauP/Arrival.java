@@ -167,7 +167,7 @@ public class Arrival {
      * the actual distance traveled.
      */
     public double getModuloDistDeg() {
-        return SeismicPhase.distanceTrim180(getDist());
+        return SeismicPhase.distanceTrim180(getDistDeg());
     }
 
     /** returns ray parameter in seconds per radian */
