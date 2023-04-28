@@ -517,7 +517,8 @@ public class TauModel implements Serializable {
      * Chapman p 1290.
      */
     public TauModel depthCorrect(double depth) throws TauModelException {
-        if (getSourceDepth() != 0.0) {
+        // allow depth correct only for model with surface source, or if already corrected to depth
+        if (getSourceDepth() != 0.0 && depth != getSourceDepth()) {
             throw new TauModelException("depthCorrect: Can't depth correct "
                     + "a tau model that is not for a surface source. Depth="
                     + sourceDepth);

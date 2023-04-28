@@ -186,6 +186,58 @@ public class SeismicPhaseFactory {
         }
     }
 
+    public static List<SeismicPhase> createSeismicPhases(String name,
+                                                         TauModel tMod,
+                                                         double sourceDepth,
+                                                         double receiverDepth,
+                                                         double scattererDepth,
+                                                         double scattererDistanceDeg,
+                                                         boolean debug) throws TauModelException {
+        List<SeismicPhase> phaseList = new ArrayList<>();
+        if (name.contains(""+LegPuller.SCATTER_CODE)
+                || name.contains(""+LegPuller.BACKSCATTER_CODE)) {
+            String[] in_scat = name.split("("+LegPuller.SCATTER_CODE+"|"+LegPuller.BACKSCATTER_CODE+")");
+            if (in_scat.length != 2) {
+                throw new TauModelException("Scatter phase doesn't have two segments: "+name);
+            }
+            if (scattererDistanceDeg == 0.0) {
+                throw new TauModelException("Attempt to use scatter phase but scatter distance is zero: "+name);
+            }
+            boolean isBackscatter = false;
+            if( name.contains(""+LegPuller.BACKSCATTER_CODE)) {
+                isBackscatter = true;
+            }
+            TauModel tModDepthCorrected = tMod.depthCorrect(sourceDepth);
+            tModDepthCorrected = tModDepthCorrected.splitBranch(receiverDepth);
+            SeismicPhase inPhase = SeismicPhaseFactory.createPhase(in_scat[0],
+                    tModDepthCorrected, sourceDepth, scattererDepth, debug);
+            TauModel scatTMod = tModDepthCorrected.depthRecorrect(scattererDepth);
+            SeismicPhase scatPhase = SeismicPhaseFactory.createPhase(in_scat[1],
+                    scatTMod, scattererDepth, receiverDepth, debug);
+
+            List<Arrival> inArrivals = inPhase.calcTime(scattererDistanceDeg);
+            if (debug && inArrivals.size() == 0) {
+                System.out.println("No inbound arrivals to scatterer for "+name);
+            }
+            for (Arrival inArr : inArrivals) {
+                ScatteredSeismicPhase seismicPhase = new ScatteredSeismicPhase(
+                        inArr,
+                        scatPhase,
+                        scattererDepth,
+                        scattererDistanceDeg,
+                        isBackscatter);
+                phaseList.add(seismicPhase);
+            }
+        } else {
+            TauModel tModDepthCorrected = tMod.depthCorrect(sourceDepth);
+            tModDepthCorrected = tModDepthCorrected.splitBranch(receiverDepth);
+            SimpleSeismicPhase seismicPhase = SeismicPhaseFactory.createPhase(name,
+                    tModDepthCorrected, sourceDepth, receiverDepth, debug);
+            phaseList.add(seismicPhase);
+        }
+        return phaseList;
+    }
+
     SimpleSeismicPhase internalCreatePhase() throws TauModelException {
         legs = LegPuller.legPuller(name);
         this.puristName = LegPuller.createPuristName(tMod, legs);

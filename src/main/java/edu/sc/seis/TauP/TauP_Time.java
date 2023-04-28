@@ -921,43 +921,8 @@ public class TauP_Time extends TauP_Tool {
             if(!alreadyAdded) {
                 // didn't find it precomputed, so recalculate
                 try {
-                    if (tempPhaseName.contains(""+LegPuller.SCATTER_CODE)
-                            || tempPhaseName.contains(""+LegPuller.BACKSCATTER_CODE)) {
-                        String[] in_scat = tempPhaseName.split("("+LegPuller.SCATTER_CODE+"|"+LegPuller.BACKSCATTER_CODE+")");
-                        if (in_scat.length != 2) {
-                            throw new TauModelException("Scatter phase doesn't have two segments: "+tempPhaseName);
-                        }
-                        if (getScattererDistDeg() == 0.0) {
-                            throw new TauModelException("Attempt to use scatter phase but scatter distance is zero: "+tempPhaseName);
-                        }
-                        boolean isBackscatter = false;
-                        if( tempPhaseName.contains(""+LegPuller.BACKSCATTER_CODE)) {
-                            isBackscatter = true;
-                        }
-                        SeismicPhase inPhase = SeismicPhaseFactory.createPhase(in_scat[0],
-                                getTauModelDepthCorrected(), getSourceDepth(), getScattererDepth(), DEBUG);
-                        TauModel scatTMod = getTauModelDepthCorrected().depthRecorrect(getScattererDepth());
-                        SeismicPhase scatPhase = SeismicPhaseFactory.createPhase(in_scat[1],
-                                scatTMod, getScattererDepth(), getReceiverDepth(), DEBUG);
-
-                        List<Arrival> inArrivals = inPhase.calcTime(getScattererDistDeg());
-                        for (Arrival inArr : inArrivals) {
-                            ScatteredSeismicPhase seismicPhase = new ScatteredSeismicPhase(
-                                    inArr,
-                                    scatPhase,
-                                    getScattererDepth(),
-                                    getScattererDistDeg(),
-                                    isBackscatter);
-                            newPhases.add(seismicPhase);
-                            if (verbose) {
-                                Alert.info(seismicPhase.toString());
-                            }
-                        }
-                    } else {
-                        SimpleSeismicPhase seismicPhase = SeismicPhaseFactory.createPhase(tempPhaseName,
-                                getTauModelDepthCorrected(), getSourceDepth(), getReceiverDepth(), DEBUG);
-                        seismicPhase.verbose = verbose;
-                        newPhases.add(seismicPhase);
+                    newPhases.addAll(SeismicPhaseFactory.createSeismicPhases(tempPhaseName, getTauModelDepthCorrected(), getSourceDepth(), getReceiverDepth(), getScattererDepth(), getScattererDistDeg(), DEBUG));
+                    for (SeismicPhase seismicPhase : newPhases) {
                         if(verbose) {
                             Alert.info(seismicPhase.toString());
                         }

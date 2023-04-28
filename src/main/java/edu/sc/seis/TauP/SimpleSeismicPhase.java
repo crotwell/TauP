@@ -465,7 +465,7 @@ public class SimpleSeismicPhase implements SeismicPhase {
     @Override
     public List<Arrival> calcTime(double deg) {
         double tempDeg = SeismicPhase.distanceTrim180(deg);
-        if (verbose) {
+        if (TauP_Tool.DEBUG) {
             System.out.println("Calculation distance: "+tempDeg+" deg");
         }
         double radDist = tempDeg * Math.PI / 180.0;
