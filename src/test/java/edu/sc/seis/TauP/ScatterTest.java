@@ -43,7 +43,7 @@ public class ScatterTest {
         double receiverDepth = 0;
         double scatterDepth = 5500;
         double scatterDistDeg = 20;
-        double dist = 50;
+        double dist = 40;
         doScatterTest(toScatPhase, scatToRecPhase, sourceDepth, receiverDepth, scatterDepth, scatterDistDeg, dist);
     }
 
@@ -56,11 +56,13 @@ public class ScatterTest {
         Arrival outArr = outboundPhase.getEarliestArrival(dist-scatterDistDeg);
         assertNotNull(outArr);
         ScatteredSeismicPhase scatPhase = new ScatteredSeismicPhase(inArr, outboundPhase, scatterDepth, scatterDistDeg, false);
+        List<Arrival> arrList = scatPhase.calcTime(dist);
+        assertNotEquals(0, arrList.size());
         Arrival scatArr = scatPhase.getEarliestArrival(dist);
         assertNotNull(scatArr);
         assertEquals(dist,inArr.getDistDeg()+outArr.getDistDeg());
         assertEquals(inArr.getTime()+outArr.getTime(), scatArr.getTime());
-        assertEquals(inArr.getDist()+outArr.getDist(), scatArr.getDist());
+        assertEquals(inArr.getDist()+outArr.getDist(), scatArr.getDist(), 1e-9);
         assertEquals(outArr.getRayParam(), scatArr.getRayParam());
         assertEquals(scatterDepth, outArr.getSourceDepth());
         assertEquals(sourceDepth, inArr.getSourceDepth());

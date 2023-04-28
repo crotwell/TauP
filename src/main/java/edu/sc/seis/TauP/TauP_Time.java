@@ -946,7 +946,7 @@ public class TauP_Time extends TauP_Tool {
                                     inArr,
                                     scatPhase,
                                     getScattererDepth(),
-                                    getScattererDistDeg()*Arrival.DtoR,
+                                    getScattererDistDeg(),
                                     isBackscatter);
                             newPhases.add(seismicPhase);
                             if (verbose) {
