@@ -55,6 +55,16 @@ class IllegalPhasesTest {
 			"PKIkp"
 	);
 
+	static List<String> scatterLegalPhases = Arrays.asList(
+			"Pop", // scattering phases
+			"POp",
+			"PedoP",
+			"PKokp",
+			"PKOKP",
+			"PKIoykp",
+			"PKIOIKP"
+	);
+
 	String[] illegalStartEndings = {
 			"m", "c", "i", "^", "^20", "v", "v300", "V", "V300", "dif"
 	};
@@ -147,6 +157,17 @@ class IllegalPhasesTest {
 				System.err.println("Working on phase: "+phaseName);
 				throw ex;
 			}
+		}
+	}
+
+	@Test
+	void checkLegalScatterPhasesTest() throws TauModelException, VelocityModelException, SlownessModelException, IOException {
+		boolean DEBUG = true;
+		// maybe dumb test, just check that leg puller doesn't die
+		List<String> legalPhases = TauP_Time.extractPhaseNames("ttall");
+		legalPhases.addAll(scatterLegalPhases);
+		for (String phaseName : legalPhases) {
+			List<String> legs = LegPuller.legPuller(phaseName);
 		}
 	}
 

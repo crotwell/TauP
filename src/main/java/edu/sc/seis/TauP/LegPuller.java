@@ -76,7 +76,9 @@ public class LegPuller {
                         || name.charAt(offset) == 'i'
                         || name.charAt(offset) == '^'
                         || name.charAt(offset) == 'v'
-                        || name.charAt(offset) == 'V') ) {
+                        || name.charAt(offset) == 'V'
+                        || name.charAt(offset) == SCATTER_CODE
+                        || name.charAt(offset) == BACKSCATTER_CODE) ) {
                     throw new TauModelException("Invalid phase name:\n"
                             + name.charAt(offset)
                             + " cannot be followed by "
@@ -87,7 +89,12 @@ public class LegPuller {
                         || name.charAt(offset) == 'p'
                         || name.charAt(offset) == 's'
                         || name.charAt(offset) == 'm') {
-                    // Do the easy ones, ie K,k,I,y,J,j,p,s,m
+                    // Do the easy ones, ie k,y,j,p,s,m
+                    legs.add(name.substring(offset, offset + 1));
+                    offset = offset + 1;
+                } else  if (name.charAt(offset) == SCATTER_CODE
+                        || name.charAt(offset) == BACKSCATTER_CODE) {
+                    // might as well pull scatter just in case
                     legs.add(name.substring(offset, offset + 1));
                     offset = offset + 1;
                 } else if(name.charAt(offset) == 'c'
@@ -120,6 +127,8 @@ public class LegPuller {
                             || name.charAt(offset + 1) == '^'
                             || name.charAt(offset + 1) == 'v'
                             || name.charAt(offset + 1) == 'V'
+                            || name.charAt(offset + 1) == SCATTER_CODE
+                            || name.charAt(offset + 1) == BACKSCATTER_CODE
                             ) {
                         legs.add(name.substring(offset, offset + 1));
                         offset++;
@@ -239,6 +248,8 @@ public class LegPuller {
                             || name.charAt(offset + 1) == '^'
                             || name.charAt(offset + 1) == 'v'
                             || name.charAt(offset + 1) == 'V'
+                            || name.charAt(offset + 1) == SCATTER_CODE
+                            || name.charAt(offset + 1) == BACKSCATTER_CODE
                             ) {
                         legs.add(name.substring(offset, offset + 1));
                         offset++;
