@@ -117,5 +117,13 @@ public class ScatterTest {
         assertEquals(340, ScatteredSeismicPhase.calcScatterDistDeg(deg, scatterer, forwardscatter), 1e-6);
         // backscatter
         assertEquals(20, ScatteredSeismicPhase.calcScatterDistDeg(deg, scatterer, backscatter), 1e-6);
+
+        // repeat other depth/dist
+        scatterer = 170;
+        deg = 170;
+        assertEquals(0, ScatteredSeismicPhase.calcScatterDistDeg(deg, scatterer, forwardscatter), 1e-6);
+        // backscatter
+        assertEquals(360, ScatteredSeismicPhase.calcScatterDistDeg(deg, scatterer, backscatter), 1e-6);
+
     }
 }
