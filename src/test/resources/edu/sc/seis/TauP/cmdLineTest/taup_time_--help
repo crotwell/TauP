@@ -11,7 +11,7 @@ Arguments are:
 -h depth           -- source depth in km
 
 --stadepth depth   -- receiver depth in km
---scat depth deg   -- scattering depth and distance
+--scat[ter] depth deg   -- scattering depth and distance
 
 Distance is given by:
 

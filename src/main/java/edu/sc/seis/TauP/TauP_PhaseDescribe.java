@@ -9,15 +9,15 @@ public class TauP_PhaseDescribe extends TauP_Time {
     /** Prints the command line arguments common to all TauP tools. */
     @Override
     public void printStdUsage() {
-        TauP_Tool.printStdUsageHead(this.arrivals.getClass());
-        Alert.info("-ph phase list     -- comma separated phase list\n"
-                + "-pf phasefile      -- file containing phases\n\n"
-                + "-mod[el] modelname -- use velocity model \"modelname\" for calculations\n"
-                + "                      Default is iasp91.\n\n"
-                + "-h depth           -- source depth in km\n\n"
-                + "--stadepth depth   -- receiver depth in km\n\n"
-                + "--scat depth deg   -- scattering depth and distance\n"
-                + "--dump             -- dump raw sample points\n\n");
+        TauP_Tool.printStdUsageHead(this.getClass());
+        Alert.info("-ph phase list        -- comma separated phase list\n"
+                + "-pf phasefile         -- file containing phases\n\n"
+                + "-mod[el] modelname    -- use velocity model \"modelname\" for calculations\n"
+                + "                         Default is iasp91.\n\n"
+                + "-h depth              -- source depth in km\n\n"
+                + "--stadepth depth      -- receiver depth in km\n\n"
+                + "--scat[ter] depth deg -- scattering depth and distance\n"
+                + "--dump                -- dump raw sample points\n\n");
     }
 
     /** Dumps raw interpolation points for phase. */
@@ -51,11 +51,6 @@ public class TauP_PhaseDescribe extends TauP_Time {
                     noComprendoArgs[numNoComprendoArgs++] = args[i];
                 }
 
-            } else if(i < args.length - 2 && args[i].equalsIgnoreCase("--scatter")) {
-                double scatterDepth = Double.valueOf(args[i + 1]).doubleValue();
-                double scatterDistDeg = Double.valueOf(args[i + 2]).doubleValue();
-                setScatterer(scatterDepth, scatterDistDeg);
-                i += 2;
             } else {
                 /* I don't know how to interpret this argument, so pass it back */
                 noComprendoArgs[numNoComprendoArgs++] = args[i];

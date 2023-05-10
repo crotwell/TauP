@@ -576,7 +576,7 @@ public class TauP_Time extends TauP_Tool {
                 } else if(args[i].equalsIgnoreCase("--stadepth")) {
                     setReceiverDepth(Double.parseDouble(args[i + 1]));
                     i++;
-                } else if(i < args.length - 2 && args[i].equalsIgnoreCase("--scatter")) {
+                } else if(i < args.length - 2 && (args[i].equalsIgnoreCase("--scat") || args[i].equalsIgnoreCase("--scatter"))) {
                     double scatterDepth = Double.valueOf(args[i + 1]).doubleValue();
                     double scatterDistDeg = Double.valueOf(args[i + 2]).doubleValue();
                     setScatterer(scatterDepth, scatterDistDeg);
@@ -1589,7 +1589,7 @@ public class TauP_Time extends TauP_Tool {
                 + "                      Default is iasp91.\n\n"
                 + "-h depth           -- source depth in km\n\n"
                 + "--stadepth depth   -- receiver depth in km\n"
-                + "--scat depth deg   -- scattering depth and distance\n"
+                + "--scat[ter] depth deg   -- scattering depth and distance\n"
         );
     }
 
