@@ -296,6 +296,11 @@ public class TauP_Create extends TauP_Tool {
         return vMod;
     }
 
+    @Override
+    public void validateArguments() throws TauModelException {
+
+    }
+
     public TauModel createTauModel(VelocityModel vMod) throws VelocityModelException, SlownessModelException, TauModelException {
         if (vMod == null) {throw new IllegalArgumentException("vMod cannot be null");}
         if(!vMod.getSpherical()) {

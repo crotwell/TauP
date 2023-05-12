@@ -86,6 +86,18 @@ public class SeismicPhaseSegment {
 			case HEAD:
 				action = "head wave";
 				break;
+			case SCATTER:
+				action = "scatter";
+				break;
+			case SCATTER_DOWN:
+				action = "down scatter";
+				break;
+			case BACKSCATTER:
+				action = "backscatter";
+				break;
+			case BACKSCATTER_DOWN:
+				action = "down backscatter";
+				break;
 			case END:
 				action = "end";
 				break;

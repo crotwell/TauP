@@ -307,7 +307,37 @@ public class ScatteredSeismicPhase implements SeismicPhase {
 
     @Override
     public String describe() {
-        return inboundArrival.getPhase().describe()+"\nArrival: "+inboundArrival+"\nScatter at "+ scattererDepth +", "+ scattererDistanceDeg +"\n"+scatteredPhase.describe();
+        String desc = getName() + " scattered at "+getScattererDepth()+" km and "+getScattererDistanceDeg()+" deg:\n";
+        if (phasesExistsInModel()) {
+            desc += "  exists from "+Outputs.formatDistance(getMinDistanceDeg())+" to "+Outputs.formatDistance(getMaxDistanceDeg())+" degrees.\n";
+            if (getMaxRayParam() > getMinRayParam()) {
+                desc += "  with ray parameter from "+Outputs.formatRayParam(getMaxRayParam() / Arrival.RtoD)
+                        +" down to "+Outputs.formatRayParam(getMinRayParam() / Arrival.RtoD)+" sec/deg.\n";
+            } else {
+                desc += "  with degenerate ray parameter of "+Outputs.formatRayParam(getMaxRayParam() / Arrival.RtoD)+" sec/deg.\n";
+            }
+            desc += "  travel times from "+Outputs.formatTime(getTime(0))+" to "+Outputs.formatTime(getTime(getTime().length-1))+" sec";
+            for(int i = 0; i < getDist().length; i++) {
+                if (i < getDist().length - 1 && (getRayParams(i) == getRayParams(i + 1))
+                        && getRayParams().length > 2) {
+                    /* Here we have a shadow zone, so output a warning of break in curve. */
+                    desc += "\n  with shadow zone between " + Outputs.formatDistance(Arrival.RtoD*getDist(i))
+                            + " and " + Outputs.formatDistance(Arrival.RtoD*getDist(i+1)) + " deg";
+                }
+            }
+            desc += ".\n";
+        } else {
+            desc += "  FAILS to exist, because no ray parameters satisfy the path.\n";
+        }
+        for(SeismicPhaseSegment segment : getPhaseSegments()) {
+            desc += segment.toString()+"\n";
+        }
+        String scat_direction = isBackscatter() ? "Backscatter" : "Scatter";
+        desc +="Inbound to Scatterer: "+((SimpleSeismicPhase)inboundArrival.getPhase()).baseDescribe()
+                +"\nArrival: "+inboundArrival
+                +"\n"+scat_direction+" at "+ scattererDepth +", "+ scattererDistanceDeg
+                +"\nOutbound from Scatterer: "+((SimpleSeismicPhase)scatteredPhase).baseDescribe();
+        return desc;
     }
 
     @Override

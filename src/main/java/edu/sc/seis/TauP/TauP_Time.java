@@ -738,20 +738,50 @@ public class TauP_Time extends TauP_Tool {
             List<SeismicPhase> relPhases = new ArrayList<SeismicPhase>();
             List<String> splitNames = extractPhaseNames(relativePhaseName);
             for (String sName : splitNames) {
-                relPhases.addAll(SeismicPhaseFactory.createSeismicPhases(
-                        sName,
-                        getTauModelDepthCorrected(),
-                        this.getSourceDepth(),
-                        this.getReceiverDepth(),
-                        this.getScattererDepth(),
-                        this.getScattererDistDeg(),
-                        this.DEBUG));
+                try {
+                    List<SeismicPhase> calcRelPhaseList = SeismicPhaseFactory.createSeismicPhases(
+                            sName,
+                            getTauModelDepthCorrected(),
+                            this.getSourceDepth(),
+                            this.getReceiverDepth(),
+                            this.getScattererDepth(),
+                            this.getScattererDistDeg(),
+                            this.DEBUG);
+                    relPhases.addAll(calcRelPhaseList);
+                } catch (ScatterArrivalFailException e) {
+                    Alert.warning(e.getMessage(),
+                            "    Skipping this relative phase");
+                    if (verbose || DEBUG) {
+                        e.printStackTrace();
+                    }
+                }
+
             }
             relativeArrival = SeismicPhase.getEarliestArrival(relPhases, degrees);
         }
     }
 
+    @Override
+    public void validateArguments() throws TauModelException {
+        if (this.getTauModel() == null) {
+            throw new TauModelException("Model for '"+this.getTauModelName()+"' is null, unable to calculate.");
+        }
+        if (this.getTauModel().getRadiusOfEarth() < getSourceDepth()) {
+            throw new TauModelException("Source depth of "+getSourceDepth()+" in '"+this.getTauModelName()
+                    +"' is greater than radius of earth, "+this.getTauModel().getRadiusOfEarth()+", unable to calculate.");
+        }
+        if (this.getTauModel().getRadiusOfEarth() < getReceiverDepth()) {
+            throw new TauModelException("Receiver depth of "+getReceiverDepth()+" in '"+this.getTauModelName()
+                    +"' is greater than radius of earth, "+this.getTauModel().getRadiusOfEarth()+", unable to calculate.");
+        }
+        if (this.getTauModel().getRadiusOfEarth() < getScattererDepth()) {
+            throw new TauModelException("Scatterer depth of "+getScattererDepth()+" in '"+this.getTauModelName()
+                    +"' is greater than radius of earth, "+this.getTauModel().getRadiusOfEarth()+", unable to calculate.");
+        }
+    }
+
     public void calcTime(double degrees) throws TauModelException {
+        validateArguments();
         depthCorrect();
         clearArrivals();
         this.degrees = degrees;
@@ -927,11 +957,17 @@ public class TauP_Time extends TauP_Tool {
             if(!alreadyAdded) {
                 // didn't find it precomputed, so recalculate
                 try {
-                    newPhases.addAll(SeismicPhaseFactory.createSeismicPhases(tempPhaseName, getTauModelDepthCorrected(), getSourceDepth(), getReceiverDepth(), getScattererDepth(), getScattererDistDeg(), DEBUG));
+                    List<SeismicPhase> calcPhaseList = SeismicPhaseFactory.createSeismicPhases(tempPhaseName, getTauModelDepthCorrected(), getSourceDepth(), getReceiverDepth(), getScattererDepth(), getScattererDistDeg(), DEBUG);
+                    newPhases.addAll(calcPhaseList);
                     for (SeismicPhase seismicPhase : newPhases) {
-                        if(verbose) {
+                        if (verbose) {
                             Alert.info(seismicPhase.toString());
                         }
+                    }
+                } catch (ScatterArrivalFailException e) {
+                    Alert.warning(e.getMessage()+", skipping this phase");
+                    if (verbose || DEBUG) {
+                        e.printStackTrace();
                     }
                 } catch(TauModelException e) {
                     Alert.warning("Error with phase=" + tempPhaseName,

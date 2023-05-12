@@ -201,7 +201,7 @@ public class SeismicPhaseFactory {
                 throw new TauModelException("Scatter phase doesn't have two segments: "+name);
             }
             if (scattererDistanceDeg == 0.0) {
-                throw new TauModelException("Attempt to use scatter phase but scatter distance is zero: "+name);
+                throw new ScatterArrivalFailException("Attempt to use scatter phase but scatter distance is zero: "+name);
             }
             boolean isBackscatter = false;
             if( name.contains(""+LegPuller.BACKSCATTER_CODE)) {
@@ -211,13 +211,29 @@ public class SeismicPhaseFactory {
             tModDepthCorrected = tModDepthCorrected.splitBranch(receiverDepth);
             SeismicPhase inPhase = SeismicPhaseFactory.createPhase(in_scat[0],
                     tModDepthCorrected, sourceDepth, scattererDepth, debug);
+            SeismicPhaseSegment lastSegment = inPhase.getPhaseSegments().get(inPhase.getPhaseSegments().size()-1);
+            PhaseInteraction endAction = lastSegment.endAction;
+            if (endAction == END_DOWN) {
+                if (isBackscatter) {
+                    lastSegment.endAction = BACKSCATTER_DOWN;
+                } else {
+                    lastSegment.endAction = SCATTER_DOWN;
+                }
+            } else if (endAction == END) {
+                if (isBackscatter) {
+                    lastSegment.endAction = BACKSCATTER;
+                } else {
+                    lastSegment.endAction = SCATTER;
+                }
+            }
             TauModel scatTMod = tModDepthCorrected.depthRecorrect(scattererDepth);
             SeismicPhase scatPhase = SeismicPhaseFactory.createPhase(in_scat[1],
                     scatTMod, scattererDepth, receiverDepth, debug);
 
             List<Arrival> inArrivals = inPhase.calcTime(scattererDistanceDeg);
-            if (debug && inArrivals.size() == 0) {
-                System.out.println("No inbound arrivals to scatterer for "+name);
+            if (inArrivals.size() == 0) {
+                throw new ScatterArrivalFailException("No inbound arrivals to the scatterer for "+name
+                        +" at "+scattererDepth+" km depth and "+scattererDistanceDeg+" deg. Distance range for scatterer at this depth is "+inPhase.getMinDistanceDeg()+" "+inPhase.getMaxDistanceDeg()+" deg.");
             }
             for (Arrival inArr : inArrivals) {
                 ScatteredSeismicPhase seismicPhase = new ScatteredSeismicPhase(
@@ -3333,6 +3349,14 @@ public class SeismicPhaseFactory {
             return "REFLECT_UNDERSIDE";
         } else if(endAction == REFLECT_UNDERSIDE_CRITICAL) {
             return "REFLECT_UNDERSIDE_CRITICAL";
+        } else if(endAction == SCATTER ) {
+            return "SCATTER";
+        } else if(endAction == SCATTER_DOWN) {
+            return "SCATTER_DOWN";
+        } else if(endAction == BACKSCATTER ) {
+            return "BACKSCATTER";
+        } else if(endAction == BACKSCATTER_DOWN) {
+            return "BACKSCATTER_DOWN";
         } else if(endAction == END ) {
             return "END";
         } else if(endAction == END_DOWN) {

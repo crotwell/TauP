@@ -45,6 +45,36 @@ public enum PhaseInteraction {
     HEAD,
 
     /**
+     * indicates end of the inbound phase to a scatterer. The ray continues on after scattering in the
+     * forward sense, so if inbound clockwise, continues clockwise.
+     *
+     */
+    SCATTER,
+
+    /**
+     * indicates end of the inbound phase to a scatterer, where last segment is downgoing.
+     * The ray continues on after scattering in the
+     * forward sense, so if inbound clockwise, continues clockwise.
+     *
+     */
+    SCATTER_DOWN,
+
+    /**
+     * indicates end of the inbound phase to a scatterer. The ray continues on after scattering in the
+     * backward sense, so if inbound clockwise, it reverses and propigates counterclockwise.
+     *
+     */
+    BACKSCATTER,
+
+    /**
+     * indicates end of the inbound phase to a scatterer, where last segment is downgoing.
+     * The ray continues on after scattering in the
+     * backward sense, so if inbound clockwise, it reverses and propigates counterclockwise.
+     *
+     */
+    BACKSCATTER_DOWN,
+
+    /**
      * Used by addToBranch for the last segment of a phase.
      */
     END,

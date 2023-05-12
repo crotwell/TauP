@@ -209,6 +209,11 @@ public class TauP_VelocityPlot extends TauP_Tool {
     }
 
     @Override
+    public void validateArguments() throws TauModelException {
+
+    }
+
+    @Override
     public void printUsage() {
 
         TauP_Tool.printStdUsageHead(this.getClass());

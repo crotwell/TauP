@@ -37,7 +37,7 @@ package edu.sc.seis.TauP;
 public class TauPException extends Exception {
 
     public TauPException(String message) {
-        super("TauP Exception: " + message);
+        super(message);
     }
 
     public TauPException( Exception e) {

@@ -37,7 +37,7 @@ package edu.sc.seis.TauP;
 public class TauModelException extends TauPException {
 
     public TauModelException(String message) {
-        super("TauModel Exception: " + message);
+        super(message);
     }
 
     public TauModelException(Exception t) {
@@ -45,6 +45,6 @@ public class TauModelException extends TauPException {
     }
 
     public TauModelException(String message, Exception t) {
-        super("TauModel Exception: " + message, t);
+        super(message, t);
     }
 }

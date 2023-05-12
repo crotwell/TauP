@@ -158,6 +158,8 @@ public abstract class TauP_Tool {
     }
 
     protected abstract String[] parseCmdLineArgs(String[] origArgs) throws IOException;
+
+
     public abstract void init() throws TauPException;
     public abstract void start() throws IOException, TauModelException, TauPException;
     public abstract void destroy() throws TauPException;
@@ -294,4 +296,6 @@ public abstract class TauP_Tool {
             noComprendoArgs = null;
         }
     }
+
+    public abstract void validateArguments() throws TauModelException;
 }

@@ -109,6 +109,11 @@ public class TauP_VelocityMerge extends TauP_Tool {
     }
 
     @Override
+    public void validateArguments() throws TauModelException {
+
+    }
+
+    @Override
     public void init() throws TauPException {
         // TODO Auto-generated method stub
         

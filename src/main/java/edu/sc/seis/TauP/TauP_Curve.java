@@ -315,13 +315,23 @@ public class TauP_Curve extends TauP_Time {
             try {
                 List<String> splitNames = extractPhaseNames(relativePhaseName);
                 for (String sName : splitNames) {
-                    relPhases.addAll( SeismicPhaseFactory.createSeismicPhases(sName,
-                            getTauModelDepthCorrected(),
-                            getSourceDepth(),
-                            getReceiverDepth(),
-                            getScattererDepth(),
-                            getScattererDistDeg(),
-                            DEBUG));
+                    try {
+                        List<SeismicPhase> calcRelPhaseList = SeismicPhaseFactory.createSeismicPhases(
+                                sName,
+                                getTauModelDepthCorrected(),
+                                this.getSourceDepth(),
+                                this.getReceiverDepth(),
+                                this.getScattererDepth(),
+                                this.getScattererDistDeg(),
+                                this.DEBUG);
+                        relPhases.addAll(calcRelPhaseList);
+                    } catch (ScatterArrivalFailException e) {
+                        Alert.warning(e.getMessage(),
+                                "    Skipping this relative phase");
+                        if (verbose || DEBUG) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
             } catch(TauModelException e) {
                 Alert.warning("Error with phase=" + relativePhaseName,
