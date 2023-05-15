@@ -57,22 +57,26 @@ public class ScatteredSeismicPhase implements SeismicPhase {
 
     @Override
     public double getMinDistanceDeg() {
-        return getScattererDistanceDeg()+scatteredPhase.getMinDistanceDeg();
+        int mulFac = isBackscatter() ? -1 : 1;
+        return getScattererDistanceDeg()+mulFac*scatteredPhase.getMinDistanceDeg();
     }
 
     @Override
     public double getMinDistance() {
-        return getScattererDistance()+scatteredPhase.getMinDistance();
+        int mulFac = isBackscatter() ? -1 : 1;
+        return getScattererDistance()+mulFac*scatteredPhase.getMinDistance();
     }
 
     @Override
     public double getMaxDistanceDeg() {
-        return getScattererDistanceDeg()+scatteredPhase.getMaxDistanceDeg();
+        int mulFac = isBackscatter() ? -1 : 1;
+        return getScattererDistanceDeg()+mulFac*scatteredPhase.getMaxDistanceDeg();
     }
 
     @Override
     public double getMaxDistance() {
-        return getScattererDistance()+scatteredPhase.getMaxDistance();
+        int mulFac = isBackscatter() ? -1 : 1;
+        return getScattererDistance()+mulFac*scatteredPhase.getMaxDistance();
     }
 
     @Override
