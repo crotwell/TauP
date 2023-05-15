@@ -143,4 +143,51 @@ public interface SeismicPhase extends Serializable, Cloneable {
     List<TimeDist> calcPierceTimeDist(Arrival arrival);
 
     List<TimeDist> calcPathTimeDist(Arrival arrival);
+
+    public static String baseDescribe(SeismicPhase phase) {
+        String desc = "";
+        if (phase.phasesExistsInModel()) {
+
+            String mod180Min = "";
+            if (phase.getMinDistanceDeg() > 180 || phase.getMinDistanceDeg() < -180) {
+                mod180Min = " ("+Outputs.formatDistanceNoPad(SeismicPhase.distanceTrim180(phase.getMinDistanceDeg()))+") ";
+            }
+            String mod180Max = "";
+            if (phase.getMaxDistanceDeg() > 180 || phase.getMaxDistanceDeg() < -180) {
+                mod180Max = " ("+Outputs.formatDistanceNoPad(SeismicPhase.distanceTrim180(phase.getMaxDistanceDeg()))+") ";
+            }
+            desc += "  exists from "+Outputs.formatDistanceNoPad(phase.getMinDistanceDeg())+mod180Min+" to "
+                    +Outputs.formatDistanceNoPad(phase.getMaxDistanceDeg())+mod180Max+" degrees.\n";
+            if (phase.getMaxRayParam() > phase.getMinRayParam()) {
+                desc += "  with ray parameter from " + Outputs.formatRayParam(phase.getMaxRayParam() / Arrival.RtoD)
+                        + " down to " + Outputs.formatRayParam(phase.getMinRayParam() / Arrival.RtoD) + " sec/deg.\n";
+            } else {
+                desc += "  with degenerate ray parameter of " + Outputs.formatRayParam(phase.getMaxRayParam() / Arrival.RtoD) + " sec/deg.\n";
+            }
+            double[] time = phase.getTime();
+            double[] dist = phase.getDist();
+            double[] rayParams = phase.getRayParams();
+            desc += "  travel times from " + Outputs.formatTimeNoPad(time[0]) + " to " + Outputs.formatTimeNoPad(time[time.length - 1]) + " sec";
+            for (int i = 0; i < dist.length; i++) {
+                if (i < dist.length - 1 && (rayParams[i] == rayParams[i + 1])
+                        && rayParams.length > 2) {
+                    /* Here we have a shadow zone, so output a warning of break in curve. */
+                    desc += "\n  with shadow zone between " + Outputs.formatDistance(Arrival.RtoD * dist[i])
+                            + " and " + Outputs.formatDistance(Arrival.RtoD * dist[i + 1]) + " deg";
+                }
+            }
+            desc += ".\n";
+        } else {
+            desc += "  FAILS to exist, because no ray parameters satisfy the path.\n";
+        }
+        return desc;
+    }
+
+    public static String segmentDescribe(SeismicPhase phase) {
+        String desc = "";
+        for(SeismicPhaseSegment segment : phase.getPhaseSegments()) {
+            desc += segment.toString()+"\n";
+        }
+        return desc;
+    }
 }

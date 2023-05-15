@@ -1152,42 +1152,10 @@ public class SimpleSeismicPhase implements SeismicPhase {
 
     @Override
     public String describe() {
-        return baseDescribe()+"\n"+segmentDescribe();
-    }
-
-    public String baseDescribe() {
         String desc = name + ":\n";
-        if (phasesExistsInModel()) {
-            desc += "  exists from " + Outputs.formatDistance(getMinDistanceDeg()) + " to " + Outputs.formatDistance(getMaxDistanceDeg()) + " degrees.\n";
-            if (getMaxRayParam() > getMinRayParam()) {
-                desc += "  with ray parameter from " + Outputs.formatRayParam(getMaxRayParam() / Arrival.RtoD)
-                        + " down to " + Outputs.formatRayParam(getMinRayParam() / Arrival.RtoD) + " sec/deg.\n";
-            } else {
-                desc += "  with degenerate ray parameter of " + Outputs.formatRayParam(getMaxRayParam() / Arrival.RtoD) + " sec/deg.\n";
-            }
-            desc += "  travel times from " + Outputs.formatTime(time[0]) + " to " + Outputs.formatTime(time[time.length - 1]) + " sec";
-            for (int i = 0; i < dist.length; i++) {
-                if (i < dist.length - 1 && (rayParams[i] == rayParams[i + 1])
-                        && rayParams.length > 2) {
-                    /* Here we have a shadow zone, so output a warning of break in curve. */
-                    desc += "\n  with shadow zone between " + Outputs.formatDistance(Arrival.RtoD * dist[i])
-                            + " and " + Outputs.formatDistance(Arrival.RtoD * dist[i + 1]) + " deg";
-                }
-            }
-            desc += ".\n";
-        } else {
-            desc += "  FAILS to exist, because no ray parameters satisfy the path.\n";
-        }
-        return desc;
+        return desc+ SeismicPhase.baseDescribe(this)+"\n"+ SeismicPhase.segmentDescribe(this);
     }
-    public String segmentDescribe() {
-        String desc = "";
-        for(SeismicPhaseSegment segment : getPhaseSegments()) {
-        	desc += segment.toString()+"\n";
-        }
 
-        return desc;
-    }
 
     @Override
     public String toString() {

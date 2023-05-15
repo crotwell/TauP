@@ -80,7 +80,7 @@ public class Outputs {
     }
 
     public static String formatDistanceNoPad(double distance) {
-        return distanceFormat.form(distance);
+        return distanceFormatNoPad.form(distance);
     }
 
     public static String formatTimeNoPad(double time) {
