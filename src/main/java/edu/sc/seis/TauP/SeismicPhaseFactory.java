@@ -227,7 +227,7 @@ public class SeismicPhaseFactory {
                 }
             }
             TauModel scatTMod = tModDepthCorrected.depthRecorrect(scattererDepth);
-            SeismicPhase scatPhase = SeismicPhaseFactory.createPhase(in_scat[1],
+            SimpleSeismicPhase scatPhase = SeismicPhaseFactory.createPhase(in_scat[1],
                     scatTMod, scattererDepth, receiverDepth, debug);
 
             List<Arrival> inArrivals = inPhase.calcTime(scattererDistanceDeg);

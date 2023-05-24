@@ -468,6 +468,9 @@ public class SimpleSeismicPhase implements SeismicPhase {
         if (TauP_Tool.DEBUG) {
             System.out.println("Calculation distance: "+tempDeg+" deg");
         }
+        double deltaTemp = Math.abs((deg - tempDeg + 180) % 360 - 180);
+        double deltaTempLongWay = Math.abs(((360-deg)-tempDeg + 180) % 360 - 180);
+        int trimDistIsPos = deltaTemp < deltaTempLongWay ? 1 : -1;
         double radDist = tempDeg * Math.PI / 180.0;
         List<Arrival> arrivals = new ArrayList<Arrival>();
         /*
@@ -486,65 +489,22 @@ public class SimpleSeismicPhase implements SeismicPhase {
              * more than n laps.
              */
             searchDist = n * 2.0 * Math.PI + radDist;
-            for(int rayNum = 0; rayNum < (dist.length - 1); rayNum++) {
-                if(searchDist == dist[rayNum + 1]
-                        && rayNum + 1 != dist.length - 1) {
-                    /* So we don't get 2 arrivals for the same ray. */
-                    continue;
-                } else if((dist[rayNum] - searchDist)
-                        * (searchDist - dist[rayNum + 1]) >= 0.0) {
-                    /* look for distances that bracket the search distance */
-                    if((rayParams[rayNum] == rayParams[rayNum + 1])
-                            && rayParams.length > 2) {
-                        /*
-                         * Here we have a shadow zone, so it is not really an
-                         * arrival.
-                         */
-                        continue;
-                    }
-                    if(DEBUG) {
-                        System.err.println("SeismicPhase " + name
-                                + ", found arrival:\n" + "dist "
-                                + (float)(180 / Math.PI * dist[rayNum]) + " "
-                                + (float)(180 / Math.PI * searchDist) + " "
-                                + (float)(180 / Math.PI * dist[rayNum + 1]));
-                    }
-                    arrivals.add(refineArrival(rayNum, searchDist, refineDistToleranceRadian, maxRecursion));
-                }
+            List<Arrival> forwardArrivals = calcTimeExactDistance(searchDist);
+            for (Arrival a : forwardArrivals) {
+                a.setSearchDist(deg * Arrival.DtoR);
             }
+            arrivals.addAll(forwardArrivals);
             /*
              * Look for arrivals that are 2(n+1)Pi-radDist, ie rays that have
              * done more than one half lap plus some number of whole laps.
              */
             searchDist = (n + 1) * 2.0 * Math.PI - radDist;
             if(tempDeg != 180 && radDist != 0 && searchDist <= maxDistance) {
-                for(int rayNum = 0; rayNum < (dist.length - 1); rayNum++) {
-                    if(searchDist == dist[rayNum + 1]
-                            && rayNum + 1 != dist.length - 1) {
-                        /* So we don't get 2 arrivals for the same ray. */
-                        continue;
-                    } else if((dist[rayNum] - searchDist)
-                            * (searchDist - dist[rayNum + 1]) >= 0.0) {
-                        if((rayParams[rayNum] == rayParams[rayNum + 1])
-                                && rayParams.length > 2) {
-                            /*
-                             * Here we have a shadow zone, so it is not really
-                             * an arrival.
-                             */
-                            continue;
-                        }
-                        if(DEBUG) {
-                            System.err.println("SeismicPhase " + name
-                                    + ", found arrival:\n" + "dist "
-                                    + (float)(180 / Math.PI * dist[rayNum])
-                                    + " " + (float)(180 / Math.PI * searchDist)
-                                    + " "
-                                    + (float)(180 / Math.PI * dist[rayNum + 1]));
-                        }
-                        arrivals.add(refineArrival(rayNum, searchDist, refineDistToleranceRadian, maxRecursion));
-
-                    }
+                List<Arrival> backwardsArrivals = calcTimeExactDistance(searchDist);
+                for (Arrival a : backwardsArrivals) {
+                    a.setSearchDist(deg*Arrival.DtoR);
                 }
+                arrivals.addAll(backwardsArrivals);
             }
             n++;
         }
@@ -552,6 +512,44 @@ public class SimpleSeismicPhase implements SeismicPhase {
             public int compare(Arrival o1, Arrival o2) {
                 return Double.compare(o1.getTime(), o2.getTime());
             }});
+        return arrivals;
+    }
+
+    /**
+     * Calculates arrivals for this phase, but only for the exact distance in radians. This does not check multiple
+     * laps nor going the long way around.
+     *  */
+    public List<Arrival> calcTimeExactDistance(double searchDist) {
+        List<Arrival> arrivals = new ArrayList<Arrival>();
+        for(int rayNum = 0; rayNum < (dist.length - 1); rayNum++) {
+            if(searchDist == dist[rayNum + 1]
+                    && rayNum + 1 != dist.length - 1) {
+                /* So we don't get 2 arrivals for the same ray. */
+                continue;
+            } else if((dist[rayNum] - searchDist)
+                    * (searchDist - dist[rayNum + 1]) >= 0.0) {
+                /* look for distances that bracket the search distance */
+                if((rayParams[rayNum] == rayParams[rayNum + 1])
+                        && rayParams.length > 2) {
+                    /*
+                     * Here we have a shadow zone, so it is not really an
+                     * arrival.
+                     */
+                    continue;
+                }
+                if(DEBUG) {
+                    System.err.println("SeismicPhase " + name
+                            + ", found arrival:\n" + "dist "
+                            + (float)(180 / Math.PI * dist[rayNum]) + " "
+                            + (float)(180 / Math.PI * searchDist) + " "
+                            + (float)(180 / Math.PI * dist[rayNum + 1]));
+                    System.err.println("time "
+                            +  time[rayNum] + " --  "
+                            + time[rayNum + 1]);
+                }
+                arrivals.add(refineArrival(rayNum, searchDist, refineDistToleranceRadian, maxRecursion));
+            }
+        }
         return arrivals;
     }
 

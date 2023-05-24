@@ -19,6 +19,7 @@ public class ScatteredArrival extends Arrival {
                 deg*Arrival.DtoR,
                 scatteredArrival.getRayParam(),
                 scatteredArrival.getRayParamIndex(),
+                deg*Arrival.DtoR,
                 formScatterPhaseName(inboundArrival.getName(), scatteredArrival.getName(), isBackscatter),
                 formScatterPhaseName(inboundArrival.getPuristName(), scatteredArrival.getPuristName(), isBackscatter),
                 inboundArrival.getPhase().getSourceDepth(),
@@ -42,6 +43,12 @@ public class ScatteredArrival extends Arrival {
     }
     public boolean isBackscatter() {
         return isBackscatter;
+    }
+
+    @Override
+    public boolean isLongWayAround() {
+        // scattered phases are not symmetric, so never long way around
+        return false;
     }
 
     public boolean isInboundNegativeDirection() {

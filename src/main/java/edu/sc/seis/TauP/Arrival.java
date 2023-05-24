@@ -50,6 +50,7 @@ public class Arrival {
                 dist,
                 rayParam,
                 rayParamIndex,
+                dist,
                 phase.getName(),
                 phase.getPuristName(),
                 phase.getSourceDepth(),
@@ -62,6 +63,7 @@ public class Arrival {
                    double dist,
                    double rayParam,
                    int rayParamIndex,
+                   double searchDist,
                    String name,
                    String puristName,
                    double sourceDepth,
@@ -80,6 +82,7 @@ public class Arrival {
         this.dist = dist;
         this.rayParam = rayParam;
         this.rayParamIndex = rayParamIndex;
+        this.searchDist = searchDist;
         this.name = name;
         this.puristName = puristName;
         this.sourceDepth = sourceDepth;
@@ -102,6 +105,10 @@ public class Arrival {
     private double rayParam;
 
     private int rayParamIndex;
+
+    /** original angular search distance (great circle) in radians. May differ from dist by multiple of 2 pi
+     * or be pi - dist for long way around. */
+    private double searchDist;
 
     /** phase name */
     private String name;
@@ -168,6 +175,49 @@ public class Arrival {
      */
     public double getModuloDistDeg() {
         return SeismicPhase.distanceTrim180(getDistDeg());
+    }
+
+    public void setSearchDist(double searchDistRadian) {
+        this.searchDist = searchDistRadian;
+    }
+
+    /** returns search distance in radians */
+    public double getSearchDist() {
+        return searchDist;
+    }
+
+    /**
+     * returns search distance in degrees.
+     */
+    public double getSearchDistDeg() {
+        return RtoD * getSearchDist();
+    }
+
+    /**
+     * returns search distance in radians and in the range 0-PI. Note this may not be
+     * the actual distance traveled.
+     */
+    public double getModuloSearchDist() {
+        double moduloDist = getSearchDist() % TWOPI;
+        if(moduloDist > Math.PI) {
+            moduloDist = TWOPI - moduloDist;
+        }
+        return moduloDist;
+    }
+
+    /**
+     * returns search distance in degrees and in the range 0-180. Note this may not be
+     * the actual distance traveled.
+     */
+    public double getModuloSearchDistDeg() {
+        return SeismicPhase.distanceTrim180(getSearchDistDeg());
+    }
+
+    public static final double MANY_LAPS_PLUS_180 = 360*100+180;
+    public boolean isLongWayAround() {
+        double shortWay = ((MANY_LAPS_PLUS_180 + getSearchDistDeg() - getDistDeg()) % 360 ) -180;
+        double longWay = ((MANY_LAPS_PLUS_180 + getSearchDistDeg() - (360-getDistDeg())) % 360) -180;
+        return Math.abs(longWay) < Math.abs(shortWay);
     }
 
     /** returns ray parameter in seconds per radian */

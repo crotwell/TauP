@@ -7,13 +7,13 @@ import java.util.List;
 public class ScatteredSeismicPhase implements SeismicPhase {
 
     private final Arrival inboundArrival;
-    private final SeismicPhase scatteredPhase;
+    private final SimpleSeismicPhase scatteredPhase;
     private final double scattererDepth;
     private final double scattererDistanceDeg;
     private final boolean backscatter;
 
     public ScatteredSeismicPhase(Arrival inboundArrival,
-                                 SeismicPhase scatteredPhase,
+                                 SimpleSeismicPhase scatteredPhase,
                                  double scattererDepth,
                                  double scattererDistanceDeg,
                                  boolean backscatter) {
@@ -226,16 +226,22 @@ public class ScatteredSeismicPhase implements SeismicPhase {
     public List<Arrival> calcTime(double deg) {
         List<Arrival> out = new ArrayList<>();
         double calcDeg = deg % 360;
-        double calcScatDeg = (180+getScattererDistanceDeg()) % 360 - 180;
-        if (deg > 180.0) {
-            calcDeg = 360-calcDeg;
-            calcScatDeg *= -1;
-        }
         double scatDist = calcScatterDistDeg(deg, getScattererDistanceDeg(), isBackscatter());
         if (scatDist < 0) {
             scatDist += 360;
         }
-        List<Arrival> scat = scatteredPhase.calcTime(SeismicPhase.distanceTrim180(scatDist));
+
+        List<Arrival> scat = new ArrayList<>();
+        double calcScatRad = scatDist * Arrival.DtoR ;
+        while (calcScatRad < scatteredPhase.getMaxDistance()) {
+            List<Arrival> scatAtDist = scatteredPhase.calcTimeExactDistance(calcScatRad);
+            for (Arrival a : scatAtDist) {
+                a.setSearchDist(deg*Arrival.DtoR);
+            }
+            scat.addAll(scatAtDist);
+            calcScatRad += 2*Math.PI;
+        }
+
         for (Arrival a : scat) {
             if (Math.abs((a.getDistDeg()-scatDist) % 360) < 1e-6) {
                 // make sure actually arrives at deg, can be messed up by neg forwardScatDist
@@ -245,6 +251,7 @@ public class ScatteredSeismicPhase implements SeismicPhase {
                         inboundArrival,
                         a,
                         isBackscatter());
+                b.setSearchDist(a.getSearchDist());
                 out.add(b);
             } else {
                 if (TauP_Tool.DEBUG) {
