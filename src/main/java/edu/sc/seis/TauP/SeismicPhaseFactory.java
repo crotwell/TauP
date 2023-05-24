@@ -3220,8 +3220,6 @@ public class SeismicPhaseFactory {
                 numDiff++;
             } else if (seg.prevEndAction.equals(HEAD)) {
                 numHead++;
-            } else {
-                System.out.println("seg head_diff check, not: "+seg);
             }
         }
         if (numDiff>0 || numHead>0) {
