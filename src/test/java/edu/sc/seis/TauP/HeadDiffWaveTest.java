@@ -105,7 +105,7 @@ public class HeadDiffWaveTest {
   @Test
   public void test_SedPdiffKP() throws TauModelException {
     double deg = 150;
-    SeismicPhase SedPdiff_Phase = SeismicPhaseFactory.createPhase("SedPdiffKP", tMod);
+    SeismicPhase SedPdiff_Phase = SeismicPhaseFactory.createPhase("SedPdiffKs", tMod);
     List<Arrival> SedPdiff_arrivals = SedPdiff_Phase.calcTime(deg);
     assertEquals(1, SedPdiff_arrivals.size());
     Arrival SedPdiff_Arr = SedPdiff_arrivals.get(0);
