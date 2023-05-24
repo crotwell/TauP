@@ -1582,6 +1582,14 @@ public class SeismicPhaseFactory {
                             endAction,
                             currLeg);
                     minRayParam = maxRayParam;
+                    if (nextLeg.equals("Ped") || nextLeg.equals("Sed")) {
+                        // down into  core
+                        addFlatBranch(tMod, tMod.getMohoBranch(), isPWave, endAction, TRANSDOWN, currLeg);
+                    } else {
+                        // normal case
+                        addFlatBranch(tMod, tMod.getMohoBranch(), isPWave, endAction, TRANSUP, currLeg);
+                    }
+
                     if(nextLeg.equals("END")) {
                         endAction = END;
                         if (currBranch >= upgoingRecBranch) {
@@ -2976,9 +2984,6 @@ public class SeismicPhaseFactory {
                     downGoing.add(isDownGoing);
                     waveType.add(isPWave);
                     legAction.add(endAction);
-                }
-                if(endAction == DIFFRACT || endAction == HEAD) {
-                    headOrDiffractSeq.add(branchSeq.size() - 1);
                 }
                 if(DEBUG) {
                     for(int i = startBranch; i <= endBranch; i++) {
