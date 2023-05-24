@@ -236,7 +236,7 @@ public class ScatteredSeismicPhase implements SeismicPhase {
         while (calcScatRad < scatteredPhase.getMaxDistance()) {
             List<Arrival> scatAtDist = scatteredPhase.calcTimeExactDistance(calcScatRad);
             for (Arrival a : scatAtDist) {
-                a.setSearchDist(deg*Arrival.DtoR);
+                a.setSearchDistDeg(deg);
             }
             scat.addAll(scatAtDist);
             calcScatRad += 2*Math.PI;
@@ -251,7 +251,7 @@ public class ScatteredSeismicPhase implements SeismicPhase {
                         inboundArrival,
                         a,
                         isBackscatter());
-                b.setSearchDist(a.getSearchDist());
+                b.setSearchDistDeg(a.getSearchDistDeg());
                 out.add(b);
             } else {
                 if (TauP_Tool.DEBUG) {

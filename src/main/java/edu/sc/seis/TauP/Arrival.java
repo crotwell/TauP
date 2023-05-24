@@ -109,6 +109,9 @@ public class Arrival {
     /** original angular search distance (great circle) in radians. May differ from dist by multiple of 2 pi
      * or be pi - dist for long way around. */
     private double searchDist;
+    /** original angular search distance (great circle) in degrees. May differ from dist by multiple of 180
+     * or be 360 - dist for long way around. */
+    private double searchDistDeg;
 
     /** phase name */
     private String name;
@@ -177,32 +180,15 @@ public class Arrival {
         return SeismicPhase.distanceTrim180(getDistDeg());
     }
 
-    public void setSearchDist(double searchDistRadian) {
-        this.searchDist = searchDistRadian;
-    }
-
-    /** returns search distance in radians */
-    public double getSearchDist() {
-        return searchDist;
+    public void setSearchDistDeg(double searchDistDeg) {
+        this.searchDistDeg = searchDistDeg;
     }
 
     /**
      * returns search distance in degrees.
      */
     public double getSearchDistDeg() {
-        return RtoD * getSearchDist();
-    }
-
-    /**
-     * returns search distance in radians and in the range 0-PI. Note this may not be
-     * the actual distance traveled.
-     */
-    public double getModuloSearchDist() {
-        double moduloDist = getSearchDist() % TWOPI;
-        if(moduloDist > Math.PI) {
-            moduloDist = TWOPI - moduloDist;
-        }
-        return moduloDist;
+        return this.searchDistDeg;
     }
 
     /**

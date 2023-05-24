@@ -491,7 +491,7 @@ public class SimpleSeismicPhase implements SeismicPhase {
             searchDist = n * 2.0 * Math.PI + radDist;
             List<Arrival> forwardArrivals = calcTimeExactDistance(searchDist);
             for (Arrival a : forwardArrivals) {
-                a.setSearchDist(deg * Arrival.DtoR);
+                a.setSearchDistDeg(deg );
             }
             arrivals.addAll(forwardArrivals);
             /*
@@ -502,7 +502,7 @@ public class SimpleSeismicPhase implements SeismicPhase {
             if(tempDeg != 180 && radDist != 0 && searchDist <= maxDistance) {
                 List<Arrival> backwardsArrivals = calcTimeExactDistance(searchDist);
                 for (Arrival a : backwardsArrivals) {
-                    a.setSearchDist(deg*Arrival.DtoR);
+                    a.setSearchDistDeg(deg);
                 }
                 arrivals.addAll(backwardsArrivals);
             }
