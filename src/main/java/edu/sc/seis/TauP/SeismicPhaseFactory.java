@@ -1340,7 +1340,7 @@ public class SeismicPhaseFactory {
 
                 SeismicPhaseSegment prevSegment = segmentList.size() > 0 ? segmentList.get(segmentList.size() - 1) : null;
                 if (currBranch < tMod.getCmbBranch() - 1 || prevEndAction == START ||
-                        (currBranch == tMod.getCmbBranch() - 1 && prevSegment != null && prevSegment.endsAtTop())
+                        (currBranch == tMod.getCmbBranch()  && prevSegment != null && prevSegment.endsAtTop())
                 ) {
                     endAction = DIFFRACT;
                     addToBranch(tMod,
@@ -1350,7 +1350,8 @@ public class SeismicPhaseFactory {
                             nextIsPWave,
                             endAction,
                             currLeg);
-                } else if (currBranch == tMod.getCmbBranch() - 1 && (prevSegment.endAction == DIFFRACT)) {
+                } else if (currBranch == tMod.getCmbBranch() - 1
+                        && (prevSegment.endAction == DIFFRACT || prevSegment.endAction == TRANSUP)) {
                     // already at correct depth ?
                 } else {
                     // we are below at the right branch to diffract???
@@ -1405,6 +1406,8 @@ public class SeismicPhaseFactory {
                             nextIsPWave,
                             endAction,
                             currLeg);
+                } else if (nextLeg.equals("p") || nextLeg.equals("s")) {
+                    // upgoing
                 } else {
                     throw new TauModelException(getName() + " Phase not recognized (12): "
                             + currLeg + " followed by " + nextLeg
@@ -1813,7 +1816,7 @@ public class SeismicPhaseFactory {
             if(nextLeg.equals("P") || nextLeg.equals("S")
                 || nextLeg.equals("p") || nextLeg.equals("s")
                 || nextLeg.equals("Pdiff") || nextLeg.equals("Sdiff")) {
-                if(prevLeg.equals("P") || prevLeg.equals("S")
+                if (prevLeg.equals("P") || prevLeg.equals("S")
                         || prevLeg.equals("Ped") || prevLeg.equals("Sed")
                         || prevLeg.equals("Pdiff") || prevLeg.equals("Sdiff")
                         || prevLeg.equals("K") || prevLeg.equals("k")
@@ -2865,7 +2868,12 @@ public class SeismicPhaseFactory {
             minRayParam = Math.max(minRayParam, maxRayParam);
         } else if(endAction == DIFFRACT) {
             endOffset = 0;
-            isDownGoing = true;
+            if (prevEndAction == TRANSUP) {
+                // diffract on upgoing leg from below
+                isDownGoing = false;
+            } else {
+                isDownGoing = true;
+            }
             // ray must reach discon
             maxRayParam = Math.min(maxRayParam, tMod.getTauBranch(endBranch, isPWave).getMinTurnRayParam());
             // and propagate at the smallest turning ray param, may be different if phase conversion, ie SedPdiff
@@ -2888,7 +2896,9 @@ public class SeismicPhaseFactory {
                     + endAction);
         }
         SeismicPhaseSegment segment = new SeismicPhaseSegment(tMod, startBranch, endBranch, isPWave, endAction, isDownGoing, currLeg);
-        if (segmentList.size() > 0) {
+        if (segmentList.size() == 0) {
+            segment.prevEndAction = START;
+        } else {
             SeismicPhaseSegment prevSegment = segmentList.get(segmentList.size()-1);
             segment.prevEndAction = prevSegment.endAction;
             if (prevSegment.isFlat) {
@@ -3029,14 +3039,33 @@ public class SeismicPhaseFactory {
         SeismicPhaseSegment flatSegment;
         if (prevEndAction == HEAD) {
             flatSegment = new SeismicPhaseSegment(tMod, branch, branch, isPWave, endAction, flatIsDownGoing, currLeg);
+            double headRP = tMod.getTauBranch(branch,isPWave).getMaxRayParam();
+            if (minRayParam > headRP || maxRayParam < headRP) {
+                // can't do head wave, no rp match
+                minRayParam = -1;
+                maxRayParam = -1;
+            } else {
+                minRayParam = headRP;
+                maxRayParam = headRP;
+            }
         } else if (prevEndAction == DIFFRACT){
             flatSegment = new SeismicPhaseSegment(tMod, branch, branch, isPWave, endAction, flatIsDownGoing, currLeg);
+            double diffRP = tMod.getTauBranch(branch,isPWave).getMinTurnRayParam();
+            if (minRayParam > diffRP || maxRayParam < diffRP) {
+                // can't do diff wave, no rp match
+                minRayParam = -1;
+                maxRayParam = -1;
+            } else {
+                minRayParam = diffRP;
+                maxRayParam = diffRP;
+            }
         } else {
             throw new TauModelException("Cannot addFlatBranch for prevEndAction: "+prevEndAction);
         }
         flatSegment.isFlat = true;
         flatSegment.prevEndAction = prevEndAction;
         segmentList.add(flatSegment);
+        headOrDiffractSeq.add(branchSeq.size() - 1);
     }
 
 
@@ -3184,16 +3213,18 @@ public class SeismicPhaseFactory {
                 }
             }
         }
-        if (headOrDiffractSeq.size() > 0) {
-            int numHead = 0;
-            int numDiff = 0;
-            for (PhaseInteraction pi : legAction) {
-                if (pi.equals(DIFFRACT)) {
-                    numDiff++;
-                } else if (pi.equals(HEAD)) {
-                    numHead++;
-                }
+        int numHead = 0;
+        int numDiff = 0;
+        for (SeismicPhaseSegment seg : segmentList) {
+            if (seg.prevEndAction.equals(DIFFRACT)) {
+                numDiff++;
+            } else if (seg.prevEndAction.equals(HEAD)) {
+                numHead++;
+            } else {
+                System.out.println("seg head_diff check, not: "+seg);
             }
+        }
+        if (numDiff>0 || numHead>0) {
             // proportionally share head/diff, although this probably can't actually happen in a single ray
             // and will usually be either refraction or diffraction
             double horizontalDistDeg = numHead/(numHead+numDiff) * getMaxRefraction() + numDiff/(numHead+numDiff)*getMaxDiffraction();

@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HeadDiffWaveTest {
 
@@ -109,6 +110,12 @@ public class HeadDiffWaveTest {
     assertEquals(1, SedPdiff_arrivals.size());
     Arrival SedPdiff_Arr = SedPdiff_arrivals.get(0);
     assertEquals(tMod.getTauBranch(tMod.getCmbBranch()-1, true).getMinTurnRayParam(), SedPdiff_Arr.getRayParam());
+    SeismicPhase SKPdiffs_Phase = SeismicPhaseFactory.createPhase("SKPdiffs", tMod);
+    List<Arrival> SKPdiffs_arrivals = SKPdiffs_Phase.calcTime(deg);
+    assertEquals(1, SKPdiffs_arrivals.size());
+    Arrival SKPdiffs_Arr = SKPdiffs_arrivals.get(0);
+    assertEquals(tMod.getTauBranch(tMod.getCmbBranch()-1, true).getMinTurnRayParam(), SKPdiffs_Arr.getRayParam());
+    assertEquals(SedPdiff_Arr.getTime(), SKPdiffs_Arr.getTime());
   }
 
   @Test
