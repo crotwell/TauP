@@ -185,8 +185,9 @@ public interface SeismicPhase extends Serializable, Cloneable {
 
     public static String segmentDescribe(SeismicPhase phase) {
         String desc = "";
+        String indent = "  ";
         for(SeismicPhaseSegment segment : phase.getPhaseSegments()) {
-            desc += segment.toString()+"\n";
+            desc += indent+ segment.toString()+"\n";
         }
         return desc;
     }

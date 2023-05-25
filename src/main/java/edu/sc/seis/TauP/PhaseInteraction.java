@@ -45,6 +45,11 @@ public enum PhaseInteraction {
     HEAD,
 
     /**
+     * Used by addToBranch when the path is surface wave, so just a velocity.
+     */
+    KMPS,
+
+    /**
      * indicates end of the inbound phase to a scatterer. The ray continues on after scattering in the
      * forward sense, so if inbound clockwise, continues clockwise.
      *

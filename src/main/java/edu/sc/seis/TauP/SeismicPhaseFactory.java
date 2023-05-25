@@ -363,6 +363,8 @@ public class SeismicPhaseFactory {
             } catch (NumberFormatException e) {
                 throw new TauModelException(getName()+" Illegal surface wave velocity "+name.substring(0, name.length() - 4), e);
             }
+            // KMPS fake with a head wave
+            SeismicPhaseSegment flatSegment = addFlatBranch(tMod, 0, false, KMPS, END, currLeg);
             return;
         }
         /* Make a check for J legs if the model doesn not allow J */
@@ -2736,7 +2738,7 @@ public class SeismicPhaseFactory {
      * of endAction. endAction can be one of PhaseInteraction like
      * TRANSUP, TRANSDOWN, REFLECTTOP, REFLECTBOT, or TURN.
      */
-    protected void addToBranch(TauModel tMod,
+    protected SeismicPhaseSegment addToBranch(TauModel tMod,
                                int startBranch,
                                int endBranch,
                                boolean isPWave,
@@ -3022,16 +3024,16 @@ public class SeismicPhaseFactory {
         if(DEBUG) {
             System.out.println("after addToBranch: minRP="+minRayParam+"  maxRP="+maxRayParam+" endOffset="+endOffset+" isDownGoing="+isDownGoing);
         }
-
+        return segment;
     }
 
 
-    protected void addFlatBranch(TauModel tMod,
-                                 int branch,
-                                 boolean isPWave,
-                                 PhaseInteraction prevEndAction,
-                                 PhaseInteraction endAction,
-                                 String currLeg) throws TauModelException {
+    protected SeismicPhaseSegment addFlatBranch(TauModel tMod,
+                                                int branch,
+                                                boolean isPWave,
+                                                PhaseInteraction prevEndAction,
+                                                PhaseInteraction endAction,
+                                                String currLeg) throws TauModelException {
         // special case, add "flat" segment along bounday
 
         if(DEBUG) {
@@ -3064,13 +3066,21 @@ public class SeismicPhaseFactory {
                 minRayParam = diffRP;
                 maxRayParam = diffRP;
             }
+        } else if (prevEndAction == KMPS && currLeg.endsWith("kmps")){
+            // dummy case for surface wave velocity
+            flatSegment = new SeismicPhaseSegment(tMod, branch, branch, isPWave, endAction, flatIsDownGoing, currLeg);
+            double velocity = Double.valueOf(currLeg.substring(0, currLeg.length() - 4))
+                    .doubleValue();
+            minRayParam = tMod.radiusOfEarth / velocity;
+            maxRayParam = minRayParam;
         } else {
-            throw new TauModelException("Cannot addFlatBranch for prevEndAction: "+prevEndAction);
+            throw new TauModelException("Cannot addFlatBranch for prevEndAction: "+prevEndAction+" for "+currLeg);
         }
         flatSegment.isFlat = true;
         flatSegment.prevEndAction = prevEndAction;
         segmentList.add(flatSegment);
         headOrDiffractSeq.add(branchSeq.size() - 1);
+        return flatSegment;
     }
 
 

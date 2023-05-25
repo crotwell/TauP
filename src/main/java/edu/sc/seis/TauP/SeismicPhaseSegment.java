@@ -141,6 +141,8 @@ public class SeismicPhaseSegment {
     		// in outer core, SeismicPhase uses fake S, equal to P velocity structure, in fluid layers
 			// to make "high slowness zone" calculations easier
 			isPString = "P";
+		} else if (prevEndAction == PhaseInteraction.KMPS) {
+			isPString = "surface wave";
 		}
     	String branchRange = startBranch == endBranch ? " layer "+startBranch : " layer "+startBranch+" to "+endBranch;
 		String depthRange;
@@ -152,6 +154,8 @@ public class SeismicPhaseSegment {
 				depthRange = " at "+tMod.getTauBranch(endBranch, isPWave).getBotDepth()+" (DIFF)";
 			} else if (prevEndAction == PhaseInteraction.HEAD) {
 				depthRange = " at " + tMod.getTauBranch(endBranch, isPWave).getTopDepth()+" (HEAD)";
+			} else if (prevEndAction == PhaseInteraction.KMPS) {
+				depthRange = " at surface (KMPS)";
 			} else {
 				throw new RuntimeException("isFlat but prev not HEAD or DIFFRACT: "+endActionToString(prevEndAction));
 			}
