@@ -619,8 +619,10 @@ public class SeismicPhaseFactory {
             } else if(currLeg.equals("P") || currLeg.equals("S")) {
                 /* Now deal with P and S case. */
                 endAction = currLegIs_P_S(prevLeg, currLeg, nextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
-            } else if(currLeg.startsWith("P") || currLeg.startsWith("S")) {
-                endAction = currLegIs_Pxx_Sxx(prevLeg, currLeg, nextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
+            } else if((currLeg.startsWith("P") || currLeg.startsWith("S")) && currLeg.endsWith("diff")) {
+                endAction = currLegIs_Pdiff_Sdiff(prevLeg, currLeg, nextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
+            } else if((currLeg.startsWith("P") || currLeg.startsWith("S")) && (currLeg.endsWith("n") || currLeg.endsWith("g"))) {
+                endAction = currLegIs_Pn_Sn(prevLeg, currLeg, nextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
             } else if(currLeg.equals("K")) {
                 /* Now deal with K. */
                 if ( checkDegenerateOuterCore(prevLeg, currLeg, nextLeg, isPWave, prevIsPWave, legNum) ) {
@@ -1317,7 +1319,7 @@ public class SeismicPhaseFactory {
         return endAction;
     }
 
-    PhaseInteraction currLegIs_Pxx_Sxx(String prevLeg, String currLeg, String nextLeg,
+    PhaseInteraction currLegIs_Pdiff_Sdiff(String prevLeg, String currLeg, String nextLeg,
                                        boolean prevIsPWave, boolean isPWave, boolean nextIsPWave, int legNum)
             throws TauModelException {
         PhaseInteraction endAction;
@@ -1326,7 +1328,7 @@ public class SeismicPhaseFactory {
             maxRayParam = -1;
             return FAIL;
         }
-        if(currLeg.equals("Pdiff") || currLeg.equals("Sdiff")) {
+        if (currLeg.equals("Pdiff") || currLeg.equals("Sdiff")) {
             endAction = DIFFRACT;
             /*
              * in the diffracted case we trick addToBranch into thinking
@@ -1342,7 +1344,7 @@ public class SeismicPhaseFactory {
 
                 SeismicPhaseSegment prevSegment = segmentList.size() > 0 ? segmentList.get(segmentList.size() - 1) : null;
                 if (currBranch < tMod.getCmbBranch() - 1 || prevEndAction == START ||
-                        (currBranch == tMod.getCmbBranch()  && prevSegment != null && prevSegment.endsAtTop())
+                        (currBranch == tMod.getCmbBranch() && prevSegment != null && prevSegment.endsAtTop())
                 ) {
                     endAction = DIFFRACT;
                     addToBranch(tMod,
@@ -1431,41 +1433,7 @@ public class SeismicPhaseFactory {
                 maxRayParam = -1;
                 return FAIL;
             }
-        } else if (currLeg.endsWith("n") && currLeg.length()>2) {
-            int depthIdx = 0;
-            if (currLeg.startsWith("P") || currLeg.startsWith("S")) {
-                depthIdx = 1;
-            }
-            String numString = currLeg.substring(depthIdx, currLeg.length()-1);
-            double diffDepth = Double.parseDouble(numString);
-            int disconBranch = LegPuller.closestBranchToDepth(tMod, numString);
-            endAction = HEAD;
-            addToBranch(tMod,
-                    currBranch,
-                    disconBranch-1,
-                    isPWave,
-                    nextIsPWave,
-                    endAction,
-                    currLeg);
-            if (nextLeg.startsWith("K") || nextLeg.equals("I") || nextLeg.equals("J")) {
-                // down into  core
-                addFlatBranch(tMod, disconBranch, isPWave, endAction, TRANSDOWN, currLeg);
-            } else {
-                // normal case
-                addFlatBranch(tMod, disconBranch, isPWave, endAction, TRANSUP, currLeg);
-            }
-            currBranch=disconBranch;
 
-            if(nextLeg.equals("END")) {
-                endAction = END;
-                addToBranch(tMod,
-                        currBranch-1,
-                        upgoingRecBranch,
-                        isPWave,
-                        nextIsPWave,
-                        endAction,
-                        currLeg);
-            }
         } else if (currLeg.endsWith("diff") && currLeg.length()>5) {
             int depthIdx = 0;
             if (currLeg.startsWith("P") || currLeg.startsWith("S")) {
@@ -1494,6 +1462,58 @@ public class SeismicPhaseFactory {
                 endAction = END;
                 addToBranch(tMod,
                         currBranch,
+                        upgoingRecBranch,
+                        isPWave,
+                        nextIsPWave,
+                        endAction,
+                        currLeg);
+            }
+
+        } else {
+            throw new TauModelException(getName()+" Phase not recognized for P,S: "
+                    + currLeg + " followed by " + nextLeg);
+        }
+        return endAction;
+    }
+
+    PhaseInteraction currLegIs_Pn_Sn(String prevLeg, String currLeg, String nextLeg,
+                                       boolean prevIsPWave, boolean isPWave, boolean nextIsPWave, int legNum)
+            throws TauModelException {
+        PhaseInteraction endAction;
+        if (tMod.getVelocityModel().cmbDepth == 0) {
+            // no crust or mantle, so no P or P
+            maxRayParam = -1;
+            return FAIL;
+        }
+        if (currLeg.endsWith("n") && currLeg.length()>2) {
+            int depthIdx = 0;
+            if (currLeg.startsWith("P") || currLeg.startsWith("S")) {
+                depthIdx = 1;
+            }
+            String numString = currLeg.substring(depthIdx, currLeg.length()-1);
+            double diffDepth = Double.parseDouble(numString);
+            int disconBranch = LegPuller.closestBranchToDepth(tMod, numString);
+            endAction = HEAD;
+            addToBranch(tMod,
+                    currBranch,
+                    disconBranch-1,
+                    isPWave,
+                    nextIsPWave,
+                    endAction,
+                    currLeg);
+            if (nextLeg.startsWith("K") || nextLeg.equals("I") || nextLeg.equals("J")) {
+                // down into  core
+                addFlatBranch(tMod, disconBranch, isPWave, endAction, TRANSDOWN, currLeg);
+            } else {
+                // normal case
+                addFlatBranch(tMod, disconBranch, isPWave, endAction, TRANSUP, currLeg);
+            }
+            currBranch=disconBranch;
+
+            if(nextLeg.equals("END")) {
+                endAction = END;
+                addToBranch(tMod,
+                        currBranch-1,
                         upgoingRecBranch,
                         isPWave,
                         nextIsPWave,
