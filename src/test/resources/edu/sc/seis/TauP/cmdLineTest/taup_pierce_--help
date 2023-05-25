@@ -45,6 +45,7 @@ or by giving the ray parameter,
                       given. Calculated if station and event
                       lat and lon are given.
 
+--first            -- only output the first arrival for each phase, no triplications
 -rev               -- only prints underside and bottom turn points, e.g. ^ and v
 -turn              -- only prints bottom turning points, e.g. v
 -under             -- only prints underside reflection points, e.g. ^

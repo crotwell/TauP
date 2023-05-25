@@ -462,12 +462,19 @@ public class TauP_Path extends TauP_Pierce {
         out.println("# draw paths");
     }
 
+
+	public void printLimitUsage() {
+		Alert.info("--first            -- only output the first arrival for each phase, no triplications\n"
+				+"--withtime        -- include time for each path point\n"
+				+"--gmt             -- outputs path as a complete GMT script.\n"
+				+"--svg             -- outputs path as a complete SVG file.\n"
+				+"--mapwidth        -- sets map width for GMT script."
+				);
+	}
+
 	public void printUsage() {
 		printStdUsage();
-        System.out.println("--withtime        -- include time for each path point");
-        System.out.println("--gmt             -- outputs path as a complete GMT script.");
-        System.out.println("--svg             -- outputs path as a complete SVG file.");
-        System.out.println("--mapwidth        -- sets map width for GMT script.");
+		printLimitUsage();
 		printStdUsageTail();
 	}
 

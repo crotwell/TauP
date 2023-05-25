@@ -34,6 +34,7 @@ or by giving the ray parameter,
                       up or down is determined by the phase
 
 
+--first            -- only output the first arrival for each phase, no triplications
 --rayp             -- only output the ray parameter
 --time             -- only output travel time
 --rel phasename    -- also output relative travel time

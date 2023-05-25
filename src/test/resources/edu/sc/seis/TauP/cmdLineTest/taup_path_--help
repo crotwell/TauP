@@ -34,6 +34,7 @@ or by giving the ray parameter,
                       up or down is determined by the phase
 
 
+--first            -- only output the first arrival for each phase, no triplications
 --withtime        -- include time for each path point
 --gmt             -- outputs path as a complete GMT script.
 --svg             -- outputs path as a complete SVG file.

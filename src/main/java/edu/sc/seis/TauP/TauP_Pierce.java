@@ -299,6 +299,17 @@ public class TauP_Pierce extends TauP_Time {
         return false;
     }
 
+    public void printLimitUsage() {
+        Alert.info("--first            -- only output the first arrival for each phase, no triplications\n"
+
+                +"-rev               -- only prints underside and bottom turn points, e.g. ^ and v\n"
+        +"-turn              -- only prints bottom turning points, e.g. v\n"
+        +"-under             -- only prints underside reflection points, e.g. ^\n\n"
+        +"-pierce depth      -- adds depth for calculating pierce points\n"
+        +"-nodiscon          -- only prints pierce points for the depths added with -pierce\n"
+        );
+    }
+
     /** prints the known command line flags. */
     public void printUsage() {
         printStdUsage();
@@ -312,11 +323,7 @@ public class TauP_Pierce extends TauP_Time {
                 + "                      if the station lat lon and distance are also\n"
                 + "                      given. Calculated if station and event\n"
                 + "                      lat and lon are given.\n");
-        System.out.println("-rev               -- only prints underside and bottom turn points, e.g. ^ and v");
-        System.out.println("-turn              -- only prints bottom turning points, e.g. v");
-        System.out.println("-under             -- only prints underside reflection points, e.g. ^\n");
-        System.out.println("-pierce depth      -- adds depth for calculating pierce points");
-        System.out.println("-nodiscon          -- only prints pierce points for the depths added with -pierce\n");
+        printLimitUsage();
         printStdUsageTail();
     }
 

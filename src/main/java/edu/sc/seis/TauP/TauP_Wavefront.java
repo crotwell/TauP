@@ -73,12 +73,17 @@ public class TauP_Wavefront extends TauP_Path {
         printPhaseUsage();
     }
 
+    public void printLimitUsage() {
+        Alert.info("--gmt             -- outputs path as a complete GMT script.\n"
+               // +"--svg             -- outputs path as a complete SVG file.\n"
+                +"--mapwidth        -- sets map width for GMT script."
+                );
+    }
+
     @Override
     public void printUsage() {
         printStdUsage();
-        System.out.println("--gmt             -- outputs path as a complete GMT script.");
-        //System.out.println("--svg             -- outputs path as a complete SVG file.");
-        System.out.println("--mapwidth        -- sets map width for GMT script.");
+        printLimitUsage();
         System.out.println("--rays  num      -- number of raypaths/distances to sample.");
         System.out.println("--timestep  num  -- steps in time (seconds) for output.");
         System.out.println("--timefiles      -- outputs each time into a separate .ps file within the gmt script.");

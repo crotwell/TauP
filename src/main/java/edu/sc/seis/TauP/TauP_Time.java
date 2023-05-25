@@ -90,6 +90,8 @@ public class TauP_Time extends TauP_Tool {
 
     protected boolean onlyPrintTime = false;
 
+    protected boolean onlyFirst = false;
+
     protected String relativePhaseName = "";
 
     protected Arrival relativeArrival;
@@ -652,6 +654,8 @@ public class TauP_Time extends TauP_Tool {
             } else if(dashEquals("time", args[i])) {
                 onlyPrintTime = true;
                 onlyPrintRayP = false;
+            } else if(dashEquals("first", args[i])) {
+                onlyFirst = true;
             } else if(i < args.length - 1) {
                 if(dashEquals("deg", args[i])) {
                     degrees = Double.valueOf(args[i + 1]).doubleValue();
@@ -791,8 +795,14 @@ public class TauP_Time extends TauP_Tool {
         for(int phaseNum = 0; phaseNum < phaseList.size(); phaseNum++) {
             phase = phaseList.get(phaseNum);
             List<Arrival> phaseArrivals = phase.calcTime(degrees);
-            for (Arrival arrival : phaseArrivals) {
-                arrivals.add(arrival);
+            if (! onlyFirst) {
+                for (Arrival arrival : phaseArrivals) {
+                    arrivals.add(arrival);
+                }
+            } else {
+                if (phaseArrivals.size()>0) {
+                    arrivals.add(phaseArrivals.get(0));
+                }
             }
         }
         sortArrivals();
@@ -1643,15 +1653,23 @@ public class TauP_Time extends TauP_Tool {
                 + "                      zero is down, 90 horizontal, 180 is up\n\n"
                 + "or by giving the ray parameter,\n"
                 + "--shootray param   -- ray parameter from the source in s/deg\n"
-                + "                      up or down is determined by the phase\n\n");
+                + "                      up or down is determined by the phase\n\n"
+
+        );
+    }
+
+    public void printLimitUsage() {
+        Alert.info("--first            -- only output the first arrival for each phase, no triplications\n"
+                    + "--rayp             -- only output the ray parameter\n"
+                    + "--time             -- only output travel time\n"
+                    + "--rel phasename    -- also output relative travel time\n\n"
+                    + "--json             -- output travel times as json\n"
+        );
     }
 
     public void printUsage() {
         printStdUsage();
-        Alert.info("--rayp             -- only output the ray parameter\n"
-                 + "--time             -- only output travel time\n"
-                 + "--rel phasename    -- also output relative travel time\n\n"
-                 + "--json             -- output travel times as json\n");
+        printLimitUsage();
         printStdUsageTail();
     }
 
