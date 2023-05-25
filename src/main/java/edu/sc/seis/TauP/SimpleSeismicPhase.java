@@ -836,6 +836,11 @@ public class SimpleSeismicPhase implements SeismicPhase {
                 break;
             }
         }
+        // check in case going opposite way around from request distance
+        double negMulDist = 1;
+        if (currArrival.isLongWayAround()) {
+            negMulDist = -1;
+        }
         // here we use ray parameter and dist info stored within the
         // SeismicPhase so we can use currArrival.rayParamIndex, which
         // may not correspond to rayNum (for tMod.rayParams).
@@ -962,7 +967,7 @@ public class SimpleSeismicPhase implements SeismicPhase {
             if(Math.abs(prevBranchTime - branchTime) > 1e-10) {
                 pierce.add(new TimeDist(distRayParam,
                                                               branchTime,
-                                                              branchDist,
+                        negMulDist*branchDist,
                                                               branchDepth));
                 if(DEBUG) {
                     System.out.println("------->  add pierce "+branchDepth);
@@ -992,7 +997,7 @@ public class SimpleSeismicPhase implements SeismicPhase {
                     double refractTime = refractDist*currArrival.getRayParam();
                     pierce.add(new TimeDist(distRayParam,
                                             branchTime + refractTime,
-                                            branchDist + refractDist,
+                            negMulDist*(branchDist + refractDist),
                                             branchDepth));
                     branchDist += refractDist;
                     prevBranchTime = branchTime;
@@ -1005,7 +1010,7 @@ public class SimpleSeismicPhase implements SeismicPhase {
             headOrDiffractSeq.add(0);
             pierce.add(new TimeDist(distRayParam,
                                                  currArrival.getTime(),
-                                                 currArrival.getDist(),
+                    negMulDist*currArrival.getDist(),
                                                  0));
         }
         return pierce;
@@ -1067,11 +1072,6 @@ public class SimpleSeismicPhase implements SeismicPhase {
                 }
                 if(tempTimeDist != null) {
                     pathList.add(tempTimeDist);
-                    for (int j = 0; j < tempTimeDist.length; j++) {
-                        if (tempTimeDist[j].getDistDeg() < 0) {
-                            throw new RuntimeException("Path is backtracking, no possible: "+j+" ("+tempTimeDist[j]+")");
-                        }
-                    }
                 }
                 /*
                  * Here we worry about the special case for head and
@@ -1138,14 +1138,49 @@ public class SimpleSeismicPhase implements SeismicPhase {
                                                cummulative.getTime()+branchPath[j].getTime(),
                                                cummulative.getDistRadian()+branchPath[j].getDistRadian(),
                                                branchPath[j].getDepth());
-                    outPath.add(cummulative);
-                    if (numAdded > 0 && cummulative.getDistRadian() < prev.getDistRadian()) {
-                        throw new RuntimeException("Backtracking ray, not possible: "+numAdded+" "+cummulative+") < ("+prev+")");
+
+                    if (currArrival.isLongWayAround()) {
+                        outPath.add(cummulative.negateDistance());
+                    } else {
+                        outPath.add(cummulative);
                     }
                     numAdded++;
                 }
             }
-        return outPath;
+        return adjustPath(outPath, currArrival);
+    }
+
+    /**
+     * Adjust path so the end point lines up.
+     * Because we are shooting a ray parameter through the model, and that ray parameter came from an
+     * interpolation, it can happen for long paths that the output path doesn't quite end at the requested
+     * distance. We do a simple scaling of all path distances so it hits the output.
+     * @param inPath
+     * @param arrival
+     * @return
+     */
+    public static List<TimeDist> adjustPath(List<TimeDist> inPath, Arrival arrival) {
+        double distRadian = arrival.getDist();
+        double finalPathDist = inPath.get(inPath.size()-1).getDistRadian();
+        if (distRadian != 0 && finalPathDist != 0) {
+            double shifty = distRadian/finalPathDist;
+            if (arrival.isLongWayAround()) {
+                shifty *= -1;
+            }
+            if (Math.abs(1.0-shifty) > .02 ) {
+                System.err.println("Path error is greater than 2%, correction may cause errors. "+shifty+" "+arrival);
+            }
+            ArrayList<TimeDist> out = new ArrayList<TimeDist>();
+            for (TimeDist td : inPath) {
+                out.add(new TimeDist(td.getP(),
+                        td.getTime(),
+                        td.getDistRadian() * shifty,
+                        td.getDepth()));
+            }
+            return out;
+        } else {
+            return inPath;
+        }
     }
 
     @Override

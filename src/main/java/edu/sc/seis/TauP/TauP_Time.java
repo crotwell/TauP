@@ -1037,8 +1037,8 @@ public class TauP_Time extends TauP_Tool {
             out.write("\n");
             for(int j = 0; j < arrivals.size(); j++) {
                 currArrival = (Arrival)arrivals.get(j);
-                out.print(Outputs.formatDistance(currArrival.getModuloDistDeg())
-                        + Outputs.formatDepth(depth) + "   ");
+                out.print(Outputs.formatDistance(currArrival.getSearchDistDeg()));
+                out.print(Outputs.formatDepth(depth) + "   ");
                 out.print(phaseFormat.form(currArrival.getName()));
                 out.print("  "
                         + Outputs.formatTime(currArrival.getTime())

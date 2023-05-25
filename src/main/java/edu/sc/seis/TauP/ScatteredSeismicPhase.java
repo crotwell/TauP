@@ -1,5 +1,6 @@
 package edu.sc.seis.TauP;
 
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -225,8 +226,7 @@ public class ScatteredSeismicPhase implements SeismicPhase {
     @Override
     public List<Arrival> calcTime(double deg) {
         List<Arrival> out = new ArrayList<>();
-        double calcDeg = deg % 360;
-        double scatDist = calcScatterDistDeg(deg, getScattererDistanceDeg(), isBackscatter());
+        double scatDist = calcScatterDistDeg(deg, getScattererDistanceDeg(), isBackscatter()) % 360;
         if (scatDist < 0) {
             scatDist += 360;
         }
@@ -236,28 +236,25 @@ public class ScatteredSeismicPhase implements SeismicPhase {
         while (calcScatRad < scatteredPhase.getMaxDistance()) {
             List<Arrival> scatAtDist = scatteredPhase.calcTimeExactDistance(calcScatRad);
             for (Arrival a : scatAtDist) {
-                a.setSearchDistDeg(deg);
+                a.setSearchDistDeg(scatDist);
+                if (Math.abs((a.getDistDeg()-scatDist) % 360) < 1e-6) {
+                    // make sure actually arrives at deg, can be messed up by neg forwardScatDist
+                    Arrival b = new ScatteredArrival(
+                            this,
+                            deg,
+                            inboundArrival,
+                            a,
+                            isBackscatter());
+                    b.setSearchDistDeg(deg);
+                    out.add(b);
+                } else {
+                    if (TauP_Tool.DEBUG) {
+                        System.out.println("Arrival not scatter to rec: " + deg + " scat: " + getScattererDistanceDeg() + " a: " + a.getDistDeg());
+                    }
+                }
             }
             scat.addAll(scatAtDist);
             calcScatRad += 2*Math.PI;
-        }
-
-        for (Arrival a : scat) {
-            if (Math.abs((a.getDistDeg()-scatDist) % 360) < 1e-6) {
-                // make sure actually arrives at deg, can be messed up by neg forwardScatDist
-                Arrival b = new ScatteredArrival(
-                        this,
-                        deg,
-                        inboundArrival,
-                        a,
-                        isBackscatter());
-                b.setSearchDistDeg(a.getSearchDistDeg());
-                out.add(b);
-            } else {
-                if (TauP_Tool.DEBUG) {
-                    System.out.println("Arrival not scatter to rec: " + deg + " scat: " + getScattererDistanceDeg() + " a: " + a.getDistDeg());
-                }
-            }
         }
         return out;
     }
@@ -386,6 +383,7 @@ public class ScatteredSeismicPhase implements SeismicPhase {
         List<TimeDist> out = new ArrayList<>();
         ScatteredArrival scatA = (ScatteredArrival) arrival;
         double scatDistance = inboundArrival.getDist();
+        TimeDist[] inPath = inboundArrival.getPath();
         if (scatA.isInboundNegativeDirection()) {
             scatDistance = -1*scatDistance;
             for (TimeDist td : inboundArrival.getPath()) {

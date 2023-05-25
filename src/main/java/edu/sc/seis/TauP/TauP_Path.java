@@ -151,7 +151,6 @@ public class TauP_Path extends TauP_Pierce {
             out.write("gmt psxy -P -R -K -O -JP -m -A >> " + psFile + " <<END\n");
         }
 		double radiusOfEarth = getTauModel().getRadiusOfEarth();
-		boolean longWayRound;
 		for (int i = 0; i < arrivals.size(); i++) {
 		    Arrival currArrival = (Arrival) arrivals.get(i);
 		    if (outputFormat.equals(TauP_Tool.JSON)) {
@@ -163,10 +162,7 @@ public class TauP_Path extends TauP_Pierce {
 		    } else {
 		        out.println(getCommentLine(currArrival));
 		    }
-			longWayRound = false;
-			if ((currArrival.getDistDeg()) % 360 > 180) {
-				longWayRound = true;
-			}
+
 			double calcTime = 0.0;
 			double calcDist = 0.0;
 			TimeDist prevTimeDist = new TimeDist(0,0,0,0);
@@ -192,9 +188,6 @@ public class TauP_Path extends TauP_Pierce {
                         break;
                     }
                 }
-				if (longWayRound && calcDist != 0.0) {
-					calcDist = -1.0 * calcDist;
-				}
                 printDistRadius(out, calcDist, radiusOfEarth - calcDepth);
 				if (doPrintTime) {
 					out.write("  " + Outputs.formatTime(calcTime));
@@ -207,24 +200,20 @@ public class TauP_Path extends TauP_Pierce {
 				    break;
 				}
 				if (j < path.length - 1
-						&& (currArrival.getRayParam() != 0.0 && 
-						   (path[j + 1].getDistDeg() - path[j].getDistDeg()) > maxPathInc)) {
+						&& (currArrival.getRayParam() != 0.0 &&
+						Math.abs(path[j + 1].getDistDeg() - path[j].getDistDeg()) > maxPathInc)) {
 					// interpolate to steps of at most maxPathInc degrees for
 					// path
 					int maxInterpNum = (int) Math
-							.ceil((path[j + 1].getDistDeg() - path[j].getDistDeg())
+							.ceil(Math.abs(path[j + 1].getDistDeg() - path[j].getDistDeg())
 									 / maxPathInc);
+
 					for (int interpNum = 1; interpNum < maxInterpNum && calcTime < maxPathTime; interpNum++) {
 						calcTime += (path[j + 1].getTime() - path[j].getTime())
 								/ maxInterpNum;
 						if (calcTime > maxPathTime) { break; }
-						if (longWayRound) {
-							calcDist -= (path[j + 1].getDistDeg() - path[j].getDistDeg())
-									 / maxInterpNum;
-						} else {
-							calcDist += (path[j + 1].getDistDeg() - path[j].getDistDeg())
-									 / maxInterpNum;
-						}
+						calcDist += (path[j + 1].getDistDeg() - path[j].getDistDeg())
+								 / maxInterpNum;
 						calcDepth = prevDepth + interpNum
 								* (path[j + 1].getDepth() - prevDepth)
 								/ maxInterpNum;

@@ -216,12 +216,8 @@ public class TauP_Pierce extends TauP_Time {
 
             TimeDist[] pierce = currArrival.getPierce();
             prevDepth = pierce[0].getDepth();
-            double negMulDist = 1;
-            if (currArrival.getPhase() instanceof SimpleSeismicPhase && currArrival.isLongWayAround()) {
-                negMulDist = -1;
-            }
             for(int j = 0; j < pierce.length; j++) {
-                double calcDist = negMulDist* pierce[j].getDistDeg();
+                double calcDist = pierce[j].getDistDeg();
                 if(j < pierce.length - 1) {
                     nextDepth = pierce[j + 1].getDepth();
                 } else {

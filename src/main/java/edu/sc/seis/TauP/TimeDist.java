@@ -80,6 +80,13 @@ public class TimeDist implements Cloneable {
                             td.getDepth());
     }
 
+    public TimeDist negateDistance() {
+        return new TimeDist(getP(),
+                getTime(),
+                -1*getDistRadian(),
+                getDepth());
+    }
+
     public String toString() {
         String desc = "p= " + p + " time=" + time + " dist=" +getDistDeg()+"("+distRadian+" rad) depth="
                 + depth;

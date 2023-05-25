@@ -16,10 +16,10 @@ public class ScatteredArrival extends Arrival {
     public ScatteredArrival(ScatteredSeismicPhase phase, double deg, Arrival inboundArrival, Arrival scatteredArrival, boolean isBackscatter) {
         super(phase,
                 inboundArrival.getTime()+scatteredArrival.getTime(),
-                deg*Arrival.DtoR,
+                inboundArrival.getDist()+(isBackscatter?-1:1)*scatteredArrival.getDist(),
                 scatteredArrival.getRayParam(),
                 scatteredArrival.getRayParamIndex(),
-                deg*Arrival.DtoR,
+                deg,
                 formScatterPhaseName(inboundArrival.getName(), scatteredArrival.getName(), isBackscatter),
                 formScatterPhaseName(inboundArrival.getPuristName(), scatteredArrival.getPuristName(), isBackscatter),
                 inboundArrival.getPhase().getSourceDepth(),
