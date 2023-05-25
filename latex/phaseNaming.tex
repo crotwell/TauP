@@ -212,6 +212,14 @@ upgoing leg in the inner core. For example in a model with a discontinuity at 55
 because standard models do not have discontuities in the core, these
 phases have not received the same level of testing.
 
+\item
+Starting in version 2.7, \texttt{o} and \testtt{O} represent forward and back
+scattering, if the model is constructed with a scatterer (depth and distance).
+Forward scattering is in the sense that the phase continues around the earth
+in the same direction, while backscattering would reverse direction.
+Note that for some phases that go the long way around the earth, the sense of
+scattering may not match the positive anglular direction.
+
 \item Currently there is no support for \texttt{PKPab}, \texttt{PKPbc},
 or \texttt{PKPdf} phase names.
 They lead to increased algorithmic complexity that at this point seems
