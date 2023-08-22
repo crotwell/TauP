@@ -13,9 +13,11 @@ Arguments are:
 -tvelmerge modelfile     -- ".tvel" velocity file to merge, ala ttimes
 
 -smtop              -- smooth merge at top
-
 -smbot              -- smooth merge at bottom
 
+--elevation         -- expand top layer for station at elevation
+                       may append m for meters, otherwise kilometers
+                       updates radius of earth
 
 -o [stdout|outfile]         -- output is redirected to stdout or to the "outfile" file
 --prop [propfile]   -- set configuration properties

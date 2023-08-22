@@ -106,4 +106,19 @@ public class VelocityModelTest {
         assertEquals( baseVMod.getCmbDepth(), outVMod.getCmbDepth(), 0.00000001, crustModelName+" cmb ");
         assertEquals( baseVMod.getIocbDepth(), outVMod.getIocbDepth(), 0.00000001, crustModelName+" iocb ");
     }
+    @Test
+    public void testElevation() throws IOException, VelocityModelException, TauModelException {
+        String crustModelName = "myelevation.nd";
+        float elevation = 3; // 3km
+        TauModel tMod = TauModelLoader.load("ak135");
+        SlownessModel sMod = tMod.getSlownessModel();
+        VelocityModel baseVMod = sMod.getVelocityModel();
+        VelocityModel outVMod = baseVMod.elevationLayer(elevation, crustModelName);
+
+        assertEquals(baseVMod.getNumLayers()+1, outVMod.getNumLayers());
+        assertEquals( baseVMod.getMohoDepth()+elevation, outVMod.getMohoDepth(), 0.00000001, crustModelName+" moho ");
+        assertEquals( baseVMod.getCmbDepth()+elevation, outVMod.getCmbDepth(), 0.00000001, crustModelName+" cmb ");
+        assertEquals( baseVMod.getIocbDepth()+elevation, outVMod.getIocbDepth(), 0.00000001, crustModelName+" iocb ");
+        assertEquals( baseVMod.getRadiusOfEarth()+elevation, outVMod.getRadiusOfEarth(), 0.00000001, crustModelName+" radius ");
+    }
 }

@@ -611,6 +611,51 @@ public class VelocityModel implements Cloneable, Serializable {
         }
     }
 
+
+    /*
+     * expands the velocity model with a new layer at the top to represent a station at
+     * elevation. This changes the radius of the earth and depths to all existing layers.
+     */
+    public VelocityModel elevationLayer(float elevation,
+                                       String name)
+            throws VelocityModelException {
+        try {
+            List<VelocityLayer> outLayers = new ArrayList<VelocityLayer>();
+
+            int numAdded = 0;
+            VelocityLayer elevationLayer = getVelocityLayer(0).cloneRenumber(numAdded);
+            elevationLayer.setTopDepth(0);
+            elevationLayer.setBotDepth(elevation);
+            outLayers.add(elevationLayer);
+            for(int i = 0; i<getNumLayers(); i++) {
+                numAdded++;
+                VelocityLayer vLayer = getVelocityLayer(i).cloneRenumber(numAdded);
+                vLayer.setTopDepth(vLayer.getTopDepth()+elevation);
+                vLayer.setBotDepth(vLayer.getBotDepth()+elevation);
+                outLayers.add(vLayer);
+            }
+
+            VelocityModel outVMod = new VelocityModel(name,
+                    getRadiusOfEarth()+elevation,
+                    getMohoDepth()+elevation,
+                    getCmbDepth()+elevation,
+                    getIocbDepth()+elevation,
+                    getMinRadius(),
+                    getMaxRadius()+elevation,
+                    getSpherical(),
+                    outLayers);
+            outVMod.fixDisconDepths();
+            boolean isValid = outVMod.validate();
+            if ( ! isValid) {
+                throw new VelocityModelException("replace layers but now is not valid.");
+            }
+            return outVMod;
+        } catch(NoSuchMatPropException e) {
+            // can't happen, but...
+            throw new RuntimeException(e);
+        }
+    }
+
     /**
      * prints out the velocity model into a file in a form suitable for plotting
      * with GMT.

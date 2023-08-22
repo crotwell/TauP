@@ -41,6 +41,9 @@ public class TauP_VelocityMerge extends TauP_Tool {
                 System.out.println("no merge model requested.");
             }
         }
+        if (elevation != 0) {
+            outVMod = outVMod.elevationLayer(elevation, overlayModelName);
+        }
 
         try {
 
@@ -93,6 +96,13 @@ public class TauP_VelocityMerge extends TauP_Tool {
                 overlayModelName = args[i+1];
                 overlayModelType = "tvel";
                 i++;
+            } else if (i < args.length - 1 && dashEquals("elevation", args[i])) {
+                if (args[i+1].endsWith("m") ) {
+                    elevation = Float.parseFloat(args[i + 1].substring(0, args[i + 1].length()-1))/1000;
+                } else {
+                    elevation = Float.parseFloat(args[i + 1]);
+                }
+                i++;
             } else {
                 /* I don't know how to interpret this argument, so pass it back */
                 noComprendoArgs[numNoComprendoArgs++] = args[i];
@@ -136,8 +146,12 @@ public class TauP_VelocityMerge extends TauP_Tool {
         System.out.println("-tvel modelfile     -- base \".tvel\" velocity file, ala ttimes\n");
         System.out.println("-ndmerge modelfile       -- \"named discontinuities\" velocity file to merge");
         System.out.println("-tvelmerge modelfile     -- \".tvel\" velocity file to merge, ala ttimes\n");
-        System.out.println("-smtop              -- smooth merge at top\n");
-        System.out.println("-smbot              -- smooth merge at bottom\n");
+        System.out.println("-smtop              -- smooth merge at top");
+        System.out.println("-smbot              -- smooth merge at bottom");
+        System.out.println();
+        System.out.println("--elevation         -- expand top layer for station at elevation");
+        System.out.println("                       may append m for meters, otherwise kilometers");
+        System.out.println("                       updates radius of earth");
         TauP_Tool.printStdUsageTail();
     }
     
@@ -148,4 +162,5 @@ public class TauP_VelocityMerge extends TauP_Tool {
     String overlayModelType = null;
     boolean smoothTop = false;
     boolean smoothBottom = false;
+    float elevation = 0;
 }
