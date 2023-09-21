@@ -103,7 +103,6 @@ public class TauP_Web extends TauP_Tool {
                                     tool.printScriptBeginning(pw);
                                     ((TauP_Time) tool).calculate(degrees);
                                     ((TauP_Time) tool).printResult(pw);
-                                    System.err.println("OUT: " + out.toString());
                                     configContentType(tool.outputFormat, exchange);
                                     exchange.getResponseSender().send(out.toString());
                                 } catch (Exception e) {
