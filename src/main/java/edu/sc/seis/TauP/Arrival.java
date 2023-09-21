@@ -368,6 +368,10 @@ public class Arrival {
     }
 
     public String asJSON(boolean pretty, String indent) {
+        return asJSON(pretty, indent, false, false);
+    }
+
+    public String asJSON(boolean pretty, String indent, boolean withPierce, boolean withPath) {
         String NL = "";
         if (pretty) {
             NL = "\n";
@@ -397,6 +401,26 @@ public class Arrival {
             out.append(COMMA+NL);
             out.append(indent+SQ+"scatterdepth"+QC+(float)scatPhase.getScattererDepth()+COMMA+NL);
             out.append(indent+SQ+"scatterdistdeg"+QC+scatPhase.getScattererDistanceDeg()+NL);
+        } else {
+            out.append(NL);
+        }
+        if (withPierce || withPath) {
+            out.append(COMMA+NL);
+            String key = withPierce ? "pierce" : "path";
+            out.append(indent+SQ+key+QC+"[");
+            boolean first = true;
+            TimeDist[] tdArray = withPierce ? getPierce() : getPath();
+            for (TimeDist td : tdArray) {
+                if (first) {
+                    first = false;
+                    out.append(NL);
+                } else {
+                    out.append(COMMA+NL);
+                }
+                out.append(indent+"  ["+Q+(float)td.getDistDeg()+QCOMMA+Q+(float)td.getDepth()+QCOMMA+Q+(float)td.getTime()+Q+"]");
+            }
+            out.append(NL);
+            out.append(indent+"]");
         } else {
             out.append(NL);
         }

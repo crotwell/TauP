@@ -12,7 +12,29 @@ public class TauP_SlownessPlot extends TauP_VelocityPlot {
     public TauP_SlownessPlot() {
         setOutFileBase(DEFAULT_OUTFILE);
     }
-    
+
+
+    public void printResult(PrintWriter out) throws TauPException, IOException {
+        System.err.println("Slowness plot printResult "+getOutputFormat());
+        VelocityModel vMod = TauModelLoader.loadVelocityModel(modelName, modelType);
+        if (vMod == null) {
+            throw new IOException("Velocity model file not found: "+modelName+", tried internally and from file");
+        }
+
+        TauP_Create taup_create = new TauP_Create();
+        TauModel tMod = taup_create.createTauModel(vMod);
+
+        if (getOutputFormat().equals(SVG)) {
+            printSVG(out, tMod.getSlownessModel());
+        } else if (getOutputFormat().equals(CSV)) {
+            printCSV(out, tMod.getSlownessModel());
+        } else if (getOutputFormat().equals(GMT)) {
+            tMod.getSlownessModel().printGMT(getOutFile());
+        } else {
+            tMod.getSlownessModel().printGMT(getOutFile());
+        }
+    }
+
     @Override
     public void start() throws SlownessModelException, TauModelException, VelocityModelException, IOException {
         VelocityModel vMod = TauModelLoader.loadVelocityModel(modelName, modelType);
@@ -26,9 +48,9 @@ public class TauP_SlownessPlot extends TauP_VelocityPlot {
         TauP_Create taup_create = new TauP_Create();
         TauModel tMod = taup_create.createTauModel(vMod);
 
-        if (getOutputFormat() == SVG) {
+        if (getOutputFormat().equals(SVG)) {
             printSVG(getWriter(), tMod.getSlownessModel());
-        } else if (getOutputFormat() == CSV) {
+        } else if (getOutputFormat().equals(CSV)) {
             printCSV(getWriter(), tMod.getSlownessModel());
         } else {
             tMod.getSlownessModel().printGMT(getOutFile());

@@ -93,6 +93,29 @@ public class TauP_VelocityPlot extends TauP_Tool {
         closeWriter();
     }
 
+
+    @Override
+    public String[] allowedOutputFormats() {
+        String[] formats = {TEXT, JSON, SVG, CSV};
+        return formats;
+    }
+
+    public void printResult(PrintWriter out) throws TauPException, IOException {
+        VelocityModel vMod = TauModelLoader.loadVelocityModel(modelName, modelType);
+        if (vMod == null) {
+            throw new IOException("Velocity model file not found: "+modelName+", tried internally and from file");
+        }
+        if (getOutputFormat().equals(SVG)) {
+            printSVG(out, vMod);
+        } else if (getOutputFormat().equals(CSV)) {
+            printCSV(out, vMod);
+        } else if (getOutputFormat().equals(JSON)) {
+            out.write(vMod.asJSON(true, ""));
+        }else if (getOutputFormat().equals(TEXT)) {
+            vMod.writeToND(out);
+        }
+    }
+
     public void printSVGBeginning(PrintWriter out) {
 
         float pixelWidth =  (72.0f*mapWidth);
@@ -227,6 +250,14 @@ public class TauP_VelocityPlot extends TauP_Tool {
         System.out.println("\n");
         TauP_Tool.printStdUsageTail();
     }
+
+    public void setModelName(String modelName) {
+        this.modelName = modelName;
+    }
+    public String getModelName() {
+        return modelName;
+    }
+
     float mapWidth = 6;
     int plotOffset = 80;
     String modelName;

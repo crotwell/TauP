@@ -43,7 +43,7 @@ public class TauP_Pierce extends TauP_Time {
 
     protected double[] addDepth = new double[0];
 
-    protected TauP_Pierce() {
+    public TauP_Pierce() {
         super();
     }
 
@@ -207,7 +207,7 @@ public class TauP_Pierce extends TauP_Time {
     }
 
     @Override
-    public void printResult(PrintWriter out) throws IOException {
+    public void printResultText(PrintWriter out) throws IOException {
         double prevDepth, nextDepth;
         double lat, lon;
         for(int i = 0; i < arrivals.size(); i++) {
@@ -285,6 +285,12 @@ public class TauP_Pierce extends TauP_Time {
                 prevDepth = pierce[j].getDepth();
             }
         }
+    }
+
+    @Override
+    public void printResultJSON(PrintWriter out) {
+        String s = resultAsJSON(modelName, depth, getReceiverDepth(), getPhaseNames(), arrivals, true, false);
+        out.println(s);
     }
 
     /**

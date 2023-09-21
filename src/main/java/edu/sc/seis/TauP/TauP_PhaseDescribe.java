@@ -29,6 +29,12 @@ public class TauP_PhaseDescribe extends TauP_Time {
     }
 
     @Override
+    public String[] allowedOutputFormats() {
+        String[] formats = {TEXT, JSON};
+        return formats;
+    }
+
+    @Override
     protected String[] parseCmdLineArgs(String[] origArgs) throws IOException {
         int i = 0;
         String[] args = super.parseSourceModelCmdLineArgs(origArgs);
@@ -78,6 +84,16 @@ public class TauP_PhaseDescribe extends TauP_Time {
 
     @Override
     public void printResult(PrintWriter writer) {
+        if (outputFormat.equals(TEXT)) {
+            printResultText(writer);
+        } else if (outputFormat.equals(JSON)) {
+            printResultJSON(writer);
+        } else {
+            throw new IllegalArgumentException("Output format "+outputFormat+" not recognized");
+        }
+    }
+
+    public void printResultText(PrintWriter writer) {
         List<SeismicPhase> phaseList = getSeismicPhases();
         for (SeismicPhase phase: phaseList) {
             writer.println(phase.describe());
@@ -94,5 +110,21 @@ public class TauP_PhaseDescribe extends TauP_Time {
             }
             writer.println("--------");
         }
+    }
+
+    public void printResultJSON(PrintWriter writer) {
+        List<SeismicPhase> phaseList = getSeismicPhases();
+        writer.println("[\n");
+        boolean first = true;
+        for (SeismicPhase phase : phaseList) {
+            if (first) {
+                writer.println("");
+                first = false;
+            } else {
+                writer.println(",");
+            }
+            writer.print(phase.describeJson());
+        }
+        writer.println("]\n");
     }
 }

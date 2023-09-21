@@ -136,6 +136,8 @@ public interface SeismicPhase extends Serializable, Cloneable {
 
     String describe();
 
+    String describeJson();
+
     String toString();
 
     void dump();
@@ -183,12 +185,79 @@ public interface SeismicPhase extends Serializable, Cloneable {
         return desc;
     }
 
+    public static String baseDescribeJSON(SeismicPhase phase) {
+        String desc = "";
+        if (phase.phasesExistsInModel()) {
+
+            String mod180Min = "";
+            if (phase.getMinDistanceDeg() > 180 || phase.getMinDistanceDeg() < -180) {
+                mod180Min = " ("+Outputs.formatDistanceNoPad(SeismicPhase.distanceTrim180(phase.getMinDistanceDeg()))+") ";
+            }
+            String mod180Max = "";
+            if (phase.getMaxDistanceDeg() > 180 || phase.getMaxDistanceDeg() < -180) {
+                mod180Max = " ("+Outputs.formatDistanceNoPad(SeismicPhase.distanceTrim180(phase.getMaxDistanceDeg()))+") ";
+            }
+            double[] time = phase.getTime();
+            double[] dist = phase.getDist();
+            double[] rayParams = phase.getRayParams();
+
+            desc += "  \"minexists\": { \n"+
+                    "    \"dist\": "+Outputs.formatDistanceNoPad(phase.getMinDistanceDeg())+mod180Min+",\n"+
+                    "    \"rayparameter\": "+Outputs.formatRayParam(phase.getMaxRayParam() / Arrival.RtoD)+",\n"+
+                    "    \"time\": "+Outputs.formatTimeNoPad(time[0])+"\n"+
+                    "  },"+
+                    "  \"maxexists\": { \n"+
+                    "    \"dist\": "+Outputs.formatDistanceNoPad(phase.getMaxDistanceDeg())+mod180Max+",\n"+
+                    "    \"rayparameter\": "+Outputs.formatRayParam(phase.getMinRayParam() / Arrival.RtoD)+",\n"+
+                    "    \"time\": "+Outputs.formatTimeNoPad(time[time.length - 1])+"\n"+
+                    "  },\n"+
+                    "  \"shadow\": [";
+
+            boolean hasPrevShadow = false;
+            for (int i = 0; i < dist.length; i++) {
+                if (i < dist.length - 1 && (rayParams[i] == rayParams[i + 1])
+                        && rayParams.length > 2) {
+                    if (hasPrevShadow) {
+                        desc +=",\n";
+                    }
+                    /* Here we have a shadow zone, so output a warning of break in curve. */
+                    desc += "  {"+
+                            "    \"min_dist\": " + Outputs.formatDistance(Arrival.RtoD * dist[i])+",\n"+
+                            "    \"max_dist\": " + Outputs.formatDistance(Arrival.RtoD * dist[i + 1])+",\n"+
+                            "  }";
+                    hasPrevShadow = true;
+                }
+            }
+            desc += "  ]\n";
+        } else {
+            desc += "  \n";
+        }
+        return desc;
+    }
+
     public static String segmentDescribe(SeismicPhase phase) {
         String desc = "";
         String indent = "  ";
         for(SeismicPhaseSegment segment : phase.getPhaseSegments()) {
             desc += indent+ segment.toString()+"\n";
         }
+        return desc;
+    }
+    public static String segmentDescribeJSON(SeismicPhase phase) {
+        String desc = "";
+        String indent = "  ";
+        desc += indent+"\"segment\": [\n";
+        boolean first=true;
+        for(SeismicPhaseSegment segment : phase.getPhaseSegments()) {
+            if (first) {
+                first = false;
+                desc+= "\n";
+            } else {
+                desc+= ",\n";
+            }
+            desc += indent+ '"'+segment.toString()+'"';
+        }
+        desc += indent+"]\n";
         return desc;
     }
 }

@@ -1,6 +1,7 @@
 package edu.sc.seis.TauP;
 
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.util.Arrays;
 import java.util.List;
 
@@ -22,8 +23,9 @@ public class ToolRun {
     public static String VPLOT = "velplot";
     public static String VELMERGE = "velmerge";
 	public static String WAVEFRONT = "wavefront";
+	public static String WEB = "web";
 	
-	static String[] toolnames = { GUI, CREATE, CURVE, PATH, PHASE, PIERCE, SETSAC, SPLOT, TABLE, TIME, VPLOT, VELMERGE, WAVEFRONT };
+	static String[] toolnames = { GUI, CREATE, CURVE, PATH, PHASE, PIERCE, SETSAC, SPLOT, TABLE, TIME, VPLOT, VELMERGE, WAVEFRONT, WEB };
 	
 	public static void printUsage() {
 		System.out.println("Usage: taup <tool> <options>");
@@ -109,6 +111,17 @@ public class ToolRun {
                 tool = new TauP_VelocityMerge();
             } else if (toolToRun.contentEquals(WAVEFRONT)) {
                 tool = new TauP_Wavefront();
+			} else if (toolToRun.contentEquals(WEB)) {
+            	try {
+            		Class webClass = Class.forName("edu.sc.seis.webtaup.TauP_Web");
+					Constructor con = webClass.getConstructor();
+					if (con != null) {
+						tool = (TauP_Tool)con.newInstance();
+					}
+				} catch (ClassNotFoundException e) {
+            		System.err.println("TauP Web does not seem to be installed, the required jar is not on the classpath.");
+            		return;
+				}
 			} else if (TauP_Tool.dashEquals("help", toolToRun) || toolToRun.equals("help")) {
                 // short circuit for these args
 			    printUsage();

@@ -23,13 +23,31 @@ group = "edu.sc.seis"
 version = "2.7.0-SNAPSHOT5"
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
     withJavadocJar()
     withSourcesJar()
 }
 tasks.withType<JavaCompile>().configureEach { options.compilerArgs.addAll(arrayOf("-Xlint:deprecation")) }
 
+
+sourceSets {
+
+    create("webserver") {
+        compileClasspath += sourceSets.main.get().output
+        runtimeClasspath += sourceSets.main.get().output
+    }
+}
+
+java {
+    registerFeature("webserver") {
+        usingSourceSet(sourceSets.main.get())
+    }
+}
+
+val webserverImplementation by configurations.getting {
+    extendsFrom(configurations.implementation.get())
+}
 dependencies {
     implementation("edu.sc.seis:seisFile:2.0.6") {
       // we need seisFile for sac output, but not all the other functionality
@@ -38,6 +56,8 @@ dependencies {
       exclude(group = "org.apache.httpcomponents", module = "httpclient")
     }
     runtimeOnly( "org.slf4j:slf4j-reload4j:1.7.36")
+
+    webserverImplementation("io.undertow:undertow-core:2.3.8.Final")
 
     // Use JUnit Jupiter API for testing.
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.0")
@@ -73,12 +93,23 @@ tasks.named<Test>("test") {
 val dirName = project.name+"-"+version
 val binDirName = project.name+"_bin-"+version
 
+
+tasks.register<Jar>("webserverJar") {
+    dependsOn("webserverClasses" )
+    from(sourceSets["webserver"].output)
+    archiveBaseName.set("taup_webserver")
+}
+
+
 val binDistFiles: CopySpec = copySpec {
     from("build/scripts") {
         include("*")
         into("bin")
     }
     from(tasks.named("jar")) {
+        into("lib")
+    }
+    from(tasks.named("webserverJar")) {
         into("lib")
     }
     from(configurations.runtimeClasspath) {
@@ -136,6 +167,7 @@ val distFiles: CopySpec = copySpec {
 
 tasks.register<Sync>("explodeBin") {
   dependsOn("jar")
+    dependsOn("webserverJar")
   dependsOn("startScripts")
   dependsOn("genModels")
     with( binDistFiles)
@@ -276,7 +308,18 @@ for (key in scriptNames.keys) {
       dependsOn(key)
   }
 }
-
+tasks.register<CreateStartScripts>("taup_web") {
+    dependsOn(tasks.named("webserverJar"))
+    outputDir = file("build/scripts")
+    mainClass.set("edu.sc.seis.webtaup.TauP_Web")
+    applicationName = "taup_web"
+    classpath = sourceSets["webserver"].runtimeClasspath +
+            project.tasks[JavaPlugin.JAR_TASK_NAME].outputs.files +
+            project.tasks["webserverJar"].outputs.files
+}
+tasks.named("createRunScripts") {
+    dependsOn("taup_web")
+}
 
 tasks.register<JavaExec>("genModels") {
   description = "generate TauP default model files"

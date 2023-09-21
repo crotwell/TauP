@@ -96,8 +96,9 @@ public class TauP_Time extends TauP_Tool {
 
     protected Arrival relativeArrival;
 
-    public TauP_Time() {
+    public static final String DEFAULT_PHASES = "p,s,P,S,Pn,Sn,PcP,ScS,Pdiff,Sdiff,PKP,SKS,PKiKP,SKiKS,PKIKP,SKIKS";
 
+    public TauP_Time() {
     }
 
     public TauP_Time(TauModel tMod)  {
@@ -129,6 +130,12 @@ public class TauP_Time extends TauP_Tool {
         } catch(IOException e) {
             throw new TauModelException("IOException:" + e.getMessage(), e);
         }
+    }
+
+    @Override
+    public String[] allowedOutputFormats() {
+        String[] formats = {TEXT, JSON};
+        return formats;
     }
 
     /* Get/Set methods */
@@ -1101,6 +1108,16 @@ public class TauP_Time extends TauP_Tool {
                                       double receiverDepth,
                                       String[] phases,
                                       List<Arrival> arrivals) {
+        return resultAsJSON(modelName, depth, receiverDepth, phases, arrivals, false, false);
+    }
+
+    public static String resultAsJSON(String modelName,
+                                      double depth,
+                                      double receiverDepth,
+                                      String[] phases,
+                                      List<Arrival> arrivals,
+                                      boolean withPierce,
+                                      boolean withPath) {
         String Q = ""+'"';
         String COMMA = ",";
         String QCOMMA = Q+COMMA;
@@ -1130,7 +1147,7 @@ public class TauP_Time extends TauP_Tool {
         out.println(SQ+"arrivals"+Q+": [");
         for(int j = 0; j < arrivals.size(); j++) {
             Arrival currArrival = (Arrival)arrivals.get(j);
-            out.print(currArrival.asJSON(true, SS));
+            out.print(currArrival.asJSON(true, SS, withPierce, withPath));
             if (j != arrivals.size()-1) {
                 out.print(COMMA);
             }
@@ -1165,12 +1182,12 @@ public class TauP_Time extends TauP_Tool {
                                   e.getMessage());
                     if(phaseNames.size() <= 0) {
                         parsePhaseList(toolProps.getProperty("taup.phase.list",
-                                                             "p,s,P,S,Pn,Sn,PcP,ScS,Pdiff,Sdiff,PKP,SKS,PKiKP,SKiKS,PKIKP,SKIKS"));
+                                DEFAULT_PHASES));
                     }
                 }
             } else {
                 parsePhaseList(toolProps.getProperty("taup.phase.list",
-                                                     "p,s,P,S,Pn,Sn,PcP,ScS,Pdiff,Sdiff,PKP,SKS,PKiKP,SKiKS,PKIKP,SKIKS"));
+                        DEFAULT_PHASES));
             }
         }
         depth = Double.valueOf(toolProps.getProperty("taup.source.depth", "0.0"))

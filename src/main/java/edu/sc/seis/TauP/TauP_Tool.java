@@ -68,7 +68,8 @@ public abstract class TauP_Tool {
         return toolProps;
     }
 
-    
+
+    public abstract String[] allowedOutputFormats();
     
     public String getOutputFormat() {
         return outputFormat;
@@ -79,6 +80,15 @@ public abstract class TauP_Tool {
      * @param val output format for results
      */
     public void setOutputFormat(String val) {
+        boolean found = false;
+        for (String t : allowedOutputFormats()) {
+            if (t.equals(val)) { found = true;}
+        }
+        if ( ! found) {
+            String allowed = "";
+            for (String s : allowedOutputFormats()) { allowed+= s+",";}
+            throw new IllegalArgumentException("output format for "+getClass().getName()+" must be one of "+allowed+" but was "+val);
+        }
         this.outputFormat = val;
     }
     

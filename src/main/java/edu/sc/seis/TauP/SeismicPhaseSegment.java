@@ -145,8 +145,22 @@ public class SeismicPhaseSegment {
 			isPString = "surface wave";
 		}
     	String branchRange = startBranch == endBranch ? " layer "+startBranch : " layer "+startBranch+" to "+endBranch;
-		String depthRange;
+		String depthRange = getDepthRangeString();
+    	if ( ! legName.contentEquals("END")) {
+    		desc += legName +" going "+upDown
+    				+ " as a "+ isPString 
+    				+ " in the "+describeBranchRange(startBranch, endBranch)+","
+    	    	    + branchRange+","
+					+ " depths "+depthRange+","
+    				+ " then " +action;
+    	} else {
+    		desc += "END";
+    	}
+		return desc;
+	}
 
+	public String getDepthRangeString() {
+		String depthRange;
 		if (isFlat) {
 			if (prevEndAction == null) {
 				depthRange = " PrevAction is NULL ";
@@ -164,16 +178,38 @@ public class SeismicPhaseSegment {
 		} else {
 			depthRange = tMod.getTauBranch(startBranch, isPWave).getBotDepth() + " to " + tMod.getTauBranch(endBranch, isPWave).getTopDepth();
 		}
-    	if ( ! legName.contentEquals("END")) {
-    		desc += legName +" going "+upDown
-    				+ " as a "+ isPString 
-    				+ " in the "+describeBranchRange(startBranch, endBranch)+","
-    	    	    + branchRange+","
-					+ " depths "+depthRange+","
-    				+ " then " +action;
-    	} else {
-    		desc += "END";
-    	}
+		return depthRange;
+	}
+
+	public String toJSONString() {
+		String desc = "";
+		if ( ! legName.contentEquals("END")) {
+			String upDown = isFlat ? "flat" : (isDownGoing ? "down" : "up  ");
+
+			String action = endActionToString(endAction);
+			String isPString = isPWave ? "P" : "S";
+			if (! isPWave && (startBranch == tMod.getCmbBranch() || endBranch == tMod.getCmbBranch())) {
+				// in outer core, SeismicPhase uses fake S, equal to P velocity structure, in fluid layers
+				// to make "high slowness zone" calculations easier
+				isPString = "P";
+			} else if (prevEndAction == PhaseInteraction.KMPS) {
+				isPString = "surface wave";
+			}
+			String branchRange = startBranch == endBranch ? " layer "+startBranch : " layer "+startBranch+" to "+endBranch;
+			String depthRange = getDepthRangeString();
+			desc += "{\n"
+					+"  \"name\": "+legName
+					+" \"updown\": "+upDown
+					+ " \"type\": "+ isPString
+					+ " \"branch\": "+describeBranchRange(startBranch, endBranch)+","
+					+ branchRange+","
+					+ " \"depths\": "+depthRange+","
+					+ " \"then\": " +action
+					+ "}\n";
+
+		} else {
+			desc += "END";
+		}
 		return desc;
 	}
 }

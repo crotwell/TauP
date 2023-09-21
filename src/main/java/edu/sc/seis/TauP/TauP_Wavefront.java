@@ -75,7 +75,7 @@ public class TauP_Wavefront extends TauP_Path {
 
     public void printLimitUsage() {
         Alert.info("--gmt             -- outputs path as a complete GMT script.\n"
-               // +"--svg             -- outputs path as a complete SVG file.\n"
+                +"--svg             -- outputs path as a complete SVG file.\n"
                 +"--mapwidth        -- sets map width for GMT script."
                 );
     }
@@ -93,13 +93,16 @@ public class TauP_Wavefront extends TauP_Path {
 
     @Override
     public void printScriptBeginning(PrintWriter out) throws IOException {
-        if (!gmtScript) {
-            return;
+        if (outputFormat.equals(TauP_Tool.JSON)) {
+            throw new RuntimeException("JSON output for TauP_Path not yet supported.");
+        } else if (outputFormat.equals(SVG)) {
+            printScriptBeginningSVG(out);
+        } else if ( gmtScript) {
+            if (getOutFile().equals("stdout")) {
+                psFile = "taup_wavefront.ps";
+            }
+            super.printScriptBeginning(out);
         }
-        if (getOutFile().equals("stdout")) {
-            psFile = "taup_wavefront.ps";
-        }
-        super.printScriptBeginning(out);
     }
 
     @Override
@@ -162,7 +165,13 @@ public class TauP_Wavefront extends TauP_Path {
                 if (wavefront == null || wavefront.size() == 0) {
                     continue;
                 }
-                timeOut.println("> " + phase.getName() + " at " + time + " seconds");
+                if (outputFormat.equals(GMT)) {
+                    timeOut.println("> " + phase.getName() + " at " + time + " seconds");
+                } else if (outputFormat.equals(SVG)) {
+                    timeOut.println("<!-- " + phase.getName() + " at " + time + " seconds");
+                    timeOut.println(" -->");
+                    timeOut.println("<polyline points=\"");
+                }
                 Collections.sort(wavefront, new Comparator<TimeDist>() {
 
                     // @Override
@@ -171,16 +180,37 @@ public class TauP_Wavefront extends TauP_Path {
                     }
                 });
                 for (TimeDist td : wavefront) {
-                    timeOut.println(Outputs.formatDistance(td.getDistDeg()) + "  "
-                            + Outputs.formatDepth(radiusOfEarth - td.getDepth()) + " " + Outputs.formatTime(time) + " "
-                            + Outputs.formatRayParam(td.getP()));
-                }
-                if (isNegDistance()) {
-                    timeOut.write("> " + phase.getName() + " at " + time + " seconds (neg distance)\n");
-                    for (TimeDist td : wavefront) {
-                        timeOut.println(Outputs.formatDistance(-1*td.getDistDeg()) + "  "
+                    if (outputFormat.equals(GMT)) {
+                        timeOut.println(Outputs.formatDistance(td.getDistDeg()) + "  "
                                 + Outputs.formatDepth(radiusOfEarth - td.getDepth()) + " " + Outputs.formatTime(time) + " "
                                 + Outputs.formatRayParam(td.getP()));
+                    } else if (outputFormat.equals(SVG)) {
+                        printDistRadius(out, td.getDistDeg(), radiusOfEarth - td.getDepth());
+                    }
+                }
+                if (outputFormat.equals(SVG)) {
+                    out.println("\" />");
+                }
+                if (isNegDistance()) {
+                    if (outputFormat.equals(GMT)) {
+                        timeOut.write("> " + phase.getName() + " at " + time + " seconds (neg distance)\n");
+                    } else if (outputFormat.equals(SVG)) {
+                        timeOut.println("<!-- " + phase.getName() + " at " + time + " seconds (neg distance)");
+                        timeOut.println(" -->");
+                        timeOut.println("<polyline points=\"");
+                    }
+                    for (TimeDist td : wavefront) {
+                        if (outputFormat.equals(GMT)) {
+                            timeOut.println(Outputs.formatDistance(-1*td.getDistDeg()) + "  "
+                                + Outputs.formatDepth(radiusOfEarth - td.getDepth()) + " " + Outputs.formatTime(time) + " "
+                                + Outputs.formatRayParam(td.getP()));
+                        } else if (outputFormat.equals(SVG)) {
+                            printDistRadius(timeOut, -1*td.getDistDeg(), radiusOfEarth - td.getDepth());
+                            timeOut.println();
+                        }
+                    }
+                    if (outputFormat.equals(SVG)) {
+                        out.println("\" />");
                     }
                 }
             }
@@ -203,6 +233,9 @@ public class TauP_Wavefront extends TauP_Path {
             out.println("gmt psconvert -P -Tf  " + byTimePsFile+" && rm " + byTimePsFile);
             out.println("# clean up after gmt...");
             out.println("rm gmt.history");
+        } else if (outputFormat.equals(SVG)) {
+            out.println("</g> <!-- end translate -->");
+            out.println("</svg>");
         }
         timeOut.flush();
         out.flush();

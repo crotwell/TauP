@@ -154,8 +154,12 @@ public class TauP_VelocityMerge extends TauP_Tool {
         System.out.println("                       updates radius of earth");
         TauP_Tool.printStdUsageTail();
     }
-    
-    
+
+    @Override
+    public String[] allowedOutputFormats() {
+        return new String[] {TEXT};
+    }
+
     String modelName;
     String modelType;
     String overlayModelName = null;

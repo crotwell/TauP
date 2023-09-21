@@ -16,10 +16,7 @@
  */
 package edu.sc.seis.TauP;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.OptionalDataException;
-import java.io.StreamCorruptedException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -1189,6 +1186,29 @@ public class SimpleSeismicPhase implements SeismicPhase {
         return desc+ SeismicPhase.baseDescribe(this)+"\n"+ SeismicPhase.segmentDescribe(this);
     }
 
+    @Override
+    public String describeJson() {
+        String Q = ""+'"';
+        String COMMA = ",";
+        String QCOMMA = Q+COMMA;
+        String COLON = ": "; // plus space
+        String S = "  ";
+        String QC = Q+COLON;
+        String QCQ = QC+Q;
+        String SS = S+S;
+        String SQ = S+Q;
+        String SSQ = S+SQ;
+        String SSSQ = S+SSQ;
+        StringWriter sw = new StringWriter();
+        PrintWriter out = new PrintWriter(sw);
+        out.println("{");
+        out.println(SQ+"name"+QCQ+getName()+QCOMMA);
+        out.println(SeismicPhase.baseDescribeJSON(this));
+        out.println(",");
+        out.println(SeismicPhase.segmentDescribeJSON(this));
+        out.println("}");
+        return sw.toString();
+    }
 
     @Override
     public String toString() {

@@ -267,6 +267,38 @@ public class VelocityLayer implements Cloneable, Serializable {
         description += " Density " + getTopDensity() + " " + getBotDensity();
         return description;
     }
+
+    public String asJSON(boolean pretty, String indent) {
+        String NL = "";
+        if (pretty) {
+            NL = "\n";
+        }
+        String Q = ""+'"';
+        String COMMA = ",";
+        String QCOMMA = Q+COMMA;
+        String COLON = ": "; // plus space
+        String S = "  ";
+        String QC = Q+COLON;
+        String QCQ = QC+Q;
+        String SS = S+S;
+        String SQ = S+Q;
+        String SSQ = S+SQ;
+        StringBuilder out = new StringBuilder();
+        out.append(indent+"{"+NL);
+        out.append(indent+SQ+"num"+QC+myLayerNumber+COMMA+NL);
+        out.append(indent+SQ+"top"+QC+"{"+NL);
+        out.append(indent+SQ+"depth"+QC+getTopDepth()+COMMA+NL);
+        out.append(indent+SQ+"vp"+QC+getTopPVelocity()+COMMA+NL);
+        out.append(indent+SQ+"vs"+QC+getTopSVelocity()+COMMA+NL);
+        out.append(indent+SQ+"rho"+QC+getTopDensity()+"}"+COMMA+NL);
+        out.append(indent+SQ+"bot"+QC+"{"+NL);
+        out.append(indent+SQ+"depth"+QC+getBotDepth()+COMMA+NL);
+        out.append(indent+SQ+"vp"+QC+getBotPVelocity()+COMMA+NL);
+        out.append(indent+SQ+"vs"+QC+getBotSVelocity()+COMMA+NL);
+        out.append(indent+SQ+"rho"+QC+getBotDensity()+"}");
+        out.append(indent+"}"+NL);
+        return out.toString();
+    }
     
     public int getLayerNum() {
         return myLayerNumber;

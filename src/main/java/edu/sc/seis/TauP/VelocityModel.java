@@ -933,6 +933,48 @@ public class VelocityModel implements Cloneable, Serializable {
         }
     }
 
+    public String asJSON(boolean pretty, String indent) {
+        String NL = "";
+        if (pretty) {
+            NL = "\n";
+        }
+        String Q = ""+'"';
+        String COMMA = ",";
+        String QCOMMA = Q+COMMA;
+        String COLON = ": "; // plus space
+        String S = "  ";
+        String QC = Q+COLON;
+        String QCQ = QC+Q;
+        String SS = S+S;
+        String SQ = S+Q;
+        String SSQ = S+SQ;
+        StringBuilder out = new StringBuilder();
+        out.append(indent+"{"+NL);
+        out.append(indent+SQ+"modelName"+QC+Q+modelName+Q+COMMA+NL);
+        out.append(indent+SQ+"radiusOfEarth"+QC+radiusOfEarth+COMMA+NL);
+        out.append(indent+SQ+"mohoDepth"+QC+mohoDepth+COMMA+NL);
+        out.append(indent+SQ+"cmbDepth"+QC+cmbDepth+COMMA+NL);
+        out.append(indent+SQ+"iocbDepth"+QC+iocbDepth+COMMA+NL);
+        out.append(indent+SQ+"minRadius"+QC+minRadius+COMMA+NL);
+        out.append(indent+SQ+"maxRadius"+QC+maxRadius+COMMA+NL);
+        out.append(indent+SQ+"spherical"+QC+spherical+COMMA+NL);
+        out.append(indent+SQ+"numLayers"+QC+getNumLayers()+COMMA+NL);
+        out.append(indent+SQ+"layers"+QC+"[");
+        boolean first = true;
+        for (VelocityLayer vl : getLayers()) {
+            if (first) {
+                first = false;
+                out.append(NL);
+            } else {
+                out.append(COMMA+NL);
+            }
+            out.append(vl.asJSON( pretty, indent));
+        }
+        out.append(indent+S+"]"+NL);
+        out.append(indent+"}");
+        return out.toString();
+    }
+
     public static String getModelNameFromFileName(String filename) {
         int j = filename.lastIndexOf(System.getProperty("file.separator"));
         String modelFilename = filename.substring(j + 1);

@@ -66,7 +66,7 @@ public class TauP_Curve extends TauP_Time {
 
     private boolean distHorizontal = true;
 
-    protected TauP_Curve() {
+    public TauP_Curve() {
         super();
         initFields();
     }
@@ -84,6 +84,12 @@ public class TauP_Curve extends TauP_Time {
     void initFields() {
         setOutFileBase("taup_curve");
         setOutputFormat(GMT);
+    }
+
+    @Override
+    public String[] allowedOutputFormats() {
+        String[] formats = {SVG, GMT};
+        return formats;
     }
 
     @Override

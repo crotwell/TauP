@@ -47,7 +47,7 @@ public class TauP_Path extends TauP_Pierce {
 	
 	protected static double maxPathInc = 1.0;
 
-	protected TauP_Path() {
+	public TauP_Path() {
 		super();
 		initFields();
 	}
@@ -79,6 +79,11 @@ public class TauP_Path extends TauP_Pierce {
 		setOutFileBase(outFileBase);
 	}
 
+	@Override
+	public String[] allowedOutputFormats() {
+		String[] formats = {TEXT, JSON, SVG, GMT};
+		return formats;
+	}
 	
 	@Override
     public String getOutFileExtension() {
@@ -145,7 +150,7 @@ public class TauP_Path extends TauP_Pierce {
 	}
 
 	@Override
-	public void printResult(PrintWriter out) throws IOException {
+	public void printResultText(PrintWriter out) throws IOException {
 		boolean doPrintTime = withTime && ! outputFormat.equals(SVG);
         if (gmtScript) {
             out.write("gmt psxy -P -R -K -O -JP -m -A >> " + psFile + " <<END\n");
@@ -283,6 +288,12 @@ public class TauP_Path extends TauP_Pierce {
         }
 	}
 
+	@Override
+	public void printResultJSON(PrintWriter out) {
+		String s = resultAsJSON(modelName, depth, getReceiverDepth(), getPhaseNames(), arrivals, false, true);
+		out.println(s);
+	}
+
     protected void printDistRadius(Writer out, double calcDist, double radius) throws IOException {
         if (outputFormat.equals(TauP_Tool.JSON)) {
             throw new RuntimeException("JSON output for TauP_Path not yet supported.");
@@ -332,19 +343,18 @@ public class TauP_Path extends TauP_Pierce {
 	
 	public void printScriptBeginning(PrintWriter out)  throws IOException {
 	    if (outputFormat.equals(TauP_Tool.JSON)) {
-            throw new RuntimeException("JSON output for TauP_Path not yet supported.");
+            return;
         } else if (outputFormat.equals(SVG)) {
 	        printScriptBeginningSVG(out);
 	    } else if ( gmtScript) {
-        
-        if (getOutFileBase().equals("stdout")) {
-            psFile = "taup_path.ps";
-        } else if (getOutFile().endsWith(".gmt")) {
-            psFile = getOutFile().substring(0, getOutFile().length() - 4) + ".ps";
-        } else {
-            psFile = getOutFile() + ".ps";
-        }
-        printScriptBeginning(out, psFile);
+			if (getOutFileBase().equals("stdout")) {
+				psFile = "taup_path.ps";
+			} else if (getOutFile().endsWith(".gmt")) {
+				psFile = getOutFile().substring(0, getOutFile().length() - 4) + ".ps";
+			} else {
+				psFile = getOutFile() + ".ps";
+			}
+			printScriptBeginning(out, psFile);
 	    } else {
 	        return; 
 	    }

@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TauP</title>
+    <style>
+      form {
+        overflow-y: auto;
+        max-height: 50vh;
+      }
+      #results {
+        overflow-y: auto;
+        max-height: 80vh;
+      }
+    </style>
+</head>
+<body>
+
+<details>
+  <summary>Parameters</summary>
+
+<form>
+    <fieldset>
+        <legend>Velocity Model:</legend>
+        <input type="radio" name="model" id="iasp91" value="iasp91" checked/>
+        <label for="iasp91">iasp91</label>
+        <input type="radio" name="model" id="ak135" value="ak135" />
+        <label for="ak135">ak135</label>
+        <input type="radio" name="model" id="prem" value="prem" />
+        <label for="prem">prem</label>
+    </fieldset>
+
+    <fieldset>
+        <label for="phases">
+            <span>Phases: </span>
+        </label>
+        <input type="text" id="phases" name="phases" value="P,S" required />
+
+        <label for="evdepth">
+            <span>Source Depth: </span>
+        </label>
+        <input type="text" id="evdepth" name="evdepth" value="0" required />
+
+        <label for="distdeg">
+            <span>Distance: </span>
+        </label>
+        <input type="text" id="distdeg" name="distdeg" value="35" required />
+    </fieldset>
+
+        <fieldset>
+            <label for="phases">
+                <span>Scatter: </span>
+            </label>
+            <input type="checkbox" id="isscatter" name="isscatter" />
+
+            <label for="scatdepth">
+                <span>Depth: </span>
+            </label>
+            <input type="text" id="scatdepth" name="scatdepth" value="0" />
+
+            <label for="scatdist">
+                <span>Distance: </span>
+            </label>
+            <input type="text" id="scatdist" name="scatdist" value="0" />
+        </fieldset>
+    <fieldset>
+        <legend>Format:</legend>
+        <input type="radio" name="format" id="format_text" value="text" checked />
+        <label for="format_text">Text</label>
+        <input type="radio" name="format" id="format_json" value="json" />
+        <label for="format_json">JSON</label>
+        <input type="radio" name="format" id="format_svg" value="svg" />
+        <label for="format_svg">SVG</label>
+        <input type="radio" name="format" id="format_gmt" value="gmt" />
+        <label for="format_gmt">GMT</label>
+    </fieldset>
+
+    <fieldset class="tools">
+        <legend>Tools:</legend>
+        <input type="radio" name="tool" id="tool_time" value="time" checked />
+        <label for="tool_time">Time</label>
+        <input type="radio" name="tool" id="tool_pierce" value="pierce" />
+        <label for="tool_pierce">Pierce</label>
+        <input type="radio" name="tool" id="tool_path" value="path" />
+        <label for="tool_path">Path</label>
+        <input type="radio" name="tool" id="tool_curve" value="curve" />
+        <label for="tool_curve">Curve</label>
+        <input type="radio" name="tool" id="tool_wavefront" value="wavefront" />
+        <label for="tool_wavefront">Wavefront</label>
+        <input type="radio" name="tool" id="tool_phase" value="phase" />
+        <label for="tool_phase">Describe</label>
+        <input type="radio" name="tool" id="tool_velplot" value="velplot" />
+        <label for="tool_velplot">Vel Model</label>
+        <input type="radio" name="tool" id="tool_slow" value="slowplot" />
+        <label for="tool_slow">Slow Model</label>
+    </fieldset>
+</form>
+
+</details>
+
+<p><a href="" id="taup_url"></a></p>
+<div id="results">
+</div>
+<script>
+  function valid_format(tool) {
+    let format = document.querySelector('input[name="format"]:checked').value;
+    if (format === "svg") {
+      if (tool === "phase" || tool === "time" || tool === "pierce") {
+        format = "text";
+      }
+    } else if (format === "text" || format === "json") {
+      if (tool === "slowplot" || tool === "curve" || tool === "wavefront") {
+        format = "svg";
+      }
+    }
+    return format;
+  }
+  async function display_results(taup_url) {
+    console.log(`Load: ${taup_url}`);
+    let toolname = document.querySelector('input[name="tool"]:checked').value;
+    let format = valid_format(toolname);
+    fetch(taup_url).then( response => {
+      const container_el = document.querySelector("#results");
+      while(container_el.firstChild) {
+        container_el.removeChild(container_el.firstChild);
+      }
+      if (!response.ok) {
+        const h5_el = document.createElement("h5");
+        h5_el.textContent = "Network response was not OK";
+        container_el.appendChild(h5_el);
+        return response.text().then(ans => {
+          const pre_el = document.createElement("pre");
+          pre_el.textContent = ans;
+          container_el.appendChild(pre_el);
+        });
+      } else if (format === "text" || format === "gmt") {
+        return response.text().then(ans => {
+          const pre_el = document.createElement("pre");
+          pre_el.textContent = ans;
+          container_el.appendChild(pre_el);
+        });
+      } else if (format === "json") {
+        return response.json().then(ans => {
+          const pre_el = document.createElement("pre");
+          pre_el.textContent = JSON.stringify(ans, null, 2);
+          container_el.appendChild(pre_el);
+        });
+      } else if (format === "svg") {
+        return response.text().then(ans => {
+          const pre_el = document.createElement("div");
+          pre_el.innerHTML = ans;
+          container_el.appendChild(pre_el);
+        });
+      }
+    });
+
+  }
+  function form_url() {
+    let tool_list = document.querySelector("fieldset.tools").querySelectorAll("input");
+    let toolname = document.querySelector('input[name="tool"]:checked').value;
+    let model = document.querySelector('input[name="model"]:checked').value;
+    let phases = document.querySelector('input[name="phases"]').value;
+    let evdepth = document.querySelector('input[name="evdepth"]').value;
+    let distdeg = document.querySelector('input[name="distdeg"]').value;
+    let scatdepth = document.querySelector('input[name="scatdepth"]').value;
+    let scatdist = document.querySelector('input[name="scatdist"]').value;
+    let isScatter = document.querySelector('input[name="isscatter"]').checked;
+
+    let format = valid_format(toolname);
+    let url = `http://${document.location.host}/${toolname}?model=${model}&phases=${phases}&evdepth=${evdepth}&distdeg=${distdeg}&format=${format}`;
+console.log(`isscatter: ${isScatter}`)
+    if (isScatter ) {
+      url += `&scatter=${scatdepth},${scatdist}`;
+    }
+    if (toolname === "wavefront") {
+      url += `&negdist=true`;
+    }
+    return url;
+  }
+  function process() {
+    const taup_url = form_url()
+    const url_el = document.querySelector("#taup_url");
+    url_el.textContent = taup_url;
+    url_el.setAttribute("href", taup_url);
+    display_results(taup_url);
+  }
+  let in_items = document.querySelectorAll("input");
+  for (let inEl of in_items) {
+    inEl.addEventListener("change", (event) => {
+      console.log(`change: ${event}`);
+      process();
+    });
+  }
+  process();
+</script>
+</body>
+</html>

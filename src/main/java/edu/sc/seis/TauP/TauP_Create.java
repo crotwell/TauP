@@ -406,5 +406,9 @@ public class TauP_Create extends TauP_Tool {
         // TODO Auto-generated method stub
         
     }
-    
+
+    @Override
+    public String[] allowedOutputFormats() {
+        return new String[0] ;
+    }
 }

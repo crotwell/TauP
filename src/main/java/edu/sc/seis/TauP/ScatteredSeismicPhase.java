@@ -1,5 +1,7 @@
 package edu.sc.seis.TauP;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -334,6 +336,33 @@ public class ScatteredSeismicPhase implements SeismicPhase {
     }
 
     @Override
+    public String describeJson() {
+
+        String Q = ""+'"';
+        String COMMA = ",";
+        String QCOMMA = Q+COMMA;
+        String COLON = ": "; // plus space
+        String S = "  ";
+        String QC = Q+COLON;
+        String QCQ = QC+Q;
+        String SS = S+S;
+        String SQ = S+Q;
+        String SSQ = S+SQ;
+        String SSSQ = S+SSQ;
+        StringWriter sw = new StringWriter();
+        PrintWriter out = new PrintWriter(sw);
+        out.println("{");
+        out.println(SQ+"name"+QCQ+getName()+QCOMMA);
+        out.println(SeismicPhase.baseDescribeJSON(this.scatteredPhase));
+        out.println(SeismicPhase.baseDescribeJSON(this));
+        out.println(",");
+        out.println(SeismicPhase.segmentDescribeJSON(this.scatteredPhase));
+        out.println(SeismicPhase.segmentDescribeJSON(this));
+        out.println("}");
+        return sw.toString();
+    }
+
+    @Override
     public void dump() {
         double[] dist = scatteredPhase.getDist();
         double[] rayParams = scatteredPhase.getRayParams();
@@ -353,7 +382,7 @@ public class ScatteredSeismicPhase implements SeismicPhase {
                 TimeDist btd = new TimeDist(
                         td.getP(),
                         td.getTime(),
-                        -1 * td.getDistRadian(),
+                        td.getDistRadian(),
                         td.getDepth());
                 out.add(btd);
             }
@@ -390,7 +419,7 @@ public class ScatteredSeismicPhase implements SeismicPhase {
                 TimeDist btd = new TimeDist(
                         td.getP(),
                         td.getTime(),
-                        -1 * td.getDistRadian(),
+                        td.getDistRadian(),
                         td.getDepth());
                 out.add(btd);
             }
