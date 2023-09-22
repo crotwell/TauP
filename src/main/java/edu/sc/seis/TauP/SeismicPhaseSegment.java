@@ -275,11 +275,17 @@ public class SeismicPhaseSegment {
 			pathList.add(segPath);
 		}
 
+		double prevTime = 0;
+		double prevDist = 0;
+		if (prevEnd != null) {
+			prevDist = prevEnd.getDistRadian();
+			prevTime = prevEnd.getTime();
+		}
 		List<TimeDist> outPath = new ArrayList<TimeDist>();
 		TimeDist cummulative = new TimeDist(currArrival.getRayParam(),
-				prevEnd.getTime(),
-				prevEnd.getDistRadian(),
-				prevEnd.getDepth());
+				prevTime,
+				prevDist,
+				0); // initial depth not used
 		TimeDist prev = cummulative;
 		TimeDist[] branchPath;
 		int numAdded = 0;
@@ -291,12 +297,8 @@ public class SeismicPhaseSegment {
 						cummulative.getTime()+branchPath[j].getTime(),
 						cummulative.getDistRadian()+branchPath[j].getDistRadian(),
 						branchPath[j].getDepth());
+				outPath.add(cummulative);
 
-				if (currArrival.isLongWayAround()) {
-					outPath.add(cummulative.negateDistance());
-				} else {
-					outPath.add(cummulative);
-				}
 				numAdded++;
 			}
 		}

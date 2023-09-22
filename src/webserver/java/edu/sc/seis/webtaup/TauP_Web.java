@@ -39,7 +39,6 @@ public class TauP_Web extends TauP_Tool {
 
     @Override
     public void start() throws IOException, TauModelException, TauPException {
-        int port = 8080;
         System.out.println("   http://localhost:"+port);
         Undertow server = Undertow.builder()
                 .addHttpListener(port, "localhost")
@@ -299,6 +298,12 @@ public class TauP_Web extends TauP_Tool {
     public String[] allowedOutputFormats() {
         return new String[0] ;
     }
+
+
+    int port = 7049;
+
+    String webRoot = "taupweb";
+
 
 
     /**
