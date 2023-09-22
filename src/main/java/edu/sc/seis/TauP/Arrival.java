@@ -400,9 +400,7 @@ public class Arrival {
             ScatteredSeismicPhase scatPhase = (ScatteredSeismicPhase)getPhase();
             out.append(COMMA+NL);
             out.append(indent+SQ+"scatterdepth"+QC+(float)scatPhase.getScattererDepth()+COMMA+NL);
-            out.append(indent+SQ+"scatterdistdeg"+QC+scatPhase.getScattererDistanceDeg()+NL);
-        } else {
-            out.append(NL);
+            out.append(indent+SQ+"scatterdistdeg"+QC+scatPhase.getScattererDistanceDeg());
         }
         if (withPierce || withPath) {
             out.append(COMMA+NL);

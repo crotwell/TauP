@@ -255,7 +255,7 @@ public interface SeismicPhase extends Serializable, Cloneable {
             } else {
                 desc+= ",\n";
             }
-            desc += indent+ '"'+segment.toString()+'"';
+            desc += indent+segment.toJSONString();
         }
         desc += indent+"]\n";
         return desc;
