@@ -163,7 +163,8 @@ public class TauP_Path extends TauP_Pierce {
 	        } else if (outputFormat.equals(SVG)) {
 	            out.println("<!-- "+getCommentLine(currArrival));
 	            out.println(" -->");
-	            out.println("<polyline points=\"");
+	            out.println("<g class=\""+currArrival.getName()+"\">");
+	            out.println("  <polyline points=\"");
 		    } else {
 		        out.println(getCommentLine(currArrival));
 		    }
@@ -235,7 +236,8 @@ public class TauP_Path extends TauP_Pierce {
 				prevDepth = path[j].getDepth();
 			}
 			if (outputFormat.equals(SVG)) {
-			    out.println("\" />");
+				out.println("\" />");
+				out.println("</g>");
 			}
 		}
         if (gmtScript) {
@@ -265,7 +267,7 @@ public class TauP_Path extends TauP_Pierce {
                     double radian = (calcDist-90)*Math.PI/180;
                     double x = radius*Math.cos(radian);
                     double y = radius*Math.sin(radian);
-                    out.println("<text x=\""+Outputs.formatDistance(x)+"\" y=\""+Outputs.formatDistance(y)+"\">"+currArrival.getName() + "</text>");
+                    out.println("<text class=\""+currArrival.getName()+"\" x=\""+Outputs.formatDistance(x)+"\" y=\""+Outputs.formatDistance(y)+"\">"+currArrival.getName() + "</text>");
                 }
             }
         }
@@ -394,6 +396,7 @@ public class TauP_Path extends TauP_Pierce {
         out.println("    ]]></style>");
         out.println("</defs>");
         out.println("<g transform=\"translate("+plotSize+","+plotSize+")\" >");
+		out.println("<g class=\"ticks\">");
         out.println("<!-- draw surface and label distances.-->");
 	    // whole earth radius (scales to mapWidth)
         int step = 30;
@@ -436,6 +439,9 @@ public class TauP_Path extends TauP_Pierce {
             out.println("  <text dominant-baseline=\""+alignBaseline+"\" text-anchor=\""+anchor+"\" class=\"label\" x=\""+Outputs.formatDistance(x).trim()+"\" y=\""+Outputs.formatDistance(y).trim()+"\">"+i+"</text>");
      
         }
+		out.println("  </g>");
+
+		out.println("<g class=\"layers\">");
 	    out.println("  <circle cx=\"0.0\" cy=\"0.0\" r=\"" + R+"\" />");
 	    // other boundaries
 	    double[] branchDepths = tMod.getBranchDepths();
@@ -443,6 +449,7 @@ public class TauP_Path extends TauP_Pierce {
 
 	        out.println("  <circle cx=\"0.0\" cy=\"0.0\" r=\"" + (R- branchDepths[i])+"\" />");
 	    }
+		out.println("  </g>");
 	    out.println("<!-- draw paths, coordinates are x,y not degree,radius due to SVG using only cartesian -->");
 	}
 

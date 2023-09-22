@@ -27,6 +27,7 @@
     ]]></style>
 </defs>
 <g transform="translate(7645.2,7645.2)" >
+<g class="ticks">
 <!-- draw surface and label distances.-->
 <!-- tick marks every 30 degrees.-->
   <polyline points="    0.00  -6371.00,     0.00  -6689.55" />
@@ -53,6 +54,8 @@
   <text dominant-baseline="baseline" text-anchor="end" class="label" x="-5820.91" y="-3360.70">300</text>
   <polyline points="-3185.50  -5517.45, -3344.78  -5793.32" />
   <text dominant-baseline="baseline" text-anchor="end" class="label" x="-3360.70" y="-5820.91">330</text>
+  </g>
+<g class="layers">
   <circle cx="0.0" cy="0.0" r="6371.0" />
   <circle cx="0.0" cy="0.0" r="6371.0" />
   <circle cx="0.0" cy="0.0" r="6351.0" />
@@ -62,10 +65,12 @@
   <circle cx="0.0" cy="0.0" r="5711.0" />
   <circle cx="0.0" cy="0.0" r="3482.0" />
   <circle cx="0.0" cy="0.0" r="1217.1000000000004" />
+  </g>
 <!-- draw paths, coordinates are x,y not degree,radius due to SVG using only cartesian -->
 <!-- > P at   412.43 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    8.613 s/deg.
  -->
-<polyline points="
+<g class="P">
+  <polyline points="
     0.00  -6361.00
     0.00  -6361.00
     2.52  -6356.00
@@ -265,8 +270,9 @@
  3654.25  -5218.81
  3654.26  -5218.82
 " />
+</g>
 <g class="phasename">
-<text x=" 2105.38" y="-5150.04">P</text>
+<text class="P" x=" 2105.38" y="-5150.04">P</text>
 </g> <!-- end labels -->
 </g> <!-- end translate -->
 </svg>
