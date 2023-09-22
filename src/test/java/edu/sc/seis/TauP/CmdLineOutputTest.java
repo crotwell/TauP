@@ -263,6 +263,7 @@ public class CmdLineOutputTest {
     }
 
     public String fileizeCmd(String cmd) {
+        cmd = cmd.replaceAll(",", "_");
         return cmd.replaceAll(" ", "_");
     }
     
