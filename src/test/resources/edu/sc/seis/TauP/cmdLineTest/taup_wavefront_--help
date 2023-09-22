@@ -14,6 +14,7 @@ Arguments are:
 --scat[ter] depth deg   -- scattering depth and distance
 
 --gmt             -- outputs path as a complete GMT script.
+--svg             -- outputs path as a complete SVG file.
 --mapwidth        -- sets map width for GMT script.
 --rays  num      -- number of raypaths/distances to sample.
 --timestep  num  -- steps in time (seconds) for output.
