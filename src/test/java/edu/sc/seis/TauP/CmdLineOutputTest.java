@@ -47,6 +47,11 @@ public class CmdLineOutputTest {
 
     String[] pathTestCmds = new String[] {"taup path -o stdout -h 10 -ph P -deg 35 -mod prem",
                                           "taup path -o stdout -h 10 -ph P -deg 35",
+            "taup path -o stdout -h 10 -ph Pdiff -deg 135",
+            "taup path -o stdout -h 10 -ph 2kmps -deg 35",
+            "taup path -o stdout -h 10 -ph Pn -deg 10",
+            "taup path -o stdout -h 10 -ph PnPn -deg 10",
+            "taup path -o stdout -h 10 -ph PdiffPdiff -deg 135",
                                           "taup path -o stdout -h 10 -ph P -deg 35 --svg",
                                           "taup path -o stdout -h 10 -ph P -deg 35 -mod ak135"};
 
@@ -179,10 +184,10 @@ public class CmdLineOutputTest {
         runCmd(cmd);
         BufferedReader prior = getPriorOutput(cmd);
         BufferedReader current = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(outContent.toByteArray())));
-        int lineNum = 0;
+        int lineNum = 1;
         String priorLine;
         String currentLine;
-        assertTrue( current.ready() , "Current output is empty.");
+        assertTrue( current.ready() , "Current output is empty for "+cmd);
         while (prior.ready() && current.ready()) {
             priorLine = prior.readLine();
             currentLine = current.readLine();
