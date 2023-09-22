@@ -17,7 +17,7 @@ public class TauP_VelocityMerge extends TauP_Tool {
         setOutputFormat("nd");
         setOutFileExtension("nd");
     }
-    
+
     @Override
     public void start() throws SlownessModelException, TauModelException, VelocityModelException, IOException {
         VelocityModel vMod = TauModelLoader.loadVelocityModel(modelName, modelType);
@@ -56,7 +56,13 @@ public class TauP_VelocityMerge extends TauP_Tool {
                 }
                 dos = new PrintWriter(new BufferedWriter(new FileWriter(getOutFile())));
             }
-            outVMod.writeToND(dos);
+            if (getOutputFormat() == ND || getOutputFormat() == TEXT) {
+                outVMod.writeToND(dos);
+            } else if (getOutputFormat() == TVEL) {
+                throw new RuntimeException("tvel output not yet implemented");
+            } else if (getOutputFormat() == JSON) {
+                dos.write(outVMod.asJSON(true, ""));
+            }
             dos.flush();
             
         } catch (IOException e) {
@@ -76,6 +82,8 @@ public class TauP_VelocityMerge extends TauP_Tool {
                 smoothTop = true;
             } else if (dashEquals("smbot", args[i])) {
                 smoothBottom = true;
+            } else if (dashEquals("json", args[i])) {
+                setOutputFormat(JSON);
             } else if(i < args.length - 1 && dashEquals("nd", args[i])) {
                 modelName = args[i + 1];
                 modelType = "nd";
@@ -152,12 +160,14 @@ public class TauP_VelocityMerge extends TauP_Tool {
         System.out.println("--elevation         -- expand top layer for station at elevation");
         System.out.println("                       may append m for meters, otherwise kilometers");
         System.out.println("                       updates radius of earth");
+        System.out.println("--json             -- output model as json\n");
         TauP_Tool.printStdUsageTail();
     }
 
     @Override
     public String[] allowedOutputFormats() {
-        return new String[] {TEXT};
+        String[] formats = {TEXT, JSON, ND};
+        return formats;
     }
 
     String modelName;
@@ -167,4 +177,7 @@ public class TauP_VelocityMerge extends TauP_Tool {
     boolean smoothTop = false;
     boolean smoothBottom = false;
     float elevation = 0;
+
+    public static final String ND = "nd";
+    public static final String TVEL = "tvel";
 }

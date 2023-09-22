@@ -18,6 +18,8 @@ Arguments are:
 --elevation         -- expand top layer for station at elevation
                        may append m for meters, otherwise kilometers
                        updates radius of earth
+--json             -- output model as json
+
 
 -o [stdout|outfile]         -- output is redirected to stdout or to the "outfile" file
 --prop [propfile]   -- set configuration properties
