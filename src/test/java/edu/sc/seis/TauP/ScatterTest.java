@@ -181,4 +181,24 @@ public class ScatterTest {
         assertEquals(250, p_250[last].getDistDeg(), 1e-9);
         assertEquals(250, p_neg110[last].getDistDeg(), 1e-9);
     }
+
+    @Test
+    public void pathBackscatterPedOP() throws TauModelException {
+        String modelname = "iasp91";
+        TauP_Path path = new TauP_Path(modelname);
+        path.setScatterer(800, -10);
+
+        path.clearPhaseNames();
+        path.appendPhaseName("PedOP");
+        path.calculate(35);
+        List<Arrival> arrivals = path.getArrivals();
+        assertEquals(1, arrivals.size());
+        Arrival a_35 = arrivals.get(0);
+        ScatteredArrival scatA = (ScatteredArrival) a_35;
+        assertEquals(-10, scatA.getScatteredSeismicPhase().getScattererDistanceDeg());
+        assertTrue(scatA.isInboundNegativeDirection());
+        // path should first go negative to scatterer, then positive to receiver
+        assertTrue(a_35.getPiercePoint(1).getDistDeg()<0);
+        assertTrue(a_35.getPathPoint(1).getDistDeg()<0);
+    }
 }
