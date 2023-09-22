@@ -170,7 +170,7 @@
     let isScatter = document.querySelector('input[name="isscatter"]').checked;
 
     let format = valid_format(toolname);
-    let url = `http://${document.location.host}/${toolname}?model=${model}&phases=${phases}&evdepth=${evdepth}&distdeg=${distdeg}&format=${format}`;
+    let url = `${toolname}?model=${model}&phases=${phases}&evdepth=${evdepth}&distdeg=${distdeg}&format=${format}`;
 console.log(`isscatter: ${isScatter}`)
     if (isScatter ) {
       url += `&scatter=${scatdepth},${scatdist}`;
