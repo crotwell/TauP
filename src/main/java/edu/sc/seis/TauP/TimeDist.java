@@ -25,6 +25,8 @@
  */
 package edu.sc.seis.TauP;
 
+import java.util.Objects;
+
 /**
  * Holds the ray parameter, time and distance increments, and optionally a
  * depth, for a ray passing through some layer.
@@ -124,5 +126,18 @@ public class TimeDist implements Cloneable {
             // Can't happen, but...
             throw new InternalError(e.toString());
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TimeDist timeDist = (TimeDist) o;
+        return Double.compare(timeDist.p, p) == 0 && Double.compare(timeDist.depth, depth) == 0 && Double.compare(timeDist.time, time) == 0 && Double.compare(timeDist.distRadian, distRadian) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(p, depth, time, distRadian);
     }
 }

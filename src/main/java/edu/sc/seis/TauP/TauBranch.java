@@ -605,7 +605,7 @@ public class TauBranch implements Serializable, Cloneable {
                     + "SlownessModel and TauModel are out of sync. "
                     + e.getMessage());
         }
-        TimeDist[] thePath = new TimeDist[botLayerNum - topLayerNum + 1];
+        TimeDist[] thePath = new TimeDist[botLayerNum - topLayerNum + 2];
         int sLayerNum;
         int pathIndex = 0;
         double turnDepth;
@@ -630,6 +630,8 @@ public class TauBranch implements Serializable, Cloneable {
         if(downgoing) {
             sLayerNum = topLayerNum;
             sLayer = sMod.getSlownessLayer(sLayerNum, isPWave);
+            thePath[pathIndex] = new TimeDist(rayParam, 0, 0, sLayer.getTopDepth());
+            pathIndex++;
             while(sLayer.getBotP() >= rayParam && sLayerNum <= botLayerNum) {
                 if(!sLayer.isZeroThickness()) {
                     thePath[pathIndex] = sMod.layerTimeDist(rayParam,
@@ -664,8 +666,11 @@ public class TauBranch implements Serializable, Cloneable {
                 sLayer = sMod.getSlownessLayer(sLayerNum, isPWave);
             }
             if(sLayer.getBotP() < rayParam) {
+                // turned in layer, so initial is turn point
                 turnDepth = sLayer.bullenDepthFor(rayParam,
                                                   sMod.getRadiusOfEarth());
+                thePath[pathIndex] = new TimeDist(rayParam, 0, 0, turnDepth);
+                pathIndex++;
                 turnSLayer = new SlownessLayer(sLayer.getTopP(),
                                                sLayer.getTopDepth(),
                                                rayParam,
@@ -678,6 +683,10 @@ public class TauBranch implements Serializable, Cloneable {
                 if(sLayerNum >= topLayerNum) {
                     sLayer = sMod.getSlownessLayer(sLayerNum, isPWave);
                 }
+            } else {
+                // enter from bottom,
+                thePath[pathIndex] = new TimeDist(rayParam, 0, 0, sLayer.getBotDepth());
+                pathIndex++;
             }
             while(sLayerNum >= topLayerNum) {
                 if(!sLayer.isZeroThickness()) {

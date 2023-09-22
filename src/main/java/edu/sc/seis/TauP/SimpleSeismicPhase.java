@@ -17,10 +17,7 @@
 package edu.sc.seis.TauP;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 import static edu.sc.seis.TauP.PhaseInteraction.*;
 
@@ -1038,17 +1035,44 @@ public class SimpleSeismicPhase implements SeismicPhase {
     }
 
     public List<TimeDist> calcPathTimeDist(Arrival currArrival) {
+        return calcPathTimeDistOld(currArrival);
+        //return calcPathTimeDistNew(currArrival);
+    }
+
+    public List<TimeDist> calcPathTimeDistNew(Arrival currArrival) {
+        List<List<TimeDist>> segmentPaths = calcSegmentPaths(currArrival);
+        List<TimeDist> outPath = new ArrayList<>();
+        for (List<TimeDist> tdList : segmentPaths) {
+            for (TimeDist td : tdList) {
+                outPath.add(td);
+            }
+        }
+        return adjustPath(outPath, currArrival);
+    }
+
+    public List<List<TimeDist>> calcSegmentPaths(Arrival currArrival) {
+        List<List<TimeDist>> segmentPaths = new ArrayList<>();
+        TimeDist prevEnd = new TimeDist(currArrival.getRayParam(),
+                0.0,
+                0.0,
+                tMod.getSourceDepth());
+        List<TimeDist> startTD = new ArrayList<>();
+        startTD.add(prevEnd);
+        segmentPaths.add(startTD);
+        for (SeismicPhaseSegment seg : segmentList) {
+            List<TimeDist> segPath = seg.calcPathTimeDist(currArrival, prevEnd);
+            segmentPaths.add(segPath);
+            prevEnd = segPath.get(segPath.size()-1);
+        }
+        return segmentPaths;
+    }
+
+    public List<TimeDist> calcPathTimeDistOld(Arrival currArrival) {
         ArrayList<TimeDist[]> pathList = new ArrayList<TimeDist[]>();
         /*
          * Find the ray parameter index that corresponds to the arrival ray
          * parameter in the TauModel, ie it is between rayNum and rayNum+1.
          */
-        TimeDist[] tempTimeDist = new TimeDist[1];
-        tempTimeDist[0] = new TimeDist(currArrival.getRayParam(),
-                                       0.0,
-                                       0.0,
-                                       tMod.getSourceDepth());
-        pathList.add(tempTimeDist);
             for(int i = 0; i < branchSeq.size(); i++) {
                 int branchNum = ((Integer)branchSeq.get(i)).intValue();
                 boolean isPWave = ((Boolean)waveType.get(i)).booleanValue();
@@ -1058,17 +1082,21 @@ public class SimpleSeismicPhase implements SeismicPhase {
                             + ((Boolean)downGoing.get(i)).booleanValue());
                 }
                 try {
-                    tempTimeDist = tMod.getTauBranch(branchNum, isPWave)
+                    TimeDist[] tempTimeDist = tMod.getTauBranch(branchNum, isPWave)
                             .path(currArrival.getRayParam(),
                                   ((Boolean)downGoing.get(i)).booleanValue(),
                                   tMod.getSlownessModel());
+                    if(tempTimeDist != null) {
+                        pathList.add(tempTimeDist);
+                        if (tempTimeDist[0] == null) {
+                            System.err.println(tMod.getTauBranch(branchNum, isPWave));
+                            throw new RuntimeException("first TimeDist is null "+i+" "+branchNum+" of "+branchSeq.size());
+                        }
+                    }
                 } catch(SlownessModelException e) {
                     // shouldn't happen but...
                     throw new RuntimeException("SeismicPhase.calcPath: Caught SlownessModelException. "
                             , e);
-                }
-                if(tempTimeDist != null) {
-                    pathList.add(tempTimeDist);
                 }
                 /*
                  * Here we worry about the special case for head and
@@ -1088,17 +1116,28 @@ public class SimpleSeismicPhase implements SeismicPhase {
                         double refractDist = (currArrival.getDist() - dist[0]) / headOrDiffractSeq.size();
                         double refractTime = refractDist*currArrival.getRayParam();
 
-                        TauBranch branch = tMod.getTauBranch(branchNum, isPWave);
-                        TimeDist[] diffTD = new TimeDist[1];
+                        TimeDist[] diffTD = new TimeDist[2];
                         if (legAction.get(i).equals(DIFFRACT)) {
+                            TauBranch branch = tMod.getTauBranch(branchNum, isPWave);
+                            System.err.println("Path DIFFRACT "+branch);
                             // diffraction happens at bottom of layer, like Pdiff bottom of mantle
                             diffTD[0] = new TimeDist(currArrival.getRayParam(),
+                                    0,
+                                    0,
+                                    branch.getBotDepth());
+                            diffTD[1] = new TimeDist(currArrival.getRayParam(),
                                     refractTime,
                                     refractDist,
                                     branch.getBotDepth());
                         } else if (legAction.get(i).equals(HEAD)) {
-                            // head wave happens at top of layer, like Pn top of mantle
+                            TauBranch branch = tMod.getTauBranch(branchNum+1, isPWave);
+                            System.err.println("Path HEAD "+branch);
+                            // head wave happens at top of next layer, like Pn top of mantle
                             diffTD[0] = new TimeDist(currArrival.getRayParam(),
+                                    0,
+                                    0,
+                                    branch.getTopDepth());
+                            diffTD[1] = new TimeDist(currArrival.getRayParam(),
                                     refractTime,
                                     refractDist,
                                     branch.getTopDepth());
@@ -1111,22 +1150,28 @@ public class SimpleSeismicPhase implements SeismicPhase {
             }
             if (name.indexOf("kmps") != -1) {
                 // kmps phases have no branches, so need to end them at the arrival distance
-                TimeDist[] headTD = new TimeDist[1];
+                TimeDist[] headTD = new TimeDist[2];
                 headTD[0] = new TimeDist(currArrival.getRayParam(),
-                                         currArrival.getDist()
-                                         * currArrival.getRayParam(),
-                                         currArrival.getDist(),
+                                         0,
+                                         0,
                                          0);
+                headTD[1] = new TimeDist(currArrival.getRayParam(),
+                        currArrival.getDist()
+                                * currArrival.getRayParam(),
+                        currArrival.getDist(),
+                        0);
                 pathList.add(headTD);
             }
             List<TimeDist> outPath = new ArrayList<TimeDist>();
-            TimeDist cummulative = new TimeDist(currArrival.getRayParam(),
-                                                0.0,
-                                                0.0,
-                                                currArrival.getSourceDepth());
+            TimeDist cummulative = pathList.get(0)[0];
+            if (currArrival.isLongWayAround()) {
+                outPath.add(cummulative.negateDistance());
+            } else {
+                outPath.add(cummulative);
+            }
+
             TimeDist prev = cummulative;
             TimeDist[] branchPath;
-            int numAdded = 0;
             for(int i = 0; i < pathList.size(); i++) {
                 branchPath = (TimeDist[])pathList.get(i);
                 for(int j = 0; j < branchPath.length; j++) {
@@ -1135,13 +1180,14 @@ public class SimpleSeismicPhase implements SeismicPhase {
                                                cummulative.getTime()+branchPath[j].getTime(),
                                                cummulative.getDistRadian()+branchPath[j].getDistRadian(),
                                                branchPath[j].getDepth());
-
-                    if (currArrival.isLongWayAround()) {
-                        outPath.add(cummulative.negateDistance());
-                    } else {
-                        outPath.add(cummulative);
+                    if ( ! prev.equals(cummulative)) {
+                        // only add if not a duplicate point
+                        if (currArrival.isLongWayAround()) {
+                            outPath.add(cummulative.negateDistance());
+                        } else {
+                            outPath.add(cummulative);
+                        }
                     }
-                    numAdded++;
                 }
             }
         return adjustPath(outPath, currArrival);

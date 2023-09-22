@@ -765,6 +765,21 @@ public class SeismicPhaseFactory {
                 }
             }
         }
+
+        // need to divide distance for any flat segments, which don't have a natural propogation distance, as a fraction
+        // of the entire path
+        int numFlatLegs = 0;
+        for (SeismicPhaseSegment seg : segmentList) {
+            if (seg.isFlat) {
+                numFlatLegs++;
+            }
+        }
+        double fractionOfPath = 1.0 / numFlatLegs;
+        for (SeismicPhaseSegment seg : segmentList) {
+            if (seg.isFlat) {
+                seg.flatFractionOfPath = fractionOfPath;
+            }
+        }
     }
 
     PhaseInteraction currLegIs_p_s(String prevLeg, String currLeg, String nextLeg,

@@ -1,5 +1,12 @@
 package edu.sc.seis.TauP;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static edu.sc.seis.TauP.PhaseInteraction.DIFFRACT;
+import static edu.sc.seis.TauP.PhaseInteraction.HEAD;
+import static edu.sc.seis.TauP.PhaseInteraction.KMPS;
+
 public class SeismicPhaseSegment {
 	TauModel tMod;
 	int startBranch;
@@ -9,6 +16,7 @@ public class SeismicPhaseSegment {
     PhaseInteraction prevEndAction = null;
     boolean isDownGoing;
     boolean isFlat = false;
+    double flatFractionOfPath = 1.0;
     String legName;
     
 	public SeismicPhaseSegment(TauModel tMod,
@@ -211,5 +219,87 @@ public class SeismicPhaseSegment {
 			desc += "END";
 		}
 		return desc;
+	}
+
+
+	public List<TimeDist> calcPathTimeDist(Arrival currArrival, TimeDist prevEnd) {
+		ArrayList<TimeDist[]> pathList = new ArrayList<TimeDist[]>();
+		if ( ! isFlat) {
+			int bStep = isDownGoing ? 1 : -1;
+			for (int i = startBranch; (isDownGoing && i <= endBranch) || (!isDownGoing && i >= endBranch); i += bStep) {
+				int branchNum = i;
+				if (ToolRun.DEBUG) {
+					System.out.println("i=" + i + " branchNum=" + branchNum
+							+ " isPWave=" + isPWave + " downgoing="
+							+ isDownGoing);
+				}
+				try {
+					TimeDist[] tempTimeDist = tMod.getTauBranch(branchNum, isPWave)
+							.path(currArrival.getRayParam(),
+									isDownGoing,
+									tMod.getSlownessModel());
+					if (tempTimeDist != null) {
+						pathList.add(tempTimeDist);
+					}
+				} catch (SlownessModelException e) {
+					// shouldn't happen but...
+					throw new RuntimeException("SeismicPhase.calcPath: Caught SlownessModelException. "
+							, e);
+				}
+			}
+		} else {
+			/*
+			 * Here we worry about the special case for head and
+			 * diffracted waves.
+			 */
+			TimeDist[] segPath = new TimeDist[2];
+			double refractDist = (currArrival.getDist() - currArrival.getPhase().getMinDistance()) * flatFractionOfPath;
+			double refractTime = refractDist * currArrival.getRayParam();
+			TauBranch branch = tMod.getTauBranch(startBranch, isPWave);
+			double depth;
+			if (prevEndAction.equals(DIFFRACT)) {
+				depth = branch.getBotDepth();
+			} else if (prevEndAction.equals(HEAD) || prevEndAction.equals(KMPS)) {
+				depth = branch.getTopDepth();
+			} else {
+				throw new RuntimeException("Segment prevEndAction Should be one of KMPS, DIFFRACT or HEAD: " + prevEndAction);
+			}
+			segPath[0] = new TimeDist(currArrival.getRayParam(),
+					0,
+					0,
+					depth);
+			segPath[1] = new TimeDist(currArrival.getRayParam(),
+					refractTime,
+					refractDist,
+					depth);
+			pathList.add(segPath);
+		}
+
+		List<TimeDist> outPath = new ArrayList<TimeDist>();
+		TimeDist cummulative = new TimeDist(currArrival.getRayParam(),
+				prevEnd.getTime(),
+				prevEnd.getDistRadian(),
+				prevEnd.getDepth());
+		TimeDist prev = cummulative;
+		TimeDist[] branchPath;
+		int numAdded = 0;
+		for(int i = 0; i < pathList.size(); i++) {
+			branchPath = (TimeDist[])pathList.get(i);
+			for(int j = 0; j < branchPath.length; j++) {
+				prev = cummulative;
+				cummulative = new TimeDist(cummulative.getP(),
+						cummulative.getTime()+branchPath[j].getTime(),
+						cummulative.getDistRadian()+branchPath[j].getDistRadian(),
+						branchPath[j].getDepth());
+
+				if (currArrival.isLongWayAround()) {
+					outPath.add(cummulative.negateDistance());
+				} else {
+					outPath.add(cummulative);
+				}
+				numAdded++;
+			}
+		}
+		return outPath;
 	}
 }
