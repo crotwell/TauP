@@ -186,7 +186,7 @@ public class TauP_Wavefront extends TauP_Path {
                                 + Outputs.formatDepth(radiusOfEarth - td.getDepth()) + " " + Outputs.formatTime(time) + " "
                                 + Outputs.formatRayParam(td.getP()));
                     } else if (outputFormat.equals(SVG)) {
-                        printDistRadius(out, td.getDistDeg(), radiusOfEarth - td.getDepth());
+                        printDistRadiusAsXY(out, td.getDistDeg(), radiusOfEarth - td.getDepth());
                     }
                 }
                 if (outputFormat.equals(SVG)) {
@@ -206,7 +206,7 @@ public class TauP_Wavefront extends TauP_Path {
                                 + Outputs.formatDepth(radiusOfEarth - td.getDepth()) + " " + Outputs.formatTime(time) + " "
                                 + Outputs.formatRayParam(td.getP()));
                         } else if (outputFormat.equals(SVG)) {
-                            printDistRadius(timeOut, -1*td.getDistDeg(), radiusOfEarth - td.getDepth());
+                            printDistRadiusAsXY(timeOut, -1*td.getDistDeg(), radiusOfEarth - td.getDepth());
                             timeOut.println();
                         }
                     }

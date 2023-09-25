@@ -150,26 +150,32 @@ public class TauP_Path extends TauP_Pierce {
         }
 	    return arrivalList;
 	}
-
 	@Override
+	public void printResult(PrintWriter out) throws IOException {
+		if (outputFormat.equals(TauP_Tool.JSON)) {
+			printResultJSON(out);
+		} else if (outputFormat.equals(TauP_Tool.SVG)) {
+			printResultSVG(out);
+		} else {
+			printResultText(out);
+		}
+	}
+
+	/**
+	 * Print Path as text for use in GMT script.
+	 * @param out
+	 * @throws IOException
+	 */
 	public void printResultText(PrintWriter out) throws IOException {
-		boolean doPrintTime = withTime && ! outputFormat.equals(SVG);
-        if (gmtScript) {
-            out.write("gmt psxy -P -R -K -O -JP -m -A >> " + psFile + " <<END\n");
-        }
+		boolean doPrintTime = withTime;
+		if (gmtScript) {
+			out.write("gmt psxy -P -R -K -O -JP -m -A >> " + psFile + " <<END\n");
+		}
 		double radiusOfEarth = getTauModel().getRadiusOfEarth();
 		for (int i = 0; i < arrivals.size(); i++) {
-		    Arrival currArrival = (Arrival) arrivals.get(i);
-		    if (outputFormat.equals(TauP_Tool.JSON)) {
-	            throw new RuntimeException("JSON output for TauP_Path not yet supported.");
-	        } else if (outputFormat.equals(SVG)) {
-	            out.println("<!-- "+getCommentLine(currArrival));
-	            out.println(" -->");
-	            out.println("<g class=\""+currArrival.getName()+"\">");
-	            out.println("  <polyline points=\"");
-		    } else {
-		        out.println(getCommentLine(currArrival));
-		    }
+			Arrival currArrival = (Arrival) arrivals.get(i);
+			out.println(getCommentLine(currArrival));
+
 
 			double calcTime = 0.0;
 			double calcDist = 0.0;
@@ -181,31 +187,32 @@ public class TauP_Path extends TauP_Pierce {
 				calcDepth = path[j].getDepth();
 				double prevDepth = calcDepth; // only used if interpolate due to maxPathInc
 				calcDist = path[j].getDistDeg();
-                if (calcTime > maxPathTime) { 
-                    if (j != 0 && path[j-1].getTime() < maxPathTime) {
-                        // past max time, so interpolate to maxPathTime
-                        calcDist = linearInterp(path[j-1].getTime(), path[j-1].getDistDeg(),
-                                                path[j].getTime(), path[j].getDistDeg(),
-                                                maxPathTime);
-                        calcDepth = linearInterp(path[j-1].getTime(), path[j-1].getDepth(),
-                                                 path[j].getTime(), path[j].getDepth(),
-                                                 maxPathTime);
-                        prevDepth = calcDepth; // only used if interpolate due to maxPathInc
-                        calcTime = maxPathTime;
-                    } else {
-                        break;
-                    }
-                }
-                printDistRadius(out, calcDist, radiusOfEarth - calcDepth);
+				if (calcTime > maxPathTime) {
+					if (j != 0 && path[j-1].getTime() < maxPathTime) {
+						// overlap max time, so interpolate to maxPathTime
+						calcDist = linearInterp(path[j-1].getTime(), path[j-1].getDistDeg(),
+								path[j].getTime(), path[j].getDistDeg(),
+								maxPathTime);
+						calcDepth = linearInterp(path[j-1].getTime(), path[j-1].getDepth(),
+								path[j].getTime(), path[j].getDepth(),
+								maxPathTime);
+						prevDepth = calcDepth; // only used if interpolate due to maxPathInc
+						calcTime = maxPathTime;
+					} else {
+						// past max time, so done
+						break;
+					}
+				}
+				printDistRadius(out, calcDist, radiusOfEarth - calcDepth);
 				if (doPrintTime) {
 					out.write("  " + Outputs.formatTime(calcTime));
 				}
-		        if (!gmtScript && !outputFormat.equals(SVG)) {
-		            printLatLon(out, calcDist, currArrival.getDistDeg());
-		        }
-                out.write("\n");
+				if (!gmtScript) {
+					printLatLon(out, calcDist, currArrival.getDistDeg());
+				}
+				out.write("\n");
 				if (calcTime >= maxPathTime) {
-				    break;
+					break;
 				}
 				if (j < path.length - 1
 						&& (currArrival.getRayParam() != 0.0 &&
@@ -214,14 +221,14 @@ public class TauP_Path extends TauP_Pierce {
 					// path
 					int maxInterpNum = (int) Math
 							.ceil(Math.abs(path[j + 1].getDistDeg() - path[j].getDistDeg())
-									 / maxPathInc);
+									/ maxPathInc);
 
 					for (int interpNum = 1; interpNum < maxInterpNum && calcTime < maxPathTime; interpNum++) {
 						calcTime += (path[j + 1].getTime() - path[j].getTime())
 								/ maxInterpNum;
 						if (calcTime > maxPathTime) { break; }
 						calcDist += (path[j + 1].getDistDeg() - path[j].getDistDeg())
-								 / maxInterpNum;
+								/ maxInterpNum;
 						calcDepth = prevDepth + interpNum
 								* (path[j + 1].getDepth() - prevDepth)
 								/ maxInterpNum;
@@ -229,67 +236,160 @@ public class TauP_Path extends TauP_Pierce {
 						if (doPrintTime) {
 							out.write("  " + Outputs.formatTime(calcTime));
 						}
-				        if (!gmtScript && !outputFormat.equals(SVG)) {
-				            printLatLon(out, calcDist, currArrival.getDistDeg());
-				        }
-				        out.write("\n");
+						if (!gmtScript) {
+							printLatLon(out, calcDist, currArrival.getDistDeg());
+						}
+						out.write("\n");
 					}
 				}
 				prevDepth = path[j].getDepth();
 			}
-			if (outputFormat.equals(SVG)) {
-				out.println("\" />");
-				out.println("</g>");
-			}
 		}
-        if (gmtScript) {
-            out.write("END\n");
-        }
+		if (gmtScript) {
+			out.write("END\n");
+		}
 		// label paths with phase name
 
-        if (gmtScript) {
-            out.write("gmt pstext -JP -P -R  -O -K >> " + psFile + " <<ENDLABELS\n");
-        } else if (outputFormat.contentEquals(SVG)) {
-            out.println("<g class=\"phasename\">");
-        }
+		if (gmtScript) {
+			out.write("gmt pstext -JP -P -R  -O -K >> " + psFile + " <<ENDLABELS\n");
+		}
+
+		if (gmtScript) {
+			for (int i = 0; i < arrivals.size(); i++) {
+				Arrival currArrival = (Arrival) arrivals.get(i);
+				TimeDist[] path = currArrival.getPath();
+				int midSample = path.length / 2;
+				double calcDepth = path[midSample].getDepth();
+				double calcDist = path[midSample].getDistDeg();
+				double radius = radiusOfEarth - calcDepth;
+				if (gmtScript) {
+					printDistRadius(out, calcDist, radius);
+					out.write( " 10 0 0 9 "
+							+ currArrival.getName() + "\n");
+				} else if (outputFormat.equals(SVG)) {
+					double radian = (calcDist-90)*Math.PI/180;
+					double x = radius*Math.cos(radian);
+					double y = radius*Math.sin(radian);
+					out.println("<text class=\""+currArrival.getName()+"\" x=\""+Outputs.formatDistance(x)+"\" y=\""+Outputs.formatDistance(y)+"\">"+currArrival.getName() + "</text>");
+				}
+			}
+		}
+		if (gmtScript) {
+			out.write("ENDLABELS\n");
+		} else if (outputFormat.contentEquals(SVG)) {
+			out.println("</g> <!-- end labels -->");
+		}
+
+		if (gmtScript) {
+			out.println("# end postscript");
+			out.println("gmt psxy -P -R -O -JP -m -A -T  >> " + psFile);
+			out.println("# convert ps to pdf, clean up .ps file");
+			out.println("gmt psconvert -P -Tf  " + psFile+" && rm " + psFile);
+			out.println("# clean up after gmt...");
+			out.println("rm gmt.history");
+		} else if (outputFormat.equals(SVG)) {
+			out.println("</g> <!-- end translate -->");
+			out.println("</svg>");
+		}
+	}
+
+	public void printResultSVG(PrintWriter out) throws IOException {
+		double radiusOfEarth = getTauModel().getRadiusOfEarth();
+		for (int i = 0; i < arrivals.size(); i++) {
+		    Arrival currArrival = (Arrival) arrivals.get(i);
+			out.println("<!-- "+getCommentLine(currArrival));
+			out.println(" -->");
+			out.println("<g class=\""+currArrival.getName()+"\">");
+
+			double calcTime = 0.0;
+			double calcDist = 0.0;
+			double calcDepth;
+
+			TimeDist prevEnd = null;
+			for (SeismicPhaseSegment seg : currArrival.getPhase().getPhaseSegments()) {
+				String p_or_s = seg.isPWave ? "p_wave" : "s_wave";
+				out.println("  <g class=\""+seg.legName+"\">");
+				out.println("  <polyline class=\""+p_or_s+"\" points=\"");
+				List<TimeDist> segPath = seg.calcPathTimeDist(currArrival, prevEnd);
+				for (TimeDist td : segPath) {
+					if (prevEnd != null && (currArrival.getRayParam() != 0.0 &&
+							Math.abs(prevEnd.getDistDeg() - td.getDistDeg()) > maxPathInc)) {
+						// interpolate to steps of at most maxPathInc degrees for
+						// path
+						int maxInterpNum = (int) Math
+								.ceil(Math.abs(td.getDistDeg() - prevEnd.getDistDeg())
+										/ maxPathInc);
+
+						for (int interpNum = 1; interpNum < maxInterpNum && calcTime < maxPathTime; interpNum++) {
+							calcTime += (td.getTime() - prevEnd.getTime())
+									/ maxInterpNum;
+							if (calcTime > maxPathTime) { break; }
+							calcDist += (td.getDistDeg() - prevEnd.getDistDeg())
+									/ maxInterpNum;
+							calcDepth = prevEnd.getDepth() + interpNum
+									* (td.getDepth() - prevEnd.getDepth())
+									/ maxInterpNum;
+							printDistRadiusAsXY(out, calcDist, radiusOfEarth - calcDepth);
+							out.write("\n");
+						}
+					}
+
+					calcTime = td.getTime();
+					calcDepth = td.getDepth();
+					calcDist = td.getDistDeg();
+					if (calcTime > maxPathTime) {
+						// now check to see if past maxPathTime, to create partial path up to a time
+						if (prevEnd != null && prevEnd.getTime() < maxPathTime) {
+							// overlap max time, so interpolate to maxPathTime
+							calcDist = linearInterp(prevEnd.getTime(), prevEnd.getDistDeg(),
+									td.getTime(), td.getDistDeg(),
+									maxPathTime);
+							calcDepth = linearInterp(prevEnd.getTime(), prevEnd.getDepth(),
+									td.getTime(), td.getDepth(),
+									maxPathTime);
+							calcTime = maxPathTime;
+						} else {
+							// past max time, so done
+							break;
+						}
+					}
+					printDistRadiusAsXY(out, calcDist, radiusOfEarth - calcDepth);
+					out.write("\n");
+					prevEnd = td;
+				}
+				out.println("\" />");
+				out.println("  </g>"); // end segment
+				if (calcTime >= maxPathTime) {
+					// past max, so done
+					break;
+				}
+			}
+
+			out.println("</g>"); // end path
+		}
+		// label paths with phase name
+
+        out.println("    <g class=\"phasename\">");
         
-        if (gmtScript || outputFormat.contentEquals(SVG)) {
-            for (int i = 0; i < arrivals.size(); i++) {
-                Arrival currArrival = (Arrival) arrivals.get(i);
-                TimeDist[] path = currArrival.getPath();
-                int midSample = path.length / 2;
-                double calcDepth = path[midSample].getDepth();
-                double calcDist = path[midSample].getDistDeg();
-                double radius = radiusOfEarth - calcDepth;
-                if (gmtScript) {
-                    printDistRadius(out, calcDist, radius);
-                    out.write( " 10 0 0 9 "
-                            + currArrival.getName() + "\n");
-                } else if (outputFormat.equals(SVG)) {
-                    double radian = (calcDist-90)*Math.PI/180;
-                    double x = radius*Math.cos(radian);
-                    double y = radius*Math.sin(radian);
-                    out.println("<text class=\""+currArrival.getName()+"\" x=\""+Outputs.formatDistance(x)+"\" y=\""+Outputs.formatDistance(y)+"\">"+currArrival.getName() + "</text>");
-                }
-            }
-        }
-        if (gmtScript) {
-            out.write("ENDLABELS\n");
-        } else if (outputFormat.contentEquals(SVG)) {
-            out.println("</g> <!-- end labels -->");
-        }
-        
-        if (gmtScript) {
-            out.println("# end postscript"); 
-            out.println("gmt psxy -P -R -O -JP -m -A -T  >> " + psFile);
-            out.println("# convert ps to pdf, clean up .ps file"); 
-            out.println("gmt psconvert -P -Tf  " + psFile+" && rm " + psFile);
-            out.println("# clean up after gmt...");
-            out.println("rm gmt.history");
-        } else if (outputFormat.equals(SVG)) {
-            out.println("</g> <!-- end translate -->");
-            out.println("</svg>");
-        }
+		for (int i = 0; i < arrivals.size(); i++) {
+			Arrival currArrival = (Arrival) arrivals.get(i);
+			TimeDist[] path = currArrival.getPath();
+			int midSample = path.length / 2;
+			double calcDepth = path[midSample].getDepth();
+			double calcDist = path[midSample].getDistDeg();
+			double radius = radiusOfEarth - calcDepth;
+			double radian = (calcDist-90)*Math.PI/180;
+			double x = radius*Math.cos(radian);
+			double y = radius*Math.sin(radian);
+			out.println("      <text class=\""+currArrival.getName()+"\" x=\""+Outputs.formatDistance(x)+"\" y=\""+Outputs.formatDistance(y)+"\">"+currArrival.getName() + "</text>");
+
+		}
+
+		out.println("    </g> <!-- end labels -->");
+
+		out.println("  </g> <!-- end translate -->");
+		out.println("</svg>");
+
 	}
 
 	@Override
@@ -298,21 +398,19 @@ public class TauP_Path extends TauP_Pierce {
 		out.println(s);
 	}
 
+	protected void printDistRadiusAsXY(Writer out, double calcDist, double radius) throws IOException {
+		double radian = (calcDist-90)*Math.PI/180;
+		double x = radius*Math.cos(radian);
+		double y = radius*Math.sin(radian);
+		out.write(Outputs.formatDistance(x)
+				+ "  "
+				+ Outputs.formatDistance(y));
+	}
     protected void printDistRadius(Writer out, double calcDist, double radius) throws IOException {
-        if (outputFormat.equals(TauP_Tool.JSON)) {
-            throw new RuntimeException("JSON output for TauP_Path not yet supported.");
-        } else if (outputFormat.equals(SVG)) {
-            double radian = (calcDist-90)*Math.PI/180;
-            double x = radius*Math.cos(radian);
-            double y = radius*Math.sin(radian);
-            out.write(Outputs.formatDistance(x)
-                      + "  "
-                      + Outputs.formatDistance(y));
-        } else {
             out.write(Outputs.formatDistance(calcDist)
                       + "  "
                       + Outputs.formatDepth(radius));
-        }
+
     }
 	protected void printLatLon(Writer out, double calcDist, double endDist) throws IOException {
 		double lat, lon;
@@ -383,6 +481,12 @@ public class TauP_Path extends TauP_Pierce {
         out.println("            stroke: black;");
         out.println("            fill: none;");
         out.println("        }");
+		out.println("        polyline.p_wave {");
+		out.println("            stroke: blue;");
+		out.println("        }");
+		out.println("        polyline.s_wave {");
+		out.println("            stroke: red;");
+		out.println("        }");
         out.println("        text.label {");
         out.println("            font: bold ;");
         out.println("            font-size: "+fontSize+"px;");
@@ -405,9 +509,9 @@ public class TauP_Path extends TauP_Pierce {
         out.println("<!-- tick marks every "+step+" degrees.-->");
         for (int i = 0; i < 360; i+= step) {
             out.print("  <polyline points=\"");
-            printDistRadius(out, i, R);
+			printDistRadiusAsXY(out, i, R);
             out.print(", ");
-            printDistRadius(out, i, R*1.05);
+			printDistRadiusAsXY(out, i, R*1.05);
             out.println("\" />");
 
             double radian = (i-90)*Math.PI/180;
