@@ -228,7 +228,9 @@
       url += `&scatter=${scatdepth},${scatdist}`;
     }
     if (toolname === "pierce") {
-      url += `&piercedepth=${piercedepth}`;
+      if (piercedepth.length > 0) {
+        url += `&piercedepth=${piercedepth}`;
+      }
       if (piercelimit !== "all") {
         url += `&piercelimit=${piercelimit}`;
       }
