@@ -185,12 +185,13 @@ public class TauP_Curve extends TauP_Time {
         this.mapWidthUnit = mapWidthUnit;
     }
 
-    public void calculate(double degrees) throws TauModelException {
+    public List<Arrival> calculate(List<Double> degreesList) throws TauModelException {
         /*
          * no need to do any calculations. So, this just overrides
          * TauP_Time.calculate. printResult handles everything else.
          */
         depthCorrect();
+        return new ArrayList<>();
     }
     
 
@@ -283,7 +284,7 @@ public class TauP_Curve extends TauP_Time {
             setSourceDepth(Double.valueOf(toolProps.getProperty("taup.source.depth",
                                                               "0.0"))
                     .doubleValue());
-            calculate(degrees);
+            depthCorrect();
             printResult(getWriter());
         } else {
             StreamTokenizer tokenIn = new StreamTokenizer(new InputStreamReader(System.in));
@@ -299,7 +300,7 @@ public class TauP_Curve extends TauP_Time {
                 return;
             }
             setSourceDepth(tempDepth);
-            calculate(degrees);
+            depthCorrect();
             printResult(getWriter());
         }
     }
@@ -629,7 +630,7 @@ public class TauP_Curve extends TauP_Time {
         if(reduceTime) {
             timeReduced = time - arcDistance / reduceVel;
         } else if(relativePhaseName != "") {
-            relativeArrival = SeismicPhase.getEarliestArrival(relPhase, distDeg);
+            Arrival relativeArrival = SeismicPhase.getEarliestArrival(relPhase, distDeg);
             if (relativeArrival == null) {
                 // no relative arrival at this dist, skip
                 return new double[0];

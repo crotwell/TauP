@@ -61,9 +61,10 @@ public class TauP_Wavefront extends TauP_Path {
     }
 
     @Override
-    public void calculate(double degrees) throws TauModelException {
-        // ignore degrees as we need a suite of distances
+    public List<Arrival> calculate(List<Double> degreesList) throws TauModelException {
+        // ignore degrees as we need a suite of distances for each phase
         result = calcIsochron();
+        return new ArrayList<Arrival>();
     }
 
     /** Prints the command line arguments common to all TauP tools. */
@@ -255,7 +256,7 @@ public class TauP_Wavefront extends TauP_Path {
             double minDist = phase.getMinDistanceDeg();
             double maxDist = phase.getMaxDistanceDeg();
             double deltaDist = (maxDist - minDist) / (numRays - 1);
-            degrees = minDist;
+            double degrees = minDist;
             List<Arrival> allArrival = new ArrayList<Arrival>();
             for (int r = 0; r < getNumRays(); r++) {
                 degrees = minDist + r * deltaDist;
@@ -392,7 +393,7 @@ public class TauP_Wavefront extends TauP_Path {
             super.start();
         } else {
             /* enough info given on cmd line, so just do one calc. */
-            calculate(degrees);
+            calculate(new ArrayList<Double>());
             printResult(getWriter());
         }
     }

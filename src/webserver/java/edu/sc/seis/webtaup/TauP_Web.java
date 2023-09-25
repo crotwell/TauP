@@ -18,10 +18,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.Deque;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 
 public class TauP_Web extends TauP_Tool {
@@ -80,12 +77,13 @@ public class TauP_Web extends TauP_Tool {
                             }
 
                             if (tool instanceof TauP_Time) {
-                                double degrees;
+                                List<Double> degreesList = new ArrayList<>();
                                 if (queryParams.containsKey("distdeg")) {
-                                    degrees = Double.parseDouble(queryParams.get("distdeg").getFirst());
-                                    System.err.println("deg " + degrees);
+                                    for (String distListStr : queryParams.get("distdeg")) {
+                                        degreesList.addAll(TauP_Time.parseDegreeList(distListStr));
+                                    }
                                 } else if (tool instanceof TauP_Curve || tool instanceof TauP_Wavefront) {
-                                    degrees = 0; // doesn't matter for curve or wavefront
+                                    // doesn't matter for curve or wavefront
                                 } else {
                                     final String errorPage = "<html><head><title>Error</title></head><body>distdeg parameter is required</body></html>";
                                     exchange.setStatusCode(400);
@@ -100,7 +98,7 @@ public class TauP_Web extends TauP_Tool {
                                     StringWriter out = new StringWriter();
                                     PrintWriter pw = new PrintWriter(out);
                                     tool.printScriptBeginning(pw);
-                                    ((TauP_Time) tool).calculate(degrees);
+                                    List<Arrival> arrivalList = ((TauP_Time) tool).calculate(degreesList);
                                     ((TauP_Time) tool).printResult(pw);
                                     configContentType(tool.outputFormat, exchange);
                                     exchange.getResponseSender().send(out.toString());

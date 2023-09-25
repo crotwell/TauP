@@ -131,6 +131,8 @@ public class Arrival {
     private double incidentAngle;
     
     private double takeoffAngle;
+
+    private Arrival relativeToArrival = null;
     
     // get set methods
     /** @return the phase used to calculate this arrival. */
@@ -260,6 +262,18 @@ public class Arrival {
             this.path = getPhase().calcPathTimeDist(this).toArray(new TimeDist[0]);
         }
         return path;
+    }
+
+    public boolean isRelativeToArrival() {
+        return relativeToArrival != null;
+    }
+
+    public Arrival getRelativeToArrival() {
+        return relativeToArrival;
+    }
+
+    public void setRelativeToArrival(Arrival relativeToArrival) {
+        this.relativeToArrival = relativeToArrival;
     }
 
     public String toString() {
@@ -401,6 +415,14 @@ public class Arrival {
             out.append(COMMA+NL);
             out.append(indent+SQ+"scatterdepth"+QC+(float)scatPhase.getScattererDepth()+COMMA+NL);
             out.append(indent+SQ+"scatterdistdeg"+QC+scatPhase.getScattererDistanceDeg());
+        }
+        if (isRelativeToArrival()) {
+            out.append(COMMA+NL);
+            Arrival relArrival = getRelativeToArrival();
+            out.append(indent+SQ+"relative"+QC+"{"+NL);
+            out.append(indent+S+SQ+"difference"+QC+(float)(getTime()-relArrival.getTime())+COMMA+NL);
+            out.append(indent+S+SQ+"arrival"+QC+relArrival.asJSON(pretty,indent+S+S)+COMMA+NL);
+            out.append(indent+S+"}");
         }
         if (withPierce || withPath) {
             out.append(COMMA+NL);

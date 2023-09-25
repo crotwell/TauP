@@ -179,11 +179,12 @@ public class TauP_Pierce extends TauP_Time {
     }
 
     @Override
-    public void calculate(double degrees) throws TauModelException {
-        super.calculate(degrees);
+    public List<Arrival> calculate(List<Double> degreesList) throws TauModelException {
+        List<Arrival> arrivalList = super.calculate(degreesList);
         for (Arrival arrival : getArrivals()) {
             arrival.getPierce(); // side effect of calculating pierce points
         }
+        return arrivalList;
     }
     
     String getCommentLine(Arrival currArrival) {
@@ -249,11 +250,11 @@ public class TauP_Pierce extends TauP_Time {
                             && backAzimuth != Double.MAX_VALUE) {
                         lat = SphericalCoords.latFor(stationLat,
                                                      stationLon,
-                                                     degrees - calcDist,
+                                currArrival.getDistDeg() - calcDist,
                                                      backAzimuth);
                         lon = SphericalCoords.lonFor(stationLat,
                                                      stationLon,
-                                                     degrees - calcDist,
+                                currArrival.getDistDeg() - calcDist,
                                                      backAzimuth);
                         out.write("  " + Outputs.formatLatLon(lat) + "  "
                                 + Outputs.formatLatLon(lon));

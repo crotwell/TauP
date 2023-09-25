@@ -1,6 +1,8 @@
 package edu.sc.seis.TauP;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JTable;
@@ -43,7 +45,7 @@ import javax.swing.event.ListSelectionListener;
 public class TauP_GUI extends javax.swing.JFrame {
 
     /** Initializes the Form */
-    protected double distance = 0;
+    protected List<Double> distanceList = new ArrayList<>();
 
     protected javax.swing.JTable timeTable, pierceTable;
 
@@ -322,9 +324,8 @@ public class TauP_GUI extends javax.swing.JFrame {
                     .doubleValue());
             timeTool.clearPhaseNames();
             timeTool.setPhaseNames(phaseDialog.getPhases());
-            setDistance(Double.valueOf(distanceTextField.getText())
-                    .doubleValue());
-            timeTool.calculate(distance);
+            setDistanceList(TauP_Time.parseDegreeList(distanceTextField.getText()));
+            timeTool.calculate(distanceList);
             // System.out.println("Done calculating time"+distance+"
             // "+timeTool.getNumArrivals()
             // +" "+timeTool.getPhaseNameString()+" "+timeTool.getTauModelName()
@@ -333,12 +334,12 @@ public class TauP_GUI extends javax.swing.JFrame {
                     .doubleValue());
             pierceTool.clearPhaseNames();
             pierceTool.setPhaseNames(phaseDialog.getPhases());
-            pierceTool.calculate(distance);
+            pierceTool.calculate(distanceList);
             pathTool.setSourceDepth(Double.valueOf(depthTextField.getText())
                     .doubleValue());
             pathTool.clearPhaseNames();
             pathTool.setPhaseNames(phaseDialog.getPhases());
-            pathTool.calculate(distance);
+            pathTool.calculate(distanceList);
             showResults();
         } catch(Exception e) {
             System.out.println("exception in calculate " + e);
@@ -348,7 +349,7 @@ public class TauP_GUI extends javax.swing.JFrame {
 
     private void distanceActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_distanceActionPerformed
         // Add your handling code here:
-        setDistance(Double.valueOf(evt.getActionCommand()).doubleValue());
+        setDistanceList(TauP_Time.parseDegreeList(evt.getActionCommand()));
         calculateActionPerformed(evt);
     }// GEN-LAST:event_distanceActionPerformed
 
@@ -441,8 +442,8 @@ public class TauP_GUI extends javax.swing.JFrame {
         timeTool.setSourceDepth(depth);
     }
 
-    protected void setDistance(double distance) {
-        this.distance = distance;
+    protected void setDistanceList(List<Double> distanceList) {
+        this.distanceList = distanceList;
     }
 
     protected void showResults() {

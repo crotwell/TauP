@@ -120,10 +120,6 @@ public class TauP_SetSac extends TauP_Time {
         }
     }
 
-    public void calculate(double degrees) throws TauModelException {
-        calcTime(degrees);
-    }
-
     public void init() throws TauPException {
         super.init();
         setSacVarNums();

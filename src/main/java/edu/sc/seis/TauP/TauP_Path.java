@@ -142,11 +142,13 @@ public class TauP_Path extends TauP_Pierce {
 		maxPathInc = max;
 	}
 
-	public void calculate(double degrees) throws TauModelException {
-	    super.calculate(degrees);
-	    for (Arrival arrival : getArrivals()) {
+	@Override
+	public List<Arrival> calculate(List<Double> degreesList) throws TauModelException {
+		List<Arrival> arrivalList = super.calculate(degreesList);
+	    for (Arrival arrival : arrivalList) {
             arrival.getPath(); // side effect of calculating path
         }
+	    return arrivalList;
 	}
 
 	@Override
@@ -199,7 +201,7 @@ public class TauP_Path extends TauP_Pierce {
 					out.write("  " + Outputs.formatTime(calcTime));
 				}
 		        if (!gmtScript && !outputFormat.equals(SVG)) {
-		            printLatLon(out, calcDist);
+		            printLatLon(out, calcDist, currArrival.getDistDeg());
 		        }
                 out.write("\n");
 				if (calcTime >= maxPathTime) {
@@ -228,7 +230,7 @@ public class TauP_Path extends TauP_Pierce {
 							out.write("  " + Outputs.formatTime(calcTime));
 						}
 				        if (!gmtScript && !outputFormat.equals(SVG)) {
-				            printLatLon(out, calcDist);
+				            printLatLon(out, calcDist, currArrival.getDistDeg());
 				        }
 				        out.write("\n");
 					}
@@ -312,7 +314,7 @@ public class TauP_Path extends TauP_Pierce {
                       + Outputs.formatDepth(radius));
         }
     }
-	protected void printLatLon(Writer out, double calcDist) throws IOException {
+	protected void printLatLon(Writer out, double calcDist, double endDist) throws IOException {
 		double lat, lon;
 		if (eventLat != Double.MAX_VALUE && eventLon != Double.MAX_VALUE
 				&& azimuth != Double.MAX_VALUE) {
@@ -323,9 +325,9 @@ public class TauP_Path extends TauP_Pierce {
 		} else if (stationLat != Double.MAX_VALUE
 				&& stationLon != Double.MAX_VALUE
 				&& backAzimuth != Double.MAX_VALUE) {
-			lat = SphericalCoords.latFor(stationLat, stationLon, degrees
+			lat = SphericalCoords.latFor(stationLat, stationLon, endDist
 					- calcDist, backAzimuth);
-			lon = SphericalCoords.lonFor(stationLat, stationLon, degrees
+			lon = SphericalCoords.lonFor(stationLat, stationLon, endDist
 					- calcDist, backAzimuth);
 			out.write("  " + Outputs.formatLatLon(lat) + "  "
 					+ Outputs.formatLatLon(lon));
