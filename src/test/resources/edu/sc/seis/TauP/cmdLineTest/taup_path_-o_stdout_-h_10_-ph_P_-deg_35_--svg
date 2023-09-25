@@ -13,10 +13,10 @@
             stroke: black;
             fill: none;
         }
-        polyline.p_wave {
+        polyline.pwave {
             stroke: blue;
         }
-        polyline.s_wave {
+        polyline.swave {
             stroke: red;
         }
         text.label {
@@ -91,7 +91,7 @@
  -->
 <g class="P">
   <g class="P">
-  <polyline class="p_wave" points="
+  <polyline class="pwave" points="
     0.00  -6361.00
     0.00  -6361.00
     2.52  -6356.00
@@ -197,7 +197,7 @@
 " />
   </g>
   <g class="P">
-  <polyline class="p_wave" points="
+  <polyline class="pwave" points="
  1660.24  -5272.88
  1748.84  -5248.64
  1837.10  -5222.92

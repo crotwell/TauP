@@ -307,7 +307,7 @@ public class TauP_Path extends TauP_Pierce {
 
 			TimeDist prevEnd = null;
 			for (SeismicPhaseSegment seg : currArrival.getPhase().getPhaseSegments()) {
-				String p_or_s = seg.isPWave ? "p_wave" : "s_wave";
+				String p_or_s = seg.isPWave ? "pwave" : "swave";
 				out.println("  <g class=\""+seg.legName+"\">");
 				out.println("  <polyline class=\""+p_or_s+"\" points=\"");
 				List<TimeDist> segPath = seg.calcPathTimeDist(currArrival, prevEnd);
@@ -481,10 +481,10 @@ public class TauP_Path extends TauP_Pierce {
         out.println("            stroke: black;");
         out.println("            fill: none;");
         out.println("        }");
-		out.println("        polyline.p_wave {");
+		out.println("        polyline.pwave {");
 		out.println("            stroke: blue;");
 		out.println("        }");
-		out.println("        polyline.s_wave {");
+		out.println("        polyline.swave {");
 		out.println("            stroke: red;");
 		out.println("        }");
         out.println("        text.label {");
