@@ -225,6 +225,19 @@ public class ScatteredSeismicPhase implements SeismicPhase {
         return inboundArrival!= null && scatteredPhase.hasArrivals();
     }
 
+
+    @Override
+    public List<Arrival> calcTimeExactDistanceDeg(double deg) {
+        List<Arrival> out = new ArrayList<>();
+        double scatDist = calcScatterDistDeg(deg, getScattererDistanceDeg(), isBackscatter());
+        double calcScatRad = scatDist * Arrival.DtoR ;
+        List<Arrival> scatAtDist = scatteredPhase.calcTimeExactDistance(calcScatRad);
+        for (Arrival a : scatAtDist) {
+            a.setSearchDistDeg(deg);
+        }
+        return scatAtDist;
+    }
+
     @Override
     public List<Arrival> calcTime(double deg) {
         List<Arrival> out = new ArrayList<>();

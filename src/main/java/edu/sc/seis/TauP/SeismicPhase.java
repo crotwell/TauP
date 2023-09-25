@@ -126,6 +126,8 @@ public interface SeismicPhase extends Serializable, Cloneable {
 
     List<Arrival> calcTime(double deg);
 
+    public List<Arrival> calcTimeExactDistanceDeg(double deg);
+
     Arrival shootRay(double rayParam) throws SlownessModelException, NoSuchLayerException;
 
     double calcRayParamForTakeoffAngle(double takeoffDegree);

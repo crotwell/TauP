@@ -509,10 +509,14 @@ public class SimpleSeismicPhase implements SeismicPhase {
         return arrivals;
     }
 
-    /**
-     * Calculates arrivals for this phase, but only for the exact distance in radians. This does not check multiple
-     * laps nor going the long way around.
-     *  */
+    public List<Arrival> calcTimeExactDistanceDeg(double deg) {
+        return calcTimeExactDistance(deg * Arrival.DtoR );
+    }
+
+        /**
+         * Calculates arrivals for this phase, but only for the exact distance in radians. This does not check multiple
+         * laps nor going the long way around.
+         *  */
     public List<Arrival> calcTimeExactDistance(double searchDist) {
         List<Arrival> arrivals = new ArrayList<Arrival>();
         for(int rayNum = 0; rayNum < (dist.length - 1); rayNum++) {

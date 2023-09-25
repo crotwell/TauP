@@ -187,6 +187,7 @@ public class TauP_Wavefront extends TauP_Path {
                                 + Outputs.formatRayParam(td.getP()));
                     } else if (outputFormat.equals(SVG)) {
                         printDistRadiusAsXY(out, td.getDistDeg(), radiusOfEarth - td.getDepth());
+                        timeOut.println();
                     }
                 }
                 if (outputFormat.equals(SVG)) {
@@ -260,7 +261,7 @@ public class TauP_Wavefront extends TauP_Path {
             List<Arrival> allArrival = new ArrayList<Arrival>();
             for (int r = 0; r < getNumRays(); r++) {
                 degrees = minDist + r * deltaDist;
-                List<Arrival> phaseArrivals = phase.calcTime(degrees);
+                List<Arrival> phaseArrivals = phase.calcTimeExactDistanceDeg(degrees);
                 allArrival.addAll(phaseArrivals);
             }
             Map<Float, List<TimeDist>> out = new HashMap<Float, List<TimeDist>>();
