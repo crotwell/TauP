@@ -94,6 +94,16 @@
         <input type="radio" name="pierce" id="pierce_under" value="under" />
         <label for="pierce_under">Under</label>
     </fieldset>
+
+    <fieldset>
+      <label for="wavefront">
+          <span>Wavefront: </span>
+      </label>
+      <label for="negdist">
+          <span>Negative Distances: </span>
+      </label>
+      <input type="checkbox" id="negdist" name="negdist" checked />
+    </fieldset>
     <fieldset>
         <legend>Format:</legend>
         <input type="radio" name="format" id="format_text" value="text" checked />
@@ -199,6 +209,7 @@
     let isScatter = document.querySelector('input[name="isscatter"]').checked;
     let piercedepth = document.querySelector('input[name="piercedepth"]').value;
     let piercelimit = document.querySelector('input[name="pierce"]:checked').value;
+    let isNegDist = document.querySelector('input[name="negdist"]').checked;
 
 
 
@@ -223,7 +234,9 @@
       }
     }
     if (toolname === "wavefront") {
-      url += `&negdist=true`;
+      if (isNegDist) {
+        url += `&negdist=true`;
+      }
     }
     // set format last as most useful to change
     url += `&format=${format}`;
