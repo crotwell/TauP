@@ -531,12 +531,11 @@ public class TauP_Time extends TauP_Tool {
         phaseList = phaseList.replaceAll(",,+", ",");
         // remove comma at beginning
         if (phaseList.startsWith(",")) {
-            if (phaseList.length() > 1) {
-                phaseList = phaseList.substring(1);
-            } else {
-                // phaseList is just a single comma, no phases, so just return
-                return new String[0];
-            }
+            phaseList = phaseList.substring(1);
+        }
+        if (phaseList.length() == 0) {
+            // phaseList is empty, no phases, so just return
+            return new String[0];
         }
         // and comma at end
         if (phaseList.charAt(phaseList.length() - 1) == ',') {

@@ -264,7 +264,14 @@ public class TauP_Web extends TauP_Tool {
             String phases = TauP_Time.DEFAULT_PHASES;
             if (queryParameters.containsKey(QP_PHASES)) {
                 unknownKeys.remove(QP_PHASES);
-                phases = queryParameters.get(QP_PHASES).getFirst();
+                phases = "";
+                for (String phStr : queryParameters.get(QP_PHASES)) {
+                    phases += " "+phStr;
+                }
+                phases = phases.trim();
+                if (phases.length() == 0 ) {
+                    phases = TauP_Time.DEFAULT_PHASES;
+                }
             }
             timeTool.parsePhaseList(phases);
             // ignore
