@@ -36,9 +36,9 @@ public class SvgUtil {
             // Y axis
             double tick_pixel;
             if (maxY > minY) {
-                tick_pixel = tick / maxY * plotWidth;
+                tick_pixel = (tick-minY ) / (maxY-minY) * plotWidth;
             } else {
-                tick_pixel = (minY-tick) / minY * plotWidth;
+                tick_pixel = (minY-tick) / (minY-maxY) * plotWidth;
             }
             String tick_text = ""+tick;
             out.println("<text class=\"ytick\" x=\"" + (-1 * tick_length - 2) + "\" y=\"" + (plotWidth - tick_pixel) + "\">" + tick_text + "</text>");
@@ -51,9 +51,9 @@ public class SvgUtil {
             // X axis
             double tick_pixel;
             if (maxX > minX) {
-                tick_pixel = tick / maxX * plotWidth;
+                tick_pixel = (tick-minX) / (maxX-minX) * plotWidth;
             } else {
-                tick_pixel = (minX-tick) / minX * plotWidth;
+                tick_pixel = (minX-tick) / (minX-maxX) * plotWidth;
             }
             String tick_text = ""+tick;
             out.println("<text class=\"xtick\" x=\"" + tick_pixel + "\" y=\"" + (text_height + tick_length + plotWidth) + "\">" + tick_text + "</text>");

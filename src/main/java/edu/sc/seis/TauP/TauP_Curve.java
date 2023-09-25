@@ -485,10 +485,10 @@ public class TauP_Curve extends TauP_Time {
                         double xPos;
                         double yPos;
                         if (distHorizontal) {
-                            xPos = cval[0] * plotWidth / 180;
-                            yPos = plotWidth - cval[1] * plotWidth / maxTime;
+                            xPos = (cval[0] )* plotWidth / 180;
+                            yPos = plotWidth - (cval[1]-minTime) * plotWidth / (maxTime-minTime);
                         } else {
-                            xPos = cval[1] * plotWidth / maxTime;
+                            xPos = (cval[1]-minTime) * plotWidth / (maxTime-minTime);
                             yPos = plotWidth - cval[0] * plotWidth / 180;
                         }
                         out.println("<text class=\"phaselabel\" x=\"" + xPos + "\" y=\"" + yPos + "\">" + phase.getName() + "</text>");
@@ -498,9 +498,11 @@ public class TauP_Curve extends TauP_Time {
                 }
                 out.println("<g transform=\"scale(1,-1) translate(0, -"+plotWidth+")\">");
                 if (distHorizontal) {
-                    out.println("<g transform=\"scale(" + (plotWidth / 180) + "," + (plotWidth / maxTime) + ")\" >");
+                    out.println("<g transform=\"scale(" + (plotWidth / 180) + "," + (plotWidth / (maxTime-minTime)) + ")\" >");
+                    out.println("<g transform=\"translate(0, -"+minTime+")\">");
                 } else {
-                    out.println("<g transform=\"scale(" +  (plotWidth / maxTime) + "," + (plotWidth / 180) + ")\" >");
+                    out.println("<g transform=\"scale(" +  (plotWidth / (maxTime-minTime)) + "," + (plotWidth / 180) + ")\" >");
+                    out.println("<g transform=\"translate(-"+minTime+", 0)\">");
                 }
             }
         }
@@ -586,6 +588,7 @@ public class TauP_Curve extends TauP_Time {
             out.println("END");
             endGmtAndCleanUp(out, psFile, "X");
         } else if (outputFormat.equals(SVG)) {
+            out.println("</g>");
             out.println("</g>");
             out.println("</g>");
             out.println("</g>");
