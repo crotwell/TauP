@@ -177,7 +177,11 @@
       } else if (format === "text" || format === "gmt") {
         return response.text().then(ans => {
           const pre_el = document.createElement("pre");
-          pre_el.textContent = ans;
+          if (ans.length != 0) {
+            pre_el.textContent = ans;
+          } else {
+            pre_el.textContent = "This page is intentionally blank...";
+          }
           container_el.appendChild(pre_el);
         });
       } else if (format === "json") {
