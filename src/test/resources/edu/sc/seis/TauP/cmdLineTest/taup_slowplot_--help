@@ -2,12 +2,16 @@ Usage: taup slowplot [arguments]
   or, for purists, java edu.sc.seis.TauP.TauP_SlownessPlot [arguments]
 
 Arguments are:
+-nd modelfile       -- "named discontinuities" velocity file
+-tvel modelfile     -- ".tvel" velocity file, ala ttimes
+
 -mod[el] modelname -- use velocity model "modelname" for calculations
                       Default is iasp91.
 
+-h depth           -- source depth in km
 
--nd modelfile       -- "named discontinuities" velocity file
--tvel modelfile     -- ".tvel" velocity file, ala ttimes
+--stadepth depth   -- receiver depth in km
+--scat[ter] depth deg   -- scattering depth and distance
 
 --svg               -- output as SVG
 --csv               -- outputs a CSV ascii table

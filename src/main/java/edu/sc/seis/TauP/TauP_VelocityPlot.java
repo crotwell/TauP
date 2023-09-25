@@ -3,6 +3,8 @@ package edu.sc.seis.TauP;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Creates plots of a velocity model.
@@ -58,6 +60,16 @@ public class TauP_VelocityPlot extends TauP_Tool {
         out.println("<g transform=\"scale(1,-1) translate(0, -"+(plotWidth)+")\">");
         out.println("<g transform=\"scale(" + (plotWidth / maxVel) + "," + (plotWidth / maxY) + ")\" >");
 
+
+        if (getSourceDepth() != 0) {
+            out.print("<polyline class=\"sourcedepth\" points=\"0 "+(maxY-getSourceDepth())+" "+maxVel+" "+(maxY-getSourceDepth())+"\"/>");
+        }
+        if (getReceiverDepth() != 0) {
+            out.print("<polyline class=\"receiverdepth\" points=\"0 "+(maxY-getReceiverDepth())+" "+maxVel+" "+(maxY-getReceiverDepth())+"\"/>");
+        }
+        if (getScattererDepth() != 0) {
+            out.print("<polyline class=\"scattererdepth\" points=\"0 "+(maxY-getScattererDepth())+" "+maxVel+" "+(maxY-getScattererDepth())+"\"/>");
+        }
 
         out.println("<!-- P velocity");
         out.println(" -->");
@@ -128,6 +140,15 @@ public class TauP_VelocityPlot extends TauP_Tool {
         out.println("            vector-effect: non-scaling-stroke;");
         out.println("            stroke: black;");
         out.println("            fill: transparent;");
+        out.println("        }");
+        out.println("        polyline.sourcedepth {");
+        out.println("            stroke: lightgrey;");
+        out.println("        }");
+        out.println("        polyline.receiverdepth {");
+        out.println("            stroke: lightgrey;");
+        out.println("        }");
+        out.println("        polyline.scattererdepth {");
+        out.println("            stroke: lightgrey;");
         out.println("        }");
         out.println("        polyline.swave {");
         out.println("            stroke: red;");
@@ -204,6 +225,17 @@ public class TauP_VelocityPlot extends TauP_Tool {
             } else if (i < args.length - 1 && dashEquals("overlay", args[i])) {
                overlayModelName = args[i+1];
                i++;
+            } else if(args[i].equalsIgnoreCase("-h")) {
+                toolProps.put("taup.source.depth", args[i + 1]);
+                i++;
+            } else if(args[i].equalsIgnoreCase("--stadepth")) {
+                setReceiverDepth(Double.parseDouble(args[i + 1]));
+                i++;
+            } else if(i < args.length - 2 && (args[i].equalsIgnoreCase("--scat") || args[i].equalsIgnoreCase("--scatter"))) {
+                double scatterDepth = Double.valueOf(args[i + 1]).doubleValue();
+                double scatterDistDeg = Double.valueOf(args[i + 2]).doubleValue();
+                setScattererDepth(scatterDepth);
+                i += 2;
             } else {
                 /* I don't know how to interpret this argument, so pass it back */
                 noComprendoArgs[numNoComprendoArgs++] = args[i];
@@ -236,15 +268,39 @@ public class TauP_VelocityPlot extends TauP_Tool {
 
     }
 
+    public double getSourceDepth() {
+        return depth;
+    }
+
+    public void setSourceDepth(double depth) {
+        System.err.println("vplot set source depth to " +depth);
+        this.depth = depth;
+    }
+
+    public double getReceiverDepth() {
+        return receiverDepth;
+    }
+
+    public void setReceiverDepth(double receiverDepth) {
+        this.receiverDepth = receiverDepth;
+    }
+
+    public double getScattererDepth() {
+        return scattererDepth;
+    }
+
+    public void setScattererDepth(double depth) {
+        this.scattererDepth = depth;
+    }
+
     @Override
     public void printUsage() {
 
         TauP_Tool.printStdUsageHead(this.getClass());
 
-        System.out.println("-mod[el] modelname -- use velocity model \"modelname\" for calculations\n"
-                + "                      Default is iasp91.\n\n");
         System.out.println("-nd modelfile       -- \"named discontinuities\" velocity file");
         System.out.println("-tvel modelfile     -- \".tvel\" velocity file, ala ttimes\n");
+        printModDepthUsage();
         System.out.println("--svg               -- output as SVG");
         System.out.println("--csv               -- outputs a CSV ascii table");
         System.out.println("\n");
@@ -264,4 +320,10 @@ public class TauP_VelocityPlot extends TauP_Tool {
     String modelType;
     String overlayModelName = null;
     String overlayModelType = null;
+
+    protected double depth = 0.0;
+
+    protected double receiverDepth = 0.0;
+
+    protected double scattererDepth = 0.0;
 }

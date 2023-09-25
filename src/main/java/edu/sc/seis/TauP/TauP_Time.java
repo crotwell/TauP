@@ -1671,13 +1671,8 @@ public class TauP_Time extends TauP_Tool {
 
     public void printPhaseUsage() {
         Alert.info("-ph phase list     -- comma separated phase list\n"
-                + "-pf phasefile      -- file containing phases\n\n"
-                + "-mod[el] modelname -- use velocity model \"modelname\" for calculations\n"
-                + "                      Default is iasp91.\n\n"
-                + "-h depth           -- source depth in km\n\n"
-                + "--stadepth depth   -- receiver depth in km\n"
-                + "--scat[ter] depth deg   -- scattering depth and distance\n"
-        );
+                + "-pf phasefile      -- file containing phases\n");
+        printModDepthUsage();
     }
 
     public void printDistanceUsage() {

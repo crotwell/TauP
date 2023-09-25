@@ -29,6 +29,10 @@
         <label for="iasp91">iasp91</label>
         <input type="radio" name="model" id="ak135" value="ak135" />
         <label for="ak135">ak135</label>
+        <input type="radio" name="model" id="ak135fcont" value="ak135fcont" />
+        <label for="ak135">ak135fcont</label>
+        <input type="radio" name="model" id="ak135favg" value="ak135favg" />
+        <label for="ak135">ak135favg</label>
         <input type="radio" name="model" id="prem" value="prem" />
         <label for="prem">prem</label>
     </fieldset>
@@ -37,35 +41,59 @@
         <label for="phases">
             <span>Phases: </span>
         </label>
-        <input type="text" id="phases" name="phases" value="P,S" required />
+        <input type="text" id="phases" name="phases" value="P,S"  />
 
         <label for="evdepth">
             <span>Source Depth: </span>
         </label>
-        <input type="text" id="evdepth" name="evdepth" value="0" required />
+        <input type="text" id="evdepth" name="evdepth" value="0"  />
 
         <label for="distdeg">
             <span>Distance: </span>
         </label>
         <input type="text" id="distdeg" name="distdeg" value="35" required />
+
+        <label for="stadepth">
+            <span>Receiver Depth: </span>
+        </label>
+        <input type="text" id="stadepth" name="stadepth" value="0"  />
     </fieldset>
 
-        <fieldset>
-            <label for="phases">
-                <span>Scatter: </span>
-            </label>
-            <input type="checkbox" id="isscatter" name="isscatter" />
+    <fieldset>
+        <label for="isscatter">
+            <span>Scatter: </span>
+        </label>
+        <input type="checkbox" id="isscatter" name="isscatter" />
 
-            <label for="scatdepth">
-                <span>Depth: </span>
-            </label>
-            <input type="text" id="scatdepth" name="scatdepth" value="0" />
+        <label for="scatdepth">
+            <span>Depth: </span>
+        </label>
+        <input type="text" id="scatdepth" name="scatdepth" value="0" />
 
-            <label for="scatdist">
-                <span>Distance: </span>
-            </label>
-            <input type="text" id="scatdist" name="scatdist" value="0" />
-        </fieldset>
+        <label for="scatdist">
+            <span>Distance: </span>
+        </label>
+        <input type="text" id="scatdist" name="scatdist" value="0" />
+    </fieldset>
+
+    <fieldset>
+        <label for="pierce">
+            <span>Pierce: </span>
+        </label>
+        <label for="piercedepth">
+            <span>Add Depths: </span>
+        </label>
+        <input type="text" id="piercedepth" name="piercedepth" value="" />
+
+        <input type="radio" name="pierce" id="pierce_all" value="all" checked />
+        <label for="pierce_all">All</label>
+        <input type="radio" name="pierce" id="pierce_rev" value="rev"  />
+        <label for="pierce_rev">Rev</label>
+        <input type="radio" name="pierce" id="pierce_turn" value="turn" />
+        <label for="pierce_turn">Turn</label>
+        <input type="radio" name="pierce" id="pierce_under" value="under" />
+        <label for="pierce_under">Under</label>
+    </fieldset>
     <fieldset>
         <legend>Format:</legend>
         <input type="radio" name="format" id="format_text" value="text" checked />
@@ -164,20 +192,42 @@
     let model = document.querySelector('input[name="model"]:checked').value;
     let phases = document.querySelector('input[name="phases"]').value;
     let evdepth = document.querySelector('input[name="evdepth"]').value;
+    let stadepth = document.querySelector('input[name="stadepth"]').value;
     let distdeg = document.querySelector('input[name="distdeg"]').value;
     let scatdepth = document.querySelector('input[name="scatdepth"]').value;
     let scatdist = document.querySelector('input[name="scatdist"]').value;
     let isScatter = document.querySelector('input[name="isscatter"]').checked;
+    let piercedepth = document.querySelector('input[name="piercedepth"]').value;
+    let piercelimit = document.querySelector('input[name="pierce"]:checked').value;
+
+
 
     let format = valid_format(toolname);
-    let url = `${toolname}?model=${model}&phases=${phases}&evdepth=${evdepth}&distdeg=${distdeg}&format=${format}`;
-console.log(`isscatter: ${isScatter}`)
+    let url = `${toolname}?model=${model}&evdepth=${evdepth}`;
+    if (toolname !== "velplot") {
+      url += `&phases=${phases}`;
+    }
+    if (toolname !== "velplot" && toolname !== "curve") {
+        url += `&distdeg=${distdeg}`;
+    }
+    if (stadepth !== 0) {
+      url += `&stadepth=${stadepth}`;
+    }
     if (isScatter ) {
       url += `&scatter=${scatdepth},${scatdist}`;
+    }
+    if (toolname === "pierce") {
+      url += `&piercedepth=${piercedepth}`;
+      if (piercelimit !== "all") {
+        url += `&piercelimit=${piercelimit}`;
+      }
     }
     if (toolname === "wavefront") {
       url += `&negdist=true`;
     }
+    // set format last as most useful to change
+    url += `&format=${format}`;
+
     return url;
   }
   function process() {

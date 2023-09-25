@@ -207,9 +207,14 @@ public class TauP_Web extends TauP_Tool {
     public static String QP_MODEL = "model";
     public static String QP_DISTDEG = "distdeg";
     public static String QP_EVDEPTH = "evdepth";
+    public static String QP_STADEPTH = "stadepth";
     public static String QP_SCATTER = "scatter";
     public static String QP_PHASES = "phases";
     public static String QP_FORMAT = "format";
+
+    // Pierce
+    public static String QP_PIERCEDEPTH = "piercedepth";
+    public static String QP_PIERCELIMIT = "piercelimit";
 
     // Wavefront
     public static String QP_TIMESTEP = "timestep";
@@ -232,11 +237,26 @@ public class TauP_Web extends TauP_Tool {
                 unknownKeys.remove(QP_MODEL);
                 vplot.setModelName(queryParameters.get(QP_MODEL).getFirst());
             }
+            if (queryParameters.containsKey(QP_EVDEPTH)) {
+                unknownKeys.remove(QP_EVDEPTH);
+                vplot.setSourceDepth(Double.parseDouble(queryParameters.get(QP_EVDEPTH).getFirst()));
+            }
+            if (queryParameters.containsKey(QP_STADEPTH)) {
+                unknownKeys.remove(QP_STADEPTH);
+                vplot.setReceiverDepth(Double.parseDouble(queryParameters.get(QP_STADEPTH).getFirst()));
+            }
+            if (queryParameters.containsKey(QP_SCATTER)) {
+                unknownKeys.remove(QP_SCATTER);
+                String[] splitQP = queryParameters.get(QP_SCATTER).getFirst().split(",");
+                if (splitQP.length != 2) {
+                    throw new TauPException("Expect depth,distdeg for scatter parameter:"+queryParameters.get(QP_SCATTER).getFirst());
+                }
+                double scatterDepth = Double.valueOf(splitQP[ 0]).doubleValue();
+                vplot.setScattererDepth(scatterDepth);
+            }
             // ignore evdepth, phases, etc
             unknownKeys.remove(QP_DISTDEG);
-            unknownKeys.remove(QP_EVDEPTH);
             unknownKeys.remove(QP_PHASES);
-            unknownKeys.remove(QP_SCATTER);
         }
         if (tool instanceof TauP_Time) {
             TauP_Time timeTool = (TauP_Time) tool;
@@ -250,6 +270,10 @@ public class TauP_Web extends TauP_Tool {
             if (queryParameters.containsKey(QP_EVDEPTH)) {
                 unknownKeys.remove(QP_EVDEPTH);
                 timeTool.setSourceDepth(Double.parseDouble(queryParameters.get(QP_EVDEPTH).getFirst()));
+            }
+            if (queryParameters.containsKey(QP_STADEPTH)) {
+                unknownKeys.remove(QP_STADEPTH);
+                timeTool.setReceiverDepth(Double.parseDouble(queryParameters.get(QP_STADEPTH).getFirst()));
             }
             if (queryParameters.containsKey(QP_SCATTER)) {
                 unknownKeys.remove(QP_SCATTER);
@@ -274,6 +298,24 @@ public class TauP_Web extends TauP_Tool {
                 }
             }
             timeTool.parsePhaseList(phases);
+            if (tool instanceof TauP_Pierce) {
+                TauP_Pierce pierce = (TauP_Pierce) tool;
+                if (queryParameters.containsKey(QP_PIERCEDEPTH)) {
+                    unknownKeys.remove(QP_PIERCEDEPTH);
+                    pierce.appendAddDepths(queryParameters.get(QP_PIERCEDEPTH).getFirst());
+                }
+                if (queryParameters.containsKey(QP_PIERCELIMIT)) {
+                    unknownKeys.remove(QP_PIERCELIMIT);
+                    String limit = queryParameters.get(QP_PIERCELIMIT).getFirst();
+                    if (limit.equals("rev")) {
+                        pierce.setOnlyRevPoints(true);
+                    } else if (limit.equals("turn")) {
+                        pierce.setOnlyTurnPoints(true);
+                    } else if (limit.equals("under")) {
+                        pierce.setOnlyUnderPoints(true);
+                    }
+                }
+            }
             // ignore
             unknownKeys.remove(QP_TIMESTEP);
             unknownKeys.remove(QP_NEGDIST);

@@ -277,7 +277,14 @@ public abstract class TauP_Tool {
         Alert.info("\nArguments are:");
     }
 
-
+    public static void printModDepthUsage() {
+        Alert.info("-mod[el] modelname -- use velocity model \"modelname\" for calculations\n"
+                + "                      Default is iasp91.\n\n"
+                + "-h depth           -- source depth in km\n\n"
+                + "--stadepth depth   -- receiver depth in km\n"
+                + "--scat[ter] depth deg   -- scattering depth and distance\n"
+        );
+    }
 
     public static void printStdUsageTail() {
         Alert.info("\n-o [stdout|outfile]         -- output is redirected to stdout or to the \"outfile\" file\n"
