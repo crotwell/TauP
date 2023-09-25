@@ -23,12 +23,26 @@
             font: bold ;
             font-size: 382px;
             fill: black;
-            fill: black;
         }
         g.phasename text {
             font: bold ;
             font-size: 382px;
             fill: black;
+        }
+        circle {
+            fill: none;
+        }
+        circle.surface {
+            fill: lightgoldenrodyellow;
+        }
+        circle.moho {
+            fill: blanchedalmond;
+        }
+        circle.cmb {
+            fill: lemonchiffon;
+        }
+        circle.iocb {
+            fill: burlywood;
         }
     ]]></style>
 </defs>
@@ -62,15 +76,15 @@
   <text dominant-baseline="baseline" text-anchor="end" class="label" x="-3360.70" y="-5820.91">330</text>
   </g>
 <g class="layers">
-  <circle cx="0.0" cy="0.0" r="6371.0" />
-  <circle cx="0.0" cy="0.0" r="6371.0" />
-  <circle cx="0.0" cy="0.0" r="6351.0" />
-  <circle cx="0.0" cy="0.0" r="6336.0" />
-  <circle cx="0.0" cy="0.0" r="6161.0" />
-  <circle cx="0.0" cy="0.0" r="5961.0" />
-  <circle cx="0.0" cy="0.0" r="5711.0" />
-  <circle cx="0.0" cy="0.0" r="3482.0" />
-  <circle cx="0.0" cy="0.0" r="1217.1000000000004" />
+  <circle class="surface" cx="0.0" cy="0.0" r="6371.0" />
+  <circle class="0.0" cx="0.0" cy="0.0" r="6371.0" />
+  <circle class="20.0" cx="0.0" cy="0.0" r="6351.0" />
+  <circle class="moho" cx="0.0" cy="0.0" r="6336.0" />
+  <circle class="210.0" cx="0.0" cy="0.0" r="6161.0" />
+  <circle class="410.0" cx="0.0" cy="0.0" r="5961.0" />
+  <circle class="660.0" cx="0.0" cy="0.0" r="5711.0" />
+  <circle class="cmb" cx="0.0" cy="0.0" r="3482.0" />
+  <circle class="iocb" cx="0.0" cy="0.0" r="1217.1000000000004" />
   </g>
 <!-- draw paths, coordinates are x,y not degree,radius due to SVG using only cartesian -->
 <!-- > P at   412.43 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    8.613 s/deg.

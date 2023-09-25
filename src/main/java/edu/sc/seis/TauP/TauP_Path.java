@@ -491,13 +491,27 @@ public class TauP_Path extends TauP_Pierce {
         out.println("            font: bold ;");
         out.println("            font-size: "+fontSize+"px;");
         out.println("            fill: black;");
-        out.println("            fill: black;");
         out.println("        }");
         out.println("        g.phasename text {");
         out.println("            font: bold ;");
         out.println("            font-size: "+fontSize+"px;");
         out.println("            fill: black;");
         out.println("        }");
+		out.println("        circle {");
+		out.println("            fill: none;");
+		out.println("        }");
+		out.println("        circle.surface {");
+		out.println("            fill: lightgoldenrodyellow;");
+		out.println("        }");
+		out.println("        circle.moho {");
+		out.println("            fill: blanchedalmond;");
+		out.println("        }");
+		out.println("        circle.cmb {");
+		out.println("            fill: lemonchiffon;");
+		out.println("        }");
+		out.println("        circle.iocb {");
+		out.println("            fill: burlywood;");
+		out.println("        }");
         
         out.println("    ]]></style>");
         out.println("</defs>");
@@ -548,12 +562,21 @@ public class TauP_Path extends TauP_Pierce {
 		out.println("  </g>");
 
 		out.println("<g class=\"layers\">");
-	    out.println("  <circle cx=\"0.0\" cy=\"0.0\" r=\"" + R+"\" />");
+	    out.println("  <circle class=\"surface\" cx=\"0.0\" cy=\"0.0\" r=\"" + R+"\" />");
 	    // other boundaries
 	    double[] branchDepths = tMod.getBranchDepths();
 	    for (int i = 0; i < branchDepths.length; i++) {
-
-	        out.println("  <circle cx=\"0.0\" cy=\"0.0\" r=\"" + (R- branchDepths[i])+"\" />");
+			String name;
+			if (i == tMod.getMohoBranch()) {
+				name = "moho";
+			} else if (i == tMod.getCmbBranch()) {
+				name = "cmb";
+			} else if (i == tMod.getIocbBranch()) {
+				name = "iocb";
+			} else {
+				name = ""+branchDepths[i];
+			}
+			out.println("  <circle class=\""+name+"\" cx=\"0.0\" cy=\"0.0\" r=\"" + (R- branchDepths[i])+"\" />");
 	    }
 		out.println("  </g>");
 	    out.println("<!-- draw paths, coordinates are x,y not degree,radius due to SVG using only cartesian -->");
