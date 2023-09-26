@@ -214,14 +214,14 @@ public class SeismicPhaseSegment {
 		String upDown;
 		if (isFlat) {
 			if (prevEndAction != null) {
-				upDown = "\""+SeismicPhaseFactory.endActionString(prevEndAction)+"\"";
+				upDown = endActionToString(prevEndAction);
 			} else {
-				upDown = "\"none\"";
+				upDown = "none";
 			}
 		} else if (isDownGoing) {
-			upDown = "\"down\"";
+			upDown = "down";
 		} else {
-			upDown = "\"up\"";
+			upDown = "up";
 		}
 		return upDown;
 	}
