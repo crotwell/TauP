@@ -118,6 +118,11 @@
       <label for="wavefront">
           <span>Wavefront: </span>
       </label>
+
+      <label for="timestep">
+          <span>Timestep: </span>
+      </label>
+      <input type="number" id="timestep" name="timestep" value="100" />
       <label for="negdist">
           <span>Negative Distances: </span>
       </label>
@@ -239,6 +244,8 @@
     let isScatter = document.querySelector('input[name="isscatter"]').checked;
     let piercedepth = document.querySelector('input[name="piercedepth"]').value;
     let piercelimit = document.querySelector('input[name="pierce"]:checked').value;
+
+    let timestep = document.querySelector('input[name="timestep"]').value;
     let isNegDist = document.querySelector('input[name="negdist"]').checked;
 
     if (isregulardist) {
@@ -274,6 +281,9 @@
       }
     }
     if (toolname === "wavefront") {
+      if (timestep > 0) {
+        url += `&timestep=${timestep}`;
+      }
       if (isNegDist) {
         url += `&negdist=true`;
       }
@@ -346,8 +356,8 @@
     }
     console.log("starting style animation");
     let time = 0;
-    let step = 100;
-    animateStep(styleEl, svgEl, time, step);
+    let timestep = parseFloat(document.querySelector('input[name="timestep"]').value);
+    animateStep(styleEl, svgEl, time, timestep);
   });
   process();
 </script>
