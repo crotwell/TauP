@@ -189,10 +189,47 @@ public class SeismicPhaseSegment {
 		return depthRange;
 	}
 
+	public String getDepthRangeJSON() {
+		String depthRange;
+		if (isFlat) {
+			if (prevEndAction == null) {
+				depthRange = "\" PrevAction is NULL \"";
+			} else if (prevEndAction == PhaseInteraction.DIFFRACT) {
+				depthRange = "["+tMod.getTauBranch(endBranch, isPWave).getBotDepth()+"]";
+			} else if (prevEndAction == PhaseInteraction.HEAD) {
+				depthRange = "[" + tMod.getTauBranch(endBranch, isPWave).getTopDepth()+"]";
+			} else if (prevEndAction == PhaseInteraction.KMPS) {
+				depthRange = "[0]";
+			} else {
+				throw new RuntimeException("isFlat but prev not HEAD or DIFFRACT: "+endActionToString(prevEndAction));
+			}
+		} else if (isDownGoing) {
+			depthRange = "["+tMod.getTauBranch(startBranch, isPWave).getTopDepth() + ", " + tMod.getTauBranch(endBranch, isPWave).getBotDepth()+"]";
+		} else {
+			depthRange = "["+tMod.getTauBranch(startBranch, isPWave).getBotDepth() + ", " + tMod.getTauBranch(endBranch, isPWave).getTopDepth()+"]";
+		}
+		return depthRange;
+	}
+	public String getUpDownJSON() {
+		String upDown;
+		if (isFlat) {
+			if (prevEndAction != null) {
+				upDown = "\""+SeismicPhaseFactory.endActionString(prevEndAction)+"\"";
+			} else {
+				upDown = "\"none\"";
+			}
+		} else if (isDownGoing) {
+			upDown = "\"down\"";
+		} else {
+			upDown = "\"up\"";
+		}
+		return upDown;
+	}
+
 	public String toJSONString() {
 		String desc = "";
 		if ( ! legName.contentEquals("END")) {
-			String upDown = isFlat ? "flat" : (isDownGoing ? "down" : "up  ");
+			String upDown = getUpDownJSON();
 
 			String action = endActionToString(endAction);
 			String isPString = isPWave ? "P" : "S";
@@ -203,16 +240,16 @@ public class SeismicPhaseSegment {
 			} else if (prevEndAction == PhaseInteraction.KMPS) {
 				isPString = "surface wave";
 			}
-			String branchRange = startBranch == endBranch ? " layer "+startBranch : " layer "+startBranch+" to "+endBranch;
-			String depthRange = getDepthRangeString();
+			String branchRangeJSON = "["+(startBranch == endBranch ? " "+startBranch : " "+startBranch+", "+endBranch)+"]";
+			String depthRange = getDepthRangeJSON();
 			desc += "{\n"
-					+"  \"name\": "+legName
-					+" \"updown\": "+upDown
-					+ " \"type\": "+ isPString
-					+ " \"branch\": "+describeBranchRange(startBranch, endBranch)+","
-					+ branchRange+","
+					+"  \"name\": \""+legName+"\","
+					+" \"updown\": \""+upDown+"\","
+					+ " \"type\": \""+ isPString+"\","
+					+ " \"branch_desc\": \""+describeBranchRange(startBranch, endBranch)+"\","
+					+ " \"branches\": "+branchRangeJSON+","
 					+ " \"depths\": "+depthRange+","
-					+ " \"then\": " +action
+					+ " \"then\": \"" +action+"\""
 					+ "}\n";
 
 		} else {

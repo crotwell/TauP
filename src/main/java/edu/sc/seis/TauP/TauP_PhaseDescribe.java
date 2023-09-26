@@ -114,7 +114,7 @@ public class TauP_PhaseDescribe extends TauP_Time {
 
     public void printResultJSON(PrintWriter writer) {
         List<SeismicPhase> phaseList = getSeismicPhases();
-        writer.println("[\n");
+        writer.println("[");
         boolean first = true;
         for (SeismicPhase phase : phaseList) {
             if (first) {
