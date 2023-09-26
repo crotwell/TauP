@@ -551,10 +551,22 @@ public class TauP_Time extends TauP_Tool {
      * Parses a comma separated list of distances and returns them in an array.
      */
     public static List<Double> parseDegreeList(String degList) {
-        String[] split = degList.split(",");
+        degList = degList.trim();
+        while (degList.startsWith(",")) {
+            degList = degList.substring(1);
+        }
+        while(degList.endsWith(",")) {
+            degList = degList.substring(0, degList.length()-1);
+        }
+        String[] split = degList.trim().split(",");
         List<Double> degreesFound = new ArrayList<Double>(split.length);
         for (int i = 0; i < split.length; i++) {
-            degreesFound.add(Double.parseDouble(split[i]));
+            try {
+                degreesFound.add(Double.parseDouble(split[i].trim()));
+            } catch (NumberFormatException e) {
+                // oh well
+                System.err.println("can't parse '"+split[i]+"' as number, skipping.");
+            }
         }
         return degreesFound;
     }

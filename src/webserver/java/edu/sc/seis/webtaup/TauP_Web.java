@@ -158,7 +158,7 @@ public class TauP_Web extends TauP_Tool {
 
     public void configContentType(String format, HttpServerExchange exchange) throws TauPException {
         String contentType;
-        if (format.equals(TauP_Tool.TEXT)) {
+        if (format.equals(TauP_Tool.TEXT) || format.equals(TauP_Tool.GMT)) {
             contentType = "text/plain";
         } else if (format.equals(TauP_Tool.CSV)) {
             contentType = "text/csv";

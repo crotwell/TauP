@@ -48,15 +48,34 @@
         </label>
         <input type="text" id="evdepth" name="evdepth" value="0"  />
 
+        <label for="stadepth">
+            <span>Receiver Depth: </span>
+        </label>
+        <input type="text" id="stadepth" name="stadepth" value="0"  />
+    </fieldset>
+    <fieldset>
+
         <label for="distdeg">
             <span>Distance: </span>
         </label>
         <input type="text" id="distdeg" name="distdeg" value="35" required />
 
-        <label for="stadepth">
-            <span>Receiver Depth: </span>
+        <label>Regular:</label>
+        <input type="checkbox" id="isregulardist" name="isregulardist"  />
+        <label for="distdegmin">
+            <span>Min: </span>
         </label>
-        <input type="text" id="stadepth" name="stadepth" value="0"  />
+        <input type="number" id="distdegmin" name="distdegmin" value="0" required />
+        <label for="distdegstep">
+            <span>Step: </span>
+        </label>
+        <input type="number" id="distdegstep" name="distdegstep" value="30"  />
+
+        <label for="distdegmax">
+            <span>Max: </span>
+        </label>
+        <input type="number" id="distdegmax" name="distdegmax" value="180" />
+
     </fieldset>
 
     <fieldset>
@@ -146,7 +165,7 @@
 <script>
   function valid_format(tool) {
     let format = document.querySelector('input[name="format"]:checked').value;
-    if (format === "svg") {
+    if (format === "svg" || format === "gmt") {
       if (tool === "phase" || tool === "time" || tool === "pierce") {
         format = "text";
       }
@@ -160,7 +179,7 @@
   async function display_results(taup_url) {
     console.log(`Load: ${taup_url}`);
     let toolname = document.querySelector('input[name="tool"]:checked').value;
-    let format = valid_format(toolname);
+    const format = valid_format(toolname);
     fetch(taup_url).then( response => {
       const container_el = document.querySelector("#results");
       while(container_el.firstChild) {
@@ -208,7 +227,13 @@
     let phases = document.querySelector('input[name="phases"]').value;
     let evdepth = document.querySelector('input[name="evdepth"]').value;
     let stadepth = document.querySelector('input[name="stadepth"]').value;
+
     let distdeg = document.querySelector('input[name="distdeg"]').value;
+    let isregulardist = document.querySelector('input[name="isregulardist"]').checked;
+    let distdegmin = document.querySelector('input[name="distdegmin"]').value;
+    let distdegstep = document.querySelector('input[name="distdegstep"]').value;
+    let distdegmax = document.querySelector('input[name="distdegmax"]').value;
+
     let scatdepth = document.querySelector('input[name="scatdepth"]').value;
     let scatdist = document.querySelector('input[name="scatdist"]').value;
     let isScatter = document.querySelector('input[name="isscatter"]').checked;
@@ -216,9 +241,17 @@
     let piercelimit = document.querySelector('input[name="pierce"]:checked').value;
     let isNegDist = document.querySelector('input[name="negdist"]').checked;
 
+    if (isregulardist) {
+      let mindist = parseFloat(distdegmin);
+      let step = parseFloat(distdegstep);
+      let max = parseFloat(distdegmax);
+      distdeg=`${mindist}`;
+      for (let d=mindist+step; d<=max; d+=step) {
+        distdeg += `,${d}`;
+      }
+    }
 
-
-    let format = valid_format(toolname);
+    const format = valid_format(toolname);
     let url = `${toolname}?model=${model}&evdepth=${evdepth}`;
     if (toolname !== "velplot") {
       url += `&phases=${phases}`;
