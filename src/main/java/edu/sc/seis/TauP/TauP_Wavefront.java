@@ -141,6 +141,8 @@ public class TauP_Wavefront extends TauP_Path {
         DecimalFormat format = new DecimalFormat(formatStr, new DecimalFormatSymbols(Locale.US));
         PrintWriter timeOut = out;
         for (Float time : keys) {
+            String timeStr = "time_"+time;
+            timeStr = timeStr.replace('.','_');
             if (separateFilesByTime) {
                 String psFileBase = psFile;
                 if (gmtScript && psFile.endsWith(".ps")) {
@@ -171,7 +173,7 @@ public class TauP_Wavefront extends TauP_Path {
                 } else if (outputFormat.equals(SVG)) {
                     timeOut.println("<!-- " + phase.getName() + " at " + time + " seconds");
                     timeOut.println(" -->");
-                    timeOut.println("<polyline points=\"");
+                    timeOut.println("<polyline class=\"wavefront "+phase.getName()+" "+timeStr+"\" points=\"");
                 }
                 Collections.sort(wavefront, new Comparator<TimeDist>() {
 
@@ -199,7 +201,7 @@ public class TauP_Wavefront extends TauP_Path {
                     } else if (outputFormat.equals(SVG)) {
                         timeOut.println("<!-- " + phase.getName() + " at " + time + " seconds (neg distance)");
                         timeOut.println(" -->");
-                        timeOut.println("<polyline points=\"");
+                        timeOut.println("<polyline class=\"wavefront "+phase.getName()+" "+timeStr+"\" points=\"");
                     }
                     for (TimeDist td : wavefront) {
                         if (outputFormat.equals(GMT)) {
