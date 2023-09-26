@@ -83,6 +83,7 @@ public class Arrival {
         this.rayParam = rayParam;
         this.rayParamIndex = rayParamIndex;
         this.searchDist = searchDist;
+        this.searchDistDeg = searchDist * RtoD; // likely rounding errors, but close and should be reset by calc fn
         this.name = name;
         this.puristName = puristName;
         this.sourceDepth = sourceDepth;
@@ -246,6 +247,11 @@ public class Arrival {
     /** returns source depth in kilometers */
     public double getSourceDepth() {
         return sourceDepth;
+    }
+
+    /** returns receiver (station) depth in kilometers */
+    public double getReceiverDepth() {
+        return receiverDepth;
     }
 
     /** returns pierce points as TimeDist objects. */

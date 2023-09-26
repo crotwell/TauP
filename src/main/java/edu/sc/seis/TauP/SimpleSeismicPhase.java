@@ -510,7 +510,11 @@ public class SimpleSeismicPhase implements SeismicPhase {
     }
 
     public List<Arrival> calcTimeExactDistanceDeg(double deg) {
-        return calcTimeExactDistance(deg * Arrival.DtoR );
+        List<Arrival> arrivals =  calcTimeExactDistance(deg * Arrival.DtoR );
+        for (Arrival a : arrivals) {
+            a.setSearchDistDeg(deg );
+        }
+        return arrivals;
     }
 
         /**

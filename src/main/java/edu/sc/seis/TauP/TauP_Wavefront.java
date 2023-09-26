@@ -276,21 +276,39 @@ public class TauP_Wavefront extends TauP_Path {
                 if (verbose) {
                     System.out.println("Time " + timeVal + " for " + phase.getName() + " " + allArrival.size());
                 }
+                Arrival prevArrival = null;
                 for (Arrival arrival : allArrival) {
-                    TimeDist[] path = arrival.getPath();
-                    for (int i = 0; i < path.length; i++) {
-                        if (path[i].getTime() <= timeVal && i < path.length - 1 && timeVal < path[i + 1].getTime()) {
-                            TimeDist interp = interp(path[i], path[i + 1], timeVal);
+                    if (arrival.getTime() >= timeVal) {
+                        TimeDist[] path = arrival.getPath();
+                        if (prevArrival != null && prevArrival.getTime() < timeVal) {
+                            // need to connect wavefront to receiver depth when on arriving edge of the wavefront
+                            double distConnect = linearInterp(prevArrival.getTime(), prevArrival.getDist(),
+                                    arrival.getTime(), arrival.getDist(), timeVal);
+                            double raypConnect = linearInterp(prevArrival.getTime(), prevArrival.getRayParam(),
+                                    arrival.getTime(), arrival.getRayParam(), timeVal);
+                            TimeDist interp = new TimeDist(raypConnect, timeVal, distConnect, arrival.getReceiverDepth());
                             List<TimeDist> tdList = out.get(timeVal);
                             if (tdList == null) {
                                 tdList = new ArrayList<TimeDist>();
                                 out.put(timeVal, tdList);
                             }
                             tdList.add(interp);
-                            done = false;
-                            break;
+                        }
+                        for (int i = 0; i < path.length; i++) {
+                            if (path[i].getTime() <= timeVal && i < path.length - 1 && timeVal < path[i + 1].getTime()) {
+                                TimeDist interp = interp(path[i], path[i + 1], timeVal);
+                                List<TimeDist> tdList = out.get(timeVal);
+                                if (tdList == null) {
+                                    tdList = new ArrayList<TimeDist>();
+                                    out.put(timeVal, tdList);
+                                }
+                                tdList.add(interp);
+                                done = false;
+                                break;
+                            }
                         }
                     }
+                    prevArrival = arrival;
                 }
             }
         }
@@ -299,10 +317,14 @@ public class TauP_Wavefront extends TauP_Path {
 
     TimeDist interp(TimeDist x, TimeDist y, float t) {
         // this is probably wrong...
+        double distInterp = linearInterp(x.getTime(), x.getDistRadian(),
+                y.getTime(), y.getDistRadian(), t);
+        double depthInterp = linearInterp(x.getTime(), x.getDepth(),
+                y.getTime(), y.getDepth(), t);
         return new TimeDist(x.getP(),
                             t,
-                            Theta.linInterp(x.getTime(), y.getTime(), x.getDistRadian(), y.getDistRadian(), t),
-                            Theta.linInterp(x.getTime(), y.getTime(), x.getDepth(), y.getDepth(), t));
+                            distInterp,
+                            depthInterp);
     }
 
     public void setNumRays(int numRays) {
