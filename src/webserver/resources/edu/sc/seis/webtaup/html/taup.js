@@ -18,7 +18,8 @@ export function process() {
 }
 
 export function valid_format(tool) {
-  let format = document.querySelector('input[name="format"]:checked').value;
+  let formatSel = document.querySelector('input[name="format"]:checked');
+  let format = formatSel ? formatSel.value : "text";
   if (format === "svg" || format === "gmt") {
     if (tool === "phase" || tool === "time" || tool === "pierce") {
       format = "text";
@@ -165,7 +166,7 @@ export function form_url() {
   // set format last as most useful to change
   url += `&format=${format}`;
 
-  return url;
+  return encodeURI(url);
 }
 
 export function setupListeners() {
