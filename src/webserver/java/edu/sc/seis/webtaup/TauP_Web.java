@@ -9,13 +9,11 @@ import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.BlockingHandler;
 import io.undertow.server.handlers.ResponseCodeHandler;
-import io.undertow.server.handlers.SetHeaderHandler;
 import io.undertow.server.handlers.resource.ClassPathResourceManager;
 import io.undertow.server.handlers.resource.ResourceHandler;
 import io.undertow.util.Headers;
 
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.*;
@@ -61,6 +59,8 @@ public class TauP_Web extends TauP_Tool {
                             System.err.println("Handle via TauP Tool:" + exchange.getRequestPath());
                             unknownKeys = configTool(tool, queryParams);
                             unknownKeys.remove(QP_DISTDEG);
+                            unknownKeys.remove(QP_TAKEOFF);
+                            unknownKeys.remove(QP_SHOOTRAY);
                             if (unknownKeys.size() > 0) {
                                 String errorPage = "<html><head><title>Error</title></head><body>unknown query parameters: ";
                                 for (String k : unknownKeys) {
@@ -76,29 +76,39 @@ public class TauP_Web extends TauP_Tool {
                                 return;
                             }
 
+                            StringWriter out = new StringWriter();
+                            PrintWriter pw = new PrintWriter(out);
                             if (tool instanceof TauP_Time) {
-                                List<Double> degreesList = new ArrayList<>();
-                                if (queryParams.containsKey("distdeg")) {
-                                    for (String distListStr : queryParams.get("distdeg")) {
-                                        degreesList.addAll(TauP_Time.parseDegreeList(distListStr));
-                                    }
-                                } else if (tool instanceof TauP_Curve || tool instanceof TauP_Wavefront) {
-                                    // doesn't matter for curve or wavefront
-                                } else {
-                                    final String errorPage = "<html><head><title>Error</title></head><body>distdeg parameter is required</body></html>";
-                                    exchange.setStatusCode(400);
-                                    exchange.getResponseHeaders().put(Headers.CONTENT_LENGTH, "" + errorPage.length());
-                                    exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, "text/html");
-                                    Sender sender = exchange.getResponseSender();
-                                    sender.send(errorPage);
-                                    return;
-                                }
                                 try {
-
-                                    StringWriter out = new StringWriter();
-                                    PrintWriter pw = new PrintWriter(out);
                                     tool.printScriptBeginning(pw);
-                                    List<Arrival> arrivalList = ((TauP_Time) tool).calculate(degreesList);
+                                    List<Double> degreesList = new ArrayList<>();
+                                    if (queryParams.containsKey(QP_DISTDEG)) {
+                                        for (String distListStr : queryParams.get(QP_DISTDEG)) {
+                                            degreesList.addAll(TauP_Time.parseDegreeList(distListStr));
+                                        }
+                                        List<Arrival> arrivalList = ((TauP_Time) tool).calculate(degreesList);
+                                    } else if (queryParams.containsKey(QP_TAKEOFF)) {
+                                        for (String distListStr : queryParams.get(QP_TAKEOFF)) {
+                                            degreesList.addAll(TauP_Time.parseDegreeList(distListStr));
+                                        }
+                                        List<Arrival> arrivalList = ((TauP_Time) tool).calcTakeoff(degreesList);
+                                    } else if (queryParams.containsKey(QP_SHOOTRAY)) {
+                                        for (String distListStr : queryParams.get(QP_SHOOTRAY)) {
+                                            degreesList.addAll(TauP_Time.parseDegreeList(distListStr));
+                                        }
+                                        List<Arrival> arrivalList = ((TauP_Time) tool).calcRayParameterSDeg(degreesList);
+                                    } else if (tool instanceof TauP_Curve || tool instanceof TauP_Wavefront) {
+                                        // doesn't matter for curve or wavefront
+                                        List<Arrival> arrivalList = ((TauP_Time) tool).calculate(degreesList);
+                                    } else {
+                                        final String errorPage = "<html><head><title>Error</title></head><body>distdeg parameter is required</body></html>";
+                                        exchange.setStatusCode(400);
+                                        exchange.getResponseHeaders().put(Headers.CONTENT_LENGTH, "" + errorPage.length());
+                                        exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, "text/html");
+                                        Sender sender = exchange.getResponseSender();
+                                        sender.send(errorPage);
+                                        return;
+                                    }
                                     ((TauP_Time) tool).printResult(pw);
                                     configContentType(tool.outputFormat, exchange);
                                     exchange.getResponseSender().send(out.toString());
@@ -109,8 +119,6 @@ public class TauP_Web extends TauP_Tool {
                             } else if (tool instanceof TauP_VelocityPlot){
                                 System.err.println("Handle as VelocityPlot");
                                 TauP_VelocityPlot vPlot = (TauP_VelocityPlot)tool;
-                                StringWriter out = new StringWriter();
-                                PrintWriter pw = new PrintWriter(out);
                                 tool.setWriter(pw);
                                 tool.printScriptBeginning(pw);
                                 vPlot.printResult(pw);
@@ -118,8 +126,6 @@ public class TauP_Web extends TauP_Tool {
                                 exchange.getResponseSender().send(out.toString());
                             } else {
                                 System.err.println("Use other tool, likely doesn't work...");
-                                StringWriter out = new StringWriter();
-                                PrintWriter pw = new PrintWriter(out);
                                 tool.setWriter(pw);
                                 tool.printScriptBeginning(pw);
                                 tool.start();
@@ -134,7 +140,10 @@ public class TauP_Web extends TauP_Tool {
                             exchange.getResponseSender().send(BuildVersion.getDetailedVersion());
                         } else {
                             System.err.println("Try to load as classpath resource: "+exchange.getRequestPath());
-                            new ResourceHandler(new ClassPathResourceManager(TauP_Web.class.getClassLoader(), "edu/sc/seis/webtaup/html")).handleRequest(exchange);
+                            ResourceHandler resHandler = new ResourceHandler(
+                                    new ClassPathResourceManager(TauP_Web.class.getClassLoader(),
+                                     "edu/sc/seis/webtaup/html"));
+                            resHandler.handleRequest(exchange);
                         }
                     }
                 })).build();
@@ -206,6 +215,8 @@ public class TauP_Web extends TauP_Tool {
 
     public static String QP_MODEL = "model";
     public static String QP_DISTDEG = "distdeg";
+    public static String QP_TAKEOFF = "takeoff";
+    public static String QP_SHOOTRAY = "shootray";
     public static String QP_EVDEPTH = "evdepth";
     public static String QP_STADEPTH = "stadepth";
     public static String QP_SCATTER = "scatter";
@@ -256,6 +267,8 @@ public class TauP_Web extends TauP_Tool {
             }
             // ignore evdepth, phases, etc
             unknownKeys.remove(QP_DISTDEG);
+            unknownKeys.remove(QP_SHOOTRAY);
+            unknownKeys.remove(QP_TAKEOFF);
             unknownKeys.remove(QP_PHASES);
         }
         if (tool instanceof TauP_Time) {

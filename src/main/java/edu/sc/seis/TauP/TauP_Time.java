@@ -846,7 +846,13 @@ public class TauP_Time extends TauP_Tool {
         return sortArrivals(arrivals);
     }
 
+
     public List<Arrival> calcTakeoff(double takeoffAngle) throws TauModelException {
+        List<Double> dList = Arrays.asList(new Double[] {takeoffAngle});
+        return calcTakeoff(dList);
+    }
+
+    public List<Arrival> calcTakeoff(List<Double> takeoffAngleList) throws TauModelException {
         stationLat = Double.MAX_VALUE;
         stationLon = Double.MAX_VALUE;
         depthCorrect();
@@ -854,55 +860,78 @@ public class TauP_Time extends TauP_Tool {
         SeismicPhase phase;
         List<SeismicPhase> phaseList = getSeismicPhases();
         List<Arrival> arrivals = new ArrayList<>();
-        for(int phaseNum = 0; phaseNum < phaseList.size(); phaseNum++) {
-            phase = phaseList.get(phaseNum);
-            if (phase.getDownGoing()[0] == (takeoffAngle <= 90) ) {
-                // check both downgoing or both upgoing
-                double rayParam = phase.calcRayParamForTakeoffAngle(takeoffAngle);
+        for (double takeoffAngle : takeoffAngleList) {
+            for (int phaseNum = 0; phaseNum < phaseList.size(); phaseNum++) {
+                phase = phaseList.get(phaseNum);
+                if (phase.getDownGoing()[0] == (takeoffAngle <= 90)) {
+                    // check both downgoing or both upgoing
+                    double rayParam = phase.calcRayParamForTakeoffAngle(takeoffAngle);
+                    Arrival phaseArrival;
+                    try {
+                        if (phase.getMinRayParam() <= rayParam && rayParam <= phase.getMaxRayParam()) {
+                            phaseArrival = phase.shootRay(rayParam);
+                            arrivals.add(phaseArrival);
+                        }
+                    } catch (NoSuchLayerException e) {
+                        Alert.warning("NoSuchLayerException", e.getMessage());
+                    } catch (SlownessModelException e) {
+                        Alert.warning("SlownessModelException", e.getMessage());
+                    }
+                }
+            }
+        }
+        this.arrivals = sortArrivals(arrivals);
+        return this.arrivals;    }
+
+    public List<Arrival> calcRayParameter(double rayparameter) throws TauModelException {
+        List<Double> dList = Arrays.asList(new Double[] {rayparameter});
+        return calcRayParameter(dList);
+    }
+
+    /**
+     * Shoots ray parameters for each phases from the source.
+     * @param rayParameterList ray parameter list in s/deg
+     * @throws TauModelException
+     */
+    public List<Arrival> calcRayParameterSDeg(List<Double> rayParameterList) throws TauModelException {
+        List<Double> rayParameterListRad = new ArrayList<>();
+        for (Double d : rayParameterList) {
+            rayParameterListRad.add(d/SphericalCoords.dtor);
+        }
+        return calcRayParameter(rayParameterListRad);
+    }
+
+    /**
+     * Shoots ray parameters for each phases from the source.
+     * @param rayParameterList ray parameter list in s/radian
+     * @throws TauModelException
+     */
+    public List<Arrival> calcRayParameter(List<Double> rayParameterList) throws TauModelException {
+        stationLat = Double.MAX_VALUE;
+        stationLon = Double.MAX_VALUE;
+        depthCorrect();
+        clearArrivals();
+        SeismicPhase phase;
+        List<SeismicPhase> phaseList = getSeismicPhases();
+        List<Arrival> arrivals = new ArrayList<>();
+        for (Double rayParam : rayParameterList) {
+            for (int phaseNum = 0; phaseNum < phaseList.size(); phaseNum++) {
+                phase = phaseList.get(phaseNum);
                 Arrival phaseArrival;
                 try {
                     if (phase.getMinRayParam() <= rayParam && rayParam <= phase.getMaxRayParam()) {
                         phaseArrival = phase.shootRay(rayParam);
                         arrivals.add(phaseArrival);
                     }
-                } catch(NoSuchLayerException e) {
+                } catch (NoSuchLayerException e) {
                     Alert.warning("NoSuchLayerException", e.getMessage());
-                } catch(SlownessModelException e) {
+                } catch (SlownessModelException e) {
                     Alert.warning("SlownessModelException", e.getMessage());
                 }
             }
         }
-        return sortArrivals(arrivals);
-    }
-
-    /**
-     * Shoots ray parameter for each phases from the source.
-     * @param rayParam ray parameter in s/radian
-     * @throws TauModelException
-     */
-    public List<Arrival> shootRayParameter(double rayParam) throws TauModelException {
-        stationLat = Double.MAX_VALUE;
-        stationLon = Double.MAX_VALUE;
-        depthCorrect();
-        clearArrivals();
-        SeismicPhase phase;
-        List<SeismicPhase> phaseList = getSeismicPhases();
-        List<Arrival> arrivals = new ArrayList<>();
-        for(int phaseNum = 0; phaseNum < phaseList.size(); phaseNum++) {
-            phase = phaseList.get(phaseNum);
-            Arrival phaseArrival;
-            try {
-                if (phase.getMinRayParam() <= rayParam && rayParam <= phase.getMaxRayParam()) {
-                    phaseArrival = phase.shootRay(rayParam);
-                    arrivals.add(phaseArrival);
-                }
-            } catch (NoSuchLayerException e) {
-                Alert.warning("NoSuchLayerException", e.getMessage());
-            } catch (SlownessModelException e) {
-                Alert.warning("SlownessModelException", e.getMessage());
-            }
-        }
-        return sortArrivals(arrivals);
+        this.arrivals = sortArrivals(arrivals);
+        return this.arrivals;
     }
 
     /**
@@ -1270,7 +1299,7 @@ public class TauP_Time extends TauP_Tool {
             if (takeoffAngle != Double.MAX_VALUE) {
                 calcTakeoff(takeoffAngle);
             } else if (shootRayp != Double.MAX_VALUE) {
-                shootRayParameter(shootRayp/SphericalCoords.dtor);
+                calcRayParameter(shootRayp/SphericalCoords.dtor);
             } else {
                 if(degreesList.size() == 0) {
                     degreesList.add(SphericalCoords.distance(stationLat,
@@ -1644,7 +1673,7 @@ public class TauP_Time extends TauP_Tool {
                         tokenIn.nextToken();
                         if(tokenIn.ttype == StreamTokenizer.TT_NUMBER) {
                             shootRayp = tokenIn.nval;
-                            shootRayParameter(shootRayp/SphericalCoords.dtor);
+                            calcRayParameter(shootRayp/SphericalCoords.dtor);
                             printResult(getWriter());
                         } else {
                             Alert.warning("Expected a number.", "got "
