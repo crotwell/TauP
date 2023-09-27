@@ -17,6 +17,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class TauP_Web extends TauP_Tool {
@@ -87,6 +89,11 @@ public class TauP_Web extends TauP_Tool {
                                             degreesList.addAll(TauP_Time.parseDegreeList(distListStr));
                                         }
                                         List<Arrival> arrivalList = ((TauP_Time) tool).calculate(degreesList);
+                                    } else if (queryParams.containsKey(QP_EVLOC) && queryParams.containsKey(QP_STALOC)) {
+                                        List<Double[]> evlatlonList = parseLoc(queryParams.get(QP_EVLOC).getFirst());
+                                        Double[] evlatlon = evlatlonList.get(0);
+                                        List<Double[]> stlatlonList = parseLoc(queryParams.get(QP_STALOC).getFirst());
+                                        List<Arrival> arrivalList = ((TauP_Time) tool).calcEventStation(evlatlon, stlatlonList);
                                     } else if (queryParams.containsKey(QP_TAKEOFF)) {
                                         for (String distListStr : queryParams.get(QP_TAKEOFF)) {
                                             degreesList.addAll(TauP_Time.parseDegreeList(distListStr));
@@ -217,6 +224,8 @@ public class TauP_Web extends TauP_Tool {
     public static String QP_DISTDEG = "distdeg";
     public static String QP_TAKEOFF = "takeoff";
     public static String QP_SHOOTRAY = "shootray";
+    public static String QP_EVLOC = "evloc";
+    public static String QP_STALOC = "staloc";
     public static String QP_EVDEPTH = "evdepth";
     public static String QP_STADEPTH = "stadepth";
     public static String QP_SCATTER = "scatter";
@@ -280,6 +289,12 @@ public class TauP_Web extends TauP_Tool {
             } else {
                 timeTool.loadTauModel("iasp91");
             }
+            if (queryParameters.containsKey(QP_EVLOC)) {
+                unknownKeys.remove(QP_EVLOC);
+                List<Double[]> latlonList = parseLoc(queryParameters.get(QP_EVLOC).getFirst());
+                Double[] latlon = latlonList.get(0);
+                timeTool.setEventLatLon( latlon[0], latlon[1]);
+            }
             if (queryParameters.containsKey(QP_EVDEPTH)) {
                 unknownKeys.remove(QP_EVDEPTH);
                 timeTool.setSourceDepth(Double.parseDouble(queryParameters.get(QP_EVDEPTH).getFirst()));
@@ -287,6 +302,12 @@ public class TauP_Web extends TauP_Tool {
             if (queryParameters.containsKey(QP_STADEPTH)) {
                 unknownKeys.remove(QP_STADEPTH);
                 timeTool.setReceiverDepth(Double.parseDouble(queryParameters.get(QP_STADEPTH).getFirst()));
+            }
+            if (queryParameters.containsKey(QP_STALOC)) {
+                unknownKeys.remove(QP_STALOC);
+                List<Double[]> latlonList = parseLoc(queryParameters.get(QP_STALOC).getFirst());
+                Double[] latlon = latlonList.get(0);
+                timeTool.setStationLatLon( latlon[0], latlon[1]);
             }
             if (queryParameters.containsKey(QP_SCATTER)) {
                 unknownKeys.remove(QP_SCATTER);
@@ -347,6 +368,21 @@ public class TauP_Web extends TauP_Tool {
             }
         }
         return unknownKeys;
+    }
+
+    private static List<Double[]> parseLoc(String loc) {
+        String numPat = "-?(0|[1-9]\\d*)?(\\.\\d+)?(?<=\\d)";
+        Pattern latlonPat = Pattern.compile("\\[("+numPat+"),("+numPat+")\\]");
+        List<Double[]> out = new ArrayList<>();
+        Matcher ma = latlonPat.matcher(loc);
+        boolean result = ma.find();
+        while(result) {
+            String latStr = ma.group(1);
+            String lonStr = ma.group(4);
+            out.add(new Double[] {Double.parseDouble(latStr), Double.parseDouble(lonStr)});
+            result = ma.find();
+        }
+        return out;
     }
 
     public static TauP_Web create() {

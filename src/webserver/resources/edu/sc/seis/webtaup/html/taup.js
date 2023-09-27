@@ -31,9 +31,16 @@ export function valid_format(tool) {
   return format;
 }
 
+export function getToolName() {
+  const toolSel = document.querySelector('input[name="tool"]:checked');
+  let toolname = toolSel ? toolSel.value : "time";
+  return toolname;
+}
+
+
 export async function display_results(taup_url) {
   console.log(`Load: ${taup_url}`);
-  let toolname = document.querySelector('input[name="tool"]:checked').value;
+  let toolname = getToolName();
   const format = valid_format(toolname);
   return fetch(taup_url).then( response => {
     const container_el = document.querySelector("#results");
@@ -76,9 +83,7 @@ export async function display_results(taup_url) {
 }
 
 export function form_url() {
-  let tool_list = document.querySelector("fieldset.tools").querySelectorAll("input");
-  const toolSel = document.querySelector('input[name="tool"]:checked');
-  let toolname = toolSel ? toolSel.value : "time";
+  let toolname = getToolName();
   const modelSel = document.querySelector('input[name="model"]:checked');
   let model = modelSel ? modelSel.value : "iasp91";
   let phases = document.querySelector('input[name="phases"]').value;
@@ -120,6 +125,12 @@ export function form_url() {
         distlist += `,${d}`;
       }
       distparam = `&distdeg=${distlist}`;
+    } else if (disttype === "isevtstadist") {
+      let evla = document.querySelector('input[name="eventlat"]').value;
+      let evlo = document.querySelector('input[name="eventlon"]').value;
+      let stla = document.querySelector('input[name="stationlat"]').value;
+      let stlo = document.querySelector('input[name="stationlon"]').value;
+      distparam = `&evloc=[${evla},${evlo}]&staloc=[${stla},${stlo}]`;
     } else if (disttype === "istakeoffdist") {
       let takeoffangle = document.querySelector('input[name="takeoffangle"]').value;
       distparam = `&takeoff=${takeoffangle}`;

@@ -372,6 +372,16 @@ public class TauP_Time extends TauP_Tool {
         setScattererDistDeg(degrees);
     }
 
+    public void setEventLatLon(double lat, double lon) {
+        this.eventLat = lat;
+        this.eventLon = lon;
+    }
+
+    public void setStationLatLon(double lat, double lon) {
+        this.stationLat = lat;
+        this.stationLon = lon;
+    }
+
     public String getTauModelName() {
         return modelName;
     }
@@ -697,13 +707,13 @@ public class TauP_Time extends TauP_Tool {
                 } else if(i < args.length - 2) {
                     if(args[i].equalsIgnoreCase("-sta")
                             || args[i].equalsIgnoreCase("-station")) {
-                        stationLat = Double.valueOf(args[i + 1]).doubleValue();
-                        stationLon = Double.valueOf(args[i + 2]).doubleValue();
+                        setStationLatLon(Double.valueOf(args[i + 1]).doubleValue(),
+                                         Double.valueOf(args[i + 2]).doubleValue());
                         i += 2;
                     } else if(args[i].equalsIgnoreCase("-evt")
                             || args[i].equalsIgnoreCase("-event")) {
-                        eventLat = Double.valueOf(args[i + 1]).doubleValue();
-                        eventLon = Double.valueOf(args[i + 2]).doubleValue();
+                        setEventLatLon( Double.valueOf(args[i + 1]).doubleValue(),
+                                        Double.valueOf(args[i + 2]).doubleValue());
                         i += 2;
                     } else {
                         /*
@@ -761,6 +771,22 @@ public class TauP_Time extends TauP_Tool {
     public List<Arrival> calculate(List<Double> degreesList) throws TauModelException {
         List<Arrival> arrivals = calcTime(degreesList);
         return sortArrivals(arrivals);
+    }
+
+    public List<Arrival> calcEventStation(Double[] evloc, List<Double[]> staloc) throws TauModelException {
+        setEventLatLon(evloc[0], evloc[1]);
+        List<Arrival> out = new ArrayList<>();
+        for (Double[] sta : staloc) {
+            clearArrivals();
+            setEventLatLon(evloc[0], evloc[1]);
+            setStationLatLon(sta[0], sta[1]);
+            degreesList.add(SphericalCoords.distance(sta[0], sta[1], evloc[0], evloc[1]));
+            azimuth = SphericalCoords.azimuth(evloc[0], evloc[1], sta[0], sta[1]);
+            backAzimuth = SphericalCoords.azimuth(sta[0], sta[1], evloc[0], evloc[1]);
+            out.addAll(calculate(degreesList));
+        }
+        this.arrivals = sortArrivals(out);
+        return this.arrivals;
     }
 
     public Arrival calculateRelativeArrival(double degrees) throws TauModelException {
@@ -1302,20 +1328,13 @@ public class TauP_Time extends TauP_Tool {
                 calcRayParameter(shootRayp/SphericalCoords.dtor);
             } else {
                 if(degreesList.size() == 0) {
-                    degreesList.add(SphericalCoords.distance(stationLat,
-                                                       stationLon,
-                                                       eventLat,
-                                                       eventLon));
-                    azimuth = SphericalCoords.azimuth(eventLat,
-                                                      eventLon,
-                                                      stationLat,
-                                                      stationLon);
-                    backAzimuth = SphericalCoords.azimuth(stationLat,
-                                                          stationLon,
-                                                          eventLat,
-                                                          eventLon);
+                    Double[] evlatlon = new Double[] {eventLat, eventLon};
+                    List<Double[]> stalatlonList = new ArrayList<>();
+                    stalatlonList.add(new Double[] {stationLat, stationLon});
+                    calcEventStation(evlatlon, stalatlonList);
+                } else {
+                    calculate(degreesList);
                 }
-                calculate(degreesList);
             }
             printResult(getWriter());
         } else {
@@ -1501,8 +1520,7 @@ public class TauP_Time extends TauP_Tool {
                         tokenIn.nextToken();
                         if(tokenIn.ttype == StreamTokenizer.TT_NUMBER) {
                             backAzimuth = tokenIn.nval;
-                            eventLat = Double.MAX_VALUE;
-                            eventLon = Double.MAX_VALUE;
+                            setEventLatLon( Double.MAX_VALUE, Double.MAX_VALUE);
                             if(DEBUG) {
                                 Alert.info("backAzimuth=" + backAzimuth);
                             }
@@ -1528,13 +1546,14 @@ public class TauP_Time extends TauP_Tool {
                         System.out.print("Enter event lat and lon: ");
                         tokenIn.nextToken();
                         if(tokenIn.ttype == StreamTokenizer.TT_NUMBER) {
-                            eventLat = tokenIn.nval;
+                            double evLat = tokenIn.nval;
                             if(DEBUG) {
                                 Alert.info("eventLat=" + eventLat);
                             }
                             tokenIn.nextToken();
                             if(tokenIn.ttype == StreamTokenizer.TT_NUMBER) {
-                                eventLon = tokenIn.nval;
+                                double evLon = tokenIn.nval;
+                                setEventLatLon(evLat, evLon);
                                 if(DEBUG) {
                                     Alert.info("eventLon=" + eventLon);
                                 }
@@ -1546,20 +1565,11 @@ public class TauP_Time extends TauP_Tool {
                         }
                         if(stationLat != Double.MAX_VALUE
                                 && stationLon != Double.MAX_VALUE) {
-                            degreesList.clear();
-                            degreesList.add(SphericalCoords.distance(stationLat,
-                                                               stationLon,
-                                                               eventLat,
-                                                               eventLon));
-                            azimuth = SphericalCoords.azimuth(eventLat,
-                                                              eventLon,
-                                                              stationLat,
-                                                              stationLon);
-                            backAzimuth = SphericalCoords.azimuth(stationLat,
-                                                                  stationLon,
-                                                                  eventLat,
-                                                                  eventLon);
-                            calculate(degreesList);
+
+                            Double[] evlatlon = new Double[] {eventLat, eventLon};
+                            List<Double[]> stalatlonList = new ArrayList<>();
+                            stalatlonList.add(new Double[] {stationLat, stationLon});
+                            calcEventStation(evlatlon, stalatlonList);
                             printResult(getWriter());
                         }
                         readMode = 'd';
@@ -1589,19 +1599,10 @@ public class TauP_Time extends TauP_Tool {
                         }
                         if(eventLat != Double.MAX_VALUE
                                 && eventLon != Double.MAX_VALUE) {
-                            degreesList.add(SphericalCoords.distance(stationLat,
-                                                               stationLon,
-                                                               eventLat,
-                                                               eventLon));
-                            azimuth = SphericalCoords.azimuth(eventLat,
-                                                              eventLon,
-                                                              stationLat,
-                                                              stationLon);
-                            backAzimuth = SphericalCoords.azimuth(stationLat,
-                                                                  stationLon,
-                                                                  eventLat,
-                                                                  eventLon);
-                            calculate(degreesList);
+                            Double[] evlatlon = new Double[] {eventLat, eventLon};
+                            List<Double[]> stalatlonList = new ArrayList<>();
+                            stalatlonList.add(new Double[] {stationLat, stationLon});
+                            calcEventStation(evlatlon, stalatlonList);
                             printResult(getWriter());
                         }
                         readMode = 'd';
