@@ -304,6 +304,10 @@ public class TauP_Path extends TauP_Pierce {
 			double calcTime = 0.0;
 			double calcDist = 0.0;
 			double calcDepth;
+			double distFactor = 1;
+			if (currArrival.isLongWayAround()) {
+				distFactor = -1;
+			}
 
 			TimeDist prevEnd = null;
 			for (SeismicPhaseSegment seg : currArrival.getPhase().getPhaseSegments()) {
@@ -329,7 +333,8 @@ public class TauP_Path extends TauP_Pierce {
 							calcDepth = prevEnd.getDepth() + interpNum
 									* (td.getDepth() - prevEnd.getDepth())
 									/ maxInterpNum;
-							printDistRadiusAsXY(out, calcDist, radiusOfEarth - calcDepth);
+
+							printDistRadiusAsXY(out, distFactor*calcDist, radiusOfEarth - calcDepth);
 							out.write("\n");
 						}
 					}
@@ -353,7 +358,7 @@ public class TauP_Path extends TauP_Pierce {
 							break;
 						}
 					}
-					printDistRadiusAsXY(out, calcDist, radiusOfEarth - calcDepth);
+					printDistRadiusAsXY(out, distFactor*calcDist, radiusOfEarth - calcDepth);
 					out.write("\n");
 					prevEnd = td;
 				}
@@ -373,10 +378,14 @@ public class TauP_Path extends TauP_Pierce {
         
 		for (int i = 0; i < arrivals.size(); i++) {
 			Arrival currArrival = (Arrival) arrivals.get(i);
+			double distFactor = 1;
+			if (currArrival.isLongWayAround()) {
+				distFactor = -1;
+			}
 			TimeDist[] path = currArrival.getPath();
 			int midSample = path.length / 2;
 			double calcDepth = path[midSample].getDepth();
-			double calcDist = path[midSample].getDistDeg();
+			double calcDist = distFactor * path[midSample].getDistDeg();
 			double radius = radiusOfEarth - calcDepth;
 			double radian = (calcDist-90)*Math.PI/180;
 			double x = radius*Math.cos(radian);
