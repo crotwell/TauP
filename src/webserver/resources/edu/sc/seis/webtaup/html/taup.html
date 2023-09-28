@@ -12,6 +12,15 @@
         overflow-y: auto;
         max-height: 80vh;
       }
+      input[type="text"].biginput {
+        width: 200px;
+      }
+      input[type="text"] {
+        width: 100px;
+      }
+      input[type="number"] {
+        width: 100px;
+      }
     </style>
 </head>
 <body>
@@ -41,15 +50,15 @@
         <label for="phases">
             <span>Phases: </span>
         </label>
-        <input type="text" id="phases" name="phases" value="P,S"  />
+        <input class="biginput" type="text" id="phases" name="phases" value="P,S"  />
 
         <label for="evdepth">
-            <span>Source Depth: </span>
+            <span>Source Depth (km): </span>
         </label>
         <input type="text" id="evdepth" name="evdepth" value="0"  />
 
         <label for="stadepth">
-            <span>Receiver Depth: </span>
+            <span>Receiver Depth (km): </span>
         </label>
         <input type="text" id="stadepth" name="stadepth" value="0"  />
     </fieldset>
@@ -58,13 +67,13 @@
         <div>
           <input type="radio" id="islistdist" name="disttype" value="islistdist" checked />
           <label for="distdeg">
-              <span>Distance: </span>
+              <span>Distance (deg): </span>
           </label>
           <input type="text" id="distdeg" name="distdeg" value="35" required />
         </div>
         <div>
           <input type="radio" id="isregulardist" name="disttype" value="isregulardist" />
-          <label>Regular:</label>
+          <label>Regular (deg):</label>
           <label for="distdegmin">
               <span>Min: </span>
           </label>
@@ -73,7 +82,6 @@
               <span>Step: </span>
           </label>
           <input type="number" id="distdegstep" name="distdegstep" value="30"  />
-
           <label for="distdegmax">
               <span>Max: </span>
           </label>
@@ -82,12 +90,12 @@
         <div>
           <input type="radio" id="isevtstadist" name="disttype" value="isevtstadist" />
           <label for="eventlat">
-              <span>Event: </span>
+              <span>Event (lat/lon): </span>
           </label>
           <input type="number" id="eventlat" name="eventlat" value="30" />
           <input type="number" id="eventlon" name="eventlon" value="-110" />
           <label for="stalat">
-              <span> Station: </span>
+              <span> Station (lat/lon): </span>
           </label>
           <input type="number" id="stationlat" name="stationlat" value="35" />
           <input type="number" id="stationlon" name="stationlon" value="-81" />
@@ -95,7 +103,7 @@
         <div>
           <input type="radio" id="istakeoffdist" name="disttype" value="istakeoffdist" />
           <label for="takeoffangle">
-              <span>Takeoff Angle: </span>
+              <span>Takeoff Angle (deg): </span>
           </label>
           <input type="text" id="takeoffangle" name="takeoffangle" value="0" />
         </div>
@@ -115,12 +123,12 @@
         <input type="checkbox" id="isscatter" name="isscatter" />
 
         <label for="scatdepth">
-            <span>Depth: </span>
+            <span>Depth (km): </span>
         </label>
         <input type="text" id="scatdepth" name="scatdepth" value="0" />
 
         <label for="scatdist">
-            <span>Distance: </span>
+            <span>Distance (deg): </span>
         </label>
         <input type="text" id="scatdist" name="scatdist" value="0" />
     </fieldset>
@@ -130,7 +138,7 @@
             <span>Pierce: </span>
         </label>
         <label for="piercedepth">
-            <span>Add Depths: </span>
+            <span>Add Depths (km): </span>
         </label>
         <input type="text" id="piercedepth" name="piercedepth" value="" />
 
@@ -150,7 +158,7 @@
       </label>
 
       <label for="timestep">
-          <span>Timestep: </span>
+          <span>Timestep (s): </span>
       </label>
       <input type="number" id="timestep" name="timestep" value="100" />
       <label for="negdist">
