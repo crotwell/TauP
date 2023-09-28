@@ -109,7 +109,7 @@ export function form_url() {
   if (toolname !== "velplot") {
     url += `&phases=${phases}`;
   }
-  if (toolname !== "velplot" && toolname !== "curve" && toolname !== "wavefront") {
+  if (toolname !== "velplot" && toolname !== "curve" && toolname !== "wavefront"  && toolname !== "phase") {
     let distparam;
     if (disttype === "islistdist") {
       let distdeg = document.querySelector('input[name="distdeg"]').value;

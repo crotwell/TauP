@@ -104,8 +104,8 @@ public class TauP_Web extends TauP_Tool {
                                             degreesList.addAll(TauP_Time.parseDegreeList(distListStr));
                                         }
                                         List<Arrival> arrivalList = ((TauP_Time) tool).calcRayParameterSDeg(degreesList);
-                                    } else if (tool instanceof TauP_Curve || tool instanceof TauP_Wavefront) {
-                                        // doesn't matter for curve or wavefront
+                                    } else if (tool instanceof TauP_Curve || tool instanceof TauP_Wavefront|| tool instanceof TauP_PhaseDescribe) {
+                                        // doesn't matter for curve or wavefront or phase
                                         List<Arrival> arrivalList = ((TauP_Time) tool).calculate(degreesList);
                                     } else {
                                         final String errorPage = "<html><head><title>Error</title></head><body>distdeg parameter is required</body></html>";
