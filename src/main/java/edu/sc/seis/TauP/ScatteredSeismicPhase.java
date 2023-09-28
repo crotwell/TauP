@@ -335,7 +335,8 @@ public class ScatteredSeismicPhase implements SeismicPhase {
     }*/
 
     public String describe() {
-        String desc = getName() + " scattered at "+getScattererDepth()+" km and "+getScattererDistanceDeg()+" deg:\n";
+        String backscatter = isBackscatter() ? "backscattered" : "scattered";
+        String desc = getName() + " "+backscatter+" at "+getScattererDepth()+" km and "+getScattererDistanceDeg()+" deg:\n";
         desc += SeismicPhase.baseDescribe(this);
         desc += SeismicPhase.segmentDescribe(this);
         String scat_direction = isBackscatter() ? "Backscatter" : "Scatter";

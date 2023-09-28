@@ -204,12 +204,14 @@ public interface SeismicPhase extends Serializable, Cloneable {
             double[] rayParams = phase.getRayParams();
 
             desc += "  \"minexists\": { \n"+
-                    "    \"dist\": "+Outputs.formatDistanceNoPad(phase.getMinDistanceDeg())+mod180Min+",\n"+
+                    "    \"dist\": "+Outputs.formatDistanceNoPad(phase.getMinDistanceDeg())+",\n"+
+                    "    \"modulodist\": "+Outputs.formatDistanceNoPad(SeismicPhase.distanceTrim180(phase.getMinDistanceDeg()))+",\n"+
                     "    \"rayparameter\": "+Outputs.formatRayParam(phase.getMaxRayParam() / Arrival.RtoD)+",\n"+
                     "    \"time\": "+Outputs.formatTimeNoPad(time[0])+"\n"+
                     "  },"+
                     "  \"maxexists\": { \n"+
-                    "    \"dist\": "+Outputs.formatDistanceNoPad(phase.getMaxDistanceDeg())+mod180Max+",\n"+
+                    "    \"dist\": "+Outputs.formatDistanceNoPad(phase.getMaxDistanceDeg())+",\n"+
+                    "    \"modulodist\": "+Outputs.formatDistanceNoPad(SeismicPhase.distanceTrim180(phase.getMaxDistanceDeg()))+",\n"+
                     "    \"rayparameter\": "+Outputs.formatRayParam(phase.getMinRayParam() / Arrival.RtoD)+",\n"+
                     "    \"time\": "+Outputs.formatTimeNoPad(time[time.length - 1])+"\n"+
                     "  },\n"+
