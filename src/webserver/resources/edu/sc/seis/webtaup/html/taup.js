@@ -4,12 +4,16 @@
  */
 export function setup() {
   setupListeners();
+  const tool = getToolName();
+  enableParams(tool)
 }
 
 /**
  * Extract options from form, create URL, display results.
  */
 export function process() {
+  const tool = getToolName();
+  enableParams(tool)
   const taup_url = form_url()
   const url_el = document.querySelector("#taup_url");
   url_el.textContent = taup_url;
@@ -23,6 +27,8 @@ export function valid_format(tool) {
   if (format === "svg" || format === "gmt") {
     if (tool === "phase" || tool === "time" || tool === "pierce") {
       format = "text";
+    } else if (tool === "slowplot" || tool === "velplot" ) {
+      format = "svg";
     }
   } else if (format === "text" || format === "json") {
     if (tool === "slowplot" || tool === "curve" || tool === "wavefront") {
@@ -183,6 +189,110 @@ export function setupListeners() {
     console.log(`Click count: ${event.detail}`);
     startAnimation();
   });
+}
+
+export function enableParams(tool) {
+  let styleEl = document.head.querySelector("style.toolenable");
+  if (styleEl === null) {
+    console.log("no style");
+    styleEl = document.createElement("style");
+    styleEl.setAttribute("class", "toolenable");
+    document.head.appendChild(styleEl);
+  }
+  let styleStr = ""
+  // format radio
+  if ( tool === "time" || tool === "pierce" || tool == "phase") {
+    document.querySelector(`input[name="format"][value="text"]`).removeAttribute("disabled");
+    document.querySelector(`input[name="format"][value="json"]`).removeAttribute("disabled");
+    document.querySelector(`input[name="format"][value="svg"]`).setAttribute("disabled", "disabled");
+    document.querySelector(`input[name="format"][value="gmt"]`).setAttribute("disabled", "disabled");
+    styleStr += `
+      label[for="format_svg"] {
+        color: lightgrey;
+      }
+      label[for="format_gmt"] {
+        color: lightgrey;
+      }
+    `;
+  } else if (tool === "velplot" ) {
+    document.querySelector(`input[name="format"][value="text"]`).removeAttribute("disabled");
+    document.querySelector(`input[name="format"][value="json"]`).removeAttribute("disabled");
+    document.querySelector(`input[name="format"][value="svg"]`).removeAttribute("disabled");
+    document.querySelector(`input[name="format"][value="gmt"]`).setAttribute("disabled", "disabled");
+    styleStr += `
+      label[for="format_gmt"] {
+        color: lightgrey;
+      }
+    `;
+  } else if (tool === "slowplot") {
+    document.querySelector(`input[name="format"][value="text"]`).setAttribute("disabled", "disabled");
+    document.querySelector(`input[name="format"][value="json"]`).setAttribute("disabled", "disabled");
+    document.querySelector(`input[name="format"][value="svg"]`).removeAttribute("disabled");
+    document.querySelector(`input[name="format"][value="gmt"]`).setAttribute("disabled", "disabled");
+    styleStr += `
+      label[for="format_text"] {
+        color: lightgrey;
+      }
+        label[for="format_json"] {
+          color: lightgrey;
+        }
+      label[for="format_gmt"] {
+        color: lightgrey;
+      }
+    `;
+  } else if (tool === "wavefront" || tool === "curve") {
+    document.querySelector(`input[name="format"][value="text"]`).setAttribute("disabled", "disabled");
+    document.querySelector(`input[name="format"][value="json"]`).setAttribute("disabled", "disabled");
+    document.querySelector(`input[name="format"][value="svg"]`).removeAttribute("disabled");
+    document.querySelector(`input[name="format"][value="gmt"]`).removeAttribute("disabled");
+    styleStr += `
+      label[for="format_text"] {
+        color: lightgrey;
+      }
+      label[for="format_json"] {
+        color: lightgrey;
+      }
+    `;
+  } else {
+    document.querySelector(`input[name="format"][value="text"]`).removeAttribute("disabled");
+    document.querySelector(`input[name="format"][value="json"]`).removeAttribute("disabled");
+    document.querySelector(`input[name="format"][value="svg"]`).removeAttribute("disabled");
+    document.querySelector(`input[name="format"][value="gmt"]`).removeAttribute("disabled");
+  }
+  if ( ! (tool === "time" || tool === "pierce" || tool == "path")) {
+    styleStr += `
+      .tool_time {
+        display: none;
+      }
+    `;
+  }
+  if ( tool !== "pierce" ) {
+    styleStr += `
+      .tool_pierce {
+        display: none;
+      }
+    `;
+  }
+  if ( tool !== "wavefront" ) {
+    styleStr += `
+      .tool_wavefront {
+        display: none;
+      }
+    `;
+  }
+  styleEl.textContent = styleStr;
+}
+
+export function getElement(child, parentEl) {
+  if (parentEl == null) {
+    parentEl = document.body;
+  }
+  let childEl = parentEl.querySelector(child);
+  if (childEl === null) {
+    childEl = document.createElement(child);
+    parentEl.insertBefore(childEl, parentEl.firstChild);
+  }
+  return childEl;
 }
 
 export function animateStep(styleEl, svgEl, start, step) {
