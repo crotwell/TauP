@@ -60,26 +60,33 @@ public class ScatteredSeismicPhase implements SeismicPhase {
 
     @Override
     public double getMinDistanceDeg() {
-        int mulFac = isBackscatter() ? -1 : 1;
+        int mulFac = getScatterDistMulFactor();
         return getScattererDistanceDeg()+mulFac*scatteredPhase.getMinDistanceDeg();
     }
 
     @Override
     public double getMinDistance() {
-        int mulFac = isBackscatter() ? -1 : 1;
+        int mulFac = getScatterDistMulFactor();
         return getScattererDistance()+mulFac*scatteredPhase.getMinDistance();
     }
 
     @Override
     public double getMaxDistanceDeg() {
-        int mulFac = isBackscatter() ? -1 : 1;
+        int mulFac = getScatterDistMulFactor();
         return getScattererDistanceDeg()+mulFac*scatteredPhase.getMaxDistanceDeg();
     }
 
     @Override
     public double getMaxDistance() {
-        int mulFac = isBackscatter() ? -1 : 1;
+        int mulFac = getScatterDistMulFactor();
         return getScattererDistance()+mulFac*scatteredPhase.getMaxDistance();
+    }
+
+    public int getScatterDistMulFactor() {
+        int mulFac = 1;
+        if (inboundArrival.getSearchDistDeg()>0 && isBackscatter() ) { mulFac = -1;}
+        if (inboundArrival.getSearchDistDeg()<0 && ! isBackscatter() ) { mulFac = -1;}
+        return mulFac;
     }
 
     @Override
@@ -367,10 +374,8 @@ public class ScatteredSeismicPhase implements SeismicPhase {
         PrintWriter out = new PrintWriter(sw);
         out.println("{");
         out.println(SQ+"name"+QCQ+getName()+QCOMMA);
-        out.println(SeismicPhase.baseDescribeJSON(this.scatteredPhase));
-        out.println(SeismicPhase.baseDescribeJSON(this));
+        out.print(SeismicPhase.baseDescribeJSON(this));
         out.println(",");
-        out.println(SeismicPhase.segmentDescribeJSON(this.scatteredPhase));
         out.println(SeismicPhase.segmentDescribeJSON(this));
         out.println("}");
         return sw.toString();
