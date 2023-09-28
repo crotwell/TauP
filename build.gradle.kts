@@ -138,6 +138,8 @@ val distFiles: CopySpec = copySpec {
       into("docs")
     }
     from(".") {
+        include("VERSION")
+        include("CITATION.cff")
         include("LICENSE")
         include("jacl/**")
         include("groovy/**")
@@ -388,6 +390,13 @@ tasks.jar {
     dependsOn("processStdmodelsResources")
     from(sourceSets["stdmodels"].output)
 }
+
+tasks.register("versionToVersionFile") {
+  inputs.files("build.gradle.kts")
+  outputs.files("VERSION")
+  File("VERSION").writeText(""+version)
+}
+tasks.get("assemble").dependsOn("versionToVersionFile")
 
 // this is really dumb, but gradle wants something....
 gradle.taskGraph.whenReady {
