@@ -411,7 +411,7 @@ public class ScatteredSeismicPhase implements SeismicPhase {
 
         List<TimeDist> scatPierce = scatteredPhase.calcPierceTimeDist(scatA.getScatteredArrival());
         // first TimeDist is just the zero distance starting point, which repeats the end of the inbound
-       // scatPierce = scatPierce.subList(1,scatPierce.size());
+        scatPierce = scatPierce.subList(1,scatPierce.size());
         int scatNegative = 1;
         if (scatA.isScatterNegativeDirection()) {
             scatNegative = -1;

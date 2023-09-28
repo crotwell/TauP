@@ -225,10 +225,19 @@ public class TauP_Pierce extends TauP_Time {
                     nextDepth = pierce[j].getDepth();
                 }
                 if(!(onlyTurnPoints || onlyRevPoints || onlyUnderPoints || onlyAddPoints)
+                        || ( onlyRevPoints
+                                && pierce[j].getDepth() == getScattererDepth()  // scat are always rev points
+                                && pierce[j].getDistDeg() == getScattererDistDeg()
+                            )
                         || ((onlyAddPoints && isAddDepth(pierce[j].getDepth()))
                                 || (onlyRevPoints && ((prevDepth - pierce[j].getDepth())
                                         * (pierce[j].getDepth() - nextDepth) < 0))
-                                || (onlyTurnPoints && j != 0 && ((prevDepth - pierce[j].getDepth()) <= 0 && (pierce[j].getDepth() - nextDepth) >= 0)) || (onlyUnderPoints && ((prevDepth - pierce[j].getDepth()) >= 0 && (pierce[j].getDepth() - nextDepth) <= 0)))) {
+                                || (onlyTurnPoints && j != 0
+                                        && ((prevDepth - pierce[j].getDepth()) <= 0
+                                        && (pierce[j].getDepth() - nextDepth) >= 0))
+                                || (onlyUnderPoints
+                                        && ((prevDepth - pierce[j].getDepth()) >= 0
+                                        && (pierce[j].getDepth() - nextDepth) <= 0)))) {
                     out.write(Outputs.formatDistance(calcDist));
                     out.write(Outputs.formatDepth(pierce[j].getDepth()));
                     out.write(Outputs.formatTime(pierce[j].getTime()));
