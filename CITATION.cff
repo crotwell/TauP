@@ -6,6 +6,25 @@ title: The TauP Toolkit
 message: >-
   If you use this software, please cite it using the
   metadata from this file.
+preferred-citation:
+  authors:
+    - family-names: Crotwell
+      given-names: H. Philip
+      email: crotwell@seis.sc.edu
+      affiliation: University of South Carolina
+      orcid: 'https://orcid.org/0000-0001-6231-4847'
+    - family-names: Owens
+      given-names: T.J.
+    - family-names: Ritsema
+      geven-names: J.
+
+  title: "The TauP Toolkit: Flexible seismic travel-time and ray-path utilities"
+  type: article
+  journal: "Seismological Research Letters"
+  volume: 70
+  start: 154
+  end: 160
+  year: 1999
 type: software
 authors:
   - family-names: Crotwell
