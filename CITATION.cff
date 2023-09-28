@@ -1,0 +1,35 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: The TauP Toolkit
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - family-names: Crotwell
+    given-names: H. Philip
+    email: crotwell@seis.sc.edu
+    affiliation: University of South Carolina
+    orcid: 'https://orcid.org/0000-0001-6231-4847'
+repository-code: 'https://github.com/crotwell/TauP'
+url: 'http://www.seis.sc.edu/TauP/'
+repository: 'http://www.seis.sc.edu/downloads/TauP/'
+repository-artifact: 'https://central.sonatype.com/artifact/edu.sc.seis/TauP'
+abstract: >-
+  The TauP Toolkit is a seismic travel time calculator. In
+  addition to travel times, it can calculate derivative
+  information such as ray paths through the earth, pierce
+  and turning points. It handles many types of velocity
+  models and can calculate times for virtually any seismic
+  phase with a phase parser.
+keywords:
+  - seismology
+  - earthquake
+  - traveltime
+  - seismograph
+license: LGPL-3.0
+commit: 204d077892b8365f64884ca73efd2a1862ca7ed2
+version: 2.6.1
+date-released: '2022-07-22'
