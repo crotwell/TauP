@@ -5,18 +5,32 @@ import java.util.ArrayList;
 public class PlotTicks {
 
     public static ArrayList<Double> getTicks(double start, double stop, int count) {
+        return getTicks(start, stop, count, false);
+    }
+
+    public static ArrayList<Double> getTicks(double start, double stop, int count, boolean startStopFixed) {
         ArrayList<Double> ticks = new ArrayList<Double>();
         double step;
         double fstart;
         double fstop;
         if (start < stop) {
             step = calculateStep((stop-start), count-1);
-            fstart = Math.ceil(start/step)*step;
-            fstop = Math.floor(stop/step)*step;
+            if (startStopFixed) {
+                fstart = start;
+                fstop = stop;
+            } else {
+                fstart = Math.ceil(start / step) * step;
+                fstop = Math.floor(stop / step) * step;
+            }
         } else if (start > stop) {
             step = calculateStep((start-stop), count -1);
-            fstart = Math.ceil(stop/step)*step;
-            fstop = Math.floor(start/step)*step;
+            if (startStopFixed) {
+                fstart = stop;
+                fstop = start;
+            } else {
+                fstart = Math.ceil(stop / step) * step;
+                fstop = Math.floor(start / step) * step;
+            }
         } else {
             return ticks;
         }

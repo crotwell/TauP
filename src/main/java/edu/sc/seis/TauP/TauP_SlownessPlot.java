@@ -78,13 +78,19 @@ public class TauP_SlownessPlot extends TauP_VelocityPlot {
         double maxY = sMod.vMod.maxRadius;
         double minY =0.0;
         int numYTicks = 10;
+        boolean xEndFixed = false;
+        boolean yEndFixed = false;
 
         float pixelWidth =  (72.0f*mapWidth)-plotOffset;
         float margin = 40;
         float plotWidth = pixelWidth - margin;
         String title = sMod.vMod.modelName;
         printSVGBeginning(out);
-        SvgUtil.createXYAxes(out, minRP, maxRP, numXTicks, maxY, minY, numYTicks, pixelWidth, margin, title);
+        SvgUtil.createXYAxes(out, minRP, maxRP, numXTicks, xEndFixed,
+                maxY, minY, numYTicks, yEndFixed,
+                pixelWidth, margin, title,
+                "Slowness (s/deg)", "Depth (km)"
+        );
 
         out.println("<g transform=\"scale(1,-1) translate(0, -"+(plotWidth)+")\">");
         out.println("<g transform=\"scale(" + (plotWidth / maxRP) + "," + (plotWidth / maxY) + ")\" >");

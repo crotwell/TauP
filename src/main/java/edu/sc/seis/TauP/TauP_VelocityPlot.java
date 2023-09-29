@@ -49,13 +49,19 @@ public class TauP_VelocityPlot extends TauP_Tool {
         double maxY = vMod.maxRadius;
         double minY =0.0;
         int numYTicks = 10;
+        boolean xEndFixed = false;
+        boolean yEndFixed = false;
 
         float pixelWidth =  (72.0f*mapWidth)-plotOffset;
         float margin = 40;
         float plotWidth = pixelWidth - margin;
         String title = vMod.modelName;
         printSVGBeginning(out);
-        SvgUtil.createXYAxes(out, minVel, maxVel, numXTicks, maxY, minY, numYTicks, pixelWidth, margin, title);
+        SvgUtil.createXYAxes(out, minVel, maxVel, numXTicks, xEndFixed,
+                maxY, minY, numYTicks, yEndFixed,
+                pixelWidth, margin, title,
+                "Velocity (km/s)", "Depth (km)"
+                );
 
         out.println("<g transform=\"scale(1,-1) translate(0, -"+(plotWidth)+")\">");
         out.println("<g transform=\"scale(" + (plotWidth / maxVel) + "," + (plotWidth / maxY) + ")\" >");
@@ -129,55 +135,7 @@ public class TauP_VelocityPlot extends TauP_Tool {
     }
 
     public void printSVGBeginning(PrintWriter out) {
-
-        float pixelWidth =  (72.0f*mapWidth);
-//        out.println("<svg version=\"1.1\" baseProfile=\"full\" xmlns=\"http://www.w3.org/2000/svg\" width=\"500\" height=\"500\" viewBox=\"0 0 "+(pixelWidth)+" "+(pixelWidth)+"\">");
-        out.println("<svg version=\"1.1\" baseProfile=\"full\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 "+(pixelWidth+plotOffset)+" "+(pixelWidth+plotOffset)+"\">");
-        SvgUtil.cmdLineArgAsComment(out, toolNameFromClass(this.getClass()), cmdLineArgs);
-        out.println("<defs>");
-        out.println("    <style type=\"text/css\"><![CDATA[");
-        out.println("        polyline {");
-        out.println("            vector-effect: non-scaling-stroke;");
-        out.println("            stroke: black;");
-        out.println("            fill: transparent;");
-        out.println("        }");
-        out.println("        polyline.sourcedepth {");
-        out.println("            stroke: lightgrey;");
-        out.println("        }");
-        out.println("        polyline.receiverdepth {");
-        out.println("            stroke: lightgrey;");
-        out.println("        }");
-        out.println("        polyline.scattererdepth {");
-        out.println("            stroke: lightgrey;");
-        out.println("        }");
-        out.println("        polyline.swave {");
-        out.println("            stroke: red;");
-        out.println("        }");
-        out.println("        polyline.pwave {");
-        out.println("            stroke: blue;");
-        out.println("        }");
-        out.println("        line {");
-        out.println("            vector-effect: non-scaling-stroke;");
-        out.println("            stroke: black;");
-        out.println("            fill: transparent;");
-        out.println("        }");
-        out.println("        .xtick {");
-        out.println("            text-anchor: middle;");
-        out.println("            dominant-baseline: middle;");
-        out.println("        }");
-        out.println("        .ytick {");
-        out.println("            text-anchor: end;");
-        out.println("            dominant-baseline: middle;");
-        out.println("        }");
-        out.println("        .phaselabel {");
-        out.println("            text-anchor: end;");
-        out.println("            dominant-baseline: middle;");
-        out.println("        }");
-        out.println("    ]]></style>");
-        out.println("</defs>");
-        out.println("<g transform=\"translate("+plotOffset+","+plotOffset+")\" >");
-        out.println("<!-- draw axis and label distances.-->");
-        out.println();
+        SvgUtil.xyplotScriptBeginning( out, toolNameFromClass(this.getClass()), cmdLineArgs,  mapWidth, plotOffset);
     }
 
     public void printCSV(PrintWriter out, VelocityModel vMod) {
