@@ -58,6 +58,11 @@ public class CmdLineOutputTest {
     String[] curveTestCmds = new String[] {"taup curve -o stdout -h 10 -ph P -mod prem",
                                            "taup curve -o stdout -h 10 -ph P",
                                            "taup curve -o stdout -h 10 -ph P -mod ak135"};
+    String[] wavefrontTestCmds = new String[] {
+            "taup wavefront -o stdout --mod ak135 --svg -h 100 -ph P,S,PKIKP",
+            "taup wavefront -o stdout --mod ak135 --svg -h 10 -ph P,S,PedOP --scatter 200 -5"
+    };
+
     String[] velplotTestCmds = new String[] {
             "taup velplot -o stdout --mod ak135 --svg",
             "taup slowplot -o stdout --mod ak135 --svg"
@@ -91,6 +96,7 @@ public class CmdLineOutputTest {
         allList.addAll(Arrays.asList(pierceTestCmds));
         allList.addAll(Arrays.asList(pathTestCmds));
         allList.addAll(Arrays.asList(curveTestCmds));
+        allList.addAll(Arrays.asList(wavefrontTestCmds));
         allList.addAll(Arrays.asList(velplotTestCmds));
         for (String cmd : allList) {
             System.err.println(cmd);
@@ -157,6 +163,11 @@ public class CmdLineOutputTest {
     @Test
     public void testTauPCurve() throws Exception {
         runTests(curveTestCmds);
+    }
+
+    @Test
+    public void testTauPWavefront() throws Exception {
+        runTests(wavefrontTestCmds);
     }
 
     @Test

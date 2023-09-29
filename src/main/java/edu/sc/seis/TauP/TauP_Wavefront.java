@@ -162,7 +162,16 @@ public class TauP_Wavefront extends TauP_Path {
                 timeOut.println("# timestep = " + time);
                 timeOut.println("gmt psxy -P -R -K -O -Wblue -JP -m -A >> " + byTimePsFile + " <<END");
             }
-            for (SeismicPhase phase : result.keySet()) {
+
+            List<SeismicPhase> phasekeys = new ArrayList<SeismicPhase>();
+            phasekeys.addAll(result.keySet());
+            Collections.sort(phasekeys, new Comparator<SeismicPhase>() {
+                // @Override
+                public int compare(SeismicPhase arg0, SeismicPhase arg1) {
+                    return arg0.getName().compareTo(arg1.getName());
+                }
+            });
+            for (SeismicPhase phase : phasekeys) {
                 Map<Float, List<TimeDist>> phaseResult = result.get(phase);
                 List<TimeDist> wavefront = phaseResult.get(time);
                 if (wavefront == null || wavefront.size() == 0) {
