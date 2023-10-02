@@ -26,6 +26,7 @@ class IllegalPhasesTest {
 			"Pedcp",
 			"PKp",
 			"PKs",
+			"Pcp^20P",
 			"Pn^20P",
 			"Pdiff^410P",
 			"PK^cKP",
