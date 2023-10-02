@@ -49,7 +49,25 @@ export async function display_results(taup_url) {
   console.log(`Load: ${taup_url}`);
   let toolname = getToolName();
   const format = valid_format(toolname);
-  return fetch(taup_url).then( response => {
+  let timeoutSec = 10;
+  const controller = new AbortController();
+  const signal = controller.signal;
+  setTimeout(() => controller.abort(), timeoutSec * 1000);
+  let fetchInitObj = defaultFetchInitObj();
+  fetchInitObj.signal = signal;
+  return fetch(taup_url, fetchInitObj).catch(e => {
+    console.log(`fetch error: ${e}`)
+    const container_el = document.querySelector("#results");
+    while(container_el.firstChild) {
+      container_el.removeChild(container_el.firstChild);
+    }
+    let message = "Network problem connecting to TauP server...\n\n";
+    message += e;
+    const pre_el = document.createElement("pre");
+    pre_el.textContent = message;
+    container_el.appendChild(pre_el);
+    throw e;
+  }).then( response => {
     const container_el = document.querySelector("#results");
     while(container_el.firstChild) {
       container_el.removeChild(container_el.firstChild);
@@ -87,6 +105,22 @@ export async function display_results(taup_url) {
       });
     }
   });
+}
+
+export function defaultFetchInitObj(mimeType) {
+  const headers = {};
+
+  if (mimeType != null) {
+    headers.Accept = mimeType;
+  }
+
+  return {
+    cache: "no-cache",
+    redirect: "follow",
+    mode: "cors",
+    referrer: "webtaup",
+    headers: headers,
+  };
 }
 
 export function form_url() {
