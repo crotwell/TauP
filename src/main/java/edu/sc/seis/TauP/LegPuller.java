@@ -435,7 +435,6 @@ public class LegPuller {
          */
         if(legs.size() == 2 && currLeg.endsWith("kmps")) {
             puristName.append(legs.get(0));
-            puristName.append(legs.get(1));
             return puristName.toString();
         }
 
