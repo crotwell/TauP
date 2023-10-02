@@ -53,7 +53,10 @@ class IllegalPhasesTest {
 			"PKI5500diffkp", // assuming discon in inner core at 5500
 			"PKIv5500ykp",
 			"PKI^5500Ikp",
-			"PKIkp"
+			"PKIkp",
+			"P410diffp",
+			"P410diff",
+			"P410diffS"
 	);
 
 	static List<String> scatterLegalPhases = Arrays.asList(
