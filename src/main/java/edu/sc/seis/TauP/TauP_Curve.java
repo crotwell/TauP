@@ -392,7 +392,11 @@ public class TauP_Curve extends TauP_Time {
             // round max and min time to nearest 100 seconds
             maxTime = Math.ceil(maxTime / 100) * 100;
             if (minTime != 0.0) {
-                minTime = minTime - (maxTime-minTime)/20; // 5% extra
+                double widerMinTime = minTime - (maxTime-minTime)/20; // 5% extra
+                if (minTime > 0 && widerMinTime < 0) {
+                    // if wider is below 0, just use 0 as minTime
+                    minTime = 0;
+                }
             }
             minTime = Math.floor(minTime / 100) * 100;
             if (outputFormat.equals(GMT)) {
@@ -471,10 +475,10 @@ public class TauP_Curve extends TauP_Time {
                 out.println("<g transform=\"scale(1,-1) translate(0, -"+plotWidth+")\">");
                 if (distHorizontal) {
                     out.println("<g transform=\"scale(" + (plotWidth / 180) + "," + (plotWidth / (maxTime-minTime)) + ")\" >");
-                    out.println("<g transform=\"translate(0, -"+minTime+")\">");
+                    out.println("<g transform=\"translate(0, "+(-1*minTime)+")\">");
                 } else {
                     out.println("<g transform=\"scale(" +  (plotWidth / (maxTime-minTime)) + "," + (plotWidth / 180) + ")\" >");
-                    out.println("<g transform=\"translate(-"+minTime+", 0)\">");
+                    out.println("<g transform=\"translate("+(-1*minTime)+", 0)\">");
                 }
             }
         }
