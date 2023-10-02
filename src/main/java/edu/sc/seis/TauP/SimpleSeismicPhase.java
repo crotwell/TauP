@@ -338,7 +338,7 @@ public class SimpleSeismicPhase implements SeismicPhase {
 
     @Override
     public String getPuristName() {
-        return name;
+        return puristName;
     }
 
     @Override
