@@ -74,6 +74,12 @@ public class ReflTransCoefficient implements Serializable {
      */
     protected Complex shDelta;
 
+    /** D term for solid-fluid */
+    Complex DSolidFluid;
+
+    /** D term for fluid-solid */
+    Complex DFluidSolid;
+
     // store the vertical slownesses for both the top and bottom halfspaces
     // for both P and S waves
     protected Complex topVertSlownessP, topVertSlownessS;
@@ -173,6 +179,7 @@ public class ReflTransCoefficient implements Serializable {
                                               topVertSlownessS)));
             // det = E * F + G * H * sqRP
             det = CX.plus(CX.times(E, F), CX.times(G, H).times(sqRP));
+
             // free surface denominator
             // fsA = ((1/sqBotVs) - 2 * sqRP)^2 +
             // 4 * sqRP * botVertSlownessP * botVertSlownessS
@@ -184,6 +191,19 @@ public class ReflTransCoefficient implements Serializable {
             shDelta = CX.plus(CX.plus(topDensity * topVs * topVs,
                                       topVertSlownessS), CX.plus(botDensity
                     * botVs * botVs, botVertSlownessS));
+
+            // solid-fluid
+            Complex dsfBracketTerm = CX.plus(topVertSlownessP.times(topVertSlownessS).times(4*sqTopVs*sqTopVs*sqRP),
+                    (1-2*sqTopVs*sqRP)*(1-2*sqTopVs*sqRP));
+            DSolidFluid = CX.plus(topVertSlownessP.times(botDensity),
+                    botVertSlownessP.times(topDensity).times(dsfBracketTerm));
+
+            // fluid-solid
+            Complex dfsParenTerm = CX.plus(botVertSlownessP.times(botVertSlownessS.times(4*sqTopVs*sqTopVs*sqRP)),
+                    (1-2*sqBotVs*sqRP)*(1-2*sqBotVs*sqRP));
+            DFluidSolid = botVertSlownessP.times(topVp*topDensity)
+                    .plus(topVertSlownessP.times(topVp*botDensity).times(dfsParenTerm));
+
             lastRayParam = rayParam;
             lastInIsPWave = inIsPWave;
         }
@@ -216,7 +236,7 @@ public class ReflTransCoefficient implements Serializable {
      * @see #getComplexFreePtoPRefl(double)
      */
     public double getFreePtoPRefl(double rayParam) {
-        return CX.real(getComplexFreePtoPRefl(rayParam));
+        return CX.abs(getComplexFreePtoPRefl(rayParam));
     }
 
     /**
@@ -238,7 +258,7 @@ public class ReflTransCoefficient implements Serializable {
      * @see #getComplexFreePtoSVRefl(double)
      */
     public double getFreePtoSVRefl(double rayParam) {
-        return CX.real(getComplexFreePtoSVRefl(rayParam));
+        return CX.abs(getComplexFreePtoSVRefl(rayParam));
     }
 
     /**
@@ -247,7 +267,8 @@ public class ReflTransCoefficient implements Serializable {
      * <P>= (4 * (topVs/topVp) * rp * topVertSlownessS *<BR>
      * ((1/sqTopVs) - 2 * sqRP)) / fsA
      */
-    public Complex getComplexFreeSVtoPRefl(double rayParam) {
+    public Complex getComplexFreeSVtoPRefl(double rayParam) throws VelocityModelException {
+        checkSVelocityNonZero();
         calcTempVars(rayParam, false);
         double realNumerator = 4 * (topVs / topVp) * rp
                 * ((1 / sqTopVs) - 2 * sqRP);
@@ -260,8 +281,8 @@ public class ReflTransCoefficient implements Serializable {
      * 
      * @see #getComplexFreeSVtoPRefl(double)
      */
-    public double getFreeSVtoPRefl(double rayParam) {
-        return CX.real(getComplexFreeSVtoPRefl(rayParam));
+    public double getFreeSVtoPRefl(double rayParam) throws VelocityModelException {
+        return CX.abs(getComplexFreeSVtoPRefl(rayParam));
     }
 
     /**
@@ -270,7 +291,8 @@ public class ReflTransCoefficient implements Serializable {
      * <P>= (-1 * ((1/sqTopVs) - 2 * sqRP)^2 +<BR>
      * 4 * sqRP * topVertSlownessP * topVertSlownessS) / fsA
      */
-    public Complex getComplexFreeSVtoSVRefl(double rayParam) {
+    public Complex getComplexFreeSVtoSVRefl(double rayParam) throws VelocityModelException {
+        checkSVelocityNonZero();
         calcTempVars(rayParam, false);
         // Aki and Richards don't have -1
         double realNumerator = ((1 / sqTopVs) - 2 * sqRP)
@@ -282,19 +304,21 @@ public class ReflTransCoefficient implements Serializable {
         return CX.over(numerator, fsA);
     }
 
+
     /**
      * Calculates incident SV wave to reflected SV wave coefficient at free
      * surface.
      */
-    public double getFreeSVtoSVRefl(double rayParam) {
-        return CX.real(getComplexFreeSVtoSVRefl(rayParam));
+    public double getFreeSVtoSVRefl(double rayParam) throws VelocityModelException {
+        return CX.abs(getComplexFreeSVtoSVRefl(rayParam));
     }
 
     /**
      * Calculates incident SH wave to reflected SH wave complex coefficient at
      * free surface. Free surface SH is always 1.
      */
-    public Complex getComplexFreeSHtoSHRefl(double rayParam) {
+    public Complex getComplexFreeSHtoSHRefl(double rayParam)  throws VelocityModelException {
+        checkSVelocityNonZero();
         return new Complex(1);
     }
 
@@ -302,8 +326,230 @@ public class ReflTransCoefficient implements Serializable {
      * Calculates incident SH wave to reflected SH wave coefficient at free
      * surface. Free surface SH is always 1.
      */
-    public double getFreeSHtoSHRefl(double rayParam) {
+    public double getFreeSHtoSHRefl(double rayParam) throws VelocityModelException {
+        checkSVelocityNonZero();
         return 1;
+    }
+
+    // solid-fluid interface
+
+    /**
+     * Calculate scattering matrix for Solid-Solid interface. See Aki and Richards (2nd ed) sect 5.2.3 p 139-147.
+     * Rows 1 and 2 are outbound from "top" layer, and rows 3 and 4 are outbound from "bottom" layer.
+     * Columns 1 and 2 are inbound from "top" layer, and columns 3 and 4 are inbound from "bottom" layer.
+     * Upper left and lower right are reflections.
+     * Upper right and lower left are transmissions.
+     *
+      <pre>
+       P↓P↑ S↓P↑ P↑P↑ S↑P↑
+       P↓S↑ S↓S↑ P↑S↑ S↑S↑
+       P↓P↓ S↓P↓ P↑P↓ S↑P↓
+       P↓S↓ S↓S↓ P↑S↓ S↑S↓
+       </pre>
+     * @param rayParam
+     * @return 4x4 matrix
+     * @throws VelocityModelException
+     */
+    public Complex[][] calcScatterMatrix(double rayParam) throws VelocityModelException {
+        ReflTransCoefficient flip = flip();
+        Complex[][] out = new Complex[4][4];
+        out[0] = new Complex[] {
+                getComplexPtoPRefl(rayParam),
+                getComplexSVtoPRefl(rayParam),
+                flip.getComplexPtoPTrans(rayParam),
+                flip.getComplexSVtoPTrans(rayParam)
+        };
+        out[1] = new Complex[] {
+                getComplexPtoSVRefl(rayParam),
+                getComplexSVtoSVRefl(rayParam),
+                flip.getComplexPtoSVTrans(rayParam),
+                flip.getComplexSVtoSVTrans(rayParam)
+        };
+        out[2] = new Complex[] {
+                getComplexPtoPTrans(rayParam),
+                getComplexSVtoPTrans(rayParam),
+                flip.getComplexPtoPRefl(rayParam),
+                flip.getComplexSVtoPRefl(rayParam)
+        };
+        out[3] = new Complex[] {
+                getComplexPtoSVTrans(rayParam),
+                getComplexSVtoSVTrans(rayParam),
+                flip.getComplexPtoSVRefl(rayParam),
+                flip.getComplexSVtoSVRefl(rayParam)
+        };
+        return out;
+    }
+
+
+    public Complex[][] calcSqrtEnergyFluxMatrix(double rayParam) throws VelocityModelException {
+        Complex[][] out =calcScatterMatrix(rayParam);
+        double cos_p_top = topDensity*topVp*Math.sqrt(1-sqRP*sqTopVp);
+        double cos_s_top = topDensity*topVs*Math.sqrt(1-sqRP*sqTopVs);
+        double cos_p_bot = botDensity*botVp*Math.sqrt(1-sqRP*sqBotVp);
+        double cos_s_bot = botDensity*botVs*Math.sqrt(1-sqRP*sqBotVs);
+        // 0,0 no change     .times(Math.sqrt((cos_p_top)/(cos_p_top)));
+        out[0][1] = out[0][1].times(Math.sqrt((cos_p_top)/(cos_s_top)));
+        out[0][2] = out[0][2].times(Math.sqrt((cos_p_top)/(cos_p_bot)));
+        out[0][3] = out[0][3].times(Math.sqrt((cos_p_top)/(cos_s_bot)));
+
+
+        out[1][0] = out[1][0].times(Math.sqrt((cos_s_top)/(cos_p_top)));
+        // 1,1 no change     .times(Math.sqrt((cos_s_top)/(cos_s_top)));
+        out[1][2] = out[1][2].times(Math.sqrt((cos_s_top)/(cos_p_bot)));
+        out[1][3] = out[1][3].times(Math.sqrt((cos_s_top)/(cos_s_bot)));
+
+        out[2][0] = out[2][0].times(Math.sqrt((cos_p_bot)/(cos_p_top)));
+        out[2][1] = out[2][1].times(Math.sqrt((cos_p_bot)/(cos_s_top)));
+        // 2,2 no change     .times(Math.sqrt((cos_p_bot)/(cos_p_bot)));
+        out[2][3] = out[2][3].times(Math.sqrt((cos_p_bot)/(cos_s_bot)));
+
+        out[3][0] = out[3][0].times(Math.sqrt((cos_s_bot)/(cos_p_top)));
+        out[3][1] = out[3][1].times(Math.sqrt((cos_s_bot)/(cos_s_top)));
+        out[3][2] = out[3][2].times(Math.sqrt((cos_s_bot)/(cos_p_bot)));
+        // 3,3 no change     .times(Math.sqrt((cos_s_bot)/(cos_s_bot)));
+        return out;
+    }
+
+    /**
+     * Calculates incident P wave in solid (over fluid) to reflected P wave Complex coefficient.
+     */
+    public Complex getComplexSolidFluidPtoPRefl(double rayParam) {
+        calcTempVars(rayParam, true);
+        Complex a1Term = topVertSlownessP.times(
+                botVertSlownessP.times(topVertSlownessS).times(4*sqTopVs*sqTopVs*sqRP*topDensity).plus(botDensity)
+                );
+        Complex a2Term = botVertSlownessP.times(topDensity).times((1-2*sqTopVs*sqRP)*(1-2*sqTopVs*sqRP));
+        Complex out = CX.over(CX.minus(a1Term, a2Term), DSolidFluid);
+        return out;
+    }
+    public double getSolidFluidPtoPRefl(double rayParam) {
+        return CX.abs(getComplexSolidFluidPtoPRefl(rayParam));
+    }
+    /**
+     * Calculates incident P wave in solid (over fluid) to reflected P wave Complex coefficient.
+     */
+    public Complex getComplexSolidFluidPtoSVRefl(double rayParam) {
+        calcTempVars(rayParam, true);
+        Complex numeratorTerm = CX.times(topVertSlownessP, botVertSlownessP).times(4*topVp*topVs*rp*topDensity).times(2*sqTopVs*sqRP-1);
+
+        Complex out = CX.over(numeratorTerm, DSolidFluid);
+        return out;
+    }
+    public double getSolidFluidPtoSVRefl(double rayParam) {
+        return CX.abs(getComplexSolidFluidPtoSVRefl(rayParam));
+    }
+    /**
+     * Calculates incident P wave in solid (over fluid) to reflected P wave Complex coefficient.
+     */
+    public Complex getComplexSolidFluidPtoPTrans(double rayParam) {
+        calcTempVars(rayParam, true);
+        Complex numeratorTerm = topVertSlownessP.times( 2*(topVp/botVp)*topDensity).times(1-2*sqTopVs*sqRP);
+        Complex out = CX.over(numeratorTerm, DSolidFluid);
+        return out;
+    }
+    public double getSolidFluidPtoPTrans(double rayParam) {
+        return CX.abs(getComplexSolidFluidPtoPTrans(rayParam));
+    }
+
+
+    /**
+     * Calculates incident S wave in solid (over fluid) to reflected S wave Complex coefficient.
+     */
+    public Complex getComplexSolidFluidSVtoSVRefl(double rayParam) throws VelocityModelException {
+        checkSVelocityNonZero();
+        calcTempVars(rayParam, false);
+        Complex a2Term = CX.times(botVertSlownessP, topDensity*(1-2*sqTopVs*sqRP)*(1-2*sqTopVs*sqRP));
+        Complex a1Term = CX.times(topVertSlownessP, CX.minus(botDensity, CX.times(botVertSlownessP, topVertSlownessS).times(4*sqTopVs*sqTopVs*sqRP*topDensity)));
+        Complex out = CX.over(CX.plus(a2Term, a1Term), DSolidFluid);
+        return out;
+    }
+    public double getSolidFluidSVtoSVRefl(double rayParam) throws VelocityModelException {
+        return CX.abs(getComplexSolidFluidSVtoSVRefl(rayParam));
+    }
+    /**
+     * Calculates incident S wave in solid (over fluid) to reflected S wave Complex coefficient.
+     */
+    public Complex getComplexSolidFluidSVtoPRefl(double rayParam) throws VelocityModelException {
+        checkSVelocityNonZero();
+        calcTempVars(rayParam, false);
+        Complex numeratorTerm = CX.times(botVertSlownessP, topVertSlownessS).times(4/topVp*sqTopVs*topVs*rp*topDensity*(1-2*sqTopVs*sqRP));
+        Complex out = CX.over(numeratorTerm, DSolidFluid);
+        return out;
+    }
+    public double getSolidFluidSVtoPRefl(double rayParam) throws VelocityModelException {
+        return CX.abs(getComplexSolidFluidSVtoPRefl(rayParam));
+    }
+    /**
+     * Calculates incident S wave in solid (over fluid) to reflected S wave Complex coefficient.
+     */
+    public Complex getComplexSolidFluidSVtoPTrans(double rayParam) throws VelocityModelException {
+        checkSVelocityNonZero();
+        calcTempVars(rayParam, false);
+
+        Complex numeratorTerm = CX.times(topVertSlownessP, topVertSlownessS).times(4/botVp*sqTopVs*topVs*topDensity*rp);
+        Complex out = CX.over(numeratorTerm, DSolidFluid);
+        return out;
+    }
+    public double getSolidFluidSVtoPTrans(double rayParam) throws VelocityModelException {
+        return CX.abs(getComplexSolidFluidSVtoPTrans(rayParam));
+    }
+
+
+    /**
+     * Calculates incident SH wave in solid (over fluid) to reflected SH wave Complex coefficient.
+     * Always 1.0, so just for completeness.
+     */
+    public double getSolidFluidSHtoSHRefl(double rayParam) throws VelocityModelException {
+        checkSVelocityNonZero();
+        return 1;
+    }
+
+    // Fluid-Solid interface
+
+    /**
+     * Calculates incident P wave in fluid (over solid) to reflected P wave Complex coefficient.
+     */
+    public Complex getComplexFluidSolidPtoPRefl(double rayParam) {
+        calcTempVars(rayParam, true);
+        Complex b24Term = botVertSlownessP.times(botVertSlownessS).times(4*sqBotVs*sqBotVs*sqRP);
+        double b2Term = (1-2*sqBotVs*sqRP)*(1-2*sqBotVs*sqRP);
+        Complex numeratorTerm = botVertSlownessP.times( botVp*botDensity).times(CX.plus(b24Term, b2Term))
+                .minus(botVertSlownessP.times(topVp*topDensity));
+        Complex out = CX.over(numeratorTerm, DFluidSolid);
+        return out;
+    }
+    public double getFluidSolidPtoPRefl(double rayParam) {
+        return CX.abs(getComplexFluidSolidPtoPRefl(rayParam));
+    }
+
+    /**
+     * Calculates incident P wave in fluid (over solid) to transmitted P wave Complex coefficient.
+     */
+    public Complex getComplexFluidSolidPtoPTrans(double rayParam) {
+        calcTempVars(rayParam, true);
+        Complex numeratorTerm = CX.plus(topVertSlownessP.times(topVp), botVertSlownessP.times(botVp))
+                .times( -1*(topVp/botVp)*topDensity*(2*sqBotVs*sqRP-1));
+        Complex out = CX.over(numeratorTerm, DFluidSolid);
+        return out;
+    }
+    public double getFluidSolidPtoPTrans(double rayParam) {
+        return CX.abs(getComplexFluidSolidPtoPTrans(rayParam));
+    }
+
+
+    /**
+     * Calculates incident P wave in fluid (over solid) to transmitted S wave Complex coefficient.
+     */
+    public Complex getComplexFluidSolidPtoSVTrans(double rayParam) {
+        calcTempVars(rayParam, true);
+        Complex numeratorTerm = botVertSlownessP
+                .times( -2*(topVp*botVs)*rp*topDensity)
+                .times(CX.plus(topVertSlownessP.times(topVp), botVertSlownessP.times(botVp)));
+        Complex out = CX.over(numeratorTerm, DFluidSolid);
+        return out;
+    }
+    public double getFluidSolidPtoSVTrans(double rayParam) {
+        return CX.abs(getComplexFluidSolidPtoSVTrans(rayParam));
     }
 
     // Solid-Solid interface
@@ -320,15 +566,16 @@ public class ReflTransCoefficient implements Serializable {
                                          CX.times(d, CX.times(topVertSlownessP,
                                                               botVertSlownessS))),
                                  CX.times(H, sqRP));
-        return CX.over(CX.minus(FTerm, HTerm), det);
+        Complex out =  CX.over(CX.minus(FTerm, HTerm), det);
+        return out;
     }
 
     /**
      * Calculates incident P wave to reflected P wave coefficient.
      */
     public double getPtoPRefl(double rayParam) {
-        // return CX.abs(getComplexPtoPRefl(rayParam));
-        return CX.real(getComplexPtoPRefl(rayParam));
+         return CX.abs(getComplexPtoPRefl(rayParam));
+        //return CX.real(getComplexPtoPRefl(rayParam));
     }
 
     /**
@@ -345,6 +592,7 @@ public class ReflTransCoefficient implements Serializable {
                                                               botVertSlownessS)));
         Complex numerator = CX.times(CX.times(realNumerator, topVertSlownessP),
                                      middleTerm);
+
         return CX.over(numerator, det);
     }
 
@@ -352,7 +600,7 @@ public class ReflTransCoefficient implements Serializable {
      * Calculates incident P wave to reflected SV wave coefficient.
      */
     public double getPtoSVRefl(double rayParam) {
-        return CX.real(getComplexPtoSVRefl(rayParam));
+        return CX.abs(getComplexPtoSVRefl(rayParam));
     }
 
     /**
@@ -363,6 +611,7 @@ public class ReflTransCoefficient implements Serializable {
     public Complex getComplexPtoPTrans(double rayParam) {
         calcTempVars(rayParam, true);
         double realNumerator = 2 * topDensity * (topVp / botVp);
+
         return CX.over(CX.times(realNumerator, CX.times(topVertSlownessP, F)),
                        det);
     }
@@ -372,7 +621,7 @@ public class ReflTransCoefficient implements Serializable {
      */
     public double getPtoPTrans(double rayParam) {
         // return CX.abs(getComplexPtoPTrans(rayParam));
-        return CX.real(getComplexPtoPTrans(rayParam));
+        return CX.abs(getComplexPtoPTrans(rayParam));
     }
 
     /**
@@ -386,6 +635,7 @@ public class ReflTransCoefficient implements Serializable {
         double realNumerator = 2 * topDensity * rp * (topVp / botVs);
         Complex numerator = CX.times(realNumerator, CX.times(topVertSlownessP,
                                                              H));
+
         return CX.over(numerator, det);
     }
 
@@ -394,7 +644,8 @@ public class ReflTransCoefficient implements Serializable {
      */
     public double getPtoSVTrans(double rayParam) {
         // return CX.abs(getComplexPtoSVTrans(rayParam));
-        return CX.real(getComplexPtoSVTrans(rayParam));
+
+        return CX.abs(getComplexPtoSVTrans(rayParam));
     }
 
     /**
@@ -404,7 +655,8 @@ public class ReflTransCoefficient implements Serializable {
      * rp * (topVs / topVp)) /<BR>
      * det
      */
-    public Complex getComplexSVtoPRefl(double rayParam) {
+    public Complex getComplexSVtoPRefl(double rayParam) throws VelocityModelException {
+        checkSVelocityNonZero();
         calcTempVars(rayParam, false);
         double realNumerator = -2 * rp * (topVs / topVp);
         // double realNumerator = -2 * rp * (topVs / topVp);
@@ -413,15 +665,16 @@ public class ReflTransCoefficient implements Serializable {
                                                               botVertSlownessS)));
         Complex numerator = CX.times(realNumerator, CX.times(topVertSlownessS,
                                                              middleTerm));
+
         return CX.over(numerator, det);
     }
 
     /**
      * Calculates incident SV wave to reflected P wave coefficient.
      */
-    public double getSVtoPRefl(double rayParam) {
+    public double getSVtoPRefl(double rayParam) throws VelocityModelException {
         // return CX.abs(getComplexSVtoPRefl(rayParam));
-        return CX.real(getComplexSVtoPRefl(rayParam));
+        return CX.abs(getComplexSVtoPRefl(rayParam));
     }
 
     /**
@@ -430,7 +683,8 @@ public class ReflTransCoefficient implements Serializable {
      * (a + b * botVertSlownessP * topVertSlownessS) * G * sqRP) /<BR>
      * det
      */
-    public Complex getComplexSVtoSVRefl(double rayParam) {
+    public Complex getComplexSVtoSVRefl(double rayParam) throws VelocityModelException {
+        checkSVelocityNonZero();
         calcTempVars(rayParam, false);
         Complex adNumerator = CX.times(CX.plus(a,
                                                CX.times(d,
@@ -446,9 +700,9 @@ public class ReflTransCoefficient implements Serializable {
     /**
      * Calculates incident SV wave to reflected SV wave coefficient.
      */
-    public double getSVtoSVRefl(double rayParam) {
+    public double getSVtoSVRefl(double rayParam) throws VelocityModelException {
         // return CX.abs(getComplexSVtoSVRefl(rayParam));
-        return CX.real(getComplexSVtoSVRefl(rayParam));
+        return CX.abs(getComplexSVtoSVRefl(rayParam));
     }
 
     /**
@@ -457,20 +711,22 @@ public class ReflTransCoefficient implements Serializable {
      * <BR>
      * det
      */
-    public Complex getComplexSVtoPTrans(double rayParam) {
+    public Complex getComplexSVtoPTrans(double rayParam) throws VelocityModelException {
+        checkSVelocityNonZero();
         calcTempVars(rayParam, false);
         double realNumerator = -2 * topDensity * rp * (topVs / botVp);
         Complex numerator = CX.times(realNumerator, CX.times(topVertSlownessS,
                                                              G));
+
         return CX.over(numerator, det);
     }
 
     /**
      * Calculates incident SV wave to transmitted P wave coefficient.
      */
-    public double getSVtoPTrans(double rayParam) {
+    public double getSVtoPTrans(double rayParam) throws VelocityModelException {
         // return CX.abs(getComplexSVtoPTrans(rayParam));
-        return CX.real(getComplexSVtoPTrans(rayParam));
+        return CX.abs(getComplexSVtoPTrans(rayParam));
     }
 
     /**
@@ -478,20 +734,21 @@ public class ReflTransCoefficient implements Serializable {
      * <P>= 2 * topDensity * topVertSlownessS * E * (topVs / botVs) /<BR>
      * det
      */
-    public Complex getComplexSVtoSVTrans(double rayParam) {
+    public Complex getComplexSVtoSVTrans(double rayParam) throws VelocityModelException {
+        checkSVelocityNonZero();
         calcTempVars(rayParam, false);
-        double realNumerator = 2 * topDensity * rp * (topVs / botVs);
-        Complex numerator = CX.times(realNumerator, CX.times(topVertSlownessS,
-                                                             E));
+        double realNumerator = 2 * topDensity * (topVs / botVs);
+        Complex numerator = CX.times(realNumerator, CX.times(topVertSlownessS, E));
+
         return CX.over(numerator, det);
     }
 
     /**
      * Calculates incident SV wave to transmitted SV wave coefficient.
      */
-    public double getSVtoSVTrans(double rayParam) {
+    public double getSVtoSVTrans(double rayParam) throws VelocityModelException {
         // return CX.abs(getComplexSVtoSVTrans(rayParam));
-        return CX.real(getComplexSVtoSVTrans(rayParam));
+        return CX.abs(getComplexSVtoSVTrans(rayParam));
     }
 
     // SH waves
@@ -502,7 +759,8 @@ public class ReflTransCoefficient implements Serializable {
      * <P>= (topMu * topVertSlownessS - botMu * botVertSlownessS) /<BR>
      * (topMu * topVertSlownessS + botMu * botVertSlownessS)
      */
-    public Complex getComplexSHtoSHRefl(double rayParam) {
+    public Complex getComplexSHtoSHRefl(double rayParam)  throws VelocityModelException {
+        checkSVelocityNonZero();
         calcTempVars(rayParam, false);
         double topMu = topVs * topVs * topDensity;
         double botMu = botVs * botVs * botDensity;
@@ -514,9 +772,9 @@ public class ReflTransCoefficient implements Serializable {
     /**
      * Calculates incident SH wave to reflected SH wave coefficient.
      */
-    public double getSHtoSHRefl(double rayParam) {
+    public double getSHtoSHRefl(double rayParam) throws VelocityModelException {
         // return CX.abs(getComplexSHtoSHRefl(rayParam));
-        return CX.real(getComplexSHtoSHRefl(rayParam));
+        return CX.abs(getComplexSHtoSHRefl(rayParam));
     }
 
     /**
@@ -526,7 +784,8 @@ public class ReflTransCoefficient implements Serializable {
      * <P>= 2 * topMu * topVertSlownessS /<BR>
      * (topMu * topVertSlownessS + botMu * botVertSlownessS)
      */
-    public Complex getComplexSHtoSHTrans(double rayParam) {
+    public Complex getComplexSHtoSHTrans(double rayParam) throws VelocityModelException {
+        checkSVelocityNonZero();
         calcTempVars(rayParam, false);
         double topMu = topVs * topVs * topDensity;
         double botMu = botVs * botVs * botDensity;
@@ -538,121 +797,18 @@ public class ReflTransCoefficient implements Serializable {
     /**
      * Calculates incident SH wave to transmitted SH wave coefficient.
      */
-    public double getSHtoSHTrans(double rayParam) {
+    public double getSHtoSHTrans(double rayParam) throws VelocityModelException {
         // return CX.abs(getComplexSHtoSHTrans(rayParam));
-        return CX.real(getComplexSHtoSHTrans(rayParam));
+        return CX.abs(getComplexSHtoSHTrans(rayParam));
     }
 
-    public static void main(String[] args) {
-        double topVp = 4.98;
-        double topVs = 2.9;
-        double topDensity = 2.667;
-        double botVp = 8.0;
-        double botVs = 4.6;
-        double botDensity = 3.38;
-        double depth;
-        double radiusOfEarth;
-        double DtoR = Math.PI / 180.0;
-        double RtoD = 180.0 / Math.PI;
-        double[] RPP = new double[91];
-        double[] RPS = new double[91];
-        double[] RSP = new double[91];
-        double[] RSS = new double[91];
-        double[] TPP = new double[91];
-        double[] TPS = new double[91];
-        double[] TSP = new double[91];
-        double[] TSS = new double[91];
-        ReflTransCoefficient coeff = new ReflTransCoefficient(topVp,
-                                                              topVs,
-                                                              topDensity,
-                                                              botVp,
-                                                              botVs,
-                                                              botDensity);
-        double rayParam;
-        for(int i = 0; i <= 90; i++) {
-            rayParam = Math.sin(DtoR * i) / topVp;
-            RPP[i] = coeff.getPtoPRefl(rayParam);
-            RPS[i] = coeff.getPtoSVRefl(rayParam);
-            TPP[i] = coeff.getPtoPTrans(rayParam);
-            TPS[i] = coeff.getPtoSVTrans(rayParam);
-            rayParam = Math.sin(DtoR * i) / topVs;
-            RSP[i] = coeff.getSVtoPRefl(rayParam);
-            RSS[i] = coeff.getSVtoSVRefl(rayParam);
-            TSP[i] = coeff.getSVtoPTrans(rayParam);
-            TSS[i] = coeff.getSVtoSVTrans(rayParam);
-        }
-        try {
-            java.io.Writer out = new java.io.BufferedWriter(new java.io.FileWriter("refltrans.gmt"));
-            out.write("#!/bin/sh\n\n");
-            out.write("/bin/rm -f refltrans.ps\n\n");
-            out.write("psbasemap -K -P -JX6 -R0/90/0/2  -B10/1 > refltrans.ps\n");
-            // out.write("psxy -K -O -JX -R -M -W1/255/0/0 >> refltrans.ps
-            // <<END\n");
-            // for (int i=0; i<=90; i++) {
-            // out.write(i+" "+RPP[i]+"\n");
-            // }
-            // out.write("END\n");
-            // out.write("psxy -K -O -JX -R -M -W1/0/255/0 >> refltrans.ps
-            // <<END\n");
-            // for (int i=0; i<=90; i++) {
-            // out.write(i+" "+RPS[i]+"\n");
-            // }
-            // out.write("END\n");
-            // out.write("psxy -K -O -JX -R -M -W1/0/0/255 >> refltrans.ps
-            // <<END\n");
-            // for (int i=0; i<=90; i++) {
-            // out.write(i+" "+TPP[i]+"\n");
-            // }
-            // out.write("END\n");
-            // out.write("psxy -K -O -JX -R -M -W1/255/255/0 >> refltrans.ps
-            // <<END\n");
-            // for (int i=0; i<=90; i++) {
-            // out.write(i+" "+TPS[i]+"\n");
-            // }
-            // out.write("END\n");
-            out.write("psxy -K -O -JX -R -M -W1/255/0/0 >> refltrans.ps <<END\n");
-            for(int i = 0; i <= 90; i++) {
-                out.write(i + " " + RSP[i] + "\n");
-            }
-            out.write("END\n");
-            out.write("psxy -K -O -JX -R -M -W1/0/255/0 >> refltrans.ps <<END\n");
-            for(int i = 0; i <= 90; i++) {
-                out.write(i + " " + RSS[i] + "\n");
-            }
-            out.write("END\n");
-            out.write("psxy -K -O -JX -R -M -W1/0/0/255 >> refltrans.ps <<END\n");
-            for(int i = 0; i <= 90; i++) {
-                out.write(i + " " + TSP[i] + "\n");
-            }
-            out.write("END\n");
-            out.write("psxy -O -JX -R -M -W1/255/0/255 >> refltrans.ps <<END\n");
-            for(int i = 0; i <= 90; i++) {
-                out.write(i + " " + TSS[i] + "\n");
-            }
-            out.write("END\n");
-            out.close();
-        } catch(java.io.IOException e) {
-            System.err.println(e);
+    public void checkSVelocityNonZero() throws VelocityModelException {
+        if (topVs == 0) {
+            throw new VelocityModelException("Cannot calculate reflection/transmission coefficents for inbound SV wave as S velocity is zero");
         }
     }
 
-    public Complex getBotVertSlownessP(double rayParam) {
-        calcTempVars(rayParam, true);
-        return botVertSlownessP;
-    }
-
-    public Complex getBotVertSlownessS(double rayParam) {
-        calcTempVars(rayParam, false);
-        return botVertSlownessS;
-    }
-
-    public Complex getTopVertSlownessP(double rayParam) {
-        calcTempVars(rayParam, true);
-        return topVertSlownessP;
-    }
-
-    public Complex getTopVertSlownessS(double rayParam) {
-        calcTempVars(rayParam, false);
-        return topVertSlownessS;
+    public static double sphericalToFlatRP(double spRayParam, double radiusOfEarth) {
+        return  spRayParam / radiusOfEarth;
     }
 } // ReflTransCoefficient

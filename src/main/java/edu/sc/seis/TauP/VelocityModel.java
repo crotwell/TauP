@@ -43,6 +43,9 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
+import static edu.sc.seis.TauP.PhaseInteraction.TRANSDOWN;
+import static edu.sc.seis.TauP.PhaseInteraction.TRANSUP;
+
 /**
  * This class defines basic classes to store and manipulate a velocity model.
  * 
@@ -1565,4 +1568,27 @@ public class VelocityModel implements Cloneable, Serializable {
                                  spherical,
                                  layers);
     }
+    
+    public ReflTransCoefficient calcReflTransCoef(double depth, boolean downgoing) throws VelocityModelException {
+        if ( ! isDisconDepth(depth)) {
+            throw new VelocityModelException("depth "+depth+" is not a discontinuity in the model");
+        }
+        double abovePVel = evaluateAbove(depth, P_WAVE_CHAR);
+        double aboveSVel = evaluateAbove(depth, S_WAVE_CHAR);
+        double aboveRho = evaluateAbove(depth, DENSITY_CHAR);
+        double belowPVel = evaluateBelow(depth, P_WAVE_CHAR);
+        double belowSVel = evaluateBelow(depth, S_WAVE_CHAR);
+        double belowRho = evaluateBelow(depth, DENSITY_CHAR);
+        ReflTransCoefficient rtCoef = new ReflTransCoefficient(
+                abovePVel, aboveSVel, aboveRho,
+                belowPVel, belowSVel, belowRho);
+        if (!downgoing) {
+            rtCoef = rtCoef.flip();
+        }
+        return rtCoef;
+    }
+
+    public static final char P_WAVE_CHAR = 'P';
+    public static final char S_WAVE_CHAR = 'S';
+    public static final char DENSITY_CHAR = 'D';
 }

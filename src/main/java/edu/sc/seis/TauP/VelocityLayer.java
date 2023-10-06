@@ -344,6 +344,10 @@ public class VelocityLayer implements Cloneable, Serializable {
         return topSVelocity;
     }
 
+    public boolean isFluid() {
+        return getTopSVelocity() == 0.0;
+    }
+
     public void setBotSVelocity(double botSVelocity) {
         this.botSVelocity = botSVelocity;
     }

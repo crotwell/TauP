@@ -24,8 +24,9 @@ public class ToolRun {
     public static String VELMERGE = "velmerge";
 	public static String WAVEFRONT = "wavefront";
 	public static String WEB = "web";
+	public static String REFLTRANSPLOT = "refltrans";
 	
-	static String[] toolnames = { GUI, CREATE, CURVE, PATH, PHASE, PIERCE, SETSAC, SPLOT, TABLE, TIME, VPLOT, VELMERGE, WAVEFRONT, WEB };
+	static String[] toolnames = { GUI, CREATE, CURVE, PATH, PHASE, PIERCE, SETSAC, SPLOT, TABLE, TIME, VPLOT, VELMERGE, WAVEFRONT, WEB, REFLTRANSPLOT };
 	
 	public static void printUsage() {
 		System.out.println("Usage: taup <tool> <options>");
@@ -111,6 +112,8 @@ public class ToolRun {
                 tool = new TauP_VelocityMerge();
             } else if (toolToRun.contentEquals(WAVEFRONT)) {
                 tool = new TauP_Wavefront();
+			} else if (toolToRun.contentEquals(REFLTRANSPLOT)) {
+				tool = new TauP_ReflTransPlot();
 			} else if (toolToRun.contentEquals(WEB)) {
             	try {
             		Class webClass = Class.forName("edu.sc.seis.webtaup.TauP_Web");
