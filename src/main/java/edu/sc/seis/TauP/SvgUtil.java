@@ -116,6 +116,9 @@ public class SvgUtil {
         out.println("        .Tss {");
         out.println("            stroke: grey;");
         out.println("        }");
+        out.println("        .Tshsh {");
+        out.println("            stroke: brown;");
+        out.println("        }");
         out.println("    ]]></style>");
         out.println("</defs>");
         out.println("<g transform=\"translate("+plotOffset+","+plotOffset+")\" >");

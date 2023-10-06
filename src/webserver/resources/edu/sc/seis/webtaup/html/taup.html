@@ -46,6 +46,8 @@
         <label for="ak135">ak135favg</label>
         <input type="radio" name="model" id="prem" value="prem" />
         <label for="prem">prem</label>
+        <input type="radio" name="model" id="fmgs" value="fmgs" />
+        <label for="fmgs">fmgs</label>
     </fieldset>
 
     <fieldset>
@@ -169,6 +171,31 @@
       <input type="checkbox" id="negdist" name="negdist" checked />
       <button id="animate" type="button" >Animate</button>
     </fieldset>
+
+    <fieldset class="tool_refltran">
+      <label for="refltran">
+          <span>Reflection and Transmission: </span>
+      </label>
+
+      <label for="depth">
+          <span>Depth (km): </span>
+      </label>
+      <input type="number" id="depth" name="depth" value="35" />
+
+      <label for="depth">
+          <span>Step (deg): </span>
+      </label>
+      <input type="number" id="anglestep" name="anglestep" value="1" />
+      <label for="indowngoing">
+          <span>Incident Downgoing: </span>
+      </label>
+      <input type="checkbox" id="indowngoing" name="indowngoing" checked />
+      <label for="inpwave">
+          <span>Incident P Wave: </span>
+      </label>
+      <input type="checkbox" id="inpwave" name="inpwave" checked />
+
+    </fieldset>
     <fieldset>
         <legend>Format:</legend>
         <input type="radio" name="format" id="format_text" value="text" checked />
@@ -199,6 +226,8 @@
         <label for="tool_velplot">Vel Model</label>
         <input type="radio" name="tool" id="tool_slow" value="slowplot" />
         <label for="tool_slow">Slow Model</label>
+        <input type="radio" name="tool" id="tool_refltran" value="refltrans" />
+        <label for="tool_refltran">Refl Trans</label>
     </fieldset>
 </form>
 

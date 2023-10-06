@@ -213,6 +213,8 @@ public class TauP_Web extends TauP_Tool {
             tool = new TauP_VelocityMerge();
         } else if (toolToRun.contentEquals(ToolRun.WAVEFRONT)) {
             tool = new TauP_Wavefront();
+        } else if (toolToRun.contentEquals(ToolRun.REFLTRANSPLOT)) {
+            tool = new TauP_ReflTransPlot();
         } else {
             System.err.println("Tool '"+toolToRun+"' not recognized.");
             printUsage();
@@ -239,6 +241,12 @@ public class TauP_Web extends TauP_Tool {
     // Wavefront
     public static String QP_TIMESTEP = "timestep";
     public static String QP_NEGDIST = "negdist";
+
+    // ReflTrans
+    public static String QP_DEPTH = "depth";
+    public static String QP_ANGLESTEP = "anglestep";
+    public static String QP_IN_DOWN = "indown";
+    public static String QP_IN_PWAVE = "inpwave";
 
 
     public Set<String> configTool(TauP_Tool tool, Map<String, Deque<String>> queryParameters) throws TauPException, IOException {
@@ -366,6 +374,55 @@ public class TauP_Web extends TauP_Tool {
                 unknownKeys.remove(QP_NEGDIST);
                 wavefrontTool.setNegDistance( true);
             }
+        }
+
+        if (tool instanceof TauP_ReflTransPlot) {
+
+            TauP_ReflTransPlot rtplot = (TauP_ReflTransPlot) tool;
+            if (queryParameters.containsKey(QP_MODEL)) {
+                unknownKeys.remove(QP_MODEL);
+                rtplot.setModelName(queryParameters.get(QP_MODEL).getFirst());
+            }
+            if (queryParameters.containsKey(QP_DEPTH)) {
+                unknownKeys.remove(QP_DEPTH);
+                rtplot.setDepth(Double.parseDouble(queryParameters.get(QP_DEPTH).getFirst()));
+            }
+            if (queryParameters.containsKey(QP_ANGLESTEP)) {
+                unknownKeys.remove(QP_ANGLESTEP);
+                rtplot.setAngleStep(Float.parseFloat(queryParameters.get(QP_ANGLESTEP).getFirst()));
+            }
+            rtplot.setIncidentDown( false);
+            if (queryParameters.containsKey(QP_IN_DOWN)) {
+                unknownKeys.remove(QP_IN_DOWN);
+
+                String p = queryParameters.get(QP_IN_DOWN).getFirst();
+                if (p.length() == 0 || p.equalsIgnoreCase("true")) {
+                    rtplot.setIncidentDown(true);
+                } else if (p.equalsIgnoreCase("false")) {
+                    rtplot.setIncidentDown(false);
+                } else {
+                    throw new TauPException("Unknown value for "+QP_IN_DOWN+": "+p);
+                }
+            }
+            rtplot.setIncidentPWave( false);
+            if (queryParameters.containsKey(QP_IN_PWAVE)) {
+                unknownKeys.remove(QP_IN_PWAVE);
+                String p = queryParameters.get(QP_IN_PWAVE).getFirst();
+                if (p.length() == 0 || p.equalsIgnoreCase("true")) {
+                    rtplot.setIncidentPWave(true);
+                } else if (p.equalsIgnoreCase("false")) {
+                    rtplot.setIncidentPWave(false);
+                } else {
+                    throw new TauPException("Unknown value for "+QP_IN_PWAVE+": "+p);
+                }
+            }
+            unknownKeys.remove(QP_DISTDEG);
+            unknownKeys.remove(QP_SHOOTRAY);
+            unknownKeys.remove(QP_TAKEOFF);
+            unknownKeys.remove(QP_PHASES);
+            unknownKeys.remove(QP_EVDEPTH);
+            unknownKeys.remove(QP_SCATTER);
+            unknownKeys.remove(QP_STADEPTH);
         }
         return unknownKeys;
     }

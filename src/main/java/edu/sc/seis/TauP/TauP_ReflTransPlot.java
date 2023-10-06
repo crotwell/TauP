@@ -87,7 +87,7 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
         if (vMod == null ) {
             throw new TauPException("Unable to find model "+modelName);
         }
-        printSVG(getWriter(), vMod, depth, indown, inpwave);
+        printSVG(getWriter(), vMod, depth, indown, inpwave, angleStep);
     }
 
     @Override
@@ -110,13 +110,17 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
     }
 
 
-    public void printSVG(PrintWriter out, VelocityModel vMod, double depth, boolean incidentTop, boolean incidentIsPWave) throws VelocityModelException {
+    public void printSVG(PrintWriter out,
+                         VelocityModel vMod,
+                         double depth,
+                         boolean downgoing,
+                         boolean incidentIsPWave,
+                         float angleStep) throws VelocityModelException {
         if ( ! vMod.isDisconDepth(depth)) {
             System.err.println("Depth is not a discontinuity in "+vMod.getModelName()+": "+depth);
         }
         float minAngle = 0.0f;
         float maxAngle = 90.0f;
-        float angleStep = 2.5f;
         int numXTicks = 5;
         double maxY = 2.0;
         double minY = 0.0;
@@ -129,13 +133,13 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
         float plotWidth = pixelWidth - margin;
 
         double invel;
-        if (incidentTop) {
+        if (downgoing) {
             invel =  vMod.evaluateAbove(depth, incidentIsPWave ? P_WAVE_CHAR : S_WAVE_CHAR);
         } else {
             invel =  vMod.evaluateBelow(depth, incidentIsPWave ? P_WAVE_CHAR : S_WAVE_CHAR);
         }
         String title = vMod.modelName +" at "+depth+" "+(incidentIsPWave ? P_WAVE_CHAR : S_WAVE_CHAR)+" "
-                +(incidentTop ? "downgoing" : "upgoing")
+                +(downgoing ? "downgoing" : "upgoing")
                 +" in vel="+(invel);
         printSVGBeginning(out);
         SvgUtil.createXYAxes(out, minAngle, maxAngle, numXTicks, xEndFixed,
@@ -151,15 +155,13 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
         out.println("<g transform=\"scale(" + (plotWidth / maxAngle) + "," + (plotWidth / (maxY-minY)) + ")\" >");
         out.println("<g transform=\"translate(0,"+(-1*minY)+")\" >");
 
-        ReflTransCoefficient reflTranCoef = vMod.calcReflTransCoef(depth, incidentTop);
-        if ( ! incidentTop) {
-            reflTranCoef = reflTranCoef.flip();
-        }
+        ReflTransCoefficient reflTranCoef = vMod.calcReflTransCoef(depth, downgoing);
+
         VelocityLayer aboveLayer = vMod.getVelocityLayer(vMod.layerNumberAbove(depth));
         VelocityLayer belowLayer = vMod.getVelocityLayer(vMod.layerNumberBelow(depth));
         VelocityLayer inLayer;
         VelocityLayer outLayer;
-        if (incidentTop) {
+        if (downgoing) {
             inLayer = aboveLayer;
             outLayer = belowLayer;
         } else {
@@ -171,7 +173,7 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
 
         // to calc flat earth ray param from incident angle
         double oneOverV;
-        if (incidentTop) {
+        if (downgoing) {
             oneOverV = 1.0 / vMod.evaluateAbove(depth, incidentIsPWave ? P_WAVE_CHAR : S_WAVE_CHAR);
         } else {
             oneOverV = 1.0 / vMod.evaluateBelow(depth, incidentIsPWave ? P_WAVE_CHAR : S_WAVE_CHAR);
@@ -520,6 +522,15 @@ System.out.println("above (inbound) is fluid");
     String modelType;
 
     protected double depth = 0.0;
+    protected float angleStep = 1.0f;
     protected boolean indown = true;
     protected boolean inpwave = true;
+
+    public void setAngleStep(float angleStep) {
+        this.angleStep = angleStep;
+    }
+
+    public float getAngleStep() {
+        return angleStep;
+    }
 }

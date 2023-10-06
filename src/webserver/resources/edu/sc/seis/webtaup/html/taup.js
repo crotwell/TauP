@@ -31,7 +31,7 @@ export function valid_format(tool) {
       format = "svg";
     }
   } else if (format === "text" || format === "json") {
-    if (tool === "slowplot" || tool === "curve" || tool === "wavefront") {
+    if (tool === "slowplot" || tool === "curve" || tool === "wavefront" || tool === "refltrans") {
       format = "svg";
     }
   }
@@ -145,11 +145,14 @@ export function form_url() {
 
 
   const format = valid_format(toolname);
-  let url = `${toolname}?model=${model}&evdepth=${evdepth}`;
-  if (toolname !== "velplot") {
+  let url = `${toolname}?model=${model}`;
+  if (toolname !== "refltrans") {
+    url += `&evdepth=${evdepth}`;
+  }
+  if (toolname !== "velplot" && toolname !== "refltrans") {
     url += `&phases=${phases}`;
   }
-  if (toolname !== "velplot" && toolname !== "curve" && toolname !== "wavefront"  && toolname !== "phase") {
+  if (toolname !== "velplot" && toolname !== "curve" && toolname !== "wavefront"  && toolname !== "phase" &&toolname !== "refltrans") {
     let distparam;
     if (disttype === "islistdist") {
       let distdeg = document.querySelector('input[name="distdeg"]').value;
@@ -181,11 +184,13 @@ export function form_url() {
     }
     url += distparam;
   }
-  if (stadepth !== 0) {
-    url += `&stadepth=${stadepth}`;
-  }
-  if (isScatter ) {
-    url += `&scatter=${scatdepth},${scatdist}`;
+  if (toolname !== "refltrans"){
+    if (stadepth !== 0) {
+      url += `&stadepth=${stadepth}`;
+    }
+    if (isScatter ) {
+      url += `&scatter=${scatdepth},${scatdist}`;
+    }
   }
   if (toolname === "pierce") {
     if (piercedepth.length > 0) {
@@ -201,6 +206,26 @@ export function form_url() {
     }
     if (isNegDist) {
       url += `&negdist=true`;
+    }
+  }
+  if (toolname === "refltrans") {
+
+    let depth = document.querySelector('input[name="depth"]').value;
+    if (depth > 0) {
+      url += `&depth=${depth}`;
+    }
+    let anglestep = document.querySelector('input[name="anglestep"]').value;
+    if (anglestep > 0) {
+      url += `&anglestep=${anglestep}`;
+    }
+    let indowngoing = document.querySelector('input[name="indowngoing"]').checked;
+    if (indowngoing) {
+      url += `&indown=true`;
+    }
+
+    let inpwave = document.querySelector('input[name="inpwave"]').checked;
+    if (inpwave) {
+      url += `&inpwave=true`;
     }
   }
   // set format last as most useful to change
