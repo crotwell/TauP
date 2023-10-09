@@ -687,7 +687,8 @@ public class TauP_Time extends TauP_Tool {
                     degreesList = parseDegreeList(args[i+1]);
                     i++;
                 } else if(dashEquals("km", args[i])) {
-                    distKilometersList.add(Double.valueOf(args[i + 1]).doubleValue());
+                    distKilometersList = parseDegreeList(args[i+1]);
+                    //distKilometersList.add(Double.valueOf(args[i + 1]).doubleValue());
                     i++;
                 } else if(dashEquals("az", args[i])) {
                     azimuth = Double.valueOf(args[i + 1]).doubleValue();
