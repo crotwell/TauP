@@ -44,7 +44,8 @@ public class Arrival {
                    double time,
                    double dist,
                    double rayParam,
-                   int rayParamIndex) {
+                   int rayParamIndex,
+                   double dRPdDist) {
         this(phase,
                 time,
                 dist,
@@ -56,7 +57,8 @@ public class Arrival {
                 phase.getSourceDepth(),
                 phase.getReceiverDepth(),
                 phase.calcTakeoffAngle(rayParam),
-                phase.calcIncidentAngle(rayParam));
+                phase.calcIncidentAngle(rayParam),
+                dRPdDist);
     }
     public Arrival(SeismicPhase phase,
                    double time,
@@ -69,7 +71,8 @@ public class Arrival {
                    double sourceDepth,
                    double receiverDepth,
                    double takeoffAngle,
-                   double incidentAngle) {
+                   double incidentAngle,
+                   double dRPdDist) {
 
         if (Double.isNaN(time)) {
             throw new IllegalArgumentException("Time cannot be NaN");
@@ -90,6 +93,7 @@ public class Arrival {
         this.receiverDepth = receiverDepth;
         this.takeoffAngle = takeoffAngle;
         this.incidentAngle = incidentAngle;
+        this.dRPdDist = dRPdDist;
     }
 
 
@@ -106,6 +110,8 @@ public class Arrival {
     private double rayParam;
 
     private int rayParamIndex;
+
+    private double dRPdDist;
 
     /** original angular search distance (great circle) in radians. May differ from dist by multiple of 2 pi
      * or be pi - dist for long way around. */
@@ -219,12 +225,62 @@ public class Arrival {
         return getRayParam()/RtoD;
     }
 
+    public double getDRayParamDDelta() {
+        return dRPdDist;
+    }
+
+    public double getDRayParamDDeltaDeg() {
+        return dRPdDist/RtoD/RtoD;
+    }
+
+    /**
+     * Geometrical spreading factor.
+     * See Fundamentals of Modern Global Seismology, ch 13, eq 13.21
+     * @return
+     * @throws TauModelException
+     */
+    public double getGeometricSpreadingFactor() throws TauModelException {
+        double rofE = getPhase().getTauModel().getRadiusOfEarth();
+        double numerator = velocityAtSource()*rayParam*Math.abs(getDRayParamDDelta());
+        double sourceRadius = rofE-getSourceDepth();
+        double recRadius = rofE-getReceiverDepth();
+        double denominator = velocityAtReceiver()*sourceRadius*sourceRadius
+                *recRadius*recRadius
+                *radialSlownessAtSource()*radialSlownessAtReceiver()
+                *Math.sin(getModuloDist());
+        System.out.println(getName()+" Gsf: "+numerator+"  "+denominator);
+        return Math.sqrt(numerator/ denominator);
+    }
+
     public double getIncidentAngle() {
         return incidentAngle;
     }
     
     public double getTakeoffAngle() {
         return takeoffAngle;
+    }
+
+    public double velocityAtSource() {
+        return getPhase().velocityAtSource();
+    }
+
+    public double radialSlownessAtSource() {
+        double srcVel = velocityAtSource();
+        double rofE = getPhase().getTauModel().getRadiusOfEarth();
+        double srcRadius = rofE - getSourceDepth();
+        return Math.sqrt(1/(srcVel*srcVel) - getRayParam()*getRayParam()/(srcRadius*srcRadius));
+    }
+
+
+    public double velocityAtReceiver() {
+        return getPhase().velocityAtReceiver();
+    }
+
+    public double radialSlownessAtReceiver() {
+        double recVel = velocityAtReceiver();
+        double rofE = getPhase().getTauModel().getRadiusOfEarth();
+        double recRadius = rofE - getReceiverDepth();
+        return Math.sqrt(1/(recVel*recVel) - getRayParam()*getRayParam()/(recRadius*recRadius));
     }
 
     public int getRayParamIndex() {

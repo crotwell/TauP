@@ -93,6 +93,32 @@ public class ConstantModelWithoutCore {
         }
     }
 
+    @Test
+    public void testGeomSpreadingP() throws TauModelException {
+        String phase = "P";
+        testGeomSpreadingForPhase(phase);
+    }
+
+    @Test
+    public void testGeomSpreadingS() throws TauModelException {
+        String phase = "S";
+        testGeomSpreadingForPhase(phase);
+    }
+
+    public void testGeomSpreadingForPhase(String phase) throws TauModelException {
+        double R = tMod.getRadiusOfEarth();
+        SeismicPhase pPhase = SeismicPhaseFactory.createPhase(phase, tMod, tMod.sourceDepth);
+        for (double dist=10; dist <= 180; dist+=10) {
+            List<Arrival> arrivals = pPhase.calcTime(dist);
+            assertEquals(1, arrivals.size());
+            Arrival a = arrivals.get(0);
+            // constant model, so geometrical spreading is 1/r, ie length of chord
+            assertEquals(1.0 / (2 * R * Math.sin(dist / 2 * Math.PI / 180)),
+                    a.getGeometricSpreadingFactor(),
+                    0.01, "dist: "+dist);
+        }
+    }
+
     VelocityModel vmod;
 
     SphericalSModel smod;

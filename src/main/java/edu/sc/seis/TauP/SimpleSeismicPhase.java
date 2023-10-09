@@ -19,8 +19,6 @@ package edu.sc.seis.TauP;
 import java.io.*;
 import java.util.*;
 
-import static edu.sc.seis.TauP.PhaseInteraction.*;
-
 /**
  * Stores and transforms seismic phase names to and from their corresponding
  * sequence of branches.
@@ -560,13 +558,14 @@ public class SimpleSeismicPhase implements SeismicPhase {
                                    getTime(rayNum),
                                    getDist(rayNum),
                                    getRayParams(rayNum),
-                                   rayNum);
+                                   rayNum,
+                (getRayParams(rayNum)-getRayParams(rayNum+1))/ (getDist(rayNum)-getDist(rayNum+1)));
         Arrival right = new Arrival(this,
                                    getTime(rayNum+1),
                                    getDist(rayNum+1),
                                    getRayParams(rayNum+1),
-                                   rayNum // use rayNum as know dist is between rayNum and rayNum+1
-                                    );
+                                   rayNum, // use rayNum as know dist is between rayNum and rayNum+1
+                (getRayParams(rayNum)-getRayParams(rayNum+1))/ (getDist(rayNum)-getDist(rayNum+1)));
         return refineArrival(left, right, distRadian, distTolRadian, maxRecursion);
     }
 
@@ -627,7 +626,9 @@ public class SimpleSeismicPhase implements SeismicPhase {
         }
         // looks like a body wave and can ray param can propagate
         int rayParamIndex = -1;
-        for (rayParamIndex = 0; rayParamIndex < rayParams.length-1 && rayParams[rayParamIndex+1] >= rayParam; rayParamIndex++) {}
+        for (rayParamIndex = 0; rayParamIndex < rayParams.length-1 && rayParams[rayParamIndex+1] >= rayParam; rayParamIndex++) {
+            // find index for ray param, done in for-loop check
+        }
         /* counter for passes through each branch. 0 is P and 1 is S. */
         int[][] timesBranches = SeismicPhaseFactory.calcBranchMultiplier(tMod, branchSeq, waveType);
         TimeDist sum = new TimeDist(rayParam);
@@ -662,11 +663,13 @@ public class SimpleSeismicPhase implements SeismicPhase {
                 sum = sum.add(td);
             }
         }
+        double dRPdDist = (rayParam-rayParams[rayParamIndex])/(sum.getDistRadian()-dist[rayParamIndex]);
         return new Arrival(this,
                            sum.getTime(),
                            sum.getDistRadian(),
                            rayParam,
-                           rayParamIndex);
+                           rayParamIndex,
+                dRPdDist);
     }
 
     /**
@@ -692,10 +695,13 @@ public class SimpleSeismicPhase implements SeismicPhase {
 
         // use closest edge to interpolate time
         double arrivalTime;
+        double dRPdDist;
         if (Math.abs(searchDist - left.getDist()) < Math.abs(searchDist - right.getDist())) {
             arrivalTime = left.getTime() + arrivalRayParam * (searchDist - left.getDist());
+            dRPdDist = (left.getRayParam()-arrivalRayParam)/ (left.getDist()-searchDist);
         } else {
             arrivalTime = right.getTime() + arrivalRayParam * (searchDist - right.getDist());
+            dRPdDist = (right.getRayParam()-arrivalRayParam)/ (right.getDist()-searchDist);
         }
         if (Double.isNaN(arrivalTime)) {
             throw new RuntimeException("Time is NaN, search "+searchDist +" leftDist "+ left.getDist()+ " leftTime "+left.getTime()
@@ -706,7 +712,8 @@ public class SimpleSeismicPhase implements SeismicPhase {
                            arrivalTime,
                            searchDist,
                            arrivalRayParam,
-                           left.getRayParamIndex());
+                           left.getRayParamIndex(),
+                dRPdDist);
     }
 
     @Override
@@ -729,30 +736,22 @@ public class SimpleSeismicPhase implements SeismicPhase {
     }
 
     @Override
-    public double calcTakeoffAngle(double arrivalRayParam) {
-        double takeoffVelocity;
-        if (name.endsWith("kmps")) {
-            return 0;
-        }
-        VelocityModel vMod = getTauModel().getVelocityModel();
+    public double velocityAtSource() {
         try {
+            double takeoffVelocity;
             char firstLeg;
+            VelocityModel vMod = getTauModel().getVelocityModel();
             if (segmentList.get(0).isPWave) {
-                firstLeg = 'P';
+                firstLeg = VelocityModel.P_WAVE_CHAR;
             } else {
-                firstLeg = 'S';
+                firstLeg = VelocityModel.S_WAVE_CHAR;
             }
             if (getDownGoing()[0]) {
                 takeoffVelocity = vMod.evaluateBelow(sourceDepth, firstLeg);
             } else {
                 takeoffVelocity = vMod.evaluateAbove(sourceDepth, firstLeg);
             }
-            double takeoffAngle = 180/Math.PI*Math.asin(takeoffVelocity*arrivalRayParam/(getTauModel().getRadiusOfEarth()-sourceDepth));
-            if ( ! getDownGoing()[0]) {
-                // upgoing, so angle is in 90-180 range
-                takeoffAngle = 180-takeoffAngle;
-            }
-            return takeoffAngle;
+            return takeoffVelocity;
         } catch(NoSuchLayerException e) {
             throw new RuntimeException("Should not happen", e);
         } catch(NoSuchMatPropException e) {
@@ -761,34 +760,52 @@ public class SimpleSeismicPhase implements SeismicPhase {
     }
 
     @Override
-    public double calcIncidentAngle(double arrivalRayParam) {
-        if (name.endsWith("kmps")) {
-            return 0;
-        }
-        double incidentVelocity;
-        VelocityModel vMod = getTauModel().getVelocityModel();
+    public double velocityAtReceiver() {
         try {
+            double incidentVelocity;
+            VelocityModel vMod = getTauModel().getVelocityModel();
             char lastLeg;
             if (segmentList.get(segmentList.size()-1).isPWave) {
-                lastLeg = 'P';
+                lastLeg = VelocityModel.P_WAVE_CHAR;
             } else {
-                lastLeg = 'S';
+                lastLeg = VelocityModel.S_WAVE_CHAR;
             }
             if (getDownGoing()[getDownGoing().length-1]) {
                 incidentVelocity = vMod.evaluateAbove(receiverDepth, lastLeg);
             } else {
                 incidentVelocity = vMod.evaluateBelow(receiverDepth, lastLeg);
             }
-            double incidentAngle = 180/Math.PI*Math.asin(incidentVelocity*arrivalRayParam/(getTauModel().getRadiusOfEarth()-receiverDepth));
-            if (getDownGoing()[getDownGoing().length-1]) {
-                incidentAngle = 180 - incidentAngle;
-            }
-            return incidentAngle;
+            return incidentVelocity;
         } catch(NoSuchLayerException e) {
             throw new RuntimeException("Should not happen", e);
         } catch(NoSuchMatPropException e) {
             throw new RuntimeException("Should not happen", e);
         }
+    }
+
+    @Override
+    public double calcTakeoffAngle(double arrivalRayParam) {
+        if (name.endsWith("kmps")) {
+            return 0;
+        }
+        double takeoffAngle = 180/Math.PI*Math.asin(velocityAtSource()*arrivalRayParam/(getTauModel().getRadiusOfEarth()-sourceDepth));
+        if ( ! getDownGoing()[0]) {
+            // upgoing, so angle is in 90-180 range
+            takeoffAngle = 180-takeoffAngle;
+        }
+        return takeoffAngle;
+    }
+
+    @Override
+    public double calcIncidentAngle(double arrivalRayParam) {
+        if (name.endsWith("kmps")) {
+            return 0;
+        }
+        double incidentAngle = 180/Math.PI*Math.asin(velocityAtReceiver()*arrivalRayParam/(getTauModel().getRadiusOfEarth()-receiverDepth));
+        if (getDownGoing()[getDownGoing().length-1]) {
+            incidentAngle = 180 - incidentAngle;
+        }
+        return incidentAngle;
     }
 
 

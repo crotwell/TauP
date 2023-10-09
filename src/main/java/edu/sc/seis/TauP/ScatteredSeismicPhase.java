@@ -2,7 +2,6 @@ package edu.sc.seis.TauP;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -323,6 +322,16 @@ public class ScatteredSeismicPhase implements SeismicPhase {
     @Override
     public double calcRayParamForTakeoffAngle(double takeoffDegree) {
         return inboundArrival.getRayParam();
+    }
+
+    @Override
+    public double velocityAtSource() {
+        return inboundArrival.getPhase().velocityAtSource();
+    }
+
+    @Override
+    public double velocityAtReceiver() {
+        return scatteredPhase.velocityAtReceiver();
     }
 
     @Override

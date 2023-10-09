@@ -167,6 +167,10 @@ public class SeismicPhaseSegment {
 		return desc;
 	}
 
+	public TauModel getTauModel() {
+		return tMod;
+	}
+
 	public String getDepthRangeString() {
 		String depthRange;
 		if (isFlat) {
