@@ -276,8 +276,7 @@ public class ReflTransCoefficient implements Serializable {
     public Complex getComplexFreeSVtoPRefl(double rayParam) throws VelocityModelException {
         checkSVelocityNonZero();
         calcTempVars(rayParam, false);
-        double realNumerator = 4 * (topVs / topVp) * rp
-                * ((1 / sqTopVs) - 2 * sqRP);
+        double realNumerator = 4 * (topVs / topVp) * rp * ((1 / sqTopVs) - 2 * sqRP);
         return CX.over(CX.times(realNumerator, topVertSlownessS), fsA);
     }
 
