@@ -143,30 +143,41 @@ public class ReflTransTest {
         double botVs = 0;
         double botDensity = 10;
         double flatRP = 0.0;
-        ReflTransCoefficient coeff = new ReflTransCoefficient(topVp,topVs,topDensity,botVp,botVs,botDensity);
+        ReflTransCoefficient coeff = new ReflTransCoefficient(topVp, topVs, topDensity, botVp, botVs, botDensity);
 
-        double Rpp_perpen = (1-(2*botVp*topDensity)/(botVp*topDensity+topVp*botDensity));
-        double Rpp_alt = 1-(2*topVp*topDensity)/(botVp*botDensity+topVp*topDensity);
+        // in p wave
+        double Rpp_perpen = (1 - (2 * botVp * topDensity) / (botVp * topDensity + topVp * botDensity));
+        double Rpp_alt = 1 - (2 * topVp * topDensity) / (botVp * botDensity + topVp * topDensity);
         double Rpp_calc = coeff.getSolidFluidPtoPRefl(flatRP);
-        double Tpp_perpen = (2*topVp*topVp*topDensity)/(botVp*botVp*topDensity+topVp*botVp*botDensity);
-        double Tpp_alt = (2*topVp*topDensity)/(botVp*botDensity+topVp*topDensity);
+        double Tpp_perpen = (2 * topVp * topVp * topDensity) / (botVp * botVp * topDensity + topVp * botVp * botDensity);
+        double Tpp_alt = (2 * topVp * topDensity) / (botVp * botDensity + topVp * topDensity);
         double Tpp_calc = coeff.getSolidFluidPtoPTrans(flatRP);
         double Rps_perpen = 0;
         double Rps_alt = 0;
         double Rps_calc = coeff.getSolidFluidPtoSVRefl(flatRP);
         assertEquals(Rps_perpen, Rps_calc);
 
-        // energy
-        assertEquals(topDensity*topVp,
-                topDensity*topVp*Rpp_calc*Rpp_calc
-                        +botDensity*botVp*Tpp_calc*Tpp_calc
+        // in s wave
+        double Rsp_calc = coeff.getSolidFluidSVtoPRefl(flatRP);
+        double Rss_calc = coeff.getSolidFluidSVtoSVRefl(flatRP);
+        double Tsp_calc = coeff.getSolidFluidSVtoPTrans(flatRP);
+
+        // energy in p wave
+        assertEquals(topDensity * topVp,
+                topDensity * topVp * Rpp_calc * Rpp_calc
+                        + botDensity * botVp * Tpp_calc * Tpp_calc
         );
-        assertEquals(topDensity*topVp,
-                topDensity*topVp*Rpp_alt*Rpp_alt
-                        +botDensity*botVp*Tpp_alt*Tpp_alt,
+        assertEquals(topDensity * topVp,
+                topDensity * topVp * Rpp_alt * Rpp_alt
+                        + botDensity * botVp * Tpp_alt * Tpp_alt,
                 0.000001
         );
-
+        // energy in s wave
+        assertEquals(topDensity * topVs,
+                topDensity * topVp * Rsp_calc * Rsp_calc
+                        + topDensity * topVs * Rss_calc * Rss_calc
+                        + botDensity * botVp * Tsp_calc * Tsp_calc
+        );
 
 /*
         //this fails, energy FMGS eq 13.63
@@ -186,10 +197,10 @@ public class ReflTransTest {
         System.out.println("     "+Tpp_alt+"      "+Rpp_alt+"      "+Rps_alt);
 */
 
-        assertEquals(0,coeff.getSolidFluidPtoSVRefl(flatRP) );
-        assertEquals(1,coeff.getSolidFluidSVtoSVRefl(flatRP) );
-        assertEquals(0,coeff.getSolidFluidSVtoPRefl(flatRP) );
-        assertEquals(0,coeff.getSolidFluidSVtoPTrans(flatRP) );
+        assertEquals(0, coeff.getSolidFluidPtoSVRefl(flatRP));
+        assertEquals(1, coeff.getSolidFluidSVtoSVRefl(flatRP));
+        assertEquals(0, coeff.getSolidFluidSVtoPRefl(flatRP));
+        assertEquals(0, coeff.getSolidFluidSVtoPTrans(flatRP));
         assertEquals(Rpp_alt,
                 coeff.getSolidFluidPtoPRefl(flatRP),
                 0.0000001);
@@ -198,12 +209,126 @@ public class ReflTransTest {
                 0.0000001);
     }
 
+    @Test
+    public void testVerticalSolidFluidEnergyRP() throws VelocityModelException {
+
+        double topVp = 13.6;
+        double topVs = 7.2;
+        double topDensity = 5.5;
+        double botVp = 8;
+        double botVs = 0;
+        double botDensity = 10;
+        double flatRP = 0.0;
+        ReflTransCoefficient coeff = new ReflTransCoefficient(topVp,topVs,topDensity,botVp,botVs,botDensity);
+
+        // non vertical incidence
+        for (flatRP = 0.0; flatRP < 1/topVs; flatRP+= 0.05) {
+
+            // in p wave
+            double Rpp_calc = coeff.getSolidFluidPtoPRefl(flatRP);
+            double Tpp_calc = coeff.getSolidFluidPtoPTrans(flatRP);
+            double Rps_calc = coeff.getSolidFluidPtoSVRefl(flatRP);
+
+            // in s wave
+            double Rsp_calc = coeff.getSolidFluidSVtoPRefl(flatRP);
+            double Rss_calc = coeff.getSolidFluidSVtoSVRefl(flatRP);
+            double Tsp_calc = coeff.getSolidFluidSVtoPTrans(flatRP);
+            // energy in p wave
+            assertEquals(topDensity * topVp,
+                    topDensity * topVp * Rpp_calc * Rpp_calc
+                        + topDensity * topVs * Rps_calc * Rps_calc
+                            + botDensity * botVp * Tpp_calc * Tpp_calc,
+                    "flatrp="+flatRP
+            );
+            // energy in s wave
+            assertEquals(topDensity * topVs,
+                    topDensity * topVp * Rsp_calc * Rsp_calc
+                            + topDensity * topVs * Rss_calc * Rss_calc
+                            + botDensity * botVp * Tsp_calc * Tsp_calc,
+                    "flatrp="+flatRP
+            );
+        }
     }
 
-    /**
-     * Ocean crust example from Stein and Wysession, p83-84, fig 2.6-12
-     * @throws VelocityModelException
-     */
+
+    @Test
+    public void testVerticalFluidSolid() throws VelocityModelException {
+        // outer core to mantle,
+        double topVp = 13.6;
+        double topVs = 7.2;
+        double topDensity = 5.5;
+        double botVp = 8;
+        double botVs = 0;
+        double botDensity = 10;
+        double flatRP = 0.0;
+        ReflTransCoefficient coeff = new ReflTransCoefficient(topVp, topVs, topDensity, botVp, botVs, botDensity);
+        coeff = coeff.flip();
+
+
+        double Rpp_perpen = botVp*(botVp*botDensity-topVp*topDensity)/(topVp*(botVp*topDensity+topVp*botDensity));
+        double Rpp_calc = coeff.getFluidSolidPtoPRefl(flatRP);
+        double Tpp_perpen = (topVp*topVp+botVp*botVp)*topDensity / (botVp*botVp*topDensity+topVp*botVp*botDensity);
+        double Tpp_calc = coeff.getFluidSolidPtoPTrans(flatRP);
+        double Tps_perpen = 0;
+        double Tps_alt = 0;
+        double Tps_calc = coeff.getFluidSolidPtoSVTrans(flatRP);
+
+        System.out.println("Outer core-mantle vertical incidence");
+        System.out.println("Tpp "+Tpp_calc+"  Rpp "+Rpp_calc+"  Rps "+Tps_calc);
+        System.out.println("     "+Tpp_perpen+"      "+Rpp_perpen+"      "+Tps_perpen);
+
+        // energy
+        assertEquals(topDensity*topVp,
+                topDensity*topVp*Rpp_calc*Rpp_calc
+                        +botDensity*botVp*Tpp_calc*Tpp_calc
+                        +botDensity*botVs*Tps_calc*Tps_calc,
+                0.000002
+        );
+
+        assertEquals(Tpp_perpen, Tpp_calc, 0.00001);
+        assertEquals(Tps_perpen, Tps_calc, 0.00001);
+        assertEquals(Rpp_perpen, Rpp_calc, 0.00001);
+    }
+
+
+    @Test
+    public void testVerticalFluidSolidEnergyRp() throws VelocityModelException {
+        // outer core to mantle,
+        double topVp = 13.6;
+        double topVs = 7.2;
+        double topDensity = 5.5;
+        double botVp = 8;
+        double botVs = 0;
+        double botDensity = 10;
+        double flatRP = 0.0;
+        ReflTransCoefficient coeff = new ReflTransCoefficient(topVp, topVs, topDensity, botVp, botVs, botDensity);
+
+        coeff = coeff.flip();
+
+        // non vertical incidence
+        for (flatRP = 0.0; flatRP < 1/topVs; flatRP+= 0.05) {
+
+            double Rpp_calc = coeff.getFluidSolidPtoPRefl(flatRP);
+            double Tpp_calc = coeff.getFluidSolidPtoPTrans(flatRP);
+            double Tps_calc = coeff.getFluidSolidPtoSVTrans(flatRP);
+
+            // energy
+            assertEquals(topDensity * topVp,
+                    topDensity * topVp * Rpp_calc * Rpp_calc
+                            + botDensity * botVp * Tpp_calc * Tpp_calc
+                            + botDensity * botVs * Tps_calc * Tps_calc,
+                    0.000002,
+                    "rp="+flatRP
+            );
+        }
+
+    }
+
+
+        /**
+         * Ocean crust example from Stein and Wysession, p83-84, fig 2.6-12
+         * @throws VelocityModelException
+         */
     @Test
     public void testVerticalFluidSolid_SteinWysession() throws VelocityModelException {
 
@@ -231,7 +356,7 @@ public class ReflTransTest {
         System.out.println("Stein Wysession");
         System.out.println("Tpp "+FS_Tpp_calc+"  Rpp "+FS_Rpp_calc);
         System.out.println("CA  "+FS_Tpp_perpen+"      "+FS_Rpp_perpen);
-        System.out.println("CA  "+FS_Tpp_perpen/Tpp_ans+"  "+FS_Rpp_perpen/Rpp_ans);
+        System.out.println("CA ratio"+FS_Tpp_perpen/Tpp_ans+"  "+FS_Rpp_perpen/Rpp_ans);
         System.out.println("ans "+Tpp_ans+"      "+Rpp_ans);
 
 
