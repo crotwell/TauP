@@ -11,36 +11,15 @@ import org.junit.jupiter.api.Test;
 
 
 /*
- * Results from Aki and Richards, p. 147
- * Reflection down-up:
- * PP 0.1065 SS -0.0807 PS -0.1766 SP -0.1766
- * Transmission up-down:
- * PP 0.9701 SS 0.9720 PS -0.1277 SP 0.1326
+Seismology has a long history of typographic errors in reflection and transmission coefficient expressions.
+ - FOUNDATIONS OF MODERN GLOBAL SEISMOLOGY, 2nd ed., p. 385, Ammon, Velasco, Lay, Wallace
  */
-/*
- * Results from this program:
- * Reflection: P to P : 0.10645629458816266 (ok)
- * SV to SV: 1.00750006460279 (-1, then almost correct)
- * SH to SH: 0.21571140246943346 (?)
- * P to SV: 0.2136862880233206 (wrong)
- * SV to P : 0.14595770448337106 (wrong)
- * Transmission: P to P : 0.8232776575961794 (wrong)
- * SV to SV: 0.07806818755242703
- * SH to SH: 0.7842885975305666
- * P to SV: 0.12406408730275095 (sign, then correct)
- * SV to P : 0.09298971937936698 (wrong)
- * Own Formulas:
- * Reflection:
- * P to P : 0.21739129686535721
- * SV to SV: -0.23076922189870933
- * P to SV: -4.8097192981283884E-5
- * SV to P : -2.8056695987942995E-5
- */
+
 public class ReflTransTest {
 
     @Test
     public void testgetSHtoSHRefl() throws VelocityModelException {
-        float ans = -.2157f;
+        float ans = Math.abs(-.2157f);
         // abs so no negative
 
         double rayParameter = 0.1;
@@ -64,12 +43,12 @@ public class ReflTransTest {
                 sVelocityBelow,
                 densityBelow);
 
-        assertEquals(-1*ans, coeff.getSHtoSHRefl(rayParameter), 0.0001f);
+        assertEquals(ans, coeff.getSHtoSHRefl(rayParameter), 0.0001f);
     }
 
     @Test
     public void testgetSHtoSHTrans() throws VelocityModelException {
-
+        double ans = .784298;
         double rayParameter = 0.1;
 
         // example from Aki and Richards p. 147
@@ -90,7 +69,7 @@ public class ReflTransTest {
                 pVelocityBelow,
                 sVelocityBelow,
                 densityBelow);
-        assertEquals(.784298, coeff.getSHtoSHTrans(rayParameter), 0.0001f);
+        assertEquals(ans, coeff.getSHtoSHTrans(rayParameter), 0.00001f);
     }
 
 
@@ -167,10 +146,15 @@ public class ReflTransTest {
         ReflTransCoefficient coeff = new ReflTransCoefficient(topVp,topVs,topDensity,botVp,botVs,botDensity);
 
         double Rpp_perpen = (1-(2*botVp*topDensity)/(botVp*topDensity+topVp*botDensity));
+        double Rpp_alt = 1-(2*topVp*topDensity)/(botVp*botDensity+topVp*topDensity);
         double Rpp_calc = coeff.getSolidFluidPtoPRefl(flatRP);
         double Tpp_perpen = (2*topVp*topVp*topDensity)/(botVp*botVp*topDensity+topVp*botVp*botDensity);
+        double Tpp_alt = (2*topVp*topDensity)/(botVp*botDensity+topVp*topDensity);
         double Tpp_calc = coeff.getSolidFluidPtoPTrans(flatRP);
-/*
+        double Rps_perpen = 0;
+        double Rps_alt = 0;
+        double Rps_calc = coeff.getSolidFluidPtoSVRefl(flatRP);
+        assertEquals(Rps_perpen, Rps_calc);
 
         // energy
         assertEquals(topDensity*topVp,
@@ -178,24 +162,41 @@ public class ReflTransTest {
                         +botDensity*botVp*Tpp_calc*Tpp_calc
         );
         assertEquals(topDensity*topVp,
+                topDensity*topVp*Rpp_alt*Rpp_alt
+                        +botDensity*botVp*Tpp_alt*Tpp_alt,
+                0.000001
+        );
+
+
+/*
+        //this fails, energy FMGS eq 13.63
+        assertEquals(topDensity*topVp,
                   topDensity*topVp*Rpp_perpen*Rpp_perpen
                         +botDensity*botVp*Tpp_perpen*Tpp_perpen
                 );
+        // this fails, values from FMGS eq 13.63
+        assertEquals(Rpp_perpen,
+               coeff.getSolidFluidPtoPRefl(flatRP));
+        assertEquals(Tpp_perpen,
+               coeff.getSolidFluidPtoPTrans(flatRP) );
+
+        System.out.println("Mantle-Outer core vertical incidence");
+        System.out.println("Tpp "+Tpp_calc+"  Rpp "+Rpp_calc+"  Rps "+Rps_calc);
+        System.out.println("     "+Tpp_perpen+"      "+Rpp_perpen+"      "+Rps_perpen);
+        System.out.println("     "+Tpp_alt+"      "+Rpp_alt+"      "+Rps_alt);
 */
 
-        System.out.println("Outer-Inner core vertical incidence");
-        System.out.println("Tpp "+Tpp_calc+"  Rpp "+Rpp_calc);
-        System.out.println("     "+Tpp_perpen+"      "+Rpp_perpen);
-
-        assertEquals(Tpp_perpen,
-                coeff.getSolidFluidPtoPTrans(flatRP) );
         assertEquals(0,coeff.getSolidFluidPtoSVRefl(flatRP) );
         assertEquals(1,coeff.getSolidFluidSVtoSVRefl(flatRP) );
         assertEquals(0,coeff.getSolidFluidSVtoPRefl(flatRP) );
         assertEquals(0,coeff.getSolidFluidSVtoPTrans(flatRP) );
-        // this fails
-        assertEquals(Rpp_perpen,
-                coeff.getSolidFluidPtoPRefl(flatRP));
+        assertEquals(Rpp_alt,
+                coeff.getSolidFluidPtoPRefl(flatRP),
+                0.0000001);
+        assertEquals(Tpp_alt,
+                coeff.getSolidFluidPtoPTrans(flatRP),
+                0.0000001);
+    }
 
     }
 
