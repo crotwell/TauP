@@ -102,13 +102,13 @@ public class SvgUtil {
         out.println("            stroke: orange;");
         out.println("        }");
         out.println("        .Rshsh {");
-        out.println("            stroke: tomato;");
+        out.println("            stroke: mediumslateblue;");
         out.println("        }");
         out.println("        .Tpp {");
         out.println("            stroke: cyan;");
         out.println("        }");
         out.println("        .Tps {");
-        out.println("            stroke: yellow;");
+        out.println("            stroke: gold;");
         out.println("        }");
         out.println("        .Tsp {");
         out.println("            stroke: magenta;");
@@ -117,7 +117,7 @@ public class SvgUtil {
         out.println("            stroke: grey;");
         out.println("        }");
         out.println("        .Tshsh {");
-        out.println("            stroke: brown;");
+        out.println("            stroke: violet;");
         out.println("        }");
         out.println("    ]]></style>");
         out.println("</defs>");
@@ -183,7 +183,7 @@ public class SvgUtil {
             } else {
                 tick_pixel = (minX-tick) / (minX-maxX) * plotWidth;
             }
-            String tick_text = ""+tick;
+            String tick_text = ""+((float)tick);
             out.println("<text class=\"xtick\" font-size=\"12\" x=\"" + tick_pixel + "\" y=\"" + (text_height + tick_length + plotWidth) + "\">" + tick_text + "</text>");
             out.println("<line class=\"tick\" x1=\"" + tick_pixel + "\" y1=\"" + (plotWidth) + "\" x2=\"" + tick_pixel + "\" y2=\"" + (plotWidth + tick_length) + "\" />");
 
