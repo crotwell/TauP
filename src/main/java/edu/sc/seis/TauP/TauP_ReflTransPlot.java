@@ -100,7 +100,7 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
 
     @Override
     public void start() throws IOException, TauModelException, TauPException {
-        float step;
+        double step;
         if (linearRayParam) {
             step = rayparamStep;
         } else {
@@ -144,7 +144,7 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
                          boolean inpwave,
                          boolean inswave,
                          boolean linearRayParam,
-                         float angleStep) throws VelocityModelException {
+                         double angleStep) throws VelocityModelException {
         if (!vMod.isDisconDepth(depth)) {
             System.err.println("Depth is not a discontinuity in " + vMod.getModelName() + ": " + depth);
         }
@@ -167,7 +167,7 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
                          boolean downgoing,
                          boolean inpwave, boolean inswave,
                          boolean linearRayParam,
-                         float angleStep) throws VelocityModelException {
+                         double angleStep) throws VelocityModelException {
         ReflTransCoefficient reflTranCoef = new ReflTransCoefficient(
                 topVp, topVs, topDensity,
                 botVp, botVs, botDensity);
@@ -204,15 +204,15 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
                          boolean inpwave,
                          boolean inswave,
                          boolean linearRayParam,
-                         float step,
+                         double step,
                          String title) throws VelocityModelException {
-        float minX = 0.0f;
-        float maxX = 90.0f;
+        double minX = 0.0f;
+        double maxX = 90.0f;
         boolean xEndFixed = true;
         boolean yEndFixed = true;
         if (linearRayParam) {
             // max rp always S if using
-            maxX = (float) (1.0 / (inswave ? reflTranCoef.topVs : reflTranCoef.topVp));
+            maxX = 1.0 / (inswave ? reflTranCoef.topVs : reflTranCoef.topVp);
         }
         int numXTicks = 5;
         double maxY = 2.0;
@@ -469,13 +469,13 @@ System.out.println("above (inbound) is fluid");
     }
 
     protected void processType(PrintWriter out, ReflTransCoefficient reflTranCoef,
-                                float minX, float maxX, float step,
+                                double minX, double maxX, double step,
                                 boolean linearRayParam, double oneOverV,
                                 String label, List<String> labels, List<String> labelClass,
                                CalcReflTranFunction<Double, Double> calcFn) throws VelocityModelException {
         out.print("<polyline class=\""+label+"\" points=\"");
         System.err.println("minX: "+minX+" maxX: "+maxX+" step: "+step);
-        float i;
+        double i;
         double[] critSlownesses = reflTranCoef.calcCriticalRayParams();
         for (i = minX; i <= maxX; i += step) {
             double rayParam;
@@ -559,9 +559,9 @@ System.out.println("above (inbound) is fluid");
     double botVs;
     double botDensity;
 
-    protected float angleStep = 1.0f;
-    protected float rayparamStep = 0.001f;
-    protected float step = -1.0f;
+    protected double angleStep = 1.0;
+    protected double rayparamStep = 0.001;
+    protected double step = -1.0;
     protected boolean indown = true;
     protected boolean inpwave = false;
     protected boolean inswave = false;
@@ -591,11 +591,11 @@ System.out.println("above (inbound) is fluid");
         this.linearRayParam = linearRayParam;
     }
 
-    public void setAngleStep(float angleStep) {
+    public void setAngleStep(double angleStep) {
         this.angleStep = angleStep;
     }
 
-    public float getAngleStep() {
+    public double getAngleStep() {
         return angleStep;
     }
 }
