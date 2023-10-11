@@ -148,6 +148,8 @@ public interface SeismicPhase extends Serializable, Cloneable {
 
     void dump();
 
+    double calcReflTran(Arrival arrival) throws VelocityModelException, SlownessModelException;
+
     List<TimeDist> calcPierceTimeDist(Arrival arrival);
 
     List<TimeDist> calcPathTimeDist(Arrival arrival);

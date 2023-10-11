@@ -3,9 +3,7 @@ package edu.sc.seis.TauP;
 import java.util.ArrayList;
 import java.util.List;
 
-import static edu.sc.seis.TauP.PhaseInteraction.DIFFRACT;
-import static edu.sc.seis.TauP.PhaseInteraction.HEAD;
-import static edu.sc.seis.TauP.PhaseInteraction.KMPS;
+import static edu.sc.seis.TauP.PhaseInteraction.*;
 
 public class SeismicPhaseSegment {
 	TauModel tMod;
@@ -344,5 +342,151 @@ public class SeismicPhaseSegment {
 			}
 		}
 		return outPath;
+	}
+	
+	public double calcReflTran(Arrival arrival, boolean nextLegIsPWave, boolean allSH) throws VelocityModelException, SlownessModelException {
+		double reflTranValue = 1;
+		VelocityModel vMod = getTauModel().getVelocityModel();
+		if ( ! isFlat) {
+			int bStep = isDownGoing ? 1 : -1;
+			for (int i = startBranch; (isDownGoing && i < endBranch) || (!isDownGoing && i > endBranch); i += bStep) {
+				int branchNum = i;
+				if (ToolRun.DEBUG) {
+					System.out.println("i=" + i + " branchNum=" + branchNum
+							+ " isPWave=" + isPWave + " downgoing="
+							+ isDownGoing);
+				}
+				TauBranch tauBranch = tMod.getTauBranch(branchNum, isPWave);
+				double depth;
+				if (isDownGoing) {
+					depth = tauBranch.getBotDepth();
+					if(arrival.getRayParam() > tauBranch.getMinTurnRayParam()) {
+						// ray can't reach bottom of branch
+						continue;
+					}
+				} else {
+					depth = tauBranch.getTopDepth();
+					if(arrival.getRayParam() > tauBranch.getMaxRayParam()) {
+						// ray can't enter branch from top
+						continue;
+					}
+				}
+				if (arrival.getSourceDepth() == depth && ! getTauModel().getVelocityModel().isDisconDepth(depth)) {
+					// branch exists just for source
+					continue;
+				}
+				if (! getTauModel().getVelocityModel().isDisconDepth(depth)) {
+					// branch exists just for reversal of gradient, or maybe solid-fluid boundary
+					// probably should be more careful
+					continue;
+				}
+				ReflTransCoefficient reflTranCoef = vMod.calcReflTransCoef(depth, isDownGoing);
+				double flatVelocity = getTauModel().getSlownessModel().toVelocity(arrival.getRayParam(), depth);
+				double flatRayParam = 1.0 / flatVelocity;
+				if (isPWave) {
+					reflTranValue *= reflTranCoef.getPtoPTrans(flatRayParam);
+				} else {
+					// SV or SH or combo???
+					if (allSH) {
+						reflTranValue *= reflTranCoef.getSHtoSHTrans(flatRayParam);
+					} else {
+						reflTranValue *= reflTranCoef.getSVtoSVTrans(flatRayParam);
+					}
+				}
+
+			}
+			TauBranch tauBranch = tMod.getTauBranch(endBranch, isPWave);
+			double depth = isDownGoing ? tauBranch.getBotDepth() : tauBranch.getTopDepth();
+			ReflTransCoefficient reflTranCoef = vMod.calcReflTransCoef(depth, isDownGoing);
+			double flatVelocity = getTauModel().getSlownessModel().toVelocity(arrival.getRayParam(), depth);
+			double flatRayParam = 1.0 / flatVelocity;
+
+			if (arrival.getSourceDepth() == depth && ! getTauModel().getVelocityModel().isDisconDepth(depth)) {
+				// branch exists just for source
+			} else if (this.endAction == TURN) {
+				if(arrival.getRayParam() < tauBranch.getMinTurnRayParam()) {
+					// turn is actually critical reflection from bottom of layer
+					if (isPWave) {
+						if (nextLegIsPWave) {
+							reflTranValue *= reflTranCoef.getPtoPRefl(flatRayParam);
+						} else {
+							reflTranValue *= reflTranCoef.getPtoSVRefl(flatRayParam);
+						}
+					} else {
+						if (nextLegIsPWave) {
+							reflTranValue *= reflTranCoef.getSVtoPRefl(flatRayParam);
+						} else {
+							if (allSH) {
+								reflTranValue *= reflTranCoef.getSHtoSHRefl(flatRayParam);
+							} else {
+								reflTranValue *= reflTranCoef.getSVtoSVRefl(flatRayParam);
+							}
+						}
+					}
+				}
+			} else if (this.endAction == TRANSDOWN || this.endAction == TRANSUP) {
+				if (isPWave) {
+					if (nextLegIsPWave) {
+						reflTranValue *= reflTranCoef.getPtoPTrans(flatRayParam);
+					} else {
+						reflTranValue *= reflTranCoef.getPtoSVTrans(flatRayParam);
+					}
+				} else {
+					if (nextLegIsPWave) {
+						reflTranValue *= reflTranCoef.getSVtoPTrans(flatRayParam);
+					} else {
+						if (allSH) {
+							reflTranValue *= reflTranCoef.getSHtoSHTrans(flatRayParam);
+						} else {
+							reflTranValue *= reflTranCoef.getSVtoSVTrans(flatRayParam);
+						}
+					}
+				}
+			} else if (this.endAction == REFLECT_TOPSIDE_CRITICAL || this.endAction == REFLECT_TOPSIDE || this.endAction == REFLECT_UNDERSIDE) {
+				if (depth == 0.0) {
+					if (isPWave) {
+						if (nextLegIsPWave) {
+							reflTranValue *= reflTranCoef.getFreePtoPRefl(flatRayParam);
+						} else {
+							reflTranValue *= reflTranCoef.getFreePtoSVRefl(flatRayParam);
+						}
+					} else {
+						if (nextLegIsPWave) {
+							reflTranValue *= reflTranCoef.getFreeSVtoPRefl(flatRayParam);
+						} else {
+							if (allSH) {
+								reflTranValue *= reflTranCoef.getFreeSHtoSHRefl(flatRayParam);
+							} else {
+								reflTranValue *= reflTranCoef.getFreeSVtoSVRefl(flatRayParam);
+							}
+						}
+					}
+				} else {
+					if (isPWave) {
+						if (nextLegIsPWave) {
+							reflTranValue *= reflTranCoef.getPtoPRefl(flatRayParam);
+						} else {
+							reflTranValue *= reflTranCoef.getPtoSVRefl(flatRayParam);
+						}
+					} else {
+						if (nextLegIsPWave) {
+							reflTranValue *= reflTranCoef.getSVtoPRefl(flatRayParam);
+						} else {
+							if (allSH) {
+								reflTranValue *= reflTranCoef.getSHtoSHRefl(flatRayParam);
+							} else {
+								reflTranValue *= reflTranCoef.getSVtoSVRefl(flatRayParam);
+							}
+						}
+					}
+				}
+			}
+		} else {
+			/*
+			 * Here we worry about the special case for head and
+			 * diffracted waves.
+			 */
+		}
+		return reflTranValue;
 	}
 }

@@ -65,6 +65,8 @@ public class Outputs {
         formString = "%8." + props.getProperty("taup.latlon.precision", "2")
                 + "f";
         latLonFormat = new Format(formString);
+
+        ampFactorFormat = new Format("%.2e");
     }
 
     public static String formatDepth(double depth) {
@@ -95,6 +97,10 @@ public class Outputs {
         return latLonFormat.form(latlon);
     }
 
+    public static String formatAmpFactor(double ampFactor) {
+        return ampFactorFormat.form(ampFactor);
+    }
+
     protected static Format depthFormat = new Format("%8.1f");
 
     protected static Format distanceFormat = new Format("%8.2f");
@@ -108,4 +114,6 @@ public class Outputs {
     protected static Format rayParamFormat = new Format("%8.3f");
 
     protected static Format latLonFormat = new Format("%8.2f");
+
+    protected static Format ampFactorFormat = new Format("%.2e");
 } // Outputs

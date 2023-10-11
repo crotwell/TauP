@@ -440,6 +440,11 @@ public class ScatteredSeismicPhase implements SeismicPhase {
     }
 
     @Override
+    public double calcReflTran(Arrival arrival) {
+        return 0;
+    }
+
+    @Override
     public List<TimeDist> calcPathTimeDist(Arrival arrival) {
         List<TimeDist> out = new ArrayList<>();
         ScatteredArrival scatA = (ScatteredArrival) arrival;

@@ -1125,9 +1125,9 @@ public class TauP_Time extends TauP_Tool {
             }
             out.println(modelLine);
             String lineOne = "Distance   Depth   " + phaseFormat.form("Phase")
-                    + "   Travel    Ray Param  Takeoff  Incident  Purist    Purist";
+                    + "   Travel    Ray Param  Takeoff  Incident  Purist    Purist  Amp";
             String lineTwo = "  (deg)     (km)   " + phaseFormat.form("Name ")
-                    + "   Time (s)  p (s/deg)   (deg)    (deg)   Distance   Name ";
+                    + "   Time (s)  p (s/deg)   (deg)    (deg)   Distance   Name    Factor";
             if (relativePhaseName != "") {
                 lineOne += " Relative to";
                 for (int s=0; s<(11-relativePhaseName.length())/2;s++) {
@@ -1137,7 +1137,7 @@ public class TauP_Time extends TauP_Tool {
             }
             out.println(lineOne);
             out.println(lineTwo);
-            for(int i = 0; i < lineOne.length(); i++) {
+            for(int i = 0; i < Math.max(lineOne.length(), lineTwo.length()); i++) {
                 out.write("-");
             }
             out.write("\n");
@@ -1166,6 +1166,20 @@ public class TauP_Time extends TauP_Tool {
                     } else {
                         out.print(phaseFormat.form("no arrival"));
                     }
+                }
+                try {
+                    double refltran = currArrival.getPhase().calcReflTran(currArrival);
+                    double geoSpread = currArrival.getGeometricSpreadingFactor();
+                    double ampFactor = refltran*geoSpread;
+                    out.print(" "+Outputs.formatAmpFactor(ampFactor));
+                } catch (NoSuchMatPropException e) {
+                    e.printStackTrace();
+                } catch (NoSuchLayerException e) {
+                    e.printStackTrace();
+                } catch (SlownessModelException e) {
+                    e.printStackTrace();
+                } catch (TauModelException | VelocityModelException e) {
+                    e.printStackTrace();
                 }
                 out.println();
             }

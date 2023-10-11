@@ -1059,6 +1059,25 @@ public class SimpleSeismicPhase implements SeismicPhase {
         return currArrival;
     }
 
+
+    @Override
+    public double calcReflTran(Arrival arrival) throws VelocityModelException, SlownessModelException {
+        double reflTranValue = 1;
+
+        boolean isAllS = true;
+        for (SeismicPhaseSegment seg : segmentList) {
+            isAllS = isAllS && ! seg.isPWave;
+        }
+        SeismicPhaseSegment prevSeg = segmentList.get(0);
+        for (SeismicPhaseSegment seg : segmentList.subList(1, segmentList.size())) {
+            System.out.println(prevSeg.legName);
+            reflTranValue *= prevSeg.calcReflTran(arrival, seg.isPWave, isAllS);
+            prevSeg = seg;
+        }
+        reflTranValue *= prevSeg.calcReflTran(arrival, prevSeg.isPWave, isAllS); // last seg can't change phase at end
+        return reflTranValue;
+    }
+
     public List<TimeDist> calcPathTimeDist(Arrival currArrival) {
         List<List<TimeDist>> segmentPaths = calcSegmentPaths(currArrival);
         List<TimeDist> outPath = new ArrayList<>();
