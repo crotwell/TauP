@@ -1170,8 +1170,8 @@ public class TauP_Time extends TauP_Tool {
                 try {
                     double refltran = currArrival.getPhase().calcReflTran(currArrival);
                     double geoSpread = currArrival.getGeometricSpreadingFactor();
-                    double ampFactor = refltran*geoSpread;
-                    out.print(" "+Outputs.formatAmpFactor(ampFactor));
+                    double ampFactor = refltran * geoSpread;
+                    out.print(" " + Outputs.formatAmpFactor(ampFactor));
                 } catch (NoSuchMatPropException e) {
                     e.printStackTrace();
                 } catch (NoSuchLayerException e) {
@@ -1181,6 +1181,7 @@ public class TauP_Time extends TauP_Tool {
                 } catch (TauModelException | VelocityModelException e) {
                     e.printStackTrace();
                 }
+
                 out.println();
             }
         } else if(onlyPrintTime) {
