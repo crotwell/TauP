@@ -326,6 +326,29 @@ public class Arrival {
         return path;
     }
 
+    /**
+     * Negates the arrival distance. Primarily used when printing a scatter arrival that is at negative distance.
+     * No other fields are changed.
+     * @return new Arrival with dist and search dist negated
+     */
+    public Arrival negateDistance() {
+        Arrival neg = new Arrival( phase,
+         time,
+        -1* dist,
+         rayParam,
+         rayParamIndex,
+         searchDist,
+         name,
+         puristName,
+         sourceDepth,
+         receiverDepth,
+         takeoffAngle,
+         incidentAngle,
+                dRPdDist);
+        neg.setSearchDistDeg(getSearchDistDeg());
+        return neg;
+    }
+
     public boolean isRelativeToArrival() {
         return relativeToArrival != null;
     }
@@ -339,7 +362,12 @@ public class Arrival {
     }
 
     public String toString() {
-        String desc =  Outputs.formatDistance(getModuloDistDeg()) + Outputs.formatDepth(getSourceDepth()) + "   " + getName()
+        double moduloDistDeg = getModuloDistDeg();
+        if (getSearchDistDeg() < 0) {
+            // search in neg distance, likely for scatter
+            moduloDistDeg *= -1;
+        }
+        String desc =  Outputs.formatDistance(moduloDistDeg) + Outputs.formatDepth(getSourceDepth()) + "   " + getName()
                 + "  " + Outputs.formatTime(getTime()) + "  " + Outputs.formatRayParam(Math.PI / 180.0 * getRayParam())
                 + "  " + Outputs.formatDistance(getTakeoffAngle()) + " " + Outputs.formatDistance(getIncidentAngle())
                 + " " + Outputs.formatDistance(getDistDeg())+" "+getRayParamIndex();

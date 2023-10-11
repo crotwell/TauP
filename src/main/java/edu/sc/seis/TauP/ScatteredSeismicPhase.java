@@ -356,9 +356,13 @@ public class ScatteredSeismicPhase implements SeismicPhase {
         desc += SeismicPhase.baseDescribe(this);
         desc += SeismicPhase.segmentDescribe(this);
         String scat_direction = isBackscatter() ? "Backscatter" : "Scatter";
+        Arrival printArrival = inboundArrival;
+        if (inboundArrival.getSearchDistDeg() < 0 && inboundArrival.getDistDeg() > 0) {
+            printArrival = inboundArrival.negateDistance();
+        }
         desc +="\nInbound to Scatterer: "+inboundArrival.getPhase().getName()+"\n"
                 +SeismicPhase.baseDescribe(inboundArrival.getPhase())
-                +"Arrival at Scatterer: "+inboundArrival
+                +"Arrival at Scatterer: "+printArrival
                 +"\n"+scat_direction+" from "+ scattererDepth +", "+ scattererDistanceDeg
                 +"\nOutbound from Scatterer: "+scatteredPhase.getName()+"\n"
                 +SeismicPhase.baseDescribe(scatteredPhase);
