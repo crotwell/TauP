@@ -19,8 +19,7 @@ public class ReflTransTest {
 
     @Test
     public void testgetSHtoSHRefl() throws VelocityModelException {
-        float ans = Math.abs(-.2157f);
-        // abs so no negative
+        float ans = -.2157f;
 
         double rayParameter = 0.1;
 

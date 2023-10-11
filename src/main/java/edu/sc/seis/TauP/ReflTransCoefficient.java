@@ -242,7 +242,7 @@ public class ReflTransCoefficient implements Serializable {
      * @see #getComplexFreePtoPRefl(double)
      */
     public double getFreePtoPRefl(double rayParam) {
-        return CX.abs(getComplexFreePtoPRefl(rayParam));
+        return getRealCoefficient(getComplexFreePtoPRefl(rayParam));
     }
 
     /**
@@ -264,7 +264,7 @@ public class ReflTransCoefficient implements Serializable {
      * @see #getComplexFreePtoSVRefl(double)
      */
     public double getFreePtoSVRefl(double rayParam) {
-        return CX.abs(getComplexFreePtoSVRefl(rayParam));
+        return getRealCoefficient(getComplexFreePtoSVRefl(rayParam));
     }
 
     /**
@@ -288,7 +288,7 @@ public class ReflTransCoefficient implements Serializable {
      * @see #getComplexFreeSVtoPRefl(double)
      */
     public double getFreeSVtoPRefl(double rayParam) throws VelocityModelException {
-        return CX.abs(getComplexFreeSVtoPRefl(rayParam));
+        return getRealCoefficient(getComplexFreeSVtoPRefl(rayParam));
     }
 
     /**
@@ -303,10 +303,7 @@ public class ReflTransCoefficient implements Serializable {
         // Aki and Richards don't have -1
         double realNumerator = ((1 / sqTopVs) - 2 * sqRP)
                 * ((1 / sqTopVs) - 2 * sqRP);
-        Complex numerator = CX.plus(realNumerator,
-                                    CX.times(4 * sqRP,
-                                             CX.times(topVertSlownessP,
-                                                      topVertSlownessS)));
+        Complex numerator = CX.minus(realNumerator, topVertSlownessP.times(topVertSlownessS).times(4 * sqRP));
         return CX.over(numerator, fsA);
     }
 
@@ -316,7 +313,7 @@ public class ReflTransCoefficient implements Serializable {
      * surface.
      */
     public double getFreeSVtoSVRefl(double rayParam) throws VelocityModelException {
-        return CX.abs(getComplexFreeSVtoSVRefl(rayParam));
+        return getRealCoefficient(getComplexFreeSVtoSVRefl(rayParam));
     }
 
     /**
@@ -337,7 +334,6 @@ public class ReflTransCoefficient implements Serializable {
         return 1;
     }
 
-    // solid-fluid interface
 
     /**
      * Calculate scattering matrix for Solid-Solid interface. See Aki and Richards (2nd ed) sect 5.2.3 p 139-147.
@@ -416,6 +412,22 @@ public class ReflTransCoefficient implements Serializable {
         return out;
     }
 
+    // fluid-fluid interface
+
+    public Complex getComplexFluidFluidPtoPRefl(double rayParam) {
+        Complex numerator = CX.minus(topVertSlownessP.times(botDensity), botVertSlownessP.times(topDensity));
+        Complex denominator = CX.plus(topVertSlownessP.times(botDensity), botVertSlownessP.times(topDensity));
+        return CX.over(numerator, denominator);
+    }
+
+    public Complex getComplexFluidFluidPtoPTrans(double rayParam) {
+        Complex numerator = topVertSlownessP.times(2*topDensity);
+        Complex denominator = CX.plus(topVertSlownessP.times(botDensity), botVertSlownessP.times(topDensity));
+        return CX.over(numerator, denominator);
+    }
+
+    // solid-fluid interface
+
     /**
      * Calculates incident P wave in solid (over fluid) to reflected P wave Complex coefficient.
      */
@@ -429,7 +441,7 @@ public class ReflTransCoefficient implements Serializable {
         return out;
     }
     public double getSolidFluidPtoPRefl(double rayParam) {
-        return CX.abs(getComplexSolidFluidPtoPRefl(rayParam));
+        return getRealCoefficient(getComplexSolidFluidPtoPRefl(rayParam));
     }
     /**
      * Calculates incident P wave in solid (over fluid) to reflected P wave Complex coefficient.
@@ -442,7 +454,7 @@ public class ReflTransCoefficient implements Serializable {
         return out;
     }
     public double getSolidFluidPtoSVRefl(double rayParam) {
-        return CX.abs(getComplexSolidFluidPtoSVRefl(rayParam));
+        return getRealCoefficient(getComplexSolidFluidPtoSVRefl(rayParam));
     }
     /**
      * Calculates incident P wave in solid (over fluid) to reflected P wave Complex coefficient.
@@ -454,7 +466,7 @@ public class ReflTransCoefficient implements Serializable {
         return out;
     }
     public double getSolidFluidPtoPTrans(double rayParam) {
-        return CX.abs(getComplexSolidFluidPtoPTrans(rayParam));
+        return getRealCoefficient(getComplexSolidFluidPtoPTrans(rayParam));
     }
 
 
@@ -470,7 +482,7 @@ public class ReflTransCoefficient implements Serializable {
         return out;
     }
     public double getSolidFluidSVtoSVRefl(double rayParam) throws VelocityModelException {
-        return CX.abs(getComplexSolidFluidSVtoSVRefl(rayParam));
+        return getRealCoefficient(getComplexSolidFluidSVtoSVRefl(rayParam));
     }
     /**
      * Calculates incident S wave in solid (over fluid) to reflected S wave Complex coefficient.
@@ -483,7 +495,7 @@ public class ReflTransCoefficient implements Serializable {
         return out;
     }
     public double getSolidFluidSVtoPRefl(double rayParam) throws VelocityModelException {
-        return CX.abs(getComplexSolidFluidSVtoPRefl(rayParam));
+        return getRealCoefficient(getComplexSolidFluidSVtoPRefl(rayParam));
     }
     /**
      * Calculates incident S wave in solid (over fluid) to reflected S wave Complex coefficient.
@@ -497,7 +509,7 @@ public class ReflTransCoefficient implements Serializable {
         return out;
     }
     public double getSolidFluidSVtoPTrans(double rayParam) throws VelocityModelException {
-        return CX.abs(getComplexSolidFluidSVtoPTrans(rayParam));
+        return getRealCoefficient(getComplexSolidFluidSVtoPTrans(rayParam));
     }
 
 
@@ -525,7 +537,7 @@ public class ReflTransCoefficient implements Serializable {
         return out;
     }
     public double getFluidSolidPtoPRefl(double rayParam) {
-        return CX.abs(getComplexFluidSolidPtoPRefl(rayParam));
+        return getRealCoefficient(getComplexFluidSolidPtoPRefl(rayParam));
     }
 
     /**
@@ -539,7 +551,7 @@ public class ReflTransCoefficient implements Serializable {
         return out;
     }
     public double getFluidSolidPtoPTrans(double rayParam) {
-        return CX.abs(getComplexFluidSolidPtoPTrans(rayParam));
+        return getRealCoefficient(getComplexFluidSolidPtoPTrans(rayParam));
     }
 
 
@@ -555,7 +567,7 @@ public class ReflTransCoefficient implements Serializable {
         return out;
     }
     public double getFluidSolidPtoSVTrans(double rayParam) {
-        return CX.abs(getComplexFluidSolidPtoSVTrans(rayParam));
+        return getRealCoefficient(getComplexFluidSolidPtoSVTrans(rayParam));
     }
 
     // Solid-Solid interface
@@ -580,8 +592,7 @@ public class ReflTransCoefficient implements Serializable {
      * Calculates incident P wave to reflected P wave coefficient.
      */
     public double getPtoPRefl(double rayParam) {
-         return CX.abs(getComplexPtoPRefl(rayParam));
-        //return CX.real(getComplexPtoPRefl(rayParam));
+         return getRealCoefficient(getComplexPtoPRefl(rayParam));
     }
 
     /**
@@ -606,7 +617,7 @@ public class ReflTransCoefficient implements Serializable {
      * Calculates incident P wave to reflected SV wave coefficient.
      */
     public double getPtoSVRefl(double rayParam) {
-        return CX.abs(getComplexPtoSVRefl(rayParam));
+        return getRealCoefficient(getComplexPtoSVRefl(rayParam));
     }
 
     /**
@@ -626,8 +637,7 @@ public class ReflTransCoefficient implements Serializable {
      * Calculates incident P wave to transmitted P wave coefficient.
      */
     public double getPtoPTrans(double rayParam) {
-        // return CX.abs(getComplexPtoPTrans(rayParam));
-        return CX.abs(getComplexPtoPTrans(rayParam));
+        return getRealCoefficient(getComplexPtoPTrans(rayParam));
     }
 
     /**
@@ -649,9 +659,7 @@ public class ReflTransCoefficient implements Serializable {
      * Calculates incident P wave to transmitted SV wave coefficient.
      */
     public double getPtoSVTrans(double rayParam) {
-        // return CX.abs(getComplexPtoSVTrans(rayParam));
-
-        return CX.abs(getComplexPtoSVTrans(rayParam));
+        return getRealCoefficient(getComplexPtoSVTrans(rayParam));
     }
 
     /**
@@ -679,8 +687,7 @@ public class ReflTransCoefficient implements Serializable {
      * Calculates incident SV wave to reflected P wave coefficient.
      */
     public double getSVtoPRefl(double rayParam) throws VelocityModelException {
-        // return CX.abs(getComplexSVtoPRefl(rayParam));
-        return CX.abs(getComplexSVtoPRefl(rayParam));
+        return getRealCoefficient(getComplexSVtoPRefl(rayParam));
     }
 
     /**
@@ -707,8 +714,7 @@ public class ReflTransCoefficient implements Serializable {
      * Calculates incident SV wave to reflected SV wave coefficient.
      */
     public double getSVtoSVRefl(double rayParam) throws VelocityModelException {
-        // return CX.abs(getComplexSVtoSVRefl(rayParam));
-        return CX.abs(getComplexSVtoSVRefl(rayParam));
+        return getRealCoefficient(getComplexSVtoSVRefl(rayParam));
     }
 
     /**
@@ -731,8 +737,7 @@ public class ReflTransCoefficient implements Serializable {
      * Calculates incident SV wave to transmitted P wave coefficient.
      */
     public double getSVtoPTrans(double rayParam) throws VelocityModelException {
-        // return CX.abs(getComplexSVtoPTrans(rayParam));
-        return CX.abs(getComplexSVtoPTrans(rayParam));
+        return getRealCoefficient(getComplexSVtoPTrans(rayParam));
     }
 
     /**
@@ -753,8 +758,7 @@ public class ReflTransCoefficient implements Serializable {
      * Calculates incident SV wave to transmitted SV wave coefficient.
      */
     public double getSVtoSVTrans(double rayParam) throws VelocityModelException {
-        // return CX.abs(getComplexSVtoSVTrans(rayParam));
-        return CX.abs(getComplexSVtoSVTrans(rayParam));
+        return getRealCoefficient(getComplexSVtoSVTrans(rayParam));
     }
 
     // SH waves
@@ -779,8 +783,7 @@ public class ReflTransCoefficient implements Serializable {
      * Calculates incident SH wave to reflected SH wave coefficient.
      */
     public double getSHtoSHRefl(double rayParam) throws VelocityModelException {
-        // return CX.abs(getComplexSHtoSHRefl(rayParam));
-        return CX.abs(getComplexSHtoSHRefl(rayParam));
+        return getRealCoefficient(getComplexSHtoSHRefl(rayParam));
     }
 
     /**
@@ -804,8 +807,7 @@ public class ReflTransCoefficient implements Serializable {
      * Calculates incident SH wave to transmitted SH wave coefficient.
      */
     public double getSHtoSHTrans(double rayParam) throws VelocityModelException {
-        // return CX.abs(getComplexSHtoSHTrans(rayParam));
-        return CX.abs(getComplexSHtoSHTrans(rayParam));
+        return getRealCoefficient(getComplexSHtoSHTrans(rayParam));
     }
 
     public void checkSVelocityNonZero() throws VelocityModelException {
@@ -816,5 +818,9 @@ public class ReflTransCoefficient implements Serializable {
 
     public static double sphericalToFlatRP(double spRayParam, double radiusOfEarth) {
         return  spRayParam / radiusOfEarth;
+    }
+
+    public static double getRealCoefficient(Complex coef) {
+        return coef.im == 0 ? coef.re : Complex.abs(coef);
     }
 } // ReflTransCoefficient
