@@ -216,7 +216,7 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
         }
         int numXTicks = 5;
         double maxY = 2.0;
-        double minY = 0.0;
+        double minY = -1.0;
         int numYTicks = 8;
 
         float pixelWidth =  (72.0f*mapWidth)-plotOffset;
