@@ -1585,6 +1585,9 @@ public class VelocityModel implements Cloneable, Serializable {
         if (!downgoing) {
             rtCoef = rtCoef.flip();
         }
+        if (depth == 0.0 && downgoing) {
+            throw new VelocityModelException("Downgoing to free surface is not possible");
+        }
         return rtCoef;
     }
 
