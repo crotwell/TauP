@@ -473,6 +473,7 @@ System.out.println("above (inbound) is fluid");
                                 boolean linearRayParam, double oneOverV,
                                 String label, List<String> labels, List<String> labelClass,
                                CalcReflTranFunction<Double, Double> calcFn) throws VelocityModelException {
+        if (onlyPlotCoef != null && ! onlyPlotCoef.equalsIgnoreCase(label) ) { return;}
         out.print("<polyline class=\""+label+"\" points=\"");
         System.err.println("minX: "+minX+" maxX: "+maxX+" step: "+step);
         double i;
@@ -566,6 +567,7 @@ System.out.println("above (inbound) is fluid");
     protected boolean inpwave = false;
     protected boolean inswave = false;
     protected boolean linearRayParam = false;
+    protected String onlyPlotCoef = null;
 
     public boolean isLinearRayParam() {
         return linearRayParam;
