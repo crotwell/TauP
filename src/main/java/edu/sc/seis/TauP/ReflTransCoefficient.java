@@ -60,8 +60,6 @@ public class ReflTransCoefficient implements Serializable {
     // "flat earth" ray parameter
     protected double rp;
 
-    double[] criticalSlownesses;
-
     // temp variables to make calculations less ugly
     // first 3 lines follow both Aki and Richards and Lay and Wallace
     protected double a, b, c, d;
@@ -206,11 +204,15 @@ public class ReflTransCoefficient implements Serializable {
             DFluidSolid = botVertSlownessP.times(topVp*topDensity)
                     .plus(topVertSlownessP.times(topVp*botDensity).times(dfsParenTerm));
 
-            criticalSlownesses = new double[] {1/topVp, 1/botVp, 1/topVs, 1/botVs};
-
             lastRayParam = rayParam;
             lastInIsPWave = inIsPWave;
         }
+    }
+
+    public double[] calcCriticalRayParams() {
+        // shoudl filter NaN?
+        double[] criticalSlownesses = new double[] {1/topVp, 1/botVp, 1/topVs, 1/botVs};
+        return criticalSlownesses;
     }
 
     // FREE SURFACE

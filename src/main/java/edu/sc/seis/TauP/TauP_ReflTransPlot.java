@@ -476,6 +476,7 @@ System.out.println("above (inbound) is fluid");
         out.print("<polyline class=\""+label+"\" points=\"");
         System.err.println("minX: "+minX+" maxX: "+maxX+" step: "+step);
         float i;
+        double[] critSlownesses = reflTranCoef.calcCriticalRayParams();
         for (i = minX; i <= maxX; i += step) {
             double rayParam;
             double nextrayParam;
@@ -487,9 +488,9 @@ System.out.println("above (inbound) is fluid");
                 nextrayParam = oneOverV * Math.sin((i+step) * Arrival.DtoR);
             }
             out.print( i + " " + ( calcFn.apply(rayParam).floatValue()) + " ");
-            for (int critIdx=0; critIdx<reflTranCoef.criticalSlownesses.length; critIdx++) {
-                if (rayParam < reflTranCoef.criticalSlownesses[critIdx] && nextrayParam > reflTranCoef.criticalSlownesses[critIdx] ) {
-                    double criti = reflTranCoef.criticalSlownesses[critIdx];
+            for (int critIdx=0; critIdx<critSlownesses.length; critIdx++) {
+                if (rayParam < critSlownesses[critIdx] && nextrayParam > critSlownesses[critIdx] ) {
+                    double criti = critSlownesses[critIdx];
                     if (!linearRayParam) {
                         // find angle
                         criti = Math.asin(criti*oneOverV)*Arrival.RtoD;
