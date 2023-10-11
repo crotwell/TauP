@@ -479,4 +479,46 @@ public class ReflTransTest {
     }
 
 
+
+    @Test
+    public void testFreeSurfaceEnergyRP() throws VelocityModelException {
+
+        double topVp = 5;
+        double topVs = 3;
+        double topDensity = 2.8;
+        double flatRP = 0.0;
+        ReflTransCoefficient coeff = new ReflTransCoefficient(topVp,topVs,topDensity,0,0,0);
+
+        // non vertical incidence
+        for (flatRP = 0.0; flatRP < 1/topVp; flatRP+= 0.01) {
+            double cosTopVp = Math.sqrt(1-flatRP*flatRP*coeff.topVp*coeff.topVp);
+            double cosTopVs = Math.sqrt(1-flatRP*flatRP*coeff.topVs*coeff.topVs);
+            assertFalse(Double.isNaN(cosTopVp));
+            assertFalse(Double.isNaN(cosTopVs));
+
+
+            // in p wave
+            double Rpp_calc = coeff.getFreePtoPRefl(flatRP);
+            double Rps_calc = coeff.getFreePtoSVRefl(flatRP);
+
+            // in s wave
+            double Rsp_calc = coeff.getFreeSVtoPRefl(flatRP);
+            double Rss_calc = coeff.getFreeSVtoSVRefl(flatRP);
+
+            // energy in p wave
+            assertEquals(topDensity * topVp * cosTopVp,
+                    topDensity * topVp * cosTopVp * Rpp_calc * Rpp_calc
+                            + topDensity * topVs * cosTopVs * Rps_calc * Rps_calc,
+                    1e-6,
+                    "flatrp="+flatRP
+            );
+            // energy in s wave
+            assertEquals(topDensity * topVs * cosTopVs,
+                    topDensity * topVp * cosTopVp * Rsp_calc * Rsp_calc
+                            + topDensity * topVs * cosTopVs * Rss_calc * Rss_calc,
+                    1e-6,
+                    "flatrp="+flatRP
+            );
+        }
+    }
 }
