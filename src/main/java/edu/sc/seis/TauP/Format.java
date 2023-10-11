@@ -589,6 +589,9 @@ public class Format {
         if ( ! Double.isFinite(d)) {
         	return ""+d;
         }
+        if (d == 0.0) {
+            return "0.0e000";
+        }
         while(dd > 10) {
             e++;
             factor /= 10;

@@ -98,6 +98,10 @@ public class Outputs {
     }
 
     public static String formatAmpFactor(double ampFactor) {
+        if (ampFactor == 0.0) {
+            // %.e does infinite loop if ampFactor is zero
+            return formatDepth(ampFactor);
+        }
         return ampFactorFormat.form(ampFactor);
     }
 
