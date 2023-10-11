@@ -3,11 +3,10 @@
 // ReflTransTest.java ReflTransCoefficient.java Complex.java Sfun.java
 package edu.sc.seis.TauP;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 
 /*
@@ -116,12 +115,24 @@ public class ReflTransTest {
         double cos_i2 = Complex.abs(coeff.botVertSlownessP) * botVp;
         double cos_j1 = Complex.abs(coeff.topVertSlownessS) * topVs;
         double cos_j2 = Complex.abs(coeff.botVertSlownessS) * botVs;
+
+        double cosTopVp = Math.sqrt(1-flatRP*flatRP*coeff.topVp*coeff.topVp);
+        double cosTopVs = Math.sqrt(1-flatRP*flatRP*coeff.topVs*coeff.topVs);
+        double cosBotVp = Math.sqrt(1-flatRP*flatRP*coeff.botVp*coeff.botVp);
+        double cosBotVs = Math.sqrt(1-flatRP*flatRP*coeff.botVs*coeff.botVs);
+        assertEquals(cosTopVp, cos_i1, 1e-6);
+        assertEquals(cosTopVs, cos_j1,1e-6);
+        assertEquals(cosBotVp, cos_i2,1e-6);
+        assertEquals(cosBotVs, cos_j2, 1e-6);
+        // energy inbound s wave
         assertEquals(topDensity*topVs*cos_j1,
                 topDensity*topVp*cos_i1*coeff.getSVtoPRefl(flatRP)*coeff.getSVtoPRefl(flatRP)
                         + topDensity*topVs*cos_j1*coeff.getSVtoSVRefl(flatRP)*coeff.getSVtoSVRefl(flatRP)
                         + botDensity*botVp*cos_i2*coeff.getSVtoPTrans(flatRP)*coeff.getSVtoPTrans(flatRP)
                         + botDensity*botVs*cos_j2*coeff.getSVtoSVTrans(flatRP)*coeff.getSVtoSVTrans(flatRP),
                 0.0001, "in S wave energy flux");
+
+        // energy inbound p wave
         assertEquals(topDensity*topVp*cos_i1,
                     topDensity*topVp*cos_i1*coeff.getPtoPRefl(flatRP)*coeff.getPtoPRefl(flatRP)
                         + topDensity*topVs*cos_j1*coeff.getPtoSVRefl(flatRP)*coeff.getPtoSVRefl(flatRP)
@@ -131,6 +142,61 @@ public class ReflTransTest {
 
     }
 
+
+    @Test
+    public void testSolidSolidEnergy() throws VelocityModelException {
+        double topDensity = 3;
+        double topVp = 6;
+        double topVs = 3.5;
+        double botDensity = 4;
+        double botVp = 7;
+        double botVs = 4.2;
+
+        ReflTransCoefficient coeff = new ReflTransCoefficient(topVp,topVs,topDensity,botVp,botVs,botDensity);
+
+        // non vertical incidence, up to value where we get complex results
+        for (double flatRP = 0.0; flatRP < 1/botVp; flatRP+= 0.05) {
+
+            double cosTopVp = Math.sqrt(1-flatRP*flatRP*coeff.topVp*coeff.topVp);
+            double cosTopVs = Math.sqrt(1-flatRP*flatRP*coeff.topVs*coeff.topVs);
+            double cosBotVp = Math.sqrt(1-flatRP*flatRP*coeff.botVp*coeff.botVp);
+            double cosBotVs = Math.sqrt(1-flatRP*flatRP*coeff.botVs*coeff.botVs);
+            assertFalse(Double.isNaN(cosTopVp));
+            assertFalse(Double.isNaN(cosTopVs));
+            assertFalse(Double.isNaN(cosBotVp));
+            assertFalse(Double.isNaN(cosBotVs));
+
+            // in p wave
+            double Rpp_calc = coeff.getPtoPRefl(flatRP);
+            double Tpp_calc = coeff.getPtoPTrans(flatRP);
+            double Rps_calc = coeff.getPtoSVRefl(flatRP);
+            double Tps_calc = coeff.getPtoSVTrans(flatRP);
+
+            // in s wave
+            double Rsp_calc = coeff.getSVtoPRefl(flatRP);
+            double Rss_calc = coeff.getSVtoSVRefl(flatRP);
+            double Tsp_calc = coeff.getSVtoPTrans(flatRP);
+            double Tss_calc = coeff.getSVtoSVTrans(flatRP);
+            // energy in p wave
+            assertEquals(topDensity * topVp * cosTopVp,
+                    topDensity * topVp * cosTopVp * Rpp_calc * Rpp_calc
+                            + topDensity * topVs * cosTopVs * Rps_calc * Rps_calc
+                            + botDensity * botVp * cosBotVp * Tpp_calc * Tpp_calc
+                            + botDensity * botVs * cosBotVs * Tps_calc * Tps_calc,
+                    1e-6,
+                    "flatrp="+flatRP
+            );
+            // energy in s wave
+            assertEquals(topDensity * topVs * cosTopVs,
+                    topDensity * topVp * cosTopVp * Rsp_calc * Rsp_calc
+                            + topDensity * topVs * cosTopVs * Rss_calc * Rss_calc
+                            + botDensity * botVp * cosBotVp * Tsp_calc * Tsp_calc
+                            + botDensity * botVs * cosBotVs * Tss_calc * Tss_calc,
+                    1e-6,
+                    "flatrp="+flatRP
+            );
+        }
+    }
 
     @Test
     public void testVerticalSolidFluid() throws VelocityModelException {
@@ -221,7 +287,16 @@ public class ReflTransTest {
         ReflTransCoefficient coeff = new ReflTransCoefficient(topVp,topVs,topDensity,botVp,botVs,botDensity);
 
         // non vertical incidence
-        for (flatRP = 0.0; flatRP < 1/topVs; flatRP+= 0.05) {
+        for (flatRP = 0.0; flatRP < 1/topVp; flatRP+= 0.05) {
+            double cosTopVp = Math.sqrt(1-flatRP*flatRP*coeff.topVp*coeff.topVp);
+            double cosTopVs = Math.sqrt(1-flatRP*flatRP*coeff.topVs*coeff.topVs);
+            double cosBotVp = Math.sqrt(1-flatRP*flatRP*coeff.botVp*coeff.botVp);
+            double cosBotVs = Math.sqrt(1-flatRP*flatRP*coeff.botVs*coeff.botVs);
+            assertFalse(Double.isNaN(cosTopVp));
+            assertFalse(Double.isNaN(cosTopVs));
+            assertFalse(Double.isNaN(cosBotVp));
+            assertFalse(Double.isNaN(cosBotVs));
+
 
             // in p wave
             double Rpp_calc = coeff.getSolidFluidPtoPRefl(flatRP);
@@ -233,17 +308,19 @@ public class ReflTransTest {
             double Rss_calc = coeff.getSolidFluidSVtoSVRefl(flatRP);
             double Tsp_calc = coeff.getSolidFluidSVtoPTrans(flatRP);
             // energy in p wave
-            assertEquals(topDensity * topVp,
-                    topDensity * topVp * Rpp_calc * Rpp_calc
-                        + topDensity * topVs * Rps_calc * Rps_calc
-                            + botDensity * botVp * Tpp_calc * Tpp_calc,
+            assertEquals(topDensity * topVp * cosTopVp,
+                    topDensity * topVp * cosTopVp * Rpp_calc * Rpp_calc
+                            + topDensity * topVs * cosTopVs * Rps_calc * Rps_calc
+                            + botDensity * botVp * cosBotVp * Tpp_calc * Tpp_calc,
+                    1e-6,
                     "flatrp="+flatRP
             );
             // energy in s wave
-            assertEquals(topDensity * topVs,
-                    topDensity * topVp * Rsp_calc * Rsp_calc
-                            + topDensity * topVs * Rss_calc * Rss_calc
-                            + botDensity * botVp * Tsp_calc * Tsp_calc,
+            assertEquals(topDensity * topVs * cosTopVs,
+                    topDensity * topVp * cosTopVp * Rsp_calc * Rsp_calc
+                            + topDensity * topVs * cosTopVs * Rss_calc * Rss_calc
+                            + botDensity * botVp * cosBotVp * Tsp_calc * Tsp_calc,
+                    1e-6,
                     "flatrp="+flatRP
             );
         }
@@ -305,18 +382,27 @@ public class ReflTransTest {
         coeff = coeff.flip();
 
         // non vertical incidence
-        for (flatRP = 0.0; flatRP < 1/topVs; flatRP+= 0.05) {
+        for (flatRP = 0.0; flatRP < 1/topVp; flatRP+= 0.05) {
+            double cosTopVp = Math.sqrt(1-flatRP*flatRP*coeff.topVp*coeff.topVp);
+            double cosTopVs = Math.sqrt(1-flatRP*flatRP*coeff.topVs*coeff.topVs);
+            double cosBotVp = Math.sqrt(1-flatRP*flatRP*coeff.botVp*coeff.botVp);
+            double cosBotVs = Math.sqrt(1-flatRP*flatRP*coeff.botVs*coeff.botVs);
+            assertFalse(Double.isNaN(cosTopVp));
+            assertFalse(Double.isNaN(cosTopVs));
+            assertFalse(Double.isNaN(cosBotVp));
+            assertFalse(Double.isNaN(cosBotVs));
+
 
             double Rpp_calc = coeff.getFluidSolidPtoPRefl(flatRP);
             double Tpp_calc = coeff.getFluidSolidPtoPTrans(flatRP);
             double Tps_calc = coeff.getFluidSolidPtoSVTrans(flatRP);
 
             // energy
-            assertEquals(topDensity * topVp,
-                    topDensity * topVp * Rpp_calc * Rpp_calc
-                            + botDensity * botVp * Tpp_calc * Tpp_calc
-                            + botDensity * botVs * Tps_calc * Tps_calc,
-                    0.000002,
+            assertEquals(coeff.topDensity * coeff.topVp * cosTopVp,
+                    coeff.topDensity * coeff.topVp * cosTopVp * Rpp_calc * Rpp_calc
+                            + coeff.botDensity * coeff.botVp * cosBotVp * Tpp_calc * Tpp_calc
+                            + coeff.botDensity * coeff.botVs * cosBotVs * Tps_calc * Tps_calc,
+                    1e-6,
                     "rp="+flatRP
             );
         }
