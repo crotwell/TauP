@@ -436,7 +436,7 @@ public class ReflTransCoefficient implements Serializable {
                 botVertSlownessP.times(topVertSlownessS).times(4*sqTopVs*sqTopVs*sqRP*topDensity).plus(botDensity)
                 );
         Complex a2Term = botVertSlownessP.times(topDensity).times((1-2*sqTopVs*sqRP)*(1-2*sqTopVs*sqRP));
-        Complex out = CX.over(CX.minus(a2Term, a1Term), DSolidFluid);
+        Complex out = CX.over(CX.minus(a1Term, a2Term), DSolidFluid);
         return out;
     }
     public double getSolidFluidPtoPRefl(double rayParam) {
