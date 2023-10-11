@@ -265,7 +265,7 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
 
                 label = "Rsp";
                 processType(out, reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label, labels, labelClass,
-                        reflTranCoef::getFreeSVtoSVRefl
+                        reflTranCoef::getFreeSVtoPRefl
                 );
 
                 label = "Rss";
