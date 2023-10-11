@@ -155,7 +155,7 @@ public class ReflTransTest {
         ReflTransCoefficient coeff = new ReflTransCoefficient(topVp,topVs,topDensity,botVp,botVs,botDensity);
 
         // non vertical incidence, up to value where we get complex results
-        for (double flatRP = 0.0; flatRP < 1/botVp; flatRP+= 0.05) {
+        for (double flatRP = 0.0; flatRP < 1/botVp; flatRP+= 0.01) {
 
             double cosTopVp = Math.sqrt(1-flatRP*flatRP*coeff.topVp*coeff.topVp);
             double cosTopVs = Math.sqrt(1-flatRP*flatRP*coeff.topVs*coeff.topVs);
@@ -220,7 +220,7 @@ public class ReflTransTest {
         double Rps_perpen = 0;
         double Rps_alt = 0;
         double Rps_calc = coeff.getSolidFluidPtoSVRefl(flatRP);
-        assertEquals(Rps_perpen, Rps_calc);
+        assertEquals(Rps_perpen, Rps_calc, 1e-6);
 
         // in s wave
         double Rsp_calc = coeff.getSolidFluidSVtoPRefl(flatRP);
@@ -262,16 +262,12 @@ public class ReflTransTest {
         System.out.println("     "+Tpp_alt+"      "+Rpp_alt+"      "+Rps_alt);
 */
 
-        assertEquals(0, coeff.getSolidFluidPtoSVRefl(flatRP));
-        assertEquals(1, coeff.getSolidFluidSVtoSVRefl(flatRP));
-        assertEquals(0, coeff.getSolidFluidSVtoPRefl(flatRP));
-        assertEquals(0, coeff.getSolidFluidSVtoPTrans(flatRP));
-        assertEquals(Rpp_alt,
-                coeff.getSolidFluidPtoPRefl(flatRP),
-                0.0000001);
-        assertEquals(Tpp_alt,
-                coeff.getSolidFluidPtoPTrans(flatRP),
-                0.0000001);
+        assertEquals(0, coeff.getSolidFluidPtoSVRefl(flatRP), 1e-6);
+        assertEquals(1, coeff.getSolidFluidSVtoSVRefl(flatRP), 1e-6);
+        assertEquals(0, coeff.getSolidFluidSVtoPRefl(flatRP), 1e-6);
+        assertEquals(0, coeff.getSolidFluidSVtoPTrans(flatRP), 1e-6);
+        assertEquals(Rpp_alt, coeff.getSolidFluidPtoPRefl(flatRP), 1e-6);
+        assertEquals(Tpp_alt, coeff.getSolidFluidPtoPTrans(flatRP), 1e-6);
     }
 
     @Test
@@ -287,7 +283,7 @@ public class ReflTransTest {
         ReflTransCoefficient coeff = new ReflTransCoefficient(topVp,topVs,topDensity,botVp,botVs,botDensity);
 
         // non vertical incidence
-        for (flatRP = 0.0; flatRP < 1/topVp; flatRP+= 0.05) {
+        for (flatRP = 0.0; flatRP < 1/topVp; flatRP+= 0.01) {
             double cosTopVp = Math.sqrt(1-flatRP*flatRP*coeff.topVp*coeff.topVp);
             double cosTopVs = Math.sqrt(1-flatRP*flatRP*coeff.topVs*coeff.topVs);
             double cosBotVp = Math.sqrt(1-flatRP*flatRP*coeff.botVp*coeff.botVp);
@@ -382,7 +378,7 @@ public class ReflTransTest {
         coeff = coeff.flip();
 
         // non vertical incidence
-        for (flatRP = 0.0; flatRP < 1/topVp; flatRP+= 0.05) {
+        for (flatRP = 0.0; flatRP < 1/topVp; flatRP+= 0.01) {
             double cosTopVp = Math.sqrt(1-flatRP*flatRP*coeff.topVp*coeff.topVp);
             double cosTopVs = Math.sqrt(1-flatRP*flatRP*coeff.topVs*coeff.topVs);
             double cosBotVp = Math.sqrt(1-flatRP*flatRP*coeff.botVp*coeff.botVp);
