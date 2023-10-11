@@ -142,12 +142,16 @@ export function form_url() {
 
   let timestep = document.querySelector('input[name="timestep"]').value;
   let isNegDist = document.querySelector('input[name="negdist"]').checked;
-
+  let isrefltranmodel = document.querySelector('input[name="isrefltranmodel"]:checked').value;
 
   const format = valid_format(toolname);
-  let url = `${toolname}?model=${model}`;
+  let url = "";
   if (toolname !== "refltrans") {
-    url += `&evdepth=${evdepth}`;
+    url = `${toolname}?model=${model}&evdepth=${evdepth}`;
+  } else if (isrefltranmodel === "refltrandepth") {
+    url = `${toolname}?model=${model}`;
+  } else {
+    url = `${toolname}?`;
   }
   if (toolname !== "velplot" && toolname !== "refltrans") {
     url += `&phases=${phases}`;
@@ -209,10 +213,18 @@ export function form_url() {
     }
   }
   if (toolname === "refltrans") {
-
-    let depth = document.querySelector('input[name="depth"]').value;
-    if (depth > 0) {
+    if (isrefltranmodel === "refltrandepth") {
+      let depth = document.querySelector('input[name="depth"]').value;
       url += `&depth=${depth}`;
+    } else {
+      let topvp = document.querySelector('input[name="topvp"]').value;
+      let topvs = document.querySelector('input[name="topvs"]').value;
+      let topden = document.querySelector('input[name="topden"]').value;
+      let botvp = document.querySelector('input[name="botvp"]').value;
+      let botvs = document.querySelector('input[name="botvs"]').value;
+      let botden = document.querySelector('input[name="botden"]').value;
+      url += `&topvp=${topvp}&topvs=${topvs}&topden=${topden}`;
+      url += `&botvp=${botvp}&botvs=${botvs}&botden=${botden}`;
     }
     let anglestep = document.querySelector('input[name="anglestep"]').value;
     if (anglestep > 0) {
@@ -226,6 +238,15 @@ export function form_url() {
     let inpwave = document.querySelector('input[name="inpwave"]').checked;
     if (inpwave) {
       url += `&inpwave=true`;
+    }
+    let inswave = document.querySelector('input[name="inswave"]').checked;
+    if (inswave) {
+      url += `&inswave=true`;
+    }
+
+    let xslowness = document.querySelector('input[name="xslowness"]').checked;
+    if (xslowness) {
+      url += `&xslowness=true`;
     }
   }
   // set format last as most useful to change

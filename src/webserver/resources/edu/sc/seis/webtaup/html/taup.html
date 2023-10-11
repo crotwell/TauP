@@ -177,12 +177,7 @@
           <span>Reflection and Transmission: </span>
       </label>
 
-      <label for="depth">
-          <span>Depth (km): </span>
-      </label>
-      <input type="number" id="depth" name="depth" value="35" />
-
-      <label for="depth">
+      <label for="anglestep">
           <span>Step (deg): </span>
       </label>
       <input type="number" id="anglestep" name="anglestep" value="1" />
@@ -195,6 +190,54 @@
       </label>
       <input type="checkbox" id="inpwave" name="inpwave" checked />
 
+      <label for="inswave">
+          <span>Incident S Wave: </span>
+      </label>
+      <input type="checkbox" id="inswave" name="inswave" checked />
+
+      <label for="xslowness">
+          <span>x is slowness: </span>
+      </label>
+      <input type="checkbox" id="xslowness" name="xslowness" checked />
+
+      <div>
+        <input type="radio" name="isrefltranmodel" id="refltrandepth" value="refltrandepth" checked />
+        <label for="depth">
+              <span>Model Depth (km): </span>
+          </label>
+          <input type="number" id="depth" name="depth" value="35" />
+      </div>
+      <div>
+        <input type="radio" name="isrefltranmodel" id="refltranvalues" value="refltranvalues" />
+        <div>
+          <label for="topvp">
+              <span>top Vp (km/s): </span>
+          </label>
+          <input type="number" id="topvp" name="topvp" value="5.8" />
+          <label for="topvs">
+              <span>top Vp (km/s): </span>
+          </label>
+          <input type="number" id="topvs" name="topvs" value="3.3" />
+          <label for="topden">
+              <span>top Den (kg/m3): </span>
+          </label>
+          <input type="number" id="topden" name="topden" value="2.5" />
+        </div>
+        <div>
+          <label for="botvp">
+              <span>bot Vp (km/s): </span>
+          </label>
+          <input type="number" id="botvp" name="botvp" value="0.3" />
+          <label for="botvs">
+              <span>bot Vp (km/s): </span>
+          </label>
+          <input type="number" id="botvs" name="botvs" value="0.0" />
+          <label for="botden">
+              <span>bot Den (kg/m3): </span>
+          </label>
+          <input type="number" id="botden" name="botden" value="1.2" />
+        </div>
+      </div>
     </fieldset>
     <fieldset>
         <legend>Format:</legend>
