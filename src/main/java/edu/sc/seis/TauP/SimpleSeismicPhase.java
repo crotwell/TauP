@@ -1070,7 +1070,6 @@ public class SimpleSeismicPhase implements SeismicPhase {
         }
         SeismicPhaseSegment prevSeg = segmentList.get(0);
         for (SeismicPhaseSegment seg : segmentList.subList(1, segmentList.size())) {
-            System.out.println(prevSeg.legName);
             reflTranValue *= prevSeg.calcReflTran(arrival, seg.isPWave, isAllS);
             prevSeg = seg;
         }

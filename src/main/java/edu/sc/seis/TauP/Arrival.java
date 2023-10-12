@@ -248,7 +248,6 @@ public class Arrival {
                 *recRadius*recRadius
                 *radialSlownessAtSource()*radialSlownessAtReceiver()
                 *Math.sin(getModuloDist());
-        System.out.println(getName()+" Gsf: "+numerator+"  "+denominator);
         return Math.sqrt(numerator/ denominator);
     }
 
