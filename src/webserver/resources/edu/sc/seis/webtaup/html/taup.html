@@ -172,7 +172,7 @@
       <button id="animate" type="button" >Animate</button>
     </fieldset>
 
-    <fieldset class="tool_refltran">
+    <fieldset class="tool_refltrans">
       <label for="refltran">
           <span>Reflection and Transmission: </span>
       </label>
@@ -181,34 +181,39 @@
           <span>Step (deg): </span>
       </label>
       <input type="number" id="anglestep" name="anglestep" value="1" />
+
+      <input type="checkbox" id="indowngoing" name="indowngoing" checked />
       <label for="indowngoing">
           <span>Incident Downgoing: </span>
       </label>
-      <input type="checkbox" id="indowngoing" name="indowngoing" checked />
-      <label for="inpwave">
-          <span>Incident P Wave: </span>
-      </label>
-      <input type="checkbox" id="inpwave" name="inpwave" checked />
 
-      <label for="inswave">
-          <span>Incident S Wave: </span>
-      </label>
-      <input type="checkbox" id="inswave" name="inswave" checked />
+      <div>
+        <input type="checkbox" id="inpwave" name="inpwave" checked />
+        <label for="inpwave">
+            <span>Incident P Wave: </span>
+        </label>
 
-      <label for="inshwave">
-          <span>Incident Sh Wave: </span>
-      </label>
-      <input type="checkbox" id="inshwave" name="inshwave" />
+        <input type="checkbox" id="inswave" name="inswave" checked />
+        <label for="inswave">
+            <span>Incident S Wave: </span>
+        </label>
 
-      <label for="xslowness">
-          <span>x is slowness: </span>
-      </label>
-      <input type="checkbox" id="xslowness" name="xslowness" checked />
+        <input type="checkbox" id="inshwave" name="inshwave" />
+        <label for="inshwave">
+            <span>Incident Sh Wave: </span>
+        </label>
+      </div>
+      <div>
+        <input type="checkbox" id="xslowness" name="xslowness" checked />
+        <label for="xslowness">
+            <span>x is slowness: </span>
+        </label>
 
-      <label for="absolute">
-          <span>absolute val: </span>
-      </label>
-      <input type="checkbox" id="absolute" name="absolute" checked />
+        <input type="checkbox" id="absolute" name="absolute" checked />
+        <label for="absolute">
+            <span>absolute val: </span>
+        </label>
+      </div>
 
       <div>
         <input type="radio" name="isrefltranmodel" id="refltrandepth" value="refltrandepth" checked />
@@ -279,8 +284,8 @@
         <label for="tool_velplot">Vel Model</label>
         <input type="radio" name="tool" id="tool_slow" value="slowplot" />
         <label for="tool_slow">Slow Model</label>
-        <input type="radio" name="tool" id="tool_refltran" value="refltrans" />
-        <label for="tool_refltran">Refl Trans</label>
+        <input type="radio" name="tool" id="tool_refltrans" value="refltrans" />
+        <label for="tool_refltrans">Refl Trans</label>
     </fieldset>
 </form>
 

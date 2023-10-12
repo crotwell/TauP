@@ -369,6 +369,13 @@ export function enableParams(tool) {
       }
     `;
   }
+  if ( tool !== "refltrans" ) {
+    styleStr += `
+      .tool_refltrans {
+        display: none;
+      }
+    `;
+  }
   styleEl.textContent = styleStr;
 }
 
