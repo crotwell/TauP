@@ -123,26 +123,47 @@ public class CmdLineOutputTest {
         // not actual tests, but allow visual compare with figures in
         // Foundations of Modern Global Seismology
         HashMap<String, String> fmgsFigureTestCmds = new HashMap<>();
+        HashMap<String, String> figureTitles = new HashMap<>();
+        HashMap<String, String> figureCompare = new HashMap<>();
         fmgsFigureTestCmds.put("FMGS_fig_13_12a.svg",
-                "taup refltrans -o stdout --abs --pwave --layer 8.0 4.6 3.3 6.4 3.7 2.8 --linrayparam --svg");
+                "taup refltrans -o stdout --abs --pwave --inlayer 8.0 4.6 3.3 --trlayer 6.4 3.7 2.8 --linrayparam --svg");
+        figureTitles.put("FMGS_fig_13_12a.svg", "FMGS, fig 13.12a, solid-solid P");
+        figureCompare.put("FMGS_fig_13_12a.svg", "FMGS_fig_13_12a.png");
         fmgsFigureTestCmds.put("FMGS_fig_13_12b.svg",
-                "taup refltrans -o stdout --abs --swave --layer 8.0 4.6 3.3 6.4 3.7 2.8 --linrayparam --svg");
+                "taup refltrans -o stdout --abs --swave --inlayer 8.0 4.6 3.3 --trlayer 6.4 3.7 2.8 --linrayparam --svg");
+        figureTitles.put("FMGS_fig_13_12b.svg", "FMGS, fig 13.12b, solid-solid S");
+        figureCompare.put("FMGS_fig_13_12b.svg", "FMGS_fig_13_12b.png");
         fmgsFigureTestCmds.put("FMGS_fig_13_13a.svg",
-                "taup refltrans -o stdout --abs --pwave --layer 6.4 3.7 2.8 8.0 4.6 3.3 --linrayparam --svg");
+                "taup refltrans -o stdout --abs --pwave --inlayer 6.4 3.7 2.8 --trlayer 8.0 4.6 3.3 --linrayparam --svg");
+        figureTitles.put("FMGS_fig_13_13a.svg", "FMGS, fig 13.13a, solid-solid P");
+        figureCompare.put("FMGS_fig_13_13a.svg", "FMGS_fig_13_13a.png");
         fmgsFigureTestCmds.put("FMGS_fig_13_13b.svg",
-                "taup refltrans -o stdout --abs --swave --layer 6.4 3.7 2.8 8.0 4.6 3.3 --linrayparam --svg");
+                "taup refltrans -o stdout --abs --swave --inlayer 6.4 3.7 2.8 --trlayer 8.0 4.6 3.3 --linrayparam --svg");
+        figureTitles.put("FMGS_fig_13_13b.svg", "FMGS, fig 13.13b, solid-solid S");
+        figureCompare.put("FMGS_fig_13_13b.svg", "FMGS_fig_13_13b.png");
         fmgsFigureTestCmds.put("FMGS_fig_13_14a.svg",
-                "taup refltrans -o stdout --abs --pwave --layer 5.8 3.35 2.5 0.3 0 1.2 --linrayparam --svg");
+                "taup refltrans -o stdout --abs --pwave --inlayer 5.8 3.35 2.5 --trlayer 0.3 0 1.2 --linrayparam --svg");
+        figureTitles.put("FMGS_fig_13_14a.svg", "FMGS, fig 13.14a, solid-air P");
+        figureCompare.put("FMGS_fig_13_14a.svg", "FMGS_fig_13_14a.png");
         fmgsFigureTestCmds.put("FMGS_fig_13_14b.svg",
-                "taup refltrans -o stdout --abs --swave --layer 5.8 3.35 2.5 0.3 0 1.2 --linrayparam --svg");
+                "taup refltrans -o stdout --abs --swave --inlayer 5.8 3.35 2.5 --trlayer 0.3 0 1.2 --linrayparam --svg");
+        figureTitles.put("FMGS_fig_13_14b.svg", "FMGS, fig 13.14b, solid-air P");
         fmgsFigureTestCmds.put("FMGS_fig_13_15.svg",
-                "taup refltrans -o stdout --abs --pwave  --swave --layer 5.8 3.35 2.5 0 0 0 --linrayparam --svg");
+                "taup refltrans -o stdout --abs --pwave  --swave --inlayer 5.8 3.35 2.5 --linrayparam --svg");
+        figureTitles.put("FMGS_fig_13_15.svg", "FMGS, fig 13.15, free surface");
+        figureCompare.put("FMGS_fig_13_15.svg", "FMGS_fig_13_15.png");
         fmgsFigureTestCmds.put("AR_fig_5_06.svg",
-                "taup refltrans -o stdout --pwave --swave --layer 5 3 2.5 0 0 0 --linrayparam --svg");
+                "taup refltrans -o stdout --pwave --swave --inlayer 5 3 2.5 --linrayparam --svg");
+        figureTitles.put("AR_fig_5_06.svg", "Aki and Richards, fig 5.6");
+        figureCompare.put("AR_fig_5_06.svg", "AR_fig_5_6.pdf");
         fmgsFigureTestCmds.put("AR_fig_5_10.svg",
-                "taup refltrans -o stdout --abs --swave --layer 5 3 2.5 0 0 0 --linrayparam --svg");
+                "taup refltrans -o stdout --abs --swave --inlayer 5 3 2.5 --linrayparam --svg");
+        figureTitles.put("AR_fig_5_10.svg", "Aki and Richards, fig 5.10");
+        figureCompare.put("AR_fig_5_10.svg", "AR_fig_5_10.pdf");
         fmgsFigureTestCmds.put("Shearer_fig_6_5.svg",
                 "taup refltrans -o stdout --abs --shwave --mod prem --depth 24.4 --down --svg");
+        figureTitles.put("Shearer_fig_6_5.svg", "Shearer, fig 6.5");
+        figureCompare.put("Shearer_fig_6_5.svg", "Shearer_fig_6_5.pdf");
 
         File topdir = new File("cmdLineTest");
         if ( ! topdir.isDirectory()) {topdir.mkdir(); }
@@ -152,7 +173,9 @@ public class CmdLineOutputTest {
         PrintStream indexOut = new PrintStream(new BufferedOutputStream(new FileOutputStream(new File(dir, "index.html"))));
         indexOut.println("<html>");
         indexOut.println("<body>");
-        indexOut.println("<ul>");
+        indexOut.println("<h3>Comparison of Reflection and Transmission Coefficients</h3>");
+        indexOut.println("<table>");
+        indexOut.println("<tr><th>TauP SVG</th><th>Command Line</th><th>Reference Image</th></tr>");
         List<String> sortedKeys = new ArrayList<String>();
         sortedKeys.addAll(fmgsFigureTestCmds.keySet());
         Collections.sort(sortedKeys);
@@ -160,9 +183,11 @@ public class CmdLineOutputTest {
             String cmd = fmgsFigureTestCmds.get(key);
             System.err.println(cmd);
             saveOutputToFile( cmd, dir, key);
-            indexOut.println("<li><a href=\""+key+"\">"+key+"</a></li>");
+            String compare = figureCompare.containsKey(key) ? figureCompare.get(key) : "";
+            indexOut.println("<tr><td><a href=\""+key+"\">"+figureTitles.get(key)+"</a></td><td><code>"
+                    +cmd.replace("-o stdout", "")+"</code></td><td><a target=\"_blank\" href=\""+compare+"\">compare</a></td></tr>");
         }
-        indexOut.println("</ul>");
+        indexOut.println("</table>");
         indexOut.println("</body>");
         indexOut.println("</html>");
         indexOut.close();

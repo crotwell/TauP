@@ -350,11 +350,16 @@ tasks.register<JavaExec>("genModels") {
   outputs.files(File(outDir, "ak135fcont.taup"))
 }
 
+tasks.register<Sync>("copyReflTranCompareFiles") {
+  from("src/test/resources/edu/sc/seis/TauP/cmdLineTest/refltranCompare")
+  into("cmdLineTest/refltranCompare")
+}
 tasks.register<JavaExec>("genCmdLineTestFiles") {
     description = "generate TauP cmd line test output files"
     classpath = sourceSets.getByName("test").runtimeClasspath
     getMainClass().set("edu.sc.seis.TauP.CmdLineOutputTest")
     dependsOn += tasks.getByName("testClasses")
+    dependsOn += tasks.getByName("copyReflTranCompareFiles")
     outputs.files(fileTree("cmdLineTest"))
 }
 tasks.register<Sync>("copyCmdLineTestFiles") {

@@ -67,6 +67,18 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
             } else if(dashEquals("depth", args[i])) {
                 setDepth(Double.parseDouble(args[i + 1]));
                 i++;
+            } else if(i < args.length - 3 && dashEquals("inlayer", args[i])) {
+                double topVp = Double.parseDouble(args[i + 1]);
+                double topVs = Double.parseDouble(args[i + 2]);
+                double topDensity = Double.parseDouble(args[i + 3]);
+                setLayerParams(topVp, topVs, topDensity, botVp, botVs, botDensity);
+                i+=3;
+            } else if(i < args.length - 3 && dashEquals("trlayer", args[i])) {
+                double botVp = Double.parseDouble(args[i + 1]);
+                double botVs = Double.parseDouble(args[i + 2]);
+                double botDensity = Double.parseDouble(args[i + 3]);
+                setLayerParams(topVp, topVs, topDensity, botVp, botVs, botDensity);
+                i+=3;
             } else if(i < args.length - 6 && dashEquals("layer", args[i])) {
                 double topVp = Double.parseDouble(args[i + 1]);
                 double topVs = Double.parseDouble(args[i + 2]);
