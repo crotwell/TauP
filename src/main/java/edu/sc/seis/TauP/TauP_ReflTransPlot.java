@@ -149,7 +149,7 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
         if (!vMod.isDisconDepth(depth)) {
             System.err.println("Depth is not a discontinuity in " + vMod.getModelName() + ": " + depth);
         }
-        ReflTransCoefficient reflTranCoef = vMod.calcReflTransCoef(depth, downgoing);
+        ReflTrans reflTranCoef = vMod.calcReflTransCoef(depth, downgoing);
 
         String title = vMod.modelName +" at ";
         if (botVp == 0) {
@@ -169,17 +169,14 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
                          boolean inpwave, boolean inswave,
                          boolean linearRayParam,
                          double angleStep) throws VelocityModelException {
-        ReflTransCoefficient reflTranCoef = new ReflTransCoefficient(
+        ReflTrans reflTranCoef = VelocityModel.calcReflTransCoef(
                 topVp, topVs, topDensity,
-                botVp, botVs, botDensity);
-        if (!downgoing) {
-            reflTranCoef = reflTranCoef.flip();
-        }
+                botVp, botVs, botDensity, downgoing);
         String title = createTitle(reflTranCoef, inpwave, inswave);
         printSVG(out, reflTranCoef, inpwave, inswave, linearRayParam, angleStep, title);
     }
 
-    public String createTitle(ReflTransCoefficient reflTransCoef, boolean inpwave, boolean inswave) {
+    public String createTitle(ReflTrans reflTransCoef, boolean inpwave, boolean inswave) {
         String title;
         if (reflTransCoef.botVp == 0) {
             title = "Free surface: "+reflTransCoef.topVp+","+reflTransCoef.topVs+","+reflTransCoef.topDensity +" ";
@@ -201,7 +198,7 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
     }
 
     public void printSVG(PrintWriter out,
-                         ReflTransCoefficient reflTranCoef,
+                         ReflTrans reflTranCoef,
                          boolean inpwave,
                          boolean inswave,
                          boolean linearRayParam,
@@ -243,156 +240,7 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
         out.println("<g transform=\"translate(0,"+(-1*minY)+")\" >");
 
         String label = "";
-        if (reflTranCoef.botVp == 0) {
-            // free surface, only reflection
-            if (inpwave) {
-                // in p wave, free surface
-                double invel = reflTranCoef.topVp;
-                // to calc flat earth ray param from incident angle
-                double oneOverV = 1.0 / invel;
 
-                label = "Rpp";
-                processType(out, reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label, labels, labelClass,
-                        reflTranCoef::getFreePtoPRefl
-                        );
-
-                label = "Rps";
-                processType(out, reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label, labels, labelClass,
-                        reflTranCoef::getFreePtoSVRefl
-                );
-            }
-            if (inswave) {
-                // in s wave, free surface
-                double invel = reflTranCoef.topVs;
-                // to calc flat earth ray param from incident angle
-                double oneOverV = 1.0 / invel;
-
-                label = "Rsp";
-                processType(out, reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label, labels, labelClass,
-                        reflTranCoef::getFreeSVtoPRefl
-                );
-
-                label = "Rss";
-                processType(out, reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label, labels, labelClass,
-                        reflTranCoef::getFreeSVtoSVRefl
-                );
-
-                label = "Rshsh";
-                processType(out, reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label, labels, labelClass,
-                        reflTranCoef::getFreeSHtoSHRefl
-                );
-            }
-        } else if (reflTranCoef.topVs == 0.0 && reflTranCoef.botVs == 0.0) {
-            // fluid-fluid boundary
-
-            if (inpwave) {
-                double invel = reflTranCoef.topVp;
-                // to calc flat earth ray param from incident angle
-                double oneOverV = 1.0 / invel;
-                /*
-                label = "Rpp";
-                processType(out, reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label, labels, labelClass,
-                        reflTranCoef::getFluidFluidPtoPRefl
-                );
-
-                label = "Tpp";
-                processType(out, reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label, labels, labelClass,
-                        reflTranCoef::getFluidFluidPtoPTrans
-                );
-
-                 */
-            }
-            if (inswave) {
-                // no s in fluid layer
-                double invel = reflTranCoef.topVs;
-                // to calc flat earth ray param from incident angle
-                double oneOverV = 1.0 / invel;
-
-            }
-        } else if (reflTranCoef.topVs == 0.0 ) {
-            // fluid-solid
-System.out.println("above (inbound) is fluid");
-            if (inpwave) {
-                // in P  fluid over solid layer
-                double invel = reflTranCoef.topVp;
-                // to calc flat earth ray param from incident angle
-                double oneOverV = 1.0 / invel;
-
-                label = "Rpp";
-                processType(out, reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label, labels, labelClass,
-                        reflTranCoef::getFluidSolidPtoPRefl
-                );
-
-                label = "Tpp";
-                processType(out, reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label, labels, labelClass,
-                        reflTranCoef::getFluidSolidPtoPTrans
-                );
-
-                label = "Tps";
-                processType(out, reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label, labels, labelClass,
-                        reflTranCoef::getFluidSolidPtoSVTrans
-                );
-            }
-            if (inswave) {
-                // no s in fluid layer
-                double invel = reflTranCoef.topVs;
-                // to calc flat earth ray param from incident angle
-                double oneOverV = 1.0 / invel;
-
-            }
-        } else if ( reflTranCoef.botVs == 0.0) {
-            // solid-fluid
-            System.out.println("below (outbound) is fluid");
-            if (inpwave) {
-                // in P solid over fluid layer
-                double invel = reflTranCoef.topVp;
-                // to calc flat earth ray param from incident angle
-                double oneOverV = 1.0 / invel;
-
-                label = "Rpp";
-                processType(out, reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label, labels, labelClass,
-                        reflTranCoef::getSolidFluidPtoPRefl
-                );
-
-                label = "Tpp";
-                processType(out, reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label, labels, labelClass,
-                        reflTranCoef::getSolidFluidPtoPTrans
-                );
-
-                label = "Rps";
-                processType(out, reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label, labels, labelClass,
-                        reflTranCoef::getSolidFluidPtoSVRefl
-                );
-            }
-            if (inswave) {
-                // in S solid over fluid layer
-                double invel = reflTranCoef.topVs;
-                // to calc flat earth ray param from incident angle
-                double oneOverV = 1.0 / invel;
-
-
-                label = "Rshsh";
-                processType(out, reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label, labels, labelClass,
-                        reflTranCoef::getSolidFluidSHtoSHRefl
-                );
-
-                label = "Rsp";
-                processType(out, reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label, labels, labelClass,
-                        reflTranCoef::getSolidFluidSVtoPRefl
-                );
-
-                label = "Tsp";
-                processType(out, reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label, labels, labelClass,
-                        reflTranCoef::getSolidFluidSVtoPTrans
-                );
-
-                label = "Rss";
-                processType(out, reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label, labels, labelClass,
-                        reflTranCoef::getSolidFluidSVtoSVRefl
-                );
-
-            }
-        } else {
             // solid-solid
             System.out.println("solid-solid");
             if (inpwave) {
@@ -457,7 +305,7 @@ System.out.println("above (inbound) is fluid");
                         reflTranCoef::getTshsh
                 );
             }
-        }
+
         out.println("</g>");
         out.println("</g>");
         out.println("</g>");
@@ -472,12 +320,19 @@ System.out.println("above (inbound) is fluid");
         closeWriter();
     }
 
-    protected void processType(PrintWriter out, ReflTransCoefficient reflTranCoef,
+    protected void processType(PrintWriter out, ReflTrans reflTranCoef,
                                 double minX, double maxX, double step,
                                 boolean linearRayParam, double oneOverV,
                                 String label, List<String> labels, List<String> labelClass,
                                CalcReflTranFunction<Double, Double> calcFn) throws VelocityModelException {
         if (onlyPlotCoef != null && ! onlyPlotCoef.equalsIgnoreCase(label) ) { return;}
+        try {
+            double val = calcFn.apply(0.0);
+        } catch (VelocityModelException e) {
+            // illegal refltrans type for this coef, ie Tss for solid-fluid
+            // just skip
+            return;
+        }
         out.print("<polyline class=\""+label+"\" points=\"");
         System.err.println("minX: "+minX+" maxX: "+maxX+" step: "+step);
         double i;

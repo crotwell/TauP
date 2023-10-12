@@ -1569,9 +1569,9 @@ public class VelocityModel implements Cloneable, Serializable {
                                  layers);
     }
     
-    public ReflTransCoefficient calcReflTransCoef(double depth, boolean downgoing) throws VelocityModelException {
-        if ( ! isDisconDepth(depth)) {
-            throw new VelocityModelException("depth "+depth+" is not a discontinuity in the model");
+    public ReflTrans calcReflTransCoef(double depth, boolean downgoing) throws VelocityModelException {
+        if (!isDisconDepth(depth)) {
+            throw new VelocityModelException("depth " + depth + " is not a discontinuity in the model");
         }
         double abovePVel = evaluateAbove(depth, P_WAVE_CHAR);
         double aboveSVel = evaluateAbove(depth, S_WAVE_CHAR);
@@ -1579,14 +1579,64 @@ public class VelocityModel implements Cloneable, Serializable {
         double belowPVel = evaluateBelow(depth, P_WAVE_CHAR);
         double belowSVel = evaluateBelow(depth, S_WAVE_CHAR);
         double belowRho = evaluateBelow(depth, DENSITY_CHAR);
-        ReflTransCoefficient rtCoef = new ReflTransCoefficient(
-                abovePVel, aboveSVel, aboveRho,
-                belowPVel, belowSVel, belowRho);
-        if (!downgoing) {
-            rtCoef = rtCoef.flip();
+        if (depth == 0) {
+            abovePVel = 0.0;
+            aboveSVel = 0.0;
+            aboveRho = 0.0;
         }
-        if (depth == 0.0 && downgoing) {
-            throw new VelocityModelException("Downgoing to free surface is not possible");
+        return calcReflTransCoef(abovePVel, aboveSVel, aboveRho, belowPVel, belowSVel, belowRho, downgoing);
+    }
+
+    public static ReflTrans calcReflTransCoef(double abovePVel,
+                                              double aboveSVel,
+                                              double aboveRho,
+                                              double belowPVel,
+                                              double belowSVel,
+                                              double belowRho) throws VelocityModelException {
+        return calcReflTransCoef(abovePVel, aboveSVel, aboveRho, belowPVel, belowSVel, belowRho, false);
+    }
+
+    public static ReflTrans calcReflTransCoef(double abovePVel,
+                                       double aboveSVel,
+                                       double aboveRho,
+                                       double belowPVel,
+                                       double belowSVel,
+                                       double belowRho,
+                                       boolean downgoing) throws VelocityModelException {
+        ReflTrans rtCoef;
+        if (abovePVel == 0.0 || aboveRho == 0.0) {
+            if (downgoing) {
+                throw new VelocityModelException("Downgoing to free surface is not possible");
+            }
+            if (aboveSVel == 0.0) {
+                rtCoef = new ReflTransFluidFreeSurface(belowPVel, belowRho);
+            } else {
+                rtCoef = new ReflTransFreeSurface(belowPVel, belowSVel, belowRho);
+            }
+        } else if (aboveSVel == 0.0 && belowSVel == 0.0) {
+            rtCoef = new ReflTransFluidFluid(abovePVel, aboveRho, belowPVel, belowRho);
+            if (!downgoing) {
+                rtCoef = rtCoef.flip();
+            }
+        } else if (aboveSVel == 0.0 ) {
+            if (downgoing) {
+                rtCoef = new ReflTransFluidSolid(abovePVel, aboveRho, belowPVel, belowSVel, belowRho);
+            } else {
+                rtCoef = new ReflTransSolidFluid(belowPVel, belowSVel, belowRho, abovePVel, aboveRho);
+            }
+        } else if (belowSVel == 0.0) {
+            if (downgoing) {
+                rtCoef = new ReflTransSolidFluid(abovePVel, aboveSVel, aboveRho, belowPVel, belowRho);
+            } else {
+                rtCoef = new ReflTransFluidSolid(belowPVel, belowRho, abovePVel, aboveSVel, aboveRho);
+            }
+        } else {
+            rtCoef = new ReflTransSolidSolid(
+                    abovePVel, aboveSVel, aboveRho,
+                    belowPVel, belowSVel, belowRho);
+            if (!downgoing) {
+                rtCoef = rtCoef.flip();
+            }
         }
         return rtCoef;
     }

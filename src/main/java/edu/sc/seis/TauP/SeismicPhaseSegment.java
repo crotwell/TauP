@@ -380,7 +380,7 @@ public class SeismicPhaseSegment {
 					// probably should be more careful
 					continue;
 				}
-				ReflTransCoefficient reflTranCoef = vMod.calcReflTransCoef(depth, isDownGoing);
+				ReflTrans reflTranCoef = vMod.calcReflTransCoef(depth, isDownGoing);
 				double flatVelocity = getTauModel().getSlownessModel().toVelocity(arrival.getRayParam(), depth);
 				double flatRayParam = 1.0 / flatVelocity;
 				if (isPWave) {
@@ -397,7 +397,7 @@ public class SeismicPhaseSegment {
 			}
 			TauBranch tauBranch = tMod.getTauBranch(endBranch, isPWave);
 			double depth = isDownGoing ? tauBranch.getBotDepth() : tauBranch.getTopDepth();
-			ReflTransCoefficient reflTranCoef = vMod.calcReflTransCoef(depth, isDownGoing);
+			ReflTrans reflTranCoef = vMod.calcReflTransCoef(depth, isDownGoing);
 			double flatVelocity = getTauModel().getSlownessModel().toVelocity(arrival.getRayParam(), depth);
 			double flatRayParam = 1.0 / flatVelocity;
 
@@ -443,43 +443,28 @@ public class SeismicPhaseSegment {
 					}
 				}
 			} else if (this.endAction == REFLECT_TOPSIDE_CRITICAL || this.endAction == REFLECT_TOPSIDE || this.endAction == REFLECT_UNDERSIDE) {
-				if (depth == 0.0) {
-					if (isPWave) {
-						if (nextLegIsPWave) {
-							reflTranValue *= reflTranCoef.getFreePtoPRefl(flatRayParam);
-						} else {
-							reflTranValue *= reflTranCoef.getFreePtoSVRefl(flatRayParam);
-						}
+
+				if (isPWave) {
+					if (nextLegIsPWave) {
+						reflTranValue *= reflTranCoef.getRpp(flatRayParam);
 					} else {
-						if (nextLegIsPWave) {
-							reflTranValue *= reflTranCoef.getFreeSVtoPRefl(flatRayParam);
-						} else {
-							if (allSH) {
-								reflTranValue *= reflTranCoef.getFreeSHtoSHRefl(flatRayParam);
-							} else {
-								reflTranValue *= reflTranCoef.getFreeSVtoSVRefl(flatRayParam);
-							}
-						}
+						reflTranValue *= reflTranCoef.getRps(flatRayParam);
 					}
 				} else {
-					if (isPWave) {
-						if (nextLegIsPWave) {
-							reflTranValue *= reflTranCoef.getRpp(flatRayParam);
-						} else {
-							reflTranValue *= reflTranCoef.getRps(flatRayParam);
-						}
+					if (nextLegIsPWave) {
+						reflTranValue *= reflTranCoef.getRsp(flatRayParam);
 					} else {
-						if (nextLegIsPWave) {
-							reflTranValue *= reflTranCoef.getRsp(flatRayParam);
+						if (allSH) {
+							reflTranValue *= reflTranCoef.getRshsh(flatRayParam);
 						} else {
-							if (allSH) {
-								reflTranValue *= reflTranCoef.getRshsh(flatRayParam);
-							} else {
-								reflTranValue *= reflTranCoef.getRss(flatRayParam);
-							}
+							reflTranValue *= reflTranCoef.getRss(flatRayParam);
 						}
 					}
 				}
+
+			}
+			if (Double.isNaN(reflTranValue)) {
+				throw new VelocityModelException("Refltran value is NaN: "+reflTranValue+" "+flatRayParam+" "+flatVelocity+" "+arrival.getRayParam()+" "+depth+" "+isPWave+" "+isDownGoing+" "+endAction);
 			}
 		} else {
 			/*
