@@ -244,9 +244,19 @@ public class TauP_Web extends TauP_Tool {
 
     // ReflTrans
     public static String QP_DEPTH = "depth";
+    public static String QP_TOPVP = "topvp";
+    public static String QP_TOPVS = "topvs";
+    public static String QP_TOPDEN = "topden";
+    public static String QP_BOTVP = "botvp";
+    public static String QP_BOTVS = "botvs";
+    public static String QP_BOTDEN = "botden";
     public static String QP_ANGLESTEP = "anglestep";
     public static String QP_IN_DOWN = "indown";
     public static String QP_IN_PWAVE = "inpwave";
+    public static String QP_IN_SWAVE = "inswave";
+    public static String QP_X_SLOWNESS = "xslowness";
+    public static String QP_ABSOLUTE = "absolute";
+
 
 
     public Set<String> configTool(TauP_Tool tool, Map<String, Deque<String>> queryParameters) throws TauPException, IOException {
@@ -386,6 +396,22 @@ public class TauP_Web extends TauP_Tool {
             if (queryParameters.containsKey(QP_DEPTH)) {
                 unknownKeys.remove(QP_DEPTH);
                 rtplot.setDepth(Double.parseDouble(queryParameters.get(QP_DEPTH).getFirst()));
+            } else {
+                double topvp = Double.parseDouble(queryParameters.get(QP_TOPVP).getFirst());
+                double topvs = Double.parseDouble(queryParameters.get(QP_TOPVS).getFirst());
+                double topden = Double.parseDouble(queryParameters.get(QP_TOPDEN).getFirst());
+
+                double botvp = Double.parseDouble(queryParameters.get(QP_BOTVP).getFirst());
+                double botvs = Double.parseDouble(queryParameters.get(QP_BOTVS).getFirst());
+                double botden = Double.parseDouble(queryParameters.get(QP_BOTDEN).getFirst());
+
+                unknownKeys.remove(QP_TOPVP);
+                unknownKeys.remove(QP_TOPVS);
+                unknownKeys.remove(QP_TOPDEN);
+                unknownKeys.remove(QP_BOTVP);
+                unknownKeys.remove(QP_BOTVS);
+                unknownKeys.remove(QP_BOTDEN);
+                rtplot.setLayerParams(topvp, topvs, topden, botvp, botvs, botden);
             }
             if (queryParameters.containsKey(QP_ANGLESTEP)) {
                 unknownKeys.remove(QP_ANGLESTEP);
@@ -404,6 +430,32 @@ public class TauP_Web extends TauP_Tool {
                     throw new TauPException("Unknown value for "+QP_IN_DOWN+": "+p);
                 }
             }
+            rtplot.setAbsolute( false);
+            if (queryParameters.containsKey(QP_ABSOLUTE)) {
+                unknownKeys.remove(QP_ABSOLUTE);
+
+                String p = queryParameters.get(QP_ABSOLUTE).getFirst();
+                if (p.length() == 0 || p.equalsIgnoreCase("true")) {
+                    rtplot.setAbsolute(true);
+                } else if (p.equalsIgnoreCase("false")) {
+                    rtplot.setAbsolute(false);
+                } else {
+                    throw new TauPException("Unknown value for "+QP_ABSOLUTE+": "+p);
+                }
+            }
+            rtplot.setLinearRayParam( false);
+            if (queryParameters.containsKey(QP_X_SLOWNESS)) {
+                unknownKeys.remove(QP_X_SLOWNESS);
+
+                String p = queryParameters.get(QP_X_SLOWNESS).getFirst();
+                if (p.length() == 0 || p.equalsIgnoreCase("true")) {
+                    rtplot.setLinearRayParam(true);
+                } else if (p.equalsIgnoreCase("false")) {
+                    rtplot.setLinearRayParam(false);
+                } else {
+                    throw new TauPException("Unknown value for "+QP_X_SLOWNESS+": "+p);
+                }
+            }
             rtplot.setIncidentPWave( false);
             if (queryParameters.containsKey(QP_IN_PWAVE)) {
                 unknownKeys.remove(QP_IN_PWAVE);
@@ -415,6 +467,22 @@ public class TauP_Web extends TauP_Tool {
                 } else {
                     throw new TauPException("Unknown value for "+QP_IN_PWAVE+": "+p);
                 }
+            }
+            rtplot.setIncidentSWave( false);
+            if (queryParameters.containsKey(QP_IN_SWAVE)) {
+                unknownKeys.remove(QP_IN_SWAVE);
+                String p = queryParameters.get(QP_IN_SWAVE).getFirst();
+                if (p.length() == 0 || p.equalsIgnoreCase("true")) {
+                    rtplot.setIncidentSWave(true);
+                } else if (p.equalsIgnoreCase("false")) {
+                    rtplot.setIncidentSWave(false);
+                } else {
+                    throw new TauPException("Unknown value for "+QP_IN_SWAVE+": "+p);
+                }
+            }
+            if (! (rtplot.isInpwave() || rtplot.isInswave())) {
+                rtplot.setInpwave(true);
+                rtplot.setInswave(true);
             }
             unknownKeys.remove(QP_DISTDEG);
             unknownKeys.remove(QP_SHOOTRAY);

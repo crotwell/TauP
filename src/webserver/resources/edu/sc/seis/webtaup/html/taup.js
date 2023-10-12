@@ -234,6 +234,11 @@ export function form_url() {
     if (indowngoing) {
       url += `&indown=true`;
     }
+    let absolute = document.querySelector('input[name="absolute"]').checked;
+    if (absolute) {
+      url += `&absolute=true`;
+    }
+
 
     let inpwave = document.querySelector('input[name="inpwave"]').checked;
     if (inpwave) {
