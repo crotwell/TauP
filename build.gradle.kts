@@ -20,11 +20,12 @@ application {
 }
 
 group = "edu.sc.seis"
-version = "2.7.0-SNAPSHOT5"
+version = "3.0.0-SNAPSHOT1"
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(11))
+    }
     withJavadocJar()
     withSourcesJar()
 }
