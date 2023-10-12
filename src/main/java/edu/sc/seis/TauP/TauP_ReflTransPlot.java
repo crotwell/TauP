@@ -402,22 +402,22 @@ System.out.println("above (inbound) is fluid");
 
                 label = "Rpp";
                 processType(out, reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label, labels, labelClass,
-                        reflTranCoef::getPtoPRefl
+                        reflTranCoef::getRpp
                 );
 
                 label = "Tpp";
                 processType(out, reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label, labels, labelClass,
-                        reflTranCoef::getPtoPTrans
+                        reflTranCoef::getTpp
                 );
 
                 label = "Rps";
                 processType(out, reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label, labels, labelClass,
-                        reflTranCoef::getPtoSVRefl
+                        reflTranCoef::getRps
                 );
 
                 label = "Tps";
                 processType(out, reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label, labels, labelClass,
-                        reflTranCoef::getPtoSVTrans
+                        reflTranCoef::getTps
                 );
             }
             if (inswave) {
@@ -429,32 +429,32 @@ System.out.println("above (inbound) is fluid");
 
                 label = "Rsp";
                 processType(out, reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label, labels, labelClass,
-                        reflTranCoef::getSVtoPRefl
+                        reflTranCoef::getRsp
                 );
 
                 label = "Tsp";
                 processType(out, reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label, labels, labelClass,
-                        reflTranCoef::getSVtoPTrans
+                        reflTranCoef::getTsp
                 );
 
                 label = "Rss";
                 processType(out, reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label, labels, labelClass,
-                        reflTranCoef::getSVtoSVRefl
+                        reflTranCoef::getRss
                 );
 
                 label = "Tss";
                 processType(out, reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label, labels, labelClass,
-                        reflTranCoef::getSVtoSVTrans
+                        reflTranCoef::getTss
                 );
 
                 label = "Rshsh";
                 processType(out, reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label, labels, labelClass,
-                        reflTranCoef::getSHtoSHRefl
+                        reflTranCoef::getRshsh
                 );
 
                 label = "Tshsh";
                 processType(out, reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label, labels, labelClass,
-                        reflTranCoef::getSHtoSHTrans
+                        reflTranCoef::getTshsh
                 );
             }
         }

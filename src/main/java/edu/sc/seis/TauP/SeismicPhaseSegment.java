@@ -384,13 +384,13 @@ public class SeismicPhaseSegment {
 				double flatVelocity = getTauModel().getSlownessModel().toVelocity(arrival.getRayParam(), depth);
 				double flatRayParam = 1.0 / flatVelocity;
 				if (isPWave) {
-					reflTranValue *= reflTranCoef.getPtoPTrans(flatRayParam);
+					reflTranValue *= reflTranCoef.getTpp(flatRayParam);
 				} else {
 					// SV or SH or combo???
 					if (allSH) {
-						reflTranValue *= reflTranCoef.getSHtoSHTrans(flatRayParam);
+						reflTranValue *= reflTranCoef.getTshsh(flatRayParam);
 					} else {
-						reflTranValue *= reflTranCoef.getSVtoSVTrans(flatRayParam);
+						reflTranValue *= reflTranCoef.getTss(flatRayParam);
 					}
 				}
 
@@ -408,18 +408,18 @@ public class SeismicPhaseSegment {
 					// turn is actually critical reflection from bottom of layer
 					if (isPWave) {
 						if (nextLegIsPWave) {
-							reflTranValue *= reflTranCoef.getPtoPRefl(flatRayParam);
+							reflTranValue *= reflTranCoef.getRpp(flatRayParam);
 						} else {
-							reflTranValue *= reflTranCoef.getPtoSVRefl(flatRayParam);
+							reflTranValue *= reflTranCoef.getRps(flatRayParam);
 						}
 					} else {
 						if (nextLegIsPWave) {
-							reflTranValue *= reflTranCoef.getSVtoPRefl(flatRayParam);
+							reflTranValue *= reflTranCoef.getRsp(flatRayParam);
 						} else {
 							if (allSH) {
-								reflTranValue *= reflTranCoef.getSHtoSHRefl(flatRayParam);
+								reflTranValue *= reflTranCoef.getRshsh(flatRayParam);
 							} else {
-								reflTranValue *= reflTranCoef.getSVtoSVRefl(flatRayParam);
+								reflTranValue *= reflTranCoef.getRss(flatRayParam);
 							}
 						}
 					}
@@ -427,18 +427,18 @@ public class SeismicPhaseSegment {
 			} else if (this.endAction == TRANSDOWN || this.endAction == TRANSUP) {
 				if (isPWave) {
 					if (nextLegIsPWave) {
-						reflTranValue *= reflTranCoef.getPtoPTrans(flatRayParam);
+						reflTranValue *= reflTranCoef.getTpp(flatRayParam);
 					} else {
-						reflTranValue *= reflTranCoef.getPtoSVTrans(flatRayParam);
+						reflTranValue *= reflTranCoef.getTps(flatRayParam);
 					}
 				} else {
 					if (nextLegIsPWave) {
-						reflTranValue *= reflTranCoef.getSVtoPTrans(flatRayParam);
+						reflTranValue *= reflTranCoef.getTsp(flatRayParam);
 					} else {
 						if (allSH) {
-							reflTranValue *= reflTranCoef.getSHtoSHTrans(flatRayParam);
+							reflTranValue *= reflTranCoef.getTshsh(flatRayParam);
 						} else {
-							reflTranValue *= reflTranCoef.getSVtoSVTrans(flatRayParam);
+							reflTranValue *= reflTranCoef.getTss(flatRayParam);
 						}
 					}
 				}
@@ -464,18 +464,18 @@ public class SeismicPhaseSegment {
 				} else {
 					if (isPWave) {
 						if (nextLegIsPWave) {
-							reflTranValue *= reflTranCoef.getPtoPRefl(flatRayParam);
+							reflTranValue *= reflTranCoef.getRpp(flatRayParam);
 						} else {
-							reflTranValue *= reflTranCoef.getPtoSVRefl(flatRayParam);
+							reflTranValue *= reflTranCoef.getRps(flatRayParam);
 						}
 					} else {
 						if (nextLegIsPWave) {
-							reflTranValue *= reflTranCoef.getSVtoPRefl(flatRayParam);
+							reflTranValue *= reflTranCoef.getRsp(flatRayParam);
 						} else {
 							if (allSH) {
-								reflTranValue *= reflTranCoef.getSHtoSHRefl(flatRayParam);
+								reflTranValue *= reflTranCoef.getRshsh(flatRayParam);
 							} else {
-								reflTranValue *= reflTranCoef.getSVtoSVRefl(flatRayParam);
+								reflTranValue *= reflTranCoef.getRss(flatRayParam);
 							}
 						}
 					}
