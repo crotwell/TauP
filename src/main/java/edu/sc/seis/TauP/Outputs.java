@@ -66,7 +66,9 @@ public class Outputs {
                 + "f";
         latLonFormat = new Format(formString);
 
-        ampFactorFormat = new Format("%.2e");
+        formString = "%." + props.getProperty("taup.amplitude.precision", "1")
+                + "e";
+        ampFactorFormat = new Format(formString);
     }
 
     public static String formatDepth(double depth) {
@@ -119,5 +121,5 @@ public class Outputs {
 
     protected static Format latLonFormat = new Format("%8.2f");
 
-    protected static Format ampFactorFormat = new Format("%.2e");
+    protected static Format ampFactorFormat = new Format("%.1e");
 } // Outputs
