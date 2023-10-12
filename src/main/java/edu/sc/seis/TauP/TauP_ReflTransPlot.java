@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
 
 import static edu.sc.seis.TauP.VelocityModel.P_WAVE_CHAR;
 import static edu.sc.seis.TauP.VelocityModel.S_WAVE_CHAR;
@@ -43,6 +42,8 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
                 setIncidentDown(false);
             } else if(dashEquals("linrayparam", args[i])) {
                 setLinearRayParam(true);
+            } else if(dashEquals("abs", args[i])) {
+                setAbsolute(true);
             } else if(dashEquals("svg", args[i])) {
                 setOutputFormat(SVG);
                 setOutFileExtension("svg");
@@ -217,6 +218,9 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
         int numXTicks = 5;
         double maxY = 2.0;
         double minY = -1.0;
+        if (isAbsolute()) {
+            minY = 0.0;
+        }
         int numYTicks = 8;
 
         float pixelWidth =  (72.0f*mapWidth)-plotOffset;
@@ -488,19 +492,23 @@ System.out.println("above (inbound) is fluid");
                 rayParam = oneOverV * Math.sin(i * Arrival.DtoR);
                 nextrayParam = oneOverV * Math.sin((i+step) * Arrival.DtoR);
             }
-            out.print( i + " " + ( calcFn.apply(rayParam).floatValue()) + " ");
+            double val = calcFn.apply(rayParam);
+            if (isAbsolute()) {
+                val = Math.abs(val);
+            }
+            out.print( ((float)i)+ " " + ((float)val) + " ");
             for (int critIdx=0; critIdx<critSlownesses.length; critIdx++) {
                 if (rayParam < critSlownesses[critIdx] && nextrayParam > critSlownesses[critIdx] ) {
                     double criti = critSlownesses[critIdx];
-                    if (!linearRayParam) {
-                        // find angle
-                        criti = Math.asin(criti*oneOverV)*Arrival.RtoD;
+                    double xval = linearRayParam ? criti : Math.asin(criti/oneOverV)*Arrival.RtoD;
+                    val = calcFn.apply(criti);
+                    if (isAbsolute()) {
+                        val = Math.abs(val);
                     }
-                    out.print( ((float)criti)+ " " + (calcFn.apply(criti).floatValue()) + " ");
+                    out.print( ((float)xval)+ " " + ((float)val) + " ");
                 }
             }
         }
-        System.err.println("ray param: "+(linearRayParam ? i : oneOverV * Math.sin(i * Arrival.DtoR)));
         if (i < maxX+step ) {
             // perhaps step was not even divide (max-min) when just one S,P, so add last value
             double rayParam;
@@ -509,7 +517,11 @@ System.out.println("above (inbound) is fluid");
             } else {
                 rayParam = oneOverV * Math.sin(maxX * Arrival.DtoR);
             }
-            out.print( maxX + " " + ( calcFn.apply(rayParam).floatValue()) + " ");
+            double val = calcFn.apply(rayParam);
+            if (isAbsolute()) {
+                val = Math.abs(val);
+            }
+            out.print( ((float)maxX)+ " " + ((float)val) + " ");
         }
         out.println("\" />");
         labels.add(label);
@@ -547,6 +559,14 @@ System.out.println("above (inbound) is fluid");
         this.inswave = inswave;
     }
 
+    public boolean isAbsolute() {
+        return absolute;
+    }
+
+    public void setAbsolute(boolean absolute) {
+        this.absolute = absolute;
+    }
+
     float mapWidth = 6;
     int plotOffset = 80;
     String modelName;
@@ -567,6 +587,7 @@ System.out.println("above (inbound) is fluid");
     protected boolean inpwave = false;
     protected boolean inswave = false;
     protected boolean linearRayParam = false;
+    protected boolean absolute = false;
     protected String onlyPlotCoef = null;
 
     public boolean isLinearRayParam() {
