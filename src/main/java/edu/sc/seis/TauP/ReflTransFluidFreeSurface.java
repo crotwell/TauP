@@ -70,4 +70,9 @@ public class ReflTransFluidFreeSurface extends ReflTrans {
     public ReflTrans flip() throws VelocityModelException {
         throw new VelocityModelException("Not legal for fluid free surface");
     }
+
+    @Override
+    public String toString() {
+        return "Fluid-free surface: "+" in: Vp: "+topVp+" d: "+topDensity;
+    }
 }

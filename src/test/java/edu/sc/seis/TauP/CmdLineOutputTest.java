@@ -19,9 +19,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 
 public class CmdLineOutputTest {
@@ -55,9 +53,14 @@ public class CmdLineOutputTest {
                                           "taup path -o stdout -h 10 -ph P -deg 35 --svg",
                                           "taup path -o stdout -h 10 -ph P -deg 35 -mod ak135"};
 
-    String[] curveTestCmds = new String[] {"taup curve -o stdout -h 10 -ph P -mod prem",
-                                           "taup curve -o stdout -h 10 -ph P",
-                                           "taup curve -o stdout -h 10 -ph P -mod ak135"};
+    String[] curveTestCmds = new String[] {
+            "taup curve -o stdout -h 10 -ph P -mod prem",
+            "taup curve -o stdout -h 10 -ph P",
+            "taup curve -o stdout -h 10 -ph P -mod ak135"
+            // curve labels are random position in --svg, so diff breaks
+            // "taup curve -o stdout -h 10 -ph P --svg",
+    };
+
     String[] wavefrontTestCmds = new String[] {
             "taup wavefront -o stdout --mod ak135 --svg -h 100 -ph P,S,PKIKP",
             "taup wavefront -o stdout --mod ak135 --svg -h 10 -ph P,S,PedOP --scatter 200 -5"
@@ -67,6 +70,10 @@ public class CmdLineOutputTest {
             "taup velplot -o stdout --mod ak135 --svg",
             "taup slowplot -o stdout --mod ak135 --svg"
     };
+    String[] reflTransPlotTestCmds = new String[] {
+            "taup relftrans -o stdout --mod fgms --depth 35 --svg"
+    };
+
 
     String[] helpTestCmds = new String[] {"taup --help",
                                           "taup time --help",
@@ -98,12 +105,68 @@ public class CmdLineOutputTest {
         allList.addAll(Arrays.asList(curveTestCmds));
         allList.addAll(Arrays.asList(wavefrontTestCmds));
         allList.addAll(Arrays.asList(velplotTestCmds));
+        allList.addAll(Arrays.asList(reflTransPlotTestCmds));
         for (String cmd : allList) {
             System.err.println(cmd);
             saveOutputToFile(cmd);
         }
     }
 
+    /**
+     * reproduce figures from books for comparison
+     * new text files will be in cmdLineTest/refltranCompare in cwd
+     *
+     * @throws Exception
+     */
+    public void regenReflTranCompareFigures() throws Exception {
+
+        // not actual tests, but allow visual compare with figures in
+        // Foundations of Modern Global Seismology
+        HashMap<String, String> fmgsFigureTestCmds = new HashMap<>();
+        fmgsFigureTestCmds.put("FMGS_fig_13_12a.svg",
+                "taup refltrans -o stdout --abs --pwave --layer 8.0 4.6 3.3 6.4 3.7 2.8 --linrayparam --svg");
+        fmgsFigureTestCmds.put("FMGS_fig_13_12b.svg",
+                "taup refltrans -o stdout --abs --swave --layer 8.0 4.6 3.3 6.4 3.7 2.8 --linrayparam --svg");
+        fmgsFigureTestCmds.put("FMGS_fig_13_13a.svg",
+                "taup refltrans -o stdout --abs --pwave --layer 6.4 3.7 2.8 8.0 4.6 3.3 --linrayparam --svg");
+        fmgsFigureTestCmds.put("FMGS_fig_13_13b.svg",
+                "taup refltrans -o stdout --abs --swave --layer 6.4 3.7 2.8 8.0 4.6 3.3 --linrayparam --svg");
+        fmgsFigureTestCmds.put("FMGS_fig_13_14a.svg",
+                "taup refltrans -o stdout --abs --pwave --layer 5.8 3.35 2.5 0.3 0 1.2 --linrayparam --svg");
+        fmgsFigureTestCmds.put("FMGS_fig_13_14b.svg",
+                "taup refltrans -o stdout --abs --swave --layer 5.8 3.35 2.5 0.3 0 1.2 --linrayparam --svg");
+        fmgsFigureTestCmds.put("FMGS_fig_13_15.svg",
+                "taup refltrans -o stdout --abs --pwave  --swave --layer 5.8 3.35 2.5 0 0 0 --linrayparam --svg");
+        fmgsFigureTestCmds.put("AR_fig_5_06.svg",
+                "taup refltrans -o stdout --pwave --swave --layer 5 3 2.5 0 0 0 --linrayparam --svg");
+        fmgsFigureTestCmds.put("AR_fig_5_10.svg",
+                "taup refltrans -o stdout --abs --swave --layer 5 3 2.5 0 0 0 --linrayparam --svg");
+        fmgsFigureTestCmds.put("Shearer_fig_6_5.svg",
+                "taup refltrans -o stdout --abs --shwave --mod prem --depth 24.4 --down --svg");
+
+        File topdir = new File("cmdLineTest");
+        if ( ! topdir.isDirectory()) {topdir.mkdir(); }
+        File dir = new File(topdir, "refltranCompare");
+        if ( ! dir.isDirectory()) {dir.mkdir(); }
+
+        PrintStream indexOut = new PrintStream(new BufferedOutputStream(new FileOutputStream(new File(dir, "index.html"))));
+        indexOut.println("<html>");
+        indexOut.println("<body>");
+        indexOut.println("<ul>");
+        List<String> sortedKeys = new ArrayList<String>();
+        sortedKeys.addAll(fmgsFigureTestCmds.keySet());
+        Collections.sort(sortedKeys);
+        for (String key : sortedKeys) {
+            String cmd = fmgsFigureTestCmds.get(key);
+            System.err.println(cmd);
+            saveOutputToFile( cmd, dir, key);
+            indexOut.println("<li><a href=\""+key+"\">"+key+"</a></li>");
+        }
+        indexOut.println("</ul>");
+        indexOut.println("</body>");
+        indexOut.println("</html>");
+        indexOut.close();
+    }
     /** 
      * regenerating the cmd line output test resources.
      * new text files will be in cmdLineTest in cwd.
@@ -176,6 +239,11 @@ public class CmdLineOutputTest {
     }
 
     @Test
+    public void testTauPReflTransplot() throws Exception {
+        runTests(reflTransPlotTestCmds);
+    }
+
+    @Test
     public void testTauPTable() throws Exception {
         // this one takes a lot of memory
        // runTests(new String[] {"taup table -ph ttall -generic"});
@@ -241,10 +309,15 @@ public class CmdLineOutputTest {
         assertEquals("> P at   411.69 seconds at    35.00 degrees for a     10.0 km deep source in the prem model with rayParam    8.604 s/deg.", priorS, "line one");
     }
 
+
     public void saveOutputToFile(String cmd) throws Exception {
         File dir = new File("cmdLineTest");
-        if ( ! dir.isDirectory()) {dir.mkdir(); }
         String filename = fileizeCmd(cmd);
+        saveOutputToFile( cmd, dir, filename);
+    }
+
+    public void saveOutputToFile(String cmd, File dir, String filename) throws Exception {
+        if ( ! dir.isDirectory()) {dir.mkdir(); }
         PrintStream fileOut = new PrintStream(new BufferedOutputStream(new FileOutputStream(new File(dir, filename))));
         System.setOut(fileOut);
         runCmd(cmd);
@@ -296,5 +369,6 @@ public class CmdLineOutputTest {
     public static void main(String[] args) throws Exception {
         CmdLineOutputTest me = new CmdLineOutputTest();
         me.regenSavedOutput();
+        me.regenReflTranCompareFigures();
     }
 }

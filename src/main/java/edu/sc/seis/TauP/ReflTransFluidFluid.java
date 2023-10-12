@@ -21,7 +21,7 @@ public class ReflTransFluidFluid extends ReflTrans {
 
     @Override
     public Complex getComplexRpp(double rayParam) throws VelocityModelException {
-        return null;
+        throw new VelocityModelException("Not implemented yet for fluid to fluid");
     }
 
     @Override
@@ -31,7 +31,7 @@ public class ReflTransFluidFluid extends ReflTrans {
 
     @Override
     public Complex getComplexTpp(double rayParam) throws VelocityModelException {
-        return null;
+        throw new VelocityModelException("Not implemented yet for fluid to fluid");
     }
 
     @Override
@@ -72,5 +72,10 @@ public class ReflTransFluidFluid extends ReflTrans {
     @Override
     public ReflTrans flip() throws VelocityModelException {
         return new ReflTransFluidFluid(botVp, botDensity, topVp, topDensity);
+    }
+
+    @Override
+    public String toString() {
+        return "Fluid-fluid: "+" in: Vp: "+topVp+" d: "+topDensity+" tr: Vp"+botVp+" d: "+botDensity;
     }
 }

@@ -100,6 +100,12 @@ public class ReflTransFluidSolid extends ReflTrans {
         return new ReflTransSolidFluid(botVp, botVs, botDensity, topVp, topDensity);
     }
 
+    @Override
+    public String toString() {
+        return "Fluid-solid: "+" in: Vp: "+topVp+" d: "+topDensity+" tr: Vp"+botVp+" Vs: "+botVs+" d: "+botDensity;
+    }
+
+
     protected void calcTempVars(double rayParam, boolean inIsPWave) {
         if(rayParam < 0) {
             throw new IllegalArgumentException("rayParam cannot be negative");

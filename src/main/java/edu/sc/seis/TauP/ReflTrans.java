@@ -100,7 +100,6 @@ public abstract class ReflTrans {
 
     public static double getRealCoefficient(Complex coef) {
         if (Math.abs(coef.im) > 1e-6) {
-            System.err.println(coef.re+" i"+coef.im);
             return Complex.abs(coef);
         }
         return coef.re;

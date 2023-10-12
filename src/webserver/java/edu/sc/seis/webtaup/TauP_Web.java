@@ -252,8 +252,9 @@ public class TauP_Web extends TauP_Tool {
     public static String QP_BOTDEN = "botden";
     public static String QP_ANGLESTEP = "anglestep";
     public static String QP_IN_DOWN = "indown";
-    public static String QP_IN_PWAVE = "inpwave";
-    public static String QP_IN_SWAVE = "inswave";
+    public static String QP_IN_PWAVE = "pwave";
+    public static String QP_IN_SWAVE = "swave";
+    public static String QP_IN_SHWAVE = "shwave";
     public static String QP_X_SLOWNESS = "xslowness";
     public static String QP_ABSOLUTE = "absolute";
 
@@ -480,7 +481,19 @@ public class TauP_Web extends TauP_Tool {
                     throw new TauPException("Unknown value for "+QP_IN_SWAVE+": "+p);
                 }
             }
-            if (! (rtplot.isInpwave() || rtplot.isInswave())) {
+            rtplot.setIncidentShWave( false);
+            if (queryParameters.containsKey(QP_IN_SHWAVE)) {
+                unknownKeys.remove(QP_IN_SHWAVE);
+                String p = queryParameters.get(QP_IN_SHWAVE).getFirst();
+                if (p.length() == 0 || p.equalsIgnoreCase("true")) {
+                    rtplot.setIncidentSWave(true);
+                } else if (p.equalsIgnoreCase("false")) {
+                    rtplot.setIncidentSWave(false);
+                } else {
+                    throw new TauPException("Unknown value for "+QP_IN_SHWAVE+": "+p);
+                }
+            }
+            if (! (rtplot.isInpwave() || rtplot.isInswave() || rtplot.isInshwave())) {
                 rtplot.setInpwave(true);
                 rtplot.setInswave(true);
             }

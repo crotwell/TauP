@@ -1593,7 +1593,7 @@ public class VelocityModel implements Cloneable, Serializable {
                                               double belowPVel,
                                               double belowSVel,
                                               double belowRho) throws VelocityModelException {
-        return calcReflTransCoef(abovePVel, aboveSVel, aboveRho, belowPVel, belowSVel, belowRho, false);
+        return calcReflTransCoef(abovePVel, aboveSVel, aboveRho, belowPVel, belowSVel, belowRho, true);
     }
 
     public static ReflTrans calcReflTransCoef(double abovePVel,
@@ -1608,10 +1608,19 @@ public class VelocityModel implements Cloneable, Serializable {
             if (downgoing) {
                 throw new VelocityModelException("Downgoing to free surface is not possible");
             }
-            if (aboveSVel == 0.0) {
+            if (belowSVel == 0.0) {
                 rtCoef = new ReflTransFluidFreeSurface(belowPVel, belowRho);
             } else {
                 rtCoef = new ReflTransFreeSurface(belowPVel, belowSVel, belowRho);
+            }
+        } else if (belowPVel == 0.0 || belowRho == 0.0) {
+            if (!downgoing) {
+                throw new VelocityModelException("Upgoing to inverted free surface is not possible");
+            }
+            if (aboveSVel == 0.0) {
+                rtCoef = new ReflTransFluidFreeSurface(abovePVel, aboveRho);
+            } else {
+                rtCoef = new ReflTransFreeSurface(abovePVel, aboveSVel, aboveRho);
             }
         } else if (aboveSVel == 0.0 && belowSVel == 0.0) {
             rtCoef = new ReflTransFluidFluid(abovePVel, aboveRho, belowPVel, belowRho);

@@ -114,6 +114,12 @@ public class ReflTransFreeSurface extends ReflTrans {
         throw new VelocityModelException("Not legal for free surface");
     }
 
+    @Override
+    public String toString() {
+        return "Solid-free surface: "+" in: Vp: "+topVp+" Vs: "+topVs+" d: "+topDensity;
+    }
+
+
     protected void calcTempVars(double rayParam, boolean inIsPWave) {
         if(rayParam < 0) {
             throw new IllegalArgumentException("rayParam cannot be negative");

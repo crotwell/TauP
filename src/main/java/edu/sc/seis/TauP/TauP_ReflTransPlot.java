@@ -36,6 +36,8 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
                 setIncidentPWave(true);
             } else if(dashEquals("swave", args[i])) {
                 setIncidentSWave(true);
+            } else if(dashEquals("shwave", args[i])) {
+                setIncidentShWave(true);
             } else if(dashEquals("down", args[i])) {
                 setIncidentDown(true);
             } else if(dashEquals("up", args[i])) {
@@ -80,8 +82,8 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
             }
             i++;
         }
-        if ( ! (inpwave || inswave)) {
-            // neither p nor s, so do both
+        if ( ! (inpwave || inswave || inshwave)) {
+            // neither p nor s, so do P-SV case as that is likely more used than Sh
             setIncidentPWave(true);
             setIncidentSWave(true);
         }
@@ -112,9 +114,9 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
             if (vMod == null) {
                 throw new TauPException("Unable to find model " + modelName);
             }
-            printSVG(getWriter(), vMod, depth, indown, inpwave, inswave, linearRayParam, step);
+            printSVG(getWriter(), vMod, depth, indown, inpwave, inswave, inshwave, linearRayParam, step);
         } else {
-            printSVG(getWriter(), topVp, topVs, topDensity, botVp, botVs, botDensity, indown, inpwave, inswave, linearRayParam, step);
+            printSVG(getWriter(), topVp, topVs, topDensity, botVp, botVs, botDensity, indown, inpwave, inswave, inshwave, linearRayParam, step);
         }
     }
 
@@ -144,6 +146,7 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
                          boolean downgoing,
                          boolean inpwave,
                          boolean inswave,
+                         boolean inshwave,
                          boolean linearRayParam,
                          double angleStep) throws VelocityModelException {
         if (!vMod.isDisconDepth(depth)) {
@@ -159,21 +162,21 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
         }
         title += createTitle(reflTranCoef, inpwave, inswave)+" "
                 +(downgoing ? "downgoing" : "upgoing");
-        printSVG(out, reflTranCoef, inpwave, inswave, linearRayParam, angleStep, title);
+        printSVG(out, reflTranCoef, inpwave, inswave, inshwave, linearRayParam, angleStep, title);
     }
 
     public void printSVG(PrintWriter out,
                          double topVp, double topVs, double topDensity,
                          double botVp, double botVs, double botDensity,
                          boolean downgoing,
-                         boolean inpwave, boolean inswave,
+                         boolean inpwave, boolean inswave, boolean inshwave,
                          boolean linearRayParam,
                          double angleStep) throws VelocityModelException {
         ReflTrans reflTranCoef = VelocityModel.calcReflTransCoef(
                 topVp, topVs, topDensity,
                 botVp, botVs, botDensity, downgoing);
         String title = createTitle(reflTranCoef, inpwave, inswave);
-        printSVG(out, reflTranCoef, inpwave, inswave, linearRayParam, angleStep, title);
+        printSVG(out, reflTranCoef, inpwave, inswave, inshwave, linearRayParam, angleStep, title);
     }
 
     public String createTitle(ReflTrans reflTransCoef, boolean inpwave, boolean inswave) {
@@ -201,6 +204,7 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
                          ReflTrans reflTranCoef,
                          boolean inpwave,
                          boolean inswave,
+                         boolean inshwave,
                          boolean linearRayParam,
                          double step,
                          String title) throws VelocityModelException {
@@ -241,70 +245,74 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
 
         String label = "";
 
-            // solid-solid
-            System.out.println("solid-solid");
-            if (inpwave) {
-                double invel = reflTranCoef.topVp;
-                // to calc flat earth ray param from incident angle
-                double oneOverV = 1.0 / invel;
+        if (inpwave) {
+            double invel = reflTranCoef.topVp;
+            // to calc flat earth ray param from incident angle
+            double oneOverV = 1.0 / invel;
 
-                label = "Rpp";
-                processType(out, reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label, labels, labelClass,
-                        reflTranCoef::getRpp
-                );
+            label = "Rpp";
+            processType(out, reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label, labels, labelClass,
+                    reflTranCoef::getRpp
+            );
 
-                label = "Tpp";
-                processType(out, reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label, labels, labelClass,
-                        reflTranCoef::getTpp
-                );
+            label = "Tpp";
+            processType(out, reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label, labels, labelClass,
+                    reflTranCoef::getTpp
+            );
 
-                label = "Rps";
-                processType(out, reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label, labels, labelClass,
-                        reflTranCoef::getRps
-                );
+            label = "Rps";
+            processType(out, reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label, labels, labelClass,
+                    reflTranCoef::getRps
+            );
 
-                label = "Tps";
-                processType(out, reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label, labels, labelClass,
-                        reflTranCoef::getTps
-                );
-            }
-            if (inswave) {
-                // in swave, solid solid
-                double invel = reflTranCoef.topVs;
-                // to calc flat earth ray param from incident angle
-                double oneOverV = 1.0 / invel;
+            label = "Tps";
+            processType(out, reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label, labels, labelClass,
+                    reflTranCoef::getTps
+            );
+        }
+        if (inswave) {
+            // in swave,
+            double invel = reflTranCoef.topVs;
+            // to calc flat earth ray param from incident angle
+            double oneOverV = 1.0 / invel;
 
 
-                label = "Rsp";
-                processType(out, reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label, labels, labelClass,
-                        reflTranCoef::getRsp
-                );
+            label = "Rsp";
+            processType(out, reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label, labels, labelClass,
+                    reflTranCoef::getRsp
+            );
 
-                label = "Tsp";
-                processType(out, reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label, labels, labelClass,
-                        reflTranCoef::getTsp
-                );
+            label = "Tsp";
+            processType(out, reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label, labels, labelClass,
+                    reflTranCoef::getTsp
+            );
 
-                label = "Rss";
-                processType(out, reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label, labels, labelClass,
-                        reflTranCoef::getRss
-                );
+            label = "Rss";
+            processType(out, reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label, labels, labelClass,
+                    reflTranCoef::getRss
+            );
 
-                label = "Tss";
-                processType(out, reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label, labels, labelClass,
-                        reflTranCoef::getTss
-                );
+            label = "Tss";
+            processType(out, reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label, labels, labelClass,
+                    reflTranCoef::getTss
+            );
 
-                label = "Rshsh";
-                processType(out, reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label, labels, labelClass,
-                        reflTranCoef::getRshsh
-                );
+        }
+        if (inshwave) {
+            double invel = reflTranCoef.topVs;
+            // to calc flat earth ray param from incident angle
+            double oneOverV = 1.0 / invel;
 
-                label = "Tshsh";
-                processType(out, reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label, labels, labelClass,
-                        reflTranCoef::getTshsh
-                );
-            }
+            label = "Rshsh";
+            processType(out, reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label, labels, labelClass,
+                    reflTranCoef::getRshsh
+            );
+
+            label = "Tshsh";
+            processType(out, reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label, labels, labelClass,
+                    reflTranCoef::getTshsh
+            );
+        }
 
         out.println("</g>");
         out.println("</g>");
@@ -334,7 +342,6 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
             return;
         }
         out.print("<polyline class=\""+label+"\" points=\"");
-        System.err.println("minX: "+minX+" maxX: "+maxX+" step: "+step);
         double i;
         double[] critSlownesses = reflTranCoef.calcCriticalRayParams();
         for (i = minX; i <= maxX; i += step) {
@@ -413,6 +420,9 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
     public void setIncidentSWave(boolean inswave) {
         this.inswave = inswave;
     }
+    public void setIncidentShWave(boolean inshwave) {
+        this.inshwave = inshwave;
+    }
 
     public boolean isAbsolute() {
         return absolute;
@@ -441,6 +451,7 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
     protected boolean indown = true;
     protected boolean inpwave = false;
     protected boolean inswave = false;
+    protected boolean inshwave = false;
     protected boolean linearRayParam = false;
     protected boolean absolute = false;
     protected String onlyPlotCoef = null;
@@ -459,6 +470,9 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
 
     public boolean isInswave() {
         return inswave;
+    }
+    public boolean isInshwave() {
+        return inshwave;
     }
 
     public void setInswave(boolean inswave) {

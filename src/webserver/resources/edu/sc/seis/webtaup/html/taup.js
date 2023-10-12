@@ -242,11 +242,15 @@ export function form_url() {
 
     let inpwave = document.querySelector('input[name="inpwave"]').checked;
     if (inpwave) {
-      url += `&inpwave=true`;
+      url += `&pwave=true`;
     }
     let inswave = document.querySelector('input[name="inswave"]').checked;
     if (inswave) {
-      url += `&inswave=true`;
+      url += `&swave=true`;
+    }
+    let inshwave = document.querySelector('input[name="inshwave"]').checked;
+    if (inshwave) {
+      url += `&shwave=true`;
     }
 
     let xslowness = document.querySelector('input[name="xslowness"]').checked;
