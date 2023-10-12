@@ -819,7 +819,16 @@ public class ReflTransCoefficient implements Serializable {
         return  spRayParam / radiusOfEarth;
     }
 
-    public static double getRealCoefficient(Complex coef) {
+    public static double getRealCoefficientEqual(Complex coef) {
         return coef.im == 0 ? coef.re : Complex.abs(coef);
+    }
+
+
+    public static double getRealCoefficient(Complex coef) {
+        if (Math.abs(coef.im) > 1e-6) {
+            System.err.println(coef.re+" i"+coef.im);
+            return Complex.abs(coef);
+        }
+        return coef.re;
     }
 } // ReflTransCoefficient
