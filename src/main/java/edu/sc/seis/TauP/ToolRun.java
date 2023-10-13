@@ -27,7 +27,7 @@ public class ToolRun {
 	public static String WEB = "web";
 	public static String REFLTRANSPLOT = "refltrans";
 	
-	static String[] toolnames = { GUI, CREATE, CURVE, AMP, PATH, PHASE, PIERCE, SETSAC, SPLOT, TABLE, TIME, VPLOT, VELMERGE, WAVEFRONT, WEB, REFLTRANSPLOT };
+	static String[] toolnames = { GUI, CREATE, CURVE, PATH, PHASE, PIERCE, SETSAC, SPLOT, TABLE, TIME, VPLOT, VELMERGE, WAVEFRONT, REFLTRANSPLOT, AMP };
 	
 	public static void printUsage() {
 		System.out.println("Usage: taup <tool> <options>");
