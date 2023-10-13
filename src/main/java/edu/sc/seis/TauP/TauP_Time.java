@@ -1162,14 +1162,8 @@ public class TauP_Time extends TauP_Tool {
                 try {
                     double ampFactor = currArrival.getAmplitudeFactor();
                     out.print(" " + Outputs.formatAmpFactor(ampFactor));
-                } catch (NoSuchMatPropException e) {
-                    e.printStackTrace();
-                } catch (NoSuchLayerException e) {
-                    e.printStackTrace();
-                } catch (SlownessModelException e) {
-                    e.printStackTrace();
-                } catch (TauModelException | VelocityModelException e) {
-                    e.printStackTrace();
+                } catch (SlownessModelException | TauModelException | VelocityModelException e) {
+                    throw new RuntimeException("SHould not happen", e);
                 }
 
                 if (relativePhaseName != "") {
