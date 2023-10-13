@@ -244,7 +244,7 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
         SvgUtil.createXYAxes(out, minX, maxX, numXTicks, xEndFixed,
                 minY, maxY, numYTicks, yEndFixed,
                 pixelWidth, margin, title,
-                linearRayParam ? "Horiz. Slowness" : "Angle (deg)",
+                linearRayParam ? "Horiz. Slowness (s/km)" : "Angle (deg)",
                 "Amp Factor"
         );
 
