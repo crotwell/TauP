@@ -60,8 +60,6 @@ public class TauP_Amp extends TauP_Curve {
             if (phase.hasArrivals()) {
                 try {
                     double[] dist = phase.getDist();
-                    double[] time = phase.getTime();
-                    double[] rayparam = phase.getRayParams();
                     double[] amp = new double[dist.length];
                     for (int i = 0; i < dist.length; i++) {
                         Arrival arrival = phase.createArrivalAtIndex(i);
@@ -81,8 +79,7 @@ public class TauP_Amp extends TauP_Curve {
 
         List<SeismicPhase> phaseList = getSeismicPhases();
         String psFile = null;
-        double arcDistance;
-        double maxTime = -1 * Double.MAX_VALUE, minTime = Double.MAX_VALUE;
+        double maxAmp = -1 * Double.MAX_VALUE, minAmp = Double.MAX_VALUE;
 
         if(gmtScript || outputFormat.equals(SVG)) {
             String scriptStuff = "";
@@ -97,33 +94,27 @@ public class TauP_Amp extends TauP_Curve {
                 if(phase.hasArrivals()) {
                     double[] dist = phase.getDist();
                     double[] amp = ampMap.get(phase);
-                    int phaseMinIndex = 0;
-                    int phaseMaxIndex = 0;
                     double phaseMaxTime = -1 * Double.MAX_VALUE;
                     double phaseMinTime = Double.MAX_VALUE;
                     // find max and min time
                     for(int i = 0; i < amp.length; i++) {
                         double[] ampValue = calcAmpValue(dist[i], amp[i]);
                         if (ampValue.length == 0 || Double.isNaN(ampValue[0])) {continue;}
-                        if(ampValue[0] > maxTime) {
-                            maxTime = ampValue[0];
+                        if(ampValue[0] > maxAmp) {
+                            maxAmp = ampValue[0];
                         }
-                        if(ampValue[0] < minTime) {
-                            minTime = ampValue[0];
+                        if(ampValue[0] < minAmp) {
+                            minAmp = ampValue[0];
                         }
                         if(ampValue[0] > phaseMaxTime) {
                             phaseMaxTime = ampValue[0];
-                            phaseMaxIndex = i;
                         }
                         if(ampValue[0] < phaseMinTime) {
                             phaseMinTime = ampValue[0];
-                            phaseMinIndex = i;
                         }
                     }
                     int midSample = dist.length / 2 ;
-                    arcDistance = Math.acos(Math.cos(dist[midSample]));
 
-                    int lix = (dist[1] > Math.PI) ? 1 : dist.length - 1;
                     double ldel = 180.0 / Math.PI
                             * Math.acos(Math.cos(dist[midSample]));
                     if (distHorizontal) {
@@ -135,26 +126,13 @@ public class TauP_Amp extends TauP_Curve {
 
                 }
             }
-            // round max and min time to nearest 100 seconds
-            if (maxTime < 0) {
-                maxTime = maxTime * 0.95;
-            } else {
-                maxTime = maxTime * 1.05;
-            }
-            if (minTime != 0.0) {
-                double widerMinTime = minTime - (maxTime-minTime)/20; // 5% extra
-                if (minTime > 0 && widerMinTime < 0) {
-                    // if wider is below 0, just use 0 as minTime
-                    minTime = 0;
-                }
-            }
 
-            minTime = -6;
+            minAmp = -8;
 
 
-            //minTime = Math.floor(minTime / 100) * 100;
+            //minAmp = Math.floor(minAmp / 100) * 100;
             if (outputFormat.equals(GMT)) {
-                out.println("gmt psbasemap -JX" + getMapWidth() + getMapWidthUnit() + " -P -R0/180/" + minTime + "/" + maxTime
+                out.println("gmt psbasemap -JX" + getMapWidth() + getMapWidthUnit() + " -P -R0/180/" + minAmp + "/" + maxAmp
                         + " -Bxa20+l'Distance (deg)' -Bya100+l'Amp (m)' -BWSne+t'" + title + "' -K > " + psFile);
                 out.println("gmt pstext -JX -P -R  -O -K >> " + psFile + " <<END");
                 out.print(scriptStuff);
@@ -174,13 +152,13 @@ public class TauP_Amp extends TauP_Curve {
                     minX = 0;
                     maxX = 180;
                     xEndFixed = true;
-                    minY = minTime;
-                    maxY = maxTime;
+                    minY = minAmp;
+                    maxY = maxAmp;
                     numYTicks = 10;
                     numXTicks = 8;
                 } else {
-                    minY = minTime;
-                    maxX = maxTime;
+                    minY = minAmp;
+                    maxX = maxAmp;
                     minX = 0;
                     maxY = 180;
                     yEndFixed = true;
@@ -216,9 +194,9 @@ public class TauP_Amp extends TauP_Curve {
                         double yPos;
                         if (distHorizontal) {
                             xPos = (cval[0] )* plotWidth / 180;
-                            yPos = plotWidth - (cval[1]-minTime) * plotWidth / (maxTime-minTime);
+                            yPos = plotWidth - (cval[1]-minAmp) * plotWidth / (maxAmp-minAmp);
                         } else {
-                            xPos = (cval[1]-minTime) * plotWidth / (maxTime-minTime);
+                            xPos = (cval[1]-minAmp) * plotWidth / (maxAmp-minAmp);
                             yPos = plotWidth - cval[0] * plotWidth / 180;
                         }
                         out.println("<text class=\"phaselabel autocolor\" font-size=\"12\" x=\"" + xPos + "\" y=\"" + yPos + "\">" + phase.getName() + "</text>");
@@ -232,11 +210,11 @@ public class TauP_Amp extends TauP_Curve {
                 out.println("<g clip-path=\"url(#margin-clip)\">");
                 out.println("<g transform=\"scale(1,-1) translate(0, -"+plotWidth+")\">");
                 if (distHorizontal) {
-                    out.println("<g transform=\"scale(" + (plotWidth / 180) + "," + (plotWidth / (maxTime-minTime)) + ")\" >");
-                    out.println("<g transform=\"translate(0, "+(-1*minTime)+")\">");
+                    out.println("<g transform=\"scale(" + (plotWidth / 180) + "," + (plotWidth / (maxAmp-minAmp)) + ")\" >");
+                    out.println("<g transform=\"translate(0, "+(-1*minAmp)+")\">");
                 } else {
-                    out.println("<g transform=\"scale(" +  (plotWidth / (maxTime-minTime)) + "," + (plotWidth / 180) + ")\" >");
-                    out.println("<g transform=\"translate("+(-1*minTime)+", 0)\">");
+                    out.println("<g transform=\"scale(" +  (plotWidth / (maxAmp-minAmp)) + "," + (plotWidth / 180) + ")\" >");
+                    out.println("<g transform=\"translate("+(-1*minAmp)+", 0)\">");
                 }
             }
         }
