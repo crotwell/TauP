@@ -393,6 +393,16 @@ export function enableParams(tool) {
       .tool_refltrans {
         display: none;
       }
+      `;
+    }
+    if ( tool === "refltrans" ) {
+      styleStr += `
+      .phase_depth {
+        display: none;
+      }
+      .scatter {
+        display: none;
+      }
     `;
   }
   styleEl.textContent = styleStr;
