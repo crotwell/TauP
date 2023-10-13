@@ -482,19 +482,19 @@ public class TauP_Table extends TauP_Time {
 
     protected void locsatTable(PrintWriter out) throws TauModelException,
             IOException {
-        Format float15_4 = new Format("%15.4f");
-        Format float7_2 = new Format("%7.2f");
-        Format decimal7 = new Format("%-7d");
+        String float15_4 = "%15.4f";
+        String float7_2 = "%7.2f";
+        String decimal7 = "%-7d";
         double maxDiff = Double.valueOf(toolProps.getProperty("taup.table.locsat.maxdiff",
                                                               "105.0"))
                 .doubleValue();
         out.print("n # " + getPhaseNameString()
                 + " travel-time tables for " + modelName
                 + " structure. (From TauP_Table)\n");
-        out.print(decimal7.form(depths.length)
+        out.print(String.format(decimal7, depths.length)
                 + "# number of depth samples\n");
         for(int depthNum = 0; depthNum < depths.length; depthNum++) {
-            out.print(float7_2.form(depths[depthNum]));
+            out.print(String.format(float7_2, depths[depthNum]));
             if(depthNum % 10 == 9) {
                 out.println();
             }
@@ -502,10 +502,10 @@ public class TauP_Table extends TauP_Time {
         if((depths.length - 1) % 10 != 9) {
             out.println();
         }
-        out.println(decimal7.form(distances.length)
+        out.println(String.format(decimal7, distances.length)
                 + "# number of distances");
         for(int distNum = 0; distNum < distances.length; distNum++) {
-            out.print(float7_2.form(distances[distNum]));
+            out.print(String.format(float7_2, distances[distNum]));
             if(distNum % 10 == 9) {
                 out.println();
             }
@@ -519,13 +519,13 @@ public class TauP_Table extends TauP_Time {
             for(int distNum = 0; distNum < distances.length; distNum++) {
                 calculate(distances[distNum]);
                 List<Arrival>arrivals = getArrivals();
-                String outString = float15_4.form(-1.0) + "    none\n";
+                String outString = String.format(float15_4, -1.0) + "    none\n";
                 for (Arrival arrival : arrivals) {
                     if(distances[distNum] > maxDiff
                             && (arrival.getName().endsWith("diff"))) {
                         continue;
                     } else {
-                        outString = float15_4.form(arrival.getTime())+ "    " + arrival.getName() + "\n";
+                        outString = String.format(float15_4, arrival.getTime())+ "    " + arrival.getName() + "\n";
                         break;
                     }
                 }

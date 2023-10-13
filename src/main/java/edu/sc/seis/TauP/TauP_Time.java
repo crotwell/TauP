@@ -1113,8 +1113,10 @@ public class TauP_Time extends TauP_Tool {
                         .length();
             }
         }
-        Format phaseFormat = new Format("%-" + maxNameLength + "s");
-        Format phasePuristFormat = new Format("%-" + maxPuristNameLength + "s");
+        //Format phaseFormat = new Format("%-" + maxNameLength + "s");
+        String phaseFormat = "%-" + maxNameLength + "s";
+        //Format phasePuristFormat = new Format("%-" + maxPuristNameLength + "s");
+        String phasePuristFormat = "%-" + maxPuristNameLength + "s";
         if(!(onlyPrintRayP || onlyPrintTime)) {
             String modelLine =  "\nModel: " + modelName;
             if (getReceiverDepth() != 0.0) {
@@ -1124,16 +1126,16 @@ public class TauP_Time extends TauP_Tool {
                 modelLine += "  Scatter Depth: "+ getScattererDepth()+" km Dist: "+ getScattererDistDeg() ;
             }
             out.println(modelLine);
-            String lineOne = "Distance   Depth   " + phaseFormat.form("Phase")
-                    + "   Travel    Ray Param  Takeoff  Incident  Purist   "+phasePuristFormat.form("Purist")+"    Amp   ";
-            String lineTwo = "  (deg)     (km)   " + phaseFormat.form("Name ")
-                    + "   Time (s)  p (s/deg)   (deg)    (deg)   Distance   "+phasePuristFormat.form("Name") +"  Factor";
+            String lineOne = "Distance   Depth   " + String.format(phaseFormat, "Phase")
+                    + "   Travel    Ray Param  Takeoff  Incident  Purist   "+String.format(phasePuristFormat, "Purist")+"    Amp   ";
+            String lineTwo = "  (deg)     (km)   " + String.format(phaseFormat, "Name ")
+                    + "   Time (s)  p (s/deg)   (deg)    (deg)   Distance   "+String.format(phasePuristFormat, "Name") +"  Factor";
             if (relativePhaseName != "") {
                 lineOne += " Relative to";
                 for (int s=0; s<(11-relativePhaseName.length())/2;s++) {
                     lineTwo += " ";
                 }
-                lineTwo += "  "+phaseFormat.form(relativePhaseName);
+                lineTwo += "  "+String.format(phaseFormat, relativePhaseName);
             }
             out.println(lineOne);
             out.println(lineTwo);
@@ -1145,7 +1147,7 @@ public class TauP_Time extends TauP_Tool {
                 currArrival = (Arrival)arrivals.get(j);
                 out.print(Outputs.formatDistance(currArrival.getSearchDistDeg()));
                 out.print(Outputs.formatDepth(depth) + "   ");
-                out.print(phaseFormat.form(currArrival.getName()));
+                out.print(String.format(phaseFormat, currArrival.getName()));
                 out.print("  "
                         + Outputs.formatTime(currArrival.getTime())
                         + "  "
@@ -1158,7 +1160,7 @@ public class TauP_Time extends TauP_Tool {
                 } else {
                     out.print("   * ");
                 }
-                out.print(phasePuristFormat.form(currArrival.getPuristName()));
+                out.print(String.format(phasePuristFormat, currArrival.getPuristName()));
                 try {
                     double ampFactor = currArrival.getAmplitudeFactor();
                     out.print(" " + Outputs.formatAmpFactor(ampFactor));
@@ -1169,9 +1171,9 @@ public class TauP_Time extends TauP_Tool {
                 if (relativePhaseName != "") {
                     if (currArrival.isRelativeToArrival()) {
                         out.print(" "+Outputs.formatTime(currArrival.getTime() - currArrival.getRelativeToArrival().getTime()));
-                        out.print(" +"+phaseFormat.form(currArrival.getRelativeToArrival().getName()));
+                        out.print(" +"+String.format(phaseFormat, currArrival.getRelativeToArrival().getName()));
                     } else {
-                        out.print(phaseFormat.form(" no arrival"));
+                        out.print(String.format(phaseFormat, " no arrival"));
                     }
                 }
 
