@@ -43,83 +43,82 @@ import java.util.Properties;
 public class Outputs {
     
     public static void configure(Properties props) {
-        String formString;
-        formString = "%8." + props.getProperty("taup.depth.precision", "1")
+        depthFormat = "%8." + props.getProperty("taup.depth.precision", "1")
                 + "f";
-        depthFormat = new Format(formString);
-        formString = "%8." + props.getProperty("taup.distance.precision", "2")
+        distanceFormat = "%8." + props.getProperty("taup.distance.precision", "2")
                 + "f";
-        distanceFormat = new Format(formString);
-        formString = "%8." + props.getProperty("taup.time.precision", "2")
+        timeFormat = "%8." + props.getProperty("taup.time.precision", "2")
                 + "f";
-        timeFormat = new Format(formString);
-        formString = "%0." + props.getProperty("taup.distance.precision", "2")
+        distanceFormatNoPad = "%0." + props.getProperty("taup.distance.precision", "2")
                 + "f";
-        distanceFormatNoPad = new Format(formString);
-        formString = "%0." + props.getProperty("taup.time.precision", "2")
+        timeFormatNoPad = "%0." + props.getProperty("taup.time.precision", "2")
                 + "f";
-        timeFormatNoPad = new Format(formString);
-        formString = "%8." + props.getProperty("taup.rayparam.precision", "3")
+        rayParamFormat = "%8." + props.getProperty("taup.rayparam.precision", "3")
                 + "f";
-        rayParamFormat = new Format(formString);
-        formString = "%8." + props.getProperty("taup.latlon.precision", "2")
+        latLonFormat = "%8." + props.getProperty("taup.latlon.precision", "2")
                 + "f";
-        latLonFormat = new Format(formString);
-
-        formString = "%." + props.getProperty("taup.amplitude.precision", "1")
+        ampFactorFormat = "%." + props.getProperty("taup.amplitude.precision", "1")
                 + "e";
-        ampFactorFormat = new Format(formString);
     }
 
     public static String formatDepth(double depth) {
-        return depthFormat.form(depth);
+
+        return String.format( depthFormat, depth);
     }
 
     public static String formatDistance(double distance) {
-        return distanceFormat.form(distance);
+
+        return String.format( distanceFormat, distance);
     }
 
     public static String formatTime(double time) {
-        return timeFormat.form(time);
+
+        return String.format( timeFormat, time);
     }
 
     public static String formatDistanceNoPad(double distance) {
-        return distanceFormatNoPad.form(distance);
+
+        return String.format( distanceFormatNoPad, distance);
     }
 
     public static String formatTimeNoPad(double time) {
-        return timeFormat.form(time);
+
+        return String.format( timeFormat, time);
     }
 
     public static String formatRayParam(double rayParam) {
-        return rayParamFormat.form(rayParam);
+
+        return String.format( rayParamFormat, rayParam);
     }
 
     public static String formatLatLon(double latlon) {
-        return latLonFormat.form(latlon);
+
+        return String.format(latLonFormat, latlon);
     }
 
     public static String formatAmpFactor(double ampFactor) {
-        if (ampFactor == 0.0) {
-            // %.e does infinite loop if ampFactor is zero
-            return formatDepth(ampFactor);
+        String space = " ";
+        if (ampFactor < 0) { space = "";}
+        if (ampFactor == 0) {
+            // so not extra minus in -0.0e+00
+            return space+String.format(ampFactorFormat, 0.0);
         }
-        return ampFactorFormat.form(ampFactor);
+        return space+String.format(ampFactorFormat, ampFactor);
     }
 
-    protected static Format depthFormat = new Format("%8.1f");
+    protected static String depthFormat = "%8.1f";
 
-    protected static Format distanceFormat = new Format("%8.2f");
+    protected static String distanceFormat = "%8.2f";
 
-    protected static Format timeFormat = new Format("%8.2f");
+    protected static String timeFormat = "%8.2f";
 
-    protected static Format distanceFormatNoPad = new Format("%0.2f");
+    protected static String distanceFormatNoPad = "%0.2f";
 
-    protected static Format timeFormatNoPad = new Format("%0.2f");
+    protected static String timeFormatNoPad = "%0.2f";
 
-    protected static Format rayParamFormat = new Format("%8.3f");
+    protected static String rayParamFormat = "%8.3f";
 
-    protected static Format latLonFormat = new Format("%8.2f");
+    protected static String latLonFormat = "%8.2f";
 
-    protected static Format ampFactorFormat = new Format("%.1e");
+    protected static String ampFactorFormat = "%.1e";
 } // Outputs

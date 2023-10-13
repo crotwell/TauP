@@ -1,8 +1,8 @@
 
 Model: prem
-Distance   Depth   Phase   Travel    Ray Param  Takeoff  Incident  Purist    Purist
+Distance   Depth   Phase   Travel    Ray Param  Takeoff  Incident  Purist   Purist
   (deg)     (km)   Name    Time (s)  p (s/deg)   (deg)    (deg)   Distance   Name 
------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------
    35.00    10.0   P        411.69     8.604     26.71    26.67    35.00   = P    
    35.00    10.0   P        479.97    13.490     44.81    44.72    35.00   = P    
    35.00    10.0   P        480.12    13.432     44.57    44.48    35.00   = P    

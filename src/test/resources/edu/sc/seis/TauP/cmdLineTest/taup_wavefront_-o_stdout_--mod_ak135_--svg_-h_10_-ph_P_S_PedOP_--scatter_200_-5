@@ -48,25 +48,25 @@
 <!-- draw surface and label distances.-->
 <!-- tick marks every 30 degrees.-->
   <polyline points="    0.00  -6371.00,     0.00  -6689.55" />
-  <text dominant-baseline="baseline" text-anchor="middle" class="label" x="0.00" y="-6721.40">0</text>
+  <text dominant-baseline="baseline" text-anchor="middle" class="label" x="0.00" y="-6721.41">0</text>
   <polyline points=" 3185.50  -5517.45,  3344.78  -5793.32" />
   <text dominant-baseline="baseline" text-anchor="middle" class="label" x="3360.70" y="-5820.91">30</text>
   <polyline points=" 5517.45  -3185.50,  5793.32  -3344.77" />
   <text dominant-baseline="middle" text-anchor="start" class="label" x="5820.91" y="-3360.70">60</text>
   <polyline points=" 6371.00      0.00,  6689.55      0.00" />
-  <text dominant-baseline="middle" text-anchor="start" class="label" x="6721.40" y="0.00">90</text>
+  <text dominant-baseline="middle" text-anchor="start" class="label" x="6721.41" y="0.00">90</text>
   <polyline points=" 5517.45   3185.50,  5793.32   3344.77" />
   <text dominant-baseline="middle" text-anchor="start" class="label" x="5820.91" y="3360.70">120</text>
   <polyline points=" 3185.50   5517.45,  3344.78   5793.32" />
   <text dominant-baseline="hanging" text-anchor="middle" class="label" x="3360.70" y="5820.91">150</text>
   <polyline points="    0.00   6371.00,     0.00   6689.55" />
-  <text dominant-baseline="hanging" text-anchor="middle" class="label" x="0.00" y="6721.40">180</text>
+  <text dominant-baseline="hanging" text-anchor="middle" class="label" x="0.00" y="6721.41">180</text>
   <polyline points="-3185.50   5517.45, -3344.77   5793.32" />
   <text dominant-baseline="hanging" text-anchor="middle" class="label" x="-3360.70" y="5820.91">210</text>
   <polyline points="-5517.45   3185.50, -5793.32   3344.77" />
   <text dominant-baseline="middle" text-anchor="end" class="label" x="-5820.91" y="3360.70">240</text>
   <polyline points="-6371.00      0.00, -6689.55      0.00" />
-  <text dominant-baseline="middle" text-anchor="end" class="label" x="-6721.40" y="0.00">270</text>
+  <text dominant-baseline="middle" text-anchor="end" class="label" x="-6721.41" y="0.00">270</text>
   <polyline points="-5517.45  -3185.50, -5793.32  -3344.78" />
   <text dominant-baseline="baseline" text-anchor="end" class="label" x="-5820.91" y="-3360.70">300</text>
   <polyline points="-3185.50  -5517.45, -3344.78  -5793.32" />

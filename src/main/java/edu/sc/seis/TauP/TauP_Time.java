@@ -1125,9 +1125,9 @@ public class TauP_Time extends TauP_Tool {
             }
             out.println(modelLine);
             String lineOne = "Distance   Depth   " + phaseFormat.form("Phase")
-                    + "   Travel    Ray Param  Takeoff  Incident  Purist    Purist  Amp";
+                    + "   Travel    Ray Param  Takeoff  Incident  Purist   "+phasePuristFormat.form("Purist");
             String lineTwo = "  (deg)     (km)   " + phaseFormat.form("Name ")
-                    + "   Time (s)  p (s/deg)   (deg)    (deg)   Distance   Name    Factor";
+                    + "   Time (s)  p (s/deg)   (deg)    (deg)   Distance   "+phasePuristFormat.form("Name");
             if (relativePhaseName != "") {
                 lineOne += " Relative to";
                 for (int s=0; s<(11-relativePhaseName.length())/2;s++) {
