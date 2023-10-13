@@ -1126,8 +1126,10 @@ public class TauP_Time extends TauP_Tool {
             out.println(modelLine);
             String lineOne = "Distance   Depth   " + phaseFormat.form("Phase")
                     + "   Travel    Ray Param  Takeoff  Incident  Purist   "+phasePuristFormat.form("Purist");
+            //+"    Amp   ";
             String lineTwo = "  (deg)     (km)   " + phaseFormat.form("Name ")
                     + "   Time (s)  p (s/deg)   (deg)    (deg)   Distance   "+phasePuristFormat.form("Name");
+            // +"  Factor";
             if (relativePhaseName != "") {
                 lineOne += " Relative to";
                 for (int s=0; s<(11-relativePhaseName.length())/2;s++) {
@@ -1159,17 +1161,9 @@ public class TauP_Time extends TauP_Tool {
                     out.print("   * ");
                 }
                 out.print(phasePuristFormat.form(currArrival.getPuristName()));
-                if (relativePhaseName != "") {
-                    if (currArrival.isRelativeToArrival()) {
-                        out.print(" "+Outputs.formatTime(currArrival.getTime() - currArrival.getRelativeToArrival().getTime()));
-                        out.print(" +"+phaseFormat.form(currArrival.getRelativeToArrival().getName()));
-                    } else {
-                        out.print(phaseFormat.form("no arrival"));
-                    }
-                }
                 try {
                     double ampFactor = currArrival.getAmplitudeFactor();
-                    out.print(" " + Outputs.formatAmpFactor(ampFactor));
+                    //out.print(" " + Outputs.formatAmpFactor(ampFactor));
                 } catch (NoSuchMatPropException e) {
                     e.printStackTrace();
                 } catch (NoSuchLayerException e) {
@@ -1178,6 +1172,15 @@ public class TauP_Time extends TauP_Tool {
                     e.printStackTrace();
                 } catch (TauModelException | VelocityModelException e) {
                     e.printStackTrace();
+                }
+
+                if (relativePhaseName != "") {
+                    if (currArrival.isRelativeToArrival()) {
+                        out.print(" "+Outputs.formatTime(currArrival.getTime() - currArrival.getRelativeToArrival().getTime()));
+                        out.print(" +"+phaseFormat.form(currArrival.getRelativeToArrival().getName()));
+                    } else {
+                        out.print(phaseFormat.form(" no arrival"));
+                    }
                 }
 
                 out.println();
