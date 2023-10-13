@@ -200,6 +200,8 @@ public class TauP_Web extends TauP_Tool {
         TauP_Tool tool = null;
         if (toolToRun.contentEquals(ToolRun.CREATE)) {
             tool = new TauP_Create();
+        } else if (toolToRun.contentEquals(ToolRun.AMP)) {
+            tool = new TauP_Amp();
         } else if (toolToRun.contentEquals(ToolRun.CURVE)) {
             tool = new TauP_Curve();
         } else if (toolToRun.contentEquals(ToolRun.PATH)) {

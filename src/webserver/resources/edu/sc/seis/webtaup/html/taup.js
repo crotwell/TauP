@@ -31,7 +31,7 @@ export function valid_format(tool) {
       format = "svg";
     }
   } else if (format === "text" || format === "json") {
-    if (tool === "slowplot" || tool === "curve" || tool === "wavefront" || tool === "refltrans") {
+    if (tool === "slowplot" || tool === "curve" || tool === "amp" || tool === "wavefront" || tool === "refltrans") {
       format = "svg";
     }
   }
@@ -156,7 +156,9 @@ export function form_url() {
   if (toolname !== "velplot" && toolname !== "refltrans") {
     url += `&phases=${phases}`;
   }
-  if (toolname !== "velplot" && toolname !== "curve" && toolname !== "wavefront"  && toolname !== "phase" &&toolname !== "refltrans") {
+  if (toolname !== "velplot" && toolname !== "curve" && toolname !== "amp"
+      && toolname !== "wavefront"  && toolname !== "phase"
+      && toolname !== "refltrans") {
     let distparam;
     if (disttype === "islistdist") {
       let distdeg = document.querySelector('input[name="distdeg"]').value;
@@ -329,7 +331,7 @@ export function enableParams(tool) {
         color: lightgrey;
       }
     `;
-  } else if (tool === "wavefront" || tool === "curve") {
+  } else if (tool === "wavefront" || tool === "curve"|| tool === "amp") {
     document.querySelector(`input[name="format"][value="text"]`).setAttribute("disabled", "disabled");
     document.querySelector(`input[name="format"][value="json"]`).setAttribute("disabled", "disabled");
     document.querySelector(`input[name="format"][value="svg"]`).removeAttribute("disabled");
