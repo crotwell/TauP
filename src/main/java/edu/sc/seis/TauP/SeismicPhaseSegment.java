@@ -381,8 +381,7 @@ public class SeismicPhaseSegment {
 					continue;
 				}
 				ReflTrans reflTranCoef = vMod.calcReflTransCoef(depth, isDownGoing);
-				double flatVelocity = getTauModel().getSlownessModel().toVelocity(arrival.getRayParam(), depth);
-				double flatRayParam = 1.0 / flatVelocity;
+				double flatRayParam = arrival.getRayParam() / (getTauModel().getRadiusOfEarth() - depth);
 				if (isPWave) {
 					reflTranValue *= reflTranCoef.getTpp(flatRayParam);
 				} else {
@@ -398,8 +397,7 @@ public class SeismicPhaseSegment {
 			TauBranch tauBranch = tMod.getTauBranch(endBranch, isPWave);
 			double depth = isDownGoing ? tauBranch.getBotDepth() : tauBranch.getTopDepth();
 			ReflTrans reflTranCoef = vMod.calcReflTransCoef(depth, isDownGoing);
-			double flatVelocity = getTauModel().getSlownessModel().toVelocity(arrival.getRayParam(), depth);
-			double flatRayParam = 1.0 / flatVelocity;
+			double flatRayParam = arrival.getRayParam() / (getTauModel().getRadiusOfEarth() - depth);
 
 			if (arrival.getSourceDepth() == depth && ! getTauModel().getVelocityModel().isDisconDepth(depth)) {
 				// branch exists just for source
@@ -464,7 +462,7 @@ public class SeismicPhaseSegment {
 
 			}
 			if (Double.isNaN(reflTranValue)) {
-				throw new VelocityModelException("Refltran value is NaN: "+reflTranValue+" "+flatRayParam+" "+flatVelocity+" "+arrival.getRayParam()+" "+depth+" "+isPWave+" "+isDownGoing+" "+endAction);
+				throw new VelocityModelException("Refltran value is NaN: "+reflTranValue+" "+flatRayParam+" "+arrival.getRayParam()+" "+depth+" "+isPWave+" "+isDownGoing+" "+endAction);
 			}
 		} else {
 			/*

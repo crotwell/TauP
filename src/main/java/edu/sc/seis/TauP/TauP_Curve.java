@@ -64,7 +64,7 @@ public class TauP_Curve extends TauP_Time {
 
     protected String mapWidthUnit = "i";
 
-    private boolean distHorizontal = true;
+    protected boolean distHorizontal = true;
 
     public TauP_Curve() {
         super();
@@ -249,6 +249,7 @@ public class TauP_Curve extends TauP_Time {
                                                               "0.0"))
                     .doubleValue());
             depthCorrect();
+            calculate(new ArrayList<>());
             printResult(getWriter());
         } else {
             StreamTokenizer tokenIn = new StreamTokenizer(new InputStreamReader(System.in));
@@ -442,7 +443,7 @@ public class TauP_Curve extends TauP_Time {
                 );
 
                 // phase labels
-                out.println("<!-- phase name labels -->");
+                out.println("<g>  <!-- phase name labels -->");
                 for(int phaseNum = 0; phaseNum < phaseList.size(); phaseNum++) {
                     SeismicPhase phase = phaseList.get(phaseNum);
                     if (phase.hasArrivals()) {
@@ -472,6 +473,7 @@ public class TauP_Curve extends TauP_Time {
 
                     }
                 }
+                out.println("</g>  <!-- end phase name labels -->");
                 out.println("<g transform=\"scale(1,-1) translate(0, -"+plotWidth+")\">");
                 if (distHorizontal) {
                     out.println("<g transform=\"scale(" + (plotWidth / 180) + "," + (plotWidth / (maxTime-minTime)) + ")\" >");
@@ -524,7 +526,7 @@ public class TauP_Curve extends TauP_Time {
                     } else if (outputFormat.equals(SVG)) {
                         out.println("<!-- "+commentLine);
                         out.println(" -->");
-                        out.print("<polyline points=\"");
+                        out.print("<polyline class=\"autocolor\" points=\"");
                     }
                 }
                 for(int i = 0; i < dist.length; i++) {

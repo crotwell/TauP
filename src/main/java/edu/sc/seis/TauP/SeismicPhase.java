@@ -128,6 +128,13 @@ public interface SeismicPhase extends Serializable, Cloneable {
 
     public List<Arrival> calcTimeExactDistanceDeg(double deg);
 
+    /**
+     * Creates an Arrival for a sampled ray parameter from the model. No interpolation between rays as this is a sample.
+     * @param rayNum
+     * @return
+     */
+    public Arrival createArrivalAtIndex(int rayNum);
+
     Arrival shootRay(double rayParam) throws SlownessModelException, NoSuchLayerException;
 
     double calcRayParamForTakeoffAngle(double takeoffDegree);

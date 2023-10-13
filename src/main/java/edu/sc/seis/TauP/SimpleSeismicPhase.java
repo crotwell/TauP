@@ -553,19 +553,38 @@ public class SimpleSeismicPhase implements SeismicPhase {
         return arrivals;
     }
 
+    /**
+     * Creates an Arrival for a sampled ray parameter from the model. No interpolation between rays as this is a sample.
+     * @param rayNum
+     * @return
+     */
+    public Arrival createArrivalAtIndex(int rayNum) {
+        int adjacentRayNum = 0;
+        double dRPdDist = 0;
+        if (rayParams.length > 1) {
+            if (rayNum == 0) {
+                dRPdDist = (getRayParams(rayNum)-getRayParams(rayNum+1))/ (getDist(rayNum)-getDist(rayNum+1));
+            } else if (rayNum == rayParams.length-1) {
+                dRPdDist = (getRayParams(rayNum)-getRayParams(rayNum-1))/ (getDist(rayNum)-getDist(rayNum-1));
+            } else {
+                // average left and right ray params
+                dRPdDist = ((getRayParams(rayNum)-getRayParams(rayNum-1))/ (getDist(rayNum)-getDist(rayNum-1))
+                        + (getRayParams(rayNum)-getRayParams(rayNum+1))/ (getDist(rayNum)-getDist(rayNum+1)))
+                        /2.0;
+            }
+
+        }
+        return new Arrival(this,
+                getTime(rayNum),
+                getDist(rayNum),
+                getRayParams(rayNum),
+                rayNum,
+                dRPdDist);
+    }
+
     public Arrival refineArrival(int rayNum, double distRadian, double distTolRadian, int maxRecursion) {
-        Arrival left = new Arrival(this,
-                                   getTime(rayNum),
-                                   getDist(rayNum),
-                                   getRayParams(rayNum),
-                                   rayNum,
-                (getRayParams(rayNum)-getRayParams(rayNum+1))/ (getDist(rayNum)-getDist(rayNum+1)));
-        Arrival right = new Arrival(this,
-                                   getTime(rayNum+1),
-                                   getDist(rayNum+1),
-                                   getRayParams(rayNum+1),
-                                   rayNum, // use rayNum as know dist is between rayNum and rayNum+1
-                (getRayParams(rayNum)-getRayParams(rayNum+1))/ (getDist(rayNum)-getDist(rayNum+1)));
+        Arrival left = createArrivalAtIndex(rayNum);
+        Arrival right = createArrivalAtIndex(rayNum+1);
         return refineArrival(left, right, distRadian, distTolRadian, maxRecursion);
     }
 

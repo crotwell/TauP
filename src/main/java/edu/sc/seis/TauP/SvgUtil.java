@@ -119,6 +119,8 @@ public class SvgUtil {
         out.println("        .Tshsh {");
         out.println("            stroke: violet;");
         out.println("        }");
+        createCSSColors( out, "polyline.autocolor", List.of("stroke"), DEFAULT_COLORS);
+        createCSSColors( out, ".autocolor.phaselabel", List.of("fill"), DEFAULT_COLORS);
         out.println("    ]]></style>");
         out.println("</defs>");
         out.println("<g transform=\"translate("+plotOffset+","+plotOffset+")\" >");
@@ -206,4 +208,26 @@ public class SvgUtil {
         }
         out.println("</g> <!-- legend end-->");
     }
+
+    public static void createCSSColors(PrintWriter out, String selector, List<String> cssAttrList, List<String> colors) {
+        for (int i = 0; i < colors.size(); i++) {
+            out.println("        "+selector+":nth-child("+colors.size()+"n+"+(i+1)+") {");
+            for (String cssAttr : cssAttrList) {
+                out.println("            " + cssAttr + ": " + colors.get(i) + ";");
+            }
+            out.println("        }");
+        }
+    }
+
+    public static List<String> DEFAULT_COLORS = List.of(
+            "skyblue",
+            "olivedrab",
+            "goldenrod",
+            "firebrick",
+            "darkcyan",
+            "orange",
+            "darkmagenta",
+            "mediumvioletred",
+            "sienna",
+            "rebeccapurple");
 }

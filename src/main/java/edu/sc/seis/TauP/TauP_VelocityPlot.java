@@ -53,7 +53,6 @@ public class TauP_VelocityPlot extends TauP_Tool {
         boolean yEndFixed = false;
 
         float pixelWidth =  (72.0f*mapWidth)-plotOffset;
-        float margin = 40;
         float plotWidth = pixelWidth - margin;
         String title = vMod.modelName;
         printSVGBeginning(out);
@@ -274,6 +273,7 @@ public class TauP_VelocityPlot extends TauP_Tool {
 
     float mapWidth = 6;
     int plotOffset = 80;
+    float margin = 40;
     String modelName;
     String modelType;
     String overlayModelName = null;

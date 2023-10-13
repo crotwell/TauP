@@ -14,6 +14,7 @@ public class ToolRun {
 	public static String TIME = "time";
 	public static String PIERCE = "pierce";
 	public static String PATH = "path";
+	public static String AMP = "amp";
 	public static String CURVE = "curve";
     public static String CREATE = "create";
     public static String GUI = "gui";
@@ -26,7 +27,7 @@ public class ToolRun {
 	public static String WEB = "web";
 	public static String REFLTRANSPLOT = "refltrans";
 	
-	static String[] toolnames = { GUI, CREATE, CURVE, PATH, PHASE, PIERCE, SETSAC, SPLOT, TABLE, TIME, VPLOT, VELMERGE, WAVEFRONT, WEB, REFLTRANSPLOT };
+	static String[] toolnames = { GUI, CREATE, CURVE, AMP, PATH, PHASE, PIERCE, SETSAC, SPLOT, TABLE, TIME, VPLOT, VELMERGE, WAVEFRONT, WEB, REFLTRANSPLOT };
 	
 	public static void printUsage() {
 		System.out.println("Usage: taup <tool> <options>");
@@ -90,6 +91,8 @@ public class ToolRun {
                 return;
             } else if (toolToRun.contentEquals(CREATE)) {
 				tool = new TauP_Create();
+			} else if (toolToRun.contentEquals(AMP)) {
+				tool = new TauP_Amp();
 			} else if (toolToRun.contentEquals(CURVE)) {
 			    tool = new TauP_Curve();
 			} else if (toolToRun.contentEquals(PATH)) {

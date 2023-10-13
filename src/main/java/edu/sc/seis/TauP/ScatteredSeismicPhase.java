@@ -231,6 +231,17 @@ public class ScatteredSeismicPhase implements SeismicPhase {
         return inboundArrival!= null && scatteredPhase.hasArrivals();
     }
 
+    /**
+     * Creates an Arrival for a sampled ray parameter from the model. No interpolation between rays as this is a sample.
+     * @param rayNum
+     * @return
+     */
+    public Arrival createArrivalAtIndex(int rayNum) {
+        Arrival scatteredArrival = scatteredPhase.createArrivalAtIndex(rayNum);
+        double scatDist = calcScatterDistDeg(scatteredArrival.getDistDeg(), getScattererDistanceDeg(), isBackscatter());
+        scatteredArrival.setSearchDistDeg(scatDist);
+        return scatteredArrival;
+    }
 
     @Override
     public List<Arrival> calcTimeExactDistanceDeg(double deg) {

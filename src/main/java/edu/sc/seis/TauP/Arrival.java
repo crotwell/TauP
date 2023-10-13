@@ -241,14 +241,29 @@ public class Arrival {
      */
     public double getGeometricSpreadingFactor() throws TauModelException {
         double rofE = getPhase().getTauModel().getRadiusOfEarth();
-        double numerator = velocityAtSource()*rayParam*Math.abs(getDRayParamDDelta());
         double sourceRadius = rofE-getSourceDepth();
         double recRadius = rofE-getReceiverDepth();
+        double rpFactor = rayParam;
+        double sinFactor = Math.sin(getModuloDist());
+        if (rayParam < 1e-6) {
+            // in purely up-down case, ray param is zero, but sin(dist) is also zero
+            // use sin(takeoff) approx.= 180 - 2 * dist for near zero rp
+            rpFactor = sourceRadius/(2*velocityAtSource());
+            sinFactor = 1.0;
+        }
+        double numerator = velocityAtSource()*rpFactor*Math.abs(getDRayParamDDelta());
         double denominator = velocityAtReceiver()*sourceRadius*sourceRadius
                 *recRadius*recRadius
                 *radialSlownessAtSource()*radialSlownessAtReceiver()
-                *Math.sin(getModuloDist());
+                *sinFactor;
         return Math.sqrt(numerator/ denominator);
+    }
+
+    public double getAmplitudeFactor() throws TauModelException, VelocityModelException, SlownessModelException {
+        double refltran = getPhase().calcReflTran(this);
+        double geoSpread = getGeometricSpreadingFactor();
+        double ampFactor = refltran * geoSpread;
+        return ampFactor;
     }
 
     public double getIncidentAngle() {
