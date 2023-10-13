@@ -36,7 +36,9 @@ public class TauP_Web extends TauP_Tool {
 
     @Override
     public void start() throws IOException, TauModelException, TauPException {
+        System.out.println();
         System.out.println("   http://localhost:"+port);
+        System.out.println();
         Undertow server = Undertow.builder()
                 .addHttpListener(port, "localhost")
                 .setHandler(new BlockingHandler(new HttpHandler() {
@@ -129,6 +131,12 @@ public class TauP_Web extends TauP_Tool {
                                 tool.setWriter(pw);
                                 tool.printScriptBeginning(pw);
                                 vPlot.printResult(pw);
+                                configContentType(tool.outputFormat, exchange);
+                                exchange.getResponseSender().send(out.toString());
+                            } else if (tool instanceof TauP_ReflTransPlot){
+                                tool.setWriter(pw);
+                                tool.printScriptBeginning(pw);
+                                tool.start();
                                 configContentType(tool.outputFormat, exchange);
                                 exchange.getResponseSender().send(out.toString());
                             } else {
@@ -486,9 +494,9 @@ public class TauP_Web extends TauP_Tool {
                 unknownKeys.remove(QP_IN_SHWAVE);
                 String p = queryParameters.get(QP_IN_SHWAVE).getFirst();
                 if (p.length() == 0 || p.equalsIgnoreCase("true")) {
-                    rtplot.setIncidentSWave(true);
+                    rtplot.setIncidentShWave(true);
                 } else if (p.equalsIgnoreCase("false")) {
-                    rtplot.setIncidentSWave(false);
+                    rtplot.setIncidentShWave(false);
                 } else {
                     throw new TauPException("Unknown value for "+QP_IN_SHWAVE+": "+p);
                 }

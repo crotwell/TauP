@@ -342,6 +342,23 @@ export function enableParams(tool) {
         color: lightgrey;
       }
     `;
+
+  } else if (tool === "refltrans") {
+    document.querySelector(`input[name="format"][value="text"]`).setAttribute("disabled", "disabled");
+    document.querySelector(`input[name="format"][value="json"]`).setAttribute("disabled", "disabled");
+    document.querySelector(`input[name="format"][value="svg"]`).removeAttribute("disabled");
+    document.querySelector(`input[name="format"][value="gmt"]`).setAttribute("disabled", "disabled");
+    styleStr += `
+      label[for="format_text"] {
+        color: lightgrey;
+      }
+      label[for="format_json"] {
+        color: lightgrey;
+      }
+      label[for="format_gmt"] {
+        color: lightgrey;
+      }
+    `;
   } else {
     document.querySelector(`input[name="format"][value="text"]`).removeAttribute("disabled");
     document.querySelector(`input[name="format"][value="json"]`).removeAttribute("disabled");
