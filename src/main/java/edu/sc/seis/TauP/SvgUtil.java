@@ -51,6 +51,9 @@ public class SvgUtil {
         out.println("            stroke: black;");
         out.println("            fill: transparent;");
         out.println("        }");
+        out.println("        .xlabel {");
+        out.println("            text-anchor: middle;");
+        out.println("        }");
         out.println("        .ylabel {");
         out.println("            text-anchor: middle;");
         out.println("            dominant-baseline: middle;");

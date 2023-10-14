@@ -39,6 +39,9 @@
             stroke: black;
             fill: transparent;
         }
+        .xlabel {
+            text-anchor: middle;
+        }
         .ylabel {
             text-anchor: middle;
             dominant-baseline: middle;
