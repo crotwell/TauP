@@ -245,6 +245,10 @@ public class Arrival {
         double recRadius = rofE-getReceiverDepth();
         double rpFactor = rayParam;
         double sinFactor = Math.sin(getModuloDist());
+        if (getModuloDist() == 0.0) {
+            // zero dist,
+            return 1.0;
+        }
         if (rayParam < 1e-6) {
             // in purely up-down case, ray param is zero, but sin(dist) is also zero
             // use sin(takeoff) approx.= 180 - 2 * dist for near zero rp
