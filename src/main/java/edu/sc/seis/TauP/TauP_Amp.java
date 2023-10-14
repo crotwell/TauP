@@ -228,15 +228,22 @@ public class TauP_Amp extends TauP_Curve {
                 double[] dist = phase.getDist();
                 double[] amp = ampMap.get(phase);
                 double[] rayParams = phase.getRayParams();
-                double minPhaseDist = dist[0];
-                double maxPhaseDist = dist[0];
+                double[] xaxisValues;
+                boolean xAxisIsDist = true;
+                if (xAxisIsDist) {
+                    xaxisValues = dist;
+                } else {
+                    xaxisValues = rayParams;
+                }
+                double minPhaseDist = xaxisValues[0];
+                double maxPhaseDist = xaxisValues[0];
                 if(relativePhaseName != "") {
-                    for (int i = 0; i < dist.length; i++) {
-                        if (dist[i] < minPhaseDist) {minDist = dist[i];}
-                        if (dist[i] > maxPhaseDist) {maxDist = dist[i];}
+                    for (int i = 0; i < xaxisValues.length; i++) {
+                        if (xaxisValues[i] < minPhaseDist) {minDist = xaxisValues[i];}
+                        if (xaxisValues[i] > maxPhaseDist) {maxDist = xaxisValues[i];}
                     }
                 }
-                if(dist.length > 0) {
+                if(xaxisValues.length > 0) {
                     String commentLine = phase.getName() + " for a source depth of "
                             + depth + " kilometers in the " + modelName
                             + " model";
@@ -248,12 +255,24 @@ public class TauP_Amp extends TauP_Curve {
                     } else if (outputFormat.equals(SVG)) {
                         out.println("<!-- "+commentLine);
                         out.println(" -->");
+                        out.println("<g class=\"autocolor "+phase.getName()+"\" >");
                         out.print("<polyline class=\"autocolor\" points=\"");
                     }
                 }
-                for(int i = 0; i < dist.length; i++) {
-                    writeValue(dist[i], amp[i], relPhases, out, distHorizontal);
-                    if(i < dist.length - 1 && (rayParams[i] == rayParams[i + 1])
+                for(int i = 0; i < xaxisValues.length; i++) {
+                    if (i < xaxisValues.length - 1 && calcAmpValue(xaxisValues[i], amp[i])[0] < minAmp) {
+                        // lots of lines off the bottom of the screen are distracting
+                        if (outputFormat.equals(GMT)) {
+                            out.println("> amp below min");
+                        } else if (outputFormat.equals(SVG)) {
+                            out.println("\" />");
+                            out.println("<!-- amp below min, create gap -->");
+                            out.print("<polyline class=\"autocolor\" points=\"");
+                        }
+                    } else {
+                        writeValue(xaxisValues[i], amp[i], relPhases, out, distHorizontal);
+                    }
+                    if(i < xaxisValues.length - 1 && (rayParams[i] == rayParams[i + 1])
                             && rayParams.length > 2) {
                         /* Here we have a shadow zone, so put a break in the curve. */
                         if (outputFormat.equals(GMT)) {
@@ -261,22 +280,25 @@ public class TauP_Amp extends TauP_Curve {
                         } else if (outputFormat.equals(SVG)) {
                             out.println("\" />");
                             out.println("<!-- Shadow Zone -->");
-                            out.print("<polyline points=\"");
+                            out.print("<polyline class=\"autocolor\" points=\"");
                         }
                         continue;
                     }
-                    checkBoundaryForAmp(0, i, phase, relPhases, out);
-                    checkBoundaryForAmp(Math.PI, i, phase, relPhases, out);
-                    if (minDist != 0 && minDist != Math.PI) {
-                        checkBoundaryForAmp(minDist, i, phase, relPhases, out);
-                    }
-                    if (maxDist != 0 && maxDist != Math.PI) {
-                        checkBoundaryForAmp(maxDist, i, phase, relPhases, out);
+                    if (xAxisIsDist) {
+                        checkBoundaryForAmp(0, i, phase, relPhases, out);
+                        checkBoundaryForAmp(Math.PI, i, phase, relPhases, out);
+                        if (minDist != 0 && minDist != Math.PI) {
+                            checkBoundaryForAmp(minDist, i, phase, relPhases, out);
+                        }
+                        if (maxDist != 0 && maxDist != Math.PI) {
+                            checkBoundaryForAmp(maxDist, i, phase, relPhases, out);
+                        }
                     }
                 }
                 if (outputFormat.equals(SVG)) {
                     // end polyline
                     out.println("\" />");
+                    out.println("</g>");
                 }
             } else {
                 if (verbose) {

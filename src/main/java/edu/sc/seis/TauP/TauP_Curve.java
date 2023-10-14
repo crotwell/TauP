@@ -526,6 +526,7 @@ public class TauP_Curve extends TauP_Time {
                     } else if (outputFormat.equals(SVG)) {
                         out.println("<!-- "+commentLine);
                         out.println(" -->");
+                        out.println("<g class=\"autocolor "+phase.getName()+"\" >");
                         out.print("<polyline class=\"autocolor\" points=\"");
                     }
                 }
@@ -555,6 +556,7 @@ public class TauP_Curve extends TauP_Time {
                 if (outputFormat.equals(SVG)) {
                     // end polyline
                     out.println("\" />");
+                    out.println("</g>");
                 }
             } else {
                 if (verbose) {

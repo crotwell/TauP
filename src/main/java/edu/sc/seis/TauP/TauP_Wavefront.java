@@ -108,6 +108,74 @@ public class TauP_Wavefront extends TauP_Path {
 
     @Override
     public void printResult(PrintWriter out) throws IOException {
+        if (outputFormat.equals(SVG)) {
+            printResultSVG(out);
+        } else {
+            printResultGMT(out);
+        }
+    }
+
+
+    public void printResultSVG(PrintWriter out) throws IOException {
+        HashSet<Float> keySet = new HashSet<Float>();
+        for (SeismicPhase phase : result.keySet()) {
+            Map<Float, List<TimeDist>> phaseResult = result.get(phase);
+            keySet.addAll(phaseResult.keySet());
+        }
+        if (keySet.size() == 0) {
+            // no phases successful?
+            System.err.println("taup wavefront, no phases successful...");
+            return;
+        }
+        List<Float> keys = new ArrayList<Float>();
+        keys.addAll(keySet);
+        Collections.sort(keys);
+        Float lastTime = keys.get(keys.size() - 1);
+        int numDigits = 1;
+        String formatStr = "0";
+        while (Math.pow(10, numDigits) < lastTime) {
+            numDigits++;
+            formatStr += "0";
+        }
+        if (lastTime < 1) {
+            formatStr += ".0";
+            int fracDigits = 0;
+            while (Math.pow(10, fracDigits) > lastTime) {
+                fracDigits--;
+                formatStr += "0";
+            }
+        }
+        DecimalFormat format = new DecimalFormat(formatStr, new DecimalFormatSymbols(Locale.US));
+        PrintWriter timeOut = out;
+
+        List<SeismicPhase> phasekeys = new ArrayList<SeismicPhase>();
+        phasekeys.addAll(result.keySet());
+        Collections.sort(phasekeys, new Comparator<SeismicPhase>() {
+            // @Override
+            public int compare(SeismicPhase arg0, SeismicPhase arg1) {
+                return arg0.getName().compareTo(arg1.getName());
+            }
+        });
+        for (SeismicPhase phase : phasekeys) {
+            timeOut.println("<g class=\"autocolor\" >");
+            for (Float time : keys) {
+                String timeStr = "time_"+time;
+                timeStr = timeStr.replace('.','_');
+
+                printResultPhaseAtTime(timeOut, phase, time,timeStr);
+            }
+            timeOut.println("</g> <!-- end "+phase.getName()+" -->");
+        }
+        out.println("</g> <!-- end translate -->");
+        out.println("  </g> ");
+        out.println("  </g> ");
+        out.println("</svg>");
+
+        timeOut.flush();
+        out.flush();
+    }
+
+    public void printResultGMT(PrintWriter out) throws IOException {
         String byTimePsFile = psFile;
         double radiusOfEarth = getTauModel().getRadiusOfEarth();
         HashSet<Float> keySet = new HashSet<Float>();
@@ -172,63 +240,9 @@ public class TauP_Wavefront extends TauP_Path {
                 }
             });
             for (SeismicPhase phase : phasekeys) {
-                Map<Float, List<TimeDist>> phaseResult = result.get(phase);
-                List<TimeDist> wavefront = phaseResult.get(time);
-                if (wavefront == null || wavefront.size() == 0) {
-                    continue;
-                }
-                if (outputFormat.equals(GMT)) {
-                    timeOut.println("> " + phase.getName() + " at " + time + " seconds");
-                } else if (outputFormat.equals(SVG)) {
-                    timeOut.println("<!-- " + phase.getName() + " at " + time + " seconds");
-                    timeOut.println(" -->");
-                    timeOut.println("<polyline class=\"wavefront "+phase.getName()+" "+timeStr+"\" points=\"");
-                }
-                Collections.sort(wavefront, new Comparator<TimeDist>() {
-
-                    // @Override
-                    public int compare(TimeDist arg0, TimeDist arg1) {
-                        return Double.valueOf(arg0.getP()).compareTo(arg1.getP());
-                    }
-                });
-                for (TimeDist td : wavefront) {
-                    if (outputFormat.equals(GMT)) {
-                        timeOut.println(Outputs.formatDistance(td.getDistDeg()) + "  "
-                                + Outputs.formatDepth(radiusOfEarth - td.getDepth()) + " " + Outputs.formatTime(time) + " "
-                                + Outputs.formatRayParam(td.getP()));
-                    } else if (outputFormat.equals(SVG)) {
-                        printDistRadiusAsXY(out, td.getDistDeg(), radiusOfEarth - td.getDepth());
-                        timeOut.println();
-                    }
-                }
-                if (outputFormat.equals(SVG)) {
-                    out.println("\" />");
-                }
-                if (isNegDistance()) {
-                    if (outputFormat.equals(GMT)) {
-                        timeOut.write("> " + phase.getName() + " at " + time + " seconds (neg distance)\n");
-                    } else if (outputFormat.equals(SVG)) {
-                        timeOut.println("<!-- " + phase.getName() + " at " + time + " seconds (neg distance)");
-                        timeOut.println(" -->");
-                        timeOut.println("<polyline class=\"wavefront "+phase.getName()+" "+timeStr+"\" points=\"");
-                    }
-                    for (TimeDist td : wavefront) {
-                        if (outputFormat.equals(GMT)) {
-                            timeOut.println(Outputs.formatDistance(-1*td.getDistDeg()) + "  "
-                                + Outputs.formatDepth(radiusOfEarth - td.getDepth()) + " " + Outputs.formatTime(time) + " "
-                                + Outputs.formatRayParam(td.getP()));
-                        } else if (outputFormat.equals(SVG)) {
-                            printDistRadiusAsXY(timeOut, -1*td.getDistDeg(), radiusOfEarth - td.getDepth());
-                            timeOut.println();
-                        }
-                    }
-                    if (outputFormat.equals(SVG)) {
-                        out.println("\" />");
-                    }
-                }
+                printResultPhaseAtTime(timeOut, phase, time,timeStr);
             }
             if (gmtScript) {
-                timeOut.println("END");
                 if (separateFilesByTime) {
                     timeOut.println("# end postscript"); 
                     timeOut.println("gmt psxy -P -R -O -JP -m -A -T >> " + byTimePsFile );
@@ -248,10 +262,75 @@ public class TauP_Wavefront extends TauP_Path {
             out.println("rm gmt.history");
         } else if (outputFormat.equals(SVG)) {
             out.println("</g> <!-- end translate -->");
+            out.println("  </g> ");
+            out.println("  </g> ");
             out.println("</svg>");
         }
         timeOut.flush();
         out.flush();
+    }
+
+    public void printResultPhaseAtTime(PrintWriter timeOut, SeismicPhase phase, Float time, String timeStr) throws IOException {
+
+        Map<Float, List<TimeDist>> phaseResult = result.get(phase);
+        List<TimeDist> wavefront = phaseResult.get(time);
+        if (wavefront == null || wavefront.size() == 0) {
+            return;
+        }
+        if (outputFormat.equals(GMT)) {
+            timeOut.println("> " + phase.getName() + " at " + time + " seconds");
+        } else if (outputFormat.equals(SVG)) {
+            timeOut.println("<!-- " + phase.getName() + " at " + time + " seconds");
+            timeOut.println(" -->");
+            timeOut.println("<polyline class=\"wavefront "+phase.getName()+" "+timeStr+"\" points=\"");
+        }
+        Collections.sort(wavefront, new Comparator<TimeDist>() {
+
+            // @Override
+            public int compare(TimeDist arg0, TimeDist arg1) {
+                return Double.valueOf(arg0.getP()).compareTo(arg1.getP());
+            }
+        });
+        double radiusOfEarth = getTauModel().getRadiusOfEarth();
+        for (TimeDist td : wavefront) {
+            if (outputFormat.equals(GMT)) {
+                timeOut.println(Outputs.formatDistance(td.getDistDeg()) + "  "
+                        + Outputs.formatDepth(radiusOfEarth - td.getDepth()) + " " + Outputs.formatTime(time) + " "
+                        + Outputs.formatRayParam(td.getP()));
+            } else if (outputFormat.equals(SVG)) {
+                printDistRadiusAsXY(timeOut, td.getDistDeg(), radiusOfEarth - td.getDepth());
+                timeOut.println();
+            }
+        }
+        if (outputFormat.equals(SVG)) {
+            timeOut.println("\" />");
+        }
+        if (isNegDistance()) {
+            if (outputFormat.equals(GMT)) {
+                timeOut.write("> " + phase.getName() + " at " + time + " seconds (neg distance)\n");
+            } else if (outputFormat.equals(SVG)) {
+                timeOut.println("<!-- " + phase.getName() + " at " + time + " seconds (neg distance)");
+                timeOut.println(" -->");
+                timeOut.println("<polyline class=\"wavefront "+phase.getName()+" "+timeStr+"\" points=\"");
+            }
+            for (TimeDist td : wavefront) {
+                if (outputFormat.equals(GMT)) {
+                    timeOut.println(Outputs.formatDistance(-1*td.getDistDeg()) + "  "
+                            + Outputs.formatDepth(radiusOfEarth - td.getDepth()) + " " + Outputs.formatTime(time) + " "
+                            + Outputs.formatRayParam(td.getP()));
+                } else if (outputFormat.equals(SVG)) {
+                    printDistRadiusAsXY(timeOut, -1*td.getDistDeg(), radiusOfEarth - td.getDepth());
+                    timeOut.println();
+                }
+            }
+            if (outputFormat.equals(SVG)) {
+                timeOut.println("\" />");
+            }
+        }
+        if (outputFormat.equals(SVG)) {
+        } else if (gmtScript) {
+            timeOut.println("END");
+        }
     }
 
     public Map<SeismicPhase, Map<Float, List<TimeDist>>> calcIsochron() throws TauModelException {
