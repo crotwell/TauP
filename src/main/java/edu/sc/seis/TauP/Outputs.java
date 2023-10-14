@@ -49,9 +49,9 @@ public class Outputs {
                 + "f";
         timeFormat = "%8." + props.getProperty("taup.time.precision", "2")
                 + "f";
-        distanceFormatNoPad = "%0." + props.getProperty("taup.distance.precision", "2")
+        distanceFormatNoPad = "%." + props.getProperty("taup.distance.precision", "2")
                 + "f";
-        timeFormatNoPad = "%0." + props.getProperty("taup.time.precision", "2")
+        timeFormatNoPad = "%." + props.getProperty("taup.time.precision", "2")
                 + "f";
         rayParamFormat = "%8." + props.getProperty("taup.rayparam.precision", "3")
                 + "f";
@@ -112,9 +112,9 @@ public class Outputs {
 
     protected static String timeFormat = "%8.2f";
 
-    protected static String distanceFormatNoPad = "%0.2f";
+    protected static String distanceFormatNoPad = "%.2f";
 
-    protected static String timeFormatNoPad = "%0.2f";
+    protected static String timeFormatNoPad = "%.2f";
 
     protected static String rayParamFormat = "%8.3f";
 
