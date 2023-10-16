@@ -468,7 +468,7 @@ public class TauP_Curve extends TauP_Time {
                             xPos = (cval[1]-minTime) * plotWidth / (maxTime-minTime);
                             yPos = plotWidth - cval[0] * plotWidth / 180;
                         }
-                        out.println("<text class=\"phaselabel\" font-size=\"12\" x=\"" + xPos + "\" y=\"" + yPos + "\">" + phase.getName() + "</text>");
+                        out.println("<text class=\"phaselabel autocolor\" font-size=\"12\" x=\"" + xPos + "\" y=\"" + yPos + "\">" + phase.getName() + "</text>");
 
 
                     }
