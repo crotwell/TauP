@@ -238,7 +238,7 @@ public class SvgUtil {
             "goldenrod",
             "firebrick",
             "darkcyan",
-            "orange",
+            "chocolate",
             "darkmagenta",
             "mediumvioletred",
             "sienna",
