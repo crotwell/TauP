@@ -91,6 +91,7 @@ public class TauP_PhaseDescribe extends TauP_Time {
         } else {
             throw new IllegalArgumentException("Output format "+outputFormat+" not recognized");
         }
+        writer.flush();
     }
 
     public void printResultText(PrintWriter writer) {

@@ -1097,6 +1097,7 @@ public class TauP_Time extends TauP_Tool {
         } else {
             printResultText(out);
         }
+        out.flush();
     }
 
     public void printResultText(PrintWriter out) throws IOException {

@@ -113,6 +113,7 @@ public class TauP_Wavefront extends TauP_Path {
         } else {
             printResultGMT(out);
         }
+        out.flush();
     }
 
 

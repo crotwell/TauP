@@ -161,6 +161,7 @@ public class TauP_Path extends TauP_Pierce {
 		} else {
 			printResultText(out);
 		}
+		out.flush();
 	}
 
 	/**
