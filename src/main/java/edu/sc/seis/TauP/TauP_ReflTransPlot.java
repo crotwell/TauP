@@ -14,11 +14,16 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
 
     public TauP_ReflTransPlot() {
         setOutFileBase(DEFAULT_OUTFILE);
+        setDefaultOutputFormat();
     }
 
     @Override
     public String[] allowedOutputFormats() {
         return new String[] { SVG};
+    }
+    @Override
+    public void setDefaultOutputFormat() {
+        setOutputFormat(SVG);
     }
 
     @Override

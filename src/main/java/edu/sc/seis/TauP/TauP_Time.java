@@ -97,9 +97,11 @@ public class TauP_Time extends TauP_Tool {
     public static final String DEFAULT_PHASES = "p,s,P,S,Pn,Sn,PcP,ScS,Pdiff,Sdiff,PKP,SKS,PKiKP,SKiKS,PKIKP,SKIKS";
 
     public TauP_Time() {
+        setDefaultOutputFormat();
     }
 
     public TauP_Time(TauModel tMod)  {
+        setDefaultOutputFormat();
         setTauModel(tMod);
     }
 
@@ -128,12 +130,17 @@ public class TauP_Time extends TauP_Tool {
         } catch(IOException e) {
             throw new TauModelException("IOException:" + e.getMessage(), e);
         }
+        setDefaultOutputFormat();
     }
 
     @Override
     public String[] allowedOutputFormats() {
         String[] formats = {TEXT, JSON};
         return formats;
+    }
+    @Override
+    public void setDefaultOutputFormat() {
+        setOutputFormat(TEXT);
     }
 
     /* Get/Set methods */

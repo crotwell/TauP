@@ -542,6 +542,10 @@ public class TauP_Web extends TauP_Tool {
     public String[] allowedOutputFormats() {
         return new String[0] ;
     }
+    @Override
+    public void setDefaultOutputFormat() {
+        // no op
+    }
 
 
     int port = 7049;

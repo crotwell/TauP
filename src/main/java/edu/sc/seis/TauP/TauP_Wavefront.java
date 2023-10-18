@@ -40,24 +40,29 @@ public class TauP_Wavefront extends TauP_Path {
     public TauP_Wavefront() {
         super();
         setOutFileBase("taup_wavefront");
+        setDefaultOutputFormat();
     }
 
     public TauP_Wavefront(String modelName, String outFileBase) throws TauModelException {
         super(modelName, outFileBase);
+        setDefaultOutputFormat();
     }
 
     public TauP_Wavefront(String modelName) throws TauModelException {
         super(modelName);
         setOutFileBase("taup_wavefront");
+        setDefaultOutputFormat();
     }
 
     public TauP_Wavefront(TauModel tMod, String outFileBase) throws TauModelException {
         super(tMod, outFileBase);
+        setDefaultOutputFormat();
     }
 
     public TauP_Wavefront(TauModel tMod) throws TauModelException {
         super(tMod);
         setOutFileBase("taup_wavefront");
+        setDefaultOutputFormat();
     }
 
     @Override

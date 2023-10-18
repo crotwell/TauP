@@ -301,6 +301,7 @@ public class TauP_Table extends TauP_Time {
 
     public TauP_Table() throws TauModelException {
         super();
+        setDefaultOutputFormat();
     }
 
     public void init() throws TauPException {

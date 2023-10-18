@@ -84,14 +84,17 @@ public class TauP_SetSac extends TauP_Time {
 
     protected TauP_SetSac() {
         super();
+        setDefaultOutputFormat();
     }
 
     public TauP_SetSac(TauModel tMod) throws TauModelException {
         super(tMod);
+        setDefaultOutputFormat();
     }
 
     public TauP_SetSac(String modelName) throws TauModelException {
         super(modelName);
+        setDefaultOutputFormat();
     }
 
     protected void setSacVarNums() {

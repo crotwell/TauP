@@ -15,6 +15,7 @@ public class TauP_VelocityPlot extends TauP_Tool {
     
     public TauP_VelocityPlot() {
         setOutFileBase(DEFAULT_OUTFILE);
+        setDefaultOutputFormat();
     }
     
     @Override
@@ -115,6 +116,10 @@ public class TauP_VelocityPlot extends TauP_Tool {
     public String[] allowedOutputFormats() {
         String[] formats = {TEXT, JSON, SVG, CSV};
         return formats;
+    }
+    @Override
+    public void setDefaultOutputFormat() {
+        setOutputFormat(SVG);
     }
 
     public void printResult(PrintWriter out) throws TauPException, IOException {

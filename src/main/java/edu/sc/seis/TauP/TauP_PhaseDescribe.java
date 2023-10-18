@@ -6,6 +6,11 @@ import java.util.List;
 
 public class TauP_PhaseDescribe extends TauP_Time {
 
+    public TauP_PhaseDescribe() {
+        super();
+        setDefaultOutputFormat();
+    }
+
     /** Prints the command line arguments common to all TauP tools. */
     @Override
     public void printStdUsage() {
@@ -32,6 +37,10 @@ public class TauP_PhaseDescribe extends TauP_Time {
     public String[] allowedOutputFormats() {
         String[] formats = {TEXT, JSON};
         return formats;
+    }
+    @Override
+    public void setDefaultOutputFormat() {
+        setOutputFormat(TEXT);
     }
 
     @Override

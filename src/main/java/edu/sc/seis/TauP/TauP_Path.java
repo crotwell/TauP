@@ -66,18 +66,20 @@ public class TauP_Path extends TauP_Pierce {
 
 	void initFields() {
 		setOutFileBase("taup_path");
-		setOutputFormat(GMT);
+		setDefaultOutputFormat();
 	}
 
 	public TauP_Path(TauModel tMod, String outFileBase)
 			throws TauModelException {
 		super(tMod);
+		initFields();
 		setOutFileBase(outFileBase);
 	}
 
 	public TauP_Path(String modelName, String outFileBase)
 			throws TauModelException {
 		super(modelName);
+		initFields();
 		setOutFileBase(outFileBase);
 	}
 
@@ -85,6 +87,10 @@ public class TauP_Path extends TauP_Pierce {
 	public String[] allowedOutputFormats() {
 		String[] formats = {TEXT, JSON, SVG, GMT};
 		return formats;
+	}
+	@Override
+	public void setDefaultOutputFormat() {
+		setOutputFormat(GMT);
 	}
 	
 	@Override

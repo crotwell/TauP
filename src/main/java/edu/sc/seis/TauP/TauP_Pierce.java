@@ -45,14 +45,17 @@ public class TauP_Pierce extends TauP_Time {
 
     public TauP_Pierce() {
         super();
+        setDefaultOutputFormat();
     }
 
     public TauP_Pierce(TauModel tMod) throws TauModelException {
         super(tMod);
+        setDefaultOutputFormat();
     }
 
     public TauP_Pierce(String modelName) throws TauModelException {
         super(modelName);
+        setDefaultOutputFormat();
     }
 
     // get/set methods

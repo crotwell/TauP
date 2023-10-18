@@ -11,6 +11,7 @@ public class TauP_SlownessPlot extends TauP_VelocityPlot {
     
     public TauP_SlownessPlot() {
         setOutFileBase(DEFAULT_OUTFILE);
+        setDefaultOutputFormat();
     }
 
 

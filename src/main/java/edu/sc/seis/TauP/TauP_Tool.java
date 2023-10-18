@@ -46,7 +46,7 @@ public abstract class TauP_Tool {
 
     protected Outputs outForms;
 
-    private String outFileExtension = "gmt";
+    private String outFileExtension = null;
     
 
     /* Constructors */
@@ -74,9 +74,11 @@ public abstract class TauP_Tool {
     public String getOutputFormat() {
         return outputFormat;
     }
+
+    public abstract void setDefaultOutputFormat();
     
-    /** usually one of TauP_Time.TEXT or TauP_Time.JSON. Subclasses may add
-     * additional types, for example TauP_Path.SVG.
+    /** usually one of TEXT or JSON. Subclasses may add
+     * additional types, for example CSV, GMT or SVG.
      * @param val output format for results
      */
     public void setOutputFormat(String val) {
@@ -90,6 +92,15 @@ public abstract class TauP_Tool {
             throw new IllegalArgumentException("output format for "+getClass().getName()+" must be one of "+allowed+" but was "+val);
         }
         this.outputFormat = val;
+        if (this.outputFormat == TEXT) {
+            setOutFileExtension("txt");
+        } else if (this.outputFormat == GMT) {
+            setOutFileExtension("gmt");
+        } else if (this.outputFormat == SVG) {
+            setOutFileExtension("svg");
+        } else if (this.outputFormat == CSV) {
+            setOutFileExtension("csv");
+        }
     }
     
     public String getOutFileBase() {

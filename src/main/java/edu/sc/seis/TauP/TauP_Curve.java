@@ -83,13 +83,17 @@ public class TauP_Curve extends TauP_Time {
 
     void initFields() {
         setOutFileBase("taup_curve");
-        setOutputFormat(GMT);
+        setDefaultOutputFormat();
     }
 
     @Override
     public String[] allowedOutputFormats() {
         String[] formats = {SVG, GMT};
         return formats;
+    }
+    @Override
+    public void setDefaultOutputFormat() {
+        setOutputFormat(GMT);
     }
 
     @Override

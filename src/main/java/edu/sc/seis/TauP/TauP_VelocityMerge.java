@@ -14,8 +14,8 @@ import java.io.PrintWriter;
 public class TauP_VelocityMerge extends TauP_Tool {
 
     public TauP_VelocityMerge() {
-        setOutputFormat("nd");
         setOutFileExtension("nd");
+        setDefaultOutputFormat();
     }
 
     @Override
@@ -168,6 +168,10 @@ public class TauP_VelocityMerge extends TauP_Tool {
     public String[] allowedOutputFormats() {
         String[] formats = {TEXT, JSON, ND};
         return formats;
+    }
+    @Override
+    public void setDefaultOutputFormat() {
+        setOutputFormat(ND);
     }
 
     String modelName;

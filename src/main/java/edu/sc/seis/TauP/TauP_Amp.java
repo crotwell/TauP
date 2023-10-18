@@ -26,7 +26,7 @@ public class TauP_Amp extends TauP_Curve {
 
     void initFields() {
         setOutFileBase("taup_amp");
-        setOutputFormat(GMT);
+        setDefaultOutputFormat();
     }
 
     public void printUsage() {
