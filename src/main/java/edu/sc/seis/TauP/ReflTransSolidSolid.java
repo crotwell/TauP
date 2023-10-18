@@ -8,16 +8,11 @@ public class ReflTransSolidSolid extends ReflTrans {
                                 double botVp,
                                 double botVs,
                                 double botDensity) throws VelocityModelException {
+        super(topVp, topVs, topDensity, botVp, botVs, botDensity);
         if (topVp*topVs*topDensity*botVp*botVs*botDensity == 0.0) {
             throw new VelocityModelException("Solid-solid reflection and transmission coefficients must have non-zero layer params:"
             +" in:"+topVp+" "+topVs+" "+topDensity+" tr: "+botVp+" "+botVs+" "+botDensity);
         }
-        this.topVp = topVp;
-        this.topVs = topVs;
-        this.topDensity = topDensity;
-        this.botVp = botVp;
-        this.botVs = botVs;
-        this.botDensity = botDensity;
     }
 
     /**
@@ -307,15 +302,11 @@ public class ReflTransSolidSolid extends ReflTrans {
 
         if(rayParam != lastRayParam || inIsPWave != lastInIsPWave) {
             lastRayParam = -1.0; // in case of failure in method
-            sqBotVs = botVs * botVs; // botVs squared
-            sqTopVs = topVs * topVs; // topVs squared
-            sqBotVp = botVp * botVp; // botVp squared
-            sqTopVp = topVp * topVp; // topVp squared
             sqRP = rp * rp; // rp squared
-            topVertSlownessP = Complex.sqrt(new Complex(1.0 / sqTopVp - sqRP));
-            topVertSlownessS = Complex.sqrt(new Complex(1.0 / sqTopVs - sqRP));
-            botVertSlownessP = Complex.sqrt(new Complex(1.0 / sqBotVp - sqRP));
-            botVertSlownessS = Complex.sqrt(new Complex(1.0 / sqBotVs - sqRP));
+            topVertSlownessP = calcInVerticalSlownessP(rp);
+            topVertSlownessS = calcInVerticalSlownessS(rp);
+            botVertSlownessP = calcTransVerticalSlownessP(rp);
+            botVertSlownessS = calcTransVerticalSlownessS(rp);
             a = botDensity * (1.0 - 2 * sqBotVs * sqRP) - topDensity
                     * (1.0 - 2 * sqTopVs * sqRP);
             b = botDensity * (1.0 - 2 * sqBotVs * sqRP) + 2 * topDensity

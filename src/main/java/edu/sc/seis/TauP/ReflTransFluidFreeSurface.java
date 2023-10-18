@@ -3,12 +3,7 @@ package edu.sc.seis.TauP;
 public class ReflTransFluidFreeSurface extends ReflTrans {
 
     public ReflTransFluidFreeSurface(double inVp, double inDensity) throws VelocityModelException {
-        this.topVp = inVp;
-        this.topDensity = inDensity;
-        this.topVs = 0.0;
-        this.botVp = 0.0;
-        this.botVs = 0.0;
-        this.botDensity = 0.0;
+        super(inVp, 0.0, inDensity, 0.0, 0.0, 0.0);
 
         if (topVp*topDensity == 0.0) {
             throw new VelocityModelException("Fluid free surface reflection and transmission coefficients must have non-zero layer params:"

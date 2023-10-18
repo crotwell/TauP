@@ -2,6 +2,23 @@ package edu.sc.seis.TauP;
 
 public abstract class ReflTrans {
 
+    public ReflTrans(double topVp,
+                     double topVs,
+                     double topDensity,
+                     double botVp,
+                     double botVs,
+                     double botDensity) {
+        this.topVp = topVp;
+        this.topVs = topVs;
+        this.topDensity = topDensity;
+        this.botVp = botVp;
+        this.botVs = botVs;
+        this.botDensity = botDensity;
+        this.sqBotVs = botVs * botVs; // botVs squared
+        this.sqTopVs = topVs * topVs; // topVs squared
+        this.sqBotVp = botVp * botVp; // botVp squared
+        this.sqTopVp = topVp * topVp; // topVp squared
+    }
     public abstract Complex getComplexRpp(double rayParam) throws VelocityModelException;
 
     public abstract Complex getComplexRps(double rayParam) throws VelocityModelException;
@@ -105,6 +122,21 @@ public abstract class ReflTrans {
         return coef.re;
     }
 
+    public Complex calcInVerticalSlownessP(double flatRP) {
+        return Complex.sqrt(new Complex(1.0 / sqTopVp - flatRP*flatRP));
+    }
+
+    public Complex calcInVerticalSlownessS(double flatRP) {
+        return Complex.sqrt(new Complex(1.0 / sqTopVs - flatRP*flatRP));
+    }
+
+    public Complex calcTransVerticalSlownessP(double flatRP) {
+        return Complex.sqrt(new Complex(1.0 / sqBotVp - flatRP*flatRP));
+    }
+
+    public Complex calcTransVerticalSlownessS(double flatRP) {
+        return Complex.sqrt(new Complex(1.0 / sqBotVs - flatRP*flatRP));
+    }
 
     public double[] calcCriticalRayParams() {
         // shoudl filter NaN?

@@ -7,16 +7,11 @@ public class ReflTransSolidFluid extends ReflTrans {
             double topDensity,
             double botVp,
             double botDensity) throws VelocityModelException {
+        super(topVp, topVs, topDensity, botVp, 0.0, botDensity);
         if (topVp*topVs*topDensity*botVp*botDensity == 0.0) {
             throw new VelocityModelException("Solid-fluid reflection and transmission coefficients must have non-zero layer params:"
                     +" in:"+topVp+" "+topVs+" "+topDensity+" tr: "+botVp+" "+botDensity);
         }
-        this.topVp = topVp;
-        this.topVs = topVs;
-        this.topDensity = topDensity;
-        this.botVp = botVp;
-        this.botVs = 0.0;
-        this.botDensity = botDensity;
     }
 
 
@@ -136,15 +131,11 @@ public class ReflTransSolidFluid extends ReflTrans {
 
         if(rayParam != lastRayParam || inIsPWave != lastInIsPWave) {
             lastRayParam = -1.0; // in case of failure in method
-            sqBotVs = botVs * botVs; // botVs squared
-            sqTopVs = topVs * topVs; // topVs squared
-            sqBotVp = botVp * botVp; // botVp squared
-            sqTopVp = topVp * topVp; // topVp squared
             sqRP = rp * rp; // rp squared
-            topVertSlownessP = Complex.sqrt(new Complex(1.0 / sqTopVp - sqRP));
-            topVertSlownessS = Complex.sqrt(new Complex(1.0 / sqTopVs - sqRP));
-            botVertSlownessP = Complex.sqrt(new Complex(1.0 / sqBotVp - sqRP));
-            botVertSlownessS = Complex.sqrt(new Complex(1.0 / sqBotVs - sqRP));
+            topVertSlownessP = calcInVerticalSlownessP(rp);
+            topVertSlownessS = calcInVerticalSlownessS(rp);
+            botVertSlownessP = calcTransVerticalSlownessP(rp);
+            botVertSlownessS = calcTransVerticalSlownessP(rp);
 
 
             // solid-fluid

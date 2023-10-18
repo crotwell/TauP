@@ -334,41 +334,84 @@ public class ReflTransTest {
     @Test
     public void testVerticalFluidSolid() throws VelocityModelException {
         // outer core to mantle,
-        double topVp = 13.6;
-        double topVs = 7.2;
-        double topDensity = 5.5;
-        double botVp = 8;
-        double botVs = 0;
-        double botDensity = 10;
+        double mantleVp = 13.6;
+        double mantleVs = 7.2;
+        double mantleDensity = 5.5;
+        double coreVp = 8;
+        double coreVs = 0;
+        double coreDensity = 10;
         double flatRP = 0.0;
-        ReflTransFluidSolid coeff = new ReflTransFluidSolid(botVp, botDensity, topVp, topVs, topDensity );
+        ReflTransFluidSolid coeff = new ReflTransFluidSolid(coreVp, coreDensity, mantleVp, mantleVs, mantleDensity );
 
 
-        double Rpp_perpen = botVp*(botVp*botDensity-topVp*topDensity)/(topVp*(botVp*topDensity+topVp*botDensity));
+        double Rpp_perpen = coreVp*(coreVp*coreDensity-mantleVp*mantleDensity)/(mantleVp*(coreVp*mantleDensity+mantleVp*coreDensity));
         double Rpp_calc = coeff.getRpp(flatRP);
-        double Tpp_perpen = (topVp*topVp+botVp*botVp)*topDensity / (botVp*botVp*topDensity+topVp*botVp*botDensity);
+        double Tpp_perpen = (mantleVp*mantleVp+coreVp*coreVp)*mantleDensity / (coreVp*coreVp*mantleDensity+mantleVp*coreVp*coreDensity);
         double Tpp_calc = coeff.getTpp(flatRP);
         double Tps_perpen = 0;
-        double Tps_alt = 0;
         double Tps_calc = coeff.getTps(flatRP);
+        // from sympy
+        double Rpp_alt = -0.0335917312661498;
+        double Tpp_alt = 1.03359173126615;
+        double Tps_alt = 0;
 
         System.out.println("Outer core-mantle vertical incidence");
         System.out.println("Tpp "+Tpp_calc+"  Rpp "+Rpp_calc+"  Rps "+Tps_calc);
         System.out.println("     "+Tpp_perpen+"      "+Rpp_perpen+"      "+Tps_perpen);
 
         // energy
-        assertEquals(topDensity*topVp,
-                topDensity*topVp*Rpp_calc*Rpp_calc
-                        +botDensity*botVp*Tpp_calc*Tpp_calc
-                        +botDensity*botVs*Tps_calc*Tps_calc,
+        assertEquals(coreDensity*coreVp,
+                coreDensity*coreVp*Rpp_calc*Rpp_calc
+                        +mantleDensity*mantleVp*Tpp_calc*Tpp_calc
+                        +mantleDensity*mantleVs*Tps_calc*Tps_calc,
                 0.000002
         );
 
-        assertEquals(Tpp_perpen, Tpp_calc, 0.00001);
-        assertEquals(Tps_perpen, Tps_calc, 0.00001);
-        assertEquals(Rpp_perpen, Rpp_calc, 0.00001);
+        assertEquals(Tpp_alt, Tpp_calc, 0.00001);
+        assertEquals(Tps_alt, Tps_calc, 0.00001);
+        assertEquals(Rpp_alt, Rpp_calc, 0.00001);
+        /*
+        not sure these are right, from FMGS
+         */
+        //assertEquals(Tpp_perpen, Tpp_calc, 0.00001);
+        //assertEquals(Tps_perpen, Tps_calc, 0.00001);
+        //assertEquals(Rpp_perpen, Rpp_calc, 0.00001);
     }
 
+    @Test
+    public void testFluidSolidFromSympyScript() throws VelocityModelException {
+
+        // outer core to mantle,
+        double topVp = 13.6;
+        double topVs = 7.2;
+        double topDensity = 5.5;
+        double botVp = 8;
+        double botVs = 0;
+        double botDensity = 10;
+        double flatRP = Math.sin(Arrival.DtoR*(30))/botVp;
+
+        ReflTransFluidSolid coeff = new ReflTransFluidSolid(botVp, botDensity, topVp, topVs, topDensity );
+
+        assertEquals(0.0625, flatRP, 1e-6);
+        assertEquals(0.108253175473055, Complex.abs(coeff.calcInVerticalSlownessP(flatRP)), 1e-6);
+        assertEquals(0.0387340211501939, Complex.abs(coeff.calcTransVerticalSlownessP(flatRP)), 1e-6);
+        assertEquals(0.124031743746470, Complex.abs(coeff.calcTransVerticalSlownessS(flatRP)), 1e-6);
+
+        double Rpp_calc = coeff.getRpp(flatRP);
+        double Tpp_calc = coeff.getTpp(flatRP);
+        double Tps_calc = coeff.getTps(flatRP);
+        assertEquals(-0.0785906918674138, Rpp_calc, 1e-6);
+        assertEquals(1.05504934388693, Tpp_calc, 1e-6);
+        assertEquals(-0.840678245498352, Tps_calc, 1e-6);
+
+        double inEnergy = Complex.abs(coeff.calcInVerticalSlownessP(flatRP))*coeff.topDensity*coeff.topVp*coeff.topVp;
+        Complex rppEnergy = coeff.topVertSlownessP.times(coeff.topDensity*coeff.topVp*coeff.topVp*coeff.getRpp(flatRP)*coeff.getRpp(flatRP));
+        Complex tppEnergy = coeff.botVertSlownessP.times(coeff.botDensity*coeff.botVp*coeff.botVp*coeff.getTpp(flatRP)*coeff.getTpp(flatRP));
+        Complex tpsEnergy = coeff.botVertSlownessS.times(coeff.botDensity*coeff.botVs*coeff.botVs*coeff.getTps(flatRP)*coeff.getTps(flatRP));
+        double outEnergy = Complex.abs(rppEnergy.plus(tppEnergy).plus(tpsEnergy));
+        assertEquals(69.2820323027551, inEnergy , 1e-6);
+        assertEquals(inEnergy, outEnergy, 1e-6);
+    }
 
     @Test
     public void testFluidSolidEnergyRp() throws VelocityModelException {

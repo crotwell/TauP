@@ -7,16 +7,11 @@ public class ReflTransFluidSolid extends ReflTrans {
                                double botVp,
                                double botVs,
                                double botDensity) throws VelocityModelException {
+        super(topVp, 0.0, topDensity, botVp, botVs, botDensity);
         if (topVp*topDensity*botVp*botVs*botDensity == 0.0) {
             throw new VelocityModelException("Fluid-solid reflection and transmission coefficients must have non-zero layer params:"
                     +" in:"+topVp+" "+topDensity+" tr: "+botVp+" "+botVs+" "+botDensity);
         }
-        this.topVp = topVp;
-        this.topVs = 0.0;
-        this.topDensity = topDensity;
-        this.botVp = botVp;
-        this.botVs = botVs;
-        this.botDensity = botDensity;
     }
 
 
@@ -26,12 +21,18 @@ public class ReflTransFluidSolid extends ReflTrans {
     @Override
     public Complex getComplexRpp(double rayParam) {
         calcTempVars(rayParam, true);
+        /*
         Complex b24Term = botVertSlownessP.times(botVertSlownessS).times(4*sqBotVs*sqBotVs*sqRP);
         double b2Term = (1-2*sqBotVs*sqRP)*(1-2*sqBotVs*sqRP);
         Complex numeratorTerm = botVertSlownessP.times( botVp*botDensity).times(CX.plus(b24Term, b2Term))
                 .minus(botVertSlownessP.times(topVp*topDensity));
         Complex out = CX.over(numeratorTerm, DFluidSolid);
-        return out;
+        */
+        Complex t1 = botVertSlownessP.times(botVertSlownessS).times(4*sqBotVs*sqBotVs*sqRP).plus(cos2fterm*cos2fterm);
+        Complex parenA = topVertSlownessP.times(botDensity).times(t1).times(-1);
+        Complex parenB = botVertSlownessP.times(topDensity).times(2*sqBotVs*sqRP+cos2fterm);
+        Complex out = (parenA.plus(parenB)).times(sqBotVp/(botVs*topDensity));
+        return out.over(DFluidSolid);
     }
 
     /**
@@ -40,10 +41,13 @@ public class ReflTransFluidSolid extends ReflTrans {
     @Override
     public Complex getComplexTpp(double rayParam) {
         calcTempVars(rayParam, true);
+        /*
         Complex numeratorTerm = CX.plus(topVertSlownessP.times(topVp), botVertSlownessP.times(botVp))
                 .times( -1*(topVp/botVp)*topDensity*(2*sqBotVs*sqRP-1));
         Complex out = CX.over(numeratorTerm, DFluidSolid);
-        return out;
+         */
+        Complex out = topVertSlownessP.times((-2*topVp*botVp*cos2fterm)/botVs);
+        return out.over(DFluidSolid);
     }
 
 
@@ -53,11 +57,14 @@ public class ReflTransFluidSolid extends ReflTrans {
     @Override
     public Complex getComplexTps(double rayParam) {
         calcTempVars(rayParam, true);
+        /*
         Complex numeratorTerm = botVertSlownessP
                 .times( -2*(topVp*botVs)*rp*topDensity)
                 .times(CX.plus(topVertSlownessP.times(topVp), botVertSlownessP.times(botVp)));
         Complex out = CX.over(numeratorTerm, DFluidSolid);
-        return out;
+         */
+        Complex out = topVertSlownessP.times(botVertSlownessP).times(4*topVp*sqBotVp*rp);
+        return out.over(DFluidSolid);
     }
 
     @Override
@@ -114,22 +121,28 @@ public class ReflTransFluidSolid extends ReflTrans {
 
         if(rayParam != lastRayParam || inIsPWave != lastInIsPWave) {
             lastRayParam = -1.0; // in case of failure in method
-            sqBotVs = botVs * botVs; // botVs squared
-            sqTopVs = topVs * topVs; // topVs squared
-            sqBotVp = botVp * botVp; // botVp squared
-            sqTopVp = topVp * topVp; // topVp squared
             sqRP = rp * rp; // rp squared
-            topVertSlownessP = Complex.sqrt(new Complex(1.0 / sqTopVp - sqRP));
-            topVertSlownessS = Complex.sqrt(new Complex(1.0 / sqTopVs - sqRP));
-            botVertSlownessP = Complex.sqrt(new Complex(1.0 / sqBotVp - sqRP));
-            botVertSlownessS = Complex.sqrt(new Complex(1.0 / sqBotVs - sqRP));
+            topVertSlownessP = calcInVerticalSlownessP(rp);
+            botVertSlownessP = calcTransVerticalSlownessP(rp);
+            botVertSlownessS = calcTransVerticalSlownessS(rp);
 
+
+            // new style
+            cos2fterm = 1 -2*sqBotVs*sqRP;
+            Complex t1 = topVertSlownessP.times(botVertSlownessP).times(botVertSlownessS).times(4*sqBotVs*sqBotVs*sqRP*botDensity);
+            Complex t2 = topVertSlownessP.times(botDensity*cos2fterm*cos2fterm);
+            Complex t3 = botVertSlownessP.times(2*sqBotVs*sqRP*topDensity);
+            Complex t4 = botVertSlownessP.times(topDensity*cos2fterm);
+            Complex paren = t1.plus(t2).plus(t3).plus(t4);
+            DFluidSolid = paren.times(-1*sqBotVp/(botVs*topDensity));
 
             // fluid-solid
-            Complex dfsParenTerm = CX.plus(botVertSlownessP.times(botVertSlownessS.times(4*sqTopVs*sqTopVs*sqRP)),
+            /*
+            Complex dfsParenTerm = CX.plus(botVertSlownessP.times(botVertSlownessS.times(4*sqBotVs*sqBotVs*sqRP)),
                     (1-2*sqBotVs*sqRP)*(1-2*sqBotVs*sqRP));
             DFluidSolid = botVertSlownessP.times(topVp*topDensity)
                     .plus(topVertSlownessP.times(topVp*botDensity).times(dfsParenTerm));
+            */
 
             lastRayParam = rayParam;
             lastInIsPWave = inIsPWave;
@@ -137,4 +150,5 @@ public class ReflTransFluidSolid extends ReflTrans {
     }
 
     Complex DFluidSolid;
+    double cos2fterm;
 }

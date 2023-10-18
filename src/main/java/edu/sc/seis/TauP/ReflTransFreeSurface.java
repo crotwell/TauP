@@ -3,9 +3,7 @@ package edu.sc.seis.TauP;
 public class ReflTransFreeSurface extends ReflTrans {
 
     public ReflTransFreeSurface(double inVp, double inVs, double inDensity) throws VelocityModelException {
-        this.topVp = inVp;
-        this.topVs = inVs;
-        this.topDensity = inDensity;
+        super(inVp, inVs, inDensity, 0.0, 0.0, 0.0);
         if (topVp*topVs*topDensity == 0.0) {
             throw new VelocityModelException("Free Surface Solid-solid reflection and transmission coefficients must have non-zero layer params:"
                     +" in:"+topVp+" "+topVs+" "+topDensity);
@@ -128,19 +126,13 @@ public class ReflTransFreeSurface extends ReflTrans {
 
         if(rayParam != lastRayParam || inIsPWave != lastInIsPWave) {
             lastRayParam = -1.0; // in case of failure in method
-            sqBotVs = botVs * botVs; // botVs squared
-            sqTopVs = topVs * topVs; // topVs squared
-            sqBotVp = botVp * botVp; // botVp squared
-            sqTopVp = topVp * topVp; // topVp squared
             sqRP = rp * rp; // rp squared
-            topVertSlownessP = Complex.sqrt(new Complex(1.0 / sqTopVp - sqRP));
-            topVertSlownessS = Complex.sqrt(new Complex(1.0 / sqTopVs - sqRP));
-            botVertSlownessP = Complex.sqrt(new Complex(1.0 / sqBotVp - sqRP));
-            botVertSlownessS = Complex.sqrt(new Complex(1.0 / sqBotVs - sqRP));
+            topVertSlownessP = calcInVerticalSlownessP(rp);
+            topVertSlownessS = calcInVerticalSlownessS(rp);
 
             // free surface denominator
             // fsA = ((1/sqBotVs) - 2 * sqRP)^2 +
-            // 4 * sqRP * botVertSlownessP * botVertSlownessS
+            // 4 * sqRP * topVertSlownessP * topVertSlownessS
             fsA = CX.plus(new Complex(((1 / sqTopVs) - 2 * sqRP)
                     * ((1 / sqTopVs) - 2 * sqRP)), CX.times(topVertSlownessP,
                             topVertSlownessS)

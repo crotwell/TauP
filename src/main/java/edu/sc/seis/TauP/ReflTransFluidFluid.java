@@ -7,16 +7,11 @@ public class ReflTransFluidFluid extends ReflTrans {
                                double topDensity,
                                double botVp,
                                double botDensity) throws VelocityModelException {
+        super(topVp, 0.0, topDensity, botVp, 0.0, botDensity);
         if (topVp*topDensity*botVp*botDensity == 0.0) {
             throw new VelocityModelException("Fluid-fluid reflection and transmission coefficients must have non-zero layer params:"
                     +" in:"+topVp+" "+topDensity+" tr: "+botVp+" "+botDensity);
         }
-        this.topVp = topVp;
-        this.topVs = 0.0;
-        this.topDensity = topDensity;
-        this.botVp = botVp;
-        this.botVs = 0.0;
-        this.botDensity = botDensity;
     }
 
     @Override
