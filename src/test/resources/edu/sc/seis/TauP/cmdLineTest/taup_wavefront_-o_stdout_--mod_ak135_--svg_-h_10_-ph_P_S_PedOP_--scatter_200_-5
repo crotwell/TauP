@@ -135,7 +135,7 @@
             stroke: darkcyan;
         }
         g.autocolor:nth-child(10n+6) {
-            stroke: orange;
+            stroke: chocolate;
         }
         g.autocolor:nth-child(10n+7) {
             stroke: darkmagenta;
@@ -165,7 +165,7 @@
             fill: darkcyan;
         }
         .autocolor.phaselabel:nth-child(10n+6) {
-            fill: orange;
+            fill: chocolate;
         }
         .autocolor.phaselabel:nth-child(10n+7) {
             fill: darkmagenta;
