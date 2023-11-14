@@ -4,8 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
+
 import org.junit.jupiter.api.Test;
 
 import java.io.BufferedOutputStream;
@@ -97,6 +96,13 @@ public class CmdLineOutputTest {
 
     String versionCmd = "taup --version";
 
+    String[] docCmds = new String[] {
+            "taup time -mod prem -h 200 -ph S,P -deg 57.4",
+            "taup pierce -mod prem -h 200 -ph S,P -deg 57.4",
+            "taup pierce -turn -mod prem -h 200 -ph S,P -deg 57.4",
+            "taup pierce -mod prem -h 200 -ph S -sta 12 34.2 -evt -28 122 --pierce 2591 --nodiscon"
+    };
+
     /** 
      * regenerating the cmd line output test resources.
      * new text files will be in cmdLineTest in cwd
@@ -115,7 +121,14 @@ public class CmdLineOutputTest {
         allList.addAll(Arrays.asList(reflTransPlotTestCmds));
         for (String cmd : allList) {
             System.err.println(cmd);
-            saveOutputToFile(cmd);
+            saveTestOutputToFile(cmd);
+        }
+    }
+
+    public void regenExampleOutput() throws Exception {
+        for (String cmd : docCmds) {
+            System.err.println(cmd);
+            saveDocOutputToFile(cmd);
         }
     }
 
@@ -189,7 +202,7 @@ public class CmdLineOutputTest {
         for (String key : sortedKeys) {
             String cmd = fmgsFigureTestCmds.get(key);
             System.err.println(cmd);
-            saveOutputToFile( cmd, dir, key);
+            saveTestOutputToFile( cmd, dir, key);
             String compare = figureCompare.containsKey(key) ? figureCompare.get(key) : "";
             indexOut.println("<tr><td><a href=\""+key+"\">"+figureTitles.get(key)+"</a></td><td><code>"
                     +cmd.replace("-o stdout", "")+"</code></td><td><a target=\"_blank\" href=\""+compare+"\">compare</a></td></tr>");
@@ -207,7 +220,7 @@ public class CmdLineOutputTest {
      * @throws Exception
      */
     public void regenSavedOutputSingle() throws Exception {
-        saveOutputToFile(helpTestCmds[0]);
+        saveTestOutputToFile(helpTestCmds[0]);
     }
     
     /**
@@ -342,13 +355,23 @@ public class CmdLineOutputTest {
     }
 
 
-    public void saveOutputToFile(String cmd) throws Exception {
-        File dir = new File("cmdLineTest");
+
+    public void saveDocOutputToFile(String cmd) throws Exception {
+        File dir = new File("src/doc/sphinx/source/examples");
         String filename = fileizeCmd(cmd);
-        saveOutputToFile( cmd, dir, filename);
+        saveTestOutputToFile( cmd, dir, filename);
+        PrintStream cmdOut = new PrintStream(new BufferedOutputStream(new FileOutputStream(new File(dir, filename+".cmd"))));
+        cmdOut.println(cmd);
+        cmdOut.close();
     }
 
-    public void saveOutputToFile(String cmd, File dir, String filename) throws Exception {
+    public void saveTestOutputToFile(String cmd) throws Exception {
+        File dir = new File("cmdLineTest");
+        String filename = fileizeCmd(cmd);
+        saveTestOutputToFile( cmd, dir, filename);
+    }
+
+    public void saveTestOutputToFile(String cmd, File dir, String filename) throws Exception {
         if ( ! dir.isDirectory()) {dir.mkdir(); }
         PrintStream fileOut = new PrintStream(new BufferedOutputStream(new FileOutputStream(new File(dir, filename))));
         System.setOut(fileOut);
@@ -402,5 +425,6 @@ public class CmdLineOutputTest {
         CmdLineOutputTest me = new CmdLineOutputTest();
         me.regenSavedOutput();
         me.regenReflTranCompareFigures();
+        me.regenExampleOutput();
     }
 }

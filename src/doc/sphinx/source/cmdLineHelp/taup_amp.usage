@@ -1,0 +1,20 @@
+Usage: taup_amp [arguments]
+  or, for purists, java edu.sc.seis.TauP.TauP_Amp [arguments]
+
+Arguments are:
+-ph phase list     -- comma separated phase list
+-pf phasefile      -- file containing phases
+
+-mod[el] modelname -- use velocity model "modelname" for calculations
+                      Default is iasp91.
+
+-h depth           -- source depth in km
+
+
+--gmt              -- outputs curves as a complete GMT script.--svg              -- outputs curves as a SVG image.-reddeg velocity   -- outputs curves with a reducing velocity (deg/sec).-redkm velocity    -- outputs curves with a reducing velocity (km/sec).-rel phasename     -- outputs relative travel time--distancevertical -- distance on vertical axis, time horizontal--mapwidth width   -- sets map width for GMT script.
+-o [stdout|outfile]         -- output is redirected to stdout or to the "outfile" file
+--prop [propfile]   -- set configuration properties
+--debug             -- enable debugging output
+--verbose           -- enable verbose output
+--version           -- print the version
+--help              -- print this out, but you already know that!

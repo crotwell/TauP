@@ -299,7 +299,7 @@ public class TauP_Table extends TauP_Time {
                                     175.00f,
                                     180.00f};
 
-    public TauP_Table() throws TauModelException {
+    public TauP_Table() {
         super();
         setDefaultOutputFormat();
     }

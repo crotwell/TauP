@@ -1,6 +1,6 @@
 package edu.sc.seis.TauP;
 
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.Constructor;
 import java.util.Arrays;
 import java.util.List;
@@ -40,6 +40,25 @@ public class ToolRun {
         +" for help with a particular tool.";
 	}
 
+	public static void genUsageDocFiles() throws IOException {
+		File toolDocDir = new File("src/doc/sphinx/source/cmdLineHelp");
+		for ( String toolname : toolnames) {
+			saveUsageToFile(toolname, toolDocDir, "taup_"+toolname+".usage");
+		}
+	}
+
+	public static void saveUsageToFile(String toolname, File dir, String filename) throws IOException {
+		TauP_Tool tool = getToolForName(toolname);
+		if (tool == null) {
+			return;
+		}
+		if ( ! dir.isDirectory()) {dir.mkdir(); }
+		PrintStream fileOut = new PrintStream(new BufferedOutputStream(new FileOutputStream(new File(dir, filename))));
+		fileOut.print(tool.getUsage());
+		fileOut.flush();
+		fileOut.close();
+	}
+
 	public static void printUsage() {
 		System.out.println(getUsage());
 	}
@@ -77,6 +96,46 @@ public class ToolRun {
     public static boolean dashEquals(String argName, String arg) {
         return arg.equalsIgnoreCase("-"+argName) || arg.equalsIgnoreCase("--"+argName);
     }
+
+    public static TauP_Tool getToolForName(String toolToRun) {
+		TauP_Tool tool = null;
+		if (toolToRun.contentEquals(CREATE)) {
+			tool = new TauP_Create();
+		} else if (toolToRun.contentEquals(AMP)) {
+			tool = new TauP_Amp();
+		} else if (toolToRun.contentEquals(CURVE)) {
+			tool = new TauP_Curve();
+		} else if (toolToRun.contentEquals(PATH)) {
+			tool = new TauP_Path();
+		} else if (toolToRun.contentEquals(PHASE)) {
+			tool = new TauP_PhaseDescribe();
+		} else if (toolToRun.contentEquals(PIERCE)) {
+			tool = new TauP_Pierce();
+		} else if (toolToRun.contentEquals(SETSAC)) {
+			tool = new TauP_SetSac();
+		} else if (toolToRun.contentEquals(SETMSEED3)) {
+			tool = new TauP_SetMSeed3();
+		} else if (toolToRun.contentEquals(SPLOT)) {
+			tool = new TauP_SlownessPlot();
+		} else if (toolToRun.contentEquals(TABLE)) {
+			tool = new TauP_Table();
+		} else if (toolToRun.contentEquals(TIME)) {
+			tool = new TauP_Time();
+		} else if (toolToRun.contentEquals(VPLOT)) {
+			tool = new TauP_VelocityPlot();
+		} else if (toolToRun.contentEquals(VELMERGE)) {
+			tool = new TauP_VelocityMerge();
+		} else if (toolToRun.contentEquals(WAVEFRONT)) {
+			tool = new TauP_Wavefront();
+		} else if (toolToRun.contentEquals(REFLTRANSPLOT)) {
+			tool = new TauP_ReflTransPlot();
+		} else if (toolToRun.contentEquals(WKBJ)) {
+			tool = new TauP_WKBJ();
+		} else if (toolToRun.contentEquals(VERSION)) {
+			tool = new TauP_Version();
+		}
+		return tool;
+	}
     
 	public static void main(String[] args) throws IOException {
 	    String toolToRun;
@@ -88,49 +147,15 @@ public class ToolRun {
 	        toolToRun = args[0];
 	        restOfArgs = Arrays.copyOfRange(args, 1, args.length);
 		}
-		TauP_Tool tool = null;
+		TauP_Tool tool = getToolForName(toolToRun);
 
 		try {
+			// special cases:
             if (toolToRun.contentEquals(GUI)) {
                 TauP_GUI t = new TauP_GUI();
                 t.setQuitExits(true);
                 t.setVisible(true);
                 return;
-            } else if (toolToRun.contentEquals(CREATE)) {
-				tool = new TauP_Create();
-			} else if (toolToRun.contentEquals(AMP)) {
-				tool = new TauP_Amp();
-			} else if (toolToRun.contentEquals(CURVE)) {
-			    tool = new TauP_Curve();
-			} else if (toolToRun.contentEquals(PATH)) {
-			    tool = new TauP_Path();
-			} else if (toolToRun.contentEquals(PHASE)) {
-			    tool = new TauP_PhaseDescribe();
-			} else if (toolToRun.contentEquals(PIERCE)) {
-			    tool = new TauP_Pierce();
-			} else if (toolToRun.contentEquals(SETSAC)) {
-				tool = new TauP_SetSac();
-			} else if (toolToRun.contentEquals(SETMSEED3)) {
-				tool = new TauP_SetMSeed3();
-            } else if (toolToRun.contentEquals(SPLOT)) {
-                tool = new TauP_SlownessPlot();
-			} else if (toolToRun.contentEquals(TABLE)) {
-			    tool = new TauP_Table();
-			} else if (toolToRun.contentEquals(TIME)) {
-			    tool = new TauP_Time();
-            } else if (toolToRun.contentEquals(VPLOT)) {
-                tool = new TauP_VelocityPlot();
-            } else if (toolToRun.contentEquals(VELMERGE)) {
-                tool = new TauP_VelocityMerge();
-            } else if (toolToRun.contentEquals(WAVEFRONT)) {
-                tool = new TauP_Wavefront();
-			} else if (toolToRun.contentEquals(REFLTRANSPLOT)) {
-				tool = new TauP_ReflTransPlot();
-			} else if (toolToRun.contentEquals(WKBJ)) {
-				tool = new TauP_WKBJ();
-			} else if (toolToRun.contentEquals(VERSION)) {
-				Alert.info(BuildVersion.getDetailedVersion());
-				return;
 			} else if (toolToRun.contentEquals(WEB)) {
             	try {
             		Class webClass = Class.forName("edu.sc.seis.webtaup.TauP_Web");
@@ -146,13 +171,15 @@ public class ToolRun {
                 // short circuit for help or --help
 			    printUsage();
                 return;
+			} else if (dashEquals("getcmdlinehelpfiles", toolToRun)) {
+				// this handles --getcmdlinehelpfiles
+				genUsageDocFiles();
+				return;
 			} else if (dashEquals("version", toolToRun)) {
 				// this handles --version
 				Alert.info(BuildVersion.getDetailedVersion());
 				return;
-			} else if (toolToRun.equals("version")) {
-				tool = new TauP_Version();
-			} else {
+			} else if (tool == null ){
 				System.err.println("Tool "+toolToRun+" not recognized.");
 				System.out.println("Tool "+toolToRun+" not recognized.");
 				System.out.println(getUsage());

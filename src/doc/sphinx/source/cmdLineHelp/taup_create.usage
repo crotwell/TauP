@@ -1,0 +1,15 @@
+Usage: taup_create [arguments]
+  or, for purists, java edu.sc.seis.TauP.TauP_Create [arguments]
+
+Arguments are:
+
+   To specify the velocity model:
+-nd modelfile       -- "named discontinuities" velocity file
+-tvel modelfile     -- ".tvel" velocity file, ala ttimes
+
+--debug              -- enable debugging output
+--prop [propfile]    -- set configuration properties
+--verbose            -- enable verbose output
+--version            -- print the version
+--help               -- print this out, but you already know that!
+

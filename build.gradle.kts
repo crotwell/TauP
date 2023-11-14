@@ -50,13 +50,15 @@ val webserverImplementation by configurations.getting {
     extendsFrom(configurations.implementation.get())
 }
 dependencies {
-    implementation("edu.sc.seis:seisFile:2.0.6") {
+
+    implementation("org.json:json:20230618")
+    implementation("edu.sc.seis:seisFile:2.1.0-SNAPSHOT") {
       // we need seisFile for sac output, but not all the other functionality
       exclude(group = "info.picocli", module = "picocli")
       exclude(group = "com.fasterxml.woodstox", module = "woodstox-core")
       exclude(group = "org.apache.httpcomponents", module = "httpclient")
     }
-    runtimeOnly( "org.slf4j:slf4j-reload4j:1.7.36")
+    runtimeOnly("org.slf4j:slf4j-reload4j:2.0.5")
 
     webserverImplementation("io.undertow:undertow-core:2.3.9.Final")
 
@@ -367,6 +369,15 @@ tasks.register<Sync>("copyCmdLineTestFiles") {
   from(tasks.getByName("genCmdLineTestFiles").outputs)
   into("src/test/resources/edu/sc/seis/TauP/cmdLineTest")
   dependsOn("genCmdLineTestFiles")
+}
+
+tasks.register<JavaExec>("genCmdLineHelpFiles") {
+  description = "generate TauP cmd line help output files"
+  classpath = sourceSets["main"].runtimeClasspath + project.tasks[JavaPlugin.JAR_TASK_NAME].outputs.files
+  getMainClass().set("edu.sc.seis.TauP.ToolRun")
+  args = listOf( "--getcmdlinehelpfiles")
+  dependsOn += tasks.getByName("classes")
+  outputs.files(fileTree("src/doc/sphinx/source/cmdLineHelp"))
 }
 
 tasks.get("assemble").dependsOn(tasks.get("dependencyUpdates"))
