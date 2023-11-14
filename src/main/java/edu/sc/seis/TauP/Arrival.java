@@ -25,6 +25,9 @@
  */
 package edu.sc.seis.TauP;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.time.Duration;
 import java.util.List;
 
@@ -257,8 +260,29 @@ public class Arrival {
         return Math.sqrt(numerator/ denominator);
     }
 
+    /**
+     * Calculates the product of the reflection and transmission coefficients for all discontinuities along the path
+     * of this arrival. Note that this may not give accurate results for certain wave types,
+     * such as head or diffracted waves.
+     * @return
+     * @throws VelocityModelException
+     * @throws SlownessModelException
+     */
+    public double getReflTrans() throws VelocityModelException, SlownessModelException {
+        return getPhase().calcReflTran(this);
+    }
+
+    /**
+     * Calculates the amplitude factor, reflection/tranmission coefficient times geometric spreading, for the
+     * arrival. Note this is only an approximation of amplitude as the source radiation magnitude and pattern is
+     * not included, and this may not give accurate results for certain wave types, such as head or diffracted waves.
+     * @return
+     * @throws TauModelException
+     * @throws VelocityModelException
+     * @throws SlownessModelException
+     */
     public double getAmplitudeFactor() throws TauModelException, VelocityModelException, SlownessModelException {
-        double refltran = getPhase().calcReflTran(this);
+        double refltran = getReflTrans();
         double geoSpread = getGeometricSpreadingFactor();
         double ampFactor = refltran * geoSpread;
         return ampFactor;
@@ -481,6 +505,56 @@ public class Arrival {
             }
         }
         return latestArrival;
+    }
+
+    public JSONObject asJSONObject() {
+        JSONObject a = new JSONObject();
+        a.put("distdeg", (float)getModuloDistDeg());
+        a.put("phase", getName());
+        a.put("time", (float)getTime());
+        a.put("rayparam", (float)(Math.PI / 180.0 * getRayParam()));
+        a.put("takeoff", (float)getTakeoffAngle());
+        a.put("incident", (float)getIncidentAngle());
+        a.put("puristdist", (float)getDistDeg());
+        a.put("puristname", getPuristName());
+        if (getPhase() instanceof ScatteredSeismicPhase) {
+            ScatteredSeismicPhase scatPhase = (ScatteredSeismicPhase)getPhase();
+            a.put("scatterdepth", (float)scatPhase.getScattererDepth());
+            a.put("scatterdistdeg", scatPhase.getScattererDistanceDeg());
+        }
+        if (isRelativeToArrival()) {
+            Arrival relArrival = getRelativeToArrival();
+            JSONObject relA = new JSONObject();
+            a.put("relative", relA);
+            relA.put("difference", (float)(getTime()-relArrival.getTime()));
+            relA.put("arrival", relArrival.asJSONObject());
+        }
+        if (pierce != null || path != null) {
+            JSONArray points = new JSONArray();
+            a.put("pierce", points);
+            boolean first = true;
+            TimeDist[] tdArray = getPierce();
+            for (TimeDist td : tdArray) {
+                JSONArray tdItems = new JSONArray();
+                points.put(tdItems);
+                tdItems.put(td.getDistDeg());
+                tdItems.put(td.getDepth());
+                tdItems.put(td.getTime());
+            }
+        }
+        if (path != null) {
+            JSONArray points = new JSONArray();
+            a.put("path", points);
+            TimeDist[] tdArray = getPath();
+            for (TimeDist td : tdArray) {
+                JSONArray tdItems = new JSONArray();
+                points.put(tdItems);
+                tdItems.put(td.getDistDeg());
+                tdItems.put(td.getDepth());
+                tdItems.put(td.getTime());
+            }
+        }
+        return a;
     }
 
     public String asJSON(boolean pretty, String indent) {

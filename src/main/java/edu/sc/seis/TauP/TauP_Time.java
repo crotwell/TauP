@@ -16,6 +16,9 @@
  */
 package edu.sc.seis.TauP;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.io.*;
 import java.util.*;
 
@@ -1216,6 +1219,29 @@ public class TauP_Time extends TauP_Tool {
                                       String[] phases,
                                       List<Arrival> arrivals) {
         return resultAsJSON(modelName, depth, receiverDepth, phases, arrivals, false, false);
+    }
+
+
+    public static JSONObject resultAsJSONObject(String modelName,
+                                      double depth,
+                                      double receiverDepth,
+                                      String[] phases,
+                                      List<Arrival> arrivals) {
+        JSONObject out = new JSONObject();
+
+        out.put("model", modelName);
+        out.put("sourcedepth", (float)depth);
+        out.put("receiverdepth", (float)receiverDepth);
+        JSONArray outPhases = new JSONArray();
+        out.put("phases", outPhases);
+        outPhases.putAll(phases);
+        JSONArray outArrivals = new JSONArray();
+        out.put("arrivals", outArrivals);
+        for(int j = 0; j < arrivals.size(); j++) {
+            Arrival currArrival = (Arrival)arrivals.get(j);
+            outArrivals.put(currArrival.asJSONObject());
+        }
+        return out;
     }
 
     public static String resultAsJSON(String modelName,

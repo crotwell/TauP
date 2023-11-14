@@ -19,6 +19,7 @@ public class ToolRun {
     public static String CREATE = "create";
     public static String GUI = "gui";
 	public static String SETSAC = "setsac";
+	public static String SETMSEED3 = "setmseed3";
     public static String SPLOT = "slowplot";
 	public static String TABLE = "table";
     public static String VPLOT = "velplot";
@@ -102,7 +103,9 @@ public class ToolRun {
 			} else if (toolToRun.contentEquals(PIERCE)) {
 			    tool = new TauP_Pierce();
 			} else if (toolToRun.contentEquals(SETSAC)) {
-			    tool = new TauP_SetSac();
+				tool = new TauP_SetSac();
+			} else if (toolToRun.contentEquals(SETMSEED3)) {
+				tool = new TauP_SetMSeed3();
             } else if (toolToRun.contentEquals(SPLOT)) {
                 tool = new TauP_SlownessPlot();
 			} else if (toolToRun.contentEquals(TABLE)) {
