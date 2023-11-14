@@ -25,7 +25,7 @@ export function valid_format(tool) {
   let formatSel = document.querySelector('input[name="format"]:checked');
   let format = formatSel ? formatSel.value : "text";
   if (format === "svg" || format === "gmt") {
-    if (tool === "phase" || tool === "time" || tool === "pierce") {
+    if (tool === "phase" || tool === "time" || tool === "pierce" || "version") {
       format = "text";
     } else if (tool === "slowplot" || tool === "velplot" ) {
       format = "svg";
@@ -292,7 +292,7 @@ export function enableParams(tool) {
   }
   let styleStr = ""
   // format radio
-  if ( tool === "time" || tool === "pierce" || tool == "phase") {
+  if ( tool === "time" || tool === "pierce" || tool == "phase" || tool == "version") {
     document.querySelector(`input[name="format"][value="text"]`).removeAttribute("disabled");
     document.querySelector(`input[name="format"][value="json"]`).removeAttribute("disabled");
     document.querySelector(`input[name="format"][value="svg"]`).setAttribute("disabled", "disabled");

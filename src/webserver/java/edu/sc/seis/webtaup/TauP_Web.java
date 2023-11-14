@@ -171,8 +171,9 @@ public class TauP_Web extends TauP_Tool {
     }
 
     @Override
-    public void printUsage() {
-
+    public String getUsage() {
+        return getStdUsageHead(TauP_Web.class)
+                +getStdUsageTail();
     }
 
     @Override
@@ -225,6 +226,8 @@ public class TauP_Web extends TauP_Tool {
             tool = new TauP_Wavefront();
         } else if (toolToRun.contentEquals(ToolRun.REFLTRANSPLOT)) {
             tool = new TauP_ReflTransPlot();
+        } else if (toolToRun.contentEquals(ToolRun.VERSION)) {
+            tool = new TauP_Version();
         } else {
             System.err.println("Tool '"+toolToRun+"' not recognized.");
             printUsage();
@@ -280,6 +283,10 @@ public class TauP_Web extends TauP_Tool {
             tool.setOutputFormat(format);
         }
 
+        if (tool instanceof TauP_Version) {
+            // no params matter
+            unknownKeys.clear();
+        }
         if (tool instanceof TauP_VelocityPlot) {
             TauP_VelocityPlot vplot = (TauP_VelocityPlot) tool;
             if (queryParameters.containsKey(QP_MODEL)) {

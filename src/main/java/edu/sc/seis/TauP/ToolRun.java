@@ -27,6 +27,7 @@ public class ToolRun {
 	public static String WAVEFRONT = "wavefront";
 	public static String WEB = "web";
 	public static String REFLTRANSPLOT = "refltrans";
+	public static String VERSION = "version";
 	
 	static String[] toolnames = { GUI, CREATE, CURVE, PATH, PHASE, PIERCE, SETSAC, SPLOT, TABLE, TIME, VPLOT, VELMERGE, WAVEFRONT, REFLTRANSPLOT, AMP };
 	
@@ -120,6 +121,9 @@ public class ToolRun {
                 tool = new TauP_Wavefront();
 			} else if (toolToRun.contentEquals(REFLTRANSPLOT)) {
 				tool = new TauP_ReflTransPlot();
+			} else if (toolToRun.contentEquals(VERSION)) {
+				Alert.info(BuildVersion.getDetailedVersion());
+				return;
 			} else if (toolToRun.contentEquals(WEB)) {
             	try {
             		Class webClass = Class.forName("edu.sc.seis.webtaup.TauP_Web");
