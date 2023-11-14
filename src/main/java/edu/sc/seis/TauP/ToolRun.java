@@ -26,18 +26,23 @@ public class ToolRun {
     public static String VELMERGE = "velmerge";
 	public static String WAVEFRONT = "wavefront";
 	public static String WEB = "web";
+	public static String WKBJ = "wkbj";
 	public static String REFLTRANSPLOT = "refltrans";
 	public static String VERSION = "version";
 	
-	static String[] toolnames = { GUI, CREATE, CURVE, PATH, PHASE, PIERCE, SETSAC, SPLOT, TABLE, TIME, VPLOT, VELMERGE, WAVEFRONT, REFLTRANSPLOT, AMP };
+	static String[] toolnames = { GUI, CREATE, CURVE, PATH, PHASE, PIERCE, SETSAC, SETMSEED3, SPLOT, TABLE, TIME,
+			VPLOT, VELMERGE, WAVEFRONT, REFLTRANSPLOT, AMP, WKBJ, VERSION };
 	
-	public static void printUsage() {
-		System.out.println("Usage: taup <tool> <options>");
-		System.out.println(" where tool is one of "+Arrays.deepToString(toolnames));
-		System.out.println(" taup <tool> --help");
-        System.out.println(" for help with a particular tool.");
+	public static String getUsage() {
+		return "Usage: taup <tool> <options>\n"
+		+" where tool is one of "+Arrays.deepToString(toolnames)+"\n"
+		+" taup <tool> --help\n"
+        +" for help with a particular tool.";
 	}
 
+	public static void printUsage() {
+		System.out.println(getUsage());
+	}
 
 	/**
 	 * Handles version, verbose and debug cmd line flags.
@@ -121,6 +126,8 @@ public class ToolRun {
                 tool = new TauP_Wavefront();
 			} else if (toolToRun.contentEquals(REFLTRANSPLOT)) {
 				tool = new TauP_ReflTransPlot();
+			} else if (toolToRun.contentEquals(WKBJ)) {
+				tool = new TauP_WKBJ();
 			} else if (toolToRun.contentEquals(VERSION)) {
 				Alert.info(BuildVersion.getDetailedVersion());
 				return;
@@ -136,17 +143,19 @@ public class ToolRun {
             		return;
 				}
 			} else if (TauP_Tool.dashEquals("help", toolToRun) || toolToRun.equals("help")) {
-                // short circuit for these args
+                // short circuit for help or --help
 			    printUsage();
                 return;
-			} else if (dashEquals("version", toolToRun) || toolToRun.equals("version")) {
-			    // this handles help and version
-                Alert.info(BuildVersion.getDetailedVersion());
-                // short circuit for these args
-			    return;
+			} else if (dashEquals("version", toolToRun)) {
+				// this handles --version
+				Alert.info(BuildVersion.getDetailedVersion());
+				return;
+			} else if (toolToRun.equals("version")) {
+				tool = new TauP_Version();
 			} else {
 				System.err.println("Tool "+toolToRun+" not recognized.");
-				printUsage();
+				System.out.println("Tool "+toolToRun+" not recognized.");
+				System.out.println(getUsage());
 				return;
 			}
             

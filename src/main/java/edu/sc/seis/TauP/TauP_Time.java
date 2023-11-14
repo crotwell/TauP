@@ -1797,9 +1797,6 @@ public class TauP_Time extends TauP_Tool {
         buf.append(getStdUsageTail());
         return buf.toString();
     }
-    public void printUsage() {
-        System.out.println(getUsage());
-    }
 
     /**
      * solves the equation (yb-ya)/(xb-xa) = (y-ya)/(x-xa) for y given x. Useful

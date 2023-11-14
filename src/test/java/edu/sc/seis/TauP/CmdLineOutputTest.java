@@ -71,7 +71,7 @@ public class CmdLineOutputTest {
             "taup slowplot -o stdout --mod ak135 --svg"
     };
     String[] reflTransPlotTestCmds = new String[] {
-            "taup relftrans -o stdout --mod fgms --depth 35 --svg"
+            "taup refltrans -o stdout --mod ak135 --depth 35 --svg"
     };
 
 
@@ -86,7 +86,14 @@ public class CmdLineOutputTest {
                                           "taup velmerge --help",
                                           "taup velplot --help",
                                           "taup slowplot --help",
-                                          "taup create --help"};
+                                          "taup create --help",
+                                          "taup refltrans --help",
+                                          "taup amp --help",
+                                          "taup setsac --help",
+                                          "taup setmseed3 --help",
+                                          "taup version --help",
+                                          "taup wkbj --help",
+    };
 
     String versionCmd = "taup --version";
 
