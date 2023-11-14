@@ -151,7 +151,7 @@ public class TauP_Path extends TauP_Pierce {
 	}
 
 	@Override
-	public List<Arrival> calculate(List<Double> degreesList) throws TauModelException {
+	public List<Arrival> calculate(List<Double> degreesList) throws TauPException {
 		List<Arrival> arrivalList = super.calculate(degreesList);
 	    for (Arrival arrival : arrivalList) {
             arrival.getPath(); // side effect of calculating path

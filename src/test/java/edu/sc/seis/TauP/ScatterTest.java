@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ScatterTest {
 
     @Test
-    public void scatterTest_B() throws TauModelException {
+    public void scatterTest_B() throws TauPException {
         String toScatPhase = "Ped";
         String scatToRecPhase = "p";
         double sourceDepth = 0;
@@ -24,7 +24,7 @@ public class ScatterTest {
     }
 
     @Test
-    public void outerCoreScatterTest() throws TauModelException {
+    public void outerCoreScatterTest() throws TauPException {
         String toScatPhase = "PKed";
         String scatToRecPhase = "kp";
         double sourceDepth = 0;
@@ -36,7 +36,7 @@ public class ScatterTest {
     }
 
     @Test
-    public void innerCoreScatterTest() throws TauModelException {
+    public void innerCoreScatterTest() throws TauPException {
         String toScatPhase = "PKIed";
         String scatToRecPhase = "ykp";
         double sourceDepth = 0;
@@ -47,7 +47,7 @@ public class ScatterTest {
         doScatterTest(toScatPhase, scatToRecPhase, sourceDepth, receiverDepth, scatterDepth, scatterDistDeg, dist);
     }
 
-    public void doScatterTest(String toScatPhase, String scatToRecPhase, double sourceDepth, double receiverDepth, double scatterDepth, double scatterDistDeg, double dist) throws TauModelException {
+    public void doScatterTest(String toScatPhase, String scatToRecPhase, double sourceDepth, double receiverDepth, double scatterDepth, double scatterDistDeg, double dist) throws TauPException {
         boolean backscatter = false;
         TauModel tMod = TauModelLoader.load("iasp91");
         SeismicPhase inboundPhase = SeismicPhaseFactory.createPhase(toScatPhase, tMod, sourceDepth, scatterDepth, false);
@@ -143,7 +143,7 @@ public class ScatterTest {
     }
 
     @Test
-    public void isLongWayTest() throws TauModelException {
+    public void isLongWayTest() throws TauPException {
         // PKKP is 234 to 287 deg, so is always long way around
         String modelname = "iasp91";
         TauP_Time time = new TauP_Time(modelname);
@@ -158,7 +158,7 @@ public class ScatterTest {
     }
 
     @Test
-    public void pierceScatterPKoKP() throws TauModelException {
+    public void pierceScatterPKoKP() throws TauPException {
         String modelname = "iasp91";
         TauP_Pierce pierce = new TauP_Pierce(modelname);
         pierce.setSourceDepth(0);
@@ -183,7 +183,7 @@ public class ScatterTest {
     }
 
     @Test
-    public void pathBackscatterPedOP() throws TauModelException {
+    public void pathBackscatterPedOP() throws TauPException {
         String modelname = "iasp91";
         TauP_Path path = new TauP_Path(modelname);
         path.setScatterer(800, -10);

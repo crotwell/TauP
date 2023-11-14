@@ -128,7 +128,7 @@ public class TauP_SetSac extends TauP_Time {
         setSacVarNums();
     }
 
-    public void start() throws IOException, TauModelException {
+    public void start() throws IOException, TauPException {
         if (sacFileNames.size() == 0) {
             printUsage();
             return;
@@ -141,7 +141,7 @@ public class TauP_SetSac extends TauP_Time {
         }
     }
     
-    public void processSacFile(File f) throws FileNotFoundException, IOException, TauModelException {
+    public void processSacFile(File f) throws IOException, TauPException {
         
         if (f.isDirectory()) {
             File[] subfiles = f.listFiles();

@@ -11,7 +11,7 @@ import java.util.List;
 public class Dist180Test {
 
     @Test
-    public void constantModelTest() throws NoSuchMatPropException, NoSuchLayerException, SlownessModelException, TauModelException {
+    public void constantModelTest() throws TauPException {
         double VP = 5.8;
         VelocityModel vMod = ConstantModelTest.createVelMod(VP, 3.5);
         SlownessModel smod = new SphericalSModel(vMod,0.1,11.0,115.0,2.5*Math.PI/180,0.01,true,
@@ -23,20 +23,20 @@ public class Dist180Test {
     }
     
     @Test
-    public void iasp91Test() throws TauModelException {
+    public void iasp91Test() throws TauPException {
         straightThroughRay("iasp91");
         // ttimes gives 1212.12 seconds, off by ~ 0.03 seconds
     }
     
     @Test
-    public void ak135Test() throws TauModelException {
+    public void ak135Test() throws TauPException {
         straightThroughRay("ak135");
         // ak135 table gives 1212.53 seconds, off by ~ 0.05 seconds
         // http://rses.anu.edu.au/~brian/AK135tables.pdf
     }
     
     @Test
-    public void premTest() throws TauModelException {
+    public void premTest() throws TauPException {
         straightThroughRay("prem");
     }
     
@@ -57,7 +57,7 @@ public class Dist180Test {
      * @param modelName
      * @throws TauModelException
      */
-    public void straightThroughRay(String modelName) throws TauModelException {
+    public void straightThroughRay(String modelName) throws TauPException {
         TauP_Time time = new TauP_Time(modelName);
         time.setSourceDepth(0);
         time.clearPhaseNames();

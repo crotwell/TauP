@@ -21,7 +21,7 @@ public class SurfaceWaveTest {
 
 
     @Test
-    public void testSurfaceWave() throws TauModelException {
+    public void testSurfaceWave() throws TauPException {
         String phaseName = "3.0kmps";
         float depth = 23;
         float deg = 30;
@@ -43,7 +43,7 @@ public class SurfaceWaveTest {
     }
 
     @Test
-    public void testDistKm() throws TauModelException {
+    public void testDistKm() throws TauPException {
         double distKm = 100;
         double phaseVel = 3.2;
         String phaseName = phaseVel+"kmps";

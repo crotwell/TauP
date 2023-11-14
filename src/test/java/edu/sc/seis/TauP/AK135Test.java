@@ -40,35 +40,35 @@ public class AK135Test  {
     }
 
     @Test
-    public void testTableP() throws TauModelException {
+    public void testTableP() throws TauPException {
         doTable("P");
     }
     @Test
-    public void testTableS() throws TauModelException {
+    public void testTableS() throws TauPException {
         doTable("S");
     }
 
     @Test
-    public void testTablePcP() throws TauModelException {
+    public void testTablePcP() throws TauPException {
         doTable("PcP");
     }
 
     @Test
-    public void testTableScS() throws TauModelException {
+    public void testTableScS() throws TauPException {
         doTable("ScS");
     }
 
     @Test
-    public void testTableScP() throws TauModelException {
+    public void testTableScP() throws TauPException {
         doTable("ScP");
     }
 
     @Test
-    public void testTablePKIKP() throws TauModelException {
+    public void testTablePKIKP() throws TauPException {
         doTable("PKIKP");
     }
 
-    public void doTable(String phase) throws TauModelException {
+    public void doTable(String phase) throws TauPException {
         if (phase.equals("P")) {
             taup.setPhaseNames(new String[] {"p", "P", "Pdiff"});
         } else if (phase.equals("S")) {

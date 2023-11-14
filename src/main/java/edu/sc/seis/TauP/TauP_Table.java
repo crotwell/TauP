@@ -409,7 +409,7 @@ public class TauP_Table extends TauP_Time {
     }
 
 
-    protected void jsonTable(PrintWriter out) throws TauModelException, IOException {
+    protected void jsonTable(PrintWriter out) throws TauPException, IOException {
         out.println("[");
         for(int depthNum = 0; depthNum < depths.length; depthNum++) {
             depthCorrect(depths[depthNum], getReceiverDepth(), getScattererDepth());
@@ -423,7 +423,7 @@ public class TauP_Table extends TauP_Time {
         out.println("]");
     }
 
-    protected void csvTable(PrintWriter out) throws TauModelException,
+    protected void csvTable(PrintWriter out) throws TauPException,
             IOException {
         String sep = ",";
         String header = "Model,Distance (deg),Depth (km),Phase,Time (s),RayParam (deg/s),Takeoff Angle,Incident Angle,Purist Distance,Purist Name";
@@ -453,7 +453,7 @@ public class TauP_Table extends TauP_Time {
 
     }
 
-    protected void genericTable(PrintWriter out) throws TauModelException,
+    protected void genericTable(PrintWriter out) throws TauPException,
             IOException {
         for(int depthNum = 0; depthNum < depths.length; depthNum++) {
             depthCorrect(depths[depthNum], getReceiverDepth(), getScattererDepth());
@@ -481,7 +481,7 @@ public class TauP_Table extends TauP_Time {
         out.flush();
     }
 
-    protected void locsatTable(PrintWriter out) throws TauModelException,
+    protected void locsatTable(PrintWriter out) throws TauPException,
             IOException {
         String float15_4 = "%15.4f";
         String float7_2 = "%7.2f";

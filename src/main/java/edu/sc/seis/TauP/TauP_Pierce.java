@@ -182,7 +182,7 @@ public class TauP_Pierce extends TauP_Time {
     }
 
     @Override
-    public List<Arrival> calculate(List<Double> degreesList) throws TauModelException {
+    public List<Arrival> calculate(List<Double> degreesList) throws TauPException {
         List<Arrival> arrivalList = super.calculate(degreesList);
         for (Arrival arrival : getArrivals()) {
             arrival.getPierce(); // side effect of calculating pierce points

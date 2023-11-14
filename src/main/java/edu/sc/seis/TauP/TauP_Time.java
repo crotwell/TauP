@@ -771,17 +771,17 @@ public class TauP_Time extends TauP_Tool {
         return arrivals;
     }
 
-    public List<Arrival> calculate(double degrees) throws TauModelException {
+    public List<Arrival> calculate(double degrees) throws TauPException {
         List<Double> dList = Arrays.asList(new Double[] {degrees});
         return calculate(dList);
     }
 
-    public List<Arrival> calculate(List<Double> degreesList) throws TauModelException {
+    public List<Arrival> calculate(List<Double> degreesList) throws TauPException {
         List<Arrival> arrivals = calcTime(degreesList);
         return sortArrivals(arrivals);
     }
 
-    public List<Arrival> calcEventStation(Double[] evloc, List<Double[]> staloc) throws TauModelException {
+    public List<Arrival> calcEventStation(Double[] evloc, List<Double[]> staloc) throws TauPException {
         setEventLatLon(evloc[0], evloc[1]);
         List<Arrival> out = new ArrayList<>();
         for (Double[] sta : staloc) {
