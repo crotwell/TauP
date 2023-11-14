@@ -536,19 +536,19 @@ public class TauP_Table extends TauP_Time {
         out.flush();
     }
 
-    public void printUsage() {
-        printStdUsageHead();
-        System.out.println("-ph phase list     -- comma separated phase list\n"
+    public String getUsage() {
+        return getStdUsageHead()
+        +"-ph phase list     -- comma separated phase list\n"
                 + "-pf phasefile      -- file containing phases\n\n"
                 + "-mod[el] modelname -- use velocity model \"modelname\" for calculations\n"
-                + "                      Default is iasp91.\n\n");
-        System.out.println("-header filename   -- reads depth and distance spacing data\n"
-                + "                      from a LOCSAT style file.");
-        System.out.println("--csv              -- outputs a CSV ascii table");
-        System.out.println("--generic          -- outputs a \"generic\" ascii table");
-        System.out.println("--locsat           -- outputs a \"locsat\" style ascii table");
-        System.out.println("--json             -- outputs a table as JSON");
-        printStdUsageTail();
+                + "                      Default is iasp91.\n\n\n"
+        +"-header filename   -- reads depth and distance spacing data\n"
+                + "                      from a LOCSAT style file.\n"
+        +"--csv              -- outputs a CSV ascii table\n"
+        +"--generic          -- outputs a \"generic\" ascii table\n"
+        +"--locsat           -- outputs a \"locsat\" style ascii table\n"
+        +"--json             -- outputs a table as JSON\n"
+        +getStdUsageTail();
     }
 
     public String[] parseCmdLineArgs(String[] args) throws IOException {

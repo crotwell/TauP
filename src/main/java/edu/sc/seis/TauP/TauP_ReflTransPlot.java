@@ -143,8 +143,9 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
     }
 
     @Override
-    public void printUsage() {
-
+    public String getUsage() {
+        return getStdUsageHead(TauP_ReflTransPlot.class)
+                +getStdUsageTail();
     }
 
     @Override

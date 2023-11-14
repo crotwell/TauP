@@ -218,31 +218,31 @@ public class TauP_Curve extends TauP_Time {
         }
     }
 
-    public void printStdUsage() {
+    public String getStdUsage() {
         String className = this.getClass().getName();
         className = className.substring(className.lastIndexOf('.') + 1,
                                         className.length());
-        System.out.println("Usage: " + className.toLowerCase() + " [arguments]");
-        System.out.println("  or, for purists, java "
-                + this.getClass().getName() + " [arguments]");
-        System.out.println("\nArguments are:");
-        System.out.println("-ph phase list     -- comma separated phase list\n"
+        return "Usage: " + className.toLowerCase() + " [arguments]\n"
+        +"  or, for purists, java "
+                + this.getClass().getName() + " [arguments]\n"
+        +"\nArguments are:\n"
+        +"-ph phase list     -- comma separated phase list\n"
                 + "-pf phasefile      -- file containing phases\n\n"
                 + "-mod[el] modelname -- use velocity model \"modelname\" for calculations\n"
                 + "                      Default is iasp91.\n\n"
-                + "-h depth           -- source depth in km\n\n");
+                + "-h depth           -- source depth in km\n\n\n";
     }
 
-    public void printUsage() {
-        printStdUsage();
-        System.out.println("--gmt              -- outputs curves as a complete GMT script.");
-        System.out.println("--svg              -- outputs curves as a SVG image.");
-        System.out.println("-reddeg velocity   -- outputs curves with a reducing velocity (deg/sec).");
-        System.out.println("-redkm velocity    -- outputs curves with a reducing velocity (km/sec).");
-        System.out.println("-rel phasename     -- outputs relative travel time");
-        System.out.println("--distancevertical -- distance on vertical axis, time horizontal");
-        System.out.println("--mapwidth width   -- sets map width for GMT script.");
-        printStdUsageTail();
+    public String getUsage() {
+        return getStdUsage()
+        +"--gmt              -- outputs curves as a complete GMT script.\n"
+        +"--svg              -- outputs curves as a SVG image.\n"
+        +"-reddeg velocity   -- outputs curves with a reducing velocity (deg/sec).\n"
+        +"-redkm velocity    -- outputs curves with a reducing velocity (km/sec).\n"
+        +"-rel phasename     -- outputs relative travel time\n"
+        +"--distancevertical -- distance on vertical axis, time horizontal\n"
+        +"--mapwidth width   -- sets map width for GMT script.\n"
+        +getStdUsageTail();
     }
 
     public void start() throws IOException, TauModelException {

@@ -1719,25 +1719,25 @@ public class TauP_Time extends TauP_Tool {
         }
     }
 
-    public void printStdUsageHead() {
-        TauP_Tool.printStdUsageHead(this.getClass());
+    public String getStdUsageHead() {
+        return TauP_Tool.getStdUsageHead(this.getClass());
     }
 
     /** Prints the command line arguments common to all TauP tools. */
-    public void printStdUsage() {
-        printStdUsageHead();
-        printPhaseUsage();
-        printDistanceUsage();
+    public String getStdUsage() {
+        return getStdUsageHead()
+        + getPhaseUsage()
+        + getDistanceUsage();
     }
 
-    public void printPhaseUsage() {
-        Alert.info("-ph phase list     -- comma separated phase list\n"
-                + "-pf phasefile      -- file containing phases\n");
-        printModDepthUsage();
+    public String getPhaseUsage() {
+        return "-ph phase list     -- comma separated phase list\n"
+                + "-pf phasefile      -- file containing phases\n\n"
+                + getModDepthUsage();
     }
 
-    public void printDistanceUsage() {
-        Alert.info("Distance is given by:\n\n"
+    public String getDistanceUsage() {
+        return "Distance is given by:\n\n"
                 + "-deg degrees       -- distance in degrees,\n"
                 + "-km kilometers     -- distance in kilometers,\n"
                 + "                      assumes radius of earth is 6371km,\n\n"
@@ -1750,24 +1750,29 @@ public class TauP_Time extends TauP_Tool {
                 + "                      zero is down, 90 horizontal, 180 is up\n\n"
                 + "or by giving the ray parameter,\n"
                 + "--shootray param   -- ray parameter from the source in s/deg\n"
-                + "                      up or down is determined by the phase\n\n"
+                + "                      up or down is determined by the phase\n\n\n"
 
-        );
+        ;
     }
 
-    public void printLimitUsage() {
-        Alert.info("--first            -- only output the first arrival for each phase, no triplications\n"
+    public String getLimitUsage() {
+        return "--first            -- only output the first arrival for each phase, no triplications\n"
                     + "--rayp             -- only output the ray parameter\n"
                     + "--time             -- only output travel time\n"
                     + "--rel phasename    -- also output relative travel time\n\n"
-                    + "--json             -- output travel times as json\n"
-        );
+                    + "--json             -- output travel times as json\n\n"
+        ;
     }
 
+    public String getUsage() {
+        StringBuffer buf = new StringBuffer();
+        buf.append(getStdUsage());
+        buf.append(getLimitUsage());
+        buf.append(getStdUsageTail());
+        return buf.toString();
+    }
     public void printUsage() {
-        printStdUsage();
-        printLimitUsage();
-        printStdUsageTail();
+        System.out.println(getUsage());
     }
 
     /**

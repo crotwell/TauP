@@ -256,17 +256,15 @@ public class TauP_VelocityPlot extends TauP_Tool {
     }
 
     @Override
-    public void printUsage() {
-
-        TauP_Tool.printStdUsageHead(this.getClass());
-
-        System.out.println("-nd modelfile       -- \"named discontinuities\" velocity file");
-        System.out.println("-tvel modelfile     -- \".tvel\" velocity file, ala ttimes\n");
-        printModDepthUsage();
-        System.out.println("--svg               -- output as SVG");
-        System.out.println("--csv               -- outputs a CSV ascii table");
-        System.out.println("\n");
-        TauP_Tool.printStdUsageTail();
+    public String getUsage() {
+        return TauP_Tool.getStdUsageHead(this.getClass())
+        +"-nd modelfile       -- \"named discontinuities\" velocity file\n"
+        +"-tvel modelfile     -- \".tvel\" velocity file, ala ttimes\n\n"
+        +getModDepthUsage()
+        +"--svg               -- output as SVG\n"
+        +"--csv               -- outputs a CSV ascii table\n"
+        +"\n\n"
+        +TauP_Tool.getStdUsageTail();
     }
 
     public void setModelName(String modelName) {

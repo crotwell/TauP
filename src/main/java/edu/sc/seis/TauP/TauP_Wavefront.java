@@ -74,27 +74,27 @@ public class TauP_Wavefront extends TauP_Path {
 
     /** Prints the command line arguments common to all TauP tools. */
     @Override
-    public void printStdUsage() {
-        printStdUsageHead();
-        printPhaseUsage();
+    public String getStdUsage() {
+        return getStdUsageHead()
+        +getPhaseUsage();
     }
 
-    public void printLimitUsage() {
-        Alert.info("--gmt             -- outputs path as a complete GMT script.\n"
+    public String getLimitUsage() {
+        return "--gmt             -- outputs path as a complete GMT script.\n"
                 +"--svg             -- outputs path as a complete SVG file.\n"
-                +"--mapwidth        -- sets map width for GMT script."
-                );
+                +"--mapwidth        -- sets map width for GMT script.\n"
+                ;
     }
 
     @Override
-    public void printUsage() {
-        printStdUsage();
-        printLimitUsage();
-        System.out.println("--rays  num      -- number of raypaths/distances to sample.");
-        System.out.println("--timestep  num  -- steps in time (seconds) for output.");
-        System.out.println("--timefiles      -- outputs each time into a separate .ps file within the gmt script.");
-        System.out.println("--negdist        -- outputs negative distance as well so wavefronts are in both halves.");
-        printStdUsageTail();
+    public String getUsage() {
+        return getStdUsage()
+        +getLimitUsage()
+        +"--rays  num      -- number of raypaths/distances to sample.\n"
+        +"--timestep  num  -- steps in time (seconds) for output.\n"
+        +"--timefiles      -- outputs each time into a separate .ps file within the gmt script.\n"
+        +"--negdist        -- outputs negative distance as well so wavefronts are in both halves.\n"
+        +getStdUsageTail();
     }
 
     @Override

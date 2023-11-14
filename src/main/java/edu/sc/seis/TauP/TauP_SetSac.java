@@ -292,39 +292,39 @@ public class TauP_SetSac extends TauP_Time {
         }
     }
 
-    public void printStdUsage() {
+    public String getStdUsage() {
         String className = this.getClass().getName();
         className = className.substring(className.lastIndexOf('.') + 1,
                                         className.length());
-        System.out.println("Usage: " + className.toLowerCase() + " [arguments]");
-        System.out.println("  or, for purists, java "
-                + this.getClass().getName() + " [arguments]");
-        System.out.println("\nArguments are:");
-        System.out.println("-ph phase list     -- comma separated phase list,\n"
+        return "Usage: " + className.toLowerCase() + " [arguments]"
+        +"  or, for purists, java "
+                + this.getClass().getName() + " [arguments]"
+        +"\nArguments are:"
+        +"-ph phase list     -- comma separated phase list,\n"
                 + "                      use phase-# to specify the sac header,\n"
                 + "                      for example, ScS-8 puts ScS in t8\n"
                 + "-pf phasefile      -- file containing phases\n\n"
                 + "-mod[el] modelname -- use velocity model \"modelname\" for calculations\n"
-                + "                      Default is iasp91.\n\n");
+                + "                      Default is iasp91.\n\n";
     }
 
-    public void printUsageTail() {
-        System.out.println("\n"
+    public String getUsageTail() {
+        return "\n"
                 + "--prop [propfile]   -- set configuration properties\n"
                 + "--debug             -- enable debugging output\n"
                 + "--verbose           -- enable verbose output\n"
                 + "--version           -- print the version\n"
-                + "--help              -- print this out, but you already know that!\n");
+                + "--help              -- print this out, but you already know that!\n";
     }
 
-    public void printUsage() {
-        printStdUsage();
-        System.out.println("--evdpkm            -- sac depth header is in km, default is meters\n");
-        printUsageTail();
-        System.out.println("sacfilename [sacfilename ...]");
-        System.out.println("\nEx: taup_setsac "
-                + "--mod S_prem -ph S-8,ScS-9 wmq.r wmq.t wmq.z");
-        System.out.println("puts the first S arrival in T8 and ScS in T9");
+    public String getUsage() {
+        return getStdUsage()
+        +"--evdpkm            -- sac depth header is in km, default is meters\n"
+        +getUsageTail()
+        +"sacfilename [sacfilename ...]"
+        +"\nEx: taup_setsac "
+                + "--mod S_prem -ph S-8,ScS-9 wmq.r wmq.t wmq.z"
+        +"puts the first S arrival in T8 and ScS in T9";
     }
 
     public String[] parseCmdLineArgs(String[] args) throws IOException {

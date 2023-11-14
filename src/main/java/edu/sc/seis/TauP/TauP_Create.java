@@ -144,22 +144,22 @@ public class TauP_Create extends TauP_Tool {
     }
     
     
-    public void printUsage() {
+    public String getUsage() {
         String className = this.getClass().getName();
         className = className.substring(className.lastIndexOf('.') + 1,
                                         className.length());
-        System.out.println("Usage: " + className.toLowerCase() + " [arguments]");
-        System.out.println("  or, for purists, java "
-                + this.getClass().getName() + " [arguments]");
-        System.out.println("\nArguments are:");
-        System.out.println("\n   To specify the velocity model:");
-        System.out.println("-nd modelfile       -- \"named discontinuities\" velocity file");
-        System.out.println("-tvel modelfile     -- \".tvel\" velocity file, ala ttimes\n");
-        System.out.println("--debug              -- enable debugging output\n"
+        return "Usage: " + className.toLowerCase() + " [arguments]\n"
+        +"  or, for purists, java "
+                + this.getClass().getName() + " [arguments]\n"
+        +"\nArguments are:\n"
+        +"\n   To specify the velocity model:\n"
+        +"-nd modelfile       -- \"named discontinuities\" velocity file\n"
+        +"-tvel modelfile     -- \".tvel\" velocity file, ala ttimes\n\n"
+        +"--debug              -- enable debugging output\n"
                 + "--prop [propfile]    -- set configuration properties\n"
                 + "--verbose            -- enable verbose output\n"
                 + "--version            -- print the version\n"
-                + "--help               -- print this out, but you already know that!\n\n");
+                + "--help               -- print this out, but you already know that!\n\n";
     }
     
     public static boolean dashEquals(String argName, String arg) {

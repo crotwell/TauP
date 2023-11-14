@@ -29,16 +29,16 @@ public class TauP_Amp extends TauP_Curve {
         setDefaultOutputFormat();
     }
 
-    public void printUsage() {
-        printStdUsage();
-        System.out.println("--gmt              -- outputs curves as a complete GMT script.");
-        System.out.println("--svg              -- outputs curves as a SVG image.");
-        System.out.println("-reddeg velocity   -- outputs curves with a reducing velocity (deg/sec).");
-        System.out.println("-redkm velocity    -- outputs curves with a reducing velocity (km/sec).");
-        System.out.println("-rel phasename     -- outputs relative travel time");
-        System.out.println("--distancevertical -- distance on vertical axis, time horizontal");
-        System.out.println("--mapwidth width   -- sets map width for GMT script.");
-        printStdUsageTail();
+    public String getUsage() {
+        return getStdUsage()
+        +"--gmt              -- outputs curves as a complete GMT script."
+        +"--svg              -- outputs curves as a SVG image."
+        +"-reddeg velocity   -- outputs curves with a reducing velocity (deg/sec)."
+        +"-redkm velocity    -- outputs curves with a reducing velocity (km/sec)."
+        +"-rel phasename     -- outputs relative travel time"
+        +"--distancevertical -- distance on vertical axis, time horizontal"
+        +"--mapwidth width   -- sets map width for GMT script."
+        +getStdUsageTail();
     }
 
     public boolean isReduceTime() {

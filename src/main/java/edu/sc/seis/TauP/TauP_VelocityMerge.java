@@ -144,24 +144,24 @@ public class TauP_VelocityMerge extends TauP_Tool {
     }
 
     @Override
-    public void printUsage() {
+    public String getUsage() {
 
-        TauP_Tool.printStdUsageHead(this.getClass());
+        return TauP_Tool.getStdUsageHead(this.getClass())
 
-        System.out.println("-mod[el] modelname -- base velocity model \"modelname\" for calculations\n"
-                + "                      Default is iasp91.\n\n");
-        System.out.println("-nd modelfile       -- base \"named discontinuities\" velocity file");
-        System.out.println("-tvel modelfile     -- base \".tvel\" velocity file, ala ttimes\n");
-        System.out.println("-ndmerge modelfile       -- \"named discontinuities\" velocity file to merge");
-        System.out.println("-tvelmerge modelfile     -- \".tvel\" velocity file to merge, ala ttimes\n");
-        System.out.println("-smtop              -- smooth merge at top");
-        System.out.println("-smbot              -- smooth merge at bottom");
-        System.out.println();
-        System.out.println("--elevation         -- expand top layer for station at elevation");
-        System.out.println("                       may append m for meters, otherwise kilometers");
-        System.out.println("                       updates radius of earth");
-        System.out.println("--json             -- output model as json\n");
-        TauP_Tool.printStdUsageTail();
+        +"-mod[el] modelname -- base velocity model \"modelname\" for calculations\n"
+                + "                      Default is iasp91.\n\n\n"
+        +"-nd modelfile       -- base \"named discontinuities\" velocity file\n"
+        +"-tvel modelfile     -- base \".tvel\" velocity file, ala ttimes\n\n"
+        +"-ndmerge modelfile       -- \"named discontinuities\" velocity file to merge\n"
+        +"-tvelmerge modelfile     -- \".tvel\" velocity file to merge, ala ttimes\n\n"
+        +"-smtop              -- smooth merge at top\n"
+        +"-smbot              -- smooth merge at bottom\n\n"
+
+        +"--elevation         -- expand top layer for station at elevation\n"
+        +"                       may append m for meters, otherwise kilometers\n"
+        +"                       updates radius of earth\n"
+        +"--json             -- output model as json\n\n"
+        +TauP_Tool.getStdUsageTail();
     }
 
     @Override

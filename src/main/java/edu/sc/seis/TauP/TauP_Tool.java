@@ -184,7 +184,10 @@ public abstract class TauP_Tool {
     public abstract void init() throws TauPException;
     public abstract void start() throws IOException, TauModelException, TauPException;
     public abstract void destroy() throws TauPException;
-    public abstract void printUsage();
+    public abstract String getUsage();
+    public void printUsage() {
+        System.out.println(getUsage());
+    }
 
     /*
      * parses the standard command line args for the taup package. Other tools
@@ -280,30 +283,30 @@ public abstract class TauP_Tool {
         return toolName.toLowerCase();
     }
 
-    public static void printStdUsageHead(Class toolClass) {
+    public static String getStdUsageHead(Class toolClass) {
         String toolName = toolNameFromClass(toolClass);
-        Alert.info("Usage: " + toolName + " [arguments]");
-        Alert.info("  or, for purists, java " + toolClass.getName()
-                + " [arguments]");
-        Alert.info("\nArguments are:");
+        return "Usage: " + toolName + " [arguments]\n"
+        + "  or, for purists, java " + toolClass.getName()
+                + " [arguments]\n"
+        + "\nArguments are:\n";
     }
 
-    public static void printModDepthUsage() {
-        Alert.info("-mod[el] modelname -- use velocity model \"modelname\" for calculations\n"
+    public static String getModDepthUsage() {
+        return "-mod[el] modelname -- use velocity model \"modelname\" for calculations\n"
                 + "                      Default is iasp91.\n\n"
                 + "-h depth           -- source depth in km\n\n"
                 + "--stadepth depth   -- receiver depth in km\n"
-                + "--scat[ter] depth deg   -- scattering depth and distance\n"
-        );
+                + "--scat[ter] depth deg   -- scattering depth and distance\n\n"
+        ;
     }
 
-    public static void printStdUsageTail() {
-        Alert.info("\n-o [stdout|outfile]         -- output is redirected to stdout or to the \"outfile\" file\n"
+    public static String getStdUsageTail() {
+        return "\n-o [stdout|outfile]         -- output is redirected to stdout or to the \"outfile\" file\n"
                 + "--prop [propfile]   -- set configuration properties\n"
                 + "--debug             -- enable debugging output\n"
                 + "--verbose           -- enable verbose output\n"
                 + "--version           -- print the version\n"
-                + "--help              -- print this out, but you already know that!\n");
+                + "--help              -- print this out, but you already know that!\n";
     }
 
     public static void printNoComprendoArgs(String[] noComprendoArgs) {

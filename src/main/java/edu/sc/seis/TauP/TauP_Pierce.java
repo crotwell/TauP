@@ -318,32 +318,32 @@ public class TauP_Pierce extends TauP_Time {
         return false;
     }
 
-    public void printLimitUsage() {
-        Alert.info("--first            -- only output the first arrival for each phase, no triplications\n"
+    public String getLimitUsage() {
+        return "--first            -- only output the first arrival for each phase, no triplications\n"
 
                 +"-rev               -- only prints underside and bottom turn points, e.g. ^ and v\n"
         +"-turn              -- only prints bottom turning points, e.g. v\n"
         +"-under             -- only prints underside reflection points, e.g. ^\n\n"
         +"-pierce depth      -- adds depth for calculating pierce points\n"
-        +"-nodiscon          -- only prints pierce points for the depths added with -pierce\n"
-        );
+        +"-nodiscon          -- only prints pierce points for the depths added with -pierce\n\n"
+        ;
     }
 
     /** prints the known command line flags. */
-    public void printUsage() {
-        printStdUsage();
-        System.out.println("-az azimuth        -- sets the azimuth (event to station)\n"
+    public String getUsage() {
+        return getStdUsage()
+        +"-az azimuth        -- sets the azimuth (event to station)\n"
                 + "                      used to output lat and lon of pierce points\n"
                 + "                      if the event lat lon and distance are also\n"
                 + "                      given. Calculated if station and event\n"
-                + "                      lat and lon are given.");
-        System.out.println("-baz backazimuth   -- sets the back azimuth (station to event)\n"
+                + "                      lat and lon are given.\n"
+                + "-baz backazimuth   -- sets the back azimuth (station to event)\n"
                 + "                      used to output lat and lon of pierce points\n"
                 + "                      if the station lat lon and distance are also\n"
                 + "                      given. Calculated if station and event\n"
-                + "                      lat and lon are given.\n");
-        printLimitUsage();
-        printStdUsageTail();
+                + "                      lat and lon are given.\n\n"
+        + getLimitUsage()
+        + getStdUsageTail();
     }
 
     public String[] parseCmdLineArgs(String[] args) throws IOException {

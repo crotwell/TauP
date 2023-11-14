@@ -598,19 +598,19 @@ public class TauP_Path extends TauP_Pierce {
     }
 
 
-	public void printLimitUsage() {
-		Alert.info("--first            -- only output the first arrival for each phase, no triplications\n"
+	public String getLimitUsage() {
+		return "--first            -- only output the first arrival for each phase, no triplications\n"
 				+"--withtime        -- include time for each path point\n"
 				+"--gmt             -- outputs path as a complete GMT script.\n"
 				+"--svg             -- outputs path as a complete SVG file.\n"
-				+"--mapwidth        -- sets map width for GMT script."
-				);
+				+"--mapwidth        -- sets map width for GMT script.\n"
+				;
 	}
 
-	public void printUsage() {
-		printStdUsage();
-		printLimitUsage();
-		printStdUsageTail();
+	public String getUsage() {
+		return getStdUsage()
+		+ getLimitUsage()
+		+ getStdUsageTail();
 	}
 
 	public String[] parseCmdLineArgs(String[] args) throws IOException {
