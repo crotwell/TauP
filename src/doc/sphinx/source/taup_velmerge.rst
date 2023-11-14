@@ -41,31 +41,5 @@ model does not have to start at the surface, it can be just a
 range of depths.
 
 The usage is:
-\begin{verbatim}
-piglet 1>taup velmerge --help
-Usage: taup velmerge [arguments]
-  or, for purists, java edu.sc.seis.TauP.TauP_VelocityMerge [arguments]
 
-Arguments are:
--mod[el] modelname -- base velocity model "modelname" for calculations
-                      Default is iasp91.
-
-
--nd modelfile       -- base "named discontinuities" velocity file
--tvel modelfile     -- base ".tvel" velocity file, ala ttimes
-
--ndmerge modelfile       -- "named discontinuities" velocity file to merge
--tvelmerge modelfile     -- ".tvel" velocity file to merge, ala ttimes
-
--smtop              -- smooth merge at top
-
--smbot              -- smooth merge at bottom
-
-
--o [stdout|outfile]         -- output is redirected to stdout or to the "outfile" file
---prop [propfile]   -- set configuration properties
---debug             -- enable debugging output
---verbose           -- enable verbose output
---version           -- print the version
---help              -- print this out, but you already know that!
-\end{verbatim}
+.. literalinclude:: cmdLineHelp/taup_velmerge.usage

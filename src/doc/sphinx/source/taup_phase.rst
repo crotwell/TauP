@@ -20,30 +20,5 @@ P going up   as a P in the crust/mantle, layer 6 to 0, depths 2891.0 to 0.0, the
 \end{verbatim}
 
 The usage is:
-\begin{verbatim}
-piglet 1> taup phase --help
-Usage: arraylist [arguments]
-  or, for purists, java java.util.ArrayList [arguments]
 
-Arguments are:
--ph phase list     -- comma separated phase list
--pf phasefile      -- file containing phases
-
--mod[el] modelname -- use velocity model "modelname" for calculations
-                      Default is iasp91.
-
--h depth           -- source depth in km
-
---stadepth depth   -- receiver depth in km
-
---dump             -- dump raw sample points
-
-
-
--o [stdout|outfile]         -- output is redirected to stdout or to the "outfile" file
---prop [propfile]   -- set configuration properties
---debug             -- enable debugging output
---verbose           -- enable verbose output
---version           -- print the version
---help              -- print this out, but you already know that!
-\end{verbatim}
+.. literalinclude:: cmdLineHelp/taup_phase.usage

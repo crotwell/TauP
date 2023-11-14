@@ -22,33 +22,6 @@ sh taup_curve.gmt
 
 and you have a plot of the wavefronts in ``taup\_curve.pdf''.
 
-The uasage is:
-\begin{verbatim}
-piglet 6>taup curve --help
-Usage: taup_curve [arguments]
-  or, for purists, java edu.sc.seis.TauP.TauP_Curve [arguments]
+The usage is:
 
-Arguments are:
--ph phase list     -- comma separated phase list
--pf phasefile      -- file containing phases
-
--mod[el] modelname -- use velocity model "modelname" for calculations
-                      Default is iasp91.
-
--h depth           -- source depth in km
-
-
---gmt              -- outputs curves as a complete GMT script.
---svg              -- outputs curves as a SVG image.
--reddeg velocity   -- outputs curves with a reducing velocity (deg/sec).
--redkm velocity    -- outputs curves with a reducing velocity (km/sec).
--rel phasename     -- outputs relative travel time
---mapwidth width   -- sets map width for GMT script.
-
--o [stdout|outfile]         -- output is redirected to stdout or to the "outfile" file
---prop [propfile]   -- set configuration properties
---debug             -- enable debugging output
---verbose           -- enable verbose output
---version           -- print the version
---help              -- print this out, but you already know that!
-\end{verbatim}
+.. literalinclude:: cmdLineHelp/taup_curve.usage

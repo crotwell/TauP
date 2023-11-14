@@ -51,33 +51,5 @@ If the given filename is a directory, TauP\_SetSac will recursively look for fil
 a large directory structure of Sac files can be processed easily.
 
 The usage is:
-\begin{verbatim}
-piglet 7>taup setsac --help
-Usage: taup_setsac [arguments]
-  or, for purists, java edu.sc.seis.TauP.TauP_SetSac [arguments]
 
-Arguments are:
--ph phase list     -- comma separated phase list,
-                      use phase-# to specify the sac header,
-                      for example, ScS-8 puts ScS in t8
--pf phasefile      -- file containing phases
-
--mod[el] modelname -- use velocity model "modelname" for calculations
-                      Default is iasp91.
-
-
---evdpkm            -- sac depth header is in km, default is meters
-
-
---prop [propfile]   -- set configuration properties
---debug             -- enable debugging output
---verbose           -- enable verbose output
---version           -- print the version
---help              -- print this out, but you already know that!
-
-sacfilename [sacfilename ...]
-
-Ex: taup_setsac --mod S_prem -ph S-8,ScS-9,PKP-a2 wmq.r wmq.t wmq.z
-puts the first S arrival in T8 and ScS in T9, and the first PKP arrival into A
-and the second into T2
-\end{verbatim}
+.. literalinclude:: cmdLineHelp/taup_setsac.usage

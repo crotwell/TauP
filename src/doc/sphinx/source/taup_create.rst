@@ -16,23 +16,10 @@ and effectively call TauP\_Create internally. However, if a model file will be u
 precomputed {\texttt .taup} file is more efficient.
 
 The usage is:
-\begin{verbatim}
-piglet 8>taup create --help
-Usage: taup_create [arguments]
-  or, for purists, java edu.sc.seis.TauP.TauP_Create [arguments]
 
-Arguments are:
+.. literalinclude:: cmdLineHelp/taup_create.usage
 
-   To specify the velocity model:
--nd modelfile       -- "named discontinuities" velocity file
--tvel modelfile     -- ".tvel" velocity file, ala ttimes
 
---debug              -- enable debugging output
---prop [propfile]    -- set configuration properties
---verbose            -- enable verbose output
---version            -- print the version
---help               -- print this out, but you already know that!
-\end{verbatim}
 
 :code:`modelfile` is the ASCII text file holding the velocity model.
 The :code:`-nd` format is preferred

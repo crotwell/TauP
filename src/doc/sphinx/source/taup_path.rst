@@ -22,45 +22,5 @@ phases like :code:`Sdiff`, the ray paths are interpolated to less than
 1 degree increments.
 
 The usage is:
-\begin{verbatim}
-piglet 5>taup path --help
-Usage: taup path [arguments]
-  or, for purists, java edu.sc.seis.TauP.TauP_Path [arguments]
 
-Arguments are:
--ph phase list     -- comma separated phase list
--pf phasefile      -- file containing phases
-
--mod[el] modelname -- use velocity model "modelname" for calculations
-                      Default is iasp91.
-
--h depth           -- source depth in km
-
---stadepth depth   -- receiver depth in km
-
-Distance is given by:
-
--deg degrees       -- distance in degrees,
--km kilometers     -- distance in kilometers,
-                      assumes radius of earth is 6371km,
-
-or by giving the station and event latitude and lonitude,
-                      assumes a spherical earth,
-
--sta[tion] lat lon -- sets the station latitude and longitude
--evt       lat lon -- sets the event latitude and longitude
-
-
---first            -- only output the first arrival for each phase, no triplications
---withtime        -- include time for each path point
---gmt             -- outputs path as a complete GMT script.
---svg             -- outputs path as a complete SVG file.
---mapwidth        -- sets map width for GMT script.
-
--o [stdout|outfile]         -- output is redirected to stdout or to the "outfile" file
---prop [propfile]   -- set configuration properties
---debug             -- enable debugging output
---verbose           -- enable verbose output
---version           -- print the version
---help              -- print this out, but you already know that!
-\end{verbatim}
+.. literalinclude:: cmdLineHelp/taup_path.usage
