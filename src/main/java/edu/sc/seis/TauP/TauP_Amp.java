@@ -259,18 +259,24 @@ public class TauP_Amp extends TauP_Curve {
                         out.print("<polyline class=\"autocolor\" points=\"");
                     }
                 }
+                boolean lastWasValid = true;
                 for(int i = 0; i < xaxisValues.length; i++) {
-                    if (i < xaxisValues.length - 1 && calcAmpValue(xaxisValues[i], amp[i])[0] < minAmp) {
+                    if (i < xaxisValues.length - 1 && ( !Double.isFinite(amp[i]) || calcAmpValue(xaxisValues[i], amp[i])[0] < minAmp)) {
                         // lots of lines off the bottom of the screen are distracting
-                        if (outputFormat.equals(GMT)) {
-                            out.println("> amp below min");
-                        } else if (outputFormat.equals(SVG)) {
-                            out.println("\" />");
-                            out.println("<!-- amp below min, create gap -->");
-                            out.print("<polyline class=\"autocolor\" points=\"");
+                        if (lastWasValid) {
+                            // only need to print warning once, not for every value
+                            if (outputFormat.equals(GMT)) {
+                                out.println("> amp below min");
+                            } else if (outputFormat.equals(SVG)) {
+                                out.println("\" />");
+                                out.println("<!-- amp below min, create gap -->");
+                                out.print("<polyline class=\"autocolor\" points=\"");
+                            }
+                            lastWasValid = false;
                         }
                     } else {
                         writeValue(xaxisValues[i], amp[i], relPhases, out, distHorizontal);
+                        lastWasValid = true;
                     }
                     if(i < xaxisValues.length - 1 && (rayParams[i] == rayParams[i + 1])
                             && rayParams.length > 2) {
