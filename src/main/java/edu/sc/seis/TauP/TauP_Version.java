@@ -74,7 +74,7 @@ public class TauP_Version extends TauP_Tool {
     @Override
     public String getUsage() {
         return TauP_Tool.getStdUsageHead(this.getClass())
-                + "--json             -- output travel times as json\n\n"
+                + "--json             -- output version as json\n\n"
                 + TauP_Tool.getStdUsageTail();
     }
 

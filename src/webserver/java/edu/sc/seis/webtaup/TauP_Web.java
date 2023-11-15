@@ -55,12 +55,12 @@ public class TauP_Web extends TauP_Tool {
 
                     public void handleTauPRequest(final HttpServerExchange exchange) throws Exception {
                         String path = exchange.getRequestPath().substring(1); // trim first slash
-                        System.err.println("handleRequest "+path);
+                        System.err.println("handleRequest "+path+" from "+exchange.getRequestPath());
                         TauP_Tool tool = createTool(path);
                         Map<String, Deque<String>> queryParams = exchange.getQueryParameters();
                         Set<String> unknownKeys;
                         if (tool != null) {
-                            System.err.println("Handle via TauP Tool:" + exchange.getRequestPath());
+                            System.err.println("Handle via TauP Tool:" + path);
                             unknownKeys = configTool(tool, queryParams);
                             unknownKeys.remove(QP_DISTDEG);
                             unknownKeys.remove(QP_TAKEOFF);
@@ -139,6 +139,12 @@ public class TauP_Web extends TauP_Tool {
                                 tool.start();
                                 configContentType(tool.outputFormat, exchange);
                                 exchange.getResponseSender().send(out.toString());
+                            } else if (tool instanceof TauP_Version){
+                                tool.setWriter(pw);
+                                tool.printScriptBeginning(pw);
+                                tool.start();
+                                configContentType(tool.outputFormat, exchange);
+                                exchange.getResponseSender().send(out.toString());
                             } else {
                                 System.err.println("Use other tool, likely doesn't work...");
                                 tool.setWriter(pw);
@@ -198,39 +204,10 @@ public class TauP_Web extends TauP_Tool {
     }
 
     public TauP_Tool createTool(String toolToRun) throws TauPException {
-        TauP_Tool tool = null;
-        if (toolToRun.contentEquals(ToolRun.CREATE)) {
-            tool = new TauP_Create();
-        } else if (toolToRun.contentEquals(ToolRun.AMP)) {
-            tool = new TauP_Amp();
-        } else if (toolToRun.contentEquals(ToolRun.CURVE)) {
-            tool = new TauP_Curve();
-        } else if (toolToRun.contentEquals(ToolRun.PATH)) {
-            tool = new TauP_Path();
-        } else if (toolToRun.contentEquals(ToolRun.PHASE)) {
-            tool = new TauP_PhaseDescribe();
-        } else if (toolToRun.contentEquals(ToolRun.PIERCE)) {
-            tool = new TauP_Pierce();
-        } else if (toolToRun.contentEquals(ToolRun.SPLOT)) {
-            tool = new TauP_SlownessPlot();
-        } else if (toolToRun.contentEquals(ToolRun.TABLE)) {
-            //tool = new TauP_Table();
-            tool = null;
-        } else if (toolToRun.contentEquals(ToolRun.TIME)) {
-            tool = new TauP_Time();
-        } else if (toolToRun.contentEquals(ToolRun.VPLOT)) {
-            tool = new TauP_VelocityPlot();
-        } else if (toolToRun.contentEquals(ToolRun.VELMERGE)) {
-            tool = new TauP_VelocityMerge();
-        } else if (toolToRun.contentEquals(ToolRun.WAVEFRONT)) {
-            tool = new TauP_Wavefront();
-        } else if (toolToRun.contentEquals(ToolRun.REFLTRANSPLOT)) {
-            tool = new TauP_ReflTransPlot();
-        } else if (toolToRun.contentEquals(ToolRun.VERSION)) {
-            tool = new TauP_Version();
-        } else {
+        TauP_Tool tool = ToolRun.getToolForName(toolToRun);
+        // special cases:
+        if (tool == null) {
             System.err.println("Tool '"+toolToRun+"' not recognized.");
-            printUsage();
         }
         return tool;
     }
