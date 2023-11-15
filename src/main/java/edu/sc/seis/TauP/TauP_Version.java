@@ -17,7 +17,26 @@ public class TauP_Version extends TauP_Tool {
 
     @Override
     protected String[] parseCmdLineArgs(String[] origArgs) throws IOException {
-        return super.parseCommonCmdLineArgs(origArgs);
+        String[] args = super.parseCommonCmdLineArgs(origArgs);
+        String[] noComprendoArgs = new String[args.length];
+        int numNoComprendoArgs = 0;
+        int i = 0;
+        while(i < args.length) {
+            if(dashEquals("json", args[i])) {
+                outputFormat = TauP_Tool.JSON;
+            } else {
+                /* I don't know how to interpret this argument, so pass it back */
+                noComprendoArgs[numNoComprendoArgs++] = args[i];
+            }
+            i++;
+        }
+        if(numNoComprendoArgs > 0) {
+            String[] temp = new String[numNoComprendoArgs];
+            System.arraycopy(noComprendoArgs, 0, temp, 0, numNoComprendoArgs);
+            return temp;
+        } else {
+            return new String[0];
+        }
     }
 
     @Override
@@ -55,6 +74,7 @@ public class TauP_Version extends TauP_Tool {
     @Override
     public String getUsage() {
         return TauP_Tool.getStdUsageHead(this.getClass())
+                + "--json             -- output travel times as json\n\n"
                 + TauP_Tool.getStdUsageTail();
     }
 
