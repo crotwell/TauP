@@ -21,21 +21,28 @@
       input[type="number"] {
         width: 100px;
       }
+      .oneline {
+        display: flex;
+      }
+      .oneline h3 {
+        margin-right: 1em;
+      }
     </style>
 </head>
 <body>
+  <div class="oneline">
 <h3>The TauP Toolkit,</h3>
 <h5>Preview version 3.0 Snapshot, web enabled.
-  <a href="http://www.seis.sc.edu/downloads/TauP/taup.pdf">Documentation</a></h5>
+  <a href="doc/index.html" target="_blank">Documentation</a></h5>
 <a href="http://www.seis.sc.edu/taup"><h5>http://www.seis.sc.edu/taup</h5></a>
-
+</div>
 
 <details open="true">
-  <summary>Parameters</summary>
+  <summary>Parameters for: <span><a target="_blank" href="" id="taup_url"></a></span></summary>
 
 <form>
     <fieldset>
-        <legend>Velocity Model:</legend>
+        <legend><a href="doc/models.html" target="_blank">Velocity Model:</a></legend>
         <input type="radio" name="model" id="iasp91" value="iasp91" checked/>
         <label for="iasp91">iasp91</label>
         <input type="radio" name="model" id="ak135" value="ak135" />
@@ -50,7 +57,7 @@
 
     <fieldset class="phase_depth">
         <label for="phases">
-            <span>Phases: </span>
+            <span><a href="doc/phaseNaming.html" target="_blank">Phases:</a> </span>
         </label>
         <input class="biginput" type="text" id="phases" name="phases" value="P,S"  />
 
@@ -267,31 +274,43 @@
     <fieldset class="tools">
         <legend>Tools:</legend>
         <input type="radio" name="tool" id="tool_time" value="time" checked />
-        <label for="tool_time">Time</label>
+        <label for="tool_time">
+          <a href="doc/taup_time.html" target="_blank">Time</a></label>
         <input type="radio" name="tool" id="tool_pierce" value="pierce" />
-        <label for="tool_pierce">Pierce</label>
+        <label for="tool_pierce">
+          <a href="doc/taup_pierce.html" target="_blank">Pierce</a></label>
         <input type="radio" name="tool" id="tool_path" value="path" />
-        <label for="tool_path">Path</label>
+        <label for="tool_path">
+          <a href="doc/taup_path.html" target="_blank">Path</a></label>
         <input type="radio" name="tool" id="tool_curve" value="curve" />
-        <label for="tool_curve">Curve</label>
-        <input type="radio" name="tool" id="tool_wavefront" value="wavefront" />
-        <label for="tool_wavefront">Wavefront</label>
-        <input type="radio" name="tool" id="tool_phase" value="phase" />
-        <label for="tool_phase">Describe</label>
-        <input type="radio" name="tool" id="tool_velplot" value="velplot" />
-        <label for="tool_velplot">Vel Model</label>
-        <input type="radio" name="tool" id="tool_slow" value="slowplot" />
-        <label for="tool_slow">Slow Model</label>
-        <input type="radio" name="tool" id="tool_refltrans" value="refltrans" />
-        <label for="tool_refltrans">Refl Trans</label>
+        <label for="tool_curve">
+          <a href="doc/taup_curve.html" target="_blank">Curve</a></label>
         <input type="radio" name="tool" id="tool_amp" value="amp" />
-        <label for="tool_amp">Amplitude Curve</label>
+        <label for="tool_amp">
+          <a href="doc/taup_amp.html" target="_blank">Amplitude Curve</a></label>
+        <input type="radio" name="tool" id="tool_wavefront" value="wavefront" />
+        <label for="tool_wavefront">
+          <a href="doc/taup_wavefront.html" target="_blank">Wavefront</a></label>
+        <input type="radio" name="tool" id="tool_phase" value="phase" />
+        <label for="tool_phase">
+          <a href="doc/taup_phase.html" target="_blank">Describe</a></label>
+        <input type="radio" name="tool" id="tool_velplot" value="velplot" />
+        <label for="tool_velplot">
+          <a href="doc/taup_velplot.html" target="_blank">Vel Model</a></label>
+        <input type="radio" name="tool" id="tool_slow" value="slowplot" />
+        <label for="tool_slow">
+          <a href="doc/taup_slowplot.html" target="_blank">Slow Model</a></label>
+        <input type="radio" name="tool" id="tool_refltrans" value="refltrans" />
+        <label for="tool_refltrans">
+          <a href="doc/taup_refltrans.html" target="_blank">Refl Trans</a></label>
+        <input type="radio" name="tool" id="tool_version" value="version" />
+        <label for="tool_version">
+          <a href="doc/taup_version.html" target="_blank">Version</a></label>
     </fieldset>
 </form>
 
 </details>
 
-<p><a href="" id="taup_url"></a></p>
 <div id="results">
 </div>
 <script type="module" >
