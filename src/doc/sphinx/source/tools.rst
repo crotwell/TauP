@@ -3,31 +3,50 @@
 Tools
 =====
 
+
+.. toctree::
+    :hidden:
+
+    taup_time
+    taup_pierce
+    taup_path
+    taup_curve
+    taup_phase
+    taup_table
+    taup_setsac
+    taup_velplot
+    taup_slowplot
+    taup_velmerge
+    taup_wavefront
+    taup_create
+    taup_gui
+
+
 Tools included with the TauP package:
 
-======================   =========================================================================
-:code:`taup time`        calculates travel times.
-:code:`taup pierce`      calculates pierce points at model discontinuities and specified depths.
-:code:`taup path`        calculates ray paths, depth versus epicentral distance.
-:code:`taup wavefront`   calculates wavefronts in steps of time, depth versus epicentral distance.
-:code:`taup gui`         a GUI that incorporates the time, pierce and path tools.
-:code:`taup curve`       calculates travel time curves, time versus epicentral distance.
-:code:`taup table`       outputs travel times for a range of depths and distances in an ASCII file
-:code:`taup setsac`      puts theoretical arrival times into sac header variables.
-:code:`taup velplot`     output velocity model as a gmt script.
-:code:`taup slowplot`    output slowness model as a gmt script.
-:code:`taup phase`       textual description of the path the phase takes through the model.
-:code:`taup create`      creates a .taup model from a velocity model.
-======================   =========================================================================
+=======================   =========================================================================
+:code:`taup time`         calculates travel times.
+:code:`taup pierce`       calculates pierce points at model discontinuities and specified depths.
+:code:`taup path`         calculates ray paths, depth versus epicentral distance.
+:code:`taup wavefront`    calculates wavefronts in steps of time, depth versus epicentral distance.
+:code:`taup gui`          a GUI that incorporates the time, pierce and path tools.
+:code:`taup curve`        calculates travel time curves, time versus epicentral distance.
+:code:`taup table`        outputs travel times for a range of depths and distances in an ASCII file
+:code:`taup setsac`       puts theoretical arrival times into sac header variables.
+:code:`taup velplot`      output velocity model as a gmt script.
+:code:`taup slowplot`     output slowness model as a gmt script.
+:code:`taup phase`        textual description of the path the phase takes through the model.
+:code:`taup create`       creates a .taup model from a velocity model.
+=======================   =========================================================================
 
 Each tool is a Java application and has an associated wrapper to make
 execution easier: sh scripts
 for \textsc{Unix} and
 bat files for windows.  The applications are machine independent but the
 wrappers are OS specific.
-For example, to invoke TauP\_Time under \textsc{Unix}, you could type
+For example, to invoke TauP Time under \textsc{Unix}, you could type
 
-:code:`java -Dtaup.model.path=\$\{TAUPPATH\} edu.sc.seis.TauP.TauP\_Time -mod prem`
+:code:`java -Dtaup.model.path=\$\{TAUPPATH\} edu.sc.seis.TauP.TauP Time -mod prem`
 
 or simply use the script that does the same thing,
 
@@ -42,6 +61,7 @@ two commands produce the same result, but the first is
 preferred and the second style will be removed in version 3.0.
 
 :code:`taup time -mod prem -deg 30 -ph P`
+
 :code:`taup\_time -mod prem -deg 30 -ph P`
 
 ------------------
@@ -119,22 +139,22 @@ Note that this is precision, not accuracy. Just because you get more
 \item[taup.table.locsat.maxdiff] maximum distance in degrees for which Pdiff
 or Sdiff are put into a locsat table. Beyond this distance Pdiff and Sdiff will
 not be added to the table, even though they may show up in the output of
-TauP\_Time. Instead, the next later arriving phase, if any, will be used
+TauP Time. Instead, the next later arriving phase, if any, will be used
 instead. The default is 105 degrees.
 \item[taup.create.minDeltaP] Minimum difference in slowness between
 successive slowness samples. This is used to decide when to stop adding new
 samples due to the distance check.
-Used by TauP\_Create to create new models.
+Used by TauP Create to create new models.
 The default is 0.1 sec/rad.
 \item[taup.create.maxDeltaP] Maximum difference in slowness between
 successive slowness samples. This is used to split any layers that exceed
 this slowness gap.
-Used by TauP\_Create to create new models.
+Used by TauP Create to create new models.
  The default is 11.0 sec/rad.
 \item[taup.create.maxDepthInterval] Maximum difference between successive depth
 samples. This is used immediately after reading in a velocity model, with
 layers being split as needed.
-Used by TauP\_Create to create new models.
+Used by TauP Create to create new models.
  The default is 115 km.
 \item[taup.create.maxRangeInterval] Maximum difference between successive
 ranges, in degrees. If the difference in distance for two adjacent rays
@@ -142,17 +162,17 @@ is greater than this, then a new slowness sample is inserted halfway between
 the two existing slowness samples.
 The default is 2.5 degrees.
 \item[taup.create.maxInterpError] Maximum error for linear interpolation
- between successive sample in seconds. TauP\_Create uses this to try to insure
+ between successive sample in seconds. TauP Create uses this to try to insure
 that the maximum error due to linear interpolation is less than this amount.
 Of course, this is only an approximation based upon an estimate of the
  curvature of the travel time curve for surface focus turning waves.
 In particular, the error for more complicated phases is greater. For instance,
 if the true error for P at 30 degrees is 0.03 seconds, then the error for
 PP at 60 degrees would be twice that, 0.06 seconds.
-Used by TauP\_Create to create new models. The default is 0.05 seconds.
+Used by TauP Create to create new models. The default is 0.05 seconds.
 \item[taup.create.allowInnerCoreS] Should we allow J phases, S in
 the inner core?
-Used by TauP\_Create to create new models.
+Used by TauP Create to create new models.
  The default is true. Setting it to false slightly reduces storage and model
 load time.
 \end{description}
@@ -167,3 +187,17 @@ Also, for compatiblity with \textit{ttimes}, you may specify
 :code:`ttp`, :code:`ttp+`, :code:`tts`, :code:`tts+`,
 :code:`ttbasic` or :code:`ttall` to get a phase list corresponding
 to the \textit{ttimes} options.
+
+.. include:: taup_time
+.. include:: taup_pierce
+.. include:: taup_path
+.. include:: taup_curve
+.. include:: taup_phase
+.. include:: taup_table
+.. include:: taup_setsac
+.. include:: taup_velplot
+.. include:: taup_slowplot
+.. include:: taup_velmerge
+.. include:: taup_wavefront
+.. include:: taup_create
+.. include:: taup_gui

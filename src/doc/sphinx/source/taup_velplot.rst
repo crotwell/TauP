@@ -1,9 +1,9 @@
 
 -----------------
-TauP_VelocityPlot
+TauP VelocityPlot
 -----------------
 
-TauP\_VelocityPlot outputs a gmt script that plots the given velocity model.
+TauP VelocityPlot outputs a gmt script that plots the given velocity model.
 
 The usage is:
 

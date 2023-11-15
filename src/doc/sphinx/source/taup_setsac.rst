@@ -1,9 +1,9 @@
 
 -----------
-TauP_SetSac
+TauP SetSac
 -----------
 
-TauP\_SetSac uses the depth and distance information in
+TauP SetSac uses the depth and distance information in
 \textsc{sac}~\cite{sacmanual}
  file headers to
 put theoretical arrival times into the :code:`t0`--:code:`t9`
@@ -12,19 +12,19 @@ a dash followed by a number, for instance :code:`S-9` puts the S arrival time
 in :code:`t9`. If no header is specified then the time will be inserted in the
 first header variable not allocated to another phase, starting with 0.
 If there are no header variables not already allocated to a phase, then the
-additional phases will not be added to the header. Note that this does not refer to times that are already in the \textsc{sac} file before TauP\_SetSac is run. They will be overwritten. The ray parameter, in seconds per radian, is also
+additional phases will not be added to the header. Note that this does not refer to times that are already in the \textsc{sac} file before TauP SetSac is run. They will be overwritten. The ray parameter, in seconds per radian, is also
 inserted into the corresponding :code:`user0`-:code:`user9` header.
 
 Note that triplicated phases are a problem as there is only one
 spot to put a time. For example, in iasp91 S has three arrivals at 20~degrees but only
-one can be put into the choosen header. TauP\_SetSac assumes that the first arrival
+one can be put into the choosen header. TauP SetSac assumes that the first arrival
 is the most important, and uses it. Additional header variables may be appended for
 the times of the multiples. For example, S-458 would put the first S arrival into
 header :code:`t4` and the second into :code:`t5` and the thrid into :code:`t8`.
 If there are more arrivals than headers, the later arrivals are not added. If there are
 more headers than arrivals, then the header is not set.
 
-\textbf{Warning:} TauP\_SetSac assumes the \textsc{evdp} header has depth in meters unless
+\textbf{Warning:} TauP SetSac assumes the \textsc{evdp} header has depth in meters unless
 the -evdpkm
 flag is used, in which case kilometers are assumed. This may be a problem for
 users that improperly use kilometers for the depth units. Due to much
@@ -37,17 +37,17 @@ manual~\cite{sacmanual} for confirmation.
 
 The \textsc{sac} files must have \textsc{evdp} and the \textsc{o} marker set.
 Also, if \textsc{gcarc} or \textsc{dist} is not
-set then TauP\_SetSac can calculate a distance only if
+set then TauP SetSac can calculate a distance only if
 \textsc{stla}, \textsc{stlo}, \textsc{evla} and \textsc{evlo}
 are set.
 
 The user should be very careful about previously set header variables.
-TauP\_SetSac will
+TauP SetSac will
 overwrite any previously set :code:`t` :code:`user` headers. A future feature may do
 more careful checking, but the current version makes no effort to verify that
 the header is undefined before writing.
 
-If the given filename is a directory, TauP\_SetSac will recursively look for files within that directory to process. Thus,
+If the given filename is a directory, TauP SetSac will recursively look for files within that directory to process. Thus,
 a large directory structure of Sac files can be processed easily.
 
 The usage is:

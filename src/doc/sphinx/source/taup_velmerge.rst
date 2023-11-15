@@ -1,9 +1,9 @@
 
 ------------------
-TauP_VelocityMerge
+TauP VelocityMerge
 ------------------
 
-TauP\_VelocityMerge overlays a partial velocity model over the given base velocity model. This makes is easy to overlay a new crust and
+TauP VelocityMerge overlays a partial velocity model over the given base velocity model. This makes is easy to overlay a new crust and
 upper mantle structure on an existing global model. For example
 if dumbcrust.nd contains:
 \begin{verbatim}

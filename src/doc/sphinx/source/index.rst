@@ -9,23 +9,11 @@ Welcome to TauP's documentation!
 .. toctree::
     :maxdepth: 2
     :caption: Contents:
+    :includehidden:
 
     overview
     distribution
     tools
-    taup_time
-    taup_pierce
-    taup_path
-    taup_curve
-    taup_phase
-    taup_table
-    taup_setsac
-    taup_velplot
-    taup_slowplot
-    taup_velmerge
-    taup_wavefront
-    taup_create
-    taup_gui
     phaseNaming
     models
 

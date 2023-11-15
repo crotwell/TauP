@@ -1,9 +1,9 @@
 
 -----------------
-TauP_SlownessPlot
+TauP SlownessPlot
 -----------------
 
-TauP\_SlownessPlot outputs a gmt script that plots the given slowness model.
+TauP SlownessPlot outputs a gmt script that plots the given slowness model.
 
 The usage is:
 

@@ -1,9 +1,9 @@
 
 ----------
-TauP_Table
+TauP Table
 ----------
 
-TauP\_Table creates an ASCII table of arrival times for a range of depths and
+TauP Table creates an ASCII table of arrival times for a range of depths and
 distances. Its main use is for generating travel time tables for earthquake
 location programs such as LOCSAT. The :code:`--generic` flag generates a flat
 table with all arrivals at each depth and distance, one arrival per line.

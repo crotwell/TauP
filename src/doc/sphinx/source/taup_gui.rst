@@ -1,6 +1,6 @@
 
 ----------
-TauP_GUI
+TauP GUI
 ----------
 
 TauP\_GUI is unlike the rest of the tools in that it doesn't have any functionality

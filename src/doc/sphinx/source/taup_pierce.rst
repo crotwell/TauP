@@ -1,9 +1,9 @@
 
 ------------
-TauP_Pierce
+TauP Pierce
 ------------
 
-TauP\_Pierce uses a model like TauP\_Time but
+TauP Pierce uses a model like TauP Time but
 determines the
 angular distances from the epicenter at which the specified rays pierce
 discontinuities or specified depths in the model.
