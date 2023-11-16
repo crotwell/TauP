@@ -55,8 +55,7 @@ public class CmdLineOutputTest {
     String[] phaseDescribeTestCmds = new String[] {
             "taup phase -ph Pdiff",
             "taup phase -ph P410diff",
-            "taup phase -ph Pv410p",
-            "taup phase -ph PV410p",
+            "taup phase -ph Pv410p,PV410p",
             "taup phase -ph P410s",
             "taup phase -ph P410S",
             "taup phase -ph Ped410S",
@@ -140,6 +139,7 @@ public class CmdLineOutputTest {
         allList.addAll(Arrays.asList(wavefrontTestCmds));
         allList.addAll(Arrays.asList(velplotTestCmds));
         allList.addAll(Arrays.asList(reflTransPlotTestCmds));
+        allList.addAll(Arrays.asList(phaseDescribeTestCmds));
         for (String cmd : allList) {
             System.err.println(cmd);
             saveTestOutputToFile(cmd);

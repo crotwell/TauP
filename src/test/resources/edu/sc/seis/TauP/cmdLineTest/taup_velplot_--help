@@ -13,6 +13,8 @@ Arguments are:
 --stadepth depth   -- receiver depth in km
 --scat[ter] depth deg   -- scattering depth and distance
 
+--text               -- output as named discontinuities text
+--json               -- output as JSON
 --svg               -- output as SVG
 --csv               -- outputs a CSV ascii table
 

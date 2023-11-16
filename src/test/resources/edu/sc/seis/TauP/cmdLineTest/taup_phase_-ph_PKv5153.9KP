@@ -1,0 +1,11 @@
+PKv5153.9KP:
+  exists from 0.00 to 155.49 degrees.
+  with ray parameter from    2.071 down to    0.000 sec/deg.
+  travel times from  1204.64 to   994.57 sec.
+
+  P going down as a P in the crust/mantle, layer 0 to 5, depths 0.0 to 2889.0, then transmit down
+  K going down as a P in the outer core, layer 6, depths 2889.0 to 5153.9, then reflect topside
+  K going up   as a P in the outer core, layer 6, depths 5153.9 to 2889.0, then transmit up
+  P going up   as a P in the crust/mantle, layer 5 to 0, depths 2889.0 to 0.0, then end
+
+--------

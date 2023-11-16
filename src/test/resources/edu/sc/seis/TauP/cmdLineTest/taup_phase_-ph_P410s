@@ -1,0 +1,10 @@
+P410S:
+  exists from 79.19 to 101.01 degrees.
+  with ray parameter from   11.521 down to    8.323 sec/deg.
+  travel times from  1287.59 to  1484.14 sec.
+
+  P going down as a P in the crust/mantle, layer 0 to 3, depths 0.0 to 410.0, then transmit down
+  S going down as a S in the mantle, layer 4 to 5, depths 410.0 to 2889.0, then turn
+  S going up   as a S in the crust/mantle, layer 5 to 0, depths 2889.0 to 0.0, then end
+
+--------
