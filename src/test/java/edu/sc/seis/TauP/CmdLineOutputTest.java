@@ -56,9 +56,8 @@ public class CmdLineOutputTest {
             "taup phase -ph Pdiff",
             "taup phase -ph P410diff",
             "taup phase -ph Pv410p,PV410p",
-            "taup phase -ph P410s",
-            "taup phase -ph P410S",
-            "taup phase -ph Ped410S",
+            "taup phase -ph P410s,P410S",
+            "taup phase -ph Ped410S,Pedv410s,PedV410s",
             "taup phase -ph PKviKP",
             "taup phase -ph PKv5153KP",
             "taup phase -ph PKv5153.9KP",
@@ -206,8 +205,8 @@ public class CmdLineOutputTest {
         figureTitles.put("Shearer_fig_6_5.svg", "Shearer, fig 6.5");
         figureCompare.put("Shearer_fig_6_5.svg", "Shearer_fig_6_5.pdf");
 
-        File topdir = new File("cmdLineTest");
-        if ( ! topdir.isDirectory()) {topdir.mkdir(); }
+        File topdir = new File("build/cmdLineTest");
+        if ( ! topdir.isDirectory()) {topdir.mkdirs(); }
         File dir = new File(topdir, "refltranCompare");
         if ( ! dir.isDirectory()) {dir.mkdir(); }
 
@@ -392,7 +391,7 @@ public class CmdLineOutputTest {
     }
 
     public void saveTestOutputToFile(String cmd) throws Exception {
-        File dir = new File("cmdLineTest");
+        File dir = new File("build/cmdLineTest");
         String filename = fileizeCmd(cmd);
         saveTestOutputToFile( cmd, dir, filename);
     }

@@ -1,0 +1,28 @@
+Ped410S:
+  exists from 79.19 to 101.01 degrees.
+  with ray parameter from   11.521 down to    8.323 sec/deg.
+  travel times from  1287.59 to  1484.14 sec.
+
+  Ped going down as a P in the crust/mantle, layer 0 to 3, depths 0.0 to 410.0, then transmit down
+  S going down as a S in the mantle, layer 4 to 5, depths 410.0 to 2889.0, then turn
+  S going up   as a S in the crust/mantle, layer 5 to 0, depths 2889.0 to 0.0, then end
+
+--------
+Pedv410s:
+  exists from 0.00 to 12.83 degrees.
+  with ray parameter from   11.521 down to    0.000 sec/deg.
+  travel times from   250.71 to   141.90 sec.
+
+  Ped going down as a P in the crust/mantle, layer 0 to 3, depths 0.0 to 410.0, then reflect topside
+  s going up   as a S in the crust/mantle, layer 3 to 0, depths 410.0 to 0.0, then end
+
+--------
+PedV410s:
+  exists from 9.06 to 12.83 degrees.
+  with ray parameter from   11.521 down to   11.115 sec/deg.
+  travel times from   250.71 to   207.77 sec.
+
+  Ped going down as a P in the crust/mantle, layer 0 to 3, depths 0.0 to 410.0, then critical reflect topside
+  s going up   as a S in the crust/mantle, layer 3 to 0, depths 410.0 to 0.0, then end
+
+--------

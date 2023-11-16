@@ -1269,7 +1269,7 @@ public class SeismicPhaseFactory {
                     nextIsPWave,
                     endAction,
                     currLeg);
-        } else if( isLegDepth) {
+        } else if( isNextLegDepth) {
             int disconBranch = LegPuller.closestBranchToDepth(tMod, nextLeg);
             endAction = TRANSDOWN;
             addToBranch(tMod,
