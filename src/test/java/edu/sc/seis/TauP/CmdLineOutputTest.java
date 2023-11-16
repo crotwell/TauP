@@ -52,6 +52,21 @@ public class CmdLineOutputTest {
                                           "taup path -o stdout -h 10 -ph P -deg 35 --svg",
                                           "taup path -o stdout -h 10 -ph P -deg 35 -mod ak135"};
 
+    String[] phaseDescribeTestCmds = new String[] {
+            "taup phase -ph Pdiff",
+            "taup phase -ph P410diff",
+            "taup phase -ph Pv410p",
+            "taup phase -ph PV410p",
+            "taup phase -ph P410s",
+            "taup phase -ph P410S",
+            "taup phase -ph Ped410S",
+            "taup phase -ph PKviKP",
+            "taup phase -ph PKv5153KP",
+            "taup phase -ph PKv5153.9KP",
+            "taup phase -ph PK5153.9diffP",
+            "taup phase -ph PKP410S",
+    };
+
     String[] curveTestCmds = new String[] {
             "taup curve -o stdout -h 10 -ph P -mod prem",
             "taup curve -o stdout -h 10 -ph P",
@@ -272,6 +287,11 @@ public class CmdLineOutputTest {
     @Test
     public void testTauPPath() throws Exception {
         runTests(pathTestCmds);
+    }
+
+    @Test
+    public void testTauPPhaseDescribe() throws Exception {
+        runTests(phaseDescribeTestCmds);
     }
 
     @Test
