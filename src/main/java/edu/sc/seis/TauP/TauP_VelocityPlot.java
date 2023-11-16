@@ -172,6 +172,12 @@ public class TauP_VelocityPlot extends TauP_Tool {
             } else if(dashEquals("csv", args[i])) {
                 setOutputFormat(CSV);
                 setOutFileExtension("csv");
+            } else if(dashEquals("json", args[i])) {
+                setOutputFormat(JSON);
+                setOutFileExtension(".json");
+            } else if(dashEquals("text", args[i])) {
+                setOutputFormat(TEXT);
+                setOutFileExtension("nd");
             } else if(i < args.length - 1 && dashEquals("nd", args[i])) {
                 modelName = args[i + 1];
                 modelType = "nd";
@@ -261,6 +267,8 @@ public class TauP_VelocityPlot extends TauP_Tool {
         +"-nd modelfile       -- \"named discontinuities\" velocity file\n"
         +"-tvel modelfile     -- \".tvel\" velocity file, ala ttimes\n\n"
         +getModDepthUsage()
+                +"--text               -- output as named discontinuities text\n"
+                +"--json               -- output as JSON\n"
         +"--svg               -- output as SVG\n"
         +"--csv               -- outputs a CSV ascii table\n"
         +"\n\n"
