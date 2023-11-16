@@ -37,12 +37,12 @@
  */
 package edu.sc.seis.TauP;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.OptionalDataException;
-import java.io.StreamCorruptedException;
+import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 
+import edu.sc.seis.seisFile.mseed3.FDSNSourceId;
+import edu.sc.seis.seisFile.mseed3.MSeed3Record;
 import edu.sc.seis.seisFile.sac.SacHeader;
 import edu.sc.seis.seisFile.sac.SacTimeSeries;
 
@@ -130,118 +130,95 @@ public class TauP_WKBJ extends TauP_Time {
         this.startTime = v;
     }
 
-    public void calculate(double degrees) throws TauModelException {
-        calcWKBJ(degrees);
+    @Override
+    public List<Arrival> calculate(List<Double> degreesList) throws TauPException {
+        try {
+            List<Arrival> arrivals = calcWKBJ(degreesList);
+            return sortArrivals(arrivals);
+        } catch(IOException e) {
+            throw new TauPException(e);
+        }
     }
 
-    public void calcWKBJ(double degrees) throws TauModelException {
-        this.degrees = degrees;
-        depthCorrect(getSourceDepth(), getReceiverDepth());
-        recalcPhases();
+    @Override
+    public List<Arrival> calcEventStation(Double[] evloc, List<Double[]> staloc) throws TauPException {
+        setEventLatLon(evloc[0], evloc[1]);
+        List<Arrival> out = new ArrayList<>();
+        for (Double[] sta : staloc) {
+            clearArrivals();
+            setEventLatLon(evloc[0], evloc[1]);
+            setStationLatLon(sta[0], sta[1]);
+            degreesList.add(SphericalCoords.distance(sta[0], sta[1], evloc[0], evloc[1]));
+            azimuth = SphericalCoords.azimuth(evloc[0], evloc[1], sta[0], sta[1]);
+            backAzimuth = SphericalCoords.azimuth(sta[0], sta[1], evloc[0], evloc[1]);
+            out.addAll(calculate(degreesList));
+        }
+        this.arrivals = sortArrivals(out);
+        return this.arrivals;
+    }
+
+    public List<Arrival> calcWKBJ(List<Double> degreesList) throws TauPException, IOException {
+        validateArguments();
+        depthCorrect();
         clearArrivals();
-        System.out.println("In calcWKBJ for " + degrees + " degrees.");
-        SeismicPhase phase;
-        double calcTime, calcDist;
-        Theta thetaAtX;
-        double rayParam, nextRayParam, minRayParam;
-        double theta, nextTheta;
-        // WKBJArrival seismogramArrival;
-        ReflTransCoefficient rtCoeff;
         List<SeismicPhase> phaseList = getSeismicPhases();
-        for(int phaseNum = 0; phaseNum < phaseList.size(); phaseNum++) {
-            System.out.println("Phase "
-                    + phaseList.get(phaseNum).getName()
-                    + ".");
-            phase = phaseList.get(phaseNum);
-            List<Arrival> phaseArrivals = phase.calcTime(degrees);
-            minRayParam = phase.getMinRayParam();
-            // rtCoeff = new ReflTransCoefficient(phase);
-            for (Arrival arrival : phaseArrivals) {
-                    System.out.println("Arrival  " + arrival);
-                    thetaAtX = new Theta(phase, arrival.getDist());
+        List<Arrival> allArrivals = new ArrayList<Arrival>();
+        File outMSeed3File = new File("taup_wkbj.ms3");
+        DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(outMSeed3File)));
+        for (double degrees : degreesList) {
+            System.out.println("In calcWKBJ for " + degrees + " degrees.");
+            float[] seismogramPoints = new float[numSamples];
+            for (int phaseNum = 0; phaseNum < phaseList.size(); phaseNum++) {
+                SeismicPhase phase = phaseList.get(phaseNum);
+                List<Arrival> phaseArrivals = phase.calcTime(degrees);
+                allArrivals.addAll(phaseArrivals);
+                for (Arrival arrival : phaseArrivals) {
+                    double reflTrans = arrival.getReflTrans();
+                    Theta thetaAtX = new Theta(phase, arrival.getDist());
+
                     System.out.println("Got Theta");
-                    float[] seismogramPoints = new float[numSamples];
-                    rayParam = thetaAtX.getMaxRayParam();
+                    double minRayParam = phase.getMinRayParam();
+                    double rayParam = thetaAtX.getMaxRayParam();
                     System.out.println("Got ray param");
-                    theta = thetaAtX.getTheta(rayParam);
+                    double theta = thetaAtX.getTheta(rayParam);
                     System.out.println("Got theta for ray param");
                     setStartTime(320);
-                    nextRayParam = thetaAtX.getStepRayParam(rayParam,
-                                                            getDeltaT());
-                    nextTheta = thetaAtX.getTheta(nextRayParam);
+                    double nextRayParam = thetaAtX.getStepRayParam(rayParam,
+                            getDeltaT());
+                    double nextTheta = thetaAtX.getTheta(nextRayParam);
                     int n = 0;
                     try {
-                        while(nextRayParam >= minRayParam) {
+                        while (nextRayParam >= minRayParam) {
                             // System.out.println(n+" "+rayParam+" "+theta+"
                             // "+nextRayParam+" "+nextTheta);
-                            n = (int)Math.round((theta - getStartTime())
+                            n = (int) Math.round((theta - getStartTime())
                                     / getDeltaT());
-                            if(n >= 0 && n < seismogramPoints.length) {
-                                // seismogramPoints[n] += (float)(
-                                // Math.sqrt(rayParam)*
-                                // rtCoeff.getCoefficient(rayParam)*
-                                // (rayParam- nextRayParam));
+                            if (n >= 0 && n < seismogramPoints.length) {
+                                seismogramPoints[n] += (float)(Math.sqrt(rayParam)*reflTrans*(rayParam- nextRayParam));
                                 System.out.println(n + "  "
                                         + seismogramPoints[n]);
                             }
                             rayParam = nextRayParam;
                             theta = nextTheta;
                             nextRayParam = thetaAtX.getStepRayParam(rayParam,
-                                                                    getDeltaT());
+                                    getDeltaT());
                             nextTheta = thetaAtX.getTheta(nextRayParam);
                         }
-                    } catch(ArrayIndexOutOfBoundsException e) {
-                        // must have dropped off of end of theta curve
-                        System.out.println("ArrayIndexOutOfBoundsException: "
-                                + e);
-                    }
-                    // seismogramArrival = new WKBJArrival( phaseArrivals[i],
-                    // seismogramPoints);
-                    SacHeader header = SacHeader.createEmptyEvenSampledTimeSeriesHeader();
-                    SacTimeSeries sac = new SacTimeSeries(header, seismogramPoints);
-                    header.setDelta( (float)getDeltaT());
-                    header.setTHeader(0, (float)arrival.getTime(), arrival.getName());
-                    header.setO( 0);
-                    header.setB( 320);
-                    header.setE( header.getB() + (header.getNpts() - 1) * header.getDelta());
-                    try {
-                        sac.write("tempsacfile");
-                    } catch(IOException e) {}
-                    // arrivals.addElement(seismogramArrival);
-                }
-        }
-    }
 
-    /**
-     * Allows TauP_Time to run as an application. Creates an instance of
-     * TauP_Time. .
-     */
-    public static void main(String[] args) throws FileNotFoundException,
-            IOException, StreamCorruptedException, ClassNotFoundException,
-            OptionalDataException {
-        try {
-            long prevTime = 0;
-            long currTime;
-            prevTime = System.currentTimeMillis();
-            TauP_Time tauPTime = new TauP_WKBJ();
-            String[] noComprendoArgs = tauPTime.parseCmdLineArgs(args);
-            printNoComprendoArgs(noComprendoArgs);
-            currTime = System.currentTimeMillis();
-            prevTime = System.currentTimeMillis();
-            tauPTime.init();
-            currTime = System.currentTimeMillis();
-            if(tauPTime.DEBUG) {
-                System.out.println("taup model read time="
-                        + (currTime - prevTime));
+                    } catch (ArrayIndexOutOfBoundsException e) {
+                        // must have dropped off of end of theta curve
+                        throw new TauPException(e);
+                    }
+                }
             }
-            tauPTime.start();
-            tauPTime.destroy();
-        } catch(TauModelException e) {
-            System.out.println("Caught: " + e.getMessage());
-            e.printStackTrace();
-        } catch(TauPException e) {
-            System.out.println("Caught: " + e.getMessage());
-            e.printStackTrace();
+            MSeed3Record ms3Rec = new MSeed3Record();
+            ms3Rec.setSourceId(new FDSNSourceId("XX", ("D"+degrees).substring(8), "00", "B", "X", "Z"));
+            ms3Rec.setNumSamples(numSamples);
+            ms3Rec.setSampleRate(getDeltaT());
+            ms3Rec.setTimeseries(seismogramPoints);
+            ms3Rec.write(dos);
         }
+        dos.close();
+        return allArrivals;
     }
 } // TauP_WKBJ
