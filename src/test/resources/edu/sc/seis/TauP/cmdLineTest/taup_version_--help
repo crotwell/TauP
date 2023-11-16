@@ -2,7 +2,7 @@ Usage: taup version [arguments]
   or, for purists, java edu.sc.seis.TauP.TauP_Version [arguments]
 
 Arguments are:
---json             -- output travel times as json
+--json             -- output version as json
 
 
 -o [stdout|outfile]         -- output is redirected to stdout or to the "outfile" file
