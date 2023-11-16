@@ -19,7 +19,7 @@ public class TauP_VelocityPlot extends TauP_Tool {
     }
     
     @Override
-    public void start() throws SlownessModelException, TauModelException, VelocityModelException, IOException {
+    public void start() throws TauPException, IOException {
         VelocityModel vMod = TauModelLoader.loadVelocityModel(modelName, modelType);
         if (vMod == null) {
             throw new IOException("Velocity model file not found: "+modelName+", tried internally and from file");
@@ -27,13 +27,7 @@ public class TauP_VelocityPlot extends TauP_Tool {
         if (getOutFileBase() == DEFAULT_OUTFILE) {
             setOutFileBase(vMod.modelName+"_vel");
         }
-        if (getOutputFormat() == SVG) {
-            printSVG(getWriter(), vMod);
-        } else if (getOutputFormat() == CSV) {
-            printCSV(getWriter(), vMod);
-        } else {
-            vMod.printGMT(getOutFile());
-        }
+        printResult(getWriter());
     }
 
     public void printSVG(PrintWriter out, VelocityModel vMod) {
@@ -241,7 +235,6 @@ public class TauP_VelocityPlot extends TauP_Tool {
     }
 
     public void setSourceDepth(double depth) {
-        System.err.println("vplot set source depth to " +depth);
         this.depth = depth;
     }
 
