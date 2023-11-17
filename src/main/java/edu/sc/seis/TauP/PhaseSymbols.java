@@ -36,6 +36,17 @@ public class PhaseSymbols {
     public static final String EX_DOWN_CODE = "ed";
     public static final String END_CODE = "END";
 
+
+    public static boolean isCompressionalWaveSymbol(String name, int offset) {
+        char c = name.charAt(offset);
+        return c == P || c == p || c == K || c == k || c == I || c == y;
+    }
+
+    public static boolean isTransverseWaveSymbol(String name, int offset) {
+        char c = name.charAt(offset);
+        return c == S || c == s || c == J || c == j;
+    }
+
     public static boolean isDowngoingSymbol(String name, int offset) {
         char c = name.charAt(offset);
         return c == P || c == S || c == K || c == I || c == J;

@@ -6,7 +6,7 @@ import java.util.Properties;
 
 import static edu.sc.seis.TauP.PhaseInteraction.*;
 import static edu.sc.seis.TauP.PhaseInteraction.REFLECT_TOPSIDE_CRITICAL;
-import static edu.sc.seis.TauP.PhaseSymbols.END_CODE;
+import static edu.sc.seis.TauP.PhaseSymbols.*;
 
 public class SeismicPhaseFactory {
 
@@ -198,8 +198,8 @@ public class SeismicPhaseFactory {
         if (name.contains(""+ PhaseSymbols.SCATTER_CODE)
                 || name.contains(""+ PhaseSymbols.BACKSCATTER_CODE)) {
             String[] in_scat = name.split("("+ PhaseSymbols.SCATTER_CODE+"|"+ PhaseSymbols.BACKSCATTER_CODE+")");
-            if (in_scat.length != 2) {
-                throw new TauModelException("Scatter phase doesn't have two segments: "+name);
+            if (in_scat.length > 2) {
+                throw new TauModelException("Scatter phase doesn't have two segments: "+name+", repeated scattering not supported");
             }
             if (scattererDistanceDeg == 0.0) {
                 throw new ScatterArrivalFailException("Attempt to use scatter phase but scatter distance is zero: "+name);
@@ -291,18 +291,16 @@ public class SeismicPhaseFactory {
 
 
     public Boolean legIsPWave(String currLeg) {
-            if(currLeg.equals("p") || currLeg.startsWith("P")
-                    || currLeg.startsWith("I") || currLeg.equals("y")
-                    ||  currLeg.startsWith("K") || currLeg.equals("k")) {
+        if (PhaseSymbols.isCompressionalWaveSymbol(currLeg, 0)) {
                 return PWAVE;
-            } else if(currLeg.equals("s") || currLeg.startsWith("S")
-                    || currLeg.equals("J")|| currLeg.equals("j")) {
-                return SWAVE;
-            } else {
-                // otherwise, curr leg is same as prev, like for reflections
-                return null;
-            }
+        } else if(PhaseSymbols.isTransverseWaveSymbol(currLeg, 0)) {
+            return SWAVE;
+        } else {
+            // otherwise, curr leg is same as prev, like for reflections
+            return null;
+        }
     }
+
     /*
      * Figures out which legs are P and S. Non-travel legs, like c or v410 are the same wave type as the
      * next leg.
@@ -357,7 +355,7 @@ public class SeismicPhaseFactory {
          * Deal with surface wave velocities first, since they are a special
          * case.
          */
-        if(legs.size() == 2 && currLeg.endsWith("kmps")) {
+        if(legs.size() == 2 && currLeg.endsWith(PhaseSymbols.KMPS_CODE)) {
             try {
                 double velocity = Double.valueOf(currLeg.substring(0, name.length() - 4))
                     .doubleValue();
@@ -369,14 +367,14 @@ public class SeismicPhaseFactory {
             return;
         }
         /* Make a check for J legs if the model doesn not allow J */
-        if((name.indexOf('J') != -1 || name.indexOf('j') != -1)
+        if((name.indexOf(J) != -1 || name.indexOf(j) != -1)
                 && !tMod.getSlownessModel().isAllowInnerCoreS()) {
             throw new TauModelException(getName()+" 'J' phases were not created for this model: "
                     + tMod.getModelName());
         }
         /* check for outer core if K */
         for (String leg : legs) {
-            if (tMod.getCmbBranch() == tMod.getNumBranches() && (leg.startsWith("K") || leg.equals("k") || leg.equals("c"))) {
+            if (tMod.getCmbBranch() == tMod.getNumBranches() && (isOuterCoreLeg(leg, 0) || leg.equals(c))) {
                 maxRayParam = -1;
                 minRayParam = -1;
                 if(DEBUG) {
@@ -384,8 +382,7 @@ public class SeismicPhaseFactory {
                 }
                 return;
             }
-            if (tMod.getIocbBranch() == tMod.getNumBranches() && (
-                    leg.startsWith("I") || leg.startsWith("J") || leg.equals("j") || leg.equals("y") || leg.equals("i"))) {
+            if (tMod.getIocbBranch() == tMod.getNumBranches() && (isInnerCoreLeg(leg, 0) || leg.equals(i))) {
                 maxRayParam = -1;
                 minRayParam = -1;
                 if(DEBUG) {
@@ -395,14 +392,10 @@ public class SeismicPhaseFactory {
             }
         }
         /* set currWave to be the wave type for this leg, 'P' or 'S'. */
-        if(currLeg.equals("p") || currLeg.startsWith("P")
-                || currLeg.startsWith("K")
-                || currLeg.equals("k")
-                || currLeg.startsWith("I") || currLeg.equals("y")) {
+        if(isCompressionalWaveSymbol(currLeg, 0)) {
             isPWave = PWAVE;
             prevIsPWave = isPWave;
-        } else if(currLeg.equals("s") || currLeg.startsWith("S")
-                || currLeg.startsWith("J") || currLeg.equals("j")) {
+        } else if(isTransverseWaveSymbol(currLeg, 0)) {
             isPWave = SWAVE;
             prevIsPWave = isPWave;
         } else {
