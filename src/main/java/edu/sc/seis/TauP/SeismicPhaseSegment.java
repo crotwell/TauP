@@ -375,6 +375,10 @@ public class SeismicPhaseSegment {
 					// branch exists just for source
 					continue;
 				}
+				if (arrival.getReceiverDepth() == depth && ! getTauModel().getVelocityModel().isDisconDepth(depth)) {
+					// branch exists just for receiver
+					continue;
+				}
 				if (! getTauModel().getVelocityModel().isDisconDepth(depth)) {
 					// branch exists just for reversal of gradient, or maybe solid-fluid boundary
 					// probably should be more careful
