@@ -24,6 +24,18 @@ public class TauP_SlownessPlot extends TauP_VelocityPlot {
         setOutputFormat(SVG);
     }
 
+    @Override
+    public String getUsage() {
+        return TauP_Tool.getStdUsageHead(this.getClass())
+                +"-nd modelfile       -- \"named discontinuities\" velocity file\n"
+                +"-tvel modelfile     -- \".tvel\" velocity file, ala ttimes\n\n"
+                +getModDepthUsage()
+                +"--json               -- output as JSON\n"
+                +"--svg               -- output as SVG\n"
+                +"--csv               -- outputs a CSV ascii table\n"
+                +"\n\n"
+                +TauP_Tool.getStdUsageTail();
+    }
     public void printResult(PrintWriter out) throws TauPException, IOException {
         System.err.println("Slowness plot printResult "+getOutputFormat());
         VelocityModel vMod = TauModelLoader.loadVelocityModel(modelName, modelType);
