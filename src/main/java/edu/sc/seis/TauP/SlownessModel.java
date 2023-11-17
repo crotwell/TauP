@@ -25,6 +25,9 @@
  */
 package edu.sc.seis.TauP;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -2066,7 +2069,26 @@ public abstract class SlownessModel implements Serializable {
             pVel = currVelocityLayer.getBotP();
         }
     }
-    
+
+    public JSONObject asJSON() {
+        JSONObject json = new JSONObject();
+        JSONArray pLayerArr = new JSONArray();
+        json.put("p_layers", pLayerArr);
+        boolean isPWave = true;
+        for(int layerNum = 0; layerNum < getNumLayers(isPWave); layerNum++) {
+            SlownessLayer currLayer = getSlownessLayer(layerNum, isPWave);
+            pLayerArr.put(currLayer.asJSON());
+        }
+        JSONArray sLayerArr = new JSONArray();
+        json.put("s_layers", sLayerArr);
+        isPWave = false;
+        for(int layerNum = 0; layerNum < getNumLayers(isPWave); layerNum++) {
+            SlownessLayer currLayer = getSlownessLayer(layerNum, isPWave);
+            sLayerArr.put(currLayer.asJSON());
+        }
+        json.put("velocity_model", getVelocityModel().asJSON());
+        return json;
+    }
     
     /**
      * Performs consistency check on the slowness model.

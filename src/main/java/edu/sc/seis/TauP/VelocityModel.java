@@ -29,6 +29,9 @@
  */
 package edu.sc.seis.TauP;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
@@ -934,6 +937,24 @@ public class VelocityModel implements Cloneable, Serializable {
         for(int i = 0; i < getNumLayers(); i++) {
             System.out.println(getVelocityLayer(i));
         }
+    }
+
+    public JSONObject asJSON() {
+        JSONObject json = new JSONObject();
+        json.put("modelName", getModelName());
+        json.put("radiusOfEarth", getRadiusOfEarth());
+        json.put("mohoDepth", getMohoDepth());
+        json.put("cmbDepth", getCmbDepth());
+        json.put("iocbDepth", getIocbDepth());
+        json.put("minRadius", getMinRadius());
+        json.put("maxRadius", getMaxRadius());
+        json.put("spherical", getSpherical());
+        JSONArray layers = new JSONArray();
+        json.put("layers", layers);
+        for (VelocityLayer vl : getLayers()) {
+            layers.put(vl.asJSON());
+        }
+        return json;
     }
 
     public String asJSON(boolean pretty, String indent) {

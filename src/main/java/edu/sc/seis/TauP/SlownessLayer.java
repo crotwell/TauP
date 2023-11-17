@@ -25,6 +25,8 @@
  */
 package edu.sc.seis.TauP;
 
+import org.json.JSONObject;
+
 import java.io.Serializable;
 
 /**
@@ -103,6 +105,15 @@ public class SlownessLayer implements Serializable {
                          boolean isPWave,
                          double radiusOfEarth) {
         this(vLayer, true, radiusOfEarth, isPWave);
+    }
+
+    public JSONObject asJSON() {
+        JSONObject json = new JSONObject();
+        json.put("topDepth", getTopDepth());
+        json.put("topP", getTopP());
+        json.put("botDepth", getBotDepth());
+        json.put("botP", getBotP());
+        return json;
     }
 
     /**

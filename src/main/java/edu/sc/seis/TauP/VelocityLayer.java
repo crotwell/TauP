@@ -29,6 +29,8 @@
  */
 package edu.sc.seis.TauP;
 
+import org.json.JSONObject;
+
 import java.io.Serializable;
 
 /**
@@ -266,6 +268,24 @@ public class VelocityLayer implements Cloneable, Serializable {
         description += " S " + getTopSVelocity() + " " + getBotSVelocity();
         description += " Density " + getTopDensity() + " " + getBotDensity();
         return description;
+    }
+
+    public JSONObject asJSON() {
+        JSONObject json = new JSONObject();
+        json.put("num", myLayerNumber);
+        JSONObject top = new JSONObject();
+        top.put("depth", getTopDepth());
+        top.put("vp", getTopPVelocity());
+        top.put("vs", getTopSVelocity());
+        top.put("rho", getTopDensity());
+        json.put("top", top);
+        JSONObject bot = new JSONObject();
+        bot.put("depth", getBotDepth());
+        bot.put("vp", getBotPVelocity());
+        bot.put("vs", getBotSVelocity());
+        bot.put("rho", getBotDensity());
+        json.put("bot", bot);
+        return json;
     }
 
     public String asJSON(boolean pretty, String indent) {
