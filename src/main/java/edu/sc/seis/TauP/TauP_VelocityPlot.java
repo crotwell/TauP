@@ -130,6 +130,7 @@ public class TauP_VelocityPlot extends TauP_Tool {
         }else if (getOutputFormat().equals(TEXT)) {
             vMod.writeToND(out);
         }
+        out.flush();
     }
 
     public void printSVGBeginning(PrintWriter out) {
