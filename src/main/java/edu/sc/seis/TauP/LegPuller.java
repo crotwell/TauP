@@ -138,7 +138,7 @@ public class LegPuller {
                             && (name.substring(offset, offset + 3).equals("Ied") || name.substring(offset, offset + 3).equals("Jed"))) {
                         legs.add(name.substring(offset, offset + 3));
                         offset = offset + 3;
-                    } else if (Character.isDigit(name.charAt(offset + 1))) {
+                    } else if (isBoundaryAtOffset(name, offset+1)) {
                         offset = extractPhaseBoundaryInteraction(name, offset, 1, legs);
                     } else {
                         throw new TauModelException("Invalid phase name:\n"
@@ -165,7 +165,7 @@ public class LegPuller {
                             || name.charAt(offset + 1) == BACKSCATTER_CODE) {
                         legs.add(name.substring(offset, offset + 1));
                         offset++;
-                    } else if (Character.isDigit(name.charAt(offset + 1))) {
+                    } else if (isBoundaryAtOffset(name, offset+1)) {
                         offset = extractPhaseBoundaryInteraction(name, offset, 1, legs);
                     } else if (name.charAt(offset + 1) == 'p'
                             || name.charAt(offset + 1) == 's') {
@@ -183,8 +183,7 @@ public class LegPuller {
                             && (name.substring(offset, offset + 3)
                             .equals("Ped") || name.substring(offset, offset + 3)
                             .equals("Sed"))) {
-                            if(name.length() > offset + 3 && (Character.isDigit(name.charAt(offset + 3 ))
-                                    || name.charAt(offset + 3 ) == '.')) {
+                            if(name.length() > offset + 3 && isBoundaryAtOffset(name, offset+3)) {
                                 offset = extractPhaseBoundaryInteraction(name, offset, 3, legs);
                             } else {
                                 legs.add(name.substring(offset, offset + 3));
@@ -220,7 +219,7 @@ public class LegPuller {
                             ) {
                         legs.add(name.substring(offset, offset + 1));
                         offset++;
-                    } else if (Character.isDigit(name.charAt(offset + 1))) {
+                    } else if (isBoundaryAtOffset(name, offset+1)) {
                         offset = extractPhaseBoundaryInteraction(name, offset, 1, legs);
                     } else if(name.length() >= offset + 3
                             && (name.substring(offset, offset + 3)
@@ -262,8 +261,7 @@ public class LegPuller {
                             || name.charAt(offset + criticalOffset + 1) == 'i') {
                         legs.add(name.substring(offset, offset + criticalOffset + 2));
                         offset = offset + criticalOffset + 2;
-                    } else if(Character.isDigit(name.charAt(offset + criticalOffset + 1))
-                            || name.charAt(offset + criticalOffset + 1) == '.') {
+                    } else if(isBoundaryAtOffset(name, offset + criticalOffset + 1)) {
                         String prefix = name.substring(offset, offset+criticalOffset+1);
                         String boundId = extractBoundaryId(name, offset+criticalOffset+1, false);
 
@@ -278,13 +276,7 @@ public class LegPuller {
                         throw new TauModelException("Invalid phase name:\n"
                                 + name.substring(offset) + " in " + name);
                     }
-                } else if(Character.isDigit(name.charAt(offset))
-                        || name.charAt(offset) == '.') {
-                    if(offset == name.length()-1) {
-                        throw new TauModelException("Invalid phase name:\n"
-                                + name.charAt(offset)
-                                + " cannot be last char in " + name);
-                    }
+                } else if(isBoundaryAtOffset(name, offset)) {
                     String boundId = extractBoundaryId(name, offset, false);
                     legs.add(boundId);
                     offset+=boundId.length();
@@ -333,6 +325,19 @@ public class LegPuller {
         return idx;
     }
 
+    public static boolean isBoundaryAtOffset(String name, int offset) throws TauModelException {
+        if(Character.isDigit(name.charAt(offset))
+                || name.charAt(offset) == '.') {
+            if (offset == name.length() - 1) {
+                throw new TauModelException("Invalid phase name:\n"
+                        + name.charAt(offset)
+                        + " cannot be last char in " + name);
+            }
+            return true;
+        }
+        return false;
+    }
+
     public static String extractBoundaryId(String name, int offset, boolean allowHeadDiff) throws TauModelException {
         if(offset == name.length()-1) {
             throw new TauModelException("Invalid phase name:\n"
@@ -341,9 +346,7 @@ public class LegPuller {
         }
         int idx = offset;
         String numString = "";
-        while(idx < name.length() &&
-                (Character.isDigit(name.charAt(idx))
-                        || name.charAt(idx) == '.')) {
+        while(idx < name.length() && isBoundaryAtOffset(name, idx)) {
             idx++;
         }
         if (allowHeadDiff && name.length() >= idx + 4 && name.substring(idx, idx + 4).equals("diff")) {
