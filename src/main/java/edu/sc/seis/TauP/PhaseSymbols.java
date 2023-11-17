@@ -82,6 +82,14 @@ public class PhaseSymbols {
         return false;
     }
 
+    public static boolean isHead(String name, int offset) {
+        if ( isDowngoingSymbol(name, offset) && name.startsWith(""+HEAD_CODE, offset+1)) {
+            // simple like Pn
+            return true;
+        }
+        return false;
+    }
+
     public static boolean isSurfaceWave(String name, int offset) {
         // look for numbers followed by kmps
         int idx = offset;

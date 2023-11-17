@@ -133,7 +133,7 @@ public class LegPuller {
                                 + name.charAt(offset + 1) + " in " + name);
                     } else if (name.charAt(offset + 1) == g
                             || name.charAt(offset + 1) == b
-                            || name.charAt(offset + 1) == HEAD_CODE) {
+                            || isHead(name, offset)) {
                         /* The leg is not described by one letter, check for 2. */
                         legs.add(name.substring(offset, offset + 2));
                         offset = offset + 2;
@@ -277,7 +277,7 @@ public class LegPuller {
         while(idx < name.length() && PhaseSymbols.isBoundary(name, idx)) {
             idx++;
         }
-        if (allowHeadDiff && name.length() >= idx + 4 && name.substring(idx, idx + 4).equals(DIFF)) {
+        if (allowHeadDiff && name.length() >= idx + 4 && name.startsWith(DIFF, idx)) {
             // diffraction off other layer
             idx+=4;
         } else if (allowHeadDiff && idx < name.length() && name.charAt(idx) == HEAD_CODE) {

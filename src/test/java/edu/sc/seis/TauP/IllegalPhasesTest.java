@@ -156,7 +156,9 @@ class IllegalPhasesTest {
 		for (String phaseName : legalPhases) {
 			try {
 				SeismicPhase phase = SeismicPhaseFactory.createPhase(phaseName, tMod_OCD, tMod_OCD.getSourceDepth(), receiverDepth, DEBUG);
+				assertNotNull(phase);
 				SeismicPhase phase_depth = SeismicPhaseFactory.createPhase(phaseName, tModDepth, tModDepth.getSourceDepth(), receiverDepth, DEBUG);
+				assertNotNull(phase_depth);
 			} catch(TauModelException ex) {
 				System.err.println("Working on phase: "+phaseName);
 				throw ex;
