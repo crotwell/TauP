@@ -95,4 +95,12 @@ public class PhaseSymbols {
         }
         return false;
     }
+
+    public static boolean isBoundary(String name, int offset) throws TauModelException {
+        char ch = name.charAt(offset);
+        if(Character.isDigit(ch) || ch == '.' || ch == m || ch == c || ch == i ) {
+            return true;
+        }
+        return false;
+    }
 }
