@@ -17,7 +17,7 @@ be familiar to seismologists, e.g. pP, PP, PcS, PKiKP, etc.
 However, the uniqueness required for parsing results in some new names for other
 familiar phases.
 
-In traditional ``whole-earth'' seismology, there are 3 major interfaces:  the free
+In traditional `whole-earth` seismology, there are 3 major interfaces:  the free
 surface, the core-mantle boundary, and the inner-outer core boundary.
 Phases interacting with the core-mantle boundary and the inner core boundary are easy to
 describe because the symbol for the wave type changes at the boundary (i.e. the symbol P
@@ -26,7 +26,7 @@ Phase multiples for these interfaces and the free surface are also easy to descr
 the symbols describe a unique path.
 The challenge begins with the description of interactions with interfaces within the
 crust and upper mantle.
-We have introduced two new symbols to existing
+We have introduced new symbols to existing
 nomenclature to provide unique descriptions of potential paths.
 Phase names are constructed from a sequence of symbols and numbers (with no spaces)
 that either describe the wave type, the interaction a wave makes with an interface, or
@@ -64,7 +64,7 @@ the depth to an interface involved in an interaction.
     ============   ================================================================
 
 3.  \label{Ped} The characters :code:`p`, :code:`s`,
-    :code:`k`, :code:`y` and :code:`j` \textbf{always} represent
+    :code:`k`, :code:`y` and :code:`j` **always** represent
     up-going legs.
     An example is the source to surface leg of the phase :code:`pP`
     from a source at depth.
@@ -72,7 +72,7 @@ the depth to an interface involved in an interaction.
     always indicate downgoing waves leaving the source when they are the first symbol in a
     phase name.
     Thus, to get near-source, direct P-wave arrival times, you need to specify two
-    phases :code:`p` and :code:`P` or use the ``\textit{ttimes} compatibility phases'' described
+    phases :code:`p` and :code:`P` or use the :code:`ttimes` compatibility phases described
     below.
     However, :code:`P` may
     represent a upgoing leg in certain cases.

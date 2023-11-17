@@ -12,12 +12,12 @@ Both are piecewise linear between given depth points. Support for cubic spline
 velocity models would be useful and is planned for a future release.
 
 The first format is that used by the most recent ttimes
-codes~\cite{kennett:ak135}, \texttt{.tvel}.
+codes~\cite{kennett:ak135}, `.tvel`.
 This format has two comment lines, followed by lines composed of depth, Vp, Vs and density, all separated by whitespace. TauP ignores the first two lines of this format and reads the remaining lines.
 
 The second format is based on the format used by Xgbm,~\cite{xgbmreport,xgbmmanual}.
 It is referred to here
-as the \texttt{.nd} format for ``named discontinuities.''
+as the `.nd` format for *named discontinuities.*
 Its biggest advantage is that it can specify the location of the major
 boundaries and this makes it the preferred format.
 The file consists of two types of lines, those that specify velocity at
@@ -36,11 +36,12 @@ calculations, are included to allow the model to be used for other purposes
 in the future. The model is assumed to be linear between given depths and
 repeated depths are used to represent discontinuities.
 
-The second type of line within the \texttt{.nd} format specifies one of the
-three major internal boundaries,
-\textit{mantle} for the crust-mantle boundary,
-\textit{outer-core} for the outer core-mantle boundary,
-or \textit{inner-core} for the inner core-outer core boundary. These labels
+The second type of line within the `.nd` format specifies one of the
+major internal boundaries. The original format was limited to *mantle*,
+*outer-core* and *inner-core*, but in version 3.0 this was expanded to include
+more crustal boundaries and synonyms. User defined labels are also allowed but
+must start with a non-number character and care should be taken when using
+in phase names to avoid confusing the phase parser. These labels
 are placed on a line by themselves between the two lines representing the
 sample points above and below the depth of the
 discontinuity.
@@ -48,6 +49,18 @@ These help to determine where a particular phase propagates. For instance,
 in a model that has many crustal and upper mantle layers, from which
 discontinuity does the phase \texttt{PvmP} reflect?
 Explicit labeling eliminates potential ambiguity.
+
+=================     =============================================
+Labels                Description
+=================     =============================================
+mantle, moho          moho, crust-mantle boundary
+outer-core, cmb       mantle-core boundary
+inner-core, icocb     inner outer core boundary
+ice                   top of ice layer
+ice-ocean             ice above ocean boundary
+ice-crust             ice above crust boundary
+ocean                 top of ocean layer
+=================     =============================================
 
 One further enhancement to these model file formats is the support for comments
 embedded within the model files. As in shell scripting, everything after

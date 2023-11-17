@@ -24,7 +24,7 @@ header :code:`t4` and the second into :code:`t5` and the thrid into :code:`t8`.
 If there are more arrivals than headers, the later arrivals are not added. If there are
 more headers than arrivals, then the header is not set.
 
-\textbf{Warning:} TauP SetSac assumes the \textsc{evdp} header has depth in meters unless
+**Warning:** TauP SetSac assumes the \textsc{evdp} header has depth in meters unless
 the -evdpkm
 flag is used, in which case kilometers are assumed. This may be a problem for
 users that improperly use kilometers for the depth units. Due to much
