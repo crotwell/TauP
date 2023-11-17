@@ -1,10 +1,7 @@
 package edu.sc.seis.TauP;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -71,7 +68,7 @@ public class ScatterTest {
         assertEquals(receiverDepth, outArr.getPhase().getReceiverDepth());
         //
         List<SeismicPhase> scatPhaseList = SeismicPhaseFactory.createSeismicPhases(
-                toScatPhase+LegPuller.SCATTER_CODE+scatToRecPhase,
+                toScatPhase+ PhaseSymbols.SCATTER_CODE+scatToRecPhase,
                 tMod,
                 sourceDepth,
                 receiverDepth,

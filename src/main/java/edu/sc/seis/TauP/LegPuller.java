@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import static edu.sc.seis.TauP.PhaseSymbols.*;
 
 public class LegPuller {
 
@@ -22,11 +23,7 @@ public class LegPuller {
     public static final String surfaceWave = "("+number+"kmps)";
     public static final String bodyWave = travelLeg+"("+interactPointsRE+"?"+travelLeg+")*";
 
-    public static final char SCATTER_CODE = 'o';
-    public static final char BACKSCATTER_CODE = 'O';
-    public static final String EX_DOWN_CODE = "ed";
-
-    public static final String scatterWave = "("+bodyWave+")("+SCATTER_CODE+"|"+BACKSCATTER_CODE+")("+bodyWave+")";
+    public static final String scatterWave = "("+bodyWave+")(["+ PhaseSymbols.SCATTER_CODE+ PhaseSymbols.BACKSCATTER_CODE+"])("+bodyWave+")";
 
     public static final Pattern phaseRegEx =
             Pattern.compile("^("+surfaceWave+"|"+ scatterWave+"|"+ bodyWave+")$");
@@ -59,48 +56,26 @@ public class LegPuller {
         int offset = 0;
         ArrayList<String> legs = new ArrayList<>();
         /* Special case for surface wave velocity. */
-        if(name.endsWith("kmps")) {
-            try {
-                legs.add(name);
-            } catch(NumberFormatException e) {
-                throw new TauModelException("Invalid phase name:\n" + name);
-            }
+        if(name.endsWith(KMPS_CODE)) {
+            legs.add(name);
         } else
             while(offset < name.length()) {
-                if (offset + 2 < name.length() && (name.charAt(offset+1) == 'e')&& (name.charAt(offset+2) == 'd')
-                        && (name.charAt(offset) == 'p'
-                        || name.charAt(offset) == 's'
-                        || name.charAt(offset) == 'k'
-                        || name.charAt(offset) == 'y'
-                        || name.charAt(offset) == 'j'
-                        || name.charAt(offset) == 'm'
-                        || name.charAt(offset) == 'c'
-                        || name.charAt(offset) == 'i'
-                        || name.charAt(offset) == '^'
-                        || name.charAt(offset) == 'v'
-                        || name.charAt(offset) == 'V'
-                        || name.charAt(offset) == SCATTER_CODE
-                        || name.charAt(offset) == BACKSCATTER_CODE) ) {
+                if (offset + 2 < name.length() && name.startsWith(EX_DOWN_CODE, offset+1)
+                        && ! isDowngoingSymbol(name, offset) ) {
                     throw new TauModelException("Invalid phase name:\n"
                             + name.charAt(offset)
                             + " cannot be followed by "
-                            + EX_DOWN_CODE+ " in " + name);
-                } else if(name.charAt(offset) == 'y'
-                        || name.charAt(offset) == 'j'
-                        || name.charAt(offset) == 'k'
-                        || name.charAt(offset) == 'p'
-                        || name.charAt(offset) == 's'
-                        || name.charAt(offset) == 'm') {
-                    // Do the easy ones, ie k,y,j,p,s,m
+                            + PhaseSymbols.EX_DOWN_CODE+ " in " + name);
+                } else if(isUpgoingSymbol(name, offset)) {
+                    // Do the strictly upgoing, easy ones, ie k,y,j,p,s
                     legs.add(name.substring(offset, offset + 1));
                     offset = offset + 1;
-                } else  if (name.charAt(offset) == SCATTER_CODE
-                        || name.charAt(offset) == BACKSCATTER_CODE) {
-                    // might as well pull scatter just in case
+                } else if(name.charAt(offset) == m) {
+                    // moho
                     legs.add(name.substring(offset, offset + 1));
                     offset = offset + 1;
-                } else if(name.charAt(offset) == 'c'
-                        || name.charAt(offset) == 'i') {
+                } else if(name.charAt(offset) == c
+                        || name.charAt(offset) == i) {
                     // note c and i are different from m as they must be reflection
                     // check m,c,i for critical refl with x
                     if (offset == name.length() - 1) {
@@ -115,27 +90,18 @@ public class LegPuller {
                         legs.add(name.substring(offset, offset + 1));
                         offset = offset + 1;
                     }
-                } else if (name.charAt(offset) == 'I' || name.charAt(offset) == 'J') {
+                } else if (name.charAt(offset) == I || name.charAt(offset) == J) {
                     if (offset + 1 == name.length()
-                            || name.charAt(offset + 1) == 'P'
-                            || name.charAt(offset + 1) == 'S'
-                            || name.charAt(offset + 1) == 'K'
-                            || name.charAt(offset + 1) == 'k'
-                            || name.charAt(offset + 1) == 'I'
-                            || name.charAt(offset + 1) == 'J'
-                            || name.charAt(offset + 1) == 'p'
-                            || name.charAt(offset + 1) == 's'
-                            || name.charAt(offset + 1) == 'c'
-                            || name.charAt(offset + 1) == '^'
-                            || name.charAt(offset + 1) == 'v'
-                            || name.charAt(offset + 1) == 'V'
-                            || name.charAt(offset + 1) == SCATTER_CODE
-                            || name.charAt(offset + 1) == BACKSCATTER_CODE
+                            || name.charAt(offset + 1) == c
+                            || isDowngoingSymbol(name, offset+1)
+                            || isReflectSymbol(name, offset+1)
+                            || isScatterSymbol(name, offset+1)
+                            || (isUpgoingSymbol(name, offset+1) && ! isInnerCoreLeg(name, offset+1))
                             ) {
                         legs.add(name.substring(offset, offset + 1));
                         offset++;
-                    } else if(name.length() >= offset + 3
-                            && (name.substring(offset, offset + 3).equals("Ied") || name.substring(offset, offset + 3).equals("Jed"))) {
+                    } else if(name.length() >= offset + 3 && isExclusiveDowngoingSymbol(name, offset)) {
+                        // Ied, Jed
                         legs.add(name.substring(offset, offset + 3));
                         offset = offset + 3;
                     } else if (isBoundaryAtOffset(name, offset+1)) {
@@ -144,108 +110,83 @@ public class LegPuller {
                         throw new TauModelException("Invalid phase name:\n"
                                 + name.substring(offset) + " in " + name);
                     }
-                } else if(name.charAt(offset) == 'P'
-                        || name.charAt(offset) == 'S') {
+                } else if(name.charAt(offset) == P
+                        || name.charAt(offset) == S) {
                     /*
                      * Now it gets complicated, first see if the next char is
                      * part of a different leg or we are at the end.
                      */
                     if (offset + 1 == name.length()
-                            || name.charAt(offset + 1) == 'P'
-                            || name.charAt(offset + 1) == 'S'
-                            || name.charAt(offset + 1) == 'K'
-                            || name.charAt(offset + 1) == 'I' // I,J might be allowed if no outer core
-                            || name.charAt(offset + 1) == 'J'
-                            || name.charAt(offset + 1) == 'm'
-                            || name.charAt(offset + 1) == 'c'
-                            || name.charAt(offset + 1) == '^'
-                            || name.charAt(offset + 1) == 'v'
-                            || name.charAt(offset + 1) == 'V'
-                            || name.charAt(offset + 1) == SCATTER_CODE
-                            || name.charAt(offset + 1) == BACKSCATTER_CODE) {
+                            || isDowngoingSymbol(name, offset+1)
+                            || isReflectSymbol(name, offset+1)
+                            || isScatterSymbol(name, offset+1)
+                            || name.charAt(offset + 1) == m
+                            || name.charAt(offset + 1) == c) {
                         legs.add(name.substring(offset, offset + 1));
                         offset++;
                     } else if (isBoundaryAtOffset(name, offset+1)) {
                         offset = extractPhaseBoundaryInteraction(name, offset, 1, legs);
-                    } else if (name.charAt(offset + 1) == 'p'
-                            || name.charAt(offset + 1) == 's') {
+                    } else if (isUpgoingSymbol(name, offset+1)) {
                         throw new TauModelException("Invalid phase name:\n"
                                 + name.charAt(offset)
-                                + " cannot be followed by "
+                                + " cannot be followed by upgoing phase"
                                 + name.charAt(offset + 1) + " in " + name);
-                    } else if (name.charAt(offset + 1) == 'g'
-                            || name.charAt(offset + 1) == 'b'
-                            || name.charAt(offset + 1) == 'n') {
+                    } else if (name.charAt(offset + 1) == g
+                            || name.charAt(offset + 1) == b
+                            || name.charAt(offset + 1) == HEAD_CODE) {
                         /* The leg is not described by one letter, check for 2. */
                         legs.add(name.substring(offset, offset + 2));
                         offset = offset + 2;
-                    } else if (name.length() >= offset + 3
-                            && (name.substring(offset, offset + 3)
-                            .equals("Ped") || name.substring(offset, offset + 3)
-                            .equals("Sed"))) {
+                    } else if (isExclusiveDowngoingSymbol(name, offset)) {
                             if(name.length() > offset + 3 && isBoundaryAtOffset(name, offset+3)) {
                                 offset = extractPhaseBoundaryInteraction(name, offset, 3, legs);
                             } else {
                                 legs.add(name.substring(offset, offset + 3));
                                 offset = offset + 3;
                             }
-                    } else if (name.length() >= offset + 5
-                            && (name.substring(offset, offset + 5)
-                            .equals("Sdiff") || name.substring(offset,
-                                    offset + 5)
-                            .equals("Pdiff"))) {
-                        legs.add(name.substring(offset, offset + 5));
-                        offset = offset + 5;
+                    } else if (isDiffracted(name, offset)) {
+                        String diffLeg = name.substring(offset, name.indexOf(DIFF,offset+1) + DIFF.length());
+                        legs.add(diffLeg);
+                        offset += diffLeg.length();
                     } else {
                         throw new TauModelException("Invalid phase name:\n"
                                 + name.substring(offset) + " in " + name);
                     }
-                } else if (name.charAt(offset) == 'K') {
+                } else if (name.charAt(offset) == K) {
                     if (offset + 1 == name.length()
-                            || name.charAt(offset + 1) == 'P'
-                            || name.charAt(offset + 1) == 'S'
-                            || name.charAt(offset + 1) == 'K'
-                            || name.charAt(offset + 1) == 'I'
-                            || name.charAt(offset + 1) == 'J'
-                            || name.charAt(offset + 1) == 'p'
-                            || name.charAt(offset + 1) == 's'
-                            || name.charAt(offset + 1) == 'c'
-                            || name.charAt(offset + 1) == 'i'
-                            || name.charAt(offset + 1) == '^'
-                            || name.charAt(offset + 1) == 'v'
-                            || name.charAt(offset + 1) == 'V'
-                            || name.charAt(offset + 1) == SCATTER_CODE
-                            || name.charAt(offset + 1) == BACKSCATTER_CODE
+                            || isDowngoingSymbol(name, offset+1)
+                            || (isUpgoingSymbol(name, offset+1) && isCrustMantleLeg(name, offset+1))
+                            || isReflectSymbol(name, offset+1)
+                            || isScatterSymbol(name, offset+1)
+                            || name.charAt(offset + 1) == c
+                            || name.charAt(offset + 1) == i
                             ) {
                         legs.add(name.substring(offset, offset + 1));
                         offset++;
                     } else if (isBoundaryAtOffset(name, offset+1)) {
                         offset = extractPhaseBoundaryInteraction(name, offset, 1, legs);
-                    } else if(name.length() >= offset + 3
-                            && (name.substring(offset, offset + 3)
-                            .equals("Ked"))) {
+                    } else if(isExclusiveDowngoingSymbol(name, offset)) {
                         legs.add(name.substring(offset, offset + 3));
                         offset = offset + 3;
-                    } else if (name.length() >= offset + 5
-                            && name.substring(offset, offset + 5).equals("Kdiff")) {
-                        legs.add(name.substring(offset, offset + 5));
-                        offset = offset + 5;
+
+                    } else if (isDiffracted(name, offset)) {
+                        String diffLeg = name.substring(offset, name.indexOf(DIFF,offset+1) + DIFF.length());
+                        legs.add(diffLeg);
+                        offset += diffLeg.length();
                     } else {
                         throw new TauModelException("Invalid phase name:\n"
                                 + name.substring(offset) + " in " + name);
                     }
 
-                } else if(name.charAt(offset) == SCATTER_CODE ||name.charAt(offset) == BACKSCATTER_CODE) {
+                } else if(isScatterSymbol(name, offset)) {
                     // scatter point
                     legs.add(name.substring(offset, offset + 1));
                     offset++;
-                } else if(name.charAt(offset) == '^'
-                        || name.charAt(offset) == 'v'
-                        || name.charAt(offset) == 'V') {
+                } else if(isReflectSymbol(name, offset)) {
                     if(offset == name.length()-1) {
                         throw new TauModelException("Invalid phase name:\n"
                                 + name.charAt(offset)
-                                + " cannot be last char in " + name);
+                                + " reflection cannot be last char in " + name);
                     }
                     // check m,c,i for critical refl with x
                     int criticalOffset = 0;
@@ -256,9 +197,9 @@ public class LegPuller {
                      * Top side or bottom side reflections, check for standard
                      * boundaries and then check for numerical ones.
                      */
-                    if(name.charAt(offset + criticalOffset + 1) == 'm'
-                            || name.charAt(offset + criticalOffset + 1) == 'c'
-                            || name.charAt(offset + criticalOffset + 1) == 'i') {
+                    if(name.charAt(offset + criticalOffset + 1) == m
+                            || name.charAt(offset + criticalOffset + 1) == c
+                            || name.charAt(offset + criticalOffset + 1) == i) {
                         legs.add(name.substring(offset, offset + criticalOffset + 2));
                         offset = offset + criticalOffset + 2;
                     } else if(isBoundaryAtOffset(name, offset + criticalOffset + 1)) {
@@ -291,7 +232,7 @@ public class LegPuller {
                             + name.substring(offset) + " in " + name);
                 }
             }
-        legs.add(new String("END"));
+        legs.add(PhaseSymbols.END_CODE);
         String validationMsg = phaseValidate(legs);
         if(validationMsg != null) {
             throw new TauModelException("Phase failed validation: " + name
@@ -308,7 +249,7 @@ public class LegPuller {
         if (boundId.length() == 0) {
             throw new TauModelException("Got empty boundary from extractBoundaryId() in phaseBoundary "+phaseChar+" "+offset+" in "+name);
         }
-        if (boundId.endsWith("diff") || boundId.endsWith("n")) {
+        if (boundId.endsWith(DIFF) || boundId.endsWith(String.valueOf(HEAD_CODE))) {
             // like Pn, Pdiff or PKdiffP, add as single leg
             legs.add(phaseChar+boundId);
             idx += boundId.length();
@@ -349,10 +290,10 @@ public class LegPuller {
         while(idx < name.length() && isBoundaryAtOffset(name, idx)) {
             idx++;
         }
-        if (allowHeadDiff && name.length() >= idx + 4 && name.substring(idx, idx + 4).equals("diff")) {
+        if (allowHeadDiff && name.length() >= idx + 4 && name.substring(idx, idx + 4).equals(DIFF)) {
             // diffraction off other layer
             idx+=4;
-        } else if (allowHeadDiff && idx < name.length() && name.charAt(idx) == 'n') {
+        } else if (allowHeadDiff && idx < name.length() && name.charAt(idx) == HEAD_CODE) {
             // head wave off other layer
             idx++;
         } else {
@@ -365,7 +306,7 @@ public class LegPuller {
     }
 
     public static boolean isBoundary(String leg) {
-        if (leg.equals("m") || leg.equals("c") || leg.equals("i")) {
+        if (leg.equals(m) || leg.equals(c) || leg.equals(i)) {
             return true;
         }
         try {
@@ -383,11 +324,11 @@ public class LegPuller {
      * @return the branch number with the closest top depth.
      */
     public static int closestBranchToDepth(TauModel tMod, String depthString) {
-        if(depthString.equals("m")) {
+        if(depthString.equals(""+m)) {
             return tMod.getMohoBranch();
-        } else if(depthString.equals("c")) {
+        } else if(depthString.equals(""+c)) {
             return tMod.getCmbBranch();
-        } else if(depthString.equals("i")) {
+        } else if(depthString.equals(""+i)) {
             return tMod.getIocbBranch();
         }
         // nonstandard boundary, given by a number, so we must look for it
@@ -413,7 +354,7 @@ public class LegPuller {
          * Deal with surface wave velocities first, since they are a special
          * case.
          */
-        if(legs.size() == 2 && currLeg.endsWith("kmps")) {
+        if(legs.size() == 2 && currLeg.endsWith(KMPS_CODE)) {
             puristName.append(legs.get(0));
             return puristName.toString();
         }
@@ -434,11 +375,11 @@ public class LegPuller {
                 disconBranch = closestBranchToDepth(tMod, currLeg.substring(1));
 
                 if (disconBranch == tMod.getMohoBranch()) {
-                    puristName.append("m");
+                    puristName.append(m);
                 } else if (disconBranch == tMod.getCmbBranch()) {
-                    puristName.append("c");
+                    puristName.append(c);
                 } else if (disconBranch == tMod.getIocbBranch()) {
-                    puristName.append("i");
+                    puristName.append(i);
                 } else {
                     legDepth = tMod.getTauBranch(disconBranch, true).getTopDepth();
                     if (legDepth == Math.rint(legDepth)) {
@@ -481,8 +422,8 @@ public class LegPuller {
         boolean prevIsReflect = false;
         /* Special cases for diffracted waves. */
         if(legs.size() == 2
-                && (currToken.equals("Pdiff") || currToken.equals("Sdiff") || currToken.endsWith("kmps"))
-                && ((String)legs.get(1)).equals("END")) {
+                && (isDiffracted(currToken, 0) || isSurfaceWave(currToken, 0))
+                && ((String)legs.get(1)).equals(PhaseSymbols.END_CODE)) {
             return null;
         }
 
@@ -493,7 +434,7 @@ public class LegPuller {
                 || currToken.equals("Pn") || currToken.equals("Pdiff")
                 || currToken.equals("Sg") || currToken.equals("Sb")
                 || currToken.equals("Sn") || currToken.equals("Sdiff")
-                || currToken.equals("P"+EX_DOWN_CODE) || currToken.equals("S"+EX_DOWN_CODE)
+                || currToken.equals("P"+ PhaseSymbols.EX_DOWN_CODE) || currToken.equals("S"+ PhaseSymbols.EX_DOWN_CODE)
                 || currToken.equals("P") || currToken.equals("S")
                 || currToken.equals("p") || currToken.equals("s")
                 || currToken.equals("K") || currToken.equals("Ked")
@@ -520,7 +461,7 @@ public class LegPuller {
                 nextToken = "";
             }
             /* Check for 2 reflections/depths with no leg between them. */
-            if(currToken.startsWith("^") || currToken.startsWith("v")
+            if(isReflectSymbol(currToken, 0)
                     || currToken.equals("m") || currToken.equals("c")
                     || currToken.equals("i")) {
                 if(prevIsReflect) {
@@ -533,28 +474,31 @@ public class LegPuller {
                 prevIsReflect = false;
             }
             /* Check for "END" before the end. */
-            if(prevToken.equals("END")) {
+            if(prevToken.equals(PhaseSymbols.END_CODE)) {
                 return "Legs ended but more tokens exist: " + currToken;
             }
             /* two upgoing crust/mantle legs in a row */
-            if ((prevToken.equals("p") || prevToken.equals("s"))
-                && (currToken.equals("p") || currToken.equals("s"))) {
-                return "Two upgoing depth phase legs in a row: "+prevToken+" "+currToken;
-            }
-            /* two upgoing outer core legs in a row */
-            if (prevToken.equals("k") && currToken.equals("k") ) {
-                return "Two upgoing depth phase legs in a row: "+prevToken+" "+currToken;
+            if (isUpgoingSymbol(prevToken, 0) && isUpgoingSymbol(currToken, 0)) {
+                if (isCrustMantleLeg(prevToken, 0) && isCrustMantleLeg(currToken, 0)) {
+                    return "Two upgoing depth phase legs in a row: "+prevToken+" "+currToken;
+                }
+                if (isOuterCoreLeg(prevToken, 0) && isOuterCoreLeg(currToken, 0)) {
+                    return "Two upgoing depth phase legs in a row: "+prevToken+" "+currToken;
+                }
+                if (isInnerCoreLeg(prevToken, 0) && isInnerCoreLeg(currToken, 0)) {
+                    return "Two upgoing depth phase legs in a row: "+prevToken+" "+currToken;
+                }
             }
             /* Check for ed not second to last token */
             if ((prevToken.startsWith("Ped") || prevToken.startsWith("Sed"))
-                    && ! ( currToken.equals("END")
+                    && ! ( currToken.equals(PhaseSymbols.END_CODE)
                     || currToken.equals("Pdiff") || currToken.equals("Sdiff")
                     || currToken.equals("P") || currToken.equals("S")
                     || currToken.equals("K") || currToken.equals("Ked")
                     || currToken.startsWith("v") || currToken.startsWith("V")
                     || currToken.equals("c") || currToken.equals("m")
-                    || currToken.equals(""+SCATTER_CODE)
-                    || currToken.equals(""+BACKSCATTER_CODE)
+                    || currToken.equals(""+ PhaseSymbols.SCATTER_CODE)
+                    || currToken.equals(""+ PhaseSymbols.BACKSCATTER_CODE)
                     || isBoundary(currToken)
             )) {
                 return "'Ped' or 'Sed' can only be before Pdiff,P,S,Sdiff,K,c,v,V,m or token immediately before END:  "+prevToken+" "+currToken;
@@ -605,8 +549,8 @@ public class LegPuller {
             }
         }
         /* Make sure legs end in "END". */
-        if(!currToken.equals("END")) {
-            return "Last token must be END";
+        if(!currToken.equals(PhaseSymbols.END_CODE)) {
+            return "Last token must be "+ PhaseSymbols.END_CODE;
         }
         return null;
     }

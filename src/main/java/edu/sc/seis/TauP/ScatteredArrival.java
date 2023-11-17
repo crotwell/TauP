@@ -8,9 +8,9 @@ public class ScatteredArrival extends Arrival {
 
     public static String formScatterPhaseName(String inboundName, String scatterName, boolean isBackscatter) {
         if (isBackscatter) {
-            return inboundName+LegPuller.BACKSCATTER_CODE+scatterName;
+            return inboundName+ PhaseSymbols.BACKSCATTER_CODE+scatterName;
         } else {
-            return inboundName+LegPuller.SCATTER_CODE+scatterName;
+            return inboundName+ PhaseSymbols.SCATTER_CODE+scatterName;
         }
     }
     public ScatteredArrival(ScatteredSeismicPhase phase, double deg, Arrival inboundArrival, Arrival scatteredArrival, boolean isBackscatter) {
