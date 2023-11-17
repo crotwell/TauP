@@ -374,7 +374,7 @@ public class SeismicPhaseFactory {
         }
         /* check for outer core if K */
         for (String leg : legs) {
-            if (tMod.getCmbBranch() == tMod.getNumBranches() && (isOuterCoreLeg(leg, 0) || leg.equals(c))) {
+            if (tMod.getCmbBranch() == tMod.getNumBranches() && (isOuterCoreLeg(leg) || leg.equals(c))) {
                 maxRayParam = -1;
                 minRayParam = -1;
                 if(DEBUG) {
@@ -382,7 +382,7 @@ public class SeismicPhaseFactory {
                 }
                 return;
             }
-            if (tMod.getIocbBranch() == tMod.getNumBranches() && (isInnerCoreLeg(leg, 0) || leg.equals(i))) {
+            if (tMod.getIocbBranch() == tMod.getNumBranches() && (isInnerCoreLeg(leg) || leg.equals(i))) {
                 maxRayParam = -1;
                 minRayParam = -1;
                 if(DEBUG) {
@@ -392,10 +392,10 @@ public class SeismicPhaseFactory {
             }
         }
         /* set currWave to be the wave type for this leg, 'P' or 'S'. */
-        if(isCompressionalWaveSymbol(currLeg, 0)) {
+        if(isCompressionalWaveSymbol(currLeg)) {
             isPWave = PWAVE;
             prevIsPWave = isPWave;
-        } else if(isTransverseWaveSymbol(currLeg, 0)) {
+        } else if(isTransverseWaveSymbol(currLeg)) {
             isPWave = SWAVE;
             prevIsPWave = isPWave;
         } else {
@@ -407,7 +407,7 @@ public class SeismicPhaseFactory {
          * tMod.getSourceBranch()-1 and downgoing would be
          * tMod.getSourceBranch().
          */
-        if(currLeg.startsWith("s") || currLeg.startsWith("S")) {
+        if(isTransverseWaveSymbol(currLeg)) {
             // Exclude S sources in fluids
             double sdep = tMod.getSourceDepth();
             if(tMod.getSlownessModel().depthInFluid(sdep, new DepthRange())) {
@@ -424,11 +424,7 @@ public class SeismicPhaseFactory {
          * Set maxRayParam to be a horizontal ray leaving the source and set
          * minRayParam to be a vertical (p=0) ray.
          */
-        if(currLeg.startsWith("P")
-                || currLeg.startsWith("S")
-                || currLeg.startsWith("K")
-                || currLeg.startsWith("I")
-                || currLeg.startsWith("J")) {
+        if(isDowngoingSymbol(currLeg)) {
             // Downgoing from source
             if ((currLeg.startsWith("P") || currLeg.startsWith("S")) && tMod.getSourceDepth() > tMod.getCmbDepth()  ) {
                 // not possible
@@ -469,12 +465,10 @@ public class SeismicPhaseFactory {
             }
             maxRayParam = tMod.getTauBranch(tMod.getSourceBranch(),
                     isPWave).getMaxRayParam();
-        } else if(currLeg.equals("p") || currLeg.equals("s")
-                || currLeg.equals("y") || currLeg.equals("j")
-                || currLeg.startsWith("k")) {
+        } else if(isUpgoingSymbol(currLeg)) {
             // Up going from source
-            if ((currLeg.startsWith("p") || currLeg.startsWith("s")) && tMod.getSourceDepth() > tMod.getCmbDepth()  ) {
-                // not possible
+            if (isCrustMantleLeg(currLeg) && tMod.getSourceDepth() > tMod.getCmbDepth()  ) {
+                // not possible as in core
                 maxRayParam = -1;
                 minRayParam = -1;
                 if(DEBUG) {
@@ -482,10 +476,10 @@ public class SeismicPhaseFactory {
                             + currLeg + " within phase " + name);
                 }
                 return;
-            } else if ((currLeg.startsWith("k"))
+            } else if (isOuterCoreLeg(currLeg)
                     && (tMod.getSourceDepth() < tMod.getCmbDepth()
                         || tMod.getSourceDepth() > tMod.getIocbDepth() )) {
-                // not possible
+                // not possible source not in outer core
                 maxRayParam = -1;
                 minRayParam = -1;
                 if(DEBUG) {
@@ -493,7 +487,7 @@ public class SeismicPhaseFactory {
                             + currLeg + " within phase " + name);
                 }
                 return;
-            } else if ((currLeg.startsWith("y") || currLeg.startsWith("j")) && (tMod.getSourceDepth() < tMod.getIocbDepth() )) {
+            } else if ((isInnerCoreLeg(currLeg)) && (tMod.getSourceDepth() < tMod.getIocbDepth() )) {
                 // not possible
                 maxRayParam = -1;
                 minRayParam = -1;
@@ -538,10 +532,8 @@ public class SeismicPhaseFactory {
                     + "or k, K, I, J, j for core sources.");
         }
         if (receiverDepth != 0) {
-            if (legs.get(legs.size()-2).equals("Ped") || legs.get(legs.size()-2).equals("Sed")
-                    || legs.get(legs.size()-2).equals("Ked")
-                    || legs.get(legs.size()-2).equals("Ied")
-                    || legs.get(legs.size()-2).equals("Jed")) {
+            String lastLegBeforeEnd = legs.get(legs.size()-2);
+            if (isExclusiveDowngoingSymbol(lastLegBeforeEnd) ) {
                 // downgoing at receiver
                 maxRayParam = Math.min(tMod.getTauBranch(downgoingRecBranch,
                                         isPWave)
@@ -604,112 +596,118 @@ public class SeismicPhaseFactory {
                 nextIsPWave = isLegPWave[legNum + 1];
             }
 
-            if (currLeg.equals("Ped") || currLeg.equals("Sed")) {
-                /* Deal with P and S exclusively downgoing case . */
-                endAction = currLegIs_Ped_Sed(prevLeg, currLeg, nextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
-            } else if(currLeg.equals("p") || currLeg.equals("s")) {
-                /* Deal with p and s case . */
-                endAction = currLegIs_p_s(prevLeg, currLeg, nextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
-            } else if(currLeg.equals("P") || currLeg.equals("S")) {
-                /* Now deal with P and S case. */
-                endAction = currLegIs_P_S(prevLeg, currLeg, nextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
-            } else if((currLeg.startsWith("P") || currLeg.startsWith("S")) && currLeg.endsWith("diff")) {
-                endAction = currLegIs_Pdiff_Sdiff(prevLeg, currLeg, nextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
-            } else if((currLeg.startsWith("P") || currLeg.startsWith("S")) && (currLeg.endsWith("n") || currLeg.endsWith("g"))) {
-                endAction = currLegIs_Pn_Sn(prevLeg, currLeg, nextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
-            } else if(currLeg.equals("K")) {
-                /* Now deal with K. */
-                if ( checkDegenerateOuterCore(prevLeg, currLeg, nextLeg, isPWave, prevIsPWave, legNum) ) {
-                    endAction = currLegIs_K(prevLeg, currLeg, nextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
-                } else {
-                    endAction = FAIL;
+            if (isCrustMantleLeg(currLeg)) {
+                if (currLeg.equals("Ped") || currLeg.equals("Sed")) {
+                    /* Deal with P and S exclusively downgoing case . */
+                    endAction = currLegIs_Ped_Sed(prevLeg, currLeg, nextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
+                } else if (currLeg.equals("p") || currLeg.equals("s")) {
+                    /* Deal with p and s case . */
+                    endAction = currLegIs_p_s(prevLeg, currLeg, nextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
+                } else if (currLeg.equals("P") || currLeg.equals("S")) {
+                    /* Now deal with P and S case. */
+                    endAction = currLegIs_P_S(prevLeg, currLeg, nextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
+                } else if ((currLeg.startsWith("P") || currLeg.startsWith("S")) && isDiffracted(currLeg)) {
+                    endAction = currLegIs_Pdiff_Sdiff(prevLeg, currLeg, nextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
+                } else if ((currLeg.startsWith("P") || currLeg.startsWith("S")) && (currLeg.endsWith("n") || currLeg.endsWith("g"))) {
+                    endAction = currLegIs_Pn_Sn(prevLeg, currLeg, nextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
                 }
-            } else if(currLeg.equals("Ked")) {
-                /* Now deal with Ked. */
-                if ( checkDegenerateOuterCore(prevLeg, currLeg, nextLeg, isPWave, prevIsPWave, legNum)) {
-                    endAction = currLegIs_Ked(prevLeg, currLeg, nextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
-                } else {
-                    endAction = FAIL;
+            } else if (isOuterCoreLeg(currLeg)) {
+                if (currLeg.equals("K")) {
+                    /* Now deal with K. */
+                    if (checkDegenerateOuterCore(prevLeg, currLeg, nextLeg, isPWave, prevIsPWave, legNum)) {
+                        endAction = currLegIs_K(prevLeg, currLeg, nextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
+                    } else {
+                        endAction = FAIL;
+                    }
+                } else if (currLeg.equals("Ked")) {
+                    /* Now deal with Ked. */
+                    if (checkDegenerateOuterCore(prevLeg, currLeg, nextLeg, isPWave, prevIsPWave, legNum)) {
+                        endAction = currLegIs_Ked(prevLeg, currLeg, nextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
+                    } else {
+                        endAction = FAIL;
+                    }
+                } else if (currLeg.startsWith("K") && isDiffracted(currLeg)) {
+                    /* Now deal with Kdiff. */
+                    if (checkDegenerateOuterCore(prevLeg, currLeg, nextLeg, isPWave, prevIsPWave, legNum)) {
+                        endAction = currLegIs_Kdiff(prevLeg, currLeg, nextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
+                    } else {
+                        endAction = FAIL;
+                    }
+                } else if (currLeg.equals("k")) {
+                    /* Deal with k case . */
+                    if (checkDegenerateOuterCore(prevLeg, currLeg, nextLeg, isPWave, prevIsPWave, legNum)) {
+                        endAction = currLegIs_k(prevLeg, currLeg, nextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
+                    } else {
+                        endAction = FAIL;
+                    }
                 }
-            } else if(currLeg.startsWith("K") && currLeg.endsWith("diff")) {
-                /* Now deal with Kdiff. */
-                if ( checkDegenerateOuterCore(prevLeg, currLeg, nextLeg, isPWave, prevIsPWave, legNum)) {
-                    endAction = currLegIs_Kdiff(prevLeg, currLeg, nextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
-                } else {
-                    endAction = FAIL;
-                }
-            } else if(currLeg.equals("k")) {
-                /* Deal with k case . */
-                if ( checkDegenerateOuterCore(prevLeg, currLeg, nextLeg, isPWave, prevIsPWave, legNum)) {
-                    endAction = currLegIs_k(prevLeg, currLeg, nextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
-                } else {
-                    endAction = FAIL;
-                }
-            } else if(currLeg.equals("I") || currLeg.equals("J")) {
-                /* And now consider inner core, I and J. */
-                if ( checkDegenerateInnerCore(prevLeg, currLeg, nextLeg, isPWave, prevIsPWave, legNum)) {
-                    endAction = currLegIs_I_J(prevLeg, currLeg, nextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
-                } else {
-                    endAction = FAIL;
-                }
-            } else if((currLeg.startsWith("I") || currLeg.startsWith("J")) && currLeg.endsWith("diff")) {
-                /* Now deal with I5500diff. */
-                if ( checkDegenerateInnerCore(prevLeg, currLeg, nextLeg, isPWave, prevIsPWave, legNum)) {
-                    endAction = currLegIs_I_Jdiff(prevLeg, currLeg, nextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
-                } else {
-                    endAction = FAIL;
-                }
+            } else if (isInnerCoreLeg(currLeg)) {
+                if (currLeg.equals("I") || currLeg.equals("J")) {
+                    /* And now consider inner core, I and J. */
+                    if (checkDegenerateInnerCore(prevLeg, currLeg, nextLeg, isPWave, prevIsPWave, legNum)) {
+                        endAction = currLegIs_I_J(prevLeg, currLeg, nextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
+                    } else {
+                        endAction = FAIL;
+                    }
+                } else if ((currLeg.startsWith("I") || currLeg.startsWith("J")) && isDiffracted(currLeg)) {
+                    /* Now deal with I5500diff. */
+                    if (checkDegenerateInnerCore(prevLeg, currLeg, nextLeg, isPWave, prevIsPWave, legNum)) {
+                        endAction = currLegIs_I_Jdiff(prevLeg, currLeg, nextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
+                    } else {
+                        endAction = FAIL;
+                    }
 
-            } else if(currLeg.equals("Ied") || currLeg.equals("Jed")) {
-                /* And now consider inner core, Ied and Jed. */
-                if ( checkDegenerateInnerCore(prevLeg, currLeg, nextLeg, isPWave, prevIsPWave, legNum)) {
-                    endAction = currLegIs_Ied_Jed(prevLeg, currLeg, nextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
-                } else {
-                    endAction = FAIL;
+                } else if (currLeg.equals("Ied") || currLeg.equals("Jed")) {
+                    /* And now consider inner core, Ied and Jed. */
+                    if (checkDegenerateInnerCore(prevLeg, currLeg, nextLeg, isPWave, prevIsPWave, legNum)) {
+                        endAction = currLegIs_Ied_Jed(prevLeg, currLeg, nextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
+                    } else {
+                        endAction = FAIL;
+                    }
+                } else if (currLeg.equals("y") || currLeg.equals("j")) {
+                    /* And now consider upgoing inner core, y and j. */
+                    if (checkDegenerateInnerCore(prevLeg, currLeg, nextLeg, isPWave, prevIsPWave, legNum)) {
+                        endAction = currLegIs_y_j(prevLeg, currLeg, nextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
+                    } else {
+                        endAction = FAIL;
+                    }
                 }
-            } else if(currLeg.equals("y") || currLeg.equals("j")) {
-                /* And now consider upgoing inner core, y and j. */
-                if ( checkDegenerateInnerCore(prevLeg, currLeg, nextLeg, isPWave, prevIsPWave, legNum)) {
-                    endAction = currLegIs_y_j(prevLeg, currLeg, nextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
-                } else {
-                    endAction = FAIL;
-                }
-            } else if(currLeg.equals("m")
+            } else if (currLeg.equals("m")
                     || currLeg.equals("c") || currLeg.equals("cx")
                     || currLeg.equals("i") || currLeg.equals("ix")) {
                 if (currLeg.equals("c") || currLeg.equals("cx")) {
-                    if ( ! checkDegenerateOuterCore(prevLeg, currLeg, nextLeg, isPWave, prevIsPWave, legNum)) {
+                    if (!checkDegenerateOuterCore(prevLeg, currLeg, nextLeg, isPWave, prevIsPWave, legNum)) {
                         endAction = FAIL;
                     }
                 }
                 if (currLeg.equals("i") || currLeg.equals("ix")) {
-                    if ( ! checkDegenerateInnerCore(prevLeg, currLeg, nextLeg, isPWave, prevIsPWave, legNum)) {
+                    if (!checkDegenerateInnerCore(prevLeg, currLeg, nextLeg, isPWave, prevIsPWave, legNum)) {
                         endAction = FAIL;
                     }
                 }
                 if (nextLeg.equals(END_CODE)) {
-                    throw new TauModelException(getName()+" Phase not recognized (12): "
+                    throw new TauModelException(getName() + " Phase not recognized (12): "
                             + currLeg + " as last leg, then " + nextLeg);
                 }
-            } else if(currLeg.startsWith("^")) {
+            } else if (currLeg.startsWith("^")) {
                 endAction = REFLECT_UNDERSIDE;
                 if (nextLeg.equals(END_CODE)) {
-                    throw new TauModelException(getName()+" Phase not recognized (12): "
+                    throw new TauModelException(getName() + " Phase not recognized (12): "
                             + currLeg + " as last leg, then " + nextLeg);
                 }
                 // nothing to do as will have been handled by previous leg
-            } else if(currLeg.startsWith("v") || currLeg.startsWith("V")) {
+            } else if (currLeg.startsWith("v") || currLeg.startsWith("V")) {
                 if (nextLeg.equals(END_CODE)) {
-                    throw new TauModelException(getName()+" Phase not recognized (12): "
+                    throw new TauModelException(getName() + " Phase not recognized (12): "
                             + currLeg + " as last leg, then " + nextLeg);
                 }
                 String depthString;
                 depthString = currLeg.substring(1);
                 int b = LegPuller.closestBranchToDepth(tMod, depthString);
                 if (b == 0) {
-                    throw new TauModelException(getName()+" Phase not recognized: "+currLeg+" looks like a top side reflection at the free surface.");
+                    throw new TauModelException(getName() + " Phase not recognized: " + currLeg + " looks like a top side reflection at the free surface.");
                 }
-            } else if(isLegDepth) {
+            } else if (isLegDepth) {
                 // check for phase like P0s, but could also be P2s if first discon is deeper
                 int b = LegPuller.closestBranchToDepth(tMod, currLeg);
                 if (b == 0 && (nextLeg.equals("p") || nextLeg.equals("s"))) {
@@ -720,7 +718,7 @@ public class SeismicPhaseFactory {
                 // non-standard head wave
                 currLegIs_OtherHead(prevLeg, currLeg, nextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
             } else {
-                throw new TauModelException(getName()+" Phase not recognized (10): " + currLeg
+                throw new TauModelException(getName() + " Phase not recognized (10): " + currLeg
                         + " followed by " + nextLeg);
             }
             if (endAction == FAIL || maxRayParam < 0) {

@@ -451,6 +451,9 @@ public class ScatteredSeismicPhase implements SeismicPhase {
     }
 
     @Override
+    /**
+     *  Calculation of a amplitude for a scattered phase doesn't make any sense given 1D ray, so always returns zero.
+     */
     public double calcReflTran(Arrival arrival) {
         return 0;
     }

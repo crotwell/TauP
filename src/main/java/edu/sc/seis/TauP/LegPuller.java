@@ -12,7 +12,7 @@ public class LegPuller {
 
     public static final String travelSuffix = "((diff)|(ed)|n|g)";
 
-    public static final String headDiffRE = "([PSIJK]?([mci]|"+number+")((diff)|n))";
+    public static final String headDiffRE = "(([PSIJK]([mci]|"+number+")?)((diff)|n))";
 
     public static final String travelLeg = "(([PpSsKkIyJj]"+travelSuffix+"?)|"+headDiffRE+")";
 

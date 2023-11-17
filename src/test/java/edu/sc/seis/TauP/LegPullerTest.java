@@ -7,16 +7,25 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 
+import static edu.sc.seis.TauP.PhaseSymbols.DIFF;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class LegPullerTest {
 
     @Test
     public void testLegalPhases() throws Exception {
-        for(String name : IllegalPhasesTest.otherLegalPhases) {
+        for (String name : IllegalPhasesTest.otherLegalPhases) {
             ArrayList<String> legs = LegPuller.legPuller(name);
             assertNotEquals(0, legs.size(), name);
         }
+    }
+
+    @Test
+    public void testDiffSubstring() throws Exception {
+        String name = "PKdiffP";
+        int offset = 1;
+        String diffLeg = name.substring(offset, name.indexOf(DIFF, offset + 1) + DIFF.length());
+        assertEquals("Kdiff", diffLeg);
     }
 
     @Test
@@ -34,6 +43,17 @@ public class LegPullerTest {
         assertEquals("P410n", legs.get(0));
         assertEquals("END", legs.get(1));
     }
+
+    @Test
+    public void testLegPull_PKdiffP() throws Exception {
+        ArrayList<String> legs = LegPuller.legPuller("PKdiffP");
+        assertEquals(4, legs.size());
+        assertEquals("P", legs.get(0));
+        assertEquals("Kdiff", legs.get(1));
+        assertEquals("P", legs.get(2));
+        assertEquals("END", legs.get(3));
+    }
+
     @Test
     public void testLegPull_PK3000diffP() throws Exception {
         ArrayList<String> legs = LegPuller.legPuller("PK3000diffP");

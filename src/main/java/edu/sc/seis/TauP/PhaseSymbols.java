@@ -1,5 +1,8 @@
 package edu.sc.seis.TauP;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class PhaseSymbols {
     public PhaseSymbols() {}
 
@@ -37,14 +40,24 @@ public class PhaseSymbols {
     public static final String END_CODE = "END";
 
 
+    public static boolean isCompressionalWaveSymbol(String name) {
+        return isCompressionalWaveSymbol(name, 0);
+    }
     public static boolean isCompressionalWaveSymbol(String name, int offset) {
         char c = name.charAt(offset);
         return c == P || c == p || c == K || c == k || c == I || c == y;
     }
 
+    public static boolean isTransverseWaveSymbol(String name) {
+        return isTransverseWaveSymbol(name, 0);
+    }
     public static boolean isTransverseWaveSymbol(String name, int offset) {
         char c = name.charAt(offset);
         return c == S || c == s || c == J || c == j;
+    }
+
+    public static boolean isDowngoingSymbol(String name) {
+        return isDowngoingSymbol(name, 0);
     }
 
     public static boolean isDowngoingSymbol(String name, int offset) {
@@ -52,47 +65,82 @@ public class PhaseSymbols {
         return c == P || c == S || c == K || c == I || c == J;
     }
 
+    public static boolean isExclusiveDowngoingSymbol(String name) {
+        return isExclusiveDowngoingSymbol(name, 0);
+    }
     public static boolean isExclusiveDowngoingSymbol(String name, int offset) {
         return isDowngoingSymbol(name, offset) && name.startsWith(EX_DOWN_CODE, offset+1);
     }
 
+    public static boolean isUpgoingSymbol(String name) {
+        return isUpgoingSymbol(name, 0);
+    }
     public static boolean isUpgoingSymbol(String name, int offset) {
         char c = name.charAt(offset);
         return c == p || c == s || c == k || c == y || c == j;
     }
 
+    public static boolean isReflectSymbol(String name) {
+        return isReflectSymbol(name, 0);
+    }
     public static boolean isReflectSymbol(String name, int offset) {
         char c = name.charAt(offset);
         return c == TOPSIDE_REFLECTION || c == TOPSIDE_CRITICAL_REFLECTION || c == UNDERSIDE_REFLECTION;
     }
 
+    public static boolean isScatterSymbol(String name) {
+        return isScatterSymbol(name, 0);
+    }
     public static boolean isScatterSymbol(String name, int offset) {
         char c = name.charAt(offset);
         return c == SCATTER_CODE || c == BACKSCATTER_CODE;
     }
 
+    public static boolean isCrustMantleLeg(String name) {
+        return isCrustMantleLeg(name, 0);
+    }
     public static boolean isCrustMantleLeg(String name, int offset) {
         char c = name.charAt(offset);
         return c == P || c == S || c == p || c == s ;
     }
 
+    public static boolean isOuterCoreLeg(String name) {
+        return isOuterCoreLeg(name, 0);
+    }
     public static boolean isOuterCoreLeg(String name, int offset) {
         char c = name.charAt(offset);
         return c == K || c == k  ;
+    }
+    public static boolean isInnerCoreLeg(String name) {
+        return isInnerCoreLeg(name, 0);
     }
     public static boolean isInnerCoreLeg(String name, int offset) {
         char c = name.charAt(offset);
         return c == I || c == y || c == J || c == j ;
     }
 
+    public static boolean isDiffracted(String name) {
+        return isDiffracted(name, 0);
+    }
+
+    /**
+     * Match phase segments like Pdiff, S410diff, Kdiff
+     * @param name
+     * @param offset
+     * @return
+     */
     public static boolean isDiffracted(String name, int offset) {
-        if ( isDowngoingSymbol(name, offset) && name.startsWith(DIFF, offset+1)) {
-            // simple like Pdiff
-            return true;
+        Pattern phaseRegEx = Pattern.compile("^"+LegPuller.headDiffRE+"");
+        Matcher m = phaseRegEx.matcher(name.substring(offset));
+        if (m.find()) {
+            return m.group(m.groupCount()-1).equals(DIFF);
         }
         return false;
     }
 
+    public static boolean isHead(String name) {
+        return isHead(name, 0);
+    }
     public static boolean isHead(String name, int offset) {
         if ( isDowngoingSymbol(name, offset) && name.startsWith(""+HEAD_CODE, offset+1)) {
             // simple like Pn
@@ -101,6 +149,9 @@ public class PhaseSymbols {
         return false;
     }
 
+    public static boolean isSurfaceWave(String name) {
+        return isSurfaceWave(name, 0);
+    }
     public static boolean isSurfaceWave(String name, int offset) {
         // look for numbers followed by kmps
         int idx = offset;
@@ -115,6 +166,9 @@ public class PhaseSymbols {
         return false;
     }
 
+    public static boolean isBoundary(String name) throws TauModelException {
+        return isBoundary(name, 0);
+    }
     public static boolean isBoundary(String name, int offset) throws TauModelException {
         char ch = name.charAt(offset);
         if(Character.isDigit(ch) || ch == '.' || ch == m || ch == c || ch == i ) {
