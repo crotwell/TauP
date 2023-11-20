@@ -33,7 +33,6 @@ tasks.withType<JavaCompile>().configureEach { options.compilerArgs.addAll(arrayO
 
 
 sourceSets {
-
     create("webserver") {
         compileClasspath += sourceSets.main.get().output
         runtimeClasspath += sourceSets.main.get().output
@@ -53,7 +52,7 @@ dependencies {
 
     implementation("org.json:json:20230618")
     implementation("edu.sc.seis:seisFile:2.1.0-SNAPSHOT") {
-      // we need seisFile for sac output, but not all the other functionality
+      // we need seisFile for sac/mseed3 output, but not all the other functionality
       exclude(group = "info.picocli", module = "picocli")
       exclude(group = "com.fasterxml.woodstox", module = "woodstox-core")
       exclude(group = "org.apache.httpcomponents", module = "httpclient")
@@ -93,13 +92,26 @@ tasks.named<Test>("test") {
 }
 
 
+tasks.named("sourcesJar") {
+    dependsOn("makeVersionClass")
+}
+
+
 val dirName = project.name+"-"+version
 val binDirName = project.name+"_bin-"+version
 
+tasks.register<Sync>("webserverSphinxDocs") {
+  from("src/doc/sphinx/build/html")
+  into("src/webserver/resources/edu/sc/seis/webtaup/html/doc")
+}
 
 tasks.register<Jar>("webserverJar") {
     dependsOn("webserverClasses" )
+    from(sourceSets["main"].output)
     from(sourceSets["webserver"].output)
+    from("src/doc/sphinx/build/html") {
+      into("edu/sc/seis/webtaup/html/doc")
+    }
     archiveBaseName.set("taup_webserver")
 }
 
