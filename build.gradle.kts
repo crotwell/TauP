@@ -355,7 +355,7 @@ tasks.register<JavaExec>("genModels") {
 
 tasks.register<Sync>("copyReflTranCompareFiles") {
   from("src/test/resources/edu/sc/seis/TauP/cmdLineTest/refltranCompare")
-  into("cmdLineTest/refltranCompare")
+  into("build/cmdLineTest/refltranCompare")
 }
 tasks.register<JavaExec>("genCmdLineTestFiles") {
     description = "generate TauP cmd line test output files"
@@ -363,7 +363,10 @@ tasks.register<JavaExec>("genCmdLineTestFiles") {
     getMainClass().set("edu.sc.seis.TauP.CmdLineOutputTest")
     dependsOn += tasks.getByName("testClasses")
     dependsOn += tasks.getByName("copyReflTranCompareFiles")
-    outputs.files(fileTree("cmdLineTest"))
+    outputs.files(fileTree("build/cmdLineTest"))
+    doFirst {
+
+    }
 }
 tasks.register<Sync>("copyCmdLineTestFiles") {
   from(tasks.getByName("genCmdLineTestFiles").outputs)
