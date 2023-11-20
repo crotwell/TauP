@@ -27,7 +27,10 @@ package edu.sc.seis.TauP;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.json.JSONWriter;
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.time.Duration;
 import java.util.List;
 
@@ -505,6 +508,81 @@ public class Arrival {
             }
         }
         return latestArrival;
+    }
+
+
+    public void writeJSON(PrintWriter pw, String indent) throws IOException {
+        String NL = "\n";
+        pw.write(indent+"{"+NL);
+        String innerIndent = indent+"  ";
+        pw.write(innerIndent+JSONWriter.valueToString("distdeg")+": "+JSONWriter.valueToString((float)getModuloDistDeg())+","+NL);
+        pw.write(innerIndent+JSONWriter.valueToString("phase")+": "+JSONWriter.valueToString(getName())+","+NL);
+        pw.write(innerIndent+JSONWriter.valueToString("time")+": "+JSONWriter.valueToString((float)getTime())+","+NL);
+        pw.write(innerIndent+JSONWriter.valueToString("rayparam")+": "+JSONWriter.valueToString((float)(Math.PI / 180.0 * getRayParam()))+","+NL);
+        pw.write(innerIndent+JSONWriter.valueToString("takeoff")+": "+JSONWriter.valueToString((float)getTakeoffAngle())+","+NL);
+        pw.write(innerIndent+JSONWriter.valueToString("incident")+": "+JSONWriter.valueToString((float)getIncidentAngle())+","+NL);
+        pw.write(innerIndent+JSONWriter.valueToString("puristdist")+": "+JSONWriter.valueToString((float)getDistDeg())+","+NL);
+        pw.write(innerIndent+JSONWriter.valueToString("puristname")+": "+JSONWriter.valueToString(getPuristName())+","+NL);
+
+        pw.write(innerIndent+JSONWriter.valueToString("amp")+": {"+NL);
+
+        try {
+            double geospread = getGeometricSpreadingFactor();
+            if (Double.isFinite(geospread)) {
+                pw.write(innerIndent+"  "+JSONWriter.valueToString("factor")+": "+JSONWriter.valueToString((float)getAmplitudeFactor())+","+NL);
+                pw.write(innerIndent+"  "+JSONWriter.valueToString("geospread")+": "+JSONWriter.valueToString((float)geospread)+","+NL);
+            } else {
+                pw.write(innerIndent+"  "+JSONWriter.valueToString("error")+": "+JSONWriter.valueToString("geometrical speading not finite")+","+NL);
+            }
+            pw.write(innerIndent+"  "+JSONWriter.valueToString("refltran")+": "+JSONWriter.valueToString((float)getReflTrans())+NL);
+            pw.write(innerIndent+"}");
+        } catch (TauPException e) {
+            throw new RuntimeException(e);
+        }
+
+        if (getPhase() instanceof ScatteredSeismicPhase) {
+            pw.write(","+NL);
+            ScatteredSeismicPhase scatPhase = (ScatteredSeismicPhase)getPhase();
+            pw.write(innerIndent+JSONWriter.valueToString("scatter")+": {"+NL);
+            pw.write(innerIndent+"  "+JSONWriter.valueToString("depth")+": "+JSONWriter.valueToString((float)scatPhase.getScattererDepth())+","+NL);
+            pw.write(innerIndent+"  "+JSONWriter.valueToString("distdeg")+": "+JSONWriter.valueToString((float)scatPhase.getScattererDistanceDeg())+","+NL);
+            pw.write(innerIndent+"}");
+        }
+        if (isRelativeToArrival()) {
+            pw.write(","+NL);
+            Arrival relArrival = getRelativeToArrival();
+            pw.write(innerIndent+JSONWriter.valueToString("relative")+": {"+NL);
+            pw.write(innerIndent+"  "+JSONWriter.valueToString("difference")+": "+JSONWriter.valueToString((float)(getTime()-relArrival.getTime()))+","+NL);
+            pw.write(innerIndent+"  "+JSONWriter.valueToString("arrival")+": "+NL);
+            relArrival.writeJSON(pw, innerIndent+"  "+"  ");
+            pw.write(innerIndent+"}");
+        }
+        if (pierce != null ) {
+            pw.write(","+NL);
+            pw.write(innerIndent+JSONWriter.valueToString("pierce")+": ["+NL);
+            TimeDist[] tdArray = getPierce();
+            for (TimeDist td : tdArray) {
+                pw.write(innerIndent+"  [ "+
+                        JSONWriter.valueToString((float)td.getDistDeg())+", "+
+                        JSONWriter.valueToString((float)td.getDepth())+", "+
+                        JSONWriter.valueToString((float)td.getTime())+" ],"+NL);
+            }
+            pw.write(innerIndent+"]");
+        }
+        if (path != null) {
+            pw.write(","+NL);
+            pw.write(innerIndent+JSONWriter.valueToString("path")+": ["+NL);
+            TimeDist[] tdArray = getPath();
+            for (TimeDist td : tdArray) {
+                pw.write(innerIndent+"  [ "+
+                        JSONWriter.valueToString((float)td.getDistDeg())+", "+
+                        JSONWriter.valueToString((float)td.getDepth())+", "+
+                        JSONWriter.valueToString((float)td.getTime())+" ],"+NL);
+            }
+            pw.write(innerIndent+"]");
+        }
+        pw.write(NL);
+        pw.write(indent+"}"); // main end
     }
 
     public JSONObject asJSONObject() {

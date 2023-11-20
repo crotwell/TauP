@@ -18,6 +18,7 @@ package edu.sc.seis.TauP;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.json.JSONWriter;
 
 import java.io.*;
 import java.util.*;
@@ -1208,9 +1209,42 @@ public class TauP_Time extends TauP_Tool {
         out.flush();
     }
 
-    public void printResultJSON(PrintWriter out) {
-        String s = resultAsJSON(modelName, depth, getReceiverDepth(), getPhaseNames(), arrivals);
-        out.println(s);
+    public void printResultJSON(PrintWriter out) throws IOException {
+        writeJSON(out, "");
+    }
+
+    public void writeJSON(PrintWriter pw, String indent) throws IOException {
+        String innerIndent = indent+"  ";
+        String NL = "\n";
+        pw.write("{"+NL);
+        pw.write(innerIndent+JSONWriter.valueToString("model")+": "+JSONWriter.valueToString(modelName)+","+NL);
+        pw.write(innerIndent+JSONWriter.valueToString("sourcedepth")+": "+JSONWriter.valueToString((float)depth)+","+NL);
+        pw.write(innerIndent+JSONWriter.valueToString("receiverdepth")+": "+JSONWriter.valueToString((float)receiverDepth)+","+NL);
+        pw.write(innerIndent+JSONWriter.valueToString("phases")+": [ ");
+        boolean first = true;
+        for (SeismicPhase phase : phases) {
+            if (first) {
+                first = false;
+            } else {
+                pw.write(", ");
+            }
+            pw.write(JSONWriter.valueToString(phase.getName()));
+        }
+        pw.write(" ],"+NL);
+
+        pw.write(innerIndent+JSONWriter.valueToString("arrivals")+": ["+NL);
+        first = true;
+        for (Arrival arrival : arrivals) {
+            if (first) {
+                first = false;
+            } else {
+                pw.write(","+NL);
+            }
+            arrival.writeJSON(pw, innerIndent+"  ");
+        }
+        pw.write(NL);
+        pw.write(innerIndent+"]"+NL);
+        pw.write("}"+NL);
     }
 
     public static String resultAsJSON(String modelName,
