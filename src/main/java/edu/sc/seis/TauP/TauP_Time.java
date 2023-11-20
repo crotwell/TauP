@@ -1280,7 +1280,8 @@ public class TauP_Time extends TauP_Tool {
         out.println(SQ+"arrivals"+Q+": [");
         for(int j = 0; j < arrivals.size(); j++) {
             Arrival currArrival = (Arrival)arrivals.get(j);
-            out.print(currArrival.asJSON(true, SS, withPierce, withPath));
+            out.print(currArrival.asJSONObject().toString(2));
+            //out.print(currArrival.asJSON(true, SS, withPierce, withPath));
             if (j != arrivals.size()-1) {
                 out.print(COMMA);
             }
