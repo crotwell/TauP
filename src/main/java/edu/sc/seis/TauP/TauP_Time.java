@@ -1027,12 +1027,12 @@ public class TauP_Time extends TauP_Tool {
             tModDepth = tModDepth.splitBranch(receiverDepth);
             clearPhases();
         }
-        if (receiverDepth != getReceiverDepth()) {
+        if ( ! tModDepth.isBranchDepth(receiverDepth)) {
             setReceiverDepth(receiverDepth);
             tModDepth = tModDepth.splitBranch(receiverDepth); // if already split on receiver depth this does nothing
             clearPhases();
         }
-        if (scatterDepth != getScattererDepth()) {
+        if ( ! tModDepth.isBranchDepth(scatterDepth)) {
             setScattererDepth(scatterDepth);
             tModDepth = tModDepth.splitBranch(scatterDepth); // if already split on scatter depth this does nothing
             clearPhases();

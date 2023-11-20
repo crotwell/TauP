@@ -31,7 +31,8 @@ public class CmdLineOutputTest {
                                           "taup time -h 10 -ph ttall -deg 35 -mod ak135",
                                           "taup time -h 10 -ph ttall -deg 35 -mod ak135 --json",
                                           "taup time -h 10 -ph ttall -deg 145 -mod ak135 --rel P",
-                                          "taup time -h 10 -ph ttall -deg 145 -mod ak135 --rel P,PKP"
+                                          "taup time -h 10 -ph ttall -deg 145 -mod ak135 --rel P,PKP",
+            "taup time -h 10 -ph ttall -deg 145 -mod ak135 --stadepth 200",
                                             };
 
     String[] pierceTestCmds = new String[] {"taup pierce -h 10 -ph P -deg 35 -mod prem",
@@ -39,7 +40,8 @@ public class CmdLineOutputTest {
                                             "taup pierce -h 10 -ph P -deg 35 -mod ak135",
                                             "taup pierce -mod prem -h 600 -deg 45 -ph PKiKP -pierce 5049.5",
                                             "taup pierce -h 0 -ph Pn -deg 6",
-                                            "taup pierce -h 0 -ph Pdiff -deg 120"
+                                            "taup pierce -h 0 -ph Pdiff -deg 120",
+            "taup pierce -h 10 -ph ttall -deg 145 -mod ak135 --stadepth 200",
                                           };
 
     String[] pathTestCmds = new String[] {"taup path -o stdout -h 10 -ph P -deg 35 -mod prem",

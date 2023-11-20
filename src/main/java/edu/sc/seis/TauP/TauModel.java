@@ -552,6 +552,22 @@ public class TauModel implements Serializable {
     }
 
     /**
+     * Checks to see if the given depth is a boundary depth. This could be because it is a discontinuity in the
+     * velocity model, or because the layer has been split for the source or reciever.
+     * @param depth
+     * @return
+     */
+    public boolean isBranchDepth(double depth) {
+        for(int branchNum = 0; branchNum < tauBranches[0].length; branchNum++) {
+            if (tauBranches[0][branchNum].getTopDepth() == depth
+                    || tauBranches[0][branchNum].getBotDepth() == depth) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * returns a new TauModel with the branches containing depth split at depth.
      * Used for putting a source at depth since a source can only be located on
      * a branch boundary.
@@ -562,24 +578,21 @@ public class TauModel implements Serializable {
              * first check to see if depth is already a branch boundary. If so
              * then we need only return this.
              */
-            for(int branchNum = 0; branchNum < tauBranches[0].length; branchNum++) {
-                if(tauBranches[0][branchNum].getTopDepth() == depth
-                        || tauBranches[0][branchNum].getBotDepth() == depth) {
-                    return new TauModel(spherical,
-                                        getSourceDepth(),
-                                        getSourceBranch(),
-                                        noDisconDepths,
-                                        mohoDepth,
-                                        mohoBranch,
-                                        cmbDepth,
-                                        cmbBranch,
-                                        iocbDepth,
-                                        iocbBranch,
-                                        radiusOfEarth,
-                                        sMod,
-                                        rayParams,
-                                        tauBranches);
-                }
+            if (isBranchDepth(depth)) {
+                return new TauModel(spherical,
+                        getSourceDepth(),
+                        getSourceBranch(),
+                        noDisconDepths,
+                        mohoDepth,
+                        mohoBranch,
+                        cmbDepth,
+                        cmbBranch,
+                        iocbDepth,
+                        iocbBranch,
+                        radiusOfEarth,
+                        sMod,
+                        rayParams,
+                        tauBranches);
             }
             /*
              * depth is not a branch boundary, so we must modify the tau model.
