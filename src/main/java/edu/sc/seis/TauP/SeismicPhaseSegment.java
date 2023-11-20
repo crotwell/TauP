@@ -400,14 +400,55 @@ public class SeismicPhaseSegment {
 			}
 			TauBranch tauBranch = tMod.getTauBranch(endBranch, isPWave);
 			double depth = isDownGoing ? tauBranch.getBotDepth() : tauBranch.getTopDepth();
-			ReflTrans reflTranCoef = vMod.calcReflTransCoef(depth, isDownGoing);
 			double flatRayParam = arrival.getRayParam() / (getTauModel().getRadiusOfEarth() - depth);
 
 			if (arrival.getSourceDepth() == depth && ! getTauModel().getVelocityModel().isDisconDepth(depth)) {
 				// branch exists just for source
-			} else if (this.endAction == TURN) {
-				if(arrival.getRayParam() < tauBranch.getMinTurnRayParam()) {
-					// turn is actually critical reflection from bottom of layer
+			} else if (arrival.getReceiverDepth() == depth && ! getTauModel().getVelocityModel().isDisconDepth(depth)) {
+				// branch exists just for receiver
+			} else {
+				ReflTrans reflTranCoef = vMod.calcReflTransCoef(depth, isDownGoing);
+				if (this.endAction == TURN) {
+					if (arrival.getRayParam() < tauBranch.getMinTurnRayParam()) {
+						// turn is actually critical reflection from bottom of layer
+						if (isPWave) {
+							if (nextLegIsPWave) {
+								reflTranValue *= reflTranCoef.getRpp(flatRayParam);
+							} else {
+								reflTranValue *= reflTranCoef.getRps(flatRayParam);
+							}
+						} else {
+							if (nextLegIsPWave) {
+								reflTranValue *= reflTranCoef.getRsp(flatRayParam);
+							} else {
+								if (allSH) {
+									reflTranValue *= reflTranCoef.getRshsh(flatRayParam);
+								} else {
+									reflTranValue *= reflTranCoef.getRss(flatRayParam);
+								}
+							}
+						}
+					}
+				} else if (this.endAction == TRANSDOWN || this.endAction == TRANSUP) {
+					if (isPWave) {
+						if (nextLegIsPWave) {
+							reflTranValue *= reflTranCoef.getTpp(flatRayParam);
+						} else {
+							reflTranValue *= reflTranCoef.getTps(flatRayParam);
+						}
+					} else {
+						if (nextLegIsPWave) {
+							reflTranValue *= reflTranCoef.getTsp(flatRayParam);
+						} else {
+							if (allSH) {
+								reflTranValue *= reflTranCoef.getTshsh(flatRayParam);
+							} else {
+								reflTranValue *= reflTranCoef.getTss(flatRayParam);
+							}
+						}
+					}
+				} else if (this.endAction == REFLECT_TOPSIDE_CRITICAL || this.endAction == REFLECT_TOPSIDE || this.endAction == REFLECT_UNDERSIDE) {
+
 					if (isPWave) {
 						if (nextLegIsPWave) {
 							reflTranValue *= reflTranCoef.getRpp(flatRayParam);
@@ -426,44 +467,6 @@ public class SeismicPhaseSegment {
 						}
 					}
 				}
-			} else if (this.endAction == TRANSDOWN || this.endAction == TRANSUP) {
-				if (isPWave) {
-					if (nextLegIsPWave) {
-						reflTranValue *= reflTranCoef.getTpp(flatRayParam);
-					} else {
-						reflTranValue *= reflTranCoef.getTps(flatRayParam);
-					}
-				} else {
-					if (nextLegIsPWave) {
-						reflTranValue *= reflTranCoef.getTsp(flatRayParam);
-					} else {
-						if (allSH) {
-							reflTranValue *= reflTranCoef.getTshsh(flatRayParam);
-						} else {
-							reflTranValue *= reflTranCoef.getTss(flatRayParam);
-						}
-					}
-				}
-			} else if (this.endAction == REFLECT_TOPSIDE_CRITICAL || this.endAction == REFLECT_TOPSIDE || this.endAction == REFLECT_UNDERSIDE) {
-
-				if (isPWave) {
-					if (nextLegIsPWave) {
-						reflTranValue *= reflTranCoef.getRpp(flatRayParam);
-					} else {
-						reflTranValue *= reflTranCoef.getRps(flatRayParam);
-					}
-				} else {
-					if (nextLegIsPWave) {
-						reflTranValue *= reflTranCoef.getRsp(flatRayParam);
-					} else {
-						if (allSH) {
-							reflTranValue *= reflTranCoef.getRshsh(flatRayParam);
-						} else {
-							reflTranValue *= reflTranCoef.getRss(flatRayParam);
-						}
-					}
-				}
-
 			}
 			if (Double.isNaN(reflTranValue)) {
 				throw new VelocityModelException("Refltran value is NaN: "+reflTranValue+" "+flatRayParam+" "+arrival.getRayParam()+" "+depth+" "+isPWave+" "+isDownGoing+" "+endAction);
