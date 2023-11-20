@@ -250,7 +250,7 @@ public class Arrival {
         double sinFactor = Math.sin(getModuloDist());
         if (getModuloDist() == 0.0 || getModuloDist() == 180.0) {
             // zero dist and antipode have divide by zero,
-            return 1.0;
+            return Double.POSITIVE_INFINITY;
         }
         double numerator = velocityAtSource()*rpFactor*Math.abs(getDRayParamDDelta());
         double denominator = velocityAtReceiver()*sourceRadius*sourceRadius
@@ -517,6 +517,20 @@ public class Arrival {
         a.put("incident", (float)getIncidentAngle());
         a.put("puristdist", (float)getDistDeg());
         a.put("puristname", getPuristName());
+        JSONObject ampObj = new JSONObject();
+        a.put("amp", ampObj);
+        try {
+            double geospread = getGeometricSpreadingFactor();
+            if (Double.isFinite(geospread)) {
+                ampObj.put("factor", (float) getAmplitudeFactor());
+                ampObj.put("geospread", (float) geospread);
+            } else {
+                ampObj.put("error", "geometrical speading not finite");
+            }
+            ampObj.put("refltran", (float) getReflTrans());
+        } catch (TauPException e) {
+            throw new RuntimeException(e);
+        }
         if (getPhase() instanceof ScatteredSeismicPhase) {
             ScatteredSeismicPhase scatPhase = (ScatteredSeismicPhase)getPhase();
             a.put("scatterdepth", (float)scatPhase.getScattererDepth());
