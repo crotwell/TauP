@@ -808,6 +808,12 @@ public class SimpleSeismicPhase implements SeismicPhase {
             return 0;
         }
         double takeoffAngle = 180/Math.PI*Math.asin(velocityAtSource()*arrivalRayParam/(getTauModel().getRadiusOfEarth()-sourceDepth));
+        if (! Double.isFinite(takeoffAngle)
+                && Math.abs(velocityAtSource()*arrivalRayParam - (getTauModel().getRadiusOfEarth()-sourceDepth)) < 0.05) {
+            // due to rounding/interpolation, arg for asin for horizontal ray can be ever so slightly greater than one
+            // just set takeoffAngle to 90 in this case
+            takeoffAngle = 90;
+        }
         if ( ! getDownGoing()[0]) {
             // upgoing, so angle is in 90-180 range
             takeoffAngle = 180-takeoffAngle;
@@ -821,6 +827,12 @@ public class SimpleSeismicPhase implements SeismicPhase {
             return 0;
         }
         double incidentAngle = 180/Math.PI*Math.asin(velocityAtReceiver()*arrivalRayParam/(getTauModel().getRadiusOfEarth()-receiverDepth));
+        if (! Double.isFinite(incidentAngle)
+                && Math.abs(velocityAtSource()*arrivalRayParam - (getTauModel().getRadiusOfEarth()-receiverDepth)) < 0.05) {
+            // due to rounding/interpolation, arg for asin for horizontal ray can be ever so slightly greater than one
+            // just set incidentAngle to 90 in this case
+            incidentAngle = 90;
+        }
         if (getDownGoing()[getDownGoing().length-1]) {
             incidentAngle = 180 - incidentAngle;
         }
