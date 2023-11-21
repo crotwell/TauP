@@ -8,10 +8,16 @@ import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.List;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
+/**
+ * Test if the params for model sampling are too tight, ie if relaxing one can still generate results with same
+ * ans within tolerance.
+ */
 public class ParamDifferential {
     
     public static void main(String[] args) throws Exception {
@@ -36,12 +42,14 @@ public class ParamDifferential {
     }
     
     @Test
+    @Disabled
     public void testConstVelModel() throws Exception {
         VelocityModel vmod = getConstVelModel();
         dotestcalc("P", vmod, new ConstCorrectTime(vmod));
     }
     
     @Test
+    @Disabled
     public void testAK135() throws Exception {
         System.err.println("testAK135: "+getAK135VelModel().getModelName());
         dotestcalc("P", getAK135VelModel(), new AK135CorrectTime());
@@ -112,19 +120,48 @@ public class ParamDifferential {
         float deltaDeg = 1.0f;
         String outName = "/tmp/"+deltaTMod[0].getVelocityModel().getModelName()+"_"+phaseName+".deltaTau";
         System.err.println("woking on "+outName);
+        Arrival[] maxImprove = new Arrival[deltaTMod.length];
+        double[] maxImproveTime = new double[deltaTMod.length];
+        for (int t = 0; t < deltaTMod.length; t++) {
+            maxImproveTime[t] = Double.NEGATIVE_INFINITY;
+        }
+        double maxError = 0;
+        double errorDistance = -1;
+        int errorIdx = -1;
         PrintStream out = new PrintStream(new BufferedOutputStream(new FileOutputStream(outName)));
         for (float d = deltaDeg; d < 99; d+=deltaDeg) {
-            String distResult = d+" "+ correctTime.getCorrectTime(phaseName, d)+" ";
+            double corTime = correctTime.getCorrectTime(phaseName, d);
+            corTime = pPhase[0].getEarliestArrival(d).getTime();
+            String distResult = d+" "+ corTime+" ";
             for (int t = 0; t < deltaTMod.length; t++) {
                 Arrival a = pPhase[t].getEarliestArrival(d);
                 if (a != null) {
-                    distResult += nf.format(a.getTime()) +" ";
-                } else { distResult += " ?? ";}
+                    distResult += nf.format((a.getTime()-corTime)) +" ";
+                    if (Math.abs(a.getTime()-corTime) > maxImproveTime[t]) {
+                        maxImproveTime[t] = Math.abs(a.getTime()-corTime);
+                        maxImprove[t] = a;
+                    }
+                    if (Math.abs(a.getTime()-corTime) > maxError) {
+                        maxError = Math.abs(a.getTime()-corTime);
+                        errorDistance = d;
+                        errorIdx = t;
+                    }
+                } else {
+                    distResult += " ?? ";
+                    maxError= Double.POSITIVE_INFINITY;
+                }
                 
             }
             out.println(distResult);
         }
+        out.println("Max Difference: "+maxError+" at "+errorDistance+" for "+errorIdx);
+
+        for (int t = 0; t < deltaTMod.length; t++) {
+            out.println(t+" "+maxImproveTime[t]+"  "+maxImprove[t].getDistDeg());
+            assertTrue(maxImproveTime[t] < 0.0005, t+ "Max Difference: "+maxImproveTime[t]+" at "+maxImprove[t].getDistDeg()+" for "+t);
+        }
         out.close();
+        assertTrue(maxError < 0.0005, "Max Difference: "+maxError+" at "+errorDistance+" for "+errorIdx);
     }
     
     NumberFormat nf = new DecimalFormat("0.0000000");
