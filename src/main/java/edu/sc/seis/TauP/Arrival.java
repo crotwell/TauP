@@ -241,7 +241,8 @@ public class Arrival {
 
     /**
      * Geometrical spreading factor.
-     * See Fundamentals of Modern Global Seismology, ch 13, eq 13.21
+     * See Fundamentals of Modern Global Seismology, ch 13, eq 13.9.
+     * Note that eq 13.10 has divide by zero in case of a horizontal ray leaving the source.
      * @return
      * @throws TauModelException
      */
@@ -255,12 +256,28 @@ public class Arrival {
             // zero dist and antipode have divide by zero,
             return Double.POSITIVE_INFINITY;
         }
-        double numerator = velocityAtSource()*rpFactor*Math.abs(getDRayParamDDelta());
-        double denominator = velocityAtReceiver()*sourceRadius*sourceRadius
-                *recRadius*recRadius
-                *radialSlownessAtSource()*radialSlownessAtReceiver()
-                *sinFactor;
-        return Math.sqrt(numerator/ denominator);
+
+        // find neighbor ray
+        Arrival neighbor;
+        if (getRayParamIndex() == 0) {
+            neighbor = getPhase().createArrivalAtIndex(getRayParamIndex()+1);
+        } else {
+            neighbor = getPhase().createArrivalAtIndex(getRayParamIndex()-1);
+        }
+        if (neighbor.getDist() == getDist()) {
+            // could create better neighbor implementation as shoot ray may give rp that is not same as index???
+            throw new TauModelException("Neighbor ray has same dist: "+getPhase().getName()+" "+getDistDeg());
+        }
+        double dtakeoff_ddelta = (getTakeoffAngle()-neighbor.getTakeoffAngle())*DtoR/
+                (getDist()-neighbor.getDist());
+
+        double geoSpread = Math.sin(getTakeoffAngle())
+                /(recRadius*recRadius)
+                * 1.0/Math.cos(getIncidentAngle()*DtoR)
+                * (1/ Math.sin(getModuloDist()))
+                * Math.abs(dtakeoff_ddelta);
+
+        return geoSpread;
     }
 
     /**
@@ -276,7 +293,7 @@ public class Arrival {
     }
 
     /**
-     * Calculates the amplitude factor, reflection/tranmission coefficient times geometric spreading, for the
+     * Calculates the amplitude factor, 1/sqrt(density*vel) times reflection/tranmission coefficient times geometric spreading, for the
      * arrival. Note this is only an approximation of amplitude as the source radiation magnitude and pattern is
      * not included, and this may not give accurate results for certain wave types, such as head or diffracted waves.
      * @return
@@ -287,7 +304,8 @@ public class Arrival {
     public double getAmplitudeFactor() throws TauModelException, VelocityModelException, SlownessModelException {
         double refltran = getReflTrans();
         double geoSpread = getGeometricSpreadingFactor();
-        double ampFactor = refltran * geoSpread;
+        double densityVelocity = 1/Math.sqrt(getPhase().velocityAtReceiver() * getPhase().densityAtReceiver());
+        double ampFactor = densityVelocity* refltran * geoSpread;
         return ampFactor;
     }
 

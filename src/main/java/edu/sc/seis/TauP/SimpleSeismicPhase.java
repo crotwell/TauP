@@ -803,6 +803,24 @@ public class SimpleSeismicPhase implements SeismicPhase {
     }
 
     @Override
+    public double densityAtReceiver() {
+        try {
+            double rho;
+            VelocityModel vMod = getTauModel().getVelocityModel();
+            if (getDownGoing()[getDownGoing().length-1]) {
+                rho = vMod.evaluateAbove(receiverDepth, VelocityModel.DENSITY_CHAR);
+            } else {
+                rho = vMod.evaluateBelow(receiverDepth, VelocityModel.DENSITY_CHAR);
+            }
+            return rho;
+        } catch(NoSuchLayerException e) {
+            throw new RuntimeException("Should not happen", e);
+        } catch(NoSuchMatPropException e) {
+            throw new RuntimeException("Should not happen", e);
+        }
+    }
+
+    @Override
     public double calcTakeoffAngle(double arrivalRayParam) {
         if (name.endsWith("kmps")) {
             return 0;

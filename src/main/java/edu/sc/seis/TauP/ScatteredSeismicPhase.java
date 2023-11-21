@@ -346,6 +346,11 @@ public class ScatteredSeismicPhase implements SeismicPhase {
     }
 
     @Override
+    public double densityAtReceiver() {
+        return scatteredPhase.densityAtReceiver();
+    }
+
+    @Override
     public double calcTakeoffAngle(double arrivalRayParam) {
         return inboundArrival.getTakeoffAngle();
     }

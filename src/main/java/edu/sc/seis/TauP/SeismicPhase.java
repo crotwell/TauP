@@ -143,6 +143,8 @@ public interface SeismicPhase extends Serializable, Cloneable {
 
     double velocityAtReceiver();
 
+    double densityAtReceiver();
+
     double calcTakeoffAngle(double arrivalRayParam);
 
     double calcIncidentAngle(double arrivalRayParam);
