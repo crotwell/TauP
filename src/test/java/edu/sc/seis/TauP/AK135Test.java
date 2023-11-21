@@ -68,6 +68,9 @@ public class AK135Test  {
         doTable("PKIKP");
     }
 
+    public static float TIME_TOL = 0.051f;  // seconds, roughly error for PKIKP at 130 deg with h=0, 1151.6700 vs 1151.6197
+    public static float RAY_PARAM_TOL = 0.11f; // seconds per degree
+
     public void doTable(String phase) throws TauPException {
         if (phase.equals("P")) {
             taup.setPhaseNames(new String[] {"p", "P", "Pdiff"});
@@ -86,10 +89,10 @@ public class AK135Test  {
                 // assume first?
                 assertEquals(timeDist.getTime(),
                              arrivals.get(0).getTime(),
-                             0.07f);
+                        TIME_TOL, timeDist.getDistDeg()+" at "+timeDist.getDepth());
                 assertEquals(timeDist.getP(),
-                             arrivals.get(0).getRayParam() * Math.PI / 180,
-                             0.11f);
+                             arrivals.get(0).getRayParamDeg() ,
+                             RAY_PARAM_TOL);
                 }
             }
         }
