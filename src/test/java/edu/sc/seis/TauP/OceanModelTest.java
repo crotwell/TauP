@@ -28,7 +28,7 @@ public class OceanModelTest {
         TauP_Create taupCreate = new TauP_Create();
         TauModel tMod = taupCreate.createTauModel(vMod);
         assertEquals(10, tMod.getNumBranches());
-        assertEquals(808, tMod.getRayParams().length);
+        assertEquals(979, tMod.getRayParams().length);
         assertEquals(2, tMod.getSlownessModel().fluidLayerDepths.size());
         String phase = "P";
         double dist = 30;

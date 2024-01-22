@@ -406,8 +406,6 @@ public class SphericalSModel extends SlownessModel implements Serializable {
                     throw new SlownessModelException("Slowness layer has a depth larger than the radius of "
                             + "the earth in a spherical model. max depth = "
                             + prevDepth + " radiusOfEarth = " + radiusOfEarth);
-                } else {
-                    isOK |= true;
                 }
             }
         }

@@ -252,21 +252,18 @@ public class TauBranch implements Serializable, Cloneable {
          * branch. minRayParam is the minimum ray parameter that turns or is
          * totally reflected in this branch.
          */
-        maxRayParam = sMod.getSlownessLayer(topLayerNum, isPWave).getTopP();
-        for (int i = topLayerNum; i < botLayerNum; i++) {
-            SlownessLayer sl = sMod.getSlownessLayer(i, isPWave);
-            maxRayParam = Math.max(maxRayParam, sl.getTopP());
-            maxRayParam = Math.max(maxRayParam, sl.getBotP());
-        }
-        //maxRayParam = Math.max(sMod.getMinRayParam(getTopDepth(), isPWave), sMod.getMinRayParam(getTopDepth(), !isPWave));
+        // max ray param cannot be larger than the largest of the top and bottom p
+        // branches should be monotonic wrt slowness
+        maxRayParam = Math.max(topSLayer.getTopP(), botSLayer.getBotP());
         minTurnRayParam = sMod.getMinTurnRayParam(getBotDepth(), isPWave);
         minRayParam = sMod.getMinRayParam(getBotDepth(), isPWave);
         tau = new double[rayParams.length];
         dist = new double[rayParams.length];
         time = new double[rayParams.length];
+
         for(int rayNum = 0; rayNum < rayParams.length; rayNum++) {
             p = rayParams[rayNum];
-            timeDist = calcTimeDist(sMod, topLayerNum, botLayerNum, p);
+            timeDist = calcTimeDist(sMod, topLayerNum, botLayerNum, p, false);
             dist[rayNum] = timeDist.getDistRadian();
             time[rayNum] = timeDist.getTime();
             tau[rayNum] = time[rayNum] - p * dist[rayNum];
@@ -320,6 +317,7 @@ public class TauBranch implements Serializable, Cloneable {
                     throw new SlownessModelException("Ray turns in the middle of this"
                             + " layer. layerNum = "
                             + layerNum
+                            + (isPWave ? " P" : " S")
                             + " sphericalRayParam " + p + " layer =" + layer);
                 }
             }

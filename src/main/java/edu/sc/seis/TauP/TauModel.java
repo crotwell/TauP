@@ -30,6 +30,7 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.io.StreamCorruptedException;
 import java.lang.ref.SoftReference;
+import java.util.Arrays;
 import java.util.HashMap;
 
 /**
@@ -321,7 +322,7 @@ public class TauModel implements Serializable {
      */
     private void calcTauIncFrom() throws SlownessModelException,
             NoSuchLayerException, TauModelException, NoSuchMatPropException {
-        SlownessLayer topSLayer, botSLayer, currSLayer;
+        SlownessLayer topSLayer, botSLayer, currSLayer, prevSLayer;
         int topCritLayerNum, botCritLayerNum;
         /*
          * First, we must have at least 1 slowness layer to calculate a
@@ -358,48 +359,67 @@ public class TauModel implements Serializable {
          * been constructed to be a subset of the S samples.
          */
         int rayNum = 0;
-        double minPSoFar = sMod.getSlownessLayer(0, false).getTopP();
         double[] tempRayParams = new double[2 * sMod.getNumLayers(false)
                 + sMod.getNumCriticalDepths()];
-        // make sure we get the top slowness of the very top layer
-        tempRayParams[rayNum] = minPSoFar;
-        rayNum++;
+        currSLayer = null;
         for(int layerNum = 0; layerNum < sMod.getNumLayers(false); layerNum++) {
+            prevSLayer = currSLayer;
             currSLayer = sMod.getSlownessLayer(layerNum, false);
             /*
              * Add the top if it is strictly less than the last sample added.
              * Note that this will not be added if the slowness is continuous
              * across the layer boundary.
              */
-            if(currSLayer.getTopP() < minPSoFar) {
+            if(prevSLayer == null || currSLayer.getTopP() != prevSLayer.getBotP()) {
                 tempRayParams[rayNum] = currSLayer.getTopP();
                 rayNum++;
-                minPSoFar = currSLayer.getTopP();
             }
             /*
              * Add the bottom if it is strictly less than the last sample added.
              * This will always happen unless we are within a high slowness
              * zone.
              */
-            if(currSLayer.getBotP() < minPSoFar) {
-                tempRayParams[rayNum] = currSLayer.getBotP();
-                rayNum++;
-                minPSoFar = currSLayer.getBotP();
-            }
+            tempRayParams[rayNum] = currSLayer.getBotP();
+            rayNum++;
         }
         /* Copy tempRayParams to rayParams so the the size is exactly right. */
-        rayParams = new double[rayNum];
-        System.arraycopy(tempRayParams, 0, rayParams, 0, rayNum);
+        double[] temptemprayParams = new double[rayNum];
+        System.arraycopy(tempRayParams, 0, temptemprayParams, 0, rayNum);
+        tempRayParams = temptemprayParams;
+        temptemprayParams = null;
+        // sort
+        Arrays.sort(tempRayParams);
+        // and remove duplicates
+        int numUnique = 1;
+        for (int i = 1; i < tempRayParams.length; i++) {
+            if (tempRayParams[i-1] != tempRayParams[i]) {
+                numUnique++;
+            }
+        }
+        rayParams = new double[numUnique];
+        int n = 0;
+        rayParams[n] = tempRayParams[0];
+        n++;
+        for (int i = 1; i < tempRayParams.length; i++) {
+            if (tempRayParams[i-1] != tempRayParams[i]) {
+                rayParams[n] = tempRayParams[i];
+                n++;
+            }
+        }
         tempRayParams = null;
+        // reverse sort so large to small
+        for (int i = 0; i < rayParams.length/2; i++) {
+            double tmp = rayParams[i];
+            rayParams[i] = rayParams[rayParams.length-i-1];
+            rayParams[rayParams.length-i-1] = tmp;
+        }
         if(DEBUG) {
-            System.out.println("Number of slowness samples for tau =" + rayNum);
+            System.out.println("Number of slowness samples for tau =" + numUnique);
         }
         CriticalDepth topCritDepth, botCritDepth;
         int waveNum;
         boolean isPWave;
         for(waveNum = 0, isPWave = true; waveNum < 2; waveNum++, isPWave = false) {
-            // The minimum slowness seen so far
-            minPSoFar = sMod.getSlownessLayer(0, isPWave).getTopP();
             // loop over critical slowness layers since they form the branches
             for(int critNum = 0; critNum < sMod.getNumCriticalDepths() - 1; critNum++) {
                 topCritDepth = sMod.getCriticalDepth(critNum);
@@ -409,8 +429,8 @@ public class TauModel implements Serializable {
                 if(DEBUG) {
                     System.out.println("Calculating " + (isPWave ? "P" : "S")
                             + " tau branch for branch " + critNum
-                            + " topCritLayerNum=" + topCritLayerNum
-                            + " botCritLayerNum=" + botCritLayerNum);
+                            + " topCritLayerNum=" + topCritLayerNum+" ("+topCritDepth.getDepth()+")"
+                            + " botCritLayerNum=" + botCritLayerNum+" ("+botCritDepth.getDepth()+")");
                 }
                 tauBranches[waveNum][critNum] = new TauBranch(topCritDepth.getDepth(),
                                                               botCritDepth.getDepth(),
@@ -426,12 +446,9 @@ public class TauModel implements Serializable {
                  */
                 topSLayer = sMod.getSlownessLayer(topCritLayerNum, isPWave);
                 botSLayer = sMod.getSlownessLayer(botCritLayerNum, isPWave);
-                minPSoFar = Math.min(minPSoFar, Math.min(topSLayer.getTopP(),
-                                                         botSLayer.getBotP()));
                 botSLayer = sMod.getSlownessLayer(sMod.layerNumberAbove(botCritDepth.getDepth(),
                                                                         isPWave),
                                                   isPWave);
-                minPSoFar = Math.min(minPSoFar, botSLayer.getBotP());
             }
         }
         /*
@@ -863,11 +880,6 @@ public class TauModel implements Serializable {
         if(tauBranches[0][0].getTopDepth() != 0
                 || tauBranches[1][0].getTopDepth() != 0) {
             System.err.println("branch 0 topDepth != 0");
-            return false;
-        }
-        // this is only for S wave (tauBranches[1][])
-        if(tauBranches[1][0].getMaxRayParam() != rayParams[0]) {
-            System.err.println("branch 0 maxRayParam != rayParams[0]");
             return false;
         }
         for(int i = 1; i < getNumBranches(); i++) {

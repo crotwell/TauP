@@ -197,8 +197,7 @@ public abstract class SlownessModel implements Serializable {
     /**
      * Maximum difference between successive ranges, in radians. The default is
      * 200 km / radiusOfEarth. See Buland and Chapman p1292.
-     * 
-     * @see radiusOfEarth
+     *
      */
     protected double maxRangeInterval = 200.0 / radiusOfEarth;
 
@@ -995,7 +994,7 @@ public abstract class SlownessModel implements Serializable {
                     // start of a high slowness zone
                     if(DEBUG) {
                         System.out.println("Found S high slowness at first order "
-                                + "discontinuity, layer = " + layerNum);
+                                + "discontinuity, layer = " + layerNum+", depth="+currSLayer.getTopDepth());
                     }
                     inHighSlownessZoneS = true;
                     highSlownessZoneS = new DepthRange();
@@ -1007,7 +1006,7 @@ public abstract class SlownessModel implements Serializable {
                     // start of a high slowness zone
                     if(DEBUG) {
                         System.out.println("Found P high slowness at first order "
-                                + "discontinuity, layer = " + layerNum);
+                                + "discontinuity, layer = " + layerNum+", depth="+currPLayer.getTopDepth());
                     }
                     inHighSlownessZoneP = true;
                     highSlownessZoneP = new DepthRange();
@@ -1015,15 +1014,18 @@ public abstract class SlownessModel implements Serializable {
                     highSlownessZoneP.rayParam = minPSoFar;
                 }
             } else {
-                if((prevSLayer.getTopP() - prevSLayer.getBotP())
+                if(layerNum == 0 || layerNum == vMod.getNumLayers()
+                        || (prevSLayer.getTopP() - prevSLayer.getBotP())
                         * (prevSLayer.getBotP() - currSLayer.getBotP()) < 0.0
                         || (prevPLayer.getTopP() - prevPLayer.getBotP())
                                 * (prevPLayer.getBotP() - currPLayer.getBotP()) < 0.0) {
-                    // local slowness extrema
-                    criticalDepths.add(new CriticalDepth(currSLayer.getTopDepth(),
-                                                                     layerNum,
-                                                                     -1,
-                                                                     -1));
+                    // local slowness extrema, but only if not already in high slowness?
+                    if (layerNum != 0) {
+                        criticalDepths.add(new CriticalDepth(currSLayer.getTopDepth(),
+                                layerNum,
+                                -1,
+                                -1));
+                    }
                     if(DEBUG) {
                         System.out.println("local slowness extrema, depth="
                                 + currSLayer.getTopDepth());
@@ -1034,7 +1036,7 @@ public abstract class SlownessModel implements Serializable {
                         if(DEBUG) {
                             System.out.println("start of a P high slowness zone,"
                                     + " local slowness extrema, minPSoFar="
-                                    + minPSoFar);
+                                    + minPSoFar + " vlayerNum="+layerNum+" depth="+currPLayer.getTopDepth());
                         }
                         inHighSlownessZoneP = true;
                         highSlownessZoneP = new DepthRange();
@@ -1047,7 +1049,7 @@ public abstract class SlownessModel implements Serializable {
                         if(DEBUG) {
                             System.out.println("start of a S high slowness zone,"
                                     + " local slowness extrema, minSSoFar="
-                                    + minSSoFar);
+                                    + minSSoFar + " vlayerNum="+layerNum+" depth="+currSLayer.getTopDepth());
                         }
                         inHighSlownessZoneS = true;
                         highSlownessZoneS = new DepthRange();
@@ -1353,28 +1355,45 @@ public abstract class SlownessModel implements Serializable {
             System.out.println("coarseSample");
         }
         coarseSample();
-        boolean isOK = false;
+        boolean isOK = true;
         if(DEBUG) {
-            isOK = validate();
+            isOK &= validate();
+            if (! isOK) {
+                throw new SlownessModelException("coarseSample RP not compatible");
+            }
             System.out.println("rayParamCheck");
         }
+
         rayParamIncCheck();
         if(DEBUG) {
             isOK &= validate();
+            if (! isOK) {
+                throw new SlownessModelException("rayParamIncCheck RP not compatible");
+            }
             System.out.println("depthIncCheck");
         }
         depthIncCheck();
         if(DEBUG) {
             isOK &= validate();
+            if (! isOK) {
+                throw new SlownessModelException("depthIncCheck RP not compatible");
+            }
             System.out.println("distanceCheck");
         }
         distanceCheck();
         if(DEBUG) {
             isOK &= validate();
+            if (! isOK) {
+                throw new SlownessModelException("distanceCheck RP not compatible");
+            }
             System.out.println("fixCriticalPoints");
         }
         fixCriticalPoints();
         if(DEBUG) {
+            isOK &= validate();
+            if (! isOK) {
+                throw new SlownessModelException("fixCriticalPoints RP not compatible");
+            }
             System.out.println("done createSample");
         }
     }
@@ -1780,9 +1799,7 @@ public abstract class SlownessModel implements Serializable {
     protected void addSlowness(double p, boolean isPWave)
             throws SlownessModelException, NoSuchLayerException {
         List<SlownessLayer> layers, otherLayers;
-        SlownessLayer sLayer, topLayer, botLayer;
-        double slope;
-        double topVelocity, botVelocity;
+        SlownessLayer sLayer;
         int otherIndex;
         if(isPWave) {
             layers = PLayers;
@@ -1793,36 +1810,7 @@ public abstract class SlownessModel implements Serializable {
         }
         for(int i = 0; i < layers.size(); i++) {
             sLayer = layers.get(i);
-            try {
-                if(sLayer.getTopDepth() != sLayer.getBotDepth()) {
-                    topVelocity = vMod.evaluateBelow(sLayer.getTopDepth(),
-                                                     (isPWave ? 'P' : 'S'));
-                    botVelocity = vMod.evaluateAbove(sLayer.getBotDepth(),
-                                                     (isPWave ? 'P' : 'S'));
-                } else {
-                    // if depths are same we really only need topVelocity,
-                    // and just to verify that we are not in a fluid.
-                    topVelocity = vMod.evaluateAbove(sLayer.getBotDepth(),
-                                                     (isPWave ? 'P' : 'S'));
-                    botVelocity = vMod.evaluateBelow(sLayer.getTopDepth(),
-                                                     (isPWave ? 'P' : 'S'));
-                }
-                
-                if(!isPWave && topVelocity == 0.0 ) {
-                    // use P vel structure in for S in fluid
-                    if(sLayer.getTopDepth() != sLayer.getBotDepth()) {
-                        topVelocity = vMod.evaluateBelow(sLayer.getTopDepth(), 'P');
-                        botVelocity = vMod.evaluateAbove(sLayer.getBotDepth(), 'P');
-                    } else {
-                        // if depths are same we really only need topVelocity
-                        topVelocity = vMod.evaluateAbove(sLayer.getBotDepth(), 'P');
-                        botVelocity = vMod.evaluateBelow(sLayer.getTopDepth(), 'P');
-                    }
-                }
-            } catch(NoSuchMatPropException e) {
-                // Can't happen but...
-                throw new SlownessModelException("Caught NoSuchMatPropException: ", e);
-            }
+
             // We don't need to check for S waves in a fluid or
             // in inner core if allowInnerCoreS==false.
             if(!isPWave && !allowInnerCoreS
@@ -1830,36 +1818,85 @@ public abstract class SlownessModel implements Serializable {
                 break;
             }
             if((sLayer.getTopP() - p) * (p - sLayer.getBotP()) > 0) {
-                double botDepth = sLayer.getBotDepth();
-                if(sLayer.getBotDepth() != sLayer.getTopDepth()) {
-                    /*
-                     * not a zero thickness layer, so calculate the depth for
-                     * the ray parameter.
-                     */
-                    slope = (botVelocity - topVelocity)
-                            / (sLayer.getBotDepth() - sLayer.getTopDepth());
-                    botDepth = interpolate(p,
-                                                     topVelocity,
-                                                     sLayer.getTopDepth(),
-                                                     slope);
-                    // check for floating point fuzziness
-                    if (botDepth < sLayer.getTopDepth() && botDepth > sLayer.getTopDepth() - .00000000001) {
-                        botDepth = sLayer.getTopDepth();
-                    }
-                }
-                botLayer = new SlownessLayer(p, botDepth, sLayer.getBotP(), sLayer.getBotDepth() );
-                topLayer = new SlownessLayer(sLayer.getTopP(), sLayer.getTopDepth(), p, botDepth);
+                SlownessLayer[] splitLayers = splitLayerForNewRayParam(p, isPWave, sLayer);
                 layers.remove(i);
-                layers.add(i, botLayer);
-                layers.add(i, topLayer);
+                layers.add(i, splitLayers[1]);
+                layers.add(i, splitLayers[0]);
                 otherIndex = otherLayers.indexOf(sLayer);
                 if(otherIndex != -1) {
                     otherLayers.remove(otherIndex);
-                    otherLayers.add(otherIndex, botLayer);
-                    otherLayers.add(otherIndex, topLayer);
+                    otherLayers.add(otherIndex, splitLayers[1]);
+                    otherLayers.add(otherIndex, splitLayers[0]);
                 }
+
             }
         }
+
+        for(int i = 0; i < otherLayers.size(); i++) {
+            sLayer = otherLayers.get(i);
+            if((sLayer.getTopP() - p) * (p - sLayer.getBotP()) > 0) {
+                SlownessLayer[] splitLayers = splitLayerForNewRayParam(p, ! isPWave, sLayer);
+                otherLayers.remove(i);
+                otherLayers.add(i, splitLayers[1]);
+                otherLayers.add(i, splitLayers[0]);
+            }
+        }
+    }
+
+    protected SlownessLayer[] splitLayerForNewRayParam(double p, boolean isPWave, SlownessLayer sLayer)
+            throws SlownessModelException, NoSuchLayerException {
+        double topVelocity, botVelocity;
+        try {
+            if(sLayer.getTopDepth() != sLayer.getBotDepth()) {
+                topVelocity = vMod.evaluateBelow(sLayer.getTopDepth(),
+                        (isPWave ? 'P' : 'S'));
+                botVelocity = vMod.evaluateAbove(sLayer.getBotDepth(),
+                        (isPWave ? 'P' : 'S'));
+            } else {
+                // if depths are same we really only need topVelocity,
+                // and just to verify that we are not in a fluid.
+                topVelocity = vMod.evaluateAbove(sLayer.getBotDepth(),
+                        (isPWave ? 'P' : 'S'));
+                botVelocity = vMod.evaluateBelow(sLayer.getTopDepth(),
+                        (isPWave ? 'P' : 'S'));
+            }
+
+            if(!isPWave && topVelocity == 0.0 ) {
+                // use P vel structure in for S in fluid
+                if(sLayer.getTopDepth() != sLayer.getBotDepth()) {
+                    topVelocity = vMod.evaluateBelow(sLayer.getTopDepth(), 'P');
+                    botVelocity = vMod.evaluateAbove(sLayer.getBotDepth(), 'P');
+                } else {
+                    // if depths are same we really only need topVelocity
+                    topVelocity = vMod.evaluateAbove(sLayer.getBotDepth(), 'P');
+                    botVelocity = vMod.evaluateBelow(sLayer.getTopDepth(), 'P');
+                }
+            }
+        } catch(NoSuchMatPropException e) {
+            // Can't happen but...
+            throw new SlownessModelException("Caught NoSuchMatPropException: ", e);
+        }
+
+        double botDepth = sLayer.getBotDepth();
+        if(sLayer.getBotDepth() != sLayer.getTopDepth()) {
+            /*
+             * not a zero thickness layer, so calculate the depth for
+             * the ray parameter.
+             */
+            double slope = (botVelocity - topVelocity)
+                    / (sLayer.getBotDepth() - sLayer.getTopDepth());
+            botDepth = interpolate(p,
+                    topVelocity,
+                    sLayer.getTopDepth(),
+                    slope);
+            // check for floating point fuzziness
+            if (botDepth < sLayer.getTopDepth() && botDepth > sLayer.getTopDepth() - .00000000001) {
+                botDepth = sLayer.getTopDepth();
+            }
+        }
+        SlownessLayer botLayer = new SlownessLayer(p, botDepth, sLayer.getBotP(), sLayer.getBotDepth() );
+        SlownessLayer topLayer = new SlownessLayer(sLayer.getTopP(), sLayer.getTopDepth(), p, botDepth);
+        return new SlownessLayer[] { topLayer, botLayer};
     }
 
     /**
@@ -2240,6 +2277,10 @@ public abstract class SlownessModel implements Serializable {
                         + " waveType=" + (isPWave ? 'P' : 'S')+"  "+sLayer);
             }
         }
+        /** check ray paramet compatiple between P and S. So each top and bottom rp should not be in the middle of
+         * a layer of the other wave type.
+         */
+        isOK &= validateRPCompatibility();
         /* Everything checks out OK so return true. */
         return isOK;
     }
@@ -2306,6 +2347,44 @@ public abstract class SlownessModel implements Serializable {
         for (SlownessLayer l : PLayers) {
             desc+=l.toString()+"\n";
         }
+        desc += "\n";
+        desc += "\n**** S Layers ****************\n";
+        for (SlownessLayer l : SLayers) {
+            desc+=l.toString()+"\n";
+        }
         return desc;
+    }
+
+    public boolean validateRPCompatibility() {
+        boolean out = true;
+        for (int i = 0; i < PLayers.size(); i++) {
+            SlownessLayer lp = PLayers.get(i);
+            for (int ii = i+1; ii < PLayers.size(); ii++) {
+                SlownessLayer llp = PLayers.get(ii);
+                if ((lp.getTopP()-llp.getTopP()) * (lp.getTopP()-llp.getBotP()) < 0) {
+                    System.out.println("P top is inside another layer: P:"+lp+"  P:"+llp);
+                    out = false;
+                }
+                if ((lp.getBotP()-llp.getTopP()) * (lp.getBotP()-llp.getBotP()) < 0) {
+                    System.out.println("P bot is inside another layer: P:"+lp+"  P:"+llp);
+                    out = false;
+                }
+            }
+        }
+        for (int i = 0; i < SLayers.size(); i++) {
+            SlownessLayer ls = SLayers.get(i);
+            for (int ii = i+1; ii < SLayers.size(); ii++) {
+                SlownessLayer lls = SLayers.get(ii);
+                if ((ls.getTopP()-lls.getTopP()) * (ls.getTopP()-lls.getBotP()) < 0) {
+                    System.out.println("S top is inside another layer: S:"+ls+"  S:"+lls);
+                    out = false;
+                }
+                if ((ls.getBotP()-lls.getTopP()) * (ls.getBotP()-lls.getBotP()) < 0) {
+                    System.out.println("S bot is inside another layer: S:"+ls+"  S:"+lls);
+                    out = false;
+                }
+            }
+        }
+        return out;
     }
 }
