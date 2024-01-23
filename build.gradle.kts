@@ -188,7 +188,7 @@ tasks.register<Sync>("explodeBin") {
   dependsOn("startScripts")
   dependsOn("genModels")
     with( binDistFiles)
-  into( file("$buildDir/explode"))
+  into( layout.buildDirectory.dir("explode"))
 }
 
 tasks.register<Tar>("tarBin") {
@@ -212,7 +212,7 @@ tasks.register<Sync>("explodeDist") {
   dependsOn("javadoc")
   dependsOn("wrapper")
     with(distFiles)
-    into( file("$buildDir/explode"))
+    into( layout.buildDirectory.dir("explode"))
 }
 
 tasks.register<Tar>("tarDist") {
@@ -229,9 +229,11 @@ tasks.register<Checksum>("checksumDist") {
   dependsOn("tarDist")
   dependsOn("zipDist")
   dependsOn("distZip")
-  files = tasks.getByName("tarBin").outputs.files + tasks.getByName("tarDist").outputs.files + tasks.getByName("zipDist").outputs.files
-  outputDir=File(project.buildDir, "distributions")
-  algorithm = Checksum.Algorithm.SHA256
+  inputs.files(tasks.getByName("tarBin").outputs.files)
+    inputs.files(tasks.getByName("tarDist").outputs.files)
+    inputs.files(tasks.getByName("zipDist").outputs.files)
+    outputs.dir(layout.buildDirectory.dir("distributions"))
+  algorithm = Checksum.Algorithm.SHA512
 }
 
 tasks.register<Zip>("zipDist") {
@@ -276,12 +278,12 @@ publishing {
     repositories {
       maven {
         name = "TestDeploy"
-        url = uri("$buildDir/repos/test-deploy")
+        url = uri(layout.buildDirectory.dir("repos/test-deploy"))
       }
       maven {
           val releaseRepo = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
           val snapshotRepo = "https://oss.sonatype.org/content/repositories/snapshots/"
-          url = uri(if ( version.toString().toLowerCase().endsWith("snapshot")) snapshotRepo else releaseRepo)
+          url = uri(if ( version.toString().lowercase().endsWith("snapshot")) snapshotRepo else releaseRepo)
           name = "ossrh"
           // credentials in gradle.properties as ossrhUsername and ossrhPassword
           credentials(PasswordCredentials::class)
@@ -302,26 +304,6 @@ tasks.named("startScripts") {
     dependsOn("createRunScripts")
 }
 
-val scriptNames = mapOf(
-// taup is created via startScripts as default for assemble plugin
-//    "taup" to "edu.sc.seis.TauP.ToolRun",
-    "taup_time" to "edu.sc.seis.TauP.TauP_Time",
-    "taup_pierce" to "edu.sc.seis.TauP.TauP_Pierce",
-    "taup_path" to "edu.sc.seis.TauP.TauP_Path",
-    "taup_create" to "edu.sc.seis.TauP.TauP_Create",
-    "taup_curve" to "edu.sc.seis.TauP.TauP_Curve",
-    "taup_setsac" to "edu.sc.seis.TauP.TauP_SetSac",
-    "taup_wavefront" to "edu.sc.seis.TauP.TauP_Wavefront",
-    "taup_table" to "edu.sc.seis.TauP.TauP_Table"
-)
-for (key in scriptNames.keys) {
-  tasks.register<CreateStartScripts>(key) {
-    outputDir = file("build/scripts")
-    getMainClass().set(scriptNames[key])
-    applicationName = key
-    classpath = sourceSets["main"].runtimeClasspath + project.tasks[JavaPlugin.JAR_TASK_NAME].outputs.files
-  }
-}
 tasks.register<CreateStartScripts>("taup_web") {
     dependsOn(tasks.named("webserverJar"))
     outputDir = file("build/scripts")
@@ -340,13 +322,15 @@ tasks.register<JavaExec>("genModels") {
   classpath = sourceSets.getByName("main").runtimeClasspath
     getMainClass().set("edu.sc.seis.TauP.StdModelGenerator")
 
-  val generatedSrcDir = File(project.buildDir, "generated-src/StdModels")
-  val resourceDir =  File(generatedSrcDir, "/resources")
-  val outDir =  File(resourceDir, "edu/sc/seis/TauP/StdModels/")
-  outDir.mkdirs()
-  val inDir = File(project.projectDir, "src/main/resources/edu/sc/seis/TauP/StdModels/")
+  val generatedSrcDir = "generated-src/StdModels"
+  val resourceDir =  generatedSrcDir+ "/resources"
+    val outDirStr =  resourceDir+ "/edu/sc/seis/TauP/StdModels/"
+  val outDir =  layout.buildDirectory.dir(resourceDir+ "/edu/sc/seis/TauP/StdModels/")
+  file(outDir).mkdirs()
+  val inDirStr = "src/main/resources/edu/sc/seis/TauP/StdModels/"
+  val inDir = layout.projectDirectory.dir(inDirStr)
 
-  args = listOf(inDir.path, outDir.path)
+  args = listOf(file(inDir).getPath(), file(outDir).getPath())
   dependsOn += tasks.getByName("compileJava")
   inputs.files("src/main/resources/edu/sc/seis/TauP/defaultProps")
   inputs.files("src/main/resources/edu/sc/seis/TauP/StdModels/ak135.tvel")
@@ -354,12 +338,12 @@ tasks.register<JavaExec>("genModels") {
   inputs.files("src/main/resources/edu/sc/seis/TauP/StdModels/prem.nd")
   inputs.files("src/main/resources/edu/sc/seis/TauP/StdModels/ak135favg.nd")
   inputs.files("src/main/resources/edu/sc/seis/TauP/StdModels/ak135fcont.nd")
-  outputs.files(File(outDir, "ak135.taup"))
-  outputs.files(File(outDir, "iasp91.taup"))
-  outputs.files(File(outDir, "prem.taup"))
-  outputs.files(File(outDir, "qdt.taup"))
-  outputs.files(File(outDir, "ak135favg.taup"))
-  outputs.files(File(outDir, "ak135fcont.taup"))
+  outputs.files(layout.buildDirectory.file(outDirStr+"/ak135.taup"))
+    outputs.files(layout.buildDirectory.file(outDirStr+"/iasp91.taup"))
+    outputs.files(layout.buildDirectory.file(outDirStr+"/prem.taup"))
+    outputs.files(layout.buildDirectory.file(outDirStr+"/qdt.taup"))
+    outputs.files(layout.buildDirectory.file(outDirStr+"/ak135favg.taup"))
+    outputs.files(layout.buildDirectory.file(outDirStr+"/ak135fcont.taup"))
 }
 
 tasks.register<Sync>("copyReflTranCompareFiles") {
