@@ -20,7 +20,7 @@ application {
 }
 
 group = "edu.sc.seis"
-version = "3.0.0-SNAPSHOT2"
+version = "3.0.0-SNAPSHOT3"
 
 java {
     toolchain {
