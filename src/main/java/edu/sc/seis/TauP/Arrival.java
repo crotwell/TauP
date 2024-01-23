@@ -325,7 +325,16 @@ public class Arrival {
         double srcVel = velocityAtSource();
         double rofE = getPhase().getTauModel().getRadiusOfEarth();
         double srcRadius = rofE - getSourceDepth();
-        return Math.sqrt(1/(srcVel*srcVel) - getRayParam()*getRayParam()/(srcRadius*srcRadius));
+        double radSlow = Math.sqrt(1/(srcVel*srcVel) - getRayParam()*getRayParam()/(srcRadius*srcRadius));
+        if (! Double.isFinite(radSlow)
+                && Math.abs( 1/(srcVel*srcVel) - getRayParam()*getRayParam()/(srcRadius*srcRadius)) < 1e-6) {
+            // due to interpolation/rounding horizontal ray might give NaN, if close to zero but negative,
+            // just return zero
+            System.err.println("rad slow: "+(1/(srcVel*srcVel))+" - " + (getRayParam()*getRayParam()/(srcRadius*srcRadius)));
+            System.err.println(srcVel+" "+getRayParam()+" "+srcRadius);
+            radSlow = 0;
+        }
+        return radSlow;
     }
 
 
