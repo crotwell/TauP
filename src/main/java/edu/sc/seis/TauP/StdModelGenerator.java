@@ -34,15 +34,7 @@ import java.util.Properties;
 import java.util.ArrayList;
 
 /**
- * TauP_Create - Re-implementation of the seismic travel time calculation method
- * described in "The Computation of Seismic Travel Times" by Buland and Chapman,
- * BSSA vol. 73, No. 5, October 1983, pp 1271-1302. This creates the
- * SlownessModel and tau branches and saves them for later use.
- *
- * @version 1.1.3 Wed Jul 18 15:00:35 GMT 2001
- *
- *
- *
+ * Generate standard models. This is used by the gradle build, but unlikely to be useful to end users.
  * @author H. Philip Crotwell
  */
 public class StdModelGenerator {
@@ -67,6 +59,7 @@ public class StdModelGenerator {
     taupCreate.setDirectory(inDir.getPath());
     taupCreate.setVelFileType("tvel");
     for (String modelName: tvelModelNames) {
+        System.out.println(modelName);
         taupCreate.setModelFilename(modelName);
         VelocityModel vMod = taupCreate.loadVMod();
         TauModel tMod = taupCreate.createTauModel(vMod);
@@ -74,6 +67,7 @@ public class StdModelGenerator {
     }
     taupCreate.setVelFileType("nd");
     for (String modelName: ndModelNames) {
+        System.out.println(modelName);
         taupCreate.setModelFilename(modelName);
         VelocityModel vMod = taupCreate.loadVMod();
         TauModel tMod = taupCreate.createTauModel(vMod);
@@ -90,6 +84,7 @@ public class StdModelGenerator {
     taupCreate.setModelFilename("iasp91");
     VelocityModel vMod = taupCreate.loadVMod();
     vMod.setModelName("qdt");
+    System.out.println(vMod.getModelName());
     TauModel tMod = taupCreate.createTauModel(vMod);
     tMod.writeModel( new File(outDir, "qdt.taup").getPath());
   }
