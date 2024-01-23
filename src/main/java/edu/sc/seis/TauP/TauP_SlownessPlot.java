@@ -116,26 +116,26 @@ public class TauP_SlownessPlot extends TauP_VelocityPlot {
 
         out.println("<!-- P velocity");
         out.println(" -->");
-        out.print("<polyline class=\"pwave\" points=\"");
+        out.println("<polyline class=\"pwave\" points=\"");
         SlownessLayer prev = null;
         for (SlownessLayer sLayer : sMod.getAllSlownessLayers(true)) {
             if (prev == null || prev.getBotP() != sLayer.getTopP()) {
-                out.print( (float)sLayer.getTopP()+ " " + (maxY-(float)sLayer.getTopDepth())+ " " );
+                out.println( (float)sLayer.getTopP()+ " " + (maxY-(float)sLayer.getTopDepth())+ " " );
             }
-            out.print( (float)sLayer.getBotP()+ " " + (maxY-(float)sLayer.getBotDepth())+ " " );
+            out.println( (float)sLayer.getBotP()+ " " + (maxY-(float)sLayer.getBotDepth())+ " " );
             prev = sLayer;
         }
         out.println("\" />");
 
         out.println("<!-- S velocity");
         out.println(" -->");
-        out.print("<polyline class=\"swave\" points=\"");
+        out.println("<polyline class=\"swave\" points=\"");
         prev = null;
         for (SlownessLayer sLayer : sMod.getAllSlownessLayers(false)) {
             if (prev == null || prev.getBotP() != sLayer.getTopP()) {
-                out.print( (float)sLayer.getTopP()+ " " + (maxY-(float)sLayer.getTopDepth())+ " " );
+                out.println( (float)sLayer.getTopP()+ " " + (maxY-(float)sLayer.getTopDepth())+ " " );
             }
-            out.print( (float)sLayer.getBotP()+ " " + (maxY-(float)sLayer.getBotDepth())+ " " );
+            out.println( (float)sLayer.getBotP()+ " " + (maxY-(float)sLayer.getBotDepth())+ " " );
             prev = sLayer;
         }
         out.println("\" />");

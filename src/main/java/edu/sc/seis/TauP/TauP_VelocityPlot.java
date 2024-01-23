@@ -73,26 +73,26 @@ public class TauP_VelocityPlot extends TauP_Tool {
 
         out.println("<!-- P velocity");
         out.println(" -->");
-        out.print("<polyline class=\"pwave\" points=\"");
+        out.println("<polyline class=\"pwave\" points=\"");
         VelocityLayer prev = null;
         for (VelocityLayer vlay : vMod.layer) {
             if (prev == null || prev.getBotPVelocity() != vlay.getTopPVelocity()) {
-                out.print( (float)vlay.getTopPVelocity()+ " " + (maxY-(float)vlay.getTopDepth())+ " " );
+                out.println( (float)vlay.getTopPVelocity()+ " " + (maxY-(float)vlay.getTopDepth())+ " " );
             }
-            out.print( (float)vlay.getBotPVelocity()+ " " + (maxY-(float)vlay.getBotDepth())+ " " );
+            out.println( (float)vlay.getBotPVelocity()+ " " + (maxY-(float)vlay.getBotDepth())+ " " );
             prev = vlay;
         }
         out.println("\" />");
 
         out.println("<!-- S velocity");
         out.println(" -->");
-        out.print("<polyline class=\"swave\" points=\"");
+        out.println("<polyline class=\"swave\" points=\"");
         prev = null;
         for (VelocityLayer vlay : vMod.layer) {
             if (prev == null || prev.getBotSVelocity() != vlay.getTopSVelocity()) {
-                out.print( (float)vlay.getTopSVelocity()+ " " + (maxY-(float)vlay.getTopDepth())+ " " );
+                out.println( (float)vlay.getTopSVelocity()+ " " + (maxY-(float)vlay.getTopDepth())+ " " );
             }
-            out.print( (float)vlay.getBotSVelocity()+ " " + (maxY-(float)vlay.getBotDepth())+ " " );
+            out.println( (float)vlay.getBotSVelocity()+ " " + (maxY-(float)vlay.getBotDepth())+ " " );
             prev = vlay;
         }
         out.println("\" />");
