@@ -133,7 +133,8 @@ public class TauP_WKBJ extends TauP_Time {
     @Override
     public List<Arrival> calculate(List<Double> degreesList) throws TauPException {
         try {
-            List<Arrival> arrivals = calcWKBJ(degreesList);
+            //List<Arrival> arrivals = calcWKBJ(degreesList);
+            List<Arrival> arrivals = calcSpikes(degreesList);
             return sortArrivals(arrivals);
         } catch(IOException e) {
             throw new TauPException(e);
@@ -155,6 +156,42 @@ public class TauP_WKBJ extends TauP_Time {
         }
         this.arrivals = sortArrivals(out);
         return this.arrivals;
+    }
+
+    public List<Arrival> calcSpikes(List<Double> degreesList) throws TauPException, IOException {
+
+        validateArguments();
+        depthCorrect();
+        clearArrivals();
+        List<SeismicPhase> phaseList = getSeismicPhases();
+        List<Arrival> allArrivals = new ArrayList<Arrival>();
+
+        File outMSeed3File = new File("taup_spikes.ms3");
+        DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(outMSeed3File)));
+        for (double degrees : degreesList) {
+            System.out.println("In calcWKBJ spikes for " + degrees + " degrees.");
+            float[] seismogramPoints = new float[numSamples];
+            for (int phaseNum = 0; phaseNum < phaseList.size(); phaseNum++) {
+                SeismicPhase phase = phaseList.get(phaseNum);
+                List<Arrival> phaseArrivals = phase.calcTime(degrees);
+                allArrivals.addAll(phaseArrivals);
+                for (Arrival arrival : phaseArrivals) {
+                    int timeIdx = (int) Math.round(arrival.getTime() * getDeltaT());
+                    seismogramPoints[timeIdx] += arrival.getAmplitudeFactor();
+                }
+            }
+
+            MSeed3Record ms3Rec = new MSeed3Record();
+            String staCode = "D"+degrees;
+            if (staCode.length()> 8) { staCode = staCode.substring(8);}
+            ms3Rec.setSourceId(new FDSNSourceId("XX", staCode, "00", "B", "X", "Z"));
+            ms3Rec.setNumSamples(numSamples);
+            ms3Rec.setSampleRate(getDeltaT());
+            ms3Rec.setTimeseries(seismogramPoints);
+            ms3Rec.write(dos);
+        }
+        dos.close();
+        return allArrivals;
     }
 
     public List<Arrival> calcWKBJ(List<Double> degreesList) throws TauPException, IOException {
