@@ -321,9 +321,6 @@ for (key in scriptNames.keys) {
     applicationName = key
     classpath = sourceSets["main"].runtimeClasspath + project.tasks[JavaPlugin.JAR_TASK_NAME].outputs.files
   }
-  tasks.named("createRunScripts") {
-      dependsOn(key)
-  }
 }
 tasks.register<CreateStartScripts>("taup_web") {
     dependsOn(tasks.named("webserverJar"))
