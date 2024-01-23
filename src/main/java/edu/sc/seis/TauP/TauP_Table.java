@@ -414,10 +414,13 @@ public class TauP_Table extends TauP_Time {
         for(int depthNum = 0; depthNum < depths.length; depthNum++) {
             depthCorrect(depths[depthNum], getReceiverDepth(), getScattererDepth());
             for (int distNum = 0; distNum < distances.length; distNum++) {
-                calculate(distances[distNum]);
-                List<Arrival> arrivals = getArrivals();
-                String s = TauP_Time.resultAsJSON(getTauModelName(), depths[depthNum], getReceiverDepth(), getPhaseNames(), arrivals);
-                out.println(s+",");
+                List<Arrival> arrivals = calculate(distances[distNum]);
+                writeJSON(out, "",
+                        getTauModelName(),
+                        getSourceDepth(),
+                        getReceiverDepth(),
+                        getSeismicPhases(),
+                        arrivals);
             }
         }
         out.println("]");

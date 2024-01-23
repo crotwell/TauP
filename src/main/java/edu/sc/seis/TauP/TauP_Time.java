@@ -17,6 +17,7 @@
 package edu.sc.seis.TauP;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
@@ -1214,6 +1215,20 @@ public class TauP_Time extends TauP_Tool {
     }
 
     public void writeJSON(PrintWriter pw, String indent) throws IOException {
+        writeJSON(pw, indent,
+                getTauModelName(),
+                getSourceDepth(),
+                getReceiverDepth(),
+                getSeismicPhases(),
+                getArrivals());
+    }
+
+    public void writeJSON(PrintWriter pw, String indent,
+                          String modelName,
+                          double depth,
+                          double receiverDepth,
+                          List<SeismicPhase> phases,
+                          List<Arrival> arrivals) throws IOException {
         String innerIndent = indent+"  ";
         String NL = "\n";
         pw.write("{"+NL);
@@ -1240,21 +1255,17 @@ public class TauP_Time extends TauP_Tool {
             } else {
                 pw.write(","+NL);
             }
-            arrival.writeJSON(pw, innerIndent+"  ");
+            try {
+                arrival.writeJSON(pw, innerIndent + "  ");
+            } catch (JSONException e) {
+                System.err.println("Erro in json: "+arrival.toString());
+                throw e;
+            }
         }
         pw.write(NL);
         pw.write(innerIndent+"]"+NL);
         pw.write("}"+NL);
     }
-
-    public static String resultAsJSON(String modelName,
-                                      double depth,
-                                      double receiverDepth,
-                                      String[] phases,
-                                      List<Arrival> arrivals) {
-        return resultAsJSON(modelName, depth, receiverDepth, phases, arrivals, false, false);
-    }
-
 
     public static JSONObject resultAsJSONObject(String modelName,
                                       double depth,
