@@ -526,10 +526,10 @@ public class Arrival {
         return soonestArrival;
     }
     public static Arrival getLatestArrival(List<Arrival> arrivals) {
-        double latest = Double.MAX_VALUE;
+        double latest = -1*Double.MAX_VALUE;
         Arrival latestArrival = null;
         for (Arrival a : arrivals) {
-            if (a.getTime() < latest) {
+            if (a.getTime() > latest) {
                 latestArrival = a;
                 latest = a.getTime();
             }
