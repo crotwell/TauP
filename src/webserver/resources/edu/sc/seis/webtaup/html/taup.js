@@ -124,8 +124,8 @@ export async function display_results(taup_url) {
         let seisConfig = new sp.seismographconfig.SeismographConfig();
         seisConfig.isRelativeTime = true;
         const sddList = seisList.map(seis => sp.seismogram.SeismogramDisplayData.fromSeismogram(seis));
-        //const seismograph = new sp.organizeddisplay.OrganizedDisplay(sddList, seisConfig);
-        const seismograph = new sp.seismograph.Seismograph(sddList, seisConfig);
+        const seismograph = new sp.organizeddisplay.OrganizedDisplay(sddList, seisConfig);
+        //const seismograph = new sp.seismograph.Seismograph(sddList, seisConfig);
         seismograph.addStyle(`
           sp-seismograph {
             height: 400px;

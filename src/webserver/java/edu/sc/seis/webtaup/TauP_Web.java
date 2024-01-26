@@ -91,8 +91,11 @@ public class TauP_Web extends TauP_Tool {
                                         degreesList.addAll(TauP_Time.parseDegreeList(distListStr));
                                     }
                                     configContentType(tool.outputFormat, exchange);
-                                    List<MSeed3Record> ms3List = ((TauP_WKBJ)tool).calcSpikes(degreesList);
-                                    //List<MSeed3Record> ms3List = ((TauP_WKBJ)tool).calcWKBJ(degreesList);
+                                    List<MSeed3Record> ms3SpikeList = ((TauP_WKBJ)tool).calcSpikes(degreesList);
+                                    List<MSeed3Record> ms3WkbjList = ((TauP_WKBJ)tool).calcWKBJ(degreesList);
+                                    List<MSeed3Record> ms3List = new ArrayList<>();
+                                    ms3List.addAll(ms3SpikeList);
+                                    ms3List.addAll(ms3WkbjList);
                                     ByteBuffer[] recordbuf = new ByteBuffer[ms3List.size()];
                                     for (int i = 0; i < ms3List.size(); i++) {
                                         recordbuf[i] = ByteBuffer.allocate(ms3List.get(i).getSize());

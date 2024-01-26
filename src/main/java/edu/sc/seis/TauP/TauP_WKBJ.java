@@ -53,14 +53,6 @@ public class TauP_WKBJ extends TauP_Time {
      */
     protected double deltaT = .05;
 
-    /** number of samples in the seismogram. Default is 100. */
-    protected int numSamples = 1000;
-
-    /**
-     * start time of the seismogram relative to the origin time. default is 0.
-     */
-    protected double startTime = 0;
-
     public TauP_WKBJ() {
         super();
     }
@@ -100,44 +92,6 @@ public class TauP_WKBJ extends TauP_Time {
      */
     public void setDeltaT(double v) {
         this.deltaT = v;
-    }
-
-    /**
-     * Get the value of numSamples.
-     * 
-     * @return Value of numSamples.
-     */
-    public int getNumSamples() {
-        return numSamples;
-    }
-
-    /**
-     * Set the value of numSamples.
-     * 
-     * @param v
-     *            Value to assign to numSamples.
-     */
-    public void setNumSamples(int v) {
-        this.numSamples = v;
-    }
-
-    /**
-     * Get the value of startTime.
-     * 
-     * @return Value of startTime.
-     */
-    public double getStartTime() {
-        return startTime;
-    }
-
-    /**
-     * Set the value of startTime.
-     * 
-     * @param v
-     *            Value to assign to startTime.
-     */
-    public void setStartTime(double v) {
-        this.startTime = v;
     }
 
     @Override
@@ -191,33 +145,30 @@ public class TauP_WKBJ extends TauP_Time {
         List<MSeed3Record> spikeRecords = new ArrayList<MSeed3Record>();
 
         for (double degrees : degreesList) {
-            System.out.println("In calcWKBJ spikes for " + degrees + " degrees.");
             for (int phaseNum = 0; phaseNum < phaseList.size(); phaseNum++) {
                 SeismicPhase phase = phaseList.get(phaseNum);
                 List<Arrival> phaseArrivals = phase.calcTime(degrees);
                 allArrivals.addAll(phaseArrivals);
             }
-            double maxTime = 0;
-            for (Arrival arrival : allArrivals) {
-                if (maxTime < arrival.getTime()) {
-                    maxTime = arrival.getTime();
-                }
-            }
-            int numSamples = (int)(Math.ceil(maxTime / getDeltaT())) + 100;
+            Arrival first = Arrival.getEarliestArrival(allArrivals);
+            Arrival last = Arrival.getLatestArrival(allArrivals);
+            int startTime = (int) (Math.round(first.getTime()) - 10);
+            double maxTime = last.getTime() - startTime + 200;
+            int numSamples = (int)(Math.ceil(maxTime / getDeltaT())) ;
             float[] seismogramPoints = new float[numSamples];
 
             for (Arrival arrival : allArrivals) {
-                int timeIdx = (int) Math.round(arrival.getTime() / getDeltaT());
-                System.out.println(arrival.getTime()+" "+arrival.getAmplitudeFactor()+" idx:"+timeIdx);
+                int timeIdx = (int) Math.round((arrival.getTime() - startTime)/ getDeltaT());
                 seismogramPoints[timeIdx] += arrival.getAmplitudeFactor();
             }
 
             MSeed3Record ms3Rec = new MSeed3Record();
-            String staCode = "D"+degrees;
+            String staCode = "S"+degrees;
             if (staCode.length()> 8) { staCode = staCode.substring(8);}
             ms3Rec.setSourceId(new FDSNSourceId("XX", staCode, "00", "B", "X", "Z"));
             ms3Rec.setSampleRate(getDeltaT());
             ms3Rec.setTimeseries(seismogramPoints);
+            ms3Rec.setStartDateTime(ms3Rec.getStartDateTime().plusSeconds(startTime));
             spikeRecords.add(ms3Rec);
         }
         return spikeRecords;
@@ -230,39 +181,36 @@ public class TauP_WKBJ extends TauP_Time {
         List<SeismicPhase> phaseList = getSeismicPhases();
         List<MSeed3Record> spikeRecords = new ArrayList<MSeed3Record>();
         for (double degrees : degreesList) {
-            System.out.println("In calcWKBJ for " + degrees + " degrees.");
             List<Arrival> allArrivals = new ArrayList<Arrival>();
-            float[] seismogramPoints = new float[numSamples];
             for (int phaseNum = 0; phaseNum < phaseList.size(); phaseNum++) {
                 SeismicPhase phase = phaseList.get(phaseNum);
                 List<Arrival> phaseArrivals = phase.calcTime(degrees);
                 allArrivals.addAll(phaseArrivals);
             }
+            Arrival first = Arrival.getEarliestArrival(allArrivals);
+            Arrival last = Arrival.getLatestArrival(allArrivals);
+            int startTime = (int) (Math.round(first.getTime()) - 10);
+            double maxTime = last.getTime() - startTime + 200;
+            int numSamples = (int)(Math.ceil(maxTime / getDeltaT())) ;
+            float[] seismogramPoints = new float[numSamples];
+
             for (Arrival arrival : allArrivals) {
                 double reflTrans = arrival.getReflTrans();
                 Theta thetaAtX = new Theta(arrival.getPhase(), arrival.getDist());
 
-                System.out.println("Got Theta");
                 double minRayParam = arrival.getPhase().getMinRayParam();
                 double rayParam = thetaAtX.getMaxRayParam();
-                System.out.println("Got ray param");
                 double theta = thetaAtX.getTheta(rayParam);
-                System.out.println("Got theta for ray param");
-                setStartTime(320);
                 double nextRayParam = thetaAtX.getStepRayParam(rayParam,
                         getDeltaT());
                 double nextTheta = thetaAtX.getTheta(nextRayParam);
                 int n = 0;
                 try {
                     while (nextRayParam >= minRayParam) {
-                        // System.out.println(n+" "+rayParam+" "+theta+"
-                        // "+nextRayParam+" "+nextTheta);
-                        n = (int) Math.round((theta - getStartTime())
+                        n = (int) Math.round((theta - startTime)
                                 / getDeltaT());
                         if (n >= 0 && n < seismogramPoints.length) {
                             seismogramPoints[n] += (float)(Math.sqrt(rayParam)*reflTrans*(rayParam- nextRayParam));
-                            System.out.println(n + "  "
-                                    + seismogramPoints[n]);
                         }
                         rayParam = nextRayParam;
                         theta = nextTheta;
@@ -281,7 +229,7 @@ public class TauP_WKBJ extends TauP_Time {
             }
 
             MSeed3Record ms3Rec = new MSeed3Record();
-            String staCode = "D"+degrees;
+            String staCode = "W"+degrees;
             if (staCode.length()> 8) { staCode = staCode.substring(8);}
             ms3Rec.setSourceId(new FDSNSourceId("XX", staCode, "00", "B", "X", "Z"));
             ms3Rec.setSampleRate(getDeltaT());
