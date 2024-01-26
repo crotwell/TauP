@@ -38,6 +38,8 @@ public abstract class TauP_Tool {
 
     public static final String TEXT = "text";
 
+    public static final String MS3 = "ms3";
+
     public String[] cmdLineArgs = new String[0];
 
     protected PrintWriter writer;
@@ -100,6 +102,8 @@ public abstract class TauP_Tool {
             setOutFileExtension("svg");
         } else if (this.outputFormat == CSV) {
             setOutFileExtension("csv");
+        } else if (this.outputFormat == MS3) {
+            setOutFileExtension("ms3");
         }
     }
     

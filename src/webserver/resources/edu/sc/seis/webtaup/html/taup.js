@@ -1,4 +1,6 @@
 import { startAnimation } from './wavefront_animation.js';
+import * as sp from './seisplotjs_3.1.4-SNAPSHOT_standalone.mjs';
+
 /**
  * Set up form listeners and other initialization items.
  */
@@ -34,6 +36,9 @@ export function valid_format(tool) {
     if (tool === "slowplot" || tool === "curve" || tool === "amp" || tool === "wavefront" || tool === "refltrans") {
       format = "svg";
     }
+  }
+  if (tool === "wkbj") {
+    format = "ms3";
   }
   return format;
 }
@@ -102,6 +107,33 @@ export async function display_results(taup_url) {
         const pre_el = document.createElement("div");
         pre_el.innerHTML = ans;
         container_el.appendChild(pre_el);
+      });
+    } else if (format === "ms3") {
+      return response.arrayBuffer().then(rawBuffer => {
+        const dataRecords = sp.mseed3.parseMSeed3Records(rawBuffer);
+        return dataRecords;
+      }).then(dataRecords => {
+        return sp.mseed3.seismogramPerChannel(dataRecords);
+      }).then(seisList => {
+        const data = seisList[0].y;
+        for (let i=0; i<data.length ; i++) {
+          if (data[i] !== 0.0) {
+            console.log(`${i} ${data[i]}`);
+          }
+        }
+        let seisConfig = new sp.seismographconfig.SeismographConfig();
+        seisConfig.isRelativeTime = true;
+        const sddList = seisList.map(seis => sp.seismogram.SeismogramDisplayData.fromSeismogram(seis));
+        //const seismograph = new sp.organizeddisplay.OrganizedDisplay(sddList, seisConfig);
+        const seismograph = new sp.seismograph.Seismograph(sddList, seisConfig);
+        seismograph.addStyle(`
+          sp-seismograph {
+            height: 400px;
+          }
+        `);
+        container_el.appendChild(seismograph);
+        seismograph.draw();
+
       });
     }
   });
@@ -367,7 +399,7 @@ export function enableParams(tool) {
     document.querySelector(`input[name="format"][value="svg"]`).removeAttribute("disabled");
     document.querySelector(`input[name="format"][value="gmt"]`).removeAttribute("disabled");
   }
-  if ( ! (tool === "time" || tool === "pierce" || tool == "path")) {
+  if ( ! (tool === "time" || tool === "pierce" || tool == "path" || tool == "wkbj")) {
     styleStr += `
       .tool_time {
         display: none;

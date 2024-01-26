@@ -3,6 +3,7 @@ package edu.sc.seis.webtaup;
 import edu.sc.seis.TauP.*;
 
 import edu.sc.seis.seisFile.BuildVersion;
+import edu.sc.seis.seisFile.mseed3.MSeed3Record;
 import io.undertow.Undertow;
 import io.undertow.io.Sender;
 import io.undertow.server.HttpHandler;
@@ -12,10 +13,10 @@ import io.undertow.server.handlers.ResponseCodeHandler;
 import io.undertow.server.handlers.resource.ClassPathResourceManager;
 import io.undertow.server.handlers.resource.ResourceHandler;
 import io.undertow.util.Headers;
+import io.undertow.util.MimeMappings;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.io.*;
+import java.nio.ByteBuffer;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -82,7 +83,27 @@ public class TauP_Web extends TauP_Tool {
 
                             StringWriter out = new StringWriter();
                             PrintWriter pw = new PrintWriter(out);
-                            if (tool instanceof TauP_Time) {
+
+                            if (tool instanceof TauP_WKBJ) {
+                                if (queryParams.containsKey(QP_DISTDEG)) {
+                                    List<Double> degreesList = new ArrayList<>();
+                                    for (String distListStr : queryParams.get(QP_DISTDEG)) {
+                                        degreesList.addAll(TauP_Time.parseDegreeList(distListStr));
+                                    }
+                                    configContentType(tool.outputFormat, exchange);
+                                    List<MSeed3Record> ms3List = ((TauP_WKBJ)tool).calcSpikes(degreesList);
+                                    //List<MSeed3Record> ms3List = ((TauP_WKBJ)tool).calcWKBJ(degreesList);
+                                    ByteBuffer[] recordbuf = new ByteBuffer[ms3List.size()];
+                                    for (int i = 0; i < ms3List.size(); i++) {
+                                        recordbuf[i] = ByteBuffer.allocate(ms3List.get(i).getSize());
+                                        ByteArrayOutputStream backing = new ByteArrayOutputStream();
+                                        ms3List.get(i).write(backing);
+                                        backing.close();
+                                        recordbuf[i] = ByteBuffer.wrap(backing.toByteArray());
+                                    }
+                                    exchange.getResponseSender().send(recordbuf);
+                                }
+                            } else if (tool instanceof TauP_Time) {
                                 try {
                                     tool.printScriptBeginning(pw);
                                     List<Double> degreesList = new ArrayList<>();
@@ -164,6 +185,9 @@ public class TauP_Web extends TauP_Tool {
                             ResourceHandler resHandler = new ResourceHandler(
                                     new ClassPathResourceManager(TauP_Web.class.getClassLoader(),
                                      "edu/sc/seis/webtaup/html"));
+                            MimeMappings mm = resHandler.getMimeMappings();
+                            MimeMappings nmm = MimeMappings.builder(true).addMapping("mjs", "application/javascript").build();
+                            resHandler.setMimeMappings(nmm);
                             resHandler.handleRequest(exchange);
                         }
                     }
@@ -197,6 +221,8 @@ public class TauP_Web extends TauP_Tool {
             contentType = "image/svg+xml";
         } else if (format.equals(TauP_Tool.JSON)) {
             contentType = "application/json";
+        } else if (format.equals(TauP_Tool.MS3)) {
+            contentType = "application/x-miniseed3"; // should update to const in seisFile
         } else {
             throw new TauPException("Unknown format: "+format);
         }

@@ -76,11 +76,15 @@ public class Theta {
         // loop until we find a theta s.t. abs(thetaStart-theta) == timeStep
         // or we fall off the end of the array, ie ArrayIndexOutOfBounds
         boolean found = false;
+        double newTheta;
         int i = getThetaIndex(rayParam);
-        while(Math.abs(thetaAtX[i + 1] - thetaStart) <= timeStep) {
+        while(i < thetaAtX.length-1 && Math.abs(thetaAtX[i + 1] - thetaStart) <= timeStep) {
             i++;
         }
-        double newTheta;
+        if (i >= thetaAtX.length-1) {
+            // fallen off end
+            return -1;
+        }
         if(thetaStart < thetaAtX[i + 1]) {
             newTheta = thetaStart + timeStep;
         } else {
