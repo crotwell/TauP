@@ -2,6 +2,7 @@
 [![Maven Central](https://img.shields.io/maven-central/v/edu.sc.seis/TauP.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22edu.sc.seis%22%20AND%20a:%22TauP%22)
  [![javadoc](https://javadoc.io/badge2/edu.sc.seis/TauP/javadoc.svg)](https://javadoc.io/doc/edu.sc.seis/TauP)
 [![taup](https://snapcraft.io/taup/badge.svg)](https://snapcraft.io/taup)
+[![Tests](https://github.com/crotwell/TauP/actions/workflows/gradle.yml/badge.svg)](https://github.com/crotwell/TauP/actions/workflows/gradle.yml)
 
 
 
