@@ -137,6 +137,12 @@ public interface SeismicPhase extends Serializable, Cloneable {
 
     Arrival shootRay(double rayParam) throws SlownessModelException, NoSuchLayerException;
 
+    /** True is all segments of this path are only S waves.
+     *
+     * @return
+     */
+    boolean isAllSWave();
+
     double calcRayParamForTakeoffAngle(double takeoffDegree);
 
     double velocityAtSource();
@@ -149,6 +155,18 @@ public interface SeismicPhase extends Serializable, Cloneable {
 
     double calcIncidentAngle(double arrivalRayParam);
 
+    /**
+     * True if the initial leg, leaving the source, wavetype is a P wave, false if an S wave.
+     * @return
+     */
+    boolean sourceSegmentIsPWave();
+
+    /**
+     * True if the final, incident, wavetype is a P wave, false if an S wave.
+     * @return
+     */
+    boolean finalSegmentIsPWave();
+
     String describe();
 
     String describeJson();
@@ -157,7 +175,9 @@ public interface SeismicPhase extends Serializable, Cloneable {
 
     void dump();
 
-    double calcReflTran(Arrival arrival) throws VelocityModelException, SlownessModelException;
+    double calcReflTranPSV(Arrival arrival) throws VelocityModelException, SlownessModelException;
+
+    double calcReflTranSH(Arrival arrival) throws VelocityModelException, SlownessModelException;
 
     List<TimeDist> calcPierceTimeDist(Arrival arrival);
 

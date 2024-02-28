@@ -282,14 +282,27 @@ public class Arrival {
 
     /**
      * Calculates the product of the reflection and transmission coefficients for all discontinuities along the path
-     * of this arrival. Note that this may not give accurate results for certain wave types,
+     * of this arrival in the P-SV plane. Note that this may not give accurate results for certain wave types,
      * such as head or diffracted waves.
      * @return
      * @throws VelocityModelException
      * @throws SlownessModelException
      */
-    public double getReflTrans() throws VelocityModelException, SlownessModelException {
-        return getPhase().calcReflTran(this);
+    public double getReflTransPSV() throws VelocityModelException, SlownessModelException {
+        return getPhase().calcReflTranPSV(this);
+    }
+
+    /**
+     * Calculates the product of the reflection and transmission coefficients for all discontinuities along the path
+     * of this arrival for transverse, SH, waves. If any segment on the path is a P wave, the result will be zero.
+     * Note that this may not give accurate results for certain wave types,
+     * such as head or diffracted waves.
+     * @return
+     * @throws VelocityModelException
+     * @throws SlownessModelException
+     */
+    public double getReflTransSH() throws VelocityModelException, SlownessModelException {
+        return getPhase().calcReflTranSH(this);
     }
 
     /**
@@ -301,8 +314,25 @@ public class Arrival {
      * @throws VelocityModelException
      * @throws SlownessModelException
      */
-    public double getAmplitudeFactor() throws TauModelException, VelocityModelException, SlownessModelException {
-        double refltran = getReflTrans();
+    public double getAmplitudeFactorPSV() throws TauModelException, VelocityModelException, SlownessModelException {
+        double refltran = getReflTransPSV();
+        double geoSpread = getGeometricSpreadingFactor();
+        double densityVelocity = 1/Math.sqrt(getPhase().velocityAtReceiver() * getPhase().densityAtReceiver());
+        double ampFactor = densityVelocity* refltran * geoSpread;
+        return ampFactor;
+    }
+
+    /**
+     * Calculates the amplitude factor, 1/sqrt(density*vel) times reflection/tranmission coefficient times geometric spreading, for the
+     * arrival. Note this is only an approximation of amplitude as the source radiation magnitude and pattern is
+     * not included, and this may not give accurate results for certain wave types, such as head or diffracted waves.
+     * @return
+     * @throws TauModelException
+     * @throws VelocityModelException
+     * @throws SlownessModelException
+     */
+    public double getAmplitudeFactorSH() throws TauModelException, VelocityModelException, SlownessModelException {
+        double refltran = getReflTransSH();
         double geoSpread = getGeometricSpreadingFactor();
         double densityVelocity = 1/Math.sqrt(getPhase().velocityAtReceiver() * getPhase().densityAtReceiver());
         double ampFactor = densityVelocity* refltran * geoSpread;
@@ -556,12 +586,14 @@ public class Arrival {
         try {
             double geospread = getGeometricSpreadingFactor();
             if (Double.isFinite(geospread)) {
-                pw.write(innerIndent+"  "+JSONWriter.valueToString("factor")+": "+JSONWriter.valueToString((float)getAmplitudeFactor())+","+NL);
+                pw.write(innerIndent+"  "+JSONWriter.valueToString("factorpsv")+": "+JSONWriter.valueToString((float)getAmplitudeFactorPSV())+","+NL);
+                pw.write(innerIndent+"  "+JSONWriter.valueToString("factorsh")+": "+JSONWriter.valueToString((float)getAmplitudeFactorSH())+","+NL);
                 pw.write(innerIndent+"  "+JSONWriter.valueToString("geospread")+": "+JSONWriter.valueToString((float)geospread)+","+NL);
             } else {
                 pw.write(innerIndent+"  "+JSONWriter.valueToString("error")+": "+JSONWriter.valueToString("geometrical speading not finite")+","+NL);
             }
-            pw.write(innerIndent+"  "+JSONWriter.valueToString("refltran")+": "+JSONWriter.valueToString((float)getReflTrans())+NL);
+            pw.write(innerIndent+"  "+JSONWriter.valueToString("refltranpsv")+": "+JSONWriter.valueToString((float)getReflTransPSV())+NL);
+            pw.write(innerIndent+"  "+JSONWriter.valueToString("refltransh")+": "+JSONWriter.valueToString((float)getReflTransSH())+NL);
             pw.write(innerIndent+"}");
         } catch (TauPException e) {
             throw new RuntimeException(e);
@@ -627,12 +659,14 @@ public class Arrival {
         try {
             double geospread = getGeometricSpreadingFactor();
             if (Double.isFinite(geospread)) {
-                ampObj.put("factor", (float) getAmplitudeFactor());
+                ampObj.put("factorpsv", (float) getAmplitudeFactorPSV());
+                ampObj.put("factorsh", (float) getAmplitudeFactorSH());
                 ampObj.put("geospread", (float) geospread);
             } else {
                 ampObj.put("error", "geometrical speading not finite");
             }
-            ampObj.put("refltran", (float) getReflTrans());
+            ampObj.put("refltranpsv", (float) getReflTransPSV());
+            ampObj.put("refltransh", (float) getReflTransSH());
         } catch (TauPException e) {
             throw new RuntimeException(e);
         }

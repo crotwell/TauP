@@ -359,7 +359,18 @@ public class ScatteredSeismicPhase implements SeismicPhase {
     public double calcIncidentAngle(double arrivalRayParam) {
         return scatteredPhase.calcIncidentAngle(arrivalRayParam);
     }
-/*
+
+    @Override
+    public boolean sourceSegmentIsPWave() {
+        return getPhaseSegments().get(0).isPWave;
+    }
+
+    @Override
+    public boolean finalSegmentIsPWave() {
+        return getPhaseSegments().get(getPhaseSegments().size()-1).isPWave;
+    }
+
+    /*
     @Override
     public String describe() {
         String desc = getName() + " scattered at "+getScattererDepth()+" km and "+getScattererDistanceDeg()+" deg:\n";
@@ -455,11 +466,31 @@ public class ScatteredSeismicPhase implements SeismicPhase {
         return out;
     }
 
+    /** True is all segments of this path are only S waves.
+     *
+     * @return
+     */
+    @Override
+    public boolean isAllSWave() {
+        for (SeismicPhaseSegment seg: getPhaseSegments()) {
+            if (seg.isPWave) { return false; }
+        }
+        return true;
+    }
+
     @Override
     /**
      *  Calculation of a amplitude for a scattered phase doesn't make any sense given 1D ray, so always returns zero.
      */
-    public double calcReflTran(Arrival arrival) {
+    public double calcReflTranPSV(Arrival arrival) {
+        return 0;
+    }
+
+    @Override
+    /**
+     *  Calculation of a amplitude for a scattered phase doesn't make any sense given 1D ray, so always returns zero.
+     */
+    public double calcReflTranSH(Arrival arrival) {
         return 0;
     }
 

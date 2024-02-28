@@ -857,7 +857,15 @@ public class SimpleSeismicPhase implements SeismicPhase {
         return incidentAngle;
     }
 
+    @Override
+    public boolean sourceSegmentIsPWave() {
+        return getPhaseSegments().get(0).isPWave;
+    }
 
+    @Override
+    public boolean finalSegmentIsPWave() {
+        return getPhaseSegments().get(getPhaseSegments().size()-1).isPWave;
+    }
 
     /**
      * Calculates the "pierce points" for the arrivals stored in arrivals. The
@@ -1108,21 +1116,47 @@ public class SimpleSeismicPhase implements SeismicPhase {
         return currArrival;
     }
 
+    /** True is all segments of this path are only S waves.
+     *
+     * @return
+     */
+    @Override
+    public boolean isAllSWave() {
+        for (SeismicPhaseSegment seg: getPhaseSegments()) {
+            if (seg.isPWave) { return false; }
+        }
+        return true;
+    }
 
     @Override
-    public double calcReflTran(Arrival arrival) throws VelocityModelException, SlownessModelException {
+    public double calcReflTranPSV(Arrival arrival) throws VelocityModelException, SlownessModelException {
+        double reflTranValue = 1;
+        boolean calcSH = false;
+        SeismicPhaseSegment prevSeg = segmentList.get(0);
+        for (SeismicPhaseSegment seg : segmentList.subList(1, segmentList.size())) {
+            reflTranValue *= prevSeg.calcReflTran(arrival, seg.isPWave, calcSH);
+            prevSeg = seg;
+        }
+        reflTranValue *= prevSeg.calcReflTran(arrival, prevSeg.isPWave, calcSH); // last seg can't change phase at end
+        return reflTranValue;
+    }
+
+    @Override
+    public double calcReflTranSH(Arrival arrival) throws VelocityModelException, SlownessModelException {
         double reflTranValue = 1;
 
         boolean isAllS = true;
         for (SeismicPhaseSegment seg : segmentList) {
             isAllS = isAllS && ! seg.isPWave;
         }
+        if ( ! isAllS) { return 0; }
+        boolean calcSH = true;
         SeismicPhaseSegment prevSeg = segmentList.get(0);
         for (SeismicPhaseSegment seg : segmentList.subList(1, segmentList.size())) {
-            reflTranValue *= prevSeg.calcReflTran(arrival, seg.isPWave, isAllS);
+            reflTranValue *= prevSeg.calcReflTran(arrival, seg.isPWave, calcSH);
             prevSeg = seg;
         }
-        reflTranValue *= prevSeg.calcReflTran(arrival, prevSeg.isPWave, isAllS); // last seg can't change phase at end
+        reflTranValue *= prevSeg.calcReflTran(arrival, prevSeg.isPWave, calcSH); // last seg can't change phase at end
         return reflTranValue;
     }
 

@@ -343,9 +343,22 @@ public class SeismicPhaseSegment {
 		}
 		return outPath;
 	}
-	
+
+	/**
+	 * Calculates the product of the reflection and transmission coefficients for this leg.
+	 * @param arrival arrival/ ray parameter to use for the calculation
+	 * @param nextLegIsPWave if next leg is a P wave, neede for final coefficient at end of leg
+	 * @param allSH if should calculate the SH coefficients instead of P-SV
+	 * @return
+	 * @throws VelocityModelException
+	 * @throws SlownessModelException
+	 */
 	public double calcReflTran(Arrival arrival, boolean nextLegIsPWave, boolean allSH) throws VelocityModelException, SlownessModelException {
 		double reflTranValue = 1;
+		if (isPWave && allSH) {
+			// P wave leg in SH system, so zero
+			return 0;
+		}
 		VelocityModel vMod = getTauModel().getVelocityModel();
 		if ( ! isFlat) {
 			int bStep = isDownGoing ? 1 : -1;
