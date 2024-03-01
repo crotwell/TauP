@@ -270,10 +270,15 @@ public class Arrival {
         }
         double dtakeoff_ddelta = (getTakeoffAngle()-neighbor.getTakeoffAngle())*DtoR/
                 (getDist()-neighbor.getDist());
+        double cosIncident = Math.cos(getIncidentAngle()*DtoR);
+        if (Double.isNaN(cosIncident)) {
+            // divide by zero???
+            return Double.POSITIVE_INFINITY;
+        }
 
         double geoSpread = Math.sin(getTakeoffAngle())
                 /(recRadius*recRadius)
-                * 1.0/Math.cos(getIncidentAngle()*DtoR)
+                * 1.0/cosIncident
                 * (1/ Math.sin(getModuloDist()))
                 * Math.abs(dtakeoff_ddelta);
 
