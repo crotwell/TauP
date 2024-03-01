@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Reader;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -139,7 +141,7 @@ public abstract class TauP_Tool {
     
     public PrintWriter getWriter() throws IOException {
         if (writer == null) {
-            if(!getOutFile().equals("stdout")) {
+            if(!(getOutFile().equals("stdout") || getOutFile().length()==0)) {
                 writer = new PrintWriter(new BufferedWriter(new FileWriter(getOutFile())));
             } else {
                 writer = new PrintWriter(new OutputStreamWriter(System.out));
@@ -184,6 +186,20 @@ public abstract class TauP_Tool {
 
     protected abstract String[] parseCmdLineArgs(String[] origArgs) throws IOException;
 
+    protected String[] parseOutputFormatCmdLineArgs(String[] origiArgs) {
+        List<String> noComprendoArgs = new ArrayList<>(List.of(origiArgs));
+        String[] allowed = allowedOutputFormats();
+        for (int a = 0; a < allowed.length; a++) {
+            for (String arg: noComprendoArgs) {
+                if (dashEquals(allowed[a], arg)) {
+                    setOutputFormat(allowed[a]);
+                    noComprendoArgs.remove(arg);
+                    break;
+                }
+            }
+        }
+        return noComprendoArgs.toArray(new String[0]);
+    }
 
     public abstract void init() throws TauPException;
     public abstract void start() throws IOException, TauModelException, TauPException;
@@ -201,6 +217,7 @@ public abstract class TauP_Tool {
         cmdLineArgs = origArgs;
         int i = 0;
         String[] args = ToolRun.parseCommonCmdLineArgs(origArgs);
+        args = parseOutputFormatCmdLineArgs(args);
         String[] noComprendoArgs = new String[args.length];
         int numNoComprendoArgs = 0;
         while(i < args.length) {

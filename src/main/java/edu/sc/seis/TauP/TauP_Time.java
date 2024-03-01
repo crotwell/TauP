@@ -649,14 +649,7 @@ public class TauP_Time extends TauP_AbstractTimeTool {
                                       double receiverDepth,
                                       String[] phases,
                                       List<Arrival> arrivals) {
-        JSONObject out = new JSONObject();
-
-        out.put("model", modelName);
-        out.put("sourcedepth", (float)depth);
-        out.put("receiverdepth", (float)receiverDepth);
-        JSONArray outPhases = new JSONArray();
-        out.put("phases", outPhases);
-        outPhases.putAll(phases);
+        JSONObject out = baseResultAsJSONObject( modelName, depth,  receiverDepth, phases);
         JSONArray outArrivals = new JSONArray();
         out.put("arrivals", outArrivals);
         for(int j = 0; j < arrivals.size(); j++) {
@@ -715,57 +708,11 @@ public class TauP_Time extends TauP_AbstractTimeTool {
     }
 
     /**
-     * preforms intialization of the tool. Properties are queried for the the
-     * default model to load, source depth to use, phases to use, etc. Note that
-     * because of the IO inherent in these operations, this method is not
-     * appropriate for Applets. Applets should load TauModels themselves and use
-     * the setTauModel(TauModel) method.
+     * preforms intialization of the tool. Properties are queried for the
+     * default model to load, source depth to use, phases to use, etc.
      */
     public void init() throws TauPException {
-        DEBUG = DEBUG || ToolRun.DEBUG;
-        this.verbose = this.verbose || DEBUG || ToolRun.VERBOSE;
-
-        if(phaseNames.size() == 0) {
-            if(toolProps.containsKey("taup.phase.file")) {
-                if(toolProps.containsKey("taup.phase.list")) {
-                    parsePhaseList(toolProps.getProperty("taup.phase.list"));
-                }
-                try {
-                    readPhaseFile(toolProps.getProperty("taup.phase.file"));
-                } catch(IOException e) {
-                    Alert.warning("Caught IOException while attempting to reading phase file "
-                                          + toolProps.getProperty("taup.phase.file"),
-                                  e.getMessage());
-                    if(phaseNames.size() <= 0) {
-                        parsePhaseList(toolProps.getProperty("taup.phase.list",
-                                DEFAULT_PHASES));
-                    }
-                }
-            } else {
-                parsePhaseList(toolProps.getProperty("taup.phase.list",
-                        DEFAULT_PHASES));
-            }
-        }
-        depth = Double.valueOf(toolProps.getProperty("taup.source.depth", "0.0"))
-                .doubleValue();
-        if(tMod == null
-                || tMod.getVelocityModel().getModelName() != toolProps.getProperty("taup.model.name",
-                                                                                   "iasp91")) {
-            modelName = toolProps.getProperty("taup.model.name", "iasp91");
-            try {
-                readTauModel();
-            } catch(TauModelException ee) {
-                if (ee.getCause() instanceof InvalidClassException) {
-                    Alert.error("Model file "
-                                + modelName
-                                + " is not compatible with the current version.",
-                        "Recreate using taup_create.");
-                } else {
-                    Alert.error("Caught TauModelException", ee.getMessage());
-                }
-                throw new RuntimeException(ee);
-            }
-        }
+        super.init();
         // check for command line arg distance in km
         for (double distKilometers : distKilometersList) {
                 degreesList.add(distKilometers / getTauModel().getRadiusOfEarth()

@@ -1,5 +1,8 @@
 package edu.sc.seis.TauP;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,6 +34,54 @@ public abstract class TauP_AbstractTimeTool extends TauP_Tool {
      * vector to hold the SeismicPhases for the phases named in phaseNames.
      */
     private List<SeismicPhase> phases = null;
+
+    @Override
+    public void init() throws TauPException {
+        DEBUG = DEBUG || ToolRun.DEBUG;
+        this.verbose = this.verbose || DEBUG || ToolRun.VERBOSE;
+
+        if(phaseNames.size() == 0) {
+            if(toolProps.containsKey("taup.phase.file")) {
+                if(toolProps.containsKey("taup.phase.list")) {
+                    parsePhaseList(toolProps.getProperty("taup.phase.list"));
+                }
+                try {
+                    readPhaseFile(toolProps.getProperty("taup.phase.file"));
+                } catch(IOException e) {
+                    Alert.warning("Caught IOException while attempting to reading phase file "
+                                    + toolProps.getProperty("taup.phase.file"),
+                            e.getMessage());
+                    if(phaseNames.size() <= 0) {
+                        parsePhaseList(toolProps.getProperty("taup.phase.list",
+                                DEFAULT_PHASES));
+                    }
+                }
+            } else {
+                parsePhaseList(toolProps.getProperty("taup.phase.list",
+                        DEFAULT_PHASES));
+            }
+        }
+        depth = Double.valueOf(toolProps.getProperty("taup.source.depth", "0.0"))
+                .doubleValue();
+        if(tMod == null
+                || tMod.getVelocityModel().getModelName() != toolProps.getProperty("taup.model.name",
+                "iasp91")) {
+            modelName = toolProps.getProperty("taup.model.name", "iasp91");
+            try {
+                readTauModel();
+            } catch(TauModelException ee) {
+                if (ee.getCause() instanceof InvalidClassException) {
+                    Alert.error("Model file "
+                                    + modelName
+                                    + " is not compatible with the current version.",
+                            "Recreate using taup_create.");
+                } else {
+                    Alert.error("Caught TauModelException", ee.getMessage());
+                }
+                throw new RuntimeException(ee);
+            }
+        }
+    }
 
     /**
      * @param phaseName
@@ -188,6 +239,21 @@ public abstract class TauP_AbstractTimeTool extends TauP_Tool {
             return yb;
         }
         return (yb - ya) * (x - xa) / (xb - xa) + ya;
+    }
+
+    public static JSONObject baseResultAsJSONObject(String modelName,
+                                                    double depth,
+                                                    double receiverDepth,
+                                                    String[] phases) {
+        JSONObject out = new JSONObject();
+
+        out.put("model", modelName);
+        out.put("sourcedepth", (float)depth);
+        out.put("receiverdepth", (float)receiverDepth);
+        JSONArray outPhases = new JSONArray();
+        out.put("phases", outPhases);
+        outPhases.putAll(phases);
+        return out;
     }
 
     /* Get/Set methods */
