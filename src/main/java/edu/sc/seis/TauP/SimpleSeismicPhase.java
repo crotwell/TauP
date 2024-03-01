@@ -1116,6 +1116,17 @@ public class SimpleSeismicPhase implements SeismicPhase {
         return currArrival;
     }
 
+    /** True is all segments of this path are only P waves.
+     *
+     * @return
+     */
+    @Override
+    public boolean isAllPWave() {
+        for (SeismicPhaseSegment seg: getPhaseSegments()) {
+            if ( ! seg.isPWave) { return false; }
+        }
+        return true;
+    }
     /** True is all segments of this path are only S waves.
      *
      * @return

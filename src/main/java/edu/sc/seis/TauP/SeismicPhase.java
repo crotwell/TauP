@@ -137,6 +137,12 @@ public interface SeismicPhase extends Serializable, Cloneable {
 
     Arrival shootRay(double rayParam) throws SlownessModelException, NoSuchLayerException;
 
+    /** True is all segments of this path are only P waves.
+     *
+     * @return
+     */
+    boolean isAllPWave();
+
     /** True is all segments of this path are only S waves.
      *
      * @return

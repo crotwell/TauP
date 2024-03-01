@@ -471,6 +471,18 @@ public class ScatteredSeismicPhase implements SeismicPhase {
      * @return
      */
     @Override
+    public boolean isAllPWave() {
+        for (SeismicPhaseSegment seg: getPhaseSegments()) {
+            if (seg.isPWave) { return false; }
+        }
+        return true;
+    }
+
+    /** True is all segments of this path are only S waves.
+     *
+     * @return
+     */
+    @Override
     public boolean isAllSWave() {
         for (SeismicPhaseSegment seg: getPhaseSegments()) {
             if (seg.isPWave) { return false; }
