@@ -134,7 +134,6 @@ public class SvgUtil {
         String filename = "standard_svg_plot.css";
         Class c = null;
         try {
-            int numLines = 0;
             c = Class.forName("edu.sc.seis.TauP.SvgUtil");
             InputStream in = c.getResourceAsStream(packageName + "/" + filename);
             if (in != null) {
@@ -142,12 +141,10 @@ public class SvgUtil {
                 String line;
                 while((line = reader.readLine()) != null ) {
                     out.append(line+"\n");
-                    numLines++;
                 }
             } else {
                 throw new RuntimeException("Standard CSS file not found in jar: "+packageName + "/" + filename);
             }
-            System.err.println("CSS numlines: "+numLines);
         } catch (InvalidClassException e) {
             throw new RuntimeException(e);
         } catch (StreamCorruptedException e) {
