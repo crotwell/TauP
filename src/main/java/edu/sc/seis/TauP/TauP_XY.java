@@ -310,4 +310,18 @@ public class TauP_XY extends TauP_AbstractTimeTool {
     protected double[] xAxisMinMax = new double[0];
     protected double[] yAxisMinMax = new double[0];
 
+    public void setxMinMax(double min, double max) {
+        if (min < max) {
+            xAxisMinMax = new double[]{min, max};
+        } else {
+            throw new IllegalArgumentException("min must be < max: "+min+" < "+max);
+        }
+    }
+    public void setyMinMax(double min, double max) {
+        if (min < max) {
+            yAxisMinMax = new double[]{min, max};
+        } else {
+            throw new IllegalArgumentException("min must be < max: "+min+" < "+max);
+        }
+    }
 }

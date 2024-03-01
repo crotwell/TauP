@@ -116,13 +116,9 @@ export async function display_results(taup_url) {
         return sp.mseed3.seismogramPerChannel(dataRecords);
       }).then(seisList => {
         const data = seisList[0].y;
-        for (let i=0; i<data.length ; i++) {
-          if (data[i] !== 0.0) {
-            console.log(`${i} ${data[i]}`);
-          }
-        }
         let seisConfig = new sp.seismographconfig.SeismographConfig();
         seisConfig.isRelativeTime = true;
+        seisConfig.amplitudeMode = sp.scale.AMPLITUDE_MODE.Raw;
         const sddList = seisList.map(seis => sp.seismogram.SeismogramDisplayData.fromSeismogram(seis));
         const seismograph = new sp.organizeddisplay.OrganizedDisplay(sddList, seisConfig);
         //const seismograph = new sp.seismograph.Seismograph(sddList, seisConfig);
@@ -176,6 +172,9 @@ export function form_url() {
   let isNegDist = document.querySelector('input[name="negdist"]').checked;
   let isrefltranmodel = document.querySelector('input[name="isrefltranmodel"]:checked').value;
 
+  let xaxis = document.querySelector('#xaxis').value;
+  let yaxis = document.querySelector('#yaxis').value;
+
   const format = valid_format(toolname);
   let url = "";
   if (toolname !== "refltrans") {
@@ -228,6 +227,22 @@ export function form_url() {
     }
     if (isScatter ) {
       url += `&scatter=${scatdepth},${scatdist}`;
+    }
+  }
+  if (toolname === "xy") {
+    url += `&xaxis=${xaxis}&yaxis=${yaxis}`;
+
+    let xautorange = document.querySelector('input[name="xminmaxauto"]').checked;
+    if ( ! xautorange) {
+        let xmin = document.querySelector('input[name="xmin"]').value;
+        let xmax = document.querySelector('input[name="xmax"]').value;
+        url += `&xminmax=[${xmin},${xmax}]`;
+    }
+    let yautorange = document.querySelector('input[name="yminmaxauto"]').checked;
+    if ( ! yautorange) {
+        let ymin = document.querySelector('input[name="ymin"]').value;
+        let ymax = document.querySelector('input[name="ymax"]').value;
+        url += `&yminmax=[${ymin},${ymax}]`;
     }
   }
   if (toolname === "pierce") {
@@ -299,8 +314,10 @@ export function form_url() {
 }
 
 export function setupListeners() {
-  let in_items = document.querySelectorAll("input");
-  for (let inEl of in_items) {
+  let in_items = Array.from(document.querySelectorAll("input"));
+  let sel_items = Array.from(document.querySelectorAll("select"));
+  let all_input_items = in_items.concat(sel_items)
+  for (let inEl of all_input_items) {
     inEl.addEventListener("change", (event) => {
       console.log(`change: ${event}`);
       process();

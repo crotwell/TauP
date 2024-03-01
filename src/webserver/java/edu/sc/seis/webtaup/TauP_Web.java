@@ -14,6 +14,7 @@ import io.undertow.server.handlers.resource.ClassPathResourceManager;
 import io.undertow.server.handlers.resource.ResourceHandler;
 import io.undertow.util.Headers;
 import io.undertow.util.MimeMappings;
+import org.json.JSONArray;
 
 import java.io.*;
 import java.nio.ByteBuffer;
@@ -96,6 +97,7 @@ public class TauP_Web extends TauP_Tool {
                                     List<MSeed3Record> ms3List = new ArrayList<>();
                                     ms3List.addAll(ms3SpikeList);
                                     ms3List.addAll(ms3WkbjList);
+                                    //ms3List.add(ms3WkbjList.get(0));
                                     ByteBuffer[] recordbuf = new ByteBuffer[ms3List.size()];
                                     for (int i = 0; i < ms3List.size(); i++) {
                                         recordbuf[i] = ByteBuffer.allocate(ms3List.get(i).getSize());
@@ -277,6 +279,11 @@ public class TauP_Web extends TauP_Tool {
     public static String QP_X_SLOWNESS = "xslowness";
     public static String QP_ABSOLUTE = "absolute";
 
+    // xy plot
+    public static String QP_XAXIS = "xaxis";
+    public static String QP_YAXIS = "yaxis";
+    public static String QP_XMINMAX = "xminmax";
+    public static String QP_YMINMAX = "yminmax";
 
 
     public Set<String> configTool(TauP_Tool tool, Map<String, Deque<String>> queryParameters) throws TauPException, IOException {
@@ -292,6 +299,49 @@ public class TauP_Web extends TauP_Tool {
         if (tool instanceof TauP_Version) {
             // no params matter
             unknownKeys.clear();
+        }
+        if (tool instanceof TauP_AbstractTimeTool) {
+
+            TauP_AbstractTimeTool timeTool = (TauP_AbstractTimeTool) tool;
+
+            if (queryParameters.containsKey(QP_MODEL)) {
+                unknownKeys.remove(QP_MODEL);
+                TauModel tMod = TauModelLoader.load(queryParameters.get(QP_MODEL).getFirst());
+                timeTool.setTauModel(tMod);
+            } else {
+                timeTool.loadTauModel("iasp91");
+            }
+            if (queryParameters.containsKey(QP_EVDEPTH)) {
+                unknownKeys.remove(QP_EVDEPTH);
+                timeTool.setSourceDepth(Double.parseDouble(queryParameters.get(QP_EVDEPTH).getFirst()));
+            }
+            if (queryParameters.containsKey(QP_STADEPTH)) {
+                unknownKeys.remove(QP_STADEPTH);
+                timeTool.setReceiverDepth(Double.parseDouble(queryParameters.get(QP_STADEPTH).getFirst()));
+            }
+            if (queryParameters.containsKey(QP_SCATTER)) {
+                unknownKeys.remove(QP_SCATTER);
+                String[] splitQP = queryParameters.get(QP_SCATTER).getFirst().split(",");
+                if (splitQP.length != 2) {
+                    throw new TauPException("Expect depth,distdeg for scatter parameter:"+queryParameters.get(QP_SCATTER).getFirst());
+                }
+                double scatterDepth = Double.valueOf(splitQP[ 0]).doubleValue();
+                double scatterDistDeg = Double.valueOf(splitQP[1]).doubleValue();
+                timeTool.setScatterer(scatterDepth, scatterDistDeg);
+            }
+            String phases = TauP_Time.DEFAULT_PHASES;
+            if (queryParameters.containsKey(QP_PHASES)) {
+                unknownKeys.remove(QP_PHASES);
+                phases = "";
+                for (String phStr : queryParameters.get(QP_PHASES)) {
+                    phases += " "+phStr;
+                }
+                phases = phases.trim();
+                if (phases.length() == 0 ) {
+                    phases = TauP_Time.DEFAULT_PHASES;
+                }
+            }
+            timeTool.parsePhaseList(phases);
         }
         if (tool instanceof TauP_VelocityPlot) {
             TauP_VelocityPlot vplot = (TauP_VelocityPlot) tool;
@@ -324,26 +374,11 @@ public class TauP_Web extends TauP_Tool {
         }
         if (tool instanceof TauP_Time) {
             TauP_Time timeTool = (TauP_Time) tool;
-            if (queryParameters.containsKey(QP_MODEL)) {
-                unknownKeys.remove(QP_MODEL);
-                TauModel tMod = TauModelLoader.load(queryParameters.get(QP_MODEL).getFirst());
-                timeTool.setTauModel(tMod);
-            } else {
-                timeTool.loadTauModel("iasp91");
-            }
             if (queryParameters.containsKey(QP_EVLOC)) {
                 unknownKeys.remove(QP_EVLOC);
                 List<Double[]> latlonList = parseLoc(queryParameters.get(QP_EVLOC).getFirst());
                 Double[] latlon = latlonList.get(0);
                 timeTool.setEventLatLon( latlon[0], latlon[1]);
-            }
-            if (queryParameters.containsKey(QP_EVDEPTH)) {
-                unknownKeys.remove(QP_EVDEPTH);
-                timeTool.setSourceDepth(Double.parseDouble(queryParameters.get(QP_EVDEPTH).getFirst()));
-            }
-            if (queryParameters.containsKey(QP_STADEPTH)) {
-                unknownKeys.remove(QP_STADEPTH);
-                timeTool.setReceiverDepth(Double.parseDouble(queryParameters.get(QP_STADEPTH).getFirst()));
             }
             if (queryParameters.containsKey(QP_STALOC)) {
                 unknownKeys.remove(QP_STALOC);
@@ -351,29 +386,6 @@ public class TauP_Web extends TauP_Tool {
                 Double[] latlon = latlonList.get(0);
                 timeTool.setStationLatLon( latlon[0], latlon[1]);
             }
-            if (queryParameters.containsKey(QP_SCATTER)) {
-                unknownKeys.remove(QP_SCATTER);
-                String[] splitQP = queryParameters.get(QP_SCATTER).getFirst().split(",");
-                if (splitQP.length != 2) {
-                    throw new TauPException("Expect depth,distdeg for scatter parameter:"+queryParameters.get(QP_SCATTER).getFirst());
-                }
-                double scatterDepth = Double.valueOf(splitQP[ 0]).doubleValue();
-                double scatterDistDeg = Double.valueOf(splitQP[1]).doubleValue();
-                timeTool.setScatterer(scatterDepth, scatterDistDeg);
-            }
-            String phases = TauP_Time.DEFAULT_PHASES;
-            if (queryParameters.containsKey(QP_PHASES)) {
-                unknownKeys.remove(QP_PHASES);
-                phases = "";
-                for (String phStr : queryParameters.get(QP_PHASES)) {
-                    phases += " "+phStr;
-                }
-                phases = phases.trim();
-                if (phases.length() == 0 ) {
-                    phases = TauP_Time.DEFAULT_PHASES;
-                }
-            }
-            timeTool.parsePhaseList(phases);
             if (tool instanceof TauP_Pierce) {
                 TauP_Pierce pierce = (TauP_Pierce) tool;
                 if (queryParameters.containsKey(QP_PIERCEDEPTH)) {
@@ -410,6 +422,35 @@ public class TauP_Web extends TauP_Tool {
             }
         }
 
+
+        if (tool instanceof TauP_XY) {
+
+            TauP_XY rtplot = (TauP_XY) tool;
+            if (queryParameters.containsKey(QP_XAXIS)) {
+                unknownKeys.remove(QP_XAXIS);
+                rtplot.setxAxisType(queryParameters.get(QP_XAXIS).getFirst());
+            }
+            if (queryParameters.containsKey(QP_XMINMAX)) {
+                unknownKeys.remove(QP_XMINMAX);
+                String mmBoxed = queryParameters.get(QP_XMINMAX).getFirst().trim();
+                JSONArray mmJson = new JSONArray(mmBoxed);
+                if (mmJson.length()==2) {
+                    rtplot.setxMinMax(mmJson.getDouble(0), mmJson.getDouble(1));
+                }
+            }
+            if (queryParameters.containsKey(QP_YAXIS)) {
+                unknownKeys.remove(QP_YAXIS);
+                rtplot.setyAxisType(queryParameters.get(QP_YAXIS).getFirst());
+            }
+            if (queryParameters.containsKey(QP_YMINMAX)) {
+                unknownKeys.remove(QP_YMINMAX);
+                String mmBoxed = queryParameters.get(QP_YMINMAX).getFirst().trim();
+                JSONArray mmJson = new JSONArray(mmBoxed);
+                if (mmJson.length()==2) {
+                    rtplot.setyMinMax(mmJson.getDouble(0), mmJson.getDouble(1));
+                }
+            }
+        }
         if (tool instanceof TauP_ReflTransPlot) {
 
             TauP_ReflTransPlot rtplot = (TauP_ReflTransPlot) tool;

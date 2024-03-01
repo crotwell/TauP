@@ -273,6 +273,61 @@
         <input type="radio" name="format" id="format_gmt" value="gmt" />
         <label for="format_gmt">GMT</label>
     </fieldset>
+    <fieldset class="xy">
+        <legend>XY Plotting:</legend>
+        <div>
+            <label for="xaxis">X Axis</label>
+            <select name="xaxis" id="xaxis">
+                <option value="degree" selected>Distance in Degrees</option>
+                <option value="radian">Distance in Radians</option>
+                <option value="rayparam">Ray Parameter</option>
+                <option value="time">Time</option>
+                <option value="tau">Tau</option>
+                <option value="amppsv">P-Sv Amplitude</option>
+                <option value="ampsh">Sh Amplitude</option>
+                <option value="geospread">Geometrical Spreading</option>
+            </select>
+
+            <input type="checkbox" id="xminmaxauto" name="xminmaxauto" checked />
+            <label for="xminmaxauto">
+                <span>Auto-range: </span>
+            </label>
+            <label for="xmin">
+                <span>Min: </span>
+            </label>
+            <input type="number" id="xmin" name="xmin" value="0" />
+            <label for="xmax">
+                <span>Max: </span>
+            </label>
+            <input type="number" id="xmax" name="xmax" value="0" />
+        </div>
+        <div>
+            <label for="yaxis">Y Axis</label>
+            <select name="yaxis" id="yaxis">
+                <option value="degree">Distance in Degrees</option>
+                <option value="radian">Distance in Radians</option>
+                <option value="rayparam">Ray Parameter</option>
+                <option value="time" selected>Time</option>
+                <option value="tau">Tau</option>
+                <option value="amppsv">P-Sv Amplitude</option>
+                <option value="ampsh">Sh Amplitude</option>
+                <option value="geospread">Geometrical Spreading</option>
+            </select>
+            <input type="checkbox" id="yminmaxauto" name="yminmaxauto" checked />
+            <label for="yminmaxauto">
+                <span>Auto-range: </span>
+            </label>
+            <label for="ymin">
+                <span>Min: </span>
+            </label>
+            <input type="number" id="ymin" name="ymin" value="0" />
+            <label for="ymax">
+                <span>Max: </span>
+            </label>
+            <input type="number" id="ymax" name="ymax" value="0" />
+        </div>
+
+    </fieldset>
 
     <fieldset class="tools">
         <legend>Tools:</legend>
@@ -287,7 +342,10 @@
           <a href="doc/taup_path.html" target="_blank">Path</a></label>
         <input type="radio" name="tool" id="tool_curve" value="curve" />
         <label for="tool_curve">
-          <a href="doc/taup_curve.html" target="_blank">Curve</a></label>
+            <a href="doc/taup_curve.html" target="_blank">Curve</a></label>
+        <input type="radio" name="tool" id="tool_xy" value="xy" />
+        <label for="tool_xy">
+            <a href="doc/taup_xy.html" target="_blank">XY</a></label>
         <input type="radio" name="tool" id="tool_amp" value="amp" />
         <label for="tool_amp">
           <a href="doc/taup_amp.html" target="_blank">Amplitude Curve</a></label>
