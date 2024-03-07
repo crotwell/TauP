@@ -2,9 +2,15 @@ package edu.sc.seis.TauP;
 
 import edu.sc.seis.seisFile.SeisFileException;
 import edu.sc.seis.seisFile.mseed3.*;
+import edu.sc.seis.seisFile.TimeUtils;
 
 import java.io.*;
+
+import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.time.Instant;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -45,52 +51,105 @@ public class TauP_SetMSeed3 extends TauP_Time {
         int bytesRead = 0;
         MSeed3Record dr3;
         int drNum = 0;
-        File tmpFile = File.createTempFile("taup", "msd3", msd3File.getParentFile());
+        File tmpFile = File.createTempFile("taup", "ms3", msd3File.getParentFile());
         DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(tmpFile)));
         DataInputStream dis = new DataInputStream(new BufferedInputStream(new FileInputStream(msd3File)));
         while (bytesRead < fileBytes && (dr3 = MSeed3Record.read(dis)) != null) {
+            bytesRead += dr3.getSize();
             JSONObject eh = dr3.getExtraHeaders();
+            JSONObject bag = new JSONObject();
+            if (eh.has("bag")) {
+                bag = eh.getJSONObject("bag");
+            } else {
+                System.out.println("No bag");
+            }
             Double staLat = null;
             Double staLon = null;
             Double staDepth = 0.0;
             Double evLat = null;
             Double evLon = null;
             Double evDepth = 0.0; // default to zero depth
-            if (eh.has("st")) {
-                JSONObject st = eh.getJSONObject("st");
+            Instant evTime = null;
+
+            if (bag.has("st")) {
+                JSONObject st = bag.getJSONObject("st");
                 if (st.has("la")) {
                     staLat = st.getDouble("la");
                 }
                 if (st.has("lo")) {
-                    staLat = st.getDouble("lo");
+                    staLon = st.getDouble("lo");
                 }
                 if (st.has("dp")) {
                     // station depth is in meters
                     staDepth = st.getDouble("dp")/1000;
                 }
             }
-            if (eh.has("ev")) {
-                JSONObject ev = eh.getJSONObject("ev");
-                if (ev.has("la")) {
-                    evLat = ev.getDouble("la");
-                }
-                if (ev.has("lo")) {
-                    evLat = ev.getDouble("lo");
-                }
-                if (ev.has("dp")) {
-                    evDepth = ev.getDouble("dp");
+            if (bag.has("ev")) {
+                JSONObject ev = bag.getJSONObject("ev");
+                if (ev.has("or")) {
+                    JSONObject origin = ev.getJSONObject("or");
+                    if (origin.has("tm")) {
+                        evTime = TimeUtils.parseISOString(origin.getString("tm"));
+                    }
+                    if (origin.has("la")) {
+                        evLat = origin.getDouble("la");
+                    }
+                    if (origin.has("lo")) {
+                        evLon = origin.getDouble("lo");
+                    }
+                    if (origin.has("dp")) {
+                        evDepth = origin.getDouble("dp");
+                    }
                 }
             }
-            if (staLat != null && staLon != null && evLat != null && evLon != null) {
-                depthCorrect(evDepth, staDepth);
+            depthCorrect(evDepth, staDepth);
+            List<Arrival> arrivals = null;
+            if (bag.has("path")) {
+                JSONObject path = bag.getJSONObject("path");
+                if (path.has("gcarc")) {
+                    double gcarc = path.getDouble("gcarc");
+                    List<Double> degreesList = Arrays.asList(new Double[] {gcarc});
+                    arrivals = calculate(degreesList);
+                    System.out.println("calc via gcarc");
+                }
+            }
+            if (arrivals == null && staLat != null && staLon != null && evLat != null && evLon != null) {
                 List<Double[]> staList = new ArrayList<>();
                 staList.add(new Double[] {staLat, staLon});
-                List<Arrival> arrivals = calcEventStation( new Double[] {evLat,evLon},
+                arrivals = calcEventStation( new Double[] {evLat,evLon},
                         staList);
-                JSONObject taup = resultAsJSONObject(modelName, depth, getReceiverDepth(), getPhaseNames(), arrivals);
-                eh.put("taup", taup);
+                System.out.println("calc via st/ev");
             }
+            if (arrivals != null) {
+                if (ehKey != null && ehKey.length() > 0) {
+                    JSONObject taup = resultAsJSONObject(modelName, depth, getReceiverDepth(), getPhaseNames(), arrivals);
+                    eh.put(ehKey, taup);
+                } else {
+                    JSONArray markers = new JSONArray();
+                    if (bag.has("mark")) {
+                        markers = bag.getJSONArray("mark");
+                    }
+                    for (Arrival arrival : arrivals) {
+                        JSONObject mark = new JSONObject();
+                        mark.put("n", arrival.getName());
+                        mark.put("tm", TimeUtils.toISOString(evTime.plusMillis(Math.round(arrival.getTime()*1000))));
+                        mark.put("mtype", "md");
+                        markers.put(mark);
+                    }
+                    bag.put("mark", markers);
+                    if (! eh.has("bag")) {
+                        // in case empty not already in eh
+                        eh.put("bag", bag);
+                    }
+                }
+            } else {
+                System.out.println("Insufficient info in eh to calc travel times: path: "+bag.has("path")+" st: "+bag.has("st")+" ev:"+bag.has("ev"));
+                System.out.println("  st: "+staLat+" "+staLon);
+                System.out.println("  ev: "+evLat+" "+evLon+"  dp: "+evDepth+" at "+evTime);
+            }
+            dr3.write(dos);
         }
+        dos.close();
         tmpFile.renameTo(msd3File);
     }
 
@@ -130,6 +189,7 @@ public class TauP_SetMSeed3 extends TauP_Time {
     public String getUsage() {
         return getStdUsage()
         +"--evdpkm            -- sac depth header is in km, default is meters\n"
+        +"--eh                -- eh key to store in, default is to only create markers\n"
         +getUsageTail()
         +"ms3filename [ms3filename ...]"
         +"\nEx: taup_setmseed3 "
@@ -149,6 +209,11 @@ public class TauP_SetMSeed3 extends TauP_Time {
         while(i < leftOverArgs.length) {
             if(dashEquals("help", leftOverArgs[i])) {
                 noComprendoArgs[numNoComprendoArgs++] = leftOverArgs[i];
+            } else if(i < leftOverArgs.length-1) {
+                if(dashEquals("eh", leftOverArgs[i])) {
+                    ehKey = leftOverArgs[i+1];
+                    i++;
+                }
             } else {
                 tempFile = new File(leftOverArgs[i]);
                 if(tempFile.exists() && (tempFile.isFile() || tempFile.isDirectory() ) && tempFile.canRead()) {
@@ -185,6 +250,7 @@ public class TauP_SetMSeed3 extends TauP_Time {
         ToolRun.legacyRunTool(ToolRun.SETMSEED3, args);
     }
 
+    protected String ehKey = null;
 
     protected List<String> mseed3FileNames = new ArrayList<String>();
 
