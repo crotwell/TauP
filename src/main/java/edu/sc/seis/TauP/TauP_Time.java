@@ -224,13 +224,13 @@ public class TauP_Time extends TauP_AbstractTimeTool {
                     relativePhaseName = args[i + 1];
                     i++;
                 } else if(i < args.length - 2) {
-                    if(args[i].equalsIgnoreCase("-sta")
-                            || args[i].equalsIgnoreCase("-station")) {
+                    if(dashEquals("sta", args[i])
+                            || dashEquals("station", args[i])) {
                         setStationLatLon(Double.valueOf(args[i + 1]).doubleValue(),
                                          Double.valueOf(args[i + 2]).doubleValue());
                         i += 2;
-                    } else if(args[i].equalsIgnoreCase("-evt")
-                            || args[i].equalsIgnoreCase("-event")) {
+                    } else if(dashEquals("evt", args[i])
+                            || dashEquals("event", args[i])) {
                         setEventLatLon( Double.valueOf(args[i + 1]).doubleValue(),
                                         Double.valueOf(args[i + 2]).doubleValue());
                         i += 2;
