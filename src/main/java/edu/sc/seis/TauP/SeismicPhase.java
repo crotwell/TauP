@@ -1,6 +1,7 @@
 package edu.sc.seis.TauP;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -188,6 +189,33 @@ public interface SeismicPhase extends Serializable, Cloneable {
     List<TimeDist> calcPierceTimeDist(Arrival arrival);
 
     List<TimeDist> calcPathTimeDist(Arrival arrival);
+
+    /**
+     * Split calculated array into segments for repeated ray parameter values, which indicate a
+     * discontinuity in the calculations usually due to low velocity zone.
+     *
+     * @param rayParams ray parameter array for phase
+     * @param values derived array, such as distance, time, tau, etc.
+     * @return list of arrays for each contiguous segment
+     */
+    public static List<double[]> splitForRepeatRayParam(double[] rayParams, double[] values) {
+        List<double[]> out = new ArrayList<>();
+        int partialStart = 0;
+        for (int i = 0; i < values.length; i++) {
+            if(i < values.length - 1 && (rayParams[i] == rayParams[i + 1])
+                    && rayParams.length > 2) {
+                double[] partialValues = new double[1+i-partialStart];
+                System.arraycopy(values, partialStart, partialValues, 0, partialValues.length);
+                out.add(partialValues);
+                partialStart = i+1;
+            }
+        }
+        // and last partial section
+        double[] partialValues = new double[values.length-partialStart];
+        System.arraycopy(values, partialStart, partialValues, 0, partialValues.length);
+        out.add(partialValues);
+        return out;
+    }
 
     public static String baseDescribe(SeismicPhase phase) {
         String desc = "";

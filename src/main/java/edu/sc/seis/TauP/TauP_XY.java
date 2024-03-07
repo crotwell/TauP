@@ -109,20 +109,24 @@ public class TauP_XY extends TauP_AbstractTimeTool {
         List<XYPlottingData> out = new ArrayList<>();
         for (SeismicPhase phase: phaseList) {
             if(phase.hasArrivals()) {
-                double[] xData = calculatePlotForType(phase, xAxisType);
-                double[] yData = calculatePlotForType(phase, yAxisType);
-                out.add(new XYPlottingData(
-                        xData, xAxisType,
-                        yData, yAxisType,
-                        phase.getName(), phase
-                ));
+
+                List<double[]> xData = calculatePlotForType(phase, xAxisType);
+                List<double[]> yData = calculatePlotForType(phase, yAxisType);
+                for (int i = 0; i < xData.size(); i++) {
+                    out.add(new XYPlottingData(
+                            xData.get(i), xAxisType,
+                            yData.get(i), yAxisType,
+                            phase.getName(), phase
+                    ));
+                }
             }
         }
         return out;
     }
 
-    public double[] calculatePlotForType(SeismicPhase phase, String axisType) throws VelocityModelException, SlownessModelException, TauModelException {
+    public List<double[]> calculatePlotForType(SeismicPhase phase, String axisType) throws VelocityModelException, SlownessModelException, TauModelException {
         double[] out = new double[0];
+        List<double[]> outList = new ArrayList<>();
         if (axisType.equalsIgnoreCase("radian")) {
             out = phase.getDist();
         } else if (axisType.equalsIgnoreCase("degree")) {
@@ -157,11 +161,12 @@ public class TauP_XY extends TauP_AbstractTimeTool {
                 amp[i] = arrival.getGeometricSpreadingFactor();
             }
             out = amp;
+
         } else {
             throw new IllegalArgumentException("Unknown axisType: "+axisType);
         }
-
-        return out;
+        // repeated ray parameters indicate break in curve, split into segments
+        return SeismicPhase.splitForRepeatRayParam(phase.getRayParams(), out);
     }
 
     public void printResult(PrintWriter writer, List<XYPlottingData> xyPlots) {
