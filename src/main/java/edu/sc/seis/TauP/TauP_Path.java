@@ -501,7 +501,7 @@ public class TauP_Path extends TauP_Pierce {
 		extrtaCSS.append("            fill: black;");
 		extrtaCSS.append("        }");
 		SvgUtil.xyplotScriptBeginning( out, toolNameFromClass(this.getClass()),
-				cmdLineArgs,  mapWidth, plotOffset, extrtaCSS.toString());
+				cmdLineArgs,  pixelWidth, plotOffset, extrtaCSS.toString());
 
 		out.println("<g transform=\"scale("+plotScale+","+plotScale+")\" >");
 		out.println("<g transform=\"translate("+plotSize+","+plotSize+")\" >");
