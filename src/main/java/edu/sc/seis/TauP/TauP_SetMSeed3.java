@@ -1,6 +1,12 @@
 package edu.sc.seis.TauP;
 
+import edu.sc.seis.seisFile.Location;
 import edu.sc.seis.seisFile.SeisFileException;
+import edu.sc.seis.seisFile.fdsnws.quakeml.Event;
+import edu.sc.seis.seisFile.fdsnws.quakeml.EventIterator;
+import edu.sc.seis.seisFile.fdsnws.quakeml.Origin;
+import edu.sc.seis.seisFile.fdsnws.quakeml.Quakeml;
+import edu.sc.seis.seisFile.fdsnws.stationxml.*;
 import edu.sc.seis.seisFile.mseed3.*;
 import edu.sc.seis.seisFile.TimeUtils;
 
@@ -9,11 +15,12 @@ import java.io.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import javax.xml.stream.XMLStreamException;
+import java.time.Duration;
 import java.time.Instant;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.time.format.DateTimeParseException;
+import java.util.*;
 
 public class TauP_SetMSeed3 extends TauP_Time {
 
@@ -56,101 +63,89 @@ public class TauP_SetMSeed3 extends TauP_Time {
         DataInputStream dis = new DataInputStream(new BufferedInputStream(new FileInputStream(msd3File)));
         while (bytesRead < fileBytes && (dr3 = MSeed3Record.read(dis)) != null) {
             bytesRead += dr3.getSize();
-            JSONObject eh = dr3.getExtraHeaders();
-            JSONObject bag = new JSONObject();
-            if (eh.has("bag")) {
-                bag = eh.getJSONObject("bag");
-            } else {
-                System.out.println("No bag");
-            }
-            Double staLat = null;
-            Double staLon = null;
-            Double staDepth = 0.0;
-            Double evLat = null;
-            Double evLon = null;
-            Double evDepth = 0.0; // default to zero depth
-            Instant evTime = null;
-
-            if (bag.has("st")) {
-                JSONObject st = bag.getJSONObject("st");
-                if (st.has("la")) {
-                    staLat = st.getDouble("la");
-                }
-                if (st.has("lo")) {
-                    staLon = st.getDouble("lo");
-                }
-                if (st.has("dp")) {
-                    // station depth is in meters
-                    staDepth = st.getDouble("dp")/1000;
-                }
-            }
-            if (bag.has("ev")) {
-                JSONObject ev = bag.getJSONObject("ev");
-                if (ev.has("or")) {
-                    JSONObject origin = ev.getJSONObject("or");
-                    if (origin.has("tm")) {
-                        evTime = TimeUtils.parseISOString(origin.getString("tm"));
-                    }
-                    if (origin.has("la")) {
-                        evLat = origin.getDouble("la");
-                    }
-                    if (origin.has("lo")) {
-                        evLon = origin.getDouble("lo");
-                    }
-                    if (origin.has("dp")) {
-                        evDepth = origin.getDouble("dp");
-                    }
-                }
-            }
-            depthCorrect(evDepth, staDepth);
-            List<Arrival> arrivals = null;
-            if (bag.has("path")) {
-                JSONObject path = bag.getJSONObject("path");
-                if (path.has("gcarc")) {
-                    double gcarc = path.getDouble("gcarc");
-                    List<Double> degreesList = Arrays.asList(new Double[] {gcarc});
-                    arrivals = calculate(degreesList);
-                    System.out.println("calc via gcarc");
-                }
-            }
-            if (arrivals == null && staLat != null && staLon != null && evLat != null && evLon != null) {
-                List<Double[]> staList = new ArrayList<>();
-                staList.add(new Double[] {staLat, staLon});
-                arrivals = calcEventStation( new Double[] {evLat,evLon},
-                        staList);
-                System.out.println("calc via st/ev");
-            }
-            if (arrivals != null) {
-                if (ehKey != null && ehKey.length() > 0) {
-                    JSONObject taup = resultAsJSONObject(modelName, depth, getReceiverDepth(), getPhaseNames(), arrivals);
-                    eh.put(ehKey, taup);
-                } else {
-                    JSONArray markers = new JSONArray();
-                    if (bag.has("mark")) {
-                        markers = bag.getJSONArray("mark");
-                    }
-                    for (Arrival arrival : arrivals) {
-                        JSONObject mark = new JSONObject();
-                        mark.put("n", arrival.getName());
-                        mark.put("tm", TimeUtils.toISOString(evTime.plusMillis(Math.round(arrival.getTime()*1000))));
-                        mark.put("mtype", "md");
-                        markers.put(mark);
-                    }
-                    bag.put("mark", markers);
-                    if (! eh.has("bag")) {
-                        // in case empty not already in eh
-                        eh.put("bag", bag);
-                    }
-                }
-            } else {
-                System.out.println("Insufficient info in eh to calc travel times: path: "+bag.has("path")+" st: "+bag.has("st")+" ev:"+bag.has("ev"));
-                System.out.println("  st: "+staLat+" "+staLon);
-                System.out.println("  ev: "+evLat+" "+evLon+"  dp: "+evDepth+" at "+evTime);
-            }
+            processRecord(dr3);
             dr3.write(dos);
         }
         dos.close();
         tmpFile.renameTo(msd3File);
+    }
+
+    public void processRecord(MSeed3Record dr3) throws TauPException {
+        Location staLoc = null;
+        Location evLoc = null;
+        Instant evTime = null;
+
+
+        MSeed3EH eh = new MSeed3EH(dr3.getExtraHeaders());
+        Channel chan = findChannelBySID(dr3.getSourceId(), dr3.getStartInstant());
+        if (chan != null) {
+            staLoc = chan.asLocation();
+        } else {
+            staLoc = eh.channelLocation();
+        }
+        Event quake = findQuakeInTime(dr3.getStartInstant(), quakeOTimeTol);
+        if (quake != null) {
+            Origin o = quake.getPreferredOrigin();
+            evLoc = o.asLocation();
+            evTime = o.getTime().asInstant();
+        } else {
+            evLoc = eh.quakeLocation();
+            evTime = eh.quakeTime();
+        }
+        Double gcarc = null;
+
+        if (staLoc != null && evLoc != null) {
+            DistAz distAz = new DistAz(staLoc, evLoc);
+            gcarc = distAz.getDelta();
+            depthCorrect(evLoc.getDepthKm(), staLoc.getDepthKm());
+        } else  {
+            if (evLoc != null) {
+                depthCorrect(evLoc.getDepthKm(), 0.0);
+            }
+            gcarc = eh.gcarc() != null ? eh.gcarc().doubleValue() : null;
+        }
+
+        List<Arrival> arrivals = null;
+        if (gcarc != null) {
+            List<Double> degreesList = Arrays.asList(new Double[] {gcarc});
+            arrivals = calculate(degreesList);
+        }
+
+        if (arrivals != null) {
+
+            if (ehKey != null && ehKey.length() > 0) {
+                JSONObject taup = resultAsJSONObject(modelName, depth, getReceiverDepth(), getPhaseNames(), arrivals);
+                eh.getEH().put(ehKey, taup);
+            } else {
+                JSONObject bag = eh.getBagEH();
+                if (evTime == null) {
+                    System.err.println("Unable to extract event origin time, skipping record");
+                }
+                insertMarkers(bag, arrivals, evTime);
+            }
+        } else {
+            System.out.println("Insufficient info in eh to calc travel times");
+            System.out.println("  st: "+staLoc+"  gcarc="+gcarc+"  ev: "+evLoc+" at "+evTime);
+        }
+    }
+
+    public static void insertMarkers(JSONObject bag, List<Arrival> arrivals, Instant evTime) {
+        JSONArray markers = new JSONArray();
+        if (bag.has("mark")) {
+            markers = bag.getJSONArray("mark");
+        }
+        for (Arrival arrival : arrivals) {
+            markers.put(createEHMarker(arrival, evTime));
+        }
+        bag.put("mark", markers);
+    }
+
+    public static JSONObject createEHMarker(Arrival arrival, Instant evTime) {
+        JSONObject mark = new JSONObject();
+        mark.put("n", arrival.getName());
+        mark.put("tm", TimeUtils.toISOString(evTime.plusMillis(Math.round(arrival.getTime()*1000))));
+        mark.put("mtype", "md");
+        return mark;
     }
 
     @Override
@@ -188,18 +183,20 @@ public class TauP_SetMSeed3 extends TauP_Time {
     @Override
     public String getUsage() {
         return getStdUsage()
-        +"--evdpkm            -- sac depth header is in km, default is meters\n"
-        +"--eh                -- eh key to store in, default is to only create markers\n"
+        +"--staxml filename   -- load station location from stationxml file, default uses extra headers\n"
+        +"--qml filename      -- load earthquake location from quakeml file, default uses extra headers\n"
+        +"--qmltol tol        -- origin time tolerance when loading from quakeml file, default is 1 hour\n"
+        +"--eh                -- eh key for full results, default is to only create markers\n"
         +getUsageTail()
         +"ms3filename [ms3filename ...]"
         +"\nEx: taup_setmseed3 "
                 + "--mod S_prem -ph S,ScS wmq.ms3 wmq.ms3 wmq.ms3"
-        +"puts the S and ScS in the extra headers in each record in these files."
-        +"Values are within the \"taup\" key and are the same as the output of taup time --json";
+        +"puts the S and ScS as markers in the extra headers in each record in these files."
+        +"Markers are within the \"bag/mark\" key. Full results are the same as the output of taup time --json";
     }
 
     @Override
-    public String[] parseCmdLineArgs(String[] args) throws IOException {
+    public String[] parseCmdLineArgs(String[] args) throws IOException, TauPException {
         int i = 0;
         String[] leftOverArgs;
         int numNoComprendoArgs = 0;
@@ -212,6 +209,24 @@ public class TauP_SetMSeed3 extends TauP_Time {
             } else if(i < leftOverArgs.length-1) {
                 if(dashEquals("eh", leftOverArgs[i])) {
                     ehKey = leftOverArgs[i+1];
+                    i++;
+                } else if(dashEquals("qml", leftOverArgs[i])) {
+                    quakemlFilename = leftOverArgs[i+1];
+                    i++;
+                } else if(dashEquals("qmltol", leftOverArgs[i])) {
+                    try {
+                        int seconds = Integer.parseInt(leftOverArgs[i + 1]);
+                        quakeOTimeTol = Duration.ofSeconds(seconds);
+                    } catch (NumberFormatException e) {
+                        try {
+                            quakeOTimeTol = Duration.parse(leftOverArgs[i + 1]);
+                        } catch (DateTimeParseException ee) {
+                            throw new TauPException("Unable to parse qmltol: "+leftOverArgs[i+1], ee);
+                        }
+                    }
+                    i++;
+                } else if(dashEquals("staxml", leftOverArgs[i])) {
+                    stationxmlFilename = leftOverArgs[i+1];
                     i++;
                 }
             } else {
@@ -231,6 +246,25 @@ public class TauP_SetMSeed3 extends TauP_Time {
             }
             i++;
         }
+
+        try {
+            if (stationxmlFilename != null ) {
+                FDSNStationXML staxml = FDSNStationXML.loadStationXML(stationxmlFilename);
+                networks = staxml.extractAllNetworks();
+            }
+        } catch (XMLStreamException | SeisFileException e) {
+            throw new TauPException("Unable to process stationxml from "+stationxmlFilename, e);
+        }
+        try {
+            if (quakemlFilename != null) {
+                FileReader reader = new FileReader(quakemlFilename);
+                Quakeml quakeml = Quakeml.loadQuakeML(reader);
+                quakes = quakeml.extractAllEvents();
+                reader.close();
+            }
+        } catch (XMLStreamException | SeisFileException e) {
+            throw new TauPException("Unable to process quakeml from "+quakemlFilename, e);
+        }
         if(numNoComprendoArgs > 0) {
             String[] temp = new String[numNoComprendoArgs];
             System.arraycopy(noComprendoArgs, 0, temp, 0, numNoComprendoArgs);
@@ -240,6 +274,39 @@ public class TauP_SetMSeed3 extends TauP_Time {
         }
     }
 
+    Channel findChannelBySID(FDSNSourceId sid, Instant time) {
+        for(Network n : networks.keySet()) {
+            if (n.getNetworkCode().equals(sid.getNetworkCode())) {
+                for (Station s : networks.get(n)) {
+                    if (s.getStationCode().equals(sid.getStationCode())) {
+                        for (Channel c : s.getChannelList()) {
+                            if (c.getLocCode().equals(sid.getLocationCode()) && c.getChannelCode().equals(sid.getChannelCode())) {
+                                if (c.getStartDateTime().isBefore(time) && (c.getEndDateTime() == null || c.getEndDateTime().isAfter(time))) {
+                                    return c;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    Event findQuakeInTime(Instant time, Duration tol) {
+        Instant early = time.minus(tol);
+        Instant late = time.plus(tol);
+        for (Event e : quakes) {
+            Origin o = e.getPreferredOrigin();
+            if (o != null) {
+                Instant otime = o.getTime().asInstant();
+                if (otime.isAfter(early) && otime.isBefore(late)) {
+                    return e;
+                }
+            }
+        }
+        return null;
+    }
     /**
      * Allows TauP_SetMSeed3 to run as an application. Creates an instance of
      * TauP_SetMSeed3.
@@ -252,6 +319,13 @@ public class TauP_SetMSeed3 extends TauP_Time {
 
     protected String ehKey = null;
 
+    protected Duration quakeOTimeTol = Duration.ofSeconds(3600);
+    protected String quakemlFilename = null;
+    protected String stationxmlFilename = null;
+
     protected List<String> mseed3FileNames = new ArrayList<String>();
 
+    protected Map<Network, List<Station>> networks = new HashMap<>();
+
+    protected List<Event> quakes = new ArrayList<>();
 }
