@@ -554,7 +554,7 @@ public class TauP_Table extends TauP_Time {
         +getStdUsageTail();
     }
 
-    public String[] parseCmdLineArgs(String[] args) throws IOException {
+    public String[] parseCmdLineArgs(String[] args) throws IOException, TauPException {
         int i = 0;
         String[] leftOverArgs;
         int numNoComprendoArgs = 0;

@@ -84,15 +84,6 @@ public abstract class TauP_AbstractTimeTool extends TauP_Tool {
     }
 
     /**
-     * @param phaseName
-     * @return
-     * @deprecated see extractPhaseNames
-     */
-    public static List<String> getPhaseNames(String phaseName) {
-        return TauP_AbstractTimeTool.extractPhaseNames(phaseName);
-    }
-
-    /**
      * Parse comma separated list of phase names, expanding convience phase names like
      * ttp into real phase names.
      *

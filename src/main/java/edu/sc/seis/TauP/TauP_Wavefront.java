@@ -453,7 +453,7 @@ public class TauP_Wavefront extends TauP_Path {
         this.negDistance = negDistance;
     }
 
-    public String[] parseCmdLineArgs(String[] args) throws IOException {
+    public String[] parseCmdLineArgs(String[] args) throws IOException, TauPException {
         int i = 0;
         String[] leftOverArgs;
         int numNoComprendoArgs = 0;

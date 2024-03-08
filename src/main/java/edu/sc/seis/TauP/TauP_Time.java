@@ -180,7 +180,7 @@ public class TauP_Time extends TauP_AbstractTimeTool {
      * parses the standard command line args for the taup package. Other tools
      * that subclass this class will likely override this.
      */
-    protected String[] parseCmdLineArgs(String[] origArgs) throws IOException {
+    protected String[] parseCmdLineArgs(String[] origArgs) throws IOException, TauPException {
         int i = 0;
         String[] args = parseSourceModelCmdLineArgs(origArgs);
         String[] noComprendoArgs = new String[args.length];

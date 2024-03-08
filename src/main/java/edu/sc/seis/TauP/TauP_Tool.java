@@ -184,7 +184,7 @@ public abstract class TauP_Tool {
         return ToolRun.dashEquals(argName, arg);
     }
 
-    protected abstract String[] parseCmdLineArgs(String[] origArgs) throws IOException;
+    protected abstract String[] parseCmdLineArgs(String[] origArgs) throws IOException, TauPException;
 
     protected String[] parseOutputFormatCmdLineArgs(String[] origiArgs) {
         List<String> noComprendoArgs = new ArrayList<>(List.of(origiArgs));

@@ -327,7 +327,7 @@ public class TauP_SetSac extends TauP_Time {
         +"puts the first S arrival in T8 and ScS in T9";
     }
 
-    public String[] parseCmdLineArgs(String[] args) throws IOException {
+    public String[] parseCmdLineArgs(String[] args) throws IOException, TauPException {
         int i = 0;
         String[] leftOverArgs;
         int numNoComprendoArgs = 0;

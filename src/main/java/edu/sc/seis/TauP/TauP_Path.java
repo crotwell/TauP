@@ -613,7 +613,7 @@ public class TauP_Path extends TauP_Pierce {
 		+ getStdUsageTail();
 	}
 
-	public String[] parseCmdLineArgs(String[] args) throws IOException {
+	public String[] parseCmdLineArgs(String[] args) throws IOException, TauPException {
 		int i = 0;
 		String[] leftOverArgs;
 		int numNoComprendoArgs = 0;
