@@ -61,6 +61,9 @@ polyline.swave {
 polyline.pwave {
     stroke: blue;
 }
+polyline.both_p_swave {
+    stroke: green;
+}
 circle.discontinuity {
     vector-effect: non-scaling-stroke;
     stroke: grey;
