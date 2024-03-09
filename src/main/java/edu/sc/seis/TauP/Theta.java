@@ -45,8 +45,9 @@ public class Theta {
 
     protected double[] rayParams;
 
-    public Theta(SeismicPhase phase, double radians) {
-        this.radians = radians;
+    public Theta(Arrival arrival) {
+        SeismicPhase phase = arrival.getPhase();
+        this.radians = arrival.getDist();
         int minRayParamIndex = phase.getMinRayParamIndex();
         int maxRayParamIndex = phase.getMaxRayParamIndex();
         rayParams = phase.getRayParams();
