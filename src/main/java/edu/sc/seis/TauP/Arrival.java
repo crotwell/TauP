@@ -411,6 +411,19 @@ public class Arrival {
         return receiverDepth;
     }
 
+
+    /** returns receiver (station) depth in kilometers */
+    public TimeDist getDeepestPierce() {
+        TimeDist[] pierce = getPierce();
+        TimeDist deepest = pierce[0];
+        for (TimeDist td : pierce) {
+            if (td.getDepth() > deepest.getDepth()) {
+                deepest = td;
+            }
+        }
+        return deepest;
+    }
+
     /** returns pierce points as TimeDist objects. */
     public TimeDist[] getPierce() {
         if (pierce == null) {

@@ -1156,10 +1156,7 @@ public class SimpleSeismicPhase implements SeismicPhase {
     public double calcReflTranSH(Arrival arrival) throws VelocityModelException, SlownessModelException {
         double reflTranValue = 1;
 
-        boolean isAllS = true;
-        for (SeismicPhaseSegment seg : segmentList) {
-            isAllS = isAllS && ! seg.isPWave;
-        }
+        boolean isAllS = isAllSWave();
         if ( ! isAllS) { return 0; }
         boolean calcSH = true;
         SeismicPhaseSegment prevSeg = segmentList.get(0);

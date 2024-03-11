@@ -167,6 +167,8 @@ public class TauP_XY extends TauP_AbstractTimeTool {
         List<SeismicPhase> phaseList = getSeismicPhases();
         List<XYPlottingData> out = new ArrayList<>();
         for (SeismicPhase phase: phaseList) {
+            boolean ensure180 = (xAxisType.equalsIgnoreCase("degree_180") || yAxisType.equalsIgnoreCase("degree_180")
+                    || xAxisType.equalsIgnoreCase("radian_pi") || yAxisType.equalsIgnoreCase("radian_pi"));
             if(phase.hasArrivals()) {
                 if (yAxisType.equalsIgnoreCase("theta")) {
                     // temp for testing...
@@ -190,8 +192,8 @@ public class TauP_XY extends TauP_AbstractTimeTool {
 
                     }
                 } else {
-                    List<double[]> xData = calculatePlotForType(phase, xAxisType);
-                    List<double[]> yData = calculatePlotForType(phase, yAxisType);
+                    List<double[]> xData = calculatePlotForType(phase, xAxisType, ensure180);
+                    List<double[]> yData = calculatePlotForType(phase, yAxisType, ensure180);
                     for (int i = 0; i < xData.size(); i++) {
                         out.add(new XYPlottingData(
                                 xData.get(i), xAxisType,
@@ -200,20 +202,38 @@ public class TauP_XY extends TauP_AbstractTimeTool {
                         ));
                     }
 
-                    if (phase.isAllSWave() &&
-                            (xAxisType.equalsIgnoreCase("amp")
-                                    || yAxisType.equalsIgnoreCase("amp"))) {
-                        String xOther = xAxisType.equalsIgnoreCase("amp") ? "ampsh" : xAxisType;
-                        String yOther = yAxisType.equalsIgnoreCase("amp") ? "ampsh" : yAxisType;
+                    if (phase.isAllSWave()) {
+                        // second calc needed for sh, as psv done in main calc
+                        if (xAxisType.equalsIgnoreCase("amp")
+                                    || yAxisType.equalsIgnoreCase("amp")) {
+                            String xOther = xAxisType.equalsIgnoreCase("amp") ? "ampsh" : xAxisType;
+                            String yOther = yAxisType.equalsIgnoreCase("amp") ? "ampsh" : yAxisType;
 
-                        xData = calculatePlotForType(phase, xOther);
-                        yData = calculatePlotForType(phase, yOther);
-                        for (int i = 0; i < xData.size(); i++) {
-                            out.add(new XYPlottingData(
-                                    xData.get(i), xOther,
-                                    yData.get(i), yOther,
-                                    phase.getName(), phase
-                            ));
+                            xData = calculatePlotForType(phase, xOther, ensure180);
+                            yData = calculatePlotForType(phase, yOther, ensure180);
+                            for (int i = 0; i < xData.size(); i++) {
+                                out.add(new XYPlottingData(
+                                        xData.get(i), xOther,
+                                        yData.get(i), yOther,
+                                        phase.getName(), phase
+                                ));
+                            }
+                        }
+                        // what about case of amp vs refltran, need 4 outputs?
+                        if (xAxisType.equalsIgnoreCase("refltran")
+                                || yAxisType.equalsIgnoreCase("refltran")) {
+                            String xOther = xAxisType.equalsIgnoreCase("refltran") ? "refltransh" : xAxisType;
+                            String yOther = yAxisType.equalsIgnoreCase("refltran") ? "refltransh" : yAxisType;
+
+                            xData = calculatePlotForType(phase, xOther, ensure180);
+                            yData = calculatePlotForType(phase, yOther, ensure180);
+                            for (int i = 0; i < xData.size(); i++) {
+                                out.add(new XYPlottingData(
+                                        xData.get(i), xOther,
+                                        yData.get(i), yOther,
+                                        phase.getName(), phase
+                                ));
+                            }
                         }
                     }
                 }
@@ -222,12 +242,12 @@ public class TauP_XY extends TauP_AbstractTimeTool {
         return out;
     }
 
-    public List<double[]> calculatePlotForType(SeismicPhase phase, String axisType) throws VelocityModelException, SlownessModelException, TauModelException {
+    public List<double[]> calculatePlotForType(SeismicPhase phase, String axisType, boolean ensure180) throws VelocityModelException, SlownessModelException, TauModelException {
         double[] out = new double[0];
         List<double[]> outList = new ArrayList<>();
-        if (axisType.equalsIgnoreCase("radian")) {
+        if (axisType.equalsIgnoreCase("radian") || axisType.equalsIgnoreCase("radian_pi")) {
             out = phase.getDist();
-        } else if (axisType.equalsIgnoreCase("degree")) {
+        } else if (axisType.equalsIgnoreCase("degree") || axisType.equalsIgnoreCase("degree_180")) {
             out = phase.getDist();
             for (int i = 0; i < out.length; i++) {
                 out[i] *= 180/Math.PI;
@@ -238,6 +258,13 @@ public class TauP_XY extends TauP_AbstractTimeTool {
             out = phase.getTime();
         } else if (axisType.equalsIgnoreCase("tau")) {
             out = phase.getTau();
+        } else if (axisType.equalsIgnoreCase("turndepth")) {
+            double[] dist = phase.getDist();
+            out = new double[dist.length];
+            for (int i = 0; i < dist.length; i++) {
+                Arrival arrival = phase.createArrivalAtIndex(i);
+                out[i] = arrival.getDeepestPierce().getDepth();
+            }
         } else if (axisType.equalsIgnoreCase("amp") ||
                 axisType.equalsIgnoreCase("amppsv") ||
                 axisType.equalsIgnoreCase("ampsh")) {
@@ -253,6 +280,7 @@ public class TauP_XY extends TauP_AbstractTimeTool {
                 }
             }
             out = amp;
+
         } else if (axisType.equalsIgnoreCase("geospread")) {
             double[] dist = phase.getDist();
             double[] amp = new double[dist.length];
@@ -261,12 +289,108 @@ public class TauP_XY extends TauP_AbstractTimeTool {
                 amp[i] = arrival.getGeometricSpreadingFactor();
             }
             out = amp;
+        } else if (axisType.equalsIgnoreCase("refltran") ||
+                axisType.equalsIgnoreCase("refltranpsv") ||
+                axisType.equalsIgnoreCase("refltransh")) {
+            boolean isSH = axisType.equalsIgnoreCase("refltransh");
+            double[] dist = phase.getDist();
+            double[] amp = new double[dist.length];
+            for (int i = 0; i < dist.length; i++) {
+                Arrival arrival = phase.createArrivalAtIndex(i);
+                if (isSH) {
+                    amp[i] = arrival.getReflTransSH();
+                } else {
+                    amp[i] = arrival.getReflTransPSV();
+                    if (amp[i] == 0.0) {
+                        System.out.println(arrival);
+                        System.out.println("index: "+arrival.getRayParamIndex());
+                    }
+                }
+            }
+            out = amp;
 
         } else {
             throw new IllegalArgumentException("Unknown axisType: "+axisType);
         }
+        double[] rayParams = phase.getRayParams();
+        if (ensure180) {
+            double[] dist = phase.getDist();
+            // insert extra values, linearly interpolated, if spans 180 deg
+            int wrapMinIndex = (int)Math.round(Math.floor(phase.getMinDistance()/Math.PI));
+            int wrapMaxIndex = (int)Math.round(Math.ceil(phase.getMaxDistance()/Math.PI));
+            ArrayList<Integer> crossIdx = new ArrayList<>();
+            ArrayList<Double> crossValue = new ArrayList<>();
+            for (int j = wrapMinIndex; j <= wrapMaxIndex; j++) {
+                double wrapRadian = j*Math.PI;
+                for (int i=1; i < out.length; i++) {
+                    if ((dist[i-1] - wrapRadian )*(dist[i] - wrapRadian) < 0 && rayParams[i-1] != rayParams[i]) {
+                        // dist spans a multiple of PI, repeated ray params are already a break so don't interpolate
+                        crossIdx.add(i);
+                        crossValue.add(wrapRadian);
+                        System.err.println(axisType+"cross idx: "+(i)+"  "+wrapRadian+" of "+wrapMinIndex+" to "+wrapMaxIndex);
+                    }
+                }
+            }
+
+            double[] unwrappedOut = new double[out.length+crossIdx.size()];
+            // also unwrap ray param as need to check for doubled ray params to separate discon
+            double[] unwrappedRP = new double[out.length+crossIdx.size()];
+            int prevIdx = 0;
+            for (int i = 0; i < crossIdx.size(); i++) {
+                int idx = crossIdx.get(i);
+                double wrap = crossValue.get(i);
+                System.arraycopy(out, prevIdx, unwrappedOut, prevIdx+i, idx-prevIdx);
+                System.arraycopy(rayParams, prevIdx, unwrappedRP, prevIdx+i, idx-prevIdx);
+                unwrappedOut[idx+i] = linearInterp(dist[idx-1], out[idx-1], dist[idx], out[idx], wrap);
+                unwrappedRP[idx+i] = linearInterp(dist[idx-1], rayParams[idx-1], dist[idx], rayParams[idx], wrap);
+                prevIdx = idx;
+            }
+            System.arraycopy(out, prevIdx, unwrappedOut, prevIdx+crossIdx.size(), out.length-prevIdx);
+            System.arraycopy(rayParams, prevIdx, unwrappedRP, prevIdx+crossIdx.size(), rayParams.length-prevIdx);
+            out = unwrappedOut;
+            rayParams = unwrappedRP;
+            if (axisType.equalsIgnoreCase("degree_180")) {
+                System.err.println("recalc modulo");
+                for (int j = 0; j < out.length; j++) {
+                    out[j] = Math.abs(out[j] % 360.0);
+                    if (out[j] > 180.0) {
+                        out[j] = 360.0 - out[j];
+                    }
+                }
+            }
+        }
+
         // repeated ray parameters indicate break in curve, split into segments
-        return SeismicPhase.splitForRepeatRayParam(phase.getRayParams(), out);
+        return SeismicPhase.splitForRepeatRayParam(rayParams, out);
+    }
+
+    public static void checkEqualMinMax(double[] minmax, double xpercent, double ypercent) {
+        if (minmax[0] == minmax[1]) {
+            // x axis min=max
+            if (minmax[0] == 0.0) {
+                // min = max = zero, so go +-1
+                minmax[0] = -1;
+                minmax[1] = 1;
+            } else {
+                // 10%
+                double shift = Math.abs(minmax[0]) * xpercent;
+                minmax[0] = minmax[0] - shift;
+                minmax[1] = minmax[1] + shift;
+            }
+        }
+        if (minmax[2] == minmax[3]) {
+            // y axis min=max
+            if (minmax[2] == 0.0) {
+                // min = max = zero, so go +-1
+                minmax[2] = -1;
+                minmax[3] = 1;
+            } else {
+                // 10%
+                double shift = Math.abs(minmax[0]) * ypercent;
+                minmax[2] = minmax[2] - shift;
+                minmax[3] = minmax[3] + shift;
+            }
+        }
     }
 
     public void printResult(PrintWriter writer, List<XYPlottingData> xyPlots) {
@@ -289,13 +413,14 @@ public class TauP_XY extends TauP_AbstractTimeTool {
             int margin = 80;
             int pixelWidth = 600+margin;//Math.round(72*mapWidth);
             int plotOffset = 60;
-            SvgUtil.xyplotScriptBeginning(writer, toolNameFromClass(this.getClass()),
-                    cmdLineArgs,  pixelWidth, plotOffset, extrtaCSS.toString());
 
             double[] minmax = XYPlottingData.initMinMax();
             for (XYPlottingData xyplot: xyPlots) {
                 minmax = xyplot.minMax(minmax);
             }
+            checkEqualMinMax(minmax, 0.1, 0.1);
+            SvgUtil.xyplotScriptBeginning(writer, toolNameFromClass(this.getClass()),
+                    cmdLineArgs,  pixelWidth, plotOffset, extrtaCSS.toString(), minmax);
             // override minmax with user supplied if
             if (xAxisMinMax.length == 2) {
                 minmax[0] = xAxisMinMax[0];

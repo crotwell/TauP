@@ -278,14 +278,21 @@
         <div>
             <label for="xaxis">X Axis</label>
             <select name="xaxis" id="xaxis">
-                <option value="degree" selected>Distance in Degrees</option>
+                <option value="degree_180">Distance in Degrees, mod 180</option>
+                <option value="degree">Distance in Degrees</option>
+                <option value="radian_pi">Distance in Radians, mod pi</option>
                 <option value="radian">Distance in Radians</option>
                 <option value="rayparam">Ray Parameter</option>
                 <option value="time">Time</option>
                 <option value="tau">Tau</option>
+                <option value="turndepth">Turn Depth</option>
+                <option value="amp">P-Sv, Sh Amplitude</option>
                 <option value="amppsv">P-Sv Amplitude</option>
                 <option value="ampsh">Sh Amplitude</option>
                 <option value="geospread">Geometrical Spreading</option>
+                <option value="refltran">P-Sv, Sh Refl Trans</option>
+                <option value="refltranpsv">Only P-Sv Refl Trans</option>
+                <option value="refltransh">Only Sh Refl Trans</option>
             </select>
 
             <input type="checkbox" id="xminmaxauto" name="xminmaxauto" checked />
@@ -300,18 +307,31 @@
                 <span>Max: </span>
             </label>
             <input type="number" id="xmax" name="xmax" value="0" />
+
+            <label for="xaxislog">
+                <span>Log: </span>
+            </label>
+            <input type="checkbox" id="xaxislog" name="xaxislog"  />
         </div>
         <div>
             <label for="yaxis">Y Axis</label>
             <select name="yaxis" id="yaxis">
+                <option value="degree_180">Distance in Degrees, mod 180</option>
                 <option value="degree">Distance in Degrees</option>
+                <option value="radian_pi">Distance in Radians, mod pi</option>
                 <option value="radian">Distance in Radians</option>
                 <option value="rayparam">Ray Parameter</option>
                 <option value="time" selected>Time</option>
                 <option value="tau">Tau</option>
-                <option value="amppsv">P-Sv Amplitude</option>
-                <option value="ampsh">Sh Amplitude</option>
+                <option value="turndepth">Turn Depth</option>
+                <option value="amp">P-Sv, Sh Amplitude</option>
+                <option value="amppsv">Only P-Sv Amplitude</option>
+                <option value="ampsh">Only Sh Amplitude</option>
                 <option value="geospread">Geometrical Spreading</option>
+                <option value="refltran">P-Sv, Sh Refl Trans</option>
+                <option value="refltranpsv">Only P-Sv Refl Trans</option>
+                <option value="refltransh">Only Sh Refl Trans</option>
+                <option value="theta">Theta</option>
             </select>
             <input type="checkbox" id="yminmaxauto" name="yminmaxauto" checked />
             <label for="yminmaxauto">
@@ -325,6 +345,10 @@
                 <span>Max: </span>
             </label>
             <input type="number" id="ymax" name="ymax" value="0" />
+            <label for="yaxislog">
+                <span>Log: </span>
+            </label>
+            <input type="checkbox" id="yaxislog" name="yaxislog"  />
         </div>
 
     </fieldset>

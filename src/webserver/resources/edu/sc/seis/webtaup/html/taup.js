@@ -107,6 +107,13 @@ export async function display_results(taup_url) {
         const pre_el = document.createElement("div");
         pre_el.innerHTML = ans;
         container_el.appendChild(pre_el);
+        const minmaxMetadata = pre_el.querySelector("taup minmax");
+        if (minmaxMetadata != null) {
+          document.querySelector('input[name="xmin"]').value = minmaxMetadata.getAttribute("xmin");
+          document.querySelector('input[name="xmax"]').value = minmaxMetadata.getAttribute("xmax");
+          document.querySelector('input[name="ymin"]').value = minmaxMetadata.getAttribute("ymin");
+          document.querySelector('input[name="ymax"]').value = minmaxMetadata.getAttribute("ymax");
+        }
       });
     } else if (format === "ms3") {
       return response.arrayBuffer().then(rawBuffer => {
@@ -187,7 +194,8 @@ export function form_url() {
   if (toolname !== "velplot" && toolname !== "refltrans") {
     url += `&phases=${phases}`;
   }
-  if (toolname !== "velplot" && toolname !== "curve" && toolname !== "amp"
+  if (toolname !== "velplot" && toolname !== "curve"
+      && toolname !== "amp" && toolname !== "xy"
       && toolname !== "wavefront"  && toolname !== "phase"
       && toolname !== "refltrans") {
     let distparam;
@@ -238,11 +246,19 @@ export function form_url() {
         let xmax = document.querySelector('input[name="xmax"]').value;
         url += `&xminmax=[${xmin},${xmax}]`;
     }
+    let xaxislog = document.querySelector('input[name="xaxislog"]').checked;
+    if (xaxislog) {
+      url += `&xaxislog=true`;
+    }
     let yautorange = document.querySelector('input[name="yminmaxauto"]').checked;
     if ( ! yautorange) {
         let ymin = document.querySelector('input[name="ymin"]').value;
         let ymax = document.querySelector('input[name="ymax"]').value;
         url += `&yminmax=[${ymin},${ymax}]`;
+    }
+    let yaxislog = document.querySelector('input[name="yaxislog"]').checked;
+    if (yaxislog) {
+      url += `&yaxislog=true`;
     }
   }
   if (toolname === "pierce") {
@@ -416,7 +432,7 @@ export function enableParams(tool) {
     document.querySelector(`input[name="format"][value="svg"]`).removeAttribute("disabled");
     document.querySelector(`input[name="format"][value="gmt"]`).removeAttribute("disabled");
   }
-  if ( ! (tool === "time" || tool === "pierce" || tool == "path" || tool == "wkbj")) {
+  if ( ! (tool === "time" || tool === "pierce" || tool == "path" || tool == "wkbj" || tool == "xy")) {
     styleStr += `
       .tool_time {
         display: none;

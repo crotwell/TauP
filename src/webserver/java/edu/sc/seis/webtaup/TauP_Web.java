@@ -165,6 +165,12 @@ public class TauP_Web extends TauP_Tool {
                                 tool.start();
                                 configContentType(tool.outputFormat, exchange);
                                 exchange.getResponseSender().send(out.toString());
+                            } else if (tool instanceof TauP_XY){
+                                tool.setWriter(pw);
+                                tool.printScriptBeginning(pw);
+                                tool.start();
+                                configContentType(tool.outputFormat, exchange);
+                                exchange.getResponseSender().send(out.toString());
                             } else if (tool instanceof TauP_Version){
                                 tool.setWriter(pw);
                                 tool.printScriptBeginning(pw);
@@ -282,6 +288,8 @@ public class TauP_Web extends TauP_Tool {
     // xy plot
     public static String QP_XAXIS = "xaxis";
     public static String QP_YAXIS = "yaxis";
+    public static String QP_XAXISLOG = "xaxislog";
+    public static String QP_YAXISLOG = "yaxislog";
     public static String QP_XMINMAX = "xminmax";
     public static String QP_YMINMAX = "yminmax";
 
@@ -438,6 +446,10 @@ public class TauP_Web extends TauP_Tool {
                     rtplot.setxMinMax(mmJson.getDouble(0), mmJson.getDouble(1));
                 }
             }
+            if (queryParameters.containsKey(QP_XAXISLOG)) {
+                unknownKeys.remove(QP_XAXISLOG);
+                rtplot.setxAxisLog(queryParameters.get(QP_XAXISLOG).getFirst().equalsIgnoreCase("true"));
+            }
             if (queryParameters.containsKey(QP_YAXIS)) {
                 unknownKeys.remove(QP_YAXIS);
                 rtplot.setyAxisType(queryParameters.get(QP_YAXIS).getFirst());
@@ -449,6 +461,10 @@ public class TauP_Web extends TauP_Tool {
                 if (mmJson.length()==2) {
                     rtplot.setyMinMax(mmJson.getDouble(0), mmJson.getDouble(1));
                 }
+            }
+            if (queryParameters.containsKey(QP_YAXISLOG)) {
+                unknownKeys.remove(QP_YAXISLOG);
+                rtplot.setyAxisLog(queryParameters.get(QP_YAXISLOG).getFirst().equalsIgnoreCase("true"));
             }
         }
         if (tool instanceof TauP_ReflTransPlot) {
