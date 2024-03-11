@@ -33,11 +33,26 @@ public class TauP_XY extends TauP_AbstractTimeTool {
         int j = 0;
         while (j < args.length) {
             String arg = args[j];
-            if (j < args.length-1) {
+
+            if (dashEquals("xlog", arg)) {
+                noComprendoArgs.remove(arg);
+                xAxisLog = true;
+            } else if (dashEquals("ylog", arg)) {
+                noComprendoArgs.remove(arg);
+                yAxisLog = true;
+            } else if (j < args.length-1) {
                 if (dashEquals("x", arg)) {
                     xAxisType = args[j+1];
                     j++;
+                } else if (dashEquals("xlog", arg)) {
+                    noComprendoArgs.remove(arg);
+                    yAxisType = args[j+1];
+                    j++;
                 } else if (dashEquals("y", arg)) {
+                    noComprendoArgs.remove(arg);
+                    yAxisType = args[j+1];
+                    j++;
+                } else if (dashEquals("ylog", arg)) {
                     noComprendoArgs.remove(arg);
                     yAxisType = args[j+1];
                     j++;
@@ -73,7 +88,6 @@ public class TauP_XY extends TauP_AbstractTimeTool {
 
     @Override
     public void start() throws IOException, TauModelException, TauPException {
-        System.out.println("start!");
         double tempDepth;
         if(depth != -1 * Double.MAX_VALUE) {
             /* enough info given on cmd line, so just do one calc. */
@@ -97,27 +111,111 @@ public class TauP_XY extends TauP_AbstractTimeTool {
                 return;
             }
             setSourceDepth(tempDepth);
+
             List<XYPlottingData>  xy = calculate(xAxisType, yAxisType);
             printResult(getWriter(), xy);
             getWriter().flush();
         }
     }
 
+    protected List<XYPlottingData> recalcForLog(List<XYPlottingData> xy, boolean xAxisLog,  boolean yAxisLog) {
+        List<XYPlottingData> out = new ArrayList<>();
+        for (XYPlottingData xyplot : xy) {
+            double[] outX = new double[xyplot.xValues.length];
+            double[] outY = new double[xyplot.xValues.length];
+            int tmpOffset = 0;
+            for (int i = 0; i < xyplot.xValues.length; i++) {
+                if ((xAxisLog && xyplot.xValues[i] == 0.0) || (yAxisLog && xyplot.yValues[i] == 0.0)) {
+                    // break due to log zero
+                    if (tmpOffset > 0) {
+                        double[] prex = new double[tmpOffset];
+                        System.arraycopy(outX, 0, prex, 0, prex.length);
+                        double[] prey = new double[tmpOffset];
+                        System.arraycopy(outY, 0, prey, 0, prey.length);
+                        out.add(new XYPlottingData(prex, xyplot.xAxisType, prey, xyplot.yAxisType, xyplot.label, xyplot.phase));
+                    }
+                    double[] postx = new double[outX.length-tmpOffset-1];
+                    System.arraycopy(outX, tmpOffset+1, postx, 0, postx.length);
+                    double[] posty = new double[outX.length-tmpOffset-1];
+                    System.arraycopy(outY, tmpOffset+1, posty, 0, posty.length);
+                    outX = postx;
+                    outY = posty;
+                    tmpOffset = 0;
+                } else {
+                    outX[tmpOffset] = xAxisLog ? Math.log(Math.abs(xyplot.xValues[i])) : xyplot.xValues[i];
+                    outY[tmpOffset] = yAxisLog ? Math.log(Math.abs(xyplot.yValues[i])) : xyplot.yValues[i];
+                    tmpOffset++;
+                }
+            }
+            if (outX.length > 0) {
+                out.add(new XYPlottingData(outX, xyplot.xAxisType, outY, xyplot.yAxisType, xyplot.label, xyplot.phase));
+            }
+        }
+        return out;
+    }
     public List<XYPlottingData> calculate(String xAxisType, String yAxisType) throws TauModelException, VelocityModelException, SlownessModelException {
+        List<XYPlottingData>  xy = calculateLinear(xAxisType, yAxisType);
+        System.err.println("reclac for log: "+xAxisLog+" "+yAxisLog);
+        if (xAxisLog || yAxisLog) {
+            xy = recalcForLog(xy, xAxisLog, yAxisLog);
+        }
+        return xy;
+    }
+
+    public List<XYPlottingData> calculateLinear(String xAxisType, String yAxisType) throws TauModelException, VelocityModelException, SlownessModelException {
         depthCorrect();
         List<SeismicPhase> phaseList = getSeismicPhases();
         List<XYPlottingData> out = new ArrayList<>();
         for (SeismicPhase phase: phaseList) {
             if(phase.hasArrivals()) {
+                if (yAxisType.equalsIgnoreCase("theta")) {
+                    // temp for testing...
+                    double dist = 15;
+                    List<Arrival> arrivals = phase.calcTime(dist);
+                    for (Arrival arrival : arrivals) {
+                        Theta theta = new Theta(arrival);
+                        List<double[]> xData = SeismicPhase.splitForRepeatRayParam(phase.getRayParams(), phase.getRayParams());
+                        List<double[]> yData = SeismicPhase.splitForRepeatRayParam(theta.rayParams, theta.thetaAtX);
+                        for (int i = 0; i < xData.size(); i++) {
+                            double[] xValues = xData.get(i);
+                            /*for (int j = 0; j < xValues.length; j++) {
+                                xValues[j] *= Arrival.RtoD;
+                            }*/
+                            out.add(new XYPlottingData(
+                                    xValues, xAxisType,
+                                    yData.get(i), "Ray Param",
+                                    phase.getName(), phase
+                            ));
+                        }
 
-                List<double[]> xData = calculatePlotForType(phase, xAxisType);
-                List<double[]> yData = calculatePlotForType(phase, yAxisType);
-                for (int i = 0; i < xData.size(); i++) {
-                    out.add(new XYPlottingData(
-                            xData.get(i), xAxisType,
-                            yData.get(i), yAxisType,
-                            phase.getName(), phase
-                    ));
+                    }
+                } else {
+                    List<double[]> xData = calculatePlotForType(phase, xAxisType);
+                    List<double[]> yData = calculatePlotForType(phase, yAxisType);
+                    for (int i = 0; i < xData.size(); i++) {
+                        out.add(new XYPlottingData(
+                                xData.get(i), xAxisType,
+                                yData.get(i), yAxisType,
+                                phase.getName(), phase
+                        ));
+                    }
+
+                    if (phase.isAllSWave() &&
+                            (xAxisType.equalsIgnoreCase("amp")
+                                    || yAxisType.equalsIgnoreCase("amp"))) {
+                        String xOther = xAxisType.equalsIgnoreCase("amp") ? "ampsh" : xAxisType;
+                        String yOther = yAxisType.equalsIgnoreCase("amp") ? "ampsh" : yAxisType;
+
+                        xData = calculatePlotForType(phase, xOther);
+                        yData = calculatePlotForType(phase, yOther);
+                        for (int i = 0; i < xData.size(); i++) {
+                            out.add(new XYPlottingData(
+                                    xData.get(i), xOther,
+                                    yData.get(i), yOther,
+                                    phase.getName(), phase
+                            ));
+                        }
+                    }
                 }
             }
         }
@@ -140,7 +238,9 @@ public class TauP_XY extends TauP_AbstractTimeTool {
             out = phase.getTime();
         } else if (axisType.equalsIgnoreCase("tau")) {
             out = phase.getTau();
-        } else if (axisType.equalsIgnoreCase("amppsv") || axisType.equalsIgnoreCase("ampsh")) {
+        } else if (axisType.equalsIgnoreCase("amp") ||
+                axisType.equalsIgnoreCase("amppsv") ||
+                axisType.equalsIgnoreCase("ampsh")) {
             boolean isAmpSH = axisType.equalsIgnoreCase("ampsh");
             double[] dist = phase.getDist();
             double[] amp = new double[dist.length];
@@ -186,9 +286,11 @@ public class TauP_XY extends TauP_AbstractTimeTool {
             extrtaCSS.append("            fill: black;\n");
             extrtaCSS.append("        }\n");
             float mapWidth = 6;
-            int plotOffset = 30;
+            int margin = 80;
+            int pixelWidth = 600+margin;//Math.round(72*mapWidth);
+            int plotOffset = 60;
             SvgUtil.xyplotScriptBeginning(writer, toolNameFromClass(this.getClass()),
-                    cmdLineArgs,  mapWidth, plotOffset, extrtaCSS.toString());
+                    cmdLineArgs,  pixelWidth, plotOffset, extrtaCSS.toString());
 
             double[] minmax = XYPlottingData.initMinMax();
             for (XYPlottingData xyplot: xyPlots) {
@@ -204,9 +306,7 @@ public class TauP_XY extends TauP_AbstractTimeTool {
                 minmax[3] = yAxisMinMax[1];
             }
 
-            int margin = 30;
-            int pixelWidth = 300+margin;//Math.round(72*mapWidth);
-            float plotWidth = pixelWidth - margin;
+            float plotWidth = pixelWidth - 2*margin;
             SvgUtil.createXYAxes(writer, minmax[0], minmax[1], 8, false,
                     minmax[2], minmax[3], 8, false,
                     pixelWidth, margin, "Titiel here", xAxisType, yAxisType);
@@ -244,7 +344,7 @@ public class TauP_XY extends TauP_AbstractTimeTool {
             writer.println("  </g> <!-- end translate -->");
             writer.println("  </g> <!-- end scale -->");
             writer.println("  </g> <!-- end translate -->");
-            writer.println("  </g> <!-- end translate -->");
+            //writer.println("  </g> <!-- end translate -->");
             writer.println("</svg>");
 
         } else if (getOutputFormat().equalsIgnoreCase(TEXT)) {
@@ -309,8 +409,27 @@ public class TauP_XY extends TauP_AbstractTimeTool {
         this.yAxisMinMax = yAxisMinMax;
     }
 
+    public boolean isxAxisLog() {
+        return xAxisLog;
+    }
+
+    public void setxAxisLog(boolean xAxisLog) {
+        this.xAxisLog = xAxisLog;
+    }
+
+    public boolean isyAxisLog() {
+        return yAxisLog;
+    }
+
+    public void setyAxisLog(boolean yAxisLog) {
+        this.yAxisLog = yAxisLog;
+    }
+
     protected String xAxisType = "degree";
     protected String yAxisType = "time";
+
+    protected boolean xAxisLog = false;
+    protected boolean yAxisLog = false;
 
     protected double[] xAxisMinMax = new double[0];
     protected double[] yAxisMinMax = new double[0];
