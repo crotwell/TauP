@@ -67,18 +67,18 @@ public class TauP_Web extends TauP_Tool {
                             unknownKeys.remove(QP_DISTDEG);
                             unknownKeys.remove(QP_TAKEOFF);
                             unknownKeys.remove(QP_SHOOTRAY);
-                            if (unknownKeys.size() > 0) {
-                                String errorPage = "<html><head><title>Error</title></head><body>unknown query parameters: ";
+                            if (!unknownKeys.isEmpty()) {
+                                StringBuilder errorPage = new StringBuilder("<html><head><title>Error</title></head><body>unknown query parameters: ");
                                 for (String k : unknownKeys) {
                                     Deque<String> dq = queryParams.get(k);
-                                    errorPage += " "+k+"="+(dq!=null?dq.getFirst():"");
+                                    errorPage.append(" ").append(k).append("=").append(dq != null ? dq.getFirst() : "");
                                 }
-                                errorPage += "</body></html>";
+                                errorPage.append("</body></html>");
                                 exchange.setStatusCode(400);
                                 exchange.getResponseHeaders().put(Headers.CONTENT_LENGTH, "" + errorPage.length());
                                 exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, "text/html");
                                 Sender sender = exchange.getResponseSender();
-                                sender.send(errorPage);
+                                sender.send(errorPage.toString());
                                 return;
                             }
 
@@ -295,8 +295,7 @@ public class TauP_Web extends TauP_Tool {
 
 
     public Set<String> configTool(TauP_Tool tool, Map<String, Deque<String>> queryParameters) throws TauPException, IOException {
-        Set<String> unknownKeys = new HashSet<String>();
-        unknownKeys.addAll(queryParameters.keySet());
+        Set<String> unknownKeys = new HashSet<String>(queryParameters.keySet());
 
         if (queryParameters.containsKey(QP_FORMAT)) {
             unknownKeys.remove(QP_FORMAT);
