@@ -105,7 +105,6 @@ public class CmdLineOutputTest {
                                           "taup slowplot --help",
                                           "taup create --help",
                                           "taup refltrans --help",
-                                          "taup amp --help",
                                           "taup setsac --help",
                                           "taup setmseed3 --help",
                                           "taup version --help",

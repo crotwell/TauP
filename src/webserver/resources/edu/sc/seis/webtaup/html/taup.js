@@ -33,7 +33,7 @@ export function valid_format(tool) {
       format = "svg";
     }
   } else if (format === "text" || format === "json") {
-    if (tool === "slowplot" || tool === "curve" || tool === "amp" || tool === "wavefront" || tool === "refltrans") {
+    if (tool === "slowplot" || tool === "curve" || tool === "wavefront" || tool === "refltrans") {
       format = "svg";
     }
   }
@@ -195,7 +195,7 @@ export function form_url() {
     url += `&phases=${phases}`;
   }
   if (toolname !== "velplot" && toolname !== "curve"
-      && toolname !== "amp" && toolname !== "xy"
+      && toolname !== "xy"
       && toolname !== "wavefront"  && toolname !== "phase"
       && toolname !== "refltrans") {
     let distparam;
@@ -396,7 +396,7 @@ export function enableParams(tool) {
         color: lightgrey;
       }
     `;
-  } else if (tool === "wavefront" || tool === "curve"|| tool === "amp") {
+  } else if (tool === "wavefront" || tool === "curve") {
     document.querySelector(`input[name="format"][value="text"]`).setAttribute("disabled", "disabled");
     document.querySelector(`input[name="format"][value="json"]`).setAttribute("disabled", "disabled");
     document.querySelector(`input[name="format"][value="svg"]`).removeAttribute("disabled");

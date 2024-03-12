@@ -14,10 +14,8 @@ public class ToolRun {
 	public static String TIME = "time";
 	public static String PIERCE = "pierce";
 	public static String PATH = "path";
-	public static String AMP = "amp";
 	public static String CURVE = "curve";
 	public static String XYPLOT = "xy";
-
 	public static String CREATE = "create";
     public static String GUI = "gui";
 	public static String SETSAC = "setsac";
@@ -33,7 +31,7 @@ public class ToolRun {
 	public static String VERSION = "version";
 	
 	static String[] toolnames = { GUI, CREATE, CURVE, PATH, PHASE, PIERCE, SETSAC, SETMSEED3, SPLOT, TABLE, TIME,
-			VPLOT, VELMERGE, WAVEFRONT, REFLTRANSPLOT, AMP, WKBJ, VERSION, XYPLOT };
+			VPLOT, VELMERGE, WAVEFRONT, REFLTRANSPLOT, WKBJ, VERSION, XYPLOT };
 	
 	public static String getUsage() {
 		return "Usage: taup <tool> <options>\n"
@@ -103,8 +101,6 @@ public class ToolRun {
 		TauP_Tool tool = null;
 		if (toolToRun.contentEquals(CREATE)) {
 			tool = new TauP_Create();
-		} else if (toolToRun.contentEquals(AMP)) {
-			tool = new TauP_Amp();
 		} else if (toolToRun.contentEquals(CURVE)) {
 			tool = new TauP_Curve();
 		} else if (toolToRun.contentEquals(XYPLOT)) {
