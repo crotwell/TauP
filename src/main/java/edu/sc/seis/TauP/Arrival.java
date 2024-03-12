@@ -104,46 +104,46 @@ public class Arrival {
 
 
     /** phase that generated this arrival. */
-    private SeismicPhase phase;
+    private final SeismicPhase phase;
 
     /** travel time in seconds */
-    private double time;
+    private final double time;
 
     /** angular distance (great circle) in radians */
-    private double dist;
+    private final double dist;
 
     /** ray parameter in seconds per radians. */
-    private double rayParam;
+    private final double rayParam;
 
-    private int rayParamIndex;
+    private final int rayParamIndex;
 
-    private double dRPdDist;
+    private final double dRPdDist;
 
     /** original angular search distance (great circle) in radians. May differ from dist by multiple of 2 pi
      * or be pi - dist for long way around. */
-    private double searchDist;
+    private final double searchDist;
     /** original angular search distance (great circle) in degrees. May differ from dist by multiple of 180
      * or be 360 - dist for long way around. */
     private double searchDistDeg;
 
     /** phase name */
-    private String name;
+    private final String name;
 
     /** phase name changed for true depths */
-    private String puristName;
+    private final String puristName;
 
     /** source depth in kilometers */
-    private double sourceDepth;
+    private final double sourceDepth;
 
     /** receiver depth in kilometers */
-    private double receiverDepth;
+    private final double receiverDepth;
 
     /** pierce and path points */
     private TimeDist[] pierce, path;
 
-    private double incidentAngle;
+    private final double incidentAngle;
     
-    private double takeoffAngle;
+    private final double takeoffAngle;
 
     private Arrival relativeToArrival = null;
     
@@ -248,10 +248,7 @@ public class Arrival {
      */
     public double getGeometricSpreadingFactor() throws TauModelException {
         double rofE = getPhase().getTauModel().getRadiusOfEarth();
-        double sourceRadius = rofE-getSourceDepth();
         double recRadius = rofE-getReceiverDepth();
-        double rpFactor = rayParam;
-        double sinFactor = Math.sin(getModuloDist());
         if (getModuloDist() == 0.0 || getModuloDist() == 180.0) {
             // zero dist and antipode have divide by zero,
             return Double.POSITIVE_INFINITY;
@@ -275,12 +272,8 @@ public class Arrival {
             // divide by zero???
             return Double.POSITIVE_INFINITY;
         }
-
-        double geoSpread = Math.sin(getTakeoffAngle())
-                /(recRadius*recRadius)
-                * 1.0/cosIncident
-                * (1/ Math.sin(getModuloDist()))
-                * Math.abs(dtakeoff_ddelta);
+        double geoSpread = Math.sin(getTakeoffAngle())* Math.abs(dtakeoff_ddelta)
+                / (recRadius * recRadius * cosIncident * Math.sin(getModuloDist()));
 
         return geoSpread;
     }
@@ -522,9 +515,9 @@ public class Arrival {
      *             if depth is not found
      */
     public TimeDist getFirstPiercePoint(double depth) {
-        for(int i = 0; i < pierce.length; i++) {
-            if(pierce[i].getDepth() == depth) {
-                return pierce[i];
+        for (TimeDist timeDist : pierce) {
+            if (timeDist.getDepth() == depth) {
+                return timeDist;
             }
         }
         throw new ArrayIndexOutOfBoundsException("No Pierce point found for depth "
@@ -539,9 +532,9 @@ public class Arrival {
      */
     public TimeDist getLastPiercePoint(double depth) {
         TimeDist piercepoint = null;
-        for(int i = 0; i < pierce.length; i++) {
-            if(pierce[i].getDepth() == depth) {
-                piercepoint = pierce[i];
+        for (TimeDist timeDist : pierce) {
+            if (timeDist.getDepth() == depth) {
+                piercepoint = timeDist;
             }
         }
         if(piercepoint == null) {
@@ -703,7 +696,6 @@ public class Arrival {
         if (pierce != null || path != null) {
             JSONArray points = new JSONArray();
             a.put("pierce", points);
-            boolean first = true;
             TimeDist[] tdArray = getPierce();
             for (TimeDist td : tdArray) {
                 JSONArray tdItems = new JSONArray();
