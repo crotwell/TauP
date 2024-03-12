@@ -154,7 +154,8 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
     }
 
     public void printSVGBeginning(PrintWriter out) {
-        SvgUtil.xyplotScriptBeginning( out, toolNameFromClass(this.getClass()), cmdLineArgs,  mapWidth, plotOffset);
+        float pixelWidth =  (72.0f*mapWidth);
+        SvgUtil.xyplotScriptBeginning( out, toolNameFromClass(this.getClass()), cmdLineArgs,  pixelWidth, plotOffset);
     }
 
 

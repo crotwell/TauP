@@ -213,8 +213,8 @@ public class TauP_Curve extends TauP_Time {
                     + "\n# first lines, as well as the last line.\n#");
             getWriter().println("/bin/rm -f " + psFile + "\n");            
         } else if (outputFormat.equals(SVG)) {
-            SvgUtil.xyplotScriptBeginning( out, toolNameFromClass(this.getClass()), cmdLineArgs,  mapWidth, plotOffset);
             float pixelWidth =  (72.0f*mapWidth);
+            SvgUtil.xyplotScriptBeginning( out, toolNameFromClass(this.getClass()), cmdLineArgs,  pixelWidth, plotOffset);
         }
     }
 
