@@ -1,9 +1,27 @@
 package edu.sc.seis.TauP;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
+
 public class XYPlottingData {
     public XYPlottingData(double[] xValues, String xAxisType, double[] yValues, String yAxisType, String label, SeismicPhase phase) {
-        this.xValues = xValues;
-        this.yValues = yValues;
+        segmentList.add(new XYSegment(xValues, yValues));
+        this.xAxisType = xAxisType;
+        this.yAxisType = yAxisType;
+        this.label = label;
+        this.phase = phase;
+
+    }
+    public XYPlottingData(List<double[]> xData, String xAxisType, List<double[]> yData, String yAxisType, String label, SeismicPhase phase) {
+        this(XYSegment.createFromLists(xData, yData), xAxisType, yAxisType, phase.getName(), phase);
+    }
+
+    public XYPlottingData(List<XYSegment> segments, String xAxisType, String yAxisType, String label, SeismicPhase phase) {
+        segmentList.addAll(segments);
         this.xAxisType = xAxisType;
         this.yAxisType = yAxisType;
         this.label = label;
@@ -24,31 +42,49 @@ public class XYPlottingData {
     }
 
     public double[] minMax(double[] priorMinMax) {
-        double minX = priorMinMax[0];
-        double maxX = priorMinMax[1];
-        double minY = priorMinMax[2];
-        double maxY = priorMinMax[3];
-        for (int i = 0; i < xValues.length; i++) {
-            if (Double.isFinite(xValues[i])) {
-                if (xValues[i] < minX) { minX = xValues[i];}
-                if (xValues[i] > maxX) { maxX = xValues[i];}
-            }
-            if (Double.isFinite(yValues[i])) {
-                if (yValues[i] < minY) {
-                    minY = yValues[i];
-                }
-                if (yValues[i] > maxY) {
-                    maxY = yValues[i];
-                }
-            }
+        for (XYSegment segment : segmentList) {
+            priorMinMax = segment.minMax(priorMinMax);
         }
-        double[] out = new double[] { minX, maxX, minY, maxY};
+        return priorMinMax;
+    }
+
+
+    public XYPlottingData recalcForLog(boolean xAxisLog, boolean yAxisLog) {
+        List<XYSegment> out = new ArrayList<>();
+        for (XYSegment segment : segmentList) {
+            out.addAll(segment.recalcForLog(xAxisLog, yAxisLog));
+        }
+        return new XYPlottingData(out, xAxisType, yAxisType, label, phase);
+    }
+
+    public void asSVG(PrintWriter writer) {
+        String p_or_s = "both_p_swave";
+        if (phase.isAllSWave()) {
+            p_or_s = "swave";
+        } else if (phase.isAllPWave()) {
+            p_or_s = "pwave";
+        }
+        writer.println("    <g class=\"" + phase.getName()+" "+ label + " " +p_or_s +"\">");
+        for (XYSegment segment : segmentList) {
+            segment.asSVG(writer, p_or_s);
+        }
+        writer.println("    </g> <!-- end "+phase.getName()+" "+ label+ " " +p_or_s +" -->");
+    }
+
+    public JSONObject asJSON() {
+        JSONObject out = new JSONObject();
+        out.put("phase", phase.getName());
+        JSONArray segarr = new JSONArray();
+        out.put("segments", segarr);
+        for (XYSegment seg : segmentList) {
+            segarr.put(seg.asJSON());
+        }
         return out;
     }
-    public final SeismicPhase phase;
-    public final double[] xValues;
-    public final double[] yValues;
 
+    public final SeismicPhase phase;
+
+    public final List<XYSegment> segmentList = new ArrayList<>();
     public final String xAxisType;
 
     public final String yAxisType;

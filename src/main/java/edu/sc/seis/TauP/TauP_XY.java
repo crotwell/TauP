@@ -1,5 +1,6 @@
 package edu.sc.seis.TauP;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -7,7 +8,9 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StreamTokenizer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class TauP_XY extends TauP_AbstractTimeTool {
     public TauP_XY() {
@@ -94,7 +97,7 @@ public class TauP_XY extends TauP_AbstractTimeTool {
             setSourceDepth(Double.valueOf(toolProps.getProperty("taup.source.depth",
                     "0.0")));
 
-            List<XYPlottingData>  xy = calculate(xAxisType, yAxisType);
+            Map<SeismicPhase, List<XYPlottingData>> xy = calculate(xAxisType, yAxisType);
             printResult(getWriter(), xy);
         } else {
             StreamTokenizer tokenIn = new StreamTokenizer(new InputStreamReader(System.in));
@@ -111,61 +114,29 @@ public class TauP_XY extends TauP_AbstractTimeTool {
             }
             setSourceDepth(tempDepth);
 
-            List<XYPlottingData>  xy = calculate(xAxisType, yAxisType);
+            Map<SeismicPhase, List<XYPlottingData>> xy = calculate(xAxisType, yAxisType);
             printResult(getWriter(), xy);
             getWriter().flush();
         }
     }
 
-    protected List<XYPlottingData> recalcForLog(List<XYPlottingData> xy, boolean xAxisLog,  boolean yAxisLog) {
-        List<XYPlottingData> out = new ArrayList<>();
-        for (XYPlottingData xyplot : xy) {
-            double[] outX = new double[xyplot.xValues.length];
-            double[] outY = new double[xyplot.xValues.length];
-            int tmpOffset = 0;
-            for (int i = 0; i < xyplot.xValues.length; i++) {
-                if ((xAxisLog && xyplot.xValues[i] == 0.0) || (yAxisLog && xyplot.yValues[i] == 0.0)) {
-                    // break due to log zero
-                    if (tmpOffset > 0) {
-                        double[] prex = new double[tmpOffset];
-                        System.arraycopy(outX, 0, prex, 0, prex.length);
-                        double[] prey = new double[tmpOffset];
-                        System.arraycopy(outY, 0, prey, 0, prey.length);
-                        out.add(new XYPlottingData(prex, xyplot.xAxisType, prey, xyplot.yAxisType, xyplot.label, xyplot.phase));
-                    }
-                    double[] postx = new double[outX.length-tmpOffset-1];
-                    System.arraycopy(outX, tmpOffset+1, postx, 0, postx.length);
-                    double[] posty = new double[outX.length-tmpOffset-1];
-                    System.arraycopy(outY, tmpOffset+1, posty, 0, posty.length);
-                    outX = postx;
-                    outY = posty;
-                    tmpOffset = 0;
-                } else {
-                    outX[tmpOffset] = xAxisLog ? Math.log10(Math.abs(xyplot.xValues[i])) : xyplot.xValues[i];
-                    outY[tmpOffset] = yAxisLog ? Math.log10(Math.abs(xyplot.yValues[i])) : xyplot.yValues[i];
-                    tmpOffset++;
-                }
-            }
-            if (outX.length > 0) {
-                out.add(new XYPlottingData(outX, xyplot.xAxisType, outY, xyplot.yAxisType, xyplot.label, xyplot.phase));
-            }
-        }
-        return out;
-    }
-    public List<XYPlottingData> calculate(String xAxisType, String yAxisType) throws TauModelException, VelocityModelException, SlownessModelException {
-        List<XYPlottingData>  xy = calculateLinear(xAxisType, yAxisType);
-        System.err.println("reclac for log: "+xAxisLog+" "+yAxisLog);
+    public Map<SeismicPhase, List<XYPlottingData>> calculate(String xAxisType, String yAxisType) throws TauModelException, VelocityModelException, SlownessModelException {
+        Map<SeismicPhase, List<XYPlottingData>>  xy = calculateLinear(xAxisType, yAxisType);
         if (xAxisLog || yAxisLog) {
-            xy = recalcForLog(xy, xAxisLog, yAxisLog);
+            for (SeismicPhase phase : xy.keySet()) {
+                xy.put(phase, recalcForLog(xy.get(phase), xAxisLog, yAxisLog));
+            }
         }
         return xy;
     }
 
-    public List<XYPlottingData> calculateLinear(String xAxisType, String yAxisType) throws TauModelException, VelocityModelException, SlownessModelException {
+    public Map<SeismicPhase, List<XYPlottingData>> calculateLinear(String xAxisType, String yAxisType) throws TauModelException, VelocityModelException, SlownessModelException {
         depthCorrect();
         List<SeismicPhase> phaseList = getSeismicPhases();
-        List<XYPlottingData> out = new ArrayList<>();
+        Map<SeismicPhase, List<XYPlottingData>> outMap = new HashMap<>();
         for (SeismicPhase phase: phaseList) {
+            List<XYPlottingData> out = new ArrayList<>();
+            outMap.put(phase, out);
             boolean ensure180 = (xAxisType.equalsIgnoreCase("degree_180") || yAxisType.equalsIgnoreCase("degree_180")
                     || xAxisType.equalsIgnoreCase("radian_pi") || yAxisType.equalsIgnoreCase("radian_pi"));
             if(phase.hasArrivals()) {
@@ -177,29 +148,21 @@ public class TauP_XY extends TauP_AbstractTimeTool {
                         Theta theta = new Theta(arrival);
                         List<double[]> xData = SeismicPhase.splitForRepeatRayParam(phase.getRayParams(), phase.getRayParams());
                         List<double[]> yData = SeismicPhase.splitForRepeatRayParam(theta.rayParams, theta.thetaAtX);
+                        List<XYSegment> segmentList = new ArrayList<>();
                         for (int i = 0; i < xData.size(); i++) {
-                            double[] xValues = xData.get(i);
-                            /*for (int j = 0; j < xValues.length; j++) {
-                                xValues[j] *= Arrival.RtoD;
-                            }*/
-                            out.add(new XYPlottingData(
-                                    xValues, xAxisType,
-                                    yData.get(i), "Ray Param",
-                                    phase.getName(), phase
-                            ));
+                            segmentList.add(new XYSegment(xData.get(i), yData.get(i)));
+
                         }
+                        out.add(new XYPlottingData(
+                                segmentList, xAxisType, "Ray Param",
+                                phase.getName(), phase
+                        ));
 
                     }
                 } else {
                     List<double[]> xData = calculatePlotForType(phase, xAxisType, ensure180);
                     List<double[]> yData = calculatePlotForType(phase, yAxisType, ensure180);
-                    for (int i = 0; i < xData.size(); i++) {
-                        out.add(new XYPlottingData(
-                                xData.get(i), xAxisType,
-                                yData.get(i), yAxisType,
-                                phase.getName(), phase
-                        ));
-                    }
+                    out.add(new XYPlottingData(xData, xAxisType, yData, yAxisType, phase.getName(), phase));
 
                     if (phase.isAllSWave()) {
                         // second calc needed for sh, as psv done in main calc
@@ -210,13 +173,7 @@ public class TauP_XY extends TauP_AbstractTimeTool {
 
                             xData = calculatePlotForType(phase, xOther, ensure180);
                             yData = calculatePlotForType(phase, yOther, ensure180);
-                            for (int i = 0; i < xData.size(); i++) {
-                                out.add(new XYPlottingData(
-                                        xData.get(i), xOther,
-                                        yData.get(i), yOther,
-                                        phase.getName(), phase
-                                ));
-                            }
+                            out.add(new XYPlottingData(xData, xAxisType, yData, yAxisType, phase.getName(), phase));
                         }
                         // what about case of amp vs refltran, need 4 outputs?
                         if (xAxisType.equalsIgnoreCase("refltran")
@@ -226,19 +183,13 @@ public class TauP_XY extends TauP_AbstractTimeTool {
 
                             xData = calculatePlotForType(phase, xOther, ensure180);
                             yData = calculatePlotForType(phase, yOther, ensure180);
-                            for (int i = 0; i < xData.size(); i++) {
-                                out.add(new XYPlottingData(
-                                        xData.get(i), xOther,
-                                        yData.get(i), yOther,
-                                        phase.getName(), phase
-                                ));
-                            }
+                            out.add(new XYPlottingData(xData, xAxisType, yData, yAxisType, phase.getName(), phase));
                         }
                     }
                 }
             }
         }
-        return out;
+        return outMap;
     }
 
     public List<double[]> calculatePlotForType(SeismicPhase phase, String axisType, boolean ensure180) throws VelocityModelException, SlownessModelException, TauModelException {
@@ -325,7 +276,6 @@ public class TauP_XY extends TauP_AbstractTimeTool {
                         // dist spans a multiple of PI, repeated ray params are already a break so don't interpolate
                         crossIdx.add(i);
                         crossValue.add(wrapRadian);
-                        System.err.println(axisType+"cross idx: "+(i)+"  "+wrapRadian+" of "+wrapMinIndex+" to "+wrapMaxIndex);
                     }
                 }
             }
@@ -361,6 +311,13 @@ public class TauP_XY extends TauP_AbstractTimeTool {
         // repeated ray parameters indicate break in curve, split into segments
         return SeismicPhase.splitForRepeatRayParam(rayParams, out);
     }
+    protected List<XYPlottingData> recalcForLog(List<XYPlottingData> xy, boolean xAxisLog,  boolean yAxisLog) {
+        List<XYPlottingData> out = new ArrayList<>();
+        for(XYPlottingData xyp : xy) {
+            out.add( xyp.recalcForLog(xAxisLog, yAxisLog));
+        }
+        return out;
+    }
 
     public static void checkEqualMinMax(double[] minmax, double xpercent, double ypercent) {
         if (minmax[0] == minmax[1]) {
@@ -391,12 +348,17 @@ public class TauP_XY extends TauP_AbstractTimeTool {
         }
     }
 
-    public void printResult(PrintWriter writer, List<XYPlottingData> xyPlots) {
+    public void printResult(PrintWriter writer, Map<SeismicPhase, List<XYPlottingData>> xyPlots) {
         if (getOutputFormat().equalsIgnoreCase(JSON)) {
             JSONObject out = baseResultAsJSONObject( modelName, depth,  receiverDepth, getPhaseNames());
-            JSONObject curves = new JSONObject();
-            out.put("curve", curves);
-
+            JSONArray phaseCurves = new JSONArray();
+            for (SeismicPhase phase: xyPlots.keySet() ) {
+                for (XYPlottingData plotItem : xyPlots.get(phase)) {
+                    phaseCurves.put(plotItem.asJSON());
+                }
+            }
+            out.put("curves", phaseCurves);
+            writer.println(out.toString(2));
         } else if (getOutputFormat().equalsIgnoreCase(SVG)) {
             StringBuffer extrtaCSS = new StringBuffer();
             extrtaCSS.append("        text.label {\n");
@@ -413,8 +375,10 @@ public class TauP_XY extends TauP_AbstractTimeTool {
             int plotOffset = 60;
 
             double[] minmax = XYPlottingData.initMinMax();
-            for (XYPlottingData xyplot: xyPlots) {
-                minmax = xyplot.minMax(minmax);
+            for (List<XYPlottingData> phaseXY : xyPlots.values()) {
+                for (XYPlottingData xyplot : phaseXY) {
+                    minmax = xyplot.minMax(minmax);
+                }
             }
             checkEqualMinMax(minmax, 0.1, 0.1);
             SvgUtil.xyplotScriptBeginning(writer, toolNameFromClass(this.getClass()),
@@ -439,25 +403,12 @@ public class TauP_XY extends TauP_AbstractTimeTool {
 
             writer.println("<g transform=\"scale(" + (plotWidth / (minmax[1]-minmax[0])) + "," + ( plotWidth / (minmax[3]-minmax[2])) + ")\" >");
             writer.println("<g transform=\"translate("+(-1*minmax[0])+", "+(-1*minmax[2])+")\">");
-            for (XYPlottingData xyplotItem: xyPlots) {
-                String p_or_s = "both_p_swave";
-                if (xyplotItem.phase.isAllSWave()) {
-                    p_or_s = "swave";
-                } else if (xyplotItem.phase.isAllPWave()) {
-                    p_or_s = "pwave";
+            for (SeismicPhase phase : xyPlots.keySet()) {
+                writer.println("    <g class=\"" + phase.getName() + "\">");
+                for (XYPlottingData xyplotItem : xyPlots.get(phase)) {
+                    xyplotItem.asSVG(writer);
                 }
-                writer.println("    <g class=\""+xyplotItem.label+"\">");
-                writer.println("    <polyline class=\""+p_or_s+"\" points=\"");
-                for (int i = 0; i < xyplotItem.xValues.length; i++) {
-                    if (Double.isFinite(xyplotItem.xValues[i]) && Double.isFinite(xyplotItem.yValues[i])) {
-                        writer.println(xyplotItem.xValues[i] + " " + xyplotItem.yValues[i]);
-                    } else if (i != 0 && i != xyplotItem.xValues.length) {
-                        writer.println("  \"  /> <!-- "+xyplotItem.label+"-->");
-                        writer.println("    <polyline class=\""+p_or_s+"\" points=\"");
-                    }
-                }
-                writer.println("  \"  /> <!-- "+xyplotItem.label+"-->");
-                writer.println("    </g> <!-- end \"+xyplotItem.label+\" -->");
+                writer.println("    </g> <!-- end "+phase.getName()+" -->");
             }
 
             writer.println("    <g class=\"phasename\">  <!-- begin labels -->");
@@ -467,15 +418,18 @@ public class TauP_XY extends TauP_AbstractTimeTool {
             writer.println("  </g> <!-- end translate -->");
             writer.println("  </g> <!-- end scale -->");
             writer.println("  </g> <!-- end translate -->");
-            //writer.println("  </g> <!-- end translate -->");
             writer.println("</svg>");
 
         } else if (getOutputFormat().equalsIgnoreCase(TEXT)) {
 
-            for (XYPlottingData xyplotItem: xyPlots) {
-                writer.println("> "+xyplotItem.label+" "+xyplotItem.xValues.length+" "+xyplotItem.phase);
-                for (int i = 0; i < xyplotItem.xValues.length; i++) {
-                    writer.println(xyplotItem.xValues[i]+" "+xyplotItem.yValues[i]);
+            for (SeismicPhase phase : xyPlots.keySet()) {
+                for (XYPlottingData xyplotItem : xyPlots.get(phase)) {
+                    for (XYSegment segment : xyplotItem.segmentList) {
+                        writer.println("> " + xyplotItem.label + " " + segment.x.length + " " + xyplotItem.phase);
+                        for (int i = 0; i < segment.x.length; i++) {
+                            writer.println(segment.x[i] + " " + segment.y[i]);
+                        }
+                    }
                 }
             }
         } else {
