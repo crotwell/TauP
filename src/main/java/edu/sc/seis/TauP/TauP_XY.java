@@ -29,7 +29,7 @@ public class TauP_XY extends TauP_AbstractTimeTool {
     protected String[] parseCmdLineArgs(String[] origArgs) throws IOException {
         String[] args = parseSourceModelCmdLineArgs(origArgs);
         args = parseOutputFormatCmdLineArgs(args);
-        List<String> noComprendoArgs = new ArrayList();
+        List<String> noComprendoArgs = new ArrayList<>();
         int j = 0;
         while (j < args.length) {
             String arg = args[j];
@@ -92,8 +92,7 @@ public class TauP_XY extends TauP_AbstractTimeTool {
         if(depth != -1 * Double.MAX_VALUE) {
             /* enough info given on cmd line, so just do one calc. */
             setSourceDepth(Double.valueOf(toolProps.getProperty("taup.source.depth",
-                            "0.0"))
-                    .doubleValue());
+                    "0.0")));
 
             List<XYPlottingData>  xy = calculate(xAxisType, yAxisType);
             printResult(getWriter(), xy);
@@ -142,8 +141,8 @@ public class TauP_XY extends TauP_AbstractTimeTool {
                     outY = posty;
                     tmpOffset = 0;
                 } else {
-                    outX[tmpOffset] = xAxisLog ? Math.log(Math.abs(xyplot.xValues[i])) : xyplot.xValues[i];
-                    outY[tmpOffset] = yAxisLog ? Math.log(Math.abs(xyplot.yValues[i])) : xyplot.yValues[i];
+                    outX[tmpOffset] = xAxisLog ? Math.log10(Math.abs(xyplot.xValues[i])) : xyplot.xValues[i];
+                    outY[tmpOffset] = yAxisLog ? Math.log10(Math.abs(xyplot.yValues[i])) : xyplot.yValues[i];
                     tmpOffset++;
                 }
             }
@@ -244,7 +243,6 @@ public class TauP_XY extends TauP_AbstractTimeTool {
 
     public List<double[]> calculatePlotForType(SeismicPhase phase, String axisType, boolean ensure180) throws VelocityModelException, SlownessModelException, TauModelException {
         double[] out = new double[0];
-        List<double[]> outList = new ArrayList<>();
         if (axisType.equalsIgnoreCase("radian") || axisType.equalsIgnoreCase("radian_pi")) {
             out = phase.getDist();
         } else if (axisType.equalsIgnoreCase("degree") || axisType.equalsIgnoreCase("degree_180")) {

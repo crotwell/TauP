@@ -45,13 +45,13 @@ public class XYPlottingData {
         double[] out = new double[] { minX, maxX, minY, maxY};
         return out;
     }
-    SeismicPhase phase;
-    double[] xValues;
-    double[] yValues;
+    public final SeismicPhase phase;
+    public final double[] xValues;
+    public final double[] yValues;
 
-    String xAxisType;
+    public final String xAxisType;
 
-    String yAxisType;
+    public final String yAxisType;
 
-    String label = "";
+    public final String label;
 }

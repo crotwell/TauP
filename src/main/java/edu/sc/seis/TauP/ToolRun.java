@@ -3,7 +3,6 @@ package edu.sc.seis.TauP;
 import java.io.*;
 import java.lang.reflect.Constructor;
 import java.util.Arrays;
-import java.util.List;
 
 public class ToolRun {
     
@@ -52,7 +51,7 @@ public class ToolRun {
 		if (tool == null) {
 			return;
 		}
-		if ( ! dir.isDirectory()) {dir.mkdir(); }
+		if ( ! dir.isDirectory()) {dir.mkdirs(); }
 		PrintStream fileOut = new PrintStream(new BufferedOutputStream(new FileOutputStream(new File(dir, filename))));
 		fileOut.print(tool.getUsage());
 		fileOut.flush();
