@@ -14,9 +14,11 @@
       "puristdist": 35,
       "puristname": "P",
       "amp": {
-        "factor": 2.2448705E-9,
+        "factorpsv": 2.2448705E-9,
+        "factorsh": 0,
         "geospread": 9.4910035E-9,
-        "refltran": 0.93945855
+        "refltranpsv": 0.93945855
+        "refltransh": 0
       }
     },
     {
@@ -29,9 +31,11 @@
       "puristdist": 35,
       "puristname": "pP",
       "amp": {
-        "factor": -1.0049341E-9,
+        "factorpsv": -1.0049341E-9,
+        "factorsh": 0,
         "geospread": 6.4029417E-9,
-        "refltran": -0.6233852
+        "refltranpsv": -0.6233852
+        "refltransh": 0
       }
     },
     {
@@ -44,9 +48,11 @@
       "puristdist": 35,
       "puristname": "sP",
       "amp": {
-        "factor": 6.4090083E-10,
+        "factorpsv": 6.4090083E-10,
+        "factorsh": 0,
         "geospread": 4.5169624E-9,
-        "refltran": 0.5635634
+        "refltranpsv": 0.5635634
+        "refltransh": 0
       }
     },
     {
@@ -59,9 +65,11 @@
       "puristdist": 35,
       "puristname": "PP",
       "amp": {
-        "factor": -5.602378E-10,
+        "factorpsv": -5.602378E-10,
+        "factorsh": 0,
         "geospread": 8.134539E-9,
-        "refltran": -0.27355075
+        "refltranpsv": -0.27355075
+        "refltransh": 0
       }
     },
     {
@@ -74,9 +82,11 @@
       "puristdist": 35,
       "puristname": "PP",
       "amp": {
-        "factor": 1.3256608E-10,
+        "factorpsv": 1.3256608E-10,
+        "factorsh": -0,
         "geospread": -1.9293809E-9,
-        "refltran": -0.27290586
+        "refltranpsv": -0.27290586
+        "refltransh": 0
       }
     },
     {
@@ -89,9 +99,11 @@
       "puristdist": 35,
       "puristname": "PP",
       "amp": {
-        "factor": 2.6919594E-10,
+        "factorpsv": 2.6919594E-10,
+        "factorsh": -0,
         "geospread": -3.71326E-9,
-        "refltran": -0.28794637
+        "refltranpsv": -0.28794637
+        "refltransh": 0
       }
     },
     {
@@ -104,9 +116,11 @@
       "puristdist": 35,
       "puristname": "PP",
       "amp": {
-        "factor": -5.6609734E-11,
+        "factorpsv": -5.6609734E-11,
+        "factorsh": 0,
         "geospread": 2.3569615E-9,
-        "refltran": -0.09539752
+        "refltranpsv": -0.09539752
+        "refltransh": 0
       }
     },
     {
@@ -119,9 +133,11 @@
       "puristdist": 35,
       "puristname": "PP",
       "amp": {
-        "factor": -1.3889002E-10,
+        "factorpsv": -1.3889002E-10,
+        "factorsh": 0,
         "geospread": 5.318295E-9,
-        "refltran": -0.10372825
+        "refltranpsv": -0.10372825
+        "refltransh": 0
       }
     },
     {
@@ -134,9 +150,11 @@
       "puristdist": 35,
       "puristname": "PcP",
       "amp": {
-        "factor": 3.416083E-10,
+        "factorpsv": 3.416083E-10,
+        "factorsh": 0,
         "geospread": 4.892863E-9,
-        "refltran": 0.2773089
+        "refltranpsv": 0.2773089
+        "refltransh": 0
       }
     },
     {
@@ -149,9 +167,11 @@
       "puristdist": 35,
       "puristname": "S",
       "amp": {
-        "factor": -9.559001E-10,
+        "factorpsv": -8.8572594E-10,
+        "factorsh": -9.559001E-10,
         "geospread": -2.9885563E-9,
-        "refltran": 0.98123634
+        "refltranpsv": 0.90920216
+        "refltransh": 0.98123634
       }
     },
     {
@@ -164,9 +184,11 @@
       "puristdist": 35,
       "puristname": "pS",
       "amp": {
-        "factor": 4.1380797E-9,
+        "factorpsv": 4.1380797E-9,
+        "factorsh": 0,
         "geospread": 1.3097071E-8,
-        "refltran": 0.96927536
+        "refltranpsv": 0.96927536
+        "refltransh": 0
       }
     },
     {
@@ -179,9 +201,11 @@
       "puristdist": 35,
       "puristname": "sS",
       "amp": {
-        "factor": 1.2368819E-9,
+        "factorpsv": 1.1673663E-11,
+        "factorsh": 1.2368819E-9,
         "geospread": 3.867232E-9,
-        "refltran": 0.9811842
+        "refltranpsv": 0.009260394
+        "refltransh": 0.9811842
       }
     },
     {
@@ -194,9 +218,11 @@
       "puristdist": 35,
       "puristname": "SP",
       "amp": {
-        "factor": -1.1158017E-9,
+        "factorpsv": -1.1158017E-9,
+        "factorsh": -0,
         "geospread": -5.35934E-9,
-        "refltran": 0.82694024
+        "refltranpsv": 0.82694024
+        "refltransh": 0
       }
     },
     {
@@ -209,9 +235,11 @@
       "puristdist": 35,
       "puristname": "PS",
       "amp": {
-        "factor": -2.5531965E-9,
+        "factorpsv": -2.5531965E-9,
+        "factorsh": -0,
         "geospread": -8.364679E-9,
-        "refltran": 0.93639153
+        "refltranpsv": 0.93639153
+        "refltransh": 0
       }
     },
     {
@@ -224,9 +252,11 @@
       "puristdist": 35,
       "puristname": "ScP",
       "amp": {
-        "factor": 7.988524E-11,
+        "factorpsv": 7.988524E-11,
+        "factorsh": 0,
         "geospread": 8.102375E-10,
-        "refltran": 0.39160898
+        "refltranpsv": 0.39160898
+        "refltransh": 0
       }
     },
     {
@@ -239,9 +269,11 @@
       "puristdist": 35,
       "puristname": "PcS",
       "amp": {
-        "factor": 1.2438949E-9,
+        "factorpsv": 1.2438949E-9,
+        "factorsh": -0,
         "geospread": -8.27238E-9,
-        "refltran": -0.46129176
+        "refltranpsv": -0.46129176
+        "refltransh": 0
       }
     },
     {
@@ -254,9 +286,11 @@
       "puristdist": 35,
       "puristname": "SS",
       "amp": {
-        "factor": -8.249301E-10,
+        "factorpsv": -8.1902435E-10,
+        "factorsh": -8.249301E-10,
         "geospread": -3.3388534E-9,
-        "refltran": 0.7579531
+        "refltranpsv": 0.7525268
+        "refltransh": 0.7579531
       }
     },
     {
@@ -269,9 +303,11 @@
       "puristdist": 35,
       "puristname": "SS",
       "amp": {
-        "factor": 9.91436E-10,
+        "factorpsv": 1.0724646E-9,
+        "factorsh": 9.91436E-10,
         "geospread": 4.542847E-9,
-        "refltran": 0.6695131
+        "refltranpsv": 0.72423136
+        "refltransh": 0.6695131
       }
     },
     {
@@ -284,9 +320,11 @@
       "puristdist": 35,
       "puristname": "SS",
       "amp": {
-        "factor": -5.341819E-10,
+        "factorpsv": -4.3499293E-10,
+        "factorsh": -5.341819E-10,
         "geospread": -1.5133576E-9,
-        "refltran": 1.0828545
+        "refltranpsv": 0.8817859
+        "refltransh": 1.0828545
       }
     },
     {
@@ -299,9 +337,11 @@
       "puristdist": 35,
       "puristname": "SS",
       "amp": {
-        "factor": -6.924226E-12,
+        "factorpsv": 1.5740333E-12,
+        "factorsh": -6.924226E-12,
         "geospread": -7.743721E-10,
-        "refltran": 0.02743115
+        "refltranpsv": -0.0062357215
+        "refltransh": 0.02743115
       }
     },
     {
@@ -314,9 +354,11 @@
       "puristdist": 35,
       "puristname": "SS",
       "amp": {
-        "factor": 2.9569622E-9,
+        "factorpsv": -5.583343E-10,
+        "factorsh": 2.9569622E-9,
         "geospread": 2.7051914E-9,
-        "refltran": 3.3532836
+        "refltranpsv": -0.63316786
+        "refltransh": 3.3532836
       }
     },
     {
@@ -329,9 +371,11 @@
       "puristdist": 35,
       "puristname": "PKiKP",
       "amp": {
-        "factor": 1.95126E-11,
+        "factorpsv": 1.95126E-11,
+        "factorsh": 0,
         "geospread": 1.9792763E-9,
-        "refltran": 0.0391568
+        "refltranpsv": 0.0391568
+        "refltransh": 0
       }
     },
     {
@@ -344,9 +388,11 @@
       "puristdist": 35,
       "puristname": "pPKiKP",
       "amp": {
-        "factor": -2.5029583E-11,
+        "factorpsv": -2.5029583E-11,
+        "factorsh": 0,
         "geospread": 2.5453137E-9,
-        "refltran": -0.039058067
+        "refltranpsv": -0.039058067
+        "refltransh": 0
       }
     },
     {
@@ -359,9 +405,11 @@
       "puristdist": 35,
       "puristname": "sPKiKP",
       "amp": {
-        "factor": 3.6171706E-13,
+        "factorpsv": 3.6171706E-13,
+        "factorsh": 0,
         "geospread": 6.49183E-10,
-        "refltran": 0.0022130962
+        "refltranpsv": 0.0022130962
+        "refltransh": 0
       }
     },
     {
@@ -374,9 +422,11 @@
       "puristdist": 35,
       "puristname": "ScS",
       "amp": {
-        "factor": -6.5053596E-10,
+        "factorpsv": -2.4197686E-10,
+        "factorsh": -6.5053596E-10,
         "geospread": -2.0617155E-9,
-        "refltran": 0.9679771
+        "refltranpsv": 0.360054
+        "refltransh": 0.9679771
       }
     },
     {
@@ -389,9 +439,11 @@
       "puristdist": 35,
       "puristname": "SKiKP",
       "amp": {
-        "factor": 1.6212206E-12,
+        "factorpsv": 1.6212206E-12,
+        "factorsh": 0,
         "geospread": 1.6025435E-9,
-        "refltran": 0.0040181926
+        "refltranpsv": 0.0040181926
+        "refltransh": 0
       }
     },
     {
@@ -404,9 +456,11 @@
       "puristdist": 325,
       "puristname": "PKIKKIKP",
       "amp": {
-        "factor": -1.1651941E-11,
+        "factorpsv": -1.1651941E-11,
+        "factorsh": 0,
         "geospread": 2.0197959E-9,
-        "refltran": -0.022913383
+        "refltranpsv": -0.022913383
+        "refltransh": 0
       }
     },
     {
@@ -419,9 +473,11 @@
       "puristdist": 325,
       "puristname": "SKIKKIKP",
       "amp": {
-        "factor": -8.4029674E-13,
+        "factorpsv": -8.4029674E-13,
+        "factorsh": 0,
         "geospread": 1.4995897E-9,
-        "refltran": -0.0022256593
+        "refltranpsv": -0.0022256593
+        "refltransh": 0
       }
     },
     {
@@ -434,9 +490,11 @@
       "puristdist": 325,
       "puristname": "PKIKKIKS",
       "amp": {
-        "factor": 2.7018132E-12,
+        "factorpsv": 2.7018132E-12,
+        "factorsh": 0,
         "geospread": 2.1195457E-9,
-        "refltran": 0.003910525
+        "refltranpsv": 0.003910525
+        "refltransh": 0
       }
     },
     {
@@ -449,9 +507,11 @@
       "puristdist": 325,
       "puristname": "SKIKKIKS",
       "amp": {
-        "factor": 1.5691697E-13,
+        "factorpsv": 1.5691697E-13,
+        "factorsh": 0,
         "geospread": 1.3950303E-9,
-        "refltran": 3.4507122E-4
+        "refltranpsv": 3.4507122E-4
+        "refltransh": 0
       }
     },
     {
@@ -464,9 +524,11 @@
       "puristdist": 325,
       "puristname": "PKIKPPKIKP",
       "amp": {
-        "factor": -1.1094422E-10,
+        "factorpsv": -1.1094422E-10,
+        "factorsh": 0,
         "geospread": 5.4908333E-10,
-        "refltran": -0.80253667
+        "refltranpsv": -0.80253667
+        "refltransh": 0
       }
     },
     {
@@ -479,9 +541,11 @@
       "puristdist": 325,
       "puristname": "PKPPKP",
       "amp": {
-        "factor": -3.7748006E-11,
+        "factorpsv": -3.7748006E-11,
+        "factorsh": 0,
         "geospread": 3.769393E-10,
-        "refltran": -0.39775994
+        "refltranpsv": -0.39775994
+        "refltransh": 0
       }
     },
     {
@@ -494,9 +558,11 @@
       "puristdist": 325,
       "puristname": "SKIKSSKIKS",
       "amp": {
-        "factor": 1.6563683E-13,
+        "factorpsv": 1.6563683E-13,
+        "factorsh": 0,
         "geospread": 1.6232624E-9,
-        "refltran": 3.130334E-4
+        "refltranpsv": 3.130334E-4
+        "refltransh": 0
       }
     }
   ]

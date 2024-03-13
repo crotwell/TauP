@@ -163,8 +163,10 @@ public class TauP_Path extends TauP_Pierce {
 		if (outputFormat.equals(TauP_Tool.JSON)) {
 			printResultJSON(out);
 		} else if (outputFormat.equals(TauP_Tool.SVG)) {
+			printScriptBeginningSVG(out);
 			printResultSVG(out);
 		} else {
+			printScriptBeginningGMT(out);
 			printResultText(out);
 		}
 		out.flush();
@@ -407,7 +409,6 @@ public class TauP_Path extends TauP_Pierce {
 
 		out.println("  </g> <!-- end translate -->");
 		out.println("  </g> ");
-		out.println("  </g> ");
 		out.println("</svg>");
 
 	}
@@ -467,8 +468,15 @@ public class TauP_Path extends TauP_Pierce {
 	    if (outputFormat.equals(TauP_Tool.JSON)) {
             return;
         } else if (outputFormat.equals(SVG)) {
-	        printScriptBeginningSVG(out);
+			return;
 	    } else if ( gmtScript) {
+			printScriptBeginningGMT(out);
+	    } else {
+	        return; 
+	    }
+	}
+	public void printScriptBeginningGMT(PrintWriter out)  throws IOException {
+		if ( gmtScript) {
 			if (getOutFileBase().equals("stdout")) {
 				psFile = "taup_path.ps";
 			} else if (getOutFile().endsWith(".gmt")) {
@@ -477,9 +485,7 @@ public class TauP_Path extends TauP_Pierce {
 				psFile = getOutFile() + ".ps";
 			}
 			printScriptBeginning(out, psFile);
-	    } else {
-	        return; 
-	    }
+		}
 	}
 
     public void printScriptBeginningSVG(PrintWriter out)  throws IOException {
@@ -654,6 +660,7 @@ public class TauP_Path extends TauP_Pierce {
 	public void start() throws IOException, TauModelException, TauPException {
 		super.start();
 	}
+
 
 
 	/**

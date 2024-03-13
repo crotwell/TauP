@@ -146,7 +146,6 @@ public abstract class TauP_Tool {
             } else {
                 writer = new PrintWriter(new OutputStreamWriter(System.out));
             }
-            printScriptBeginning(writer);
         }
         return writer;
     }

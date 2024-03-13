@@ -1,6 +1,7 @@
 text.title {
     text-anchor: middle;
     dominant-baseline: auto;
+    font-size: 20px;
 }
 circle {
     vector-effect: non-scaling-stroke;

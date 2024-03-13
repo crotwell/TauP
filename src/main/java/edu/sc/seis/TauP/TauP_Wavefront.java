@@ -102,7 +102,7 @@ public class TauP_Wavefront extends TauP_Path {
         if (outputFormat.equals(TauP_Tool.JSON)) {
             throw new RuntimeException("JSON output for TauP_Path not yet supported.");
         } else if (outputFormat.equals(SVG)) {
-            printScriptBeginningSVG(out);
+            return;
         } else if ( gmtScript) {
             if (getOutFile().equals("stdout")) {
                 psFile = "taup_wavefront.ps";
@@ -114,8 +114,10 @@ public class TauP_Wavefront extends TauP_Path {
     @Override
     public void printResult(PrintWriter out) throws IOException {
         if (outputFormat.equals(SVG)) {
+            printScriptBeginningSVG(out);
             printResultSVG(out);
         } else {
+            printScriptBeginningGMT(out);
             printResultGMT(out);
         }
         out.flush();
