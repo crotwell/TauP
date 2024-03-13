@@ -336,9 +336,7 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
         out.println("</g>");
         out.println("</g>");
         out.println("</g>");
-        out.println("<g transform=\"translate("+(3.0/4.0*plotWidth)+", "+(0.1*plotWidth)+")\">");
-        SvgUtil.createLegend(out, labels, labelClass);
-        out.println("</g>");
+        SvgUtil.createLegend(out, labels, labelClass, "", (3.0f/4.0f*plotWidth), (0.1f*plotWidth));
 
         out.println("</g>");
         out.println("</svg>");

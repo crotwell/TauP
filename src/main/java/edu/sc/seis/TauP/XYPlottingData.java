@@ -72,7 +72,7 @@ public class XYPlottingData {
         }
         writer.println("    <g class=\"" + phase.getName()+" "+ label + " " +p_or_s +"\">");
         for (XYSegment segment : segmentList) {
-            segment.asSVG(writer, p_or_s);
+            segment.asSVG(writer, "");
         }
         writer.println("    </g> <!-- end "+phase.getName()+" "+ label+ " " +p_or_s +" -->");
     }

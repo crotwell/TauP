@@ -29,6 +29,7 @@ public class SvgUtil {
         css.append(stdcss+"\n");
         css.append(createCSSColors( "g.autocolor", List.of("stroke"), DEFAULT_COLORS)+"\n");
         css.append(createCSSColors(  ".autocolor.phaselabel", List.of("fill"), DEFAULT_COLORS)+"\n");
+        css.append(createCSSColors(  ".autocolor.legend", List.of("fill"), DEFAULT_COLORS)+"\n");
         out.println("<svg version=\"1.1\" baseProfile=\"full\" xmlns=\"http://www.w3.org/2000/svg\" ");
         //out.println("     width=\""+(pixelWidth)+"\" height=\""+(pixelWidth)+"\"");
         out.println("     viewBox=\""+(-1*plotOffset)+" "+(-1*plotOffset)+" "+(pixelWidth+plotOffset)+" "+(pixelWidth+plotOffset)+"\"");
@@ -93,7 +94,7 @@ public class SvgUtil {
         out.println("<text class=\"title\" x=\""+(pixelWidth/2-margin)+"\" y=\""+(0)+"\">"+title+"</text>");
         out.println("<g> <!-- y axis -->");
         int yLabel_y = Math.round(plotWidth / 2);
-        int yLabel_x = Math.round(-1 * 1.8f*margin );
+        int yLabel_x = Math.round(-1 * .8f*margin );
         out.println("<g  >");
         out.println("  <text font-size=\"14\" transform=\"translate("+yLabel_x+", "+yLabel_y+") rotate(-90 )\" dy=\".75em\" text-anchor=\"middle\" class=\"ylabel\" >" + yLabel + "</text>");
         out.println("</g>");
@@ -131,17 +132,19 @@ public class SvgUtil {
 
     }
 
-    public static void createLegend(PrintWriter out, List<String> labels, List<String> labelClasses) {
+    public static void createLegend(PrintWriter out, List<String> labels, List<String> labelClasses, String outerGcss, float xtrans, float ytrans) {
         int lineLength = 10;
         int font_size = 14;
         int yoffset = font_size+2;
-        out.println("<g> <!-- legend -->");
+        out.println("<g class=\"legend "+outerGcss+"\" transform=\"translate("+xtrans+","+ytrans+")\"> <!-- legend -->");
         for (int i = 0; i < labels.size(); i++) {
             String labelCSS = "tick";
             int y = i*yoffset;
             if (i < labelClasses.size()) { labelCSS = labelClasses.get(i);}
-            out.println("<line class=\"legend "+labelCSS+"\" x1=\"0\" y1=\"" + (y) + "\" x2=\"" + lineLength + "\" y2=\"" + (y) + "\" />");
-            out.println("<text class=\"legend\" font-size=\""+font_size+"\" x=\"" + lineLength + "\" y=\"" + (y) + "\">" + labels.get(i) + "</text>");
+            out.println("<g class=\""+labelCSS+"\">");
+            out.println("<line class=\""+labelCSS+"\" x1=\"0\" y1=\"" + (y) + "\" x2=\"" + lineLength + "\" y2=\"" + (y) + "\" />");
+            out.println("<text class=\""+labelCSS+"\" font-size=\""+font_size+"\" x=\"" + (lineLength+1) + "\" y=\"" + (y) + "\">" + labels.get(i) + "</text>");
+            out.println("</g>");
         }
         out.println("</g> <!-- legend end-->");
     }
@@ -149,7 +152,7 @@ public class SvgUtil {
     public static StringBuffer createCSSColors(String selector, List<String> cssAttrList, List<String> colors) {
         StringBuffer out = new StringBuffer();
         for (int i = 0; i < colors.size(); i++) {
-            out.append("        "+selector+":nth-child("+colors.size()+"n+"+(i+1)+") {\n");
+            out.append("        "+selector+" > :nth-child("+colors.size()+"n+"+(i+1)+") {\n");
             for (String cssAttr : cssAttrList) {
                 out.append("            " + cssAttr + ": " + colors.get(i) + ";\n");
             }

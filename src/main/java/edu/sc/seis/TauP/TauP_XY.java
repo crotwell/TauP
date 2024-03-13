@@ -369,7 +369,7 @@ public class TauP_XY extends TauP_AbstractTimeTool {
             extrtaCSS.append("            font: bold ;\n");
             extrtaCSS.append("            fill: black;\n");
             extrtaCSS.append("        }\n");
-            float mapWidth = 6;
+
             int margin = 80;
             int pixelWidth = 600+margin;//Math.round(72*mapWidth);
             int plotOffset = 60;
@@ -396,28 +396,43 @@ public class TauP_XY extends TauP_AbstractTimeTool {
             float plotWidth = pixelWidth - 2*margin;
             SvgUtil.createXYAxes(writer, minmax[0], minmax[1], 8, false,
                     minmax[2], minmax[3], 8, false,
-                    pixelWidth, margin, "Titiel here", xAxisType, yAxisType);
+                    pixelWidth, margin, getTauModelName()+" (h="+getSourceDepth()+" km)", xAxisType, yAxisType);
 
 
             writer.println("<g transform=\"scale(1,-1) translate(0, -"+plotWidth+")\">");
 
             writer.println("<g transform=\"scale(" + (plotWidth / (minmax[1]-minmax[0])) + "," + ( plotWidth / (minmax[3]-minmax[2])) + ")\" >");
             writer.println("<g transform=\"translate("+(-1*minmax[0])+", "+(-1*minmax[2])+")\">");
+            writer.println("    <g class=\"autocolor\">");
             for (SeismicPhase phase : xyPlots.keySet()) {
+                // group all
                 writer.println("    <g class=\"" + phase.getName() + "\">");
                 for (XYPlottingData xyplotItem : xyPlots.get(phase)) {
                     xyplotItem.asSVG(writer);
                 }
                 writer.println("    </g> <!-- end "+phase.getName()+" -->");
             }
+            writer.println("    </g> <!-- end autocolor g -->");
 
             writer.println("    <g class=\"phasename\">  <!-- begin labels -->");
 
             writer.println("    </g> <!-- end labels -->");
 
+
             writer.println("  </g> <!-- end translate -->");
+
+
             writer.println("  </g> <!-- end scale -->");
             writer.println("  </g> <!-- end translate -->");
+
+            List<String> labels = new ArrayList<>();
+            List<String> labelClasses = new ArrayList<>();
+            for (SeismicPhase phase : xyPlots.keySet()) {
+                labels.add(phase.getName());
+                labelClasses.add(phase.getName());
+            }
+
+            SvgUtil.createLegend(writer, labels, labelClasses, "autocolor", (int)(plotWidth*.1), (int) (plotWidth*.1));
             writer.println("</svg>");
 
         } else if (getOutputFormat().equalsIgnoreCase(TEXT)) {
