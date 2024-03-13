@@ -57,6 +57,12 @@ public class XYPlottingData {
         return new XYPlottingData(out, xAxisType, yAxisType, label, phase);
     }
 
+    /**
+     * Output as an SVG g containing polyline. Limit to float precision per SVG spec. Label, phase name and wave type
+     * are added as CSS class names.
+     *
+     * @param writer to write to
+     */
     public void asSVG(PrintWriter writer) {
         String p_or_s = "both_p_swave";
         if (phase.isAllSWave()) {

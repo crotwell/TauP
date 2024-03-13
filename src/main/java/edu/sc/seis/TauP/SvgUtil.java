@@ -100,11 +100,11 @@ public class SvgUtil {
         out.println("<line  class=\"tick\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\""+(plotWidth)+"\" />");
         for (double tick: yTicks) {
             // Y axis
-            double tick_pixel;
+            float tick_pixel;
             if (maxY > minY) {
-                tick_pixel = (tick-minY ) / (maxY-minY) * plotWidth;
+                tick_pixel = (float) ((tick-minY ) / (maxY-minY) * plotWidth);
             } else {
-                tick_pixel = (minY-tick) / (minY-maxY) * plotWidth;
+                tick_pixel = (float) ((minY-tick) / (minY-maxY) * plotWidth);
             }
             String tick_text = ""+((float)tick);
             out.println("<text class=\"ytick\" font-size=\"12\" x=\"" + (-1 * tick_length - 2) + "\" y=\"" + (plotWidth - tick_pixel) + "\">" + tick_text + "</text>");

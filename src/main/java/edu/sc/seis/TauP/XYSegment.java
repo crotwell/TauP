@@ -84,11 +84,19 @@ public class XYSegment {
         return out;
     }
 
+    /**
+     * Output as an SVG polyline. Limit to float precision per SVG spec.
+     *
+     * @param writer to write to
+     * @param css_class optional class to add to css class attribute
+     */
     public void asSVG(PrintWriter writer, String css_class) {
         writer.println("    <polyline class=\"" + css_class + "\" points=\"");
         for (int i = 0; i < x.length; i++) {
-            if (Double.isFinite(x[i]) && Double.isFinite(y[i])) {
-                writer.println(x[i] + " " + y[i]);
+            float xf = (float)x[i];
+            float yf = (float)y[i];
+            if (Float.isFinite(xf) && Float.isFinite(yf)) {
+                writer.println(xf + " " + yf);
             } else if (i != 0 && i != x.length) {
                 writer.println("  \"  /> <!-- " + css_class + "-->");
                 writer.println("    <polyline class=\"" + css_class + "\" points=\"");
@@ -97,6 +105,10 @@ public class XYSegment {
         writer.println("  \"  /> <!-- " + css_class + "-->");
     }
 
+    /**
+     * Output as JSON Object. NaN and Infinity values are skipped per JSON spec.
+     * @return
+     */
     public JSONObject asJSON() {
         JSONObject out = new JSONObject();
         JSONArray xarr = new JSONArray();
