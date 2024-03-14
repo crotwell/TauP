@@ -49,6 +49,23 @@ public class TauP_Path extends TauP_Pierce {
 	
 	protected static double maxPathInc = 1.0;
 
+	protected double[] xAxisMinMax = new double[0];
+	protected double[] yAxisMinMax = new double[0];
+
+	public void setDegreeMinMax(double min, double max) {
+		if (min < max) {
+			xAxisMinMax = new double[]{min, max};
+		} else {
+			throw new IllegalArgumentException("min must be < max: "+min+" < "+max);
+		}
+	}
+	public void setDepthMinMax(double min, double max) {
+		if (min < max) {
+			yAxisMinMax = new double[]{min, max};
+		} else {
+			throw new IllegalArgumentException("min must be < max: "+min+" < "+max);
+		}
+	}
 	public TauP_Path() {
 		super();
 		initFields();
@@ -304,8 +321,16 @@ public class TauP_Path extends TauP_Pierce {
 		}
 	}
 
+
+
 	public void printResultSVG(PrintWriter out) throws IOException {
 		double radiusOfEarth = getTauModel().getRadiusOfEarth();
+		double maxDist = 0;
+		double maxDepth = 0;
+		for (Arrival arr : arrivals) {
+			if (arr.getDist() > maxDist) {maxDist = arr.getDist();}
+			if (arr.getDeepestPierce().getDepth() > maxDepth) {maxDepth = arr.getDeepestPierce().getDepth();}
+		}
 		for (int i = 0; i < arrivals.size(); i++) {
 		    Arrival currArrival = (Arrival) arrivals.get(i);
 			out.println("<!-- "+getCommentLine(currArrival));
@@ -407,6 +432,8 @@ public class TauP_Path extends TauP_Pierce {
 
 		out.println("    </g> <!-- end labels -->");
 
+		out.println("  </g> ");
+		out.println("  </g> <!-- end zoom -->");
 		out.println("  </g> <!-- end translate -->");
 		out.println("  </g> ");
 		out.println("</svg>");
@@ -492,9 +519,69 @@ public class TauP_Path extends TauP_Pierce {
 		float pixelWidth =  (72.0f*mapWidth);
 
 		float R = (float)getTauModel().getRadiusOfEarth();
-        float plotSize =R  * 1.2f;
+		float plotOverScaleFactor = 1.2f;
+        float plotSize =R  * plotOverScaleFactor;
         int fontSize = (int) (plotSize/20);
 		float plotScale =pixelWidth/(2*R  * 1.2f);
+		float zoomYMin = -R;
+		float zoomYMax = R;
+		float zoomXMin = -R;
+		float zoomXMax = R;
+		float zoomScale = 1;
+		float zoomTranslateX = 0;
+		float zoomTranslateY = 0;
+
+		double minDist = 0;
+		double maxDist = 0;
+		double minDepth = 0;
+		double maxDepth = 0;
+		if (arrivals.size() > 0) {
+			Arrival arr = arrivals.get(0);
+			maxDist = arr.getDist();
+			minDepth = getSourceDepth();
+			maxDepth = arr.getDeepestPierce().getDepth();
+		}
+		if (xAxisMinMax.length == 2) {
+			minDist = xAxisMinMax[0];
+			maxDist = xAxisMinMax[1];
+		}
+		if (yAxisMinMax.length == 2) {
+			minDepth = yAxisMinMax[0];
+			maxDepth = yAxisMinMax[1];
+		}
+		for (Arrival arr : arrivals) {
+			if (arr.getDist() > maxDist) {maxDist = arr.getDist();}
+			if (arr.getDist() < minDist) {minDist = arr.getDist();}
+			if (arr.getPhase() instanceof ScatteredSeismicPhase) {
+				TimeDist[] pierce = arr.getPierce();
+				for (TimeDist td : pierce) {
+					if (td.getDistRadian() > maxDist) {maxDist = td.getDistRadian();}
+					if (td.getDistRadian() < minDist) {minDist = td.getDistRadian();}
+				}
+			}
+			if (arr.getDeepestPierce().getDepth() > maxDepth) {maxDepth = arr.getDeepestPierce().getDepth();}
+			if (arr.getShallowestPierce().getDepth() < minDepth) {minDepth = arr.getShallowestPierce().getDepth();}
+		}
+		if (maxDist == 0.0) {
+			maxDist = Math.PI;
+			maxDepth = R;
+		}
+		if ( ((maxDist-minDist) <= 3*Math.PI/4 && (maxDepth-minDepth) < 3*R/4)) {
+			// limited depth/dist range, so zoom in
+			zoomYMin = (float)( Math.cos(maxDist)*(R-maxDepth));
+			zoomYMax = R+(plotOverScaleFactor-1)*(R-zoomYMin);
+			zoomXMin = (float) (R*Math.sin(minDist));
+			zoomXMax = (float) Math.max(Math.sqrt((R-maxDepth)*(R-maxDepth)-zoomYMin*zoomYMin),
+					R*Math.sin(maxDist));
+			float longSide = (float)(Math.max((zoomYMax-zoomYMin), (zoomXMax-zoomXMin)));
+			float shortSide = (float)(Math.min((zoomYMax-zoomYMin), (zoomXMax-zoomXMin)));
+
+			zoomTranslateX = -1*((zoomXMax+zoomXMin)/2);
+			zoomTranslateY = Math.min(zoomYMin+(zoomXMax-zoomXMin/2), (zoomYMax+zoomYMin)/2);
+			zoomScale = (float)((2*R)/longSide);
+			fontSize = (int) (fontSize / zoomScale);
+		}
+
 		StringBuffer extrtaCSS = new StringBuffer();
 		extrtaCSS.append("        text.label {");
 		extrtaCSS.append("            font: bold ;");
@@ -509,23 +596,42 @@ public class TauP_Path extends TauP_Pierce {
 		SvgUtil.xyplotScriptBeginning( out, toolNameFromClass(this.getClass()),
 				cmdLineArgs,  pixelWidth, plotOffset, extrtaCSS.toString());
 
-		out.println("<g transform=\"scale("+plotScale+","+plotScale+")\" >");
-		out.println("<g transform=\"translate("+plotSize+","+plotSize+")\" >");
+		out.println("<g transform=\"scale("+plotScale+","+(plotScale)+")\" >");
+		out.println("<g transform=\"translate("+plotSize+","+(plotSize)+")\" >");
+		out.println("<g transform=\"scale("+zoomScale+","+zoomScale+")\" >");
+		out.println("<g transform=\"translate("+zoomTranslateX+","+zoomTranslateY+")\" >");
 		out.println("<g class=\"ticks\">");
         out.println("<!-- draw surface and label distances.-->");
 	    // whole earth radius (scales to mapWidth)
-        int step = 30;
-        out.println("<!-- tick marks every "+step+" degrees.-->");
-        for (int i = 0; i < 360; i+= step) {
+        float step = 30;
+		double maxTick = 360;
+		if (zoomScale > 1) {
+			double maxDistDeg = maxDist*180/Math.PI;
+			if (maxDistDeg >= 60) {
+				step = 10;
+			} else if (maxDistDeg >= 30) {
+				step = 5;
+			} else if (maxDistDeg >= 10) {
+				step = 2;
+			} else if (maxDistDeg > 5) {
+				step = 1;
+			} else {
+				step = (int) Math.floor(maxDist / 10);
+			}
+			maxTick = Math.ceil(maxDistDeg+5*step);
+		}
+		double tickLen = R*.05;
+        out.println("<!-- tick marks every "+step+" degrees to "+maxTick+".-->");
+        for (float i = 0; i < maxTick; i+= step) {
             out.print("  <polyline  class=\"tick\"  points=\"");
 			printDistRadiusAsXY(out, i, R);
             out.print(", ");
-			printDistRadiusAsXY(out, i, R*1.05);
+			printDistRadiusAsXY(out, i, R + tickLen/zoomScale);
             out.println("\" />");
 
             double radian = (i-90)*Math.PI/180;
-            double x = R*1.055*Math.cos(radian);
-            double y = R*1.055*Math.sin(radian);
+            double x = (R+(tickLen*1.05)/zoomScale)*Math.cos(radian);
+            double y = (R+(tickLen*1.05)/zoomScale)*Math.sin(radian);
             String anchor = "start";
             if (i < 45) {
                 anchor = "middle";
@@ -574,7 +680,8 @@ public class TauP_Path extends TauP_Pierce {
 			out.println("  <circle class=\"discontinuity"+name+"\" cx=\"0.0\" cy=\"0.0\" r=\"" + (R- branchDepths[i])+"\" />");
 	    }
 		out.println("  </g>");
-	    out.println("<!-- draw paths, coordinates are x,y not degree,radius due to SVG using only cartesian -->");
+
+		out.println("<!-- draw paths, coordinates are x,y not degree,radius due to SVG using only cartesian -->");
 	}
 
     public void printScriptBeginning(PrintWriter out, String psFile)  throws IOException {

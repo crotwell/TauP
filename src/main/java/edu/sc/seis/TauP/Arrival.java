@@ -405,7 +405,18 @@ public class Arrival {
     }
 
 
-    /** returns receiver (station) depth in kilometers */
+    /** returns shallowest point on path, in kilometers */
+    public TimeDist getShallowestPierce() {
+        TimeDist[] pierce = getPierce();
+        TimeDist shallowest = pierce[0];
+        for (TimeDist td : pierce) {
+            if (td.getDepth() < shallowest.getDepth()) {
+                shallowest = td;
+            }
+        }
+        return shallowest;
+    }
+    /** returns deepest point on path, in kilometers */
     public TimeDist getDeepestPierce() {
         TimeDist[] pierce = getPierce();
         TimeDist deepest = pierce[0];
