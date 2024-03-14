@@ -16,7 +16,7 @@
  -->
 <defs>
     <style type="text/css"><![CDATA[
-        text.label {            font: bold ;            font-size: 382px;            fill: black;        }        g.phasename text {            font: bold ;            font-size: 382px;            fill: black;        }
+        text.label {            font: bold ;            font-size: 109px;            fill: black;        }        g.phasename text {            font: bold ;            font-size: 109px;            fill: black;        }
 text.title {
     text-anchor: middle;
     dominant-baseline: auto;
@@ -236,33 +236,35 @@ circle.discontinuity.iocb {
 
 <g transform="scale(0.02825302,0.02825302)" >
 <g transform="translate(7645.2,7645.2)" >
+<g transform="scale(3.4868937,3.4868937)" >
+<g transform="translate(-1827.1277,5633.843)" >
 <g class="ticks">
 <!-- draw surface and label distances.-->
-<!-- tick marks every 30 degrees.-->
-  <polyline  class="tick"  points="    0.00  -6371.00,     0.00  -6689.55" />
-  <text dominant-baseline="baseline" text-anchor="middle" class="label" x="0.00" y="-6721.41">0</text>
-  <polyline  class="tick"  points=" 3185.50  -5517.45,  3344.78  -5793.32" />
-  <text dominant-baseline="baseline" text-anchor="middle" class="label" x="3360.70" y="-5820.91">30</text>
-  <polyline  class="tick"  points=" 5517.45  -3185.50,  5793.32  -3344.77" />
-  <text dominant-baseline="middle" text-anchor="start" class="label" x="5820.91" y="-3360.70">60</text>
-  <polyline  class="tick"  points=" 6371.00      0.00,  6689.55      0.00" />
-  <text dominant-baseline="middle" text-anchor="start" class="label" x="6721.41" y="0.00">90</text>
-  <polyline  class="tick"  points=" 5517.45   3185.50,  5793.32   3344.77" />
-  <text dominant-baseline="middle" text-anchor="start" class="label" x="5820.91" y="3360.70">120</text>
-  <polyline  class="tick"  points=" 3185.50   5517.45,  3344.78   5793.32" />
-  <text dominant-baseline="hanging" text-anchor="middle" class="label" x="3360.70" y="5820.91">150</text>
-  <polyline  class="tick"  points="    0.00   6371.00,     0.00   6689.55" />
-  <text dominant-baseline="hanging" text-anchor="middle" class="label" x="0.00" y="6721.41">180</text>
-  <polyline  class="tick"  points="-3185.50   5517.45, -3344.77   5793.32" />
-  <text dominant-baseline="hanging" text-anchor="middle" class="label" x="-3360.70" y="5820.91">210</text>
-  <polyline  class="tick"  points="-5517.45   3185.50, -5793.32   3344.77" />
-  <text dominant-baseline="middle" text-anchor="end" class="label" x="-5820.91" y="3360.70">240</text>
-  <polyline  class="tick"  points="-6371.00      0.00, -6689.55      0.00" />
-  <text dominant-baseline="middle" text-anchor="end" class="label" x="-6721.41" y="0.00">270</text>
-  <polyline  class="tick"  points="-5517.45  -3185.50, -5793.32  -3344.78" />
-  <text dominant-baseline="baseline" text-anchor="end" class="label" x="-5820.91" y="-3360.70">300</text>
-  <polyline  class="tick"  points="-3185.50  -5517.45, -3344.78  -5793.32" />
-  <text dominant-baseline="baseline" text-anchor="end" class="label" x="-3360.70" y="-5820.91">330</text>
+<!-- tick marks every 5.0 degrees to 60.0.-->
+  <polyline  class="tick"  points="    0.00  -6371.00,     0.00  -6462.36" />
+  <text dominant-baseline="baseline" text-anchor="middle" class="label" x="0.00" y="-6466.92">0.0</text>
+  <polyline  class="tick"  points="  555.27  -6346.76,   563.23  -6437.77" />
+  <text dominant-baseline="baseline" text-anchor="middle" class="label" x="563.63" y="-6442.32">5.0</text>
+  <polyline  class="tick"  points=" 1106.31  -6274.21,  1122.18  -6364.18" />
+  <text dominant-baseline="baseline" text-anchor="middle" class="label" x="1122.97" y="-6368.68">10.0</text>
+  <polyline  class="tick"  points=" 1648.94  -6153.91,  1672.58  -6242.16" />
+  <text dominant-baseline="baseline" text-anchor="middle" class="label" x="1673.76" y="-6246.57">15.0</text>
+  <polyline  class="tick"  points=" 2179.01  -5986.78,  2210.26  -6072.63" />
+  <text dominant-baseline="baseline" text-anchor="middle" class="label" x="2211.82" y="-6076.92">20.0</text>
+  <polyline  class="tick"  points=" 2692.50  -5774.09,  2731.11  -5856.88" />
+  <text dominant-baseline="baseline" text-anchor="middle" class="label" x="2733.04" y="-5861.02">25.0</text>
+  <polyline  class="tick"  points=" 3185.50  -5517.45,  3231.18  -5596.56" />
+  <text dominant-baseline="baseline" text-anchor="middle" class="label" x="3233.46" y="-5600.52">30.0</text>
+  <polyline  class="tick"  points=" 3654.26  -5218.82,  3706.66  -5293.65" />
+  <text dominant-baseline="baseline" text-anchor="middle" class="label" x="3709.28" y="-5297.39">35.0</text>
+  <polyline  class="tick"  points=" 4095.20  -4880.47,  4153.92  -4950.45" />
+  <text dominant-baseline="baseline" text-anchor="middle" class="label" x="4156.86" y="-4953.95">40.0</text>
+  <polyline  class="tick"  points=" 4504.98  -4504.98,  4569.58  -4569.58" />
+  <text dominant-baseline="baseline" text-anchor="start" class="label" x="4572.81" y="-4572.81">45.0</text>
+  <polyline  class="tick"  points=" 4880.47  -4095.20,  4950.45  -4153.92" />
+  <text dominant-baseline="baseline" text-anchor="start" class="label" x="4953.95" y="-4156.86">50.0</text>
+  <polyline  class="tick"  points=" 5218.82  -3654.26,  5293.65  -3706.66" />
+  <text dominant-baseline="baseline" text-anchor="start" class="label" x="5297.39" y="-3709.28">55.0</text>
   </g>
 <g class="layers">
   <circle class="discontinuity surface" cx="0.0" cy="0.0" r="6371.0" />
@@ -501,6 +503,8 @@ circle.discontinuity.iocb {
     <g class="phasename">
       <text class="P" x=" 2105.38" y="-5150.04">P</text>
     </g> <!-- end labels -->
+  </g> 
+  </g> <!-- end zoom -->
   </g> <!-- end translate -->
   </g> 
 </svg>
