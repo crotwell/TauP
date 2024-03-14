@@ -70,7 +70,8 @@ public class CmdLineOutputTest {
     String[] curveTestCmds = new String[] {
             "taup curve -o stdout -h 10 -ph P -mod prem",
             "taup curve -o stdout -h 10 -ph P",
-            "taup curve -o stdout -h 10 -ph P -mod ak135"
+            "taup curve -o stdout -h 10 -ph P -mod ak135",
+            "taup curve -o stdout -h 10 -ph P -mod ak135 --redkm 8"
             // curve labels are random position in --svg, so diff breaks
             // "taup curve -o stdout -h 10 -ph P --svg",
     };
