@@ -26,6 +26,24 @@ public class ScatteredSeismicPhase implements SeismicPhase {
         this.backscatter = backscatter;
     }
 
+    /**
+     * Gets the arrival inbound to the scatterer from the source. This part of the phase path is the same for all
+     * arrivals for the scattered phase.
+     * @return
+     */
+    public Arrival getInboundArrival() {
+        return inboundArrival;
+    }
+
+    /**
+     * Gets the simple phase from the scatterer to the receiver, equivalent to setting a source at the scatterer
+     * location.
+     * @return
+     */
+    public SimpleSeismicPhase getScatteredPhase() {
+        return scatteredPhase;
+    }
+
     public double getScattererDepth() {
         return scattererDepth;
     }

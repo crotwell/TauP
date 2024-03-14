@@ -22,6 +22,7 @@ import java.io.OptionalDataException;
 import java.io.PrintWriter;
 import java.io.StreamCorruptedException;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -346,11 +347,42 @@ public class TauP_Path extends TauP_Pierce {
 			}
 
 			TimeDist prevEnd = null;
-			for (SeismicPhaseSegment seg : currArrival.getPhase().getPhaseSegments()) {
-				String p_or_s = seg.isPWave ? "pwave" : "swave";
-				out.println("  <g class=\""+seg.legName+"\">");
+			List<List<TimeDist>> segTimeDist = new ArrayList<>();
+			List<Boolean> p_or_sList = new ArrayList<>();
+			List<String> legNameList = new ArrayList<>();
+			if (currArrival.getPhase() instanceof ScatteredSeismicPhase) {
+				Arrival scatArrival = ((ScatteredSeismicPhase)currArrival.getPhase()).getInboundArrival();
+				for (SeismicPhaseSegment seg : scatArrival.getPhase().getPhaseSegments()) {
+					List<TimeDist> segPath = seg.calcPathTimeDist(scatArrival, prevEnd);
+					segTimeDist.add(segPath);
+					p_or_sList.add(seg.isPWave);
+					legNameList.add(seg.legName);
+					prevEnd = segPath.get(segPath.size()-1);
+				}
+				SimpleSeismicPhase scatPhase = ((ScatteredSeismicPhase)currArrival.getPhase()).getScatteredPhase();
+				for (SeismicPhaseSegment seg : scatPhase.getPhaseSegments()) {
+					List<TimeDist> segPath = seg.calcPathTimeDist(currArrival, prevEnd);
+					segTimeDist.add(segPath);
+					p_or_sList.add(seg.isPWave);
+					legNameList.add(seg.legName);
+					prevEnd = segPath.get(segPath.size()-1);
+				}
+			} else {
+				for (SeismicPhaseSegment seg : currArrival.getPhase().getPhaseSegments()) {
+					List<TimeDist> segPath = seg.calcPathTimeDist(currArrival, prevEnd);
+					segTimeDist.add(segPath);
+					p_or_sList.add(seg.isPWave);
+					legNameList.add(seg.legName);
+					prevEnd = segPath.get(segPath.size()-1);
+				}
+			}
+			prevEnd = null;
+			for (int j = 0; j < segTimeDist.size(); j++) {
+				String p_or_s = p_or_sList.get(j) ? "pwave" : "swave";
+				List<TimeDist> segPath = segTimeDist.get(j);
+				String legName = legNameList.get(j);
+				out.println("  <g class=\""+legName+"\">");
 				out.println("  <polyline class=\""+p_or_s+"\" points=\"");
-				List<TimeDist> segPath = seg.calcPathTimeDist(currArrival, prevEnd);
 				for (TimeDist td : segPath) {
 					if (prevEnd != null && (currArrival.getRayParam() != 0.0 &&
 							Math.abs(prevEnd.getDistDeg() - td.getDistDeg()) > maxPathInc)) {
