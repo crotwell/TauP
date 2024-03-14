@@ -11,3 +11,6 @@ testing
 tmp
 /cmdLineTest/
 .idea
+src/test/resources/edu/sc/seis/TauP/cmdLineTest/refltranCompare/*.svg
+src/test/resources/edu/sc/seis/TauP/cmdLineTest/refltranCompare/index.html
+
