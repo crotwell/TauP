@@ -9,50 +9,50 @@ import edu.sc.seis.seisFile.fdsnws.stationxml.Station;
 public class DistAz {
 
     /**
-     c getDelta() => Great Circle Arc distance in degrees
-     c getAz()    => Azimuth from channel to event in degrees
-     c getBaz()   => Back Azimuth from event to channel in degrees
+     c getDelta()  Great Circle Arc distance in degrees
+     c getAz()     Azimuth from channel to event in degrees
+     c getBaz()    Back Azimuth from event to channel in degrees
      */
     public DistAz(Channel chan, Event ev){
         this(chan, ev.getPreferredOrigin());
     }
 
     /**
-     c getDelta() => Great Circle Arc distance in degrees
-     c getAz()    => Azimuth from channel to origin in degrees
-     c getBaz()   => Back Azimuth from origin to channel in degrees
+     c getDelta()  Great Circle Arc distance in degrees
+     c getAz()     Azimuth from channel to origin in degrees
+     c getBaz()    Back Azimuth from origin to channel in degrees
      */
     public DistAz(Channel chan, Origin origin){
         this(chan.asLocation(), origin.asLocation());
     }
 
     /**
-     c getDelta() => Great Circle Arc distance in degrees
-     c getAz()    => Azimuth from channel to origin in degrees
-     c getBaz()   => Back Azimuth from origin to channel in degrees
+     c getDelta()  Great Circle Arc distance in degrees
+     c getAz()     Azimuth from channel to origin in degrees
+     c getBaz()    Back Azimuth from origin to channel in degrees
      */
     public DistAz(Channel chan, Location eventLoc){
         this(chan.asLocation(), eventLoc);
     }
 
     /**
-     c getDelta() => Great Circle Arc distance in degrees
-     c getAz()    => Azimuth from loc1 to loc2 in degrees
-     c getBaz()   => Back Azimuth from loc2 to loc1 in degrees
+     c getDelta()  Great Circle Arc distance in degrees
+     c getAz()     Azimuth from loc1 to loc2 in degrees
+     c getBaz()    Back Azimuth from loc2 to loc1 in degrees
      */
     public DistAz(Location loc1, Location loc2){
         this(loc1.getLatitude(), loc1.getLongitude(), loc2.getLatitude(), loc2.getLongitude());
     }
 
     /**
-     c lat1 => Latitude of first point (+N, -S) in degrees
-     c lon1 => Longitude of first point (+E, -W) in degrees
-     c lat2 => Latitude of second point
-     c lon2 => Longitude of second point
+     c lat1  Latitude of first point (+N, -S) in degrees
+     c lon1  Longitude of first point (+E, -W) in degrees
+     c lat2  Latitude of second point
+     c lon2  Longitude of second point
      c
-     c getDelta() => Great Circle Arc distance in degrees
-     c getAz()    => Azimuth from pt. 1 to pt. 2 in degrees
-     c getBaz()   => Back Azimuth from pt. 2 to pt. 1 in degrees
+     c getDelta()  Great Circle Arc distance in degrees
+     c getAz()     Azimuth from pt. 1 to pt. 2 in degrees
+     c getBaz()    Back Azimuth from pt. 2 to pt. 1 in degrees
      */
     public DistAz(double lat1, double lon1, double lat2, double lon2){
         this.stalat = lat1;
