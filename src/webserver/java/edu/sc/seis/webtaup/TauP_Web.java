@@ -241,6 +241,9 @@ public class TauP_Web extends TauP_Tool {
     }
 
     public TauP_Tool createTool(String toolToRun) throws TauPException {
+        if (toolToRun.startsWith("/")) {
+            toolToRun = toolToRun.substring(1);
+        }
         TauP_Tool tool = ToolRun.getToolForName(toolToRun);
         // special cases:
         if (tool == null) {
