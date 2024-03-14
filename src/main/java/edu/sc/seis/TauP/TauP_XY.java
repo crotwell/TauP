@@ -192,6 +192,24 @@ public class TauP_XY extends TauP_AbstractTimeTool {
         return outMap;
     }
 
+    public static final String[] axisTypes = new String[] {
+            "radian",
+            "radian_pi",
+            "degree",
+            "degree_180",
+            "rayparam",
+            "time",
+            "tau",
+            "turndepth",
+            "amp",
+            "amppsv",
+            "ampsh",
+            "geospread",
+            "refltran",
+            "refltranpsv",
+            "refltransh",
+            "index"
+    };
     public List<double[]> calculatePlotForType(SeismicPhase phase, String axisType, boolean ensure180) throws VelocityModelException, SlownessModelException, TauModelException {
         double[] out = new double[0];
         if (axisType.equalsIgnoreCase("radian") || axisType.equalsIgnoreCase("radian_pi")) {
@@ -257,7 +275,11 @@ public class TauP_XY extends TauP_AbstractTimeTool {
                 }
             }
             out = amp;
-
+        } else if (axisType.equalsIgnoreCase("index")) {
+            out = new double[phase.getRayParams().length+1];
+            for (int i = phase.getMinRayParamIndex(); i <= phase.getMaxRayParamIndex(); i++) {
+                out[i-phase.getMinRayParamIndex()] = i;
+            }
         } else {
             throw new IllegalArgumentException("Unknown axisType: "+axisType);
         }
@@ -459,11 +481,40 @@ public class TauP_XY extends TauP_AbstractTimeTool {
 
     }
 
-    @Override
-    public String getUsage() {
-        return null;
+    public String getStdUsage() {
+        String className = this.getClass().getName();
+        className = className.substring(className.lastIndexOf('.') + 1,
+                className.length());
+        return "Usage: " + className.toLowerCase() + " [arguments]\n"
+                +"  or, for purists, java "
+                + this.getClass().getName() + " [arguments]\n"
+                +"\nArguments are:\n"
+                +"-ph phase list     -- comma separated phase list\n"
+                + "-pf phasefile      -- file containing phases\n\n"
+                + "-mod[el] modelname -- use velocity model \"modelname\" for calculations\n"
+                + "                      Default is iasp91.\n\n"
+                + "-h depth           -- source depth in km\n\n\n";
     }
 
+    public String getUsage() {
+        return getStdUsage()
+                +"-x type            -- x axis value, one of "+String.join(", ", getAxisTypes())+".\n"
+                +"-xlog              -- x axis is log.\n"
+                +"-y type            -- y axis value, same items as -x.\n"
+                +"-ylog              -- y axis is log.\n"
+                +"--gmt              -- outputs curves as a complete GMT script.\n"
+                +"--svg              -- outputs curves as a SVG image.\n"
+                +"-reddeg velocity   -- outputs curves with a reducing velocity (deg/sec).\n"
+                +"-redkm velocity    -- outputs curves with a reducing velocity (km/sec).\n"
+                +"-rel phasename     -- outputs relative travel time\n"
+                +"--distancevertical -- distance on vertical axis, time horizontal\n"
+                +"--mapwidth width   -- sets map width for GMT script.\n"
+                +getStdUsageTail();
+    }
+
+    public String[] getAxisTypes() {
+        return axisTypes;
+    }
     @Override
     public void validateArguments() throws TauModelException {
 
