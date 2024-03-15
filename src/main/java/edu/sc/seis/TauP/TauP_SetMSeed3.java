@@ -77,7 +77,7 @@ public class TauP_SetMSeed3 extends TauP_Time {
 
 
         MSeed3EH eh = new MSeed3EH(dr3.getExtraHeaders());
-        Channel chan = findChannelBySID(dr3.getSourceId(), dr3.getStartInstant());
+        Channel chan = FDSNStationXML.findChannelBySID(networks, dr3.getSourceId(), dr3.getStartInstant());
         if (chan != null) {
             staLoc = chan.asLocation();
         } else {
@@ -272,25 +272,6 @@ public class TauP_SetMSeed3 extends TauP_Time {
         } else {
             return new String[0];
         }
-    }
-
-    Channel findChannelBySID(FDSNSourceId sid, Instant time) {
-        for(Network n : networks.keySet()) {
-            if (n.getNetworkCode().equals(sid.getNetworkCode())) {
-                for (Station s : networks.get(n)) {
-                    if (s.getStationCode().equals(sid.getStationCode())) {
-                        for (Channel c : s.getChannelList()) {
-                            if (c.getLocCode().equals(sid.getLocationCode()) && c.getChannelCode().equals(sid.getChannelCode())) {
-                                if (c.getStartDateTime().isBefore(time) && (c.getEndDateTime() == null || c.getEndDateTime().isAfter(time))) {
-                                    return c;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return null;
     }
 
     Event findQuakeInTime(Instant time, Duration tol) {
