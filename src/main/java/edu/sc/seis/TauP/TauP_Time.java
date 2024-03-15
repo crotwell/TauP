@@ -143,7 +143,7 @@ public class TauP_Time extends TauP_AbstractTimeTool {
     }
 
     public Arrival getArrival(int i) {
-        return (Arrival)arrivals.get(i);
+        return arrivals.get(i);
     }
 
     public List<Arrival> getArrivals() {
@@ -218,7 +218,7 @@ public class TauP_Time extends TauP_AbstractTimeTool {
                     takeoffAngle = Double.valueOf(args[i + 1]).doubleValue();
                     i++;
                 } else if(dashEquals("shootray", args[i])) {
-                    shootRayp = Double.valueOf(args[i + 1]).doubleValue();
+                    shootRayp = Double.valueOf(args[i + 1]);
                     i++;
                 } else if(dashEquals("rel", args[i])) {
                     relativePhaseName = args[i + 1];
@@ -226,12 +226,12 @@ public class TauP_Time extends TauP_AbstractTimeTool {
                 } else if(i < args.length - 2) {
                     if(dashEquals("sta", args[i])
                             || dashEquals("station", args[i])) {
-                        setStationLatLon(Double.valueOf(args[i + 1]).doubleValue(),
-                                         Double.valueOf(args[i + 2]).doubleValue());
+                        setStationLatLon(Double.valueOf(args[i + 1]),
+                                Double.valueOf(args[i + 2]));
                         i += 2;
                     } else if(dashEquals("evt", args[i])
                             || dashEquals("event", args[i])) {
-                        setEventLatLon( Double.valueOf(args[i + 1]).doubleValue(),
+                        setEventLatLon(Double.valueOf(args[i + 1]),
                                         Double.valueOf(args[i + 2]).doubleValue());
                         i += 2;
                     } else {
@@ -283,7 +283,7 @@ public class TauP_Time extends TauP_AbstractTimeTool {
     }
 
     public List<Arrival> calculate(double degrees) throws TauPException {
-        List<Double> dList = Arrays.asList(new Double[] {degrees});
+        List<Double> dList = Arrays.asList(degrees);
         return calculate(dList);
     }
 
@@ -322,7 +322,7 @@ public class TauP_Time extends TauP_AbstractTimeTool {
                             this.getReceiverDepth(),
                             this.getScattererDepth(),
                             this.getScattererDistDeg(),
-                            this.DEBUG);
+                            DEBUG);
                     relPhases.addAll(calcRelPhaseList);
                 } catch (ScatterArrivalFailException e) {
                     Alert.warning(e.getMessage(),
@@ -358,7 +358,7 @@ public class TauP_Time extends TauP_AbstractTimeTool {
     }
 
     public List<Arrival> calcTime(double degrees) throws TauModelException {
-        List<Double> dList = Arrays.asList(new Double[] {degrees});
+        List<Double> dList = Arrays.asList(degrees);
         return calcTime(dList);
     }
 
@@ -393,7 +393,7 @@ public class TauP_Time extends TauP_AbstractTimeTool {
 
 
     public List<Arrival> calcTakeoff(double takeoffAngle) throws TauModelException {
-        List<Double> dList = Arrays.asList(new Double[] {takeoffAngle});
+        List<Double> dList = Arrays.asList(takeoffAngle);
         return calcTakeoff(dList);
     }
 
@@ -429,7 +429,7 @@ public class TauP_Time extends TauP_AbstractTimeTool {
         return this.arrivals;    }
 
     public List<Arrival> calcRayParameter(double rayparameter) throws TauModelException {
-        List<Double> dList = Arrays.asList(new Double[] {rayparameter});
+        List<Double> dList = Arrays.asList(rayparameter);
         return calcRayParameter(dList);
     }
 
@@ -493,12 +493,12 @@ public class TauP_Time extends TauP_AbstractTimeTool {
         int maxNameLength = 5;
         int maxPuristNameLength = 5;
         for(int j = 0; j < arrivals.size(); j++) {
-            if(((Arrival)arrivals.get(j)).getName().length() > maxNameLength) {
-                maxNameLength = ((Arrival)arrivals.get(j)).getName()
+            if(arrivals.get(j).getName().length() > maxNameLength) {
+                maxNameLength = arrivals.get(j).getName()
                         .length();
             }
-            if(((Arrival)arrivals.get(j)).getPuristName().length() > maxPuristNameLength) {
-                maxPuristNameLength = ((Arrival)arrivals.get(j)).getPuristName()
+            if(arrivals.get(j).getPuristName().length() > maxPuristNameLength) {
+                maxPuristNameLength = arrivals.get(j).getPuristName()
                         .length();
             }
         }
@@ -533,7 +533,7 @@ public class TauP_Time extends TauP_AbstractTimeTool {
             }
             out.write("\n");
             for(int j = 0; j < arrivals.size(); j++) {
-                currArrival = (Arrival)arrivals.get(j);
+                currArrival = arrivals.get(j);
                 out.print(Outputs.formatDistance(currArrival.getSearchDistDeg()));
                 out.print(Outputs.formatDepth(depth) + "   ");
                 out.print(String.format(phaseFormat, currArrival.getName()));
@@ -571,14 +571,14 @@ public class TauP_Time extends TauP_AbstractTimeTool {
             }
         } else if(onlyPrintTime) {
             for(int j = 0; j < arrivals.size(); j++) {
-                currArrival = (Arrival)arrivals.get(j);
-                out.print(String.valueOf((float)(currArrival.getTime())) + " ");
+                currArrival = arrivals.get(j);
+                out.print((float) (currArrival.getTime()) + " ");
             }
             out.println();
         } else if(onlyPrintRayP) {
             for(int j = 0; j < arrivals.size(); j++) {
-                currArrival = (Arrival)arrivals.get(j);
-                out.write(String.valueOf((float)(Math.PI / 180.0 * currArrival.getRayParam()))
+                currArrival = arrivals.get(j);
+                out.write((float) (Math.PI / 180.0 * currArrival.getRayParam())
                         + " ");
             }
             out.println();
@@ -635,7 +635,7 @@ public class TauP_Time extends TauP_AbstractTimeTool {
             try {
                 arrival.writeJSON(pw, innerIndent + "  ");
             } catch (JSONException e) {
-                System.err.println("Erro in json: "+arrival.toString());
+                System.err.println("Erro in json: "+ arrival);
                 throw e;
             }
         }
@@ -653,7 +653,7 @@ public class TauP_Time extends TauP_AbstractTimeTool {
         JSONArray outArrivals = new JSONArray();
         out.put("arrivals", outArrivals);
         for(int j = 0; j < arrivals.size(); j++) {
-            Arrival currArrival = (Arrival)arrivals.get(j);
+            Arrival currArrival = arrivals.get(j);
             outArrivals.put(currArrival.asJSONObject());
         }
         return out;
@@ -694,7 +694,7 @@ public class TauP_Time extends TauP_AbstractTimeTool {
         out.println(" ]"+COMMA);
         out.println(SQ+"arrivals"+Q+": [");
         for(int j = 0; j < arrivals.size(); j++) {
-            Arrival currArrival = (Arrival)arrivals.get(j);
+            Arrival currArrival = arrivals.get(j);
             out.print(currArrival.asJSONObject().toString(2));
             //out.print(currArrival.asJSON(true, SS, withPierce, withPath));
             if (j != arrivals.size()-1) {
@@ -730,7 +730,7 @@ public class TauP_Time extends TauP_AbstractTimeTool {
                 + "m for new model or \nq to quit.\n");
     }
 
-    public void start() throws IOException, TauModelException, TauPException {
+    public void start() throws IOException, TauPException {
         if((degreesList.size() != 0 || takeoffAngle != Double.MAX_VALUE
                 || shootRayp != Double.MAX_VALUE
                 || (stationLat != Double.MAX_VALUE
@@ -1155,11 +1155,10 @@ public class TauP_Time extends TauP_AbstractTimeTool {
     }
 
     public String getUsage() {
-        StringBuffer buf = new StringBuffer();
-        buf.append(getStdUsage());
-        buf.append(getLimitUsage());
-        buf.append(getStdUsageTail());
-        return buf.toString();
+        String buf = getStdUsage() +
+                getLimitUsage() +
+                getStdUsageTail();
+        return buf;
     }
 
     /**
