@@ -68,6 +68,8 @@ public class TauP_Time extends TauP_AbstractTimeTool {
 
     protected boolean onlyFirst = false;
 
+    protected boolean withAmplitude = false;
+
     protected String relativePhaseName = "";
 
     public TauP_Time() {
@@ -200,6 +202,8 @@ public class TauP_Time extends TauP_AbstractTimeTool {
                 onlyPrintRayP = false;
             } else if(dashEquals("first", args[i])) {
                 onlyFirst = true;
+            } else if(dashEquals("amp", args[i])) {
+                withAmplitude = true;
             } else if(i < args.length - 1) {
                 if(dashEquals("deg", args[i])) {
                     degreesList = parseDegreeList(args[i+1]);
@@ -516,9 +520,13 @@ public class TauP_Time extends TauP_AbstractTimeTool {
             }
             out.println(modelLine);
             String lineOne = "Distance   Depth   " + String.format(phaseFormat, "Phase")
-                    + "   Travel    Ray Param  Takeoff  Incident  Purist   "+String.format(phasePuristFormat, "Purist")+"    Amp   ";
+                    + "   Travel    Ray Param  Takeoff  Incident  Purist   "+String.format(phasePuristFormat, "Purist");
             String lineTwo = "  (deg)     (km)   " + String.format(phaseFormat, "Name ")
-                    + "   Time (s)  p (s/deg)   (deg)    (deg)   Distance   "+String.format(phasePuristFormat, "Name") +"  Factor";
+                    + "   Time (s)  p (s/deg)   (deg)    (deg)   Distance   "+String.format(phasePuristFormat, "Name");
+            if (withAmplitude) {
+                lineOne += "    Amp   ";
+                lineTwo += "  Factor";
+            }
             if (relativePhaseName != "") {
                 lineOne += " Relative to";
                 for (int s=0; s<(11-relativePhaseName.length())/2;s++) {
@@ -550,12 +558,14 @@ public class TauP_Time extends TauP_AbstractTimeTool {
                     out.print("   * ");
                 }
                 out.print(String.format(phasePuristFormat, currArrival.getPuristName()));
-                try {
-                    double ampFactorPSV = currArrival.getAmplitudeFactorPSV();
-                    double ampFactorSH = currArrival.getAmplitudeFactorSH();
-                    out.print(" " + Outputs.formatAmpFactor(ampFactorPSV)+","+Outputs.formatAmpFactor(ampFactorSH));
-                } catch (SlownessModelException | TauModelException | VelocityModelException e) {
-                    throw new RuntimeException("SHould not happen", e);
+                if (withAmplitude) {
+                    try {
+                        double ampFactorPSV = currArrival.getAmplitudeFactorPSV();
+                        double ampFactorSH = currArrival.getAmplitudeFactorSH();
+                        out.print(" " + Outputs.formatAmpFactor(ampFactorPSV) + "," + Outputs.formatAmpFactor(ampFactorSH));
+                    } catch (SlownessModelException | TauModelException | VelocityModelException e) {
+                        throw new RuntimeException("SHould not happen", e);
+                    }
                 }
 
                 if (relativePhaseName != "") {
