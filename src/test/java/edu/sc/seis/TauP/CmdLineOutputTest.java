@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import org.json.JSONObject;
+import org.json.JSONTokener;
 import org.junit.jupiter.api.Test;
 
 import java.io.BufferedOutputStream;
@@ -112,6 +114,10 @@ public class CmdLineOutputTest {
                                           "taup wkbj --help",
     };
 
+    String[] jsonTestCmds = new String[] {
+            "taup time -h 10 -ph P -deg 35 --json",
+    };
+
     String versionCmd = "taup --version";
 
     String[] docCmds = new String[] {
@@ -144,6 +150,7 @@ public class CmdLineOutputTest {
         allList.addAll(Arrays.asList(velplotTestCmds));
         allList.addAll(Arrays.asList(reflTransPlotTestCmds));
         allList.addAll(Arrays.asList(phaseDescribeTestCmds));
+        allList.addAll(Arrays.asList(jsonTestCmds));
         for (String cmd : allList) {
             System.err.println(cmd);
             saveTestOutputToFile(cmd);
@@ -318,6 +325,11 @@ public class CmdLineOutputTest {
         runTests(reflTransPlotTestCmds);
     }
 
+
+    @Test
+    public void testTauPJSON() throws Exception {
+        runJsonTests(jsonTestCmds);
+    }
     @Test
     public void testTauPTable() throws Exception {
         // this one takes a lot of memory
@@ -327,6 +339,12 @@ public class CmdLineOutputTest {
     public void runTests(String[] cmds) throws Exception {
         for (int i = 0; i < cmds.length; i++) {
             testCmd(cmds[i]);
+        }
+    }
+
+    public void runJsonTests(String[] cmds) throws Exception {
+        for (int i = 0; i < cmds.length; i++) {
+            testJsonCmd(cmds[i]);
         }
     }
 
@@ -369,6 +387,19 @@ public class CmdLineOutputTest {
         }
         cleanUpStreams();
         origErr.println("Done with " + cmd);
+    }
+
+    public void testJsonCmd(String cmd) throws Exception {
+        setUpStreams();
+        assertEquals(0, outContent.toByteArray().length, "sysout is not empty");
+        runCmd(cmd);
+        BufferedReader prior = getPriorOutput(cmd);
+        BufferedReader current = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(outContent.toByteArray())));
+        JSONTokener jsonIn = new JSONTokener(prior);
+        JSONObject priorJson = new JSONObject(jsonIn);
+        JSONTokener currentIn = new JSONTokener(current);
+        JSONObject currentJson = new JSONObject(currentIn);
+        assertTrue(priorJson.similar(currentJson), currentJson.toString(2));
     }
 
     /**

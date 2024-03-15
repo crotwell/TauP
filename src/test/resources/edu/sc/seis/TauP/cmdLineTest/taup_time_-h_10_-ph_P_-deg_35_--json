@@ -1,0 +1,25 @@
+{
+  "model": "iasp91",
+  "sourcedepth": 10,
+  "receiverdepth": 0,
+  "phases": [ "P" ],
+  "arrivals": [
+    {
+      "distdeg": 35,
+      "phase": "P",
+      "time": 412.4329,
+      "rayparam": 8.613012,
+      "takeoff": 26.741543,
+      "incident": 26.69624,
+      "puristdist": 35,
+      "puristname": "P",
+      "amp": {
+        "factorpsv": 2.0197284E-9,
+        "factorsh": 0,
+        "geospread": 8.546455E-9,
+        "refltranpsv": 0.9386537, 
+        "refltransh": 0
+      }
+    }
+  ]
+}

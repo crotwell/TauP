@@ -614,7 +614,7 @@ public class Arrival {
             } else {
                 pw.write(innerIndent+"  "+JSONWriter.valueToString("error")+": "+JSONWriter.valueToString("geometrical speading not finite")+","+NL);
             }
-            pw.write(innerIndent+"  "+JSONWriter.valueToString("refltranpsv")+": "+JSONWriter.valueToString((float)getReflTransPSV())+NL);
+            pw.write(innerIndent+"  "+JSONWriter.valueToString("refltranpsv")+": "+JSONWriter.valueToString((float)getReflTransPSV())+", "+NL);
             pw.write(innerIndent+"  "+JSONWriter.valueToString("refltransh")+": "+JSONWriter.valueToString((float)getReflTransSH())+NL);
             pw.write(innerIndent+"}");
         } catch (TauPException e) {
