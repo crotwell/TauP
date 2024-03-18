@@ -337,6 +337,7 @@ public class TauP_Path extends TauP_Pierce {
 			out.println("<!-- "+getCommentLine(currArrival));
 			out.println(" -->");
 			out.println("<g class=\""+currArrival.getName()+"\">");
+			out.println("<desc>"+currArrival+"</desc>");
 
 			double calcTime = 0.0;
 			double calcDist = 0.0;
@@ -348,40 +349,42 @@ public class TauP_Path extends TauP_Pierce {
 
 			TimeDist prevEnd = null;
 			List<List<TimeDist>> segTimeDist = new ArrayList<>();
-			List<Boolean> p_or_sList = new ArrayList<>();
+			List<SeismicPhaseSegment> segmentList = new ArrayList<>();
 			List<String> legNameList = new ArrayList<>();
 			if (currArrival.getPhase() instanceof ScatteredSeismicPhase) {
 				Arrival scatArrival = ((ScatteredSeismicPhase)currArrival.getPhase()).getInboundArrival();
 				for (SeismicPhaseSegment seg : scatArrival.getPhase().getPhaseSegments()) {
+					segmentList.add(seg);
 					List<TimeDist> segPath = seg.calcPathTimeDist(scatArrival, prevEnd);
 					segTimeDist.add(segPath);
-					p_or_sList.add(seg.isPWave);
 					legNameList.add(seg.legName);
 					prevEnd = segPath.get(segPath.size()-1);
 				}
 				SimpleSeismicPhase scatPhase = ((ScatteredSeismicPhase)currArrival.getPhase()).getScatteredPhase();
 				for (SeismicPhaseSegment seg : scatPhase.getPhaseSegments()) {
+					segmentList.add(seg);
 					List<TimeDist> segPath = seg.calcPathTimeDist(currArrival, prevEnd);
 					segTimeDist.add(segPath);
-					p_or_sList.add(seg.isPWave);
 					legNameList.add(seg.legName);
 					prevEnd = segPath.get(segPath.size()-1);
 				}
 			} else {
 				for (SeismicPhaseSegment seg : currArrival.getPhase().getPhaseSegments()) {
+					segmentList.add(seg);
 					List<TimeDist> segPath = seg.calcPathTimeDist(currArrival, prevEnd);
 					segTimeDist.add(segPath);
-					p_or_sList.add(seg.isPWave);
 					legNameList.add(seg.legName);
 					prevEnd = segPath.get(segPath.size()-1);
 				}
 			}
 			prevEnd = null;
 			for (int j = 0; j < segTimeDist.size(); j++) {
-				String p_or_s = p_or_sList.get(j) ? "pwave" : "swave";
+				SeismicPhaseSegment seg = segmentList.get(j);
+				String p_or_s = seg.isPWave ? "pwave" : "swave";
 				List<TimeDist> segPath = segTimeDist.get(j);
 				String legName = legNameList.get(j);
 				out.println("  <g class=\""+legName+"\">");
+				out.println("  <desc>"+legName+", segment "+(j+1)+" of "+segTimeDist.size()+" then "+seg.endAction.name()+"</desc>");
 				out.println("  <polyline class=\""+p_or_s+"\" points=\"");
 				for (TimeDist td : segPath) {
 					if (prevEnd != null && (currArrival.getRayParam() != 0.0 &&
@@ -615,16 +618,16 @@ public class TauP_Path extends TauP_Pierce {
 		}
 
 		StringBuffer extrtaCSS = new StringBuffer();
-		extrtaCSS.append("        text.label {");
-		extrtaCSS.append("            font: bold ;");
-		extrtaCSS.append("            font-size: "+fontSize+"px;");
-		extrtaCSS.append("            fill: black;");
-		extrtaCSS.append("        }");
-		extrtaCSS.append("        g.phasename text {");
-		extrtaCSS.append("            font: bold ;");
-		extrtaCSS.append("            font-size: "+fontSize+"px;");
-		extrtaCSS.append("            fill: black;");
-		extrtaCSS.append("        }");
+		extrtaCSS.append("        text.label {\n");
+		extrtaCSS.append("            font: bold ;\n");
+		extrtaCSS.append("            font-size: "+fontSize+"px;\n");
+		extrtaCSS.append("            fill: black;\n");
+		extrtaCSS.append("        }\n");
+		extrtaCSS.append("        g.phasename text {\n");
+		extrtaCSS.append("            font: bold ;\n");
+		extrtaCSS.append("            font-size: "+fontSize+"px;\n");
+		extrtaCSS.append("            fill: black;\n");
+		extrtaCSS.append("        }\n");
 		SvgUtil.xyplotScriptBeginning( out, toolNameFromClass(this.getClass()),
 				cmdLineArgs,  pixelWidth, plotOffset, extrtaCSS.toString());
 
