@@ -104,7 +104,6 @@ public class TimeDist implements Cloneable {
     public double getDepth() {
         return depth;
     }
-
     
     public double getTime() {
         return time;

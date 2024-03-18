@@ -416,6 +416,7 @@ public class Arrival {
         }
         return shallowest;
     }
+
     /** returns deepest point on path, in kilometers */
     public TimeDist getDeepestPierce() {
         TimeDist[] pierce = getPierce();
@@ -426,6 +427,18 @@ public class Arrival {
             }
         }
         return deepest;
+    }
+
+    /** returns furthest distance point module pi/180 on path, in radians */
+    public TimeDist getFurthestPierce() {
+        TimeDist[] pierce = getPierce();
+        TimeDist furthest = pierce[0];
+        for (TimeDist td : pierce) {
+            if (td.getDistRadian() > furthest.getDistRadian()) {
+                furthest = td;
+            }
+        }
+        return furthest;
     }
 
     /** returns pierce points as TimeDist objects. */

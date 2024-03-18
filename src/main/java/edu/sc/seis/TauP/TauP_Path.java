@@ -16,11 +16,8 @@
  */
 package edu.sc.seis.TauP;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.OptionalDataException;
 import java.io.PrintWriter;
-import java.io.StreamCorruptedException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,19 +47,19 @@ public class TauP_Path extends TauP_Pierce {
 	
 	protected static double maxPathInc = 1.0;
 
-	protected double[] xAxisMinMax = new double[0];
-	protected double[] yAxisMinMax = new double[0];
+	protected double[] distAxisMinMax = new double[0];
+	protected double[] depthAxisMinMax = new double[0];
 
 	public void setDegreeMinMax(double min, double max) {
 		if (min < max) {
-			xAxisMinMax = new double[]{min, max};
+			distAxisMinMax = new double[]{min, max};
 		} else {
 			throw new IllegalArgumentException("min must be < max: "+min+" < "+max);
 		}
 	}
 	public void setDepthMinMax(double min, double max) {
 		if (min < max) {
-			yAxisMinMax = new double[]{min, max};
+			depthAxisMinMax = new double[]{min, max};
 		} else {
 			throw new IllegalArgumentException("min must be < max: "+min+" < "+max);
 		}
@@ -103,8 +100,7 @@ public class TauP_Path extends TauP_Pierce {
 
 	@Override
 	public String[] allowedOutputFormats() {
-		String[] formats = {TEXT, JSON, SVG, GMT};
-		return formats;
+        return new String[]{TEXT, JSON, SVG, GMT};
 	}
 	@Override
 	public void setDefaultOutputFormat() {
@@ -201,79 +197,79 @@ public class TauP_Path extends TauP_Pierce {
 			out.write("gmt psxy -P -R -K -O -JP -m -A >> " + psFile + " <<END\n");
 		}
 		double radiusOfEarth = getTauModel().getRadiusOfEarth();
-		for (int i = 0; i < arrivals.size(); i++) {
-			Arrival currArrival = (Arrival) arrivals.get(i);
-			out.println(getCommentLine(currArrival));
+        for (Arrival arrival : arrivals) {
+            out.println(getCommentLine(arrival));
 
 
-			double calcTime = 0.0;
-			double calcDist = 0.0;
-			TimeDist prevTimeDist = new TimeDist(0,0,0,0);
-			double calcDepth = currArrival.getSourceDepth();
-			TimeDist[] path = currArrival.getPath();
-			for (int j = 0; j < path.length; j++) {
-				calcTime = path[j].getTime();
-				calcDepth = path[j].getDepth();
-				double prevDepth = calcDepth; // only used if interpolate due to maxPathInc
-				calcDist = path[j].getDistDeg();
-				if (calcTime > maxPathTime) {
-					if (j != 0 && path[j-1].getTime() < maxPathTime) {
-						// overlap max time, so interpolate to maxPathTime
-						calcDist = linearInterp(path[j-1].getTime(), path[j-1].getDistDeg(),
-								path[j].getTime(), path[j].getDistDeg(),
-								maxPathTime);
-						calcDepth = linearInterp(path[j-1].getTime(), path[j-1].getDepth(),
-								path[j].getTime(), path[j].getDepth(),
-								maxPathTime);
-						prevDepth = calcDepth; // only used if interpolate due to maxPathInc
-						calcTime = maxPathTime;
-					} else {
-						// past max time, so done
-						break;
-					}
-				}
-				printDistRadius(out, calcDist, radiusOfEarth - calcDepth);
-				if (doPrintTime) {
-					out.write("  " + Outputs.formatTime(calcTime));
-				}
-				if (!gmtScript) {
-					printLatLon(out, calcDist, currArrival.getDistDeg());
-				}
-				out.write("\n");
-				if (calcTime >= maxPathTime) {
-					break;
-				}
-				if (j < path.length - 1
-						&& (currArrival.getRayParam() != 0.0 &&
-						Math.abs(path[j + 1].getDistDeg() - path[j].getDistDeg()) > maxPathInc)) {
-					// interpolate to steps of at most maxPathInc degrees for
-					// path
-					int maxInterpNum = (int) Math
-							.ceil(Math.abs(path[j + 1].getDistDeg() - path[j].getDistDeg())
-									/ maxPathInc);
+            double calcTime = 0.0;
+            double calcDist = 0.0;
+            double calcDepth = arrival.getSourceDepth();
+            TimeDist[] path = arrival.getPath();
+            for (int j = 0; j < path.length; j++) {
+                calcTime = path[j].getTime();
+                calcDepth = path[j].getDepth();
+                double prevDepth = calcDepth; // only used if interpolate due to maxPathInc
+                calcDist = path[j].getDistDeg();
+                if (calcTime > maxPathTime) {
+                    if (j != 0 && path[j - 1].getTime() < maxPathTime) {
+                        // overlap max time, so interpolate to maxPathTime
+                        calcDist = linearInterp(path[j - 1].getTime(), path[j - 1].getDistDeg(),
+                                path[j].getTime(), path[j].getDistDeg(),
+                                maxPathTime);
+                        calcDepth = linearInterp(path[j - 1].getTime(), path[j - 1].getDepth(),
+                                path[j].getTime(), path[j].getDepth(),
+                                maxPathTime);
+                        prevDepth = calcDepth; // only used if interpolate due to maxPathInc
+                        calcTime = maxPathTime;
+                    } else {
+                        // past max time, so done
+                        break;
+                    }
+                }
+                printDistRadius(out, calcDist, radiusOfEarth - calcDepth);
+                if (doPrintTime) {
+                    out.write("  " + Outputs.formatTime(calcTime));
+                }
+                if (!gmtScript) {
+                    printLatLon(out, calcDist, ((Arrival) arrival).getDistDeg());
+                }
+                out.write("\n");
+                if (calcTime >= maxPathTime) {
+                    break;
+                }
+                if (j < path.length - 1
+                        && (((Arrival) arrival).getRayParam() != 0.0 &&
+                        Math.abs(path[j + 1].getDistDeg() - path[j].getDistDeg()) > maxPathInc)) {
+                    // interpolate to steps of at most maxPathInc degrees for
+                    // path
+                    int maxInterpNum = (int) Math
+                            .ceil(Math.abs(path[j + 1].getDistDeg() - path[j].getDistDeg())
+                                    / maxPathInc);
 
-					for (int interpNum = 1; interpNum < maxInterpNum && calcTime < maxPathTime; interpNum++) {
-						calcTime += (path[j + 1].getTime() - path[j].getTime())
-								/ maxInterpNum;
-						if (calcTime > maxPathTime) { break; }
-						calcDist += (path[j + 1].getDistDeg() - path[j].getDistDeg())
-								/ maxInterpNum;
-						calcDepth = prevDepth + interpNum
-								* (path[j + 1].getDepth() - prevDepth)
-								/ maxInterpNum;
-						printDistRadius(out, calcDist, radiusOfEarth - calcDepth);
-						if (doPrintTime) {
-							out.write("  " + Outputs.formatTime(calcTime));
-						}
-						if (!gmtScript) {
-							printLatLon(out, calcDist, currArrival.getDistDeg());
-						}
-						out.write("\n");
-					}
-				}
-				prevDepth = path[j].getDepth();
-			}
-		}
+                    for (int interpNum = 1; interpNum < maxInterpNum && calcTime < maxPathTime; interpNum++) {
+                        calcTime += (path[j + 1].getTime() - path[j].getTime())
+                                / maxInterpNum;
+                        if (calcTime > maxPathTime) {
+                            break;
+                        }
+                        calcDist += (path[j + 1].getDistDeg() - path[j].getDistDeg())
+                                / maxInterpNum;
+                        calcDepth = prevDepth + interpNum
+                                * (path[j + 1].getDepth() - prevDepth)
+                                / maxInterpNum;
+                        printDistRadius(out, calcDist, radiusOfEarth - calcDepth);
+                        if (doPrintTime) {
+                            out.write("  " + Outputs.formatTime(calcTime));
+                        }
+                        if (!gmtScript) {
+                            printLatLon(out, calcDist, ((Arrival) arrival).getDistDeg());
+                        }
+                        out.write("\n");
+                    }
+                }
+                prevDepth = path[j].getDepth();
+            }
+        }
 		if (gmtScript) {
 			out.write("END\n");
 		}
@@ -326,144 +322,139 @@ public class TauP_Path extends TauP_Pierce {
 
 	public void printResultSVG(PrintWriter out) throws IOException {
 		double radiusOfEarth = getTauModel().getRadiusOfEarth();
-		double maxDist = 0;
-		double maxDepth = 0;
-		for (Arrival arr : arrivals) {
-			if (arr.getDist() > maxDist) {maxDist = arr.getDist();}
-			if (arr.getDeepestPierce().getDepth() > maxDepth) {maxDepth = arr.getDeepestPierce().getDepth();}
-		}
-		for (int i = 0; i < arrivals.size(); i++) {
-		    Arrival currArrival = (Arrival) arrivals.get(i);
-			out.println("<!-- "+getCommentLine(currArrival));
-			out.println(" -->");
-			out.println("<g class=\""+currArrival.getName()+"\">");
-			out.println("<desc>"+currArrival+"</desc>");
 
-			double calcTime = 0.0;
-			double calcDist = 0.0;
-			double calcDepth;
-			double distFactor = 1;
-			if (currArrival.isLongWayAround()) {
-				distFactor = -1;
-			}
+        for (Arrival arrival : arrivals) {
+            out.println("<!-- " + getCommentLine(arrival));
+            out.println(" -->");
+            out.println("<g class=\"" + arrival.getName() + "\">");
+            out.println("<desc>" + arrival + "</desc>");
 
-			TimeDist prevEnd = null;
-			List<List<TimeDist>> segTimeDist = new ArrayList<>();
-			List<SeismicPhaseSegment> segmentList = new ArrayList<>();
-			List<String> legNameList = new ArrayList<>();
-			if (currArrival.getPhase() instanceof ScatteredSeismicPhase) {
-				Arrival scatArrival = ((ScatteredSeismicPhase)currArrival.getPhase()).getInboundArrival();
-				for (SeismicPhaseSegment seg : scatArrival.getPhase().getPhaseSegments()) {
-					segmentList.add(seg);
-					List<TimeDist> segPath = seg.calcPathTimeDist(scatArrival, prevEnd);
-					segTimeDist.add(segPath);
-					legNameList.add(seg.legName);
-					prevEnd = segPath.get(segPath.size()-1);
-				}
-				SimpleSeismicPhase scatPhase = ((ScatteredSeismicPhase)currArrival.getPhase()).getScatteredPhase();
-				for (SeismicPhaseSegment seg : scatPhase.getPhaseSegments()) {
-					segmentList.add(seg);
-					List<TimeDist> segPath = seg.calcPathTimeDist(currArrival, prevEnd);
-					segTimeDist.add(segPath);
-					legNameList.add(seg.legName);
-					prevEnd = segPath.get(segPath.size()-1);
-				}
-			} else {
-				for (SeismicPhaseSegment seg : currArrival.getPhase().getPhaseSegments()) {
-					segmentList.add(seg);
-					List<TimeDist> segPath = seg.calcPathTimeDist(currArrival, prevEnd);
-					segTimeDist.add(segPath);
-					legNameList.add(seg.legName);
-					prevEnd = segPath.get(segPath.size()-1);
-				}
-			}
-			prevEnd = null;
-			for (int j = 0; j < segTimeDist.size(); j++) {
-				SeismicPhaseSegment seg = segmentList.get(j);
-				String p_or_s = seg.isPWave ? "pwave" : "swave";
-				List<TimeDist> segPath = segTimeDist.get(j);
-				String legName = legNameList.get(j);
-				out.println("  <g class=\""+legName+"\">");
-				out.println("  <desc>"+legName+", segment "+(j+1)+" of "+segTimeDist.size()+" then "+seg.endAction.name()+"</desc>");
-				out.println("  <polyline class=\""+p_or_s+"\" points=\"");
-				for (TimeDist td : segPath) {
-					if (prevEnd != null && (currArrival.getRayParam() != 0.0 &&
-							Math.abs(prevEnd.getDistDeg() - td.getDistDeg()) > maxPathInc)) {
-						// interpolate to steps of at most maxPathInc degrees for
-						// path
-						int maxInterpNum = (int) Math
-								.ceil(Math.abs(td.getDistDeg() - prevEnd.getDistDeg())
-										/ maxPathInc);
+            double calcTime = 0.0;
+            double calcDist = 0.0;
+            double calcDepth;
+            double distFactor = 1;
+            if (arrival.isLongWayAround()) {
+                distFactor = -1;
+            }
 
-						for (int interpNum = 1; interpNum < maxInterpNum && calcTime < maxPathTime; interpNum++) {
-							calcTime += (td.getTime() - prevEnd.getTime())
-									/ maxInterpNum;
-							if (calcTime > maxPathTime) { break; }
-							calcDist += (td.getDistDeg() - prevEnd.getDistDeg())
-									/ maxInterpNum;
-							calcDepth = prevEnd.getDepth() + interpNum
-									* (td.getDepth() - prevEnd.getDepth())
-									/ maxInterpNum;
+            TimeDist prevEnd = null;
+            List<List<TimeDist>> segTimeDist = new ArrayList<>();
+            List<SeismicPhaseSegment> segmentList = new ArrayList<>();
+            List<String> legNameList = new ArrayList<>();
+            if (arrival.getPhase() instanceof ScatteredSeismicPhase) {
+                Arrival scatArrival = ((ScatteredSeismicPhase) arrival.getPhase()).getInboundArrival();
+                for (SeismicPhaseSegment seg : scatArrival.getPhase().getPhaseSegments()) {
+                    segmentList.add(seg);
+                    List<TimeDist> segPath = seg.calcPathTimeDist(scatArrival, prevEnd);
+                    segTimeDist.add(segPath);
+                    legNameList.add(seg.legName);
+                    prevEnd = segPath.get(segPath.size() - 1);
+                }
+                SimpleSeismicPhase scatPhase = ((ScatteredSeismicPhase) arrival.getPhase()).getScatteredPhase();
+                for (SeismicPhaseSegment seg : scatPhase.getPhaseSegments()) {
+                    segmentList.add(seg);
+                    List<TimeDist> segPath = seg.calcPathTimeDist(arrival, prevEnd);
+                    segTimeDist.add(segPath);
+                    legNameList.add(seg.legName);
+                    prevEnd = segPath.get(segPath.size() - 1);
+                }
+            } else {
+                for (SeismicPhaseSegment seg : arrival.getPhase().getPhaseSegments()) {
+                    segmentList.add(seg);
+                    List<TimeDist> segPath = seg.calcPathTimeDist(arrival, prevEnd);
+                    segTimeDist.add(segPath);
+                    legNameList.add(seg.legName);
+                    prevEnd = segPath.get(segPath.size() - 1);
+                }
+            }
+            prevEnd = null;
+            for (int j = 0; j < segTimeDist.size(); j++) {
+                SeismicPhaseSegment seg = segmentList.get(j);
+                String p_or_s = seg.isPWave ? "pwave" : "swave";
+                List<TimeDist> segPath = segTimeDist.get(j);
+                String legName = legNameList.get(j);
+                out.println("  <g class=\"" + legName + "\">");
+                out.println("  <desc>" + legName + ", segment " + (j + 1) + " of " + segTimeDist.size() + " then " + seg.endAction.name() + "</desc>");
+                out.println("  <polyline class=\"" + p_or_s + "\" points=\"");
+                for (TimeDist td : segPath) {
+                    if (prevEnd != null && (arrival.getRayParam() != 0.0 &&
+                            Math.abs(prevEnd.getDistDeg() - td.getDistDeg()) > maxPathInc)) {
+                        // interpolate to steps of at most maxPathInc degrees for
+                        // path
+                        int maxInterpNum = (int) Math
+                                .ceil(Math.abs(td.getDistDeg() - prevEnd.getDistDeg())
+                                        / maxPathInc);
 
-							printDistRadiusAsXY(out, distFactor*calcDist, radiusOfEarth - calcDepth);
-							out.write("\n");
-						}
-					}
+                        for (int interpNum = 1; interpNum < maxInterpNum && calcTime < maxPathTime; interpNum++) {
+                            calcTime += (td.getTime() - prevEnd.getTime())
+                                    / maxInterpNum;
+                            if (calcTime > maxPathTime) {
+                                break;
+                            }
+                            calcDist += (td.getDistDeg() - prevEnd.getDistDeg())
+                                    / maxInterpNum;
+                            calcDepth = prevEnd.getDepth() + interpNum
+                                    * (td.getDepth() - prevEnd.getDepth())
+                                    / maxInterpNum;
 
-					calcTime = td.getTime();
-					calcDepth = td.getDepth();
-					calcDist = td.getDistDeg();
-					if (calcTime > maxPathTime) {
-						// now check to see if past maxPathTime, to create partial path up to a time
-						if (prevEnd != null && prevEnd.getTime() < maxPathTime) {
-							// overlap max time, so interpolate to maxPathTime
-							calcDist = linearInterp(prevEnd.getTime(), prevEnd.getDistDeg(),
-									td.getTime(), td.getDistDeg(),
-									maxPathTime);
-							calcDepth = linearInterp(prevEnd.getTime(), prevEnd.getDepth(),
-									td.getTime(), td.getDepth(),
-									maxPathTime);
-							calcTime = maxPathTime;
-						} else {
-							// past max time, so done
-							break;
-						}
-					}
-					printDistRadiusAsXY(out, distFactor*calcDist, radiusOfEarth - calcDepth);
-					out.write("\n");
-					prevEnd = td;
-				}
-				out.println("\" />");
-				out.println("  </g>"); // end segment
-				if (calcTime >= maxPathTime) {
-					// past max, so done
-					break;
-				}
-			}
+                            printDistRadiusAsXY(out, distFactor * calcDist, radiusOfEarth - calcDepth);
+                            out.write("\n");
+                        }
+                    }
 
-			out.println("</g>"); // end path
-		}
+                    calcTime = td.getTime();
+                    calcDepth = td.getDepth();
+                    calcDist = td.getDistDeg();
+                    if (calcTime > maxPathTime) {
+                        // now check to see if past maxPathTime, to create partial path up to a time
+                        if (prevEnd != null && prevEnd.getTime() < maxPathTime) {
+                            // overlap max time, so interpolate to maxPathTime
+                            calcDist = linearInterp(prevEnd.getTime(), prevEnd.getDistDeg(),
+                                    td.getTime(), td.getDistDeg(),
+                                    maxPathTime);
+                            calcDepth = linearInterp(prevEnd.getTime(), prevEnd.getDepth(),
+                                    td.getTime(), td.getDepth(),
+                                    maxPathTime);
+                            calcTime = maxPathTime;
+                        } else {
+                            // past max time, so done
+                            break;
+                        }
+                    }
+                    printDistRadiusAsXY(out, distFactor * calcDist, radiusOfEarth - calcDepth);
+                    out.write("\n");
+                    prevEnd = td;
+                }
+                out.println("\" />");
+                out.println("  </g>"); // end segment
+                if (calcTime >= maxPathTime) {
+                    // past max, so done
+                    break;
+                }
+            }
+
+            out.println("</g>"); // end path
+        }
 		// label paths with phase name
 
         out.println("    <g class=\"phasename\">");
-        
-		for (int i = 0; i < arrivals.size(); i++) {
-			Arrival currArrival = (Arrival) arrivals.get(i);
-			double distFactor = 1;
-			if (currArrival.isLongWayAround()) {
-				distFactor = -1;
-			}
-			TimeDist[] path = currArrival.getPath();
-			int midSample = path.length / 2;
-			double calcDepth = path[midSample].getDepth();
-			double calcDist = distFactor * path[midSample].getDistDeg();
-			double radius = radiusOfEarth - calcDepth;
-			double radian = (calcDist-90)*Math.PI/180;
-			double x = radius*Math.cos(radian);
-			double y = radius*Math.sin(radian);
-			out.println("      <text class=\""+currArrival.getName()+"\" x=\""+Outputs.formatDistance(x)+"\" y=\""+Outputs.formatDistance(y)+"\">"+currArrival.getName() + "</text>");
 
-		}
+        for (Arrival currArrival : arrivals) {
+            double distFactor = 1;
+            if (currArrival.isLongWayAround()) {
+                distFactor = -1;
+            }
+            TimeDist[] path = currArrival.getPath();
+            int midSample = path.length / 2;
+            double calcDepth = path[midSample].getDepth();
+            double calcDist = distFactor * path[midSample].getDistDeg();
+            double radius = radiusOfEarth - calcDepth;
+            double radian = (calcDist - 90) * Math.PI / 180;
+            double x = radius * Math.cos(radian);
+            double y = radius * Math.sin(radian);
+            out.println("      <text class=\"" + currArrival.getName() + "\" x=\"" + Outputs.formatDistance(x) + "\" y=\"" + Outputs.formatDistance(y) + "\">" + currArrival.getName() + "</text>");
+
+        }
 
 		out.println("    </g> <!-- end labels -->");
 
@@ -550,18 +541,136 @@ public class TauP_Path extends TauP_Pierce {
 		}
 	}
 
-    public void printScriptBeginningSVG(PrintWriter out)  throws IOException {
-		float pixelWidth =  (72.0f*mapWidth);
+	/**
+	 * Find the boundaries of a x-y box that contain all pierce points for the arrivals.
+	 * @param arrivals to search
+	 * @return array of xmin, xmax, ymin, ymax in x-y coordinates (not dist-depth)
+	 */
+	public double[] findPierceBoundingBox(List<Arrival> arrivals) {
+		double xmin;
+		double xmax;
+		double ymin;
+		double ymax;
+		double R;
+		if (arrivals.size() > 0) {
+			Arrival arrival = arrivals.get(0);
+			R = arrival.getPhase().getTauModel().getRadiusOfEarth();
+			TimeDist td = arrival.getPiercePoint(0);
+			xmin = Math.sin(td.getDistRadian())*(R-td.getDepth());
+			xmax = xmin;
+			ymin = Math.cos(td.getDistRadian())*(R-td.getDepth());
+			ymax = ymin;
+		} else {
+			return null;
+		}
 
-		float R = (float)getTauModel().getRadiusOfEarth();
-		float plotOverScaleFactor = 1.2f;
-        float plotSize =R  * plotOverScaleFactor;
-        int fontSize = (int) (plotSize/20);
-		float plotScale =pixelWidth/(2*R  * 1.2f);
+		for (Arrival arr : arrivals) {
+			TimeDist[] pierce = arr.getPierce();
+			for (TimeDist td : pierce) {
+				double x = Math.sin(td.getDistRadian())*(R-td.getDepth());
+				if (x < xmin) { xmin = x;}
+				if (x > xmax) { xmax = x;}
+				double y = Math.cos(td.getDistRadian())*(R-td.getDepth());
+				if (y < ymin) {ymin = y;}
+				if (y > ymax) {ymax = y;}
+			}
+		}
+		return new double[] {xmin, xmax, ymin, ymax};
+	}
+
+	public double[] findPierceBoundingBox(double[] distRange, double[] depthRange, double R) {
+		double xmin = Math.sin(distRange[0]*Math.PI/180)*(R-depthRange[0]);
+		double xmax = xmin;
+		double ymin = Math.cos(distRange[0]*Math.PI/180)*(R-depthRange[0]);
+		double ymax = ymin;
+		for (int i = 0; i < distRange.length; i++) {
+			for (int j = 0; j < depthRange.length; j++) {
+				double x = Math.sin(distRange[i]*Math.PI/180)*(R-depthRange[j]);
+				if (x < xmin) { xmin = x;}
+				if (x > xmax) { xmax = x;}
+				double y = Math.cos(distRange[i]*Math.PI/180)*(R-depthRange[j]);
+				if (y < ymin) {ymin = y;}
+				if (y > ymax) {ymax = y;}
+			}
+		}
+		return new double[] {xmin, xmax, ymin, ymax};
+	}
+
+
+	public float[] calcZoomScaleTranslate(List<Arrival> arrivals)  throws IOException {
+		float R = (float) getTauModel().getRadiusOfEarth();
 		float zoomYMin = -R;
 		float zoomYMax = R;
 		float zoomXMin = -R;
 		float zoomXMax = R;
+
+		double minDist = 0;
+		double maxDist = 0;
+		double minDepth = 0;
+		double maxDepth = 0;
+		if (!arrivals.isEmpty()) {
+			double[] minmax = findPierceBoundingBox(arrivals);
+			zoomXMin = (float) minmax[0];
+			zoomXMax = (float) minmax[1];
+			zoomYMin = (float) minmax[2];
+			zoomYMax = (float) minmax[3];
+			for (Arrival arr : arrivals) {
+				if (arr.getPhase() instanceof ScatteredSeismicPhase) {
+					TimeDist[] pierce = arr.getPierce();
+					for (TimeDist td : pierce) {
+						if (td.getDistRadian() > maxDist) {
+							maxDist = td.getDistRadian();
+						}
+						if (td.getDistRadian() < minDist) {
+							minDist = td.getDistRadian();
+						}
+					}
+				}
+				TimeDist furthest = arr.getFurthestPierce();
+				if (furthest.getDistRadian() > maxDist) {
+					maxDist = furthest.getDistRadian();
+				}
+				TimeDist deepest = arr.getDeepestPierce();
+				if (deepest.getDepth() > maxDepth) {
+					maxDepth = deepest.getDepth();
+				}
+				TimeDist shallowest = arr.getShallowestPierce();
+				if (shallowest.getDepth() < minDepth) {
+					minDepth = shallowest.getDepth();
+				}
+			}
+			return calcZoomScaleTranslate( zoomXMin,  zoomXMax,  zoomYMin,  zoomYMax, R, (float)minDist, (float)maxDist);
+		} else {
+			return new float[] {1, 0, 0, 0, (float) Math.PI};
+		}
+	}
+	public float[] calcZoomScaleTranslate(float zoomXMin, float zoomXMax, float zoomYMin, float zoomYMax, float R, float minDist, float maxDist)  throws IOException {
+		float zoomScale = 1;
+		float zoomTranslateX = 0;
+		float zoomTranslateY = 0;
+
+		float longSide = (float) (Math.max((zoomYMax - zoomYMin), (zoomXMax - zoomXMin)));
+		zoomTranslateX = -1 * ((zoomXMax + zoomXMin) / 2);
+		zoomTranslateY = (zoomYMax + zoomYMin) / 2;
+		if (zoomTranslateY + longSide/2 > R) {
+			zoomTranslateY = R-longSide/2;
+		}
+		if (zoomTranslateX + longSide/2 > R) {
+			zoomTranslateX = R-longSide/2;
+		}
+		zoomScale = (float) ((2*R ) / longSide);
+
+		return new float[] {zoomScale, zoomTranslateX, zoomTranslateY,  minDist,  maxDist};
+	}
+
+    public void printScriptBeginningSVG(PrintWriter out)  throws IOException {
+		float pixelWidth =  (72.0f*mapWidth);
+
+		float R = (float)getTauModel().getRadiusOfEarth();
+		float plotOverScaleFactor = 1.1f;
+        float plotSize =R  * plotOverScaleFactor;
+        int fontSize = (int) (plotSize/20);
+		float plotScale =pixelWidth/(2*R  * plotOverScaleFactor);
 		float zoomScale = 1;
 		float zoomTranslateX = 0;
 		float zoomTranslateY = 0;
@@ -570,52 +679,74 @@ public class TauP_Path extends TauP_Pierce {
 		double maxDist = 0;
 		double minDepth = 0;
 		double maxDepth = 0;
-		if (arrivals.size() > 0) {
-			Arrival arr = arrivals.get(0);
-			maxDist = arr.getDist();
-			minDepth = getSourceDepth();
-			maxDepth = arr.getDeepestPierce().getDepth();
+		// override with set values if given
+		if (distAxisMinMax.length == 2) {
+			minDist = distAxisMinMax[0];
+			maxDist = distAxisMinMax[1];
 		}
-		if (xAxisMinMax.length == 2) {
-			minDist = xAxisMinMax[0];
-			maxDist = xAxisMinMax[1];
+		if (depthAxisMinMax.length == 2) {
+			minDepth = depthAxisMinMax[0];
+			maxDepth = depthAxisMinMax[1];
 		}
-		if (yAxisMinMax.length == 2) {
-			minDepth = yAxisMinMax[0];
-			maxDepth = yAxisMinMax[1];
-		}
-		for (Arrival arr : arrivals) {
-			if (arr.getDist() > maxDist) {maxDist = arr.getDist();}
-			if (arr.getDist() < minDist) {minDist = arr.getDist();}
-			if (arr.getPhase() instanceof ScatteredSeismicPhase) {
-				TimeDist[] pierce = arr.getPierce();
-				for (TimeDist td : pierce) {
-					if (td.getDistRadian() > maxDist) {maxDist = td.getDistRadian();}
-					if (td.getDistRadian() < minDist) {minDist = td.getDistRadian();}
-				}
-			}
-			if (arr.getDeepestPierce().getDepth() > maxDepth) {maxDepth = arr.getDeepestPierce().getDepth();}
-			if (arr.getShallowestPierce().getDepth() < minDepth) {minDepth = arr.getShallowestPierce().getDepth();}
-		}
-		if (maxDist == 0.0) {
+		// show whole earth if no arrivals?
+		float[] scaleTrans;
+		if (arrivals.size() == 0 && distAxisMinMax.length != 2 && depthAxisMinMax.length != 2) {
 			maxDist = Math.PI;
 			maxDepth = R;
+			scaleTrans = new float[]{1, 0, 0};
+		} else if (distAxisMinMax.length == 2 && depthAxisMinMax.length == 2) {
+			// user specified box
+			double[] bbox = findPierceBoundingBox(distAxisMinMax, depthAxisMinMax, R);
+			scaleTrans = calcZoomScaleTranslate((float) bbox[0], (float) bbox[1], (float) bbox[2], (float) bbox[3], R, (float) distAxisMinMax[0], (float) distAxisMinMax[1]);
+		} else {
+			scaleTrans = calcZoomScaleTranslate(arrivals);
+			if (distAxisMinMax.length != 2 && depthAxisMinMax.length == 2) {
+				// user specified depth, but not dist
+				double[] bbox = findPierceBoundingBox(new double[] {scaleTrans[3], scaleTrans[4]}, depthAxisMinMax, R);
+				scaleTrans = calcZoomScaleTranslate((float) bbox[0], (float) bbox[1], (float) bbox[2], (float) bbox[3], R, (float) distAxisMinMax[0], (float) distAxisMinMax[1]);
+			} else if (distAxisMinMax.length == 2 && depthAxisMinMax.length != 2) {
+				// user specified dist, but not depth
+				boolean lookingFirst = true;
+				double distMinDepth =0;
+				double distMaxDepth = 0;
+				for (Arrival arrival : arrivals) {
+					for (TimeDist td : arrival.getPierce()) {
+						if (distAxisMinMax[0] <= td.getDistDeg() && td.getDistDeg() <= distAxisMinMax[1]) {
+							if (lookingFirst) {
+								distMinDepth = td.getDepth();
+								distMaxDepth = td.getDepth();
+								lookingFirst = false;
+							} else {
+								if (td.getDepth() < distMinDepth ) {distMinDepth = td.getDepth(); }
+								if (td.getDepth() > distMaxDepth) {distMaxDepth = td.getDepth();}
+							}
+						}
+					}
+				}
+				if (lookingFirst) {
+					// no pierce points in dist range?
+				} else {
+					minDepth= distMinDepth;
+					maxDepth = distMaxDepth;
+					if (minDepth == maxDepth) {
+						minDepth = minDepth-100;
+						maxDepth = maxDepth+100;
+					}
+					double[] bbox = findPierceBoundingBox(distAxisMinMax, new double[] {minDepth, maxDepth}, R);
+					scaleTrans = calcZoomScaleTranslate((float) bbox[0], (float) bbox[1], (float) bbox[2], (float) bbox[3], R, (float) distAxisMinMax[0], (float) distAxisMinMax[1]);
+				}
+			}
+			minDist = scaleTrans[3];
+			maxDist = scaleTrans[4];
+			if (scaleTrans[0] < 1.25) {
+				// close to whole earth, no scale
+				scaleTrans = new float[] { 1, 0, 0};
+			}
 		}
-		if ( ((maxDist-minDist) <= 3*Math.PI/4 && (maxDepth-minDepth) < 3*R/4)) {
-			// limited depth/dist range, so zoom in
-			zoomYMin = (float)( Math.cos(maxDist)*(R-maxDepth));
-			zoomYMax = R+(plotOverScaleFactor-1)*(R-zoomYMin);
-			zoomXMin = (float) (R*Math.sin(minDist));
-			zoomXMax = (float) Math.max(Math.sqrt((R-maxDepth)*(R-maxDepth)-zoomYMin*zoomYMin),
-					R*Math.sin(maxDist));
-			float longSide = (float)(Math.max((zoomYMax-zoomYMin), (zoomXMax-zoomXMin)));
-			float shortSide = (float)(Math.min((zoomYMax-zoomYMin), (zoomXMax-zoomXMin)));
-
-			zoomTranslateX = -1*((zoomXMax+zoomXMin)/2);
-			zoomTranslateY = Math.min(zoomYMin+(zoomXMax-zoomXMin/2), (zoomYMax+zoomYMin)/2);
-			zoomScale = (float)((2*R)/longSide);
-			fontSize = (int) (fontSize / zoomScale);
-		}
+		zoomScale = scaleTrans[0];
+		zoomTranslateX = scaleTrans[1];
+		zoomTranslateY = scaleTrans[2];
+		fontSize = (int) (fontSize / zoomScale);
 
 		StringBuffer extrtaCSS = new StringBuffer();
 		extrtaCSS.append("        text.label {\n");
@@ -630,34 +761,43 @@ public class TauP_Path extends TauP_Pierce {
 		extrtaCSS.append("        }\n");
 		SvgUtil.xyplotScriptBeginning( out, toolNameFromClass(this.getClass()),
 				cmdLineArgs,  pixelWidth, plotOffset, extrtaCSS.toString());
-
+		out.println("<!-- scale/translate so coordinates in earth units ( square ~ 2R x 2R)-->");
 		out.println("<g transform=\"scale("+plotScale+","+(plotScale)+")\" >");
 		out.println("<g transform=\"translate("+plotSize+","+(plotSize)+")\" >");
+		out.println("<!-- scale/translate so zoomed in on area of interest -->");
 		out.println("<g transform=\"scale("+zoomScale+","+zoomScale+")\" >");
 		out.println("<g transform=\"translate("+zoomTranslateX+","+zoomTranslateY+")\" >");
 		out.println("<g class=\"ticks\">");
         out.println("<!-- draw surface and label distances.-->");
 	    // whole earth radius (scales to mapWidth)
         float step = 30;
-		double maxTick = 360;
+		float maxTick = 180;
+		float minTick = -180+step;
 		if (zoomScale > 1) {
-			double maxDistDeg = maxDist*180/Math.PI;
-			if (maxDistDeg >= 60) {
+			double distRangeDeg = (maxDist-minDist)*180/Math.PI;
+			if (distRangeDeg >= 60) {
 				step = 10;
-			} else if (maxDistDeg >= 30) {
+			} else if (distRangeDeg >= 30) {
 				step = 5;
-			} else if (maxDistDeg >= 10) {
+			} else if (distRangeDeg >= 10) {
 				step = 2;
-			} else if (maxDistDeg > 5) {
+			} else if (distRangeDeg > 5) {
 				step = 1;
 			} else {
 				step = (int) Math.floor(maxDist / 10);
 			}
-			maxTick = Math.ceil(maxDistDeg+5*step);
+			if (step < 5) {
+				maxTick = (float) (Math.ceil(maxDist * 180 / Math.PI / step + 2) * step);
+				minTick = (float) (Math.floor(minDist * 180 / Math.PI / step - 2) * step);
+			} else {
+				// might as well draw all just in case as not zoomed in much
+				maxTick = 180;
+				minTick = -180+step;
+			}
 		}
 		double tickLen = R*.05;
         out.println("<!-- tick marks every "+step+" degrees to "+maxTick+".-->");
-        for (float i = 0; i < maxTick; i+= step) {
+        for (float i = minTick; i < maxTick; i+= step) {
             out.print("  <polyline  class=\"tick\"  points=\"");
 			printDistRadiusAsXY(out, i, R);
             out.print(", ");
@@ -668,26 +808,22 @@ public class TauP_Path extends TauP_Pierce {
             double x = (R+(tickLen*1.05)/zoomScale)*Math.cos(radian);
             double y = (R+(tickLen*1.05)/zoomScale)*Math.sin(radian);
             String anchor = "start";
-            if (i < 45) {
+            if (i < -135 || (-45 < i && i < 45 ) || i > 135) {
                 anchor = "middle";
-            } else if (i < 135) {
+            } else if (45 <= i && i < 135) {
                 anchor = "start";
-            } else if (i < 225) {
-                anchor = "middle";
-            } else if (i < 335) {
+            } else if ((-135 <= i && i < -45) || (225 <= i && i < 315)) {
                 anchor = "end";
             } else {
                 anchor = "middle";
             }
             String alignBaseline = "baseline";
-            if (i < 60) {
+            if ((-60 < i && i < 60) || (300 < i)) {
                 alignBaseline = "baseline";
-            } else if ( i <= 120 ) {
+            } else if ((-120 < i && i <= 120) || (240 < i && i < 300)) {
                 alignBaseline = "middle";
-            } else if (i < 240) {
+            } else if (i < -120 || i > 120) {
                 alignBaseline = "hanging";
-            } else if ( i < 300 ) {
-                alignBaseline = "middle";
             } else {
                 alignBaseline = "baseline";
             }
@@ -715,6 +851,21 @@ public class TauP_Path extends TauP_Pierce {
 			out.println("  <circle class=\"discontinuity"+name+"\" cx=\"0.0\" cy=\"0.0\" r=\"" + (R- branchDepths[i])+"\" />");
 	    }
 		out.println("  </g>");
+
+		/*
+		// draws box around zoomed in area
+		out.println("<polyline  class=\"tick\"  points=\"");
+		double[] minmax = findPierceBoundingBox(arrivals);
+		minmax[2] *= -1;
+		minmax[3] *= -1;
+		out.println("0 0 ");
+		out.println(",  "+minmax[0]+" "+minmax[2]);
+		out.println(",  "+minmax[0]+" "+minmax[3]);
+		out.println(",  "+minmax[1]+" "+minmax[3]);
+		out.println(",  "+minmax[1]+" "+minmax[2]);
+		out.println(",  "+minmax[0]+" "+minmax[2]);
+		out.println("\" />");
+		*/
 
 		out.println("<!-- draw paths, coordinates are x,y not degree,radius due to SVG using only cartesian -->");
 	}
