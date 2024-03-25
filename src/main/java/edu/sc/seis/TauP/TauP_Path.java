@@ -16,6 +16,10 @@
  */
 package edu.sc.seis.TauP;
 
+import edu.sc.seis.TauP.CLI.GraphicOutputTypeArgs;
+import edu.sc.seis.TauP.CLI.OutputTypes;
+import picocli.CommandLine;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
@@ -29,13 +33,14 @@ import java.util.List;
  * @version 1.1.3 Wed Jul 18 15:00:35 GMT 2001
  * @author H. Philip Crotwell
  */
+@CommandLine.Command(name = "path")
 public class TauP_Path extends TauP_Pierce {
-    
+
+	GraphicOutputTypeArgs outputTypeArgs = new GraphicOutputTypeArgs();
+
     protected String mapWidthUnit = "i";
 
 	protected float mapWidth = (float) 6.0;
-
-	int plotOffset = 0;
 
 	protected boolean gmtScript = false;
 	
@@ -100,17 +105,17 @@ public class TauP_Path extends TauP_Pierce {
 
 	@Override
 	public String[] allowedOutputFormats() {
-        return new String[]{TEXT, JSON, SVG, GMT};
+        return new String[]{OutputTypes.TEXT, OutputTypes.JSON, OutputTypes.SVG, OutputTypes.GMT};
 	}
 	@Override
 	public void setDefaultOutputFormat() {
-		setOutputFormat(GMT);
+		setOutputFormat(OutputTypes.GMT);
 	}
 	
 	@Override
     public String getOutFileExtension() {
         String extention = "gmt";
-        if (outputFormat.equals(SVG)) {
+        if (outputFormat.equals(OutputTypes.SVG)) {
             extention = "svg";
         }
         return extention;
@@ -121,7 +126,7 @@ public class TauP_Path extends TauP_Pierce {
 	 * the circles for each discontinuity. Default is 6 inches.
 	 */
 	public void setMapWidth(float mapWidth) {
-	    this.mapWidth = mapWidth;
+	    outputTypeArgs.mapwidth = mapWidth;
 	}
 
 	/**
@@ -129,15 +134,15 @@ public class TauP_Path extends TauP_Pierce {
 	 * the circles for each discontinuity.
 	 */
 	public float getMapWidth() {
-		return mapWidth;
+		return outputTypeArgs.mapwidth;
 	}
     
     public String getMapWidthUnit() {
-        return mapWidthUnit;
+        return outputTypeArgs.mapWidthUnit;
     }
     
     public void setMapWidthUnit(String mapWidthUnit) {
-        this.mapWidthUnit = mapWidthUnit;
+		outputTypeArgs.mapWidthUnit = mapWidthUnit;
     }
 
     public float getMaxPathTime() {
@@ -165,23 +170,23 @@ public class TauP_Path extends TauP_Pierce {
 	}
 
 	@Override
-	public List<Arrival> calculate(List<Double> degreesList) throws TauPException {
-		List<Arrival> arrivalList = super.calculate(degreesList);
+	public List<Arrival> calculate(List<DistanceRay> distanceRays) throws TauPException {
+		List<Arrival> arrivalList = super.calculate(distanceRays);
 	    for (Arrival arrival : arrivalList) {
             arrival.getPath(); // side effect of calculating path
         }
 	    return arrivalList;
 	}
 	@Override
-	public void printResult(PrintWriter out) throws IOException {
-		if (outputFormat.equals(TauP_Tool.JSON)) {
-			printResultJSON(out);
-		} else if (outputFormat.equals(TauP_Tool.SVG)) {
-			printScriptBeginningSVG(out);
-			printResultSVG(out);
+	public void printResult(PrintWriter out, List<Arrival> arrivalList) throws IOException {
+		if (outputFormat.equals(OutputTypes.JSON)) {
+			printResultJSON(out, arrivalList);
+		} else if (outputFormat.equals(OutputTypes.SVG)) {
+			printScriptBeginningSVG(out, arrivalList);
+			printResultSVG(out, arrivalList);
 		} else {
 			printScriptBeginningGMT(out);
-			printResultText(out);
+			printResultText(out, arrivalList);
 		}
 		out.flush();
 	}
@@ -191,13 +196,13 @@ public class TauP_Path extends TauP_Pierce {
 	 * @param out
 	 * @throws IOException
 	 */
-	public void printResultText(PrintWriter out) throws IOException {
+	public void printResultText(PrintWriter out, List<Arrival> arrivalList) throws IOException {
 		boolean doPrintTime = withTime;
 		if (gmtScript) {
 			out.write("gmt psxy -P -R -K -O -JP -m -A >> " + psFile + " <<END\n");
 		}
 		double radiusOfEarth = getTauModel().getRadiusOfEarth();
-        for (Arrival arrival : arrivals) {
+        for (Arrival arrival : arrivalList) {
             out.println(getCommentLine(arrival));
 
 
@@ -231,7 +236,11 @@ public class TauP_Path extends TauP_Pierce {
                     out.write("  " + Outputs.formatTime(calcTime));
                 }
                 if (!gmtScript) {
-                    printLatLon(out, calcDist, ((Arrival) arrival).getDistDeg());
+					if (arrival.getShootable() != null) {
+						double[] latlon = arrival.getShootable().getLatLonable().calcLatLon(calcDist, arrival.getDistDeg());
+						out.write("  " + Outputs.formatLatLon(latlon[0]) + "  "
+								+ Outputs.formatLatLon(latlon[1]));
+					}
                 }
                 out.write("\n");
                 if (calcTime >= maxPathTime) {
@@ -262,7 +271,11 @@ public class TauP_Path extends TauP_Pierce {
                             out.write("  " + Outputs.formatTime(calcTime));
                         }
                         if (!gmtScript) {
-                            printLatLon(out, calcDist, ((Arrival) arrival).getDistDeg());
+							if (arrival.getShootable() != null) {
+								double[] latlon = arrival.getShootable().getLatLonable().calcLatLon(calcDist, arrival.getDistDeg());
+								out.write("  " + Outputs.formatLatLon(latlon[0]) + "  "
+										+ Outputs.formatLatLon(latlon[1]));
+							}
                         }
                         out.write("\n");
                     }
@@ -280,8 +293,8 @@ public class TauP_Path extends TauP_Pierce {
 		}
 
 		if (gmtScript) {
-			for (int i = 0; i < arrivals.size(); i++) {
-				Arrival currArrival = (Arrival) arrivals.get(i);
+			for (int i = 0; i < arrivalList.size(); i++) {
+				Arrival currArrival = (Arrival) arrivalList.get(i);
 				TimeDist[] path = currArrival.getPath();
 				int midSample = path.length / 2;
 				double calcDepth = path[midSample].getDepth();
@@ -291,7 +304,7 @@ public class TauP_Path extends TauP_Pierce {
 					printDistRadius(out, calcDist, radius);
 					out.write( " 10 0 0 9 "
 							+ currArrival.getName() + "\n");
-				} else if (outputFormat.equals(SVG)) {
+				} else if (outputFormat.equals(OutputTypes.SVG)) {
 					double radian = (calcDist-90)*Math.PI/180;
 					double x = radius*Math.cos(radian);
 					double y = radius*Math.sin(radian);
@@ -301,7 +314,7 @@ public class TauP_Path extends TauP_Pierce {
 		}
 		if (gmtScript) {
 			out.write("ENDLABELS\n");
-		} else if (outputFormat.contentEquals(SVG)) {
+		} else if (outputFormat.contentEquals(OutputTypes.SVG)) {
 			out.println("</g> <!-- end labels -->");
 		}
 
@@ -312,7 +325,7 @@ public class TauP_Path extends TauP_Pierce {
 			out.println("gmt psconvert -P -Tf  " + psFile+" && rm " + psFile);
 			out.println("# clean up after gmt...");
 			out.println("rm gmt.history");
-		} else if (outputFormat.equals(SVG)) {
+		} else if (outputFormat.equals(OutputTypes.SVG)) {
 			out.println("</g> <!-- end translate -->");
 			out.println("</svg>");
 		}
@@ -320,10 +333,10 @@ public class TauP_Path extends TauP_Pierce {
 
 
 
-	public void printResultSVG(PrintWriter out) throws IOException {
+	public void printResultSVG(PrintWriter out, List<Arrival> arrivalList) throws IOException {
 		double radiusOfEarth = getTauModel().getRadiusOfEarth();
 
-        for (Arrival arrival : arrivals) {
+        for (Arrival arrival : arrivalList) {
             out.println("<!-- " + getCommentLine(arrival));
             out.println(" -->");
             out.println("<g class=\"" + arrival.getName() + "\">");
@@ -439,7 +452,7 @@ public class TauP_Path extends TauP_Pierce {
 
         out.println("    <g class=\"phasename\">");
 
-        for (Arrival currArrival : arrivals) {
+        for (Arrival currArrival : arrivalList) {
             double distFactor = 1;
             if (currArrival.isLongWayAround()) {
                 distFactor = -1;
@@ -467,12 +480,12 @@ public class TauP_Path extends TauP_Pierce {
 	}
 
 	@Override
-	public void printResultJSON(PrintWriter out) {
-		String s = resultAsJSON(modelName, depth, getReceiverDepth(), getPhaseNames(), arrivals, false, true);
+	public void printResultJSON(PrintWriter out, List<Arrival> arrivalList) {
+		String s = resultAsJSON(modelArgs.getModelName(), tModDepth.getSourceDepth(), getReceiverDepth(), getPhaseNames(), arrivalList, false, true);
 		out.println(s);
 	}
 
-	protected void printDistRadiusAsXY(Writer out, double calcDist, double radius) throws IOException {
+	protected static void printDistRadiusAsXY(Writer out, double calcDist, double radius) throws IOException {
 		double radian = (calcDist-90)*Math.PI/180;
 		double x = radius*Math.cos(radian);
 		double y = radius*Math.sin(radian);
@@ -486,41 +499,11 @@ public class TauP_Path extends TauP_Pierce {
                       + Outputs.formatDepth(radius));
 
     }
-	protected void printLatLon(Writer out, double calcDist, double endDist) throws IOException {
-		double lat, lon;
-		if (eventLat != Double.MAX_VALUE && eventLon != Double.MAX_VALUE
-				&& azimuth != Double.MAX_VALUE) {
-			lat = SphericalCoords.latFor(eventLat, eventLon, calcDist, azimuth);
-			lon = SphericalCoords.lonFor(eventLat, eventLon, calcDist, azimuth);
-			out.write("  " + Outputs.formatLatLon(lat) + "  "
-					+ Outputs.formatLatLon(lon));
-		} else if (stationLat != Double.MAX_VALUE
-				&& stationLon != Double.MAX_VALUE
-				&& backAzimuth != Double.MAX_VALUE) {
-			lat = SphericalCoords.latFor(stationLat, stationLon, endDist
-					- calcDist, backAzimuth);
-			lon = SphericalCoords.lonFor(stationLat, stationLon, endDist
-					- calcDist, backAzimuth);
-			out.write("  " + Outputs.formatLatLon(lat) + "  "
-					+ Outputs.formatLatLon(lon));
-		} else if (stationLat != Double.MAX_VALUE
-				&& stationLon != Double.MAX_VALUE
-				&& eventLat != Double.MAX_VALUE && eventLon != Double.MAX_VALUE) {
-			azimuth = SphericalCoords.azimuth(eventLat, eventLon, stationLat,
-					stationLon);
-			backAzimuth = SphericalCoords.azimuth(stationLat, stationLon,
-					eventLat, eventLon);
-			lat = SphericalCoords.latFor(eventLat, eventLon, calcDist, azimuth);
-			lon = SphericalCoords.lonFor(eventLat, eventLon, calcDist, azimuth);
-			out.write("  " + Outputs.formatLatLon(lat) + "  "
-					+ Outputs.formatLatLon(lon));
-		}
-	}
-	
+
 	public void printScriptBeginning(PrintWriter out)  throws IOException {
-	    if (outputFormat.equals(TauP_Tool.JSON)) {
+	    if (outputFormat.equals(OutputTypes.JSON)) {
             return;
-        } else if (outputFormat.equals(SVG)) {
+        } else if (outputFormat.equals(OutputTypes.SVG)) {
 			return;
 	    } else if ( gmtScript) {
 			printScriptBeginningGMT(out);
@@ -537,7 +520,7 @@ public class TauP_Path extends TauP_Pierce {
 			} else {
 				psFile = getOutFile() + ".ps";
 			}
-			printScriptBeginning(out, psFile);
+			printScriptBeginning(out, psFile, tModDepth, outputTypeArgs.mapwidth, outputTypeArgs.mapWidthUnit);
 		}
 	}
 
@@ -663,14 +646,14 @@ public class TauP_Path extends TauP_Pierce {
 		return new float[] {zoomScale, zoomTranslateX, zoomTranslateY,  minDist,  maxDist};
 	}
 
-    public void printScriptBeginningSVG(PrintWriter out)  throws IOException {
-		float pixelWidth =  (72.0f*mapWidth);
+    public void printScriptBeginningSVG(PrintWriter out, List<Arrival> arrivalList)  throws IOException {
+		float pixelWidth = (72.0f * outputTypeArgs.mapwidth);
+		int plotOffset = 0;
 
-		float R = (float)getTauModel().getRadiusOfEarth();
+		float R = (float) getTauModel().getRadiusOfEarth();
 		float plotOverScaleFactor = 1.1f;
-        float plotSize =R  * plotOverScaleFactor;
-        int fontSize = (int) (plotSize/20);
-		float plotScale =pixelWidth/(2*R  * plotOverScaleFactor);
+		float plotSize = R * plotOverScaleFactor;
+		float plotScale = pixelWidth / (2 * R * plotOverScaleFactor);
 		float zoomScale = 1;
 		float zoomTranslateX = 0;
 		float zoomTranslateY = 0;
@@ -690,7 +673,7 @@ public class TauP_Path extends TauP_Pierce {
 		}
 		// show whole earth if no arrivals?
 		float[] scaleTrans;
-		if (arrivals.size() == 0 && distAxisMinMax.length != 2 && depthAxisMinMax.length != 2) {
+		if (arrivalList.size() == 0 && distAxisMinMax.length != 2 && depthAxisMinMax.length != 2) {
 			maxDist = Math.PI;
 			maxDepth = R;
 			scaleTrans = new float[]{1, 0, 0};
@@ -699,17 +682,17 @@ public class TauP_Path extends TauP_Pierce {
 			double[] bbox = findPierceBoundingBox(distAxisMinMax, depthAxisMinMax, R);
 			scaleTrans = calcZoomScaleTranslate((float) bbox[0], (float) bbox[1], (float) bbox[2], (float) bbox[3], R, (float) distAxisMinMax[0], (float) distAxisMinMax[1]);
 		} else {
-			scaleTrans = calcZoomScaleTranslate(arrivals);
+			scaleTrans = calcZoomScaleTranslate(arrivalList);
 			if (distAxisMinMax.length != 2 && depthAxisMinMax.length == 2) {
 				// user specified depth, but not dist
-				double[] bbox = findPierceBoundingBox(new double[] {scaleTrans[3], scaleTrans[4]}, depthAxisMinMax, R);
+				double[] bbox = findPierceBoundingBox(new double[]{scaleTrans[3], scaleTrans[4]}, depthAxisMinMax, R);
 				scaleTrans = calcZoomScaleTranslate((float) bbox[0], (float) bbox[1], (float) bbox[2], (float) bbox[3], R, (float) distAxisMinMax[0], (float) distAxisMinMax[1]);
 			} else if (distAxisMinMax.length == 2 && depthAxisMinMax.length != 2) {
 				// user specified dist, but not depth
 				boolean lookingFirst = true;
-				double distMinDepth =0;
+				double distMinDepth = 0;
 				double distMaxDepth = 0;
-				for (Arrival arrival : arrivals) {
+				for (Arrival arrival : arrivalList) {
 					for (TimeDist td : arrival.getPierce()) {
 						if (distAxisMinMax[0] <= td.getDistDeg() && td.getDistDeg() <= distAxisMinMax[1]) {
 							if (lookingFirst) {
@@ -717,8 +700,12 @@ public class TauP_Path extends TauP_Pierce {
 								distMaxDepth = td.getDepth();
 								lookingFirst = false;
 							} else {
-								if (td.getDepth() < distMinDepth ) {distMinDepth = td.getDepth(); }
-								if (td.getDepth() > distMaxDepth) {distMaxDepth = td.getDepth();}
+								if (td.getDepth() < distMinDepth) {
+									distMinDepth = td.getDepth();
+								}
+								if (td.getDepth() > distMaxDepth) {
+									distMaxDepth = td.getDepth();
+								}
 							}
 						}
 					}
@@ -726,13 +713,13 @@ public class TauP_Path extends TauP_Pierce {
 				if (lookingFirst) {
 					// no pierce points in dist range?
 				} else {
-					minDepth= distMinDepth;
+					minDepth = distMinDepth;
 					maxDepth = distMaxDepth;
 					if (minDepth == maxDepth) {
-						minDepth = minDepth-100;
-						maxDepth = maxDepth+100;
+						minDepth = minDepth - 100;
+						maxDepth = maxDepth + 100;
 					}
-					double[] bbox = findPierceBoundingBox(distAxisMinMax, new double[] {minDepth, maxDepth}, R);
+					double[] bbox = findPierceBoundingBox(distAxisMinMax, new double[]{minDepth, maxDepth}, R);
 					scaleTrans = calcZoomScaleTranslate((float) bbox[0], (float) bbox[1], (float) bbox[2], (float) bbox[3], R, (float) distAxisMinMax[0], (float) distAxisMinMax[1]);
 				}
 			}
@@ -740,13 +727,16 @@ public class TauP_Path extends TauP_Pierce {
 			maxDist = scaleTrans[4];
 			if (scaleTrans[0] < 1.25) {
 				// close to whole earth, no scale
-				scaleTrans = new float[] { 1, 0, 0};
+				scaleTrans = new float[]{1, 0, 0};
 			}
 		}
 		zoomScale = scaleTrans[0];
 		zoomTranslateX = scaleTrans[1];
 		zoomTranslateY = scaleTrans[2];
+
+		int fontSize = (int) (plotSize / 20);
 		fontSize = (int) (fontSize / zoomScale);
+
 
 		StringBuffer extrtaCSS = new StringBuffer();
 		extrtaCSS.append("        text.label {\n");
@@ -761,6 +751,12 @@ public class TauP_Path extends TauP_Pierce {
 		extrtaCSS.append("        }\n");
 		SvgUtil.xyplotScriptBeginning( out, toolNameFromClass(this.getClass()),
 				cmdLineArgs,  pixelWidth, plotOffset, extrtaCSS.toString());
+
+		printModelAsSVG(writer, tMod, minDist, maxDist, plotScale, plotSize, zoomScale, zoomTranslateX, zoomTranslateY);
+	}
+
+	public static void printModelAsSVG(PrintWriter out, TauModel tMod, double minDist, double maxDist, float plotScale, float plotSize, float zoomScale, float zoomTranslateX, float zoomTranslateY) throws IOException {
+
 		out.println("<!-- scale/translate so coordinates in earth units ( square ~ 2R x 2R)-->");
 		out.println("<g transform=\"scale("+plotScale+","+(plotScale)+")\" >");
 		out.println("<g transform=\"translate("+plotSize+","+(plotSize)+")\" >");
@@ -795,6 +791,7 @@ public class TauP_Path extends TauP_Pierce {
 				minTick = -180+step;
 			}
 		}
+		double R = tMod.getRadiusOfEarth();
 		double tickLen = R*.05;
         out.println("<!-- tick marks every "+step+" degrees to "+maxTick+".-->");
         for (float i = minTick; i < maxTick; i+= step) {
@@ -870,14 +867,14 @@ public class TauP_Path extends TauP_Pierce {
 		out.println("<!-- draw paths, coordinates are x,y not degree,radius due to SVG using only cartesian -->");
 	}
 
-    public void printScriptBeginning(PrintWriter out, String psFile)  throws IOException {
+    public static void printScriptBeginning(PrintWriter out, String psFile, TauModel tMod, float mapWidth, String mapWidthUnit)  throws IOException {
         out.println("#!/bin/sh");
         out.println("#\n# This script will plot ray paths using GMT. If you want to\n"
                 + "#use this as a data file for psxy in another script, delete these"
                 + "\n# first lines, to the last psxy, as well as the last line.\n#");
         out.println("/bin/rm -f " + psFile);
         out.println("# draw surface and label distances.\n"
-                + "gmt psbasemap -K -P -R0/360/0/"+getTauModel().getRadiusOfEarth()+" -JP" + mapWidth + mapWidthUnit
+                + "gmt psbasemap -K -P -R0/360/0/"+tMod.getRadiusOfEarth()+" -JP" + mapWidth + mapWidthUnit
                 + " -Bx30  > " + psFile);
         out.println("# draw circles for branches, note these are scaled for a \n"
                 + "# map using -JP" + mapWidth + mapWidthUnit + "\n"
@@ -889,8 +886,8 @@ public class TauP_Path extends TauP_Pierce {
         double[] branchDepths = tMod.getBranchDepths();
         for (int i = 0; i < branchDepths.length; i++) {
             out.println("0.0 0.0 "
-                    + (float) ((getTauModel().getRadiusOfEarth() - branchDepths[i])
-                            * mapWidth / getTauModel().getRadiusOfEarth()) + mapWidthUnit);
+                    + (float) ((tMod.getRadiusOfEarth() - branchDepths[i])
+                            * mapWidth / tMod.getRadiusOfEarth()) + mapWidthUnit);
         }
         out.println("ENDLAYERS\n");
         out.println("# draw paths");
@@ -922,7 +919,7 @@ public class TauP_Path extends TauP_Pierce {
 			if (dashEquals("gmt", leftOverArgs[i])) {
 				gmtScript = true;
 			} else if (dashEquals("svg", leftOverArgs[i])) {
-				outputFormat = SVG;
+				outputFormat = OutputTypes.SVG;
             } else if((dashEquals("mapwidth", leftOverArgs[i])) && i < leftOverArgs.length - 1) {
                 setMapWidth(Float.parseFloat(leftOverArgs[i + 1]));
                 i++;

@@ -452,10 +452,15 @@ public class SimpleSeismicPhase implements SeismicPhase {
 
     // Normal methods
 
+    public List<Arrival> calcTime(double deg) {
+        return calcTime(DistanceRay.ofDegrees(deg));
+    }
+
     /** calculates arrival times for this phase, sorted by time.
      *  */
     @Override
-    public List<Arrival> calcTime(double deg) {
+    public List<Arrival> calcTime(DistanceRay dv) {
+        double deg = dv.getDegrees(getTauModel().getRadiusOfEarth());
         double tempDeg = SeismicPhase.distanceTrim180(deg);
         if (TauP_Tool.DEBUG) {
             System.out.println("Calculation distance: "+tempDeg+" deg");
@@ -500,11 +505,10 @@ public class SimpleSeismicPhase implements SeismicPhase {
             }
             n++;
         }
-        Collections.sort(arrivals, new Comparator<Arrival>() {
-            public int compare(Arrival o1, Arrival o2) {
-                return Double.compare(o1.getTime(), o2.getTime());
-            }});
-        return arrivals;
+        for (Arrival arrival : arrivals) {
+            arrival.setShootable(dv);
+        }
+        return Arrival.sortArrivals(arrivals);
     }
 
     public List<Arrival> calcTimeExactDistanceDeg(double deg) {

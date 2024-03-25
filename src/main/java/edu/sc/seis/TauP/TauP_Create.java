@@ -25,6 +25,8 @@
  */
 package edu.sc.seis.TauP;
 
+import picocli.CommandLine;
+
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -45,6 +47,7 @@ import java.util.Properties;
  * 
  * @author H. Philip Crotwell
  */
+@CommandLine.Command(name = "create")
 public class TauP_Create extends TauP_Tool {
 
     String modelFilename = "iasp91.tvel";
@@ -225,7 +228,7 @@ public class TauP_Create extends TauP_Tool {
             System.out.println("Velocity model not specified, use one of -nd or -tvel");
             printUsage();
             // bad, should do something else here...
-            System.exit(1);
+            System.exit(3001);
         }
         if(numNoComprendoArgs > 0) {
             String[] temp = new String[numNoComprendoArgs];

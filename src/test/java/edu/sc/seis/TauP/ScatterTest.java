@@ -1,5 +1,6 @@
 package edu.sc.seis.TauP;
 
+import edu.sc.seis.TauP.CLI.Scatterer;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -17,7 +18,8 @@ public class ScatterTest {
         double scatterDepth = 100;
         double scatterDistDeg = 2;
         double dist = 10;
-        doScatterTest(toScatPhase, scatToRecPhase, sourceDepth, receiverDepth, scatterDepth, scatterDistDeg, dist);
+        Scatterer scat = new Scatterer(scatterDepth, scatterDistDeg);
+        doScatterTest(toScatPhase, scatToRecPhase, sourceDepth, receiverDepth, scat, dist);
     }
 
     @Test
@@ -29,7 +31,8 @@ public class ScatterTest {
         double scatterDepth = 3500;
         double scatterDistDeg = 20;
         double dist = 50;
-        doScatterTest(toScatPhase, scatToRecPhase, sourceDepth, receiverDepth, scatterDepth, scatterDistDeg, dist);
+        Scatterer scat = new Scatterer(scatterDepth, scatterDistDeg);
+        doScatterTest(toScatPhase, scatToRecPhase, sourceDepth, receiverDepth, scat, dist);
     }
 
     @Test
@@ -41,19 +44,20 @@ public class ScatterTest {
         double scatterDepth = 5500;
         double scatterDistDeg = 20;
         double dist = 40;
-        doScatterTest(toScatPhase, scatToRecPhase, sourceDepth, receiverDepth, scatterDepth, scatterDistDeg, dist);
+        Scatterer scat = new Scatterer(scatterDepth, scatterDistDeg);
+        doScatterTest(toScatPhase, scatToRecPhase, sourceDepth, receiverDepth, scat, dist);
     }
 
-    public void doScatterTest(String toScatPhase, String scatToRecPhase, double sourceDepth, double receiverDepth, double scatterDepth, double scatterDistDeg, double dist) throws TauPException {
+    public void doScatterTest(String toScatPhase, String scatToRecPhase, double sourceDepth, double receiverDepth, Scatterer scat, double dist) throws TauPException {
         boolean backscatter = false;
         TauModel tMod = TauModelLoader.load("iasp91");
-        SeismicPhase inboundPhase = SeismicPhaseFactory.createPhase(toScatPhase, tMod, sourceDepth, scatterDepth, false);
-        Arrival inArr = inboundPhase.getEarliestArrival(scatterDistDeg);
+        SeismicPhase inboundPhase = SeismicPhaseFactory.createPhase(toScatPhase, tMod, sourceDepth, scat.depth, false);
+        Arrival inArr = inboundPhase.getEarliestArrival(scat.dist.getDegrees(tMod.getRadiusOfEarth()));
         assertNotNull(inArr);
-        SimpleSeismicPhase outboundPhase = SeismicPhaseFactory.createPhase(scatToRecPhase, tMod, scatterDepth, receiverDepth, false);
-        Arrival outArr = outboundPhase.getEarliestArrival(dist-scatterDistDeg);
+        SimpleSeismicPhase outboundPhase = SeismicPhaseFactory.createPhase(scatToRecPhase, tMod, scat.depth, receiverDepth, false);
+        Arrival outArr = outboundPhase.getEarliestArrival(dist-scat.dist.getDegrees(tMod.getRadiusOfEarth()));
         assertNotNull(outArr);
-        ScatteredSeismicPhase scatPhase = new ScatteredSeismicPhase(inArr, outboundPhase, scatterDepth, scatterDistDeg, backscatter);
+        ScatteredSeismicPhase scatPhase = new ScatteredSeismicPhase(inArr, outboundPhase, scat.depth, scat.dist.getDegrees(tMod.getRadiusOfEarth()), backscatter);
         List<Arrival> arrList = scatPhase.calcTime(dist);
         assertNotEquals(0, arrList.size());
         Arrival scatArr = scatPhase.getEarliestArrival(dist);
@@ -62,7 +66,7 @@ public class ScatterTest {
         assertEquals(inArr.getTime()+outArr.getTime(), scatArr.getTime());
         assertEquals(inArr.getDist()+outArr.getDist(), scatArr.getDist(), 1e-9);
         assertEquals(outArr.getRayParam(), scatArr.getRayParam());
-        assertEquals(scatterDepth, outArr.getSourceDepth());
+        assertEquals(scat.depth, outArr.getSourceDepth());
         assertEquals(sourceDepth, inArr.getSourceDepth());
         assertEquals(sourceDepth, scatArr.getSourceDepth());
         assertEquals(receiverDepth, outArr.getPhase().getReceiverDepth());
@@ -72,8 +76,7 @@ public class ScatterTest {
                 tMod,
                 sourceDepth,
                 receiverDepth,
-                scatterDepth,
-                scatterDistDeg,
+                scat,
                 false
         );
         assertNotEquals(0, scatPhaseList.size());
@@ -87,7 +90,7 @@ public class ScatterTest {
         assertEquals(inArr.getTime()+outArr.getTime(), scatArrB.getTime());
         assertEquals(inArr.getDist()+outArr.getDist(), scatArrB.getDist(), 1e-9);
         assertEquals(outArr.getRayParam(), scatArrB.getRayParam());
-        assertEquals(scatterDepth, outArr.getSourceDepth());
+        assertEquals(scat.depth, outArr.getSourceDepth());
         assertEquals(sourceDepth, inArr.getSourceDepth());
         assertEquals(sourceDepth, scatArrB.getSourceDepth());
         assertEquals(receiverDepth, outArr.getPhase().getReceiverDepth());
@@ -147,8 +150,8 @@ public class ScatterTest {
         time.setSourceDepth(0);
         time.clearPhaseNames();
         time.appendPhaseName("PKKP");
-        time.calculate(70);
-        List<Arrival> arrivals = time.getArrivals();
+
+        List<Arrival> arrivals = time.calculate(70);
         for (Arrival a : arrivals) {
             assertTrue(a.isLongWayAround());
         }
@@ -159,17 +162,18 @@ public class ScatterTest {
         String modelname = "iasp91";
         TauP_Pierce pierce = new TauP_Pierce(modelname);
         pierce.setSourceDepth(0);
-        pierce.setScatterer(3500, 120);
+        Scatterer scat = new Scatterer(3500, 120);
+        pierce.setScatterer(scat);
         pierce.clearPhaseNames();
         pierce.appendPhaseName("PKoKP");
-        pierce.calculate(-110);
-        List<Arrival> arrivals = pierce.getArrivals();
+
+        List<Arrival> arrivals = pierce.calculate(-110);
         assertEquals(1, arrivals.size());
         Arrival a_neg110 = arrivals.get(0);
         TimeDist[] p_neg110 = a_neg110.getPierce();
 
-        pierce.calculate(250);
-        List<Arrival> arrivalsAt250 = pierce.getArrivals();
+
+        List<Arrival> arrivalsAt250 = pierce.calculate(250);
         assertEquals(1, arrivalsAt250.size());
         Arrival a_250 = arrivalsAt250.get(0);
         TimeDist[] p_250 = a_250.getPierce();
@@ -183,12 +187,13 @@ public class ScatterTest {
     public void pathBackscatterPedOP() throws TauPException {
         String modelname = "iasp91";
         TauP_Path path = new TauP_Path(modelname);
-        path.setScatterer(800, -10);
+        Scatterer scat = new Scatterer(800, -10);
+        path.setScatterer(scat);
 
         path.clearPhaseNames();
         path.appendPhaseName("PedOP");
-        path.calculate(35);
-        List<Arrival> arrivals = path.getArrivals();
+
+        List<Arrival> arrivals = path.calculate(35);
         assertEquals(1, arrivals.size());
         Arrival a_35 = arrivals.get(0);
         ScatteredArrival scatA = (ScatteredArrival) a_35;

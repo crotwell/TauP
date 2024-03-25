@@ -1,5 +1,7 @@
 package edu.sc.seis.TauP;
 
+import edu.sc.seis.TauP.CLI.OutputTypes;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -7,12 +9,12 @@ public class TauP_Version extends TauP_Tool {
 
     @Override
     public String[] allowedOutputFormats() {
-        return new String[] {TEXT, JSON};
+        return new String[] {OutputTypes.TEXT, OutputTypes.JSON};
     }
 
     @Override
     public void setDefaultOutputFormat() {
-        super.setOutputFormat(TEXT);
+        super.setOutputFormat(OutputTypes.TEXT);
     }
 
     @Override
@@ -23,7 +25,7 @@ public class TauP_Version extends TauP_Tool {
         int i = 0;
         while(i < args.length) {
             if(dashEquals("json", args[i])) {
-                outputFormat = TauP_Tool.JSON;
+                outputFormat = OutputTypes.JSON;
             } else {
                 /* I don't know how to interpret this argument, so pass it back */
                 noComprendoArgs[numNoComprendoArgs++] = args[i];
@@ -50,7 +52,7 @@ public class TauP_Version extends TauP_Tool {
     }
 
     public void printResult(PrintWriter out) throws IOException {
-        if (outputFormat.equals(TauP_Tool.JSON)) {
+        if (outputFormat.equals(OutputTypes.JSON)) {
             printResultJSON(out);
         } else {
             printResultText(out);

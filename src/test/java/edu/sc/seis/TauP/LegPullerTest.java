@@ -37,6 +37,13 @@ public class LegPullerTest {
     }
 
     @Test
+    public void testLegPull_P20n() throws Exception {
+        ArrayList<String> legs = LegPuller.legPuller("P20n");
+        assertEquals(2, legs.size());
+        assertEquals("P20n", legs.get(0));
+        assertEquals("END", legs.get(1));
+    }
+    @Test
     public void testLegPull_P410n() throws Exception {
         ArrayList<String> legs = LegPuller.legPuller("P410n");
         assertEquals(2, legs.size());

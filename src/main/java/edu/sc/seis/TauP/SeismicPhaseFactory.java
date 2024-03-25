@@ -1,5 +1,7 @@
 package edu.sc.seis.TauP;
 
+import edu.sc.seis.TauP.CLI.Scatterer;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -191,8 +193,7 @@ public class SeismicPhaseFactory {
                                                          TauModel tMod,
                                                          double sourceDepth,
                                                          double receiverDepth,
-                                                         double scattererDepth,
-                                                         double scattererDistanceDeg,
+                                                         Scatterer scat,
                                                          boolean debug) throws TauModelException {
         List<SeismicPhase> phaseList = new ArrayList<>();
         if (name.contains(""+ PhaseSymbols.SCATTER_CODE)
@@ -201,7 +202,7 @@ public class SeismicPhaseFactory {
             if (in_scat.length > 2) {
                 throw new TauModelException("Scatter phase doesn't have two segments: "+name+", repeated scattering not supported");
             }
-            if (scattererDistanceDeg == 0.0) {
+            if (scat.dist.getDegrees(tMod.getRadiusOfEarth()) == 0.0) {
                 throw new ScatterArrivalFailException("Attempt to use scatter phase but scatter distance is zero: "+name);
             }
             boolean isBackscatter = false;
@@ -211,7 +212,7 @@ public class SeismicPhaseFactory {
             TauModel tModDepthCorrected = tMod.depthCorrect(sourceDepth);
             tModDepthCorrected = tModDepthCorrected.splitBranch(receiverDepth);
             SeismicPhase inPhase = SeismicPhaseFactory.createPhase(in_scat[0],
-                    tModDepthCorrected, sourceDepth, scattererDepth, debug);
+                    tModDepthCorrected, sourceDepth, scat.depth, debug);
             SeismicPhaseSegment lastSegment = inPhase.getPhaseSegments().get(inPhase.getPhaseSegments().size()-1);
             PhaseInteraction endAction = lastSegment.endAction;
             if (endAction == END_DOWN) {
@@ -227,21 +228,21 @@ public class SeismicPhaseFactory {
                     lastSegment.endAction = SCATTER;
                 }
             }
-            TauModel scatTMod = tModDepthCorrected.depthRecorrect(scattererDepth);
+            TauModel scatTMod = tModDepthCorrected.depthRecorrect(scat.depth);
             SimpleSeismicPhase scatPhase = SeismicPhaseFactory.createPhase(in_scat[1],
-                    scatTMod, scattererDepth, receiverDepth, debug);
+                    scatTMod, scat.depth, receiverDepth, debug);
 
-            List<Arrival> inArrivals = inPhase.calcTime(scattererDistanceDeg);
+            List<Arrival> inArrivals = inPhase.calcTime(scat.dist.getDegrees(tMod.getRadiusOfEarth()));
             if (inArrivals.size() == 0) {
                 throw new ScatterArrivalFailException("No inbound arrivals to the scatterer for "+name
-                        +" at "+scattererDepth+" km depth and "+scattererDistanceDeg+" deg. Distance range for scatterer at this depth is "+inPhase.getMinDistanceDeg()+" "+inPhase.getMaxDistanceDeg()+" deg.");
+                        +" at "+scat.depth+" km depth and "+scat.dist.getDegrees(tMod.getRadiusOfEarth())+" deg. Distance range for scatterer at this depth is "+inPhase.getMinDistanceDeg()+" "+inPhase.getMaxDistanceDeg()+" deg.");
             }
             for (Arrival inArr : inArrivals) {
                 ScatteredSeismicPhase seismicPhase = new ScatteredSeismicPhase(
                         inArr,
                         scatPhase,
-                        scattererDepth,
-                        scattererDistanceDeg,
+                        scat.depth,
+                        scat.dist.getDegrees(tMod.getRadiusOfEarth()),
                         isBackscatter);
                 phaseList.add(seismicPhase);
             }

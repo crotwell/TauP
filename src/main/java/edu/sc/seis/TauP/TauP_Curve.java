@@ -25,6 +25,9 @@
  */
 package edu.sc.seis.TauP;
 
+import edu.sc.seis.TauP.CLI.OutputTypes;
+import picocli.CommandLine;
+
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -42,6 +45,7 @@ import java.util.List;
  * @author H. Philip Crotwell
  * 
  */
+@CommandLine.Command(name = "curve")
 public class TauP_Curve extends TauP_Time {
 
     /** should the output file be a compete script? */
@@ -88,18 +92,18 @@ public class TauP_Curve extends TauP_Time {
 
     @Override
     public String[] allowedOutputFormats() {
-        String[] formats = {SVG, GMT};
+        String[] formats = {OutputTypes.SVG, OutputTypes.GMT};
         return formats;
     }
     @Override
     public void setDefaultOutputFormat() {
-        setOutputFormat(GMT);
+        setOutputFormat(OutputTypes.GMT);
     }
 
     @Override
     public String getOutFileExtension() {
         String extention = "gmt";
-        if (outputFormat.equals(SVG)) {
+        if (outputFormat.equals(OutputTypes.SVG)) {
             extention = "svg";
         }
         return extention;
@@ -189,7 +193,7 @@ public class TauP_Curve extends TauP_Time {
         this.mapWidthUnit = mapWidthUnit;
     }
 
-    public List<Arrival> calculate(List<Double> degreesList) throws TauModelException {
+    public List<Arrival> calculate(List<DistanceRay> distanceRays) throws TauPException {
         /*
          * no need to do any calculations. So, this just overrides
          * TauP_Time.calculate. printResult handles everything else.
@@ -212,7 +216,7 @@ public class TauP_Curve extends TauP_Time {
                     + "#use this as a data file for psxy in another script, delete these"
                     + "\n# first lines, as well as the last line.\n#");
             getWriter().println("/bin/rm -f " + psFile + "\n");            
-        } else if (outputFormat.equals(SVG)) {
+        } else if (outputFormat.equals(OutputTypes.SVG)) {
             float pixelWidth =  (72.0f*mapWidth);
             SvgUtil.xyplotScriptBeginning( out, toolNameFromClass(this.getClass()), cmdLineArgs,  pixelWidth, plotOffset);
         }
@@ -245,9 +249,8 @@ public class TauP_Curve extends TauP_Time {
         +getStdUsageTail();
     }
 
-    public void start() throws IOException, TauModelException {
-        double tempDepth;
-        if(depth != -1 * Double.MAX_VALUE) {
+    public void start() throws IOException, TauPException {
+        if(modelArgs.getSourceDepth() != -1 * Double.MAX_VALUE) {
             /* enough info given on cmd line, so just do one calc. */
             setSourceDepth(Double.valueOf(toolProps.getProperty("taup.source.depth",
                                                               "0.0"))
@@ -262,8 +265,8 @@ public class TauP_Curve extends TauP_Time {
             tokenIn.wordChars('_', '_');
             System.out.print("Enter Depth: ");
             tokenIn.nextToken();
-            tempDepth = tokenIn.nval;
-            if(tempDepth < 0.0 || depth > tMod.getRadiusOfEarth()) {
+            double tempDepth = tokenIn.nval;
+            if(tempDepth < 0.0 || tempDepth > tMod.getRadiusOfEarth()) {
                 System.out.println("Depth must be >= 0.0 and "
                         + "<= tMod.getRadiusOfEarth().\ndepth = " + tempDepth);
                 return;
@@ -281,7 +284,6 @@ public class TauP_Curve extends TauP_Time {
         super.destroy();
     }
 
-    @Override
     public void printResult(PrintWriter out) throws IOException {
         double[] dist, time, rayParams;
         double arcDistance;
@@ -297,8 +299,7 @@ public class TauP_Curve extends TauP_Time {
                                 getTauModelDepthCorrected(),
                                 this.getSourceDepth(),
                                 this.getReceiverDepth(),
-                                this.getScattererDepth(),
-                                this.getScattererDistDeg(),
+                                this.getScatterer(),
                                 this.DEBUG);
                         relPhases.addAll(calcRelPhaseList);
                     } catch (ScatterArrivalFailException e) {
@@ -317,14 +318,14 @@ public class TauP_Curve extends TauP_Time {
         List<SeismicPhase> phaseList = getSeismicPhases();
         String psFile = null;
 
-        if(gmtScript || outputFormat.equals(SVG)) {
+        if(gmtScript || outputFormat.equals(OutputTypes.SVG)) {
             String scriptStuff = "";
             if(getOutFile().endsWith(".gmt")) {
                 psFile = getOutFile().substring(0, getOutFile().length() - 4) + ".ps";
             } else {
                 psFile = getOutFile() + ".ps";
             }
-            String title = modelName+" (h="+getSourceDepth()+" km)";
+            String title = modelArgs.getModelName()+" (h="+getSourceDepth()+" km)";
             if(reduceTime) {
                 title += " reduce vel "+redVelString;
             } else if (relativePhaseName != "") {
@@ -404,14 +405,14 @@ public class TauP_Curve extends TauP_Time {
                 }
             }
             minTime = Math.floor(minTime / 100) * 100;
-            if (outputFormat.equals(GMT)) {
+            if (outputFormat.equals(OutputTypes.GMT)) {
                 out.println("gmt psbasemap -JX" + getMapWidth() + getMapWidthUnit() + " -P -R0/180/" + minTime + "/" + maxTime
                         + " -Bxa20+l'Distance (deg)' -Bya100+l'Time (sec)' -BWSne+t'" + title + "' -K > " + psFile);
                 out.println("gmt pstext -JX -P -R  -O -K >> " + psFile + " <<END");
                 out.print(scriptStuff);
                 out.println("END\n");
                 out.println("gmt psxy -JX -R -m -O -K >> " + psFile + " <<END");
-            } else if (outputFormat.equals(SVG)) {
+            } else if (outputFormat.equals(OutputTypes.SVG)) {
                 double minX;
                 double maxX;
                 int numXTicks;
@@ -520,14 +521,14 @@ public class TauP_Curve extends TauP_Time {
                 }
                 if(dist.length > 0) {
                     String commentLine = phase.getName() + " for a source depth of "
-                            + depth + " kilometers in the " + modelName
+                            + tModDepth.getSourceDepth() + " kilometers in the " + modelArgs.getModelName()
                             + " model";
                     if (relativePhaseName != "") {
                         commentLine += " relative to " + relativePhaseName;
                     }
-                    if (outputFormat.equals(GMT)) {
+                    if (outputFormat.equals(OutputTypes.GMT)) {
                         out.println("> " + commentLine);
-                    } else if (outputFormat.equals(SVG)) {
+                    } else if (outputFormat.equals(OutputTypes.SVG)) {
                         out.println("<!-- "+commentLine);
                         out.println(" -->");
                         out.println("<g class=\"autocolor "+phase.getName()+"\" >");
@@ -539,9 +540,9 @@ public class TauP_Curve extends TauP_Time {
                     if(i < dist.length - 1 && (rayParams[i] == rayParams[i + 1])
                             && rayParams.length > 2) {
                         /* Here we have a shadow zone, so put a break in the curve. */
-                        if (outputFormat.equals(GMT)) {
+                        if (outputFormat.equals(OutputTypes.GMT)) {
                             out.println("> Shadow Zone");
-                        } else if (outputFormat.equals(SVG)) {
+                        } else if (outputFormat.equals(OutputTypes.SVG)) {
                             out.println("\" />");
                             out.println("<!-- Shadow Zone -->");
                             out.print("<polyline points=\"");
@@ -557,7 +558,7 @@ public class TauP_Curve extends TauP_Time {
                         checkBoundary(maxDist, i, phase, relPhases, out);
                     }
                 }
-                if (outputFormat.equals(SVG)) {
+                if (outputFormat.equals(OutputTypes.SVG)) {
                     // end polyline
                     out.println("\" />");
                     out.println("</g>");
@@ -571,7 +572,7 @@ public class TauP_Curve extends TauP_Time {
         if (isGmtScript()) {
             out.println("END");
             endGmtAndCleanUp(out, psFile, "X");
-        } else if (outputFormat.equals(SVG)) {
+        } else if (outputFormat.equals(OutputTypes.SVG)) {
             out.println("</g>");
             out.println("</g>");
             out.println("</g>");
@@ -643,7 +644,7 @@ public class TauP_Curve extends TauP_Time {
         if (cval.length == 2) {
             double distDeg = cval[0];
             double timeReduced = cval[1];
-            if (outputFormat.equals(SVG)) {
+            if (outputFormat.equals(OutputTypes.SVG)) {
                 if (distHorizontal) {
                     out.print(Outputs.formatDistanceNoPad(distDeg) + "  "
                             + Outputs.formatTimeNoPad(timeReduced) + " ");
@@ -676,9 +677,9 @@ public class TauP_Curve extends TauP_Time {
         while(i < leftOverArgs.length) {
             if(dashEquals("gmt", leftOverArgs[i])) {
                 gmtScript = true;
-                outputFormat = GMT;
+                outputFormat = OutputTypes.GMT;
             } else if (dashEquals("svg", leftOverArgs[i])) {
-                outputFormat = SVG;
+                outputFormat = OutputTypes.SVG;
             } else if (dashEquals("distancevertical", leftOverArgs[i])) {
                 distHorizontal = false;
             } else if(dashEquals("reddeg", leftOverArgs[i]) && i < leftOverArgs.length - 1) {

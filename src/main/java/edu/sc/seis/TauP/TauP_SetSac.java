@@ -34,6 +34,7 @@ import java.util.List;
 import edu.sc.seis.seisFile.sac.SacConstants;
 import edu.sc.seis.seisFile.sac.SacHeader;
 import edu.sc.seis.seisFile.sac.SacTimeSeries;
+import picocli.CommandLine;
 
 /**
  * Calculate times for phases and set sac headers based on gcarc or dist or
@@ -58,6 +59,7 @@ import edu.sc.seis.seisFile.sac.SacTimeSeries;
  * @author H. Philip Crotwell
  * 
  */
+@CommandLine.Command(name = "setsac")
 public class TauP_SetSac extends TauP_Time {
 
     protected List<String> sacFileNames = new ArrayList<String>();
@@ -196,7 +198,7 @@ public class TauP_SetSac extends TauP_Time {
                           "skipping " + f);
             return;
         }
-        if(!((evdpkm && depth == header.getEvdp()) || (!evdpkm && depth == 1000 * header.getEvdp()))) {
+        if(!((evdpkm && tModDepth.getSourceDepth() == header.getEvdp()) || (!evdpkm && tModDepth.getSourceDepth() == 1000 * header.getEvdp()))) {
             if(!evdpkm && header.getEvdp() != 0 && header.getEvdp() < 1000.0) {
                 Alert.warning("Sac header evdp is < 1000 in "
                                       + f,
@@ -213,15 +215,15 @@ public class TauP_SetSac extends TauP_Time {
             System.out.println(f
                     + " searching for " + getPhaseNameString());
         }
-        calculate(deg);
+        List<Arrival> arrivalList = calculate(deg);
         // calcTime(deg);
         if(verbose) {
             System.out.println(f + " "
-                    + arrivals.size() + " arrivals found.");
+                    + arrivalList.size() + " arrivals found.");
         }
         // set arrivals in header, look for triplications if configured in phase name
         List<Arrival> arrivalCopy = new ArrayList<Arrival>();
-        arrivalCopy.addAll(arrivals);
+        arrivalCopy.addAll(arrivalList);
         while (arrivalCopy.size() > 0) {
             int phaseNum = -1;
             Arrival currArrival = arrivalCopy.get(0);

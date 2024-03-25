@@ -16,10 +16,12 @@
  */
 package edu.sc.seis.TauP;
 
+import edu.sc.seis.TauP.CLI.OutputTypes;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONWriter;
+import picocli.CommandLine;
 
 import java.io.*;
 import java.util.*;
@@ -31,45 +33,22 @@ import java.util.*;
  * @version 1.1.3 Wed Jul 18 15:00:35 GMT 2001
  * @author H. Philip Crotwell
  */
-public class TauP_Time extends TauP_AbstractTimeTool {
+@CommandLine.Command(name = "time")
+public class TauP_Time extends TauP_AbstractRayTool {
 
-
-    protected List<Double> degreesList = new ArrayList<Double>();
-
-    /**
-     * For when command line args uses --km for distance. Have to wait until
-     * after the model is read in to get radius of earth.
-     */
-    protected List<Double> distKilometersList = new ArrayList<Double>();
-
-    protected double azimuth = Double.MAX_VALUE;
-
-    protected double backAzimuth = Double.MAX_VALUE;
-
-    protected double takeoffAngle = Double.MAX_VALUE;
-
-    protected double shootRayp = Double.MAX_VALUE;
-
-    protected double stationLat = Double.MAX_VALUE;
-
-    protected double stationLon = Double.MAX_VALUE;
-
-    protected double eventLat = Double.MAX_VALUE;
-
-    protected double eventLon = Double.MAX_VALUE;
-
-    protected List<Arrival> arrivals = new ArrayList<Arrival>();
-
-    protected boolean GUI = false;
-
+    @CommandLine.Option(names = "--rayp", description = "only output the ray parameter")
     protected boolean onlyPrintRayP = false;
 
+    @CommandLine.Option(names = "--time", description = "only output travel time")
     protected boolean onlyPrintTime = false;
 
+    @CommandLine.Option(names = "--first", description = "only output the first arrival for each phase, no triplications")
     protected boolean onlyFirst = false;
 
+    @CommandLine.Option(names = "--amp", description = "amplitude factor for each phase")
     protected boolean withAmplitude = false;
 
+    @CommandLine.Option(names = "--rel", description = "times relative to the given phase")
     protected String relativePhaseName = "";
 
     public TauP_Time() {
@@ -111,72 +90,17 @@ public class TauP_Time extends TauP_AbstractTimeTool {
 
     @Override
     public String[] allowedOutputFormats() {
-        String[] formats = {TEXT, JSON};
+        String[] formats = {OutputTypes.TEXT, OutputTypes.JSON};
         return formats;
     }
     @Override
     public void setDefaultOutputFormat() {
-        setOutputFormat(TEXT);
+        setOutputFormat(OutputTypes.TEXT);
     }
 
 
-    public void setEventLatLon(double lat, double lon) {
-        this.eventLat = lat;
-        this.eventLon = lon;
-    }
-
-    public void setStationLatLon(double lat, double lon) {
-        this.stationLat = lat;
-        this.stationLon = lon;
-    }
-
-    @Override
-    public void clearPhases() {
-        super.clearPhases();
-        clearArrivals();
-    }
-
-    public void clearArrivals() {
-        arrivals = new ArrayList<Arrival>();
-    }
-
-    public int getNumArrivals() {
-        return arrivals.size();
-    }
-
-    public Arrival getArrival(int i) {
-        return arrivals.get(i);
-    }
-
-    public List<Arrival> getArrivals() {
-        return Collections.unmodifiableList(arrivals);
-    }
 
     /* Normal methods */
-
-    /**
-     * Parses a comma separated list of distances and returns them in an array.
-     */
-    public static List<Double> parseDegreeList(String degList) {
-        degList = degList.trim();
-        while (degList.startsWith(",")) {
-            degList = degList.substring(1);
-        }
-        while(degList.endsWith(",")) {
-            degList = degList.substring(0, degList.length()-1);
-        }
-        String[] split = degList.trim().split(",");
-        List<Double> degreesFound = new ArrayList<Double>(split.length);
-        for (int i = 0; i < split.length; i++) {
-            try {
-                degreesFound.add(Double.parseDouble(split[i].trim()));
-            } catch (NumberFormatException e) {
-                // oh well
-                System.err.println("can't parse '"+split[i]+"' as number, skipping.");
-            }
-        }
-        return degreesFound;
-    }
 
     /*
      * parses the standard command line args for the taup package. Other tools
@@ -189,127 +113,17 @@ public class TauP_Time extends TauP_AbstractTimeTool {
         int numNoComprendoArgs = 0;
         boolean cmdLineArgPhase = false;
         boolean cmdLineArgPhaseFile = false;
-        while(i < args.length) {
-            if(dashEquals("json", args[i])) {
-                outputFormat = TauP_Tool.JSON;
-            } else if(dashEquals("gui", args[i])) {
-                GUI = true;
-            } else if(dashEquals("rayp", args[i])) {
-                onlyPrintRayP = true;
-                onlyPrintTime = false;
-            } else if(dashEquals("time", args[i])) {
-                onlyPrintTime = true;
-                onlyPrintRayP = false;
-            } else if(dashEquals("first", args[i])) {
-                onlyFirst = true;
-            } else if(dashEquals("amp", args[i])) {
-                withAmplitude = true;
-            } else if(i < args.length - 1) {
-                if(dashEquals("deg", args[i])) {
-                    degreesList = parseDegreeList(args[i+1]);
-                    i++;
-                } else if(dashEquals("km", args[i])) {
-                    distKilometersList = parseDegreeList(args[i+1]);
-                    //distKilometersList.add(Double.valueOf(args[i + 1]).doubleValue());
-                    i++;
-                } else if(dashEquals("az", args[i])) {
-                    azimuth = Double.valueOf(args[i + 1]).doubleValue();
-                    i++;
-                } else if(dashEquals("baz", args[i])) {
-                    backAzimuth = Double.valueOf(args[i + 1]).doubleValue();
-                    i++;
-                } else if(dashEquals("takeoff", args[i])) {
-                    takeoffAngle = Double.valueOf(args[i + 1]).doubleValue();
-                    i++;
-                } else if(dashEquals("shootray", args[i])) {
-                    shootRayp = Double.valueOf(args[i + 1]);
-                    i++;
-                } else if(dashEquals("rel", args[i])) {
-                    relativePhaseName = args[i + 1];
-                    i++;
-                } else if(i < args.length - 2) {
-                    if(dashEquals("sta", args[i])
-                            || dashEquals("station", args[i])) {
-                        setStationLatLon(Double.valueOf(args[i + 1]),
-                                Double.valueOf(args[i + 2]));
-                        i += 2;
-                    } else if(dashEquals("evt", args[i])
-                            || dashEquals("event", args[i])) {
-                        setEventLatLon(Double.valueOf(args[i + 1]),
-                                        Double.valueOf(args[i + 2]).doubleValue());
-                        i += 2;
-                    } else {
-                        /*
-                         * I don't know how to interpret this argument, so pass
-                         * it back
-                         */
-                        noComprendoArgs[numNoComprendoArgs++] = args[i];
-                    }
-                } else {
-                    /*
-                     * I don't know how to interpret this argument, so pass it
-                     * back
-                     */
-                    noComprendoArgs[numNoComprendoArgs++] = args[i];
-                }
-            } else {
-                /* I don't know how to interpret this argument, so pass it back */
-                noComprendoArgs[numNoComprendoArgs++] = args[i];
-            }
-            i++;
-        }
-        // check to see if there were phases or a phase file as an argument.
-        // if so then dump the defaults
-        if(cmdLineArgPhaseFile || cmdLineArgPhase) {
-            if(cmdLineArgPhaseFile && !cmdLineArgPhase) {
-                toolProps.remove("taup.phase.list");
-            }
-            if(!cmdLineArgPhaseFile && cmdLineArgPhase) {
-                toolProps.remove("taup.phase.file");
-            }
-        }
-        if(numNoComprendoArgs > 0) {
-            String[] temp = new String[numNoComprendoArgs];
-            System.arraycopy(noComprendoArgs, 0, temp, 0, numNoComprendoArgs);
-            return temp;
-        } else {
-            return new String[0];
-        }
-    }
+        return new String[0];
 
-    public synchronized List<Arrival> sortArrivals(List<Arrival> arrivals) {
-        Collections.sort(arrivals, new Comparator<Arrival>() {
-            public int compare(Arrival o1, Arrival o2) {
-                return Double.compare(o1.getTime(), o2.getTime());
-            }
-        });
-        return arrivals;
     }
 
     public List<Arrival> calculate(double degrees) throws TauPException {
-        List<Double> dList = Arrays.asList(degrees);
+        List<DistanceRay> dList = Arrays.asList( DistanceRay.ofDegrees(degrees));
         return calculate(dList);
     }
 
-    public List<Arrival> calculate(List<Double> degreesList) throws TauPException {
-        List<Arrival> arrivals = calcTime(degreesList);
-        return sortArrivals(arrivals);
-    }
-
-    public List<Arrival> calcEventStation(Double[] evloc, List<Double[]> staloc) throws TauPException {
-        setEventLatLon(evloc[0], evloc[1]);
-        List<Arrival> out = new ArrayList<>();
-        for (Double[] sta : staloc) {
-            clearArrivals();
-            setEventLatLon(evloc[0], evloc[1]);
-            setStationLatLon(sta[0], sta[1]);
-            degreesList.add(SphericalCoords.distance(sta[0], sta[1], evloc[0], evloc[1]));
-            azimuth = SphericalCoords.azimuth(evloc[0], evloc[1], sta[0], sta[1]);
-            backAzimuth = SphericalCoords.azimuth(sta[0], sta[1], evloc[0], evloc[1]);
-            out.addAll(calculate(degreesList));
-        }
-        this.arrivals = sortArrivals(out);
-        return this.arrivals;
+    public List<Arrival> calculate(List<DistanceRay> distanceRays) throws TauPException {
+        return calcTime(distanceRays);
     }
 
     public Arrival calculateRelativeArrival(double degrees) throws TauModelException {
@@ -324,8 +138,7 @@ public class TauP_Time extends TauP_AbstractTimeTool {
                             getTauModelDepthCorrected(),
                             this.getSourceDepth(),
                             this.getReceiverDepth(),
-                            this.getScattererDepth(),
-                            this.getScattererDistDeg(),
+                            this.getScatterer(),
                             DEBUG);
                     relPhases.addAll(calcRelPhaseList);
                 } catch (ScatterArrivalFailException e) {
@@ -343,37 +156,25 @@ public class TauP_Time extends TauP_AbstractTimeTool {
     }
 
     @Override
-    public void validateArguments() throws TauModelException {
-        if (this.getTauModel() == null) {
-            throw new TauModelException("Model for '"+this.getTauModelName()+"' is null, unable to calculate.");
+    public List<Arrival> calcAll(List<SeismicPhase> phaseList, List<RayCalculateable> shootables) throws TauPException {
+        List<Arrival> arrivals = new ArrayList<>();
+        depthCorrect();
+        for (SeismicPhase phase : phaseList) {
+            for (RayCalculateable shoot : shootables) {
+                arrivals.addAll(shoot.calculate(phase));
+            }
         }
-        if (this.getTauModel().getRadiusOfEarth() < getSourceDepth()) {
-            throw new TauModelException("Source depth of "+getSourceDepth()+" in '"+this.getTauModelName()
-                    +"' is greater than radius of earth, "+this.getTauModel().getRadiusOfEarth()+", unable to calculate.");
-        }
-        if (this.getTauModel().getRadiusOfEarth() < getReceiverDepth()) {
-            throw new TauModelException("Receiver depth of "+getReceiverDepth()+" in '"+this.getTauModelName()
-                    +"' is greater than radius of earth, "+this.getTauModel().getRadiusOfEarth()+", unable to calculate.");
-        }
-        if (this.getTauModel().getRadiusOfEarth() < getScattererDepth()) {
-            throw new TauModelException("Scatterer depth of "+getScattererDepth()+" in '"+this.getTauModelName()
-                    +"' is greater than radius of earth, "+this.getTauModel().getRadiusOfEarth()+", unable to calculate.");
-        }
+        return Arrival.sortArrivals(arrivals);
     }
 
-    public List<Arrival> calcTime(double degrees) throws TauModelException {
-        List<Double> dList = Arrays.asList(degrees);
-        return calcTime(dList);
-    }
-
-    public List<Arrival> calcTime(List<Double> degreesList) throws TauModelException {
+    public List<Arrival> calcTime(List<DistanceRay> degreesList) throws TauModelException {
         validateArguments();
         depthCorrect();
-        clearArrivals();
         SeismicPhase phase;
-        clearArrivals();
+        List<Arrival> arrivalList = new ArrayList<>();
         List<SeismicPhase> phaseList = getSeismicPhases();
-        for (double degrees : degreesList) {
+        for (DistanceRay distVal : degreesList) {
+            double degrees = distVal.getDegrees(tMod.getRadiusOfEarth());
             for (int phaseNum = 0; phaseNum < phaseList.size(); phaseNum++) {
                 phase = phaseList.get(phaseNum);
                 List<Arrival> phaseArrivals = phase.calcTime(degrees);
@@ -382,127 +183,39 @@ public class TauP_Time extends TauP_AbstractTimeTool {
                     arrival.setRelativeToArrival(relativeArrival);
                 }
                 if (!onlyFirst) {
-                    for (Arrival arrival : phaseArrivals) {
-                        arrivals.add(arrival);
-                    }
+                    arrivalList.addAll(phaseArrivals);
                 } else {
                     if (phaseArrivals.size() > 0) {
-                        arrivals.add(phaseArrivals.get(0));
+                        arrivalList.add(phaseArrivals.get(0));
                     }
                 }
             }
         }
-        return sortArrivals(arrivals);
+        return Arrival.sortArrivals(arrivalList);
     }
 
 
-    public List<Arrival> calcTakeoff(double takeoffAngle) throws TauModelException {
-        List<Double> dList = Arrays.asList(takeoffAngle);
-        return calcTakeoff(dList);
-    }
-
-    public List<Arrival> calcTakeoff(List<Double> takeoffAngleList) throws TauModelException {
-        stationLat = Double.MAX_VALUE;
-        stationLon = Double.MAX_VALUE;
-        depthCorrect();
-        clearArrivals();
-        SeismicPhase phase;
-        List<SeismicPhase> phaseList = getSeismicPhases();
-        List<Arrival> arrivals = new ArrayList<>();
-        for (double takeoffAngle : takeoffAngleList) {
-            for (int phaseNum = 0; phaseNum < phaseList.size(); phaseNum++) {
-                phase = phaseList.get(phaseNum);
-                if (phase.getDownGoing()[0] == (takeoffAngle <= 90)) {
-                    // check both downgoing or both upgoing
-                    double rayParam = phase.calcRayParamForTakeoffAngle(takeoffAngle);
-                    Arrival phaseArrival;
-                    try {
-                        if (phase.getMinRayParam() <= rayParam && rayParam <= phase.getMaxRayParam()) {
-                            phaseArrival = phase.shootRay(rayParam);
-                            arrivals.add(phaseArrival);
-                        }
-                    } catch (NoSuchLayerException e) {
-                        Alert.warning("NoSuchLayerException", e.getMessage());
-                    } catch (SlownessModelException e) {
-                        Alert.warning("SlownessModelException", e.getMessage());
-                    }
-                }
-            }
-        }
-        this.arrivals = sortArrivals(arrivals);
-        return this.arrivals;    }
-
-    public List<Arrival> calcRayParameter(double rayparameter) throws TauModelException {
-        List<Double> dList = Arrays.asList(rayparameter);
-        return calcRayParameter(dList);
-    }
-
-    /**
-     * Shoots ray parameters for each phases from the source.
-     * @param rayParameterList ray parameter list in s/deg
-     * @throws TauModelException
-     */
-    public List<Arrival> calcRayParameterSDeg(List<Double> rayParameterList) throws TauModelException {
-        List<Double> rayParameterListRad = new ArrayList<>();
-        for (Double d : rayParameterList) {
-            rayParameterListRad.add(d/SphericalCoords.dtor);
-        }
-        return calcRayParameter(rayParameterListRad);
-    }
-
-    /**
-     * Shoots ray parameters for each phases from the source.
-     * @param rayParameterList ray parameter list in s/radian
-     * @throws TauModelException
-     */
-    public List<Arrival> calcRayParameter(List<Double> rayParameterList) throws TauModelException {
-        stationLat = Double.MAX_VALUE;
-        stationLon = Double.MAX_VALUE;
-        depthCorrect();
-        clearArrivals();
-        SeismicPhase phase;
-        List<SeismicPhase> phaseList = getSeismicPhases();
-        List<Arrival> arrivals = new ArrayList<>();
-        for (Double rayParam : rayParameterList) {
-            for (int phaseNum = 0; phaseNum < phaseList.size(); phaseNum++) {
-                phase = phaseList.get(phaseNum);
-                Arrival phaseArrival;
-                try {
-                    if (phase.getMinRayParam() <= rayParam && rayParam <= phase.getMaxRayParam()) {
-                        phaseArrival = phase.shootRay(rayParam);
-                        arrivals.add(phaseArrival);
-                    }
-                } catch (NoSuchLayerException e) {
-                    Alert.warning("NoSuchLayerException", e.getMessage());
-                } catch (SlownessModelException e) {
-                    Alert.warning("SlownessModelException", e.getMessage());
-                }
-            }
-        }
-        this.arrivals = sortArrivals(arrivals);
-        return this.arrivals;
-    }
-
-    public void printResult(PrintWriter out) throws IOException {
-        if (outputFormat.equals(TauP_Tool.JSON)) {
-            printResultJSON(out);
+    @Override
+    public void printResult(PrintWriter out, List<Arrival> arrivalList) throws IOException {
+        if (outputFormat.equals(OutputTypes.JSON)) {
+            printResultJSON(out, arrivalList);
         } else {
-            printResultText(out);
+            printResultText(out, arrivalList);
         }
         out.flush();
     }
 
-    public void printResultText(PrintWriter out) throws IOException {
+    public void printResultText(PrintWriter out, List<Arrival> arrivalList) throws IOException {
         Arrival currArrival;
         int maxNameLength = 5;
         int maxPuristNameLength = 5;
-        for(int j = 0; j < arrivals.size(); j++) {
-            if(arrivals.get(j).getName().length() > maxNameLength) {
-                maxNameLength = arrivals.get(j).getName()
+        for(int j = 0; j < arrivalList.size(); j++) {
+            if(arrivalList.get(j).getName().length() > maxNameLength) {
+                maxNameLength = arrivalList.get(j).getName()
                         .length();
             }
-            if(arrivals.get(j).getPuristName().length() > maxPuristNameLength) {
-                maxPuristNameLength = arrivals.get(j).getPuristName()
+            if(arrivalList.get(j).getPuristName().length() > maxPuristNameLength) {
+                maxPuristNameLength = arrivalList.get(j).getPuristName()
                         .length();
             }
         }
@@ -511,12 +224,12 @@ public class TauP_Time extends TauP_AbstractTimeTool {
         //Format phasePuristFormat = new Format("%-" + maxPuristNameLength + "s");
         String phasePuristFormat = "%-" + maxPuristNameLength + "s";
         if(!(onlyPrintRayP || onlyPrintTime)) {
-            String modelLine =  "\nModel: " + modelName;
+            String modelLine =  "\nModel: " + modelArgs.getModelName();
             if (getReceiverDepth() != 0.0) {
                 modelLine += "  Receiver Depth: "+getReceiverDepth()+" km";
             }
-            if (getScattererDistDeg() != 0.0) {
-                modelLine += "  Scatter Depth: "+ getScattererDepth()+" km Dist: "+ getScattererDistDeg() ;
+            if (getScatterer() != null && getScatterer().dist.getDegrees(tMod.getRadiusOfEarth()) != 0.0) {
+                modelLine += "  Scatter Depth: "+ getScattererDepth()+" km Dist: "+ getScatterer().dist.getDegrees(tMod.getRadiusOfEarth());
             }
             out.println(modelLine);
             String lineOne = "Distance   Depth   " + String.format(phaseFormat, "Phase")
@@ -540,10 +253,10 @@ public class TauP_Time extends TauP_AbstractTimeTool {
                 out.write("-");
             }
             out.write("\n");
-            for(int j = 0; j < arrivals.size(); j++) {
-                currArrival = arrivals.get(j);
+            for(int j = 0; j < arrivalList.size(); j++) {
+                currArrival = arrivalList.get(j);
                 out.print(Outputs.formatDistance(currArrival.getSearchDistDeg()));
-                out.print(Outputs.formatDepth(depth) + "   ");
+                out.print(Outputs.formatDepth(tModDepth.getSourceDepth()) + "   ");
                 out.print(String.format(phaseFormat, currArrival.getName()));
                 out.print("  "
                         + Outputs.formatTime(currArrival.getTime())
@@ -580,14 +293,14 @@ public class TauP_Time extends TauP_AbstractTimeTool {
                 out.println();
             }
         } else if(onlyPrintTime) {
-            for(int j = 0; j < arrivals.size(); j++) {
-                currArrival = arrivals.get(j);
+            for(int j = 0; j < arrivalList.size(); j++) {
+                currArrival = arrivalList.get(j);
                 out.print((float) (currArrival.getTime()) + " ");
             }
             out.println();
         } else if(onlyPrintRayP) {
-            for(int j = 0; j < arrivals.size(); j++) {
-                currArrival = arrivals.get(j);
+            for(int j = 0; j < arrivalList.size(); j++) {
+                currArrival = arrivalList.get(j);
                 out.write((float) (Math.PI / 180.0 * currArrival.getRayParam())
                         + " ");
             }
@@ -597,17 +310,17 @@ public class TauP_Time extends TauP_AbstractTimeTool {
         out.flush();
     }
 
-    public void printResultJSON(PrintWriter out) throws IOException {
-        writeJSON(out, "");
+    public void printResultJSON(PrintWriter out, List<Arrival> arrivalList) throws IOException {
+        writeJSON(out, "", arrivalList);
     }
 
-    public void writeJSON(PrintWriter pw, String indent) throws IOException {
+    public void writeJSON(PrintWriter pw, String indent, List<Arrival> arrivalList) throws IOException {
         writeJSON(pw, indent,
                 getTauModelName(),
                 getSourceDepth(),
                 getReceiverDepth(),
                 getSeismicPhases(),
-                getArrivals());
+                arrivalList);
     }
 
     public void writeJSON(PrintWriter pw, String indent,
@@ -723,11 +436,6 @@ public class TauP_Time extends TauP_AbstractTimeTool {
      */
     public void init() throws TauPException {
         super.init();
-        // check for command line arg distance in km
-        for (double distKilometers : distKilometersList) {
-                degreesList.add(distKilometers / getTauModel().getRadiusOfEarth()
-                        * 180.0 / Math.PI);
-        }
     }
 
     public void printHelp() {
@@ -741,34 +449,18 @@ public class TauP_Time extends TauP_AbstractTimeTool {
     }
 
     public void start() throws IOException, TauPException {
-        if((degreesList.size() != 0 || takeoffAngle != Double.MAX_VALUE
-                || shootRayp != Double.MAX_VALUE
-                || (stationLat != Double.MAX_VALUE
-                && stationLon != Double.MAX_VALUE
-                && eventLat != Double.MAX_VALUE && eventLon != Double.MAX_VALUE))) {
+        List<RayCalculateable> distanceValues = getDistanceArgs().getShootRays();
+        List<Arrival> arrivalList = new ArrayList<>();
+        if((distanceValues.size() != 0)) {
             /* enough info given on cmd line, so just do one calc. */
-            if (takeoffAngle != Double.MAX_VALUE) {
-                calcTakeoff(takeoffAngle);
-            } else if (shootRayp != Double.MAX_VALUE) {
-                calcRayParameter(shootRayp/SphericalCoords.dtor);
-            } else {
-                if(degreesList.size() == 0) {
-                    Double[] evlatlon = new Double[] {eventLat, eventLon};
-                    List<Double[]> stalatlonList = new ArrayList<>();
-                    stalatlonList.add(new Double[] {stationLat, stationLon});
-                    calcEventStation(evlatlon, stalatlonList);
-                } else {
-                    calculate(degreesList);
-                }
-            }
-            printResult(getWriter());
+            calcAndPrint(getSeismicPhases(), distanceValues);
         } else {
             /* interactive mode... */
             long prevTime = 0;
             long currTime;
             char readMode = 'd';
-            double tempDepth = depth;
-            setSourceDepth(depth);
+            double tempDepth = modelArgs.getSourceDepth();
+            setSourceDepth(modelArgs.getSourceDepth());
             StreamTokenizer tokenIn = new StreamTokenizer(new InputStreamReader(System.in));
             tokenIn.parseNumbers();
             tokenIn.wordChars(',', ',');
@@ -811,10 +503,9 @@ public class TauP_Time extends TauP_AbstractTimeTool {
                             if(DEBUG) {
                                 Alert.info("degrees=" + degrees);
                             }
-                            degreesList.clear();
-                            degreesList.add(degrees);
-                            calculate(degreesList);
-                            printResult(getWriter());
+                            getDistanceArgs().clear();
+                            getDistanceArgs().setDegreeList(Arrays.asList(degrees));
+                            calcAndPrint(getSeismicPhases(), distanceValues);
                         } else {
                             if(tokenIn.ttype == StreamTokenizer.TT_EOF
                                     || (tokenIn.ttype == StreamTokenizer.TT_WORD && (tokenIn.sval.equalsIgnoreCase("q")
@@ -860,10 +551,7 @@ public class TauP_Time extends TauP_AbstractTimeTool {
                         break;
                     case 'r':
                         // recalulate
-                        if(degreesList.size() != 0) {
-                            calculate(degreesList);
-                            printResult(getWriter());
-                        }
+                        calcAndPrint(getSeismicPhases(), distanceValues);
                         readMode = 'd';
                         break;
                     case 'p':
@@ -915,26 +603,20 @@ public class TauP_Time extends TauP_AbstractTimeTool {
                         System.out.print("Enter azimuth: ");
                         tokenIn.nextToken();
                         if(tokenIn.ttype == StreamTokenizer.TT_NUMBER) {
-                            azimuth = tokenIn.nval;
-                            stationLat = Double.MAX_VALUE;
-                            stationLon = Double.MAX_VALUE;
-                            if(DEBUG) {
-                                Alert.info("azimuth=" + azimuth);
-                            }
+                            getDistanceArgs().setAzimuth(tokenIn.nval);
+                            getDistanceArgs().unsetStationLatLon();
                         } else {
                             Alert.warning("Expected a number.", "got "
                                     + tokenIn + " instead.");
                             printHelp();
                             break;
                         }
-                        if(eventLat == Double.MAX_VALUE
-                                || eventLon == Double.MAX_VALUE) {
+                        if(! getDistanceArgs().hasEventLatLon()) {
                             readMode = 'e';
-                        } else if(degreesList.size() == 0) {
+                        } else if(getDistanceArgs().getShootRays().size() == 0) {
                             readMode = 'd';
                         } else {
-                            calculate(degreesList);
-                            printResult(getWriter());
+                            calcAndPrint(getSeismicPhases(), distanceValues);
                         }
                         readMode = 'd';
                         break;
@@ -944,10 +626,10 @@ public class TauP_Time extends TauP_AbstractTimeTool {
                         System.out.print("Enter back azimuth: ");
                         tokenIn.nextToken();
                         if(tokenIn.ttype == StreamTokenizer.TT_NUMBER) {
-                            backAzimuth = tokenIn.nval;
-                            setEventLatLon( Double.MAX_VALUE, Double.MAX_VALUE);
+                            getDistanceArgs().setBackAzimuth(tokenIn.nval);
+                            getDistanceArgs().unsetEventLatLon();
                             if(DEBUG) {
-                                Alert.info("backAzimuth=" + backAzimuth);
+                                Alert.info("backAzimuth=" + tokenIn.nval);
                             }
                         } else {
                             Alert.warning("Expected a number.", "got "
@@ -955,14 +637,12 @@ public class TauP_Time extends TauP_AbstractTimeTool {
                             printHelp();
                             break;
                         }
-                        if(stationLat == Double.MAX_VALUE
-                                || stationLon == Double.MAX_VALUE) {
+                        if( ! getDistanceArgs().hasStationLatLon()) {
                             readMode = 's';
-                        } else if(degreesList.size() == 0) {
+                        } else if(getDistanceArgs().getShootRays().size() == 0) {
                             readMode = 'd';
                         } else {
-                            calculate(degreesList);
-                            printResult(getWriter());
+                            calcAndPrint(getSeismicPhases(), distanceValues);
                         }
                         readMode = 'd';
                         break;
@@ -973,14 +653,14 @@ public class TauP_Time extends TauP_AbstractTimeTool {
                         if(tokenIn.ttype == StreamTokenizer.TT_NUMBER) {
                             double evLat = tokenIn.nval;
                             if(DEBUG) {
-                                Alert.info("eventLat=" + eventLat);
+                                Alert.info("eventLat=" + evLat);
                             }
                             tokenIn.nextToken();
                             if(tokenIn.ttype == StreamTokenizer.TT_NUMBER) {
                                 double evLon = tokenIn.nval;
-                                setEventLatLon(evLat, evLon);
+                                getDistanceArgs().setEventLatLon(evLat, evLon);
                                 if(DEBUG) {
-                                    Alert.info("eventLon=" + eventLon);
+                                    Alert.info("eventLon=" + evLon);
                                 }
                             } else {
                                 printHelp();
@@ -988,14 +668,8 @@ public class TauP_Time extends TauP_AbstractTimeTool {
                         } else {
                             printHelp();
                         }
-                        if(stationLat != Double.MAX_VALUE
-                                && stationLon != Double.MAX_VALUE) {
-
-                            Double[] evlatlon = new Double[] {eventLat, eventLon};
-                            List<Double[]> stalatlonList = new ArrayList<>();
-                            stalatlonList.add(new Double[] {stationLat, stationLon});
-                            calcEventStation(evlatlon, stalatlonList);
-                            printResult(getWriter());
+                        if(getDistanceArgs().hasStationLatLon()) {
+                            calcAndPrint(getSeismicPhases(), distanceValues);
                         }
                         readMode = 'd';
                         break;
@@ -1004,16 +678,17 @@ public class TauP_Time extends TauP_AbstractTimeTool {
                         System.out.print("Enter station lat and lon: ");
                         tokenIn.nextToken();
                         if(tokenIn.ttype == StreamTokenizer.TT_NUMBER) {
-                            stationLat = tokenIn.nval;
+                            double stationLat = tokenIn.nval;
                             if(DEBUG) {
-                                Alert.info("stationLat=" + stationLat);
+                                Alert.info("stationLat=" + tokenIn.nval);
                             }
                             tokenIn.nextToken();
                             if(tokenIn.ttype == StreamTokenizer.TT_NUMBER) {
-                                stationLon = tokenIn.nval;
+                                double stationLon = tokenIn.nval;
                                 if(DEBUG) {
-                                    Alert.info("stationLon=" + stationLon);
+                                    Alert.info("stationLon=" + tokenIn.nval);
                                 }
+                                getDistanceArgs().setStationLatLon(stationLat, stationLon);
                             } else {
                                 printHelp();
                                 break;
@@ -1022,13 +697,8 @@ public class TauP_Time extends TauP_AbstractTimeTool {
                             printHelp();
                             break;
                         }
-                        if(eventLat != Double.MAX_VALUE
-                                && eventLon != Double.MAX_VALUE) {
-                            Double[] evlatlon = new Double[] {eventLat, eventLon};
-                            List<Double[]> stalatlonList = new ArrayList<>();
-                            stalatlonList.add(new Double[] {stationLat, stationLon});
-                            calcEventStation(evlatlon, stalatlonList);
-                            printResult(getWriter());
+                        if(getDistanceArgs().hasEventLatLon() || getDistanceArgs().getBackAzimuth() != null) {
+                            calcAndPrint(getSeismicPhases(), distanceValues);
                         }
                         readMode = 'd';
                         break;
@@ -1040,35 +710,35 @@ public class TauP_Time extends TauP_AbstractTimeTool {
                         tokenIn.wordChars('.', '.');
                         tokenIn.ordinaryChars('-', '-');
                         tokenIn.wordChars('-', '-');
-                        String oldModelName = modelName;
+                        String oldModelName = modelArgs.getModelName();
                         TauModel oldTMod = tMod;
                         TauModel oldTModDepth = tModDepth;
                         System.out.print("Enter model name: ");
                         tokenIn.nextToken();
                         if(tokenIn.ttype == StreamTokenizer.TT_WORD) {
-                            modelName = tokenIn.sval;
+                            modelArgs.setModelName( tokenIn.sval);
                         }
                         tokenIn.ordinaryChars('0', '9');
                         tokenIn.ordinaryChars('.', '.');
                         tokenIn.ordinaryChars('-', '-');
                         tokenIn.parseNumbers();
-                        if(!modelName.equals(oldModelName)) {
+                        if(!modelArgs.getModelName().equals(oldModelName)) {
                             try {
                                 readTauModel();
-                                setSourceDepth(depth);
+                                setSourceDepth(modelArgs.getSourceDepth());
                             } catch(TauModelException e) {
                                 if (e.getCause() instanceof InvalidClassException) {
                                     Alert.warning("Model file "
-                                                  + modelName
+                                                  + modelArgs.getModelName()
                                                   + " is not compatible with the current version.",
                                           "Recreate using taup_create. Still using model "
                                                   + oldModelName + ".");
                                 } else {
                                     Alert.warning("I can't load model file "
-                                                  + modelName, "Still using model "
+                                                  + modelArgs.getModelName(), "Still using model "
                                                   + oldModelName + ".");
                                 }
-                                modelName = oldModelName;
+                                modelArgs.setModelName(oldModelName);
                                 tMod = oldTMod;
                                 tModDepth = oldTModDepth;
                             }
@@ -1082,8 +752,8 @@ public class TauP_Time extends TauP_AbstractTimeTool {
                         tokenIn.nextToken();
                         if(tokenIn.ttype == StreamTokenizer.TT_NUMBER) {
                             takeoffAngle = tokenIn.nval;
-                            calcTakeoff(takeoffAngle);
-                            printResult(getWriter());
+                            getDistanceArgs().setTakeoffAngles(Arrays.asList(takeoffAngle));
+                            calcAndPrint(getSeismicPhases(), distanceValues);
                         } else {
                             Alert.warning("Expected a number.", "got "
                                     + tokenIn + " instead.");
@@ -1094,13 +764,13 @@ public class TauP_Time extends TauP_AbstractTimeTool {
                         break;
                     case 'z':
                         System.out.print("Enter ray parameter (s/deg): ");
-                        // takeoff angle
+                        // shoot a ray
                         double shootRayp;
                         tokenIn.nextToken();
                         if(tokenIn.ttype == StreamTokenizer.TT_NUMBER) {
                             shootRayp = tokenIn.nval;
-                            calcRayParameter(shootRayp/SphericalCoords.dtor);
-                            printResult(getWriter());
+                            getDistanceArgs().setShootRayParams(Arrays.asList(shootRayp));
+                            calcAndPrint(getSeismicPhases(), distanceValues);
                         } else {
                             Alert.warning("Expected a number.", "got "
                                     + tokenIn + " instead.");
@@ -1180,5 +850,4 @@ public class TauP_Time extends TauP_AbstractTimeTool {
     public static void main(String[] args) throws IOException {
         ToolRun.legacyRunTool(ToolRun.TIME, args);
     }
-
 }

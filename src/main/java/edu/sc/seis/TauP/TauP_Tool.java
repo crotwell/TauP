@@ -13,34 +13,42 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.Callable;
+
+import edu.sc.seis.TauP.CLI.OutputTypes;
+import picocli.CommandLine;
 
 /**
  * Base class for tools within the TauP Toolkit.
  */
-public abstract class TauP_Tool {
+public abstract class TauP_Tool implements Callable<Integer> {
 
+    /**
+     * Computes a result, or throws an exception if unable to do so.
+     *
+     * @return computed result
+     * @throws Exception if unable to compute a result
+     */
+    @Override
+    public Integer call() throws Exception {
+        init();
+        start();
+        return 0;
+    }
 
     /** Turns on debugging output. */
+    @CommandLine.Option(names = {"--debug"}, description = "display debugging message")
     public static boolean DEBUG = ToolRun.DEBUG;
 
     /** Turns on verbose output. */
     public boolean verbose = ToolRun.VERBOSE;
 
-    public String outputFormat = TEXT;
+    public String outputFormat = OutputTypes.TEXT;
 
     protected String outFileBase = "";
 
-    public static final String CSV = "csv";
-
-    public static final String GMT = "gmt";
-
-    public static final String SVG = "svg";
-
-    public static final String JSON = "json";
-
-    public static final String TEXT = "text";
-
-    public static final String MS3 = "ms3";
+    @CommandLine.Option(names = {"--help"}, usageHelp = true, description = "display this help message")
+    boolean usageHelpRequested;
 
     public String[] cmdLineArgs = new String[0];
 
@@ -80,7 +88,9 @@ public abstract class TauP_Tool {
     }
 
     public abstract void setDefaultOutputFormat();
-    
+
+    public OutputTypes outputType;
+
     /** usually one of TEXT or JSON. Subclasses may add
      * additional types, for example CSV, GMT or SVG.
      * @param val output format for results
@@ -96,15 +106,15 @@ public abstract class TauP_Tool {
             throw new IllegalArgumentException("output format for "+getClass().getName()+" must be one of "+allowed+" but was "+val);
         }
         this.outputFormat = val;
-        if (this.outputFormat == TEXT) {
+        if (this.outputFormat == OutputTypes.TEXT) {
             setOutFileExtension("txt");
-        } else if (this.outputFormat == GMT) {
+        } else if (this.outputFormat == OutputTypes.GMT) {
             setOutFileExtension("gmt");
-        } else if (this.outputFormat == SVG) {
+        } else if (this.outputFormat == OutputTypes.SVG) {
             setOutFileExtension("svg");
-        } else if (this.outputFormat == CSV) {
+        } else if (this.outputFormat == OutputTypes.CSV) {
             setOutFileExtension("csv");
-        } else if (this.outputFormat == MS3) {
+        } else if (this.outputFormat == OutputTypes.MS3) {
             setOutFileExtension("ms3");
         }
     }
@@ -161,11 +171,11 @@ public abstract class TauP_Tool {
         this.writer = writer;
     }
 
-    /** a noop that allows overriding classes to print things
-     * before results are calculated. For example to set up GMT commands before drawing paths.
-     * @param out
-     * @throws IOException
-     */
+        /** a noop that allows overriding classes to print things
+         * before results are calculated. For example to set up GMT commands before drawing paths.
+         * @param out
+         * @throws IOException
+         */
     public void printScriptBeginning(PrintWriter out)  throws IOException {}
 
     

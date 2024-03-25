@@ -1,10 +1,14 @@
 package edu.sc.seis.TauP;
 
+import edu.sc.seis.TauP.CLI.OutputTypes;
+import picocli.CommandLine;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 
-public class TauP_PhaseDescribe extends TauP_Time {
+@CommandLine.Command(name = "phase")
+public class TauP_PhaseDescribe extends TauP_AbstractPhaseTool {
 
     public TauP_PhaseDescribe() {
         super();
@@ -12,7 +16,6 @@ public class TauP_PhaseDescribe extends TauP_Time {
     }
 
     /** Prints the command line arguments common to all TauP tools. */
-    @Override
     public String getStdUsage() {
         return TauP_Tool.getStdUsageHead(this.getClass())
                 + "-ph phase list        -- comma separated phase list\n"
@@ -34,13 +37,18 @@ public class TauP_PhaseDescribe extends TauP_Time {
     }
 
     @Override
+    public void validateArguments() throws TauModelException {
+
+    }
+
+    @Override
     public String[] allowedOutputFormats() {
-        String[] formats = {TEXT, JSON};
+        String[] formats = {OutputTypes.TEXT, OutputTypes.JSON};
         return formats;
     }
     @Override
     public void setDefaultOutputFormat() {
-        setOutputFormat(TEXT);
+        setOutputFormat(OutputTypes.TEXT);
     }
 
     @Override
@@ -92,10 +100,14 @@ public class TauP_PhaseDescribe extends TauP_Time {
     }
 
     @Override
+    public void destroy() throws TauPException {
+
+    }
+
     public void printResult(PrintWriter writer) {
-        if (outputFormat.equals(TEXT)) {
+        if (outputFormat.equals(OutputTypes.TEXT)) {
             printResultText(writer);
-        } else if (outputFormat.equals(JSON)) {
+        } else if (outputFormat.equals(OutputTypes.JSON)) {
             printResultJSON(writer);
         } else {
             throw new IllegalArgumentException("Output format "+outputFormat+" not recognized");

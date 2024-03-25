@@ -1,9 +1,35 @@
 package edu.sc.seis.TauP;
 
+import picocli.CommandLine;
+
 import java.io.*;
 import java.lang.reflect.Constructor;
 import java.util.Arrays;
+import java.util.concurrent.Callable;
 
+
+@CommandLine.Command(name = "taup",
+		description="The TauP Toolkit",
+		mixinStandardHelpOptions = true,
+		separator = " ",
+		versionProvider=edu.sc.seis.TauP.CLI.VersionProvider.class,
+		subcommands = {
+				TauP_Time.class,
+				TauP_Pierce.class,
+				TauP_Path.class,
+				TauP_Create.class,
+				TauP_XY.class,
+				TauP_Curve.class,
+				TauP_SetMSeed3.class,
+				TauP_SetSac.class,
+				TauP_SlownessPlot.class,
+				edu.sc.seis.TauP.TauP_VelocityPlot.class,
+				TauP_Table.class,
+				TauP_Wavefront.class,
+				edu.sc.seis.TauP.TauP_PhaseDescribe.class,
+				TauP_Web.class,
+				CommandLine.HelpCommand.class
+		})
 public class ToolRun {
     
     public static boolean DEBUG = false;
@@ -96,7 +122,17 @@ public class ToolRun {
         return arg.equalsIgnoreCase("-"+argName) || arg.equalsIgnoreCase("--"+argName);
     }
 
-    public static TauP_Tool getToolForName(String toolToRun) {
+
+	public static CommandLine.Help.ColorScheme colorScheme = new CommandLine.Help.ColorScheme.Builder()
+			.commands    (CommandLine.Help.Ansi.Style.bold, CommandLine.Help.Ansi.Style.underline)    // combine multiple styles
+			.options     (CommandLine.Help.Ansi.Style.fg_black, CommandLine.Help.Ansi.Style.bold)
+			.parameters  (CommandLine.Help.Ansi.Style.fg_black)
+			.optionParams(CommandLine.Help.Ansi.Style.italic)
+			.errors      (CommandLine.Help.Ansi.Style.fg_red, CommandLine.Help.Ansi.Style.bold)
+			.stackTraces (CommandLine.Help.Ansi.Style.italic).build();
+
+
+	public static TauP_Tool getToolForName(String toolToRun) {
 		TauP_Tool tool = null;
 		if (toolToRun.contentEquals(CREATE)) {
 			tool = new TauP_Create();
@@ -135,8 +171,34 @@ public class ToolRun {
 		}
 		return tool;
 	}
-    
-	public static void main(String[] args) throws IOException {
+
+	@CommandLine.Option(names = {"-V", "--version"}, versionHelp = true, description = "display version info")
+	boolean versionInfoRequested;
+
+	@CommandLine.Option(names = {"--help"}, usageHelp = true, description = "display this help message")
+	boolean usageHelpRequested;
+
+
+	public static int mainWithExitCode(String[] args) throws IOException {
+		CommandLine commandLine = new CommandLine(new edu.sc.seis.TauP.ToolRun());
+		commandLine.setPosixClusteredShortOptionsAllowed(false);
+		commandLine.setColorScheme(colorScheme);
+		System.err.println("picocli run: "+String.join(" ", args));
+		int result = commandLine.execute(args);
+		return result;
+	}
+	public static void main(String... args) {
+		System.err.println("new picocli main: "+String.join(" ", args));
+		try {
+			System.exit(10000+mainWithExitCode(args));
+		} catch(Exception e) {
+			System.err.println("Error starting tool: "+args[0]+" "+e);
+			e.printStackTrace();
+			System.exit(1001);
+		}
+	}
+	public static void mainOld(String[] args) throws IOException {
+		System.err.println("old parseargs main: "+String.join(" ", args));
 	    String toolToRun;
 	    String[] restOfArgs = new String[0];
 		if (args.length == 0) {
@@ -150,12 +212,7 @@ public class ToolRun {
 
 		try {
 			// special cases:
-            if (toolToRun.contentEquals(GUI)) {
-                TauP_GUI t = new TauP_GUI();
-                t.setQuitExits(true);
-                t.setVisible(true);
-                return;
-			} else if (toolToRun.contentEquals(WEB)) {
+            if (toolToRun.contentEquals(WEB)) {
             	try {
             		Class webClass = Class.forName("edu.sc.seis.webtaup.TauP_Web");
 					Constructor con = webClass.getConstructor();
@@ -176,7 +233,7 @@ public class ToolRun {
 				return;
 			} else if (dashEquals("version", toolToRun)) {
 				// this handles --version
-				Alert.info(BuildVersion.getDetailedVersion());
+				Alert.info(edu.sc.seis.TauP.BuildVersion.getDetailedVersion());
 				return;
 			} else if (tool == null ){
 				System.err.println("Tool "+toolToRun+" not recognized.");
@@ -200,7 +257,7 @@ public class ToolRun {
 		} catch(Exception e) {
 			System.err.println("Error starting tool: "+args[0]+" "+e);
 			e.printStackTrace();
-			System.exit(1);
+			System.exit(1002);
 		}
 	}
 	

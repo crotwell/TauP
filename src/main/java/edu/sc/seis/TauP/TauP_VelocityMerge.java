@@ -1,8 +1,8 @@
 package edu.sc.seis.TauP;
 
-import java.io.BufferedInputStream;
+import edu.sc.seis.TauP.CLI.OutputTypes;
+
 import java.io.BufferedWriter;
-import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -56,11 +56,11 @@ public class TauP_VelocityMerge extends TauP_Tool {
                 }
                 dos = new PrintWriter(new BufferedWriter(new FileWriter(getOutFile())));
             }
-            if (getOutputFormat() == ND || getOutputFormat() == TEXT) {
+            if (getOutputFormat() == ND || getOutputFormat() == OutputTypes.TEXT) {
                 outVMod.writeToND(dos);
             } else if (getOutputFormat() == TVEL) {
                 throw new RuntimeException("tvel output not yet implemented");
-            } else if (getOutputFormat() == JSON) {
+            } else if (getOutputFormat() == OutputTypes.JSON) {
                 dos.write(outVMod.asJSON(true, ""));
             }
             dos.flush();
@@ -83,7 +83,7 @@ public class TauP_VelocityMerge extends TauP_Tool {
             } else if (dashEquals("smbot", args[i])) {
                 smoothBottom = true;
             } else if (dashEquals("json", args[i])) {
-                setOutputFormat(JSON);
+                setOutputFormat(OutputTypes.JSON);
             } else if(i < args.length - 1 && dashEquals("nd", args[i])) {
                 modelName = args[i + 1];
                 modelType = "nd";
@@ -166,7 +166,7 @@ public class TauP_VelocityMerge extends TauP_Tool {
 
     @Override
     public String[] allowedOutputFormats() {
-        String[] formats = {TEXT, JSON, ND};
+        String[] formats = {OutputTypes.TEXT, OutputTypes.JSON, ND};
         return formats;
     }
     @Override

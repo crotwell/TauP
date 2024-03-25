@@ -1,14 +1,15 @@
 package edu.sc.seis.TauP;
 
+import edu.sc.seis.TauP.CLI.OutputTypes;
+import picocli.CommandLine;
+
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Creates plots of a velocity model.
  */
+@CommandLine.Command(name = "velplot")
 public class TauP_VelocityPlot extends TauP_Tool {
 
     public static final String DEFAULT_OUTFILE = "taup_velocitymodel";
@@ -108,12 +109,12 @@ public class TauP_VelocityPlot extends TauP_Tool {
 
     @Override
     public String[] allowedOutputFormats() {
-        String[] formats = {TEXT, JSON, SVG, CSV};
+        String[] formats = {OutputTypes.TEXT, OutputTypes.JSON, OutputTypes.SVG, OutputTypes.CSV};
         return formats;
     }
     @Override
     public void setDefaultOutputFormat() {
-        setOutputFormat(SVG);
+        setOutputFormat(OutputTypes.SVG);
     }
 
     public void printResult(PrintWriter out) throws TauPException, IOException {
@@ -121,13 +122,13 @@ public class TauP_VelocityPlot extends TauP_Tool {
         if (vMod == null) {
             throw new IOException("Velocity model file not found: "+modelName+", tried internally and from file");
         }
-        if (getOutputFormat().equals(SVG)) {
+        if (getOutputFormat().equals(OutputTypes.SVG)) {
             printSVG(out, vMod);
-        } else if (getOutputFormat().equals(CSV)) {
+        } else if (getOutputFormat().equals(OutputTypes.CSV)) {
             printCSV(out, vMod);
-        } else if (getOutputFormat().equals(JSON)) {
+        } else if (getOutputFormat().equals(OutputTypes.JSON)) {
             out.write(vMod.asJSON(true, ""));
-        }else if (getOutputFormat().equals(TEXT)) {
+        }else if (getOutputFormat().equals(OutputTypes.TEXT)) {
             vMod.writeToND(out);
         }
         out.flush();
@@ -163,16 +164,16 @@ public class TauP_VelocityPlot extends TauP_Tool {
         int numNoComprendoArgs = 0;
         while(i < args.length) {
             if(dashEquals("svg", args[i])) {
-                setOutputFormat(SVG);
+                setOutputFormat(OutputTypes.SVG);
                 setOutFileExtension("svg");
             } else if(dashEquals("csv", args[i])) {
-                setOutputFormat(CSV);
+                setOutputFormat(OutputTypes.CSV);
                 setOutFileExtension("csv");
             } else if(dashEquals("json", args[i])) {
-                setOutputFormat(JSON);
+                setOutputFormat(OutputTypes.JSON);
                 setOutFileExtension(".json");
             } else if(dashEquals("text", args[i])) {
-                setOutputFormat(TEXT);
+                setOutputFormat(OutputTypes.TEXT);
                 setOutFileExtension("nd");
             } else if(i < args.length - 1 && dashEquals("nd", args[i])) {
                 modelName = args[i + 1];

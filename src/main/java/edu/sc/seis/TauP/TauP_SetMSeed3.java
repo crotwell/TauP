@@ -3,7 +3,6 @@ package edu.sc.seis.TauP;
 import edu.sc.seis.seisFile.Location;
 import edu.sc.seis.seisFile.SeisFileException;
 import edu.sc.seis.seisFile.fdsnws.quakeml.Event;
-import edu.sc.seis.seisFile.fdsnws.quakeml.EventIterator;
 import edu.sc.seis.seisFile.fdsnws.quakeml.Origin;
 import edu.sc.seis.seisFile.fdsnws.quakeml.Quakeml;
 import edu.sc.seis.seisFile.fdsnws.stationxml.*;
@@ -14,14 +13,15 @@ import java.io.*;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import picocli.CommandLine;
 
 import javax.xml.stream.XMLStreamException;
 import java.time.Duration;
 import java.time.Instant;
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.*;
 
+@CommandLine.Command(name = "setmseed3")
 public class TauP_SetMSeed3 extends TauP_Time {
 
     public TauP_SetMSeed3() {
@@ -107,14 +107,14 @@ public class TauP_SetMSeed3 extends TauP_Time {
 
         List<Arrival> arrivals = null;
         if (gcarc != null) {
-            List<Double> degreesList = Arrays.asList(new Double[] {gcarc});
+            List<DistanceRay> degreesList = Arrays.asList(new DistanceRay[] {DistanceRay.ofDegrees(gcarc)});
             arrivals = calculate(degreesList);
         }
 
         if (arrivals != null) {
 
             if (ehKey != null && ehKey.length() > 0) {
-                JSONObject taup = resultAsJSONObject(modelName, depth, getReceiverDepth(), getPhaseNames(), arrivals);
+                JSONObject taup = resultAsJSONObject(modelArgs.getModelName(), tModDepth.getSourceDepth(), getReceiverDepth(), getPhaseNames(), arrivals);
                 eh.getEH().put(ehKey, taup);
             } else {
                 JSONObject bag = eh.getBagEH();
@@ -147,12 +147,6 @@ public class TauP_SetMSeed3 extends TauP_Time {
         mark.put("mtype", "md");
         return mark;
     }
-
-    @Override
-    public List<Arrival> calculate(List<Double> degreesList) throws TauPException {
-        return super.calculate(degreesList);
-    }
-
 
     @Override
     public String getStdUsage() {

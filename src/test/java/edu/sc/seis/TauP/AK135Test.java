@@ -1,7 +1,5 @@
 package edu.sc.seis.TauP;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -11,6 +9,8 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 
 /** test data from http://rses.anu.edu.au/~brian/AK135tables.pdf
@@ -82,8 +82,9 @@ public class AK135Test  {
         for (List<TimeDist> atDepth : table.get(phase).values()) {
             taup.setSourceDepth(atDepth.get(0).getDepth());
             for (TimeDist timeDist : atDepth) {
-                taup.calculate(timeDist.getDistDeg());
-                List<Arrival> arrivals = taup.getArrivals();
+                assertNotNull(timeDist);
+
+                List<Arrival> arrivals = taup.calculate(timeDist.getDistDeg());
                 if (timeDist.getTime() > 0) {
                 assertTrue(arrivals.size() > 0, "got no arrivals for "+phase+" at deg="+timeDist.getDistDeg()+" depth="+taup.getSourceDepth());
                 // assume first?

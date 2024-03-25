@@ -25,6 +25,9 @@
  */
 package edu.sc.seis.TauP;
 
+import edu.sc.seis.TauP.CLI.OutputTypes;
+import picocli.CommandLine;
+
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -44,6 +47,7 @@ import java.util.List;
  * @author H. Philip Crotwell
  * 
  */
+@CommandLine.Command(name = "table")
 public class TauP_Table extends TauP_Time {
 
     public static final String LOCSAT = "locsat";
@@ -326,7 +330,7 @@ public class TauP_Table extends TauP_Time {
                         Alert.error("Expected a number of depth samples, but got ",
                                     "'" + head.ttype + "'");
                     }
-                    System.exit(1);
+                    System.exit(101);
                 }
                 if(head.nval != Math.rint(head.nval)) {
                     Alert.error("Expected a number of depth samples, but got ",
@@ -343,7 +347,7 @@ public class TauP_Table extends TauP_Time {
                             Alert.error("Expected a number of depth samples, but got ",
                                         "'" + head.ttype + "'");
                         }
-                        System.exit(1);
+                        System.exit(102);
                     }
                     depths[i] = head.nval;
                 }
@@ -356,7 +360,7 @@ public class TauP_Table extends TauP_Time {
                         Alert.error("Expected a number of distance samples, but got ",
                                     "'" + head.ttype + "'");
                     }
-                    System.exit(1);
+                    System.exit(103);
                 }
                 if(head.nval != Math.rint(head.nval)) {
                     Alert.error("Expected a number of distance samples, but got ",
@@ -373,29 +377,29 @@ public class TauP_Table extends TauP_Time {
                             Alert.error("Expected a distance sample, but got ",
                                         "'" + head.ttype + "'");
                         }
-                        System.exit(1);
+                        System.exit(104);
                     }
                     distances[i] = head.nval;
                 }
             } catch(FileNotFoundException e) {
                 Alert.error("Couldn't find file.", e.getMessage());
-                System.exit(1);
+                System.exit(105);
             } catch(IOException e) {
                 Alert.error("Caught IOException.", e.getMessage());
-                System.exit(1);
+                System.exit(106);
             }
         }
     }
 
     public void start() throws TauModelException, TauPException, IOException {
-        if(outputFormat == TEXT) {
+        if(outputFormat == OutputTypes.TEXT) {
             // GENERIC:
             genericTable(getWriter());
-        } else if(outputFormat == CSV) {
+        } else if(outputFormat == OutputTypes.CSV) {
             csvTable(getWriter());
         } else if (outputFormat == TauP_Table.LOCSAT) {
             locsatTable(getWriter());
-        } else if (outputFormat == JSON) {
+        } else if (outputFormat == OutputTypes.JSON) {
             jsonTable(getWriter());
         } else {
             throw new TauPException("TauP_Table: undefined state for output type: "
@@ -412,7 +416,7 @@ public class TauP_Table extends TauP_Time {
     protected void jsonTable(PrintWriter out) throws TauPException, IOException {
         out.println("[");
         for(int depthNum = 0; depthNum < depths.length; depthNum++) {
-            depthCorrect(depths[depthNum], getReceiverDepth(), getScattererDepth());
+            depthCorrect(depths[depthNum], getReceiverDepth(), getScatterer());
             for (int distNum = 0; distNum < distances.length; distNum++) {
                 List<Arrival> arrivals = calculate(distances[distNum]);
                 writeJSON(out, "",
@@ -432,15 +436,14 @@ public class TauP_Table extends TauP_Time {
         String header = "Model,Distance (deg),Depth (km),Phase,Time (s),RayParam (deg/s),Takeoff Angle,Incident Angle,Purist Distance,Purist Name";
         out.println(header);
         for(int depthNum = 0; depthNum < depths.length; depthNum++) {
-            depthCorrect(depths[depthNum], getReceiverDepth(), getScattererDepth());
+            depthCorrect(depths[depthNum], getReceiverDepth(), getScatterer());
             for(int distNum = 0; distNum < distances.length; distNum++) {
-                calculate(distances[distNum]);
-                List<Arrival> arrivals = getArrivals();
+                List<Arrival> arrivals = calculate(distances[distNum]);
                 for (Arrival currArrival : arrivals) {
                     double moduloDist = currArrival.getModuloDistDeg();
-                    String line = modelName + sep
+                    String line = modelArgs.getModelName() + sep
                             + Outputs.formatDistance(moduloDist).trim() + sep
-                            + Outputs.formatDepth(depth).trim() + sep
+                            + Outputs.formatDepth(tModDepth.getSourceDepth()).trim() + sep
                             + currArrival.getName().trim()+sep
                             + Outputs.formatTime(currArrival.getTime()).trim()+ sep
                             +Outputs.formatRayParam(Math.PI / 180.0 * currArrival.getRayParam()).trim()+ sep
@@ -459,15 +462,14 @@ public class TauP_Table extends TauP_Time {
     protected void genericTable(PrintWriter out) throws TauPException,
             IOException {
         for(int depthNum = 0; depthNum < depths.length; depthNum++) {
-            depthCorrect(depths[depthNum], getReceiverDepth(), getScattererDepth());
+            depthCorrect(depths[depthNum], getReceiverDepth(), getScatterer());
             for(int distNum = 0; distNum < distances.length; distNum++) {
-                calculate(distances[distNum]);
-                List<Arrival> arrivals = getArrivals();
+                List<Arrival> arrivals = calculate(distances[distNum]);
                 for (Arrival currArrival : arrivals) {
                     double moduloDist = currArrival.getModuloDistDeg();
-                    out.print(modelName + " "
+                    out.print(modelArgs.getModelName() + " "
                                    + Outputs.formatDistance(moduloDist) + " "
-                                   + Outputs.formatDepth(depth) + " ");
+                                   + Outputs.formatDepth(tModDepth.getSourceDepth()) + " ");
                     out.print(currArrival.getName());
                     out.print("  "
                                    + Outputs.formatTime(currArrival.getTime())
@@ -493,7 +495,7 @@ public class TauP_Table extends TauP_Time {
                                                               "105.0"))
                 .doubleValue();
         out.print("n # " + getPhaseNameString()
-                + " travel-time tables for " + modelName
+                + " travel-time tables for " + modelArgs.getModelName()
                 + " structure. (From TauP_Table)\n");
         out.print(String.format(decimal7, depths.length)
                 + "# number of depth samples\n");
@@ -518,11 +520,11 @@ public class TauP_Table extends TauP_Time {
             out.println();
         }
         for(int depthNum = 0; depthNum < depths.length; depthNum++) {
-            depthCorrect(depths[depthNum], getReceiverDepth(), getScattererDepth());
+            depthCorrect(depths[depthNum], getReceiverDepth(), getScatterer());
             out.println("#  Travel time for z =    " + depths[depthNum]);
             for(int distNum = 0; distNum < distances.length; distNum++) {
-                calculate(distances[distNum]);
-                List<Arrival>arrivals = getArrivals();
+
+                List<Arrival>arrivals = calculate(distances[distNum]);
                 String outString = String.format(float15_4, -1.0) + "    none\n";
                 for (Arrival arrival : arrivals) {
                     if(distances[distNum] > maxDiff
@@ -568,9 +570,9 @@ public class TauP_Table extends TauP_Time {
             } else if(dashEquals("locsat", leftOverArgs[i])) {
                 outputFormat = LOCSAT;
             } else if(dashEquals("generic", leftOverArgs[i])) {
-                outputFormat = TEXT;
-            } else if(dashEquals(CSV, leftOverArgs[i])) {
-                outputFormat = CSV;
+                outputFormat = OutputTypes.TEXT;
+            } else if(dashEquals(OutputTypes.CSV, leftOverArgs[i])) {
+                outputFormat = OutputTypes.CSV;
             } else if(dashEquals("help", leftOverArgs[i])) {
                 noComprendoArgs[numNoComprendoArgs++] = leftOverArgs[i];
             } else {

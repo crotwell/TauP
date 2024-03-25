@@ -38,6 +38,11 @@ public class HeadWaveTest {
     }
 
     @Test
+    public void pierce_P20n() throws TauModelException {
+        checkHeadWave("P20n", 1, 10, false);
+    }
+
+    @Test
     public void pierce_Pdiff() throws TauModelException {
         checkHeadWave("Pdiff", 1, 210, true);
         checkHeadWave("Pdiff", 1, 150, false);

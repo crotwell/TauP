@@ -1,7 +1,9 @@
 package edu.sc.seis.TauP;
 
+import edu.sc.seis.TauP.CLI.OutputTypes;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import picocli.CommandLine;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -12,7 +14,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class TauP_XY extends TauP_AbstractTimeTool {
+@CommandLine.Command(name = "xy")
+public class TauP_XY extends TauP_AbstractPhaseTool {
     public TauP_XY() {
         setDefaultOutputFormat();
         setOutFileBase("stdout");
@@ -20,12 +23,12 @@ public class TauP_XY extends TauP_AbstractTimeTool {
 
     @Override
     public String[] allowedOutputFormats() {
-        return new String[]{TEXT, JSON, SVG, CSV};
+        return new String[]{OutputTypes.TEXT, OutputTypes.JSON, OutputTypes.SVG, OutputTypes.CSV};
     }
 
     @Override
     public void setDefaultOutputFormat() {
-        setOutputFormat(SVG);
+        setOutputFormat(OutputTypes.SVG);
     }
 
     @Override
@@ -92,7 +95,7 @@ public class TauP_XY extends TauP_AbstractTimeTool {
     @Override
     public void start() throws IOException, TauModelException, TauPException {
         double tempDepth;
-        if(depth != -1 * Double.MAX_VALUE) {
+        if(modelArgs.getSourceDepth() != -1 * Double.MAX_VALUE) {
             /* enough info given on cmd line, so just do one calc. */
             setSourceDepth(Double.valueOf(toolProps.getProperty("taup.source.depth",
                     "0.0")));
@@ -107,7 +110,7 @@ public class TauP_XY extends TauP_AbstractTimeTool {
             System.out.print("Enter Depth: ");
             tokenIn.nextToken();
             tempDepth = tokenIn.nval;
-            if(tempDepth < 0.0 || depth > tMod.getRadiusOfEarth()) {
+            if(tempDepth < 0.0 || tempDepth > tMod.getRadiusOfEarth()) {
                 System.out.println("Depth must be >= 0.0 and "
                         + "<= tMod.getRadiusOfEarth().\ndepth = " + tempDepth);
                 return;
@@ -198,10 +201,10 @@ public class TauP_XY extends TauP_AbstractTimeTool {
     public Map<SeismicPhase, List<XYPlottingData>> reduce(Map<SeismicPhase, List<XYPlottingData>> xy) {
         Map<SeismicPhase, List<XYPlottingData>> out = new HashMap<>();
         double velFactor;
-        if (axisIsDistance(xAxisType) && axisIsTime(yAxisType)) {
+        if (axisIsDistanceLike(xAxisType) && axisIsTimeLike(yAxisType)) {
             // x is distance, y is time
             velFactor = reduceVelForAxis(xAxisType);
-        } else if (axisIsDistance(yAxisType) && axisIsTime(xAxisType)) {
+        } else if (axisIsDistanceLike(yAxisType) && axisIsTimeLike(xAxisType)) {
             velFactor = reduceVelForAxis(yAxisType);
         } else {
             throw new IllegalArgumentException("axis are not time and distance: "+xAxisType+" "+yAxisType);
@@ -215,7 +218,7 @@ public class TauP_XY extends TauP_AbstractTimeTool {
                 for (XYSegment xyseg : xyp.segmentList) {
                     double[] dist;
                     double[] time;
-                    if (axisIsDistance(xAxisType)) {
+                    if (axisIsDistanceLike(xAxisType)) {
                         dist = xyseg.x;
                         time = xyseg.y;
                     } else {
@@ -225,7 +228,7 @@ public class TauP_XY extends TauP_AbstractTimeTool {
                     for (int i = 0; i < dist.length; i++) {
                         time[i] = time[i] - dist[i] / velFactor;
                     }
-                    if (axisIsDistance(xAxisType)) {
+                    if (axisIsDistanceLike(xAxisType)) {
                         redSeg.add(new XYSegment(dist, time));
                     } else {
                         redSeg.add(new XYSegment(time, dist));
@@ -425,8 +428,8 @@ public class TauP_XY extends TauP_AbstractTimeTool {
     }
 
     public void printResult(PrintWriter writer, Map<SeismicPhase, List<XYPlottingData>> xyPlots) {
-        if (getOutputFormat().equalsIgnoreCase(JSON)) {
-            JSONObject out = baseResultAsJSONObject( modelName, depth,  receiverDepth, getPhaseNames());
+        if (getOutputFormat().equalsIgnoreCase(OutputTypes.JSON)) {
+            JSONObject out = baseResultAsJSONObject( modelArgs.getModelName(), tModDepth.getSourceDepth(),  modelArgs.getReceiveDepth(), getPhaseNames());
             JSONArray phaseCurves = new JSONArray();
             for (SeismicPhase phase: xyPlots.keySet() ) {
                 for (XYPlottingData plotItem : xyPlots.get(phase)) {
@@ -435,7 +438,7 @@ public class TauP_XY extends TauP_AbstractTimeTool {
             }
             out.put("curves", phaseCurves);
             writer.println(out.toString(2));
-        } else if (getOutputFormat().equalsIgnoreCase(SVG)) {
+        } else if (getOutputFormat().equalsIgnoreCase(OutputTypes.SVG)) {
             StringBuffer extrtaCSS = new StringBuffer();
             extrtaCSS.append("        text.label {\n");
             extrtaCSS.append("            font: bold ;\n");
@@ -511,7 +514,7 @@ public class TauP_XY extends TauP_AbstractTimeTool {
             SvgUtil.createLegend(writer, labels, labelClasses, "autocolor", (int)(plotWidth*.1), (int) (plotWidth*.1));
             writer.println("</svg>");
 
-        } else if (getOutputFormat().equalsIgnoreCase(TEXT)) {
+        } else if (getOutputFormat().equalsIgnoreCase(OutputTypes.TEXT)) {
 
             for (SeismicPhase phase : xyPlots.keySet()) {
                 for (XYPlottingData xyplotItem : xyPlots.get(phase)) {
@@ -576,7 +579,7 @@ public class TauP_XY extends TauP_AbstractTimeTool {
      * @param axisType
      * @return
      */
-    public boolean axisIsDistance(String axisType) {
+    public boolean axisIsDistanceLike(String axisType) {
         return axisType.equalsIgnoreCase("degree")
                 || axisType.equalsIgnoreCase("degree_180")
                 || axisType.equalsIgnoreCase("radian")
@@ -588,7 +591,7 @@ public class TauP_XY extends TauP_AbstractTimeTool {
      * @param axisType
      * @return
      */
-    public boolean axisIsTime(String axisType) {
+    public boolean axisIsTimeLike(String axisType) {
         return axisType.equalsIgnoreCase("time");
     }
 

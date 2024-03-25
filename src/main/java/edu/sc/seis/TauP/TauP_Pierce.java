@@ -16,11 +16,11 @@
  */
 package edu.sc.seis.TauP;
 
-import java.io.FileNotFoundException;
+import edu.sc.seis.TauP.CLI.Scatterer;
+import picocli.CommandLine;
+
 import java.io.IOException;
-import java.io.OptionalDataException;
 import java.io.PrintWriter;
-import java.io.StreamCorruptedException;
 import java.util.List;
 
 /**
@@ -31,6 +31,7 @@ import java.util.List;
  * @version 1.1.3 Fri Apr 5 14:12:19 GMT 2002
  * @author H. Philip Crotwell
  */
+@CommandLine.Command(name = "pierce")
 public class TauP_Pierce extends TauP_Time {
 
     protected boolean onlyTurnPoints = false;
@@ -142,10 +143,10 @@ public class TauP_Pierce extends TauP_Time {
     }
 
     /** override depthCorrect so that we can put the pierce depths in. */
-    public void depthCorrect(double depth, double receiverDepth, double scatterDepth) throws TauModelException {
+    public void depthCorrect(double depth, double receiverDepth, Scatterer scatter) throws TauModelException {
         TauModel tModOrig = tMod; // save original
         tMod = splitPierceDepths(tMod); // add pierce depths
-        super.depthCorrect(depth, receiverDepth, scatterDepth); // normal depth correction
+        super.depthCorrect(depth, receiverDepth, scatter); // normal depth correction
         tMod = tModOrig; // restore orig to tMod
     }
 
@@ -182,9 +183,9 @@ public class TauP_Pierce extends TauP_Time {
     }
 
     @Override
-    public List<Arrival> calculate(List<Double> degreesList) throws TauPException {
+    public List<Arrival> calculate(List<DistanceRay> degreesList) throws TauPException {
         List<Arrival> arrivalList = super.calculate(degreesList);
-        for (Arrival arrival : getArrivals()) {
+        for (Arrival arrival : arrivalList) {
             arrival.getPierce(); // side effect of calculating pierce points
         }
         return arrivalList;
@@ -201,7 +202,7 @@ public class TauP_Pierce extends TauP_Time {
                 + Outputs.formatDistance(currArrival.getDistDeg())
                 + " degrees for a "
                 + Outputs.formatDepth(currArrival.getSourceDepth())
-                + " km deep source in the " + modelName + " model with rayParam "
+                + " km deep source in the " + modelArgs.getModelName() + " model with rayParam "
                 + Outputs.formatRayParam(Math.PI / 180 * currArrival.getRayParam()) 
                 + " s/deg.";
         if (getReceiverDepth() != 0.0) {
@@ -211,11 +212,11 @@ public class TauP_Pierce extends TauP_Time {
     }
 
     @Override
-    public void printResultText(PrintWriter out) throws IOException {
+    public void printResultText(PrintWriter out, List<Arrival> arrivalList) throws IOException {
         double prevDepth, nextDepth;
         double lat, lon;
-        for(int i = 0; i < arrivals.size(); i++) {
-            Arrival currArrival = (Arrival) arrivals.get(i);
+        for(int i = 0; i < arrivalList.size(); i++) {
+            Arrival currArrival = (Arrival) arrivalList.get(i);
             out.println(getCommentLine(currArrival));
 
             TimeDist[] pierce = currArrival.getPierce();
@@ -229,8 +230,8 @@ public class TauP_Pierce extends TauP_Time {
                 }
                 if(!(onlyTurnPoints || onlyRevPoints || onlyUnderPoints || onlyAddPoints)
                         || ( onlyRevPoints
-                                && pierce[j].getDepth() == getScattererDepth()  // scat are always rev points
-                                && pierce[j].getDistDeg() == getScattererDistDeg()
+                                && ( getScatterer()!= null && pierce[j].getDepth() == getScatterer().depth  // scat are always rev points
+                                && pierce[j].getDistDeg() == getScatterer().dist.getDegrees(tMod.getRadiusOfEarth()))
                             )
                         || ((onlyAddPoints && isAddDepth(pierce[j].getDepth()))
                                 || (onlyRevPoints && ((prevDepth - pierce[j].getDepth())
@@ -244,54 +245,10 @@ public class TauP_Pierce extends TauP_Time {
                     out.write(Outputs.formatDistance(calcDist));
                     out.write(Outputs.formatDepth(pierce[j].getDepth()));
                     out.write(Outputs.formatTime(pierce[j].getTime()));
-                    if(eventLat != Double.MAX_VALUE
-                            && eventLon != Double.MAX_VALUE
-                            && azimuth != Double.MAX_VALUE) {
-                        lat = SphericalCoords.latFor(eventLat,
-                                                     eventLon,
-                                                     calcDist,
-                                                     azimuth);
-                        lon = SphericalCoords.lonFor(eventLat,
-                                                     eventLon,
-                                                     calcDist,
-                                                     azimuth);
-                        out.write("  " + Outputs.formatLatLon(lat) + "  "
-                                + Outputs.formatLatLon(lon));
-                    } else if(stationLat != Double.MAX_VALUE
-                            && stationLon != Double.MAX_VALUE
-                            && backAzimuth != Double.MAX_VALUE) {
-                        lat = SphericalCoords.latFor(stationLat,
-                                                     stationLon,
-                                currArrival.getDistDeg() - calcDist,
-                                                     backAzimuth);
-                        lon = SphericalCoords.lonFor(stationLat,
-                                                     stationLon,
-                                currArrival.getDistDeg() - calcDist,
-                                                     backAzimuth);
-                        out.write("  " + Outputs.formatLatLon(lat) + "  "
-                                + Outputs.formatLatLon(lon));
-                    } else if(stationLat != Double.MAX_VALUE
-                            && stationLon != Double.MAX_VALUE
-                            && eventLat != Double.MAX_VALUE
-                            && eventLon != Double.MAX_VALUE) {
-                        azimuth = SphericalCoords.azimuth(eventLat,
-                                                          eventLon,
-                                                          stationLat,
-                                                          stationLon);
-                        backAzimuth = SphericalCoords.azimuth(stationLat,
-                                                              stationLon,
-                                                              eventLat,
-                                                              eventLon);
-                        lat = SphericalCoords.latFor(eventLat,
-                                                     eventLon,
-                                                     calcDist,
-                                                     azimuth);
-                        lon = SphericalCoords.lonFor(eventLat,
-                                                     eventLon,
-                                                     calcDist,
-                                                     azimuth);
-                        out.write("  " + Outputs.formatLatLon(lat) + "  "
-                                + Outputs.formatLatLon(lon));
+                    if (currArrival.getShootable() != null) {
+                        double[] latlon = currArrival.getShootable().getLatLonable().calcLatLon(calcDist, currArrival.getDistDeg());
+                        out.write("  " + Outputs.formatLatLon(latlon[0]) + "  "
+                                + Outputs.formatLatLon(latlon[1]));
                     }
                     out.write("\n");
                 }
@@ -301,8 +258,8 @@ public class TauP_Pierce extends TauP_Time {
     }
 
     @Override
-    public void printResultJSON(PrintWriter out) {
-        String s = resultAsJSON(modelName, depth, getReceiverDepth(), getPhaseNames(), arrivals, true, false);
+    public void printResultJSON(PrintWriter out, List<Arrival> arrivalList) {
+        String s = resultAsJSON(modelArgs.getModelName(), tModDepth.getSourceDepth(), getReceiverDepth(), getPhaseNames(), arrivalList, true, false);
         out.println(s);
     }
 

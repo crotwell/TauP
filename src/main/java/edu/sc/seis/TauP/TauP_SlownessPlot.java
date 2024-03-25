@@ -1,10 +1,12 @@
 package edu.sc.seis.TauP;
 
+import edu.sc.seis.TauP.CLI.OutputTypes;
+import picocli.CommandLine;
+
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Iterator;
-import java.util.List;
 
+@CommandLine.Command(name = "slowplot")
 public class TauP_SlownessPlot extends TauP_VelocityPlot {
 
     public static final String DEFAULT_OUTFILE = "taup_slownessmodel";
@@ -16,12 +18,12 @@ public class TauP_SlownessPlot extends TauP_VelocityPlot {
 
     @Override
     public String[] allowedOutputFormats() {
-        String[] formats = {SVG, GMT, CSV, JSON};
+        String[] formats = {OutputTypes.SVG, OutputTypes.GMT, OutputTypes.CSV, OutputTypes.JSON};
         return formats;
     }
     @Override
     public void setDefaultOutputFormat() {
-        setOutputFormat(SVG);
+        setOutputFormat(OutputTypes.SVG);
     }
 
     @Override
@@ -46,13 +48,13 @@ public class TauP_SlownessPlot extends TauP_VelocityPlot {
         TauP_Create taup_create = new TauP_Create();
         TauModel tMod = taup_create.createTauModel(vMod);
 
-        if (getOutputFormat().equals(SVG)) {
+        if (getOutputFormat().equals(OutputTypes.SVG)) {
             printSVG(out, tMod.getSlownessModel());
-        } else if (getOutputFormat().equals(CSV)) {
+        } else if (getOutputFormat().equals(OutputTypes.CSV)) {
             printCSV(out, tMod.getSlownessModel());
-        } else if (getOutputFormat().equals(GMT)) {
+        } else if (getOutputFormat().equals(OutputTypes.GMT)) {
             tMod.getSlownessModel().printGMT(getOutFile());
-        } else if (getOutputFormat().equals(JSON)) {
+        } else if (getOutputFormat().equals(OutputTypes.JSON)) {
             out.write(tMod.getSlownessModel().asJSON().toString( 2));
         } else {
             tMod.getSlownessModel().printGMT(getOutFile());

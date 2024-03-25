@@ -275,6 +275,12 @@ public class ScatteredSeismicPhase implements SeismicPhase {
 
     @Override
     public List<Arrival> calcTime(double deg) {
+        return calcTime(DistanceRay.ofDegrees(deg));
+    }
+
+    @Override
+    public List<Arrival> calcTime(DistanceRay dv) {
+        double deg = dv.getDegrees(getTauModel().getRadiusOfEarth());
         List<Arrival> out = new ArrayList<>();
         double scatDist = calcScatterDistDeg(deg, getScattererDistanceDeg(), isBackscatter()) % 360;
         if (scatDist < 0) {

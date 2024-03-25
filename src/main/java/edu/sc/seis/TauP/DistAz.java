@@ -8,6 +8,10 @@ import edu.sc.seis.seisFile.fdsnws.stationxml.Station;
 
 public class DistAz {
 
+    public static final double wgs85_flattening = 1/298.257223563;
+
+    public static final double wgs85_meanEarthRadius = 6371.0088;
+
     /**
      c getDelta()  Great Circle Arc distance in degrees
      c getAz()     Azimuth from channel to event in degrees
@@ -54,7 +58,10 @@ public class DistAz {
      c getAz()     Azimuth from pt. 1 to pt. 2 in degrees
      c getBaz()    Back Azimuth from pt. 2 to pt. 1 in degrees
      */
-    public DistAz(double lat1, double lon1, double lat2, double lon2){
+    public DistAz(double lat1, double lon1, double lat2, double lon2) {
+        this(lat1, lon1, lat2, lon2, wgs85_flattening);
+    }
+    public DistAz(double lat1, double lon1, double lat2, double lon2, double flattening){
         this.stalat = lat1;
         this.stalon = lon1;
         this.evtlat = lat2;
@@ -78,7 +85,8 @@ public class DistAz {
          c Earth Flattening of 1/298.257 take from Bott (pg. 3)
          c
          */
-        sph=1.0/298.257;
+        //sph=1.0/298.257;
+        sph = flattening;
 
         scolat=Math.PI/2.0 - Math.atan((1.-sph)*(1.-sph)*Math.tan(lat1*rad));
         ecolat=Math.PI/2.0 - Math.atan((1.-sph)*(1.-sph)*Math.tan(lat2*rad));
@@ -206,11 +214,20 @@ public class DistAz {
     private int hash;
     private boolean hashSet = false;
 
-    public static double degreesToKilometers(double degrees) {
-        return degrees * 111.19;
+    public static double kmPerDeg() {
+        return kmPerDeg(wgs85_meanEarthRadius);
     }
-    public static double kilometersToDegrees(double kilometers) {
-        return kilometers / 111.19;
+    public static double kmPerDeg(double radius) {
+        return Math.PI*radius/180.0;
+    }
+    public static double degreesToKilometers(double degrees) {
+        return degrees * kmPerDeg();
+    }
+    public static double degreesToKilometers(double degrees, double radius) {
+        return degrees * kmPerDeg(radius);
+    }
+    public static double kilometersToDegrees(double kilometers, double radius) {
+        return kilometers / kmPerDeg(radius);
     }
 
     public static void main(String[] args) {

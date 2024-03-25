@@ -11,7 +11,7 @@ plugins {
   `maven-publish`
   signing
   application
-  id("com.github.ben-manes.versions") version "0.47.0"
+  id("com.github.ben-manes.versions") version "0.51.0"
 }
 
 application {
@@ -29,7 +29,11 @@ java {
     withJavadocJar()
     withSourcesJar()
 }
-tasks.withType<JavaCompile>().configureEach { options.compilerArgs.addAll(arrayOf("-Xlint:deprecation")) }
+tasks.withType<JavaCompile>().configureEach {
+    options.compilerArgs.addAll(arrayOf("-Xlint:deprecation"))
+    // for picocli
+    options.compilerArgs.addAll(arrayOf("-Aproject=${project.group}/${project.name}"))
+}
 
 
 sourceSets {
@@ -59,6 +63,10 @@ dependencies {
       exclude(group = "com.fasterxml.woodstox", module = "woodstox-core")
       exclude(group = "org.apache.httpcomponents", module = "httpclient")
     }
+
+    implementation("info.picocli:picocli:4.7.5")
+    annotationProcessor("info.picocli:picocli-codegen:4.7.5")
+
     runtimeOnly("org.slf4j:slf4j-reload4j:2.0.5")
 
     webserverImplementation("io.undertow:undertow-core:2.3.9.Final")

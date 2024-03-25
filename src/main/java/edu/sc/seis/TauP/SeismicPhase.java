@@ -2,43 +2,9 @@ package edu.sc.seis.TauP;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public interface SeismicPhase extends Serializable, Cloneable {
-    /**
-     * @return max refractions distance for head waves
-     * @deprecated see SeismicPhaseFactory
-     */
-    static double getMaxRefraction() {
-        return SeismicPhaseFactory.getMaxRefraction();
-    }
-
-    /**
-     * set max refractions distance for head waves
-     *
-     * @deprecated see SeismicPhaseFactory
-     */
-    static void setMaxRefraction(double max) {
-        SeismicPhaseFactory.setMaxRefraction(max);
-    }
-
-    /**
-     * @return max diffraction distance for diff waves
-     * @deprecated see SeismicPhaseFactory
-     */
-    static double getMaxDiffraction() {
-        return SeismicPhaseFactory.getMaxDiffraction();
-    }
-
-    /**
-     * set max diffraction distance for diff waves
-     *
-     * @deprecated see SeismicPhaseFactory
-     */
-    static void setMaxDiffraction(double max) {
-        SeismicPhaseFactory.setMaxDiffraction(max);
-    }
 
     static Arrival getEarliestArrival(List<SeismicPhase> phases, double degrees) {
         Arrival minArrival = null;
@@ -126,6 +92,8 @@ public interface SeismicPhase extends Serializable, Cloneable {
     }
 
     List<Arrival> calcTime(double deg);
+
+    List<Arrival> calcTime(DistanceRay dv);
 
     public List<Arrival> calcTimeExactDistanceDeg(double deg);
 

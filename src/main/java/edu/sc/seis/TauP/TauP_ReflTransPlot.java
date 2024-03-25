@@ -1,5 +1,7 @@
 package edu.sc.seis.TauP;
 
+import edu.sc.seis.TauP.CLI.OutputTypes;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -19,17 +21,17 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
 
     @Override
     public String[] allowedOutputFormats() {
-        return new String[] { SVG};
+        return new String[] { OutputTypes.SVG};
     }
     @Override
     public void setDefaultOutputFormat() {
-        setOutputFormat(SVG);
+        setOutputFormat(OutputTypes.SVG);
     }
 
     @Override
     protected String[] parseCmdLineArgs(String[] origArgs) throws IOException {
         //defaults
-        setOutputFormat(SVG);
+        setOutputFormat(OutputTypes.SVG);
         setOutFileExtension("svg");
 
         String[] args = super.parseCommonCmdLineArgs(origArgs);
@@ -52,10 +54,10 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
             } else if(dashEquals("abs", args[i])) {
                 setAbsolute(true);
             } else if(dashEquals("svg", args[i])) {
-                setOutputFormat(SVG);
+                setOutputFormat(OutputTypes.SVG);
                 setOutFileExtension("svg");
             } else if(dashEquals("csv", args[i])) {
-                setOutputFormat(CSV);
+                setOutputFormat(OutputTypes.CSV);
                 setOutFileExtension("csv");
             } else if(i < args.length - 1 && dashEquals("nd", args[i])) {
                 modelName = args[i + 1];

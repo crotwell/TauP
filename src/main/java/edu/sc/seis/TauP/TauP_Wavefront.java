@@ -1,12 +1,13 @@
 package edu.sc.seis.TauP;
 
+import edu.sc.seis.TauP.CLI.GraphicOutputTypeArgs;
+import edu.sc.seis.TauP.CLI.OutputTypes;
+import picocli.CommandLine;
+
 import java.io.BufferedWriter;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.OptionalDataException;
 import java.io.PrintWriter;
-import java.io.StreamCorruptedException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
@@ -18,10 +19,14 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import static edu.sc.seis.TauP.CLI.OutputTypes.GMT;
+import static edu.sc.seis.TauP.CLI.OutputTypes.SVG;
+
 /**
  * Plots of wavefronts, distance along the ray at points in time.
  */
-public class TauP_Wavefront extends TauP_Path {
+@CommandLine.Command(name = "wavefront")
+public class TauP_Wavefront extends TauP_AbstractPhaseTool {
 
     int numRays = 30;
 
@@ -32,6 +37,8 @@ public class TauP_Wavefront extends TauP_Path {
     boolean negDistance = false;
 
     boolean doInteractive = true;
+
+    GraphicOutputTypeArgs outputTypeArgs = new GraphicOutputTypeArgs();
     
     Map<SeismicPhase, Map<Float, List<TimeDist>>> result;
 
@@ -43,81 +50,116 @@ public class TauP_Wavefront extends TauP_Path {
         setDefaultOutputFormat();
     }
 
+    @Override
+    public String[] allowedOutputFormats() {
+        return new String[] {SVG, GMT};
+    }
+
+    @Override
+    public void setDefaultOutputFormat() {
+        outputTypeArgs.setOutputType(SVG);
+    }
+
     public TauP_Wavefront(String modelName, String outFileBase) throws TauModelException {
-        super(modelName, outFileBase);
+        setModelName(modelName);
+        setOutFileBase(outFileBase);
         setDefaultOutputFormat();
     }
 
     public TauP_Wavefront(String modelName) throws TauModelException {
-        super(modelName);
+        setModelName(modelName);
         setOutFileBase("taup_wavefront");
         setDefaultOutputFormat();
     }
 
     public TauP_Wavefront(TauModel tMod, String outFileBase) throws TauModelException {
-        super(tMod, outFileBase);
+        setTauModel(tMod);
+        setOutFileBase(outFileBase);
         setDefaultOutputFormat();
     }
 
     public TauP_Wavefront(TauModel tMod) throws TauModelException {
-        super(tMod);
+        setTauModel(tMod);
         setOutFileBase("taup_wavefront");
         setDefaultOutputFormat();
     }
 
-    @Override
-    public List<Arrival> calculate(List<Double> degreesList) throws TauModelException {
+    public List<Arrival> calculate(List<DistanceRay> distanceRays) throws TauPException {
         // ignore degrees as we need a suite of distances for each phase
         result = calcIsochron();
         return new ArrayList<Arrival>();
     }
 
-    /** Prints the command line arguments common to all TauP tools. */
-    @Override
-    public String getStdUsage() {
-        return getStdUsageHead()
-        +getPhaseUsage();
-    }
-
-    public String getLimitUsage() {
-        return "--gmt             -- outputs path as a complete GMT script.\n"
-                +"--svg             -- outputs path as a complete SVG file.\n"
-                +"--mapwidth        -- sets map width for GMT script.\n"
-                ;
-    }
 
     @Override
-    public String getUsage() {
-        return getStdUsage()
-        +getLimitUsage()
-        +"--rays  num      -- number of raypaths/distances to sample.\n"
-        +"--timestep  num  -- steps in time (seconds) for output.\n"
-        +"--timefiles      -- outputs each time into a separate .ps file within the gmt script.\n"
-        +"--negdist        -- outputs negative distance as well so wavefronts are in both halves.\n"
-        +getStdUsageTail();
+    public void validateArguments() throws TauModelException {
+
     }
 
     @Override
     public void printScriptBeginning(PrintWriter out) throws IOException {
-        if (outputFormat.equals(TauP_Tool.JSON)) {
+        if (outputFormat.equals(OutputTypes.JSON)) {
             throw new RuntimeException("JSON output for TauP_Path not yet supported.");
         } else if (outputFormat.equals(SVG)) {
             return;
-        } else if ( gmtScript) {
+        } else if ( outputTypeArgs.gmtScript) {
             if (getOutFile().equals("stdout")) {
-                psFile = "taup_wavefront.ps";
+                outputTypeArgs.psFile = "taup_wavefront.ps";
             }
             super.printScriptBeginning(out);
         }
     }
 
     @Override
+    protected String[] parseCmdLineArgs(String[] origArgs) throws IOException, TauPException {
+        return new String[0];
+    }
+
     public void printResult(PrintWriter out) throws IOException {
         if (outputFormat.equals(SVG)) {
-            printScriptBeginningSVG(out);
+            float pixelWidth = (72.0f * outputTypeArgs.mapwidth);
+            int plotOffset = 0;
+            float R = (float) getTauModel().getRadiusOfEarth();
+            float plotOverScaleFactor = 1.1f;
+            float plotSize = R * plotOverScaleFactor;
+            float plotScale = pixelWidth / (2 * R * plotOverScaleFactor);
+            float zoomScale = 1;
+            float zoomTranslateX = 0;
+            float zoomTranslateY = 0;
+            double minDist = 0;
+            double maxDist = Math.PI;
+
+
+            int fontSize = (int) (plotSize / 20);
+            fontSize = (int) (fontSize / zoomScale);
+
+
+            StringBuffer extrtaCSS = new StringBuffer();
+            extrtaCSS.append("        text.label {\n");
+            extrtaCSS.append("            font: bold ;\n");
+            extrtaCSS.append("            font-size: "+fontSize+"px;\n");
+            extrtaCSS.append("            fill: black;\n");
+            extrtaCSS.append("        }\n");
+            extrtaCSS.append("        g.phasename text {\n");
+            extrtaCSS.append("            font: bold ;\n");
+            extrtaCSS.append("            font-size: "+fontSize+"px;\n");
+            extrtaCSS.append("            fill: black;\n");
+            extrtaCSS.append("        }\n");
+            SvgUtil.xyplotScriptBeginning( out, toolNameFromClass(this.getClass()),
+                    cmdLineArgs,  pixelWidth, plotOffset, extrtaCSS.toString());
+
+            TauP_Path.printModelAsSVG(out, tMod, minDist, maxDist, plotScale, plotSize, zoomScale, zoomTranslateX, zoomTranslateY);
             printResultSVG(out);
         } else {
-            printScriptBeginningGMT(out);
+            String psFile;
+            if (getOutFileBase().equals("stdout")) {
+                psFile = "taup_path.ps";
+            } else if (getOutFile().endsWith(".gmt")) {
+                psFile = getOutFile().substring(0, getOutFile().length() - 4) + ".ps";
+            } else {
+                psFile = getOutFile() + ".ps";
+            }
+            TauP_Path.printScriptBeginning(out, psFile, tModDepth, outputTypeArgs.mapwidth, outputTypeArgs.mapWidthUnit);
             printResultGMT(out);
         }
         out.flush();
@@ -184,7 +226,7 @@ public class TauP_Wavefront extends TauP_Path {
     }
 
     public void printResultGMT(PrintWriter out) throws IOException {
-        String byTimePsFile = psFile;
+        String byTimePsFile = outputTypeArgs.psFile;
         double radiusOfEarth = getTauModel().getRadiusOfEarth();
         HashSet<Float> keySet = new HashSet<Float>();
         for (SeismicPhase phase : result.keySet()) {
@@ -220,9 +262,9 @@ public class TauP_Wavefront extends TauP_Path {
             String timeStr = "time_"+time;
             timeStr = timeStr.replace('.','_');
             if (separateFilesByTime) {
-                String psFileBase = psFile;
-                if (gmtScript && psFile.endsWith(".ps")) {
-                    psFileBase = psFile.substring(0, psFile.length() - 3);
+                String psFileBase = outputTypeArgs.psFile;
+                if (outputTypeArgs.gmtScript && psFileBase.endsWith(".ps")) {
+                    psFileBase = psFileBase.substring(0, psFileBase.length() - 3);
                 }
                 String timeExt = "_" + format.format(time);
                 byTimePsFile = psFileBase + timeExt + ".ps";
@@ -232,9 +274,11 @@ public class TauP_Wavefront extends TauP_Path {
                 }
                 if (timeOut != null && timeOut != out) {timeOut.close();}
                 timeOut = new PrintWriter(new BufferedWriter(new FileWriter(timeOutName)));
-                if (gmtScript) {printScriptBeginning(timeOut, byTimePsFile);}
+                if (outputTypeArgs.gmtScript) {
+                    TauP_Path.printScriptBeginning(timeOut, byTimePsFile, tMod, outputTypeArgs.mapwidth, outputTypeArgs.mapWidthUnit);
+                }
             }
-            if (gmtScript) {
+            if (outputTypeArgs.gmtScript) {
                 timeOut.println("# timestep = " + time);
                 timeOut.println("gmt psxy -P -R -K -O -Wblue -JP -m -A >> " + byTimePsFile + " <<END");
             }
@@ -250,7 +294,7 @@ public class TauP_Wavefront extends TauP_Path {
             for (SeismicPhase phase : phasekeys) {
                 printResultPhaseAtTime(timeOut, phase, time,timeStr);
             }
-            if (gmtScript) {
+            if (outputTypeArgs.gmtScript) {
                 if (separateFilesByTime) {
                     timeOut.println("# end postscript"); 
                     timeOut.println("gmt psxy -P -R -O -JP -m -A -T >> " + byTimePsFile );
@@ -261,7 +305,7 @@ public class TauP_Wavefront extends TauP_Path {
                 }
             }
         }
-        if (gmtScript && ! separateFilesByTime) {
+        if (outputTypeArgs.gmtScript && ! separateFilesByTime) {
             out.println("# end postscript"); 
             out.println("gmt psxy -P -R -O -JP -m -A -T >> " + byTimePsFile);
             out.println("# convert ps to pdf, clean up .ps file"); 
@@ -285,7 +329,7 @@ public class TauP_Wavefront extends TauP_Path {
         if (wavefront == null || wavefront.size() == 0) {
             return;
         }
-        if (outputFormat.equals(GMT)) {
+        if (outputFormat.equals(OutputTypes.GMT)) {
             timeOut.println("> " + phase.getName() + " at " + time + " seconds");
         } else if (outputFormat.equals(SVG)) {
             timeOut.println("<!-- " + phase.getName() + " at " + time + " seconds");
@@ -301,12 +345,12 @@ public class TauP_Wavefront extends TauP_Path {
         });
         double radiusOfEarth = getTauModel().getRadiusOfEarth();
         for (TimeDist td : wavefront) {
-            if (outputFormat.equals(GMT)) {
+            if (outputFormat.equals(OutputTypes.GMT)) {
                 timeOut.println(Outputs.formatDistance(td.getDistDeg()) + "  "
                         + Outputs.formatDepth(radiusOfEarth - td.getDepth()) + " " + Outputs.formatTime(time) + " "
                         + Outputs.formatRayParam(td.getP()));
             } else if (outputFormat.equals(SVG)) {
-                printDistRadiusAsXY(timeOut, td.getDistDeg(), radiusOfEarth - td.getDepth());
+                TauP_Path.printDistRadiusAsXY(timeOut, td.getDistDeg(), radiusOfEarth - td.getDepth());
                 timeOut.println();
             }
         }
@@ -314,7 +358,7 @@ public class TauP_Wavefront extends TauP_Path {
             timeOut.println("\" />");
         }
         if (isNegDistance()) {
-            if (outputFormat.equals(GMT)) {
+            if (outputFormat.equals(OutputTypes.GMT)) {
                 timeOut.write("> " + phase.getName() + " at " + time + " seconds (neg distance)\n");
             } else if (outputFormat.equals(SVG)) {
                 timeOut.println("<!-- " + phase.getName() + " at " + time + " seconds (neg distance)");
@@ -322,12 +366,12 @@ public class TauP_Wavefront extends TauP_Path {
                 timeOut.println("<polyline class=\"wavefront "+phase.getName()+" "+timeStr+"\" points=\"");
             }
             for (TimeDist td : wavefront) {
-                if (outputFormat.equals(GMT)) {
+                if (outputFormat.equals(OutputTypes.GMT)) {
                     timeOut.println(Outputs.formatDistance(-1*td.getDistDeg()) + "  "
                             + Outputs.formatDepth(radiusOfEarth - td.getDepth()) + " " + Outputs.formatTime(time) + " "
                             + Outputs.formatRayParam(td.getP()));
                 } else if (outputFormat.equals(SVG)) {
-                    printDistRadiusAsXY(timeOut, -1*td.getDistDeg(), radiusOfEarth - td.getDepth());
+                    TauP_Path.printDistRadiusAsXY(timeOut, -1*td.getDistDeg(), radiusOfEarth - td.getDepth());
                     timeOut.println();
                 }
             }
@@ -336,7 +380,7 @@ public class TauP_Wavefront extends TauP_Path {
             }
         }
         if (outputFormat.equals(SVG)) {
-        } else if (gmtScript) {
+        } else if (outputTypeArgs.gmtScript) {
             timeOut.println("END");
         }
     }
@@ -345,7 +389,6 @@ public class TauP_Wavefront extends TauP_Path {
         depthCorrect();
         Map<SeismicPhase, Map<Float, List<TimeDist>>> resultOut = new HashMap<SeismicPhase, Map<Float, List<TimeDist>>>();
         SeismicPhase phase;
-        clearArrivals();
         List<SeismicPhase> phaseList = getSeismicPhases();
         for (int phaseNum = 0; phaseNum < phaseList.size(); phaseNum++) {
             phase = phaseList.get(phaseNum);
@@ -423,6 +466,7 @@ public class TauP_Wavefront extends TauP_Path {
                             depthInterp);
     }
 
+    @CommandLine.Option(names = "--rays", description = "number of raypaths/distances to sample.")
     public void setNumRays(int numRays) {
         this.numRays = numRays;
     }
@@ -443,6 +487,7 @@ public class TauP_Wavefront extends TauP_Path {
         return separateFilesByTime;
     }
 
+    @CommandLine.Option(names="--timefiles", description = "outputs each time into a separate .ps file within the gmt script.")
     public void setSeparateFilesByTime(boolean separateFilesByTime) {
         this.separateFilesByTime = separateFilesByTime;
     }
@@ -451,55 +496,11 @@ public class TauP_Wavefront extends TauP_Path {
         return negDistance;
     }
 
+    @CommandLine.Option(names="--negdist", description = "outputs negative distance as well so wavefronts are in both halves.")
     public void setNegDistance(boolean negDistance) {
         this.negDistance = negDistance;
     }
 
-    public String[] parseCmdLineArgs(String[] args) throws IOException, TauPException {
-        int i = 0;
-        String[] leftOverArgs;
-        int numNoComprendoArgs = 0;
-
-        for (int j = 0; j < args.length; j++) {
-            // setting source depth is enough???
-            if (dashEquals("h", args[j])) {
-                doInteractive = false;
-            }
-        }
-        
-        leftOverArgs = super.parseCmdLineArgs(args);
-        String[] noComprendoArgs = new String[leftOverArgs.length];
-        while (i < leftOverArgs.length) {
-            if (dashEquals("gmt", leftOverArgs[i])) {
-                gmtScript = true;
-            } else if (dashEquals("timefiles", leftOverArgs[i])) {
-                separateFilesByTime = true;
-            } else if (dashEquals("negdist", leftOverArgs[i])) {
-                negDistance = true;
-            } else if (dashEquals("rays", leftOverArgs[i]) && i < leftOverArgs.length - 1) {
-                setNumRays(Integer.parseInt(leftOverArgs[i + 1]));
-                i++;
-            } else if (dashEquals("timestep", leftOverArgs[i]) && i < leftOverArgs.length - 1) {
-                setTimeStep(Float.parseFloat(leftOverArgs[i + 1]));
-                i++;
-            } else if (dashEquals("mapwidth", leftOverArgs[i]) && i < leftOverArgs.length - 1) {
-                setMapWidth(Float.parseFloat(leftOverArgs[i + 1]));
-                i++;
-            } else if (dashEquals("help", leftOverArgs[i])) {
-                noComprendoArgs[numNoComprendoArgs++] = leftOverArgs[i];
-            } else {
-                noComprendoArgs[numNoComprendoArgs++] = leftOverArgs[i];
-            }
-            i++;
-        }
-        if (numNoComprendoArgs > 0) {
-            String[] temp = new String[numNoComprendoArgs];
-            System.arraycopy(noComprendoArgs, 0, temp, 0, numNoComprendoArgs);
-            return temp;
-        } else {
-            return new String[0];
-        }
-    }
 
     @Override
     public void init() throws TauPException {
@@ -511,12 +512,22 @@ public class TauP_Wavefront extends TauP_Path {
     public void start() throws IOException, TauModelException, TauPException {
 
         if (doInteractive) {
-            super.start();
+            throw new RuntimeException("interactive wavefront not yet impl");
         } else {
             /* enough info given on cmd line, so just do one calc. */
-            calculate(new ArrayList<Double>());
+            calculate(new ArrayList<DistanceRay>());
             printResult(getWriter());
         }
+    }
+
+    @Override
+    public void destroy() throws TauPException {
+
+    }
+
+    @Override
+    public String getUsage() {
+        return null;
     }
 
     /**

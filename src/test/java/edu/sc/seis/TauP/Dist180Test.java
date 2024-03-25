@@ -62,8 +62,7 @@ public class Dist180Test {
         time.setSourceDepth(0);
         time.clearPhaseNames();
         time.appendPhaseName("PKIKP");
-        time.calculate(180);
-        List<Arrival> arrivals = time.getArrivals();
+        List<Arrival> arrivals = time.calculate(180);
         assertEquals(integrateVelocity(time.getTauModel().getVelocityModel()), arrivals.get(0).getTime(), 0.006);
     }
     

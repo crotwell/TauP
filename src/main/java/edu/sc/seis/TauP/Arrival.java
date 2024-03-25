@@ -32,6 +32,8 @@ import org.json.JSONWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.time.Duration;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -89,6 +91,7 @@ public class Arrival {
         this.phase = phase;
         this.time = time;
         this.dist = dist;
+        this.distValue = DistanceRay.ofRadians(dist);
         this.rayParam = rayParam;
         this.rayParamIndex = rayParamIndex;
         this.searchDist = searchDist;
@@ -111,6 +114,9 @@ public class Arrival {
 
     /** angular distance (great circle) in radians */
     private final double dist;
+
+    // ToDo: make this final???
+    private RayCalculateable distValue;
 
     /** ray parameter in seconds per radians. */
     private final double rayParam;
@@ -146,7 +152,16 @@ public class Arrival {
     private final double takeoffAngle;
 
     private Arrival relativeToArrival = null;
-    
+
+    public static List<Arrival> sortArrivals(List<Arrival> arrivals) {
+        Collections.sort(arrivals, new Comparator<Arrival>() {
+            public int compare(Arrival o1, Arrival o2) {
+                return Double.compare(o1.getTime(), o2.getTime());
+            }
+        });
+        return arrivals;
+    }
+
     // get set methods
     /** @return the phase used to calculate this arrival. */
     public SeismicPhase getPhase() {
@@ -744,4 +759,10 @@ public class Arrival {
         return a;
     }
 
+    public RayCalculateable getShootable() {
+        return this.distValue;
+    }
+    public void setShootable(RayCalculateable dv) {
+        this.distValue = dv;
+    }
 }
