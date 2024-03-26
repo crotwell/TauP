@@ -556,7 +556,9 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
      * @throws TauModelException
      */
     public void depthCorrect(double depth, double receiverDepth, Scatterer scatter) throws TauModelException {
-
+        if (tMod == null) {
+            tMod = TauModelLoader.load(modelArgs.getModelName());
+        }
         if (tModDepth == null || tModDepth.getSourceDepth() != depth) {
             setReceiverDepth(receiverDepth);
             tModDepth = tMod.depthCorrect(depth);

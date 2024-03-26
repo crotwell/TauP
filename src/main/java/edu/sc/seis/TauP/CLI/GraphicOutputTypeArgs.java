@@ -4,7 +4,7 @@ import picocli.CommandLine;
 
 import static edu.sc.seis.TauP.CLI.OutputTypes.*;
 
-public class GraphicOutputTypeArgs extends TextOutputTypeArgs {
+public class GraphicOutputTypeArgs  {
 
 
     @CommandLine.ArgGroup(exclusive=true, multiplicity="1")
@@ -83,8 +83,12 @@ public class GraphicOutputTypeArgs extends TextOutputTypeArgs {
         }
     }
 
-    static class GraphicsOutputType extends TextOutputType {
+    static class GraphicsOutputType {
 
+        @CommandLine.Option(names = {"-text"}, required = true, description = "outputs as text")
+        boolean _isText;
+        @CommandLine.Option(names = {"-json"}, required = true, description = "outputs as JSON")
+        boolean _isJSON;
         @CommandLine.Option(names = {"-gmt"}, required = true, description = "outputs as GMT")
         boolean _isGMT;
         @CommandLine.Option(names = {"-svg"}, required = true, description = "outputs as SVG")

@@ -3,6 +3,7 @@ package edu.sc.seis.TauP;
 import edu.sc.seis.TauP.CLI.Scatterer;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -192,15 +193,16 @@ public class ScatterTest {
 
         path.clearPhaseNames();
         path.appendPhaseName("PedOP");
+        path.recalcPhases();
 
-        List<Arrival> arrivals = path.calculate(35);
+        List<Arrival> arrivals = path.calcAll(path.getSeismicPhases(), Arrays.asList(DistanceRay.ofDegrees(35)));
         assertEquals(1, arrivals.size());
         Arrival a_35 = arrivals.get(0);
         ScatteredArrival scatA = (ScatteredArrival) a_35;
         assertEquals(-10, scatA.getScatteredSeismicPhase().getScattererDistanceDeg());
         assertTrue(scatA.isInboundNegativeDirection());
         // path should first go negative to scatterer, then positive to receiver
-        assertTrue(a_35.getPiercePoint(1).getDistDeg()<0);
         assertTrue(a_35.getPathPoint(1).getDistDeg()<0);
+        assertTrue(a_35.getPathPoint(a_35.getNumPathPoints()-1).getDistDeg() == 35);
     }
 }

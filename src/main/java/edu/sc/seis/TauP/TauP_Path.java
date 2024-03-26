@@ -26,6 +26,8 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
+import static edu.sc.seis.TauP.TauP_Pierce.getCommentLine;
+
 /**
  * Calculate travel paths for different phases using a linear interpolated ray
  * parameter between known slowness samples.
@@ -34,7 +36,7 @@ import java.util.List;
  * @author H. Philip Crotwell
  */
 @CommandLine.Command(name = "path")
-public class TauP_Path extends TauP_Pierce {
+public class TauP_Path extends TauP_AbstractRayTool {
 
 
 	protected boolean withTime = false;
@@ -78,12 +80,12 @@ public class TauP_Path extends TauP_Pierce {
 	}
 
 	public TauP_Path(TauModel tMod) throws TauModelException {
-		super(tMod);
+		setTauModel(tMod);
 		initFields();
 	}
 
 	public TauP_Path(String modelName) throws TauModelException {
-		super(modelName);
+		modelArgs.setModelName(modelName);
 		initFields();
 	}
 
@@ -95,14 +97,14 @@ public class TauP_Path extends TauP_Pierce {
 
 	public TauP_Path(TauModel tMod, String outFileBase)
 			throws TauModelException {
-		super(tMod);
+		setTauModel(tMod);
 		initFields();
 		setOutFileBase(outFileBase);
 	}
 
 	public TauP_Path(String modelName, String outFileBase)
 			throws TauModelException {
-		super(modelName);
+		modelArgs.setModelName(modelName);
 		initFields();
 		setOutFileBase(outFileBase);
 	}
@@ -186,14 +188,28 @@ public class TauP_Path extends TauP_Pierce {
 		return (GraphicOutputTypeArgs) outputTypeArgs;
 	}
 
+	GraphicOutputTypeArgs outputTypeArgs = new GraphicOutputTypeArgs();
+
 	@Override
-	public List<Arrival> calculate(List<DistanceRay> distanceRays) throws TauPException {
-		List<Arrival> arrivalList = super.calculate(distanceRays);
-	    for (Arrival arrival : arrivalList) {
-            arrival.getPath(); // side effect of calculating path
-        }
-	    return arrivalList;
+	public List<Arrival> calcAll(List<SeismicPhase> phaseList, List<RayCalculateable> shootables) throws TauPException {
+		List<Arrival> arrivals = new ArrayList<>();
+		depthCorrect();
+		for (SeismicPhase phase : phaseList) {
+			for (RayCalculateable shoot : shootables) {
+				arrivals.addAll(shoot.calculate(phase));
+			}
+		}
+		for (Arrival arrival : arrivals) {
+			arrival.getPath(); // side effect of calculating path
+		}
+		return Arrival.sortArrivals(arrivals);
 	}
+
+	@Override
+	public void destroy() throws TauPException {
+
+	}
+
 	@Override
 	public void printResult(PrintWriter out, List<Arrival> arrivalList) throws IOException {
 		if (outputFormat.equals(OutputTypes.JSON)) {
@@ -496,7 +512,6 @@ public class TauP_Path extends TauP_Pierce {
 
 	}
 
-	@Override
 	public void printResultJSON(PrintWriter out, List<Arrival> arrivalList) {
 		String s = resultAsJSON(modelArgs.getModelName(), tModDepth.getSourceDepth(), getReceiverDepth(), getPhaseNames(), arrivalList, false, true);
 		out.println(s);
@@ -925,7 +940,7 @@ public class TauP_Path extends TauP_Pierce {
 	}
 
 	public void start() throws IOException, TauModelException, TauPException {
-		super.start();
+
 	}
 
 

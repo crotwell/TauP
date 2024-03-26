@@ -626,7 +626,7 @@ public class TauP_Web extends TauP_Tool {
 
     /**
      * Allows TauP_Web to run as an application. Creates an instance of
-     * TauP_Time.
+     * TauP_Web.
      *
      * ToolRun.main should be used instead.
      */

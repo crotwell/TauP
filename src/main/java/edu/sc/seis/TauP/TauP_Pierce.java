@@ -145,7 +145,7 @@ public class TauP_Pierce extends TauP_Time {
         return arrivalList;
     }
     
-    String getCommentLine(Arrival currArrival) {
+    public static String getCommentLine(Arrival currArrival) {
         String outName = currArrival.getName();
         if ( ! currArrival.getName().equals(currArrival.getPuristName())) {
             outName+="("+currArrival.getPuristName()+")";
@@ -156,11 +156,11 @@ public class TauP_Pierce extends TauP_Time {
                 + Outputs.formatDistance(currArrival.getDistDeg())
                 + " degrees for a "
                 + Outputs.formatDepth(currArrival.getSourceDepth())
-                + " km deep source in the " + modelArgs.getModelName() + " model with rayParam "
+                + " km deep source in the " + currArrival.getPhase().getTauModel().getModelName() + " model with rayParam "
                 + Outputs.formatRayParam(Math.PI / 180 * currArrival.getRayParam()) 
                 + " s/deg.";
-        if (getReceiverDepth() != 0.0) {
-            out += " Receiver at depth: "+getReceiverDepth()+" km.";
+        if (currArrival.getPhase().getReceiverDepth() != 0.0) {
+            out += " Receiver at depth: "+currArrival.getPhase().getReceiverDepth()+" km.";
         }
         return out;
     }

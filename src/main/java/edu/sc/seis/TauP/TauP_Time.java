@@ -372,54 +372,6 @@ public class TauP_Time extends TauP_AbstractRayTool {
         return out;
     }
 
-    public static String resultAsJSON(String modelName,
-                                      double depth,
-                                      double receiverDepth,
-                                      String[] phases,
-                                      List<Arrival> arrivals,
-                                      boolean withPierce,
-                                      boolean withPath) {
-        String Q = ""+'"';
-        String COMMA = ",";
-        String QCOMMA = Q+COMMA;
-        String COLON = ": "; // plus space
-        String S = "  ";
-        String QC = Q+COLON;
-        String QCQ = QC+Q;
-        String SS = S+S;
-        String SQ = S+Q;
-        String SSQ = S+SQ;
-        String SSSQ = S+SSQ;
-        // use cast to float to limit digits printed
-        StringWriter sw = new StringWriter();
-        PrintWriter out = new PrintWriter(sw);
-        out.println("{");
-        out.println(SQ+"model"+QCQ+modelName+QCOMMA);
-        out.println(SQ+"sourcedepth"+QC+(float)depth+COMMA);
-        out.println(SQ+"receiverdepth"+QC+(float)receiverDepth+COMMA);
-        out.print(SQ+"phases"+Q+": [");
-        for(int p=0; p<phases.length; p++) {
-            out.print(" "+Q+phases[p]+Q);
-            if ( p != phases.length-1) {
-                out.print(COMMA);
-            }
-        }
-        out.println(" ]"+COMMA);
-        out.println(SQ+"arrivals"+Q+": [");
-        for(int j = 0; j < arrivals.size(); j++) {
-            Arrival currArrival = arrivals.get(j);
-            out.print(currArrival.asJSONObject().toString(2));
-            //out.print(currArrival.asJSON(true, SS, withPierce, withPath));
-            if (j != arrivals.size()-1) {
-                out.print(COMMA);
-            }
-            out.println();
-        }
-        out.println(S+"]");
-        out.print("}");
-        return sw.toString();
-    }
-
     /**
      * preforms intialization of the tool. Properties are queried for the
      * default model to load, source depth to use, phases to use, etc.
@@ -440,7 +392,6 @@ public class TauP_Time extends TauP_AbstractRayTool {
 
     public void start() throws IOException, TauPException {
         List<RayCalculateable> distanceValues = getDistanceArgs().getShootRays();
-        List<Arrival> arrivalList = new ArrayList<>();
         if((distanceValues.size() != 0)) {
             /* enough info given on cmd line, so just do one calc. */
             calcAndPrint(getSeismicPhases(), distanceValues);
