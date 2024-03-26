@@ -17,6 +17,7 @@
 package edu.sc.seis.TauP;
 
 import edu.sc.seis.TauP.CLI.OutputTypes;
+import edu.sc.seis.TauP.CLI.TextOutputTypeArgs;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -50,6 +51,9 @@ public class TauP_Time extends TauP_AbstractRayTool {
 
     @CommandLine.Option(names = "--rel", description = "times relative to the given phase")
     protected String relativePhaseName = "";
+
+    @CommandLine.Mixin
+    TextOutputTypeArgs outputTypeArgs = new TextOutputTypeArgs();
 
     public TauP_Time() {
         setDefaultOutputFormat();
@@ -102,20 +106,6 @@ public class TauP_Time extends TauP_AbstractRayTool {
 
     /* Normal methods */
 
-    /*
-     * parses the standard command line args for the taup package. Other tools
-     * that subclass this class will likely override this.
-     */
-    protected String[] parseCmdLineArgs(String[] origArgs) throws IOException, TauPException {
-        int i = 0;
-        String[] args = parseSourceModelCmdLineArgs(origArgs);
-        String[] noComprendoArgs = new String[args.length];
-        int numNoComprendoArgs = 0;
-        boolean cmdLineArgPhase = false;
-        boolean cmdLineArgPhaseFile = false;
-        return new String[0];
-
-    }
 
     public List<Arrival> calculate(double degrees) throws TauPException {
         List<DistanceRay> dList = Arrays.asList( DistanceRay.ofDegrees(degrees));
@@ -832,13 +822,6 @@ public class TauP_Time extends TauP_AbstractRayTool {
                     + "--rel phasename    -- also output relative travel time\n\n"
                     + "--json             -- output travel times as json\n\n"
         ;
-    }
-
-    public String getUsage() {
-        String buf = getStdUsage() +
-                getLimitUsage() +
-                getStdUsageTail();
-        return buf;
     }
 
     /**

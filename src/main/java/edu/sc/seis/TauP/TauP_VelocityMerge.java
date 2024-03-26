@@ -1,12 +1,17 @@
 package edu.sc.seis.TauP;
 
+import edu.sc.seis.TauP.CLI.ModelArgs;
 import edu.sc.seis.TauP.CLI.OutputTypes;
+import picocli.CommandLine;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+
+import static edu.sc.seis.TauP.VelocityModel.ND;
+import static edu.sc.seis.TauP.VelocityModel.TVEL;
 
 /**
  * Replaces part of a velocity model with layers from another.
@@ -58,7 +63,7 @@ public class TauP_VelocityMerge extends TauP_Tool {
             }
             if (getOutputFormat() == ND || getOutputFormat() == OutputTypes.TEXT) {
                 outVMod.writeToND(dos);
-            } else if (getOutputFormat() == TVEL) {
+            } else if (getOutputFormat() == VelocityModel.TVEL) {
                 throw new RuntimeException("tvel output not yet implemented");
             } else if (getOutputFormat() == OutputTypes.JSON) {
                 dos.write(outVMod.asJSON(true, ""));
@@ -67,62 +72,6 @@ public class TauP_VelocityMerge extends TauP_Tool {
             
         } catch (IOException e) {
             throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    protected String[] parseCmdLineArgs(String[] origArgs) throws IOException {
-
-        String[] args = super.parseCommonCmdLineArgs(origArgs);
-        int i = 0;
-        String[] noComprendoArgs = new String[args.length];
-        int numNoComprendoArgs = 0;
-        while(i < args.length) {
-            if (dashEquals("smtop", args[i])) {
-                smoothTop = true;
-            } else if (dashEquals("smbot", args[i])) {
-                smoothBottom = true;
-            } else if (dashEquals("json", args[i])) {
-                setOutputFormat(OutputTypes.JSON);
-            } else if(i < args.length - 1 && dashEquals("nd", args[i])) {
-                modelName = args[i + 1];
-                modelType = "nd";
-                i++;
-            } else if(i < args.length - 1 && dashEquals("tvel", args[i])) {
-                modelName = args[i + 1];
-                modelType = "tvel";
-                i++;
-            } else if(i < args.length - 1 && dashEquals("mod", args[i])) {
-                modelName = args[i + 1];
-                modelType = null;
-                i++;
-            } else if (i < args.length - 1 && dashEquals("ndmerge", args[i])) {
-               overlayModelName = args[i+1];
-               overlayModelType = "nd";
-               i++;
-            } else if (i < args.length - 1 && dashEquals("tvelmerge", args[i])) {
-                overlayModelName = args[i+1];
-                overlayModelType = "tvel";
-                i++;
-            } else if (i < args.length - 1 && dashEquals("elevation", args[i])) {
-                if (args[i+1].endsWith("m") ) {
-                    elevation = Float.parseFloat(args[i + 1].substring(0, args[i + 1].length()-1))/1000;
-                } else {
-                    elevation = Float.parseFloat(args[i + 1]);
-                }
-                i++;
-            } else {
-                /* I don't know how to interpret this argument, so pass it back */
-                noComprendoArgs[numNoComprendoArgs++] = args[i];
-            }
-            i++;
-        }
-        if(numNoComprendoArgs > 0) {
-            String[] temp = new String[numNoComprendoArgs];
-            System.arraycopy(noComprendoArgs, 0, temp, 0, numNoComprendoArgs);
-            return temp;
-        } else {
-            return new String[0];
         }
     }
 
@@ -144,27 +93,6 @@ public class TauP_VelocityMerge extends TauP_Tool {
     }
 
     @Override
-    public String getUsage() {
-
-        return TauP_Tool.getStdUsageHead(this.getClass())
-
-        +"-mod[el] modelname -- base velocity model \"modelname\" for calculations\n"
-                + "                      Default is iasp91.\n\n\n"
-        +"-nd modelfile       -- base \"named discontinuities\" velocity file\n"
-        +"-tvel modelfile     -- base \".tvel\" velocity file, ala ttimes\n\n"
-        +"-ndmerge modelfile       -- \"named discontinuities\" velocity file to merge\n"
-        +"-tvelmerge modelfile     -- \".tvel\" velocity file to merge, ala ttimes\n\n"
-        +"-smtop              -- smooth merge at top\n"
-        +"-smbot              -- smooth merge at bottom\n\n"
-
-        +"--elevation         -- expand top layer for station at elevation\n"
-        +"                       may append m for meters, otherwise kilometers\n"
-        +"                       updates radius of earth\n"
-        +"--json             -- output model as json\n\n"
-        +TauP_Tool.getStdUsageTail();
-    }
-
-    @Override
     public String[] allowedOutputFormats() {
         String[] formats = {OutputTypes.TEXT, OutputTypes.JSON, ND};
         return formats;
@@ -174,14 +102,32 @@ public class TauP_VelocityMerge extends TauP_Tool {
         setOutputFormat(ND);
     }
 
+    @CommandLine.Mixin
+    ModelArgs modelArgs = new ModelArgs();
+
     String modelName;
     String modelType;
+
+    @CommandLine.Option(names = "--ndmerge")
+    public void setNDMerge(String modelName) {
+        overlayModelName = modelName;
+        overlayModelType = ND;
+    }
+    @CommandLine.Option(names = "--tvelmerge")
+    public void setTvelMerge(String modelName) {
+        overlayModelName = modelName;
+        overlayModelType = TVEL;
+    }
+
     String overlayModelName = null;
     String overlayModelType = null;
+    @CommandLine.Option(names = {"--smtop", "--smoothtop"})
     boolean smoothTop = false;
+
+    @CommandLine.Option(names = {"--smbot", "--smoothBottom"})
     boolean smoothBottom = false;
+
+    @CommandLine.Option(names = "--elev")
     float elevation = 0;
 
-    public static final String ND = "nd";
-    public static final String TVEL = "tvel";
 }

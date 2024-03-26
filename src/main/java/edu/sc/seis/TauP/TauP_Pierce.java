@@ -21,6 +21,7 @@ import picocli.CommandLine;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -42,7 +43,8 @@ public class TauP_Pierce extends TauP_Time {
 
     protected boolean onlyAddPoints = false;
 
-    protected double[] addDepth = new double[0];
+    @CommandLine.Option(names="--pierce", description = "adds depth for calculating pierce points")
+    protected List<Double> addDepth = new ArrayList<>();
 
     public TauP_Pierce() {
         super();
@@ -60,89 +62,43 @@ public class TauP_Pierce extends TauP_Time {
     }
 
     // get/set methods
+    @CommandLine.Option(names = "--turn", description = "only prints bottom turning points, e.g. v")
     public void setOnlyTurnPoints(boolean onlyTurnPoints) {
         this.onlyTurnPoints = onlyTurnPoints;
     }
 
+    @CommandLine.Option(names = "--rev", description = "only prints underside and bottom turn points, e.g. ^ and v")
     public void setOnlyRevPoints(boolean onlyRevPoints) {
         this.onlyRevPoints = onlyRevPoints;
     }
 
+    @CommandLine.Option(names="--under", description = "only prints underside reflection points, e.g. ^")
     public void setOnlyUnderPoints(boolean onlyUnderPoints) {
         this.onlyUnderPoints = onlyUnderPoints;
     }
 
+    @CommandLine.Option(names = "--nodiscon", description = "only prints pierce points for the depths added with -pierce")
     public void setOnlyAddPoints(boolean onlyAddPoints) {
         this.onlyAddPoints = onlyAddPoints;
     }
 
-    /**
-     * sets depths for additional pierce points, ie depths that are not really
-     * discontinuities in the model.
-     */
-    public void setAddDepths(String depthString) {
-        addDepth = parseAddDepthsList(depthString);
-    }
-
     public void appendAddDepths(String depthString) {
-        double[] newDepths = parseAddDepthsList(depthString);
-        double[] temp = new double[addDepth.length + newDepths.length];
-        System.arraycopy(addDepth, 0, temp, 0, addDepth.length);
-        System.arraycopy(newDepths, 0, temp, addDepth.length, newDepths.length);
-        addDepth = temp;
+        addDepth.addAll(parseAddDepthsList(depthString));
     }
 
-    protected double[] parseAddDepthsList(String depthList) {
-        int offset = 0;
-        int commaIndex;
-        String degEntry;
-        int numDepths = 0;
+    protected List<Double> parseAddDepthsList(String depthList) {
+        List<Double> out = new ArrayList<>();
         depthList = depthList.replace(' ', ',');
-        // remove any empty depths, ie two commas next to each other
-        // should be replaced with one comma
-        commaIndex = depthList.indexOf(",,", offset);
-        while(commaIndex != -1) {
-            depthList = depthList.substring(0, commaIndex)
-                    + depthList.substring(commaIndex + 1);
-            commaIndex = depthList.indexOf(",,", offset);
-        }
-        // remove comma at begining
-        if(depthList.charAt(0) == ',') {
-            if(depthList.length() > 1) {
-                depthList = depthList.substring(1);
-            } else {
-                // depthList is just a single comma, no depths, so just return
-                return new double[0];
+        for (String dstr : depthList.split(",")) {
+            if (!dstr.isEmpty()) {
+                out.add(Double.parseDouble(dstr));
             }
         }
-        // and comma at end
-        if(depthList.charAt(depthList.length() - 1) == ',') {
-            // we know that the length is > 1 as if not then we would have
-            // returned from the previous if
-            depthList = depthList.substring(0, depthList.length() - 1);
-        }
-        double[] depthsFound = new double[depthList.length()];
-        while(offset < depthList.length()) {
-            commaIndex = depthList.indexOf(',', offset);
-            if(commaIndex != -1) {
-                degEntry = depthList.substring(offset, commaIndex);
-                depthsFound[numDepths] = Double.valueOf(degEntry).doubleValue();
-                offset = commaIndex + 1;
-                numDepths++;
-            } else {
-                degEntry = depthList.substring(offset);
-                depthsFound[numDepths] = Double.valueOf(degEntry).doubleValue();
-                offset = depthList.length();
-                numDepths++;
-            }
-        }
-        double[] temp = new double[numDepths];
-        System.arraycopy(depthsFound, 0, temp, 0, numDepths);
-        depthsFound = temp;
-        return depthsFound;
+        return out;
     }
 
     /** override depthCorrect so that we can put the pierce depths in. */
+    @Override
     public void depthCorrect(double depth, double receiverDepth, Scatterer scatter) throws TauModelException {
         TauModel tModOrig = tMod; // save original
         tMod = splitPierceDepths(tMod); // add pierce depths
@@ -155,9 +111,9 @@ public class TauP_Pierce extends TauP_Time {
         TauModel tModOut = tModOrig;
         if(addDepth != null) {
             double[] branchDepths = tModOrig.getBranchDepths();
-            for(int i = 0; i < addDepth.length; i++) {
-                for(int j = 0; j < branchDepths.length; j++) {
-                    if(addDepth[i] == branchDepths[j]) {
+            for (Double aDouble : addDepth) {
+                for (double branchDepth : branchDepths) {
+                    if (aDouble == branchDepth) {
                         // found it, so break and go to the next addDepth
                         break;
                     }
@@ -166,17 +122,15 @@ public class TauP_Pierce extends TauP_Time {
                     // so this means we must recalculate
                     mustRecalc = true;
                 }
-                if(mustRecalc) {
+                if (mustRecalc) {
                     // must recalculate, so break out of addDepth loop
                     break;
                 }
             }
         }
         if (mustRecalc) {
-            if (addDepth != null) {
-                for (int i = 0; i < addDepth.length; i++) {
-                    tModOut = tModOut.splitBranch(addDepth[i]);
-                }
+            for (Double aDouble : addDepth) {
+                tModOut = tModOut.splitBranch(aDouble);
             }
         }
         return tModOut;
@@ -214,39 +168,37 @@ public class TauP_Pierce extends TauP_Time {
     @Override
     public void printResultText(PrintWriter out, List<Arrival> arrivalList) throws IOException {
         double prevDepth, nextDepth;
-        double lat, lon;
-        for(int i = 0; i < arrivalList.size(); i++) {
-            Arrival currArrival = (Arrival) arrivalList.get(i);
-            out.println(getCommentLine(currArrival));
+        for (Arrival arrival : arrivalList) {
+            out.println(getCommentLine(arrival));
 
-            TimeDist[] pierce = currArrival.getPierce();
+            TimeDist[] pierce = arrival.getPierce();
             prevDepth = pierce[0].getDepth();
-            for(int j = 0; j < pierce.length; j++) {
+            for (int j = 0; j < pierce.length; j++) {
                 double calcDist = pierce[j].getDistDeg();
-                if(j < pierce.length - 1) {
+                if (j < pierce.length - 1) {
                     nextDepth = pierce[j + 1].getDepth();
                 } else {
                     nextDepth = pierce[j].getDepth();
                 }
-                if(!(onlyTurnPoints || onlyRevPoints || onlyUnderPoints || onlyAddPoints)
-                        || ( onlyRevPoints
-                                && ( getScatterer()!= null && pierce[j].getDepth() == getScatterer().depth  // scat are always rev points
-                                && pierce[j].getDistDeg() == getScatterer().dist.getDegrees(tMod.getRadiusOfEarth()))
-                            )
+                if (!(onlyTurnPoints || onlyRevPoints || onlyUnderPoints || onlyAddPoints)
+                        || (onlyRevPoints
+                        && (getScatterer() != null && pierce[j].getDepth() == getScatterer().depth  // scat are always rev points
+                        && pierce[j].getDistDeg() == getScatterer().dist.getDegrees(tMod.getRadiusOfEarth()))
+                )
                         || ((onlyAddPoints && isAddDepth(pierce[j].getDepth()))
-                                || (onlyRevPoints && ((prevDepth - pierce[j].getDepth())
-                                        * (pierce[j].getDepth() - nextDepth) < 0))
-                                || (onlyTurnPoints && j != 0
-                                        && ((prevDepth - pierce[j].getDepth()) <= 0
-                                        && (pierce[j].getDepth() - nextDepth) >= 0))
-                                || (onlyUnderPoints
-                                        && ((prevDepth - pierce[j].getDepth()) >= 0
-                                        && (pierce[j].getDepth() - nextDepth) <= 0)))) {
+                        || (onlyRevPoints && ((prevDepth - pierce[j].getDepth())
+                        * (pierce[j].getDepth() - nextDepth) < 0))
+                        || (onlyTurnPoints && j != 0
+                        && ((prevDepth - pierce[j].getDepth()) <= 0
+                        && (pierce[j].getDepth() - nextDepth) >= 0))
+                        || (onlyUnderPoints
+                        && ((prevDepth - pierce[j].getDepth()) >= 0
+                        && (pierce[j].getDepth() - nextDepth) <= 0)))) {
                     out.write(Outputs.formatDistance(calcDist));
                     out.write(Outputs.formatDepth(pierce[j].getDepth()));
                     out.write(Outputs.formatTime(pierce[j].getTime()));
-                    if (currArrival.getShootable() != null) {
-                        double[] latlon = currArrival.getShootable().getLatLonable().calcLatLon(calcDist, currArrival.getDistDeg());
+                    if (((Arrival) arrival).getShootable() != null) {
+                        double[] latlon = ((Arrival) arrival).getShootable().getLatLonable().calcLatLon(calcDist, ((Arrival) arrival).getDistDeg());
                         out.write("  " + Outputs.formatLatLon(latlon[0]) + "  "
                                 + Outputs.formatLatLon(latlon[1]));
                     }
@@ -267,75 +219,12 @@ public class TauP_Pierce extends TauP_Time {
      * checks to see if the given depth has been "added" as a pierce point.
      */
     public synchronized boolean isAddDepth(double depth) {
-        for(int i = 0; i < addDepth.length; i++) {
-            if(depth == addDepth[i]) {
+        for (Double aDouble : addDepth) {
+            if (depth == aDouble) {
                 return true;
             }
         }
         return false;
-    }
-
-    public String getLimitUsage() {
-        return "--first            -- only output the first arrival for each phase, no triplications\n"
-
-                +"-rev               -- only prints underside and bottom turn points, e.g. ^ and v\n"
-        +"-turn              -- only prints bottom turning points, e.g. v\n"
-        +"-under             -- only prints underside reflection points, e.g. ^\n\n"
-        +"-pierce depth      -- adds depth for calculating pierce points\n"
-        +"-nodiscon          -- only prints pierce points for the depths added with -pierce\n\n"
-        ;
-    }
-
-    /** prints the known command line flags. */
-    public String getUsage() {
-        return getStdUsage()
-        +"-az azimuth        -- sets the azimuth (event to station)\n"
-                + "                      used to output lat and lon of pierce points\n"
-                + "                      if the event lat lon and distance are also\n"
-                + "                      given. Calculated if station and event\n"
-                + "                      lat and lon are given.\n"
-                + "-baz backazimuth   -- sets the back azimuth (station to event)\n"
-                + "                      used to output lat and lon of pierce points\n"
-                + "                      if the station lat lon and distance are also\n"
-                + "                      given. Calculated if station and event\n"
-                + "                      lat and lon are given.\n\n"
-        + getLimitUsage()
-        + getStdUsageTail();
-    }
-
-    public String[] parseCmdLineArgs(String[] args) throws IOException, TauPException {
-        int i = 0;
-        String[] leftOverArgs;
-        int numNoComprendoArgs = 0;
-        leftOverArgs = super.parseCmdLineArgs(args);
-        String[] noComprendoArgs = new String[leftOverArgs.length];
-        while(i < leftOverArgs.length) {
-            if(dashEquals("turn", leftOverArgs[i])) {
-                onlyTurnPoints = true;
-            } else if(dashEquals("rev", leftOverArgs[i])) {
-                onlyRevPoints = true;
-            } else if(dashEquals("under", leftOverArgs[i])) {
-                onlyUnderPoints = true;
-            } else if(dashEquals("pierce", leftOverArgs[i])
-                    && i < leftOverArgs.length - 1) {
-                appendAddDepths(leftOverArgs[i + 1]);
-                i++;
-            } else if(dashEquals("nodiscon", leftOverArgs[i])) {
-                onlyAddPoints = true;
-            } else if(dashEquals("help", leftOverArgs[i])) {
-                noComprendoArgs[numNoComprendoArgs++] = leftOverArgs[i];
-            } else {
-                noComprendoArgs[numNoComprendoArgs++] = leftOverArgs[i];
-            }
-            i++;
-        }
-        if(numNoComprendoArgs > 0) {
-            String[] temp = new String[numNoComprendoArgs];
-            System.arraycopy(noComprendoArgs, 0, temp, 0, numNoComprendoArgs);
-            return temp;
-        } else {
-            return new String[0];
-        }
     }
 
     /**

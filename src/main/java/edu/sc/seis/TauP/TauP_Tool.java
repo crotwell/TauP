@@ -31,6 +31,8 @@ public abstract class TauP_Tool implements Callable<Integer> {
      */
     @Override
     public Integer call() throws Exception {
+        Outputs.configure(toolProps);
+        SeismicPhaseFactory.configure(toolProps);
         init();
         start();
         return 0;
@@ -193,8 +195,6 @@ public abstract class TauP_Tool implements Callable<Integer> {
         return ToolRun.dashEquals(argName, arg);
     }
 
-    protected abstract String[] parseCmdLineArgs(String[] origArgs) throws IOException, TauPException;
-
     protected String[] parseOutputFormatCmdLineArgs(String[] origiArgs) {
         List<String> noComprendoArgs = new ArrayList<>(List.of(origiArgs));
         String[] allowed = allowedOutputFormats();
@@ -210,87 +210,19 @@ public abstract class TauP_Tool implements Callable<Integer> {
         return noComprendoArgs.toArray(new String[0]);
     }
 
+    @CommandLine.Option(names = "--prop", description = "load defaults from properties file")
+    public void setToolPropsFilename(String filename) throws IOException {
+        File f = new File(filename);
+        if (! f.exists()) {
+            throw new FileNotFoundException(filename); // ToDo better error msg
+        }
+        Reader r = new BufferedReader(new FileReader(filename));
+        toolProps.load(r);
+    }
+
     public abstract void init() throws TauPException;
     public abstract void start() throws IOException, TauModelException, TauPException;
     public abstract void destroy() throws TauPException;
-    public abstract String getUsage();
-    public void printUsage() {
-        System.out.println(getUsage());
-    }
-
-    /*
-     * parses the standard command line args for the taup package. Other tools
-     * that subclass this class will likely override this.
-     */
-    protected String[] parseCommonCmdLineArgs(String[] origArgs) throws IOException {
-        cmdLineArgs = origArgs;
-        int i = 0;
-        String[] args = ToolRun.parseCommonCmdLineArgs(origArgs);
-        args = parseOutputFormatCmdLineArgs(args);
-        String[] noComprendoArgs = new String[args.length];
-        int numNoComprendoArgs = 0;
-        while(i < args.length) {
-            if(dashEquals("version", args[i])) {
-                Alert.info(BuildVersion.getDetailedVersion());
-                noComprendoArgs[numNoComprendoArgs++] = args[i];
-            } else if(dashEquals("help", args[i])) {
-                printUsage();
-                noComprendoArgs[numNoComprendoArgs++] = args[i];
-            } else if(dashEquals("expert", args[i])) {
-                System.err.println("expert mode is not longer required for core sources or interactions.");
-            } else if(i < args.length - 1) {
-                if(args[i].equalsIgnoreCase("-o")) {
-                    outFileBase = args[i + 1];
-                    i++;
-                } else if(dashEquals("prop", args[i])) {
-                    File f = new File(args[i+1]);
-                    if (! f.exists()) {
-                        throw new FileNotFoundException(args[i+1]); // ToDo better error msg
-                    }
-                    Reader r = new BufferedReader(new FileReader(args[i + 1]));
-                    toolProps.load(r);
-                    i++;
-                } else if(i < args.length - 2) {
-                    if (dashEquals("set", args[i])
-                            && args[i+1].startsWith("taup.")) {
-                        if (toolProps.containsKey(args[i+1])) {
-                            // set a known config prop
-                            toolProps.setProperty(args[i + 1], args[i + 2]);
-                            i += 2;
-                        } else {
-                            System.err.println("Warning: Setting unknown property "+args[i+1] +" to "+args[i+2]);
-                        }
-                    } else {
-                        /*
-                         * I don't know how to interpret this argument, so pass
-                         * it back
-                         */
-                        noComprendoArgs[numNoComprendoArgs++] = args[i];
-                    }
-                } else {
-                    /*
-                     * I don't know how to interpret this argument, so pass it
-                     * back
-                     */
-                    noComprendoArgs[numNoComprendoArgs++] = args[i];
-                }
-            } else {
-                /* I don't know how to interpret this argument, so pass it back */
-                noComprendoArgs[numNoComprendoArgs++] = args[i];
-            }
-            i++;
-        }
-        Outputs.configure(toolProps);
-        SeismicPhaseFactory.configure(toolProps);
-
-        if(numNoComprendoArgs > 0) {
-            String[] temp = new String[numNoComprendoArgs];
-            System.arraycopy(noComprendoArgs, 0, temp, 0, numNoComprendoArgs);
-            return temp;
-        } else {
-            return new String[0];
-        }
-    }
     
     public static String toolNameFromClass(Class toolClass) {
         String className = toolClass.getName();
@@ -302,8 +234,6 @@ public abstract class TauP_Tool implements Callable<Integer> {
         }
         if (toolClass.equals(TauP_VelocityPlot.class) ) {
             toolName = "taup velplot";
-        } else if (toolClass.equals(TauP_SlownessPlot.class) ) {
-            toolName = "taup slowplot";
         } else if (toolClass.equals(TauP_VelocityMerge.class) ) {
             toolName = "taup velmerge";
         } else if (toolClass.equals(TauP_PhaseDescribe.class) ) {

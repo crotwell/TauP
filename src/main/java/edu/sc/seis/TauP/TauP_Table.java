@@ -392,14 +392,14 @@ public class TauP_Table extends TauP_Time {
     }
 
     public void start() throws TauModelException, TauPException, IOException {
-        if(outputFormat == OutputTypes.TEXT) {
+        if(tableFormat.generic) {
             // GENERIC:
             genericTable(getWriter());
-        } else if(outputFormat == OutputTypes.CSV) {
+        } else if(tableFormat.csv) {
             csvTable(getWriter());
-        } else if (outputFormat == TauP_Table.LOCSAT) {
+        } else if (tableFormat.locsat) {
             locsatTable(getWriter());
-        } else if (outputFormat == OutputTypes.JSON) {
+        } else if (tableFormat.json) {
             jsonTable(getWriter());
         } else {
             throw new TauPException("TauP_Table: undefined state for output type: "
@@ -541,52 +541,28 @@ public class TauP_Table extends TauP_Time {
         out.flush();
     }
 
-    public String getUsage() {
-        return getStdUsageHead()
-        +"-ph phase list     -- comma separated phase list\n"
-                + "-pf phasefile      -- file containing phases\n\n"
-                + "-mod[el] modelname -- use velocity model \"modelname\" for calculations\n"
-                + "                      Default is iasp91.\n\n\n"
-        +"-header filename   -- reads depth and distance spacing data\n"
-                + "                      from a LOCSAT style file.\n"
-        +"--csv              -- outputs a CSV ascii table\n"
-        +"--generic          -- outputs a \"generic\" ascii table\n"
-        +"--locsat           -- outputs a \"locsat\" style ascii table\n"
-        +"--json             -- outputs a table as JSON\n"
-        +getStdUsageTail();
+    public String getHeaderFile() {
+        return headerFile;
     }
 
-    public String[] parseCmdLineArgs(String[] args) throws IOException, TauPException {
-        int i = 0;
-        String[] leftOverArgs;
-        int numNoComprendoArgs = 0;
-        leftOverArgs = super.parseCmdLineArgs(args);
-        String[] noComprendoArgs = new String[leftOverArgs.length];
-        while(i < leftOverArgs.length) {
-            if(dashEquals("header", leftOverArgs[i])
-                    && i < leftOverArgs.length - 1) {
-                headerFile = leftOverArgs[i + 1];
-                i++;
-            } else if(dashEquals("locsat", leftOverArgs[i])) {
-                outputFormat = LOCSAT;
-            } else if(dashEquals("generic", leftOverArgs[i])) {
-                outputFormat = OutputTypes.TEXT;
-            } else if(dashEquals(OutputTypes.CSV, leftOverArgs[i])) {
-                outputFormat = OutputTypes.CSV;
-            } else if(dashEquals("help", leftOverArgs[i])) {
-                noComprendoArgs[numNoComprendoArgs++] = leftOverArgs[i];
-            } else {
-                noComprendoArgs[numNoComprendoArgs++] = leftOverArgs[i];
-            }
-            i++;
-        }
-        if(numNoComprendoArgs > 0) {
-            String[] temp = new String[numNoComprendoArgs];
-            System.arraycopy(noComprendoArgs, 0, temp, 0, numNoComprendoArgs);
-            return temp;
-        } else {
-            return new String[0];
-        }
+    @CommandLine.Option(names = "--header", description = "reads depth and distance spacing data\n" +
+            "                      from a LOCSAT style file.")
+    public void setHeaderFile(String headerFile) {
+        this.headerFile = headerFile;
+    }
+
+    @CommandLine.ArgGroup(exclusive = true, multiplicity = "0..1")
+    TableFormat tableFormat;
+
+    static class TableFormat {
+        @CommandLine.Option(names = "--csv", required = true)
+        boolean csv;
+        @CommandLine.Option(names = "--locsat", required = true)
+        boolean locsat;
+        @CommandLine.Option(names = "--generic", required = true)
+        boolean generic;
+        @CommandLine.Option(names = "--json", required = true)
+        boolean json;
     }
 
     /**

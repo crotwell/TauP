@@ -14,6 +14,10 @@ public class Scatterer {
         }
         this.dist = DistanceRay.ofDegrees(degrees);
     }
+    public Scatterer(double depth, DistanceRay dist) {
+        this.depth = depth;
+        this.dist = dist;
+    }
     public final double depth;
     public final DistanceRay dist;
 }

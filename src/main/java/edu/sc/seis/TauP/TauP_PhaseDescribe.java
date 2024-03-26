@@ -31,11 +31,6 @@ public class TauP_PhaseDescribe extends TauP_AbstractPhaseTool {
     /** Dumps raw interpolation points for phase. */
     public boolean dump = false;
 
-    public String getUsage() {
-        return getStdUsage()
-        + getStdUsageTail();
-    }
-
     @Override
     public void validateArguments() throws TauModelException {
 
@@ -49,44 +44,6 @@ public class TauP_PhaseDescribe extends TauP_AbstractPhaseTool {
     @Override
     public void setDefaultOutputFormat() {
         setOutputFormat(OutputTypes.TEXT);
-    }
-
-    @Override
-    protected String[] parseCmdLineArgs(String[] origArgs) throws IOException {
-        int i = 0;
-        String[] args = super.parseSourceModelCmdLineArgs(origArgs);
-        String[] noComprendoArgs = new String[args.length];
-        int numNoComprendoArgs = 0;
-        boolean cmdLineArgPhase = false;
-        boolean cmdLineArgPhaseFile = false;
-        while(i < args.length) {
-            if(dashEquals("dump", args[i])) {
-                dump = true;
-            } else if(i < args.length - 1) {
-                if(args[i].equalsIgnoreCase("-o")) {
-                    outFileBase = args[i + 1];
-                    i++;
-                } else {
-                    /*
-                     * I don't know how to interpret this argument, so pass it
-                     * back
-                     */
-                    noComprendoArgs[numNoComprendoArgs++] = args[i];
-                }
-
-            } else {
-                /* I don't know how to interpret this argument, so pass it back */
-                noComprendoArgs[numNoComprendoArgs++] = args[i];
-            }
-            i++;
-        }
-        if(numNoComprendoArgs > 0) {
-            String[] temp = new String[numNoComprendoArgs];
-            System.arraycopy(noComprendoArgs, 0, temp, 0, numNoComprendoArgs);
-            return temp;
-        } else {
-            return new String[0];
-        }
     }
 
     @Override

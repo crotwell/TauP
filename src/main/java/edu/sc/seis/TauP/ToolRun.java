@@ -22,7 +22,6 @@ import java.util.concurrent.Callable;
 				TauP_Curve.class,
 				TauP_SetMSeed3.class,
 				TauP_SetSac.class,
-				TauP_SlownessPlot.class,
 				edu.sc.seis.TauP.TauP_VelocityPlot.class,
 				TauP_Table.class,
 				TauP_Wavefront.class,
@@ -79,7 +78,7 @@ public class ToolRun {
 		}
 		if ( ! dir.isDirectory()) {dir.mkdirs(); }
 		PrintStream fileOut = new PrintStream(new BufferedOutputStream(new FileOutputStream(new File(dir, filename))));
-		fileOut.print(tool.getUsage());
+		CommandLine.usage(tool, fileOut);
 		fileOut.flush();
 		fileOut.close();
 	}
@@ -150,8 +149,6 @@ public class ToolRun {
 			tool = new TauP_SetSac();
 		} else if (toolToRun.contentEquals(SETMSEED3)) {
 			tool = new TauP_SetMSeed3();
-		} else if (toolToRun.contentEquals(SPLOT)) {
-			tool = new TauP_SlownessPlot();
 		} else if (toolToRun.contentEquals(TABLE)) {
 			tool = new TauP_Table();
 		} else if (toolToRun.contentEquals(TIME)) {
@@ -195,69 +192,6 @@ public class ToolRun {
 			System.err.println("Error starting tool: "+args[0]+" "+e);
 			e.printStackTrace();
 			System.exit(1001);
-		}
-	}
-	public static void mainOld(String[] args) throws IOException {
-		System.err.println("old parseargs main: "+String.join(" ", args));
-	    String toolToRun;
-	    String[] restOfArgs = new String[0];
-		if (args.length == 0) {
-		    // no args, so open the gui
-		    toolToRun = GUI;
-		} else {
-	        toolToRun = args[0];
-	        restOfArgs = Arrays.copyOfRange(args, 1, args.length);
-		}
-		TauP_Tool tool = getToolForName(toolToRun);
-
-		try {
-			// special cases:
-            if (toolToRun.contentEquals(WEB)) {
-            	try {
-            		Class webClass = Class.forName("edu.sc.seis.webtaup.TauP_Web");
-					Constructor con = webClass.getConstructor();
-					if (con != null) {
-						tool = (TauP_Tool)con.newInstance();
-					}
-				} catch (ClassNotFoundException e) {
-            		System.err.println("TauP Web does not seem to be installed, the required jar is not on the classpath.");
-            		return;
-				}
-			} else if (TauP_Tool.dashEquals("help", toolToRun) || toolToRun.equals("help")) {
-                // short circuit for help or --help
-			    printUsage();
-                return;
-			} else if (dashEquals("getcmdlinehelpfiles", toolToRun)) {
-				// this handles --getcmdlinehelpfiles
-				genUsageDocFiles();
-				return;
-			} else if (dashEquals("version", toolToRun)) {
-				// this handles --version
-				Alert.info(edu.sc.seis.TauP.BuildVersion.getDetailedVersion());
-				return;
-			} else if (tool == null ){
-				System.err.println("Tool "+toolToRun+" not recognized.");
-				System.out.println("Tool "+toolToRun+" not recognized.");
-				System.out.println(getUsage());
-				return;
-			}
-            
-            String[] noComprendoArgs = tool.parseCmdLineArgs(restOfArgs);
-            TauP_Tool.printNoComprendoArgs(noComprendoArgs);
-            if (noComprendoArgs.length != 0) {
-                return;
-            }
-            if (DEBUG) {tool.DEBUG = DEBUG;}
-            tool.init();
-            tool.start();
-            tool.destroy();
-            if (tool.verbose) {
-                System.out.println("Done with "+toolToRun);
-            }
-		} catch(Exception e) {
-			System.err.println("Error starting tool: "+args[0]+" "+e);
-			e.printStackTrace();
-			System.exit(1002);
 		}
 	}
 	

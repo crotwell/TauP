@@ -1,6 +1,9 @@
 package edu.sc.seis.TauP;
 
+import edu.sc.seis.TauP.CLI.GraphicOutputTypeArgs;
+import edu.sc.seis.TauP.CLI.ModelArgs;
 import edu.sc.seis.TauP.CLI.OutputTypes;
+import picocli.CommandLine;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -28,92 +31,6 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
         setOutputFormat(OutputTypes.SVG);
     }
 
-    @Override
-    protected String[] parseCmdLineArgs(String[] origArgs) throws IOException {
-        //defaults
-        setOutputFormat(OutputTypes.SVG);
-        setOutFileExtension("svg");
-
-        String[] args = super.parseCommonCmdLineArgs(origArgs);
-        int i = 0;
-        String[] noComprendoArgs = new String[args.length];
-        int numNoComprendoArgs = 0;
-        while(i < args.length) {
-            if(dashEquals("pwave", args[i])) {
-                setIncidentPWave(true);
-            } else if(dashEquals("swave", args[i])) {
-                setIncidentSWave(true);
-            } else if(dashEquals("shwave", args[i])) {
-                setIncidentShWave(true);
-            } else if(dashEquals("down", args[i])) {
-                setIncidentDown(true);
-            } else if(dashEquals("up", args[i])) {
-                setIncidentDown(false);
-            } else if(dashEquals("linrayparam", args[i])) {
-                setLinearRayParam(true);
-            } else if(dashEquals("abs", args[i])) {
-                setAbsolute(true);
-            } else if(dashEquals("svg", args[i])) {
-                setOutputFormat(OutputTypes.SVG);
-                setOutFileExtension("svg");
-            } else if(dashEquals("csv", args[i])) {
-                setOutputFormat(OutputTypes.CSV);
-                setOutFileExtension("csv");
-            } else if(i < args.length - 1 && dashEquals("nd", args[i])) {
-                modelName = args[i + 1];
-                modelType = "nd";
-                i++;
-            } else if(i < args.length - 1 && dashEquals("tvel", args[i])) {
-                modelName = args[i + 1];
-                modelType = "tvel";
-                i++;
-            } else if(i < args.length - 1 && dashEquals("mod", args[i])) {
-                modelName = args[i + 1];
-                modelType = null;
-                i++;
-            } else if(dashEquals("depth", args[i])) {
-                setDepth(Double.parseDouble(args[i + 1]));
-                i++;
-            } else if(i < args.length - 3 && dashEquals("inlayer", args[i])) {
-                double topVp = Double.parseDouble(args[i + 1]);
-                double topVs = Double.parseDouble(args[i + 2]);
-                double topDensity = Double.parseDouble(args[i + 3]);
-                setLayerParams(topVp, topVs, topDensity, botVp, botVs, botDensity);
-                i+=3;
-            } else if(i < args.length - 3 && dashEquals("trlayer", args[i])) {
-                double botVp = Double.parseDouble(args[i + 1]);
-                double botVs = Double.parseDouble(args[i + 2]);
-                double botDensity = Double.parseDouble(args[i + 3]);
-                setLayerParams(topVp, topVs, topDensity, botVp, botVs, botDensity);
-                i+=3;
-            } else if(i < args.length - 6 && dashEquals("layer", args[i])) {
-                double topVp = Double.parseDouble(args[i + 1]);
-                double topVs = Double.parseDouble(args[i + 2]);
-                double topDensity = Double.parseDouble(args[i + 3]);
-                double botVp = Double.parseDouble(args[i + 4]);
-                double botVs = Double.parseDouble(args[i + 5]);
-                double botDensity = Double.parseDouble(args[i + 6]);
-                setLayerParams(topVp, topVs, topDensity, botVp, botVs, botDensity);
-                i+=6;
-            } else {
-                /* I don't know how to interpret this argument, so pass it back */
-                noComprendoArgs[numNoComprendoArgs++] = args[i];
-            }
-            i++;
-        }
-        if ( ! (inpwave || inswave || inshwave)) {
-            // neither p nor s, so do P-SV case as that is likely more used than Sh
-            setIncidentPWave(true);
-            setIncidentSWave(true);
-        }
-        if(numNoComprendoArgs > 0) {
-            String[] temp = new String[numNoComprendoArgs];
-            System.arraycopy(noComprendoArgs, 0, temp, 0, numNoComprendoArgs);
-            return temp;
-        } else {
-            return new String[0];
-        }
-    }
 
     @Override
     public void init() throws TauPException {
@@ -142,12 +59,6 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
     @Override
     public void destroy() throws TauPException {
 
-    }
-
-    @Override
-    public String getUsage() {
-        return getStdUsageHead(TauP_ReflTransPlot.class)
-                +getStdUsageTail();
     }
 
     @Override
@@ -409,6 +320,7 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
         labelClass.add(label);
     }
 
+    @CommandLine.Option(names = "--depth", description = "Depth in model to get boundary parameters")
     public void setDepth(double depth) {
         this.depth = depth;
     }
@@ -423,6 +335,12 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
         this.botDensity = botDensity;
     }
 
+    @CommandLine.Mixin
+    ModelArgs modelArgs = new ModelArgs();
+
+    @CommandLine.Mixin
+    GraphicOutputTypeArgs graphicOutputTypeArgs = new GraphicOutputTypeArgs();
+
     public void setModelName(String modelName) {
         this.modelName = modelName;
     }
@@ -430,25 +348,68 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
         return modelName;
     }
 
+    @CommandLine.Option(names = "--down", defaultValue = "true")
     public void setIncidentDown(boolean indown) {
         this.indown = indown;
     }
+    @CommandLine.Option(names = "--up", defaultValue = "false")
+    public void setIncidentUp(boolean inup) {
+        this.indown = ! inup;
+    }
+    @CommandLine.Option(names = "pwave", description = "incident P wave")
     public void setIncidentPWave(boolean inpwave) {
         this.inpwave = inpwave;
     }
+    public boolean isIncidentPWave() { return inpwave;}
+
+    @CommandLine.Option(names = "swave", description = "incident S wave")
     public void setIncidentSWave(boolean inswave) {
         this.inswave = inswave;
     }
+    public boolean isIncidentSWave() { return inswave;}
+    @CommandLine.Option(names = "shwave", description = "incident SH wave")
     public void setIncidentShWave(boolean inshwave) {
         this.inshwave = inshwave;
     }
+    public boolean isIncidentShWave() { return inshwave;}
+
 
     public boolean isAbsolute() {
         return absolute;
     }
 
+    @CommandLine.Option(names = "--abs", description = "absolute")
     public void setAbsolute(boolean absolute) {
         this.absolute = absolute;
+    }
+
+    @CommandLine.ArgGroup(exclusive = false)
+    LayerParams layerParams;
+    static class LayerParams {
+        @CommandLine.Option(names = "--layer", required = true)
+        boolean useLayer = false;
+        @CommandLine.Parameters(index = "0") double inVp;
+        @CommandLine.Parameters(index = "1") double inVs;
+        @CommandLine.Parameters(index = "2") double inRho;
+        @CommandLine.Parameters(index = "3") double trVp;
+        @CommandLine.Parameters(index = "4") double trVs;
+        @CommandLine.Parameters(index = "5") double trRho;
+    }
+
+
+    @CommandLine.Option(names = "--layeras6",
+            arity="6",
+            description = "incident layer parameters")
+    public void setLayer(List<Double> layerVals) {
+        if (layerVals.size() != 6) {
+            throw new IllegalArgumentException("layer parameters must have 6 values");
+        }
+        topVp = layerVals.get(0);
+        topVs = layerVals.get(1);
+        topDensity = layerVals.get(2);
+        botVp = layerVals.get(3);
+        botVs = layerVals.get(4);
+        botDensity = layerVals.get(5);
     }
 
     float mapWidth = 6;
@@ -483,9 +444,6 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
         return inpwave;
     }
 
-    public void setInpwave(boolean inpwave) {
-        this.inpwave = inpwave;
-    }
 
     public boolean isInswave() {
         return inswave;
@@ -494,20 +452,27 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
         return inshwave;
     }
 
-    public void setInswave(boolean inswave) {
-        this.inswave = inswave;
-    }
-
+    @CommandLine.Option(names = "--linrayparam", description = "linear in ray param, default is linear in angle")
     public void setLinearRayParam(boolean linearRayParam) {
         this.linearRayParam = linearRayParam;
     }
 
+    @CommandLine.Option(names = "--anglestep", description = "step in degrees when x is degrees")
     public void setAngleStep(double angleStep) {
         this.angleStep = angleStep;
     }
 
     public double getAngleStep() {
         return angleStep;
+    }
+
+    public double getRayparamStep() {
+        return rayparamStep;
+    }
+
+    @CommandLine.Option(names = "--rpstep", description = "step in ray param when x is ray param")
+    public void setRayparamStep(double rayparamStep) {
+        this.rayparamStep = rayparamStep;
     }
 }
 

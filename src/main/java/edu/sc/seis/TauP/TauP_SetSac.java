@@ -73,10 +73,12 @@ public class TauP_SetSac extends TauP_Time {
         return evdpkm;
     }
 
+    @CommandLine.Option(names = "--evdpkm", description = "sac depth header is in km, default is meters")
     public void setEvdpkm(boolean evdpkm) {
         this.evdpkm = evdpkm;
     }
 
+    @CommandLine.Parameters
     public void setSacFileNames(String[] sacFileNames) {
         this.sacFileNames = new ArrayList<String>();
         for(int i = 0; i < sacFileNames.length; i++) {
@@ -132,7 +134,7 @@ public class TauP_SetSac extends TauP_Time {
 
     public void start() throws IOException, TauPException {
         if (sacFileNames.size() == 0) {
-            printUsage();
+            CommandLine.usage(this, System.out);
             return;
         }
         for (String filename : sacFileNames) {
@@ -317,54 +319,6 @@ public class TauP_SetSac extends TauP_Time {
                 + "--verbose           -- enable verbose output\n"
                 + "--version           -- print the version\n"
                 + "--help              -- print this out, but you already know that!\n";
-    }
-
-    public String getUsage() {
-        return getStdUsage()
-        +"--evdpkm            -- sac depth header is in km, default is meters\n"
-        +getUsageTail()
-        +"sacfilename [sacfilename ...]"
-        +"\nEx: taup_setsac "
-                + "--mod S_prem -ph S-8,ScS-9 wmq.r wmq.t wmq.z"
-        +"puts the first S arrival in T8 and ScS in T9";
-    }
-
-    public String[] parseCmdLineArgs(String[] args) throws IOException, TauPException {
-        int i = 0;
-        String[] leftOverArgs;
-        int numNoComprendoArgs = 0;
-        File tempFile;
-        leftOverArgs = super.parseCmdLineArgs(args);
-        String[] noComprendoArgs = new String[leftOverArgs.length];
-        while(i < leftOverArgs.length) {
-            if(dashEquals("evdpkm", leftOverArgs[i])) {
-                evdpkm = true;
-            } else if(dashEquals("help", leftOverArgs[i])) {
-                noComprendoArgs[numNoComprendoArgs++] = leftOverArgs[i];
-            } else {
-                tempFile = new File(leftOverArgs[i]);
-                if(tempFile.exists() && (tempFile.isFile() || tempFile.isDirectory() ) && tempFile.canRead()) {
-                    sacFileNames.add(leftOverArgs[i]);
-                } else {
-                    if(! tempFile.exists()) {
-                        System.err.println(leftOverArgs[i]+" does not exist. "+tempFile.getAbsolutePath() );
-                    } else if( ! (tempFile.isFile() || tempFile.isDirectory())) {
-                        System.err.println(leftOverArgs[i]+" is not a file or directory.");
-                    } else if( ! tempFile.canRead()) {
-                        System.err.println(leftOverArgs[i]+" is not readable.");
-                    }
-                    noComprendoArgs[numNoComprendoArgs++] = leftOverArgs[i];
-                }
-            }
-            i++;
-        }
-        if(numNoComprendoArgs > 0) {
-            String[] temp = new String[numNoComprendoArgs];
-            System.arraycopy(noComprendoArgs, 0, temp, 0, numNoComprendoArgs);
-            return temp;
-        } else {
-            return new String[0];
-        }
     }
 
     /**

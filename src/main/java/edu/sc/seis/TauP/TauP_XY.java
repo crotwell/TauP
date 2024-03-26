@@ -31,59 +31,6 @@ public class TauP_XY extends TauP_AbstractPhaseTool {
         setOutputFormat(OutputTypes.SVG);
     }
 
-    @Override
-    protected String[] parseCmdLineArgs(String[] origArgs) throws IOException {
-        String[] args = parseSourceModelCmdLineArgs(origArgs);
-        args = parseOutputFormatCmdLineArgs(args);
-        List<String> noComprendoArgs = new ArrayList<>();
-        int j = 0;
-        while (j < args.length) {
-            String arg = args[j];
-
-            if (dashEquals("xlog", arg)) {
-                noComprendoArgs.remove(arg);
-                xAxisLog = true;
-            } else if (dashEquals("ylog", arg)) {
-                noComprendoArgs.remove(arg);
-                yAxisLog = true;
-            } else if (j < args.length-1) {
-                if (dashEquals("x", arg)) {
-                    xAxisType = args[j+1];
-                    j++;
-                } else if (dashEquals("y", arg)) {
-                    noComprendoArgs.remove(arg);
-                    yAxisType = args[j+1];
-                    j++;
-                } else if(dashEquals("reddeg", arg)) {
-                    setReduceTime(true);
-                    setReduceVelDeg(Double.parseDouble(args[j + 1]));
-                    j++;
-                } else if(dashEquals("redkm", arg)) {
-                    setReduceTime(true);
-                    setReduceVelKm(Double.parseDouble(args[j + 1]));
-                    j++;
-                } else if (j < args.length-2) {
-                    if (dashEquals("xminmax", arg)) {
-                        noComprendoArgs.remove(arg);
-                        xAxisMinMax = new double[] { Double.parseDouble(args[j+1]), Double.parseDouble(args[j+2])};
-                        j+=2;
-                    } else if (dashEquals("yminmax", arg)) {
-                        yAxisMinMax = new double[] { Double.parseDouble(args[j+1]), Double.parseDouble(args[j+2])};
-                        j+=2;
-                    } else {
-                        noComprendoArgs.add(arg);
-                    }
-                } else {
-                    noComprendoArgs.add(arg);
-                }
-            } else {
-                noComprendoArgs.add(arg);
-            }
-            j++;
-        }
-        return noComprendoArgs.toArray(new String[0]);
-    }
-
     /**
      * preforms intialization of the tool. Properties are queried for the
      * default model to load, source depth to use, phases to use, etc.
@@ -123,7 +70,7 @@ public class TauP_XY extends TauP_AbstractPhaseTool {
         }
     }
 
-    public Map<SeismicPhase, List<XYPlottingData>> calculate(String xAxisType, String yAxisType) throws TauPException {
+    public Map<SeismicPhase, List<XYPlottingData>> calculate(AxisType xAxisType, AxisType yAxisType) throws TauPException {
         Map<SeismicPhase, List<XYPlottingData>>  xy = calculateLinear(xAxisType, yAxisType);
         if (isReduceTime()) {
             xy = reduce(xy);
@@ -136,17 +83,17 @@ public class TauP_XY extends TauP_AbstractPhaseTool {
         return xy;
     }
 
-    public Map<SeismicPhase, List<XYPlottingData>> calculateLinear(String xAxisType, String yAxisType) throws TauModelException, VelocityModelException, SlownessModelException {
+    public Map<SeismicPhase, List<XYPlottingData>> calculateLinear(AxisType xAxisType, AxisType yAxisType) throws TauModelException, VelocityModelException, SlownessModelException {
         depthCorrect();
         List<SeismicPhase> phaseList = getSeismicPhases();
         Map<SeismicPhase, List<XYPlottingData>> outMap = new HashMap<>();
         for (SeismicPhase phase: phaseList) {
             List<XYPlottingData> out = new ArrayList<>();
             outMap.put(phase, out);
-            boolean ensure180 = (xAxisType.equalsIgnoreCase("degree_180") || yAxisType.equalsIgnoreCase("degree_180")
-                    || xAxisType.equalsIgnoreCase("radian_pi") || yAxisType.equalsIgnoreCase("radian_pi"));
+            boolean ensure180 = (xAxisType==AxisType.degree_180 || yAxisType==AxisType.degree_180
+                    || xAxisType==AxisType.radian_pi || yAxisType==AxisType.radian_pi);
             if(phase.hasArrivals()) {
-                if (yAxisType.equalsIgnoreCase("theta")) {
+                if (yAxisType==AxisType.theta) {
                     // temp for testing...
                     double dist = 15;
                     List<Arrival> arrivals = phase.calcTime(dist);
@@ -160,7 +107,7 @@ public class TauP_XY extends TauP_AbstractPhaseTool {
 
                         }
                         out.add(new XYPlottingData(
-                                segmentList, xAxisType, "Ray Param",
+                                segmentList, xAxisType.toString(), "Ray Param",
                                 phase.getName(), phase
                         ));
 
@@ -168,28 +115,28 @@ public class TauP_XY extends TauP_AbstractPhaseTool {
                 } else {
                     List<double[]> xData = calculatePlotForType(phase, xAxisType, ensure180);
                     List<double[]> yData = calculatePlotForType(phase, yAxisType, ensure180);
-                    out.add(new XYPlottingData(xData, xAxisType, yData, yAxisType, phase.getName(), phase));
+                    out.add(new XYPlottingData(xData, xAxisType.toString(), yData, yAxisType.toString(), phase.getName(), phase));
 
                     if (phase.isAllSWave()) {
                         // second calc needed for sh, as psv done in main calc
-                        if (xAxisType.equalsIgnoreCase("amp")
-                                    || yAxisType.equalsIgnoreCase("amp")) {
-                            String xOther = xAxisType.equalsIgnoreCase("amp") ? "ampsh" : xAxisType;
-                            String yOther = yAxisType.equalsIgnoreCase("amp") ? "ampsh" : yAxisType;
+                        if (xAxisType==AxisType.amp
+                                    || yAxisType==AxisType.amp) {
+                            AxisType xOther = xAxisType==AxisType.amp ? AxisType.ampsh : xAxisType;
+                            AxisType yOther = yAxisType==AxisType.amp ? AxisType.ampsh : yAxisType;
 
                             xData = calculatePlotForType(phase, xOther, ensure180);
                             yData = calculatePlotForType(phase, yOther, ensure180);
-                            out.add(new XYPlottingData(xData, xAxisType, yData, yAxisType, phase.getName(), phase));
+                            out.add(new XYPlottingData(xData, xAxisType.toString(), yData, yAxisType.toString(), phase.getName(), phase));
                         }
                         // what about case of amp vs refltran, need 4 outputs?
-                        if (xAxisType.equalsIgnoreCase("refltran")
-                                || yAxisType.equalsIgnoreCase("refltran")) {
-                            String xOther = xAxisType.equalsIgnoreCase("refltran") ? "refltransh" : xAxisType;
-                            String yOther = yAxisType.equalsIgnoreCase("refltran") ? "refltransh" : yAxisType;
+                        if (xAxisType==AxisType.refltran
+                                || yAxisType==AxisType.refltran) {
+                            AxisType xOther = xAxisType==AxisType.refltran ? AxisType.refltransh : xAxisType;
+                            AxisType yOther = yAxisType==AxisType.refltran ? AxisType.refltransh : yAxisType;
 
                             xData = calculatePlotForType(phase, xOther, ensure180);
                             yData = calculatePlotForType(phase, yOther, ensure180);
-                            out.add(new XYPlottingData(xData, xAxisType, yData, yAxisType, phase.getName(), phase));
+                            out.add(new XYPlottingData(xData, xAxisType.toString(), yData, yAxisType.toString(), phase.getName(), phase));
                         }
                     }
                 }
@@ -242,57 +189,39 @@ public class TauP_XY extends TauP_AbstractPhaseTool {
         return out;
     }
 
-    public static final String[] axisTypes = new String[] {
-            "radian",
-            "radian_pi",
-            "degree",
-            "degree_180",
-            "kilometer",
-            "rayparam",
-            "time",
-            "tau",
-            "turndepth",
-            "amp",
-            "amppsv",
-            "ampsh",
-            "geospread",
-            "refltran",
-            "refltranpsv",
-            "refltransh",
-            "index"
-    };
-    public List<double[]> calculatePlotForType(SeismicPhase phase, String axisType, boolean ensure180) throws VelocityModelException, SlownessModelException, TauModelException {
+
+    public List<double[]> calculatePlotForType(SeismicPhase phase, AxisType axisType, boolean ensure180) throws VelocityModelException, SlownessModelException, TauModelException {
         double[] out = new double[0];
-        if (axisType.equalsIgnoreCase("radian") || axisType.equalsIgnoreCase("radian_pi")) {
+        if (axisType==AxisType.radian || axisType==AxisType.radian_pi) {
             out = phase.getDist();
-        } else if (axisType.equalsIgnoreCase("degree") || axisType.equalsIgnoreCase("degree_180")) {
+        } else if (axisType==AxisType.degree || axisType==AxisType.degree_180) {
             out = phase.getDist();
             for (int i = 0; i < out.length; i++) {
                 out[i] *= 180/Math.PI;
             }
-        } else if (axisType.equalsIgnoreCase("kilometer") || axisType.equalsIgnoreCase("kilometer_180")) {
+        } else if (axisType==AxisType.kilometer || axisType==AxisType.kilometer_180) {
             out = phase.getDist();
             double redToKm = tMod.getRadiusOfEarth();
             for (int i = 0; i < out.length; i++) {
                 out[i] *= redToKm;
             }
-        } else if (axisType.equalsIgnoreCase("rayparam")) {
+        } else if (axisType==AxisType.rayparam) {
             out = phase.getRayParams();
-        } else if (axisType.equalsIgnoreCase("time")) {
+        } else if (axisType==AxisType.time) {
             out = phase.getTime();
-        } else if (axisType.equalsIgnoreCase("tau")) {
+        } else if (axisType==AxisType.tau) {
             out = phase.getTau();
-        } else if (axisType.equalsIgnoreCase("turndepth")) {
+        } else if (axisType==AxisType.turndepth) {
             double[] dist = phase.getDist();
             out = new double[dist.length];
             for (int i = 0; i < dist.length; i++) {
                 Arrival arrival = phase.createArrivalAtIndex(i);
                 out[i] = arrival.getDeepestPierce().getDepth();
             }
-        } else if (axisType.equalsIgnoreCase("amp") ||
-                axisType.equalsIgnoreCase("amppsv") ||
-                axisType.equalsIgnoreCase("ampsh")) {
-            boolean isAmpSH = axisType.equalsIgnoreCase("ampsh");
+        } else if (axisType==AxisType.amp ||
+                axisType==AxisType.amppsv ||
+                axisType==AxisType.ampsh) {
+            boolean isAmpSH = axisType==AxisType.ampsh;
             double[] dist = phase.getDist();
             double[] amp = new double[dist.length];
             for (int i = 0; i < dist.length; i++) {
@@ -305,7 +234,7 @@ public class TauP_XY extends TauP_AbstractPhaseTool {
             }
             out = amp;
 
-        } else if (axisType.equalsIgnoreCase("geospread")) {
+        } else if (axisType==AxisType.geospread) {
             double[] dist = phase.getDist();
             double[] amp = new double[dist.length];
             for (int i = 0; i < dist.length; i++) {
@@ -313,10 +242,10 @@ public class TauP_XY extends TauP_AbstractPhaseTool {
                 amp[i] = arrival.getGeometricSpreadingFactor();
             }
             out = amp;
-        } else if (axisType.equalsIgnoreCase("refltran") ||
-                axisType.equalsIgnoreCase("refltranpsv") ||
-                axisType.equalsIgnoreCase("refltransh")) {
-            boolean isSH = axisType.equalsIgnoreCase("refltransh");
+        } else if (axisType==AxisType.refltran ||
+                axisType==AxisType.refltranpsv ||
+                axisType==AxisType.refltransh) {
+            boolean isSH = axisType==AxisType.refltransh;
             double[] dist = phase.getDist();
             double[] amp = new double[dist.length];
             for (int i = 0; i < dist.length; i++) {
@@ -332,7 +261,7 @@ public class TauP_XY extends TauP_AbstractPhaseTool {
                 }
             }
             out = amp;
-        } else if (axisType.equalsIgnoreCase("index")) {
+        } else if (axisType == AxisType.index) {
             out = new double[phase.getRayParams().length+1];
             for (int i = phase.getMinRayParamIndex(); i <= phase.getMaxRayParamIndex(); i++) {
                 out[i-phase.getMinRayParamIndex()] = i;
@@ -376,7 +305,7 @@ public class TauP_XY extends TauP_AbstractPhaseTool {
             System.arraycopy(rayParams, prevIdx, unwrappedRP, prevIdx+crossIdx.size(), rayParams.length-prevIdx);
             out = unwrappedOut;
             rayParams = unwrappedRP;
-            if (axisType.equalsIgnoreCase("degree_180")) {
+            if (axisType== AxisType.degree_180) {
                 System.err.println("recalc modulo");
                 for (int j = 0; j < out.length; j++) {
                     out[j] = Math.abs(out[j] % 360.0);
@@ -429,7 +358,7 @@ public class TauP_XY extends TauP_AbstractPhaseTool {
 
     public void printResult(PrintWriter writer, Map<SeismicPhase, List<XYPlottingData>> xyPlots) {
         if (getOutputFormat().equalsIgnoreCase(OutputTypes.JSON)) {
-            JSONObject out = baseResultAsJSONObject( modelArgs.getModelName(), tModDepth.getSourceDepth(),  modelArgs.getReceiveDepth(), getPhaseNames());
+            JSONObject out = baseResultAsJSONObject( modelArgs.getModelName(), tModDepth.getSourceDepth(),  modelArgs.getReceiverDepth(), getPhaseNames());
             JSONArray phaseCurves = new JSONArray();
             for (SeismicPhase phase: xyPlots.keySet() ) {
                 for (XYPlottingData plotItem : xyPlots.get(phase)) {
@@ -475,7 +404,8 @@ public class TauP_XY extends TauP_AbstractPhaseTool {
             float plotWidth = pixelWidth - 2*margin;
             SvgUtil.createXYAxes(writer, minmax[0], minmax[1], 8, false,
                     minmax[2], minmax[3], 8, false,
-                    pixelWidth, margin, getTauModelName()+" (h="+getSourceDepth()+" km)", xAxisType, yAxisType);
+                    pixelWidth, margin, getTauModelName()+" (h="+getSourceDepth()+" km)",
+                    xAxisType.toString(), yAxisType.toString());
 
 
             writer.println("<g transform=\"scale(1,-1) translate(0, -"+plotWidth+")\">");
@@ -553,37 +483,17 @@ public class TauP_XY extends TauP_AbstractPhaseTool {
                 + "-h depth           -- source depth in km\n\n\n";
     }
 
-    public String getUsage() {
-        return getStdUsage()
-                +"-x type            -- x axis value, default is degree, one of "+String.join(", ", getAxisTypes())+".\n"
-                +"-xlog              -- x axis is log.\n"
-                +"-y type            -- y axis value, default is time, same items as -x.\n"
-                +"-ylog              -- y axis is log.\n"
-                +"--gmt              -- outputs curves as a complete GMT script.\n"
-                +"--svg              -- outputs curves as a SVG image.\n"
-                +"-reddeg velocity   -- outputs curves with a reducing velocity (deg/sec).\n"
-                +"-redkm velocity    -- outputs curves with a reducing velocity (km/sec).\n"
-                +"-rel phasename     -- outputs relative travel time\n"
-                +"--distancevertical -- distance on vertical axis, time horizontal\n"
-                +"--mapwidth width   -- sets map width for GMT script.\n"
-                +getStdUsageTail();
-    }
-
-    public String[] getAxisTypes() {
-        return axisTypes;
-    }
-
     /**
      * True if the axis type is distance-like.
      *
      * @param axisType
      * @return
      */
-    public boolean axisIsDistanceLike(String axisType) {
-        return axisType.equalsIgnoreCase("degree")
-                || axisType.equalsIgnoreCase("degree_180")
-                || axisType.equalsIgnoreCase("radian")
-                || axisType.equalsIgnoreCase("radian_pi");
+    public boolean axisIsDistanceLike(AxisType axisType) {
+        return axisType == AxisType.degree
+                || axisType == AxisType.degree_180
+                || axisType == AxisType.radian
+                || axisType == AxisType.radian_pi;
     }
 
     /**
@@ -591,8 +501,8 @@ public class TauP_XY extends TauP_AbstractPhaseTool {
      * @param axisType
      * @return
      */
-    public boolean axisIsTimeLike(String axisType) {
-        return axisType.equalsIgnoreCase("time");
+    public boolean axisIsTimeLike(AxisType axisType) {
+        return axisType == AxisType.time;
     }
 
     @Override
@@ -600,19 +510,21 @@ public class TauP_XY extends TauP_AbstractPhaseTool {
 
     }
 
-    public String getxAxisType() {
+    public AxisType getxAxisType() {
         return xAxisType;
     }
 
-    public void setxAxisType(String xAxisType) {
+    @CommandLine.Option(names = "-x", description = "X axis data type")
+    public void setxAxisType(AxisType xAxisType) {
         this.xAxisType = xAxisType;
     }
 
-    public String getyAxisType() {
+    public AxisType getyAxisType() {
         return yAxisType;
     }
 
-    public void setyAxisType(String yAxisType) {
+    @CommandLine.Option(names = "-y", description = "Y axis data type")
+    public void setyAxisType(AxisType yAxisType) {
         this.yAxisType = yAxisType;
     }
 
@@ -620,6 +532,10 @@ public class TauP_XY extends TauP_AbstractPhaseTool {
         return xAxisMinMax;
     }
 
+    @CommandLine.Option(names = "--xminmax",
+            arity = "2",
+            paramLabel = "x",
+            description = "min and max x axis for plotting")
     public void setxAxisMinMax(double[] xAxisMinMax) {
         this.xAxisMinMax = xAxisMinMax;
     }
@@ -628,6 +544,10 @@ public class TauP_XY extends TauP_AbstractPhaseTool {
         return yAxisMinMax;
     }
 
+    @CommandLine.Option(names = "--yminmax",
+            arity = "2",
+            paramLabel = "y",
+            description = "min and max y axis for plotting")
     public void setyAxisMinMax(double[] yAxisMinMax) {
         this.yAxisMinMax = yAxisMinMax;
     }
@@ -636,6 +556,7 @@ public class TauP_XY extends TauP_AbstractPhaseTool {
         return xAxisLog;
     }
 
+    @CommandLine.Option(names = "--xlog", description = "X axis is log")
     public void setxAxisLog(boolean xAxisLog) {
         this.xAxisLog = xAxisLog;
     }
@@ -644,6 +565,7 @@ public class TauP_XY extends TauP_AbstractPhaseTool {
         return yAxisLog;
     }
 
+    @CommandLine.Option(names = "--ylog", description = "Y axis is log")
     public void setyAxisLog(boolean yAxisLog) {
         this.yAxisLog = yAxisLog;
     }
@@ -654,6 +576,17 @@ public class TauP_XY extends TauP_AbstractPhaseTool {
 
     public void setReduceTime(boolean reduceTime) {
         this.reduceTime = reduceTime;
+    }
+
+    protected String relativePhaseName = "";
+
+    public String getRelativePhaseName() {
+        return relativePhaseName;
+    }
+
+    @CommandLine.Option(names = "--rel", description = "plot relative to the given phase, no effect unless distance/time")
+    public void setRelativePhaseName(String relativePhaseName) {
+        this.relativePhaseName = relativePhaseName;
     }
 
     /**
@@ -668,6 +601,10 @@ public class TauP_XY extends TauP_AbstractPhaseTool {
      * set the reducing velocity, in degrees/second. The internal representation
      * is radians/second.
      */
+
+    @CommandLine.Option(names = "reddeg",
+            defaultValue = "0.0",
+            description = "outputs curves with a reducing velocity (deg/sec), no effect if axis is not distance-like/time")
     public void setReduceVelDeg(double reduceVel) {
         if(reduceVel > 0.0) {
             redVelString = reduceVel+" deg/s";
@@ -683,12 +620,12 @@ public class TauP_XY extends TauP_AbstractPhaseTool {
         return reduceVel * tMod.getRadiusOfEarth();
     }
 
-    public double reduceVelForAxis(String axisType) {
-        if (axisType.equalsIgnoreCase("degree")) {
+    public double reduceVelForAxis(AxisType axisType) {
+        if (axisType==AxisType.degree) {
             return getReduceVelDeg();
-        } else if (axisType.equalsIgnoreCase("kilometer")) {
+        } else if (axisType==AxisType.kilometer) {
             return getReduceVelKm();
-        } else if (axisType.equalsIgnoreCase("radian")) {
+        } else if (axisType==AxisType.radian) {
             return getReduceVelDeg()*Math.PI/180;
         } else {
             throw new IllegalArgumentException("axis type not distance-like: "+axisType);
@@ -699,6 +636,9 @@ public class TauP_XY extends TauP_AbstractPhaseTool {
      * set the reducing velocity, in kilometers/second. The internal
      * representation is radians/second.
      */
+    @CommandLine.Option(names = "redkm",
+            defaultValue = "0.0",
+            description = "outputs curves with a reducing velocity (km/sec), no effect if axis is not distance-like/time")
     public void setReduceVelKm(double reduceVel) {
         redVelString = reduceVel+" km/s";
         if(reduceVel > 0.0) {
@@ -712,8 +652,8 @@ public class TauP_XY extends TauP_AbstractPhaseTool {
         }
     }
 
-    protected String xAxisType = "degree";
-    protected String yAxisType = "time";
+    protected AxisType xAxisType = AxisType.degree;
+    protected AxisType yAxisType = AxisType.time;
 
     protected boolean xAxisLog = false;
     protected boolean yAxisLog = false;

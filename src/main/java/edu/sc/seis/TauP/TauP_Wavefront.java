@@ -110,11 +110,6 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
         }
     }
 
-    @Override
-    protected String[] parseCmdLineArgs(String[] origArgs) throws IOException, TauPException {
-        return new String[0];
-    }
-
     public void printResult(PrintWriter out) throws IOException {
         if (outputFormat.equals(SVG)) {
             float pixelWidth = (72.0f * outputTypeArgs.mapwidth);
@@ -479,6 +474,9 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
         return timeStep;
     }
 
+    @CommandLine.Option(names = "--timestep",
+    defaultValue = "100",
+    description = "steps in time (seconds) for output")
     public void setTimeStep(float timeStep) {
         this.timeStep = timeStep;
     }
@@ -523,11 +521,6 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
     @Override
     public void destroy() throws TauPException {
 
-    }
-
-    @Override
-    public String getUsage() {
-        return null;
     }
 
     /**

@@ -29,11 +29,6 @@ public class TauP_Web extends TauP_Tool {
 
 
     @Override
-    protected String[] parseCmdLineArgs(String[] origArgs) throws IOException {
-        return new String[0];
-    }
-
-    @Override
     public void init() throws TauPException {
 
     }
@@ -220,12 +215,6 @@ public class TauP_Web extends TauP_Tool {
     }
 
     @Override
-    public String getUsage() {
-        return getStdUsageHead(TauP_Web.class)
-                +getStdUsageTail();
-    }
-
-    @Override
     public void validateArguments() throws TauModelException {
 
     }
@@ -365,15 +354,15 @@ public class TauP_Web extends TauP_Tool {
             TauP_VelocityPlot vplot = (TauP_VelocityPlot) tool;
             if (queryParameters.containsKey(QP_MODEL)) {
                 unknownKeys.remove(QP_MODEL);
-                vplot.setModelName(queryParameters.get(QP_MODEL).getFirst());
+                vplot.getModelArgs().setModelName(queryParameters.get(QP_MODEL).getFirst());
             }
             if (queryParameters.containsKey(QP_EVDEPTH)) {
                 unknownKeys.remove(QP_EVDEPTH);
-                vplot.setSourceDepth(Double.parseDouble(queryParameters.get(QP_EVDEPTH).getFirst()));
+                vplot.getModelArgs().setSourceDepth(Double.parseDouble(queryParameters.get(QP_EVDEPTH).getFirst()));
             }
             if (queryParameters.containsKey(QP_STADEPTH)) {
                 unknownKeys.remove(QP_STADEPTH);
-                vplot.setReceiverDepth(Double.parseDouble(queryParameters.get(QP_STADEPTH).getFirst()));
+                vplot.getModelArgs().setReceiverDepth(Double.parseDouble(queryParameters.get(QP_STADEPTH).getFirst()));
             }
             if (queryParameters.containsKey(QP_SCATTER)) {
                 unknownKeys.remove(QP_SCATTER);
@@ -381,8 +370,9 @@ public class TauP_Web extends TauP_Tool {
                 if (splitQP.length != 2) {
                     throw new TauPException("Expect depth,distdeg for scatter parameter:"+queryParameters.get(QP_SCATTER).getFirst());
                 }
-                double scatterDepth = Double.valueOf(splitQP[ 0]).doubleValue();
-                vplot.setScattererDepth(scatterDepth);
+                double scatterDepth = Double.parseDouble(splitQP[0]);
+                double scatterDist = Double.parseDouble(splitQP[1]);
+                vplot.getModelArgs().setScatterer(scatterDepth, scatterDist);
             }
             // ignore evdepth, phases, etc
             unknownKeys.remove(QP_DISTDEG);
@@ -446,7 +436,7 @@ public class TauP_Web extends TauP_Tool {
             TauP_XY rtplot = (TauP_XY) tool;
             if (queryParameters.containsKey(QP_XAXIS)) {
                 unknownKeys.remove(QP_XAXIS);
-                rtplot.setxAxisType(queryParameters.get(QP_XAXIS).getFirst());
+                rtplot.setxAxisType(AxisType.valueOf(queryParameters.get(QP_XAXIS).getFirst()));
             }
             if (queryParameters.containsKey(QP_XMINMAX)) {
                 unknownKeys.remove(QP_XMINMAX);
@@ -462,7 +452,7 @@ public class TauP_Web extends TauP_Tool {
             }
             if (queryParameters.containsKey(QP_YAXIS)) {
                 unknownKeys.remove(QP_YAXIS);
-                rtplot.setyAxisType(queryParameters.get(QP_YAXIS).getFirst());
+                rtplot.setyAxisType(AxisType.valueOf(queryParameters.get(QP_YAXIS).getFirst()));
             }
             if (queryParameters.containsKey(QP_YMINMAX)) {
                 unknownKeys.remove(QP_YMINMAX);
@@ -584,8 +574,8 @@ public class TauP_Web extends TauP_Tool {
                 }
             }
             if (! (rtplot.isInpwave() || rtplot.isInswave() || rtplot.isInshwave())) {
-                rtplot.setInpwave(true);
-                rtplot.setInswave(true);
+                rtplot.setIncidentPWave(true);
+                rtplot.setIncidentSWave(true);
             }
             unknownKeys.remove(QP_DISTDEG);
             unknownKeys.remove(QP_SHOOTRAY);

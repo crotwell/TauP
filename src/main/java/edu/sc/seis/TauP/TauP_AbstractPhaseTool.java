@@ -333,11 +333,11 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
     }
 
     public double getReceiverDepth() {
-        return modelArgs.getReceiveDepth();
+        return modelArgs.getReceiverDepth();
     }
 
     public void setReceiverDepth(double receiverDepth) {
-        if (modelArgs.getReceiveDepth() != receiverDepth) {
+        if (modelArgs.getReceiverDepth() != receiverDepth) {
             clearPhases();
         }
         modelArgs.setReceiverDepth(receiverDepth);
@@ -504,84 +504,6 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
                     e.printStackTrace();
                 }
             }
-        }
-    }
-
-    /*
-     * parses the standard command line args for the model, phase source and other
-     * common items used by most tools. Does not do args related to distance or
-     * output file.
-     */
-    protected String[] parseSourceModelCmdLineArgs(String[] origArgs) throws IOException {
-        int i = 0;
-        String[] args = parseCommonCmdLineArgs(origArgs);
-        String[] noComprendoArgs = new String[args.length];
-        int numNoComprendoArgs = 0;
-        boolean cmdLineArgPhase = false;
-        boolean cmdLineArgPhaseFile = false;
-        while (i < args.length) {
-            if (i < args.length - 1) {
-                if (dashEquals("mod", args[i]) || dashEquals("model", args[i])) {
-                    toolProps.put("taup.model.name", args[i + 1]);
-                    i++;
-                } else if (args[i].equalsIgnoreCase("-h")) {
-                    toolProps.put("taup.source.depth", args[i + 1]);
-                    i++;
-                } else if (args[i].equalsIgnoreCase("--stadepth")) {
-                    setReceiverDepth(Double.parseDouble(args[i + 1]));
-                    i++;
-                } else if (i < args.length - 2 && (args[i].equalsIgnoreCase("--scat") || args[i].equalsIgnoreCase("--scatter"))) {
-                    double scatterDepth = Double.valueOf(args[i + 1]).doubleValue();
-                    double scatterDistDeg = Double.valueOf(args[i + 2]).doubleValue();
-                    Scatterer scat = new Scatterer(scatterDepth, scatterDistDeg);
-                    setScatterer(scat);
-                    i += 2;
-                } else if (dashEquals("ph", args[i])) {
-                    if (cmdLineArgPhase) {
-                        // previous cmd line -ph so append
-                        toolProps.put("taup.phase.list",
-                                toolProps.getProperty("taup.phase.list",
-                                        "")
-                                        + "," + args[i + 1]);
-                    } else {
-                        // no previous cmd line -ph so replace defaults
-                        toolProps.put("taup.phase.list", args[i + 1]);
-                    }
-                    cmdLineArgPhase = true;
-                    i++;
-                } else if (dashEquals("pf", args[i])) {
-                    cmdLineArgPhaseFile = true;
-                    toolProps.put("taup.phase.file", args[i + 1]);
-                    i++;
-                } else {
-                    /*
-                     * I don't know how to interpret this argument, so pass it
-                     * back
-                     */
-                    noComprendoArgs[numNoComprendoArgs++] = args[i];
-                }
-            } else {
-                /* I don't know how to interpret this argument, so pass it back */
-                noComprendoArgs[numNoComprendoArgs++] = args[i];
-            }
-            i++;
-        }
-        // check to see if there were phases or a phase file as an argument.
-        // if so then dump the defaults
-        if (cmdLineArgPhaseFile || cmdLineArgPhase) {
-            if (cmdLineArgPhaseFile && !cmdLineArgPhase) {
-                toolProps.remove("taup.phase.list");
-            }
-            if (!cmdLineArgPhaseFile && cmdLineArgPhase) {
-                toolProps.remove("taup.phase.file");
-            }
-        }
-        if (numNoComprendoArgs > 0) {
-            String[] temp = new String[numNoComprendoArgs];
-            System.arraycopy(noComprendoArgs, 0, temp, 0, numNoComprendoArgs);
-            return temp;
-        } else {
-            return new String[0];
         }
     }
 

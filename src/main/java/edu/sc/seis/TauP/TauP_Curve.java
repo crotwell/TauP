@@ -237,18 +237,6 @@ public class TauP_Curve extends TauP_Time {
                 + "-h depth           -- source depth in km\n\n\n";
     }
 
-    public String getUsage() {
-        return getStdUsage()
-        +"--gmt              -- outputs curves as a complete GMT script.\n"
-        +"--svg              -- outputs curves as a SVG image.\n"
-        +"-reddeg velocity   -- outputs curves with a reducing velocity (deg/sec).\n"
-        +"-redkm velocity    -- outputs curves with a reducing velocity (km/sec).\n"
-        +"-rel phasename     -- outputs relative travel time\n"
-        +"--distancevertical -- distance on vertical axis, time horizontal\n"
-        +"--mapwidth width   -- sets map width for GMT script.\n"
-        +getStdUsageTail();
-    }
-
     public void start() throws IOException, TauPException {
         if(modelArgs.getSourceDepth() != -1 * Double.MAX_VALUE) {
             /* enough info given on cmd line, so just do one calc. */
@@ -667,52 +655,7 @@ public class TauP_Curve extends TauP_Time {
     public static final boolean isBetween(double a, double b, double value) {
         return (a < value && value < b) || (a > value && value > b);
     }
-    
-    public String[] parseCmdLineArgs(String[] args) throws IOException {
-        int i = 0;
-        String[] leftOverArgs;
-        int numNoComprendoArgs = 0;
-        leftOverArgs = super.parseSourceModelCmdLineArgs(args);
-        String[] noComprendoArgs = new String[leftOverArgs.length];
-        while(i < leftOverArgs.length) {
-            if(dashEquals("gmt", leftOverArgs[i])) {
-                gmtScript = true;
-                outputFormat = OutputTypes.GMT;
-            } else if (dashEquals("svg", leftOverArgs[i])) {
-                outputFormat = OutputTypes.SVG;
-            } else if (dashEquals("distancevertical", leftOverArgs[i])) {
-                distHorizontal = false;
-            } else if(dashEquals("reddeg", leftOverArgs[i]) && i < leftOverArgs.length - 1) {
-                setReduceTime(true);
-                setReduceVelDeg(Double.valueOf(leftOverArgs[i + 1])
-                        .doubleValue());
-                i++;
-            } else if(dashEquals("redkm", leftOverArgs[i]) && i < leftOverArgs.length - 1) {
-                setReduceTime(true);
-                setReduceVelKm(Double.valueOf(leftOverArgs[i + 1])
-                        .doubleValue());
-                i++;
-            } else if(dashEquals("rel", leftOverArgs[i]) && i < leftOverArgs.length - 1) {
-                relativePhaseName = leftOverArgs[i + 1];
-                i++;
-            } else if(dashEquals("mapwidth", leftOverArgs[i]) && i < leftOverArgs.length - 1) {
-                setMapWidth(Float.parseFloat(leftOverArgs[i + 1]));
-                i++;
-            } else if(dashEquals("help", leftOverArgs[i])) {
-                noComprendoArgs[numNoComprendoArgs++] = leftOverArgs[i];
-            } else {
-                noComprendoArgs[numNoComprendoArgs++] = leftOverArgs[i];
-            }
-            i++;
-        }
-        if(numNoComprendoArgs > 0) {
-            String[] temp = new String[numNoComprendoArgs];
-            System.arraycopy(noComprendoArgs, 0, temp, 0, numNoComprendoArgs);
-            return temp;
-        } else {
-            return new String[0];
-        }
-    }
+
 
     /**
      * Allows TauP_Curve to run as an application. Creates an instance of

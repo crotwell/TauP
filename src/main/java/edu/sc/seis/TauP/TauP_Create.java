@@ -35,6 +35,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Properties;
 
+import static edu.sc.seis.TauP.VelocityModel.ND;
+import static edu.sc.seis.TauP.VelocityModel.TVEL;
+
 /**
  * TauP_Create - Re-implementation of the seismic travel time calculation method
  * described in "The Computation of Seismic Travel Times" by Buland and Chapman,
@@ -54,7 +57,7 @@ public class TauP_Create extends TauP_Tool {
     
     String overlayModelFilename = null;
 
-    protected String velFileType = "tvel";
+    protected String velFileType = TVEL;
     
     String overlayVelFileType;
 
@@ -98,6 +101,16 @@ public class TauP_Create extends TauP_Tool {
         this.modelFilename = modelFilename;
     }
 
+    @CommandLine.Option(names = "--nd", description = "\"named discontinuities\" velocity file")
+    public void setNDModelFilename(String modelFilename) {
+        setVelFileType(ND);
+        setModelFilename(modelFilename);
+    }
+    @CommandLine.Option(names = "--tvel", description = "\".tvel\" velocity file, ala ttimes")
+    public void setTvelModelFilename(String modelFilename) {
+        setVelFileType(TVEL);
+        setModelFilename(modelFilename);
+    }
     public String getModelFilename() {
         return modelFilename;
     }
@@ -144,99 +157,6 @@ public class TauP_Create extends TauP_Tool {
     
     public void setAllowInnerCoreS(boolean allowInnerCoreS) {
         toolProps.setProperty("taup.create.allowInnerCoreS", ""+allowInnerCoreS);
-    }
-    
-    
-    public String getUsage() {
-        String className = this.getClass().getName();
-        className = className.substring(className.lastIndexOf('.') + 1,
-                                        className.length());
-        return "Usage: " + className.toLowerCase() + " [arguments]\n"
-        +"  or, for purists, java "
-                + this.getClass().getName() + " [arguments]\n"
-        +"\nArguments are:\n"
-        +"\n   To specify the velocity model:\n"
-        +"-nd modelfile       -- \"named discontinuities\" velocity file\n"
-        +"-tvel modelfile     -- \".tvel\" velocity file, ala ttimes\n\n"
-        +"--debug              -- enable debugging output\n"
-                + "--prop [propfile]    -- set configuration properties\n"
-                + "--verbose            -- enable verbose output\n"
-                + "--version            -- print the version\n"
-                + "--help               -- print this out, but you already know that!\n\n";
-    }
-    
-    public static boolean dashEquals(String argName, String arg) {
-        return TauP_Time.dashEquals(argName, arg);
-    }
-
-    /* parses the command line args for TauP_Create. */
-    protected String[] parseCmdLineArgs(String[] origArgs) {
-        String[] args = ToolRun.parseCommonCmdLineArgs(origArgs);
-        int i = 0;
-        String[] noComprendoArgs = new String[args.length];
-        int numNoComprendoArgs = 0;
-        while(i < args.length) {
-            if(dashEquals("help", args[i])) {
-                printUsage();
-                noComprendoArgs[numNoComprendoArgs++] = args[i];
-                return noComprendoArgs;
-            } else if(dashEquals("gui", args[i])) {
-                GUI = true;
-            } else if(i < args.length - 1 && (dashEquals("prop", args[i]) || dashEquals("p", args[i]))) {
-                try {
-                toolProps.load(new BufferedInputStream(new FileInputStream(args[i + 1])));
-                i++;
-                } catch(IOException e) {
-                    noComprendoArgs[numNoComprendoArgs++] = args[i+1];
-                }
-            } else if(i < args.length - 1 && dashEquals("nd", args[i])) {
-                velFileType = "nd";
-                parseFileName(args[i + 1]);
-                i++;
-            } else if(i < args.length - 1 && dashEquals("tvel", args[i])) {
-                velFileType = "tvel";
-                parseFileName(args[i + 1]);
-                i++;
-            } else if (i < args.length - 1 && dashEquals("overlayND", args[i])) {
-               overlayVelFileType = "nd";
-               overlayModelFilename = args[i+1];
-               i++;
-            } else if (i < args.length - 1 && dashEquals("vplot", args[i])) {
-                System.err.println("vplot is deprecated, please use: taup "+ToolRun.VPLOT);
-                noComprendoArgs[numNoComprendoArgs++] = args[i];
-                i++;
-            } else if (i < args.length - 1 && dashEquals("splot", args[i])) {
-                System.err.println("splot is deprecated, please use: taup "+ToolRun.SPLOT);
-                noComprendoArgs[numNoComprendoArgs++] = args[i];
-                i++;
-            } else if(args[i].startsWith("GB.")) {
-                velFileType = "nd";
-                parseFileName(args[i]);
-            } else if(args[i].endsWith(".nd")) {
-                velFileType = "nd";
-                parseFileName(args[i]);
-            } else if(args[i].endsWith(".tvel")) {
-                velFileType = "tvel";
-                parseFileName(args[i]);
-            } else {
-                /* I don't know how to interpret this argument, so pass it back */
-                noComprendoArgs[numNoComprendoArgs++] = args[i];
-            }
-            i++;
-        }
-        if (modelFilename == null) {
-            System.out.println("Velocity model not specified, use one of -nd or -tvel");
-            printUsage();
-            // bad, should do something else here...
-            System.exit(3001);
-        }
-        if(numNoComprendoArgs > 0) {
-            String[] temp = new String[numNoComprendoArgs];
-            System.arraycopy(noComprendoArgs, 0, temp, 0, numNoComprendoArgs);
-            return temp;
-        } else {
-            return new String[0];
-        }
     }
 
     /**

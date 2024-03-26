@@ -60,6 +60,9 @@ import static edu.sc.seis.TauP.PhaseInteraction.TRANSUP;
  */
 public class VelocityModel implements Cloneable, Serializable {
 
+    public static final String ND = "nd";
+    public static final String TVEL = "tvel";
+
     public VelocityModel(String modelName,
                          double radiusOfEarth,
                          double mohoDepth,

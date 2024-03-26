@@ -38,8 +38,27 @@ public class TauP_SetMSeed3 extends TauP_Time {
     @Override
     public void start() throws IOException, TauPException {
         if (mseed3FileNames.size() == 0) {
-            printUsage();
+            CommandLine.usage(this, System.out);
             return;
+        }
+
+        try {
+            if (stationxmlFilename != null ) {
+                FDSNStationXML staxml = FDSNStationXML.loadStationXML(stationxmlFilename);
+                networks = staxml.extractAllNetworks();
+            }
+        } catch (XMLStreamException | SeisFileException e) {
+            throw new TauPException("Unable to process stationxml from "+stationxmlFilename, e);
+        }
+        try {
+            if (quakemlFilename != null) {
+                FileReader reader = new FileReader(quakemlFilename);
+                Quakeml quakeml = Quakeml.loadQuakeML(reader);
+                quakes = quakeml.extractAllEvents();
+                reader.close();
+            }
+        } catch (XMLStreamException | SeisFileException e) {
+            throw new TauPException("Unable to process quakeml from "+quakemlFilename, e);
         }
         for (String filename : mseed3FileNames) {
             try {
@@ -174,100 +193,6 @@ public class TauP_SetMSeed3 extends TauP_Time {
                 + "--help              -- print this out, but you already know that!\n";
     }
 
-    @Override
-    public String getUsage() {
-        return getStdUsage()
-        +"--staxml filename   -- load station location from stationxml file, default uses extra headers\n"
-        +"--qml filename      -- load earthquake location from quakeml file, default uses extra headers\n"
-        +"--qmltol tol        -- origin time tolerance when loading from quakeml file, default is 1 hour\n"
-        +"--eh                -- eh key for full results, default is to only create markers\n"
-        +getUsageTail()
-        +"ms3filename [ms3filename ...]"
-        +"\nEx: taup_setmseed3 "
-                + "--mod S_prem -ph S,ScS wmq.ms3 wmq.ms3 wmq.ms3"
-        +"puts the S and ScS as markers in the extra headers in each record in these files."
-        +"Markers are within the \"bag/mark\" key. Full results are the same as the output of taup time --json";
-    }
-
-    @Override
-    public String[] parseCmdLineArgs(String[] args) throws IOException, TauPException {
-        int i = 0;
-        String[] leftOverArgs;
-        int numNoComprendoArgs = 0;
-        File tempFile;
-        leftOverArgs = super.parseCmdLineArgs(args);
-        String[] noComprendoArgs = new String[leftOverArgs.length];
-        while(i < leftOverArgs.length) {
-            if(dashEquals("help", leftOverArgs[i])) {
-                noComprendoArgs[numNoComprendoArgs++] = leftOverArgs[i];
-            } else if(i < leftOverArgs.length-1) {
-                if(dashEquals("eh", leftOverArgs[i])) {
-                    ehKey = leftOverArgs[i+1];
-                    i++;
-                } else if(dashEquals("qml", leftOverArgs[i])) {
-                    quakemlFilename = leftOverArgs[i+1];
-                    i++;
-                } else if(dashEquals("qmltol", leftOverArgs[i])) {
-                    try {
-                        int seconds = Integer.parseInt(leftOverArgs[i + 1]);
-                        quakeOTimeTol = Duration.ofSeconds(seconds);
-                    } catch (NumberFormatException e) {
-                        try {
-                            quakeOTimeTol = Duration.parse(leftOverArgs[i + 1]);
-                        } catch (DateTimeParseException ee) {
-                            throw new TauPException("Unable to parse qmltol: "+leftOverArgs[i+1], ee);
-                        }
-                    }
-                    i++;
-                } else if(dashEquals("staxml", leftOverArgs[i])) {
-                    stationxmlFilename = leftOverArgs[i+1];
-                    i++;
-                }
-            } else {
-                tempFile = new File(leftOverArgs[i]);
-                if(tempFile.exists() && (tempFile.isFile() || tempFile.isDirectory() ) && tempFile.canRead()) {
-                    mseed3FileNames.add(leftOverArgs[i]);
-                } else {
-                    if(! tempFile.exists()) {
-                        System.err.println(leftOverArgs[i]+" does not exist. "+tempFile.getAbsolutePath() );
-                    } else if( ! (tempFile.isFile() || tempFile.isDirectory())) {
-                        System.err.println(leftOverArgs[i]+" is not a file or directory.");
-                    } else if( ! tempFile.canRead()) {
-                        System.err.println(leftOverArgs[i]+" is not readable.");
-                    }
-                    noComprendoArgs[numNoComprendoArgs++] = leftOverArgs[i];
-                }
-            }
-            i++;
-        }
-
-        try {
-            if (stationxmlFilename != null ) {
-                FDSNStationXML staxml = FDSNStationXML.loadStationXML(stationxmlFilename);
-                networks = staxml.extractAllNetworks();
-            }
-        } catch (XMLStreamException | SeisFileException e) {
-            throw new TauPException("Unable to process stationxml from "+stationxmlFilename, e);
-        }
-        try {
-            if (quakemlFilename != null) {
-                FileReader reader = new FileReader(quakemlFilename);
-                Quakeml quakeml = Quakeml.loadQuakeML(reader);
-                quakes = quakeml.extractAllEvents();
-                reader.close();
-            }
-        } catch (XMLStreamException | SeisFileException e) {
-            throw new TauPException("Unable to process quakeml from "+quakemlFilename, e);
-        }
-        if(numNoComprendoArgs > 0) {
-            String[] temp = new String[numNoComprendoArgs];
-            System.arraycopy(noComprendoArgs, 0, temp, 0, numNoComprendoArgs);
-            return temp;
-        } else {
-            return new String[0];
-        }
-    }
-
     Event findQuakeInTime(Instant time, Duration tol) {
         Instant early = time.minus(tol);
         Instant late = time.plus(tol);
@@ -290,6 +215,71 @@ public class TauP_SetMSeed3 extends TauP_Time {
      */
     public static void main(String[] args) throws IOException {
         ToolRun.legacyRunTool(ToolRun.SETMSEED3, args);
+    }
+
+    public String getEhKey() {
+        return ehKey;
+    }
+
+    @CommandLine.Option(names = "--eh",
+            description = "key to store full output within extra headers within, otherwise use abbreviateg 'bag' markers")
+    public void setEhKey(String ehKey) {
+        this.ehKey = ehKey;
+    }
+
+    public Duration getQuakeOTimeTol() {
+        return quakeOTimeTol;
+    }
+
+    @CommandLine.Option(names = "--qmltol",
+            defaultValue = "PT1H",
+            description = "time window to search for origins in a QuakeML file")
+    public void setQuakeOTimeTol(Duration quakeOTimeTol) {
+        this.quakeOTimeTol = quakeOTimeTol;
+    }
+
+    public String getQuakemlFilename() {
+        return quakemlFilename;
+    }
+
+    @CommandLine.Option(names = {"--qml", "--quakeml"},
+            description = "QuakeML file to load to search for origins that match this waveform")
+    public void setQuakemlFilename(String quakemlFilename) {
+        this.quakemlFilename = quakemlFilename;
+    }
+
+    public String getStationxmlFilename() {
+        return stationxmlFilename;
+    }
+
+    @CommandLine.Option(names = "--staxml", description = "StationXML file to extract station lat/lon from")
+    public void setStationxmlFilename(String stationxmlFilename) {
+        this.stationxmlFilename = stationxmlFilename;
+    }
+
+    public List<String> getMseed3FileNames() {
+        return mseed3FileNames;
+    }
+
+    @CommandLine.Parameters
+    public void setMseed3FileNames(List<String> mseed3FileNames) {
+        this.mseed3FileNames = mseed3FileNames;
+    }
+
+    public Map<Network, List<Station>> getNetworks() {
+        return networks;
+    }
+
+    public void setNetworks(Map<Network, List<Station>> networks) {
+        this.networks = networks;
+    }
+
+    public List<Event> getQuakes() {
+        return quakes;
+    }
+
+    public void setQuakes(List<Event> quakes) {
+        this.quakes = quakes;
     }
 
     protected String ehKey = null;
