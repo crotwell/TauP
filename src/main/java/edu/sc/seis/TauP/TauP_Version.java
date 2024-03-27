@@ -20,8 +20,12 @@ public class TauP_Version extends TauP_Tool {
     }
 
     @CommandLine.Mixin
-    TextOutputTypeArgs textOutputTypeArgs = new TextOutputTypeArgs();
+    TextOutputTypeArgs outputTypeArgs = new TextOutputTypeArgs();
 
+    @Override
+    public String getOutputFormat() {
+        return outputTypeArgs.getOuputFormat();
+    }
 
     @Override
     public void init() throws TauPException {
@@ -34,7 +38,7 @@ public class TauP_Version extends TauP_Tool {
     }
 
     public void printResult(PrintWriter out) throws IOException {
-        if (textOutputTypeArgs.isJSON()) {
+        if (outputTypeArgs.isJSON()) {
             printResultJSON(out);
         } else {
             printResultText(out);

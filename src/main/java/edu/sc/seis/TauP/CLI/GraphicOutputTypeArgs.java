@@ -83,6 +83,13 @@ public class GraphicOutputTypeArgs  {
         }
     }
 
+    public String getOuputFormat() {
+        if (isGMT()) return GMT;
+        if (isSVG()) return SVG;
+        if (isJSON()) return JSON;
+        return TEXT;
+    }
+
     static class GraphicsOutputType {
 
         @CommandLine.Option(names = {"--text"}, required = true, description = "outputs as text")

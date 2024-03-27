@@ -102,6 +102,11 @@ public class TauP_VelocityMerge extends TauP_Tool {
         setOutputFormat(ND);
     }
 
+    @Override
+    public String getOutputFormat() {
+        return modelType;
+    }
+    
     @CommandLine.Mixin
     ModelArgs modelArgs = new ModelArgs();
 

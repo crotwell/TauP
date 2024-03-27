@@ -83,9 +83,7 @@ public abstract class TauP_Tool implements Callable<Integer> {
 
     public abstract String[] allowedOutputFormats();
     
-    public String getOutputFormat() {
-        return outputFormat;
-    }
+    public abstract String getOutputFormat();
 
     public abstract void setDefaultOutputFormat();
 
@@ -106,15 +104,15 @@ public abstract class TauP_Tool implements Callable<Integer> {
             throw new IllegalArgumentException("output format for "+getClass().getName()+" must be one of "+allowed+" but was "+val);
         }
         this.outputFormat = val;
-        if (this.outputFormat == OutputTypes.TEXT) {
+        if (val == OutputTypes.TEXT) {
             setOutFileExtension("txt");
-        } else if (this.outputFormat == OutputTypes.GMT) {
+        } else if (val == OutputTypes.GMT) {
             setOutFileExtension("gmt");
-        } else if (this.outputFormat == OutputTypes.SVG) {
+        } else if (val == OutputTypes.SVG) {
             setOutFileExtension("svg");
-        } else if (this.outputFormat == OutputTypes.CSV) {
+        } else if (val == OutputTypes.CSV) {
             setOutFileExtension("csv");
-        } else if (this.outputFormat == OutputTypes.MS3) {
+        } else if (val == OutputTypes.MS3) {
             setOutFileExtension("ms3");
         }
     }

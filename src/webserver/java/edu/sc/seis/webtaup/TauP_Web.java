@@ -88,7 +88,7 @@ public class TauP_Web extends TauP_Tool {
                                     for (String distListStr : queryParams.get(QP_DISTDEG)) {
                                         degreesList.addAll(TauP_AbstractRayTool.parseDegreeList(distListStr));
                                     }
-                                    configContentType(tool.outputFormat, exchange);
+                                    configContentType(tool.getOutputFormat(), exchange);
                                     List<MSeed3Record> ms3SpikeList = ((TauP_WKBJ)tool).calcSpikes(degreesList);
                                     List<MSeed3Record> ms3WkbjList = ((TauP_WKBJ)tool).calcWKBJ(degreesList);
                                     List<MSeed3Record> ms3List = new ArrayList<>();
@@ -148,7 +148,7 @@ public class TauP_Web extends TauP_Tool {
                                     }
                                     TauP_Time timeTool = ((TauP_Time) tool);
                                     timeTool.printResult(pw,timeTool.calcAll(timeTool.getSeismicPhases(), timeTool.getDistanceArgs().getShootRays()) );
-                                    configContentType(tool.outputFormat, exchange);
+                                    configContentType(tool.getOutputFormat(), exchange);
                                     exchange.getResponseSender().send(out.toString());
                                 } catch (Exception e) {
                                     System.err.println("Error: " + e);
@@ -160,32 +160,32 @@ public class TauP_Web extends TauP_Tool {
                                 tool.setWriter(pw);
                                 tool.printScriptBeginning(pw);
                                 vPlot.printResult(pw);
-                                configContentType(tool.outputFormat, exchange);
+                                configContentType(tool.getOutputFormat(), exchange);
                                 exchange.getResponseSender().send(out.toString());
                             } else if (tool instanceof TauP_ReflTransPlot){
                                 tool.setWriter(pw);
                                 tool.printScriptBeginning(pw);
                                 tool.start();
-                                configContentType(tool.outputFormat, exchange);
+                                configContentType(tool.getOutputFormat(), exchange);
                                 exchange.getResponseSender().send(out.toString());
                             } else if (tool instanceof TauP_Curve){
                                 tool.setWriter(pw);
                                 tool.printScriptBeginning(pw);
                                 tool.start();
-                                configContentType(tool.outputFormat, exchange);
+                                configContentType(tool.getOutputFormat(), exchange);
                                 exchange.getResponseSender().send(out.toString());
                             } else if (tool instanceof TauP_Version){
                                 tool.setWriter(pw);
                                 tool.printScriptBeginning(pw);
                                 tool.start();
-                                configContentType(tool.outputFormat, exchange);
+                                configContentType(tool.getOutputFormat(), exchange);
                                 exchange.getResponseSender().send(out.toString());
                             } else {
                                 System.err.println("Use other tool, likely doesn't work...");
                                 tool.setWriter(pw);
                                 tool.printScriptBeginning(pw);
                                 tool.start();
-                                configContentType(tool.outputFormat, exchange);
+                                configContentType(tool.getOutputFormat(), exchange);
                                 exchange.getResponseSender().send(out.toString());
                             }
                         } else if (exchange.getRequestPath().equals("/favicon.ico")) {
@@ -608,6 +608,10 @@ public class TauP_Web extends TauP_Tool {
     @Override
     public String[] allowedOutputFormats() {
         return new String[0] ;
+    }
+    @Override
+    public String getOutputFormat() {
+        return null;
     }
     @Override
     public void setDefaultOutputFormat() {

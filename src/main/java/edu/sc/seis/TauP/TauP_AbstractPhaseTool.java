@@ -296,9 +296,9 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
         phaseNames.clear();
     }
 
+    @Deprecated
     public double getSourceDepth() {
-        return Double.valueOf(toolProps.getProperty("taup.source.depth", "0.0"))
-                .doubleValue();
+        return this.modelArgs.getSourceDepth();
     }
 
     public void setSourceDepth(double depth) {
@@ -468,9 +468,9 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
                 try {
                     List<SeismicPhase> calcPhaseList = SeismicPhaseFactory.createSeismicPhases(tempPhaseName,
                             modelArgs.depthCorrected(),
-                            getSourceDepth(),
-                            getReceiverDepth(),
-                            getScatterer(),
+                            modelArgs.getSourceDepth(),
+                            modelArgs.getReceiverDepth(),
+                            modelArgs.getScatterer(),
                             DEBUG);
                     newPhases.addAll(calcPhaseList);
                     for (SeismicPhase seismicPhase : newPhases) {

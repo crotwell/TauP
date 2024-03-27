@@ -55,6 +55,11 @@ public class TauP_Time extends TauP_AbstractRayTool {
     @CommandLine.Mixin
     TextOutputTypeArgs outputTypeArgs = new TextOutputTypeArgs();
 
+    @Override
+    public String getOutputFormat() {
+        return outputTypeArgs.getOuputFormat();
+    }
+
     public TauP_Time() {
         setDefaultOutputFormat();
     }
@@ -174,7 +179,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
 
     @Override
     public void printResult(PrintWriter out, List<Arrival> arrivalList) throws IOException {
-        if (outputFormat.equals(OutputTypes.JSON)) {
+        if (getOutputFormat().equals(OutputTypes.JSON)) {
             printResultJSON(out, arrivalList);
         } else {
             printResultText(out, arrivalList);

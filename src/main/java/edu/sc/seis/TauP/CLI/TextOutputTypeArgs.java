@@ -29,6 +29,11 @@ public class TextOutputTypeArgs {
         }
     }
 
+    public String getOuputFormat() {
+        if (isJSON()) return JSON;
+        return TEXT;
+    }
+
     static class TextOutputType {
         @CommandLine.Option(names = {"-text"}, required = true, description = "outputs as text")
         boolean _isText;

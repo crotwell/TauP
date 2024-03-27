@@ -1,6 +1,7 @@
 package edu.sc.seis.TauP;
 
 import edu.sc.seis.TauP.CLI.OutputTypes;
+import edu.sc.seis.TauP.CLI.TextOutputTypeArgs;
 import picocli.CommandLine;
 
 import java.io.IOException;
@@ -30,6 +31,13 @@ public class TauP_PhaseDescribe extends TauP_AbstractPhaseTool {
 
     /** Dumps raw interpolation points for phase. */
     public boolean dump = false;
+
+    TextOutputTypeArgs outputTypeArgs = new TextOutputTypeArgs();
+
+    @Override
+    public String getOutputFormat() {
+        return outputTypeArgs.getOuputFormat();
+    }
 
     @Override
     public void validateArguments() throws TauModelException {
@@ -62,12 +70,12 @@ public class TauP_PhaseDescribe extends TauP_AbstractPhaseTool {
     }
 
     public void printResult(PrintWriter writer) {
-        if (outputFormat.equals(OutputTypes.TEXT)) {
+        if (getOutputFormat().equals(OutputTypes.TEXT)) {
             printResultText(writer);
-        } else if (outputFormat.equals(OutputTypes.JSON)) {
+        } else if (getOutputFormat().equals(OutputTypes.JSON)) {
             printResultJSON(writer);
         } else {
-            throw new IllegalArgumentException("Output format "+outputFormat+" not recognized");
+            throw new IllegalArgumentException("Output format "+getOutputFormat()+" not recognized");
         }
         writer.flush();
     }

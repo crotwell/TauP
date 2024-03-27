@@ -178,15 +178,19 @@ public class TauP_VelocityPlot extends TauP_Tool {
         return modelArgs;
     }
 
-    public GraphicOutputTypeArgs getGraphicOutputTypeArgs() {
-        return graphicOutputTypeArgs;
+    public GraphicOutputTypeArgs getOutputTypeArgs() {
+        return outputTypeArgs;
     }
 
+    @Override
+    public String getOutputFormat() {
+        return outputTypeArgs.getOuputFormat();
+    }
     @CommandLine.Mixin
     ModelArgs modelArgs = new ModelArgs();
 
     @CommandLine.Mixin
-    GraphicOutputTypeArgs graphicOutputTypeArgs = new GraphicOutputTypeArgs();
+    GraphicOutputTypeArgs outputTypeArgs = new GraphicOutputTypeArgs();
 
     float mapWidth = 6;
     int plotOffset = 80;

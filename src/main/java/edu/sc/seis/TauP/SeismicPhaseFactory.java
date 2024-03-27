@@ -209,7 +209,11 @@ public class SeismicPhaseFactory {
             if( name.contains(""+ PhaseSymbols.BACKSCATTER_CODE)) {
                 isBackscatter = true;
             }
-            TauModel tModDepthCorrected = tMod.depthCorrect(sourceDepth);
+            TauModel tModDepthCorrected = tMod;
+            if (tModDepthCorrected.getSourceDepth()!= sourceDepth) {
+                System.err.println("Seis phase factory depthCor: "+sourceDepth+"  "+tMod.getSourceDepth());
+                tModDepthCorrected= tMod.depthCorrect(sourceDepth);
+            }
             tModDepthCorrected = tModDepthCorrected.splitBranch(receiverDepth);
             SeismicPhase inPhase = SeismicPhaseFactory.createPhase(in_scat[0],
                     tModDepthCorrected, sourceDepth, scat.depth, debug);
@@ -247,7 +251,12 @@ public class SeismicPhaseFactory {
                 phaseList.add(seismicPhase);
             }
         } else {
-            TauModel tModDepthCorrected = tMod.depthCorrect(sourceDepth);
+
+            TauModel tModDepthCorrected = tMod;
+            if (tModDepthCorrected.getSourceDepth()!= sourceDepth) {
+                System.err.println("simple, Seis phase factory depthCor: "+sourceDepth+"  "+tMod.getSourceDepth());
+                tModDepthCorrected= tMod.depthCorrect(sourceDepth);
+            }
             tModDepthCorrected = tModDepthCorrected.splitBranch(receiverDepth);
             SimpleSeismicPhase seismicPhase = SeismicPhaseFactory.createPhase(name,
                     tModDepthCorrected, sourceDepth, receiverDepth, debug);

@@ -150,82 +150,8 @@ public class SimpleSeismicPhase implements SeismicPhase {
 
     public static final boolean SWAVE = false;
 
-    /**
-     *
-     *  @deprecated use SeismicPhaseFactory.create()
-     * @param name
-     * @param modelName
-     * @param depth
-     * @throws TauModelException
-     */
-    @Deprecated
-    public SimpleSeismicPhase(String name, String modelName, double depth) throws TauModelException {
-        this(name, TauModelLoader.load(modelName).depthCorrect(depth));
-    }
-    /**
-     *  @deprecated use SeismicPhaseFactory.create()
-     * @param name
-     *            String containing a name of the phase.
-     * @param tMod
-     *            Tau model to be used to construct the phase. This should be corrected for the source
-     *            depth.
-     * @throws TauModelException
-     */
-    @Deprecated
-    public SimpleSeismicPhase(String name, TauModel tMod) throws TauModelException {
-        this(name, tMod, 0.0); //surface receiver
-    }
 
-    /**
-     *
-     *  @deprecated use SeismicPhaseFactory.create()
-     * @param name
-     * @param tMod
-     * @param receiverDepth
-     * @throws TauModelException
-     */
-    @Deprecated
-    public SimpleSeismicPhase(String name, TauModel tMod, double receiverDepth) throws TauModelException {
-    	this(name, tMod, receiverDepth, ToolRun.DEBUG);
-    }
 
-    /**
-     *  @deprecated use SeismicPhaseFactory.create()
-     * @param name
-     * @param tMod
-     * @param receiverDepth
-     * @param debug
-     * @throws TauModelException
-     */
-    @Deprecated
-    public SimpleSeismicPhase(String name, TauModel tMod, double receiverDepth, boolean debug) throws TauModelException {
-        SimpleSeismicPhase phase = SeismicPhaseFactory.createPhase(name, tMod, tMod.sourceDepth, receiverDepth, debug);
-
-        this.DEBUG = phase.DEBUG ;
-        this.verbose = phase.verbose;
-    	this.name = phase.name;
-    	this.tMod = phase.tMod;
-        this.sourceDepth = phase.sourceDepth;
-        this.receiverDepth = phase.receiverDepth;
-        this.legs = phase.legs;
-        this.puristName = phase.puristName;
-
-        this.minRayParam = phase.minRayParam;
-        this.maxRayParam = phase.maxRayParam;
-        this.minRayParamIndex = phase.minRayParamIndex;
-        this.maxRayParamIndex = phase.maxRayParamIndex;
-        this.branchSeq = phase.branchSeq;
-        this.headOrDiffractSeq = phase.headOrDiffractSeq;
-        this.segmentList = phase.segmentList;
-        this.legAction = phase.legAction;
-        this.downGoing = phase.downGoing;
-        this.waveType = phase.waveType;
-        this.minDistance = phase.minDistance;
-        this.maxDistance = phase.maxDistance;
-        this.dist = phase.dist;
-        this.time = phase.time;
-        this.rayParams = phase.rayParams;
-    }
 
     public SimpleSeismicPhase(String name,
                               TauModel tMod,
@@ -1310,35 +1236,4 @@ public class SimpleSeismicPhase implements SeismicPhase {
         }
     }
 
-    public static void main(String args[]) {
-        TauModel tMod;
-        TauModel tModDepth;
-        try {
-            if(args.length < 3) {
-                System.out.println("Usage: SimpleSeismicPhase modelfile depth phasename [phasename ...]");
-            }
-            tMod = TauModel.readModel(args[0]);
-            tModDepth = tMod.depthCorrect(Double.valueOf(args[1]).doubleValue());
-            for(int i = 2; i < args.length; i++) {
-                System.out.println("-----");
-                SeismicPhase sp = SeismicPhaseFactory.createPhase(args[i], tModDepth);
-                System.out.println(sp);
-                sp.dump();
-            }
-            System.out.println("-----");
-        } catch(FileNotFoundException e) {
-            System.out.println(e.getMessage());
-        } catch(OptionalDataException e) {
-            System.out.println(e.getMessage());
-        } catch(StreamCorruptedException e) {
-            System.out.println(e.getMessage());
-        } catch(IOException e) {
-            System.out.println(e.getMessage());
-        } catch(ClassNotFoundException e) {
-            System.out.println(e.getMessage());
-        } catch(TauModelException e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        }
-    }
 }

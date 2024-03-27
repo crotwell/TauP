@@ -404,7 +404,7 @@ public class TauP_Table extends TauP_Time {
             jsonTable(getWriter());
         } else {
             throw new TauPException("TauP_Table: undefined state for output type: "
-                        + outputFormat);
+                        + getOutputFormat());
         }
     }
 

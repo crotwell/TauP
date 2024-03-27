@@ -1,5 +1,6 @@
 package edu.sc.seis.TauP;
 
+import edu.sc.seis.TauP.CLI.GraphicOutputTypeArgs;
 import edu.sc.seis.TauP.CLI.OutputTypes;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -14,9 +15,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@CommandLine.Command(name = "xy")
-public class TauP_XY extends TauP_AbstractPhaseTool {
-    public TauP_XY() {
+@CommandLine.Command(name = "curve")
+public class TauP_Curve extends TauP_AbstractPhaseTool {
+    public TauP_Curve() {
         setDefaultOutputFormat();
         setOutFileBase("stdout");
     }
@@ -685,6 +686,14 @@ public class TauP_XY extends TauP_AbstractPhaseTool {
 
     protected double[] xAxisMinMax = new double[0];
     protected double[] yAxisMinMax = new double[0];
+
+    @CommandLine.Mixin
+    GraphicOutputTypeArgs outputTypeArgs = new GraphicOutputTypeArgs();
+
+    @Override
+    public String getOutputFormat() {
+        return outputTypeArgs.getOuputFormat();
+    }
 
     public void setxMinMax(double min, double max) {
         if (min < max) {

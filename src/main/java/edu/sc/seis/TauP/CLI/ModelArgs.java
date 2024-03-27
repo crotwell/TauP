@@ -81,7 +81,7 @@ public class ModelArgs {
             tModDepth = getTauModel();
         }
         if (tModDepth.getSourceDepth() != getSourceDepth()) {
-            tModDepth = tMod.depthCorrect(getSourceDepth());
+            tModDepth = getTauModel().depthCorrect(getSourceDepth());
             if (!tModDepth.isBranchDepth(getReceiverDepth())) {
                 tModDepth = tModDepth.splitBranch(getReceiverDepth());
             }

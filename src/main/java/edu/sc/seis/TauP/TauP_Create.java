@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Properties;
 
+import static edu.sc.seis.TauP.CLI.OutputTypes.TAUP;
 import static edu.sc.seis.TauP.VelocityModel.ND;
 import static edu.sc.seis.TauP.VelocityModel.TVEL;
 
@@ -118,7 +119,12 @@ public class TauP_Create extends TauP_Tool {
     public String getVelFileType() {
         return velFileType;
     }
-    
+
+    @Override
+    public String getOutputFormat() {
+        return TAUP;
+    }
+
     public void setVelFileType(String type) {
         this.velFileType = type;
     }

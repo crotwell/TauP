@@ -339,7 +339,12 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
     ModelArgs modelArgs = new ModelArgs();
 
     @CommandLine.Mixin
-    GraphicOutputTypeArgs graphicOutputTypeArgs = new GraphicOutputTypeArgs();
+    GraphicOutputTypeArgs outputTypeArgs = new GraphicOutputTypeArgs();
+
+    @Override
+    public String getOutputFormat() {
+        return outputTypeArgs.getOuputFormat();
+    }
 
     public void setModelName(String modelName) {
         this.modelName = modelName;

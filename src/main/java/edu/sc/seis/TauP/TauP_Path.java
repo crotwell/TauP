@@ -121,7 +121,7 @@ public class TauP_Path extends TauP_AbstractRayTool {
 	@Override
     public String getOutFileExtension() {
         String extention = "gmt";
-        if (outputFormat.equals(OutputTypes.SVG)) {
+        if (getOutputFormat().equals(OutputTypes.SVG)) {
             extention = "svg";
         }
         return extention;
@@ -191,6 +191,11 @@ public class TauP_Path extends TauP_AbstractRayTool {
 	GraphicOutputTypeArgs outputTypeArgs = new GraphicOutputTypeArgs();
 
 	@Override
+	public String getOutputFormat() {
+		return outputTypeArgs.getOuputFormat();
+	}
+
+	@Override
 	public List<Arrival> calcAll(List<SeismicPhase> phaseList, List<RayCalculateable> shootables) throws TauPException {
 		List<Arrival> arrivals = new ArrayList<>();
 		modelArgs.depthCorrected();
@@ -212,9 +217,9 @@ public class TauP_Path extends TauP_AbstractRayTool {
 
 	@Override
 	public void printResult(PrintWriter out, List<Arrival> arrivalList) throws IOException, TauModelException {
-		if (outputFormat.equals(OutputTypes.JSON)) {
+		if (getOutputFormat().equals(OutputTypes.JSON)) {
 			printResultJSON(out, arrivalList);
-		} else if (outputFormat.equals(OutputTypes.SVG)) {
+		} else if (getOutputFormat().equals(OutputTypes.SVG)) {
 			printScriptBeginningSVG(out, arrivalList);
 			printResultSVG(out, arrivalList);
 		} else {
@@ -536,9 +541,9 @@ public class TauP_Path extends TauP_AbstractRayTool {
     }
 
 	public void printScriptBeginning(PrintWriter out)  throws IOException {
-	    if (outputFormat.equals(OutputTypes.JSON)) {
+	    if (getOutputFormat().equals(OutputTypes.JSON)) {
             return;
-        } else if (outputFormat.equals(OutputTypes.SVG)) {
+        } else if (getOutputFormat().equals(OutputTypes.SVG)) {
 			return;
 	    } else if ( getGraphicOutputTypeArgs().isGMT()) {
 			printScriptBeginningGMT(out);

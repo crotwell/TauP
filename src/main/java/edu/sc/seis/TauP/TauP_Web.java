@@ -1,5 +1,6 @@
 package edu.sc.seis.TauP;
 
+import edu.sc.seis.TauP.CLI.OutputTypes;
 import picocli.CommandLine;
 
 import java.lang.reflect.Constructor;
@@ -30,4 +31,5 @@ public class TauP_Web implements Callable<Integer> {
         }
         return 0;
     }
+
 }
