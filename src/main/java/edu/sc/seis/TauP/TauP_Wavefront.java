@@ -36,8 +36,9 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
 
     boolean negDistance = false;
 
-    boolean doInteractive = true;
+    boolean doInteractive = false;
 
+    @CommandLine.Mixin
     GraphicOutputTypeArgs outputTypeArgs = new GraphicOutputTypeArgs();
     
     Map<SeismicPhase, Map<Float, List<TimeDist>>> result;

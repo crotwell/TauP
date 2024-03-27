@@ -180,14 +180,17 @@ public class ToolRun {
 		CommandLine commandLine = new CommandLine(new edu.sc.seis.TauP.ToolRun());
 		commandLine.setPosixClusteredShortOptionsAllowed(false);
 		commandLine.setColorScheme(colorScheme);
-		System.err.println("picocli run: "+String.join(" ", args));
 		int result = commandLine.execute(args);
+		if (result != 0) {
+			System.err.println("Error code: " + result);
+		}
 		return result;
 	}
 	public static void main(String... args) {
 		System.err.println("new picocli main: "+String.join(" ", args));
 		try {
-			System.exit(10000+mainWithExitCode(args));
+			int result = mainWithExitCode(args);
+			System.exit(result);
 		} catch(Exception e) {
 			System.err.println("Error starting tool: "+args[0]+" "+e);
 			e.printStackTrace();

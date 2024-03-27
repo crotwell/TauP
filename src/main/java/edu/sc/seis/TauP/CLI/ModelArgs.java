@@ -111,7 +111,7 @@ public class ModelArgs {
 
     protected List<Double> modelSplitDepths = new ArrayList<>();
 
-    @CommandLine.ArgGroup(heading = "Model Args %n")
+    @CommandLine.ArgGroup(heading = "Model Args %n", exclusive = false)
     ModelArgsInner modelArgsInner = new ModelArgsInner();
 
     static Properties toolProps = TauP_Tool.configDefaults();

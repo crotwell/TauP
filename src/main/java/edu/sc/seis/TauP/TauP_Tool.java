@@ -58,8 +58,6 @@ public abstract class TauP_Tool implements Callable<Integer> {
 
     protected Properties toolProps;
 
-    protected Outputs outForms;
-
     private String outFileExtension = null;
     
 
@@ -127,6 +125,12 @@ public abstract class TauP_Tool implements Callable<Integer> {
     
     public void setOutFileBase(String outFileBase) {
         this.outFileBase = outFileBase;
+    }
+
+    @CommandLine.Option(names = {"-o", "--output"}, description = "output to file, default is stdout.")
+    public void setOutFile(String outfile) {
+        this.outFileBase = outfile;
+        this.outFileExtension = "";
     }
     
     public String getOutFileExtension() {
