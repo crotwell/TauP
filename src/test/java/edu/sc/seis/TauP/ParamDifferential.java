@@ -34,7 +34,7 @@ public class ParamDifferential {
 
     public VelocityModel getAK135VelModel() {
         try {
-            return new TauP_Time("ak135").getTauModel().getVelocityModel();
+            return new TauP_Time("ak135").modelArgs.getTauModel().getVelocityModel();
         } catch(TauModelException e) {
             //shouldn't happen
             throw new RuntimeException(e);

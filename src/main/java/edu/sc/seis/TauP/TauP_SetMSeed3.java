@@ -114,26 +114,28 @@ public class TauP_SetMSeed3 extends TauP_Time {
         Double gcarc = null;
 
         if (staLoc != null && evLoc != null) {
+            // geodetic vs spherical???
             DistAz distAz = new DistAz(staLoc, evLoc);
             gcarc = distAz.getDelta();
-            depthCorrect(evLoc.getDepthKm(), staLoc.getDepthKm());
+            modelArgs.setSourceDepth(evLoc.getDepthKm());
+            modelArgs.setReceiverDepth(staLoc.getDepthKm());
         } else  {
             if (evLoc != null) {
-                depthCorrect(evLoc.getDepthKm(), 0.0);
+                modelArgs.setReceiverDepth(staLoc.getDepthKm());
             }
             gcarc = eh.gcarc() != null ? eh.gcarc().doubleValue() : null;
         }
 
         List<Arrival> arrivals = null;
         if (gcarc != null) {
-            List<DistanceRay> degreesList = Arrays.asList(new DistanceRay[] {DistanceRay.ofDegrees(gcarc)});
-            arrivals = calculate(degreesList);
+            List<RayCalculateable> degreesList = Arrays.asList(DistanceRay.ofDegrees(gcarc));
+            arrivals = calcAll(getSeismicPhases(), degreesList);
         }
 
         if (arrivals != null) {
 
             if (ehKey != null && ehKey.length() > 0) {
-                JSONObject taup = resultAsJSONObject(modelArgs.getModelName(), tModDepth.getSourceDepth(), getReceiverDepth(), getPhaseNames(), arrivals);
+                JSONObject taup = resultAsJSONObject(modelArgs.getModelName(), modelArgs.getSourceDepth(), getReceiverDepth(), getPhaseNames(), arrivals);
                 eh.getEH().put(ehKey, taup);
             } else {
                 JSONObject bag = eh.getBagEH();

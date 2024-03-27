@@ -110,11 +110,13 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
         }
     }
 
-    public void printResult(PrintWriter out) throws IOException {
+    public void printResult(PrintWriter out) throws IOException, TauModelException {
+        TauModel tModDepth = modelArgs.depthCorrected();
         if (outputFormat.equals(SVG)) {
             float pixelWidth = (72.0f * outputTypeArgs.mapwidth);
             int plotOffset = 0;
-            float R = (float) getTauModel().getRadiusOfEarth();
+            float R;
+            R = (float) tModDepth.getRadiusOfEarth();
             float plotOverScaleFactor = 1.1f;
             float plotSize = R * plotOverScaleFactor;
             float plotScale = pixelWidth / (2 * R * plotOverScaleFactor);
@@ -143,7 +145,7 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
             SvgUtil.xyplotScriptBeginning( out, toolNameFromClass(this.getClass()),
                     cmdLineArgs,  pixelWidth, plotOffset, extrtaCSS.toString());
 
-            TauP_Path.printModelAsSVG(out, tMod, minDist, maxDist, plotScale, plotSize, zoomScale, zoomTranslateX, zoomTranslateY);
+            TauP_Path.printModelAsSVG(out, tModDepth, minDist, maxDist, plotScale, plotSize, zoomScale, zoomTranslateX, zoomTranslateY);
             printResultSVG(out);
         } else {
             String psFile;
@@ -220,9 +222,8 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
         out.flush();
     }
 
-    public void printResultGMT(PrintWriter out) throws IOException {
+    public void printResultGMT(PrintWriter out) throws IOException, TauModelException {
         String byTimePsFile = outputTypeArgs.psFile;
-        double radiusOfEarth = getTauModel().getRadiusOfEarth();
         HashSet<Float> keySet = new HashSet<Float>();
         for (SeismicPhase phase : result.keySet()) {
             Map<Float, List<TimeDist>> phaseResult = result.get(phase);
@@ -270,7 +271,7 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
                 if (timeOut != null && timeOut != out) {timeOut.close();}
                 timeOut = new PrintWriter(new BufferedWriter(new FileWriter(timeOutName)));
                 if (outputTypeArgs.gmtScript) {
-                    TauP_Path.printScriptBeginning(timeOut, byTimePsFile, tMod, outputTypeArgs.mapwidth, outputTypeArgs.mapWidthUnit);
+                    TauP_Path.printScriptBeginning(timeOut, byTimePsFile, modelArgs.depthCorrected(), outputTypeArgs.mapwidth, outputTypeArgs.mapWidthUnit);
                 }
             }
             if (outputTypeArgs.gmtScript) {
@@ -338,7 +339,7 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
                 return Double.valueOf(arg0.getP()).compareTo(arg1.getP());
             }
         });
-        double radiusOfEarth = getTauModel().getRadiusOfEarth();
+        double radiusOfEarth = phase.getTauModel().getRadiusOfEarth();
         for (TimeDist td : wavefront) {
             if (outputFormat.equals(OutputTypes.GMT)) {
                 timeOut.println(Outputs.formatDistance(td.getDistDeg()) + "  "
@@ -381,7 +382,7 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
     }
 
     public Map<SeismicPhase, Map<Float, List<TimeDist>>> calcIsochron() throws TauModelException {
-        depthCorrect();
+        modelArgs.depthCorrected();
         Map<SeismicPhase, Map<Float, List<TimeDist>>> resultOut = new HashMap<SeismicPhase, Map<Float, List<TimeDist>>>();
         SeismicPhase phase;
         List<SeismicPhase> phaseList = getSeismicPhases();

@@ -193,7 +193,7 @@ public class TauP_Path extends TauP_AbstractRayTool {
 	@Override
 	public List<Arrival> calcAll(List<SeismicPhase> phaseList, List<RayCalculateable> shootables) throws TauPException {
 		List<Arrival> arrivals = new ArrayList<>();
-		depthCorrect();
+		modelArgs.depthCorrected();
 		for (SeismicPhase phase : phaseList) {
 			for (RayCalculateable shoot : shootables) {
 				arrivals.addAll(shoot.calculate(phase));
@@ -211,7 +211,7 @@ public class TauP_Path extends TauP_AbstractRayTool {
 	}
 
 	@Override
-	public void printResult(PrintWriter out, List<Arrival> arrivalList) throws IOException {
+	public void printResult(PrintWriter out, List<Arrival> arrivalList) throws IOException, TauModelException {
 		if (outputFormat.equals(OutputTypes.JSON)) {
 			printResultJSON(out, arrivalList);
 		} else if (outputFormat.equals(OutputTypes.SVG)) {
@@ -234,9 +234,9 @@ public class TauP_Path extends TauP_AbstractRayTool {
 		if (getGraphicOutputTypeArgs().isGMT()) {
 			out.write("gmt psxy -P -R -K -O -JP -m -A >> " + getGraphicOutputTypeArgs().psFile + " <<END\n");
 		}
-		double radiusOfEarth = getTauModel().getRadiusOfEarth();
         for (Arrival arrival : arrivalList) {
             out.println(getCommentLine(arrival));
+			double radiusOfEarth = arrival.getPhase().getTauModel().getRadiusOfEarth();
 
 
             double calcTime = 0.0;
@@ -327,7 +327,8 @@ public class TauP_Path extends TauP_AbstractRayTool {
 
 		if (getGraphicOutputTypeArgs().isGMT()) {
 			for (int i = 0; i < arrivalList.size(); i++) {
-				Arrival currArrival = (Arrival) arrivalList.get(i);
+				Arrival currArrival = arrivalList.get(i);
+				double radiusOfEarth = currArrival.getPhase().getTauModel().getRadiusOfEarth();
 				TimeDist[] path = currArrival.getPath();
 				int midSample = path.length / 2;
 				double calcDepth = path[midSample].getDepth();
@@ -367,13 +368,13 @@ public class TauP_Path extends TauP_AbstractRayTool {
 
 
 	public void printResultSVG(PrintWriter out, List<Arrival> arrivalList) throws IOException {
-		double radiusOfEarth = getTauModel().getRadiusOfEarth();
-
         for (Arrival arrival : arrivalList) {
             out.println("<!-- " + getCommentLine(arrival));
             out.println(" -->");
             out.println("<g class=\"" + arrival.getName() + "\">");
             out.println("<desc>" + arrival + "</desc>");
+
+			double radiusOfEarth = arrival.getPhase().getTauModel().getRadiusOfEarth();
 
             double calcTime = 0.0;
             double calcDist = 0.0;
@@ -486,7 +487,9 @@ public class TauP_Path extends TauP_AbstractRayTool {
         out.println("    <g class=\"phasename\">");
 
         for (Arrival currArrival : arrivalList) {
-            double distFactor = 1;
+			double radiusOfEarth = currArrival.getPhase().getTauModel().getRadiusOfEarth();
+
+			double distFactor = 1;
             if (currArrival.isLongWayAround()) {
                 distFactor = -1;
             }
@@ -513,7 +516,7 @@ public class TauP_Path extends TauP_AbstractRayTool {
 	}
 
 	public void printResultJSON(PrintWriter out, List<Arrival> arrivalList) {
-		String s = resultAsJSON(modelArgs.getModelName(), tModDepth.getSourceDepth(), getReceiverDepth(), getPhaseNames(), arrivalList, false, true);
+		String s = resultAsJSON(modelArgs.getModelName(), modelArgs.getSourceDepth(), getReceiverDepth(), getPhaseNames(), arrivalList, false, true);
 		out.println(s);
 	}
 
@@ -552,7 +555,13 @@ public class TauP_Path extends TauP_AbstractRayTool {
 			} else {
 				psFile = getOutFile() + ".ps";
 			}
-			printScriptBeginning(out,
+            TauModel tModDepth = null;
+            try {
+                tModDepth = modelArgs.depthCorrected();
+            } catch (TauModelException e) {
+                throw new RuntimeException(e);
+            }
+            printScriptBeginning(out,
 					getGraphicOutputTypeArgs().psFile,
 					tModDepth,
 					getGraphicOutputTypeArgs().mapwidth,
@@ -617,17 +626,18 @@ public class TauP_Path extends TauP_AbstractRayTool {
 
 
 	public float[] calcZoomScaleTranslate(List<Arrival> arrivals)  throws IOException {
-		float R = (float) getTauModel().getRadiusOfEarth();
-		float zoomYMin = -R;
-		float zoomYMax = R;
-		float zoomXMin = -R;
-		float zoomXMax = R;
-
-		double minDist = 0;
-		double maxDist = 0;
-		double minDepth = 0;
-		double maxDepth = 0;
 		if (!arrivals.isEmpty()) {
+			float R = (float) arrivals.get(0).getPhase().getTauModel().getRadiusOfEarth();
+
+			float zoomYMin;
+			float zoomYMax;
+			float zoomXMin;
+			float zoomXMax;
+
+			double minDist = 0;
+			double maxDist = 0;
+			double minDepth = 0;
+			double maxDepth = 0;
 			double[] minmax = findPierceBoundingBox(arrivals);
 			zoomXMin = (float) minmax[0];
 			zoomXMax = (float) minmax[1];
@@ -682,12 +692,22 @@ public class TauP_Path extends TauP_AbstractRayTool {
 		return new float[] {zoomScale, zoomTranslateX, zoomTranslateY,  minDist,  maxDist};
 	}
 
-    public void printScriptBeginningSVG(PrintWriter out, List<Arrival> arrivalList)  throws IOException {
+    public void printScriptBeginningSVG(PrintWriter out, List<Arrival> arrivalList) throws IOException, TauModelException {
 		float pixelWidth = (72.0f * getGraphicOutputTypeArgs().mapwidth);
 		int plotOffset = 0;
 
-		float R = (float) getTauModel().getRadiusOfEarth();
-		float plotOverScaleFactor = 1.1f;
+		float R = 6371;
+		if ( ! arrivalList.isEmpty()) {
+			R = (float) arrivalList.get(0).getPhase().getTauModel().getRadiusOfEarth();
+		} else {
+			try {
+				R = (float) modelArgs.getTauModel().getRadiusOfEarth();
+			} catch (TauModelException e) {
+				// should not happen
+				throw new RuntimeException(e);
+			}
+		}
+        float plotOverScaleFactor = 1.1f;
 		float plotSize = R * plotOverScaleFactor;
 		float plotScale = pixelWidth / (2 * R * plotOverScaleFactor);
 		float zoomScale = 1;
@@ -711,7 +731,6 @@ public class TauP_Path extends TauP_AbstractRayTool {
 		float[] scaleTrans;
 		if (arrivalList.size() == 0 && distAxisMinMax.length != 2 && depthAxisMinMax.length != 2) {
 			maxDist = Math.PI;
-			maxDepth = R;
 			scaleTrans = new float[]{1, 0, 0};
 		} else if (distAxisMinMax.length == 2 && depthAxisMinMax.length == 2) {
 			// user specified box
@@ -788,7 +807,7 @@ public class TauP_Path extends TauP_AbstractRayTool {
 		SvgUtil.xyplotScriptBeginning( out, toolNameFromClass(this.getClass()),
 				cmdLineArgs,  pixelWidth, plotOffset, extrtaCSS.toString());
 
-		printModelAsSVG(writer, tMod, minDist, maxDist, plotScale, plotSize, zoomScale, zoomTranslateX, zoomTranslateY);
+		printModelAsSVG(writer, modelArgs.depthCorrected(), minDist, maxDist, plotScale, plotSize, zoomScale, zoomTranslateX, zoomTranslateY);
 	}
 
 	public static void printModelAsSVG(PrintWriter out, TauModel tMod, double minDist, double maxDist, float plotScale, float plotSize, float zoomScale, float zoomTranslateX, float zoomTranslateY) throws IOException {

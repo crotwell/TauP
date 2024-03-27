@@ -105,20 +105,20 @@ public abstract class TauP_AbstractRayTool extends TauP_AbstractPhaseTool {
 
     @Override
     public void validateArguments() throws TauModelException {
-        if (this.getTauModel() == null) {
+        if (modelArgs.getTauModel() == null) {
             throw new TauModelException("Model for '"+this.getTauModelName()+"' is null, unable to calculate.");
         }
-        if (this.getTauModel().getRadiusOfEarth() < getSourceDepth()) {
+        if (modelArgs.getTauModel().getRadiusOfEarth() < getSourceDepth()) {
             throw new TauModelException("Source depth of "+getSourceDepth()+" in '"+this.getTauModelName()
-                    +"' is greater than radius of earth, "+this.getTauModel().getRadiusOfEarth()+", unable to calculate.");
+                    +"' is greater than radius of earth, "+modelArgs.getTauModel().getRadiusOfEarth()+", unable to calculate.");
         }
-        if (this.getTauModel().getRadiusOfEarth() < getReceiverDepth()) {
+        if (modelArgs.getTauModel().getRadiusOfEarth() < getReceiverDepth()) {
             throw new TauModelException("Receiver depth of "+getReceiverDepth()+" in '"+this.getTauModelName()
-                    +"' is greater than radius of earth, "+this.getTauModel().getRadiusOfEarth()+", unable to calculate.");
+                    +"' is greater than radius of earth, "+modelArgs.getTauModel().getRadiusOfEarth()+", unable to calculate.");
         }
-        if (this.getScatterer() != null && this.getTauModel().getRadiusOfEarth() < getScattererDepth()) {
+        if (modelArgs.getScatterer() != null && modelArgs.getTauModel().getRadiusOfEarth() < getScattererDepth()) {
             throw new TauModelException("Scatterer depth of "+getScattererDepth()+" in '"+this.getTauModelName()
-                    +"' is greater than radius of earth, "+this.getTauModel().getRadiusOfEarth()+", unable to calculate.");
+                    +"' is greater than radius of earth, "+modelArgs.getTauModel().getRadiusOfEarth()+", unable to calculate.");
         }
 
     }
@@ -130,5 +130,5 @@ public abstract class TauP_AbstractRayTool extends TauP_AbstractPhaseTool {
         printResult(getWriter(), arrivalList);
     }
 
-    public abstract void printResult(PrintWriter out, List<Arrival> arrivalList) throws IOException;
+    public abstract void printResult(PrintWriter out, List<Arrival> arrivalList) throws IOException, TauModelException;
 }

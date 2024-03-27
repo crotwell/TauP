@@ -200,7 +200,7 @@ public class TauP_SetSac extends TauP_Time {
                           "skipping " + f);
             return;
         }
-        if(!((evdpkm && tModDepth.getSourceDepth() == header.getEvdp()) || (!evdpkm && tModDepth.getSourceDepth() == 1000 * header.getEvdp()))) {
+        if(!((evdpkm && modelArgs.getSourceDepth() == header.getEvdp()) || (!evdpkm && modelArgs.getSourceDepth() == 1000 * header.getEvdp()))) {
             if(!evdpkm && header.getEvdp() != 0 && header.getEvdp() < 1000.0) {
                 Alert.warning("Sac header evdp is < 1000 in "
                                       + f,

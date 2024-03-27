@@ -149,7 +149,7 @@ public class TauP_Curve extends TauP_Time {
      *          radians/second.
      */
     public double getReduceVelKm() {
-        return reduceVel * tMod.getRadiusOfEarth();
+        return reduceVel * getRadiusOfEarth();
     }
 
     /**
@@ -159,11 +159,7 @@ public class TauP_Curve extends TauP_Time {
     public void setReduceVelKm(double reduceVel) {
         redVelString = reduceVel+" km/s";
         if(reduceVel > 0.0) {
-            if(tMod != null) {
-                this.reduceVel = reduceVel / tMod.getRadiusOfEarth();
-            } else {
-                this.reduceVel = reduceVel / 6371.0;
-            }
+                this.reduceVel = reduceVel / getRadiusOfEarth();
         } else {
             throw new IllegalArgumentException("Reducing velocity must be positive: "+reduceVel);
         }
@@ -198,7 +194,7 @@ public class TauP_Curve extends TauP_Time {
          * no need to do any calculations. So, this just overrides
          * TauP_Time.calculate. printResult handles everything else.
          */
-        depthCorrect();
+        modelArgs.depthCorrected();
         return new ArrayList<>();
     }
     
@@ -243,7 +239,7 @@ public class TauP_Curve extends TauP_Time {
             setSourceDepth(Double.valueOf(toolProps.getProperty("taup.source.depth",
                                                               "0.0"))
                     .doubleValue());
-            depthCorrect();
+            modelArgs.depthCorrected();
             calculate(new ArrayList<>());
             printResult(getWriter());
         } else {
@@ -254,13 +250,13 @@ public class TauP_Curve extends TauP_Time {
             System.out.print("Enter Depth: ");
             tokenIn.nextToken();
             double tempDepth = tokenIn.nval;
-            if(tempDepth < 0.0 || tempDepth > tMod.getRadiusOfEarth()) {
+            if(tempDepth < 0.0 || tempDepth > getRadiusOfEarth()) {
                 System.out.println("Depth must be >= 0.0 and "
                         + "<= tMod.getRadiusOfEarth().\ndepth = " + tempDepth);
                 return;
             }
             setSourceDepth(tempDepth);
-            depthCorrect();
+            modelArgs.depthCorrected();
             printResult(getWriter());
         }
     }
@@ -284,7 +280,7 @@ public class TauP_Curve extends TauP_Time {
                     try {
                         List<SeismicPhase> calcRelPhaseList = SeismicPhaseFactory.createSeismicPhases(
                                 sName,
-                                getTauModelDepthCorrected(),
+                                modelArgs.depthCorrected(),
                                 this.getSourceDepth(),
                                 this.getReceiverDepth(),
                                 this.getScatterer(),
@@ -509,7 +505,7 @@ public class TauP_Curve extends TauP_Time {
                 }
                 if(dist.length > 0) {
                     String commentLine = phase.getName() + " for a source depth of "
-                            + tModDepth.getSourceDepth() + " kilometers in the " + modelArgs.getModelName()
+                            + modelArgs.getSourceDepth() + " kilometers in the " + modelArgs.getModelName()
                             + " model";
                     if (relativePhaseName != "") {
                         commentLine += " relative to " + relativePhaseName;

@@ -313,10 +313,7 @@ public class TauP_Web extends TauP_Tool {
 
             if (queryParameters.containsKey(QP_MODEL)) {
                 unknownKeys.remove(QP_MODEL);
-                TauModel tMod = TauModelLoader.load(queryParameters.get(QP_MODEL).getFirst());
-                timeTool.setTauModel(tMod);
-            } else {
-                timeTool.loadTauModel("iasp91");
+                timeTool.setModelName(queryParameters.get(QP_MODEL).getFirst());
             }
             if (queryParameters.containsKey(QP_EVDEPTH)) {
                 unknownKeys.remove(QP_EVDEPTH);

@@ -43,9 +43,6 @@ public class TauP_Pierce extends TauP_Time {
 
     protected boolean onlyAddPoints = false;
 
-    @CommandLine.Option(names="--pierce", description = "adds depth for calculating pierce points")
-    protected List<Double> addDepth = new ArrayList<>();
-
     public TauP_Pierce() {
         super();
         setDefaultOutputFormat();
@@ -82,8 +79,14 @@ public class TauP_Pierce extends TauP_Time {
         this.onlyAddPoints = onlyAddPoints;
     }
 
+    @CommandLine.Option(names="--pierce", description = "adds depth for calculating pierce points")
+    public void setAddDepth(List<Double> addDepths) {
+        modelArgs.setModelSplitDepths(addDepths);
+    }
+
     public void appendAddDepths(String depthString) {
-        addDepth.addAll(parseAddDepthsList(depthString));
+        modelArgs.unsetDepthCorrected();
+        modelArgs.getModelSplitDepths().addAll(parseAddDepthsList(depthString));
     }
 
     protected List<Double> parseAddDepthsList(String depthList) {
@@ -97,48 +100,9 @@ public class TauP_Pierce extends TauP_Time {
         return out;
     }
 
-    /** override depthCorrect so that we can put the pierce depths in. */
     @Override
-    public void depthCorrect(double depth, double receiverDepth, Scatterer scatter) throws TauModelException {
-        TauModel tModOrig = tMod; // save original
-        tMod = splitPierceDepths(tMod); // add pierce depths
-        super.depthCorrect(depth, receiverDepth, scatter); // normal depth correction
-        tMod = tModOrig; // restore orig to tMod
-    }
-
-    public TauModel splitPierceDepths(TauModel tModOrig) throws TauModelException {
-        boolean mustRecalc = false;
-        TauModel tModOut = tModOrig;
-        if(addDepth != null) {
-            double[] branchDepths = tModOrig.getBranchDepths();
-            for (Double aDouble : addDepth) {
-                for (double branchDepth : branchDepths) {
-                    if (aDouble == branchDepth) {
-                        // found it, so break and go to the next addDepth
-                        break;
-                    }
-                    // we only get here if we didn't find the depth as a
-                    // branch due to the break statement,
-                    // so this means we must recalculate
-                    mustRecalc = true;
-                }
-                if (mustRecalc) {
-                    // must recalculate, so break out of addDepth loop
-                    break;
-                }
-            }
-        }
-        if (mustRecalc) {
-            for (Double aDouble : addDepth) {
-                tModOut = tModOut.splitBranch(aDouble);
-            }
-        }
-        return tModOut;
-    }
-
-    @Override
-    public List<Arrival> calculate(List<DistanceRay> degreesList) throws TauPException {
-        List<Arrival> arrivalList = super.calculate(degreesList);
+    public List<Arrival> calcAll(List<SeismicPhase> phaseList, List<RayCalculateable> shootables) throws TauPException {
+        List<Arrival> arrivalList = super.calcAll(phaseList, shootables);
         for (Arrival arrival : arrivalList) {
             arrival.getPierce(); // side effect of calculating pierce points
         }
@@ -183,7 +147,7 @@ public class TauP_Pierce extends TauP_Time {
                 if (!(onlyTurnPoints || onlyRevPoints || onlyUnderPoints || onlyAddPoints)
                         || (onlyRevPoints
                         && (getScatterer() != null && pierce[j].getDepth() == getScatterer().depth  // scat are always rev points
-                        && pierce[j].getDistDeg() == getScatterer().dist.getDegrees(tMod.getRadiusOfEarth()))
+                        && pierce[j].getDistDeg() == getScatterer().dist.getDegrees(arrival.getPhase().getTauModel().getRadiusOfEarth()))
                 )
                         || ((onlyAddPoints && isAddDepth(pierce[j].getDepth()))
                         || (onlyRevPoints && ((prevDepth - pierce[j].getDepth())
@@ -211,7 +175,7 @@ public class TauP_Pierce extends TauP_Time {
 
     @Override
     public void printResultJSON(PrintWriter out, List<Arrival> arrivalList) {
-        String s = resultAsJSON(modelArgs.getModelName(), tModDepth.getSourceDepth(), getReceiverDepth(), getPhaseNames(), arrivalList, true, false);
+        String s = resultAsJSON(modelArgs.getModelName(), modelArgs.getSourceDepth(), getReceiverDepth(), getPhaseNames(), arrivalList, true, false);
         out.println(s);
     }
 
@@ -219,7 +183,7 @@ public class TauP_Pierce extends TauP_Time {
      * checks to see if the given depth has been "added" as a pierce point.
      */
     public synchronized boolean isAddDepth(double depth) {
-        for (Double aDouble : addDepth) {
+        for (Double aDouble : modelArgs.getModelSplitDepths()) {
             if (depth == aDouble) {
                 return true;
             }

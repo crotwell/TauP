@@ -126,13 +126,13 @@ public class TauP_WKBJ extends TauP_Time {
 
 
         validateArguments();
-        depthCorrect();
+        modelArgs.depthCorrected();
         List<SeismicPhase> phaseList = getSeismicPhases();
         List<Arrival> allArrivals = new ArrayList<Arrival>();
         List<MSeed3Record> spikeRecords = new ArrayList<MSeed3Record>();
 
         for (DistanceRay distVal : degreesList) {
-            double degrees = distVal.getDegrees(tMod.getRadiusOfEarth());
+            double degrees = distVal.getDegrees(getRadiusOfEarth());
             for (int phaseNum = 0; phaseNum < phaseList.size(); phaseNum++) {
                 SeismicPhase phase = phaseList.get(phaseNum);
                 List<Arrival> phaseArrivals = phase.calcTime(degrees);
@@ -202,14 +202,14 @@ public class TauP_WKBJ extends TauP_Time {
 
     public List<MSeed3Record> calcWKBJ(List<DistanceRay> degreesList) throws TauPException, IOException {
         validateArguments();
-        depthCorrect();
+        modelArgs.depthCorrected();
         List<SeismicPhase> phaseList = getSeismicPhases();
         List<MSeed3Record> spikeRecords = new ArrayList<MSeed3Record>();
         float momentMag = 4;
         float[][] sourceTerm = effectiveSourceTerm( momentMag, (float) deltaT,  1000);
         Instant sourceTime = new MSeed3Record().getStartInstant();
         for (DistanceRay distVal : degreesList) {
-            double degrees = distVal.getDegrees(tMod.getRadiusOfEarth());
+            double degrees = distVal.getDegrees(getRadiusOfEarth());
             List<Arrival> allArrivals = new ArrayList<Arrival>();
             for (int phaseNum = 0; phaseNum < phaseList.size(); phaseNum++) {
                 SeismicPhase phase = phaseList.get(phaseNum);

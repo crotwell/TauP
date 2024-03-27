@@ -72,23 +72,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
      *             if the file can't be found or is corrupted in some way.
      */
     public TauP_Time(String modelName) throws TauModelException {
-        try {
-            loadTauModel(modelName);
-        } catch(FileNotFoundException e) {
-            throw new TauModelException("FileNotFoundException:"
-                    + e.getMessage(), e);
-        } catch(InvalidClassException e) {
-            throw new TauModelException("InvalidClassException:"
-                    + e.getMessage(), e);
-        } catch(StreamCorruptedException e) {
-            throw new TauModelException("StreamCorruptedException:"
-                    + e.getMessage(), e);
-        } catch(OptionalDataException e) {
-            throw new TauModelException("OptionalDataException:"
-                    + e.getMessage(), e);
-        } catch(IOException e) {
-            throw new TauModelException("IOException:" + e.getMessage(), e);
-        }
+        modelArgs.setModelName(modelName);
         setDefaultOutputFormat();
     }
 
@@ -107,11 +91,13 @@ public class TauP_Time extends TauP_AbstractRayTool {
     /* Normal methods */
 
 
+    @Deprecated
     public List<Arrival> calculate(double degrees) throws TauPException {
         List<DistanceRay> dList = Arrays.asList( DistanceRay.ofDegrees(degrees));
         return calculate(dList);
     }
 
+    @Deprecated
     public List<Arrival> calculate(List<DistanceRay> distanceRays) throws TauPException {
         return calcTime(distanceRays);
     }
@@ -125,7 +111,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
                 try {
                     List<SeismicPhase> calcRelPhaseList = SeismicPhaseFactory.createSeismicPhases(
                             sName,
-                            getTauModelDepthCorrected(),
+                            modelArgs.depthCorrected(),
                             this.getSourceDepth(),
                             this.getReceiverDepth(),
                             this.getScatterer(),
@@ -148,7 +134,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
     @Override
     public List<Arrival> calcAll(List<SeismicPhase> phaseList, List<RayCalculateable> shootables) throws TauPException {
         List<Arrival> arrivals = new ArrayList<>();
-        depthCorrect();
+        modelArgs.depthCorrected();
         for (SeismicPhase phase : phaseList) {
             for (RayCalculateable shoot : shootables) {
                 arrivals.addAll(shoot.calculate(phase));
@@ -157,14 +143,15 @@ public class TauP_Time extends TauP_AbstractRayTool {
         return Arrival.sortArrivals(arrivals);
     }
 
+    @Deprecated
     public List<Arrival> calcTime(List<DistanceRay> degreesList) throws TauModelException {
         validateArguments();
-        depthCorrect();
+        modelArgs.depthCorrected();
         SeismicPhase phase;
         List<Arrival> arrivalList = new ArrayList<>();
         List<SeismicPhase> phaseList = getSeismicPhases();
         for (DistanceRay distVal : degreesList) {
-            double degrees = distVal.getDegrees(tMod.getRadiusOfEarth());
+            double degrees = distVal.getDegrees(getRadiusOfEarth());
             for (int phaseNum = 0; phaseNum < phaseList.size(); phaseNum++) {
                 phase = phaseList.get(phaseNum);
                 List<Arrival> phaseArrivals = phase.calcTime(degrees);
@@ -218,8 +205,8 @@ public class TauP_Time extends TauP_AbstractRayTool {
             if (getReceiverDepth() != 0.0) {
                 modelLine += "  Receiver Depth: "+getReceiverDepth()+" km";
             }
-            if (getScatterer() != null && getScatterer().dist.getDegrees(tMod.getRadiusOfEarth()) != 0.0) {
-                modelLine += "  Scatter Depth: "+ getScattererDepth()+" km Dist: "+ getScatterer().dist.getDegrees(tMod.getRadiusOfEarth());
+            if (getScatterer() != null && getScatterer().dist.getDegrees(getRadiusOfEarth()) != 0.0) {
+                modelLine += "  Scatter Depth: "+ getScattererDepth()+" km Dist: "+ getScatterer().dist.getDegrees(getRadiusOfEarth());
             }
             out.println(modelLine);
             String lineOne = "Distance   Depth   " + String.format(phaseFormat, "Phase")
@@ -246,7 +233,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
             for(int j = 0; j < arrivalList.size(); j++) {
                 currArrival = arrivalList.get(j);
                 out.print(Outputs.formatDistance(currArrival.getSearchDistDeg()));
-                out.print(Outputs.formatDepth(tModDepth.getSourceDepth()) + "   ");
+                out.print(Outputs.formatDepth(currArrival.getPhase().getSourceDepth()) + "   ");
                 out.print(String.format(phaseFormat, currArrival.getName()));
                 out.print("  "
                         + Outputs.formatTime(currArrival.getTime())
@@ -419,11 +406,11 @@ public class TauP_Time extends TauP_AbstractRayTool {
                         tokenIn.nextToken();
                         tempDepth = tokenIn.nval;
                         if(tempDepth < 0.0
-                                || tempDepth > tMod.getRadiusOfEarth()) {
+                                || tempDepth > getRadiusOfEarth()) {
                             Alert.warning("Depth must be >= 0.0 and <= tMod.getRadiusOfEarth().",
                                           "depth = " + tempDepth
                                                   + " getRadiusOfEarth= "
-                                                  + tMod.getRadiusOfEarth());
+                                                  + getRadiusOfEarth());
                             continue;
                         }
                         prevTime = System.currentTimeMillis();
@@ -652,8 +639,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
                         tokenIn.ordinaryChars('-', '-');
                         tokenIn.wordChars('-', '-');
                         String oldModelName = modelArgs.getModelName();
-                        TauModel oldTMod = tMod;
-                        TauModel oldTModDepth = tModDepth;
+                        TauModel oldTMod = modelArgs.getTauModel();
                         System.out.print("Enter model name: ");
                         tokenIn.nextToken();
                         if(tokenIn.ttype == StreamTokenizer.TT_WORD) {
@@ -663,27 +649,6 @@ public class TauP_Time extends TauP_AbstractRayTool {
                         tokenIn.ordinaryChars('.', '.');
                         tokenIn.ordinaryChars('-', '-');
                         tokenIn.parseNumbers();
-                        if(!modelArgs.getModelName().equals(oldModelName)) {
-                            try {
-                                readTauModel();
-                                setSourceDepth(modelArgs.getSourceDepth());
-                            } catch(TauModelException e) {
-                                if (e.getCause() instanceof InvalidClassException) {
-                                    Alert.warning("Model file "
-                                                  + modelArgs.getModelName()
-                                                  + " is not compatible with the current version.",
-                                          "Recreate using taup_create. Still using model "
-                                                  + oldModelName + ".");
-                                } else {
-                                    Alert.warning("I can't load model file "
-                                                  + modelArgs.getModelName(), "Still using model "
-                                                  + oldModelName + ".");
-                                }
-                                modelArgs.setModelName(oldModelName);
-                                tMod = oldTMod;
-                                tModDepth = oldTModDepth;
-                            }
-                        }
                         readMode = 'd';
                         break;
                     case 't':

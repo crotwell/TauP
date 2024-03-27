@@ -57,7 +57,7 @@ public class TauP_XY extends TauP_AbstractPhaseTool {
             System.out.print("Enter Depth: ");
             tokenIn.nextToken();
             tempDepth = tokenIn.nval;
-            if(tempDepth < 0.0 || tempDepth > tMod.getRadiusOfEarth()) {
+            if(tempDepth < 0.0 || tempDepth > getRadiusOfEarth()) {
                 System.out.println("Depth must be >= 0.0 and "
                         + "<= tMod.getRadiusOfEarth().\ndepth = " + tempDepth);
                 return;
@@ -84,7 +84,7 @@ public class TauP_XY extends TauP_AbstractPhaseTool {
     }
 
     public Map<SeismicPhase, List<XYPlottingData>> calculateLinear(AxisType xAxisType, AxisType yAxisType) throws TauModelException, VelocityModelException, SlownessModelException {
-        depthCorrect();
+        modelArgs.depthCorrected();
         List<SeismicPhase> phaseList = getSeismicPhases();
         Map<SeismicPhase, List<XYPlottingData>> outMap = new HashMap<>();
         for (SeismicPhase phase: phaseList) {
@@ -156,6 +156,10 @@ public class TauP_XY extends TauP_AbstractPhaseTool {
         } else {
             throw new IllegalArgumentException("axis are not time and distance: "+xAxisType+" "+yAxisType);
         }
+        if (velFactor == 1.0 || velFactor == 0.0) {
+            // either not set or nothing to do
+            return xy;
+        }
 
         for (SeismicPhase phase : xy.keySet()) {
             List<XYPlottingData> plotList = xy.get(phase);
@@ -201,7 +205,7 @@ public class TauP_XY extends TauP_AbstractPhaseTool {
             }
         } else if (axisType==AxisType.kilometer || axisType==AxisType.kilometer_180) {
             out = phase.getDist();
-            double redToKm = tMod.getRadiusOfEarth();
+            double redToKm = getRadiusOfEarth();
             for (int i = 0; i < out.length; i++) {
                 out[i] *= redToKm;
             }
@@ -358,7 +362,7 @@ public class TauP_XY extends TauP_AbstractPhaseTool {
 
     public void printResult(PrintWriter writer, Map<SeismicPhase, List<XYPlottingData>> xyPlots) {
         if (getOutputFormat().equalsIgnoreCase(OutputTypes.JSON)) {
-            JSONObject out = baseResultAsJSONObject( modelArgs.getModelName(), tModDepth.getSourceDepth(),  modelArgs.getReceiverDepth(), getPhaseNames());
+            JSONObject out = baseResultAsJSONObject( modelArgs.getModelName(), modelArgs.getSourceDepth(),  modelArgs.getReceiverDepth(), getPhaseNames());
             JSONArray phaseCurves = new JSONArray();
             for (SeismicPhase phase: xyPlots.keySet() ) {
                 for (XYPlottingData plotItem : xyPlots.get(phase)) {
@@ -593,8 +597,21 @@ public class TauP_XY extends TauP_AbstractPhaseTool {
      * @return reducing velocity in degrees/second. The internal usage is
      *          radians/second.
      */
+    public double getReduceVelRadian() {
+        if (reduceVelKm != null) {
+            try {
+                return reduceVelKm / modelArgs.getTauModel().getRadiusOfEarth();
+            } catch (TauModelException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        if (reduceVelDeg != null) {
+            return reduceVelDeg * Math.PI / 180.0;
+        }
+        return 0;
+    }
     public double getReduceVelDeg() {
-        return 180.0 / Math.PI * reduceVel;
+        return reduceVelDeg;
     }
 
     /**
@@ -606,9 +623,9 @@ public class TauP_XY extends TauP_AbstractPhaseTool {
             defaultValue = "0.0",
             description = "outputs curves with a reducing velocity (deg/sec), no effect if axis is not distance-like/time")
     public void setReduceVelDeg(double reduceVel) {
-        if(reduceVel > 0.0) {
+        if(reduceVel != 0.0) {
             redVelString = reduceVel+" deg/s";
-            this.reduceVel = Math.PI / 180.0 * reduceVel;
+            this.reduceVelDeg = reduceVel;
         }
     }
 
@@ -617,7 +634,7 @@ public class TauP_XY extends TauP_AbstractPhaseTool {
      *          radians/second.
      */
     public double getReduceVelKm() {
-        return reduceVel * tMod.getRadiusOfEarth();
+        return reduceVelKm;
     }
 
     public double reduceVelForAxis(AxisType axisType) {
@@ -641,12 +658,8 @@ public class TauP_XY extends TauP_AbstractPhaseTool {
             description = "outputs curves with a reducing velocity (km/sec), no effect if axis is not distance-like/time")
     public void setReduceVelKm(double reduceVel) {
         redVelString = reduceVel+" km/s";
-        if(reduceVel > 0.0) {
-            if(tMod != null) {
-                this.reduceVel = reduceVel / tMod.getRadiusOfEarth();
-            } else {
-                this.reduceVel = reduceVel / 6371.0;
-            }
+        if(reduceVel != 0.0) {
+            this.reduceVelKm = reduceVel;
         } else {
             throw new IllegalArgumentException("Reducing velocity must be positive: "+reduceVel);
         }
@@ -665,7 +678,8 @@ public class TauP_XY extends TauP_AbstractPhaseTool {
      * the reducing velocity to use if reduceTime == true, in units of
      * radians/second .
      */
-    protected double reduceVel = .125 * Math.PI / 180;
+    protected Double reduceVelDeg = .125;
+    protected Double reduceVelKm = 8.0;
 
     protected String redVelString = ".125 deg/s";
 

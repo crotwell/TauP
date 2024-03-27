@@ -49,7 +49,7 @@ public class TauP_PhaseDescribe extends TauP_AbstractPhaseTool {
     @Override
     public void start() throws IOException, TauModelException, TauPException {
         if (getSeismicPhases().size() > 0) {
-            depthCorrect();
+            modelArgs.depthCorrected();
             printResult(getWriter());
         } else {
             getWriter().println("No phases to describe.");

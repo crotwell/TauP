@@ -15,25 +15,21 @@ import java.util.List;
 public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
     public static final String DEFAULT_PHASES = "p,s,P,S,Pn,Sn,PcP,ScS,Pdiff,Sdiff,PKP,SKS,PKiKP,SKiKS,PKIKP,SKIKS";
 
-    /**
-     * Tau model calculated previously.
-     *
-     * @see TauModel
-     */
-    protected TauModel tMod;
-
-    /**
-     * TauModel derived from tMod by correcting it for a non-surface source.
-     */
-    protected transient TauModel tModDepth;
+    public double getRadiusOfEarth() {
+        try {
+            return modelArgs.getTauModel().getRadiusOfEarth();
+        } catch (TauModelException e) {
+            throw new RuntimeException(e);
+        }
+    }
     /**
      * names of phases to be used, ie PKIKP.
      */
     protected List<PhaseName> phaseNames = new ArrayList<PhaseName>();
 
+    @CommandLine.Mixin
     ModelArgs modelArgs = new ModelArgs();
 
-    Scatterer scat;
     /**
      * vector to hold the SeismicPhases for the phases named in phaseNames.
      */
@@ -229,27 +225,6 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
                         DEFAULT_PHASES));
             }
         }
-        modelArgs.setSourceDepth(Double.parseDouble(toolProps.getProperty("taup.source.depth", "0.0")));
-        if (tMod == null
-                || tMod.getVelocityModel().getModelName() != toolProps.getProperty("taup.model.name",
-                "iasp91")) {
-            if (modelArgs.getModelName() == null) {
-                modelArgs.setModelName(toolProps.getProperty("taup.model.name", "iasp91"));
-            }
-            try {
-                readTauModel();
-            } catch (TauModelException ee) {
-                if (ee.getCause() instanceof InvalidClassException) {
-                    Alert.error("Model file "
-                                    + modelArgs.getModelName()
-                                    + " is not compatible with the current version.",
-                            "Recreate using taup_create.");
-                } else {
-                    Alert.error("Caught TauModelException", ee.getMessage());
-                }
-                throw new RuntimeException(ee);
-            }
-        }
     }
 
     /* Get/Set methods */
@@ -344,58 +319,37 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
     }
 
     public double getScattererDepth() {
-        return scat.depth;
+        return modelArgs.getScatterer().depth;
     }
 
     public Scatterer getScatterer() {
-        return scat;
+        return modelArgs.getScatterer();
     }
 
     public void setScatterer(Scatterer scatterer) {
         clearPhases();
-        this.scat = scatterer;
-    }
-
-    @CommandLine.Option(names = {"--scat", "--scatter"},
-            arity = "2",
-            description = "scattering depth and distance in degrees, which may be negative.")
-    public void setScattererDistDepth(double[] dist_depth) {
-        if (dist_depth.length != 2) {
-            throw new CommandLine.TypeConversionException("must be dist depth, but got " + dist_depth.length + " values.");
-        }
-        scat = new Scatterer(dist_depth[0], dist_depth[1]);
+        modelArgs.setScatterer(scatterer.depth, scatterer.dist.getDegrees(getRadiusOfEarth()));
     }
 
     public String getTauModelName() {
         return modelArgs.getModelName();
     }
 
-    public TauModel getTauModel() {
-        return tMod;
-    }
-
     /**
      * Gets depth corrected TauModel.
      */
     public TauModel getTauModelDepthCorrected() throws TauModelException {
-        if (tModDepth == null) {
-            depthCorrect();
-        }
-        return tModDepth;
+        return modelArgs.depthCorrected();
     }
 
-    @CommandLine.Option(names = {"--mod", "--model"}, defaultValue = "iasp91", paramLabel = "modelname", description = "the velocity model")
     public void setModelName(String modelName) {
         modelArgs.setModelName(modelName);
-        this.tMod = null;
-        this.tModDepth = null;
     }
 
     public void setTauModel(TauModel tMod) {
         clearPhases();
-        this.tMod = tMod;
-        this.tModDepth = null;
         modelArgs.setModelName(tMod.getModelName());
+        this.modelArgs.setTMod(tMod);
         toolProps.put("taup.model.name", tMod.getModelName());
         if (verbose) {
             Alert.info("Model set to " + tMod.getModelName()
@@ -404,18 +358,6 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
                     + " iocb=" + tMod.getIocbDepth()
                     + " radius=" + tMod.getRadiusOfEarth());
         }
-    }
-
-    public void loadTauModel(String modelName) throws FileNotFoundException,
-            InvalidClassException, IOException, StreamCorruptedException,
-            OptionalDataException, TauModelException {
-        modelArgs.setModelName(modelName);
-        readTauModel();
-        modelArgs.setModelName(tMod.getModelName());
-    }
-
-    public double[] getDisconDepths() {
-        return tMod.getVelocityModel().getDisconDepths();
     }
 
     public void clearPhases() {
@@ -427,22 +369,6 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
             recalcPhases();
         }
         return Collections.unmodifiableList(phases);
-    }
-
-    /**
-     * Reads the velocity model, slowness model, and tau model from a file saved
-     * using Java's Serializable interface. Performs a depth correction if the
-     * current depth is not 0.0
-     */
-    protected void readTauModel() throws TauModelException {
-        TauModel tModLoad = TauModelLoader.load(modelArgs.getModelName(),
-                toolProps.getProperty("taup.model.path"),
-                verbose);
-        if (tModLoad != null) {
-            setTauModel(tModLoad);
-        } else {
-            throw new TauModelException("Unable to load " + modelArgs.getModelName());
-        }
     }
 
     /**
@@ -508,77 +434,6 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
     }
 
     /**
-     * corrects the TauModel for the source, receiver and scatter depths.
-     * In general, this is called by each tool's calculate methods, and so should
-     * not need to be called by outside code. Most of the time calling setSourceDepth,
-     * setReceiverDepth and setScatterDepth
-     * is preferred, allowing the tool to choose when to call depthCorrect.
-     */
-    public void depthCorrect() throws TauModelException {
-        depthCorrect(getSourceDepth(), getReceiverDepth(), getScatterer());
-    }
-
-    /**
-     * corrects the TauModel for the given source depth. It only performs the
-     * correction of the model is not already corrected to that depth.
-     * In general, this is called by each tool's calculate methods, and so should
-     * not need to be called by outside code. Most of the time calling setSourceDepth
-     * is preferred, allowing the tool to choose when to call depthCorrect.
-     *
-     * @deprecated use setSourceDepth instead
-     */
-    @Deprecated
-    public void depthCorrect(double depth) throws TauModelException {
-        depthCorrect(depth, getReceiverDepth());
-    }
-
-    /**
-     * In general, this is called by each tool's calculate methods, and so should
-     * not need to be called by outside code. Most of the time calling setSourceDepth
-     * and setReceiverDepth is preferred, allowing the tool to choose when to call depthCorrect.
-     *
-     * @param depth         the source depth
-     * @param receiverDepth the receiver depth
-     * @throws TauModelException
-     */
-    public void depthCorrect(double depth, double receiverDepth) throws TauModelException {
-        depthCorrect(depth, receiverDepth, getScatterer());
-    }
-
-    /**
-     * In general, this is called by each tool's calculate methods, and so should
-     * not need to be called by outside code. Most of the time calling setSourceDepth
-     * and setReceiverDepth and setScatterDepth is preferred, allowing the tool to choose when to call depthCorrect.
-     *
-     * @param depth         the source depth
-     * @param receiverDepth the receiver depth
-     * @param scatter       scatterer depth, set to null if no scattering
-     * @throws TauModelException
-     */
-    public void depthCorrect(double depth, double receiverDepth, Scatterer scatter) throws TauModelException {
-        if (tMod == null) {
-            tMod = TauModelLoader.load(modelArgs.getModelName());
-        }
-        if (tModDepth == null || tModDepth.getSourceDepth() != depth) {
-            setReceiverDepth(receiverDepth);
-            tModDepth = tMod.depthCorrect(depth);
-            tModDepth = tModDepth.splitBranch(receiverDepth);
-            clearPhases();
-        }
-        if (!tModDepth.isBranchDepth(receiverDepth)) {
-            setReceiverDepth(receiverDepth);
-            tModDepth = tModDepth.splitBranch(receiverDepth); // if already split on receiver depth this does nothing
-            clearPhases();
-        }
-        if (scat != null && !tModDepth.isBranchDepth(scat.depth)) {
-            setScatterer(scat);
-            tModDepth = tModDepth.splitBranch(scat.depth); // if already split on scatter depth this does nothing
-            clearPhases();
-        }
-        setSourceDepth(depth);
-    }
-
-    /**
      * recalculates the given phases using a possibly new or changed tau model.
      * This should not need to be called by outside classes as it is called by
      * depthCorrect, and calculate.
@@ -611,7 +466,12 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
             if (!alreadyAdded) {
                 // didn't find it precomputed, so recalculate
                 try {
-                    List<SeismicPhase> calcPhaseList = SeismicPhaseFactory.createSeismicPhases(tempPhaseName, getTauModelDepthCorrected(), getSourceDepth(), getReceiverDepth(), getScatterer(), DEBUG);
+                    List<SeismicPhase> calcPhaseList = SeismicPhaseFactory.createSeismicPhases(tempPhaseName,
+                            modelArgs.depthCorrected(),
+                            getSourceDepth(),
+                            getReceiverDepth(),
+                            getScatterer(),
+                            DEBUG);
                     newPhases.addAll(calcPhaseList);
                     for (SeismicPhase seismicPhase : newPhases) {
                         if (verbose) {

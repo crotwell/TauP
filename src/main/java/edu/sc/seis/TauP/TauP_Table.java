@@ -34,6 +34,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StreamTokenizer;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -416,13 +417,13 @@ public class TauP_Table extends TauP_Time {
     protected void jsonTable(PrintWriter out) throws TauPException, IOException {
         out.println("[");
         for(int depthNum = 0; depthNum < depths.length; depthNum++) {
-            depthCorrect(depths[depthNum], getReceiverDepth(), getScatterer());
+            modelArgs.setSourceDepth(depths[depthNum]); // depth correct happens in modelArgs
             for (int distNum = 0; distNum < distances.length; distNum++) {
-                List<Arrival> arrivals = calculate(distances[distNum]);
+                List<Arrival> arrivals = calcAll(getSeismicPhases(), Arrays.asList(DistanceRay.ofDegrees(distances[distNum])));
                 writeJSON(out, "",
                         getTauModelName(),
-                        getSourceDepth(),
-                        getReceiverDepth(),
+                        modelArgs.getSourceDepth(),
+                        modelArgs.getReceiverDepth(),
                         getSeismicPhases(),
                         arrivals);
             }
@@ -436,14 +437,14 @@ public class TauP_Table extends TauP_Time {
         String header = "Model,Distance (deg),Depth (km),Phase,Time (s),RayParam (deg/s),Takeoff Angle,Incident Angle,Purist Distance,Purist Name";
         out.println(header);
         for(int depthNum = 0; depthNum < depths.length; depthNum++) {
-            depthCorrect(depths[depthNum], getReceiverDepth(), getScatterer());
+            modelArgs.setSourceDepth(depths[depthNum]); // depth correct happens in modelArgs
             for(int distNum = 0; distNum < distances.length; distNum++) {
-                List<Arrival> arrivals = calculate(distances[distNum]);
+                List<Arrival> arrivals = calcAll(getSeismicPhases(), Arrays.asList(DistanceRay.ofDegrees(distances[distNum])));
                 for (Arrival currArrival : arrivals) {
                     double moduloDist = currArrival.getModuloDistDeg();
                     String line = modelArgs.getModelName() + sep
                             + Outputs.formatDistance(moduloDist).trim() + sep
-                            + Outputs.formatDepth(tModDepth.getSourceDepth()).trim() + sep
+                            + Outputs.formatDepth(modelArgs.getSourceDepth()).trim() + sep
                             + currArrival.getName().trim()+sep
                             + Outputs.formatTime(currArrival.getTime()).trim()+ sep
                             +Outputs.formatRayParam(Math.PI / 180.0 * currArrival.getRayParam()).trim()+ sep
@@ -462,14 +463,14 @@ public class TauP_Table extends TauP_Time {
     protected void genericTable(PrintWriter out) throws TauPException,
             IOException {
         for(int depthNum = 0; depthNum < depths.length; depthNum++) {
-            depthCorrect(depths[depthNum], getReceiverDepth(), getScatterer());
+            modelArgs.setSourceDepth(depths[depthNum]); // depth correct happens in modelArgs
             for(int distNum = 0; distNum < distances.length; distNum++) {
-                List<Arrival> arrivals = calculate(distances[distNum]);
+                List<Arrival> arrivals = calcAll(getSeismicPhases(), Arrays.asList(DistanceRay.ofDegrees(distances[distNum])));
                 for (Arrival currArrival : arrivals) {
                     double moduloDist = currArrival.getModuloDistDeg();
                     out.print(modelArgs.getModelName() + " "
                                    + Outputs.formatDistance(moduloDist) + " "
-                                   + Outputs.formatDepth(tModDepth.getSourceDepth()) + " ");
+                                   + Outputs.formatDepth(modelArgs.getSourceDepth()) + " ");
                     out.print(currArrival.getName());
                     out.print("  "
                                    + Outputs.formatTime(currArrival.getTime())
@@ -520,11 +521,10 @@ public class TauP_Table extends TauP_Time {
             out.println();
         }
         for(int depthNum = 0; depthNum < depths.length; depthNum++) {
-            depthCorrect(depths[depthNum], getReceiverDepth(), getScatterer());
+            modelArgs.setSourceDepth(depths[depthNum]); // depth correct happens in modelArgs
             out.println("#  Travel time for z =    " + depths[depthNum]);
             for(int distNum = 0; distNum < distances.length; distNum++) {
-
-                List<Arrival>arrivals = calculate(distances[distNum]);
+                List<Arrival> arrivals = calcAll(getSeismicPhases(), Arrays.asList(DistanceRay.ofDegrees(distances[distNum])));
                 String outString = String.format(float15_4, -1.0) + "    none\n";
                 for (Arrival arrival : arrivals) {
                     if(distances[distNum] > maxDiff
