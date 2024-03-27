@@ -168,7 +168,7 @@ public class TauP_Web extends TauP_Tool {
                                 tool.start();
                                 configContentType(tool.outputFormat, exchange);
                                 exchange.getResponseSender().send(out.toString());
-                            } else if (tool instanceof TauP_XY){
+                            } else if (tool instanceof TauP_Curve){
                                 tool.setWriter(pw);
                                 tool.printScriptBeginning(pw);
                                 tool.start();
@@ -428,9 +428,9 @@ public class TauP_Web extends TauP_Tool {
         }
 
 
-        if (tool instanceof TauP_XY) {
+        if (tool instanceof TauP_Curve) {
 
-            TauP_XY rtplot = (TauP_XY) tool;
+            TauP_Curve rtplot = (TauP_Curve) tool;
             if (queryParameters.containsKey(QP_XAXIS)) {
                 unknownKeys.remove(QP_XAXIS);
                 rtplot.setxAxisType(AxisType.valueOf(queryParameters.get(QP_XAXIS).getFirst()));

@@ -3,9 +3,7 @@ package edu.sc.seis.TauP;
 import picocli.CommandLine;
 
 import java.io.*;
-import java.lang.reflect.Constructor;
 import java.util.Arrays;
-import java.util.concurrent.Callable;
 
 
 @CommandLine.Command(name = "taup",
@@ -18,7 +16,6 @@ import java.util.concurrent.Callable;
 				TauP_Pierce.class,
 				TauP_Path.class,
 				TauP_Create.class,
-				TauP_XY.class,
 				TauP_Curve.class,
 				TauP_SetMSeed3.class,
 				TauP_SetSac.class,
@@ -39,7 +36,6 @@ public class ToolRun {
 	public static String PIERCE = "pierce";
 	public static String PATH = "path";
 	public static String CURVE = "curve";
-	public static String XYPLOT = "xy";
 	public static String CREATE = "create";
     public static String GUI = "gui";
 	public static String SETSAC = "setsac";
@@ -55,7 +51,7 @@ public class ToolRun {
 	public static String VERSION = "version";
 	
 	static String[] toolnames = { GUI, CREATE, CURVE, PATH, PHASE, PIERCE, SETSAC, SETMSEED3, SPLOT, TABLE, TIME,
-			VPLOT, VELMERGE, WAVEFRONT, REFLTRANSPLOT, WKBJ, VERSION, XYPLOT };
+			VPLOT, VELMERGE, WAVEFRONT, REFLTRANSPLOT, WKBJ, VERSION };
 	
 	public static String getUsage() {
 		return "Usage: taup <tool> <options>\n"
@@ -137,8 +133,6 @@ public class ToolRun {
 			tool = new TauP_Create();
 		} else if (toolToRun.contentEquals(CURVE)) {
 			tool = new TauP_Curve();
-		} else if (toolToRun.contentEquals(XYPLOT)) {
-			tool = new TauP_XY();
 		} else if (toolToRun.contentEquals(PATH)) {
 			tool = new TauP_Path();
 		} else if (toolToRun.contentEquals(PHASE)) {
