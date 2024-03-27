@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.json.JSONObject;
 import org.json.JSONTokener;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.BufferedOutputStream;
@@ -331,6 +332,7 @@ public class CmdLineOutputTest {
         runJsonTests(jsonTestCmds);
     }
     @Test
+    @Disabled
     public void testTauPTable() throws Exception {
         // this one takes a lot of memory
        // runTests(new String[] {"taup table -ph ttall -generic"});
@@ -357,7 +359,8 @@ public class CmdLineOutputTest {
         String[] cmdArgs = new String[s.length - 1];
         System.arraycopy(s, 1, cmdArgs, 0, cmdArgs.length);
         System.err.println(cmd);
-        ToolRun.main(cmdArgs);
+        int exitCode = ToolRun.mainWithExitCode(cmdArgs);
+        assertEquals(0, exitCode, "exit code="+exitCode+"  "+cmd);
     }
 
     public void testCmd(String cmd) throws Exception {
