@@ -79,7 +79,7 @@ public class TauP_Pierce extends TauP_Time {
         this.onlyAddPoints = onlyAddPoints;
     }
 
-    @CommandLine.Option(names="--pierce", description = "adds depth for calculating pierce points")
+    @CommandLine.Option(names= {"-pierce", "--pierce"}, description = "adds depth for calculating pierce points")
     public void setAddDepth(List<Double> addDepths) {
         modelArgs.setModelSplitDepths(addDepths);
     }
@@ -161,8 +161,8 @@ public class TauP_Pierce extends TauP_Time {
                     out.write(Outputs.formatDistance(calcDist));
                     out.write(Outputs.formatDepth(pierce[j].getDepth()));
                     out.write(Outputs.formatTime(pierce[j].getTime()));
-                    if (((Arrival) arrival).getShootable() != null) {
-                        double[] latlon = ((Arrival) arrival).getShootable().getLatLonable().calcLatLon(calcDist, ((Arrival) arrival).getDistDeg());
+                    if (((Arrival) arrival).getShootable() != null && arrival.getShootable().getLatLonable() != null) {
+                        double[] latlon = arrival.getShootable().getLatLonable().calcLatLon(calcDist, ((Arrival) arrival).getDistDeg());
                         out.write("  " + Outputs.formatLatLon(latlon[0]) + "  "
                                 + Outputs.formatLatLon(latlon[1]));
                     }

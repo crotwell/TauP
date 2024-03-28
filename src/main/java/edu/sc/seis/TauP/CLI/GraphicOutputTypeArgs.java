@@ -7,7 +7,7 @@ import static edu.sc.seis.TauP.CLI.OutputTypes.*;
 public class GraphicOutputTypeArgs  {
 
 
-    @CommandLine.ArgGroup(exclusive=true, multiplicity="1")
+    @CommandLine.ArgGroup(exclusive=true, multiplicity="0..1")
     GraphicsOutputType outputType = new GraphicsOutputType();
 
     /** ps filename for use within gmt script. Usually named after the tool that created the output. */
@@ -93,12 +93,12 @@ public class GraphicOutputTypeArgs  {
     static class GraphicsOutputType {
 
         @CommandLine.Option(names = {"--text"}, required = true, description = "outputs as text")
-        boolean _isText;
+        boolean _isText = true;
         @CommandLine.Option(names = {"--json"}, required = true, description = "outputs as JSON")
-        boolean _isJSON;
+        boolean _isJSON = false;
         @CommandLine.Option(names = {"--gmt"}, required = true, description = "outputs as GMT")
-        boolean _isGMT;
+        boolean _isGMT = false;
         @CommandLine.Option(names = {"--svg"}, required = true, description = "outputs as SVG")
-        boolean _isSVG;
+        boolean _isSVG = false;
     }
 }

@@ -364,7 +364,7 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
         phases = null;
     }
 
-    public List<SeismicPhase> getSeismicPhases() {
+    public List<SeismicPhase> getSeismicPhases() throws TauModelException {
         if (phases == null) {
             recalcPhases();
         }
@@ -438,61 +438,40 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
      * This should not need to be called by outside classes as it is called by
      * depthCorrect, and calculate.
      */
-    protected synchronized void recalcPhases() {
+    protected synchronized void recalcPhases() throws TauModelException {
         List<SeismicPhase> newPhases = new ArrayList<SeismicPhase>();
-        boolean alreadyAdded;
-        String tempPhaseName;
-        for (int phaseNameNum = 0; phaseNameNum < phaseNames.size(); phaseNameNum++) {
-            tempPhaseName = phaseNames.get(phaseNameNum).getName();
-            alreadyAdded = false;
-            /*
-            for(int phaseNum = 0; phaseNum < phases.size(); phaseNum++) {
-                seismicPhase = phases.get(phaseNum);
-                if(seismicPhase.name.equals(tempPhaseName)) {
-                    phases.remove(phaseNum);
-                    if(seismicPhase.sourceDepth == depth
-                            && seismicPhase.tMod.equals(tModDepth)) {
-                        // ok so copy to newPhases
-                        newPhases.add(seismicPhase);
-                        alreadyAdded = true;
-                        if(verbose) {
-                            Alert.info(seismicPhase.toString());
-                        }
-                        //break;
+        TauModel tModDepth = modelArgs.depthCorrected();
+        for (PhaseName phaseName : phaseNames) {
+            String tempPhaseName = phaseName.getName();
+            // didn't find it precomputed, so recalculate
+            try {
+                List<SeismicPhase> calcPhaseList = SeismicPhaseFactory.createSeismicPhases(
+                        phaseName.getName(),
+                        tModDepth,
+                        modelArgs.getSourceDepth(),
+                        modelArgs.getReceiverDepth(),
+                        modelArgs.getScatterer(),
+                        DEBUG);
+                newPhases.addAll(calcPhaseList);
+                for (SeismicPhase seismicPhase : newPhases) {
+                    if (verbose) {
+                        Alert.info(seismicPhase.toString());
                     }
                 }
-            }
-            */
-            if (!alreadyAdded) {
-                // didn't find it precomputed, so recalculate
-                try {
-                    List<SeismicPhase> calcPhaseList = SeismicPhaseFactory.createSeismicPhases(tempPhaseName,
-                            modelArgs.depthCorrected(),
-                            modelArgs.getSourceDepth(),
-                            modelArgs.getReceiverDepth(),
-                            modelArgs.getScatterer(),
-                            DEBUG);
-                    newPhases.addAll(calcPhaseList);
-                    for (SeismicPhase seismicPhase : newPhases) {
-                        if (verbose) {
-                            Alert.info(seismicPhase.toString());
-                        }
-                    }
-                } catch (ScatterArrivalFailException e) {
-                    Alert.warning(e.getMessage() + ", skipping this phase");
-                    if (verbose || DEBUG) {
-                        e.printStackTrace();
-                    }
-                } catch (TauModelException e) {
-                    Alert.warning("Error with phase=" + tempPhaseName,
-                            e.getMessage() + "\nSkipping this phase");
-                    if (verbose || DEBUG) {
-                        e.printStackTrace();
-                    }
-                } finally {
-                    if (verbose) {
-                        Alert.info("-----------------");
-                    }
+            } catch (ScatterArrivalFailException e) {
+                Alert.warning(e.getMessage() + ", skipping this phase");
+                if (verbose || DEBUG) {
+                    e.printStackTrace();
+                }
+            } catch (TauModelException e) {
+                Alert.warning("Error with phase=" + tempPhaseName,
+                        e.getMessage() + "\nSkipping this phase");
+                if (verbose || DEBUG) {
+                    e.printStackTrace();
+                }
+            } finally {
+                if (verbose) {
+                    Alert.info("-----------------");
                 }
             }
         }

@@ -7,7 +7,7 @@ import static edu.sc.seis.TauP.CLI.OutputTypes.TEXT;
 
 public class TextOutputTypeArgs {
 
-    @CommandLine.ArgGroup(exclusive=true, multiplicity="1")
+    @CommandLine.ArgGroup(exclusive=true, multiplicity="0..1")
     TextOutputType outputType = new TextOutputType();
 
 
@@ -35,10 +35,10 @@ public class TextOutputTypeArgs {
     }
 
     static class TextOutputType {
-        @CommandLine.Option(names = {"-text"}, required = true, description = "outputs as text")
-        boolean _isText;
-        @CommandLine.Option(names = {"-json"}, required = true, description = "outputs as JSON")
-        boolean _isJSON;
+        @CommandLine.Option(names = {"-text", "--text"}, required = true, description = "outputs as text")
+        boolean _isText = true;
+        @CommandLine.Option(names = {"-json", "--json"}, required = true, description = "outputs as JSON")
+        boolean _isJSON = false;
     }
 
 }

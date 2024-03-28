@@ -17,6 +17,7 @@ import java.util.Arrays;
 				TauP_Path.class,
 				TauP_Create.class,
 				TauP_Curve.class,
+				TauP_ReflTransPlot.class,
 				TauP_SetMSeed3.class,
 				TauP_SetSac.class,
 				edu.sc.seis.TauP.TauP_VelocityPlot.class,

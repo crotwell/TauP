@@ -26,6 +26,7 @@
 package edu.sc.seis.TauP;
 
 import edu.sc.seis.TauP.CLI.OutputTypes;
+import edu.sc.seis.TauP.CLI.TextOutputTypeArgs;
 import picocli.CommandLine;
 
 import java.io.BufferedReader;
@@ -34,6 +35,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StreamTokenizer;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -49,7 +51,7 @@ import java.util.List;
  * 
  */
 @CommandLine.Command(name = "table")
-public class TauP_Table extends TauP_Time {
+public class TauP_Table extends TauP_AbstractPhaseTool {
 
     public static final String LOCSAT = "locsat";
 
@@ -305,8 +307,32 @@ public class TauP_Table extends TauP_Time {
                                     180.00f};
 
     public TauP_Table() {
-        super();
         setDefaultOutputFormat();
+    }
+
+    @Override
+    public String[] allowedOutputFormats() {
+        return new String[] { LOCSAT, OutputTypes.JSON, OutputTypes.TEXT, OutputTypes.CSV };
+    }
+
+    @Override
+    public String getOutputFormat() {
+        if(tableFormat.generic) {
+            // GENERIC:
+            return OutputTypes.TEXT;
+        } else if(tableFormat.csv) {
+            return OutputTypes.CSV;
+        } else if (tableFormat.locsat) {
+            return LOCSAT;
+        } else if (tableFormat.json) {
+            return OutputTypes.JSON;
+        }
+        return OutputTypes.TEXT;
+    }
+
+    @Override
+    public void setDefaultOutputFormat() {
+        tableFormat.generic = true;
     }
 
     public void init() throws TauPException {
@@ -409,26 +435,66 @@ public class TauP_Table extends TauP_Time {
     }
 
     @Override
+    public void destroy() throws TauPException {
+
+    }
+
+    @Override
+    public void validateArguments() throws TauModelException {
+
+    }
+
+    @Override
     public String getOutFileExtension() {
         return "";
     }
 
+    public List<Arrival> calcAll(List<SeismicPhase> phaseList, List<RayCalculateable> shootables) throws SlownessModelException, NoSuchLayerException {
+        List<Arrival> arrivals =  new ArrayList<>();
+        for (SeismicPhase phase : phaseList) {
+            for (RayCalculateable shoot : shootables) {
+                arrivals.addAll(shoot.calculate(phase));
+            }
+        }
+        arrivals = Arrival.sortArrivals(arrivals);
+        return arrivals;
+    }
 
     protected void jsonTable(PrintWriter out) throws TauPException, IOException {
         out.println("[");
         for(int depthNum = 0; depthNum < depths.length; depthNum++) {
-            modelArgs.setSourceDepth(depths[depthNum]); // depth correct happens in modelArgs
+            List<SeismicPhase> phaseList = recalcPhases(phaseNames, depths[depthNum]);
             for (int distNum = 0; distNum < distances.length; distNum++) {
-                List<Arrival> arrivals = calcAll(getSeismicPhases(), Arrays.asList(DistanceRay.ofDegrees(distances[distNum])));
-                writeJSON(out, "",
-                        getTauModelName(),
-                        modelArgs.getSourceDepth(),
-                        modelArgs.getReceiverDepth(),
-                        getSeismicPhases(),
-                        arrivals);
+                List<RayCalculateable> shootables = Arrays.asList(DistanceRay.ofDegrees(distances[distNum]));
+                List<Arrival> arrivals = calcAll(phaseList, shootables);
+                TauP_Time.writeJSON(out, "",
+                    getTauModelName(),
+                    modelArgs.getSourceDepth(),
+                    modelArgs.getReceiverDepth(),
+                    phaseList,
+                    arrivals);
             }
         }
         out.println("]");
+    }
+
+    protected List<SeismicPhase> recalcPhases(List<PhaseName> phaseNames, double depth) throws TauModelException {
+        List<SeismicPhase> newPhases = new ArrayList<SeismicPhase>();
+        modelArgs.setSourceDepth(depth);
+        TauModel tModDepth = modelArgs.depthCorrected();
+        for (PhaseName phaseName : phaseNames) {
+            String tempPhaseName = phaseName.getName();
+            List<SeismicPhase> calcPhaseList = SeismicPhaseFactory.createSeismicPhases(
+                    phaseName.getName(),
+                    tModDepth,
+                    modelArgs.getSourceDepth(),
+                    modelArgs.getReceiverDepth(),
+                    modelArgs.getScatterer(),
+                    DEBUG);
+            newPhases.addAll(calcPhaseList);
+
+        }
+        return newPhases;
     }
 
     protected void csvTable(PrintWriter out) throws TauPException,
@@ -437,7 +503,7 @@ public class TauP_Table extends TauP_Time {
         String header = "Model,Distance (deg),Depth (km),Phase,Time (s),RayParam (deg/s),Takeoff Angle,Incident Angle,Purist Distance,Purist Name";
         out.println(header);
         for(int depthNum = 0; depthNum < depths.length; depthNum++) {
-            modelArgs.setSourceDepth(depths[depthNum]); // depth correct happens in modelArgs
+            List<SeismicPhase> phaseList = recalcPhases(phaseNames, depths[depthNum]);
             for(int distNum = 0; distNum < distances.length; distNum++) {
                 List<Arrival> arrivals = calcAll(getSeismicPhases(), Arrays.asList(DistanceRay.ofDegrees(distances[distNum])));
                 for (Arrival currArrival : arrivals) {
@@ -552,7 +618,7 @@ public class TauP_Table extends TauP_Time {
     }
 
     @CommandLine.ArgGroup(exclusive = true, multiplicity = "0..1")
-    TableFormat tableFormat;
+    TableFormat tableFormat = new TableFormat();
 
     static class TableFormat {
         @CommandLine.Option(names = "--csv", required = true)

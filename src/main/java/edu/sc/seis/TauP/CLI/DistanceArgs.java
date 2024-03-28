@@ -21,7 +21,7 @@ public class DistanceArgs {
         return out;
     }
 
-    public List<RayCalculateable> getShootRays() {
+    public List<RayCalculateable> getRayCalculatables() {
         List<RayCalculateable> out = new ArrayList<>();
         out.addAll(getDistances());
         for (Double d : distArgs.shootRaypList) {
@@ -125,7 +125,7 @@ public class DistanceArgs {
 
     static class DistanceArgsInner {
 
-        @CommandLine.Option(names={"--deg", "--degrees"}, paramLabel="d", description="distance in degrees", split=",")
+        @CommandLine.Option(names={"-deg", "--deg", "--degrees"}, paramLabel="d", description="distance in degrees", split=",")
         protected List<Double> degreesList = new ArrayList<Double>();
 
         /**

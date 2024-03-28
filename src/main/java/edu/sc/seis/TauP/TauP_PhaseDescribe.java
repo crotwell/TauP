@@ -69,7 +69,7 @@ public class TauP_PhaseDescribe extends TauP_AbstractPhaseTool {
 
     }
 
-    public void printResult(PrintWriter writer) {
+    public void printResult(PrintWriter writer) throws TauModelException {
         if (getOutputFormat().equals(OutputTypes.TEXT)) {
             printResultText(writer);
         } else if (getOutputFormat().equals(OutputTypes.JSON)) {
@@ -80,7 +80,7 @@ public class TauP_PhaseDescribe extends TauP_AbstractPhaseTool {
         writer.flush();
     }
 
-    public void printResultText(PrintWriter writer) {
+    public void printResultText(PrintWriter writer) throws TauModelException {
         List<SeismicPhase> phaseList = getSeismicPhases();
         for (SeismicPhase phase: phaseList) {
             writer.println(phase.describe());
@@ -99,7 +99,7 @@ public class TauP_PhaseDescribe extends TauP_AbstractPhaseTool {
         }
     }
 
-    public void printResultJSON(PrintWriter writer) {
+    public void printResultJSON(PrintWriter writer) throws TauModelException {
         List<SeismicPhase> phaseList = getSeismicPhases();
         writer.println("[");
         boolean first = true;

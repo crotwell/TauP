@@ -147,7 +147,7 @@ public class TauP_Web extends TauP_Tool {
                                         return;
                                     }
                                     TauP_Time timeTool = ((TauP_Time) tool);
-                                    timeTool.printResult(pw,timeTool.calcAll(timeTool.getSeismicPhases(), timeTool.getDistanceArgs().getShootRays()) );
+                                    timeTool.printResult(pw,timeTool.calcAll(timeTool.getSeismicPhases(), timeTool.getDistanceArgs().getRayCalculatables()) );
                                     configContentType(tool.getOutputFormat(), exchange);
                                     exchange.getResponseSender().send(out.toString());
                                 } catch (Exception e) {

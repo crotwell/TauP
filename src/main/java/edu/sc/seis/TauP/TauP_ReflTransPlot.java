@@ -13,6 +13,7 @@ import java.util.List;
 import static edu.sc.seis.TauP.VelocityModel.P_WAVE_CHAR;
 import static edu.sc.seis.TauP.VelocityModel.S_WAVE_CHAR;
 
+@CommandLine.Command(name = "refltrans")
 public class TauP_ReflTransPlot extends  TauP_Tool {
 
     public static final String DEFAULT_OUTFILE = "taup_refltrans";
@@ -336,9 +337,6 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
     }
 
     @CommandLine.Mixin
-    ModelArgs modelArgs = new ModelArgs();
-
-    @CommandLine.Mixin
     GraphicOutputTypeArgs outputTypeArgs = new GraphicOutputTypeArgs();
 
     @Override
@@ -346,6 +344,7 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
         return outputTypeArgs.getOuputFormat();
     }
 
+    @CommandLine.Option(names = "--mod", description = "model file to get interface, must also use --depth")
     public void setModelName(String modelName) {
         this.modelName = modelName;
     }

@@ -70,7 +70,7 @@ public class TauP_VelocityPlot extends TauP_Tool {
         if (modelArgs.getReceiverDepth() != 0) {
             out.print("<polyline class=\"receiverdepth\" points=\"0 "+(maxY-modelArgs.getReceiverDepth())+" "+maxVel+" "+(maxY-modelArgs.getReceiverDepth())+"\"/>");
         }
-        if (modelArgs.getScatterer().depth != 0) {
+        if (modelArgs.getScatterer() != null && modelArgs.getScatterer().depth != 0) {
             out.print("<polyline class=\"scattererdepth\" points=\"0 "+(maxY-modelArgs.getScatterer().depth)+" "+maxVel+" "+(maxY-modelArgs.getScatterer().depth)+"\"/>");
         }
 

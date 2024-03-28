@@ -115,7 +115,8 @@ public class TauP_Path extends TauP_AbstractRayTool {
 	}
 	@Override
 	public void setDefaultOutputFormat() {
-		setOutputFormat(OutputTypes.GMT);
+		outputTypeArgs.setOutputType(OutputTypes.TEXT);
+		setOutputFormat(OutputTypes.TEXT);
 	}
 	
 	@Override
@@ -159,12 +160,12 @@ public class TauP_Path extends TauP_AbstractRayTool {
         this.maxPathTime = maxPathTime;
     }
 
-	@CommandLine.Option(names = "--withtime",
-	description = "include time for each path point")
 	public boolean isWithTime() {
 		return withTime;
 	}
 
+	@CommandLine.Option(names = "--withtime",
+			description = "include time for each path point")
 	public void setWithTime(boolean withTime) {
 		this.withTime = withTime;
 	}
@@ -274,7 +275,7 @@ public class TauP_Path extends TauP_AbstractRayTool {
                     out.write("  " + Outputs.formatTime(calcTime));
                 }
                 if (!getGraphicOutputTypeArgs().isGMT()) {
-					if (arrival.getShootable() != null) {
+					if (arrival.getShootable() != null && arrival.getShootable().getLatLonable() != null ) {
 						double[] latlon = arrival.getShootable().getLatLonable().calcLatLon(calcDist, arrival.getDistDeg());
 						out.write("  " + Outputs.formatLatLon(latlon[0]) + "  "
 								+ Outputs.formatLatLon(latlon[1]));
@@ -964,7 +965,7 @@ public class TauP_Path extends TauP_AbstractRayTool {
 	}
 
 	public void start() throws IOException, TauModelException, TauPException {
-
+		calcAndPrint(getSeismicPhases(), distanceArgs.getRayCalculatables());
 	}
 
 
