@@ -18,6 +18,7 @@ package edu.sc.seis.TauP;
 
 import edu.sc.seis.TauP.CLI.OutputTypes;
 import edu.sc.seis.TauP.CLI.TextOutputTypeArgs;
+import edu.sc.seis.seisFile.Location;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -604,7 +605,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
                         tokenIn.nextToken();
                         if(tokenIn.ttype == StreamTokenizer.TT_NUMBER) {
                             getDistanceArgs().setAzimuth(tokenIn.nval);
-                            getDistanceArgs().unsetStationLatLon();
+                            getDistanceArgs().clearStationLatLon();
                         } else {
                             Alert.warning("Expected a number.", "got "
                                     + tokenIn + " instead.");
@@ -627,7 +628,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
                         tokenIn.nextToken();
                         if(tokenIn.ttype == StreamTokenizer.TT_NUMBER) {
                             getDistanceArgs().setBackAzimuth(tokenIn.nval);
-                            getDistanceArgs().unsetEventLatLon();
+                            getDistanceArgs().clearEventLatLon();
                             if(DEBUG) {
                                 Alert.info("backAzimuth=" + tokenIn.nval);
                             }
@@ -658,7 +659,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
                             tokenIn.nextToken();
                             if(tokenIn.ttype == StreamTokenizer.TT_NUMBER) {
                                 double evLon = tokenIn.nval;
-                                getDistanceArgs().setEventLatLon(evLat, evLon);
+                                getDistanceArgs().getEventList().add( new Location(evLat, evLon));
                                 if(DEBUG) {
                                     Alert.info("eventLon=" + evLon);
                                 }
@@ -688,7 +689,8 @@ public class TauP_Time extends TauP_AbstractRayTool {
                                 if(DEBUG) {
                                     Alert.info("stationLon=" + tokenIn.nval);
                                 }
-                                getDistanceArgs().setStationLatLon(stationLat, stationLon);
+                                getDistanceArgs().getStationList().clear();
+                                getDistanceArgs().getStationList().add(new Location(stationLat, stationLon));
                             } else {
                                 printHelp();
                                 break;

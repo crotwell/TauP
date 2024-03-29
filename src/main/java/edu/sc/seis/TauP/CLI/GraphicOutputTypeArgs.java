@@ -16,7 +16,7 @@ public class GraphicOutputTypeArgs  {
     public boolean gmtScript = false;
 
     @CommandLine.Option(names="--mapwidth", description = "plot width in inches for GMT, pixels for SVG.")
-    public Float mapwidth = null;
+    public Float mapwidth = 6f;
 
 
     @CommandLine.Option(names="--mapwidthunit", defaultValue = "i", description = "plot width unit for GMT. Default is i for inchs")

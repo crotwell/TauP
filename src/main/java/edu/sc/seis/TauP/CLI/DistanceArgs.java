@@ -1,6 +1,7 @@
 package edu.sc.seis.TauP.CLI;
 
 import edu.sc.seis.TauP.*;
+import edu.sc.seis.seisFile.Location;
 import picocli.CommandLine;
 import picocli.CommandLine.ArgGroup;
 import picocli.CommandLine.Option;
@@ -18,47 +19,139 @@ public class DistanceArgs {
         for (Double d : distArgs.distKilometersList) {
             out.add(DistanceRay.ofKilometers(d));
         }
+        if (hasEventLatLon() && !hasStationLatLon() && getAzimuth() != null) {
+            List<DistanceRay> evtOut = new ArrayList<>();
+            for (DistanceRay dr : out) {
+                if (dr.isLatLonable()) {
+                    // already enough info, so just add
+                    evtOut.add(dr);
+                }
+                for (Location evt : distArgs.eventList) {
+                    DistanceRay evtDr = new DistanceRay(dr);
+                    evtDr.withEventAzimuth(evt, getAzimuth());
+                    evtOut.add(dr);
+                }
+            }
+            out = evtOut;
+        } else if ( ! hasEventLatLon() && hasStationLatLon() && getBackAzimuth() != null) {
+            List<DistanceRay> staOut = new ArrayList<>();
+            for (DistanceRay dr : out) {
+                if (dr.isLatLonable()) {
+                    // already enough info, so just add
+                    staOut.add(dr);
+                }
+                for (Location evt : distArgs.eventList) {
+                    DistanceRay evtDr = new DistanceRay(dr);
+                    evtDr.withEventAzimuth(evt, getAzimuth());
+                    staOut.add(dr);
+                }
+            }
+            out = staOut;
+        } else if (hasEventLatLon() && hasStationLatLon()) {
+            // now add evt-station pairs, already have latlonable
+            for (Location evtLoc : distArgs.eventList) {
+                for (Location staLoc : distArgs.stationList) {
+                    if (distArgs.geodetic) {
+                        throw new RuntimeException("geodetic not yet...");
+                    } else {
+                        out.add(DistanceRay.ofStationEvent(staLoc, evtLoc));
+                    }
+                }
+            }
+        }
         return out;
     }
 
+    public List<RayParamRay> getRayParamRays() {
+        List<RayParamRay> rpList = new ArrayList<>();
+        for (Double d : distArgs.shootRaypList) {
+            rpList.add(RayParamRay.ofRayParam(d));
+        }
+        if (hasEventLatLon() && !hasStationLatLon() && getAzimuth() != null) {
+            if (distArgs.geodetic) {
+                throw new RuntimeException("geodetic not yet...");
+            } else {
+                List<RayParamRay> evtOut = new ArrayList<>();
+                for (RayParamRay dr : rpList) {
+                    for (Location evt : distArgs.eventList) {
+                        RayParamRay evtDr = new RayParamRay(dr);
+                        evtDr.withEventAzimuth(evt, getAzimuth());
+                        evtOut.add(dr);
+                    }
+                }
+                rpList = evtOut;
+            }
+
+        } else if ( ! hasEventLatLon() && hasStationLatLon() && getBackAzimuth() != null) {
+            List<RayParamRay> staOut = new ArrayList<>();
+            for (RayParamRay dr : rpList) {
+                if (dr.isLatLonable()) {
+                    // already enough info, so just add
+                    staOut.add(dr);
+                }
+                for (Location evt : distArgs.eventList) {
+                    RayParamRay evtDr = new RayParamRay(dr);
+                    evtDr.withEventAzimuth(evt, getAzimuth());
+                    staOut.add(dr);
+                }
+
+            }
+            rpList = staOut;
+        }
+        return rpList;
+    }
+
+    public List<TakeoffAngleRay> getTakeoffAngleRays() {
+        List<TakeoffAngleRay> rpList = new ArrayList<>();
+        for (Double d : distArgs.takeoffAngle) {
+            rpList.add(TakeoffAngleRay.ofTakeoffAngle(d));
+        }
+        if (hasEventLatLon() && !hasStationLatLon() && getAzimuth() != null) {
+            if (distArgs.geodetic) {
+                throw new RuntimeException("geodetic not yet...");
+            } else {
+                List<TakeoffAngleRay> evtOut = new ArrayList<>();
+                for (TakeoffAngleRay dr : rpList) {
+                    for (Location evt : distArgs.eventList) {
+                        TakeoffAngleRay evtDr = new TakeoffAngleRay(dr);
+                        evtDr.withEventAzimuth(evt, getAzimuth());
+                        evtOut.add(dr);
+                    }
+                }
+                rpList = evtOut;
+            }
+        } else if ( ! hasEventLatLon() && hasStationLatLon() && getBackAzimuth() != null) {
+            List<TakeoffAngleRay> staOut = new ArrayList<>();
+            for (TakeoffAngleRay dr : rpList) {
+                if (dr.isLatLong()) {
+                    // already enough info, so just add
+                    staOut.add(dr);
+                }
+                for (Location evt : distArgs.eventList) {
+                    TakeoffAngleRay evtDr = new TakeoffAngleRay(dr);
+                    evtDr.withEventAzimuth(evt, getAzimuth());
+                    staOut.add(dr);
+                }
+
+            }
+            rpList = staOut;
+        }
+        return rpList;
+    }
     public List<RayCalculateable> getRayCalculatables() {
         List<RayCalculateable> out = new ArrayList<>();
         out.addAll(getDistances());
-        for (Double d : distArgs.shootRaypList) {
-            out.add(RayParamRay.ofRayParam(d));
-        }
-        for (Double d : distArgs.takeoffAngle) {
-            out.add(TakeoffAngleRay.ofTakeoffAngle(d));
-        }
-        LatLonable latLonable = getLatLonable();
-        if (latLonable != null ) {
-            for (RayCalculateable shoot : out) {
-                shoot.setLatLonable(latLonable);
-            }
-        }
+        out.addAll(getRayParamRays());
+        out.addAll(getTakeoffAngleRays());
         return out;
-    }
-
-    public LatLonable getLatLonable() {
-        LatLonable latLonable = null;
-        if (distArgs.geodetic) {
-            throw new RuntimeException("geodetic not yet...");
-        } else {
-            if (hasEventLatLon() && hasStationLatLon()) {
-                latLonable = new EventStation(distArgs.eventLat, distArgs.eventLon, distArgs.stationLat, distArgs.stationLon);
-            } else if (getAzimuth() != null && hasEventLatLon()) {
-                latLonable = new EventAzimuth(distArgs.eventLat, distArgs.eventLon, getAzimuth());
-            } else if (getBackAzimuth() != null && hasStationLatLon()) {
-                latLonable = new StationBackAzimuth(distArgs.stationLat, distArgs.stationLon, getBackAzimuth());
-            }
-        }
-        return latLonable;
     }
 
     public Double getAzimuth() {
         return distArgs.azimuth;
     }
     public void setAzimuth(double val) { distArgs.azimuth = val;}
+    public boolean hasAzimuth() {return distArgs.azimuth != null;}
+
     public Double getBackAzimuth() {
         return distArgs.backAzimuth;
     }
@@ -67,28 +160,24 @@ public class DistanceArgs {
         return distArgs.eventLat != null && distArgs.eventLon != null;
     }
     public boolean hasStationLatLon() {
-        return distArgs.stationLat != null && distArgs.stationLon != null;
+        return distArgs.stationList.size() > 0;
     }
 
     @ArgGroup(validate = false, heading = "Distance is given by:%n")
     DistanceArgsInner distArgs = new DistanceArgsInner();
 
-    public void setStationLatLon(double stationLat, double stationLon) {
-        distArgs.stationLat = stationLat;
-        distArgs.stationLon = stationLon;
+    public List<Location> getStationList() {
+        return distArgs.stationList;
     }
-    public void unsetStationLatLon() {
-        distArgs.stationLat = null;
-        distArgs.stationLon = null;
+    public void clearStationLatLon() {
+        distArgs.stationList.clear();
     }
 
-    public void setEventLatLon(double evLat, double evLon) {
-        distArgs.eventLat = evLat;
-        distArgs.eventLon = evLon;
+    public List<Location> getEventList() {
+        return distArgs.eventList;
     }
-    public void unsetEventLatLon() {
-        distArgs.eventLat = null;
-        distArgs.eventLon = null;
+    public void clearEventLatLon() {
+        distArgs.eventList.clear();
     }
 
     public void setDegreeList(List<Double> degreesList) {
@@ -103,17 +192,9 @@ public class DistanceArgs {
         distArgs.shootRaypList = rayParamList;
     }
 
-    public void setStationList(List<Double[]> stlatlonList) {
-        if (stlatlonList.size()>1) {
-            throw new RuntimeException("multiple sta lat/lon not yet impl.");
-        }
-        distArgs.stationLat = stlatlonList.get(0)[0];
-        distArgs.stationLon = stlatlonList.get(0)[1];
-    }
-
     public void clear() {
-        distArgs.stationLat = null;
-        distArgs.stationLon = null;
+        distArgs.stationList.clear();
+        distArgs.eventList.clear();
         distArgs.eventLat = null;
         distArgs.eventLon = null;
         distArgs.takeoffAngle.clear();
@@ -136,11 +217,11 @@ public class DistanceArgs {
         protected List<Double> distKilometersList = new ArrayList<Double>();
 
         @Option(names="-az", description="azimuth in degrees")
-        protected double azimuth = Double.MAX_VALUE;
+        protected Double azimuth = Double.MAX_VALUE;
 
 
         @Option(names="-baz", description="backazimuth in degrees")
-        protected double backAzimuth = Double.MAX_VALUE;
+        protected Double backAzimuth = Double.MAX_VALUE;
 
 
         @Option(names="--takeoff",
@@ -152,22 +233,40 @@ public class DistanceArgs {
                 split=",")
         protected List<Double> shootRaypList = new ArrayList<Double>();
 
-        @Option(names={"-sta", "--station"}, arity="2", description="station latitude and longitude"
+        @Option(names={"-sta", "--station"},
+                arity="2",
+                description="station latitude and longitude"
                 )
-        void setStationLatLon(double stationLat, double stationLon) {
-            this.stationLat = stationLat;
-            this.stationLon = stationLon;
+        void setStationLatLon(List<Double> stationLatLon) {
+            if (stationLatLon.size() % 2 != 0) {
+                throw new IllegalArgumentException("Station lat lon must have even number of items: "+stationLatLon.size());
+            }
+            for (int i = 0; i < stationLatLon.size()/2; i+=2) {
+                stationList.add(new Location(stationLatLon.get(i), stationLatLon.get(i+1)));
+            }
         }
 
-        protected Double stationLat = null;
-
-        protected Double stationLon = null;
+        protected List<Location> stationList = new ArrayList<>();
 
         @Option(names={"-evt", "--event"}, arity="2", description="event latitude and longitude")
+        void setEventLatLon(List<Double> eventLatLon) {
+            if (eventLatLon.size() == 0) {
+                throw new RuntimeException("event len 0");
+                //unsetEventLatLon();
+            } else {
+                setEventLatLon(eventLatLon.get(0), eventLatLon.get(1));
+            }
+        }
         void setEventLatLon(double eventLat, double eventLon) {
             this.eventLat = eventLat;
             this.eventLon = eventLon;
         }
+        void unsetEventLatLon() {
+            this.eventLat = null;
+            this.eventLon = null;
+        }
+
+        protected List<Location> eventList = new ArrayList<>();
 
         protected Double eventLat = null;
 

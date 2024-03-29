@@ -1,10 +1,15 @@
 package edu.sc.seis.TauP;
 
+import edu.sc.seis.seisFile.Location;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class RayParamRay extends RayCalculateable {
 
+    public RayParamRay(RayParamRay rpr) {
+        this.rayParam = rpr.getRayParam();
+    }
 
     public RayParamRay(Double rayParam) {
         this.rayParam = rayParam;
@@ -19,6 +24,11 @@ public class RayParamRay extends RayCalculateable {
         return ray;
     }
 
+    public void withEventAzimuth(Location evt, double azimuth) {
+        this.evtLatLon = evt;
+        this.azimuth = azimuth;
+    }
+
     @Override
     public List<Arrival> calculate(SeismicPhase phase) throws SlownessModelException, NoSuchLayerException {
         List<Arrival> arrivals = new ArrayList<>();
@@ -31,8 +41,33 @@ public class RayParamRay extends RayCalculateable {
     }
 
     /**
+     * ray param in s/radian
+     *
+     * @return
+     */
+    public Double getRayParam() {
+        return rayParam;
+    }
+
+
+    @Override
+    public LatLonable getLatLonable() {
+        if (isLatLonable()) {
+            return new EventAzimuth(evtLatLon, azimuth);
+        }
+        return null;
+    }
+
+    @Override
+    public boolean isLatLonable() {
+        return evtLatLon != null && azimuth != null;
+    }
+
+    /**
      * Ray parameter in s/radian.
      */
     Double rayParam;
+    Location evtLatLon;
+    Double azimuth;
 
 }

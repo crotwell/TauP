@@ -1,11 +1,28 @@
 package edu.sc.seis.TauP;
 
 import edu.sc.seis.TauP.CLI.DistanceArgs;
+import edu.sc.seis.seisFile.Location;
 
 import java.util.List;
 
 public class DistanceRay extends RayCalculateable {
 
+    public DistanceRay() {}
+    public DistanceRay(DistanceRay dr) {
+          radians = dr.radians;
+          degrees = dr.degrees;
+          kilometers = dr.kilometers;
+          staLatLon = dr.staLatLon;
+          evtLatLon = dr.evtLatLon;
+          lat = dr.lat;
+          lon = dr.lon;
+          azimuth = dr.azimuth;
+          backAzimuth = dr.backAzimuth;
+          geodetic = dr.geodetic;
+          flattening = dr.flattening;
+
+          args = dr.args;
+    }
     public static DistanceRay ofDegrees(double deg) {
         DistanceRay val = new DistanceRay();
         val.degrees = deg;
@@ -22,34 +39,32 @@ public class DistanceRay extends RayCalculateable {
         return val;
     }
 
-    public static DistanceRay ofStationEvent(double staLat, double staLon, double evtLat, double evtLon) {
-        DistanceRay val = DistanceRay.ofDegrees(SphericalCoords.distance(evtLat, evtLon, staLat, staLon));
-        val.lat = evtLat;
-        val.lon = evtLon;
-        val.azimuth = SphericalCoords.azimuth(evtLat, evtLon, staLat, staLon);
-        val.backAzimuth = SphericalCoords.azimuth(staLat, staLon, evtLat, evtLon);
+    public static DistanceRay ofStationEvent(Location sta, Location evt) {
+        DistanceRay val = DistanceRay.ofDegrees(SphericalCoords.distance(evt, sta));
+        val.evtLatLon = evt;
+        val.staLatLon = sta;
+        val.azimuth = SphericalCoords.azimuth(evt, sta);
+        val.backAzimuth = SphericalCoords.azimuth(sta, evt);
         return val;
     }
 
-    public void withEventAzimuth(double evtLat, double evtLon, double azimuth) {
-        this.lat = evtLat;
-        this.lon = evtLon;
+    public void withEventAzimuth(Location evt, double azimuth) {
+        this.evtLatLon = evt;
         this.azimuth = azimuth;
         this.backAzimuth = null;
     }
 
-    public void withStationBackAzimuth(double staLat, double staLon, double backazimuth) {
-        this.lat = staLat;
-        this.lon = staLon;
+    public void withStationBackAzimuth(Location sta, double backazimuth) {
+        this.staLatLon = sta;
         this.azimuth = null;
         this.backAzimuth = backazimuth;
     }
 
-    public static DistanceRay ofGeodeticStationEvent(double staLat, double staLon, double evtLat, double evtLon, double flattening) {
-        DistAz distAz = new DistAz(staLat, staLon, evtLat, evtLon, flattening);
+    public static DistanceRay ofGeodeticStationEvent(Location sta, Location evt, double flattening) {
+        DistAz distAz = new DistAz(sta, evt, flattening);
         DistanceRay val = ofDegrees(distAz.getDelta());
-        val.lat = evtLat;
-        val.lon = evtLon;
+        val.staLatLon = sta;
+        val.evtLatLon = evt;
         val.azimuth = distAz.getAz();
         val.backAzimuth = distAz.getBaz();
         val.flattening = flattening;
@@ -86,15 +101,28 @@ public class DistanceRay extends RayCalculateable {
         return degrees*SphericalCoords.dtor;
     }
 
+    @Override
+    public boolean isLatLonable() {
+        return (staLatLon != null && evtLatLon != null) || (staLatLon != null && backAzimuth != null) || (evtLatLon != null && azimuth != null);
+    }
+
+    @Override
+    public LatLonable getLatLonable() {
+        if (staLatLon != null && evtLatLon != null) {
+            return new EventStation(evtLatLon, staLatLon);
+        } else if (staLatLon != null && backAzimuth != null) {
+            return new StationBackAzimuth(staLatLon, backAzimuth);
+        } else if (evtLatLon != null && azimuth != null) {
+            return new EventAzimuth(evtLatLon, azimuth);
+        }
+        return null;
+    }
+
     protected Double radians = null;
     protected Double degrees = null;
     protected Double kilometers = null;
-    protected Double searchDist = null;
-
-    public boolean isLatLong() {
-        return lat != null;
-    }
-
+    protected Location staLatLon = null;
+    protected Location evtLatLon = null;
     protected Double lat = null;
     protected Double lon = null;
     protected Double azimuth = null;

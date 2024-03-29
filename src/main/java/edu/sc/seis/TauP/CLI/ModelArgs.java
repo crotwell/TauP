@@ -130,17 +130,29 @@ public class ModelArgs {
 
         @CommandLine.Option(names = {"--stadepth"},
                 defaultValue = "0.0",
-                paramLabel = "station depth",
+                paramLabel = "depth",
                 description = "the receiver depth in km for stations not at the surface")
         double receiverDepth = 0.0;
 
-        @CommandLine.Option(names = {"--scat", "--scatterer"},
+        @CommandLine.Option(names = {"--scat", "--scatter"},
                 arity = "2",
+                paramLabel = "s",
                 description = "scattering depth and distance in degrees, which may be negative."
         )
+        public void setScatterer(List<Double> depth_dist) {
+            if (depth_dist.size() == 2) {
+                setScatterer(depth_dist.get(0), depth_dist.get(1));
+            } else {
+                unsetScatterer();
+            }
+        }
         public void setScatterer(double depth, double dist) {
             scattererDepth = depth;
             scattererDist = dist;
+        }
+        public void unsetScatterer() {
+            scattererDepth = null;
+            scattererDist = null;
         }
         public Double scattererDepth;
         public Double scattererDist;

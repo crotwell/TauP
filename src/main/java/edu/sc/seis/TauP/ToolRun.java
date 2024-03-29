@@ -172,9 +172,30 @@ public class ToolRun {
 
 
 	public static int mainWithExitCode(String[] args) throws IOException {
+		// precheck args for debug and verbose to aid in debugging picocli issues
+		for (String arg : args) {
+			if(dashEquals("verbose", arg)) {
+				VERBOSE = true;
+			} else if(dashEquals("debug", arg)) {
+				VERBOSE = true;
+				DEBUG = true;
+				TauP_Tool.DEBUG = true;
+			}
+		}
 		CommandLine commandLine = new CommandLine(new edu.sc.seis.TauP.ToolRun());
 		commandLine.setPosixClusteredShortOptionsAllowed(false);
 		commandLine.setColorScheme(colorScheme);
+		if (DEBUG) {
+			commandLine.setParameterExceptionHandler(new CommandLine.IParameterExceptionHandler() {
+
+				@Override
+				public int handleParseException(CommandLine.ParameterException ex, String[] strings) throws Exception {
+					commandLine.getErr().println(commandLine.getColorScheme().stackTraceText(ex));
+					commandLine.getErr().println(commandLine.getColorScheme().errorText(ex.getMessage()));
+					return 3;
+				}
+			});
+		}
 		int result = commandLine.execute(args);
 		if (result != 0) {
 			System.err.println("Error code: " + result);

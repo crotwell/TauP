@@ -49,6 +49,15 @@ public class DistAz {
     }
 
     /**
+     c getDelta()  Great Circle Arc distance in degrees
+     c getAz()     Azimuth from loc1 to loc2 in degrees
+     c getBaz()    Back Azimuth from loc2 to loc1 in degrees
+     */
+    public DistAz(Location loc1, Location loc2, double flattening){
+        this(loc1.getLatitude(), loc1.getLongitude(), loc2.getLatitude(), loc2.getLongitude(), flattening);
+    }
+
+    /**
      c lat1  Latitude of first point (+N, -S) in degrees
      c lon1  Longitude of first point (+E, -W) in degrees
      c lat2  Latitude of second point

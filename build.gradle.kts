@@ -55,12 +55,10 @@ val webserverImplementation by configurations.getting {
 dependencies {
 
     implementation("org.json:json:20230618")
-    //implementation("edu.sc.seis:seisFile:2.1.0-SNAPSHOT2") {
+    implementation("edu.sc.seis:seisFile:2.1.0-SNAPSHOT3") {
     // or
-    implementation("edu.sc.seis:seisFile:2.1.0-20240315.154800-2") {
+    //implementation("edu.sc.seis:seisFile:2.1.0-20240315.154800-2") {
       // we need seisFile for sac/mseed3 output, but not all the other functionality
-      exclude(group = "info.picocli", module = "picocli")
-      exclude(group = "com.fasterxml.woodstox", module = "woodstox-core")
       exclude(group = "org.apache.httpcomponents", module = "httpclient")
     }
 

@@ -5,6 +5,7 @@ import edu.sc.seis.TauP.*;
 import edu.sc.seis.TauP.CLI.OutputTypes;
 import edu.sc.seis.TauP.CLI.Scatterer;
 import edu.sc.seis.seisFile.BuildVersion;
+import edu.sc.seis.seisFile.Location;
 import edu.sc.seis.seisFile.mseed3.MSeed3Record;
 import io.undertow.Undertow;
 import io.undertow.io.Sender;
@@ -116,12 +117,18 @@ public class TauP_Web extends TauP_Tool {
                                         }
                                         ((TauP_Time) tool).getDistanceArgs().setDegreeList(degreesList);
 
-                                    } else if (queryParams.containsKey(QP_EVLOC) && queryParams.containsKey(QP_STALOC)) {
+                                    } else if (queryParams.containsKey(QP_EVLOC)) {
                                         List<Double[]> evlatlonList = parseLoc(queryParams.get(QP_EVLOC).getFirst());
-                                        Double[] evlatlon = evlatlonList.get(0);
+                                        List<Location> evtList = ((TauP_Time) tool).getDistanceArgs().getEventList();
+                                        for (Double[] ll : evlatlonList) {
+                                            evtList.add(new Location(ll[0], ll[1]));
+                                        }
+                                    } else if (queryParams.containsKey(QP_STALOC)) {
                                         List<Double[]> stlatlonList = parseLoc(queryParams.get(QP_STALOC).getFirst());
-                                        ((TauP_Time) tool).getDistanceArgs().setEventLatLon(evlatlon[0], evlatlon[1]);
-                                        ((TauP_Time) tool).getDistanceArgs().setStationList(stlatlonList);
+                                        List<Location> staList = ((TauP_Time) tool).getDistanceArgs().getStationList();
+                                        for (Double[] ll : stlatlonList) {
+                                            staList.add(new Location(ll[0], ll[1]));
+                                        }
                                     } else if (queryParams.containsKey(QP_TAKEOFF)) {
                                         List<Double> takeoffList = new ArrayList<>();
                                         for (String distListStr : queryParams.get(QP_TAKEOFF)) {
@@ -383,13 +390,17 @@ public class TauP_Web extends TauP_Tool {
                 unknownKeys.remove(QP_EVLOC);
                 List<Double[]> latlonList = parseLoc(queryParameters.get(QP_EVLOC).getFirst());
                 Double[] latlon = latlonList.get(0);
-                timeTool.getDistanceArgs().setEventLatLon( latlon[0], latlon[1]);
+                timeTool.getDistanceArgs().getEventList().add( new Location( latlon[0], latlon[1]));
             }
             if (queryParameters.containsKey(QP_STALOC)) {
                 unknownKeys.remove(QP_STALOC);
-                List<Double[]> latlonList = parseLoc(queryParameters.get(QP_STALOC).getFirst());
-                Double[] latlon = latlonList.get(0);
-                timeTool.getDistanceArgs().setStationLatLon( latlon[0], latlon[1]);
+                List<Location> staList = timeTool.getDistanceArgs().getStationList();
+                for (String latlonParam : queryParameters.get(QP_STALOC)) {
+                    List<Double[]> latlonList = parseLoc(latlonParam);
+                    for (Double[] ll : latlonList) {
+                        staList.add(new Location(ll[0], ll[1]));
+                    }
+                }
             }
             if (tool instanceof TauP_Pierce) {
                 TauP_Pierce pierce = (TauP_Pierce) tool;

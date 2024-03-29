@@ -621,7 +621,7 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
      * is radians/second.
      */
 
-    @CommandLine.Option(names = "reddeg",
+    @CommandLine.Option(names = "--reddeg",
             description = "outputs curves with a reducing velocity (deg/sec), no effect if axis is not distance-like/time")
     public void setReduceVelDeg(double reduceVel) {
         if(reduceVel != 0.0) {
@@ -654,7 +654,7 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
      * set the reducing velocity, in kilometers/second. The internal
      * representation is radians/second.
      */
-    @CommandLine.Option(names = "redkm",
+    @CommandLine.Option(names = "--redkm",
             description = "outputs curves with a reducing velocity (km/sec), no effect if axis is not distance-like/time")
     public void setReduceVelKm(double reduceVel) {
         redVelString = reduceVel+" km/s";

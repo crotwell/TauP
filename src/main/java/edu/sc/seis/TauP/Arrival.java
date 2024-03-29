@@ -759,10 +759,17 @@ public class Arrival {
         return a;
     }
 
-    public RayCalculateable getShootable() {
+    public RayCalculateable getRayCalculateable() {
         return this.distValue;
     }
     public void setShootable(RayCalculateable dv) {
         this.distValue = dv;
+    }
+
+    public boolean isLatLonable() {
+        return this.getRayCalculateable() != null && this.getRayCalculateable().isLatLonable() ;
+    }
+    public LatLonable getLatLonable() {
+        return getRayCalculateable() != null ? getRayCalculateable().getLatLonable() : null;
     }
 }

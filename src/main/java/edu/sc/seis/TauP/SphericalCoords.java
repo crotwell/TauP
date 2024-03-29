@@ -25,6 +25,9 @@
  */
 package edu.sc.seis.TauP;
 
+
+import edu.sc.seis.seisFile.Location;
+
 /**
  * Utility class for spherical coordinate (lat-lon) transformations. Given lat,
  * lon, lat, lon you can find the distance or azimuth and given lat, lon,
@@ -59,6 +62,9 @@ public class SphericalCoords {
                         + Math.cos(latA * dtor) * Math.cos(latB * dtor)
                         * Math.cos((lonB - lonA) * dtor));
     }
+    public static double distance(Location a, Location b) {
+        return distance(a.getLatitude(), a.getLongitude(), b.getLatitude(), b.getLongitude());
+    }
 
     /** Calculates azimuth between two lat lon pairs. */
     public static double azimuth(double latA,
@@ -74,6 +80,9 @@ public class SphericalCoords {
                 / Math.sin(distance(latA, lonA, latB, lonB) * dtor);
         return rtod * Math.atan2(sinAzimuth, cosAzimuth);
     }
+    public static double azimuth(Location a, Location b) {
+        return azimuth(a.getLatitude(), a.getLongitude(), b.getLatitude(), b.getLongitude());
+    }
 
     /**
      * Find the rotation pole required to rotate the first lat lon pair to the
@@ -83,9 +92,9 @@ public class SphericalCoords {
      *          pole.
      */
     public static double[] rotationPole(double latA,
-                                        double lonA,
-                                        double latB,
-                                        double lonB) {
+                                 double lonA,
+                                 double latB,
+                                 double lonB) {
         double[] pointA = new double[3];
         double[] pointB = new double[3];
         double[] pole = new double[3];
@@ -155,6 +164,16 @@ public class SphericalCoords {
      * Calculates the latitude of a point a given distance along a given azimuth
      * from a starting lat lon.
      */
+    public static double latFor(Location a,
+                                double distance,
+                                double azimuth) {
+        return latFor(a.getLatitude(), a.getLongitude(), distance, azimuth);
+    }
+
+    /**
+     * Calculates the latitude of a point a given distance along a given azimuth
+     * from a starting lat lon.
+     */
     public static double latFor(double latA,
                                 double lonA,
                                 double distance,
@@ -165,6 +184,16 @@ public class SphericalCoords {
                         + Math.cos(distance * dtor) * Math.sin(latA * dtor));
     }
 
+
+    /**
+     * Calculates the latitude of a point a given distance along a given azimuth
+     * from a starting lat lon.
+     */
+    public static double lonFor(Location a,
+                                double distance,
+                                double azimuth) {
+        return lonFor(a.getLatitude(), a.getLongitude(), distance, azimuth);
+    }
     /**
      * Calculates the longitude of a point a given distance along a given
      * azimuth from a starting lat lon.

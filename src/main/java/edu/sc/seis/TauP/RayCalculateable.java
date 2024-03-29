@@ -6,15 +6,7 @@ public abstract class RayCalculateable {
 
     public abstract List<Arrival> calculate(SeismicPhase phase) throws SlownessModelException, NoSuchLayerException;
 
-    public LatLonable getLatLonable() {
-        return latLonable;
-    }
+    public abstract boolean isLatLonable();
+    public abstract LatLonable getLatLonable();
 
-    public void setLatLonable(LatLonable latLonable) {
-        if (this.latLonable != null ) {
-            throw new RuntimeException("Cannot set latlonable after already set");
-        }
-        this.latLonable = latLonable;
-    }
-    LatLonable latLonable = null;
 }

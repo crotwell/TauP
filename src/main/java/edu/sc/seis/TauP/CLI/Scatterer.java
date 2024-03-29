@@ -20,4 +20,6 @@ public class Scatterer {
     }
     public final double depth;
     public final DistanceRay dist;
+
+
 }

@@ -1,16 +1,16 @@
 package edu.sc.seis.TauP;
 
-public class EventAzimuth extends LatLonable {
+import edu.sc.seis.seisFile.Location;
 
-    public EventAzimuth(double evtLat, double evtLon, double azimuth) {
-        this.evtLat = evtLat;
-        this.evtLon = evtLon;
+public class EventAzimuth extends LatLonable {
+    double azimuth;
+
+    Location evtLatLon;
+
+    public EventAzimuth(Location evtLatLon, Double azimuth) {
+        this.evtLatLon = evtLatLon;
         this.azimuth = azimuth;
     }
-
-    double evtLat;
-    double evtLon;
-    double azimuth;
 
     @Override
     public double[] calcLatLon(double calcDist, double totalDist) {
@@ -18,8 +18,8 @@ public class EventAzimuth extends LatLonable {
         if (isGeodetic()) {
             throw new RuntimeException("geodtic not yet");
         }
-        out[0] = SphericalCoords.latFor(evtLat, evtLon, calcDist, azimuth);
-        out[1] = SphericalCoords.lonFor(evtLat, evtLon, calcDist, azimuth);
+        out[0] = SphericalCoords.latFor(evtLatLon.getLatitude(), evtLatLon.getLongitude(), calcDist, azimuth);
+        out[1] = SphericalCoords.lonFor(evtLatLon.getLatitude(), evtLatLon.getLongitude(), calcDist, azimuth);
         return out;
     }
 }

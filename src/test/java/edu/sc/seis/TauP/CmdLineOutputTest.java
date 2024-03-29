@@ -335,7 +335,7 @@ public class CmdLineOutputTest {
     @Disabled
     public void testTauPTable() throws Exception {
         // this one takes a lot of memory
-       // runTests(new String[] {"taup table -ph ttall -generic"});
+       runTests(new String[] {"taup table -ph ttall -generic"});
     }
 
     public void runTests(String[] cmds) throws Exception {

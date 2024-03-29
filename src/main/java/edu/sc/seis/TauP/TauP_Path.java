@@ -189,6 +189,7 @@ public class TauP_Path extends TauP_AbstractRayTool {
 		return (GraphicOutputTypeArgs) outputTypeArgs;
 	}
 
+	@CommandLine.Mixin
 	GraphicOutputTypeArgs outputTypeArgs = new GraphicOutputTypeArgs();
 
 	@Override
@@ -275,8 +276,8 @@ public class TauP_Path extends TauP_AbstractRayTool {
                     out.write("  " + Outputs.formatTime(calcTime));
                 }
                 if (!getGraphicOutputTypeArgs().isGMT()) {
-					if (arrival.getShootable() != null && arrival.getShootable().getLatLonable() != null ) {
-						double[] latlon = arrival.getShootable().getLatLonable().calcLatLon(calcDist, arrival.getDistDeg());
+					if (arrival.isLatLonable() ) {
+						double[] latlon = arrival.getLatLonable().calcLatLon(calcDist, arrival.getDistDeg());
 						out.write("  " + Outputs.formatLatLon(latlon[0]) + "  "
 								+ Outputs.formatLatLon(latlon[1]));
 					}
@@ -286,7 +287,7 @@ public class TauP_Path extends TauP_AbstractRayTool {
                     break;
                 }
                 if (j < path.length - 1
-                        && (((Arrival) arrival).getRayParam() != 0.0 &&
+                        && (arrival.getRayParam() != 0.0 &&
                         Math.abs(path[j + 1].getDistDeg() - path[j].getDistDeg()) > maxPathInc)) {
                     // interpolate to steps of at most maxPathInc degrees for
                     // path
@@ -310,8 +311,8 @@ public class TauP_Path extends TauP_AbstractRayTool {
                             out.write("  " + Outputs.formatTime(calcTime));
                         }
                         if (!getGraphicOutputTypeArgs().isGMT()) {
-							if (arrival.getShootable() != null) {
-								double[] latlon = arrival.getShootable().getLatLonable().calcLatLon(calcDist, arrival.getDistDeg());
+							if (arrival.isLatLonable() ) {
+								double[] latlon = arrival.getLatLonable().calcLatLon(calcDist, arrival.getDistDeg());
 								out.write("  " + Outputs.formatLatLon(latlon[0]) + "  "
 										+ Outputs.formatLatLon(latlon[1]));
 							}
@@ -588,6 +589,7 @@ public class TauP_Path extends TauP_AbstractRayTool {
 		double R;
 		if (arrivals.size() > 0) {
 			Arrival arrival = arrivals.get(0);
+			arrival.getPierce();
 			R = arrival.getPhase().getTauModel().getRadiusOfEarth();
 			TimeDist td = arrival.getPiercePoint(0);
 			xmin = Math.sin(td.getDistRadian())*(R-td.getDepth());
