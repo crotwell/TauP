@@ -450,7 +450,7 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
             SvgUtil.createLegend(writer, labels, labelClasses, "autocolor", (int)(plotWidth*.1), (int) (plotWidth*.1));
             writer.println("</svg>");
 
-        } else if (getOutputFormat().equalsIgnoreCase(OutputTypes.TEXT)) {
+        } else if (getOutputFormat().equalsIgnoreCase(OutputTypes.TEXT) || getOutputFormat().equalsIgnoreCase(OutputTypes.GMT)) {
 
             for (SeismicPhase phase : xyPlots.keySet()) {
                 for (XYPlottingData xyplotItem : xyPlots.get(phase)) {

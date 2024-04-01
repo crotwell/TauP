@@ -156,11 +156,13 @@ public class DistanceArgs {
         return distArgs.backAzimuth;
     }
     public void setBackAzimuth(double val) { distArgs.backAzimuth = val;}
+
     public boolean hasEventLatLon() {
-        return distArgs.eventLat != null && distArgs.eventLon != null;
+        return ! distArgs.eventList.isEmpty();
     }
+
     public boolean hasStationLatLon() {
-        return distArgs.stationList.size() > 0;
+        return ! distArgs.stationList.isEmpty();
     }
 
     @ArgGroup(validate = false, heading = "Distance is given by:%n")
@@ -195,8 +197,6 @@ public class DistanceArgs {
     public void clear() {
         distArgs.stationList.clear();
         distArgs.eventList.clear();
-        distArgs.eventLat = null;
-        distArgs.eventLon = null;
         distArgs.takeoffAngle.clear();
         distArgs.degreesList.clear();
         distArgs.distKilometersList.clear();
@@ -233,11 +233,14 @@ public class DistanceArgs {
                 split=",")
         protected List<Double> shootRaypList = new ArrayList<Double>();
 
-        @Option(names={"-sta", "--station"},
+        @Option(names={"--sta", "--station"},
                 arity="2",
                 description="station latitude and longitude"
                 )
         void setStationLatLon(List<Double> stationLatLon) {
+            if (stationLatLon.size() == 0) {
+                stationList.clear();
+            }
             if (stationLatLon.size() % 2 != 0) {
                 throw new IllegalArgumentException("Station lat lon must have even number of items: "+stationLatLon.size());
             }
@@ -251,26 +254,17 @@ public class DistanceArgs {
         @Option(names={"--evt", "--event"}, arity="2", description="event latitude and longitude")
         void setEventLatLon(List<Double> eventLatLon) {
             if (eventLatLon.size() == 0) {
-                throw new RuntimeException("event len 0");
-                //unsetEventLatLon();
-            } else {
-                setEventLatLon(eventLatLon.get(0), eventLatLon.get(1));
+                eventList.clear();
             }
-        }
-        void setEventLatLon(double eventLat, double eventLon) {
-            this.eventLat = eventLat;
-            this.eventLon = eventLon;
-        }
-        void unsetEventLatLon() {
-            this.eventLat = null;
-            this.eventLon = null;
+            if (eventLatLon.size() % 2 != 0) {
+                throw new IllegalArgumentException("Station lat lon must have even number of items: "+eventLatLon.size());
+            }
+            for (int i = 0; i < eventLatLon.size()/2; i+=2) {
+                eventList.add(new Location(eventLatLon.get(i), eventLatLon.get(i+1)));
+            }
         }
 
         protected List<Location> eventList = new ArrayList<>();
-
-        protected Double eventLat = null;
-
-        protected Double eventLon = null;
 
         @Option(names = "--geodetic",
                 description = "use geodetic latitude for distance calculations, which implies an ellipticity. Default is spherical. Note this only affects calculation of distance from lat/lon, all travel time calculations are done in a purely spherical model.")
