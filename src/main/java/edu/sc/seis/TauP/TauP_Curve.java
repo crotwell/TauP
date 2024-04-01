@@ -146,9 +146,9 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
         return outMap;
     }
 
-    public Map<SeismicPhase, List<XYPlottingData>> reduce(Map<SeismicPhase, List<XYPlottingData>> xy) {
+    public Map<SeismicPhase, List<XYPlottingData>> reduce(Map<SeismicPhase, List<XYPlottingData>> xy) throws TauModelException {
         Map<SeismicPhase, List<XYPlottingData>> out = new HashMap<>();
-        double velFactor;
+        Double velFactor;
         if (axisIsDistanceLike(xAxisType) && axisIsTimeLike(yAxisType)) {
             // x is distance, y is time
             velFactor = reduceVelForAxis(xAxisType);
@@ -157,9 +157,10 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
         } else {
             throw new IllegalArgumentException("axis are not time and distance: "+xAxisType+" "+yAxisType);
         }
-        if (velFactor == 1.0 || velFactor == 0.0) {
+        if (velFactor == null || velFactor == 1.0 || velFactor == 0.0) {
             // either not set or nothing to do
-            return xy;
+            throw new IllegalArgumentException("Unable to reduce, red vel is invalid: "+velFactor);
+            //return xy;
         }
 
         for (SeismicPhase phase : xy.keySet()) {
@@ -186,7 +187,7 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
                         redSeg.add(new XYSegment(time, dist));
                     }
                 }
-                XYPlottingData redxyp = new XYPlottingData(redSeg, xyp.xAxisType, xyp.yAxisType, xyp.label, xyp.phase);
+                XYPlottingData redxyp = new XYPlottingData(redSeg, xyp.xAxisType, xyp.yAxisType, xyp.label+", reduce: "+getRedVelLabel(), xyp.phase);
                 redplotList.add(redxyp);
             }
             out.put(phase, redplotList);
@@ -570,11 +571,7 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
     }
 
     public boolean isReduceTime() {
-        return reduceTime;
-    }
-
-    public void setReduceTime(boolean reduceTime) {
-        this.reduceTime = reduceTime;
+        return reduceVelKm != null || reduceVelDeg != null;
     }
 
     protected String relativePhaseName = "";
@@ -605,7 +602,7 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
         }
         return 0;
     }
-    public double getReduceVelDeg() {
+    public Double getReduceVelDeg() {
         return reduceVelDeg;
     }
 
@@ -627,20 +624,28 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
      * @return reducing velocity in kilometers/second. The internal usage is
      *          radians/second.
      */
-    public double getReduceVelKm() {
+    public Double getReduceVelKm() {
         return reduceVelKm;
     }
 
-    public double reduceVelForAxis(AxisType axisType) {
-        if (axisType==AxisType.degree) {
-            return getReduceVelDeg();
-        } else if (axisType==AxisType.kilometer) {
-            return getReduceVelKm();
+    public Double reduceVelForAxis(AxisType axisType) throws TauModelException {
+        if (axisType==AxisType.degree || axisType==AxisType.degree_180) {
+            if (getReduceVelDeg() != null) {
+                return getReduceVelDeg();
+            } else if (getReduceVelKm() != null) {
+                return getReduceVelRadian() * 180/Math.PI;
+            }
+        } else if (axisType==AxisType.kilometer || axisType==AxisType.kilometer_180) {
+            if (getReduceVelKm() != null) {
+                return getReduceVelKm();
+            } else if (getReduceVelDeg() != 0) {
+                return getReduceVelRadian() * modelArgs.getTauModel().getRadiusOfEarth();
+            }
         } else if (axisType==AxisType.radian) {
-            return getReduceVelDeg()*Math.PI/180;
-        } else {
-            throw new IllegalArgumentException("axis type not distance-like: "+axisType);
+            return getReduceVelRadian();
         }
+        throw new IllegalArgumentException("axis type not distance-like: "+axisType);
+
     }
 
     /**
@@ -658,23 +663,24 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
         }
     }
 
+    public String getRedVelLabel() {
+        return redVelString;
+    }
+
     protected AxisType xAxisType = AxisType.degree;
     protected AxisType yAxisType = AxisType.time;
 
     protected boolean xAxisLog = false;
     protected boolean yAxisLog = false;
 
-    /** should the output times use a reducing velocity? */
-    protected boolean reduceTime = false;
-
     /**
      * the reducing velocity to use if reduceTime == true, in units of
      * radians/second .
      */
-    protected Double reduceVelDeg = .125;
-    protected Double reduceVelKm = 8.0;
+    protected Double reduceVelDeg = null;
+    protected Double reduceVelKm = null;
 
-    protected String redVelString = ".125 deg/s";
+    protected String redVelString = "";
 
     protected double[] xAxisMinMax = new double[0];
     protected double[] yAxisMinMax = new double[0];
