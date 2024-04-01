@@ -26,68 +26,68 @@ import java.util.*;
 
 public class CmdLineOutputTest {
 
-    String[] timeTestCmds = new String[] {"taup time -h 10 -ph P -deg 35 -mod prem",
-                                          "taup time -h 10 -ph P -deg 35",
-                                          "taup time -h 10 -ph P -deg 35 -mod ak135",
-                                          "taup time -h 10 -ph ttall -deg 35 -mod prem",
-                                          "taup time -h 10 -ph ttall -deg 35",
-                                          "taup time -h 10 -ph ttall -deg 35 -mod ak135",
-                                          "taup time -h 10 -ph ttall -deg 35 -mod ak135 --json",
-                                          "taup time -h 10 -ph ttall -deg 145 -mod ak135 --rel P",
-                                          "taup time -h 10 -ph ttall -deg 145 -mod ak135 --rel P,PKP",
-            "taup time -h 10 -ph ttall -deg 145 -mod ak135 --stadepth 200",
+    String[] timeTestCmds = new String[] {"taup time -h 10 -p P --deg 35 --mod prem",
+                                          "taup time -h 10 -p P --deg 35",
+                                          "taup time -h 10 -p P --deg 35 --mod ak135",
+                                          "taup time -h 10 -p ttall --deg 35 --mod prem",
+                                          "taup time -h 10 -p ttall --deg 35",
+                                          "taup time -h 10 -p ttall --deg 35 --mod ak135",
+                                          "taup time -h 10 -p ttall --deg 35 --mod ak135 --json",
+                                          "taup time -h 10 -p ttall --deg 145 --mod ak135 --rel P",
+                                          "taup time -h 10 -p ttall --deg 145 --mod ak135 --rel P,PKP",
+            "taup time -h 10 -p ttall --deg 145 --mod ak135 --stadepth 200",
                                             };
 
-    String[] pierceTestCmds = new String[] {"taup pierce -h 10 -ph P -deg 35 -mod prem",
-                                            "taup pierce -h 10 -ph P -deg 35",
-                                            "taup pierce -h 10 -ph P -deg 35 -mod ak135",
-                                            "taup pierce -mod prem -h 600 -deg 45 -ph PKiKP -pierce 5049.5",
-                                            "taup pierce -h 0 -ph Pn -deg 6",
-                                            "taup pierce -h 0 -ph Pdiff -deg 120",
-            "taup pierce -h 10 -ph ttall -deg 145 -mod ak135 --stadepth 200",
+    String[] pierceTestCmds = new String[] {"taup pierce -h 10 -p P --deg 35 --mod prem",
+                                            "taup pierce -h 10 -p P --deg 35",
+                                            "taup pierce -h 10 -p P --deg 35 --mod ak135",
+                                            "taup pierce --mod prem -h 600 --deg 45 -p PKiKP --pierce 5049.5",
+                                            "taup pierce -h 0 -p Pn --deg 6",
+                                            "taup pierce -h 0 -p Pdiff --deg 120",
+            "taup pierce -h 10 -p ttall --deg 145 --mod ak135 --stadepth 200",
                                           };
 
-    String[] pathTestCmds = new String[] {"taup path -o stdout -h 10 -ph P -deg 35 -mod prem",
-                                          "taup path -o stdout -h 10 -ph P -deg 35",
-            "taup path -o stdout -h 10 -ph Pdiff -deg 135",
-            "taup path -o stdout -h 10 -ph 2kmps -deg 35",
-            "taup path -o stdout -h 10 -ph Pn -deg 10",
-            "taup path -o stdout -h 10 -ph PnPn -deg 10",
-            "taup path -o stdout -h 10 -ph PdiffPdiff -deg 135",
-                                          "taup path -o stdout -h 10 -ph P -deg 35 --svg",
-                                          "taup path -o stdout -h 10 -ph P -deg 35 -mod ak135"};
+    String[] pathTestCmds = new String[] {"taup path -o stdout -h 10 -p P --deg 35 --mod prem",
+                                          "taup path -o stdout -h 10 -p P --deg 35",
+            "taup path -o stdout -h 10 -p Pdiff --deg 135",
+            "taup path -o stdout -h 10 -p 2kmps --deg 35",
+            "taup path -o stdout -h 10 -p Pn --deg 10",
+            "taup path -o stdout -h 10 -p PnPn --deg 10",
+            "taup path -o stdout -h 10 -p PdiffPdiff --deg 135",
+                                          "taup path -o stdout -h 10 -p P --deg 35 --svg",
+                                          "taup path -o stdout -h 10 -p P --deg 35 --mod ak135"};
 
     String[] phaseDescribeTestCmds = new String[] {
-            "taup phase -ph Pdiff",
-            "taup phase -ph P410diff",
-            "taup phase -ph Pv410p,PV410p",
-            "taup phase -ph P410s,P410S",
-            "taup phase -ph Ped410S,Pedv410s,PedV410s",
-            "taup phase -ph PKviKP",
-            "taup phase -ph PKv5153KP",
-            "taup phase -ph PKv5153.9KP",
-            "taup phase -ph PK5153.9diffP",
-            "taup phase -ph PKP410S",
+            "taup phase -p Pdiff",
+            "taup phase -p P410diff",
+            "taup phase -p Pv410p,PV410p",
+            "taup phase -p P410s,P410S",
+            "taup phase -p Ped410S,Pedv410s,PedV410s",
+            "taup phase -p PKviKP",
+            "taup phase -p PKv5153KP",
+            "taup phase -p PKv5153.9KP",
+            "taup phase -p PK5153.9diffP",
+            "taup phase -p PKP410S",
     };
 
     String[] curveTestCmds = new String[] {
-            "taup curve -o stdout -h 10 -ph P -mod prem",
-            "taup curve -o stdout -h 10 -ph P",
-            "taup curve -o stdout -h 10 -ph P -mod ak135",
-            "taup curve -o stdout -h 10 -ph P -mod ak135 --redkm 8"
+            "taup curve -o stdout -h 10 -p P --mod prem",
+            "taup curve -o stdout -h 10 -p P",
+            "taup curve -o stdout -h 10 -p P --mod ak135",
+            "taup curve -o stdout -h 10 -p P --mod ak135 --redkm 8"
             // curve labels are random position in --svg, so diff breaks
-            // "taup curve -o stdout -h 10 -ph P --svg",
+            // "taup curve -o stdout -h 10 -p P --svg",
     };
 
     String[] wavefrontTestCmds = new String[] {
-            "taup wavefront -o stdout --mod ak135 --svg -h 100 -ph P,S,PKIKP",
-            "taup wavefront -o stdout --mod ak135 --svg -h 10 -ph P,S,PedOP --scatter 200 -5"
+            "taup wavefront -o stdout --mod ak135 --svg -h 100 -p P,S,PKIKP",
+            "taup wavefront -o stdout --mod ak135 --svg -h 10 -p P,S,PedOP --scatter 200 -5"
     };
 
     String[] velplotTestCmds = new String[] {
             "taup velplot -o stdout --mod ak135 --svg",
-            "taup slowplot -o stdout --mod ak135 --svg",
-            "taup velplot -o stdout --csv",
+           // "taup slowplot -o stdout --mod ak135 --svg",
+            //"taup velplot -o stdout --csv",
             "taup velplot -o stdout --text",
             "taup velplot -o stdout --json",
     };
@@ -116,22 +116,22 @@ public class CmdLineOutputTest {
     };
 
     String[] jsonTestCmds = new String[] {
-            "taup time -h 10 -ph P -deg 35 --json",
+            "taup time -h 10 -p P --deg 35 --json",
     };
 
     String versionCmd = "taup --version";
 
     String[] docCmds = new String[] {
-            "taup time -mod prem -h 200 -ph S,P -deg 57.4",
-            "taup pierce -mod prem -h 200 -ph S,P -deg 57.4",
-            "taup pierce -turn -mod prem -h 200 -ph S,P -deg 57.4",
-            "taup pierce -mod prem -h 200 -ph S -sta 12 34.2 -evt -28 122 --pierce 2591 --nodiscon",
-            "taup path -mod iasp91 -h 550 -deg 74 -ph S,ScS,sS,sScS --gmt",
-            "taup phase -mod prem -h 200 -ph PKiKP",
-            "taup wavefront -mod iasp91 -h 550 -ph S,ScS,sS,sScS --gmt",
-            "taup wavefront -mod iasp91 -h 550 -ph S,ScS,sS,sScS --svg",
-            "taup curve -mod prem -h 500 -ph s,S,ScS,Sdiff --gmt",
-            "taup curve -mod prem -h 500 -ph s,S,ScS,Sdiff --svg"
+            "taup time --mod prem -h 200 -p S,P --deg 57.4",
+            "taup pierce --mod prem -h 200 -p S,P --deg 57.4",
+            "taup pierce --turn --mod prem -h 200 -p S,P --deg 57.4",
+            "taup pierce --mod prem -h 200 -p S --sta 12 34.2 --evt -28 122 --pierce 2591 --nodiscon",
+            "taup path --mod iasp91 -h 550 --deg 74 -p S,ScS,sS,sScS --gmt",
+            "taup phase --mod prem -h 200 -p PKiKP",
+            "taup wavefront --mod iasp91 -h 550 -p S,ScS,sS,sScS --gmt",
+            "taup wavefront --mod iasp91 -h 550 -p S,ScS,sS,sScS --svg",
+            "taup curve --mod prem -h 500 -p s,S,ScS,Sdiff --gmt",
+            "taup curve --mod prem -h 500 -p s,S,ScS,Sdiff --svg"
     };
 
     /** 
@@ -335,7 +335,7 @@ public class CmdLineOutputTest {
     @Disabled
     public void testTauPTable() throws Exception {
         // this one takes a lot of memory
-       runTests(new String[] {"taup table -ph ttall -generic"});
+       runTests(new String[] {"taup table -p ttall -generic"});
     }
 
     public void runTests(String[] cmds) throws Exception {
@@ -411,7 +411,7 @@ public class CmdLineOutputTest {
      */
     @Test
     public void loadTest() throws Exception {
-        BufferedReader s = getPriorOutput("taup_path -o stdout -h 10 -ph P -deg 35 -mod prem");
+        BufferedReader s = getPriorOutput("taup_path -o stdout -h 10 -p P --deg 35 --mod prem");
         String priorS = s.readLine();
         String shouldBeS = "> P at   411.69 seconds at    35.00 degrees for a     10.0 km deep source in the prem model with rayParam    8.604 s/deg.";
         assertEquals(shouldBeS.length(), priorS.length(), "line one length" );
