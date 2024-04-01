@@ -34,6 +34,13 @@ public abstract class TauP_Tool implements Callable<Integer> {
         Outputs.configure(toolProps);
         SeismicPhaseFactory.configure(toolProps);
         init();
+        try {
+            validateArguments();
+        } catch (TauPException e) {
+            if (spec != null ) {
+                throw new CommandLine.ParameterException(spec.commandLine(), e.getMessage(), e);
+            }
+        }
         start();
         return 0;
     }
@@ -290,5 +297,12 @@ public abstract class TauP_Tool implements Callable<Integer> {
         }
     }
 
-    public abstract void validateArguments() throws TauModelException;
+    public abstract void validateArguments() throws TauPException;
+
+    /**
+     * injected by picocli
+     *
+     */
+    @CommandLine.Spec
+    CommandLine.Model.CommandSpec spec;
 }

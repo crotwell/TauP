@@ -40,6 +40,7 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
 
     @Override
     public void start() throws IOException, TauModelException, TauPException {
+
         double step;
         if (linearRayParam) {
             step = rayparamStep;
@@ -53,7 +54,10 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
             }
             printSVG(getWriter(), vMod, depth, indown, inpwave, inswave, inshwave, linearRayParam, step);
         } else {
-            printSVG(getWriter(), topVp, topVs, topDensity, botVp, botVs, botDensity, indown, inpwave, inswave, inshwave, linearRayParam, step);
+            printSVG(getWriter(),
+                    layerParams.inVp, layerParams.inVs, layerParams.inRho,
+                    layerParams.trVp, layerParams.trVs, layerParams.trRho,
+                    indown, inpwave, inswave, inshwave, linearRayParam, step);
         }
     }
 
@@ -63,8 +67,11 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
     }
 
     @Override
-    public void validateArguments() throws TauModelException {
-
+    public void validateArguments() throws TauPException {
+        if (layerParams == null) {
+            throw new TauPException(
+                    "Either --layer, or --mod and --depth must be given to specify layer parameters");
+        }
     }
 
     public void printSVGBeginning(PrintWriter out) {
@@ -88,7 +95,7 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
         ReflTrans reflTranCoef = vMod.calcReflTransCoef(depth, downgoing);
 
         String title = vMod.modelName +" at ";
-        if (botVp == 0) {
+        if (layerParams.trVp == 0) {
             title += " surface, ";
         } else {
             title += depth+", ";
@@ -328,12 +335,13 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
 
     public void setLayerParams(double topVp, double topVs, double topDensity,
                                double botVp, double botVs, double botDensity) {
-        this.topVp = topVp;
-        this.topVs = topVs;
-        this.topDensity = topDensity;
-        this.botVp = botVp;
-        this.botVs = botVs;
-        this.botDensity = botDensity;
+        layerParams = new LayerParams();
+        layerParams.inVp = topVp;
+        layerParams.inVs = topVs;
+        layerParams.inRho = topDensity;
+        layerParams.trVp = botVp;
+        layerParams.trVs = botVs;
+        layerParams.trRho = botDensity;
     }
 
     @CommandLine.Mixin
@@ -360,18 +368,18 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
     public void setIncidentUp(boolean inup) {
         this.indown = ! inup;
     }
-    @CommandLine.Option(names = "pwave", description = "incident P wave")
+    @CommandLine.Option(names = "--pwave", description = "incident P wave")
     public void setIncidentPWave(boolean inpwave) {
         this.inpwave = inpwave;
     }
     public boolean isIncidentPWave() { return inpwave;}
 
-    @CommandLine.Option(names = "swave", description = "incident S wave")
+    @CommandLine.Option(names = "--swave", description = "incident S wave")
     public void setIncidentSWave(boolean inswave) {
         this.inswave = inswave;
     }
     public boolean isIncidentSWave() { return inswave;}
-    @CommandLine.Option(names = "shwave", description = "incident SH wave")
+    @CommandLine.Option(names = "--shwave", description = "incident SH wave")
     public void setIncidentShWave(boolean inshwave) {
         this.inshwave = inshwave;
     }
@@ -388,7 +396,7 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
     }
 
     @CommandLine.ArgGroup(exclusive = false)
-    LayerParams layerParams;
+    LayerParams layerParams = new LayerParams();
     static class LayerParams {
         @CommandLine.Option(names = "--layer", required = true)
         boolean useLayer = false;
@@ -401,33 +409,12 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
     }
 
 
-    @CommandLine.Option(names = "--layeras6",
-            arity="6",
-            description = "incident layer parameters")
-    public void setLayer(List<Double> layerVals) {
-        if (layerVals.size() != 6) {
-            throw new IllegalArgumentException("layer parameters must have 6 values");
-        }
-        topVp = layerVals.get(0);
-        topVs = layerVals.get(1);
-        topDensity = layerVals.get(2);
-        botVp = layerVals.get(3);
-        botVs = layerVals.get(4);
-        botDensity = layerVals.get(5);
-    }
-
     float mapWidth = 6;
     int plotOffset = 80;
     String modelName;
     String modelType;
 
     protected double depth = -1.0;
-    double topVp;
-    double topVs;
-    double topDensity;
-    double botVp = 0.0;
-    double botVs;
-    double botDensity;
 
     protected double angleStep = 1.0;
     protected double rayparamStep = 0.001;

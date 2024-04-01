@@ -247,7 +247,7 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
         return phases;
     }
 
-    @CommandLine.Option(names = "-ph", split = ",", description = "seismic phase names", defaultValue = DEFAULT_PHASES)
+    @CommandLine.Option(names = {"-p", "--phase", "--ph"}, split = ",", description = "seismic phase names", defaultValue = DEFAULT_PHASES)
     public void setPhaseNames(String[] phaseNames) throws TauModelException {
         clearPhaseNames();
         for (int i = 0; i < phaseNames.length; i++) {

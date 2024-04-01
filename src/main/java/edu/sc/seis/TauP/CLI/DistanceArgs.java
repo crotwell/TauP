@@ -206,7 +206,7 @@ public class DistanceArgs {
 
     static class DistanceArgsInner {
 
-        @CommandLine.Option(names={"-deg", "--deg", "--degrees"}, paramLabel="d", description="distance in degrees", split=",")
+        @CommandLine.Option(names={"--deg", "--degrees"}, paramLabel="d", description="distance in degrees", split=",")
         protected List<Double> degreesList = new ArrayList<Double>();
 
         /**
@@ -216,11 +216,11 @@ public class DistanceArgs {
         @CommandLine.Option(names={"--km", "--kilometers"}, paramLabel = "km", description="distance in kilometers", split=",")
         protected List<Double> distKilometersList = new ArrayList<Double>();
 
-        @Option(names="-az", description="azimuth in degrees")
+        @Option(names="--az", description="azimuth in degrees")
         protected Double azimuth = Double.MAX_VALUE;
 
 
-        @Option(names="-baz", description="backazimuth in degrees")
+        @Option(names="--baz", description="backazimuth in degrees")
         protected Double backAzimuth = Double.MAX_VALUE;
 
 
@@ -248,7 +248,7 @@ public class DistanceArgs {
 
         protected List<Location> stationList = new ArrayList<>();
 
-        @Option(names={"-evt", "--event"}, arity="2", description="event latitude and longitude")
+        @Option(names={"--evt", "--event"}, arity="2", description="event latitude and longitude")
         void setEventLatLon(List<Double> eventLatLon) {
             if (eventLatLon.size() == 0) {
                 throw new RuntimeException("event len 0");

@@ -212,7 +212,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
     }
 
     @Deprecated
-    public List<Arrival> calcTime(List<DistanceRay> degreesList) throws TauModelException {
+    public List<Arrival> calcTime(List<DistanceRay> degreesList) throws TauPException {
         validateArguments();
         modelArgs.depthCorrected();
         SeismicPhase phase;

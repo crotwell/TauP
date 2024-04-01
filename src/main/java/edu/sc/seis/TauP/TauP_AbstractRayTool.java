@@ -104,7 +104,7 @@ public abstract class TauP_AbstractRayTool extends TauP_AbstractPhaseTool {
     }
 
     @Override
-    public void validateArguments() throws TauModelException {
+    public void validateArguments() throws TauPException {
         if (modelArgs.getTauModel() == null) {
             throw new TauModelException("Model for '"+this.getTauModelName()+"' is null, unable to calculate.");
         }
