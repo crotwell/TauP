@@ -200,11 +200,11 @@ public class SphericalSModel extends SlownessModel implements Serializable {
         if(sphericalRayParam > Math.min(sphericalLayer.getTopP(),
                                         sphericalLayer.getBotP())) {
             if(DEBUG) {
-                System.out.println("Ray Turns in layer, velocities: "
+                System.err.println("Ray Turns in layer, velocities: "
                         + topRadius / sphericalRayParam + " " + topRadius
                         / sphericalLayer.getTopP() + " " + botRadius
                         / sphericalLayer.getBotP());
-                System.out.println("depths        top "
+                System.err.println("depths        top "
                         + sphericalLayer.getTopDepth() + "  bot "
                         + sphericalLayer.getBotDepth());
             }
@@ -295,7 +295,7 @@ public class SphericalSModel extends SlownessModel implements Serializable {
             distRadian = Math.PI / 2.0;
             time = sphericalLayer.getTopP();
             if(DEBUG) {
-                System.out.println("Center of Earth: dist " + distRadian
+                System.err.println("Center of Earth: dist " + distRadian
                         + " time " + time);
             }
             if(distRadian < 0.0 || time < 0.0

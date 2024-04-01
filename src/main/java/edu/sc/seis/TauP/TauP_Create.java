@@ -191,13 +191,13 @@ public class TauP_Create extends TauP_Tool {
         String filename = directory + file_sep + modelFilename;
         File f = new File(filename);
         if(verbose)
-            System.out.println("filename =" + directory + file_sep
+            System.err.println("filename =" + directory + file_sep
                     + modelFilename);
         try {
             vMod = VelocityModel.readVelocityFile(filename, velFileType);
         } catch(FileNotFoundException e) {
             if (DEBUG) {
-                System.out.println("Unable to load from directory "+filename);
+                System.err.println("Unable to load from directory "+filename);
             }
         }
         if (vMod == null) {
@@ -208,21 +208,21 @@ public class TauP_Create extends TauP_Tool {
             throw new IOException("Velocity model file not found: "+modelFilename+", tried internally and from file: "+f);
         }
         if(verbose) {
-            System.out.println("Done reading velocity model.");
-            System.out.println("Radius of model " + vMod.getModelName()
+            System.err.println("Done reading velocity model.");
+            System.err.println("Radius of model " + vMod.getModelName()
                     + " is " + vMod.getRadiusOfEarth());
         }
         
         if (overlayModelFilename != null) {
 
             if(DEBUG) {
-                System.out.println("orig model: "+vMod);
+                System.err.println("orig model: "+vMod);
             }
             overlayVMod = VelocityModel.readVelocityFile(directory + file_sep + overlayModelFilename, overlayVelFileType);
             vMod = vMod.replaceLayers(overlayVMod.getLayers(), overlayVMod.getModelName(), true, true);
         }
         if(DEBUG)
-            System.out.println("velocity mode: "+vMod);
+            System.err.println("velocity mode: "+vMod);
         return vMod;
     }
 
@@ -259,25 +259,25 @@ public class TauP_Create extends TauP_Tool {
                                            .booleanValue(),
                                    SlownessModel.DEFAULT_SLOWNESS_TOLERANCE);
         if(verbose) {
-            System.out.println("Parameters are:");
-            System.out.println("taup.create.minDeltaP = "
+            System.err.println("Parameters are:");
+            System.err.println("taup.create.minDeltaP = "
                     + sMod.getMinDeltaP() + " sec / radian");
-            System.out.println("taup.create.maxDeltaP = "
+            System.err.println("taup.create.maxDeltaP = "
                     + sMod.getMaxDeltaP() + " sec / radian");
-            System.out.println("taup.create.maxDepthInterval = "
+            System.err.println("taup.create.maxDepthInterval = "
                     + sMod.getMaxDepthInterval() + " kilometers");
-            System.out.println("taup.create.maxRangeInterval = "
+            System.err.println("taup.create.maxRangeInterval = "
                     + sMod.getMaxRangeInterval() + " degrees");
-            System.out.println("taup.create.maxInterpError = "
+            System.err.println("taup.create.maxInterpError = "
                     + sMod.getMaxInterpError() + " seconds");
-            System.out.println("taup.create.allowInnerCoreS = "
+            System.err.println("taup.create.allowInnerCoreS = "
                     + sMod.isAllowInnerCoreS());
-            System.out.println("Slow model " 
+            System.err.println("Slow model "
                                + " " + sMod.getNumLayers(true) + " P layers,"
                                + sMod.getNumLayers(false) + " S layers");
         }
         if(DEBUG) {
-            System.out.println(sMod);
+            System.err.println(sMod);
         }
         TauModel.DEBUG = DEBUG;
         SlownessModel.DEBUG = DEBUG;
@@ -288,13 +288,13 @@ public class TauP_Create extends TauP_Tool {
     public void start() throws SlownessModelException, TauModelException, VelocityModelException, IOException {
         try {
             if (verbose) {
-                System.out.println("TauP_Create starting...");
+                System.err.println("TauP_Create starting...");
             }
             String file_sep = System.getProperty("file.separator");
             TauModel tMod = createTauModel(vMod);
 
             if(DEBUG)
-                System.out.println("Done calculating Tau branches.");
+                System.err.println("Done calculating Tau branches.");
             if(DEBUG)
                 tMod.print();
             String outFile;
@@ -305,17 +305,17 @@ public class TauP_Create extends TauP_Tool {
             }
             tMod.writeModel(outFile);
             if(verbose) {
-                System.out.println("Done Saving " + outFile);
+                System.err.println("Done Saving " + outFile);
             }
 
         } catch(IOException e) {
-            System.out.println("Tried to write!\n Caught IOException "
+            System.err.println("Tried to write!\n Caught IOException "
                     + e.getMessage()
                     + "\nDo you have write permission in this directory?");
             throw e;
         } finally {
             if(verbose) {
-                System.out.println("Done!");
+                System.err.println("Done!");
             }
         }
     }

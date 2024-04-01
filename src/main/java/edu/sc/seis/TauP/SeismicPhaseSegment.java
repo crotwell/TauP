@@ -268,7 +268,7 @@ public class SeismicPhaseSegment {
 			for (int i = startBranch; (isDownGoing && i <= endBranch) || (!isDownGoing && i >= endBranch); i += bStep) {
 				int branchNum = i;
 				if (ToolRun.DEBUG) {
-					System.out.println("i=" + i + " branchNum=" + branchNum
+					System.err.println("i=" + i + " branchNum=" + branchNum
 							+ " isPWave=" + isPWave + " downgoing="
 							+ isDownGoing);
 				}
@@ -365,7 +365,7 @@ public class SeismicPhaseSegment {
 			for (int i = startBranch; (isDownGoing && i < endBranch) || (!isDownGoing && i > endBranch); i += bStep) {
 				int branchNum = i;
 				if (ToolRun.DEBUG) {
-					System.out.println("i=" + i + " branchNum=" + branchNum
+					System.err.println("i=" + i + " branchNum=" + branchNum
 							+ " isPWave=" + isPWave + " downgoing="
 							+ isDownGoing);
 				}

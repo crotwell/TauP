@@ -211,7 +211,6 @@ public class SeismicPhaseFactory {
             }
             TauModel tModDepthCorrected = tMod;
             if (tModDepthCorrected.getSourceDepth()!= sourceDepth) {
-                System.err.println("Seis phase factory depthCor: "+sourceDepth+"  "+tMod.getSourceDepth());
                 tModDepthCorrected= tMod.depthCorrect(sourceDepth);
             }
             tModDepthCorrected = tModDepthCorrected.splitBranch(receiverDepth);
@@ -254,7 +253,6 @@ public class SeismicPhaseFactory {
 
             TauModel tModDepthCorrected = tMod;
             if (tModDepthCorrected.getSourceDepth()!= sourceDepth) {
-                System.err.println("simple, Seis phase factory depthCor: "+sourceDepth+"  "+tMod.getSourceDepth());
                 tModDepthCorrected= tMod.depthCorrect(sourceDepth);
             }
             tModDepthCorrected = tModDepthCorrected.splitBranch(receiverDepth);
@@ -388,7 +386,7 @@ public class SeismicPhaseFactory {
                 maxRayParam = -1;
                 minRayParam = -1;
                 if(DEBUG) {
-                    System.out.println("Cannot have K leg in model with no outer core within phase " + name);
+                    System.err.println("Cannot have K leg in model with no outer core within phase " + name);
                 }
                 return;
             }
@@ -396,7 +394,7 @@ public class SeismicPhaseFactory {
                 maxRayParam = -1;
                 minRayParam = -1;
                 if(DEBUG) {
-                    System.out.println("Cannot have I,J,y,j,i leg in model with no inner core within phase " + name);
+                    System.err.println("Cannot have I,J,y,j,i leg in model with no inner core within phase " + name);
                 }
                 return;
             }
@@ -424,7 +422,7 @@ public class SeismicPhaseFactory {
                 maxRayParam = -1;
                 minRayParam = -1;
                 if(DEBUG) {
-                    System.out.println("Cannot have S wave with starting depth in fluid layer"
+                    System.err.println("Cannot have S wave with starting depth in fluid layer"
                             + currLeg + " within phase " + name);
                 }
                 return;
@@ -441,7 +439,7 @@ public class SeismicPhaseFactory {
                 maxRayParam = -1;
                 minRayParam = -1;
                 if(DEBUG) {
-                    System.out.println("Source must be in crust/mantle for "
+                    System.err.println("Source must be in crust/mantle for "
                             + currLeg + " within phase " + name);
                 }
                 return;
@@ -450,7 +448,7 @@ public class SeismicPhaseFactory {
                 maxRayParam = -1;
                 minRayParam = -1;
                 if(DEBUG) {
-                    System.out.println("Source must be in outer core for "
+                    System.err.println("Source must be in outer core for "
                             + currLeg + " within phase " + name);
                 }
                 return;
@@ -459,7 +457,7 @@ public class SeismicPhaseFactory {
                 maxRayParam = -1;
                 minRayParam = -1;
                 if(DEBUG) {
-                    System.out.println("Source must be in inner core for "
+                    System.err.println("Source must be in inner core for "
                             + currLeg + " within phase " + name);
                 }
                 return;
@@ -482,7 +480,7 @@ public class SeismicPhaseFactory {
                 maxRayParam = -1;
                 minRayParam = -1;
                 if(DEBUG) {
-                    System.out.println("Source must be in crust/mantle for "
+                    System.err.println("Source must be in crust/mantle for "
                             + currLeg + " within phase " + name);
                 }
                 return;
@@ -493,7 +491,7 @@ public class SeismicPhaseFactory {
                 maxRayParam = -1;
                 minRayParam = -1;
                 if(DEBUG) {
-                    System.out.println("Source must be in outer core for "
+                    System.err.println("Source must be in outer core for "
                             + currLeg + " within phase " + name);
                 }
                 return;
@@ -502,7 +500,7 @@ public class SeismicPhaseFactory {
                 maxRayParam = -1;
                 minRayParam = -1;
                 if(DEBUG) {
-                    System.out.println("Source must be in inner core for "
+                    System.err.println("Source must be in inner core for "
                             + currLeg + " within phase " + name);
                 }
                 return;
@@ -531,7 +529,7 @@ public class SeismicPhaseFactory {
                 maxRayParam = -1;
                 minRayParam = -1;
                 if (DEBUG) {
-                    System.out.println(getName()+" Upgoing initial leg but already at surface, so no ray parameters satisfy path.");
+                    System.err.println(getName()+" Upgoing initial leg but already at surface, so no ray parameters satisfy path.");
                 }
                 return;
             }
@@ -580,7 +578,7 @@ public class SeismicPhaseFactory {
                 nextLeg = END_CODE;
             }
             if(DEBUG) {
-                System.out.println("Iterate legs: "+legNum + "  " + prevLeg + "  cur=" + currLeg
+                System.err.println("Iterate legs: "+legNum + "  " + prevLeg + "  cur=" + currLeg
                         + "  " + nextLeg);
             }
             if (currLeg.contentEquals(END_CODE)) {
@@ -748,7 +746,7 @@ public class SeismicPhaseFactory {
             if ((endAction == REFLECT_UNDERSIDE || endAction == REFLECT_UNDERSIDE) && downgoingRecBranch == branchSeq.get(branchSeq.size()-1) ) {
                 // last action was upgoing, so last branch should be upgoingRecBranch
                 if (DEBUG) {
-                    System.out.println("Phase ends upgoing, but receiver is not on upgoing end of last branch");
+                    System.err.println("Phase ends upgoing, but receiver is not on upgoing end of last branch");
                 }
                 minRayParam = -1;
                 maxRayParam = -1;
@@ -756,14 +754,14 @@ public class SeismicPhaseFactory {
                     && upgoingRecBranch == branchSeq.get(branchSeq.size()-1) ) {
                 // last action was downgoing, so last branch should be downgoingRecBranch
                 if (DEBUG) {
-                    System.out.println("Phase ends downgoing, but receiver is not on downgoing end of last branch");
-                    System.out.println(endActionString(endAction)+" upgoingRecBranch="+upgoingRecBranch+"  bs="+branchSeq.get(branchSeq.size()-1));
+                    System.err.println("Phase ends downgoing, but receiver is not on downgoing end of last branch");
+                    System.err.println(endActionString(endAction)+" upgoingRecBranch="+upgoingRecBranch+"  bs="+branchSeq.get(branchSeq.size()-1));
                 }
                 minRayParam = -1;
                 maxRayParam = -1;
             } else {
                 if (DEBUG) {
-                    System.out.println("Last action is: "+endActionString(endAction)+" upR="+upgoingRecBranch+" downR="+downgoingRecBranch+" last="+branchSeq.get(branchSeq.size()-1));
+                    System.err.println("Last action is: "+endActionString(endAction)+" upR="+upgoingRecBranch+" downR="+downgoingRecBranch+" last="+branchSeq.get(branchSeq.size()-1));
                 }
             }
         }
@@ -837,7 +835,7 @@ public class SeismicPhaseFactory {
                 if (currBranch < upgoingRecBranch) {
                     maxRayParam = -1;
                     if (DEBUG) {
-                        System.out.println(name+" (currBranch >= receiverBranch() "
+                        System.err.println(name+" (currBranch >= receiverBranch() "
                                 + currBranch
                                 + " "
                                 + upgoingRecBranch
@@ -950,7 +948,7 @@ public class SeismicPhaseFactory {
             int disconBranch = LegPuller.closestBranchToDepth(tMod, depthString);
             if (disconBranch == tMod.getNumBranches()) {
                 maxRayParam = -1;
-                if(DEBUG) {System.out.println("Attempt to underside reflect from center of earth: "+nextLeg);}
+                if(DEBUG) {System.err.println("Attempt to underside reflect from center of earth: "+nextLeg);}
                 return FAIL;
             }
             if(prevLeg.equals("K")) {
@@ -985,7 +983,7 @@ public class SeismicPhaseFactory {
                     || (prevLeg.equals("c") && disconBranch < tMod.getCmbBranch())) {
                 if (disconBranch == tMod.getNumBranches()) {
                     maxRayParam = -1;
-                    if(DEBUG) {System.out.println("Attempt to reflect from center of earth: "+nextLeg);}
+                    if(DEBUG) {System.err.println("Attempt to reflect from center of earth: "+nextLeg);}
                     return FAIL;
                 }
                 addToBranch(tMod,
@@ -1004,7 +1002,7 @@ public class SeismicPhaseFactory {
         } else if(nextLeg.equals("c")) {
             if (tMod.getCmbBranch() == tMod.getNumBranches()) {
                 maxRayParam = -1;
-                if(DEBUG) {System.out.println("Attempt to reflect from center of earth: "+nextLeg);}
+                if(DEBUG) {System.err.println("Attempt to reflect from center of earth: "+nextLeg);}
                 return FAIL;
             }
             endAction = REFLECT_TOPSIDE;
@@ -1053,9 +1051,9 @@ public class SeismicPhaseFactory {
             // discontinuities
             int disconBranch = LegPuller.closestBranchToDepth(tMod, nextLeg);
             if (DEBUG) {
-                System.out.println("DisconBranch=" + disconBranch
+                System.err.println("DisconBranch=" + disconBranch
                         + " for " + nextLeg);
-                System.out.println(tMod.getTauBranch(disconBranch,
+                System.err.println(tMod.getTauBranch(disconBranch,
                                 isPWave)
                         .getTopDepth());
             }
@@ -1124,7 +1122,7 @@ public class SeismicPhaseFactory {
                         // this source depth
                         maxRayParam = -1;
                         if (DEBUG) {
-                            System.out.println("Cannot phase convert on the "
+                            System.err.println("Cannot phase convert on the "
                                     + "downgoing side if the discontinuity is above "
                                     + "the phase leg starting point, "
                                     + currLeg
@@ -1326,7 +1324,7 @@ public class SeismicPhaseFactory {
                         currLeg);
             } else {
                 maxRayParam = -1;
-                if(DEBUG) {System.out.println("P or S followed by I or J can only exist if model has no outer core");}
+                if(DEBUG) {System.err.println("P or S followed by I or J can only exist if model has no outer core");}
                 return FAIL;
             }
         } else {
@@ -1405,7 +1403,7 @@ public class SeismicPhaseFactory {
                     if (disconBranch >= tMod.getCmbBranch()) {
                         maxRayParam = -1;
                         if (DEBUG) {
-                            System.out.println(getName() + " Attempt to underside reflect " + currLeg
+                            System.err.println(getName() + " Attempt to underside reflect " + currLeg
                                     + " from deeper layer: " + nextLeg);
                         }
                         return FAIL;
@@ -1437,10 +1435,10 @@ public class SeismicPhaseFactory {
             } else {
                 // can't have head wave as ray param is not within range
                 if (DEBUG) {
-                    System.out.println("Cannot have the head wave "
+                    System.err.println("Cannot have the head wave "
                             + currLeg + " within phase " + name
                             + " for this sourceDepth and/or path.");
-                    System.out.println(maxRayParam + " >= " + tMod.getTauBranch(tMod.getCmbBranch() - 1,
+                    System.err.println(maxRayParam + " >= " + tMod.getTauBranch(tMod.getCmbBranch() - 1,
                                     isPWave)
                             .getMinTurnRayParam() + " " +
                             "&& " + minRayParam + " <= " + tMod.getTauBranch(tMod.getCmbBranch() - 1,
@@ -1549,7 +1547,7 @@ public class SeismicPhaseFactory {
                  */
                 maxRayParam = -1;
                 if(DEBUG) {
-                    System.out.println("(currBranch >= tMod.getMohoBranch() "
+                    System.err.println("(currBranch >= tMod.getMohoBranch() "
                             + currBranch
                             + " "
                             + tMod.getMohoBranch()
@@ -1582,7 +1580,7 @@ public class SeismicPhaseFactory {
                     if (disconBranch >= tMod.getMohoBranch()) {
                         maxRayParam = -1;
                         if(DEBUG) {
-                            System.out.println(getName()+" Attempt to underside reflect "+currLeg
+                            System.err.println(getName()+" Attempt to underside reflect "+currLeg
                                     +" from deeper layer: "+nextLeg);
                         }
                         return FAIL;
@@ -1642,7 +1640,7 @@ public class SeismicPhaseFactory {
                         } else {
                             maxRayParam = -1;
                             if(DEBUG) {
-                                System.out.println("Cannot have the head wave "
+                                System.err.println("Cannot have the head wave "
                                         + currLeg + " within phase " + name
                                         + " for this sourceDepth, receiverDepth and/or path.");
                             }
@@ -1665,7 +1663,7 @@ public class SeismicPhaseFactory {
                         if (disconBranch >= tMod.getMohoBranch()) {
                             maxRayParam = -1;
                             if(DEBUG) {
-                                System.out.println(getName()+" Attempt to underside reflect "+currLeg
+                                System.err.println(getName()+" Attempt to underside reflect "+currLeg
                                         +" from deeper layer: "+nextLeg);
                             }
                             return FAIL;
@@ -1686,7 +1684,7 @@ public class SeismicPhaseFactory {
                     // range
                     maxRayParam = -1;
                     if(DEBUG) {
-                        System.out.println("Cannot have the head wave "
+                        System.err.println("Cannot have the head wave "
                                 + currLeg + " within phase " + name
                                 + " for this sourceDepth and/or path.");
                     }
@@ -1733,7 +1731,7 @@ public class SeismicPhaseFactory {
             // degenerate case, CMB is at center, so model without a core
             maxRayParam = -1;
             if(DEBUG) {
-                System.out.println("Cannot have K phase "
+                System.err.println("Cannot have K phase "
                         + currLeg + " within phase " + name
                         + " for this model as it has no core, cmb depth = radius of Earth.");
             }
@@ -1743,7 +1741,7 @@ public class SeismicPhaseFactory {
             // degenerate case, CMB is same as IOCB, so model without an outer core
             maxRayParam = -1;
             if(DEBUG) {
-                System.out.println("Cannot have K phase "
+                System.err.println("Cannot have K phase "
                         + currLeg + " within phase " + name
                         + " for this model as it has no outer core, cmb depth = iocb depth, "+tMod.getCmbDepth());
             }
@@ -1832,7 +1830,7 @@ public class SeismicPhaseFactory {
             if (reflectBranch == tMod.getNumBranches()) {
                 maxRayParam = -1;
                 if (DEBUG) {
-                    System.out.println("Attempt to underside reflect from center of earth: " + nextLeg);
+                    System.err.println("Attempt to underside reflect from center of earth: " + nextLeg);
                 }
                 return FAIL;
             }
@@ -1924,7 +1922,7 @@ public class SeismicPhaseFactory {
                 if (tMod.getIocbBranch() == tMod.getNumBranches()) {
                     maxRayParam = -1;
                     if (DEBUG) {
-                        System.out.println("Attempt to reflect from center of earth: " + nextLeg);
+                        System.err.println("Attempt to reflect from center of earth: " + nextLeg);
                     }
                     return FAIL;
                 }
@@ -1978,7 +1976,7 @@ public class SeismicPhaseFactory {
                 if (disconBranch == tMod.getNumBranches()) {
                     maxRayParam = -1;
                     if (DEBUG) {
-                        System.out.println("Attempt to underside reflect from center of earth: " + nextLeg);
+                        System.err.println("Attempt to underside reflect from center of earth: " + nextLeg);
                     }
                     return FAIL;
                 }
@@ -2116,7 +2114,7 @@ public class SeismicPhaseFactory {
                 if (tMod.getIocbBranch() == tMod.getNumBranches()) {
                     maxRayParam = -1;
                     if (DEBUG) {
-                        System.out.println("Attempt to reflect from center of earth: " + nextLeg);
+                        System.err.println("Attempt to reflect from center of earth: " + nextLeg);
                     }
                     return FAIL;
                 }
@@ -2238,7 +2236,7 @@ public class SeismicPhaseFactory {
                 if (currBranch < upgoingRecBranch) {
                     maxRayParam = -1;
                     if (DEBUG) {
-                        System.out.println(name+" (currBranch >= receiverBranch() "
+                        System.err.println(name+" (currBranch >= receiverBranch() "
                                 + currBranch
                                 + " "
                                 + upgoingRecBranch
@@ -2315,7 +2313,7 @@ public class SeismicPhaseFactory {
             // degenerate case, IOCB is at center, so model without a inner core
             maxRayParam = -1;
             if (DEBUG) {
-                System.out.println("Cannot have I or J phase "
+                System.err.println("Cannot have I or J phase "
                         + currLeg + " within phase " + name
                         + " for this model as it has no inner core, iocb depth = radius of Earth.");
             }
@@ -2398,7 +2396,7 @@ public class SeismicPhaseFactory {
             }
             if (disconBranch == tMod.getNumBranches()) {
                 maxRayParam = -1;
-                if(DEBUG) {System.out.println("Attempt to underside reflect from center of earth: "+nextLeg);}
+                if(DEBUG) {System.err.println("Attempt to underside reflect from center of earth: "+nextLeg);}
                 return FAIL;
             }
             addToBranch(tMod,
@@ -2625,7 +2623,7 @@ public class SeismicPhaseFactory {
             if (reflectBranch == tMod.getNumBranches()) {
                 maxRayParam = -1;
                 if (DEBUG) {
-                    System.out.println("Attempt to underside reflect from center of earth: " + nextLeg);
+                    System.err.println("Attempt to underside reflect from center of earth: " + nextLeg);
                 }
                 return FAIL;
             }
@@ -2690,7 +2688,7 @@ public class SeismicPhaseFactory {
                 if (currBranch < upgoingRecBranch) {
                     maxRayParam = -1;
                     if (DEBUG) {
-                        System.out.println(name+" (currBranch >= receiverBranch() "
+                        System.err.println(name+" (currBranch >= receiverBranch() "
                                 + currBranch
                                 + " "
                                 + upgoingRecBranch
@@ -2798,8 +2796,8 @@ public class SeismicPhaseFactory {
         int endOffset;
         boolean isDownGoing;
         if(DEBUG) {
-            System.out.println("before addToBranch: minRP="+minRayParam+"  maxRP="+maxRayParam);
-            System.out.println("addToBranch( start=" + startBranch + " end=" + endBranch
+            System.err.println("before addToBranch: minRP="+minRayParam+"  maxRP="+maxRayParam);
+            System.err.println("addToBranch( start=" + startBranch + " end=" + endBranch
                     + " endAction="+endActionString(endAction)+" "+currLeg+") isP:"+(isPWave?"P":"S"));
 
         }
@@ -2824,7 +2822,7 @@ public class SeismicPhaseFactory {
                     // tau branch is in high slowness, so turn is not possible, only
                     // non-critical reflect, so do not add these branches
                     if (DEBUG) {
-                        System.out.println("Warn, ray cannot turn in layer "+bNum+" due to high slowness layer at bottom depth "+tMod.getTauBranch(bNum, isPWave).getBotDepth());
+                        System.err.println("Warn, ray cannot turn in layer "+bNum+" due to high slowness layer at bottom depth "+tMod.getTauBranch(bNum, isPWave).getBotDepth());
                     }
                     endBranch = bNum-1;
                     bNum--;
@@ -2957,7 +2955,6 @@ public class SeismicPhaseFactory {
                     }
                 } else {
                     if (prevSegment.endsAtTop() && prevSegment.endBranch != startBranch +1) {
-                        System.out.println(prevSegment.toString());
                         throw new TauModelException(getName() + ": Flat Segment is ends at top, but start is not next shallower branch: " + currLeg+" "+prevSegment.endBranch +"!= "+startBranch+"+1");
                     } else if (!prevSegment.endsAtTop() && prevSegment.endBranch != startBranch) {
                         throw new TauModelException(getName() + ": Flat Segment is ends at bottom, but start is not current branch: " + currLeg+" "+prevSegment.endBranch +"!= "+startBranch);
@@ -3026,7 +3023,7 @@ public class SeismicPhaseFactory {
                 }
                 if(DEBUG) {
                     for(int i = startBranch; i <= endBranch; i++) {
-                        System.out.println("i=" + i + " isDownGoing=" + isDownGoing
+                        System.err.println("i=" + i + " isDownGoing=" + isDownGoing
                                 + " isPWave=" + isPWave + " startBranch="
                                 + startBranch + " endBranch=" + endBranch + " "
                                 + endActionString(endAction));
@@ -3049,7 +3046,7 @@ public class SeismicPhaseFactory {
                 }
                 if(DEBUG) {
                     for(int i = startBranch; i >= endBranch; i--) {
-                        System.out.println("i=" + i + " isDownGoing=" + isDownGoing
+                        System.err.println("i=" + i + " isDownGoing=" + isDownGoing
                                 + " isPWave=" + isPWave + " startBranch="
                                 + startBranch + " endBranch=" + endBranch + " "
                                 + endActionString(endAction));
@@ -3059,7 +3056,7 @@ public class SeismicPhaseFactory {
         }
         currBranch = endBranch + endOffset;
         if(DEBUG) {
-            System.out.println("after addToBranch: minRP="+minRayParam+"  maxRP="+maxRayParam+" endOffset="+endOffset+" isDownGoing="+isDownGoing);
+            System.err.println("after addToBranch: minRP="+minRayParam+"  maxRP="+maxRayParam+" endOffset="+endOffset+" isDownGoing="+isDownGoing);
         }
         return segment;
     }
@@ -3074,8 +3071,8 @@ public class SeismicPhaseFactory {
         // special case, add "flat" segment along bounday
 
         if(DEBUG) {
-            System.out.println("before addFlatBranch: minRP="+minRayParam+"  maxRP="+maxRayParam);
-            System.out.println("addFlatBranch( " + branch
+            System.err.println("before addFlatBranch: minRP="+minRayParam+"  maxRP="+maxRayParam);
+            System.err.println("addFlatBranch( " + branch
                     + " endAction="+endActionString(endAction)+" "+currLeg+") isP:"+(isPWave?"P":"S"));
 
         }
@@ -3224,7 +3221,7 @@ public class SeismicPhaseFactory {
             rayParams[1] = minRayParam;
         } else {
             if(DEBUG) {
-                System.out.println("SumBranches() maxRayParamIndex=" + maxRayParamIndex
+                System.err.println("SumBranches() maxRayParamIndex=" + maxRayParamIndex
                         + " minRayParamIndex=" + minRayParamIndex
                         + " tMod.rayParams.length=" + tMod.rayParams.length
                         + " tMod.rayParams[0]=" + tMod.rayParams[0]
@@ -3281,7 +3278,7 @@ public class SeismicPhaseFactory {
             dist[1] = dist[0] + horizontalDistDeg * Math.PI / 180.0;
             time[1] = time[0] + horizontalDistDeg * Math.PI / 180.0 * minRayParam;
         } else if(maxRayParamIndex == minRayParamIndex) {
-            System.out.println("one ray param but no head/diff phases");
+            // one ray param but no head/diff phases ???
             dist[1] = dist[0];
             time[1] = time[0];
         }

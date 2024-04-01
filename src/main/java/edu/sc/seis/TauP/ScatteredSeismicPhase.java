@@ -305,7 +305,7 @@ public class ScatteredSeismicPhase implements SeismicPhase {
                     out.add(b);
                 } else {
                     if (TauP_Tool.DEBUG) {
-                        System.out.println("Arrival not scatter to rec: " + deg + " scat: " + getScattererDistanceDeg() + " a: " + a.getDistDeg());
+                        System.err.println("Arrival not scatter to rec: " + deg + " scat: " + getScattererDistanceDeg() + " a: " + a.getDistDeg());
                     }
                 }
             }

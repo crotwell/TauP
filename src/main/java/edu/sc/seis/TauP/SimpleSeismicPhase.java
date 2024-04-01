@@ -389,7 +389,7 @@ public class SimpleSeismicPhase implements SeismicPhase {
         double deg = dv.getDegrees(getTauModel().getRadiusOfEarth());
         double tempDeg = SeismicPhase.distanceTrim180(deg);
         if (TauP_Tool.DEBUG) {
-            System.out.println("Calculation distance: "+tempDeg+" deg");
+            System.err.println("Calculation distance: "+tempDeg+" deg");
         }
         double deltaTemp = Math.abs((deg - tempDeg + 180) % 360 - 180);
         double deltaTempLongWay = Math.abs(((360-deg)-tempDeg + 180) % 360 - 180);
@@ -883,7 +883,7 @@ public class SimpleSeismicPhase implements SeismicPhase {
             int branchNum = ((Integer)branchSeq.get(i)).intValue();
             boolean isPWave = ((Boolean)waveType.get(i)).booleanValue();
             if(DEBUG) {
-                System.out.println(i + " branchNum =" + branchNum
+                System.err.println(i + " branchNum =" + branchNum
                         + " downGoing=" + (Boolean)downGoing.get(i)
                         + "  isPWave=" + isPWave);
             }
@@ -976,17 +976,17 @@ public class SimpleSeismicPhase implements SeismicPhase {
                         negMulDist*branchDist,
                                                               branchDepth));
                 if(DEBUG) {
-                    System.out.println("------->  add pierce "+branchDepth);
-                    System.out.println(" branchTime=" + branchTime
+                    System.err.println("------->  add pierce "+branchDepth);
+                    System.err.println(" branchTime=" + branchTime
                             + " branchDist=" + branchDist + " branchDepth="
                             + branchDepth);
-                    System.out.println("incrementTime = "
+                    System.err.println("incrementTime = "
                             + (distRatio * (timeB - timeA)) + " timeB="
                             + timeB + " timeA=" + timeA);
                 }
             } else {
                 if(DEBUG) {
-                    System.out.println("Time inc in branch tiny: "+" branchTime=" + branchTime
+                    System.err.println("Time inc in branch tiny: "+" branchTime=" + branchTime
                             + " branchDist=" + branchDist + " branchDepth="
                             + branchDepth);
                 }
@@ -994,7 +994,7 @@ public class SimpleSeismicPhase implements SeismicPhase {
             for(int diffBranchIdx = 0; diffBranchIdx < headOrDiffractSeq.size(); diffBranchIdx++) {
                 int diffBranchNum = headOrDiffractSeq.get(diffBranchIdx);
                 if (DEBUG) {
-                    System.out.println("diff check: "+diffBranchNum+" "+i + " branchNum =" + branchNum
+                    System.err.println("diff check: "+diffBranchNum+" "+i + " branchNum =" + branchNum
                                        + " downGoing=" + (Boolean)downGoing.get(i)
                                        + "  isPWave=" + isPWave);
                 }

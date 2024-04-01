@@ -394,7 +394,7 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
         for (int phaseNum = 0; phaseNum < phaseList.size(); phaseNum++) {
             phase = phaseList.get(phaseNum);
             if (verbose) {
-                System.out.println("Work on " + phase.getName());
+                System.err.println("Work on " + phase.getName());
             }
             double minDist = phase.getMinDistanceDeg();
             double maxDist = phase.getMaxDistanceDeg();
@@ -414,7 +414,7 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
                 done = true;
                 timeVal += timeStep;
                 if (verbose) {
-                    System.out.println("Time " + timeVal + " for " + phase.getName() + " " + allArrival.size());
+                    System.err.println("Time " + timeVal + " for " + phase.getName() + " " + allArrival.size());
                 }
                 Arrival prevArrival = null;
                 for (Arrival arrival : allArrival) {

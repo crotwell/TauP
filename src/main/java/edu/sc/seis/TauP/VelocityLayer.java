@@ -254,7 +254,7 @@ public class VelocityLayer implements Cloneable, Serializable {
                 answer = slope * (depth - getTopDepth()) + getTopDensity();
                 break;
             default:
-                System.out.println("I don't understand this material property: "
+                System.err.println("I don't understand this material property: "
                         + materialProperty + "\nUse one of P p S s R r D d");
                 throw new NoSuchMatPropException(materialProperty);
         }

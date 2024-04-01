@@ -304,9 +304,6 @@ public class TauP_WKBJ extends TauP_Time {
             c = n;
             n = data[i+1];
             data[i] = (p -2*c + n)/(deltaT*deltaT);
-            if (c != n) {
-                System.out.println(i+" => "+p+" "+c+" "+n+" "+data[i]);
-            }
         }
         p = c;
         c = n;

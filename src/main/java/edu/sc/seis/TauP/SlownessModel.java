@@ -951,16 +951,16 @@ public abstract class SlownessModel implements Serializable {
                                                                  -1,
                                                                  -1));
                 if(DEBUG) {
-                    System.out.println("first order discontinuity, depth="
+                    System.err.println("first order discontinuity, depth="
                             + currSLayer.getTopDepth());
-                    System.out.println(prevSLayer + "\n" + currSLayer);
-                    System.out.println(prevPLayer + "\n" + currPLayer);
+                    System.err.println(prevSLayer + "\n" + currSLayer);
+                    System.err.println(prevPLayer + "\n" + currPLayer);
                 }
                 if(inHighSlownessZoneS && (currSLayer.getTopP() < minSSoFar)) {
                     // top of current layer is the bottom of a high slowness
                     // zone.
                     if(DEBUG) {
-                        System.out.println("top of current layer is the bottom"
+                        System.err.println("top of current layer is the bottom"
                                 + " of a high slowness zone.");
                     }
                     highSlownessZoneS.botDepth = currSLayer.getTopDepth();
@@ -971,7 +971,7 @@ public abstract class SlownessModel implements Serializable {
                     // top of current layer is the bottom of a high slowness
                     // zone.
                     if(DEBUG) {
-                        System.out.println("top of current layer is the bottom"
+                        System.err.println("top of current layer is the bottom"
                                 + " of a high slowness zone.");
                     }
                     highSlownessZoneP.botDepth = currSLayer.getTopDepth();
@@ -993,7 +993,7 @@ public abstract class SlownessModel implements Serializable {
                         && (prevSLayer.getBotP() < currSLayer.getTopP() || currSLayer.getTopP() < currSLayer.getBotP())) {
                     // start of a high slowness zone
                     if(DEBUG) {
-                        System.out.println("Found S high slowness at first order "
+                        System.err.println("Found S high slowness at first order "
                                 + "discontinuity, layer = " + layerNum+", depth="+currSLayer.getTopDepth());
                     }
                     inHighSlownessZoneS = true;
@@ -1005,7 +1005,7 @@ public abstract class SlownessModel implements Serializable {
                         && (prevPLayer.getBotP() < currPLayer.getTopP() || currPLayer.getTopP() < currPLayer.getBotP())) {
                     // start of a high slowness zone
                     if(DEBUG) {
-                        System.out.println("Found P high slowness at first order "
+                        System.err.println("Found P high slowness at first order "
                                 + "discontinuity, layer = " + layerNum+", depth="+currPLayer.getTopDepth());
                     }
                     inHighSlownessZoneP = true;
@@ -1027,14 +1027,14 @@ public abstract class SlownessModel implements Serializable {
                                 -1));
                     }
                     if(DEBUG) {
-                        System.out.println("local slowness extrema, depth="
+                        System.err.println("local slowness extrema, depth="
                                 + currSLayer.getTopDepth());
                     }
                     if(!inHighSlownessZoneP
                             && (currPLayer.getTopP() < currPLayer.getBotP())) {
                         // start of a high slowness zone
                         if(DEBUG) {
-                            System.out.println("start of a P high slowness zone,"
+                            System.err.println("start of a P high slowness zone,"
                                     + " local slowness extrema, minPSoFar="
                                     + minPSoFar + " vlayerNum="+layerNum+" depth="+currPLayer.getTopDepth());
                         }
@@ -1047,7 +1047,7 @@ public abstract class SlownessModel implements Serializable {
                             && (currSLayer.getTopP() < currSLayer.getBotP())) {
                         // start of a high slowness zone
                         if(DEBUG) {
-                            System.out.println("start of a S high slowness zone,"
+                            System.err.println("start of a S high slowness zone,"
                                     + " local slowness extrema, minSSoFar="
                                     + minSSoFar + " vlayerNum="+layerNum+" depth="+currSLayer.getTopDepth());
                         }
@@ -1061,7 +1061,7 @@ public abstract class SlownessModel implements Serializable {
             if(inHighSlownessZoneP && (currPLayer.getBotP() < minPSoFar)) {
                 // layer contains the bottom of a high slowness zone.
                 if(DEBUG) {
-                    System.out.println("layer contains the bottom of a P "
+                    System.err.println("layer contains the bottom of a P "
                             + "high slowness zone. minPSoFar=" + minPSoFar
                             + " " + currPLayer);
                 }
@@ -1075,7 +1075,7 @@ public abstract class SlownessModel implements Serializable {
             if(inHighSlownessZoneS && (currSLayer.getBotP() < minSSoFar)) {
                 // layer contains the bottom of a high slowness zone.
                 if(DEBUG) {
-                    System.out.println("layer contains the bottom of a S "
+                    System.err.println("layer contains the bottom of a S "
                             + "high slowness zone. minSSoFar=" + minSSoFar
                             + " " + currSLayer);
                 }
@@ -1100,11 +1100,11 @@ public abstract class SlownessModel implements Serializable {
                 minSSoFar = currSLayer.getTopP();
             }
             if(DEBUG && inHighSlownessZoneS) {
-                System.out.println("In S high slowness zone, layerNum = "
+                System.err.println("In S high slowness zone, layerNum = "
                         + layerNum + " minSSoFar=" + minSSoFar);
             }
             if(DEBUG && inHighSlownessZoneP) {
-                System.out.println("In P high slowness zone, layerNum = "
+                System.err.println("In P high slowness zone, layerNum = "
                         + layerNum + " minPSoFar=" + minPSoFar);
             }
         }
@@ -1143,19 +1143,19 @@ public abstract class SlownessModel implements Serializable {
                 botCriticalLayerNum = criticalDepths.get(criticalNum).getVelLayerNum() - 1;
                 desc += " " + topCriticalLayerNum + "," + botCriticalLayerNum;
             }
-            System.out.println(desc);
+            System.err.println(desc);
         }
         if (DEBUG) {
             if (highSlownessLayerDepthsP.size() != 0) {
-                System.out.println("high slowness layer depths P: ");
+                System.err.println("high slowness layer depths P: ");
                 for (int layerNum = 0; layerNum < highSlownessLayerDepthsP.size(); layerNum++) {
-                    System.out.println(highSlownessLayerDepthsP.get(layerNum));
+                    System.err.println(highSlownessLayerDepthsP.get(layerNum));
                 }
             }
             if (highSlownessLayerDepthsS.size() != 0) {
-                System.out.println("high slowness layer depths S: ");
+                System.err.println("high slowness layer depths S: ");
                 for (int layerNum = 0; layerNum < highSlownessLayerDepthsS.size(); layerNum++) {
-                    System.out.println(highSlownessLayerDepthsS.get(layerNum));
+                    System.err.println(highSlownessLayerDepthsS.get(layerNum));
                 }
             }
         }
@@ -1302,8 +1302,10 @@ public abstract class SlownessModel implements Serializable {
                  * Check to see if p is just outside the bottommost layer. If so
                  * than return the bottom depth.
                  */
-                System.out.println(" p is just outside the bottommost layer."
-                        + " This probably shouldn't be allowed to happen!\n");
+                if (DEBUG) {
+                    System.err.println(" p is just outside the bottommost layer."
+                            + " This probably shouldn't be allowed to happen!\n");
+                }
                 return velLayer.getBotDepth();
             }
         } catch(NoSuchMatPropException e) {
@@ -1344,15 +1346,15 @@ public abstract class SlownessModel implements Serializable {
         }
         VelocityLayer firstVL = vMod.getVelocityLayer(0);
         if(DEBUG) {
-            System.out.println("start createSample");
+            System.err.println("start createSample");
         }
         setRadiusOfEarth(vMod.getRadiusOfEarth());
         if(DEBUG) {
-            System.out.println("findCriticalPoints");
+            System.err.println("findCriticalPoints");
         }
         findCriticalPoints();
         if(DEBUG) {
-            System.out.println("coarseSample");
+            System.err.println("coarseSample");
         }
         coarseSample();
         boolean isOK = true;
@@ -1361,7 +1363,7 @@ public abstract class SlownessModel implements Serializable {
             if (! isOK) {
                 throw new SlownessModelException("coarseSample RP not compatible");
             }
-            System.out.println("rayParamCheck");
+            System.err.println("rayParamCheck");
         }
 
         rayParamIncCheck();
@@ -1370,7 +1372,7 @@ public abstract class SlownessModel implements Serializable {
             if (! isOK) {
                 throw new SlownessModelException("rayParamIncCheck RP not compatible");
             }
-            System.out.println("depthIncCheck");
+            System.err.println("depthIncCheck");
         }
         depthIncCheck();
         if(DEBUG) {
@@ -1378,7 +1380,7 @@ public abstract class SlownessModel implements Serializable {
             if (! isOK) {
                 throw new SlownessModelException("depthIncCheck RP not compatible");
             }
-            System.out.println("distanceCheck");
+            System.err.println("distanceCheck");
         }
         distanceCheck();
         if(DEBUG) {
@@ -1386,7 +1388,7 @@ public abstract class SlownessModel implements Serializable {
             if (! isOK) {
                 throw new SlownessModelException("distanceCheck RP not compatible");
             }
-            System.out.println("fixCriticalPoints");
+            System.err.println("fixCriticalPoints");
         }
         fixCriticalPoints();
         if(DEBUG) {
@@ -1394,7 +1396,7 @@ public abstract class SlownessModel implements Serializable {
             if (! isOK) {
                 throw new SlownessModelException("fixCriticalPoints RP not compatible");
             }
-            System.out.println("done createSample");
+            System.err.println("done createSample");
         }
     }
 
@@ -1699,7 +1701,7 @@ public abstract class SlownessModel implements Serializable {
                     if(Math.abs(prevTD.getDistRadian() - currTD.getDistRadian()) > maxRangeInterval
                             && Math.abs(sLayer.getTopP() - sLayer.getBotP()) > 2 * minDeltaP) {
                         if (DEBUG) {
-                            System.out.println(" " + j+"Dist jump too great: "+Math.abs(prevTD.getDistRadian() - currTD.getDistRadian())+" > "+maxRangeInterval
+                            System.err.println(" " + j+"Dist jump too great: "+Math.abs(prevTD.getDistRadian() - currTD.getDistRadian())+" > "+maxRangeInterval
                                                +"  adding slowness: "+(sLayer.getTopP() + sLayer.getBotP()) / 2.0);
                         }
                         addSlowness((sLayer.getTopP() + sLayer.getBotP()) / 2.0,
@@ -1736,7 +1738,7 @@ public abstract class SlownessModel implements Serializable {
                                                 / (splitTD.getDistRadian() - prevTD.getDistRadian()) + prevTD.getTime())) > maxInterpError) {
 
                             if(DEBUG ) {
-                                System.out.print(" " + j+" add slowness "+Math.abs(currTD.getTime()
+                                System.err.print(" " + j+" add slowness "+Math.abs(currTD.getTime()
                                                                                    - ((splitTD.getTime() - prevTD.getTime())
                                                                                            * (currTD.getDistRadian() - prevTD.getDistRadian())
                                                                                            / (splitTD.getDistRadian() - prevTD.getDistRadian()) + prevTD.getTime()))+" > "+maxInterpError);
@@ -1766,7 +1768,7 @@ public abstract class SlownessModel implements Serializable {
                         } else {
                             j++;
                             if(DEBUG && (j % 10 == 0)) {
-                                System.out.println(j);
+                                System.err.println(j);
                             }
                         }
                     }
@@ -1778,12 +1780,12 @@ public abstract class SlownessModel implements Serializable {
                     isPrevOK = false;
                     j++;
                     if(DEBUG && (j % 100 == 0)) {
-                        System.out.print(" " + j);
+                        System.err.print(" " + j);
                     }
                 }
             }
             if(DEBUG) {
-                System.out.println("\nNumber of " + (currWaveType ? 'P' : 'S')
+                System.err.println("\nNumber of " + (currWaveType ? 'P' : 'S')
                         + " slowness layers: " + j);
             }
         }
@@ -2362,11 +2364,11 @@ public abstract class SlownessModel implements Serializable {
             for (int ii = i+1; ii < PLayers.size(); ii++) {
                 SlownessLayer llp = PLayers.get(ii);
                 if ((lp.getTopP()-llp.getTopP()) * (lp.getTopP()-llp.getBotP()) < 0) {
-                    System.out.println("P top is inside another layer: P:"+lp+"  P:"+llp);
+                    System.err.println("P top is inside another layer: P:" + lp + "  P:" + llp);
                     out = false;
                 }
                 if ((lp.getBotP()-llp.getTopP()) * (lp.getBotP()-llp.getBotP()) < 0) {
-                    System.out.println("P bot is inside another layer: P:"+lp+"  P:"+llp);
+                    System.err.println("P bot is inside another layer: P:"+lp+"  P:"+llp);
                     out = false;
                 }
             }
@@ -2376,11 +2378,11 @@ public abstract class SlownessModel implements Serializable {
             for (int ii = i+1; ii < SLayers.size(); ii++) {
                 SlownessLayer lls = SLayers.get(ii);
                 if ((ls.getTopP()-lls.getTopP()) * (ls.getTopP()-lls.getBotP()) < 0) {
-                    System.out.println("S top is inside another layer: S:"+ls+"  S:"+lls);
+                    System.err.println("S top is inside another layer: S:"+ls+"  S:"+lls);
                     out = false;
                 }
                 if ((ls.getBotP()-lls.getTopP()) * (ls.getBotP()-lls.getBotP()) < 0) {
-                    System.out.println("S bot is inside another layer: S:"+ls+"  S:"+lls);
+                    System.err.println("S bot is inside another layer: S:"+ls+"  S:"+lls);
                     out = false;
                 }
             }

@@ -143,7 +143,7 @@ public class PropertyLoader {
             props.put("Key", "Value and another value");
             save(props, "testProperties");
         } catch(IOException e) {
-            System.out.println("Caught IOException: " + e.getMessage());
+            System.err.println("Caught IOException: " + e.getMessage());
         }
     }
 }

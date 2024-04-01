@@ -110,7 +110,7 @@ public class TauModelLoader {
         } catch(Exception ex) {
             // couldn't get as a resource, so keep going
             if(verbose)
-                System.out.println("couldn't load as resource: " + filename
+                System.err.println("couldn't load as resource: " + filename
                         + "\n message: " + ex.getMessage());
         }
         /* couldn't find as a resource, try in classpath. */

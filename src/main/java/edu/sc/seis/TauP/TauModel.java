@@ -329,7 +329,7 @@ public class TauModel implements Serializable {
          * distance. Otherwise we must signal an exception.
          */
         if(DEBUG) {
-            System.out.println("Size of slowness model:"
+            System.err.println("Size of slowness model:"
                     + " sMod.getNumLayers('P') = " + sMod.getNumLayers(true)
                     + ", sMod.getNumLayers('S') = " + sMod.getNumLayers(false));
         }
@@ -414,7 +414,7 @@ public class TauModel implements Serializable {
             rayParams[rayParams.length-i-1] = tmp;
         }
         if(DEBUG) {
-            System.out.println("Number of slowness samples for tau =" + numUnique);
+            System.err.println("Number of slowness samples for tau =" + numUnique);
         }
         CriticalDepth topCritDepth, botCritDepth;
         int waveNum;
@@ -427,7 +427,7 @@ public class TauModel implements Serializable {
                 botCritDepth = sMod.getCriticalDepth(critNum + 1);
                 botCritLayerNum = botCritDepth.getLayerNum(isPWave) - 1;
                 if(DEBUG) {
-                    System.out.println("Calculating " + (isPWave ? "P" : "S")
+                    System.err.println("Calculating " + (isPWave ? "P" : "S")
                             + " tau branch for branch " + critNum
                             + " topCritLayerNum=" + topCritLayerNum+" ("+topCritDepth.getDepth()+")"
                             + " botCritLayerNum=" + botCritLayerNum+" ("+botCritDepth.getDepth()+")");
@@ -911,28 +911,28 @@ public class TauModel implements Serializable {
     public void print() {
         double deg, time;
         if(DEBUG)
-            System.out.println("Starting print() in TauModel");
-        System.out.println("Delta tau for each slowness sample and layer.");
+            System.err.println("Starting print() in TauModel");
+        System.err.println("Delta tau for each slowness sample and layer.");
         for(int j = 0; j < rayParams.length; j++) {
             deg = 0;
             time = 0;
             for(int i = 0; i < getNumBranches(); i++) {
                 deg += tauBranches[0][i].getDist(j) * 180 / Math.PI;
                 time += tauBranches[0][i].time[j];
-                System.out.println(" i " + i + " j " + j + " rayParam "
+                System.err.println(" i " + i + " j " + j + " rayParam "
                         + rayParams[j] + " tau " + tauBranches[0][i].tau[j]
                         + " time " + tauBranches[0][i].time[j] + " dist "
                         + tauBranches[0][i].getDist(j) + " degrees "
                         + (tauBranches[0][i].getDist(j) * 180 / Math.PI));
             }
-            System.out.println();
-            System.out.println("deg= " + deg + "  time=" + time);
+            System.err.println();
+            System.err.println("deg= " + deg + "  time=" + time);
         }
     }
 
     public String toString() {
         if(DEBUG)
-            System.out.println("Starting toString() in TauModel");
+            System.err.println("Starting toString() in TauModel");
         String desc = "Delta tau for each slowness sample and layer.\n";
         for(int j = 0; j < rayParams.length; j++) {
             for(int i = 0; i < tauBranches[0].length; i++) {

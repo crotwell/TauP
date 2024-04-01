@@ -63,7 +63,7 @@ public class TauP_SetMSeed3 extends TauP_Time {
         for (String filename : mseed3FileNames) {
             try {
                 if (verbose) {
-                    System.out.println(filename);
+                    System.err.println(filename);
                 }
                 processMSeed3File(new File(filename));
             } catch(SeisFileException e) {
@@ -145,8 +145,8 @@ public class TauP_SetMSeed3 extends TauP_Time {
                 insertMarkers(bag, arrivals, evTime);
             }
         } else {
-            System.out.println("Insufficient info in eh to calc travel times");
-            System.out.println("  st: "+staLoc+"  gcarc="+gcarc+"  ev: "+evLoc+" at "+evTime);
+            System.err.println("Insufficient info in eh to calc travel times");
+            System.err.println("  st: "+staLoc+"  gcarc="+gcarc+"  ev: "+evLoc+" at "+evTime);
         }
     }
 

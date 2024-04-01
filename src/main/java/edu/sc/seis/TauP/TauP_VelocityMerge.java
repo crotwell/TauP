@@ -34,16 +34,16 @@ public class TauP_VelocityMerge extends TauP_Tool {
         if (overlayModelName != null) {
 
             if(DEBUG) {
-                System.out.println("base model: "+vMod.modelName);
-                System.out.println("merge model: "+overlayModelName);
+                System.err.println("base model: "+vMod.modelName);
+                System.err.println("merge model: "+overlayModelName);
             }
             overlayVMod = TauModelLoader.loadVelocityModel(overlayModelName, overlayModelType);
             outVMod = vMod.replaceLayers(overlayVMod.getLayers(), overlayVMod.getModelName(), smoothTop, smoothBottom);
             outVMod.setModelName(vMod.modelName+"_"+overlayVMod.getModelName());
         } else {
             if (DEBUG) {
-                System.out.println("base model: "+vMod.modelName);
-                System.out.println("no merge model requested.");
+                System.err.println("base model: "+vMod.modelName);
+                System.err.println("no merge model requested.");
             }
         }
         if (elevation != 0) {
@@ -57,7 +57,7 @@ public class TauP_VelocityMerge extends TauP_Tool {
                 dos = new PrintWriter(new OutputStreamWriter(System.out));
             } else {
                 if (DEBUG) {
-                    System.out.println("Save to "+getOutFile());
+                    System.err.println("Save to "+getOutFile());
                 }
                 dos = new PrintWriter(new BufferedWriter(new FileWriter(getOutFile())));
             }

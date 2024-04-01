@@ -139,7 +139,7 @@ public class TauP_SetSac extends TauP_Time {
         }
         for (String filename : sacFileNames) {
             if(verbose) {
-                System.out.println(filename);
+                System.err.println(filename);
             }
             processSacFile(new File(filename));
         }
@@ -161,30 +161,30 @@ public class TauP_SetSac extends TauP_Time {
         SacTimeSeries sacFile = SacTimeSeries.read(f);
         SacHeader header = sacFile.getHeader();
         if(SacConstants.isUndef(header.getEvdp())) {
-            System.out.println("Depth not set in "
+            System.err.println("Depth not set in "
                     + f.getName() + ", skipping");
             return;
         }
         if(SacConstants.isUndef(header.getO())) {
-            System.out.println("O marker not set in "
+            System.err.println("O marker not set in "
                     + f + ", skipping");
             return;
         }
         double deg;
         if(! SacConstants.isUndef(header.getGcarc())) {
             if(verbose) {
-                System.out.println("Using gcarc: " + header.getGcarc());
+                System.err.println("Using gcarc: " + header.getGcarc());
             }
             deg = header.getGcarc();
         } else if(! SacConstants.isUndef(header.getDist())) {
             if(verbose) {
-                System.out.println("Using dist: " + header.getDist());
+                System.err.println("Using dist: " + header.getDist());
             }
             deg = header.getDist() / 6371.0 * 180.0 / Math.PI;
         } else if( ! SacConstants.isUndef(sacFile.getHeader().getStla()) && ! SacConstants.isUndef(sacFile.getHeader().getStlo())
                 && ! SacConstants.isUndef(sacFile.getHeader().getEvla()) && ! SacConstants.isUndef(sacFile.getHeader().getEvlo())) {
             if(verbose) {
-                System.out.println("Using stla,stlo, evla,evlo to calculate");
+                System.err.println("Using stla,stlo, evla,evlo to calculate");
             }
             Alert.warning("Warning: Sac header gcarc is not set,",
                           "using lat and lons to calculate distance.");
@@ -214,13 +214,13 @@ public class TauP_SetSac extends TauP_Time {
             }
         }
         if(verbose) {
-            System.out.println(f
+            System.err.println(f
                     + " searching for " + getPhaseNameString());
         }
         List<Arrival> arrivalList = calculate(deg);
         // calcTime(deg);
         if(verbose) {
-            System.out.println(f + " "
+            System.err.println(f + " "
                     + arrivalList.size() + " arrivals found.");
         }
         // set arrivals in header, look for triplications if configured in phase name
@@ -247,7 +247,7 @@ public class TauP_SetSac extends TauP_Time {
                         Arrival tripArrival = arrivalCopy.get(tripNum);
                         if (tripHeader != SKIP_HEADER) {
                             if (verbose) {
-                                System.out.println(f
+                                System.err.println(f
                                         + " phase found " + pn.name + " = "
                                         + tripArrival.getName() + " trip(" + tripNum + ")"
                                         + " -> t"
@@ -258,7 +258,7 @@ public class TauP_SetSac extends TauP_Time {
                             setSacTHeader(sacFile, tripHeader, tripArrival);
                         } else {
                             if (verbose) {
-                                System.out.println(f
+                                System.err.println(f
                                         + " phase found " + pn.name + " = "
                                         + tripArrival.getName() + " trip(" + tripNum + ")"
                                         + " -> skip"
