@@ -455,7 +455,7 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
             for (SeismicPhase phase : xyPlots.keySet()) {
                 for (XYPlottingData xyplotItem : xyPlots.get(phase)) {
                     for (XYSegment segment : xyplotItem.segmentList) {
-                        writer.println("> " + xyplotItem.label + " " + segment.x.length + " " + xyplotItem.phase);
+                        writer.println("> " + xyplotItem.label );
                         for (int i = 0; i < segment.x.length; i++) {
                             writer.println(segment.x[i] + " " + segment.y[i]);
                         }
