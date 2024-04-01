@@ -17,7 +17,7 @@ public class XYPlottingData {
 
     }
     public XYPlottingData(List<double[]> xData, String xAxisType, List<double[]> yData, String yAxisType, String label, SeismicPhase phase) {
-        this(XYSegment.createFromLists(xData, yData), xAxisType, yAxisType, phase.getName(), phase);
+        this(XYSegment.createFromLists(xData, yData), xAxisType, yAxisType, label, phase);
     }
 
     public XYPlottingData(List<XYSegment> segments, String xAxisType, String yAxisType, String label, SeismicPhase phase) {
@@ -72,9 +72,17 @@ public class XYPlottingData {
         }
         writer.println("    <g class=\"" + phase.getName()+" "+ label + " " +p_or_s +"\">");
         for (XYSegment segment : segmentList) {
-            segment.asSVG(writer, "");
+            segment.asSVG(writer, "", Outputs.formatStringForAxisType(xAxisType), Outputs.formatStringForAxisType(yAxisType));
         }
         writer.println("    </g> <!-- end "+phase.getName()+" "+ label+ " " +p_or_s +" -->");
+    }
+
+    public void asGMT(PrintWriter writer) {
+        String xFormat = Outputs.formatStringForAxisType(xAxisType);
+        String yFormat = Outputs.formatStringForAxisType(yAxisType);
+        for (XYSegment segment : segmentList) {
+            segment.asGMT(writer, label, xFormat, yFormat);
+        }
     }
 
     public JSONObject asJSON() {

@@ -91,18 +91,35 @@ public class XYSegment {
      * @param css_class optional class to add to css class attribute
      */
     public void asSVG(PrintWriter writer, String css_class) {
+        asSVG(writer, css_class, "%3g", "%3g");
+    }
+    public void asSVG(PrintWriter writer, String css_class, String xFormat, String yFormat) {
         writer.println("    <polyline class=\"" + css_class + "\" points=\"");
         for (int i = 0; i < x.length; i++) {
             float xf = (float)x[i];
             float yf = (float)y[i];
             if (Float.isFinite(xf) && Float.isFinite(yf)) {
-                writer.println(xf + " " + yf);
+                writer.println(String.format(xFormat + " " + yFormat, xf, yf));
             } else if (i != 0 && i != x.length) {
                 writer.println("  \"  /> <!-- " + css_class + "-->");
                 writer.println("    <polyline class=\"" + css_class + "\" points=\"");
             }
         }
         writer.println("  \"  /> <!-- " + css_class + "-->");
+    }
+
+
+    public void asGMT(PrintWriter writer, String label, String xFormat, String yFormat) {
+        writer.println("> "+label);
+        for (int i = 0; i < x.length; i++) {
+            float xf = (float)x[i];
+            float yf = (float)y[i];
+            if (Float.isFinite(xf) && Float.isFinite(yf)) {
+                writer.println(String.format(xFormat + "  " + yFormat, xf, yf));
+            } else if (i != 0 && i != x.length) {
+                writer.println("> "+label+" NaN break "+xf+" "+yf);
+            }
+        }
     }
 
     /**

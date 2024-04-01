@@ -46,8 +46,6 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
         double tempDepth;
         if(modelArgs.getSourceDepth() != -1 * Double.MAX_VALUE) {
             /* enough info given on cmd line, so just do one calc. */
-            setSourceDepth(Double.valueOf(toolProps.getProperty("taup.source.depth",
-                    "0.0")));
 
             Map<SeismicPhase, List<XYPlottingData>> xy = calculate(xAxisType, yAxisType);
             printResult(getWriter(), xy);
@@ -90,6 +88,7 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
         List<SeismicPhase> phaseList = getSeismicPhases();
         Map<SeismicPhase, List<XYPlottingData>> outMap = new HashMap<>();
         for (SeismicPhase phase: phaseList) {
+            String phaseLabel = phase.getName()+" for a source depth of "+modelArgs.getSourceDepth()+" kilometers in the "+modelArgs.getModelName()+" model";
             List<XYPlottingData> out = new ArrayList<>();
             outMap.put(phase, out);
             boolean ensure180 = (xAxisType==AxisType.degree_180 || yAxisType==AxisType.degree_180
@@ -110,14 +109,14 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
                         }
                         out.add(new XYPlottingData(
                                 segmentList, xAxisType.toString(), "Ray Param",
-                                phase.getName(), phase
+                                phaseLabel, phase
                         ));
 
                     }
                 } else {
                     List<double[]> xData = calculatePlotForType(phase, xAxisType, ensure180);
                     List<double[]> yData = calculatePlotForType(phase, yAxisType, ensure180);
-                    out.add(new XYPlottingData(xData, xAxisType.toString(), yData, yAxisType.toString(), phase.getName(), phase));
+                    out.add(new XYPlottingData(xData, xAxisType.toString(), yData, yAxisType.toString(), xAxisType+"/"+yAxisType+" "+phaseLabel, phase));
 
                     if (phase.isAllSWave()) {
                         // second calc needed for sh, as psv done in main calc
@@ -128,7 +127,7 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
 
                             xData = calculatePlotForType(phase, xOther, ensure180);
                             yData = calculatePlotForType(phase, yOther, ensure180);
-                            out.add(new XYPlottingData(xData, xAxisType.toString(), yData, yAxisType.toString(), phase.getName(), phase));
+                            out.add(new XYPlottingData(xData, xAxisType.toString(), yData, yAxisType.toString(), xOther+"/"+yOther+" "+phaseLabel, phase));
                         }
                         // what about case of amp vs refltran, need 4 outputs?
                         if (xAxisType==AxisType.refltran
@@ -138,7 +137,7 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
 
                             xData = calculatePlotForType(phase, xOther, ensure180);
                             yData = calculatePlotForType(phase, yOther, ensure180);
-                            out.add(new XYPlottingData(xData, xAxisType.toString(), yData, yAxisType.toString(), phase.getName(), phase));
+                            out.add(new XYPlottingData(xData, xAxisType.toString(), yData, yAxisType.toString(), xOther+"/"+yOther+" "+phaseLabel, phase));
                         }
                     }
                 }
@@ -451,15 +450,9 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
             writer.println("</svg>");
 
         } else if (getOutputFormat().equalsIgnoreCase(OutputTypes.TEXT) || getOutputFormat().equalsIgnoreCase(OutputTypes.GMT)) {
-
             for (SeismicPhase phase : xyPlots.keySet()) {
                 for (XYPlottingData xyplotItem : xyPlots.get(phase)) {
-                    for (XYSegment segment : xyplotItem.segmentList) {
-                        writer.println("> " + xyplotItem.label );
-                        for (int i = 0; i < segment.x.length; i++) {
-                            writer.println(segment.x[i] + " " + segment.y[i]);
-                        }
-                    }
+                    xyplotItem.asGMT(writer);
                 }
             }
         } else {

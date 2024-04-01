@@ -61,6 +61,55 @@ public class Outputs {
                 + "e";
     }
 
+    public static String formatStringForAxisType(String axisType) {
+        try {
+            AxisType at = AxisType.valueOf(axisType);
+            return formatStringForAxisType(at);
+        } catch (IllegalArgumentException e ) {}
+        return "%f";
+    }
+
+    public static String formatStringForAxisType(AxisType axisType) {
+        String outFormat = "%f";
+        switch (axisType) {
+            case radian:
+            case radian_pi:
+                outFormat = distanceFormat;
+                break;
+            case degree:
+            case degree_180:
+            case kilometer:
+            case kilometer_180:
+                outFormat = distanceFormat;
+                break;
+            case rayparam:
+            case theta:
+            case tau:
+                outFormat = rayParamFormat;
+                break;
+            case time:
+                outFormat = timeFormat;
+                break;
+            case turndepth:
+                outFormat = depthFormat;
+                break;
+            case amp:
+            case amppsv:
+            case ampsh:
+            case geospread:
+            case refltran:
+            case refltranpsv:
+            case refltransh:
+                outFormat = ampFactorFormat;
+                break;
+            case index:
+            default:
+                outFormat = depthFormat;
+                break;
+        }
+        return outFormat;
+    }
+
     public static String formatDepth(double depth) {
 
         return String.format( depthFormat, depth);
