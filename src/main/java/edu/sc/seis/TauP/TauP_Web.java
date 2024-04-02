@@ -6,7 +6,7 @@ import picocli.CommandLine;
 import java.lang.reflect.Constructor;
 import java.util.concurrent.Callable;
 
-@CommandLine.Command(name = "web")
+@CommandLine.Command(name = "web", description = "web based gui for the TauP Toolkit")
 public class TauP_Web implements Callable<Integer> {
 
     /**

@@ -51,7 +51,7 @@ import static edu.sc.seis.TauP.VelocityModel.TVEL;
  * 
  * @author H. Philip Crotwell
  */
-@CommandLine.Command(name = "create")
+@CommandLine.Command(name = "create", description = "Create .taup file from velocity model")
 public class TauP_Create extends TauP_Tool {
 
     String modelFilename = "iasp91.tvel";

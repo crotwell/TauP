@@ -11,7 +11,7 @@ import java.io.PrintWriter;
 /**
  * Creates plots of a velocity model.
  */
-@CommandLine.Command(name = "velplot")
+@CommandLine.Command(name = "velplot", description = "plot velocity vs depth for a model")
 public class TauP_VelocityPlot extends TauP_Tool {
 
     public static final String DEFAULT_OUTFILE = "taup_velocitymodel";

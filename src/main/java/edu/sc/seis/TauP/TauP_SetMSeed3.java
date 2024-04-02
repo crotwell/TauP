@@ -21,7 +21,7 @@ import java.time.Instant;
 import java.time.format.DateTimeParseException;
 import java.util.*;
 
-@CommandLine.Command(name = "setmseed3")
+@CommandLine.Command(name = "setmseed3", description = "save travel times in the extra header of miniseed3 files")
 public class TauP_SetMSeed3 extends TauP_Time {
 
     public TauP_SetMSeed3() {

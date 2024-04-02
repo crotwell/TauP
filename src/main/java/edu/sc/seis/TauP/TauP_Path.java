@@ -35,7 +35,7 @@ import static edu.sc.seis.TauP.TauP_Pierce.getCommentLine;
  * @version 1.1.3 Wed Jul 18 15:00:35 GMT 2001
  * @author H. Philip Crotwell
  */
-@CommandLine.Command(name = "path")
+@CommandLine.Command(name = "path", description = "plot ray paths through the earth")
 public class TauP_Path extends TauP_AbstractRayTool {
 
 

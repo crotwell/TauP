@@ -25,7 +25,7 @@ import static edu.sc.seis.TauP.CLI.OutputTypes.SVG;
 /**
  * Plots of wavefronts, distance along the ray at points in time.
  */
-@CommandLine.Command(name = "wavefront")
+@CommandLine.Command(name = "wavefront", description = "plot wavefronts of seismic phases at steps in time")
 public class TauP_Wavefront extends TauP_AbstractPhaseTool {
 
     int numRays = 30;

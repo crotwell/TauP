@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@CommandLine.Command(name = "curve")
+@CommandLine.Command(name = "curve", description = "plot traveltime and other curves for phases")
 public class TauP_Curve extends TauP_AbstractPhaseTool {
     public TauP_Curve() {
         setDefaultOutputFormat();

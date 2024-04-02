@@ -13,7 +13,7 @@ import java.util.List;
 import static edu.sc.seis.TauP.VelocityModel.P_WAVE_CHAR;
 import static edu.sc.seis.TauP.VelocityModel.S_WAVE_CHAR;
 
-@CommandLine.Command(name = "refltrans")
+@CommandLine.Command(name = "refltrans", description = "plot reflection and transmission coefficients for a discontinuity")
 public class TauP_ReflTransPlot extends  TauP_Tool {
 
     public static final String DEFAULT_OUTFILE = "taup_refltrans";
