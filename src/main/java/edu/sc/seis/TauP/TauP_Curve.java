@@ -391,12 +391,15 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
             double[] minmax = XYPlottingData.initMinMax();
             for (List<XYPlottingData> phaseXY : xyPlots.values()) {
                 for (XYPlottingData xyplot : phaseXY) {
-                    minmax = xyplot.minMax(minmax);
+                    if (xAxisMinMax.length == 2 && yAxisMinMax.length == 0) {
+                        // given x range, find y range
+                        minmax = xyplot.minMaxInXRange(minmax, xAxisMinMax);
+                    } else {
+                        minmax = xyplot.minMax(minmax);
+                    }
                 }
             }
             checkEqualMinMax(minmax, 0.1, 0.1);
-            SvgUtil.xyplotScriptBeginning(writer, toolNameFromClass(this.getClass()),
-                    cmdLineArgs,  pixelWidth, plotOffset, extrtaCSS.toString(), minmax);
             // override minmax with user supplied if
             if (xAxisMinMax.length == 2) {
                 minmax[0] = xAxisMinMax[0];
@@ -406,6 +409,8 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
                 minmax[2] = yAxisMinMax[0];
                 minmax[3] = yAxisMinMax[1];
             }
+            SvgUtil.xyplotScriptBeginning(writer, toolNameFromClass(this.getClass()),
+                    cmdLineArgs,  pixelWidth, margin, extrtaCSS.toString(), minmax);
 
             float plotWidth = pixelWidth - 2*margin;
             SvgUtil.createXYAxes(writer, minmax[0], minmax[1], 8, false,
@@ -413,6 +418,7 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
                     pixelWidth, margin, getTauModelName()+" (h="+getSourceDepth()+" km)",
                     xAxisType.toString(), yAxisType.toString());
 
+            writer.println("<g clip-path=\"url(#curve_clip)\">");
 
             writer.println("<g transform=\"scale(1,-1) translate(0, -"+plotWidth+")\">");
 
@@ -438,7 +444,8 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
 
 
             writer.println("  </g> <!-- end scale -->");
-            writer.println("  </g> <!-- end translate -->");
+            writer.println("  </g> <!-- end scaletranslate -->");
+            writer.println("  </g> <!-- end clip-path -->");
 
             List<String> labels = new ArrayList<>();
             List<String> labelClasses = new ArrayList<>();

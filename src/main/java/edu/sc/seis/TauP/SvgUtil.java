@@ -41,9 +41,13 @@ public class SvgUtil {
         out.println("    <style type=\"text/css\"><![CDATA[");
         out.println(css);
         out.println("    ]]></style>");
+        out.println("  <clipPath id=\"curve_clip\">");
+        out.println("    <rect x=\""+0+"\" y=\""+0+"\" width=\""+(pixelWidth-2*plotOffset)+"\" height=\""+(pixelWidth-2*plotOffset)+"\"/>");
+        out.println("  </clipPath>");
         out.println("  </defs>");
         //out.println("<g transform=\"translate("+plotOffset+","+plotOffset+")\" >");
         out.println("<!-- draw axis and label distances.-->");
+
         out.println();
     }
 

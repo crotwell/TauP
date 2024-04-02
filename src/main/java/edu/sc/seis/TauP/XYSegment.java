@@ -49,6 +49,32 @@ public class XYSegment {
         return out;
     }
 
+    public double[] minMaxInXRange(double[] priorMinMax, double[] xRange) {
+        double minX = priorMinMax[0];
+        double maxX = priorMinMax[1];
+        double minY = priorMinMax[2];
+        double maxY = priorMinMax[3];
+        for (int i = 0; i < y.length; i++) {
+            if (i > 0) {
+                for (int j = 0; j < 2; j++) {
+                    if ((x[i-1] - xRange[j])*(x[i]-xRange[j]) < 0) {
+                        // crosses x boundary
+                        double interp = TauP_AbstractPhaseTool.linearInterp(x[i-1], y[i-1], x[i], y[i], xRange[0]);
+                        if (interp < minY) { minY = interp;}
+                        if (interp > maxY) {maxY = interp;}
+                    }
+                }
+            }
+            if ((x[i] - xRange[0])*(x[i]-xRange[1]) < 0) {
+                // point inside xRange
+                if (y[i] < minY) { minY = y[i];}
+                if (y[i] > maxY) {maxY = y[i];}
+            }
+        }
+        double[] out = new double[] { xRange[0], xRange[1], minY, maxY};
+        return out;
+    }
+
 
     public List<XYSegment> recalcForLog(boolean xAxisLog, boolean yAxisLog) {
         List<XYSegment> out = new ArrayList<>();
