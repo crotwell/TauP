@@ -203,7 +203,6 @@ public class ToolRun {
 		return result;
 	}
 	public static void main(String... args) {
-		System.err.println("new picocli main: "+String.join(" ", args));
 		try {
 			int result = mainWithExitCode(args);
 			System.exit(result);

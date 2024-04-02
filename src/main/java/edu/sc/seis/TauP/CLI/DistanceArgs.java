@@ -65,7 +65,7 @@ public class DistanceArgs {
     public List<RayParamRay> getRayParamRays() {
         List<RayParamRay> rpList = new ArrayList<>();
         for (Double d : distArgs.shootRaypList) {
-            rpList.add(RayParamRay.ofRayParam(d));
+            rpList.add(RayParamRay.ofRayParamSDegree(d));
         }
         if (hasEventLatLon() && !hasStationLatLon() && getAzimuth() != null) {
             if (distArgs.geodetic) {

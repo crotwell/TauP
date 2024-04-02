@@ -38,13 +38,13 @@ import java.util.*;
 @CommandLine.Command(name = "time")
 public class TauP_Time extends TauP_AbstractRayTool {
 
-    @CommandLine.Option(names = "--rayp", description = "only output the ray parameter")
+    @CommandLine.Option(names = {"--rayp", "--onlyrayp"}, description = "only output the ray parameter")
     protected boolean onlyPrintRayP = false;
 
-    @CommandLine.Option(names = "--time", description = "only output travel time")
+    @CommandLine.Option(names = {"--time", "--onlytime"}, description = "only output travel time")
     protected boolean onlyPrintTime = false;
 
-    @CommandLine.Option(names = "--first", description = "only output the first arrival for each phase, no triplications")
+    @CommandLine.Option(names = {"--first", "--onlyfirst"}, description = "only output the first arrival for each phase, no triplications")
     protected boolean onlyFirst = false;
 
     @CommandLine.Option(names = "--amp", description = "amplitude factor for each phase")
