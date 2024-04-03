@@ -16,8 +16,8 @@
  */
 package edu.sc.seis.TauP;
 
-import edu.sc.seis.TauP.CLI.OutputTypes;
-import edu.sc.seis.TauP.CLI.TextOutputTypeArgs;
+import edu.sc.seis.TauP.cli.OutputTypes;
+import edu.sc.seis.TauP.cli.TextOutputTypeArgs;
 import edu.sc.seis.seisFile.Location;
 import org.json.JSONArray;
 import org.json.JSONException;

@@ -1,6 +1,6 @@
 package edu.sc.seis.TauP;
 
-import edu.sc.seis.TauP.CLI.OutputTypes;
+import edu.sc.seis.TauP.cli.OutputTypes;
 import picocli.CommandLine;
 
 import java.lang.reflect.Constructor;

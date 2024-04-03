@@ -1,7 +1,7 @@
 package edu.sc.seis.TauP;
 
-import edu.sc.seis.TauP.CLI.DistanceArgs;
-import edu.sc.seis.TauP.CLI.Scatterer;
+import edu.sc.seis.TauP.cli.DistanceArgs;
+import edu.sc.seis.TauP.cli.Scatterer;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import picocli.CommandLine;

@@ -1,7 +1,7 @@
 package edu.sc.seis.TauP;
 
-import edu.sc.seis.TauP.CLI.OutputTypes;
-import edu.sc.seis.TauP.CLI.TextOutputTypeArgs;
+import edu.sc.seis.TauP.cli.OutputTypes;
+import edu.sc.seis.TauP.cli.TextOutputTypeArgs;
 import picocli.CommandLine;
 
 import java.io.IOException;

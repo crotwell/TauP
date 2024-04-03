@@ -2,8 +2,8 @@ package edu.sc.seis.webtaup;
 
 import edu.sc.seis.TauP.*;
 
-import edu.sc.seis.TauP.CLI.OutputTypes;
-import edu.sc.seis.TauP.CLI.Scatterer;
+import edu.sc.seis.TauP.cli.OutputTypes;
+import edu.sc.seis.TauP.cli.Scatterer;
 import edu.sc.seis.seisFile.BuildVersion;
 import edu.sc.seis.seisFile.Location;
 import edu.sc.seis.seisFile.mseed3.MSeed3Record;

@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.Callable;
 
-import edu.sc.seis.TauP.CLI.OutputTypes;
+import edu.sc.seis.TauP.cli.OutputTypes;
 import picocli.CommandLine;
 
 /**

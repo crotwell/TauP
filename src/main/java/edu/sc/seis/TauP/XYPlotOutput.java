@@ -1,6 +1,6 @@
 package edu.sc.seis.TauP;
 
-import edu.sc.seis.TauP.CLI.ModelArgs;
+import edu.sc.seis.TauP.cli.ModelArgs;
 import org.json.JSONArray;
 import org.json.JSONObject;
 

@@ -1,8 +1,8 @@
 package edu.sc.seis.TauP;
 
-import edu.sc.seis.TauP.CLI.GraphicOutputTypeArgs;
-import edu.sc.seis.TauP.CLI.ModelArgs;
-import edu.sc.seis.TauP.CLI.OutputTypes;
+import edu.sc.seis.TauP.cli.GraphicOutputTypeArgs;
+import edu.sc.seis.TauP.cli.ModelArgs;
+import edu.sc.seis.TauP.cli.OutputTypes;
 import picocli.CommandLine;
 
 import java.io.IOException;

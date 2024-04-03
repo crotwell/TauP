@@ -1,7 +1,7 @@
 package edu.sc.seis.TauP;
 
-import edu.sc.seis.TauP.CLI.GraphicOutputTypeArgs;
-import edu.sc.seis.TauP.CLI.OutputTypes;
+import edu.sc.seis.TauP.cli.GraphicOutputTypeArgs;
+import edu.sc.seis.TauP.cli.OutputTypes;
 import picocli.CommandLine;
 
 import java.io.BufferedWriter;
@@ -19,8 +19,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import static edu.sc.seis.TauP.CLI.OutputTypes.GMT;
-import static edu.sc.seis.TauP.CLI.OutputTypes.SVG;
+import static edu.sc.seis.TauP.cli.OutputTypes.GMT;
+import static edu.sc.seis.TauP.cli.OutputTypes.SVG;
 
 /**
  * Plots of wavefronts, distance along the ray at points in time.

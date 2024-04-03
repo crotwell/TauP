@@ -44,7 +44,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-import edu.sc.seis.TauP.CLI.OutputTypes;
+import edu.sc.seis.TauP.cli.OutputTypes;
 import edu.sc.seis.seisFile.mseed3.FDSNSourceId;
 import edu.sc.seis.seisFile.mseed3.MSeed3Record;
 import org.json.JSONObject;

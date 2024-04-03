@@ -10,7 +10,7 @@ import java.util.Arrays;
 		description="The TauP Toolkit",
 		mixinStandardHelpOptions = true,
 		separator = " ",
-		versionProvider=edu.sc.seis.TauP.CLI.VersionProvider.class,
+		versionProvider=edu.sc.seis.TauP.cli.VersionProvider.class,
 		subcommands = {
 				TauP_Time.class,
 				TauP_Pierce.class,

@@ -1,6 +1,6 @@
 package edu.sc.seis.TauP;
 
-import edu.sc.seis.TauP.CLI.DistanceArgs;
+import edu.sc.seis.TauP.cli.DistanceArgs;
 import edu.sc.seis.seisFile.Location;
 
 import java.util.List;

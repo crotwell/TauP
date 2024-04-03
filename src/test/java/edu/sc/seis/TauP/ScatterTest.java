@@ -1,6 +1,6 @@
 package edu.sc.seis.TauP;
 
-import edu.sc.seis.TauP.CLI.Scatterer;
+import edu.sc.seis.TauP.cli.Scatterer;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;

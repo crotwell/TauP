@@ -1,6 +1,6 @@
 package edu.sc.seis.TauP;
 
-import edu.sc.seis.TauP.CLI.Scatterer;
+import edu.sc.seis.TauP.cli.Scatterer;
 
 import java.util.ArrayList;
 import java.util.List;
