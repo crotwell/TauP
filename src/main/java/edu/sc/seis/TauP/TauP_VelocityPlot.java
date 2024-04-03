@@ -7,6 +7,10 @@ import picocli.CommandLine;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Creates plots of a velocity model.
@@ -27,122 +31,51 @@ public class TauP_VelocityPlot extends TauP_Tool {
         if (vMod == null) {
             throw new IOException("Velocity model file not found: "+modelArgs.getModelName()+", tried internally and from file");
         }
-        if (getOutFileBase() == DEFAULT_OUTFILE) {
+        if (Objects.equals(getOutFileBase(), DEFAULT_OUTFILE)) {
             setOutFileBase(vMod.modelName+"_vel");
         }
-        printResult(getWriter());
-    }
-
-    public void printSVG(PrintWriter out, VelocityModel vMod) {
-        double maxVel=0;
-        for (VelocityLayer vLayer : vMod.layer) {
-            if (vLayer.getTopPVelocity() > maxVel) { maxVel = vLayer.getTopPVelocity();}
-            if (vLayer.getBotPVelocity() > maxVel) { maxVel = vLayer.getBotPVelocity();}
-            if (vLayer.getTopSVelocity() > maxVel) { maxVel = vLayer.getTopSVelocity();}
-            if (vLayer.getBotSVelocity() > maxVel) { maxVel = vLayer.getBotSVelocity();}
+        PrintWriter writer = getWriter();
+        if (Objects.equals(getOutputFormat(), OutputTypes.CSV)) {
+            printCSV(writer, vMod);
+        } else if (getOutputFormat().equals(OutputTypes.TEXT)) {
+            vMod.writeToND(writer);
+        } else {
+            List<XYPlottingData> xyPlotList = calculate(getxAxisType(), getyAxisType());
+            printResult(writer, xyPlotList);
         }
-        double minVel = 0.0;
-        maxVel *= 1.05; // make little bit larger
-        int numXTicks = 5;
-        double maxY = vMod.maxRadius;
-        double minY =0.0;
-        int numYTicks = 10;
-        boolean xEndFixed = false;
-        boolean yEndFixed = false;
-
-        float pixelWidth =  (72.0f*mapWidth)-plotOffset;
-        float plotWidth = pixelWidth - margin;
-        String title = vMod.modelName;
-        printSVGBeginning(out);
-        SvgUtil.createXYAxes(out, minVel, maxVel, numXTicks, xEndFixed,
-                maxY, minY, numYTicks, yEndFixed,
-                pixelWidth, margin, title,
-                "Velocity (km/s)", "Depth (km)"
-                );
-
-        out.println("<g transform=\"scale(1,-1) translate(0, -"+(plotWidth)+")\">");
-        out.println("<g transform=\"scale(" + (plotWidth / maxVel) + "," + (plotWidth / maxY) + ")\" >");
-
-
-        if (modelArgs.getSourceDepth() != 0) {
-            out.print("<polyline class=\"sourcedepth\" points=\"0 "+(maxY-modelArgs.getSourceDepth())+" "+maxVel+" "+(maxY-modelArgs.getSourceDepth())+"\"/>");
-        }
-        if (modelArgs.getReceiverDepth() != 0) {
-            out.print("<polyline class=\"receiverdepth\" points=\"0 "+(maxY-modelArgs.getReceiverDepth())+" "+maxVel+" "+(maxY-modelArgs.getReceiverDepth())+"\"/>");
-        }
-        if (modelArgs.getScatterer() != null && modelArgs.getScatterer().depth != 0) {
-            out.print("<polyline class=\"scattererdepth\" points=\"0 "+(maxY-modelArgs.getScatterer().depth)+" "+maxVel+" "+(maxY-modelArgs.getScatterer().depth)+"\"/>");
-        }
-
-        out.println("<!-- P velocity");
-        out.println(" -->");
-        out.println("<polyline class=\"pwave\" points=\"");
-        VelocityLayer prev = null;
-        for (VelocityLayer vlay : vMod.layer) {
-            if (prev == null || prev.getBotPVelocity() != vlay.getTopPVelocity()) {
-                out.println( (float)vlay.getTopPVelocity()+ " " + (maxY-(float)vlay.getTopDepth())+ " " );
-            }
-            out.println( (float)vlay.getBotPVelocity()+ " " + (maxY-(float)vlay.getBotDepth())+ " " );
-            prev = vlay;
-        }
-        out.println("\" />");
-
-        out.println("<!-- S velocity");
-        out.println(" -->");
-        out.println("<polyline class=\"swave\" points=\"");
-        prev = null;
-        for (VelocityLayer vlay : vMod.layer) {
-            if (prev == null || prev.getBotSVelocity() != vlay.getTopSVelocity()) {
-                out.println( (float)vlay.getTopSVelocity()+ " " + (maxY-(float)vlay.getTopDepth())+ " " );
-            }
-            out.println( (float)vlay.getBotSVelocity()+ " " + (maxY-(float)vlay.getBotDepth())+ " " );
-            prev = vlay;
-        }
-        out.println("\" />");
-
-        out.println("</g>");
-        out.println("</g>");
-        out.println("</g>");
-        out.println("</svg>");
-        out.flush();
         closeWriter();
     }
 
+    public void printResult(PrintWriter writer, List<XYPlottingData> xyPlots) {
+        XYPlotOutput xyOut = new XYPlotOutput(xyPlots, modelArgs);
+        xyOut.setxAxisMinMax(xAxisMinMax);
+        xyOut.setyAxisMinMax(yAxisMinMax);
+
+        if (yAxisType == ModelAxisType.depth) {
+            xyOut.yAxisInvert = true;
+        }
+        if (getOutputFormat().equalsIgnoreCase(OutputTypes.JSON)) {
+            xyOut.printAsJSON(writer, 2);
+        } else if (getOutputFormat().equalsIgnoreCase(OutputTypes.TEXT) || getOutputFormat().equalsIgnoreCase(OutputTypes.GMT)) {
+            xyOut.printAsGmtText(writer);
+        } else if (getOutputFormat().equalsIgnoreCase(OutputTypes.SVG)) {
+            xyOut.printAsSvg(writer, cmdLineArgs, xAxisType.toString(), yAxisType.toString());
+        } else {
+            throw new IllegalArgumentException("Unknown output format: " + getOutputFormat());
+        }
+        writer.flush();
+    }
 
     @Override
     public String[] allowedOutputFormats() {
-        String[] formats = {OutputTypes.TEXT, OutputTypes.JSON, OutputTypes.SVG, OutputTypes.CSV};
-        return formats;
+        return new String[]{OutputTypes.TEXT, OutputTypes.JSON, OutputTypes.SVG, OutputTypes.CSV};
     }
     @Override
     public void setDefaultOutputFormat() {
         setOutputFormat(OutputTypes.SVG);
     }
 
-    public void printResult(PrintWriter out) throws TauPException, IOException {
-        VelocityModel vMod = TauModelLoader.loadVelocityModel(modelArgs.getModelName());
-        if (vMod == null) {
-            throw new IOException("Velocity model file not found: "+modelArgs.getModelName()+", tried internally and from file");
-        }
-        if (getOutputFormat().equals(OutputTypes.SVG)) {
-            printSVG(out, vMod);
-        } else if (getOutputFormat().equals(OutputTypes.CSV)) {
-            printCSV(out, vMod);
-        } else if (getOutputFormat().equals(OutputTypes.JSON)) {
-            out.write(vMod.asJSON(true, ""));
-        }else if (getOutputFormat().equals(OutputTypes.TEXT)) {
-            vMod.writeToND(out);
-        }
-        out.flush();
-    }
-
-    public void printSVGBeginning(PrintWriter out) {
-        float pixelWidth =  (72.0f*mapWidth);
-        SvgUtil.xyplotScriptBeginning( out, toolNameFromClass(this.getClass()), cmdLineArgs,  pixelWidth, plotOffset);
-    }
-
     public void printCSV(PrintWriter out, VelocityModel vMod) {
-        double maxY = vMod.maxRadius;
         VelocityLayer prev = null;
         out.println("Depth,P Velocity,S Velocity");
         for (VelocityLayer vLayer : vMod.getLayers()) {
@@ -161,6 +94,222 @@ public class TauP_VelocityPlot extends TauP_Tool {
     public void init() throws TauPException {
         // TODO Auto-generated method stub
         
+    }
+
+    public String labelFor(ModelAxisType axisType) {
+        String label;
+        switch (axisType) {
+            case depth:
+                label = "Depth";
+                break;
+            case radius:
+                label = "Radius";
+                break;
+            case velocity:
+            case velocity_p:
+                label = "P Vel.";
+                break;
+            case velocity_s:
+                label = "S Vel.";
+                break;
+            case slowness:
+            case slowness_p:
+                label = "P Slow.";
+                break;
+            case slowness_s:
+                label = "S Slow.";
+                break;
+            case density:
+                label = "Density";
+                break;
+            default:
+                label = axisType.toString();
+        }
+        return label;
+    }
+
+    public boolean depthLike(ModelAxisType axisType) {
+        return axisType == ModelAxisType.depth || axisType == ModelAxisType.radius;
+    }
+    public boolean velocityLike(ModelAxisType axisType) {
+        return axisType == ModelAxisType.velocity || axisType == ModelAxisType.velocity_p || axisType == ModelAxisType.velocity_s;
+    }
+
+    public boolean slownessLike(ModelAxisType axisType) {
+        return axisType == ModelAxisType.slowness || axisType == ModelAxisType.slowness_p || axisType == ModelAxisType.slowness_s;
+    }
+
+    public ModelAxisType dependentAxis(ModelAxisType xAxisType, ModelAxisType yAxisType) {
+        if (depthLike(yAxisType) && ! depthLike(xAxisType)) {
+            return xAxisType;
+        } else {
+            return yAxisType;
+        }
+    }
+
+    public List<XYPlottingData> calculate(ModelAxisType xAxis, ModelAxisType yAxis) throws VelocityModelException, IOException, TauModelException, SlownessModelException {
+        List<XYPlottingData> xyList = new ArrayList<>();
+        ModelAxisType depAxis = dependentAxis(xAxis, yAxis);
+        if ((velocityLike(xAxis) && depthLike(yAxis))
+                || (depthLike(xAxis) && velocityLike(yAxis))
+                || (depthLike(xAxis) && depthLike(yAxis))
+                || (velocityLike(xAxis) && velocityLike(yAxis))) {
+            VelocityModel vMod = TauModelLoader.loadVelocityModel(modelArgs.getModelName());
+            List<Double> xVals = calculateForVelocityModel(xAxis, vMod);
+            double[] xDbl = new double[xVals.size()];
+            List<Double> yVals = calculateForVelocityModel(yAxis, vMod);
+            double[] yDbl = new double[xVals.size()];
+            for (int i = 0; i < xVals.size(); i++) {
+                xDbl[i] = xVals.get(i);
+                yDbl[i] = yVals.get(i);
+            }
+            List<XYSegment> segList = new ArrayList<>();
+            segList.add(new XYSegment(xDbl, yDbl));
+            XYPlottingData xyplot = new XYPlottingData(segList,
+                    xAxis.name(),
+                    yAxis.name(),
+                    labelFor(depAxis), null
+            );
+            xyList.add(xyplot);
+            if (xAxis == ModelAxisType.velocity) {
+                // also do velocity_s
+                xyList.addAll(calculate(ModelAxisType.velocity_s, yAxis));
+            }
+        } else {
+            // slowness based...
+            TauModel vMod = TauModelLoader.load(modelArgs.getModelName());
+            SlownessModel sMod = vMod.getSlownessModel();
+            boolean defWaveType = (xAxis != ModelAxisType.slowness_s && yAxis != ModelAxisType.slowness_s);
+            List<Double> xVals = calculateForSlownessModel(xAxis, sMod, defWaveType);
+            double[] xDbl = new double[xVals.size()];
+            List<Double> yVals = calculateForSlownessModel(yAxis, sMod, defWaveType);
+            double[] yDbl = new double[xVals.size()];
+            for (int i = 0; i < xVals.size(); i++) {
+                xDbl[i] = xVals.get(i);
+                yDbl[i] = yVals.get(i);
+            }
+            List<XYSegment> segList = new ArrayList<>();
+            segList.add(new XYSegment(xDbl, yDbl));
+            XYPlottingData xyplot = new XYPlottingData(segList,
+                    xAxis.name(),
+                    yAxis.name(),
+                    labelFor(depAxis), null
+            );
+            xyList.add(xyplot);
+            if (xAxis == ModelAxisType.slowness) {
+                // also do slowness_s
+                xyList.addAll(calculate(ModelAxisType.slowness_s, yAxis));
+            } else if (yAxis == ModelAxisType.slowness) {
+                // also do slowness_s
+                xyList.addAll(calculate(xAxis, ModelAxisType.slowness_s));
+            }
+        }
+        return xyList;
+    }
+
+    public List<Double> calculateForVelocityModel(ModelAxisType axisType, VelocityModel vMod) {
+        List<Double> out = new ArrayList<>();
+        if (axisType == ModelAxisType.depth) {
+            out.add(vMod.getVelocityLayer(0).getTopDepth());
+            for (VelocityLayer vLayer : vMod.layer) {
+                if (vMod.isDisconDepth(vLayer.getTopDepth())) {
+                    out.add(vLayer.getTopDepth());
+                }
+                out.add(vLayer.getBotDepth());
+            }
+        } else if (axisType == ModelAxisType.radius) {
+            double R = vMod.getRadiusOfEarth();
+            out.add(R-vMod.getVelocityLayer(0).getTopDepth());
+            for (VelocityLayer vLayer : vMod.layer) {
+                if (vMod.isDisconDepth(vLayer.getTopDepth())) {
+                    out.add(R-vLayer.getTopDepth());
+                }
+                out.add(R-vLayer.getBotDepth());
+            }
+        } else if (axisType == ModelAxisType.velocity || axisType == ModelAxisType.velocity_p) {
+            out.add(vMod.getVelocityLayer(0).getTopPVelocity());
+            for (VelocityLayer vLayer : vMod.layer) {
+                if (vMod.isDisconDepth(vLayer.getTopDepth())) {
+                    out.add(vLayer.getTopPVelocity());
+                }
+                out.add(vLayer.getBotPVelocity());
+            }
+        } else if (axisType == ModelAxisType.velocity_s) {
+            out.add(vMod.getVelocityLayer(0).getTopSVelocity());
+            for (VelocityLayer vLayer : vMod.layer) {
+                if (vMod.isDisconDepth(vLayer.getTopDepth())) {
+                    out.add(vLayer.getTopSVelocity());
+                }
+                out.add(vLayer.getBotSVelocity());
+            }
+        } else if (axisType == ModelAxisType.density) {
+            out.add(vMod.getVelocityLayer(0).getTopDensity());
+            for (VelocityLayer vLayer : vMod.layer) {
+                if (vMod.isDisconDepth(vLayer.getTopDepth())) {
+                    out.add(vLayer.getTopDensity());
+                }
+                out.add(vLayer.getBotDensity());
+            }
+        }
+        return out;
+    }
+
+
+    public List<Double> calculateForSlownessModel(ModelAxisType axisType, SlownessModel sMod, boolean useWavetype) throws SlownessModelException {
+        List<Double> out = new ArrayList<>();
+        if (axisType == ModelAxisType.depth) {
+            out.add(sMod.getSlownessLayer(0, useWavetype).getTopDepth());
+            SlownessLayer prevLayer = null;
+            for (SlownessLayer layer : sMod.getAllSlownessLayers(useWavetype)) {
+                if (prevLayer != null && prevLayer.getBotP() != layer.getTopP()) {
+                    out.add(layer.getTopDepth());
+                }
+                out.add(layer.getBotDepth());
+                prevLayer = layer;
+            }
+        } else if (axisType == ModelAxisType.radius) {
+            double R = sMod.getRadiusOfEarth();
+            out.add(R-sMod.getSlownessLayer(0, useWavetype).getTopDepth());
+            SlownessLayer prevLayer = null;
+            for (SlownessLayer layer : sMod.getAllSlownessLayers(useWavetype)) {
+                if (prevLayer != null && prevLayer.getBotP() != layer.getTopP()) {
+                    out.add(R-layer.getTopDepth());
+                }
+                out.add(R-layer.getBotDepth());
+                prevLayer = layer;
+            }
+        } else if (axisType == ModelAxisType.velocity || axisType == ModelAxisType.velocity_p) {
+            out.add(sMod.getSlownessLayer(0, true).getTopP());
+            SlownessLayer prevLayer = null;
+            for (SlownessLayer layer : sMod.getAllSlownessLayers(true)) {
+                if (prevLayer != null && prevLayer.getBotP() != layer.getTopP()) {
+                    out.add(sMod.toVelocity(layer.getTopP(), layer.getTopDepth()));
+                }
+                out.add(sMod.toVelocity(layer.getBotP(), layer.getBotDepth()));
+                prevLayer = layer;
+            }
+        } else if (axisType == ModelAxisType.slowness || axisType == ModelAxisType.slowness_p) {
+            out.add(sMod.getSlownessLayer(0, true).getTopP());
+            SlownessLayer prevLayer = null;
+            for (SlownessLayer layer : sMod.getAllSlownessLayers(true)) {
+                if (prevLayer != null && prevLayer.getBotP() != layer.getTopP()) {
+                    out.add(layer.getTopP());
+                }
+                out.add(layer.getBotP());
+                prevLayer = layer;
+            }
+        } else if (axisType == ModelAxisType.slowness_s) {
+            out.add(sMod.getSlownessLayer(0, false).getTopP());
+            SlownessLayer prevLayer = null;
+            for (SlownessLayer layer : sMod.getAllSlownessLayers(false)) {
+                if (prevLayer != null && prevLayer.getBotP() != layer.getTopP()) {
+                    out.add(layer.getTopP());
+                }
+                out.add(layer.getBotP());
+                prevLayer = layer;
+            }
+        }
+        return out;
     }
 
     @Override
@@ -192,7 +341,53 @@ public class TauP_VelocityPlot extends TauP_Tool {
     @CommandLine.Mixin
     GraphicOutputTypeArgs outputTypeArgs = new GraphicOutputTypeArgs();
 
-    float mapWidth = 6;
-    int plotOffset = 80;
-    float margin = 40;
+
+    public ModelAxisType getxAxisType() {
+        return xAxisType;
+    }
+
+    @CommandLine.Option(names = "-x", description = "X axis data type")
+    public void setxAxisType(ModelAxisType xAxisType) {
+        this.xAxisType = xAxisType;
+    }
+
+    public ModelAxisType getyAxisType() {
+        return yAxisType;
+    }
+
+    @CommandLine.Option(names = "-y", description = "Y axis data type")
+    public void setyAxisType(ModelAxisType yAxisType) {
+        this.yAxisType = yAxisType;
+    }
+
+    public double[] getxAxisMinMax() {
+        return xAxisMinMax;
+    }
+
+    @CommandLine.Option(names = "--xminmax",
+            arity = "2",
+            paramLabel = "x",
+            description = "min and max x axis for plotting")
+    public void setxAxisMinMax(double[] xAxisMinMax) {
+        this.xAxisMinMax = xAxisMinMax;
+    }
+
+    public double[] getyAxisMinMax() {
+        return yAxisMinMax;
+    }
+
+    @CommandLine.Option(names = "--yminmax",
+            arity = "2",
+            paramLabel = "y",
+            description = "min and max y axis for plotting")
+    public void setyAxisMinMax(double[] yAxisMinMax) {
+        this.yAxisMinMax = yAxisMinMax;
+    }
+
+    ModelAxisType xAxisType = ModelAxisType.velocity;
+    ModelAxisType yAxisType = ModelAxisType.depth;
+
+    protected double[] xAxisMinMax = new double[0];
+    protected double[] yAxisMinMax = new double[0];
+
 }

@@ -20,10 +20,11 @@ import java.util.Arrays;
 				TauP_ReflTransPlot.class,
 				TauP_SetMSeed3.class,
 				TauP_SetSac.class,
-				edu.sc.seis.TauP.TauP_VelocityPlot.class,
+				TauP_VelocityPlot.class,
+				TauP_VelocityMerge.class,
 				TauP_Table.class,
 				TauP_Wavefront.class,
-				edu.sc.seis.TauP.TauP_PhaseDescribe.class,
+				TauP_PhaseDescribe.class,
 				TauP_Web.class,
 				CommandLine.HelpCommand.class
 		})

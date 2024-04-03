@@ -8,25 +8,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class XYPlottingData {
-    public XYPlottingData(double[] xValues, String xAxisType, double[] yValues, String yAxisType, String label, SeismicPhase phase) {
-        segmentList.add(new XYSegment(xValues, yValues));
-        this.xAxisType = xAxisType;
-        this.yAxisType = yAxisType;
-        this.label = label;
-        this.phase = phase;
 
-    }
-    public XYPlottingData(List<double[]> xData, String xAxisType, List<double[]> yData, String yAxisType, String label, SeismicPhase phase) {
-        this(XYSegment.createFromLists(xData, yData), xAxisType, yAxisType, label, phase);
-    }
-
-    public XYPlottingData(List<XYSegment> segments, String xAxisType, String yAxisType, String label, SeismicPhase phase) {
+    public XYPlottingData(List<XYSegment> segments, String xAxisType, String yAxisType, String label, List<String> cssClasses) {
         segmentList.addAll(segments);
         this.xAxisType = xAxisType;
         this.yAxisType = yAxisType;
         this.label = label;
-        this.phase = phase;
-
+        this.cssClasses = cssClasses;
     }
 
     public static final int MIN_IDX = 0;
@@ -60,7 +48,9 @@ public class XYPlottingData {
         for (XYSegment segment : segmentList) {
             out.addAll(segment.recalcForLog(xAxisLog, yAxisLog));
         }
-        return new XYPlottingData(out, xAxisType, yAxisType, label, phase);
+        String xAxis = xAxisLog ? "log "+xAxisType : xAxisType;
+        String yAxis = yAxisLog ? "log "+yAxisType : yAxisType;
+        return new XYPlottingData(out, xAxis, yAxis, label, cssClasses);
     }
 
     /**
@@ -70,17 +60,20 @@ public class XYPlottingData {
      * @param writer to write to
      */
     public void asSVG(PrintWriter writer) {
-        String p_or_s = "both_p_swave";
-        if (phase.isAllSWave()) {
-            p_or_s = "swave";
-        } else if (phase.isAllPWave()) {
-            p_or_s = "pwave";
+        String cssClassParam = "";
+        if (cssClasses != null && cssClasses.size()>0){
+            cssClassParam = "class=\"";
+            for (String s : cssClasses) {
+                cssClassParam += " " + s;
+            }
+            cssClassParam += "\"";
         }
-        writer.println("    <g class=\"" + phase.getName()+" "+ label + " " +p_or_s +"\">");
+        writer.println("    <g "+cssClassParam+" tauplabel=\"" + label + "\" " +" >");
         for (XYSegment segment : segmentList) {
+            System.err.println("XYPlottingData: "+segment.x.length+" "+label+" ");
             segment.asSVG(writer, "", Outputs.formatStringForAxisType(xAxisType), Outputs.formatStringForAxisType(yAxisType));
         }
-        writer.println("    </g> <!-- end "+phase.getName()+" "+ label+ " " +p_or_s +" -->");
+        writer.println("    </g> <!-- end "+ label+" -->");
     }
 
     public void asGMT(PrintWriter writer) {
@@ -93,7 +86,9 @@ public class XYPlottingData {
 
     public JSONObject asJSON() {
         JSONObject out = new JSONObject();
-        out.put("phase", phase.getName());
+        out.put("label", label);
+        out.put("x", xAxisType);
+        out.put("y", yAxisType);
         JSONArray segarr = new JSONArray();
         out.put("segments", segarr);
         for (XYSegment seg : segmentList) {
@@ -102,12 +97,12 @@ public class XYPlottingData {
         return out;
     }
 
-    public final SeismicPhase phase;
-
     public final List<XYSegment> segmentList = new ArrayList<>();
     public final String xAxisType;
 
     public final String yAxisType;
 
     public final String label;
+
+    public List<String> cssClasses = new ArrayList<>();
 }

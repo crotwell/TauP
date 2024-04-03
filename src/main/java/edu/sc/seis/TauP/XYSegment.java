@@ -18,6 +18,9 @@ public class XYSegment {
     }
 
     public static List<XYSegment> createFromLists(List<double[]> xData, List<double[]> yData) {
+        if (xData.size() != yData.size()) {
+            throw new IllegalArgumentException("xData and yData must have same size: "+xData.size()+" "+yData.size());
+        }
         List<XYSegment> segmentList = new ArrayList<>();
         for (int i = 0; i < xData.size(); i++) {
             segmentList.add(new XYSegment(xData.get(i), yData.get(i)));

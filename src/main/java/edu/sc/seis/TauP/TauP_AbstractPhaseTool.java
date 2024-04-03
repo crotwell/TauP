@@ -193,9 +193,11 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
         out.put("model", modelName);
         out.put("sourcedepth", (float) depth);
         out.put("receiverdepth", (float) receiverDepth);
-        JSONArray outPhases = new JSONArray();
-        out.put("phases", outPhases);
-        outPhases.putAll(phases);
+        if (phases != null  ) {
+            JSONArray outPhases = new JSONArray();
+            out.put("phases", outPhases);
+            outPhases.putAll(phases);
+        }
         return out;
     }
 

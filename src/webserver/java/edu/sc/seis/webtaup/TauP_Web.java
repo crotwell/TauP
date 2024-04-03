@@ -166,7 +166,7 @@ public class TauP_Web extends TauP_Tool {
                                 TauP_VelocityPlot vPlot = (TauP_VelocityPlot)tool;
                                 tool.setWriter(pw);
                                 tool.printScriptBeginning(pw);
-                                vPlot.printResult(pw);
+                                tool.start();
                                 configContentType(tool.getOutputFormat(), exchange);
                                 exchange.getResponseSender().send(out.toString());
                             } else if (tool instanceof TauP_ReflTransPlot){

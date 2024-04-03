@@ -42,7 +42,7 @@ public class SvgUtil {
         out.println(css);
         out.println("    ]]></style>");
         out.println("  <clipPath id=\"curve_clip\">");
-        out.println("    <rect x=\""+0+"\" y=\""+0+"\" width=\""+(pixelWidth-2*plotOffset)+"\" height=\""+(pixelWidth-2*plotOffset)+"\"/>");
+        out.println("    <rect x=\""+0+"\" y=\""+0+"\" width=\""+(pixelWidth-2*plotOffset+1)+"\" height=\""+(pixelWidth-2*plotOffset+1)+"\"/>");
         out.println("  </clipPath>");
         out.println("  </defs>");
         //out.println("<g transform=\"translate("+plotOffset+","+plotOffset+")\" >");
@@ -79,8 +79,8 @@ public class SvgUtil {
         float plotWidth = pixelWidth - 2*margin;
         float tick_length = 10;
         float text_height = 12; // guess text font height to shift x-axis tick labels
-        ArrayList<Double> xTicks = PlotTicks.getTicks(minX, maxX, numXTicks);
-        ArrayList<Double> yTicks = PlotTicks.getTicks(minY, maxY, numYTicks);
+        ArrayList<Double> xTicks = PlotTicks.getTicks(minX, maxX, numXTicks, xEndFixed);
+        ArrayList<Double> yTicks = PlotTicks.getTicks(minY, maxY, numYTicks, yEndFixed);
         out.println("<text class=\"title\" x=\""+(pixelWidth/2-margin)+"\" y=\""+(0)+"\">"+title+"</text>");
         out.println("<g> <!-- y axis -->");
         int yLabel_y = Math.round(plotWidth / 2);

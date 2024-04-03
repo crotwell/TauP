@@ -2,8 +2,6 @@ package edu.sc.seis.TauP;
 
 import edu.sc.seis.TauP.CLI.GraphicOutputTypeArgs;
 import edu.sc.seis.TauP.CLI.OutputTypes;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import picocli.CommandLine;
 
 import java.io.IOException;
@@ -11,9 +9,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StreamTokenizer;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @CommandLine.Command(name = "curve", description = "plot traveltime and other curves for phases")
 public class TauP_Curve extends TauP_AbstractPhaseTool {
@@ -47,7 +43,7 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
         if(modelArgs.getSourceDepth() != -1 * Double.MAX_VALUE) {
             /* enough info given on cmd line, so just do one calc. */
 
-            Map<SeismicPhase, List<XYPlottingData>> xy = calculate(xAxisType, yAxisType);
+            List<XYPlottingData> xy = calculate(xAxisType, yAxisType);
             printResult(getWriter(), xy);
         } else {
             StreamTokenizer tokenIn = new StreamTokenizer(new InputStreamReader(System.in));
@@ -64,33 +60,35 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
             }
             setSourceDepth(tempDepth);
 
-            Map<SeismicPhase, List<XYPlottingData>> xy = calculate(xAxisType, yAxisType);
+            List<XYPlottingData> xy = calculate(xAxisType, yAxisType);
             printResult(getWriter(), xy);
             getWriter().flush();
         }
     }
 
-    public Map<SeismicPhase, List<XYPlottingData>> calculate(AxisType xAxisType, AxisType yAxisType) throws TauPException {
-        Map<SeismicPhase, List<XYPlottingData>>  xy = calculateLinear(xAxisType, yAxisType);
+    public List<XYPlottingData> calculate(AxisType xAxisType, AxisType yAxisType) throws TauPException {
+        List<XYPlottingData>  xy = calculateLinear(xAxisType, yAxisType);
         if (isReduceTime()) {
             xy = reduce(xy);
         }
-        if (xAxisLog || yAxisLog) {
-            for (SeismicPhase phase : xy.keySet()) {
-                xy.put(phase, recalcForLog(xy.get(phase), xAxisLog, yAxisLog));
-            }
+        if (isxAxisLog() || isyAxisLog()) {
+            xy = XYPlotOutput.recalcForLog(xy, isxAxisLog(), isyAxisLog());
         }
         return xy;
     }
 
-    public Map<SeismicPhase, List<XYPlottingData>> calculateLinear(AxisType xAxisType, AxisType yAxisType) throws TauModelException, VelocityModelException, SlownessModelException {
+    public List<XYPlottingData> calculateLinear(AxisType xAxisType, AxisType yAxisType) throws TauModelException, VelocityModelException, SlownessModelException {
         modelArgs.depthCorrected();
         List<SeismicPhase> phaseList = getSeismicPhases();
-        Map<SeismicPhase, List<XYPlottingData>> outMap = new HashMap<>();
+        List<XYPlottingData> out = new ArrayList<>();
         for (SeismicPhase phase: phaseList) {
             String phaseLabel = phase.getName()+" for a source depth of "+modelArgs.getSourceDepth()+" kilometers in the "+modelArgs.getModelName()+" model";
-            List<XYPlottingData> out = new ArrayList<>();
-            outMap.put(phase, out);
+            String p_or_s = "both_p_swave";
+            if (phase.isAllSWave()) {
+                p_or_s = "swave";
+            } else if (phase.isAllPWave()) {
+                p_or_s = "pwave";
+            }
             boolean ensure180 = (xAxisType==AxisType.degree_180 || yAxisType==AxisType.degree_180
                     || xAxisType==AxisType.radian_pi || yAxisType==AxisType.radian_pi);
             if(phase.hasArrivals()) {
@@ -104,19 +102,29 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
                         List<double[]> yData = SeismicPhase.splitForRepeatRayParam(theta.rayParams, theta.thetaAtX);
                         List<XYSegment> segmentList = new ArrayList<>();
                         for (int i = 0; i < xData.size(); i++) {
-                            segmentList.add(new XYSegment(xData.get(i), yData.get(i)));
-
+                            XYSegment seg = new XYSegment(xData.get(i), yData.get(i));
+                            segmentList.add(seg);
                         }
-                        out.add(new XYPlottingData(
+                        List<String> cssClasses = new ArrayList<>();
+                        cssClasses.add(p_or_s);
+                        XYPlottingData xyp = new XYPlottingData(
                                 segmentList, xAxisType.toString(), "Ray Param",
-                                phaseLabel, phase
-                        ));
+                                phaseLabel, cssClasses
+                        );
+                        out.add(xyp);
 
                     }
                 } else {
+
                     List<double[]> xData = calculatePlotForType(phase, xAxisType, ensure180);
                     List<double[]> yData = calculatePlotForType(phase, yAxisType, ensure180);
-                    out.add(new XYPlottingData(xData, xAxisType.toString(), yData, yAxisType.toString(), xAxisType+"/"+yAxisType+" "+phaseLabel, phase));
+                    List<XYSegment> segments = XYSegment.createFromLists(xData, yData);
+                    List<String> cssClasses = new ArrayList<>();
+                    cssClasses.add(p_or_s);
+                    cssClasses.add(phase.getName());
+                    XYPlottingData xyp = new XYPlottingData(segments, xAxisType.toString(), yAxisType.toString(), xAxisType+"/"+yAxisType+" "+phaseLabel, cssClasses);
+                    xyp.cssClasses.add(p_or_s);
+                    out.add(xyp);
 
                     if (phase.isAllSWave()) {
                         // second calc needed for sh, as psv done in main calc
@@ -127,7 +135,10 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
 
                             xData = calculatePlotForType(phase, xOther, ensure180);
                             yData = calculatePlotForType(phase, yOther, ensure180);
-                            out.add(new XYPlottingData(xData, xAxisType.toString(), yData, yAxisType.toString(), xOther+"/"+yOther+" "+phaseLabel, phase));
+                            List<XYSegment> sh_segments = XYSegment.createFromLists(xData, yData);
+                            List<String> cssClassesCopy = new ArrayList<>(cssClasses);
+                            cssClassesCopy.add("ampsh");
+                            out.add(new XYPlottingData(sh_segments, xAxisType.toString(), yAxisType.toString(), xOther+"/"+yOther+" "+phaseLabel, cssClassesCopy));
                         }
                         // what about case of amp vs refltran, need 4 outputs?
                         if (xAxisType==AxisType.refltran
@@ -137,17 +148,20 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
 
                             xData = calculatePlotForType(phase, xOther, ensure180);
                             yData = calculatePlotForType(phase, yOther, ensure180);
-                            out.add(new XYPlottingData(xData, xAxisType.toString(), yData, yAxisType.toString(), xOther+"/"+yOther+" "+phaseLabel, phase));
+                            List<XYSegment> sh_segments = XYSegment.createFromLists(xData, yData);
+                            List<String> cssClassesCopy = new ArrayList<>(cssClasses);
+                            cssClassesCopy.add("refltransh");
+                            out.add(new XYPlottingData(sh_segments, xAxisType.toString(), yAxisType.toString(), xOther+"/"+yOther+" "+phaseLabel, cssClassesCopy));
                         }
                     }
                 }
             }
         }
-        return outMap;
+        return out;
     }
 
-    public Map<SeismicPhase, List<XYPlottingData>> reduce(Map<SeismicPhase, List<XYPlottingData>> xy) throws TauModelException {
-        Map<SeismicPhase, List<XYPlottingData>> out = new HashMap<>();
+    public List<XYPlottingData> reduce(List<XYPlottingData> xy) throws TauModelException {
+        List<XYPlottingData> out = new ArrayList<>();
         Double velFactor;
         if (axisIsDistanceLike(xAxisType) && axisIsTimeLike(yAxisType)) {
             // x is distance, y is time
@@ -163,34 +177,29 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
             //return xy;
         }
 
-        for (SeismicPhase phase : xy.keySet()) {
-            List<XYPlottingData> plotList = xy.get(phase);
-            List<XYPlottingData> redplotList = new ArrayList<>();
-            for (XYPlottingData xyp : plotList) {
-                List<XYSegment> redSeg = new ArrayList<>();
-                for (XYSegment xyseg : xyp.segmentList) {
-                    double[] dist;
-                    double[] time;
-                    if (axisIsDistanceLike(xAxisType)) {
-                        dist = xyseg.x;
-                        time = xyseg.y;
-                    } else {
-                        dist = xyseg.y;
-                        time = xyseg.x;
-                    }
-                    for (int i = 0; i < dist.length; i++) {
-                        time[i] = time[i] - dist[i] / velFactor;
-                    }
-                    if (axisIsDistanceLike(xAxisType)) {
-                        redSeg.add(new XYSegment(dist, time));
-                    } else {
-                        redSeg.add(new XYSegment(time, dist));
-                    }
+        for (XYPlottingData xyp : xy) {
+            List<XYSegment> redSeg = new ArrayList<>();
+            for (XYSegment xyseg : xyp.segmentList) {
+                double[] dist;
+                double[] time;
+                if (axisIsDistanceLike(xAxisType)) {
+                    dist = xyseg.x;
+                    time = xyseg.y;
+                } else {
+                    dist = xyseg.y;
+                    time = xyseg.x;
                 }
-                XYPlottingData redxyp = new XYPlottingData(redSeg, xyp.xAxisType, xyp.yAxisType, xyp.label+", reduce: "+getRedVelLabel(), xyp.phase);
-                redplotList.add(redxyp);
+                for (int i = 0; i < dist.length; i++) {
+                    time[i] = time[i] - dist[i] / velFactor;
+                }
+                if (axisIsDistanceLike(xAxisType)) {
+                    redSeg.add(new XYSegment(dist, time));
+                } else {
+                    redSeg.add(new XYSegment(time, dist));
+                }
             }
-            out.put(phase, redplotList);
+            XYPlottingData redxyp = new XYPlottingData(redSeg, xyp.xAxisType, xyp.yAxisType, xyp.label+", reduce: "+getRedVelLabel(), xyp.cssClasses);
+            out.add(redxyp);
         }
         return out;
     }
@@ -325,149 +334,25 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
         // repeated ray parameters indicate break in curve, split into segments
         return SeismicPhase.splitForRepeatRayParam(rayParams, out);
     }
-    protected List<XYPlottingData> recalcForLog(List<XYPlottingData> xy, boolean xAxisLog,  boolean yAxisLog) {
-        List<XYPlottingData> out = new ArrayList<>();
-        for(XYPlottingData xyp : xy) {
-            out.add( xyp.recalcForLog(xAxisLog, yAxisLog));
-        }
-        return out;
-    }
 
-    public static void checkEqualMinMax(double[] minmax, double xpercent, double ypercent) {
-        if (minmax[0] == minmax[1]) {
-            // x axis min=max
-            if (minmax[0] == 0.0) {
-                // min = max = zero, so go +-1
-                minmax[0] = -1;
-                minmax[1] = 1;
-            } else {
-                // 10%
-                double shift = Math.abs(minmax[0]) * xpercent;
-                minmax[0] = minmax[0] - shift;
-                minmax[1] = minmax[1] + shift;
-            }
+    public void printResult(PrintWriter writer, List<XYPlottingData> xyPlots) {
+        XYPlotOutput xyOut = new XYPlotOutput(xyPlots, modelArgs);
+        xyOut.setPhaseNames(getPhaseNames());
+        xyOut.setxAxisMinMax(xAxisMinMax);
+        xyOut.setyAxisMinMax(yAxisMinMax);
+        if (yAxisType == AxisType.turndepth) {
+            xyOut.yAxisInvert = true;
         }
-        if (minmax[2] == minmax[3]) {
-            // y axis min=max
-            if (minmax[2] == 0.0) {
-                // min = max = zero, so go +-1
-                minmax[2] = -1;
-                minmax[3] = 1;
-            } else {
-                // 10%
-                double shift = Math.abs(minmax[0]) * ypercent;
-                minmax[2] = minmax[2] - shift;
-                minmax[3] = minmax[3] + shift;
-            }
-        }
-    }
-
-    public void printResult(PrintWriter writer, Map<SeismicPhase, List<XYPlottingData>> xyPlots) {
         if (getOutputFormat().equalsIgnoreCase(OutputTypes.JSON)) {
-            JSONObject out = baseResultAsJSONObject( modelArgs.getModelName(), modelArgs.getSourceDepth(),  modelArgs.getReceiverDepth(), getPhaseNames());
-            JSONArray phaseCurves = new JSONArray();
-            for (SeismicPhase phase: xyPlots.keySet() ) {
-                for (XYPlottingData plotItem : xyPlots.get(phase)) {
-                    phaseCurves.put(plotItem.asJSON());
-                }
-            }
-            out.put("curves", phaseCurves);
-            writer.println(out.toString(2));
-        } else if (getOutputFormat().equalsIgnoreCase(OutputTypes.SVG)) {
-            StringBuffer extrtaCSS = new StringBuffer();
-            extrtaCSS.append("        text.label {\n");
-            extrtaCSS.append("            font: bold ;\n");
-            extrtaCSS.append("            fill: black;\n");
-            extrtaCSS.append("        }\n");
-            extrtaCSS.append("        g.phasename text {\n");
-            extrtaCSS.append("            font: bold ;\n");
-            extrtaCSS.append("            fill: black;\n");
-            extrtaCSS.append("        }\n");
-
-            int margin = 80;
-            int pixelWidth = 600+margin;//Math.round(72*mapWidth);
-            int plotOffset = 60;
-
-            double[] minmax = XYPlottingData.initMinMax();
-            for (List<XYPlottingData> phaseXY : xyPlots.values()) {
-                for (XYPlottingData xyplot : phaseXY) {
-                    if (xAxisMinMax.length == 2 && yAxisMinMax.length == 0) {
-                        // given x range, find y range
-                        minmax = xyplot.minMaxInXRange(minmax, xAxisMinMax);
-                    } else {
-                        minmax = xyplot.minMax(minmax);
-                    }
-                }
-            }
-            checkEqualMinMax(minmax, 0.1, 0.1);
-            // override minmax with user supplied if
-            if (xAxisMinMax.length == 2) {
-                minmax[0] = xAxisMinMax[0];
-                minmax[1] = xAxisMinMax[1];
-            }
-            if (yAxisMinMax.length == 2) {
-                minmax[2] = yAxisMinMax[0];
-                minmax[3] = yAxisMinMax[1];
-            }
-            SvgUtil.xyplotScriptBeginning(writer, toolNameFromClass(this.getClass()),
-                    cmdLineArgs,  pixelWidth, margin, extrtaCSS.toString(), minmax);
-
-            float plotWidth = pixelWidth - 2*margin;
-            SvgUtil.createXYAxes(writer, minmax[0], minmax[1], 8, false,
-                    minmax[2], minmax[3], 8, false,
-                    pixelWidth, margin, getTauModelName()+" (h="+getSourceDepth()+" km)",
-                    xAxisType.toString(), yAxisType.toString());
-
-            writer.println("<g clip-path=\"url(#curve_clip)\">");
-
-            writer.println("<g transform=\"scale(1,-1) translate(0, -"+plotWidth+")\">");
-
-            writer.println("<g transform=\"scale(" + (plotWidth / (minmax[1]-minmax[0])) + "," + ( plotWidth / (minmax[3]-minmax[2])) + ")\" >");
-            writer.println("<g transform=\"translate("+(-1*minmax[0])+", "+(-1*minmax[2])+")\">");
-            writer.println("    <g class=\"autocolor\">");
-            for (SeismicPhase phase : xyPlots.keySet()) {
-                // group all
-                writer.println("    <g class=\"" + phase.getName() + "\">");
-                for (XYPlottingData xyplotItem : xyPlots.get(phase)) {
-                    xyplotItem.asSVG(writer);
-                }
-                writer.println("    </g> <!-- end "+phase.getName()+" -->");
-            }
-            writer.println("    </g> <!-- end autocolor g -->");
-
-            writer.println("    <g class=\"phasename\">  <!-- begin labels -->");
-
-            writer.println("    </g> <!-- end labels -->");
-
-
-            writer.println("  </g> <!-- end translate -->");
-
-
-            writer.println("  </g> <!-- end scale -->");
-            writer.println("  </g> <!-- end scaletranslate -->");
-            writer.println("  </g> <!-- end clip-path -->");
-
-            List<String> labels = new ArrayList<>();
-            List<String> labelClasses = new ArrayList<>();
-            for (SeismicPhase phase : xyPlots.keySet()) {
-                labels.add(phase.getName());
-                labelClasses.add(phase.getName());
-            }
-
-            SvgUtil.createLegend(writer, labels, labelClasses, "autocolor", (int)(plotWidth*.1), (int) (plotWidth*.1));
-            writer.println("</svg>");
-
+            xyOut.printAsJSON(writer, 2);
         } else if (getOutputFormat().equalsIgnoreCase(OutputTypes.TEXT) || getOutputFormat().equalsIgnoreCase(OutputTypes.GMT)) {
-            for (SeismicPhase phase : xyPlots.keySet()) {
-                for (XYPlottingData xyplotItem : xyPlots.get(phase)) {
-                    xyplotItem.asGMT(writer);
-                }
-            }
+            xyOut.printAsGmtText(writer);
+        } else if (getOutputFormat().equalsIgnoreCase(OutputTypes.SVG)) {
+            xyOut.printAsSvg(writer, cmdLineArgs, xAxisType.toString(), yAxisType.toString());
         } else {
-            throw new IllegalArgumentException("Unknown output format: "+getOutputFormat());
+            throw new IllegalArgumentException("Unknown output format: " + getOutputFormat());
         }
         writer.flush();
-
     }
 
     @Override
@@ -475,28 +360,11 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
 
     }
 
-    public String getStdUsage() {
-        String className = this.getClass().getName();
-        className = className.substring(className.lastIndexOf('.') + 1,
-                className.length());
-        return "Usage: " + className.toLowerCase() + " [arguments]\n"
-                +"  or, for purists, java "
-                + this.getClass().getName() + " [arguments]\n"
-                +"\nArguments are:\n"
-                +"-ph phase list     -- comma separated phase list\n"
-                + "-pf phasefile      -- file containing phases\n\n"
-                + "-mod[el] modelname -- use velocity model \"modelname\" for calculations\n"
-                + "                      Default is iasp91.\n\n"
-                + "-h depth           -- source depth in km\n\n\n";
-    }
-
     /**
      * True if the axis type is distance-like.
      *
-     * @param axisType
-     * @return
      */
-    public boolean axisIsDistanceLike(AxisType axisType) {
+    public static boolean axisIsDistanceLike(AxisType axisType) {
         return axisType == AxisType.degree
                 || axisType == AxisType.degree_180
                 || axisType == AxisType.radian
@@ -505,10 +373,8 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
 
     /**
      * True if the axis type is time.
-     * @param axisType
-     * @return
      */
-    public boolean axisIsTimeLike(AxisType axisType) {
+    public static boolean axisIsTimeLike(AxisType axisType) {
         return axisType == AxisType.time;
     }
 
