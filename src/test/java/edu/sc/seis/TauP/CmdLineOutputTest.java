@@ -98,7 +98,6 @@ public class CmdLineOutputTest {
                                           "taup table --help",
                                           "taup velmerge --help",
                                           "taup velplot --help",
-                                          "taup slowplot --help",
                                           "taup create --help",
                                           "taup refltrans --help",
                                           "taup setsac --help",
