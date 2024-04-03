@@ -1,8 +1,8 @@
-package edu.sc.seis.TauP.CLI;
+package edu.sc.seis.TauP.cli;
 
 import picocli.CommandLine;
 
-import static edu.sc.seis.TauP.CLI.OutputTypes.*;
+import static edu.sc.seis.TauP.cli.OutputTypes.*;
 
 public class GraphicOutputTypeArgs  {
 

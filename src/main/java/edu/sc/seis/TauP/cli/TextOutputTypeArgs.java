@@ -1,9 +1,9 @@
-package edu.sc.seis.TauP.CLI;
+package edu.sc.seis.TauP.cli;
 
 import picocli.CommandLine;
 
-import static edu.sc.seis.TauP.CLI.OutputTypes.JSON;
-import static edu.sc.seis.TauP.CLI.OutputTypes.TEXT;
+import static edu.sc.seis.TauP.cli.OutputTypes.JSON;
+import static edu.sc.seis.TauP.cli.OutputTypes.TEXT;
 
 public class TextOutputTypeArgs {
 

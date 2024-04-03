@@ -1,4 +1,4 @@
-package edu.sc.seis.TauP.CLI;
+package edu.sc.seis.TauP.cli;
 
 public interface OutputTypes {
 

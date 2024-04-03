@@ -1,4 +1,4 @@
-package edu.sc.seis.TauP.CLI;
+package edu.sc.seis.TauP.cli;
 
 import edu.sc.seis.TauP.ToolRun;
 import picocli.CommandLine.ArgGroup;
