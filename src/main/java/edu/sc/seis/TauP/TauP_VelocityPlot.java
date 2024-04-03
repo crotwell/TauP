@@ -35,7 +35,7 @@ public class TauP_VelocityPlot extends TauP_Tool {
             setOutFileBase(vMod.modelName+"_vel");
         }
         PrintWriter writer = getWriter();
-        if (Objects.equals(getOutputFormat(), OutputTypes.CSV)) {
+        if (_isCsv) {
             printCSV(writer, vMod);
         } else if (getOutputFormat().equals(OutputTypes.TEXT)) {
             vMod.writeToND(writer);
@@ -341,12 +341,17 @@ public class TauP_VelocityPlot extends TauP_Tool {
     @CommandLine.Mixin
     GraphicOutputTypeArgs outputTypeArgs = new GraphicOutputTypeArgs();
 
+    @CommandLine.Option(names = {"--csv"}, required = false, description = "outputs as csv")
+    public void setCsvOutput(boolean isCsv) {
+        this._isCsv = true;
+    }
+    boolean _isCsv = false;
 
     public ModelAxisType getxAxisType() {
         return xAxisType;
     }
 
-    @CommandLine.Option(names = "-x", description = "X axis data type")
+    @CommandLine.Option(names = "-x", description = "X axis data type, one of ${COMPLETION-CANDIDATES}", defaultValue = "velocity")
     public void setxAxisType(ModelAxisType xAxisType) {
         this.xAxisType = xAxisType;
     }
@@ -355,7 +360,7 @@ public class TauP_VelocityPlot extends TauP_Tool {
         return yAxisType;
     }
 
-    @CommandLine.Option(names = "-y", description = "Y axis data type")
+    @CommandLine.Option(names = "-y", description = "Y axis data type, one of ${COMPLETION-CANDIDATES}", defaultValue = "depth")
     public void setyAxisType(ModelAxisType yAxisType) {
         this.yAxisType = yAxisType;
     }

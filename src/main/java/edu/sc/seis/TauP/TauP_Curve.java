@@ -387,7 +387,7 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
         return xAxisType;
     }
 
-    @CommandLine.Option(names = "-x", description = "X axis data type")
+    @CommandLine.Option(names = "-x", description = "X axis data type, one of ${COMPLETION-CANDIDATES}", defaultValue = "degree_180")
     public void setxAxisType(AxisType xAxisType) {
         this.xAxisType = xAxisType;
     }
@@ -396,7 +396,7 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
         return yAxisType;
     }
 
-    @CommandLine.Option(names = "-y", description = "Y axis data type")
+    @CommandLine.Option(names = "-y", description = "Y axis data type, one of ${COMPLETION-CANDIDATES}", defaultValue = "time")
     public void setyAxisType(AxisType yAxisType) {
         this.yAxisType = yAxisType;
     }
