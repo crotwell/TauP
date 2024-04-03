@@ -10,16 +10,7 @@ import org.json.JSONTokener;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
+import java.io.*;
 import java.net.URL;
 import java.util.*;
 
@@ -157,6 +148,95 @@ public class CmdLineOutputTest {
             System.err.println(cmd);
             saveTestOutputToFile(cmd);
         }
+        viewSavedOutputAsHTML(allList);
+    }
+
+    public void viewSavedOutputAsHTML(List<String> allList) throws FileNotFoundException {
+        String html = "<!DOCTYPE html>\n"
+                +"<html>\n"
+        +"<body>\n"
+        +"<h3>Command Line Test Cases</h3>\n"
+        +"  <select name=\"cmdlinetests\" id=\"cmd-select\">\n";
+        for (String cmd : allList) {
+            html += "  <option>"+cmd+"</option>\n";
+        }
+        html += "  </select>\n"
+                +"  <button id=\"prev\">Prev</button>\n"
+                +"  <button id=\"next\">Next</button>\n"
+                +"  <h5 id=\"cmdvalue\">\n"
+                +"  </h5>\n"
+                +"  <div id=\"testoutput\">\n"
+                +"  </div>\n";
+        String javascript = "\n"
+                +"function fileizeCmd(cmd) {\n" +
+                "        cmd = cmd.replaceAll(\",\", \"_\");\n" +
+                "        return cmd.replaceAll(\" \", \"_\");\n" +
+                "}\n"
+                +"const selectEl = document.querySelector(\"select\");\n"
+                +"const outputEl = document.querySelector(\"#testoutput\");\n"
+                +"const cmdEl = document.querySelector(\"#cmdvalue\");\n"
+                +"function doCmd(cmd) {\n"
+                +"  while (outputEl.firstChild) {\n"
+                +"    outputEl.removeChild(outputEl.lastChild);\n"
+                +"  }\n"
+                +"  cmdEl.textContent = fileizeCmd(cmd);\n"
+                +"  console.log(cmd);\n"
+                +"  fetch(fileizeCmd(cmd)).then(resp => {\n"
+                +"    if (!resp.ok) {\n"
+                +"      throw new Error(`HTTP error! Status: ${resp.status}`);\n"
+                +"    }\n"
+                +"    return resp.text();\n"
+                +"  }).then(textResp => {\n"
+                +"    if (cmd.includes(\"--svg\")) {\n"
+                +"      outputEl.innerHTML = textResp;\n"
+                +"    } else {\n"
+                +"      const embEl = document.createElement(\"pre\");\n"
+                +"      embEl.textContent = textResp;\n"
+                +"      outputEl.appendChild(embEl);\n"
+                +"    }\n"
+                +"  }).catch(e => {\n"
+                +"    outputEl.textContent = e;\n"
+                +"    console.warn(e);\n"
+                +"  });\n"
+                +"}\n"
+                +"selectEl.addEventListener(\"change\", e => {\n"
+                +"  const cmd = e.target.value;\n"
+                +"  doCmd(cmd);\n"
+                +"});\n"
+                +"doCmd(selectEl.options[selectEl.selectedIndex].text);\n"
+                +"document.querySelector(\"#prev\").addEventListener(\"click\", e => {\n"
+                +"  let idx = selectEl.selectedIndex;\n"
+                +"  if (idx > 0) {\n"
+                +"    idx = idx-1;\n"
+                +"  } else {\n"
+                +"    idx = selectEl.options.length-1;\n"
+                +"  }\n"
+                +"  selectEl.selectedIndex = idx;\n"
+                +"  doCmd(selectEl.options[selectEl.selectedIndex].text);\n"
+                +"});\n"
+                +"document.querySelector(\"#next\").addEventListener(\"click\", e => {\n"
+                +"  let idx = selectEl.selectedIndex;\n"
+                +"  if (idx < selectEl.options.length-1) {\n"
+                +"    idx = idx+1;\n"
+                +"  } else {\n"
+                +"    idx = 0;\n"
+                +"  }\n"
+                +"  selectEl.selectedIndex = idx;\n"
+                +"  doCmd(selectEl.options[selectEl.selectedIndex].text);\n"
+                +"});\n"
+
+                +"\n"
+                +"\n";
+
+        html += "<script>\n"
+                +javascript
+                +"\n</script>\n";
+        html += "</body>\n"
+                +"</html>\n";
+        PrintStream indexOut = new PrintStream(new BufferedOutputStream(new FileOutputStream(new File(testOutputDir, "index.html"))));
+        indexOut.println(html);
+        indexOut.close();
+
     }
 
     public void regenExampleOutput() throws Exception {
@@ -430,10 +510,11 @@ public class CmdLineOutputTest {
         cmdOut.close();
     }
 
+    File testOutputDir = new File("build/cmdLineTest");
+
     public void saveTestOutputToFile(String cmd) throws Exception {
-        File dir = new File("build/cmdLineTest");
         String filename = fileizeCmd(cmd);
-        saveTestOutputToFile( cmd, dir, filename);
+        saveTestOutputToFile( cmd, testOutputDir, filename);
     }
 
     public void saveTestOutputToFile(String cmd, File dir, String filename) throws Exception {
