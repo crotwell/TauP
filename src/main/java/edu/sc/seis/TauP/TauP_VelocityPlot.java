@@ -77,14 +77,14 @@ public class TauP_VelocityPlot extends TauP_Tool {
 
     public void printCSV(PrintWriter out, VelocityModel vMod) {
         VelocityLayer prev = null;
-        out.println("Depth,P Velocity,S Velocity");
+        out.println("Depth,P Velocity,S Velocity,Density");
         for (VelocityLayer vLayer : vMod.getLayers()) {
             if (prev == null
                     || prev.getBotPVelocity() != vLayer.getTopPVelocity()
                     || prev.getBotSVelocity() != vLayer.getTopSVelocity()) {
-                out.println((float)(vLayer.getTopDepth())+","+(float) vLayer.getTopPVelocity() + "," + (float)vLayer.getTopSVelocity());
+                out.println((float)(vLayer.getTopDepth())+","+(float) vLayer.getTopPVelocity() + "," + (float)vLayer.getTopSVelocity() + "," + (float)vLayer.getTopDensity());
             }
-            out.println((float)(vLayer.getBotDepth())+","+(float) vLayer.getBotPVelocity() + "," + (float)vLayer.getBotSVelocity());
+            out.println((float)(vLayer.getBotDepth())+","+(float) vLayer.getBotPVelocity() + "," + (float)vLayer.getBotSVelocity() + "," + (float)vLayer.getBotDensity());
             prev = vLayer;
         }
         out.flush();
