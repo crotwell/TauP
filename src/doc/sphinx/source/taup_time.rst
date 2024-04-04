@@ -25,10 +25,10 @@ section of TauP Time.
 
 For example:
 
-.. literalinclude:: examples/taup_time_-mod_prem_-h_200_-ph_S_P_-deg_57.4.cmd
+.. literalinclude:: examples/taup_time_--mod_prem_-h_200_-p_S_P_--deg_57.4.cmd
 
 gives you arrival times for S and P for a 200 kilometer
 deep source at a distance of 57.4 degrees.
 
 
-.. literalinclude:: examples/taup_time_-mod_prem_-h_200_-ph_S_P_-deg_57.4
+.. literalinclude:: examples/taup_time_--mod_prem_-h_200_-p_S_P_--deg_57.4

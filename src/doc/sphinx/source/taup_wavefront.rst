@@ -14,7 +14,7 @@ If you specify the `-gmt` flag then this
 is a complete script with the appropriate `psxy` command prepended, so if you
 have GMT installed, you can just:
 
-.. literalinclude:: examples/taup_wavefront_-mod_iasp91_-h_550_-ph_S_ScS_sS_sScS_--gmt.cmd
+.. literalinclude:: examples/taup_wavefront_--mod_iasp91_-h_550_-p_S_ScS_sS_sScS_--gmt.cmd
 
 \begin{verbatim}
 taup wavefront -mod iasp91 -h 550 -ph S,ScS,sS,sScS --gmt
@@ -25,7 +25,7 @@ and you have a plot of the wavefronts in `taup_wavefront.pdf`.
 
 Or use --svg to generate a SVG plot
 
-.. literalinclude:: examples/taup_wavefront_-mod_iasp91_-h_550_-ph_S_ScS_sS_sScS_--svg.cmd
+.. literalinclude:: examples/taup_wavefront_--mod_iasp91_-h_550_-p_S_ScS_sS_sScS_--svg.cmd
 
 The usage is:
 

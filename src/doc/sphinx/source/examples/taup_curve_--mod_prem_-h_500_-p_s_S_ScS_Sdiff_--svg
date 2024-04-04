@@ -1,9 +1,9 @@
 <svg version="1.1" baseProfile="full" xmlns="http://www.w3.org/2000/svg" 
-     viewBox="-60 -60 740.0 740.0"
+     viewBox="-80 -80 760.0 760.0"
      >
   <metadata>
     <taup>
-      <command>taup curve </command>
+      <command>xyplotoutput </command>
       <version>3.0.0-SNAPSHOT3</version>
       <a href="https://github.com/crotwell/TauP">https://github.com/crotwell/TauP</a>
     <minmax xmin="0.0" xmax="160.87334025390405" ymin="108.95337178722244" ymax="1929.8355299795362" />
@@ -234,6 +234,9 @@ circle.discontinuity.iocb {
 
 
     ]]></style>
+  <clipPath id="curve_clip">
+    <rect x="0" y="0" width="521.0" height="521.0"/>
+  </clipPath>
   </defs>
 <!-- draw axis and label distances.-->
 
@@ -263,7 +266,7 @@ circle.discontinuity.iocb {
 <line class="tick" x1="0" y1="37.07788" x2="-10.0" y2="37.07788" />
 </g> <!-- y axis end-->
 <g> <!-- x axis -->
-<text class="xlabel" font-size="14" x="260.0" y="556.4">degree</text>
+<text class="xlabel" font-size="14" x="260.0" y="556.4">degree_180</text>
 <line class="tick" x1="0" y1="520.0" x2="520.0" y2="520.0" />
 <text class="xtick" font-size="12" x="0.0" y="542.0">0.0</text>
 <line class="tick" x1="0.0" y1="520.0" x2="0.0" y2="530.0" />
@@ -284,12 +287,12 @@ circle.discontinuity.iocb {
 <text class="xtick" font-size="12" x="517.1770528832599" y="542.0">160.0</text>
 <line class="tick" x1="517.1770528832599" y1="520.0" x2="517.1770528832599" y2="530.0" />
 </g> <!-- x axis end-->
+<g clip-path="url(#curve_clip)">
 <g transform="scale(1,-1) translate(0, -520.0)">
 <g transform="scale(3.2323565805203747,0.28557586643400995)" >
 <g transform="translate(-0.0, -108.95337178722244)">
     <g class="autocolor">
-    <g class="s">
-    <g class="s degree/time s for a source depth of 500.0 kilometers in the prem model swave">
+    <g class=" swave s swave" tauplabel="degree_180/time s for a source depth of 500.0 kilometers in the prem model"  >
     <polyline class="" points="
    10.64   264.19
     8.87   229.56
@@ -712,10 +715,8 @@ circle.discontinuity.iocb {
     0.02   108.95
     0.00   108.95
   "  /> <!-- -->
-    </g> <!-- end s degree/time s for a source depth of 500.0 kilometers in the prem model swave -->
-    </g> <!-- end s -->
-    <g class="S">
-    <g class="S degree/time S for a source depth of 500.0 kilometers in the prem model swave">
+    </g> <!-- end degree_180/time s for a source depth of 500.0 kilometers in the prem model -->
+    <g class=" swave S swave" tauplabel="degree_180/time S for a source depth of 500.0 kilometers in the prem model"  >
     <polyline class="" points="
    10.64   264.19
    12.72   304.94
@@ -941,10 +942,8 @@ circle.discontinuity.iocb {
   100.40  1424.25
   100.87  1428.20
   "  /> <!-- -->
-    </g> <!-- end S degree/time S for a source depth of 500.0 kilometers in the prem model swave -->
-    </g> <!-- end S -->
-    <g class="ScS">
-    <g class="ScS degree/time ScS for a source depth of 500.0 kilometers in the prem model swave">
+    </g> <!-- end degree_180/time S for a source depth of 500.0 kilometers in the prem model -->
+    <g class=" swave ScS swave" tauplabel="degree_180/time ScS for a source depth of 500.0 kilometers in the prem model"  >
     <polyline class="" points="
   100.87  1428.20
    97.71  1401.72
@@ -1145,38 +1144,36 @@ circle.discontinuity.iocb {
     0.42   826.73
     0.00   826.71
   "  /> <!-- -->
-    </g> <!-- end ScS degree/time ScS for a source depth of 500.0 kilometers in the prem model swave -->
-    </g> <!-- end ScS -->
-    <g class="Sdiff">
-    <g class="Sdiff degree/time Sdiff for a source depth of 500.0 kilometers in the prem model swave">
+    </g> <!-- end degree_180/time ScS for a source depth of 500.0 kilometers in the prem model -->
+    <g class=" swave Sdiff swave" tauplabel="degree_180/time Sdiff for a source depth of 500.0 kilometers in the prem model"  >
     <polyline class="" points="
   100.87  1428.20
   160.87  1929.84
   "  /> <!-- -->
-    </g> <!-- end Sdiff degree/time Sdiff for a source depth of 500.0 kilometers in the prem model swave -->
-    </g> <!-- end Sdiff -->
+    </g> <!-- end degree_180/time Sdiff for a source depth of 500.0 kilometers in the prem model -->
     </g> <!-- end autocolor g -->
     <g class="phasename">  <!-- begin labels -->
     </g> <!-- end labels -->
   </g> <!-- end translate -->
   </g> <!-- end scale -->
-  </g> <!-- end translate -->
+  </g> <!-- end scaletranslate -->
+  </g> <!-- end clip-path -->
 <g class="legend autocolor" transform="translate(52.0,52.0)"> <!-- legend -->
-<g class="s">
-<line class="s" x1="0" y1="0" x2="10" y2="0" />
-<text class="s" font-size="14" x="11" y="0">s</text>
+<g class="degree_180/time s for a source depth of 500.0 kilometers in the prem model">
+<line class="degree_180/time s for a source depth of 500.0 kilometers in the prem model" x1="0" y1="0" x2="10" y2="0" />
+<text class="degree_180/time s for a source depth of 500.0 kilometers in the prem model" font-size="14" x="11" y="0">degree_180/time s for a source depth of 500.0 kilometers in the prem model</text>
 </g>
-<g class="S">
-<line class="S" x1="0" y1="16" x2="10" y2="16" />
-<text class="S" font-size="14" x="11" y="16">S</text>
+<g class="degree_180/time S for a source depth of 500.0 kilometers in the prem model">
+<line class="degree_180/time S for a source depth of 500.0 kilometers in the prem model" x1="0" y1="16" x2="10" y2="16" />
+<text class="degree_180/time S for a source depth of 500.0 kilometers in the prem model" font-size="14" x="11" y="16">degree_180/time S for a source depth of 500.0 kilometers in the prem model</text>
 </g>
-<g class="ScS">
-<line class="ScS" x1="0" y1="32" x2="10" y2="32" />
-<text class="ScS" font-size="14" x="11" y="32">ScS</text>
+<g class="degree_180/time ScS for a source depth of 500.0 kilometers in the prem model">
+<line class="degree_180/time ScS for a source depth of 500.0 kilometers in the prem model" x1="0" y1="32" x2="10" y2="32" />
+<text class="degree_180/time ScS for a source depth of 500.0 kilometers in the prem model" font-size="14" x="11" y="32">degree_180/time ScS for a source depth of 500.0 kilometers in the prem model</text>
 </g>
-<g class="Sdiff">
-<line class="Sdiff" x1="0" y1="48" x2="10" y2="48" />
-<text class="Sdiff" font-size="14" x="11" y="48">Sdiff</text>
+<g class="degree_180/time Sdiff for a source depth of 500.0 kilometers in the prem model">
+<line class="degree_180/time Sdiff for a source depth of 500.0 kilometers in the prem model" x1="0" y1="48" x2="10" y2="48" />
+<text class="degree_180/time Sdiff for a source depth of 500.0 kilometers in the prem model" font-size="14" x="11" y="48">degree_180/time Sdiff for a source depth of 500.0 kilometers in the prem model</text>
 </g>
 </g> <!-- legend end-->
 </svg>

@@ -8,9 +8,9 @@ phase takes through the model.
 
 For example:
 
-.. literalinclude:: examples/taup_phase_-mod_prem_-h_200_-ph_PKiKP.cmd
+.. literalinclude:: examples/taup_phase_--mod_prem_-h_200_-p_PKiKP.cmd
 
-.. literalinclude:: examples/taup_phase_-mod_prem_-h_200_-ph_PKiKP
+.. literalinclude:: examples/taup_phase_--mod_prem_-h_200_-p_PKiKP
 
 
 The usage is:
