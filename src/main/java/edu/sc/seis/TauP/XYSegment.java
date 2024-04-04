@@ -17,6 +17,19 @@ public class XYSegment {
         }
     }
 
+    public static XYSegment fromSingleList(List<Double> xData, List<Double> yData) {
+        double[] rp = new double[xData.size()];
+        for (int j = 0; j < rp.length; j++) {
+            rp[j] = xData.get(j);
+        }
+        double[] vals = new double[rp.length];
+        for (int j = 0; j < yData.size(); j++) {
+            vals[j] = yData.get(j);
+        }
+        XYSegment seg = new XYSegment(rp, vals);
+        return seg;
+    }
+
     public static List<XYSegment> createFromLists(List<double[]> xData, List<double[]> yData) {
         if (xData.size() != yData.size()) {
             throw new IllegalArgumentException("xData and yData must have same size: "+xData.size()+" "+yData.size());

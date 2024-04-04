@@ -25,7 +25,7 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
 
     @Override
     public String[] allowedOutputFormats() {
-        return new String[] { OutputTypes.SVG};
+        return new String[] { OutputTypes.TEXT, OutputTypes.JSON, OutputTypes.GMT, OutputTypes.SVG};
     }
     @Override
     public void setDefaultOutputFormat() {
@@ -42,23 +42,55 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
     public void start() throws IOException, TauModelException, TauPException {
 
         double step;
-        if (linearRayParam) {
+        if (isLinearRayParam()) {
             step = rayparamStep;
         } else {
             step = angleStep;
         }
-        if (modelName != null && modelName.length()>0) {
-            VelocityModel vMod = TauModelLoader.loadVelocityModel(modelName, modelType);
+        List<XYPlottingData> xypList = new ArrayList<>();
+        if (layerParams == null) {
+            VelocityModel vMod = TauModelLoader.loadVelocityModel(modelArgs.getModelName(), modelType);
             if (vMod == null) {
-                throw new TauPException("Unable to find model " + modelName);
+                throw new TauPException("Unable to find model " + modelArgs.getModelName());
             }
-            printSVG(getWriter(), vMod, depth, indown, inpwave, inswave, inshwave, linearRayParam, step);
+            xypList = calculate(vMod, depth, indown, inpwave, inswave, inshwave, isLinearRayParam(), step);
         } else {
-            printSVG(getWriter(),
+            xypList = calculate(
                     layerParams.inVp, layerParams.inVs, layerParams.inRho,
                     layerParams.trVp, layerParams.trVs, layerParams.trRho,
-                    indown, inpwave, inswave, inshwave, linearRayParam, step);
+                    indown, inpwave, inswave, inshwave, isLinearRayParam(), step);
+            modelArgs.setModelName(layerParams.asName());
         }
+        printResult(getWriter(), xypList);
+    }
+
+
+    public void printResult(PrintWriter writer, List<XYPlottingData> xyPlots) {
+        XYPlotOutput xyOut = new XYPlotOutput(xyPlots, modelArgs);
+        xyOut.setxAxisMinMax(xAxisMinMax);
+        xyOut.setyAxisMinMax(yAxisMinMax);
+        xyOut.autoColor = false;
+        if (layerParams != null) {
+            xyOut.setTitle(layerParams.asName());
+        } else {
+            String title = modelArgs.getModelName() +" at ";
+            if (depth == 0) {
+                title += " surface, ";
+            } else {
+                title += depth+" km";
+            }
+            xyOut.setTitle(title);
+        }
+        if (getOutputFormat().equalsIgnoreCase(OutputTypes.JSON)) {
+            xyOut.printAsJSON(writer, 2);
+        } else if (getOutputFormat().equalsIgnoreCase(OutputTypes.TEXT) || getOutputFormat().equalsIgnoreCase(OutputTypes.GMT)) {
+            xyOut.printAsGmtText(writer);
+        } else if (getOutputFormat().equalsIgnoreCase(OutputTypes.SVG)) {
+            xyOut.printAsSvg(writer, cmdLineArgs, xAxisType.toString(), yAxisType.toString());
+        } else {
+            throw new IllegalArgumentException("Unknown output format: " + getOutputFormat());
+        }
+        writer.flush();
     }
 
     @Override
@@ -68,19 +100,13 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
 
     @Override
     public void validateArguments() throws TauPException {
-        if (layerParams == null) {
+        if (layerParams == null && depth == -1) {
             throw new TauPException(
                     "Either --layer, or --mod and --depth must be given to specify layer parameters");
         }
     }
 
-    public void printSVGBeginning(PrintWriter out) {
-        float pixelWidth =  (72.0f*mapWidth);
-        SvgUtil.xyplotScriptBeginning( out, toolNameFromClass(this.getClass()), cmdLineArgs,  pixelWidth, plotOffset);
-    }
-
-
-    public void printSVG(PrintWriter out,
+    public List<XYPlottingData> calculate(
                          VelocityModel vMod,
                          double depth,
                          boolean downgoing,
@@ -90,23 +116,14 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
                          boolean linearRayParam,
                          double angleStep) throws VelocityModelException {
         if (!vMod.isDisconDepth(depth)) {
-            System.err.println("Depth is not a discontinuity in " + vMod.getModelName() + ": " + depth);
+            throw new CommandLine.ParameterException(spec.commandLine(), "Depth is not a discontinuity in " + vMod.getModelName() + ": " + depth);
         }
         ReflTrans reflTranCoef = vMod.calcReflTransCoef(depth, downgoing);
 
-        String title = vMod.modelName +" at ";
-        if (layerParams.trVp == 0) {
-            title += " surface, ";
-        } else {
-            title += depth+", ";
-        }
-        title += createTitle(reflTranCoef, inpwave, inswave)+" "
-                +(downgoing ? "downgoing" : "upgoing");
-        printSVG(out, reflTranCoef, inpwave, inswave, inshwave, linearRayParam, angleStep, title);
+        return calculate(reflTranCoef, inpwave, inswave, inshwave, linearRayParam, angleStep);
     }
 
-    public void printSVG(PrintWriter out,
-                         double topVp, double topVs, double topDensity,
+    public List<XYPlottingData> calculate(double topVp, double topVs, double topDensity,
                          double botVp, double botVs, double botDensity,
                          boolean downgoing,
                          boolean inpwave, boolean inswave, boolean inshwave,
@@ -115,9 +132,9 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
         ReflTrans reflTranCoef = VelocityModel.calcReflTransCoef(
                 topVp, topVs, topDensity,
                 botVp, botVs, botDensity, downgoing);
-        String title = createTitle(reflTranCoef, inpwave, inswave);
-        printSVG(out, reflTranCoef, inpwave, inswave, inshwave, linearRayParam, angleStep, title);
+        return calculate(reflTranCoef, inpwave, inswave, inshwave, linearRayParam, angleStep);
     }
+
 
     public String createTitle(ReflTrans reflTransCoef, boolean inpwave, boolean inswave) {
         String title;
@@ -140,146 +157,147 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
         return title;
     }
 
-    public void printSVG(PrintWriter out,
-                         ReflTrans reflTranCoef,
+    public List<XYPlottingData> calculate(ReflTrans reflTranCoef,
                          boolean inpwave,
                          boolean inswave,
                          boolean inshwave,
                          boolean linearRayParam,
-                         double step,
-                         String title) throws VelocityModelException {
+                         double step) throws VelocityModelException {
+        List<XYPlottingData> out = new ArrayList<>();
         double minX = 0.0f;
         double maxX = 90.0f;
-        boolean xEndFixed = true;
-        boolean yEndFixed = true;
         if (linearRayParam) {
             // max rp always S if using
             maxX = 1.0 / (inswave ? reflTranCoef.topVs : reflTranCoef.topVp);
         }
-        int numXTicks = 5;
-        double maxY = 2.0;
-        double minY = -1.0;
-        if (isAbsolute()) {
-            minY = 0.0;
+
+        String label;
+        boolean doAll =  (!inpwave && ! inswave && ! inshwave);
+
+        if (yAxisType.size() == 0) {
+            yAxisType = ReflTransAxisType.all;
         }
-        int numYTicks = 8;
-
-        float pixelWidth =  (72.0f*mapWidth)-plotOffset;
-        float margin = 40;
-        float plotWidth = pixelWidth - margin;
-
-        printSVGBeginning(out);
-        SvgUtil.createXYAxes(out, minX, maxX, numXTicks, xEndFixed,
-                minY, maxY, numYTicks, yEndFixed,
-                pixelWidth, margin, title,
-                linearRayParam ? "Horiz. Slowness (s/km)" : "Angle (deg)",
-                "Amp Factor"
-        );
-
-        List<String> labels = new ArrayList<>();
-        List<String> labelClass = new ArrayList<>();
-
-        out.println("<g transform=\"scale(1,-1) translate(0, -"+(plotWidth)+")\">");
-        out.println("<g transform=\"scale(" + (plotWidth / maxX) + "," + (plotWidth / (maxY-minY)) + ")\" >");
-        out.println("<g transform=\"translate(0,"+(-1*minY)+")\" >");
-
-        String label = "";
-
-        if (inpwave) {
+        if (inpwave || doAll) {
             double invel = reflTranCoef.topVp;
             // to calc flat earth ray param from incident angle
             double oneOverV = 1.0 / invel;
+            if (yAxisType.contains(ReflTransAxisType.Rpp)) {
+                label = "Rpp";
+                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label,
+                        reflTranCoef::getRpp
+                );
+                out.add(xyp);
+            }
 
-            label = "Rpp";
-            processType(out, reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label, labels, labelClass,
-                    reflTranCoef::getRpp
-            );
+            if (yAxisType.contains(ReflTransAxisType.Tpp)) {
+                label = "Tpp";
+                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label,
+                        reflTranCoef::getTpp
+                );
+                out.add(xyp);
+            }
 
-            label = "Tpp";
-            processType(out, reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label, labels, labelClass,
-                    reflTranCoef::getTpp
-            );
-
-            label = "Rps";
-            processType(out, reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label, labels, labelClass,
-                    reflTranCoef::getRps
-            );
-
-            label = "Tps";
-            processType(out, reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label, labels, labelClass,
-                    reflTranCoef::getTps
-            );
+            if (yAxisType.contains(ReflTransAxisType.Rps)) {
+                label = "Rps";
+                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label,
+                        reflTranCoef::getRps
+                );
+                out.add(xyp);
+            }
+            if (yAxisType.contains(ReflTransAxisType.Tps)) {
+                label = "Tps";
+                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label,
+                        reflTranCoef::getTps
+                );
+                out.add(xyp);
+            }
         }
-        if (inswave) {
+        if (inswave || doAll) {
             // in swave,
             double invel = reflTranCoef.topVs;
             // to calc flat earth ray param from incident angle
             double oneOverV = 1.0 / invel;
 
+            if (yAxisType.contains(ReflTransAxisType.Rsp)) {
+                label = "Rsp";
+                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label,
+                        reflTranCoef::getRsp
+                );
+                out.add(xyp);
+            }
 
-            label = "Rsp";
-            processType(out, reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label, labels, labelClass,
-                    reflTranCoef::getRsp
-            );
+            if (yAxisType.contains(ReflTransAxisType.Tsp)) {
+                label = "Tsp";
+                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label,
+                        reflTranCoef::getTsp
+                );
+                out.add(xyp);
+            }
 
-            label = "Tsp";
-            processType(out, reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label, labels, labelClass,
-                    reflTranCoef::getTsp
-            );
+            if (yAxisType.contains(ReflTransAxisType.Rss)) {
+                label = "Rss";
+                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label,
+                        reflTranCoef::getRss
+                );
+                out.add(xyp);
+            }
 
-            label = "Rss";
-            processType(out, reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label, labels, labelClass,
-                    reflTranCoef::getRss
-            );
-
-            label = "Tss";
-            processType(out, reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label, labels, labelClass,
-                    reflTranCoef::getTss
-            );
+            if (yAxisType.contains(ReflTransAxisType.Tss)) {
+                label = "Tss";
+                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label,
+                        reflTranCoef::getTss
+                );
+                out.add(xyp);
+            }
 
         }
-        if (inshwave) {
+        if (inshwave || doAll) {
             double invel = reflTranCoef.topVs;
             // to calc flat earth ray param from incident angle
             double oneOverV = 1.0 / invel;
 
-            label = "Rshsh";
-            processType(out, reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label, labels, labelClass,
-                    reflTranCoef::getRshsh
-            );
+            if (yAxisType.contains(ReflTransAxisType.Rshsh)) {
+                label = "Rshsh";
+                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label,
+                        reflTranCoef::getRshsh
+                );
+                out.add(xyp);
+            }
 
-            label = "Tshsh";
-            processType(out, reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label, labels, labelClass,
-                    reflTranCoef::getTshsh
-            );
+            if (yAxisType.contains(ReflTransAxisType.Tshsh)) {
+                label = "Tshsh";
+                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label,
+                        reflTranCoef::getTshsh
+                );
+                out.add(xyp);
+            }
+
         }
-
-        out.println("</g>");
-        out.println("</g>");
-        out.println("</g>");
-        SvgUtil.createLegend(out, labels, labelClass, "", (3.0f/4.0f*plotWidth), (0.1f*plotWidth));
-
-        out.println("</g>");
-        out.println("</svg>");
-
-        out.flush();
-        closeWriter();
+        return out;
     }
 
-    protected void processType(PrintWriter out, ReflTrans reflTranCoef,
-                                double minX, double maxX, double step,
-                                boolean linearRayParam, double oneOverV,
-                                String label, List<String> labels, List<String> labelClass,
+
+    protected XYPlottingData calculateForType(ReflTrans reflTranCoef,
+                               double minX, double maxX, double step,
+                               boolean linearRayParam, double oneOverV,
+                               String label,
                                CalcReflTranFunction<Double, Double> calcFn) throws VelocityModelException {
-        if (onlyPlotCoef != null && ! onlyPlotCoef.equalsIgnoreCase(label) ) { return;}
+        List<XYSegment> segments = new ArrayList<>();
+        String xLabel = linearRayParam ? "Horiz. Slowness (s/km)" : "Angle (deg)";
+        String yLabel = "Amp Factor";
+        List<String> cssClassList = new ArrayList<>();
+        cssClassList.add(label);
+        XYPlottingData xyp = new XYPlottingData(segments, xLabel, yLabel, label, cssClassList);
         try {
             double val = calcFn.apply(0.0);
         } catch (VelocityModelException e) {
             // illegal refltrans type for this coef, ie Tss for solid-fluid
             // just skip
-            return;
+            return xyp;
         }
-        out.print("<polyline class=\""+label+"\" points=\"");
+        List<Double> xList = new ArrayList<>();
+        List<Double> yList = new ArrayList<>();
+
         double i;
         double[] critSlownesses = reflTranCoef.calcCriticalRayParams();
         for (i = minX; i <= maxX; i += step) {
@@ -296,7 +314,8 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
             if (isAbsolute()) {
                 val = Math.abs(val);
             }
-            out.print( ((float)i)+ " " + ((float)val) + " ");
+            xList.add(i);
+            yList.add(val);
             for (int critIdx=0; critIdx<critSlownesses.length; critIdx++) {
                 if (rayParam < critSlownesses[critIdx] && nextrayParam > critSlownesses[critIdx] ) {
                     double criti = critSlownesses[critIdx];
@@ -305,7 +324,8 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
                     if (isAbsolute()) {
                         val = Math.abs(val);
                     }
-                    out.print( ((float)xval)+ " " + ((float)val) + " ");
+                    xList.add(xval);
+                    yList.add(val);
                 }
             }
         }
@@ -321,11 +341,16 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
             if (isAbsolute()) {
                 val = Math.abs(val);
             }
-            out.print( ((float)maxX)+ " " + ((float)val) + " ");
+            xList.add(i);
+            yList.add(val);
         }
-        out.println("\" />");
-        labels.add(label);
-        labelClass.add(label);
+        XYSegment seg = XYSegment.fromSingleList(xList, yList);
+        segments.add(seg);
+        return xyp;
+    }
+
+    public double getDepth() {
+        return depth;
     }
 
     @CommandLine.Option(names = "--depth", description = "Depth in model to get boundary parameters")
@@ -350,14 +375,6 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
     @Override
     public String getOutputFormat() {
         return outputTypeArgs.getOuputFormat();
-    }
-
-    @CommandLine.Option(names = "--mod", description = "model file to get interface, must also use --depth")
-    public void setModelName(String modelName) {
-        this.modelName = modelName;
-    }
-    public String getModelName() {
-        return modelName;
     }
 
     @CommandLine.Option(names = "--down", defaultValue = "true")
@@ -390,45 +407,114 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
         return absolute;
     }
 
-    @CommandLine.Option(names = "--abs", description = "absolute")
+    @CommandLine.Option(names = "--abs", description = "absolute value of amplitude factor")
     public void setAbsolute(boolean absolute) {
         this.absolute = absolute;
     }
 
-    @CommandLine.ArgGroup(exclusive = false)
-    LayerParams layerParams = new LayerParams();
+    @CommandLine.Option(names = "--layer", arity="6")
+    public void setLayerParams(double[] params) {
+        if (params.length == 0) {
+            layerParams = null;
+        } else if (params.length != 6) {
+            throw new CommandLine.ParameterException(spec.commandLine(), "layer params must be 6 numbers, inbould vp, vs, rho, transmitted vp, vs, rho");
+        } else {
+            layerParams = new LayerParams();
+            layerParams.inVp = params[0];
+            layerParams.inVs = params[1];
+            layerParams.inRho = params[2];
+            layerParams.trVp = params[3];
+            layerParams.trVs = params[4];
+            layerParams.trRho = params[5];
+        }
+    }
+
+    LayerParams layerParams = null;
     static class LayerParams {
-        @CommandLine.Option(names = "--layer", required = true)
-        boolean useLayer = false;
-        @CommandLine.Parameters(index = "0") double inVp;
-        @CommandLine.Parameters(index = "1") double inVs;
-        @CommandLine.Parameters(index = "2") double inRho;
-        @CommandLine.Parameters(index = "3") double trVp;
-        @CommandLine.Parameters(index = "4") double trVs;
-        @CommandLine.Parameters(index = "5") double trRho;
+        double inVp;
+        double inVs;
+        double inRho;
+        double trVp;
+        double trVs;
+        double trRho;
+
+        public String asName() {
+            return inVp+","+inVs+","+inRho+" "+trVp+","+trVs+","+trRho;
+        }
     }
 
 
+
+    public DegRayParam getxAxisType() {
+        return xAxisType;
+    }
+
+    @CommandLine.Option(names = "-x", description = "X axis data type, one of ${COMPLETION-CANDIDATES}, default is degree", defaultValue = "degree")
+    public void setxAxisType(DegRayParam xAxisType) {
+        this.xAxisType = xAxisType;
+    }
+
+    public List<ReflTransAxisType> getyAxisType() {
+        return yAxisType;
+    }
+
+    @CommandLine.Option(names = "-y", description = "Y axis data type, one of ${COMPLETION-CANDIDATES}, default is all", arity = "1..10")
+    public void setyAxisType(List<ReflTransAxisType> yAxisType) {
+        this.yAxisType.addAll(yAxisType);
+    }
+
+    public double[] getxAxisMinMax() {
+        return xAxisMinMax;
+    }
+
+    @CommandLine.Option(names = "--xminmax",
+            arity = "2",
+            paramLabel = "x",
+            description = "min and max x axis for plotting")
+    public void setxAxisMinMax(double[] xAxisMinMax) {
+        this.xAxisMinMax = xAxisMinMax;
+    }
+
+    public double[] getyAxisMinMax() {
+        return yAxisMinMax;
+    }
+
+    @CommandLine.Option(names = "--yminmax",
+            arity = "2",
+            paramLabel = "y",
+            description = "min and max y axis for plotting")
+    public void setyAxisMinMax(double[] yAxisMinMax) {
+        this.yAxisMinMax = yAxisMinMax;
+    }
+
     float mapWidth = 6;
     int plotOffset = 80;
-    String modelName;
     String modelType;
 
     protected double depth = -1.0;
 
     protected double angleStep = 1.0;
     protected double rayparamStep = 0.001;
+
+    public enum DegRayParam {
+        degree,
+        rayparam,
+    }
+
+    protected DegRayParam xAxisType = DegRayParam.degree;
+    protected List<ReflTransAxisType> yAxisType = new ArrayList<>();
+    protected double[] xAxisMinMax = new double[0];
+    protected double[] yAxisMinMax = new double[0];
+
     protected double step = -1.0;
     protected boolean indown = true;
     protected boolean inpwave = false;
     protected boolean inswave = false;
     protected boolean inshwave = false;
-    protected boolean linearRayParam = false;
     protected boolean absolute = false;
-    protected String onlyPlotCoef = null;
 
     public boolean isLinearRayParam() {
-        return linearRayParam;
+        return xAxisType == DegRayParam.rayparam;
     }
 
     public boolean isInpwave() {
@@ -441,11 +527,6 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
     }
     public boolean isInshwave() {
         return inshwave;
-    }
-
-    @CommandLine.Option(names = "--linrayparam", description = "linear in ray param, default is linear in angle")
-    public void setLinearRayParam(boolean linearRayParam) {
-        this.linearRayParam = linearRayParam;
     }
 
     @CommandLine.Option(names = "--anglestep", description = "step in degrees when x is degrees")
@@ -465,6 +546,11 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
     public void setRayparamStep(double rayparamStep) {
         this.rayparamStep = rayparamStep;
     }
+
+    @CommandLine.Mixin
+    ModelArgs modelArgs = new ModelArgs();
+
+    public ModelArgs getModelArgs() { return modelArgs;}
 }
 
 @FunctionalInterface

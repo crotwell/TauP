@@ -10,7 +10,7 @@ import java.util.List;
 public class XYPlottingData {
 
     public XYPlottingData(List<XYSegment> segments, String xAxisType, String yAxisType, String label, List<String> cssClasses) {
-        segmentList.addAll(segments);
+        segmentList = segments;
         this.xAxisType = xAxisType;
         this.yAxisType = yAxisType;
         this.label = label;
@@ -62,11 +62,11 @@ public class XYPlottingData {
     public void asSVG(PrintWriter writer) {
         String cssClassParam = "";
         if (cssClasses != null && cssClasses.size()>0){
-            cssClassParam = "class=\"";
+            cssClassParam = "";
             for (String s : cssClasses) {
                 cssClassParam += " " + s;
             }
-            cssClassParam += "\"";
+            cssClassParam = "class=\""+cssClassParam.trim()+"\"";
         }
         writer.println("    <g "+cssClassParam+" tauplabel=\"" + label + "\" " +" >");
         for (XYSegment segment : segmentList) {
@@ -97,7 +97,7 @@ public class XYPlottingData {
         return out;
     }
 
-    public final List<XYSegment> segmentList = new ArrayList<>();
+    public final List<XYSegment> segmentList;
     public final String xAxisType;
 
     public final String yAxisType;

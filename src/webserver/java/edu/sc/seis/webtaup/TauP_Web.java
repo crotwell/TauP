@@ -480,7 +480,7 @@ public class TauP_Web extends TauP_Tool {
             TauP_ReflTransPlot rtplot = (TauP_ReflTransPlot) tool;
             if (queryParameters.containsKey(QP_MODEL)) {
                 unknownKeys.remove(QP_MODEL);
-                rtplot.setModelName(queryParameters.get(QP_MODEL).getFirst());
+                rtplot.getModelArgs().setModelName(queryParameters.get(QP_MODEL).getFirst());
             }
             if (queryParameters.containsKey(QP_DEPTH)) {
                 unknownKeys.remove(QP_DEPTH);
@@ -532,15 +532,15 @@ public class TauP_Web extends TauP_Tool {
                     throw new TauPException("Unknown value for "+QP_ABSOLUTE+": "+p);
                 }
             }
-            rtplot.setLinearRayParam( false);
+            rtplot.setxAxisType(TauP_ReflTransPlot.DegRayParam.degree);
             if (queryParameters.containsKey(QP_X_SLOWNESS)) {
                 unknownKeys.remove(QP_X_SLOWNESS);
 
                 String p = queryParameters.get(QP_X_SLOWNESS).getFirst();
                 if (p.length() == 0 || p.equalsIgnoreCase("true")) {
-                    rtplot.setLinearRayParam(true);
+                    rtplot.setxAxisType(TauP_ReflTransPlot.DegRayParam.rayparam);
                 } else if (p.equalsIgnoreCase("false")) {
-                    rtplot.setLinearRayParam(false);
+                    rtplot.setxAxisType(TauP_ReflTransPlot.DegRayParam.degree);
                 } else {
                     throw new TauPException("Unknown value for "+QP_X_SLOWNESS+": "+p);
                 }
