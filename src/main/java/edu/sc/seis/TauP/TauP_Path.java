@@ -898,6 +898,10 @@ public class TauP_Path extends TauP_AbstractRayTool {
 	    // other boundaries
 	    double[] branchDepths = tMod.getBranchDepths();
 	    for (int i = 0; i < branchDepths.length; i++) {
+			if (tMod.isNoDisconDepth(branchDepths[i])) {
+				// depth like source, scatter or reciever, don't draw circle for model
+				continue;
+			}
 			String name;
 			if (i == tMod.getMohoBranch()) {
 				name = " moho";
