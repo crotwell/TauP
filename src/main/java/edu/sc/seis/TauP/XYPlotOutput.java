@@ -140,7 +140,7 @@ public class XYPlotOutput {
         SvgUtil.createXYAxes(writer, axisMinMax[0], axisMinMax[1], 8, false,
                 axisMinMax[2], axisMinMax[3], 8, false,
                 pixelWidth, margin,
-                modelArgs.getModelName()+" (h="+modelArgs.getSourceDepth()+" km)",
+                getTitle(),
                 xAxisType, yAxisType);
 
         writer.println("<g clip-path=\"url(#curve_clip)\">");
@@ -149,7 +149,9 @@ public class XYPlotOutput {
 
         writer.println("<g transform=\"scale(" + (plotWidth / (minmax[1]-minmax[0])) + "," + ( plotWidth / (minmax[3]-minmax[2])) + ")\" >");
         writer.println("<g transform=\"translate("+(-1*minmax[0])+", "+(-1*minmax[2])+")\">");
-        writer.println("    <g class=\"autocolor\">");
+        if (autoColor) {
+            writer.println("    <g class=\"autocolor\">");
+        }
         for (XYPlottingData xyplotItem : xyPlots) {
             if (xAxisInvert || yAxisInvert) {
                 int xflip = xAxisInvert ? -1 : 1;
@@ -164,7 +166,9 @@ public class XYPlotOutput {
             }
         }
 
-        writer.println("    </g> <!-- end autocolor g -->");
+        if (autoColor) {
+            writer.println("    </g> <!-- end autocolor g -->");
+        }
 
         writer.println("    <g class=\"phasename\">  <!-- begin labels -->");
 
@@ -185,14 +189,28 @@ public class XYPlotOutput {
             labelClasses.add(xyp.label);
         }
 
-        SvgUtil.createLegend(writer, labels, labelClasses, "autocolor", (int)(plotWidth*.1), (int) (plotWidth*.1));
+        SvgUtil.createLegend(writer, labels, labelClasses, autoColor ? "autocolor": "", (int)(plotWidth*.1), (int) (plotWidth*.1));
         writer.println("</svg>");
+    }
+
+    public String getTitle() {
+        if (title == null && modelArgs != null) {
+            return modelArgs.getModelName() + " (h=" + modelArgs.getSourceDepth() + " km)";
+        } else {
+            return title;
+        }
+    }
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     List<XYPlottingData> xyPlots;
     ModelArgs modelArgs;
     String[] phaseNames = null;
 
+    String title = null;
+
+    boolean autoColor = true;
 
     double[] xAxisMinMax = new double[0];
     double[] yAxisMinMax = new double[0];

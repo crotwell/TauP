@@ -260,42 +260,43 @@ public class CmdLineOutputTest {
         HashMap<String, String> figureTitles = new HashMap<>();
         HashMap<String, String> figureCompare = new HashMap<>();
         fmgsFigureTestCmds.put("FMGS_fig_13_12a.svg",
-                "taup refltrans -o stdout --abs --pwave --layer 8.0 4.6 3.3 6.4 3.7 2.8 --linrayparam --svg");
+                "taup refltrans -o stdout --abs --pwave --layer 8.0 4.6 3.3 6.4 3.7 2.8 -x rayparam --svg");
         figureTitles.put("FMGS_fig_13_12a.svg", "FMGS, fig 13.12a, solid-solid P");
         figureCompare.put("FMGS_fig_13_12a.svg", "FMGS_fig_13_12a.png");
         fmgsFigureTestCmds.put("FMGS_fig_13_12b.svg",
-                "taup refltrans -o stdout --abs --swave --layer 8.0 4.6 3.3 6.4 3.7 2.8 --linrayparam --svg");
+                "taup refltrans -o stdout --abs --swave --layer 8.0 4.6 3.3 6.4 3.7 2.8 -x rayparam --yminmax -0.05 1.3 --svg");
         figureTitles.put("FMGS_fig_13_12b.svg", "FMGS, fig 13.12b, solid-solid S");
         figureCompare.put("FMGS_fig_13_12b.svg", "FMGS_fig_13_12b.png");
         fmgsFigureTestCmds.put("FMGS_fig_13_13a.svg",
-                "taup refltrans -o stdout --abs --pwave --layer 6.4 3.7 2.8 8.0 4.6 3.3 --linrayparam --svg");
+                "taup refltrans -o stdout --abs --pwave --layer 6.4 3.7 2.8 8.0 4.6 3.3 -x rayparam --yminmax 0 2 --svg");
         figureTitles.put("FMGS_fig_13_13a.svg", "FMGS, fig 13.13a, solid-solid P");
         figureCompare.put("FMGS_fig_13_13a.svg", "FMGS_fig_13_13a.png");
         fmgsFigureTestCmds.put("FMGS_fig_13_13b.svg",
-                "taup refltrans -o stdout --abs --swave --layer 6.4 3.7 2.8 8.0 4.6 3.3 --linrayparam --svg");
+                "taup refltrans -o stdout --abs --swave --layer 6.4 3.7 2.8 8.0 4.6 3.3 -x rayparam --yminmax 0 2 --svg");
         figureTitles.put("FMGS_fig_13_13b.svg", "FMGS, fig 13.13b, solid-solid S");
         figureCompare.put("FMGS_fig_13_13b.svg", "FMGS_fig_13_13b.png");
         fmgsFigureTestCmds.put("FMGS_fig_13_14a.svg",
-                "taup refltrans -o stdout --abs --pwave --layer 5.8 3.35 2.5 0.3 0 1.2 --linrayparam --svg");
+                "taup refltrans -o stdout --abs --pwave --layer 5.8 3.35 2.5 0.3 0 1.2 -x rayparam --yminmax 0 2.5 --svg");
         figureTitles.put("FMGS_fig_13_14a.svg", "FMGS, fig 13.14a, solid-air P");
         figureCompare.put("FMGS_fig_13_14a.svg", "FMGS_fig_13_14a.png");
         fmgsFigureTestCmds.put("FMGS_fig_13_14b.svg",
-                "taup refltrans -o stdout --abs --swave --layer 5.8 3.35 2.5 0.3 0 1.2 --linrayparam --svg");
+                "taup refltrans -o stdout --abs --swave --layer 5.8 3.35 2.5 0.3 0 1.2 -x rayparam -y Rss Rsp Tsp --svg");
         figureTitles.put("FMGS_fig_13_14b.svg", "FMGS, fig 13.14b, solid-air P");
+        figureCompare.put("FMGS_fig_13_14b.svg", "FMGS_fig_13_14b.png");
         fmgsFigureTestCmds.put("FMGS_fig_13_15.svg",
-                "taup refltrans -o stdout --abs --pwave  --swave --layer 5.8 3.35 2.5 0 0 0 --linrayparam --svg");
+                "taup refltrans -o stdout --abs --pwave  --swave --layer 5.8 3.35 2.5 0 0 0 -x rayparam -y Rpp Rps Rsp Rss --yminmax 0 3.3 --svg");
         figureTitles.put("FMGS_fig_13_15.svg", "FMGS, fig 13.15, free surface");
         figureCompare.put("FMGS_fig_13_15.svg", "FMGS_fig_13_15.png");
         fmgsFigureTestCmds.put("AR_fig_5_06.svg",
-                "taup refltrans -o stdout --pwave --swave --layer 5 3 2.5 0 0 0 --linrayparam --svg");
+                "taup refltrans -o stdout --pwave --swave --layer 5 3 2.5 0 0 0 -x rayparam -y Rpp Rps Rsp Rss --svg");
         figureTitles.put("AR_fig_5_06.svg", "Aki and Richards, fig 5.6");
         figureCompare.put("AR_fig_5_06.svg", "AR_fig_5_6.pdf");
         fmgsFigureTestCmds.put("AR_fig_5_10.svg",
-                "taup refltrans -o stdout --abs --swave --layer 5 3 2.5 0 0 0 --linrayparam --svg");
+                "taup refltrans -o stdout --abs --swave --layer 5 3 2.5 0 0 0 -x rayparam  -y Rsp Rss --svg");
         figureTitles.put("AR_fig_5_10.svg", "Aki and Richards, fig 5.10");
         figureCompare.put("AR_fig_5_10.svg", "AR_fig_5_10.pdf");
         fmgsFigureTestCmds.put("Shearer_fig_6_5.svg",
-                "taup refltrans -o stdout --abs --shwave --mod prem --depth 24.4 --down --svg");
+                "taup refltrans -o stdout  --shwave --mod prem --depth 24.4 --down --svg");
         figureTitles.put("Shearer_fig_6_5.svg", "Shearer, fig 6.5");
         figureCompare.put("Shearer_fig_6_5.svg", "Shearer_fig_6_5.pdf");
 

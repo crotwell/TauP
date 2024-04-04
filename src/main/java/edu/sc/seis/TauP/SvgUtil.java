@@ -3,6 +3,7 @@ package edu.sc.seis.TauP;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class SvgUtil {
@@ -27,6 +28,7 @@ public class SvgUtil {
         css.append(extraCSS+"\n");
         StringBuffer stdcss = loadStandardCSS();
         css.append(stdcss+"\n");
+        css.append(createReflTransCSSColors()+"\n");
         css.append(createCSSColors( "g.autocolor", List.of("stroke"), DEFAULT_COLORS)+"\n");
         css.append(createCSSColors(  ".autocolor.phaselabel", List.of("fill"), DEFAULT_COLORS)+"\n");
         css.append(createCSSColors(  ".autocolor.legend", List.of("fill"), DEFAULT_COLORS)+"\n");
@@ -146,6 +148,37 @@ public class SvgUtil {
             for (String cssAttr : cssAttrList) {
                 out.append("            " + cssAttr + ": " + colors.get(i) + ";\n");
             }
+            out.append("        }\n");
+        }
+        return out;
+    }
+
+    public static StringBuffer createReflTransCSSColors() {
+        StringBuffer out = new StringBuffer();
+
+        HashMap<ReflTransAxisType, String> colors = new HashMap<>();
+        colors.put(ReflTransAxisType.Rpp , "blue");
+        colors.put(ReflTransAxisType.Rps, "green");
+        colors.put(ReflTransAxisType.Rsp , "red");
+        colors.put(ReflTransAxisType.Rss, "orange");
+        colors.put(ReflTransAxisType.Rshsh, "mediumslateblue");
+        colors.put(ReflTransAxisType.Tpp, "cyan");
+        colors.put(ReflTransAxisType.Tps, "gold");
+        colors.put(ReflTransAxisType.Tsp, "magenta");
+        colors.put(ReflTransAxisType.Tss, "grey");
+        colors.put(ReflTransAxisType.Tshsh, "violet");
+
+        for (ReflTransAxisType rt : ReflTransAxisType.all) {
+            out.append("        ."+rt.name()+" {\n");
+            out.append("          stroke: "+colors.get(rt)+";\n");
+            out.append("        }\n");
+            out.append("        ."+rt.name()+".label {\n");
+            out.append("          stroke: "+colors.get(rt)+";\n");
+            out.append("          fill: "+colors.get(rt)+";\n");
+            out.append("        }\n");
+            out.append("        .legend ."+rt.name()+" {\n");
+            out.append("          stroke: "+colors.get(rt)+";\n");
+            out.append("          fill: "+colors.get(rt)+";\n");
             out.append("        }\n");
         }
         return out;
