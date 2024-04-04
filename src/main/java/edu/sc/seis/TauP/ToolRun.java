@@ -198,15 +198,25 @@ public class ToolRun {
 			});
 		}
 		int result = commandLine.execute(args);
+
 		if (result != 0) {
 			System.err.println("Error code: " + result);
 		}
 		return result;
 	}
 	public static void main(String... args) {
+		boolean doSysExit = true;
+		for (String arg : args) {
+			if (arg.equals("web")) {
+				// need taup web to stay alive after calling start
+				doSysExit = false;
+			}
+		}
 		try {
 			int result = mainWithExitCode(args);
-			System.exit(result);
+			if (doSysExit) {
+				System.exit(result);
+			}
 		} catch(Exception e) {
 			System.err.println("Error starting tool: "+args[0]+" "+e);
 			e.printStackTrace();
