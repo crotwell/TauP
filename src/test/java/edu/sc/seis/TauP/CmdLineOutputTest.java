@@ -147,14 +147,14 @@ public class CmdLineOutputTest {
             System.err.println(cmd);
             saveTestOutputToFile(cmd);
         }
-        viewSavedOutputAsHTML(allList);
+        viewSavedOutputAsHTML(allList, testOutputDir, "Command Line Test Cases");
     }
 
-    public void viewSavedOutputAsHTML(List<String> allList) throws FileNotFoundException {
+    public void viewSavedOutputAsHTML(List<String> allList, File outputDir, String title) throws FileNotFoundException {
         String html = "<!DOCTYPE html>\n"
                 +"<html>\n"
         +"<body>\n"
-        +"<h3>Command Line Test Cases</h3>\n"
+        +"<h3>"+title+"</h3>\n"
         +"  <select name=\"cmdlinetests\" id=\"cmd-select\">\n";
         for (String cmd : allList) {
             html += "  <option>"+cmd+"</option>\n";
@@ -232,7 +232,7 @@ public class CmdLineOutputTest {
                 +"\n</script>\n";
         html += "</body>\n"
                 +"</html>\n";
-        PrintStream indexOut = new PrintStream(new BufferedOutputStream(new FileOutputStream(new File(testOutputDir, "index.html"))));
+        PrintStream indexOut = new PrintStream(new BufferedOutputStream(new FileOutputStream(new File(outputDir, "index.html"))));
         indexOut.println(html);
         indexOut.close();
 
@@ -241,8 +241,9 @@ public class CmdLineOutputTest {
     public void regenExampleOutput() throws Exception {
         for (String cmd : docCmds) {
             System.err.println(cmd);
-            saveDocOutputToFile(cmd);
+            saveDocOutputToFile(cmd, docOutputDir);
         }
+        viewSavedOutputAsHTML(List.of(docCmds), docOutputDir, "Command Line Test Cases");
     }
 
     /**
@@ -500,15 +501,14 @@ public class CmdLineOutputTest {
 
 
 
-    public void saveDocOutputToFile(String cmd) throws Exception {
-        File dir = new File("src/doc/sphinx/source/examples");
+    public void saveDocOutputToFile(String cmd, File outputDir) throws Exception {
         String filename = fileizeCmd(cmd);
-        saveTestOutputToFile( cmd, dir, filename);
-        PrintStream cmdOut = new PrintStream(new BufferedOutputStream(new FileOutputStream(new File(dir, filename+".cmd"))));
+        saveTestOutputToFile( cmd, outputDir, filename);
+        PrintStream cmdOut = new PrintStream(new BufferedOutputStream(new FileOutputStream(new File(outputDir, filename+".cmd"))));
         cmdOut.println(cmd);
         cmdOut.close();
     }
-
+    File docOutputDir = new File("src/doc/sphinx/source/examples");
     File testOutputDir = new File("build/cmdLineTest");
 
     public void saveTestOutputToFile(String cmd) throws Exception {
