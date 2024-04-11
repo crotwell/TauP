@@ -54,10 +54,10 @@ val webserverImplementation by configurations.getting {
 }
 dependencies {
 
-    implementation("org.json:json:20230618")
-    implementation("edu.sc.seis:seisFile:2.1.0-SNAPSHOT3") {
+    implementation("org.json:json:20240303")
+    //implementation("edu.sc.seis:seisFile:2.1.0-SNAPSHOT3") {
     // or
-    //implementation("edu.sc.seis:seisFile:2.1.0-20240315.154800-2") {
+    implementation("edu.sc.seis:seisFile:2.1.0-20240411.142319-3") {
       // we need seisFile for sac/mseed3 output, but not all the other functionality
       exclude(group = "org.apache.httpcomponents", module = "httpclient")
     }
@@ -67,11 +67,11 @@ dependencies {
 
     runtimeOnly("org.slf4j:slf4j-reload4j:2.0.5")
 
-    webserverImplementation("io.undertow:undertow-core:2.3.9.Final")
+    webserverImplementation("io.undertow:undertow-core:2.3.12.Final")
 
     // Use JUnit Jupiter API for testing.
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.0")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:5.10.0")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.2")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:5.10.2")
 
     // Use JUnit Jupiter Engine for testing.
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
