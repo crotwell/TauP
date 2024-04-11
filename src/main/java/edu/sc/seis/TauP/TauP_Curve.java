@@ -90,8 +90,8 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
             } else if (phase.isAllPWave()) {
                 p_or_s = "pwave";
             }
-            boolean ensure180 = (xAxisType==AxisType.degree_180 || yAxisType==AxisType.degree_180
-                    || xAxisType==AxisType.radian_pi || yAxisType==AxisType.radian_pi);
+            boolean ensure180 = (xAxisType==AxisType.degree180 || yAxisType==AxisType.degree180
+                    || xAxisType==AxisType.radian180 || yAxisType==AxisType.radian180);
             if(phase.hasArrivals()) {
                 if (yAxisType==AxisType.theta) {
                     // temp for testing...
@@ -208,14 +208,14 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
 
     public List<double[]> calculatePlotForType(SeismicPhase phase, AxisType axisType, boolean ensure180) throws VelocityModelException, SlownessModelException, TauModelException {
         double[] out = new double[0];
-        if (axisType==AxisType.radian || axisType==AxisType.radian_pi) {
+        if (axisType==AxisType.radian || axisType==AxisType.radian180) {
             out = phase.getDist();
-        } else if (axisType==AxisType.degree || axisType==AxisType.degree_180) {
+        } else if (axisType==AxisType.degree || axisType==AxisType.degree180) {
             out = phase.getDist();
             for (int i = 0; i < out.length; i++) {
                 out[i] *= 180/Math.PI;
             }
-        } else if (axisType==AxisType.kilometer || axisType==AxisType.kilometer_180) {
+        } else if (axisType==AxisType.kilometer || axisType==AxisType.kilometer180) {
             out = phase.getDist();
             double redToKm = getRadiusOfEarth();
             for (int i = 0; i < out.length; i++) {
@@ -321,7 +321,7 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
             System.arraycopy(rayParams, prevIdx, unwrappedRP, prevIdx+crossIdx.size(), rayParams.length-prevIdx);
             out = unwrappedOut;
             rayParams = unwrappedRP;
-            if (axisType== AxisType.degree_180) {
+            if (axisType== AxisType.degree180) {
                 System.err.println("recalc modulo");
                 for (int j = 0; j < out.length; j++) {
                     out[j] = Math.abs(out[j] % 360.0);
@@ -367,9 +367,9 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
      */
     public static boolean axisIsDistanceLike(AxisType axisType) {
         return axisType == AxisType.degree
-                || axisType == AxisType.degree_180
+                || axisType == AxisType.degree180
                 || axisType == AxisType.radian
-                || axisType == AxisType.radian_pi;
+                || axisType == AxisType.radian180;
     }
 
     /**
@@ -388,7 +388,7 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
         return xAxisType;
     }
 
-    @CommandLine.Option(names = "-x", description = "X axis data type, one of ${COMPLETION-CANDIDATES}", defaultValue = "degree_180")
+    @CommandLine.Option(names = "-x", description = "X axis data type, one of ${COMPLETION-CANDIDATES}", defaultValue = "degree180")
     public void setxAxisType(AxisType xAxisType) {
         this.xAxisType = xAxisType;
     }
@@ -503,13 +503,13 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
     }
 
     public Double reduceVelForAxis(AxisType axisType) throws TauModelException {
-        if (axisType==AxisType.degree || axisType==AxisType.degree_180) {
+        if (axisType==AxisType.degree || axisType==AxisType.degree180) {
             if (getReduceVelDeg() != null) {
                 return getReduceVelDeg();
             } else if (getReduceVelKm() != null) {
                 return getReduceVelRadian() * 180/Math.PI;
             }
-        } else if (axisType==AxisType.kilometer || axisType==AxisType.kilometer_180) {
+        } else if (axisType==AxisType.kilometer || axisType==AxisType.kilometer180) {
             if (getReduceVelKm() != null) {
                 return getReduceVelKm();
             } else if (getReduceVelDeg() != 0) {

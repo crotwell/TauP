@@ -73,13 +73,13 @@ public class Outputs {
         String outFormat = "%f";
         switch (axisType) {
             case radian:
-            case radian_pi:
+            case radian180:
                 outFormat = distanceFormat;
                 break;
             case degree:
-            case degree_180:
+            case degree180:
             case kilometer:
-            case kilometer_180:
+            case kilometer180:
                 outFormat = distanceFormat;
                 break;
             case rayparam:

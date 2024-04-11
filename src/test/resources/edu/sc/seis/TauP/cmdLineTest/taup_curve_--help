@@ -27,15 +27,15 @@ plot traveltime and other curves for phases
       --rel=<relativePhaseName>
                            plot relative to the given phase, no effect unless
                              distance/time
-  -x=<xAxisType>           X axis data type, one of radian, radian_pi, degree,
-                             degree_180, kilometer, kilometer_180, rayparam,
+  -x=<xAxisType>           X axis data type, one of radian, radian180, degree,
+                             degree180, kilometer, kilometer180, rayparam,
                              time, tau, turndepth, amp, amppsv, ampsh,
                              geospread, refltran, refltranpsv, refltransh,
                              index, theta
       --xlog               X axis is log
       --xminmax=x x        min and max x axis for plotting
-  -y=<yAxisType>           Y axis data type, one of radian, radian_pi, degree,
-                             degree_180, kilometer, kilometer_180, rayparam,
+  -y=<yAxisType>           Y axis data type, one of radian, radian180, degree,
+                             degree180, kilometer, kilometer180, rayparam,
                              time, tau, turndepth, amp, amppsv, ampsh,
                              geospread, refltran, refltranpsv, refltransh,
                              index, theta

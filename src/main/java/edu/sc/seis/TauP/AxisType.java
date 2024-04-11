@@ -3,11 +3,11 @@ package edu.sc.seis.TauP;
 public enum AxisType {
 
     radian,
-    radian_pi,
+    radian180,
     degree,
-    degree_180,
+    degree180,
     kilometer,
-    kilometer_180,
+    kilometer180,
     rayparam,
     time,
     tau,

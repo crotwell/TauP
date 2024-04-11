@@ -214,7 +214,7 @@ public class XYPlotOutput {
         List<XYPlottingData> convXYPlotList = new ArrayList<>();
         for (XYPlottingData xyp : xyPlots) {
             if ( ! (xyp.xAxisType == AxisType.radian.name()
-                        || xyp.xAxisType == degree_180.name()
+                        || xyp.xAxisType == degree180.name()
                         || xyp.xAxisType == degree.name()
                         || xyp.yAxisType == ModelAxisType.depth.name()
                         || xyp.yAxisType == ModelAxisType.radius.name()
@@ -229,7 +229,7 @@ public class XYPlotOutput {
                     double radian = 0;
                     if (xyp.xAxisType == AxisType.radian.name()) {
                         radian = seg.x[i]-Math.PI/2;
-                    } else if (xyp.xAxisType == degree.name() || xyp.xAxisType == degree_180.name()) {
+                    } else if (xyp.xAxisType == degree.name() || xyp.xAxisType == degree180.name()) {
                         radian = (seg.x[i]-90)*Math.PI/180;
                     }
                     double radius = 0;
