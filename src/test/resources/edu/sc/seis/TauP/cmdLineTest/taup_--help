@@ -1,4 +1,21 @@
-Usage: taup <tool> <options>
- where tool is one of [gui, create, curve, path, phase, pierce, setsac, setmseed3, slowplot, table, time, velplot, velmerge, wavefront, refltrans, wkbj, version, xy]
- taup <tool> --help
- for help with a particular tool.
+Usage: taup [--help] [-V] [COMMAND]
+The TauP Toolkit
+      --help      display this help message
+  -V, --version   display version info
+Commands:
+  time       calculate travel times for seismic phases in an earth model
+  pierce     calculate pierce points for phases at discontinuities in the model
+  path       plot ray paths through the earth
+  create     Create .taup file from velocity model
+  curve      plot traveltime and other curves for phases
+  refltrans  plot reflection and transmission coefficients for a discontinuity
+  setmseed3  save travel times in the extra header of miniseed3 files
+  setsac     set headers to travel times of phases using depth and distance
+               from headers
+  velplot    plot velocity vs depth for a model
+  velmerge   merge part of one model into another
+  table      create a table of travel times for a range of depths and distances
+  wavefront  plot wavefronts of seismic phases at steps in time
+  phase      describe a seismic phase in the current model
+  web        web based gui for the TauP Toolkit
+  help       Display help information about the specified command.

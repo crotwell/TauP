@@ -1,21 +1,77 @@
-Usage: taup_setmseed3 [arguments]  or, for purists, java edu.sc.seis.TauP.TauP_SetMSeed3 [arguments]
-Arguments are:-ph phase list     -- comma separated phase list,
-                      use phase-# to specify the sac header,
-                      for example, ScS-8 puts ScS in t8
--pf phasefile      -- file containing phases
-
--mod[el] modelname -- use velocity model "modelname" for calculations
-                      Default is iasp91.
-
---staxml filename   -- load station location from stationxml file, default uses extra headers
---qml filename      -- load earthquake location from quakeml file, default uses extra headers
---qmltol tol        -- origin time tolerance when loading from quakeml file, default is 1 hour
---eh                -- eh key for full results, default is to only create markers
-
---prop [propfile]   -- set configuration properties
---debug             -- enable debugging output
---verbose           -- enable verbose output
---version           -- print the version
---help              -- print this out, but you already know that!
-ms3filename [ms3filename ...]
-Ex: taup_setmseed3 --mod S_prem -ph S,ScS wmq.ms3 wmq.ms3 wmq.ms3puts the S and ScS as markers in the extra headers in each record in these files.Markers are within the "bag/mark" key. Full results are the same as the output of taup time --json
+Usage: taup setmseed3 [--amp] [--debug] [--first] [--geodetic] [--help]
+                      [--rayp] [--time] [--az=<azimuth>] [--baz=<backAzimuth>]
+                      [--eh=<ehKey>] [--ellipflattening=<ellipflattening>]
+                      [--prop=<toolPropsFilename>] [--qml=<quakemlFilename>]
+                      [--qmltol=<quakeOTimeTol>]
+                      [--staxml=<stationxmlFilename>] [--deg=d[,d...]]...
+                      [--km=km[,km...]]... [-p=<phaseNames>[,
+                      <phaseNames>...]]... [--rel=<relativePhaseName>[,
+                      <relativePhaseName>...]]... [--shoot=<shootRaypList>[,
+                      <shootRaypList>...]]... [--takeoff=<takeoffAngle>]...
+                      [--evt=<eventLatLon> <eventLatLon>]...
+                      [--sta=<stationLatLon> <stationLatLon>]...
+                      [[-mod=<modelname>] [-h=<sourceDepth>] [--stadepth=depth]
+                      [--scat=s s]...] [--text | --json] [<mseed3FileNames>...]
+save travel times in the extra header of miniseed3 files
+      [<mseed3FileNames>...]
+      --amp                  amplitude factor for each phase
+      --debug                display debugging message
+      --eh=<ehKey>           key to store full output within extra headers
+                               within, otherwise use abbreviateg 'bag' markers
+      --first, --onlyfirst   only output the first arrival for each phase, no
+                               triplications
+      --help                 display this help message
+  -p, --ph, --phase=<phaseNames>[,<phaseNames>...]
+                             seismic phase names
+      --prop=<toolPropsFilename>
+                             load defaults from properties file
+      --qml, --quakeml=<quakemlFilename>
+                             QuakeML file to load to search for origins that
+                               match this waveform
+      --qmltol=<quakeOTimeTol>
+                             time window to search for origins in a QuakeML file
+      --rayp, --onlyrayp     only output the ray parameter
+      --rel=<relativePhaseName>[,<relativePhaseName>...]
+                             times relative to the first of the given phases
+      --staxml=<stationxmlFilename>
+                             StationXML file to extract station lat/lon from
+      --time, --onlytime     only output travel time
+Model Args
+  -h, --sourcedepth=<sourceDepth>
+                             source depth in km
+      -mod, --mod, --model=<modelname>
+                             use velocity model "modelname" for calculations
+                                                   Default is iasp91.
+      --scat, --scatter=s s  scattering depth and distance in degrees, which
+                               may be negative.
+      --stadepth=depth       the receiver depth in km for stations not at the
+                               surface
+Distance is given by:
+      --az=<azimuth>         azimuth in degrees
+      --baz=<backAzimuth>    backazimuth in degrees
+      --deg, --degrees=d[,d...]
+                             distance in degrees
+      --ellipflattening=<ellipflattening>
+                             Elliptical flattening for distance calculations
+                               when --geodetic, defaults to WGS84 ~ 1/298.257
+      --evt, --event=<eventLatLon> <eventLatLon>
+                             event latitude and longitude
+      --geodetic             use geodetic latitude for distance calculations,
+                               which implies an ellipticity. Default is
+                               spherical. Note this only affects calculation of
+                               distance from lat/lon, all travel time
+                               calculations are done in a purely spherical
+                               model.
+      --km, --kilometers=km[,km...]
+                             distance in kilometers
+      --shoot, --shootray=<shootRaypList>[,<shootRaypList>...]
+                             ray parameter from the source in s/deg up or down
+                               is determined by the phase
+      --sta, --station=<stationLatLon> <stationLatLon>
+                             station latitude and longitude
+      --takeoff=<takeoffAngle>
+                             takeoff angle in degrees from the source zero is
+                               down, 90 horizontal, 180 is up
+Output Type
+      --json                 outputs as JSON
+      --text                 outputs as text

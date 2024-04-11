@@ -9,7 +9,7 @@ import static edu.sc.seis.TauP.cli.OutputTypes.SVG;
 
 public class TextOutputTypeArgs {
 
-    @CommandLine.ArgGroup(exclusive=true, multiplicity="0..1")
+    @CommandLine.ArgGroup(exclusive=true, multiplicity="0..1", heading = "Output Type %n")
     TextOutputType outputType = new TextOutputType();
 
 
@@ -75,9 +75,9 @@ public class TextOutputTypeArgs {
     String outFileBase = "taup";
 
     static class TextOutputType {
-        @CommandLine.Option(names = {"-text", "--text"}, required = true, description = "outputs as text")
+        @CommandLine.Option(names = {"--text"}, required = true, description = "outputs as text")
         boolean _isText = true;
-        @CommandLine.Option(names = {"-json", "--json"}, required = true, description = "outputs as JSON")
+        @CommandLine.Option(names = {"--json"}, required = true, description = "outputs as JSON")
         boolean _isJSON = false;
     }
 

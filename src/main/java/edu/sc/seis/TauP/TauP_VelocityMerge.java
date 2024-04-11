@@ -2,6 +2,7 @@ package edu.sc.seis.TauP;
 
 import edu.sc.seis.TauP.cli.ModelArgs;
 import edu.sc.seis.TauP.cli.OutputTypes;
+import edu.sc.seis.TauP.cli.OverlayVelocityModelArgs;
 import picocli.CommandLine;
 
 import java.io.BufferedWriter;
@@ -32,13 +33,13 @@ public class TauP_VelocityMerge extends TauP_Tool {
         }
         VelocityModel overlayVMod;
         VelocityModel outVMod = vMod; // in case no overlay
-        if (overlayModelName != null) {
+        if (overlayModelArgs.getModelFilename() != null && overlayModelArgs.getModelFilename().length()>0) {
 
             if(DEBUG) {
                 System.err.println("base model: "+vMod.modelName);
-                System.err.println("merge model: "+overlayModelName);
+                System.err.println("merge model: "+overlayModelArgs.getModelFilename());
             }
-            overlayVMod = TauModelLoader.loadVelocityModel(overlayModelName, overlayModelType);
+            overlayVMod = TauModelLoader.loadVelocityModel(overlayModelArgs.getModelFilename(), overlayModelArgs.getVelFileType());
             outVMod = vMod.replaceLayers(overlayVMod.getLayers(), overlayVMod.getModelName(), smoothTop, smoothBottom);
             outVMod.setModelName(vMod.modelName+"_"+overlayVMod.getModelName());
         } else {
@@ -48,7 +49,7 @@ public class TauP_VelocityMerge extends TauP_Tool {
             }
         }
         if (elevation != 0) {
-            outVMod = outVMod.elevationLayer(elevation, overlayModelName);
+            outVMod = outVMod.elevationLayer(elevation, overlayModelArgs.getModelFilename());
         }
 
         try {
@@ -78,7 +79,9 @@ public class TauP_VelocityMerge extends TauP_Tool {
 
     @Override
     public void validateArguments() throws TauModelException {
-
+        if (overlayModelArgs.getModelFilename() == null || overlayModelArgs.getModelFilename().length()==0) {
+            throw new CommandLine.ParameterException(spec.commandLine(), "merge model cannot be empty, use one of --ndmerge or --tvelmerge");
+        }
     }
 
     @Override
@@ -124,26 +127,16 @@ public class TauP_VelocityMerge extends TauP_Tool {
     }
     String outfile = "stdout";
 
-    @CommandLine.Option(names = "--ndmerge")
-    public void setNDMerge(String modelName) {
-        overlayModelName = modelName;
-        overlayModelType = ND;
-    }
-    @CommandLine.Option(names = "--tvelmerge")
-    public void setTvelMerge(String modelName) {
-        overlayModelName = modelName;
-        overlayModelType = TVEL;
-    }
+    @CommandLine.ArgGroup(exclusive = true, multiplicity = "1", heading = "Merge Velocity Model %n")
+    OverlayVelocityModelArgs overlayModelArgs = new OverlayVelocityModelArgs();
 
-    String overlayModelName = null;
-    String overlayModelType = null;
-    @CommandLine.Option(names = {"--smtop", "--smoothtop"})
+    @CommandLine.Option(names = {"--smoothtop"}, description = "smooth merge at top")
     boolean smoothTop = false;
 
-    @CommandLine.Option(names = {"--smbot", "--smoothBottom"})
+    @CommandLine.Option(names = {"--smoothbot"}, description = "smooth merge at bottom")
     boolean smoothBottom = false;
 
-    @CommandLine.Option(names = "--elev")
+    @CommandLine.Option(names = "--elev", description = "increase topmost layer by elevation (meters)")
     float elevation = 0;
 
 }

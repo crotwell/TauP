@@ -9,7 +9,7 @@ import static edu.sc.seis.TauP.cli.OutputTypes.*;
 public class GraphicOutputTypeArgs  {
 
 
-    @CommandLine.ArgGroup(exclusive=true, multiplicity="0..1")
+    @CommandLine.ArgGroup(exclusive=true, multiplicity="0..1", heading = "Output Type %n")
     GraphicsOutputType outputType = new GraphicsOutputType();
 
     /** ps filename for use within gmt script. Usually named after the tool that created the output. */

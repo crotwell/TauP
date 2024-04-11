@@ -79,7 +79,7 @@ public class TauP_Pierce extends TauP_Time {
         this.onlyAddPoints = onlyAddPoints;
     }
 
-    @CommandLine.Option(names= {"-pierce", "--pierce"}, description = "adds depth for calculating pierce points")
+    @CommandLine.Option(names= {"--pierce"}, description = "adds depth for calculating pierce points")
     public void setAddDepth(List<Double> addDepths) {
         modelArgs.setModelSplitDepths(addDepths);
     }

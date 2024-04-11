@@ -25,14 +25,13 @@
  */
 package edu.sc.seis.TauP;
 
+import edu.sc.seis.TauP.cli.OverlayVelocityModelArgs;
+import edu.sc.seis.TauP.cli.VelocityModelArgs;
 import picocli.CommandLine;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.Properties;
 
 import static edu.sc.seis.TauP.cli.OutputTypes.TAUP;
@@ -54,13 +53,8 @@ import static edu.sc.seis.TauP.VelocityModel.TVEL;
 @CommandLine.Command(name = "create", description = "Create .taup file from velocity model")
 public class TauP_Create extends TauP_Tool {
 
-    String modelFilename = "iasp91.tvel";
-    
-    String overlayModelFilename = null;
-
-    protected String velFileType = TVEL;
-    
-    String overlayVelFileType;
+    @CommandLine.ArgGroup(exclusive = true, multiplicity = "1", heading = "Velocity Model %n")
+    VelocityModelArgs inputFileArgs = new VelocityModelArgs();
 
     String directory = ".";
 
@@ -99,26 +93,9 @@ public class TauP_Create extends TauP_Tool {
     }
 
     public void setModelFilename(String modelFilename) {
-        this.modelFilename = modelFilename;
+        this.inputFileArgs.setModelFilename( modelFilename);
     }
 
-    @CommandLine.Option(names = "--nd", description = "\"named discontinuities\" velocity file")
-    public void setNDModelFilename(String modelFilename) {
-        setVelFileType(ND);
-        setModelFilename(modelFilename);
-    }
-    @CommandLine.Option(names = "--tvel", description = "\".tvel\" velocity file, ala ttimes")
-    public void setTvelModelFilename(String modelFilename) {
-        setVelFileType(TVEL);
-        setModelFilename(modelFilename);
-    }
-    public String getModelFilename() {
-        return modelFilename;
-    }
-    
-    public String getVelFileType() {
-        return velFileType;
-    }
 
     @Override
     public String getOutputFormat() {
@@ -126,7 +103,7 @@ public class TauP_Create extends TauP_Tool {
     }
 
     public void setVelFileType(String type) {
-        this.velFileType = type;
+        this.inputFileArgs.setVelFileType(type);
     }
 
     public void setDEBUG(boolean DEBUG) {
@@ -177,7 +154,7 @@ public class TauP_Create extends TauP_Tool {
 
     public void parseFileName(String modelFilename) {
         int j = modelFilename.lastIndexOf(System.getProperty("file.separator"));
-        this.modelFilename = modelFilename.substring(j + 1);
+        this.inputFileArgs.setModelFilename(modelFilename.substring(j + 1));
         if(j == -1) {
             directory = ".";
         } else {
@@ -188,13 +165,13 @@ public class TauP_Create extends TauP_Tool {
     public VelocityModel loadVMod() throws IOException, VelocityModelException {
         String file_sep = System.getProperty("file.separator");
         // Read the velocity model file.
-        String filename = directory + file_sep + modelFilename;
+        String filename = directory + file_sep + inputFileArgs.getModelFilename();
         File f = new File(filename);
         if(verbose)
             System.err.println("filename =" + directory + file_sep
-                    + modelFilename);
+                    + inputFileArgs.getModelFilename());
         try {
-            vMod = VelocityModel.readVelocityFile(filename, velFileType);
+            vMod = VelocityModel.readVelocityFile(filename, inputFileArgs.getVelFileType());
         } catch(FileNotFoundException e) {
             if (DEBUG) {
                 System.err.println("Unable to load from directory "+filename);
@@ -202,25 +179,17 @@ public class TauP_Create extends TauP_Tool {
         }
         if (vMod == null) {
             // maybe try an load interally???
-            vMod = TauModelLoader.loadVelocityModel(modelFilename);
+            vMod = TauModelLoader.loadVelocityModel(inputFileArgs.getModelFilename());
         }
         if (vMod == null) {
-            throw new IOException("Velocity model file not found: "+modelFilename+", tried internally and from file: "+f);
+            throw new IOException("Velocity model file not found: "+ inputFileArgs.getModelFilename() +", tried internally and from file: "+f);
         }
         if(verbose) {
             System.err.println("Done reading velocity model.");
             System.err.println("Radius of model " + vMod.getModelName()
                     + " is " + vMod.getRadiusOfEarth());
         }
-        
-        if (overlayModelFilename != null) {
 
-            if(DEBUG) {
-                System.err.println("orig model: "+vMod);
-            }
-            overlayVMod = VelocityModel.readVelocityFile(directory + file_sep + overlayModelFilename, overlayVelFileType);
-            vMod = vMod.replaceLayers(overlayVMod.getLayers(), overlayVMod.getModelName(), true, true);
-        }
         if(DEBUG)
             System.err.println("velocity mode: "+vMod);
         return vMod;
@@ -345,4 +314,5 @@ public class TauP_Create extends TauP_Tool {
     public void setDefaultOutputFormat() {
         // no op
     }
+
 }

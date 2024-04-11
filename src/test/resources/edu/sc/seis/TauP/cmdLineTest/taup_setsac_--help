@@ -1,18 +1,66 @@
-Usage: taup_setsac [arguments]  or, for purists, java edu.sc.seis.TauP.TauP_SetSac [arguments]
-Arguments are:-ph phase list     -- comma separated phase list,
-                      use phase-# to specify the sac header,
-                      for example, ScS-8 puts ScS in t8
--pf phasefile      -- file containing phases
-
--mod[el] modelname -- use velocity model "modelname" for calculations
-                      Default is iasp91.
-
---evdpkm            -- sac depth header is in km, default is meters
-
---prop [propfile]   -- set configuration properties
---debug             -- enable debugging output
---verbose           -- enable verbose output
---version           -- print the version
---help              -- print this out, but you already know that!
-sacfilename [sacfilename ...]
-Ex: taup_setsac --mod S_prem -ph S-8,ScS-9 wmq.r wmq.t wmq.zputs the first S arrival in T8 and ScS in T9
+Usage: taup setsac [--amp] [--debug] [--evdpkm] [--first] [--geodetic] [--help]
+                   [--rayp] [--time] [--az=<azimuth>] [--baz=<backAzimuth>]
+                   [--ellipflattening=<ellipflattening>]
+                   [--prop=<toolPropsFilename>] [--deg=d[,d...]]... [--km=km[,
+                   km...]]... [-p=<phaseNames>[,<phaseNames>...]]...
+                   [--rel=<relativePhaseName>[,<relativePhaseName>...]]...
+                   [--shoot=<shootRaypList>[,<shootRaypList>...]]...
+                   [--takeoff=<takeoffAngle>]... [--evt=<eventLatLon>
+                   <eventLatLon>]... [--sta=<stationLatLon> <stationLatLon>]...
+                   [[-mod=<modelname>] [-h=<sourceDepth>] [--stadepth=depth]
+                   [--scat=s s]...] [--text | --json] [<sacFileNames>...]
+set headers to travel times of phases using depth and distance from headers
+      [<sacFileNames>...]
+      --amp                  amplitude factor for each phase
+      --debug                display debugging message
+      --evdpkm               sac depth header is in km, default is meters
+      --first, --onlyfirst   only output the first arrival for each phase, no
+                               triplications
+      --help                 display this help message
+  -p, --ph, --phase=<phaseNames>[,<phaseNames>...]
+                             seismic phase names
+      --prop=<toolPropsFilename>
+                             load defaults from properties file
+      --rayp, --onlyrayp     only output the ray parameter
+      --rel=<relativePhaseName>[,<relativePhaseName>...]
+                             times relative to the first of the given phases
+      --time, --onlytime     only output travel time
+Model Args
+  -h, --sourcedepth=<sourceDepth>
+                             source depth in km
+      -mod, --mod, --model=<modelname>
+                             use velocity model "modelname" for calculations
+                                                   Default is iasp91.
+      --scat, --scatter=s s  scattering depth and distance in degrees, which
+                               may be negative.
+      --stadepth=depth       the receiver depth in km for stations not at the
+                               surface
+Distance is given by:
+      --az=<azimuth>         azimuth in degrees
+      --baz=<backAzimuth>    backazimuth in degrees
+      --deg, --degrees=d[,d...]
+                             distance in degrees
+      --ellipflattening=<ellipflattening>
+                             Elliptical flattening for distance calculations
+                               when --geodetic, defaults to WGS84 ~ 1/298.257
+      --evt, --event=<eventLatLon> <eventLatLon>
+                             event latitude and longitude
+      --geodetic             use geodetic latitude for distance calculations,
+                               which implies an ellipticity. Default is
+                               spherical. Note this only affects calculation of
+                               distance from lat/lon, all travel time
+                               calculations are done in a purely spherical
+                               model.
+      --km, --kilometers=km[,km...]
+                             distance in kilometers
+      --shoot, --shootray=<shootRaypList>[,<shootRaypList>...]
+                             ray parameter from the source in s/deg up or down
+                               is determined by the phase
+      --sta, --station=<stationLatLon> <stationLatLon>
+                             station latitude and longitude
+      --takeoff=<takeoffAngle>
+                             takeoff angle in degrees from the source zero is
+                               down, 90 horizontal, 180 is up
+Output Type
+      --json                 outputs as JSON
+      --text                 outputs as text

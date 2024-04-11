@@ -3,6 +3,7 @@ package edu.sc.seis.TauP;
 import edu.sc.seis.TauP.cli.GraphicOutputTypeArgs;
 import edu.sc.seis.TauP.cli.ModelArgs;
 import edu.sc.seis.TauP.cli.OutputTypes;
+import edu.sc.seis.TauP.cli.VelocityModelArgs;
 import picocli.CommandLine;
 
 import java.io.IOException;
@@ -340,8 +341,10 @@ public class TauP_VelocityPlot extends TauP_Tool {
     public String getOutputFormat() {
         return outputTypeArgs.getOuputFormat();
     }
-    @CommandLine.Mixin
-    ModelArgs modelArgs = new ModelArgs();
+
+
+    @CommandLine.ArgGroup(exclusive = true, multiplicity = "1", heading = "Velocity Model %n")
+    VelocityModelArgs velModelArgs = new VelocityModelArgs();
 
     @CommandLine.Mixin
     GraphicOutputTypeArgs outputTypeArgs = new GraphicOutputTypeArgs();

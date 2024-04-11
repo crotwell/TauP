@@ -19,7 +19,7 @@ import static edu.sc.seis.TauP.cli.OutputTypes.SVG;
 
 public class TableOutputTypeArgs {
 
-    @CommandLine.ArgGroup(exclusive=true, multiplicity="0..1")
+    @CommandLine.ArgGroup(exclusive=true, multiplicity="0..1", heading = "Output Type %n")
     TableOutputType outputType = new TableOutputType();
 
 

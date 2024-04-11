@@ -1,30 +1,31 @@
-Usage: taup velmerge [arguments]
-  or, for purists, java edu.sc.seis.TauP.TauP_VelocityMerge [arguments]
-
-Arguments are:
--mod[el] modelname -- base velocity model "modelname" for calculations
-                      Default is iasp91.
-
-
--nd modelfile       -- base "named discontinuities" velocity file
--tvel modelfile     -- base ".tvel" velocity file, ala ttimes
-
--ndmerge modelfile       -- "named discontinuities" velocity file to merge
--tvelmerge modelfile     -- ".tvel" velocity file to merge, ala ttimes
-
--smtop              -- smooth merge at top
--smbot              -- smooth merge at bottom
-
---elevation         -- expand top layer for station at elevation
-                       may append m for meters, otherwise kilometers
-                       updates radius of earth
---json             -- output model as json
-
-
--o [stdout|outfile]         -- output is redirected to stdout or to the "outfile" file
---prop [propfile]   -- set configuration properties
---debug             -- enable debugging output
---verbose           -- enable verbose output
---version           -- print the version
---help              -- print this out, but you already know that!
-
+Usage: taup velmerge [--debug] [--help] [--smoothbot] [--smoothtop]
+                     [--elev=<elevation>] [-o=<outFile>]
+                     [--prop=<toolPropsFilename>] [[-mod=<modelname>]
+                     [-h=<sourceDepth>] [--stadepth=depth] [--scat=s s]...]
+                     (--ndmerge=<nDModelFilename> |
+                     --tvelmerge=<tvelModelFilename>)
+merge part of one model into another
+      --debug              display debugging message
+      --elev=<elevation>   increase topmost layer by elevation (meters)
+      --help               display this help message
+  -o, --output=<outFile>   output to file, default is stdout.
+      --prop=<toolPropsFilename>
+                           load defaults from properties file
+      --smoothbot          smooth merge at bottom
+      --smoothtop          smooth merge at top
+Model Args
+  -h, --sourcedepth=<sourceDepth>
+                           source depth in km
+      -mod, --mod, --model=<modelname>
+                           use velocity model "modelname" for calculations
+                                                 Default is iasp91.
+      --scat, --scatter=s s
+                           scattering depth and distance in degrees, which may
+                             be negative.
+      --stadepth=depth     the receiver depth in km for stations not at the
+                             surface
+Merge Velocity Model
+      --ndmerge=<nDModelFilename>
+                           "named discontinuities" velocity file to merge
+      --tvelmerge=<tvelModelFilename>
+                           ".tvel" velocity file to merge, ala ttimes
