@@ -107,7 +107,6 @@ public class ArrivalPathSegment {
             if (arrival.isLongWayAround()) {
                 shifty *= -1;
             }
-            System.err.println("shifty: "+shifty);
             if (Math.abs(1.0-shifty) > .02 ) {
                 System.err.println("Path error is greater than 2%, correction may cause errors. "+shifty+" "+arrival);
                 System.err.println("  "+distRadian+" "+finalPathDist+"  "+arrival.isLongWayAround());
