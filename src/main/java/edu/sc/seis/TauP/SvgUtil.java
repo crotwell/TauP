@@ -213,6 +213,84 @@ public class SvgUtil {
         return out;
     }
 
+    public static StringBuffer createPhaseColorCSS(List<String> phaseNames) {
+        StringBuffer out = new StringBuffer();
+        for (int i = 0; i < phaseNames.size(); i++) {
+            int moduloColor = i % DEFAULT_COLORS.size();
+            String color = DEFAULT_COLORS.get(moduloColor);
+            out.append("        ."+phaseNames.get(i)+" {\n");
+            out.append("          stroke: "+color+";\n");
+            out.append("        }\n");
+            out.append("        ."+phaseNames.get(i)+".label {\n");
+            out.append("          stroke: "+color+";\n");
+            out.append("          fill: "+color+";\n");
+            out.append("        }\n");
+            out.append("        .legend ."+phaseNames.get(i)+" line {\n");
+            out.append("          stroke: "+color+";\n");
+            out.append("        }\n");
+            out.append("        .legend ."+phaseNames.get(i)+" text {\n");
+            out.append("          fill: "+color+";\n");
+            out.append("          stroke: transparent;\n");
+            out.append("        }\n");
+        }
+        return out;
+    }
+    public static StringBuffer createTimeStepColorCSS(int timestep, float maxTime) {
+        StringBuffer out = new StringBuffer();
+        for (int i = 1; i < maxTime/timestep; i++) {
+            String timeLabel = String.format("time_%05d", i*timestep);
+            int moduloColor = i % DEFAULT_COLORS.size();
+            String color = DEFAULT_COLORS.get(moduloColor);
+            out.append("        ."+timeLabel+" {\n");
+            out.append("          stroke: "+color+";\n");
+            out.append("        }\n");
+            out.append("        ."+timeLabel+".label {\n");
+            out.append("          stroke: "+color+";\n");
+            out.append("          fill: "+color+";\n");
+            out.append("        }\n");
+            out.append("        .legend ."+timeLabel+" {\n");
+            out.append("          stroke: "+color+";\n");
+            out.append("          fill: "+color+";\n");
+            out.append("        }\n");
+        }
+        return out;
+    }
+
+    public static void startAutocolorG(PrintWriter writer) {
+        writer.println("  <g class=\"autocolor\" >");
+    }
+    public static void endAutocolorG(PrintWriter writer) {
+        writer.println("  </g> <!-- end autocolor -->");
+    }
+
+    public static StringBuffer resizeLabels(int fontSize) {
+        StringBuffer extrtaCSS = new StringBuffer();
+        extrtaCSS.append("        text.label {\n");
+        extrtaCSS.append("            font: bold ;\n");
+        extrtaCSS.append("            font-size: "+fontSize+"px;\n");
+        extrtaCSS.append("            fill: black;\n");
+        extrtaCSS.append("        }\n");
+        extrtaCSS.append("        g.phasename text {\n");
+        extrtaCSS.append("            font: bold ;\n");
+        extrtaCSS.append("            font-size: "+fontSize+"px;\n");
+        extrtaCSS.append("            fill: black;\n");
+        extrtaCSS.append("        }\n");
+        return extrtaCSS;
+    }
+
+    public static StringBuffer createWaveTypeColorCSS() {
+        StringBuffer extrtaCSS = new StringBuffer();
+        extrtaCSS.append("        polyline.pwave {\n");
+        extrtaCSS.append("            stroke: blue;\n");
+        extrtaCSS.append("        }\n");
+        extrtaCSS.append("        polyline.swave {\n");
+        extrtaCSS.append("            stroke: red;\n");
+        extrtaCSS.append("        }\n");
+        extrtaCSS.append("        polyline.both_p_swave {\n");
+        extrtaCSS.append("            stroke: black;\n");
+        extrtaCSS.append("        }\n");
+        return extrtaCSS;
+    }
     public static List<String> DEFAULT_COLORS = List.of(
             "skyblue",
             "olivedrab",
@@ -224,4 +302,5 @@ public class SvgUtil {
             "mediumvioletred",
             "sienna",
             "rebeccapurple");
+
 }

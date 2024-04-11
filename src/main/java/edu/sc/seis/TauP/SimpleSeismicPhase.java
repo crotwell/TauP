@@ -255,6 +255,22 @@ public class SimpleSeismicPhase implements SeismicPhase {
         return minRayParamIndex;
     }
 
+    public double getMinTime() {
+        double v = time[0];
+        for (double d : time) {
+            v = Math.min(v, d);
+        }
+        return v;
+    }
+
+    public double getMaxTime() {
+        double v = time[0];
+        for (double d : time) {
+            v = Math.max(v, d);
+        }
+        return v;
+    }
+
     @Override
     public String getName() {
         return name;
@@ -1098,38 +1114,34 @@ public class SimpleSeismicPhase implements SeismicPhase {
         return reflTranValue;
     }
 
-    public List<TimeDist> calcPathTimeDist(Arrival currArrival) {
-        List<List<TimeDist>> segmentPaths = calcSegmentPaths(currArrival);
-        List<TimeDist> outPath = new ArrayList<>();
-        for (List<TimeDist> tdList : segmentPaths) {
-            for (TimeDist td : tdList) {
-                if (currArrival.isLongWayAround()) {
-                    outPath.add(td.negateDistance());
-                } else {
-                    outPath.add(td);
-                }
-            }
-        }
-        if (outPath.size() == 0) {
-            System.err.println("Calc Path is zero length:  "+currArrival);
-        }
-        outPath = removeDuplicatePathPoints(outPath);
-        return adjustPath(outPath, currArrival);
+    @Override
+    public List<ArrivalPathSegment> calcSegmentPaths(Arrival currArrival) {
+        return calcSegmentPaths(currArrival, null, 0);
     }
 
-    public List<List<TimeDist>> calcSegmentPaths(Arrival currArrival) {
-        List<List<TimeDist>> segmentPaths = new ArrayList<>();
-        TimeDist prevEnd = null;
+    /**
+     * Calc path with a starting time-distance possibly not zero. Used when this simple phase
+     * is the outbound phase of a scattered phase and so the path needs to start at the
+     * scatterer distance.
+     *
+     * @param currArrival
+     * @param prevEnd
+     * @return
+     */
+    public List<ArrivalPathSegment> calcSegmentPaths(Arrival currArrival, TimeDist prevEnd, int prevIdx) {
+        int idx = prevIdx+1;
+        List<ArrivalPathSegment> segmentPaths = new ArrayList<>();
         for (SeismicPhaseSegment seg : segmentList) {
-            List<TimeDist> segPath = seg.calcPathTimeDist(currArrival, prevEnd);
-            if (segPath.size() == 0) {
+            ArrivalPathSegment segPath = seg.calcPathTimeDist(currArrival, prevEnd, idx++);
+
+            if (segPath.path.size() == 0) {
                 System.err.println("segPath.size() is 0 "+seg);
                 continue;
             }
             segmentPaths.add(segPath);
-            prevEnd = segPath.get(segPath.size()-1);
+            prevEnd = segPath.getPathEnd();
         }
-        return segmentPaths;
+        return ArrivalPathSegment.adjustPath(segmentPaths, currArrival);
     }
 
     public static List<TimeDist> removeDuplicatePathPoints(List<TimeDist> inPath) {

@@ -77,6 +77,7 @@ public class TauP_WKBJ extends TauP_Time {
 
     @Override
     public void setDefaultOutputFormat() {
+        outputTypeArgs.setOutFileBase("taup_wkbj");
         setOutputFormat(OutputTypes.MS3);
     }
 
@@ -494,4 +495,14 @@ public class TauP_WKBJ extends TauP_Time {
     public void setOutputStream(DataOutputStream writer) {
         this.writer = writer;
     }
+
+
+    @CommandLine.Option(names = {"-o", "--output"}, description = "output to file, default is taup_wkbj.ms3")
+    public void setOutFile(String outfile) {
+        this.outfile = outfile;
+    }
+    public String getOutFile() {
+        return this.outfile;
+    }
+    String outfile = "taup_wkbj.ms3";
 } // TauP_WKBJ

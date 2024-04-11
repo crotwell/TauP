@@ -9,4 +9,5 @@ public interface OutputTypes {
     String TEXT = "text";
     String MS3 = "ms3";
     String TAUP = "taup";
+    String LOCSAT = "locsat";
 }

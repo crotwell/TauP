@@ -15,7 +15,7 @@ import java.util.List;
 public class TauP_Curve extends TauP_AbstractPhaseTool {
     public TauP_Curve() {
         setDefaultOutputFormat();
-        setOutFileBase("stdout");
+        outputTypeArgs.setOutFileBase("taup_curve");
     }
 
     @Override
@@ -40,11 +40,12 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
     @Override
     public void start() throws IOException, TauModelException, TauPException {
         double tempDepth;
+        PrintWriter writer = outputTypeArgs.createWriter();
         if(modelArgs.getSourceDepth() != -1 * Double.MAX_VALUE) {
             /* enough info given on cmd line, so just do one calc. */
 
             List<XYPlottingData> xy = calculate(xAxisType, yAxisType);
-            printResult(getWriter(), xy);
+            printResult(writer, xy);
         } else {
             StreamTokenizer tokenIn = new StreamTokenizer(new InputStreamReader(System.in));
             tokenIn.parseNumbers();
@@ -61,9 +62,9 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
             setSourceDepth(tempDepth);
 
             List<XYPlottingData> xy = calculate(xAxisType, yAxisType);
-            printResult(getWriter(), xy);
-            getWriter().flush();
+            printResult(writer, xy);
         }
+        writer.close();
     }
 
     public List<XYPlottingData> calculate(AxisType xAxisType, AxisType yAxisType) throws TauPException {
@@ -564,6 +565,11 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
     @Override
     public String getOutputFormat() {
         return outputTypeArgs.getOuputFormat();
+    }
+
+    @Override
+    public String getOutFileExtension() {
+        return outputTypeArgs.getOutFileExtension();
     }
 
     public void setxMinMax(double min, double max) {

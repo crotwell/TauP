@@ -63,6 +63,11 @@ public class TauP_Time extends TauP_AbstractRayTool {
         return outputTypeArgs.getOuputFormat();
     }
 
+    @Override
+    public String getOutFileExtension() {
+        return outputTypeArgs.getOutFileExtension();
+    }
+
     public TauP_Time() {
         setDefaultOutputFormat();
     }
@@ -92,6 +97,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
     @Override
     public void setDefaultOutputFormat() {
         setOutputFormat(OutputTypes.TEXT);
+        outputTypeArgs.setOutFileBase("stdout");
     }
 
 
@@ -450,11 +456,21 @@ public class TauP_Time extends TauP_AbstractRayTool {
                 + "m for new model or \nq to quit.\n");
     }
 
+    public void calcAndPrint(List<SeismicPhase> phaseList, List<RayCalculateable> shootables) throws TauPException, IOException {
+        List<Arrival> arrivalList = calcAll(phaseList, shootables);
+        PrintWriter writer = outputTypeArgs.createWriter();
+        printResult(writer, arrivalList);
+        writer.close();
+    }
+
     public void start() throws IOException, TauPException {
         List<RayCalculateable> distanceValues = getDistanceArgs().getRayCalculatables();
         if((distanceValues.size() != 0)) {
             /* enough info given on cmd line, so just do one calc. */
-            calcAndPrint(getSeismicPhases(), distanceValues);
+            List<Arrival> arrivalList = calcAll(getSeismicPhases(), distanceValues);
+            PrintWriter writer = outputTypeArgs.createWriter();
+            printResult(writer, arrivalList);
+            writer.close();
         } else {
             /* interactive mode... */
             long prevTime = 0;

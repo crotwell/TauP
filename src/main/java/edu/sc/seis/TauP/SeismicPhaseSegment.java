@@ -116,9 +116,12 @@ public class SeismicPhaseSegment {
 		}
 		return action;
 	}
-	
-	public String describeBranchRange(int startBranch, int endBranch) {
-		String out = "";
+	public String describeBranchRange() {
+		return describeBranchRange(tMod, startBranch, endBranch);
+	}
+
+	public static String describeBranchRange(TauModel tMod, int startBranch, int endBranch) {
+		String out;
 		if (startBranch < tMod.getMohoBranch() && endBranch < tMod.getMohoBranch()) {
 			out = "crust";
 		} else if (startBranch < tMod.getCmbBranch() && endBranch < tMod.getCmbBranch()) {
@@ -155,7 +158,7 @@ public class SeismicPhaseSegment {
     	if ( ! legName.contentEquals("END")) {
     		desc += legName +" going "+upDown
     				+ " as a "+ isPString 
-    				+ " in the "+describeBranchRange(startBranch, endBranch)+","
+    				+ " in the "+describeBranchRange()+","
     	    	    + branchRange+","
 					+ " depths "+depthRange+","
     				+ " then " +action;
@@ -248,7 +251,7 @@ public class SeismicPhaseSegment {
 					+"  \"name\": \""+legName+"\","
 					+" \"updown\": \""+upDown+"\","
 					+ " \"type\": \""+ isPString+"\","
-					+ " \"branch_desc\": \""+describeBranchRange(startBranch, endBranch)+"\","
+					+ " \"branch_desc\": \""+describeBranchRange()+"\","
 					+ " \"branches\": "+branchRangeJSON+","
 					+ " \"depths\": "+depthRange+","
 					+ " \"then\": \"" +action+"\""
@@ -261,7 +264,7 @@ public class SeismicPhaseSegment {
 	}
 
 
-	public List<TimeDist> calcPathTimeDist(Arrival currArrival, TimeDist prevEnd) {
+	public ArrivalPathSegment calcPathTimeDist(Arrival currArrival, TimeDist prevEnd, int segmentIndex) {
 		ArrayList<TimeDist[]> pathList = new ArrayList<TimeDist[]>();
 		if ( ! isFlat) {
 			int bStep = isDownGoing ? 1 : -1;
@@ -328,20 +331,25 @@ public class SeismicPhaseSegment {
 		TimeDist prev = cummulative;
 		TimeDist[] branchPath;
 		int numAdded = 0;
+		double longWayFactor = 1;
+		if (currArrival.isLongWayAround()) {
+			longWayFactor = -1;
+		}
 		for(int i = 0; i < pathList.size(); i++) {
 			branchPath = (TimeDist[])pathList.get(i);
 			for(int j = 0; j < branchPath.length; j++) {
 				prev = cummulative;
 				cummulative = new TimeDist(cummulative.getP(),
 						cummulative.getTime()+branchPath[j].getTime(),
-						cummulative.getDistRadian()+branchPath[j].getDistRadian(),
+						cummulative.getDistRadian()+longWayFactor*branchPath[j].getDistRadian(),
 						branchPath[j].getDepth());
 				outPath.add(cummulative);
 
 				numAdded++;
 			}
 		}
-		return outPath;
+		ArrivalPathSegment pathSeg = new ArrivalPathSegment(outPath, isPWave, legName, prevEnd, currArrival, this);
+		return pathSeg;
 	}
 
 	/**

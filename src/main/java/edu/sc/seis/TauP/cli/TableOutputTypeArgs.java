@@ -4,13 +4,23 @@ import picocli.CommandLine;
 
 import java.io.*;
 
+import static edu.sc.seis.TauP.cli.OutputTypes.JSON;
+import static edu.sc.seis.TauP.cli.OutputTypes.TEXT;
+import static edu.sc.seis.TauP.cli.OutputTypes.CSV;
+import static edu.sc.seis.TauP.cli.OutputTypes.LOCSAT;
+
+
+import picocli.CommandLine;
+
+import java.io.*;
+
 import static edu.sc.seis.TauP.cli.OutputTypes.*;
 import static edu.sc.seis.TauP.cli.OutputTypes.SVG;
 
-public class TextOutputTypeArgs {
+public class TableOutputTypeArgs {
 
     @CommandLine.ArgGroup(exclusive=true, multiplicity="0..1")
-    TextOutputType outputType = new TextOutputType();
+    TableOutputType outputType = new TableOutputType();
 
 
     public boolean isText() {
@@ -19,13 +29,26 @@ public class TextOutputTypeArgs {
     public boolean isJSON() {
         return outputType._isJSON;
     }
+    public boolean isCSV() {
+        return outputType._isCSV;
+    }
+    public boolean isLocsat() {
+        return outputType._isLocsat;
+    }
+
     public void setOutputType(String oType) {
         outputType._isText = false;
         outputType._isJSON = false;
-        if (oType.equalsIgnoreCase(TEXT)) {
+        outputType._isCSV = false;
+        outputType._isLocsat = false;
+        if (oType.equalsIgnoreCase(TEXT) || oType.equalsIgnoreCase("generic")) {
             outputType._isText = true;
         } else if (oType.equalsIgnoreCase(JSON)) {
-                outputType._isText = true;
+            outputType._isJSON = true;
+        } else if (oType.equalsIgnoreCase(CSV)) {
+            outputType._isCSV = true;
+        } else if (oType.equalsIgnoreCase(LOCSAT)) {
+            outputType._isLocsat = true;
         } else {
             throw new IllegalArgumentException("output type "+oType+" not recognized.");
         }
@@ -33,6 +56,8 @@ public class TextOutputTypeArgs {
 
     public String getOuputFormat() {
         if (isJSON()) return JSON;
+        if (isCSV()) return CSV;
+        if (isLocsat()) return LOCSAT;
         return TEXT;
     }
 
@@ -48,6 +73,12 @@ public class TextOutputTypeArgs {
         String extention = "text";
         if (isJSON()) {
             extention = "json";
+        }
+        if (isCSV()) {
+            extention = "csv";
+        }
+        if (isLocsat()) {
+            extention = "locsat";
         }
         return extention;
     }
@@ -72,13 +103,18 @@ public class TextOutputTypeArgs {
         }
     }
 
-    String outFileBase = "taup";
+    String outFileBase = "taup_table";
 
-    static class TextOutputType {
-        @CommandLine.Option(names = {"-text", "--text"}, required = true, description = "outputs as text")
+    static class TableOutputType {
+        @CommandLine.Option(names = {"--text", "--generic"}, required = true, description = "outputs as text")
         boolean _isText = true;
-        @CommandLine.Option(names = {"-json", "--json"}, required = true, description = "outputs as JSON")
+        @CommandLine.Option(names = {"--json"}, required = true, description = "outputs as JSON")
         boolean _isJSON = false;
+        @CommandLine.Option(names = {"--csv"}, required = true, description = "outputs as CSV")
+        boolean _isCSV = false;
+        @CommandLine.Option(names = {"--locsat"}, required = true, description = "outputs as locsat")
+        boolean _isLocsat = false;
     }
 
 }
+

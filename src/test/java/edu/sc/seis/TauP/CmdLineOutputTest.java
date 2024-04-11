@@ -496,8 +496,9 @@ public class CmdLineOutputTest {
         BufferedReader s = getPriorOutput("taup_path -o stdout -h 10 -p P --deg 35 --mod prem");
         String priorS = s.readLine();
         String shouldBeS = "> P at   411.69 seconds at    35.00 degrees for a     10.0 km deep source in the prem model with rayParam    8.604 s/deg.";
-        assertEquals(shouldBeS.length(), priorS.length(), "line one length" );
-        assertEquals("> P at   411.69 seconds at    35.00 degrees for a     10.0 km deep source in the prem model with rayParam    8.604 s/deg.", priorS, "line one");
+
+        //assertEquals(shouldBeS.length(), priorS.length(), "line one length" );
+        assertEquals(shouldBeS, priorS, "line one");
     }
 
 

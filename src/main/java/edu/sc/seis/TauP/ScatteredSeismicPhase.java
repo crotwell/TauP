@@ -127,6 +127,16 @@ public class ScatteredSeismicPhase implements SeismicPhase {
     }
 
     @Override
+    public double getMinTime() {
+        return inboundArrival.getTime()+scatteredPhase.getMinTime();
+    }
+
+    @Override
+    public double getMaxTime() {
+        return inboundArrival.getTime()+scatteredPhase.getMaxTime();
+    }
+
+    @Override
     public double getSourceDepth() {
         return inboundArrival.getSourceDepth();
     }
@@ -531,39 +541,33 @@ public class ScatteredSeismicPhase implements SeismicPhase {
     }
 
     @Override
-    public List<TimeDist> calcPathTimeDist(Arrival arrival) {
-        List<TimeDist> out = new ArrayList<>();
+    public List<ArrivalPathSegment> calcSegmentPaths(Arrival arrival) {
+        List<ArrivalPathSegment> out = new ArrayList<>();
+        List<ArrivalPathSegment> inboundPath = inboundArrival.getPathSegments();
+        for (ArrivalPathSegment seg : inboundPath) {
+            // swap arrival for main
+            seg.arrival = arrival;
+            out.add(seg);
+        }
         ScatteredArrival scatA = (ScatteredArrival) arrival;
         double scatDistance = inboundArrival.getDist();
-        TimeDist[] inPath = inboundArrival.getPath();
         if (scatA.isInboundNegativeDirection()) {
             scatDistance = -1*scatDistance;
-            for (TimeDist td : inboundArrival.getPath()) {
-                TimeDist btd = new TimeDist(
-                        td.getP(),
-                        td.getTime(),
-                        td.getDistRadian(),
-                        td.getDepth());
-                out.add(btd);
-            }
-        } else {
-            out.addAll(Arrays.asList(inboundArrival.getPath()));
         }
+        ArrivalPathSegment lastSeg =  inboundPath.get(inboundPath.size()-1);
+        TimeDist prevEnd = lastSeg.getPathEnd();
+        List<ArrivalPathSegment> outboundPath = scatteredPhase.calcSegmentPaths(scatA.getScatteredArrival(), prevEnd, lastSeg.segmentIndex);
 
-        List<TimeDist> scatPath = scatteredPhase.calcPathTimeDist(scatA.getScatteredArrival());
-        // first TimeDist is just the zero distance starting point, which repeats the end of the inbound
-        scatPath = scatPath.subList(1,scatPath.size());
+        int segIdx = lastSeg.segmentIndex+1;
         int scatNegative = 1;
         if (scatA.isScatterNegativeDirection()) {
             scatNegative = -1;
         }
-        for (TimeDist td : scatPath) {
-            out.add(new TimeDist(td.getP(),
-                    inboundArrival.getTime()+td.getTime(),
-                    scatDistance + scatNegative*td.getDistRadian(),
-                    td.getDepth()));
+        for (ArrivalPathSegment scatPathSeg : outboundPath) {
+            scatPathSeg.segmentIndex = segIdx++;
+            scatPathSeg.arrival = arrival;
         }
-
+        out.addAll(outboundPath);
         return out;
     }
 }

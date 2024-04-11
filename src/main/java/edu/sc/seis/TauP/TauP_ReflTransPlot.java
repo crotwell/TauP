@@ -19,7 +19,7 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
     public static final String DEFAULT_OUTFILE = "taup_refltrans";
 
     public TauP_ReflTransPlot() {
-        setOutFileBase(DEFAULT_OUTFILE);
+        outputTypeArgs.setOutFileBase(DEFAULT_OUTFILE);
         setDefaultOutputFormat();
     }
 
@@ -61,7 +61,9 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
                     indown, inpwave, inswave, inshwave, isLinearRayParam(), step);
             modelArgs.setModelName(layerParams.asName());
         }
-        printResult(getWriter(), xypList);
+        PrintWriter writer = outputTypeArgs.createWriter();
+        printResult(writer, xypList);
+        writer.close();
     }
 
 

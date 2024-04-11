@@ -26,6 +26,7 @@
 package edu.sc.seis.TauP;
 
 import edu.sc.seis.TauP.cli.OutputTypes;
+import edu.sc.seis.TauP.cli.TableOutputTypeArgs;
 import edu.sc.seis.TauP.cli.TextOutputTypeArgs;
 import picocli.CommandLine;
 
@@ -317,22 +318,12 @@ public class TauP_Table extends TauP_AbstractPhaseTool {
 
     @Override
     public String getOutputFormat() {
-        if(tableFormat.generic) {
-            // GENERIC:
-            return OutputTypes.TEXT;
-        } else if(tableFormat.csv) {
-            return OutputTypes.CSV;
-        } else if (tableFormat.locsat) {
-            return LOCSAT;
-        } else if (tableFormat.json) {
-            return OutputTypes.JSON;
-        }
-        return OutputTypes.TEXT;
+        return outputTypeArgs.getOuputFormat();
     }
 
     @Override
     public void setDefaultOutputFormat() {
-        tableFormat.generic = true;
+        outputTypeArgs.setOutputType("generic");
     }
 
     public void init() throws TauPException {
@@ -419,19 +410,21 @@ public class TauP_Table extends TauP_AbstractPhaseTool {
     }
 
     public void start() throws TauModelException, TauPException, IOException {
-        if(tableFormat.generic) {
-            // GENERIC:
-            genericTable(getWriter());
-        } else if(tableFormat.csv) {
-            csvTable(getWriter());
-        } else if (tableFormat.locsat) {
-            locsatTable(getWriter());
-        } else if (tableFormat.json) {
-            jsonTable(getWriter());
+        PrintWriter writer = outputTypeArgs.createWriter();
+        if(outputTypeArgs.isCSV()) {
+            csvTable(writer);
+        } else if (outputTypeArgs.isLocsat()) {
+            locsatTable(writer);
+        } else if (outputTypeArgs.isJSON()) {
+            jsonTable(writer);
+        } else if(outputTypeArgs.isText()) {
+                // GENERIC:
+                genericTable(writer);
         } else {
             throw new TauPException("TauP_Table: undefined state for output type: "
                         + getOutputFormat());
         }
+        writer.close();
     }
 
     @Override
@@ -617,19 +610,8 @@ public class TauP_Table extends TauP_AbstractPhaseTool {
         this.headerFile = headerFile;
     }
 
-    @CommandLine.ArgGroup(exclusive = true, multiplicity = "0..1")
-    TableFormat tableFormat = new TableFormat();
-
-    static class TableFormat {
-        @CommandLine.Option(names = "--csv", required = true)
-        boolean csv;
-        @CommandLine.Option(names = "--locsat", required = true)
-        boolean locsat;
-        @CommandLine.Option(names = "--generic", required = true)
-        boolean generic;
-        @CommandLine.Option(names = "--json", required = true)
-        boolean json;
-    }
+    @CommandLine.Mixin
+    TableOutputTypeArgs outputTypeArgs = new TableOutputTypeArgs();
 
     /**
     * ToolRun.main should be used instead.

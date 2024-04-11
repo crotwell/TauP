@@ -131,12 +131,6 @@ public abstract class TauP_Tool implements Callable<Integer> {
     public void setOutFileBase(String outFileBase) {
         this.outFileBase = outFileBase;
     }
-
-    @CommandLine.Option(names = {"-o", "--output"}, description = "output to file, default is stdout.")
-    public void setOutFile(String outfile) {
-        this.outFileBase = outfile;
-        this.outFileExtension = "";
-    }
     
     public String getOutFileExtension() {
         return outFileExtension ;
@@ -146,37 +140,6 @@ public abstract class TauP_Tool implements Callable<Integer> {
         this.outFileExtension = outFileExtension;
     }
 
-
-
-    public String getOutFile() {
-        if(getOutFileBase() == null || getOutFileBase().length() == 0 || getOutFileBase().equals("stdout")) {
-            return "stdout";
-        } else {
-            if (getOutFileExtension() == null || getOutFileExtension().length() == 0 || getOutFileBase().endsWith("."+getOutFileExtension())) {
-                // don't do a dot if no extension or already there
-                return getOutFileBase();
-            }
-            return getOutFileBase()+"."+getOutFileExtension();
-        }
-    }
-    
-    public PrintWriter getWriter() throws IOException {
-        if (writer == null) {
-            if(!(getOutFile().equals("stdout") || getOutFile().length()==0)) {
-                writer = new PrintWriter(new BufferedWriter(new FileWriter(getOutFile())));
-            } else {
-                writer = new PrintWriter(new OutputStreamWriter(System.out));
-            }
-        }
-        return writer;
-    }
-
-    public void closeWriter() {
-        if (writer != null) {
-            writer.close();
-        }
-        writer = null;
-    }
     
     public void setWriter(PrintWriter writer) {
         this.writer = writer;

@@ -114,6 +114,16 @@ public class TauP_VelocityMerge extends TauP_Tool {
     String modelName;
     String modelType;
 
+
+    @CommandLine.Option(names = {"-o", "--output"}, description = "output to file, default is stdout.")
+    public void setOutFile(String outfile) {
+        this.outfile = outfile;
+    }
+    public String getOutFile() {
+        return this.outfile;
+    }
+    String outfile = "stdout";
+
     @CommandLine.Option(names = "--ndmerge")
     public void setNDMerge(String modelName) {
         overlayModelName = modelName;

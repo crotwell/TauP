@@ -125,10 +125,6 @@ public abstract class TauP_AbstractRayTool extends TauP_AbstractPhaseTool {
 
     public abstract List<Arrival> calcAll(List<SeismicPhase> phaseList, List<RayCalculateable> shootables) throws TauPException;
 
-    public void calcAndPrint(List<SeismicPhase> phaseList, List<RayCalculateable> shootables) throws TauPException, IOException {
-        List<Arrival> arrivalList = calcAll(phaseList, shootables);
-        printResult(getWriter(), arrivalList);
-    }
 
-    public abstract void printResult(PrintWriter out, List<Arrival> arrivalList) throws IOException, TauModelException;
+    public abstract void printResult(PrintWriter out, List<Arrival> arrivalList) throws IOException, TauPException;
 }

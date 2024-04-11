@@ -40,6 +40,9 @@ public interface SeismicPhase extends Serializable, Cloneable {
 
     int getMinRayParamIndex();
 
+    public double getMinTime();
+    public double getMaxTime();
+
     String getName();
 
     String getPuristName();
@@ -142,6 +145,8 @@ public interface SeismicPhase extends Serializable, Cloneable {
      */
     boolean finalSegmentIsPWave();
 
+    List<ArrivalPathSegment> calcSegmentPaths(Arrival currArrival);
+
     String describe();
 
     String describeJson();
@@ -155,8 +160,6 @@ public interface SeismicPhase extends Serializable, Cloneable {
     double calcReflTranSH(Arrival arrival) throws VelocityModelException, SlownessModelException;
 
     List<TimeDist> calcPierceTimeDist(Arrival arrival);
-
-    List<TimeDist> calcPathTimeDist(Arrival arrival);
 
     /**
      * Split calculated array into segments for repeated ray parameter values, which indicate a

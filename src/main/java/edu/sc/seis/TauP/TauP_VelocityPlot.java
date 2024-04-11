@@ -21,7 +21,7 @@ public class TauP_VelocityPlot extends TauP_Tool {
     public static final String DEFAULT_OUTFILE = "taup_velocitymodel";
     
     public TauP_VelocityPlot() {
-        setOutFileBase(DEFAULT_OUTFILE);
+        outputTypeArgs.setOutFileBase(DEFAULT_OUTFILE);
         setDefaultOutputFormat();
     }
     
@@ -31,10 +31,10 @@ public class TauP_VelocityPlot extends TauP_Tool {
         if (vMod == null) {
             throw new IOException("Velocity model file not found: "+modelArgs.getModelName()+", tried internally and from file");
         }
-        if (Objects.equals(getOutFileBase(), DEFAULT_OUTFILE)) {
-            setOutFileBase(vMod.modelName+"_vel");
+        if (Objects.equals(outputTypeArgs.getOutFileBase(), DEFAULT_OUTFILE)) {
+            outputTypeArgs.setOutFileBase(vMod.modelName+"_vel");
         }
-        PrintWriter writer = getWriter();
+        PrintWriter writer = outputTypeArgs.createWriter();
         if (_isCsv) {
             printCSV(writer, vMod);
         } else if (getOutputFormat().equals(OutputTypes.TEXT)) {
@@ -43,7 +43,7 @@ public class TauP_VelocityPlot extends TauP_Tool {
             List<XYPlottingData> xyPlotList = calculate(getxAxisType(), getyAxisType());
             printResult(writer, xyPlotList);
         }
-        closeWriter();
+        writer.close();
     }
 
     public void printResult(PrintWriter writer, List<XYPlottingData> xyPlots) {
@@ -329,6 +329,11 @@ public class TauP_VelocityPlot extends TauP_Tool {
 
     public GraphicOutputTypeArgs getOutputTypeArgs() {
         return outputTypeArgs;
+    }
+
+    @Override
+    public String getOutFileExtension() {
+        return outputTypeArgs.getOutFileExtension();
     }
 
     @Override

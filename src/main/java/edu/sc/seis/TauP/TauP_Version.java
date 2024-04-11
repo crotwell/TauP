@@ -28,13 +28,20 @@ public class TauP_Version extends TauP_Tool {
     }
 
     @Override
+    public String getOutFileExtension() {
+        return outputTypeArgs.getOutFileExtension();
+    }
+
+    @Override
     public void init() throws TauPException {
 
     }
 
     @Override
     public void start() throws IOException, TauModelException, TauPException {
-        printResult(getWriter());
+        PrintWriter writer = outputTypeArgs.createWriter();
+        printResult(writer);
+        writer.close();
     }
 
     public void printResult(PrintWriter out) throws IOException {

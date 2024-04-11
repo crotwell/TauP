@@ -52,16 +52,23 @@ public class TauP_PhaseDescribe extends TauP_AbstractPhaseTool {
     @Override
     public void setDefaultOutputFormat() {
         setOutputFormat(OutputTypes.TEXT);
+        outputTypeArgs.setOutFileBase("stdout");
     }
 
     @Override
+    public String getOutFileExtension() {
+        return outputTypeArgs.getOutFileExtension();
+    }
+    @Override
     public void start() throws IOException, TauModelException, TauPException {
+        PrintWriter writer = outputTypeArgs.createWriter();
         if (getSeismicPhases().size() > 0) {
             modelArgs.depthCorrected();
-            printResult(getWriter());
+            printResult(writer);
         } else {
-            getWriter().println("No phases to describe.");
+            writer.println("No phases to describe.");
         }
+        writer.close();
     }
 
     @Override

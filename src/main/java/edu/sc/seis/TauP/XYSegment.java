@@ -126,6 +126,21 @@ public class XYSegment {
         return out;
     }
 
+    public static XYSegment radianDepthToXY(XYSegment segment, double R) {
+        double[] xVal = new double[segment.x.length];
+        double[] yVal = new double[xVal.length];
+        for (int i = 0; i < xVal.length; i++) {
+            double radius = R - segment.y[i];
+            double radian = segment.x[i]-Math.PI/2;
+            xVal[i] = radius*Math.cos(radian);
+            yVal[i] = radius*Math.sin(radian);
+        }
+        XYSegment out = new XYSegment(xVal, yVal);
+        out.cssClasses = List.copyOf(segment.cssClasses);
+        out.description = segment.description;
+        return out;
+    }
+
     /**
      * Output as an SVG polyline. Limit to float precision per SVG spec.
      *
@@ -136,7 +151,21 @@ public class XYSegment {
         asSVG(writer, css_class, "%3g", "%3g");
     }
     public void asSVG(PrintWriter writer, String css_class, String xFormat, String yFormat) {
-        writer.println("    <polyline class=\"" + css_class + "\" points=\"");
+
+        String cssClassParam = ""+css_class;
+        if (cssClasses != null && cssClasses.size()>0){
+            cssClassParam = "";
+            for (String s : cssClasses) {
+                cssClassParam += " " + s;
+            }
+        }
+        cssClassParam = cssClassParam.trim();
+        if (cssClassParam.length() > 0) {
+            cssClassParam = "class=\""+cssClassParam+"\"";
+        }
+        writer.println("  <g>");
+        writer.println("    <desc>" + description + "</desc>");
+        writer.println("    <polyline " + cssClassParam + " points=\"");
         for (int i = 0; i < x.length; i++) {
             float xf = (float)x[i];
             float yf = (float)y[i];
@@ -144,10 +173,12 @@ public class XYSegment {
                 writer.println(String.format(xFormat + " " + yFormat, xf, yf));
             } else if (i != 0 && i != x.length) {
                 writer.println("  \"  /> <!-- " + css_class + "-->");
-                writer.println("    <polyline class=\"" + css_class + "\" points=\"");
+                writer.println("    <polyline " + cssClassParam + " points=\"");
             }
         }
-        writer.println("  \"  /> <!-- " + css_class + "-->");
+        writer.println("  \"  /> <!-- " + cssClassParam + "-->");
+        writer.println("  </g>");
+
     }
 
 
@@ -187,4 +218,6 @@ public class XYSegment {
     public final double[] x;
     public final double[] y;
 
+    public List<String> cssClasses = new ArrayList<>();
+    public String description = "";
 }

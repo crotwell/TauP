@@ -53,13 +53,7 @@ public class XYPlottingData {
         return new XYPlottingData(out, xAxis, yAxis, label, cssClasses);
     }
 
-    /**
-     * Output as an SVG g containing polyline. Limit to float precision per SVG spec. Label, phase name and wave type
-     * are added as CSS class names.
-     *
-     * @param writer to write to
-     */
-    public void asSVG(PrintWriter writer) {
+    public String createCSSClassParam() {
         String cssClassParam = "";
         if (cssClasses != null && cssClasses.size()>0){
             cssClassParam = "";
@@ -68,9 +62,19 @@ public class XYPlottingData {
             }
             cssClassParam = "class=\""+cssClassParam.trim()+"\"";
         }
+        return cssClassParam;
+    }
+
+    /**
+     * Output as an SVG g containing polyline. Limit to float precision per SVG spec. Label, phase name and wave type
+     * are added as CSS class names.
+     *
+     * @param writer to write to
+     */
+    public void asSVG(PrintWriter writer) {
+        String cssClassParam = createCSSClassParam();
         writer.println("    <g "+cssClassParam+" tauplabel=\"" + label + "\" " +" >");
         for (XYSegment segment : segmentList) {
-            System.err.println("XYPlottingData: "+segment.x.length+" "+label+" ");
             segment.asSVG(writer, "", Outputs.formatStringForAxisType(xAxisType), Outputs.formatStringForAxisType(yAxisType));
         }
         writer.println("    </g> <!-- end "+ label+" -->");

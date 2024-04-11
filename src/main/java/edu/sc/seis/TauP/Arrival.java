@@ -32,9 +32,7 @@ import org.json.JSONWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.time.Duration;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 /**
  * convenience class for storing the parameters associated with a phase arrival.
@@ -145,7 +143,9 @@ public class Arrival {
     private final double receiverDepth;
 
     /** pierce and path points */
-    private TimeDist[] pierce, path;
+    private TimeDist[] pierce;
+
+    private List<ArrivalPathSegment> pathSegments;
 
     private final double incidentAngle;
     
@@ -373,8 +373,6 @@ public class Arrival {
                 && Math.abs( 1/(srcVel*srcVel) - getRayParam()*getRayParam()/(srcRadius*srcRadius)) < 1e-6) {
             // due to interpolation/rounding horizontal ray might give NaN, if close to zero but negative,
             // just return zero
-            System.err.println("rad slow: "+(1/(srcVel*srcVel))+" - " + (getRayParam()*getRayParam()/(srcRadius*srcRadius)));
-            System.err.println(srcVel+" "+getRayParam()+" "+srcRadius);
             radSlow = 0;
         }
         return radSlow;
@@ -464,12 +462,26 @@ public class Arrival {
         return pierce;
     }
 
-    /** returns path points as TimeDist objects. */
+    /** returns path points as TimeDist objects.
+     *
+     * */
     public TimeDist[] getPath() {
-        if (path == null) {
-            this.path = getPhase().calcPathTimeDist(this).toArray(new TimeDist[0]);
+        if (pathSegments == null) {
+            this.pathSegments = getPhase().calcSegmentPaths(this);
+
         }
-        return path;
+        List<TimeDist> pathList = new ArrayList<>();
+        for (ArrivalPathSegment seg : pathSegments) {
+            pathList.addAll(seg.path);
+        }
+        return pathList.toArray(new TimeDist[0]);
+    }
+
+    public List<ArrivalPathSegment> getPathSegments() {
+        if (pathSegments == null) {
+            pathSegments = getPhase().calcSegmentPaths(this);
+        }
+        return this.pathSegments;
     }
 
     /**
@@ -535,11 +547,13 @@ public class Arrival {
     }
 
     public int getNumPathPoints() {
-        if(path != null) {
-            return path.length;
-        } else {
-            return 0;
+        int c = 0;
+        if (pathSegments != null) {
+            for (ArrivalPathSegment seg : getPathSegments()) {
+                c += seg.path.size();
+            }
         }
+        return c;
     }
 
     public TimeDist getPiercePoint(int i) {
@@ -581,11 +595,6 @@ public class Arrival {
                     + depth);
         }
         return piercepoint;
-    }
-
-    public TimeDist getPathPoint(int i) {
-        // don't check for i> length since we want an ArrayOutOfBounds anyway
-        return path[i];
     }
 
     protected static final double TWOPI = 2.0 * Math.PI;
@@ -678,15 +687,12 @@ public class Arrival {
             }
             pw.write(innerIndent+"]");
         }
-        if (path != null) {
+        if (pathSegments != null) {
             pw.write(","+NL);
             pw.write(innerIndent+JSONWriter.valueToString("path")+": ["+NL);
-            TimeDist[] tdArray = getPath();
-            for (TimeDist td : tdArray) {
-                pw.write(innerIndent+"  [ "+
-                        JSONWriter.valueToString((float)td.getDistDeg())+", "+
-                        JSONWriter.valueToString((float)td.getDepth())+", "+
-                        JSONWriter.valueToString((float)td.getTime())+" ],"+NL);
+            for (ArrivalPathSegment seg : pathSegments) {
+                seg.writeJSON(pw, innerIndent);
+                pw.write(","+NL);
             }
             pw.write(innerIndent+"]");
         }
@@ -732,7 +738,7 @@ public class Arrival {
             relA.put("difference", (float)(getTime()-relArrival.getTime()));
             relA.put("arrival", relArrival.asJSONObject());
         }
-        if (pierce != null || path != null) {
+        if (pierce != null) {
             JSONArray points = new JSONArray();
             a.put("pierce", points);
             TimeDist[] tdArray = getPierce();
@@ -744,16 +750,11 @@ public class Arrival {
                 tdItems.put(td.getTime());
             }
         }
-        if (path != null) {
+        if (pathSegments != null) {
             JSONArray points = new JSONArray();
             a.put("path", points);
-            TimeDist[] tdArray = getPath();
-            for (TimeDist td : tdArray) {
-                JSONArray tdItems = new JSONArray();
-                points.put(tdItems);
-                tdItems.put(td.getDistDeg());
-                tdItems.put(td.getDepth());
-                tdItems.put(td.getTime());
+            for (ArrivalPathSegment seg : pathSegments) {
+                points.put(seg.asJSONObject());
             }
         }
         return a;

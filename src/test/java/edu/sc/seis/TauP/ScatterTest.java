@@ -200,9 +200,11 @@ public class ScatterTest {
         Arrival a_35 = arrivals.get(0);
         ScatteredArrival scatA = (ScatteredArrival) a_35;
         assertEquals(-10, scatA.getScatteredSeismicPhase().getScattererDistanceDeg());
+        assertFalse(scatA.isScatterNegativeDirection());
         assertTrue(scatA.isInboundNegativeDirection());
         // path should first go negative to scatterer, then positive to receiver
-        assertTrue(a_35.getPathPoint(1).getDistDeg()<0);
-        assertTrue(a_35.getPathPoint(a_35.getNumPathPoints()-1).getDistDeg() == 35);
+        List<ArrivalPathSegment> pathSegments = a_35.getPathSegments();
+        assertTrue(pathSegments.get(0).getPathPoint(1).getDistDeg()<0);
+        assertEquals(35.0, pathSegments.get(pathSegments.size()-1).getPathEnd().getDistDeg(), 1e-5);
     }
 }

@@ -8,6 +8,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
+import static edu.sc.seis.TauP.AxisType.*;
 import static edu.sc.seis.TauP.TauP_AbstractPhaseTool.baseResultAsJSONObject;
 import static edu.sc.seis.TauP.TauP_Tool.toolNameFromClass;
 
@@ -204,6 +205,56 @@ public class XYPlotOutput {
         this.title = title;
     }
 
+
+    public void printAsSvgSpherical(PrintWriter writer, String[] cmdLineArgs, String xAxisType, String yAxisType) {
+
+    }
+
+    public XYPlotOutput convertToCartesian() throws TauPException {
+        List<XYPlottingData> convXYPlotList = new ArrayList<>();
+        for (XYPlottingData xyp : xyPlots) {
+            if ( ! (xyp.xAxisType == AxisType.radian.name()
+                        || xyp.xAxisType == degree_180.name()
+                        || xyp.xAxisType == degree.name()
+                        || xyp.yAxisType == ModelAxisType.depth.name()
+                        || xyp.yAxisType == ModelAxisType.radius.name()
+                )) {
+                throw new TauPException("Unable to convert to cartesian for axis: "+xyp.xAxisType+" "+xyp.yAxisType);
+            }
+            List<XYSegment> convSegList = new ArrayList<>();
+            for (XYSegment seg : xyp.segmentList) {
+                double[] xVal = new double[seg.x.length];
+                double[] yVal = new double[xVal.length];
+                for (int i = 0; i < xVal.length; i++) {
+                    double radian = 0;
+                    if (xyp.xAxisType == AxisType.radian.name()) {
+                        radian = seg.x[i]-Math.PI/2;
+                    } else if (xyp.xAxisType == degree.name() || xyp.xAxisType == degree_180.name()) {
+                        radian = (seg.x[i]-90)*Math.PI/180;
+                    }
+                    double radius = 0;
+                    if (xyp.yAxisType == ModelAxisType.depth.name()) {
+                        radius = modelArgs.getTauModel().getRadiusOfEarth()-seg.y[i];
+                    } else if (xyp.yAxisType == ModelAxisType.radius.name()) {
+                        radius = seg.y[i];
+                    }
+                    xVal[i] = radius*Math.cos(radian);
+                    yVal[i] = radius*Math.sin(radian);
+                }
+                XYSegment convSeg = new XYSegment(xVal, yVal);
+                convSeg.cssClasses = List.copyOf(seg.cssClasses);
+                convSeg.description = seg.description;
+                convSegList.add(convSeg);
+            }
+            convXYPlotList.add(new XYPlottingData(convSegList, kilometer.name(), kilometer.name(), xyp.label, xyp.cssClasses));
+        }
+        XYPlotOutput out = new XYPlotOutput(convXYPlotList, modelArgs);
+        out.setPhaseNames(phaseNames);
+        out.title = title;
+        out.autoColor = autoColor;
+        return out;
+    }
+
     List<XYPlottingData> xyPlots;
     ModelArgs modelArgs;
     String[] phaseNames = null;
@@ -217,4 +268,5 @@ public class XYPlotOutput {
 
     boolean xAxisInvert = false;
     boolean yAxisInvert = false;
+
 }
