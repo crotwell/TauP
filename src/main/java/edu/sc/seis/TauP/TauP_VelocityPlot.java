@@ -28,9 +28,9 @@ public class TauP_VelocityPlot extends TauP_Tool {
     
     @Override
     public void start() throws TauPException, IOException {
-        VelocityModel vMod = TauModelLoader.loadVelocityModel(modelArgs.getModelName());
+        VelocityModel vMod = TauModelLoader.loadVelocityModel(velModelArgs.getModelFilename(), velModelArgs.getVelFileType());
         if (vMod == null) {
-            throw new IOException("Velocity model file not found: "+modelArgs.getModelName()+", tried internally and from file");
+            throw new IOException("Velocity model file not found: "+velModelArgs.getModelFilename()+", tried internally and from file");
         }
         if (Objects.equals(outputTypeArgs.getOutFileBase(), DEFAULT_OUTFILE)) {
             outputTypeArgs.setOutFileBase(vMod.modelName+"_vel");
@@ -48,6 +48,8 @@ public class TauP_VelocityPlot extends TauP_Tool {
     }
 
     public void printResult(PrintWriter writer, List<XYPlottingData> xyPlots) {
+        ModelArgs modelArgs = new ModelArgs();
+        modelArgs.setModelName(velModelArgs.getModelFilename());
         XYPlotOutput xyOut = new XYPlotOutput(xyPlots, modelArgs);
         xyOut.setxAxisMinMax(xAxisMinMax);
         xyOut.setyAxisMinMax(yAxisMinMax);
@@ -155,7 +157,7 @@ public class TauP_VelocityPlot extends TauP_Tool {
                 || (depthLike(xAxis) && velocityLike(yAxis))
                 || (depthLike(xAxis) && depthLike(yAxis))
                 || (velocityLike(xAxis) && velocityLike(yAxis))) {
-            VelocityModel vMod = TauModelLoader.loadVelocityModel(modelArgs.getModelName());
+            VelocityModel vMod = TauModelLoader.loadVelocityModel(velModelArgs.getModelFilename(), velModelArgs.getVelFileType());
             List<Double> xVals = calculateForVelocityModel(xAxis, vMod);
             double[] xDbl = new double[xVals.size()];
             List<Double> yVals = calculateForVelocityModel(yAxis, vMod);
@@ -178,7 +180,7 @@ public class TauP_VelocityPlot extends TauP_Tool {
             }
         } else {
             // slowness based...
-            TauModel vMod = TauModelLoader.load(modelArgs.getModelName());
+            TauModel vMod = TauModelLoader.load(velModelArgs.getModelFilename(), velModelArgs.getVelFileType());
             SlownessModel sMod = vMod.getSlownessModel();
             boolean defWaveType = (xAxis != ModelAxisType.slowness_s && yAxis != ModelAxisType.slowness_s);
             List<Double> xVals = calculateForSlownessModel(xAxis, sMod, defWaveType);
@@ -324,10 +326,6 @@ public class TauP_VelocityPlot extends TauP_Tool {
 
     }
 
-    public ModelArgs getModelArgs() {
-        return modelArgs;
-    }
-
     public GraphicOutputTypeArgs getOutputTypeArgs() {
         return outputTypeArgs;
     }
@@ -342,8 +340,11 @@ public class TauP_VelocityPlot extends TauP_Tool {
         return outputTypeArgs.getOuputFormat();
     }
 
+    public VelocityModelArgs getVelModelArgs() {
+        return velModelArgs;
+    }
 
-    @CommandLine.ArgGroup(exclusive = true, multiplicity = "1", heading = "Velocity Model %n")
+    @CommandLine.ArgGroup(exclusive = true, multiplicity = "0..1", heading = "Velocity Model %n")
     VelocityModelArgs velModelArgs = new VelocityModelArgs();
 
     @CommandLine.Mixin

@@ -358,25 +358,7 @@ public class TauP_Web extends TauP_Tool {
             TauP_VelocityPlot vplot = (TauP_VelocityPlot) tool;
             if (queryParameters.containsKey(QP_MODEL)) {
                 unknownKeys.remove(QP_MODEL);
-                vplot.getModelArgs().setModelName(queryParameters.get(QP_MODEL).getFirst());
-            }
-            if (queryParameters.containsKey(QP_EVDEPTH)) {
-                unknownKeys.remove(QP_EVDEPTH);
-                vplot.getModelArgs().setSourceDepth(Double.parseDouble(queryParameters.get(QP_EVDEPTH).getFirst()));
-            }
-            if (queryParameters.containsKey(QP_STADEPTH)) {
-                unknownKeys.remove(QP_STADEPTH);
-                vplot.getModelArgs().setReceiverDepth(Double.parseDouble(queryParameters.get(QP_STADEPTH).getFirst()));
-            }
-            if (queryParameters.containsKey(QP_SCATTER)) {
-                unknownKeys.remove(QP_SCATTER);
-                String[] splitQP = queryParameters.get(QP_SCATTER).getFirst().split(",");
-                if (splitQP.length != 2) {
-                    throw new TauPException("Expect depth,distdeg for scatter parameter:"+queryParameters.get(QP_SCATTER).getFirst());
-                }
-                double scatterDepth = Double.parseDouble(splitQP[0]);
-                double scatterDist = Double.parseDouble(splitQP[1]);
-                vplot.getModelArgs().setScatterer(scatterDepth, scatterDist);
+                vplot.getVelModelArgs().setModelName(queryParameters.get(QP_MODEL).getFirst());
             }
             // ignore evdepth, phases, etc
             unknownKeys.remove(QP_DISTDEG);

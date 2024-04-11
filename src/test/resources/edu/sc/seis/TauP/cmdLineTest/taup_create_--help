@@ -1,15 +1,14 @@
 Usage: taup create [--debug] [--help] [--prop=<toolPropsFilename>]
-                   (--nd=<nDModelFilename> | --tvel=<tvelModelFilename> |
-                   --mod=<velModelFilename>)
+                   (--mod=<modelName> | --nd=<nDModelFilename> |
+                   --tvel=<tvelModelFilename>)
 Create .taup file from velocity model
-      --debug   display debugging message
-      --help    display this help message
+      --debug             display debugging message
+      --help              display this help message
       --prop=<toolPropsFilename>
-                load defaults from properties file
+                          load defaults from properties file
 Velocity Model
-      --mod=<velModelFilename>
-                velocity file, format is guessed
+      --mod=<modelName>   velocity file, format is guessed
       --nd=<nDModelFilename>
-                "named discontinuities" velocity file
+                          "named discontinuities" velocity file
       --tvel=<tvelModelFilename>
-                ".tvel" velocity file, ala ttimes
+                          ".tvel" velocity file, ala ttimes

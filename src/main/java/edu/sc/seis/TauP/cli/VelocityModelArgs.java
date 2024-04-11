@@ -21,7 +21,7 @@ public class VelocityModelArgs extends InputVelocityModelArgs {
 
 
     @CommandLine.Option(names = "--mod", description = "velocity file, format is guessed")
-    public void setVelModelFilename(String modelFilename) {
+    public void setModelName(String modelFilename) {
         setVelFileType(null);
         setModelFilename(modelFilename);
     }
