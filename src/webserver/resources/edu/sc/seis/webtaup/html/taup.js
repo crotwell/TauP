@@ -29,11 +29,11 @@ export function valid_format(tool) {
   if (format === "svg" || format === "gmt") {
     if (tool === "phase" || tool === "time" || tool === "pierce" || tool === "version") {
       format = "text";
-    } else if (tool === "slowplot" || tool === "velplot" ) {
+    } else if ( tool === "velplot" ) {
       format = "svg";
     }
   } else if (format === "text" || format === "json") {
-    if (tool === "slowplot" || tool === "curve" || tool === "wavefront" || tool === "refltrans") {
+    if ( tool === "curve" || tool === "wavefront" ) {
       format = "svg";
     }
   }
@@ -380,22 +380,6 @@ export function enableParams(tool) {
         color: lightgrey;
       }
     `;
-  } else if (tool === "slowplot") {
-    document.querySelector(`input[name="format"][value="text"]`).setAttribute("disabled", "disabled");
-    document.querySelector(`input[name="format"][value="json"]`).setAttribute("disabled", "disabled");
-    document.querySelector(`input[name="format"][value="svg"]`).removeAttribute("disabled");
-    document.querySelector(`input[name="format"][value="gmt"]`).setAttribute("disabled", "disabled");
-    styleStr += `
-      label[for="format_text"] {
-        color: lightgrey;
-      }
-        label[for="format_json"] {
-          color: lightgrey;
-        }
-      label[for="format_gmt"] {
-        color: lightgrey;
-      }
-    `;
   } else if (tool === "wavefront" || tool === "curve") {
     document.querySelector(`input[name="format"][value="text"]`).setAttribute("disabled", "disabled");
     document.querySelector(`input[name="format"][value="json"]`).setAttribute("disabled", "disabled");
@@ -411,10 +395,10 @@ export function enableParams(tool) {
     `;
 
   } else if (tool === "refltrans") {
-    document.querySelector(`input[name="format"][value="text"]`).setAttribute("disabled", "disabled");
-    document.querySelector(`input[name="format"][value="json"]`).setAttribute("disabled", "disabled");
+    document.querySelector(`input[name="format"][value="text"]`).removeAttribute("disabled");
+    document.querySelector(`input[name="format"][value="json"]`).removeAttribute("disabled");
     document.querySelector(`input[name="format"][value="svg"]`).removeAttribute("disabled");
-    document.querySelector(`input[name="format"][value="gmt"]`).setAttribute("disabled", "disabled");
+    document.querySelector(`input[name="format"][value="gmt"]`).removeAttribute("disabled");
     styleStr += `
       label[for="format_text"] {
         color: lightgrey;
