@@ -2,9 +2,8 @@ Usage: taup velplot [--csv] [--debug] [--help] [--mapwidth=<mapwidth>]
                     [--mapwidthunit=<mapWidthUnit>] [-o=<outFile>]
                     [--prop=<toolPropsFilename>] [-x=<xAxisType>]
                     [-y=<yAxisType>] [--xminmax=x x]... [--yminmax=y y]...
-                    [--mod=<modelName> | --nd=<nDModelFilename> |
-                    --tvel=<tvelModelFilename>] [--text | --json | --gmt |
-                    --svg]
+                    [--nd=<nDModelFilename> | --tvel=<tvelModelFilename> |
+                    --mod=<modelName>] [--text | --json | --gmt | --svg]
 plot velocity vs depth for a model
       --csv                outputs as csv
       --debug              display debugging message

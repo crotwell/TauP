@@ -1,6 +1,6 @@
 Usage: taup create [--debug] [--help] [--prop=<toolPropsFilename>]
-                   (--mod=<modelName> | --nd=<nDModelFilename> |
-                   --tvel=<tvelModelFilename>)
+                   (--nd=<nDModelFilename> | --tvel=<tvelModelFilename> |
+                   --mod=<modelName>)
 Create .taup file from velocity model
       --debug             display debugging message
       --help              display this help message
