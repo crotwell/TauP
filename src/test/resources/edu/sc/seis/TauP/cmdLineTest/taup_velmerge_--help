@@ -3,7 +3,7 @@ Usage: taup velmerge [--debug] [--help] [--smoothbot] [--smoothtop]
                      [--prop=<toolPropsFilename>] [[-mod=<modelname>]
                      [-h=<sourceDepth>] [--stadepth=depth] [--scat=s s]...]
                      (--ndmerge=<nDModelFilename> |
-                     --tvelmerge=<tvelModelFilename>)
+                     --tvelmerge=<tvelModelFilename> | --modmerge=<modelName>)
 merge part of one model into another
       --debug              display debugging message
       --elev=<elevation>   increase topmost layer by elevation (meters)
@@ -25,6 +25,8 @@ Model Args
       --stadepth=depth     the receiver depth in km for stations not at the
                              surface
 Merge Velocity Model
+      --modmerge=<modelName>
+                           velocity file to merge, format is guessed
       --ndmerge=<nDModelFilename>
                            "named discontinuities" velocity file to merge
       --tvelmerge=<tvelModelFilename>

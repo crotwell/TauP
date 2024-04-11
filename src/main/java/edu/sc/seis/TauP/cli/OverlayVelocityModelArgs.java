@@ -23,4 +23,10 @@ public class OverlayVelocityModelArgs extends InputVelocityModelArgs {
         setVelFileType(TVEL);
         setModelFilename(modelFilename);
     }
+
+    @CommandLine.Option(names = "--modmerge", description = "velocity file to merge, format is guessed")
+    public void setModelName(String modelFilename) {
+        setVelFileType(null);
+        setModelFilename(modelFilename);
+    }
 }
