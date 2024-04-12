@@ -1,4 +1,4 @@
->  seg 1 P of P at   412.43 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    8.613 s/deg. in crust/mantle
+> seg 1 P of P at   412.43 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    8.613 s/deg. in crust/mantle
     0.00    6361.0
     0.00    6361.0
     0.02    6356.0
@@ -96,7 +96,7 @@
    15.58    5536.6
    16.53    5532.3
    17.48    5528.1
->  seg 2 P of P at   412.43 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    8.613 s/deg. in crust/mantle
+> seg 2 P of P at   412.43 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    8.613 s/deg. in crust/mantle
    17.48    5528.1
    18.43    5532.3
    19.38    5536.6

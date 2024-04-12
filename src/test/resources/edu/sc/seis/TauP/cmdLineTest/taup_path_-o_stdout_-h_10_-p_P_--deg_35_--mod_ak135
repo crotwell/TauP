@@ -1,4 +1,4 @@
->  seg 1 P of P at   412.51 seconds at    35.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    8.625 s/deg. in crust/mantle
+> seg 1 P of P at   412.51 seconds at    35.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    8.625 s/deg. in crust/mantle
     0.00    6361.0
     0.01    6359.0
     0.05    6351.0
@@ -92,7 +92,7 @@
    15.70    5542.6
    16.59    5536.4
    17.48    5530.1
->  seg 2 P of P at   412.51 seconds at    35.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    8.625 s/deg. in crust/mantle
+> seg 2 P of P at   412.51 seconds at    35.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    8.625 s/deg. in crust/mantle
    17.48    5530.1
    18.37    5536.4
    19.26    5542.6

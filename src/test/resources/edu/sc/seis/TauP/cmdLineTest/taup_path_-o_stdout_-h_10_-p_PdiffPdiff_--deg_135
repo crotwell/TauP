@@ -1,4 +1,4 @@
->  seg 1 Pdiff of PdiffPdiff at  1762.79 seconds at   225.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    4.439 s/deg. in crust/mantle
+> seg 1 Pdiff of PdiffPdiff at  1762.79 seconds at   225.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    4.439 s/deg. in crust/mantle
     0.00    6361.0
    -0.00    6361.0
    -0.01    6356.0
@@ -204,7 +204,7 @@
   -47.39    3487.4
   -48.29    3484.7
   -49.18    3482.0
->  seg 2 Pdiff of PdiffPdiff at  1762.79 seconds at   225.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    4.439 s/deg. in mantle
+> seg 2 Pdiff of PdiffPdiff at  1762.79 seconds at   225.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    4.439 s/deg. in mantle
   -49.18    3482.0
   -50.12    3482.0
   -51.06    3482.0
@@ -221,7 +221,7 @@
   -61.41    3482.0
   -62.35    3482.0
   -63.29    3482.0
->  seg 3 Pdiff of PdiffPdiff at  1762.79 seconds at   225.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    4.439 s/deg. in crust/mantle
+> seg 3 Pdiff of PdiffPdiff at  1762.79 seconds at   225.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    4.439 s/deg. in crust/mantle
   -63.29    3482.0
   -64.18    3484.7
   -65.08    3487.4
@@ -432,7 +432,7 @@
  -112.49    6369.7
  -112.49    6371.0
  -112.49    6371.0
->  seg 4 Pdiff of PdiffPdiff at  1762.79 seconds at   225.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    4.439 s/deg. in crust/mantle
+> seg 4 Pdiff of PdiffPdiff at  1762.79 seconds at   225.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    4.439 s/deg. in crust/mantle
  -112.49    6371.0
  -112.49    6371.0
  -112.49    6369.7
@@ -643,7 +643,7 @@
  -159.90    3487.4
  -160.80    3484.7
  -161.69    3482.0
->  seg 5 Pdiff of PdiffPdiff at  1762.79 seconds at   225.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    4.439 s/deg. in mantle
+> seg 5 Pdiff of PdiffPdiff at  1762.79 seconds at   225.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    4.439 s/deg. in mantle
  -161.69    3482.0
  -162.63    3482.0
  -163.57    3482.0
@@ -660,7 +660,7 @@
  -173.92    3482.0
  -174.86    3482.0
  -175.80    3482.0
->  seg 6 Pdiff of PdiffPdiff at  1762.79 seconds at   225.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    4.439 s/deg. in crust/mantle
+> seg 6 Pdiff of PdiffPdiff at  1762.79 seconds at   225.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    4.439 s/deg. in crust/mantle
  -175.80    3482.0
  -176.69    3484.7
  -177.59    3487.4

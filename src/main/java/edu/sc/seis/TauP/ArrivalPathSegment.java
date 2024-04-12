@@ -175,7 +175,7 @@ public class ArrivalPathSegment {
     }
 
     public String description() {
-        return " seg "+segmentIndex+" "+segmentName+" of "+arrival.getCommentLine()+" in "+phaseSegment.describeBranchRange();
+        return "seg "+segmentIndex+" "+segmentName+" of "+arrival.getCommentLine()+" in "+phaseSegment.describeBranchRange();
 
     }
 
