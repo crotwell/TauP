@@ -108,6 +108,7 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
                         }
                         List<String> cssClasses = new ArrayList<>();
                         cssClasses.add(p_or_s);
+                        cssClasses.add(SvgUtil.classForPhase(arrival.getName()));
                         XYPlottingData xyp = new XYPlottingData(
                                 segmentList, xAxisType.toString(), "Ray Param",
                                 phaseLabel, cssClasses
@@ -122,7 +123,7 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
                     List<XYSegment> segments = XYSegment.createFromLists(xData, yData);
                     List<String> cssClasses = new ArrayList<>();
                     cssClasses.add(p_or_s);
-                    cssClasses.add(phase.getName());
+                    cssClasses.add(SvgUtil.classForPhase(phase.getName()));
                     XYPlottingData xyp = new XYPlottingData(segments, xAxisType.toString(), yAxisType.toString(), xAxisType+"/"+yAxisType+" "+phaseLabel, cssClasses);
                     xyp.cssClasses.add(p_or_s);
                     out.add(xyp);

@@ -217,7 +217,7 @@ public class ArrivalPathSegment {
         double radiusOfEarth = arrival.getPhase().getTauModel().getRadiusOfEarth();
         pw.println("<g>");
         pw.println("    <desc>" + description() + "</desc>");
-        pw.println("    <polyline class=\"path "+arrival.getName()+" "+(isPWave?"pwave":"swave")+"\" points=\"");
+        pw.println("    <polyline class=\"path "+SvgUtil.classForPhase(arrival.getName())+" "+(isPWave?"pwave":"swave")+"\" points=\"");
         for (TimeDist td : path) {
             SvgEarth.printDistRadiusAsXY(pw, td.getDistDeg(), radiusOfEarth - td.getDepth());
             pw.println();

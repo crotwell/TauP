@@ -213,22 +213,39 @@ public class SvgUtil {
         return out;
     }
 
+    public static StringBuffer createSurfaceWaveCSS(List<String> phaseNames) {
+        StringBuffer out = new StringBuffer();
+        for (String phase : phaseNames) {
+            if (phase.endsWith("kmps")) {
+                out.append("        ."+classForPhase(phase)+" {\n");
+                out.append("          stroke-width: 5px;\n");
+                out.append("        }\n");
+            }
+        }
+        return out;
+    }
+
+    public static final String classForPhase(String phase) {
+        return "phase_"+phase;
+    }
+
     public static StringBuffer createPhaseColorCSS(List<String> phaseNames) {
         StringBuffer out = new StringBuffer();
         for (int i = 0; i < phaseNames.size(); i++) {
             int moduloColor = i % DEFAULT_COLORS.size();
             String color = DEFAULT_COLORS.get(moduloColor);
-            out.append("        ."+phaseNames.get(i)+" {\n");
+            String phaseClass = classForPhase(phaseNames.get(i));
+            out.append("        ."+phaseClass+" {\n");
             out.append("          stroke: "+color+";\n");
             out.append("        }\n");
-            out.append("        ."+phaseNames.get(i)+".label {\n");
+            out.append("        ."+phaseClass+".label {\n");
             out.append("          stroke: "+color+";\n");
             out.append("          fill: "+color+";\n");
             out.append("        }\n");
-            out.append("        .legend ."+phaseNames.get(i)+" line {\n");
+            out.append("        .legend ."+phaseClass+" line {\n");
             out.append("          stroke: "+color+";\n");
             out.append("        }\n");
-            out.append("        .legend ."+phaseNames.get(i)+" text {\n");
+            out.append("        .legend ."+phaseClass+" text {\n");
             out.append("          fill: "+color+";\n");
             out.append("          stroke: transparent;\n");
             out.append("        }\n");

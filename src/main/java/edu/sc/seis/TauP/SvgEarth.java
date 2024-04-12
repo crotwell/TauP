@@ -136,6 +136,11 @@ public class SvgEarth {
         }
 
         for (Arrival arr : arrivals) {
+            if (arr.isLongWayAround()) {
+                return new double[]{-R, R, -R, R};
+            }
+        }
+        for (Arrival arr : arrivals) {
             TimeDist[] pierce = arr.getPierce();
             for (TimeDist td : pierce) {
                 double x = Math.sin(td.getDistRadian()) * (R - td.getDepth());
@@ -306,53 +311,60 @@ public class SvgEarth {
         + Outputs.formatDepth(radius));
     }
 
+    public static final float[] WHOLE_EARTH_ZOOM = new float[] {1, 0, 0, 0, (float) Math.PI};
+
     public static float[] calcZoomScaleTranslate(List<Arrival> arrivals) {
-        if (!arrivals.isEmpty()) {
-            float R = (float) arrivals.get(0).getPhase().getTauModel().getRadiusOfEarth();
+        if (arrivals.isEmpty()) {
+            return WHOLE_EARTH_ZOOM;
+        }
+        for (Arrival arr : arrivals) {
+            if (arr.isLongWayAround()) {
+                return WHOLE_EARTH_ZOOM;
+            }
+        }
+        float R = (float) arrivals.get(0).getPhase().getTauModel().getRadiusOfEarth();
 
-            float zoomYMin;
-            float zoomYMax;
-            float zoomXMin;
-            float zoomXMax;
+        float zoomYMin;
+        float zoomYMax;
+        float zoomXMin;
+        float zoomXMax;
 
-            double minDist = 0;
-            double maxDist = 0;
-            double minDepth = 0;
-            double maxDepth = 0;
-            double[] minmax = findPierceBoundingBox(arrivals);
-            zoomXMin = (float) minmax[0];
-            zoomXMax = (float) minmax[1];
-            zoomYMin = (float) minmax[2];
-            zoomYMax = (float) minmax[3];
-            for (Arrival arr : arrivals) {
-                if (arr.getPhase() instanceof ScatteredSeismicPhase) {
-                    TimeDist[] pierce = arr.getPierce();
-                    for (TimeDist td : pierce) {
-                        if (td.getDistRadian() > maxDist) {
-                            maxDist = td.getDistRadian();
-                        }
-                        if (td.getDistRadian() < minDist) {
-                            minDist = td.getDistRadian();
-                        }
+        double minDist = 0;
+        double maxDist = 0;
+        double minDepth = 0;
+        double maxDepth = 0;
+        double[] minmax = findPierceBoundingBox(arrivals);
+        zoomXMin = (float) minmax[0];
+        zoomXMax = (float) minmax[1];
+        zoomYMin = (float) minmax[2];
+        zoomYMax = (float) minmax[3];
+        System.err.println("pierce bound: "+zoomXMin+" "+zoomXMax+"  Y: "+zoomYMin+" "+zoomYMax);
+        for (Arrival arr : arrivals) {
+            if (arr.getPhase() instanceof ScatteredSeismicPhase) {
+                TimeDist[] pierce = arr.getPierce();
+                for (TimeDist td : pierce) {
+                    if (td.getDistRadian() > maxDist) {
+                        maxDist = td.getDistRadian();
+                    }
+                    if (td.getDistRadian() < minDist) {
+                        minDist = td.getDistRadian();
                     }
                 }
-                TimeDist furthest = arr.getFurthestPierce();
-                if (furthest.getDistRadian() > maxDist) {
-                    maxDist = furthest.getDistRadian();
-                }
-                TimeDist deepest = arr.getDeepestPierce();
-                if (deepest.getDepth() > maxDepth) {
-                    maxDepth = deepest.getDepth();
-                }
-                TimeDist shallowest = arr.getShallowestPierce();
-                if (shallowest.getDepth() < minDepth) {
-                    minDepth = shallowest.getDepth();
-                }
             }
-            return calcZoomScaleTranslate( zoomXMin,  zoomXMax,  zoomYMin,  zoomYMax, R, (float)minDist, (float)maxDist);
-        } else {
-            return new float[] {1, 0, 0, 0, (float) Math.PI};
+            TimeDist furthest = arr.getFurthestPierce();
+            if (furthest.getDistRadian() > maxDist) {
+                maxDist = furthest.getDistRadian();
+            }
+            TimeDist deepest = arr.getDeepestPierce();
+            if (deepest.getDepth() > maxDepth) {
+                maxDepth = deepest.getDepth();
+            }
+            TimeDist shallowest = arr.getShallowestPierce();
+            if (shallowest.getDepth() < minDepth) {
+                minDepth = shallowest.getDepth();
+            }
         }
+        return calcZoomScaleTranslate( zoomXMin,  zoomXMax,  zoomYMin,  zoomYMax, R, (float)minDist, (float)maxDist);
     }
 
     public static float[] calcZoomScaleTranslate(float zoomXMin, float zoomXMax, float zoomYMin, float zoomYMax, float R, float minDist, float maxDist) {

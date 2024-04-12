@@ -197,10 +197,17 @@ public class TauP_VelocityPlot extends TauP_Tool {
             }
             List<XYSegment> segList = new ArrayList<>();
             segList.add(new XYSegment(xDbl, yDbl));
+            List<String> cssClassList = new ArrayList<>();
+            if (xAxis == ModelAxisType.velocity_p || xAxis == ModelAxisType.velocity
+                    || yAxis == ModelAxisType.velocity_p || yAxis == ModelAxisType.velocity) {
+                cssClassList.add("pwave");
+            } else if (xAxis == ModelAxisType.velocity_s || yAxis == ModelAxisType.velocity_s) {
+                cssClassList.add("swave");
+            }
             XYPlottingData xyplot = new XYPlottingData(segList,
                     xAxis.name(),
                     yAxis.name(),
-                    labelPrefix+labelFor(depAxis), null
+                    labelPrefix+labelFor(depAxis), cssClassList
             );
             xyList.add(xyplot);
             if (xAxis == ModelAxisType.velocity) {
@@ -226,10 +233,20 @@ public class TauP_VelocityPlot extends TauP_Tool {
             }
             List<XYSegment> segList = new ArrayList<>();
             segList.add(new XYSegment(xDbl, yDbl));
+            List<String> cssClassList = new ArrayList<>();
+            if (xAxis == ModelAxisType.velocity_p || xAxis == ModelAxisType.velocity
+                    || yAxis == ModelAxisType.velocity_p || yAxis == ModelAxisType.velocity
+                    || xAxis == ModelAxisType.slowness_p || xAxis == ModelAxisType.slowness
+                    || yAxis == ModelAxisType.slowness_p || yAxis == ModelAxisType.slowness) {
+                cssClassList.add("pwave");
+            } else if (xAxis == ModelAxisType.velocity_s || yAxis == ModelAxisType.velocity_s
+                    || xAxis == ModelAxisType.slowness_s || yAxis == ModelAxisType.slowness_s) {
+                cssClassList.add("swave");
+            }
             XYPlottingData xyplot = new XYPlottingData(segList,
                     xAxis.name(),
                     yAxis.name(),
-                    labelPrefix+labelFor(depAxis), null
+                    labelPrefix+labelFor(depAxis), cssClassList
             );
             xyList.add(xyplot);
             if (xAxis == ModelAxisType.slowness) {

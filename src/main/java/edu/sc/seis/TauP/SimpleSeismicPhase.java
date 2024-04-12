@@ -318,7 +318,7 @@ public class SimpleSeismicPhase implements SeismicPhase {
 
     @Override
     public double[] getDist() {
-        return (double[])dist.clone();
+        return dist.clone();
     }
 
     @Override

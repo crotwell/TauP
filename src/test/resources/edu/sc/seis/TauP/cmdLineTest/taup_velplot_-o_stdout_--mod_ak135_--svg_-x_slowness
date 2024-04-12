@@ -363,7 +363,7 @@ circle.discontinuity.iocb {
 <g transform="translate(-0.0, -0.0)">
     <g class="autocolor">
 <g transform="scale(1,-1) translate(0.0, -6371.0)" > <!-- invert axis -->
-    <g  tauplabel="P Slow."  >
+    <g class="pwave" tauplabel="P Slow."  >
   <g>
     <desc></desc>
     <polyline  points="
@@ -911,7 +911,7 @@ circle.discontinuity.iocb {
     </g> <!-- end P Slow. -->
     </g> <!-- end invert axis -->
 <g transform="scale(1,-1) translate(0.0, -6371.0)" > <!-- invert axis -->
-    <g  tauplabel="S Slow."  >
+    <g class="swave" tauplabel="S Slow."  >
   <g>
     <desc></desc>
     <polyline  points="

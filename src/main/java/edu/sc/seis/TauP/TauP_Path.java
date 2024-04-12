@@ -26,6 +26,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static edu.sc.seis.TauP.SvgEarth.calcEarthScaleTrans;
+import static edu.sc.seis.TauP.SvgUtil.createSurfaceWaveCSS;
 
 /**
  * Calculate travel paths for different phases using a linear interpolated ray
@@ -275,7 +276,7 @@ public class TauP_Path extends TauP_AbstractRayTool {
 					double radian = (calcDist-90)*Math.PI/180;
 					double x = radius*Math.cos(radian);
 					double y = radius*Math.sin(radian);
-					out.println("<text class=\""+currArrival.getName()+"\" x=\""+Outputs.formatDistance(x)+"\" y=\""+Outputs.formatDistance(y)+"\">"+currArrival.getName() + "</text>");
+					out.println("<text class=\""+SvgUtil.classForPhase(currArrival.getName())+"\" x=\""+Outputs.formatDistance(x)+"\" y=\""+Outputs.formatDistance(y)+"\">"+currArrival.getName() + "</text>");
 				}
 			}
 		}
@@ -318,7 +319,7 @@ public class TauP_Path extends TauP_AbstractRayTool {
             double radian = (calcDist - 90) * Math.PI / 180;
             double x = radius * Math.cos(radian);
             double y = radius * Math.sin(radian);
-            out.println("      <text class=\"" + currArrival.getName() + "\" x=\"" + Outputs.formatDistance(x) + "\" y=\"" + Outputs.formatDistance(y) + "\">" + currArrival.getName() + "</text>");
+            out.println("      <text class=\"" + SvgUtil.classForPhase(currArrival.getName()) + "\" x=\"" + Outputs.formatDistance(x) + "\" y=\"" + Outputs.formatDistance(y) + "\">" + currArrival.getName() + "</text>");
 
         }
 
@@ -375,6 +376,8 @@ public class TauP_Path extends TauP_AbstractRayTool {
 		TauModel tMod = modelArgs.depthCorrected();
 		float[] scaleTrans = calcEarthScaleTrans(arrivalList, distDepthRange);
 		String extraCSS = "";
+
+		extraCSS+=createSurfaceWaveCSS(Arrays.asList(getPhaseNames()))+"\n";
 		if (coloring.getColor() == ColorType.phase) {
 			StringBuffer cssPhaseColors = SvgUtil.createPhaseColorCSS(Arrays.asList(getPhaseNames()));
 			extraCSS += cssPhaseColors;
@@ -387,7 +390,11 @@ public class TauP_Path extends TauP_AbstractRayTool {
 		SvgEarth.printScriptBeginningSvg(out, tMod, pixelWidth, scaleTrans, toolNameFromClass(this.getClass()), cmdLineArgs, extraCSS);
 		if (coloring.getColor() == ColorType.phase) {
 			List<String> phasenameList = Arrays.asList(getPhaseNames());
-			SvgUtil.createLegend(out, phasenameList, phasenameList, "",  (int)(pixelWidth*.9), (int) (pixelWidth*.05));
+			List<String> phaseClassList = new ArrayList<>();
+			for (String p : phasenameList) {
+				phaseClassList.add(SvgUtil.classForPhase(p));
+			}
+			SvgUtil.createLegend(out, phasenameList, phaseClassList, "",  (int)(pixelWidth*.9), (int) (pixelWidth*.05));
 		}
 
 		SvgEarth.printModelAsSVG(out, tMod, pixelWidth, scaleTrans);

@@ -336,7 +336,7 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
         } else if (outputTypeArgs.isSVG()) {
             timeOut.println("<!-- " + phase.getName() + " at " + time + " seconds");
             timeOut.println(" -->");
-            timeOut.println("<polyline class=\"wavefront "+phase.getName()+" "+timeStr+"\" points=\"");
+            timeOut.println("<polyline class=\"wavefront "+SvgUtil.classForPhase(phase.getName())+" "+timeStr+"\" points=\"");
         }
         Collections.sort(wavefront, new Comparator<TimeDist>() {
 
@@ -365,7 +365,7 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
             } else if (outputTypeArgs.isSVG()) {
                 timeOut.println("<!-- " + phase.getName() + " at " + time + " seconds (neg distance)");
                 timeOut.println(" -->");
-                timeOut.println("<polyline class=\"wavefront "+phase.getName()+" "+timeStr+"\" points=\"");
+                timeOut.println("<polyline class=\"wavefront "+SvgUtil.classForPhase((phase.getName()))+" "+timeStr+"\" points=\"");
             }
             for (TimeDist td : wavefront) {
                 if (outputTypeArgs.isGMT()) {
@@ -584,12 +584,12 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
                 String p_or_s = waveSeg.isPWave ? "pwave" : "swave";
                 seg.cssClasses.add(p_or_s);
                 seg.cssClasses.add(String.format("time_%05d", (int) timeVal));
-                seg.cssClasses.add(waveSeg.segmentName);
+                seg.cssClasses.add(SvgUtil.classForPhase(waveSeg.segmentName));
                 xySegmentList.add(seg);
             }
             List<String> cssClasses = new ArrayList<>();
             cssClasses.add(String.format("time_%05d", (int) timeVal));
-            cssClasses.add(phase.getName());
+            cssClasses.add(SvgUtil.classForPhase(phase.getName()));
             XYPlottingData xyp = new XYPlottingData(xySegmentList, AxisType.degree.name(), ModelAxisType.depth.name(), phase.getName(), cssClasses);
             out.put(timeVal, xyp);
         }

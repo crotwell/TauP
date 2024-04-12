@@ -371,7 +371,7 @@ circle.discontinuity.iocb {
 <g transform="translate(-0.0, -0.0)">
     <g class="autocolor">
 <g transform="scale(1,-1) translate(0.0, -6371.0)" > <!-- invert axis -->
-    <g  tauplabel="ak135 P Vel."  >
+    <g class="pwave" tauplabel="ak135 P Vel."  >
   <g>
     <desc></desc>
     <polyline  points="
@@ -516,7 +516,7 @@ circle.discontinuity.iocb {
     </g> <!-- end ak135 P Vel. -->
     </g> <!-- end invert axis -->
 <g transform="scale(1,-1) translate(0.0, -6371.0)" > <!-- invert axis -->
-    <g  tauplabel="ak135 S Vel."  >
+    <g class="swave" tauplabel="ak135 S Vel."  >
   <g>
     <desc></desc>
     <polyline  points="
@@ -661,7 +661,7 @@ circle.discontinuity.iocb {
     </g> <!-- end ak135 S Vel. -->
     </g> <!-- end invert axis -->
 <g transform="scale(1,-1) translate(0.0, -6371.0)" > <!-- invert axis -->
-    <g  tauplabel="ak135favg P Vel."  >
+    <g class="pwave" tauplabel="ak135favg P Vel."  >
   <g>
     <desc></desc>
     <polyline  points="
@@ -813,7 +813,7 @@ circle.discontinuity.iocb {
     </g> <!-- end ak135favg P Vel. -->
     </g> <!-- end invert axis -->
 <g transform="scale(1,-1) translate(0.0, -6371.0)" > <!-- invert axis -->
-    <g  tauplabel="ak135favg S Vel."  >
+    <g class="swave" tauplabel="ak135favg S Vel."  >
   <g>
     <desc></desc>
     <polyline  points="
@@ -965,7 +965,7 @@ circle.discontinuity.iocb {
     </g> <!-- end ak135favg S Vel. -->
     </g> <!-- end invert axis -->
 <g transform="scale(1,-1) translate(0.0, -6371.0)" > <!-- invert axis -->
-    <g  tauplabel="ak135fcont P Vel."  >
+    <g class="pwave" tauplabel="ak135fcont P Vel."  >
   <g>
     <desc></desc>
     <polyline  points="
@@ -1112,7 +1112,7 @@ circle.discontinuity.iocb {
     </g> <!-- end ak135fcont P Vel. -->
     </g> <!-- end invert axis -->
 <g transform="scale(1,-1) translate(0.0, -6371.0)" > <!-- invert axis -->
-    <g  tauplabel="ak135fcont S Vel."  >
+    <g class="swave" tauplabel="ak135fcont S Vel."  >
   <g>
     <desc></desc>
     <polyline  points="
@@ -1259,7 +1259,7 @@ circle.discontinuity.iocb {
     </g> <!-- end ak135fcont S Vel. -->
     </g> <!-- end invert axis -->
 <g transform="scale(1,-1) translate(0.0, -6371.0)" > <!-- invert axis -->
-    <g  tauplabel="prem P Vel."  >
+    <g class="pwave" tauplabel="prem P Vel."  >
   <g>
     <desc></desc>
     <polyline  points="
@@ -1357,7 +1357,7 @@ circle.discontinuity.iocb {
     </g> <!-- end prem P Vel. -->
     </g> <!-- end invert axis -->
 <g transform="scale(1,-1) translate(0.0, -6371.0)" > <!-- invert axis -->
-    <g  tauplabel="prem S Vel."  >
+    <g class="swave" tauplabel="prem S Vel."  >
   <g>
     <desc></desc>
     <polyline  points="
