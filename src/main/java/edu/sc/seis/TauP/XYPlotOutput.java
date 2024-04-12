@@ -68,7 +68,12 @@ public class XYPlotOutput {
     }
 
     public JSONObject asJSON() {
-        JSONObject out = baseResultAsJSONObject( modelArgs.getModelName(), modelArgs.getSourceDepth(),  modelArgs.getReceiverDepth(), phaseNames);
+        JSONObject out;
+        if (modelArgs != null ) {
+            out = baseResultAsJSONObject( modelArgs.getModelName(), modelArgs.getSourceDepth(),  modelArgs.getReceiverDepth(), phaseNames);
+        } else {
+            out = new JSONObject();
+        }
         JSONArray phaseCurves = new JSONArray();
         for (XYPlottingData plotItem : xyPlots) {
             phaseCurves.put(plotItem.asJSON());

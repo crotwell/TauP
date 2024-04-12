@@ -82,15 +82,6 @@ polyline.receiverdepth {
 polyline.scattererdepth {
     stroke: lightgrey;
 }
-polyline.swave {
-    stroke: red;
-}
-polyline.pwave {
-    stroke: blue;
-}
-polyline.both_p_swave {
-    stroke: green;
-}
 circle.discontinuity {
     vector-effect: non-scaling-stroke;
     stroke: grey;
@@ -108,36 +99,117 @@ circle.discontinuity.cmb {
 circle.discontinuity.iocb {
     fill: burlywood;
 }
-.Rpp {
-    stroke: blue;
-}
-.Rps {
-    stroke: green;
-}
-.Rsp {
-    stroke: red;
-}
-.Rss {
-    stroke: orange;
-}
-.Rshsh {
-    stroke: mediumslateblue;
-}
-.Tpp {
-    stroke: cyan;
-}
-.Tps {
-    stroke: gold;
-}
-.Tsp {
-    stroke: magenta;
-}
-.Tss {
-    stroke: grey;
-}
-.Tshsh {
-    stroke: violet;
-}
+
+        .Rpp {
+          stroke: blue;
+        }
+        .Rpp.label {
+          stroke: blue;
+          fill: blue;
+        }
+        .legend .Rpp {
+          stroke: blue;
+          fill: blue;
+        }
+        .Rps {
+          stroke: green;
+        }
+        .Rps.label {
+          stroke: green;
+          fill: green;
+        }
+        .legend .Rps {
+          stroke: green;
+          fill: green;
+        }
+        .Tpp {
+          stroke: cyan;
+        }
+        .Tpp.label {
+          stroke: cyan;
+          fill: cyan;
+        }
+        .legend .Tpp {
+          stroke: cyan;
+          fill: cyan;
+        }
+        .Tps {
+          stroke: gold;
+        }
+        .Tps.label {
+          stroke: gold;
+          fill: gold;
+        }
+        .legend .Tps {
+          stroke: gold;
+          fill: gold;
+        }
+        .Rsp {
+          stroke: red;
+        }
+        .Rsp.label {
+          stroke: red;
+          fill: red;
+        }
+        .legend .Rsp {
+          stroke: red;
+          fill: red;
+        }
+        .Rss {
+          stroke: orange;
+        }
+        .Rss.label {
+          stroke: orange;
+          fill: orange;
+        }
+        .legend .Rss {
+          stroke: orange;
+          fill: orange;
+        }
+        .Tsp {
+          stroke: magenta;
+        }
+        .Tsp.label {
+          stroke: magenta;
+          fill: magenta;
+        }
+        .legend .Tsp {
+          stroke: magenta;
+          fill: magenta;
+        }
+        .Tss {
+          stroke: grey;
+        }
+        .Tss.label {
+          stroke: grey;
+          fill: grey;
+        }
+        .legend .Tss {
+          stroke: grey;
+          fill: grey;
+        }
+        .Rshsh {
+          stroke: mediumslateblue;
+        }
+        .Rshsh.label {
+          stroke: mediumslateblue;
+          fill: mediumslateblue;
+        }
+        .legend .Rshsh {
+          stroke: mediumslateblue;
+          fill: mediumslateblue;
+        }
+        .Tshsh {
+          stroke: violet;
+        }
+        .Tshsh.label {
+          stroke: violet;
+          fill: violet;
+        }
+        .legend .Tshsh {
+          stroke: violet;
+          fill: violet;
+        }
 
         g.autocolor > :nth-child(10n+1) {
             stroke: skyblue;
@@ -240,7 +312,7 @@ circle.discontinuity.iocb {
   </defs>
 <!-- draw axis and label distances.-->
 
-<text class="title" x="260.0" y="0">ak135 (h=0.0 km)</text>
+<text class="title" x="260.0" y="0">ak135</text>
 <g> <!-- y axis -->
 <g  >
   <text font-size="14" transform="translate(-64, 260) rotate(-90 )" dy=".75em" text-anchor="middle" class="ylabel" >depth</text>
@@ -292,7 +364,9 @@ circle.discontinuity.iocb {
     <g class="autocolor">
 <g transform="scale(1,-1) translate(0.0, -6371.0)" > <!-- invert axis -->
     <g  tauplabel="P Slow."  >
-    <polyline class="" points="
+  <g>
+    <desc></desc>
+    <polyline  points="
 1098.448242 0.000000
 1098.190674 1.494071
 1097.933105 2.988142
@@ -833,11 +907,14 @@ circle.discontinuity.iocb {
 4.502832 6320.290039
 0.000000 6371.000000
   "  /> <!-- -->
+  </g>
     </g> <!-- end P Slow. -->
     </g> <!-- end invert axis -->
 <g transform="scale(1,-1) translate(0.0, -6371.0)" > <!-- invert axis -->
     <g  tauplabel="S Slow."  >
-    <polyline class="" points="
+  <g>
+    <desc></desc>
+    <polyline  points="
 1841.329468 0.000000
 1840.968262 1.250000
 1840.606934 2.500000
@@ -1523,6 +1600,7 @@ circle.discontinuity.iocb {
 4.502832 6354.484863
 0.000000 6371.000000
   "  /> <!-- -->
+  </g>
     </g> <!-- end S Slow. -->
     </g> <!-- end invert axis -->
     </g> <!-- end autocolor g -->

@@ -6,7 +6,7 @@
       <command>xyplotoutput </command>
       <version>3.0.0-SNAPSHOT3</version>
       <a href="https://github.com/crotwell/TauP">https://github.com/crotwell/TauP</a>
-    <minmax xmin="0.0" xmax="13.6602" ymin="0.0" ymax="6371.0" />
+    <minmax xmin="0.0" xmax="13.6602" ymin="0.0" ymax="700.0" />
     </taup>
   </metadata>
   <defs>
@@ -320,18 +320,20 @@ circle.discontinuity.iocb {
 <line  class="tick" x1="0" y1="0" x2="0" y2="520.0" />
 <text class="ytick" font-size="12" x="-12.0" y="0.0">0.0</text>
 <line class="tick" x1="0" y1="0.0" x2="-10.0" y2="0.0" />
-<text class="ytick" font-size="12" x="-12.0" y="81.61984">1000.0</text>
-<line class="tick" x1="0" y1="81.61984" x2="-10.0" y2="81.61984" />
-<text class="ytick" font-size="12" x="-12.0" y="163.23969">2000.0</text>
-<line class="tick" x1="0" y1="163.23969" x2="-10.0" y2="163.23969" />
-<text class="ytick" font-size="12" x="-12.0" y="244.85953">3000.0</text>
-<line class="tick" x1="0" y1="244.85953" x2="-10.0" y2="244.85953" />
-<text class="ytick" font-size="12" x="-12.0" y="326.47937">4000.0</text>
-<line class="tick" x1="0" y1="326.47937" x2="-10.0" y2="326.47937" />
-<text class="ytick" font-size="12" x="-12.0" y="408.09918">5000.0</text>
-<line class="tick" x1="0" y1="408.09918" x2="-10.0" y2="408.09918" />
-<text class="ytick" font-size="12" x="-12.0" y="489.71906">6000.0</text>
-<line class="tick" x1="0" y1="489.71906" x2="-10.0" y2="489.71906" />
+<text class="ytick" font-size="12" x="-12.0" y="74.285706">100.0</text>
+<line class="tick" x1="0" y1="74.285706" x2="-10.0" y2="74.285706" />
+<text class="ytick" font-size="12" x="-12.0" y="148.57144">200.0</text>
+<line class="tick" x1="0" y1="148.57144" x2="-10.0" y2="148.57144" />
+<text class="ytick" font-size="12" x="-12.0" y="222.85715">300.0</text>
+<line class="tick" x1="0" y1="222.85715" x2="-10.0" y2="222.85715" />
+<text class="ytick" font-size="12" x="-12.0" y="297.14285">400.0</text>
+<line class="tick" x1="0" y1="297.14285" x2="-10.0" y2="297.14285" />
+<text class="ytick" font-size="12" x="-12.0" y="371.4286">500.0</text>
+<line class="tick" x1="0" y1="371.4286" x2="-10.0" y2="371.4286" />
+<text class="ytick" font-size="12" x="-12.0" y="445.7143">600.0</text>
+<line class="tick" x1="0" y1="445.7143" x2="-10.0" y2="445.7143" />
+<text class="ytick" font-size="12" x="-12.0" y="520.0">700.0</text>
+<line class="tick" x1="0" y1="520.0" x2="-10.0" y2="520.0" />
 </g> <!-- y axis end-->
 <g> <!-- x axis -->
 <text class="xlabel" font-size="14" x="260.0" y="556.4">velocity</text>
@@ -367,10 +369,10 @@ circle.discontinuity.iocb {
 </g> <!-- x axis end-->
 <g clip-path="url(#curve_clip)">
 <g transform="scale(1,-1) translate(0, -520.0)">
-<g transform="scale(38.06679257990366,0.08161983989954481)" >
+<g transform="scale(38.06679257990366,0.7428571428571429)" >
 <g transform="translate(-0.0, -0.0)">
     <g class="autocolor">
-<g transform="scale(1,-1) translate(0.0, -6371.0)" > <!-- invert axis -->
+<g transform="scale(1,-1) translate(0.0, -700.0)" > <!-- invert axis -->
     <g  tauplabel="P Vel."  >
   <g>
     <desc></desc>
@@ -515,7 +517,7 @@ circle.discontinuity.iocb {
   </g>
     </g> <!-- end P Vel. -->
     </g> <!-- end invert axis -->
-<g transform="scale(1,-1) translate(0.0, -6371.0)" > <!-- invert axis -->
+<g transform="scale(1,-1) translate(0.0, -700.0)" > <!-- invert axis -->
     <g  tauplabel="S Vel."  >
   <g>
     <desc></desc>

@@ -28,40 +28,69 @@ public class TauP_VelocityPlot extends TauP_Tool {
     
     @Override
     public void start() throws TauPException, IOException {
-        VelocityModel vMod = TauModelLoader.loadVelocityModel(velModelArgs.getModelFilename(), velModelArgs.getVelFileType());
-        if (vMod == null) {
-            throw new IOException("Velocity model file not found: "+velModelArgs.getModelFilename()+", tried internally and from file");
+        List<VelocityModel> vModList = new ArrayList<>();
+        for (VelocityModelArgs vmodArg : velModelArgs) {
+            VelocityModel vMod = TauModelLoader.loadVelocityModel(vmodArg.getModelFilename(), vmodArg.getVelFileType());
+            if (vMod == null) {
+                throw new IOException("Velocity model file not found: "+vmodArg.getModelFilename()+", tried internally and from file");
+            }
+            vModList.add(vMod);
         }
-        if (Objects.equals(outputTypeArgs.getOutFileBase(), DEFAULT_OUTFILE)) {
-            outputTypeArgs.setOutFileBase(vMod.modelName+"_vel");
-        }
-        PrintWriter writer = outputTypeArgs.createWriter();
+
         if (_isCsv) {
-            printCSV(writer, vMod);
+            for (VelocityModel vMod : vModList) {
+                outputTypeArgs.setOutFileBase(vMod.modelName + "_vel");
+                PrintWriter writer = outputTypeArgs.createWriter();
+                printCSV(writer, vMod);
+                writer.close();
+            }
         } else if (getOutputFormat().equals(OutputTypes.TEXT)) {
-            vMod.writeToND(writer);
+            for (VelocityModel vMod : vModList) {
+                outputTypeArgs.setOutFileBase(vMod.modelName + "_vel");
+                PrintWriter writer = outputTypeArgs.createWriter();
+                vMod.writeToND(writer);
+                writer.close();
+            }
         } else {
-            List<XYPlottingData> xyPlotList = calculate(getxAxisType(), getyAxisType());
-            printResult(writer, xyPlotList);
+            if (Objects.equals(outputTypeArgs.getOutFileBase(), DEFAULT_OUTFILE)) {
+                if (vModList.size() == 1) {
+                    outputTypeArgs.setOutFileBase(vModList.get(0).modelName + "_vel");
+                }
+            }
+            PrintWriter writer = outputTypeArgs.createWriter();
+            String modelLabel = "";
+            String title = "";
+            List<XYPlottingData> xyPlotList = new ArrayList<>();
+            for (VelocityModelArgs vmodArg : velModelArgs) {
+                title += ", "+vmodArg.getModelFilename();
+                if (velModelArgs.size()>1) {
+                    modelLabel = vmodArg.getModelFilename()+" ";
+                }
+                List<XYPlottingData> modxyPlotList = calculate(vmodArg, getxAxisType(), getyAxisType(), modelLabel);
+                xyPlotList.addAll(modxyPlotList);
+            }
+            ModelArgs modelArgs = new ModelArgs();
+            modelArgs.setModelName("");
+            XYPlotOutput xyOut = new XYPlotOutput(xyPlotList, null);
+            title = title.substring(2);
+            xyOut.setTitle(title.trim());
+            xyOut.setxAxisMinMax(xAxisMinMax);
+            xyOut.setyAxisMinMax(yAxisMinMax);
+            printResult(writer, xyOut);
+            writer.close();
         }
-        writer.close();
     }
 
-    public void printResult(PrintWriter writer, List<XYPlottingData> xyPlots) {
-        ModelArgs modelArgs = new ModelArgs();
-        modelArgs.setModelName(velModelArgs.getModelFilename());
-        XYPlotOutput xyOut = new XYPlotOutput(xyPlots, modelArgs);
-        xyOut.setxAxisMinMax(xAxisMinMax);
-        xyOut.setyAxisMinMax(yAxisMinMax);
+    public void printResult(PrintWriter writer, XYPlotOutput xyOut) {
 
-        if (yAxisType == ModelAxisType.depth) {
-            xyOut.yAxisInvert = true;
-        }
         if (getOutputFormat().equalsIgnoreCase(OutputTypes.JSON)) {
             xyOut.printAsJSON(writer, 2);
         } else if (getOutputFormat().equalsIgnoreCase(OutputTypes.TEXT) || getOutputFormat().equalsIgnoreCase(OutputTypes.GMT)) {
             xyOut.printAsGmtText(writer);
         } else if (getOutputFormat().equalsIgnoreCase(OutputTypes.SVG)) {
+            if (yAxisType == ModelAxisType.depth) {
+                xyOut.yAxisInvert = true;
+            }
             xyOut.printAsSvg(writer, cmdLineArgs, xAxisType.toString(), yAxisType.toString());
         } else {
             throw new IllegalArgumentException("Unknown output format: " + getOutputFormat());
@@ -150,7 +179,7 @@ public class TauP_VelocityPlot extends TauP_Tool {
         }
     }
 
-    public List<XYPlottingData> calculate(ModelAxisType xAxis, ModelAxisType yAxis) throws VelocityModelException, IOException, TauModelException, SlownessModelException {
+    public List<XYPlottingData> calculate(VelocityModelArgs velModelArgs, ModelAxisType xAxis, ModelAxisType yAxis, String labelPrefix) throws VelocityModelException, IOException, TauModelException, SlownessModelException {
         List<XYPlottingData> xyList = new ArrayList<>();
         ModelAxisType depAxis = dependentAxis(xAxis, yAxis);
         if ((velocityLike(xAxis) && depthLike(yAxis))
@@ -171,12 +200,16 @@ public class TauP_VelocityPlot extends TauP_Tool {
             XYPlottingData xyplot = new XYPlottingData(segList,
                     xAxis.name(),
                     yAxis.name(),
-                    labelFor(depAxis), null
+                    labelPrefix+labelFor(depAxis), null
             );
             xyList.add(xyplot);
             if (xAxis == ModelAxisType.velocity) {
                 // also do velocity_s
-                xyList.addAll(calculate(ModelAxisType.velocity_s, yAxis));
+                xyList.addAll(calculate(velModelArgs, ModelAxisType.velocity_s, yAxis, labelPrefix));
+            }
+            if (yAxis == ModelAxisType.velocity) {
+                // also do velocity_s
+                xyList.addAll(calculate(velModelArgs, xAxis, ModelAxisType.velocity_s, labelPrefix));
             }
         } else {
             // slowness based...
@@ -196,15 +229,16 @@ public class TauP_VelocityPlot extends TauP_Tool {
             XYPlottingData xyplot = new XYPlottingData(segList,
                     xAxis.name(),
                     yAxis.name(),
-                    labelFor(depAxis), null
+                    labelPrefix+labelFor(depAxis), null
             );
             xyList.add(xyplot);
             if (xAxis == ModelAxisType.slowness) {
                 // also do slowness_s
-                xyList.addAll(calculate(ModelAxisType.slowness_s, yAxis));
-            } else if (yAxis == ModelAxisType.slowness) {
+                xyList.addAll(calculate(velModelArgs, ModelAxisType.slowness_s, yAxis, labelPrefix));
+            }
+            if (yAxis == ModelAxisType.slowness) {
                 // also do slowness_s
-                xyList.addAll(calculate(xAxis, ModelAxisType.slowness_s));
+                xyList.addAll(calculate(velModelArgs, xAxis, ModelAxisType.slowness_s, labelPrefix));
             }
         }
         return xyList;
@@ -340,12 +374,12 @@ public class TauP_VelocityPlot extends TauP_Tool {
         return outputTypeArgs.getOuputFormat();
     }
 
-    public VelocityModelArgs getVelModelArgs() {
+    public List<VelocityModelArgs> getVelModelArgs() {
         return velModelArgs;
     }
 
-    @CommandLine.ArgGroup(exclusive = true, multiplicity = "0..1", heading = "Velocity Model %n")
-    VelocityModelArgs velModelArgs = new VelocityModelArgs();
+    @CommandLine.ArgGroup(exclusive = true, multiplicity = "1..", heading = "Velocity Model %n")
+    List<VelocityModelArgs> velModelArgs = new ArrayList<>();
 
     @CommandLine.Mixin
     GraphicOutputTypeArgs outputTypeArgs = new GraphicOutputTypeArgs();
