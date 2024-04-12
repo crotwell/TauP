@@ -423,6 +423,19 @@ tasks.register("versionToVersionFile") {
 }
 tasks.get("assemble").dependsOn("versionToVersionFile")
 
+
+tasks.register<JavaExec>("genAutocomplete") {
+  description = "generate TauP bash Autocomplete file"
+  classpath = sourceSets.getByName("main").runtimeClasspath
+  getMainClass().set("picocli.AutoComplete")
+  val outDir =  layout.buildDirectory.dir("picocli/bash_completion")
+  file(outDir).mkdirs()
+  val outFile = File(file(outDir), "taup_completion")
+  args = listOf("edu.sc.seis.TauP.ToolRun", "-f", "-o", outFile.path)
+  dependsOn += tasks.getByName("compileJava")
+  outputs.files(outFile)
+}
+
 // this is really dumb, but gradle wants something....
 gradle.taskGraph.whenReady {
     allTasks
