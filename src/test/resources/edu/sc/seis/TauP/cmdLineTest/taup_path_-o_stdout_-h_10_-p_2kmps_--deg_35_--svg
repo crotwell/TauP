@@ -1,0 +1,752 @@
+<svg version="1.1" baseProfile="full" xmlns="http://www.w3.org/2000/svg" 
+     viewBox="0 0 432.0 432.0"
+     >
+  <metadata>
+    <taup>
+      <command>taup path </command>
+      <version>3.0.0-SNAPSHOT3</version>
+      <a href="https://github.com/crotwell/TauP">https://github.com/crotwell/TauP</a>
+    </taup>
+  </metadata>
+  <defs>
+    <style type="text/css"><![CDATA[
+        text.label {
+            font: bold ;
+            font-size: 350px;
+            fill: black;
+        }
+        g.phasename text {
+            font: bold ;
+            font-size: 350px;
+            fill: black;
+        }
+        .phase_2kmps {
+          stroke-width: 5px;
+        }
+
+
+text.title {
+    text-anchor: middle;
+    dominant-baseline: auto;
+    font-size: 20px;
+}
+circle {
+    vector-effect: non-scaling-stroke;
+    stroke: grey;
+    fill: transparent;
+}
+.xtick {
+    text-anchor: middle;
+    dominant-baseline: middle;
+}
+.ytick {
+    text-anchor: end;
+    dominant-baseline: middle;
+
+}
+.legend line {
+    text-anchor: end;
+    dominant-baseline: middle;
+    stroke: black;
+    fill: transparent;
+}
+.legend text {
+    text-anchor: start;
+    dominant-baseline: middle;
+}
+
+line.tick {
+    vector-effect: non-scaling-stroke;
+    stroke: black;
+    fill: transparent;
+}
+.xlabel {
+    text-anchor: middle;
+}
+.ylabel {
+    text-anchor: middle;
+    dominant-baseline: middle;
+}
+.phaselabel {
+    text-anchor: end;
+    dominant-baseline: middle;
+}
+polyline {
+    vector-effect: non-scaling-stroke;
+    fill: transparent;
+}
+polyline.tick {
+    stroke: black;
+}
+polyline.sourcedepth {
+    stroke: lightgrey;
+}
+polyline.receiverdepth {
+    stroke: lightgrey;
+}
+polyline.scattererdepth {
+    stroke: lightgrey;
+}
+circle.discontinuity {
+    vector-effect: non-scaling-stroke;
+    stroke: grey;
+    fill: none;
+}
+circle.discontinuity.surface {
+    fill: lightgoldenrodyellow;
+}
+circle.discontinuity.moho {
+    fill: blanchedalmond;
+}
+circle.discontinuity.cmb {
+    fill: lemonchiffon;
+}
+circle.discontinuity.iocb {
+    fill: burlywood;
+}
+
+        .Rpp {
+          stroke: blue;
+        }
+        .Rpp.label {
+          stroke: blue;
+          fill: blue;
+        }
+        .legend .Rpp {
+          stroke: blue;
+          fill: blue;
+        }
+        .Rps {
+          stroke: green;
+        }
+        .Rps.label {
+          stroke: green;
+          fill: green;
+        }
+        .legend .Rps {
+          stroke: green;
+          fill: green;
+        }
+        .Tpp {
+          stroke: cyan;
+        }
+        .Tpp.label {
+          stroke: cyan;
+          fill: cyan;
+        }
+        .legend .Tpp {
+          stroke: cyan;
+          fill: cyan;
+        }
+        .Tps {
+          stroke: gold;
+        }
+        .Tps.label {
+          stroke: gold;
+          fill: gold;
+        }
+        .legend .Tps {
+          stroke: gold;
+          fill: gold;
+        }
+        .Rsp {
+          stroke: red;
+        }
+        .Rsp.label {
+          stroke: red;
+          fill: red;
+        }
+        .legend .Rsp {
+          stroke: red;
+          fill: red;
+        }
+        .Rss {
+          stroke: orange;
+        }
+        .Rss.label {
+          stroke: orange;
+          fill: orange;
+        }
+        .legend .Rss {
+          stroke: orange;
+          fill: orange;
+        }
+        .Tsp {
+          stroke: magenta;
+        }
+        .Tsp.label {
+          stroke: magenta;
+          fill: magenta;
+        }
+        .legend .Tsp {
+          stroke: magenta;
+          fill: magenta;
+        }
+        .Tss {
+          stroke: grey;
+        }
+        .Tss.label {
+          stroke: grey;
+          fill: grey;
+        }
+        .legend .Tss {
+          stroke: grey;
+          fill: grey;
+        }
+        .Rshsh {
+          stroke: mediumslateblue;
+        }
+        .Rshsh.label {
+          stroke: mediumslateblue;
+          fill: mediumslateblue;
+        }
+        .legend .Rshsh {
+          stroke: mediumslateblue;
+          fill: mediumslateblue;
+        }
+        .Tshsh {
+          stroke: violet;
+        }
+        .Tshsh.label {
+          stroke: violet;
+          fill: violet;
+        }
+        .legend .Tshsh {
+          stroke: violet;
+          fill: violet;
+        }
+
+        g.autocolor > :nth-child(10n+1) {
+            stroke: skyblue;
+        }
+        g.autocolor > :nth-child(10n+2) {
+            stroke: olivedrab;
+        }
+        g.autocolor > :nth-child(10n+3) {
+            stroke: goldenrod;
+        }
+        g.autocolor > :nth-child(10n+4) {
+            stroke: firebrick;
+        }
+        g.autocolor > :nth-child(10n+5) {
+            stroke: darkcyan;
+        }
+        g.autocolor > :nth-child(10n+6) {
+            stroke: chocolate;
+        }
+        g.autocolor > :nth-child(10n+7) {
+            stroke: darkmagenta;
+        }
+        g.autocolor > :nth-child(10n+8) {
+            stroke: mediumvioletred;
+        }
+        g.autocolor > :nth-child(10n+9) {
+            stroke: sienna;
+        }
+        g.autocolor > :nth-child(10n+10) {
+            stroke: rebeccapurple;
+        }
+
+        .autocolor.phaselabel > :nth-child(10n+1) {
+            fill: skyblue;
+        }
+        .autocolor.phaselabel > :nth-child(10n+2) {
+            fill: olivedrab;
+        }
+        .autocolor.phaselabel > :nth-child(10n+3) {
+            fill: goldenrod;
+        }
+        .autocolor.phaselabel > :nth-child(10n+4) {
+            fill: firebrick;
+        }
+        .autocolor.phaselabel > :nth-child(10n+5) {
+            fill: darkcyan;
+        }
+        .autocolor.phaselabel > :nth-child(10n+6) {
+            fill: chocolate;
+        }
+        .autocolor.phaselabel > :nth-child(10n+7) {
+            fill: darkmagenta;
+        }
+        .autocolor.phaselabel > :nth-child(10n+8) {
+            fill: mediumvioletred;
+        }
+        .autocolor.phaselabel > :nth-child(10n+9) {
+            fill: sienna;
+        }
+        .autocolor.phaselabel > :nth-child(10n+10) {
+            fill: rebeccapurple;
+        }
+
+        .autocolor.legend > :nth-child(10n+1) {
+            fill: skyblue;
+        }
+        .autocolor.legend > :nth-child(10n+2) {
+            fill: olivedrab;
+        }
+        .autocolor.legend > :nth-child(10n+3) {
+            fill: goldenrod;
+        }
+        .autocolor.legend > :nth-child(10n+4) {
+            fill: firebrick;
+        }
+        .autocolor.legend > :nth-child(10n+5) {
+            fill: darkcyan;
+        }
+        .autocolor.legend > :nth-child(10n+6) {
+            fill: chocolate;
+        }
+        .autocolor.legend > :nth-child(10n+7) {
+            fill: darkmagenta;
+        }
+        .autocolor.legend > :nth-child(10n+8) {
+            fill: mediumvioletred;
+        }
+        .autocolor.legend > :nth-child(10n+9) {
+            fill: sienna;
+        }
+        .autocolor.legend > :nth-child(10n+10) {
+            fill: rebeccapurple;
+        }
+
+
+    ]]></style>
+  <clipPath id="curve_clip">
+    <rect x="0" y="0" width="433.0" height="433.0"/>
+  </clipPath>
+  </defs>
+<!-- draw axis and label distances.-->
+
+<!-- scale/translate so coordinates in earth units ( square ~ 2R x 2R)-->
+<g transform="scale(0.030821478,0.030821478)" >
+<g transform="translate(7008.1,7008.1)" >
+<!-- scale/translate so zoomed in on area of interest -->
+<g transform="scale(1.0,1.0)" >
+<g transform="translate(0.0,0.0)" >
+<g class="ticks">
+<!-- draw surface and label distances.-->
+<!-- tick marks every 30.0 degrees to 180.0.-->
+  <polyline  class="tick"  points="-3185.50   5517.45, -3344.78   5793.32" />
+  <text dominant-baseline="hanging" text-anchor="middle" class="label" x="-3352.74" y="5807.11">-150.0</text>
+  <polyline  class="tick"  points="-5517.45   3185.50, -5793.32   3344.78" />
+  <text dominant-baseline="baseline" text-anchor="end" class="label" x="-5807.11" y="3352.74">-120.0</text>
+  <polyline  class="tick"  points="-6371.00     -0.00, -6689.55     -0.00" />
+  <text dominant-baseline="middle" text-anchor="end" class="label" x="-6705.48" y="-0.00">-90.0</text>
+  <polyline  class="tick"  points="-5517.45  -3185.50, -5793.32  -3344.77" />
+  <text dominant-baseline="middle" text-anchor="end" class="label" x="-5807.11" y="-3352.74">-60.0</text>
+  <polyline  class="tick"  points="-3185.50  -5517.45, -3344.77  -5793.32" />
+  <text dominant-baseline="baseline" text-anchor="middle" class="label" x="-3352.74" y="-5807.11">-30.0</text>
+  <polyline  class="tick"  points="    0.00  -6371.00,     0.00  -6689.55" />
+  <text dominant-baseline="baseline" text-anchor="middle" class="label" x="0.00" y="-6705.48">0.0</text>
+  <polyline  class="tick"  points=" 3185.50  -5517.45,  3344.78  -5793.32" />
+  <text dominant-baseline="baseline" text-anchor="middle" class="label" x="3352.74" y="-5807.11">30.0</text>
+  <polyline  class="tick"  points=" 5517.45  -3185.50,  5793.32  -3344.77" />
+  <text dominant-baseline="middle" text-anchor="start" class="label" x="5807.11" y="-3352.74">60.0</text>
+  <polyline  class="tick"  points=" 6371.00      0.00,  6689.55      0.00" />
+  <text dominant-baseline="middle" text-anchor="start" class="label" x="6705.48" y="0.00">90.0</text>
+  <polyline  class="tick"  points=" 5517.45   3185.50,  5793.32   3344.77" />
+  <text dominant-baseline="middle" text-anchor="start" class="label" x="5807.11" y="3352.74">120.0</text>
+  <polyline  class="tick"  points=" 3185.50   5517.45,  3344.78   5793.32" />
+  <text dominant-baseline="hanging" text-anchor="middle" class="label" x="3352.74" y="5807.11">150.0</text>
+  </g>
+<g class="layers">
+  <circle class="discontinuity surface" cx="0.0" cy="0.0" r="6371.0" />
+  <circle class="discontinuity 0.0" cx="0.0" cy="0.0" r="6371.0" />
+  <circle class="discontinuity 20.0" cx="0.0" cy="0.0" r="6351.0" />
+  <circle class="discontinuity moho" cx="0.0" cy="0.0" r="6336.0" />
+  <circle class="discontinuity 210.0" cx="0.0" cy="0.0" r="6161.0" />
+  <circle class="discontinuity 410.0" cx="0.0" cy="0.0" r="5961.0" />
+  <circle class="discontinuity 660.0" cx="0.0" cy="0.0" r="5711.0" />
+  <circle class="discontinuity cmb" cx="0.0" cy="0.0" r="3482.0" />
+  <circle class="discontinuity iocb" cx="0.0" cy="0.0" r="1217.1000000000004" />
+  </g>
+<!-- draw paths, coordinates are x,y not degree,radius due to SVG using only cartesian -->
+  <g class="autocolor" >
+<g>
+    <desc>   35.00    10.0   2kmps   1945.91    55.597      0.00     0.00    35.00 0   = 2kmps</desc>
+<g>
+    <desc>seg 1 2kmps of 2kmps at  1945.91 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   55.597 s/deg. in crust</desc>
+    <polyline class="path phase_2kmps swave" points="
+    0.00  -6371.00
+  111.19  -6370.03
+  222.34  -6367.12
+  333.43  -6362.27
+  444.42  -6355.48
+  555.27  -6346.76
+  665.95  -6336.10
+  776.43  -6323.51
+  886.67  -6309.00
+  996.64  -6292.56
+ 1106.31  -6274.21
+ 1215.64  -6253.95
+ 1324.61  -6231.78
+ 1433.16  -6207.71
+ 1541.28  -6181.75
+ 1648.94  -6153.91
+ 1756.09  -6124.20
+ 1862.70  -6092.62
+ 1968.75  -6059.18
+ 2074.19  -6023.90
+ 2179.01  -5986.78
+ 2283.16  -5947.84
+ 2386.62  -5907.09
+ 2489.35  -5864.54
+ 2591.32  -5820.20
+ 2692.50  -5774.09
+ 2792.86  -5726.22
+ 2892.37  -5676.60
+ 2991.00  -5625.26
+ 3088.72  -5572.20
+ 3185.50  -5517.45
+ 3281.31  -5461.01
+ 3376.12  -5402.91
+ 3469.90  -5343.17
+ 3562.62  -5281.80
+ 3654.26  -5218.82
+" />
+</g>
+</g>
+<g>
+    <desc>   35.00    10.0   2kmps  18069.18    55.597      0.00     0.00   325.00 0   = 2kmps</desc>
+<g>
+    <desc>seg 1 2kmps of 2kmps at 18069.18 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   55.597 s/deg. in crust</desc>
+    <polyline class="path phase_2kmps swave" points="
+    0.00  -6371.00
+ -111.19  -6370.03
+ -222.34  -6367.12
+ -333.43  -6362.27
+ -444.42  -6355.48
+ -555.27  -6346.76
+ -665.95  -6336.10
+ -776.43  -6323.51
+ -886.67  -6309.00
+ -996.64  -6292.56
+-1106.31  -6274.21
+-1215.64  -6253.95
+-1324.61  -6231.78
+-1433.16  -6207.71
+-1541.28  -6181.75
+-1648.94  -6153.91
+-1756.09  -6124.20
+-1862.70  -6092.62
+-1968.75  -6059.18
+-2074.19  -6023.90
+-2179.01  -5986.78
+-2283.16  -5947.84
+-2386.62  -5907.09
+-2489.35  -5864.54
+-2591.32  -5820.20
+-2692.50  -5774.09
+-2792.86  -5726.22
+-2892.37  -5676.60
+-2991.00  -5625.26
+-3088.72  -5572.20
+-3185.50  -5517.45
+-3281.31  -5461.01
+-3376.12  -5402.91
+-3469.90  -5343.17
+-3562.62  -5281.80
+-3654.26  -5218.82
+-3744.78  -5154.25
+-3834.16  -5088.11
+-3922.38  -5020.42
+-4009.40  -4951.20
+-4095.20  -4880.47
+-4179.75  -4808.25
+-4263.03  -4734.58
+-4345.01  -4659.45
+-4425.67  -4582.91
+-4504.98  -4504.98
+-4582.91  -4425.67
+-4659.45  -4345.01
+-4734.58  -4263.03
+-4808.25  -4179.75
+-4880.47  -4095.20
+-4951.20  -4009.40
+-5020.42  -3922.38
+-5088.11  -3834.16
+-5154.25  -3744.78
+-5218.82  -3654.26
+-5281.80  -3562.62
+-5343.17  -3469.90
+-5402.91  -3376.12
+-5461.01  -3281.31
+-5517.45  -3185.50
+-5572.20  -3088.72
+-5625.26  -2991.00
+-5676.60  -2892.37
+-5726.22  -2792.86
+-5774.09  -2692.50
+-5820.20  -2591.32
+-5864.54  -2489.35
+-5907.09  -2386.62
+-5947.84  -2283.16
+-5986.78  -2179.01
+-6023.90  -2074.19
+-6059.18  -1968.75
+-6092.62  -1862.70
+-6124.20  -1756.09
+-6153.91  -1648.94
+-6181.75  -1541.28
+-6207.71  -1433.16
+-6231.78  -1324.61
+-6253.95  -1215.64
+-6274.21  -1106.31
+-6292.56   -996.64
+-6309.00   -886.67
+-6323.51   -776.43
+-6336.10   -665.95
+-6346.76   -555.27
+-6355.48   -444.42
+-6362.27   -333.43
+-6367.12   -222.34
+-6370.03   -111.19
+-6371.00     -0.00
+-6370.03    111.19
+-6367.12    222.34
+-6362.27    333.43
+-6355.48    444.42
+-6346.76    555.27
+-6336.10    665.95
+-6323.51    776.43
+-6309.00    886.67
+-6292.56    996.64
+-6274.21   1106.31
+-6253.95   1215.64
+-6231.78   1324.61
+-6207.71   1433.16
+-6181.75   1541.28
+-6153.91   1648.94
+-6124.20   1756.09
+-6092.62   1862.70
+-6059.18   1968.75
+-6023.90   2074.19
+-5986.78   2179.01
+-5947.84   2283.16
+-5907.09   2386.62
+-5864.54   2489.35
+-5820.20   2591.32
+-5774.09   2692.50
+-5726.22   2792.86
+-5676.60   2892.37
+-5625.26   2991.00
+-5572.20   3088.72
+-5517.45   3185.50
+-5461.01   3281.31
+-5402.91   3376.12
+-5343.17   3469.90
+-5281.80   3562.62
+-5218.82   3654.26
+-5154.25   3744.78
+-5088.11   3834.16
+-5020.42   3922.38
+-4951.20   4009.40
+-4880.47   4095.20
+-4808.25   4179.75
+-4734.58   4263.03
+-4659.45   4345.01
+-4582.91   4425.67
+-4504.98   4504.98
+-4425.67   4582.91
+-4345.01   4659.45
+-4263.03   4734.58
+-4179.75   4808.25
+-4095.20   4880.47
+-4009.40   4951.20
+-3922.38   5020.42
+-3834.16   5088.11
+-3744.78   5154.25
+-3654.26   5218.82
+-3562.62   5281.80
+-3469.90   5343.17
+-3376.12   5402.91
+-3281.31   5461.01
+-3185.50   5517.45
+-3088.72   5572.20
+-2991.00   5625.26
+-2892.37   5676.60
+-2792.86   5726.22
+-2692.50   5774.09
+-2591.32   5820.20
+-2489.35   5864.54
+-2386.62   5907.09
+-2283.16   5947.84
+-2179.01   5986.78
+-2074.19   6023.90
+-1968.75   6059.18
+-1862.70   6092.62
+-1756.09   6124.20
+-1648.94   6153.91
+-1541.28   6181.75
+-1433.16   6207.71
+-1324.61   6231.78
+-1215.64   6253.95
+-1106.31   6274.21
+ -996.64   6292.56
+ -886.67   6309.00
+ -776.43   6323.51
+ -665.95   6336.10
+ -555.27   6346.76
+ -444.42   6355.48
+ -333.43   6362.27
+ -222.34   6367.12
+ -111.19   6370.03
+   -0.00   6371.00
+  111.19   6370.03
+  222.34   6367.12
+  333.43   6362.27
+  444.42   6355.48
+  555.27   6346.76
+  665.95   6336.10
+  776.43   6323.51
+  886.67   6309.00
+  996.64   6292.56
+ 1106.31   6274.21
+ 1215.64   6253.95
+ 1324.61   6231.78
+ 1433.16   6207.71
+ 1541.28   6181.75
+ 1648.94   6153.91
+ 1756.09   6124.20
+ 1862.70   6092.62
+ 1968.75   6059.18
+ 2074.19   6023.90
+ 2179.01   5986.78
+ 2283.16   5947.84
+ 2386.62   5907.09
+ 2489.35   5864.54
+ 2591.32   5820.20
+ 2692.50   5774.09
+ 2792.86   5726.22
+ 2892.37   5676.60
+ 2991.00   5625.26
+ 3088.72   5572.20
+ 3185.50   5517.45
+ 3281.31   5461.01
+ 3376.12   5402.91
+ 3469.90   5343.17
+ 3562.62   5281.80
+ 3654.26   5218.82
+ 3744.78   5154.25
+ 3834.16   5088.11
+ 3922.38   5020.42
+ 4009.40   4951.20
+ 4095.20   4880.47
+ 4179.75   4808.25
+ 4263.03   4734.58
+ 4345.01   4659.45
+ 4425.67   4582.91
+ 4504.98   4504.98
+ 4582.91   4425.67
+ 4659.45   4345.01
+ 4734.58   4263.03
+ 4808.25   4179.75
+ 4880.47   4095.20
+ 4951.20   4009.40
+ 5020.42   3922.38
+ 5088.11   3834.16
+ 5154.25   3744.78
+ 5218.82   3654.26
+ 5281.80   3562.62
+ 5343.17   3469.90
+ 5402.91   3376.12
+ 5461.01   3281.31
+ 5517.45   3185.50
+ 5572.20   3088.72
+ 5625.26   2991.00
+ 5676.60   2892.37
+ 5726.22   2792.86
+ 5774.09   2692.50
+ 5820.20   2591.32
+ 5864.54   2489.35
+ 5907.09   2386.62
+ 5947.84   2283.16
+ 5986.78   2179.01
+ 6023.90   2074.19
+ 6059.18   1968.75
+ 6092.62   1862.70
+ 6124.20   1756.09
+ 6153.91   1648.94
+ 6181.75   1541.28
+ 6207.71   1433.16
+ 6231.78   1324.61
+ 6253.95   1215.64
+ 6274.21   1106.31
+ 6292.56    996.64
+ 6309.00    886.67
+ 6323.51    776.43
+ 6336.10    665.95
+ 6346.76    555.27
+ 6355.48    444.42
+ 6362.27    333.43
+ 6367.12    222.34
+ 6370.03    111.19
+ 6371.00      0.00
+ 6370.03   -111.19
+ 6367.12   -222.34
+ 6362.27   -333.43
+ 6355.48   -444.42
+ 6346.76   -555.27
+ 6336.10   -665.95
+ 6323.51   -776.43
+ 6309.00   -886.67
+ 6292.56   -996.64
+ 6274.21  -1106.31
+ 6253.95  -1215.64
+ 6231.78  -1324.61
+ 6207.71  -1433.16
+ 6181.75  -1541.28
+ 6153.91  -1648.94
+ 6124.20  -1756.09
+ 6092.62  -1862.70
+ 6059.18  -1968.75
+ 6023.90  -2074.19
+ 5986.78  -2179.01
+ 5947.84  -2283.16
+ 5907.09  -2386.62
+ 5864.54  -2489.35
+ 5820.20  -2591.32
+ 5774.09  -2692.50
+ 5726.22  -2792.86
+ 5676.60  -2892.37
+ 5625.26  -2991.00
+ 5572.20  -3088.72
+ 5517.45  -3185.50
+ 5461.01  -3281.31
+ 5402.91  -3376.12
+ 5343.17  -3469.90
+ 5281.80  -3562.62
+ 5218.82  -3654.26
+ 5154.25  -3744.78
+ 5088.11  -3834.16
+ 5020.42  -3922.38
+ 4951.20  -4009.40
+ 4880.47  -4095.20
+ 4808.25  -4179.75
+ 4734.58  -4263.03
+ 4659.45  -4345.01
+ 4582.91  -4425.67
+ 4504.98  -4504.98
+ 4425.67  -4582.91
+ 4345.01  -4659.45
+ 4263.03  -4734.58
+ 4179.75  -4808.25
+ 4095.20  -4880.47
+ 4009.40  -4951.20
+ 3922.38  -5020.42
+ 3834.16  -5088.11
+ 3744.78  -5154.25
+ 3654.26  -5218.82
+" />
+</g>
+</g>
+  </g> <!-- end autocolor -->
+    <g class="phasename">
+      <text class="phase_2kmps" x=" 3654.26" y="-5218.82">2kmps</text>
+      <text class="phase_2kmps" x="-3654.26" y="-5218.82">2kmps</text>
+    </g> <!-- end labels -->
+  </g> 
+  </g> <!-- end zoom -->
+  </g> <!-- end translate -->
+  </g> 
+</svg>

@@ -46,7 +46,15 @@ public class CmdLineOutputTest {
             "taup path -o stdout -h 10 -p PnPn --deg 10",
             "taup path -o stdout -h 10 -p PdiffPdiff --deg 135",
                                           "taup path -o stdout -h 10 -p P --deg 35 --svg",
-                                          "taup path -o stdout -h 10 -p P --deg 35 --mod ak135"};
+                                          "taup path -o stdout -h 10 -p P --deg 35 --mod ak135",
+
+            "taup path -o stdout -h 10 -p Pdiff --deg 135 --svg",
+            "taup path -o stdout -h 10 -p 2kmps --deg 35 --svg",
+            "taup path -o stdout -h 10 -p Pn --deg 10 --svg",
+            "taup path -o stdout -h 10 -p PnPn --deg 10 --svg",
+            "taup path -o stdout -h 10 -p PdiffPdiff --deg 135 --svg",
+            "taup path -o stdout -h 10 -p ttall --deg 35 --svg",
+    };
 
     String[] phaseDescribeTestCmds = new String[] {
             "taup phase -p Pdiff",
@@ -65,9 +73,11 @@ public class CmdLineOutputTest {
             "taup curve -o stdout -h 10 -p P --mod prem",
             "taup curve -o stdout -h 10 -p P",
             "taup curve -o stdout -h 10 -p P --mod ak135",
-            "taup curve -o stdout -h 10 -p P --mod ak135 --redkm 8"
+            "taup curve -o stdout -h 10 -p P --mod ak135 --redkm 8",
             // curve labels are random position in --svg, so diff breaks
             // "taup curve -o stdout -h 10 -p P --svg",
+
+            "taup curve -o stdout -h 10 -p P,2kmps --mod prem --svg",
     };
 
     String[] wavefrontTestCmds = new String[] {

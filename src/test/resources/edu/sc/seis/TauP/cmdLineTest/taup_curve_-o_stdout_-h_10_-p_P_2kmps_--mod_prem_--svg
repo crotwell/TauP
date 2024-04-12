@@ -1,0 +1,707 @@
+<svg version="1.1" baseProfile="full" xmlns="http://www.w3.org/2000/svg" 
+     viewBox="-80 -80 760.0 760.0"
+     >
+  <metadata>
+    <taup>
+      <command>xyplotoutput </command>
+      <version>3.0.0-SNAPSHOT3</version>
+      <a href="https://github.com/crotwell/TauP">https://github.com/crotwell/TauP</a>
+    <minmax xmin="0.0" xmax="180.0" ymin="0.0" ymax="20015.086796020572" />
+    </taup>
+  </metadata>
+  <defs>
+    <style type="text/css"><![CDATA[
+        text.label {
+            font: bold ;
+            fill: black;
+        }
+        g.phasename text {
+            font: bold ;
+            fill: black;
+        }
+
+text.title {
+    text-anchor: middle;
+    dominant-baseline: auto;
+    font-size: 20px;
+}
+circle {
+    vector-effect: non-scaling-stroke;
+    stroke: grey;
+    fill: transparent;
+}
+.xtick {
+    text-anchor: middle;
+    dominant-baseline: middle;
+}
+.ytick {
+    text-anchor: end;
+    dominant-baseline: middle;
+
+}
+.legend line {
+    text-anchor: end;
+    dominant-baseline: middle;
+    stroke: black;
+    fill: transparent;
+}
+.legend text {
+    text-anchor: start;
+    dominant-baseline: middle;
+}
+
+line.tick {
+    vector-effect: non-scaling-stroke;
+    stroke: black;
+    fill: transparent;
+}
+.xlabel {
+    text-anchor: middle;
+}
+.ylabel {
+    text-anchor: middle;
+    dominant-baseline: middle;
+}
+.phaselabel {
+    text-anchor: end;
+    dominant-baseline: middle;
+}
+polyline {
+    vector-effect: non-scaling-stroke;
+    fill: transparent;
+}
+polyline.tick {
+    stroke: black;
+}
+polyline.sourcedepth {
+    stroke: lightgrey;
+}
+polyline.receiverdepth {
+    stroke: lightgrey;
+}
+polyline.scattererdepth {
+    stroke: lightgrey;
+}
+circle.discontinuity {
+    vector-effect: non-scaling-stroke;
+    stroke: grey;
+    fill: none;
+}
+circle.discontinuity.surface {
+    fill: lightgoldenrodyellow;
+}
+circle.discontinuity.moho {
+    fill: blanchedalmond;
+}
+circle.discontinuity.cmb {
+    fill: lemonchiffon;
+}
+circle.discontinuity.iocb {
+    fill: burlywood;
+}
+
+        .Rpp {
+          stroke: blue;
+        }
+        .Rpp.label {
+          stroke: blue;
+          fill: blue;
+        }
+        .legend .Rpp {
+          stroke: blue;
+          fill: blue;
+        }
+        .Rps {
+          stroke: green;
+        }
+        .Rps.label {
+          stroke: green;
+          fill: green;
+        }
+        .legend .Rps {
+          stroke: green;
+          fill: green;
+        }
+        .Tpp {
+          stroke: cyan;
+        }
+        .Tpp.label {
+          stroke: cyan;
+          fill: cyan;
+        }
+        .legend .Tpp {
+          stroke: cyan;
+          fill: cyan;
+        }
+        .Tps {
+          stroke: gold;
+        }
+        .Tps.label {
+          stroke: gold;
+          fill: gold;
+        }
+        .legend .Tps {
+          stroke: gold;
+          fill: gold;
+        }
+        .Rsp {
+          stroke: red;
+        }
+        .Rsp.label {
+          stroke: red;
+          fill: red;
+        }
+        .legend .Rsp {
+          stroke: red;
+          fill: red;
+        }
+        .Rss {
+          stroke: orange;
+        }
+        .Rss.label {
+          stroke: orange;
+          fill: orange;
+        }
+        .legend .Rss {
+          stroke: orange;
+          fill: orange;
+        }
+        .Tsp {
+          stroke: magenta;
+        }
+        .Tsp.label {
+          stroke: magenta;
+          fill: magenta;
+        }
+        .legend .Tsp {
+          stroke: magenta;
+          fill: magenta;
+        }
+        .Tss {
+          stroke: grey;
+        }
+        .Tss.label {
+          stroke: grey;
+          fill: grey;
+        }
+        .legend .Tss {
+          stroke: grey;
+          fill: grey;
+        }
+        .Rshsh {
+          stroke: mediumslateblue;
+        }
+        .Rshsh.label {
+          stroke: mediumslateblue;
+          fill: mediumslateblue;
+        }
+        .legend .Rshsh {
+          stroke: mediumslateblue;
+          fill: mediumslateblue;
+        }
+        .Tshsh {
+          stroke: violet;
+        }
+        .Tshsh.label {
+          stroke: violet;
+          fill: violet;
+        }
+        .legend .Tshsh {
+          stroke: violet;
+          fill: violet;
+        }
+
+        g.autocolor > :nth-child(10n+1) {
+            stroke: skyblue;
+        }
+        g.autocolor > :nth-child(10n+2) {
+            stroke: olivedrab;
+        }
+        g.autocolor > :nth-child(10n+3) {
+            stroke: goldenrod;
+        }
+        g.autocolor > :nth-child(10n+4) {
+            stroke: firebrick;
+        }
+        g.autocolor > :nth-child(10n+5) {
+            stroke: darkcyan;
+        }
+        g.autocolor > :nth-child(10n+6) {
+            stroke: chocolate;
+        }
+        g.autocolor > :nth-child(10n+7) {
+            stroke: darkmagenta;
+        }
+        g.autocolor > :nth-child(10n+8) {
+            stroke: mediumvioletred;
+        }
+        g.autocolor > :nth-child(10n+9) {
+            stroke: sienna;
+        }
+        g.autocolor > :nth-child(10n+10) {
+            stroke: rebeccapurple;
+        }
+
+        .autocolor.phaselabel > :nth-child(10n+1) {
+            fill: skyblue;
+        }
+        .autocolor.phaselabel > :nth-child(10n+2) {
+            fill: olivedrab;
+        }
+        .autocolor.phaselabel > :nth-child(10n+3) {
+            fill: goldenrod;
+        }
+        .autocolor.phaselabel > :nth-child(10n+4) {
+            fill: firebrick;
+        }
+        .autocolor.phaselabel > :nth-child(10n+5) {
+            fill: darkcyan;
+        }
+        .autocolor.phaselabel > :nth-child(10n+6) {
+            fill: chocolate;
+        }
+        .autocolor.phaselabel > :nth-child(10n+7) {
+            fill: darkmagenta;
+        }
+        .autocolor.phaselabel > :nth-child(10n+8) {
+            fill: mediumvioletred;
+        }
+        .autocolor.phaselabel > :nth-child(10n+9) {
+            fill: sienna;
+        }
+        .autocolor.phaselabel > :nth-child(10n+10) {
+            fill: rebeccapurple;
+        }
+
+        .autocolor.legend > :nth-child(10n+1) {
+            fill: skyblue;
+        }
+        .autocolor.legend > :nth-child(10n+2) {
+            fill: olivedrab;
+        }
+        .autocolor.legend > :nth-child(10n+3) {
+            fill: goldenrod;
+        }
+        .autocolor.legend > :nth-child(10n+4) {
+            fill: firebrick;
+        }
+        .autocolor.legend > :nth-child(10n+5) {
+            fill: darkcyan;
+        }
+        .autocolor.legend > :nth-child(10n+6) {
+            fill: chocolate;
+        }
+        .autocolor.legend > :nth-child(10n+7) {
+            fill: darkmagenta;
+        }
+        .autocolor.legend > :nth-child(10n+8) {
+            fill: mediumvioletred;
+        }
+        .autocolor.legend > :nth-child(10n+9) {
+            fill: sienna;
+        }
+        .autocolor.legend > :nth-child(10n+10) {
+            fill: rebeccapurple;
+        }
+
+
+    ]]></style>
+  <clipPath id="curve_clip">
+    <rect x="0" y="0" width="521.0" height="521.0"/>
+  </clipPath>
+  </defs>
+<!-- draw axis and label distances.-->
+
+<text class="title" x="260.0" y="0">prem (h=10.0 km)</text>
+<g> <!-- y axis -->
+<g  >
+  <text font-size="14" transform="translate(-64, 260) rotate(-90 )" dy=".75em" text-anchor="middle" class="ylabel" >time</text>
+</g>
+<line  class="tick" x1="0" y1="0" x2="0" y2="520.0" />
+<text class="ytick" font-size="12" x="-12.0" y="520.0">0.0</text>
+<line class="tick" x1="0" y1="520.0" x2="-10.0" y2="520.0" />
+<text class="ytick" font-size="12" x="-12.0" y="468.03918">2000.0</text>
+<line class="tick" x1="0" y1="468.03918" x2="-10.0" y2="468.03918" />
+<text class="ytick" font-size="12" x="-12.0" y="416.0784">4000.0</text>
+<line class="tick" x1="0" y1="416.0784" x2="-10.0" y2="416.0784" />
+<text class="ytick" font-size="12" x="-12.0" y="364.11758">6000.0</text>
+<line class="tick" x1="0" y1="364.11758" x2="-10.0" y2="364.11758" />
+<text class="ytick" font-size="12" x="-12.0" y="312.1568">8000.0</text>
+<line class="tick" x1="0" y1="312.1568" x2="-10.0" y2="312.1568" />
+<text class="ytick" font-size="12" x="-12.0" y="260.19598">10000.0</text>
+<line class="tick" x1="0" y1="260.19598" x2="-10.0" y2="260.19598" />
+<text class="ytick" font-size="12" x="-12.0" y="208.23517">12000.0</text>
+<line class="tick" x1="0" y1="208.23517" x2="-10.0" y2="208.23517" />
+<text class="ytick" font-size="12" x="-12.0" y="156.27438">14000.0</text>
+<line class="tick" x1="0" y1="156.27438" x2="-10.0" y2="156.27438" />
+<text class="ytick" font-size="12" x="-12.0" y="104.31357">16000.0</text>
+<line class="tick" x1="0" y1="104.31357" x2="-10.0" y2="104.31357" />
+<text class="ytick" font-size="12" x="-12.0" y="52.352753">18000.0</text>
+<line class="tick" x1="0" y1="52.352753" x2="-10.0" y2="52.352753" />
+<text class="ytick" font-size="12" x="-12.0" y="0.39196777">20000.0</text>
+<line class="tick" x1="0" y1="0.39196777" x2="-10.0" y2="0.39196777" />
+</g> <!-- y axis end-->
+<g> <!-- x axis -->
+<text class="xlabel" font-size="14" x="260.0" y="556.4">degree180</text>
+<line class="tick" x1="0" y1="520.0" x2="520.0" y2="520.0" />
+<text class="xtick" font-size="12" x="0.0" y="542.0">0.0</text>
+<line class="tick" x1="0.0" y1="520.0" x2="0.0" y2="530.0" />
+<text class="xtick" font-size="12" x="57.77777777777777" y="542.0">20.0</text>
+<line class="tick" x1="57.77777777777777" y1="520.0" x2="57.77777777777777" y2="530.0" />
+<text class="xtick" font-size="12" x="115.55555555555554" y="542.0">40.0</text>
+<line class="tick" x1="115.55555555555554" y1="520.0" x2="115.55555555555554" y2="530.0" />
+<text class="xtick" font-size="12" x="173.33333333333331" y="542.0">60.0</text>
+<line class="tick" x1="173.33333333333331" y1="520.0" x2="173.33333333333331" y2="530.0" />
+<text class="xtick" font-size="12" x="231.1111111111111" y="542.0">80.0</text>
+<line class="tick" x1="231.1111111111111" y1="520.0" x2="231.1111111111111" y2="530.0" />
+<text class="xtick" font-size="12" x="288.8888888888889" y="542.0">100.0</text>
+<line class="tick" x1="288.8888888888889" y1="520.0" x2="288.8888888888889" y2="530.0" />
+<text class="xtick" font-size="12" x="346.66666666666663" y="542.0">120.0</text>
+<line class="tick" x1="346.66666666666663" y1="520.0" x2="346.66666666666663" y2="530.0" />
+<text class="xtick" font-size="12" x="404.44444444444446" y="542.0">140.0</text>
+<line class="tick" x1="404.44444444444446" y1="520.0" x2="404.44444444444446" y2="530.0" />
+<text class="xtick" font-size="12" x="462.2222222222222" y="542.0">160.0</text>
+<line class="tick" x1="462.2222222222222" y1="520.0" x2="462.2222222222222" y2="530.0" />
+<text class="xtick" font-size="12" x="520.0" y="542.0">180.0</text>
+<line class="tick" x1="520.0" y1="520.0" x2="520.0" y2="530.0" />
+</g> <!-- x axis end-->
+<g clip-path="url(#curve_clip)">
+<g transform="scale(1,-1) translate(0, -520.0)">
+<g transform="scale(2.888888888888889,0.025980401948763325)" >
+<g transform="translate(-0.0, -0.0)">
+    <g class="autocolor">
+    <g class="pwave phase_P pwave" tauplabel="degree180/time P for a source depth of 10.0 kilometers in the prem model"  >
+  <g>
+    <desc></desc>
+    <polyline  points="
+    3.21    61.52
+    6.20   118.81
+    4.09    78.32
+    3.51    67.20
+    2.88    55.29
+    2.27    43.61
+    1.16    22.51
+    0.94    18.30
+    0.75    14.74
+    0.70    13.81
+    0.64    12.70
+    0.61    12.24
+    0.61    12.17
+    0.57    11.47
+    0.56    11.34
+    0.55    11.12
+    0.54    10.89
+    0.51    10.39
+    0.51    10.35
+    0.51    10.31
+    0.50    10.26
+    0.49     9.91
+    0.47     9.58
+    0.46     9.54
+    0.46     9.49
+    0.46     9.40
+    0.45     9.23
+    0.44     9.06
+    0.43     8.91
+    0.41     8.62
+    0.40     8.36
+    0.38     8.12
+    0.38     8.01
+    0.37     7.91
+    0.36     7.71
+    0.35     7.53
+    0.34     7.30
+    0.33     7.25
+    0.32     7.10
+    0.32     7.03
+    0.32     6.96
+    0.31     6.83
+    0.30     6.63
+    0.29     6.59
+    2.46    41.98
+    3.36    56.64
+    4.63    77.36
+    6.43   106.65
+    6.52   108.20
+    4.04    67.74
+    3.41    57.41
+    2.76    46.94
+    2.17    37.33
+    1.67    29.27
+    1.09    19.88
+    0.94    17.49
+    0.84    15.96
+    0.83    15.80
+    0.82    15.64
+    0.80    15.34
+    0.77    14.80
+    0.74    14.38
+    0.73    14.19
+    0.72    14.01
+    0.70    13.67
+    0.69    13.51
+    0.68    13.36
+    0.66    13.07
+    0.65    12.93
+    0.64    12.79
+    0.62    12.56
+    0.62    12.46
+    0.61    12.35
+    0.60    12.16
+    0.59    12.06
+    0.58    11.97
+    0.57    11.78
+    0.56    11.61
+    0.54    11.32
+    0.54    11.30
+    0.52    11.05
+    0.50    10.82
+    0.49    10.61
+    0.47    10.39
+    0.46    10.28
+    0.46    10.18
+    0.44     9.98
+    4.36    63.42
+    5.98    85.55
+    8.27   116.81
+   10.02   140.78
+   11.50   160.97
+   13.17   183.69
+   14.63   203.63
+   15.96   221.66
+   17.17   238.25
+   19.41   268.75
+   21.40   295.69
+   23.85   329.10
+   26.05   358.83
+   26.16   360.42
+   27.26   375.33
+   28.60   393.43
+   29.83   410.14
+   32.14   441.34
+   34.37   471.48
+   36.41   498.94
+   38.42   526.02
+   40.27   550.90
+   36.50   500.24
+   35.05   480.78
+   33.11   454.77
+   31.71   435.97
+   30.59   420.88
+   28.81   397.08
+   27.42   378.42
+   25.29   349.81
+   23.66   328.12
+   21.26   296.04
+   19.52   272.78
+   17.36   244.16
+   16.52   233.11
+   15.80   223.56
+   14.60   207.74
+   13.63   195.07
+   12.15   175.79
+   11.47   167.00
+   10.89   159.50
+    9.93   147.30
+    9.17   137.73
+   11.11   162.11
+   11.89   171.83
+   12.96   185.23
+   14.43   203.54
+   14.76   207.63
+   15.06   211.44
+   16.25   226.11
+   16.76   232.46
+   17.24   238.34
+   18.22   250.41
+   19.10   261.16
+   20.29   275.64
+   20.34   276.30
+   20.39   276.94
+   21.56   290.97
+   22.63   303.86
+   23.32   311.96
+   24.07   320.90
+   24.65   327.70
+   22.82   306.22
+   22.10   297.87
+   21.14   286.59
+   19.86   271.66
+   18.21   252.50
+   18.10   251.24
+   17.99   250.01
+   16.97   238.27
+   16.15   228.90
+   16.05   227.70
+   15.95   226.53
+   18.18   251.93
+   18.79   258.86
+   19.53   267.15
+   19.63   268.26
+   19.81   270.30
+   19.99   272.23
+   20.39   276.67
+   20.78   280.88
+   21.28   286.19
+   21.51   288.62
+   21.67   290.32
+   21.83   292.00
+   22.15   295.32
+   22.47   298.64
+   22.49   298.81
+   22.67   300.73
+   22.86   302.65
+   23.24   306.44
+   23.62   310.26
+   25.74   331.24
+   26.66   340.32
+   28.00   353.54
+   28.41   357.55
+   28.79   361.29
+   30.05   373.62
+   31.15   384.32
+   28.94   362.90
+   28.10   354.75
+   26.98   343.90
+   25.27   327.42
+   24.12   316.33
+   23.22   307.76
+   22.48   300.71
+   21.29   289.39
+   20.34   280.40
+   18.84   266.46
+   21.13   287.64
+   22.01   295.72
+   23.72   311.49
+   24.86   321.97
+   26.54   337.17
+   28.07   350.92
+   29.16   360.64
+   31.53   381.51
+   32.84   392.94
+   33.56   399.23
+   33.90   402.19
+   34.23   405.05
+   35.20   413.37
+   35.66   417.33
+   36.10   421.14
+   37.26   430.95
+   38.26   439.45
+   38.55   441.90
+   38.98   445.47
+   39.03   445.88
+   39.08   446.28
+   39.17   447.08
+   39.36   448.66
+   39.55   450.23
+   39.74   451.78
+   39.92   453.31
+   40.11   454.84
+   40.47   457.84
+   41.07   462.80
+   41.59   467.07
+   42.09   471.18
+   42.58   475.16
+   43.02   478.71
+   43.45   482.18
+   44.29   488.93
+   45.46   498.20
+   46.50   506.38
+   47.17   511.65
+   47.83   516.77
+   48.79   524.18
+   49.65   530.74
+   50.66   538.37
+   50.73   538.88
+   50.79   539.37
+   50.92   540.34
+   51.18   542.26
+   51.78   546.72
+   52.30   550.63
+   53.31   558.07
+   54.38   565.86
+   54.72   568.34
+   56.12   578.42
+   57.46   587.92
+   58.94   598.21
+   59.07   599.15
+   59.48   601.99
+   59.97   605.37
+   60.46   608.70
+   61.96   618.83
+   63.36   628.13
+   64.02   632.49
+   64.86   637.99
+   65.53   642.31
+   66.19   646.54
+   67.27   653.42
+   68.29   659.82
+   68.93   663.83
+   70.56   673.85
+   71.59   680.09
+   72.17   683.57
+   72.37   684.73
+   73.28   690.13
+   74.19   695.43
+   75.20   701.31
+   76.19   706.95
+   76.45   708.43
+   76.71   709.88
+   77.93   716.71
+   79.14   723.37
+   79.40   724.79
+   79.61   725.91
+   79.82   727.02
+   80.67   731.58
+   81.10   733.88
+   81.52   736.13
+   82.36   740.53
+   83.22   744.95
+   83.52   746.51
+   83.82   748.05
+   84.91   753.56
+   86.04   759.15
+   86.23   760.08
+   86.32   760.52
+   86.41   760.96
+   87.29   765.26
+   88.20   769.59
+   89.42   775.32
+   89.66   776.46
+   91.89   786.75
+   92.96   791.67
+   94.98   800.90
+   96.65   808.42
+   97.62   812.76
+   98.36   816.07
+  "  /> <!-- -->
+  </g>
+    </g> <!-- end degree180/time P for a source depth of 10.0 kilometers in the prem model -->
+    <g class="swave phase_2kmps swave" tauplabel="degree180/time 2kmps for a source depth of 10.0 kilometers in the prem model"  >
+  <g>
+    <desc></desc>
+    <polyline  points="
+    0.00     0.00
+  180.00 10007.54
+    0.00 20015.09
+  "  /> <!-- -->
+  </g>
+    </g> <!-- end degree180/time 2kmps for a source depth of 10.0 kilometers in the prem model -->
+    </g> <!-- end autocolor g -->
+    <g class="phasename">  <!-- begin labels -->
+    </g> <!-- end labels -->
+  </g> <!-- end translate -->
+  </g> <!-- end scale -->
+  </g> <!-- end scaletranslate -->
+  </g> <!-- end clip-path -->
+<g class="legend autocolor" transform="translate(52.0,52.0)"> <!-- legend -->
+<g class="degree180/time P for a source depth of 10.0 kilometers in the prem model">
+<line class="degree180/time P for a source depth of 10.0 kilometers in the prem model" x1="0" y1="0" x2="10" y2="0" />
+<text class="degree180/time P for a source depth of 10.0 kilometers in the prem model" font-size="14" x="11" y="0">degree180/time P for a source depth of 10.0 kilometers in the prem model</text>
+</g>
+<g class="degree180/time 2kmps for a source depth of 10.0 kilometers in the prem model">
+<line class="degree180/time 2kmps for a source depth of 10.0 kilometers in the prem model" x1="0" y1="16" x2="10" y2="16" />
+<text class="degree180/time 2kmps for a source depth of 10.0 kilometers in the prem model" font-size="14" x="11" y="16">degree180/time 2kmps for a source depth of 10.0 kilometers in the prem model</text>
+</g>
+</g> <!-- legend end-->
+</svg>

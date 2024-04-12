@@ -1,0 +1,841 @@
+<svg version="1.1" baseProfile="full" xmlns="http://www.w3.org/2000/svg" 
+     viewBox="0 0 432.0 432.0"
+     >
+  <metadata>
+    <taup>
+      <command>taup path </command>
+      <version>3.0.0-SNAPSHOT3</version>
+      <a href="https://github.com/crotwell/TauP">https://github.com/crotwell/TauP</a>
+    </taup>
+  </metadata>
+  <defs>
+    <style type="text/css"><![CDATA[
+        text.label {
+            font: bold ;
+            font-size: 350px;
+            fill: black;
+        }
+        g.phasename text {
+            font: bold ;
+            font-size: 350px;
+            fill: black;
+        }
+
+
+text.title {
+    text-anchor: middle;
+    dominant-baseline: auto;
+    font-size: 20px;
+}
+circle {
+    vector-effect: non-scaling-stroke;
+    stroke: grey;
+    fill: transparent;
+}
+.xtick {
+    text-anchor: middle;
+    dominant-baseline: middle;
+}
+.ytick {
+    text-anchor: end;
+    dominant-baseline: middle;
+
+}
+.legend line {
+    text-anchor: end;
+    dominant-baseline: middle;
+    stroke: black;
+    fill: transparent;
+}
+.legend text {
+    text-anchor: start;
+    dominant-baseline: middle;
+}
+
+line.tick {
+    vector-effect: non-scaling-stroke;
+    stroke: black;
+    fill: transparent;
+}
+.xlabel {
+    text-anchor: middle;
+}
+.ylabel {
+    text-anchor: middle;
+    dominant-baseline: middle;
+}
+.phaselabel {
+    text-anchor: end;
+    dominant-baseline: middle;
+}
+polyline {
+    vector-effect: non-scaling-stroke;
+    fill: transparent;
+}
+polyline.tick {
+    stroke: black;
+}
+polyline.sourcedepth {
+    stroke: lightgrey;
+}
+polyline.receiverdepth {
+    stroke: lightgrey;
+}
+polyline.scattererdepth {
+    stroke: lightgrey;
+}
+circle.discontinuity {
+    vector-effect: non-scaling-stroke;
+    stroke: grey;
+    fill: none;
+}
+circle.discontinuity.surface {
+    fill: lightgoldenrodyellow;
+}
+circle.discontinuity.moho {
+    fill: blanchedalmond;
+}
+circle.discontinuity.cmb {
+    fill: lemonchiffon;
+}
+circle.discontinuity.iocb {
+    fill: burlywood;
+}
+
+        .Rpp {
+          stroke: blue;
+        }
+        .Rpp.label {
+          stroke: blue;
+          fill: blue;
+        }
+        .legend .Rpp {
+          stroke: blue;
+          fill: blue;
+        }
+        .Rps {
+          stroke: green;
+        }
+        .Rps.label {
+          stroke: green;
+          fill: green;
+        }
+        .legend .Rps {
+          stroke: green;
+          fill: green;
+        }
+        .Tpp {
+          stroke: cyan;
+        }
+        .Tpp.label {
+          stroke: cyan;
+          fill: cyan;
+        }
+        .legend .Tpp {
+          stroke: cyan;
+          fill: cyan;
+        }
+        .Tps {
+          stroke: gold;
+        }
+        .Tps.label {
+          stroke: gold;
+          fill: gold;
+        }
+        .legend .Tps {
+          stroke: gold;
+          fill: gold;
+        }
+        .Rsp {
+          stroke: red;
+        }
+        .Rsp.label {
+          stroke: red;
+          fill: red;
+        }
+        .legend .Rsp {
+          stroke: red;
+          fill: red;
+        }
+        .Rss {
+          stroke: orange;
+        }
+        .Rss.label {
+          stroke: orange;
+          fill: orange;
+        }
+        .legend .Rss {
+          stroke: orange;
+          fill: orange;
+        }
+        .Tsp {
+          stroke: magenta;
+        }
+        .Tsp.label {
+          stroke: magenta;
+          fill: magenta;
+        }
+        .legend .Tsp {
+          stroke: magenta;
+          fill: magenta;
+        }
+        .Tss {
+          stroke: grey;
+        }
+        .Tss.label {
+          stroke: grey;
+          fill: grey;
+        }
+        .legend .Tss {
+          stroke: grey;
+          fill: grey;
+        }
+        .Rshsh {
+          stroke: mediumslateblue;
+        }
+        .Rshsh.label {
+          stroke: mediumslateblue;
+          fill: mediumslateblue;
+        }
+        .legend .Rshsh {
+          stroke: mediumslateblue;
+          fill: mediumslateblue;
+        }
+        .Tshsh {
+          stroke: violet;
+        }
+        .Tshsh.label {
+          stroke: violet;
+          fill: violet;
+        }
+        .legend .Tshsh {
+          stroke: violet;
+          fill: violet;
+        }
+
+        g.autocolor > :nth-child(10n+1) {
+            stroke: skyblue;
+        }
+        g.autocolor > :nth-child(10n+2) {
+            stroke: olivedrab;
+        }
+        g.autocolor > :nth-child(10n+3) {
+            stroke: goldenrod;
+        }
+        g.autocolor > :nth-child(10n+4) {
+            stroke: firebrick;
+        }
+        g.autocolor > :nth-child(10n+5) {
+            stroke: darkcyan;
+        }
+        g.autocolor > :nth-child(10n+6) {
+            stroke: chocolate;
+        }
+        g.autocolor > :nth-child(10n+7) {
+            stroke: darkmagenta;
+        }
+        g.autocolor > :nth-child(10n+8) {
+            stroke: mediumvioletred;
+        }
+        g.autocolor > :nth-child(10n+9) {
+            stroke: sienna;
+        }
+        g.autocolor > :nth-child(10n+10) {
+            stroke: rebeccapurple;
+        }
+
+        .autocolor.phaselabel > :nth-child(10n+1) {
+            fill: skyblue;
+        }
+        .autocolor.phaselabel > :nth-child(10n+2) {
+            fill: olivedrab;
+        }
+        .autocolor.phaselabel > :nth-child(10n+3) {
+            fill: goldenrod;
+        }
+        .autocolor.phaselabel > :nth-child(10n+4) {
+            fill: firebrick;
+        }
+        .autocolor.phaselabel > :nth-child(10n+5) {
+            fill: darkcyan;
+        }
+        .autocolor.phaselabel > :nth-child(10n+6) {
+            fill: chocolate;
+        }
+        .autocolor.phaselabel > :nth-child(10n+7) {
+            fill: darkmagenta;
+        }
+        .autocolor.phaselabel > :nth-child(10n+8) {
+            fill: mediumvioletred;
+        }
+        .autocolor.phaselabel > :nth-child(10n+9) {
+            fill: sienna;
+        }
+        .autocolor.phaselabel > :nth-child(10n+10) {
+            fill: rebeccapurple;
+        }
+
+        .autocolor.legend > :nth-child(10n+1) {
+            fill: skyblue;
+        }
+        .autocolor.legend > :nth-child(10n+2) {
+            fill: olivedrab;
+        }
+        .autocolor.legend > :nth-child(10n+3) {
+            fill: goldenrod;
+        }
+        .autocolor.legend > :nth-child(10n+4) {
+            fill: firebrick;
+        }
+        .autocolor.legend > :nth-child(10n+5) {
+            fill: darkcyan;
+        }
+        .autocolor.legend > :nth-child(10n+6) {
+            fill: chocolate;
+        }
+        .autocolor.legend > :nth-child(10n+7) {
+            fill: darkmagenta;
+        }
+        .autocolor.legend > :nth-child(10n+8) {
+            fill: mediumvioletred;
+        }
+        .autocolor.legend > :nth-child(10n+9) {
+            fill: sienna;
+        }
+        .autocolor.legend > :nth-child(10n+10) {
+            fill: rebeccapurple;
+        }
+
+
+    ]]></style>
+  <clipPath id="curve_clip">
+    <rect x="0" y="0" width="433.0" height="433.0"/>
+  </clipPath>
+  </defs>
+<!-- draw axis and label distances.-->
+
+<!-- scale/translate so coordinates in earth units ( square ~ 2R x 2R)-->
+<g transform="scale(0.030821478,0.030821478)" >
+<g transform="translate(7008.1,7008.1)" >
+<!-- scale/translate so zoomed in on area of interest -->
+<g transform="scale(1.0,1.0)" >
+<g transform="translate(0.0,0.0)" >
+<g class="ticks">
+<!-- draw surface and label distances.-->
+<!-- tick marks every 30.0 degrees to 180.0.-->
+  <polyline  class="tick"  points="-3185.50   5517.45, -3344.78   5793.32" />
+  <text dominant-baseline="hanging" text-anchor="middle" class="label" x="-3352.74" y="5807.11">-150.0</text>
+  <polyline  class="tick"  points="-5517.45   3185.50, -5793.32   3344.78" />
+  <text dominant-baseline="baseline" text-anchor="end" class="label" x="-5807.11" y="3352.74">-120.0</text>
+  <polyline  class="tick"  points="-6371.00     -0.00, -6689.55     -0.00" />
+  <text dominant-baseline="middle" text-anchor="end" class="label" x="-6705.48" y="-0.00">-90.0</text>
+  <polyline  class="tick"  points="-5517.45  -3185.50, -5793.32  -3344.77" />
+  <text dominant-baseline="middle" text-anchor="end" class="label" x="-5807.11" y="-3352.74">-60.0</text>
+  <polyline  class="tick"  points="-3185.50  -5517.45, -3344.77  -5793.32" />
+  <text dominant-baseline="baseline" text-anchor="middle" class="label" x="-3352.74" y="-5807.11">-30.0</text>
+  <polyline  class="tick"  points="    0.00  -6371.00,     0.00  -6689.55" />
+  <text dominant-baseline="baseline" text-anchor="middle" class="label" x="0.00" y="-6705.48">0.0</text>
+  <polyline  class="tick"  points=" 3185.50  -5517.45,  3344.78  -5793.32" />
+  <text dominant-baseline="baseline" text-anchor="middle" class="label" x="3352.74" y="-5807.11">30.0</text>
+  <polyline  class="tick"  points=" 5517.45  -3185.50,  5793.32  -3344.77" />
+  <text dominant-baseline="middle" text-anchor="start" class="label" x="5807.11" y="-3352.74">60.0</text>
+  <polyline  class="tick"  points=" 6371.00      0.00,  6689.55      0.00" />
+  <text dominant-baseline="middle" text-anchor="start" class="label" x="6705.48" y="0.00">90.0</text>
+  <polyline  class="tick"  points=" 5517.45   3185.50,  5793.32   3344.77" />
+  <text dominant-baseline="middle" text-anchor="start" class="label" x="5807.11" y="3352.74">120.0</text>
+  <polyline  class="tick"  points=" 3185.50   5517.45,  3344.78   5793.32" />
+  <text dominant-baseline="hanging" text-anchor="middle" class="label" x="3352.74" y="5807.11">150.0</text>
+  </g>
+<g class="layers">
+  <circle class="discontinuity surface" cx="0.0" cy="0.0" r="6371.0" />
+  <circle class="discontinuity 0.0" cx="0.0" cy="0.0" r="6371.0" />
+  <circle class="discontinuity 20.0" cx="0.0" cy="0.0" r="6351.0" />
+  <circle class="discontinuity moho" cx="0.0" cy="0.0" r="6336.0" />
+  <circle class="discontinuity 210.0" cx="0.0" cy="0.0" r="6161.0" />
+  <circle class="discontinuity 410.0" cx="0.0" cy="0.0" r="5961.0" />
+  <circle class="discontinuity 660.0" cx="0.0" cy="0.0" r="5711.0" />
+  <circle class="discontinuity cmb" cx="0.0" cy="0.0" r="3482.0" />
+  <circle class="discontinuity iocb" cx="0.0" cy="0.0" r="1217.1000000000004" />
+  </g>
+<!-- draw paths, coordinates are x,y not degree,radius due to SVG using only cartesian -->
+  <g class="autocolor" >
+<g>
+    <desc>  135.00    10.0   Pdiff    980.43     4.439     13.41    13.39   135.00 0   = Pdiff</desc>
+<g>
+    <desc>seg 1 Pdiff of Pdiff at   980.43 seconds at   135.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    4.439 s/deg. in crust/mantle</desc>
+    <polyline class="path phase_Pdiff pwave" points="
+    0.00  -6361.00
+    0.00  -6361.00
+    1.19  -6356.00
+    2.38  -6351.00
+    2.64  -6350.06
+    2.89  -6349.12
+    3.39  -6347.25
+    4.40  -6343.50
+    6.42  -6336.00
+    6.87  -6334.67
+    7.33  -6333.34
+    8.23  -6330.69
+   10.03  -6325.37
+   11.84  -6320.06
+   13.65  -6314.74
+   17.26  -6304.11
+   20.88  -6293.47
+   22.08  -6289.94
+   25.40  -6280.18
+   28.72  -6270.43
+   35.36  -6250.90
+   35.98  -6249.09
+   36.60  -6247.28
+   37.83  -6243.65
+   40.32  -6236.37
+   45.12  -6222.39
+   49.99  -6208.27
+   50.42  -6207.03
+   50.85  -6205.79
+   55.30  -6192.98
+   59.81  -6180.06
+   66.63  -6160.64
+   67.92  -6156.97
+   69.22  -6153.29
+   73.38  -6141.57
+   77.61  -6129.73
+   84.56  -6110.41
+   85.36  -6108.21
+   86.16  -6105.99
+   90.48  -6094.10
+   92.67  -6088.11
+   94.88  -6082.09
+   98.90  -6071.16
+  102.98  -6060.13
+  103.38  -6059.04
+  103.78  -6057.95
+  108.29  -6045.84
+  110.58  -6039.73
+  112.88  -6033.59
+  117.35  -6021.74
+  121.89  -6009.76
+  122.04  -6009.38
+  122.18  -6008.99
+  126.91  -5996.62
+  129.29  -5990.39
+  131.71  -5984.12
+  136.47  -5971.79
+  141.31  -5959.32
+  142.80  -5955.68
+  144.30  -5952.02
+  147.31  -5944.67
+  153.08  -5930.64
+  158.95  -5916.46
+  162.15  -5908.78
+  170.92  -5887.85
+  183.20  -5858.83
+  183.51  -5858.13
+  195.83  -5829.39
+  205.39  -5807.37
+  208.82  -5799.50
+  222.20  -5769.12
+  227.81  -5756.49
+  235.97  -5738.25
+  250.17  -5706.87
+  250.79  -5705.49
+  251.85  -5703.34
+  252.91  -5701.19
+  255.04  -5696.87
+  259.32  -5688.21
+  267.71  -5671.31
+  276.22  -5654.26
+  277.80  -5651.11
+  279.38  -5647.96
+  289.63  -5627.59
+  300.07  -5606.99
+  302.18  -5602.86
+  313.96  -5579.77
+  325.91  -5556.49
+  327.12  -5554.15
+  328.33  -5551.80
+  339.36  -5530.44
+  350.53  -5508.91
+  354.87  -5500.56
+  376.04  -5460.11
+  381.81  -5449.14
+  402.44  -5410.13
+  402.86  -5409.34
+  403.28  -5408.56
+  404.12  -5406.98
+  405.79  -5403.83
+  407.47  -5400.67
+  409.15  -5397.51
+  412.58  -5391.09
+  416.02  -5384.64
+  419.47  -5378.19
+  422.93  -5371.71
+  429.90  -5358.72
+  436.91  -5345.67
+  443.88  -5332.75
+  450.90  -5319.76
+  457.97  -5306.71
+  465.09  -5293.61
+  479.30  -5267.57
+  493.70  -5241.30
+  508.13  -5215.13
+  522.76  -5188.73
+  537.41  -5162.43
+  552.27  -5135.89
+  568.73  -5106.65
+  569.57  -5105.16
+  570.41  -5103.67
+  572.10  -5100.70
+  575.47  -5094.73
+  582.25  -5082.76
+  597.38  -5056.16
+  612.72  -5029.31
+  618.16  -5019.82
+  643.68  -4975.54
+  668.98  -4931.99
+  675.17  -4921.40
+  707.19  -4866.89
+  721.23  -4843.15
+  739.78  -4811.97
+  772.95  -4756.61
+  774.93  -4753.32
+  806.74  -4700.78
+  830.17  -4662.39
+  841.18  -4644.44
+  876.30  -4587.56
+  886.98  -4570.37
+  912.14  -4530.08
+  945.45  -4477.19
+  948.76  -4471.97
+  986.19  -4413.15
+ 1005.71  -4382.71
+ 1016.63  -4365.77
+ 1024.50  -4353.58
+ 1063.75  -4293.18
+ 1067.93  -4286.79
+ 1104.03  -4231.86
+ 1132.32  -4189.17
+ 1132.39  -4189.07
+ 1145.41  -4169.53
+ 1188.01  -4106.09
+ 1199.10  -4089.69
+ 1231.94  -4041.41
+ 1261.00  -3999.02
+ 1268.69  -3987.86
+ 1277.34  -3975.32
+ 1324.40  -3907.66
+ 1341.51  -3883.28
+ 1373.32  -3838.21
+ 1406.52  -3791.58
+ 1418.25  -3775.20
+ 1424.36  -3766.69
+ 1451.38  -3729.81
+ 1477.83  -3692.77
+ 1499.79  -3662.72
+ 1534.17  -3616.01
+ 1576.47  -3559.13
+ 1587.42  -3544.51
+ 1593.92  -3535.84
+ 1626.26  -3493.81
+ 1657.81  -3451.51
+ 1683.16  -3418.45
+ 1726.92  -3361.90
+ 1758.03  -3322.83
+ 1788.45  -3283.50
+ 1790.45  -3280.97
+ 1802.80  -3265.40
+ 1846.05  -3212.63
+ 1888.02  -3159.34
+ 1915.64  -3125.50
+ 1951.87  -3082.40
+ 1987.25  -3038.91
+ 2012.60  -3008.58
+ 2038.99  -2977.04
+ 2067.49  -2943.48
+ 2095.49  -2909.67
+ 2107.06  -2895.90
+ 2133.42  -2864.54
+ 2166.55  -2826.97
+ 2199.05  -2789.03
+ 2230.92  -2750.73
+ 2262.14  -2712.08
+ 2303.54  -2665.95
+ 2344.02  -2619.21
+ 2383.58  -2571.86
+ 2422.19  -2523.94
+ 2459.33  -2483.97
+ 2495.81  -2443.46
+ 2531.62  -2402.42
+ 2566.76  -2360.85
+ 2601.23  -2318.78
+ 2635.00  -2276.20
+" />
+</g>
+<g>
+    <desc>seg 2 Pdiff of Pdiff at   980.43 seconds at   135.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    4.439 s/deg. in mantle</desc>
+    <polyline class="path phase_Pdiff pwave" points="
+ 2635.00  -2276.20
+ 2673.93  -2230.35
+ 2712.05  -2183.82
+ 2749.37  -2136.65
+ 2785.87  -2088.84
+ 2821.54  -2040.40
+ 2856.36  -1991.36
+ 2890.34  -1941.72
+ 2923.45  -1891.50
+ 2955.68  -1840.72
+ 2987.04  -1789.39
+ 3017.50  -1737.53
+ 3047.07  -1685.14
+ 3075.72  -1632.26
+ 3103.46  -1578.88
+ 3130.27  -1525.04
+ 3156.14  -1470.74
+ 3181.08  -1416.00
+ 3205.06  -1360.84
+ 3228.09  -1305.27
+ 3250.16  -1249.32
+ 3271.25  -1192.99
+ 3291.37  -1136.30
+ 3310.51  -1079.28
+ 3328.66  -1021.93
+ 3345.82   -964.28
+ 3361.97   -906.34
+ 3377.13   -848.13
+ 3391.28   -789.67
+ 3404.41   -730.97
+ 3416.53   -672.05
+ 3427.63   -612.93
+ 3437.70   -553.63
+ 3446.76   -494.17
+ 3454.78   -434.55
+ 3461.77   -374.81
+ 3467.73   -314.96
+ 3472.65   -255.01
+" />
+</g>
+<g>
+    <desc>seg 3 Pdiff of Pdiff at   980.43 seconds at   135.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    4.439 s/deg. in crust/mantle</desc>
+    <polyline class="path phase_Pdiff pwave" points="
+ 3472.65   -255.01
+ 3478.89   -201.02
+ 3484.30   -146.90
+ 3488.86    -92.67
+ 3492.58    -38.32
+ 3495.45     16.12
+ 3497.47     70.63
+ 3504.07    131.83
+ 3509.61    193.27
+ 3514.06    254.95
+ 3517.43    316.84
+ 3522.69    366.25
+ 3527.26    415.86
+ 3531.13    465.67
+ 3534.29    515.66
+ 3537.83    556.47
+ 3539.40    574.39
+ 3543.53    618.09
+ 3547.12    661.97
+ 3550.77    702.93
+ 3554.31    742.31
+ 3560.06    798.08
+ 3564.94    854.17
+ 3569.36    897.63
+ 3577.39    964.98
+ 3584.14   1032.87
+ 3586.43   1052.61
+ 3586.80   1055.82
+ 3593.12   1105.14
+ 3598.77   1154.76
+ 3607.84   1225.68
+ 3613.31   1266.98
+ 3620.93   1319.20
+ 3627.80   1371.79
+ 3629.33   1382.51
+ 3631.94   1400.60
+ 3642.28   1470.72
+ 3651.01   1528.06
+ 3656.75   1564.83
+ 3664.26   1609.72
+ 3671.24   1654.91
+ 3672.94   1665.24
+ 3676.24   1685.12
+ 3685.76   1741.56
+ 3695.15   1795.92
+ 3700.31   1825.26
+ 3714.91   1906.37
+ 3717.66   1921.36
+ 3720.12   1934.68
+ 3729.56   1985.20
+ 3740.50   2042.56
+ 3744.27   2062.00
+ 3759.03   2136.97
+ 3763.65   2159.99
+ 3763.67   2160.11
+ 3773.87   2210.30
+ 3787.21   2274.66
+ 3788.78   2282.13
+ 3803.76   2352.59
+ 3806.82   2366.78
+ 3811.09   2386.47
+ 3818.82   2421.80
+ 3833.96   2489.85
+ 3835.32   2495.88
+ 3849.19   2556.83
+ 3859.90   2603.10
+ 3864.51   2622.81
+ 3879.92   2687.86
+ 3884.84   2708.34
+ 3895.43   2752.04
+ 3910.11   2811.68
+ 3911.04   2815.41
+ 3926.75   2878.00
+ 3935.70   2913.16
+ 3942.57   2939.88
+ 3958.49   3001.06
+ 3961.62   3012.92
+ 3974.53   3061.60
+ 3987.82   3110.96
+ 3990.69   3121.51
+ 3998.83   3151.34
+ 4006.96   3180.84
+ 4010.63   3194.10
+ 4012.47   3200.70
+ 4013.39   3204.00
+ 4013.84   3205.65
+ 4014.30   3207.29
+ 4023.35   3239.60
+ 4031.62   3268.87
+ 4039.87   3297.83
+ 4048.20   3326.84
+ 4056.52   3355.54
+ 4064.92   3384.30
+ 4073.29   3412.75
+ 4077.53   3427.05
+ 4081.76   3441.28
+ 4085.99   3455.42
+ 4090.20   3469.49
+ 4094.48   3483.68
+ 4098.74   3497.78
+ 4100.87   3504.81
+ 4103.00   3511.81
+ 4105.13   3518.80
+ 4107.25   3525.77
+ 4108.30   3529.19
+ 4109.34   3532.61
+ 4110.39   3536.02
+ 4110.91   3537.73
+ 4111.17   3538.58
+ 4111.43   3539.43
+ 4124.44   3581.60
+ 4128.12   3593.44
+ 4141.78   3637.01
+ 4144.61   3645.97
+ 4151.94   3669.10
+ 4159.26   3692.00
+ 4160.06   3694.51
+ 4160.87   3697.02
+ 4168.89   3721.93
+ 4176.89   3746.59
+ 4178.33   3751.00
+ 4185.52   3772.94
+ 4192.68   3794.59
+ 4193.79   3797.94
+ 4194.91   3801.27
+ 4200.95   3819.35
+ 4206.98   3837.23
+ 4210.08   3846.38
+ 4211.63   3850.93
+ 4212.40   3853.21
+ 4213.17   3855.48
+ 4213.70   3856.89
+ 4225.87   3889.12
+ 4233.00   3907.79
+ 4237.97   3920.69
+ 4250.00   3951.62
+ 4253.14   3959.61
+ 4261.97   3981.93
+ 4273.58   4010.96
+ 4273.87   4011.68
+ 4285.71   4040.87
+ 4294.32   4061.87
+ 4297.49   4069.57
+ 4303.37   4083.74
+ 4309.21   4097.74
+ 4312.28   4105.06
+ 4313.81   4108.71
+ 4315.34   4112.34
+ 4320.73   4124.58
+ 4326.09   4136.66
+ 4328.82   4142.80
+ 4331.54   4148.90
+ 4336.95   4160.98
+ 4337.12   4161.36
+ 4337.29   4161.73
+ 4342.55   4173.41
+ 4347.78   4184.95
+ 4350.49   4190.92
+ 4353.20   4196.85
+ 4358.58   4208.60
+ 4359.06   4209.66
+ 4359.55   4210.71
+ 4364.47   4221.39
+ 4369.36   4231.96
+ 4372.06   4237.78
+ 4374.75   4243.56
+ 4380.11   4255.03
+ 4381.11   4257.16
+ 4382.10   4259.28
+ 4390.85   4277.86
+ 4396.24   4289.21
+ 4401.59   4300.44
+ 4403.27   4303.96
+ 4404.95   4307.47
+ 4413.87   4326.02
+ 4419.82   4338.34
+ 4425.74   4350.55
+ 4426.31   4351.72
+ 4426.89   4352.90
+ 4433.43   4366.33
+ 4439.93   4379.61
+ 4443.32   4386.52
+ 4445.01   4389.96
+ 4445.86   4391.67
+ 4446.70   4393.39
+ 4455.82   4411.89
+ 4460.38   4421.13
+ 4464.93   4430.37
+ 4466.58   4433.72
+ 4471.55   4443.80
+ 4476.51   4453.87
+ 4479.00   4458.91
+ 4481.48   4463.94
+ 4483.96   4468.97
+ 4485.20   4471.49
+ 4485.82   4472.75
+ 4486.44   4474.01
+ 4490.32   4480.74
+ 4492.26   4484.10
+ 4493.23   4485.79
+ 4493.72   4486.63
+ 4494.20   4487.47
+ 4496.89   4491.84
+ 4499.59   4496.22
+ 4499.59   4496.22
+ 4502.28   4500.60
+ 4503.63   4502.78
+ 4504.30   4503.88
+ 4504.97   4504.97
+ 4504.98   4504.98
+" />
+</g>
+</g>
+  </g> <!-- end autocolor -->
+    <g class="phasename">
+      <text class="phase_Pdiff" x=" 3497.47" y="   70.63">Pdiff</text>
+    </g> <!-- end labels -->
+  </g> 
+  </g> <!-- end zoom -->
+  </g> <!-- end translate -->
+  </g> 
+</svg>
