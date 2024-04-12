@@ -3,6 +3,7 @@ Usage: taup wavefront [--colortime] [--debug] [--help] [--negdist]
                       [--mapwidth=<mapwidth>] [--mapwidthunit=<mapWidthUnit>]
                       [-o=<outFile>] [--prop=<toolPropsFilename>]
                       [--rays=<numRays>] [--timestep=<timeStep>]
+                      [--xaxis=<distAxisType>] [--yaxis=<depthAxisType>]
                       [-p=<phaseNames>[,<phaseNames>...]]... [--degminmax=deg
                       deg] [--depthminmax=km km] [[-mod=<modelname>]
                       [-h=<sourceDepth>] [--stadepth=depth] [--scat=s s]...]
@@ -29,6 +30,12 @@ plot wavefronts of seismic phases at steps in time
       --timefiles           outputs each time into a separate .ps file within
                               the gmt script.
       --timestep=<timeStep> steps in time (seconds) for output
+      --xaxis=<distAxisType>
+                            x axis type, the distance axis, one of degree,
+                              radian, kilometer
+      --yaxis=<depthAxisType>
+                            y axis type, the depth/radius axis, one of depth,
+                              radius
 Model Args
   -h, --sourcedepth=<sourceDepth>
                             source depth in km
