@@ -153,6 +153,13 @@ public class CmdLineOutputTest {
     public void viewSavedOutputAsHTML(List<String> allList, File outputDir, String title) throws FileNotFoundException {
         String html = "<!DOCTYPE html>\n"
                 +"<html>\n"
+                +"<head>\n"
+                +"  <style>\n"
+                +"  #testoutput {\n"
+                +"    background-color: gainsboro;\n"
+                +"  }"
+                +"  </style>\n"
+                +"</head>\n"
         +"<body>\n"
         +"<h3>"+title+"</h3>\n"
         +"  <select name=\"cmdlinetests\" id=\"cmd-select\">\n";
