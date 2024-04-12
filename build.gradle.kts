@@ -16,7 +16,7 @@ plugins {
 
 application {
   mainClass.set("edu.sc.seis.TauP.ToolRun")
-  applicationName = "taup"
+  applicationName = "taupdev"
 }
 
 group = "edu.sc.seis"

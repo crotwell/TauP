@@ -6,7 +6,7 @@ import java.io.*;
 import java.util.Arrays;
 
 
-@CommandLine.Command(name = "taup",
+@CommandLine.Command(name = "taupdev",
 		description="The TauP Toolkit",
 		mixinStandardHelpOptions = true,
 		separator = " ",
