@@ -1159,40 +1159,6 @@ public class SimpleSeismicPhase implements SeismicPhase {
         return outPath;
     }
 
-    /**
-     * Adjust path so the end point lines up.
-     * Because we are shooting a ray parameter through the model, and that ray parameter came from an
-     * interpolation, it can happen for long paths that the output path doesn't quite end at the requested
-     * distance. We do a simple scaling of all path distances so it hits the output.
-     * @param inPath
-     * @param arrival
-     * @return
-     */
-    public static List<TimeDist> adjustPath(List<TimeDist> inPath, Arrival arrival) {
-        double distRadian = arrival.getDist();
-        double finalPathDist = inPath.get(inPath.size()-1).getDistRadian();
-        if (inPath.size() != 0 && distRadian != 0 && finalPathDist != 0) {
-            double shifty = distRadian/finalPathDist;
-            if (arrival.isLongWayAround()) {
-                shifty *= -1;
-            }
-            if (Math.abs(1.0-shifty) > .02 ) {
-                System.err.println("Path error is greater than 2%, correction may cause errors. "+shifty+" "+arrival);
-                System.err.println("  "+distRadian+" "+finalPathDist+"  "+arrival.isLongWayAround());
-            }
-            ArrayList<TimeDist> out = new ArrayList<TimeDist>();
-            for (TimeDist td : inPath) {
-                out.add(new TimeDist(td.getP(),
-                        td.getTime(),
-                        td.getDistRadian() * shifty,
-                        td.getDepth()));
-            }
-            return out;
-        } else {
-            return inPath;
-        }
-    }
-
     @Override
     public String describe() {
         String desc = name + ":\n";

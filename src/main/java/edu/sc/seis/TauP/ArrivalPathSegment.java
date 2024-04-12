@@ -1,5 +1,6 @@
 package edu.sc.seis.TauP;
 
+import edu.sc.seis.TauP.cli.DistDepthRange;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONWriter;
@@ -10,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static edu.sc.seis.TauP.Arrival.DtoR;
-import static edu.sc.seis.TauP.TauP_Pierce.getCommentLine;
 
 public class ArrivalPathSegment {
 
@@ -136,6 +136,21 @@ public class ArrivalPathSegment {
         return out;
     }
 
+    public static List<TimeDist> trimDuplicates(List<TimeDist> tdList) {
+        if (tdList.size() < 3) {
+            return tdList;
+        }
+        TimeDist prev = null;
+        List<TimeDist> out = new ArrayList<>();
+        for (TimeDist td : tdList) {
+            if (! td.equals(prev)) {
+                out.add(td);
+            }
+            prev = td;
+        }
+        return out;
+    }
+
 
     public TimeDist getPathEnd() {
         if (path.size()>0) {
@@ -160,7 +175,7 @@ public class ArrivalPathSegment {
     }
 
     public String description() {
-        return " seg "+segmentIndex+" "+segmentName+" of "+arrival.getName()+" in "+phaseSegment.describeBranchRange();
+        return " seg "+segmentIndex+" "+segmentName+" of "+arrival.getCommentLine()+" in "+phaseSegment.describeBranchRange();
 
     }
 
@@ -211,22 +226,37 @@ public class ArrivalPathSegment {
         pw.println("</g>");
     }
 
-    public void writeGMTText(PrintWriter pw, DistanceAxisType distanceAxisType, String xFormat, String yFormat, boolean withTime) {
-        pw.println(getCommentLine(arrival));
-        //pw.println("> seg "+description());
+    public void writeGMTText(PrintWriter pw, DistDepthRange distDepthRange, String xFormat, String yFormat, boolean withTime) {
+        //pw.println("> " + arrival.getCommentLine());
+        DistanceAxisType distanceAxisType = distDepthRange.distAxisType != null ? distDepthRange.distAxisType : DistanceAxisType.degree ;
+        DepthAxisType depthAxisType = distDepthRange.depthAxisType != null ? distDepthRange.depthAxisType : DepthAxisType.radius;
+        pw.println("> "+description());
         double R = arrival.getPhase().getTauModel().getRadiusOfEarth();
         for (TimeDist td : path) {
-            if (distanceAxisType == DistanceAxisType.radian) {
-                pw.print(String.format(xFormat, td.getDistRadian()) + " " + String.format(yFormat, td.getDepth()));
-            } else if (distanceAxisType == DistanceAxisType.degree) {
-                pw.print(String.format(xFormat, td.getDistDeg()) + " " + String.format(yFormat, td.getDepth()));
-            } else if (distanceAxisType == DistanceAxisType.kilometer) {
-                pw.print(String.format(xFormat, R * td.getDistRadian()) + " " + String.format(yFormat, td.getDepth()));
+            double xVal;
+            double yVal;
+            switch (distanceAxisType)  {
+                case radian:
+                    xVal = td.getDistRadian();
+                case kilometer:
+                    xVal = R * td.getDistRadian();
+                case degree:
+                default:
+                    // default to degree?
+                    xVal = td.getDistDeg();
             }
+            switch (depthAxisType) {
+                case depth:
+                    yVal = td.getDepth();
+                case radius:
+                default:
+                    yVal = R-td.getDepth();
+            }
+            String timeStr = "";
             if (withTime) {
                 pw.print(" " + Outputs.formatTime(td.getTime()));
             }
-            pw.println();
+            pw.println(String.format(xFormat, xVal)+"  "+String.format(yFormat, yVal)+timeStr);
         }
     }
 

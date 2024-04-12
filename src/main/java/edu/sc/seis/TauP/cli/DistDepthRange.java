@@ -1,5 +1,8 @@
 package edu.sc.seis.TauP.cli;
 
+import edu.sc.seis.TauP.DepthAxisType;
+import edu.sc.seis.TauP.DistAz;
+import edu.sc.seis.TauP.DistanceAxisType;
 import picocli.CommandLine;
 
 public class DistDepthRange {
@@ -26,6 +29,24 @@ public class DistDepthRange {
     public boolean hasDistAxisMinMax() {
         return distAxisMinMax.length == 2;
     }
+
+    @CommandLine.Option(names = "--yaxis",
+            description = "y axis type, the depth/radius axis, one of ${COMPLETION-CANDIDATES}"
+    )
+    public void setDepthAxisType(DepthAxisType axisType) {
+        depthAxisType = axisType;
+    }
+
+    public DepthAxisType depthAxisType = null;
+
+    @CommandLine.Option(names = "--xaxis",
+            description = "x axis type, the distance axis, one of ${COMPLETION-CANDIDATES}"
+    )
+    public void setDistAxisType(DistanceAxisType axisType) {
+        this.distAxisType = axisType;
+    }
+    public DistanceAxisType distAxisType = null;
+
 
     protected double[] distAxisMinMax = new double[0];
     protected double[] depthAxisMinMax = new double[0];

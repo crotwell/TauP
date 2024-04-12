@@ -162,6 +162,26 @@ public class Arrival {
         return arrivals;
     }
 
+    public  String getCommentLine() {
+        String outName = getName();
+        if ( ! getName().equals(getPuristName())) {
+            outName+="("+getPuristName()+")";
+        }
+        String out = outName + " at "
+                + Outputs.formatTime(getTime())
+                + " seconds at "
+                + Outputs.formatDistance(getDistDeg())
+                + " degrees for a "
+                + Outputs.formatDepth(getSourceDepth())
+                + " km deep source in the " + getPhase().getTauModel().getModelName() + " model with rayParam "
+                + Outputs.formatRayParam(Math.PI / 180 * getRayParam())
+                + " s/deg.";
+        if (getPhase().getReceiverDepth() != 0.0) {
+            out += " Receiver at depth: "+getPhase().getReceiverDepth()+" km.";
+        }
+        return out;
+    }
+
     // get set methods
     /** @return the phase used to calculate this arrival. */
     public SeismicPhase getPhase() {

@@ -26,7 +26,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import static edu.sc.seis.TauP.SvgEarth.calcEarthScaleTrans;
-import static edu.sc.seis.TauP.TauP_Pierce.getCommentLine;
 
 /**
  * Calculate travel paths for different phases using a linear interpolated ray
@@ -217,7 +216,12 @@ public class TauP_Path extends TauP_AbstractRayTool {
 				out.println("<g>");
 				out.println("    <desc>" + arrival.toString() + "</desc>");
 				for (ArrivalPathSegment seg : arrival.getPathSegments()) {
-					seg.writeSVGCartesian(out);
+					ArrivalPathSegment interpSeg = ArrivalPathSegment.linearInterpPath(seg, maxPathInc, maxPathTime);
+					if (distDepthRange.distAxisType == null && distDepthRange.depthAxisType == null) {
+						interpSeg.writeSVGCartesian(out);
+					} else {
+						throw new CommandLine.ParameterException(spec.commandLine(), "other dist, depth axis types not impl for --svg output");
+					}
 				}
 				out.println("</g>");
 			}
@@ -235,12 +239,13 @@ public class TauP_Path extends TauP_AbstractRayTool {
 			for (Arrival arrival : arrivalList) {
 				for (ArrivalPathSegment seg : arrival.getPathSegments()) {
 					ArrivalPathSegment interpSeg = ArrivalPathSegment.linearInterpPath(seg, maxPathInc, maxPathTime);
-					interpSeg.writeGMTText(out, DistanceAxisType.degree, Outputs.distanceFormatNoPad, Outputs.depthFormat, withTime);
+					interpSeg.writeGMTText(out, distDepthRange, Outputs.distanceFormat, Outputs.depthFormat, withTime);
 				}
 			}
-
-			out.write("END\n");
-			printLabelsGMT(out, arrivalList);
+			if (getGraphicOutputTypeArgs().isGMT()) {
+				out.write("END\n");
+				printLabelsGMT(out, arrivalList);
+			}
 		}
 		out.flush();
 	}

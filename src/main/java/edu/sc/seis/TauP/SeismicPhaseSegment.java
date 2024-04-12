@@ -348,7 +348,8 @@ public class SeismicPhaseSegment {
 				numAdded++;
 			}
 		}
-		ArrivalPathSegment pathSeg = new ArrivalPathSegment(outPath, isPWave, legName, prevEnd, currArrival, this);
+		outPath = ArrivalPathSegment.trimDuplicates(outPath);
+		ArrivalPathSegment pathSeg = new ArrivalPathSegment(outPath, isPWave, legName, prevEnd, currArrival, this, segmentIndex);
 		return pathSeg;
 	}
 

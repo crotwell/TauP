@@ -2,7 +2,8 @@ Usage: taup path [--debug] [--geodetic] [--help] [--withtime] [--az=<azimuth>]
                  [--baz=<backAzimuth>] [--color=<coloring>]
                  [--ellipflattening=<ellipflattening>] [--mapwidth=<mapwidth>]
                  [--mapwidthunit=<mapWidthUnit>] [--maxpathinc=<maxPathInc>]
-                 [-o=<outFile>] [--prop=<toolPropsFilename>] [--deg=d[,
+                 [-o=<outFile>] [--prop=<toolPropsFilename>]
+                 [--xaxis=<distAxisType>] [--yaxis=<depthAxisType>] [--deg=d[,
                  d...]]... [--km=km[,km...]]... [-p=<phaseNames>[,
                  <phaseNames>...]]... [--shoot=<shootRaypList>[,
                  <shootRaypList>...]]... [--takeoff=<takeoffAngle>]...
@@ -29,6 +30,12 @@ plot ray paths through the earth
       --prop=<toolPropsFilename>
                             load defaults from properties file
       --withtime            include time for each path point
+      --xaxis=<distAxisType>
+                            x axis type, the distance axis, one of degree,
+                              radian, kilometer
+      --yaxis=<depthAxisType>
+                            y axis type, the depth/radius axis, one of depth,
+                              radius
 Model Args
   -h, --sourcedepth=<sourceDepth>
                             source depth in km

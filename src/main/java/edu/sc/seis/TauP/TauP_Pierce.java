@@ -16,7 +16,6 @@
  */
 package edu.sc.seis.TauP;
 
-import edu.sc.seis.TauP.cli.Scatterer;
 import picocli.CommandLine;
 
 import java.io.IOException;
@@ -108,32 +107,12 @@ public class TauP_Pierce extends TauP_Time {
         }
         return arrivalList;
     }
-    
-    public static String getCommentLine(Arrival currArrival) {
-        String outName = currArrival.getName();
-        if ( ! currArrival.getName().equals(currArrival.getPuristName())) {
-            outName+="("+currArrival.getPuristName()+")";
-        }
-        String out = "> " + outName + " at "
-                + Outputs.formatTime(currArrival.getTime())
-                + " seconds at "
-                + Outputs.formatDistance(currArrival.getDistDeg())
-                + " degrees for a "
-                + Outputs.formatDepth(currArrival.getSourceDepth())
-                + " km deep source in the " + currArrival.getPhase().getTauModel().getModelName() + " model with rayParam "
-                + Outputs.formatRayParam(Math.PI / 180 * currArrival.getRayParam()) 
-                + " s/deg.";
-        if (currArrival.getPhase().getReceiverDepth() != 0.0) {
-            out += " Receiver at depth: "+currArrival.getPhase().getReceiverDepth()+" km.";
-        }
-        return out;
-    }
 
     @Override
     public void printResultText(PrintWriter out, List<Arrival> arrivalList) throws IOException {
         double prevDepth, nextDepth;
         for (Arrival arrival : arrivalList) {
-            out.println(getCommentLine(arrival));
+            out.println("> " + arrival.getCommentLine());
 
             TimeDist[] pierce = arrival.getPierce();
             prevDepth = pierce[0].getDepth();
