@@ -208,6 +208,7 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
 
     public List<double[]> calculatePlotForType(SeismicPhase phase, AxisType axisType, boolean ensure180) throws VelocityModelException, SlownessModelException, TauModelException {
         double[] out = new double[0];
+        boolean flatPhase = phase.getRayParams().length == 2;
         if (axisType==AxisType.radian || axisType==AxisType.radian180) {
             out = phase.getDist();
         } else if (axisType==AxisType.degree || axisType==AxisType.degree180) {
@@ -287,53 +288,68 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
         }
         double[] rayParams = phase.getRayParams();
         if (ensure180) {
-            double[] dist = phase.getDist();
+            double[] dist = new double[phase.getDist().length];
+            System.arraycopy(phase.getDist(), 0, dist, 0, dist.length);
             // insert extra values, linearly interpolated, if spans 180 deg
             int wrapMinIndex = (int)Math.round(Math.floor(phase.getMinDistance()/Math.PI));
             int wrapMaxIndex = (int)Math.round(Math.ceil(phase.getMaxDistance()/Math.PI));
-            ArrayList<Integer> crossIdx = new ArrayList<>();
-            ArrayList<Double> crossValue = new ArrayList<>();
             for (int j = wrapMinIndex; j <= wrapMaxIndex; j++) {
                 double wrapRadian = j*Math.PI;
                 for (int i=1; i < out.length; i++) {
-                    if ((dist[i-1] - wrapRadian )*(dist[i] - wrapRadian) < 0 && rayParams[i-1] != rayParams[i]) {
+                    if ((dist[i-1] < wrapRadian && wrapRadian < dist[i] ) || (dist[i-1] > wrapRadian &&  wrapRadian > dist[i]) ) {
                         // dist spans a multiple of PI, repeated ray params are already a break so don't interpolate
-                        crossIdx.add(i);
-                        crossValue.add(wrapRadian);
+                        double[] outSeg = new double[out.length+1];
+                        double[] distSeg = new double[out.length+1];
+                        double[] rpSeg = new double[rayParams.length+1];
+                        System.arraycopy(out, 0, outSeg, 0, i);
+                        System.arraycopy(dist, 0, distSeg, 0, i);
+                        System.arraycopy(rayParams, 0, rpSeg, 0, i);
+                        outSeg[i] = linearInterp(dist[i-1], out[i-1], dist[i], out[i], wrapRadian);
+                        distSeg[i] = wrapRadian;
+                        rpSeg[i] = linearInterp(dist[i-1], rayParams[i-1], dist[i], rayParams[i], wrapRadian);
+                        System.arraycopy(out, i, outSeg, i+1, out.length-i);
+                        System.arraycopy(dist, i, distSeg, i+1, out.length-i);
+                        System.arraycopy(rayParams, i, rpSeg, i+1, out.length-i);
+                        out = outSeg;
+                        dist = distSeg;
+                        rayParams = rpSeg;
+                        break;
                     }
                 }
             }
-
-            double[] unwrappedOut = new double[out.length+crossIdx.size()];
-            // also unwrap ray param as need to check for doubled ray params to separate discon
-            double[] unwrappedRP = new double[out.length+crossIdx.size()];
-            int prevIdx = 0;
-            for (int i = 0; i < crossIdx.size(); i++) {
-                int idx = crossIdx.get(i);
-                double wrap = crossValue.get(i);
-                System.arraycopy(out, prevIdx, unwrappedOut, prevIdx+i, idx-prevIdx);
-                System.arraycopy(rayParams, prevIdx, unwrappedRP, prevIdx+i, idx-prevIdx);
-                unwrappedOut[idx+i] = linearInterp(dist[idx-1], out[idx-1], dist[idx], out[idx], wrap);
-                unwrappedRP[idx+i] = linearInterp(dist[idx-1], rayParams[idx-1], dist[idx], rayParams[idx], wrap);
-                prevIdx = idx;
-            }
-            System.arraycopy(out, prevIdx, unwrappedOut, prevIdx+crossIdx.size(), out.length-prevIdx);
-            System.arraycopy(rayParams, prevIdx, unwrappedRP, prevIdx+crossIdx.size(), rayParams.length-prevIdx);
-            out = unwrappedOut;
-            rayParams = unwrappedRP;
             if (axisType== AxisType.degree180) {
-                System.err.println("recalc modulo");
                 for (int j = 0; j < out.length; j++) {
                     out[j] = Math.abs(out[j] % 360.0);
                     if (out[j] > 180.0) {
                         out[j] = 360.0 - out[j];
                     }
                 }
+            } else if (axisType == AxisType.radian180) {
+                for (int j = 0; j < out.length; j++) {
+                    out[j] = Math.abs(out[j] % (2*Math.PI));
+                    if (out[j] > Math.PI) {
+                        out[j] = 2*Math.PI - out[j];
+                    }
+                }
+            } else if (axisType == AxisType.kilometer180) {
+                double km180 = phase.getTauModel().getRadiusOfEarth()*Math.PI;
+                for (int j = 0; j < out.length; j++) {
+                    out[j] = Math.abs(out[j] % (2*km180));
+                    if (out[j] > km180) {
+                        out[j] = 2*km180 - out[j];
+                    }
+                }
             }
         }
 
-        // repeated ray parameters indicate break in curve, split into segments
-        return SeismicPhase.splitForRepeatRayParam(rayParams, out);
+        List<double[]> splitCurve;
+        if (! flatPhase) {
+            // repeated ray parameters indicate break in curve, split into segments
+            splitCurve = SeismicPhase.splitForRepeatRayParam(rayParams, out);
+        } else {
+            splitCurve = List.of(out);
+        }
+        return splitCurve;
     }
 
     public void printResult(PrintWriter writer, List<XYPlottingData> xyPlots) {
