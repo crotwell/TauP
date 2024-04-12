@@ -435,6 +435,7 @@ tasks.register<JavaExec>("genAutocomplete") {
   dependsOn += tasks.getByName("compileJava")
   outputs.files(outFile)
 }
+tasks.get("explodeBin").dependsOn(tasks.get("genAutocomplete"))
 
 // this is really dumb, but gradle wants something....
 gradle.taskGraph.whenReady {
