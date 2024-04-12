@@ -77,11 +77,13 @@ public class CmdLineOutputTest {
 
     String[] velplotTestCmds = new String[] {
             "taup velplot -o stdout --mod ak135 --svg",
+            "taup velplot -o stdout --mod ak135 --mod ak135favg --mod ak135fcont --mod prem --svg",
             "taup velplot -o stdout --mod ak135 --svg -x slowness",
-            "taup velplot -o stdout --csv",
-            "taup velplot -o stdout --text",
-            "taup velplot -o stdout --gmt",
-            "taup velplot -o stdout --json",
+            "taup velplot -o stdout --mod ak135 --yminmax 0 700 --svg",
+            "taup velplot -o stdout --mod ak135 --csv",
+            "taup velplot -o stdout --mod ak135 --text",
+            "taup velplot -o stdout --mod ak135 --gmt",
+            "taup velplot -o stdout --mod ak135 --json",
     };
     String[] reflTransPlotTestCmds = new String[] {
             "taup refltrans -o stdout --mod ak135 --depth 35 --svg"
