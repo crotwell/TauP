@@ -4,6 +4,7 @@ import edu.sc.seis.TauP.*;
 
 import edu.sc.seis.TauP.cli.OutputTypes;
 import edu.sc.seis.TauP.cli.Scatterer;
+import edu.sc.seis.TauP.cli.VelocityModelArgs;
 import edu.sc.seis.seisFile.BuildVersion;
 import edu.sc.seis.seisFile.Location;
 import edu.sc.seis.seisFile.mseed3.MSeed3Record;
@@ -358,7 +359,12 @@ public class TauP_Web extends TauP_Tool {
             TauP_VelocityPlot vplot = (TauP_VelocityPlot) tool;
             if (queryParameters.containsKey(QP_MODEL)) {
                 unknownKeys.remove(QP_MODEL);
-                vplot.getVelModelArgs().setModelName(queryParameters.get(QP_MODEL).getFirst());
+                vplot.getVelModelArgs().clear();
+                for (String modName : queryParameters.get(QP_MODEL)) {
+                    VelocityModelArgs modArg = new VelocityModelArgs();
+                    modArg.setModelFilename(modName);
+                    vplot.getVelModelArgs().add(modArg);
+                }
             }
             // ignore evdepth, phases, etc
             unknownKeys.remove(QP_DISTDEG);
