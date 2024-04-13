@@ -7,8 +7,12 @@ import picocli.CommandLine;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+@CommandLine.Command(name = "version", description = "print version")
 public class TauP_Version extends TauP_Tool {
 
+    public TauP_Version() {
+        setDefaultOutputFormat();
+    }
     @Override
     public String[] allowedOutputFormats() {
         return new String[] {OutputTypes.TEXT, OutputTypes.JSON};
@@ -16,7 +20,8 @@ public class TauP_Version extends TauP_Tool {
 
     @Override
     public void setDefaultOutputFormat() {
-        super.setOutputFormat(OutputTypes.TEXT);
+        setOutputFormat(OutputTypes.TEXT);
+        outputTypeArgs.setOutFileBase("stdout");
     }
 
     @CommandLine.Mixin

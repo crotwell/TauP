@@ -18,4 +18,5 @@ Commands:
   wavefront  plot wavefronts of seismic phases at steps in time
   phase      describe a seismic phase in the current model
   web        web based gui for the TauP Toolkit
+  version    print version
   help       Display help information about the specified command.
