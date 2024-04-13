@@ -7,7 +7,7 @@ import java.util.List;
 
 public class DistanceRay extends RayCalculateable {
 
-    public DistanceRay() {}
+    DistanceRay() {}
     public DistanceRay(DistanceRay dr) {
           radians = dr.radians;
           degrees = dr.degrees;
@@ -74,7 +74,7 @@ public class DistanceRay extends RayCalculateable {
 
     @Override
     public List<Arrival> calculate(SeismicPhase phase) throws SlownessModelException, NoSuchLayerException {
-        List<Arrival> phaseArrivals = phase.calcTime(getDegrees(phase.getTauModel().getRadiusOfEarth()));
+        List<Arrival> phaseArrivals = phase.calcTime(this);
         for (Arrival arrival : phaseArrivals) {
             arrival.setShootable(this);
         }

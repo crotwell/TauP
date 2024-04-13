@@ -67,7 +67,7 @@ public class ScatteredSeismicPhase implements SeismicPhase {
 
     @Override
     public Arrival getEarliestArrival(double degrees) {
-        return Arrival.getEarliestArrival(calcTime(degrees));
+        return Arrival.getEarliestArrival(calcTime(DistanceRay.ofDegrees(degrees)));
     }
 
     @Override

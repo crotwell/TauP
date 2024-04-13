@@ -9,7 +9,7 @@ public interface SeismicPhase extends Serializable, Cloneable {
     static Arrival getEarliestArrival(List<SeismicPhase> phases, double degrees) {
         Arrival minArrival = null;
         for (SeismicPhase seismicPhase : phases) {
-            seismicPhase.calcTime(degrees);
+            seismicPhase.calcTime(DistanceRay.ofDegrees(degrees));
             Arrival currArrival = seismicPhase.getEarliestArrival(degrees);
             if (currArrival != null && (minArrival == null || minArrival.getTime() > currArrival.getTime())) {
                 minArrival = currArrival;

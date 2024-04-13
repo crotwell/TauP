@@ -4,7 +4,8 @@ Usage: taup path [--debug] [--geodetic] [--help] [--withtime] [--az=<azimuth>]
                  [--mapwidthunit=<mapWidthUnit>] [--maxpathinc=<maxPathInc>]
                  [-o=<outFile>] [--prop=<toolPropsFilename>]
                  [--xaxis=<distAxisType>] [--yaxis=<depthAxisType>] [--deg=d[,
-                 d...]]... [--km=km[,km...]]... [-p=<phaseNames>[,
+                 d...]]... [--exactdegree=d[,d...]]... [--exactkilometer=km[,
+                 km...]]... [--km=km[,km...]]... [-p=<phaseNames>[,
                  <phaseNames>...]]... [--shoot=<shootRaypList>[,
                  <shootRaypList>...]]... [--takeoff=<takeoffAngle>]...
                  [--degminmax=deg deg] [--depthminmax=km km]
@@ -49,19 +50,23 @@ Model Args
 Distance is given by:
       --az=<azimuth>        azimuth in degrees
       --baz=<backAzimuth>   backazimuth in degrees
-      --deg, --degrees=d[,d...]
+      --deg, --degree=d[,d...]
                             distance in degrees
       --ellipflattening=<ellipflattening>
                             Elliptical flattening for distance calculations
                               when --geodetic, defaults to WGS84 ~ 1/298.257
       --evt, --event=<eventLatLon> <eventLatLon>
                             event latitude and longitude
+      --exactdegree=d[,d...]
+                            exact distance traveled in degrees, not 360-d
+      --exactkilometer=km[,km...]
+                            exact distance traveled in kilometers, not 360-k
       --geodetic            use geodetic latitude for distance calculations,
                               which implies an ellipticity. Default is
                               spherical. Note this only affects calculation of
                               distance from lat/lon, all travel time
                               calculations are done in a purely spherical model.
-      --km, --kilometers=km[,km...]
+      --km, --kilometer=km[,km...]
                             distance in kilometers
       --shoot, --shootray=<shootRaypList>[,<shootRaypList>...]
                             ray parameter from the source in s/deg up or down

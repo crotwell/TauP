@@ -96,7 +96,7 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
                 if (yAxisType==AxisType.theta) {
                     // temp for testing...
                     double dist = 15;
-                    List<Arrival> arrivals = phase.calcTime(dist);
+                    List<Arrival> arrivals = phase.calcTime(DistanceRay.ofDegrees(dist));
                     for (Arrival arrival : arrivals) {
                         Theta theta = new Theta(arrival);
                         List<double[]> xData = SeismicPhase.splitForRepeatRayParam(phase.getRayParams(), phase.getRayParams());

@@ -207,7 +207,7 @@ public class SimpleSeismicPhase implements SeismicPhase {
 
     @Override
     public Arrival getEarliestArrival(double degrees) {
-        return Arrival.getEarliestArrival(calcTime(degrees));
+        return Arrival.getEarliestArrival(calcTime(DistanceRay.ofDegrees(degrees)));
     }
 
     @Override
@@ -402,6 +402,9 @@ public class SimpleSeismicPhase implements SeismicPhase {
      *  */
     @Override
     public List<Arrival> calcTime(DistanceRay dv) {
+        if (dv instanceof ExactDistanceRay) {
+            return calcTimeExactDistance(dv.getRadians(getTauModel().getRadiusOfEarth()));
+        }
         double deg = dv.getDegrees(getTauModel().getRadiusOfEarth());
         double tempDeg = SeismicPhase.distanceTrim180(deg);
         if (TauP_Tool.DEBUG) {
@@ -820,7 +823,7 @@ public class SimpleSeismicPhase implements SeismicPhase {
      */
     @Deprecated
     public List<Arrival> calcPierce(double deg) throws TauModelException {
-        List<Arrival> arrivals = calcTime(deg);
+        List<Arrival> arrivals = calcTime(DistanceRay.ofDegrees(deg));
         for (Arrival a : arrivals) {
             a.getPierce(); // side effect calc pierce
         }
@@ -1043,7 +1046,7 @@ public class SimpleSeismicPhase implements SeismicPhase {
      */
     @Deprecated
     public List<Arrival> calcPath(double deg) {
-        List<Arrival> arrivals = calcTime(deg);
+        List<Arrival> arrivals = calcTime(DistanceRay.ofDegrees(deg));
         for (Arrival a : arrivals) {
             a.getPath(); // side effect calculates path
         }

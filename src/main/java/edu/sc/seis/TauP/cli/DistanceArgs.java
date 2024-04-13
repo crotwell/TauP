@@ -16,9 +16,16 @@ public class DistanceArgs {
         for (Double d : distArgs.degreesList) {
             out.add(DistanceRay.ofDegrees(d));
         }
+        for (Double d : distArgs.exactDegreesList) {
+            out.add(ExactDistanceRay.ofDegrees(d));
+        }
         for (Double d : distArgs.distKilometersList) {
             out.add(DistanceRay.ofKilometers(d));
         }
+        for (Double d : distArgs.exactDistKilometersList) {
+            out.add(ExactDistanceRay.ofKilometers(d));
+        }
+
         if (hasEventLatLon() && !hasStationLatLon() && getAzimuth() != null) {
             List<DistanceRay> evtOut = new ArrayList<>();
             for (DistanceRay dr : out) {
@@ -206,15 +213,28 @@ public class DistanceArgs {
 
     static class DistanceArgsInner {
 
-        @CommandLine.Option(names={"--deg", "--degrees"}, paramLabel="d", description="distance in degrees", split=",")
+        @CommandLine.Option(names={"--deg", "--degree"}, paramLabel="d", description="distance in degrees", split=",")
         protected List<Double> degreesList = new ArrayList<Double>();
+
+
+        @CommandLine.Option(names={"--exactdegree"}, paramLabel="d",
+                description="exact distance traveled in degrees, not 360-d", split=",")
+        protected List<Double> exactDegreesList = new ArrayList<Double>();
 
         /**
          * For when command line args uses --km for distance. Have to wait until
          * after the model is read in to get radius of earth.
          */
-        @CommandLine.Option(names={"--km", "--kilometers"}, paramLabel = "km", description="distance in kilometers", split=",")
+        @CommandLine.Option(names={"--km", "--kilometer"}, paramLabel = "km",
+                description="distance in kilometers", split=",")
         protected List<Double> distKilometersList = new ArrayList<Double>();
+
+        /**
+         * Exact km, no mod 360
+         */
+        @CommandLine.Option(names={ "--exactkilometer"}, paramLabel = "km",
+                description="exact distance traveled in kilometers, not 360-k", split=",")
+        protected List<Double> exactDistKilometersList = new ArrayList<Double>();
 
         @Option(names="--az", description="azimuth in degrees")
         protected Double azimuth = Double.MAX_VALUE;
@@ -267,10 +287,13 @@ public class DistanceArgs {
         protected List<Location> eventList = new ArrayList<>();
 
         @Option(names = "--geodetic",
-                description = "use geodetic latitude for distance calculations, which implies an ellipticity. Default is spherical. Note this only affects calculation of distance from lat/lon, all travel time calculations are done in a purely spherical model.")
+                description = "use geodetic latitude for distance calculations, which implies an ellipticity. "
+                        +"Default is spherical. Note this only affects calculation of distance from lat/lon, "
+                        +"all travel time calculations are done in a purely spherical model.")
         protected boolean geodetic = false;
 
-        @Option(names= "--ellipflattening", description = "Elliptical flattening for distance calculations when --geodetic, defaults to WGS84 ~ 1/298.257")
+        @Option(names= "--ellipflattening",
+                description = "Elliptical flattening for distance calculations when --geodetic, defaults to WGS84 ~ 1/298.257")
         protected double ellipflattening = DistAz.wgs85_flattening;
     }
 }

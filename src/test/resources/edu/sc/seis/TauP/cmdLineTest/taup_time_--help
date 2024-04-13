@@ -1,8 +1,9 @@
 Usage: taup time [--amp] [--debug] [--first] [--geodetic] [--help] [--rayp]
                  [--time] [--az=<azimuth>] [--baz=<backAzimuth>]
                  [--ellipflattening=<ellipflattening>]
-                 [--prop=<toolPropsFilename>] [--deg=d[,d...]]... [--km=km[,
-                 km...]]... [-p=<phaseNames>[,<phaseNames>...]]...
+                 [--prop=<toolPropsFilename>] [--deg=d[,d...]]...
+                 [--exactdegree=d[,d...]]... [--exactkilometer=km[,km...]]...
+                 [--km=km[,km...]]... [-p=<phaseNames>[,<phaseNames>...]]...
                  [--rel=<relativePhaseName>[,<relativePhaseName>...]]...
                  [--shoot=<shootRaypList>[,<shootRaypList>...]]...
                  [--takeoff=<takeoffAngle>]... [--evt=<eventLatLon>
@@ -36,20 +37,23 @@ Model Args
 Distance is given by:
       --az=<azimuth>         azimuth in degrees
       --baz=<backAzimuth>    backazimuth in degrees
-      --deg, --degrees=d[,d...]
+      --deg, --degree=d[,d...]
                              distance in degrees
       --ellipflattening=<ellipflattening>
                              Elliptical flattening for distance calculations
                                when --geodetic, defaults to WGS84 ~ 1/298.257
       --evt, --event=<eventLatLon> <eventLatLon>
                              event latitude and longitude
+      --exactdegree=d[,d...] exact distance traveled in degrees, not 360-d
+      --exactkilometer=km[,km...]
+                             exact distance traveled in kilometers, not 360-k
       --geodetic             use geodetic latitude for distance calculations,
                                which implies an ellipticity. Default is
                                spherical. Note this only affects calculation of
                                distance from lat/lon, all travel time
                                calculations are done in a purely spherical
                                model.
-      --km, --kilometers=km[,km...]
+      --km, --kilometer=km[,km...]
                              distance in kilometers
       --shoot, --shootray=<shootRaypList>[,<shootRaypList>...]
                              ray parameter from the source in s/deg up or down

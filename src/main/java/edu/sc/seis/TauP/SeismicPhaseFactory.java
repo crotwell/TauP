@@ -235,7 +235,7 @@ public class SeismicPhaseFactory {
             SimpleSeismicPhase scatPhase = SeismicPhaseFactory.createPhase(in_scat[1],
                     scatTMod, scat.depth, receiverDepth, debug);
 
-            List<Arrival> inArrivals = inPhase.calcTime(scat.dist.getDegrees(tMod.getRadiusOfEarth()));
+            List<Arrival> inArrivals = inPhase.calcTime(scat.dist);
             if (inArrivals.size() == 0) {
                 throw new ScatterArrivalFailException("No inbound arrivals to the scatterer for "+name
                         +" at "+scat.depth+" km depth and "+scat.dist.getDegrees(tMod.getRadiusOfEarth())+" deg. Distance range for scatterer at this depth is "+inPhase.getMinDistanceDeg()+" "+inPhase.getMaxDistanceDeg()+" deg.");

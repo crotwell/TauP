@@ -228,7 +228,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
             double degrees = distVal.getDegrees(getRadiusOfEarth());
             for (int phaseNum = 0; phaseNum < phaseList.size(); phaseNum++) {
                 phase = phaseList.get(phaseNum);
-                List<Arrival> phaseArrivals = phase.calcTime(degrees);
+                List<Arrival> phaseArrivals = phase.calcTime(distVal);
                 Arrival relativeArrival = calculateRelativeArrival(degrees);
                 for (Arrival arrival : phaseArrivals) {
                     arrival.setRelativeToArrival(relativeArrival);
