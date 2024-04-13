@@ -93,16 +93,27 @@ public class GraphicOutputTypeArgs  {
     }
 
     public String getOutFileExtension() {
-        String extension = "text";
-        if (isSVG()) {
-            extension = "svg";
-        } else if (isJSON()) {
-            extension = "json";
-        } else if (isGMT()) {
-            extension = "gmt";
+        String ext;
+        if (extension != null) {
+            return extension;
+        } else {
+            ext = "text";
         }
-        return extension;
+        if (isSVG()) {
+            ext = "svg";
+        } else if (isJSON()) {
+            ext = "json";
+        } else if (isGMT()) {
+            ext = "gmt";
+        }
+        return ext;
     }
+
+    public void setOutFileExtension(String ext) {
+        extension = ext;
+    }
+
+    protected String extension = null;
 
 
     public String getOutFileBase() {
@@ -118,6 +129,12 @@ public class GraphicOutputTypeArgs  {
         this.outFileBase = outfile;
     }
 
+    public boolean isStdout() {
+        if(getOutFileBase() == null || getOutFileBase().length() == 0 || getOutFileBase().equals("stdout")) {
+            return true;
+        }
+        return false;
+    }
     public String getOutFile() {
         if(getOutFileBase() == null || getOutFileBase().length() == 0 || getOutFileBase().equals("stdout")) {
             return "stdout";

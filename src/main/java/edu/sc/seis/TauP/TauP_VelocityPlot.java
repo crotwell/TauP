@@ -38,15 +38,20 @@ public class TauP_VelocityPlot extends TauP_Tool {
         }
 
         if (_isCsv) {
+            outputTypeArgs.setOutFileExtension("csv");
             for (VelocityModel vMod : vModList) {
-                outputTypeArgs.setOutFileBase(vMod.modelName + "_vel");
+                if (!outputTypeArgs.isStdout()) {
+                    outputTypeArgs.setOutFileBase(vMod.modelName);
+                }
                 PrintWriter writer = outputTypeArgs.createWriter();
                 printCSV(writer, vMod);
                 writer.close();
             }
         } else if (getOutputFormat().equals(OutputTypes.TEXT)) {
             for (VelocityModel vMod : vModList) {
-                outputTypeArgs.setOutFileBase(vMod.modelName + "_vel");
+                if (!outputTypeArgs.isStdout()) {
+                    outputTypeArgs.setOutFileBase(vMod.modelName + "_vel");
+                }
                 PrintWriter writer = outputTypeArgs.createWriter();
                 vMod.writeToND(writer);
                 writer.close();
@@ -374,7 +379,9 @@ public class TauP_VelocityPlot extends TauP_Tool {
 
     @Override
     public void validateArguments() throws TauModelException {
-
+        if (_isCsv && ! outputTypeArgs.isText()) {
+            throw new CommandLine.ParameterException(spec.commandLine(), "cannot use --csv with other file type");
+        }
     }
 
     public GraphicOutputTypeArgs getOutputTypeArgs() {
