@@ -25,7 +25,10 @@ public class GraphicOutputTypeArgs  {
     public String mapWidthUnit = "i";
 
     public String getPsFile() {
-        return psFile;
+        if (psFile != null) {
+            return psFile;
+        }
+        return getOutFileBase()+".ps";
     }
 
     public void setPsFile(String psFile) {

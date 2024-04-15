@@ -2,8 +2,8 @@ Usage: taup velmerge [--debug] [--help] [--smoothbot] [--smoothtop] [--verbose]
                      [--elev=<elevation>] [-o=<outFile>]
                      [--prop=<toolPropsFilename>] [[-mod=<modelname>]
                      [-h=<sourceDepth>] [--stadepth=depth] [--scat=s s]...]
-                     (--modmerge=<modelName> | --ndmerge=<nDModelFilename> |
-                     --tvelmerge=<tvelModelFilename>)
+                     (--ndmerge=<nDModelFilename> |
+                     --tvelmerge=<tvelModelFilename> | --modmerge=<modelName>)
 merge part of one model into another
       --debug              enable debugging output
       --elev=<elevation>   increase topmost layer by elevation (meters)

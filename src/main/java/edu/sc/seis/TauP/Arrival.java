@@ -558,6 +558,12 @@ public class Arrival {
         return desc;
     }
 
+    /**
+     * Create TimeDist point for source, first point in pierce or path.
+     */
+    public TimeDist getSourceTimeDist() {
+        return new TimeDist(getRayParam(), 0, 0, getSourceDepth());
+    }
     public int getNumPiercePoints() {
         if(pierce != null) {
             return pierce.length;

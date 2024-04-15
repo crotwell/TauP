@@ -1,51 +1,22 @@
-Usage: taup wkbj [arguments]
-  or, for purists, java edu.sc.seis.TauP.TauP_WKBJ [arguments]
-
-Arguments are:
--ph phase list     -- comma separated phase list
--pf phasefile      -- file containing phases
-
--mod[el] modelname -- use velocity model "modelname" for calculations
-                      Default is iasp91.
-
--h depth           -- source depth in km
-
---stadepth depth   -- receiver depth in km
---scat[ter] depth deg   -- scattering depth and distance
-
-Distance is given by:
-
--deg degrees       -- distance in degrees,
--km kilometers     -- distance in kilometers,
-                      assumes radius of earth is 6371km,
-
-or by giving the station and event latitude and lonitude,
-                      assumes a spherical earth,
-
--sta[tion] lat lon -- sets the station latitude and longitude
--evt       lat lon -- sets the event latitude and longitude
-
-or by giving the takeoff angle,
---takeoff angle    -- takeoff angle from the source
-                      zero is down, 90 horizontal, 180 is up
-
-or by giving the ray parameter,
---shootray param   -- ray parameter from the source in s/deg
-                      up or down is determined by the phase
-
-
---first            -- only output the first arrival for each phase, no triplications
---rayp             -- only output the ray parameter
---time             -- only output travel time
---rel phasename    -- also output relative travel time
-
---json             -- output travel times as json
-
-
--o [stdout|outfile]         -- output is redirected to stdout or to the "outfile" file
---prop [propfile]   -- set configuration properties
---debug             -- enable debugging output
---verbose           -- enable verbose output
---version           -- print the version
---help              -- print this out, but you already know that!
-
+Usage: taup [--help] [-V] [COMMAND]
+The TauP Toolkit
+      --help      display this help message
+  -V, --version   display version info
+Commands:
+  time       calculate travel times for seismic phases in an earth model
+  pierce     calculate pierce points for phases at discontinuities in the model
+  path       plot ray paths through the earth
+  create     Create .taup file from velocity model
+  curve      plot traveltime and other curves for phases
+  refltrans  plot reflection and transmission coefficients for a discontinuity
+  setmseed3  save travel times in the extra header of miniseed3 files
+  setsac     set headers to travel times of phases using depth and distance
+               from headers
+  velplot    plot velocity vs depth for a model
+  velmerge   merge part of one model into another
+  table      create a table of travel times for a range of depths and distances
+  wavefront  plot wavefronts of seismic phases at steps in time
+  phase      describe a seismic phase in the current model
+  web        web based gui for the TauP Toolkit
+  version    print version
+  help       Display help information about the specified command.

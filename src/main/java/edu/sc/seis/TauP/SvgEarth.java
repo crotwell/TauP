@@ -12,6 +12,61 @@ public class SvgEarth {
 
     private static final float plotOverScaleFactor = 1.1f;
 
+    public static float[] calcEarthScaleTransForPhaseList(List<SeismicPhase> phaseList, DistDepthRange distDepthRange) {
+        float R = 6371;
+        if (phaseList.size() > 0) {
+            R = (float) phaseList.get(0).getTauModel().getRadiusOfEarth();
+        }
+        float minDist = 0;
+        float maxDist = 0;
+        double minDepth = 0;
+        double maxDepth = 0;
+        // show whole earth if no arrivals?
+        float[] scaleTrans;
+        if (phaseList.size() == 0 && ! distDepthRange.hasDistAxisMinMax() && ! distDepthRange.hasDepthAxisMinMax()) {
+            // no arrivals, show whole earth
+            maxDist = (float) Math.PI;
+            scaleTrans = new float[]{1, 0, 0, minDist, maxDist};
+        } else if (distDepthRange.hasDistAxisMinMax() && distDepthRange.hasDistAxisMinMax()) {
+            // user specified box
+            double[] bbox = SvgEarth.findPierceBoundingBox(distDepthRange.getDistAxisMinMax(), distDepthRange.getDepthAxisMinMax(), R);
+            scaleTrans = SvgEarth.calcZoomScaleTranslate((float) bbox[0], (float) bbox[1], (float) bbox[2], (float) bbox[3],
+                    R, (float) distDepthRange.getDistAxisMinMax()[0], (float) distDepthRange.getDistAxisMinMax()[1]);
+        } else {
+            for (SeismicPhase phase : phaseList) {
+                if (phase.getMaxDistance() > maxDist) {
+                    maxDist = (float) phase.getMaxDistance();
+                }
+                if (phase.getMinDistance() < minDist) {
+                    minDist = (float) phase.getMinDistance();
+                }
+                for (SeismicPhaseSegment phaseSeg : phase.getPhaseSegments()) {
+                    double[] depths = phaseSeg.getDepthRange();
+                    for (double d : depths) {
+                        if (d < minDepth) { minDepth = d;}
+                        if (d > maxDepth) { maxDepth = d;}
+                    }
+                }
+            }
+
+            if (distDepthRange.hasDistAxisMinMax()) {
+                minDist = (float) distDepthRange.getDistAxisMinMax()[0];
+                maxDist = (float) distDepthRange.getDistAxisMinMax()[1];
+            }
+            System.err.println("minmax depth: "+minDepth+" "+maxDepth+"  dist: "+minDist*180/Math.PI+" "+maxDist*180/Math.PI);
+            double[] bbox = SvgEarth.findPierceBoundingBox(new double[] {minDist*180/Math.PI, maxDist*180/Math.PI}, new double[]{minDepth, maxDepth}, R);
+            scaleTrans = SvgEarth.calcZoomScaleTranslate((float) bbox[0], (float) bbox[1], (float) bbox[2], (float) bbox[3],
+                    R, minDist, maxDist);
+        }
+        if (scaleTrans[0] < 1.25) {
+            // close to whole earth, no scale
+            minDist = 0;
+            maxDist = (float)Math.PI;
+            scaleTrans = new float[]{1, 0, 0, minDist, maxDist};
+        }
+        return scaleTrans;
+    }
+
     public static float[] calcEarthScaleTrans(List<Arrival> arrivalList, DistDepthRange distDepthRange) {
         float R = 6371;
         if (arrivalList.size()> 0) {R = (float) arrivalList.get(0).getPhase().getTauModel().getRadiusOfEarth();}
@@ -84,21 +139,21 @@ public class SvgEarth {
         return scaleTrans;
     }
 
-    public static double[] findPierceBoundingBox(double[] distRange, double[] depthRange, double R) {
-        double xmin = Math.sin(distRange[0] * Math.PI / 180) * (R - depthRange[0]);
+    public static double[] findPierceBoundingBox(double[] distRangeDeg, double[] depthRange, double R) {
+        double xmin = Math.sin(distRangeDeg[0] * Math.PI / 180) * (R - depthRange[0]);
         double xmax = xmin;
-        double ymin = Math.cos(distRange[0] * Math.PI / 180) * (R - depthRange[0]);
+        double ymin = Math.cos(distRangeDeg[0] * Math.PI / 180) * (R - depthRange[0]);
         double ymax = ymin;
-        for (int i = 0; i < distRange.length; i++) {
+        for (int i = 0; i < distRangeDeg.length; i++) {
             for (int j = 0; j < depthRange.length; j++) {
-                double x = Math.sin(distRange[i] * Math.PI / 180) * (R - depthRange[j]);
+                double x = Math.sin(distRangeDeg[i] * Math.PI / 180) * (R - depthRange[j]);
                 if (x < xmin) {
                     xmin = x;
                 }
                 if (x > xmax) {
                     xmax = x;
                 }
-                double y = Math.cos(distRange[i] * Math.PI / 180) * (R - depthRange[j]);
+                double y = Math.cos(distRangeDeg[i] * Math.PI / 180) * (R - depthRange[j]);
                 if (y < ymin) {
                     ymin = y;
                 }
@@ -340,28 +395,20 @@ public class SvgEarth {
         zoomYMax = (float) minmax[3];
         System.err.println("pierce bound: "+zoomXMin+" "+zoomXMax+"  Y: "+zoomYMin+" "+zoomYMax);
         for (Arrival arr : arrivals) {
-            if (arr.getPhase() instanceof ScatteredSeismicPhase) {
-                TimeDist[] pierce = arr.getPierce();
-                for (TimeDist td : pierce) {
-                    if (td.getDistRadian() > maxDist) {
-                        maxDist = td.getDistRadian();
-                    }
-                    if (td.getDistRadian() < minDist) {
-                        minDist = td.getDistRadian();
-                    }
+            TimeDist[] pierce = arr.getPierce();
+            for (TimeDist td : pierce) {
+                if (td.getDistRadian() > maxDist) {
+                    maxDist = td.getDistRadian();
                 }
-            }
-            TimeDist furthest = arr.getFurthestPierce();
-            if (furthest.getDistRadian() > maxDist) {
-                maxDist = furthest.getDistRadian();
-            }
-            TimeDist deepest = arr.getDeepestPierce();
-            if (deepest.getDepth() > maxDepth) {
-                maxDepth = deepest.getDepth();
-            }
-            TimeDist shallowest = arr.getShallowestPierce();
-            if (shallowest.getDepth() < minDepth) {
-                minDepth = shallowest.getDepth();
+                if (td.getDistRadian() < minDist) {
+                    minDist = td.getDistRadian();
+                }
+                if (td.getDepth() < minDepth) {
+                    minDepth = td.getDepth();
+                }
+                if (td.getDepth() > maxDepth) {
+                    maxDepth = td.getDepth();
+                }
             }
         }
         return calcZoomScaleTranslate( zoomXMin,  zoomXMax,  zoomYMin,  zoomYMax, R, (float)minDist, (float)maxDist);

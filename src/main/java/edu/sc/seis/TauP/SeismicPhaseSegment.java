@@ -215,6 +215,30 @@ public class SeismicPhaseSegment {
 		}
 		return depthRange;
 	}
+
+	public double[] getDepthRange() {
+		double[] depthRange;
+		if (isFlat) {
+			if (prevEndAction == null) {
+				depthRange = new double[0];
+			} else if (prevEndAction == PhaseInteraction.DIFFRACT) {
+				depthRange = new double[] {tMod.getTauBranch(endBranch, isPWave).getBotDepth()};
+			} else if (prevEndAction == PhaseInteraction.HEAD) {
+				depthRange = new double[] { tMod.getTauBranch(endBranch, isPWave).getTopDepth()};
+			} else if (prevEndAction == PhaseInteraction.KMPS) {
+				depthRange = new double[] {0};
+			} else {
+				throw new RuntimeException("isFlat but prev not HEAD or DIFFRACT: "+endActionToString(prevEndAction));
+			}
+		} else if (isDownGoing) {
+			depthRange = new double[] { tMod.getTauBranch(startBranch, isPWave).getTopDepth(),
+					tMod.getTauBranch(endBranch, isPWave).getBotDepth() };
+		} else {
+			depthRange = new double[] { tMod.getTauBranch(startBranch, isPWave).getBotDepth(),
+					tMod.getTauBranch(endBranch, isPWave).getTopDepth() };
+		}
+		return depthRange;
+	}
 	public String getUpDownJSON() {
 		String upDown;
 		if (isFlat) {
