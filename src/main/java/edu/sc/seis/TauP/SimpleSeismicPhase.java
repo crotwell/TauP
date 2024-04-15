@@ -1041,6 +1041,11 @@ public class SimpleSeismicPhase implements SeismicPhase {
         return pierce;
     }
 
+    @Override
+    public int getNumRays() {
+        return getRayParams().length;
+    }
+
     /** calculates the paths this phase takes through the earth model.
      * @deprecated  Use the getPath() method on each Arrival from calcTime()
      */

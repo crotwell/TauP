@@ -185,6 +185,11 @@ public class ScatteredSeismicPhase implements SeismicPhase {
     }
 
     @Override
+    public int getNumRays() {
+        return scatteredPhase.getNumRays();
+    }
+
+    @Override
     public double getDist(int i) {
         return inboundArrival.getDist()+scatteredPhase.getDist(i);
     }

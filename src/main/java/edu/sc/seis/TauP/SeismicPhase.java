@@ -304,4 +304,6 @@ public interface SeismicPhase extends Serializable, Cloneable {
         desc += indent+"]\n";
         return desc;
     }
+
+    public int getNumRays();
 }
