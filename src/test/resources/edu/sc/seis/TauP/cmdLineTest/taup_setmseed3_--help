@@ -1,6 +1,7 @@
 Usage: taup setmseed3 [--amp] [--debug] [--first] [--geodetic] [--help]
-                      [--rayp] [--time] [--az=<azimuth>] [--baz=<backAzimuth>]
-                      [--eh=<ehKey>] [--ellipflattening=<ellipflattening>]
+                      [--rayp] [--time] [--verbose] [--az=<azimuth>]
+                      [--baz=<backAzimuth>] [--eh=<ehKey>]
+                      [--ellipflattening=<ellipflattening>]
                       [--prop=<toolPropsFilename>] [--qml=<quakemlFilename>]
                       [--qmltol=<quakeOTimeTol>]
                       [--staxml=<stationxmlFilename>] [--deg=d[,d...]]...
@@ -16,7 +17,7 @@ Usage: taup setmseed3 [--amp] [--debug] [--first] [--geodetic] [--help]
 save travel times in the extra header of miniseed3 files
       [<mseed3FileNames>...]
       --amp                  amplitude factor for each phase
-      --debug                display debugging message
+      --debug                enable debugging output
       --eh=<ehKey>           key to store full output within extra headers
                                within, otherwise use abbreviateg 'bag' markers
       --first, --onlyfirst   only output the first arrival for each phase, no
@@ -37,6 +38,7 @@ save travel times in the extra header of miniseed3 files
       --staxml=<stationxmlFilename>
                              StationXML file to extract station lat/lon from
       --time, --onlytime     only output travel time
+      --verbose              enable verbose output
 Model Args
   -h, --sourcedepth=<sourceDepth>
                              source depth in km

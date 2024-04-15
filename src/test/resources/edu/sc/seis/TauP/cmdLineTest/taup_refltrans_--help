@@ -1,5 +1,5 @@
 Usage: taup refltrans [--abs] [--debug] [--down] [--help] [--pwave] [--shwave]
-                      [--swave] [--up] [--anglestep=<angleStep>]
+                      [--swave] [--up] [--verbose] [--anglestep=<angleStep>]
                       [--depth=<depth>] [--mapwidth=<mapwidth>]
                       [--mapwidthunit=<mapWidthUnit>] [-o=<outFile>]
                       [--prop=<toolPropsFilename>] [--rpstep=<rayparamStep>]
@@ -15,7 +15,7 @@ plot reflection and transmission coefficients for a discontinuity
       --abs                absolute value of amplitude factor
       --anglestep=<angleStep>
                            step in degrees when x is degrees
-      --debug              display debugging message
+      --debug              enable debugging output
       --depth=<depth>      Depth in model to get boundary parameters
       --down
       --help               display this help message
@@ -35,6 +35,7 @@ plot reflection and transmission coefficients for a discontinuity
       --shwave             incident SH wave
       --swave              incident S wave
       --up
+      --verbose            enable verbose output
   -x=<xAxisType>           X axis data type, one of degree, rayparam, default
                              is degree
       --xminmax=x x        min and max x axis for plotting

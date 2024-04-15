@@ -1,5 +1,5 @@
-Usage: taup path [--debug] [--geodetic] [--help] [--withtime] [--az=<azimuth>]
-                 [--baz=<backAzimuth>] [--color=<coloring>]
+Usage: taup path [--debug] [--geodetic] [--help] [--verbose] [--withtime]
+                 [--az=<azimuth>] [--baz=<backAzimuth>] [--color=<coloring>]
                  [--ellipflattening=<ellipflattening>] [--mapwidth=<mapwidth>]
                  [--mapwidthunit=<mapWidthUnit>] [--maxpathinc=<maxPathInc>]
                  [-o=<outFile>] [--prop=<toolPropsFilename>]
@@ -15,7 +15,7 @@ Usage: taup path [--debug] [--geodetic] [--help] [--withtime] [--az=<azimuth>]
                  --svg]
 plot ray paths through the earth
       --color=<coloring>    style of coloring for paths and wavefronts
-      --debug               display debugging message
+      --debug               enable debugging output
       --degminmax=deg deg   min and max distance in degrees for plotting
       --depthminmax=km km   min and max depth, km,  for plotting
       --help                display this help message
@@ -30,6 +30,7 @@ plot ray paths through the earth
                             seismic phase names
       --prop=<toolPropsFilename>
                             load defaults from properties file
+      --verbose             enable verbose output
       --withtime            include time for each path point
       --xaxis=<distAxisType>
                             x axis type, the distance axis, one of degree,

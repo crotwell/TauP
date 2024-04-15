@@ -1,6 +1,6 @@
 Usage: taup setsac [--amp] [--debug] [--evdpkm] [--first] [--geodetic] [--help]
-                   [--rayp] [--time] [--az=<azimuth>] [--baz=<backAzimuth>]
-                   [--ellipflattening=<ellipflattening>]
+                   [--rayp] [--time] [--verbose] [--az=<azimuth>]
+                   [--baz=<backAzimuth>] [--ellipflattening=<ellipflattening>]
                    [--prop=<toolPropsFilename>] [--deg=d[,d...]]...
                    [--exactdegree=d[,d...]]... [--exactkilometer=km[,km...]]...
                    [--km=km[,km...]]... [-p=<phaseNames>[,<phaseNames>...]]...
@@ -13,7 +13,7 @@ Usage: taup setsac [--amp] [--debug] [--evdpkm] [--first] [--geodetic] [--help]
 set headers to travel times of phases using depth and distance from headers
       [<sacFileNames>...]
       --amp                  amplitude factor for each phase
-      --debug                display debugging message
+      --debug                enable debugging output
       --evdpkm               sac depth header is in km, default is meters
       --first, --onlyfirst   only output the first arrival for each phase, no
                                triplications
@@ -26,6 +26,7 @@ set headers to travel times of phases using depth and distance from headers
       --rel=<relativePhaseName>[,<relativePhaseName>...]
                              times relative to the first of the given phases
       --time, --onlytime     only output travel time
+      --verbose              enable verbose output
 Model Args
   -h, --sourcedepth=<sourceDepth>
                              source depth in km

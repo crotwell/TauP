@@ -1,10 +1,10 @@
-Usage: taup table [--debug] [--help] [--header=<headerFile>]
+Usage: taup table [--debug] [--help] [--verbose] [--header=<headerFile>]
                   [--prop=<toolPropsFilename>] [-p=<phaseNames>[,
                   <phaseNames>...]]... [[-mod=<modelname>] [-h=<sourceDepth>]
                   [--stadepth=depth] [--scat=s s]...] [--text | --json | --csv
                   | --locsat]
 create a table of travel times for a range of depths and distances
-      --debug             display debugging message
+      --debug             enable debugging output
       --header=<headerFile>
                           reads depth and distance spacing data
                                                 from a LOCSAT style file.
@@ -13,6 +13,7 @@ create a table of travel times for a range of depths and distances
                           seismic phase names
       --prop=<toolPropsFilename>
                           load defaults from properties file
+      --verbose           enable verbose output
 Model Args
   -h, --sourcedepth=<sourceDepth>
                           source depth in km

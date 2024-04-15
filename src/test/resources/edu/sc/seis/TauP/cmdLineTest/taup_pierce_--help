@@ -1,6 +1,6 @@
 Usage: taup pierce [--amp] [--debug] [--first] [--geodetic] [--help]
                    [--nodiscon] [--rayp] [--rev] [--time] [--turn] [--under]
-                   [--az=<azimuth>] [--baz=<backAzimuth>]
+                   [--verbose] [--az=<azimuth>] [--baz=<backAzimuth>]
                    [--ellipflattening=<ellipflattening>]
                    [--prop=<toolPropsFilename>] [--deg=d[,d...]]...
                    [--exactdegree=d[,d...]]... [--exactkilometer=km[,km...]]...
@@ -14,7 +14,7 @@ Usage: taup pierce [--amp] [--debug] [--first] [--geodetic] [--help]
                    [--scat=s s]...] [--text | --json]
 calculate pierce points for phases at discontinuities in the model
       --amp                  amplitude factor for each phase
-      --debug                display debugging message
+      --debug                enable debugging output
       --first, --onlyfirst   only output the first arrival for each phase, no
                                triplications
       --help                 display this help message
@@ -33,6 +33,7 @@ calculate pierce points for phases at discontinuities in the model
       --time, --onlytime     only output travel time
       --turn                 only prints bottom turning points, e.g. v
       --under                only prints underside reflection points, e.g. ^
+      --verbose              enable verbose output
 Model Args
   -h, --sourcedepth=<sourceDepth>
                              source depth in km

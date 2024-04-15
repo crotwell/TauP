@@ -1,5 +1,5 @@
 Usage: taup wavefront [--colortime] [--debug] [--help] [--negdist]
-                      [--timefiles] [--color=<coloring>]
+                      [--timefiles] [--verbose] [--color=<coloring>]
                       [--mapwidth=<mapwidth>] [--mapwidthunit=<mapWidthUnit>]
                       [-o=<outFile>] [--prop=<toolPropsFilename>]
                       [--rays=<numRays>] [--timestep=<timeStep>]
@@ -12,7 +12,7 @@ plot wavefronts of seismic phases at steps in time
       --color=<coloring>    style of coloring for paths and wavefronts
       --colortime           generate css colors by time, default is by phase
                               name
-      --debug               display debugging message
+      --debug               enable debugging output
       --degminmax=deg deg   min and max distance in degrees for plotting
       --depthminmax=km km   min and max depth, km,  for plotting
       --help                display this help message
@@ -30,6 +30,7 @@ plot wavefronts of seismic phases at steps in time
       --timefiles           outputs each time into a separate .ps file within
                               the gmt script.
       --timestep=<timeStep> steps in time (seconds) for output
+      --verbose             enable verbose output
       --xaxis=<distAxisType>
                             x axis type, the distance axis, one of degree,
                               radian, kilometer

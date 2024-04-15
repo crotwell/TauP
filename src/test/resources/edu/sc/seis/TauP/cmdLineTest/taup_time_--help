@@ -1,5 +1,5 @@
 Usage: taup time [--amp] [--debug] [--first] [--geodetic] [--help] [--rayp]
-                 [--time] [--az=<azimuth>] [--baz=<backAzimuth>]
+                 [--time] [--verbose] [--az=<azimuth>] [--baz=<backAzimuth>]
                  [--ellipflattening=<ellipflattening>]
                  [--prop=<toolPropsFilename>] [--deg=d[,d...]]...
                  [--exactdegree=d[,d...]]... [--exactkilometer=km[,km...]]...
@@ -12,7 +12,7 @@ Usage: taup time [--amp] [--debug] [--first] [--geodetic] [--help] [--rayp]
                  [--scat=s s]...] [--text | --json]
 calculate travel times for seismic phases in an earth model
       --amp                  amplitude factor for each phase
-      --debug                display debugging message
+      --debug                enable debugging output
       --first, --onlyfirst   only output the first arrival for each phase, no
                                triplications
       --help                 display this help message
@@ -24,6 +24,7 @@ calculate travel times for seismic phases in an earth model
       --rel=<relativePhaseName>[,<relativePhaseName>...]
                              times relative to the first of the given phases
       --time, --onlytime     only output travel time
+      --verbose              enable verbose output
 Model Args
   -h, --sourcedepth=<sourceDepth>
                              source depth in km

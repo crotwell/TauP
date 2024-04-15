@@ -1,11 +1,12 @@
-Usage: taup create [--debug] [--help] [--prop=<toolPropsFilename>]
+Usage: taup create [--debug] [--help] [--verbose] [--prop=<toolPropsFilename>]
                    (--mod=<modelName> | --nd=<nDModelFilename> |
                    --tvel=<tvelModelFilename>)
 Create .taup file from velocity model
-      --debug             display debugging message
+      --debug             enable debugging output
       --help              display this help message
       --prop=<toolPropsFilename>
                           load defaults from properties file
+      --verbose           enable verbose output
 Velocity Model
       --mod=<modelName>   velocity file, format is guessed
       --nd=<nDModelFilename>

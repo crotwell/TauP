@@ -1,13 +1,14 @@
-Usage: taup curve [--debug] [--help] [--xlog] [--ylog] [--mapwidth=<mapwidth>]
-                  [--mapwidthunit=<mapWidthUnit>] [-o=<outFile>]
-                  [--prop=<toolPropsFilename>] [--reddeg=<reduceVelDeg>]
-                  [--redkm=<reduceVelKm>] [--rel=<relativePhaseName>]
-                  [-x=<xAxisType>] [-y=<yAxisType>] [-p=<phaseNames>[,
-                  <phaseNames>...]]... [--xminmax=x x]... [--yminmax=y y]...
-                  [[-mod=<modelname>] [-h=<sourceDepth>] [--stadepth=depth]
-                  [--scat=s s]...] [--text | --json | --gmt | --svg]
+Usage: taup curve [--debug] [--help] [--verbose] [--xlog] [--ylog]
+                  [--mapwidth=<mapwidth>] [--mapwidthunit=<mapWidthUnit>]
+                  [-o=<outFile>] [--prop=<toolPropsFilename>]
+                  [--reddeg=<reduceVelDeg>] [--redkm=<reduceVelKm>]
+                  [--rel=<relativePhaseName>] [-x=<xAxisType>] [-y=<yAxisType>]
+                  [-p=<phaseNames>[,<phaseNames>...]]... [--xminmax=x x]...
+                  [--yminmax=y y]... [[-mod=<modelname>] [-h=<sourceDepth>]
+                  [--stadepth=depth] [--scat=s s]...] [--text | --json | --gmt
+                  | --svg]
 plot traveltime and other curves for phases
-      --debug              display debugging message
+      --debug              enable debugging output
       --help               display this help message
       --mapwidth=<mapwidth>
                            plot width in inches for GMT, pixels for SVG.
@@ -27,6 +28,7 @@ plot traveltime and other curves for phases
       --rel=<relativePhaseName>
                            plot relative to the given phase, no effect unless
                              distance/time
+      --verbose            enable verbose output
   -x=<xAxisType>           X axis data type, one of radian, radian180, degree,
                              degree180, kilometer, kilometer180, rayparam,
                              time, tau, turndepth, amp, amppsv, ampsh,

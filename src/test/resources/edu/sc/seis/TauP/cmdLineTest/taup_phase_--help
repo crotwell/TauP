@@ -1,13 +1,14 @@
-Usage: taup phase [--debug] [--help] [--prop=<toolPropsFilename>]
+Usage: taup phase [--debug] [--help] [--verbose] [--prop=<toolPropsFilename>]
                   [-p=<phaseNames>[,<phaseNames>...]]... [[-mod=<modelname>]
                   [-h=<sourceDepth>] [--stadepth=depth] [--scat=s s]...]
 describe a seismic phase in the current model
-      --debug            display debugging message
+      --debug            enable debugging output
       --help             display this help message
   -p, --ph, --phase=<phaseNames>[,<phaseNames>...]
                          seismic phase names
       --prop=<toolPropsFilename>
                          load defaults from properties file
+      --verbose          enable verbose output
 Model Args
   -h, --sourcedepth=<sourceDepth>
                          source depth in km

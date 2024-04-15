@@ -1,13 +1,13 @@
-Usage: taup velplot [--csv] [--debug] [--help] [--mapwidth=<mapwidth>]
-                    [--mapwidthunit=<mapWidthUnit>] [-o=<outFile>]
-                    [--prop=<toolPropsFilename>] [-x=<xAxisType>]
-                    [-y=<yAxisType>] [--xminmax=x x]... [--yminmax=y y]...
-                    (--mod=<modelName> | --nd=<nDModelFilename> |
-                    --tvel=<tvelModelFilename>)... [--text | --json | --gmt |
-                    --svg]
+Usage: taup velplot [--csv] [--debug] [--help] [--verbose]
+                    [--mapwidth=<mapwidth>] [--mapwidthunit=<mapWidthUnit>]
+                    [-o=<outFile>] [--prop=<toolPropsFilename>]
+                    [-x=<xAxisType>] [-y=<yAxisType>] [--xminmax=x x]...
+                    [--yminmax=y y]... (--mod=<modelName> |
+                    --nd=<nDModelFilename> | --tvel=<tvelModelFilename>)...
+                    [--text | --json | --gmt | --svg]
 plot velocity vs depth for a model
       --csv                outputs as csv
-      --debug              display debugging message
+      --debug              enable debugging output
       --help               display this help message
       --mapwidth=<mapwidth>
                            plot width in inches for GMT, pixels for SVG.
@@ -16,6 +16,7 @@ plot velocity vs depth for a model
   -o, --output=<outFile>   output to file, default is stdout.
       --prop=<toolPropsFilename>
                            load defaults from properties file
+      --verbose            enable verbose output
   -x=<xAxisType>           X axis data type, one of depth, radius, velocity,
                              velocity_p, velocity_s, slowness, slowness_p,
                              slowness_s, density

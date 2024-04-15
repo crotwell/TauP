@@ -1,11 +1,11 @@
-Usage: taup velmerge [--debug] [--help] [--smoothbot] [--smoothtop]
+Usage: taup velmerge [--debug] [--help] [--smoothbot] [--smoothtop] [--verbose]
                      [--elev=<elevation>] [-o=<outFile>]
                      [--prop=<toolPropsFilename>] [[-mod=<modelname>]
                      [-h=<sourceDepth>] [--stadepth=depth] [--scat=s s]...]
                      (--modmerge=<modelName> | --ndmerge=<nDModelFilename> |
                      --tvelmerge=<tvelModelFilename>)
 merge part of one model into another
-      --debug              display debugging message
+      --debug              enable debugging output
       --elev=<elevation>   increase topmost layer by elevation (meters)
       --help               display this help message
   -o, --output=<outFile>   output to file, default is stdout.
@@ -13,6 +13,7 @@ merge part of one model into another
                            load defaults from properties file
       --smoothbot          smooth merge at bottom
       --smoothtop          smooth merge at top
+      --verbose            enable verbose output
 Model Args
   -h, --sourcedepth=<sourceDepth>
                            source depth in km
