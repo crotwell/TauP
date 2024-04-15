@@ -407,7 +407,7 @@ public class SimpleSeismicPhase implements SeismicPhase {
         }
         double deg = dv.getDegrees(getTauModel().getRadiusOfEarth());
         double tempDeg = SeismicPhase.distanceTrim180(deg);
-        if (TauP_Tool.DEBUG) {
+        if (ToolRun.DEBUG) {
             System.err.println("Calculation distance: "+tempDeg+" deg");
         }
         double deltaTemp = Math.abs((deg - tempDeg + 180) % 360 - 180);

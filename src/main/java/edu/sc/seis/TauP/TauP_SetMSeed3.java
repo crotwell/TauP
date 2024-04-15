@@ -18,7 +18,6 @@ import picocli.CommandLine;
 import javax.xml.stream.XMLStreamException;
 import java.time.Duration;
 import java.time.Instant;
-import java.time.format.DateTimeParseException;
 import java.util.*;
 
 @CommandLine.Command(name = "setmseed3", description = "save travel times in the extra header of miniseed3 files")
@@ -62,7 +61,7 @@ public class TauP_SetMSeed3 extends TauP_Time {
         }
         for (String filename : mseed3FileNames) {
             try {
-                if (verbose) {
+                if (isVerbose()) {
                     System.err.println(filename);
                 }
                 processMSeed3File(new File(filename));

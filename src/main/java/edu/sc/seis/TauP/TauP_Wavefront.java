@@ -487,7 +487,7 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
         while( ! done) {
             done = true;
             timeVal += timeStep;
-            if (verbose) {
+            if (isVerbose()) {
                 System.err.println("wavefront calc for " + timeVal);
             }
             List<ArrivalPathSegment> wavefrontSegments = new ArrayList<>();
@@ -603,7 +603,7 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
         List<SeismicPhase> phaseList = getSeismicPhases();
         for (int phaseNum = 0; phaseNum < phaseList.size(); phaseNum++) {
             phase = phaseList.get(phaseNum);
-            if (verbose) {
+            if (isVerbose()) {
                 System.err.println("Work on " + phase.getName());
             }
             double minDist = phase.getMinDistanceDeg();
@@ -623,7 +623,7 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
             while (!done) {
                 done = true;
                 timeVal += timeStep;
-                if (verbose) {
+                if (isVerbose()) {
                     System.err.println("Time " + timeVal + " for " + phase.getName() + " " + allArrival.size());
                 }
                 Arrival prevArrival = null;

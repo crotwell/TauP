@@ -128,12 +128,12 @@ public class TauP_Time extends TauP_AbstractRayTool {
                             this.getSourceDepth(),
                             this.getReceiverDepth(),
                             this.getScatterer(),
-                            DEBUG);
+                            isDEBUG());
                     relPhases.addAll(calcRelPhaseList);
                 } catch (ScatterArrivalFailException e) {
                     Alert.warning(e.getMessage(),
                             "    Skipping this relative phase");
-                    if (verbose || DEBUG) {
+                    if (isVerbose() || isDEBUG()) {
                         e.printStackTrace();
                     }
                 }
@@ -204,12 +204,12 @@ public class TauP_Time extends TauP_AbstractRayTool {
                             this.getSourceDepth(),
                             this.getReceiverDepth(),
                             this.getScatterer(),
-                            DEBUG);
+                            isDEBUG());
                     relativePhaseList.addAll(calcRelPhaseList);
                 } catch (ScatterArrivalFailException e) {
                     Alert.warning(e.getMessage(),
                             "    Skipping this relative phase");
-                    if (verbose || DEBUG) {
+                    if (isVerbose() || isDEBUG()) {
                         e.printStackTrace();
                     }
                 }
@@ -505,7 +505,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
                         prevTime = System.currentTimeMillis();
                         setSourceDepth(tempDepth);
                         currTime = System.currentTimeMillis();
-                        if(verbose) {
+                        if(isVerbose()) {
                             Alert.info("depthCorrect time="
                                     + (currTime - prevTime));
                         }
@@ -517,7 +517,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
                         tokenIn.nextToken();
                         if(tokenIn.ttype == StreamTokenizer.TT_NUMBER) {
                             double degrees = tokenIn.nval;
-                            if(DEBUG) {
+                            if(isDEBUG()) {
                                 Alert.info("degrees=" + degrees);
                             }
                             getDistanceArgs().clear();
@@ -645,7 +645,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
                         if(tokenIn.ttype == StreamTokenizer.TT_NUMBER) {
                             getDistanceArgs().setBackAzimuth(tokenIn.nval);
                             getDistanceArgs().clearEventLatLon();
-                            if(DEBUG) {
+                            if(isDEBUG()) {
                                 Alert.info("backAzimuth=" + tokenIn.nval);
                             }
                         } else {
@@ -669,14 +669,14 @@ public class TauP_Time extends TauP_AbstractRayTool {
                         tokenIn.nextToken();
                         if(tokenIn.ttype == StreamTokenizer.TT_NUMBER) {
                             double evLat = tokenIn.nval;
-                            if(DEBUG) {
+                            if(isDEBUG()) {
                                 Alert.info("eventLat=" + evLat);
                             }
                             tokenIn.nextToken();
                             if(tokenIn.ttype == StreamTokenizer.TT_NUMBER) {
                                 double evLon = tokenIn.nval;
                                 getDistanceArgs().getEventList().add( new Location(evLat, evLon));
-                                if(DEBUG) {
+                                if(isDEBUG()) {
                                     Alert.info("eventLon=" + evLon);
                                 }
                             } else {
@@ -696,13 +696,13 @@ public class TauP_Time extends TauP_AbstractRayTool {
                         tokenIn.nextToken();
                         if(tokenIn.ttype == StreamTokenizer.TT_NUMBER) {
                             double stationLat = tokenIn.nval;
-                            if(DEBUG) {
+                            if(isDEBUG()) {
                                 Alert.info("stationLat=" + tokenIn.nval);
                             }
                             tokenIn.nextToken();
                             if(tokenIn.ttype == StreamTokenizer.TT_NUMBER) {
                                 double stationLon = tokenIn.nval;
-                                if(DEBUG) {
+                                if(isDEBUG()) {
                                     Alert.info("stationLon=" + tokenIn.nval);
                                 }
                                 getDistanceArgs().getStationList().clear();

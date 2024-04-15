@@ -203,8 +203,6 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
 
     @Override
     public void init() throws TauPException {
-        DEBUG = DEBUG || ToolRun.DEBUG;
-        this.verbose = this.verbose || DEBUG || ToolRun.VERBOSE;
 
         if (phaseNames.size() == 0) {
             if (toolProps.containsKey("taup.phase.file")) {
@@ -353,7 +351,7 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
         modelArgs.setModelName(tMod.getModelName());
         this.modelArgs.setTMod(tMod);
         toolProps.put("taup.model.name", tMod.getModelName());
-        if (verbose) {
+        if (isVerbose()) {
             Alert.info("Model set to " + tMod.getModelName()
                     + " with moho=" + tMod.getMohoDepth()
                     + " cmb=" + tMod.getCmbDepth()
@@ -394,7 +392,7 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
             if (tokenIn.sval != null) {
                 parsePhaseList(tokenIn.sval);
             } else {
-                if (DEBUG) {
+                if (isDEBUG()) {
                     Alert.info("Token.sval was null! nval=" + tokenIn.nval);
                 }
             }
@@ -428,7 +426,7 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
             } catch (TauModelException e) {
                 Alert.warning("Problem with phase=" + phaseEntry + " "
                         + e.getMessage(), "Skipping this phase: ");
-                if (verbose || DEBUG) {
+                if (isVerbose() || isDEBUG()) {
                     e.printStackTrace();
                 }
             }
@@ -453,26 +451,26 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
                         modelArgs.getSourceDepth(),
                         modelArgs.getReceiverDepth(),
                         modelArgs.getScatterer(),
-                        DEBUG);
+                        isDEBUG());
                 newPhases.addAll(calcPhaseList);
                 for (SeismicPhase seismicPhase : newPhases) {
-                    if (verbose) {
+                    if (isVerbose()) {
                         Alert.info(seismicPhase.toString());
                     }
                 }
             } catch (ScatterArrivalFailException e) {
                 Alert.warning(e.getMessage() + ", skipping this phase");
-                if (verbose || DEBUG) {
+                if (isVerbose() || isDEBUG()) {
                     e.printStackTrace();
                 }
             } catch (TauModelException e) {
                 Alert.warning("Error with phase=" + tempPhaseName,
                         e.getMessage() + "\nSkipping this phase");
-                if (verbose || DEBUG) {
+                if (isVerbose() || isDEBUG()) {
                     e.printStackTrace();
                 }
             } finally {
-                if (verbose) {
+                if (isVerbose()) {
                     Alert.info("-----------------");
                 }
             }

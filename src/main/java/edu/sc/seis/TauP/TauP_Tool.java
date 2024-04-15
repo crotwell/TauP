@@ -46,11 +46,24 @@ public abstract class TauP_Tool implements Callable<Integer> {
     }
 
     /** Turns on debugging output. */
-    @CommandLine.Option(names = {"--debug"}, description = "display debugging message")
-    public static boolean DEBUG = ToolRun.DEBUG;
+    @CommandLine.Option(names="--debug", description="enable debugging output")
+    public void setDEBUG(boolean debug) {
+        ToolRun.DEBUG = debug;
+    }
+
+    public boolean isDEBUG() {
+        return ToolRun.DEBUG;
+    }
 
     /** Turns on verbose output. */
-    public boolean verbose = ToolRun.VERBOSE;
+    @CommandLine.Option(names="--verbose", description="enable verbose output")
+    public void setVerbose(boolean verbose) {
+        ToolRun.VERBOSE = verbose;
+    }
+
+    public boolean isVerbose() {
+        return ToolRun.VERBOSE || ToolRun.DEBUG;
+    }
 
     public String outputFormat = OutputTypes.TEXT;
 

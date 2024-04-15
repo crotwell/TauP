@@ -26,7 +26,6 @@
 package edu.sc.seis.TauP;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -138,7 +137,7 @@ public class TauP_SetSac extends TauP_Time {
             return;
         }
         for (String filename : sacFileNames) {
-            if(verbose) {
+            if(isVerbose()) {
                 System.err.println(filename);
             }
             processSacFile(new File(filename));
@@ -172,18 +171,18 @@ public class TauP_SetSac extends TauP_Time {
         }
         double deg;
         if(! SacConstants.isUndef(header.getGcarc())) {
-            if(verbose) {
+            if(isVerbose()) {
                 System.err.println("Using gcarc: " + header.getGcarc());
             }
             deg = header.getGcarc();
         } else if(! SacConstants.isUndef(header.getDist())) {
-            if(verbose) {
+            if(isVerbose()) {
                 System.err.println("Using dist: " + header.getDist());
             }
             deg = header.getDist() / 6371.0 * 180.0 / Math.PI;
         } else if( ! SacConstants.isUndef(sacFile.getHeader().getStla()) && ! SacConstants.isUndef(sacFile.getHeader().getStlo())
                 && ! SacConstants.isUndef(sacFile.getHeader().getEvla()) && ! SacConstants.isUndef(sacFile.getHeader().getEvlo())) {
-            if(verbose) {
+            if(isVerbose()) {
                 System.err.println("Using stla,stlo, evla,evlo to calculate");
             }
             Alert.warning("Warning: Sac header gcarc is not set,",
@@ -213,13 +212,13 @@ public class TauP_SetSac extends TauP_Time {
                 setSourceDepth(header.getEvdp() / 1000.0);
             }
         }
-        if(verbose) {
+        if(isVerbose()) {
             System.err.println(f
                     + " searching for " + getPhaseNameString());
         }
         List<Arrival> arrivalList = calculate(deg);
         // calcTime(deg);
-        if(verbose) {
+        if(isVerbose()) {
             System.err.println(f + " "
                     + arrivalList.size() + " arrivals found.");
         }
@@ -246,7 +245,7 @@ public class TauP_SetSac extends TauP_Time {
                     if (tripNum < arrivalCopy.size()) {
                         Arrival tripArrival = arrivalCopy.get(tripNum);
                         if (tripHeader != SKIP_HEADER) {
-                            if (verbose) {
+                            if (isVerbose()) {
                                 System.err.println(f
                                         + " phase found " + pn.name + " = "
                                         + tripArrival.getName() + " trip(" + tripNum + ")"
@@ -257,7 +256,7 @@ public class TauP_SetSac extends TauP_Time {
                             }
                             setSacTHeader(sacFile, tripHeader, tripArrival);
                         } else {
-                            if (verbose) {
+                            if (isVerbose()) {
                                 System.err.println(f
                                         + " phase found " + pn.name + " = "
                                         + tripArrival.getName() + " trip(" + tripNum + ")"

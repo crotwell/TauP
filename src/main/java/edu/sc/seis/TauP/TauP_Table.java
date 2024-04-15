@@ -27,7 +27,6 @@ package edu.sc.seis.TauP;
 
 import edu.sc.seis.TauP.cli.OutputTypes;
 import edu.sc.seis.TauP.cli.TableOutputTypeArgs;
-import edu.sc.seis.TauP.cli.TextOutputTypeArgs;
 import picocli.CommandLine;
 
 import java.io.BufferedReader;
@@ -483,7 +482,7 @@ public class TauP_Table extends TauP_AbstractPhaseTool {
                     modelArgs.getSourceDepth(),
                     modelArgs.getReceiverDepth(),
                     modelArgs.getScatterer(),
-                    DEBUG);
+                    isDEBUG());
             newPhases.addAll(calcPhaseList);
 
         }

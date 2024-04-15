@@ -25,7 +25,6 @@
  */
 package edu.sc.seis.TauP;
 
-import edu.sc.seis.TauP.cli.OverlayVelocityModelArgs;
 import edu.sc.seis.TauP.cli.VelocityModelArgs;
 import picocli.CommandLine;
 
@@ -35,8 +34,6 @@ import java.io.IOException;
 import java.util.Properties;
 
 import static edu.sc.seis.TauP.cli.OutputTypes.TAUP;
-import static edu.sc.seis.TauP.VelocityModel.ND;
-import static edu.sc.seis.TauP.VelocityModel.TVEL;
 
 /**
  * TauP_Create - Re-implementation of the seismic travel time calculation method
@@ -107,11 +104,11 @@ public class TauP_Create extends TauP_Tool {
     }
 
     public void setDEBUG(boolean DEBUG) {
-        this.DEBUG = DEBUG;
+        super.setDEBUG(DEBUG);
     }
 
     public boolean getDEBUG() {
-        return DEBUG;
+        return isDEBUG();
     }
 
     public void setVelocityModel(VelocityModel vMod) {
@@ -167,13 +164,13 @@ public class TauP_Create extends TauP_Tool {
         // Read the velocity model file.
         String filename = directory + file_sep + inputFileArgs.getModelFilename();
         File f = new File(filename);
-        if(verbose)
+        if(isVerbose())
             System.err.println("filename =" + directory + file_sep
                     + inputFileArgs.getModelFilename());
         try {
             vMod = VelocityModel.readVelocityFile(filename, inputFileArgs.getVelFileType());
         } catch(FileNotFoundException e) {
-            if (DEBUG) {
+            if (isDEBUG()) {
                 System.err.println("Unable to load from directory "+filename);
             }
         }
@@ -184,13 +181,13 @@ public class TauP_Create extends TauP_Tool {
         if (vMod == null) {
             throw new IOException("Velocity model file not found: "+ inputFileArgs.getModelFilename() +", tried internally and from file: "+f);
         }
-        if(verbose) {
+        if(isVerbose()) {
             System.err.println("Done reading velocity model.");
             System.err.println("Radius of model " + vMod.getModelName()
                     + " is " + vMod.getRadiusOfEarth());
         }
 
-        if(DEBUG)
+        if(isDEBUG())
             System.err.println("velocity mode: "+vMod);
         return vMod;
     }
@@ -206,7 +203,7 @@ public class TauP_Create extends TauP_Tool {
             throw new SlownessModelException("Flat slowness model not yet implemented.");
         }
 
-        SlownessModel.DEBUG = DEBUG;
+        SlownessModel.DEBUG = isDEBUG();
         sMod = new SphericalSModel(vMod,
                                    Double.valueOf(toolProps.getProperty("taup.create.minDeltaP",
                                                                         "0.1"))
@@ -227,7 +224,7 @@ public class TauP_Create extends TauP_Tool {
                                                                          "true"))
                                            .booleanValue(),
                                    SlownessModel.DEFAULT_SLOWNESS_TOLERANCE);
-        if(verbose) {
+        if(isVerbose()) {
             System.err.println("Parameters are:");
             System.err.println("taup.create.minDeltaP = "
                     + sMod.getMinDeltaP() + " sec / radian");
@@ -245,26 +242,26 @@ public class TauP_Create extends TauP_Tool {
                                + " " + sMod.getNumLayers(true) + " P layers,"
                                + sMod.getNumLayers(false) + " S layers");
         }
-        if(DEBUG) {
+        if(isDEBUG()) {
             System.err.println(sMod);
         }
-        TauModel.DEBUG = DEBUG;
-        SlownessModel.DEBUG = DEBUG;
+        TauModel.DEBUG = isDEBUG();
+        SlownessModel.DEBUG = isDEBUG();
         // Creates tau model from slownesses
         return new TauModel(sMod);
     }
     
     public void start() throws SlownessModelException, TauModelException, VelocityModelException, IOException {
         try {
-            if (verbose) {
+            if (isVerbose()) {
                 System.err.println("TauP_Create starting...");
             }
             String file_sep = System.getProperty("file.separator");
             TauModel tMod = createTauModel(vMod);
 
-            if(DEBUG)
+            if(isDEBUG())
                 System.err.println("Done calculating Tau branches.");
-            if(DEBUG)
+            if(isDEBUG())
                 tMod.print();
             String outFile;
             if(directory.equals(".")) {
@@ -273,7 +270,7 @@ public class TauP_Create extends TauP_Tool {
                 outFile = vMod.getModelName() + ".taup";
             }
             tMod.writeModel(outFile);
-            if(verbose) {
+            if(isVerbose()) {
                 System.err.println("Done Saving " + outFile);
             }
 
@@ -283,7 +280,7 @@ public class TauP_Create extends TauP_Tool {
                     + "\nDo you have write permission in this directory?");
             throw e;
         } finally {
-            if(verbose) {
+            if(isVerbose()) {
                 System.err.println("Done!");
             }
         }

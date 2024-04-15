@@ -181,7 +181,7 @@ public class ToolRun {
 			} else if(dashEquals("debug", arg)) {
 				VERBOSE = true;
 				DEBUG = true;
-				TauP_Tool.DEBUG = true;
+				ToolRun.DEBUG = true;
 			}
 		}
 		CommandLine commandLine = new CommandLine(new edu.sc.seis.TauP.ToolRun());

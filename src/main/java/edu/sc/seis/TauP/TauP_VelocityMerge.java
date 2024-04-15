@@ -12,7 +12,6 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 
 import static edu.sc.seis.TauP.VelocityModel.ND;
-import static edu.sc.seis.TauP.VelocityModel.TVEL;
 
 /**
  * Replaces part of a velocity model with layers from another.
@@ -35,7 +34,7 @@ public class TauP_VelocityMerge extends TauP_Tool {
         VelocityModel outVMod = vMod; // in case no overlay
         if (overlayModelArgs.getModelFilename() != null && overlayModelArgs.getModelFilename().length()>0) {
 
-            if(DEBUG) {
+            if(isDEBUG()) {
                 System.err.println("base model: "+vMod.modelName);
                 System.err.println("merge model: "+overlayModelArgs.getModelFilename());
             }
@@ -43,7 +42,7 @@ public class TauP_VelocityMerge extends TauP_Tool {
             outVMod = vMod.replaceLayers(overlayVMod.getLayers(), overlayVMod.getModelName(), smoothTop, smoothBottom);
             outVMod.setModelName(vMod.modelName+"_"+overlayVMod.getModelName());
         } else {
-            if (DEBUG) {
+            if (isDEBUG()) {
                 System.err.println("base model: "+vMod.modelName);
                 System.err.println("no merge model requested.");
             }
@@ -58,7 +57,7 @@ public class TauP_VelocityMerge extends TauP_Tool {
             if (getOutFile() == "stdout") {
                 dos = new PrintWriter(new OutputStreamWriter(System.out));
             } else {
-                if (DEBUG) {
+                if (isDEBUG()) {
                     System.err.println("Save to "+getOutFile());
                 }
                 dos = new PrintWriter(new BufferedWriter(new FileWriter(getOutFile())));
