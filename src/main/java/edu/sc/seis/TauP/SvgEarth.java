@@ -37,6 +37,9 @@ public class SvgEarth {
                 if (phase.getMaxDistance() > maxDist) {
                     maxDist = (float) phase.getMaxDistance();
                 }
+                if (maxDist >= Math.PI) {
+                    return WHOLE_EARTH_ZOOM;
+                }
                 if (phase.getMinDistance() < minDist) {
                     minDist = (float) phase.getMinDistance();
                 }

@@ -228,6 +228,7 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
 
         double maxTime = 0;
         for (SeismicPhase phase : getSeismicPhases()) {
+            if ( ! phase.hasArrivals()) { continue;}
             maxTime = Math.max(maxTime, phase.getMaxTime());
             Map<Double, List<WavefrontPathSegment>> wavefrontPathSegments = calcIsochronSegmentsForPhase(phase, timeStep);
             for (Double timeVal : wavefrontPathSegments.keySet()) {
