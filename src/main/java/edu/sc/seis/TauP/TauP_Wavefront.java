@@ -6,11 +6,8 @@ import org.json.JSONObject;
 import picocli.CommandLine;
 
 import java.io.*;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.util.*;
 
-import static edu.sc.seis.TauP.SvgEarth.calcEarthScaleTrans;
 import static edu.sc.seis.TauP.SvgUtil.createSurfaceWaveCSS;
 import static edu.sc.seis.TauP.cli.OutputTypes.*;
 
@@ -173,7 +170,6 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
             }
             float pixelWidth = getGraphicOutputTypeArgs().getPixelWidth();
             float[] scaleTrans = SvgEarth.calcEarthScaleTransForPhaseList(getSeismicPhases(), distDepthRangeArgs, isNegDistance());
-            System.err.println("scaleTrans: "+scaleTrans[0] +" "+scaleTrans[1] +" "+scaleTrans[2]+" "+scaleTrans[3]*180/Math.PI +" "+scaleTrans[4]*180/Math.PI);
 
             SvgEarth.printScriptBeginningSvg(out, modelArgs.getTauModel(), pixelWidth,
                     scaleTrans, toolNameFromClass(this.getClass()), cmdLineArgs, cssExtra);
@@ -518,7 +514,7 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
                     timeWriter.close();
                 }
             } else {
-                PrintWriter writer = outputTypeArgs.createWriter();
+                PrintWriter writer = outputTypeArgs.createWriter(spec.commandLine().getOut());
                 printIsochron(writer, isochronMap, isNegDistance(), outputTypeArgs.getPsFile());
                 writer.close();
             }

@@ -64,11 +64,11 @@ public class TextOutputTypeArgs {
         }
     }
 
-    public PrintWriter createWriter() throws IOException {
+    public PrintWriter createWriter(PrintWriter stdout) throws IOException {
         if(!(getOutFile().equals("stdout") || getOutFile().length()==0)) {
             return new PrintWriter(new BufferedWriter(new FileWriter(getOutFile())));
         } else {
-            return new PrintWriter(new OutputStreamWriter(System.out));
+            return stdout;
         }
     }
 

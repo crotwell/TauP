@@ -46,7 +46,7 @@ public class TauP_Version extends TauP_Tool {
 
     @Override
     public void start() throws IOException, TauModelException, TauPException {
-        PrintWriter writer = outputTypeArgs.createWriter();
+        PrintWriter writer = outputTypeArgs.createWriter(spec.commandLine().getOut());
         printResult(writer);
         writer.close();
     }

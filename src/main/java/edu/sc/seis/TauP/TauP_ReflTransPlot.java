@@ -63,7 +63,7 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
                     indown, inpwave, inswave, inshwave, isLinearRayParam(), step);
             modelArgs.setModelName(layerParams.asName());
         }
-        PrintWriter writer = outputTypeArgs.createWriter();
+        PrintWriter writer = outputTypeArgs.createWriter(spec.commandLine().getOut());
         printResult(writer, xypList);
         writer.close();
     }

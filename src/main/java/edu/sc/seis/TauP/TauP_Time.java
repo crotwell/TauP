@@ -460,7 +460,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
 
     public void calcAndPrint(List<SeismicPhase> phaseList, List<RayCalculateable> shootables) throws TauPException, IOException {
         List<Arrival> arrivalList = calcAll(phaseList, shootables);
-        PrintWriter writer = outputTypeArgs.createWriter();
+        PrintWriter writer = outputTypeArgs.createWriter(spec.commandLine().getOut());
         printResult(writer, arrivalList);
         writer.close();
     }
@@ -470,7 +470,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
         if((distanceValues.size() != 0)) {
             /* enough info given on cmd line, so just do one calc. */
             List<Arrival> arrivalList = calcAll(getSeismicPhases(), distanceValues);
-            PrintWriter writer = outputTypeArgs.createWriter();
+            PrintWriter writer = outputTypeArgs.createWriter(spec.commandLine().getOut());
             printResult(writer, arrivalList);
             writer.close();
         } else {

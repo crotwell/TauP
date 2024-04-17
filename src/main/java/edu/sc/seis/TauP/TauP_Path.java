@@ -408,7 +408,7 @@ public class TauP_Path extends TauP_AbstractRayTool {
 			throw new CommandLine.ParameterException(spec.commandLine(), "No distance arguments given, one of --deg, --km, --shoot, --takeoff required");
 		}
 		List<Arrival> arrivalList = calcAll(getSeismicPhases(), calcRayList);
-		PrintWriter writer = outputTypeArgs.createWriter();
+		PrintWriter writer = outputTypeArgs.createWriter(spec.commandLine().getOut());
 		printResult(writer, arrivalList);
 		writer.close();
 	}

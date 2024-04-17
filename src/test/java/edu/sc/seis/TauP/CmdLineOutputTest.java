@@ -1,18 +1,16 @@
 package edu.sc.seis.TauP;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import picocli.CommandLine;
 
 import java.io.*;
 import java.net.URL;
 import java.util.*;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public class CmdLineOutputTest {
@@ -368,21 +366,13 @@ public class CmdLineOutputTest {
      */
     @Test
     public void testVersion() throws Exception {
-        setUpStreams();
-        assertEquals( 0, outContent.toByteArray().length, "sysout is not empty");
-        runCmd(versionCmd);
-        BufferedReader current = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(outContent.toByteArray())));
-        int lineNum = 0;
-        String currentLine;
-        assertTrue(current.ready());
-        currentLine = current.readLine();
+        String currentLine = runCmd(versionCmd);
         BuildVersion ver;
         // should only be one line
-        assertFalse(current.ready());
+        assertEquals(1, currentLine.split("\\n").length);
         assertTrue(currentLine.contains(BuildVersion.getGroup()));
         assertTrue(currentLine.contains(BuildVersion.getName()));
         assertTrue(currentLine.contains(BuildVersion.getVersion()));
-        cleanUpStreams();
     }
 
     @Test
@@ -454,7 +444,13 @@ public class CmdLineOutputTest {
         }
     }
 
-    public void runCmd(String cmd) throws Exception {
+    public String runCmd(String cmd) throws Exception {
+        StringWriter sw = new StringWriter();
+        runCmdWithWriter(cmd, new PrintWriter(sw));
+        return sw.toString();
+    }
+
+    public void runCmdWithWriter(String cmd, PrintWriter writer) throws Exception {
         String[] s = cmd.split(" +");
         String tool = s[0];
         if ( ! tool.equalsIgnoreCase("taup")) {
@@ -463,16 +459,23 @@ public class CmdLineOutputTest {
         String[] cmdArgs = new String[s.length - 1];
         System.arraycopy(s, 1, cmdArgs, 0, cmdArgs.length);
         System.err.println(cmd);
-        int exitCode = ToolRun.mainWithExitCode(cmdArgs);
+
+        ToolRun toolRun = new ToolRun();
+        CommandLine cmdLine = new CommandLine(toolRun);
+
+        cmdLine.setOut(writer);
+
+        int exitCode = cmdLine.execute(cmdArgs);
         assertEquals(0, exitCode, "exit code="+exitCode+"  "+cmd);
+        writer.flush();
     }
 
     public void testCmd(String cmd) throws Exception {
-        setUpStreams();
-        assertEquals( 0, outContent.toByteArray().length, "sysout is not empty");
-        runCmd(cmd);
+        String outContent = runCmd(cmd);
+        assertNotNull(outContent);
+        assertNotEquals(0, outContent.length());
         BufferedReader prior = getPriorOutput(cmd);
-        BufferedReader current = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(outContent.toByteArray())));
+        BufferedReader current = new BufferedReader(new StringReader(outContent));
         int lineNum = 1;
         String priorLine;
         String currentLine;
@@ -480,7 +483,7 @@ public class CmdLineOutputTest {
         while (prior.ready() && current.ready()) {
             priorLine = prior.readLine();
             currentLine = current.readLine();
-            origOut.println(currentLine);
+            System.out.println(currentLine);
             assertEquals(priorLine, currentLine, cmd + " line " + lineNum);
             lineNum++;
         }
@@ -490,18 +493,18 @@ public class CmdLineOutputTest {
         }
         while (current.ready()) {
             currentLine = current.readLine();
+            if (currentLine == null) {break;}
             assertEquals(0, currentLine.trim().length(), "Current has extra lines: " + currentLine);
         }
-        cleanUpStreams();
-        origErr.println("Done with " + cmd);
+        System.err.println("Done with " + cmd);
     }
 
     public void testJsonCmd(String cmd) throws Exception {
-        setUpStreams();
-        assertEquals(0, outContent.toByteArray().length, "sysout is not empty");
-        runCmd(cmd);
+        String outContent = runCmd(cmd);
+        assertNotNull(outContent);
+        assertNotEquals(0, outContent.length());
         BufferedReader prior = getPriorOutput(cmd);
-        BufferedReader current = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(outContent.toByteArray())));
+        BufferedReader current = new BufferedReader(new StringReader(outContent));
         JSONTokener jsonIn = new JSONTokener(prior);
         JSONObject priorJson = new JSONObject(jsonIn);
         JSONTokener currentIn = new JSONTokener(current);
@@ -544,34 +547,10 @@ public class CmdLineOutputTest {
 
     public void saveTestOutputToFile(String cmd, File dir, String filename) throws Exception {
         if ( ! dir.isDirectory()) {dir.mkdir(); }
-        PrintStream fileOut = new PrintStream(new BufferedOutputStream(new FileOutputStream(new File(dir, filename))));
-        System.setOut(fileOut);
-        runCmd(cmd);
+        PrintWriter fileOut = new PrintWriter(new BufferedWriter(new FileWriter(new File(dir, filename))));
+        runCmdWithWriter(cmd, fileOut);
         fileOut.flush();
-        System.setOut(origOut);
         fileOut.close();
-    }
-
-    private ByteArrayOutputStream outContent;
-
-    private ByteArrayOutputStream errContent;
-
-    PrintStream origOut = System.out;
-
-    PrintStream origErr = System.err;
-
-    public void setUpStreams() {
-        outContent = new ByteArrayOutputStream();
-        errContent = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outContent));
-        // System.setErr(new PrintStream(errContent));
-    }
-
-    public void cleanUpStreams() {
-        System.setOut(origOut);
-        // System.setErr(origErr);
-        outContent.reset();
-        errContent.reset();
     }
 
     public BufferedReader getPriorOutput(String cmd) throws IOException {

@@ -45,7 +45,7 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
     @Override
     public void start() throws IOException, TauModelException, TauPException {
         double tempDepth;
-        PrintWriter writer = outputTypeArgs.createWriter();
+        PrintWriter writer = outputTypeArgs.createWriter(spec.commandLine().getOut());
         if(modelArgs.getSourceDepth() != -1 * Double.MAX_VALUE) {
             /* enough info given on cmd line, so just do one calc. */
 

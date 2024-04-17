@@ -45,7 +45,7 @@ public class TauP_VelocityPlot extends TauP_Tool {
                 if (!outputTypeArgs.isStdout()) {
                     outputTypeArgs.setOutFileBase(vMod.modelName);
                 }
-                PrintWriter writer = outputTypeArgs.createWriter();
+                PrintWriter writer = outputTypeArgs.createWriter(spec.commandLine().getOut());
                 printCSV(writer, vMod);
                 writer.close();
             }
@@ -54,7 +54,7 @@ public class TauP_VelocityPlot extends TauP_Tool {
                 if (!outputTypeArgs.isStdout()) {
                     outputTypeArgs.setOutFileBase(vMod.modelName + "_vel");
                 }
-                PrintWriter writer = outputTypeArgs.createWriter();
+                PrintWriter writer = outputTypeArgs.createWriter(spec.commandLine().getOut());
                 vMod.writeToND(writer);
                 writer.close();
             }
@@ -64,7 +64,7 @@ public class TauP_VelocityPlot extends TauP_Tool {
                     outputTypeArgs.setOutFileBase(vModList.get(0).modelName + "_vel");
                 }
             }
-            PrintWriter writer = outputTypeArgs.createWriter();
+            PrintWriter writer = outputTypeArgs.createWriter(spec.commandLine().getOut());
             String modelLabel = "";
             String title = "";
             List<XYPlottingData> xyPlotList = new ArrayList<>();
