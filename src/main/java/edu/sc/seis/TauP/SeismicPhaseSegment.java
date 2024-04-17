@@ -288,7 +288,7 @@ public class SeismicPhaseSegment {
 	}
 
 
-	public ArrivalPathSegment calcPathTimeDist(Arrival currArrival, TimeDist prevEnd, int segmentIndex) {
+	public ArrivalPathSegment calcPathTimeDist(Arrival currArrival, TimeDist prevEnd, int segmentIndex, int totalNumSegments) {
 		ArrayList<TimeDist[]> pathList = new ArrayList<TimeDist[]>();
 		if ( ! isFlat) {
 			int bStep = isDownGoing ? 1 : -1;
@@ -373,7 +373,8 @@ public class SeismicPhaseSegment {
 			}
 		}
 		outPath = ArrivalPathSegment.trimDuplicates(outPath);
-		ArrivalPathSegment pathSeg = new ArrivalPathSegment(outPath, isPWave, legName, prevEnd, currArrival, this, segmentIndex);
+		ArrivalPathSegment pathSeg = new ArrivalPathSegment(outPath, isPWave, legName, prevEnd, currArrival,
+				this, segmentIndex, totalNumSegments);
 		return pathSeg;
 	}
 

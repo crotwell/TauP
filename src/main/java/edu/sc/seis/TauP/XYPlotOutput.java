@@ -92,16 +92,7 @@ public class XYPlotOutput {
         }
     }
 
-    public void printAsSvg(PrintWriter writer, String[] cmdLineArgs, String xAxisType, String yAxisType) {
-        StringBuffer extrtaCSS = new StringBuffer();
-        extrtaCSS.append("        text.label {\n");
-        extrtaCSS.append("            font: bold ;\n");
-        extrtaCSS.append("            fill: black;\n");
-        extrtaCSS.append("        }\n");
-        extrtaCSS.append("        g.phasename text {\n");
-        extrtaCSS.append("            font: bold ;\n");
-        extrtaCSS.append("            fill: black;\n");
-        extrtaCSS.append("        }\n");
+    public void printAsSvg(PrintWriter writer, String[] cmdLineArgs, String xAxisType, String yAxisType, String extraCSS, boolean isLegend) {
 
         int margin = 80;
         int pixelWidth = 600+margin;//Math.round(72*mapWidth);
@@ -127,7 +118,7 @@ public class XYPlotOutput {
             minmax[3] = yAxisMinMax[1];
         }
         SvgUtil.xyplotScriptBeginning(writer, toolNameFromClass(this.getClass()),
-                cmdLineArgs,  pixelWidth, margin, extrtaCSS.toString(), minmax);
+                cmdLineArgs,  pixelWidth, margin, extraCSS, minmax);
 
         float plotWidth = pixelWidth - 2*margin;
         double[] axisMinMax = new double[4];
@@ -188,14 +179,16 @@ public class XYPlotOutput {
         writer.println("  </g> <!-- end scaletranslate -->");
         writer.println("  </g> <!-- end clip-path -->");
 
-        List<String> labels = new ArrayList<>();
-        List<String> labelClasses = new ArrayList<>();
-        for (XYPlottingData xyp : xyPlots) {
-            labels.add(xyp.label);
-            labelClasses.add(xyp.label);
-        }
+        if (isLegend) {
+            List<String> labels = new ArrayList<>();
+            List<String> labelClasses = new ArrayList<>();
+            for (XYPlottingData xyp : xyPlots) {
+                labels.add(xyp.label);
+                labelClasses.add(xyp.label);
+            }
 
-        SvgUtil.createLegend(writer, labels, labelClasses, autoColor ? "autocolor": "", (int)(plotWidth*.1), (int) (plotWidth*.1));
+            SvgUtil.createLegend(writer, labels, labelClasses, autoColor ? "autocolor" : "", (int) (plotWidth * .1), (int) (plotWidth * .1));
+        }
         writer.println("</svg>");
     }
 
@@ -251,7 +244,8 @@ public class XYPlotOutput {
                 convSeg.description = seg.description;
                 convSegList.add(convSeg);
             }
-            convXYPlotList.add(new XYPlottingData(convSegList, kilometer.name(), kilometer.name(), xyp.label, xyp.cssClasses));
+            convXYPlotList.add(new XYPlottingData(convSegList, kilometer.name(), kilometer.name(),
+                    xyp.label, xyp.description, xyp.cssClasses));
         }
         XYPlotOutput out = new XYPlotOutput(convXYPlotList, modelArgs);
         out.setPhaseNames(phaseNames);

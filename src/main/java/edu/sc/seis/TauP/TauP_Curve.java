@@ -1,5 +1,7 @@
 package edu.sc.seis.TauP;
 
+import edu.sc.seis.TauP.cli.ColorType;
+import edu.sc.seis.TauP.cli.ColoringArgs;
 import edu.sc.seis.TauP.cli.GraphicOutputTypeArgs;
 import edu.sc.seis.TauP.cli.OutputTypes;
 import picocli.CommandLine;
@@ -9,6 +11,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StreamTokenizer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @CommandLine.Command(name = "curve", description = "plot traveltime and other curves for phases")
@@ -83,7 +86,7 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
         List<SeismicPhase> phaseList = getSeismicPhases();
         List<XYPlottingData> out = new ArrayList<>();
         for (SeismicPhase phase: phaseList) {
-            String phaseLabel = phase.getName()+" for a source depth of "+modelArgs.getSourceDepth()+" kilometers in the "+modelArgs.getModelName()+" model";
+            String phaseDesc = xAxisType+"/"+yAxisType+" "+phase.getName()+" for a source depth of "+modelArgs.getSourceDepth()+" kilometers in the "+modelArgs.getModelName()+" model";
             String p_or_s = "both_p_swave";
             if (phase.isAllSWave()) {
                 p_or_s = "swave";
@@ -111,7 +114,7 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
                         cssClasses.add(SvgUtil.classForPhase(arrival.getName()));
                         XYPlottingData xyp = new XYPlottingData(
                                 segmentList, xAxisType.toString(), "Ray Param",
-                                phaseLabel, cssClasses
+                                phase.getName(), phaseDesc, cssClasses
                         );
                         out.add(xyp);
 
@@ -124,7 +127,8 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
                     List<String> cssClasses = new ArrayList<>();
                     cssClasses.add(p_or_s);
                     cssClasses.add(SvgUtil.classForPhase(phase.getName()));
-                    XYPlottingData xyp = new XYPlottingData(segments, xAxisType.toString(), yAxisType.toString(), xAxisType+"/"+yAxisType+" "+phaseLabel, cssClasses);
+                    XYPlottingData xyp = new XYPlottingData(segments, xAxisType.toString(), yAxisType.toString(),
+                            phase.getName(), phaseDesc, cssClasses);
                     xyp.cssClasses.add(p_or_s);
                     out.add(xyp);
 
@@ -140,7 +144,8 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
                             List<XYSegment> sh_segments = XYSegment.createFromLists(xData, yData);
                             List<String> cssClassesCopy = new ArrayList<>(cssClasses);
                             cssClassesCopy.add("ampsh");
-                            out.add(new XYPlottingData(sh_segments, xAxisType.toString(), yAxisType.toString(), xOther+"/"+yOther+" "+phaseLabel, cssClassesCopy));
+                            out.add(new XYPlottingData(sh_segments, xAxisType.toString(), yAxisType.toString(),
+                                    phase.getName(), phaseDesc, cssClassesCopy));
                         }
                         // what about case of amp vs refltran, need 4 outputs?
                         if (xAxisType==AxisType.refltran
@@ -153,7 +158,8 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
                             List<XYSegment> sh_segments = XYSegment.createFromLists(xData, yData);
                             List<String> cssClassesCopy = new ArrayList<>(cssClasses);
                             cssClassesCopy.add("refltransh");
-                            out.add(new XYPlottingData(sh_segments, xAxisType.toString(), yAxisType.toString(), xOther+"/"+yOther+" "+phaseLabel, cssClassesCopy));
+                            out.add(new XYPlottingData(sh_segments, xAxisType.toString(), yAxisType.toString(),
+                                    phase.getName(), phaseDesc, cssClassesCopy));
                         }
                     }
                 }
@@ -200,7 +206,8 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
                     redSeg.add(new XYSegment(time, dist));
                 }
             }
-            XYPlottingData redxyp = new XYPlottingData(redSeg, xyp.xAxisType, xyp.yAxisType, xyp.label+", reduce: "+getRedVelLabel(), xyp.cssClasses);
+            XYPlottingData redxyp = new XYPlottingData(redSeg, xyp.xAxisType, xyp.yAxisType,
+                    xyp.label, xyp.description+", reduce: "+getRedVelLabel(), xyp.cssClasses);
             out.add(redxyp);
         }
         return out;
@@ -353,7 +360,7 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
         return splitCurve;
     }
 
-    public void printResult(PrintWriter writer, List<XYPlottingData> xyPlots) {
+    public void printResult(PrintWriter writer, List<XYPlottingData> xyPlots) throws TauModelException {
         XYPlotOutput xyOut = new XYPlotOutput(xyPlots, modelArgs);
         xyOut.setPhaseNames(getPhaseNames());
         xyOut.setxAxisMinMax(xAxisMinMax);
@@ -366,7 +373,14 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
         } else if (getOutputFormat().equalsIgnoreCase(OutputTypes.TEXT) || getOutputFormat().equalsIgnoreCase(OutputTypes.GMT)) {
             xyOut.printAsGmtText(writer);
         } else if (getOutputFormat().equalsIgnoreCase(OutputTypes.SVG)) {
-            xyOut.printAsSvg(writer, cmdLineArgs, xAxisType.toString(), yAxisType.toString());
+            String cssExtra = "";
+            if (coloring.getColor() == ColorType.phase) {
+                cssExtra += SvgUtil.createPhaseColorCSS(Arrays.asList(getPhaseNames()));
+            } else if (coloring.getColor() == ColorType.wavetype) {
+                cssExtra += SvgUtil.createWaveTypeColorCSS();
+            } else {
+            }
+            xyOut.printAsSvg(writer, cmdLineArgs, xAxisType.toString(), yAxisType.toString(), cssExtra, isLegend);
         } else {
             throw new IllegalArgumentException("Unknown output format: " + getOutputFormat());
         }
@@ -578,6 +592,12 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
 
     @CommandLine.Mixin
     GraphicOutputTypeArgs outputTypeArgs = new GraphicOutputTypeArgs();
+
+    @CommandLine.Mixin
+    ColoringArgs coloring = new ColoringArgs();
+
+    @CommandLine.Option(names = "--legend", description = "create a legend")
+    boolean isLegend = false;
 
     @Override
     public String getOutputFormat() {

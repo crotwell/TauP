@@ -88,7 +88,7 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
         } else if (getOutputFormat().equalsIgnoreCase(OutputTypes.TEXT) || getOutputFormat().equalsIgnoreCase(OutputTypes.GMT)) {
             xyOut.printAsGmtText(writer);
         } else if (getOutputFormat().equalsIgnoreCase(OutputTypes.SVG)) {
-            xyOut.printAsSvg(writer, cmdLineArgs, xAxisType.toString(), yAxisType.toString());
+            xyOut.printAsSvg(writer, cmdLineArgs, xAxisType.toString(), yAxisType.toString(), SvgUtil.createReflTransCSSColors()+"\n", isLegend);
         } else {
             throw new IllegalArgumentException("Unknown output format: " + getOutputFormat());
         }
@@ -488,6 +488,9 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
     public void setyAxisMinMax(double[] yAxisMinMax) {
         this.yAxisMinMax = yAxisMinMax;
     }
+
+    @CommandLine.Option(names = "--legend", description = "create a legend")
+    boolean isLegend = false;
 
     float mapWidth = 6;
     int plotOffset = 80;

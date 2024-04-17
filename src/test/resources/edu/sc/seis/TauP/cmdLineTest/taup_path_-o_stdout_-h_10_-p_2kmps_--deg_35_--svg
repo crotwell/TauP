@@ -105,117 +105,6 @@ circle.discontinuity.iocb {
     fill: burlywood;
 }
 
-        .Rpp {
-          stroke: blue;
-        }
-        .Rpp.label {
-          stroke: blue;
-          fill: blue;
-        }
-        .legend .Rpp {
-          stroke: blue;
-          fill: blue;
-        }
-        .Rps {
-          stroke: green;
-        }
-        .Rps.label {
-          stroke: green;
-          fill: green;
-        }
-        .legend .Rps {
-          stroke: green;
-          fill: green;
-        }
-        .Tpp {
-          stroke: cyan;
-        }
-        .Tpp.label {
-          stroke: cyan;
-          fill: cyan;
-        }
-        .legend .Tpp {
-          stroke: cyan;
-          fill: cyan;
-        }
-        .Tps {
-          stroke: gold;
-        }
-        .Tps.label {
-          stroke: gold;
-          fill: gold;
-        }
-        .legend .Tps {
-          stroke: gold;
-          fill: gold;
-        }
-        .Rsp {
-          stroke: red;
-        }
-        .Rsp.label {
-          stroke: red;
-          fill: red;
-        }
-        .legend .Rsp {
-          stroke: red;
-          fill: red;
-        }
-        .Rss {
-          stroke: orange;
-        }
-        .Rss.label {
-          stroke: orange;
-          fill: orange;
-        }
-        .legend .Rss {
-          stroke: orange;
-          fill: orange;
-        }
-        .Tsp {
-          stroke: magenta;
-        }
-        .Tsp.label {
-          stroke: magenta;
-          fill: magenta;
-        }
-        .legend .Tsp {
-          stroke: magenta;
-          fill: magenta;
-        }
-        .Tss {
-          stroke: grey;
-        }
-        .Tss.label {
-          stroke: grey;
-          fill: grey;
-        }
-        .legend .Tss {
-          stroke: grey;
-          fill: grey;
-        }
-        .Rshsh {
-          stroke: mediumslateblue;
-        }
-        .Rshsh.label {
-          stroke: mediumslateblue;
-          fill: mediumslateblue;
-        }
-        .legend .Rshsh {
-          stroke: mediumslateblue;
-          fill: mediumslateblue;
-        }
-        .Tshsh {
-          stroke: violet;
-        }
-        .Tshsh.label {
-          stroke: violet;
-          fill: violet;
-        }
-        .legend .Tshsh {
-          stroke: violet;
-          fill: violet;
-        }
-
         g.autocolor > :nth-child(10n+1) {
             stroke: skyblue;
         }
@@ -364,9 +253,9 @@ circle.discontinuity.iocb {
   <g class="autocolor" >
 <g>
     <desc>   35.00    10.0   2kmps   1945.91    55.597      0.00     0.00    35.00 0   = 2kmps</desc>
-<g>
-    <desc>seg 1 2kmps of 2kmps at  1945.91 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   55.597 s/deg. in crust</desc>
-    <polyline class="path phase_2kmps swave" points="
+    <g>
+      <desc>seg 1/1 2kmps of 2kmps at  1945.91 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   55.597 s/deg. in crust</desc>
+      <polyline class="path phase_2kmps swave" points="
     0.00  -6371.00
   111.19  -6370.03
   222.34  -6367.12
@@ -404,13 +293,13 @@ circle.discontinuity.iocb {
  3562.62  -5281.80
  3654.26  -5218.82
 " />
-</g>
+    </g>
 </g>
 <g>
     <desc>   35.00    10.0   2kmps  18069.18    55.597      0.00     0.00   325.00 0   = 2kmps</desc>
-<g>
-    <desc>seg 1 2kmps of 2kmps at 18069.18 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   55.597 s/deg. in crust</desc>
-    <polyline class="path phase_2kmps swave" points="
+    <g>
+      <desc>seg 1/1 2kmps of 2kmps at 18069.18 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   55.597 s/deg. in crust</desc>
+      <polyline class="path phase_2kmps swave" points="
     0.00  -6371.00
  -111.19  -6370.03
  -222.34  -6367.12
@@ -738,7 +627,7 @@ circle.discontinuity.iocb {
  3744.78  -5154.25
  3654.26  -5218.82
 " />
-</g>
+    </g>
 </g>
   </g> <!-- end autocolor -->
     <g class="phasename">

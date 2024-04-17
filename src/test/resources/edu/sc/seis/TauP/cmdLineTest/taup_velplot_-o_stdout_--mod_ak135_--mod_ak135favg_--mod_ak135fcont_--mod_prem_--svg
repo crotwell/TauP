@@ -11,13 +11,38 @@
   </metadata>
   <defs>
     <style type="text/css"><![CDATA[
-        text.label {
-            font: bold ;
-            fill: black;
+        polyline.swave {
+            stroke: red;
         }
-        g.phasename text {
-            font: bold ;
-            fill: black;
+        .swave.label {
+          stroke: red;
+          fill: red;
+        }
+        .legend .swave {
+          stroke: red;
+          fill: red;
+        }
+        polyline.pwave {
+            stroke: blue;
+        }
+        .pwave.label {
+          stroke: blue;
+          fill: blue;
+        }
+        .legend .pwave {
+          stroke: blue;
+          fill: blue;
+        }
+        polyline.both_p_swave {
+            stroke: green;
+        }
+        .both_p_swave.label {
+          stroke: green;
+          fill: green;
+        }
+        .legend .both_p_swave {
+          stroke: green;
+          fill: green;
         }
 
 text.title {
@@ -99,117 +124,6 @@ circle.discontinuity.cmb {
 circle.discontinuity.iocb {
     fill: burlywood;
 }
-
-        .Rpp {
-          stroke: blue;
-        }
-        .Rpp.label {
-          stroke: blue;
-          fill: blue;
-        }
-        .legend .Rpp {
-          stroke: blue;
-          fill: blue;
-        }
-        .Rps {
-          stroke: green;
-        }
-        .Rps.label {
-          stroke: green;
-          fill: green;
-        }
-        .legend .Rps {
-          stroke: green;
-          fill: green;
-        }
-        .Tpp {
-          stroke: cyan;
-        }
-        .Tpp.label {
-          stroke: cyan;
-          fill: cyan;
-        }
-        .legend .Tpp {
-          stroke: cyan;
-          fill: cyan;
-        }
-        .Tps {
-          stroke: gold;
-        }
-        .Tps.label {
-          stroke: gold;
-          fill: gold;
-        }
-        .legend .Tps {
-          stroke: gold;
-          fill: gold;
-        }
-        .Rsp {
-          stroke: red;
-        }
-        .Rsp.label {
-          stroke: red;
-          fill: red;
-        }
-        .legend .Rsp {
-          stroke: red;
-          fill: red;
-        }
-        .Rss {
-          stroke: orange;
-        }
-        .Rss.label {
-          stroke: orange;
-          fill: orange;
-        }
-        .legend .Rss {
-          stroke: orange;
-          fill: orange;
-        }
-        .Tsp {
-          stroke: magenta;
-        }
-        .Tsp.label {
-          stroke: magenta;
-          fill: magenta;
-        }
-        .legend .Tsp {
-          stroke: magenta;
-          fill: magenta;
-        }
-        .Tss {
-          stroke: grey;
-        }
-        .Tss.label {
-          stroke: grey;
-          fill: grey;
-        }
-        .legend .Tss {
-          stroke: grey;
-          fill: grey;
-        }
-        .Rshsh {
-          stroke: mediumslateblue;
-        }
-        .Rshsh.label {
-          stroke: mediumslateblue;
-          fill: mediumslateblue;
-        }
-        .legend .Rshsh {
-          stroke: mediumslateblue;
-          fill: mediumslateblue;
-        }
-        .Tshsh {
-          stroke: violet;
-        }
-        .Tshsh.label {
-          stroke: violet;
-          fill: violet;
-        }
-        .legend .Tshsh {
-          stroke: violet;
-          fill: violet;
-        }
 
         g.autocolor > :nth-child(10n+1) {
             stroke: skyblue;
@@ -1461,38 +1375,4 @@ circle.discontinuity.iocb {
   </g> <!-- end scale -->
   </g> <!-- end scaletranslate -->
   </g> <!-- end clip-path -->
-<g class="legend autocolor" transform="translate(52.0,52.0)"> <!-- legend -->
-<g class="ak135 P Vel.">
-<line class="ak135 P Vel." x1="0" y1="0" x2="10" y2="0" />
-<text class="ak135 P Vel." font-size="14" x="11" y="0">ak135 P Vel.</text>
-</g>
-<g class="ak135 S Vel.">
-<line class="ak135 S Vel." x1="0" y1="16" x2="10" y2="16" />
-<text class="ak135 S Vel." font-size="14" x="11" y="16">ak135 S Vel.</text>
-</g>
-<g class="ak135favg P Vel.">
-<line class="ak135favg P Vel." x1="0" y1="32" x2="10" y2="32" />
-<text class="ak135favg P Vel." font-size="14" x="11" y="32">ak135favg P Vel.</text>
-</g>
-<g class="ak135favg S Vel.">
-<line class="ak135favg S Vel." x1="0" y1="48" x2="10" y2="48" />
-<text class="ak135favg S Vel." font-size="14" x="11" y="48">ak135favg S Vel.</text>
-</g>
-<g class="ak135fcont P Vel.">
-<line class="ak135fcont P Vel." x1="0" y1="64" x2="10" y2="64" />
-<text class="ak135fcont P Vel." font-size="14" x="11" y="64">ak135fcont P Vel.</text>
-</g>
-<g class="ak135fcont S Vel.">
-<line class="ak135fcont S Vel." x1="0" y1="80" x2="10" y2="80" />
-<text class="ak135fcont S Vel." font-size="14" x="11" y="80">ak135fcont S Vel.</text>
-</g>
-<g class="prem P Vel.">
-<line class="prem P Vel." x1="0" y1="96" x2="10" y2="96" />
-<text class="prem P Vel." font-size="14" x="11" y="96">prem P Vel.</text>
-</g>
-<g class="prem S Vel.">
-<line class="prem S Vel." x1="0" y1="112" x2="10" y2="112" />
-<text class="prem S Vel." font-size="14" x="11" y="112">prem S Vel.</text>
-</g>
-</g> <!-- legend end-->
 </svg>

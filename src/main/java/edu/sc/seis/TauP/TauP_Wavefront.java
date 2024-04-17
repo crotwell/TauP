@@ -33,6 +33,9 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
     @CommandLine.Mixin
     ColoringArgs coloring = new ColoringArgs();
 
+    @CommandLine.Option(names = "--legend", description = "create a legend")
+    boolean isLegend = false;
+
     @CommandLine.Option(names = "--colortime", description = "generate css colors by time, default is by phase name")
     boolean cssColorTime = false;
     @CommandLine.Mixin
@@ -117,7 +120,6 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
     }
 
     public void printIsochron(PrintWriter out, Map<Double, List<WavefrontPathSegment>> timeSegmentMap, boolean negDistance, String psFile) throws TauPException, IOException {
-        List<WavefrontPathSegment> segmentList;
         List<Double> sortedKeys = new ArrayList<>();
         sortedKeys.addAll(timeSegmentMap.keySet());
         Collections.sort(sortedKeys);
@@ -151,18 +153,27 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
         } else if (getOutputFormat().equals(OutputTypes.SVG)) {
             String cssExtra = "";
             cssExtra += createSurfaceWaveCSS(Arrays.asList(getPhaseNames()))+"\n";
+            double maxTime = 0;
             if (coloring.getColor() == ColorType.phase) {
                 StringBuffer cssPhaseColors = SvgUtil.createPhaseColorCSS(Arrays.asList(getPhaseNames()));
                 cssExtra += cssPhaseColors;
             } else if (coloring.getColor() == ColorType.wavetype) {
-                StringBuffer cssWaveTypeColors = SvgUtil.createWaveTypeColorCSS();
+                String cssWaveTypeColors = SvgUtil.createWaveTypeColorCSS();
                 cssExtra += cssWaveTypeColors;
             } else {
+                for (SeismicPhase phase : getSeismicPhases()) {
+                    if (phase.getMaxTime() > maxTime) {
+                        maxTime = phase.getMaxTime();
+                    }
+                }
+                StringBuffer cssTimeColors = SvgUtil.createTimeStepColorCSS(timeStep, (float) maxTime);
+                cssExtra += cssTimeColors;
                 // autocolor?
             }
-            float pixelWidth = (72.0f * getGraphicOutputTypeArgs().mapwidth);
-            float[] scaleTrans = SvgEarth.calcEarthScaleTransForPhaseList(getSeismicPhases(), distDepthRangeArgs);
+            float pixelWidth = getGraphicOutputTypeArgs().getPixelWidth();
+            float[] scaleTrans = SvgEarth.calcEarthScaleTransForPhaseList(getSeismicPhases(), distDepthRangeArgs, isNegDistance());
             System.err.println("scaleTrans: "+scaleTrans[0] +" "+scaleTrans[1] +" "+scaleTrans[2]+" "+scaleTrans[3]*180/Math.PI +" "+scaleTrans[4]*180/Math.PI);
+
             SvgEarth.printScriptBeginningSvg(out, modelArgs.getTauModel(), pixelWidth,
                     scaleTrans, toolNameFromClass(this.getClass()), cmdLineArgs, cssExtra);
 
@@ -172,17 +183,32 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
                 SvgUtil.startAutocolorG(out);
             }
             for (Double timeVal : sortedKeys) {
-                out.println("<g>");
-                out.println("    <desc>Time" + timeVal + "</desc>");
+                out.println("    <g>");
+                out.println("      <desc>Time" + Outputs.formatTimeNoPad(timeVal) + "</desc>");
                 for (WavefrontPathSegment segment : timeSegmentMap.get(timeVal)) {
                     segment.writeSVGCartesian(out);
+                    if (isNegDistance()) {
+                        segment.asNegativeDistance().writeSVGCartesian(out);
+                    }
                 }
                 out.println("</g>");
             }
             if (coloring.getColor() == ColorType.auto) {
                 SvgUtil.endAutocolorG(out);
             }
-            SvgEarth.printSvgEnding(out);
+            SvgEarth.printSvgEndZoom(out);
+            if (isLegend) {
+                float xtrans = (int)(-1*pixelWidth*.05);
+                float ytrans = (int) (pixelWidth*.05);
+                if (coloring.getColor() == ColorType.phase) {
+                    SvgUtil.createPhaseLegend(out, getSeismicPhases(), "" , xtrans, ytrans);
+                } else if (coloring.getColor() == ColorType.wavetype) {
+                    SvgUtil.createWavetypeLegend(out, xtrans, ytrans, false);
+                } else {
+                    SvgUtil.createTimeStepLegend(out, timeStep, maxTime, "autocolor", xtrans, ytrans );
+                }
+            }
+            SvgEarth.printSvgEnd(out);
         } else {
             // text/gmt
 
@@ -244,6 +270,7 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
     public Map<Double, List<WavefrontPathSegment>> calcIsochronSegmentsForPhase(SeismicPhase phase, double timeStep) {
         double minDist = phase.getMinDistanceDeg();
         double maxDist = phase.getMaxDistanceDeg();
+        int totalNumSegments = (int) Math.floor(phase.getMaxTime()/timeStep);
         double deltaDist = (maxDist - minDist) / (numRays - 1);
         List<Arrival> allArrival = new ArrayList<Arrival>();
         for (int i=0; i<phase.getNumRays(); i++) {
@@ -276,7 +303,8 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
                 double dist = timeVal / phase.getRayParams(0);
                 surfaceWaveTD.add(new TimeDist(phase.getRayParams(0), timeVal, dist, 0));
                 surfaceWaveTD.add(new TimeDist(phase.getRayParams(0), timeVal, dist, 100));
-                WavefrontPathSegment seg = new WavefrontPathSegment(surfaceWaveTD, false, phase.getName(),  null, 0, phase, timeVal);
+                WavefrontPathSegment seg = new WavefrontPathSegment(surfaceWaveTD, false, phase.getName(),
+                        null, 0, totalNumSegments, phase, timeVal);
                 wavefrontSegments.add(seg);
                 done = dist + timeStep / phase.getRayParams(0) > phase.getMaxDistance();
                 continue;
@@ -310,7 +338,8 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
                                 // maybe should check endaction of prev path segment to see if reflection???
                                 tdList.add(prevEnd);
                             }
-                            curWaveSeg = new WavefrontPathSegment(tdList, lastSeg.isPWave, lastSeg.segmentName, prevEnd, waveSegIdx++, arrival.getPhase(), timeVal);
+                            curWaveSeg = new WavefrontPathSegment(tdList, lastSeg.isPWave, lastSeg.segmentName,
+                                    prevEnd, waveSegIdx++, totalNumSegments, arrival.getPhase(), timeVal);
                             wavefrontSegments.add(curWaveSeg);
                         }
                         curWaveSeg.path.add(interp);
@@ -344,7 +373,8 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
                                     // kind of wrong as phase change happened somewhere in between, but better than a gap???
                                     tdList.add(prevEnd);
                                 }
-                                curWaveSeg = new WavefrontPathSegment(tdList, curPathSeg.isPWave, curPathSeg.segmentName, prevEnd, waveSegIdx++, arrival.getPhase(), timeVal);
+                                curWaveSeg = new WavefrontPathSegment(tdList, curPathSeg.isPWave, curPathSeg.segmentName,
+                                        prevEnd, waveSegIdx++, totalNumSegments, arrival.getPhase(), timeVal);
                                 wavefrontSegments.add(curWaveSeg);
                             }
                             curWaveSeg.path.add(interp);
@@ -384,14 +414,15 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
                 XYSegment seg = new XYSegment(xVals, yVals);
                 String p_or_s = waveSeg.isPWave ? "pwave" : "swave";
                 seg.cssClasses.add(p_or_s);
-                seg.cssClasses.add(String.format("time_%05d", (int) Math.round(timeVal)));
+                seg.cssClasses.add(SvgUtil.formatTimeForCss(timeVal));
                 seg.cssClasses.add(SvgUtil.classForPhase(waveSeg.segmentName));
                 xySegmentList.add(seg);
             }
             List<String> cssClasses = new ArrayList<>();
             cssClasses.add(String.format("time_%05d", (int) Math.round(timeVal)));
             cssClasses.add(SvgUtil.classForPhase(phase.getName()));
-            XYPlottingData xyp = new XYPlottingData(xySegmentList, AxisType.degree.name(), ModelAxisType.depth.name(), phase.getName(), cssClasses);
+            XYPlottingData xyp = new XYPlottingData(xySegmentList, AxisType.degree.name(), ModelAxisType.depth.name(),
+                    phase.getName(), phase.getName()+" at "+Outputs.formatTimeNoPad(timeVal)+" sec", cssClasses);
             out.put(timeVal, xyp);
         }
         return out;
@@ -466,22 +497,6 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
         } else {
             /* enough info given on cmd line, so just do one calc. */
             Map<Double, List<WavefrontPathSegment>> isochronMap = calcIsochron();
-            String cssExtra = "";
-            if (coloring.getColor() == ColorType.phase) {
-                StringBuffer cssPhaseColors = SvgUtil.createPhaseColorCSS(Arrays.asList(getPhaseNames()));
-                cssExtra += cssPhaseColors;
-            } else if (coloring.getColor() == ColorType.wavetype) {
-                StringBuffer cssWaveTypeColors = SvgUtil.createWaveTypeColorCSS();
-                cssExtra += cssWaveTypeColors;
-            } else {
-                // autocolor? by time?
-                double maxTime = 0;
-                for (Double timeVal : isochronMap.keySet()) {
-                    maxTime = Math.max(maxTime, timeVal);
-                }
-                StringBuffer cssTime = SvgUtil.createTimeStepColorCSS((int) timeStep, (float) maxTime);
-                cssExtra += cssTime;
-            }
             List<Double> sortedKeys = new ArrayList<>();
             sortedKeys.addAll(isochronMap.keySet());
             Collections.sort(sortedKeys);

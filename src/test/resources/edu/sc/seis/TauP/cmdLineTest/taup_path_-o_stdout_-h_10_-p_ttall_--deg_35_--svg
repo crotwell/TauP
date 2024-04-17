@@ -102,117 +102,6 @@ circle.discontinuity.iocb {
     fill: burlywood;
 }
 
-        .Rpp {
-          stroke: blue;
-        }
-        .Rpp.label {
-          stroke: blue;
-          fill: blue;
-        }
-        .legend .Rpp {
-          stroke: blue;
-          fill: blue;
-        }
-        .Rps {
-          stroke: green;
-        }
-        .Rps.label {
-          stroke: green;
-          fill: green;
-        }
-        .legend .Rps {
-          stroke: green;
-          fill: green;
-        }
-        .Tpp {
-          stroke: cyan;
-        }
-        .Tpp.label {
-          stroke: cyan;
-          fill: cyan;
-        }
-        .legend .Tpp {
-          stroke: cyan;
-          fill: cyan;
-        }
-        .Tps {
-          stroke: gold;
-        }
-        .Tps.label {
-          stroke: gold;
-          fill: gold;
-        }
-        .legend .Tps {
-          stroke: gold;
-          fill: gold;
-        }
-        .Rsp {
-          stroke: red;
-        }
-        .Rsp.label {
-          stroke: red;
-          fill: red;
-        }
-        .legend .Rsp {
-          stroke: red;
-          fill: red;
-        }
-        .Rss {
-          stroke: orange;
-        }
-        .Rss.label {
-          stroke: orange;
-          fill: orange;
-        }
-        .legend .Rss {
-          stroke: orange;
-          fill: orange;
-        }
-        .Tsp {
-          stroke: magenta;
-        }
-        .Tsp.label {
-          stroke: magenta;
-          fill: magenta;
-        }
-        .legend .Tsp {
-          stroke: magenta;
-          fill: magenta;
-        }
-        .Tss {
-          stroke: grey;
-        }
-        .Tss.label {
-          stroke: grey;
-          fill: grey;
-        }
-        .legend .Tss {
-          stroke: grey;
-          fill: grey;
-        }
-        .Rshsh {
-          stroke: mediumslateblue;
-        }
-        .Rshsh.label {
-          stroke: mediumslateblue;
-          fill: mediumslateblue;
-        }
-        .legend .Rshsh {
-          stroke: mediumslateblue;
-          fill: mediumslateblue;
-        }
-        .Tshsh {
-          stroke: violet;
-        }
-        .Tshsh.label {
-          stroke: violet;
-          fill: violet;
-        }
-        .legend .Tshsh {
-          stroke: violet;
-          fill: violet;
-        }
-
         g.autocolor > :nth-child(10n+1) {
             stroke: skyblue;
         }
@@ -361,9 +250,9 @@ circle.discontinuity.iocb {
   <g class="autocolor" >
 <g>
     <desc>   35.00    10.0   P    412.43     8.613     26.74    26.70    35.00 180   = P</desc>
-<g>
-    <desc>seg 1 P of P at   412.43 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    8.613 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_P pwave" points="
+    <g>
+      <desc>seg 1/2 P of P at   412.43 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    8.613 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_P pwave" points="
     0.00  -6361.00
     0.00  -6361.00
     2.52  -6356.00
@@ -462,10 +351,10 @@ circle.discontinuity.iocb {
  1573.74  -5303.78
  1660.24  -5272.88
 " />
-</g>
-<g>
-    <desc>seg 2 P of P at   412.43 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    8.613 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_P pwave" points="
+    </g>
+    <g>
+      <desc>seg 2/2 P of P at   412.43 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    8.613 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_P pwave" points="
  1660.24  -5272.88
  1748.84  -5248.64
  1837.10  -5222.92
@@ -569,13 +458,13 @@ circle.discontinuity.iocb {
  3654.25  -5218.81
  3654.26  -5218.82
 " />
-</g>
+    </g>
 </g>
 <g>
     <desc>   35.00    10.0   pP    415.51     8.618    153.24    26.71    35.00 180   = pP</desc>
-<g>
-    <desc>seg 1 p of pP at   415.51 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    8.618 s/deg. in crust</desc>
-    <polyline class="path phase_pP pwave" points="
+    <g>
+      <desc>seg 1/3 p of pP at   415.51 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    8.618 s/deg. in crust</desc>
+      <polyline class="path phase_pP pwave" points="
     0.00  -6361.00
     2.52  -6366.00
     3.78  -6368.49
@@ -583,10 +472,10 @@ circle.discontinuity.iocb {
     5.04  -6370.99
     5.04  -6371.00
 " />
-</g>
-<g>
-    <desc>seg 2 P of pP at   415.51 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    8.618 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_pP pwave" points="
+    </g>
+    <g>
+      <desc>seg 2/3 P of pP at   415.51 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    8.618 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_pP pwave" points="
     5.04  -6371.00
     5.04  -6370.99
     5.67  -6369.74
@@ -690,10 +579,10 @@ circle.discontinuity.iocb {
  1584.82  -5301.75
  1664.96  -5273.31
 " />
-</g>
-<g>
-    <desc>seg 3 P of pP at   415.51 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    8.618 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_pP pwave" points="
+    </g>
+    <g>
+      <desc>seg 3/3 P of pP at   415.51 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    8.618 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_pP pwave" points="
  1664.96  -5273.31
  1746.90  -5250.58
  1828.53  -5226.57
@@ -797,23 +686,23 @@ circle.discontinuity.iocb {
  3654.25  -5218.81
  3654.26  -5218.82
 " />
-</g>
+    </g>
 </g>
 <g>
     <desc>   35.00    10.0   sP    416.85     8.617    164.88    26.71    35.00 185   = sP</desc>
-<g>
-    <desc>seg 1 s of sP at   416.85 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    8.617 s/deg. in crust</desc>
-    <polyline class="path phase_sP swave" points="
+    <g>
+      <desc>seg 1/3 s of sP at   416.85 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    8.617 s/deg. in crust</desc>
+      <polyline class="path phase_sP swave" points="
     0.00  -6361.00
     1.35  -6366.00
     2.03  -6368.50
     2.36  -6369.75
     2.70  -6371.00
 " />
-</g>
-<g>
-    <desc>seg 2 P of sP at   416.85 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    8.617 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_sP pwave" points="
+    </g>
+    <g>
+      <desc>seg 2/3 P of sP at   416.85 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    8.617 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_sP pwave" points="
     2.70  -6371.00
     2.70  -6370.99
     3.33  -6369.74
@@ -917,10 +806,10 @@ circle.discontinuity.iocb {
  1582.21  -5302.24
  1663.87  -5273.21
 " />
-</g>
-<g>
-    <desc>seg 3 P of sP at   416.85 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    8.617 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_sP pwave" points="
+    </g>
+    <g>
+      <desc>seg 3/3 P of sP at   416.85 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    8.617 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_sP pwave" points="
  1663.87  -5273.21
  1747.39  -5250.12
  1830.60  -5225.69
@@ -1024,13 +913,13 @@ circle.discontinuity.iocb {
  3654.25  -5218.81
  3654.26  -5218.82
 " />
-</g>
+    </g>
 </g>
 <g>
     <desc>   35.00    10.0   PP    489.44    12.444     40.55    40.47    35.00 109   = PP</desc>
-<g>
-    <desc>seg 1 P of PP at   489.44 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   12.444 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_PP pwave" points="
+    <g>
+      <desc>seg 1/4 P of PP at   489.44 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   12.444 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_PP pwave" points="
     0.00  -6361.00
     0.00  -6361.00
     4.28  -6356.00
@@ -1075,10 +964,10 @@ circle.discontinuity.iocb {
   855.27  -6034.47
   920.90  -6023.48
 " />
-</g>
-<g>
-    <desc>seg 2 P of PP at   489.44 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   12.444 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_PP pwave" points="
+    </g>
+    <g>
+      <desc>seg 2/4 P of PP at   489.44 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   12.444 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_PP pwave" points="
   920.90  -6023.48
   986.81  -6014.36
  1058.72  -6008.12
@@ -1128,10 +1017,10 @@ circle.discontinuity.iocb {
  1911.71  -6077.41
  1911.72  -6077.41
 " />
-</g>
-<g>
-    <desc>seg 3 P of PP at   489.44 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   12.444 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_PP pwave" points="
+    </g>
+    <g>
+      <desc>seg 3/4 P of PP at   489.44 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   12.444 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_PP pwave" points="
  1911.72  -6077.41
  1911.72  -6077.41
  1912.36  -6075.90
@@ -1181,10 +1070,10 @@ circle.discontinuity.iocb {
  2633.97  -5496.22
  2693.24  -5465.97
 " />
-</g>
-<g>
-    <desc>seg 4 P of PP at   489.44 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   12.444 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_PP pwave" points="
+    </g>
+    <g>
+      <desc>seg 4/4 P of PP at   489.44 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   12.444 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_PP pwave" points="
  2693.24  -5465.97
  2753.34  -5437.41
  2820.03  -5409.79
@@ -1234,13 +1123,13 @@ circle.discontinuity.iocb {
  3654.25  -5218.82
  3654.26  -5218.82
 " />
-</g>
+    </g>
 </g>
 <g>
     <desc>   35.00    10.0   PP    491.85    11.053     35.27    35.21    35.00 138   = PP</desc>
-<g>
-    <desc>seg 1 P of PP at   491.85 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   11.053 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_PP pwave" points="
+    <g>
+      <desc>seg 1/4 P of PP at   491.85 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   11.053 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_PP pwave" points="
     0.00  -6361.00
     0.00  -6361.00
     3.54  -6356.00
@@ -1304,10 +1193,10 @@ circle.discontinuity.iocb {
   843.57  -5891.94
   900.28  -5881.78
 " />
-</g>
-<g>
-    <desc>seg 2 P of PP at   491.85 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   11.053 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_PP pwave" points="
+    </g>
+    <g>
+      <desc>seg 2/4 P of PP at   491.85 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   11.053 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_PP pwave" points="
   900.28  -5881.78
   957.43  -5874.51
  1014.53  -5866.69
@@ -1376,10 +1265,10 @@ circle.discontinuity.iocb {
  1912.42  -6077.19
  1912.43  -6077.19
 " />
-</g>
-<g>
-    <desc>seg 3 P of PP at   491.85 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   11.053 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_PP pwave" points="
+    </g>
+    <g>
+      <desc>seg 3/4 P of PP at   491.85 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   11.053 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_PP pwave" points="
  1912.43  -6077.19
  1912.43  -6077.19
  1912.89  -6075.73
@@ -1448,10 +1337,10 @@ circle.discontinuity.iocb {
  2579.25  -5364.14
  2630.26  -5337.37
 " />
-</g>
-<g>
-    <desc>seg 4 P of PP at   491.85 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   11.053 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_PP pwave" points="
+    </g>
+    <g>
+      <desc>seg 4/4 P of PP at   491.85 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   11.053 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_PP pwave" points="
  2630.26  -5337.37
  2682.57  -5313.23
  2734.66  -5288.57
@@ -1520,13 +1409,13 @@ circle.discontinuity.iocb {
  3654.25  -5218.82
  3654.26  -5218.82
 " />
-</g>
+    </g>
 </g>
 <g>
     <desc>   35.00    10.0   PP    493.23    11.428     36.66    36.59    35.00 131   = PP</desc>
-<g>
-    <desc>seg 1 P of PP at   493.23 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   11.428 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_PP pwave" points="
+    <g>
+      <desc>seg 1/4 P of PP at   493.23 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   11.428 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_PP pwave" points="
     0.00  -6361.00
     0.00  -6361.00
     3.72  -6356.00
@@ -1586,10 +1475,10 @@ circle.discontinuity.iocb {
   822.95  -5916.39
   901.65  -5892.41
 " />
-</g>
-<g>
-    <desc>seg 2 P of PP at   493.23 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   11.428 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_PP pwave" points="
+    </g>
+    <g>
+      <desc>seg 2/4 P of PP at   493.23 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   11.428 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_PP pwave" points="
   901.65  -5892.41
   983.91  -5891.76
  1047.96  -5893.12
@@ -1654,10 +1543,10 @@ circle.discontinuity.iocb {
  1912.24  -6077.24
  1912.25  -6077.25
 " />
-</g>
-<g>
-    <desc>seg 3 P of PP at   493.23 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   11.428 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_PP pwave" points="
+    </g>
+    <g>
+      <desc>seg 3/4 P of PP at   493.23 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   11.428 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_PP pwave" points="
  1912.25  -6077.25
  1912.25  -6077.24
  1912.76  -6075.77
@@ -1722,10 +1611,10 @@ circle.discontinuity.iocb {
  2567.10  -5393.59
  2634.92  -5347.03
 " />
-</g>
-<g>
-    <desc>seg 4 P of PP at   493.23 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   11.428 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_PP pwave" points="
+    </g>
+    <g>
+      <desc>seg 4/4 P of PP at   493.23 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   11.428 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_PP pwave" points="
  2634.92  -5347.03
  2713.17  -5321.62
  2774.65  -5303.62
@@ -1790,13 +1679,13 @@ circle.discontinuity.iocb {
  3654.25  -5218.82
  3654.26  -5218.82
 " />
-</g>
+    </g>
 </g>
 <g>
     <desc>   35.00    10.0   PP    493.26    13.578     45.18    45.09    35.00 89   = PP</desc>
-<g>
-    <desc>seg 1 P of PP at   493.26 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   13.578 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_PP pwave" points="
+    <g>
+      <desc>seg 1/4 P of PP at   493.26 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   13.578 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_PP pwave" points="
     0.00  -6361.00
     0.00  -6361.00
     5.04  -6356.00
@@ -1822,10 +1711,10 @@ circle.discontinuity.iocb {
   840.06  -6207.96
   945.20  -6189.81
 " />
-</g>
-<g>
-    <desc>seg 2 P of PP at   493.26 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   13.578 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_PP pwave" points="
+    </g>
+    <g>
+      <desc>seg 2/4 P of PP at   493.26 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   13.578 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_PP pwave" points="
   945.20  -6189.81
  1050.97  -6175.75
  1156.54  -6159.89
@@ -1856,10 +1745,10 @@ circle.discontinuity.iocb {
  1910.99  -6077.64
  1911.00  -6077.64
 " />
-</g>
-<g>
-    <desc>seg 3 P of PP at   493.26 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   13.578 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_PP pwave" points="
+    </g>
+    <g>
+      <desc>seg 3/4 P of PP at   493.26 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   13.578 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_PP pwave" points="
  1911.00  -6077.64
  1911.00  -6077.63
  1911.83  -6076.07
@@ -1890,10 +1779,10 @@ circle.discontinuity.iocb {
  2672.42  -5665.92
  2767.20  -5616.92
 " />
-</g>
-<g>
-    <desc>seg 4 P of PP at   493.26 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   13.578 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_PP pwave" points="
+    </g>
+    <g>
+      <desc>seg 4/4 P of PP at   493.26 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   13.578 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_PP pwave" points="
  2767.20  -5616.92
  2863.81  -5571.63
  2959.68  -5524.68
@@ -1924,13 +1813,13 @@ circle.discontinuity.iocb {
  3654.25  -5218.82
  3654.26  -5218.82
 " />
-</g>
+    </g>
 </g>
 <g>
     <desc>   35.00    10.0   PP    493.29    13.550     45.07    44.98    35.00 90   = PP</desc>
-<g>
-    <desc>seg 1 P of PP at   493.29 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   13.550 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_PP pwave" points="
+    <g>
+      <desc>seg 1/4 P of PP at   493.29 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   13.550 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_PP pwave" points="
     0.00  -6361.00
     0.00  -6361.00
     5.02  -6356.00
@@ -1957,10 +1846,10 @@ circle.discontinuity.iocb {
   906.92  -6184.86
   943.58  -6179.02
 " />
-</g>
-<g>
-    <desc>seg 2 P of PP at   493.29 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   13.550 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_PP pwave" points="
+    </g>
+    <g>
+      <desc>seg 2/4 P of PP at   493.29 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   13.550 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_PP pwave" points="
   943.58  -6179.02
   980.30  -6173.65
  1074.17  -6162.96
@@ -1992,10 +1881,10 @@ circle.discontinuity.iocb {
  1911.01  -6077.63
  1911.01  -6077.64
 " />
-</g>
-<g>
-    <desc>seg 3 P of PP at   493.29 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   13.550 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_PP pwave" points="
+    </g>
+    <g>
+      <desc>seg 3/4 P of PP at   493.29 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   13.550 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_PP pwave" points="
  1911.01  -6077.64
  1911.02  -6077.63
  1911.83  -6076.06
@@ -2027,10 +1916,10 @@ circle.discontinuity.iocb {
  2729.19  -5623.74
  2762.39  -5607.13
 " />
-</g>
-<g>
-    <desc>seg 4 P of PP at   493.29 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   13.550 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_PP pwave" points="
+    </g>
+    <g>
+      <desc>seg 4/4 P of PP at   493.29 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   13.550 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_PP pwave" points="
  2762.39  -5607.13
  2795.79  -5590.94
  2882.07  -5552.44
@@ -2062,13 +1951,13 @@ circle.discontinuity.iocb {
  3654.25  -5218.82
  3654.26  -5218.82
 " />
-</g>
+    </g>
 </g>
 <g>
     <desc>   35.00    10.0   PcP    564.28     2.914      8.76     8.74    35.00 31   = PcP</desc>
-<g>
-    <desc>seg 1 P of PcP at   564.28 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    2.914 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_PcP pwave" points="
+    <g>
+      <desc>seg 1/2 P of PcP at   564.28 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    2.914 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_PcP pwave" points="
     0.00  -6361.00
     0.00  -6361.00
     0.77  -6356.00
@@ -2258,10 +2147,10 @@ circle.discontinuity.iocb {
  1038.11  -3340.60
  1046.66  -3320.97
 " />
-</g>
-<g>
-    <desc>seg 2 P of PcP at   564.28 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    2.914 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_PcP pwave" points="
+    </g>
+    <g>
+      <desc>seg 2/2 P of PcP at   564.28 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    2.914 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_PcP pwave" points="
  1046.66  -3320.97
  1064.91  -3332.15
  1102.48  -3355.18
@@ -2456,13 +2345,13 @@ circle.discontinuity.iocb {
  3654.25  -5218.81
  3654.26  -5218.82
 " />
-</g>
+    </g>
 </g>
 <g>
     <desc>   35.00    10.0   S    745.29    15.367     27.71    27.67    35.00 172   = S</desc>
-<g>
-    <desc>seg 1 S of S at   745.29 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   15.367 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_S swave" points="
+    <g>
+      <desc>seg 1/2 S of S at   745.29 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   15.367 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_S swave" points="
     0.00  -6361.00
     2.63  -6356.00
     5.25  -6351.00
@@ -2570,10 +2459,10 @@ circle.discontinuity.iocb {
  1571.08  -5300.56
  1659.10  -5269.57
 " />
-</g>
-<g>
-    <desc>seg 2 S of S at   745.29 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   15.367 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_S swave" points="
+    </g>
+    <g>
+      <desc>seg 2/2 S of S at   745.29 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   15.367 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_S swave" points="
  1659.10  -5269.57
  1749.00  -5244.54
  1838.52  -5217.97
@@ -2685,13 +2574,13 @@ circle.discontinuity.iocb {
  3653.00  -5218.17
  3654.26  -5218.82
 " />
-</g>
+    </g>
 </g>
 <g>
     <desc>   35.00    10.0   pS    748.95    15.379    126.54    27.69    35.00 61   = pS</desc>
-<g>
-    <desc>seg 1 p of pS at   748.95 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   15.379 s/deg. in crust</desc>
-    <polyline class="path phase_pS pwave" points="
+    <g>
+      <desc>seg 1/3 p of pS at   748.95 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   15.379 s/deg. in crust</desc>
+      <polyline class="path phase_pS pwave" points="
     0.00  -6361.00
     6.74  -6365.99
    10.10  -6368.49
@@ -2699,10 +2588,10 @@ circle.discontinuity.iocb {
    13.47  -6370.98
    13.48  -6370.99
 " />
-</g>
-<g>
-    <desc>seg 2 S of pS at   748.95 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   15.379 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_pS swave" points="
+    </g>
+    <g>
+      <desc>seg 2/3 S of pS at   748.95 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   15.379 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_pS swave" points="
    13.48  -6370.99
    14.13  -6369.73
    14.78  -6368.48
@@ -2815,10 +2704,10 @@ circle.discontinuity.iocb {
  1590.51  -5296.66
  1667.67  -5269.74
 " />
-</g>
-<g>
-    <desc>seg 3 S of pS at   748.95 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   15.379 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_pS swave" points="
+    </g>
+    <g>
+      <desc>seg 3/3 S of pS at   748.95 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   15.379 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_pS swave" points="
  1667.67  -5269.74
  1746.27  -5247.37
  1824.58  -5223.83
@@ -2931,23 +2820,23 @@ circle.discontinuity.iocb {
  3653.00  -5218.17
  3654.26  -5218.82
 " />
-</g>
+    </g>
 </g>
 <g>
     <desc>   35.00    10.0   sS    750.56    15.374    152.27    27.68    35.00 172   = sS</desc>
-<g>
-    <desc>seg 1 s of sS at   750.56 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   15.374 s/deg. in crust</desc>
-    <polyline class="path phase_sS swave" points="
+    <g>
+      <desc>seg 1/3 s of sS at   750.56 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   15.374 s/deg. in crust</desc>
+      <polyline class="path phase_sS swave" points="
     0.00  -6361.00
     2.63  -6366.00
     3.94  -6368.50
     4.60  -6369.75
     5.26  -6371.00
 " />
-</g>
-<g>
-    <desc>seg 2 S of sS at   750.56 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   15.374 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_sS swave" points="
+    </g>
+    <g>
+      <desc>seg 2/3 S of sS at   750.56 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   15.374 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_sS swave" points="
     5.26  -6371.00
     5.91  -6369.75
     6.56  -6368.50
@@ -3059,10 +2948,10 @@ circle.discontinuity.iocb {
  1581.82  -5298.43
  1663.91  -5269.67
 " />
-</g>
-<g>
-    <desc>seg 3 S of sS at   750.56 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   15.374 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_sS swave" points="
+    </g>
+    <g>
+      <desc>seg 3/3 S of sS at   750.56 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   15.374 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_sS swave" points="
  1663.91  -5269.67
  1747.63  -5246.08
  1831.02  -5221.15
@@ -3174,13 +3063,13 @@ circle.discontinuity.iocb {
  3653.00  -5218.17
  3654.26  -5218.82
 " />
-</g>
+    </g>
 </g>
 <g>
     <desc>   35.00    10.0   SP    751.35    15.444     27.87    53.66    35.00 65   = SP</desc>
-<g>
-    <desc>seg 1 S of SP at   751.35 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   15.444 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_SP swave" points="
+    <g>
+      <desc>seg 1/4 S of SP at   751.35 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   15.444 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_SP swave" points="
     0.00  -6361.00
     2.64  -6356.00
     5.29  -6351.00
@@ -3287,10 +3176,10 @@ circle.discontinuity.iocb {
  1543.00  -5324.77
  1614.47  -5300.88
 " />
-</g>
-<g>
-    <desc>seg 2 S of SP at   751.35 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   15.444 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_SP swave" points="
+    </g>
+    <g>
+      <desc>seg 2/4 S of SP at   751.35 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   15.444 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_SP swave" points="
  1614.47  -5300.88
  1687.13  -5280.87
  1759.55  -5259.87
@@ -3401,10 +3290,10 @@ circle.discontinuity.iocb {
  3554.50  -5285.76
  3555.75  -5286.42
 " />
-</g>
-<g>
-    <desc>seg 3 P of SP at   751.35 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   15.444 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_SP pwave" points="
+    </g>
+    <g>
+      <desc>seg 3/4 P of SP at   751.35 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   15.444 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_SP pwave" points="
  3555.75  -5286.42
  3555.75  -5286.42
  3556.46  -5284.43
@@ -3420,10 +3309,10 @@ circle.discontinuity.iocb {
  3576.24  -5239.32
  3585.36  -5223.99
 " />
-</g>
-<g>
-    <desc>seg 4 P of SP at   751.35 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   15.444 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_SP pwave" points="
+    </g>
+    <g>
+      <desc>seg 4/4 P of SP at   751.35 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   15.444 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_SP pwave" points="
  3585.36  -5223.99
  3602.93  -5221.00
  3611.68  -5219.51
@@ -3439,13 +3328,13 @@ circle.discontinuity.iocb {
  3654.25  -5218.82
  3654.26  -5218.82
 " />
-</g>
+    </g>
 </g>
 <g>
     <desc>   35.00    10.0   PS    752.96    15.438     53.76    27.81    35.00 60   = PS</desc>
-<g>
-    <desc>seg 1 P of PS at   752.96 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   15.438 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_PS pwave" points="
+    <g>
+      <desc>seg 1/4 P of PS at   752.96 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   15.438 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_PS pwave" points="
     0.00  -6361.00
     0.00  -6361.00
     6.83  -6355.99
@@ -3456,10 +3345,10 @@ circle.discontinuity.iocb {
    29.67  -6343.43
    45.77  -6335.83
 " />
-</g>
-<g>
-    <desc>seg 2 P of PS at   752.96 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   15.438 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_PS pwave" points="
+    </g>
+    <g>
+      <desc>seg 2/4 P of PS at   752.96 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   15.438 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_PS pwave" points="
    45.77  -6335.83
    61.98  -6343.20
    70.05  -6346.86
@@ -3475,10 +3364,10 @@ circle.discontinuity.iocb {
   105.66  -6370.12
   105.67  -6370.12
 " />
-</g>
-<g>
-    <desc>seg 3 S of PS at   752.96 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   15.438 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_PS swave" points="
+    </g>
+    <g>
+      <desc>seg 3/4 S of PS at   752.96 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   15.438 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_PS swave" points="
   105.67  -6370.12
   106.31  -6368.86
   106.95  -6367.60
@@ -3589,10 +3478,10 @@ circle.discontinuity.iocb {
  1633.60  -5296.88
  1709.71  -5269.72
 " />
-</g>
-<g>
-    <desc>seg 4 S of PS at   752.96 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   15.438 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_PS swave" points="
+    </g>
+    <g>
+      <desc>seg 4/4 S of PS at   752.96 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   15.438 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_PS swave" points="
  1709.71  -5269.72
  1787.27  -5247.02
  1864.53  -5223.17
@@ -3703,13 +3592,13 @@ circle.discontinuity.iocb {
  3653.00  -5218.17
  3654.26  -5218.82
 " />
-</g>
+    </g>
 </g>
 <g>
     <desc>   35.00    10.0   ScP    789.88     3.606      6.27    10.84    35.00 21   = ScP</desc>
-<g>
-    <desc>seg 1 S of ScP at   789.88 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    3.606 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_ScP swave" points="
+    <g>
+      <desc>seg 1/2 S of ScP at   789.88 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    3.606 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_ScP swave" points="
     0.00  -6361.00
     0.55  -6356.00
     1.10  -6351.00
@@ -3937,10 +3826,10 @@ circle.discontinuity.iocb {
   638.82  -3462.17
   649.82  -3420.83
 " />
-</g>
-<g>
-    <desc>seg 2 P of ScP at   789.88 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    3.606 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_ScP pwave" points="
+    </g>
+    <g>
+      <desc>seg 2/2 P of ScP at   789.88 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    3.606 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_ScP pwave" points="
   649.82  -3420.83
   674.87  -3432.47
   725.97  -3456.25
@@ -4135,13 +4024,13 @@ circle.discontinuity.iocb {
  3654.25  -5218.81
  3654.26  -5218.82
 " />
-</g>
+    </g>
 </g>
 <g>
     <desc>   35.00    10.0   PcS    791.15     3.607     10.86     6.26    35.00 21   = PcS</desc>
-<g>
-    <desc>seg 1 P of PcS at   791.15 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    3.607 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_PcS pwave" points="
+    <g>
+      <desc>seg 1/2 P of PcS at   791.15 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    3.607 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_PcS pwave" points="
     0.00  -6361.00
     0.00  -6361.00
     0.96  -6356.00
@@ -4331,10 +4220,10 @@ circle.discontinuity.iocb {
  1415.32  -3199.09
  1429.17  -3175.18
 " />
-</g>
-<g>
-    <desc>seg 2 S of PcS at   791.15 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    3.607 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_PcS swave" points="
+    </g>
+    <g>
+      <desc>seg 2/2 S of PcS at   791.15 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    3.607 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_PcS swave" points="
  1429.17  -3175.18
  1461.89  -3202.75
  1471.24  -3210.63
@@ -4566,13 +4455,13 @@ circle.discontinuity.iocb {
  3653.43  -5217.87
  3654.26  -5218.82
 " />
-</g>
+    </g>
 </g>
 <g>
     <desc>   35.00    10.0   SS    881.90    24.202     47.09    47.00    35.00 55   = SS</desc>
-<g>
-    <desc>seg 1 S of SS at   881.90 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   24.202 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_SS swave" points="
+    <g>
+      <desc>seg 1/4 S of SS at   881.90 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   24.202 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_SS swave" points="
     0.00  -6361.00
     5.38  -6356.00
    10.77  -6350.99
@@ -4597,10 +4486,10 @@ circle.discontinuity.iocb {
   847.01  -6187.61
   941.82  -6171.01
 " />
-</g>
-<g>
-    <desc>seg 2 S of SS at   881.90 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   24.202 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_SS swave" points="
+    </g>
+    <g>
+      <desc>seg 2/4 S of SS at   881.90 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   24.202 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_SS swave" points="
   941.82  -6171.01
  1037.26  -6158.57
  1132.54  -6144.66
@@ -4629,10 +4518,10 @@ circle.discontinuity.iocb {
  1909.02  -6076.95
  1910.67  -6077.74
 " />
-</g>
-<g>
-    <desc>seg 3 S of SS at   881.90 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   24.202 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_SS swave" points="
+    </g>
+    <g>
+      <desc>seg 3/4 S of SS at   881.90 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   24.202 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_SS swave" points="
  1910.67  -6077.74
  1911.57  -6076.15
  1912.48  -6074.56
@@ -4661,10 +4550,10 @@ circle.discontinuity.iocb {
  2673.22  -5644.27
  2758.61  -5599.86
 " />
-</g>
-<g>
-    <desc>seg 4 S of SS at   881.90 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   24.202 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_SS swave" points="
+    </g>
+    <g>
+      <desc>seg 4/4 S of SS at   881.90 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   24.202 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_SS swave" points="
  2758.61  -5599.86
  2845.86  -5559.23
  2932.52  -5517.23
@@ -4693,13 +4582,13 @@ circle.discontinuity.iocb {
  3652.44  -5218.56
  3654.26  -5218.82
 " />
-</g>
+    </g>
 </g>
 <g>
     <desc>   35.00    10.0   SS    898.10    20.402     38.13    38.06    35.00 93   = SS</desc>
-<g>
-    <desc>seg 1 S of SS at   898.10 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   20.402 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_SS swave" points="
+    <g>
+      <desc>seg 1/4 S of SS at   898.10 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   20.402 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_SS swave" points="
     0.00  -6361.00
     3.93  -6356.00
     7.85  -6351.00
@@ -4747,10 +4636,10 @@ circle.discontinuity.iocb {
   840.33  -5892.53
   899.87  -5882.66
 " />
-</g>
-<g>
-    <desc>seg 2 S of SS at   898.10 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   20.402 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_SS swave" points="
+    </g>
+    <g>
+      <desc>seg 2/4 S of SS at   898.10 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   20.402 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_SS swave" points="
   899.87  -5882.66
   959.64  -5874.28
  1036.04  -5865.79
@@ -4802,10 +4691,10 @@ circle.discontinuity.iocb {
  1910.75  -6076.41
  1912.05  -6077.31
 " />
-</g>
-<g>
-    <desc>seg 3 S of SS at   898.10 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   20.402 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_SS swave" points="
+    </g>
+    <g>
+      <desc>seg 3/4 S of SS at   898.10 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   20.402 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_SS swave" points="
  1912.05  -6077.31
  1912.61  -6075.82
  1913.17  -6074.34
@@ -4857,10 +4746,10 @@ circle.discontinuity.iocb {
  2576.66  -5365.53
  2630.45  -5338.18
 " />
-</g>
-<g>
-    <desc>seg 4 S of SS at   898.10 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   20.402 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_SS swave" points="
+    </g>
+    <g>
+      <desc>seg 4/4 S of SS at   898.10 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   20.402 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_SS swave" points="
  2630.45  -5338.18
  2684.92  -5312.18
  2755.22  -5281.07
@@ -4912,13 +4801,13 @@ circle.discontinuity.iocb {
  3652.74  -5218.36
  3654.26  -5218.82
 " />
-</g>
+    </g>
 </g>
 <g>
     <desc>   35.00    10.0   SS    900.27    21.080     39.64    39.57    35.00 86   = SS</desc>
-<g>
-    <desc>seg 1 S of SS at   900.27 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   21.080 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_SS swave" points="
+    <g>
+      <desc>seg 1/4 S of SS at   900.27 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   21.080 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_SS swave" points="
     0.00  -6361.00
     4.14  -6356.00
     8.29  -6350.99
@@ -4963,10 +4852,10 @@ circle.discontinuity.iocb {
   823.82  -5918.89
   901.06  -5892.50
 " />
-</g>
-<g>
-    <desc>seg 2 S of SS at   900.27 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   21.080 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_SS swave" points="
+    </g>
+    <g>
+      <desc>seg 2/4 S of SS at   900.27 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   21.080 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_SS swave" points="
   901.06  -5892.50
   982.66  -5894.60
  1049.60  -5898.07
@@ -5015,10 +4904,10 @@ circle.discontinuity.iocb {
  1910.49  -6076.49
  1911.85  -6077.37
 " />
-</g>
-<g>
-    <desc>seg 3 S of SS at   900.27 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   21.080 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_SS swave" points="
+    </g>
+    <g>
+      <desc>seg 3/4 S of SS at   900.27 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   21.080 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_SS swave" points="
  1911.85  -6077.37
  1912.46  -6075.87
  1913.07  -6074.37
@@ -5067,10 +4956,10 @@ circle.discontinuity.iocb {
  2569.04  -5395.55
  2634.75  -5347.11
 " />
-</g>
-<g>
-    <desc>seg 4 S of SS at   900.27 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   21.080 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_SS swave" points="
+    </g>
+    <g>
+      <desc>seg 4/4 S of SS at   900.27 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   21.080 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_SS swave" points="
  2634.75  -5347.11
  2713.18  -5324.52
  2778.05  -5307.67
@@ -5119,13 +5008,13 @@ circle.discontinuity.iocb {
  3652.69  -5218.39
  3654.26  -5218.82
 " />
-</g>
+    </g>
 </g>
 <g>
     <desc>   35.00    10.0   SS    932.85    16.751     30.46    30.41    35.00 153   = SS</desc>
-<g>
-    <desc>seg 1 S of SS at   932.85 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   16.751 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_SS swave" points="
+    <g>
+      <desc>seg 1/4 S of SS at   932.85 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   16.751 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_SS swave" points="
     0.00  -6361.00
     2.94  -6356.00
     5.88  -6351.00
@@ -5211,10 +5100,10 @@ circle.discontinuity.iocb {
   842.94  -5648.45
   864.85  -5644.98
 " />
-</g>
-<g>
-    <desc>seg 2 S of SS at   932.85 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   16.751 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_SS swave" points="
+    </g>
+    <g>
+      <desc>seg 2/4 S of SS at   932.85 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   16.751 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_SS swave" points="
   864.85  -5644.98
   886.79  -5641.73
   933.13  -5651.01
@@ -5304,10 +5193,10 @@ circle.discontinuity.iocb {
  1911.92  -6076.04
  1912.99  -6077.01
 " />
-</g>
-<g>
-    <desc>seg 3 S of SS at   932.85 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   16.751 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_SS swave" points="
+    </g>
+    <g>
+      <desc>seg 3/4 S of SS at   932.85 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   16.751 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_SS swave" points="
  1912.99  -6077.01
  1913.32  -6075.60
  1913.64  -6074.19
@@ -5397,10 +5286,10 @@ circle.discontinuity.iocb {
  2504.81  -5132.39
  2524.66  -5122.49
 " />
-</g>
-<g>
-    <desc>seg 4 S of SS at   932.85 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   16.751 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_SS swave" points="
+    </g>
+    <g>
+      <desc>seg 4/4 S of SS at   932.85 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   16.751 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_SS swave" points="
  2524.66  -5122.49
  2544.61  -5112.78
  2591.59  -5107.67
@@ -5490,13 +5379,13 @@ circle.discontinuity.iocb {
  3652.94  -5218.21
  3654.26  -5218.82
 " />
-</g>
+    </g>
 </g>
 <g>
     <desc>   35.00    10.0   SS    932.90    16.860     30.68    30.63    35.00 152   = SS</desc>
-<g>
-    <desc>seg 1 S of SS at   932.90 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   16.860 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_SS swave" points="
+    <g>
+      <desc>seg 1/4 S of SS at   932.90 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   16.860 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_SS swave" points="
     0.00  -6361.00
     2.97  -6356.00
     5.93  -6351.00
@@ -5581,10 +5470,10 @@ circle.discontinuity.iocb {
   820.94  -5668.40
   864.84  -5645.14
 " />
-</g>
-<g>
-    <desc>seg 2 S of SS at   932.90 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   16.860 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_SS swave" points="
+    </g>
+    <g>
+      <desc>seg 2/4 S of SS at   932.90 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   16.860 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_SS swave" points="
   864.84  -5645.14
   913.68  -5654.19
   920.06  -5655.44
@@ -5673,10 +5562,10 @@ circle.discontinuity.iocb {
  1911.89  -6076.05
  1912.97  -6077.02
 " />
-</g>
-<g>
-    <desc>seg 3 S of SS at   932.90 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   16.860 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_SS swave" points="
+    </g>
+    <g>
+      <desc>seg 3/4 S of SS at   932.90 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   16.860 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_SS swave" points="
  1912.97  -6077.02
  1913.30  -6075.61
  1913.63  -6074.19
@@ -5765,10 +5654,10 @@ circle.discontinuity.iocb {
  2489.87  -5158.03
  2524.72  -5122.63
 " />
-</g>
-<g>
-    <desc>seg 4 S of SS at   932.90 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   16.860 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_SS swave" points="
+    </g>
+    <g>
+      <desc>seg 4/4 S of SS at   932.90 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   16.860 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_SS swave" points="
  2524.72  -5122.63
  2574.02  -5116.55
  2580.48  -5115.82
@@ -5857,13 +5746,13 @@ circle.discontinuity.iocb {
  3652.93  -5218.22
  3654.26  -5218.82
 " />
-</g>
+    </g>
 </g>
 <g>
     <desc>   35.00    10.0   PKiKP   1006.36     0.762      2.28     2.28    35.00 59   = PKiKP</desc>
-<g>
-    <desc>seg 1 P of PKiKP at  1006.36 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.762 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_PKiKP pwave" points="
+    <g>
+      <desc>seg 1/4 P of PKiKP at  1006.36 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.762 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_PKiKP pwave" points="
     0.00  -6361.00
     0.00  -6361.00
     0.20  -6356.00
@@ -6053,10 +5942,10 @@ circle.discontinuity.iocb {
   240.50  -3489.90
   242.19  -3473.57
 " />
-</g>
-<g>
-    <desc>seg 2 K of PKiKP at  1006.36 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.762 s/deg. in outer core</desc>
-    <polyline class="path phase_PKiKP pwave" points="
+    </g>
+    <g>
+      <desc>seg 2/4 K of PKiKP at  1006.36 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.762 s/deg. in outer core</desc>
+      <polyline class="path phase_PKiKP pwave" points="
   242.19  -3473.57
   242.22  -3472.69
   242.24  -3471.82
@@ -6172,10 +6061,10 @@ circle.discontinuity.iocb {
   362.13  -1214.60
   365.95  -1160.78
 " />
-</g>
-<g>
-    <desc>seg 3 K of PKiKP at  1006.36 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.762 s/deg. in outer core</desc>
-    <polyline class="path phase_PKiKP pwave" points="
+    </g>
+    <g>
+      <desc>seg 3/4 K of PKiKP at  1006.36 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.762 s/deg. in outer core</desc>
+      <polyline class="path phase_PKiKP pwave" points="
   365.95  -1160.78
   399.95  -1202.67
   432.97  -1243.39
@@ -6291,10 +6180,10 @@ circle.discontinuity.iocb {
  1793.26  -2983.70
  1793.78  -2984.41
 " />
-</g>
-<g>
-    <desc>seg 4 P of PKiKP at  1006.36 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.762 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_PKiKP pwave" points="
+    </g>
+    <g>
+      <desc>seg 4/4 P of PKiKP at  1006.36 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.762 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_PKiKP pwave" points="
  1793.78  -2984.41
  1804.53  -2996.82
  1826.77  -3022.51
@@ -6489,13 +6378,13 @@ circle.discontinuity.iocb {
  3654.25  -5218.81
  3654.26  -5218.82
 " />
-</g>
+    </g>
 </g>
 <g>
     <desc>   35.00    10.0   pPKiKP   1009.81     0.761    177.72     2.28    35.00 59   = pPKiKP</desc>
-<g>
-    <desc>seg 1 p of pPKiKP at  1009.81 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.761 s/deg. in crust</desc>
-    <polyline class="path phase_pPKiKP pwave" points="
+    <g>
+      <desc>seg 1/5 p of pPKiKP at  1009.81 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.761 s/deg. in crust</desc>
+      <polyline class="path phase_pPKiKP pwave" points="
     0.00  -6361.00
     0.20  -6366.00
     0.30  -6368.50
@@ -6503,10 +6392,10 @@ circle.discontinuity.iocb {
     0.40  -6370.99
     0.40  -6371.00
 " />
-</g>
-<g>
-    <desc>seg 2 P of pPKiKP at  1009.81 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.761 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_pPKiKP pwave" points="
+    </g>
+    <g>
+      <desc>seg 2/5 P of pPKiKP at  1009.81 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.761 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_pPKiKP pwave" points="
     0.40  -6371.00
     0.40  -6370.99
     0.45  -6369.74
@@ -6701,10 +6590,10 @@ circle.discontinuity.iocb {
   240.89  -3489.88
   242.57  -3473.54
 " />
-</g>
-<g>
-    <desc>seg 3 K of pPKiKP at  1009.81 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.761 s/deg. in outer core</desc>
-    <polyline class="path phase_pPKiKP pwave" points="
+    </g>
+    <g>
+      <desc>seg 3/5 K of pPKiKP at  1009.81 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.761 s/deg. in outer core</desc>
+      <polyline class="path phase_pPKiKP pwave" points="
   242.57  -3473.54
   242.60  -3472.66
   242.63  -3471.79
@@ -6820,10 +6709,10 @@ circle.discontinuity.iocb {
   362.21  -1214.57
   366.03  -1160.76
 " />
-</g>
-<g>
-    <desc>seg 4 K of pPKiKP at  1009.81 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.761 s/deg. in outer core</desc>
-    <polyline class="path phase_pPKiKP pwave" points="
+    </g>
+    <g>
+      <desc>seg 4/5 K of pPKiKP at  1009.81 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.761 s/deg. in outer core</desc>
+      <polyline class="path phase_pPKiKP pwave" points="
   366.03  -1160.76
   400.02  -1202.65
   433.03  -1243.36
@@ -6939,10 +6828,10 @@ circle.discontinuity.iocb {
  1793.30  -2983.68
  1793.82  -2984.38
 " />
-</g>
-<g>
-    <desc>seg 5 P of pPKiKP at  1009.81 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.761 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_pPKiKP pwave" points="
+    </g>
+    <g>
+      <desc>seg 5/5 P of pPKiKP at  1009.81 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.761 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_pPKiKP pwave" points="
  1793.82  -2984.38
  1804.57  -2996.80
  1826.81  -3022.49
@@ -7137,23 +7026,23 @@ circle.discontinuity.iocb {
  3654.25  -5218.81
  3654.26  -5218.82
 " />
-</g>
+    </g>
 </g>
 <g>
     <desc>   35.00    10.0   sPKiKP   1011.06     0.761    178.68     2.28    35.00 59   = sPKiKP</desc>
-<g>
-    <desc>seg 1 s of sPKiKP at  1011.06 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.761 s/deg. in crust</desc>
-    <polyline class="path phase_sPKiKP swave" points="
+    <g>
+      <desc>seg 1/5 s of sPKiKP at  1011.06 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.761 s/deg. in crust</desc>
+      <polyline class="path phase_sPKiKP swave" points="
     0.00  -6361.00
     0.12  -6366.00
     0.17  -6368.50
     0.20  -6369.75
     0.23  -6371.00
 " />
-</g>
-<g>
-    <desc>seg 2 P of sPKiKP at  1011.06 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.761 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_sPKiKP pwave" points="
+    </g>
+    <g>
+      <desc>seg 2/5 P of sPKiKP at  1011.06 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.761 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_sPKiKP pwave" points="
     0.23  -6371.00
     0.23  -6370.99
     0.28  -6369.74
@@ -7348,10 +7237,10 @@ circle.discontinuity.iocb {
   240.81  -3489.88
   242.49  -3473.55
 " />
-</g>
-<g>
-    <desc>seg 3 K of sPKiKP at  1011.06 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.761 s/deg. in outer core</desc>
-    <polyline class="path phase_sPKiKP pwave" points="
+    </g>
+    <g>
+      <desc>seg 3/5 K of sPKiKP at  1011.06 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.761 s/deg. in outer core</desc>
+      <polyline class="path phase_sPKiKP pwave" points="
   242.49  -3473.55
   242.52  -3472.67
   242.55  -3471.79
@@ -7467,10 +7356,10 @@ circle.discontinuity.iocb {
   362.19  -1214.58
   366.01  -1160.76
 " />
-</g>
-<g>
-    <desc>seg 4 K of sPKiKP at  1011.06 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.761 s/deg. in outer core</desc>
-    <polyline class="path phase_sPKiKP pwave" points="
+    </g>
+    <g>
+      <desc>seg 4/5 K of sPKiKP at  1011.06 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.761 s/deg. in outer core</desc>
+      <polyline class="path phase_sPKiKP pwave" points="
   366.01  -1160.76
   400.01  -1202.65
   433.02  -1243.37
@@ -7586,10 +7475,10 @@ circle.discontinuity.iocb {
  1793.29  -2983.68
  1793.81  -2984.39
 " />
-</g>
-<g>
-    <desc>seg 5 P of sPKiKP at  1011.06 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.761 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_sPKiKP pwave" points="
+    </g>
+    <g>
+      <desc>seg 5/5 P of sPKiKP at  1011.06 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.761 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_sPKiKP pwave" points="
  1793.81  -2984.39
  1804.56  -2996.80
  1826.80  -3022.50
@@ -7784,13 +7673,13 @@ circle.discontinuity.iocb {
  3654.25  -5218.81
  3654.26  -5218.82
 " />
-</g>
+    </g>
 </g>
 <g>
     <desc>   35.00    10.0   ScS   1033.65     5.387      9.38     9.37    35.00 66   = ScS</desc>
-<g>
-    <desc>seg 1 S of ScS at  1033.65 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    5.387 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_ScS swave" points="
+    <g>
+      <desc>seg 1/2 S of ScS at  1033.65 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    5.387 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_ScS swave" points="
     0.00  -6361.00
     0.83  -6356.00
     1.65  -6351.00
@@ -8018,10 +7907,10 @@ circle.discontinuity.iocb {
  1027.07  -3367.47
  1046.63  -3320.98
 " />
-</g>
-<g>
-    <desc>seg 2 S of ScS at  1033.65 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    5.387 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_ScS swave" points="
+    </g>
+    <g>
+      <desc>seg 2/2 S of ScS at  1033.65 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    5.387 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_ScS swave" points="
  1046.63  -3320.98
  1089.30  -3347.86
  1101.45  -3355.52
@@ -8253,13 +8142,13 @@ circle.discontinuity.iocb {
  3653.37  -5217.91
  3654.26  -5218.82
 " />
-</g>
+    </g>
 </g>
 <g>
     <desc>   35.00    10.0   SKiKP   1217.99     0.801      1.39     2.40    35.00 58   = SKiKP</desc>
-<g>
-    <desc>seg 1 S of SKiKP at  1217.99 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.801 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_SKiKP swave" points="
+    <g>
+      <desc>seg 1/4 S of SKiKP at  1217.99 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.801 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_SKiKP swave" points="
     0.00  -6361.00
     0.12  -6356.00
     0.24  -6351.00
@@ -8487,10 +8376,10 @@ circle.discontinuity.iocb {
   135.28  -3518.01
   137.49  -3479.28
 " />
-</g>
-<g>
-    <desc>seg 2 K of SKiKP at  1217.99 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.801 s/deg. in outer core</desc>
-    <polyline class="path phase_SKiKP pwave" points="
+    </g>
+    <g>
+      <desc>seg 2/4 K of SKiKP at  1217.99 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.801 s/deg. in outer core</desc>
+      <polyline class="path phase_SKiKP pwave" points="
   137.49  -3479.28
   137.54  -3478.41
   137.60  -3477.54
@@ -8606,10 +8495,10 @@ circle.discontinuity.iocb {
   340.39  -1220.86
   346.28  -1166.80
 " />
-</g>
-<g>
-    <desc>seg 3 K of SKiKP at  1217.99 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.801 s/deg. in outer core</desc>
-    <polyline class="path phase_SKiKP pwave" points="
+    </g>
+    <g>
+      <desc>seg 3/4 K of SKiKP at  1217.99 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.801 s/deg. in outer core</desc>
+      <polyline class="path phase_SKiKP pwave" points="
   346.28  -1166.80
   380.71  -1208.90
   414.12  -1249.79
@@ -8725,10 +8614,10 @@ circle.discontinuity.iocb {
  1782.24  -2990.30
  1782.77  -2991.00
 " />
-</g>
-<g>
-    <desc>seg 4 P of SKiKP at  1217.99 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.801 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_SKiKP pwave" points="
+    </g>
+    <g>
+      <desc>seg 4/4 P of SKiKP at  1217.99 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.801 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_SKiKP pwave" points="
  1782.77  -2991.00
  1793.60  -3003.38
  1816.01  -3028.99
@@ -8923,13 +8812,13 @@ circle.discontinuity.iocb {
  3654.25  -5218.81
  3654.26  -5218.82
 " />
-</g>
+    </g>
 </g>
 <g>
     <desc>   35.00    10.0   PKIKKIKP   1897.34     0.784      2.35     2.34   325.00 37   = PKIKKIKP</desc>
-<g>
-    <desc>seg 1 P of PKIKKIKP at  1897.34 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.784 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_PKIKKIKP pwave" points="
+    <g>
+      <desc>seg 1/10 P of PKIKKIKP at  1897.34 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.784 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_PKIKKIKP pwave" points="
     0.00  -6361.00
    -0.00  -6361.00
    -0.21  -6356.00
@@ -9119,10 +9008,10 @@ circle.discontinuity.iocb {
  -247.76  -3489.40
  -249.50  -3473.05
 " />
-</g>
-<g>
-    <desc>seg 2 K of PKIKKIKP at  1897.34 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.784 s/deg. in outer core</desc>
-    <polyline class="path phase_PKIKKIKP pwave" points="
+    </g>
+    <g>
+      <desc>seg 2/10 K of PKIKKIKP at  1897.34 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.784 s/deg. in outer core</desc>
+      <polyline class="path phase_PKIKKIKP pwave" points="
  -249.50  -3473.05
  -249.53  -3472.17
  -249.55  -3471.30
@@ -9238,10 +9127,10 @@ circle.discontinuity.iocb {
  -373.17  -1211.25
  -377.13  -1157.20
 " />
-</g>
-<g>
-    <desc>seg 3 I of PKIKKIKP at  1897.34 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.784 s/deg. in outer core</desc>
-    <polyline class="path phase_PKIKKIKP pwave" points="
+    </g>
+    <g>
+      <desc>seg 3/10 I of PKIKKIKP at  1897.34 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.784 s/deg. in outer core</desc>
+      <polyline class="path phase_PKIKKIKP pwave" points="
  -377.13  -1157.20
  -377.31  -1155.47
  -377.50  -1153.75
@@ -9332,10 +9221,10 @@ circle.discontinuity.iocb {
  -499.95    -66.83
  -500.50    -58.76
 " />
-</g>
-<g>
-    <desc>seg 4 I of PKIKKIKP at  1897.34 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.784 s/deg. in outer core</desc>
-    <polyline class="path phase_PKIKKIKP pwave" points="
+    </g>
+    <g>
+      <desc>seg 4/10 I of PKIKKIKP at  1897.34 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.784 s/deg. in outer core</desc>
+      <polyline class="path phase_PKIKKIKP pwave" points="
  -500.50    -58.76
  -501.83    -50.79
  -503.03    -42.79
@@ -9426,10 +9315,10 @@ circle.discontinuity.iocb {
  -634.69   1036.65
  -634.91   1038.38
 " />
-</g>
-<g>
-    <desc>seg 5 K of PKIKKIKP at  1897.34 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.784 s/deg. in outer core</desc>
-    <polyline class="path phase_PKIKKIKP pwave" points="
+    </g>
+    <g>
+      <desc>seg 5/10 K of PKIKKIKP at  1897.34 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.784 s/deg. in outer core</desc>
+      <polyline class="path phase_PKIKKIKP pwave" points="
  -634.91   1038.38
  -643.58   1091.87
  -652.02   1143.83
@@ -9545,10 +9434,10 @@ circle.discontinuity.iocb {
 -1046.99   3319.95
 -1047.16   3320.81
 " />
-</g>
-<g>
-    <desc>seg 6 K of PKIKKIKP at  1897.34 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.784 s/deg. in outer core</desc>
-    <polyline class="path phase_PKIKKIKP pwave" points="
+    </g>
+    <g>
+      <desc>seg 6/10 K of PKIKKIKP at  1897.34 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.784 s/deg. in outer core</desc>
+      <polyline class="path phase_PKIKKIKP pwave" points="
 -1047.16   3320.81
 -1046.82   3320.00
 -1046.47   3319.20
@@ -9664,10 +9553,10 @@ circle.discontinuity.iocb {
   -99.17   1263.54
   -75.58   1214.75
 " />
-</g>
-<g>
-    <desc>seg 7 I of PKIKKIKP at  1897.34 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.784 s/deg. in outer core</desc>
-    <polyline class="path phase_PKIKKIKP pwave" points="
+    </g>
+    <g>
+      <desc>seg 7/10 I of PKIKKIKP at  1897.34 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.784 s/deg. in outer core</desc>
+      <polyline class="path phase_PKIKKIKP pwave" points="
   -75.58   1214.75
   -74.77   1213.22
   -73.96   1211.68
@@ -9758,10 +9647,10 @@ circle.discontinuity.iocb {
   440.19    246.26
   443.67    238.97
 " />
-</g>
-<g>
-    <desc>seg 8 I of PKIKKIKP at  1897.34 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.784 s/deg. in outer core</desc>
-    <polyline class="path phase_PKIKKIKP pwave" points="
+    </g>
+    <g>
+      <desc>seg 8/10 I of PKIKKIKP at  1897.34 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.784 s/deg. in outer core</desc>
+      <polyline class="path phase_PKIKKIKP pwave" points="
   443.67    238.97
   447.85    232.04
   451.91    225.05
@@ -9852,10 +9741,10 @@ circle.discontinuity.iocb {
   971.87   -730.03
   972.71   -731.55
 " />
-</g>
-<g>
-    <desc>seg 9 K of PKIKKIKP at  1897.34 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.784 s/deg. in outer core</desc>
-    <polyline class="path phase_PKIKKIKP pwave" points="
+    </g>
+    <g>
+      <desc>seg 9/10 K of PKIKKIKP at  1897.34 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.784 s/deg. in outer core</desc>
+      <polyline class="path phase_PKIKKIKP pwave" points="
   972.71   -731.55
  1000.48   -778.09
  1027.46   -823.28
@@ -9971,10 +9860,10 @@ circle.discontinuity.iocb {
  2196.13  -2700.97
  2196.61  -2701.71
 " />
-</g>
-<g>
-    <desc>seg 10 P of PKIKKIKP at  1897.34 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.784 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_PKIKKIKP pwave" points="
+    </g>
+    <g>
+      <desc>seg 10/10 P of PKIKKIKP at  1897.34 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.784 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_PKIKKIKP pwave" points="
  2196.61  -2701.71
  2204.56  -2716.09
  2221.02  -2745.86
@@ -10169,13 +10058,13 @@ circle.discontinuity.iocb {
  3654.25  -5218.81
  3654.26  -5218.82
 " />
-</g>
+    </g>
 </g>
 <g>
     <desc>   35.00    10.0   SKIKKIKP   2108.94     0.745      1.29     2.23   325.00 38   = SKIKKIKP</desc>
-<g>
-    <desc>seg 1 S of SKIKKIKP at  2108.94 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.745 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_SKIKKIKP swave" points="
+    <g>
+      <desc>seg 1/10 S of SKIKKIKP at  2108.94 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.745 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_SKIKKIKP swave" points="
     0.00  -6361.00
    -0.11  -6356.00
    -0.23  -6351.00
@@ -10403,10 +10292,10 @@ circle.discontinuity.iocb {
  -125.81  -3518.36
  -127.85  -3479.65
 " />
-</g>
-<g>
-    <desc>seg 2 K of SKIKKIKP at  2108.94 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.745 s/deg. in outer core</desc>
-    <polyline class="path phase_SKIKKIKP pwave" points="
+    </g>
+    <g>
+      <desc>seg 2/10 K of SKIKKIKP at  2108.94 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.745 s/deg. in outer core</desc>
+      <polyline class="path phase_SKIKKIKP pwave" points="
  -127.85  -3479.65
  -127.91  -3478.78
  -127.96  -3477.90
@@ -10522,10 +10411,10 @@ circle.discontinuity.iocb {
  -315.85  -1227.44
  -321.26  -1173.94
 " />
-</g>
-<g>
-    <desc>seg 3 I of SKIKKIKP at  2108.94 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.745 s/deg. in outer core</desc>
-    <polyline class="path phase_SKIKKIKP pwave" points="
+    </g>
+    <g>
+      <desc>seg 3/10 I of SKIKKIKP at  2108.94 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.745 s/deg. in outer core</desc>
+      <polyline class="path phase_SKIKKIKP pwave" points="
  -321.26  -1173.94
  -321.49  -1172.23
  -321.71  -1170.53
@@ -10621,10 +10510,10 @@ circle.discontinuity.iocb {
  -473.42    -73.25
  -474.18    -67.89
 " />
-</g>
-<g>
-    <desc>seg 4 I of SKIKKIKP at  2108.94 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.745 s/deg. in outer core</desc>
-    <polyline class="path phase_SKIKKIKP pwave" points="
+    </g>
+    <g>
+      <desc>seg 4/10 I of SKIKKIKP at  2108.94 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.745 s/deg. in outer core</desc>
+      <polyline class="path phase_SKIKKIKP pwave" points="
  -474.18    -67.89
  -474.95    -62.53
  -477.41    -54.63
@@ -10720,10 +10609,10 @@ circle.discontinuity.iocb {
  -637.50   1034.93
  -637.76   1036.63
 " />
-</g>
-<g>
-    <desc>seg 5 K of SKIKKIKP at  2108.94 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.745 s/deg. in outer core</desc>
-    <polyline class="path phase_SKIKKIKP pwave" points="
+    </g>
+    <g>
+      <desc>seg 5/10 K of SKIKKIKP at  2108.94 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.745 s/deg. in outer core</desc>
+      <polyline class="path phase_SKIKKIKP pwave" points="
  -637.76   1036.63
  -647.58   1089.50
  -657.15   1140.89
@@ -10839,10 +10728,10 @@ circle.discontinuity.iocb {
 -1098.92   3303.12
 -1099.11   3303.98
 " />
-</g>
-<g>
-    <desc>seg 6 K of SKIKKIKP at  2108.94 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.745 s/deg. in outer core</desc>
-    <polyline class="path phase_SKIKKIKP pwave" points="
+    </g>
+    <g>
+      <desc>seg 6/10 K of SKIKKIKP at  2108.94 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.745 s/deg. in outer core</desc>
+      <polyline class="path phase_SKIKKIKP pwave" points="
 -1099.11   3303.98
 -1098.76   3303.18
 -1098.40   3302.38
@@ -10958,10 +10847,10 @@ circle.discontinuity.iocb {
  -134.12   1260.31
  -110.31   1212.09
 " />
-</g>
-<g>
-    <desc>seg 7 I of SKIKKIKP at  2108.94 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.745 s/deg. in outer core</desc>
-    <polyline class="path phase_SKIKKIKP pwave" points="
+    </g>
+    <g>
+      <desc>seg 7/10 I of SKIKKIKP at  2108.94 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.745 s/deg. in outer core</desc>
+      <polyline class="path phase_SKIKKIKP pwave" points="
  -110.31   1212.09
  -109.50   1210.58
  -108.69   1209.06
@@ -11057,10 +10946,10 @@ circle.discontinuity.iocb {
   417.76    234.44
   420.36    229.69
 " />
-</g>
-<g>
-    <desc>seg 8 I of SKIKKIKP at  2108.94 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.745 s/deg. in outer core</desc>
-    <polyline class="path phase_SKIKKIKP pwave" points="
+    </g>
+    <g>
+      <desc>seg 8/10 I of SKIKKIKP at  2108.94 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.745 s/deg. in outer core</desc>
+      <polyline class="path phase_SKIKKIKP pwave" points="
   420.36    229.69
   422.96    224.94
   428.03    218.40
@@ -11156,10 +11045,10 @@ circle.discontinuity.iocb {
   959.63   -746.05
   960.47   -747.55
 " />
-</g>
-<g>
-    <desc>seg 9 K of SKIKKIKP at  2108.94 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.745 s/deg. in outer core</desc>
-    <polyline class="path phase_SKIKKIKP pwave" points="
+    </g>
+    <g>
+      <desc>seg 9/10 K of SKIKKIKP at  2108.94 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.745 s/deg. in outer core</desc>
+      <polyline class="path phase_SKIKKIKP pwave" points="
   960.47   -747.55
   988.19   -793.64
  1015.15   -838.42
@@ -11275,10 +11164,10 @@ circle.discontinuity.iocb {
  2186.33  -2708.92
  2186.81  -2709.65
 " />
-</g>
-<g>
-    <desc>seg 10 P of SKIKKIKP at  2108.94 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.745 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_SKIKKIKP pwave" points="
+    </g>
+    <g>
+      <desc>seg 10/10 P of SKIKKIKP at  2108.94 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.745 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_SKIKKIKP pwave" points="
  2186.81  -2709.65
  2194.83  -2723.97
  2211.42  -2753.60
@@ -11473,13 +11362,13 @@ circle.discontinuity.iocb {
  3654.25  -5218.81
  3654.26  -5218.82
 " />
-</g>
+    </g>
 </g>
 <g>
     <desc>   35.00    10.0   PKIKKIKS   2110.19     0.745      2.23     1.29   325.00 38   = PKIKKIKS</desc>
-<g>
-    <desc>seg 1 P of PKIKKIKS at  2110.19 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.745 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_PKIKKIKS pwave" points="
+    <g>
+      <desc>seg 1/10 P of PKIKKIKS at  2110.19 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.745 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_PKIKKIKS pwave" points="
     0.00  -6361.00
    -0.00  -6361.00
    -0.19  -6356.00
@@ -11669,10 +11558,10 @@ circle.discontinuity.iocb {
  -235.27  -3490.26
  -236.92  -3473.93
 " />
-</g>
-<g>
-    <desc>seg 2 K of PKIKKIKS at  2110.19 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.745 s/deg. in outer core</desc>
-    <polyline class="path phase_PKIKKIKS pwave" points="
+    </g>
+    <g>
+      <desc>seg 2/10 K of PKIKKIKS at  2110.19 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.745 s/deg. in outer core</desc>
+      <polyline class="path phase_PKIKKIKS pwave" points="
  -236.92  -3473.93
  -236.94  -3473.06
  -236.97  -3472.18
@@ -11788,10 +11677,10 @@ circle.discontinuity.iocb {
  -354.17  -1216.94
  -357.91  -1163.29
 " />
-</g>
-<g>
-    <desc>seg 3 I of PKIKKIKS at  2110.19 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.745 s/deg. in outer core</desc>
-    <polyline class="path phase_PKIKKIKS pwave" points="
+    </g>
+    <g>
+      <desc>seg 3/10 I of PKIKKIKS at  2110.19 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.745 s/deg. in outer core</desc>
+      <polyline class="path phase_PKIKKIKS pwave" points="
  -357.91  -1163.29
  -358.08  -1161.58
  -358.25  -1159.87
@@ -11887,10 +11776,10 @@ circle.discontinuity.iocb {
  -475.31    -59.74
  -476.06    -52.98
 " />
-</g>
-<g>
-    <desc>seg 4 I of PKIKKIKS at  2110.19 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.745 s/deg. in outer core</desc>
-    <polyline class="path phase_PKIKKIKS pwave" points="
+    </g>
+    <g>
+      <desc>seg 4/10 I of PKIKKIKS at  2110.19 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.745 s/deg. in outer core</desc>
+      <polyline class="path phase_PKIKKIKS pwave" points="
  -476.06    -52.98
  -476.81    -46.22
  -479.00    -38.31
@@ -11986,10 +11875,10 @@ circle.discontinuity.iocb {
  -604.70   1054.43
  -604.91   1056.13
 " />
-</g>
-<g>
-    <desc>seg 5 K of PKIKKIKS at  2110.19 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.745 s/deg. in outer core</desc>
-    <polyline class="path phase_PKIKKIKS pwave" points="
+    </g>
+    <g>
+      <desc>seg 5/10 K of PKIKKIKS at  2110.19 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.745 s/deg. in outer core</desc>
+      <polyline class="path phase_PKIKKIKS pwave" points="
  -604.91   1056.13
  -613.07   1109.29
  -621.02   1160.95
@@ -12105,10 +11994,10 @@ circle.discontinuity.iocb {
  -994.74   3335.98
  -994.91   3336.84
 " />
-</g>
-<g>
-    <desc>seg 6 K of PKIKKIKS at  2110.19 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.745 s/deg. in outer core</desc>
-    <polyline class="path phase_PKIKKIKS pwave" points="
+    </g>
+    <g>
+      <desc>seg 6/10 K of PKIKKIKS at  2110.19 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.745 s/deg. in outer core</desc>
+      <polyline class="path phase_PKIKKIKS pwave" points="
  -994.91   3336.84
  -994.57   3336.03
  -994.24   3335.22
@@ -12224,10 +12113,10 @@ circle.discontinuity.iocb {
   -94.52   1263.90
   -72.23   1214.95
 " />
-</g>
-<g>
-    <desc>seg 7 I of PKIKKIKS at  2110.19 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.745 s/deg. in outer core</desc>
-    <polyline class="path phase_PKIKKIKS pwave" points="
+    </g>
+    <g>
+      <desc>seg 7/10 I of PKIKKIKS at  2110.19 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.745 s/deg. in outer core</desc>
+      <polyline class="path phase_PKIKKIKS pwave" points="
   -72.23   1214.95
   -71.47   1213.41
   -70.71   1211.87
@@ -12323,10 +12212,10 @@ circle.discontinuity.iocb {
   424.27    222.45
   427.34    216.38
 " />
-</g>
-<g>
-    <desc>seg 8 I of PKIKKIKS at  2110.19 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.745 s/deg. in outer core</desc>
-    <polyline class="path phase_PKIKKIKS pwave" points="
+    </g>
+    <g>
+      <desc>seg 8/10 I of PKIKKIKS at  2110.19 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.745 s/deg. in outer core</desc>
+      <polyline class="path phase_PKIKKIKS pwave" points="
   427.34    216.38
   430.42    210.31
   435.23    203.66
@@ -12422,10 +12311,10 @@ circle.discontinuity.iocb {
   935.73   -775.82
   936.52   -777.34
 " />
-</g>
-<g>
-    <desc>seg 9 K of PKIKKIKS at  2110.19 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.745 s/deg. in outer core</desc>
-    <polyline class="path phase_PKIKKIKS pwave" points="
+    </g>
+    <g>
+      <desc>seg 9/10 K of PKIKKIKS at  2110.19 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.745 s/deg. in outer core</desc>
+      <polyline class="path phase_PKIKKIKS pwave" points="
   936.52   -777.34
   962.78   -824.28
   988.32   -869.88
@@ -12541,10 +12430,10 @@ circle.discontinuity.iocb {
  2100.22  -2776.21
  2100.67  -2776.96
 " />
-</g>
-<g>
-    <desc>seg 10 S of PKIKKIKS at  2110.19 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.745 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_PKIKKIKS swave" points="
+    </g>
+    <g>
+      <desc>seg 10/10 S of PKIKKIKS at  2110.19 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.745 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_PKIKKIKS swave" points="
  2100.67  -2776.96
  2121.20  -2809.84
  2127.08  -2819.26
@@ -12776,13 +12665,13 @@ circle.discontinuity.iocb {
  3653.56  -5217.78
  3654.26  -5218.82
 " />
-</g>
+    </g>
 </g>
 <g>
     <desc>   35.00    10.0   SKIKKIKS   2321.72     0.710      1.23     1.23   325.00 39   = SKIKKIKS</desc>
-<g>
-    <desc>seg 1 S of SKIKKIKS at  2321.72 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.710 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_SKIKKIKS swave" points="
+    <g>
+      <desc>seg 1/10 S of SKIKKIKS at  2321.72 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.710 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_SKIKKIKS swave" points="
     0.00  -6361.00
    -0.11  -6356.00
    -0.21  -6351.00
@@ -13010,10 +12899,10 @@ circle.discontinuity.iocb {
  -119.78  -3518.57
  -121.73  -3479.87
 " />
-</g>
-<g>
-    <desc>seg 2 K of SKIKKIKS at  2321.72 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.710 s/deg. in outer core</desc>
-    <polyline class="path phase_SKIKKIKS pwave" points="
+    </g>
+    <g>
+      <desc>seg 2/10 K of SKIKKIKS at  2321.72 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.710 s/deg. in outer core</desc>
+      <polyline class="path phase_SKIKKIKS pwave" points="
  -121.73  -3479.87
  -121.79  -3479.00
  -121.84  -3478.12
@@ -13129,10 +13018,10 @@ circle.discontinuity.iocb {
  -300.34  -1231.33
  -305.45  -1178.15
 " />
-</g>
-<g>
-    <desc>seg 3 I of SKIKKIKS at  2321.72 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.710 s/deg. in outer core</desc>
-    <polyline class="path phase_SKIKKIKS pwave" points="
+    </g>
+    <g>
+      <desc>seg 3/10 I of SKIKKIKS at  2321.72 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.710 s/deg. in outer core</desc>
+      <polyline class="path phase_SKIKKIKS pwave" points="
  -305.45  -1178.15
  -305.67  -1176.46
  -305.88  -1174.76
@@ -13228,10 +13117,10 @@ circle.discontinuity.iocb {
  -451.38    -67.11
  -452.10    -61.52
 " />
-</g>
-<g>
-    <desc>seg 4 I of SKIKKIKS at  2321.72 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.710 s/deg. in outer core</desc>
-    <polyline class="path phase_SKIKKIKS pwave" points="
+    </g>
+    <g>
+      <desc>seg 4/10 I of SKIKKIKS at  2321.72 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.710 s/deg. in outer core</desc>
+      <polyline class="path phase_SKIKKIKS pwave" points="
  -452.10    -61.52
  -452.90    -55.94
  -453.62    -50.34
@@ -13327,10 +13216,10 @@ circle.discontinuity.iocb {
  -608.90   1052.01
  -609.14   1053.70
 " />
-</g>
-<g>
-    <desc>seg 5 K of SKIKKIKS at  2321.72 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.710 s/deg. in outer core</desc>
-    <polyline class="path phase_SKIKKIKS pwave" points="
+    </g>
+    <g>
+      <desc>seg 5/10 K of SKIKKIKS at  2321.72 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.710 s/deg. in outer core</desc>
+      <polyline class="path phase_SKIKKIKS pwave" points="
  -609.14   1053.70
  -618.42   1106.32
  -627.47   1157.48
@@ -13446,10 +13335,10 @@ circle.discontinuity.iocb {
 -1046.93   3319.97
 -1047.11   3320.82
 " />
-</g>
-<g>
-    <desc>seg 6 K of SKIKKIKS at  2321.72 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.710 s/deg. in outer core</desc>
-    <polyline class="path phase_SKIKKIKS pwave" points="
+    </g>
+    <g>
+      <desc>seg 6/10 K of SKIKKIKS at  2321.72 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.710 s/deg. in outer core</desc>
+      <polyline class="path phase_SKIKKIKS pwave" points="
 -1047.11   3320.82
 -1046.77   3320.02
 -1046.43   3319.21
@@ -13565,10 +13454,10 @@ circle.discontinuity.iocb {
  -128.02   1260.95
  -105.44   1212.52
 " />
-</g>
-<g>
-    <desc>seg 7 I of SKIKKIKS at  2321.72 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.710 s/deg. in outer core</desc>
-    <polyline class="path phase_SKIKKIKS pwave" points="
+    </g>
+    <g>
+      <desc>seg 7/10 I of SKIKKIKS at  2321.72 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.710 s/deg. in outer core</desc>
+      <polyline class="path phase_SKIKKIKS pwave" points="
  -105.44   1212.52
  -104.67   1211.00
  -103.90   1209.48
@@ -13664,10 +13553,10 @@ circle.discontinuity.iocb {
   403.07    213.97
   405.62    208.94
 " />
-</g>
-<g>
-    <desc>seg 8 I of SKIKKIKS at  2321.72 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.710 s/deg. in outer core</desc>
-    <polyline class="path phase_SKIKKIKS pwave" points="
+    </g>
+    <g>
+      <desc>seg 8/10 I of SKIKKIKS at  2321.72 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.710 s/deg. in outer core</desc>
+      <polyline class="path phase_SKIKKIKS pwave" points="
   405.62    208.94
   408.23    203.94
   410.79    198.91
@@ -13763,10 +13652,10 @@ circle.discontinuity.iocb {
   925.20   -788.34
   926.00   -789.85
 " />
-</g>
-<g>
-    <desc>seg 9 K of SKIKKIKS at  2321.72 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.710 s/deg. in outer core</desc>
-    <polyline class="path phase_SKIKKIKS pwave" points="
+    </g>
+    <g>
+      <desc>seg 9/10 K of SKIKKIKS at  2321.72 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.710 s/deg. in outer core</desc>
+      <polyline class="path phase_SKIKKIKS pwave" points="
   926.00   -789.85
   952.31   -836.35
   977.92   -881.56
@@ -13882,10 +13771,10 @@ circle.discontinuity.iocb {
  2095.33  -2779.90
  2095.79  -2780.65
 " />
-</g>
-<g>
-    <desc>seg 10 S of SKIKKIKS at  2321.72 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.710 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_SKIKKIKS swave" points="
+    </g>
+    <g>
+      <desc>seg 10/10 S of SKIKKIKS at  2321.72 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.710 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_SKIKKIKS swave" points="
  2095.79  -2780.65
  2116.39  -2813.47
  2122.29  -2822.87
@@ -14117,13 +14006,13 @@ circle.discontinuity.iocb {
  3653.56  -5217.78
  3654.26  -5218.82
 " />
-</g>
+    </g>
 </g>
 <g>
     <desc>   35.00    10.0   PKIKPPKIKP   2404.46     1.010      3.02     3.02   325.00 33   = PKIKPPKIKP</desc>
-<g>
-    <desc>seg 1 P of PKIKPPKIKP at  2404.46 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    1.010 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_PKIKPPKIKP pwave" points="
+    <g>
+      <desc>seg 1/12 P of PKIKPPKIKP at  2404.46 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    1.010 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_PKIKPPKIKP pwave" points="
     0.00  -6361.00
    -0.00  -6361.00
    -0.26  -6356.00
@@ -14313,10 +14202,10 @@ circle.discontinuity.iocb {
  -320.68  -3483.45
  -322.95  -3466.99
 " />
-</g>
-<g>
-    <desc>seg 2 K of PKIKPPKIKP at  2404.46 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    1.010 s/deg. in outer core</desc>
-    <polyline class="path phase_PKIKPPKIKP pwave" points="
+    </g>
+    <g>
+      <desc>seg 2/12 K of PKIKPPKIKP at  2404.46 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    1.010 s/deg. in outer core</desc>
+      <polyline class="path phase_PKIKPPKIKP pwave" points="
  -322.95  -3466.99
  -322.98  -3466.11
  -323.02  -3465.23
@@ -14435,10 +14324,10 @@ circle.discontinuity.iocb {
  -487.76  -1142.50
  -490.18  -1114.03
 " />
-</g>
-<g>
-    <desc>seg 3 I of PKIKPPKIKP at  2404.46 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    1.010 s/deg. in outer core</desc>
-    <polyline class="path phase_PKIKPPKIKP pwave" points="
+    </g>
+    <g>
+      <desc>seg 3/12 I of PKIKPPKIKP at  2404.46 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    1.010 s/deg. in outer core</desc>
+      <polyline class="path phase_PKIKPPKIKP pwave" points="
  -490.18  -1114.03
  -490.44  -1112.18
  -490.70  -1110.34
@@ -14521,10 +14410,10 @@ circle.discontinuity.iocb {
  -639.58   -109.56
  -640.32    -98.59
 " />
-</g>
-<g>
-    <desc>seg 4 I of PKIKPPKIKP at  2404.46 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    1.010 s/deg. in outer core</desc>
-    <polyline class="path phase_PKIKPPKIKP pwave" points="
+    </g>
+    <g>
+      <desc>seg 4/12 I of PKIKPPKIKP at  2404.46 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    1.010 s/deg. in outer core</desc>
+      <polyline class="path phase_PKIKPPKIKP pwave" points="
  -640.32    -98.59
  -642.91    -87.92
  -645.33    -77.19
@@ -14607,10 +14496,10 @@ circle.discontinuity.iocb {
  -802.29    913.13
  -802.60    914.97
 " />
-</g>
-<g>
-    <desc>seg 5 K of PKIKPPKIKP at  2404.46 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    1.010 s/deg. in outer core</desc>
-    <polyline class="path phase_PKIKPPKIKP pwave" points="
+    </g>
+    <g>
+      <desc>seg 5/12 K of PKIKPPKIKP at  2404.46 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    1.010 s/deg. in outer core</desc>
+      <polyline class="path phase_PKIKPPKIKP pwave" points="
  -802.60    914.97
  -808.86    942.85
  -814.60    970.98
@@ -14729,10 +14618,10 @@ circle.discontinuity.iocb {
 -1350.71   3208.40
 -1350.94   3209.25
 " />
-</g>
-<g>
-    <desc>seg 6 P of PKIKPPKIKP at  2404.46 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    1.010 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_PKIKPPKIKP pwave" points="
+    </g>
+    <g>
+      <desc>seg 6/12 P of PKIKPPKIKP at  2404.46 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    1.010 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_PKIKPPKIKP pwave" points="
 -1350.94   3209.25
 -1353.74   3225.63
 -1359.52   3259.51
@@ -14927,10 +14816,10 @@ circle.discontinuity.iocb {
 -1916.05   6076.05
 -1916.05   6076.05
 " />
-</g>
-<g>
-    <desc>seg 7 P of PKIKPPKIKP at  2404.46 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    1.010 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_PKIKPPKIKP pwave" points="
+    </g>
+    <g>
+      <desc>seg 7/12 P of PKIKPPKIKP at  2404.46 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    1.010 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_PKIKPPKIKP pwave" points="
 -1916.05   6076.05
 -1916.05   6076.05
 -1915.61   6074.87
@@ -15125,10 +15014,10 @@ circle.discontinuity.iocb {
  -741.51   3418.69
  -734.40   3403.67
 " />
-</g>
-<g>
-    <desc>seg 8 K of PKIKPPKIKP at  2404.46 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    1.010 s/deg. in outer core</desc>
-    <polyline class="path phase_PKIKPPKIKP pwave" points="
+    </g>
+    <g>
+      <desc>seg 8/12 K of PKIKPPKIKP at  2404.46 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    1.010 s/deg. in outer core</desc>
+      <polyline class="path phase_PKIKPPKIKP pwave" points="
  -734.40   3403.67
  -734.11   3402.84
  -733.81   3402.02
@@ -15247,10 +15136,10 @@ circle.discontinuity.iocb {
   121.68   1236.29
   132.55   1209.86
 " />
-</g>
-<g>
-    <desc>seg 9 I of PKIKPPKIKP at  2404.46 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    1.010 s/deg. in outer core</desc>
-    <polyline class="path phase_PKIKPPKIKP pwave" points="
+    </g>
+    <g>
+      <desc>seg 9/12 I of PKIKPPKIKP at  2404.46 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    1.010 s/deg. in outer core</desc>
+      <polyline class="path phase_PKIKPPKIKP pwave" points="
   132.55   1209.86
   133.35   1208.18
   134.16   1206.50
@@ -15333,10 +15222,10 @@ circle.discontinuity.iocb {
   577.05    296.79
   581.04    286.55
 " />
-</g>
-<g>
-    <desc>seg 10 I of PKIKPPKIKP at  2404.46 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    1.010 s/deg. in outer core</desc>
-    <polyline class="path phase_PKIKPPKIKP pwave" points="
+    </g>
+    <g>
+      <desc>seg 10/12 I of PKIKPPKIKP at  2404.46 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    1.010 s/deg. in outer core</desc>
+      <polyline class="path phase_PKIKPPKIKP pwave" points="
   581.04    286.55
   586.73    277.16
   592.27    267.65
@@ -15419,10 +15308,10 @@ circle.discontinuity.iocb {
  1039.72   -629.65
  1040.56   -631.32
 " />
-</g>
-<g>
-    <desc>seg 11 K of PKIKPPKIKP at  2404.46 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    1.010 s/deg. in outer core</desc>
-    <polyline class="path phase_PKIKPPKIKP pwave" points="
+    </g>
+    <g>
+      <desc>seg 11/12 K of PKIKPPKIKP at  2404.46 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    1.010 s/deg. in outer core</desc>
+      <polyline class="path phase_PKIKPPKIKP pwave" points="
  1040.56   -631.32
  1054.92   -656.03
  1068.85   -681.13
@@ -15541,10 +15430,10 @@ circle.discontinuity.iocb {
  2252.87  -2653.83
  2253.35  -2654.57
 " />
-</g>
-<g>
-    <desc>seg 12 P of PKIKPPKIKP at  2404.46 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    1.010 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_PKIKPPKIKP pwave" points="
+    </g>
+    <g>
+      <desc>seg 12/12 P of PKIKPPKIKP at  2404.46 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    1.010 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_PKIKPPKIKP pwave" points="
  2253.35  -2654.57
  2260.94  -2669.35
  2276.64  -2699.93
@@ -15739,13 +15628,13 @@ circle.discontinuity.iocb {
  3654.25  -5218.81
  3654.26  -5218.82
 " />
-</g>
+    </g>
 </g>
 <g>
     <desc>   35.00    10.0   PKPPKP   2500.66     4.384     13.24    13.22   325.00 7   = PKPPKP</desc>
-<g>
-    <desc>seg 1 P of PKPPKP at  2500.66 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    4.384 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_PKPPKP pwave" points="
+    <g>
+      <desc>seg 1/8 P of PKPPKP at  2500.66 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    4.384 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_PKPPKP pwave" points="
     0.00  -6361.00
    -0.00  -6361.00
    -1.18  -6356.00
@@ -15946,10 +15835,10 @@ circle.discontinuity.iocb {
 -2273.30  -2648.18
 -2303.25  -2611.39
 " />
-</g>
-<g>
-    <desc>seg 2 K of PKPPKP at  2500.66 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    4.384 s/deg. in outer core</desc>
-    <polyline class="path phase_PKPPKP pwave" points="
+    </g>
+    <g>
+      <desc>seg 2/8 K of PKPPKP at  2500.66 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    4.384 s/deg. in outer core</desc>
+      <polyline class="path phase_PKPPKP pwave" points="
 -2303.25  -2611.39
 -2303.13  -2610.33
 -2303.02  -2609.27
@@ -16043,10 +15932,10 @@ circle.discontinuity.iocb {
 -2359.25   -400.99
 -2364.08   -364.54
 " />
-</g>
-<g>
-    <desc>seg 3 K of PKPPKP at  2500.66 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    4.384 s/deg. in outer core</desc>
-    <polyline class="path phase_PKPPKP pwave" points="
+    </g>
+    <g>
+      <desc>seg 3/8 K of PKPPKP at  2500.66 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    4.384 s/deg. in outer core</desc>
+      <polyline class="path phase_PKPPKP pwave" points="
 -2364.08   -364.54
 -2370.46   -328.32
 -2376.28   -291.99
@@ -16140,10 +16029,10 @@ circle.discontinuity.iocb {
 -2982.47   1795.30
 -2982.90   1796.28
 " />
-</g>
-<g>
-    <desc>seg 4 P of PKPPKP at  2500.66 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    4.384 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_PKPPKP pwave" points="
+    </g>
+    <g>
+      <desc>seg 4/8 P of PKPPKP at  2500.66 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    4.384 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_PKPPKP pwave" points="
 -2982.90   1796.28
 -2965.42   1840.38
 -2947.30   1884.33
@@ -16349,10 +16238,10 @@ circle.discontinuity.iocb {
 -1916.92   6075.77
 -1916.92   6075.78
 " />
-</g>
-<g>
-    <desc>seg 5 P of PKPPKP at  2500.66 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    4.384 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_PKPPKP pwave" points="
+    </g>
+    <g>
+      <desc>seg 5/8 P of PKPPKP at  2500.66 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    4.384 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_PKPPKP pwave" points="
 -1916.92   6075.78
 -1916.92   6075.77
 -1916.26   6074.67
@@ -16558,10 +16447,10 @@ circle.discontinuity.iocb {
  1372.35   3208.95
  1411.97   3182.87
 " />
-</g>
-<g>
-    <desc>seg 6 K of PKPPKP at  2500.66 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    4.384 s/deg. in outer core</desc>
-    <polyline class="path phase_PKPPKP pwave" points="
+    </g>
+    <g>
+      <desc>seg 6/8 K of PKPPKP at  2500.66 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    4.384 s/deg. in outer core</desc>
+      <polyline class="path phase_PKPPKP pwave" points="
  1411.97   3182.87
  1412.18   3181.82
  1412.40   3180.77
@@ -16655,10 +16544,10 @@ circle.discontinuity.iocb {
  2129.68   1091.48
  2145.24   1058.16
 " />
-</g>
-<g>
-    <desc>seg 7 K of PKPPKP at  2500.66 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    4.384 s/deg. in outer core</desc>
-    <polyline class="path phase_PKPPKP pwave" points="
+    </g>
+    <g>
+      <desc>seg 7/8 K of PKPPKP at  2500.66 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    4.384 s/deg. in outer core</desc>
+      <polyline class="path phase_PKPPKP pwave" points="
  2145.24   1058.16
  2162.21   1025.54
  2178.68    992.64
@@ -16752,10 +16641,10 @@ circle.discontinuity.iocb {
  3384.14   -815.98
  3384.85   -816.79
 " />
-</g>
-<g>
-    <desc>seg 8 P of PKPPKP at  2500.66 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    4.384 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_PKPPKP pwave" points="
+    </g>
+    <g>
+      <desc>seg 8/8 P of PKPPKP at  2500.66 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    4.384 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_PKPPKP pwave" points="
  3384.85   -816.79
  3381.43   -864.10
  3377.35   -911.47
@@ -16961,13 +16850,13 @@ circle.discontinuity.iocb {
  3654.25  -5218.81
  3654.26  -5218.82
 " />
-</g>
+    </g>
 </g>
 <g>
     <desc>   35.00    10.0   SKIKSSKIKS   3255.68     0.798      1.38     1.38   325.00 36   = SKIKSSKIKS</desc>
-<g>
-    <desc>seg 1 S of SKIKSSKIKS at  3255.68 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.798 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_SKIKSSKIKS swave" points="
+    <g>
+      <desc>seg 1/12 S of SKIKSSKIKS at  3255.68 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.798 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_SKIKSSKIKS swave" points="
     0.00  -6361.00
    -0.12  -6356.00
    -0.24  -6351.00
@@ -17195,10 +17084,10 @@ circle.discontinuity.iocb {
  -134.76  -3518.03
  -136.96  -3479.31
 " />
-</g>
-<g>
-    <desc>seg 2 K of SKIKSSKIKS at  3255.68 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.798 s/deg. in outer core</desc>
-    <polyline class="path phase_SKIKSSKIKS pwave" points="
+    </g>
+    <g>
+      <desc>seg 2/12 K of SKIKSSKIKS at  3255.68 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.798 s/deg. in outer core</desc>
+      <polyline class="path phase_SKIKSSKIKS pwave" points="
  -136.96  -3479.31
  -137.02  -3478.43
  -137.07  -3477.56
@@ -17314,10 +17203,10 @@ circle.discontinuity.iocb {
  -339.04  -1221.24
  -344.91  -1167.21
 " />
-</g>
-<g>
-    <desc>seg 3 I of SKIKSSKIKS at  3255.68 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.798 s/deg. in outer core</desc>
-    <polyline class="path phase_SKIKSSKIKS pwave" points="
+    </g>
+    <g>
+      <desc>seg 3/12 I of SKIKSSKIKS at  3255.68 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.798 s/deg. in outer core</desc>
+      <polyline class="path phase_SKIKSSKIKS pwave" points="
  -344.91  -1167.21
  -345.15  -1165.48
  -345.40  -1163.76
@@ -17407,10 +17296,10 @@ circle.discontinuity.iocb {
  -507.31    -86.85
  -506.85    -78.03
 " />
-</g>
-<g>
-    <desc>seg 4 I of SKIKSSKIKS at  3255.68 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.798 s/deg. in outer core</desc>
-    <polyline class="path phase_SKIKSSKIKS pwave" points="
+    </g>
+    <g>
+      <desc>seg 4/12 I of SKIKSSKIKS at  3255.68 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.798 s/deg. in outer core</desc>
+      <polyline class="path phase_SKIKSSKIKS pwave" points="
  -506.85    -78.03
  -509.95    -69.75
  -512.91    -61.39
@@ -17500,10 +17389,10 @@ circle.discontinuity.iocb {
  -679.70   1007.71
  -679.99   1009.43
 " />
-</g>
-<g>
-    <desc>seg 5 K of SKIKSSKIKS at  3255.68 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.798 s/deg. in outer core</desc>
-    <polyline class="path phase_SKIKSSKIKS pwave" points="
+    </g>
+    <g>
+      <desc>seg 5/12 K of SKIKSSKIKS at  3255.68 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.798 s/deg. in outer core</desc>
+      <polyline class="path phase_SKIKSSKIKS pwave" points="
  -679.99   1009.43
  -690.65   1062.73
  -701.02   1114.47
@@ -17619,10 +17508,10 @@ circle.discontinuity.iocb {
 -1176.84   3276.17
 -1177.05   3277.02
 " />
-</g>
-<g>
-    <desc>seg 6 S of SKIKSSKIKS at  3255.68 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.798 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_SKIKSSKIKS swave" points="
+    </g>
+    <g>
+      <desc>seg 6/12 S of SKIKSSKIKS at  3255.68 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.798 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_SKIKSSKIKS swave" points="
 -1177.05   3277.02
 -1186.61   3314.62
 -1189.34   3325.38
@@ -17854,10 +17743,10 @@ circle.discontinuity.iocb {
 -1915.56   6074.89
 -1915.91   6076.09
 " />
-</g>
-<g>
-    <desc>seg 7 S of SKIKSSKIKS at  3255.68 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.798 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_SKIKSSKIKS swave" points="
+    </g>
+    <g>
+      <desc>seg 7/12 S of SKIKSSKIKS at  3255.68 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.798 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_SKIKSSKIKS swave" points="
 -1915.91   6076.09
 -1915.51   6074.91
 -1915.10   6073.73
@@ -18089,10 +17978,10 @@ circle.discontinuity.iocb {
  -929.30   3395.75
  -915.56   3359.47
 " />
-</g>
-<g>
-    <desc>seg 8 K of SKIKSSKIKS at  3255.68 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.798 s/deg. in outer core</desc>
-    <polyline class="path phase_SKIKSSKIKS pwave" points="
+    </g>
+    <g>
+      <desc>seg 8/12 K of SKIKSSKIKS at  3255.68 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.798 s/deg. in outer core</desc>
+      <polyline class="path phase_SKIKSSKIKS pwave" points="
  -915.56   3359.47
  -915.25   3358.66
  -914.93   3357.84
@@ -18208,10 +18097,10 @@ circle.discontinuity.iocb {
   -43.86   1266.67
   -22.02   1216.90
 " />
-</g>
-<g>
-    <desc>seg 9 I of SKIKSSKIKS at  3255.68 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.798 s/deg. in outer core</desc>
-    <polyline class="path phase_SKIKSSKIKS pwave" points="
+    </g>
+    <g>
+      <desc>seg 9/12 I of SKIKSSKIKS at  3255.68 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.798 s/deg. in outer core</desc>
+      <polyline class="path phase_SKIKSSKIKS pwave" points="
   -22.02   1216.90
   -21.27   1215.33
   -20.51   1213.76
@@ -18301,10 +18190,10 @@ circle.discontinuity.iocb {
   457.72    235.38
   459.93    226.82
 " />
-</g>
-<g>
-    <desc>seg 10 I of SKIKSSKIKS at  3255.68 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.798 s/deg. in outer core</desc>
-    <polyline class="path phase_SKIKSSKIKS pwave" points="
+    </g>
+    <g>
+      <desc>seg 10/12 I of SKIKSSKIKS at  3255.68 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.798 s/deg. in outer core</desc>
+      <polyline class="path phase_SKIKSSKIKS pwave" points="
   459.93    226.82
   465.37    219.86
   470.71    212.78
@@ -18394,10 +18283,10 @@ circle.discontinuity.iocb {
   951.26   -756.70
   952.04   -758.25
 " />
-</g>
-<g>
-    <desc>seg 11 K of SKIKSSKIKS at  3255.68 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.798 s/deg. in outer core</desc>
-    <polyline class="path phase_SKIKSSKIKS pwave" points="
+    </g>
+    <g>
+      <desc>seg 11/12 K of SKIKSSKIKS at  3255.68 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.798 s/deg. in outer core</desc>
+      <polyline class="path phase_SKIKSSKIKS pwave" points="
   952.04   -758.25
   978.23   -805.88
  1003.69   -852.11
@@ -18513,10 +18402,10 @@ circle.discontinuity.iocb {
  2107.49  -2770.70
  2107.94  -2771.44
 " />
-</g>
-<g>
-    <desc>seg 12 S of SKIKSSKIKS at  3255.68 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.798 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_SKIKSSKIKS swave" points="
+    </g>
+    <g>
+      <desc>seg 12/12 S of SKIKSSKIKS at  3255.68 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    0.798 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_SKIKSSKIKS swave" points="
  2107.94  -2771.44
  2128.36  -2804.43
  2134.20  -2813.87
@@ -18748,7 +18637,7 @@ circle.discontinuity.iocb {
  3653.56  -5217.78
  3654.26  -5218.82
 " />
-</g>
+    </g>
 </g>
   </g> <!-- end autocolor -->
     <g class="phasename">

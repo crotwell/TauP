@@ -102,117 +102,6 @@ circle.discontinuity.iocb {
     fill: burlywood;
 }
 
-        .Rpp {
-          stroke: blue;
-        }
-        .Rpp.label {
-          stroke: blue;
-          fill: blue;
-        }
-        .legend .Rpp {
-          stroke: blue;
-          fill: blue;
-        }
-        .Rps {
-          stroke: green;
-        }
-        .Rps.label {
-          stroke: green;
-          fill: green;
-        }
-        .legend .Rps {
-          stroke: green;
-          fill: green;
-        }
-        .Tpp {
-          stroke: cyan;
-        }
-        .Tpp.label {
-          stroke: cyan;
-          fill: cyan;
-        }
-        .legend .Tpp {
-          stroke: cyan;
-          fill: cyan;
-        }
-        .Tps {
-          stroke: gold;
-        }
-        .Tps.label {
-          stroke: gold;
-          fill: gold;
-        }
-        .legend .Tps {
-          stroke: gold;
-          fill: gold;
-        }
-        .Rsp {
-          stroke: red;
-        }
-        .Rsp.label {
-          stroke: red;
-          fill: red;
-        }
-        .legend .Rsp {
-          stroke: red;
-          fill: red;
-        }
-        .Rss {
-          stroke: orange;
-        }
-        .Rss.label {
-          stroke: orange;
-          fill: orange;
-        }
-        .legend .Rss {
-          stroke: orange;
-          fill: orange;
-        }
-        .Tsp {
-          stroke: magenta;
-        }
-        .Tsp.label {
-          stroke: magenta;
-          fill: magenta;
-        }
-        .legend .Tsp {
-          stroke: magenta;
-          fill: magenta;
-        }
-        .Tss {
-          stroke: grey;
-        }
-        .Tss.label {
-          stroke: grey;
-          fill: grey;
-        }
-        .legend .Tss {
-          stroke: grey;
-          fill: grey;
-        }
-        .Rshsh {
-          stroke: mediumslateblue;
-        }
-        .Rshsh.label {
-          stroke: mediumslateblue;
-          fill: mediumslateblue;
-        }
-        .legend .Rshsh {
-          stroke: mediumslateblue;
-          fill: mediumslateblue;
-        }
-        .Tshsh {
-          stroke: violet;
-        }
-        .Tshsh.label {
-          stroke: violet;
-          fill: violet;
-        }
-        .legend .Tshsh {
-          stroke: violet;
-          fill: violet;
-        }
-
         g.autocolor > :nth-child(10n+1) {
             stroke: skyblue;
         }
@@ -361,9 +250,9 @@ circle.discontinuity.iocb {
   <g class="autocolor" >
 <g>
     <desc>  135.00    10.0   Pdiff    980.43     4.439     13.41    13.39   135.00 0   = Pdiff</desc>
-<g>
-    <desc>seg 1 Pdiff of Pdiff at   980.43 seconds at   135.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    4.439 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_Pdiff pwave" points="
+    <g>
+      <desc>seg 1/3 Pdiff of Pdiff at   980.43 seconds at   135.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    4.439 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_Pdiff pwave" points="
     0.00  -6361.00
     0.00  -6361.00
     1.19  -6356.00
@@ -570,10 +459,10 @@ circle.discontinuity.iocb {
  2601.23  -2318.78
  2635.00  -2276.20
 " />
-</g>
-<g>
-    <desc>seg 2 Pdiff of Pdiff at   980.43 seconds at   135.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    4.439 s/deg. in mantle</desc>
-    <polyline class="path phase_Pdiff pwave" points="
+    </g>
+    <g>
+      <desc>seg 2/3 Pdiff of Pdiff at   980.43 seconds at   135.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    4.439 s/deg. in mantle</desc>
+      <polyline class="path phase_Pdiff pwave" points="
  2635.00  -2276.20
  2673.93  -2230.35
  2712.05  -2183.82
@@ -613,10 +502,10 @@ circle.discontinuity.iocb {
  3467.73   -314.96
  3472.65   -255.01
 " />
-</g>
-<g>
-    <desc>seg 3 Pdiff of Pdiff at   980.43 seconds at   135.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    4.439 s/deg. in crust/mantle</desc>
-    <polyline class="path phase_Pdiff pwave" points="
+    </g>
+    <g>
+      <desc>seg 3/3 Pdiff of Pdiff at   980.43 seconds at   135.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    4.439 s/deg. in crust/mantle</desc>
+      <polyline class="path phase_Pdiff pwave" points="
  3472.65   -255.01
  3478.89   -201.02
  3484.30   -146.90
@@ -828,7 +717,7 @@ circle.discontinuity.iocb {
  4504.97   4504.97
  4504.98   4504.98
 " />
-</g>
+    </g>
 </g>
   </g> <!-- end autocolor -->
     <g class="phasename">

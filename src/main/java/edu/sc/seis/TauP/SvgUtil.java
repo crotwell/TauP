@@ -3,6 +3,7 @@ package edu.sc.seis.TauP;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -28,7 +29,6 @@ public class SvgUtil {
         css.append(extraCSS+"\n");
         StringBuffer stdcss = loadStandardCSS();
         css.append(stdcss+"\n");
-        css.append(createReflTransCSSColors()+"\n");
         css.append(createCSSColors( "g.autocolor", List.of("stroke"), DEFAULT_COLORS)+"\n");
         css.append(createCSSColors(  ".autocolor.phaselabel", List.of("fill"), DEFAULT_COLORS)+"\n");
         css.append(createCSSColors(  ".autocolor.legend", List.of("fill"), DEFAULT_COLORS)+"\n");
@@ -139,6 +139,41 @@ public class SvgUtil {
             out.println("</g>");
         }
         out.println("</g> <!-- legend end-->");
+    }
+
+    public static void createPhaseLegend(PrintWriter out, List<SeismicPhase> phaseList, String outerGcss, float xtrans, float ytrans) {
+        List<String> phasenameList = new ArrayList<>();
+        List<String> phaseClassList = new ArrayList<>();
+        for (SeismicPhase p : phaseList) {
+            phasenameList.add(p.getName());
+            phaseClassList.add(SvgUtil.classForPhase(p.getName()));
+        }
+        SvgUtil.createLegend(out, phasenameList, phaseClassList, "",  xtrans, ytrans);
+    }
+
+    public static void createTimeStepLegend(PrintWriter out, double timeStep, double maxTime, String outerGcss, float xtrans, float ytrans) {
+        List<String> labelList = new ArrayList<>();
+        List<String> classList = new ArrayList<>();
+        for (int i = 0; i < maxTime/timeStep; i++) {
+            double timeVal = i*timeStep;
+            labelList.add(Outputs.formatTimeNoPad(timeVal)+" s");
+            classList.add(SvgUtil.formatTimeForCss(timeVal));
+        }
+        SvgUtil.createLegend(out, labelList, classList, "",  xtrans, ytrans);
+    }
+
+    public static void createWavetypeLegend(PrintWriter out, float xtrans, float ytrans, boolean withBoth) {
+        List<String> waveLabels = new ArrayList<>();
+        List<String> waveLabelClasses = new ArrayList<>();
+        waveLabels.add("P");
+        waveLabelClasses.add("pwave");
+        waveLabels.add("S");
+        waveLabelClasses.add("swave");
+        if (withBoth){
+            waveLabels.add("Both");
+            waveLabelClasses.add("both_p_swave");
+        }
+        SvgUtil.createLegend(out, waveLabels, waveLabelClasses, "", xtrans, ytrans);
     }
 
     public static StringBuffer createCSSColors(String selector, List<String> cssAttrList, List<String> colors) {
@@ -252,11 +287,16 @@ public class SvgUtil {
         }
         return out;
     }
-    public static StringBuffer createTimeStepColorCSS(int timestep, float maxTime) {
+
+    public static String formatTimeForCss(double timeVal) {
+        return "time_"+Outputs.formatTimeNoPad(timeVal).trim().replaceAll("\\.", "_");
+    }
+
+    public static StringBuffer createTimeStepColorCSS(float timestep, float maxTime) {
         StringBuffer out = new StringBuffer();
         for (int i = 1; i < maxTime/timestep; i++) {
-            String timeLabel = String.format("time_%05d", i*timestep);
-            int moduloColor = i % DEFAULT_COLORS.size();
+            String timeLabel = formatTimeForCss( i*timestep);
+            int moduloColor = (i-1) % DEFAULT_COLORS.size();
             String color = DEFAULT_COLORS.get(moduloColor);
             out.append("        ."+timeLabel+" {\n");
             out.append("          stroke: "+color+";\n");
@@ -295,18 +335,27 @@ public class SvgUtil {
         return extrtaCSS;
     }
 
-    public static StringBuffer createWaveTypeColorCSS() {
+    public static String createWaveTypeColorCSS() {
         StringBuffer extrtaCSS = new StringBuffer();
-        extrtaCSS.append("        polyline.pwave {\n");
-        extrtaCSS.append("            stroke: blue;\n");
-        extrtaCSS.append("        }\n");
-        extrtaCSS.append("        polyline.swave {\n");
-        extrtaCSS.append("            stroke: red;\n");
-        extrtaCSS.append("        }\n");
-        extrtaCSS.append("        polyline.both_p_swave {\n");
-        extrtaCSS.append("            stroke: black;\n");
-        extrtaCSS.append("        }\n");
-        return extrtaCSS;
+        HashMap<String, String> colors = new HashMap();
+        colors.put("pwave", "blue");
+        colors.put("swave", "red");
+        colors.put("both_p_swave", "green");
+        for (String wavetype : colors.keySet()) {
+            String color = colors.get(wavetype);
+            extrtaCSS.append("        polyline."+wavetype+" {\n");
+            extrtaCSS.append("            stroke: "+color+";\n");
+            extrtaCSS.append("        }\n");
+            extrtaCSS.append("        ."+wavetype+".label {\n");
+            extrtaCSS.append("          stroke: "+color+";\n");
+            extrtaCSS.append("          fill: "+color+";\n");
+            extrtaCSS.append("        }\n");
+            extrtaCSS.append("        .legend ."+wavetype+" {\n");
+            extrtaCSS.append("          stroke: "+color+";\n");
+            extrtaCSS.append("          fill: "+color+";\n");
+            extrtaCSS.append("        }\n");
+        }
+        return extrtaCSS.toString();
     }
     public static List<String> DEFAULT_COLORS = List.of(
             "skyblue",

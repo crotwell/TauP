@@ -102,117 +102,6 @@ circle.discontinuity.iocb {
     fill: burlywood;
 }
 
-        .Rpp {
-          stroke: blue;
-        }
-        .Rpp.label {
-          stroke: blue;
-          fill: blue;
-        }
-        .legend .Rpp {
-          stroke: blue;
-          fill: blue;
-        }
-        .Rps {
-          stroke: green;
-        }
-        .Rps.label {
-          stroke: green;
-          fill: green;
-        }
-        .legend .Rps {
-          stroke: green;
-          fill: green;
-        }
-        .Tpp {
-          stroke: cyan;
-        }
-        .Tpp.label {
-          stroke: cyan;
-          fill: cyan;
-        }
-        .legend .Tpp {
-          stroke: cyan;
-          fill: cyan;
-        }
-        .Tps {
-          stroke: gold;
-        }
-        .Tps.label {
-          stroke: gold;
-          fill: gold;
-        }
-        .legend .Tps {
-          stroke: gold;
-          fill: gold;
-        }
-        .Rsp {
-          stroke: red;
-        }
-        .Rsp.label {
-          stroke: red;
-          fill: red;
-        }
-        .legend .Rsp {
-          stroke: red;
-          fill: red;
-        }
-        .Rss {
-          stroke: orange;
-        }
-        .Rss.label {
-          stroke: orange;
-          fill: orange;
-        }
-        .legend .Rss {
-          stroke: orange;
-          fill: orange;
-        }
-        .Tsp {
-          stroke: magenta;
-        }
-        .Tsp.label {
-          stroke: magenta;
-          fill: magenta;
-        }
-        .legend .Tsp {
-          stroke: magenta;
-          fill: magenta;
-        }
-        .Tss {
-          stroke: grey;
-        }
-        .Tss.label {
-          stroke: grey;
-          fill: grey;
-        }
-        .legend .Tss {
-          stroke: grey;
-          fill: grey;
-        }
-        .Rshsh {
-          stroke: mediumslateblue;
-        }
-        .Rshsh.label {
-          stroke: mediumslateblue;
-          fill: mediumslateblue;
-        }
-        .legend .Rshsh {
-          stroke: mediumslateblue;
-          fill: mediumslateblue;
-        }
-        .Tshsh {
-          stroke: violet;
-        }
-        .Tshsh.label {
-          stroke: violet;
-          fill: violet;
-        }
-        .legend .Tshsh {
-          stroke: violet;
-          fill: violet;
-        }
-
         g.autocolor > :nth-child(10n+1) {
             stroke: skyblue;
         }
@@ -367,9 +256,9 @@ circle.discontinuity.iocb {
   <g class="autocolor" >
 <g>
     <desc>   10.00    10.0   Pn    143.86    13.754     45.94    45.84    10.00 0   = Pn</desc>
-<g>
-    <desc>seg 1 Pn of Pn at   143.86 seconds at    10.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   13.754 s/deg. in crust</desc>
-    <polyline class="path phase_Pn pwave" points="
+    <g>
+      <desc>seg 1/3 Pn of Pn at   143.86 seconds at    10.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   13.754 s/deg. in crust</desc>
+      <polyline class="path phase_Pn pwave" points="
     0.00  -6361.00
     0.00  -6361.00
     5.17  -6356.00
@@ -380,10 +269,10 @@ circle.discontinuity.iocb {
    20.57  -6343.47
    30.83  -6335.93
 " />
-</g>
-<g>
-    <desc>seg 2 Pn of Pn at   143.86 seconds at    10.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   13.754 s/deg. in mantle</desc>
-    <polyline class="path phase_Pn pwave" points="
+    </g>
+    <g>
+      <desc>seg 2/3 Pn of Pn at   143.86 seconds at    10.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   13.754 s/deg. in mantle</desc>
+      <polyline class="path phase_Pn pwave" points="
    30.83  -6335.93
   134.21  -6334.58
   237.56  -6331.55
@@ -396,10 +285,10 @@ circle.discontinuity.iocb {
   957.67  -6263.21
  1059.74  -6246.75
 " />
-</g>
-<g>
-    <desc>seg 3 Pn of Pn at   143.86 seconds at    10.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   13.754 s/deg. in crust</desc>
-    <polyline class="path phase_Pn pwave" points="
+    </g>
+    <g>
+      <desc>seg 3/3 Pn of Pn at   143.86 seconds at    10.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   13.754 s/deg. in crust</desc>
+      <polyline class="path phase_Pn pwave" points="
  1059.74  -6246.75
  1071.14  -6252.41
  1076.83  -6255.24
@@ -415,7 +304,7 @@ circle.discontinuity.iocb {
  1106.31  -6274.21
  1106.31  -6274.21
 " />
-</g>
+    </g>
 </g>
   </g> <!-- end autocolor -->
     <g class="phasename">

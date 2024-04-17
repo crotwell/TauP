@@ -1,4 +1,4 @@
-> seg 1 2kmps of 2kmps at  1945.91 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   55.597 s/deg. in crust
+> seg 1/1 2kmps of 2kmps at  1945.91 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   55.597 s/deg. in crust
     0.00    6371.0
     1.00    6371.0
     2.00    6371.0
@@ -35,7 +35,7 @@
    33.00    6371.0
    34.00    6371.0
    35.00    6371.0
-> seg 1 2kmps of 2kmps at 18069.18 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   55.597 s/deg. in crust
+> seg 1/1 2kmps of 2kmps at 18069.18 seconds at   325.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   55.597 s/deg. in crust
     0.00    6371.0
    -1.00    6371.0
    -2.00    6371.0

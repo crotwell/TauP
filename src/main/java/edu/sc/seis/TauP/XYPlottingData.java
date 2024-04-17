@@ -10,10 +10,14 @@ import java.util.List;
 public class XYPlottingData {
 
     public XYPlottingData(List<XYSegment> segments, String xAxisType, String yAxisType, String label, List<String> cssClasses) {
+        this(segments, xAxisType, yAxisType, label, "", cssClasses);
+    }
+    public XYPlottingData(List<XYSegment> segments, String xAxisType, String yAxisType, String label, String description, List<String> cssClasses) {
         segmentList = segments;
         this.xAxisType = xAxisType;
         this.yAxisType = yAxisType;
         this.label = label;
+        this.description = description;
         this.cssClasses = cssClasses;
     }
 
@@ -73,18 +77,20 @@ public class XYPlottingData {
      */
     public void asSVG(PrintWriter writer) {
         String cssClassParam = createCSSClassParam();
-        writer.println("    <g "+cssClassParam+" tauplabel=\"" + label + "\" " +" >");
+        writer.println("    <g "+cssClassParam+" tauplabel=\"" + description + "\" " +" >");
         for (XYSegment segment : segmentList) {
             segment.asSVG(writer, "", Outputs.formatStringForAxisType(xAxisType), Outputs.formatStringForAxisType(yAxisType));
         }
-        writer.println("    </g> <!-- end "+ label+" -->");
+        writer.println("    </g> <!-- end "+ description+" -->");
     }
 
     public void asGMT(PrintWriter writer) {
         String xFormat = Outputs.formatStringForAxisType(xAxisType);
         String yFormat = Outputs.formatStringForAxisType(yAxisType);
+        int idx = 1;
         for (XYSegment segment : segmentList) {
-            segment.asGMT(writer, label, xFormat, yFormat);
+            segment.asGMT(writer, idx+"/"+segmentList.size()+" "+label+" "+description, xFormat, yFormat);
+            idx++;
         }
     }
 
@@ -107,6 +113,8 @@ public class XYPlottingData {
     public final String yAxisType;
 
     public final String label;
+
+    public final String description;
 
     public List<String> cssClasses = new ArrayList<>();
 }

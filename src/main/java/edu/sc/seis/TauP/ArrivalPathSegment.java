@@ -16,12 +16,12 @@ public class ArrivalPathSegment extends AbstractPathSegment {
 
     public ArrivalPathSegment(List<TimeDist> path, boolean isPWave, String segmentName, TimeDist prevEnd, Arrival arrival,
                               SeismicPhaseSegment phaseSegment) {
-        this(path, isPWave, segmentName, prevEnd, arrival, phaseSegment, 0);
+        this(path, isPWave, segmentName, prevEnd, arrival, phaseSegment, 0, -1);
     }
 
     public ArrivalPathSegment(List<TimeDist> path, boolean isPWave, String segmentName, TimeDist prevEnd, Arrival arrival,
-                              SeismicPhaseSegment phaseSegment, int segmentIndex) {
-        super(path, isPWave, segmentName, prevEnd, segmentIndex, arrival.getPhase());
+                              SeismicPhaseSegment phaseSegment, int segmentIndex, int totalNumSegments) {
+        super(path, isPWave, segmentName, prevEnd, segmentIndex, totalNumSegments, arrival.getPhase());
         this.arrival = arrival;
         this.phaseSegment = phaseSegment;
     }
@@ -55,7 +55,8 @@ public class ArrivalPathSegment extends AbstractPathSegment {
             TimeDist prevEnd = inPath.get(0).prevEnd;
             for (ArrivalPathSegment seg : inPath) {
                 ArrivalPathSegment shiftySeg = new ArrivalPathSegment(seg.adjustPathForShifty(shifty),
-                        seg.isPWave, seg.segmentName, prevEnd, seg.arrival, seg.phaseSegment, seg.segmentIndex);
+                        seg.isPWave, seg.segmentName, prevEnd, seg.arrival,
+                        seg.phaseSegment, seg.segmentIndex, seg.totalNumSegments);
                 prevEnd = shiftySeg.getPathEnd();
                 out.add(shiftySeg);
             }
@@ -79,7 +80,7 @@ public class ArrivalPathSegment extends AbstractPathSegment {
 
     @Override
     public String description() {
-        return "seg "+segmentIndex+" "+segmentName+" of "+arrival.getCommentLine()+" in "+phaseSegment.describeBranchRange();
+        return "seg "+segmentIndex+"/"+totalNumSegments+" "+segmentName+" of "+arrival.getCommentLine()+" in "+phaseSegment.describeBranchRange();
 
     }
 

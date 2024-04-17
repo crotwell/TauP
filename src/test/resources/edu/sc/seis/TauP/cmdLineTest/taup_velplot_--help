@@ -1,4 +1,4 @@
-Usage: taup velplot [--csv] [--debug] [--help] [--verbose]
+Usage: taup velplot [--csv] [--debug] [--help] [--legend] [--verbose]
                     [--mapwidth=<mapwidth>] [--mapwidthunit=<mapWidthUnit>]
                     [-o=<outFile>] [--prop=<toolPropsFilename>]
                     [-x=<xAxisType>] [-y=<yAxisType>] [--xminmax=x x]...
@@ -9,6 +9,7 @@ plot velocity vs depth for a model
       --csv                outputs as csv
       --debug              enable debugging output
       --help               display this help message
+      --legend             create a legend
       --mapwidth=<mapwidth>
                            plot width in inches for GMT, pixels for SVG.
       --mapwidthunit=<mapWidthUnit>

@@ -196,20 +196,8 @@ public class TauP_Path extends TauP_AbstractRayTool {
 		if (getOutputFormat().equals(OutputTypes.JSON)) {
 			printResultJSON(out, arrivalList);
 		} else if (getOutputFormat().equals(OutputTypes.SVG)) {
-			String cssExtra = "";
-			if (coloring.getColor() == ColorType.phase) {
-				StringBuffer cssPhaseColors = SvgUtil.createPhaseColorCSS(Arrays.asList(getPhaseNames()));
-				cssExtra += cssPhaseColors;
-			} else if (coloring.getColor() == ColorType.wavetype) {
-				StringBuffer cssWaveTypeColors = SvgUtil.createWaveTypeColorCSS();
-				cssExtra += cssWaveTypeColors;
-			} else {
-				// autocolor?
-			}
 			float pixelWidth = (72.0f * getGraphicOutputTypeArgs().mapwidth);
 			printScriptBeginningSVG(out, arrivalList, pixelWidth, distDepthRange, modelArgs, cmdLineArgs);
-
-
 			if (coloring.getColor() == ColorType.auto){
 				SvgUtil.startAutocolorG(out);
 			}
@@ -382,19 +370,14 @@ public class TauP_Path extends TauP_AbstractRayTool {
 			StringBuffer cssPhaseColors = SvgUtil.createPhaseColorCSS(Arrays.asList(getPhaseNames()));
 			extraCSS += cssPhaseColors;
 		} else if (coloring.getColor() == ColorType.wavetype) {
-			StringBuffer cssWaveTypeColors = SvgUtil.createWaveTypeColorCSS();
+			String cssWaveTypeColors = SvgUtil.createWaveTypeColorCSS();
 			extraCSS += cssWaveTypeColors;
 		} else {
 			// autocolor?
 		}
 		SvgEarth.printScriptBeginningSvg(out, tMod, pixelWidth, scaleTrans, toolNameFromClass(this.getClass()), cmdLineArgs, extraCSS);
 		if (coloring.getColor() == ColorType.phase) {
-			List<String> phasenameList = Arrays.asList(getPhaseNames());
-			List<String> phaseClassList = new ArrayList<>();
-			for (String p : phasenameList) {
-				phaseClassList.add(SvgUtil.classForPhase(p));
-			}
-			SvgUtil.createLegend(out, phasenameList, phaseClassList, "",  (int)(pixelWidth*.9), (int) (pixelWidth*.05));
+			SvgUtil.createPhaseLegend(out, getSeismicPhases(), "",  (int)(pixelWidth*.9), (int) (pixelWidth*.05));
 		}
 
 		SvgEarth.printModelAsSVG(out, tMod, pixelWidth, scaleTrans);

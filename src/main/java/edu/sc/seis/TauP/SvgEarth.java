@@ -12,7 +12,7 @@ public class SvgEarth {
 
     private static final float plotOverScaleFactor = 1.1f;
 
-    public static float[] calcEarthScaleTransForPhaseList(List<SeismicPhase> phaseList, DistDepthRange distDepthRange) {
+    public static float[] calcEarthScaleTransForPhaseList(List<SeismicPhase> phaseList, DistDepthRange distDepthRange, boolean includeNegDist) {
         float R = 6371;
         if (phaseList.size() > 0) {
             R = (float) phaseList.get(0).getTauModel().getRadiusOfEarth();
@@ -55,8 +55,11 @@ public class SvgEarth {
             if (distDepthRange.hasDistAxisMinMax()) {
                 minDist = (float) distDepthRange.getDistAxisMinMax()[0];
                 maxDist = (float) distDepthRange.getDistAxisMinMax()[1];
+            } else {
+                if (includeNegDist) {
+                    minDist = -1 * maxDist;
+                }
             }
-            System.err.println("minmax depth: "+minDepth+" "+maxDepth+"  dist: "+minDist*180/Math.PI+" "+maxDist*180/Math.PI);
             double[] bbox = SvgEarth.findPierceBoundingBox(new double[] {minDist*180/Math.PI, maxDist*180/Math.PI}, new double[]{minDepth, maxDepth}, R);
             scaleTrans = SvgEarth.calcZoomScaleTranslate((float) bbox[0], (float) bbox[1], (float) bbox[2], (float) bbox[3],
                     R, minDist, maxDist);
@@ -396,7 +399,6 @@ public class SvgEarth {
         zoomXMax = (float) minmax[1];
         zoomYMin = (float) minmax[2];
         zoomYMax = (float) minmax[3];
-        System.err.println("pierce bound: "+zoomXMin+" "+zoomXMax+"  Y: "+zoomYMin+" "+zoomYMax);
         for (Arrival arr : arrivals) {
             TimeDist[] pierce = arr.getPierce();
             for (TimeDist td : pierce) {
@@ -441,6 +443,15 @@ public class SvgEarth {
         out.println("  </g> <!-- end zoom -->");
         out.println("  </g> <!-- end translate -->");
         out.println("  </g> ");
+        out.println("</svg>");
+    }
+    public static void printSvgEndZoom(PrintWriter out) {
+        out.println("  </g> ");
+        out.println("  </g> <!-- end zoom -->");
+        out.println("  </g> <!-- end translate -->");
+        out.println("  </g> ");
+    }
+    public static void printSvgEnd(PrintWriter out) {
         out.println("</svg>");
     }
 

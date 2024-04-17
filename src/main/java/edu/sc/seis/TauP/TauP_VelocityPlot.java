@@ -96,7 +96,7 @@ public class TauP_VelocityPlot extends TauP_Tool {
             if (yAxisType == ModelAxisType.depth) {
                 xyOut.yAxisInvert = true;
             }
-            xyOut.printAsSvg(writer, cmdLineArgs, xAxisType.toString(), yAxisType.toString());
+            xyOut.printAsSvg(writer, cmdLineArgs, xAxisType.toString(), yAxisType.toString(), SvgUtil.createWaveTypeColorCSS(), isLegend);
         } else {
             throw new IllegalArgumentException("Unknown output format: " + getOutputFormat());
         }
@@ -212,7 +212,9 @@ public class TauP_VelocityPlot extends TauP_Tool {
             XYPlottingData xyplot = new XYPlottingData(segList,
                     xAxis.name(),
                     yAxis.name(),
-                    labelPrefix+labelFor(depAxis), cssClassList
+                    labelPrefix+labelFor(depAxis),
+                    vMod.getModelName()+" "+labelFor(depAxis),
+                    cssClassList
             );
             xyList.add(xyplot);
             if (xAxis == ModelAxisType.velocity) {
@@ -251,7 +253,9 @@ public class TauP_VelocityPlot extends TauP_Tool {
             XYPlottingData xyplot = new XYPlottingData(segList,
                     xAxis.name(),
                     yAxis.name(),
-                    labelPrefix+labelFor(depAxis), cssClassList
+                    labelPrefix+labelFor(depAxis),
+                    vMod.getModelName()+" "+labelFor(depAxis),
+                    cssClassList
             );
             xyList.add(xyplot);
             if (xAxis == ModelAxisType.slowness) {
@@ -407,6 +411,9 @@ public class TauP_VelocityPlot extends TauP_Tool {
 
     @CommandLine.Mixin
     GraphicOutputTypeArgs outputTypeArgs = new GraphicOutputTypeArgs();
+
+    @CommandLine.Option(names = "--legend", description = "create a legend")
+    boolean isLegend = false;
 
     @CommandLine.Option(names = {"--csv"}, required = false, description = "outputs as csv")
     public void setCsvOutput(boolean isCsv) {

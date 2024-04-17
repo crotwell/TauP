@@ -1,15 +1,16 @@
-Usage: taup refltrans [--abs] [--debug] [--down] [--help] [--pwave] [--shwave]
-                      [--swave] [--up] [--verbose] [--anglestep=<angleStep>]
-                      [--depth=<depth>] [--mapwidth=<mapwidth>]
-                      [--mapwidthunit=<mapWidthUnit>] [-o=<outFile>]
-                      [--prop=<toolPropsFilename>] [--rpstep=<rayparamStep>]
-                      [-x=<xAxisType>] [--xminmax=x x]... [--yminmax=y y]...
-                      [--layer=<layerParams> <layerParams> <layerParams>
-                      <layerParams> <layerParams> <layerParams>]...
-                      [-y=<yAxisType> [<yAxisType> [<yAxisType> [<yAxisType>
+Usage: taup refltrans [--abs] [--debug] [--down] [--help] [--legend] [--pwave]
+                      [--shwave] [--swave] [--up] [--verbose]
+                      [--anglestep=<angleStep>] [--depth=<depth>]
+                      [--mapwidth=<mapwidth>] [--mapwidthunit=<mapWidthUnit>]
+                      [-o=<outFile>] [--prop=<toolPropsFilename>]
+                      [--rpstep=<rayparamStep>] [-x=<xAxisType>] [--xminmax=x
+                      x]... [--yminmax=y y]... [--layer=<layerParams>
+                      <layerParams> <layerParams> <layerParams> <layerParams>
+                      <layerParams>]... [-y=<yAxisType> [<yAxisType>
                       [<yAxisType> [<yAxisType> [<yAxisType> [<yAxisType>
-                      [<yAxisType> [<yAxisType>]]]]]]]]]]... [--text | --json |
-                      --gmt | --svg] [[-mod=<modelname>] [-h=<sourceDepth>]
+                      [<yAxisType> [<yAxisType> [<yAxisType>
+                      [<yAxisType>]]]]]]]]]]... [--text | --json | --gmt |
+                      --svg] [[-mod=<modelname>] [-h=<sourceDepth>]
                       [--stadepth=depth] [--scat=s s]...]
 plot reflection and transmission coefficients for a discontinuity
       --abs                absolute value of amplitude factor
@@ -22,6 +23,7 @@ plot reflection and transmission coefficients for a discontinuity
       --layer=<layerParams> <layerParams> <layerParams> <layerParams>
         <layerParams> <layerParams>
 
+      --legend             create a legend
       --mapwidth=<mapwidth>
                            plot width in inches for GMT, pixels for SVG.
       --mapwidthunit=<mapWidthUnit>

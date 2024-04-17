@@ -4,15 +4,27 @@ import java.util.List;
 
 public class WavefrontPathSegment extends  AbstractPathSegment {
 
-    public WavefrontPathSegment(List<TimeDist> path, boolean isPWave, String segmentName, TimeDist prevEnd, int segmentIndex, SeismicPhase phase, double timeVal) {
-        super(path, isPWave, segmentName, prevEnd, segmentIndex, phase);
+    public WavefrontPathSegment(List<TimeDist> path, boolean isPWave, String segmentName, TimeDist prevEnd,
+                                int segmentIndex, int totalNumSegments, SeismicPhase phase, double timeVal) {
+        super(path, isPWave, segmentName, prevEnd, segmentIndex, totalNumSegments, phase);
+        this.timeVal = timeVal;
     }
 
     @Override
     public String description() {
-        return "seg "+segmentIndex+" "+segmentName+" of "+phase.getName();
+        return "seg "+segmentIndex+"/"+totalNumSegments+" "+segmentName+" of "+phase.getName()+" at "+Outputs.formatTimeNoPad(timeVal);
 
     }
 
-    float timeVal;
+    public String getCssClasses() {
+        return super.getCssClasses()+ " "+SvgUtil.formatTimeForCss(timeVal);
+    }
+
+    public WavefrontPathSegment asNegativeDistance() {
+        WavefrontPathSegment out = new WavefrontPathSegment(negativeDistance(), isPWave, segmentName, prevEnd,
+                segmentIndex, totalNumSegments, phase, timeVal);
+        return out;
+    }
+
+    double timeVal;
 }

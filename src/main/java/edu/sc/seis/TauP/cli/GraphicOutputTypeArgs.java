@@ -160,6 +160,10 @@ public class GraphicOutputTypeArgs  {
 
     String outFileBase = "taup";
 
+    public float getPixelWidth() {
+        return (72.0f * mapwidth);
+    }
+
     static class GraphicsOutputType {
 
         @CommandLine.Option(names = {"--text"}, required = true, description = "outputs as text")

@@ -1140,7 +1140,7 @@ public class SimpleSeismicPhase implements SeismicPhase {
         int idx = prevIdx+1;
         List<ArrivalPathSegment> segmentPaths = new ArrayList<>();
         for (SeismicPhaseSegment seg : segmentList) {
-            ArrivalPathSegment segPath = seg.calcPathTimeDist(currArrival, prevEnd, idx++);
+            ArrivalPathSegment segPath = seg.calcPathTimeDist(currArrival, prevEnd, idx++, prevIdx+segmentList.size());
 
             if (segPath.path.size() == 0) {
                 System.err.println("segPath.size() is 0 "+seg);

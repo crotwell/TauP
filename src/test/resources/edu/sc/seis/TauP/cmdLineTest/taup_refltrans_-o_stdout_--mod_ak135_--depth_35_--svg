@@ -11,95 +11,6 @@
   </metadata>
   <defs>
     <style type="text/css"><![CDATA[
-        text.label {
-            font: bold ;
-            fill: black;
-        }
-        g.phasename text {
-            font: bold ;
-            fill: black;
-        }
-
-text.title {
-    text-anchor: middle;
-    dominant-baseline: auto;
-    font-size: 20px;
-}
-circle {
-    vector-effect: non-scaling-stroke;
-    stroke: grey;
-    fill: transparent;
-}
-.xtick {
-    text-anchor: middle;
-    dominant-baseline: middle;
-}
-.ytick {
-    text-anchor: end;
-    dominant-baseline: middle;
-
-}
-.legend line {
-    text-anchor: end;
-    dominant-baseline: middle;
-    stroke: black;
-    fill: transparent;
-}
-.legend text {
-    text-anchor: start;
-    dominant-baseline: middle;
-}
-
-line.tick {
-    vector-effect: non-scaling-stroke;
-    stroke: black;
-    fill: transparent;
-}
-.xlabel {
-    text-anchor: middle;
-}
-.ylabel {
-    text-anchor: middle;
-    dominant-baseline: middle;
-}
-.phaselabel {
-    text-anchor: end;
-    dominant-baseline: middle;
-}
-polyline {
-    vector-effect: non-scaling-stroke;
-    fill: transparent;
-}
-polyline.tick {
-    stroke: black;
-}
-polyline.sourcedepth {
-    stroke: lightgrey;
-}
-polyline.receiverdepth {
-    stroke: lightgrey;
-}
-polyline.scattererdepth {
-    stroke: lightgrey;
-}
-circle.discontinuity {
-    vector-effect: non-scaling-stroke;
-    stroke: grey;
-    fill: none;
-}
-circle.discontinuity.surface {
-    fill: lightgoldenrodyellow;
-}
-circle.discontinuity.moho {
-    fill: blanchedalmond;
-}
-circle.discontinuity.cmb {
-    fill: lemonchiffon;
-}
-circle.discontinuity.iocb {
-    fill: burlywood;
-}
-
         .Rpp {
           stroke: blue;
         }
@@ -210,6 +121,87 @@ circle.discontinuity.iocb {
           stroke: violet;
           fill: violet;
         }
+
+
+text.title {
+    text-anchor: middle;
+    dominant-baseline: auto;
+    font-size: 20px;
+}
+circle {
+    vector-effect: non-scaling-stroke;
+    stroke: grey;
+    fill: transparent;
+}
+.xtick {
+    text-anchor: middle;
+    dominant-baseline: middle;
+}
+.ytick {
+    text-anchor: end;
+    dominant-baseline: middle;
+
+}
+.legend line {
+    text-anchor: end;
+    dominant-baseline: middle;
+    stroke: black;
+    fill: transparent;
+}
+.legend text {
+    text-anchor: start;
+    dominant-baseline: middle;
+}
+
+line.tick {
+    vector-effect: non-scaling-stroke;
+    stroke: black;
+    fill: transparent;
+}
+.xlabel {
+    text-anchor: middle;
+}
+.ylabel {
+    text-anchor: middle;
+    dominant-baseline: middle;
+}
+.phaselabel {
+    text-anchor: end;
+    dominant-baseline: middle;
+}
+polyline {
+    vector-effect: non-scaling-stroke;
+    fill: transparent;
+}
+polyline.tick {
+    stroke: black;
+}
+polyline.sourcedepth {
+    stroke: lightgrey;
+}
+polyline.receiverdepth {
+    stroke: lightgrey;
+}
+polyline.scattererdepth {
+    stroke: lightgrey;
+}
+circle.discontinuity {
+    vector-effect: non-scaling-stroke;
+    stroke: grey;
+    fill: none;
+}
+circle.discontinuity.surface {
+    fill: lightgoldenrodyellow;
+}
+circle.discontinuity.moho {
+    fill: blanchedalmond;
+}
+circle.discontinuity.cmb {
+    fill: lemonchiffon;
+}
+circle.discontinuity.iocb {
+    fill: burlywood;
+}
 
         g.autocolor > :nth-child(10n+1) {
             stroke: skyblue;
@@ -355,7 +347,7 @@ circle.discontinuity.iocb {
 <g transform="scale(1,-1) translate(0, -520.0)">
 <g transform="scale(5.777777777777778,127.65139340743224)" >
 <g transform="translate(-0.0, 0.9999999999999994)">
-    <g class="Rpp" tauplabel="Rpp"  >
+    <g class="Rpp" tauplabel=""  >
   <g>
     <desc></desc>
     <polyline  points="
@@ -453,8 +445,8 @@ circle.discontinuity.iocb {
 90.000000 -1.000000
   "  /> <!-- -->
   </g>
-    </g> <!-- end Rpp -->
-    <g class="Tpp" tauplabel="Tpp"  >
+    </g> <!-- end  -->
+    <g class="Tpp" tauplabel=""  >
   <g>
     <desc></desc>
     <polyline  points="
@@ -552,8 +544,8 @@ circle.discontinuity.iocb {
 90.000000 0.000000
   "  /> <!-- -->
   </g>
-    </g> <!-- end Tpp -->
-    <g class="Rps" tauplabel="Rps"  >
+    </g> <!-- end  -->
+    <g class="Rps" tauplabel=""  >
   <g>
     <desc></desc>
     <polyline  points="
@@ -651,8 +643,8 @@ circle.discontinuity.iocb {
 90.000000 0.000000
   "  /> <!-- -->
   </g>
-    </g> <!-- end Rps -->
-    <g class="Tps" tauplabel="Tps"  >
+    </g> <!-- end  -->
+    <g class="Tps" tauplabel=""  >
   <g>
     <desc></desc>
     <polyline  points="
@@ -750,8 +742,8 @@ circle.discontinuity.iocb {
 90.000000 -0.000000
   "  /> <!-- -->
   </g>
-    </g> <!-- end Tps -->
-    <g class="Rsp" tauplabel="Rsp"  >
+    </g> <!-- end  -->
+    <g class="Rsp" tauplabel=""  >
   <g>
     <desc></desc>
     <polyline  points="
@@ -851,8 +843,8 @@ circle.discontinuity.iocb {
 90.000000 -0.000000
   "  /> <!-- -->
   </g>
-    </g> <!-- end Rsp -->
-    <g class="Tsp" tauplabel="Tsp"  >
+    </g> <!-- end  -->
+    <g class="Tsp" tauplabel=""  >
   <g>
     <desc></desc>
     <polyline  points="
@@ -952,8 +944,8 @@ circle.discontinuity.iocb {
 90.000000 -0.000000
   "  /> <!-- -->
   </g>
-    </g> <!-- end Tsp -->
-    <g class="Rss" tauplabel="Rss"  >
+    </g> <!-- end  -->
+    <g class="Rss" tauplabel=""  >
   <g>
     <desc></desc>
     <polyline  points="
@@ -1053,8 +1045,8 @@ circle.discontinuity.iocb {
 90.000000 1.000000
   "  /> <!-- -->
   </g>
-    </g> <!-- end Rss -->
-    <g class="Tss" tauplabel="Tss"  >
+    </g> <!-- end  -->
+    <g class="Tss" tauplabel=""  >
   <g>
     <desc></desc>
     <polyline  points="
@@ -1154,8 +1146,8 @@ circle.discontinuity.iocb {
 90.000000 0.000000
   "  /> <!-- -->
   </g>
-    </g> <!-- end Tss -->
-    <g class="Rshsh" tauplabel="Rshsh"  >
+    </g> <!-- end  -->
+    <g class="Rshsh" tauplabel=""  >
   <g>
     <desc></desc>
     <polyline  points="
@@ -1255,8 +1247,8 @@ circle.discontinuity.iocb {
 90.000000 -1.000000
   "  /> <!-- -->
   </g>
-    </g> <!-- end Rshsh -->
-    <g class="Tshsh" tauplabel="Tshsh"  >
+    </g> <!-- end  -->
+    <g class="Tshsh" tauplabel=""  >
   <g>
     <desc></desc>
     <polyline  points="
@@ -1356,53 +1348,11 @@ circle.discontinuity.iocb {
 90.000000 0.000000
   "  /> <!-- -->
   </g>
-    </g> <!-- end Tshsh -->
+    </g> <!-- end  -->
     <g class="phasename">  <!-- begin labels -->
     </g> <!-- end labels -->
   </g> <!-- end translate -->
   </g> <!-- end scale -->
   </g> <!-- end scaletranslate -->
   </g> <!-- end clip-path -->
-<g class="legend " transform="translate(52.0,52.0)"> <!-- legend -->
-<g class="Rpp">
-<line class="Rpp" x1="0" y1="0" x2="10" y2="0" />
-<text class="Rpp" font-size="14" x="11" y="0">Rpp</text>
-</g>
-<g class="Tpp">
-<line class="Tpp" x1="0" y1="16" x2="10" y2="16" />
-<text class="Tpp" font-size="14" x="11" y="16">Tpp</text>
-</g>
-<g class="Rps">
-<line class="Rps" x1="0" y1="32" x2="10" y2="32" />
-<text class="Rps" font-size="14" x="11" y="32">Rps</text>
-</g>
-<g class="Tps">
-<line class="Tps" x1="0" y1="48" x2="10" y2="48" />
-<text class="Tps" font-size="14" x="11" y="48">Tps</text>
-</g>
-<g class="Rsp">
-<line class="Rsp" x1="0" y1="64" x2="10" y2="64" />
-<text class="Rsp" font-size="14" x="11" y="64">Rsp</text>
-</g>
-<g class="Tsp">
-<line class="Tsp" x1="0" y1="80" x2="10" y2="80" />
-<text class="Tsp" font-size="14" x="11" y="80">Tsp</text>
-</g>
-<g class="Rss">
-<line class="Rss" x1="0" y1="96" x2="10" y2="96" />
-<text class="Rss" font-size="14" x="11" y="96">Rss</text>
-</g>
-<g class="Tss">
-<line class="Tss" x1="0" y1="112" x2="10" y2="112" />
-<text class="Tss" font-size="14" x="11" y="112">Tss</text>
-</g>
-<g class="Rshsh">
-<line class="Rshsh" x1="0" y1="128" x2="10" y2="128" />
-<text class="Rshsh" font-size="14" x="11" y="128">Rshsh</text>
-</g>
-<g class="Tshsh">
-<line class="Tshsh" x1="0" y1="144" x2="10" y2="144" />
-<text class="Tshsh" font-size="14" x="11" y="144">Tshsh</text>
-</g>
-</g> <!-- legend end-->
 </svg>

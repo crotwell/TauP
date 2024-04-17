@@ -11,13 +11,38 @@
   </metadata>
   <defs>
     <style type="text/css"><![CDATA[
-        text.label {
-            font: bold ;
-            fill: black;
+        polyline.swave {
+            stroke: red;
         }
-        g.phasename text {
-            font: bold ;
-            fill: black;
+        .swave.label {
+          stroke: red;
+          fill: red;
+        }
+        .legend .swave {
+          stroke: red;
+          fill: red;
+        }
+        polyline.pwave {
+            stroke: blue;
+        }
+        .pwave.label {
+          stroke: blue;
+          fill: blue;
+        }
+        .legend .pwave {
+          stroke: blue;
+          fill: blue;
+        }
+        polyline.both_p_swave {
+            stroke: green;
+        }
+        .both_p_swave.label {
+          stroke: green;
+          fill: green;
+        }
+        .legend .both_p_swave {
+          stroke: green;
+          fill: green;
         }
 
 text.title {
@@ -99,117 +124,6 @@ circle.discontinuity.cmb {
 circle.discontinuity.iocb {
     fill: burlywood;
 }
-
-        .Rpp {
-          stroke: blue;
-        }
-        .Rpp.label {
-          stroke: blue;
-          fill: blue;
-        }
-        .legend .Rpp {
-          stroke: blue;
-          fill: blue;
-        }
-        .Rps {
-          stroke: green;
-        }
-        .Rps.label {
-          stroke: green;
-          fill: green;
-        }
-        .legend .Rps {
-          stroke: green;
-          fill: green;
-        }
-        .Tpp {
-          stroke: cyan;
-        }
-        .Tpp.label {
-          stroke: cyan;
-          fill: cyan;
-        }
-        .legend .Tpp {
-          stroke: cyan;
-          fill: cyan;
-        }
-        .Tps {
-          stroke: gold;
-        }
-        .Tps.label {
-          stroke: gold;
-          fill: gold;
-        }
-        .legend .Tps {
-          stroke: gold;
-          fill: gold;
-        }
-        .Rsp {
-          stroke: red;
-        }
-        .Rsp.label {
-          stroke: red;
-          fill: red;
-        }
-        .legend .Rsp {
-          stroke: red;
-          fill: red;
-        }
-        .Rss {
-          stroke: orange;
-        }
-        .Rss.label {
-          stroke: orange;
-          fill: orange;
-        }
-        .legend .Rss {
-          stroke: orange;
-          fill: orange;
-        }
-        .Tsp {
-          stroke: magenta;
-        }
-        .Tsp.label {
-          stroke: magenta;
-          fill: magenta;
-        }
-        .legend .Tsp {
-          stroke: magenta;
-          fill: magenta;
-        }
-        .Tss {
-          stroke: grey;
-        }
-        .Tss.label {
-          stroke: grey;
-          fill: grey;
-        }
-        .legend .Tss {
-          stroke: grey;
-          fill: grey;
-        }
-        .Rshsh {
-          stroke: mediumslateblue;
-        }
-        .Rshsh.label {
-          stroke: mediumslateblue;
-          fill: mediumslateblue;
-        }
-        .legend .Rshsh {
-          stroke: mediumslateblue;
-          fill: mediumslateblue;
-        }
-        .Tshsh {
-          stroke: violet;
-        }
-        .Tshsh.label {
-          stroke: violet;
-          fill: violet;
-        }
-        .legend .Tshsh {
-          stroke: violet;
-          fill: violet;
-        }
 
         g.autocolor > :nth-child(10n+1) {
             stroke: skyblue;
@@ -373,7 +287,7 @@ circle.discontinuity.iocb {
 <g transform="translate(-0.0, -0.0)">
     <g class="autocolor">
 <g transform="scale(1,-1) translate(0.0, -700.0)" > <!-- invert axis -->
-    <g class="pwave" tauplabel="P Vel."  >
+    <g class="pwave" tauplabel="ak135 P Vel."  >
   <g>
     <desc></desc>
     <polyline  points="
@@ -515,10 +429,10 @@ circle.discontinuity.iocb {
 11.262200 6371.000000
   "  /> <!-- -->
   </g>
-    </g> <!-- end P Vel. -->
+    </g> <!-- end ak135 P Vel. -->
     </g> <!-- end invert axis -->
 <g transform="scale(1,-1) translate(0.0, -700.0)" > <!-- invert axis -->
-    <g class="swave" tauplabel="S Vel."  >
+    <g class="swave" tauplabel="ak135 S Vel."  >
   <g>
     <desc></desc>
     <polyline  points="
@@ -660,7 +574,7 @@ circle.discontinuity.iocb {
 3.667800 6371.000000
   "  /> <!-- -->
   </g>
-    </g> <!-- end S Vel. -->
+    </g> <!-- end ak135 S Vel. -->
     </g> <!-- end invert axis -->
     </g> <!-- end autocolor g -->
     <g class="phasename">  <!-- begin labels -->
@@ -669,14 +583,4 @@ circle.discontinuity.iocb {
   </g> <!-- end scale -->
   </g> <!-- end scaletranslate -->
   </g> <!-- end clip-path -->
-<g class="legend autocolor" transform="translate(52.0,52.0)"> <!-- legend -->
-<g class="P Vel.">
-<line class="P Vel." x1="0" y1="0" x2="10" y2="0" />
-<text class="P Vel." font-size="14" x="11" y="0">P Vel.</text>
-</g>
-<g class="S Vel.">
-<line class="S Vel." x1="0" y1="16" x2="10" y2="16" />
-<text class="S Vel." font-size="14" x="11" y="16">S Vel.</text>
-</g>
-</g> <!-- legend end-->
 </svg>

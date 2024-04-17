@@ -19,13 +19,15 @@ public abstract class AbstractPathSegment {
     SeismicPhase phase;
     TimeDist prevEnd;
     int segmentIndex = -1;
+    int totalNumSegments = -1;
 
-    public AbstractPathSegment(List<TimeDist> path, boolean isPWave, String segmentName, TimeDist prevEnd, int segmentIndex, SeismicPhase phase) {
+    public AbstractPathSegment(List<TimeDist> path, boolean isPWave, String segmentName, TimeDist prevEnd, int segmentIndex, int totalNumSegments, SeismicPhase phase) {
         this.path = path;
         this.isPWave = isPWave;
         this.segmentName = segmentName;
         this.prevEnd = prevEnd;
         this.segmentIndex = segmentIndex;
+        this.totalNumSegments = totalNumSegments;
         this.phase = phase;
     }
 
@@ -82,7 +84,8 @@ public abstract class AbstractPathSegment {
             out.add(new TimeDist(td.getP(), calcTime, calcDist * DtoR, calcDepth));
             prevEnd = td;
         }
-        return new ArrivalPathSegment(out, segPath.isPWave, segPath.segmentName, segPath.prevEnd, segPath.arrival, segPath.phaseSegment, segPath.segmentIndex);
+        return new ArrivalPathSegment(out, segPath.isPWave, segPath.segmentName, segPath.prevEnd, segPath.arrival,
+                segPath.phaseSegment, segPath.segmentIndex, segPath.totalNumSegments);
     }
 
     public static List<TimeDist> trimDuplicates(List<TimeDist> tdList) {
@@ -112,6 +115,14 @@ public abstract class AbstractPathSegment {
             return path.get(0);
         }
         return prevEnd;
+    }
+
+    public List<TimeDist> negativeDistance() {
+        List<TimeDist> out = new ArrayList<>();
+        for(TimeDist td : path) {
+            out.add(new TimeDist(td.getP(), td.getTime(), -1* td.getDistRadian(), td.getDepth()));
+        }
+        return out;
     }
 
     public List<TimeDist> getPath() {
@@ -162,17 +173,22 @@ public abstract class AbstractPathSegment {
         pw.write(innerIndent + "]");
     }
 
+    public String getCssClasses() {
+        return "path "+SvgUtil.classForPhase(getPhase().getName()) + (isPWave ? " pwave" : " swave");
+    }
+
     public void writeSVGCartesian(PrintWriter pw) {
         double radiusOfEarth = getPhase().getTauModel().getRadiusOfEarth();
-        pw.println("<g>");
-        pw.println("    <desc>" + description() + "</desc>");
-        pw.println("    <polyline class=\"path " + SvgUtil.classForPhase(getPhase().getName()) + " " + (isPWave ? "pwave" : "swave") + "\" points=\"");
+        pw.println("    <g>");
+        pw.println("      <desc>" + description() + "</desc>");
+
+        pw.println("      <polyline class=\"" + getCssClasses() + "\" points=\"");
         for (TimeDist td : path) {
             SvgEarth.printDistRadiusAsXY(pw, td.getDistDeg(), radiusOfEarth - td.getDepth());
             pw.println();
         }
         pw.println("\" />");
-        pw.println("</g>");
+        pw.println("    </g>");
     }
 
     public void writeGMTText(PrintWriter pw, DistDepthRange distDepthRange, String xFormat, String yFormat, boolean withTime) {

@@ -11,14 +11,6 @@
   </metadata>
   <defs>
     <style type="text/css"><![CDATA[
-        text.label {
-            font: bold ;
-            fill: black;
-        }
-        g.phasename text {
-            font: bold ;
-            fill: black;
-        }
 
 text.title {
     text-anchor: middle;
@@ -99,117 +91,6 @@ circle.discontinuity.cmb {
 circle.discontinuity.iocb {
     fill: burlywood;
 }
-
-        .Rpp {
-          stroke: blue;
-        }
-        .Rpp.label {
-          stroke: blue;
-          fill: blue;
-        }
-        .legend .Rpp {
-          stroke: blue;
-          fill: blue;
-        }
-        .Rps {
-          stroke: green;
-        }
-        .Rps.label {
-          stroke: green;
-          fill: green;
-        }
-        .legend .Rps {
-          stroke: green;
-          fill: green;
-        }
-        .Tpp {
-          stroke: cyan;
-        }
-        .Tpp.label {
-          stroke: cyan;
-          fill: cyan;
-        }
-        .legend .Tpp {
-          stroke: cyan;
-          fill: cyan;
-        }
-        .Tps {
-          stroke: gold;
-        }
-        .Tps.label {
-          stroke: gold;
-          fill: gold;
-        }
-        .legend .Tps {
-          stroke: gold;
-          fill: gold;
-        }
-        .Rsp {
-          stroke: red;
-        }
-        .Rsp.label {
-          stroke: red;
-          fill: red;
-        }
-        .legend .Rsp {
-          stroke: red;
-          fill: red;
-        }
-        .Rss {
-          stroke: orange;
-        }
-        .Rss.label {
-          stroke: orange;
-          fill: orange;
-        }
-        .legend .Rss {
-          stroke: orange;
-          fill: orange;
-        }
-        .Tsp {
-          stroke: magenta;
-        }
-        .Tsp.label {
-          stroke: magenta;
-          fill: magenta;
-        }
-        .legend .Tsp {
-          stroke: magenta;
-          fill: magenta;
-        }
-        .Tss {
-          stroke: grey;
-        }
-        .Tss.label {
-          stroke: grey;
-          fill: grey;
-        }
-        .legend .Tss {
-          stroke: grey;
-          fill: grey;
-        }
-        .Rshsh {
-          stroke: mediumslateblue;
-        }
-        .Rshsh.label {
-          stroke: mediumslateblue;
-          fill: mediumslateblue;
-        }
-        .legend .Rshsh {
-          stroke: mediumslateblue;
-          fill: mediumslateblue;
-        }
-        .Tshsh {
-          stroke: violet;
-        }
-        .Tshsh.label {
-          stroke: violet;
-          fill: violet;
-        }
-        .legend .Tshsh {
-          stroke: violet;
-          fill: violet;
-        }
 
         g.autocolor > :nth-child(10n+1) {
             stroke: skyblue;
@@ -694,14 +575,4 @@ circle.discontinuity.iocb {
   </g> <!-- end scale -->
   </g> <!-- end scaletranslate -->
   </g> <!-- end clip-path -->
-<g class="legend autocolor" transform="translate(52.0,52.0)"> <!-- legend -->
-<g class="degree180/time P for a source depth of 10.0 kilometers in the prem model">
-<line class="degree180/time P for a source depth of 10.0 kilometers in the prem model" x1="0" y1="0" x2="10" y2="0" />
-<text class="degree180/time P for a source depth of 10.0 kilometers in the prem model" font-size="14" x="11" y="0">degree180/time P for a source depth of 10.0 kilometers in the prem model</text>
-</g>
-<g class="degree180/time 2kmps for a source depth of 10.0 kilometers in the prem model">
-<line class="degree180/time 2kmps for a source depth of 10.0 kilometers in the prem model" x1="0" y1="16" x2="10" y2="16" />
-<text class="degree180/time 2kmps for a source depth of 10.0 kilometers in the prem model" font-size="14" x="11" y="16">degree180/time 2kmps for a source depth of 10.0 kilometers in the prem model</text>
-</g>
-</g> <!-- legend end-->
 </svg>

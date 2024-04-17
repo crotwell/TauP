@@ -1,15 +1,17 @@
-Usage: taup curve [--debug] [--help] [--verbose] [--xlog] [--ylog]
-                  [--mapwidth=<mapwidth>] [--mapwidthunit=<mapWidthUnit>]
-                  [-o=<outFile>] [--prop=<toolPropsFilename>]
-                  [--reddeg=<reduceVelDeg>] [--redkm=<reduceVelKm>]
-                  [--rel=<relativePhaseName>] [-x=<xAxisType>] [-y=<yAxisType>]
-                  [-p=<phaseNames>[,<phaseNames>...]]... [--xminmax=x x]...
-                  [--yminmax=y y]... [[-mod=<modelname>] [-h=<sourceDepth>]
-                  [--stadepth=depth] [--scat=s s]...] [--text | --json | --gmt
-                  | --svg]
+Usage: taup curve [--debug] [--help] [--legend] [--verbose] [--xlog] [--ylog]
+                  [--color=<coloring>] [--mapwidth=<mapwidth>]
+                  [--mapwidthunit=<mapWidthUnit>] [-o=<outFile>]
+                  [--prop=<toolPropsFilename>] [--reddeg=<reduceVelDeg>]
+                  [--redkm=<reduceVelKm>] [--rel=<relativePhaseName>]
+                  [-x=<xAxisType>] [-y=<yAxisType>] [-p=<phaseNames>[,
+                  <phaseNames>...]]... [--xminmax=x x]... [--yminmax=y y]...
+                  [[-mod=<modelname>] [-h=<sourceDepth>] [--stadepth=depth]
+                  [--scat=s s]...] [--text | --json | --gmt | --svg]
 plot traveltime and other curves for phases
+      --color=<coloring>   style of coloring for paths and wavefronts
       --debug              enable debugging output
       --help               display this help message
+      --legend             create a legend
       --mapwidth=<mapwidth>
                            plot width in inches for GMT, pixels for SVG.
       --mapwidthunit=<mapWidthUnit>
