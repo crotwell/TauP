@@ -400,7 +400,9 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
         return axisType == AxisType.degree
                 || axisType == AxisType.degree180
                 || axisType == AxisType.radian
-                || axisType == AxisType.radian180;
+                || axisType == AxisType.radian180
+                || axisType == AxisType.kilometer
+                || axisType == AxisType.kilometer180;
     }
 
     /**
