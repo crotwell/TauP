@@ -36,6 +36,9 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
     @CommandLine.Option(names = "--legend", description = "create a legend")
     boolean isLegend = false;
 
+    @CommandLine.Option(names = "--onlynameddiscon", description = "only draw circles on the plot for named discontinuities like moho, cmb, iocb")
+    boolean onlyNamedDiscon = false;
+
     @CommandLine.Option(names = "--colortime", description = "generate css colors by time, default is by phase name")
     boolean cssColorTime = false;
     @CommandLine.Mixin
@@ -177,7 +180,7 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
             SvgEarth.printScriptBeginningSvg(out, modelArgs.getTauModel(), pixelWidth,
                     scaleTrans, toolNameFromClass(this.getClass()), cmdLineArgs, cssExtra);
 
-            SvgEarth.printModelAsSVG(out, modelArgs.getTauModel(), pixelWidth, scaleTrans);
+            SvgEarth.printModelAsSVG(out, modelArgs.getTauModel(), pixelWidth, scaleTrans, onlyNamedDiscon);
 
             if (coloring.getColor() == ColorType.auto){
                 SvgUtil.startAutocolorG(out);
@@ -213,7 +216,8 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
             // text/gmt
 
             if (getGraphicOutputTypeArgs().isGMT()) {
-                SvgEarth.printGmtScriptBeginning(out, psFile, modelArgs.depthCorrected(), outputTypeArgs.mapwidth, outputTypeArgs.mapWidthUnit);
+                SvgEarth.printGmtScriptBeginning(out, psFile, modelArgs.depthCorrected(), outputTypeArgs.mapwidth,
+                        outputTypeArgs.mapWidthUnit, onlyNamedDiscon);
                 if (coloring.getColor() != ColorType.wavetype) {
                     out.write("gmt psxy -P -R -K -O -JP -m -A >> " + psFile + " <<END\n");
                 }

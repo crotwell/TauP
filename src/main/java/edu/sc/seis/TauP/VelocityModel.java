@@ -188,6 +188,25 @@ public class VelocityModel implements Cloneable, Serializable {
         }
         return false;
     }
+
+
+    public NamedVelocityDiscon getNamedDisconForDepth(double depth) {
+        for (NamedVelocityDiscon nDiscon : namedDiscon) {
+            if (depth == nDiscon.depth) {
+                return nDiscon;
+            }
+        }
+        return null;
+    }
+
+    public boolean isNamedDisconDepth(double depth) {
+        for (NamedVelocityDiscon nDiscon : namedDiscon) {
+            if (depth == nDiscon.depth) {
+                return true;
+            }
+        }
+        return false;
+    }
     
     /** @return the depths of discontinuities within the velocity model */
     public double[] getDisconDepths() {

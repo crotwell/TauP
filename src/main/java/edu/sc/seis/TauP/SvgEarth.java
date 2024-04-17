@@ -234,7 +234,7 @@ public class SvgEarth {
         return arrivalList;
     }
 
-    public static void printModelAsSVG(PrintWriter out, TauModel tMod, float pixelWidth, float[] scaleTrans) {
+    public static void printModelAsSVG(PrintWriter out, TauModel tMod, float pixelWidth, float[] scaleTrans, boolean onlyNamedDiscon) {
         float zoomScale = scaleTrans[0];
         float zoomTranslateX = scaleTrans[1];
         float zoomTranslateY = scaleTrans[2];
@@ -321,7 +321,7 @@ public class SvgEarth {
         // other boundaries
         double[] branchDepths = tMod.getBranchDepths();
         for (int i = 0; i < branchDepths.length; i++) {
-            if (tMod.isNoDisconDepth(branchDepths[i])) {
+            if (tMod.isNoDisconDepth(branchDepths[i]) || (onlyNamedDiscon && !tMod.getVelocityModel().isNamedDisconDepth(branchDepths[i]))) {
                 // depth like source, scatter or reciever, don't draw circle for model
                 continue;
             }
@@ -455,7 +455,8 @@ public class SvgEarth {
         out.println("</svg>");
     }
 
-    public static void printGmtScriptBeginning(PrintWriter out, String psFile, TauModel tMod, float mapWidth, String mapWidthUnit)  throws IOException {
+    public static void printGmtScriptBeginning(PrintWriter out, String psFile, TauModel tMod,
+                                               float mapWidth, String mapWidthUnit, boolean onlyNamedDiscon)  throws IOException {
         out.println("#!/bin/sh");
         out.println("#\n# This script will plot ray paths using GMT. If you want to\n"
         + "#use this as a data file for psxy in another script, delete these"
@@ -473,9 +474,13 @@ public class SvgEarth {
         // other boundaries
         double[] branchDepths = tMod.getBranchDepths();
         for (int i = 0; i < branchDepths.length; i++) {
-        out.println("0.0 0.0 "
-        + (float) ((tMod.getRadiusOfEarth() - branchDepths[i])
-        * mapWidth / tMod.getRadiusOfEarth()) + mapWidthUnit);
+            if (tMod.isNoDisconDepth(branchDepths[i]) || (onlyNamedDiscon && !tMod.getVelocityModel().isNamedDisconDepth(branchDepths[i]))) {
+                //skip
+            } else {
+                out.println("0.0 0.0 "
+                        + (float) ((tMod.getRadiusOfEarth() - branchDepths[i])
+                        * mapWidth / tMod.getRadiusOfEarth()) + mapWidthUnit);
+            }
         }
         out.println("ENDLAYERS\n");
         out.println("# draw paths");
