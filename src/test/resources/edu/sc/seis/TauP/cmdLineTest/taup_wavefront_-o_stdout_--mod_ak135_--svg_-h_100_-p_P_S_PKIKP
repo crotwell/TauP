@@ -4,7 +4,7 @@
   <metadata>
     <taup>
       <command>taup wavefront </command>
-      <version>3.0.0-SNAPSHOT3</version>
+      <version>3.0.0-SNAPSHOT4</version>
       <a href="https://github.com/crotwell/TauP">https://github.com/crotwell/TauP</a>
     </taup>
   </metadata>

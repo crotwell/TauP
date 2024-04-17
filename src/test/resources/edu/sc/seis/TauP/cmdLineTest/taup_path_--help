@@ -1,5 +1,6 @@
-Usage: taup path [--debug] [--geodetic] [--help] [--verbose] [--withtime]
-                 [--az=<azimuth>] [--baz=<backAzimuth>] [--color=<coloring>]
+Usage: taup path [--debug] [--geodetic] [--help] [--onlynameddiscon]
+                 [--verbose] [--withtime] [--az=<azimuth>]
+                 [--baz=<backAzimuth>] [--color=<coloring>]
                  [--ellipflattening=<ellipflattening>] [--mapwidth=<mapwidth>]
                  [--mapwidthunit=<mapWidthUnit>] [--maxpathinc=<maxPathInc>]
                  [-o=<outFile>] [--prop=<toolPropsFilename>]
@@ -26,6 +27,8 @@ plot ray paths through the earth
                             Maximum distance increment in degrees between path
                               points, avoid visible segmentation in plots
   -o, --output=<outFile>    output to file, default is stdout.
+      --onlynameddiscon     only draw circles on the plot for named
+                              discontinuities like moho, cmb, iocb
   -p, --ph, --phase=<phaseNames>[,<phaseNames>...]
                             seismic phase names
       --prop=<toolPropsFilename>

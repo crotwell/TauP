@@ -1,11 +1,12 @@
 Usage: taup wavefront [--colortime] [--debug] [--help] [--legend] [--negdist]
-                      [--timefiles] [--verbose] [--color=<coloring>]
-                      [--mapwidth=<mapwidth>] [--mapwidthunit=<mapWidthUnit>]
-                      [-o=<outFile>] [--prop=<toolPropsFilename>]
-                      [--rays=<numRays>] [--timestep=<timeStep>]
-                      [--xaxis=<distAxisType>] [--yaxis=<depthAxisType>]
-                      [-p=<phaseNames>[,<phaseNames>...]]... [--degminmax=deg
-                      deg] [--depthminmax=km km] [[-mod=<modelname>]
+                      [--onlynameddiscon] [--timefiles] [--verbose]
+                      [--color=<coloring>] [--mapwidth=<mapwidth>]
+                      [--mapwidthunit=<mapWidthUnit>] [-o=<outFile>]
+                      [--prop=<toolPropsFilename>] [--rays=<numRays>]
+                      [--timestep=<timeStep>] [--xaxis=<distAxisType>]
+                      [--yaxis=<depthAxisType>] [-p=<phaseNames>[,
+                      <phaseNames>...]]... [--degminmax=deg deg]
+                      [--depthminmax=km km] [[-mod=<modelname>]
                       [-h=<sourceDepth>] [--stadepth=depth] [--scat=s s]...]
                       [--text | --json | --gmt | --svg]
 plot wavefronts of seismic phases at steps in time
@@ -23,6 +24,8 @@ plot wavefronts of seismic phases at steps in time
       --negdist             outputs negative distance as well so wavefronts are
                               in both halves.
   -o, --output=<outFile>    output to file, default is stdout.
+      --onlynameddiscon     only draw circles on the plot for named
+                              discontinuities like moho, cmb, iocb
   -p, --ph, --phase=<phaseNames>[,<phaseNames>...]
                             seismic phase names
       --prop=<toolPropsFilename>
