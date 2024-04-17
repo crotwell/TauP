@@ -73,9 +73,9 @@ public class XYSegment {
         for (int i = 0; i < y.length; i++) {
             if (i > 0) {
                 for (int j = 0; j < 2; j++) {
-                    if ((x[i-1] - xRange[j])*(x[i]-xRange[j]) < 0) {
+                    if ((x[i-1] < xRange[j] && xRange[j] < x[i]) || (xRange[j] > x[i] && x[i-1] > xRange[j] )) {
                         // crosses x boundary
-                        double interp = TauP_AbstractPhaseTool.linearInterp(x[i-1], y[i-1], x[i], y[i], xRange[0]);
+                        double interp = TauP_AbstractPhaseTool.linearInterp(x[i-1], y[i-1], x[i], y[i], xRange[j]);
                         if (interp < minY) { minY = interp;}
                         if (interp > maxY) {maxY = interp;}
                     }
