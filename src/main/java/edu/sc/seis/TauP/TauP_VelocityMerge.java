@@ -16,7 +16,9 @@ import static edu.sc.seis.TauP.VelocityModel.ND;
 /**
  * Replaces part of a velocity model with layers from another.
  */
-@CommandLine.Command(name = "velmerge", description = "merge part of one model into another")
+@CommandLine.Command(name = "velmerge",
+        description = "merge part of one model into another",
+        usageHelpAutoWidth = true)
 public class TauP_VelocityMerge extends TauP_Tool {
 
     public TauP_VelocityMerge() {

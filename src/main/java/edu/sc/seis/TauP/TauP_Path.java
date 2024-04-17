@@ -35,7 +35,9 @@ import static edu.sc.seis.TauP.SvgUtil.createSurfaceWaveCSS;
  * @version 1.1.3 Wed Jul 18 15:00:35 GMT 2001
  * @author H. Philip Crotwell
  */
-@CommandLine.Command(name = "path", description = "plot ray paths through the earth")
+@CommandLine.Command(name = "path",
+		description = "plot ray paths through the earth",
+		usageHelpAutoWidth = true)
 public class TauP_Path extends TauP_AbstractRayTool {
 
 

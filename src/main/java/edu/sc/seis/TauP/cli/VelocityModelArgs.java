@@ -1,5 +1,6 @@
 package edu.sc.seis.TauP.cli;
 
+import edu.sc.seis.TauP.StdModelGenerator;
 import picocli.CommandLine;
 
 import static edu.sc.seis.TauP.VelocityModel.ND;
@@ -7,7 +8,10 @@ import static edu.sc.seis.TauP.VelocityModel.TVEL;
 
 public class VelocityModelArgs extends InputVelocityModelArgs {
 
-    @CommandLine.Option(names = "--mod", description = "velocity file, format is guessed")
+    @CommandLine.Option(names = "--mod",
+            description = "velocity file, format is guessed",
+            completionCandidates = StdModelGenerator.StdModelCandidates.class
+    )
     public void setModelName(String modelFilename) {
         setVelFileType(null);
         setModelFilename(modelFilename);

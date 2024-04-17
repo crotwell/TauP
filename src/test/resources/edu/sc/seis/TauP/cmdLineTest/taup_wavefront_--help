@@ -1,18 +1,16 @@
-Usage: taup wavefront [--colortime] [--debug] [--help] [--legend] [--negdist]
+Usage: taup wavefront [--debug] [--help] [--legend] [--negdist]
                       [--onlynameddiscon] [--timefiles] [--verbose]
                       [--color=<coloring>] [--mapwidth=<mapwidth>]
                       [--mapwidthunit=<mapWidthUnit>] [-o=<outFile>]
-                      [--prop=<toolPropsFilename>] [--rays=<numRays>]
-                      [--timestep=<timeStep>] [--xaxis=<distAxisType>]
-                      [--yaxis=<depthAxisType>] [-p=<phaseNames>[,
-                      <phaseNames>...]]... [--degminmax=deg deg]
-                      [--depthminmax=km km] [[-mod=<modelname>]
+                      [--prop=<toolPropsFilename>] [--timestep=<timeStep>]
+                      [--xaxis=<distAxisType>] [--yaxis=<depthAxisType>]
+                      [-p=<phaseNames>[,<phaseNames>...]]... [--degminmax=deg
+                      deg] [--depthminmax=km km] [[-mod=<modelname>]
                       [-h=<sourceDepth>] [--stadepth=depth] [--scat=s s]...]
                       [--text | --json | --gmt | --svg]
 plot wavefronts of seismic phases at steps in time
-      --color=<coloring>    style of coloring for paths and wavefronts
-      --colortime           generate css colors by time, default is by phase
-                              name
+      --color=<coloring>    style of coloring for paths and wavefronts, one of
+                              auto, wavetype, phase
       --debug               enable debugging output
       --degminmax=deg deg   min and max distance in degrees for plotting
       --depthminmax=km km   min and max depth, km,  for plotting
@@ -30,10 +28,9 @@ plot wavefronts of seismic phases at steps in time
                             seismic phase names
       --prop=<toolPropsFilename>
                             load defaults from properties file
-      --rays=<numRays>      number of raypaths/distances to sample.
       --timefiles           outputs each time into a separate .ps file within
                               the gmt script.
-      --timestep=<timeStep> steps in time (seconds) for output
+      --timestep=<timeStep> steps in time (seconds) for output, default is null
       --verbose             enable verbose output
       --xaxis=<distAxisType>
                             x axis type, the distance axis, one of degree,
@@ -48,7 +45,8 @@ Model Args
                             use velocity model "modelname" for calculations
                                                   Default is iasp91.
       --scat, --scatter=s s scattering depth and distance in degrees, which may
-                              be negative.
+                              be negative. Only effects phases with 'o' or 'O'
+                              in the phase name.
       --stadepth=depth      the receiver depth in km for stations not at the
                               surface
 Output Type

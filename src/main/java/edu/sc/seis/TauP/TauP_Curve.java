@@ -14,7 +14,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@CommandLine.Command(name = "curve", description = "plot traveltime and other curves for phases")
+@CommandLine.Command(name = "curve",
+        description = "plot traveltime and other curves for phases",
+        usageHelpAutoWidth = true)
 public class TauP_Curve extends TauP_AbstractPhaseTool {
     public TauP_Curve() {
         setDefaultOutputFormat();

@@ -28,7 +28,8 @@ import java.util.Arrays;
 				TauP_Web.class,
 				TauP_Version.class,
 				CommandLine.HelpCommand.class
-		})
+		},
+		usageHelpAutoWidth = true)
 public class ToolRun {
     
     public static boolean DEBUG = false;

@@ -8,7 +8,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 
-@CommandLine.Command(name = "phase", description = "describe a seismic phase in the current model")
+@CommandLine.Command(name = "phase",
+        description = "describe a seismic phase in the current model",
+        usageHelpAutoWidth = true)
 public class TauP_PhaseDescribe extends TauP_AbstractPhaseTool {
 
     public TauP_PhaseDescribe() {

@@ -149,6 +149,9 @@ val binDistFiles: CopySpec = copySpec {
         into("lib")
     }
      */
+    from("build/picocli/bash_completion") {
+        include("taup_completion")
+    }
 }
 
 val distFiles: CopySpec = copySpec {

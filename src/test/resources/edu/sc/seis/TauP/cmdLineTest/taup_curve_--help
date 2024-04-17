@@ -8,7 +8,8 @@ Usage: taup curve [--debug] [--help] [--legend] [--verbose] [--xlog] [--ylog]
                   [[-mod=<modelname>] [-h=<sourceDepth>] [--stadepth=depth]
                   [--scat=s s]...] [--text | --json | --gmt | --svg]
 plot traveltime and other curves for phases
-      --color=<coloring>   style of coloring for paths and wavefronts
+      --color=<coloring>   style of coloring for paths and wavefronts, one of
+                             auto, wavetype, phase
       --debug              enable debugging output
       --help               display this help message
       --legend             create a legend
@@ -53,7 +54,8 @@ Model Args
                                                  Default is iasp91.
       --scat, --scatter=s s
                            scattering depth and distance in degrees, which may
-                             be negative.
+                             be negative. Only effects phases with 'o' or 'O'
+                             in the phase name.
       --stadepth=depth     the receiver depth in km for stations not at the
                              surface
 Output Type

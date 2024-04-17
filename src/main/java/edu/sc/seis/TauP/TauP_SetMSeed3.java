@@ -20,7 +20,9 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
 
-@CommandLine.Command(name = "setmseed3", description = "save travel times in the extra header of miniseed3 files")
+@CommandLine.Command(name = "setmseed3",
+        description = "save travel times in the extra header of miniseed3 files",
+        usageHelpAutoWidth = true)
 public class TauP_SetMSeed3 extends TauP_Time {
 
     public TauP_SetMSeed3() {

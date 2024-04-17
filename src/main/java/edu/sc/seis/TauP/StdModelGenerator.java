@@ -30,6 +30,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 import java.util.ArrayList;
 
@@ -45,6 +47,12 @@ public class StdModelGenerator {
     File outDir = new File(args[1]);
     createStandardModels( inDir,  outDir);
   }
+
+    public static class StdModelCandidates extends ArrayList<String> {
+        StdModelCandidates() {
+            super(Arrays.asList("iasp91", "ak135", "prem", "ak135fcont", "ak135favg", "qdt"));
+        }
+    }
 
   public static final void createStandardModels(File inDir, File outDir)
   throws IOException, TauPException {

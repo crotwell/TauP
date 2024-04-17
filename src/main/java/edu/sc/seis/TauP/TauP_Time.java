@@ -35,7 +35,9 @@ import java.util.*;
  * @version 1.1.3 Wed Jul 18 15:00:35 GMT 2001
  * @author H. Philip Crotwell
  */
-@CommandLine.Command(name = "time", description = "calculate travel times for seismic phases in an earth model")
+@CommandLine.Command(name = "time",
+        description = "calculate travel times for seismic phases in an earth model",
+        usageHelpAutoWidth = true)
 public class TauP_Time extends TauP_AbstractRayTool {
 
     @CommandLine.Option(names = {"--rayp", "--onlyrayp"}, description = "only output the ray parameter")

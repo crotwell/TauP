@@ -47,7 +47,9 @@ import static edu.sc.seis.TauP.cli.OutputTypes.TAUP;
  * 
  * @author H. Philip Crotwell
  */
-@CommandLine.Command(name = "create", description = "Create .taup file from velocity model")
+@CommandLine.Command(name = "create",
+        description = "Create .taup file from velocity model",
+        usageHelpAutoWidth = true)
 public class TauP_Create extends TauP_Tool {
 
     @CommandLine.ArgGroup(exclusive = true, multiplicity = "1", heading = "Velocity Model %n")

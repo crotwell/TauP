@@ -17,10 +17,10 @@ import static edu.sc.seis.TauP.cli.OutputTypes.*;
 /**
  * Plots of wavefronts, distance along the ray at points in time.
  */
-@CommandLine.Command(name = "wavefront", description = "plot wavefronts of seismic phases at steps in time")
+@CommandLine.Command(name = "wavefront",
+        description = "plot wavefronts of seismic phases at steps in time",
+        usageHelpAutoWidth = true)
 public class TauP_Wavefront extends TauP_AbstractPhaseTool {
-
-    int numRays = 30;
 
     float timeStep = 100;
 
@@ -39,8 +39,6 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
     @CommandLine.Option(names = "--onlynameddiscon", description = "only draw circles on the plot for named discontinuities like moho, cmb, iocb")
     boolean onlyNamedDiscon = false;
 
-    @CommandLine.Option(names = "--colortime", description = "generate css colors by time, default is by phase name")
-    boolean cssColorTime = false;
     @CommandLine.Mixin
     DistDepthRange distDepthRangeArgs = new DistDepthRange();
 
@@ -275,7 +273,6 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
         double minDist = phase.getMinDistanceDeg();
         double maxDist = phase.getMaxDistanceDeg();
         int totalNumSegments = (int) Math.floor(phase.getMaxTime()/timeStep);
-        double deltaDist = (maxDist - minDist) / (numRays - 1);
         List<Arrival> allArrival = new ArrayList<Arrival>();
         for (int i=0; i<phase.getNumRays(); i++) {
             allArrival.add(phase.createArrivalAtIndex(i));
@@ -444,15 +441,6 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
                             depthInterp);
     }
 
-    @CommandLine.Option(names = "--rays", description = "number of raypaths/distances to sample.")
-    public void setNumRays(int numRays) {
-        this.numRays = numRays;
-    }
-
-    public int getNumRays() {
-        return numRays;
-    }
-
     public float getTimeStep() {
         return timeStep;
     }
@@ -463,8 +451,11 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
 
     @CommandLine.Option(names = "--timestep",
     defaultValue = "100",
-    description = "steps in time (seconds) for output")
+    description = "steps in time (seconds) for output, default is ${DEFAULT_VALUE}")
     public void setTimeStep(float timeStep) {
+        if (timeStep < 0) {
+            throw new IllegalArgumentException("TimeStep must be positive: "+timeStep);
+        }
         this.timeStep = timeStep;
     }
 

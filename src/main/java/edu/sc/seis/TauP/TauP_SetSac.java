@@ -58,7 +58,9 @@ import picocli.CommandLine;
  * @author H. Philip Crotwell
  * 
  */
-@CommandLine.Command(name = "setsac", description = "set headers to travel times of phases using depth and distance from headers")
+@CommandLine.Command(name = "setsac",
+        description = "set headers to travel times of phases using depth and distance from headers",
+        usageHelpAutoWidth = true)
 public class TauP_SetSac extends TauP_Time {
 
     protected List<String> sacFileNames = new ArrayList<String>();

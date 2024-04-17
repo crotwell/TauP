@@ -1,9 +1,6 @@
 package edu.sc.seis.TauP.cli;
 
-import edu.sc.seis.TauP.TauModel;
-import edu.sc.seis.TauP.TauModelException;
-import edu.sc.seis.TauP.TauModelLoader;
-import edu.sc.seis.TauP.TauP_Tool;
+import edu.sc.seis.TauP.*;
 import picocli.CommandLine;
 
 import java.util.ArrayList;
@@ -121,7 +118,10 @@ public class ModelArgs {
         @CommandLine.Option(names={"-mod", "--mod", "--model"},
                 defaultValue = "iasp91",
                 description = "use velocity model \"modelname\" for calculations\n" +
-                "                      Default is iasp91.")
+                "                      Default is ${DEFAULT-VALUE}.",
+
+                completionCandidates = StdModelGenerator.StdModelCandidates.class
+        )
         String modelname = toolProps.getProperty("taup.model.name",
                 "iasp91");
 
@@ -137,7 +137,8 @@ public class ModelArgs {
         @CommandLine.Option(names = {"--scat", "--scatter"},
                 arity = "2",
                 paramLabel = "s",
-                description = "scattering depth and distance in degrees, which may be negative."
+                description = "scattering depth and distance in degrees, which may be negative. "+
+                        "Only effects phases with 'o' or 'O' in the phase name."
         )
         public void setScatterer(List<Double> depth_dist) {
             if (depth_dist.size() == 2) {

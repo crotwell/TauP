@@ -17,6 +17,7 @@ Model Args
                                                Default is iasp91.
       --scat, --scatter=s s
                          scattering depth and distance in degrees, which may be
-                           negative.
+                           negative. Only effects phases with 'o' or 'O' in the
+                           phase name.
       --stadepth=depth   the receiver depth in km for stations not at the
                            surface

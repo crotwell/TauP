@@ -50,7 +50,9 @@ import java.util.List;
  * @author H. Philip Crotwell
  * 
  */
-@CommandLine.Command(name = "table", description = "create a table of travel times for a range of depths and distances")
+@CommandLine.Command(name = "table",
+        description = "create a table of travel times for a range of depths and distances",
+        usageHelpAutoWidth = true)
 public class TauP_Table extends TauP_AbstractPhaseTool {
 
     public static final String LOCSAT = "locsat";

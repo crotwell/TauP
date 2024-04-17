@@ -15,7 +15,8 @@ Usage: taup path [--debug] [--geodetic] [--help] [--onlynameddiscon]
                  [--stadepth=depth] [--scat=s s]...] [--text | --json | --gmt |
                  --svg]
 plot ray paths through the earth
-      --color=<coloring>    style of coloring for paths and wavefronts
+      --color=<coloring>    style of coloring for paths and wavefronts, one of
+                              auto, wavetype, phase
       --debug               enable debugging output
       --degminmax=deg deg   min and max distance in degrees for plotting
       --depthminmax=km km   min and max depth, km,  for plotting
@@ -48,7 +49,8 @@ Model Args
                             use velocity model "modelname" for calculations
                                                   Default is iasp91.
       --scat, --scatter=s s scattering depth and distance in degrees, which may
-                              be negative.
+                              be negative. Only effects phases with 'o' or 'O'
+                              in the phase name.
       --stadepth=depth      the receiver depth in km for stations not at the
                               surface
 Distance is given by:

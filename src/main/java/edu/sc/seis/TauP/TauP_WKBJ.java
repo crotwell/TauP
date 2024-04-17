@@ -50,7 +50,9 @@ import edu.sc.seis.seisFile.mseed3.MSeed3Record;
 import org.json.JSONObject;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "wkbj")
+@CommandLine.Command(name = "wkbj",
+        description = "calc WKJB seismograms, DANGER: experimental!!!",
+        usageHelpAutoWidth = true)
 public class TauP_WKBJ extends TauP_Time {
 
     /**
