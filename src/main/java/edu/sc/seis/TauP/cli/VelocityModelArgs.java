@@ -7,6 +7,12 @@ import static edu.sc.seis.TauP.VelocityModel.TVEL;
 
 public class VelocityModelArgs extends InputVelocityModelArgs {
 
+    @CommandLine.Option(names = "--mod", description = "velocity file, format is guessed")
+    public void setModelName(String modelFilename) {
+        setVelFileType(null);
+        setModelFilename(modelFilename);
+    }
+
     @CommandLine.Option(names = "--nd", description = "\"named discontinuities\" velocity file")
     public void setNDModelFilename(String modelFilename) {
         setVelFileType(ND);
@@ -19,10 +25,4 @@ public class VelocityModelArgs extends InputVelocityModelArgs {
         setModelFilename(modelFilename);
     }
 
-
-    @CommandLine.Option(names = "--mod", description = "velocity file, format is guessed")
-    public void setModelName(String modelFilename) {
-        setVelFileType(null);
-        setModelFilename(modelFilename);
-    }
 }
