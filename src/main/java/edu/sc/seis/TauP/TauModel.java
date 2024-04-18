@@ -42,7 +42,7 @@ import java.util.HashMap;
 public class TauModel implements Serializable {
 
     public TauModel(SlownessModel sMod) throws NoSuchLayerException,
-            NoSuchMatPropException, SlownessModelException, TauModelException {
+            SlownessModelException, TauModelException {
         this.sMod = (SlownessModel)sMod;
         calcTauIncFrom();
     }
@@ -321,7 +321,7 @@ public class TauModel implements Serializable {
      *                distance without a layer.
      */
     private void calcTauIncFrom() throws SlownessModelException,
-            NoSuchLayerException, TauModelException, NoSuchMatPropException {
+            NoSuchLayerException, TauModelException {
         SlownessLayer topSLayer, botSLayer, currSLayer, prevSLayer;
         int topCritLayerNum, botCritLayerNum;
         /*

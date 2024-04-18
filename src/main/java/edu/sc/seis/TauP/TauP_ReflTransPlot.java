@@ -10,9 +10,6 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-import static edu.sc.seis.TauP.VelocityModel.P_WAVE_CHAR;
-import static edu.sc.seis.TauP.VelocityModel.S_WAVE_CHAR;
-
 @CommandLine.Command(name = "refltrans",
         description = "plot reflection and transmission coefficients for a discontinuity",
         usageHelpAutoWidth = true)
@@ -156,8 +153,8 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
                 title += "to Solid: "  + reflTransCoef.botVp + "," + reflTransCoef.botVs + "," + reflTransCoef.botDensity + ": ";
             }
         }
-        title += inpwave ? (P_WAVE_CHAR+" at "+reflTransCoef.topVp+" ") : "";
-        title += inswave ? (S_WAVE_CHAR+" at "+reflTransCoef.topVs+" ") : "";
+        title += inpwave ? ("P at "+reflTransCoef.topVp+" ") : "";
+        title += inswave ? ("S at "+reflTransCoef.topVs+" ") : "";
         return title;
     }
 

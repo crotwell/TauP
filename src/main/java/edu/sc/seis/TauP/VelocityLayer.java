@@ -33,6 +33,8 @@ import org.json.JSONObject;
 
 import java.io.Serializable;
 
+import static edu.sc.seis.TauP.LinearInterpolation.linInterp;
+
 /**
  * The VelocityModelLayer class stores and manipulates a singly layer. An entire
  * velocity model is implemented as an Vector of layers.
@@ -181,82 +183,75 @@ public class VelocityLayer implements Cloneable, Serializable {
     }
 
 
-    public double evaluateAtBottom(char materialProperty)
-            throws NoSuchMatPropException {
+    public double evaluateAtBottom(VelocityModelMaterial materialProperty) {
         double answer;
         switch(materialProperty){
-            case 'P':
-            case 'p':
+            case P_VELOCITY:
                 answer = getBotPVelocity();
                 break;
-            case 's':
-            case 'S':
+            case S_VELOCITY:
                 answer = getBotSVelocity();
                 break;
-            case 'r':
-            case 'R':
-            case 'D':
-            case 'd':
+            case DENSITY:
                 answer = getBotDensity();
                 break;
+            case Q_P:
+                answer = getBotQp();
+                break;
+            case Q_S:
+                answer = getBotQs();
+                break;
             default:
-                throw new NoSuchMatPropException(materialProperty);
+                throw new IllegalArgumentException("Unknown mat prop: "+materialProperty);
         }
         return answer;
     }
 
-    public double evaluateAtTop(char materialProperty)
-            throws NoSuchMatPropException {
+    public double evaluateAtTop(VelocityModelMaterial materialProperty) {
         double answer;
         switch(materialProperty){
-            case 'P':
-            case 'p':
+            case P_VELOCITY:
                 answer = getTopPVelocity();
                 break;
-            case 's':
-            case 'S':
+            case S_VELOCITY:
                 answer = getTopSVelocity();
                 break;
-            case 'r':
-            case 'R':
-            case 'D':
-            case 'd':
+            case DENSITY:
                 answer = getTopDensity();
                 break;
+            case Q_P:
+                answer = getTopQp();
+                break;
+            case Q_S:
+                answer = getTopQs();
+                break;
             default:
-                throw new NoSuchMatPropException(materialProperty);
+                throw new IllegalArgumentException("Unknown mat prop: "+materialProperty);
         }
         return answer;
     }
 
-    public double evaluateAt(double depth, char materialProperty)
-            throws NoSuchMatPropException {
-        double slope, answer;
+    public double evaluateAt(double depth, VelocityModelMaterial materialProperty) {
+        double answer;
         switch(materialProperty){
-            case 'P':
-            case 'p':
-                slope = (getBotPVelocity() - getTopPVelocity())
-                        / (getBotDepth() - getTopDepth());
-                answer = slope * (depth - getTopDepth()) + getTopPVelocity();
+            case P_VELOCITY:
+                answer = linInterp(getBotDepth(), getTopDepth(), getBotPVelocity(), getTopPVelocity(), depth);
                 break;
-            case 's':
-            case 'S':
-                slope = (getBotSVelocity() - getTopSVelocity())
-                        / (getBotDepth() - getTopDepth());
-                answer = slope * (depth - getTopDepth()) + getTopSVelocity();
+            case S_VELOCITY:
+                answer = linInterp(getBotDepth(), getTopDepth(), getBotSVelocity(), getTopSVelocity(), depth);
                 break;
-            case 'r':
-            case 'R':
-            case 'D':
-            case 'd':
-                slope = (getBotDensity() - getTopDensity())
-                        / (getBotDepth() - getTopDepth());
-                answer = slope * (depth - getTopDepth()) + getTopDensity();
+            case DENSITY:
+                answer = linInterp(getBotDepth(), getTopDepth(), getBotDensity(), getTopDensity(), depth);
+                break;
+            case Q_P:
+                answer = linInterp(getBotDepth(), getTopDepth(), getBotQp(), getTopQp(), depth);
+                break;
+            case Q_S:
+                answer = linInterp(getBotDepth(), getTopDepth(), getBotQs(), getTopQs(), depth);
                 break;
             default:
-                System.err.println("I don't understand this material property: "
-                        + materialProperty + "\nUse one of P p S s R r D d");
-                throw new NoSuchMatPropException(materialProperty);
+                throw new IllegalArgumentException("I don't understand this material property: "
+                        + materialProperty);
         }
         return answer;
     }

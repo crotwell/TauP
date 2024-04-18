@@ -257,7 +257,7 @@ public class AddToBranchTest {
     }
 
     @BeforeAll
-    public static void createTMod() throws SlownessModelException, TauModelException, NoSuchMatPropException, NoSuchLayerException {
+    public static void createTMod() throws SlownessModelException, TauModelException, NoSuchLayerException {
         vmod = createVelMod(vp, vs);
         smod = new SphericalSModel(vmod,
                                        0.1,

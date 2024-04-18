@@ -408,8 +408,8 @@ public class VelocityModel implements Cloneable, Serializable {
      * @exception NoSuchMatPropException
      *                occurs if the material property is not recognized.
      */
-    public double evaluateAbove(double depth, char materialProperty)
-            throws NoSuchLayerException, NoSuchMatPropException {
+    public double evaluateAbove(double depth, VelocityModelMaterial materialProperty)
+            throws NoSuchLayerException {
         VelocityLayer tempLayer;
         tempLayer = (VelocityLayer)getVelocityLayer(layerNumberAbove(depth));
         return tempLayer.evaluateAt(depth, materialProperty);
@@ -423,11 +423,9 @@ public class VelocityModel implements Cloneable, Serializable {
      * @return the value of the given material property
      * @exception NoSuchLayerException
      *                occurs if no layer contains the given depth.
-     * @exception NoSuchMatPropException
-     *                occurs if the material property is not recognized.
      */
-    public double evaluateBelow(double depth, char materialProperty)
-            throws NoSuchLayerException, NoSuchMatPropException {
+    public double evaluateBelow(double depth, VelocityModelMaterial materialProperty)
+            throws NoSuchLayerException {
         VelocityLayer tempLayer;
         tempLayer = (VelocityLayer)getVelocityLayer(layerNumberBelow(depth));
         return tempLayer.evaluateAt(depth, materialProperty);
@@ -438,11 +436,9 @@ public class VelocityModel implements Cloneable, Serializable {
      * velocity, at the top of the given layer.
      * 
      * @return the value of the given material property
-     * @exception NoSuchMatPropException
      *                occurs if the material property is not recognized.
      */
-    public double evaluateAtTop(int layerNumber, char materialProperty)
-            throws NoSuchMatPropException {
+    public double evaluateAtTop(int layerNumber, VelocityModelMaterial materialProperty) {
         VelocityLayer tempLayer;
         tempLayer = (VelocityLayer)getVelocityLayer(layerNumber);
         return tempLayer.evaluateAtTop(materialProperty);
@@ -453,11 +449,8 @@ public class VelocityModel implements Cloneable, Serializable {
      * velocity, at the bottom of the given layer.
      * 
      * @return the value of the given material property
-     * @exception NoSuchMatPropException
-     *                occurs if the material property is not recognized.
      */
-    public double evaluateAtBottom(int layerNumber, char materialProperty)
-            throws NoSuchMatPropException {
+    public double evaluateAtBottom(int layerNumber, VelocityModelMaterial materialProperty) {
         VelocityLayer tempLayer;
         tempLayer = (VelocityLayer)getVelocityLayer(layerNumber);
         return tempLayer.evaluateAtBottom(materialProperty);
@@ -478,10 +471,9 @@ public class VelocityModel implements Cloneable, Serializable {
      * returns the depth at the bottom of the given layer.
      * 
      * @return the depth.
-     * @exception NoSuchMatPropException
      *                occurs if the material property is not recognized.
      */
-    public double depthAtBottom(int layerNumber) throws NoSuchMatPropException {
+    public double depthAtBottom(int layerNumber) {
         VelocityLayer tempLayer;
         tempLayer = (VelocityLayer)getVelocityLayer(layerNumber);
         return tempLayer.getBotDepth();
@@ -499,7 +491,7 @@ public class VelocityModel implements Cloneable, Serializable {
                                        boolean smoothTop,
                                        boolean smoothBot)
             throws VelocityModelException {
-        try {
+
             List<VelocityLayer> outLayers = new ArrayList<VelocityLayer>();
             int topLayerNum = layerNumberBelow(newLayers[0].getTopDepth());
             int numAdded = 0;
@@ -517,20 +509,29 @@ public class VelocityModel implements Cloneable, Serializable {
                                                 topLayer.getTopDepth(),
                                                 newLayers[0].getTopDepth(),
                                                 topLayer.getTopPVelocity(),
-                                                topLayer.evaluateAt(newLayers[0].getTopDepth(), 'P'),
+                                                topLayer.evaluateAt(newLayers[0].getTopDepth(), VelocityModelMaterial.P_VELOCITY),
                                                 topLayer.getTopSVelocity(),
-                                                topLayer.evaluateAt(newLayers[0].getTopDepth(), 'S'),
+                                                topLayer.evaluateAt(newLayers[0].getTopDepth(), VelocityModelMaterial.S_VELOCITY),
                                                 topLayer.getTopDensity(),
-                                                topLayer.evaluateAt(newLayers[0].getTopDepth(), 'R')));
+                                                topLayer.evaluateAt(newLayers[0].getTopDepth(), VelocityModelMaterial.DENSITY),
+                        topLayer.getTopQp(),
+                        topLayer.evaluateAt(newLayers[0].getTopDepth(), VelocityModelMaterial.Q_P),
+                        topLayer.getTopQs(),
+                        topLayer.evaluateAt(newLayers[0].getTopDepth(), VelocityModelMaterial.Q_S)
+                        ));
                 outLayers.add(new VelocityLayer(numAdded++,
                                                 newLayers[0].getTopDepth(),
                                                 topLayer.getBotDepth(),
-                                                topLayer.evaluateAt(newLayers[0].getTopDepth(), 'P'),
+                                                topLayer.evaluateAt(newLayers[0].getTopDepth(), VelocityModelMaterial.P_VELOCITY),
                                                 topLayer.getBotPVelocity(),
-                                                topLayer.evaluateAt(newLayers[0].getTopDepth(), 'S'),
+                                                topLayer.evaluateAt(newLayers[0].getTopDepth(), VelocityModelMaterial.S_VELOCITY),
                                                 topLayer.getBotSVelocity(),
-                                                topLayer.evaluateAt(newLayers[0].getTopDepth(), 'R'),
-                                                topLayer.getBotDensity()));
+                                                topLayer.evaluateAt(newLayers[0].getTopDepth(), VelocityModelMaterial.DENSITY),
+                                                topLayer.getBotDensity(),
+                        topLayer.evaluateAt(newLayers[0].getTopDepth(), VelocityModelMaterial.Q_P),
+                        topLayer.getBotQp(),
+                        topLayer.evaluateAt(newLayers[0].getTopDepth(), VelocityModelMaterial.Q_S),
+                        topLayer.getBotQs()));
             } else {
                 // already a discon at our new layer top depth
                 outLayers.add(topLayer.cloneRenumber(numAdded++));
@@ -546,19 +547,19 @@ public class VelocityModel implements Cloneable, Serializable {
                                                 botLayer.getTopDepth(),
                                                 lastNewLayer.getBotDepth(),
                                                 botLayer.getTopPVelocity(),
-                                                botLayer.evaluateAt(lastNewLayer.getBotDepth(), 'P'),
+                                                botLayer.evaluateAt(lastNewLayer.getBotDepth(), VelocityModelMaterial.P_VELOCITY),
                                                 botLayer.getTopSVelocity(),
-                                                botLayer.evaluateAt(lastNewLayer.getBotDepth(), 'S'),
+                                                botLayer.evaluateAt(lastNewLayer.getBotDepth(), VelocityModelMaterial.S_VELOCITY),
                                                 botLayer.getTopDensity(),
-                                                botLayer.evaluateAt(lastNewLayer.getBotDepth(), 'R')));
+                                                botLayer.evaluateAt(lastNewLayer.getBotDepth(), VelocityModelMaterial.DENSITY)));
                 outLayers.add(new VelocityLayer(numAdded++,
                                                 lastNewLayer.getBotDepth(),
                                                 botLayer.getBotDepth(),
-                                                botLayer.evaluateAt(lastNewLayer.getBotDepth(), 'P'),
+                                                botLayer.evaluateAt(lastNewLayer.getBotDepth(), VelocityModelMaterial.P_VELOCITY),
                                                 botLayer.getBotPVelocity(),
-                                                botLayer.evaluateAt(lastNewLayer.getBotDepth(), 'S'),
+                                                botLayer.evaluateAt(lastNewLayer.getBotDepth(), VelocityModelMaterial.S_VELOCITY),
                                                 botLayer.getBotSVelocity(),
-                                                botLayer.evaluateAt(lastNewLayer.getBotDepth(), 'R'),
+                                                botLayer.evaluateAt(lastNewLayer.getBotDepth(), VelocityModelMaterial.DENSITY),
                                                 botLayer.getBotDensity()));
             } else {
                 // already a discon at our new layer top depth
@@ -633,10 +634,6 @@ public class VelocityModel implements Cloneable, Serializable {
                 throw new VelocityModelException("replace layers but now is not valid.");
             }
             return outVMod;
-        } catch(NoSuchMatPropException e) {
-            // can't happen, but...
-            throw new RuntimeException(e);
-        }
     }
 
 
@@ -647,7 +644,6 @@ public class VelocityModel implements Cloneable, Serializable {
     public VelocityModel elevationLayer(float elevation,
                                        String name)
             throws VelocityModelException {
-        try {
             List<VelocityLayer> outLayers = new ArrayList<VelocityLayer>();
 
             int numAdded = 0;
@@ -678,10 +674,6 @@ public class VelocityModel implements Cloneable, Serializable {
                 throw new VelocityModelException("replace layers but now is not valid.");
             }
             return outVMod;
-        } catch(NoSuchMatPropException e) {
-            // can't happen, but...
-            throw new RuntimeException(e);
-        }
     }
 
     /**
@@ -1616,12 +1608,12 @@ public class VelocityModel implements Cloneable, Serializable {
         if (!isDisconDepth(depth)) {
             throw new VelocityModelException("depth " + depth + " is not a discontinuity in the model");
         }
-        double abovePVel = evaluateAbove(depth, P_WAVE_CHAR);
-        double aboveSVel = evaluateAbove(depth, S_WAVE_CHAR);
-        double aboveRho = evaluateAbove(depth, DENSITY_CHAR);
-        double belowPVel = evaluateBelow(depth, P_WAVE_CHAR);
-        double belowSVel = evaluateBelow(depth, S_WAVE_CHAR);
-        double belowRho = evaluateBelow(depth, DENSITY_CHAR);
+        double abovePVel = evaluateAbove(depth, VelocityModelMaterial.P_VELOCITY);
+        double aboveSVel = evaluateAbove(depth, VelocityModelMaterial.S_VELOCITY);
+        double aboveRho = evaluateAbove(depth, VelocityModelMaterial.DENSITY);
+        double belowPVel = evaluateBelow(depth, VelocityModelMaterial.P_VELOCITY);
+        double belowSVel = evaluateBelow(depth, VelocityModelMaterial.S_VELOCITY);
+        double belowRho = evaluateBelow(depth, VelocityModelMaterial.DENSITY);
         if (depth == 0) {
             abovePVel = 0.0;
             aboveSVel = 0.0;
@@ -1693,7 +1685,4 @@ public class VelocityModel implements Cloneable, Serializable {
         return rtCoef;
     }
 
-    public static final char P_WAVE_CHAR = 'P';
-    public static final char S_WAVE_CHAR = 'S';
-    public static final char DENSITY_CHAR = 'D';
 }

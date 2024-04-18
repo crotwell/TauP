@@ -72,13 +72,12 @@ public class SlownessLayer implements Serializable {
                                + vLayer.getBotDepth());
         topDepth = vLayer.getTopDepth();
         botDepth = vLayer.getBotDepth();
-        char waveType;
+        VelocityModelMaterial waveType;
         if(isPWave) {
-            waveType = 'P';
+            waveType = VelocityModelMaterial.P_VELOCITY;
         } else {
-            waveType = 'S';
+            waveType = VelocityModelMaterial.S_VELOCITY;
         }
-        try {
             if(spherical) {
                 topP = (radiusOfEarth - getTopDepth())
                         / vLayer.evaluateAtTop(waveType);
@@ -91,10 +90,6 @@ public class SlownessLayer implements Serializable {
             Assert.isFalse(Double.isNaN(getTopP()) || Double.isNaN(getBotP()),
                            "Slowness sample is NaN: topP=" + getTopP()
                                    + " botP=" + getBotP()+" depth "+topDepth+" to "+botDepth);
-        } catch(NoSuchMatPropException e) {
-            // Can't happen
-            throw new RuntimeException(e);
-        }
     }
 
     /**

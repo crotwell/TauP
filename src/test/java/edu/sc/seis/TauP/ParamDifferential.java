@@ -176,7 +176,7 @@ public class ParamDifferential {
                                   double maxRangeInterval,
                                   double maxInterpError,
                                   boolean allowInnerCoreS,
-                                  double slownessTolerance) throws NoSuchMatPropException, NoSuchLayerException,
+                                  double slownessTolerance) throws NoSuchLayerException,
             SlownessModelException, TauModelException {
         SlownessModel smod = new SphericalSModel(vMod,
                                                  minDeltaP,

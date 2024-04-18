@@ -688,17 +688,16 @@ public class SimpleSeismicPhase implements SeismicPhase {
     public double calcRayParamForTakeoffAngle(double takeoffDegree) {
         double takeoffVelocity;
         VelocityModel vMod = getTauModel().getVelocityModel();
+        VelocityModelMaterial material = getPhaseSegments().get(0).isPWave ? VelocityModelMaterial.P_VELOCITY : VelocityModelMaterial.S_VELOCITY;
         try {
             if (getDownGoing()[0]) {
-                takeoffVelocity = vMod.evaluateBelow(sourceDepth, name.charAt(0));
+                takeoffVelocity = vMod.evaluateBelow(sourceDepth, material);
             } else {
-                takeoffVelocity = vMod.evaluateAbove(sourceDepth, name.charAt(0));
+                takeoffVelocity = vMod.evaluateAbove(sourceDepth, material);
             }
             double rayParam = (getTauModel().getRadiusOfEarth()-sourceDepth)*Math.sin(takeoffDegree*Math.PI/180)/takeoffVelocity;
             return rayParam;
         } catch(NoSuchLayerException e) {
-            throw new RuntimeException("Should not happen", e);
-        } catch(NoSuchMatPropException e) {
             throw new RuntimeException("Should not happen", e);
         }
     }
@@ -707,12 +706,12 @@ public class SimpleSeismicPhase implements SeismicPhase {
     public double velocityAtSource() {
         try {
             double takeoffVelocity;
-            char firstLeg;
+            VelocityModelMaterial firstLeg;
             VelocityModel vMod = getTauModel().getVelocityModel();
             if (segmentList.get(0).isPWave) {
-                firstLeg = VelocityModel.P_WAVE_CHAR;
+                firstLeg = VelocityModelMaterial.P_VELOCITY;
             } else {
-                firstLeg = VelocityModel.S_WAVE_CHAR;
+                firstLeg = VelocityModelMaterial.S_VELOCITY;
             }
             if (getDownGoing()[0]) {
                 takeoffVelocity = vMod.evaluateBelow(sourceDepth, firstLeg);
@@ -722,8 +721,6 @@ public class SimpleSeismicPhase implements SeismicPhase {
             return takeoffVelocity;
         } catch(NoSuchLayerException e) {
             throw new RuntimeException("Should not happen", e);
-        } catch(NoSuchMatPropException e) {
-            throw new RuntimeException("Should not happen", e);
         }
     }
 
@@ -732,11 +729,11 @@ public class SimpleSeismicPhase implements SeismicPhase {
         try {
             double incidentVelocity;
             VelocityModel vMod = getTauModel().getVelocityModel();
-            char lastLeg;
+            VelocityModelMaterial lastLeg;
             if (segmentList.get(segmentList.size()-1).isPWave) {
-                lastLeg = VelocityModel.P_WAVE_CHAR;
+                lastLeg = VelocityModelMaterial.P_VELOCITY;
             } else {
-                lastLeg = VelocityModel.S_WAVE_CHAR;
+                lastLeg = VelocityModelMaterial.S_VELOCITY;
             }
             if (getDownGoing()[getDownGoing().length-1]) {
                 incidentVelocity = vMod.evaluateAbove(receiverDepth, lastLeg);
@@ -745,8 +742,6 @@ public class SimpleSeismicPhase implements SeismicPhase {
             }
             return incidentVelocity;
         } catch(NoSuchLayerException e) {
-            throw new RuntimeException("Should not happen", e);
-        } catch(NoSuchMatPropException e) {
             throw new RuntimeException("Should not happen", e);
         }
     }
@@ -757,14 +752,12 @@ public class SimpleSeismicPhase implements SeismicPhase {
             double rho;
             VelocityModel vMod = getTauModel().getVelocityModel();
             if (getDownGoing()[getDownGoing().length-1]) {
-                rho = vMod.evaluateAbove(receiverDepth, VelocityModel.DENSITY_CHAR);
+                rho = vMod.evaluateAbove(receiverDepth, VelocityModelMaterial.DENSITY);
             } else {
-                rho = vMod.evaluateBelow(receiverDepth, VelocityModel.DENSITY_CHAR);
+                rho = vMod.evaluateBelow(receiverDepth, VelocityModelMaterial.DENSITY);
             }
             return rho;
         } catch(NoSuchLayerException e) {
-            throw new RuntimeException("Should not happen", e);
-        } catch(NoSuchMatPropException e) {
             throw new RuntimeException("Should not happen", e);
         }
     }

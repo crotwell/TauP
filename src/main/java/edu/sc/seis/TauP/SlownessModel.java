@@ -56,7 +56,7 @@ public abstract class SlownessModel implements Serializable {
                          double maxRangeInterval,
                          double maxInterpError,
                          boolean allowInnerCoreS,
-                         double slownessTolerance) throws NoSuchMatPropException, NoSuchLayerException, SlownessModelException {
+                         double slownessTolerance) throws NoSuchLayerException, SlownessModelException {
         this.vMod = vMod;
         this.minDeltaP = minDeltaP;
         this.maxDeltaP = maxDeltaP;
@@ -1221,13 +1221,12 @@ public abstract class SlownessModel implements Serializable {
         double topVelocity, botVelocity;
         double depth;
         double slope;
-        char waveType;
+        VelocityModelMaterial waveType;
         if(isPWave) {
-            waveType = 'P';
+            waveType = VelocityModelMaterial.P_VELOCITY;
         } else {
-            waveType = 'S';
+            waveType = VelocityModelMaterial.S_VELOCITY;
         }
-        try {
             if(topCriticalLayer > botCriticalLayer) {
                 throw new SlownessModelException("findDepth: no layers to search!: "
                         + "topCriticalLayer = "
@@ -1289,7 +1288,7 @@ public abstract class SlownessModel implements Serializable {
                          * layer is in a fluid then we should set topVelocity to
                          * be the P velocity at the top of the layer.
                          */
-                        topVelocity = velLayer.evaluateAtTop('P');
+                        topVelocity = velLayer.evaluateAtTop(VelocityModelMaterial.P_VELOCITY);
                     }
                     topP = toSlowness(topVelocity, velLayer.getTopDepth());
                     if(botP >= p && p >= topP) {
@@ -1308,10 +1307,7 @@ public abstract class SlownessModel implements Serializable {
                 }
                 return velLayer.getBotDepth();
             }
-        } catch(NoSuchMatPropException e) {
-            // can't happen...
-            throw new RuntimeException("Should never happen...", e);
-        }
+
         throw new SlownessModelException("slowness p=" + p
                 + " is not contained within the specified layers." + "\np=" + p
                 + " topCriticalLayer=" + topCriticalLayer
@@ -1331,11 +1327,10 @@ public abstract class SlownessModel implements Serializable {
      * @exception SlownessModelException
      *                occurs if the validation on the velocity model fails, or
      *                if the velocity model has no layers.
-     * @exception NoSuchMatPropException
      *                occurs if wavetype is not recognized.
      */
     private void createSample()
-            throws SlownessModelException, NoSuchMatPropException,
+            throws SlownessModelException,
             NoSuchLayerException {
         // First check to make sure velocity model is ok.
         if(vMod.validate() == false) {
@@ -1407,7 +1402,7 @@ public abstract class SlownessModel implements Serializable {
      * S sampling will also be compatible.
      */
     protected void coarseSample() throws SlownessModelException,
-            NoSuchLayerException, NoSuchMatPropException {
+            NoSuchLayerException {
         VelocityLayer prevVLayer;
         VelocityLayer origVLayer;
         VelocityLayer currVLayer;
@@ -1596,7 +1591,7 @@ public abstract class SlownessModel implements Serializable {
         double p;
         // temp copy as may change list while looping over it
         List<SlownessLayer> tmpLayers = new ArrayList<SlownessLayer>(SLayers);
-        try {
+
             // S layers
             for(int j = 0; j < tmpLayers.size(); j++) {
                 sLayer = tmpLayers.get(j);
@@ -1607,12 +1602,12 @@ public abstract class SlownessModel implements Serializable {
                             / numNewDepths;
                     for(int depthNum = 1; depthNum < numNewDepths; depthNum++) {
                         velocity = vMod.evaluateAbove(sLayer.getTopDepth()
-                                + depthNum * deltaDepth, 'S');
+                                + depthNum * deltaDepth, VelocityModelMaterial.S_VELOCITY);
                         if(velocity == 0.0
                                 || (!allowInnerCoreS && sLayer.getTopDepth()
                                         + depthNum * deltaDepth >= vMod.getIocbDepth())) {
                             velocity = vMod.evaluateAbove(sLayer.getTopDepth()
-                                    + depthNum * deltaDepth, 'P');
+                                    + depthNum * deltaDepth, VelocityModelMaterial.P_VELOCITY);
                         }
                         p = toSlowness(velocity, sLayer.getTopDepth()
                                 + depthNum * deltaDepth);
@@ -1632,7 +1627,7 @@ public abstract class SlownessModel implements Serializable {
                             / numNewDepths;
                     for(int depthNum = 1; depthNum < numNewDepths; depthNum++) {
                         p = toSlowness(vMod.evaluateAbove(sLayer.getTopDepth()
-                                               + depthNum * deltaDepth, 'P'),
+                                               + depthNum * deltaDepth, VelocityModelMaterial.P_VELOCITY),
                                        sLayer.getTopDepth() + depthNum
                                                * deltaDepth);
                         addSlowness(p, PWAVE);
@@ -1640,9 +1635,6 @@ public abstract class SlownessModel implements Serializable {
                     }
                 }
             }
-        } catch(NoSuchMatPropException e) {
-            throw new RuntimeException("can't happen", e);
-        }
     }
 
     /**
@@ -1651,7 +1643,7 @@ public abstract class SlownessModel implements Serializable {
      * maxInterpError.
      */
     protected void distanceCheck() throws SlownessModelException,
-            NoSuchMatPropException, NoSuchLayerException {
+            NoSuchLayerException {
         SlownessLayer sLayer, prevSLayer;
         int j;
         TimeDist prevTD;
@@ -1785,7 +1777,7 @@ public abstract class SlownessModel implements Serializable {
                 }
             }
             if(DEBUG) {
-                System.err.println("\nNumber of " + (currWaveType ? 'P' : 'S')
+                System.err.println("\nNumber of " + (currWaveType ? VelocityModelMaterial.P_VELOCITY : VelocityModelMaterial.S_VELOCITY)
                         + " slowness layers: " + j);
             }
         }
@@ -1848,36 +1840,31 @@ public abstract class SlownessModel implements Serializable {
     protected SlownessLayer[] splitLayerForNewRayParam(double p, boolean isPWave, SlownessLayer sLayer)
             throws SlownessModelException, NoSuchLayerException {
         double topVelocity, botVelocity;
-        try {
             if(sLayer.getTopDepth() != sLayer.getBotDepth()) {
                 topVelocity = vMod.evaluateBelow(sLayer.getTopDepth(),
-                        (isPWave ? 'P' : 'S'));
+                        (isPWave ? VelocityModelMaterial.P_VELOCITY : VelocityModelMaterial.S_VELOCITY));
                 botVelocity = vMod.evaluateAbove(sLayer.getBotDepth(),
-                        (isPWave ? 'P' : 'S'));
+                        (isPWave ? VelocityModelMaterial.P_VELOCITY : VelocityModelMaterial.S_VELOCITY));
             } else {
                 // if depths are same we really only need topVelocity,
                 // and just to verify that we are not in a fluid.
                 topVelocity = vMod.evaluateAbove(sLayer.getBotDepth(),
-                        (isPWave ? 'P' : 'S'));
+                        (isPWave ? VelocityModelMaterial.P_VELOCITY : VelocityModelMaterial.S_VELOCITY));
                 botVelocity = vMod.evaluateBelow(sLayer.getTopDepth(),
-                        (isPWave ? 'P' : 'S'));
+                        (isPWave ? VelocityModelMaterial.P_VELOCITY : VelocityModelMaterial.S_VELOCITY));
             }
 
             if(!isPWave && topVelocity == 0.0 ) {
                 // use P vel structure in for S in fluid
                 if(sLayer.getTopDepth() != sLayer.getBotDepth()) {
-                    topVelocity = vMod.evaluateBelow(sLayer.getTopDepth(), 'P');
-                    botVelocity = vMod.evaluateAbove(sLayer.getBotDepth(), 'P');
+                    topVelocity = vMod.evaluateBelow(sLayer.getTopDepth(), VelocityModelMaterial.P_VELOCITY);
+                    botVelocity = vMod.evaluateAbove(sLayer.getBotDepth(), VelocityModelMaterial.P_VELOCITY);
                 } else {
                     // if depths are same we really only need topVelocity
-                    topVelocity = vMod.evaluateAbove(sLayer.getBotDepth(), 'P');
-                    botVelocity = vMod.evaluateBelow(sLayer.getTopDepth(), 'P');
+                    topVelocity = vMod.evaluateAbove(sLayer.getBotDepth(), VelocityModelMaterial.P_VELOCITY);
+                    botVelocity = vMod.evaluateBelow(sLayer.getTopDepth(), VelocityModelMaterial.P_VELOCITY);
                 }
             }
-        } catch(NoSuchMatPropException e) {
-            // Can't happen but...
-            throw new SlownessModelException("Caught NoSuchMatPropException: ", e);
-        }
 
         double botDepth = sLayer.getBotDepth();
         if(sLayer.getBotDepth() != sLayer.getTopDepth()) {
@@ -2252,11 +2239,11 @@ public abstract class SlownessModel implements Serializable {
                 }
                 if(Double.isNaN(sLayer.getTopDepth())) {
                     throw new SlownessModelException("Top depth is NaN, layerNum="
-                            + i + " waveType=" + (isPWave ? 'P' : 'S'));
+                            + i + " waveType=" + (isPWave ? VelocityModelMaterial.P_VELOCITY : VelocityModelMaterial.S_VELOCITY));
                 }
                 if(Double.isNaN(sLayer.getBotDepth())) {
                     throw new SlownessModelException("Top depth is NaN, layerNum="
-                            + i + " waveType=" + (isPWave ? 'P' : 'S'));
+                            + i + " waveType=" + (isPWave ? VelocityModelMaterial.P_VELOCITY : VelocityModelMaterial.S_VELOCITY));
                 }
                 prevSLayer = sLayer;
                 prevBotP = sLayer.getBotP();
@@ -2268,7 +2255,7 @@ public abstract class SlownessModel implements Serializable {
             SlownessLayer sLayer = getSlownessLayer(getNumLayers(isPWave)-1, isPWave);
             if (sLayer.getBotP() != 0) {
                 throw new SlownessModelException("Bot ray param of bottom layer should be zero, "
-                        + " waveType=" + (isPWave ? 'P' : 'S')+"  "+sLayer);
+                        + " waveType=" + (isPWave ? VelocityModelMaterial.P_VELOCITY : VelocityModelMaterial.S_VELOCITY)+"  "+sLayer);
             }
         }
         isPWave = false;
@@ -2276,7 +2263,7 @@ public abstract class SlownessModel implements Serializable {
             SlownessLayer sLayer = getSlownessLayer(getNumLayers(isPWave)-1, isPWave);
             if (sLayer.getBotP() != 0) {
                 throw new SlownessModelException("Bot ray param of bottom layer should be zero, "
-                        + " waveType=" + (isPWave ? 'P' : 'S')+"  "+sLayer);
+                        + " waveType=" + (isPWave ? VelocityModelMaterial.P_VELOCITY : VelocityModelMaterial.S_VELOCITY)+"  "+sLayer);
             }
         }
         /** check ray paramet compatiple between P and S. So each top and bottom rp should not be in the middle of
@@ -2296,8 +2283,8 @@ public abstract class SlownessModel implements Serializable {
                 + maxDepthInterval + "\n maxRangeInterval=" + maxRangeInterval
                 + "\n allowInnerCoreS=" + allowInnerCoreS
                 + "\n slownessTolerance=" + slownessTolerance
-                + "\n getNumLayers('P')=" + getNumLayers(PWAVE)
-                + "\n getNumLayers('S')=" + getNumLayers(SWAVE)
+                + "\n getNumLayers(VelocityModelMaterial.P_VELOCITY)=" + getNumLayers(PWAVE)
+                + "\n getNumLayers(VelocityModelMaterial.S_VELOCITY)=" + getNumLayers(SWAVE)
                 + "\n fluidLayerDepths.size()=" + fluidLayerDepths.size()
                 + "\n highSlownessLayerDepthsP.size()="
                 + highSlownessLayerDepthsP.size()
