@@ -1,9 +1,6 @@
 package edu.sc.seis.TauP;
 
-import edu.sc.seis.TauP.cli.GraphicOutputTypeArgs;
-import edu.sc.seis.TauP.cli.ModelArgs;
-import edu.sc.seis.TauP.cli.OutputTypes;
-import edu.sc.seis.TauP.cli.VelocityModelArgs;
+import edu.sc.seis.TauP.cli.*;
 import picocli.CommandLine;
 
 import java.io.IOException;
@@ -31,7 +28,7 @@ public class TauP_VelocityPlot extends TauP_Tool {
     @Override
     public void start() throws TauPException, IOException {
         List<VelocityModel> vModList = new ArrayList<>();
-        for (VelocityModelArgs vmodArg : velModelArgs) {
+        for (InputVelocityModelArgs vmodArg : velModelArgs.getVelocityModelArgsList()) {
             VelocityModel vMod = TauModelLoader.loadVelocityModel(vmodArg.getModelFilename(), vmodArg.getVelFileType());
             if (vMod == null) {
                 throw new IOException("Velocity model file not found: "+vmodArg.getModelFilename()+", tried internally and from file");
@@ -68,7 +65,7 @@ public class TauP_VelocityPlot extends TauP_Tool {
             String modelLabel = "";
             String title = "";
             List<XYPlottingData> xyPlotList = new ArrayList<>();
-            for (VelocityModelArgs vmodArg : velModelArgs) {
+            for (InputVelocityModelArgs vmodArg : velModelArgs.getVelocityModelArgsList()) {
                 title += ", "+vmodArg.getModelFilename();
                 if (velModelArgs.size()>1) {
                     modelLabel = vmodArg.getModelFilename()+" ";
@@ -186,7 +183,7 @@ public class TauP_VelocityPlot extends TauP_Tool {
         }
     }
 
-    public List<XYPlottingData> calculate(VelocityModelArgs velModelArgs, ModelAxisType xAxis, ModelAxisType yAxis, String labelPrefix) throws VelocityModelException, IOException, TauModelException, SlownessModelException {
+    public List<XYPlottingData> calculate(InputVelocityModelArgs velModelArgs, ModelAxisType xAxis, ModelAxisType yAxis, String labelPrefix) throws VelocityModelException, IOException, TauModelException, SlownessModelException {
         List<XYPlottingData> xyList = new ArrayList<>();
         ModelAxisType depAxis = dependentAxis(xAxis, yAxis);
         if ((velocityLike(xAxis) && depthLike(yAxis))
@@ -404,12 +401,12 @@ public class TauP_VelocityPlot extends TauP_Tool {
         return outputTypeArgs.getOuputFormat();
     }
 
-    public List<VelocityModelArgs> getVelModelArgs() {
+    public VelocityModelListArgs getVelModelArgs() {
         return velModelArgs;
     }
 
-    @CommandLine.ArgGroup(exclusive = true, multiplicity = "1..", heading = "Velocity Model %n")
-    List<VelocityModelArgs> velModelArgs = new ArrayList<>();
+    @CommandLine.ArgGroup(exclusive = true, heading = "Velocity Model %n")
+    VelocityModelListArgs velModelArgs = new VelocityModelListArgs();
 
     @CommandLine.Mixin
     GraphicOutputTypeArgs outputTypeArgs = new GraphicOutputTypeArgs();

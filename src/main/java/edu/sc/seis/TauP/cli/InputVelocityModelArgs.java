@@ -2,7 +2,7 @@ package edu.sc.seis.TauP.cli;
 
 import static edu.sc.seis.TauP.VelocityModel.TVEL;
 
-public class InputVelocityModelArgs {
+public abstract class InputVelocityModelArgs {
 
 
     public String getModelFilename() {

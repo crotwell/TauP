@@ -107,7 +107,7 @@ public class CmdLineOutputTest {
                                           "taup wavefront --help",
                                           "taup table --help",
                                           "taup velmerge --help",
-                                          //"taup velplot --help",  // bug in picocli gives randome order to vmod args
+                                          "taup velplot --help",  // bug in picocli gives randome order to vmod args
                                           "taup create --help",
                                           "taup refltrans --help",
                                           "taup setsac --help",

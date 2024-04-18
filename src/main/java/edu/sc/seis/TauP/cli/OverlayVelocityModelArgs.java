@@ -12,21 +12,30 @@ public class OverlayVelocityModelArgs extends InputVelocityModelArgs {
         modelFilename = null;
     }
 
-    @CommandLine.Option(names = "--ndmerge", description = "\"named discontinuities\" velocity file to merge")
+    @CommandLine.Option(names = "--modmerge",
+            description = "velocity file to merge, format is guessed",
+            order = 1
+    )
+    public void setModelName(String modelFilename) {
+        setVelFileType(null);
+        setModelFilename(modelFilename);
+    }
+
+    @CommandLine.Option(names = "--ndmerge",
+            description = "\"named discontinuities\" velocity file to merge",
+            order = 2
+    )
     public void setNDModelFilename(String modelFilename) {
         setVelFileType(ND);
         setModelFilename(modelFilename);
     }
 
-    @CommandLine.Option(names = "--tvelmerge", description = "\".tvel\" velocity file to merge, ala ttimes")
+    @CommandLine.Option(names = "--tvelmerge",
+            description = "\".tvel\" velocity file to merge, ala ttimes",
+            order = 3
+    )
     public void setTvelModelFilename(String modelFilename) {
         setVelFileType(TVEL);
-        setModelFilename(modelFilename);
-    }
-
-    @CommandLine.Option(names = "--modmerge", description = "velocity file to merge, format is guessed")
-    public void setModelName(String modelFilename) {
-        setVelFileType(null);
         setModelFilename(modelFilename);
     }
 }

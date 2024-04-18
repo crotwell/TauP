@@ -360,11 +360,7 @@ public class TauP_Web extends TauP_Tool {
             if (queryParameters.containsKey(QP_MODEL)) {
                 unknownKeys.remove(QP_MODEL);
                 vplot.getVelModelArgs().clear();
-                for (String modName : queryParameters.get(QP_MODEL)) {
-                    VelocityModelArgs modArg = new VelocityModelArgs();
-                    modArg.setModelFilename(modName);
-                    vplot.getVelModelArgs().add(modArg);
-                }
+                vplot.getVelModelArgs().setModelName(new ArrayList<String>(queryParameters.get(QP_MODEL)));
             }
             // ignore evdepth, phases, etc
             unknownKeys.remove(QP_DISTDEG);
