@@ -1,4 +1,4 @@
-Usage: taup [--help] [-V] [COMMAND]
+Usage: taup [-V] [--help] [COMMAND]
 The TauP Toolkit
       --help      display this help message
   -V, --version   display version info

@@ -8,7 +8,7 @@ Usage: taup time [--amp] [--debug] [--first] [--geodetic] [--help] [--rayp]
                  [--shoot=<shootRaypList>[,<shootRaypList>...]]...
                  [--takeoff=<takeoffAngle>]... [--evt=<eventLatLon>
                  <eventLatLon>]... [--sta=<stationLatLon> <stationLatLon>]...
-                 [[-mod=<modelname>] [-h=<sourceDepth>] [--stadepth=depth]
+                 [[--mod=<modelname>] [-h=<sourceDepth>] [--stadepth=depth]
                  [--scat=s s]...] [--text | --json]
 calculate travel times for seismic phases in an earth model
       --amp                  amplitude factor for each phase
@@ -28,7 +28,7 @@ calculate travel times for seismic phases in an earth model
 Model Args
   -h, --sourcedepth=<sourceDepth>
                              source depth in km
-      -mod, --mod, --model=<modelname>
+      --mod, --model=<modelname>
                              use velocity model "modelname" for calculations
                                                    Default is iasp91.
       --scat, --scatter=s s  scattering depth and distance in degrees, which

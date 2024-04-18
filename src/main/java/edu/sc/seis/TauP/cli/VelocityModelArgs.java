@@ -8,8 +8,10 @@ import static edu.sc.seis.TauP.VelocityModel.TVEL;
 
 public class VelocityModelArgs extends InputVelocityModelArgs {
 
-    @CommandLine.Option(names = "--mod",
-            description = "velocity file, format is guessed",
+    @CommandLine.Option(names={"--mod", "--model"},
+            defaultValue = "iasp91",
+            description = "use velocity model \"modelname\" for calculations" +
+                    ", format is guessed. Default is ${DEFAULT-VALUE}.",
             completionCandidates = StdModelGenerator.StdModelCandidates.class
     )
     public void setModelName(String modelFilename) {

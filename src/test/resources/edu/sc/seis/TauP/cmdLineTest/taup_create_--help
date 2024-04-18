@@ -1,15 +1,17 @@
 Usage: taup create [--debug] [--help] [--verbose] [--prop=<toolPropsFilename>]
-                   (--mod=<modelName> | --nd=<nDModelFilename> |
+                   ([--mod=<modelName>] | --nd=<nDModelFilename> |
                    --tvel=<tvelModelFilename>)
 Create .taup file from velocity model
-      --debug             enable debugging output
-      --help              display this help message
+      --debug     enable debugging output
+      --help      display this help message
       --prop=<toolPropsFilename>
-                          load defaults from properties file
-      --verbose           enable verbose output
+                  load defaults from properties file
+      --verbose   enable verbose output
 Velocity Model
-      --mod=<modelName>   velocity file, format is guessed
+      --mod, --model=<modelName>
+                  use velocity model "modelname" for calculations, format is
+                    guessed. Default is iasp91.
       --nd=<nDModelFilename>
-                          "named discontinuities" velocity file
+                  "named discontinuities" velocity file
       --tvel=<tvelModelFilename>
-                          ".tvel" velocity file, ala ttimes
+                  ".tvel" velocity file, ala ttimes

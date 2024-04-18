@@ -115,7 +115,7 @@ public class ModelArgs {
 
     static class ModelArgsInner {
 
-        @CommandLine.Option(names={"-mod", "--mod", "--model"},
+        @CommandLine.Option(names={"--mod", "--model"},
                 defaultValue = "iasp91",
                 description = "use velocity model \"modelname\" for calculations\n" +
                 "                      Default is ${DEFAULT-VALUE}.",

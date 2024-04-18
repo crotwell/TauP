@@ -1,6 +1,6 @@
 Usage: taup velmerge [--debug] [--help] [--smoothbot] [--smoothtop] [--verbose]
                      [--elev=<elevation>] [-o=<outFile>]
-                     [--prop=<toolPropsFilename>] [[-mod=<modelname>]
+                     [--prop=<toolPropsFilename>] [[--mod=<modelname>]
                      [-h=<sourceDepth>] [--stadepth=depth] [--scat=s s]...]
                      (--modmerge=<modelName> | --ndmerge=<nDModelFilename> |
                      --tvelmerge=<tvelModelFilename>)
@@ -17,7 +17,7 @@ merge part of one model into another
 Model Args
   -h, --sourcedepth=<sourceDepth>
                            source depth in km
-      -mod, --mod, --model=<modelname>
+      --mod, --model=<modelname>
                            use velocity model "modelname" for calculations
                                                  Default is iasp91.
       --scat, --scatter=s s

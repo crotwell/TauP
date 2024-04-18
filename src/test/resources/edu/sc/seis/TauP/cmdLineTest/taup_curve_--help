@@ -5,7 +5,7 @@ Usage: taup curve [--debug] [--help] [--legend] [--verbose] [--xlog] [--ylog]
                   [--redkm=<reduceVelKm>] [--rel=<relativePhaseName>]
                   [-x=<xAxisType>] [-y=<yAxisType>] [-p=<phaseNames>[,
                   <phaseNames>...]]... [--xminmax=x x]... [--yminmax=y y]...
-                  [[-mod=<modelname>] [-h=<sourceDepth>] [--stadepth=depth]
+                  [[--mod=<modelname>] [-h=<sourceDepth>] [--stadepth=depth]
                   [--scat=s s]...] [--text | --json | --gmt | --svg]
 plot traveltime and other curves for phases
       --color=<coloring>   style of coloring for paths and wavefronts, one of
@@ -49,7 +49,7 @@ plot traveltime and other curves for phases
 Model Args
   -h, --sourcedepth=<sourceDepth>
                            source depth in km
-      -mod, --mod, --model=<modelname>
+      --mod, --model=<modelname>
                            use velocity model "modelname" for calculations
                                                  Default is iasp91.
       --scat, --scatter=s s

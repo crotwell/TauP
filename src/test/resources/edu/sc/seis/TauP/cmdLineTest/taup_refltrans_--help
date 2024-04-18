@@ -10,7 +10,7 @@ Usage: taup refltrans [--abs] [--debug] [--down] [--help] [--legend] [--pwave]
                       [<yAxisType> [<yAxisType> [<yAxisType> [<yAxisType>
                       [<yAxisType> [<yAxisType> [<yAxisType>
                       [<yAxisType>]]]]]]]]]]... [--text | --json | --gmt |
-                      --svg] [[-mod=<modelname>] [-h=<sourceDepth>]
+                      --svg] [[--mod=<modelname>] [-h=<sourceDepth>]
                       [--stadepth=depth] [--scat=s s]...]
 plot reflection and transmission coefficients for a discontinuity
       --abs                absolute value of amplitude factor
@@ -54,7 +54,7 @@ Output Type
 Model Args
   -h, --sourcedepth=<sourceDepth>
                            source depth in km
-      -mod, --mod, --model=<modelname>
+      --mod, --model=<modelname>
                            use velocity model "modelname" for calculations
                                                  Default is iasp91.
       --scat, --scatter=s s

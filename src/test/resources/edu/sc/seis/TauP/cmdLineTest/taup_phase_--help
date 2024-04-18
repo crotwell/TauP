@@ -1,5 +1,5 @@
 Usage: taup phase [--debug] [--help] [--verbose] [--prop=<toolPropsFilename>]
-                  [-p=<phaseNames>[,<phaseNames>...]]... [[-mod=<modelname>]
+                  [-p=<phaseNames>[,<phaseNames>...]]... [[--mod=<modelname>]
                   [-h=<sourceDepth>] [--stadepth=depth] [--scat=s s]...]
 describe a seismic phase in the current model
       --debug            enable debugging output
@@ -12,7 +12,7 @@ describe a seismic phase in the current model
 Model Args
   -h, --sourcedepth=<sourceDepth>
                          source depth in km
-      -mod, --mod, --model=<modelname>
+      --mod, --model=<modelname>
                          use velocity model "modelname" for calculations
                                                Default is iasp91.
       --scat, --scatter=s s

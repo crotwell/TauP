@@ -5,7 +5,7 @@ Usage: taup wavefront [--debug] [--help] [--legend] [--negdist]
                       [--prop=<toolPropsFilename>] [--timestep=<timeStep>]
                       [--xaxis=<distAxisType>] [--yaxis=<depthAxisType>]
                       [-p=<phaseNames>[,<phaseNames>...]]... [--degminmax=deg
-                      deg] [--depthminmax=km km] [[-mod=<modelname>]
+                      deg] [--depthminmax=km km] [[--mod=<modelname>]
                       [-h=<sourceDepth>] [--stadepth=depth] [--scat=s s]...]
                       [--text | --json | --gmt | --svg]
 plot wavefronts of seismic phases at steps in time
@@ -41,7 +41,7 @@ plot wavefronts of seismic phases at steps in time
 Model Args
   -h, --sourcedepth=<sourceDepth>
                             source depth in km
-      -mod, --mod, --model=<modelname>
+      --mod, --model=<modelname>
                             use velocity model "modelname" for calculations
                                                   Default is iasp91.
       --scat, --scatter=s s scattering depth and distance in degrees, which may

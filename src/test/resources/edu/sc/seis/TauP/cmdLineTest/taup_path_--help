@@ -11,7 +11,7 @@ Usage: taup path [--debug] [--geodetic] [--help] [--onlynameddiscon]
                  <shootRaypList>...]]... [--takeoff=<takeoffAngle>]...
                  [--degminmax=deg deg] [--depthminmax=km km]
                  [--evt=<eventLatLon> <eventLatLon>]... [--sta=<stationLatLon>
-                 <stationLatLon>]... [[-mod=<modelname>] [-h=<sourceDepth>]
+                 <stationLatLon>]... [[--mod=<modelname>] [-h=<sourceDepth>]
                  [--stadepth=depth] [--scat=s s]...] [--text | --json | --gmt |
                  --svg]
 plot ray paths through the earth
@@ -45,7 +45,7 @@ plot ray paths through the earth
 Model Args
   -h, --sourcedepth=<sourceDepth>
                             source depth in km
-      -mod, --mod, --model=<modelname>
+      --mod, --model=<modelname>
                             use velocity model "modelname" for calculations
                                                   Default is iasp91.
       --scat, --scatter=s s scattering depth and distance in degrees, which may

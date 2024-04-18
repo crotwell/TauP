@@ -8,7 +8,7 @@ Usage: taup setsac [--amp] [--debug] [--evdpkm] [--first] [--geodetic] [--help]
                    [--shoot=<shootRaypList>[,<shootRaypList>...]]...
                    [--takeoff=<takeoffAngle>]... [--evt=<eventLatLon>
                    <eventLatLon>]... [--sta=<stationLatLon> <stationLatLon>]...
-                   [[-mod=<modelname>] [-h=<sourceDepth>] [--stadepth=depth]
+                   [[--mod=<modelname>] [-h=<sourceDepth>] [--stadepth=depth]
                    [--scat=s s]...] [--text | --json] [<sacFileNames>...]
 set headers to travel times of phases using depth and distance from headers
       [<sacFileNames>...]
@@ -30,7 +30,7 @@ set headers to travel times of phases using depth and distance from headers
 Model Args
   -h, --sourcedepth=<sourceDepth>
                              source depth in km
-      -mod, --mod, --model=<modelname>
+      --mod, --model=<modelname>
                              use velocity model "modelname" for calculations
                                                    Default is iasp91.
       --scat, --scatter=s s  scattering depth and distance in degrees, which
