@@ -167,7 +167,7 @@ public class TauP_Path extends TauP_AbstractRayTool {
 	}
 
 	@CommandLine.Mixin
-	GraphicOutputTypeArgs outputTypeArgs = new GraphicOutputTypeArgs();
+	GraphicOutputTypeArgs outputTypeArgs = new GraphicOutputTypeArgs(OutputTypes.TEXT);
 
 	@Override
 	public String getOutputFormat() {

@@ -595,7 +595,7 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
     protected double[] yAxisMinMax = new double[0];
 
     @CommandLine.Mixin
-    GraphicOutputTypeArgs outputTypeArgs = new GraphicOutputTypeArgs();
+    GraphicOutputTypeArgs outputTypeArgs = new GraphicOutputTypeArgs(OutputTypes.TEXT);
 
     @CommandLine.Mixin
     ColoringArgs coloring = new ColoringArgs();

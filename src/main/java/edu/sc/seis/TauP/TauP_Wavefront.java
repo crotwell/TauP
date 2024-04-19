@@ -40,7 +40,7 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
     DistDepthRange distDepthRangeArgs = new DistDepthRange();
 
     @CommandLine.Mixin
-    GraphicOutputTypeArgs outputTypeArgs = new GraphicOutputTypeArgs();
+    GraphicOutputTypeArgs outputTypeArgs = new GraphicOutputTypeArgs(OutputTypes.SVG);
 
 
     @Override

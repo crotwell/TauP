@@ -371,7 +371,7 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
     }
 
     @CommandLine.Mixin
-    GraphicOutputTypeArgs outputTypeArgs = new GraphicOutputTypeArgs();
+    GraphicOutputTypeArgs outputTypeArgs = new GraphicOutputTypeArgs(OutputTypes.TEXT);
 
     @Override
     public String getOutputFormat() {

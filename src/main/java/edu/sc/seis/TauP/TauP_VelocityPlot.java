@@ -409,7 +409,7 @@ public class TauP_VelocityPlot extends TauP_Tool {
     VelocityModelListArgs velModelArgs = new VelocityModelListArgs();
 
     @CommandLine.Mixin
-    GraphicOutputTypeArgs outputTypeArgs = new GraphicOutputTypeArgs();
+    GraphicOutputTypeArgs outputTypeArgs = new GraphicOutputTypeArgs(OutputTypes.SVG);
 
     @CommandLine.Option(names = "--legend", description = "create a legend")
     boolean isLegend = false;

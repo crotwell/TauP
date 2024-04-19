@@ -8,6 +8,10 @@ import static edu.sc.seis.TauP.cli.OutputTypes.*;
 
 public class GraphicOutputTypeArgs  {
 
+    public GraphicOutputTypeArgs(String defaultValue) {
+        setOutputType(defaultValue);
+    }
+
     @CommandLine.ArgGroup(exclusive=true, multiplicity="0..1", heading = "Output Type %n")
     GraphicsOutputType outputType = new GraphicsOutputType();
 
@@ -71,7 +75,7 @@ public class GraphicOutputTypeArgs  {
         if (oType.equalsIgnoreCase(TEXT)) {
             outputType._isText = true;
         } else if (oType.equalsIgnoreCase(JSON)) {
-            outputType._isText = true;
+            outputType._isJSON = true;
         } else if (oType.equalsIgnoreCase(GMT)) {
             outputType._isGMT = true;
             if (mapwidth == null ) {
@@ -166,7 +170,7 @@ public class GraphicOutputTypeArgs  {
     static class GraphicsOutputType {
 
         @CommandLine.Option(names = {"--text"}, required = true, description = "outputs as text")
-        boolean _isText = true;
+        boolean _isText = false;
         @CommandLine.Option(names = {"--json"}, required = true, description = "outputs as JSON")
         boolean _isJSON = false;
         @CommandLine.Option(names = {"--gmt"}, required = true, description = "outputs as GMT")
