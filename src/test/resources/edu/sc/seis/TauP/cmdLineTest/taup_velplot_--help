@@ -1,11 +1,11 @@
-Usage: taup velplot [--csv] [--debug] [--help] [--legend] [--verbose]
-                    [--mapwidth=<mapwidth>] [--mapwidthunit=<mapWidthUnit>]
-                    [-o=<outFile>] [--prop=<toolPropsFilename>]
-                    [-x=<xAxisType>] [-y=<yAxisType>] [--xminmax=x x]...
-                    [--yminmax=y y]... [--mod[=<modelName>...] [--mod
-                    [=<modelName>...]]... | --nd[=<nDModelFilename>...] [--nd
-                    [=<nDModelFilename>...]]... | --tvel
-                    [=<tvelModelFilename>...] [--tvel
+Usage: taup velplot [--csv] [--debug] [--help] [--legend] [--nameddiscon]
+                    [--verbose] [--mapwidth=<mapwidth>]
+                    [--mapwidthunit=<mapWidthUnit>] [-o=<outFile>]
+                    [--prop=<toolPropsFilename>] [-x=<xAxisType>]
+                    [-y=<yAxisType>] [--xminmax=x x]... [--yminmax=y y]...
+                    [--mod[=<modelName>...] [--mod[=<modelName>...]]... | --nd
+                    [=<nDModelFilename>...] [--nd[=<nDModelFilename>...]]... |
+                    --tvel[=<tvelModelFilename>...] [--tvel
                     [=<tvelModelFilename>...]]...] [--text | --json | --gmt |
                     --svg]
 plot velocity vs depth for a model
@@ -17,17 +17,20 @@ plot velocity vs depth for a model
                            plot width in inches for GMT, pixels for SVG.
       --mapwidthunit=<mapWidthUnit>
                            plot width unit for GMT. Default is i for inchs
+      --nameddiscon        outputs as .nd named discontinuity model file
   -o, --output=<outFile>   output to file, default is stdout.
       --prop=<toolPropsFilename>
                            load defaults from properties file
       --verbose            enable verbose output
   -x=<xAxisType>           X axis data type, one of depth, radius, velocity,
                              velocity_p, velocity_s, slowness, slowness_p,
-                             slowness_s, density
+                             slowness_s, density, velocity_density,
+                             attenuation_p, attenuation_s, attenuation
       --xminmax=x x        min and max x axis for plotting
   -y=<yAxisType>           Y axis data type, one of depth, radius, velocity,
                              velocity_p, velocity_s, slowness, slowness_p,
-                             slowness_s, density
+                             slowness_s, density, velocity_density,
+                             attenuation_p, attenuation_s, attenuation
       --yminmax=y y        min and max y axis for plotting
 Velocity Model
       --mod, --model[=<modelName>...]

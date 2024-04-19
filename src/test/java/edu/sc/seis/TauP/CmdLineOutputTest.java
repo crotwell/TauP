@@ -86,6 +86,7 @@ public class CmdLineOutputTest {
     String[] velplotTestCmds = new String[] {
             "taup velplot -o stdout --mod ak135 --svg",
             "taup velplot -o stdout --mod ak135 --mod ak135favg --mod ak135fcont --mod prem --svg",
+            "taup velplot -o stdout --mod ak135 --svg -x velocity_density",
             "taup velplot -o stdout --mod ak135 --svg -x slowness",
             "taup velplot -o stdout --mod ak135 --yminmax 0 700 --svg",
             "taup velplot -o stdout --mod ak135 --csv",

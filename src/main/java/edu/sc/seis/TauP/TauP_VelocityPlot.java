@@ -10,6 +10,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+import static edu.sc.seis.TauP.cli.OutputTypes.SVG;
+import static edu.sc.seis.TauP.cli.OutputTypes.TEXT;
+
 /**
  * Creates plots of a velocity model.
  */
@@ -46,10 +49,11 @@ public class TauP_VelocityPlot extends TauP_Tool {
                 printCSV(writer, vMod);
                 writer.close();
             }
-        } else if (getOutputFormat().equals(OutputTypes.TEXT)) {
+        } else if (_isNd) {
+            outputTypeArgs.setOutFileExtension("nd");
             for (VelocityModel vMod : vModList) {
                 if (!outputTypeArgs.isStdout()) {
-                    outputTypeArgs.setOutFileBase(vMod.modelName + "_vel");
+                    outputTypeArgs.setOutFileBase(vMod.modelName);
                 }
                 PrintWriter writer = outputTypeArgs.createWriter(spec.commandLine().getOut());
                 vMod.writeToND(writer);
@@ -86,12 +90,11 @@ public class TauP_VelocityPlot extends TauP_Tool {
     }
 
     public void printResult(PrintWriter writer, XYPlotOutput xyOut) {
-
-        if (getOutputFormat().equalsIgnoreCase(OutputTypes.JSON)) {
+        if (getOutputTypeArgs().isJSON()) {
             xyOut.printAsJSON(writer, 2);
-        } else if (getOutputFormat().equalsIgnoreCase(OutputTypes.TEXT) || getOutputFormat().equalsIgnoreCase(OutputTypes.GMT)) {
+        } else if (getOutputTypeArgs().isText() || getOutputTypeArgs().isGMT()) {
             xyOut.printAsGmtText(writer);
-        } else if (getOutputFormat().equalsIgnoreCase(OutputTypes.SVG)) {
+        } else if (getOutputTypeArgs().isSVG()) {
             if (yAxisType == ModelAxisType.depth) {
                 xyOut.yAxisInvert = true;
             }
@@ -104,11 +107,12 @@ public class TauP_VelocityPlot extends TauP_Tool {
 
     @Override
     public String[] allowedOutputFormats() {
-        return new String[]{OutputTypes.TEXT, OutputTypes.JSON, OutputTypes.SVG, OutputTypes.CSV};
+        return new String[]{OutputTypes.TEXT, OutputTypes.JSON, SVG, OutputTypes.CSV};
     }
     @Override
     public void setDefaultOutputFormat() {
-        setOutputFormat(OutputTypes.SVG);
+        outputTypeArgs.setOutputType(OutputTypes.TEXT);
+        setOutputFormat(OutputTypes.TEXT);
     }
 
     public void printCSV(PrintWriter out, VelocityModel vMod) {
@@ -129,7 +133,6 @@ public class TauP_VelocityPlot extends TauP_Tool {
     @Override
     public void init() throws TauPException {
         // TODO Auto-generated method stub
-        
     }
 
     public String labelFor(ModelAxisType axisType) {
@@ -158,6 +161,18 @@ public class TauP_VelocityPlot extends TauP_Tool {
             case density:
                 label = "Density";
                 break;
+            case velocity_density:
+                label = "Velocity,Density";
+                break;
+            case attenuation:
+                label = "Attenuation";
+                break;
+            case attenuation_p:
+                label = "P Attenuation";
+                break;
+            case attenuation_s:
+                label = "S Attenuation";
+                break;
             default:
                 label = axisType.toString();
         }
@@ -168,11 +183,15 @@ public class TauP_VelocityPlot extends TauP_Tool {
         return axisType == ModelAxisType.depth || axisType == ModelAxisType.radius;
     }
     public boolean velocityLike(ModelAxisType axisType) {
-        return axisType == ModelAxisType.velocity || axisType == ModelAxisType.velocity_p || axisType == ModelAxisType.velocity_s;
+        return axisType == ModelAxisType.velocity || axisType == ModelAxisType.velocity_p
+                || axisType == ModelAxisType.velocity_s || axisType == ModelAxisType.velocity_density
+                || axisType == ModelAxisType.density || axisType == ModelAxisType.attenuation
+                || axisType == ModelAxisType.attenuation_p || axisType == ModelAxisType.attenuation_s;
     }
 
     public boolean slownessLike(ModelAxisType axisType) {
-        return axisType == ModelAxisType.slowness || axisType == ModelAxisType.slowness_p || axisType == ModelAxisType.slowness_s;
+        return axisType == ModelAxisType.slowness || axisType == ModelAxisType.slowness_p
+                || axisType == ModelAxisType.slowness_s;
     }
 
     public ModelAxisType dependentAxis(ModelAxisType xAxisType, ModelAxisType yAxisType) {
@@ -183,195 +202,212 @@ public class TauP_VelocityPlot extends TauP_Tool {
         }
     }
 
+    public static double calculateAtDepth(VelocityModel vMod, ModelAxisType axisType, double depth, boolean above) throws NoSuchLayerException, TauModelException {
+        switch (axisType) {
+            case radius:
+                return vMod.getRadiusOfEarth() - depth;
+            case depth:
+                return depth;
+            case density:
+            case velocity_density:
+                if (above) {
+                    return vMod.evaluateAbove(depth, VelocityModelMaterial.DENSITY);
+                } else {
+                    return vMod.evaluateBelow(depth, VelocityModelMaterial.DENSITY);
+                }
+            case velocity:
+            case velocity_p:
+                if (above) {
+                    return vMod.evaluateAbove(depth, VelocityModelMaterial.P_VELOCITY);
+                } else {
+                    return vMod.evaluateBelow(depth, VelocityModelMaterial.P_VELOCITY);
+                }
+            case velocity_s:
+                if (above) {
+                    return vMod.evaluateAbove(depth, VelocityModelMaterial.S_VELOCITY);
+                } else {
+                    return vMod.evaluateBelow(depth, VelocityModelMaterial.S_VELOCITY);
+                }
+            case attenuation:
+            case attenuation_p:
+                if (above) {
+                    return vMod.evaluateAbove(depth, VelocityModelMaterial.Q_P);
+                } else {
+                    return vMod.evaluateBelow(depth, VelocityModelMaterial.Q_P);
+                }
+            case attenuation_s:
+                if (above) {
+                    return vMod.evaluateAbove(depth, VelocityModelMaterial.Q_S);
+                } else {
+                    return vMod.evaluateBelow(depth, VelocityModelMaterial.Q_S);
+                }
+            default:
+                throw new TauModelException(axisType + " is not a velocity model property");
+        }
+    }
+    public static double calculateAtDepth(TauModel tMod, ModelAxisType axisType, double depth, boolean above) throws NoSuchLayerException, TauModelException {
+        switch (axisType) {
+            case radius:
+                return tMod.getRadiusOfEarth()-depth;
+            case depth:
+                return depth;
+            case density:
+            case velocity:
+            case velocity_density:
+            case velocity_p:
+            case velocity_s:
+            case attenuation_p:
+            case attenuation_s:
+                return calculateAtDepth(tMod.getVelocityModel(), axisType, depth, above);
+            case slowness:
+            case slowness_p:
+            case slowness_s:
+                boolean isPWave = axisType != ModelAxisType.slowness_s;
+                SlownessLayer slayer;
+                if (above) {
+                    slayer = tMod.getSlownessModel().layerAbove(depth, isPWave);
+                } else {
+                    slayer = tMod.getSlownessModel().layerAbove(depth, isPWave);
+                }
+                try {
+                    return slayer.evaluateAt_bullen(depth, tMod.getRadiusOfEarth());
+                } catch (SlownessModelException e) {
+                    throw new TauModelException(e);
+                }
+            default:
+                throw new TauModelException(axisType+" not a simple material property");
+        }
+    }
+
     public List<XYPlottingData> calculate(InputVelocityModelArgs velModelArgs, ModelAxisType xAxis, ModelAxisType yAxis, String labelPrefix) throws VelocityModelException, IOException, TauModelException, SlownessModelException {
         List<XYPlottingData> xyList = new ArrayList<>();
         ModelAxisType depAxis = dependentAxis(xAxis, yAxis);
-        if ((velocityLike(xAxis) && depthLike(yAxis))
-                || (depthLike(xAxis) && velocityLike(yAxis))
-                || (depthLike(xAxis) && depthLike(yAxis))
-                || (velocityLike(xAxis) && velocityLike(yAxis))) {
+        String modelName = velModelArgs.getModelFilename();
+
+        List<Double> xVals = new ArrayList<>();
+        List<Double> yVals = new ArrayList<>();
+
+        if ((velocityLike(xAxis) || depthLike(xAxis))
+                && (velocityLike(yAxis) || depthLike(yAxis))) {
+            // both exist in velocity model, so only use depths in velocity model
             VelocityModel vMod = TauModelLoader.loadVelocityModel(velModelArgs.getModelFilename(), velModelArgs.getVelFileType());
-            List<Double> xVals = calculateForVelocityModel(xAxis, vMod);
-            double[] xDbl = new double[xVals.size()];
-            List<Double> yVals = calculateForVelocityModel(yAxis, vMod);
-            double[] yDbl = new double[xVals.size()];
-            for (int i = 0; i < xVals.size(); i++) {
-                xDbl[i] = xVals.get(i);
-                yDbl[i] = yVals.get(i);
-            }
-            List<XYSegment> segList = new ArrayList<>();
-            segList.add(new XYSegment(xDbl, yDbl));
-            List<String> cssClassList = new ArrayList<>();
-            if (xAxis == ModelAxisType.velocity_p || xAxis == ModelAxisType.velocity
-                    || yAxis == ModelAxisType.velocity_p || yAxis == ModelAxisType.velocity) {
-                cssClassList.add("pwave");
-            } else if (xAxis == ModelAxisType.velocity_s || yAxis == ModelAxisType.velocity_s) {
-                cssClassList.add("swave");
-            }
-            XYPlottingData xyplot = new XYPlottingData(segList,
-                    xAxis.name(),
-                    yAxis.name(),
-                    labelPrefix+labelFor(depAxis),
-                    vMod.getModelName()+" "+labelFor(depAxis),
-                    cssClassList
-            );
-            xyList.add(xyplot);
-            if (xAxis == ModelAxisType.velocity) {
-                // also do velocity_s
-                xyList.addAll(calculate(velModelArgs, ModelAxisType.velocity_s, yAxis, labelPrefix));
-            }
-            if (yAxis == ModelAxisType.velocity) {
-                // also do velocity_s
-                xyList.addAll(calculate(velModelArgs, xAxis, ModelAxisType.velocity_s, labelPrefix));
+            modelName = vMod.getModelName();
+
+            double depth = vMod.getVelocityLayer(0).getTopDepth();
+            xVals.add(calculateAtDepth(vMod, xAxis, depth, false));
+            yVals.add(calculateAtDepth(vMod, yAxis, depth, false));
+            for (VelocityLayer vLayer : vMod.layer) {
+                if (vLayer.getThickness() > 0 && vMod.isDisconDepth(vLayer.getTopDepth())) {
+                    xVals.add(calculateAtDepth(vMod, xAxis, vLayer.getTopDepth(), false));
+                    yVals.add(calculateAtDepth(vMod, yAxis, vLayer.getTopDepth(), false));
+                }
+                xVals.add(calculateAtDepth(vMod, xAxis, vLayer.getBotDepth(), true));
+                yVals.add(calculateAtDepth(vMod, yAxis, vLayer.getBotDepth(), true));
             }
         } else {
-            // slowness based...
-            TauModel vMod = TauModelLoader.load(velModelArgs.getModelFilename(), velModelArgs.getVelFileType());
-            SlownessModel sMod = vMod.getSlownessModel();
+            // slowness/tau based...
+            TauModel tMod = TauModelLoader.load(velModelArgs.getModelFilename(), velModelArgs.getVelFileType());
+            modelName = tMod.getModelName();
+            SlownessModel sMod = tMod.getSlownessModel();
             boolean defWaveType = (xAxis != ModelAxisType.slowness_s && yAxis != ModelAxisType.slowness_s);
-            List<Double> xVals = calculateForSlownessModel(xAxis, sMod, defWaveType);
-            double[] xDbl = new double[xVals.size()];
-            List<Double> yVals = calculateForSlownessModel(yAxis, sMod, defWaveType);
-            double[] yDbl = new double[xVals.size()];
-            for (int i = 0; i < xVals.size(); i++) {
-                xDbl[i] = xVals.get(i);
-                yDbl[i] = yVals.get(i);
-            }
-            List<XYSegment> segList = new ArrayList<>();
-            segList.add(new XYSegment(xDbl, yDbl));
-            List<String> cssClassList = new ArrayList<>();
-            if (xAxis == ModelAxisType.velocity_p || xAxis == ModelAxisType.velocity
-                    || yAxis == ModelAxisType.velocity_p || yAxis == ModelAxisType.velocity
-                    || xAxis == ModelAxisType.slowness_p || xAxis == ModelAxisType.slowness
-                    || yAxis == ModelAxisType.slowness_p || yAxis == ModelAxisType.slowness) {
-                cssClassList.add("pwave");
-            } else if (xAxis == ModelAxisType.velocity_s || yAxis == ModelAxisType.velocity_s
-                    || xAxis == ModelAxisType.slowness_s || yAxis == ModelAxisType.slowness_s) {
-                cssClassList.add("swave");
-            }
-            XYPlottingData xyplot = new XYPlottingData(segList,
-                    xAxis.name(),
-                    yAxis.name(),
-                    labelPrefix+labelFor(depAxis),
-                    vMod.getModelName()+" "+labelFor(depAxis),
-                    cssClassList
-            );
-            xyList.add(xyplot);
-            if (xAxis == ModelAxisType.slowness) {
-                // also do slowness_s
-                xyList.addAll(calculate(velModelArgs, ModelAxisType.slowness_s, yAxis, labelPrefix));
-            }
-            if (yAxis == ModelAxisType.slowness) {
-                // also do slowness_s
-                xyList.addAll(calculate(velModelArgs, xAxis, ModelAxisType.slowness_s, labelPrefix));
+
+            xVals.add(calculateAtDepth(tMod, xAxis, sMod.getSlownessLayer(0, defWaveType).getTopDepth(), false));
+            yVals.add(calculateAtDepth(tMod, yAxis, sMod.getSlownessLayer(0, defWaveType).getTopDepth(), false));
+            for (SlownessLayer layer : sMod.getAllSlownessLayers(defWaveType)) {
+                if (! layer.isZeroThickness()) {
+                    xVals.add(calculateAtDepth(tMod, xAxis, layer.getTopDepth(), false));
+                    yVals.add(calculateAtDepth(tMod, yAxis, layer.getTopDepth(), false));
+                }
+                xVals.add(calculateAtDepth(tMod, xAxis, layer.getBotDepth(), true));
+                yVals.add(calculateAtDepth(tMod, yAxis, layer.getBotDepth(), true));
             }
         }
+
+        // dedup
+        List<Double> xValDedup = new ArrayList<>();
+        List<Double> yValDedup = new ArrayList<>();
+        Double prevX = xVals.get(0);
+        Double prevY = yVals.get(0);
+        xValDedup.add(prevX);
+        yValDedup.add(prevY);
+        for (int i = 1; i < xVals.size(); i++) {
+            Double currX = xVals.get(i);
+            Double currY = yVals.get(i);
+            if (currX != prevX || currY != prevY) {
+                xValDedup.add(currX);
+                yValDedup.add(currY);
+                prevX = currX;
+                prevY = currY;
+            }
+        }
+        xVals = xValDedup;
+        yVals = yValDedup;
+
+        double[] xDbl = new double[xVals.size()];
+        double[] yDbl = new double[yVals.size()];
+
+        for (int i = 0; i < xVals.size(); i++) {
+            xDbl[i] = xVals.get(i);
+            yDbl[i] = yVals.get(i);
+        }
+        List<XYSegment> segList = new ArrayList<>();
+        segList.add(new XYSegment(xDbl, yDbl));
+        List<String> cssClassList = new ArrayList<>();
+        if (xAxis == ModelAxisType.velocity_p || xAxis == ModelAxisType.velocity
+                || yAxis == ModelAxisType.velocity_p || yAxis == ModelAxisType.velocity
+                || xAxis == ModelAxisType.slowness_p || xAxis == ModelAxisType.slowness
+                || yAxis == ModelAxisType.slowness_p || yAxis == ModelAxisType.slowness) {
+            cssClassList.add("pwave");
+        } else if (xAxis == ModelAxisType.velocity_s || yAxis == ModelAxisType.velocity_s
+                || xAxis == ModelAxisType.slowness_s || yAxis == ModelAxisType.slowness_s) {
+            cssClassList.add("swave");
+        } else {
+            cssClassList.add("both_p_swave");
+        }
+        XYPlottingData xyplot = new XYPlottingData(segList,
+                xAxis.name(),
+                yAxis.name(),
+                labelPrefix+labelFor(depAxis),
+                modelName+" "+labelFor(depAxis),
+                cssClassList
+        );
+        xyList.add(xyplot);
+
+
+        if (xAxis == ModelAxisType.velocity ) {
+            // also do velocity_s
+            xyList.addAll(calculate(velModelArgs, ModelAxisType.velocity_s, yAxis, labelPrefix));
+        }
+        if (yAxis == ModelAxisType.velocity ) {
+            // also do velocity_s
+            xyList.addAll(calculate(velModelArgs, xAxis, ModelAxisType.velocity_s, labelPrefix));
+        }
+        if (xAxis == ModelAxisType.velocity_density) {
+            // also do velocity
+            xyList.addAll(calculate(velModelArgs, ModelAxisType.velocity, yAxis, labelPrefix));
+        }
+        if (yAxis == ModelAxisType.velocity_density) {
+            // also do velocity
+            xyList.addAll(calculate(velModelArgs, xAxis, ModelAxisType.velocity, labelPrefix));
+        }
+        if (xAxis == ModelAxisType.attenuation) {
+            // also do attenuation_s
+            xyList.addAll(calculate(velModelArgs, ModelAxisType.attenuation_s, yAxis, labelPrefix));
+        }
+        if (yAxis == ModelAxisType.attenuation) {
+            // also do attenuation_s
+            xyList.addAll(calculate(velModelArgs, xAxis, ModelAxisType.attenuation_s, labelPrefix));
+        }
+        if (xAxis == ModelAxisType.slowness) {
+            // also do slowness_s
+            xyList.addAll(calculate(velModelArgs, ModelAxisType.slowness_s, yAxis, labelPrefix));
+        }
+        if (yAxis == ModelAxisType.slowness) {
+            // also do slowness_s
+            xyList.addAll(calculate(velModelArgs, xAxis, ModelAxisType.slowness_s, labelPrefix));
+        }
+
         return xyList;
-    }
-
-    public List<Double> calculateForVelocityModel(ModelAxisType axisType, VelocityModel vMod) {
-        List<Double> out = new ArrayList<>();
-        if (axisType == ModelAxisType.depth) {
-            out.add(vMod.getVelocityLayer(0).getTopDepth());
-            for (VelocityLayer vLayer : vMod.layer) {
-                if (vMod.isDisconDepth(vLayer.getTopDepth())) {
-                    out.add(vLayer.getTopDepth());
-                }
-                out.add(vLayer.getBotDepth());
-            }
-        } else if (axisType == ModelAxisType.radius) {
-            double R = vMod.getRadiusOfEarth();
-            out.add(R-vMod.getVelocityLayer(0).getTopDepth());
-            for (VelocityLayer vLayer : vMod.layer) {
-                if (vMod.isDisconDepth(vLayer.getTopDepth())) {
-                    out.add(R-vLayer.getTopDepth());
-                }
-                out.add(R-vLayer.getBotDepth());
-            }
-        } else if (axisType == ModelAxisType.velocity || axisType == ModelAxisType.velocity_p) {
-            out.add(vMod.getVelocityLayer(0).getTopPVelocity());
-            for (VelocityLayer vLayer : vMod.layer) {
-                if (vMod.isDisconDepth(vLayer.getTopDepth())) {
-                    out.add(vLayer.getTopPVelocity());
-                }
-                out.add(vLayer.getBotPVelocity());
-            }
-        } else if (axisType == ModelAxisType.velocity_s) {
-            out.add(vMod.getVelocityLayer(0).getTopSVelocity());
-            for (VelocityLayer vLayer : vMod.layer) {
-                if (vMod.isDisconDepth(vLayer.getTopDepth())) {
-                    out.add(vLayer.getTopSVelocity());
-                }
-                out.add(vLayer.getBotSVelocity());
-            }
-        } else if (axisType == ModelAxisType.density) {
-            out.add(vMod.getVelocityLayer(0).getTopDensity());
-            for (VelocityLayer vLayer : vMod.layer) {
-                if (vMod.isDisconDepth(vLayer.getTopDepth())) {
-                    out.add(vLayer.getTopDensity());
-                }
-                out.add(vLayer.getBotDensity());
-            }
-        }
-        return out;
-    }
-
-
-    public List<Double> calculateForSlownessModel(ModelAxisType axisType, SlownessModel sMod, boolean useWavetype) throws SlownessModelException {
-        List<Double> out = new ArrayList<>();
-        if (axisType == ModelAxisType.depth) {
-            out.add(sMod.getSlownessLayer(0, useWavetype).getTopDepth());
-            SlownessLayer prevLayer = null;
-            for (SlownessLayer layer : sMod.getAllSlownessLayers(useWavetype)) {
-                if (prevLayer != null && prevLayer.getBotP() != layer.getTopP()) {
-                    out.add(layer.getTopDepth());
-                }
-                out.add(layer.getBotDepth());
-                prevLayer = layer;
-            }
-        } else if (axisType == ModelAxisType.radius) {
-            double R = sMod.getRadiusOfEarth();
-            out.add(R-sMod.getSlownessLayer(0, useWavetype).getTopDepth());
-            SlownessLayer prevLayer = null;
-            for (SlownessLayer layer : sMod.getAllSlownessLayers(useWavetype)) {
-                if (prevLayer != null && prevLayer.getBotP() != layer.getTopP()) {
-                    out.add(R-layer.getTopDepth());
-                }
-                out.add(R-layer.getBotDepth());
-                prevLayer = layer;
-            }
-        } else if (axisType == ModelAxisType.velocity || axisType == ModelAxisType.velocity_p) {
-            out.add(sMod.getSlownessLayer(0, true).getTopP());
-            SlownessLayer prevLayer = null;
-            for (SlownessLayer layer : sMod.getAllSlownessLayers(true)) {
-                if (prevLayer != null && prevLayer.getBotP() != layer.getTopP()) {
-                    out.add(sMod.toVelocity(layer.getTopP(), layer.getTopDepth()));
-                }
-                out.add(sMod.toVelocity(layer.getBotP(), layer.getBotDepth()));
-                prevLayer = layer;
-            }
-        } else if (axisType == ModelAxisType.slowness || axisType == ModelAxisType.slowness_p) {
-            out.add(sMod.getSlownessLayer(0, true).getTopP());
-            SlownessLayer prevLayer = null;
-            for (SlownessLayer layer : sMod.getAllSlownessLayers(true)) {
-                if (prevLayer != null && prevLayer.getBotP() != layer.getTopP()) {
-                    out.add(layer.getTopP());
-                }
-                out.add(layer.getBotP());
-                prevLayer = layer;
-            }
-        } else if (axisType == ModelAxisType.slowness_s) {
-            out.add(sMod.getSlownessLayer(0, false).getTopP());
-            SlownessLayer prevLayer = null;
-            for (SlownessLayer layer : sMod.getAllSlownessLayers(false)) {
-                if (prevLayer != null && prevLayer.getBotP() != layer.getTopP()) {
-                    out.add(layer.getTopP());
-                }
-                out.add(layer.getBotP());
-                prevLayer = layer;
-            }
-        }
-        return out;
     }
 
     @Override
@@ -382,8 +418,11 @@ public class TauP_VelocityPlot extends TauP_Tool {
 
     @Override
     public void validateArguments() throws TauModelException {
+        if (velModelArgs.size() == 0) {
+            throw new CommandLine.ParameterException(spec.commandLine(), "must give at least one model");
+        }
         if (_isCsv && ! outputTypeArgs.isText()) {
-            throw new CommandLine.ParameterException(spec.commandLine(), "cannot use --csv with other file type");
+            throw new CommandLine.ParameterException(spec.commandLine(), "cannot use --csv with other file type: "+getOutputTypeArgs().getOuputFormat());
         }
     }
 
@@ -416,9 +455,23 @@ public class TauP_VelocityPlot extends TauP_Tool {
 
     @CommandLine.Option(names = {"--csv"}, required = false, description = "outputs as csv")
     public void setCsvOutput(boolean isCsv) {
-        this._isCsv = true;
+        this._isCsv = isCsv;
+        if (isCsv) {
+            getOutputTypeArgs().setOutputType(TEXT);
+        }
     }
     boolean _isCsv = false;
+
+
+    @CommandLine.Option(names = {"--nameddiscon"}, required = false, description = "outputs as .nd named discontinuity model file")
+    public void setNDOutput(boolean isNd) {
+        this._isNd = isNd;
+        if (_isNd) {
+            getOutputTypeArgs().setOutputType(TEXT);
+        }
+    }
+    boolean _isNd = false;
+
 
     public ModelAxisType getxAxisType() {
         return xAxisType;

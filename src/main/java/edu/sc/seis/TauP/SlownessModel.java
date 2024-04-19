@@ -1986,6 +1986,21 @@ public abstract class SlownessModel implements Serializable {
     }
 
     /**
+     * Finds the slowness layer that contains the given depth Note
+     * that if the depth is a layer boundary, it returns the shallower of the
+     * two or possibly more (since total reflections are zero thickness layers)
+     * layers.
+     *
+     * @return the layer
+     * @exception NoSuchLayerException
+     *                occurs if no layer in the slowness model contains the
+     *                given depth.
+     */
+    public SlownessLayer layerAbove(double depth, boolean isPWave) throws NoSuchLayerException {
+        return getSlownessLayer(layerNumberAbove(depth, isPWave), isPWave);
+    }
+
+    /**
      * Finds the index of the slowness layer that contains the given depth Note
      * that if the depth is a layer boundary, it returns the deeper of the two
      * or possibly more (since total reflections are zero thickness layers)
@@ -2013,6 +2028,20 @@ public abstract class SlownessModel implements Serializable {
         return foundLayerNum;
     }
 
+    /**
+     * Finds the slowness layer that contains the given depth Note
+     * that if the depth is a layer boundary, it returns the deeper of the two
+     * or possibly more (since total reflections are zero thickness layers)
+     * layers.
+     *
+     * @return the layer
+     * @exception NoSuchLayerException
+     *                occurs if no layer in the slowness model contains the
+     *                given depth.
+     */
+    public SlownessLayer layerBelow(double depth, boolean isPWave) throws NoSuchLayerException {
+        return getSlownessLayer(layerNumberBelow(depth, isPWave), isPWave);
+    }
 
     /**
      * prints out the velocity model into a file in a form suitable for plotting

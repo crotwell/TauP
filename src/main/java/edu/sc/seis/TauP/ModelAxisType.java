@@ -12,5 +12,9 @@ public enum ModelAxisType {
     slowness_s,
     density,
 
+    velocity_density,
+    attenuation_p,
+    attenuation_s,
+    attenuation
 
 }
