@@ -193,10 +193,19 @@ public class TauP_VelocityPlot extends TauP_Tool {
         return axisType == ModelAxisType.depth || axisType == ModelAxisType.radius;
     }
     public boolean velocityLike(ModelAxisType axisType) {
-        return axisType == ModelAxisType.velocity || axisType == ModelAxisType.velocity_p
-                || axisType == ModelAxisType.velocity_s || axisType == ModelAxisType.velocity_density
-                || axisType == ModelAxisType.density || axisType == ModelAxisType.attenuation
-                || axisType == ModelAxisType.attenuation_p || axisType == ModelAxisType.attenuation_s;
+        return axisType == ModelAxisType.velocity
+                || axisType == ModelAxisType.velocity_p
+                || axisType == ModelAxisType.velocity_s
+                || axisType == ModelAxisType.velocity_density
+                || axisType == ModelAxisType.density
+                || axisType == ModelAxisType.attenuation
+                || axisType == ModelAxisType.attenuation_p
+                || axisType == ModelAxisType.attenuation_s
+                || axisType == ModelAxisType.poisson
+                || axisType == ModelAxisType.shearmodulus
+                || axisType == ModelAxisType.lambda
+                || axisType == ModelAxisType.bulkmodulus
+                || axisType == ModelAxisType.youngsmodulus;
     }
 
     public boolean slownessLike(ModelAxisType axisType) {
@@ -251,6 +260,38 @@ public class TauP_VelocityPlot extends TauP_Tool {
                 } else {
                     return vMod.evaluateBelow(depth, VelocityModelMaterial.Q_S);
                 }
+            case poisson:
+            case shearmodulus:
+            case lambda:
+            case bulkmodulus:
+            case youngsmodulus:
+                double vp;
+                double vs;
+                double rho;
+                if (above) {
+                    vp = vMod.evaluateAbove(depth, VelocityModelMaterial.P_VELOCITY);
+                    vs = vMod.evaluateAbove(depth, VelocityModelMaterial.S_VELOCITY);
+                    rho = vMod.evaluateAbove(depth, VelocityModelMaterial.DENSITY);
+                } else {
+                    vp = vMod.evaluateBelow(depth, VelocityModelMaterial.P_VELOCITY);
+                    vs = vMod.evaluateBelow(depth, VelocityModelMaterial.S_VELOCITY);
+                    rho = vMod.evaluateBelow(depth, VelocityModelMaterial.DENSITY);
+                }
+                double mu=vs*vs*rho;
+                double lambda=vp*vp*rho-2*mu;
+                switch (axisType) {
+                    case poisson:
+                        return (vp * vp / 2 - vs * vs) / (vp * vp - vs * vs);
+                    case shearmodulus:
+                        return mu;
+                    case lambda:
+                        return lambda;
+                    case bulkmodulus:
+                        return lambda + 2*mu/3;
+                    case youngsmodulus:
+                        return mu*( (3*lambda+2*mu) / (lambda+mu));
+                }
+
             default:
                 throw new TauModelException(axisType + " is not a velocity model property");
         }
@@ -268,6 +309,11 @@ public class TauP_VelocityPlot extends TauP_Tool {
             case velocity_s:
             case attenuation_p:
             case attenuation_s:
+            case poisson:
+            case shearmodulus:
+            case lambda:
+            case bulkmodulus:
+            case youngsmodulus:
                 return calculateAtDepth(tMod.getVelocityModel(), axisType, depth, above);
             case slowness:
             case slowness_p:
