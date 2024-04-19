@@ -166,7 +166,7 @@ public abstract class TauP_Tool implements Callable<Integer> {
     public void printScriptBeginning(PrintWriter out)  throws IOException {}
 
     
-    public void endGmtAndCleanUp(PrintWriter out, String psFile, String projectionType) {
+    public static void endGmtAndCleanUp(PrintWriter out, String psFile, String projectionType) {
         out.println("# end postscript"); 
         out.println("gmt psxy -J"+projectionType+" -R -m -O -T  >> " + psFile);
         out.println("# convert ps to pdf, clean up .ps file"); 

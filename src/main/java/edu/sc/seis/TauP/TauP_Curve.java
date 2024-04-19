@@ -372,8 +372,10 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
         }
         if (getOutputFormat().equalsIgnoreCase(OutputTypes.JSON)) {
             xyOut.printAsJSON(writer, 2);
-        } else if (getOutputFormat().equalsIgnoreCase(OutputTypes.TEXT) || getOutputFormat().equalsIgnoreCase(OutputTypes.GMT)) {
+        } else if (getOutputFormat().equalsIgnoreCase(OutputTypes.TEXT)) {
             xyOut.printAsGmtText(writer);
+        } else if (getOutputFormat().equalsIgnoreCase(OutputTypes.GMT)) {
+            xyOut.printAsGmtScript(writer, outputTypeArgs, isLegend);
         } else if (getOutputFormat().equalsIgnoreCase(OutputTypes.SVG)) {
             String cssExtra = "";
             if (coloring.getColor() == ColorType.phase) {

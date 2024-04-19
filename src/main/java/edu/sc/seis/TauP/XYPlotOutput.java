@@ -1,5 +1,6 @@
 package edu.sc.seis.TauP;
 
+import edu.sc.seis.TauP.cli.GraphicOutputTypeArgs;
 import edu.sc.seis.TauP.cli.ModelArgs;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -86,18 +87,60 @@ public class XYPlotOutput {
         writer.println(asJSON().toString(indentFactor));
     }
 
+    public void printAsGmtScript(PrintWriter writer,
+                                 GraphicOutputTypeArgs outputTypeArgs,
+                                 boolean isLegend) {
+        String projection = "X";
+        printGmtScriptBeginning(writer, outputTypeArgs, isLegend);
+        printAsGmtText(writer);
+        writer.println("END");
+        TauP_Tool.endGmtAndCleanUp(writer, outputTypeArgs.getPsFile(), projection);
+    }
+
+    public void printGmtScriptBeginning(PrintWriter writer,
+                                        GraphicOutputTypeArgs outputTypeArgs,
+                                        boolean isLegend) {
+        String psFile = outputTypeArgs.getPsFile();
+        writer.println("#!/bin/sh");
+        writer.println("#\n# This script will plot curves using GMT. If you want to\n"
+                + "#use this as a data file for psxy in another script, delete these"
+                + "\n# first lines, as well as the last line.\n#");
+        writer.println("/bin/rm -f " + psFile + "\n");
+        double[] minmax = calcMinMax();
+        ArrayList<Double> xTicks = PlotTicks.getTicks(minmax[0], minmax[1], numXTicks, false);
+        double xTickStep = xTicks.size()>1 ? xTicks.get(1) - xTicks.get(0) : 1;
+        ArrayList<Double> yTicks = PlotTicks.getTicks(minmax[2], minmax[3], numYTicks, false);
+        double yTickStep = yTicks.size()>1 ? yTicks.get(1) - yTicks.get(0) : 1;
+        String xLabelParam = " -Bxa"+xTickStep;
+        if (getXLabel().length() > 0) {
+            xLabelParam+="+l'"+getXLabel()+"'";
+        }
+        String yLabelParam = " -Bya"+yTickStep;
+        if (getYLabel().length()>0) {
+            yLabelParam += "+l'"+getYLabel()+"'";
+        }
+        writer.println("gmt psbasemap -JX" + outputTypeArgs.mapwidth + outputTypeArgs.mapWidthUnit + " -P -R"+minmax[0]+"/"+minmax[1]+"/" + minmax[2] + "/" + minmax[3]
+                + xLabelParam+yLabelParam+" -BWSne+t'" + getTitle() + "' -K > " + psFile);
+        if (isLegend) {
+            printGmtScriptLegend(writer, psFile);
+        }
+        writer.println("gmt psxy -JX -R -m -O -K >> " + psFile + " <<END");
+
+    }
+
+    public void printGmtScriptLegend(PrintWriter writer, String psFile) {
+        writer.println("gmt pstext -JX -P -R  -O -K >> " + psFile + " <<END");
+        //writer.print(scriptStuff);
+        writer.println("END\n");
+    }
+
     public void printAsGmtText(PrintWriter writer) {
         for (XYPlottingData xyplotItem : xyPlots) {
             xyplotItem.asGMT(writer);
         }
     }
 
-    public void printAsSvg(PrintWriter writer, String[] cmdLineArgs, String xAxisType, String yAxisType, String extraCSS, boolean isLegend) {
-
-        int margin = 80;
-        int pixelWidth = 600+margin;//Math.round(72*mapWidth);
-        int plotOffset = 60;
-
+    public double[] calcMinMax() {
         double[] minmax = XYPlottingData.initMinMax();
         for (XYPlottingData xyplot : xyPlots) {
             if (xAxisMinMax.length == 2 && yAxisMinMax.length == 0) {
@@ -117,8 +160,17 @@ public class XYPlotOutput {
             minmax[2] = yAxisMinMax[0];
             minmax[3] = yAxisMinMax[1];
         }
+        return minmax;
+    }
+
+    public void printAsSvg(PrintWriter writer, String[] cmdLineArgs, String xAxisType, String yAxisType, String extraCSS, boolean isLegend) {
+
+        int margin = 80;
+        int pixelWidth = 600+margin;//Math.round(72*mapWidth);
+        int plotOffset = 60;
+        double[] minmax = calcMinMax();
         SvgUtil.xyplotScriptBeginning(writer, toolNameFromClass(this.getClass()),
-                cmdLineArgs,  pixelWidth, margin, extraCSS, minmax);
+            cmdLineArgs,  pixelWidth, margin, extraCSS, minmax);
 
         float plotWidth = pixelWidth - 2*margin;
         double[] axisMinMax = new double[4];
@@ -134,8 +186,8 @@ public class XYPlotOutput {
             axisMinMax[3] = axisMinMax[2];
             axisMinMax[2] = tmp;
         }
-        SvgUtil.createXYAxes(writer, axisMinMax[0], axisMinMax[1], 8, false,
-                axisMinMax[2], axisMinMax[3], 8, false,
+        SvgUtil.createXYAxes(writer, axisMinMax[0], axisMinMax[1], numXTicks, false,
+                axisMinMax[2], axisMinMax[3], numYTicks, false,
                 pixelWidth, margin,
                 getTitle(),
                 xAxisType, yAxisType);
@@ -203,10 +255,22 @@ public class XYPlotOutput {
         this.title = title;
     }
 
-
-    public void printAsSvgSpherical(PrintWriter writer, String[] cmdLineArgs, String xAxisType, String yAxisType) {
-
+    public String getXLabel() {
+        return xLabel;
     }
+    public void setXLabel(String x) {
+        this.xLabel = x;
+    }
+
+    String xLabel = "";
+
+    public String getYLabel() {
+        return yLabel;
+    }
+    public void setYLabel(String y) {
+        this.yLabel = y;
+    }
+    String yLabel = "";
 
     public XYPlotOutput convertToCartesian() throws TauPException {
         List<XYPlottingData> convXYPlotList = new ArrayList<>();
@@ -261,6 +325,9 @@ public class XYPlotOutput {
     String title = null;
 
     boolean autoColor = true;
+
+    int numXTicks = 8;
+    int numYTicks = 8;
 
     double[] xAxisMinMax = new double[0];
     double[] yAxisMinMax = new double[0];

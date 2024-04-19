@@ -84,6 +84,14 @@ public class TauP_VelocityPlot extends TauP_Tool {
             xyOut.setTitle(title.trim());
             xyOut.setxAxisMinMax(xAxisMinMax);
             xyOut.setyAxisMinMax(yAxisMinMax);
+            String xLabel = "";
+            String yLabel = "";
+            for (XYPlottingData xyp : xyPlotList) {
+                xLabel += " "+xyp.xAxisType;
+                yLabel += " "+xyp.yAxisType;
+            }
+            xyOut.setXLabel(xLabel);
+            xyOut.setYLabel(yLabel);
             printResult(writer, xyOut);
             writer.close();
         }
@@ -92,8 +100,10 @@ public class TauP_VelocityPlot extends TauP_Tool {
     public void printResult(PrintWriter writer, XYPlotOutput xyOut) {
         if (getOutputTypeArgs().isJSON()) {
             xyOut.printAsJSON(writer, 2);
-        } else if (getOutputTypeArgs().isText() || getOutputTypeArgs().isGMT()) {
+        } else if (getOutputTypeArgs().isText()) {
             xyOut.printAsGmtText(writer);
+        } else if (getOutputFormat().equalsIgnoreCase(OutputTypes.GMT)) {
+            xyOut.printAsGmtScript(writer, outputTypeArgs, isLegend);
         } else if (getOutputTypeArgs().isSVG()) {
             if (yAxisType == ModelAxisType.depth) {
                 xyOut.yAxisInvert = true;
@@ -367,8 +377,8 @@ public class TauP_VelocityPlot extends TauP_Tool {
         XYPlottingData xyplot = new XYPlottingData(segList,
                 xAxis.name(),
                 yAxis.name(),
-                labelPrefix+labelFor(depAxis),
-                modelName+" "+labelFor(depAxis),
+                labelPrefix,
+                modelName+" "+labelFor(xAxis)+" / "+labelFor(yAxis),
                 cssClassList
         );
         xyList.add(xyplot);

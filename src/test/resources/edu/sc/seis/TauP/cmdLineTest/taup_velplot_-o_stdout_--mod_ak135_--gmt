@@ -1,4 +1,14 @@
-> 1/1 P Vel. ak135 P Vel.
+#!/bin/sh
+#
+# This script will plot curves using GMT. If you want to
+#use this as a data file for psxy in another script, delete these
+# first lines, as well as the last line.
+#
+/bin/rm -f stdout.ps
+
+gmt psbasemap -JX6.0i -P -R0.0/13.6602/0.0/6371.0 -Bxa1.0+l' velocity velocity_s' -Bya1000.0+l' depth depth' -BWSne+t'ak135' -K > stdout.ps
+gmt psxy -JX -R -m -O -K >> stdout.ps <<END
+> 1/1  ak135 P Vel. / Depth
 5.800000  0.000000
 5.800000  0.000000
 5.800000  20.000000
@@ -135,7 +145,7 @@
 11.260600  6269.569824
 11.261800  6320.290039
 11.262200  6371.000000
-> 1/1 S Vel. ak135 S Vel.
+> 1/1  ak135 S Vel. / Depth
 3.460000  0.000000
 3.460000  0.000000
 3.460000  20.000000
@@ -272,3 +282,10 @@
 3.666700  6269.569824
 3.667500  6320.290039
 3.667800  6371.000000
+END
+# end postscript
+gmt psxy -JX -R -m -O -T  >> stdout.ps
+# convert ps to pdf, clean up .ps file
+gmt psconvert -P -Tf  stdout.ps && rm stdout.ps
+# clean up after gmt...
+rm gmt.history

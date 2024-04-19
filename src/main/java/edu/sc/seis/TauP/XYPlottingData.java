@@ -97,6 +97,7 @@ public class XYPlottingData {
     public JSONObject asJSON() {
         JSONObject out = new JSONObject();
         out.put("label", label);
+        out.put("description", description);
         out.put("x", xAxisType);
         out.put("y", yAxisType);
         JSONArray segarr = new JSONArray();

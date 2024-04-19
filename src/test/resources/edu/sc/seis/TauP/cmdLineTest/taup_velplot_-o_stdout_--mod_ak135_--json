@@ -1,8 +1,9 @@
 {"curves": [
   {
     "x": "velocity",
+    "description": "ak135 P Vel. / Depth",
     "y": "depth",
-    "label": "P Vel.",
+    "label": "",
     "segments": [{
       "x": [
         5.8,
@@ -284,8 +285,9 @@
   },
   {
     "x": "velocity_s",
+    "description": "ak135 S Vel. / Depth",
     "y": "depth",
-    "label": "S Vel.",
+    "label": "",
     "segments": [{
       "x": [
         3.46,

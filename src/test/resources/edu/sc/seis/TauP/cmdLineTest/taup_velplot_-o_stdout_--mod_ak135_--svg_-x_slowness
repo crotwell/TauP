@@ -277,7 +277,7 @@ circle.discontinuity.iocb {
 <g transform="translate(-0.0, -0.0)">
     <g class="autocolor">
 <g transform="scale(1,-1) translate(0.0, -6371.0)" > <!-- invert axis -->
-    <g class="pwave" tauplabel="ak135 P Slow."  >
+    <g class="pwave" tauplabel="ak135 P Slow. / Depth"  >
   <g>
     <desc></desc>
     <polyline  points="
@@ -1176,10 +1176,10 @@ circle.discontinuity.iocb {
 0.000000 6371.000000
   "  /> <!-- -->
   </g>
-    </g> <!-- end ak135 P Slow. -->
+    </g> <!-- end ak135 P Slow. / Depth -->
     </g> <!-- end invert axis -->
 <g transform="scale(1,-1) translate(0.0, -6371.0)" > <!-- invert axis -->
-    <g class="swave" tauplabel="ak135 S Slow."  >
+    <g class="swave" tauplabel="ak135 S Slow. / Depth"  >
   <g>
     <desc></desc>
     <polyline  points="
@@ -2370,7 +2370,7 @@ circle.discontinuity.iocb {
 0.000000 6371.000000
   "  /> <!-- -->
   </g>
-    </g> <!-- end ak135 S Slow. -->
+    </g> <!-- end ak135 S Slow. / Depth -->
     </g> <!-- end invert axis -->
     </g> <!-- end autocolor g -->
     <g class="phasename">  <!-- begin labels -->
