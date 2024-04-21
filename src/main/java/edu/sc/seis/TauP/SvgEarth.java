@@ -8,6 +8,8 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
+import static edu.sc.seis.TauP.Arrival.RtoD;
+
 public class SvgEarth {
 
     private static final float plotOverScaleFactor = 1.1f;
@@ -52,15 +54,30 @@ public class SvgEarth {
                 }
             }
 
+            List<Double> distRanges = new ArrayList<>();
             if (distDepthRange.hasDistAxisMinMax()) {
                 minDist = (float) distDepthRange.getDistAxisMinMax()[0];
                 maxDist = (float) distDepthRange.getDistAxisMinMax()[1];
+                distRanges.add((double) minDist);
+                distRanges.add((double) maxDist);
             } else {
+                distRanges.add(0.0);
+                for (SeismicPhase phase : phaseList) {
+                    distRanges.add(phase.getMinDistance()*RtoD);
+                    distRanges.add(phase.getMaxDistance()*RtoD);
+                }
                 if (includeNegDist) {
-                    minDist = -1 * maxDist;
+                    for (SeismicPhase phase : phaseList) {
+                        distRanges.add(-1*phase.getMinDistance()*RtoD);
+                        distRanges.add(-1*phase.getMaxDistance()*RtoD);
+                    }
                 }
             }
-            double[] bbox = SvgEarth.findPierceBoundingBox(new double[] {minDist*180/Math.PI, maxDist*180/Math.PI}, new double[]{minDepth, maxDepth}, R);
+            double[] distRangeAr = new double[distRanges.size()];
+            for (int i = 0; i < distRangeAr.length; i++) {
+                distRangeAr[i] = distRanges.get(i);
+            }
+            double[] bbox = SvgEarth.findPierceBoundingBox(distRangeAr, new double[]{minDepth, maxDepth}, R);
             scaleTrans = SvgEarth.calcZoomScaleTranslate((float) bbox[0], (float) bbox[1], (float) bbox[2], (float) bbox[3],
                     R, minDist, maxDist);
         }
