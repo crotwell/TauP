@@ -177,6 +177,8 @@ export function form_url() {
 
   let timestep = document.querySelector('input[name="timestep"]').value;
   let isNegDist = document.querySelector('input[name="negdist"]').checked;
+  let colorTypeEl = document.querySelector('input[name="color"]:checked');
+  let colorType = colorTypeEl ? colorTypeEl.value : "auto";
   let isrefltranmodel = document.querySelector('input[name="isrefltranmodel"]:checked').value;
 
   let xaxis = document.querySelector('#xaxis').value;
@@ -192,7 +194,7 @@ export function form_url() {
     url = `${toolname}?`;
   }
   if (toolname !== "velplot" && toolname !== "refltrans") {
-    url += `&phases=${phases}`;
+    url += `&phase=${phases}`;
   }
   if (toolname !== "velplot" && toolname !== "curve"
       && toolname !== "xy"
@@ -275,6 +277,9 @@ export function form_url() {
     }
     if (isNegDist) {
       url += `&negdist=true`;
+    }
+    if (colorType && colorType !== "auto") {
+      url += `&color=${colorType}`
     }
   }
   if (toolname === "refltrans") {

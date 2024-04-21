@@ -8,6 +8,7 @@ public class WavefrontPathSegment extends  AbstractPathSegment {
                                 int segmentIndex, int totalNumSegments, SeismicPhase phase, double timeVal) {
         super(path, isPWave, segmentName, prevEnd, segmentIndex, totalNumSegments, phase);
         this.timeVal = timeVal;
+        this.pathCssClass = "wavefront";
     }
 
     @Override

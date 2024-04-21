@@ -173,6 +173,17 @@
           <span>Timestep (s): </span>
       </label>
       <input type="number" id="timestep" name="timestep" value="100" />
+
+        <fieldset>
+            <legend>Color by:</legend>
+            <input type="radio" name="color" id="auto" value="auto" checked/>
+            <label for="auto">Time</label>
+            <input type="radio" name="color" id="phase" value="phase" />
+            <label for="auto">Phase</label>
+            <input type="radio" name="color" id="wavetype" value="wavetype" />
+            <label for="auto">WaveType</label>
+        </fieldset>
+
       <label for="negdist">
           <span>Negative Distances: </span>
       </label>

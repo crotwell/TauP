@@ -21,6 +21,8 @@ public abstract class AbstractPathSegment {
     int segmentIndex = -1;
     int totalNumSegments = -1;
 
+    String pathCssClass = "path";
+
     public AbstractPathSegment(List<TimeDist> path, boolean isPWave, String segmentName, TimeDist prevEnd, int segmentIndex, int totalNumSegments, SeismicPhase phase) {
         this.path = path;
         this.isPWave = isPWave;
@@ -174,7 +176,7 @@ public abstract class AbstractPathSegment {
     }
 
     public String getCssClasses() {
-        return "path "+SvgUtil.classForPhase(getPhase().getName()) + (isPWave ? " pwave" : " swave");
+        return pathCssClass+" "+SvgUtil.classForPhase(getPhase().getName()) + (isPWave ? " pwave" : " swave");
     }
 
     public void writeSVGCartesian(PrintWriter pw) {

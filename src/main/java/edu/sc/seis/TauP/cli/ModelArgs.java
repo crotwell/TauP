@@ -125,10 +125,10 @@ public class ModelArgs {
         String modelname = toolProps.getProperty("taup.model.name",
                 "iasp91");
 
-        @CommandLine.Option(names={"-h", "--sourcedepth"}, defaultValue = "0.0", description = "source depth in km")
+        @CommandLine.Option(names={"-h", "--sourcedepth", "--evdepth"}, defaultValue = "0.0", description = "source depth in km")
         double sourceDepth = Double.parseDouble(toolProps.getProperty("taup.source.depth", "0.0"));
 
-        @CommandLine.Option(names = {"--stadepth"},
+        @CommandLine.Option(names = {"--stadepth", "--receiverdepth"},
                 defaultValue = "0.0",
                 paramLabel = "depth",
                 description = "the receiver depth in km for stations not at the surface")

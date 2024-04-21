@@ -19,6 +19,7 @@ import io.undertow.server.handlers.resource.ResourceHandler;
 import io.undertow.util.Headers;
 import io.undertow.util.MimeMappings;
 import org.json.JSONArray;
+import picocli.CommandLine;
 
 import java.io.*;
 import java.nio.ByteBuffer;
@@ -59,143 +60,11 @@ public class TauP_Web extends TauP_Tool {
                         System.err.println("handleRequest "+path+" from "+exchange.getRequestPath());
                         TauP_Tool tool = createTool(path);
                         Map<String, Deque<String>> queryParams = exchange.getQueryParameters();
-                        Set<String> unknownKeys;
                         if (tool != null) {
                             System.err.println("Handle via TauP Tool:" + path);
-                            unknownKeys = configTool(tool, queryParams);
-                            unknownKeys.remove(QP_DISTDEG);
-                            unknownKeys.remove(QP_TAKEOFF);
-                            unknownKeys.remove(QP_SHOOTRAY);
-                            if (!unknownKeys.isEmpty()) {
-                                StringBuilder errorPage = new StringBuilder("<html><head><title>Error</title></head><body>unknown query parameters: ");
-                                for (String k : unknownKeys) {
-                                    Deque<String> dq = queryParams.get(k);
-                                    errorPage.append(" ").append(k).append("=").append(dq != null ? dq.getFirst() : "");
-                                }
-                                errorPage.append("</body></html>");
-                                exchange.setStatusCode(400);
-                                exchange.getResponseHeaders().put(Headers.CONTENT_LENGTH, "" + errorPage.length());
-                                exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, "text/html");
-                                Sender sender = exchange.getResponseSender();
-                                sender.send(errorPage.toString());
-                                return;
-                            }
-
-                            StringWriter out = new StringWriter();
-                            PrintWriter pw = new PrintWriter(out);
-
-                            if (tool instanceof TauP_WKBJ) {
-                                if (queryParams.containsKey(QP_DISTDEG)) {
-                                    List<DistanceRay> degreesList = new ArrayList<>();
-                                    for (String distListStr : queryParams.get(QP_DISTDEG)) {
-                                        degreesList.addAll(TauP_AbstractRayTool.parseDegreeList(distListStr));
-                                    }
-                                    configContentType(tool.getOutputFormat(), exchange);
-                                    List<MSeed3Record> ms3SpikeList = ((TauP_WKBJ)tool).calcSpikes(degreesList);
-                                    List<MSeed3Record> ms3WkbjList = ((TauP_WKBJ)tool).calcWKBJ(degreesList);
-                                    List<MSeed3Record> ms3List = new ArrayList<>();
-                                    ms3List.addAll(ms3SpikeList);
-                                    ms3List.addAll(ms3WkbjList);
-                                    //ms3List.add(ms3WkbjList.get(0));
-                                    ByteBuffer[] recordbuf = new ByteBuffer[ms3List.size()];
-                                    for (int i = 0; i < ms3List.size(); i++) {
-                                        recordbuf[i] = ByteBuffer.allocate(ms3List.get(i).getSize());
-                                        ByteArrayOutputStream backing = new ByteArrayOutputStream();
-                                        ms3List.get(i).write(backing);
-                                        backing.close();
-                                        recordbuf[i] = ByteBuffer.wrap(backing.toByteArray());
-                                    }
-                                    exchange.getResponseSender().send(recordbuf);
-                                }
-                            } else if (tool instanceof TauP_Time) {
-                                try {
-                                    tool.printScriptBeginning(pw);
-
-                                    if (queryParams.containsKey(QP_DISTDEG)) {
-                                        List<Double> degreesList = new ArrayList<>();
-                                        for (String distListStr : queryParams.get(QP_DISTDEG)) {
-                                            degreesList.addAll(TauP_AbstractRayTool.parseDoubleList(distListStr));
-                                        }
-                                        ((TauP_Time) tool).getDistanceArgs().setDegreeList(degreesList);
-
-                                    } else if (queryParams.containsKey(QP_EVLOC)) {
-                                        List<Double[]> evlatlonList = parseLoc(queryParams.get(QP_EVLOC).getFirst());
-                                        List<Location> evtList = ((TauP_Time) tool).getDistanceArgs().getEventList();
-                                        for (Double[] ll : evlatlonList) {
-                                            evtList.add(new Location(ll[0], ll[1]));
-                                        }
-                                    } else if (queryParams.containsKey(QP_STALOC)) {
-                                        List<Double[]> stlatlonList = parseLoc(queryParams.get(QP_STALOC).getFirst());
-                                        List<Location> staList = ((TauP_Time) tool).getDistanceArgs().getStationList();
-                                        for (Double[] ll : stlatlonList) {
-                                            staList.add(new Location(ll[0], ll[1]));
-                                        }
-                                    } else if (queryParams.containsKey(QP_TAKEOFF)) {
-                                        List<Double> takeoffList = new ArrayList<>();
-                                        for (String distListStr : queryParams.get(QP_TAKEOFF)) {
-                                            takeoffList.addAll(TauP_AbstractRayTool.parseDoubleList(distListStr));
-                                        }
-                                        ((TauP_Time) tool).getDistanceArgs().setTakeoffAngles(takeoffList);
-                                    } else if (queryParams.containsKey(QP_SHOOTRAY)) {
-                                        List<Double> shootList = new ArrayList<>();
-                                        for (String distListStr : queryParams.get(QP_SHOOTRAY)) {
-                                            shootList.addAll(TauP_AbstractRayTool.parseDoubleList(distListStr));
-                                        }
-                                        ((TauP_Time) tool).getDistanceArgs().setShootRayParams(shootList);
-                                    } else if (tool instanceof TauP_Curve || tool instanceof TauP_Wavefront|| tool instanceof TauP_PhaseDescribe) {
-                                        // doesn't matter for curve or wavefront or phase
-                                        List<Arrival> arrivalList = ((TauP_Time) tool).calculate(null);
-                                    } else {
-                                        final String errorPage = "<html><head><title>Error</title></head><body>distdeg parameter is required</body></html>";
-                                        exchange.setStatusCode(400);
-                                        exchange.getResponseHeaders().put(Headers.CONTENT_LENGTH, "" + errorPage.length());
-                                        exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, "text/html");
-                                        Sender sender = exchange.getResponseSender();
-                                        sender.send(errorPage);
-                                        return;
-                                    }
-                                    TauP_Time timeTool = ((TauP_Time) tool);
-                                    timeTool.printResult(pw,timeTool.calcAll(timeTool.getSeismicPhases(), timeTool.getDistanceArgs().getRayCalculatables()) );
-                                    configContentType(tool.getOutputFormat(), exchange);
-                                    exchange.getResponseSender().send(out.toString());
-                                } catch (Exception e) {
-                                    System.err.println("Error: " + e);
-                                    throw e;
-                                }
-                            } else if (tool instanceof TauP_VelocityPlot){
-                                System.err.println("Handle as VelocityPlot");
-                                TauP_VelocityPlot vPlot = (TauP_VelocityPlot)tool;
-                                tool.setWriter(pw);
-                                tool.printScriptBeginning(pw);
-                                tool.start();
-                                configContentType(tool.getOutputFormat(), exchange);
-                                exchange.getResponseSender().send(out.toString());
-                            } else if (tool instanceof TauP_ReflTransPlot){
-                                tool.setWriter(pw);
-                                tool.printScriptBeginning(pw);
-                                tool.start();
-                                configContentType(tool.getOutputFormat(), exchange);
-                                exchange.getResponseSender().send(out.toString());
-                            } else if (tool instanceof TauP_Curve){
-                                tool.setWriter(pw);
-                                tool.printScriptBeginning(pw);
-                                tool.start();
-                                configContentType(tool.getOutputFormat(), exchange);
-                                exchange.getResponseSender().send(out.toString());
-                            } else if (tool instanceof TauP_Version){
-                                tool.setWriter(pw);
-                                tool.printScriptBeginning(pw);
-                                tool.start();
-                                configContentType(tool.getOutputFormat(), exchange);
-                                exchange.getResponseSender().send(out.toString());
-                            } else {
-                                System.err.println("Use other tool, likely doesn't work...");
-                                tool.setWriter(pw);
-                                tool.printScriptBeginning(pw);
-                                tool.start();
-                                configContentType(tool.getOutputFormat(), exchange);
-                                exchange.getResponseSender().send(out.toString());
-                            }
+                            String results = webRunTool(tool, queryParams);
+                            configContentType(tool.getOutputFormat(), exchange);
+                            exchange.getResponseSender().send(results);
                         } else if (exchange.getRequestPath().equals("/favicon.ico")) {
                             new ResponseCodeHandler(404).handleRequest(exchange);
                             return;
@@ -215,6 +84,144 @@ public class TauP_Web extends TauP_Tool {
                     }
                 })).build();
         server.start();
+    }
+
+    public void oldToolRun(TauP_Tool tool, HttpServerExchange exchange, Map<String, Deque<String>> queryParams) throws TauPException, IOException {
+        Set<String> unknownKeys;
+        unknownKeys = configTool(tool, queryParams);
+        unknownKeys.remove(QP_DISTDEG);
+        unknownKeys.remove(QP_TAKEOFF);
+        unknownKeys.remove(QP_SHOOTRAY);
+        if (!unknownKeys.isEmpty()) {
+            StringBuilder errorPage = new StringBuilder("<html><head><title>Error</title></head><body>unknown query parameters: ");
+            for (String k : unknownKeys) {
+                Deque<String> dq = queryParams.get(k);
+                errorPage.append(" ").append(k).append("=").append(dq != null ? dq.getFirst() : "");
+            }
+            errorPage.append("</body></html>");
+            exchange.setStatusCode(400);
+            exchange.getResponseHeaders().put(Headers.CONTENT_LENGTH, "" + errorPage.length());
+            exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, "text/html");
+            Sender sender = exchange.getResponseSender();
+            sender.send(errorPage.toString());
+            return;
+        }
+
+        StringWriter out = new StringWriter();
+        PrintWriter pw = new PrintWriter(out);
+
+        if (tool instanceof TauP_WKBJ) {
+            if (queryParams.containsKey(QP_DISTDEG)) {
+                List<DistanceRay> degreesList = new ArrayList<>();
+                for (String distListStr : queryParams.get(QP_DISTDEG)) {
+                    degreesList.addAll(TauP_AbstractRayTool.parseDegreeList(distListStr));
+                }
+                configContentType(tool.getOutputFormat(), exchange);
+                List<MSeed3Record> ms3SpikeList = ((TauP_WKBJ)tool).calcSpikes(degreesList);
+                List<MSeed3Record> ms3WkbjList = ((TauP_WKBJ)tool).calcWKBJ(degreesList);
+                List<MSeed3Record> ms3List = new ArrayList<>();
+                ms3List.addAll(ms3SpikeList);
+                ms3List.addAll(ms3WkbjList);
+                //ms3List.add(ms3WkbjList.get(0));
+                ByteBuffer[] recordbuf = new ByteBuffer[ms3List.size()];
+                for (int i = 0; i < ms3List.size(); i++) {
+                    recordbuf[i] = ByteBuffer.allocate(ms3List.get(i).getSize());
+                    ByteArrayOutputStream backing = new ByteArrayOutputStream();
+                    ms3List.get(i).write(backing);
+                    backing.close();
+                    recordbuf[i] = ByteBuffer.wrap(backing.toByteArray());
+                }
+                exchange.getResponseSender().send(recordbuf);
+            }
+        } else if (tool instanceof TauP_Time) {
+            try {
+                tool.printScriptBeginning(pw);
+
+                if (queryParams.containsKey(QP_DISTDEG)) {
+                    List<Double> degreesList = new ArrayList<>();
+                    for (String distListStr : queryParams.get(QP_DISTDEG)) {
+                        degreesList.addAll(TauP_AbstractRayTool.parseDoubleList(distListStr));
+                    }
+                    ((TauP_Time) tool).getDistanceArgs().setDegreeList(degreesList);
+
+                } else if (queryParams.containsKey(QP_EVLOC)) {
+                    List<Double[]> evlatlonList = parseLoc(queryParams.get(QP_EVLOC).getFirst());
+                    List<Location> evtList = ((TauP_Time) tool).getDistanceArgs().getEventList();
+                    for (Double[] ll : evlatlonList) {
+                        evtList.add(new Location(ll[0], ll[1]));
+                    }
+                } else if (queryParams.containsKey(QP_STALOC)) {
+                    List<Double[]> stlatlonList = parseLoc(queryParams.get(QP_STALOC).getFirst());
+                    List<Location> staList = ((TauP_Time) tool).getDistanceArgs().getStationList();
+                    for (Double[] ll : stlatlonList) {
+                        staList.add(new Location(ll[0], ll[1]));
+                    }
+                } else if (queryParams.containsKey(QP_TAKEOFF)) {
+                    List<Double> takeoffList = new ArrayList<>();
+                    for (String distListStr : queryParams.get(QP_TAKEOFF)) {
+                        takeoffList.addAll(TauP_AbstractRayTool.parseDoubleList(distListStr));
+                    }
+                    ((TauP_Time) tool).getDistanceArgs().setTakeoffAngles(takeoffList);
+                } else if (queryParams.containsKey(QP_SHOOTRAY)) {
+                    List<Double> shootList = new ArrayList<>();
+                    for (String distListStr : queryParams.get(QP_SHOOTRAY)) {
+                        shootList.addAll(TauP_AbstractRayTool.parseDoubleList(distListStr));
+                    }
+                    ((TauP_Time) tool).getDistanceArgs().setShootRayParams(shootList);
+                } else if (tool instanceof TauP_Curve || tool instanceof TauP_Wavefront|| tool instanceof TauP_PhaseDescribe) {
+                    // doesn't matter for curve or wavefront or phase
+                    List<Arrival> arrivalList = ((TauP_Time) tool).calculate(null);
+                } else {
+                    final String errorPage = "<html><head><title>Error</title></head><body>distdeg parameter is required</body></html>";
+                    exchange.setStatusCode(400);
+                    exchange.getResponseHeaders().put(Headers.CONTENT_LENGTH, "" + errorPage.length());
+                    exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, "text/html");
+                    Sender sender = exchange.getResponseSender();
+                    sender.send(errorPage);
+                    return;
+                }
+                TauP_Time timeTool = ((TauP_Time) tool);
+                timeTool.printResult(pw,timeTool.calcAll(timeTool.getSeismicPhases(), timeTool.getDistanceArgs().getRayCalculatables()) );
+                configContentType(tool.getOutputFormat(), exchange);
+                exchange.getResponseSender().send(out.toString());
+            } catch (Exception e) {
+                System.err.println("Error: " + e);
+                throw e;
+            }
+        } else if (tool instanceof TauP_VelocityPlot){
+            System.err.println("Handle as VelocityPlot");
+            TauP_VelocityPlot vPlot = (TauP_VelocityPlot)tool;
+            tool.setWriter(pw);
+            tool.printScriptBeginning(pw);
+            tool.start();
+            configContentType(tool.getOutputFormat(), exchange);
+            exchange.getResponseSender().send(out.toString());
+        } else if (tool instanceof TauP_ReflTransPlot){
+            tool.setWriter(pw);
+            tool.printScriptBeginning(pw);
+            tool.start();
+            configContentType(tool.getOutputFormat(), exchange);
+            exchange.getResponseSender().send(out.toString());
+        } else if (tool instanceof TauP_Curve){
+            tool.setWriter(pw);
+            tool.printScriptBeginning(pw);
+            tool.start();
+            configContentType(tool.getOutputFormat(), exchange);
+            exchange.getResponseSender().send(out.toString());
+        } else if (tool instanceof TauP_Version){
+            tool.setWriter(pw);
+            tool.printScriptBeginning(pw);
+            tool.start();
+            configContentType(tool.getOutputFormat(), exchange);
+            exchange.getResponseSender().send(out.toString());
+        } else {
+            System.err.println("Use other tool, likely doesn't work...");
+            tool.setWriter(pw);
+            tool.printScriptBeginning(pw);
+            tool.start();
+            configContentType(tool.getOutputFormat(), exchange);
+            exchange.getResponseSender().send(out.toString());
+        }
     }
 
     @Override
@@ -302,7 +309,7 @@ public class TauP_Web extends TauP_Tool {
     public static String QP_YMINMAX = "yminmax";
 
 
-    public Set<String> configTool(TauP_Tool tool, Map<String, Deque<String>> queryParameters) throws TauPException, IOException {
+    public Set<String> configTool(TauP_Tool tool, Map<String, Deque<String>> queryParameters) throws TauPException {
         Set<String> unknownKeys = new HashSet<String>(queryParameters.keySet());
 
         if (queryParameters.containsKey(QP_FORMAT)) {
@@ -593,6 +600,75 @@ public class TauP_Web extends TauP_Tool {
             result = ma.find();
         }
         return out;
+    }
+
+    public static List<String> queryParamsToCmdLineArgs(CommandLine.Model.CommandSpec spec,
+                                                        Map<String, Deque<String>> queryParams) throws TauPException {
+        List<String> out = new ArrayList<>();
+
+        for (String qp : queryParams.keySet()) {
+            String dashedQP = "--"+qp;
+            CommandLine.Model.OptionSpec op = spec.findOption(dashedQP);
+            if (op != null) {
+                out.add(dashedQP);
+                Deque<String> qpList = queryParams.get(qp);
+                if (qpList.size() > 1 || ( ! qpList.getFirst().equalsIgnoreCase("true"))) {
+                    out.addAll(queryParams.get(qp));
+                }
+                continue;
+            } else if (qp.equalsIgnoreCase("format")) {
+                if (queryParams.get(qp).size() > 1) {
+                    throw new TauPException("Only one format at a time: " + queryParams.get(qp).getFirst() + " " + queryParams.get(qp).peek());
+                }
+
+                String format = "--" + queryParams.get(qp).getFirst();
+                op = spec.findOption(format);
+                if (op != null) {
+                    out.add(format);
+                    continue;
+                }
+            }
+            throw new TauPException("Unknown parameter: "+qp);
+        }
+        return out;
+    }
+
+
+    public String webRunTool(TauP_Tool tool, Map<String, Deque<String>> queryParams) throws Exception {
+        StringWriter sw = new StringWriter();
+        CommandLine cmd = new CommandLine(tool);
+        cmd.setOut(new PrintWriter(sw));
+        CommandLine.Model.CommandSpec spec = cmd.getCommandSpec();
+        List<String> argList = queryParamsToCmdLineArgs(spec, queryParams);
+        argList.add("-o");
+        argList.add("stdout");
+        tool.setOutFileBase("stdout");
+        StringBuffer buffer = new StringBuffer();
+        buffer.append(TauP_Tool.toolNameFromClass(tool.getClass()));
+        for (String s : argList) {
+            buffer.append(s+" ");
+        }
+        System.err.println(buffer.toString());
+        try {
+            CommandLine.ParseResult parseResult = cmd.parseArgs(argList.toArray(argList.toArray(new String[0])));
+
+            // Did user request usage help (--help)?
+            if (cmd.isUsageHelpRequested()) {
+                cmd.usage(cmd.getOut());
+
+                // Did user request version help (--version)?
+            } else if (cmd.isVersionHelpRequested()) {
+                cmd.printVersionHelp(cmd.getOut());
+            } else {
+                // invoke the business logic
+                Integer statusCode = tool.call();
+                cmd.setExecutionResult(statusCode);
+
+            }
+        } catch (Exception e) {
+            System.err.println(buffer.toString());
+        }
+        return sw.toString();
     }
 
     public static TauP_Web create() {
