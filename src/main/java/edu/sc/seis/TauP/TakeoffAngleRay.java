@@ -2,6 +2,7 @@ package edu.sc.seis.TauP;
 
 import edu.sc.seis.seisFile.Location;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TakeoffAngleRay extends RayCalculateable {
@@ -41,11 +42,20 @@ public class TakeoffAngleRay extends RayCalculateable {
 
     @Override
     public List<Arrival> calculate(SeismicPhase phase) throws SlownessModelException, NoSuchLayerException {
-        return forPhase(phase).calculate(phase);
+        RayParamRay rayParamRay = forPhase(phase);
+        if (rayParamRay == null) {
+            return new ArrayList<Arrival>();
+        }
+        return rayParamRay.calculate(phase);
     }
 
     public RayParamRay forPhase(SeismicPhase phase) {
-        Double rayParam = phase.calcRayParamForTakeoffAngle(takeoffAngle);
+        Double rayParam = null;
+        try {
+            rayParam = phase.calcRayParamForTakeoffAngle(takeoffAngle);
+        } catch (NoArrivalException e) {
+            return null;
+        }
         RayParamRay ray = new RayParamRay(rayParam);
         return ray;
     }

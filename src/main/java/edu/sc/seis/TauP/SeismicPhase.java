@@ -121,7 +121,7 @@ public interface SeismicPhase extends Serializable, Cloneable {
      */
     boolean isAllSWave();
 
-    double calcRayParamForTakeoffAngle(double takeoffDegree);
+    double calcRayParamForTakeoffAngle(double takeoffDegree) throws NoArrivalException;
 
     double velocityAtSource();
 

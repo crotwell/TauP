@@ -685,7 +685,10 @@ public class SimpleSeismicPhase implements SeismicPhase {
     }
 
     @Override
-    public double calcRayParamForTakeoffAngle(double takeoffDegree) {
+    public double calcRayParamForTakeoffAngle(double takeoffDegree) throws NoArrivalException {
+        if (getPhaseSegments().size() == 0) {
+            throw new NoArrivalException("No phase segments for "+getName());
+        }
         double takeoffVelocity;
         VelocityModel vMod = getTauModel().getVelocityModel();
         VelocityModelMaterial material = getPhaseSegments().get(0).isPWave ? VelocityModelMaterial.P_VELOCITY : VelocityModelMaterial.S_VELOCITY;

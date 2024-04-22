@@ -370,8 +370,11 @@ public class ScatteredSeismicPhase implements SeismicPhase {
     }
 
     @Override
-    public double calcRayParamForTakeoffAngle(double takeoffDegree) {
-        return inboundArrival.getRayParam();
+    public double calcRayParamForTakeoffAngle(double takeoffDegree) throws NoArrivalException {
+        if (takeoffDegree == inboundArrival.getTakeoffAngle()) {
+            return inboundArrival.getRayParam();
+        }
+        throw new NoArrivalException("Scattered phase cannot have arbitrary takeoff angle: "+getName());
     }
 
     @Override
