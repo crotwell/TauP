@@ -124,6 +124,7 @@ public class ReflTransTest {
         assertEquals(cosBotVp, cos_i2,1e-6);
         assertEquals(cosBotVs, cos_j2, 1e-6);
         // energy inbound s wave
+        assertEquals(topDensity*topVs*cos_j1, coeff.inboundEnergyS(flatRP));
         assertEquals(topDensity*topVs*cos_j1,
                 topDensity*topVp*cos_i1*coeff.getRsp(flatRP)*coeff.getRsp(flatRP)
                         + topDensity*topVs*cos_j1*coeff.getRss(flatRP)*coeff.getRss(flatRP)
@@ -132,6 +133,7 @@ public class ReflTransTest {
                 0.0001, "in S wave energy flux");
 
         // energy inbound p wave
+        assertEquals(topDensity*topVp*cos_i1, coeff.inboundEnergyP(flatRP));
         assertEquals(topDensity*topVp*cos_i1,
                     topDensity*topVp*cos_i1*coeff.getRpp(flatRP)*coeff.getRpp(flatRP)
                         + topDensity*topVs*cos_j1*coeff.getRps(flatRP)*coeff.getRps(flatRP)
@@ -185,6 +187,14 @@ public class ReflTransTest {
                     1e-6,
                     "flatrp="+flatRP
             );
+            assertEquals(coeff.inboundEnergyP(flatRP),
+                    coeff.getEnergyFluxRpp(flatRP)
+                            + coeff.getEnergyFluxRps(flatRP)
+                            + coeff.getEnergyFluxTpp(flatRP)
+                            + coeff.getEnergyFluxTps(flatRP),
+                    1e-6,
+                    "flatrp="+flatRP
+            );
             // energy in s wave
             assertEquals(topDensity * topVs * cosTopVs,
                     topDensity * topVp * cosTopVp * Rsp_calc * Rsp_calc
@@ -194,12 +204,26 @@ public class ReflTransTest {
                     1e-6,
                     "flatrp="+flatRP
             );
+            assertEquals(coeff.inboundEnergyS(flatRP),
+                    coeff.getEnergyFluxRsp(flatRP)
+                            + coeff.getEnergyFluxRss(flatRP)
+                            + coeff.getEnergyFluxTsp(flatRP)
+                            + coeff.getEnergyFluxTss(flatRP),
+                    1e-6,
+                    "flatrp="+flatRP
+            );
             // energy in sh wave
             double Rshsh_calc = coeff.getRshsh(flatRP);
             double Tshsh_calc = coeff.getTshsh(flatRP);
             assertEquals(topDensity * topVs * cosTopVs,
                             + topDensity * topVs * cosTopVs * Rshsh_calc * Rshsh_calc
                             + botDensity * botVs * cosBotVs * Tshsh_calc * Tshsh_calc,
+                    1e-6,
+                    "flatrp="+flatRP
+            );
+            assertEquals(coeff.inboundEnergyS(flatRP),
+                    + coeff.getEnergyFluxRshsh(flatRP)
+                            + coeff.getEnergyFluxTshsh(flatRP),
                     1e-6,
                     "flatrp="+flatRP
             );

@@ -12,7 +12,7 @@ public enum ReflTransAxisType {
     Tsp,
     Tss,
     Rshsh,
-    Tshsh;
+    Tshsh, RppEnergy, TppEnergy, RpsEnergy, TpsEnergy, RspEnergy, TspEnergy, RssEnergy, TssEnergy, RshshEnergy, TshshEnergy, RpAngle, RsAngle, TpAngle, TsAngle;
     public static final List<ReflTransAxisType> inpwave = List.of(Rpp, Rps, Tpp, Tps);
     public static final List<ReflTransAxisType> insvwave = List.of(Rsp, Rss, Tsp, Tss);
     public static final List<ReflTransAxisType> allSh = List.of(Rshsh, Tshsh);
