@@ -5,28 +5,23 @@ import edu.sc.seis.seisFile.Location;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RayParamRay extends RayCalculateable {
+public class RayParamRay extends ShootableRay {
 
     public RayParamRay(RayParamRay rpr) {
         this.rayParam = rpr.getRayParam();
     }
 
-    public RayParamRay(Double rayParam) {
+    public RayParamRay(double rayParam) {
         this.rayParam = rayParam;
     }
 
-    public static RayParamRay ofRayParam(Double d) {
+    public static RayParamRay ofRayParam(double d) {
         RayParamRay ray = new RayParamRay(d);
         return ray;
     }
-    public static RayParamRay ofRayParamSDegree(Double d) {
+    public static RayParamRay ofRayParamSDegree(double d) {
         RayParamRay ray =  RayParamRay.ofRayParam(d/SphericalCoords.dtor);
         return ray;
-    }
-
-    public void withEventAzimuth(Location evt, double azimuth) {
-        this.evtLatLon = evt;
-        this.azimuth = azimuth;
     }
 
     @Override
@@ -50,24 +45,8 @@ public class RayParamRay extends RayCalculateable {
     }
 
 
-    @Override
-    public LatLonable getLatLonable() {
-        if (isLatLonable()) {
-            return new EventAzimuth(evtLatLon, azimuth);
-        }
-        return null;
-    }
-
-    @Override
-    public boolean isLatLonable() {
-        return evtLatLon != null && azimuth != null;
-    }
-
     /**
      * Ray parameter in s/radian.
      */
     Double rayParam;
-    Location evtLatLon;
-    Double azimuth;
-
 }

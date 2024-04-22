@@ -69,41 +69,62 @@ public class DistanceArgs {
         return out;
     }
 
+    public List<RayParamKmRay> getRayParamKmRays() {
+        List<RayParamKmRay> rpList = new ArrayList<>();
+        for (Double d : distArgs.shootKmRaypList) {
+            if (hasEventLatLon() && !hasStationLatLon() && getAzimuth() != null) {
+                if (distArgs.geodetic) {
+                    throw new RuntimeException("geodetic not yet...");
+                } else {
+                    for (Location evt : distArgs.eventList) {
+                        RayParamKmRay evtDr = new RayParamKmRay(d);
+                        evtDr.withEventAzimuth(evt, getAzimuth());
+                        rpList.add(evtDr);
+                    }
+                }
+            } else if (!hasEventLatLon() && hasStationLatLon() && getBackAzimuth() != null) {
+                if (distArgs.geodetic) {
+                    throw new RuntimeException("geodetic not yet...");
+                } else {
+                    for (Location sta : distArgs.stationList) {
+                        RayParamKmRay staDr = new RayParamKmRay(d);
+                        staDr.withStationBackAzimuth(sta, getBackAzimuth());
+                        rpList.add(staDr);
+                    }
+                }
+            } else {
+                rpList.add(new RayParamKmRay(d));
+            }
+        }
+        return rpList;
+    }
+
     public List<RayParamRay> getRayParamRays() {
         List<RayParamRay> rpList = new ArrayList<>();
         for (Double d : distArgs.shootRaypList) {
-            rpList.add(RayParamRay.ofRayParamSDegree(d));
-        }
-        if (hasEventLatLon() && !hasStationLatLon() && getAzimuth() != null) {
-            if (distArgs.geodetic) {
-                throw new RuntimeException("geodetic not yet...");
-            } else {
-                List<RayParamRay> evtOut = new ArrayList<>();
-                for (RayParamRay dr : rpList) {
+            if (hasEventLatLon() && !hasStationLatLon() && getAzimuth() != null) {
+                if (distArgs.geodetic) {
+                    throw new RuntimeException("geodetic not yet...");
+                } else {
                     for (Location evt : distArgs.eventList) {
-                        RayParamRay evtDr = new RayParamRay(dr);
+                        RayParamRay evtDr = RayParamRay.ofRayParamSDegree(d);
                         evtDr.withEventAzimuth(evt, getAzimuth());
-                        evtOut.add(dr);
+                        rpList.add(evtDr);
                     }
                 }
-                rpList = evtOut;
-            }
-
-        } else if ( ! hasEventLatLon() && hasStationLatLon() && getBackAzimuth() != null) {
-            List<RayParamRay> staOut = new ArrayList<>();
-            for (RayParamRay dr : rpList) {
-                if (dr.isLatLonable()) {
-                    // already enough info, so just add
-                    staOut.add(dr);
+            } else if (!hasEventLatLon() && hasStationLatLon() && getBackAzimuth() != null) {
+                if (distArgs.geodetic) {
+                    throw new RuntimeException("geodetic not yet...");
+                } else {
+                    for (Location sta : distArgs.stationList) {
+                        RayParamRay staDr = RayParamRay.ofRayParamSDegree(d);
+                        staDr.withStationBackAzimuth(sta, getBackAzimuth());
+                        rpList.add(staDr);
+                    }
                 }
-                for (Location evt : distArgs.eventList) {
-                    RayParamRay evtDr = new RayParamRay(dr);
-                    evtDr.withEventAzimuth(evt, getAzimuth());
-                    staOut.add(dr);
-                }
-
+            } else {
+                rpList.add(RayParamRay.ofRayParamSDegree(d));
             }
-            rpList = staOut;
         }
         return rpList;
     }
@@ -111,44 +132,38 @@ public class DistanceArgs {
     public List<TakeoffAngleRay> getTakeoffAngleRays() {
         List<TakeoffAngleRay> rpList = new ArrayList<>();
         for (Double d : distArgs.takeoffAngle) {
-            rpList.add(TakeoffAngleRay.ofTakeoffAngle(d));
-        }
-        if (hasEventLatLon() && !hasStationLatLon() && getAzimuth() != null) {
-            if (distArgs.geodetic) {
-                throw new RuntimeException("geodetic not yet...");
-            } else {
-                List<TakeoffAngleRay> evtOut = new ArrayList<>();
-                for (TakeoffAngleRay dr : rpList) {
+            if (hasEventLatLon() && !hasStationLatLon() && getAzimuth() != null) {
+                if (distArgs.geodetic) {
+                    throw new RuntimeException("geodetic not yet...");
+                } else {
                     for (Location evt : distArgs.eventList) {
-                        TakeoffAngleRay evtDr = new TakeoffAngleRay(dr);
+                        TakeoffAngleRay evtDr = new TakeoffAngleRay(d);
                         evtDr.withEventAzimuth(evt, getAzimuth());
-                        evtOut.add(dr);
+                        rpList.add(evtDr);
                     }
                 }
-                rpList = evtOut;
-            }
-        } else if ( ! hasEventLatLon() && hasStationLatLon() && getBackAzimuth() != null) {
-            List<TakeoffAngleRay> staOut = new ArrayList<>();
-            for (TakeoffAngleRay dr : rpList) {
-                if (dr.isLatLong()) {
-                    // already enough info, so just add
-                    staOut.add(dr);
+            } else if (!hasEventLatLon() && hasStationLatLon() && getBackAzimuth() != null) {
+                if (distArgs.geodetic) {
+                    throw new RuntimeException("geodetic not yet...");
+                } else {
+                    for (Location sta : distArgs.stationList) {
+                        TakeoffAngleRay staDr = new TakeoffAngleRay(d);
+                        staDr.withStationBackAzimuth(sta, getBackAzimuth());
+                        rpList.add(staDr);
+                    }
                 }
-                for (Location evt : distArgs.eventList) {
-                    TakeoffAngleRay evtDr = new TakeoffAngleRay(dr);
-                    evtDr.withEventAzimuth(evt, getAzimuth());
-                    staOut.add(dr);
-                }
-
+            } else {
+                rpList.add(TakeoffAngleRay.ofTakeoffAngle(d));
             }
-            rpList = staOut;
         }
         return rpList;
     }
+
     public List<RayCalculateable> getRayCalculatables() {
         List<RayCalculateable> out = new ArrayList<>();
         out.addAll(getDistances());
         out.addAll(getRayParamRays());
+        out.addAll(getRayParamKmRays());
         out.addAll(getTakeoffAngleRays());
         return out;
     }
@@ -201,6 +216,10 @@ public class DistanceArgs {
         distArgs.shootRaypList = rayParamList;
     }
 
+    public void setShootRayParamKM(List<Double> rayParamKMList) {
+        distArgs.shootKmRaypList = rayParamKMList;
+    }
+
     public void clear() {
         distArgs.stationList.clear();
         distArgs.eventList.clear();
@@ -208,6 +227,7 @@ public class DistanceArgs {
         distArgs.degreesList.clear();
         distArgs.distKilometersList.clear();
         distArgs.shootRaypList.clear();
+        distArgs.shootKmRaypList.clear();
     }
 
 
@@ -249,10 +269,15 @@ public class DistanceArgs {
                 description="takeoff angle in degrees from the source zero is down, 90 horizontal, 180 is up")
         protected List<Double> takeoffAngle = new ArrayList<Double>();
 
-        @CommandLine.Option(names={"--shoot", "--shootray"},
-                description="ray parameter from the source in s/deg up or down is determined by the phase",
+        @CommandLine.Option(names={"--shoot", "--rayparamdeg"},
+                description="ray parameter from the source in s/deg, up or down is determined by the phase",
                 split=",")
         protected List<Double> shootRaypList = new ArrayList<Double>();
+
+        @CommandLine.Option(names={"--rayparamkm"},
+                description="ray parameter from the source in s/km, up or down is determined by the phase",
+                split=",")
+        protected List<Double> shootKmRaypList = new ArrayList<Double>();
 
         @Option(names={"--sta", "--station"},
                 arity="2",

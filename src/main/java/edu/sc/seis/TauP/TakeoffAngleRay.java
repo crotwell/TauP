@@ -5,7 +5,7 @@ import edu.sc.seis.seisFile.Location;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TakeoffAngleRay extends RayCalculateable {
+public class TakeoffAngleRay extends ShootableRay {
 
     public TakeoffAngleRay(Double takeoffAngle) {
         this.takeoffAngle = takeoffAngle;
@@ -18,26 +18,6 @@ public class TakeoffAngleRay extends RayCalculateable {
     public static TakeoffAngleRay ofTakeoffAngle(Double d) {
         TakeoffAngleRay takeoffRay = new TakeoffAngleRay(d);
         return takeoffRay;
-    }
-
-
-
-    public void withEventAzimuth(Location evt, double azimuth) {
-        this.evtLatLon = evt;
-        this.azimuth = azimuth;
-    }
-
-    @Override
-    public boolean isLatLonable() {
-        return evtLatLon != null && azimuth != null;
-    }
-
-    @Override
-    public LatLonable getLatLonable() {
-        if (isLatLonable()) {
-            return new EventAzimuth(evtLatLon, azimuth);
-        }
-        return null;
     }
 
     @Override
@@ -62,10 +42,5 @@ public class TakeoffAngleRay extends RayCalculateable {
 
 
     Double takeoffAngle;
-    Location evtLatLon;
-    Double azimuth;
 
-    public boolean isLatLong() {
-        return evtLatLon != null && azimuth != null;
-    }
 }

@@ -14,8 +14,6 @@ public class DistanceRay extends RayCalculateable {
           kilometers = dr.kilometers;
           staLatLon = dr.staLatLon;
           evtLatLon = dr.evtLatLon;
-          lat = dr.lat;
-          lon = dr.lon;
           azimuth = dr.azimuth;
           backAzimuth = dr.backAzimuth;
           geodetic = dr.geodetic;
@@ -48,17 +46,6 @@ public class DistanceRay extends RayCalculateable {
         return val;
     }
 
-    public void withEventAzimuth(Location evt, double azimuth) {
-        this.evtLatLon = evt;
-        this.azimuth = azimuth;
-        this.backAzimuth = null;
-    }
-
-    public void withStationBackAzimuth(Location sta, double backazimuth) {
-        this.staLatLon = sta;
-        this.azimuth = null;
-        this.backAzimuth = backazimuth;
-    }
 
     public static DistanceRay ofGeodeticStationEvent(Location sta, Location evt, double flattening) {
         DistAz distAz = new DistAz(sta, evt, flattening);
@@ -103,7 +90,8 @@ public class DistanceRay extends RayCalculateable {
 
     @Override
     public boolean isLatLonable() {
-        return (staLatLon != null && evtLatLon != null) || (staLatLon != null && backAzimuth != null) || (evtLatLon != null && azimuth != null);
+        return (staLatLon != null && evtLatLon != null) || (staLatLon != null && backAzimuth != null)
+                || (evtLatLon != null && azimuth != null);
     }
 
     @Override
@@ -121,14 +109,6 @@ public class DistanceRay extends RayCalculateable {
     protected Double radians = null;
     protected Double degrees = null;
     protected Double kilometers = null;
-    protected Location staLatLon = null;
-    protected Location evtLatLon = null;
-    protected Double lat = null;
-    protected Double lon = null;
-    protected Double azimuth = null;
-    protected Double backAzimuth = null;
-    protected boolean geodetic = false;
-    protected Double flattening = null;
 
     protected DistanceArgs args = null;
 }
