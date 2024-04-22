@@ -1,11 +1,12 @@
-Usage: taup version [--debug] [--help] [--verbose] [--prop=<toolPropsFilename>]
-                    [--text | --json]
+Usage: taup version [--debug] [--help] [--verbose] [-o=<outFile>]
+                    [--prop=<toolPropsFilename>] [--text | --json]
 print version
-      --debug     enable debugging output
-      --help      display this help message
+      --debug              enable debugging output
+      --help               display this help message
+  -o, --output=<outFile>   output to file, default is stdout.
       --prop=<toolPropsFilename>
-                  load defaults from properties file
-      --verbose   enable verbose output
+                           load defaults from properties file
+      --verbose            enable verbose output
 Output Type
-      --json      outputs as JSON
-      --text      outputs as text
+      --json               outputs as JSON
+      --text               outputs as text

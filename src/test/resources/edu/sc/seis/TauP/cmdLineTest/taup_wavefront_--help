@@ -39,7 +39,7 @@ plot wavefronts of seismic phases at steps in time
                             y axis type, the depth/radius axis, one of depth,
                               radius
 Model Args
-  -h, --sourcedepth=<sourceDepth>
+  -h, --evdepth, --sourcedepth=<sourceDepth>
                             source depth in km
       --mod, --model=<modelname>
                             use velocity model "modelname" for calculations
@@ -47,7 +47,8 @@ Model Args
       --scat, --scatter=s s scattering depth and distance in degrees, which may
                               be negative. Only effects phases with 'o' or 'O'
                               in the phase name.
-      --stadepth=depth      the receiver depth in km for stations not at the
+      --stadepth, --receiverdepth=depth
+                            the receiver depth in km for stations not at the
                               surface
 Output Type
       --gmt                 outputs as GMT

@@ -373,7 +373,7 @@ circle.discontinuity.iocb {
 <g transform="translate(7008.1,7008.1)" >
 <!-- scale/translate so zoomed in on area of interest -->
 <g transform="scale(1.7038383,1.7038383)" >
-<g transform="translate(-3137.0083,2631.7954)" >
+<g transform="translate(-3177.582,2631.7954)" >
 <g class="ticks">
 <!-- draw surface and label distances.-->
 <!-- tick marks every 10.0 degrees to 180.0.-->
@@ -465,7 +465,7 @@ circle.discontinuity.iocb {
       <desc>Time  100.00</desc>
     <g>
       <desc>seg 0/8 P of P at   100.00</desc>
-      <polyline class="path phase_P pwave time_100_00" points="
+      <polyline class="wavefront phase_P pwave time_100_00" points="
   579.78  -6344.56
   579.15  -6330.19
   579.51  -6340.97
@@ -473,7 +473,7 @@ circle.discontinuity.iocb {
     </g>
     <g>
       <desc>seg 0/8 P of P at   100.00</desc>
-      <polyline class="path phase_P pwave time_100_00" points="
+      <polyline class="wavefront phase_P pwave time_100_00" points="
   635.89  -6339.19
   642.71  -6321.76
   643.40  -6307.87
@@ -482,7 +482,7 @@ circle.discontinuity.iocb {
     </g>
     <g>
       <desc>seg 0/8 P of P at   100.00</desc>
-      <polyline class="path phase_P pwave time_100_00" points="
+      <polyline class="wavefront phase_P pwave time_100_00" points="
   755.98  -6325.99
   764.47  -6314.85
   781.52  -6280.84
@@ -683,7 +683,7 @@ circle.discontinuity.iocb {
     </g>
     <g>
       <desc>seg 0/15 S of S at   100.00</desc>
-      <polyline class="path phase_S swave time_100_00" points="
+      <polyline class="wavefront phase_S swave time_100_00" points="
   346.00  -6361.01
   345.75  -6348.45
   345.47  -6341.81
@@ -693,7 +693,7 @@ circle.discontinuity.iocb {
     </g>
     <g>
       <desc>seg 0/15 S of S at   100.00</desc>
-      <polyline class="path phase_S swave time_100_00" points="
+      <polyline class="wavefront phase_S swave time_100_00" points="
   371.27  -6360.17
   379.85  -6337.60
   379.64  -6333.01
@@ -706,7 +706,7 @@ circle.discontinuity.iocb {
     </g>
     <g>
       <desc>seg 0/15 S of S at   100.00</desc>
-      <polyline class="path phase_S swave time_100_00" points="
+      <polyline class="wavefront phase_S swave time_100_00" points="
   407.30  -6357.97
   430.49  -6319.06
   430.20  -6312.50
@@ -964,7 +964,7 @@ circle.discontinuity.iocb {
     </g>
     <g>
       <desc>seg 0/8 P of P at   100.00</desc>
-      <polyline class="path phase_P pwave time_100_00" points="
+      <polyline class="wavefront phase_P pwave time_100_00" points="
   807.15  -6272.07
   819.81  -6202.23
   820.32  -6199.40
@@ -1148,7 +1148,7 @@ circle.discontinuity.iocb {
       <desc>Time  200.00</desc>
     <g>
       <desc>seg 0/8 P of P at   200.00</desc>
-      <polyline class="path phase_P pwave time_200_00" points="
+      <polyline class="wavefront phase_P pwave time_200_00" points="
  1554.10  -6178.55
  1574.66  -6130.54
  1572.38  -6112.72
@@ -1343,21 +1343,21 @@ circle.discontinuity.iocb {
     </g>
     <g>
       <desc>seg 0/15 S of S at   200.00</desc>
-      <polyline class="path phase_S swave time_200_00" points="
+      <polyline class="wavefront phase_S swave time_200_00" points="
   691.45  -6333.37
   690.91  -6322.35
 " />
     </g>
     <g>
       <desc>seg 0/15 S of S at   200.00</desc>
-      <polyline class="path phase_S swave time_200_00" points="
+      <polyline class="wavefront phase_S swave time_200_00" points="
   756.25  -6325.96
   763.18  -6297.44
 " />
     </g>
     <g>
       <desc>seg 0/15 S of S at   200.00</desc>
-      <polyline class="path phase_S swave time_200_00" points="
+      <polyline class="wavefront phase_S swave time_200_00" points="
   856.31  -6313.19
   876.79  -6269.92
   875.64  -6252.87
@@ -1613,7 +1613,7 @@ circle.discontinuity.iocb {
     </g>
     <g>
       <desc>seg 0/8 P of P at   200.00</desc>
-      <polyline class="path phase_P pwave time_200_00" points="
+      <polyline class="wavefront phase_P pwave time_200_00" points="
  1630.23  -6158.89
  1635.44  -6151.57
  1637.97  -6148.02
@@ -1779,7 +1779,7 @@ circle.discontinuity.iocb {
       <desc>Time  300.00</desc>
     <g>
       <desc>seg 0/8 P of P at   300.00</desc>
-      <polyline class="path phase_P pwave time_300_00" points="
+      <polyline class="wavefront phase_P pwave time_300_00" points="
  2442.17  -5884.34
  2466.32  -5846.52
  2468.42  -5842.70
@@ -1908,7 +1908,7 @@ circle.discontinuity.iocb {
     </g>
     <g>
       <desc>seg 0/15 S of S at   300.00</desc>
-      <polyline class="path phase_S swave time_300_00" points="
+      <polyline class="wavefront phase_S swave time_300_00" points="
  1302.61  -6236.41
  1317.10  -6207.66
  1319.62  -6179.94
@@ -2162,7 +2162,7 @@ circle.discontinuity.iocb {
     </g>
     <g>
       <desc>seg 0/8 P of P at   300.00</desc>
-      <polyline class="path phase_P pwave time_300_00" points="
+      <polyline class="wavefront phase_P pwave time_300_00" points="
  2602.11  -5815.38
  2610.48  -5802.87
  2632.84  -5766.86
@@ -2285,7 +2285,7 @@ circle.discontinuity.iocb {
       <desc>Time  400.00</desc>
     <g>
       <desc>seg 0/8 P of P at   400.00</desc>
-      <polyline class="path phase_P pwave time_400_00" points="
+      <polyline class="wavefront phase_P pwave time_400_00" points="
  3521.65  -5309.20
  3521.97  -5308.64
  3578.38  -5167.63
@@ -2390,7 +2390,7 @@ circle.discontinuity.iocb {
     </g>
     <g>
       <desc>seg 0/15 S of S at   400.00</desc>
-      <polyline class="path phase_S swave time_400_00" points="
+      <polyline class="wavefront phase_S swave time_400_00" points="
  1745.01  -6127.36
  1745.74  -6125.80
  1760.28  -6078.40
@@ -2436,7 +2436,7 @@ circle.discontinuity.iocb {
     </g>
     <g>
       <desc>seg 0/15 S of S at   400.00</desc>
-      <polyline class="path phase_S swave time_400_00" points="
+      <polyline class="wavefront phase_S swave time_400_00" points="
  1670.18  -6148.18
  1709.50  -6070.34
  1724.02  -6024.28
@@ -2644,7 +2644,7 @@ circle.discontinuity.iocb {
     </g>
     <g>
       <desc>seg 0/8 P of P at   400.00</desc>
-      <polyline class="path phase_P pwave time_400_00" points="
+      <polyline class="wavefront phase_P pwave time_400_00" points="
  3725.86  -5167.94
  3737.16  -5146.40
  3763.46  -5084.67
@@ -2749,7 +2749,7 @@ circle.discontinuity.iocb {
       <desc>Time  500.00</desc>
     <g>
       <desc>seg 0/8 P of P at   500.00</desc>
-      <polyline class="path phase_P pwave time_500_00" points="
+      <polyline class="wavefront phase_P pwave time_500_00" points="
  4549.12  -4460.40
  4554.87  -4444.50
  4578.25  -4360.94
@@ -2832,7 +2832,7 @@ circle.discontinuity.iocb {
     </g>
     <g>
       <desc>seg 0/15 S of S at   500.00</desc>
-      <polyline class="path phase_S swave time_500_00" points="
+      <polyline class="wavefront phase_S swave time_500_00" points="
  2181.98  -5985.70
  2182.94  -5983.26
  2193.96  -5930.51
@@ -3040,7 +3040,7 @@ circle.discontinuity.iocb {
     </g>
     <g>
       <desc>seg 0/8 P of P at   500.00</desc>
-      <polyline class="path phase_P pwave time_500_00" points="
+      <polyline class="wavefront phase_P pwave time_500_00" points="
  4747.02  -4249.17
  4769.08  -4177.03
  4770.33  -4172.28
@@ -3121,7 +3121,7 @@ circle.discontinuity.iocb {
       <desc>Time  600.00</desc>
     <g>
       <desc>seg 0/8 P of P at   600.00</desc>
-      <polyline class="path phase_P pwave time_600_00" points="
+      <polyline class="wavefront phase_P pwave time_600_00" points="
  5462.71  -3278.48
  5473.32  -3210.84
  5476.04  -3175.92
@@ -3183,7 +3183,7 @@ circle.discontinuity.iocb {
     </g>
     <g>
       <desc>seg 0/15 S of S at   600.00</desc>
-      <polyline class="path phase_S swave time_600_00" points="
+      <polyline class="wavefront phase_S swave time_600_00" points="
  2611.79  -5811.04
  2619.57  -5786.79
  2725.19  -5758.73
@@ -3330,7 +3330,7 @@ circle.discontinuity.iocb {
     </g>
     <g>
       <desc>seg 0/8 P of P at   600.00</desc>
-      <polyline class="path phase_P pwave time_600_00" points="
+      <polyline class="wavefront phase_P pwave time_600_00" points="
  5634.18  -2974.16
  5643.62  -2848.13
  5643.12  -2832.14
@@ -3390,7 +3390,7 @@ circle.discontinuity.iocb {
       <desc>Time  700.00</desc>
     <g>
       <desc>seg 0/8 P of P at   700.00</desc>
-      <polyline class="path phase_P pwave time_700_00" points="
+      <polyline class="wavefront phase_P pwave time_700_00" points="
  6146.17  -1677.56
  6145.62  -1664.99
  6145.21  -1655.26
@@ -3433,7 +3433,7 @@ circle.discontinuity.iocb {
     </g>
     <g>
       <desc>seg 0/15 S of S at   700.00</desc>
-      <polyline class="path phase_S swave time_700_00" points="
+      <polyline class="wavefront phase_S swave time_700_00" points="
  3388.79  -5394.97
  3424.06  -5321.53
  3462.16  -5200.36
@@ -3563,7 +3563,7 @@ circle.discontinuity.iocb {
     </g>
     <g>
       <desc>seg 0/8 P of P at   700.00</desc>
-      <polyline class="path phase_P pwave time_700_00" points="
+      <polyline class="wavefront phase_P pwave time_700_00" points="
  6247.65  -1247.61
  6243.13  -1200.08
  6225.94  -1093.60
@@ -3600,7 +3600,7 @@ circle.discontinuity.iocb {
       <desc>Time  800.00</desc>
     <g>
       <desc>seg 0/8 P of P at   800.00</desc>
-      <polyline class="path phase_P pwave time_800_00" points="
+      <polyline class="wavefront phase_P pwave time_800_00" points="
  6352.31    487.59
  6342.59    516.81
  6337.18    532.92
@@ -3613,7 +3613,7 @@ circle.discontinuity.iocb {
     </g>
     <g>
       <desc>seg 0/15 S of S at   800.00</desc>
-      <polyline class="path phase_S swave time_800_00" points="
+      <polyline class="wavefront phase_S swave time_800_00" points="
  3978.71  -4975.89
  4014.39  -4869.14
  4035.38  -4773.82
@@ -3741,7 +3741,7 @@ circle.discontinuity.iocb {
       <desc>Time  900.00</desc>
     <g>
       <desc>seg 0/15 S of S at   900.00</desc>
-      <polyline class="path phase_S swave time_900_00" points="
+      <polyline class="wavefront phase_S swave time_900_00" points="
  4537.47  -4472.25
  4560.56  -4385.23
  4572.20  -4301.16
@@ -3863,7 +3863,7 @@ circle.discontinuity.iocb {
       <desc>Time 1000.00</desc>
     <g>
       <desc>seg 0/15 S of S at  1000.00</desc>
-      <polyline class="path phase_S swave time_1000_00" points="
+      <polyline class="wavefront phase_S swave time_1000_00" points="
  5056.14  -3876.22
  5060.57  -3855.75
  5062.15  -3848.39
@@ -3970,7 +3970,7 @@ circle.discontinuity.iocb {
       <desc>Time 1100.00</desc>
     <g>
       <desc>seg 0/15 S of S at  1100.00</desc>
-      <polyline class="path phase_S swave time_1100_00" points="
+      <polyline class="wavefront phase_S swave time_1100_00" points="
  5520.87  -3179.57
  5525.56  -3136.02
  5526.65  -3059.15
@@ -4058,7 +4058,7 @@ circle.discontinuity.iocb {
       <desc>Time 1200.00</desc>
     <g>
       <desc>seg 0/15 S of S at  1200.00</desc>
-      <polyline class="path phase_S swave time_1200_00" points="
+      <polyline class="wavefront phase_S swave time_1200_00" points="
  5912.34  -2373.58
  5912.34  -2372.15
  5911.20  -2300.72
@@ -4131,7 +4131,7 @@ circle.discontinuity.iocb {
       <desc>Time 1300.00</desc>
     <g>
       <desc>seg 0/15 S of S at  1300.00</desc>
-      <polyline class="path phase_S swave time_1300_00" points="
+      <polyline class="wavefront phase_S swave time_1300_00" points="
  6204.57  -1446.70
  6200.77  -1415.17
  6193.75  -1366.46
@@ -4182,7 +4182,7 @@ circle.discontinuity.iocb {
       <desc>Time 1400.00</desc>
     <g>
       <desc>seg 0/15 S of S at  1400.00</desc>
-      <polyline class="path phase_S swave time_1400_00" points="
+      <polyline class="wavefront phase_S swave time_1400_00" points="
  6359.52   -382.24
  6355.50   -366.40
  6348.38   -338.65
@@ -4218,7 +4218,7 @@ circle.discontinuity.iocb {
       <desc>Time 1500.00</desc>
     <g>
       <desc>seg 0/15 S of S at  1500.00</desc>
-      <polyline class="path phase_S swave time_1500_00" points="
+      <polyline class="wavefront phase_S swave time_1500_00" points="
  6314.65    845.51
  6285.06    914.01
  6256.99    971.10

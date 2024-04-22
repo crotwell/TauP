@@ -208,7 +208,7 @@ circle.discontinuity.iocb {
 <g transform="translate(7008.1,7008.1)" >
 <!-- scale/translate so zoomed in on area of interest -->
 <g transform="scale(1.0,1.0)" >
-<g transform="translate(0.0,0.0)" >
+<g transform="translate(-0.0,0.0)" >
 <g class="ticks">
 <!-- draw surface and label distances.-->
 <!-- tick marks every 30.0 degrees to 180.0.-->

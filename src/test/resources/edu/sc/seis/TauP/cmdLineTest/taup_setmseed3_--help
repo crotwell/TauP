@@ -1,20 +1,21 @@
 Usage: taup setmseed3 [--amp] [--debug] [--first] [--geodetic] [--help]
                       [--rayp] [--time] [--verbose] [--az=<azimuth>]
                       [--baz=<backAzimuth>] [--eh=<ehKey>]
-                      [--ellipflattening=<ellipflattening>]
+                      [--ellipflattening=<ellipflattening>] [-o=<outFile>]
                       [--prop=<toolPropsFilename>] [--qml=<quakemlFilename>]
                       [--qmltol=<quakeOTimeTol>]
                       [--staxml=<stationxmlFilename>] [--deg=d[,d...]]...
                       [--exactdegree=d[,d...]]... [--exactkilometer=km[,
                       km...]]... [--km=km[,km...]]... [-p=<phaseNames>[,
-                      <phaseNames>...]]... [--rel=<relativePhaseName>[,
+                      <phaseNames>...]]... [--rayparamkm=<shootKmRaypList>[,
+                      <shootKmRaypList>...]]... [--rel=<relativePhaseName>[,
                       <relativePhaseName>...]]... [--shoot=<shootRaypList>[,
-                      <shootRaypList>...]]... [--takeoff=<takeoffAngle>]...
-                      [--evt=<eventLatLon> <eventLatLon>]...
-                      [--sta=<stationLatLon> <stationLatLon>]...
-                      [[--mod=<modelname>] [-h=<sourceDepth>]
-                      [--stadepth=depth] [--scat=s s]...] [--text | --json]
-                      [<mseed3FileNames>...]
+                      <shootRaypList>...]]... [--takeoff=<takeoffAngle>[,
+                      <takeoffAngle>...]]... [--evt=<eventLatLon>
+                      <eventLatLon>]... [--sta=<stationLatLon>
+                      <stationLatLon>]... [[--mod=<modelname>]
+                      [-h=<sourceDepth>] [--stadepth=depth] [--scat=s s]...]
+                      [--text | --json] [<mseed3FileNames>...]
 save travel times in the extra header of miniseed3 files
       [<mseed3FileNames>...]
       --amp                  amplitude factor for each phase
@@ -24,6 +25,7 @@ save travel times in the extra header of miniseed3 files
       --first, --onlyfirst   only output the first arrival for each phase, no
                                triplications
       --help                 display this help message
+  -o, --output=<outFile>     output to file, default is stdout.
   -p, --ph, --phase=<phaseNames>[,<phaseNames>...]
                              seismic phase names
       --prop=<toolPropsFilename>
@@ -41,7 +43,7 @@ save travel times in the extra header of miniseed3 files
       --time, --onlytime     only output travel time
       --verbose              enable verbose output
 Model Args
-  -h, --sourcedepth=<sourceDepth>
+  -h, --evdepth, --sourcedepth=<sourceDepth>
                              source depth in km
       --mod, --model=<modelname>
                              use velocity model "modelname" for calculations
@@ -49,7 +51,8 @@ Model Args
       --scat, --scatter=s s  scattering depth and distance in degrees, which
                                may be negative. Only effects phases with 'o' or
                                'O' in the phase name.
-      --stadepth=depth       the receiver depth in km for stations not at the
+      --stadepth, --receiverdepth=depth
+                             the receiver depth in km for stations not at the
                                surface
 Distance is given by:
       --az=<azimuth>         azimuth in degrees
@@ -72,12 +75,15 @@ Distance is given by:
                                model.
       --km, --kilometer=km[,km...]
                              distance in kilometers
-      --shoot, --shootray=<shootRaypList>[,<shootRaypList>...]
-                             ray parameter from the source in s/deg up or down
+      --rayparamkm=<shootKmRaypList>[,<shootKmRaypList>...]
+                             ray parameter from the source in s/km, up or down
+                               is determined by the phase
+      --shoot, --rayparamdeg=<shootRaypList>[,<shootRaypList>...]
+                             ray parameter from the source in s/deg, up or down
                                is determined by the phase
       --sta, --station=<stationLatLon> <stationLatLon>
                              station latitude and longitude
-      --takeoff=<takeoffAngle>
+      --takeoff=<takeoffAngle>[,<takeoffAngle>...]
                              takeoff angle in degrees from the source zero is
                                down, 90 horizontal, 180 is up
 Output Type

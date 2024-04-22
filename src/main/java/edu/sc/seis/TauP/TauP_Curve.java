@@ -19,7 +19,7 @@ import java.util.List;
         usageHelpAutoWidth = true)
 public class TauP_Curve extends TauP_AbstractPhaseTool {
     public TauP_Curve() {
-        super(new GraphicOutputTypeArgs(OutputTypes.SVG, "taup_curve"));
+        super(new GraphicOutputTypeArgs(OutputTypes.TEXT, "taup_curve"));
         outputTypeArgs = (GraphicOutputTypeArgs)abstractOutputTypeArgs;
     }
 

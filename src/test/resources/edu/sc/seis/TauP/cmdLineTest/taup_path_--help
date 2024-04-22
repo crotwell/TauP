@@ -7,13 +7,14 @@ Usage: taup path [--debug] [--geodetic] [--help] [--onlynameddiscon]
                  [--xaxis=<distAxisType>] [--yaxis=<depthAxisType>] [--deg=d[,
                  d...]]... [--exactdegree=d[,d...]]... [--exactkilometer=km[,
                  km...]]... [--km=km[,km...]]... [-p=<phaseNames>[,
-                 <phaseNames>...]]... [--shoot=<shootRaypList>[,
-                 <shootRaypList>...]]... [--takeoff=<takeoffAngle>]...
-                 [--degminmax=deg deg] [--depthminmax=km km]
-                 [--evt=<eventLatLon> <eventLatLon>]... [--sta=<stationLatLon>
-                 <stationLatLon>]... [[--mod=<modelname>] [-h=<sourceDepth>]
-                 [--stadepth=depth] [--scat=s s]...] [--text | --json | --gmt |
-                 --svg]
+                 <phaseNames>...]]... [--rayparamkm=<shootKmRaypList>[,
+                 <shootKmRaypList>...]]... [--shoot=<shootRaypList>[,
+                 <shootRaypList>...]]... [--takeoff=<takeoffAngle>[,
+                 <takeoffAngle>...]]... [--degminmax=deg deg] [--depthminmax=km
+                 km] [--evt=<eventLatLon> <eventLatLon>]...
+                 [--sta=<stationLatLon> <stationLatLon>]...
+                 [[--mod=<modelname>] [-h=<sourceDepth>] [--stadepth=depth]
+                 [--scat=s s]...] [--text | --json | --gmt | --svg]
 plot ray paths through the earth
       --color=<coloring>    style of coloring for paths and wavefronts, one of
                               auto, wavetype, phase
@@ -43,7 +44,7 @@ plot ray paths through the earth
                             y axis type, the depth/radius axis, one of depth,
                               radius
 Model Args
-  -h, --sourcedepth=<sourceDepth>
+  -h, --evdepth, --sourcedepth=<sourceDepth>
                             source depth in km
       --mod, --model=<modelname>
                             use velocity model "modelname" for calculations
@@ -51,7 +52,8 @@ Model Args
       --scat, --scatter=s s scattering depth and distance in degrees, which may
                               be negative. Only effects phases with 'o' or 'O'
                               in the phase name.
-      --stadepth=depth      the receiver depth in km for stations not at the
+      --stadepth, --receiverdepth=depth
+                            the receiver depth in km for stations not at the
                               surface
 Distance is given by:
       --az=<azimuth>        azimuth in degrees
@@ -74,12 +76,15 @@ Distance is given by:
                               calculations are done in a purely spherical model.
       --km, --kilometer=km[,km...]
                             distance in kilometers
-      --shoot, --shootray=<shootRaypList>[,<shootRaypList>...]
-                            ray parameter from the source in s/deg up or down
+      --rayparamkm=<shootKmRaypList>[,<shootKmRaypList>...]
+                            ray parameter from the source in s/km, up or down
+                              is determined by the phase
+      --shoot, --rayparamdeg=<shootRaypList>[,<shootRaypList>...]
+                            ray parameter from the source in s/deg, up or down
                               is determined by the phase
       --sta, --station=<stationLatLon> <stationLatLon>
                             station latitude and longitude
-      --takeoff=<takeoffAngle>
+      --takeoff=<takeoffAngle>[,<takeoffAngle>...]
                             takeoff angle in degrees from the source zero is
                               down, 90 horizontal, 180 is up
 Output Type

@@ -47,7 +47,7 @@ plot traveltime and other curves for phases
       --ylog               Y axis is log
       --yminmax=y y        min and max y axis for plotting
 Model Args
-  -h, --sourcedepth=<sourceDepth>
+  -h, --evdepth, --sourcedepth=<sourceDepth>
                            source depth in km
       --mod, --model=<modelname>
                            use velocity model "modelname" for calculations
@@ -56,7 +56,8 @@ Model Args
                            scattering depth and distance in degrees, which may
                              be negative. Only effects phases with 'o' or 'O'
                              in the phase name.
-      --stadepth=depth     the receiver depth in km for stations not at the
+      --stadepth, --receiverdepth=depth
+                           the receiver depth in km for stations not at the
                              surface
 Output Type
       --gmt                outputs as GMT
