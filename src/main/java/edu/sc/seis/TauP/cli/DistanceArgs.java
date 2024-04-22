@@ -245,6 +245,7 @@ public class DistanceArgs {
 
 
         @Option(names="--takeoff",
+                split=",",
                 description="takeoff angle in degrees from the source zero is down, 90 horizontal, 180 is up")
         protected List<Double> takeoffAngle = new ArrayList<Double>();
 
