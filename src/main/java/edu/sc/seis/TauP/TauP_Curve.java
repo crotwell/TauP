@@ -21,19 +21,6 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
     public TauP_Curve() {
         super(new GraphicOutputTypeArgs(OutputTypes.SVG, "taup_curve"));
         outputTypeArgs = (GraphicOutputTypeArgs)abstractOutputTypeArgs;
-        setDefaultOutputFormat();
-        outputTypeArgs.setOutFileBase("taup_curve");
-    }
-
-    @Override
-    public String[] allowedOutputFormats() {
-        return new String[]{OutputTypes.TEXT, OutputTypes.JSON, OutputTypes.SVG, OutputTypes.CSV};
-    }
-
-    @Override
-    public void setDefaultOutputFormat() {
-        outputTypeArgs.setOutputType(OutputTypes.TEXT);
-        setOutputFormat(OutputTypes.TEXT);
     }
 
     /**
@@ -372,13 +359,13 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
         if (yAxisType == AxisType.turndepth) {
             xyOut.yAxisInvert = true;
         }
-        if (getOutputFormat().equalsIgnoreCase(OutputTypes.JSON)) {
+        if (outputTypeArgs.isJSON()) {
             xyOut.printAsJSON(writer, 2);
-        } else if (getOutputFormat().equalsIgnoreCase(OutputTypes.TEXT)) {
+        } else if (outputTypeArgs.isText()) {
             xyOut.printAsGmtText(writer);
-        } else if (getOutputFormat().equalsIgnoreCase(OutputTypes.GMT)) {
+        } else if (outputTypeArgs.isGMT()) {
             xyOut.printAsGmtScript(writer, outputTypeArgs, isLegend);
-        } else if (getOutputFormat().equalsIgnoreCase(OutputTypes.SVG)) {
+        } else if (outputTypeArgs.isSVG()) {
             String cssExtra = "";
             if (coloring.getColor() == ColorType.phase) {
                 cssExtra += SvgUtil.createPhaseColorCSS(Arrays.asList(getPhaseNames()));
@@ -388,7 +375,7 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
             }
             xyOut.printAsSvg(writer, cmdLineArgs, xAxisType.toString(), yAxisType.toString(), cssExtra, isLegend);
         } else {
-            throw new IllegalArgumentException("Unknown output format: " + getOutputFormat());
+            throw new IllegalArgumentException("Unknown output format: " + outputTypeArgs.getOutputFormat());
         }
         writer.flush();
     }
@@ -609,7 +596,7 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
 
     @Override
     public String getOutputFormat() {
-        return outputTypeArgs.getOuputFormat();
+        return outputTypeArgs.getOutputFormat();
     }
 
     @Override

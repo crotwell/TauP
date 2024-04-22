@@ -84,7 +84,6 @@ public class TauP_Create extends TauP_Tool {
                           e.getMessage());
             toolProps = new Properties();
         }
-        setDefaultOutputFormat();
     }
 
     /* Accessor methods */
@@ -308,15 +307,6 @@ public class TauP_Create extends TauP_Tool {
     public void destroy() throws TauPException {
         // TODO Auto-generated method stub
         
-    }
-
-    @Override
-    public String[] allowedOutputFormats() {
-        return new String[0] ;
-    }
-    @Override
-    public void setDefaultOutputFormat() {
-        // no op
     }
 
 }

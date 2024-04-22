@@ -17,7 +17,6 @@ public class TauP_PhaseDescribe extends TauP_AbstractPhaseTool {
     public TauP_PhaseDescribe() {
         super(new TextOutputTypeArgs(OutputTypes.TEXT, AbstractOutputTypeArgs.STDOUT_FILENAME));
         outputTypeArgs = (TextOutputTypeArgs)abstractOutputTypeArgs;
-        setDefaultOutputFormat();
     }
 
     /** Prints the command line arguments common to all TauP tools. */
@@ -41,23 +40,12 @@ public class TauP_PhaseDescribe extends TauP_AbstractPhaseTool {
 
     @Override
     public String getOutputFormat() {
-        return outputTypeArgs.getOuputFormat();
+        return outputTypeArgs.getOutputFormat();
     }
 
     @Override
     public void validateArguments() throws TauModelException {
 
-    }
-
-    @Override
-    public String[] allowedOutputFormats() {
-        String[] formats = {OutputTypes.TEXT, OutputTypes.JSON};
-        return formats;
-    }
-    @Override
-    public void setDefaultOutputFormat() {
-        setOutputFormat(OutputTypes.TEXT);
-        outputTypeArgs.setOutFileBase("stdout");
     }
 
     @Override

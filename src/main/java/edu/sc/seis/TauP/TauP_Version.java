@@ -16,17 +16,6 @@ public class TauP_Version extends TauP_Tool {
     public TauP_Version() {
         super(new TextOutputTypeArgs(OutputTypes.TEXT, AbstractOutputTypeArgs.STDOUT_FILENAME));
         outputTypeArgs = (TextOutputTypeArgs)abstractOutputTypeArgs;
-        setDefaultOutputFormat();
-    }
-    @Override
-    public String[] allowedOutputFormats() {
-        return new String[] {OutputTypes.TEXT, OutputTypes.JSON};
-    }
-
-    @Override
-    public void setDefaultOutputFormat() {
-        setOutputFormat(OutputTypes.TEXT);
-        outputTypeArgs.setOutFileBase("stdout");
     }
 
     @CommandLine.Mixin
@@ -34,7 +23,7 @@ public class TauP_Version extends TauP_Tool {
 
     @Override
     public String getOutputFormat() {
-        return outputTypeArgs.getOuputFormat();
+        return outputTypeArgs.getOutputFormat();
     }
 
     @Override

@@ -2,15 +2,13 @@ package edu.sc.seis.TauP.cli;
 
 import picocli.CommandLine;
 
-import java.io.*;
-
 import static edu.sc.seis.TauP.cli.OutputTypes.*;
 
 public class GraphicOutputTypeArgs extends AbstractOutputTypeArgs {
 
     public GraphicOutputTypeArgs(String defaultFormat, String filebase) {
         super(filebase);
-        setOutputType(defaultFormat);
+        setOutputFormat(defaultFormat);
     }
 
     @CommandLine.ArgGroup(exclusive=true, multiplicity="0..1", heading = "Output Type %n")
@@ -68,7 +66,7 @@ public class GraphicOutputTypeArgs extends AbstractOutputTypeArgs {
         return outputType._isJSON;
     }
 
-    public void setOutputType(String oType) {
+    public void setOutputFormat(String oType) {
         outputType._isText = false;
         outputType._isJSON = false;
         outputType._isGMT = false;
@@ -92,7 +90,7 @@ public class GraphicOutputTypeArgs extends AbstractOutputTypeArgs {
         }
     }
 
-    public String getOuputFormat() {
+    public String getOutputFormat() {
         if (isGMT()) return GMT;
         if (isSVG()) return SVG;
         if (isJSON()) return JSON;

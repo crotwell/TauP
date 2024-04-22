@@ -57,30 +57,13 @@ public class TauP_Path extends TauP_AbstractRayTool {
 	boolean onlyNamedDiscon = false;
 
 	public TauP_Path() {
-		super(new GraphicOutputTypeArgs(OutputTypes.SVG, "taup_path"));
+		super(new GraphicOutputTypeArgs(OutputTypes.TEXT, "taup_path"));
 		outputTypeArgs = (GraphicOutputTypeArgs)abstractOutputTypeArgs;
-		initFields();
 	}
 
 	public TauP_Path(String modelName) throws TauModelException {
 		this();
 		modelArgs.setModelName(modelName);
-		initFields();
-	}
-
-	void initFields() {
-		outputTypeArgs.setOutFileBase("taup_path");
-		setDefaultOutputFormat();
-	}
-
-	@Override
-	public String[] allowedOutputFormats() {
-        return new String[]{OutputTypes.TEXT, OutputTypes.JSON, OutputTypes.SVG, OutputTypes.GMT};
-	}
-	@Override
-	public void setDefaultOutputFormat() {
-		outputTypeArgs.setOutputType(OutputTypes.SVG);
-		setOutputFormat(OutputTypes.SVG);
 	}
 	
 	@Override
@@ -154,7 +137,7 @@ public class TauP_Path extends TauP_AbstractRayTool {
 
 	@Override
 	public String getOutputFormat() {
-		return outputTypeArgs.getOuputFormat();
+		return outputTypeArgs.getOutputFormat();
 	}
 
 	@Override

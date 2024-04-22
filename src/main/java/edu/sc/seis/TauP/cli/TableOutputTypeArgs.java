@@ -2,26 +2,16 @@ package edu.sc.seis.TauP.cli;
 
 import picocli.CommandLine;
 
-import java.io.*;
-
 import static edu.sc.seis.TauP.cli.OutputTypes.JSON;
 import static edu.sc.seis.TauP.cli.OutputTypes.TEXT;
 import static edu.sc.seis.TauP.cli.OutputTypes.CSV;
 import static edu.sc.seis.TauP.cli.OutputTypes.LOCSAT;
 
-
-import picocli.CommandLine;
-
-import java.io.*;
-
-import static edu.sc.seis.TauP.cli.OutputTypes.*;
-import static edu.sc.seis.TauP.cli.OutputTypes.SVG;
-
 public class TableOutputTypeArgs extends AbstractOutputTypeArgs {
 
     public TableOutputTypeArgs(String defaultFormat, String filebase) {
         super(filebase);
-        setOutputType(defaultFormat);
+        setOutputFormat(defaultFormat);
     }
 
     @CommandLine.ArgGroup(exclusive=true, multiplicity="0..1", heading = "Output Type %n")
@@ -41,7 +31,7 @@ public class TableOutputTypeArgs extends AbstractOutputTypeArgs {
         return outputType._isLocsat;
     }
 
-    public void setOutputType(String oType) {
+    public void setOutputFormat(String oType) {
         outputType._isText = false;
         outputType._isJSON = false;
         outputType._isCSV = false;
@@ -59,7 +49,7 @@ public class TableOutputTypeArgs extends AbstractOutputTypeArgs {
         }
     }
 
-    public String getOuputFormat() {
+    public String getOutputFormat() {
         if (isJSON()) return JSON;
         if (isCSV()) return CSV;
         if (isLocsat()) return LOCSAT;

@@ -72,17 +72,6 @@ public class TauP_WKBJ extends TauP_Time {
         super(modelName);
     }
 
-    @Override
-    public String[] allowedOutputFormats() {
-        return new String[] { OutputTypes.MS3 };
-    }
-
-    @Override
-    public void setDefaultOutputFormat() {
-        outputTypeArgs.setOutFileBase("taup_wkbj");
-        setOutputFormat(OutputTypes.MS3);
-    }
-
     /**
      * Get the value of deltaT.
      * 

@@ -17,7 +17,6 @@
 package edu.sc.seis.TauP;
 
 import edu.sc.seis.TauP.cli.AbstractOutputTypeArgs;
-import edu.sc.seis.TauP.cli.GraphicOutputTypeArgs;
 import edu.sc.seis.TauP.cli.OutputTypes;
 import edu.sc.seis.TauP.cli.TextOutputTypeArgs;
 import edu.sc.seis.seisFile.Location;
@@ -64,7 +63,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
 
     @Override
     public String getOutputFormat() {
-        return outputTypeArgs.getOuputFormat();
+        return outputTypeArgs.getOutputFormat();
     }
 
     @Override
@@ -75,7 +74,6 @@ public class TauP_Time extends TauP_AbstractRayTool {
     public TauP_Time() {
         super(new TextOutputTypeArgs(OutputTypes.TEXT, AbstractOutputTypeArgs.STDOUT_FILENAME));
         outputTypeArgs = (TextOutputTypeArgs)abstractOutputTypeArgs;
-        setDefaultOutputFormat();
     }
 
     public TauP_Time(TauModel tMod)  {
@@ -93,20 +91,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
     public TauP_Time(String modelName) throws TauModelException {
         this();
         modelArgs.setModelName(modelName);
-        setDefaultOutputFormat();
     }
-
-    @Override
-    public String[] allowedOutputFormats() {
-        String[] formats = {OutputTypes.TEXT, OutputTypes.JSON};
-        return formats;
-    }
-    @Override
-    public void setDefaultOutputFormat() {
-        setOutputFormat(OutputTypes.TEXT);
-        outputTypeArgs.setOutFileBase("stdout");
-    }
-
 
 
     /* Normal methods */

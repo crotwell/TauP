@@ -21,18 +21,7 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
         super(new GraphicOutputTypeArgs(OutputTypes.TEXT, "taup_refltrans"));
         outputTypeArgs = (GraphicOutputTypeArgs)abstractOutputTypeArgs;
         outputTypeArgs.setOutFileBase(DEFAULT_OUTFILE);
-        setDefaultOutputFormat();
     }
-
-    @Override
-    public String[] allowedOutputFormats() {
-        return new String[] { OutputTypes.TEXT, OutputTypes.JSON, OutputTypes.GMT, OutputTypes.SVG};
-    }
-    @Override
-    public void setDefaultOutputFormat() {
-        setOutputFormat(OutputTypes.SVG);
-    }
-
 
     @Override
     public void init() throws TauPException {
@@ -541,7 +530,7 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
 
     @Override
     public String getOutputFormat() {
-        return outputTypeArgs.getOuputFormat();
+        return outputTypeArgs.getOutputFormat();
     }
 
     @CommandLine.Option(names = "--down", defaultValue = "true")

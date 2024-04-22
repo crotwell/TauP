@@ -6,11 +6,9 @@ import picocli.CommandLine;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-import static edu.sc.seis.TauP.cli.OutputTypes.SVG;
 import static edu.sc.seis.TauP.cli.OutputTypes.TEXT;
 
 /**
@@ -27,7 +25,6 @@ public class TauP_VelocityPlot extends TauP_Tool {
         super(new GraphicOutputTypeArgs(OutputTypes.TEXT, DEFAULT_OUTFILE));
         outputTypeArgs = (GraphicOutputTypeArgs)abstractOutputTypeArgs;
         outputTypeArgs.setOutFileBase(DEFAULT_OUTFILE);
-        setDefaultOutputFormat();
     }
     
     @Override
@@ -115,16 +112,6 @@ public class TauP_VelocityPlot extends TauP_Tool {
             throw new IllegalArgumentException("Unknown output format: " + getOutputFormat());
         }
         writer.flush();
-    }
-
-    @Override
-    public String[] allowedOutputFormats() {
-        return new String[]{OutputTypes.TEXT, OutputTypes.JSON, SVG, OutputTypes.CSV};
-    }
-    @Override
-    public void setDefaultOutputFormat() {
-        outputTypeArgs.setOutputType(OutputTypes.TEXT);
-        setOutputFormat(OutputTypes.TEXT);
     }
 
     public void printCSV(PrintWriter out, VelocityModel vMod) {
@@ -480,7 +467,7 @@ public class TauP_VelocityPlot extends TauP_Tool {
             throw new CommandLine.ParameterException(spec.commandLine(), "must give at least one model");
         }
         if (_isCsv && ! outputTypeArgs.isText()) {
-            throw new CommandLine.ParameterException(spec.commandLine(), "cannot use --csv with other file type: "+getOutputTypeArgs().getOuputFormat());
+            throw new CommandLine.ParameterException(spec.commandLine(), "cannot use --csv with other file type: "+getOutputTypeArgs().getOutputFormat());
         }
     }
 
@@ -495,7 +482,7 @@ public class TauP_VelocityPlot extends TauP_Tool {
 
     @Override
     public String getOutputFormat() {
-        return outputTypeArgs.getOuputFormat();
+        return outputTypeArgs.getOutputFormat();
     }
 
     public VelocityModelListArgs getVelModelArgs() {
@@ -515,7 +502,7 @@ public class TauP_VelocityPlot extends TauP_Tool {
     public void setCsvOutput(boolean isCsv) {
         this._isCsv = isCsv;
         if (isCsv) {
-            getOutputTypeArgs().setOutputType(TEXT);
+            getOutputTypeArgs().setOutputFormat(TEXT);
         }
     }
     boolean _isCsv = false;
@@ -525,7 +512,7 @@ public class TauP_VelocityPlot extends TauP_Tool {
     public void setNDOutput(boolean isNd) {
         this._isNd = isNd;
         if (_isNd) {
-            getOutputTypeArgs().setOutputType(TEXT);
+            getOutputTypeArgs().setOutputFormat(TEXT);
         }
     }
     boolean _isNd = false;

@@ -11,12 +11,12 @@ public class VelModelOutputTypeArgs extends AbstractOutputTypeArgs {
     }
 
     @Override
-    public void setOutputType(String oType) {
+    public void setOutputFormat(String oType) {
       outType = oType;
     }
 
     @Override
-    public String getOuputFormat() {
+    public String getOutputFormat() {
         return OutputTypes.ND;
     }
 

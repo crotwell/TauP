@@ -25,7 +25,6 @@ public class TauP_VelocityMerge extends TauP_Tool {
         super(new VelModelOutputTypeArgs(DEFAULT_OUTFILE));
         outputTypeArgs = (VelModelOutputTypeArgs)abstractOutputTypeArgs;
         setOutFileExtension("nd");
-        setDefaultOutputFormat();
     }
 
     @Override
@@ -97,16 +96,6 @@ public class TauP_VelocityMerge extends TauP_Tool {
     public void destroy() throws TauPException {
         // TODO Auto-generated method stub
         
-    }
-
-    @Override
-    public String[] allowedOutputFormats() {
-        String[] formats = {OutputTypes.TEXT, OutputTypes.JSON, ND};
-        return formats;
-    }
-    @Override
-    public void setDefaultOutputFormat() {
-        setOutputFormat(ND);
     }
 
     @Override

@@ -91,139 +91,6 @@ public class TauP_Web extends TauP_Tool {
         server.start();
     }
 
-    public void oldToolRun(TauP_Tool tool, HttpServerExchange exchange, Map<String, Deque<String>> queryParams) throws TauPException, IOException {
-        Set<String> unknownKeys;
-        unknownKeys = configTool(tool, queryParams);
-        unknownKeys.remove(QP_DISTDEG);
-        unknownKeys.remove(QP_TAKEOFF);
-        unknownKeys.remove(QP_SHOOTRAY);
-        if (!unknownKeys.isEmpty()) {
-            StringBuilder errorPage = new StringBuilder("<html><head><title>Error</title></head><body>unknown query parameters: ");
-            for (String k : unknownKeys) {
-                Deque<String> dq = queryParams.get(k);
-                errorPage.append(" ").append(k).append("=").append(dq != null ? dq.getFirst() : "");
-            }
-            errorPage.append("</body></html>");
-            exchange.setStatusCode(400);
-            exchange.getResponseHeaders().put(Headers.CONTENT_LENGTH, "" + errorPage.length());
-            exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, "text/html");
-            Sender sender = exchange.getResponseSender();
-            sender.send(errorPage.toString());
-            return;
-        }
-
-        StringWriter out = new StringWriter();
-        PrintWriter pw = new PrintWriter(out);
-
-        if (tool instanceof TauP_WKBJ) {
-            if (queryParams.containsKey(QP_DISTDEG)) {
-                List<DistanceRay> degreesList = new ArrayList<>();
-                for (String distListStr : queryParams.get(QP_DISTDEG)) {
-                    degreesList.addAll(TauP_AbstractRayTool.parseDegreeList(distListStr));
-                }
-                configContentType(tool.getOutputFormat(), exchange);
-                List<MSeed3Record> ms3SpikeList = ((TauP_WKBJ)tool).calcSpikes(degreesList);
-                List<MSeed3Record> ms3WkbjList = ((TauP_WKBJ)tool).calcWKBJ(degreesList);
-                List<MSeed3Record> ms3List = new ArrayList<>();
-                ms3List.addAll(ms3SpikeList);
-                ms3List.addAll(ms3WkbjList);
-                //ms3List.add(ms3WkbjList.get(0));
-                ByteBuffer[] recordbuf = new ByteBuffer[ms3List.size()];
-                for (int i = 0; i < ms3List.size(); i++) {
-                    recordbuf[i] = ByteBuffer.allocate(ms3List.get(i).getSize());
-                    ByteArrayOutputStream backing = new ByteArrayOutputStream();
-                    ms3List.get(i).write(backing);
-                    backing.close();
-                    recordbuf[i] = ByteBuffer.wrap(backing.toByteArray());
-                }
-                exchange.getResponseSender().send(recordbuf);
-            }
-        } else if (tool instanceof TauP_Time) {
-            try {
-                tool.printScriptBeginning(pw);
-
-                if (queryParams.containsKey(QP_DISTDEG)) {
-                    List<Double> degreesList = new ArrayList<>();
-                    for (String distListStr : queryParams.get(QP_DISTDEG)) {
-                        degreesList.addAll(TauP_AbstractRayTool.parseDoubleList(distListStr));
-                    }
-                    ((TauP_Time) tool).getDistanceArgs().setDegreeList(degreesList);
-
-                } else if (queryParams.containsKey(QP_EVLOC)) {
-                    List<Double[]> evlatlonList = parseLoc(queryParams.get(QP_EVLOC).getFirst());
-                    List<Location> evtList = ((TauP_Time) tool).getDistanceArgs().getEventList();
-                    for (Double[] ll : evlatlonList) {
-                        evtList.add(new Location(ll[0], ll[1]));
-                    }
-                } else if (queryParams.containsKey(QP_STALOC)) {
-                    List<Double[]> stlatlonList = parseLoc(queryParams.get(QP_STALOC).getFirst());
-                    List<Location> staList = ((TauP_Time) tool).getDistanceArgs().getStationList();
-                    for (Double[] ll : stlatlonList) {
-                        staList.add(new Location(ll[0], ll[1]));
-                    }
-                } else if (queryParams.containsKey(QP_TAKEOFF)) {
-                    List<Double> takeoffList = new ArrayList<>();
-                    for (String distListStr : queryParams.get(QP_TAKEOFF)) {
-                        takeoffList.addAll(TauP_AbstractRayTool.parseDoubleList(distListStr));
-                    }
-                    ((TauP_Time) tool).getDistanceArgs().setTakeoffAngles(takeoffList);
-                } else if (queryParams.containsKey(QP_SHOOTRAY)) {
-                    List<Double> shootList = new ArrayList<>();
-                    for (String distListStr : queryParams.get(QP_SHOOTRAY)) {
-                        shootList.addAll(TauP_AbstractRayTool.parseDoubleList(distListStr));
-                    }
-                    ((TauP_Time) tool).getDistanceArgs().setShootRayParams(shootList);
-                } else if (tool instanceof TauP_Curve || tool instanceof TauP_Wavefront|| tool instanceof TauP_PhaseDescribe) {
-                    // doesn't matter for curve or wavefront or phase
-                    List<Arrival> arrivalList = ((TauP_Time) tool).calculate(null);
-                } else {
-                    final String errorPage = "<html><head><title>Error</title></head><body>distdeg parameter is required</body></html>";
-                    exchange.setStatusCode(400);
-                    exchange.getResponseHeaders().put(Headers.CONTENT_LENGTH, "" + errorPage.length());
-                    exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, "text/html");
-                    Sender sender = exchange.getResponseSender();
-                    sender.send(errorPage);
-                    return;
-                }
-                TauP_Time timeTool = ((TauP_Time) tool);
-                timeTool.printResult(pw,timeTool.calcAll(timeTool.getSeismicPhases(), timeTool.getDistanceArgs().getRayCalculatables()) );
-                configContentType(tool.getOutputFormat(), exchange);
-                exchange.getResponseSender().send(out.toString());
-            } catch (Exception e) {
-                System.err.println("Error: " + e);
-                throw e;
-            }
-        } else if (tool instanceof TauP_VelocityPlot){
-            System.err.println("Handle as VelocityPlot");
-            TauP_VelocityPlot vPlot = (TauP_VelocityPlot)tool;
-            tool.printScriptBeginning(pw);
-            tool.start();
-            configContentType(tool.getOutputFormat(), exchange);
-            exchange.getResponseSender().send(out.toString());
-        } else if (tool instanceof TauP_ReflTransPlot){
-            tool.printScriptBeginning(pw);
-            tool.start();
-            configContentType(tool.getOutputFormat(), exchange);
-            exchange.getResponseSender().send(out.toString());
-        } else if (tool instanceof TauP_Curve){
-            tool.printScriptBeginning(pw);
-            tool.start();
-            configContentType(tool.getOutputFormat(), exchange);
-            exchange.getResponseSender().send(out.toString());
-        } else if (tool instanceof TauP_Version){
-            tool.printScriptBeginning(pw);
-            tool.start();
-            configContentType(tool.getOutputFormat(), exchange);
-            exchange.getResponseSender().send(out.toString());
-        } else {
-            System.err.println("Use other tool, likely doesn't work...");
-            tool.printScriptBeginning(pw);
-            tool.start();
-            configContentType(tool.getOutputFormat(), exchange);
-            exchange.getResponseSender().send(out.toString());
-        }
-    }
-
     @Override
     public void destroy() throws TauPException {
 
@@ -677,16 +544,8 @@ public class TauP_Web extends TauP_Tool {
 
 
     @Override
-    public String[] allowedOutputFormats() {
-        return new String[0] ;
-    }
-    @Override
     public String getOutputFormat() {
         return null;
-    }
-    @Override
-    public void setDefaultOutputFormat() {
-        // no op
     }
 
 

@@ -7,9 +7,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import static edu.sc.seis.TauP.cli.OutputTypes.JSON;
-import static edu.sc.seis.TauP.cli.OutputTypes.TEXT;
-
 public abstract class AbstractOutputTypeArgs {
 
     public AbstractOutputTypeArgs(String filebase) {
@@ -23,9 +20,9 @@ public abstract class AbstractOutputTypeArgs {
         setOutFileBase(outfile);
     }
 
-    public abstract void setOutputType(String oType);
+    public abstract void setOutputFormat(String oType);
 
-    public abstract String getOuputFormat();
+    public abstract String getOutputFormat();
 
     public String getOutFileBase() {
         return outFileBase;

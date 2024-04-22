@@ -9,7 +9,6 @@ import java.io.*;
 import java.util.*;
 
 import static edu.sc.seis.TauP.SvgUtil.createSurfaceWaveCSS;
-import static edu.sc.seis.TauP.cli.OutputTypes.*;
 
 /**
  * Plots of wavefronts, distance along the ray at points in time.
@@ -50,7 +49,7 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
 
     @Override
     public String getOutputFormat() {
-        return outputTypeArgs.getOuputFormat();
+        return outputTypeArgs.getOutputFormat();
     }
     Map<SeismicPhase, Map<Float, List<TimeDist>>> result;
 
@@ -59,18 +58,6 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
     public TauP_Wavefront() {
         super(new GraphicOutputTypeArgs(OutputTypes.SVG, "taup_wavefront"));
         outputTypeArgs = (GraphicOutputTypeArgs)abstractOutputTypeArgs;
-        setDefaultOutputFormat();
-    }
-
-    @Override
-    public String[] allowedOutputFormats() {
-        return new String[] {TEXT, JSON, SVG, GMT};
-    }
-
-    @Override
-    public void setDefaultOutputFormat() {
-        outputTypeArgs.setOutputType(SVG);
-        setOutputFormat(OutputTypes.SVG);
     }
 
     @Override
@@ -452,7 +439,7 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
     @Override
     public void init() throws TauPException {
         super.init();
-        setOutputFormat(outputTypeArgs.getOuputFormat());
+        setOutputFormat(outputTypeArgs.getOutputFormat());
     }
 
     @Override

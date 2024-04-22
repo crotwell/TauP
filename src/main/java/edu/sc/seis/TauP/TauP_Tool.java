@@ -1,22 +1,16 @@
 package edu.sc.seis.TauP;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Reader;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.Callable;
 
 import edu.sc.seis.TauP.cli.AbstractOutputTypeArgs;
-import edu.sc.seis.TauP.cli.OutputTypes;
 import picocli.CommandLine;
 
 /**
@@ -96,13 +90,8 @@ public abstract class TauP_Tool implements Callable<Integer> {
         SeismicPhaseFactory.configure(toolProps);
         return toolProps;
     }
-
-
-    public abstract String[] allowedOutputFormats();
     
     public abstract String getOutputFormat();
-
-    public abstract void setDefaultOutputFormat();
 
     public AbstractOutputTypeArgs abstractOutputTypeArgs;
 
@@ -111,7 +100,7 @@ public abstract class TauP_Tool implements Callable<Integer> {
      * @param val output format for results
      */
     public void setOutputFormat(String val) {
-        abstractOutputTypeArgs.setOutputType(val);
+        abstractOutputTypeArgs.setOutputFormat(val);
     }
     
     public String getOutFileBase() {
@@ -146,25 +135,6 @@ public abstract class TauP_Tool implements Callable<Integer> {
         
         out.println("# clean up after gmt...");
         out.println("rm gmt.history");
-    }
-    
-    public static boolean dashEquals(String argName, String arg) {
-        return ToolRun.dashEquals(argName, arg);
-    }
-
-    protected String[] parseOutputFormatCmdLineArgs(String[] origiArgs) {
-        List<String> noComprendoArgs = new ArrayList<>(List.of(origiArgs));
-        String[] allowed = allowedOutputFormats();
-        for (int a = 0; a < allowed.length; a++) {
-            for (String arg: noComprendoArgs) {
-                if (dashEquals(allowed[a], arg)) {
-                    setOutputFormat(allowed[a]);
-                    noComprendoArgs.remove(arg);
-                    break;
-                }
-            }
-        }
-        return noComprendoArgs.toArray(new String[0]);
     }
 
     @CommandLine.Option(names = "--prop", description = "load defaults from properties file")
@@ -224,25 +194,6 @@ public abstract class TauP_Tool implements Callable<Integer> {
                 + "--verbose           -- enable verbose output\n"
                 + "--version           -- print the version\n"
                 + "--help              -- print this out, but you already know that!\n";
-    }
-
-    public static void printNoComprendoArgs(String[] noComprendoArgs) {
-        if(noComprendoArgs.length > 0) {
-            for(int i = 0; i < noComprendoArgs.length; i++) {
-                if(dashEquals("help", noComprendoArgs[i]) 
-                        || dashEquals("version", noComprendoArgs[i])) {
-                    // short circuit for these args
-                    return;
-                }
-            }
-            String outStringA = "I don't understand the following arguments, continuing:";
-            String outStringB = "";
-            for(int i = 0; i < noComprendoArgs.length; i++) {
-                outStringB += noComprendoArgs[i] + " ";
-            }
-            Alert.warning(outStringA, outStringB);
-            noComprendoArgs = null;
-        }
     }
 
     public abstract void validateArguments() throws TauPException;

@@ -25,10 +25,8 @@
  */
 package edu.sc.seis.TauP;
 
-import edu.sc.seis.TauP.cli.AbstractOutputTypeArgs;
 import edu.sc.seis.TauP.cli.OutputTypes;
 import edu.sc.seis.TauP.cli.TableOutputTypeArgs;
-import edu.sc.seis.TauP.cli.TextOutputTypeArgs;
 import picocli.CommandLine;
 
 import java.io.BufferedReader;
@@ -313,22 +311,12 @@ public class TauP_Table extends TauP_AbstractPhaseTool {
     public TauP_Table() {
         super(new TableOutputTypeArgs(OutputTypes.TEXT, "taup_table"));
         outputTypeArgs = (TableOutputTypeArgs)abstractOutputTypeArgs;
-        setDefaultOutputFormat();
     }
 
-    @Override
-    public String[] allowedOutputFormats() {
-        return new String[] { LOCSAT, OutputTypes.JSON, OutputTypes.TEXT, OutputTypes.CSV };
-    }
 
     @Override
     public String getOutputFormat() {
-        return outputTypeArgs.getOuputFormat();
-    }
-
-    @Override
-    public void setDefaultOutputFormat() {
-        outputTypeArgs.setOutputType(OutputTypes.TEXT);
+        return outputTypeArgs.getOutputFormat();
     }
 
     public void init() throws TauPException {
