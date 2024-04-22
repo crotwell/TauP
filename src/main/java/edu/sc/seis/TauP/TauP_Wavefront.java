@@ -144,7 +144,7 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
                 // autocolor?
             }
             float pixelWidth = getGraphicOutputTypeArgs().getPixelWidth();
-            float[] scaleTrans = SvgEarth.calcEarthScaleTransForPhaseList(getSeismicPhases(), distDepthRangeArgs, isNegDistance());
+            SvgEarthScaling scaleTrans = SvgEarth.calcEarthScaleTransForPhaseList(getSeismicPhases(), distDepthRangeArgs, isNegDistance());
 
             SvgEarth.printScriptBeginningSvg(out, modelArgs.getTauModel(), pixelWidth,
                     scaleTrans, toolNameFromClass(this.getClass()), cmdLineArgs, cssExtra);

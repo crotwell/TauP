@@ -349,7 +349,7 @@ public class TauP_Path extends TauP_AbstractRayTool {
 										String[] cmdLineArgs) throws IOException, TauModelException {
 
 		TauModel tMod = modelArgs.depthCorrected();
-		float[] scaleTrans = calcEarthScaleTrans(arrivalList, distDepthRange);
+		SvgEarthScaling scaleTrans = calcEarthScaleTrans(arrivalList, distDepthRange);
 		String extraCSS = "";
 
 		extraCSS+=createSurfaceWaveCSS(Arrays.asList(getPhaseNames()))+"\n";
