@@ -186,9 +186,9 @@ export function form_url() {
 
   const format = valid_format(toolname);
   let url = "";
-  if (toolname !== "refltrans") {
+  if (toolname !== "velplot" && toolname !== "refltrans") {
     url = `${toolname}?model=${model}&evdepth=${evdepth}`;
-  } else if (isrefltranmodel === "refltrandepth") {
+  } else if (toolname === "velplot" && isrefltranmodel === "refltrandepth") {
     url = `${toolname}?model=${model}`;
   } else {
     url = `${toolname}?`;
@@ -203,7 +203,7 @@ export function form_url() {
     let distparam;
     if (disttype === "islistdist") {
       let distdeg = document.querySelector('input[name="distdeg"]').value;
-      distparam = `&distdeg=${distdeg}`;
+      distparam = `&degree=${distdeg}`;
     } else if (disttype === "isregulardist") {
       let distdegmin = document.querySelector('input[name="distdegmin"]').value;
       let distdegstep = document.querySelector('input[name="distdegstep"]').value;
@@ -215,7 +215,7 @@ export function form_url() {
       for (let d=mindist+step; d<=max; d+=step) {
         distlist += `,${d}`;
       }
-      distparam = `&distdeg=${distlist}`;
+      distparam = `&degree=${distlist}`;
     } else if (disttype === "isevtstadist") {
       let evla = document.querySelector('input[name="eventlat"]').value;
       let evlo = document.querySelector('input[name="eventlon"]').value;
@@ -231,7 +231,7 @@ export function form_url() {
     }
     url += distparam;
   }
-  if (toolname !== "refltrans"){
+  if (toolname !== "velplot" && toolname !== "refltrans"){
     if (stadepth !== 0) {
       url += `&stadepth=${stadepth}`;
     }
@@ -302,11 +302,11 @@ export function form_url() {
     }
     let indowngoing = document.querySelector('input[name="indowngoing"]').checked;
     if (indowngoing) {
-      url += `&indown=true`;
+      url += `&down=true`;
     }
     let absolute = document.querySelector('input[name="absolute"]').checked;
     if (absolute) {
-      url += `&absolute=true`;
+      url += `&abs=true`;
     }
 
 
@@ -325,8 +325,9 @@ export function form_url() {
 
     let xslowness = document.querySelector('input[name="xslowness"]').checked;
     if (xslowness) {
-      url += `&xslowness=true`;
+      url += `&x=rayparam`;
     }
+    url += `&legend=true`;
   }
   // set format last as most useful to change
   url += `&format=${format}`;

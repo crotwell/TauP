@@ -607,28 +607,28 @@ public class TauP_Web extends TauP_Tool {
         List<String> out = new ArrayList<>();
 
         for (String qp : queryParams.keySet()) {
-            String dashedQP = "--"+qp;
+            String dashedQP = (qp.length() == 1 ? "-" : "--")+qp;
             CommandLine.Model.OptionSpec op = spec.findOption(dashedQP);
+            Deque<String> qpList = queryParams.get(qp);
             if (op != null) {
                 out.add(dashedQP);
-                Deque<String> qpList = queryParams.get(qp);
                 if (qpList.size() > 1 || ( ! qpList.getFirst().equalsIgnoreCase("true"))) {
                     out.addAll(queryParams.get(qp));
                 }
                 continue;
             } else if (qp.equalsIgnoreCase("format")) {
-                if (queryParams.get(qp).size() > 1) {
-                    throw new TauPException("Only one format at a time: " + queryParams.get(qp).getFirst() + " " + queryParams.get(qp).peek());
+                if (qpList.size() > 1) {
+                    throw new TauPException("Only one format at a time: " + qpList.getFirst() + " " + qpList.peek());
                 }
 
-                String format = "--" + queryParams.get(qp).getFirst();
+                String format = "--" + qpList.getFirst();
                 op = spec.findOption(format);
                 if (op != null) {
                     out.add(format);
                     continue;
                 }
             }
-            throw new TauPException("Unknown parameter: "+qp);
+            throw new TauPException("Unknown parameter: "+qp+" value:"+qpList.getFirst());
         }
         return out;
     }
@@ -642,15 +642,15 @@ public class TauP_Web extends TauP_Tool {
         List<String> argList = queryParamsToCmdLineArgs(spec, queryParams);
         argList.add("-o");
         argList.add("stdout");
-        tool.setOutFileBase("stdout");
         StringBuffer buffer = new StringBuffer();
         buffer.append(TauP_Tool.toolNameFromClass(tool.getClass()));
         for (String s : argList) {
-            buffer.append(s+" ");
+            buffer.append(" "+s);
         }
         System.err.println(buffer.toString());
         try {
             CommandLine.ParseResult parseResult = cmd.parseArgs(argList.toArray(argList.toArray(new String[0])));
+            tool.setOutFileBase("stdout");
 
             // Did user request usage help (--help)?
             if (cmd.isUsageHelpRequested()) {
