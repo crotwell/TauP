@@ -10,4 +10,5 @@ public interface OutputTypes {
     String MS3 = "ms3";
     String TAUP = "taup";
     String LOCSAT = "locsat";
+    String ND = "nd";
 }

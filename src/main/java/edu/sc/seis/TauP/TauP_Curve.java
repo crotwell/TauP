@@ -19,6 +19,8 @@ import java.util.List;
         usageHelpAutoWidth = true)
 public class TauP_Curve extends TauP_AbstractPhaseTool {
     public TauP_Curve() {
+        super(new GraphicOutputTypeArgs(OutputTypes.SVG, "taup_curve"));
+        outputTypeArgs = (GraphicOutputTypeArgs)abstractOutputTypeArgs;
         setDefaultOutputFormat();
         outputTypeArgs.setOutFileBase("taup_curve");
     }
@@ -597,7 +599,7 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
     protected double[] yAxisMinMax = new double[0];
 
     @CommandLine.Mixin
-    GraphicOutputTypeArgs outputTypeArgs = new GraphicOutputTypeArgs(OutputTypes.TEXT);
+    GraphicOutputTypeArgs outputTypeArgs;
 
     @CommandLine.Mixin
     ColoringArgs coloring = new ColoringArgs();

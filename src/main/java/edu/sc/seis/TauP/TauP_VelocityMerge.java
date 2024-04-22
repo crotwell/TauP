@@ -1,8 +1,6 @@
 package edu.sc.seis.TauP;
 
-import edu.sc.seis.TauP.cli.ModelArgs;
-import edu.sc.seis.TauP.cli.OutputTypes;
-import edu.sc.seis.TauP.cli.OverlayVelocityModelArgs;
+import edu.sc.seis.TauP.cli.*;
 import picocli.CommandLine;
 
 import java.io.BufferedWriter;
@@ -21,7 +19,11 @@ import static edu.sc.seis.TauP.VelocityModel.ND;
         usageHelpAutoWidth = true)
 public class TauP_VelocityMerge extends TauP_Tool {
 
+    public static String DEFAULT_OUTFILE = "velocity_model";
+
     public TauP_VelocityMerge() {
+        super(new VelModelOutputTypeArgs(DEFAULT_OUTFILE));
+        outputTypeArgs = (VelModelOutputTypeArgs)abstractOutputTypeArgs;
         setOutFileExtension("nd");
         setDefaultOutputFormat();
     }
@@ -139,5 +141,9 @@ public class TauP_VelocityMerge extends TauP_Tool {
 
     @CommandLine.Option(names = "--elev", description = "increase topmost layer by elevation (meters)")
     float elevation = 0;
+
+
+    VelModelOutputTypeArgs outputTypeArgs;
+
 
 }

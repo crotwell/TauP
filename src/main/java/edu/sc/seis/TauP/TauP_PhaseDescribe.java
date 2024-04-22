@@ -1,5 +1,6 @@
 package edu.sc.seis.TauP;
 
+import edu.sc.seis.TauP.cli.AbstractOutputTypeArgs;
 import edu.sc.seis.TauP.cli.OutputTypes;
 import edu.sc.seis.TauP.cli.TextOutputTypeArgs;
 import picocli.CommandLine;
@@ -14,7 +15,8 @@ import java.util.List;
 public class TauP_PhaseDescribe extends TauP_AbstractPhaseTool {
 
     public TauP_PhaseDescribe() {
-        super();
+        super(new TextOutputTypeArgs(OutputTypes.TEXT, AbstractOutputTypeArgs.STDOUT_FILENAME));
+        outputTypeArgs = (TextOutputTypeArgs)abstractOutputTypeArgs;
         setDefaultOutputFormat();
     }
 
@@ -34,7 +36,8 @@ public class TauP_PhaseDescribe extends TauP_AbstractPhaseTool {
     /** Dumps raw interpolation points for phase. */
     public boolean dump = false;
 
-    TextOutputTypeArgs outputTypeArgs = new TextOutputTypeArgs();
+    @CommandLine.Mixin
+    TextOutputTypeArgs outputTypeArgs;
 
     @Override
     public String getOutputFormat() {

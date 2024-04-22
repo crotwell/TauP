@@ -18,6 +18,8 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
     public static final String DEFAULT_OUTFILE = "taup_refltrans";
 
     public TauP_ReflTransPlot() {
+        super(new GraphicOutputTypeArgs(OutputTypes.TEXT, "taup_refltrans"));
+        outputTypeArgs = (GraphicOutputTypeArgs)abstractOutputTypeArgs;
         outputTypeArgs.setOutFileBase(DEFAULT_OUTFILE);
         setDefaultOutputFormat();
     }

@@ -40,7 +40,7 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
     DistDepthRange distDepthRangeArgs = new DistDepthRange();
 
     @CommandLine.Mixin
-    GraphicOutputTypeArgs outputTypeArgs = new GraphicOutputTypeArgs(OutputTypes.SVG);
+    GraphicOutputTypeArgs outputTypeArgs;
 
 
     @Override
@@ -57,8 +57,8 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
     
     
     public TauP_Wavefront() {
-        super();
-        outputTypeArgs.setOutFileBase("taup_wavefront");
+        super(new GraphicOutputTypeArgs(OutputTypes.SVG, "taup_wavefront"));
+        outputTypeArgs = (GraphicOutputTypeArgs)abstractOutputTypeArgs;
         setDefaultOutputFormat();
     }
 
@@ -72,31 +72,6 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
         outputTypeArgs.setOutputType(SVG);
         setOutputFormat(OutputTypes.SVG);
     }
-
-    public TauP_Wavefront(String modelName, String outFileBase) throws TauModelException {
-        setModelName(modelName);
-        outputTypeArgs.setOutFileBase(outFileBase);
-        setDefaultOutputFormat();
-    }
-
-    public TauP_Wavefront(String modelName) throws TauModelException {
-        setModelName(modelName);
-        outputTypeArgs.setOutFileBase("taup_wavefront");
-        setDefaultOutputFormat();
-    }
-
-    public TauP_Wavefront(TauModel tMod, String outFileBase) throws TauModelException {
-        setTauModel(tMod);
-        outputTypeArgs.setOutFileBase(outFileBase);
-        setDefaultOutputFormat();
-    }
-
-    public TauP_Wavefront(TauModel tMod) throws TauModelException {
-        setTauModel(tMod);
-        outputTypeArgs.setOutFileBase("taup_wavefront");
-        setDefaultOutputFormat();
-    }
-
 
     @Override
     public void validateArguments() throws TauModelException {

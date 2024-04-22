@@ -1,5 +1,6 @@
 package edu.sc.seis.TauP;
 
+import edu.sc.seis.TauP.cli.AbstractOutputTypeArgs;
 import edu.sc.seis.TauP.cli.DistanceArgs;
 import edu.sc.seis.TauP.cli.Scatterer;
 import org.json.JSONArray;
@@ -17,6 +18,10 @@ public abstract class TauP_AbstractRayTool extends TauP_AbstractPhaseTool {
 
     @CommandLine.Mixin
     protected DistanceArgs distanceArgs = new DistanceArgs();
+
+    public TauP_AbstractRayTool(AbstractOutputTypeArgs outputTypeArgs) {
+        super(outputTypeArgs);
+    }
 
     /**
      * Parses a comma separated list of distances and returns them in an array.

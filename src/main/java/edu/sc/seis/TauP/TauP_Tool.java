@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.Callable;
 
+import edu.sc.seis.TauP.cli.AbstractOutputTypeArgs;
 import edu.sc.seis.TauP.cli.OutputTypes;
 import picocli.CommandLine;
 
@@ -22,6 +23,13 @@ import picocli.CommandLine;
  * Base class for tools within the TauP Toolkit.
  */
 public abstract class TauP_Tool implements Callable<Integer> {
+
+    /* Constructors */
+
+    public TauP_Tool(AbstractOutputTypeArgs outputTypeArgs) {
+        this.abstractOutputTypeArgs = outputTypeArgs;
+        toolProps = TauP_Tool.configDefaults();
+    }
 
     /**
      * Computes a result, or throws an exception if unable to do so.
@@ -39,6 +47,8 @@ public abstract class TauP_Tool implements Callable<Integer> {
         } catch (TauPException e) {
             if (spec != null ) {
                 throw new CommandLine.ParameterException(spec.commandLine(), e.getMessage(), e);
+            } else {
+                throw e;
             }
         }
         start();
@@ -65,26 +75,13 @@ public abstract class TauP_Tool implements Callable<Integer> {
         return ToolRun.VERBOSE || ToolRun.DEBUG;
     }
 
-    public String outputFormat = OutputTypes.TEXT;
-
-    protected String outFileBase = "";
-
     @CommandLine.Option(names = {"--help"}, usageHelp = true, description = "display this help message")
     boolean usageHelpRequested;
 
     public String[] cmdLineArgs = new String[0];
 
-    protected PrintWriter writer;
-
     protected Properties toolProps;
-
-    private String outFileExtension = null;
     
-
-    /* Constructors */
-    protected TauP_Tool() {
-        toolProps = TauP_Tool.configDefaults();
-    }
 
     public static Properties configDefaults() {
         Properties toolProps;
@@ -107,55 +104,30 @@ public abstract class TauP_Tool implements Callable<Integer> {
 
     public abstract void setDefaultOutputFormat();
 
-    public OutputTypes outputType;
+    public AbstractOutputTypeArgs abstractOutputTypeArgs;
 
     /** usually one of TEXT or JSON. Subclasses may add
      * additional types, for example CSV, GMT or SVG.
      * @param val output format for results
      */
     public void setOutputFormat(String val) {
-        boolean found = false;
-        for (String t : allowedOutputFormats()) {
-            if (t.equals(val)) { found = true;}
-        }
-        if ( ! found) {
-            String allowed = "";
-            for (String s : allowedOutputFormats()) { allowed+= s+",";}
-            throw new IllegalArgumentException("output format for "+getClass().getName()+" must be one of "+allowed+" but was "+val);
-        }
-        this.outputFormat = val;
-        if (val == OutputTypes.TEXT) {
-            setOutFileExtension("txt");
-        } else if (val == OutputTypes.GMT) {
-            setOutFileExtension("gmt");
-        } else if (val == OutputTypes.SVG) {
-            setOutFileExtension("svg");
-        } else if (val == OutputTypes.CSV) {
-            setOutFileExtension("csv");
-        } else if (val == OutputTypes.MS3) {
-            setOutFileExtension("ms3");
-        }
+        abstractOutputTypeArgs.setOutputType(val);
     }
     
     public String getOutFileBase() {
-        return outFileBase;
+        return abstractOutputTypeArgs.getOutFileBase();
     }
     
     public void setOutFileBase(String outFileBase) {
-        this.outFileBase = outFileBase;
+        abstractOutputTypeArgs.setOutFileBase(outFileBase);
     }
     
     public String getOutFileExtension() {
-        return outFileExtension ;
+        return abstractOutputTypeArgs.getOutFileExtension() ;
     }
     
     public void setOutFileExtension(String outFileExtension) {
-        this.outFileExtension = outFileExtension;
-    }
-
-    
-    public void setWriter(PrintWriter writer) {
-        this.writer = writer;
+        abstractOutputTypeArgs.setOutFileExtension(outFileExtension);
     }
 
         /** a noop that allows overriding classes to print things

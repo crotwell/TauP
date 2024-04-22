@@ -16,6 +16,8 @@
  */
 package edu.sc.seis.TauP;
 
+import edu.sc.seis.TauP.cli.AbstractOutputTypeArgs;
+import edu.sc.seis.TauP.cli.GraphicOutputTypeArgs;
 import edu.sc.seis.TauP.cli.OutputTypes;
 import edu.sc.seis.TauP.cli.TextOutputTypeArgs;
 import edu.sc.seis.seisFile.Location;
@@ -58,7 +60,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
     protected List<SeismicPhase> relativePhaseList = new ArrayList<>();
 
     @CommandLine.Mixin
-    TextOutputTypeArgs outputTypeArgs = new TextOutputTypeArgs();
+    TextOutputTypeArgs outputTypeArgs = new TextOutputTypeArgs(OutputTypes.TEXT, AbstractOutputTypeArgs.STDOUT_FILENAME);
 
     @Override
     public String getOutputFormat() {
@@ -71,11 +73,13 @@ public class TauP_Time extends TauP_AbstractRayTool {
     }
 
     public TauP_Time() {
+        super(new TextOutputTypeArgs(OutputTypes.TEXT, AbstractOutputTypeArgs.STDOUT_FILENAME));
+        outputTypeArgs = (TextOutputTypeArgs)abstractOutputTypeArgs;
         setDefaultOutputFormat();
     }
 
     public TauP_Time(TauModel tMod)  {
-        setDefaultOutputFormat();
+        this();
         setTauModel(tMod);
     }
 
@@ -87,6 +91,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
      *             if the file can't be found or is corrupted in some way.
      */
     public TauP_Time(String modelName) throws TauModelException {
+        this();
         modelArgs.setModelName(modelName);
         setDefaultOutputFormat();
     }
@@ -786,13 +791,6 @@ public class TauP_Time extends TauP_AbstractRayTool {
         }
     }
 
-    public void destroy() throws TauPException {
-        if(writer != null) {
-            writer.close();
-            writer = null;
-        }
-    }
-
     public String getStdUsageHead() {
         return TauP_Tool.getStdUsageHead(this.getClass());
     }
@@ -830,6 +828,11 @@ public class TauP_Time extends TauP_AbstractRayTool {
                     + "--rel phasename    -- also output relative travel time\n\n"
                     + "--json             -- output travel times as json\n\n"
         ;
+    }
+
+    @Override
+    public void destroy() throws TauPException {
+
     }
 
     /**

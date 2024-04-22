@@ -21,9 +21,11 @@ import static edu.sc.seis.TauP.cli.OutputTypes.TEXT;
         usageHelpAutoWidth = true)
 public class TauP_VelocityPlot extends TauP_Tool {
 
-    public static final String DEFAULT_OUTFILE = "taup_velocitymodel";
+    public static final String DEFAULT_OUTFILE = "taup_velplot";
     
     public TauP_VelocityPlot() {
+        super(new GraphicOutputTypeArgs(OutputTypes.TEXT, DEFAULT_OUTFILE));
+        outputTypeArgs = (GraphicOutputTypeArgs)abstractOutputTypeArgs;
         outputTypeArgs.setOutFileBase(DEFAULT_OUTFILE);
         setDefaultOutputFormat();
     }
@@ -504,7 +506,7 @@ public class TauP_VelocityPlot extends TauP_Tool {
     VelocityModelListArgs velModelArgs = new VelocityModelListArgs();
 
     @CommandLine.Mixin
-    GraphicOutputTypeArgs outputTypeArgs = new GraphicOutputTypeArgs(OutputTypes.SVG);
+    GraphicOutputTypeArgs outputTypeArgs;
 
     @CommandLine.Option(names = "--legend", description = "create a legend")
     boolean isLegend = false;

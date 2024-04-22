@@ -1,5 +1,6 @@
 package edu.sc.seis.TauP;
 
+import edu.sc.seis.TauP.cli.AbstractOutputTypeArgs;
 import edu.sc.seis.TauP.cli.ModelArgs;
 import edu.sc.seis.TauP.cli.Scatterer;
 import org.json.JSONArray;
@@ -14,6 +15,10 @@ import java.util.List;
 
 public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
     public static final String DEFAULT_PHASES = "p,s,P,S,Pn,Sn,PcP,ScS,Pdiff,Sdiff,PKP,SKS,PKiKP,SKiKS,PKIKP,SKIKS";
+
+    public TauP_AbstractPhaseTool(AbstractOutputTypeArgs outputTypeArgs) {
+        super(outputTypeArgs);
+    }
 
     public double getRadiusOfEarth() {
         try {

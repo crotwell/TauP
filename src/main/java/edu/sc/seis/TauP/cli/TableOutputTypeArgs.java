@@ -17,7 +17,12 @@ import java.io.*;
 import static edu.sc.seis.TauP.cli.OutputTypes.*;
 import static edu.sc.seis.TauP.cli.OutputTypes.SVG;
 
-public class TableOutputTypeArgs {
+public class TableOutputTypeArgs extends AbstractOutputTypeArgs {
+
+    public TableOutputTypeArgs(String defaultFormat, String filebase) {
+        super(filebase);
+        setOutputType(defaultFormat);
+    }
 
     @CommandLine.ArgGroup(exclusive=true, multiplicity="0..1", heading = "Output Type %n")
     TableOutputType outputType = new TableOutputType();
@@ -61,46 +66,21 @@ public class TableOutputTypeArgs {
         return TEXT;
     }
 
-    public String getOutFileBase() {
-        return outFileBase;
-    }
-
-    public void setOutFileBase(String outFileBase) {
-        this.outFileBase = outFileBase;
-    }
-
     public String getOutFileExtension() {
-        String extention = "text";
+        if (extension != null && extension.length() > 0) {
+            return extension;
+        }
+        String calcExt = "text";
         if (isJSON()) {
-            extention = "json";
+            calcExt = "json";
         }
         if (isCSV()) {
-            extention = "csv";
+            calcExt = "csv";
         }
         if (isLocsat()) {
-            extention = "locsat";
+            calcExt = "locsat";
         }
-        return extention;
-    }
-
-    public String getOutFile() {
-        if(getOutFileBase() == null || getOutFileBase().length() == 0 || getOutFileBase().equals("stdout")) {
-            return "stdout";
-        } else {
-            if (getOutFileExtension() == null || getOutFileExtension().length() == 0 || getOutFileBase().endsWith("."+getOutFileExtension())) {
-                // don't do a dot if no extension or already there
-                return getOutFileBase();
-            }
-            return getOutFileBase()+"."+getOutFileExtension();
-        }
-    }
-
-    public PrintWriter createWriter() throws IOException {
-        if(!(getOutFile().equals("stdout") || getOutFile().length()==0)) {
-            return new PrintWriter(new BufferedWriter(new FileWriter(getOutFile())));
-        } else {
-            return new PrintWriter(new OutputStreamWriter(System.out));
-        }
+        return calcExt;
     }
 
     String outFileBase = "taup_table";

@@ -1,5 +1,6 @@
 package edu.sc.seis.TauP;
 
+import edu.sc.seis.TauP.cli.AbstractOutputTypeArgs;
 import edu.sc.seis.TauP.cli.OutputTypes;
 import edu.sc.seis.TauP.cli.TextOutputTypeArgs;
 import picocli.CommandLine;
@@ -13,6 +14,8 @@ import java.io.PrintWriter;
 public class TauP_Version extends TauP_Tool {
 
     public TauP_Version() {
+        super(new TextOutputTypeArgs(OutputTypes.TEXT, AbstractOutputTypeArgs.STDOUT_FILENAME));
+        outputTypeArgs = (TextOutputTypeArgs)abstractOutputTypeArgs;
         setDefaultOutputFormat();
     }
     @Override
@@ -27,7 +30,7 @@ public class TauP_Version extends TauP_Tool {
     }
 
     @CommandLine.Mixin
-    TextOutputTypeArgs outputTypeArgs = new TextOutputTypeArgs();
+    TextOutputTypeArgs outputTypeArgs;
 
     @Override
     public String getOutputFormat() {

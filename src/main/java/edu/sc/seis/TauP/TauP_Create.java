@@ -25,6 +25,7 @@
  */
 package edu.sc.seis.TauP;
 
+import edu.sc.seis.TauP.cli.TauModelOutputTypeArgs;
 import edu.sc.seis.TauP.cli.VelocityModelArgs;
 import picocli.CommandLine;
 
@@ -57,6 +58,8 @@ public class TauP_Create extends TauP_Tool {
 
     String directory = ".";
 
+    TauModelOutputTypeArgs outputTypeArgs;
+
     SlownessModel sMod;
 
     VelocityModel vMod;
@@ -71,6 +74,8 @@ public class TauP_Create extends TauP_Tool {
 
     /* constructor */
     public TauP_Create() {
+        super(new TauModelOutputTypeArgs(TAUP, "taup_create"));
+        outputTypeArgs = (TauModelOutputTypeArgs)abstractOutputTypeArgs;
         Alert.setGUI(GUI);
         try {
             toolProps = PropertyLoader.load();

@@ -25,8 +25,10 @@
  */
 package edu.sc.seis.TauP;
 
+import edu.sc.seis.TauP.cli.AbstractOutputTypeArgs;
 import edu.sc.seis.TauP.cli.OutputTypes;
 import edu.sc.seis.TauP.cli.TableOutputTypeArgs;
+import edu.sc.seis.TauP.cli.TextOutputTypeArgs;
 import picocli.CommandLine;
 
 import java.io.BufferedReader;
@@ -309,6 +311,8 @@ public class TauP_Table extends TauP_AbstractPhaseTool {
                                     180.00f};
 
     public TauP_Table() {
+        super(new TableOutputTypeArgs(OutputTypes.TEXT, "taup_table"));
+        outputTypeArgs = (TableOutputTypeArgs)abstractOutputTypeArgs;
         setDefaultOutputFormat();
     }
 
@@ -324,7 +328,7 @@ public class TauP_Table extends TauP_AbstractPhaseTool {
 
     @Override
     public void setDefaultOutputFormat() {
-        outputTypeArgs.setOutputType("generic");
+        outputTypeArgs.setOutputType(OutputTypes.TEXT);
     }
 
     public void init() throws TauPException {
@@ -411,7 +415,7 @@ public class TauP_Table extends TauP_AbstractPhaseTool {
     }
 
     public void start() throws TauModelException, TauPException, IOException {
-        PrintWriter writer = outputTypeArgs.createWriter();
+        PrintWriter writer = outputTypeArgs.createWriter(spec.commandLine().getOut());
         if(outputTypeArgs.isCSV()) {
             csvTable(writer);
         } else if (outputTypeArgs.isLocsat()) {
@@ -612,7 +616,7 @@ public class TauP_Table extends TauP_AbstractPhaseTool {
     }
 
     @CommandLine.Mixin
-    TableOutputTypeArgs outputTypeArgs = new TableOutputTypeArgs();
+    TableOutputTypeArgs outputTypeArgs;
 
     /**
     * ToolRun.main should be used instead.

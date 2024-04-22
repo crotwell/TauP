@@ -1,10 +1,8 @@
 package edu.sc.seis.webtaup;
 
 import edu.sc.seis.TauP.*;
-
 import edu.sc.seis.TauP.cli.OutputTypes;
 import edu.sc.seis.TauP.cli.Scatterer;
-import edu.sc.seis.TauP.cli.VelocityModelArgs;
 import edu.sc.seis.seisFile.BuildVersion;
 import edu.sc.seis.seisFile.Location;
 import edu.sc.seis.seisFile.mseed3.MSeed3Record;
@@ -21,7 +19,10 @@ import io.undertow.util.MimeMappings;
 import org.json.JSONArray;
 import picocli.CommandLine;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.nio.ByteBuffer;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -30,6 +31,10 @@ import java.util.regex.Pattern;
 
 public class TauP_Web extends TauP_Tool {
 
+
+    public TauP_Web() {
+        super(null);
+    }
 
     @Override
     public void init() throws TauPException {
@@ -191,32 +196,27 @@ public class TauP_Web extends TauP_Tool {
         } else if (tool instanceof TauP_VelocityPlot){
             System.err.println("Handle as VelocityPlot");
             TauP_VelocityPlot vPlot = (TauP_VelocityPlot)tool;
-            tool.setWriter(pw);
             tool.printScriptBeginning(pw);
             tool.start();
             configContentType(tool.getOutputFormat(), exchange);
             exchange.getResponseSender().send(out.toString());
         } else if (tool instanceof TauP_ReflTransPlot){
-            tool.setWriter(pw);
             tool.printScriptBeginning(pw);
             tool.start();
             configContentType(tool.getOutputFormat(), exchange);
             exchange.getResponseSender().send(out.toString());
         } else if (tool instanceof TauP_Curve){
-            tool.setWriter(pw);
             tool.printScriptBeginning(pw);
             tool.start();
             configContentType(tool.getOutputFormat(), exchange);
             exchange.getResponseSender().send(out.toString());
         } else if (tool instanceof TauP_Version){
-            tool.setWriter(pw);
             tool.printScriptBeginning(pw);
             tool.start();
             configContentType(tool.getOutputFormat(), exchange);
             exchange.getResponseSender().send(out.toString());
         } else {
             System.err.println("Use other tool, likely doesn't work...");
-            tool.setWriter(pw);
             tool.printScriptBeginning(pw);
             tool.start();
             configContentType(tool.getOutputFormat(), exchange);

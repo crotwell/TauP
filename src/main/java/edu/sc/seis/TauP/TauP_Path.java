@@ -57,16 +57,13 @@ public class TauP_Path extends TauP_AbstractRayTool {
 	boolean onlyNamedDiscon = false;
 
 	public TauP_Path() {
-		super();
-		initFields();
-	}
-
-	public TauP_Path(TauModel tMod) throws TauModelException {
-		setTauModel(tMod);
+		super(new GraphicOutputTypeArgs(OutputTypes.SVG, "taup_path"));
+		outputTypeArgs = (GraphicOutputTypeArgs)abstractOutputTypeArgs;
 		initFields();
 	}
 
 	public TauP_Path(String modelName) throws TauModelException {
+		this();
 		modelArgs.setModelName(modelName);
 		initFields();
 	}
@@ -76,28 +73,14 @@ public class TauP_Path extends TauP_AbstractRayTool {
 		setDefaultOutputFormat();
 	}
 
-	public TauP_Path(TauModel tMod, String outFileBase)
-			throws TauModelException {
-		setTauModel(tMod);
-		initFields();
-		outputTypeArgs.setOutFileBase(outFileBase);
-	}
-
-	public TauP_Path(String modelName, String outFileBase)
-			throws TauModelException {
-		modelArgs.setModelName(modelName);
-		initFields();
-		outputTypeArgs.setOutFileBase(outFileBase);
-	}
-
 	@Override
 	public String[] allowedOutputFormats() {
         return new String[]{OutputTypes.TEXT, OutputTypes.JSON, OutputTypes.SVG, OutputTypes.GMT};
 	}
 	@Override
 	public void setDefaultOutputFormat() {
-		outputTypeArgs.setOutputType(OutputTypes.TEXT);
-		setOutputFormat(OutputTypes.TEXT);
+		outputTypeArgs.setOutputType(OutputTypes.SVG);
+		setOutputFormat(OutputTypes.SVG);
 	}
 	
 	@Override
@@ -163,11 +146,11 @@ public class TauP_Path extends TauP_AbstractRayTool {
 	}
 
 	public GraphicOutputTypeArgs getGraphicOutputTypeArgs() {
-		return (GraphicOutputTypeArgs) outputTypeArgs;
+		return outputTypeArgs;
 	}
 
 	@CommandLine.Mixin
-	GraphicOutputTypeArgs outputTypeArgs = new GraphicOutputTypeArgs(OutputTypes.TEXT);
+	GraphicOutputTypeArgs outputTypeArgs;
 
 	@Override
 	public String getOutputFormat() {
