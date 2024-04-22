@@ -187,7 +187,17 @@ public class ReflTransTest {
                     1e-6,
                     "flatrp="+flatRP
             );
-            assertEquals(coeff.inboundEnergyP(flatRP),
+            assertEquals(topDensity * topVp * cosTopVp, coeff.inboundEnergyP(flatRP), 1e-6);
+
+            assertEquals(coeff.getEnergyFluxRpp(flatRP),
+                    topDensity * topVp * cosTopVp * Rpp_calc * Rpp_calc/coeff.inboundEnergyP(flatRP));
+            assertEquals( topDensity * topVs * cosTopVs * Rps_calc * Rps_calc/coeff.inboundEnergyP(flatRP),
+                    coeff.getEnergyFluxRps(flatRP));
+            assertEquals( botDensity * botVp * cosBotVp * Tpp_calc * Tpp_calc/coeff.inboundEnergyP(flatRP),
+                    coeff.getEnergyFluxTpp(flatRP));
+            assertEquals( botDensity * botVs * cosBotVs * Tps_calc * Tps_calc/coeff.inboundEnergyP(flatRP),
+                    coeff.getEnergyFluxTps(flatRP));
+            assertEquals(1,
                     coeff.getEnergyFluxRpp(flatRP)
                             + coeff.getEnergyFluxRps(flatRP)
                             + coeff.getEnergyFluxTpp(flatRP)
@@ -204,7 +214,7 @@ public class ReflTransTest {
                     1e-6,
                     "flatrp="+flatRP
             );
-            assertEquals(coeff.inboundEnergyS(flatRP),
+            assertEquals(1,
                     coeff.getEnergyFluxRsp(flatRP)
                             + coeff.getEnergyFluxRss(flatRP)
                             + coeff.getEnergyFluxTsp(flatRP)
@@ -221,7 +231,7 @@ public class ReflTransTest {
                     1e-6,
                     "flatrp="+flatRP
             );
-            assertEquals(coeff.inboundEnergyS(flatRP),
+            assertEquals(1,
                     + coeff.getEnergyFluxRshsh(flatRP)
                             + coeff.getEnergyFluxTshsh(flatRP),
                     1e-6,
