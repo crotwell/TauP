@@ -1,5 +1,6 @@
 package edu.sc.seis.TauP;
 
+import edu.sc.seis.TauP.cli.OutputTypes;
 import edu.sc.seis.seisFile.Location;
 import edu.sc.seis.seisFile.SeisFileException;
 import edu.sc.seis.seisFile.fdsnws.quakeml.Event;
@@ -23,22 +24,20 @@ import java.util.*;
 @CommandLine.Command(name = "setmseed3",
         description = "save travel times in the extra header of miniseed3 files",
         usageHelpAutoWidth = true)
-public class TauP_SetMSeed3 extends TauP_Time {
+public class TauP_SetMSeed3 extends TauP_AbstractPhaseTool {
 
     public TauP_SetMSeed3() {
+        super(null);
     }
 
-    public TauP_SetMSeed3(TauModel tMod) {
-        super(tMod);
-    }
-
-    public TauP_SetMSeed3(String modelName) throws TauModelException {
-        super(modelName);
+    @Override
+    public String getOutputFormat() {
+        return OutputTypes.MS3;
     }
 
     @Override
     public void start() throws IOException, TauPException {
-        if (mseed3FileNames.size() == 0) {
+        if (mseed3FileNames.isEmpty()) {
             CommandLine.usage(this, System.out);
             return;
         }
@@ -73,6 +72,16 @@ public class TauP_SetMSeed3 extends TauP_Time {
         }
     }
 
+    @Override
+    public void destroy() throws TauPException {
+
+    }
+
+    @Override
+    public void validateArguments() throws TauPException {
+
+    }
+
     public void processMSeed3File(File msd3File) throws IOException, SeisFileException, TauPException {
         int fileBytes = (int) msd3File.length();
         int bytesRead = 0;
@@ -87,7 +96,9 @@ public class TauP_SetMSeed3 extends TauP_Time {
             dr3.write(dos);
         }
         dos.close();
-        tmpFile.renameTo(msd3File);
+        if ( !tmpFile.renameTo(msd3File)) {
+            throw new SetSacException("unable to rename temp file: "+tmpFile+" to "+msd3File);
+        }
     }
 
     public void processRecord(MSeed3Record dr3) throws TauPException {
@@ -96,6 +107,7 @@ public class TauP_SetMSeed3 extends TauP_Time {
         Instant evTime = null;
 
 
+        RayCalculateable rayCalculateable;
         MSeed3EH eh = new MSeed3EH(dr3.getExtraHeaders());
         Channel chan = FDSNStationXML.findChannelBySID(networks, dr3.getSourceId(), dr3.getStartInstant());
         if (chan != null) {
@@ -112,31 +124,48 @@ public class TauP_SetMSeed3 extends TauP_Time {
             evLoc = eh.quakeLocation();
             evTime = eh.quakeTime();
         }
-        Double gcarc = null;
 
         if (staLoc != null && evLoc != null) {
             // geodetic vs spherical???
-            DistAz distAz = new DistAz(staLoc, evLoc);
-            gcarc = distAz.getDelta();
-            modelArgs.setSourceDepth(evLoc.getDepthKm());
+            rayCalculateable = DistanceRay.ofGeodeticStationEvent(
+                    staLoc,
+                    evLoc,
+                    DistAz.wgs85_flattening
+            );
+        } else if (eh.gcarc() != null) {
+            rayCalculateable = DistanceRay.ofDegrees(eh.gcarc());
+        } else {
+            throw new SetSacException("Unable to get distance from MS3 record, skipping. :"+dr3);
+        }
+        
+        // save values used to make calc, if not already from eh
+        if (quake != null) {
+            eh.addToBag(quake);
+        }
+        if (chan != null) {
+            eh.addToBag(chan);
+        }
+
+        if (staLoc != null) {
             modelArgs.setReceiverDepth(staLoc.getDepthKm());
-        } else  {
-            if (evLoc != null) {
-                modelArgs.setReceiverDepth(staLoc.getDepthKm());
-            }
-            gcarc = eh.gcarc() != null ? eh.gcarc().doubleValue() : null;
+        } else {
+            modelArgs.setReceiverDepth(0);
+        }
+        if (evLoc != null) {
+            modelArgs.setSourceDepth(evLoc.getDepthKm());
+        } else {
+            modelArgs.setSourceDepth(0);
         }
 
-        List<Arrival> arrivals = null;
-        if (gcarc != null) {
-            List<RayCalculateable> degreesList = Arrays.asList(DistanceRay.ofDegrees(gcarc));
-            arrivals = calcAll(getSeismicPhases(), degreesList);
+        List<Arrival> arrivals = new ArrayList<>();
+        for (SeismicPhase phase : getSeismicPhases()) {
+            arrivals.addAll(rayCalculateable.calculate(phase));
         }
 
-        if (arrivals != null) {
+        if (!arrivals.isEmpty()) {
 
-            if (ehKey != null && ehKey.length() > 0) {
-                JSONObject taup = resultAsJSONObject(modelArgs.getModelName(), modelArgs.getSourceDepth(), getReceiverDepth(), getPhaseNames(), arrivals);
+            if (ehKey != null && !ehKey.isEmpty()) {
+                JSONObject taup = TauP_Time.resultAsJSONObject(modelArgs.getModelName(), modelArgs.getSourceDepth(), getReceiverDepth(), getPhaseNames(), arrivals);
                 eh.getEH().put(ehKey, taup);
             } else {
                 JSONObject bag = eh.getBagEH();
@@ -145,9 +174,6 @@ public class TauP_SetMSeed3 extends TauP_Time {
                 }
                 insertMarkers(bag, arrivals, evTime);
             }
-        } else {
-            System.err.println("Insufficient info in eh to calc travel times");
-            System.err.println("  st: "+staLoc+"  gcarc="+gcarc+"  ev: "+evLoc+" at "+evTime);
         }
     }
 
@@ -170,32 +196,6 @@ public class TauP_SetMSeed3 extends TauP_Time {
         return mark;
     }
 
-    @Override
-    public String getStdUsage() {
-        String className = this.getClass().getName();
-        className = className.substring(className.lastIndexOf('.') + 1,
-                className.length());
-        return "Usage: " + className.toLowerCase() + " [arguments]"
-        +"  or, for purists, java "
-                + this.getClass().getName() + " [arguments]"
-        +"\nArguments are:"
-        +"-ph phase list     -- comma separated phase list,\n"
-                + "                      use phase-# to specify the sac header,\n"
-                + "                      for example, ScS-8 puts ScS in t8\n"
-                + "-pf phasefile      -- file containing phases\n\n"
-                + "-mod[el] modelname -- use velocity model \"modelname\" for calculations\n"
-                + "                      Default is iasp91.\n\n";
-    }
-
-    public String getUsageTail() {
-        return "\n"
-                + "--prop [propfile]   -- set configuration properties\n"
-                + "--debug             -- enable debugging output\n"
-                + "--verbose           -- enable verbose output\n"
-                + "--version           -- print the version\n"
-                + "--help              -- print this out, but you already know that!\n";
-    }
-
     Event findQuakeInTime(Instant time, Duration tol) {
         Instant early = time.minus(tol);
         Instant late = time.plus(tol);
@@ -213,7 +213,6 @@ public class TauP_SetMSeed3 extends TauP_Time {
     /**
      * Allows TauP_SetMSeed3 to run as an application. Creates an instance of
      * TauP_SetMSeed3.
-     *
      * ToolRun.main should be used instead.
      */
     public static void main(String[] args) throws IOException {
@@ -225,7 +224,7 @@ public class TauP_SetMSeed3 extends TauP_Time {
     }
 
     @CommandLine.Option(names = "--eh",
-            description = "key to store full output within extra headers within, otherwise use abbreviateg 'bag' markers")
+            description = "key to store full output within extra headers within, otherwise use abbreviated 'bag' markers")
     public void setEhKey(String ehKey) {
         this.ehKey = ehKey;
     }
