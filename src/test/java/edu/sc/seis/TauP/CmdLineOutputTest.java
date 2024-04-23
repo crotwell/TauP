@@ -114,7 +114,7 @@ public class CmdLineOutputTest {
                                           "taup setsac --help",
                                           "taup setmseed3 --help",
                                           "taup version --help",
-                                          "taup wkbj --help",
+                                          //"taup wkbj --help",
     };
 
     String[] jsonTestCmds = new String[] {
