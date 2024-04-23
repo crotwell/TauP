@@ -11,4 +11,5 @@ public interface OutputTypes {
     String TAUP = "taup";
     String LOCSAT = "locsat";
     String ND = "nd";
+    String SAC = "sac";
 }

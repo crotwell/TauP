@@ -30,6 +30,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.sc.seis.TauP.cli.DistanceArgs;
+import edu.sc.seis.TauP.cli.OutputTypes;
+import edu.sc.seis.seisFile.Location;
 import edu.sc.seis.seisFile.sac.SacConstants;
 import edu.sc.seis.seisFile.sac.SacHeader;
 import edu.sc.seis.seisFile.sac.SacTimeSeries;
@@ -61,7 +64,7 @@ import picocli.CommandLine;
 @CommandLine.Command(name = "setsac",
         description = "set headers to travel times of phases using depth and distance from headers",
         usageHelpAutoWidth = true)
-public class TauP_SetSac extends TauP_Time {
+public class TauP_SetSac extends TauP_AbstractPhaseTool {
 
     protected List<String> sacFileNames = new ArrayList<String>();
 
@@ -79,7 +82,7 @@ public class TauP_SetSac extends TauP_Time {
         this.evdpkm = evdpkm;
     }
 
-    @CommandLine.Parameters
+    @CommandLine.Parameters(description = "SAC files to process")
     public void setSacFileNames(String[] sacFileNames) {
         this.sacFileNames = new ArrayList<String>();
         for(int i = 0; i < sacFileNames.length; i++) {
@@ -88,15 +91,7 @@ public class TauP_SetSac extends TauP_Time {
     }
 
     protected TauP_SetSac() {
-        super();
-    }
-
-    public TauP_SetSac(TauModel tMod) throws TauModelException {
-        super(tMod);
-    }
-
-    public TauP_SetSac(String modelName) throws TauModelException {
-        super(modelName);
+        super(null);
     }
 
     protected void setSacVarNums() {
@@ -125,6 +120,11 @@ public class TauP_SetSac extends TauP_Time {
         }
     }
 
+    @Override
+    public String getOutputFormat() {
+        return OutputTypes.SAC;
+    }
+
     public void init() throws TauPException {
         super.init();
         setSacVarNums();
@@ -142,9 +142,19 @@ public class TauP_SetSac extends TauP_Time {
             processSacFile(new File(filename));
         }
     }
-    
+
+    @Override
+    public void destroy() throws TauPException {
+
+    }
+
+    @Override
+    public void validateArguments() throws TauPException {
+
+    }
+
     public void processSacFile(File f) throws IOException, TauPException {
-        
+
         if (f.isDirectory()) {
             File[] subfiles = f.listFiles();
             for (int j = 0; j < subfiles.length; j++) {
@@ -156,52 +166,65 @@ public class TauP_SetSac extends TauP_Time {
             return;
         }
         // regular file, hopefully
-        SacTimeSeries sacFile = SacTimeSeries.read(f);
+        try {
+            SacTimeSeries sacFile = SacTimeSeries.read(f);
+            processSacTimeSeries(sacFile, f.getName());
+            sacFile.write(f);
+        } catch (SetSacException e) {
+            System.err.println(e.getMessage()+", skipping.");
+        }
+    }
+
+    public void processSacTimeSeries(SacTimeSeries sacFile, String filenameForError) throws SetSacException, TauModelException, SlownessModelException, NoSuchLayerException {
         SacHeader header = sacFile.getHeader();
         if(SacConstants.isUndef(header.getEvdp())) {
-            System.err.println("Depth not set in "
-                    + f.getName() + ", skipping");
-            return;
+            throw new SetSacException("Depth not set in "
+                    + filenameForError );
         }
         if(SacConstants.isUndef(header.getO())) {
-            System.err.println("O marker not set in "
-                    + f + ", skipping");
-            return;
+            throw new SetSacException("O marker not set in "
+                    + filenameForError );
         }
         double deg;
+        RayCalculateable rayCalculateable;
         if(! SacConstants.isUndef(header.getGcarc())) {
             if(isVerbose()) {
                 System.err.println("Using gcarc: " + header.getGcarc());
             }
             deg = header.getGcarc();
+            rayCalculateable = DistanceRay.ofDegrees(header.getGcarc());
         } else if(! SacConstants.isUndef(header.getDist())) {
             if(isVerbose()) {
                 System.err.println("Using dist: " + header.getDist());
             }
             deg = header.getDist() / 6371.0 * 180.0 / Math.PI;
+            rayCalculateable = DistanceRay.ofKilometers(header.getDist());
         } else if( ! SacConstants.isUndef(sacFile.getHeader().getStla()) && ! SacConstants.isUndef(sacFile.getHeader().getStlo())
                 && ! SacConstants.isUndef(sacFile.getHeader().getEvla()) && ! SacConstants.isUndef(sacFile.getHeader().getEvlo())) {
             if(isVerbose()) {
                 System.err.println("Using stla,stlo, evla,evlo to calculate");
             }
-            Alert.warning("Warning: Sac header gcarc is not set,",
+            Alert.warning("Warning: Sac header gcarc is not set in "+filenameForError+",",
                           "using lat and lons to calculate distance.");
-            Alert.warning("No ellipticity correction will be applied.",
+            Alert.warning("Using WGS85 ellipticity flattening.",
                           "This may introduce errors. Please see the manual.");
             deg = SphericalCoords.distance(header.getStla(),
                                            header.getStlo(),
                                            header.getEvla(),
                                            header.getEvlo());
+            rayCalculateable = DistanceRay.ofGeodeticStationEvent(
+                    new Location(header.getStla(), header.getStlo()),
+                    new Location(header.getEvla(), header.getEvlo(), header.getEvdp()),
+                    DistAz.wgs85_flattening
+                    );
         } else {
             /* can't get a distance, skipping */
-            Alert.warning("Can't get a distance, all distance fields are undef.",
-                          "skipping " + f);
-            return;
+            throw new SetSacException("Can't get a distance, all distance fields are undef in "+filenameForError);
         }
         if(!((evdpkm && modelArgs.getSourceDepth() == header.getEvdp()) || (!evdpkm && modelArgs.getSourceDepth() == 1000 * header.getEvdp()))) {
             if(!evdpkm && header.getEvdp() != 0 && header.getEvdp() < 1000.0) {
                 Alert.warning("Sac header evdp is < 1000 in "
-                                      + f,
+                                      + filenameForError,
                               "If the depth is in kilometers instead of meters "
                                       + "(default), you should use the -evdpkm flag");
             }
@@ -212,71 +235,49 @@ public class TauP_SetSac extends TauP_Time {
             }
         }
         if(isVerbose()) {
-            System.err.println(f
-                    + " searching for " + getPhaseNameString());
+            System.err.println(filenameForError + " searching for " + getPhaseNameString());
         }
-        List<Arrival> arrivalList = calculate(deg);
-        // calcTime(deg);
-        if(isVerbose()) {
-            System.err.println(f + " "
-                    + arrivalList.size() + " arrivals found.");
-        }
-        // set arrivals in header, look for triplications if configured in phase name
-        List<Arrival> arrivalCopy = new ArrayList<Arrival>();
-        arrivalCopy.addAll(arrivalList);
-        while (arrivalCopy.size() > 0) {
+        for(int j = getSeismicPhases().size() - 1; j >= 0; j--) {
+            SeismicPhase phase = getSeismicPhases().get(j);
+            List<Arrival> arrivalList = rayCalculateable.calculate(phase);
             int phaseNum = -1;
-            Arrival currArrival = arrivalCopy.get(0);
-            for(int j = phaseNames.size() - 1; j >= 0; j--) {
-                if(currArrival.getName()
-                        .equals(((PhaseName)phaseNames.get(j)).name)) {
-                    phaseNum = j;
+            for(int pnidx = phaseNames.size() - 1; pnidx >= 0; pnidx--) {
+                if(phase.getName().equals(phaseNames.get(pnidx).name)) {
+                    phaseNum = pnidx;
                     break;
                 }
             }
-            if(phaseNum != -1) {
-                PhaseName pn = phaseNames.get(phaseNum);
-                int tripNum = 0;
-                for (int tripHeader: pn.sacTNumTriplication) {
-                    while (tripNum < arrivalCopy.size() && ! arrivalCopy.get(tripNum).getName().equals(pn.name)) {
-                        tripNum++;
+            PhaseName pn = phaseNames.get(phaseNum);
+            int tripNum = 0;
+            for (int tripHeader: pn.sacTNumTriplication) {
+                if (tripNum >= arrivalList.size()) {
+                    break;
+                }
+                Arrival tripArrival = arrivalList.get(tripNum);
+                if (tripHeader != SKIP_HEADER) {
+                    if (isVerbose()) {
+                        System.err.println(
+                                " phase found " + pn.name + " = "
+                                + tripArrival.getName() + " trip(" + tripNum + ")"
+                                + " -> t"
+                                + tripHeader
+                                + ", travel time="
+                                + (float) tripArrival.getTime());
                     }
-                    if (tripNum < arrivalCopy.size()) {
-                        Arrival tripArrival = arrivalCopy.get(tripNum);
-                        if (tripHeader != SKIP_HEADER) {
-                            if (isVerbose()) {
-                                System.err.println(f
-                                        + " phase found " + pn.name + " = "
-                                        + tripArrival.getName() + " trip(" + tripNum + ")"
-                                        + " -> t"
-                                        + tripHeader
-                                        + ", travel time="
-                                        + (float) tripArrival.getTime());
-                            }
-                            setSacTHeader(sacFile, tripHeader, tripArrival);
-                        } else {
-                            if (isVerbose()) {
-                                System.err.println(f
-                                        + " phase found " + pn.name + " = "
-                                        + tripArrival.getName() + " trip(" + tripNum + ")"
-                                        + " -> skip"
-                                        + ", travel time="
-                                        + (float) tripArrival.getTime());
-                            }
-                        }
-                        tripNum++;
+                    setSacTHeader(sacFile, tripHeader, tripArrival);
+                } else {
+                    if (isVerbose()) {
+                        System.err.println(
+                                " phase found " + pn.name + " = "
+                                + tripArrival.getName() + " trip(" + tripNum + ")"
+                                + " -> skip"
+                                + ", travel time="
+                                + (float) tripArrival.getTime());
                     }
                 }
+                tripNum++;
             }
-            List<Arrival> cleanArrivals = new ArrayList<>();
-            for (Arrival a : arrivalCopy) {
-                if (! a.getName().equals(currArrival.getName())) {
-                    cleanArrivals.add(a);
-                }
-            }
-            arrivalCopy = cleanArrivals;
         }
-        sacFile.write(f);
     }
 
     public static void setSacTHeader(SacTimeSeries sacFile,

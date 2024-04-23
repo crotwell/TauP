@@ -1,79 +1,26 @@
-Usage: taup setsac [--amp] [--debug] [--evdpkm] [--first] [--geodetic] [--help]
-                   [--rayp] [--time] [--verbose] [--az=<azimuth>]
-                   [--baz=<backAzimuth>] [--ellipflattening=<ellipflattening>]
-                   [-o=<outFile>] [--prop=<toolPropsFilename>] [--deg=d[,
-                   d...]]... [--exactdegree=d[,d...]]... [--exactkilometer=km[,
-                   km...]]... [--km=km[,km...]]... [-p=<phaseNames>[,
-                   <phaseNames>...]]... [--rayparamkm=<shootKmRaypList>[,
-                   <shootKmRaypList>...]]... [--rel=<relativePhaseName>[,
-                   <relativePhaseName>...]]... [--shoot=<shootRaypList>[,
-                   <shootRaypList>...]]... [--takeoff=<takeoffAngle>[,
-                   <takeoffAngle>...]]... [--evt=<eventLatLon>
-                   <eventLatLon>]... [--sta=<stationLatLon> <stationLatLon>]...
-                   [[--mod=<modelname>] [-h=<sourceDepth>] [--stadepth=depth]
-                   [--scat=s s]...] [--text | --json] [<sacFileNames>...]
+Usage: taup setsac [--debug] [--evdpkm] [--help] [--verbose]
+                   [--prop=<toolPropsFilename>] [-p=<phaseNames>[,
+                   <phaseNames>...]]... [[--mod=<modelname>] [-h=<sourceDepth>]
+                   [--stadepth=depth] [--scat=s s]...] [<sacFileNames>...]
 set headers to travel times of phases using depth and distance from headers
-      [<sacFileNames>...]
-      --amp                  amplitude factor for each phase
-      --debug                enable debugging output
-      --evdpkm               sac depth header is in km, default is meters
-      --first, --onlyfirst   only output the first arrival for each phase, no
-                               triplications
-      --help                 display this help message
-  -o, --output=<outFile>     output to file, default is stdout.
+      [<sacFileNames>...]   SAC files to process
+      --debug               enable debugging output
+      --evdpkm              sac depth header is in km, default is meters
+      --help                display this help message
   -p, --ph, --phase=<phaseNames>[,<phaseNames>...]
-                             seismic phase names
+                            seismic phase names
       --prop=<toolPropsFilename>
-                             load defaults from properties file
-      --rayp, --onlyrayp     only output the ray parameter
-      --rel=<relativePhaseName>[,<relativePhaseName>...]
-                             times relative to the first of the given phases
-      --time, --onlytime     only output travel time
-      --verbose              enable verbose output
+                            load defaults from properties file
+      --verbose             enable verbose output
 Model Args
   -h, --evdepth, --sourcedepth=<sourceDepth>
-                             source depth in km
+                            source depth in km
       --mod, --model=<modelname>
-                             use velocity model "modelname" for calculations
-                                                   Default is iasp91.
-      --scat, --scatter=s s  scattering depth and distance in degrees, which
-                               may be negative. Only effects phases with 'o' or
-                               'O' in the phase name.
+                            use velocity model "modelname" for calculations
+                                                  Default is iasp91.
+      --scat, --scatter=s s scattering depth and distance in degrees, which may
+                              be negative. Only effects phases with 'o' or 'O'
+                              in the phase name.
       --stadepth, --receiverdepth=depth
-                             the receiver depth in km for stations not at the
-                               surface
-Distance is given by:
-      --az=<azimuth>         azimuth in degrees
-      --baz=<backAzimuth>    backazimuth in degrees
-      --deg, --degree=d[,d...]
-                             distance in degrees
-      --ellipflattening=<ellipflattening>
-                             Elliptical flattening for distance calculations
-                               when --geodetic, defaults to WGS84 ~ 1/298.257
-      --evt, --event=<eventLatLon> <eventLatLon>
-                             event latitude and longitude
-      --exactdegree=d[,d...] exact distance traveled in degrees, not 360-d
-      --exactkilometer=km[,km...]
-                             exact distance traveled in kilometers, not 360-k
-      --geodetic             use geodetic latitude for distance calculations,
-                               which implies an ellipticity. Default is
-                               spherical. Note this only affects calculation of
-                               distance from lat/lon, all travel time
-                               calculations are done in a purely spherical
-                               model.
-      --km, --kilometer=km[,km...]
-                             distance in kilometers
-      --rayparamkm=<shootKmRaypList>[,<shootKmRaypList>...]
-                             ray parameter from the source in s/km, up or down
-                               is determined by the phase
-      --shoot, --rayparamdeg=<shootRaypList>[,<shootRaypList>...]
-                             ray parameter from the source in s/deg, up or down
-                               is determined by the phase
-      --sta, --station=<stationLatLon> <stationLatLon>
-                             station latitude and longitude
-      --takeoff=<takeoffAngle>[,<takeoffAngle>...]
-                             takeoff angle in degrees from the source zero is
-                               down, 90 horizontal, 180 is up
-Output Type
-      --json                 outputs as JSON
-      --text                 outputs as text
+                            the receiver depth in km for stations not at the
+                              surface

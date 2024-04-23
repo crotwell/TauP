@@ -40,11 +40,11 @@ public class TauPException extends Exception {
         super(message);
     }
 
-    public TauPException( Exception e) {
+    public TauPException( Throwable e) {
         super( e);
     }
 
-    public TauPException(String message, Exception e) {
+    public TauPException(String message, Throwable e) {
         super(message, e);
     }
 }
