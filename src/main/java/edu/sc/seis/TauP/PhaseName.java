@@ -50,24 +50,24 @@ public class PhaseName implements Serializable {
     /** list of sac t headers to be associated with the phase, including n triplications */
     public ArrayList<Integer> sacTNumTriplication = new ArrayList<Integer>();
 
-    public PhaseName(String name) throws TauModelException {
+    public PhaseName(String name) throws PhaseParseException {
         this.name = name;
         // check name is valid
         LegPuller.legPuller(name);
     }
 
-    public PhaseName(String name, int sacTNum) throws TauModelException {
+    public PhaseName(String name, int sacTNum) throws PhaseParseException {
         this(name);
         this.sacTNum = sacTNum;
         sacTNumTriplication.add(sacTNum);
     }
 
-    public PhaseName(String name, String sacTNumList) throws TauModelException {
+    public PhaseName(String name, String sacTNumList) throws PhaseParseException {
         this(name);
         parseSacTNums(sacTNumList);
     }
 
-    void parseSacTNums(String sacTNumList) throws TauModelException {
+    void parseSacTNums(String sacTNumList) throws PhaseParseException {
         for (int j = 0; j < sacTNumList.length(); j++) {
             char c = sacTNumList.charAt(j);
             int intForChar;
@@ -89,11 +89,11 @@ public class PhaseName implements Serializable {
                  */
                 intForChar = TauP_SetSac.SKIP_HEADER;
             } else {
-                throw new TauModelException("Problem with phase=" + name +
-                        ", unknown SAC header TNum: "+c);
+                throw new PhaseParseException("Problem with phase=" + name +
+                        ", unknown SAC header TNum: "+c, name, j);
             }
             if (sacTNumTriplication.contains(intForChar)) {
-                throw new TauModelException("SAC TNum is duplicated for phase "+name+", in "+sacTNumList);
+                throw new PhaseParseException("SAC TNum is duplicated for phase "+name+", in "+sacTNumList, name, j);
             }
             sacTNumTriplication.add(intForChar);
         }

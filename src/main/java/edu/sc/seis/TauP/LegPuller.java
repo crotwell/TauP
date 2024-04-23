@@ -44,13 +44,13 @@ public class LegPuller {
      * @throws TauModelException
      *             if the phase name cannot be tokenized.
      */
-    protected static ArrayList<String> legPuller(String name) throws TauModelException {
+    protected static ArrayList<String> legPuller(String name) throws PhaseParseException {
         // check against regex for coarse validation
         if ( ! regExCheck(name)) {
             if (ToolRun.DEBUG) {
-                throw new TauModelException("Do not understand Phase "+name+" doesn't match phase regex: "+phaseRegEx);
+                throw new PhaseParseException("Do not understand Phase "+name+" doesn't match phase regex: "+phaseRegEx, name, 0);
             }
-            throw new TauModelException("Do not understand Phase "+name+", (regex) skipping.");
+            throw new PhaseParseException("Do not understand Phase "+name+", (regex) skipping.", name, 0);
         }
 
         int offset = 0;
@@ -62,10 +62,10 @@ public class LegPuller {
             while(offset < name.length()) {
                 if (offset + 2 < name.length() && name.startsWith(EX_DOWN_CODE, offset+1)
                         && ! isDowngoingSymbol(name, offset) ) {
-                    throw new TauModelException("Invalid phase name:\n"
+                    throw new PhaseParseException("Invalid phase name:\n"
                             + name.charAt(offset)
                             + " cannot be followed by "
-                            + PhaseSymbols.EX_DOWN_CODE+ " in " + name+" at "+offset);
+                            + PhaseSymbols.EX_DOWN_CODE+ " in " + name+" at "+offset, name, offset);
                 } else if(isUpgoingSymbol(name, offset)) {
                     // Do the strictly upgoing, easy ones, ie k,y,j,p,s
                     legs.add(name.substring(offset, offset + 1));
@@ -79,9 +79,9 @@ public class LegPuller {
                     // note c and i are different from m as they must be reflection
                     // check m,c,i for critical refl with x
                     if (offset == name.length() - 1) {
-                        throw new TauModelException("Invalid phase name:\n"
+                        throw new PhaseParseException("Invalid phase name:\n"
                                 + name.charAt(offset)
-                                + " cannot be last char in " + name+" at "+offset);
+                                + " cannot be last char in " + name+" at "+offset, name, offset);
                     }
                     if (name.charAt(offset + 1) == 'x') {
                         legs.add(name.substring(offset, offset + 2));
@@ -107,8 +107,8 @@ public class LegPuller {
                     } else if (PhaseSymbols.isBoundary(name, offset+1)) {
                         offset = extractPhaseBoundaryInteraction(name, offset, 1, legs);
                     } else {
-                        throw new TauModelException("Invalid phase name:\n"
-                                + name.substring(offset) + " in " + name+" at "+offset);
+                        throw new PhaseParseException("Invalid phase name:\n"
+                                + name.substring(offset) + " in " + name+" at "+offset, name, offset);
                     }
                 } else if(name.charAt(offset) == P
                         || name.charAt(offset) == S) {
@@ -127,10 +127,10 @@ public class LegPuller {
                     } else if (PhaseSymbols.isBoundary(name, offset+1)) {
                         offset = extractPhaseBoundaryInteraction(name, offset, 1, legs);
                     } else if (isUpgoingSymbol(name, offset+1)) {
-                        throw new TauModelException("Invalid phase name:\n"
+                        throw new PhaseParseException("Invalid phase name:\n"
                                 + name.charAt(offset)
                                 + " cannot be followed by upgoing phase"
-                                + name.charAt(offset + 1) + " in " + name+" at "+offset);
+                                + name.charAt(offset + 1) + " in " + name+" at "+offset, name, offset);
                     } else if (name.charAt(offset + 1) == g
                             || name.charAt(offset + 1) == b
                             || isHead(name, offset)) {
@@ -149,8 +149,8 @@ public class LegPuller {
                         legs.add(diffLeg);
                         offset += diffLeg.length();
                     } else {
-                        throw new TauModelException("Invalid phase name:\n"
-                                + name.substring(offset) + " in " + name+" at "+offset);
+                        throw new PhaseParseException("Invalid phase name:\n"
+                                + name.substring(offset) + " in " + name+" at "+offset, name, offset);
                     }
                 } else if (name.charAt(offset) == K) {
                     if (offset + 1 == name.length()
@@ -174,8 +174,8 @@ public class LegPuller {
                         legs.add(diffLeg);
                         offset += diffLeg.length();
                     } else {
-                        throw new TauModelException("Invalid phase name:\n"
-                                + name.substring(offset) + " in " + name+" at "+offset);
+                        throw new PhaseParseException("Invalid phase name:\n"
+                                + name.substring(offset) + " in " + name+" at "+offset, name, offset);
                     }
 
                 } else if(isScatterSymbol(name, offset)) {
@@ -184,9 +184,9 @@ public class LegPuller {
                     offset++;
                 } else if(isReflectSymbol(name, offset)) {
                     if(offset == name.length()-1) {
-                        throw new TauModelException("Invalid phase name:\n"
+                        throw new PhaseParseException("Invalid phase name:\n"
                                 + name.charAt(offset)
-                                + " reflection cannot be last char in " + name+" at "+offset);
+                                + " reflection cannot be last char in " + name+" at "+offset, name, offset);
                     }
                     // check m,c,i for critical refl with x
                     int criticalOffset = 0;
@@ -209,45 +209,45 @@ public class LegPuller {
                         legs.add(prefix+boundId);
                         offset += prefix.length()+boundId.length();
                         if(offset == name.length()) {
-                            throw new TauModelException("Invalid phase name:\n"
+                            throw new PhaseParseException("Invalid phase name:\n"
                                     + prefix+" followed by "+ boundId
-                                    + " cannot be last in " + name+" at "+offset);
+                                    + " cannot be last in " + name+" at "+offset, name, offset);
                         }
                     } else {
-                        throw new TauModelException("Invalid phase name:\n"
-                                + name.substring(offset) + " in " + name+" at "+offset);
+                        throw new PhaseParseException("Invalid phase name:\n"
+                                + name.substring(offset) + " in " + name+" at "+offset, name, offset);
                     }
                 } else if(PhaseSymbols.isBoundary(name, offset)) {
                     String boundId = extractBoundaryId(name, offset, false);
                     legs.add(boundId);
                     offset+=boundId.length();
                     if(offset == name.length()) {
-                        throw new TauModelException("Invalid phase name:\n"
+                        throw new PhaseParseException("Invalid phase name:\n"
                                 + boundId
-                                + " cannot be last in " + name+" at "+offset);
+                                + " cannot be last in " + name+" at "+offset, name, offset);
 
                     }
                 } else {
-                    throw new TauModelException("Invalid phase name:\n"
-                            + name.substring(offset) + " in " + name+" at "+offset);
+                    throw new PhaseParseException("Invalid phase name:\n"
+                            + name.substring(offset) + " in " + name+" at "+offset, name, offset);
                 }
             }
         legs.add(PhaseSymbols.END_CODE);
         String validationMsg = phaseValidate(legs);
         if(validationMsg != null) {
-            throw new TauModelException("Phase failed validation: " + name
-                    + "  " + validationMsg);
+            throw new PhaseParseException("Phase failed validation: " + name
+                    + "  " + validationMsg, name, 0);
         }
         return legs;
     }
 
-    public static int extractPhaseBoundaryInteraction(String name, int offset, int phaseCharLength, List<String> legs) throws TauModelException {
+    public static int extractPhaseBoundaryInteraction(String name, int offset, int phaseCharLength, List<String> legs) throws PhaseParseException {
         int idx = offset;
         String phaseChar = name.substring(offset, offset+phaseCharLength);
         idx+=phaseCharLength;
         String boundId = extractBoundaryId(name, idx, true);
         if (boundId.length() == 0) {
-            throw new TauModelException("Got empty boundary from extractBoundaryId() in phaseBoundary "+phaseChar+" "+offset+" in "+name);
+            throw new PhaseParseException("Got empty boundary from extractBoundaryId() in phaseBoundary "+phaseChar+" "+offset+" in "+name, name, offset);
         }
         if (boundId.endsWith(DIFF) || boundId.endsWith(String.valueOf(HEAD_CODE))) {
             // like Pn, Pdiff or PKdiffP, add as single leg
@@ -255,8 +255,8 @@ public class LegPuller {
             idx += boundId.length();
         } else  if (offset+phaseChar.length()+boundId.length() == name.length()) {
             // like P410 ?
-            throw new TauModelException("Invalid phase name: "+ phaseChar
-                    + " cannot be followed by "+ boundId + " in " + name);
+            throw new PhaseParseException("Invalid phase name: "+ phaseChar
+                    + " cannot be followed by "+ boundId + " in " + name, name, offset);
         } else {
             // like P410s
             legs.add(phaseChar);
@@ -266,11 +266,11 @@ public class LegPuller {
         return idx;
     }
 
-    public static String extractBoundaryId(String name, int offset, boolean allowHeadDiff) throws TauModelException {
+    public static String extractBoundaryId(String name, int offset, boolean allowHeadDiff) throws PhaseParseException {
         if(offset == name.length()-1) {
-            throw new TauModelException("Invalid phase name:\n"
+            throw new PhaseParseException("Invalid phase name:\n"
                     + name.charAt(offset)
-                    + " cannot be last char in " + name);
+                    + " cannot be last char in " + name, name, offset);
         }
         int idx = offset;
         String numString = "";
@@ -287,7 +287,7 @@ public class LegPuller {
             // normal discon interaction
         }
         if (idx == offset) {
-            throw new TauModelException("Attempt to extract boundary but empty starting at "+offset+" in "+name);
+            throw new PhaseParseException("Attempt to extract boundary but empty starting at "+offset+" in "+name, name, offset);
         }
         return name.substring(offset, idx);
     }

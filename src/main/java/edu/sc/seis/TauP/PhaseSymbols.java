@@ -166,10 +166,10 @@ public class PhaseSymbols {
         return false;
     }
 
-    public static boolean isBoundary(String name) throws TauModelException {
+    public static boolean isBoundary(String name) {
         return isBoundary(name, 0);
     }
-    public static boolean isBoundary(String name, int offset) throws TauModelException {
+    public static boolean isBoundary(String name, int offset) {
         char ch = name.charAt(offset);
         if(Character.isDigit(ch) || ch == '.' || ch == m || ch == c || ch == i ) {
             return true;
