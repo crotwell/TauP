@@ -9,7 +9,6 @@ public abstract class RayCalculateable {
 
     public abstract List<Arrival> calculate(SeismicPhase phase) throws SlownessModelException, NoSuchLayerException;
 
-
     public void withEventAzimuth(Location evt, double azimuth) {
         this.evtLatLon = evt;
         this.azimuth = azimuth;

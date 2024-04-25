@@ -141,8 +141,16 @@ public class TauP_Time extends TauP_AbstractRayTool {
         List<Arrival> arrivals = new ArrayList<>();
         modelArgs.depthCorrected();
         for (SeismicPhase phase : phaseList) {
+            List<Arrival> phaseArrivals = new ArrayList<>();
             for (RayCalculateable shoot : shootables) {
-                arrivals.addAll(shoot.calculate(phase));
+                phaseArrivals.addAll(shoot.calculate(phase));
+            }
+            if (!onlyFirst) {
+                arrivals.addAll(phaseArrivals);
+            } else {
+                if (phaseArrivals.size() > 0) {
+                    arrivals.add(phaseArrivals.get(0));
+                }
             }
         }
 
@@ -156,7 +164,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
                 DistanceRay distRay = DistanceRay.ofRadians(dist);
                 List<Arrival> relativeArrivals = new ArrayList<>();
                 for (SeismicPhase relPhase : relativePhaseList) {
-                    relativeArrivals.addAll(relPhase.calcTime(distRay));
+                    relativeArrivals.addAll(distRay.calculate(relPhase));
                 }
                 relativeArrivals = Arrival.sortArrivals(relativeArrivals);
                 if (relativeArrivals.size() != 0) {
@@ -220,7 +228,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
             double degrees = distVal.getDegrees(getRadiusOfEarth());
             for (int phaseNum = 0; phaseNum < phaseList.size(); phaseNum++) {
                 phase = phaseList.get(phaseNum);
-                List<Arrival> phaseArrivals = phase.calcTime(distVal);
+                List<Arrival> phaseArrivals = distVal.calculate(phase);
                 Arrival relativeArrival = calculateRelativeArrival(degrees);
                 for (Arrival arrival : phaseArrivals) {
                     arrival.setRelativeToArrival(relativeArrival);

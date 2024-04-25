@@ -52,6 +52,8 @@ public class SphericalCoords {
 
     protected static final double rtod = 180.0 / Math.PI;
 
+    public static final double TWOPI = 2*Math.PI;
+
     /** Calculates angular distance between two lat lon pairs. */
     public static double distance(double latA,
                                   double lonA,

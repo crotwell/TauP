@@ -34,6 +34,8 @@ import java.io.PrintWriter;
 import java.time.Duration;
 import java.util.*;
 
+import static edu.sc.seis.TauP.SphericalCoords.TWOPI;
+
 /**
  * convenience class for storing the parameters associated with a phase arrival.
  * 
@@ -57,7 +59,7 @@ public class Arrival {
                 dist,
                 rayParam,
                 rayParamIndex,
-                dist,
+                DistanceRay.ofRadians(dist),
                 phase.getName(),
                 phase.getPuristName(),
                 phase.getSourceDepth(),
@@ -71,7 +73,7 @@ public class Arrival {
                    double dist,
                    double rayParam,
                    int rayParamIndex,
-                   double searchDist,
+                   RayCalculateable searchDist,
                    String name,
                    String puristName,
                    double sourceDepth,
@@ -89,11 +91,9 @@ public class Arrival {
         this.phase = phase;
         this.time = time;
         this.dist = dist;
-        this.distValue = DistanceRay.ofRadians(dist);
         this.rayParam = rayParam;
         this.rayParamIndex = rayParamIndex;
-        this.searchDist = searchDist;
-        this.searchDistDeg = searchDist * RtoD; // likely rounding errors, but close and should be reset by calc fn
+        this.searchCalc = searchDist;
         this.name = name;
         this.puristName = puristName;
         this.sourceDepth = sourceDepth;
@@ -113,9 +113,6 @@ public class Arrival {
     /** angular distance (great circle) in radians */
     private final double dist;
 
-    // ToDo: make this final???
-    private RayCalculateable distValue;
-
     /** ray parameter in seconds per radians. */
     private final double rayParam;
 
@@ -123,12 +120,10 @@ public class Arrival {
 
     private final double dRPdDist;
 
-    /** original angular search distance (great circle) in radians. May differ from dist by multiple of 2 pi
-     * or be pi - dist for long way around. */
-    private final double searchDist;
-    /** original angular search distance (great circle) in degrees. May differ from dist by multiple of 180
-     * or be 360 - dist for long way around. */
-    private double searchDistDeg;
+    /** original angular search criteria, usually distance (great circle) in degrees.
+     * May differ from dist by multiple of 180
+     * or be 180 - dist for long way around. */
+    private RayCalculateable searchCalc;
 
     /** phase name */
     private final String name;
@@ -230,15 +225,18 @@ public class Arrival {
         return SeismicPhase.distanceTrim180(getDistDeg());
     }
 
-    public void setSearchDistDeg(double searchDistDeg) {
-        this.searchDistDeg = searchDistDeg;
+    public void setSearchValue(RayCalculateable searchVal) {
+        this.searchCalc = searchVal;
     }
 
     /**
      * returns search distance in degrees.
      */
     public double getSearchDistDeg() {
-        return this.searchDistDeg;
+        if (this.searchCalc instanceof DistanceRay) {
+            return ((DistanceRay)this.searchCalc).getDegrees(getPhase().getTauModel().getRadiusOfEarth());
+        }
+        return this.getDistDeg();
     }
 
     /**
@@ -515,7 +513,7 @@ public class Arrival {
         -1* dist,
          rayParam,
          rayParamIndex,
-         searchDist,
+         searchCalc,
          name,
          puristName,
          sourceDepth,
@@ -523,7 +521,6 @@ public class Arrival {
          takeoffAngle,
          incidentAngle,
                 dRPdDist);
-        neg.setSearchDistDeg(getSearchDistDeg());
         return neg;
     }
 
@@ -565,26 +562,20 @@ public class Arrival {
         return new TimeDist(getRayParam(), 0, 0, getSourceDepth());
     }
     public int getNumPiercePoints() {
-        if(pierce != null) {
-            return pierce.length;
-        } else {
-            return 0;
-        }
+        return getPierce().length;
     }
 
     public int getNumPathPoints() {
         int c = 0;
-        if (pathSegments != null) {
-            for (ArrivalPathSegment seg : getPathSegments()) {
-                c += seg.path.size();
-            }
+        for (ArrivalPathSegment seg : getPathSegments()) {
+            c += seg.path.size();
         }
         return c;
     }
 
     public TimeDist getPiercePoint(int i) {
         // don't check for i> length since we want an ArrayOutOfBounds anyway
-        return pierce[i];
+        return getPierce()[i];
     }
 
     /**
@@ -594,7 +585,7 @@ public class Arrival {
      *             if depth is not found
      */
     public TimeDist getFirstPiercePoint(double depth) {
-        for (TimeDist timeDist : pierce) {
+        for (TimeDist timeDist : getPierce()) {
             if (timeDist.getDepth() == depth) {
                 return timeDist;
             }
@@ -611,7 +602,7 @@ public class Arrival {
      */
     public TimeDist getLastPiercePoint(double depth) {
         TimeDist piercepoint = null;
-        for (TimeDist timeDist : pierce) {
+        for (TimeDist timeDist : getPierce()) {
             if (timeDist.getDepth() == depth) {
                 piercepoint = timeDist;
             }
@@ -623,11 +614,9 @@ public class Arrival {
         return piercepoint;
     }
 
-    protected static final double TWOPI = 2.0 * Math.PI;
+    protected static final double DtoR = SphericalCoords.dtor;
 
-    protected static final double DtoR = Math.PI / 180.0;
-
-    protected static final double RtoD = 180.0 / Math.PI;
+    protected static final double RtoD = SphericalCoords.rtod;
 
     public static Arrival getEarliestArrival(List<Arrival> arrivals) {
         double soonest = Double.MAX_VALUE;
@@ -787,10 +776,7 @@ public class Arrival {
     }
 
     public RayCalculateable getRayCalculateable() {
-        return this.distValue;
-    }
-    public void setShootable(RayCalculateable dv) {
-        this.distValue = dv;
+        return this.searchCalc;
     }
 
     public boolean isLatLonable() {

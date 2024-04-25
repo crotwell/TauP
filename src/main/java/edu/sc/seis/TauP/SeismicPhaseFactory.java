@@ -202,8 +202,8 @@ public class SeismicPhaseFactory {
             if (in_scat.length > 2) {
                 throw new TauModelException("Scatter phase doesn't have two segments: "+name+", repeated scattering not supported");
             }
-            if (scat.dist.getDegrees(tMod.getRadiusOfEarth()) == 0.0) {
-                throw new ScatterArrivalFailException("Attempt to use scatter phase but scatter distance is zero: "+name);
+            if (scat.depth == 0.0) {
+                throw new ScatterArrivalFailException("Attempt to use scatter phase but scatter depth is zero: "+name);
             }
             boolean isBackscatter = false;
             if( name.contains(""+ PhaseSymbols.BACKSCATTER_CODE)) {
@@ -235,14 +235,18 @@ public class SeismicPhaseFactory {
             SimpleSeismicPhase scatPhase = SeismicPhaseFactory.createPhase(in_scat[1],
                     scatTMod, scat.depth, receiverDepth, debug);
 
-            List<Arrival> inArrivals = inPhase.calcTime(scat.dist);
+            List<Arrival> inArrivals = scat.dist.calculate(inPhase);
             if (inArrivals.size() == 0) {
                 throw new ScatterArrivalFailException("No inbound arrivals to the scatterer for "+name
                         +" at "+scat.depth+" km depth and "+scat.dist.getDegrees(tMod.getRadiusOfEarth())+" deg. Distance range for scatterer at this depth is "+inPhase.getMinDistanceDeg()+" "+inPhase.getMaxDistanceDeg()+" deg.");
             }
             for (Arrival inArr : inArrivals) {
+                Arrival flipInArr = inArr;
+                if (inArr.getDistDeg() == -1 * scat.dist.getDegrees(scatPhase.getTauModel().getRadiusOfEarth())) {
+                    flipInArr = inArr.negateDistance();
+                }
                 ScatteredSeismicPhase seismicPhase = new ScatteredSeismicPhase(
-                        inArr,
+                        flipInArr,
                         scatPhase,
                         scat.depth,
                         scat.dist.getDegrees(tMod.getRadiusOfEarth()),

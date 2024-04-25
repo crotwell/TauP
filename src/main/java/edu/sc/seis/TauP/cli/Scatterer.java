@@ -1,25 +1,19 @@
 package edu.sc.seis.TauP.cli;
 
-import edu.sc.seis.TauP.DistanceRay;
+import edu.sc.seis.TauP.FixedHemisphereDistanceRay;
 
 public class Scatterer {
     public Scatterer(double depth, double dist) {
-        this.depth = depth;
-        double degrees = dist;
-        if (degrees > 180.0 || degrees <= -180.0) {
-            degrees = (180.0 + degrees) % 360.0 - 180.0;
-        }
-        if (degrees == -180.0) {
-            degrees = 180;
-        }
-        this.dist = DistanceRay.ofDegrees(degrees);
+        this(depth, FixedHemisphereDistanceRay.ofDegrees(dist));
     }
-    public Scatterer(double depth, DistanceRay dist) {
+
+    public Scatterer(double depth, FixedHemisphereDistanceRay dist) {
         this.depth = depth;
         this.dist = dist;
     }
+
     public final double depth;
-    public final DistanceRay dist;
+    public final FixedHemisphereDistanceRay dist;
 
 
 }

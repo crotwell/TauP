@@ -67,7 +67,7 @@ public class ScatteredSeismicPhase implements SeismicPhase {
 
     @Override
     public Arrival getEarliestArrival(double degrees) {
-        return Arrival.getEarliestArrival(calcTime(DistanceRay.ofDegrees(degrees)));
+        return Arrival.getEarliestArrival(DistanceRay.ofDegrees(degrees).calcScatteredPhase(this));
     }
 
     @Override
@@ -271,63 +271,18 @@ public class ScatteredSeismicPhase implements SeismicPhase {
      */
     public Arrival createArrivalAtIndex(int rayNum) {
         Arrival scatteredArrival = scatteredPhase.createArrivalAtIndex(rayNum);
-        double scatDist = calcScatterDistDeg(scatteredArrival.getDistDeg(), getScattererDistanceDeg(), isBackscatter());
-        scatteredArrival.setSearchDistDeg(scatDist);
-        return scatteredArrival;
-    }
-
-    @Override
-    public List<Arrival> calcTimeExactDistanceDeg(double deg) {
-        List<Arrival> out = new ArrayList<>();
-        double scatDist = calcScatterDistDeg(deg, getScattererDistanceDeg(), isBackscatter());
-        double calcScatRad = scatDist * Arrival.DtoR ;
-        List<Arrival> scatAtDist = scatteredPhase.calcTimeExactDistance(calcScatRad);
-        for (Arrival a : scatAtDist) {
-            a.setSearchDistDeg(deg);
-        }
-        return scatAtDist;
+        Arrival b = new ScatteredArrival(
+                this,
+                DistanceRay.ofDegrees(inboundArrival.getDistDeg()+scatteredArrival.getDistDeg()),
+                inboundArrival,
+                scatteredArrival,
+                isBackscatter());
+        return b;
     }
 
     @Override
     public List<Arrival> calcTime(double deg) {
-        return calcTime(DistanceRay.ofDegrees(deg));
-    }
-
-    @Override
-    public List<Arrival> calcTime(DistanceRay dv) {
-        double deg = dv.getDegrees(getTauModel().getRadiusOfEarth());
-        List<Arrival> out = new ArrayList<>();
-        double scatDist = calcScatterDistDeg(deg, getScattererDistanceDeg(), isBackscatter()) % 360;
-        if (scatDist < 0) {
-            scatDist += 360;
-        }
-
-        List<Arrival> scat = new ArrayList<>();
-        double calcScatRad = scatDist * Arrival.DtoR ;
-        while (calcScatRad < scatteredPhase.getMaxDistance()) {
-            List<Arrival> scatAtDist = scatteredPhase.calcTimeExactDistance(calcScatRad);
-            for (Arrival a : scatAtDist) {
-                a.setSearchDistDeg(scatDist);
-                if (Math.abs((a.getDistDeg()-scatDist) % 360) < 1e-6) {
-                    // make sure actually arrives at deg, can be messed up by neg forwardScatDist
-                    Arrival b = new ScatteredArrival(
-                            this,
-                            deg,
-                            inboundArrival,
-                            a,
-                            isBackscatter());
-                    b.setSearchDistDeg(deg);
-                    out.add(b);
-                } else {
-                    if (ToolRun.DEBUG) {
-                        System.err.println("Arrival not scatter to rec: " + deg + " scat: " + getScattererDistanceDeg() + " a: " + a.getDistDeg());
-                    }
-                }
-            }
-            scat.addAll(scatAtDist);
-            calcScatRad += 2*Math.PI;
-        }
-        return out;
+        return DistanceRay.ofDegrees(deg).calcScatteredPhase(this);
     }
 
     public static double calcScatterDistDeg(double deg, double scattererDeg, boolean backscatter) {

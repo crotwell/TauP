@@ -13,13 +13,13 @@ public class ScatteredArrival extends Arrival {
             return inboundName+ PhaseSymbols.SCATTER_CODE+scatterName;
         }
     }
-    public ScatteredArrival(ScatteredSeismicPhase phase, double deg, Arrival inboundArrival, Arrival scatteredArrival, boolean isBackscatter) {
+    public ScatteredArrival(ScatteredSeismicPhase phase, RayCalculateable searchVal, Arrival inboundArrival, Arrival scatteredArrival, boolean isBackscatter) {
         super(phase,
                 inboundArrival.getTime()+scatteredArrival.getTime(),
-                inboundArrival.getDist()+(isBackscatter?-1:1)*scatteredArrival.getDist(),
+                inboundArrival.getDist()+scatteredArrival.getDist(),
                 scatteredArrival.getRayParam(),
                 scatteredArrival.getRayParamIndex(),
-                deg,
+                searchVal,
                 formScatterPhaseName(inboundArrival.getName(), scatteredArrival.getName(), isBackscatter),
                 formScatterPhaseName(inboundArrival.getPuristName(), scatteredArrival.getPuristName(), isBackscatter),
                 inboundArrival.getPhase().getSourceDepth(),

@@ -127,7 +127,7 @@ public class TauP_WKBJ extends TauP_Time {
             double degrees = distVal.getDegrees(getRadiusOfEarth());
             for (int phaseNum = 0; phaseNum < phaseList.size(); phaseNum++) {
                 SeismicPhase phase = phaseList.get(phaseNum);
-                List<Arrival> phaseArrivals = phase.calcTime(distVal);
+                List<Arrival> phaseArrivals = distVal.calculate(phase);
                 allArrivals.addAll(phaseArrivals);
             }
             Arrival first = Arrival.getEarliestArrival(allArrivals);
@@ -205,7 +205,7 @@ public class TauP_WKBJ extends TauP_Time {
             List<Arrival> allArrivals = new ArrayList<Arrival>();
             for (int phaseNum = 0; phaseNum < phaseList.size(); phaseNum++) {
                 SeismicPhase phase = phaseList.get(phaseNum);
-                List<Arrival> phaseArrivals = phase.calcTime(distVal);
+                List<Arrival> phaseArrivals = distVal.calculate(phase);
                 allArrivals.addAll(phaseArrivals);
             }
 

@@ -59,7 +59,7 @@ public class ScatterTest {
         Arrival outArr = outboundPhase.getEarliestArrival(dist-scat.dist.getDegrees(tMod.getRadiusOfEarth()));
         assertNotNull(outArr);
         ScatteredSeismicPhase scatPhase = new ScatteredSeismicPhase(inArr, outboundPhase, scat.depth, scat.dist.getDegrees(tMod.getRadiusOfEarth()), backscatter);
-        List<Arrival> arrList = scatPhase.calcTime(dist);
+        List<Arrival> arrList = DistanceRay.ofDegrees(dist).calcScatteredPhase(scatPhase);
         assertNotEquals(0, arrList.size());
         Arrival scatArr = scatPhase.getEarliestArrival(dist);
         assertNotNull(scatArr);
@@ -83,7 +83,7 @@ public class ScatterTest {
         assertNotEquals(0, scatPhaseList.size());
         assertInstanceOf(ScatteredSeismicPhase.class, scatPhaseList.get(0));
         ScatteredSeismicPhase scatPhaseB = (ScatteredSeismicPhase) scatPhaseList.get(0);
-        List<Arrival> arrListB = scatPhaseB.calcTime(dist);
+        List<Arrival> arrListB = DistanceRay.ofDegrees(dist).calcScatteredPhase(scatPhaseB);
         assertNotEquals(0, arrListB.size());
         Arrival scatArrB = scatPhaseB.getEarliestArrival(dist);
         assertNotNull(scatArrB);
@@ -166,7 +166,30 @@ public class ScatterTest {
         Scatterer scat = new Scatterer(3500, 120);
         pierce.setScatterer(scat);
         pierce.clearPhaseNames();
-        pierce.appendPhaseName("PKoKP");
+        String phaseName = "PKoKP";
+        pierce.appendPhaseName(phaseName);
+
+        DistanceRay dRay = DistanceRay.ofDegrees(360-110);
+        ScatteredSeismicPhase scatPhase = (ScatteredSeismicPhase) SeismicPhaseFactory.createSeismicPhases(phaseName,
+                pierce.getTauModelDepthCorrected(),
+                0,
+                0,
+                scat,
+                false).get(0);
+        List<Double> arrDistList = dRay.calcRadiansInRange(
+                scatPhase.getMinDistance(),
+                scatPhase.getMaxDistance(),
+                pierce.getRadiusOfEarth(),
+                false);
+        assertTrue(arrDistList.size()>0);
+        for (Double d : arrDistList) {
+            System.err.println("   dist in range "+d);
+        }
+        List<Arrival> dRayArrivalList = dRay.calcScatteredPhase(scatPhase);
+        assertEquals(1, dRayArrivalList.size());
+
+        List<Arrival> arrivalsAt250a = pierce.calculate(360-110);
+        assertEquals(1, arrivalsAt250a.size());
 
         List<Arrival> arrivals = pierce.calculate(-110);
         assertEquals(1, arrivals.size());
@@ -205,6 +228,23 @@ public class ScatterTest {
         // path should first go negative to scatterer, then positive to receiver
         List<ArrivalPathSegment> pathSegments = a_35.getPathSegments();
         assertTrue(pathSegments.get(0).getPathPoint(1).getDistDeg()<0);
+        assertEquals(-10, pathSegments.get(1).getPathPoint(0).getDistDeg(), 1e-5);
         assertEquals(35.0, pathSegments.get(pathSegments.size()-1).getPathEnd().getDistDeg(), 1e-5);
+        assertEquals(35, a_35.getDistDeg(), 1e-5);
+    }
+
+
+    @Test
+    public void pathBackscatterPedOPTime() throws TauPException {
+        String modelname = "iasp91";
+        TauModel tMod = TauModelLoader.load(modelname);
+        String phaseName = "PedOP";
+        Scatterer scat = new Scatterer(400, FixedHemisphereDistanceRay.ofDegrees(-5));
+        List<SeismicPhase> phaseList = SeismicPhaseFactory.createSeismicPhases(phaseName, tMod, 0, 0, scat, false);
+        ScatteredSeismicPhase phase = (ScatteredSeismicPhase) phaseList.get(0);
+        DistanceRay distRay = DistanceRay.ofDegrees(10);
+        List<Arrival> arrivals = distRay.calculate(phase);
+        assertTrue(arrivals.size()> 0);
+        assertTrue(arrivals.get(0) instanceof ScatteredArrival);
     }
 }

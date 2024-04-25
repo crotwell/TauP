@@ -29,7 +29,7 @@ public class RayParamRay extends ShootableRay {
         List<Arrival> arrivals = new ArrayList<>();
         if (phase.getMinRayParam() <= rayParam && rayParam <= phase.getMaxRayParam()) {
             Arrival phaseArrival = phase.shootRay(rayParam);
-            phaseArrival.setShootable(this);
+            phaseArrival.setSearchValue(this);
             arrivals.add(phaseArrival);
         }
         return arrivals;

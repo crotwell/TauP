@@ -19,6 +19,8 @@ package edu.sc.seis.TauP;
 import java.io.*;
 import java.util.*;
 
+import static edu.sc.seis.TauP.Arrival.RtoD;
+
 /**
  * Stores and transforms seismic phase names to and from their corresponding
  * sequence of branches.
@@ -207,7 +209,7 @@ public class SimpleSeismicPhase implements SeismicPhase {
 
     @Override
     public Arrival getEarliestArrival(double degrees) {
-        return Arrival.getEarliestArrival(calcTime(DistanceRay.ofDegrees(degrees)));
+        return Arrival.getEarliestArrival(DistanceRay.ofDegrees(degrees).calcSimplePhase(this));
     }
 
     @Override
@@ -394,80 +396,15 @@ public class SimpleSeismicPhase implements SeismicPhase {
 
     // Normal methods
 
+    @Deprecated
     public List<Arrival> calcTime(double deg) {
-        return calcTime(DistanceRay.ofDegrees(deg));
+        return DistanceRay.ofDegrees(deg).calcSimplePhase(this);
     }
 
-    /** calculates arrival times for this phase, sorted by time.
+    /**
+     * Calculates arrivals for this phase, but only for the exact distance in radians. This does not check multiple
+     * laps nor going the long way around.
      *  */
-    @Override
-    public List<Arrival> calcTime(DistanceRay dv) {
-        if (dv instanceof ExactDistanceRay) {
-            return calcTimeExactDistance(dv.getRadians(getTauModel().getRadiusOfEarth()));
-        }
-        double deg = dv.getDegrees(getTauModel().getRadiusOfEarth());
-        double tempDeg = SeismicPhase.distanceTrim180(deg);
-        if (ToolRun.DEBUG) {
-            System.err.println("Calculation distance: "+tempDeg+" deg");
-        }
-        double deltaTemp = Math.abs((deg - tempDeg + 180) % 360 - 180);
-        double deltaTempLongWay = Math.abs(((360-deg)-tempDeg + 180) % 360 - 180);
-        int trimDistIsPos = deltaTemp < deltaTempLongWay ? 1 : -1;
-        double radDist = tempDeg * Math.PI / 180.0;
-        List<Arrival> arrivals = new ArrayList<Arrival>();
-        /*
-         * Search all distances 2n*PI+radDist and 2(n+1)*PI-radDist that are
-         * less than the maximum distance for this phase. This insures that we
-         * get the time for phases that accumulate more than 180 degrees of
-         * distance, for instance PKKKKP might wrap all of the way around. A
-         * special case exists at 180, so we skip the second case if
-         * tempDeg==180.
-         */
-        int n = 0;
-        double searchDist;
-        while(n * 2.0 * Math.PI + radDist <= maxDistance) {
-            /*
-             * Look for arrivals that are radDist + 2nPi, ie rays that have done
-             * more than n laps.
-             */
-            searchDist = n * 2.0 * Math.PI + radDist;
-            List<Arrival> forwardArrivals = calcTimeExactDistance(searchDist);
-            for (Arrival a : forwardArrivals) {
-                a.setSearchDistDeg(deg );
-            }
-            arrivals.addAll(forwardArrivals);
-            /*
-             * Look for arrivals that are 2(n+1)Pi-radDist, ie rays that have
-             * done more than one half lap plus some number of whole laps.
-             */
-            searchDist = (n + 1) * 2.0 * Math.PI - radDist;
-            if(tempDeg != 180 && radDist != 0 && searchDist <= maxDistance) {
-                List<Arrival> backwardsArrivals = calcTimeExactDistance(searchDist);
-                for (Arrival a : backwardsArrivals) {
-                    a.setSearchDistDeg(deg);
-                }
-                arrivals.addAll(backwardsArrivals);
-            }
-            n++;
-        }
-        for (Arrival arrival : arrivals) {
-            arrival.setShootable(dv);
-        }
-        return Arrival.sortArrivals(arrivals);
-    }
-
-    public List<Arrival> calcTimeExactDistanceDeg(double deg) {
-        List<Arrival> arrivals =  calcTimeExactDistance(deg * Arrival.DtoR );
-        for (Arrival a : arrivals) {
-            a.setSearchDistDeg(deg );
-        }
-        return arrivals;
-    }
-
-        /**
-         * Calculates arrivals for this phase, but only for the exact distance in radians. This does not check multiple
-         * laps nor going the long way around.
-         *  */
     public List<Arrival> calcTimeExactDistance(double searchDist) {
         List<Arrival> arrivals = new ArrayList<Arrival>();
         for(int rayNum = 0; rayNum < (dist.length - 1); rayNum++) {
@@ -812,31 +749,6 @@ public class SimpleSeismicPhase implements SeismicPhase {
         return getPhaseSegments().get(getPhaseSegments().size()-1).isPWave;
     }
 
-    /**
-     * Calculates the "pierce points" for the arrivals stored in arrivals. The
-     * pierce points are stored within each arrival object.
-     * @deprecated  Use the getPierce() method on each Arrival from calcTime()
-     */
-    @Deprecated
-    public List<Arrival> calcPierce(double deg) throws TauModelException {
-        List<Arrival> arrivals = calcTime(DistanceRay.ofDegrees(deg));
-        for (Arrival a : arrivals) {
-            a.getPierce(); // side effect calc pierce
-        }
-        return arrivals;
-    }
-
-    /** Calculates the pierce points for a particular arrival. The returned arrival is the same
-     * as the input arguement but now has the pierce points filled in.
-     * @param currArrival
-     * @return same arrival with pierce points
-     * @deprecated  Use the getPierce() method on each Arrival from calcTime()
-     */
-    @Deprecated
-    public Arrival calcPierce(Arrival currArrival) {
-        currArrival.getPierce();
-        return currArrival;
-    }
 
     public List<TimeDist> calcPierceTimeDist(Arrival currArrival) {
         double branchDist = 0.0;
@@ -1040,30 +952,6 @@ public class SimpleSeismicPhase implements SeismicPhase {
     @Override
     public int getNumRays() {
         return getRayParams().length;
-    }
-
-    /** calculates the paths this phase takes through the earth model.
-     * @deprecated  Use the getPath() method on each Arrival from calcTime()
-     */
-    @Deprecated
-    public List<Arrival> calcPath(double deg) {
-        List<Arrival> arrivals = calcTime(DistanceRay.ofDegrees(deg));
-        for (Arrival a : arrivals) {
-            a.getPath(); // side effect calculates path
-        }
-        return arrivals;
-    }
-
-    /**
-     *
-     * @param currArrival
-     * @return
-     * @deprecated use the getPath() method on the arrival.
-     */
-    @Deprecated
-    public Arrival calcPath(Arrival currArrival) {
-        currArrival.getPath(); // side effect calculates path
-        return currArrival;
     }
 
     /** True is all segments of this path are only P waves.

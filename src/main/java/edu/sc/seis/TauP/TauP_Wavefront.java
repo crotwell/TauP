@@ -256,6 +256,7 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
             out.put(timeVal, wavefrontSegments);
             WavefrontPathSegment curWaveSeg = null;
 
+            int waveSegIdx = 0;
             if (phase.getName().endsWith("kmps")) {
                 // surface wave, so make wavefront from 0 to 100 km???
                 List<TimeDist> surfaceWaveTD = new ArrayList<>();
@@ -266,6 +267,47 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
                         null, 0, totalNumSegments, phase, timeVal);
                 wavefrontSegments.add(seg);
                 done = dist + timeStep / phase.getRayParams(0) > phase.getMaxDistance();
+                continue;
+            } else if (phase instanceof ScatteredSeismicPhase &&
+                    ((ScatteredSeismicPhase) phase).getInboundArrival().getTime() > timeVal
+            ) {
+                Arrival inboundArrival = ((ScatteredSeismicPhase) phase).getInboundArrival();
+                TimeDist prevTD = null;
+                for (ArrivalPathSegment curPathSeg : inboundArrival.getPathSegments()) {
+                    for (TimeDist currTD : curPathSeg.getPath()) {
+                        if (prevTD != null && prevTD.getTime() <= timeVal && timeVal <= currTD.getTime()) {
+                            TimeDist interp = interp(prevTD, currTD, timeVal);
+                            double deltaDepth = phase.getTauModel().getRadiusOfEarth() * 0.01;
+                            TimeDist shallowerTd = new TimeDist(
+                                    interp.getP(),
+                                    timeVal,
+                                    interp.getDistRadian(),
+                                    interp.getDepth() - deltaDepth
+                            );
+                            List<TimeDist> tdList = new ArrayList<>();
+                            tdList.add(interp);
+                            tdList.add(shallowerTd);
+                            TimeDist prevEnd = null;
+                            curWaveSeg = new WavefrontPathSegment(tdList, curPathSeg.isPWave, curPathSeg.segmentName,
+                                    prevEnd, waveSegIdx++, totalNumSegments, phase, timeVal);
+                            wavefrontSegments.add(curWaveSeg);
+                            curWaveSeg = null;
+                            done = false;
+                            prevTD = currTD;
+                            break;
+                        }
+                        prevTD = currTD;
+                    }
+                    if (prevTD.getTime() > timeVal) {
+                        break;
+                    }
+                }
+                //set indexs to end of inbound segments for later normal wavefronts
+                for (Arrival arrival : allArrival) {
+                    segIdx.put(arrival, inboundArrival.getPathSegments().size());
+                    pathIdx.put(arrival, 0);
+                    prevTimeDistMap.put(arrival, inboundArrival.getPiercePoint(inboundArrival.getNumPiercePoints()-1));
+                }
                 continue;
             }
 
@@ -278,7 +320,6 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
                     List<ArrivalPathSegment> segPath = arrival.getPathSegments();
                     ArrivalPathSegment curPathSeg = segPath.get(segIdx.get(arrival));
                     TimeDist prevTD = prevTimeDistMap.get(arrival);
-                    int waveSegIdx = 0;
 
                     if (prevArrival != null && prevArrival.getTime() < timeVal) {
                         // need to connect wavefront to receiver depth when on arriving edge of the wavefront

@@ -9,7 +9,6 @@ public interface SeismicPhase extends Serializable, Cloneable {
     static Arrival getEarliestArrival(List<SeismicPhase> phases, double degrees) {
         Arrival minArrival = null;
         for (SeismicPhase seismicPhase : phases) {
-            seismicPhase.calcTime(DistanceRay.ofDegrees(degrees));
             Arrival currArrival = seismicPhase.getEarliestArrival(degrees);
             if (currArrival != null && (minArrival == null || minArrival.getTime() > currArrival.getTime())) {
                 minArrival = currArrival;
@@ -96,9 +95,6 @@ public interface SeismicPhase extends Serializable, Cloneable {
 
     List<Arrival> calcTime(double deg);
 
-    List<Arrival> calcTime(DistanceRay dv);
-
-    public List<Arrival> calcTimeExactDistanceDeg(double deg);
 
     /**
      * Creates an Arrival for a sampled ray parameter from the model. No interpolation between rays as this is a sample.
