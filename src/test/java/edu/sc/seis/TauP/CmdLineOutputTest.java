@@ -80,7 +80,8 @@ public class CmdLineOutputTest {
 
     String[] wavefrontTestCmds = new String[] {
             "taup wavefront -o stdout --mod ak135 --svg -h 100 -p P,S,PKIKP",
-            "taup wavefront -o stdout --mod ak135 --svg -h 10 -p P,S,PedOP --scatter 200 -5"
+            "taup wavefront -o stdout --mod ak135 --svg -h 10 -p P,S,PedOP --scatter 200 -5 --timestep 25 --color wavetype",
+            "taup path -o stdout --mod ak135 --svg -h 10 -p P,S,PedOP --scatter 200 -5 --deg 40"
     };
 
     String[] velplotTestCmds = new String[] {
@@ -93,7 +94,10 @@ public class CmdLineOutputTest {
             "taup velplot -o stdout --mod ak135 --text",
             "taup velplot -o stdout --mod ak135 --gmt",
             "taup velplot -o stdout --mod ak135 --json",
+            "taup velplot -o stdout --mod ak135 --svg ",
+            "taup velplot -o stdout --mod ak135 --svg -x poisson",
     };
+
     String[] reflTransPlotTestCmds = new String[] {
             "taup refltrans -o stdout --mod ak135 --depth 35 --svg"
     };

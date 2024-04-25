@@ -1,0 +1,437 @@
+<svg version="1.1" baseProfile="full" xmlns="http://www.w3.org/2000/svg" 
+     viewBox="-80 -80 760.0 760.0"
+     >
+  <metadata>
+    <taup>
+      <command>xyplotoutput </command>
+      <version>3.0.0-SNAPSHOT4</version>
+      <a href="https://github.com/crotwell/TauP">https://github.com/crotwell/TauP</a>
+    <minmax xmin="0.22375440733972052" xmax="0.5" ymin="0.0" ymax="6371.0" />
+    </taup>
+  </metadata>
+  <defs>
+    <style type="text/css"><![CDATA[
+        polyline.swave {
+            stroke: red;
+        }
+        .swave.label {
+          stroke: red;
+          fill: red;
+        }
+        .legend .swave {
+          stroke: red;
+          fill: red;
+        }
+        polyline.pwave {
+            stroke: blue;
+        }
+        .pwave.label {
+          stroke: blue;
+          fill: blue;
+        }
+        .legend .pwave {
+          stroke: blue;
+          fill: blue;
+        }
+        polyline.both_p_swave {
+            stroke: green;
+        }
+        .both_p_swave.label {
+          stroke: green;
+          fill: green;
+        }
+        .legend .both_p_swave {
+          stroke: green;
+          fill: green;
+        }
+
+text.title {
+    text-anchor: middle;
+    dominant-baseline: auto;
+    font-size: 20px;
+}
+circle {
+    vector-effect: non-scaling-stroke;
+    stroke: grey;
+    fill: transparent;
+}
+.xtick {
+    text-anchor: middle;
+    dominant-baseline: middle;
+}
+.ytick {
+    text-anchor: end;
+    dominant-baseline: middle;
+
+}
+.legend line {
+    text-anchor: end;
+    dominant-baseline: middle;
+    stroke: black;
+    fill: transparent;
+}
+.legend text {
+    text-anchor: start;
+    dominant-baseline: middle;
+}
+
+line.tick {
+    vector-effect: non-scaling-stroke;
+    stroke: black;
+    fill: transparent;
+}
+.xlabel {
+    text-anchor: middle;
+}
+.ylabel {
+    text-anchor: middle;
+    dominant-baseline: middle;
+}
+.phaselabel {
+    text-anchor: end;
+    dominant-baseline: middle;
+}
+polyline {
+    vector-effect: non-scaling-stroke;
+    fill: transparent;
+}
+polyline.tick {
+    stroke: black;
+}
+polyline.sourcedepth {
+    stroke: lightgrey;
+}
+polyline.receiverdepth {
+    stroke: lightgrey;
+}
+polyline.scattererdepth {
+    stroke: lightgrey;
+}
+circle.discontinuity {
+    vector-effect: non-scaling-stroke;
+    stroke: grey;
+    fill: none;
+}
+circle.discontinuity.surface {
+    fill: lightgoldenrodyellow;
+}
+circle.discontinuity.moho {
+    fill: blanchedalmond;
+}
+circle.discontinuity.cmb {
+    fill: lemonchiffon;
+}
+circle.discontinuity.iocb {
+    fill: burlywood;
+}
+
+        g.autocolor > :nth-child(10n+1) {
+            stroke: skyblue;
+        }
+        g.autocolor > :nth-child(10n+2) {
+            stroke: olivedrab;
+        }
+        g.autocolor > :nth-child(10n+3) {
+            stroke: goldenrod;
+        }
+        g.autocolor > :nth-child(10n+4) {
+            stroke: firebrick;
+        }
+        g.autocolor > :nth-child(10n+5) {
+            stroke: darkcyan;
+        }
+        g.autocolor > :nth-child(10n+6) {
+            stroke: chocolate;
+        }
+        g.autocolor > :nth-child(10n+7) {
+            stroke: darkmagenta;
+        }
+        g.autocolor > :nth-child(10n+8) {
+            stroke: mediumvioletred;
+        }
+        g.autocolor > :nth-child(10n+9) {
+            stroke: sienna;
+        }
+        g.autocolor > :nth-child(10n+10) {
+            stroke: rebeccapurple;
+        }
+
+        .autocolor.phaselabel > :nth-child(10n+1) {
+            fill: skyblue;
+        }
+        .autocolor.phaselabel > :nth-child(10n+2) {
+            fill: olivedrab;
+        }
+        .autocolor.phaselabel > :nth-child(10n+3) {
+            fill: goldenrod;
+        }
+        .autocolor.phaselabel > :nth-child(10n+4) {
+            fill: firebrick;
+        }
+        .autocolor.phaselabel > :nth-child(10n+5) {
+            fill: darkcyan;
+        }
+        .autocolor.phaselabel > :nth-child(10n+6) {
+            fill: chocolate;
+        }
+        .autocolor.phaselabel > :nth-child(10n+7) {
+            fill: darkmagenta;
+        }
+        .autocolor.phaselabel > :nth-child(10n+8) {
+            fill: mediumvioletred;
+        }
+        .autocolor.phaselabel > :nth-child(10n+9) {
+            fill: sienna;
+        }
+        .autocolor.phaselabel > :nth-child(10n+10) {
+            fill: rebeccapurple;
+        }
+
+        .autocolor.legend > :nth-child(10n+1) {
+            fill: skyblue;
+        }
+        .autocolor.legend > :nth-child(10n+2) {
+            fill: olivedrab;
+        }
+        .autocolor.legend > :nth-child(10n+3) {
+            fill: goldenrod;
+        }
+        .autocolor.legend > :nth-child(10n+4) {
+            fill: firebrick;
+        }
+        .autocolor.legend > :nth-child(10n+5) {
+            fill: darkcyan;
+        }
+        .autocolor.legend > :nth-child(10n+6) {
+            fill: chocolate;
+        }
+        .autocolor.legend > :nth-child(10n+7) {
+            fill: darkmagenta;
+        }
+        .autocolor.legend > :nth-child(10n+8) {
+            fill: mediumvioletred;
+        }
+        .autocolor.legend > :nth-child(10n+9) {
+            fill: sienna;
+        }
+        .autocolor.legend > :nth-child(10n+10) {
+            fill: rebeccapurple;
+        }
+
+
+    ]]></style>
+  <clipPath id="curve_clip">
+    <rect x="0" y="0" width="521.0" height="521.0"/>
+  </clipPath>
+  </defs>
+<!-- draw axis and label distances.-->
+
+<text class="title" x="260.0" y="0">ak135</text>
+<g> <!-- y axis -->
+<g  >
+  <text font-size="14" transform="translate(-64, 260) rotate(-90 )" dy=".75em" text-anchor="middle" class="ylabel" >depth</text>
+</g>
+<line  class="tick" x1="0" y1="0" x2="0" y2="520.0" />
+<text class="ytick" font-size="12" x="-12.0" y="0.0">0.0</text>
+<line class="tick" x1="0" y1="0.0" x2="-10.0" y2="0.0" />
+<text class="ytick" font-size="12" x="-12.0" y="81.61984">1000.0</text>
+<line class="tick" x1="0" y1="81.61984" x2="-10.0" y2="81.61984" />
+<text class="ytick" font-size="12" x="-12.0" y="163.23969">2000.0</text>
+<line class="tick" x1="0" y1="163.23969" x2="-10.0" y2="163.23969" />
+<text class="ytick" font-size="12" x="-12.0" y="244.85953">3000.0</text>
+<line class="tick" x1="0" y1="244.85953" x2="-10.0" y2="244.85953" />
+<text class="ytick" font-size="12" x="-12.0" y="326.47937">4000.0</text>
+<line class="tick" x1="0" y1="326.47937" x2="-10.0" y2="326.47937" />
+<text class="ytick" font-size="12" x="-12.0" y="408.09918">5000.0</text>
+<line class="tick" x1="0" y1="408.09918" x2="-10.0" y2="408.09918" />
+<text class="ytick" font-size="12" x="-12.0" y="489.71906">6000.0</text>
+<line class="tick" x1="0" y1="489.71906" x2="-10.0" y2="489.71906" />
+</g> <!-- y axis end-->
+<g> <!-- x axis -->
+<text class="xlabel" font-size="14" x="260.0" y="556.4">poisson</text>
+<line class="tick" x1="0" y1="520.0" x2="520.0" y2="520.0" />
+<text class="xtick" font-size="12" x="30.580427010591713" y="542.0">0.24</text>
+<line class="tick" x1="30.580427010591713" y1="520.0" x2="30.580427010591713" y2="530.0" />
+<text class="xtick" font-size="12" x="68.22808647131546" y="542.0">0.26</text>
+<line class="tick" x1="68.22808647131546" y1="520.0" x2="68.22808647131546" y2="530.0" />
+<text class="xtick" font-size="12" x="105.87574593203921" y="542.0">0.28</text>
+<line class="tick" x1="105.87574593203921" y1="520.0" x2="105.87574593203921" y2="530.0" />
+<text class="xtick" font-size="12" x="143.52340539276295" y="542.0">0.3</text>
+<line class="tick" x1="143.52340539276295" y1="520.0" x2="143.52340539276295" y2="530.0" />
+<text class="xtick" font-size="12" x="181.1710648534867" y="542.0">0.32</text>
+<line class="tick" x1="181.1710648534867" y1="520.0" x2="181.1710648534867" y2="530.0" />
+<text class="xtick" font-size="12" x="218.81872431421044" y="542.0">0.34</text>
+<line class="tick" x1="218.81872431421044" y1="520.0" x2="218.81872431421044" y2="530.0" />
+<text class="xtick" font-size="12" x="256.4663837749342" y="542.0">0.36</text>
+<line class="tick" x1="256.4663837749342" y1="520.0" x2="256.4663837749342" y2="530.0" />
+<text class="xtick" font-size="12" x="294.11404323565796" y="542.0">0.38</text>
+<line class="tick" x1="294.11404323565796" y1="520.0" x2="294.11404323565796" y2="530.0" />
+<text class="xtick" font-size="12" x="331.7617026963817" y="542.0">0.4</text>
+<line class="tick" x1="331.7617026963817" y1="520.0" x2="331.7617026963817" y2="530.0" />
+<text class="xtick" font-size="12" x="369.4093621571054" y="542.0">0.42</text>
+<line class="tick" x1="369.4093621571054" y1="520.0" x2="369.4093621571054" y2="530.0" />
+<text class="xtick" font-size="12" x="407.05702161782915" y="542.0">0.44</text>
+<line class="tick" x1="407.05702161782915" y1="520.0" x2="407.05702161782915" y2="530.0" />
+<text class="xtick" font-size="12" x="444.70468107855294" y="542.0">0.46</text>
+<line class="tick" x1="444.70468107855294" y1="520.0" x2="444.70468107855294" y2="530.0" />
+<text class="xtick" font-size="12" x="482.35234053927667" y="542.0">0.48</text>
+<line class="tick" x1="482.35234053927667" y1="520.0" x2="482.35234053927667" y2="530.0" />
+</g> <!-- x axis end-->
+<g clip-path="url(#curve_clip)">
+<g transform="scale(1,-1) translate(0, -520.0)">
+<g transform="scale(1882.3829730361856,0.08161983989954481)" >
+<g transform="translate(-0.22375440733972052, -0.0)">
+    <g class="autocolor">
+<g transform="scale(1,-1) translate(0.0, -6371.0)" > <!-- invert axis -->
+    <g class="both_p_swave" tauplabel="ak135 poisson / Depth"  >
+  <g>
+    <desc></desc>
+    <polyline  points="
+0.223754 0.000000
+0.223754 0.000000
+0.223754 20.000000
+0.229788 20.000000
+0.229788 35.000000
+0.274850 35.000000
+0.273797 77.500000
+0.272740 120.000000
+0.281384 165.000000
+0.289467 210.000000
+0.288804 210.000000
+0.290545 260.000000
+0.292075 310.000000
+0.293532 360.000000
+0.294922 410.000000
+0.291221 410.000000
+0.289518 460.000000
+0.287862 510.000000
+0.286250 560.000000
+0.284682 610.000000
+0.283154 660.000000
+0.280467 660.000000
+0.274495 710.000000
+0.269591 760.000000
+0.270831 809.500000
+0.272046 859.000000
+0.273218 908.500000
+0.274360 958.000000
+0.275475 1007.500000
+0.276553 1057.000000
+0.277623 1106.500000
+0.278630 1156.000000
+0.279606 1205.500000
+0.280574 1255.000000
+0.281565 1304.500000
+0.282533 1354.000000
+0.283457 1403.500000
+0.284361 1453.000000
+0.285338 1502.500000
+0.286174 1552.000000
+0.287028 1601.500000
+0.287919 1651.000000
+0.288712 1700.500000
+0.289529 1750.000000
+0.290337 1799.500000
+0.291131 1849.000000
+0.291899 1898.500000
+0.292610 1948.000000
+0.293360 1997.500000
+0.294067 2047.000000
+0.294890 2096.500000
+0.295555 2146.000000
+0.296297 2195.500000
+0.296979 2245.000000
+0.297610 2294.500000
+0.298248 2344.000000
+0.299005 2393.500000
+0.299662 2443.000000
+0.300276 2492.500000
+0.300961 2542.000000
+0.301666 2591.500000
+0.302282 2640.000000
+0.302937 2690.000000
+0.303571 2740.000000
+0.302907 2789.669922
+0.302241 2839.330078
+0.301573 2891.500000
+0.500000 2891.500000
+0.500000 2939.330078
+0.500000 2989.659912
+0.500000 3039.989990
+0.500000 3090.320068
+0.500000 3140.659912
+0.500000 3190.989990
+0.500000 3241.320068
+0.500000 3291.649902
+0.500000 3341.979980
+0.500000 3392.310059
+0.500000 3442.639893
+0.500000 3492.969971
+0.500000 3543.300049
+0.500000 3593.639893
+0.500000 3643.969971
+0.500000 3694.300049
+0.500000 3744.629883
+0.500000 3794.959961
+0.500000 3845.290039
+0.500000 3895.620117
+0.500000 3945.949951
+0.500000 3996.280029
+0.500000 4046.620117
+0.500000 4096.950195
+0.500000 4147.279785
+0.500000 4197.609863
+0.500000 4247.939941
+0.500000 4298.270020
+0.500000 4348.600098
+0.500000 4398.930176
+0.500000 4449.259766
+0.500000 4499.600098
+0.500000 4549.930176
+0.500000 4600.259766
+0.500000 4650.589844
+0.500000 4700.919922
+0.500000 4801.580078
+0.500000 4851.910156
+0.500000 4902.240234
+0.500000 4952.580078
+0.500000 5002.910156
+0.500000 5053.240234
+0.500000 5103.569824
+0.500000 5153.500000
+0.444009 5153.500000
+0.443675 5204.609863
+0.443373 5255.319824
+0.443091 5306.040039
+0.442829 5356.750000
+0.442644 5407.459961
+0.442444 5458.169922
+0.442251 5508.890137
+0.442071 5559.600098
+0.441903 5610.310059
+0.441744 5661.020020
+0.441597 5711.740234
+0.441336 5813.160156
+0.441222 5863.870117
+0.441116 5914.589844
+0.441024 5965.299805
+0.440942 6016.009766
+0.440871 6066.720215
+0.440811 6117.439941
+0.440763 6168.149902
+0.440724 6218.859863
+0.440697 6269.569824
+0.440682 6320.290039
+0.440676 6371.000000
+  "  /> <!-- -->
+  </g>
+    </g> <!-- end ak135 poisson / Depth -->
+    </g> <!-- end invert axis -->
+    </g> <!-- end autocolor g -->
+    <g class="phasename">  <!-- begin labels -->
+    </g> <!-- end labels -->
+  </g> <!-- end translate -->
+  </g> <!-- end scale -->
+  </g> <!-- end scaletranslate -->
+  </g> <!-- end clip-path -->
+</svg>
