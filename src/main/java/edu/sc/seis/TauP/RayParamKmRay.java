@@ -1,7 +1,5 @@
 package edu.sc.seis.TauP;
 
-import edu.sc.seis.seisFile.Location;
-
 import java.util.List;
 
 public class RayParamKmRay extends ShootableRay {
@@ -19,7 +17,7 @@ public class RayParamKmRay extends ShootableRay {
     /**
      * ray param in s/km
      *
-     * @return
+     * @return ray param in seconds per kilometer
      */
     public Double getRayParamSKm() {
         return rpSecKm;

@@ -48,7 +48,7 @@ public class PhaseName implements Serializable {
     public int sacTNum = -1;
 
     /** list of sac t headers to be associated with the phase, including n triplications */
-    public ArrayList<Integer> sacTNumTriplication = new ArrayList<Integer>();
+    public ArrayList<Integer> sacTNumTriplication = new ArrayList<>();
 
     public PhaseName(String name) throws PhaseParseException {
         this.name = name;
@@ -97,17 +97,13 @@ public class PhaseName implements Serializable {
             }
             sacTNumTriplication.add(intForChar);
         }
-        if (sacTNumTriplication.size() > 0) {
+        if (!sacTNumTriplication.isEmpty()) {
             sacTNum = sacTNumTriplication.get(0);
         }
     }
 
     public boolean equals(PhaseName obj) {
-        if(obj.name.equals(this.name) && obj.sacTNum == this.sacTNum) {
-            return true;
-        } else {
-            return false;
-        }
+        return obj.name.equals(this.name) && obj.sacTNum == this.sacTNum;
     }
 
     public String getName() {
@@ -118,7 +114,7 @@ public class PhaseName implements Serializable {
      * Gets sac header for the index triplication. Zero is the first arrival, 1 is next arrival, etc.
      * Index zero should be same as this.sacTNum.
      *
-     * @param index
+     * @param index triplication index
      * @return index arrival for the phase
      */
     public int sacTNumForTriplication(int index) {

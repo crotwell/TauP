@@ -219,20 +219,4 @@ public class SphericalCoords {
         return lon;
     }
 
-    public static void main(String args[]) {
-        System.out.println(distance(0, 0, 0, 45) + "  " + azimuth(0, 0, 0, 45)
-                + "   " + azimuth(0, 45, 0, 0));
-        System.out.println(latFor(0, 0, 45, 90) + "   " + lonFor(0, 0, 45, 90));
-        System.out.println("(35,42,36,43)  " + distance(35, 42, 36, 43) + "  "
-                + azimuth(35, 42, 36, 43) + "   " + azimuth(36, 43, 35, 42));
-        System.out.println(latFor(35, 42, distance(35, 42, 36, 43), azimuth(35,
-                                                                            42,
-                                                                            36,
-                                                                            43))
-                + "   "
-                + lonFor(35, 42, distance(35, 42, 36, 43), azimuth(35,
-                                                                   42,
-                                                                   36,
-                                                                   43)));
-    }
 }

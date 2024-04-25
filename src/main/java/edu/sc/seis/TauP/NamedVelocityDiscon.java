@@ -42,6 +42,10 @@ public class NamedVelocityDiscon implements Cloneable, Serializable {
         return this.name + pf_name + this.depth;
     }
 
+    public NamedVelocityDiscon clone() throws CloneNotSupportedException {
+        return (NamedVelocityDiscon) super.clone();
+    }
+
     String name;
     String preferredName = null;
     double depth;

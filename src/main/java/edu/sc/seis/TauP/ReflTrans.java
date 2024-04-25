@@ -142,13 +142,7 @@ public abstract class ReflTrans {
 
     public double[] calcCriticalRayParams() {
         // shoudl filter NaN?
-        double[] criticalSlownesses = new double[] {1/topVp, 1/botVp, 1/topVs, 1/botVs};
-        return criticalSlownesses;
-    }
-
-    public double inboundAngleP(double flatRP) {
-        double cos_j1 = Complex.abs(this.topVertSlownessP) * topVp;
-        return Math.acos(cos_j1)*RtoD;
+        return new double[] {1/topVp, 1/botVp, 1/topVs, 1/botVs};
     }
 
     public double getAngleR_p(double flatRP) {
@@ -169,11 +163,13 @@ public abstract class ReflTrans {
     }
 
     public double inboundEnergyP(double flatRP) {
+        calcTempVars(flatRP, true);
         double cos_j1 = Complex.abs(this.topVertSlownessP) * topVp;
         return topDensity*topVp*cos_j1;
     }
 
     public double inboundEnergyS(double flatRP) {
+        calcTempVars(flatRP, false);
         double cos_j1 = Complex.abs(this.topVertSlownessS) * topVs;
         return topDensity*topVs*cos_j1;
     }
@@ -268,6 +264,8 @@ public abstract class ReflTrans {
         return botDensity * botVs * cosBotVs * Tshsh_calc * Tshsh_calc
                 / inboundEnergyS(flatRP);
     }
+
+    protected abstract void calcTempVars(double rayParam, boolean inIsPWave);
 
     protected double topVp;
 

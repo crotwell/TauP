@@ -54,11 +54,6 @@ public class DepthRange implements Serializable, Cloneable {
 
     public DepthRange() {}
 
-    public DepthRange(double topDepth, double botDepth) {
-        this.topDepth = topDepth;
-        this.botDepth = botDepth;
-    }
-
     public DepthRange(double topDepth, double botDepth, double rayParam) {
         this.topDepth = topDepth;
         this.botDepth = botDepth;

@@ -167,7 +167,7 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
         boolean doAll =  (!inpwave && ! inswave && ! inshwave);
 
         if (yAxisType.size() == 0) {
-            yAxisType = ReflTransAxisType.all;
+            yAxisType = ReflTransAxisType.allCoeff;
         }
         if (inpwave || doAll) {
             double invel = reflTranCoef.topVp;

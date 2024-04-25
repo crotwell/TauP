@@ -1,7 +1,6 @@
 package edu.sc.seis.TauP.cli;
 
 import edu.sc.seis.TauP.DepthAxisType;
-import edu.sc.seis.TauP.DistAz;
 import edu.sc.seis.TauP.DistanceAxisType;
 import picocli.CommandLine;
 

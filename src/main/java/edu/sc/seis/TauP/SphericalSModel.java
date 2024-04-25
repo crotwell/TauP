@@ -135,12 +135,8 @@ public class SphericalSModel extends SlownessModel implements Serializable {
 
     /**
      * Converts a velocity layer into a slowness layer.
-     * 
-     * @exception SlownessModelException
-     *                if velocity layer is malformed.
      */
-    public SlownessLayer toSlownessLayer(VelocityLayer vLayer, boolean isPWave)
-            throws SlownessModelException {
+    public SlownessLayer toSlownessLayer(VelocityLayer vLayer, boolean isPWave) {
         return new SlownessLayer(vLayer, true, radiusOfEarth, isPWave);
     }
 
@@ -402,7 +398,6 @@ public class SphericalSModel extends SlownessModel implements Serializable {
                  * radiusOfEarth.
                  */
                 if(prevDepth > radiusOfEarth) {
-                    isOK = false;
                     throw new SlownessModelException("Slowness layer has a depth larger than the radius of "
                             + "the earth in a spherical model. max depth = "
                             + prevDepth + " radiusOfEarth = " + radiusOfEarth);
@@ -414,7 +409,6 @@ public class SphericalSModel extends SlownessModel implements Serializable {
     }
 
     public String toString() {
-        String desc = "spherical model:\n" + super.toString();
-        return desc;
+        return "spherical model:\n" + super.toString();
     }
 }

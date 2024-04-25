@@ -289,7 +289,7 @@ public class SeismicPhaseSegment {
 
 
 	public ArrivalPathSegment calcPathTimeDist(Arrival currArrival, TimeDist prevEnd, int segmentIndex, int totalNumSegments) {
-		ArrayList<TimeDist[]> pathList = new ArrayList<TimeDist[]>();
+		ArrayList<TimeDist[]> pathList = new ArrayList<>();
 		if ( ! isFlat) {
 			int bStep = isDownGoing ? 1 : -1;
 			for (int i = startBranch; (isDownGoing && i <= endBranch) || (!isDownGoing && i >= endBranch); i += bStep) {
@@ -347,7 +347,7 @@ public class SeismicPhaseSegment {
 			prevDist = prevEnd.getDistRadian();
 			prevTime = prevEnd.getTime();
 		}
-		List<TimeDist> outPath = new ArrayList<TimeDist>();
+		List<TimeDist> outPath = new ArrayList<>();
 		TimeDist cummulative = new TimeDist(currArrival.getRayParam(),
 				prevTime,
 				prevDist,
@@ -360,7 +360,7 @@ public class SeismicPhaseSegment {
 			longWayFactor = -1;
 		}
 		for(int i = 0; i < pathList.size(); i++) {
-			branchPath = (TimeDist[])pathList.get(i);
+			branchPath = pathList.get(i);
 			for(int j = 0; j < branchPath.length; j++) {
 				prev = cummulative;
 				cummulative = new TimeDist(cummulative.getP(),
@@ -383,11 +383,8 @@ public class SeismicPhaseSegment {
 	 * @param arrival arrival/ ray parameter to use for the calculation
 	 * @param nextLegIsPWave if next leg is a P wave, neede for final coefficient at end of leg
 	 * @param allSH if should calculate the SH coefficients instead of P-SV
-	 * @return
-	 * @throws VelocityModelException
-	 * @throws SlownessModelException
 	 */
-	public double calcReflTran(Arrival arrival, boolean nextLegIsPWave, boolean allSH) throws VelocityModelException, SlownessModelException {
+	public double calcReflTran(Arrival arrival, boolean nextLegIsPWave, boolean allSH) throws VelocityModelException {
 		double reflTranValue = 1;
 		if (isPWave && allSH) {
 			// P wave leg in SH system, so zero

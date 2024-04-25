@@ -1,23 +1,9 @@
 package edu.sc.seis.TauP;
 
-import edu.sc.seis.TauP.cli.DistDepthRange;
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.json.JSONWriter;
-
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-import static edu.sc.seis.TauP.Arrival.DtoR;
-
 public class ArrivalPathSegment extends AbstractPathSegment {
-
-    public ArrivalPathSegment(List<TimeDist> path, boolean isPWave, String segmentName, TimeDist prevEnd, Arrival arrival,
-                              SeismicPhaseSegment phaseSegment) {
-        this(path, isPWave, segmentName, prevEnd, arrival, phaseSegment, 0, -1);
-    }
 
     public ArrivalPathSegment(List<TimeDist> path, boolean isPWave, String segmentName, TimeDist prevEnd, Arrival arrival,
                               SeismicPhaseSegment phaseSegment, int segmentIndex, int totalNumSegments) {
@@ -42,7 +28,7 @@ public class ArrivalPathSegment extends AbstractPathSegment {
         TimeDist firstPoint = inPath.get(0).getPathStart();
         ArrivalPathSegment lastSeg = inPath.get(inPath.size()-1);
         double finalPathDist = lastSeg.getPathEnd().getDistRadian()- firstPoint.getDistRadian();
-        if (inPath.size() != 0 && distRadian != 0 && finalPathDist != 0) {
+        if (!inPath.isEmpty() && distRadian != 0 && finalPathDist != 0) {
             double shifty = distRadian/finalPathDist;
             if (Math.abs(1.0-shifty) > .02 && Math.abs(1+shifty) > 1e-5 ) {
                 // don't flag shifty that just reflects, ie -1
@@ -69,7 +55,7 @@ public class ArrivalPathSegment extends AbstractPathSegment {
     }
 
     public List<TimeDist> adjustPathForShifty(double shifty) {
-        ArrayList<TimeDist> out = new ArrayList<TimeDist>();
+        ArrayList<TimeDist> out = new ArrayList<>();
         for (TimeDist td : path) {
             out.add(new TimeDist(td.getP(),
                     td.getTime(),

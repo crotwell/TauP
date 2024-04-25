@@ -23,29 +23,25 @@
  * crotwell@seis.sc.edu or Tom Owens, owens@seis.sc.edu
  * 
  */
+
+package edu.sc.seis.TauP;
+
 /**
  * SplitLayerInfo.java
- * 
- * 
  * Created: Wed Feb 3 11:32:14 1999
  * 
  * @author Philip Crotwell
  * @version 1.1.3 Wed Jul 18 15:00:35 GMT 2001
- * 
- * 
- * 
  */
-package edu.sc.seis.TauP;
-
 public class SplitLayerInfo implements java.io.Serializable, Cloneable {
 
-    private SlownessModel sMod;
+    private final SlownessModel sMod;
     
-    private boolean neededSplit;
+    private final boolean neededSplit;
 
-    private boolean movedSample;
+    private final boolean movedSample;
 
-    private double rayParam;
+    private final double rayParam;
 
     public SplitLayerInfo(SlownessModel sMod,
                           boolean neededSplit,

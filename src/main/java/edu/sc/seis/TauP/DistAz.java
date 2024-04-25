@@ -4,7 +4,6 @@ import edu.sc.seis.seisFile.Location;
 import edu.sc.seis.seisFile.fdsnws.quakeml.Event;
 import edu.sc.seis.seisFile.fdsnws.quakeml.Origin;
 import edu.sc.seis.seisFile.fdsnws.stationxml.Channel;
-import edu.sc.seis.seisFile.fdsnws.stationxml.Station;
 
 public class DistAz {
 
@@ -202,15 +201,12 @@ public class DistAz {
     }
 
     public int hashCode(){
-        if(!hashSet){
-            int result = 24;
-            result = 37*result + hashDouble(stalat);
-            result = 37*result + hashDouble(stalon);
-            result = 37*result + hashDouble(evtlat);
-            result = 37*result + hashDouble(evtlon);
-            hash = result;
-        }
-        return hash;
+        int result = 24;
+        result = 37*result + hashDouble(stalat);
+        result = 37*result + hashDouble(stalon);
+        result = 37*result + hashDouble(evtlat);
+        result = 37*result + hashDouble(evtlon);
+        return result;
     }
 
     private static int hashDouble(double d){
@@ -218,10 +214,10 @@ public class DistAz {
         return (int)(bits^(bits>>>32));
     }
 
-    private double delta, az, baz;
-    private double stalat, stalon, evtlat, evtlon;
-    private int hash;
-    private boolean hashSet = false;
+    private final double delta;
+    private double az;
+    private double baz;
+    private final double stalat, stalon, evtlat, evtlon;
 
     public static double kmPerDeg() {
         return kmPerDeg(wgs85_meanEarthRadius);
@@ -244,10 +240,10 @@ public class DistAz {
             System.out.println("Usage: java DistAz sta_lat sta_lon evt_lat evt_lon");
             System.out.println("       Returns:  Delta Baz Az");
         } else {
-            double stalat = Double.valueOf(args[0]).doubleValue();
-            double stalon = Double.valueOf(args[1]).doubleValue();
-            double evtlat = Double.valueOf(args[2]).doubleValue();
-            double evtlon = Double.valueOf(args[3]).doubleValue();
+            double stalat = Double.parseDouble(args[0]);
+            double stalon = Double.parseDouble(args[1]);
+            double evtlat = Double.parseDouble(args[2]);
+            double evtlon = Double.parseDouble(args[3]);
 
             DistAz distaz = new DistAz(stalat, stalon, evtlat, evtlon);
             System.out.println("   dist="+distaz.delta+"   baz="+distaz.baz+

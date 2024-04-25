@@ -30,15 +30,10 @@ import java.util.Properties;
 /**
  * Outputs.java contains formating, similar to printf, routines for the output
  * types in the TauP package.
- * 
- * 
  * Created: Tue Sep 21 11:45:35 1999
  * 
  * @author Philip Crotwell
  * @version 1.1.3 Wed Jul 18 15:00:35 GMT 2001
- * 
- * 
- * 
  */
 public class Outputs {
     
@@ -65,17 +60,16 @@ public class Outputs {
         try {
             AxisType at = AxisType.valueOf(axisType);
             return formatStringForAxisType(at);
-        } catch (IllegalArgumentException e ) {}
-        return "%f";
+        } catch (IllegalArgumentException e ) {
+            return "%f";
+        }
     }
 
     public static String formatStringForAxisType(AxisType axisType) {
-        String outFormat = "%f";
+        String outFormat;
         switch (axisType) {
             case radian:
             case radian180:
-                outFormat = distanceFormat;
-                break;
             case degree:
             case degree180:
             case kilometer:
@@ -90,9 +84,6 @@ public class Outputs {
             case time:
                 outFormat = timeFormat;
                 break;
-            case turndepth:
-                outFormat = depthFormat;
-                break;
             case amp:
             case amppsv:
             case ampsh:
@@ -102,6 +93,7 @@ public class Outputs {
             case refltransh:
                 outFormat = ampFactorFormat;
                 break;
+            case turndepth:
             case index:
             default:
                 outFormat = depthFormat;

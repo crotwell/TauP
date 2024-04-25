@@ -20,7 +20,7 @@ public class ReflTransFreeSurface extends ReflTrans {
      * 4 * sqRP * topVertSlownessP * topVertSlownessS) / A
      */
     @Override
-    public Complex getComplexRpp(double rayParam) throws VelocityModelException {
+    public Complex getComplexRpp(double rayParam) {
         calcTempVars(rayParam, true);
         Complex numerator = CX.plus(-1.0 * ((1 / sqTopVs) - 2 * sqRP)
                 * ((1 / sqTopVs) - 2 * sqRP), CX.times(topVertSlownessP,

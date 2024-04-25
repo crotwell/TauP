@@ -66,15 +66,15 @@ public class SeismicPhaseFactory {
      * Array of branch numbers for the given phase. Note that this depends upon
      * both the earth model and the source depth.
      */
-    protected List<Integer> branchSeq = new ArrayList<Integer>();
+    protected List<Integer> branchSeq = new ArrayList<>();
 
     /**
      * Array of branchSeq positions where a head or diffracted segment occurs.
      */
-    protected List<Integer> headOrDiffractSeq = new ArrayList<Integer>();
+    protected List<Integer> headOrDiffractSeq = new ArrayList<>();
 
     /** Description of segments of the phase. */
-    protected List<SeismicPhaseSegment> segmentList = new ArrayList<SeismicPhaseSegment>();
+    protected List<SeismicPhaseSegment> segmentList = new ArrayList<>();
 
     /**
      * records the end action for the current leg. Will be one of
@@ -82,19 +82,19 @@ public class SeismicPhaseFactory {
      * SeismicPhase.REFLECTBOT, or SeismicPhase.REFLECTTOP. This allows a check
      * to make sure the path is correct. Used in addToBranch() and parseName().
      */
-    protected ArrayList<PhaseInteraction> legAction = new ArrayList<PhaseInteraction>();
+    protected ArrayList<PhaseInteraction> legAction = new ArrayList<>();
 
     /**
      * true if the current leg of the phase is down going. This allows a check
      * to make sure the path is correct. Used in addToBranch() and parseName().
      */
-    protected ArrayList<Boolean> downGoing = new ArrayList<Boolean>();
+    protected ArrayList<Boolean> downGoing = new ArrayList<>();
 
     /**
      * ArrayList of wave types corresponding to each leg of the phase.
      *
      */
-    protected ArrayList<Boolean> waveType = new ArrayList<Boolean>();
+    protected ArrayList<Boolean> waveType = new ArrayList<>();
 
     public static final boolean PWAVE = SimpleSeismicPhase.PWAVE;
 
@@ -143,7 +143,7 @@ public class SeismicPhaseFactory {
 
     SeismicPhaseFactory(String name, TauModel tMod, double sourceDepth, double receiverDepth, boolean debug) throws TauModelException {
         this.DEBUG = debug;
-        if (name == null || name.length() == 0) {
+        if (name == null || name.isEmpty()) {
             throw new TauModelException("Phase name cannot be empty to null: " + name);
         }
         // make sure we have layer boundary at source and receiver
@@ -198,17 +198,14 @@ public class SeismicPhaseFactory {
         List<SeismicPhase> phaseList = new ArrayList<>();
         if (name.contains(""+ PhaseSymbols.SCATTER_CODE)
                 || name.contains(""+ PhaseSymbols.BACKSCATTER_CODE)) {
-            String[] in_scat = name.split("("+ PhaseSymbols.SCATTER_CODE+"|"+ PhaseSymbols.BACKSCATTER_CODE+")");
+            String[] in_scat = name.split("(["+ PhaseSymbols.SCATTER_CODE+ PhaseSymbols.BACKSCATTER_CODE+"])");
             if (in_scat.length > 2) {
                 throw new TauModelException("Scatter phase doesn't have two segments: "+name+", repeated scattering not supported");
             }
             if (scat.depth == 0.0) {
                 throw new ScatterArrivalFailException("Attempt to use scatter phase but scatter depth is zero: "+name);
             }
-            boolean isBackscatter = false;
-            if( name.contains(""+ PhaseSymbols.BACKSCATTER_CODE)) {
-                isBackscatter = true;
-            }
+            boolean isBackscatter = name.contains("" + PhaseSymbols.BACKSCATTER_CODE);
             TauModel tModDepthCorrected = tMod;
             if (tModDepthCorrected.getSourceDepth()!= sourceDepth) {
                 tModDepthCorrected= tMod.depthCorrect(sourceDepth);
@@ -236,7 +233,7 @@ public class SeismicPhaseFactory {
                     scatTMod, scat.depth, receiverDepth, debug);
 
             List<Arrival> inArrivals = scat.dist.calculate(inPhase);
-            if (inArrivals.size() == 0) {
+            if (inArrivals.isEmpty()) {
                 throw new ScatterArrivalFailException("No inbound arrivals to the scatterer for "+name
                         +" at "+scat.depth+" km depth and "+scat.dist.getDegrees(tMod.getRadiusOfEarth())+" deg. Distance range for scatterer at this depth is "+inPhase.getMinDistanceDeg()+" "+inPhase.getMaxDistanceDeg()+" deg.");
             }
@@ -273,7 +270,7 @@ public class SeismicPhaseFactory {
 
         parseName(tMod);
         sumBranches(tMod);
-        SimpleSeismicPhase phase = new SimpleSeismicPhase(name,
+        return new SimpleSeismicPhase(name,
                 tMod,
                 receiverDepth,
                 legs,
@@ -294,7 +291,6 @@ public class SeismicPhaseFactory {
                 downGoing,
                 waveType,
                 DEBUG);
-        return phase;
     }
 
     public String getName() {
@@ -357,25 +353,24 @@ public class SeismicPhaseFactory {
      */
     protected void parseName(TauModel tMod) throws TauModelException {
         String prevLeg;
-        String currLeg = (String)legs.get(0);
+        String currLeg = legs.get(0);
         String nextLeg = currLeg;
         branchSeq.clear();
-        boolean isPWave = PWAVE;
-        boolean prevIsPWave = isPWave;
-        PhaseInteraction endAction = TRANSDOWN;
+        boolean isPWave;
+        boolean prevIsPWave;
+        PhaseInteraction endAction;
         /*
          * Deal with surface wave velocities first, since they are a special
          * case.
          */
         if(legs.size() == 2 && currLeg.endsWith(PhaseSymbols.KMPS_CODE)) {
             try {
-                double velocity = Double.valueOf(currLeg.substring(0, name.length() - 4))
-                    .doubleValue();
+                Double.parseDouble(currLeg.substring(0, name.length() - 4));
             } catch (NumberFormatException e) {
                 throw new TauModelException(getName()+" Illegal surface wave velocity "+name.substring(0, name.length() - 4), e);
             }
             // KMPS fake with a head wave
-            SeismicPhaseSegment flatSegment = addFlatBranch(tMod, 0, false, KMPS, END, currLeg);
+            addFlatBranch(tMod, 0, false, KMPS, END, currLeg);
             return;
         }
         /* Make a check for J legs if the model doesn not allow J */
@@ -386,7 +381,8 @@ public class SeismicPhaseFactory {
         }
         /* check for outer core if K */
         for (String leg : legs) {
-            if (tMod.getCmbBranch() == tMod.getNumBranches() && (isOuterCoreLeg(leg) || leg.equals(c))) {
+            if (tMod.getCmbBranch() == tMod.getNumBranches() && (isOuterCoreLeg(leg)
+                    || (leg.length()==1 && leg.charAt(0) == c))) {
                 maxRayParam = -1;
                 minRayParam = -1;
                 if(DEBUG) {
@@ -394,7 +390,8 @@ public class SeismicPhaseFactory {
                 }
                 return;
             }
-            if (tMod.getIocbBranch() == tMod.getNumBranches() && (isInnerCoreLeg(leg) || leg.equals(i))) {
+            if (tMod.getIocbBranch() == tMod.getNumBranches() && (isInnerCoreLeg(leg) ||
+                    (leg.length()==1 && leg.charAt(0) == i))) {
                 maxRayParam = -1;
                 minRayParam = -1;
                 if(DEBUG) {
@@ -586,7 +583,7 @@ public class SeismicPhaseFactory {
                         + "  " + nextLeg);
             }
             if (currLeg.contentEquals(END_CODE)) {
-                if (segmentList.size() > 0) {
+                if (!segmentList.isEmpty()) {
                     segmentList.get(segmentList.size()-1).endAction = END;
                     continue;
                 }
@@ -741,13 +738,13 @@ public class SeismicPhaseFactory {
             }
         }
         if (endAction != FAIL && maxRayParam != -1) {
-            if (branchSeq.size() > 0 &&
+            if (!branchSeq.isEmpty() &&
                     branchSeq.get(branchSeq.size()-1) != upgoingRecBranch &&
                     branchSeq.get(branchSeq.size()-1) != downgoingRecBranch) {
                 throw new TauModelException(getName()+" Phase does not end at the receiver branch, last: "+branchSeq.get(branchSeq.size()-1)
                         +" down Rec: "+downgoingRecBranch+" up Rec: "+upgoingRecBranch);
             }
-            if ((endAction == REFLECT_UNDERSIDE || endAction == REFLECT_UNDERSIDE) && downgoingRecBranch == branchSeq.get(branchSeq.size()-1) ) {
+            if ((endAction == REFLECT_UNDERSIDE) && downgoingRecBranch == branchSeq.get(branchSeq.size()-1) ) {
                 // last action was upgoing, so last branch should be upgoingRecBranch
                 if (DEBUG) {
                     System.err.println("Phase ends upgoing, but receiver is not on upgoing end of last branch");
@@ -896,7 +893,7 @@ public class SeismicPhaseFactory {
             throws TauModelException {
         PhaseInteraction endAction;
         SeismicPhaseSegment prevSegment = null;
-        if (segmentList.size()>0) {segmentList.get(segmentList.size()-1);}
+        if (!segmentList.isEmpty()) {segmentList.get(segmentList.size()-1);}
         if (tMod.getVelocityModel().cmbDepth == 0) {
             // no crust or mantle, so no P or P
             maxRayParam = -1;
@@ -1361,11 +1358,10 @@ public class SeismicPhaseFactory {
                             isPWave)
                     .getMinTurnRayParam()) {
 
-                SeismicPhaseSegment prevSegment = segmentList.size() > 0 ? segmentList.get(segmentList.size() - 1) : null;
+                SeismicPhaseSegment prevSegment = !segmentList.isEmpty() ? segmentList.get(segmentList.size() - 1) : null;
                 if (currBranch < tMod.getCmbBranch() - 1 || prevEndAction == START ||
                         (currBranch == tMod.getCmbBranch() && prevSegment != null && prevSegment.endsAtTop())
                 ) {
-                    endAction = DIFFRACT;
                     addToBranch(tMod,
                             currBranch,
                             tMod.getCmbBranch() - 1,
@@ -2311,10 +2307,9 @@ public class SeismicPhaseFactory {
     }
 
     boolean checkDegenerateInnerCore(String prevLeg, String currLeg, String nextLeg,
-                                   boolean isPWave, boolean isPWavePrev, int legNum)
-            throws TauModelException {
+                                   boolean isPWave, boolean isPWavePrev, int legNum) {
         if (tMod.getIocbDepth() == tMod.getRadiusOfEarth()) {
-            // degenerate case, IOCB is at center, so model without a inner core
+            // degenerate case, IOCB is at center, so model without an inner core
             maxRayParam = -1;
             if (DEBUG) {
                 System.err.println("Cannot have I or J phase "

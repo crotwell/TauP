@@ -137,11 +137,7 @@ public class SlownessLayer implements Serializable {
 
     /** Is the layer a zero thickness layer, ie a total reflection? */
     public boolean isZeroThickness() {
-        if(getTopDepth() == getBotDepth()) {
-            return true;
-        } else {
-            return false;
-        }
+        return getTopDepth() == getBotDepth();
     }
     
     public boolean containsDepth(double depth) {
@@ -194,8 +190,8 @@ public class SlownessLayer implements Serializable {
                     double linear = (getBotP() - getTopP())
                             / (getBotDepth() - getTopDepth())
                             * (depth - getTopDepth()) + getTopP();
-                    if(linear < 0.0 || Double.isNaN(linear)
-                            || Double.isInfinite(linear)) {} else {
+                    if( ! (linear < 0.0 || Double.isNaN(linear)
+                            || Double.isInfinite(linear))) {
                         return linear;
                     }
                 }
@@ -204,7 +200,7 @@ public class SlownessLayer implements Serializable {
                         + " is not a number or is negative: "
                         + answer
                         + "\n"
-                        + this.toString()
+                        + this
                         + "\n A="
                         + A
                         + "   B="
@@ -263,7 +259,7 @@ public class SlownessLayer implements Serializable {
                     + "\n botDepth = " + getBotDepth() + "\n dist="
                     + distRadian + "\n time=" + time + "\n topP = "
                     + getTopP() + "\n botP = " + getBotP() + "\n B = " + B
-                    + " " + toString());
+                    + " " + this);
         }
         return new TimeDist(p, time, distRadian, outDepth);
     }
@@ -295,10 +291,9 @@ public class SlownessLayer implements Serializable {
                         - Math.exp(1.0 / B * Math.log(rayParam / A));
                 } else {
                     // overflow double, maybe B so large? use linear interp
-                    double linear = (getBotDepth() - getTopDepth())
+                    tempDepth = (getBotDepth() - getTopDepth())
                             / (getBotP() - getTopP())
                             * (rayParam - getTopP()) + getTopDepth();
-                    tempDepth = linear;
                 }
                 /*
                  * tempDepth = radiusOfEarth - Math.pow(rayParam/A, 1.0/B);
@@ -317,8 +312,8 @@ public class SlownessLayer implements Serializable {
                         double linear = (getBotDepth() - getTopDepth())
                                 / (getBotP() - getTopP())
                                 * (rayParam - getTopP()) + getTopDepth();
-                        if(linear < 0.0 || Double.isNaN(linear)
-                                || Double.isInfinite(linear)) {} else {
+                        if( ! (linear < 0.0 || Double.isNaN(linear)
+                                || Double.isInfinite(linear))) {
                             return linear;
                         }
                     }
@@ -364,11 +359,8 @@ public class SlownessLayer implements Serializable {
 
     /** returns a String description of this SlownessLayer. */
     public String toString() {
-        // String desc = "top p "+ (float)topP +", topDepth " + (float)topDepth
-        // +", bot p "+ (float)botP +", botDepth " + (float)botDepth;
-        String desc = "top p " + getTopP() + ", topDepth " + getTopDepth()
+        return "top p " + getTopP() + ", topDepth " + getTopDepth()
                 + ", bot p " + getBotP() + ", botDepth " + getBotDepth();
-        return desc;
     }
 
     public boolean validate() throws SlownessModelException {
@@ -389,14 +381,14 @@ public class SlownessLayer implements Serializable {
     }
 
     /** Slowness at the top of the layer. */
-    private double topP;
+    private final double topP;
 
     /** Slowness at the bottom of the layer. */
-    private double botP;
+    private final double botP;
 
     /** Depth at the top of the layer. */
-    private double topDepth;
+    private final double topDepth;
 
     /** Depth at the bottom of the layer. */
-    private double botDepth;
+    private final double botDepth;
 }

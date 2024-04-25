@@ -67,6 +67,20 @@ public class ReflTransFluidFreeSurface extends ReflTrans {
     }
 
     @Override
+    protected void calcTempVars(double rayParam, boolean inIsPWave) {
+        if(rayParam < 0) {
+            throw new IllegalArgumentException("rayParam cannot be negative");
+        }
+        this.rp = rayParam; // ray parameter
+
+        if(rayParam != lastRayParam || inIsPWave != lastInIsPWave) {
+
+            lastRayParam = rayParam;
+            lastInIsPWave = inIsPWave;
+        }
+    }
+
+    @Override
     public String toString() {
         return "Fluid-free surface: "+" in: Vp: "+topVp+" d: "+topDensity;
     }

@@ -43,18 +43,15 @@ public abstract class AbstractOutputTypeArgs {
     public static final String STDOUT_FILENAME = "-";
 
     public boolean isStdout() {
-        if(getOutFileBase() == null || getOutFileBase().length() == 0
-                || getOutFileBase().equals(STDOUT_FILENAME)|| getOutFileBase().equals("stdout")) {
-            return true;
-        }
-        return false;
+        return getOutFileBase() == null || getOutFileBase().isEmpty()
+                || getOutFileBase().equals(STDOUT_FILENAME) || getOutFileBase().equals("stdout");
     }
 
     public String getOutFile() {
         if (isStdout()) {
             return "stdout";
         } else {
-            if (getOutFileExtension() == null || getOutFileExtension().length() == 0 || getOutFileBase().endsWith("." + getOutFileExtension())) {
+            if (getOutFileExtension() == null || getOutFileExtension().isEmpty() || getOutFileBase().endsWith("." + getOutFileExtension())) {
                 // don't do a dot if no extension or already there
                 return getOutFileBase();
             }

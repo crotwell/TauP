@@ -14,7 +14,7 @@ public class TableOutputTypeArgs extends AbstractOutputTypeArgs {
         setOutputFormat(defaultFormat);
     }
 
-    @CommandLine.ArgGroup(exclusive=true, multiplicity="0..1", heading = "Output Type %n")
+    @CommandLine.ArgGroup(heading = "Output Type %n")
     TableOutputType outputType = new TableOutputType();
 
 
@@ -57,7 +57,7 @@ public class TableOutputTypeArgs extends AbstractOutputTypeArgs {
     }
 
     public String getOutFileExtension() {
-        if (extension != null && extension.length() > 0) {
+        if (extension != null && !extension.isEmpty()) {
             return extension;
         }
         String calcExt = "text";

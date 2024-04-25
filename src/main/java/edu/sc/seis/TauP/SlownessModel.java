@@ -100,10 +100,10 @@ public abstract class SlownessModel implements Serializable {
     }
 
     /** True to enable debugging output. */
-    transient static public boolean DEBUG = ToolRun.DEBUG;
+    static public boolean DEBUG = ToolRun.DEBUG;
 
     /** True to enable verbose output. */
-    transient static public boolean verbose = ToolRun.VERBOSE;
+    static public boolean verbose = ToolRun.VERBOSE;
 
     /** Radius of the Earth in km, usually input from the velocity model. */
     protected double radiusOfEarth = 6371.0;
@@ -120,7 +120,7 @@ public abstract class SlownessModel implements Serializable {
      * 
      * @see edu.sc.seis.TauP.CriticalDepth
      */
-    protected List<CriticalDepth> criticalDepths = new ArrayList<CriticalDepth>();
+    protected List<CriticalDepth> criticalDepths = new ArrayList<>();
 
     /**
      * Stores depth ranges that contains a high slowness zone for P. Stored as
@@ -128,7 +128,7 @@ public abstract class SlownessModel implements Serializable {
      * 
      * @see DepthRange
      */
-    protected List<DepthRange> highSlownessLayerDepthsP = new ArrayList<DepthRange>();
+    protected List<DepthRange> highSlownessLayerDepthsP = new ArrayList<>();
 
     /**
      * Stores depth ranges that contains a high slowness zone for S. Stored as
@@ -136,7 +136,7 @@ public abstract class SlownessModel implements Serializable {
      * 
      * @see DepthRange
      */
-    protected List<DepthRange> highSlownessLayerDepthsS = new ArrayList<DepthRange>();
+    protected List<DepthRange> highSlownessLayerDepthsS = new ArrayList<>();
 
     /**
      * Stores depth ranges that are fluid, ie S velocity is zero. Stored as
@@ -144,7 +144,7 @@ public abstract class SlownessModel implements Serializable {
      * 
      * @see DepthRange
      */
-    protected List<DepthRange> fluidLayerDepths = new ArrayList<DepthRange>();
+    protected List<DepthRange> fluidLayerDepths = new ArrayList<>();
 
     /** Initial length of the slowness vectors. */
     protected static int vectorLength = 256;
@@ -155,7 +155,7 @@ public abstract class SlownessModel implements Serializable {
      * 
      * @see edu.sc.seis.TauP.SlownessLayer
      */
-    protected List<SlownessLayer> PLayers = new ArrayList<SlownessLayer>(vectorLength);
+    protected List<SlownessLayer> PLayers = new ArrayList<>(vectorLength);
 
     /**
      * Stores the final slowness-depth layers for S waves. Stored as
@@ -165,7 +165,7 @@ public abstract class SlownessModel implements Serializable {
      * 
      * @see edu.sc.seis.TauP.SlownessLayer
      */
-    protected List<SlownessLayer> SLayers = new ArrayList<SlownessLayer>(vectorLength);
+    protected List<SlownessLayer> SLayers = new ArrayList<>(vectorLength);
 
     /**
      * Minimum difference between successive slowness samples. The default is
@@ -484,10 +484,7 @@ public abstract class SlownessModel implements Serializable {
     /**
      * generate approximate distance, in radians, for a ray from a surface
      * source that turns at the bottom of the given slowness layer.
-     * 
-     * @exception NoSuchLayerException
-     *                occurs if no layer in the velocity model contains the
-     *                given depth.
+     *
      * @exception SlownessModelException
      *                occurs if getNumLayers() == 0 as we cannot compute a
      *                distance without a layer.
@@ -495,7 +492,7 @@ public abstract class SlownessModel implements Serializable {
     public TimeDist approxDistance(int slownessTurnLayer,
                                    double p,
                                    boolean isPWave)
-            throws NoSuchLayerException, SlownessModelException {
+            throws SlownessModelException {
         /*
          * First, if slowness contains less than slownessTurnLayer elements then
          * we can't calculate a distance, otherwise we must signal an exception.
@@ -636,7 +633,7 @@ public abstract class SlownessModel implements Serializable {
              * boundary
              */
             List<SlownessLayer> allLayers = getAllSlownessLayers(isPWave);
-            List<SlownessLayer> outLayers = new ArrayList<SlownessLayer>(allLayers.size());
+            List<SlownessLayer> outLayers = new ArrayList<>(allLayers.size());
             outLayers.addAll(allLayers);
             outLayers.set(layerNum, new SlownessLayer(sLayer.getTopP(),
                                                       depth,
@@ -678,7 +675,7 @@ public abstract class SlownessModel implements Serializable {
              * boundary
              */
             List<SlownessLayer> allLayers = getAllSlownessLayers(isPWave);
-            List<SlownessLayer> outLayers = new ArrayList<SlownessLayer>(allLayers.size());
+            List<SlownessLayer> outLayers = new ArrayList<>(allLayers.size());
             outLayers.addAll(allLayers);
             outLayers.set(layerNum, new SlownessLayer(sLayer.getTopP(),
                                                       sLayer.getTopDepth(),
@@ -726,7 +723,7 @@ public abstract class SlownessModel implements Serializable {
                                          sLayer.getBotDepth());
             
             List<SlownessLayer> allLayers = getAllSlownessLayers(isPWave);
-            List<SlownessLayer> outLayers = new ArrayList<SlownessLayer>(allLayers.size());
+            List<SlownessLayer> outLayers = new ArrayList<>(allLayers.size());
             outLayers.addAll(allLayers);
             outLayers.remove(layerNum);
             outLayers.add(layerNum, botLayer);
@@ -734,7 +731,7 @@ public abstract class SlownessModel implements Serializable {
             
             List<SlownessLayer> outPLayers, outSLayers;
             // fix critical layers since we have added a slowness layer
-            List<CriticalDepth> outCriticalDepths = new ArrayList<CriticalDepth>();
+            List<CriticalDepth> outCriticalDepths = new ArrayList<>();
             outCriticalDepths.addAll(criticalDepths);
             fixCriticalDepths(outCriticalDepths, layerNum, isPWave);
             if(isPWave) {
@@ -1234,7 +1231,7 @@ public abstract class SlownessModel implements Serializable {
                         + "botCriticalLayer = " + botCriticalLayer);
             }
             for(int layerNum = topCriticalLayer; layerNum <= botCriticalLayer; layerNum++) {
-                velLayer = (VelocityLayer)vMod.getVelocityLayer(layerNum);
+                velLayer = vMod.getVelocityLayer(layerNum);
                 topVelocity = velLayer.evaluateAtTop(waveType);
                 botVelocity = velLayer.evaluateAtBottom(waveType);
                 if (topVelocity == 0.0 && botVelocity == 0.0) {
@@ -1280,7 +1277,7 @@ public abstract class SlownessModel implements Serializable {
                  * to be the slowness at the top of the next layer.
                  */
                 if(layerNum < vMod.getNumLayers() - 1) {
-                    velLayer = (VelocityLayer)vMod.getVelocityLayer(layerNum + 1);
+                    velLayer = vMod.getVelocityLayer(layerNum + 1);
                     topVelocity = velLayer.evaluateAtTop(waveType);
                     if(!isPWave && depthInFluid(velLayer.getTopDepth())) {
                         /*
@@ -1530,7 +1527,7 @@ public abstract class SlownessModel implements Serializable {
             addSlowness(botP, SWAVE);
         }
         botP = -1;
-        tmpLayers = new ArrayList<SlownessLayer>(SLayers);
+        tmpLayers = new ArrayList<>(SLayers);
         for(int j = 0; j < tmpLayers.size(); j++) {
             topP = tmpLayers.get(j).getTopP();
             if(topP != botP) {
@@ -1549,7 +1546,7 @@ public abstract class SlownessModel implements Serializable {
         SlownessLayer sLayer;
         double numNewP;
         double deltaP;
-        List<SlownessLayer> tempLayers = new ArrayList<SlownessLayer>(SLayers);
+        List<SlownessLayer> tempLayers = new ArrayList<>(SLayers);
         for(int j = 0; j < tempLayers.size(); j++) {
             sLayer = tempLayers.get(j);
             if(Math.abs(sLayer.getTopP() - sLayer.getBotP()) > maxDeltaP) {
@@ -1563,7 +1560,7 @@ public abstract class SlownessModel implements Serializable {
                 }
             }
         }
-        tempLayers = new ArrayList<SlownessLayer>(PLayers);
+        tempLayers = new ArrayList<>(PLayers);
         for(int j = 0; j < tempLayers.size(); j++) {
             sLayer = tempLayers.get(j);
             if(Math.abs(sLayer.getTopP() - sLayer.getBotP()) > maxDeltaP) {
@@ -1590,7 +1587,7 @@ public abstract class SlownessModel implements Serializable {
         double velocity;
         double p;
         // temp copy as may change list while looping over it
-        List<SlownessLayer> tmpLayers = new ArrayList<SlownessLayer>(SLayers);
+        List<SlownessLayer> tmpLayers = new ArrayList<>(SLayers);
 
             // S layers
             for(int j = 0; j < tmpLayers.size(); j++) {
@@ -1617,7 +1614,7 @@ public abstract class SlownessModel implements Serializable {
                 }
             }
             // P layers
-            tmpLayers = new ArrayList<SlownessLayer>(PLayers);
+            tmpLayers = new ArrayList<>(PLayers);
             for(int j = 0; j < tmpLayers.size(); j++) {
                 sLayer = tmpLayers.get(j);
                 if((sLayer.getBotDepth() - sLayer.getTopDepth()) > maxDepthInterval) {
@@ -2111,7 +2108,7 @@ public abstract class SlownessModel implements Serializable {
         printGMT(dos, false);
     }
     
-    void printGMT(PrintWriter dos, boolean isPWave) throws IOException {
+    void printGMT(PrintWriter dos, boolean isPWave) {
         double pVel = -1.0;
         for(int layerNum = 0; layerNum < getNumLayers(isPWave); layerNum++) {
             SlownessLayer currVelocityLayer = getSlownessLayer(layerNum, isPWave);

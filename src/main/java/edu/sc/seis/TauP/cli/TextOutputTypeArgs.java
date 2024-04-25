@@ -11,7 +11,7 @@ public class TextOutputTypeArgs extends AbstractOutputTypeArgs {
         setOutputFormat(defaultFormat);
     }
 
-    @CommandLine.ArgGroup(exclusive = true, multiplicity = "0..1", heading = "Output Type %n")
+    @CommandLine.ArgGroup(heading = "Output Type %n")
     TextOutputTypeArgs.TextOutputType outputType = new TextOutputTypeArgs.TextOutputType();
 
     public boolean isText() {

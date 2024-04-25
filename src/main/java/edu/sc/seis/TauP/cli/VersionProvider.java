@@ -7,7 +7,7 @@ public class VersionProvider implements IVersionProvider {
 
 
     @Override
-    public String[] getVersion() throws Exception {
+    public String[] getVersion() {
         return new String[] { BuildVersion.getDetailedVersion() };
     }
 

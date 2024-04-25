@@ -5,7 +5,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,8 +17,8 @@ public abstract class AbstractPathSegment {
     String segmentName;
     SeismicPhase phase;
     TimeDist prevEnd;
-    int segmentIndex = -1;
-    int totalNumSegments = -1;
+    int segmentIndex;
+    int totalNumSegments;
 
     String pathCssClass = "path";
 
@@ -106,14 +105,14 @@ public abstract class AbstractPathSegment {
     }
 
     public TimeDist getPathEnd() {
-        if (path.size() > 0) {
+        if (!path.isEmpty()) {
             return path.get(path.size() - 1);
         }
         return prevEnd;
     }
 
     public TimeDist getPathStart() {
-        if (path.size() > 0) {
+        if (!path.isEmpty()) {
             return path.get(0);
         }
         return prevEnd;
@@ -157,7 +156,7 @@ public abstract class AbstractPathSegment {
         return a;
     }
 
-    public void writeJSON(PrintWriter pw, String indent) throws IOException {
+    public void writeJSON(PrintWriter pw, String indent) {
         String NL = "\n";
         pw.write(indent + "{" + NL);
         String innerIndent = indent + "  ";
@@ -205,8 +204,10 @@ public abstract class AbstractPathSegment {
             switch (distanceAxisType) {
                 case radian:
                     xVal = td.getDistRadian();
+                    break;
                 case kilometer:
                     xVal = R * td.getDistRadian();
+                    break;
                 case degree:
                 default:
                     // default to degree?
@@ -215,6 +216,7 @@ public abstract class AbstractPathSegment {
             switch (depthAxisType) {
                 case depth:
                     yVal = td.getDepth();
+                    break;
                 case radius:
                 default:
                     yVal = R - td.getDepth();

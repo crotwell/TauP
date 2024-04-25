@@ -6,7 +6,6 @@ import edu.sc.seis.seisFile.Location;
 import java.util.ArrayList;
 import java.util.List;
 
-import static edu.sc.seis.TauP.Arrival.RtoD;
 import static edu.sc.seis.TauP.ScatteredSeismicPhase.calcScatterDistDeg;
 
 public class DistanceRay extends RayCalculateable {
@@ -77,7 +76,7 @@ public class DistanceRay extends RayCalculateable {
     public List<Arrival> calcSimplePhase(SimpleSeismicPhase phase) {
         List<Double> arrivalDistList = calcRadiansInRange(phase.getMinDistance(), phase.getMaxDistance(),
                 phase.getTauModel().getRadiusOfEarth(), true);
-        List<Arrival> arrivals = new ArrayList<Arrival>();
+        List<Arrival> arrivals = new ArrayList<>();
         for (Double distRadian : arrivalDistList) {
             arrivals.addAll(phase.calcTimeExactDistance(distRadian));
         }
@@ -95,11 +94,11 @@ public class DistanceRay extends RayCalculateable {
         SimpleSeismicPhase scatteredPhase = phase.getScatteredPhase();
         List<Double> arrivalDistList = scatRay.calcRadiansInRange(scatteredPhase.getMinDistance(), scatteredPhase.getMaxDistance(),
                 phase.getTauModel().getRadiusOfEarth(), false);
-        List<Arrival> arrivals = new ArrayList<Arrival>();
+        List<Arrival> arrivals = new ArrayList<>();
         for (Double distRadian : arrivalDistList) {
             arrivals.addAll(phase.getScatteredPhase().calcTimeExactDistance(distRadian));
         }
-        List<Arrival> scatArrivals = new ArrayList<Arrival>();
+        List<Arrival> scatArrivals = new ArrayList<>();
         for (Arrival a : arrivals) {
             a.setSearchValue(scatRay);
             scatArrivals.add(new ScatteredArrival(phase, this, phase.getInboundArrival(), a, phase.isBackscatter()));
@@ -134,7 +133,6 @@ public class DistanceRay extends RayCalculateable {
             out.add(minRadian);
         }
         int n = (int) Math.floor(minRadian/(2*Math.PI));
-        double searchDist;
         while(n * 2.0 * Math.PI  < maxRadian) {
             double searchVal = n * 2.0 * Math.PI + radianVal;
             if (minRadian < searchVal && searchVal <= maxRadian) {

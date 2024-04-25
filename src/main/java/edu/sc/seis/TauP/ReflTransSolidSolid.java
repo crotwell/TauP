@@ -21,7 +21,7 @@ public class ReflTransSolidSolid extends ReflTrans {
      * (a + d*topVertSlownessP * botVertSlownessS)*H*sqRP) / det
      */
     @Override
-    public Complex getComplexRpp(double rayParam) throws VelocityModelException {
+    public Complex getComplexRpp(double rayParam) {
         calcTempVars(rayParam, true);
         Complex FTerm = CX.times(CX.minus(CX.times(b, topVertSlownessP),
                 CX.times(c, botVertSlownessP)), F);
@@ -29,15 +29,14 @@ public class ReflTransSolidSolid extends ReflTrans {
                         CX.times(d, CX.times(topVertSlownessP,
                                 botVertSlownessS))),
                 CX.times(H, sqRP));
-        Complex out =  CX.over(CX.minus(FTerm, HTerm), det);
-        return out;
+        return CX.over(CX.minus(FTerm, HTerm), det);
     }
 
     /**
      * Calculates incident P wave to reflected SV wave Complex coefficient.
      * <P>= -2 * topVertSlownessP *<BR>
      * (a * b + c * d *botVertSlownessP *botVertSlownessS) *<BR>
-     * rp * (topVp/topVs)) / det
+     * (rp * (topVp/topVs)) / det
      */
     @Override
     public Complex getComplexRps(double rayParam) {

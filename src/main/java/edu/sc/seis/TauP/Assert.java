@@ -48,10 +48,4 @@ public class Assert {
         isTrue(!b, s);
     }
 
-    public static void isNotNull(Object o, String s)
-            throws IllegalArgumentException {
-        if(o == null) {
-            throw new IllegalArgumentException(s);
-        }
-    }
 }

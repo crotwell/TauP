@@ -25,15 +25,10 @@
  */
 package edu.sc.seis.TauP;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Properties;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Generate standard models. This is used by the gradle build, but unlikely to be useful to end users.
@@ -41,7 +36,7 @@ import java.util.ArrayList;
  */
 public class StdModelGenerator {
 
-  public static final void main(String[] args)
+  public static void main(String[] args)
   throws IOException, TauPException {
     File inDir = new File(args[0]);
     File outDir = new File(args[1]);
@@ -54,12 +49,12 @@ public class StdModelGenerator {
         }
     }
 
-  public static final void createStandardModels(File inDir, File outDir)
+  public static void createStandardModels(File inDir, File outDir)
   throws IOException, TauPException {
-    ArrayList<String> tvelModelNames = new ArrayList<String>();
+    ArrayList<String> tvelModelNames = new ArrayList<>();
     tvelModelNames.add("iasp91");
     tvelModelNames.add("ak135");
-    ArrayList<String> ndModelNames = new ArrayList<String>();
+    ArrayList<String> ndModelNames = new ArrayList<>();
     ndModelNames.add("prem");
     ndModelNames.add("ak135fcont");
     ndModelNames.add("ak135favg");

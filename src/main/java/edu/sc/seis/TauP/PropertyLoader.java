@@ -26,9 +26,8 @@
 package edu.sc.seis.TauP;
 
 import java.io.*;
+import java.nio.file.FileSystems;
 import java.util.Properties;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 /**
  * convenience class for loading properties.
@@ -42,13 +41,11 @@ import java.util.zip.ZipFile;
  */
 public class PropertyLoader {
 
-    protected static String jarFileName = "taup.jar";
-
     protected static String defaultPropFileName = "defaultProps";
 
     protected static String packageName = "/edu/sc/seis/TauP";
 
-    protected static String userPropFileName = ".taup";
+    protected static String propFileName = ".taup";
 
     /**
      * loads the properties from a file. First the default properties are loaded
@@ -69,11 +66,6 @@ public class PropertyLoader {
         Properties defaultProps = new Properties();
         // load default properties
         try {
-            String classPath = System.getProperty("java.class.path");
-            String pathEntry = "";
-            int offset = 0;
-            int pathSepIndex;
-            File jarFile;
             Class c = null;
             try {
                 c = Class.forName("edu.sc.seis.TauP.PropertyLoader");
@@ -97,7 +89,7 @@ public class PropertyLoader {
         // append/overwrite with user's directory .taup
         try {
             applicationProps.load(new FileInputStream(System.getProperty("user.home")
-                    + System.getProperty("file.separator") + ".taup"));
+                    + FileSystems.getDefault().getSeparator() + propFileName));
         } catch(FileNotFoundException ee) {
             // file doesn't exist, so go on
         }
@@ -105,7 +97,7 @@ public class PropertyLoader {
         try {
             /* Check for .taup in the current directory. */
             applicationProps.load(new FileInputStream(System.getProperty("user.dir")
-                    + System.getProperty("file.separator") + ".taup"));
+                    + FileSystems.getDefault().getSeparator() + propFileName));
         } catch(FileNotFoundException e) {
             // file doesn't exist, so go on
         }
@@ -126,7 +118,7 @@ public class PropertyLoader {
 
     /** writes the current system properties out to the file given. */
     public static void save(Properties props) throws IOException {
-        save(props, ".taup");
+        save(props, propFileName);
     }
 
     /** writes the current system properties out to the file given. */

@@ -29,10 +29,11 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONWriter;
 
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.time.Duration;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 import static edu.sc.seis.TauP.SphericalCoords.TWOPI;
 
@@ -149,11 +150,7 @@ public class Arrival {
     private Arrival relativeToArrival = null;
 
     public static List<Arrival> sortArrivals(List<Arrival> arrivals) {
-        Collections.sort(arrivals, new Comparator<Arrival>() {
-            public int compare(Arrival o1, Arrival o2) {
-                return Double.compare(o1.getTime(), o2.getTime());
-            }
-        });
+        arrivals.sort(Comparator.comparingDouble(Arrival::getTime));
         return arrivals;
     }
 
@@ -276,7 +273,7 @@ public class Arrival {
      * Geometrical spreading factor.
      * See Fundamentals of Modern Global Seismology, ch 13, eq 13.9.
      * Note that eq 13.10 has divide by zero in case of a horizontal ray leaving the source.
-     * @return
+     *
      * @throws TauModelException
      */
     public double getGeometricSpreadingFactor() throws TauModelException {
@@ -305,10 +302,9 @@ public class Arrival {
             // divide by zero???
             return Double.POSITIVE_INFINITY;
         }
-        double geoSpread = Math.sin(getTakeoffAngle())* Math.abs(dtakeoff_ddelta)
-                / (recRadius * recRadius * cosIncident * Math.sin(getModuloDist()));
 
-        return geoSpread;
+        return Math.sin(getTakeoffAngle())* Math.abs(dtakeoff_ddelta)
+                / (recRadius * recRadius * cosIncident * Math.sin(getModuloDist()));
     }
 
     /**
@@ -349,8 +345,7 @@ public class Arrival {
         double refltran = getReflTransPSV();
         double geoSpread = getGeometricSpreadingFactor();
         double densityVelocity = 1/Math.sqrt(getPhase().velocityAtReceiver() * getPhase().densityAtReceiver());
-        double ampFactor = densityVelocity* refltran * geoSpread;
-        return ampFactor;
+        return densityVelocity* refltran * geoSpread;
     }
 
     /**
@@ -366,8 +361,7 @@ public class Arrival {
         double refltran = getReflTransSH();
         double geoSpread = getGeometricSpreadingFactor();
         double densityVelocity = 1/Math.sqrt(getPhase().velocityAtReceiver() * getPhase().densityAtReceiver());
-        double ampFactor = densityVelocity* refltran * geoSpread;
-        return ampFactor;
+        return densityVelocity* refltran * geoSpread;
     }
 
     public double getIncidentAngle() {
@@ -480,8 +474,8 @@ public class Arrival {
         return pierce;
     }
 
-    /** returns path points as TimeDist objects.
-     *
+    /**
+     * returns path points as TimeDist objects.
      * */
     public TimeDist[] getPath() {
         if (pathSegments == null) {
@@ -508,20 +502,19 @@ public class Arrival {
      * @return new Arrival with dist and search dist negated
      */
     public Arrival negateDistance() {
-        Arrival neg = new Arrival( phase,
-         time,
-        -1* dist,
-         rayParam,
-         rayParamIndex,
-         searchCalc,
-         name,
-         puristName,
-         sourceDepth,
-         receiverDepth,
-         takeoffAngle,
-         incidentAngle,
-                dRPdDist);
-        return neg;
+        return new Arrival( phase,
+            time,
+            -1* dist,
+            rayParam,
+            rayParamIndex,
+            searchCalc,
+            name,
+            puristName,
+            sourceDepth,
+            receiverDepth,
+            takeoffAngle,
+            incidentAngle,
+            dRPdDist);
     }
 
     public boolean isRelativeToArrival() {
@@ -642,7 +635,7 @@ public class Arrival {
     }
 
 
-    public void writeJSON(PrintWriter pw, String indent) throws IOException {
+    public void writeJSON(PrintWriter pw, String indent) {
         String NL = "\n";
         pw.write(indent+"{"+NL);
         String innerIndent = indent+"  ";

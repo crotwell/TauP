@@ -130,7 +130,7 @@ public class PhaseSymbols {
      * @return
      */
     public static boolean isDiffracted(String name, int offset) {
-        Pattern phaseRegEx = Pattern.compile("^"+LegPuller.headDiffRE+"");
+        Pattern phaseRegEx = Pattern.compile("^"+LegPuller.headDiffRE);
         Matcher m = phaseRegEx.matcher(name.substring(offset));
         if (m.find()) {
             return m.group(m.groupCount()-1).equals(DIFF);
@@ -142,11 +142,8 @@ public class PhaseSymbols {
         return isHead(name, 0);
     }
     public static boolean isHead(String name, int offset) {
-        if ( isDowngoingSymbol(name, offset) && name.startsWith(""+HEAD_CODE, offset+1)) {
-            // simple like Pn
-            return true;
-        }
-        return false;
+        // simple like Pn
+        return isDowngoingSymbol(name, offset) && name.startsWith("" + HEAD_CODE, offset + 1);
     }
 
     public static boolean isSurfaceWave(String name) {
@@ -160,10 +157,7 @@ public class PhaseSymbols {
             idx++;
             c = name.charAt(idx);
         }
-        if ( name.startsWith(KMPS_CODE, idx)) {
-            return true;
-        }
-        return false;
+        return name.startsWith(KMPS_CODE, idx);
     }
 
     public static boolean isBoundary(String name) {
@@ -171,9 +165,6 @@ public class PhaseSymbols {
     }
     public static boolean isBoundary(String name, int offset) {
         char ch = name.charAt(offset);
-        if(Character.isDigit(ch) || ch == '.' || ch == m || ch == c || ch == i ) {
-            return true;
-        }
-        return false;
+        return Character.isDigit(ch) || ch == '.' || ch == m || ch == c || ch == i;
     }
 }

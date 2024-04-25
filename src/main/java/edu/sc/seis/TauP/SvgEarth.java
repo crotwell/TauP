@@ -15,7 +15,7 @@ public class SvgEarth {
 
     public static SvgEarthScaling calcEarthScaleTransForPhaseList(List<SeismicPhase> phaseList, DistDepthRange distDepthRange, boolean includeNegDist) {
         float R = 6371;
-        if (phaseList.size() > 0) {
+        if (!phaseList.isEmpty()) {
             R = (float) phaseList.get(0).getTauModel().getRadiusOfEarth();
         }
         float minDist = 0;
@@ -25,7 +25,7 @@ public class SvgEarth {
         SvgEarthScaling scaling;
         // show whole earth if no arrivals?
         float[] scaleTrans;
-        if (phaseList.size() == 0 && ! distDepthRange.hasDistAxisMinMax() && ! distDepthRange.hasDepthAxisMinMax()) {
+        if (phaseList.isEmpty() && ! distDepthRange.hasDistAxisMinMax() && ! distDepthRange.hasDepthAxisMinMax()) {
             // no arrivals, show whole earth
             maxDist = (float) Math.PI;
             scaleTrans = new float[]{1, 0, 0, minDist, maxDist};
@@ -96,7 +96,7 @@ public class SvgEarth {
 
     public static SvgEarthScaling calcEarthScaleTrans(List<Arrival> arrivalList, DistDepthRange distDepthRange) {
         float R = 6371;
-        if (arrivalList.size()> 0) {R = (float) arrivalList.get(0).getPhase().getTauModel().getRadiusOfEarth();}
+        if (!arrivalList.isEmpty()) {R = (float) arrivalList.get(0).getPhase().getTauModel().getRadiusOfEarth();}
         float minDist = 0;
         float maxDist = (float) Math.PI;
         double minDepth = 0;
@@ -104,7 +104,7 @@ public class SvgEarth {
         SvgEarthScaling scaling;
         // show whole earth if no arrivals?
         float[] scaleTrans;
-        if (arrivalList.size() == 0 && ! distDepthRange.hasDistAxisMinMax() && ! distDepthRange.hasDepthAxisMinMax()) {
+        if (arrivalList.isEmpty() && ! distDepthRange.hasDistAxisMinMax() && ! distDepthRange.hasDepthAxisMinMax()) {
             // no arrivals, show whole earth
             maxDist = (float) Math.PI;
             scaleTrans = new float[]{1, 0, 0, minDist, maxDist};
@@ -378,21 +378,6 @@ public class SvgEarth {
         }
         out.println("  </g>");
 
-        /*
-        // draws box around zoomed in area
-        out.println("<polyline  class=\"tick\"  points=\"");
-        double[] minmax = findPierceBoundingBox(arrivals);
-        minmax[2] *= -1;
-        minmax[3] *= -1;
-        out.println("0 0 ");
-        out.println(",  "+minmax[0]+" "+minmax[2]);
-        out.println(",  "+minmax[0]+" "+minmax[3]);
-        out.println(",  "+minmax[1]+" "+minmax[3]);
-        out.println(",  "+minmax[1]+" "+minmax[2]);
-        out.println(",  "+minmax[0]+" "+minmax[2]);
-        out.println("\" />");
-        */
-
         out.println("<!-- draw paths, coordinates are x,y not degree,radius due to SVG using only cartesian -->");
     }
 
@@ -425,20 +410,11 @@ public class SvgEarth {
             }
         }
 
-        float zoomYMin;
-        float zoomYMax;
-        float zoomXMin;
-        float zoomXMax;
-
         double minDist = 0;
         double maxDist = 0;
         double minDepth = 0;
         double maxDepth = 0;
         double[] minmax = findPierceBoundingBox(arrivals);
-        zoomXMin = (float) minmax[0];
-        zoomXMax = (float) minmax[1];
-        zoomYMin = (float) minmax[2];
-        zoomYMax = (float) minmax[3];
         for (Arrival arr : arrivals) {
             TimeDist[] pierce = arr.getPierce();
             for (TimeDist td : pierce) {
@@ -493,7 +469,7 @@ public class SvgEarth {
         + "gmt psxy -K -O -P -R -JP -Sc -A >> " + psFile
         + " <<ENDLAYERS");
         // whole earth radius (scales to mapWidth)
-        out.println("0.0 0.0 " + (float) (mapWidth) + mapWidthUnit);
+        out.println("0.0 0.0 " + mapWidth + mapWidthUnit);
         // other boundaries
         double[] branchDepths = tMod.getBranchDepths();
         for (int i = 0; i < branchDepths.length; i++) {
@@ -510,12 +486,11 @@ public class SvgEarth {
     }
 
     public static void printScriptBeginningSvg(PrintWriter out, TauModel tMod, float pixelWidth,
-                                               SvgEarthScaling scaleTrans, String toolName, String[] cmdLineArgs, String extraCSS) throws IOException {
+                                               SvgEarthScaling scaleTrans, String toolName, String[] cmdLineArgs, String extraCSS) {
         float zoomScale = scaleTrans.getZoomScale();
         int plotOffset = 0;
         float R = (float) tMod.getRadiusOfEarth();
         float plotSize = R * plotOverScaleFactor;
-        float plotScale = pixelWidth / (2 * R * plotOverScaleFactor);
 
         int fontSize = (int) (plotSize / 20);
         fontSize = (int) (fontSize / zoomScale);

@@ -1,7 +1,5 @@
 package edu.sc.seis.TauP.cli;
 
-import picocli.CommandLine;
-
 public class VelModelOutputTypeArgs extends AbstractOutputTypeArgs {
 
     String outType = "nd";

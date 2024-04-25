@@ -16,10 +16,11 @@
  */
 package edu.sc.seis.TauP;
 
-import java.io.*;
-import java.util.*;
-
-import static edu.sc.seis.TauP.Arrival.RtoD;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Stores and transforms seismic phase names to and from their corresponding
@@ -37,7 +38,7 @@ import static edu.sc.seis.TauP.Arrival.RtoD;
 public class SimpleSeismicPhase implements SeismicPhase {
 
     /** Enables debugging output. */
-    public transient boolean DEBUG = ToolRun.DEBUG;
+    public transient boolean DEBUG;
 
     /** Enables verbose output. */
     public transient boolean verbose = false;
@@ -56,21 +57,21 @@ public class SimpleSeismicPhase implements SeismicPhase {
      * phase. Normally this is 0.0 for a surface stations, but can be different
      * for borehole or scattering calculations.
      */
-    protected double receiverDepth = 0.0;
+    protected double receiverDepth;
 
     /**
      * Array of distances corresponding to the ray parameters stored in
      * rayParams.
      */
-    protected double[] dist = new double[0];
+    protected double[] dist;
 
     /**
      * Array of times corresponding to the ray parameters stored in rayParams.
      */
-    protected double[] time = new double[0];
+    protected double[] time;
 
     /** Array of possible ray parameters for this phase. */
-    protected double[] rayParams = new double[0];
+    protected double[] rayParams;
 
     /** Minimum ray parameter that exists for this phase. */
     protected double minRayParam;
@@ -83,32 +84,32 @@ public class SimpleSeismicPhase implements SeismicPhase {
      * that maxRayParamIndex &lt; minRayParamIndex as ray parameter decreases with
      * increasing index.
      */
-    protected int maxRayParamIndex = -1;
+    protected int maxRayParamIndex;
 
     /**
      * Index within TauModel.rayParams that corresponds to minRayParam. Note
      * that maxRayParamIndex &lt; minRayParamIndex as ray parameter decreases with
      * increasing index.
      */
-    protected int minRayParamIndex = -1;
+    protected int minRayParamIndex;
 
     /** The minimum distance that this phase can be theoretically observed. */
-    protected double minDistance = 0.0;
+    protected double minDistance;
 
     /** The maximum distance that this phase can be theoretically observed. */
-    protected double maxDistance = Double.MAX_VALUE;
+    protected double maxDistance;
 
     /**
      * Array of branch numbers for the given phase. Note that this depends upon
      * both the earth model and the source depth.
      */
-    protected List<Integer> branchSeq = new ArrayList<Integer>();
+    protected List<Integer> branchSeq;
 
 
     /**
      * Array of branchSeq positions where a head or diffracted segment occurs.
      */
-    protected List<Integer> headOrDiffractSeq = new ArrayList<Integer>();
+    protected List<Integer> headOrDiffractSeq;
 
     /** The phase name, ie PKiKP. */
     protected String name;
@@ -119,10 +120,10 @@ public class SimpleSeismicPhase implements SeismicPhase {
     protected String puristName;
 
     /** ArrayList containing Strings for each leg. */
-    protected ArrayList<String> legs = new ArrayList<String>();
+    protected ArrayList<String> legs;
 
     /** Description of segments of the phase. */
-    protected List<SeismicPhaseSegment> segmentList = new ArrayList<SeismicPhaseSegment>();
+    protected List<SeismicPhaseSegment> segmentList;
 
     /**
      * records the end action for the current leg. Will be one of
@@ -130,19 +131,19 @@ public class SimpleSeismicPhase implements SeismicPhase {
      * SeismicPhase.REFLECTBOT, or SeismicPhase.REFLECTTOP. This allows a check
      * to make sure the path is correct. Used in addToBranch() and parseName().
      */
-    protected List<PhaseInteraction> legAction = new ArrayList<PhaseInteraction>();
+    protected List<PhaseInteraction> legAction;
 
     /**
      * true if the current leg of the phase is down going. This allows a check
      * to make sure the path is correct. Used in addToBranch() and parseName().
      */
-    protected List<Boolean> downGoing = new ArrayList<Boolean>();
+    protected List<Boolean> downGoing;
 
     /**
      * ArrayList of wave types corresponding to each leg of the phase.
      *
      */
-    protected List<Boolean> waveType = new ArrayList<Boolean>();
+    protected List<Boolean> waveType;
 
     protected double refineDistToleranceRadian = 0.0049*Math.PI/180;
 
@@ -310,7 +311,7 @@ public class SimpleSeismicPhase implements SeismicPhase {
 
     @Override
     public double[] getRayParams() {
-        return (double[])rayParams.clone();
+        return rayParams.clone();
     }
 
     @Override
@@ -330,7 +331,7 @@ public class SimpleSeismicPhase implements SeismicPhase {
 
     @Override
     public double[] getTime() {
-        return (double[])time.clone();
+        return time.clone();
     }
 
     @Override
@@ -353,10 +354,10 @@ public class SimpleSeismicPhase implements SeismicPhase {
      */
     @Override
     public boolean[] getDownGoing() {
-        Boolean[] b = (Boolean[])downGoing.toArray(new Boolean[0]);
+        Boolean[] b = downGoing.toArray(new Boolean[0]);
         boolean[] out = new boolean[b.length];
         for(int i = 0; i < b.length; i++) {
-            out[i] = b[i].booleanValue();
+            out[i] = b[i];
         }
         return out;
     }
@@ -367,10 +368,10 @@ public class SimpleSeismicPhase implements SeismicPhase {
      */
     @Override
     public boolean[] getWaveType() {
-        Boolean[] b = (Boolean[])waveType.toArray(new Boolean[0]);
+        Boolean[] b = waveType.toArray(new Boolean[0]);
         boolean[] out = new boolean[b.length];
         for(int i = 0; i < b.length; i++) {
-            out[i] = b[i].booleanValue();
+            out[i] = b[i];
         }
         return out;
     }
@@ -380,13 +381,8 @@ public class SimpleSeismicPhase implements SeismicPhase {
      * TRANSUP, TRANSDOWN
      */
     @Override
-    public int[] getLegAction() {
-        Integer[] b = (Integer[])legAction.toArray(new Integer[0]);
-        int[] out = new int[b.length];
-        for(int i = 0; i < b.length; i++) {
-            out[i] = b[i].intValue();
-        }
-        return out;
+    public List<PhaseInteraction> getLegAction() {
+        return legAction;
     }
 
     @Override

@@ -3,7 +3,6 @@ package edu.sc.seis.TauP;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -203,7 +202,7 @@ public class SvgUtil {
         colors.put(ReflTransAxisType.Tss, "grey");
         colors.put(ReflTransAxisType.Tshsh, "violet");
 
-        for (ReflTransAxisType rt : ReflTransAxisType.all) {
+        for (ReflTransAxisType rt : ReflTransAxisType.allCoeff) {
             out.append("        ."+rt.name()+" {\n");
             out.append("          stroke: "+colors.get(rt)+";\n");
             out.append("        }\n");
@@ -223,7 +222,7 @@ public class SvgUtil {
         StringBuffer out = new StringBuffer();
         String packageName = "/edu/sc/seis/TauP/svg";
         String filename = "standard_svg_plot.css";
-        Class c = null;
+        Class c;
         try {
             c = Class.forName("edu.sc.seis.TauP.SvgUtil");
             InputStream in = c.getResourceAsStream(packageName + "/" + filename);
@@ -236,13 +235,7 @@ public class SvgUtil {
             } else {
                 throw new RuntimeException("Standard CSS file not found in jar: "+packageName + "/" + filename);
             }
-        } catch (InvalidClassException e) {
-            throw new RuntimeException(e);
-        } catch (StreamCorruptedException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
+        } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
         return out;
@@ -260,7 +253,7 @@ public class SvgUtil {
         return out;
     }
 
-    public static final String classForPhase(String phase) {
+    public static String classForPhase(String phase) {
         return "phase_"+phase;
     }
 
@@ -337,7 +330,7 @@ public class SvgUtil {
 
     public static String createWaveTypeColorCSS() {
         StringBuffer extrtaCSS = new StringBuffer();
-        HashMap<String, String> colors = new HashMap();
+        HashMap<String, String> colors = new HashMap<>();
         colors.put("pwave", "blue");
         colors.put("swave", "red");
         colors.put("both_p_swave", "green");

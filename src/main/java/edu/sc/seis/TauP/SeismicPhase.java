@@ -39,8 +39,8 @@ public interface SeismicPhase extends Serializable, Cloneable {
 
     int getMinRayParamIndex();
 
-    public double getMinTime();
-    public double getMaxTime();
+    double getMinTime();
+    double getMaxTime();
 
     String getName();
 
@@ -74,7 +74,7 @@ public interface SeismicPhase extends Serializable, Cloneable {
 
     boolean[] getWaveType();
 
-    int[] getLegAction();
+    List<PhaseInteraction> getLegAction();
 
     boolean hasArrivals();
 
@@ -98,22 +98,19 @@ public interface SeismicPhase extends Serializable, Cloneable {
 
     /**
      * Creates an Arrival for a sampled ray parameter from the model. No interpolation between rays as this is a sample.
-     * @param rayNum
-     * @return
+     * @param rayNum index in ray parameters
      */
-    public Arrival createArrivalAtIndex(int rayNum);
+    Arrival createArrivalAtIndex(int rayNum);
 
     Arrival shootRay(double rayParam) throws SlownessModelException, NoSuchLayerException;
 
     /** True is all segments of this path are only P waves.
      *
-     * @return
      */
     boolean isAllPWave();
 
     /** True is all segments of this path are only S waves.
      *
-     * @return
      */
     boolean isAllSWave();
 
@@ -131,13 +128,11 @@ public interface SeismicPhase extends Serializable, Cloneable {
 
     /**
      * True if the initial leg, leaving the source, wavetype is a P wave, false if an S wave.
-     * @return
      */
     boolean sourceSegmentIsPWave();
 
     /**
      * True if the final, incident, wavetype is a P wave, false if an S wave.
-     * @return
      */
     boolean finalSegmentIsPWave();
 
@@ -165,7 +160,7 @@ public interface SeismicPhase extends Serializable, Cloneable {
      * @param values derived array, such as distance, time, tau, etc.
      * @return list of arrays for each contiguous segment
      */
-    public static List<double[]> splitForRepeatRayParam(double[] rayParams, double[] values) {
+    static List<double[]> splitForRepeatRayParam(double[] rayParams, double[] values) {
         List<double[]> out = new ArrayList<>();
         int partialStart = 0;
         for (int i = 0; i < values.length; i++) {
@@ -184,7 +179,7 @@ public interface SeismicPhase extends Serializable, Cloneable {
         return out;
     }
 
-    public static String baseDescribe(SeismicPhase phase) {
+    static String baseDescribe(SeismicPhase phase) {
         String desc = "";
         if (phase.phasesExistsInModel()) {
 
@@ -208,33 +203,26 @@ public interface SeismicPhase extends Serializable, Cloneable {
             double[] dist = phase.getDist();
             double[] rayParams = phase.getRayParams();
             desc += "  travel times from " + Outputs.formatTimeNoPad(time[0]) + " to " + Outputs.formatTimeNoPad(time[time.length - 1]) + " sec";
+            StringBuilder builder = new StringBuilder();
             for (int i = 0; i < dist.length; i++) {
                 if (i < dist.length - 1 && (rayParams[i] == rayParams[i + 1])
                         && rayParams.length > 2) {
                     /* Here we have a shadow zone, so output a warning of break in curve. */
-                    desc += "\n  with shadow zone between " + Outputs.formatDistance(Arrival.RtoD * dist[i])
-                            + " and " + Outputs.formatDistance(Arrival.RtoD * dist[i + 1]) + " deg";
+                    builder.append( "\n  with shadow zone between " + Outputs.formatDistance(Arrival.RtoD * dist[i])
+                            + " and " + Outputs.formatDistance(Arrival.RtoD * dist[i + 1]) + " deg");
                 }
             }
-            desc += ".\n";
+            builder.append(".\n");
+            desc += builder.toString();
         } else {
             desc += "  FAILS to exist, because no ray parameters satisfy the path.\n";
         }
         return desc;
     }
 
-    public static String baseDescribeJSON(SeismicPhase phase) {
+    static String baseDescribeJSON(SeismicPhase phase) {
         String desc = "";
         if (phase.phasesExistsInModel()) {
-
-            String mod180Min = "";
-            if (phase.getMinDistanceDeg() > 180 || phase.getMinDistanceDeg() < -180) {
-                mod180Min = " ("+Outputs.formatDistanceNoPad(SeismicPhase.distanceTrim180(phase.getMinDistanceDeg()))+") ";
-            }
-            String mod180Max = "";
-            if (phase.getMaxDistanceDeg() > 180 || phase.getMaxDistanceDeg() < -180) {
-                mod180Max = " ("+Outputs.formatDistanceNoPad(SeismicPhase.distanceTrim180(phase.getMaxDistanceDeg()))+") ";
-            }
             double[] time = phase.getTime();
             double[] dist = phase.getDist();
             double[] rayParams = phase.getRayParams();
@@ -275,7 +263,7 @@ public interface SeismicPhase extends Serializable, Cloneable {
         return desc;
     }
 
-    public static String segmentDescribe(SeismicPhase phase) {
+    static String segmentDescribe(SeismicPhase phase) {
         String desc = "";
         String indent = "  ";
         for(SeismicPhaseSegment segment : phase.getPhaseSegments()) {
@@ -283,7 +271,7 @@ public interface SeismicPhase extends Serializable, Cloneable {
         }
         return desc;
     }
-    public static String segmentDescribeJSON(SeismicPhase phase) {
+    static String segmentDescribeJSON(SeismicPhase phase) {
         String desc = "";
         String indent = "  ";
         desc += indent+"\"segment\": [\n";
@@ -301,5 +289,5 @@ public interface SeismicPhase extends Serializable, Cloneable {
         return desc;
     }
 
-    public int getNumRays();
+    int getNumRays();
 }

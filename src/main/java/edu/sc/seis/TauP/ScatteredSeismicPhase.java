@@ -29,7 +29,7 @@ public class ScatteredSeismicPhase implements SeismicPhase {
     /**
      * Gets the arrival inbound to the scatterer from the source. This part of the phase path is the same for all
      * arrivals for the scattered phase.
-     * @return
+     * @return inbound arrival
      */
     public Arrival getInboundArrival() {
         return inboundArrival;
@@ -38,7 +38,7 @@ public class ScatteredSeismicPhase implements SeismicPhase {
     /**
      * Gets the simple phase from the scatterer to the receiver, equivalent to setting a source at the scatterer
      * location.
-     * @return
+     * @return scattered phase
      */
     public SimpleSeismicPhase getScatteredPhase() {
         return scatteredPhase;
@@ -250,12 +250,10 @@ public class ScatteredSeismicPhase implements SeismicPhase {
     }
 
     @Override
-    public int[] getLegAction() {
-        int[] in = inboundArrival.getPhase().getLegAction();
-        int[] scat = scatteredPhase.getLegAction();
-        int[] out = new int[in.length+scat.length];
-        System.arraycopy(in, 0, out, 0, in.length);
-        System.arraycopy(scat, 0, out, in.length, scat.length);
+    public List<PhaseInteraction> getLegAction() {
+        List<PhaseInteraction> out = new ArrayList<>();
+        out.addAll( inboundArrival.getPhase().getLegAction());
+        out.addAll( scatteredPhase.getLegAction());
         return out;
     }
 
@@ -266,18 +264,17 @@ public class ScatteredSeismicPhase implements SeismicPhase {
 
     /**
      * Creates an Arrival for a sampled ray parameter from the model. No interpolation between rays as this is a sample.
-     * @param rayNum
-     * @return
+     * @param rayNum ray parameter index
+     * @return arraival at ray num
      */
     public Arrival createArrivalAtIndex(int rayNum) {
         Arrival scatteredArrival = scatteredPhase.createArrivalAtIndex(rayNum);
-        Arrival b = new ScatteredArrival(
+        return new ScatteredArrival(
                 this,
                 DistanceRay.ofDegrees(inboundArrival.getDistDeg()+scatteredArrival.getDistDeg()),
                 inboundArrival,
                 scatteredArrival,
                 isBackscatter());
-        return b;
     }
 
     @Override
@@ -320,8 +317,8 @@ public class ScatteredSeismicPhase implements SeismicPhase {
     }
 
     @Override
-    public Arrival shootRay(double rayParam) throws SlownessModelException, NoSuchLayerException {
-        return null;
+    public Arrival shootRay(double rayParam) {
+        throw new IllegalArgumentException("Cannot shoot ray for scattered phase");
     }
 
     @Override
@@ -367,13 +364,6 @@ public class ScatteredSeismicPhase implements SeismicPhase {
         return getPhaseSegments().get(getPhaseSegments().size()-1).isPWave;
     }
 
-    /*
-    @Override
-    public String describe() {
-        String desc = getName() + " scattered at "+getScattererDepth()+" km and "+getScattererDistanceDeg()+" deg:\n";
-        return desc+baseDescribe()+"\n"+segmentDescribe();
-    }*/
-
     public String describe() {
         String backscatter = isBackscatter() ? "backscattered" : "scattered";
         String desc = getName() + " "+backscatter+" at "+getScattererDepth()+" km and "+getScattererDistanceDeg()+" deg:\n";
@@ -403,10 +393,8 @@ public class ScatteredSeismicPhase implements SeismicPhase {
         String S = "  ";
         String QC = Q+COLON;
         String QCQ = QC+Q;
-        String SS = S+S;
         String SQ = S+Q;
         String SSQ = S+SQ;
-        String SSSQ = S+SSQ;
         StringWriter sw = new StringWriter();
         PrintWriter out = new PrintWriter(sw);
         out.println("{");
@@ -465,7 +453,6 @@ public class ScatteredSeismicPhase implements SeismicPhase {
 
     /** True is all segments of this path are only S waves.
      *
-     * @return
      */
     @Override
     public boolean isAllPWave() {
@@ -477,7 +464,6 @@ public class ScatteredSeismicPhase implements SeismicPhase {
 
     /** True is all segments of this path are only S waves.
      *
-     * @return
      */
     @Override
     public boolean isAllSWave() {
@@ -487,18 +473,18 @@ public class ScatteredSeismicPhase implements SeismicPhase {
         return true;
     }
 
-    @Override
     /**
      *  Calculation of a amplitude for a scattered phase doesn't make any sense given 1D ray, so always returns zero.
      */
+    @Override
     public double calcReflTranPSV(Arrival arrival) {
         return 0;
     }
 
-    @Override
     /**
      *  Calculation of a amplitude for a scattered phase doesn't make any sense given 1D ray, so always returns zero.
      */
+    @Override
     public double calcReflTranSH(Arrival arrival) {
         return 0;
     }
@@ -513,19 +499,11 @@ public class ScatteredSeismicPhase implements SeismicPhase {
             out.add(seg);
         }
         ScatteredArrival scatA = (ScatteredArrival) arrival;
-        double scatDistance = inboundArrival.getDist();
-        if (scatA.isInboundNegativeDirection()) {
-            scatDistance = -1*scatDistance;
-        }
         ArrivalPathSegment lastSeg =  inboundPath.get(inboundPath.size()-1);
         TimeDist prevEnd = lastSeg.getPathEnd();
         List<ArrivalPathSegment> outboundPath = scatteredPhase.calcSegmentPaths(scatA.getScatteredArrival(), prevEnd, lastSeg.segmentIndex);
 
         int segIdx = lastSeg.segmentIndex+1;
-        int scatNegative = 1;
-        if (scatA.isScatterNegativeDirection()) {
-            scatNegative = -1;
-        }
         for (ArrivalPathSegment scatPathSeg : outboundPath) {
             scatPathSeg.segmentIndex = segIdx++;
             scatPathSeg.arrival = arrival;

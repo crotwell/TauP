@@ -38,7 +38,7 @@ public class SvgEarthScaling {
     }
 
     public float[] getLabelRange() {
-        return new float[] {(float) minLabelDist, (float) maxLabelDist};
+        return new float[] {minLabelDist, maxLabelDist};
     }
 
     void calcDistLabelRange() {
@@ -62,11 +62,11 @@ public class SvgEarthScaling {
 
     public static float[] calcZoomScaleTranslate(float zoomXMin, float zoomXMax, float zoomYMin, float zoomYMax,
                                                  float R, float minDist, float maxDist) {
-        float zoomScale = 1;
-        float zoomTranslateX = 0;
-        float zoomTranslateY = 0;
+        float zoomScale;
+        float zoomTranslateX;
+        float zoomTranslateY;
 
-        float longSide = (float) (Math.max((zoomYMax - zoomYMin), (zoomXMax - zoomXMin)));
+        float longSide = Math.max((zoomYMax - zoomYMin), (zoomXMax - zoomXMin));
         zoomTranslateX = -1 * ((zoomXMax + zoomXMin) / 2);
         zoomTranslateY = (zoomYMax + zoomYMin) / 2;
         if (zoomTranslateY + longSide/2 > R) {
@@ -75,7 +75,7 @@ public class SvgEarthScaling {
         if (zoomTranslateX + longSide/2 > R) {
             zoomTranslateX = R-longSide/2;
         }
-        zoomScale = (float) ((2*R ) / longSide);
+        zoomScale = (2*R ) / longSide;
 
         return new float[] {zoomScale, zoomTranslateX, zoomTranslateY,  minDist,  maxDist};
     }

@@ -41,7 +41,7 @@ public class LegPuller {
      * instance pIP generates an exception but ^410 doesn't. It also appends
      * "END" as the last leg.
      *
-     * @throws TauModelException
+     * @throws PhaseParseException
      *             if the phase name cannot be tokenized.
      */
     protected static ArrayList<String> legPuller(String name) throws PhaseParseException {
@@ -246,7 +246,7 @@ public class LegPuller {
         String phaseChar = name.substring(offset, offset+phaseCharLength);
         idx+=phaseCharLength;
         String boundId = extractBoundaryId(name, idx, true);
-        if (boundId.length() == 0) {
+        if (boundId.isEmpty()) {
             throw new PhaseParseException("Got empty boundary from extractBoundaryId() in phaseBoundary "+phaseChar+" "+offset+" in "+name, name, offset);
         }
         if (boundId.endsWith(DIFF) || boundId.endsWith(String.valueOf(HEAD_CODE))) {
@@ -273,7 +273,6 @@ public class LegPuller {
                     + " cannot be last char in " + name, name, offset);
         }
         int idx = offset;
-        String numString = "";
         while(idx < name.length() && PhaseSymbols.isBoundary(name, idx)) {
             idx++;
         }
@@ -283,9 +282,8 @@ public class LegPuller {
         } else if (allowHeadDiff && idx < name.length() && name.charAt(idx) == HEAD_CODE) {
             // head wave off other layer
             idx++;
-        } else {
-            // normal discon interaction
-        }
+        } // else normal discon interaction
+
         if (idx == offset) {
             throw new PhaseParseException("Attempt to extract boundary but empty starting at "+offset+" in "+name, name, offset);
         }
@@ -293,15 +291,15 @@ public class LegPuller {
     }
 
     public static boolean isBoundary(String leg) {
-        if (leg.equals(m) || leg.equals(c) || leg.equals(i)) {
+        if (leg.length() == 1 && (leg.charAt(0) == m || leg.charAt(0) == c || leg.charAt(0) == i)) {
             return true;
         }
         try {
             double d = Double.parseDouble(leg);
             return true;
         } catch (NumberFormatException e) {
+            return false;
         }
-        return false;
     }
 
     /**
@@ -311,17 +309,18 @@ public class LegPuller {
      * @return the branch number with the closest top depth.
      */
     public static int closestBranchToDepth(TauModel tMod, String depthString) {
-        if(depthString.equals(""+m)) {
-            return tMod.getMohoBranch();
-        } else if(depthString.equals(""+c)) {
-            return tMod.getCmbBranch();
-        } else if(depthString.equals(""+i)) {
-            return tMod.getIocbBranch();
+        switch (depthString) {
+            case "" + m:
+                return tMod.getMohoBranch();
+            case "" + c:
+                return tMod.getCmbBranch();
+            case "" + i:
+                return tMod.getIocbBranch();
         }
         // nonstandard boundary, given by a number, so we must look for it
         int disconBranch = -1;
         double disconMax = Double.MAX_VALUE;
-        double disconDepth = (Double.valueOf(depthString)).doubleValue();
+        double disconDepth = Double.parseDouble(depthString);
         TauBranch tBranch;
         for(int i = 0; i < tMod.getNumBranches(); i++) {
             tBranch = tMod.getTauBranch(i, SimpleSeismicPhase.PWAVE);
@@ -336,7 +335,7 @@ public class LegPuller {
 
     public static String createPuristName(TauModel tMod, List<String> legs) {
         StringBuilder puristName = new StringBuilder();
-        String currLeg = (String)legs.get(0);
+        String currLeg = legs.get(0);
         /*
          * Deal with surface wave velocities first, since they are a special
          * case.
@@ -349,16 +348,16 @@ public class LegPuller {
         double legDepth;
         int intLegDepth;
         int disconBranch;
-        Pattern reflectDepthPattern = Pattern.compile("[Vv^][0-9\\.]+");
+        Pattern reflectDepthPattern = Pattern.compile("[Vv^][0-9.]+");
 
         // only loop to size()-1 as last leg is always "END"
         for(int legNum = 0; legNum < legs.size() - 1; legNum++) {
-            currLeg = (String)legs.get(legNum);
+            currLeg = legs.get(legNum);
             // find out if the next leg represents a
             // phase conversion or reflection depth
             Matcher m = reflectDepthPattern.matcher(currLeg);
             if(m.matches()) {
-                puristName.append(currLeg.substring(0, 1));
+                puristName.append(currLeg.charAt(0));
                 disconBranch = closestBranchToDepth(tMod, currLeg.substring(1));
 
                 if (disconBranch == tMod.getMohoBranch()) {
@@ -378,7 +377,7 @@ public class LegPuller {
                 }
             } else {
                 try {
-                    legDepth = Double.parseDouble(currLeg);
+                    double d = Double.parseDouble(currLeg);
                     // only get this far if the currLeg is a number,
                     // otherwise exception
                     disconBranch = closestBranchToDepth(tMod, currLeg);
@@ -403,14 +402,14 @@ public class LegPuller {
      * in legs. Returns null if all is ok, a message if there is a problem.
      */
     public static String phaseValidate(ArrayList<String> legs) {
-        String currToken = (String)legs.get(0);
+        String currToken = legs.get(0);
         String prevToken;
-        String nextToken = "";
+        String nextToken;
         boolean prevIsReflect = false;
         /* Special cases for diffracted waves. */
         if(legs.size() == 2
                 && (isDiffracted(currToken, 0) || isSurfaceWave(currToken, 0))
-                && ((String)legs.get(1)).equals(PhaseSymbols.END_CODE)) {
+                && legs.get(1).equals(PhaseSymbols.END_CODE)) {
             return null;
         }
 
@@ -430,16 +429,14 @@ public class LegPuller {
                 || currToken.equals("y") || currToken.equals("j")
                 || headDiffRegEx.matcher(currToken).matches()
         )) {
-            String validationFailMessage = "First leg ("
-                    + currToken
+            return "First leg ("+ currToken
                     + ") must be one of Pg, Pb, Pn, Pdiff, Sg, Sb, Sn, Sdiff, P, S, p, s, k, K, Ked, I, J, y, j, "
                     + " or like P410diff or P410n";
-            return validationFailMessage;
         }
         for(int i = 1; i < legs.size(); i++) {
             prevToken = currToken;
             currToken = legs.get(i);
-            if (currToken.length() == 0) {
+            if (currToken.isEmpty()) {
                 return "currToken is empty, after "+prevToken+" "+i+"/"+legs.size();
             }
             if (i < legs.size()-1) {
@@ -521,15 +518,12 @@ public class LegPuller {
             }
             /* Check for m, c before K. */
             if((prevToken.equals("m") || prevToken.equals("c") )
-                    && (currToken.equals("K") || currToken.equals("I") || currToken.equals("J") || currToken.equals("i"))) {
+                    && (currToken.equals("K"))) {
                 return "Cannot have m,c followed by K,I,i,J";
             }
             if((currToken.equals("c") || currToken.equals("i"))
                     && (prevToken.equals("p") || prevToken.equals("s"))) {
                 return "Cannot have p,s followed by c,i "+prevToken+" "+currToken;
-            }
-            if(currToken.equals("i") && prevToken.equals("k")) {
-                return "Cannot have i followed by k";
             }
             if(currToken.equals("i") && prevToken.equals("k")) {
                 return "Cannot have i followed by k";

@@ -58,7 +58,6 @@ public class CriticalDepth implements Cloneable, Serializable {
     private int SLayerNum;
 
     // Constructors
-    public CriticalDepth() {}
 
     public CriticalDepth(double depth,
                          int velLayerNum,

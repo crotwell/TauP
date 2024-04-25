@@ -234,12 +234,12 @@ public class DistanceArgs {
     static class DistanceArgsInner {
 
         @CommandLine.Option(names={"--deg", "--degree"}, paramLabel="d", description="distance in degrees", split=",")
-        protected List<Double> degreesList = new ArrayList<Double>();
+        protected List<Double> degreesList = new ArrayList<>();
 
 
         @CommandLine.Option(names={"--exactdegree"}, paramLabel="d",
                 description="exact distance traveled in degrees, not 360-d", split=",")
-        protected List<Double> exactDegreesList = new ArrayList<Double>();
+        protected List<Double> exactDegreesList = new ArrayList<>();
 
         /**
          * For when command line args uses --km for distance. Have to wait until
@@ -247,14 +247,14 @@ public class DistanceArgs {
          */
         @CommandLine.Option(names={"--km", "--kilometer"}, paramLabel = "km",
                 description="distance in kilometers", split=",")
-        protected List<Double> distKilometersList = new ArrayList<Double>();
+        protected List<Double> distKilometersList = new ArrayList<>();
 
         /**
          * Exact km, no mod 360
          */
         @CommandLine.Option(names={ "--exactkilometer"}, paramLabel = "km",
                 description="exact distance traveled in kilometers, not 360-k", split=",")
-        protected List<Double> exactDistKilometersList = new ArrayList<Double>();
+        protected List<Double> exactDistKilometersList = new ArrayList<>();
 
         @Option(names="--az", description="azimuth in degrees")
         protected Double azimuth = Double.MAX_VALUE;
@@ -267,24 +267,24 @@ public class DistanceArgs {
         @Option(names="--takeoff",
                 split=",",
                 description="takeoff angle in degrees from the source zero is down, 90 horizontal, 180 is up")
-        protected List<Double> takeoffAngle = new ArrayList<Double>();
+        protected List<Double> takeoffAngle = new ArrayList<>();
 
         @CommandLine.Option(names={"--shoot", "--rayparamdeg"},
                 description="ray parameter from the source in s/deg, up or down is determined by the phase",
                 split=",")
-        protected List<Double> shootRaypList = new ArrayList<Double>();
+        protected List<Double> shootRaypList = new ArrayList<>();
 
         @CommandLine.Option(names={"--rayparamkm"},
                 description="ray parameter from the source in s/km, up or down is determined by the phase",
                 split=",")
-        protected List<Double> shootKmRaypList = new ArrayList<Double>();
+        protected List<Double> shootKmRaypList = new ArrayList<>();
 
         @Option(names={"--sta", "--station"},
                 arity="2",
                 description="station latitude and longitude"
                 )
         void setStationLatLon(List<Double> stationLatLon) {
-            if (stationLatLon.size() == 0) {
+            if (stationLatLon.isEmpty()) {
                 stationList.clear();
             }
             if (stationLatLon.size() % 2 != 0) {
@@ -299,7 +299,7 @@ public class DistanceArgs {
 
         @Option(names={"--evt", "--event"}, arity="2", description="event latitude and longitude")
         void setEventLatLon(List<Double> eventLatLon) {
-            if (eventLatLon.size() == 0) {
+            if (eventLatLon.isEmpty()) {
                 eventList.clear();
             }
             if (eventLatLon.size() % 2 != 0) {

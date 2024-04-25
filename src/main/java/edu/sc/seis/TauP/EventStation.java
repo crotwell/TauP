@@ -4,10 +4,7 @@ package edu.sc.seis.TauP;
 import edu.sc.seis.seisFile.Location;
 
 public class EventStation extends LatLonable {
-    public EventStation(double evtLat, double evtLon, double staLat, double staLon) {
-        this.evt = new Location(evtLat, evtLon);
-        this.sta = new Location(staLat, staLon);
-    }
+
     public EventStation(Location evt, Location sta) {
         this.evt = evt;
         this.sta = sta;

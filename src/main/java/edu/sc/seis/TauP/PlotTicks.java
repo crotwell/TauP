@@ -4,12 +4,8 @@ import java.util.ArrayList;
 
 public class PlotTicks {
 
-    public static ArrayList<Double> getTicks(double start, double stop, int count) {
-        return getTicks(start, stop, count, false);
-    }
-
     public static ArrayList<Double> getTicks(double start, double stop, int count, boolean startStopFixed) {
-        ArrayList<Double> ticks = new ArrayList<Double>();
+        ArrayList<Double> ticks = new ArrayList<>();
         double step;
         double fstart;
         double fstop;
@@ -46,8 +42,6 @@ public class PlotTicks {
         double evenTen = Math.pow(10.0, Math.floor(Math.log10(range)));
         if (range / (evenTen / 2.0) >= minNumTicks)
             return evenTen;
-        if (range / (evenTen / 2.0) >= minNumTicks)
-            return evenTen / 2.0;
         else if (range / (evenTen / 5.0) >= minNumTicks)
             return evenTen / 5.0;
         else

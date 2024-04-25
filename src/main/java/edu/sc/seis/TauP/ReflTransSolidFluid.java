@@ -25,8 +25,7 @@ public class ReflTransSolidFluid extends ReflTrans {
                 botVertSlownessP.times(topVertSlownessS).times(4*sqTopVs*sqTopVs*sqRP*topDensity).plus(botDensity)
         );
         Complex a2Term = botVertSlownessP.times(topDensity).times((1-2*sqTopVs*sqRP)*(1-2*sqTopVs*sqRP));
-        Complex out = CX.over(CX.minus(a1Term, a2Term), DSolidFluid);
-        return out;
+        return CX.over(CX.minus(a1Term, a2Term), DSolidFluid);
     }
 
     /**
@@ -37,8 +36,7 @@ public class ReflTransSolidFluid extends ReflTrans {
         calcTempVars(rayParam, true);
         Complex numeratorTerm = CX.times(topVertSlownessP, botVertSlownessP).times(4*topVp*topVs*rp*topDensity).times(2*sqTopVs*sqRP-1);
 
-        Complex out = CX.over(numeratorTerm, DSolidFluid);
-        return out;
+        return CX.over(numeratorTerm, DSolidFluid);
     }
 
     /**
@@ -48,8 +46,7 @@ public class ReflTransSolidFluid extends ReflTrans {
     public Complex getComplexTpp(double rayParam) {
         calcTempVars(rayParam, true);
         Complex numeratorTerm = topVertSlownessP.times( 2*(topVp/botVp)*topDensity).times(1-2*sqTopVs*sqRP);
-        Complex out = CX.over(numeratorTerm, DSolidFluid);
-        return out;
+        return CX.over(numeratorTerm, DSolidFluid);
     }
 
 
@@ -57,35 +54,32 @@ public class ReflTransSolidFluid extends ReflTrans {
      * Calculates incident S wave in solid (over fluid) to reflected S wave Complex coefficient.
      */
     @Override
-    public Complex getComplexRss(double rayParam) throws VelocityModelException {
+    public Complex getComplexRss(double rayParam) {
         calcTempVars(rayParam, false);
         Complex a2Term = CX.times(botVertSlownessP, topDensity*(1-2*sqTopVs*sqRP)*(1-2*sqTopVs*sqRP));
         Complex a1Term = CX.times(topVertSlownessP, CX.minus(botDensity, CX.times(botVertSlownessP, topVertSlownessS).times(4*sqTopVs*sqTopVs*sqRP*topDensity)));
-        Complex out = CX.over(CX.plus(a2Term, a1Term), DSolidFluid);
-        return out;
+        return CX.over(CX.plus(a2Term, a1Term), DSolidFluid);
     }
 
     /**
      * Calculates incident S wave in solid (over fluid) to reflected S wave Complex coefficient.
      */
     @Override
-    public Complex getComplexRsp(double rayParam) throws VelocityModelException {
+    public Complex getComplexRsp(double rayParam) {
         calcTempVars(rayParam, false);
         Complex numeratorTerm = CX.times(botVertSlownessP, topVertSlownessS).times(4/topVp*sqTopVs*topVs*rp*topDensity*(1-2*sqTopVs*sqRP));
-        Complex out = CX.over(numeratorTerm, DSolidFluid);
-        return out;
+        return CX.over(numeratorTerm, DSolidFluid);
     }
 
     /**
      * Calculates incident S wave in solid (over fluid) to reflected S wave Complex coefficient.
      */
     @Override
-    public Complex getComplexTsp(double rayParam) throws VelocityModelException {
+    public Complex getComplexTsp(double rayParam) {
         calcTempVars(rayParam, false);
 
         Complex numeratorTerm = CX.times(topVertSlownessP, topVertSlownessS).times(4/botVp*sqTopVs*topVs*topDensity*rp);
-        Complex out = CX.over(numeratorTerm, DSolidFluid);
-        return out;
+        return CX.over(numeratorTerm, DSolidFluid);
     }
 
 
@@ -94,7 +88,7 @@ public class ReflTransSolidFluid extends ReflTrans {
      * Always 1.0, so just for completeness.
      */
     @Override
-    public Complex getComplexRshsh(double rayParam) throws VelocityModelException {
+    public Complex getComplexRshsh(double rayParam) {
         return new Complex(1);
     }
 
@@ -114,7 +108,7 @@ public class ReflTransSolidFluid extends ReflTrans {
     }
 
     @Override
-    public ReflTrans flip() throws VelocityModelException {
+    public ReflTrans flip() {
         return null;
     }
 
