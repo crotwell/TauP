@@ -231,6 +231,7 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
         double minDist = phase.getMinDistanceDeg();
         double maxDist = phase.getMaxDistanceDeg();
         int totalNumSegments = (int) Math.floor(phase.getMaxTime()/timeStep);
+        int waveSegIdx = 0;
         List<Arrival> allArrival = new ArrayList<Arrival>();
         for (int i=0; i<phase.getNumRays(); i++) {
             allArrival.add(phase.createArrivalAtIndex(i));
@@ -256,7 +257,6 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
             out.put(timeVal, wavefrontSegments);
             WavefrontPathSegment curWaveSeg = null;
 
-            int waveSegIdx = 0;
             if (phase.getName().endsWith("kmps")) {
                 // surface wave, so make wavefront from 0 to 100 km???
                 List<TimeDist> surfaceWaveTD = new ArrayList<>();
@@ -264,7 +264,7 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
                 surfaceWaveTD.add(new TimeDist(phase.getRayParams(0), timeVal, dist, 0));
                 surfaceWaveTD.add(new TimeDist(phase.getRayParams(0), timeVal, dist, 100));
                 WavefrontPathSegment seg = new WavefrontPathSegment(surfaceWaveTD, false, phase.getName(),
-                        null, 0, totalNumSegments, phase, timeVal);
+                        null, waveSegIdx, totalNumSegments, phase, timeVal);
                 wavefrontSegments.add(seg);
                 done = dist + timeStep / phase.getRayParams(0) > phase.getMaxDistance();
                 continue;
