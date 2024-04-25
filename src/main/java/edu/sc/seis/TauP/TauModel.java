@@ -16,19 +16,7 @@
  */
 package edu.sc.seis.TauP;
 
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InvalidClassException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.OptionalDataException;
-import java.io.OutputStream;
-import java.io.Serializable;
-import java.io.StreamCorruptedException;
+import java.io.*;
 import java.lang.ref.SoftReference;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -43,7 +31,7 @@ public class TauModel implements Serializable {
 
     public TauModel(SlownessModel sMod) throws NoSuchLayerException,
             SlownessModelException, TauModelException {
-        this.sMod = (SlownessModel)sMod;
+        this.sMod = sMod;
         calcTauIncFrom();
     }
 
@@ -78,7 +66,7 @@ public class TauModel implements Serializable {
     }
 
     /** True to enable debugging output. */
-    transient public static boolean DEBUG = ToolRun.DEBUG;
+    public static boolean DEBUG = ToolRun.DEBUG;
 
     /** True if this is a spherical slowness model. False if flat. */
     protected boolean spherical = true;
@@ -125,7 +113,7 @@ public class TauModel implements Serializable {
      * an event at depth. This is normally be set when the tau model is
      * generated to be a clone of the slowness model.
      */
-    private SlownessModel sMod;
+    private final SlownessModel sMod;
 
     /**
      * ray parameters used to construct the tau branches. This may only be a
@@ -262,7 +250,7 @@ public class TauModel implements Serializable {
      *          zones (low velocity zones).
      */
     public double[] getRayParams() {
-        return (double[])rayParams.clone();
+        return rayParams.clone();
     }
 
     public double getOneRayParam(int i) {
@@ -386,7 +374,6 @@ public class TauModel implements Serializable {
         double[] temptemprayParams = new double[rayNum];
         System.arraycopy(tempRayParams, 0, temptemprayParams, 0, rayNum);
         tempRayParams = temptemprayParams;
-        temptemprayParams = null;
         // sort
         Arrays.sort(tempRayParams);
         // and remove duplicates
@@ -406,7 +393,6 @@ public class TauModel implements Serializable {
                 n++;
             }
         }
-        tempRayParams = null;
         // reverse sort so large to small
         for (int i = 0; i < rayParams.length/2; i++) {
             double tmp = rayParams[i];
@@ -460,7 +446,7 @@ public class TauModel implements Serializable {
         double bestCmb = Double.MAX_VALUE;
         double bestIocb = Double.MAX_VALUE;
         for(int branchNum = 0; branchNum < tauBranches[0].length; branchNum++) {
-            TauBranch tBranch = (TauBranch)tauBranches[0][branchNum];
+            TauBranch tBranch = tauBranches[0][branchNum];
             if(Math.abs(tBranch.getTopDepth() - sMod.vMod.getMohoDepth()) <= bestMoho) {
                 mohoBranch = branchNum;
                 bestMoho = Math.abs(tBranch.getTopDepth()
@@ -478,7 +464,7 @@ public class TauModel implements Serializable {
             }
         }
         // check bottom of last layer, zero radius, in case no core for cmb and iocb
-        TauBranch tBranch = (TauBranch)tauBranches[0][tauBranches[0].length-1];
+        TauBranch tBranch = tauBranches[0][tauBranches[0].length-1];
         if(Math.abs(tBranch.getBotDepth() - sMod.vMod.getCmbDepth()) < bestCmb) {
             cmbBranch = tauBranches[0].length;
             cmbDepth = tBranch.getBotDepth();
@@ -563,7 +549,7 @@ public class TauModel implements Serializable {
             depthCorrected.sourceDepth = depth;
             depthCorrected.sourceBranch = depthCorrected.findBranch(depth);
             depthCorrected.validate();
-            depthCache.put(depth, new SoftReference<TauModel>(depthCorrected));
+            depthCache.put(depth, new SoftReference<>(depthCorrected));
         }
         return depthCorrected;
     }
@@ -681,8 +667,8 @@ public class TauModel implements Serializable {
             int branchToSplit = findBranch(depth);
             TauBranch[][] newtauBranches = new TauBranch[2][getNumBranches() + 1];
             for(int i = 0; i < branchToSplit; i++) {
-                newtauBranches[0][i] = (TauBranch)tauBranches[0][i].clone();
-                newtauBranches[1][i] = (TauBranch)tauBranches[1][i].clone();
+                newtauBranches[0][i] = tauBranches[0][i].clone();
+                newtauBranches[1][i] = tauBranches[1][i].clone();
                 if(indexS != -1) {
                     // add the new ray parameter from splitting the S Wave
                     // slowness layer to both the P and S wave Tau branches
@@ -798,9 +784,8 @@ public class TauModel implements Serializable {
     }
 
     public static TauModel readModel(String filename)
-            throws FileNotFoundException, IOException,
-            StreamCorruptedException, ClassNotFoundException,
-            OptionalDataException {
+            throws IOException,
+            ClassNotFoundException {
         TauModel tMod;
         BufferedInputStream in = new BufferedInputStream(new FileInputStream(filename));
         try {
@@ -812,12 +797,10 @@ public class TauModel implements Serializable {
     }
 
     public static TauModel readModelFromStream(InputStream inStream)
-            throws InvalidClassException, IOException,
-            StreamCorruptedException, ClassNotFoundException,
-            OptionalDataException {
+            throws IOException,
+            ClassNotFoundException {
         ObjectInputStream in = new ObjectInputStream(inStream);
-        TauModel tMod = (TauModel)in.readObject();
-        return tMod;
+        return (TauModel)in.readObject();
     }
 
     /*
@@ -959,6 +942,6 @@ public class TauModel implements Serializable {
         return null;
     }
     
-    private HashMap<Double, SoftReference<TauModel>> depthCache = new HashMap<Double, SoftReference<TauModel>>();
+    private final HashMap<Double, SoftReference<TauModel>> depthCache = new HashMap<>();
 
 }

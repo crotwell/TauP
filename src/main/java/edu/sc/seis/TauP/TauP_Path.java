@@ -287,7 +287,7 @@ public class TauP_Path extends TauP_AbstractRayTool {
 	}
 
 	public void printResultJSON(PrintWriter out, List<Arrival> arrivalList) {
-		String s = resultAsJSON(modelArgs.getModelName(), modelArgs.getSourceDepth(), getReceiverDepth(), getPhaseNames(), arrivalList, false, true);
+		String s = resultAsJSON(modelArgs.getModelName(), modelArgs.getSourceDepth(), getReceiverDepth(), getPhaseNames(), arrivalList);
 		out.println(s);
 	}
 

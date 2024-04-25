@@ -86,9 +86,6 @@ public class SvgEarth {
         }
         if (scaleTrans[0] < 1.25) {
             // close to whole earth, no scale
-            minDist = 0;
-            maxDist = (float)Math.PI;
-            scaleTrans = new float[]{1, 0, 0, minDist, maxDist};
             scaling = new SvgEarthScaling(R);
         }
         return scaling;
@@ -97,24 +94,17 @@ public class SvgEarth {
     public static SvgEarthScaling calcEarthScaleTrans(List<Arrival> arrivalList, DistDepthRange distDepthRange) {
         float R = 6371;
         if (!arrivalList.isEmpty()) {R = (float) arrivalList.get(0).getPhase().getTauModel().getRadiusOfEarth();}
-        float minDist = 0;
-        float maxDist = (float) Math.PI;
         double minDepth = 0;
         double maxDepth = 0;
         SvgEarthScaling scaling;
         // show whole earth if no arrivals?
-        float[] scaleTrans;
         if (arrivalList.isEmpty() && ! distDepthRange.hasDistAxisMinMax() && ! distDepthRange.hasDepthAxisMinMax()) {
             // no arrivals, show whole earth
-            maxDist = (float) Math.PI;
-            scaleTrans = new float[]{1, 0, 0, minDist, maxDist};
             scaling = new SvgEarthScaling(R);
         } else if (distDepthRange.hasDistAxisMinMax() && distDepthRange.hasDistAxisMinMax()) {
             // user specified box
             double[] bbox = SvgEarth.findPierceBoundingBox(distDepthRange.getDistAxisMinMax(), distDepthRange.getDepthAxisMinMax(), R);
             scaling = new SvgEarthScaling(bbox, R);
-            scaleTrans = SvgEarthScaling.calcZoomScaleTranslate((float) bbox[0], (float) bbox[1], (float) bbox[2], (float) bbox[3],
-                    R, (float) distDepthRange.getDistAxisMinMax()[0], (float) distDepthRange.getDistAxisMinMax()[1]);
         } else {
             scaling = SvgEarth.calcZoomScaleTranslate(arrivalList);
             if (! distDepthRange.hasDistAxisMinMax() && distDepthRange.hasDepthAxisMinMax()) {
@@ -122,8 +112,6 @@ public class SvgEarth {
                 double[] bbox = SvgEarth.findPierceBoundingBox(new double[]{scaling.minDataDist, scaling.maxDataDist},
                         distDepthRange.getDepthAxisMinMax(), R);
                 scaling = new SvgEarthScaling(bbox, R);
-                scaleTrans = SvgEarthScaling.calcZoomScaleTranslate((float) bbox[0], (float) bbox[1], (float) bbox[2], (float) bbox[3],
-                        R, (float) distDepthRange.getDistAxisMinMax()[0], (float) distDepthRange.getDistAxisMinMax()[1]);
             } else if (distDepthRange.hasDistAxisMinMax() && ! distDepthRange.hasDepthAxisMinMax()) {
                 // user specified dist, but not depth
                 boolean lookingFirst = true;
@@ -160,15 +148,10 @@ public class SvgEarth {
                     }
                     double[] bbox = SvgEarth.findPierceBoundingBox(distDepthRange.getDistAxisMinMax(), new double[]{minDepth, maxDepth}, R);
                     scaling = new SvgEarthScaling(bbox, R);
-                    scaleTrans = SvgEarthScaling.calcZoomScaleTranslate((float) bbox[0], (float) bbox[1], (float) bbox[2], (float) bbox[3],
-                            R, (float) distDepthRange.getDistAxisMinMax()[0], (float) distDepthRange.getDistAxisMinMax()[1]);
                 }
             }
             if (scaling.getZoomScale() < 1.25) {
                 // close to whole earth, no scale
-                minDist = 0;
-                maxDist = (float)Math.PI;
-                scaleTrans = new float[]{1, 0, 0, minDist, maxDist};
                 scaling = new SvgEarthScaling(R);
             }
         }
@@ -222,7 +205,7 @@ public class SvgEarth {
         double ymin;
         double ymax;
         double R;
-        if (arrivals.size() > 0) {
+        if (!arrivals.isEmpty()) {
             Arrival arrival = arrivals.get(0);
             arrival.getPierce();
             R = arrival.getPhase().getTauModel().getRadiusOfEarth();
@@ -329,7 +312,7 @@ public class SvgEarth {
             double radian = (i - 90) * Math.PI / 180;
             double x = (R + (tickLen * 1.05) / zoomScale) * Math.cos(radian);
             double y = (R + (tickLen * 1.05) / zoomScale) * Math.sin(radian);
-            String anchor = "start";
+            String anchor;
             if (i < -135 || (-45 < i && i < 45) || i > 135) {
                 anchor = "middle";
             } else if (45 <= i && i < 135) {
@@ -339,7 +322,7 @@ public class SvgEarth {
             } else {
                 anchor = "middle";
             }
-            String alignBaseline = "baseline";
+            String alignBaseline;
             if ((-60 < i && i < 60) || (300 < i)) {
                 alignBaseline = "baseline";
             } else if ((-120 < i && i <= 120) || (240 < i && i < 300)) {
@@ -396,11 +379,9 @@ public class SvgEarth {
         + Outputs.formatDepth(radius));
     }
 
-    public static final float[] WHOLE_EARTH_ZOOM = new float[] {1, 0, 0, 0, (float) Math.PI};
-
     public static SvgEarthScaling calcZoomScaleTranslate(List<Arrival> arrivals) {
         float R = 6371;
-        if (arrivals.size()> 0) {R = (float) arrivals.get(0).getPhase().getTauModel().getRadiusOfEarth();}
+        if (!arrivals.isEmpty()) {R = (float) arrivals.get(0).getPhase().getTauModel().getRadiusOfEarth();}
         if (arrivals.isEmpty()) {
             return new SvgEarthScaling(R);
         }
@@ -455,7 +436,7 @@ public class SvgEarth {
     }
 
     public static void printGmtScriptBeginning(PrintWriter out, String psFile, TauModel tMod,
-                                               float mapWidth, String mapWidthUnit, boolean onlyNamedDiscon)  throws IOException {
+                                               float mapWidth, String mapWidthUnit, boolean onlyNamedDiscon) {
         out.println("#!/bin/sh");
         out.println("#\n# This script will plot ray paths using GMT. If you want to\n"
         + "#use this as a data file for psxy in another script, delete these"

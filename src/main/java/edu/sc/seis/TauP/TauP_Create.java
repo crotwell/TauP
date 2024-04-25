@@ -53,7 +53,7 @@ import static edu.sc.seis.TauP.cli.OutputTypes.TAUP;
         usageHelpAutoWidth = true)
 public class TauP_Create extends TauP_Tool {
 
-    @CommandLine.ArgGroup(exclusive = true, multiplicity = "1", heading = "Velocity Model %n")
+    @CommandLine.ArgGroup(multiplicity = "1", heading = "Velocity Model %n")
     VelocityModelArgs inputFileArgs = new VelocityModelArgs();
 
     String directory = ".";
@@ -63,10 +63,6 @@ public class TauP_Create extends TauP_Tool {
     SlownessModel sMod;
 
     VelocityModel vMod;
-    
-    VelocityModel overlayVMod;
-
-    TauModel tMod;
 
     protected boolean GUI = false;
 

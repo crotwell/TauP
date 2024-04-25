@@ -2,19 +2,15 @@ package edu.sc.seis.TauP;
 
 import edu.sc.seis.TauP.cli.AbstractOutputTypeArgs;
 import edu.sc.seis.TauP.cli.DistanceArgs;
-import edu.sc.seis.TauP.cli.Scatterer;
-import org.json.JSONArray;
 import org.json.JSONObject;
 import picocli.CommandLine;
 
-import java.io.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.List;
 
 public abstract class TauP_AbstractRayTool extends TauP_AbstractPhaseTool {
-
 
     @CommandLine.Mixin
     protected DistanceArgs distanceArgs = new DistanceArgs();
@@ -23,46 +19,11 @@ public abstract class TauP_AbstractRayTool extends TauP_AbstractPhaseTool {
         super(outputTypeArgs);
     }
 
-    /**
-     * Parses a comma separated list of distances and returns them in an array.
-     */
-    public static List<DistanceRay> parseDegreeList(String degList) {
-        List<Double> degreesFound = TauP_AbstractRayTool.parseDoubleList(degList);
-        List<DistanceRay> distanceRays = new ArrayList<DistanceRay>();
-        for (Double d : degreesFound) {
-            distanceRays.add(DistanceRay.ofDegrees(d));
-        }
-        return distanceRays;
-    }
-
-    public static List<Double> parseDoubleList(String degList) {
-        degList = degList.trim();
-        while (degList.startsWith(",")) {
-            degList = degList.substring(1);
-        }
-        while(degList.endsWith(",")) {
-            degList = degList.substring(0, degList.length()-1);
-        }
-        String[] split = degList.trim().split(",");
-        List<Double> degreesFound = new ArrayList<Double>(split.length);
-        for (int i = 0; i < split.length; i++) {
-            try {
-                degreesFound.add(Double.parseDouble(split[i].trim()));
-            } catch (NumberFormatException e) {
-                // oh well
-                System.err.println("can't parse '"+split[i]+"' as number, skipping.");
-            }
-        }
-        return degreesFound;
-    }
-
     public static String resultAsJSON(String modelName,
                                       double depth,
                                       double receiverDepth,
                                       String[] phases,
-                                      List<Arrival> arrivals,
-                                      boolean withPierce,
-                                      boolean withPath) {
+                                      List<Arrival> arrivals) {
         String Q = ""+'"';
         String COMMA = ",";
         String QCOMMA = Q+COMMA;
@@ -70,10 +31,7 @@ public abstract class TauP_AbstractRayTool extends TauP_AbstractPhaseTool {
         String S = "  ";
         String QC = Q+COLON;
         String QCQ = QC+Q;
-        String SS = S+S;
         String SQ = S+Q;
-        String SSQ = S+SQ;
-        String SSSQ = S+SSQ;
         // use cast to float to limit digits printed
         StringWriter sw = new StringWriter();
         PrintWriter out = new PrintWriter(sw);
@@ -92,8 +50,8 @@ public abstract class TauP_AbstractRayTool extends TauP_AbstractPhaseTool {
         out.println(SQ+"arrivals"+Q+": [");
         for(int j = 0; j < arrivals.size(); j++) {
             Arrival currArrival = arrivals.get(j);
-            out.print(currArrival.asJSONObject().toString(2));
-            //out.print(currArrival.asJSON(true, SS, withPierce, withPath));
+            JSONObject asjson = currArrival.asJSONObject();
+            out.print(asjson.toString(2));
             if (j != arrivals.size()-1) {
                 out.print(COMMA);
             }
@@ -113,16 +71,16 @@ public abstract class TauP_AbstractRayTool extends TauP_AbstractPhaseTool {
         if (modelArgs.getTauModel() == null) {
             throw new TauModelException("Model for '"+this.getTauModelName()+"' is null, unable to calculate.");
         }
-        if (modelArgs.getTauModel().getRadiusOfEarth() < getSourceDepth()) {
-            throw new TauModelException("Source depth of "+getSourceDepth()+" in '"+this.getTauModelName()
+        if (modelArgs.getTauModel().getRadiusOfEarth() < modelArgs.getSourceDepth()) {
+            throw new TauModelException("Source depth of "+modelArgs.getSourceDepth()+" in '"+this.getTauModelName()
                     +"' is greater than radius of earth, "+modelArgs.getTauModel().getRadiusOfEarth()+", unable to calculate.");
         }
-        if (modelArgs.getTauModel().getRadiusOfEarth() < getReceiverDepth()) {
-            throw new TauModelException("Receiver depth of "+getReceiverDepth()+" in '"+this.getTauModelName()
+        if (modelArgs.getTauModel().getRadiusOfEarth() < modelArgs.getReceiverDepth()) {
+            throw new TauModelException("Receiver depth of "+modelArgs.getReceiverDepth()+" in '"+this.getTauModelName()
                     +"' is greater than radius of earth, "+modelArgs.getTauModel().getRadiusOfEarth()+", unable to calculate.");
         }
         if (modelArgs.getScatterer() != null && modelArgs.getTauModel().getRadiusOfEarth() < getScattererDepth()) {
-            throw new TauModelException("Scatterer depth of "+getScattererDepth()+" in '"+this.getTauModelName()
+            throw new TauModelException("Scatterer depth of "+modelArgs.getScatterer().depth+" in '"+this.getTauModelName()
                     +"' is greater than radius of earth, "+modelArgs.getTauModel().getRadiusOfEarth()+", unable to calculate.");
         }
 

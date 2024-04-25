@@ -35,6 +35,7 @@ import java.io.OptionalDataException;
 import java.io.Reader;
 import java.io.StreamCorruptedException;
 import java.lang.ref.SoftReference;
+import java.nio.file.FileSystems;
 import java.util.HashMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -193,17 +194,7 @@ public class TauModelLoader {
         throw new TauModelException("Can't find any saved models for "
                                         + modelName);
 
-        } catch(InvalidClassException e) {
-            throw new TauModelException("Unable to load '"+modelName+"'", e);
-        } catch(StreamCorruptedException e) {
-            throw new TauModelException("Unable to load '"+modelName+"'", e);
-        } catch(OptionalDataException e) {
-            throw new TauModelException("Unable to load '"+modelName+"'", e);
-        } catch(FileNotFoundException e) {
-            throw new TauModelException("Unable to load '"+modelName+"'", e);
-        } catch(ClassNotFoundException e) {
-            throw new TauModelException("Unable to load '"+modelName+"'", e);
-        } catch(IOException e) {
+        } catch(ClassNotFoundException | IOException e) {
             throw new TauModelException("Unable to load '"+modelName+"'", e);
         }
     }
@@ -224,7 +215,7 @@ public class TauModelLoader {
     public static VelocityModel loadVelocityModel(String modelName, String fileType) throws IOException, VelocityModelException {
         if (modelName == null) {modelName = "iasp91"; fileType = "tvel";}
         String basemodelName = modelName;
-        int dirSepIndex = modelName.lastIndexOf(System.getProperty("file.separator"));
+        int dirSepIndex = modelName.lastIndexOf(FileSystems.getDefault().getSeparator());
         if(dirSepIndex != -1) {
             // assume a full filename, look as a regular file
             basemodelName = modelName.substring(dirSepIndex + 1);
@@ -239,7 +230,7 @@ public class TauModelLoader {
         /* First we try to find the model in the distributed taup.jar file. */
         VelocityModel vMod = null;
         if (dirSepIndex == -1) {
-            Class c = new TauModelLoader().getClass();
+            Class c = TauModelLoader.class;
             String filename = basemodelName+".nd";
             InputStream in = c.getResourceAsStream(packageName + "/" + filename);
             if(in != null) {
@@ -288,7 +279,7 @@ public class TauModelLoader {
         return null;
     }
     
-    static HashMap<String, SoftReference<TauModel>> tModCache = new HashMap<String, SoftReference<TauModel>>();
+    static HashMap<String, SoftReference<TauModel>> tModCache = new HashMap<>();
 
     public static void clearCache() {
         tModCache.clear();

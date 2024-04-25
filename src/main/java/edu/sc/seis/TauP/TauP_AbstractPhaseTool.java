@@ -8,10 +8,7 @@ import org.json.JSONObject;
 import picocli.CommandLine;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
     public static final String DEFAULT_PHASES = "p,s,P,S,Pn,Sn,PcP,ScS,Pdiff,Sdiff,PKP,SKS,PKiKP,SKiKS,PKIKP,SKIKS";
@@ -30,7 +27,7 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
     /**
      * names of phases to be used, ie PKIKP.
      */
-    protected List<PhaseName> phaseNames = new ArrayList<PhaseName>();
+    protected List<PhaseName> phaseNames = new ArrayList<>();
 
     @CommandLine.Mixin
     ModelArgs modelArgs = new ModelArgs();
@@ -48,7 +45,7 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
      * @return parsed list of phase names
      */
     public static List<String> extractPhaseNames(String phaseNames) {
-        List<String> names = new ArrayList<String>();
+        List<String> names = new ArrayList<>();
         for (String phaseName : TauP_AbstractPhaseTool.splitPhaseNameList(phaseNames)) {
             if (phaseName.equalsIgnoreCase("ttp")
                     || phaseName.equalsIgnoreCase("tts")
@@ -145,7 +142,6 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
     }
 
     public static String[] splitPhaseNameList(String phaseList) {
-        String phaseEntry = "";
         phaseList = phaseList.trim();
         phaseList = phaseList.replace(' ', ',');
         // remove any empty phases, ie two commas next to each other
@@ -155,7 +151,7 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
         if (phaseList.startsWith(",")) {
             phaseList = phaseList.substring(1);
         }
-        if (phaseList.length() == 0) {
+        if (phaseList.isEmpty()) {
             // phaseList is empty, no phases, so just return
             return new String[0];
         }
@@ -165,8 +161,7 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
             // returned from the previous if
             phaseList = phaseList.substring(0, phaseList.length() - 1);
         }
-        String[] namesInList = phaseList.split(",");
-        return namesInList;
+        return phaseList.split(",");
     }
 
     /**
@@ -175,11 +170,11 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
      * range of values it is supposed to cover. Note, this does not check for xa ==
      * xb, in which case a divide by zero would occur.
      */
-    public static final double linearInterp(double xa,
-                                            double ya,
-                                            double xb,
-                                            double yb,
-                                            double x) {
+    public static double linearInterp(double xa,
+                                      double ya,
+                                      double xb,
+                                      double yb,
+                                      double x) {
         if (x == xa) {
             return ya;
         }
@@ -209,7 +204,7 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
     @Override
     public void init() throws TauPException {
 
-        if (phaseNames.size() == 0) {
+        if (phaseNames.isEmpty()) {
             if (toolProps.containsKey("taup.phase.file")) {
                 if (toolProps.containsKey("taup.phase.list")) {
                     parsePhaseList(toolProps.getProperty("taup.phase.list"));
@@ -220,7 +215,7 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
                     Alert.warning("Caught IOException while attempting to reading phase file "
                                     + toolProps.getProperty("taup.phase.file"),
                             e.getMessage());
-                    if (phaseNames.size() <= 0) {
+                    if (phaseNames.isEmpty()) {
                         parsePhaseList(toolProps.getProperty("taup.phase.list",
                                 DEFAULT_PHASES));
                     }
@@ -262,9 +257,7 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
 
     public void setPhaseNames(PhaseName[] phaseNames) {
         clearPhaseNames();
-        for (int i = 0; i < phaseNames.length; i++) {
-            this.phaseNames.add(phaseNames[i]);
-        }
+        this.phaseNames.addAll(Arrays.asList(phaseNames));
     }
 
     public synchronized void appendPhaseName(String phaseName)
@@ -277,14 +270,14 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
 
     public synchronized void appendPhaseName(PhaseName phaseName) {
         boolean unique = true;
-        if (phaseName.name == null || phaseName.name.length() == 0) {
+        if (phaseName.name == null || phaseName.name.isEmpty()) {
             // make sure not null string
             return;
         }
         for (int i = 0; i < phaseNames.size(); i++) {
             if (phaseNames.get(i).equals(phaseName)) {
                 unique = false;
-                return;
+                break;
             }
         }
         if (unique) {
@@ -423,8 +416,6 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
                     /* no optional dash argument, so just add the name. */
                     appendPhaseName(phaseAndHeader[0]);
                 } else {
-                    int startHeaderRange = -9;
-                    int endHeaderRange = -9;
                     PhaseName sacPhase = new PhaseName(phaseAndHeader[0], phaseAndHeader[1]);
                     appendPhaseName(sacPhase);
                 }

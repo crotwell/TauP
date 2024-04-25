@@ -146,7 +146,7 @@ public class TauBranch implements Serializable, Cloneable {
      *          i_th ray parameter for this branch.
      */
     public double[] getDist() {
-        return (double[])dist.clone();
+        return dist.clone();
     }
 
     /**
@@ -162,7 +162,7 @@ public class TauBranch implements Serializable, Cloneable {
      *          i_th ray parameter for this branch.
      */
     public double[] getTime() {
-        return (double[])time.clone();
+        return time.clone();
     }
 
     /**
@@ -178,7 +178,7 @@ public class TauBranch implements Serializable, Cloneable {
      *          ray parameter for this branch.
      */
     public double[] getTau() {
-        return (double[])tau.clone();
+        return tau.clone();
     }
 
     /**
@@ -202,7 +202,7 @@ public class TauBranch implements Serializable, Cloneable {
      *                if the slownessmodel and taumodel are not compatible
      */
     public void createBranch(SlownessModel sMod,
-                             double rayParams[]) throws NoSuchLayerException,
+                             double[] rayParams) throws NoSuchLayerException,
             SlownessModelException, TauModelException {
         TimeDist timeDist;
         double p;
@@ -274,10 +274,7 @@ public class TauBranch implements Serializable, Cloneable {
      * calculates the time and distance increments for the given ray parameter.
      * The topDepth and botDepth must be correct as they determine the bounds on
      * the integration/summing.
-     * 
-     * @exception NoSuchLayerException
-     *                if topLayerNum or botLayerNum are not in the slowness
-     *                model.
+     *
      * @exception SlownessModelException
      *                if the ray with ray parameter p turns within a layer
      *                instead of at the bottom.
@@ -285,7 +282,7 @@ public class TauBranch implements Serializable, Cloneable {
     public TimeDist calcTimeDist(SlownessModel sMod,
                                  int topLayerNum,
                                  int botLayerNum,
-                                 double p) throws NoSuchLayerException,
+                                 double p) throws
             SlownessModelException {
         return calcTimeDist(sMod, topLayerNum, botLayerNum, p, false);
     }
@@ -294,7 +291,7 @@ public class TauBranch implements Serializable, Cloneable {
                                  int topLayerNum,
                                  int botLayerNum,
                                  double p,
-                                 boolean allowTurnInLayer) throws NoSuchLayerException,
+                                 boolean allowTurnInLayer) throws
             SlownessModelException {
         int layerNum;
         TimeDist timeDist = new TimeDist(p);
@@ -391,7 +388,7 @@ public class TauBranch implements Serializable, Cloneable {
                                    int indexP,
                                    int indexS,
                                    SlownessModel sMod,
-                                   double rayParams[])
+                                   double[] rayParams)
             throws NoSuchLayerException, SlownessModelException,
             TauModelException {
         if(topBranch.getTopDepth() != getTopDepth()
@@ -478,7 +475,6 @@ public class TauBranch implements Serializable, Cloneable {
                     + rayParams[indexS]
                     + " " + rayParams[indexS + 1] + "\n" + sLayer);
         }
-        sLayer = null;
         // construct the new TauBranch, going from the bottom of
         // the top half to the bottom of the whole branch
         TauBranch botBranch = new TauBranch(topBranch.getBotDepth(),
@@ -608,7 +604,7 @@ public class TauBranch implements Serializable, Cloneable {
         int pathIndex = 0;
         double turnDepth;
         SlownessLayer sLayer, turnSLayer;
-        /** check to make sure layers and branches are compatable. */
+        /* check to make sure layers and branches are compatable. */
         sLayer = sMod.getSlownessLayer(topLayerNum, isPWave);
         if(sLayer.getTopDepth() != getTopDepth()) {
             throw new SlownessModelException("Branch and Slowness model are not compatible! "
@@ -734,7 +730,7 @@ public class TauBranch implements Serializable, Cloneable {
         byte[] classString = new byte[dis.readInt()];
         dis.read(classString);
         Class tBranchClass = Class.forName(new String(classString));
-        TauBranch tBranch = null;
+        TauBranch tBranch;
         try {
             tBranch = (TauBranch)tBranchClass.getDeclaredConstructor().newInstance();
         } catch (InvocationTargetException e) {
