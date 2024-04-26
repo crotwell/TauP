@@ -22,8 +22,8 @@ public class TauP_VelocityPlot extends TauP_Tool {
     public static final String DEFAULT_OUTFILE = "taup_velplot";
     
     public TauP_VelocityPlot() {
-        super(new GraphicOutputTypeArgs(OutputTypes.TEXT, DEFAULT_OUTFILE));
-        outputTypeArgs = (GraphicOutputTypeArgs)abstractOutputTypeArgs;
+        super(new VelPlotOutputTypeArgs(OutputTypes.TEXT, DEFAULT_OUTFILE));
+        outputTypeArgs = (VelPlotOutputTypeArgs)abstractOutputTypeArgs;
         outputTypeArgs.setOutFileBase(DEFAULT_OUTFILE);
     }
     
@@ -38,8 +38,7 @@ public class TauP_VelocityPlot extends TauP_Tool {
             vModList.add(vMod);
         }
 
-        if (_isCsv) {
-            outputTypeArgs.setOutFileExtension("csv");
+        if (outputTypeArgs.isCSV()) {
             for (VelocityModel vMod : vModList) {
                 if (!outputTypeArgs.isStdout()) {
                     outputTypeArgs.setOutFileBase(vMod.modelName);
@@ -48,8 +47,7 @@ public class TauP_VelocityPlot extends TauP_Tool {
                 printCSV(writer, vMod);
                 writer.close();
             }
-        } else if (_isNd) {
-            outputTypeArgs.setOutFileExtension("nd");
+        } else if (outputTypeArgs.isND()) {
             for (VelocityModel vMod : vModList) {
                 if (!outputTypeArgs.isStdout()) {
                     outputTypeArgs.setOutFileBase(vMod.modelName);
@@ -102,7 +100,8 @@ public class TauP_VelocityPlot extends TauP_Tool {
         } else if (getOutputTypeArgs().isText()) {
             xyOut.printAsGmtText(writer);
         } else if (getOutputFormat().equalsIgnoreCase(OutputTypes.GMT)) {
-            xyOut.printAsGmtScript(writer, outputTypeArgs, isLegend);
+            throw new RuntimeException("temporary disable GMT output");
+//            xyOut.printAsGmtScript(writer, outputTypeArgs, isLegend);
         } else if (getOutputTypeArgs().isSVG()) {
             if (yAxisType == ModelAxisType.depth) {
                 xyOut.yAxisInvert = true;
@@ -465,12 +464,9 @@ public class TauP_VelocityPlot extends TauP_Tool {
         if (velModelArgs.size() == 0) {
             throw new CommandLine.ParameterException(spec.commandLine(), "must give at least one model");
         }
-        if (_isCsv && ! outputTypeArgs.isText()) {
-            throw new CommandLine.ParameterException(spec.commandLine(), "cannot use --csv with other file type: "+getOutputTypeArgs().getOutputFormat());
-        }
     }
 
-    public GraphicOutputTypeArgs getOutputTypeArgs() {
+    public VelPlotOutputTypeArgs getOutputTypeArgs() {
         return outputTypeArgs;
     }
 
@@ -492,29 +488,10 @@ public class TauP_VelocityPlot extends TauP_Tool {
     VelocityModelListArgs velModelArgs = new VelocityModelListArgs();
 
     @CommandLine.Mixin
-    GraphicOutputTypeArgs outputTypeArgs;
+    VelPlotOutputTypeArgs outputTypeArgs;
 
     @CommandLine.Option(names = "--legend", description = "create a legend")
     boolean isLegend = false;
-
-    @CommandLine.Option(names = {"--csv"}, description = "outputs as csv")
-    public void setCsvOutput(boolean isCsv) {
-        this._isCsv = isCsv;
-        if (isCsv) {
-            getOutputTypeArgs().setOutputFormat(TEXT);
-        }
-    }
-    boolean _isCsv = false;
-
-
-    @CommandLine.Option(names = {"--nameddiscon"}, description = "outputs as .nd named discontinuity model file")
-    public void setNDOutput(boolean isNd) {
-        this._isNd = isNd;
-        if (_isNd) {
-            getOutputTypeArgs().setOutputFormat(TEXT);
-        }
-    }
-    boolean _isNd = false;
 
 
     public ModelAxisType getxAxisType() {

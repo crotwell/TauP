@@ -1,15 +1,14 @@
-Usage: taup velplot [--csv] [--debug] [--help] [--legend] [--nameddiscon]
-                    [--verbose] [--mapwidth=<mapwidth>]
-                    [--mapwidthunit=<mapWidthUnit>] [-o=<outFile>]
-                    [--prop=<toolPropsFilename>] [-x=<xAxisType>]
-                    [-y=<yAxisType>] [--xminmax=x x]... [--yminmax=y y]...
-                    [--mod[=<modelName>...] [--mod[=<modelName>...]]... | --nd
-                    [=<nDModelFilename>...] [--nd[=<nDModelFilename>...]]... |
-                    --tvel[=<tvelModelFilename>...] [--tvel
-                    [=<tvelModelFilename>...]]...] [--text | --json | --gmt |
-                    --svg]
+Usage: taup velplot [--debug] [--help] [--legend] [--verbose]
+                    [--mapwidth=<mapwidth>] [--mapwidthunit=<mapWidthUnit>]
+                    [-o=<outFile>] [--prop=<toolPropsFilename>]
+                    [-x=<xAxisType>] [-y=<yAxisType>] [--xminmax=x x]...
+                    [--yminmax=y y]... [--nd[=<nDModelFilename>...] [--nd
+                    [=<nDModelFilename>...]]... | --tvel
+                    [=<tvelModelFilename>...] [--tvel
+                    [=<tvelModelFilename>...]]... | --mod[=<modelName>...]
+                    [--mod[=<modelName>...]]...] [--text | --json | --gmt |
+                    --svg | --csv | --nameddiscon]
 plot velocity vs depth for a model
-      --csv                outputs as csv
       --debug              enable debugging output
       --help               display this help message
       --legend             create a legend
@@ -17,7 +16,6 @@ plot velocity vs depth for a model
                            plot width in inches for GMT, pixels for SVG.
       --mapwidthunit=<mapWidthUnit>
                            plot width unit for GMT. Default is i for inchs
-      --nameddiscon        outputs as .nd named discontinuity model file
   -o, --output=<outFile>   output to file, default is stdout.
       --prop=<toolPropsFilename>
                            load defaults from properties file
@@ -45,7 +43,9 @@ Velocity Model
       --tvel[=<tvelModelFilename>...]
                            ".tvel" velocity file, ala ttimes
 Output Type
+      --csv                outputs as csv
       --gmt                outputs as GMT
       --json               outputs as JSON
+      --nameddiscon        outputs as .nd named discontinuity model file
       --svg                outputs as SVG
       --text               outputs as text

@@ -102,14 +102,14 @@ public class GraphicOutputTypeArgs extends AbstractOutputTypeArgs {
         if (extension != null) {
             return extension;
         } else {
-            ext = "text";
+            ext = TEXT;
         }
         if (isSVG()) {
-            ext = "svg";
+            ext = SVG;
         } else if (isJSON()) {
-            ext = "json";
+            ext = JSON;
         } else if (isGMT()) {
-            ext = "gmt";
+            ext = GMT;
         }
         return ext;
     }
