@@ -29,7 +29,7 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
     }
 
     @Override
-    public void start() throws IOException, TauModelException, TauPException {
+    public void start() throws IOException, TauPException {
 
         double step;
         if (isLinearRayParam()) {
@@ -37,7 +37,7 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
         } else {
             step = angleStep;
         }
-        List<XYPlottingData> xypList = new ArrayList<>();
+        List<XYPlottingData> xypList;
         if (layerParams == null) {
             VelocityModel vMod = TauModelLoader.loadVelocityModel(modelArgs.getModelName(), modelType);
             if (vMod == null) {
@@ -166,7 +166,7 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
         String label;
         boolean doAll =  (!inpwave && ! inswave && ! inshwave);
 
-        if (yAxisType.size() == 0) {
+        if (yAxisType.isEmpty()) {
             yAxisType = ReflTransAxisType.allCoeff;
         }
         if (inpwave || doAll) {

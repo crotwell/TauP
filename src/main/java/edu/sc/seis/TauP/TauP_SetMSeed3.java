@@ -86,7 +86,6 @@ public class TauP_SetMSeed3 extends TauP_AbstractPhaseTool {
         int fileBytes = (int) msd3File.length();
         int bytesRead = 0;
         MSeed3Record dr3;
-        int drNum = 0;
         File tmpFile = File.createTempFile("taup", "ms3", msd3File.getParentFile());
         DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(tmpFile)));
         DataInputStream dis = new DataInputStream(new BufferedInputStream(new FileInputStream(msd3File)));
@@ -102,9 +101,9 @@ public class TauP_SetMSeed3 extends TauP_AbstractPhaseTool {
     }
 
     public void processRecord(MSeed3Record dr3) throws TauPException {
-        Location staLoc = null;
-        Location evLoc = null;
-        Instant evTime = null;
+        Location staLoc;
+        Location evLoc;
+        Instant evTime;
 
 
         RayCalculateable rayCalculateable;
@@ -290,7 +289,7 @@ public class TauP_SetMSeed3 extends TauP_AbstractPhaseTool {
     protected String quakemlFilename = null;
     protected String stationxmlFilename = null;
 
-    protected List<String> mseed3FileNames = new ArrayList<String>();
+    protected List<String> mseed3FileNames = new ArrayList<>();
 
     protected Map<Network, List<Station>> networks = new HashMap<>();
 

@@ -48,7 +48,7 @@ public class TauP_Pierce extends TauP_Time {
         super();
     }
 
-    public TauP_Pierce(TauModel tMod) throws TauModelException {
+    public TauP_Pierce(TauModel tMod) {
         super(tMod);
     }
 
@@ -108,7 +108,7 @@ public class TauP_Pierce extends TauP_Time {
     }
 
     @Override
-    public void printResultText(PrintWriter out, List<Arrival> arrivalList) throws IOException {
+    public void printResultText(PrintWriter out, List<Arrival> arrivalList) {
         double prevDepth, nextDepth;
         for (Arrival arrival : arrivalList) {
             out.println("> " + arrival.getCommentLine());

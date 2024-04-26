@@ -61,7 +61,7 @@ public class TauP_Path extends TauP_AbstractRayTool {
 		outputTypeArgs = (GraphicOutputTypeArgs)abstractOutputTypeArgs;
 	}
 
-	public TauP_Path(String modelName) throws TauModelException {
+	public TauP_Path(String modelName) {
 		this();
 		modelArgs.setModelName(modelName);
 	}
@@ -259,7 +259,7 @@ public class TauP_Path extends TauP_AbstractRayTool {
 		}
 	}
 
-	public void labelPathsSVG(PrintWriter out, List<Arrival> arrivalList) throws IOException {
+	public void labelPathsSVG(PrintWriter out, List<Arrival> arrivalList) {
 		// label paths with phase name
 
         out.println("    <g class=\"phasename\">");
@@ -291,45 +291,12 @@ public class TauP_Path extends TauP_AbstractRayTool {
 		out.println(s);
 	}
 
-	public void printScriptBeginning(PrintWriter out)  throws IOException {
-	    if (getOutputFormat().equals(OutputTypes.JSON)) {
-            return;
-        } else if (getOutputFormat().equals(OutputTypes.SVG)) {
-			return;
-	    } else if ( getGraphicOutputTypeArgs().isGMT()) {
-			printScriptBeginningGMT(out);
-	    } else {
-	        return; 
-	    }
-	}
-	public void printScriptBeginningGMT(PrintWriter out)  throws IOException {
-		if ( getGraphicOutputTypeArgs().isGMT()) {
-
-			if (outputTypeArgs.getOutFileBase().equals("stdout")) {
-				outputTypeArgs.setPsFile( "taup_path.ps");
-			}
-            TauModel tModDepth = null;
-            try {
-                tModDepth = modelArgs.depthCorrected();
-            } catch (TauModelException e) {
-                throw new RuntimeException(e);
-            }
-            SvgEarth.printGmtScriptBeginning(out,
-					getGraphicOutputTypeArgs().getPsFile(),
-					tModDepth,
-					getGraphicOutputTypeArgs().mapwidth,
-					getGraphicOutputTypeArgs().mapWidthUnit,
-					onlyNamedDiscon);
-		}
-	}
-
-
 	public void printScriptBeginningSVG(PrintWriter out,
 										List<Arrival> arrivalList,
 										float pixelWidth,
 										DistDepthRange distDepthRange,
 										ModelArgs modelArgs,
-										String[] cmdLineArgs) throws IOException, TauModelException {
+										String[] cmdLineArgs) throws TauModelException {
 
 		TauModel tMod = modelArgs.depthCorrected();
 		SvgEarthScaling scaleTrans = calcEarthScaleTrans(arrivalList, distDepthRange);
@@ -368,9 +335,9 @@ public class TauP_Path extends TauP_AbstractRayTool {
 		super.init();
 	}
 
-	public void start() throws IOException, TauModelException, TauPException {
+	public void start() throws IOException, TauPException {
 		List<RayCalculateable> calcRayList = distanceArgs.getRayCalculatables();
-		if (calcRayList.size() == 0) {
+		if (calcRayList.isEmpty()) {
 			throw new CommandLine.ParameterException(spec.commandLine(), "No distance arguments given, one of --deg, --km, --shoot, --takeoff required");
 		}
 		List<Arrival> arrivalList = calcAll(getSeismicPhases(), calcRayList);

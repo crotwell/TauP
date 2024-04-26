@@ -65,20 +65,6 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
 
     }
 
-    @Override
-    public void printScriptBeginning(PrintWriter out) throws IOException {
-        if (getOutputFormat().equals(OutputTypes.JSON)) {
-            throw new RuntimeException("JSON output for TauP_Path not yet supported.");
-        } else if (outputTypeArgs.isSVG()) {
-            return;
-        } else if ( outputTypeArgs.gmtScript) {
-            if (outputTypeArgs.getOutFile().equals("stdout")) {
-                outputTypeArgs.psFile = "taup_wavefront.ps";
-            }
-            super.printScriptBeginning(out);
-        }
-    }
-
     public void printIsochron(PrintWriter out, Map<Double, List<WavefrontPathSegment>> timeSegmentMap, boolean negDistance, String psFile) throws TauPException, IOException {
         List<Double> sortedKeys = new ArrayList<>();
         sortedKeys.addAll(timeSegmentMap.keySet());

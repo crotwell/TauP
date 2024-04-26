@@ -32,7 +32,7 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
     }
 
     @Override
-    public void start() throws IOException, TauModelException, TauPException {
+    public void start() throws IOException, TauPException {
         double tempDepth;
         PrintWriter writer = outputTypeArgs.createWriter(spec.commandLine().getOut());
         if(modelArgs.getSourceDepth() != -1 * Double.MAX_VALUE) {
@@ -206,7 +206,7 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
 
 
     public List<double[]> calculatePlotForType(SeismicPhase phase, AxisType axisType, boolean ensure180) throws VelocityModelException, SlownessModelException, TauModelException {
-        double[] out = new double[0];
+        double[] out;
         boolean flatPhase = phase.getRayParams().length == 2;
         if (axisType==AxisType.radian || axisType==AxisType.radian180) {
             out = phase.getDist();
@@ -351,7 +351,7 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
         return splitCurve;
     }
 
-    public void printResult(PrintWriter writer, List<XYPlottingData> xyPlots) throws TauModelException {
+    public void printResult(PrintWriter writer, List<XYPlottingData> xyPlots) {
         XYPlotOutput xyOut = new XYPlotOutput(xyPlots, modelArgs);
         xyOut.setPhaseNames(getPhaseNames());
         xyOut.setxAxisMinMax(xAxisMinMax);

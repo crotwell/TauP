@@ -25,18 +25,18 @@
  */
 package edu.sc.seis.TauP;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import edu.sc.seis.TauP.cli.DistanceArgs;
 import edu.sc.seis.TauP.cli.OutputTypes;
 import edu.sc.seis.seisFile.Location;
 import edu.sc.seis.seisFile.sac.SacConstants;
 import edu.sc.seis.seisFile.sac.SacHeader;
 import edu.sc.seis.seisFile.sac.SacTimeSeries;
 import picocli.CommandLine;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Calculate times for phases and set sac headers based on gcarc or dist or
@@ -66,7 +66,7 @@ import picocli.CommandLine;
         usageHelpAutoWidth = true)
 public class TauP_SetSac extends TauP_AbstractPhaseTool {
 
-    protected List<String> sacFileNames = new ArrayList<String>();
+    protected List<String> sacFileNames = new ArrayList<>();
 
     protected boolean evdpkm = false;
 
@@ -84,10 +84,8 @@ public class TauP_SetSac extends TauP_AbstractPhaseTool {
 
     @CommandLine.Parameters(description = "SAC files to process")
     public void setSacFileNames(String[] sacFileNames) {
-        this.sacFileNames = new ArrayList<String>();
-        for(int i = 0; i < sacFileNames.length; i++) {
-            this.sacFileNames.add(sacFileNames[i]);
-        }
+        this.sacFileNames = new ArrayList<>();
+        this.sacFileNames.addAll(Arrays.asList(sacFileNames));
     }
 
     protected TauP_SetSac() {
@@ -96,9 +94,6 @@ public class TauP_SetSac extends TauP_AbstractPhaseTool {
 
     protected void setSacVarNums() {
         boolean[] headersUsed = new boolean[11]; // A header is 10
-        for(int i = 0; i < headersUsed.length; i++) {
-            headersUsed[i] = false;
-        }
         for(PhaseName pn : phaseNames) {
             for(int t : pn.sacTNumTriplication) {
                 if (t != SKIP_HEADER) {
@@ -108,7 +103,7 @@ public class TauP_SetSac extends TauP_AbstractPhaseTool {
         }
         int j=0;
         for(PhaseName pn : phaseNames) {
-            if(pn.sacTNumTriplication.size() == 0) {
+            if(pn.sacTNumTriplication.isEmpty()) {
                 // find a j that hasn't been used
                 while(j < headersUsed.length && headersUsed[j]){ j++; }
                 if(j < 10) {
@@ -131,7 +126,7 @@ public class TauP_SetSac extends TauP_AbstractPhaseTool {
     }
 
     public void start() throws IOException, TauPException {
-        if (sacFileNames.size() == 0) {
+        if (sacFileNames.isEmpty()) {
             CommandLine.usage(this, System.out);
             return;
         }
@@ -185,19 +180,16 @@ public class TauP_SetSac extends TauP_AbstractPhaseTool {
             throw new SetSacException("O marker not set in "
                     + filenameForError );
         }
-        double deg;
         RayCalculateable rayCalculateable;
         if(! SacConstants.isUndef(header.getGcarc())) {
             if(isVerbose()) {
                 System.err.println("Using gcarc: " + header.getGcarc());
             }
-            deg = header.getGcarc();
             rayCalculateable = DistanceRay.ofDegrees(header.getGcarc());
         } else if(! SacConstants.isUndef(header.getDist())) {
             if(isVerbose()) {
                 System.err.println("Using dist: " + header.getDist());
             }
-            deg = header.getDist() / 6371.0 * 180.0 / Math.PI;
             rayCalculateable = DistanceRay.ofKilometers(header.getDist());
         } else if( ! SacConstants.isUndef(sacFile.getHeader().getStla()) && ! SacConstants.isUndef(sacFile.getHeader().getStlo())
                 && ! SacConstants.isUndef(sacFile.getHeader().getEvla()) && ! SacConstants.isUndef(sacFile.getHeader().getEvlo())) {
@@ -208,10 +200,6 @@ public class TauP_SetSac extends TauP_AbstractPhaseTool {
                           "using lat and lons to calculate distance.");
             Alert.warning("Using WGS85 ellipticity flattening.",
                           "This may introduce errors. Please see the manual.");
-            deg = SphericalCoords.distance(header.getStla(),
-                                           header.getStlo(),
-                                           header.getEvla(),
-                                           header.getEvlo());
             rayCalculateable = DistanceRay.ofGeodeticStationEvent(
                     new Location(header.getStla(), header.getStlo()),
                     new Location(header.getEvla(), header.getEvlo(), header.getEvdp()),
@@ -297,8 +285,8 @@ public class TauP_SetSac extends TauP_AbstractPhaseTool {
 
     public String getStdUsage() {
         String className = this.getClass().getName();
-        className = className.substring(className.lastIndexOf('.') + 1,
-                                        className.length());
+        className = className.substring(className.lastIndexOf('.') + 1
+        );
         return "Usage: " + className.toLowerCase() + " [arguments]"
         +"  or, for purists, java "
                 + this.getClass().getName() + " [arguments]"

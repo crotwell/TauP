@@ -119,14 +119,6 @@ public abstract class TauP_Tool implements Callable<Integer> {
         abstractOutputTypeArgs.setOutFileExtension(outFileExtension);
     }
 
-        /** a noop that allows overriding classes to print things
-         * before results are calculated. For example to set up GMT commands before drawing paths.
-         * @param out
-         * @throws IOException
-         */
-    public void printScriptBeginning(PrintWriter out)  throws IOException {}
-
-    
     public static void endGmtAndCleanUp(PrintWriter out, String psFile, String projectionType) {
         out.println("# end postscript"); 
         out.println("gmt psxy -J"+projectionType+" -R -m -O -T  >> " + psFile);

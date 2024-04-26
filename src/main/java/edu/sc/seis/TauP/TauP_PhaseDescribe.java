@@ -53,9 +53,9 @@ public class TauP_PhaseDescribe extends TauP_AbstractPhaseTool {
         return outputTypeArgs.getOutFileExtension();
     }
     @Override
-    public void start() throws IOException, TauModelException, TauPException {
+    public void start() throws IOException, TauPException {
         PrintWriter writer = outputTypeArgs.createWriter(spec.commandLine().getOut());
-        if (getSeismicPhases().size() > 0) {
+        if (!getSeismicPhases().isEmpty()) {
             modelArgs.depthCorrected();
             printResult(writer);
         } else {

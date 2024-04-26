@@ -326,8 +326,7 @@ public class TauP_VelocityPlot extends TauP_Tool {
 
     public List<XYPlottingData> calculate(InputVelocityModelArgs velModelArgs, ModelAxisType xAxis, ModelAxisType yAxis, String labelPrefix) throws VelocityModelException, IOException, TauModelException, SlownessModelException {
         List<XYPlottingData> xyList = new ArrayList<>();
-        ModelAxisType depAxis = dependentAxis(xAxis, yAxis);
-        String modelName = velModelArgs.getModelFilename();
+        String modelName;
 
         List<Double> xVals = new ArrayList<>();
         List<Double> yVals = new ArrayList<>();
@@ -378,7 +377,7 @@ public class TauP_VelocityPlot extends TauP_Tool {
         for (int i = 1; i < xVals.size(); i++) {
             Double currX = xVals.get(i);
             Double currY = yVals.get(i);
-            if (currX != prevX || currY != prevY) {
+            if (!Objects.equals(currX, prevX) || !Objects.equals(currY, prevY)) {
                 xValDedup.add(currX);
                 yValDedup.add(currY);
                 prevX = currX;
@@ -489,7 +488,7 @@ public class TauP_VelocityPlot extends TauP_Tool {
         return velModelArgs;
     }
 
-    @CommandLine.ArgGroup(exclusive = true, heading = "Velocity Model %n")
+    @CommandLine.ArgGroup(heading = "Velocity Model %n")
     VelocityModelListArgs velModelArgs = new VelocityModelListArgs();
 
     @CommandLine.Mixin
@@ -498,7 +497,7 @@ public class TauP_VelocityPlot extends TauP_Tool {
     @CommandLine.Option(names = "--legend", description = "create a legend")
     boolean isLegend = false;
 
-    @CommandLine.Option(names = {"--csv"}, required = false, description = "outputs as csv")
+    @CommandLine.Option(names = {"--csv"}, description = "outputs as csv")
     public void setCsvOutput(boolean isCsv) {
         this._isCsv = isCsv;
         if (isCsv) {
@@ -508,7 +507,7 @@ public class TauP_VelocityPlot extends TauP_Tool {
     boolean _isCsv = false;
 
 
-    @CommandLine.Option(names = {"--nameddiscon"}, required = false, description = "outputs as .nd named discontinuity model file")
+    @CommandLine.Option(names = {"--nameddiscon"}, description = "outputs as .nd named discontinuity model file")
     public void setNDOutput(boolean isNd) {
         this._isNd = isNd;
         if (_isNd) {

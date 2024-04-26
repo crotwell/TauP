@@ -8,6 +8,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.util.Objects;
 
 import static edu.sc.seis.TauP.VelocityModel.ND;
 
@@ -35,7 +36,7 @@ public class TauP_VelocityMerge extends TauP_Tool {
         }
         VelocityModel overlayVMod;
         VelocityModel outVMod = vMod; // in case no overlay
-        if (overlayModelArgs.getModelFilename() != null && overlayModelArgs.getModelFilename().length()>0) {
+        if (overlayModelArgs.getModelFilename() != null && !overlayModelArgs.getModelFilename().isEmpty()) {
 
             if(isDEBUG()) {
                 System.err.println("base model: "+vMod.modelName);
@@ -57,7 +58,7 @@ public class TauP_VelocityMerge extends TauP_Tool {
         try {
 
             PrintWriter dos;
-            if (getOutFile() == "stdout") {
+            if (Objects.equals(getOutFile(), "stdout") || Objects.equals(getOutFile(), "-")) {
                 dos = new PrintWriter(new OutputStreamWriter(System.out));
             } else {
                 if (isDEBUG()) {
@@ -65,11 +66,11 @@ public class TauP_VelocityMerge extends TauP_Tool {
                 }
                 dos = new PrintWriter(new BufferedWriter(new FileWriter(getOutFile())));
             }
-            if (getOutputFormat() == ND || getOutputFormat() == OutputTypes.TEXT) {
+            if (Objects.equals(getOutputFormat(), ND) || Objects.equals(getOutputFormat(), OutputTypes.TEXT)) {
                 outVMod.writeToND(dos);
-            } else if (getOutputFormat() == VelocityModel.TVEL) {
+            } else if (Objects.equals(getOutputFormat(), VelocityModel.TVEL)) {
                 throw new RuntimeException("tvel output not yet implemented");
-            } else if (getOutputFormat() == OutputTypes.JSON) {
+            } else if (Objects.equals(getOutputFormat(), OutputTypes.JSON)) {
                 dos.write(outVMod.asJSON(true, ""));
             }
             dos.flush();
@@ -102,9 +103,6 @@ public class TauP_VelocityMerge extends TauP_Tool {
     public String getOutputFormat() {
         return modelType;
     }
-    
-    @CommandLine.Mixin
-    ModelArgs modelArgs = new ModelArgs();
 
     String modelName;
     String modelType;

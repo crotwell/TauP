@@ -99,7 +99,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
 
     @Deprecated
     public List<Arrival> calculate(double degrees) throws TauPException {
-        List<DistanceRay> dList = Arrays.asList( DistanceRay.ofDegrees(degrees));
+        List<DistanceRay> dList = List.of(DistanceRay.ofDegrees(degrees));
         return calculate(dList);
     }
 
@@ -110,16 +110,16 @@ public class TauP_Time extends TauP_AbstractRayTool {
 
     public Arrival calculateRelativeArrival(double degrees) throws TauModelException {
         Arrival relativeArrival = null;
-        if (relativePhaseName.size() != 0) {
-            List<SeismicPhase> relPhases = new ArrayList<SeismicPhase>();
+        if (!relativePhaseName.isEmpty()) {
+            List<SeismicPhase> relPhases = new ArrayList<>();
             for (String sName : relativePhaseName) {
                 try {
                     List<SeismicPhase> calcRelPhaseList = SeismicPhaseFactory.createSeismicPhases(
                             sName,
                             modelArgs.depthCorrected(),
-                            this.getSourceDepth(),
-                            this.getReceiverDepth(),
-                            this.getScatterer(),
+                            modelArgs.getSourceDepth(),
+                            modelArgs.getReceiverDepth(),
+                            modelArgs.getScatterer(),
                             isDEBUG());
                     relPhases.addAll(calcRelPhaseList);
                 } catch (ScatterArrivalFailException e) {
@@ -148,13 +148,13 @@ public class TauP_Time extends TauP_AbstractRayTool {
             if (!onlyFirst) {
                 arrivals.addAll(phaseArrivals);
             } else {
-                if (phaseArrivals.size() > 0) {
+                if (!phaseArrivals.isEmpty()) {
                     arrivals.add(phaseArrivals.get(0));
                 }
             }
         }
 
-        if(relativePhaseList.size() != 0) {
+        if(!relativePhaseList.isEmpty()) {
             Set<Double> distList = new HashSet<>();
             for (Arrival arr : arrivals) {
                 distList.add(arr.getModuloDist());
@@ -167,7 +167,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
                     relativeArrivals.addAll(distRay.calculate(relPhase));
                 }
                 relativeArrivals = Arrival.sortArrivals(relativeArrivals);
-                if (relativeArrivals.size() != 0) {
+                if (!relativeArrivals.isEmpty()) {
                     Arrival earliest = relativeArrivals.get(0);
                     earliestAtDist.put(dist, earliest);
                 } else {
@@ -195,15 +195,15 @@ public class TauP_Time extends TauP_AbstractRayTool {
     protected synchronized void recalcPhases() throws TauModelException {
         super.recalcPhases();
         relativePhaseList = new ArrayList<>();
-        if (relativePhaseName.size() != 0) {
+        if (!relativePhaseName.isEmpty()) {
             for (String sName : relativePhaseName) {
                 try {
                     List<SeismicPhase> calcRelPhaseList = SeismicPhaseFactory.createSeismicPhases(
                             sName,
                             modelArgs.depthCorrected(),
-                            this.getSourceDepth(),
-                            this.getReceiverDepth(),
-                            this.getScatterer(),
+                            modelArgs.getSourceDepth(),
+                            modelArgs.getReceiverDepth(),
+                            modelArgs.getScatterer(),
                             isDEBUG());
                     relativePhaseList.addAll(calcRelPhaseList);
                 } catch (ScatterArrivalFailException e) {
@@ -236,7 +236,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
                 if (!onlyFirst) {
                     arrivalList.addAll(phaseArrivals);
                 } else {
-                    if (phaseArrivals.size() > 0) {
+                    if (!phaseArrivals.isEmpty()) {
                         arrivalList.add(phaseArrivals.get(0));
                     }
                 }
@@ -256,7 +256,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
         out.flush();
     }
 
-    public void printResultText(PrintWriter out, List<Arrival> arrivalList) throws IOException {
+    public void printResultText(PrintWriter out, List<Arrival> arrivalList) {
         Arrival currArrival;
         int maxNameLength = 5;
         int maxPuristNameLength = 5;
@@ -291,7 +291,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
                 lineOne += "    Amp   ";
                 lineTwo += "  Factor";
             }
-            if (relativePhaseName.size() != 0) {
+            if (!relativePhaseName.isEmpty()) {
                 String allRelPhase = "";
                 for (String s : relativePhaseName) {
                     allRelPhase += s+",";
@@ -337,7 +337,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
                     }
                 }
 
-                if (relativePhaseName.size() != 0) {
+                if (!relativePhaseName.isEmpty()) {
                     if (currArrival.isRelativeToArrival()) {
                         out.print(" "+Outputs.formatTime(currArrival.getTime() - currArrival.getRelativeToArrival().getTime()));
                         out.print(" +"+String.format(phaseFormat, currArrival.getRelativeToArrival().getName()));
@@ -373,8 +373,8 @@ public class TauP_Time extends TauP_AbstractRayTool {
     public void writeJSON(PrintWriter pw, String indent, List<Arrival> arrivalList) throws IOException, TauModelException {
         writeJSON(pw, indent,
                 getTauModelName(),
-                getSourceDepth(),
-                getReceiverDepth(),
+                modelArgs.getSourceDepth(),
+                modelArgs.getReceiverDepth(),
                 getSeismicPhases(),
                 arrivalList);
     }
