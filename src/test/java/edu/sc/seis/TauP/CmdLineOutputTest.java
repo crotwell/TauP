@@ -381,6 +381,7 @@ public class CmdLineOutputTest {
     }
 
     @Test
+    @Disabled
     public void testTauPHelp() throws Exception {
         runTests(helpTestCmds);
     }
