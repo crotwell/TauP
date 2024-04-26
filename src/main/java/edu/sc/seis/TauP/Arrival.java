@@ -303,7 +303,7 @@ public class Arrival {
             return Double.POSITIVE_INFINITY;
         }
 
-        return Math.sin(getTakeoffAngle())* Math.abs(dtakeoff_ddelta)
+        return Math.sin(getTakeoffAngle()*DtoR)* Math.abs(dtakeoff_ddelta)
                 / (recRadius * recRadius * cosIncident * Math.sin(getModuloDist()));
     }
 

@@ -14,9 +14,9 @@
       "puristdist": 35,
       "puristname": "P",
       "amp": {
-        "factorpsv": 2.0197284E-9,
+        "factorpsv": 9.0946717E-10,
         "factorsh": 0,
-        "geospread": 8.546455E-9,
+        "geospread": 3.848399E-9,
         "refltranpsv": 0.9386537, 
         "refltransh": 0
       }

@@ -14,9 +14,9 @@
       "puristdist": 35,
       "puristname": "P",
       "amp": {
-        "factorpsv": 2.2448705E-9,
+        "factorpsv": 1.0146693E-9,
         "factorsh": 0,
-        "geospread": 9.4910035E-9,
+        "geospread": 4.2898822E-9,
         "refltranpsv": 0.93945855, 
         "refltransh": 0
       }
@@ -31,9 +31,9 @@
       "puristdist": 35,
       "puristname": "pP",
       "amp": {
-        "factorpsv": -1.0049341E-9,
+        "factorpsv": -6.7264705E-10,
         "factorsh": 0,
-        "geospread": 6.4029417E-9,
+        "geospread": 4.2857735E-9,
         "refltranpsv": -0.6233852, 
         "refltransh": 0
       }
@@ -48,9 +48,9 @@
       "puristdist": 35,
       "puristname": "sP",
       "amp": {
-        "factorpsv": 6.4090083E-10,
+        "factorpsv": 2.0035804E-10,
         "factorsh": 0,
-        "geospread": 4.5169624E-9,
+        "geospread": 1.4120901E-9,
         "refltranpsv": 0.5635634, 
         "refltransh": 0
       }
@@ -65,9 +65,9 @@
       "puristdist": 35,
       "puristname": "PP",
       "amp": {
-        "factorpsv": -5.602378E-10,
+        "factorpsv": -1.2661108E-9,
         "factorsh": 0,
-        "geospread": 8.134539E-9,
+        "geospread": 1.8383671E-8,
         "refltranpsv": -0.27355075, 
         "refltransh": 0
       }
@@ -82,9 +82,9 @@
       "puristdist": 35,
       "puristname": "PP",
       "amp": {
-        "factorpsv": 1.3256608E-10,
-        "factorsh": -0,
-        "geospread": -1.9293809E-9,
+        "factorpsv": -1.1714162E-10,
+        "factorsh": 0,
+        "geospread": 1.7048917E-9,
         "refltranpsv": -0.27290586, 
         "refltransh": 0
       }
@@ -99,9 +99,9 @@
       "puristdist": 35,
       "puristname": "PP",
       "amp": {
-        "factorpsv": 2.6919594E-10,
-        "factorsh": -0,
-        "geospread": -3.71326E-9,
+        "factorpsv": -1.8627247E-10,
+        "factorsh": 0,
+        "geospread": 2.5694225E-9,
         "refltranpsv": -0.28794637, 
         "refltransh": 0
       }
@@ -116,9 +116,9 @@
       "puristdist": 35,
       "puristname": "PP",
       "amp": {
-        "factorpsv": -5.6609734E-11,
+        "factorpsv": -4.30968E-11,
         "factorsh": 0,
-        "geospread": 2.3569615E-9,
+        "geospread": 1.7943469E-9,
         "refltranpsv": -0.09539752, 
         "refltransh": 0
       }
@@ -133,9 +133,9 @@
       "puristdist": 35,
       "puristname": "PP",
       "amp": {
-        "factorpsv": -1.3889002E-10,
+        "factorpsv": -1.1129763E-10,
         "factorsh": 0,
-        "geospread": 5.318295E-9,
+        "geospread": 4.261744E-9,
         "refltranpsv": -0.10372825, 
         "refltransh": 0
       }
@@ -150,9 +150,9 @@
       "puristdist": 35,
       "puristname": "PcP",
       "amp": {
-        "factorpsv": 3.416083E-10,
+        "factorpsv": 8.254426E-11,
         "factorsh": 0,
-        "geospread": 4.892863E-9,
+        "geospread": 1.1822833E-9,
         "refltranpsv": 0.2773089, 
         "refltransh": 0
       }
@@ -167,9 +167,9 @@
       "puristdist": 35,
       "puristname": "S",
       "amp": {
-        "factorpsv": -8.8572594E-10,
-        "factorsh": -9.559001E-10,
-        "geospread": -2.9885563E-9,
+        "factorpsv": 1.1065444E-9,
+        "factorsh": 1.1942136E-9,
+        "geospread": 3.7336267E-9,
         "refltranpsv": 0.90920216, 
         "refltransh": 0.98123634
       }
@@ -184,9 +184,9 @@
       "puristdist": 35,
       "puristname": "pS",
       "amp": {
-        "factorpsv": 4.1380797E-9,
+        "factorpsv": 4.9542535E-9,
         "factorsh": 0,
-        "geospread": 1.3097071E-8,
+        "geospread": 1.568027E-8,
         "refltranpsv": 0.96927536, 
         "refltransh": 0
       }
@@ -201,9 +201,9 @@
       "puristdist": 35,
       "puristname": "sS",
       "amp": {
-        "factorpsv": 1.1673663E-11,
-        "factorsh": 1.2368819E-9,
-        "geospread": 3.867232E-9,
+        "factorpsv": 1.128672E-11,
+        "factorsh": 1.1958834E-9,
+        "geospread": 3.739046E-9,
         "refltranpsv": 0.009260394, 
         "refltransh": 0.9811842
       }
@@ -218,9 +218,9 @@
       "puristdist": 35,
       "puristname": "SP",
       "amp": {
-        "factorpsv": -1.1158017E-9,
-        "factorsh": -0,
-        "geospread": -5.35934E-9,
+        "factorpsv": 1.0111045E-9,
+        "factorsh": 0,
+        "geospread": 4.856466E-9,
         "refltranpsv": 0.82694024, 
         "refltransh": 0
       }
@@ -235,9 +235,9 @@
       "puristdist": 35,
       "puristname": "PS",
       "amp": {
-        "factorpsv": -2.5531965E-9,
-        "factorsh": -0,
-        "geospread": -8.364679E-9,
+        "factorpsv": 4.2145016E-9,
+        "factorsh": 0,
+        "geospread": 1.3807379E-8,
         "refltranpsv": 0.93639153, 
         "refltransh": 0
       }
@@ -252,9 +252,9 @@
       "puristdist": 35,
       "puristname": "ScP",
       "amp": {
-        "factorpsv": 7.988524E-11,
+        "factorpsv": 5.5197402E-11,
         "factorsh": 0,
-        "geospread": 8.102375E-10,
+        "geospread": 5.598407E-10,
         "refltranpsv": 0.39160898, 
         "refltransh": 0
       }
@@ -269,9 +269,9 @@
       "puristdist": 35,
       "puristname": "PcS",
       "amp": {
-        "factorpsv": 1.2438949E-9,
-        "factorsh": -0,
-        "geospread": -8.27238E-9,
+        "factorpsv": -2.366596E-10,
+        "factorsh": 0,
+        "geospread": 1.5738776E-9,
         "refltranpsv": -0.46129176, 
         "refltransh": 0
       }
@@ -286,9 +286,9 @@
       "puristdist": 35,
       "puristname": "SS",
       "amp": {
-        "factorpsv": -8.1902435E-10,
-        "factorsh": -8.249301E-10,
-        "geospread": -3.3388534E-9,
+        "factorpsv": 6.5572714E-10,
+        "factorsh": 6.6045536E-10,
+        "geospread": 2.6731521E-9,
         "refltranpsv": 0.7525268, 
         "refltransh": 0.7579531
       }
@@ -303,9 +303,9 @@
       "puristdist": 35,
       "puristname": "SS",
       "amp": {
-        "factorpsv": 1.0724646E-9,
-        "factorsh": 9.91436E-10,
-        "geospread": 4.542847E-9,
+        "factorpsv": 6.835391E-10,
+        "factorsh": 6.318953E-10,
+        "geospread": 2.8953997E-9,
         "refltranpsv": 0.72423136, 
         "refltransh": 0.6695131
       }
@@ -320,9 +320,9 @@
       "puristdist": 35,
       "puristname": "SS",
       "amp": {
-        "factorpsv": -4.3499293E-10,
-        "factorsh": -5.341819E-10,
-        "geospread": -1.5133576E-9,
+        "factorpsv": 1.3299849E-9,
+        "factorsh": 1.6332538E-9,
+        "geospread": 4.62707E-9,
         "refltranpsv": 0.8817859, 
         "refltransh": 1.0828545
       }
@@ -337,9 +337,9 @@
       "puristdist": 35,
       "puristname": "SS",
       "amp": {
-        "factorpsv": 1.5740333E-12,
-        "factorsh": -6.924226E-12,
-        "geospread": -7.743721E-10,
+        "factorpsv": -1.5241473E-10,
+        "factorsh": 6.7047756E-10,
+        "geospread": 7.4982985E-8,
         "refltranpsv": -0.0062357215, 
         "refltransh": 0.02743115
       }
@@ -354,9 +354,9 @@
       "puristdist": 35,
       "puristname": "SS",
       "amp": {
-        "factorpsv": -5.583343E-10,
-        "factorsh": 2.9569622E-9,
-        "geospread": 2.7051914E-9,
+        "factorpsv": -1.3246241E-9,
+        "factorsh": 7.0152653E-9,
+        "geospread": 6.4179493E-9,
         "refltranpsv": -0.63316786, 
         "refltransh": 3.3532836
       }
@@ -371,9 +371,9 @@
       "puristdist": 35,
       "puristname": "PKiKP",
       "amp": {
-        "factorpsv": 1.95126E-11,
+        "factorpsv": 1.0232625E-12,
         "factorsh": 0,
-        "geospread": 1.9792763E-9,
+        "geospread": 1.03795465E-10,
         "refltranpsv": 0.0391568, 
         "refltransh": 0
       }
@@ -388,9 +388,9 @@
       "puristdist": 35,
       "puristname": "pPKiKP",
       "amp": {
-        "factorpsv": -2.5029583E-11,
+        "factorpsv": -1.0203094E-12,
         "factorsh": 0,
-        "geospread": 2.5453137E-9,
+        "geospread": 1.0375752E-10,
         "refltranpsv": -0.039058067, 
         "refltransh": 0
       }
@@ -405,9 +405,9 @@
       "puristdist": 35,
       "puristname": "sPKiKP",
       "amp": {
-        "factorpsv": 3.6171706E-13,
+        "factorpsv": 2.056343E-14,
         "factorsh": 0,
-        "geospread": 6.49183E-10,
+        "geospread": 3.6905725E-11,
         "refltranpsv": 0.0022130962, 
         "refltransh": 0
       }
@@ -422,9 +422,9 @@
       "puristdist": 35,
       "puristname": "ScS",
       "amp": {
-        "factorpsv": -2.4197686E-10,
-        "factorsh": -6.5053596E-10,
-        "geospread": -2.0617155E-9,
+        "factorpsv": 1.7592972E-10,
+        "factorsh": 4.729734E-10,
+        "geospread": 1.498974E-9,
         "refltranpsv": 0.360054, 
         "refltransh": 0.9679771
       }
@@ -439,9 +439,9 @@
       "puristdist": 35,
       "puristname": "SKiKP",
       "amp": {
-        "factorpsv": 1.6212206E-12,
+        "factorpsv": 4.0883458E-14,
         "factorsh": 0,
-        "geospread": 1.6025435E-9,
+        "geospread": 4.041246E-11,
         "refltranpsv": 0.0040181926, 
         "refltransh": 0
       }
@@ -456,9 +456,9 @@
       "puristdist": 325,
       "puristname": "PKIKKIKP",
       "amp": {
-        "factorpsv": -1.1651941E-11,
+        "factorpsv": -6.321207E-13,
         "factorsh": 0,
-        "geospread": 2.0197959E-9,
+        "geospread": 1.0957444E-10,
         "refltranpsv": -0.022913383, 
         "refltransh": 0
       }
@@ -473,9 +473,9 @@
       "puristdist": 325,
       "puristname": "SKIKKIKP",
       "amp": {
-        "factorpsv": -8.4029674E-13,
+        "factorpsv": -1.9851029E-14,
         "factorsh": 0,
-        "geospread": 1.4995897E-9,
+        "geospread": 3.5426054E-11,
         "refltranpsv": -0.0022256593, 
         "refltransh": 0
       }
@@ -490,9 +490,9 @@
       "puristdist": 325,
       "puristname": "PKIKKIKS",
       "amp": {
-        "factorpsv": 2.7018132E-12,
+        "factorpsv": 1.268964E-13,
         "factorsh": 0,
-        "geospread": 2.1195457E-9,
+        "geospread": 9.9548966E-11,
         "refltranpsv": 0.003910525, 
         "refltransh": 0
       }
@@ -507,9 +507,9 @@
       "puristdist": 325,
       "puristname": "SKIKKIKS",
       "amp": {
-        "factorpsv": 1.5691697E-13,
+        "factorpsv": 3.5998748E-15,
         "factorsh": 0,
-        "geospread": 1.3950303E-9,
+        "geospread": 3.2003768E-11,
         "refltranpsv": 3.4507122E-4, 
         "refltransh": 0
       }
@@ -524,9 +524,9 @@
       "puristdist": 325,
       "puristname": "PKIKPPKIKP",
       "amp": {
-        "factorpsv": -1.1094422E-10,
+        "factorpsv": -3.444441E-11,
         "factorsh": 0,
-        "geospread": 5.4908333E-10,
+        "geospread": 1.704717E-10,
         "refltranpsv": -0.80253667, 
         "refltransh": 0
       }
@@ -541,9 +541,9 @@
       "puristdist": 325,
       "puristname": "PKPPKP",
       "amp": {
-        "factorpsv": -3.7748006E-11,
+        "factorpsv": -1.3879462E-11,
         "factorsh": 0,
-        "geospread": 3.769393E-10,
+        "geospread": 1.3859579E-10,
         "refltranpsv": -0.39775994, 
         "refltransh": 0
       }
@@ -558,9 +558,9 @@
       "puristdist": 325,
       "puristname": "SKIKSSKIKS",
       "amp": {
-        "factorpsv": 1.6563683E-13,
+        "factorpsv": 4.1055636E-15,
         "factorsh": 0,
-        "geospread": 1.6232624E-9,
+        "geospread": 4.0235055E-11,
         "refltranpsv": 3.130334E-4, 
         "refltransh": 0
       }
