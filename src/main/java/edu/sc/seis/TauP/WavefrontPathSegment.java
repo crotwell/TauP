@@ -22,9 +22,8 @@ public class WavefrontPathSegment extends  AbstractPathSegment {
     }
 
     public WavefrontPathSegment asNegativeDistance() {
-        WavefrontPathSegment out = new WavefrontPathSegment(negativeDistance(), isPWave, segmentName, prevEnd,
+        return new WavefrontPathSegment(negativeDistance(), isPWave, segmentName, prevEnd,
                 segmentIndex, totalNumSegments, phase, timeVal);
-        return out;
     }
 
     double timeVal;

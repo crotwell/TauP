@@ -83,39 +83,6 @@ public class ToolRun {
 		fileOut.close();
 	}
 
-	public static void printUsage() {
-		System.out.println(getUsage());
-	}
-
-	/**
-	 * Handles version, verbose and debug cmd line flags.
-	 * 
-	 * @param args command line args to parse
-	 * @return all unrecognized args
-	 */
-    protected static String[] parseCommonCmdLineArgs(String[] args) {
-        int i = 0;
-        String[] noComprendoArgs = new String[args.length];
-        int numNoComprendoArgs = 0;
-        while(i < args.length) {
-            if(dashEquals("verbose", args[i])) {
-                VERBOSE = true;
-            } else if(dashEquals("debug", args[i])) {
-                VERBOSE = true;
-                DEBUG = true;
-            } else {
-                noComprendoArgs[numNoComprendoArgs++] = args[i];
-            }
-            i++;
-        }
-        if(numNoComprendoArgs > 0) {
-            String[] temp = new String[numNoComprendoArgs];
-            System.arraycopy(noComprendoArgs, 0, temp, 0, numNoComprendoArgs);
-            return temp;
-        } else {
-            return new String[0];
-        }
-    }
     
     public static boolean dashEquals(String argName, String arg) {
         return arg.equalsIgnoreCase("-"+argName) || arg.equalsIgnoreCase("--"+argName);
@@ -174,7 +141,7 @@ public class ToolRun {
 	boolean usageHelpRequested;
 
 
-	public static int mainWithExitCode(String[] args) throws IOException {
+	public static int mainWithExitCode(String[] args) {
 		// precheck args for debug and verbose to aid in debugging picocli issues
 		for (String arg : args) {
 			if(dashEquals("verbose", arg)) {
@@ -192,7 +159,7 @@ public class ToolRun {
 			commandLine.setParameterExceptionHandler(new CommandLine.IParameterExceptionHandler() {
 
 				@Override
-				public int handleParseException(CommandLine.ParameterException ex, String[] strings) throws Exception {
+				public int handleParseException(CommandLine.ParameterException ex, String[] strings) {
 					commandLine.getErr().println(commandLine.getColorScheme().stackTraceText(ex));
 					commandLine.getErr().println(commandLine.getColorScheme().errorText(ex.getMessage()));
 					return 3;
@@ -226,7 +193,7 @@ public class ToolRun {
 		}
 	}
 	
-	static void legacyRunTool(String toolname, String[] args) throws IOException {
+	static void legacyRunTool(String toolname, String[] args) {
 	    String[] argsPlusName = new String[args.length+1];
 	    argsPlusName[0] = toolname;
 	    System.arraycopy(args, 0, argsPlusName, 1, args.length);

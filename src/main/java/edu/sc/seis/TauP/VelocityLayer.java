@@ -23,10 +23,6 @@
  * crotwell@seis.sc.edu or Tom Owens, owens@seis.sc.edu
  * 
  */
-/**
- * package for storage and manipulation of seismic earth models.
- * 
- */
 package edu.sc.seis.TauP;
 
 import org.json.JSONObject;

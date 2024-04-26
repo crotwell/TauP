@@ -32,22 +32,10 @@ package edu.sc.seis.TauP;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.io.Reader;
-import java.io.Serializable;
-import java.io.StreamTokenizer;
-import java.io.Writer;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-
-import static edu.sc.seis.TauP.PhaseInteraction.TRANSDOWN;
-import static edu.sc.seis.TauP.PhaseInteraction.TRANSUP;
+import java.util.Objects;
 
 /**
  * This class defines basic classes to store and manipulate a velocity model.
@@ -158,7 +146,7 @@ public class VelocityModel implements Cloneable, Serializable {
 
     /** set the model name. */
     public void setModelName(String modelName) {
-        if(modelName.length() > 0) {
+        if(!modelName.isEmpty()) {
             this.modelName = modelName;
         } else {
             this.modelName = "unknown";
@@ -315,7 +303,7 @@ public class VelocityModel implements Cloneable, Serializable {
     }
     
     public VelocityLayer[] getLayers() {
-        return (VelocityLayer[])layer.toArray(new VelocityLayer[0]);
+        return layer.toArray(new VelocityLayer[0]);
     }
 
     // normal methods
@@ -330,7 +318,7 @@ public class VelocityModel implements Cloneable, Serializable {
     public int layerNumberAbove(double depth) throws NoSuchLayerException {
         VelocityLayer tempLayer;
         /* first check to see if depth is at top of top layer. */
-        tempLayer = (VelocityLayer)getVelocityLayer(0);
+        tempLayer = getVelocityLayer(0);
         if(depth == tempLayer.getTopDepth()) {
             return 0;
         } else {
@@ -405,13 +393,11 @@ public class VelocityModel implements Cloneable, Serializable {
      * @return the value of the given material property
      * @exception NoSuchLayerException
      *                occurs if no layer contains the given depth.
-     * @exception NoSuchMatPropException
-     *                occurs if the material property is not recognized.
      */
     public double evaluateAbove(double depth, VelocityModelMaterial materialProperty)
             throws NoSuchLayerException {
         VelocityLayer tempLayer;
-        tempLayer = (VelocityLayer)getVelocityLayer(layerNumberAbove(depth));
+        tempLayer = getVelocityLayer(layerNumberAbove(depth));
         return tempLayer.evaluateAt(depth, materialProperty);
     }
 
@@ -427,7 +413,7 @@ public class VelocityModel implements Cloneable, Serializable {
     public double evaluateBelow(double depth, VelocityModelMaterial materialProperty)
             throws NoSuchLayerException {
         VelocityLayer tempLayer;
-        tempLayer = (VelocityLayer)getVelocityLayer(layerNumberBelow(depth));
+        tempLayer = getVelocityLayer(layerNumberBelow(depth));
         return tempLayer.evaluateAt(depth, materialProperty);
     }
 
@@ -440,7 +426,7 @@ public class VelocityModel implements Cloneable, Serializable {
      */
     public double evaluateAtTop(int layerNumber, VelocityModelMaterial materialProperty) {
         VelocityLayer tempLayer;
-        tempLayer = (VelocityLayer)getVelocityLayer(layerNumber);
+        tempLayer = getVelocityLayer(layerNumber);
         return tempLayer.evaluateAtTop(materialProperty);
     }
 
@@ -452,7 +438,7 @@ public class VelocityModel implements Cloneable, Serializable {
      */
     public double evaluateAtBottom(int layerNumber, VelocityModelMaterial materialProperty) {
         VelocityLayer tempLayer;
-        tempLayer = (VelocityLayer)getVelocityLayer(layerNumber);
+        tempLayer = getVelocityLayer(layerNumber);
         return tempLayer.evaluateAtBottom(materialProperty);
     }
 
@@ -463,7 +449,7 @@ public class VelocityModel implements Cloneable, Serializable {
      */
     public double depthAtTop(int layerNumber) {
         VelocityLayer tempLayer;
-        tempLayer = (VelocityLayer)getVelocityLayer(layerNumber);
+        tempLayer = getVelocityLayer(layerNumber);
         return tempLayer.getTopDepth();
     }
 
@@ -475,7 +461,7 @@ public class VelocityModel implements Cloneable, Serializable {
      */
     public double depthAtBottom(int layerNumber) {
         VelocityLayer tempLayer;
-        tempLayer = (VelocityLayer)getVelocityLayer(layerNumber);
+        tempLayer = getVelocityLayer(layerNumber);
         return tempLayer.getBotDepth();
     }
 
@@ -492,7 +478,7 @@ public class VelocityModel implements Cloneable, Serializable {
                                        boolean smoothBot)
             throws VelocityModelException {
 
-            List<VelocityLayer> outLayers = new ArrayList<VelocityLayer>();
+            List<VelocityLayer> outLayers = new ArrayList<>();
             int topLayerNum = layerNumberBelow(newLayers[0].getTopDepth());
             int numAdded = 0;
             for(int i = 0; i<topLayerNum; i++) {
@@ -591,7 +577,7 @@ public class VelocityModel implements Cloneable, Serializable {
                 }
             }
             
-            List<VelocityLayer> replaceoutLayers = new ArrayList<VelocityLayer>();
+            List<VelocityLayer> replaceoutLayers = new ArrayList<>();
             numAdded = 0;
             for(VelocityLayer vlay : outLayers) {
                 if (vlay.getTopDepth() < newLayers[0].getTopDepth()) {
@@ -644,7 +630,7 @@ public class VelocityModel implements Cloneable, Serializable {
     public VelocityModel elevationLayer(float elevation,
                                        String name)
             throws VelocityModelException {
-            List<VelocityLayer> outLayers = new ArrayList<VelocityLayer>();
+            List<VelocityLayer> outLayers = new ArrayList<>();
 
             int numAdded = 0;
             VelocityLayer elevationLayer = getVelocityLayer(0).cloneRenumber(numAdded);
@@ -682,7 +668,7 @@ public class VelocityModel implements Cloneable, Serializable {
      */
     public void printGMT(String filename) throws IOException {
         String psFile;
-        if (filename == "stdout") { 
+        if (Objects.equals(filename, "stdout")) {
             psFile = "taup_velocitymodel";
         } else if(filename.endsWith(".gmt")) {
             psFile = filename.substring(0, filename.length() - 4) + ".ps";
@@ -691,7 +677,7 @@ public class VelocityModel implements Cloneable, Serializable {
         }
 
         PrintWriter dos;
-        if (filename == "stdout") {
+        if (filename.equals("stdout")) {
             dos = new PrintWriter(new OutputStreamWriter(System.out));
         } else {
             dos = new PrintWriter(new BufferedWriter(new FileWriter(filename)));
@@ -736,14 +722,14 @@ public class VelocityModel implements Cloneable, Serializable {
      * prints out the velocity model into a file in a for suitable for plotting
      * with GMT.
      */
-    public void printGMT(PrintWriter dos) throws IOException {
+    public void printGMT(PrintWriter dos) {
         dos.println("> P velocity for " + modelName + "  below");
         printGMTforP(dos);
         dos.println("> S velocity for " + modelName + "  below");
         printGMTforP(dos);
     }
     
-    void printGMTforP(PrintWriter dos) throws IOException {
+    void printGMTforP(PrintWriter dos) {
         double pVel = -1.0;
         for(int layerNum = 0; layerNum < getNumLayers(); layerNum++) {
             VelocityLayer currVelocityLayer = getVelocityLayer(layerNum);
@@ -757,7 +743,7 @@ public class VelocityModel implements Cloneable, Serializable {
         }
     }
     
-    void printGMTforS(PrintWriter dos) throws IOException {
+    void printGMTforS(PrintWriter dos) {
         double sVel = -1.0;
         for(int layerNum = 0; layerNum < getNumLayers(); layerNum++) {
             VelocityLayer currVelocityLayer = getVelocityLayer(layerNum);

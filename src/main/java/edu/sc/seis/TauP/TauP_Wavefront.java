@@ -65,9 +65,8 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
 
     }
 
-    public void printIsochron(PrintWriter out, Map<Double, List<WavefrontPathSegment>> timeSegmentMap, boolean negDistance, String psFile) throws TauPException, IOException {
-        List<Double> sortedKeys = new ArrayList<>();
-        sortedKeys.addAll(timeSegmentMap.keySet());
+    public void printIsochron(PrintWriter out, Map<Double, List<WavefrontPathSegment>> timeSegmentMap, String psFile) throws TauPException {
+        List<Double> sortedKeys = new ArrayList<>(timeSegmentMap.keySet());
         Collections.sort(sortedKeys);
         if (getOutputFormat().equals(OutputTypes.JSON)) {
             JSONArray jsonArray = new JSONArray();
@@ -214,8 +213,6 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
     }
 
     public Map<Double, List<WavefrontPathSegment>> calcIsochronSegmentsForPhase(SeismicPhase phase, double timeStep) {
-        double minDist = phase.getMinDistanceDeg();
-        double maxDist = phase.getMaxDistanceDeg();
         int totalNumSegments = (int) Math.floor(phase.getMaxTime()/timeStep);
         int waveSegIdx = 0;
         List<Arrival> allArrival = new ArrayList<Arrival>();
@@ -382,38 +379,6 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
         return out;
     }
 
-    public Map<Double, XYPlottingData> calcIsochronsForPhase(SeismicPhase phase, double timeStep) {
-        Map<Double, List<WavefrontPathSegment>> wavefrontSegMap = calcIsochronSegmentsForPhase(phase, timeStep);
-        Map<Double, XYPlottingData> out = new HashMap<>();
-        for (Double timeVal : wavefrontSegMap.keySet()) {
-            List<XYSegment> xySegmentList = new ArrayList<>();
-            List<WavefrontPathSegment> wavefrontSegments = wavefrontSegMap.get(timeVal);
-            for (WavefrontPathSegment waveSeg : wavefrontSegments) {
-                double[] xVals = new double[waveSeg.path.size()];
-                double[] yVals = new double[waveSeg.path.size()];
-                int idx = 0;
-                for (TimeDist td : waveSeg.path) {
-                    xVals[idx] = td.getDistDeg();
-                    yVals[idx] = td.getDepth();
-                    idx++;
-                }
-                XYSegment seg = new XYSegment(xVals, yVals);
-                String p_or_s = waveSeg.isPWave ? "pwave" : "swave";
-                seg.cssClasses.add(p_or_s);
-                seg.cssClasses.add(SvgUtil.formatTimeForCss(timeVal));
-                seg.cssClasses.add(SvgUtil.classForPhase(waveSeg.segmentName));
-                xySegmentList.add(seg);
-            }
-            List<String> cssClasses = new ArrayList<>();
-            cssClasses.add(String.format("time_%05d", (int) Math.round(timeVal)));
-            cssClasses.add(SvgUtil.classForPhase(phase.getName()));
-            XYPlottingData xyp = new XYPlottingData(xySegmentList, AxisType.degree.name(), ModelAxisType.depth.name(),
-                    phase.getName(), phase.getName()+" at "+Outputs.formatTimeNoPad(timeVal)+" sec", cssClasses);
-            out.put(timeVal, xyp);
-        }
-        return out;
-    }
-
     TimeDist interp(TimeDist x, TimeDist y, double t) {
         // this is probably wrong...
         double distInterp = linearInterp(x.getTime(), x.getDistRadian(),
@@ -477,8 +442,7 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
         } else {
             /* enough info given on cmd line, so just do one calc. */
             Map<Double, List<WavefrontPathSegment>> isochronMap = calcIsochron();
-            List<Double> sortedKeys = new ArrayList<>();
-            sortedKeys.addAll(isochronMap.keySet());
+            List<Double> sortedKeys = new ArrayList<>(isochronMap.keySet());
             Collections.sort(sortedKeys);
             if (isSeparateFilesByTime()) {
                 Double lastTime = sortedKeys.get(sortedKeys.size() - 1);
@@ -499,12 +463,12 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
                     }
                     String timeExt = "_" + String.format(formatStr, timeVal);
                     String byTimePsFile = psFileBase + timeExt + ".ps";
-                    printIsochron(timeWriter, singleTimeIsochronMap, isNegDistance(), byTimePsFile);
+                    printIsochron(timeWriter, singleTimeIsochronMap, byTimePsFile);
                     timeWriter.close();
                 }
             } else {
                 PrintWriter writer = outputTypeArgs.createWriter(spec.commandLine().getOut());
-                printIsochron(writer, isochronMap, isNegDistance(), outputTypeArgs.getPsFile());
+                printIsochron(writer, isochronMap, outputTypeArgs.getPsFile());
                 writer.close();
             }
         }

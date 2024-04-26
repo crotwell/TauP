@@ -8,6 +8,7 @@ import org.json.JSONObject;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static edu.sc.seis.TauP.AxisType.*;
 import static edu.sc.seis.TauP.TauP_AbstractPhaseTool.baseResultAsJSONObject;
@@ -112,11 +113,11 @@ public class XYPlotOutput {
         ArrayList<Double> yTicks = PlotTicks.getTicks(minmax[2], minmax[3], numYTicks, false);
         double yTickStep = yTicks.size()>1 ? yTicks.get(1) - yTicks.get(0) : 1;
         String xLabelParam = " -Bxa"+xTickStep;
-        if (getXLabel().length() > 0) {
+        if (!getXLabel().isEmpty()) {
             xLabelParam+="+l'"+getXLabel()+"'";
         }
         String yLabelParam = " -Bya"+yTickStep;
-        if (getYLabel().length()>0) {
+        if (!getYLabel().isEmpty()) {
             yLabelParam += "+l'"+getYLabel()+"'";
         }
         writer.println("gmt psbasemap -JX" + outputTypeArgs.mapwidth + outputTypeArgs.mapWidthUnit + " -P -R"+minmax[0]+"/"+minmax[1]+"/" + minmax[2] + "/" + minmax[3]
@@ -167,7 +168,6 @@ public class XYPlotOutput {
 
         int margin = 80;
         int pixelWidth = 600+margin;//Math.round(72*mapWidth);
-        int plotOffset = 60;
         double[] minmax = calcMinMax();
         SvgUtil.xyplotScriptBeginning(writer, toolNameFromClass(this.getClass()),
             cmdLineArgs,  pixelWidth, margin, extraCSS, minmax);
@@ -275,11 +275,11 @@ public class XYPlotOutput {
     public XYPlotOutput convertToCartesian() throws TauPException {
         List<XYPlottingData> convXYPlotList = new ArrayList<>();
         for (XYPlottingData xyp : xyPlots) {
-            if ( ! (xyp.xAxisType == AxisType.radian.name()
-                        || xyp.xAxisType == degree180.name()
-                        || xyp.xAxisType == degree.name()
-                        || xyp.yAxisType == ModelAxisType.depth.name()
-                        || xyp.yAxisType == ModelAxisType.radius.name()
+            if ( ! (Objects.equals(xyp.xAxisType, radian.name())
+                        || Objects.equals(xyp.xAxisType, degree180.name())
+                        || Objects.equals(xyp.xAxisType, degree.name())
+                        || Objects.equals(xyp.yAxisType, ModelAxisType.depth.name())
+                        || Objects.equals(xyp.yAxisType, ModelAxisType.radius.name())
                 )) {
                 throw new TauPException("Unable to convert to cartesian for axis: "+xyp.xAxisType+" "+xyp.yAxisType);
             }
@@ -289,15 +289,16 @@ public class XYPlotOutput {
                 double[] yVal = new double[xVal.length];
                 for (int i = 0; i < xVal.length; i++) {
                     double radian = 0;
-                    if (xyp.xAxisType == AxisType.radian.name()) {
+                    if (Objects.equals(xyp.xAxisType, AxisType.radian.name())) {
                         radian = seg.x[i]-Math.PI/2;
-                    } else if (xyp.xAxisType == degree.name() || xyp.xAxisType == degree180.name()) {
+                    } else if (Objects.equals(xyp.xAxisType, degree.name())
+                            || Objects.equals(xyp.xAxisType, degree180.name())) {
                         radian = (seg.x[i]-90)*Math.PI/180;
                     }
                     double radius = 0;
-                    if (xyp.yAxisType == ModelAxisType.depth.name()) {
+                    if (Objects.equals(xyp.yAxisType, ModelAxisType.depth.name())) {
                         radius = modelArgs.getTauModel().getRadiusOfEarth()-seg.y[i];
-                    } else if (xyp.yAxisType == ModelAxisType.radius.name()) {
+                    } else if (Objects.equals(xyp.yAxisType, ModelAxisType.radius.name())) {
                         radius = seg.y[i];
                     }
                     xVal[i] = radius*Math.cos(radian);

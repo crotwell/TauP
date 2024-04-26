@@ -59,7 +59,7 @@ public class XYPlottingData {
 
     public String createCSSClassParam() {
         String cssClassParam = "";
-        if (cssClasses != null && cssClasses.size()>0){
+        if (cssClasses != null && !cssClasses.isEmpty()){
             cssClassParam = "";
             for (String s : cssClasses) {
                 cssClassParam += " " + s;
@@ -117,5 +117,5 @@ public class XYPlottingData {
 
     public final String description;
 
-    public List<String> cssClasses = new ArrayList<>();
+    public List<String> cssClasses;
 }

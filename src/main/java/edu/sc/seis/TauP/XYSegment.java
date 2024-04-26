@@ -26,8 +26,7 @@ public class XYSegment {
         for (int j = 0; j < yData.size(); j++) {
             vals[j] = yData.get(j);
         }
-        XYSegment seg = new XYSegment(rp, vals);
-        return seg;
+        return new XYSegment(rp, vals);
     }
 
     public static List<XYSegment> createFromLists(List<double[]> xData, List<double[]> yData) {
@@ -61,8 +60,7 @@ public class XYSegment {
                 }
             }
         }
-        double[] out = new double[] { minX, maxX, minY, maxY};
-        return out;
+        return new double[] { minX, maxX, minY, maxY};
     }
 
     public double[] minMaxInXRange(double[] priorMinMax, double[] xRange) {
@@ -87,8 +85,7 @@ public class XYSegment {
                 if (y[i] > maxY) {maxY = y[i];}
             }
         }
-        double[] out = new double[] { xRange[0], xRange[1], minY, maxY};
-        return out;
+        return new double[] { xRange[0], xRange[1], minY, maxY};
     }
 
 
@@ -153,14 +150,14 @@ public class XYSegment {
     public void asSVG(PrintWriter writer, String css_class, String xFormat, String yFormat) {
 
         String cssClassParam = ""+css_class;
-        if (cssClasses != null && cssClasses.size()>0){
+        if (cssClasses != null && !cssClasses.isEmpty()){
             cssClassParam = "";
             for (String s : cssClasses) {
                 cssClassParam += " " + s;
             }
         }
         cssClassParam = cssClassParam.trim();
-        if (cssClassParam.length() > 0) {
+        if (!cssClassParam.isEmpty()) {
             cssClassParam = "class=\""+cssClassParam+"\"";
         }
         writer.println("  <g>");

@@ -39,13 +39,13 @@ import java.util.Objects;
  */
 public class TimeDist implements Cloneable {
 
-    private double p;
+    private final double p;
 
-    private double depth;
+    private final double depth;
 
-    private double time;
+    private final double time;
 
-    private double distRadian;
+    private final double distRadian;
 
     public TimeDist() {
         this.p = 0;
@@ -90,9 +90,8 @@ public class TimeDist implements Cloneable {
     }
 
     public String toString() {
-        String desc = "p= " + p + " time=" + time + " dist=" +getDistDeg()+"("+distRadian+" rad) depth="
+        return "p= " + p + " time=" + time + " dist=" +getDistDeg()+"("+distRadian+" rad) depth="
                 + depth;
-        return desc;
     }
 
     
