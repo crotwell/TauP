@@ -89,6 +89,32 @@ public class XYSegment {
     }
 
 
+    public double[] minMaxInYRange(double[] priorMinMax, double[] yRange) {
+        double minX = priorMinMax[0];
+        double maxX = priorMinMax[1];
+        double minY = priorMinMax[2];
+        double maxY = priorMinMax[3];
+        for (int i = 0; i < x.length; i++) {
+            if (i > 0) {
+                for (int j = 0; j < 2; j++) {
+                    if ((y[i-1] < yRange[j] && yRange[j] < y[i]) || (yRange[j] > y[i] && y[i-1] > yRange[j] )) {
+                        // crosses y boundary
+                        double interp = TauP_AbstractPhaseTool.linearInterp(y[i-1], x[i-1], y[i], x[i], yRange[j]);
+                        if (interp < minX) { minX = interp;}
+                        if (interp > maxX) {maxX = interp;}
+                    }
+                }
+            }
+            if ((y[i] - yRange[0])*(y[i]-yRange[1]) < 0) {
+                // point inside xRange
+                if (x[i] < minX) { minX = x[i];}
+                if (x[i] > maxX) {maxX = x[i];}
+            }
+        }
+        return new double[] { minX, maxX, yRange[0], yRange[1]};
+    }
+
+
     public XYSegment recalcForAbs(boolean xAxisAbs, boolean yAxisAbs) {
         double[] outX = new double[x.length];
         double[] outY = new double[y.length];

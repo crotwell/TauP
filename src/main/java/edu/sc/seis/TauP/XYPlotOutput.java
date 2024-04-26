@@ -156,6 +156,9 @@ public class XYPlotOutput {
             if (xAxisMinMax.length == 2 && yAxisMinMax.length == 0) {
                 // given x range, find y range
                 minmax = xyplot.minMaxInXRange(minmax, xAxisMinMax);
+            } else if (xAxisMinMax.length == 0 && yAxisMinMax.length == 2) {
+                // given x range, find y range
+                minmax = xyplot.minMaxInYRange(minmax, yAxisMinMax);
             } else {
                 minmax = xyplot.minMax(minmax);
             }

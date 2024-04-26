@@ -6,7 +6,7 @@
       <command>xyplotoutput </command>
       <version>3.0.0-SNAPSHOT4</version>
       <a href="https://github.com/crotwell/TauP">https://github.com/crotwell/TauP</a>
-    <minmax xmin="0.0" xmax="13.6602" ymin="0.0" ymax="700.0" />
+    <minmax xmin="3.46" xmax="10.89632" ymin="0.0" ymax="700.0" />
     </taup>
   </metadata>
   <defs>
@@ -252,39 +252,25 @@ circle.discontinuity.iocb {
 <g> <!-- x axis -->
 <text class="xlabel" font-size="14" x="260.0" y="556.4">velocity</text>
 <line class="tick" x1="0" y1="520.0" x2="520.0" y2="520.0" />
-<text class="xtick" font-size="12" x="0.0" y="542.0">0.0</text>
-<line class="tick" x1="0.0" y1="520.0" x2="0.0" y2="530.0" />
-<text class="xtick" font-size="12" x="38.06679257990366" y="542.0">1.0</text>
-<line class="tick" x1="38.06679257990366" y1="520.0" x2="38.06679257990366" y2="530.0" />
-<text class="xtick" font-size="12" x="76.13358515980732" y="542.0">2.0</text>
-<line class="tick" x1="76.13358515980732" y1="520.0" x2="76.13358515980732" y2="530.0" />
-<text class="xtick" font-size="12" x="114.20037773971099" y="542.0">3.0</text>
-<line class="tick" x1="114.20037773971099" y1="520.0" x2="114.20037773971099" y2="530.0" />
-<text class="xtick" font-size="12" x="152.26717031961465" y="542.0">4.0</text>
-<line class="tick" x1="152.26717031961465" y1="520.0" x2="152.26717031961465" y2="530.0" />
-<text class="xtick" font-size="12" x="190.3339628995183" y="542.0">5.0</text>
-<line class="tick" x1="190.3339628995183" y1="520.0" x2="190.3339628995183" y2="530.0" />
-<text class="xtick" font-size="12" x="228.40075547942197" y="542.0">6.0</text>
-<line class="tick" x1="228.40075547942197" y1="520.0" x2="228.40075547942197" y2="530.0" />
-<text class="xtick" font-size="12" x="266.4675480593257" y="542.0">7.0</text>
-<line class="tick" x1="266.4675480593257" y1="520.0" x2="266.4675480593257" y2="530.0" />
-<text class="xtick" font-size="12" x="304.5343406392293" y="542.0">8.0</text>
-<line class="tick" x1="304.5343406392293" y1="520.0" x2="304.5343406392293" y2="530.0" />
-<text class="xtick" font-size="12" x="342.601133219133" y="542.0">9.0</text>
-<line class="tick" x1="342.601133219133" y1="520.0" x2="342.601133219133" y2="530.0" />
-<text class="xtick" font-size="12" x="380.6679257990366" y="542.0">10.0</text>
-<line class="tick" x1="380.6679257990366" y1="520.0" x2="380.6679257990366" y2="530.0" />
-<text class="xtick" font-size="12" x="418.73471837894033" y="542.0">11.0</text>
-<line class="tick" x1="418.73471837894033" y1="520.0" x2="418.73471837894033" y2="530.0" />
-<text class="xtick" font-size="12" x="456.80151095884395" y="542.0">12.0</text>
-<line class="tick" x1="456.80151095884395" y1="520.0" x2="456.80151095884395" y2="530.0" />
-<text class="xtick" font-size="12" x="494.8683035387476" y="542.0">13.0</text>
-<line class="tick" x1="494.8683035387476" y1="520.0" x2="494.8683035387476" y2="530.0" />
+<text class="xtick" font-size="12" x="37.76061277621189" y="542.0">4.0</text>
+<line class="tick" x1="37.76061277621189" y1="520.0" x2="37.76061277621189" y2="530.0" />
+<text class="xtick" font-size="12" x="107.68767347290058" y="542.0">5.0</text>
+<line class="tick" x1="107.68767347290058" y1="520.0" x2="107.68767347290058" y2="530.0" />
+<text class="xtick" font-size="12" x="177.6147341695893" y="542.0">6.0</text>
+<line class="tick" x1="177.6147341695893" y1="520.0" x2="177.6147341695893" y2="530.0" />
+<text class="xtick" font-size="12" x="247.54179486627797" y="542.0">7.0</text>
+<line class="tick" x1="247.54179486627797" y1="520.0" x2="247.54179486627797" y2="530.0" />
+<text class="xtick" font-size="12" x="317.4688555629666" y="542.0">8.0</text>
+<line class="tick" x1="317.4688555629666" y1="520.0" x2="317.4688555629666" y2="530.0" />
+<text class="xtick" font-size="12" x="387.39591625965534" y="542.0">9.0</text>
+<line class="tick" x1="387.39591625965534" y1="520.0" x2="387.39591625965534" y2="530.0" />
+<text class="xtick" font-size="12" x="457.32297695634406" y="542.0">10.0</text>
+<line class="tick" x1="457.32297695634406" y1="520.0" x2="457.32297695634406" y2="530.0" />
 </g> <!-- x axis end-->
 <g clip-path="url(#curve_clip)">
 <g transform="scale(1,-1) translate(0, -520.0)">
-<g transform="scale(38.06679257990366,0.7428571428571429)" >
-<g transform="translate(-0.0, -0.0)">
+<g transform="scale(69.92706069668868,0.7428571428571429)" >
+<g transform="translate(-3.46, -0.0)">
     <g class="autocolor">
 <g transform="scale(1,-1) translate(0.0, -700.0)" > <!-- invert axis -->
     <g class="pwave" tauplabel="ak135 P Vel. / Depth"  >

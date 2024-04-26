@@ -47,6 +47,14 @@ public class XYPlottingData {
         return priorMinMax;
     }
 
+    public double[] minMaxInYRange(double[] priorMinMax, double[] yRange) {
+        for (XYSegment segment : segmentList) {
+            priorMinMax = segment.minMaxInYRange(priorMinMax, yRange);
+        }
+        return priorMinMax;
+    }
+
+
     public XYPlottingData recalcForAbs(boolean xAxisAbs, boolean yAxisAbs) {
         List<XYSegment> out = new ArrayList<>();
         for (XYSegment segment : segmentList) {
