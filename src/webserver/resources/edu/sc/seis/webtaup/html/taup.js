@@ -242,6 +242,12 @@ export function form_url() {
     }
     url += distparam;
   }
+  if (toolname === "time") {
+    let isAmplitude = document.querySelector('input[name="amplitude"]').checked;
+    if (isAmplitude) {
+      url += `&amp=true`;
+    }
+  }
   if (toolname !== "velplot" && toolname !== "refltrans"){
     if (stadepth !== 0) {
       url += `&stadepth=${stadepth}`;
