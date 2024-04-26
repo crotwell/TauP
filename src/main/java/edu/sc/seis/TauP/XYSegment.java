@@ -89,6 +89,16 @@ public class XYSegment {
     }
 
 
+    public XYSegment recalcForAbs(boolean xAxisAbs, boolean yAxisAbs) {
+        double[] outX = new double[x.length];
+        double[] outY = new double[y.length];
+        for (int i = 0; i < x.length; i++) {
+            outX[i] = xAxisAbs ? Math.abs(Math.abs(x[i])) : x[i];
+            outY[i] = yAxisAbs ? Math.abs(Math.abs(y[i])) : y[i];
+        }
+        return new XYSegment(outX, outY);
+    }
+
     public List<XYSegment> recalcForLog(boolean xAxisLog, boolean yAxisLog) {
         List<XYSegment> out = new ArrayList<>();
         double[] outX = new double[x.length];

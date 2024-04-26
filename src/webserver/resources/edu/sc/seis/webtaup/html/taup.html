@@ -13,8 +13,8 @@
         max-height: 80vh;
       }
       #results svg {
-        width: 50%;
-        height: 50%;
+        width: 75%;
+        height: 75%;
       }
       input[type="text"].biginput {
         width: 200px;
@@ -63,10 +63,10 @@
     </fieldset>
 
     <fieldset class="phase_depth">
-        <label for="phases">
-            <span><a href="doc/phaseNaming.html" target="_blank">Phases:</a> </span>
+        <label for="phase">
+            <span><a href="doc/phaseNaming.html" target="_blank">Phase:</a> </span>
         </label>
-        <input class="biginput" type="text" id="phases" name="phases" value="P,S"  />
+        <input class="biginput" type="text" id="phase" name="phase" value="P,S"  />
 
         <label for="evdepth">
             <span>Source Depth (km): </span>
@@ -126,9 +126,18 @@
         <div>
           <input type="radio" id="isshootraydist" name="disttype" value="isshootraydist" />
           <label for="shootray">
-              <span>Shoot Ray (s/deg): </span>
+              <span>Ray Param: </span>
           </label>
           <input type="text" id="shootray" name="shootray" value="0" />
+
+          <label for="isshootraydeg">
+              <span>(s/deg): </span>
+          </label>
+          <input type="radio" id="isshootraydeg" name="shootrayunit" value="isshootraydeg" checked />
+          <label for="isshootraykm">
+              <span>(s/km): </span>
+          </label>
+          <input type="radio" id="isshootraykm" name="shootrayunit" value="isshootraykm" />
         </div>
     </fieldset>
 
@@ -288,12 +297,12 @@
         <input type="radio" name="format" id="format_gmt" value="gmt" />
         <label for="format_gmt">GMT</label>
     </fieldset>
-    <fieldset class="xy">
-        <legend>XY Plotting:</legend>
+    <fieldset class="tool_curve">
+        <legend>Curve:</legend>
         <div>
             <label for="xaxis">X Axis</label>
             <select name="xaxis" id="xaxis">
-                <option value="degree_180">Distance in Degrees, mod 180</option>
+                <option value="degree180">Distance in Degrees, mod 180</option>
                 <option value="degree">Distance in Degrees</option>
                 <option value="kilometer">Distance in Kilometers</option>
                 <option value="radian_pi">Distance in Radians, mod pi</option>
@@ -328,11 +337,15 @@
                 <span>Log: </span>
             </label>
             <input type="checkbox" id="xaxislog" name="xaxislog"  />
+            <label for="xaxisabs">
+                <span>Abs: </span>
+            </label>
+            <input type="checkbox" id="xaxisabs" name="xaxisabs"  />
         </div>
         <div>
             <label for="yaxis">Y Axis</label>
             <select name="yaxis" id="yaxis">
-                <option value="degree_180">Distance in Degrees, mod 180</option>
+                <option value="degree180">Distance in Degrees, mod 180</option>
                 <option value="degree">Distance in Degrees</option>
                 <option value="kilometer">Distance in Kilometers</option>
                 <option value="radian_pi">Distance in Radians, mod pi</option>
@@ -366,6 +379,106 @@
                 <span>Log: </span>
             </label>
             <input type="checkbox" id="yaxislog" name="yaxislog"  />
+            <label for="yaxisabs">
+                <span>Abs: </span>
+            </label>
+            <input type="checkbox" id="yaxisabs" name="yaxisabs"  />
+        </div>
+        <div>
+          <label for="legend">
+              <span>Legend: </span>
+          </label>
+          <input type="checkbox" id="legend" name="legend"  />
+        </div>
+
+    </fieldset>
+    <fieldset class="tool_velplot">
+        <legend>Velocity Model:</legend>
+        <div>
+            <label for="velplotxaxis">X Axis</label>
+            <select name="xaxis" id="velplotxaxis">
+                <option value="depth">Depth</option>
+                <option value="radius">Radius</option>
+                <option value="velocity">P and S Velocity</option>
+                <option value="velocity_p">P Velocity</option>
+                <option value="velocity_s">S Velocity</option>
+                <option value="slowness">P and S Slowness</option>
+                <option value="slowness_p">P Slowness</option>
+                <option value="slowness_s">S Slowness</option>
+                <option value="density">Density</option>
+                <option value="velocity_density" selected>P and S Velocity and Density</option>
+                <option value="attenuation">Attenuation</option>
+                <option value="attenuation_p">P Attenuation</option>
+                <option value="attenuation_s">S Attenuation</option>
+                <option value="poisson">Poisson's Ratio, 𝛎</option>
+                <option value="shearmodulus">Shear Modulus, 𝛍</option>
+                <option value="lambda">Lambda Lamé Parameter, 𝛌</option>
+                <option value="bulkmodulus">Bulk Modulus, 𝛫</option>
+                <option value="youngsmodulus">Young's Modulus, 𝚬</option>
+            </select>
+
+            <input type="checkbox" id="velplotxminmaxauto" name="velplotxminmaxauto" checked />
+            <label for="velplotxminmaxauto">
+                <span>Auto-range: </span>
+            </label>
+            <label for="velplotxmin">
+                <span>Min: </span>
+            </label>
+            <input type="number" id="velplotxmin" name="velplotxmin" value="0" />
+            <label for="velplotxmax">
+                <span>Max: </span>
+            </label>
+            <input type="number" id="velplotxmax" name="velplotxmax" value="0" />
+
+            <label for="velplotxaxislog">
+                <span>Log: </span>
+            </label>
+            <input type="checkbox" id="velplotxaxislog" name="velplotxaxislog"  />
+        </div>
+        <div>
+            <label for="velplotyaxis">Y Axis</label>
+            <select name="velplotyaxis" id="velplotyaxis">
+                <option value="depth"  selected>Depth</option>
+                <option value="radius">Radius</option>
+                <option value="velocity">P and S Velocity</option>
+                <option value="velocity_p">P Velocity</option>
+                <option value="velocity_s">S Velocity</option>
+                <option value="slowness">P and S Slowness</option>
+                <option value="slowness_p">P Slowness</option>
+                <option value="slowness_s">S Slowness</option>
+                <option value="density">Density</option>
+                <option value="velocity_density">P and S Velocity and Density</option>
+                <option value="attenuation">Attenuation</option>
+                <option value="attenuation_p">P Attenuation</option>
+                <option value="attenuation_s">S Attenuation</option>
+                <option value="poisson">Poisson's Ratio, 𝛎</option>
+                <option value="shearmodulus">Shear Modulus, 𝛍</option>
+                <option value="lambda">Lamé's First Parameter, 𝛌</option>
+                <option value="bulkmodulus">Bulk Modulus, 𝛫</option>
+                <option value="youngsmodulus">Young's Modulus, 𝚬</option>
+            </select>
+            <input type="checkbox" id="velplotyminmaxauto" name="velplotyminmaxauto" checked />
+            <label for="velplotyminmaxauto">
+                <span>Auto-range: </span>
+            </label>
+            <label for="velplotymin">
+                <span>Min: </span>
+            </label>
+            <input type="number" id="velplotymin" name="velplotymin" value="0" />
+            <label for="velplotymax">
+                <span>Max: </span>
+            </label>
+            <input type="number" id="velplotymax" name="velplotymax" value="0" />
+            <label for="velplotyaxislog">
+                <span>Log: </span>
+            </label>
+            <input type="checkbox" id="velplotyaxislog" name="velplotyaxislog"  />
+        </div>
+        <div>
+          <label for="legend">
+              <span>Legend: </span>
+          </label>
+          <input type="checkbox" id="legend" name="legend" checked />
         </div>
 
     </fieldset>
@@ -384,9 +497,6 @@
         <input type="radio" name="tool" id="tool_curve" value="curve" />
         <label for="tool_curve">
             <a href="doc/taup_curve.html" target="_blank">Curve</a></label>
-        <input type="radio" name="tool" id="tool_xy" value="xy" />
-        <label for="tool_xy">
-            <a href="doc/taup_xy.html" target="_blank">XY</a></label>
         <input type="radio" name="tool" id="tool_wavefront" value="wavefront" />
         <label for="tool_wavefront">
           <a href="doc/taup_wavefront.html" target="_blank">Wavefront</a></label>
@@ -396,9 +506,6 @@
         <input type="radio" name="tool" id="tool_velplot" value="velplot" />
         <label for="tool_velplot">
           <a href="doc/taup_velplot.html" target="_blank">Vel Model</a></label>
-        <input type="radio" name="tool" id="tool_slow" value="slowplot" />
-        <label for="tool_slow">
-          <a href="doc/taup_slowplot.html" target="_blank">Slow Model</a></label>
         <input type="radio" name="tool" id="tool_refltrans" value="refltrans" />
         <label for="tool_refltrans">
           <a href="doc/taup_refltrans.html" target="_blank">Refl Trans</a></label>

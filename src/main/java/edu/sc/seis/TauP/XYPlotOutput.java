@@ -50,6 +50,15 @@ public class XYPlotOutput {
         }
     }
 
+    protected static List<XYPlottingData> recalcForAbs(List<XYPlottingData> xy, boolean xAxisAbs, boolean yAxisAbs) {
+        List<XYPlottingData> out = new ArrayList<>();
+        for(XYPlottingData xyp : xy) {
+            out.add( xyp.recalcForAbs(xAxisAbs, yAxisAbs));
+        }
+        return out;
+    }
+
+
     protected static List<XYPlottingData> recalcForLog(List<XYPlottingData> xy, boolean xAxisLog, boolean yAxisLog) {
         List<XYPlottingData> out = new ArrayList<>();
         for(XYPlottingData xyp : xy) {

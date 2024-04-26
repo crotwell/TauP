@@ -66,6 +66,9 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
         if (isReduceTime()) {
             xy = reduce(xy);
         }
+        if (isxAxisAbs() || isyAxisAbs()) {
+            xy = XYPlotOutput.recalcForAbs(xy, isxAxisAbs(), isyAxisAbs());
+        }
         if (isxAxisLog() || isyAxisLog()) {
             xy = XYPlotOutput.recalcForLog(xy, isxAxisLog(), isyAxisLog());
         }
@@ -414,7 +417,7 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
         return xAxisType;
     }
 
-    @CommandLine.Option(names = "-x", description = "X axis data type, one of ${COMPLETION-CANDIDATES}", defaultValue = "degree180")
+    @CommandLine.Option(names = {"-x", "--xaxis"}, description = "X axis data type, one of ${COMPLETION-CANDIDATES}", defaultValue = "degree180")
     public void setxAxisType(AxisType xAxisType) {
         this.xAxisType = xAxisType;
     }
@@ -423,7 +426,7 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
         return yAxisType;
     }
 
-    @CommandLine.Option(names = "-y", description = "Y axis data type, one of ${COMPLETION-CANDIDATES}", defaultValue = "time")
+    @CommandLine.Option(names = {"-y", "--yaxis"}, description = "Y axis data type, one of ${COMPLETION-CANDIDATES}", defaultValue = "time")
     public void setyAxisType(AxisType yAxisType) {
         this.yAxisType = yAxisType;
     }
@@ -450,6 +453,24 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
             description = "min and max y axis for plotting")
     public void setyAxisMinMax(double[] yAxisMinMax) {
         this.yAxisMinMax = yAxisMinMax;
+    }
+
+    public boolean isxAxisAbs() {
+        return xAxisAbs;
+    }
+
+    @CommandLine.Option(names = "--xabs", description = "X axis is absolute value")
+    public void setxAxisAbs(boolean xAxisAbs) {
+        this.xAxisAbs = xAxisAbs;
+    }
+
+    public boolean isyAxisAbs() {
+        return yAxisAbs;
+    }
+
+    @CommandLine.Option(names = "--yabs", description = "Y axis is absolute value")
+    public void setyAxisAbs(boolean yAxisAbs) {
+        this.yAxisAbs = yAxisAbs;
     }
 
     public boolean isxAxisLog() {
@@ -570,6 +591,8 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
     protected AxisType xAxisType = AxisType.degree;
     protected AxisType yAxisType = AxisType.time;
 
+    protected boolean xAxisAbs = false;
+    protected boolean yAxisAbs = false;
     protected boolean xAxisLog = false;
     protected boolean yAxisLog = false;
 

@@ -47,6 +47,16 @@ public class XYPlottingData {
         return priorMinMax;
     }
 
+    public XYPlottingData recalcForAbs(boolean xAxisAbs, boolean yAxisAbs) {
+        List<XYSegment> out = new ArrayList<>();
+        for (XYSegment segment : segmentList) {
+            out.add(segment.recalcForAbs(xAxisAbs, yAxisAbs));
+        }
+        String xAxis = xAxisAbs ? "abs "+xAxisType : xAxisType;
+        String yAxis = yAxisAbs ? "abs "+yAxisType : yAxisType;
+        return new XYPlottingData(out, xAxis, yAxis, label, cssClasses);
+    }
+
     public XYPlottingData recalcForLog(boolean xAxisLog, boolean yAxisLog) {
         List<XYSegment> out = new ArrayList<>();
         for (XYSegment segment : segmentList) {

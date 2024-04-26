@@ -34,7 +34,7 @@ export function valid_format(tool) {
       format = "svg";
     }
   } else if (format === "text" || format === "json") {
-    if ( tool === "curve" || tool === "wavefront" ) {
+    if ( tool === "curve" || tool === "wavefront" || tool === "velplot") {
       format = "svg";
     }
   }
@@ -117,7 +117,7 @@ export async function display_results(taup_url) {
         }
       });
     } else if (format === "ms3") {
-      console.log("miniseed3 format disabled"); 
+      console.log("miniseed3 format disabled");
 
       // return response.arrayBuffer().then(rawBuffer => {
       //   const dataRecords = sp.mseed3.parseMSeed3Records(rawBuffer);
@@ -165,7 +165,7 @@ export function form_url() {
   let toolname = getToolName();
   const modelSel = document.querySelector('input[name="model"]:checked');
   let model = modelSel ? modelSel.value : "iasp91";
-  let phases = document.querySelector('input[name="phases"]').value;
+  let phase = document.querySelector('input[name="phase"]').value;
   let evdepth = document.querySelector('input[name="evdepth"]').value;
   let stadepth = document.querySelector('input[name="stadepth"]').value;
 
@@ -197,10 +197,9 @@ export function form_url() {
     url = `${toolname}?`;
   }
   if (toolname !== "velplot" && toolname !== "refltrans") {
-    url += `&phase=${phases}`;
+    url += `&phase=${phase}`;
   }
   if (toolname !== "velplot" && toolname !== "curve"
-      && toolname !== "xy"
       && toolname !== "wavefront"  && toolname !== "phase"
       && toolname !== "refltrans") {
     let distparam;
@@ -224,13 +223,22 @@ export function form_url() {
       let evlo = document.querySelector('input[name="eventlon"]').value;
       let stla = document.querySelector('input[name="stationlat"]').value;
       let stlo = document.querySelector('input[name="stationlon"]').value;
-      distparam = `&evloc=[${evla},${evlo}]&staloc=[${stla},${stlo}]`;
+      distparam = `&event=${evla},${evlo}&station=${stla},${stlo}`;
     } else if (disttype === "istakeoffdist") {
       let takeoffangle = document.querySelector('input[name="takeoffangle"]').value;
       distparam = `&takeoff=${takeoffangle}`;
     } else if (disttype === "isshootraydist") {
       let shootray = document.querySelector('input[name="shootray"]').value;
-      distparam = `&shootray=${shootray}`;
+      const shootrayunitSel = document.querySelector('input[name="shootrayunit"]:checked');
+      let shootrayunit = shootrayunitSel ? shootrayunitSel.value : "isshootraydeg";
+
+      if (shootrayunit === "isshootraydeg") {
+        distparam = `&rayparamdeg=${shootray}`;
+      } else if (shootrayunit === "isshootraykm") {
+        distparam = `&rayparamkm=${shootray}`;
+      } else {
+        distparam = shootrayunit;
+      }
     }
     url += distparam;
   }
@@ -242,28 +250,71 @@ export function form_url() {
       url += `&scatter=${scatdepth},${scatdist}`;
     }
   }
-  if (toolname === "xy") {
+  if (toolname === "curve") {
     url += `&xaxis=${xaxis}&yaxis=${yaxis}`;
 
     let xautorange = document.querySelector('input[name="xminmaxauto"]').checked;
     if ( ! xautorange) {
         let xmin = document.querySelector('input[name="xmin"]').value;
         let xmax = document.querySelector('input[name="xmax"]').value;
-        url += `&xminmax=[${xmin},${xmax}]`;
+        url += `&xminmax=${xmin},${xmax}`;
     }
     let xaxislog = document.querySelector('input[name="xaxislog"]').checked;
     if (xaxislog) {
-      url += `&xaxislog=true`;
+      url += `&xlog=true`;
+    }
+    let xaxisabs = document.querySelector('input[name="xaxisabs"]').checked;
+    if (xaxisabs) {
+      url += `&xabs=true`;
     }
     let yautorange = document.querySelector('input[name="yminmaxauto"]').checked;
     if ( ! yautorange) {
         let ymin = document.querySelector('input[name="ymin"]').value;
         let ymax = document.querySelector('input[name="ymax"]').value;
-        url += `&yminmax=[${ymin},${ymax}]`;
+        url += `&yminmax=${ymin},${ymax}`;
     }
     let yaxislog = document.querySelector('input[name="yaxislog"]').checked;
     if (yaxislog) {
-      url += `&yaxislog=true`;
+      url += `&ylog=true`;
+    }
+    let yaxisabs = document.querySelector('input[name="yaxisabs"]').checked;
+    if (yaxisabs) {
+      url += `&yabs=true`;
+    }
+    let isLegend = document.querySelector('input[name="legend"]').checked;
+    if (isLegend) {
+      url += `&legend=true`;
+    }
+  }
+  if (toolname === "velplot") {
+
+    let xaxis = document.querySelector('#velplotxaxis').value;
+    let yaxis = document.querySelector('#velplotyaxis').value;
+    url += `&xaxis=${xaxis}&yaxis=${yaxis}`;
+
+    let xautorange = document.querySelector('input[name="velplotxminmaxauto"]').checked;
+    if ( ! xautorange) {
+        let xmin = document.querySelector('input[name="velplotxmin"]').value;
+        let xmax = document.querySelector('input[name="velplotxmax"]').value;
+        url += `&xminmax=${xmin},${xmax}`;
+    }
+    let xaxislog = document.querySelector('input[name="velplotxaxislog"]').checked;
+    if (xaxislog) {
+      url += `&xlog=true`;
+    }
+    let yautorange = document.querySelector('input[name="velplotyminmaxauto"]').checked;
+    if ( ! yautorange) {
+        let ymin = document.querySelector('input[name="velplotymin"]').value;
+        let ymax = document.querySelector('input[name="velplotymax"]').value;
+        url += `&yminmax=${ymin},${ymax}`;
+    }
+    let yaxislog = document.querySelector('input[name="velplotyaxislog"]').checked;
+    if (yaxislog) {
+      url += `&ylog=true`;
+    }
+    let isLegend = document.querySelector('input[name="legend"]').checked;
+    if (isLegend) {
+      url += `&legend=true`;
     }
   }
   if (toolname === "pierce") {
@@ -389,7 +440,7 @@ export function enableParams(tool) {
         color: lightgrey;
       }
     `;
-  } else if (tool === "wavefront" || tool === "curve") {
+  } else if (tool === "wavefront" || tool === "curve" || tool === "velplot") {
     document.querySelector(`input[name="format"][value="text"]`).setAttribute("disabled", "disabled");
     document.querySelector(`input[name="format"][value="json"]`).setAttribute("disabled", "disabled");
     document.querySelector(`input[name="format"][value="svg"]`).removeAttribute("disabled");
@@ -425,7 +476,7 @@ export function enableParams(tool) {
     document.querySelector(`input[name="format"][value="svg"]`).removeAttribute("disabled");
     document.querySelector(`input[name="format"][value="gmt"]`).removeAttribute("disabled");
   }
-  if ( ! (tool === "time" || tool === "pierce" || tool == "path" || tool == "wkbj" || tool == "xy")) {
+  if ( ! (tool === "time" || tool === "pierce" || tool == "path" || tool == "wkbj" || tool == "curve")) {
     styleStr += `
       .tool_time {
         display: none;
@@ -435,6 +486,20 @@ export function enableParams(tool) {
   if ( tool !== "pierce" ) {
     styleStr += `
       .tool_pierce {
+        display: none;
+      }
+    `;
+  }
+  if ( tool !== "curve" ) {
+    styleStr += `
+      .tool_curve {
+        display: none;
+      }
+    `;
+  }
+  if ( tool !== "velplot" ) {
+    styleStr += `
+      .tool_velplot {
         display: none;
       }
     `;

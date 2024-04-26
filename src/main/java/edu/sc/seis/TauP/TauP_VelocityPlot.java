@@ -498,7 +498,7 @@ public class TauP_VelocityPlot extends TauP_Tool {
         return xAxisType;
     }
 
-    @CommandLine.Option(names = "-x", description = "X axis data type, one of ${COMPLETION-CANDIDATES}", defaultValue = "velocity")
+    @CommandLine.Option(names = {"-x", "--xaxis"}, description = "X axis data type, one of ${COMPLETION-CANDIDATES}", defaultValue = "velocity")
     public void setxAxisType(ModelAxisType xAxisType) {
         this.xAxisType = xAxisType;
     }
@@ -507,7 +507,7 @@ public class TauP_VelocityPlot extends TauP_Tool {
         return yAxisType;
     }
 
-    @CommandLine.Option(names = "-y", description = "Y axis data type, one of ${COMPLETION-CANDIDATES}", defaultValue = "depth")
+    @CommandLine.Option(names = {"-y", "--yaxis"}, description = "Y axis data type, one of ${COMPLETION-CANDIDATES}", defaultValue = "depth")
     public void setyAxisType(ModelAxisType yAxisType) {
         this.yAxisType = yAxisType;
     }
