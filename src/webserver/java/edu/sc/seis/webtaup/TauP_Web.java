@@ -144,16 +144,13 @@ public class TauP_Web extends TauP_Tool {
                 if (qpList.size() == 1 && qpList.getFirst().equalsIgnoreCase("true")) {
                     // skip as just a flag
                 } else {
-                    System.err.println(qp+" '"+op.splitRegex()+"'");
                     if (op.splitRegex().trim().isEmpty()) {
-                        // default split is whitespace
-                        System.err.print(qp+" ");
+                        // default split is whitespace, so split on comma
                         for (String p : qpList) {
-                            System.err.print(p);
                             out.addAll(Arrays.asList(p.split(",")));
                         }
-                        System.err.println();
                     } else {
+                        // add as is and let picocli handle comma splitting
                         out.addAll(queryParams.get(qp));
                     }
                 }
