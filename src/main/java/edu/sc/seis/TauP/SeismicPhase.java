@@ -74,8 +74,6 @@ public interface SeismicPhase extends Serializable, Cloneable {
 
     boolean[] getWaveType();
 
-    List<PhaseInteraction> getLegAction();
-
     boolean hasArrivals();
 
     static double distanceTrim180(double deg) {

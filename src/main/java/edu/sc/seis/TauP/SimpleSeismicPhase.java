@@ -126,14 +126,6 @@ public class SimpleSeismicPhase implements SeismicPhase {
     protected List<SeismicPhaseSegment> segmentList;
 
     /**
-     * records the end action for the current leg. Will be one of
-     * SeismicPhase.TURN, SeismicPhase.TRANSDOWN, SeismicPhase.TRANSUP,
-     * SeismicPhase.REFLECTBOT, or SeismicPhase.REFLECTTOP. This allows a check
-     * to make sure the path is correct. Used in addToBranch() and parseName().
-     */
-    protected List<PhaseInteraction> legAction;
-
-    /**
      * true if the current leg of the phase is down going. This allows a check
      * to make sure the path is correct. Used in addToBranch() and parseName().
      */
@@ -173,7 +165,6 @@ public class SimpleSeismicPhase implements SeismicPhase {
                               List<Integer> branchSeq,
                               List<Integer> headOrDiffractSeq,
                               List<SeismicPhaseSegment> segmentList,
-                              List<PhaseInteraction> legAction,
                               List<Boolean> downGoing,
                               List<Boolean> waveType,
                               boolean debug) throws TauModelException {
@@ -196,7 +187,6 @@ public class SimpleSeismicPhase implements SeismicPhase {
         this.branchSeq = branchSeq;
         this.headOrDiffractSeq = headOrDiffractSeq;
         this.segmentList = segmentList;
-        this.legAction = legAction;
         this.downGoing = downGoing;
         this.waveType = waveType;
 
@@ -374,15 +364,6 @@ public class SimpleSeismicPhase implements SeismicPhase {
             out[i] = b[i];
         }
         return out;
-    }
-
-    /**
-     * Leg type i layer interaction, one of TURN, REFLECTTOP, REFLECTBOT,
-     * TRANSUP, TRANSDOWN
-     */
-    @Override
-    public List<PhaseInteraction> getLegAction() {
-        return legAction;
     }
 
     @Override

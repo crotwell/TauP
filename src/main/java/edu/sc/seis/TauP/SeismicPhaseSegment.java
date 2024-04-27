@@ -16,6 +16,9 @@ public class SeismicPhaseSegment {
     boolean isFlat = false;
     double flatFractionOfPath = 1.0;
     String legName;
+
+	double minRayParam;
+	double maxRayParam;
     
 	public SeismicPhaseSegment(TauModel tMod,
 			                   int startBranch,
@@ -23,7 +26,9 @@ public class SeismicPhaseSegment {
                                boolean isPWave,
                                PhaseInteraction endAction,
                                boolean isDownGoing,
-                               String legName) {
+                               String legName,
+							   double minRayParam,
+							   double maxRayParam) {
 		this.tMod = tMod;
 		this.startBranch = startBranch;
 		this.endBranch = endBranch;
@@ -31,6 +36,8 @@ public class SeismicPhaseSegment {
 		this.endAction = endAction;
 		this.isDownGoing = isDownGoing;
 		this.legName = legName;
+		this.minRayParam = minRayParam;
+		this.maxRayParam = maxRayParam;
 	}
 
 	public boolean endsAtTop() throws TauModelException {

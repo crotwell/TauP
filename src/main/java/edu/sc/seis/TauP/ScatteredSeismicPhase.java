@@ -250,14 +250,6 @@ public class ScatteredSeismicPhase implements SeismicPhase {
     }
 
     @Override
-    public List<PhaseInteraction> getLegAction() {
-        List<PhaseInteraction> out = new ArrayList<>();
-        out.addAll( inboundArrival.getPhase().getLegAction());
-        out.addAll( scatteredPhase.getLegAction());
-        return out;
-    }
-
-    @Override
     public boolean hasArrivals() {
         return inboundArrival!= null && scatteredPhase.hasArrivals();
     }

@@ -17,7 +17,6 @@ public class SeismicPhaseFactory {
     double sourceDepth;
     double receiverDepth;
     TauModel tMod;
-    ArrayList<String> legs;
     String puristName;
 
     // temp vars used in calculation of phase
@@ -75,14 +74,6 @@ public class SeismicPhaseFactory {
 
     /** Description of segments of the phase. */
     protected List<SeismicPhaseSegment> segmentList = new ArrayList<>();
-
-    /**
-     * records the end action for the current leg. Will be one of
-     * SeismicPhase.TURN, SeismicPhase.TRANSDOWN, SeismicPhase.TRANSUP,
-     * SeismicPhase.REFLECTBOT, or SeismicPhase.REFLECTTOP. This allows a check
-     * to make sure the path is correct. Used in addToBranch() and parseName().
-     */
-    protected ArrayList<PhaseInteraction> legAction = new ArrayList<>();
 
     /**
      * true if the current leg of the phase is down going. This allows a check
@@ -265,10 +256,10 @@ public class SeismicPhaseFactory {
     }
 
     SimpleSeismicPhase internalCreatePhase() throws TauModelException {
-        legs = LegPuller.legPuller(name);
+        ArrayList<String> legs = LegPuller.legPuller(name);
         this.puristName = LegPuller.createPuristName(tMod, legs);
 
-        parseName(tMod);
+        parseName(tMod, legs);
         sumBranches(tMod);
         return new SimpleSeismicPhase(name,
                 tMod,
@@ -287,7 +278,6 @@ public class SeismicPhaseFactory {
                 branchSeq,
                 headOrDiffractSeq,
                 segmentList,
-                legAction,
                 downGoing,
                 waveType,
                 DEBUG);
@@ -313,7 +303,7 @@ public class SeismicPhaseFactory {
      * Figures out which legs are P and S. Non-travel legs, like c or v410 are the same wave type as the
      * next leg.
      */
-    public boolean[] legsArePWave() {
+    public boolean[] legsArePWave(ArrayList<String> legs) {
         boolean[] isPWaveForLegs = new boolean[legs.size()];
         int legNum = 0;
         boolean prevWaveType = true;
@@ -351,7 +341,7 @@ public class SeismicPhaseFactory {
     /**
      * Constructs a branch sequence from the given phase name and tau model.
      */
-    protected void parseName(TauModel tMod) throws TauModelException {
+    protected void parseName(TauModel tMod, ArrayList<String> legs) throws TauModelException {
         String prevLeg;
         String currLeg = legs.get(0);
         String nextLeg = currLeg;
@@ -564,7 +554,7 @@ public class SeismicPhaseFactory {
         /*
          * Figure out which legs are P and S
          */
-        boolean[] isLegPWave = legsArePWave();
+        boolean[] isLegPWave = legsArePWave(legs);
         /*
          * Now loop over all of the phase legs and construct the proper branch
          * sequence.
@@ -614,7 +604,9 @@ public class SeismicPhaseFactory {
                     endAction = currLegIs_p_s(prevLeg, currLeg, nextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
                 } else if (currLeg.equals("P") || currLeg.equals("S")) {
                     /* Now deal with P and S case. */
-                    endAction = currLegIs_P_S(prevLeg, currLeg, nextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
+                    //special, need nextnextleg too
+                    String nextNextLeg = legNum < legs.size()-2 ? legs.get(legNum+2) : END_CODE;
+                    endAction = currLegIs_P_S(prevLeg, currLeg, nextLeg, nextNextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
                 } else if ((currLeg.startsWith("P") || currLeg.startsWith("S")) && isDiffracted(currLeg)) {
                     endAction = currLegIs_Pdiff_Sdiff(prevLeg, currLeg, nextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
                 } else if ((currLeg.startsWith("P") || currLeg.startsWith("S")) && (currLeg.endsWith("n") || currLeg.endsWith("g"))) {
@@ -888,12 +880,12 @@ public class SeismicPhaseFactory {
         return endAction;
     }
 
-    PhaseInteraction currLegIs_P_S(String prevLeg, String currLeg, String nextLeg,
+    PhaseInteraction currLegIs_P_S(String prevLeg, String currLeg, String nextLeg, String nextNextLeg,
                                    boolean prevIsPWave, boolean isPWave, boolean nextIsPWave, int legNum)
             throws TauModelException {
         PhaseInteraction endAction;
         SeismicPhaseSegment prevSegment = null;
-        if (!segmentList.isEmpty()) {segmentList.get(segmentList.size()-1);}
+        if (!segmentList.isEmpty()) {prevSegment = segmentList.get(segmentList.size()-1);}
         if (tMod.getVelocityModel().cmbDepth == 0) {
             // no crust or mantle, so no P or P
             maxRayParam = -1;
@@ -1086,7 +1078,7 @@ public class SeismicPhaseFactory {
                 // leg to determine whether to convert on the downgoing
                 // or
                 // upgoing part of the path
-                String nextNextLeg = (String) legs.get(legNum + 2);
+                //String nextNextLeg = (String) legs.get(legNum + 2);
                 if (nextNextLeg.equals("p") || nextNextLeg.equals("s")) {
                     // convert on upgoing section
                     endAction = TURN;
@@ -2939,7 +2931,8 @@ public class SeismicPhaseFactory {
             throw new TauModelException(getName()+": Illegal endAction: endAction="
                     + endAction);
         }
-        SeismicPhaseSegment segment = new SeismicPhaseSegment(tMod, startBranch, endBranch, isPWave, endAction, isDownGoing, currLeg);
+        SeismicPhaseSegment segment = new SeismicPhaseSegment(tMod, startBranch, endBranch,
+                isPWave, endAction, isDownGoing, currLeg, minRayParam, maxRayParam);
         if (segmentList.size() == 0) {
             segment.prevEndAction = START;
         } else {
@@ -3018,7 +3011,6 @@ public class SeismicPhaseFactory {
                     branchSeq.add(i);
                     downGoing.add(isDownGoing);
                     waveType.add(isPWave);
-                    legAction.add(endAction);
                 }
                 if(DEBUG) {
                     for(int i = startBranch; i <= endBranch; i++) {
@@ -3041,7 +3033,6 @@ public class SeismicPhaseFactory {
                     branchSeq.add(i);
                     downGoing.add(isDownGoing);
                     waveType.add(isPWave);
-                    legAction.add(endAction);
                 }
                 if(DEBUG) {
                     for(int i = startBranch; i >= endBranch; i--) {
@@ -3078,7 +3069,6 @@ public class SeismicPhaseFactory {
         boolean flatIsDownGoing = false;
         SeismicPhaseSegment flatSegment;
         if (prevEndAction == HEAD) {
-            flatSegment = new SeismicPhaseSegment(tMod, branch, branch, isPWave, endAction, flatIsDownGoing, currLeg);
             double headRP = tMod.getTauBranch(branch,isPWave).getMaxRayParam();
             if (minRayParam > headRP || maxRayParam < headRP) {
                 // can't do head wave, no rp match
@@ -3088,8 +3078,9 @@ public class SeismicPhaseFactory {
                 minRayParam = headRP;
                 maxRayParam = headRP;
             }
+            flatSegment = new SeismicPhaseSegment(tMod, branch, branch,
+                    isPWave, endAction, flatIsDownGoing, currLeg, minRayParam, maxRayParam);
         } else if (prevEndAction == DIFFRACT){
-            flatSegment = new SeismicPhaseSegment(tMod, branch, branch, isPWave, endAction, flatIsDownGoing, currLeg);
             double diffRP = tMod.getTauBranch(branch,isPWave).getMinTurnRayParam();
             if (minRayParam > diffRP || maxRayParam < diffRP) {
                 // can't do diff wave, no rp match
@@ -3099,13 +3090,16 @@ public class SeismicPhaseFactory {
                 minRayParam = diffRP;
                 maxRayParam = diffRP;
             }
+            flatSegment = new SeismicPhaseSegment(tMod, branch, branch,
+                    isPWave, endAction, flatIsDownGoing, currLeg, minRayParam, maxRayParam);
         } else if (prevEndAction == KMPS && currLeg.endsWith("kmps")){
             // dummy case for surface wave velocity
-            flatSegment = new SeismicPhaseSegment(tMod, branch, branch, isPWave, endAction, flatIsDownGoing, currLeg);
             double velocity = Double.valueOf(currLeg.substring(0, currLeg.length() - 4))
                     .doubleValue();
             minRayParam = tMod.radiusOfEarth / velocity;
             maxRayParam = minRayParam;
+            flatSegment = new SeismicPhaseSegment(tMod, branch, branch,
+                    isPWave, endAction, flatIsDownGoing, currLeg, minRayParam, maxRayParam);
         } else {
             throw new TauModelException("Cannot addFlatBranch for prevEndAction: "+prevEndAction+" for "+currLeg);
         }

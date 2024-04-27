@@ -229,12 +229,14 @@ public class AddToBranchTest {
     @Test
     public void legsArePWaveTest() throws TauModelException {
         SeismicPhaseFactory seisFactory = makeSPhFactory("PKP");
-        boolean[] legsArePWave = seisFactory.legsArePWave();
+        ArrayList<String> legsPKP = LegPuller.legPuller(seisFactory.name);
+        boolean[] legsArePWave = seisFactory.legsArePWave(legsPKP);
         for (boolean b : legsArePWave) {
             assertEquals(true, b);
         }
         seisFactory = makeSPhFactory("SKS");
-        legsArePWave = seisFactory.legsArePWave();
+        ArrayList<String> legs = LegPuller.legPuller(seisFactory.name);
+        legsArePWave = seisFactory.legsArePWave(legs);
         // legs includes END as leg
         assertEquals(4, legsArePWave.length);
         assertEquals(false, legsArePWave[0]);
@@ -249,8 +251,9 @@ public class AddToBranchTest {
             isPWave = false;
         }
         SeismicPhaseFactory seisFactory = new SeismicPhaseFactory(name, tMod, 0,0,true);
-        seisFactory.legs = LegPuller.legPuller(seisFactory.name);
-        seisFactory.puristName = LegPuller.createPuristName(tMod, seisFactory.legs);
+        List<String> legs = LegPuller.legPuller(seisFactory.name);
+        //seisFactory.legs = legs;
+        seisFactory.puristName = LegPuller.createPuristName(tMod, legs);
         seisFactory.currBranch = tMod.getSourceBranch();
         seisFactory.maxRayParam = tMod.getTauBranch(tMod.getSourceBranch(), isPWave).getMaxRayParam();
         return seisFactory;
