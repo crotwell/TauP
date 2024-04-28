@@ -1,8 +1,6 @@
 package edu.sc.seis.TauP;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import static edu.sc.seis.TauP.PhaseInteraction.*;
 
@@ -24,9 +22,12 @@ public class SeismicPhaseWalk {
                // System.err.println("seg does not end: "+phaseNameForSegments(segList));
             }
         }
+        endingSegments.sort(Comparator.comparingInt(s -> s.size()));
+        endingSegments = cleanDuplicates(endingSegments);
         System.err.println("Found "+endingSegments.size()+" segments < "+maxLegs);
         return endingSegments;
     }
+
     public List<List<SeismicPhaseSegment>> createSourceSegments(TauModel tMod) {
 
         List<List<SeismicPhaseSegment>> segmentTree =  new ArrayList<>();
@@ -160,6 +161,91 @@ public class SeismicPhaseWalk {
         return segmentTree;
     }
 
+    public List<List<SeismicPhaseSegment>> cleanDuplicates(List<List<SeismicPhaseSegment>> in) {
+        List<List<SeismicPhaseSegment>> out = new ArrayList<>();
+        List<List<SeismicPhaseSegment>> sameSize = new ArrayList<>();
+
+        int currSize = in.get(0).size();
+        for (int i = 0; i < in.size(); i++) {
+            List<SeismicPhaseSegment> next = in.get(i);
+            if (currSize == next.size()) {
+                List<List<SeismicPhaseSegment>> merged = new ArrayList<>();
+                for (List<SeismicPhaseSegment> p : sameSize) {
+                    if (canMergePhases(p, next)) {
+                        next = mergePhases(p, next);
+                    } else {
+                        merged.add(p);
+                    }
+                }
+                merged.add(next);
+                sameSize = merged;
+            } else {
+                out.addAll(sameSize);
+                sameSize.clear();
+                sameSize.add(next);
+                currSize = next.size();
+            }
+        }
+        return out;
+    }
+
+    public boolean canMergePhases(List<SeismicPhaseSegment> curr, List<SeismicPhaseSegment> other) {
+        if (curr.size() != other.size()) {
+            return false;
+        }
+        SeismicPhaseSegment pS = null;
+        for (int s = 0; s < curr.size(); s++) {
+            SeismicPhaseSegment cS = curr.get(s);
+            SeismicPhaseSegment oS = other.get(s);
+            if (cS.isPWave != oS.isPWave
+                    || cS.isDownGoing != oS.isDownGoing
+                    || cS.endAction != oS.endAction) {
+                return false;
+            }
+            if (cS.endAction == TURN && cS.startBranch != oS.startBranch) {
+                return false;
+            }
+            if (pS != null && pS.endAction == TURN && cS.endBranch != oS.endBranch) {
+                return false;
+            }
+            pS = cS;
+        }
+        return true;
+    }
+    public List<SeismicPhaseSegment> mergePhases(List<SeismicPhaseSegment> curr, List<SeismicPhaseSegment> other) {
+        List<SeismicPhaseSegment> out = new ArrayList<>();
+        SeismicPhaseSegment prevS = null;
+        for (int s = 0; s < curr.size(); s++) {
+            SeismicPhaseSegment cS = curr.get(s);
+            SeismicPhaseSegment oS = other.get(s);
+            if (cS.endAction == TURN) {
+                if (cS.endBranch == oS.endBranch) {
+                    out.add(cS);
+                } else if (cS.endBranch < oS.endBranch) {
+                    SeismicPhaseSegment m = new SeismicPhaseSegment(cS.tMod, cS.startBranch, oS.endBranch, cS.isPWave, cS.endAction, cS.isDownGoing, cS.legName, oS.minRayParam, cS.maxRayParam);
+                    out.add(m);
+                } else if (cS.endBranch > oS.endBranch) {
+                    SeismicPhaseSegment m = new SeismicPhaseSegment(cS.tMod, cS.startBranch, oS.endBranch, cS.isPWave, cS.endAction, cS.isDownGoing, cS.legName, cS.minRayParam, oS.maxRayParam);
+                    out.add(m);
+                }
+            } else if (prevS != null && prevS.endAction == TURN) {
+                if (cS.startBranch == oS.startBranch) {
+                    out.add(cS);
+                } else if (cS.startBranch < oS.startBranch) {
+                    SeismicPhaseSegment m = new SeismicPhaseSegment(cS.tMod, oS.startBranch, oS.endBranch, cS.isPWave, cS.endAction, cS.isDownGoing, cS.legName, oS.minRayParam, cS.maxRayParam);
+                    out.add(m);
+                } else if (cS.startBranch > oS.startBranch) {
+                    SeismicPhaseSegment m = new SeismicPhaseSegment(cS.tMod, oS.startBranch, oS.endBranch, cS.isPWave, cS.endAction, cS.isDownGoing, cS.legName, cS.minRayParam, oS.maxRayParam);
+                    out.add(m);
+                }
+            } else {
+                out.add(cS);
+            }
+            prevS = cS;
+        }
+        return out;
+    }
+
     public List<List<SeismicPhaseSegment>> walkPhases(TauModel tMod, List<List<SeismicPhaseSegment>> segmentTree, int maxLegs) {
         List<List<SeismicPhaseSegment>> nextSegmentTree = new ArrayList<>();
         boolean walkedAStep = false;
@@ -179,7 +265,7 @@ public class SeismicPhaseWalk {
                         }
                     }
                 } else {
-                    System.err.println("Skip: " + phaseNameForSegments(segList)+" num: "+interactionNum+" > "+maxLegs);
+                   // System.err.println("Skip: " + phaseNameForSegments(segList)+" num: "+interactionNum+" > "+maxLegs);
                 }
             }
         }
@@ -266,6 +352,10 @@ public class SeismicPhaseWalk {
                 }
                 break;
             case TURN:
+                if (receiverBranch == prevEndSeg.endBranch) {
+                    outTree.add(nextSegment(segmentList, prevEndSeg.isPWave, END));
+                }
+                break;
             case REFLECT_TOPSIDE:
                 if (receiverBranch == prevEndSeg.endBranch) {
                     outTree.add(nextSegment(segmentList, SimpleSeismicPhase.PWAVE, END));
@@ -378,6 +468,7 @@ public class SeismicPhaseWalk {
 
         double minRayParam = endSeg.minRayParam;
         double maxRayParam = endSeg.maxRayParam;
+        int endBranchNum = startBranchNum; // same except for TURN
         switch (endAction) {
             case REFLECT_TOPSIDE_CRITICAL:
                 minRayParam = Math.max(minRayParam, nextBranch.getMinRayParam());
@@ -397,7 +488,7 @@ public class SeismicPhaseWalk {
         }
 
         out.add(new SeismicPhaseSegment(tMod,
-                startBranchNum, startBranchNum, isPWave, endAction, isDowngoing, nextLegName,
+                startBranchNum, endBranchNum, isPWave, endAction, isDowngoing, nextLegName,
                 minRayParam, maxRayParam));
         validateSegList(out);
         return out;
