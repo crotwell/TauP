@@ -313,10 +313,10 @@ public class SeismicPhaseWalk {
         return out;
     }
 
-    public String phaseNameForSegments(List<SeismicPhaseSegment> segList) {
+    public static String phaseNameForSegments(List<SeismicPhaseSegment> segList) {
         return phaseNameForSegments(segList, true);
     }
-    public String phaseNameForSegments(List<SeismicPhaseSegment> segList, boolean zapED) {
+    public static String phaseNameForSegments(List<SeismicPhaseSegment> segList, boolean zapED) {
         String name = "";
         TauModel tMod = segList.get(0).tMod;
         int idx = 0;
@@ -586,7 +586,7 @@ public class SeismicPhaseWalk {
         return out;
     }
 
-    public String legNameForTauBranch(TauModel tMod, int branchNum, boolean isPWave, boolean isDowngoing) {
+    public static String legNameForTauBranch(TauModel tMod, int branchNum, boolean isPWave, boolean isDowngoing) {
         TauBranch tauBranch = tMod.getTauBranch(branchNum, isPWave);
         if (branchNum >= tMod.getIocbBranch()) {
             if (tauBranch.isPWave) {
@@ -629,7 +629,7 @@ public class SeismicPhaseWalk {
         }
     }
 
-    public String legNameForSegment(TauModel tMod, SeismicPhaseSegment seg) {
+    public static String legNameForSegment(TauModel tMod, SeismicPhaseSegment seg) {
         String name = legNameForTauBranch(tMod, seg.endBranch, seg.isPWave, seg.isDownGoing);
         if (seg.endAction == TURN && name.endsWith("ed")) {
             name = name.substring(0, name.length()-2);

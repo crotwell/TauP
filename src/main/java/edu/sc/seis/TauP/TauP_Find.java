@@ -4,11 +4,15 @@ import edu.sc.seis.TauP.cli.AbstractOutputTypeArgs;
 import edu.sc.seis.TauP.cli.ModelArgs;
 import edu.sc.seis.TauP.cli.OutputTypes;
 import edu.sc.seis.TauP.cli.TextOutputTypeArgs;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import picocli.CommandLine;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.List;
 
+import static edu.sc.seis.TauP.cli.OutputTypes.JSON;
 import static edu.sc.seis.TauP.cli.OutputTypes.TEXT;
 
 @CommandLine.Command(name = "find",
@@ -24,7 +28,7 @@ public class TauP_Find extends TauP_Tool {
 
     @Override
     public String getOutputFormat() {
-        return TEXT;
+        return outputTypeArgs.getOutputFormat();
     }
 
     @Override
@@ -33,8 +37,7 @@ public class TauP_Find extends TauP_Tool {
     }
 
     @Override
-    public void start() throws IOException, TauModelException, TauPException {
-
+    public void start() throws IOException, TauPException {
         TauModel tMod = modelArgs.depthCorrected();
         SeismicPhaseWalk walker = new SeismicPhaseWalk();
         List<List<SeismicPhaseSegment>> walk = walker.walkPhases(tMod, maxLegs);
@@ -46,16 +49,39 @@ public class TauP_Find extends TauP_Tool {
             }
             walk = walker.overlapsRayParam(walk, minRP, maxRP);
         }
+        if (outputTypeArgs.isText()) {
+            printResultText(walk);
+        } else if (outputTypeArgs.isJSON()) {
+            printResultJson(walk);
+        }
+    }
+
+    public void printResultText(List<List<SeismicPhaseSegment>> walk) throws IOException {
+        PrintWriter writer = outputTypeArgs.createWriter(spec.commandLine().getOut());
         int maxNameLength = 25;
         String phaseFormat = "%-" + maxNameLength + "s";
         for (List<SeismicPhaseSegment> segList : walk) {
             SeismicPhaseSegment endSeg = segList.get(segList.size()-1);
-            System.out.println(walker.phaseNameForSegments(segList));
+            writer.println(SeismicPhaseWalk.phaseNameForSegments(segList));
             //SimpleSeismicPhase phase = new SimpleSeismicPhase();
             //System.out.println(String.format(phaseFormat, walker.phaseNameForSegments(segList)) + " "
             //        + Outputs.formatRayParam(endSeg.minRayParam) + " " + Outputs.formatRayParam(endSeg.maxRayParam));
         }
-        System.out.println("Found "+walk.size()+" segments <= "+maxLegs);
+        writer.flush();
+    }
+    public void printResultJson(List<List<SeismicPhaseSegment>> walk) throws IOException {
+        JSONObject out = new JSONObject();
+        out.put("model", modelArgs.getModelName());
+        out.put("sourcedepth", modelArgs.getSourceDepth());
+        out.put("receiverdepth", modelArgs.getReceiverDepth());
+        JSONArray phases = new JSONArray();
+        out.put("phases", phases);
+        for (List<SeismicPhaseSegment> segList : walk) {
+            phases.put(SeismicPhaseWalk.phaseNameForSegments(segList));
+        }
+        PrintWriter writer = outputTypeArgs.createWriter(spec.commandLine().getOut());
+        out.write(writer);
+        writer.flush();
     }
 
     @Override
