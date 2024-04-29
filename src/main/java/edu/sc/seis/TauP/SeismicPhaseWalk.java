@@ -46,51 +46,27 @@ public class SeismicPhaseWalk {
                 // one branch away from receiver, so can just go direct and END
                 upSeg = new SeismicPhaseSegment(tMod,
                         aboveStartBranch, aboveStartBranch,
-                        SimpleSeismicPhase.PWAVE, END, false,
-                        legNameForTauBranch(tMod, tMod.getSourceBranch(), SimpleSeismicPhase.PWAVE, false),
+                        isPWave, END, false,
+                        legNameForTauBranch(tMod, tMod.getSourceBranch(), isPWave, false),
                         0, aboveSourceBranchP.getMinTurnRayParam());
-                upSegList.add(upSeg);
-                segmentTree.add(upSegList);
-                upSegList = new ArrayList<>();
-                upSeg = new SeismicPhaseSegment(tMod,
-                        aboveStartBranch, aboveStartBranch,
-                        SimpleSeismicPhase.SWAVE, END, false,
-                        legNameForTauBranch(tMod, tMod.getSourceBranch(), SimpleSeismicPhase.SWAVE, false),
-                        0, aboveSourceBranchS.getMinTurnRayParam());
                 upSegList.add(upSeg);
                 segmentTree.add(upSegList);
                 upSegList = new ArrayList<>();
             }
             upSeg = new SeismicPhaseSegment(tMod,
                     aboveStartBranch, aboveStartBranch,
-                    SimpleSeismicPhase.PWAVE, REFLECT_UNDERSIDE, false,
-                    legNameForTauBranch(tMod, tMod.getSourceBranch(), SimpleSeismicPhase.PWAVE, false),
+                    isPWave, REFLECT_UNDERSIDE, false,
+                    legNameForTauBranch(tMod, tMod.getSourceBranch(), isPWave, false),
                     0, aboveSourceBranchP.getMinTurnRayParam());
-            upSegList.add(upSeg);
-            segmentTree.add(upSegList);
-            upSegList = new ArrayList<>();
-            upSeg = new SeismicPhaseSegment(tMod,
-                    aboveStartBranch, aboveStartBranch,
-                    SimpleSeismicPhase.SWAVE, REFLECT_UNDERSIDE, false,
-                    legNameForTauBranch(tMod, tMod.getSourceBranch(), SimpleSeismicPhase.SWAVE, false),
-                    0, aboveSourceBranchS.getMinTurnRayParam());
             upSegList.add(upSeg);
             segmentTree.add(upSegList);
             upSegList = new ArrayList<>();
             if (tMod.getSourceBranch() > 1) {
                 upSeg = new SeismicPhaseSegment(tMod,
                         aboveStartBranch, aboveStartBranch,
-                        SimpleSeismicPhase.PWAVE, TRANSUP, false,
-                        legNameForTauBranch(tMod, tMod.getSourceBranch(), SimpleSeismicPhase.PWAVE, false),
+                        isPWave, TRANSUP, false,
+                        legNameForTauBranch(tMod, tMod.getSourceBranch(), isPWave, false),
                         0, aboveSourceBranchP.getMinTurnRayParam());
-                upSegList.add(upSeg);
-                segmentTree.add(upSegList);
-                upSegList = new ArrayList<>();
-                upSeg = new SeismicPhaseSegment(tMod,
-                        aboveStartBranch, aboveStartBranch,
-                        SimpleSeismicPhase.SWAVE, TRANSUP, false,
-                        legNameForTauBranch(tMod, tMod.getSourceBranch(), SimpleSeismicPhase.SWAVE, false),
-                        0, aboveSourceBranchS.getMinTurnRayParam());
                 upSegList.add(upSeg);
                 segmentTree.add(upSegList);
             }
@@ -232,7 +208,9 @@ public class SeismicPhaseWalk {
                 // upgoing
                 if (cS.endBranch != oS.endBranch) {
                     return false;
-                } else if (pS == null || (pS.endAction != TURN && cS.startBranch != oS.startBranch)) {
+                } else if (pS == null && cS.startBranch != oS.startBranch) {
+                    return false;
+                } else if (pS != null && (pS.endAction != TURN && cS.startBranch != oS.startBranch)) {
                     return false;
                 }
             }
@@ -322,6 +300,17 @@ public class SeismicPhaseWalk {
             nextSegmentTree = walkPhases(tMod, nextSegmentTree, maxLegs);
         }
         return nextSegmentTree;
+    }
+
+    public List<List<SeismicPhaseSegment>> overlapsRayParam(List<List<SeismicPhaseSegment>> segTree, double minRayParam, double maxRayParam) {
+        List<List<SeismicPhaseSegment>> out = new ArrayList<>();
+        for (List<SeismicPhaseSegment> segList : segTree) {
+            SeismicPhaseSegment endSeg = segList.get(segList.size()-1);
+            if (endSeg.maxRayParam >= minRayParam && endSeg.minRayParam <= maxRayParam) {
+                out.add(segList);
+            }
+        }
+        return out;
     }
 
     public String phaseNameForSegments(List<SeismicPhaseSegment> segList) {
@@ -551,12 +540,23 @@ public class SeismicPhaseWalk {
                 // some reversal of direction
                 startBranchNum = priorEndBranchNum;
         }
+        int endBranchNum = startBranchNum;
+        if (isDowngoing) {
+            while (endBranchNum < tMod.getNumBranches()-1
+                    && tMod.isNoDisconDepth(tMod.getTauBranch(endBranchNum, isPWave).getBotDepth())) {
+                endBranchNum += 1;
+            }
+        } else {
+            // upgoing
+            while (endBranchNum > 0 && tMod.isNoDisconDepth(tMod.getTauBranch(endBranchNum, isPWave).getTopDepth())) {
+                endBranchNum -= 1;
+            }
+        }
         String nextLegName = legNameForTauBranch(tMod, startBranchNum, isPWave, isDowngoing);
         TauBranch nextBranch = tMod.getTauBranch(startBranchNum, isPWave);
 
         double minRayParam = endSeg.minRayParam;
         double maxRayParam = endSeg.maxRayParam;
-        int endBranchNum = startBranchNum;
         switch (endAction) {
             case REFLECT_TOPSIDE_CRITICAL:
                 minRayParam = Math.max(minRayParam, nextBranch.getMinRayParam());
