@@ -12,9 +12,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 
-import static edu.sc.seis.TauP.cli.OutputTypes.JSON;
-import static edu.sc.seis.TauP.cli.OutputTypes.TEXT;
-
 @CommandLine.Command(name = "find",
         description = "find seismic phases in an earth model near a search time",
         usageHelpAutoWidth = true)
@@ -40,7 +37,7 @@ public class TauP_Find extends TauP_Tool {
     public void start() throws IOException, TauPException {
         TauModel tMod = modelArgs.depthCorrected();
         SeismicPhaseWalk walker = new SeismicPhaseWalk();
-        List<List<SeismicPhaseSegment>> walk = walker.walkPhases(tMod, maxLegs);
+        List<List<SeismicPhaseSegment>> walk = walker.walkPhases(tMod, maxActions);
         if (minRayParamRange != null) {
             double minRP = minRayParamRange[0];
             double maxRP = minRP;
@@ -83,13 +80,15 @@ public class TauP_Find extends TauP_Tool {
         out.put("model", modelArgs.getModelName());
         out.put("sourcedepth", modelArgs.getSourceDepth());
         out.put("receiverdepth", modelArgs.getReceiverDepth());
+        out.put("max", maxActions);
         JSONArray phases = new JSONArray();
         out.put("phases", phases);
         for (List<SeismicPhaseSegment> segList : walk) {
             phases.put(SeismicPhaseWalk.phaseNameForSegments(segList));
         }
         PrintWriter writer = outputTypeArgs.createWriter(spec.commandLine().getOut());
-        out.write(writer);
+        out.write(writer, 2, 0);
+        writer.println();
         writer.flush();
     }
 
@@ -114,7 +113,7 @@ public class TauP_Find extends TauP_Tool {
     boolean showrayparam = false;
 
     @CommandLine.Option(names = "--max", defaultValue = "2", description = "Maximum number of reflections and phase conversion")
-    int maxLegs;
+    int maxActions;
 
     @CommandLine.Option(names = "--rayparam", arity = "1..2", description = "only keep phases that overlap the given ray parameter range")
     Double[] minRayParamRange;
