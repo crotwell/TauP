@@ -58,14 +58,23 @@ public class TauP_Find extends TauP_Tool {
 
     public void printResultText(List<List<SeismicPhaseSegment>> walk) throws IOException {
         PrintWriter writer = outputTypeArgs.createWriter(spec.commandLine().getOut());
-        int maxNameLength = 25;
+        int maxNameLength = 1;
+        for (List<SeismicPhaseSegment> segList : walk) {
+            maxNameLength = Math.max(maxNameLength,
+                    SeismicPhaseWalk.phaseNameForSegments(segList).length());
+        }
         String phaseFormat = "%-" + maxNameLength + "s";
         for (List<SeismicPhaseSegment> segList : walk) {
             SeismicPhaseSegment endSeg = segList.get(segList.size()-1);
-            writer.println(SeismicPhaseWalk.phaseNameForSegments(segList));
+
+            if (showrayparam) {
+                writer.print(String.format(phaseFormat, SeismicPhaseWalk.phaseNameForSegments(segList))
+                        +" "+Outputs.formatRayParam(endSeg.minRayParam) + " " + Outputs.formatRayParam(endSeg.maxRayParam));
+            } else {
+                writer.print(SeismicPhaseWalk.phaseNameForSegments(segList));
+            }
+            writer.println();
             //SimpleSeismicPhase phase = new SimpleSeismicPhase();
-            //System.out.println(String.format(phaseFormat, walker.phaseNameForSegments(segList)) + " "
-            //        + Outputs.formatRayParam(endSeg.minRayParam) + " " + Outputs.formatRayParam(endSeg.maxRayParam));
         }
         writer.flush();
     }
@@ -101,6 +110,8 @@ public class TauP_Find extends TauP_Tool {
     @CommandLine.Mixin
     TextOutputTypeArgs outputTypeArgs;
 
+    @CommandLine.Option(names = "--showrayparam", description = "show min and max ray parameter for each phase name")
+    boolean showrayparam = false;
 
     @CommandLine.Option(names = "--max", defaultValue = "2", description = "Maximum number of reflections and phase conversion")
     int maxLegs;
