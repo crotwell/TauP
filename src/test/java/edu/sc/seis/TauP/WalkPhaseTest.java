@@ -16,8 +16,8 @@ public class WalkPhaseTest {
     public void shortWalk() throws TauModelException {
         TauModel tMod = TauModelLoader.load("iasp91");
         SeismicPhaseWalk walker = new SeismicPhaseWalk();
-        int maxLegs = 3;
-        List<List<SeismicPhaseSegment>> walk = walker.walkPhases(tMod, 2);
+        int maxLegs = 1;
+        List<List<SeismicPhaseSegment>> walk = walker.walkPhases(tMod, maxLegs);
         for (List<SeismicPhaseSegment> segList : walk) {
             System.err.print(walker.phaseNameForSegments(segList));
             System.err.println();
@@ -67,6 +67,38 @@ public class WalkPhaseTest {
         List<SeismicPhaseSegment> merged = walker.mergePhases(upper, lower);
         assertEquals(merged.get(merged.size()-1).maxRayParam, 100);
         assertEquals(merged.get(merged.size()-1).minRayParam, 0);
+
+    }
+
+    @Test
+    public void interactNumTest() throws TauModelException {
+        boolean isPWave = true;
+        TauModel tMod = TauModelLoader.load("iasp91");
+        SeismicPhaseWalk walker = new SeismicPhaseWalk();
+        List<SeismicPhaseSegment> turnOnly = new ArrayList<>();
+        turnOnly.add(new SeismicPhaseSegment(tMod, 0, 1, isPWave, TURN, true, "P", 0, 10));
+        turnOnly.add(new SeismicPhaseSegment(tMod, 1, 0, isPWave, END, false, "p", 0, 10));
+        int num = walker.calcInteractionNumber(turnOnly);
+        assertEquals(0, num);
+
+        List<SeismicPhaseSegment> reflUnder = new ArrayList<>();
+        reflUnder.add(new SeismicPhaseSegment(tMod, 0, 1, isPWave, TURN, true, "P", 0, 10));
+        reflUnder.add(new SeismicPhaseSegment(tMod, 1, 0, isPWave, REFLECT_UNDERSIDE, false, "p", 0, 10));
+        reflUnder.add(new SeismicPhaseSegment(tMod, 0, 1, isPWave, TURN, true, "P", 0, 10));
+        reflUnder.add(new SeismicPhaseSegment(tMod, 1, 0, isPWave, END, false, "p", 0, 10));
+        assertEquals(1, walker.calcInteractionNumber(reflUnder));
+    }
+    @Test
+    public void interactConvTest() throws TauModelException {
+        boolean isPWave = true;
+        TauModel tMod = TauModelLoader.load("iasp91");
+        SeismicPhaseWalk walker = new SeismicPhaseWalk();
+        List<SeismicPhaseSegment> convTransDown = new ArrayList<>();
+        convTransDown.add(new SeismicPhaseSegment(tMod, 0, 1, isPWave, TRANSDOWN, true, "P", 0, 10));
+        convTransDown.add(new SeismicPhaseSegment(tMod, 1, 2, !isPWave, TURN, false, "s", 0, 10));
+        convTransDown.add(new SeismicPhaseSegment(tMod, 2, 0, !isPWave, END, false, "s", 0, 10));
+        assertEquals(1,  walker.calcInteractionNumber(convTransDown));
+
 
     }
 }
