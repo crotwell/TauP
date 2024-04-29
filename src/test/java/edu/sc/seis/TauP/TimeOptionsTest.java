@@ -17,7 +17,7 @@ public class TimeOptionsTest {
         String modelname = "iasp91";
         TauModel tMod = TauModelLoader.load(modelname);
         TauP_Time timeTool = new TauP_Time();
-        timeTool.setPhaseNames(new String[]{ "P" });
+        timeTool.setPhaseNames(List.of( "P" ));
         timeTool.onlyFirst = true;
         List<Arrival> arrivals = timeTool.calcAll(timeTool.getSeismicPhases(), Collections.singletonList(DistanceRay.ofDegrees(20)));
 

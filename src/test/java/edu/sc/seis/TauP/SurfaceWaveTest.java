@@ -25,7 +25,7 @@ public class SurfaceWaveTest {
         String phaseName = "3.0kmps";
         float depth = 23;
         float deg = 30;
-            taup.setPhaseNames(new String[] {phaseName});
+            taup.setPhaseNames(List.of(phaseName));
             taup.setSourceDepth(depth);
 
             List<Arrival> arrivals = taup.calculate(deg);
@@ -53,7 +53,7 @@ public class SurfaceWaveTest {
         assertEquals(0.8993, distDeg, 0.0001);
         double longWayDistDeg = 360.0-distDeg;
         double longWayDistKm = longWayDistDeg*taup.modelArgs.getTauModel().getRadiusOfEarth()*Math.PI/180.0;
-        taup.setPhaseNames(new String[] {phaseName});
+        taup.setPhaseNames(List.of(phaseName));
         taup.setSourceDepth(depth);
 
         List<Arrival> arrivals = taup.calculate(distDeg);

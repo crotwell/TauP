@@ -73,11 +73,11 @@ public class AK135Test  {
 
     public void doTable(String phase) throws TauPException {
         if (phase.equals("P")) {
-            taup.setPhaseNames(new String[] {"p", "P", "Pdiff"});
+            taup.setPhaseNames(List.of("p", "P", "Pdiff"));
         } else if (phase.equals("S")) {
-            taup.setPhaseNames(new String[] {"s", "S", "Sdiff"});
+            taup.setPhaseNames(List.of("s", "S", "Sdiff"));
         } else {
-            taup.setPhaseNames(new String[] {phase});
+            taup.setPhaseNames(List.of(phase));
         }
         for (List<TimeDist> atDepth : table.get(phase).values()) {
             taup.setSourceDepth(atDepth.get(0).getDepth());

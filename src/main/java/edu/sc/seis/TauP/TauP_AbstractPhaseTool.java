@@ -248,10 +248,10 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
     }
 
     @CommandLine.Option(names = {"-p", "--phase", "--ph"}, split = ",", description = "seismic phase names", defaultValue = DEFAULT_PHASES)
-    public void setPhaseNames(String[] phaseNames) throws TauModelException {
+    public void setPhaseNames(List<String> phaseNames) throws PhaseParseException {
         clearPhaseNames();
-        for (int i = 0; i < phaseNames.length; i++) {
-            appendPhaseName(phaseNames[i]);
+        for (String phasename : phaseNames) {
+            appendPhaseName(phasename);
         }
     }
 
@@ -261,7 +261,7 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
     }
 
     public synchronized void appendPhaseName(String phaseName)
-            throws TauModelException {
+            throws PhaseParseException {
         Iterator<String> it = TauP_AbstractPhaseTool.extractPhaseNames(phaseName).iterator();
         while (it.hasNext()) {
             appendPhaseName(new PhaseName(it.next()));
