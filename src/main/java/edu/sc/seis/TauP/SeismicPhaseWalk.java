@@ -325,6 +325,9 @@ public class SeismicPhaseWalk {
     }
 
     public String phaseNameForSegments(List<SeismicPhaseSegment> segList) {
+        return phaseNameForSegments(segList, true);
+    }
+    public String phaseNameForSegments(List<SeismicPhaseSegment> segList, boolean zapED) {
         String name = "";
         TauModel tMod = segList.get(0).tMod;
         int idx = 0;
@@ -337,15 +340,26 @@ public class SeismicPhaseWalk {
             if (idx < segList.size()-1) {
                 next = segList.get(idx+1);
             }
+            double botDepth = tMod.getTauBranch(seg.endBranch, seg.isPWave).getBotDepth();
+            double topDepth = tMod.getTauBranch(seg.endBranch, seg.isPWave).getTopDepth();
             //name += " "+seg.startBranch+","+seg.endBranch+" ";
             if ( prev == null || prev.endAction != TURN
                     || (! prev.legName.equalsIgnoreCase(seg.legName) && (prev.legName.equals("I") && seg.legName.equals("y")))) {
-                name += legNameForSegment(tMod, seg);
+                String legName = legNameForSegment(tMod, seg);
+                if (zapED) {
+                    if (seg.endAction == TRANSDOWN && legName.endsWith("ed")
+                            && seg.isPWave == next.isPWave
+                            && !legName.startsWith(next.legName.substring(0, 1))) {
+                        legName = legName.substring(0, 1);
+                    } else if (seg.endAction == REFLECT_TOPSIDE
+                            && (botDepth == tMod.cmbDepth || botDepth == tMod.iocbDepth)) {
+                        legName = legName.substring(0, 1);
+                    }
+                }
+                name += legName;
             } else {
                 //name += "("+seg.legName+")";
             }
-            double botDepth = tMod.getTauBranch(seg.endBranch, seg.isPWave).getBotDepth();
-            double topDepth = tMod.getTauBranch(seg.endBranch, seg.isPWave).getTopDepth();
             switch (seg.endAction) {
                 case REFLECT_TOPSIDE:
                     if (botDepth == tMod.cmbDepth) {

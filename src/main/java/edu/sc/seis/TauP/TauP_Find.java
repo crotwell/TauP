@@ -36,9 +36,10 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
         String phaseFormat = "%-" + maxNameLength + "s";
         for (List<SeismicPhaseSegment> segList : walk) {
             SeismicPhaseSegment endSeg = segList.get(segList.size()-1);
-            System.out.print(String.format(phaseFormat, walker.phaseNameForSegments(segList))+" "+Outputs.formatRayParam(endSeg.minRayParam)+" "+Outputs.formatRayParam(endSeg.maxRayParam));
+
             //SimpleSeismicPhase phase = new SimpleSeismicPhase();
-            System.out.println();
+            System.out.println(String.format(phaseFormat, walker.phaseNameForSegments(segList)) + " "
+                    + Outputs.formatRayParam(endSeg.minRayParam) + " " + Outputs.formatRayParam(endSeg.maxRayParam));
         }
         System.out.println("Found "+walk.size()+" segments <= "+maxLegs);
     }
