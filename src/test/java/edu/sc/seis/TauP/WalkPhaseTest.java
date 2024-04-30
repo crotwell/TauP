@@ -7,8 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static edu.sc.seis.TauP.PhaseInteraction.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class WalkPhaseTest {
 
@@ -131,5 +130,52 @@ public class WalkPhaseTest {
         assertEquals(1,  transProto.calcInteractionNumber());
 
 
+    }
+
+    @Test
+    public void excludeDiscon() throws TauPException {
+        boolean isPWave = true;
+        TauModel tMod = TauModelLoader.load("ak135");
+        SeismicPhaseWalk walker = new SeismicPhaseWalk(tMod);
+        Double d = 20.0;
+        Double d210 = 210.0;
+        walker.excludeBoundaries(List.of(d, d210));
+
+        ProtoSeismicPhase proto = ProtoSeismicPhase.start(new SeismicPhaseSegment(tMod, 0, 0, isPWave, TRANSDOWN, true, "P", 0, 10));
+        List<ProtoSeismicPhase> next = walker.nextLegs(tMod, proto, !isPWave);
+        assertEquals(0, next.size(), "no P20S");
+
+        ProtoSeismicPhase proto_pPv20 = ProtoSeismicPhase.start(new SeismicPhaseSegment(tMod, 0, 0, isPWave, REFLECT_UNDERSIDE, false, "P", 0, 10));
+        List<ProtoSeismicPhase> next_Pv20 = walker.nextLegs(tMod, proto_pPv20, isPWave);
+        assertEquals(2, next_Pv20.size(), "no pPv20p, only trans, "+next_Pv20.get(0).phaseName+" "+next_Pv20.get(1).phaseName);
+
+        ProtoSeismicPhase s20p = ProtoSeismicPhase.start(new SeismicPhaseSegment(tMod, 1, 1, false, TRANSUP, false, "s", 0, 1000));
+        List<ProtoSeismicPhase> next_s20p = walker.nextLegs(tMod, s20p, true);
+        assertEquals(0, next_s20p.size(), "no s20p, s^20");
+
+
+        List<SeismicPhaseSegment> legs = new ArrayList<>();
+        legs.add(new SeismicPhaseSegment(tMod, 0, 0, isPWave, TRANSDOWN, true, "P", 0, 10));
+        legs.add(new SeismicPhaseSegment(tMod, 1, 1, isPWave, TURN, true, "P", 0, 10));
+        ProtoSeismicPhase proto_Punder20P = new ProtoSeismicPhase(legs);
+        List<ProtoSeismicPhase> next_Punder20P = walker.nextLegs(tMod, proto_Punder20P, isPWave);
+        assertEquals(1, next_Punder20P.size(), "no P^20p, only trans");
+
+    }
+
+
+    @Test
+    public void excludeDisconWalk() throws TauPException {
+        TauModel tMod = TauModelLoader.load("ak135");
+        int maxLegs = 1;
+        SeismicPhaseWalk walker = new SeismicPhaseWalk(tMod);
+        Double d = 20.0;
+        Double d210 = 210.0;
+        walker.excludeBoundaries(List.of(d, d210));
+        List<ProtoSeismicPhase> walk = walker.findEndingPaths(maxLegs);
+        for (ProtoSeismicPhase segList : walk) {
+            assertFalse(segList.phaseName.contains("20"), segList.phaseName);
+            assertFalse(segList.phaseName.contains("210"), segList.phaseName);
+        }
     }
 }

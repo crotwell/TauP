@@ -136,7 +136,6 @@ public class VelPlotOutputTypeArgs extends AbstractOutputTypeArgs {
         return ((VelPlotOutputType)outputType)._isND;
     }
     public boolean isCSV() {
-        System.err.println("outputType class: "+outputType.getClass().getName());
         return ((VelPlotOutputType)outputType)._isCsv;
     }
 
