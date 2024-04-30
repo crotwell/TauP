@@ -10,6 +10,7 @@ import picocli.CommandLine;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.List;
 
 @CommandLine.Command(name = "find",
@@ -48,6 +49,7 @@ public class TauP_Find extends TauP_Tool {
         SeismicPhaseWalk walker = new SeismicPhaseWalk(tMod,
                 minRP, maxRP,
                 tMod.findBranch(modelArgs.getReceiverDepth()));
+        walker.excludeBoundaries(excludeDepth);
         List<ProtoSeismicPhase> walk = walker.findEndingPaths(maxActions);
         if (outputTypeArgs.isText()) {
             printResultText(walk);
@@ -121,5 +123,7 @@ public class TauP_Find extends TauP_Tool {
     @CommandLine.Option(names = "--rayparam", arity = "1..2", description = "only keep phases that overlap the given ray parameter range")
     Double[] minRayParamRange;
 
+    @CommandLine.Option(names = "--exclude", arity = "1..", description = "Exclude boundaries from phase conversion or reflection interactions")
+    List<Double> excludeDepth = new ArrayList<>();
 
 }
