@@ -36,16 +36,19 @@ public class TauP_Find extends TauP_Tool {
     @Override
     public void start() throws IOException, TauPException {
         TauModel tMod = modelArgs.depthCorrected();
-        SeismicPhaseWalk walker = new SeismicPhaseWalk();
-        List<List<SeismicPhaseSegment>> walk = walker.walkPhases(tMod, maxActions);
-        if (minRayParamRange != null) {
-            double minRP = minRayParamRange[0];
-            double maxRP = minRP;
+        Double minRP = null;
+        Double maxRP = null;
+        if (minRayParamRange != null && minRayParamRange.length > 0) {
+            minRP = minRayParamRange[0];
+            maxRP = minRP;
             if (minRayParamRange.length > 1) {
                 maxRP = minRayParamRange[1];
             }
-            walk = walker.overlapsRayParam(walk, minRP, maxRP);
         }
+        SeismicPhaseWalk walker = new SeismicPhaseWalk(tMod,
+                minRP, maxRP,
+                tMod.findBranch(modelArgs.getReceiverDepth()));
+        List<List<SeismicPhaseSegment>> walk = walker.findEndingPaths(maxActions);
         if (outputTypeArgs.isText()) {
             printResultText(walk);
         } else if (outputTypeArgs.isJSON()) {

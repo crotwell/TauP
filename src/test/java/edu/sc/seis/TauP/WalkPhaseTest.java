@@ -15,9 +15,9 @@ public class WalkPhaseTest {
     @Test
     public void shortWalk() throws TauModelException {
         TauModel tMod = TauModelLoader.load("iasp91");
-        SeismicPhaseWalk walker = new SeismicPhaseWalk();
         int maxLegs = 1;
-        List<List<SeismicPhaseSegment>> walk = walker.walkPhases(tMod, maxLegs);
+        SeismicPhaseWalk walker = new SeismicPhaseWalk(tMod);
+        List<List<SeismicPhaseSegment>> walk = walker.findEndingPaths(maxLegs);
         for (List<SeismicPhaseSegment> segList : walk) {
             System.err.print(walker.phaseNameForSegments(segList));
             System.err.println();
@@ -29,7 +29,7 @@ public class WalkPhaseTest {
     public void mergeTest() throws TauModelException {
         boolean isPWave = true;
         TauModel tMod = TauModelLoader.load("iasp91");
-        SeismicPhaseWalk walker = new SeismicPhaseWalk();
+        SeismicPhaseWalk walker = new SeismicPhaseWalk(tMod);
         List<SeismicPhaseSegment> upper = new ArrayList<>();
         upper.add(new SeismicPhaseSegment(tMod, 0, 0, isPWave, TURN, true, "P", 0, 100));
         upper.add(new SeismicPhaseSegment(tMod, 0, 0, isPWave, END, false, "p", 0, 100));
@@ -49,7 +49,7 @@ public class WalkPhaseTest {
     public void mergeUndersideTest() throws TauModelException {
         boolean isPWave = true;
         TauModel tMod = TauModelLoader.load("iasp91");
-        SeismicPhaseWalk walker = new SeismicPhaseWalk();
+        SeismicPhaseWalk walker = new SeismicPhaseWalk(tMod);
         List<SeismicPhaseSegment> upper = new ArrayList<>();
         upper.add(new SeismicPhaseSegment(tMod, 0, 0, isPWave, TURN, true, "P", 0, 100));
         upper.add(new SeismicPhaseSegment(tMod, 0, 0, isPWave, REFLECT_UNDERSIDE, false, "p", 0, 100));
@@ -73,7 +73,7 @@ public class WalkPhaseTest {
     public void mergeUnderside_pP() throws TauModelException {
         boolean isPWave = true;
         TauModel tMod = TauModelLoader.load("iasp91");
-        SeismicPhaseWalk walker = new SeismicPhaseWalk();
+        SeismicPhaseWalk walker = new SeismicPhaseWalk(tMod);
         List<SeismicPhaseSegment> upper = new ArrayList<>();
         upper.add(new SeismicPhaseSegment(tMod, 0, 0, isPWave, REFLECT_UNDERSIDE, false, "p", 0, 100));
         upper.add(new SeismicPhaseSegment(tMod, 0, 0, isPWave, TURN, true, "P", 0, 100));
@@ -96,7 +96,7 @@ public class WalkPhaseTest {
     public void interactNumTest() throws TauModelException {
         boolean isPWave = true;
         TauModel tMod = TauModelLoader.load("iasp91");
-        SeismicPhaseWalk walker = new SeismicPhaseWalk();
+        SeismicPhaseWalk walker = new SeismicPhaseWalk(tMod);
         List<SeismicPhaseSegment> turnOnly = new ArrayList<>();
         turnOnly.add(new SeismicPhaseSegment(tMod, 0, 1, isPWave, TURN, true, "P", 0, 10));
         turnOnly.add(new SeismicPhaseSegment(tMod, 1, 0, isPWave, END, false, "p", 0, 10));
@@ -114,7 +114,7 @@ public class WalkPhaseTest {
     public void interactConvTest() throws TauModelException {
         boolean isPWave = true;
         TauModel tMod = TauModelLoader.load("iasp91");
-        SeismicPhaseWalk walker = new SeismicPhaseWalk();
+        SeismicPhaseWalk walker = new SeismicPhaseWalk(tMod);
         List<SeismicPhaseSegment> convTransDown = new ArrayList<>();
         convTransDown.add(new SeismicPhaseSegment(tMod, 0, 1, isPWave, TRANSDOWN, true, "P", 0, 10));
         convTransDown.add(new SeismicPhaseSegment(tMod, 1, 2, !isPWave, TURN, false, "s", 0, 10));

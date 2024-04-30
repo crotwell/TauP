@@ -6,11 +6,44 @@ import static edu.sc.seis.TauP.PhaseInteraction.*;
 
 public class SeismicPhaseWalk {
 
+
+    public SeismicPhaseWalk(TauModel tMod) throws TauModelException {
+        this(tMod, null, null, 0);
+    }
+
+    public SeismicPhaseWalk(TauModel tMod, Double minRayParam, Double maxRayParam, double receiverDepth) throws TauModelException {
+        this.tMod = tMod;
+        this.minRayParam = minRayParam;
+        this.maxRayParam = maxRayParam;
+        this.receiverBranch = tMod.findBranch(receiverDepth);
+    }
     /**
      * Temporary assume receiver is at surface.
      */
-    public static final int receiverBranch = 0;
-    public List<List<SeismicPhaseSegment>> walkPhases(TauModel tMod, int maxLegs) {
+    public int receiverBranch = 0;
+    Double minRayParam;
+    Double maxRayParam;
+    TauModel tMod;
+
+
+    public List<List<SeismicPhaseSegment>> findEndingPaths(int maxAction) {
+        List<List<SeismicPhaseSegment>> segmentTree = walkPhases(maxAction);
+
+        List<List<SeismicPhaseSegment>> endingSegments = new ArrayList<>();
+        for (List<SeismicPhaseSegment> segList : segmentTree) {
+            SeismicPhaseSegment endSeg = segList.get(segList.size()-1);
+            if (endSeg.endAction == END || endSeg.endAction == END_DOWN) {
+                endingSegments.add(consolidateSegment(segList));
+            } else {
+                // System.err.println("seg does not end: "+phaseNameForSegments(segList));
+            }
+        }
+        endingSegments.sort(Comparator.comparingInt(s -> s.size()));
+        endingSegments = cleanDuplicates(endingSegments);
+        return endingSegments;
+    }
+
+    public List<List<SeismicPhaseSegment>> walkPhases(int maxAction) {
 
         List<List<SeismicPhaseSegment>> segmentTree = new ArrayList<>();
         if (allowSWave) {
@@ -19,19 +52,9 @@ public class SeismicPhaseWalk {
         if (allowPWave) {
             segmentTree.addAll( createSourceSegments(tMod, SimpleSeismicPhase.PWAVE));
         }
-        segmentTree = walkPhases(tMod, segmentTree, maxLegs);
-        List<List<SeismicPhaseSegment>> endingSegments = new ArrayList<>();
-        for (List<SeismicPhaseSegment> segList : segmentTree) {
-            SeismicPhaseSegment endSeg = segList.get(segList.size()-1);
-            if (endSeg.endAction == END || endSeg.endAction == END_DOWN) {
-                endingSegments.add(consolidateSegment(segList));
-            } else {
-               // System.err.println("seg does not end: "+phaseNameForSegments(segList));
-            }
-        }
-        endingSegments.sort(Comparator.comparingInt(s -> s.size()));
-        endingSegments = cleanDuplicates(endingSegments);
-        return endingSegments;
+        segmentTree = overlapsRayParam(segmentTree, minRayParam, maxRayParam);
+        segmentTree = walkPhases(tMod, segmentTree, maxAction);
+        return segmentTree;
     }
 
     public List<List<SeismicPhaseSegment>> createSourceSegments(TauModel tMod, boolean isPWave) {
@@ -289,24 +312,20 @@ public class SeismicPhaseWalk {
                 }
             }
         }
-        int endCount = 0;
-        for (List<SeismicPhaseSegment> segList : nextSegmentTree) {
-            SeismicPhaseSegment endSeg = segList.get(segList.size()-1);
-            if (endSeg.endAction == END || endSeg.endAction == END_DOWN) {
-                endCount++;
-            }
-        }
+        nextSegmentTree = overlapsRayParam(nextSegmentTree, minRayParam, maxRayParam);
         if (walkedAStep ) {
             nextSegmentTree = walkPhases(tMod, nextSegmentTree, maxLegs);
         }
         return nextSegmentTree;
     }
 
-    public List<List<SeismicPhaseSegment>> overlapsRayParam(List<List<SeismicPhaseSegment>> segTree, double minRayParam, double maxRayParam) {
+    public List<List<SeismicPhaseSegment>> overlapsRayParam(List<List<SeismicPhaseSegment>> segTree,
+                                                            Double minRayParam, Double maxRayParam) {
         List<List<SeismicPhaseSegment>> out = new ArrayList<>();
         for (List<SeismicPhaseSegment> segList : segTree) {
             SeismicPhaseSegment endSeg = segList.get(segList.size()-1);
-            if (endSeg.maxRayParam >= minRayParam && endSeg.minRayParam <= maxRayParam) {
+            if ((minRayParam == null || endSeg.maxRayParam >= minRayParam)
+                    && (maxRayParam == null || endSeg.minRayParam <= maxRayParam)) {
                 out.add(segList);
             }
         }
