@@ -17,9 +17,9 @@ public class WalkPhaseTest {
         TauModel tMod = TauModelLoader.load("iasp91");
         int maxLegs = 1;
         SeismicPhaseWalk walker = new SeismicPhaseWalk(tMod);
-        List<List<SeismicPhaseSegment>> walk = walker.findEndingPaths(maxLegs);
-        for (List<SeismicPhaseSegment> segList : walk) {
-            System.err.print(walker.phaseNameForSegments(segList));
+        List<ProtoSeismicPhase> walk = walker.findEndingPaths(maxLegs);
+        for (ProtoSeismicPhase segList : walk) {
+            System.err.print(segList.phaseNameForSegments());
             System.err.println();
         }
         System.err.println("Found "+walk.size()+" segments < "+maxLegs);
@@ -33,14 +33,16 @@ public class WalkPhaseTest {
         List<SeismicPhaseSegment> upper = new ArrayList<>();
         upper.add(new SeismicPhaseSegment(tMod, 0, 0, isPWave, TURN, true, "P", 0, 100));
         upper.add(new SeismicPhaseSegment(tMod, 0, 0, isPWave, END, false, "p", 0, 100));
+        ProtoSeismicPhase upperProto = new ProtoSeismicPhase(upper);
         List<SeismicPhaseSegment> lower = new ArrayList<>();
         lower.add(new SeismicPhaseSegment(tMod, 0, 1, isPWave, TURN, true, "P", 0, 10));
         lower.add(new SeismicPhaseSegment(tMod, 1, 0, isPWave, END, false, "p", 0, 10));
-        System.err.println(upper);
-        System.err.println(lower);
+        ProtoSeismicPhase lowerProto = new ProtoSeismicPhase(lower);
+        System.err.println(upperProto);
+        System.err.println(lowerProto);
 
-        assertTrue(walker.canMergePhases(upper, lower));
-        List<SeismicPhaseSegment> merged = walker.mergePhases(upper, lower);
+        assertTrue(walker.canMergePhases(upperProto, lowerProto));
+        ProtoSeismicPhase merged = walker.mergePhases(upperProto, lowerProto);
         assertEquals(merged.get(merged.size()-1).maxRayParam, 100);
         assertEquals(merged.get(merged.size()-1).minRayParam, 0);
 
@@ -55,16 +57,18 @@ public class WalkPhaseTest {
         upper.add(new SeismicPhaseSegment(tMod, 0, 0, isPWave, REFLECT_UNDERSIDE, false, "p", 0, 100));
         upper.add(new SeismicPhaseSegment(tMod, 0, 0, isPWave, TURN, true, "P", 0, 100));
         upper.add(new SeismicPhaseSegment(tMod, 0, 0, isPWave, END, false, "p", 0, 100));
+        ProtoSeismicPhase upperProto = new ProtoSeismicPhase(upper);
         List<SeismicPhaseSegment> lower = new ArrayList<>();
         lower.add(new SeismicPhaseSegment(tMod, 0, 1, isPWave, TURN, true, "P", 0, 10));
         lower.add(new SeismicPhaseSegment(tMod, 1, 0, isPWave, REFLECT_UNDERSIDE, false, "p", 0, 10));
         lower.add(new SeismicPhaseSegment(tMod, 0, 1, isPWave, TURN, true, "P", 0, 10));
         lower.add(new SeismicPhaseSegment(tMod, 1, 0, isPWave, END, false, "p", 0, 10));
-        System.err.println(upper);
-        System.err.println(lower);
+        ProtoSeismicPhase lowerProto = new ProtoSeismicPhase(lower);
+        System.err.println(upperProto);
+        System.err.println(lowerProto);
 
-        assertTrue(walker.canMergePhases(upper, lower));
-        List<SeismicPhaseSegment> merged = walker.mergePhases(upper, lower);
+        assertTrue(walker.canMergePhases(upperProto, lowerProto));
+        ProtoSeismicPhase merged = walker.mergePhases(upperProto, lowerProto);
         assertEquals(merged.get(merged.size()-1).maxRayParam, 100);
         assertEquals(merged.get(merged.size()-1).minRayParam, 0);
 
@@ -78,15 +82,17 @@ public class WalkPhaseTest {
         upper.add(new SeismicPhaseSegment(tMod, 0, 0, isPWave, REFLECT_UNDERSIDE, false, "p", 0, 100));
         upper.add(new SeismicPhaseSegment(tMod, 0, 0, isPWave, TURN, true, "P", 0, 100));
         upper.add(new SeismicPhaseSegment(tMod, 0, 0, isPWave, END, false, "p", 0, 100));
+        ProtoSeismicPhase upperProto = new ProtoSeismicPhase(upper);
         List<SeismicPhaseSegment> lower = new ArrayList<>();
         lower.add(new SeismicPhaseSegment(tMod, 0, 0, isPWave, REFLECT_UNDERSIDE, false, "p", 0, 100));
         lower.add(new SeismicPhaseSegment(tMod, 0, 2, isPWave, TURN, true, "P", 0, 100));
         lower.add(new SeismicPhaseSegment(tMod, 2, 0, isPWave, END, false, "p", 0, 100));
-        System.err.println(upper);
-        System.err.println(lower);
+        ProtoSeismicPhase lowerProto = new ProtoSeismicPhase(lower);
+        System.err.println(upperProto);
+        System.err.println(lowerProto);
 
-        assertTrue(walker.canMergePhases(upper, lower));
-        List<SeismicPhaseSegment> merged = walker.mergePhases(upper, lower);
+        assertTrue(walker.canMergePhases(upperProto, lowerProto));
+        ProtoSeismicPhase merged = walker.mergePhases(upperProto, lowerProto);
         assertEquals(merged.get(merged.size()-1).maxRayParam, 100);
         assertEquals(merged.get(merged.size()-1).minRayParam, 0);
 
@@ -100,7 +106,8 @@ public class WalkPhaseTest {
         List<SeismicPhaseSegment> turnOnly = new ArrayList<>();
         turnOnly.add(new SeismicPhaseSegment(tMod, 0, 1, isPWave, TURN, true, "P", 0, 10));
         turnOnly.add(new SeismicPhaseSegment(tMod, 1, 0, isPWave, END, false, "p", 0, 10));
-        int num = walker.calcInteractionNumber(turnOnly);
+        ProtoSeismicPhase proto = new ProtoSeismicPhase(turnOnly);
+        int num = proto.calcInteractionNumber();
         assertEquals(0, num);
 
         List<SeismicPhaseSegment> reflUnder = new ArrayList<>();
@@ -108,7 +115,8 @@ public class WalkPhaseTest {
         reflUnder.add(new SeismicPhaseSegment(tMod, 1, 0, isPWave, REFLECT_UNDERSIDE, false, "p", 0, 10));
         reflUnder.add(new SeismicPhaseSegment(tMod, 0, 1, isPWave, TURN, true, "P", 0, 10));
         reflUnder.add(new SeismicPhaseSegment(tMod, 1, 0, isPWave, END, false, "p", 0, 10));
-        assertEquals(1, walker.calcInteractionNumber(reflUnder));
+        ProtoSeismicPhase reflProto = new ProtoSeismicPhase(reflUnder);
+        assertEquals(1, reflProto.calcInteractionNumber());
     }
     @Test
     public void interactConvTest() throws TauModelException {
@@ -119,7 +127,8 @@ public class WalkPhaseTest {
         convTransDown.add(new SeismicPhaseSegment(tMod, 0, 1, isPWave, TRANSDOWN, true, "P", 0, 10));
         convTransDown.add(new SeismicPhaseSegment(tMod, 1, 2, !isPWave, TURN, false, "s", 0, 10));
         convTransDown.add(new SeismicPhaseSegment(tMod, 2, 0, !isPWave, END, false, "s", 0, 10));
-        assertEquals(1,  walker.calcInteractionNumber(convTransDown));
+        ProtoSeismicPhase transProto = new ProtoSeismicPhase(convTransDown);
+        assertEquals(1,  transProto.calcInteractionNumber());
 
 
     }
