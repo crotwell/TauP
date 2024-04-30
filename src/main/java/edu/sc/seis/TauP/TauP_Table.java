@@ -449,7 +449,7 @@ public class TauP_Table extends TauP_AbstractPhaseTool {
     protected void jsonTable(PrintWriter out) throws TauPException, IOException {
         out.println("[");
         for(int depthNum = 0; depthNum < depths.length; depthNum++) {
-            List<SeismicPhase> phaseList = recalcPhases(phaseNames, depths[depthNum]);
+            List<SeismicPhase> phaseList = recalcPhases(getPhaseNameList(), depths[depthNum]);
             for (int distNum = 0; distNum < distances.length; distNum++) {
                 List<RayCalculateable> shootables = List.of(DistanceRay.ofDegrees(distances[distNum]));
                 List<Arrival> arrivals = calcAll(phaseList, shootables);
@@ -487,7 +487,7 @@ public class TauP_Table extends TauP_AbstractPhaseTool {
         String header = "Model,Distance (deg),Depth (km),Phase,Time (s),RayParam (deg/s),Takeoff Angle,Incident Angle,Purist Distance,Purist Name";
         out.println(header);
         for(int depthNum = 0; depthNum < depths.length; depthNum++) {
-            List<SeismicPhase> phaseList = recalcPhases(phaseNames, depths[depthNum]);
+            List<SeismicPhase> phaseList = recalcPhases(getPhaseNameList(), depths[depthNum]);
             for(int distNum = 0; distNum < distances.length; distNum++) {
                 List<Arrival> arrivals = calcAll(getSeismicPhases(), List.of(DistanceRay.ofDegrees(distances[distNum])));
                 for (Arrival currArrival : arrivals) {

@@ -50,6 +50,16 @@ public class PhaseName implements Serializable {
     /** list of sac t headers to be associated with the phase, including n triplications */
     public ArrayList<Integer> sacTNumTriplication = new ArrayList<>();
 
+    public static PhaseName parseName(String name) throws PhaseParseException {
+        String[] phaseAndHeader = name.split("-");
+        if (phaseAndHeader.length == 1) {
+            /* no optional dash argument, so just add the name. */
+            return new PhaseName(phaseAndHeader[0]);
+        } else {
+            return new PhaseName(phaseAndHeader[0], phaseAndHeader[1]);
+        }
+    }
+
     public PhaseName(String name) throws PhaseParseException {
         this.name = name;
         // check name is valid

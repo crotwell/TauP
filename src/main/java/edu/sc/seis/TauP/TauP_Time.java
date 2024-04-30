@@ -597,16 +597,14 @@ public class TauP_Time extends TauP_AbstractRayTool {
                         break;
                     case 'l':
                         // list phases
-                        int numPhases = phaseNames.size();
+                        int numPhases = getPhaseNameList().size();
                         String output = numPhases + " phases.";
                         Alert.info(output);
                         output = "";
-                        for(int i = 0; i < numPhases; i++) {
-                            output += phaseNames.get(i).getName();
-                            if(i < numPhases - 1) {
-                                output += ",";
-                            }
+                        for (PhaseName pn : getPhaseNameList()) {
+                            output += pn.getName()+",";
                         }
+                        output = output.substring(0, output.length()-1);
                         Alert.info(output);
                         readMode = 'd';
                         break;

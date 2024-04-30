@@ -8,6 +8,7 @@ import edu.sc.seis.seisFile.sac.SacTimeSeries;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class SetSacTest {
 
@@ -33,11 +34,12 @@ public class SetSacTest {
         header.setO(oMarker);
         SacTimeSeries sac = new SacTimeSeries(header);
         TauP_SetSac setsac = new TauP_SetSac();
-        setsac.phaseNames = new ArrayList<>();
+        List<PhaseName> phaseNames = new ArrayList<>();
         PhaseName phaseP = new PhaseName("P", 1);
-        setsac.phaseNames.add(phaseP);
+        phaseNames.add(phaseP);
         PhaseName phaseS = new PhaseName("S", "234");
-        setsac.phaseNames.add(phaseS);
+        phaseNames.add(phaseS);
+        setsac.setPhaseNameList(phaseNames);
         setsac.sacFileNames = new ArrayList<>();
         setsac.init();
         setsac.processSacTimeSeries(sac, "inmemory");

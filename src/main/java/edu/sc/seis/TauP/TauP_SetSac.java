@@ -92,9 +92,9 @@ public class TauP_SetSac extends TauP_AbstractPhaseTool {
         super(null);
     }
 
-    protected void setSacVarNums() {
+    protected void setSacVarNums() throws PhaseParseException, IOException {
         boolean[] headersUsed = new boolean[11]; // A header is 10
-        for(PhaseName pn : phaseNames) {
+        for(PhaseName pn : getPhaseNameList()) {
             for(int t : pn.sacTNumTriplication) {
                 if (t != SKIP_HEADER) {
                     headersUsed[t] = true;
@@ -102,7 +102,7 @@ public class TauP_SetSac extends TauP_AbstractPhaseTool {
             }
         }
         int j=0;
-        for(PhaseName pn : phaseNames) {
+        for(PhaseName pn : getPhaseNameList()) {
             if(pn.sacTNumTriplication.isEmpty()) {
                 // find a j that hasn't been used
                 while(j < headersUsed.length && headersUsed[j]){ j++; }
@@ -122,7 +122,11 @@ public class TauP_SetSac extends TauP_AbstractPhaseTool {
 
     public void init() throws TauPException {
         super.init();
-        setSacVarNums();
+        try {
+            setSacVarNums();
+        } catch (IOException e) {
+            throw new TauPException(e);
+        }
     }
 
     public void start() throws IOException, TauPException {
@@ -229,13 +233,13 @@ public class TauP_SetSac extends TauP_AbstractPhaseTool {
             SeismicPhase phase = getSeismicPhases().get(j);
             List<Arrival> arrivalList = rayCalculateable.calculate(phase);
             int phaseNum = -1;
-            for(int pnidx = phaseNames.size() - 1; pnidx >= 0; pnidx--) {
-                if(phase.getName().equals(phaseNames.get(pnidx).name)) {
+            for(int pnidx = getPhaseNameList().size() - 1; pnidx >= 0; pnidx--) {
+                if(phase.getName().equals(getPhaseNameList().get(pnidx).name)) {
                     phaseNum = pnidx;
                     break;
                 }
             }
-            PhaseName pn = phaseNames.get(phaseNum);
+            PhaseName pn = getPhaseNameList().get(phaseNum);
             int tripNum = 0;
             for (int tripHeader: pn.sacTNumTriplication) {
                 if (tripNum >= arrivalList.size()) {
