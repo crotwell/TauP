@@ -892,7 +892,10 @@ public class SeismicPhaseFactory {
             return FAIL;
         }
         if(nextLeg.equals("P") || nextLeg.equals("S")
+                || nextLeg.equals("Ped") || nextLeg.equals("Sed")
                 || nextLeg.equals("Pn") || nextLeg.equals("Sn")
+                || nextLeg.equals("Pg") || nextLeg.equals("Sg")
+                || nextLeg.equals("Pb") || nextLeg.equals("Sb")
                 || nextLeg.equals("Pdiff") || nextLeg.equals("Sdiff")
                 || nextLeg.equals(END_CODE)) {
             if(prevEndAction == START || prevEndAction == TRANSDOWN || prevEndAction == REFLECT_UNDERSIDE|| prevEndAction == REFLECT_UNDERSIDE_CRITICAL) {
@@ -955,6 +958,7 @@ public class SeismicPhaseFactory {
             } else if(prevLeg.startsWith("^") || prevLeg.equals("P")
                     || prevLeg.equals("S") || prevLeg.equals("p")
                     || prevLeg.equals("s") || prevLeg.equals("m")
+                    || isLegDepth(prevLeg)
                     || prevLeg.equals("START")) {
                 addToBranch(tMod,
                         currBranch,
@@ -1878,7 +1882,11 @@ public class SeismicPhaseFactory {
                         currLeg);
             } else if(nextLeg.equals("K") || nextLeg.equals("Ked") || nextLeg.equals(END_CODE)) {
                 if(prevLeg.equals("P") || prevLeg.equals("S")
-                        || prevLeg.equals("K")) {
+                        || prevLeg.equals("Ped") || prevLeg.equals("Sed")
+                        || prevLeg.equals("Pdiff") || prevLeg.equals("Sdiff")
+                        || prevLeg.equals("K") || prevLeg.equals("k")
+                        || prevLeg.startsWith("^")
+                        || prevLeg.equals("START")) {
                     endAction = TURN;
                     addToBranch(tMod,
                             currBranch,
