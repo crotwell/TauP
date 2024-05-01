@@ -858,8 +858,8 @@ public class SeismicPhaseFactory {
                 || nextLeg.equals("I") || nextLeg.equals("J") || nextLeg.equals("j")) {
             throw new TauModelException(getName()+" Phase not recognized (3): "
                     + currLeg + " followed by " + nextLeg+", p and s must be upgoing in mantle and so cannot hit core.");
-        } else if(isLegDepth(currLeg)) {
-            double nextLegDepth = Double.parseDouble(currLeg);
+        } else if(isLegDepth(nextLeg)) {
+            double nextLegDepth = Double.parseDouble(nextLeg);
             if (nextLegDepth >= tMod.getCmbDepth()) {
                 throw new TauModelException(getName()+" Phase not recognized (3): "
                         + currLeg + " followed by " + nextLeg+", p and s must be upgoing in mantle and so cannot hit core.");
@@ -874,7 +874,7 @@ public class SeismicPhaseFactory {
                     endAction,
                     currLeg);
         } else {
-            throw new TauModelException(getName()+" Phase not recognized (3): "
+            throw new TauModelException(getName()+" Phase not recognized (3 else): "
                     + currLeg + " followed by " + nextLeg);
         }
         return endAction;

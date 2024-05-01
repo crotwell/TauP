@@ -32,7 +32,7 @@ public class PhaseSymbols {
 
     // specialized codes
     public static final char g = 'g'; // crust only like Pg
-    public static final char b = 'b'; // crust only like Pg
+    public static final char b = 'b'; // crust only like Pb
     public static final String KMPS_CODE = "kmps";
     public static final char SCATTER_CODE = 'o';
     public static final char BACKSCATTER_CODE = 'O';
