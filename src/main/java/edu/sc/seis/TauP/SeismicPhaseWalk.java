@@ -342,43 +342,43 @@ public class SeismicPhaseWalk {
         switch (prevEndSeg.endAction) {
             case TRANSUP:
                 if (receiverBranch == prevEndSeg.endBranch-1) {
-                    outTree.add(segmentList.nextSegment(isPWave, END));
+                    outTreeAdd(outTree, segmentList.nextSegment(isPWave, END));
                 }
                 break;
             case TURN:
                 if (receiverBranch == prevEndSeg.endBranch && isPWave == prevEndSeg.isPWave) {
                     // turn cannot phase convert
-                    outTree.add(segmentList.nextSegment( prevEndSeg.isPWave, END));
+                    outTreeAdd(outTree, segmentList.nextSegment( prevEndSeg.isPWave, END));
                 }
                 break;
             case REFLECT_TOPSIDE:
                 if (receiverBranch == prevEndSeg.endBranch ) {
-                    outTree.add(segmentList.nextSegment( isPWave, END));
+                    outTreeAdd(outTree, segmentList.nextSegment( isPWave, END));
                 }
                 break;
             case REFLECT_UNDERSIDE:
                 if (receiverBranch == prevEndSeg.endBranch+1) {
-                    outTree.add(segmentList.nextSegment( isPWave, END));
+                    outTreeAdd(outTree, segmentList.nextSegment( isPWave, END));
                 }
                 break;
             case TRANSDOWN:
                 if (receiverBranch == prevEndSeg.endBranch+2) {
-                    outTree.add(segmentList.nextSegment( isPWave, END));
+                    outTreeAdd(outTree, segmentList.nextSegment( isPWave, END));
                 }
                 break;
         }
         switch (prevEndSeg.endAction) {
             case END:
             case FAIL:
-                outTree.add(segmentList);
+                outTreeAdd(outTree, segmentList);
                 break;
             case REFLECT_UNDERSIDE:
             case TRANSDOWN:
-                outTree.add(segmentList.nextSegment(isPWave, TURN));
+                outTreeAdd(outTree, segmentList.nextSegment(isPWave, TURN));
                 if (prevEndSeg.endBranch < tMod.getNumBranches()-2) {
-                    outTree.add(segmentList.nextSegment(isPWave, TRANSDOWN));
+                    outTreeAdd(outTree, segmentList.nextSegment(isPWave, TRANSDOWN));
                     if ( ! excludeBranch.contains(startBranchNum+1) ) {
-                        outTree.add(segmentList.nextSegment(isPWave, REFLECT_TOPSIDE));
+                        outTreeAdd(outTree, segmentList.nextSegment(isPWave, REFLECT_TOPSIDE));
                     }
                 }
                 break;
@@ -386,10 +386,10 @@ public class SeismicPhaseWalk {
             case TRANSUP:
                     if (prevEndSeg.endBranch > 1) {
                             // exclude phase converstion
-                            outTree.add(segmentList.nextSegment(isPWave, TRANSUP));
+                            outTreeAdd(outTree, segmentList.nextSegment(isPWave, TRANSUP));
                     }
                 if ( ! excludeBranch.contains(startBranchNum)) {
-                    outTree.add(segmentList.nextSegment(isPWave, REFLECT_UNDERSIDE));
+                    outTreeAdd(outTree, segmentList.nextSegment(isPWave, REFLECT_UNDERSIDE));
 
                 }
                 break;
@@ -398,11 +398,11 @@ public class SeismicPhaseWalk {
                     // turn cannot phase convert
                     if (prevEndSeg.endBranch > 0) {
                             // exclude phase converstion
-                            outTree.add(segmentList.nextSegment(prevEndSeg.isPWave, TRANSUP));
+                            outTreeAdd(outTree, segmentList.nextSegment(prevEndSeg.isPWave, TRANSUP));
 
                     }
                     if ( ! excludeBranch.contains(startBranchNum) ) {
-                        outTree.add(segmentList.nextSegment(prevEndSeg.isPWave, REFLECT_UNDERSIDE));
+                        outTreeAdd(outTree, segmentList.nextSegment(prevEndSeg.isPWave, REFLECT_UNDERSIDE));
                     }
                 }
                 break;
@@ -410,6 +410,22 @@ public class SeismicPhaseWalk {
         return outTree;
     }
 
+    public static void outTreeAdd(List<ProtoSeismicPhase> outTree, ProtoSeismicPhase proto) {
+        if (proto != null) {
+            boolean hasDiffOrHead = false;
+            for (SeismicPhaseSegment seg : proto.segmentList) {
+                if (seg.isFlat) {
+                    hasDiffOrHead = true;
+                    break;
+                }
+            }
+            SeismicPhaseSegment endSeg = proto.get(proto.size()-1);
+            // only phases with a head/diff leg can exist with degenerate ray parameter range
+            if (hasDiffOrHead || endSeg.minRayParam < endSeg.maxRayParam) {
+                outTree.add(proto);
+            }
+        }
+    }
 
     public static String legNameForTauBranch(TauModel tMod, int branchNum, boolean isPWave, boolean isDowngoing) {
         TauBranch tauBranch = tMod.getTauBranch(branchNum, isPWave);
