@@ -52,8 +52,8 @@ public class TauP_VelocityPlot extends TauP_Tool {
                     VelocityLayer above = vMod.getVelocityLayer(vMod.layerNumberAbove(d));
                     VelocityLayer below = vMod.getVelocityLayer(vMod.layerNumberBelow(d));
                     writer.println(d+disconName);
-                    writer.println("      "+Outputs.formatLatLon(above.getBotPVelocity())+" "+Outputs.formatLatLon(above.getBotSVelocity())+" "+Outputs.formatLatLon(above.getBotDensity()));
-                    writer.println("      "+Outputs.formatLatLon(below.getTopPVelocity())+" "+Outputs.formatLatLon(below.getTopSVelocity())+" "+Outputs.formatLatLon(below.getTopDensity()));
+                    writer.println("      "+Outputs.formatRayParam(above.getBotPVelocity())+" "+Outputs.formatRayParam(above.getBotSVelocity())+" "+Outputs.formatRayParam(above.getBotDensity()));
+                    writer.println("      "+Outputs.formatRayParam(below.getTopPVelocity())+" "+Outputs.formatRayParam(below.getTopSVelocity())+" "+Outputs.formatRayParam(below.getTopDensity()));
                 }
             }
             writer.flush();
