@@ -51,12 +51,10 @@ public class SeismicPhaseWalk {
         List<ProtoSeismicPhase> segmentTree = walkPhases(maxAction);
 
         List<ProtoSeismicPhase> endingSegments = new ArrayList<>();
-        for (ProtoSeismicPhase segList : segmentTree) {
-            SeismicPhaseSegment endSeg = segList.get(segList.size()-1);
+        for (ProtoSeismicPhase proto : segmentTree) {
+            SeismicPhaseSegment endSeg = proto.get(proto.size()-1);
             if (endSeg.endAction == END || endSeg.endAction == END_DOWN) {
-                endingSegments.add(consolidateSegment(segList));
-            } else {
-                // System.err.println("seg does not end: "+phaseNameForSegments(segList));
+                endingSegments.add(consolidateSegment(proto));
             }
         }
         endingSegments.sort(Comparator.comparingInt(s -> s.size()));
@@ -83,8 +81,6 @@ public class SeismicPhaseWalk {
         if (tMod.getSourceBranch() > 0) {
             int aboveStartBranch = tMod.getSourceBranch()-1;
             TauBranch aboveSourceBranchP = tMod.getTauBranch(tMod.getSourceBranch()-1, isPWave);
-            TauBranch aboveSourceBranchS = tMod.getTauBranch(tMod.getSourceBranch()-1, SimpleSeismicPhase.SWAVE);
-            SeismicPhaseSegment upSeg;
             if (receiverBranch == tMod.sourceBranch-1) {
                 // one branch away from receiver, so can just go direct and END
                 ProtoSeismicPhase upProto = ProtoSeismicPhase.start( new SeismicPhaseSegment(tMod,
@@ -458,13 +454,13 @@ public class SeismicPhaseWalk {
         }
     }
 
-    public ProtoSeismicPhase consolidateSegment(ProtoSeismicPhase segmentList) {
-        segmentList.validateSegList();
+    public ProtoSeismicPhase consolidateSegment(ProtoSeismicPhase proto) {
+        proto.validateSegList();
 
-        ProtoSeismicPhase outSegmentList = consolidateTrans(segmentList);
+        ProtoSeismicPhase outSegmentList = consolidateTrans(proto);
         outSegmentList.validateSegList();
         return outSegmentList;
-        //return segmentList;
+        //return proto;
     }
 
     public ProtoSeismicPhase consolidateTrans(ProtoSeismicPhase proto) {
