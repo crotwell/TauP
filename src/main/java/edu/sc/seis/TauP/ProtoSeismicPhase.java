@@ -16,6 +16,57 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
         return new ProtoSeismicPhase(new ArrayList<>(List.of(startSeg)));
     }
 
+    public static ProtoSeismicPhase startNewPhase(TauModel tMod,
+                                                  boolean isPWave,
+                                                  PhaseInteraction endAction,
+                                                  boolean isDownGoing) throws TauPException {
+        int startBranchNum = tMod.getSourceBranch();
+        if ( ! isDownGoing) {
+            startBranchNum = startBranchNum-1;
+        }
+        String legName = legNameForSegment(tMod, startBranchNum, isPWave, isDownGoing, endAction);
+        TauBranch startBranch = tMod.getTauBranch(startBranchNum, isPWave);
+        double minRayParam = 0.0;
+        double maxRayParam;
+        SlownessModel sMod = tMod.getSlownessModel();
+        if (isDownGoing) {
+            if (tMod.getSourceDepth() == tMod.getRadiusOfEarth()) {
+                throw new TauPException("Cannot be downgoing for source at center of earth: "+tMod.getSourceDepth());
+            }
+            SlownessLayer slownessLayer = sMod.getSlownessLayer(sMod.layerNumberBelow(tMod.getSourceDepth(), isPWave), isPWave);
+            maxRayParam = slownessLayer.getTopP();
+            switch (endAction) {
+                case TURN:
+                    minRayParam = startBranch.getMinRayParam();
+                    break;
+                case REFLECT_TOPSIDE:
+                case TRANSDOWN:
+                    maxRayParam = startBranch.getMinTurnRayParam();
+                    break;
+                case REFLECT_TOPSIDE_CRITICAL:
+                    maxRayParam = startBranch.getMinTurnRayParam();
+                    minRayParam = startBranch.getMinRayParam();
+                    break;
+                default:
+                    throw new TauPException("Don't understand endAction "+endAction+" when downgoing");
+            }
+        } else {
+            // upgoing
+            if (tMod.getSourceDepth() == 0) {throw new TauPException("Cannot be upgoing for zero depth source");}
+            SlownessLayer slownessLayer = sMod.getSlownessLayer(sMod.layerNumberAbove(tMod.getSourceDepth(), isPWave), isPWave);
+            maxRayParam = slownessLayer.getBotP();
+            switch (endAction) {
+                case REFLECT_UNDERSIDE:
+                case TRANSUP:
+                    maxRayParam = Math.max(maxRayParam, startBranch.getMinTurnRayParam());
+                    break;
+                default:
+                    throw new TauPException("Don't understand endAction "+endAction+" when upgoing");
+            }
+        }
+        return start(new SeismicPhaseSegment(tMod, startBranchNum, startBranchNum, isPWave, endAction, isDownGoing, legName, minRayParam, maxRayParam));
+    }
+
 
     public ProtoSeismicPhase nextSegment(boolean isPWave,
                                          PhaseInteraction endAction) {
@@ -44,6 +95,9 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
             default:
                 throw new IllegalArgumentException("End action case not yet impl: "+endAction);
         }
+        if (! isDowngoing && endSeg.endBranch == 0) {
+            return null;
+        }
         int startBranchNum;
         switch (endSeg.endAction) {
             case TRANSUP:
@@ -56,18 +110,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                 // some reversal of direction
                 startBranchNum = priorEndBranchNum;
         }
-        int endBranchNum = startBranchNum;
-        if (isDowngoing) {
-            while (endBranchNum < tMod.getNumBranches()-1
-                    && tMod.isNoDisconDepth(tMod.getTauBranch(endBranchNum, isPWave).getBotDepth())) {
-                endBranchNum += 1;
-            }
-        } else {
-            // upgoing
-            while (endBranchNum > 0 && tMod.isNoDisconDepth(tMod.getTauBranch(endBranchNum, isPWave).getTopDepth())) {
-                endBranchNum -= 1;
-            }
-        }
+        int endBranchNum = findEndDiscon(tMod, startBranchNum, isPWave, isDowngoing); // usually same as start
         String nextLegName = SeismicPhaseWalk.legNameForTauBranch(tMod, startBranchNum, isPWave, isDowngoing);
         TauBranch nextBranch = tMod.getTauBranch(startBranchNum, isPWave);
 
@@ -94,6 +137,9 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                 break;
 
         }
+        if (maxRayParam < minRayParam) {
+            return null;
+        }
 
         out.add(new SeismicPhaseSegment(tMod,
                 startBranchNum, endBranchNum, isPWave, endAction, isDowngoing, nextLegName,
@@ -103,6 +149,21 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
         return proto;
     }
 
+    public static int findEndDiscon(TauModel tMod, int startBranchNum, boolean isPWave, boolean isDowngoing) {
+        int endBranchNum = startBranchNum;
+        if (isDowngoing) {
+            while (endBranchNum < tMod.getNumBranches()-1
+                    && tMod.isNoDisconDepth(tMod.getTauBranch(endBranchNum, isPWave).getBotDepth())) {
+                endBranchNum += 1;
+            }
+        } else {
+            // upgoing
+            while (endBranchNum > 0 && tMod.isNoDisconDepth(tMod.getTauBranch(endBranchNum, isPWave).getTopDepth())) {
+                endBranchNum -= 1;
+            }
+        }
+        return endBranchNum;
+    }
 
     public void validateSegList() {
         SeismicPhaseSegment prev = null;
@@ -130,6 +191,10 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
 
     public final SeismicPhaseSegment get(int i) {
         return segmentList.get(i);
+    }
+
+    public final SeismicPhaseSegment endSegment() {
+        return segmentList.get(segmentList.size()-1);
     }
 
     public final int size() {
@@ -258,8 +323,11 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
     }
 
     public static String legNameForSegment(TauModel tMod, SeismicPhaseSegment seg) {
-        String name = SeismicPhaseWalk.legNameForTauBranch(tMod, seg.endBranch, seg.isPWave, seg.isDownGoing);
-        if (seg.endAction == TURN && name.endsWith("ed")) {
+        return legNameForSegment(tMod, seg.endBranch, seg.isPWave, seg.isDownGoing, seg.endAction);
+    }
+    public static String legNameForSegment(TauModel tMod, int endBranch, boolean isPWave, boolean isDownGoing, PhaseInteraction endAction) {
+        String name = SeismicPhaseWalk.legNameForTauBranch(tMod, endBranch, isPWave, isDownGoing);
+        if (endAction == TURN && name.endsWith("ed")) {
             name = name.substring(0, name.length()-2);
         }
         return name;

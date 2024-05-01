@@ -355,8 +355,8 @@ public class LegPuller {
             currLeg = legs.get(legNum);
             // find out if the next leg represents a
             // phase conversion or reflection depth
-            Matcher m = reflectDepthPattern.matcher(currLeg);
-            if(m.matches()) {
+            Matcher matcher = reflectDepthPattern.matcher(currLeg);
+            if(matcher.matches()) {
                 puristName.append(currLeg.charAt(0));
                 disconBranch = closestBranchToDepth(tMod, currLeg.substring(1));
 
@@ -381,13 +381,21 @@ public class LegPuller {
                     // only get this far if the currLeg is a number,
                     // otherwise exception
                     disconBranch = closestBranchToDepth(tMod, currLeg);
-                    legDepth = tMod.getTauBranch(disconBranch, true)
-                            .getTopDepth();
-                    if(legDepth == Math.rint(legDepth)) {
-                        intLegDepth = (int)legDepth;
-                        puristName.append(intLegDepth);
+                    if (disconBranch == tMod.getMohoBranch()) {
+                        puristName.append(m);
+                    } else if (disconBranch == tMod.getCmbBranch()) {
+                        puristName.append(c);
+                    } else if (disconBranch == tMod.getIocbBranch()) {
+                        puristName.append(i);
                     } else {
-                        puristName.append(legDepth);
+                        legDepth = tMod.getTauBranch(disconBranch, true)
+                                .getTopDepth();
+                        if (legDepth == Math.rint(legDepth)) {
+                            intLegDepth = (int) legDepth;
+                            puristName.append(intLegDepth);
+                        } else {
+                            puristName.append(legDepth);
+                        }
                     }
                 } catch(NumberFormatException e) {
                     puristName.append(currLeg);

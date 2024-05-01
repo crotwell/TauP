@@ -3000,7 +3000,8 @@ public class SeismicPhaseFactory {
                 for (DepthRange fluidDR : tMod.getSlownessModel().fluidLayerDepths) {
                     if (tb.getTopDepth() >= fluidDR.topDepth && tb.getTopDepth() < fluidDR.botDepth
                             || tb.getBotDepth() > fluidDR.topDepth && tb.getBotDepth() <= fluidDR.botDepth) {
-                        throw new TauModelException("S wave branch in "+getName()+" is in fluid: "+tb+" "+fluidDR);
+                        throw new TauModelException("S wave branch "+currLeg+"("+isPWave+")"+" in "+getName()
+                                +" is in fluid: "+tb+" "+fluidDR+" "+startBranch+" "+endBranch+" "+isDownGoing);
                     }
                 }
             }

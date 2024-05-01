@@ -50,6 +50,12 @@ public class TauP_Find extends TauP_Tool {
                 minRP, maxRP,
                 tMod.findBranch(modelArgs.getReceiverDepth()));
         walker.excludeBoundaries(excludeDepth);
+        if (isVerbose() && excludeDepth.size()>0) {
+            System.out.println("Exclude: "+excludeDepth.size()+" depths:");
+            for (int i : walker.excludeBranch) {
+                System.out.println(i+" "+walker.tMod.getTauBranch(i, true).getTopDepth()+" km");
+            }
+        }
         List<ProtoSeismicPhase> walk = walker.findEndingPaths(maxActions);
         if (outputTypeArgs.isText()) {
             printResultText(walk);
@@ -86,6 +92,11 @@ public class TauP_Find extends TauP_Tool {
         out.put("sourcedepth", modelArgs.getSourceDepth());
         out.put("receiverdepth", modelArgs.getReceiverDepth());
         out.put("max", maxActions);
+        JSONArray exclude = new JSONArray();
+        out.put("exclude", exclude);
+        for (double d : excludeDepth) {
+            exclude.put(d);
+        }
         JSONArray phases = new JSONArray();
         out.put("phases", phases);
         for (ProtoSeismicPhase segList : walk) {

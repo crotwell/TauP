@@ -147,12 +147,11 @@ public class WalkPhaseTest {
 
         ProtoSeismicPhase proto_pPv20 = ProtoSeismicPhase.start(new SeismicPhaseSegment(tMod, 0, 0, isPWave, REFLECT_UNDERSIDE, false, "P", 0, 10));
         List<ProtoSeismicPhase> next_Pv20 = walker.nextLegs(tMod, proto_pPv20, isPWave);
-        assertEquals(2, next_Pv20.size(), "no pPv20p, only trans, "+next_Pv20.get(0).phaseName+" "+next_Pv20.get(1).phaseName);
+        assertEquals(1, next_Pv20.size(), "no pPv20p, only trans, " + next_Pv20.get(0).phaseName );
 
         ProtoSeismicPhase s20p = ProtoSeismicPhase.start(new SeismicPhaseSegment(tMod, 1, 1, false, TRANSUP, false, "s", 0, 1000));
         List<ProtoSeismicPhase> next_s20p = walker.nextLegs(tMod, s20p, true);
         assertEquals(0, next_s20p.size(), "no s20p, s^20");
-
 
         List<SeismicPhaseSegment> legs = new ArrayList<>();
         legs.add(new SeismicPhaseSegment(tMod, 0, 0, isPWave, TRANSDOWN, true, "P", 0, 10));
@@ -163,19 +162,56 @@ public class WalkPhaseTest {
 
     }
 
+    @Test
+    public void exclude210_pPedv210p() throws TauPException {
+        boolean isPWave = true;
+        TauModel tMod = TauModelLoader.load("ak135");
+        TauModel tModDepth = tMod.depthCorrect(100);
+        SeismicPhaseWalk walker = new SeismicPhaseWalk(tModDepth);
+        Double d = 20.0;
+        Double d210 = 210.0;
+        walker.excludeBoundaries(List.of(d, d210));
+
+        int branchNum210 = tModDepth.findBranch(210);
+        ProtoSeismicPhase pPedv210 = ProtoSeismicPhase.startNewPhase(tModDepth, true, TRANSUP, false);
+        while(pPedv210.endSegment().endBranch > 1) {
+            pPedv210 = pPedv210.nextSegment(true, TRANSUP);
+        }
+        pPedv210 = pPedv210.nextSegment(true, REFLECT_UNDERSIDE);
+        while(pPedv210.endSegment().endBranch < branchNum210-3) {
+            assertNotEquals(branchNum210, pPedv210.endSegment().endBranch);
+            pPedv210 = pPedv210.nextSegment(true, TRANSDOWN);
+        }
+        System.err.println("pPedv210 before 210: "+pPedv210.endSegment().toString());
+        for (SeismicPhaseSegment seg : pPedv210.segmentList) {
+            System.err.println("   "+seg);
+        }
+        List<ProtoSeismicPhase> nextLegs = walker.nextLegs(tModDepth, pPedv210, isPWave);
+        for (ProtoSeismicPhase p : nextLegs) {
+            assertNotEquals(branchNum210, pPedv210.endSegment().endBranch);
+            assertNotEquals(REFLECT_TOPSIDE, p.endSegment().endAction);
+        }
+    }
+
 
     @Test
     public void excludeDisconWalk() throws TauPException {
         TauModel tMod = TauModelLoader.load("ak135");
-        int maxLegs = 1;
+        int maxLegs = 4;
         SeismicPhaseWalk walker = new SeismicPhaseWalk(tMod);
         Double d = 20.0;
+        Double d35 = 35.0;
         Double d210 = 210.0;
-        walker.excludeBoundaries(List.of(d, d210));
+        Double d410 = 410.0;
+        double d660 = 660.0;
+        walker.excludeBoundaries(List.of(d, d35, d210, d410, d660));
         List<ProtoSeismicPhase> walk = walker.findEndingPaths(maxLegs);
         for (ProtoSeismicPhase segList : walk) {
             assertFalse(segList.phaseName.contains("20"), segList.phaseName);
+            assertFalse(segList.phaseName.contains("35"), segList.phaseName);
             assertFalse(segList.phaseName.contains("210"), segList.phaseName);
+            assertFalse(segList.phaseName.contains("410"), segList.phaseName);
+            assertFalse(segList.phaseName.contains("660"), segList.phaseName);
         }
     }
 }

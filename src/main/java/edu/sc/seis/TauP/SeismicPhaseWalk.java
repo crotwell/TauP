@@ -274,7 +274,7 @@ public class SeismicPhaseWalk {
                             nextSegmentTree.add(conProto);
                             walkedAStep = true;
                         } else {
-                            if (ToolRun.VERBOSE) {
+                            if (ToolRun.DEBUG) {
                                 ProtoSeismicPhase conProto = consolidateSegment(calcSegList);
                                 System.out.println("skip " + conProto.phaseNameForSegments()
                                         + " " + (calcSegList.calcInteractionNumber() <= maxLegs)
@@ -339,6 +339,7 @@ public class SeismicPhaseWalk {
             return outTree;
         }
 
+
         switch (prevEndSeg.endAction) {
             case TRANSUP:
                 if (receiverBranch == prevEndSeg.endBranch-1) {
@@ -369,26 +370,27 @@ public class SeismicPhaseWalk {
         }
         switch (prevEndSeg.endAction) {
             case END:
-            case FAIL:
                 outTreeAdd(outTree, segmentList);
+            case FAIL:
                 break;
             case REFLECT_UNDERSIDE:
             case TRANSDOWN:
                 outTreeAdd(outTree, segmentList.nextSegment(isPWave, TURN));
                 if (prevEndSeg.endBranch < tMod.getNumBranches()-2) {
                     outTreeAdd(outTree, segmentList.nextSegment(isPWave, TRANSDOWN));
-                    if ( ! excludeBranch.contains(startBranchNum+1) ) {
+                    if ( ! excludeBranch.contains(1+ProtoSeismicPhase.findEndDiscon(tMod, startBranchNum, isPWave, true)) ) {
                         outTreeAdd(outTree, segmentList.nextSegment(isPWave, REFLECT_TOPSIDE));
                     }
                 }
                 break;
             case REFLECT_TOPSIDE:
             case TRANSUP:
-                    if (prevEndSeg.endBranch > 1) {
-                            // exclude phase converstion
-                            outTreeAdd(outTree, segmentList.nextSegment(isPWave, TRANSUP));
+                if (prevEndSeg.endBranch > 1) {
+                    if (isPWave || ! tMod.isFluidBranch(startBranchNum-1)) {
+                        outTreeAdd(outTree, segmentList.nextSegment(isPWave, TRANSUP));
                     }
-                if ( ! excludeBranch.contains(startBranchNum)) {
+                }
+                if ( ! excludeBranch.contains(ProtoSeismicPhase.findEndDiscon(tMod, startBranchNum, isPWave, false))) {
                     outTreeAdd(outTree, segmentList.nextSegment(isPWave, REFLECT_UNDERSIDE));
 
                 }
@@ -397,11 +399,13 @@ public class SeismicPhaseWalk {
                 if (isPWave == prevEndSeg.isPWave) {
                     // turn cannot phase convert
                     if (prevEndSeg.endBranch > 0) {
-                            // exclude phase converstion
+                            // exclude phase converstion if fluid
+                        if (isPWave || ! tMod.isFluidBranch(startBranchNum-1)) {
                             outTreeAdd(outTree, segmentList.nextSegment(prevEndSeg.isPWave, TRANSUP));
+                        }
 
                     }
-                    if ( ! excludeBranch.contains(startBranchNum) ) {
+                    if ( ! excludeBranch.contains(ProtoSeismicPhase.findEndDiscon(tMod, startBranchNum, isPWave, false)) ) {
                         outTreeAdd(outTree, segmentList.nextSegment(prevEndSeg.isPWave, REFLECT_UNDERSIDE));
                     }
                 }

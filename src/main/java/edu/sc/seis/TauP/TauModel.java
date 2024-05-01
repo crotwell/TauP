@@ -182,6 +182,10 @@ public class TauModel implements Serializable {
         return false;
     }
 
+    public boolean isFluidBranch(int branchNum) {
+        return getSlownessModel().depthInFluid(getTauBranch(branchNum, false).getTopDepth());
+    }
+
     /**
      * Is the given depth a "noDisconDepth"?
      */
