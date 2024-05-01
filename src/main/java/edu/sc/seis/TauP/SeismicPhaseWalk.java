@@ -497,5 +497,5 @@ public class SeismicPhaseWalk {
 
     boolean allowSWave = true;
     boolean allowPWave = true;
-    
+
 }

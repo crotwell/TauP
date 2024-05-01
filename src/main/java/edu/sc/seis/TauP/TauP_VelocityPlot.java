@@ -38,7 +38,26 @@ public class TauP_VelocityPlot extends TauP_Tool {
             vModList.add(vMod);
         }
 
-        if (outputTypeArgs.isCSV()) {
+        if (listDiscon) {
+            outputTypeArgs.setOutputFormat(TEXT);
+            if (outputTypeArgs.getOutFileBase().equals(DEFAULT_OUTFILE)) {
+                outputTypeArgs.setOutFileBase("-");
+            }
+            PrintWriter writer = outputTypeArgs.createWriter(spec.commandLine().getOut());
+            for (VelocityModel vMod : vModList) {
+                writer.println("# "+vMod.getModelName());
+                for (double d : vMod.getDisconDepths()) {
+                    NamedVelocityDiscon discon = vMod.getNamedDisconForDepth(d);
+                    String disconName = discon == null ? "" : "   "+discon.getPreferredName();
+                    VelocityLayer above = vMod.getVelocityLayer(vMod.layerNumberAbove(d));
+                    VelocityLayer below = vMod.getVelocityLayer(vMod.layerNumberBelow(d));
+                    writer.println(d+disconName);
+                    writer.println("      "+Outputs.formatLatLon(above.getBotPVelocity())+" "+Outputs.formatLatLon(above.getBotSVelocity())+" "+Outputs.formatLatLon(above.getBotDensity()));
+                    writer.println("      "+Outputs.formatLatLon(below.getTopPVelocity())+" "+Outputs.formatLatLon(below.getTopSVelocity())+" "+Outputs.formatLatLon(below.getTopDensity()));
+                }
+            }
+            writer.flush();
+        } else if (outputTypeArgs.isCSV()) {
             for (VelocityModel vMod : vModList) {
                 if (!outputTypeArgs.isStdout()) {
                     outputTypeArgs.setOutFileBase(vMod.modelName);
@@ -535,6 +554,9 @@ public class TauP_VelocityPlot extends TauP_Tool {
     public void setyAxisMinMax(double[] yAxisMinMax) {
         this.yAxisMinMax = yAxisMinMax;
     }
+
+    @CommandLine.Option(names = "--listdiscon", description = "List the discontinuities in the velocity model")
+    public boolean listDiscon = false;
 
     ModelAxisType xAxisType = ModelAxisType.velocity;
     ModelAxisType yAxisType = ModelAxisType.depth;
