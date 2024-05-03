@@ -111,6 +111,7 @@ public class HeadDiffWaveTest {
     Arrival SedPdiff_Arr = SedPdiff_arrivals.get(0);
     assertEquals(tMod.getTauBranch(tMod.getCmbBranch()-1, true).getMinTurnRayParam(), SedPdiff_Arr.getRayParam());
     SeismicPhase SKPdiffs_Phase = SeismicPhaseFactory.createPhase("SKPdiffs", tMod);
+    assertEquals(1, SKPdiffs_Phase.countFlatLegs());
     List<Arrival> SKPdiffs_arrivals = SKPdiffs_Phase.calcTime(deg);
     assertEquals(1, SKPdiffs_arrivals.size());
     Arrival SKPdiffs_Arr = SKPdiffs_arrivals.get(0);
