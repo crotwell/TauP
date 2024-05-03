@@ -210,10 +210,10 @@ public class SeismicPhaseSegment {
 				depthRange = " at "+tMod.getTauBranch(endBranch, isPWave).getBotDepth()+" (DIFF)";
 			} else if (prevEndAction == PhaseInteraction.HEAD) {
 				depthRange = " at " + tMod.getTauBranch(endBranch, isPWave).getTopDepth()+" (HEAD)";
-			} else if (prevEndAction == PhaseInteraction.KMPS) {
+			} else if (prevEndAction == KMPS) {
 				depthRange = " at surface (KMPS)";
 			} else {
-				throw new RuntimeException("isFlat but prev not HEAD or DIFFRACT: "+endActionToString(prevEndAction));
+				throw new RuntimeException("isFlat but prev not HEAD or DIFFRACT: "+endActionToString(prevEndAction)+" "+endAction);
 			}
 		} else if (isDownGoing) {
 			depthRange = tMod.getTauBranch(startBranch, isPWave).getTopDepth() + " to " + tMod.getTauBranch(endBranch, isPWave).getBotDepth();

@@ -375,7 +375,9 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
     }
 
     public final void add(SeismicPhaseSegment seg) {
-        if (segmentList.isEmpty()) {
+        if (seg.prevEndAction == KMPS) {
+            // keep KMPS
+        } else if (segmentList.isEmpty()) {
             seg.prevEndAction = START;
         } else {
             seg.prevEndAction = endSegment().endAction;
@@ -386,7 +388,10 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
 
     public int calcStartBranch(String currLeg) {
         int currBranch;
-        if (! isEmpty()) {
+        if (currLeg.endsWith(KMPS_CODE)) {
+            // surface wave, zero
+            currBranch = 0;
+        } else if (! isEmpty()) {
             currBranch = endSegment().endBranch + PhaseInteraction.endOffset(endSegment().endAction);
         } else if(isDowngoingSymbol(currLeg)) {
             // initial downgoing leg, like P
@@ -677,44 +682,11 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
         if (branch != startBranch) {
             throw new RuntimeException("old branch not calc for flat: "+branch+" "+startBranch);
         }
-        double minRayParam = isEmpty() ? 0 : endSegment().minRayParam;
-        if (isEmpty()) {
-            throw new TauModelException("Cannot have flat leg as starting leg in phase: "+currLeg+" "+getName());
-        }
-        double maxRayParam = endSegment().maxRayParam;
-        if(ToolRun.DEBUG) {
-            System.err.println("before addFlatBranch: minRP="+minRayParam+"  maxRP="+maxRayParam);
-            System.err.println("addFlatBranch( " + branch
-                    + " endAction="+endActionString(endAction)+" "+currLeg+") isP:"+(isPWave?"P":"S"));
-
-        }
+        double minRayParam;
+        double maxRayParam;
         boolean flatIsDownGoing = false;
         SeismicPhaseSegment flatSegment;
-        if (prevEndAction == HEAD) {
-            double headRP = tMod.getTauBranch(branch,isPWave).getMaxRayParam();
-            if (minRayParam > headRP || maxRayParam < headRP) {
-                // can't do head wave, no rp match
-                minRayParam = -1;
-                maxRayParam = -1;
-            } else {
-                minRayParam = headRP;
-                maxRayParam = headRP;
-            }
-            flatSegment = new SeismicPhaseSegment(tMod, branch, branch,
-                    isPWave, endAction, flatIsDownGoing, currLeg, minRayParam, maxRayParam);
-        } else if (prevEndAction == DIFFRACT || prevEndAction == TRANSUPDIFFRACT){
-            double diffRP = tMod.getTauBranch(branch,isPWave).getMinTurnRayParam();
-            if (minRayParam > diffRP || maxRayParam < diffRP) {
-                // can't do diff wave, no rp match
-                minRayParam = -1;
-                maxRayParam = -1;
-            } else {
-                minRayParam = diffRP;
-                maxRayParam = diffRP;
-            }
-            flatSegment = new SeismicPhaseSegment(tMod, branch, branch,
-                    isPWave, endAction, flatIsDownGoing, currLeg, minRayParam, maxRayParam);
-        } else if (prevEndAction == KMPS && currLeg.endsWith("kmps")){
+        if (prevEndAction == KMPS) {
             // dummy case for surface wave velocity
             double velocity = Double.valueOf(currLeg.substring(0, currLeg.length() - 4))
                     .doubleValue();
@@ -722,8 +694,46 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
             maxRayParam = minRayParam;
             flatSegment = new SeismicPhaseSegment(tMod, branch, branch,
                     isPWave, endAction, flatIsDownGoing, currLeg, minRayParam, maxRayParam);
+
         } else {
-            throw new TauModelException("Cannot addFlatBranch for prevEndAction: "+prevEndAction+" for "+currLeg);
+            minRayParam = isEmpty() ? 0 : endSegment().minRayParam;
+            if (isEmpty()) {
+                throw new TauModelException("Cannot have flat leg as starting leg in phase: " + currLeg + " " + getName());
+            }
+            maxRayParam = endSegment().maxRayParam;
+            if(ToolRun.DEBUG) {
+                System.err.println("before addFlatBranch: minRP="+minRayParam+"  maxRP="+maxRayParam);
+                System.err.println("addFlatBranch( " + branch
+                        + " endAction="+endActionString(endAction)+" "+currLeg+") isP:"+(isPWave?"P":"S"));
+
+            }
+            if (prevEndAction == HEAD) {
+                double headRP = tMod.getTauBranch(branch,isPWave).getMaxRayParam();
+                if (minRayParam > headRP || maxRayParam < headRP) {
+                    // can't do head wave, no rp match
+                    minRayParam = -1;
+                    maxRayParam = -1;
+                } else {
+                    minRayParam = headRP;
+                    maxRayParam = headRP;
+                }
+                flatSegment = new SeismicPhaseSegment(tMod, branch, branch,
+                        isPWave, endAction, flatIsDownGoing, currLeg, minRayParam, maxRayParam);
+            } else if (prevEndAction == DIFFRACT || prevEndAction == TRANSUPDIFFRACT){
+                double diffRP = tMod.getTauBranch(branch,isPWave).getMinTurnRayParam();
+                if (minRayParam > diffRP || maxRayParam < diffRP) {
+                    // can't do diff wave, no rp match
+                    minRayParam = -1;
+                    maxRayParam = -1;
+                } else {
+                    minRayParam = diffRP;
+                    maxRayParam = diffRP;
+                }
+                flatSegment = new SeismicPhaseSegment(tMod, branch, branch,
+                        isPWave, endAction, flatIsDownGoing, currLeg, minRayParam, maxRayParam);
+            } else {
+                throw new TauModelException("Cannot addFlatBranch for prevEndAction: "+prevEndAction+" for "+currLeg);
+            }
         }
         flatSegment.isFlat = true;
         flatSegment.prevEndAction = prevEndAction;
