@@ -29,6 +29,7 @@ import java.util.HashMap;
  */
 public class TauModel implements Serializable {
 
+
     public TauModel(SlownessModel sMod) throws NoSuchLayerException,
             SlownessModelException, TauModelException {
         this.sMod = sMod;
@@ -85,6 +86,8 @@ public class TauModel implements Serializable {
      * discontinuity then then it is not included.
      */
     protected double[] noDisconDepths = new double[0];
+
+    protected double surfaceDepth = 0;
 
     /** Depth of the moho. */
     protected double mohoDepth;

@@ -779,6 +779,8 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
         String name = "";
         if (segmentList.isEmpty()) {
             return name;
+        } else if (segmentList.size() == 1 && segmentList.get(0).legName.endsWith(KMPS_CODE)) {
+            return segmentList.get(0).legName;
         }
         TauModel tMod = segmentList.get(0).tMod;
         int idx = 0;
@@ -803,13 +805,20 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                 String legName = legNameForSegment(tMod, seg);
                 String nextLegName = legNameForSegment(tMod, next);
                 if (zapED) {
-                    if (seg.endAction == TRANSDOWN && legName.endsWith("ed")
+                    if ((seg.endAction == TRANSDOWN || seg.endAction == DIFFRACT|| seg.endAction == HEAD)
+                            && legName.endsWith("ed")
                             && seg.isPWave == next.isPWave
                             && !legName.startsWith(nextLegName.substring(0, 1))) {
                         legName = legName.substring(0, 1);
                     } else if (seg.endAction == REFLECT_TOPSIDE
                             && (botDepth == tMod.cmbDepth || botDepth == tMod.iocbDepth)) {
                         legName = legName.substring(0, 1);
+                    } else if ((seg.endAction == END
+                            || ((seg.endAction == TURN || seg.endAction == TRANSUP) && next.endBranch == 0))
+                            && (prev != null && (prev.endAction == DIFFRACT || prev.endAction == HEAD)
+                            && seg.isPWave == prev.isPWave)
+                    ) {
+                        legName = "";
                     }
                 }
                 name += legName;
@@ -854,11 +863,20 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                     }
                     break;
                 case TRANSUP:
-                    if (topDepth == tMod.cmbDepth || topDepth == tMod.iocbDepth) {
+                    if (topDepth == tMod.cmbDepth || topDepth == tMod.iocbDepth || topDepth == tMod.surfaceDepth) {
                         // no char as P,S -> K -> I,J
+                    } else if (topDepth == tMod.mohoDepth && seg.endAction == TRANSUP && next.endAction == END) {
+                        // no char finish at surface
                     } else {
                         name += (int) (topDepth);
                     }
+                    break;
+                case HEAD:
+                    name += "n";
+                    break;
+                case DIFFRACT:
+                case TRANSUPDIFFRACT:
+                    name += "diff";
                     break;
                 case END:
                 case END_DOWN:
