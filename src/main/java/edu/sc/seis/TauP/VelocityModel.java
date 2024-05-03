@@ -913,7 +913,10 @@ public class VelocityModel implements Cloneable, Serializable {
     public void writeToND(Writer out) throws IOException {
         VelocityLayer prev = null;
         for(VelocityLayer vlay: getLayers() ) {
-            if (prev == null || 
+            if (prev == null ||
+                    vlay.getBotDepth() == getMohoDepth() ||
+                    vlay.getBotDepth() == getCmbDepth() ||
+                    vlay.getBotDepth() == getIocbDepth() ||
                     prev.getBotPVelocity()!=vlay.getTopPVelocity() ||
                     prev.getBotSVelocity()!=vlay.getTopSVelocity() ||
                     prev.getBotDensity()!=vlay.getTopDensity()) {

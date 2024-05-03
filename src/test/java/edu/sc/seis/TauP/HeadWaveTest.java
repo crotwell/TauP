@@ -21,7 +21,7 @@ public class HeadWaveTest {
     public void checkHeadWave(String phaseName, int numHeadLegs, double distDeg, boolean isLongWay) throws TauModelException {
         double receiverDepth = 0;
         SimpleSeismicPhase phase = SeismicPhaseFactory.createPhase(phaseName, tMod, tMod.getSourceDepth(), receiverDepth, DEBUG);
-        assertEquals(numHeadLegs, phase.headOrDiffractSeq.size());
+        assertEquals(numHeadLegs, phase.countFlatLegs(), phaseName);
         List<Arrival> arrivalList = phase.calcTime(distDeg);
         double longWayDist = -1*(360-distDeg);
         double shoutWayDist = distDeg;

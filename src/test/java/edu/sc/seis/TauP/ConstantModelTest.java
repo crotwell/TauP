@@ -1,13 +1,16 @@
 package edu.sc.seis.TauP;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import static edu.sc.seis.TauP.Arrival.DtoR;
+import static edu.sc.seis.TauP.Arrival.RtoD;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public class ConstantModelTest {
@@ -15,6 +18,11 @@ public class ConstantModelTest {
     @BeforeEach
     public void setUp() throws Exception {
         vmod = createVelMod(vp, vs);
+        System.err.println();
+        PrintWriter pw = new PrintWriter(System.err);
+        vmod.writeToND(pw);
+        pw.flush();
+        System.err.println();
         smod = new SphericalSModel(vmod,
                                    0.1,
                                    11.0,
@@ -61,7 +69,7 @@ public class ConstantModelTest {
  * @throws TauModelException
  */
     @Test
-    public void testDepthP() throws TauModelException {
+    public void testDepthP() throws Exception {
         for (int depth = 0; depth < 400; depth+=5) {
             for (int deg = 0; deg < 90; deg++) {
                 doSeismicPhase(depth, deg, vp, "P", tMod);
@@ -160,18 +168,21 @@ public class ConstantModelTest {
     }
 
     public static void doSeismicPhase(double depth, double dist, double velocity, String phase, TauModel tMod)
-            throws TauModelException {
+            throws TauModelException, NoSuchLayerException {
         TauModel tModDepth = tMod.depthCorrect(depth);
         SeismicPhase PPhase = SeismicPhaseFactory.createPhase(phase.toUpperCase(), tModDepth, depth);
-        SeismicPhase pPhase = SeismicPhaseFactory.createPhase(phase.toLowerCase(), tModDepth, depth);
+        assertTrue(PPhase.phasesExistsInModel());
         List<Arrival> arrivals = PPhase.calcTime(dist);
-        arrivals.addAll(pPhase.calcTime(dist));
-        // assertEquals("one arrival for "+dist+" depth="+depth+" at "+velocity,
-        // 1, arrivals.size());
+        SeismicPhase pPhase = SeismicPhaseFactory.createPhase(phase.toLowerCase(), tModDepth, depth);
+        if (depth != 0.0) {
+            assertTrue(pPhase.phasesExistsInModel());
+            arrivals.addAll(pPhase.calcTime(dist));
+        }
+        assertEquals(1, arrivals.size(), "one arrival for "+dist+" depth="+depth+" at "+velocity);
         Arrival a = arrivals.get(0);
         assertEquals(lawCosinesLength(R, depth, dist * Math.PI / 180) / velocity,
                      a.getTime(),
-                     0.02);
+                     0.02, dist+" depth="+depth+" at "+velocity);
     }
 
     public static double lawCosinesLength(double R, double depth, double theta) {

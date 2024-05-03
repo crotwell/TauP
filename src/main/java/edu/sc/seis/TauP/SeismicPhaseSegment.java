@@ -29,6 +29,7 @@ public class SeismicPhaseSegment {
                                String legName,
 							   double minRayParam,
 							   double maxRayParam) {
+
 		this.tMod = tMod;
 		this.startBranch = startBranch;
 		this.endBranch = endBranch;
@@ -38,6 +39,21 @@ public class SeismicPhaseSegment {
 		this.legName = legName;
 		this.minRayParam = minRayParam;
 		this.maxRayParam = maxRayParam;
+	}
+
+	public static SeismicPhaseSegment failSegment(TauModel tMod) {
+		return new SeismicPhaseSegment(tMod, -1, -1, true,
+				FAIL, true, "", -1, -1 );
+	}
+
+	public static SeismicPhaseSegment failSegment(TauModel tMod,
+												  int startBranch,
+												  int endBranch,
+												  boolean isPWave,
+												  boolean isDownGoing,
+												  String legName) {
+		return new SeismicPhaseSegment(tMod, startBranch, endBranch, isPWave,
+				FAIL, isDownGoing, legName, -1, -1 );
 	}
 
 	public boolean endsAtTop() throws TauModelException {
@@ -50,6 +66,7 @@ public class SeismicPhaseSegment {
 				return true;
 			case TURN:
 			case DIFFRACT:
+			case TRANSUPDIFFRACT:
 			case END_DOWN:
 			case TRANSDOWN:
 			case REFLECT_TOPSIDE:
@@ -95,6 +112,9 @@ public class SeismicPhaseSegment {
 				break;
 			case DIFFRACT:
 				action = "diffract";
+				break;
+			case TRANSUPDIFFRACT:
+				action = "transmit up diffract";
 				break;
 			case HEAD:
 				action = "head wave";
@@ -181,10 +201,12 @@ public class SeismicPhaseSegment {
 
 	public String getDepthRangeString() {
 		String depthRange;
-		if (isFlat) {
+		if (startBranch == -1 && endBranch == -1) {
+			depthRange = "";
+		} else if (isFlat) {
 			if (prevEndAction == null) {
 				depthRange = " PrevAction is NULL ";
-			} else if (prevEndAction == PhaseInteraction.DIFFRACT) {
+			} else if (prevEndAction == PhaseInteraction.DIFFRACT || prevEndAction == TRANSUPDIFFRACT) {
 				depthRange = " at "+tMod.getTauBranch(endBranch, isPWave).getBotDepth()+" (DIFF)";
 			} else if (prevEndAction == PhaseInteraction.HEAD) {
 				depthRange = " at " + tMod.getTauBranch(endBranch, isPWave).getTopDepth()+" (HEAD)";
@@ -206,7 +228,7 @@ public class SeismicPhaseSegment {
 		if (isFlat) {
 			if (prevEndAction == null) {
 				depthRange = "\" PrevAction is NULL \"";
-			} else if (prevEndAction == PhaseInteraction.DIFFRACT) {
+			} else if (prevEndAction == PhaseInteraction.DIFFRACT || prevEndAction == TRANSUPDIFFRACT) {
 				depthRange = "["+tMod.getTauBranch(endBranch, isPWave).getBotDepth()+"]";
 			} else if (prevEndAction == PhaseInteraction.HEAD) {
 				depthRange = "[" + tMod.getTauBranch(endBranch, isPWave).getTopDepth()+"]";
@@ -228,7 +250,7 @@ public class SeismicPhaseSegment {
 		if (isFlat) {
 			if (prevEndAction == null) {
 				depthRange = new double[0];
-			} else if (prevEndAction == PhaseInteraction.DIFFRACT) {
+			} else if (prevEndAction == PhaseInteraction.DIFFRACT || prevEndAction == TRANSUPDIFFRACT) {
 				depthRange = new double[] {tMod.getTauBranch(endBranch, isPWave).getBotDepth()};
 			} else if (prevEndAction == PhaseInteraction.HEAD) {
 				depthRange = new double[] { tMod.getTauBranch(endBranch, isPWave).getTopDepth()};
@@ -330,7 +352,7 @@ public class SeismicPhaseSegment {
 			double refractTime = refractDist * currArrival.getRayParam();
 			TauBranch branch = tMod.getTauBranch(startBranch, isPWave);
 			double depth;
-			if (prevEndAction.equals(DIFFRACT)) {
+			if (prevEndAction.equals(DIFFRACT) || prevEndAction.equals(TRANSUPDIFFRACT)) {
 				depth = branch.getBotDepth();
 			} else if (prevEndAction.equals(HEAD) || prevEndAction.equals(KMPS)) {
 				depth = branch.getTopDepth();

@@ -1,5 +1,6 @@
 package edu.sc.seis.TauP;
 
+import static edu.sc.seis.TauP.PhaseSymbols.isExclusiveDowngoingSymbol;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
@@ -65,6 +66,21 @@ public class ReceiverAtDepth {
             flippedPhase = SeismicPhaseFactory.createPhase(reversedName.toUpperCase(), tModRec, tModRec.getSourceDepth(), tMod.getSourceDepth());
             upFlippedPhase = SeismicPhaseFactory.createPhase(reversedName.toLowerCase().replace("i", "y"), tModRec, tModRec.getSourceDepth(), tMod.getSourceDepth());
             endsDowngoingFlippedPhase = null;
+        }
+        if (receiverDepth != 0) {
+            // where we end up, depending on if we end going down or up
+            int upgoingRecBranch = tMod.findBranch(receiverDepth);
+            int downgoingRecBranch = upgoingRecBranch - 1; // one branch shallower
+            if (phase.getFinalPhaseSegment().isDownGoing ) {
+                // downgoing at receiver
+                assertTrue(phase.getFinalPhaseSegment().maxRayParam <= tMod.getTauBranch(downgoingRecBranch,
+                                        phase.getFinalPhaseSegment().isPWave).getMinTurnRayParam());
+            } else {
+                // upgoing at receiver
+                assertTrue(phase.getFinalPhaseSegment().maxRayParam <= tMod.getTauBranch(upgoingRecBranch,
+                                        phase.getFinalPhaseSegment().isPWave).getMaxRayParam());
+            }
+
         }
         for (double degrees = 0; degrees < phase.getMaxDistance() && degrees < flippedPhase.getMaxDistance(); degrees+= distStep) {
             String pre = phaseName+" sd="+tMod.getSourceDepth()+" rd="+receiverDepth+" deg="+degrees;

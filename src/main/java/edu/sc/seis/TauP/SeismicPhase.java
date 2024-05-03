@@ -50,9 +50,13 @@ public interface SeismicPhase extends Serializable, Cloneable {
 
     double getReceiverDepth();
 
-    List<String> getLegs();
-
     List<SeismicPhaseSegment> getPhaseSegments();
+
+    SeismicPhaseSegment getInitialPhaseSegment();
+
+    SeismicPhaseSegment getFinalPhaseSegment();
+
+    int countFlatLegs();
 
     double getRayParams(int i);
 
@@ -69,10 +73,6 @@ public interface SeismicPhase extends Serializable, Cloneable {
     double getTau(int i);
 
     double[] getTau();
-
-    boolean[] getDownGoing();
-
-    boolean[] getWaveType();
 
     boolean hasArrivals();
 

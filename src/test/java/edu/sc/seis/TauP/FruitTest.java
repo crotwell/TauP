@@ -36,9 +36,11 @@ public class FruitTest {
         double tol = 0.01;
         assertEquals(0.0, P.getMinDistanceDeg(), tol);
         assertEquals(72.66, P.getMaxDistanceDeg(), tol);
-        assertEquals(2, P.branchSeq.size());
-        assertEquals(0, P.branchSeq.get(0));
-        assertEquals(0, P.branchSeq.get(1));
+        assertEquals(2, P.getPhaseSegments().size());
+        assertEquals(0, P.getInitialPhaseSegment().startBranch);
+        assertEquals(0, P.getInitialPhaseSegment().endBranch);
+        assertEquals(0, P.getFinalPhaseSegment().startBranch);
+        assertEquals(0, P.getFinalPhaseSegment().endBranch);
     }
 
 }

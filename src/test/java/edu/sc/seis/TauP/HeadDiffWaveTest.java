@@ -16,13 +16,13 @@ public class HeadDiffWaveTest {
     double depth = 0;
     TauModel tMod = TauModelLoader.load(modelName).depthCorrect(depth);
     SimpleSeismicPhase pnPhase = SeismicPhaseFactory.createPhase("Pn", tMod);
-    assertEquals(1, pnPhase.headOrDiffractSeq.size());
+    assertEquals(1, pnPhase.countFlatLegs());
     SimpleSeismicPhase pdiffPhase = SeismicPhaseFactory.createPhase("Pdiff", tMod);
-    assertEquals(1, pdiffPhase.headOrDiffractSeq.size());
+    assertEquals(1, pdiffPhase.countFlatLegs());
     SimpleSeismicPhase pdiffpdiffPhase = SeismicPhaseFactory.createPhase("PdiffPdiff", tMod);
-    assertEquals(2, pdiffpdiffPhase.headOrDiffractSeq.size());
+    assertEquals(2, pdiffpdiffPhase.countFlatLegs());
     SeismicPhase pvmppnPhase = SeismicPhaseFactory.createPhase("PvmpPn", tMod);
-    assertEquals(1, pnPhase.headOrDiffractSeq.size());
+    assertEquals(1, pnPhase.countFlatLegs());
   }
 
   @Test

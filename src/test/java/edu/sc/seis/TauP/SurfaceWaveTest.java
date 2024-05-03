@@ -25,21 +25,27 @@ public class SurfaceWaveTest {
         String phaseName = "3.0kmps";
         float depth = 23;
         float deg = 30;
-            taup.setPhaseNames(List.of(phaseName));
-            taup.setSourceDepth(depth);
+        taup.setPhaseNames(List.of(phaseName));
+        taup.setSourceDepth(depth);
 
-            List<Arrival> arrivals = taup.calculate(deg);
-            assertTrue(arrivals.size() > 0,
-                       phaseName + " has arrivals for depth " + depth + " at dist " + deg);
-            assertEquals(1111.95f,
-                         arrivals.get(0).getTime(),
-                         0.07f,
-                         phaseName + " time for depth " + depth + " at dist " + deg);
-            // long way around
-            assertEquals(12231.44f,
-                         arrivals.get(1).getTime(),
-                         0.07f,
-                         phaseName + " time for depth " + depth + " at dist " + deg);
+        List<Arrival> arrivals = taup.calculate(deg);
+        assertTrue(arrivals.size() > 0,
+                   phaseName + " has arrivals for depth " + depth + " at dist " + deg);
+        assertEquals(1111.95f,
+                     arrivals.get(0).getTime(),
+                     0.07f,
+                     phaseName + " time for depth " + depth + " at dist " + deg);
+        // long way around
+        assertEquals(12231.44f,
+                     arrivals.get(1).getTime(),
+                     0.07f,
+                     phaseName + " time for depth " + depth + " at dist " + deg);
+        // pierce for surface wave should be just start and finish
+        TimeDist[] pierce = arrivals.get(0).getPierce();
+        assertEquals(0, pierce[0].getDistRadian());
+        assertEquals(0, pierce[0].getDepth());
+        assertEquals(0, pierce[0].getTime());
+        assertEquals(2, pierce.length);
     }
 
     @Test

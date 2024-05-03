@@ -159,19 +159,25 @@ public class ScatteredSeismicPhase implements SeismicPhase {
     }
 
     @Override
-    public List<String> getLegs() {
-        List<String> out = new ArrayList<>();
-        out.addAll(inboundArrival.getPhase().getLegs());
-        out.addAll(scatteredPhase.getLegs());
-        return out;
-    }
-
-    @Override
     public List<SeismicPhaseSegment> getPhaseSegments() {
         List<SeismicPhaseSegment> out = new ArrayList<>();
         out.addAll(inboundArrival.getPhase().getPhaseSegments());
         out.addAll(scatteredPhase.getPhaseSegments());
         return out;
+    }
+
+
+    public SeismicPhaseSegment getInitialPhaseSegment() {
+        return inboundArrival.getPhase().getInitialPhaseSegment();
+    }
+
+    public SeismicPhaseSegment getFinalPhaseSegment() {
+        return scatteredPhase.getFinalPhaseSegment();
+    }
+
+    @Override
+    public int countFlatLegs() {
+        return inboundArrival.getPhase().countFlatLegs()+scatteredPhase.countFlatLegs();
     }
 
     @Override
@@ -227,26 +233,6 @@ public class ScatteredSeismicPhase implements SeismicPhase {
     @Override
     public double[] getTau() {
         return new double[0];
-    }
-
-    @Override
-    public boolean[] getDownGoing() {
-        boolean[] inDowngoing = inboundArrival.getPhase().getDownGoing();
-        boolean[] scatDownGoing = scatteredPhase.getDownGoing();
-        boolean[] out = new boolean[inDowngoing.length+scatDownGoing.length];
-        System.arraycopy(inDowngoing, 0, out, 0, inDowngoing.length);
-        System.arraycopy(scatDownGoing, 0, out, inDowngoing.length, scatDownGoing.length);
-        return out;
-    }
-
-    @Override
-    public boolean[] getWaveType() {
-        boolean[] in = inboundArrival.getPhase().getWaveType();
-        boolean[] scat = scatteredPhase.getWaveType();
-        boolean[] out = new boolean[in.length+scat.length];
-        System.arraycopy(in, 0, out, 0, in.length);
-        System.arraycopy(scat, 0, out, in.length, scat.length);
-        return out;
     }
 
     @Override

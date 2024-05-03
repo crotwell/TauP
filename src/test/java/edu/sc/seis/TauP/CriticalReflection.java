@@ -44,7 +44,15 @@ public class CriticalReflection {
         assertTrue(critPhase.getMaxDistanceDeg() <= reflPhase.getMaxDistanceDeg());
         assertTrue(reflPhase.getMinRayParam() <= critPhase.getMinRayParam());
         assertTrue(critPhase.getMaxRayParam() <= reflPhase.getMaxRayParam());
-        assertEquals(reflPhase.branchSeq.size(), critPhase.branchSeq.size());
+        assertEquals(reflPhase.getPhaseSegments().size(), critPhase.getPhaseSegments().size());
+        for (int i = 0; i < reflPhase.getPhaseSegments().size(); i++) {
+            SeismicPhaseSegment reflSeg = reflPhase.getPhaseSegments().get(i);
+            SeismicPhaseSegment critSeg = critPhase.getPhaseSegments().get(i);
+            assertEquals(reflSeg.startBranch, critSeg.startBranch);
+            assertEquals(reflSeg.endBranch, critSeg.endBranch);
+            assertEquals(reflSeg.isDownGoing, critSeg.isDownGoing);
+            assertEquals(reflSeg.isPWave, critSeg.isPWave);
+        }
 
         List<Arrival> reflArrivals = reflPhase.calcTime(degrees);
         List<Arrival> critArrivals = critPhase.calcTime(degrees);

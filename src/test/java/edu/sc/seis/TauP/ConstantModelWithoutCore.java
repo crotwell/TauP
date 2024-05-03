@@ -60,11 +60,15 @@ public class ConstantModelWithoutCore {
  * @throws TauModelException
  */
     @Test
-    public void testDepthP() throws TauModelException {
+    public void testDepthP() throws Exception {
+        String phase = "P";
+        TauModel tModDepth = tMod.depthCorrect(0);
+        SeismicPhase PPhase = SeismicPhaseFactory.createPhase(phase.toUpperCase(), tModDepth, 0, 0,true);
+
         double vp = tMod.getVelocityModel().getVelocityLayer(0).getTopPVelocity();
         for (int depth = 0; depth < 400; depth += 5) {
             for (int deg = 0; deg < 90; deg++) {
-                ConstantModelTest.doSeismicPhase(depth, deg, vp, "P", tMod);
+                ConstantModelTest.doSeismicPhase(depth, deg, vp, phase, tMod);
             }
         }
     }

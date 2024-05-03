@@ -1,30 +1,81 @@
 package edu.sc.seis.TauP;
 
+import javax.tools.Tool;
 import java.util.ArrayList;
 import java.util.List;
 
+import static edu.sc.seis.TauP.Arrival.RtoD;
 import static edu.sc.seis.TauP.PhaseInteraction.*;
+import static edu.sc.seis.TauP.PhaseSymbols.*;
+import static edu.sc.seis.TauP.SeismicPhaseFactory.endActionString;
 
 public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
 
-    public ProtoSeismicPhase(List<SeismicPhaseSegment> segmentList) {
-        this.segmentList = segmentList;
-        phaseName = phaseNameForSegments();
+    public ProtoSeismicPhase(List<SeismicPhaseSegment> segmentList, double receiverDepth) {
+        this(segmentList, receiverDepth, null);
+        this.tMod = segmentList.get(0).tMod;
+        SeismicPhaseSegment prev = null;
+        for (SeismicPhaseSegment seg : segmentList) {
+            if (prev != null) {
+                seg.prevEndAction = prev.endAction;
+            }
+            prev = seg;
+        }
+        try {
+            validateSegList();
+        } catch (TauModelException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public static ProtoSeismicPhase start(SeismicPhaseSegment startSeg) {
-        return new ProtoSeismicPhase(new ArrayList<>(List.of(startSeg)));
+    ProtoSeismicPhase(List<SeismicPhaseSegment> segmentList, double receiverDepth, String phaseName) {
+        this.segmentList = segmentList;
+        this.receiverDepth = receiverDepth;
+        this.phaseName = phaseName; // possible overwrite later
+    }
+
+    public static ProtoSeismicPhase startEmpty(String phaseName, TauModel tMod, double receiverDepth) {
+        ProtoSeismicPhase proto = new ProtoSeismicPhase(new ArrayList<SeismicPhaseSegment>(), receiverDepth, phaseName);
+        proto.phaseName = phaseName;
+        proto.tMod = tMod;
+        if (tMod == null) {throw new IllegalArgumentException("TauModel cannot be null");}
+        return proto;
+    }
+
+    public static ProtoSeismicPhase start(SeismicPhaseSegment startSeg, double receiverDepth) {
+        if (startSeg == null) {throw new RuntimeException("Start Segment cannot be null");}
+        return new ProtoSeismicPhase(new ArrayList<>(List.of(startSeg)), receiverDepth);
+    }
+
+    public static ProtoSeismicPhase failNewPhase(TauModel tMod,
+                                                 boolean isPWave,
+                                                 boolean isDownGoing,
+                                                 double receiverDepth,
+                                                 String phaseName,
+                                                 String reason) {
+        ProtoSeismicPhase failed = startEmpty(phaseName, tMod, receiverDepth);
+        int startBranchNum = tMod.getSourceBranch();
+        failed.add(SeismicPhaseSegment.failSegment(tMod, startBranchNum, startBranchNum,
+                        isPWave, isDownGoing, phaseName));
+        failed.isFail = true;
+        failed.failReason = reason;
+        if(ToolRun.DEBUG) {
+            System.err.println("FAIL: "+reason+" within phase " + phaseName);
+        }
+        return failed;
     }
 
     public static ProtoSeismicPhase startNewPhase(TauModel tMod,
                                                   boolean isPWave,
                                                   PhaseInteraction endAction,
-                                                  boolean isDownGoing) throws TauPException {
+                                                  boolean isDownGoing,
+                                                  double receiverDepth) throws TauPException {
         int startBranchNum = tMod.getSourceBranch();
         if ( ! isDownGoing) {
             startBranchNum = startBranchNum-1;
         }
         String legName = legNameForSegment(tMod, startBranchNum, isPWave, isDownGoing, endAction);
+        ProtoSeismicPhase proto = startEmpty(legName, tMod, receiverDepth);
         TauBranch startBranch = tMod.getTauBranch(startBranchNum, isPWave);
         double minRayParam = 0.0;
         double maxRayParam;
@@ -64,39 +115,61 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                     throw new TauPException("Don't understand endAction "+endAction+" when upgoing");
             }
         }
-        return start(new SeismicPhaseSegment(tMod, startBranchNum, startBranchNum, isPWave, endAction, isDownGoing, legName, minRayParam, maxRayParam));
+        proto.add(new SeismicPhaseSegment(tMod, startBranchNum, startBranchNum,
+                        isPWave, endAction, isDownGoing, legName, minRayParam, maxRayParam));
+        return proto;
     }
 
 
+    public void failNext(String reason) {
+        if (ToolRun.DEBUG){
+            System.err.println("Fail: " + reason + " empty: " + segmentList.isEmpty());
+        }
+        segmentList.add(SeismicPhaseSegment.failSegment(tMod));
+        isFail = true;
+        failReason = reason;
+    }
+
     public ProtoSeismicPhase nextSegment(boolean isPWave,
-                                         PhaseInteraction endAction) {
-        SeismicPhaseSegment endSeg = segmentList.get(segmentList.size()-1);
+                                         PhaseInteraction endAction) throws TauModelException {
         List<SeismicPhaseSegment> out = new ArrayList<>(segmentList);
-        TauModel tMod = endSeg.getTauModel();
-        int priorEndBranchNum = endSeg.endBranch;
+        SeismicPhaseSegment endSeg = segmentList.isEmpty() ? null : segmentList.get(segmentList.size()-1);
+        TauModel tMod = endSeg != null ? endSeg.getTauModel() : null;
+        int priorEndBranchNum = endSeg != null ? endSeg.endBranch : -1;
         boolean isDowngoing;
         switch (endAction) {
             case TRANSUP:
             case REFLECT_UNDERSIDE:
             case REFLECT_UNDERSIDE_CRITICAL:
             case END:
-                isDowngoing = false;
-                break;
             case TURN:
             case TRANSDOWN:
             case REFLECT_TOPSIDE:
             case REFLECT_TOPSIDE_CRITICAL:
             case END_DOWN:
-                isDowngoing = true;
+                isDowngoing = PhaseInteraction.isDowngoingActionBefore(endAction);
                 break;
             case FAIL:
+                SeismicPhaseSegment nextSeg = SeismicPhaseSegment.failSegment(tMod, priorEndBranchNum, priorEndBranchNum, isPWave, true, "");
+                out.add(nextSeg);
+                if (endSeg != null) {
+                    nextSeg.prevEndAction = endSeg.endAction;
+                }
+                ProtoSeismicPhase failProto =  new ProtoSeismicPhase(out, receiverDepth);
+                failProto.isFail = true;
+                return failProto;
             case START:
                 throw new IllegalArgumentException("End action cannot be FAIL or START: "+endAction);
             default:
                 throw new IllegalArgumentException("End action case not yet impl: "+endAction);
         }
-        if (! isDowngoing && endSeg.endBranch == 0) {
-            return null;
+        if (! isDowngoing && (endSeg.endBranch == 0 && endSeg.endAction != TURN)) {
+            SeismicPhaseSegment nextSeg = SeismicPhaseSegment.failSegment(tMod, priorEndBranchNum, priorEndBranchNum, isPWave, true, "");
+            out.add(nextSeg);
+            if (endSeg != null) {
+                nextSeg.prevEndAction = endSeg.endAction;
+            }
+            return new ProtoSeismicPhase(out, receiverDepth);
         }
         int startBranchNum;
         switch (endSeg.endAction) {
@@ -137,14 +210,18 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                 break;
 
         }
+        SeismicPhaseSegment nextSeg;
         if (maxRayParam < minRayParam) {
-            return null;
+             nextSeg = SeismicPhaseSegment.failSegment(tMod, startBranchNum, endBranchNum, isPWave, isDowngoing, nextLegName);
+        } else {
+            nextSeg = new SeismicPhaseSegment(tMod,
+                    startBranchNum, endBranchNum, isPWave, endAction, isDowngoing, nextLegName,
+                    minRayParam, maxRayParam);
         }
-
-        out.add(new SeismicPhaseSegment(tMod,
-                startBranchNum, endBranchNum, isPWave, endAction, isDowngoing, nextLegName,
-                minRayParam, maxRayParam));
-        ProtoSeismicPhase proto = new ProtoSeismicPhase(out);
+        nextSeg.prevEndAction = endSeg.endAction;
+        validateSegList();
+        out.add(nextSeg);
+        ProtoSeismicPhase proto = new ProtoSeismicPhase(out, receiverDepth);
         proto.validateSegList();
         return proto;
     }
@@ -165,7 +242,14 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
         return endBranchNum;
     }
 
-    public void validateSegList() {
+    public void validateSegList() throws TauModelException {
+        if (segmentList.isEmpty()) {
+            return;
+        }
+        if (endSegment().endAction == FAIL) {
+            // failing is failing, no need to validate
+            return;
+        }
         SeismicPhaseSegment prev = null;
         for (SeismicPhaseSegment seg : segmentList) {
             if (seg.maxRayParam == 0) {
@@ -176,6 +260,10 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                         +phaseNameForSegments()+" "+seg.endBranch+" "+ seg.tMod.getNumBranches()+" "+seg.endAction);
             }
             if (prev != null) {
+                String currLeg = seg.legName;
+                if (seg.prevEndAction != prev.endAction) {
+                    throw new RuntimeException("segment prevEndAction is not prev segment endAction: "+seg.prevEndAction+" "+prev.endAction);
+                }
                 if (prev.endAction == TRANSDOWN && prev.endBranch != seg.startBranch-1) {
                     throw new RuntimeException("prev is TRANSDOWN, but seg is not +1\n"+prev.endAction+"  "+seg.startBranch+"\n"+phaseNameForSegments());
                 }
@@ -184,8 +272,58 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                                 || seg.endAction == END_DOWN || seg.endAction == REFLECT_TOPSIDE)) {
                     throw new RuntimeException("prev is TURN, but seg is "+seg.endAction);
                 }
+                if (prev.isDownGoing && seg.isDownGoing && prev.endBranch +1 != seg.startBranch) {
+                    throw new TauModelException("Prev and Curr both downgoing but prev.endBranch+1 != seg.startBranch"
+                    +" pdown: "+prev.isDownGoing+" currdown "+seg.isDownGoing+" && "+prev.endBranch+" +1 != "+seg.startBranch);
+                }
+                if (prev.isFlat) {
+                    if (seg.isDownGoing) {
+                        if (prev.endsAtTop() && prev.endBranch != seg.startBranch) {
+                            throw new TauModelException(getName() + ": Flat Segment is ends at top, but start is not current branch: " + currLeg);
+                        } else if (!prev.endsAtTop() && prev.endBranch != seg.startBranch - 1) {
+                            throw new TauModelException(getName() + ": Flat Segment is ends at bottom, but start is not next deeper branch: " + currLeg);
+                        }
+                    } else {
+                        if (prev.endsAtTop() && prev.endBranch != seg.startBranch +1) {
+                            throw new TauModelException(getName() + ": Flat Segment is ends at top, but start is not next shallower branch: " + currLeg+" "+prev.endBranch +"!= "+seg.startBranch+"+1");
+                        } else if (!prev.endsAtTop() && prev.endBranch != seg.startBranch) {
+                            throw new TauModelException(getName() + ": Flat Segment is ends at bottom, but start is not current branch: " + currLeg+" "+prev.endBranch +"!= "+seg.startBranch);
+                        }
+                    }
+                } else if (seg.isDownGoing) {
+                    if (prev.endBranch > seg.startBranch) {
+                        throw new TauModelException(getName()+": Segment is downgoing, but we are already below the start: "+currLeg);
+                    }
+                    if (prev.endAction == REFLECT_TOPSIDE || prev.endAction == REFLECT_TOPSIDE_CRITICAL) {
+                        throw new TauModelException(getName()+": Segment is downgoing, but previous action was to reflect up: "+currLeg+" "+prev.endAction+" "+seg);
+                    }
+                    if (prev.endAction == TURN) {
+                        throw new TauModelException(getName()+": Segment is downgoing, but previous action was to turn: "+currLeg);
+                    }
+                    if (prev.endAction == TRANSUP) {
+                        throw new TauModelException(getName()+": Segment is downgoing, but previous action was to transmit up: "+currLeg);
+                    }
+                    if (prev.endBranch == seg.startBranch && prev.isDownGoing == false &&
+                            ! (prev.endAction == REFLECT_UNDERSIDE || prev.endAction == REFLECT_UNDERSIDE_CRITICAL)) {
+                        throw new TauModelException(getName()+": Segment "+currLeg+" is downgoing, but previous action was not to reflect underside: "+currLeg+" "+endActionString(prev.endAction));
+                    }
+                } else {
+                    if (prev.endAction == REFLECT_UNDERSIDE || prev.endAction == REFLECT_UNDERSIDE_CRITICAL) {
+                        throw new TauModelException(getName()+": Segment is upgoing, but previous action was to underside reflect down: "+currLeg);
+                    }
+                    if (prev.endAction == TRANSDOWN) {
+                        throw new TauModelException(getName()+": Segment is upgoing, but previous action was  to trans down: "+currLeg);
+                    }
+                    if (prev.endBranch == seg.startBranch && prev.isDownGoing == true
+                            && ! ( prev.endAction == TURN || prev.endAction == DIFFRACT || prev.endAction == HEAD || prev.endAction == REFLECT_TOPSIDE || prev.endAction == REFLECT_TOPSIDE_CRITICAL)) {
+                        throw new TauModelException(getName()+": Segment is upgoing, but previous action was not to reflect topside: "+currLeg+" "+endActionString(prev.endAction));
+                    }
+                }
             }
             prev = seg;
+        }
+        if (ToolRun.VERBOSE) {
+            System.err.println("#### VALIDATE OK " + getName());
         }
     }
 
@@ -193,17 +331,410 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
         return segmentList.get(i);
     }
 
+    public final boolean isEmpty() {
+        return segmentList.isEmpty();
+    }
+
     public final SeismicPhaseSegment endSegment() {
+        if (isEmpty()) {throw new RuntimeException("Segment list is empty");}
         return segmentList.get(segmentList.size()-1);
+    }
+
+    public boolean isSuccessful() {
+        return( !isFail) && endSegment().endAction != FAIL;
     }
 
     public final int size() {
         return segmentList.size();
     }
 
+    public int countFlatLegs() {
+        int countHeadLegs = 0;
+        for (SeismicPhaseSegment seg : segmentList) {
+            if (seg.isFlat) { countHeadLegs++;}
+        }
+        return countHeadLegs;
+    }
+
+    public int countHeadLegs() {
+        int countHeadLegs = 0;
+        for (SeismicPhaseSegment seg : segmentList) {
+            if (seg.isFlat && seg.prevEndAction == HEAD) { countHeadLegs++;}
+        }
+        return countHeadLegs;
+    }
+
+    public int countDiffLegs() {
+        int countHeadLegs = 0;
+        for (SeismicPhaseSegment seg : segmentList) {
+            if (seg.isFlat && (seg.prevEndAction == DIFFRACT || seg.endAction == TRANSUPDIFFRACT)) {
+                countHeadLegs++;
+            }
+        }
+        return countHeadLegs;
+    }
+
     public final void add(SeismicPhaseSegment seg) {
+        if (segmentList.isEmpty()) {
+            seg.prevEndAction = START;
+        } else {
+            seg.prevEndAction = endSegment().endAction;
+        }
         segmentList.add(seg);
     }
+
+
+    public int calcStartBranch(String currLeg) {
+        int currBranch;
+        if (! isEmpty()) {
+            currBranch = endSegment().endBranch + PhaseInteraction.endOffset(endSegment().endAction);
+        } else if(isDowngoingSymbol(currLeg)) {
+            // initial downgoing leg, like P
+            currBranch = tMod.getSourceBranch();
+        } else {
+            // initial upgoing leg, like p
+            currBranch = tMod.getSourceBranch()-1;
+        }
+        return currBranch;
+    }
+
+
+    public SeismicPhaseSegment addToBranch(TauModel tMod,
+                int oldstartBranch,
+                int endBranch,
+                boolean isPWave,
+                boolean nextIsPWave,
+                PhaseInteraction endAction,
+                String currLeg) throws TauModelException {
+
+        int startBranch = calcStartBranch(currLeg);
+        if (oldstartBranch != startBranch) {
+            System.err.println("start not same: "+oldstartBranch+" "+startBranch+" to "+endBranch+" "+getName()+" "+currLeg);
+        }
+        if (startBranch < 0 || startBranch > tMod.getNumBranches()) {
+            throw new IllegalArgumentException(getName()+": start branch outside range: (0-"+tMod.getNumBranches()+") "+startBranch);
+        }
+        if (endBranch < 0 || endBranch > tMod.getNumBranches()) {
+            throw new IllegalArgumentException(getName()+": end branch outside range: "+endBranch);
+        }
+        if(endAction == TRANSUP && endBranch == 0) {
+            throw new IllegalArgumentException(getName()+": cannot TRANSUP with end branch zero: "+endBranch);
+        }
+        if( ! isPWave && tMod.getSlownessModel().depthInFluid(tMod.getTauBranch(startBranch, isPWave).getTopDepth())) {
+            // S wave in fluid
+            throw new TauModelException("Attempt to have S wave in fluid layer in "+getName()+" "+startBranch+" to "+endBranch+" "+endActionString(endAction));
+        }
+        int endOffset;
+        boolean isDownGoing;
+        double minRayParam = isEmpty() ? 0 : endSegment().minRayParam;
+        double maxRayParam;
+        if (isEmpty()) {
+            if(isDowngoingSymbol(currLeg) || tMod.getSourceDepth() == 0) {
+                maxRayParam = tMod.getTauBranch(tMod.getSourceBranch(),
+                        isPWave).getMaxRayParam();
+            } else if (isUpgoingSymbol(currLeg)) {
+                try {
+                    int sLayerNum = tMod.getSlownessModel().layerNumberAbove(tMod.getSourceDepth(), isPWave);
+                    maxRayParam = tMod.getSlownessModel().getSlownessLayer(sLayerNum, isPWave).getBotP();
+                    // check if source is in high slowness zone
+                    DepthRange highSZoneDepth = new DepthRange();
+                    if (tMod.getSlownessModel().depthInHighSlowness(tMod.getSourceDepth(), maxRayParam, highSZoneDepth, isPWave)) {
+                        // need to reduce maxRayParam until it can propagate out of high slowness zone
+                        maxRayParam = Math.min(maxRayParam, highSZoneDepth.rayParam);
+                    }
+                } catch(NoSuchLayerException e) {
+                    throw new RuntimeException("Should not happen", e);
+                }
+            } else {
+                throw new RuntimeException("Unknown starting max ray param for "+currLeg+" in "+getName()+" at "+tMod.getSourceDepth());
+            }
+        } else {
+            maxRayParam = endSegment().maxRayParam;
+        }
+        if(ToolRun.DEBUG) {
+            System.err.println("before addToBranch: minRP="+minRayParam+"  maxRP="+maxRayParam);
+            System.err.println("addToBranch( start=" + startBranch + " end=" + endBranch
+                    + " endAction="+endActionString(endAction)+" "+currLeg+") isP:"+(isPWave?"P":"S"));
+
+        }
+        if(endAction == TURN) {
+            if (isPWave != nextIsPWave) {
+                throw new TauModelException(getName()+" phase conversion not allowed for TURN");
+            }
+            endOffset = 0;
+            isDownGoing = true;
+            minRayParam = Math.max(minRayParam, tMod.getTauBranch(endBranch,
+                            isPWave)
+                    .getMinTurnRayParam());
+            // careful if the ray param cannot turn due to high slowness. Do not use these
+            // layers if their top is in high slowness for the given ray parameter
+            // and the bottom is not a critical reflection, rp > max rp in next branch
+            int bNum = endBranch;
+            while (bNum >= startBranch) {
+                if (tMod.getSlownessModel().depthInHighSlowness(tMod.getTauBranch(bNum, isPWave).getTopDepth(),
+                        minRayParam, isPWave) && (
+                        bNum+1>=tMod.getNumBranches()
+                                || minRayParam <= tMod.getTauBranch(bNum+1, isPWave).getMaxRayParam())) {
+                    // tau branch is in high slowness, so turn is not possible, only
+                    // non-critical reflect, so do not add these branches
+                    if (ToolRun.DEBUG) {
+                        System.err.println("Warn, ray cannot turn in layer "+bNum+" due to high slowness layer at bottom depth "+tMod.getTauBranch(bNum, isPWave).getBotDepth());
+                    }
+                    endBranch = bNum-1;
+                    bNum--;
+                } else {
+                    // can turn in bNum layer, so don't worry about shallower high slowness layers
+                    break;
+                }
+            }
+        } else if(endAction == REFLECT_UNDERSIDE || endAction == REFLECT_UNDERSIDE_CRITICAL) {
+            endOffset = 0;
+            isDownGoing = false;
+            maxRayParam = Math.min(maxRayParam,
+                    tMod.getTauBranch(endBranch, isPWave).getMaxRayParam());
+
+            if (isPWave != nextIsPWave) {
+                maxRayParam = Math.min(maxRayParam,
+                        tMod.getTauBranch(endBranch, nextIsPWave).getMaxRayParam());
+            }
+            if (endAction == REFLECT_UNDERSIDE_CRITICAL) {
+                try {
+                    TauBranch endTauBranch = tMod.getTauBranch(endBranch, isPWave);
+                    int slayAbove = tMod.getSlownessModel().layerNumberAbove(endTauBranch.getTopDepth(), isPWave);
+                    SlownessLayer sLayer = tMod.getSlownessModel().getSlownessLayer(slayAbove, isPWave);
+                    minRayParam = Math.max(minRayParam, sLayer.getBotP());
+                } catch (NoSuchLayerException e) {
+                    throw new TauModelException(e);
+                }
+            }
+        } else if(endAction == END) {
+            endOffset = 0;
+            isDownGoing = false;
+            maxRayParam = Math.min(maxRayParam,
+                    tMod.getTauBranch(endBranch, isPWave).getMaxRayParam());
+        } else if (endAction == END_DOWN) {
+            endOffset = 0;
+            isDownGoing = true;
+            maxRayParam = Math.min(maxRayParam, tMod.getTauBranch(endBranch,
+                            isPWave)
+                    .getMinTurnRayParam());
+        } else if(endAction == REFLECT_TOPSIDE || endAction == REFLECT_TOPSIDE_CRITICAL) {
+            endOffset = 0;
+            isDownGoing = true;
+            maxRayParam = Math.min(maxRayParam, tMod.getTauBranch(endBranch,
+                    isPWave).getMinTurnRayParam());
+            if (isPWave != nextIsPWave) {
+                maxRayParam = Math.min(maxRayParam, tMod.getTauBranch(endBranch,
+                        nextIsPWave).getMinTurnRayParam());
+            }
+            if (endAction == REFLECT_TOPSIDE_CRITICAL) {
+                try {
+                    TauBranch endTauBranch = tMod.getTauBranch(endBranch, isPWave);
+                    int slayBelow = tMod.getSlownessModel().layerNumberBelow(endTauBranch.getBotDepth(), isPWave);
+                    SlownessLayer sLayer = tMod.getSlownessModel().getSlownessLayer(slayBelow,isPWave);
+                    minRayParam = Math.max(minRayParam,
+                            sLayer.getTopP());
+
+                } catch (NoSuchLayerException e) {
+                    throw new TauModelException(e);
+                }
+            }
+        } else if(endAction == TRANSUP) {
+            endOffset = -1;
+            isDownGoing = false;
+            maxRayParam = Math.min(maxRayParam,
+                    tMod.getTauBranch(endBranch, isPWave).getMaxRayParam());
+            maxRayParam = Math.min(maxRayParam,
+                    tMod.getTauBranch(endBranch-1, nextIsPWave).getMinTurnRayParam());
+        } else if(endAction == TRANSDOWN) {
+            endOffset = 1;
+            isDownGoing = true;
+            // ray must reach discon
+            maxRayParam = Math.min(maxRayParam, tMod.getTauBranch(endBranch, isPWave).getMinTurnRayParam());
+            // and cross into lower
+            if (endBranch == tMod.getNumBranches()-1) {
+                throw new TauModelException(getName()+" Cannot TRANSDOWN if endBranch: "+endBranch+" == numBranchs: "+tMod.getNumBranches());
+            }
+            maxRayParam = Math.min(maxRayParam, tMod.getTauBranch(endBranch+1, nextIsPWave).getMaxRayParam());
+        } else if(endAction == HEAD) {
+            endOffset = 0;
+            isDownGoing = true;
+            // ray must reach discon, at turn/critical ray parameter
+            maxRayParam = Math.min(maxRayParam, tMod.getTauBranch(endBranch,
+                            isPWave)
+                    .getMinTurnRayParam());
+            // and cross into lower layer, possible phase change
+            maxRayParam = Math.min(maxRayParam,
+                    tMod.getTauBranch(endBranch+1, nextIsPWave).getMaxRayParam());
+            minRayParam = Math.max(minRayParam, maxRayParam);
+        } else if(endAction == DIFFRACT) {
+            endOffset = 0;
+            isDownGoing = true;
+            // ray must reach discon
+            maxRayParam = Math.min(maxRayParam, tMod.getTauBranch(endBranch, isPWave).getMinTurnRayParam());
+            // and propagate at the smallest turning ray param, may be different if phase conversion, ie SedPdiff
+            if (isPWave != nextIsPWave) {
+                maxRayParam = Math.min(maxRayParam, tMod.getTauBranch(endBranch, nextIsPWave).getMinTurnRayParam());
+            }
+            // min rp same as max
+            minRayParam = Math.max(minRayParam, maxRayParam);
+            double depth = tMod.getTauBranch(endBranch, isPWave).getBotDepth();
+            if (depth == tMod.radiusOfEarth ||
+                    tMod.getSlownessModel().depthInHighSlowness(depth - 1e-10, minRayParam, isPWave)) {
+                /*
+                 * No diffraction if diffraction is at zero radius or there is a high slowness zone.
+                 */
+                minRayParam = -1;
+                maxRayParam = -1;
+            }
+        } else if (endAction == TRANSUPDIFFRACT) {
+            endOffset = -1;
+            isDownGoing = false;
+            maxRayParam = Math.min(maxRayParam,
+                    tMod.getTauBranch(endBranch, isPWave).getMaxRayParam());
+            maxRayParam = Math.min(maxRayParam,
+                    tMod.getTauBranch(endBranch-1, nextIsPWave).getMinTurnRayParam());
+            minRayParam = Math.max(minRayParam, maxRayParam);
+            double depth = tMod.getTauBranch(endBranch, isPWave).getBotDepth();
+            if (depth == tMod.radiusOfEarth ||
+                    tMod.getSlownessModel().depthInHighSlowness(depth - 1e-10, minRayParam, isPWave)) {
+                /*
+                 * No diffraction if diffraction is at zero radius or there is a high slowness zone.
+                 */
+                minRayParam = -1;
+                maxRayParam = -1;
+            }
+        } else {
+            throw new TauModelException(getName()+": Illegal endAction: endAction="
+                    + endAction);
+        }
+        SeismicPhaseSegment segment = new SeismicPhaseSegment(tMod, startBranch, endBranch,
+                isPWave, endAction, isDownGoing, currLeg, minRayParam, maxRayParam);
+        if ( ! isPWave &&  ! (currLeg.startsWith("K") || currLeg.equals("k"))) {
+            // outer core K is treated as S wave as special case
+            for(int i = Math.min(startBranch, endBranch); i <= Math.max(startBranch,endBranch); i++) {
+                TauBranch tb = tMod.getTauBranch(i, isPWave);
+                for (DepthRange fluidDR : tMod.getSlownessModel().fluidLayerDepths) {
+                    if (tb.getTopDepth() >= fluidDR.topDepth && tb.getTopDepth() < fluidDR.botDepth
+                            || tb.getBotDepth() > fluidDR.topDepth && tb.getBotDepth() <= fluidDR.botDepth) {
+                        throw new TauModelException("S wave branch "+currLeg+"("+isPWave+")"+" in "+getName()
+                                +" is in fluid: "+tb+" "+fluidDR+" "+startBranch+" "+endBranch+" "+isDownGoing);
+                    }
+                }
+            }
+        }
+
+        if(isDownGoing) {
+            if (startBranch > endBranch) {
+                // can't be downgoing as we are already below
+                minRayParam = -1;
+                maxRayParam = -1;
+                throw new TauModelException("can't be downgoing as we are already below: "+startBranch+" "+endBranch+" in "+getName());
+            } else {
+                if(ToolRun.DEBUG) {
+                    for(int i = startBranch; i <= endBranch; i++) {
+                        System.err.println("i=" + i + " isDownGoing=" + isDownGoing
+                                + " isPWave=" + isPWave + " startBranch="
+                                + startBranch + " endBranch=" + endBranch + " "
+                                + endActionString(endAction));
+                    }
+                }
+            }
+        } else {
+            if (startBranch < endBranch) {
+                // can't be upgoing as we are already above
+                minRayParam = -1;
+                maxRayParam = -1;
+                throw new TauModelException("can't be upgoing as we are already above: "+startBranch+" "+endBranch+" "+currLeg+" in "+getName());
+            } else {
+                if(ToolRun.DEBUG) {
+                    for(int i = startBranch; i >= endBranch; i--) {
+                        System.err.println("i=" + i + " isDownGoing=" + isDownGoing
+                                + " isPWave=" + isPWave + " startBranch="
+                                + startBranch + " endBranch=" + endBranch + " "
+                                + endActionString(endAction));
+                    }
+                }
+            }
+        }
+        if(ToolRun.DEBUG) {
+            System.err.println("after addToBranch: minRP="+minRayParam+"  maxRP="+maxRayParam+" endOffset="+endOffset+" isDownGoing="+isDownGoing);
+        }
+        add(segment);
+        return segment;
+    }
+
+
+    protected SeismicPhaseSegment addFlatBranch(TauModel tMod,
+                                                int branch,
+                                                boolean isPWave,
+                                                PhaseInteraction prevEndAction,
+                                                PhaseInteraction endAction,
+                                                String currLeg) throws TauModelException {
+        // special case, add "flat" segment along bounday
+
+        int startBranch = calcStartBranch(currLeg);
+        if (branch != startBranch) {
+            throw new RuntimeException("old branch not calc for flat: "+branch+" "+startBranch);
+        }
+        double minRayParam = isEmpty() ? 0 : endSegment().minRayParam;
+        if (isEmpty()) {
+            throw new TauModelException("Cannot have flat leg as starting leg in phase: "+currLeg+" "+getName());
+        }
+        double maxRayParam = endSegment().maxRayParam;
+        if(ToolRun.DEBUG) {
+            System.err.println("before addFlatBranch: minRP="+minRayParam+"  maxRP="+maxRayParam);
+            System.err.println("addFlatBranch( " + branch
+                    + " endAction="+endActionString(endAction)+" "+currLeg+") isP:"+(isPWave?"P":"S"));
+
+        }
+        boolean flatIsDownGoing = false;
+        SeismicPhaseSegment flatSegment;
+        if (prevEndAction == HEAD) {
+            double headRP = tMod.getTauBranch(branch,isPWave).getMaxRayParam();
+            if (minRayParam > headRP || maxRayParam < headRP) {
+                // can't do head wave, no rp match
+                minRayParam = -1;
+                maxRayParam = -1;
+            } else {
+                minRayParam = headRP;
+                maxRayParam = headRP;
+            }
+            flatSegment = new SeismicPhaseSegment(tMod, branch, branch,
+                    isPWave, endAction, flatIsDownGoing, currLeg, minRayParam, maxRayParam);
+        } else if (prevEndAction == DIFFRACT || prevEndAction == TRANSUPDIFFRACT){
+            double diffRP = tMod.getTauBranch(branch,isPWave).getMinTurnRayParam();
+            if (minRayParam > diffRP || maxRayParam < diffRP) {
+                // can't do diff wave, no rp match
+                minRayParam = -1;
+                maxRayParam = -1;
+            } else {
+                minRayParam = diffRP;
+                maxRayParam = diffRP;
+            }
+            flatSegment = new SeismicPhaseSegment(tMod, branch, branch,
+                    isPWave, endAction, flatIsDownGoing, currLeg, minRayParam, maxRayParam);
+        } else if (prevEndAction == KMPS && currLeg.endsWith("kmps")){
+            // dummy case for surface wave velocity
+            double velocity = Double.valueOf(currLeg.substring(0, currLeg.length() - 4))
+                    .doubleValue();
+            minRayParam = tMod.radiusOfEarth / velocity;
+            maxRayParam = minRayParam;
+            flatSegment = new SeismicPhaseSegment(tMod, branch, branch,
+                    isPWave, endAction, flatIsDownGoing, currLeg, minRayParam, maxRayParam);
+        } else {
+            throw new TauModelException("Cannot addFlatBranch for prevEndAction: "+prevEndAction+" for "+currLeg);
+        }
+        flatSegment.isFlat = true;
+        flatSegment.prevEndAction = prevEndAction;
+
+        if(ToolRun.DEBUG) {
+            System.err.println("after addFlatBranch: minRP="+minRayParam+"  maxRP="+maxRayParam);
+        }
+        add(flatSegment);
+        return flatSegment;
+    }
+
 
     public int calcInteractionNumber() {
         int count = 0;
@@ -236,6 +767,9 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
     }
     public String phaseNameForSegments(boolean zapED) {
         String name = "";
+        if (segmentList.isEmpty()) {
+            return name;
+        }
         TauModel tMod = segmentList.get(0).tMod;
         int idx = 0;
         SeismicPhaseSegment prev;
@@ -244,6 +778,10 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
         while (idx < segmentList.size()) {
             prev = seg;
             seg = next;
+            if (seg.endAction == FAIL) {
+                name += "FAIL";
+                return name;
+            }
             if (idx < segmentList.size()-1) {
                 next = segmentList.get(idx+1);
             }
@@ -253,10 +791,11 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
             if ( prev == null || prev.endAction != TURN
                     || (! prev.legName.equalsIgnoreCase(seg.legName) && (prev.legName.equals("I") && seg.legName.equals("y")))) {
                 String legName = legNameForSegment(tMod, seg);
+                String nextLegName = legNameForSegment(tMod, next);
                 if (zapED) {
                     if (seg.endAction == TRANSDOWN && legName.endsWith("ed")
                             && seg.isPWave == next.isPWave
-                            && !legName.startsWith(next.legName.substring(0, 1))) {
+                            && !legName.startsWith(nextLegName.substring(0, 1))) {
                         legName = legName.substring(0, 1);
                     } else if (seg.endAction == REFLECT_TOPSIDE
                             && (botDepth == tMod.cmbDepth || botDepth == tMod.iocbDepth)) {
@@ -333,20 +872,54 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
         return name;
     }
 
-    public String branchNumSeq() {
-        String out = "";
+    public List<Integer> branchNumSeg() {
+        List<Integer> branchSeq = new ArrayList<>();
         for (SeismicPhaseSegment seg : segmentList) {
-            out += seg.startBranch;
-            if (seg.endBranch != seg.startBranch) {
-                out += seg.endBranch;
+            int indexIncr = seg.isDownGoing ? 1 : -1;
+            int finish = seg.endBranch + indexIncr;
+            for (int branchNum = seg.startBranch; branchNum != finish; branchNum += indexIncr) {
+                branchSeq.add(branchNum);
             }
+        }
+        return branchSeq;
+    }
+
+    public String branchNumSeqStr() {
+        String out = "";
+        for (Integer i : branchNumSeg()) {
+            out += i+" ";
         }
         return out;
     }
 
-    List<SeismicPhaseSegment> segmentList;
+    public SeismicPhase asSeismicPhase() {
+        SeismicPhaseSegment endSeg = endSegment();
+        throw new RuntimeException("Not Yet...");
+
+    }
+
+    public String getName() {
+        if (phaseName != null ) {
+            return phaseName;
+        }
+        return getPuristName();
+    }
+
+    public String getPuristName() {
+        return phaseNameForSegments();
+    }
+
+    final List<SeismicPhaseSegment> segmentList;
+
+    TauModel tMod;
+
+    boolean isFail = false;
+
+    String failReason = null;
 
     String phaseName;
+
+    final double receiverDepth;
 
     @Override
     public int compareTo(ProtoSeismicPhase o) {

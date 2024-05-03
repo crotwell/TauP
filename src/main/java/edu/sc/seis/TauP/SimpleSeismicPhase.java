@@ -37,6 +37,8 @@ import java.util.List;
  */
 public class SimpleSeismicPhase implements SeismicPhase {
 
+    ProtoSeismicPhase proto = null;
+
     /** Enables debugging output. */
     public transient boolean DEBUG;
 
@@ -99,18 +101,6 @@ public class SimpleSeismicPhase implements SeismicPhase {
     /** The maximum distance that this phase can be theoretically observed. */
     protected double maxDistance;
 
-    /**
-     * Array of branch numbers for the given phase. Note that this depends upon
-     * both the earth model and the source depth.
-     */
-    protected List<Integer> branchSeq;
-
-
-    /**
-     * Array of branchSeq positions where a head or diffracted segment occurs.
-     */
-    protected List<Integer> headOrDiffractSeq;
-
     /** The phase name, ie PKiKP. */
     protected String name;
 
@@ -118,24 +108,6 @@ public class SimpleSeismicPhase implements SeismicPhase {
      * name with depths corrected to be actuall discontinuities in the model.
      */
     protected String puristName;
-
-    /** ArrayList containing Strings for each leg. */
-    protected ArrayList<String> legs;
-
-    /** Description of segments of the phase. */
-    protected List<SeismicPhaseSegment> segmentList;
-
-    /**
-     * true if the current leg of the phase is down going. This allows a check
-     * to make sure the path is correct. Used in addToBranch() and parseName().
-     */
-    protected List<Boolean> downGoing;
-
-    /**
-     * ArrayList of wave types corresponding to each leg of the phase.
-     *
-     */
-    protected List<Boolean> waveType;
 
     protected double refineDistToleranceRadian = 0.0049*Math.PI/180;
 
@@ -146,13 +118,7 @@ public class SimpleSeismicPhase implements SeismicPhase {
     public static final boolean SWAVE = false;
 
 
-
-
-    public SimpleSeismicPhase(String name,
-                              TauModel tMod,
-                              double receiverDepth,
-                              ArrayList<String> legs,
-                              String puristName,
+    public SimpleSeismicPhase(ProtoSeismicPhase proto,
                               double[] rayParams,
                               double[] time,
                               double[] dist,
@@ -162,19 +128,21 @@ public class SimpleSeismicPhase implements SeismicPhase {
                               int maxRayParamIndex,
                               double minDistance,
                               double maxDistance,
-                              List<Integer> branchSeq,
-                              List<Integer> headOrDiffractSeq,
-                              List<SeismicPhaseSegment> segmentList,
-                              List<Boolean> downGoing,
-                              List<Boolean> waveType,
-                              boolean debug) throws TauModelException {
+                              boolean debug) {
+        if (proto == null) {throw new IllegalArgumentException("proto cannot be null");}
+        try {
+            proto.validateSegList();
+        } catch (TauModelException e) {
+            throw new RuntimeException(getName()+" fail validation:", e);
+        }
+        this.proto = proto;
         this.DEBUG = debug ;
-        this.name = name;
-        this.tMod = tMod;
-        this.puristName = puristName;
-        this.sourceDepth = tMod.getSourceDepth();
-        this.receiverDepth = receiverDepth;
-        this.legs = legs;
+        System.err.println("SimpleSeismicPhase con name="+proto.getName());
+        this.name = proto.getName();
+        this.tMod = proto.tMod;
+        this.puristName = proto.getPuristName();
+        this.sourceDepth = tMod != null ? tMod.getSourceDepth() : -1;
+        this.receiverDepth = proto.receiverDepth;
         this.rayParams = rayParams;
         this.time = time;
         this.dist = dist;
@@ -184,14 +152,7 @@ public class SimpleSeismicPhase implements SeismicPhase {
         this.maxRayParamIndex = maxRayParamIndex;
         this.minDistance = minDistance;
         this.maxDistance = maxDistance;
-        this.branchSeq = branchSeq;
-        this.headOrDiffractSeq = headOrDiffractSeq;
-        this.segmentList = segmentList;
-        this.downGoing = downGoing;
-        this.waveType = waveType;
-
     }
-
 
     @Override
     public boolean phasesExistsInModel() {
@@ -284,14 +245,15 @@ public class SimpleSeismicPhase implements SeismicPhase {
         return receiverDepth;
     }
 
+    /** Description of segments of the phase. */
     @Override
-    public List<String> getLegs() {
-        return Collections.unmodifiableList(legs);
+    public List<SeismicPhaseSegment> getPhaseSegments() {
+    	return Collections.unmodifiableList(proto.segmentList);
     }
 
     @Override
-    public List<SeismicPhaseSegment> getPhaseSegments() {
-    	return Collections.unmodifiableList(segmentList);
+    public int countFlatLegs() {
+        return proto.countFlatLegs();
     }
 
     @Override
@@ -336,34 +298,6 @@ public class SimpleSeismicPhase implements SeismicPhase {
             tau[i] = time[i] - rayParams[i] * dist[i];
         }
         return tau;
-    }
-
-    /**
-     * Direction of the leg between pierce point i and i+1, true is downgoing,
-     * false if upgoing
-     */
-    @Override
-    public boolean[] getDownGoing() {
-        Boolean[] b = downGoing.toArray(new Boolean[0]);
-        boolean[] out = new boolean[b.length];
-        for(int i = 0; i < b.length; i++) {
-            out[i] = b[i];
-        }
-        return out;
-    }
-
-    /**
-     * Wave type of the leg between pierce point i and i+1, true is P, false if
-     * S
-     */
-    @Override
-    public boolean[] getWaveType() {
-        Boolean[] b = waveType.toArray(new Boolean[0]);
-        boolean[] out = new boolean[b.length];
-        for(int i = 0; i < b.length; i++) {
-            out[i] = b[i];
-        }
-        return out;
     }
 
     @Override
@@ -453,8 +387,7 @@ public class SimpleSeismicPhase implements SeismicPhase {
 
     public Arrival refineArrival(Arrival leftEstimate, Arrival rightEstimate, double searchDist, double distTolRadian, int maxRecursion) {
         Arrival linInterp = linearInterpArrival(searchDist, leftEstimate, rightEstimate);
-        if(maxRecursion <= 0 || headOrDiffractSeq.size() > 0
-                || name.endsWith("kmps")) {
+        if(maxRecursion <= 0 || countFlatLegs() > 0) {
             // can't shoot/refine for diffracted, head and non-body waves
             return linInterp;
         }
@@ -500,7 +433,7 @@ public class SimpleSeismicPhase implements SeismicPhase {
 
     @Override
     public Arrival shootRay(double rayParam) throws SlownessModelException, NoSuchLayerException {
-        if(headOrDiffractSeq.size() > 0) {
+        if(countFlatLegs() > 0) {
             throw new SlownessModelException("Unable to shoot ray in non-body, head, diffracted waves");
         }
         if (rayParam < minRayParam || maxRayParam < rayParam) {
@@ -512,7 +445,7 @@ public class SimpleSeismicPhase implements SeismicPhase {
             // find index for ray param, done in for-loop check
         }
         /* counter for passes through each branch. 0 is P and 1 is S. */
-        int[][] timesBranches = SeismicPhaseFactory.calcBranchMultiplier(tMod, branchSeq, waveType);
+        int[][] timesBranches = SeismicPhaseFactory.calcBranchMultiplier(tMod, getPhaseSegments());
         TimeDist sum = new TimeDist(rayParam);
         /* Sum the branches with the appropriate multiplier. */
         for(int j = 0; j < tMod.getNumBranches(); j++) {
@@ -607,7 +540,7 @@ public class SimpleSeismicPhase implements SeismicPhase {
         VelocityModel vMod = getTauModel().getVelocityModel();
         VelocityModelMaterial material = getPhaseSegments().get(0).isPWave ? VelocityModelMaterial.P_VELOCITY : VelocityModelMaterial.S_VELOCITY;
         try {
-            if (getDownGoing()[0]) {
+            if (getPhaseSegments().get(0).isDownGoing) {
                 takeoffVelocity = vMod.evaluateBelow(sourceDepth, material);
             } else {
                 takeoffVelocity = vMod.evaluateAbove(sourceDepth, material);
@@ -625,12 +558,12 @@ public class SimpleSeismicPhase implements SeismicPhase {
             double takeoffVelocity;
             VelocityModelMaterial firstLeg;
             VelocityModel vMod = getTauModel().getVelocityModel();
-            if (segmentList.get(0).isPWave) {
+            if (getPhaseSegments().get(0).isPWave) {
                 firstLeg = VelocityModelMaterial.P_VELOCITY;
             } else {
                 firstLeg = VelocityModelMaterial.S_VELOCITY;
             }
-            if (getDownGoing()[0]) {
+            if (getPhaseSegments().get(0).isDownGoing) {
                 takeoffVelocity = vMod.evaluateBelow(sourceDepth, firstLeg);
             } else {
                 takeoffVelocity = vMod.evaluateAbove(sourceDepth, firstLeg);
@@ -647,12 +580,12 @@ public class SimpleSeismicPhase implements SeismicPhase {
             double incidentVelocity;
             VelocityModel vMod = getTauModel().getVelocityModel();
             VelocityModelMaterial lastLeg;
-            if (segmentList.get(segmentList.size()-1).isPWave) {
+            if (getPhaseSegments().get(getPhaseSegments().size()-1).isPWave) {
                 lastLeg = VelocityModelMaterial.P_VELOCITY;
             } else {
                 lastLeg = VelocityModelMaterial.S_VELOCITY;
             }
-            if (getDownGoing()[getDownGoing().length-1]) {
+            if (getPhaseSegments().get(getPhaseSegments().size()-1).isDownGoing) {
                 incidentVelocity = vMod.evaluateAbove(receiverDepth, lastLeg);
             } else {
                 incidentVelocity = vMod.evaluateBelow(receiverDepth, lastLeg);
@@ -668,7 +601,7 @@ public class SimpleSeismicPhase implements SeismicPhase {
         try {
             double rho;
             VelocityModel vMod = getTauModel().getVelocityModel();
-            if (getDownGoing()[getDownGoing().length-1]) {
+            if (getFinalPhaseSegment().isDownGoing) {
                 rho = vMod.evaluateAbove(receiverDepth, VelocityModelMaterial.DENSITY);
             } else {
                 rho = vMod.evaluateBelow(receiverDepth, VelocityModelMaterial.DENSITY);
@@ -691,7 +624,7 @@ public class SimpleSeismicPhase implements SeismicPhase {
             // just set takeoffAngle to 90 in this case
             takeoffAngle = 90;
         }
-        if ( ! getDownGoing()[0]) {
+        if ( !getInitialPhaseSegment().isDownGoing) {
             // upgoing, so angle is in 90-180 range
             takeoffAngle = 180-takeoffAngle;
         }
@@ -710,7 +643,7 @@ public class SimpleSeismicPhase implements SeismicPhase {
             // just set incidentAngle to 90 in this case
             incidentAngle = 90;
         }
-        if (getDownGoing()[getDownGoing().length-1]) {
+        if (getFinalPhaseSegment().isDownGoing) {
             incidentAngle = 180 - incidentAngle;
         }
         return incidentAngle;
@@ -719,6 +652,15 @@ public class SimpleSeismicPhase implements SeismicPhase {
     @Override
     public boolean sourceSegmentIsPWave() {
         return getPhaseSegments().get(0).isPWave;
+    }
+
+
+    public SeismicPhaseSegment getInitialPhaseSegment() {
+        return getPhaseSegments().get(0);
+    }
+
+    public SeismicPhaseSegment getFinalPhaseSegment() {
+        return getPhaseSegments().get(getPhaseSegments().size()-1);
     }
 
     @Override
@@ -773,155 +715,159 @@ public class SimpleSeismicPhase implements SeismicPhase {
             distRatio = (currArrival.getDist() - distA) / (distB - distA);
             distRayParam = distRatio * (rayParamB - rayParamA) + rayParamA;
         }
-        /* First pierce point is always 0 distance at the source depth. */
-        pierce.add(new TimeDist(distRayParam,
-                                             0.0,
-                                             0.0,
-                                             tMod.getSourceDepth()));
+        if (getName().endsWith("kmps")) {
+            pierce.add(new TimeDist(distRayParam,
+                    0.0,
+                    0.0,
+                    0.0));
+        } else {
+            /* First pierce point is always 0 distance at the source depth. */
+            pierce.add(new TimeDist(distRayParam,
+                    0.0,
+                    0.0,
+                    tMod.getSourceDepth()));
+        }
         /*
          * Loop from 0 but already done 0, so the pierce point when the ray
          * leaves branch i is stored in i+1. Use linear interpolation
          * between rays that we know.
          */
-        for(int i = 0; i < branchSeq.size(); i++) {
-            int branchNum = ((Integer)branchSeq.get(i)).intValue();
-            boolean isPWave = ((Boolean)waveType.get(i)).booleanValue();
-            if(DEBUG) {
-                System.err.println(i + " branchNum =" + branchNum
-                        + " downGoing=" + (Boolean)downGoing.get(i)
-                        + "  isPWave=" + isPWave);
-            }
-            /*
-             * Save the turning depths for the ray parameter for both P and
-             * S waves. This way we get the depth correct for any rays that
-             * turn within a layer. We have to do this on a per branch basis
-             * because of converted phases, e.g. SKS.
-             */
-            double turnDepth;
-            try {
-                if(distRayParam > tMod.getTauBranch(branchNum, isPWave)
-                        .getMaxRayParam()) {
-                    turnDepth = tMod.getTauBranch(branchNum, isPWave)
-                            .getTopDepth();
-                } else if(distRayParam <= tMod.getTauBranch(branchNum,
-                                                            isPWave)
-                        .getMinRayParam()) {
-                    turnDepth = tMod.getTauBranch(branchNum, isPWave)
-                            .getBotDepth();
-                } else {
-                    if(isPWave
-                            || tMod.getSlownessModel()
-                                    .depthInFluid((tMod.getTauBranch(branchNum,
-                                                                     isPWave)
-                                            .getTopDepth() + tMod.getTauBranch(branchNum,
-                                                                               isPWave)
-                                            .getBotDepth()) / 2.0)) {
-                        turnDepth = tMod.getSlownessModel()
-                                .findDepth(distRayParam,
-                                           tMod.getTauBranch(branchNum,
-                                                             isPWave)
-                                                   .getTopDepth(),
-                                           tMod.getTauBranch(branchNum,
-                                                             isPWave)
-                                                   .getBotDepth(),
-                                           PWAVE);
-                    } else {
-                        turnDepth = tMod.getSlownessModel()
-                                .findDepth(distRayParam,
-                                           tMod.getTauBranch(branchNum,
-                                                             isPWave)
-                                                   .getTopDepth(),
-                                           tMod.getTauBranch(branchNum,
-                                                             isPWave)
-                                                   .getBotDepth(),
-                                           isPWave);
-                    }
-                }
-            } catch(SlownessModelException e) {
-                // shouldn't happen but...
-                throw new RuntimeException("SeismicPhase.calcPierce: Caught SlownessModelException. "
-                        , e);
-            }
-            double timeA, timeB;
-            if(headOrDiffractSeq.size() > 0) {
-                /* head waves and diffracted waves are a special case. */
-                distA = tMod.getTauBranch(branchNum, isPWave)
-                        .getDist(rayNum);
-                timeA = tMod.getTauBranch(branchNum, isPWave).time[rayNum];
-                distB = tMod.getTauBranch(branchNum, isPWave)
-                        .getDist(rayNum);
-                timeB = tMod.getTauBranch(branchNum, isPWave).time[rayNum];
-            } else {
-                distA = tMod.getTauBranch(branchNum, isPWave)
-                        .getDist(rayNum);
-                timeA = tMod.getTauBranch(branchNum, isPWave).time[rayNum];
-                distB = tMod.getTauBranch(branchNum, isPWave)
-                        .getDist(rayNum + 1);
-                timeB = tMod.getTauBranch(branchNum, isPWave).time[rayNum + 1];
-            }
-            branchDist += distRatio * (distB - distA) + distA;
-            prevBranchTime = branchTime;
-            branchTime += distRatio * (timeB - timeA) + timeA;
-            double branchDepth;
-            if(((Boolean)downGoing.get(i)).booleanValue()) {
-                branchDepth = Math.min(tMod.getTauBranch(branchNum, isPWave)
-                                               .getBotDepth(),
-                                       turnDepth);
-            } else {
-                branchDepth = Math.min(tMod.getTauBranch(branchNum, isPWave)
-                                               .getTopDepth(),
-                                       turnDepth);
-            }
-            // make sure ray actually propagates in this branch, leave
-            // a little room for numerical "chatter"
-            if(Math.abs(prevBranchTime - branchTime) > 1e-10) {
-                pierce.add(new TimeDist(distRayParam,
-                                                              branchTime,
-                        negMulDist*branchDist,
-                                                              branchDepth));
-                if(DEBUG) {
-                    System.err.println("------->  add pierce "+branchDepth);
-                    System.err.println(" branchTime=" + branchTime
-                            + " branchDist=" + branchDist + " branchDepth="
-                            + branchDepth);
-                    System.err.println("incrementTime = "
-                            + (distRatio * (timeB - timeA)) + " timeB="
-                            + timeB + " timeA=" + timeA);
-                }
-            } else {
-                if(DEBUG) {
-                    System.err.println("Time inc in branch tiny: "+" branchTime=" + branchTime
-                            + " branchDist=" + branchDist + " branchDepth="
-                            + branchDepth);
-                }
-            }
-            for(int diffBranchIdx = 0; diffBranchIdx < headOrDiffractSeq.size(); diffBranchIdx++) {
-                int diffBranchNum = headOrDiffractSeq.get(diffBranchIdx);
+        for (SeismicPhaseSegment seg : getPhaseSegments()) {
+            boolean isPWave = seg.isPWave;
+            int indexIncr = seg.isDownGoing ? 1 : -1;
+            int finish = seg.endBranch + indexIncr;
+            for (int branchNum = seg.startBranch; branchNum != finish; branchNum += indexIncr) {
                 if (DEBUG) {
-                    System.err.println("diff check: "+diffBranchNum+" "+i + " branchNum =" + branchNum
-                                       + " downGoing=" + (Boolean)downGoing.get(i)
-                                       + "  isPWave=" + isPWave);
+                    System.err.println(seg);
                 }
-                if (i == diffBranchNum) {
-                    double refractDist = (currArrival.getDist() - dist[0]) / headOrDiffractSeq.size();
-                    double refractTime = refractDist*currArrival.getRayParam();
+
+                if (seg.isFlat) {
+                    double refractDist = (currArrival.getDist() - dist[0]) / countFlatLegs();
+                    double refractTime = refractDist * currArrival.getRayParam();
                     pierce.add(new TimeDist(distRayParam,
-                                            branchTime + refractTime,
-                            negMulDist*(branchDist + refractDist),
-                                            branchDepth));
+                            branchTime + refractTime,
+                            negMulDist * (branchDist + refractDist),
+                            seg.getDepthRange()[0]));
                     branchDist += refractDist;
                     prevBranchTime = branchTime;
                     branchTime += refractTime;
+                } else {
+                    /*
+                     * Save the turning depths for the ray parameter for both P and
+                     * S waves. This way we get the depth correct for any rays that
+                     * turn within a layer. We have to do this on a per branch basis
+                     * because of converted phases, e.g. SKS.
+                     */
+                    double turnDepth;
+                    try {
+                        if (distRayParam > tMod.getTauBranch(branchNum, isPWave)
+                                .getMaxRayParam()) {
+                            turnDepth = tMod.getTauBranch(branchNum, isPWave)
+                                    .getTopDepth();
+                        } else if (distRayParam <= tMod.getTauBranch(branchNum,
+                                        isPWave)
+                                .getMinRayParam()) {
+                            turnDepth = tMod.getTauBranch(branchNum, isPWave)
+                                    .getBotDepth();
+                        } else {
+                            if (isPWave
+                                    || tMod.getSlownessModel()
+                                    .depthInFluid((tMod.getTauBranch(branchNum,
+                                                    isPWave)
+                                            .getTopDepth() + tMod.getTauBranch(branchNum,
+                                                    isPWave)
+                                            .getBotDepth()) / 2.0)) {
+                                turnDepth = tMod.getSlownessModel()
+                                        .findDepth(distRayParam,
+                                                tMod.getTauBranch(branchNum,
+                                                                isPWave)
+                                                        .getTopDepth(),
+                                                tMod.getTauBranch(branchNum,
+                                                                isPWave)
+                                                        .getBotDepth(),
+                                                PWAVE);
+                            } else {
+                                turnDepth = tMod.getSlownessModel()
+                                        .findDepth(distRayParam,
+                                                tMod.getTauBranch(branchNum,
+                                                                isPWave)
+                                                        .getTopDepth(),
+                                                tMod.getTauBranch(branchNum,
+                                                                isPWave)
+                                                        .getBotDepth(),
+                                                isPWave);
+                            }
+                        }
+                    } catch (SlownessModelException e) {
+                        // shouldn't happen but...
+                        throw new RuntimeException("SeismicPhase.calcPierce: Caught SlownessModelException. "
+                                , e);
+                    }
+                    double timeA, timeB;
+                    if (countFlatLegs() > 0) {
+                        /* head waves and diffracted waves are a special case. */
+                        distA = tMod.getTauBranch(branchNum, isPWave)
+                                .getDist(rayNum);
+                        timeA = tMod.getTauBranch(branchNum, isPWave).time[rayNum];
+                        distB = tMod.getTauBranch(branchNum, isPWave)
+                                .getDist(rayNum);
+                        timeB = tMod.getTauBranch(branchNum, isPWave).time[rayNum];
+                    } else {
+                        distA = tMod.getTauBranch(branchNum, isPWave)
+                                .getDist(rayNum);
+                        timeA = tMod.getTauBranch(branchNum, isPWave).time[rayNum];
+                        distB = tMod.getTauBranch(branchNum, isPWave)
+                                .getDist(rayNum + 1);
+                        timeB = tMod.getTauBranch(branchNum, isPWave).time[rayNum + 1];
+                    }
+                    branchDist += distRatio * (distB - distA) + distA;
+                    prevBranchTime = branchTime;
+                    branchTime += distRatio * (timeB - timeA) + timeA;
+                    double branchDepth;
+                    if (seg.isDownGoing) {
+                        branchDepth = Math.min(tMod.getTauBranch(branchNum, isPWave)
+                                        .getBotDepth(),
+                                turnDepth);
+                    } else {
+                        branchDepth = Math.min(tMod.getTauBranch(branchNum, isPWave)
+                                        .getTopDepth(),
+                                turnDepth);
+                    }
+                    // make sure ray actually propagates in this branch, leave
+                    // a little room for numerical "chatter"
+                    if (Math.abs(prevBranchTime - branchTime) > 1e-10) {
+                        pierce.add(new TimeDist(distRayParam,
+                                branchTime,
+                                negMulDist * branchDist,
+                                branchDepth));
+                        if (DEBUG) {
+                            System.err.println("------->  add pierce " + branchDepth);
+                            System.err.println(" branchTime=" + branchTime
+                                    + " branchDist=" + branchDist + " branchDepth="
+                                    + branchDepth);
+                            System.err.println("incrementTime = "
+                                    + (distRatio * (timeB - timeA)) + " timeB="
+                                    + timeB + " timeA=" + timeA);
+                        }
+                    } else {
+                        if (DEBUG) {
+                            System.err.println("Time inc in branch tiny: " + " branchTime=" + branchTime
+                                    + " branchDist=" + branchDist + " branchDepth="
+                                    + branchDepth);
+                        }
+                    }
+                    if (seg.isFlat) {
+                        double refractDist = (currArrival.getDist() - dist[0]) / countFlatLegs();
+                        double refractTime = refractDist * currArrival.getRayParam();
+                        pierce.add(new TimeDist(distRayParam,
+                                branchTime + refractTime,
+                                negMulDist * (branchDist + refractDist),
+                                branchDepth));
+                        branchDist += refractDist;
+                        branchTime += refractTime;
+                    }
                 }
             }
-        }
-        if(name.indexOf("kmps") != -1) {
-            // just so kmps waves can be indentified as special
-            headOrDiffractSeq.add(0);
-            pierce.add(new TimeDist(distRayParam,
-                                                 currArrival.getTime(),
-                    negMulDist*currArrival.getDist(),
-                                                 0));
         }
         return pierce;
     }
@@ -958,8 +904,8 @@ public class SimpleSeismicPhase implements SeismicPhase {
     public double calcReflTranPSV(Arrival arrival) throws VelocityModelException, SlownessModelException {
         double reflTranValue = 1;
         boolean calcSH = false;
-        SeismicPhaseSegment prevSeg = segmentList.get(0);
-        for (SeismicPhaseSegment seg : segmentList.subList(1, segmentList.size())) {
+        SeismicPhaseSegment prevSeg = getPhaseSegments().get(0);
+        for (SeismicPhaseSegment seg : getPhaseSegments().subList(1, getPhaseSegments().size())) {
             reflTranValue *= prevSeg.calcReflTran(arrival, seg.isPWave, calcSH);
             prevSeg = seg;
         }
@@ -974,8 +920,8 @@ public class SimpleSeismicPhase implements SeismicPhase {
         boolean isAllS = isAllSWave();
         if ( ! isAllS) { return 0; }
         boolean calcSH = true;
-        SeismicPhaseSegment prevSeg = segmentList.get(0);
-        for (SeismicPhaseSegment seg : segmentList.subList(1, segmentList.size())) {
+        SeismicPhaseSegment prevSeg = getPhaseSegments().get(0);
+        for (SeismicPhaseSegment seg : getPhaseSegments().subList(1, getPhaseSegments().size())) {
             reflTranValue *= prevSeg.calcReflTran(arrival, seg.isPWave, calcSH);
             prevSeg = seg;
         }
@@ -1000,8 +946,8 @@ public class SimpleSeismicPhase implements SeismicPhase {
     public List<ArrivalPathSegment> calcSegmentPaths(Arrival currArrival, TimeDist prevEnd, int prevIdx) {
         int idx = prevIdx+1;
         List<ArrivalPathSegment> segmentPaths = new ArrayList<>();
-        for (SeismicPhaseSegment seg : segmentList) {
-            ArrivalPathSegment segPath = seg.calcPathTimeDist(currArrival, prevEnd, idx++, prevIdx+segmentList.size());
+        for (SeismicPhaseSegment seg : getPhaseSegments()) {
+            ArrivalPathSegment segPath = seg.calcPathTimeDist(currArrival, prevEnd, idx++, prevIdx+ getPhaseSegments().size());
 
             if (segPath.path.size() == 0) {
                 System.err.println("segPath.size() is 0 "+seg);
@@ -1030,7 +976,7 @@ public class SimpleSeismicPhase implements SeismicPhase {
 
     @Override
     public String describe() {
-        String desc = name + ":\n";
+        String desc = getName() + ":\n";
         return desc+ SeismicPhase.baseDescribe(this)+"\n"+ SeismicPhase.segmentDescribe(this);
     }
 
@@ -1061,13 +1007,11 @@ public class SimpleSeismicPhase implements SeismicPhase {
     @Override
     public String toString() {
         String desc = name + ": ";
-        for(int i = 0; i < legs.size(); i++) {
-            desc += legs.get(i) + " ";
+        for (SeismicPhaseSegment seg : getPhaseSegments()) {
+            desc += seg.legName+" ";
         }
         desc += "\n";
-        for(int i = 0; i < branchSeq.size(); i++) {
-            desc += (Integer)branchSeq.get(i) + " ";
-        }
+        desc += proto.branchNumSeqStr();
         desc += "\n";
         desc += "minRayParam=" + minRayParam + " maxRayParam=" + maxRayParam;
         desc += "\n";
@@ -1082,5 +1026,4 @@ public class SimpleSeismicPhase implements SeismicPhase {
             System.out.println(j + "  " + dist[j] + "  " + rayParams[j]);
         }
     }
-
 }

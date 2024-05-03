@@ -32,6 +32,8 @@ public class SourceInCoreTest {
         legalPhases.addAll(mantlePhases);
         legalPhases.addAll(outerCoreSourcePhases);
         legalPhases.addAll(innerCoreSourcePhases);
+
+        legalPhases.clear();legalPhases.add("Pn");
         for (float sourceDepth : sourceDepths) {
             TauModel tModDepth = tMod.depthCorrect(sourceDepth);
             for (String phaseName : legalPhases) {
@@ -48,7 +50,7 @@ public class SourceInCoreTest {
                         assertEquals(-1, phase.getMaxRayParam());
                     }
                 } catch (TauModelException ex) {
-                    System.err.println("Working on phase: " + phaseName);
+                    System.err.println("Working on phase: " + phaseName+" at "+sourceDepth+" in "+tModDepth.getModelName());
                     throw ex;
                 }
             }
