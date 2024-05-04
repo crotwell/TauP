@@ -129,7 +129,7 @@ public class ReflTransSolidFluid extends ReflTrans {
             topVertSlownessP = calcInVerticalSlownessP(rp);
             topVertSlownessS = calcInVerticalSlownessS(rp);
             botVertSlownessP = calcTransVerticalSlownessP(rp);
-            botVertSlownessS = calcTransVerticalSlownessP(rp);
+            //botVertSlownessS = calcTransVerticalSlownessS(rp);
 
 
             // solid-fluid

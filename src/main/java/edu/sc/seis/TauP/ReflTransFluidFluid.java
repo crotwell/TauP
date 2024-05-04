@@ -17,6 +17,11 @@ public class ReflTransFluidFluid extends ReflTrans {
     @Override
     public Complex getComplexRpp(double rayParam) throws VelocityModelException {
         throw new VelocityModelException("Not implemented yet for fluid to fluid");
+        /*
+        calcTempVars(rayParam, true);
+        Complex num = botVertSlownessP.times(topDensity).minus(topVertSlownessP.times(botDensity));
+        return num.over(denom);
+         */
     }
 
     @Override
@@ -27,6 +32,12 @@ public class ReflTransFluidFluid extends ReflTrans {
     @Override
     public Complex getComplexTpp(double rayParam) throws VelocityModelException {
         throw new VelocityModelException("Not implemented yet for fluid to fluid");
+        /*
+        calcTempVars(rayParam, true);
+        Complex num = botVertSlownessP.times(2*topDensity);
+        return num.over(denom);
+        
+         */
     }
 
     @Override
@@ -77,11 +88,16 @@ public class ReflTransFluidFluid extends ReflTrans {
         this.rp = rayParam; // ray parameter
 
         if(rayParam != lastRayParam || inIsPWave != lastInIsPWave) {
-
+            topVertSlownessP = calcInVerticalSlownessP(rp);
+            botVertSlownessP = calcTransVerticalSlownessP(rp);
             lastRayParam = rayParam;
             lastInIsPWave = inIsPWave;
+
+            denom = topVertSlownessP.times(botDensity).plus(botVertSlownessP.times(topDensity));
         }
     }
+
+    Complex denom;
 
     @Override
     public String toString() {

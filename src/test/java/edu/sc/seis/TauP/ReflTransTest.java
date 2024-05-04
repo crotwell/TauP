@@ -3,6 +3,7 @@
 // ReflTransTest.java ReflTransCoefficient.java Complex.java Sfun.java
 package edu.sc.seis.TauP;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -364,6 +365,42 @@ public class ReflTransTest {
         }
     }
 
+
+    @Test
+    @Disabled
+    public void testVerticalFluidFluid() throws VelocityModelException {
+        double topVp = 1;
+        double topDensity = 1;
+        double botVp = 1.5;
+        double botDensity = 1.5;
+        ReflTransFluidFluid coeff = new ReflTransFluidFluid(topVp, topDensity, botVp, botDensity );
+
+        double flatRP_perpen = 0;
+        double Rpp_calc_perpen = coeff.getRpp(flatRP_perpen);
+        double Tpp_calc_perpen = coeff.getTpp(flatRP_perpen);
+
+        double Rpp_perpen = (topVp*topDensity-botVp*botDensity)/(topVp*topDensity+botVp*botDensity);
+        double Tpp_perpen = 2*topDensity*topVp / ((botVp*botDensity+topVp*topDensity));
+
+        assertEquals(Tpp_perpen, Tpp_calc_perpen, 0.00001);
+        assertEquals(Rpp_perpen, Rpp_calc_perpen, 0.00001);
+
+        // non vertical incidence, up to value where we get complex results
+        for (double flatRP = 0.0; flatRP < 1/botVp; flatRP+= 0.2) {
+            double cosTopVp = Math.sqrt(1 - flatRP * flatRP * coeff.topVp * coeff.topVp);
+            double cosBotVp = Math.sqrt(1 - flatRP * flatRP * coeff.botVp * coeff.botVp);
+            // energy
+            double Rpp_calc = coeff.getRpp(flatRP);
+            double Tpp_calc = coeff.getTpp(flatRP);
+            assertEquals(coeff.topDensity * coeff.topVp * cosTopVp,
+                    coeff.topDensity * coeff.topVp * cosTopVp * Rpp_calc * Rpp_calc
+                            + coeff.botDensity * coeff.botVp * cosBotVp * Tpp_calc * Tpp_calc,
+                    1e-6,
+                    "rp=" + flatRP
+            );
+        }
+
+    }
 
     @Test
     public void testVerticalFluidSolid() throws VelocityModelException {
