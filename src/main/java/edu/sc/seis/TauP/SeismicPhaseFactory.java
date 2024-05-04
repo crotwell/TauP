@@ -27,29 +27,6 @@ public class SeismicPhaseFactory {
     double nextLegDepth = 0.0;
     boolean isLegDepth, isNextLegDepth = false;
     PhaseInteraction prevEndAction = START;
-    double[] dist;
-    double[] time;
-    double[] rayParams;
-
-    /**
-     * Index within TauModel.rayParams that corresponds to maxRayParam. Note
-     * that maxRayParamIndex &lt; minRayParamIndex as ray parameter decreases with
-     * increasing index.
-     */
-    protected int maxRayParamIndex = -1;
-
-    /**
-     * Index within TauModel.rayParams that corresponds to minRayParam. Note
-     * that maxRayParamIndex &lt; minRayParamIndex as ray parameter decreases with
-     * increasing index.
-     */
-    protected int minRayParamIndex = -1;
-
-    /** The minimum distance that this phase can be theoretically observed. */
-    protected double minDistance = 0.0;
-
-    /** The maximum distance that this phase can be theoretically observed. */
-    protected double maxDistance = Double.MAX_VALUE;
 
     public static final boolean PWAVE = SimpleSeismicPhase.PWAVE;
 
@@ -2602,13 +2579,21 @@ public class SeismicPhaseFactory {
      *             within the TauModel. This should never happen and would
      *             indicate an invalid TauModel.
      */
-    protected SimpleSeismicPhase sumBranches(TauModel tMod, ProtoSeismicPhase proto) throws TauModelException {
+    protected static SimpleSeismicPhase sumBranches(TauModel tMod, ProtoSeismicPhase proto) throws TauModelException {
         SeismicPhaseSegment endSeg = proto.endSegment();
         double minRayParam = endSeg.minRayParam;
         double maxRayParam = endSeg.maxRayParam;
         if (endSeg.endAction == FAIL) {
             throw new RuntimeException("Cannot sum failed phase");
         }
+        double[] rayParams;
+        double[] dist;
+        double[] time;
+        double minDistance;
+        double maxDistance;
+        int minRayParamIndex = 0;
+        int maxRayParamIndex = tMod.rayParams.length;
+        String name = proto.getName();
         if(endSeg.maxRayParam < 0.0 || endSeg.minRayParam > endSeg.maxRayParam) {
             /* Phase has no arrivals, possibly due to source depth. */
             rayParams = new double[0];
@@ -2638,10 +2623,11 @@ public class SeismicPhaseFactory {
             maxDistance = dist[1];
             minRayParam = rayParams[0];
             maxRayParam = rayParams[0];
+            maxRayParamIndex = 1;
             return new SimpleSeismicPhase(proto, rayParams, time, dist,
-                    minRayParam, maxRayParam, minRayParamIndex, maxRayParamIndex, minDistance, maxDistance, DEBUG);
+                    minRayParam, maxRayParam, minRayParamIndex, maxRayParamIndex, minDistance, maxDistance, ToolRun.DEBUG);
             } catch (NumberFormatException e) {
-                throw new TauModelException(getName()+" Illegal surface wave velocity "+name.substring(0, name.length() - 4), e);
+                throw new TauModelException(name+" Illegal surface wave velocity "+name.substring(0, name.length() - 4), e);
             }
         }
         /*
@@ -2657,11 +2643,11 @@ public class SeismicPhaseFactory {
             }
         }
         if(maxRayParamIndex < 0) {
-            throw new RuntimeException(getName()+" Should not happen, did not find max ray param"+maxRayParam);
+            throw new RuntimeException(proto.getName()+" Should not happen, did not find max ray param"+maxRayParam);
         }
 
         if(minRayParamIndex < 0) {
-            throw new RuntimeException(getName()+" Should not happen, did not find min ray param"+minRayParam);
+            throw new RuntimeException(proto.getName()+" Should not happen, did not find min ray param"+minRayParam);
         }
 
         if(maxRayParamIndex == 0
@@ -2679,7 +2665,7 @@ public class SeismicPhaseFactory {
             rayParams[0] = minRayParam;
             rayParams[1] = minRayParam;
         } else {
-            if(DEBUG) {
+            if(ToolRun.DEBUG) {
                 System.err.println("SumBranches() maxRayParamIndex=" + maxRayParamIndex
                         + " minRayParamIndex=" + minRayParamIndex
                         + " tMod.rayParams.length=" + tMod.rayParams.length
@@ -2866,7 +2852,7 @@ public class SeismicPhaseFactory {
                 maxRayParamIndex,
                 minDistance,
                 maxDistance,
-                DEBUG);
+                ToolRun.DEBUG);
     }
 
     /**

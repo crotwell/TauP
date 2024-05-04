@@ -1,9 +1,6 @@
 package edu.sc.seis.TauP;
 
-import edu.sc.seis.TauP.cli.AbstractOutputTypeArgs;
-import edu.sc.seis.TauP.cli.ModelArgs;
-import edu.sc.seis.TauP.cli.OutputTypes;
-import edu.sc.seis.TauP.cli.TextOutputTypeArgs;
+import edu.sc.seis.TauP.cli.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import picocli.CommandLine;
@@ -49,6 +46,9 @@ public class TauP_Find extends TauP_Tool {
         SeismicPhaseWalk walker = new SeismicPhaseWalk(tMod,
                 minRP, maxRP,
                 tMod.findBranch(modelArgs.getReceiverDepth()));
+        if (onlyPWave) {
+            walker.allowSWave = false;
+        }
         walker.excludeBoundaries(excludeDepth);
         if (isVerbose() && excludeDepth.size()>0) {
             System.out.println("Exclude: "+excludeDepth.size()+" depths:");
@@ -57,10 +57,44 @@ public class TauP_Find extends TauP_Tool {
             }
         }
         List<ProtoSeismicPhase> walk = walker.findEndingPaths(maxActions);
-        if (outputTypeArgs.isText()) {
-            printResultText(walk);
-        } else if (outputTypeArgs.isJSON()) {
-            printResultJson(walk);
+
+        List<RayCalculateable> distanceValues = distanceArgs.getRayCalculatables();
+        if((!distanceValues.isEmpty())) {
+            List<SeismicPhase> phaseList = new ArrayList<>();
+            for (ProtoSeismicPhase proto : walk) {
+                phaseList.add(proto.asSeismicPhase());
+            }
+            TauP_Time timeTool = new TauP_Time();
+            timeTool.modelArgs = modelArgs;
+            timeTool.outputTypeArgs = outputTypeArgs;
+            List<Arrival> arrivalList = timeTool.calcAll(phaseList,distanceValues);
+            if (times.size()> 0) {
+                double minTime = times.get(0);
+                double maxTime = minTime;
+                if (times.size()>1) {
+                    maxTime = times.get(1);
+                } else {
+                    maxTime = minTime + deltaTime;
+                    minTime = minTime - deltaTime;
+                }
+                List<Arrival> timedArrivalList = new ArrayList<>();
+                for (Arrival a : arrivalList) {
+                    if (minTime <= a.getTime() && a.getTime() <= maxTime) {
+                        timedArrivalList.add(a);
+                    }
+                }
+                arrivalList = timedArrivalList;
+            }
+            PrintWriter writer = outputTypeArgs.createWriter(spec.commandLine().getOut());
+            timeTool.printResult(writer, arrivalList);
+            writer.flush();
+        } else {
+            System.err.println("No distances given, just find phases...");
+            if (outputTypeArgs.isText()) {
+                printResultText(walk);
+            } else if (outputTypeArgs.isJSON()) {
+                printResultJson(walk);
+            }
         }
     }
 
@@ -128,7 +162,7 @@ public class TauP_Find extends TauP_Tool {
     @CommandLine.Option(names = "--showrayparam", description = "show min and max ray parameter for each phase name")
     boolean showrayparam = false;
 
-    @CommandLine.Option(names = "--max", defaultValue = "2", description = "Maximum number of reflections and phase conversion")
+    @CommandLine.Option(names = "--max", required = true,description = "Maximum number of reflections and phase conversion")
     int maxActions;
 
     @CommandLine.Option(names = "--rayparam", arity = "1..2", description = "only keep phases that overlap the given ray parameter range")
@@ -137,4 +171,19 @@ public class TauP_Find extends TauP_Tool {
     @CommandLine.Option(names = "--exclude", arity = "1..", description = "Exclude boundaries from phase conversion or reflection interactions")
     List<Double> excludeDepth = new ArrayList<>();
 
+    @CommandLine.Option(names = "--pwaveonly", description = "only P wave legs, no S")
+    boolean onlyPWave = false;
+
+    @CommandLine.Option(names = "--time", arity = "1..2", description = "find arrivals within the given range")
+    List<Double> times = new ArrayList<>();
+
+    @CommandLine.Option(names = "--deltatime", description = "find arrivals within the +- deltatime, --times must have single time")
+    Double deltaTime = 5.0;
+
+    @CommandLine.Option(names={"--deg", "--degree"}, paramLabel="d", description="distance in degrees", split=",")
+    protected void setDegree(List<Double> degreesList) {
+        distanceArgs.setDegreeList(degreesList);
+    }
+
+    DistanceArgs distanceArgs = new DistanceArgs();
 }

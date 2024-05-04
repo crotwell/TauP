@@ -920,9 +920,8 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
         return out;
     }
 
-    public SeismicPhase asSeismicPhase() {
-        SeismicPhaseSegment endSeg = endSegment();
-        throw new RuntimeException("Not Yet...");
+    public SeismicPhase asSeismicPhase() throws TauModelException {
+        return SeismicPhaseFactory.sumBranches(tMod, this);
 
     }
 

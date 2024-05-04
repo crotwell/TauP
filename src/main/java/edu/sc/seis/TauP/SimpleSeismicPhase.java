@@ -137,7 +137,6 @@ public class SimpleSeismicPhase implements SeismicPhase {
         }
         this.proto = proto;
         this.DEBUG = debug ;
-        System.err.println("SimpleSeismicPhase con name="+proto.getName());
         this.name = proto.getName();
         this.tMod = proto.tMod;
         this.puristName = proto.getPuristName();
