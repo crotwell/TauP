@@ -130,12 +130,18 @@ public class TauP_Web extends TauP_Tool {
         return tool;
     }
 
+    public static List<String> disableOptions = List.of("o", "help", "version");
+
     public static List<String> queryParamsToCmdLineArgs(CommandLine.Model.CommandSpec spec,
                                                         Map<String, Deque<String>> queryParams) throws TauPException {
         List<String> out = new ArrayList<>();
 
         for (String qp : queryParams.keySet()) {
             String dashedQP = (qp.length() == 1 ? "-" : "--")+qp;
+            if (disableOptions.contains(qp)) {
+                // ignore these options
+                continue;
+            }
             CommandLine.Model.OptionSpec op = spec.findOption(dashedQP);
 
             Deque<String> qpList = queryParams.get(qp);
