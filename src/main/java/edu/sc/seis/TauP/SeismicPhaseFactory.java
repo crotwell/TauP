@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import static edu.sc.seis.TauP.Arrival.RtoD;
 import static edu.sc.seis.TauP.PhaseInteraction.*;
 import static edu.sc.seis.TauP.PhaseInteraction.REFLECT_TOPSIDE_CRITICAL;
 import static edu.sc.seis.TauP.PhaseSymbols.*;
@@ -292,7 +291,7 @@ public class SeismicPhaseFactory {
             }
             // KMPS fake with a head wave
             ProtoSeismicPhase proto = ProtoSeismicPhase.startEmpty(name, tMod, receiverDepth);
-            proto.addFlatBranch(tMod, 0, false, KMPS, END, currLeg);
+            proto.addFlatBranch(false, KMPS, END, currLeg);
             return proto;
         }
         /* Make a check for J legs if the model doesn not allow J */
@@ -647,8 +646,7 @@ public class SeismicPhaseFactory {
             endAction = REFLECT_UNDERSIDE;
             int disconBranch = LegPuller.closestBranchToDepth(tMod, depthString);
             if(currBranch >= disconBranch) {
-                proto.addToBranch(tMod,
-                        currBranch,
+                proto.addToBranch(
                         disconBranch,
                         isPWave,
                         nextIsPWave,
@@ -663,8 +661,7 @@ public class SeismicPhaseFactory {
         } else if(nextLeg.equals("m")
                 && currBranch >= tMod.getMohoBranch()) {
             endAction = TRANSUP;
-            proto.addToBranch(tMod,
-                    currBranch,
+            proto.addToBranch(
                     tMod.getMohoBranch(),
                     isPWave,
                     nextIsPWave,
@@ -691,8 +688,7 @@ public class SeismicPhaseFactory {
             } else {
                 endAction = REFLECT_UNDERSIDE;
             }
-            proto.addToBranch(tMod,
-                    currBranch,
+            proto.addToBranch(
                     disconBranch,
                     isPWave,
                     nextIsPWave,
@@ -711,8 +707,7 @@ public class SeismicPhaseFactory {
             }
             int disconBranch = LegPuller.closestBranchToDepth(tMod, nextLeg);
             endAction = TRANSUP;
-            proto.addToBranch(tMod,
-                    currBranch,
+            proto.addToBranch(
                     disconBranch,
                     isPWave,
                     nextIsPWave,
@@ -745,8 +740,7 @@ public class SeismicPhaseFactory {
             if(prevEndAction == START || prevEndAction == TRANSDOWN || prevEndAction == REFLECT_UNDERSIDE|| prevEndAction == REFLECT_UNDERSIDE_CRITICAL) {
                 // was downgoing, so must first turn in mantle
                 endAction = TURN;
-                proto.addToBranch(tMod,
-                        currBranch,
+                proto.addToBranch(
                         tMod.getCmbBranch() - 1,
                         isPWave,
                         isPWave,
@@ -755,10 +749,10 @@ public class SeismicPhaseFactory {
             }
             if (nextLeg.equals(END_CODE)) {
                 endAction = END;
-                proto.addToBranch(tMod, currBranch, upgoingRecBranch, isPWave, nextIsPWave, endAction, currLeg);
+                proto.addToBranch(upgoingRecBranch, isPWave, nextIsPWave, endAction, currLeg);
             } else {
                 endAction = REFLECT_UNDERSIDE;
-                proto.addToBranch(tMod, currBranch, 0, isPWave, nextIsPWave, endAction, currLeg);
+                proto.addToBranch(0, isPWave, nextIsPWave, endAction, currLeg);
             }
         } else if(nextLeg.startsWith("v") || nextLeg.startsWith("V") ) {
             if (nextLeg.startsWith("V")) {
@@ -769,8 +763,7 @@ public class SeismicPhaseFactory {
             int disconBranch = LegPuller.closestBranchToDepth(tMod,
                     nextLeg.substring(1));
             if(currBranch <= disconBranch - 1) {
-                proto.addToBranch(tMod,
-                        currBranch,
+                proto.addToBranch(
                         disconBranch - 1,
                         isPWave,
                         nextIsPWave,
@@ -791,8 +784,7 @@ public class SeismicPhaseFactory {
                 return failWithMessage(proto, reason);
             }
             if(prevLeg.equals("K")) {
-                proto.addToBranch(tMod,
-                        currBranch,
+                proto.addToBranch(
                         disconBranch,
                         isPWave,
                         nextIsPWave,
@@ -803,15 +795,13 @@ public class SeismicPhaseFactory {
                     || prevLeg.equals("s") || prevLeg.equals("m")
                     || isLegDepth(prevLeg)
                     || prevLeg.equals("START")) {
-                proto.addToBranch(tMod,
-                        currBranch,
+                proto.addToBranch(
                         tMod.getCmbBranch() - 1,
                         isPWave,
                         isPWave,
                         TURN,
                         currLeg);
-                proto.addToBranch(tMod,
-                        currBranch,
+                proto.addToBranch(
                         disconBranch,
                         isPWave,
                         nextIsPWave,
@@ -825,8 +815,7 @@ public class SeismicPhaseFactory {
                     String reason = "Attempt to reflect from center of earth: "+nextLeg;
                     return failWithMessage(proto, reason);
                 }
-                proto.addToBranch(tMod,
-                        currBranch,
+                proto.addToBranch(
                         disconBranch,
                         isPWave,
                         nextIsPWave,
@@ -844,8 +833,7 @@ public class SeismicPhaseFactory {
                 return failWithMessage(proto, reason);
             }
             endAction = REFLECT_TOPSIDE;
-            proto.addToBranch(tMod,
-                    currBranch,
+            proto.addToBranch(
                     tMod.getCmbBranch() - 1,
                     isPWave,
                     nextIsPWave,
@@ -859,8 +847,7 @@ public class SeismicPhaseFactory {
                     );
         } else if(nextLeg.startsWith("K") ) {
             endAction = TRANSDOWN;
-            proto.addToBranch(tMod,
-                    currBranch,
+            proto.addToBranch(
                     tMod.getCmbBranch() - 1,
                     isPWave,
                     nextIsPWave,
@@ -870,8 +857,7 @@ public class SeismicPhaseFactory {
             if(tMod.getCmbDepth() == tMod.getIocbDepth()) {
                 // degenerate case of no fluid outer core, so allow phases like PIP or SJS
                 endAction = TRANSDOWN;
-                proto.addToBranch(tMod,
-                        currBranch,
+                proto.addToBranch(
                         tMod.getCmbBranch() - 1,
                         isPWave,
                         nextIsPWave,
@@ -910,8 +896,7 @@ public class SeismicPhaseFactory {
                             + " > disconBranch=" + disconBranch);
                 }
                 endAction = TRANSUP;
-                proto.addToBranch(tMod,
-                        currBranch,
+                proto.addToBranch(
                         disconBranch,
                         isPWave,
                         nextIsPWave,
@@ -927,16 +912,14 @@ public class SeismicPhaseFactory {
                 if (nextNextLeg.equals("p") || nextNextLeg.equals("s")) {
                     // convert on upgoing section
                     endAction = TURN;
-                    proto.addToBranch(tMod,
-                            currBranch,
+                    proto.addToBranch(
                             tMod.getCmbBranch() - 1,
                             isPWave,
                             isPWave,
                             endAction,
                             currLeg);
                     endAction = TRANSUP;
-                    proto.addToBranch(tMod,
-                            currBranch,
+                    proto.addToBranch(
                             disconBranch,
                             isPWave,
                             nextIsPWave,
@@ -947,8 +930,7 @@ public class SeismicPhaseFactory {
                     if (disconBranch > currBranch) {
                         // discon is below current loc
                         endAction = TRANSDOWN;
-                        proto.addToBranch(tMod,
-                                currBranch,
+                        proto.addToBranch(
                                 disconBranch - 1,
                                 isPWave,
                                 nextIsPWave,
@@ -980,8 +962,7 @@ public class SeismicPhaseFactory {
                 double headDepth = Double.parseDouble(numString);
                 int disconBranch = LegPuller.closestBranchToDepth(tMod, numString);
                 endAction = HEAD;
-                proto.addToBranch(tMod,
-                        currBranch,
+                proto.addToBranch(
                         disconBranch - 1,
                         isPWave,
                         nextIsPWave,
@@ -1004,8 +985,7 @@ public class SeismicPhaseFactory {
                 if(prevEndAction == START || prevEndAction == TRANSDOWN || prevEndAction == REFLECT_UNDERSIDE|| prevEndAction == REFLECT_UNDERSIDE_CRITICAL) {
                     // was downgoing, so must first turn in mantle
                     endAction = TURN;
-                    proto.addToBranch(tMod,
-                            currBranch,
+                    proto.addToBranch(
                             tMod.getCmbBranch() - 1,
                             isPWave,
                             isPWave,
@@ -1013,7 +993,7 @@ public class SeismicPhaseFactory {
                             currLeg);
                 }
                 endAction = REFLECT_UNDERSIDE;
-                proto.addToBranch(tMod, currBranch, 0, isPWave, nextIsPWave, endAction, currLeg);
+                proto.addToBranch(0, isPWave, nextIsPWave, endAction, currLeg);
 
             } catch(NumberFormatException e) {
                 throw new TauModelException(getName() + " Phase not recognized (7): "
@@ -1042,7 +1022,7 @@ public class SeismicPhaseFactory {
         if(nextLeg.equals(END_CODE)) {
             if (receiverDepth > 0) {
                 endAction = END_DOWN;
-                proto.addToBranch(tMod, currBranch, downgoingRecBranch, isPWave, nextIsPWave, endAction, currLeg);
+                proto.addToBranch(downgoingRecBranch, isPWave, nextIsPWave, endAction, currLeg);
             } else {
                 String reason = "impossible except for 0 dist 0 source depth which can be called p or P";
                 return failWithMessage(proto, reason);
@@ -1050,8 +1030,7 @@ public class SeismicPhaseFactory {
 
         } else if(nextLeg.equals("Pdiff") || nextLeg.equals("Sdiff")) {
             endAction = DIFFRACT;
-            proto.addToBranch(tMod,
-                    currBranch,
+            proto.addToBranch(
                     tMod.getCmbBranch() - 1,
                     isPWave,
                     nextIsPWave,
@@ -1062,8 +1041,7 @@ public class SeismicPhaseFactory {
             double headDepth = Double.parseDouble(numString);
             int disconBranch = LegPuller.closestBranchToDepth(tMod, numString);
             endAction = HEAD;
-            proto.addToBranch(tMod,
-                    currBranch,
+            proto.addToBranch(
                     disconBranch-1,
                     isPWave,
                     nextIsPWave,
@@ -1074,8 +1052,7 @@ public class SeismicPhaseFactory {
             double diffDepth = Double.parseDouble(numString);
             int disconBranch = LegPuller.closestBranchToDepth(tMod, numString);
             endAction = DIFFRACT;
-            proto.addToBranch(tMod,
-                    currBranch,
+            proto.addToBranch(
                     disconBranch - 1,
                     isPWave,
                     nextIsPWave,
@@ -1083,8 +1060,7 @@ public class SeismicPhaseFactory {
                     currLeg);
         } else if(nextLeg.equals("K") || nextLeg.equals("Ked") || nextLeg.equals("Kdiff")) {
             endAction = TRANSDOWN;
-            proto.addToBranch(tMod,
-                    currBranch,
+            proto.addToBranch(
                     tMod.getCmbBranch() - 1,
                     isPWave,
                     nextIsPWave,
@@ -1092,8 +1068,7 @@ public class SeismicPhaseFactory {
                     currLeg);
         } else if(nextLeg.equals("m")) {
             endAction = TRANSDOWN;
-            proto.addToBranch(tMod,
-                    currBranch,
+            proto.addToBranch(
                     tMod.getMohoBranch() - 1,
                     isPWave,
                     nextIsPWave,
@@ -1102,8 +1077,7 @@ public class SeismicPhaseFactory {
         } else if( isNextLegDepth) {
             int disconBranch = LegPuller.closestBranchToDepth(tMod, nextLeg);
             endAction = TRANSDOWN;
-            proto.addToBranch(tMod,
-                    currBranch,
+            proto.addToBranch(
                     disconBranch - 1,
                     isPWave,
                     nextIsPWave,
@@ -1112,8 +1086,7 @@ public class SeismicPhaseFactory {
         } else if(nextLeg.equals("c") || nextLeg.equals("i")) {
             int disconBranch = LegPuller.closestBranchToDepth(tMod, nextLeg);
             endAction = REFLECT_TOPSIDE;
-            proto.addToBranch(tMod,
-                    currBranch,
+            proto.addToBranch(
                     disconBranch - 1,
                     isPWave,
                     nextIsPWave,
@@ -1128,8 +1101,7 @@ public class SeismicPhaseFactory {
             int disconBranch = LegPuller.closestBranchToDepth(tMod,
                     nextLeg.substring(1));
             if(currBranch <= disconBranch - 1) {
-                proto.addToBranch(tMod,
-                        currBranch,
+                proto.addToBranch(
                         disconBranch - 1,
                         isPWave,
                         nextIsPWave,
@@ -1145,8 +1117,7 @@ public class SeismicPhaseFactory {
             if(tMod.getCmbDepth() == tMod.getIocbDepth()) {
                 // degenerate case of no fluid outer core, so allow phases like PIP or SJS
                 endAction = TRANSDOWN;
-                proto.addToBranch(tMod,
-                        currBranch,
+                proto.addToBranch(
                         tMod.getCmbBranch() - 1,
                         isPWave,
                         nextIsPWave,
@@ -1182,8 +1153,7 @@ public class SeismicPhaseFactory {
                 if (currBranch < tMod.getCmbBranch() - 1 || prevEndAction == START ||
                         (currBranch == tMod.getCmbBranch() && prevSegment != null && prevSegment.endsAtTop())
                 ) {
-                    proto.addToBranch(tMod,
-                            currBranch,
+                    proto.addToBranch(
                             tMod.getCmbBranch() - 1,
                             isPWave,
                             nextIsPWave,
@@ -1199,15 +1169,14 @@ public class SeismicPhaseFactory {
                 }
                 if (nextLeg.startsWith("K") || nextLeg.equals("I") || nextLeg.equals("J")) {
                     // down into inner core
-                    proto.addFlatBranch(tMod, tMod.getCmbBranch() - 1, isPWave, endAction, TRANSDOWN, currLeg);
+                    proto.addFlatBranch(isPWave, endAction, TRANSDOWN, currLeg);
                 } else {
                     // normal case
-                    proto.addFlatBranch(tMod, tMod.getCmbBranch() - 1, isPWave, endAction, TURN, currLeg);
+                    proto.addFlatBranch(isPWave, endAction, TURN, currLeg);
                 }
                 if (nextLeg.equals(END_CODE)) {
                     endAction = END;
-                    proto.addToBranch(tMod,
-                            currBranch,
+                    proto.addToBranch(
                             upgoingRecBranch,
                             isPWave,
                             nextIsPWave,
@@ -1226,8 +1195,7 @@ public class SeismicPhaseFactory {
                                 + " from deeper layer: " + nextLeg;
                         return failWithMessage(proto, reason);
                     }
-                    proto.addToBranch(tMod,
-                            currBranch,
+                    proto.addToBranch(
                             disconBranch,
                             isPWave,
                             nextIsPWave,
@@ -1236,8 +1204,7 @@ public class SeismicPhaseFactory {
 
                 } else if (nextLeg.startsWith("P") || nextLeg.startsWith("S")) {
                     endAction = REFLECT_UNDERSIDE;
-                    proto.addToBranch(tMod,
-                            currBranch,
+                    proto.addToBranch(
                             0,
                             isPWave,
                             nextIsPWave,
@@ -1260,8 +1227,7 @@ public class SeismicPhaseFactory {
             double diffDepth = Double.parseDouble(numString);
             int disconBranch = LegPuller.closestBranchToDepth(tMod, numString);
             endAction = DIFFRACT;
-            proto.addToBranch(tMod,
-                    currBranch,
+            proto.addToBranch(
                     disconBranch - 1,
                     isPWave,
                     nextIsPWave,
@@ -1269,16 +1235,15 @@ public class SeismicPhaseFactory {
                     currLeg);
             if (nextLeg.startsWith("K") || nextLeg.equals("I") || nextLeg.equals("J")) {
                 // down into  core
-                proto.addFlatBranch(tMod, disconBranch-1, isPWave, endAction, TRANSDOWN, currLeg);
+                proto.addFlatBranch(isPWave, endAction, TRANSDOWN, currLeg);
             } else {
                 // normal case
-                proto.addFlatBranch(tMod, disconBranch-1, isPWave, endAction, TURN, currLeg);
+                proto.addFlatBranch(isPWave, endAction, TURN, currLeg);
             }
 
             if(nextLeg.equals(END_CODE)) {
                 endAction = END;
-                proto.addToBranch(tMod,
-                        currBranch,
+                proto.addToBranch(
                         upgoingRecBranch,
                         isPWave,
                         nextIsPWave,
@@ -1312,8 +1277,7 @@ public class SeismicPhaseFactory {
             double diffDepth = Double.parseDouble(numString);
             int disconBranch = LegPuller.closestBranchToDepth(tMod, numString);
             endAction = HEAD;
-            proto.addToBranch(tMod,
-                    currBranch,
+            proto.addToBranch(
                     disconBranch-1,
                     isPWave,
                     nextIsPWave,
@@ -1321,17 +1285,16 @@ public class SeismicPhaseFactory {
                     currLeg);
             if (nextLeg.startsWith("K") || nextLeg.equals("I") || nextLeg.equals("J")) {
                 // down into  core
-                proto.addFlatBranch(tMod, disconBranch, isPWave, endAction, TRANSDOWN, currLeg);
+                proto.addFlatBranch(isPWave, endAction, TRANSDOWN, currLeg);
             } else {
                 // normal case
-                proto.addFlatBranch(tMod, disconBranch, isPWave, endAction, TRANSUP, currLeg);
+                proto.addFlatBranch(isPWave, endAction, TRANSUP, currLeg);
             }
             currBranch=disconBranch;
 
             if(nextLeg.equals(END_CODE)) {
                 endAction = END;
-                proto.addToBranch(tMod,
-                        currBranch-1,
+                proto.addToBranch(
                         upgoingRecBranch,
                         isPWave,
                         nextIsPWave,
@@ -1359,8 +1322,7 @@ public class SeismicPhaseFactory {
             }
             if(currLeg.equals("Pg") || currLeg.equals("Sg")) {
                 endAction = TURN;
-                proto.addToBranch(tMod,
-                        currBranch,
+                proto.addToBranch(
                         tMod.getMohoBranch() - 1,
                         isPWave,
                         isPWave,
@@ -1368,10 +1330,10 @@ public class SeismicPhaseFactory {
                         currLeg);
                 if(nextLeg.equals(END_CODE)) {
                     endAction = END;
-                    proto.addToBranch(tMod, currBranch, upgoingRecBranch, isPWave, nextIsPWave, endAction, currLeg);
+                    proto.addToBranch(upgoingRecBranch, isPWave, nextIsPWave, endAction, currLeg);
                 } else if(nextLeg.startsWith("P") || nextLeg.startsWith("S")) {
                     endAction = REFLECT_UNDERSIDE;
-                    proto.addToBranch(tMod, currBranch, 0, isPWave, nextIsPWave, endAction, currLeg);
+                    proto.addToBranch(0, isPWave, nextIsPWave, endAction, currLeg);
                 } else if(nextLeg.startsWith("^")) {
                     String depthString;
                     depthString = nextLeg.substring(1);
@@ -1381,9 +1343,8 @@ public class SeismicPhaseFactory {
                         String reason = "Attempt to underside reflect "+currLeg+" from deeper layer: "+nextLeg;
                         return failWithMessage(proto, reason);
                     }
-                    proto.addToBranch(tMod,
-                                currBranch,
-                                disconBranch,
+                    proto.addToBranch(
+                            disconBranch,
                                 isPWave,
                                 nextIsPWave,
                                 endAction,
@@ -1395,8 +1356,7 @@ public class SeismicPhaseFactory {
                 }
             } else if(currLeg.equals("Pn") || currLeg.equals("Sn")) {
                     endAction = HEAD;
-                    proto.addToBranch(tMod,
-                            currBranch,
+                    proto.addToBranch(
                             tMod.getMohoBranch()-1,
                             isPWave,
                             nextIsPWave,
@@ -1404,17 +1364,16 @@ public class SeismicPhaseFactory {
                             currLeg);
                     if (nextLeg.equals("Ped") || nextLeg.equals("Sed")) {
                         // down into  core
-                        proto.addFlatBranch(tMod, tMod.getMohoBranch(), isPWave, endAction, TRANSDOWN, currLeg);
+                        proto.addFlatBranch(isPWave, endAction, TRANSDOWN, currLeg);
                     } else {
                         // normal case
-                        proto.addFlatBranch(tMod, tMod.getMohoBranch(), isPWave, endAction, TRANSUP, currLeg);
+                        proto.addFlatBranch(isPWave, endAction, TRANSUP, currLeg);
                     }
 
                     if(nextLeg.equals(END_CODE)) {
                         endAction = END;
                         if (currBranch >= upgoingRecBranch) {
-                            proto.addToBranch(tMod,
-                                    currBranch,
+                            proto.addToBranch(
                                     upgoingRecBranch,
                                     isPWave,
                                     nextIsPWave,
@@ -1428,8 +1387,7 @@ public class SeismicPhaseFactory {
                         }
                     } else if ( nextLeg.startsWith("P") || nextLeg.startsWith("S")) {
                         endAction = REFLECT_UNDERSIDE;
-                        proto.addToBranch(tMod,
-                                currBranch,
+                        proto.addToBranch(
                                 0,
                                 isPWave,
                                 nextIsPWave,
@@ -1445,8 +1403,7 @@ public class SeismicPhaseFactory {
                                     +" from deeper layer: "+nextLeg;
                             return failWithMessage(proto, reason);
                         }
-                        proto.addToBranch(tMod,
-                                currBranch,
+                        proto.addToBranch(
                                 disconBranch,
                                 isPWave,
                                 nextIsPWave,
@@ -1476,8 +1433,7 @@ public class SeismicPhaseFactory {
         if (currLeg.endsWith("n")) {
             if(nextLeg.equals(END_CODE)) {
                 endAction = END;
-                proto.addToBranch(tMod,
-                        currBranch,
+                proto.addToBranch(
                         upgoingRecBranch,
                         isPWave,
                         nextIsPWave,
@@ -1548,8 +1504,7 @@ public class SeismicPhaseFactory {
         }
 
         endAction = DIFFRACT;
-        proto.addToBranch(tMod,
-                currBranch,
+        proto.addToBranch(
                 disconBranch - 1,
                 PWAVE,
                 nextIsPWave,
@@ -1557,16 +1512,15 @@ public class SeismicPhaseFactory {
                 currLeg);
         if (nextLeg.equals("I") || nextLeg.equals("J")) {
             // down into inner core
-            proto.addFlatBranch(tMod, disconBranch-1, isPWave, endAction, TRANSDOWN, currLeg);
+            proto.addFlatBranch(isPWave, endAction, TRANSDOWN, currLeg);
         } else {
             // normal case
-            proto.addFlatBranch(tMod, disconBranch-1, isPWave, endAction, TURN, currLeg);
+            proto.addFlatBranch(isPWave, endAction, TURN, currLeg);
         }
 
         if (nextLeg.startsWith("P") || nextLeg.startsWith("S") || nextLeg.equals("p") || nextLeg.equals("s")) {
             endAction = TRANSUP;
-            proto.addToBranch(tMod,
-                    currBranch,
+            proto.addToBranch(
                     tMod.getCmbBranch(),
                     PWAVE,
                     nextIsPWave,
@@ -1575,8 +1529,7 @@ public class SeismicPhaseFactory {
 
         } else if (nextLeg.equals("K") || (nextLeg.startsWith("K") && nextLeg.endsWith("diff"))) {
             endAction = REFLECT_UNDERSIDE;
-            proto.addToBranch(tMod,
-                    currBranch,
+            proto.addToBranch(
                     tMod.getCmbBranch(),
                     PWAVE,
                     nextIsPWave,
@@ -1602,8 +1555,7 @@ public class SeismicPhaseFactory {
                 String reason = "Attempt to underside reflect from center of earth: " + nextLeg;
                 return failWithMessage(proto, reason);
             }
-            proto.addToBranch(tMod,
-                    currBranch,
+            proto.addToBranch(
                     reflectBranch,
                     isPWave,
                     nextIsPWave,
@@ -1638,8 +1590,7 @@ public class SeismicPhaseFactory {
                         || prevLeg.startsWith("^")
                         || prevLeg.equals("START")) {
                     endAction = TURN;
-                    proto.addToBranch(tMod,
-                            currBranch,
+                    proto.addToBranch(
                             tMod.getIocbBranch() - 1,
                             isPWave,
                             isPWave,
@@ -1652,8 +1603,7 @@ public class SeismicPhaseFactory {
                     endAction = TRANSUP;
                 }
 
-                proto.addToBranch(tMod,
-                        currBranch,
+                proto.addToBranch(
                         tMod.getCmbBranch(),
                         isPWave,
                         nextIsPWave,
@@ -1667,8 +1617,7 @@ public class SeismicPhaseFactory {
                         || prevLeg.startsWith("^")
                         || prevLeg.equals("START")) {
                     endAction = TURN;
-                    proto.addToBranch(tMod,
-                            currBranch,
+                    proto.addToBranch(
                             tMod.getIocbBranch() - 1,
                             isPWave,
                             isPWave,
@@ -1677,11 +1626,10 @@ public class SeismicPhaseFactory {
                 }
                 if (nextLeg.equals(END_CODE)) {
                     endAction = END;
-                    proto.addToBranch(tMod, currBranch, upgoingRecBranch, isPWave, nextIsPWave, endAction, currLeg);
+                    proto.addToBranch(upgoingRecBranch, isPWave, nextIsPWave, endAction, currLeg);
                 } else {
                     endAction = REFLECT_UNDERSIDE;
-                    proto.addToBranch(tMod,
-                            currBranch,
+                    proto.addToBranch(
                             tMod.getCmbBranch(),
                             isPWave,
                             nextIsPWave,
@@ -1690,8 +1638,7 @@ public class SeismicPhaseFactory {
                 }
             } else if(nextLeg.startsWith("I") || nextLeg.startsWith("J")) {
                 endAction = TRANSDOWN;
-                proto.addToBranch(tMod,
-                        currBranch,
+                proto.addToBranch(
                         tMod.getIocbBranch() - 1,
                         isPWave,
                         nextIsPWave,
@@ -1703,8 +1650,7 @@ public class SeismicPhaseFactory {
                     return failWithMessage(proto, reason);
                 }
                 endAction = REFLECT_TOPSIDE;
-                proto.addToBranch(tMod,
-                        currBranch,
+                proto.addToBranch(
                         tMod.getIocbBranch() - 1,
                         isPWave,
                         nextIsPWave,
@@ -1719,8 +1665,7 @@ public class SeismicPhaseFactory {
                 int disconBranch = LegPuller.closestBranchToDepth(tMod,
                         nextLeg.substring(1));
                 if(currBranch <= disconBranch - 1) {
-                    proto.addToBranch(tMod,
-                            currBranch,
+                    proto.addToBranch(
                             disconBranch - 1,
                             isPWave,
                             nextIsPWave,
@@ -1757,8 +1702,7 @@ public class SeismicPhaseFactory {
                         || prevLeg.equals("i") || prevLeg.equals("j")
                         || prevLeg.equals("k")) {
                     // upgoind K leg
-                    proto.addToBranch(tMod,
-                            currBranch,
+                    proto.addToBranch(
                             disconBranch,
                             isPWave,
                             nextIsPWave,
@@ -1767,15 +1711,13 @@ public class SeismicPhaseFactory {
                 } else if (prevLeg.equals("P") || prevLeg.equals("S") ||
                         prevLeg.startsWith("^") ||
                         prevLeg.equals("K") || prevLeg.equals("START")) {
-                    proto.addToBranch(tMod,
-                            currBranch,
+                    proto.addToBranch(
                             tMod.getIocbBranch() - 1,
                             isPWave,
                             isPWave,
                             TURN,
                             currLeg);
-                    proto.addToBranch(tMod,
-                            currBranch,
+                    proto.addToBranch(
                             disconBranch,
                             isPWave,
                             nextIsPWave,
@@ -1786,8 +1728,7 @@ public class SeismicPhaseFactory {
                     int prevdisconBranch = LegPuller.closestBranchToDepth(tMod, prevDepthString);
                     if (disconBranch < prevdisconBranch) {
                         // upgoind K leg
-                        proto.addToBranch(tMod,
-                                currBranch,
+                        proto.addToBranch(
                                 disconBranch,
                                 isPWave,
                                 nextIsPWave,
@@ -1795,15 +1736,13 @@ public class SeismicPhaseFactory {
                                 currLeg);
                     } else {
                         // down-turn-up
-                        proto.addToBranch(tMod,
-                                currBranch,
+                        proto.addToBranch(
                                 tMod.getIocbBranch() - 1,
                                 isPWave,
                                 isPWave,
                                 TURN,
                                 currLeg);
-                        proto.addToBranch(tMod,
-                                currBranch,
+                        proto.addToBranch(
                                 disconBranch,
                                 isPWave,
                                 nextIsPWave,
@@ -1826,8 +1765,7 @@ public class SeismicPhaseFactory {
                             + " when cmbBranch < disconBranch=" + disconBranch + " , prev=" + prevLeg);
                 }
                 endAction = HEAD;
-                proto.addToBranch(tMod,
-                        currBranch,
+                proto.addToBranch(
                         disconBranch-1,
                         isPWave,
                         nextIsPWave,
@@ -1843,8 +1781,7 @@ public class SeismicPhaseFactory {
                             + " when cmbBranch < disconBranch=" + disconBranch + " , prev=" + prevLeg);
                 }
                 endAction = DIFFRACT;
-                proto.addToBranch(tMod,
-                        currBranch,
+                proto.addToBranch(
                         disconBranch - 1,
                         isPWave,
                         nextIsPWave,
@@ -1875,11 +1812,10 @@ public class SeismicPhaseFactory {
             }
             if(nextLeg.equals(END_CODE)) {
                 endAction = END_DOWN;
-                proto.addToBranch(tMod, currBranch, downgoingRecBranch, isPWave, nextIsPWave, endAction, currLeg);
+                proto.addToBranch(downgoingRecBranch, isPWave, nextIsPWave, endAction, currLeg);
             } else if(nextLeg.equals("I") || nextLeg.equals("J")) {
                 endAction = TRANSDOWN;
-                proto.addToBranch(tMod,
-                        currBranch,
+                proto.addToBranch(
                         tMod.getIocbBranch() - 1,
                         isPWave,
                         nextIsPWave,
@@ -1891,8 +1827,7 @@ public class SeismicPhaseFactory {
                     return failWithMessage(proto, reason);
                 }
                 endAction = REFLECT_TOPSIDE;
-                proto.addToBranch(tMod,
-                        currBranch,
+                proto.addToBranch(
                         tMod.getIocbBranch() - 1,
                         isPWave,
                         nextIsPWave,
@@ -1907,8 +1842,7 @@ public class SeismicPhaseFactory {
                 int disconBranch = LegPuller.closestBranchToDepth(tMod,
                         nextLeg.substring(1));
                 if(currBranch <= disconBranch - 1) {
-                    proto.addToBranch(tMod,
-                            currBranch,
+                    proto.addToBranch(
                             disconBranch - 1,
                             isPWave,
                             nextIsPWave,
@@ -1930,8 +1864,7 @@ public class SeismicPhaseFactory {
                             + " when cmbBranch < disconBranch=" + disconBranch + " , prev=" + prevLeg);
                 }
                 endAction = HEAD;
-                proto.addToBranch(tMod,
-                        currBranch,
+                proto.addToBranch(
                         disconBranch-1,
                         isPWave,
                         nextIsPWave,
@@ -1947,8 +1880,7 @@ public class SeismicPhaseFactory {
                             + " when cmbBranch < disconBranch=" + disconBranch + " , prev=" + prevLeg);
                 }
                 endAction = DIFFRACT;
-                proto.addToBranch(tMod,
-                        currBranch,
+                proto.addToBranch(
                         disconBranch - 1,
                         isPWave,
                         nextIsPWave,
@@ -1986,8 +1918,7 @@ public class SeismicPhaseFactory {
                         + ", discon not in outer core.");
             }
             if(currBranch >= disconBranch) {
-                proto.addToBranch(tMod,
-                        currBranch,
+                proto.addToBranch(
                         disconBranch,
                         isPWave,
                         nextIsPWave,
@@ -2032,8 +1963,7 @@ public class SeismicPhaseFactory {
                 throw new TauModelException(getName()+" Phase not recognized (3): "
                         + currLeg + " followed by " + nextLeg);
             }
-            proto.addToBranch(tMod,
-                    currBranch,
+            proto.addToBranch(
                     disconBranch,
                     isPWave,
                     nextIsPWave,
@@ -2063,8 +1993,7 @@ public class SeismicPhaseFactory {
                         + ", discon not in outer core.");
             }
             endAction = TRANSUP;
-            proto.addToBranch(tMod,
-                    currBranch,
+            proto.addToBranch(
                     disconBranch,
                     isPWave,
                     nextIsPWave,
@@ -2101,8 +2030,7 @@ public class SeismicPhaseFactory {
                 && (prevEndAction == START || prevEndAction == TRANSDOWN || prevEndAction == REFLECT_UNDERSIDE || prevEndAction == REFLECT_UNDERSIDE_CRITICAL)) {
             // was downgoing, not reflecting, so must first turn in inner core
             endAction = TURN;
-            proto.addToBranch(tMod,
-                    currBranch,
+            proto.addToBranch(
                     tMod.getNumBranches() - 1,
                     isPWave,
                     isPWave,
@@ -2113,11 +2041,10 @@ public class SeismicPhaseFactory {
         // have already TURNed
         if(nextLeg.equals(END_CODE)) {
             endAction = END;
-            proto.addToBranch(tMod, currBranch, upgoingRecBranch, isPWave, nextIsPWave, endAction, currLeg);
+            proto.addToBranch(upgoingRecBranch, isPWave, nextIsPWave, endAction, currLeg);
         } else if(nextLeg.equals("I") || nextLeg.equals("J")) {
             endAction = REFLECT_UNDERSIDE;
-            proto.addToBranch(tMod,
-                    currBranch,
+            proto.addToBranch(
                     tMod.getIocbBranch(),
                     isPWave,
                     nextIsPWave,
@@ -2125,8 +2052,7 @@ public class SeismicPhaseFactory {
                     currLeg);
         } else if(nextLeg.equals("K") || nextLeg.equals("k")) {
             endAction = TRANSUP;
-            proto.addToBranch(tMod,
-                    currBranch,
+            proto.addToBranch(
                     tMod.getIocbBranch(),
                     isPWave,
                     nextIsPWave,
@@ -2141,8 +2067,7 @@ public class SeismicPhaseFactory {
             int disconBranch = LegPuller.closestBranchToDepth(tMod,
                     nextLeg.substring(1));
             if(currBranch <= disconBranch - 1) {
-                proto.addToBranch(tMod,
-                        currBranch,
+                proto.addToBranch(
                         disconBranch - 1,
                         isPWave,
                         nextIsPWave,
@@ -2169,8 +2094,7 @@ public class SeismicPhaseFactory {
                 String reason = "Attempt to underside reflect from center of earth: "+nextLeg;
                 return failWithMessage(proto, reason);
             }
-            proto.addToBranch(tMod,
-                    currBranch,
+            proto.addToBranch(
                     disconBranch,
                     isPWave,
                     nextIsPWave,
@@ -2180,8 +2104,7 @@ public class SeismicPhaseFactory {
             if (tMod.getCmbDepth() == tMod.getIocbDepth()) {
                 // degenerate case of no fluid outer core, so allow phases like PIP or SJS
                 endAction = TRANSUP;
-                proto.addToBranch(tMod,
-                        currBranch,
+                proto.addToBranch(
                         tMod.getIocbBranch(),
                         isPWave,
                         nextIsPWave,
@@ -2205,8 +2128,7 @@ public class SeismicPhaseFactory {
                         + " when iocbBranch < disconBranch=" + disconBranch + " , prev=" + prevLeg);
             }
             endAction = HEAD;
-            proto.addToBranch(tMod,
-                    currBranch,
+            proto.addToBranch(
                     disconBranch-1,
                     isPWave,
                     nextIsPWave,
@@ -2222,8 +2144,7 @@ public class SeismicPhaseFactory {
                         + " when iocbBranch="+tMod.getIocbBranch()+" < disconBranch=" + disconBranch + " , prev=" + prevLeg);
             }
             endAction = DIFFRACT;
-            proto.addToBranch(tMod,
-                    currBranch,
+            proto.addToBranch(
                     disconBranch - 1,
                     isPWave,
                     nextIsPWave,
@@ -2247,7 +2168,7 @@ public class SeismicPhaseFactory {
         if (currLeg.equals("Ied") || currLeg.equals("Jed")) {
             if(nextLeg.equals(END_CODE)) {
                 endAction = END_DOWN;
-                proto.addToBranch(tMod, currBranch, downgoingRecBranch, isPWave, nextIsPWave, endAction, currLeg);
+                proto.addToBranch(downgoingRecBranch, isPWave, nextIsPWave, endAction, currLeg);
             } else if(nextLeg.startsWith("v") || nextLeg.startsWith("V") ) {
                 if (nextLeg.startsWith("V")) {
                     endAction = REFLECT_TOPSIDE_CRITICAL;
@@ -2257,8 +2178,7 @@ public class SeismicPhaseFactory {
                 int disconBranch = LegPuller.closestBranchToDepth(tMod,
                         nextLeg.substring(1));
                 if(currBranch <= disconBranch - 1) {
-                    proto.addToBranch(tMod,
-                            currBranch,
+                    proto.addToBranch(
                             disconBranch - 1,
                             isPWave,
                             nextIsPWave,
@@ -2280,8 +2200,7 @@ public class SeismicPhaseFactory {
                             + " when iocbBranch < disconBranch=" + disconBranch + " , prev=" + prevLeg);
                 }
                 endAction = HEAD;
-                proto.addToBranch(tMod,
-                        currBranch,
+                proto.addToBranch(
                         disconBranch-1,
                         isPWave,
                         nextIsPWave,
@@ -2297,8 +2216,7 @@ public class SeismicPhaseFactory {
                             + " when iocbBranch < disconBranch=" + disconBranch + " , prev=" + prevLeg);
                 }
                 endAction = DIFFRACT;
-                proto.addToBranch(tMod,
-                        currBranch,
+                proto.addToBranch(
                         disconBranch - 1,
                         isPWave,
                         nextIsPWave,
@@ -2341,8 +2259,7 @@ public class SeismicPhaseFactory {
         }
 
         endAction = DIFFRACT;
-        proto.addToBranch(tMod,
-                currBranch,
+        proto.addToBranch(
                 disconBranch - 1,
                 PWAVE,
                 nextIsPWave,
@@ -2350,16 +2267,15 @@ public class SeismicPhaseFactory {
                 currLeg);
         if (nextLeg.equals("I") || nextLeg.equals("J")) {
             // down into inner core
-            proto.addFlatBranch(tMod, disconBranch-1, isPWave, endAction, TRANSDOWN, currLeg);
+            proto.addFlatBranch(isPWave, endAction, TRANSDOWN, currLeg);
         } else {
             // normal case
-            proto.addFlatBranch(tMod, disconBranch-1, isPWave, endAction, TURN, currLeg);
+            proto.addFlatBranch(isPWave, endAction, TURN, currLeg);
         }
 
         if (nextLeg.startsWith("K")  || nextLeg.equals("k")) {
             endAction = TRANSUP;
-            proto.addToBranch(tMod,
-                    currBranch,
+            proto.addToBranch(
                     tMod.getIocbBranch(),
                     PWAVE,
                     nextIsPWave,
@@ -2369,8 +2285,7 @@ public class SeismicPhaseFactory {
         } else if (nextLeg.equals("I") || nextLeg.equals("I")
                 || ((nextLeg.startsWith("I") || nextLeg.startsWith("J")) && nextLeg.endsWith("diff"))) {
             endAction = REFLECT_UNDERSIDE;
-            proto.addToBranch(tMod,
-                    currBranch,
+            proto.addToBranch(
                     tMod.getIocbBranch(),
                     PWAVE,
                     nextIsPWave,
@@ -2396,8 +2311,7 @@ public class SeismicPhaseFactory {
                 String reason = "Attempt to underside reflect from center of earth: " + nextLeg;
                 return failWithMessage(proto, reason);
             }
-            proto.addToBranch(tMod,
-                    currBranch,
+            proto.addToBranch(
                     reflectBranch,
                     isPWave,
                     nextIsPWave,
@@ -2432,8 +2346,7 @@ public class SeismicPhaseFactory {
                         + ", discon not in inner core.");
             }
             if(currBranch >= disconBranch) {
-                proto.addToBranch(tMod,
-                        currBranch,
+                proto.addToBranch(
                         disconBranch,
                         isPWave,
                         nextIsPWave,
@@ -2491,8 +2404,7 @@ public class SeismicPhaseFactory {
                 throw new TauModelException(getName()+" Phase not recognized (3): "
                         + currLeg + " followed by " + nextLeg);
             }
-            proto.addToBranch(tMod,
-                    currBranch,
+            proto.addToBranch(
                     disconBranch,
                     isPWave,
                     nextIsPWave,
@@ -2521,8 +2433,7 @@ public class SeismicPhaseFactory {
                         + ", discon not in inner core.");
             }
             endAction = TRANSUP;
-            proto.addToBranch(tMod,
-                    currBranch,
+            proto.addToBranch(
                     disconBranch,
                     isPWave,
                     nextIsPWave,

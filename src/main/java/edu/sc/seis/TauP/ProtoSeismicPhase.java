@@ -1,10 +1,8 @@
 package edu.sc.seis.TauP;
 
-import javax.tools.Tool;
 import java.util.ArrayList;
 import java.util.List;
 
-import static edu.sc.seis.TauP.Arrival.RtoD;
 import static edu.sc.seis.TauP.PhaseInteraction.*;
 import static edu.sc.seis.TauP.PhaseSymbols.*;
 import static edu.sc.seis.TauP.SeismicPhaseFactory.endActionString;
@@ -163,12 +161,12 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
             default:
                 throw new IllegalArgumentException("End action case not yet impl: "+endAction);
         }
-        if (! isDowngoing && (endSeg.endBranch == 0 && endSeg.endAction != TURN)) {
+        if (! isDowngoing && endSeg != null && (endSeg.endBranch == 0 && endSeg.endAction != TURN)) {
             SeismicPhaseSegment nextSeg = SeismicPhaseSegment.failSegment(tMod, priorEndBranchNum, priorEndBranchNum, isPWave, true, "");
+            isFail = true;
+            failReason = "phase upgoing at surface";
             out.add(nextSeg);
-            if (endSeg != null) {
-                nextSeg.prevEndAction = endSeg.endAction;
-            }
+            nextSeg.prevEndAction = endSeg.endAction;
             return new ProtoSeismicPhase(out, receiverDepth);
         }
         int startBranchNum;
@@ -404,18 +402,13 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
     }
 
 
-    public SeismicPhaseSegment addToBranch(TauModel tMod,
-                int oldstartBranch,
-                int endBranch,
-                boolean isPWave,
-                boolean nextIsPWave,
-                PhaseInteraction endAction,
-                String currLeg) throws TauModelException {
+    public SeismicPhaseSegment addToBranch(int endBranch,
+                                           boolean isPWave,
+                                           boolean nextIsPWave,
+                                           PhaseInteraction endAction,
+                                           String currLeg) throws TauModelException {
 
         int startBranch = calcStartBranch(currLeg);
-        if (oldstartBranch != startBranch) {
-            System.err.println("start not same: "+oldstartBranch+" "+startBranch+" to "+endBranch+" "+getName()+" "+currLeg);
-        }
         if (startBranch < 0 || startBranch > tMod.getNumBranches()) {
             throw new IllegalArgumentException(getName()+": start branch outside range: (0-"+tMod.getNumBranches()+") "+startBranch);
         }
@@ -670,26 +663,20 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
     }
 
 
-    protected SeismicPhaseSegment addFlatBranch(TauModel tMod,
-                                                int branch,
-                                                boolean isPWave,
+    protected SeismicPhaseSegment addFlatBranch(boolean isPWave,
                                                 PhaseInteraction prevEndAction,
                                                 PhaseInteraction endAction,
                                                 String currLeg) throws TauModelException {
         // special case, add "flat" segment along bounday
 
-        int startBranch = calcStartBranch(currLeg);
-        if (branch != startBranch) {
-            throw new RuntimeException("old branch not calc for flat: "+branch+" "+startBranch);
-        }
+        int branch = calcStartBranch(currLeg);
         double minRayParam;
         double maxRayParam;
         boolean flatIsDownGoing = false;
         SeismicPhaseSegment flatSegment;
         if (prevEndAction == KMPS) {
             // dummy case for surface wave velocity
-            double velocity = Double.valueOf(currLeg.substring(0, currLeg.length() - 4))
-                    .doubleValue();
+            double velocity = Double.parseDouble(currLeg.substring(0, currLeg.length() - 4));
             minRayParam = tMod.radiusOfEarth / velocity;
             maxRayParam = minRayParam;
             flatSegment = new SeismicPhaseSegment(tMod, branch, branch,
