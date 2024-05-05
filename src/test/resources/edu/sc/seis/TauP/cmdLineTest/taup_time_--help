@@ -1,25 +1,25 @@
 Usage: taup time [--amp] [--debug] [--first] [--geodetic] [--help] [--rayp]
                  [--time] [--verbose] [--az=<azimuth>] [--baz=<backAzimuth>]
-                 [--ellipflattening=<ellipflattening>] [-o=<outFile>]
-                 [--prop=<toolPropsFilename>] [--deg=d[,d...]]...
-                 [--exactdegree=d[,d...]]... [--exactkilometer=km[,km...]]...
-                 [--km=km[,km...]]... [-p=<phaseNames>[,<phaseNames>...]]...
-                 [--rayparamkm=<shootKmRaypList>[,<shootKmRaypList>...]]...
-                 [--rel=<relativePhaseName>[,<relativePhaseName>...]]...
-                 [--shoot=<shootRaypList>[,<shootRaypList>...]]...
-                 [--takeoff=<takeoffAngle>[,<takeoffAngle>...]]...
-                 [--evt=<eventLatLon> <eventLatLon>]... [--sta=<stationLatLon>
-                 <stationLatLon>]... [[--mod=<modelname>] [-h=<sourceDepth>]
-                 [--stadepth=depth] [--scat=s s]...] [--text | --json]
+                 [--ellipflattening=<ellipflattening>] [--mw=<mw>]
+                 [-o=<outFile>] [--prop=<toolPropsFilename>] [--deg=d[,
+                 d...]]... [--exactdegree=d[,d...]]... [--exactkilometer=km[,
+                 km...]]... [--km=km[,km...]]... [--rayparamkm=<shootKmRaypList>
+                 [,<shootKmRaypList>...]]... [--rel=<relativePhaseName>[,
+                 <relativePhaseName>...]]... [--shoot=<shootRaypList>[,
+                 <shootRaypList>...]]... [--takeoff=<takeoffAngle>[,
+                 <takeoffAngle>...]]... [--evt=<eventLatLon> <eventLatLon>]...
+                 [--sta=<stationLatLon> <stationLatLon>]...
+                 [[--mod=<modelname>] [-h=<sourceDepth>] [--stadepth=depth]
+                 [--scat=s s]...] [[-p=<phaseNames>[,<phaseNames>...]]...
+                 [--phasefile=<phaseFiles>]...] [--text | --json]
 calculate travel times for seismic phases in an earth model
       --amp                  amplitude factor for each phase
       --debug                enable debugging output
       --first, --onlyfirst   only output the first arrival for each phase, no
                                triplications
       --help                 display this help message
+      --mw=<mw>              scale by source moment magnitude
   -o, --output=<outFile>     output to file, default is stdout.
-  -p, --ph, --phase=<phaseNames>[,<phaseNames>...]
-                             seismic phase names
       --prop=<toolPropsFilename>
                              load defaults from properties file
       --rayp, --onlyrayp     only output the ray parameter
@@ -39,6 +39,11 @@ Model Args
       --stadepth, --receiverdepth=depth
                              the receiver depth in km for stations not at the
                                surface
+Phase Names
+  -p, --ph, --phase=<phaseNames>[,<phaseNames>...]
+                             seismic phase names
+      --phasefile=<phaseFiles>
+                             read list of phase names from file
 Distance is given by:
       --az=<azimuth>         azimuth in degrees
       --baz=<backAzimuth>    backazimuth in degrees

@@ -14,9 +14,9 @@
       "puristdist": 35,
       "puristname": "P",
       "amp": {
-        "factorpsv": 1.0146693E-9,
+        "factorpsv": 9.141956E-8,
         "factorsh": 0,
-        "geospread": 4.2898822E-9,
+        "geospread": 6.549719E-8,
         "refltranpsv": 0.93945855, 
         "refltransh": 0
       }
@@ -31,9 +31,9 @@
       "puristdist": 35,
       "puristname": "pP",
       "amp": {
-        "factorpsv": -6.7264705E-10,
+        "factorpsv": -6.063311E-8,
         "factorsh": 0,
-        "geospread": 4.2857735E-9,
+        "geospread": 6.546582E-8,
         "refltranpsv": -0.6233852, 
         "refltransh": 0
       }
@@ -48,9 +48,9 @@
       "puristdist": 35,
       "puristname": "sP",
       "amp": {
-        "factorpsv": 2.0035804E-10,
+        "factorpsv": 1.4820692E-7,
         "factorsh": 0,
-        "geospread": 1.4120901E-9,
+        "geospread": 3.7577788E-8,
         "refltranpsv": 0.5635634, 
         "refltransh": 0
       }
@@ -65,9 +65,9 @@
       "puristdist": 35,
       "puristname": "PP",
       "amp": {
-        "factorpsv": -1.2661108E-9,
+        "factorpsv": -5.5105232E-8,
         "factorsh": 0,
-        "geospread": 1.8383671E-8,
+        "geospread": 1.355864E-7,
         "refltranpsv": -0.27355075, 
         "refltransh": 0
       }
@@ -82,9 +82,9 @@
       "puristdist": 35,
       "puristname": "PP",
       "amp": {
-        "factorpsv": -1.1714162E-10,
+        "factorpsv": -1.6741721E-8,
         "factorsh": 0,
-        "geospread": 1.7048917E-9,
+        "geospread": 4.1290335E-8,
         "refltranpsv": -0.27290586, 
         "refltransh": 0
       }
@@ -99,9 +99,9 @@
       "puristdist": 35,
       "puristname": "PP",
       "amp": {
-        "factorpsv": -1.8627247E-10,
+        "factorpsv": -2.1685437E-8,
         "factorsh": 0,
-        "geospread": 2.5694225E-9,
+        "geospread": 5.068947E-8,
         "refltranpsv": -0.28794637, 
         "refltransh": 0
       }
@@ -116,9 +116,9 @@
       "puristdist": 35,
       "puristname": "PP",
       "amp": {
-        "factorpsv": -4.30968E-11,
+        "factorpsv": -6.0038396E-9,
         "factorsh": 0,
-        "geospread": 1.7943469E-9,
+        "geospread": 4.2359733E-8,
         "refltranpsv": -0.09539752, 
         "refltransh": 0
       }
@@ -133,9 +133,9 @@
       "puristdist": 35,
       "puristname": "PP",
       "amp": {
-        "factorpsv": -1.1129763E-10,
+        "factorpsv": -1.006073E-8,
         "factorsh": 0,
-        "geospread": 4.261744E-9,
+        "geospread": 6.528203E-8,
         "refltranpsv": -0.10372825, 
         "refltransh": 0
       }
@@ -148,11 +148,11 @@
       "takeoff": 8.744313,
       "incident": 8.73048,
       "puristdist": 35,
-      "puristname": "PcP",
+      "puristname": "Pcp",
       "amp": {
-        "factorpsv": 8.254426E-11,
+        "factorpsv": 1.4166527E-8,
         "factorsh": 0,
-        "geospread": 1.1822833E-9,
+        "geospread": 3.4384346E-8,
         "refltranpsv": 0.2773089, 
         "refltransh": 0
       }
@@ -167,9 +167,9 @@
       "puristdist": 35,
       "puristname": "S",
       "amp": {
-        "factorpsv": 1.1065444E-9,
-        "factorsh": 1.1942136E-9,
-        "geospread": 3.7336267E-9,
+        "factorpsv": 5.033804E-7,
+        "factorsh": 5.432622E-7,
+        "geospread": 6.1103414E-8,
         "refltranpsv": 0.90920216, 
         "refltransh": 0.98123634
       }
@@ -184,9 +184,9 @@
       "puristdist": 35,
       "puristname": "pS",
       "amp": {
-        "factorpsv": 4.9542535E-9,
+        "factorpsv": 2.3347408E-7,
         "factorsh": 0,
-        "geospread": 1.568027E-8,
+        "geospread": 1.2522088E-7,
         "refltranpsv": 0.96927536, 
         "refltransh": 0
       }
@@ -201,9 +201,9 @@
       "puristdist": 35,
       "puristname": "sS",
       "amp": {
-        "factorpsv": 1.128672E-11,
-        "factorsh": 1.1958834E-9,
-        "geospread": 3.739046E-9,
+        "factorpsv": 5.130743E-9,
+        "factorsh": 5.4362744E-7,
+        "geospread": 6.114774E-8,
         "refltranpsv": 0.009260394, 
         "refltransh": 0.9811842
       }
@@ -218,9 +218,9 @@
       "puristdist": 35,
       "puristname": "SP",
       "amp": {
-        "factorpsv": 1.0111045E-9,
+        "factorpsv": 4.0330053E-7,
         "factorsh": 0,
-        "geospread": 4.856466E-9,
+        "geospread": 6.968835E-8,
         "refltranpsv": 0.82694024, 
         "refltransh": 0
       }
@@ -235,9 +235,9 @@
       "puristdist": 35,
       "puristname": "PS",
       "amp": {
-        "factorpsv": 4.2145016E-9,
+        "factorpsv": 2.1165467E-7,
         "factorsh": 0,
-        "geospread": 1.3807379E-8,
+        "geospread": 1.17504804E-7,
         "refltranpsv": 0.93639153, 
         "refltransh": 0
       }
@@ -250,11 +250,11 @@
       "takeoff": 6.4463987,
       "incident": 10.83078,
       "puristdist": 35,
-      "puristname": "ScP",
+      "puristname": "Scp",
       "amp": {
-        "factorpsv": 5.5197402E-11,
+        "factorpsv": 6.484543E-8,
         "factorsh": 0,
-        "geospread": 5.598407E-10,
+        "geospread": 2.3660952E-8,
         "refltranpsv": 0.39160898, 
         "refltransh": 0
       }
@@ -267,11 +267,11 @@
       "takeoff": 10.8494215,
       "incident": 6.4370666,
       "puristdist": 35,
-      "puristname": "PcS",
+      "puristname": "Pcs",
       "amp": {
-        "factorpsv": -2.366596E-10,
+        "factorpsv": -3.5202696E-8,
         "factorsh": 0,
-        "geospread": 1.5738776E-9,
+        "geospread": 3.9672127E-8,
         "refltranpsv": -0.46129176, 
         "refltransh": 0
       }
@@ -286,9 +286,9 @@
       "puristdist": 35,
       "puristname": "SS",
       "amp": {
-        "factorpsv": 6.5572714E-10,
-        "factorsh": 6.6045536E-10,
-        "geospread": 2.6731521E-9,
+        "factorpsv": 3.5253663E-7,
+        "factorsh": 3.5507867E-7,
+        "geospread": 5.1702536E-8,
         "refltranpsv": 0.7525268, 
         "refltransh": 0.7579531
       }
@@ -303,9 +303,9 @@
       "puristdist": 35,
       "puristname": "SS",
       "amp": {
-        "factorpsv": 6.835391E-10,
-        "factorsh": 6.318953E-10,
-        "geospread": 2.8953997E-9,
+        "factorpsv": 3.531035E-7,
+        "factorsh": 3.264253E-7,
+        "geospread": 5.3808918E-8,
         "refltranpsv": 0.72423136, 
         "refltransh": 0.6695131
       }
@@ -320,9 +320,9 @@
       "puristdist": 35,
       "puristname": "SS",
       "amp": {
-        "factorpsv": 1.3299849E-9,
-        "factorsh": 1.6332538E-9,
-        "geospread": 4.62707E-9,
+        "factorpsv": 5.434838E-7,
+        "factorsh": 6.6741137E-7,
+        "geospread": 6.802257E-8,
         "refltranpsv": 0.8817859, 
         "refltransh": 1.0828545
       }
@@ -337,9 +337,9 @@
       "puristdist": 35,
       "puristname": "SS",
       "amp": {
-        "factorpsv": -1.5241473E-10,
-        "factorsh": 6.7047756E-10,
-        "geospread": 7.4982985E-8,
+        "factorpsv": -1.5471716E-8,
+        "factorsh": 6.806061E-8,
+        "geospread": 2.738302E-7,
         "refltranpsv": -0.0062357215, 
         "refltransh": 0.02743115
       }
@@ -354,9 +354,9 @@
       "puristdist": 35,
       "puristname": "SS",
       "amp": {
-        "factorpsv": -1.3246241E-9,
-        "factorsh": 7.0152653E-9,
-        "geospread": 6.4179493E-9,
+        "factorpsv": -4.5960783E-7,
+        "factorsh": 2.4341027E-6,
+        "geospread": 8.01121E-8,
         "refltranpsv": -0.63316786, 
         "refltransh": 3.3532836
       }
@@ -369,11 +369,11 @@
       "takeoff": 2.2802625,
       "incident": 2.2766814,
       "puristdist": 35,
-      "puristname": "PKiKP",
+      "puristname": "PKikp",
       "amp": {
-        "factorpsv": 1.0232625E-12,
+        "factorpsv": 5.927003E-10,
         "factorsh": 0,
-        "geospread": 1.03795465E-10,
+        "geospread": 1.0188006E-8,
         "refltranpsv": 0.0391568, 
         "refltransh": 0
       }
@@ -386,11 +386,11 @@
       "takeoff": 177.72018,
       "incident": 2.2762418,
       "puristdist": 35,
-      "puristname": "pPKiKP",
+      "puristname": "pPKikp",
       "amp": {
-        "factorpsv": -1.0203094E-12,
+        "factorpsv": -5.910978E-10,
         "factorsh": 0,
-        "geospread": 1.0375752E-10,
+        "geospread": 1.01861435E-8,
         "refltranpsv": -0.039058067, 
         "refltransh": 0
       }
@@ -403,11 +403,11 @@
       "takeoff": 178.64015,
       "incident": 2.2763305,
       "puristdist": 35,
-      "puristname": "sPKiKP",
+      "puristname": "sPKikp",
       "amp": {
-        "factorpsv": 2.056343E-14,
+        "factorpsv": 9.408961E-11,
         "factorsh": 0,
-        "geospread": 3.6905725E-11,
+        "geospread": 6.075008E-9,
         "refltranpsv": 0.0022130962, 
         "refltransh": 0
       }
@@ -420,11 +420,11 @@
       "takeoff": 9.657617,
       "incident": 9.642313,
       "puristdist": 35,
-      "puristname": "ScS",
+      "puristname": "Scs",
       "amp": {
-        "factorpsv": 1.7592972E-10,
-        "factorsh": 4.729734E-10,
-        "geospread": 1.498974E-9,
+        "factorpsv": 1.2630923E-7,
+        "factorsh": 3.3957255E-7,
+        "geospread": 3.8716585E-8,
         "refltranpsv": 0.360054, 
         "refltransh": 0.9679771
       }
@@ -437,11 +437,11 @@
       "takeoff": 1.430901,
       "incident": 2.3953042,
       "puristdist": 35,
-      "puristname": "SKiKP",
+      "puristname": "SedKikp",
       "amp": {
-        "factorpsv": 4.0883458E-14,
+        "factorpsv": 1.7876517E-10,
         "factorsh": 0,
-        "geospread": 4.041246E-11,
+        "geospread": 6.3570798E-9,
         "refltranpsv": 0.0040181926, 
         "refltransh": 0
       }
@@ -454,11 +454,11 @@
       "takeoff": 2.3060124,
       "incident": 2.3023908,
       "puristdist": 325,
-      "puristname": "PKIKKIKP",
+      "puristname": "PKIkKIkp",
       "amp": {
-        "factorpsv": -6.321207E-13,
+        "factorpsv": -3.5635483E-10,
         "factorsh": 0,
-        "geospread": 1.0957444E-10,
+        "geospread": 1.0467781E-8,
         "refltranpsv": -0.022913383, 
         "refltransh": 0
       }
@@ -471,11 +471,11 @@
       "takeoff": 1.3067465,
       "incident": 2.1874034,
       "puristdist": 325,
-      "puristname": "SKIKKIKP",
+      "puristname": "SedKIkKIkp",
       "amp": {
-        "factorpsv": -1.9851029E-14,
+        "factorpsv": -9.270744E-11,
         "factorsh": 0,
-        "geospread": 3.5426054E-11,
+        "geospread": 5.951979E-9,
         "refltranpsv": -0.0022256593, 
         "refltransh": 0
       }
@@ -488,11 +488,11 @@
       "takeoff": 2.190757,
       "incident": 1.3046434,
       "puristdist": 325,
-      "puristname": "PKIKKIKS",
+      "puristname": "PKIkKIks",
       "amp": {
-        "factorpsv": 1.268964E-13,
+        "factorpsv": 7.505302E-11,
         "factorsh": 0,
-        "geospread": 9.9548966E-11,
+        "geospread": 9.977422E-9,
         "refltranpsv": 0.003910525, 
         "refltransh": 0
       }
@@ -505,11 +505,11 @@
       "takeoff": 1.2456756,
       "incident": 1.24372,
       "puristdist": 325,
-      "puristname": "SKIKKIKS",
+      "puristname": "SedKIkKIks",
       "amp": {
-        "factorpsv": 3.5998748E-15,
+        "factorpsv": 1.7688042E-11,
         "factorsh": 0,
-        "geospread": 3.2003768E-11,
+        "geospread": 5.657187E-9,
         "refltranpsv": 3.4507122E-4, 
         "refltransh": 0
       }
@@ -522,11 +522,11 @@
       "takeoff": 2.9737089,
       "incident": 2.969037,
       "puristdist": 325,
-      "puristname": "PKIKPPKIKP",
+      "puristname": "PKIkpPKIkp",
       "amp": {
-        "factorpsv": -3.444441E-11,
+        "factorpsv": -1.5567894E-8,
         "factorsh": 0,
-        "geospread": 1.704717E-10,
+        "geospread": 1.3056481E-8,
         "refltranpsv": -0.80253667, 
         "refltransh": 0
       }
@@ -539,11 +539,11 @@
       "takeoff": 13.238733,
       "incident": 13.217577,
       "puristdist": 325,
-      "puristname": "PKPPKP",
+      "puristname": "PKpPKp",
       "amp": {
-        "factorpsv": -1.3879462E-11,
+        "factorpsv": -6.957206E-9,
         "factorsh": 0,
-        "geospread": 1.3859579E-10,
+        "geospread": 1.1772672E-8,
         "refltranpsv": -0.39775994, 
         "refltransh": 0
       }
@@ -556,11 +556,11 @@
       "takeoff": 1.3995245,
       "incident": 1.3973273,
       "puristdist": 325,
-      "puristname": "SKIKSSKIKS",
+      "puristname": "SedKIksSedKIks",
       "amp": {
-        "factorpsv": 4.1055636E-15,
+        "factorpsv": 1.7991336E-11,
         "factorsh": 0,
-        "geospread": 4.0235055E-11,
+        "geospread": 6.343111E-9,
         "refltranpsv": 3.130334E-4, 
         "refltransh": 0
       }

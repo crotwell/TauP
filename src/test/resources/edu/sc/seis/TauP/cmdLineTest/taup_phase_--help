@@ -1,13 +1,12 @@
 Usage: taup phase [--debug] [--help] [--verbose] [-o=<outFile>]
-                  [--prop=<toolPropsFilename>] [-p=<phaseNames>[,
-                  <phaseNames>...]]... [[--mod=<modelname>] [-h=<sourceDepth>]
-                  [--stadepth=depth] [--scat=s s]...] [--text | --json]
+                  [--prop=<toolPropsFilename>] [[--mod=<modelname>]
+                  [-h=<sourceDepth>] [--stadepth=depth] [--scat=s s]...]
+                  [[-p=<phaseNames>[,<phaseNames>...]]...
+                  [--phasefile=<phaseFiles>]...] [--text | --json]
 describe a seismic phase in the current model
       --debug              enable debugging output
       --help               display this help message
   -o, --output=<outFile>   output to file, default is stdout.
-  -p, --ph, --phase=<phaseNames>[,<phaseNames>...]
-                           seismic phase names
       --prop=<toolPropsFilename>
                            load defaults from properties file
       --verbose            enable verbose output
@@ -24,6 +23,11 @@ Model Args
       --stadepth, --receiverdepth=depth
                            the receiver depth in km for stations not at the
                              surface
+Phase Names
+  -p, --ph, --phase=<phaseNames>[,<phaseNames>...]
+                           seismic phase names
+      --phasefile=<phaseFiles>
+                           read list of phase names from file
 Output Type
       --json               outputs as JSON
       --text               outputs as text

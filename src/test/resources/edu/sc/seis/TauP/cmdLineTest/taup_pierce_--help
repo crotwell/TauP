@@ -1,29 +1,29 @@
 Usage: taup pierce [--amp] [--debug] [--first] [--geodetic] [--help]
                    [--nodiscon] [--rayp] [--rev] [--time] [--turn] [--under]
                    [--verbose] [--az=<azimuth>] [--baz=<backAzimuth>]
-                   [--ellipflattening=<ellipflattening>] [-o=<outFile>]
-                   [--prop=<toolPropsFilename>] [--deg=d[,d...]]...
-                   [--exactdegree=d[,d...]]... [--exactkilometer=km[,km...]]...
-                   [--km=km[,km...]]... [-p=<phaseNames>[,<phaseNames>...]]...
-                   [--pierce=<addDepth>]... [--rayparamkm=<shootKmRaypList>[,
-                   <shootKmRaypList>...]]... [--rel=<relativePhaseName>[,
-                   <relativePhaseName>...]]... [--shoot=<shootRaypList>[,
-                   <shootRaypList>...]]... [--takeoff=<takeoffAngle>[,
-                   <takeoffAngle>...]]... [--evt=<eventLatLon>
-                   <eventLatLon>]... [--sta=<stationLatLon> <stationLatLon>]...
+                   [--ellipflattening=<ellipflattening>] [--mw=<mw>]
+                   [-o=<outFile>] [--prop=<toolPropsFilename>] [--deg=d[,
+                   d...]]... [--exactdegree=d[,d...]]... [--exactkilometer=km[,
+                   km...]]... [--km=km[,km...]]... [--pierce=<addDepth>]...
+                   [--rayparamkm=<shootKmRaypList>[,<shootKmRaypList>...]]...
+                   [--rel=<relativePhaseName>[,<relativePhaseName>...]]...
+                   [--shoot=<shootRaypList>[,<shootRaypList>...]]...
+                   [--takeoff=<takeoffAngle>[,<takeoffAngle>...]]...
+                   [--evt=<eventLatLon> <eventLatLon>]...
+                   [--sta=<stationLatLon> <stationLatLon>]...
                    [[--mod=<modelname>] [-h=<sourceDepth>] [--stadepth=depth]
-                   [--scat=s s]...] [--text | --json]
+                   [--scat=s s]...] [[-p=<phaseNames>[,<phaseNames>...]]...
+                   [--phasefile=<phaseFiles>]...] [--text | --json]
 calculate pierce points for phases at discontinuities in the model
       --amp                  amplitude factor for each phase
       --debug                enable debugging output
       --first, --onlyfirst   only output the first arrival for each phase, no
                                triplications
       --help                 display this help message
+      --mw=<mw>              scale by source moment magnitude
       --nodiscon             only prints pierce points for the depths added
                                with -pierce
   -o, --output=<outFile>     output to file, default is stdout.
-  -p, --ph, --phase=<phaseNames>[,<phaseNames>...]
-                             seismic phase names
       --pierce=<addDepth>    adds depth for calculating pierce points
       --prop=<toolPropsFilename>
                              load defaults from properties file
@@ -48,6 +48,11 @@ Model Args
       --stadepth, --receiverdepth=depth
                              the receiver depth in km for stations not at the
                                surface
+Phase Names
+  -p, --ph, --phase=<phaseNames>[,<phaseNames>...]
+                             seismic phase names
+      --phasefile=<phaseFiles>
+                             read list of phase names from file
 Distance is given by:
       --az=<azimuth>         azimuth in degrees
       --baz=<backAzimuth>    backazimuth in degrees

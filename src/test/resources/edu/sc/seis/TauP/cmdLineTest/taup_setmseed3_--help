@@ -1,10 +1,10 @@
 Usage: taup setmseed3 [--debug] [--help] [--verbose] [--eh=<ehKey>]
                       [--prop=<toolPropsFilename>] [--qml=<quakemlFilename>]
                       [--qmltol=<quakeOTimeTol>]
-                      [--staxml=<stationxmlFilename>] [-p=<phaseNames>[,
-                      <phaseNames>...]]... [[--mod=<modelname>]
+                      [--staxml=<stationxmlFilename>] [[--mod=<modelname>]
                       [-h=<sourceDepth>] [--stadepth=depth] [--scat=s s]...]
-                      [<mseed3FileNames>...]
+                      [[-p=<phaseNames>[,<phaseNames>...]]...
+                      [--phasefile=<phaseFiles>]...] [<mseed3FileNames>...]
 save travel times in the extra header of miniseed3 files
       [<mseed3FileNames>...]
 
@@ -12,8 +12,6 @@ save travel times in the extra header of miniseed3 files
       --eh=<ehKey>   key to store full output within extra headers within,
                        otherwise use abbreviated 'bag' markers
       --help         display this help message
-  -p, --ph, --phase=<phaseNames>[,<phaseNames>...]
-                     seismic phase names
       --prop=<toolPropsFilename>
                      load defaults from properties file
       --qml, --quakeml=<quakemlFilename>
@@ -36,3 +34,8 @@ Model Args
                        phase name.
       --stadepth, --receiverdepth=depth
                      the receiver depth in km for stations not at the surface
+Phase Names
+  -p, --ph, --phase=<phaseNames>[,<phaseNames>...]
+                     seismic phase names
+      --phasefile=<phaseFiles>
+                     read list of phase names from file

@@ -1,14 +1,13 @@
 Usage: taup setsac [--debug] [--evdpkm] [--help] [--verbose]
-                   [--prop=<toolPropsFilename>] [-p=<phaseNames>[,
-                   <phaseNames>...]]... [[--mod=<modelname>] [-h=<sourceDepth>]
-                   [--stadepth=depth] [--scat=s s]...] [<sacFileNames>...]
+                   [--prop=<toolPropsFilename>] [[--mod=<modelname>]
+                   [-h=<sourceDepth>] [--stadepth=depth] [--scat=s s]...]
+                   [[-p=<phaseNames>[,<phaseNames>...]]...
+                   [--phasefile=<phaseFiles>]...] [<sacFileNames>...]
 set headers to travel times of phases using depth and distance from headers
       [<sacFileNames>...]   SAC files to process
       --debug               enable debugging output
       --evdpkm              sac depth header is in km, default is meters
       --help                display this help message
-  -p, --ph, --phase=<phaseNames>[,<phaseNames>...]
-                            seismic phase names
       --prop=<toolPropsFilename>
                             load defaults from properties file
       --verbose             enable verbose output
@@ -24,3 +23,8 @@ Model Args
       --stadepth, --receiverdepth=depth
                             the receiver depth in km for stations not at the
                               surface
+Phase Names
+  -p, --ph, --phase=<phaseNames>[,<phaseNames>...]
+                            seismic phase names
+      --phasefile=<phaseFiles>
+                            read list of phase names from file

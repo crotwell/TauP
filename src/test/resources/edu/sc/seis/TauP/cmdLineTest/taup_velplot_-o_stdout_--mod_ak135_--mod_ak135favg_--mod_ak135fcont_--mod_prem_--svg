@@ -4,7 +4,7 @@
   <metadata>
     <taup>
       <command>xyplotoutput </command>
-      <version>3.0.0-SNAPSHOT4</version>
+      <version>3.0.0-SNAPSHOT5</version>
       <a href="https://github.com/crotwell/TauP">https://github.com/crotwell/TauP</a>
     <minmax xmin="0.0" xmax="13.7166" ymin="0.0" ymax="6371.0" />
     </taup>

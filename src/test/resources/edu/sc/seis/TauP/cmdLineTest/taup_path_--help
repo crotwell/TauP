@@ -6,15 +6,16 @@ Usage: taup path [--debug] [--geodetic] [--help] [--onlynameddiscon]
                  [-o=<outFile>] [--prop=<toolPropsFilename>]
                  [--xaxis=<distAxisType>] [--yaxis=<depthAxisType>] [--deg=d[,
                  d...]]... [--exactdegree=d[,d...]]... [--exactkilometer=km[,
-                 km...]]... [--km=km[,km...]]... [-p=<phaseNames>[,
-                 <phaseNames>...]]... [--rayparamkm=<shootKmRaypList>[,
-                 <shootKmRaypList>...]]... [--shoot=<shootRaypList>[,
+                 km...]]... [--km=km[,km...]]... [--rayparamkm=<shootKmRaypList>
+                 [,<shootKmRaypList>...]]... [--shoot=<shootRaypList>[,
                  <shootRaypList>...]]... [--takeoff=<takeoffAngle>[,
                  <takeoffAngle>...]]... [--degminmax=deg deg] [--depthminmax=km
                  km] [--evt=<eventLatLon> <eventLatLon>]...
                  [--sta=<stationLatLon> <stationLatLon>]...
                  [[--mod=<modelname>] [-h=<sourceDepth>] [--stadepth=depth]
-                 [--scat=s s]...] [--text | --json | --gmt | --svg]
+                 [--scat=s s]...] [[-p=<phaseNames>[,<phaseNames>...]]...
+                 [--phasefile=<phaseFiles>]...] [--text | --json | --gmt |
+                 --svg]
 plot ray paths through the earth
       --color=<coloring>    style of coloring for paths and wavefronts, one of
                               auto, wavetype, phase
@@ -31,8 +32,6 @@ plot ray paths through the earth
   -o, --output=<outFile>    output to file, default is stdout.
       --onlynameddiscon     only draw circles on the plot for named
                               discontinuities like moho, cmb, iocb
-  -p, --ph, --phase=<phaseNames>[,<phaseNames>...]
-                            seismic phase names
       --prop=<toolPropsFilename>
                             load defaults from properties file
       --verbose             enable verbose output
@@ -55,6 +54,11 @@ Model Args
       --stadepth, --receiverdepth=depth
                             the receiver depth in km for stations not at the
                               surface
+Phase Names
+  -p, --ph, --phase=<phaseNames>[,<phaseNames>...]
+                            seismic phase names
+      --phasefile=<phaseFiles>
+                            read list of phase names from file
 Distance is given by:
       --az=<azimuth>        azimuth in degrees
       --baz=<backAzimuth>   backazimuth in degrees

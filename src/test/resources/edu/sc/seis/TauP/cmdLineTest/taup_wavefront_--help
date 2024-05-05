@@ -4,9 +4,10 @@ Usage: taup wavefront [--debug] [--help] [--legend] [--negdist]
                       [--mapwidthunit=<mapWidthUnit>] [-o=<outFile>]
                       [--prop=<toolPropsFilename>] [--timestep=<timeStep>]
                       [--xaxis=<distAxisType>] [--yaxis=<depthAxisType>]
-                      [-p=<phaseNames>[,<phaseNames>...]]... [--degminmax=deg
-                      deg] [--depthminmax=km km] [[--mod=<modelname>]
-                      [-h=<sourceDepth>] [--stadepth=depth] [--scat=s s]...]
+                      [--degminmax=deg deg] [--depthminmax=km km]
+                      [[--mod=<modelname>] [-h=<sourceDepth>]
+                      [--stadepth=depth] [--scat=s s]...] [[-p=<phaseNames>[,
+                      <phaseNames>...]]... [--phasefile=<phaseFiles>]...]
                       [--text | --json | --gmt | --svg]
 plot wavefronts of seismic phases at steps in time
       --color=<coloring>    style of coloring for paths and wavefronts, one of
@@ -24,8 +25,6 @@ plot wavefronts of seismic phases at steps in time
   -o, --output=<outFile>    output to file, default is stdout.
       --onlynameddiscon     only draw circles on the plot for named
                               discontinuities like moho, cmb, iocb
-  -p, --ph, --phase=<phaseNames>[,<phaseNames>...]
-                            seismic phase names
       --prop=<toolPropsFilename>
                             load defaults from properties file
       --timefiles           outputs each time into a separate .ps file within
@@ -50,6 +49,11 @@ Model Args
       --stadepth, --receiverdepth=depth
                             the receiver depth in km for stations not at the
                               surface
+Phase Names
+  -p, --ph, --phase=<phaseNames>[,<phaseNames>...]
+                            seismic phase names
+      --phasefile=<phaseFiles>
+                            read list of phase names from file
 Output Type
       --gmt                 outputs as GMT
       --json                outputs as JSON
