@@ -1,9 +1,6 @@
 package edu.sc.seis.TauP;
 
-import edu.sc.seis.TauP.cli.ColorType;
-import edu.sc.seis.TauP.cli.ColoringArgs;
-import edu.sc.seis.TauP.cli.GraphicOutputTypeArgs;
-import edu.sc.seis.TauP.cli.OutputTypes;
+import edu.sc.seis.TauP.cli.*;
 import picocli.CommandLine;
 
 import java.io.IOException;
@@ -258,7 +255,7 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
             double[] amp = new double[dist.length];
             for (int i = 0; i < dist.length; i++) {
                 Arrival arrival = phase.createArrivalAtIndex(i);
-                amp[i] = arrival.getGeometricSpreadingFactor();
+                amp[i] = arrival.getAmplitudeGeometricSpreadingFactor();
             }
             out = amp;
         } else if (axisType==AxisType.refltran ||

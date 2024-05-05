@@ -120,9 +120,15 @@ public interface SeismicPhase extends Serializable, Cloneable {
 
     double densityAtReceiver();
 
+    double densityAtSource();
+
+    double calcTakeoffAngleDegree(double arrivalRayParam);
+
     double calcTakeoffAngle(double arrivalRayParam);
 
     double calcIncidentAngle(double arrivalRayParam);
+
+    double calcIncidentAngleDegree(double arrivalRayParam);
 
     /**
      * True if the initial leg, leaving the source, wavetype is a P wave, false if an S wave.

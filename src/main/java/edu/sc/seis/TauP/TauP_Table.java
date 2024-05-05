@@ -36,7 +36,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StreamTokenizer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -498,8 +497,8 @@ public class TauP_Table extends TauP_AbstractPhaseTool {
                             + currArrival.getName().trim()+sep
                             + Outputs.formatTime(currArrival.getTime()).trim()+ sep
                             +Outputs.formatRayParam(Math.PI / 180.0 * currArrival.getRayParam()).trim()+ sep
-                            +Outputs.formatDistance(currArrival.getTakeoffAngle()).trim()+sep
-                            +Outputs.formatDistance(currArrival.getIncidentAngle()).trim()+sep
+                            +Outputs.formatDistance(currArrival.getTakeoffAngleDegree()).trim()+sep
+                            +Outputs.formatDistance(currArrival.getIncidentAngleDegree()).trim()+sep
                             +Outputs.formatDistance(currArrival.getDistDeg()).trim()+sep
                             +currArrival.getPuristName().trim();
                     out.println(line);

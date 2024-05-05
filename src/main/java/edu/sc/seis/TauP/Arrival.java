@@ -25,6 +25,7 @@
  */
 package edu.sc.seis.TauP;
 
+import edu.sc.seis.TauP.cli.SeismicSourceArgs;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONWriter;
@@ -79,8 +80,8 @@ public class Arrival {
                    String puristName,
                    double sourceDepth,
                    double receiverDepth,
-                   double takeoffAngle,
-                   double incidentAngle,
+                   double takeoffAngleRadian,
+                   double incidentAngleRadian,
                    double dRPdDist) {
 
         if (Double.isNaN(time)) {
@@ -99,8 +100,8 @@ public class Arrival {
         this.puristName = puristName;
         this.sourceDepth = sourceDepth;
         this.receiverDepth = receiverDepth;
-        this.takeoffAngle = takeoffAngle;
-        this.incidentAngle = incidentAngle;
+        this.takeoffAngleRadian = takeoffAngleRadian;
+        this.incidentAngleRadian = incidentAngleRadian;
         this.dRPdDist = dRPdDist;
     }
 
@@ -143,11 +144,15 @@ public class Arrival {
 
     private List<ArrivalPathSegment> pathSegments;
 
-    private final double incidentAngle;
+    private final double incidentAngleRadian;
     
-    private final double takeoffAngle;
+    private final double takeoffAngleRadian;
+
+    private double moment = SeismicSourceArgs.MAG3_MOMENT;
 
     private Arrival relativeToArrival = null;
+
+
 
     public static List<Arrival> sortArrivals(List<Arrival> arrivals) {
         arrivals.sort(Comparator.comparingDouble(Arrival::getTime));
@@ -269,6 +274,18 @@ public class Arrival {
         return dRPdDist/RtoD/RtoD;
     }
 
+
+    /**
+     * Geometrical spreading factor for amplitude.
+     * See Fundamentals of Modern Global Seismology, ch 13, eq 13.19.
+     *
+     * @throws TauModelException
+     */
+    public double getAmplitudeGeometricSpreadingFactor() throws TauModelException {
+        double d = getEnergyGeometricSpreadingFactor();
+        if (d < 0) throw new RuntimeException("energy geo spread is neg "+getDistDeg()+" "+d);
+        return Math.sqrt(getEnergyGeometricSpreadingFactor());
+    }
     /**
      * Geometrical spreading factor.
      * See Fundamentals of Modern Global Seismology, ch 13, eq 13.9.
@@ -276,9 +293,10 @@ public class Arrival {
      *
      * @throws TauModelException
      */
-    public double getGeometricSpreadingFactor() throws TauModelException {
+    public double getEnergyGeometricSpreadingFactor() throws TauModelException {
         double rofE = getPhase().getTauModel().getRadiusOfEarth();
         double recRadius = rofE-getReceiverDepth();
+        double sourceRadius = rofE-getSourceDepth();
         if (getModuloDist() == 0.0 || getModuloDist() == 180.0) {
             // zero dist and antipode have divide by zero,
             return Double.POSITIVE_INFINITY;
@@ -295,16 +313,17 @@ public class Arrival {
             // could create better neighbor implementation as shoot ray may give rp that is not same as index???
             throw new TauModelException("Neighbor ray has same dist: "+getPhase().getName()+" "+getDistDeg());
         }
-        double dtakeoff_ddelta = (getTakeoffAngle()-neighbor.getTakeoffAngle())*DtoR/
+        double dtakeoff_ddelta = (getTakeoffAngleRadian()-neighbor.getTakeoffAngleRadian())/
                 (getDist()-neighbor.getDist());
-        double cosIncident = Math.cos(getIncidentAngle()*DtoR);
+        double cosIncident = Math.cos(getIncidentAngleDegree()*DtoR);
         if (Double.isNaN(cosIncident)) {
             // divide by zero???
             return Double.POSITIVE_INFINITY;
         }
-
-        return Math.sin(getTakeoffAngle()*DtoR)* Math.abs(dtakeoff_ddelta)
-                / (recRadius * recRadius * cosIncident * Math.sin(getModuloDist()));
+        //units of 1/km^2 ?
+        double km2tom2 = 1e6;
+        return Math.sin(getTakeoffAngleRadian())* Math.abs(dtakeoff_ddelta)
+                / (km2tom2 * recRadius * recRadius * cosIncident * Math.sin(getModuloDist()));
     }
 
     /**
@@ -342,10 +361,15 @@ public class Arrival {
      * @throws SlownessModelException
      */
     public double getAmplitudeFactorPSV() throws TauModelException, VelocityModelException, SlownessModelException {
+        // dimensionaless ?
         double refltran = getReflTransPSV();
-        double geoSpread = getGeometricSpreadingFactor();
-        double densityVelocity = 1/Math.sqrt(getPhase().velocityAtReceiver() * getPhase().densityAtReceiver());
-        return densityVelocity* refltran * geoSpread;
+        double geoSpread = getAmplitudeGeometricSpreadingFactor(); // 1/km
+        // * KMtoM * MgtoKg = 1
+        // sqrt (km/s * Mg/m^3) => sqrt(m/s * Kg/m^3) => sqrt(Kg/(s m^2)) ???
+        double densityVelocity = 1/Math.sqrt(getPhase().velocityAtReceiver()  * getPhase().densityAtReceiver());
+        double sourceVel = getPhase().velocityAtSource();
+        double radiationTerm = 4*Math.PI*getPhase().densityAtSource()*sourceVel*sourceVel*sourceVel*1e9;
+        return moment*densityVelocity* refltran * geoSpread / radiationTerm; // sqrt(Kg/(s m^2) * 1/m^2 * (s/m)3 * m3/Mg
     }
 
     /**
@@ -359,17 +383,27 @@ public class Arrival {
      */
     public double getAmplitudeFactorSH() throws TauModelException, VelocityModelException, SlownessModelException {
         double refltran = getReflTransSH();
-        double geoSpread = getGeometricSpreadingFactor();
+        double geoSpread = getAmplitudeGeometricSpreadingFactor();
         double densityVelocity = 1/Math.sqrt(getPhase().velocityAtReceiver() * getPhase().densityAtReceiver());
-        return densityVelocity* refltran * geoSpread;
+        double sourceVel = getPhase().velocityAtSource();
+        double radiationTerm = 4*Math.PI*getPhase().densityAtSource()*sourceVel*sourceVel*sourceVel*1e9;
+        return moment*densityVelocity* refltran * geoSpread / radiationTerm;
     }
 
-    public double getIncidentAngle() {
-        return incidentAngle;
+    public double getIncidentAngleDegree() {
+        return getIncidentAngleRadian()*RtoD;
+    }
+
+    public double getIncidentAngleRadian() {
+        return incidentAngleRadian;
+    }
+
+    public double getTakeoffAngleDegree() {
+        return getTakeoffAngleRadian()*RtoD;
     }
     
-    public double getTakeoffAngle() {
-        return takeoffAngle;
+    public double getTakeoffAngleRadian() {
+        return takeoffAngleRadian;
     }
 
     public double velocityAtSource() {
@@ -512,8 +546,8 @@ public class Arrival {
             puristName,
             sourceDepth,
             receiverDepth,
-            takeoffAngle,
-            incidentAngle,
+                takeoffAngleRadian,
+                incidentAngleRadian,
             dRPdDist);
     }
 
@@ -529,6 +563,10 @@ public class Arrival {
         this.relativeToArrival = relativeToArrival;
     }
 
+    public void setSeismicMoment(double moment) {
+        this.moment = moment;
+    }
+
     public String toString() {
         double moduloDistDeg = getModuloDistDeg();
         if (getSearchDistDeg() < 0) {
@@ -537,7 +575,7 @@ public class Arrival {
         }
         String desc =  Outputs.formatDistance(moduloDistDeg) + Outputs.formatDepth(getSourceDepth()) + "   " + getName()
                 + "  " + Outputs.formatTime(getTime()) + "  " + Outputs.formatRayParam(Math.PI / 180.0 * getRayParam())
-                + "  " + Outputs.formatDistance(getTakeoffAngle()) + " " + Outputs.formatDistance(getIncidentAngle())
+                + "  " + Outputs.formatDistance(getTakeoffAngleDegree()) + " " + Outputs.formatDistance(getIncidentAngleDegree())
                 + " " + Outputs.formatDistance(getDistDeg())+" "+getRayParamIndex();
         if (getName().equals(getPuristName())) {
             desc += "   = ";
@@ -611,6 +649,10 @@ public class Arrival {
 
     protected static final double RtoD = SphericalCoords.rtod;
 
+    protected static final double KMtoM = 1000.0; // 1000 m per km
+
+    protected static final double MgtoKg = 1.0/1000;
+
     public static Arrival getEarliestArrival(List<Arrival> arrivals) {
         double soonest = Double.MAX_VALUE;
         Arrival soonestArrival = null;
@@ -643,15 +685,15 @@ public class Arrival {
         pw.write(innerIndent+JSONWriter.valueToString("phase")+": "+JSONWriter.valueToString(getName())+","+NL);
         pw.write(innerIndent+JSONWriter.valueToString("time")+": "+JSONWriter.valueToString((float)getTime())+","+NL);
         pw.write(innerIndent+JSONWriter.valueToString("rayparam")+": "+JSONWriter.valueToString((float)(Math.PI / 180.0 * getRayParam()))+","+NL);
-        pw.write(innerIndent+JSONWriter.valueToString("takeoff")+": "+JSONWriter.valueToString((float)getTakeoffAngle())+","+NL);
-        pw.write(innerIndent+JSONWriter.valueToString("incident")+": "+JSONWriter.valueToString((float)getIncidentAngle())+","+NL);
+        pw.write(innerIndent+JSONWriter.valueToString("takeoff")+": "+JSONWriter.valueToString((float) getTakeoffAngleDegree())+","+NL);
+        pw.write(innerIndent+JSONWriter.valueToString("incident")+": "+JSONWriter.valueToString((float) getIncidentAngleDegree())+","+NL);
         pw.write(innerIndent+JSONWriter.valueToString("puristdist")+": "+JSONWriter.valueToString((float)getDistDeg())+","+NL);
         pw.write(innerIndent+JSONWriter.valueToString("puristname")+": "+JSONWriter.valueToString(getPuristName())+","+NL);
 
         pw.write(innerIndent+JSONWriter.valueToString("amp")+": {"+NL);
 
         try {
-            double geospread = getGeometricSpreadingFactor();
+            double geospread = getAmplitudeGeometricSpreadingFactor();
             if (Double.isFinite(geospread)) {
                 pw.write(innerIndent+"  "+JSONWriter.valueToString("factorpsv")+": "+JSONWriter.valueToString((float)getAmplitudeFactorPSV())+","+NL);
                 pw.write(innerIndent+"  "+JSONWriter.valueToString("factorsh")+": "+JSONWriter.valueToString((float)getAmplitudeFactorSH())+","+NL);
@@ -714,14 +756,14 @@ public class Arrival {
         a.put("phase", getName());
         a.put("time", (float)getTime());
         a.put("rayparam", (float)(Math.PI / 180.0 * getRayParam()));
-        a.put("takeoff", (float)getTakeoffAngle());
-        a.put("incident", (float)getIncidentAngle());
+        a.put("takeoff", (float) getTakeoffAngleDegree());
+        a.put("incident", (float) getIncidentAngleDegree());
         a.put("puristdist", (float)getDistDeg());
         a.put("puristname", getPuristName());
         JSONObject ampObj = new JSONObject();
         a.put("amp", ampObj);
         try {
-            double geospread = getGeometricSpreadingFactor();
+            double geospread = getAmplitudeGeometricSpreadingFactor();
             if (Double.isFinite(geospread)) {
                 ampObj.put("factorpsv", (float) getAmplitudeFactorPSV());
                 ampObj.put("factorsh", (float) getAmplitudeFactorSH());

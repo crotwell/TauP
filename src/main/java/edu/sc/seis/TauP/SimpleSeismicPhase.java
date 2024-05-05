@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static edu.sc.seis.TauP.Arrival.RtoD;
+
 /**
  * Stores and transforms seismic phase names to and from their corresponding
  * sequence of branches.
@@ -596,6 +598,22 @@ public class SimpleSeismicPhase implements SeismicPhase {
     }
 
     @Override
+    public double densityAtSource() {
+        try {
+            double rho;
+            VelocityModel vMod = getTauModel().getVelocityModel();
+            if (getInitialPhaseSegment().isDownGoing) {
+                rho = vMod.evaluateAbove(sourceDepth, VelocityModelMaterial.DENSITY);
+            } else {
+                rho = vMod.evaluateBelow(sourceDepth, VelocityModelMaterial.DENSITY);
+            }
+            return rho;
+        } catch(NoSuchLayerException e) {
+            throw new RuntimeException("Should not happen", e);
+        }
+    }
+
+    @Override
     public double densityAtReceiver() {
         try {
             double rho;
@@ -612,22 +630,31 @@ public class SimpleSeismicPhase implements SeismicPhase {
     }
 
     @Override
+    public double calcTakeoffAngleDegree(double arrivalRayParam) {
+        return calcTakeoffAngle(arrivalRayParam)*RtoD;
+    }
+    @Override
     public double calcTakeoffAngle(double arrivalRayParam) {
         if (name.endsWith("kmps")) {
             return 0;
         }
-        double takeoffAngle = 180/Math.PI*Math.asin(velocityAtSource()*arrivalRayParam/(getTauModel().getRadiusOfEarth()-sourceDepth));
+        double takeoffAngle = Math.asin(velocityAtSource()*arrivalRayParam/(getTauModel().getRadiusOfEarth()-sourceDepth));
         if (! Double.isFinite(takeoffAngle)
                 && Math.abs(velocityAtSource()*arrivalRayParam - (getTauModel().getRadiusOfEarth()-sourceDepth)) < 0.05) {
             // due to rounding/interpolation, arg for asin for horizontal ray can be ever so slightly greater than one
             // just set takeoffAngle to 90 in this case
-            takeoffAngle = 90;
+            takeoffAngle = Math.PI/2;
         }
         if ( !getInitialPhaseSegment().isDownGoing) {
             // upgoing, so angle is in 90-180 range
-            takeoffAngle = 180-takeoffAngle;
+            takeoffAngle = Math.PI-takeoffAngle;
         }
         return takeoffAngle;
+    }
+
+    @Override
+    public double calcIncidentAngleDegree(double arrivalRayParam) {
+        return calcIncidentAngle(arrivalRayParam) * RtoD;
     }
 
     @Override
@@ -635,15 +662,15 @@ public class SimpleSeismicPhase implements SeismicPhase {
         if (name.endsWith("kmps")) {
             return 0;
         }
-        double incidentAngle = 180/Math.PI*Math.asin(velocityAtReceiver()*arrivalRayParam/(getTauModel().getRadiusOfEarth()-receiverDepth));
+        double incidentAngle = Math.asin(velocityAtReceiver()*arrivalRayParam/(getTauModel().getRadiusOfEarth()-receiverDepth));
         if (! Double.isFinite(incidentAngle)
                 && Math.abs(velocityAtSource()*arrivalRayParam - (getTauModel().getRadiusOfEarth()-receiverDepth)) < 0.05) {
             // due to rounding/interpolation, arg for asin for horizontal ray can be ever so slightly greater than one
             // just set incidentAngle to 90 in this case
-            incidentAngle = 90;
+            incidentAngle = Math.PI/2;
         }
         if (getFinalPhaseSegment().isDownGoing) {
-            incidentAngle = 180 - incidentAngle;
+            incidentAngle = Math.PI - incidentAngle;
         }
         return incidentAngle;
     }

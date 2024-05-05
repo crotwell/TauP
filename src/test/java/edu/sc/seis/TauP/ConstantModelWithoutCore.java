@@ -117,8 +117,9 @@ public class ConstantModelWithoutCore {
             assertEquals(1, arrivals.size());
             Arrival a = arrivals.get(0);
             // constant model, so geometrical spreading is 1/r, ie length of chord
+            assertFalse(Double.isNaN(a.getAmplitudeGeometricSpreadingFactor()), "dist: "+dist);
             assertEquals(1.0 / (2 * R * Math.sin(dist / 2 * Math.PI / 180)),
-                    a.getGeometricSpreadingFactor(),
+                    a.getAmplitudeGeometricSpreadingFactor(),
                     0.01, "dist: "+dist);
         }
     }

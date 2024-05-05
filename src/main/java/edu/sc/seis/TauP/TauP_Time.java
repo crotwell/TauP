@@ -18,6 +18,7 @@ package edu.sc.seis.TauP;
 
 import edu.sc.seis.TauP.cli.AbstractOutputTypeArgs;
 import edu.sc.seis.TauP.cli.OutputTypes;
+import edu.sc.seis.TauP.cli.SeismicSourceArgs;
 import edu.sc.seis.TauP.cli.TextOutputTypeArgs;
 import edu.sc.seis.seisFile.Location;
 import org.json.JSONArray;
@@ -50,8 +51,9 @@ public class TauP_Time extends TauP_AbstractRayTool {
     @CommandLine.Option(names = {"--first", "--onlyfirst"}, description = "only output the first arrival for each phase, no triplications")
     protected boolean onlyFirst = false;
 
-    @CommandLine.Option(names = "--amp", description = "amplitude factor for each phase")
-    protected boolean withAmplitude = false;
+
+    @CommandLine.Mixin
+    SeismicSourceArgs sourceArgs = new SeismicSourceArgs();
 
     @CommandLine.Option(names = "--rel", split = ",", description = "times relative to the first of the given phases")
     protected List<String> relativePhaseName = new ArrayList<>();
@@ -151,6 +153,11 @@ public class TauP_Time extends TauP_AbstractRayTool {
                 if (!phaseArrivals.isEmpty()) {
                     arrivals.add(phaseArrivals.get(0));
                 }
+            }
+        }
+        if (sourceArgs.isWithAmplitude()) {
+            for (Arrival a : arrivals) {
+                a.setSeismicMoment(sourceArgs.getMoment());
             }
         }
 
@@ -287,7 +294,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
                     + "   Travel    Ray Param  Takeoff  Incident  Purist   "+String.format(phasePuristFormat, "Purist");
             String lineTwo = "  (deg)     (km)   " + String.format(phaseFormat, "Name ")
                     + "   Time (s)  p (s/deg)   (deg)    (deg)   Distance   "+String.format(phasePuristFormat, "Name");
-            if (withAmplitude) {
+            if (sourceArgs.isWithAmplitude()) {
                 lineOne += "    Amp           ";
                 lineTwo += "  Factor PSv   Sh";
             }
@@ -318,8 +325,8 @@ public class TauP_Time extends TauP_AbstractRayTool {
                         + Outputs.formatTime(currArrival.getTime())
                         + "  "
                         + Outputs.formatRayParam(currArrival.getRayParam() / Arrival.RtoD) + "  ");
-                out.print(Outputs.formatDistance(currArrival.getTakeoffAngle())+" ");
-                out.print(Outputs.formatDistance(currArrival.getIncidentAngle())+" ");
+                out.print(Outputs.formatDistance(currArrival.getTakeoffAngleDegree())+" ");
+                out.print(Outputs.formatDistance(currArrival.getIncidentAngleDegree())+" ");
                 out.print(Outputs.formatDistance(currArrival.getDistDeg()));
                 if(currArrival.getName().equals(currArrival.getPuristName())) {
                     out.print("   = ");
@@ -327,11 +334,11 @@ public class TauP_Time extends TauP_AbstractRayTool {
                     out.print("   * ");
                 }
                 out.print(String.format(phasePuristFormat, currArrival.getPuristName()));
-                if (withAmplitude) {
+                if (sourceArgs.isWithAmplitude()) {
                     try {
                         double ampFactorPSV = currArrival.getAmplitudeFactorPSV();
                         double ampFactorSH = currArrival.getAmplitudeFactorSH();
-                        out.print(" " + Outputs.formatAmpFactor(ampFactorPSV) + "," + Outputs.formatAmpFactor(ampFactorSH));
+                        out.print(" " + Outputs.formatAmpFactor(ampFactorPSV) + " " + Outputs.formatAmpFactor(ampFactorSH));
                     } catch (SlownessModelException | TauModelException | VelocityModelException e) {
                         throw new RuntimeException("SHould not happen", e);
                     }

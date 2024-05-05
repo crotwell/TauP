@@ -103,8 +103,8 @@ public class ReceiverAtDepth {
                 Arrival a = phaseArrivals.get(i);
                 Arrival f = flippedArrivals.get(i);
                 assertEquals(  a.getTime(), f.getTime(), 0.0001, a+" "+f);
-                assertEquals(  a.getTakeoffAngle(), f.getIncidentAngle(), 0.0001);
-                assertEquals(  a.getIncidentAngle(), f.getTakeoffAngle(), 0.0001);
+                assertEquals(  a.getTakeoffAngleDegree(), f.getIncidentAngleDegree(), 0.0001);
+                assertEquals(  a.getIncidentAngleDegree(), f.getTakeoffAngleDegree(), 0.0001);
                 assertEquals(  a.getDist(), f.getDist(), 0.0001);
                 assertEquals(  a.getRayParam(), f.getRayParam(), 0.0001);
             }

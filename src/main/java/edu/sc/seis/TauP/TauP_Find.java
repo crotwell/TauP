@@ -67,6 +67,7 @@ public class TauP_Find extends TauP_Tool {
             TauP_Time timeTool = new TauP_Time();
             timeTool.modelArgs = modelArgs;
             timeTool.outputTypeArgs = outputTypeArgs;
+            timeTool.sourceArgs = sourceArgs;
             List<Arrival> arrivalList = timeTool.calcAll(phaseList,distanceValues);
             if (times.size()> 0) {
                 double minTime = times.get(0);
@@ -179,6 +180,9 @@ public class TauP_Find extends TauP_Tool {
 
     @CommandLine.Option(names = "--deltatime", description = "find arrivals within the +- deltatime, --times must have single time")
     Double deltaTime = 5.0;
+
+    @CommandLine.Mixin
+    SeismicSourceArgs sourceArgs = new SeismicSourceArgs();
 
     @CommandLine.Option(names={"--deg", "--degree"}, paramLabel="d", description="distance in degrees", split=",")
     protected void setDegree(List<Double> degreesList) {

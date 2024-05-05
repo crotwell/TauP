@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static edu.sc.seis.TauP.Arrival.RtoD;
+
 public class ScatteredSeismicPhase implements SeismicPhase {
 
     private final Arrival inboundArrival;
@@ -301,7 +303,7 @@ public class ScatteredSeismicPhase implements SeismicPhase {
 
     @Override
     public double calcRayParamForTakeoffAngle(double takeoffDegree) throws NoArrivalException {
-        if (takeoffDegree == inboundArrival.getTakeoffAngle()) {
+        if (takeoffDegree == inboundArrival.getTakeoffAngleDegree()) {
             return inboundArrival.getRayParam();
         }
         throw new NoArrivalException("Scattered phase cannot have arbitrary takeoff angle: "+getName());
@@ -323,13 +325,26 @@ public class ScatteredSeismicPhase implements SeismicPhase {
     }
 
     @Override
+    public double densityAtSource() {
+        return inboundArrival.getPhase().densityAtSource();
+    }
+    @Override
+    public double calcTakeoffAngleDegree(double arrivalRayParam) {
+        return inboundArrival.getTakeoffAngleDegree();
+    }
+    @Override
     public double calcTakeoffAngle(double arrivalRayParam) {
-        return inboundArrival.getTakeoffAngle();
+        return inboundArrival.getTakeoffAngleRadian();
     }
 
     @Override
     public double calcIncidentAngle(double arrivalRayParam) {
         return scatteredPhase.calcIncidentAngle(arrivalRayParam);
+    }
+
+    @Override
+    public double calcIncidentAngleDegree(double arrivalRayParam) {
+        return scatteredPhase.calcIncidentAngleDegree(arrivalRayParam);
     }
 
     @Override

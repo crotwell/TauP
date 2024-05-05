@@ -26,6 +26,7 @@
 
 package edu.sc.seis.TauP;
 
+import edu.sc.seis.TauP.cli.SeismicSourceArgs;
 import edu.sc.seis.seisFile.mseed3.FDSNSourceId;
 import edu.sc.seis.seisFile.mseed3.MSeed3Record;
 import org.json.JSONObject;
@@ -135,7 +136,7 @@ public class TauP_WKBJ extends TauP_Time {
                 int timeIdx = (int) Math.round((arrival.getTime() - startTime)/ getDeltaT());
                 double psvAmpFactor = arrival.getAmplitudeFactorPSV();
                 double shAmpFactor = arrival.getAmplitudeFactorSH();
-                double incidentAngle = arrival.getIncidentAngle();
+                double incidentAngle = arrival.getIncidentAngleDegree();
                 double rotateAngle = 0;
                 if ( ! arrival.getPhase().finalSegmentIsPWave()) {
                     rotateAngle = 90;
@@ -313,7 +314,7 @@ public class TauP_WKBJ extends TauP_Time {
     }
 
     public static float[][] effectiveSourceTerm(float momentMag, float deltaT, int numSamples) {
-        float Mo = (float) mw_to_N_m(momentMag);
+        float Mo = (float) SeismicSourceArgs.mw_to_N_m(momentMag);
         Mo = 1;
         float[] radial = new float[numSamples];
         float[] vertical = new float[numSamples];
@@ -390,7 +391,7 @@ public class TauP_WKBJ extends TauP_Time {
                         try {
                             Arrival thetaArrival = arrival.getPhase().shootRay(rayParam);
                             double psvAmpFactor = thetaArrival.getReflTransPSV();
-                            double incidentAngle = thetaArrival.getIncidentAngle();
+                            double incidentAngle = thetaArrival.getIncidentAngleDegree();
                             double transverseAmpFactor = thetaArrival.getReflTransSH();
                             double rotateAngle = 0;
                             if ( ! thetaArrival.getPhase().finalSegmentIsPWave()) {
@@ -435,19 +436,6 @@ public class TauP_WKBJ extends TauP_Time {
         return rtz;
     }
 
-    /**
-     *
-     * Mw to Mo conversion from Lay and Wallace p. 384, I assumed that Mo is in
-     * newton meters hence multiply by 10^7 to change to dyne cm
-     * (1 Newton = 10^5 dynes and 1 m = 10^2 cm)
-     *
-     * @return
-     */
-    public static double mw_to_N_m(double Mw) {
-        double scalar_moment_N_m = Math.pow(10, (Mw + 10.73) * 1.5 - 7.0);
-        return scalar_moment_N_m;
-    }
-
     DataOutputStream writer;
 
     public DataOutputStream getOutputStream() throws IOException {
@@ -476,6 +464,8 @@ public class TauP_WKBJ extends TauP_Time {
         this.writer = writer;
     }
 
+    @CommandLine.Mixin
+    SeismicSourceArgs sourceArgs = new SeismicSourceArgs();
 
     @CommandLine.Option(names = {"-o", "--output"}, description = "output to file, default is taup_wkbj.ms3")
     public void setOutFile(String outfile) {
