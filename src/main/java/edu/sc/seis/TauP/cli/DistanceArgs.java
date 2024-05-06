@@ -177,6 +177,7 @@ public class DistanceArgs {
     public Double getBackAzimuth() {
         return distArgs.backAzimuth;
     }
+    public boolean hasBackAzimuth() {return distArgs.backAzimuth != null;}
     public void setBackAzimuth(double val) { distArgs.backAzimuth = val;}
 
     public boolean hasEventLatLon() {

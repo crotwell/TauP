@@ -295,7 +295,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
             String lineTwo = "  (deg)     (km)   " + String.format(phaseFormat, "Name ")
                     + "   Time (s)  p (s/deg)   (deg)    (deg)   Distance   "+String.format(phasePuristFormat, "Name");
             if (sourceArgs.isWithAmplitude()) {
-                lineOne += "    Amp           ";
+                lineOne += "    Amp  ~"+Outputs.formatDistanceNoPad(sourceArgs.getMw())+" Mw";
                 lineTwo += "  Factor PSv   Sh";
             }
             if (!relativePhaseName.isEmpty()) {

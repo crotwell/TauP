@@ -104,7 +104,7 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
                         cssClasses.add(p_or_s);
                         cssClasses.add(SvgUtil.classForPhase(arrival.getName()));
                         XYPlottingData xyp = new XYPlottingData(
-                                segmentList, xAxisType.toString(), "Ray Param",
+                                segmentList, axisLabel(xAxisType), "Ray Param",
                                 phase.getName(), phaseDesc, cssClasses
                         );
                         out.add(xyp);
@@ -118,7 +118,7 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
                     List<String> cssClasses = new ArrayList<>();
                     cssClasses.add(p_or_s);
                     cssClasses.add(SvgUtil.classForPhase(phase.getName()));
-                    XYPlottingData xyp = new XYPlottingData(segments, xAxisType.toString(), yAxisType.toString(),
+                    XYPlottingData xyp = new XYPlottingData(segments, axisLabel(xAxisType), axisLabel(yAxisType),
                             phase.getName(), phaseDesc, cssClasses);
                     xyp.cssClasses.add(p_or_s);
                     out.add(xyp);
@@ -135,7 +135,7 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
                             List<XYSegment> sh_segments = XYSegment.createFromLists(xData, yData);
                             List<String> cssClassesCopy = new ArrayList<>(cssClasses);
                             cssClassesCopy.add("ampsh");
-                            out.add(new XYPlottingData(sh_segments, xAxisType.toString(), yAxisType.toString(),
+                            out.add(new XYPlottingData(sh_segments, axisLabel(xAxisType), axisLabel(yAxisType),
                                     phase.getName(), phaseDesc, cssClassesCopy));
                         }
                         // what about case of amp vs refltran, need 4 outputs?
@@ -149,7 +149,7 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
                             List<XYSegment> sh_segments = XYSegment.createFromLists(xData, yData);
                             List<String> cssClassesCopy = new ArrayList<>(cssClasses);
                             cssClassesCopy.add("refltransh");
-                            out.add(new XYPlottingData(sh_segments, xAxisType.toString(), yAxisType.toString(),
+                            out.add(new XYPlottingData(sh_segments, axisLabel(xAxisType), axisLabel(yAxisType),
                                     phase.getName(), phaseDesc, cssClassesCopy));
                         }
                     }
@@ -373,7 +373,7 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
                 cssExtra += SvgUtil.createWaveTypeColorCSS();
             } else {
             }
-            xyOut.printAsSvg(writer, cmdLineArgs, xAxisType.toString(), yAxisType.toString(), cssExtra, isLegend);
+            xyOut.printAsSvg(writer, cmdLineArgs, axisLabel(xAxisType), axisLabel(yAxisType), cssExtra, isLegend);
         } else {
             throw new IllegalArgumentException("Unknown output format: " + outputTypeArgs.getOutputFormat());
         }
@@ -488,6 +488,20 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
         this.yAxisLog = yAxisLog;
     }
 
+    public String axisLabel(AxisType axisType) {
+        switch (axisType) {
+            case amp:
+                return "Amplitude PSv,Sh "+Outputs.formatDistanceNoPad(sourceArgs.getMw())+" Mw";
+            case ampsh:
+                return "Amplitude Sh "+Outputs.formatDistanceNoPad(sourceArgs.getMw())+" Mw";
+            case amppsv:
+                return "Amplitude PSv "+Outputs.formatDistanceNoPad(sourceArgs.getMw())+" Mw";
+            default:
+                return axisType.name();
+        }
+    }
+
+
     public boolean isReduceTime() {
         return reduceVelKm != null || reduceVelDeg != null;
     }
@@ -587,6 +601,11 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
 
     protected AxisType xAxisType = AxisType.degree;
     protected AxisType yAxisType = AxisType.time;
+
+
+    @CommandLine.Mixin
+    SeismicSourceArgs sourceArgs = new SeismicSourceArgs();
+
 
     protected boolean xAxisAbs = false;
     protected boolean yAxisAbs = false;

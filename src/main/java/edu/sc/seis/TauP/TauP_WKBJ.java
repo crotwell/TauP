@@ -27,17 +27,24 @@
 package edu.sc.seis.TauP;
 
 import edu.sc.seis.TauP.cli.SeismicSourceArgs;
+import edu.sc.seis.TauP.cli.SeismogramOutputTypeArgs;
+import edu.sc.seis.seisFile.fdsnws.quakeml.*;
 import edu.sc.seis.seisFile.mseed3.FDSNSourceId;
+import edu.sc.seis.seisFile.mseed3.MSeed3EH;
 import edu.sc.seis.seisFile.mseed3.MSeed3Record;
-import org.json.JSONObject;
+import edu.sc.seis.seisFile.mseed3.ehbag.Marker;
+import edu.sc.seis.seisFile.mseed3.ehbag.Path;
+import org.json.JSONException;
 import picocli.CommandLine;
 
 import java.io.*;
 import java.time.Instant;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+
+import static edu.sc.seis.TauP.cli.OutputTypes.MS3;
 
 /**
  * TauP_WKBJ.java
@@ -54,7 +61,7 @@ import java.util.List;
 @CommandLine.Command(name = "wkbj",
         description = "calc WKJB seismograms, DANGER: experimental!!!",
         usageHelpAutoWidth = true)
-public class TauP_WKBJ extends TauP_Time {
+public class TauP_WKBJ extends TauP_AbstractRayTool {
 
     /**
      * deltaT of the seismogram, default is .05 which gives 20 sps.
@@ -62,7 +69,8 @@ public class TauP_WKBJ extends TauP_Time {
     protected double deltaT = .05;
 
     public TauP_WKBJ() {
-        super();
+        super(new SeismogramOutputTypeArgs(MS3, "taup_wkbj"));
+        outputTypeArgs = (SeismogramOutputTypeArgs) abstractOutputTypeArgs;
     }
 
     /**
@@ -84,20 +92,23 @@ public class TauP_WKBJ extends TauP_Time {
         this.deltaT = v;
     }
 
+
     @Override
-    public List<Arrival> calculate(List<DistanceRay> distanceRays) throws TauPException {
+    public void start() throws IOException, TauModelException, TauPException {
         try {
-            List<Arrival> arrivals = super.calculate(distanceRays);
-            List<MSeed3Record> spikeRecords = calcWKBJ(distanceRays);
-            //List<MSeed3Record> spikeRecords = calcSpikes(degreesList);
+
+            List<MSeed3Record> allRecords = new ArrayList<>();
+            //List<MSeed3Record> wkbjRecords = calcWKBJ(distanceArgs.getDistances());
+            //allRecords.addAll(wkbjRecords);
+            List<MSeed3Record> spikeRecords = calcSpikes(distanceArgs.getDistances());
+            allRecords.addAll(spikeRecords);
 
             setOutFileBase("taup_spikes");
             DataOutputStream dos = getOutputStream();
-            for (MSeed3Record ms3 : spikeRecords) {
+            for (MSeed3Record ms3 : allRecords) {
                 dos.write(ms3.asByteBuffer().array());
             }
             dos.close();
-            return Arrival.sortArrivals(arrivals);
         } catch(IOException e) {
             throw new TauPException(e);
         }
@@ -122,6 +133,9 @@ public class TauP_WKBJ extends TauP_Time {
                 List<Arrival> phaseArrivals = distVal.calculate(phase);
                 allArrivals.addAll(phaseArrivals);
             }
+            for ( Arrival a : allArrivals) {
+                a.setSeismicMoment(sourceArgs.getMoment());
+            }
             Arrival last = Arrival.getLatestArrival(allArrivals);
             double lastTime = last == null ? 0 : last.getTime();
             //int startTime = (int) (Math.round(firstTime) - 120);
@@ -131,6 +145,7 @@ public class TauP_WKBJ extends TauP_Time {
             float[] radial = new float[numSamples];
             float[] vertical = new float[numSamples];
             float[] transverse = new float[numSamples];
+            MSeed3EH eh = createEH(degrees, defaultOriginTime, allArrivals);
 
             for (Arrival arrival : allArrivals) {
                 int timeIdx = (int) Math.round((arrival.getTime() - startTime)/ getDeltaT());
@@ -152,8 +167,57 @@ public class TauP_WKBJ extends TauP_Time {
             spikeRecords.add(packageMSeed3(vertical, staCode, "SP", "Z", startTime ));
             spikeRecords.add(packageMSeed3(radial, staCode, "SP", "R", startTime ));
             spikeRecords.add(packageMSeed3(transverse, staCode, "SP", "T", startTime ));
+            for (MSeed3Record ms3 : spikeRecords) {
+                    ms3.setStartDateTime(defaultOriginTime);
+                    ms3.setExtraHeaders(eh.getEH());
+
+            }
         }
         return spikeRecords;
+    }
+
+    public MSeed3EH createEH(double degrees, ZonedDateTime startDateTime, List<Arrival> allArrivals) {
+        MSeed3EH eh = new MSeed3EH();
+        try {
+            Float deg = (float) degrees;
+            Float az = distanceArgs.hasAzimuth() ? distanceArgs.getAzimuth().floatValue() : null;
+            Float baz = distanceArgs.hasBackAzimuth() ? distanceArgs.getBackAzimuth().floatValue() : null;
+            Path path = new Path(deg, az, baz);
+            eh.addToBag(path);
+
+            Origin origin = new Origin();
+            origin.setDepth(new RealQuantity((float) modelArgs.getSourceDepth()));
+            origin.setTime(new Time(startDateTime.toInstant()));
+
+            float olat = 0;
+            float olon = 0;
+            if (distanceArgs.hasEventLatLon()) {
+                olat = (float) distanceArgs.getEventList().get(0).getLatitude();
+                olon = (float) distanceArgs.getEventList().get(0).getLongitude();
+            }
+            origin.setLatitude(new RealQuantity(olat));
+            origin.setLongitude(new RealQuantity(olon));
+            Event event = new Event(origin);
+            event.setPreferredOriginID(origin.getPublicId());
+
+            Magnitude mag = new Magnitude();
+            mag.setMag(new RealQuantity(sourceArgs.getMw()));
+            mag.setType("Mw");
+            event.setMagnitudeList(List.of(mag));
+            event.setPreferredMagnitudeID(mag.getPublicId());
+            eh.addToBag(event);
+            for (Arrival a : allArrivals) {
+                ZonedDateTime arrTime = startDateTime.plusNanos(Math.round(a.getTime() * 1e9));
+                String desc = "";
+                Marker m = new Marker(a.getName(), arrTime, Marker.MARKER_PREDIC_MODEL, desc);
+                eh.addToBag(m);
+            }
+        } catch (JSONException e) {
+            System.err.println(e);
+            e.printStackTrace();
+            throw e;
+        }
+        return eh;
     }
 
     public List<MSeed3Record> packageMSeed3(float[] vertical, float[] radial, float[] transverse, String staCode,
@@ -187,8 +251,7 @@ public class TauP_WKBJ extends TauP_Time {
         modelArgs.depthCorrected();
         List<SeismicPhase> phaseList = getSeismicPhases();
         List<MSeed3Record> spikeRecords = new ArrayList<>();
-        float momentMag = 4;
-        float[][] sourceTerm = effectiveSourceTerm( momentMag, (float) deltaT,  1000);
+        float[][] sourceTerm = effectiveSourceTerm( sourceArgs.getMw(), (float) deltaT,  1000);
         Instant sourceTime = new MSeed3Record().getStartInstant();
         for (DistanceRay distVal : degreesList) {
             double degrees = distVal.getDegrees(getRadiusOfEarth());
@@ -204,6 +267,7 @@ public class TauP_WKBJ extends TauP_Time {
             Arrival last = Arrival.getLatestArrival(allArrivals);
             double lastTime = last == null ? 0 : last.getTime();
             int startTime = (int) (Math.round(firstTime) - 10);
+            startTime = 0;
             double maxTime = lastTime - startTime + 200;
             int numSamples = (int)(Math.ceil(maxTime / getDeltaT())) ;
 
@@ -213,34 +277,14 @@ public class TauP_WKBJ extends TauP_Time {
             rtz[TRANS_IDX] = dumbconvolve(rtz[TRANS_IDX], sourceTerm[TRANS_IDX]);
             rtz[VERT_IDX] = dumbconvolve(rtz[VERT_IDX], sourceTerm[VERT_IDX]);
             //startTime += (int) (Math.round(sourceTerm[VERT_IDX].length*getDeltaT()));
-            String staCode = "W"+degrees;
+            String staCode = "S"+degrees;
             if (staCode.length()> 8) { staCode = staCode.substring(8);}
-            JSONObject stationEH = new JSONObject();
-            stationEH.put("la", 0);
-            stationEH.put("lo", 0);
-            stationEH.put("el", 0);
-            stationEH.put("dp", 0);
-            JSONObject quakeEH = new JSONObject();
-            JSONObject originEH = new JSONObject();
-            originEH.put("tm", MSeed3Record.getDefaultStartTime().format(DateTimeFormatter.ISO_INSTANT));
-            originEH.put("la", 0);
-            originEH.put("lo", degrees);
-            originEH.put("dp", modelArgs.getSourceDepth());
-            quakeEH.put("or", originEH);
-            JSONObject pathEH = new JSONObject();
-            pathEH.put("gcarc", degrees);
-            JSONObject bagEH = new JSONObject();
-            bagEH.put("st", stationEH);
-            bagEH.put("ev", quakeEH);
-            bagEH.put("path", pathEH);
-            TauP_SetMSeed3.insertMarkers(bagEH, allArrivals, sourceTime);
-            JSONObject eh = new JSONObject();
-            eh.put("bag", bagEH);
-            //eh.put("taup", TauP_Time.resultAsJSONObject(getTauModelName(), getSourceDepth(), getReceiverDepth(), getPhaseNames(), allArrivals));
+            MSeed3EH eh = createEH(degrees, defaultOriginTime, allArrivals);
             spikeRecords.addAll(packageMSeed3(rtz[VERT_IDX], rtz[RAD_IDX], rtz[TRANS_IDX], staCode, startTime));
             spikeRecords.add(packageMSeed3(theta_rtz[VERT_IDX], staCode, "THETA", "Z", startTime));
             for(MSeed3Record msr: spikeRecords) {
-                msr.setExtraHeaders(eh);
+                msr.setExtraHeaders(eh.getEH());
+                msr.setStartDateTime(defaultOriginTime);
             }
 
             spikeRecords.add(packageMSeed3(sourceTerm[0], staCode, "XS", "Z", startTime));
@@ -315,7 +359,7 @@ public class TauP_WKBJ extends TauP_Time {
 
     public static float[][] effectiveSourceTerm(float momentMag, float deltaT, int numSamples) {
         float Mo = (float) SeismicSourceArgs.mw_to_N_m(momentMag);
-        Mo = 1;
+
         float[] radial = new float[numSamples];
         float[] vertical = new float[numSamples];
         float[] transverse = new float[numSamples];
@@ -440,8 +484,8 @@ public class TauP_WKBJ extends TauP_Time {
 
     public DataOutputStream getOutputStream() throws IOException {
         if (writer == null) {
-            if(!getOutFile().equals("stdout")) {
-                writer = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(getOutFile())));
+            if(!outputTypeArgs.getOutFile().equals("stdout")) {
+                writer = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(outputTypeArgs.getOutFile())));
             } else {
                 writer = new DataOutputStream(new BufferedOutputStream(System.out));
             }
@@ -449,30 +493,60 @@ public class TauP_WKBJ extends TauP_Time {
         return writer;
     }
 
-    public void closeOutputStream() {
-        if (writer != null) {
-            try {
-                writer.close();
-            } catch (IOException e) {
-                // oh well
+    @Override
+    public List<Arrival> calcAll(List<SeismicPhase> phaseList, List<RayCalculateable> shootables) throws TauPException {
+        List<Arrival> arrivals = new ArrayList<>();
+        modelArgs.depthCorrected();
+        for (SeismicPhase phase : phaseList) {
+            List<Arrival> phaseArrivals = new ArrayList<>();
+            for (RayCalculateable shoot : shootables) {
+                phaseArrivals.addAll(shoot.calculate(phase));
+            }
+            if (!phaseArrivals.isEmpty()) {
+                arrivals.add(phaseArrivals.get(0));
+            }
+
+        }
+        if (sourceArgs.isWithAmplitude()) {
+            for (Arrival a : arrivals) {
+                a.setSeismicMoment(sourceArgs.getMoment());
             }
         }
-        writer = null;
+
+        return Arrival.sortArrivals(arrivals);
     }
 
-    public void setOutputStream(DataOutputStream writer) {
-        this.writer = writer;
+    @Override
+    public void printResult(PrintWriter out, List<Arrival> arrivalList) throws IOException, TauPException {
+
     }
+
+    @Override
+    public void destroy() throws TauPException {
+
+    }
+
+
+    @Override
+    public String getOutputFormat() {
+        return outputTypeArgs.getOutputFormat();
+    }
+
+    @Override
+    public String getOutFileExtension() {
+        return outputTypeArgs.getOutFileExtension();
+    }
+
+    public List<DistanceRay> getDistances() {
+        return distanceArgs.getDistances();
+    }
+
+    ZonedDateTime defaultOriginTime = ZonedDateTime.of(2000, 01, 01, 0, 0, 0, 0, ZoneId.of("UTC"));
+
 
     @CommandLine.Mixin
     SeismicSourceArgs sourceArgs = new SeismicSourceArgs();
 
-    @CommandLine.Option(names = {"-o", "--output"}, description = "output to file, default is taup_wkbj.ms3")
-    public void setOutFile(String outfile) {
-        this.outfile = outfile;
-    }
-    public String getOutFile() {
-        return this.outfile;
-    }
-    String outfile = "taup_wkbj.ms3";
+    @CommandLine.Mixin
+    SeismogramOutputTypeArgs outputTypeArgs;
 } // TauP_WKBJ

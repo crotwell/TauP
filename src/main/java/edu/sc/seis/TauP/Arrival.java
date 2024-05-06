@@ -148,7 +148,7 @@ public class Arrival {
     
     private final double takeoffAngleRadian;
 
-    private double moment = SeismicSourceArgs.MAG3_MOMENT;
+    private double moment = SeismicSourceArgs.MAG4_MOMENT;
 
     private Arrival relativeToArrival = null;
 
@@ -321,9 +321,8 @@ public class Arrival {
             return Double.POSITIVE_INFINITY;
         }
         //units of 1/km^2 ?
-        double km2tom2 = 1e6;
         return Math.sin(getTakeoffAngleRadian())* Math.abs(dtakeoff_ddelta)
-                / (km2tom2 * recRadius * recRadius * cosIncident * Math.sin(getModuloDist()));
+                / ( recRadius * recRadius * cosIncident * Math.sin(getModuloDist()));
     }
 
     /**
@@ -355,21 +354,19 @@ public class Arrival {
      * Calculates the amplitude factor, 1/sqrt(density*vel) times reflection/tranmission coefficient times geometric spreading, for the
      * arrival. Note this is only an approximation of amplitude as the source radiation magnitude and pattern is
      * not included, and this may not give accurate results for certain wave types, such as head or diffracted waves.
-     * @return
-     * @throws TauModelException
-     * @throws VelocityModelException
-     * @throws SlownessModelException
+     *
+     * See FMGS eq 17.74
      */
     public double getAmplitudeFactorPSV() throws TauModelException, VelocityModelException, SlownessModelException {
         // dimensionaless ?
         double refltran = getReflTransPSV();
         double geoSpread = getAmplitudeGeometricSpreadingFactor(); // 1/km
-        // * KMtoM * MgtoKg = 1
-        // sqrt (km/s * Mg/m^3) => sqrt(m/s * Kg/m^3) => sqrt(Kg/(s m^2)) ???
-        double densityVelocity = 1/Math.sqrt(getPhase().velocityAtReceiver()  * getPhase().densityAtReceiver());
-        double sourceVel = getPhase().velocityAtSource();
-        double radiationTerm = 4*Math.PI*getPhase().densityAtSource()*sourceVel*sourceVel*sourceVel*1e9;
-        return moment*densityVelocity* refltran * geoSpread / radiationTerm; // sqrt(Kg/(s m^2) * 1/m^2 * (s/m)3 * m3/Mg
+        // km/s
+        double sourceVel = getPhase().velocityAtSource(); // km/s
+        // Mg/m3 * (km/s)3 => 1e3 Kg/m3 * 1e9 (m3/s3) => 1e12 Kg /s3
+        double radiationTerm = 4*Math.PI*getPhase().densityAtSource()*sourceVel*sourceVel*sourceVel*1e12;
+        //    Kg m2 / s2     1        1/km   /   ( Kg/s3 )
+        return moment * refltran * geoSpread / radiationTerm / 1e3; // s m2/km => s m / 1e3  why sec???
     }
 
     /**
@@ -384,10 +381,9 @@ public class Arrival {
     public double getAmplitudeFactorSH() throws TauModelException, VelocityModelException, SlownessModelException {
         double refltran = getReflTransSH();
         double geoSpread = getAmplitudeGeometricSpreadingFactor();
-        double densityVelocity = 1/Math.sqrt(getPhase().velocityAtReceiver() * getPhase().densityAtReceiver());
         double sourceVel = getPhase().velocityAtSource();
-        double radiationTerm = 4*Math.PI*getPhase().densityAtSource()*sourceVel*sourceVel*sourceVel*1e9;
-        return moment*densityVelocity* refltran * geoSpread / radiationTerm;
+        double radiationTerm = 4*Math.PI*getPhase().densityAtSource()*sourceVel*sourceVel*sourceVel*1e12;
+        return moment* refltran * geoSpread / radiationTerm / 1e3;
     }
 
     public double getIncidentAngleDegree() {

@@ -26,6 +26,7 @@ import java.util.Arrays;
 				TauP_Wavefront.class,
 				TauP_PhaseDescribe.class,
 				TauP_Find.class,
+				TauP_WKBJ.class,
 				TauP_Web.class,
 				TauP_Version.class,
 				CommandLine.HelpCommand.class
