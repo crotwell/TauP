@@ -1,11 +1,9 @@
 package edu.sc.seis.webtaup;
 
-import edu.sc.seis.TauP.TauModelException;
-import edu.sc.seis.TauP.TauPException;
-import edu.sc.seis.TauP.TauP_Tool;
-import edu.sc.seis.TauP.ToolRun;
+import edu.sc.seis.TauP.*;
 import edu.sc.seis.TauP.cli.OutputTypes;
 import edu.sc.seis.seisFile.BuildVersion;
+import edu.sc.seis.seisFile.mseed3.MSeed3Record;
 import io.undertow.Undertow;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
@@ -17,8 +15,10 @@ import io.undertow.util.Headers;
 import io.undertow.util.MimeMappings;
 import picocli.CommandLine;
 
+import java.io.DataOutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.nio.ByteBuffer;
 import java.util.*;
 
 
@@ -60,9 +60,7 @@ public class TauP_Web extends TauP_Tool {
                         Map<String, Deque<String>> queryParams = exchange.getQueryParameters();
                         if (tool != null) {
                             System.err.println("Handle via TauP Tool:" + path);
-                            String results = webRunTool(tool, queryParams);
-                            configContentType(tool.getOutputFormat(), exchange);
-                            exchange.getResponseSender().send(results);
+                            webRunTool(tool, queryParams, exchange);
                         } else if (exchange.getRequestPath().equals("/favicon.ico")) {
                             new ResponseCodeHandler(404).handleRequest(exchange);
                         } else if (exchange.getRequestPath().equals("/version")) {
@@ -183,7 +181,7 @@ public class TauP_Web extends TauP_Tool {
     }
 
 
-    public String webRunTool(TauP_Tool tool, Map<String, Deque<String>> queryParams) throws Exception {
+    public void webRunTool(TauP_Tool tool, Map<String, Deque<String>> queryParams, HttpServerExchange exchange) throws Exception {
         StringWriter sw = new StringWriter();
         CommandLine cmd = new CommandLine(tool);
         cmd.setOut(new PrintWriter(sw));
@@ -191,6 +189,7 @@ public class TauP_Web extends TauP_Tool {
         List<String> argList = queryParamsToCmdLineArgs(spec, queryParams);
         argList.add("-o");
         argList.add("stdout");
+        
         StringBuffer buffer = new StringBuffer();
         buffer.append(TauP_Tool.toolNameFromClass(tool.getClass()));
         for (String s : argList) {
@@ -208,6 +207,20 @@ public class TauP_Web extends TauP_Tool {
                 // Did user request version help (--version)?
             } else if (cmd.isVersionHelpRequested()) {
                 cmd.printVersionHelp(cmd.getOut());
+            } else if (tool instanceof TauP_WKBJ) {
+                // special because output is not text
+                TauP_WKBJ wkbj = (TauP_WKBJ) tool;
+                List<MSeed3Record> allRecords = new ArrayList<>();
+                //List<MSeed3Record> wkbjRecords = wkbj.calcWKBJ(wkbj.getDistances());
+                //allRecords.addAll(wkbjRecords);
+                List<MSeed3Record> spikeRecords = wkbj.calcSpikes(wkbj.getDistances());
+                allRecords.addAll(spikeRecords);
+
+                List<ByteBuffer> bufList = new ArrayList<>();
+                for (MSeed3Record ms3 : allRecords) {
+                    bufList.add(ms3.asByteBuffer());
+                }
+                exchange.getResponseSender().send(bufList.toArray(new ByteBuffer[0])); //.send(ByteBuffer.wrap(buf.array()));
             } else {
                 // invoke the business logic
                 Integer statusCode = tool.call();
@@ -216,14 +229,16 @@ public class TauP_Web extends TauP_Tool {
                     System.err.println("\nWARN: status code non-zero: "+statusCode+"\n");
                 }
 
+                configContentType(tool.getOutputFormat(), exchange);
+                exchange.getResponseSender().send(sw.toString());
 
             }
+
         } catch (Exception e) {
             System.err.println("\nException in tool exec: "+e.getMessage()+"\n");
             System.err.println(buffer);
             System.err.println(e);
         }
-        return sw.toString();
     }
 
     @Override

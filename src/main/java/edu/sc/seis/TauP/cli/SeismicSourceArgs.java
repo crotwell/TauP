@@ -5,15 +5,8 @@ import picocli.CommandLine;
 public class SeismicSourceArgs {
 
 
-    @CommandLine.Option(names = "--amp", description = "amplitude factor for each phase")
-    public boolean withAmplitude = false;
-
-    @CommandLine.Option(names = "--mw", defaultValue = "4.0", description = "scale by source moment magnitude")
+    @CommandLine.Option(names = "--mw", defaultValue = "4.0", description = "scale amplitude by source moment magnitude")
     Float mw = null;
-
-    public boolean isWithAmplitude() {
-        return withAmplitude;
-    }
 
     public float getMw() {
         if (mw == null) {

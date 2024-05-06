@@ -507,11 +507,10 @@ public class TauP_WKBJ extends TauP_AbstractRayTool {
             }
 
         }
-        if (sourceArgs.isWithAmplitude()) {
-            for (Arrival a : arrivals) {
-                a.setSeismicMoment(sourceArgs.getMoment());
-            }
+        for (Arrival a : arrivals) {
+            a.setSeismicMoment(sourceArgs.getMoment());
         }
+
 
         return Arrival.sortArrivals(arrivals);
     }

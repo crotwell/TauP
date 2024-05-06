@@ -6,9 +6,9 @@ Usage: taup wavefront [--debug] [--help] [--legend] [--negdist]
                       [--xaxis=<distAxisType>] [--yaxis=<depthAxisType>]
                       [--degminmax=deg deg] [--depthminmax=km km]
                       [[--mod=<modelname>] [-h=<sourceDepth>]
-                      [--stadepth=depth] [--scat=s s]...] [[-p=<phaseNames>[,
-                      <phaseNames>...]]... [--phasefile=<phaseFiles>]...]
-                      [--text | --json | --gmt | --svg]
+                      [--stadepth=depth] [--scat=s s]...]
+                      [[--phasefile=<phaseFiles>]... [-p=<phaseNames>[,
+                      <phaseNames>...]]...] [--text | --json | --gmt | --svg]
 plot wavefronts of seismic phases at steps in time
       --color=<coloring>    style of coloring for paths and wavefronts, one of
                               auto, wavetype, phase

@@ -51,6 +51,12 @@ public class TauP_Time extends TauP_AbstractRayTool {
     @CommandLine.Option(names = {"--first", "--onlyfirst"}, description = "only output the first arrival for each phase, no triplications")
     protected boolean onlyFirst = false;
 
+    @CommandLine.Option(names = "--amp", description = "amplitude factor for each phase")
+    public boolean withAmplitude = false;
+
+    public boolean isWithAmplitude() {
+        return withAmplitude;
+    }
 
     @CommandLine.Mixin
     SeismicSourceArgs sourceArgs = new SeismicSourceArgs();
@@ -155,7 +161,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
                 }
             }
         }
-        if (sourceArgs.isWithAmplitude()) {
+        if (isWithAmplitude()) {
             for (Arrival a : arrivals) {
                 a.setSeismicMoment(sourceArgs.getMoment());
             }
@@ -294,7 +300,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
                     + "   Travel    Ray Param  Takeoff  Incident  Purist   "+String.format(phasePuristFormat, "Purist");
             String lineTwo = "  (deg)     (km)   " + String.format(phaseFormat, "Name ")
                     + "   Time (s)  p (s/deg)   (deg)    (deg)   Distance   "+String.format(phasePuristFormat, "Name");
-            if (sourceArgs.isWithAmplitude()) {
+            if (isWithAmplitude()) {
                 lineOne += "    Amp  ~"+Outputs.formatDistanceNoPad(sourceArgs.getMw())+" Mw";
                 lineTwo += "  Factor PSv   Sh";
             }
@@ -334,7 +340,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
                     out.print("   * ");
                 }
                 out.print(String.format(phasePuristFormat, currArrival.getPuristName()));
-                if (sourceArgs.isWithAmplitude()) {
+                if (isWithAmplitude()) {
                     try {
                         double ampFactorPSV = currArrival.getAmplitudeFactorPSV();
                         double ampFactorSH = currArrival.getAmplitudeFactorSH();
@@ -471,6 +477,11 @@ public class TauP_Time extends TauP_AbstractRayTool {
     }
 
     public void start() throws IOException, TauPException {
+        if (getPhaseNameList().size() == 0) {
+            System.err.println("No phases specified");
+            spec.commandLine().usage(System.err);
+            return;
+        }
         List<RayCalculateable> distanceValues = getDistanceArgs().getRayCalculatables();
         if((distanceValues.size() != 0)) {
             /* enough info given on cmd line, so just do one calc. */

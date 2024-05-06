@@ -1,14 +1,13 @@
 Usage: taup curve [--debug] [--help] [--legend] [--verbose] [--xabs] [--xlog]
                   [--yabs] [--ylog] [--color=<coloring>]
                   [--mapwidth=<mapwidth>] [--mapwidthunit=<mapWidthUnit>]
-                  [-o=<outFile>] [--prop=<toolPropsFilename>]
+                  [--mw=<mw>] [-o=<outFile>] [--prop=<toolPropsFilename>]
                   [--reddeg=<reduceVelDeg>] [--redkm=<reduceVelKm>]
                   [--rel=<relativePhaseName>] [-x=<xAxisType>] [-y=<yAxisType>]
                   [--xminmax=x x]... [--yminmax=y y]... [[--mod=<modelname>]
                   [-h=<sourceDepth>] [--stadepth=depth] [--scat=s s]...]
-                  [[-p=<phaseNames>[,<phaseNames>...]]...
-                  [--phasefile=<phaseFiles>]...] [--text | --json | --gmt |
-                  --svg]
+                  [[--phasefile=<phaseFiles>]... [-p=<phaseNames>[,
+                  <phaseNames>...]]...] [--text | --json | --gmt | --svg]
 plot traveltime and other curves for phases
       --color=<coloring>    style of coloring for paths and wavefronts, one of
                               auto, wavetype, phase
@@ -18,6 +17,7 @@ plot traveltime and other curves for phases
       --mapwidth=<mapwidth> plot width in inches for GMT, pixels for SVG.
       --mapwidthunit=<mapWidthUnit>
                             plot width unit for GMT. Default is i for inchs
+      --mw=<mw>             scale amplitude by source moment magnitude
   -o, --output=<outFile>    output to file, default is stdout.
       --prop=<toolPropsFilename>
                             load defaults from properties file
