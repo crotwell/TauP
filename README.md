@@ -9,7 +9,7 @@
                            The TauP Toolkit
 
             Flexible Seismic Travel-Time and Raypath Utilities
-                              Version 2.6
+                              Version 3.0
                       http://www.seis.sc.edu/taup/
 
 The TauP Toolkit is a seismic travel time calculator. In addition to travel
