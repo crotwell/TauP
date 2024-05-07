@@ -72,10 +72,13 @@ public class AK135Test  {
     public static float RAY_PARAM_TOL = 0.11f; // seconds per degree
 
     public void doTable(String phase) throws TauPException {
+        taup.clearPhaseNames();
         if (phase.equals("P")) {
             taup.setPhaseNames(List.of("p", "P", "Pdiff"));
+            assertEquals(3, taup.parsePhaseNameList().size());
         } else if (phase.equals("S")) {
             taup.setPhaseNames(List.of("s", "S", "Sdiff"));
+            assertEquals(3, taup.parsePhaseNameList().size());
         } else {
             taup.setPhaseNames(List.of(phase));
         }
@@ -84,13 +87,15 @@ public class AK135Test  {
             for (TimeDist timeDist : atDepth) {
                 assertNotNull(timeDist);
 
-                List<Arrival> arrivals = taup.calculate(timeDist.getDistDeg());
+                List<Arrival> arrivals = taup.calcAll(taup.getSeismicPhases(), List.of(DistanceRay.ofDegrees(timeDist.getDistDeg())));
                 if (timeDist.getTime() > 0) {
-                assertTrue(arrivals.size() > 0, "got no arrivals for "+phase+" at deg="+timeDist.getDistDeg()+" depth="+taup.getSourceDepth());
+                assertTrue(!arrivals.isEmpty(),
+                        "got no arrivals for "+phase+" at deg="+timeDist.getDistDeg()+" depth="+taup.getSourceDepth());
+
                 // assume first?
                 assertEquals(timeDist.getTime(),
                              arrivals.get(0).getTime(),
-                        TIME_TOL, timeDist.getDistDeg()+" at "+timeDist.getDepth());
+                        TIME_TOL, timeDist.getDistDeg()+" at "+timeDist.getDepth()+" "+phase);
                 assertEquals(timeDist.getP(),
                              arrivals.get(0).getRayParamDeg() ,
                              RAY_PARAM_TOL);

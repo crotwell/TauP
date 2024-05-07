@@ -611,7 +611,7 @@ public class SeismicPhaseFactory {
                 seg.flatFractionOfPath = fractionOfPath;
             }
         }
-        if ( proto.segmentList.size() == 0 ) {
+        if (proto.segmentList.isEmpty()) {
             throw new TauModelException("seg list is zero??? "+name);
         }
         return proto;
@@ -953,7 +953,6 @@ public class SeismicPhaseFactory {
         } else if (nextLeg.endsWith("n") && nextLeg.length() > 1) {
             String numString = nextLeg.substring(0, nextLeg.length() - 1);
             try {
-                double headDepth = Double.parseDouble(numString);
                 int disconBranch = LegPuller.closestBranchToDepth(tMod, numString);
                 endAction = HEAD;
                 proto.addToBranch(
@@ -973,7 +972,6 @@ public class SeismicPhaseFactory {
             // diff but not Pdiff or Sdiff
             String numString = nextLeg.substring(0, nextLeg.length()-4);
             try {
-                double diffDepth = Double.parseDouble(numString);
                 int disconBranch = LegPuller.closestBranchToDepth(tMod, numString);
 
                 if(prevEndAction == START || prevEndAction == TRANSDOWN || prevEndAction == REFLECT_UNDERSIDE|| prevEndAction == REFLECT_UNDERSIDE_CRITICAL) {
@@ -2501,12 +2499,6 @@ public class SeismicPhaseFactory {
         String name = proto.getName();
         if(endSeg.maxRayParam < 0.0 || endSeg.minRayParam > endSeg.maxRayParam) {
             /* Phase has no arrivals, possibly due to source depth. */
-            rayParams = new double[0];
-            minRayParam = -1;
-            maxRayParam = -1;
-            dist = new double[0];
-            time = new double[0];
-            maxDistance = -1;
             proto.failNext("Phase has no arrivals, possibly due to source depth");
             return new FailedSeismicPhase(proto);
         }

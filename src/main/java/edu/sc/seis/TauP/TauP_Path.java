@@ -302,7 +302,7 @@ public class TauP_Path extends TauP_AbstractRayTool {
 		SvgEarthScaling scaleTrans = calcEarthScaleTrans(arrivalList, distDepthRange);
 		String extraCSS = "";
 
-		extraCSS+=createSurfaceWaveCSS(Arrays.asList(getPhaseNames()))+"\n";
+		extraCSS+=createSurfaceWaveCSS(parsePhaseNameList())+"\n";
 		if (coloring.getColor() == ColorType.phase) {
 			StringBuffer cssPhaseColors = SvgUtil.createPhaseColorCSS(Arrays.asList(getPhaseNames()));
 			extraCSS += cssPhaseColors;

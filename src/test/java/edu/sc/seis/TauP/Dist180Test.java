@@ -62,7 +62,7 @@ public class Dist180Test {
         time.setSourceDepth(0);
         time.clearPhaseNames();
         time.appendPhaseName("PKIKP");
-        List<Arrival> arrivals = time.calculate(180);
+        List<Arrival> arrivals = time.calcAll(time.getSeismicPhases(), List.of(DistanceRay.ofDegrees(180)));
         assertEquals(integrateVelocity(time.modelArgs.getTauModel().getVelocityModel()), arrivals.get(0).getTime(), 0.006);
     }
     

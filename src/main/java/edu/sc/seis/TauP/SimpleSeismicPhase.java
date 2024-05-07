@@ -39,7 +39,7 @@ import static edu.sc.seis.TauP.Arrival.RtoD;
  */
 public class SimpleSeismicPhase implements SeismicPhase {
 
-    ProtoSeismicPhase proto = null;
+    ProtoSeismicPhase proto;
 
     /** Enables debugging output. */
     public transient boolean DEBUG;
@@ -318,7 +318,7 @@ public class SimpleSeismicPhase implements SeismicPhase {
      * laps nor going the long way around.
      *  */
     public List<Arrival> calcTimeExactDistance(double searchDist) {
-        List<Arrival> arrivals = new ArrayList<Arrival>();
+        List<Arrival> arrivals = new ArrayList<>();
         for(int rayNum = 0; rayNum < (dist.length - 1); rayNum++) {
             if(searchDist == dist[rayNum + 1]
                     && rayNum + 1 != dist.length - 1) {
@@ -357,7 +357,6 @@ public class SimpleSeismicPhase implements SeismicPhase {
      * @return
      */
     public Arrival createArrivalAtIndex(int rayNum) {
-        int adjacentRayNum = 0;
         double dRPdDist = 0;
         if (rayParams.length > 1) {
             if (rayNum == 0) {
@@ -534,7 +533,7 @@ public class SimpleSeismicPhase implements SeismicPhase {
 
     @Override
     public double calcRayParamForTakeoffAngle(double takeoffDegree) throws NoArrivalException {
-        if (getPhaseSegments().size() == 0) {
+        if (getPhaseSegments().isEmpty()) {
             throw new NoArrivalException("No phase segments for "+getName());
         }
         double takeoffVelocity;
@@ -698,8 +697,8 @@ public class SimpleSeismicPhase implements SeismicPhase {
     public List<TimeDist> calcPierceTimeDist(Arrival currArrival) {
         double branchDist = 0.0;
         double branchTime = 0.0;
-        double prevBranchTime = 0.0;
-        List<TimeDist> pierce = new ArrayList<TimeDist>();
+        double prevBranchTime;
+        List<TimeDist> pierce = new ArrayList<>();
         /*
          * Find the ray parameter index that corresponds to the arrival ray
          * parameter in the TauModel, ie it is between rayNum and rayNum+1,
@@ -729,8 +728,6 @@ public class SimpleSeismicPhase implements SeismicPhase {
         if (currArrival.getRayParamIndex() == rayParams.length-1) {
             // special case for exactly matching last ray param (often rayparam==0)
             distRayParam = rayParams[currArrival.getRayParamIndex()];
-            distA = dist[currArrival.getRayParamIndex()];
-            distB = dist[currArrival.getRayParamIndex()];
             distRatio = 1;
         } else {
             // normal case, in middle of ray param space
@@ -975,7 +972,7 @@ public class SimpleSeismicPhase implements SeismicPhase {
         for (SeismicPhaseSegment seg : getPhaseSegments()) {
             ArrivalPathSegment segPath = seg.calcPathTimeDist(currArrival, prevEnd, idx++, prevIdx+ getPhaseSegments().size());
 
-            if (segPath.path.size() == 0) {
+            if (segPath.path.isEmpty()) {
                 System.err.println("segPath.size() is 0 "+seg);
                 continue;
             }
@@ -986,8 +983,8 @@ public class SimpleSeismicPhase implements SeismicPhase {
     }
 
     public static List<TimeDist> removeDuplicatePathPoints(List<TimeDist> inPath) {
-        List<TimeDist> outPath = new ArrayList<TimeDist>();
-        if (inPath.size() != 0) {
+        List<TimeDist> outPath = new ArrayList<>();
+        if (!inPath.isEmpty()) {
             TimeDist prev = inPath.get(0);
             outPath.add(prev);
             for (TimeDist td : inPath) {

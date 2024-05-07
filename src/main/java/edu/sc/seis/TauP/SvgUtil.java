@@ -241,11 +241,11 @@ public class SvgUtil {
         return out;
     }
 
-    public static StringBuffer createSurfaceWaveCSS(List<String> phaseNames) {
+    public static StringBuffer createSurfaceWaveCSS(List<PhaseName> phaseNames) {
         StringBuffer out = new StringBuffer();
-        for (String phase : phaseNames) {
-            if (phase.endsWith("kmps")) {
-                out.append("        ."+classForPhase(phase)+" {\n");
+        for (PhaseName phase : phaseNames) {
+            if (phase.getName().endsWith("kmps")) {
+                out.append("        ."+classForPhase(phase.getName())+" {\n");
                 out.append("          stroke-width: 5px;\n");
                 out.append("        }\n");
             }

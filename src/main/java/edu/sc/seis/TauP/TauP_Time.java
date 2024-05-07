@@ -105,17 +105,6 @@ public class TauP_Time extends TauP_AbstractRayTool {
     /* Normal methods */
 
 
-    @Deprecated
-    public List<Arrival> calculate(double degrees) throws TauPException {
-        List<DistanceRay> dList = List.of(DistanceRay.ofDegrees(degrees));
-        return calculate(dList);
-    }
-
-    @Deprecated
-    public List<Arrival> calculate(List<DistanceRay> distanceRays) throws TauPException {
-        return calcTime(distanceRays);
-    }
-
     public Arrival calculateRelativeArrival(double degrees) throws TauModelException {
         Arrival relativeArrival = null;
         if (!relativePhaseName.isEmpty()) {
@@ -229,35 +218,6 @@ public class TauP_Time extends TauP_AbstractRayTool {
             }
         }
     }
-
-    @Deprecated
-    public List<Arrival> calcTime(List<DistanceRay> degreesList) throws TauPException {
-        validateArguments();
-        modelArgs.depthCorrected();
-        SeismicPhase phase;
-        List<Arrival> arrivalList = new ArrayList<>();
-        List<SeismicPhase> phaseList = getSeismicPhases();
-        for (DistanceRay distVal : degreesList) {
-            double degrees = distVal.getDegrees(getRadiusOfEarth());
-            for (int phaseNum = 0; phaseNum < phaseList.size(); phaseNum++) {
-                phase = phaseList.get(phaseNum);
-                List<Arrival> phaseArrivals = distVal.calculate(phase);
-                Arrival relativeArrival = calculateRelativeArrival(degrees);
-                for (Arrival arrival : phaseArrivals) {
-                    arrival.setRelativeToArrival(relativeArrival);
-                }
-                if (!onlyFirst) {
-                    arrivalList.addAll(phaseArrivals);
-                } else {
-                    if (!phaseArrivals.isEmpty()) {
-                        arrivalList.add(phaseArrivals.get(0));
-                    }
-                }
-            }
-        }
-        return Arrival.sortArrivals(arrivalList);
-    }
-
 
     @Override
     public void printResult(PrintWriter out, List<Arrival> arrivalList) throws IOException, TauModelException {
@@ -491,13 +451,8 @@ public class TauP_Time extends TauP_AbstractRayTool {
     }
 
     public void start() throws IOException, TauPException {
-        if (getPhaseNameList().size() == 0) {
-            System.err.println("No phases specified");
-            spec.commandLine().usage(System.err);
-            return;
-        }
         List<RayCalculateable> distanceValues = getDistanceArgs().getRayCalculatables();
-        if((distanceValues.size() != 0)) {
+        if((!distanceValues.isEmpty())) {
             /* enough info given on cmd line, so just do one calc. */
             List<Arrival> arrivalList = calcAll(getSeismicPhases(), distanceValues);
             PrintWriter writer = outputTypeArgs.createWriter(spec.commandLine().getOut());
@@ -629,11 +584,11 @@ public class TauP_Time extends TauP_AbstractRayTool {
                         break;
                     case 'l':
                         // list phases
-                        int numPhases = getPhaseNameList().size();
+                        int numPhases = parsePhaseNameList().size();
                         String output = numPhases + " phases.";
                         Alert.info(output);
                         output = "";
-                        for (PhaseName pn : getPhaseNameList()) {
+                        for (PhaseName pn : parsePhaseNameList()) {
                             output += pn.getName()+",";
                         }
                         output = output.substring(0, output.length()-1);

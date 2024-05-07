@@ -28,7 +28,10 @@ public class SurfaceWaveTest {
         taup.setPhaseNames(List.of(phaseName));
         taup.setSourceDepth(depth);
 
-        List<Arrival> arrivals = taup.calculate(deg);
+
+        List<SeismicPhase> phaseList = taup.getSeismicPhases();
+        List<RayCalculateable> distanceValues = List.of(DistanceRay.ofDegrees(deg));
+        List<Arrival> arrivals = taup.calcAll(phaseList, distanceValues);
         assertTrue(arrivals.size() > 0,
                    phaseName + " has arrivals for depth " + depth + " at dist " + deg);
         assertEquals(1111.95f,
@@ -61,8 +64,9 @@ public class SurfaceWaveTest {
         double longWayDistKm = longWayDistDeg*taup.modelArgs.getTauModel().getRadiusOfEarth()*Math.PI/180.0;
         taup.setPhaseNames(List.of(phaseName));
         taup.setSourceDepth(depth);
-
-        List<Arrival> arrivals = taup.calculate(distDeg);
+        List<SeismicPhase> phaseList = taup.getSeismicPhases();
+        List<RayCalculateable> distanceValues = List.of(DistanceRay.ofDegrees(distDeg));
+        List<Arrival> arrivals = taup.calcAll(phaseList, distanceValues);
         assertEquals(2, arrivals.size(),
                 phaseName + " has arrivals for depth " + depth + " at dist " + distDeg);
         assertTrue(arrivals.get(0).getTime() < arrivals.get(1).getTime());

@@ -152,7 +152,7 @@ public class ScatterTest {
         time.clearPhaseNames();
         time.appendPhaseName("PKKP");
 
-        List<Arrival> arrivals = time.calculate(70);
+        List<Arrival> arrivals = time.calcAll(time.getSeismicPhases(), List.of(DistanceRay.ofDegrees(70)));
         for (Arrival a : arrivals) {
             assertTrue(a.isLongWayAround());
         }
@@ -188,16 +188,17 @@ public class ScatterTest {
         List<Arrival> dRayArrivalList = dRay.calcScatteredPhase(scatPhase);
         assertEquals(1, dRayArrivalList.size());
 
-        List<Arrival> arrivalsAt250a = pierce.calculate(360-110);
+        List<Arrival> arrivalsAt250a = pierce.calcAll(pierce.getSeismicPhases(), List.of(DistanceRay.ofDegrees(360-110)));
         assertEquals(1, arrivalsAt250a.size());
 
-        List<Arrival> arrivals = pierce.calculate(-110);
+
+        List<Arrival> arrivals = pierce.calcAll(pierce.getSeismicPhases(), List.of(DistanceRay.ofDegrees(-110)));
         assertEquals(1, arrivals.size());
         Arrival a_neg110 = arrivals.get(0);
         TimeDist[] p_neg110 = a_neg110.getPierce();
 
 
-        List<Arrival> arrivalsAt250 = pierce.calculate(250);
+        List<Arrival> arrivalsAt250 = pierce.calcAll(pierce.getSeismicPhases(), List.of(DistanceRay.ofDegrees(250)));
         assertEquals(1, arrivalsAt250.size());
         Arrival a_250 = arrivalsAt250.get(0);
         TimeDist[] p_250 = a_250.getPierce();

@@ -28,8 +28,13 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
         }
     }
 
-    public List<PhaseName> getPhaseNameList() throws PhaseParseException {
+    public List<PhaseName> parsePhaseNameList() throws PhaseParseException {
         if (this.phaseNames == null) {
+            if (phaseArgs.isEmpty()) {
+                for (String pStr : extractPhaseNames(DEFAULT_PHASES)) {
+                    appendPhaseName(pStr);
+                }
+            }
             this.phaseNames = new ArrayList<>();
             for (String pStr : phaseArgs.phaseNames) {
                 appendPhaseName(pStr);
@@ -239,9 +244,9 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
     @Deprecated
     public String[] getPhaseNames() {
         try {
-            String[] phases = new String[getPhaseNameList().size()];
-            for (int i = 0; i < getPhaseNameList().size(); i++) {
-                phases[i] = getPhaseNameList().get(i).getName();
+            String[] phases = new String[parsePhaseNameList().size()];
+            for (int i = 0; i < parsePhaseNameList().size(); i++) {
+                phases[i] = parsePhaseNameList().get(i).getName();
             }
             return phases;
         } catch (PhaseParseException e) {
@@ -255,9 +260,9 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
         // in case of empty phase list
         if (getNumPhases() == 0)
             return "";
-        String phases = getPhaseNameList().get(0).getName();
+        String phases = parsePhaseNameList().get(0).getName();
         for (int i = 1; i < getNumPhases(); i++) {
-            phases += "," + getPhaseNameList().get(i).getName();
+            phases += "," + parsePhaseNameList().get(i).getName();
         }
         return phases;
         } catch (PhaseParseException e) {
@@ -291,12 +296,12 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
             // make sure not null string
             return;
         }
-        this.getPhaseNameList().add(phaseName);
+        this.phaseNames.add(phaseName);
     }
 
     public int getNumPhases() {
         try {
-            return getPhaseNameList().size();
+            return parsePhaseNameList().size();
         } catch (PhaseParseException e) {
             throw new RuntimeException(e);
         }
@@ -304,7 +309,7 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
 
     public void clearPhaseNames() {
         phases = null;
-        phaseNames = null;
+        phaseNames = new ArrayList<>();
     }
 
     @Deprecated
@@ -451,7 +456,7 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
     protected synchronized void recalcPhases() throws TauModelException {
         List<SeismicPhase> newPhases = new ArrayList<>();
         TauModel tModDepth = modelArgs.depthCorrected();
-        for (PhaseName phaseName : getPhaseNameList()) {
+        for (PhaseName phaseName : parsePhaseNameList()) {
             String tempPhaseName = phaseName.getName();
             // didn't find it precomputed, so recalculate
             try {
@@ -537,6 +542,10 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
             phaseFileList = phaseFile;
         }
         List<String> phaseFileList = new ArrayList<>();
+
+        public boolean isEmpty() {
+            return phaseNames.isEmpty() && phaseFileList.isEmpty();
+        }
     }
 
 }

@@ -97,7 +97,7 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
             out.println(jsonArray.toString(2));
         } else if (getOutputFormat().equals(OutputTypes.SVG)) {
             String cssExtra = "";
-            cssExtra += createSurfaceWaveCSS(Arrays.asList(getPhaseNames()))+"\n";
+            cssExtra += createSurfaceWaveCSS(parsePhaseNameList())+"\n";
             double maxTime = 0;
             if (coloring.getColor() == ColorType.phase) {
                 StringBuffer cssPhaseColors = SvgUtil.createPhaseColorCSS(Arrays.asList(getPhaseNames()));
