@@ -1002,7 +1002,7 @@ public class SimpleSeismicPhase implements SeismicPhase {
 
     @Override
     public String describe() {
-        String desc = getName() + ":\n";
+        String desc = getName() +" "+(getName().equals(getPuristName()) ? "" : ("("+getPuristName()+")"))+ ":\n";
         return desc+ SeismicPhase.baseDescribe(this)+"\n"+ SeismicPhase.segmentDescribe(this);
     }
 
@@ -1023,6 +1023,7 @@ public class SimpleSeismicPhase implements SeismicPhase {
         PrintWriter out = new PrintWriter(sw);
         out.println("{");
         out.println(SQ+"name"+QCQ+getName()+QCOMMA);
+        out.println(SQ+"puristname"+QCQ+getPuristName()+QCOMMA);
         out.println(SeismicPhase.baseDescribeJSON(this));
         out.println(",");
         out.println(SeismicPhase.segmentDescribeJSON(this));

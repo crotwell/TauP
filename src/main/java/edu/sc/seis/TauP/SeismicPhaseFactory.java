@@ -18,7 +18,6 @@ public class SeismicPhaseFactory {
     double sourceDepth;
     double receiverDepth;
     TauModel tMod;
-    String puristName;
 
     // temp vars used in calculation of phase
     int upgoingRecBranch;
@@ -197,17 +196,12 @@ public class SeismicPhaseFactory {
 
     SimpleSeismicPhase internalCreatePhase() throws TauModelException {
         ArrayList<String> legs = LegPuller.legPuller(name);
-        this.puristName = LegPuller.createPuristName(tMod, legs);
 
         ProtoSeismicPhase proto = parseName(tMod, legs);
         proto.phaseName = name;
         proto.validateSegList();
 
-
         if (proto.isSuccessful()) {
-            if (! this.puristName.equals(proto.getPuristName())) {
-                System.err.println("WARN purist name not same: " + this.puristName + " " + proto.getPuristName());
-            }
             return sumBranches(tMod, proto);
         } else {
             return new FailedSeismicPhase(proto);

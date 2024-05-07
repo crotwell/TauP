@@ -794,16 +794,21 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                 if (zapED) {
                     if ((seg.endAction == TRANSDOWN || seg.endAction == DIFFRACT|| seg.endAction == HEAD)
                             && legName.endsWith("ed")
-                            && seg.isPWave == next.isPWave
+                            && seg.isPWave == next.isPWave || ( seg.legName.equals("Sed") && nextLegName.equals("K"))
                             && !legName.startsWith(nextLegName.substring(0, 1))) {
                         legName = legName.substring(0, 1);
-                    } else if (seg.endAction == REFLECT_TOPSIDE
-                            && (botDepth == tMod.cmbDepth || botDepth == tMod.iocbDepth)) {
+                    } else if ((seg.endAction == REFLECT_TOPSIDE || seg.endAction == REFLECT_TOPSIDE_CRITICAL ||
+                            (seg.endAction == TRANSDOWN && (botDepth == tMod.cmbDepth || botDepth == tMod.iocbDepth)))
+                            && legName.endsWith("ed")) {
+                        // ed not needed as legname changes
                         legName = legName.substring(0, 1);
                     } else if ((seg.endAction == END
-                            || ((seg.endAction == TURN || seg.endAction == TRANSUP) && next.endBranch == 0))
-                            && (prev != null && (prev.endAction == DIFFRACT || prev.endAction == HEAD)
-                            && seg.isPWave == prev.isPWave)
+                            || (seg.endAction == REFLECT_UNDERSIDE && seg.endBranch == 0)
+                            || ((seg.endAction == TURN || seg.endAction == TRANSUP || seg.endAction == REFLECT_UNDERSIDE)
+                                && next.endBranch == 0))
+                            && (prev != null
+                                && (prev.endAction == DIFFRACT || prev.endAction == HEAD || prev.endAction ==TRANSUP)
+                                && seg.isPWave == prev.isPWave && seg.legName.equals(prev.legName))
                     ) {
                         legName = "";
                     }
@@ -818,6 +823,8 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                         name += "c";
                     } else if (botDepth == tMod.iocbDepth) {
                         name += "i";
+                    } else if (botDepth == tMod.mohoDepth) {
+                        name += "vm";
                     } else {
                         name += "v" + (int) (botDepth);
                     }
@@ -828,6 +835,8 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                         name += "c";
                     } else if (botDepth == tMod.iocbDepth) {
                         name += "i";
+                    } else if (botDepth == tMod.mohoDepth) {
+                        name += "m";
                     } else {
                         name += (int) (botDepth);
                     }
@@ -852,7 +861,10 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                 case TRANSUP:
                     if (topDepth == tMod.cmbDepth || topDepth == tMod.iocbDepth || topDepth == tMod.surfaceDepth) {
                         // no char as P,S -> K -> I,J
-                    } else if (topDepth == tMod.mohoDepth && seg.endAction == TRANSUP && next.endAction == END) {
+                    } else if (topDepth == tMod.mohoDepth && seg.endAction == TRANSUP
+                            && (next.endAction == END || (next.endAction == REFLECT_UNDERSIDE && next.endBranch == 0))
+                            && seg.isPWave == next.isPWave
+                    ) {
                         // no char finish at surface
                     } else {
                         name += (int) (topDepth);
@@ -862,8 +874,18 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                     name += "n";
                     break;
                 case DIFFRACT:
+                    if (botDepth == tMod.cmbDepth || botDepth == tMod.iocbDepth) {
+                        name += "diff";
+                    } else {
+                        name += (int) (botDepth)+"diff";
+                    }
+                    break;
                 case TRANSUPDIFFRACT:
-                    name += "diff";
+                    if (topDepth == tMod.cmbDepth || topDepth == tMod.iocbDepth) {
+                        name += "diff";
+                    } else {
+                        name += (int) (topDepth)+"diff";
+                    }
                     break;
                 case END:
                 case END_DOWN:
