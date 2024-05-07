@@ -129,6 +129,8 @@ public class CmdLineOutputTest {
 
     String[] docCmds = new String[] {
             "taup time --mod prem -h 200 -p S,P --deg 57.4",
+            "taup find --max 2 -h 100",
+            "taup find --max 2 --deg 35 -h 100 --time 400 420 --exclude 210",
             "taup pierce --mod prem -h 200 -p S,P --deg 57.4",
             "taup pierce --turn --mod prem -h 200 -p S,P --deg 57.4",
             "taup pierce --mod prem -h 200 -p S --sta 12 34.2 --evt -28 122 --pierce 2591 --nodiscon",
@@ -268,8 +270,11 @@ public class CmdLineOutputTest {
         for (String cmd : docCmds) {
             System.err.println(cmd);
             String filename = fileizeCmd(cmd); // without -o stdout
-            cmd = cmd+" -o stdout";
-            saveDocOutputToFile(cmd, docOutputDir, filename);
+            String cmdStdOut = cmd+" -o stdout";
+            saveTestOutputToFile( cmdStdOut, docOutputDir, filename);
+            PrintStream cmdOut = new PrintStream(new BufferedOutputStream(new FileOutputStream(new File(docOutputDir, filename+".cmd"))));
+            cmdOut.println(cmd);
+            cmdOut.close();
         }
         viewSavedOutputAsHTML(List.of(docCmds), docOutputDir, "Command Line Test Cases");
     }
@@ -549,12 +554,6 @@ public class CmdLineOutputTest {
         }
     }
 
-    public void saveDocOutputToFile(String cmd, File outputDir, String filename) throws Exception {
-        saveTestOutputToFile( cmd, outputDir, filename);
-        PrintStream cmdOut = new PrintStream(new BufferedOutputStream(new FileOutputStream(new File(outputDir, filename+".cmd"))));
-        cmdOut.println(cmd);
-        cmdOut.close();
-    }
     File docOutputDir = new File("src/doc/sphinx/source/examples");
     File testOutputDir = new File("build/cmdLineTest");
 

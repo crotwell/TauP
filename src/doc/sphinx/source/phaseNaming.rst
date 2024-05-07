@@ -34,18 +34,23 @@ the depth to an interface involved in an interaction.
 
 
 1. Symbols that describe wave-type are:
-    =========   ================================================================
-    :code:`P`   compressional wave, upgoing or downgoing, in the crust or mantle
-    :code:`p`   strictly upgoing P wave in the crust or mantle
-    :code:`S`   shear wave, upgoing or downgoing, in the crust or mantle
-    :code:`s`   strictly upgoing S wave in the crust or mantle
-    :code:`K`   compressional wave in the outer core
-    :code:`k`   strictly upgoing compressional wave in the outer core
-    :code:`I`   compressional wave in the inner core
-    :code:`y`   strictly upgoing compressional wave in the inner core
-    :code:`J`   shear wave in the inner core
-    :code:`j`   strictly upgoing shear wave in the inner core
-    =========   ================================================================
+    ===========   ================================================================
+    :code:`P`     compressional wave, upgoing or downgoing, in the crust or mantle
+    :code:`p`     strictly upgoing P wave in the crust or mantle
+    :code:`Ped`   compressional wave, exclusively downgoing, in the crust or mantle
+    :code:`S`     shear wave, upgoing or downgoing, in the crust or mantle
+    :code:`s`     strictly upgoing S wave in the crust or mantle
+    :code:`Sed`   shear wave, exclusively downgoing, in the crust or mantle
+    :code:`K`     compressional wave in the outer core
+    :code:`k`     strictly upgoing compressional wave in the outer core
+    :code:`Ked`   compressional wave, exclusively downgoing, in the outer core
+    :code:`I`     compressional wave in the inner core
+    :code:`y`     strictly upgoing compressional wave in the inner core
+    :code:`Ied`   compressional, exclusively downgoing, wave in the inner core
+    :code:`J`     shear wave in the inner core
+    :code:`j`     strictly upgoing shear wave in the inner core
+    :code:`Jed`   shear wave, exclusively downgoing, wave in the inner core
+    ===========   ================================================================
 
 2. Symbols that describe interactions with interfaces are:
 
@@ -60,10 +65,9 @@ the depth to an interface involved in an interaction.
     :code:`V`      critical topside reflection, used primarily for crustal and mantle interfaces
     :code:`diff`   appended to P or S to represent a diffracted wave along the core mantle boundary, or to K for a diffracted wave along the inner-outer core boundary
     :code:`kmps`   appended to a velocity to represent a horizontal phase velocity (see \ref{kmps} below)
-    :code:`ed`     appended to P, S, K, I or J to represent a exclusively downgoing path, for a receiver below the source (see \ref{Ped} below)
     ============   ================================================================
 
-3.  \label{Ped} The characters :code:`p`, :code:`s`,
+3.  The characters :code:`p`, :code:`s`,
     :code:`k`, :code:`y` and :code:`j` **always** represent
     up-going legs.
     An example is the source to surface leg of the phase :code:`pP`
@@ -150,7 +154,7 @@ the depth to an interface involved in an interaction.
     limit arrivals to just those that turn deeper than a discontinuity (thus avoiding
     travel time curve triplications), even though they have no real interaction with it.
 
-7.  \label{carrotv} The characters :code:`\^\,`, :code:`v` and :code:`V` are new symbols introduced here to
+7.  The characters :code:`\^\,`, :code:`v` and :code:`V` are new symbols introduced here to
     represent bottom-side and top-side reflections, respectively.
     They are followed by a number to
     represent the approximate depth of the reflection or
@@ -222,8 +226,7 @@ the depth to an interface involved in an interaction.
     So, :code:`PKPab` and :code:`PKPbc` are
     both labeled just :code:`PKP` while :code:`PKPdf` is called :code:`PKIKP`.
 
-11  \label{kmps}
-    The symbol :code:`kmps` is used to get the travel time for a
+11  The symbol :code:`kmps` is used to get the travel time for a
     specific horizontal phase velocity.
     For example, :code:`2kmps` represents a horizontal phase
     velocity of 2 kilometers per second.
@@ -231,8 +234,14 @@ the depth to an interface involved in an interaction.
     to have them available to estimate surface wave travel times or to define windows of
     interest for given paths.
 
-12  As a convenience, a \textit{ttimes} phase name compatibility mode is available.
+12  As a convenience, a :code:`ttimes` phase name compatibility mode is available.
     So :code:`ttp` gives
-    you the phase list corresponding to :code:`P` in \textit{ttimes}.
+    you the phase list corresponding to :code:`P` in :code:`ttimes`.
     Similarly there are :code:`tts`, :code:`ttp+`,
     :code:`tts+`, :code:`ttbasic` and :code:`ttall`.
+
+It is also possible to generate a list of all possible phase paths within
+a model, using the :code:`taup find` tool. This takes a
+:code:`--max n` argument that speficies the maximum number of interactions
+that the phase has with discontinuities in the model, other than start,
+end and transmission without phase change.

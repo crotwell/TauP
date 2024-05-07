@@ -10,6 +10,7 @@ Tools
     taup_time
     taup_pierce
     taup_path
+    taup_find
     taup_curve
     taup_phase
     taup_table
@@ -26,6 +27,7 @@ Tools included with the TauP package:
 :code:`taup time`         calculates travel times.
 :code:`taup pierce`       calculates pierce points at model discontinuities and specified depths.
 :code:`taup path`         calculates ray paths, depth versus epicentral distance.
+:code:`taup find`         calculates all possible phases in a model with number of interactions.
 :code:`taup wavefront`    calculates wavefronts in steps of time, depth versus epicentral distance.
 :code:`taup curve`        calculates travel time curves, time versus epicentral distance.
 :code:`taup table`        outputs travel times for a range of depths and distances in an ASCII file
@@ -187,6 +189,7 @@ to the \textit{ttimes} options.
 .. include:: taup_time
 .. include:: taup_pierce
 .. include:: taup_path
+.. include:: taup_find
 .. include:: taup_curve
 .. include:: taup_phase
 .. include:: taup_table
