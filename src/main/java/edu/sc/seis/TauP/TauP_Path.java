@@ -230,20 +230,19 @@ public class TauP_Path extends TauP_AbstractRayTool {
 		}
 
 		if (getGraphicOutputTypeArgs().isGMT()) {
-			for (int i = 0; i < arrivalList.size(); i++) {
-				Arrival currArrival = arrivalList.get(i);
-				double radiusOfEarth = currArrival.getPhase().getTauModel().getRadiusOfEarth();
-				TimeDist[] path = currArrival.getPath();
-				int midSample = path.length / 2;
-				double calcDepth = path[midSample].getDepth();
-				double calcDist = path[midSample].getDistDeg();
-				double radius = radiusOfEarth - calcDepth;
-				if (getGraphicOutputTypeArgs().isGMT()) {
-					SvgEarth.printDistRadius(out, calcDist, radius);
-					out.write( " 10 0 0 9 "
-							+ currArrival.getName() + "\n");
-				}
-			}
+            for (Arrival currArrival : arrivalList) {
+                double radiusOfEarth = currArrival.getPhase().getTauModel().getRadiusOfEarth();
+                TimeDist[] path = currArrival.getPath();
+                int midSample = path.length / 2;
+                double calcDepth = path[midSample].getDepth();
+                double calcDist = path[midSample].getDistDeg();
+                double radius = radiusOfEarth - calcDepth;
+                if (getGraphicOutputTypeArgs().isGMT()) {
+                    SvgEarth.printDistRadius(out, calcDist, radius);
+                    out.write(" 10 0 0 9 "
+                            + currArrival.getName() + "\n");
+                }
+            }
 		}
 		if (getGraphicOutputTypeArgs().isGMT()) {
 			out.write("ENDLABELS\n");

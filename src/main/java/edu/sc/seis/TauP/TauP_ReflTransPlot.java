@@ -445,7 +445,8 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
         cssClassList.add(label);
         XYPlottingData xyp = new XYPlottingData(segments, xLabel, yLabel, label, cssClassList);
         try {
-            double val = calcFn.apply(0.0);
+            // side effect, check type is allowed, ie may be S in fluid
+            calcFn.apply(0.0);
         } catch (VelocityModelException e) {
             // illegal refltrans type for this coef, ie Tss for solid-fluid
             // just skip
@@ -472,11 +473,10 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
             }
             xList.add(i);
             yList.add(val);
-            for (int critIdx=0; critIdx<critSlownesses.length; critIdx++) {
-                if (rayParam < critSlownesses[critIdx] && nextrayParam > critSlownesses[critIdx] ) {
-                    double criti = critSlownesses[critIdx];
-                    double xval = linearRayParam ? criti : Math.asin(criti/oneOverV)*Arrival.RtoD;
-                    val = calcFn.apply(criti);
+            for (double critSlowness : critSlownesses) {
+                if (rayParam < critSlowness && nextrayParam > critSlowness) {
+                    double xval = linearRayParam ? critSlowness : Math.asin(critSlowness / oneOverV) * Arrival.RtoD;
+                    val = calcFn.apply(critSlowness);
                     if (isAbsolute()) {
                         val = Math.abs(val);
                     }
@@ -649,8 +649,6 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
     @CommandLine.Option(names = "--legend", description = "create a legend")
     boolean isLegend = false;
 
-    float mapWidth = 6;
-    int plotOffset = 80;
     String modelType;
 
     protected double depth = -1.0;

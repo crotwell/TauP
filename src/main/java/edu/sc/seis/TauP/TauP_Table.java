@@ -54,8 +54,6 @@ import java.util.List;
         usageHelpAutoWidth = true)
 public class TauP_Table extends TauP_AbstractPhaseTool {
 
-    public static final String LOCSAT = "locsat";
-
     protected String headerFile;
 
     protected double[] depths = {0.00f,
@@ -447,17 +445,17 @@ public class TauP_Table extends TauP_AbstractPhaseTool {
 
     protected void jsonTable(PrintWriter out) throws TauPException, IOException {
         out.println("[");
-        for(int depthNum = 0; depthNum < depths.length; depthNum++) {
-            List<SeismicPhase> phaseList = recalcPhases(parsePhaseNameList(), depths[depthNum]);
-            for (int distNum = 0; distNum < distances.length; distNum++) {
-                List<RayCalculateable> shootables = List.of(DistanceRay.ofDegrees(distances[distNum]));
+        for (double depth : depths) {
+            List<SeismicPhase> phaseList = recalcPhases(parsePhaseNameList(), depth);
+            for (double distance : distances) {
+                List<RayCalculateable> shootables = List.of(DistanceRay.ofDegrees(distance));
                 List<Arrival> arrivals = calcAll(phaseList, shootables);
                 TauP_Time.writeJSON(out, "",
-                    getTauModelName(),
-                    modelArgs.getSourceDepth(),
-                    modelArgs.getReceiverDepth(),
-                    phaseList,
-                    arrivals);
+                        getTauModelName(),
+                        modelArgs.getSourceDepth(),
+                        modelArgs.getReceiverDepth(),
+                        phaseList,
+                        arrivals);
             }
         }
         out.println("]");
@@ -485,22 +483,22 @@ public class TauP_Table extends TauP_AbstractPhaseTool {
         String sep = ",";
         String header = "Model,Distance (deg),Depth (km),Phase,Time (s),RayParam (deg/s),Takeoff Angle,Incident Angle,Purist Distance,Purist Name";
         out.println(header);
-        for(int depthNum = 0; depthNum < depths.length; depthNum++) {
-            List<SeismicPhase> phaseList = recalcPhases(parsePhaseNameList(), depths[depthNum]);
-            for(int distNum = 0; distNum < distances.length; distNum++) {
-                List<Arrival> arrivals = calcAll(getSeismicPhases(), List.of(DistanceRay.ofDegrees(distances[distNum])));
+        for (double depth : depths) {
+            List<SeismicPhase> phaseList = recalcPhases(parsePhaseNameList(), depth);
+            for (double distance : distances) {
+                List<Arrival> arrivals = calcAll(getSeismicPhases(), List.of(DistanceRay.ofDegrees(distance)));
                 for (Arrival currArrival : arrivals) {
                     double moduloDist = currArrival.getModuloDistDeg();
                     String line = modelArgs.getModelName() + sep
                             + Outputs.formatDistance(moduloDist).trim() + sep
                             + Outputs.formatDepth(modelArgs.getSourceDepth()).trim() + sep
-                            + currArrival.getName().trim()+sep
-                            + Outputs.formatTime(currArrival.getTime()).trim()+ sep
-                            +Outputs.formatRayParam(Math.PI / 180.0 * currArrival.getRayParam()).trim()+ sep
-                            +Outputs.formatDistance(currArrival.getTakeoffAngleDegree()).trim()+sep
-                            +Outputs.formatDistance(currArrival.getIncidentAngleDegree()).trim()+sep
-                            +Outputs.formatDistance(currArrival.getDistDeg()).trim()+sep
-                            +currArrival.getPuristName().trim();
+                            + currArrival.getName().trim() + sep
+                            + Outputs.formatTime(currArrival.getTime()).trim() + sep
+                            + Outputs.formatRayParam(Math.PI / 180.0 * currArrival.getRayParam()).trim() + sep
+                            + Outputs.formatDistance(currArrival.getTakeoffAngleDegree()).trim() + sep
+                            + Outputs.formatDistance(currArrival.getIncidentAngleDegree()).trim() + sep
+                            + Outputs.formatDistance(currArrival.getDistDeg()).trim() + sep
+                            + currArrival.getPuristName().trim();
                     out.println(line);
                 }
             }
@@ -510,22 +508,22 @@ public class TauP_Table extends TauP_AbstractPhaseTool {
     }
 
     protected void genericTable(PrintWriter out) throws TauPException {
-        for(int depthNum = 0; depthNum < depths.length; depthNum++) {
-            modelArgs.setSourceDepth(depths[depthNum]); // depth correct happens in modelArgs
-            for(int distNum = 0; distNum < distances.length; distNum++) {
-                List<Arrival> arrivals = calcAll(getSeismicPhases(), List.of(DistanceRay.ofDegrees(distances[distNum])));
+        for (double depth : depths) {
+            modelArgs.setSourceDepth(depth); // depth correct happens in modelArgs
+            for (double distance : distances) {
+                List<Arrival> arrivals = calcAll(getSeismicPhases(), List.of(DistanceRay.ofDegrees(distance)));
                 for (Arrival currArrival : arrivals) {
                     double moduloDist = currArrival.getModuloDistDeg();
                     out.print(modelArgs.getModelName() + " "
-                                   + Outputs.formatDistance(moduloDist) + " "
-                                   + Outputs.formatDepth(modelArgs.getSourceDepth()) + " ");
+                            + Outputs.formatDistance(moduloDist) + " "
+                            + Outputs.formatDepth(modelArgs.getSourceDepth()) + " ");
                     out.print(currArrival.getName());
                     out.print("  "
-                                   + Outputs.formatTime(currArrival.getTime())
-                                   + "  ");
+                            + Outputs.formatTime(currArrival.getTime())
+                            + "  ");
                     out.print(Outputs.formatRayParam(Math.PI / 180.0
-                                                           * currArrival.getRayParam())
-                                                           + "   ");
+                            * currArrival.getRayParam())
+                            + "   ");
                     out.print(Outputs.formatDistance(currArrival.getDistDeg()));
                     out.print("  " + currArrival.getPuristName());
                     out.println();
@@ -566,17 +564,17 @@ public class TauP_Table extends TauP_AbstractPhaseTool {
         if((distances.length - 1) % 10 != 9) {
             out.println();
         }
-        for(int depthNum = 0; depthNum < depths.length; depthNum++) {
-            modelArgs.setSourceDepth(depths[depthNum]); // depth correct happens in modelArgs
-            out.println("#  Travel time for z =    " + depths[depthNum]);
-            for(int distNum = 0; distNum < distances.length; distNum++) {
-                List<Arrival> arrivals = calcAll(getSeismicPhases(), List.of(DistanceRay.ofDegrees(distances[distNum])));
+        for (double depth : depths) {
+            modelArgs.setSourceDepth(depth); // depth correct happens in modelArgs
+            out.println("#  Travel time for z =    " + depth);
+            for (double distance : distances) {
+                List<Arrival> arrivals = calcAll(getSeismicPhases(), List.of(DistanceRay.ofDegrees(distance)));
                 String outString = String.format(float15_4, -1.0) + "    none\n";
                 for (Arrival arrival : arrivals) {
-                    if(distances[distNum] > maxDiff
+                    if (distance > maxDiff
                             && (arrival.getName().endsWith("diff"))) {
                     } else {
-                        outString = String.format(float15_4, arrival.getTime())+ "    " + arrival.getName() + "\n";
+                        outString = String.format(float15_4, arrival.getTime()) + "    " + arrival.getName() + "\n";
                         break;
                     }
                 }

@@ -64,8 +64,6 @@ public class XYSegment {
     }
 
     public double[] minMaxInXRange(double[] priorMinMax, double[] xRange) {
-        double minX = priorMinMax[0];
-        double maxX = priorMinMax[1];
         double minY = priorMinMax[2];
         double maxY = priorMinMax[3];
         for (int i = 0; i < y.length; i++) {
@@ -92,8 +90,6 @@ public class XYSegment {
     public double[] minMaxInYRange(double[] priorMinMax, double[] yRange) {
         double minX = priorMinMax[0];
         double maxX = priorMinMax[1];
-        double minY = priorMinMax[2];
-        double maxY = priorMinMax[3];
         for (int i = 0; i < x.length; i++) {
             if (i > 0) {
                 for (int j = 0; j < 2; j++) {

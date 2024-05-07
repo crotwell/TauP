@@ -89,8 +89,7 @@ public class AK135Test  {
 
                 List<Arrival> arrivals = taup.calcAll(taup.getSeismicPhases(), List.of(DistanceRay.ofDegrees(timeDist.getDistDeg())));
                 if (timeDist.getTime() > 0) {
-                assertTrue(!arrivals.isEmpty(),
-                        "got no arrivals for "+phase+" at deg="+timeDist.getDistDeg()+" depth="+taup.getSourceDepth());
+                    assertFalse(arrivals.isEmpty(), "got no arrivals for " + phase + " at deg=" + timeDist.getDistDeg() + " depth=" + taup.getSourceDepth());
 
                 // assume first?
                 assertEquals(timeDist.getTime(),
@@ -110,11 +109,7 @@ public class AK135Test  {
                 .getResourceAsStream("edu/sc/seis/TauP/" + filename)));
         String line = in.readLine();
         float[] depths = parseLine(line);
-        HashMap<Float, List<TimeDist>> phaseTable = table.get(phase);
-        if (phaseTable == null) {
-            phaseTable = new HashMap<Float, List<TimeDist>>();
-            table.put(phase, phaseTable);
-        }
+        HashMap<Float, List<TimeDist>> phaseTable = table.computeIfAbsent(phase, k -> new HashMap<Float, List<TimeDist>>());
         for (int i = 0; i < depths.length; i++) {
             phaseTable.put(depths[i], new ArrayList<TimeDist>());
         }

@@ -50,7 +50,7 @@ public class TauP_Find extends TauP_Tool {
             walker.allowSWave = false;
         }
         walker.excludeBoundaries(excludeDepth);
-        if (isVerbose() && excludeDepth.size()>0) {
+        if (isVerbose() && !excludeDepth.isEmpty()) {
             System.out.println("Exclude: "+excludeDepth.size()+" depths:");
             for (int i : walker.excludeBranch) {
                 System.out.println(i+" "+walker.tMod.getTauBranch(i, true).getTopDepth()+" km");
@@ -70,9 +70,9 @@ public class TauP_Find extends TauP_Tool {
             timeTool.sourceArgs = sourceArgs;
             timeTool.withAmplitude= withAmplitude;
             List<Arrival> arrivalList = timeTool.calcAll(phaseList,distanceValues);
-            if (times.size()> 0) {
+            if (!times.isEmpty()) {
                 double minTime = times.get(0);
-                double maxTime = minTime;
+                double maxTime;
                 if (times.size()>1) {
                     maxTime = times.get(1);
                 } else {

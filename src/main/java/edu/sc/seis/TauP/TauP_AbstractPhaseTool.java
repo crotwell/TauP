@@ -40,7 +40,7 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
                 appendPhaseName(pStr);
             }
             for (String filename : phaseArgs.phaseFileList) {
-                List<String> pList = null;
+                List<String> pList;
                 try {
                     pList = readPhaseFile(filename);
                 } catch (IOException e) {
@@ -284,14 +284,12 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
 
     public synchronized void appendPhaseName(String phaseName)
             throws PhaseParseException {
-        Iterator<String> it = TauP_AbstractPhaseTool.extractPhaseNames(phaseName).iterator();
-        while (it.hasNext()) {
-            appendPhaseName(PhaseName.parseName(it.next()));
+        for (String s : TauP_AbstractPhaseTool.extractPhaseNames(phaseName)) {
+            appendPhaseName(PhaseName.parseName(s));
         }
     }
 
-    public synchronized void appendPhaseName(PhaseName phaseName) throws PhaseParseException {
-        boolean unique = true;
+    public synchronized void appendPhaseName(PhaseName phaseName) {
         if (phaseName.name == null || phaseName.name.isEmpty()) {
             // make sure not null string
             return;
@@ -434,9 +432,9 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
         List<PhaseName> out = new ArrayList<>();
         String phaseEntry = "";
         String[] namesInList = TauP_AbstractPhaseTool.splitPhaseNameList(phaseList);
-        for (int i = 0; i < namesInList.length; i++) {
+        for (String s : namesInList) {
             try {
-                out.add(PhaseName.parseName(namesInList[i]));
+                out.add(PhaseName.parseName(s));
             } catch (TauModelException e) {
                 Alert.warning("Problem with phase=" + phaseEntry + " "
                         + e.getMessage(), "Skipping this phase: ");
@@ -514,7 +512,7 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
          * names of phases to be used, ie PKIKP.
          */
         @CommandLine.Option(names = {"-p", "--phase", "--ph"}, split = ",", description = "seismic phase names")
-        public void setPhaseNames(List<String> phaseNamesStr) throws PhaseParseException {
+        public void setPhaseNames(List<String> phaseNamesStr) {
             if (tool != null) {
                 tool.clearPhaseNames();
             }
@@ -531,7 +529,7 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
                     }
                 }
             }
-        };
+        }
 
 
         @CommandLine.Option(names = "--phasefile", description = "read list of phase names from file")

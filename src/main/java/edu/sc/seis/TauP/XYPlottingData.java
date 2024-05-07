@@ -21,7 +21,6 @@ public class XYPlottingData {
         this.cssClasses = cssClasses;
     }
 
-    public static final int MIN_IDX = 0;
     public static double[] initMinMax() {
         double minX = Double.MAX_VALUE;
         double maxX = -1*Double.MAX_VALUE;

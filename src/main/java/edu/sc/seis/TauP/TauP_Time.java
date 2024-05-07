@@ -67,7 +67,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
     protected List<SeismicPhase> relativePhaseList = new ArrayList<>();
 
     @CommandLine.Mixin
-    TextOutputTypeArgs outputTypeArgs = new TextOutputTypeArgs(OutputTypes.TEXT, AbstractOutputTypeArgs.STDOUT_FILENAME);
+    TextOutputTypeArgs outputTypeArgs;
 
     @Override
     public String getOutputFormat() {
@@ -104,34 +104,6 @@ public class TauP_Time extends TauP_AbstractRayTool {
 
     /* Normal methods */
 
-
-    public Arrival calculateRelativeArrival(double degrees) throws TauModelException {
-        Arrival relativeArrival = null;
-        if (!relativePhaseName.isEmpty()) {
-            List<SeismicPhase> relPhases = new ArrayList<>();
-            for (String sName : relativePhaseName) {
-                try {
-                    List<SeismicPhase> calcRelPhaseList = SeismicPhaseFactory.createSeismicPhases(
-                            sName,
-                            modelArgs.depthCorrected(),
-                            modelArgs.getSourceDepth(),
-                            modelArgs.getReceiverDepth(),
-                            modelArgs.getScatterer(),
-                            isDEBUG());
-                    relPhases.addAll(calcRelPhaseList);
-                } catch (ScatterArrivalFailException e) {
-                    Alert.warning(e.getMessage(),
-                            "    Skipping this relative phase");
-                    if (isVerbose() || isDEBUG()) {
-                        e.printStackTrace();
-                    }
-                }
-
-            }
-            relativeArrival = SeismicPhase.getEarliestArrival(relPhases, degrees);
-        }
-        return relativeArrival;
-    }
 
     @Override
     public List<Arrival> calcAll(List<SeismicPhase> phaseList, List<RayCalculateable> shootables) throws TauPException {
@@ -233,13 +205,13 @@ public class TauP_Time extends TauP_AbstractRayTool {
         Arrival currArrival;
         int maxNameLength = 5;
         int maxPuristNameLength = 5;
-        for(int j = 0; j < arrivalList.size(); j++) {
-            if(arrivalList.get(j).getName().length() > maxNameLength) {
-                maxNameLength = arrivalList.get(j).getName()
+        for (Arrival arrival : arrivalList) {
+            if (arrival.getName().length() > maxNameLength) {
+                maxNameLength = arrival.getName()
                         .length();
             }
-            if(arrivalList.get(j).getPuristName().length() > maxPuristNameLength) {
-                maxPuristNameLength = arrivalList.get(j).getPuristName()
+            if (arrival.getPuristName().length() > maxPuristNameLength) {
+                maxPuristNameLength = arrival.getPuristName()
                         .length();
             }
         }
@@ -282,8 +254,8 @@ public class TauP_Time extends TauP_AbstractRayTool {
                 out.write("-");
             }
             out.write("\n");
-            for(int j = 0; j < arrivalList.size(); j++) {
-                currArrival = arrivalList.get(j);
+            for (Arrival arrival : arrivalList) {
+                currArrival = arrival;
                 out.print(Outputs.formatDistance(currArrival.getSearchDistDeg()));
                 out.print(Outputs.formatDepth(currArrival.getPhase().getSourceDepth()) + "   ");
                 out.print(String.format(phaseFormat, currArrival.getName()));
@@ -291,10 +263,10 @@ public class TauP_Time extends TauP_AbstractRayTool {
                         + Outputs.formatTime(currArrival.getTime())
                         + "  "
                         + Outputs.formatRayParam(currArrival.getRayParam() / Arrival.RtoD) + "  ");
-                out.print(Outputs.formatDistance(currArrival.getTakeoffAngleDegree())+" ");
-                out.print(Outputs.formatDistance(currArrival.getIncidentAngleDegree())+" ");
+                out.print(Outputs.formatDistance(currArrival.getTakeoffAngleDegree()) + " ");
+                out.print(Outputs.formatDistance(currArrival.getIncidentAngleDegree()) + " ");
                 out.print(Outputs.formatDistance(currArrival.getDistDeg()));
-                if(currArrival.getName().equals(currArrival.getPuristName())) {
+                if (currArrival.getName().equals(currArrival.getPuristName())) {
                     out.print("   = ");
                 } else {
                     out.print("   * ");
@@ -312,8 +284,8 @@ public class TauP_Time extends TauP_AbstractRayTool {
 
                 if (!relativePhaseName.isEmpty()) {
                     if (currArrival.isRelativeToArrival()) {
-                        out.print(" "+Outputs.formatTime(currArrival.getTime() - currArrival.getRelativeToArrival().getTime()));
-                        out.print(" +"+String.format(phaseFormat, currArrival.getRelativeToArrival().getName()));
+                        out.print(" " + Outputs.formatTime(currArrival.getTime() - currArrival.getRelativeToArrival().getTime()));
+                        out.print(" +" + String.format(phaseFormat, currArrival.getRelativeToArrival().getName()));
                     } else {
                         out.print(String.format(phaseFormat, " no arrival"));
                     }
@@ -322,14 +294,14 @@ public class TauP_Time extends TauP_AbstractRayTool {
                 out.println();
             }
         } else if(onlyPrintTime) {
-            for(int j = 0; j < arrivalList.size(); j++) {
-                currArrival = arrivalList.get(j);
+            for (Arrival arrival : arrivalList) {
+                currArrival = arrival;
                 out.print((float) (currArrival.getTime()) + " ");
             }
             out.println();
         } else if(onlyPrintRayP) {
-            for(int j = 0; j < arrivalList.size(); j++) {
-                currArrival = arrivalList.get(j);
+            for (Arrival arrival : arrivalList) {
+                currArrival = arrival;
                 out.write((float) (Math.PI / 180.0 * currArrival.getRayParam())
                         + " ");
             }
@@ -339,11 +311,11 @@ public class TauP_Time extends TauP_AbstractRayTool {
         out.flush();
     }
 
-    public void printResultJSON(PrintWriter out, List<Arrival> arrivalList) throws IOException, TauModelException {
+    public void printResultJSON(PrintWriter out, List<Arrival> arrivalList) throws TauModelException {
         writeJSON(out, "", arrivalList);
     }
 
-    public void writeJSON(PrintWriter pw, String indent, List<Arrival> arrivalList) throws IOException, TauModelException {
+    public void writeJSON(PrintWriter pw, String indent, List<Arrival> arrivalList) throws TauModelException {
         writeJSON(pw, indent,
                 getTauModelName(),
                 modelArgs.getSourceDepth(),
@@ -359,7 +331,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
                                  double depth,
                                  double receiverDepth,
                                  List<SeismicPhase> phases,
-                                 List<Arrival> arrivals) throws IOException {
+                                 List<Arrival> arrivals) {
         writeJSON(pw, indent, modelName, depth, receiverDepth, phases, arrivals,  false, 4.0f);
     }
     public static void writeJSON(PrintWriter pw, String indent,
@@ -369,7 +341,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
                                  List<SeismicPhase> phases,
                                  List<Arrival> arrivals,
                                  boolean withAmplitude,
-                                 float Mw) throws IOException {
+                                 float Mw) {
         String innerIndent = indent+"  ";
         String NL = "\n";
         pw.write("{"+NL);
@@ -418,8 +390,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
         JSONObject out = baseResultAsJSONObject( modelName, depth,  receiverDepth, phases);
         JSONArray outArrivals = new JSONArray();
         out.put("arrivals", outArrivals);
-        for(int j = 0; j < arrivals.size(); j++) {
-            Arrival currArrival = arrivals.get(j);
+        for (Arrival currArrival : arrivals) {
             outArrivals.put(currArrival.asJSONObject());
         }
         return out;
@@ -460,10 +431,10 @@ public class TauP_Time extends TauP_AbstractRayTool {
             writer.close();
         } else {
             /* interactive mode... */
-            long prevTime = 0;
+            long prevTime;
             long currTime;
             char readMode = 'd';
-            double tempDepth = modelArgs.getSourceDepth();
+            double tempDepth;
             setSourceDepth(modelArgs.getSourceDepth());
             StreamTokenizer tokenIn = new StreamTokenizer(new InputStreamReader(System.in));
             tokenIn.parseNumbers();
@@ -508,7 +479,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
                                 Alert.info("degrees=" + degrees);
                             }
                             getDistanceArgs().clear();
-                            getDistanceArgs().setDegreeList(Arrays.asList(degrees));
+                            getDistanceArgs().setDegreeList(List.of(degrees));
                             calcAndPrint(getSeismicPhases(), distanceValues);
                         } else {
                             if(tokenIn.ttype == StreamTokenizer.TT_EOF
@@ -541,6 +512,8 @@ public class TauP_Time extends TauP_AbstractRayTool {
                                     readMode = 'x';
                                 } else if(tokenIn.sval.equalsIgnoreCase("t")) {
                                     readMode = 't';
+                                } else if(tokenIn.sval.equalsIgnoreCase("z")) {
+                                    readMode = 'z';
                                 } else if(tokenIn.sval.equalsIgnoreCase("?")) {
                                     printHelp();
                                 } else {
@@ -615,7 +588,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
                         }
                         if(! getDistanceArgs().hasEventLatLon()) {
                             readMode = 'e';
-                        } else if(getDistanceArgs().getRayCalculatables().size() == 0) {
+                        } else if(getDistanceArgs().getRayCalculatables().isEmpty()) {
                             readMode = 'd';
                         } else {
                             calcAndPrint(getSeismicPhases(), distanceValues);
@@ -641,7 +614,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
                         }
                         if( ! getDistanceArgs().hasStationLatLon()) {
                             readMode = 's';
-                        } else if(getDistanceArgs().getRayCalculatables().size() == 0) {
+                        } else if(getDistanceArgs().getRayCalculatables().isEmpty()) {
                             readMode = 'd';
                         } else {
                             calcAndPrint(getSeismicPhases(), distanceValues);
@@ -713,8 +686,6 @@ public class TauP_Time extends TauP_AbstractRayTool {
                         tokenIn.wordChars('.', '.');
                         tokenIn.ordinaryChars('-', '-');
                         tokenIn.wordChars('-', '-');
-                        String oldModelName = modelArgs.getModelName();
-                        TauModel oldTMod = modelArgs.getTauModel();
                         System.out.print("Enter model name: ");
                         tokenIn.nextToken();
                         if(tokenIn.ttype == StreamTokenizer.TT_WORD) {
@@ -733,7 +704,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
                         tokenIn.nextToken();
                         if(tokenIn.ttype == StreamTokenizer.TT_NUMBER) {
                             takeoffAngle = tokenIn.nval;
-                            getDistanceArgs().setTakeoffAngles(Arrays.asList(takeoffAngle));
+                            getDistanceArgs().setTakeoffAngles(List.of(takeoffAngle));
                             calcAndPrint(getSeismicPhases(), distanceValues);
                         } else {
                             Alert.warning("Expected a number.", "got "
@@ -750,7 +721,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
                         tokenIn.nextToken();
                         if(tokenIn.ttype == StreamTokenizer.TT_NUMBER) {
                             shootRayp = tokenIn.nval;
-                            getDistanceArgs().setShootRayParams(Arrays.asList(shootRayp));
+                            getDistanceArgs().setShootRayParams(List.of(shootRayp));
                             calcAndPrint(getSeismicPhases(), distanceValues);
                         } else {
                             Alert.warning("Expected a number.", "got "
@@ -763,49 +734,8 @@ public class TauP_Time extends TauP_AbstractRayTool {
                     case 'q':
                         return;
                 }
-            } while(tokenIn.ttype == StreamTokenizer.TT_NUMBER
-                    || tokenIn.ttype != StreamTokenizer.TT_WORD
-                    || (tokenIn.ttype == StreamTokenizer.TT_WORD && !tokenIn.sval.equalsIgnoreCase("q")));
+            } while(tokenIn.ttype != StreamTokenizer.TT_WORD || !tokenIn.sval.equalsIgnoreCase("q"));
         }
-    }
-
-    public String getStdUsageHead() {
-        return TauP_Tool.getStdUsageHead(this.getClass());
-    }
-
-    /** Prints the command line arguments common to all TauP tools. */
-    public String getStdUsage() {
-        return getStdUsageHead()
-        + getPhaseUsage()
-        + getDistanceUsage();
-    }
-
-    public String getDistanceUsage() {
-        return "Distance is given by:\n\n"
-                + "-deg degrees       -- distance in degrees,\n"
-                + "-km kilometers     -- distance in kilometers,\n"
-                + "                      assumes radius of earth is 6371km,\n\n"
-                + "or by giving the station and event latitude and lonitude,\n"
-                + "                      assumes a spherical earth,\n\n"
-                + "-sta[tion] lat lon -- sets the station latitude and longitude\n"
-                + "-evt       lat lon -- sets the event latitude and longitude\n\n"
-                + "or by giving the takeoff angle,\n"
-                + "--takeoff angle    -- takeoff angle from the source\n"
-                + "                      zero is down, 90 horizontal, 180 is up\n\n"
-                + "or by giving the ray parameter,\n"
-                + "--shootray param   -- ray parameter from the source in s/deg\n"
-                + "                      up or down is determined by the phase\n\n\n"
-
-        ;
-    }
-
-    public String getLimitUsage() {
-        return "--first            -- only output the first arrival for each phase, no triplications\n"
-                    + "--rayp             -- only output the ray parameter\n"
-                    + "--time             -- only output travel time\n"
-                    + "--rel phasename    -- also output relative travel time\n\n"
-                    + "--json             -- output travel times as json\n\n"
-        ;
     }
 
     @Override

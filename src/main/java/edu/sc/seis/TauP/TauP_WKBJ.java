@@ -34,7 +34,6 @@ import edu.sc.seis.seisFile.mseed3.MSeed3EH;
 import edu.sc.seis.seisFile.mseed3.MSeed3Record;
 import edu.sc.seis.seisFile.mseed3.ehbag.Marker;
 import edu.sc.seis.seisFile.mseed3.ehbag.Path;
-import org.json.JSONException;
 import picocli.CommandLine;
 
 import java.io.*;
@@ -94,7 +93,7 @@ public class TauP_WKBJ extends TauP_AbstractRayTool {
 
 
     @Override
-    public void start() throws IOException, TauModelException, TauPException {
+    public void start() throws IOException, TauPException {
         try {
 
             List<MSeed3Record> allRecords = new ArrayList<>();
@@ -128,8 +127,7 @@ public class TauP_WKBJ extends TauP_AbstractRayTool {
 
         for (DistanceRay distVal : degreesList) {
             double degrees = distVal.getDegrees(getRadiusOfEarth());
-            for (int phaseNum = 0; phaseNum < phaseList.size(); phaseNum++) {
-                SeismicPhase phase = phaseList.get(phaseNum);
+            for (SeismicPhase phase : phaseList) {
                 List<Arrival> phaseArrivals = distVal.calculate(phase);
                 allArrivals.addAll(phaseArrivals);
             }
@@ -178,44 +176,39 @@ public class TauP_WKBJ extends TauP_AbstractRayTool {
 
     public MSeed3EH createEH(double degrees, ZonedDateTime startDateTime, List<Arrival> allArrivals) {
         MSeed3EH eh = new MSeed3EH();
-        try {
-            Float deg = (float) degrees;
-            Float az = distanceArgs.hasAzimuth() ? distanceArgs.getAzimuth().floatValue() : null;
-            Float baz = distanceArgs.hasBackAzimuth() ? distanceArgs.getBackAzimuth().floatValue() : null;
-            Path path = new Path(deg, az, baz);
-            eh.addToBag(path);
 
-            Origin origin = new Origin();
-            origin.setDepth(new RealQuantity((float) modelArgs.getSourceDepth()));
-            origin.setTime(new Time(startDateTime.toInstant()));
+        Float deg = (float) degrees;
+        Float az = distanceArgs.hasAzimuth() ? distanceArgs.getAzimuth().floatValue() : null;
+        Float baz = distanceArgs.hasBackAzimuth() ? distanceArgs.getBackAzimuth().floatValue() : null;
+        Path path = new Path(deg, az, baz);
+        eh.addToBag(path);
 
-            float olat = 0;
-            float olon = 0;
-            if (distanceArgs.hasEventLatLon()) {
-                olat = (float) distanceArgs.getEventList().get(0).getLatitude();
-                olon = (float) distanceArgs.getEventList().get(0).getLongitude();
-            }
-            origin.setLatitude(new RealQuantity(olat));
-            origin.setLongitude(new RealQuantity(olon));
-            Event event = new Event(origin);
-            event.setPreferredOriginID(origin.getPublicId());
+        Origin origin = new Origin();
+        origin.setDepth(new RealQuantity((float) modelArgs.getSourceDepth()));
+        origin.setTime(new Time(startDateTime.toInstant()));
 
-            Magnitude mag = new Magnitude();
-            mag.setMag(new RealQuantity(sourceArgs.getMw()));
-            mag.setType("Mw");
-            event.setMagnitudeList(List.of(mag));
-            event.setPreferredMagnitudeID(mag.getPublicId());
-            eh.addToBag(event);
-            for (Arrival a : allArrivals) {
-                ZonedDateTime arrTime = startDateTime.plusNanos(Math.round(a.getTime() * 1e9));
-                String desc = "";
-                Marker m = new Marker(a.getName(), arrTime, Marker.MARKER_PREDIC_MODEL, desc);
-                eh.addToBag(m);
-            }
-        } catch (JSONException e) {
-            System.err.println(e);
-            e.printStackTrace();
-            throw e;
+        float olat = 0;
+        float olon = 0;
+        if (distanceArgs.hasEventLatLon()) {
+            olat = (float) distanceArgs.getEventList().get(0).getLatitude();
+            olon = (float) distanceArgs.getEventList().get(0).getLongitude();
+        }
+        origin.setLatitude(new RealQuantity(olat));
+        origin.setLongitude(new RealQuantity(olon));
+        Event event = new Event(origin);
+        event.setPreferredOriginID(origin.getPublicId());
+
+        Magnitude mag = new Magnitude();
+        mag.setMag(new RealQuantity(sourceArgs.getMw()));
+        mag.setType("Mw");
+        event.setMagnitudeList(List.of(mag));
+        event.setPreferredMagnitudeID(mag.getPublicId());
+        eh.addToBag(event);
+        for (Arrival a : allArrivals) {
+            ZonedDateTime arrTime = startDateTime.plusNanos(Math.round(a.getTime() * 1e9));
+            String desc = "";
+            Marker m = new Marker(a.getName(), arrTime, Marker.MARKER_PREDIC_MODEL, desc);
+            eh.addToBag(m);
         }
         return eh;
     }
@@ -246,7 +239,7 @@ public class TauP_WKBJ extends TauP_AbstractRayTool {
     public static final int TRANS_IDX = 1;
     public static final int VERT_IDX = 2;
 
-    public List<MSeed3Record> calcWKBJ(List<DistanceRay> degreesList) throws TauPException, IOException {
+    public List<MSeed3Record> calcWKBJ(List<DistanceRay> degreesList) throws TauPException {
         validateArguments();
         modelArgs.depthCorrected();
         List<SeismicPhase> phaseList = getSeismicPhases();
@@ -256,8 +249,7 @@ public class TauP_WKBJ extends TauP_AbstractRayTool {
         for (DistanceRay distVal : degreesList) {
             double degrees = distVal.getDegrees(getRadiusOfEarth());
             List<Arrival> allArrivals = new ArrayList<>();
-            for (int phaseNum = 0; phaseNum < phaseList.size(); phaseNum++) {
-                SeismicPhase phase = phaseList.get(phaseNum);
+            for (SeismicPhase phase : phaseList) {
                 List<Arrival> phaseArrivals = distVal.calculate(phase);
                 allArrivals.addAll(phaseArrivals);
             }
@@ -307,7 +299,7 @@ public class TauP_WKBJ extends TauP_AbstractRayTool {
     }
 
     public static void trapazoid(float[] data, float m, float rise, float dur, float deltaT) {
-        int i = 0;
+        int i;
         int riseIdx = (int) Math.ceil((rise)/deltaT);
         int end = (int) Math.ceil((2*rise+dur)/deltaT);
         if (end >= data.length) {
@@ -540,7 +532,7 @@ public class TauP_WKBJ extends TauP_AbstractRayTool {
         return distanceArgs.getDistances();
     }
 
-    ZonedDateTime defaultOriginTime = ZonedDateTime.of(2000, 01, 01, 0, 0, 0, 0, ZoneId.of("UTC"));
+    ZonedDateTime defaultOriginTime = ZonedDateTime.of(2000, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC"));
 
 
     @CommandLine.Mixin

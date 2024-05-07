@@ -207,24 +207,18 @@ public class TauP_Create extends TauP_Tool {
 
         SlownessModel.DEBUG = isDEBUG();
         sMod = new SphericalSModel(vMod,
-                                   Double.valueOf(toolProps.getProperty("taup.create.minDeltaP",
-                                                                        "0.1"))
-                                           .doubleValue(),
-                                   Double.valueOf(toolProps.getProperty("taup.create.maxDeltaP",
-                                                                        "11.0"))
-                                           .doubleValue(),
-                                   Double.valueOf(toolProps.getProperty("taup.create.maxDepthInterval",
-                                                                        "115.0"))
-                                           .doubleValue(),
-                                   Double.valueOf(toolProps.getProperty("taup.create.maxRangeInterval",
-                                                                        "2.5"))
-                                           .doubleValue()*Math.PI/180,
-                                   Double.valueOf(toolProps.getProperty("taup.create.maxInterpError",
-                                                                        "0.05"))
-                                           .doubleValue(),
-                                   Boolean.valueOf(toolProps.getProperty("taup.create.allowInnerCoreS",
-                                                                         "true"))
-                                           .booleanValue(),
+                Double.parseDouble(toolProps.getProperty("taup.create.minDeltaP",
+                        "0.1")),
+                Double.parseDouble(toolProps.getProperty("taup.create.maxDeltaP",
+                        "11.0")),
+                Double.parseDouble(toolProps.getProperty("taup.create.maxDepthInterval",
+                        "115.0")),
+                Double.parseDouble(toolProps.getProperty("taup.create.maxRangeInterval",
+                        "2.5")) *Math.PI/180,
+                Double.parseDouble(toolProps.getProperty("taup.create.maxInterpError",
+                        "0.05")),
+                Boolean.parseBoolean(toolProps.getProperty("taup.create.allowInnerCoreS",
+                        "true")),
                                    SlownessModel.DEFAULT_SLOWNESS_TOLERANCE);
         if(isVerbose()) {
             System.err.println("Parameters are:");

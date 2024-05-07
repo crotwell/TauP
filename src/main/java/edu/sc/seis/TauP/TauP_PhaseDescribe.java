@@ -19,19 +19,6 @@ public class TauP_PhaseDescribe extends TauP_AbstractPhaseTool {
         outputTypeArgs = (TextOutputTypeArgs)abstractOutputTypeArgs;
     }
 
-    /** Prints the command line arguments common to all TauP tools. */
-    public String getStdUsage() {
-        return TauP_Tool.getStdUsageHead(this.getClass())
-                + "-ph phase list        -- comma separated phase list\n"
-                + "-pf phasefile         -- file containing phases\n\n"
-                + "-mod[el] modelname    -- use velocity model \"modelname\" for calculations\n"
-                + "                         Default is iasp91.\n\n"
-                + "-h depth              -- source depth in km\n\n"
-                + "--stadepth depth      -- receiver depth in km\n\n"
-                + "--scat[ter] depth deg -- scattering depth and distance\n"
-                + "--dump                -- dump raw sample points\n\n\n";
-    }
-
     /** Dumps raw interpolation points for phase. */
     public boolean dump = false;
 

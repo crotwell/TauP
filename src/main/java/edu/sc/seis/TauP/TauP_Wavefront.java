@@ -51,9 +51,6 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
     public String getOutputFormat() {
         return outputTypeArgs.getOutputFormat();
     }
-    Map<SeismicPhase, Map<Float, List<TimeDist>>> result;
-
-    
     
     public TauP_Wavefront() {
         super(new GraphicOutputTypeArgs(OutputTypes.SVG, "taup_wavefront"));
@@ -203,7 +200,7 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
             maxTime = Math.max(maxTime, phase.getMaxTime());
             Map<Double, List<WavefrontPathSegment>> wavefrontPathSegments = calcIsochronSegmentsForPhase(phase, timeStep);
             for (Double timeVal : wavefrontPathSegments.keySet()) {
-                if ( ! out.keySet().contains(timeVal)) {
+                if ( ! out.containsKey(timeVal)) {
                     out.put(timeVal, new ArrayList<>());
                 }
                 out.get(timeVal).addAll(wavefrontPathSegments.get(timeVal));
@@ -215,7 +212,7 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
     public Map<Double, List<WavefrontPathSegment>> calcIsochronSegmentsForPhase(SeismicPhase phase, double timeStep) {
         int totalNumSegments = (int) Math.floor(phase.getMaxTime()/timeStep);
         int waveSegIdx = 0;
-        List<Arrival> allArrival = new ArrayList<Arrival>();
+        List<Arrival> allArrival = new ArrayList<>();
         for (int i=0; i<phase.getNumRays(); i++) {
             allArrival.add(phase.createArrivalAtIndex(i));
         }
@@ -274,7 +271,6 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
                             curWaveSeg = new WavefrontPathSegment(tdList, curPathSeg.isPWave, curPathSeg.segmentName,
                                     prevEnd, waveSegIdx++, totalNumSegments, phase, timeVal);
                             wavefrontSegments.add(curWaveSeg);
-                            curWaveSeg = null;
                             done = false;
                             prevTD = currTD;
                             break;
@@ -339,7 +335,6 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
 
                             } else {
                                 // no more points in this arrival
-                                curPathSeg = null;
                                 break;
                             }
                         }

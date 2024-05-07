@@ -156,11 +156,11 @@ public class TauP_SetSac extends TauP_AbstractPhaseTool {
 
         if (f.isDirectory()) {
             File[] subfiles = f.listFiles();
-            for (int j = 0; j < subfiles.length; j++) {
-                if (subfiles[j].getName().startsWith(".")) {
+            for (File subfile : subfiles) {
+                if (subfile.getName().startsWith(".")) {
                     continue;
                 }
-                processSacFile(subfiles[j]);
+                processSacFile(subfile);
             }
             return;
         }
@@ -285,31 +285,6 @@ public class TauP_SetSac extends TauP_AbstractPhaseTool {
             sacFile.getHeader().setTHeader(headerNum, arrivalTime, arrival.getName());
             sacFile.getHeader().setUserHeader(headerNum, (float)arrival.getRayParam());
         }
-    }
-
-    public String getStdUsage() {
-        String className = this.getClass().getName();
-        className = className.substring(className.lastIndexOf('.') + 1
-        );
-        return "Usage: " + className.toLowerCase() + " [arguments]"
-        +"  or, for purists, java "
-                + this.getClass().getName() + " [arguments]"
-        +"\nArguments are:"
-        +"-ph phase list     -- comma separated phase list,\n"
-                + "                      use phase-# to specify the sac header,\n"
-                + "                      for example, ScS-8 puts ScS in t8\n"
-                + "-pf phasefile      -- file containing phases\n\n"
-                + "-mod[el] modelname -- use velocity model \"modelname\" for calculations\n"
-                + "                      Default is iasp91.\n\n";
-    }
-
-    public String getUsageTail() {
-        return "\n"
-                + "--prop [propfile]   -- set configuration properties\n"
-                + "--debug             -- enable debugging output\n"
-                + "--verbose           -- enable verbose output\n"
-                + "--version           -- print the version\n"
-                + "--help              -- print this out, but you already know that!\n";
     }
 
     /**

@@ -321,10 +321,9 @@ public class SeismicPhaseSegment {
 		ArrayList<TimeDist[]> pathList = new ArrayList<>();
 		if ( ! isFlat) {
 			int bStep = isDownGoing ? 1 : -1;
-			for (int i = startBranch; (isDownGoing && i <= endBranch) || (!isDownGoing && i >= endBranch); i += bStep) {
-				int branchNum = i;
+			for (int branchNum = startBranch; (isDownGoing && branchNum <= endBranch) || (!isDownGoing && branchNum >= endBranch); branchNum += bStep) {
 				if (ToolRun.DEBUG) {
-					System.err.println("i=" + i + " branchNum=" + branchNum
+					System.err.println(" branchNum=" + branchNum
 							+ " isPWave=" + isPWave + " downgoing="
 							+ isDownGoing);
 				}
@@ -388,19 +387,19 @@ public class SeismicPhaseSegment {
 		if (currArrival.isLongWayAround()) {
 			longWayFactor = -1;
 		}
-		for(int i = 0; i < pathList.size(); i++) {
-			branchPath = pathList.get(i);
-			for(int j = 0; j < branchPath.length; j++) {
-				prev = cummulative;
-				cummulative = new TimeDist(cummulative.getP(),
-						cummulative.getTime()+branchPath[j].getTime(),
-						cummulative.getDistRadian()+longWayFactor*branchPath[j].getDistRadian(),
-						branchPath[j].getDepth());
-				outPath.add(cummulative);
+        for (TimeDist[] timeDists : pathList) {
+            branchPath = timeDists;
+            for (TimeDist timeDist : branchPath) {
+                prev = cummulative;
+                cummulative = new TimeDist(cummulative.getP(),
+                        cummulative.getTime() + timeDist.getTime(),
+                        cummulative.getDistRadian() + longWayFactor * timeDist.getDistRadian(),
+                        timeDist.getDepth());
+                outPath.add(cummulative);
 
-				numAdded++;
-			}
-		}
+                numAdded++;
+            }
+        }
 		outPath = ArrivalPathSegment.trimDuplicates(outPath);
 		ArrivalPathSegment pathSeg = new ArrivalPathSegment(outPath, isPWave, legName, prevEnd, currArrival,
 				this, segmentIndex, totalNumSegments);
@@ -422,10 +421,9 @@ public class SeismicPhaseSegment {
 		VelocityModel vMod = getTauModel().getVelocityModel();
 		if ( ! isFlat) {
 			int bStep = isDownGoing ? 1 : -1;
-			for (int i = startBranch; (isDownGoing && i < endBranch) || (!isDownGoing && i > endBranch); i += bStep) {
-				int branchNum = i;
+			for (int branchNum = startBranch; (isDownGoing && branchNum < endBranch) || (!isDownGoing && branchNum > endBranch); branchNum += bStep) {
 				if (ToolRun.DEBUG) {
-					System.err.println("i=" + i + " branchNum=" + branchNum
+					System.err.println(" branchNum=" + branchNum
 							+ " isPWave=" + isPWave + " downgoing="
 							+ isDownGoing);
 				}

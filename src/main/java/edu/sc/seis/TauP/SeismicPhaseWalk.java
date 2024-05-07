@@ -60,7 +60,7 @@ public class SeismicPhaseWalk {
                 endingSegments.add(cons);
             }
         }
-        endingSegments.sort(Comparator.comparingInt(s -> s.size()));
+        endingSegments.sort(Comparator.comparingInt(ProtoSeismicPhase::size));
         endingSegments = cleanDuplicates(endingSegments);
         return endingSegments;
     }
@@ -156,8 +156,7 @@ public class SeismicPhaseWalk {
         List<ProtoSeismicPhase> sameSize = new ArrayList<>();
 
         int currSize = in.get(0).size();
-        for (int i = 0; i < in.size(); i++) {
-            ProtoSeismicPhase next = in.get(i);
+        for (ProtoSeismicPhase next : in) {
             if (currSize == next.size()) {
                 List<ProtoSeismicPhase> merged = new ArrayList<>();
                 for (ProtoSeismicPhase p : sameSize) {
@@ -176,9 +175,7 @@ public class SeismicPhaseWalk {
                 currSize = next.size();
             }
         }
-        if (!sameSize.isEmpty()) {
-            out.addAll(sameSize);
-        }
+        out.addAll(sameSize);
         return out;
     }
 
@@ -193,7 +190,7 @@ public class SeismicPhaseWalk {
             if (cS.isPWave != oS.isPWave
                     || cS.isDownGoing != oS.isDownGoing
                     || cS.endAction != oS.endAction
-                    || cS.legName != oS.legName) {
+                    || !Objects.equals(cS.legName, oS.legName)) {
                 return false;
             }
             if (cS.isDownGoing) {
@@ -228,7 +225,8 @@ public class SeismicPhaseWalk {
                 } else if (cS.endBranch < oS.endBranch) {
                     SeismicPhaseSegment m = new SeismicPhaseSegment(cS.tMod, cS.startBranch, oS.endBranch, cS.isPWave, cS.endAction, cS.isDownGoing, cS.legName, oS.minRayParam, cS.maxRayParam);
                     out.add(m);
-                } else if (cS.endBranch > oS.endBranch) {
+                } else  {
+                    //if (cS.endBranch > oS.endBranch)
                     SeismicPhaseSegment m = new SeismicPhaseSegment(cS.tMod, cS.startBranch, oS.endBranch, cS.isPWave, cS.endAction, cS.isDownGoing, cS.legName, cS.minRayParam, oS.maxRayParam);
                     out.add(m);
                 }
@@ -238,7 +236,8 @@ public class SeismicPhaseWalk {
                 } else if (cS.startBranch < oS.startBranch) {
                     SeismicPhaseSegment m = new SeismicPhaseSegment(cS.tMod, oS.startBranch, oS.endBranch, cS.isPWave, cS.endAction, cS.isDownGoing, cS.legName, oS.minRayParam, cS.maxRayParam);
                     out.add(m);
-                } else if (cS.startBranch > oS.startBranch) {
+                } else {
+                    //if (cS.startBranch > oS.startBranch) {
                     SeismicPhaseSegment m = new SeismicPhaseSegment(cS.tMod, oS.startBranch, oS.endBranch, cS.isPWave, cS.endAction, cS.isDownGoing, cS.legName, cS.minRayParam, oS.maxRayParam);
                     out.add(m);
                 }
@@ -313,9 +312,7 @@ public class SeismicPhaseWalk {
     public List<ProtoSeismicPhase> nextLegs(TauModel tMod, ProtoSeismicPhase segmentList, boolean isPWave) throws TauModelException {
         List<ProtoSeismicPhase> outTree = new ArrayList<>();
         SeismicPhaseSegment prevEndSeg = segmentList.get(segmentList.size()-1);
-        TauBranch prevEndBranch = tMod.getTauBranch(prevEndSeg.endBranch, prevEndSeg.isPWave);
         int startBranchNum;
-        TauBranch startBranch;
 
         if (isPWave != prevEndSeg.isPWave) {
             if (prevEndSeg.isDownGoing && excludeBranch.contains(prevEndSeg.endBranch + 1)) {

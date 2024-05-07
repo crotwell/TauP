@@ -103,10 +103,6 @@ public abstract class TauP_Tool implements Callable<Integer> {
         abstractOutputTypeArgs.setOutputFormat(val);
     }
     
-    public String getOutFileBase() {
-        return abstractOutputTypeArgs.getOutFileBase();
-    }
-    
     public void setOutFileBase(String outFileBase) {
         abstractOutputTypeArgs.setOutFileBase(outFileBase);
     }
@@ -140,13 +136,12 @@ public abstract class TauP_Tool implements Callable<Integer> {
     }
 
     public abstract void init() throws TauPException;
-    public abstract void start() throws IOException, TauModelException, TauPException;
+    public abstract void start() throws IOException, TauPException;
     public abstract void destroy() throws TauPException;
     
     public static String toolNameFromClass(Class toolClass) {
         String className = toolClass.getName();
-        className = className.substring(className.lastIndexOf('.') + 1,
-                                        className.length());
+        className = className.substring(className.lastIndexOf('.') + 1);
         String toolName = className;
         if (toolName.startsWith("TauP_")) {
             toolName = toolName.replace('_', ' ');
@@ -177,15 +172,6 @@ public abstract class TauP_Tool implements Callable<Integer> {
                 + "--stadepth depth   -- receiver depth in km\n"
                 + "--scat[ter] depth deg   -- scattering depth and distance\n\n"
         ;
-    }
-
-    public static String getStdUsageTail() {
-        return "\n-o [stdout|outfile]         -- output is redirected to stdout or to the \"outfile\" file\n"
-                + "--prop [propfile]   -- set configuration properties\n"
-                + "--debug             -- enable debugging output\n"
-                + "--verbose           -- enable verbose output\n"
-                + "--version           -- print the version\n"
-                + "--help              -- print this out, but you already know that!\n";
     }
 
     public abstract void validateArguments() throws TauPException;

@@ -82,7 +82,7 @@ public class TauP_VelocityMerge extends TauP_Tool {
 
     @Override
     public void validateArguments() throws TauModelException {
-        if (overlayModelArgs.getModelFilename() == null || overlayModelArgs.getModelFilename().length()==0) {
+        if (overlayModelArgs.getModelFilename() == null || overlayModelArgs.getModelFilename().isEmpty()) {
             throw new CommandLine.ParameterException(spec.commandLine(), "merge model cannot be empty, use one of --ndmerge or --tvelmerge");
         }
     }
@@ -117,7 +117,7 @@ public class TauP_VelocityMerge extends TauP_Tool {
     }
     String outfile = "stdout";
 
-    @CommandLine.ArgGroup(exclusive = true, multiplicity = "1", heading = "Merge Velocity Model %n")
+    @CommandLine.ArgGroup(multiplicity = "1", heading = "Merge Velocity Model %n")
     OverlayVelocityModelArgs overlayModelArgs = new OverlayVelocityModelArgs();
 
     @CommandLine.Option(names = {"--smoothtop"}, description = "smooth merge at top")
