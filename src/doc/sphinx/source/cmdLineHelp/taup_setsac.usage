@@ -1,18 +1,30 @@
-Usage: taup_setsac [arguments]  or, for purists, java edu.sc.seis.TauP.TauP_SetSac [arguments]
-Arguments are:-ph phase list     -- comma separated phase list,
-                      use phase-# to specify the sac header,
-                      for example, ScS-8 puts ScS in t8
--pf phasefile      -- file containing phases
-
--mod[el] modelname -- use velocity model "modelname" for calculations
-                      Default is iasp91.
-
---evdpkm            -- sac depth header is in km, default is meters
-
---prop [propfile]   -- set configuration properties
---debug             -- enable debugging output
---verbose           -- enable verbose output
---version           -- print the version
---help              -- print this out, but you already know that!
-sacfilename [sacfilename ...]
-Ex: taup_setsac --mod S_prem -ph S-8,ScS-9 wmq.r wmq.t wmq.zputs the first S arrival in T8 and ScS in T9
+Usage: taup setsac [--debug] [--evdpkm] [--help] [--verbose]
+                   [--prop=<toolPropsFilename>] [[--mod=<modelname>]
+                   [-h=<sourceDepth>] [--stadepth=depth] [--scat=s s]...]
+                   [[-p=<phaseNames>[,<phaseNames>...]]...
+                   [--phasefile=<phaseFiles>]...] [<sacFileNames>...]
+set headers to travel times of phases using depth and distance from headers
+      [<sacFileNames>...]   SAC files to process
+      --debug               enable debugging output
+      --evdpkm              sac depth header is in km, default is meters
+      --help                display this help message
+      --prop=<toolPropsFilename>
+                            load defaults from properties file
+      --verbose             enable verbose output
+Model Args
+  -h, --evdepth, --sourcedepth=<sourceDepth>
+                            source depth in km
+      --mod, --model=<modelname>
+                            use velocity model "modelname" for calculations
+                                                  Default is iasp91.
+      --scat, --scatter=s s scattering depth and distance in degrees, which may
+                              be negative. Only effects phases with 'o' or 'O'
+                              in the phase name.
+      --stadepth, --receiverdepth=depth
+                            the receiver depth in km for stations not at the
+                              surface
+Phase Names
+  -p, --ph, --phase=<phaseNames>[,<phaseNames>...]
+                            seismic phase names
+      --phasefile=<phaseFiles>
+                            read list of phase names from file

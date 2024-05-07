@@ -1,11 +1,70 @@
-Usage: taup refltransplot [arguments]
-  or, for purists, java edu.sc.seis.TauP.TauP_ReflTransPlot [arguments]
-
-Arguments are:
-
--o [stdout|outfile]         -- output is redirected to stdout or to the "outfile" file
---prop [propfile]   -- set configuration properties
---debug             -- enable debugging output
---verbose           -- enable verbose output
---version           -- print the version
---help              -- print this out, but you already know that!
+Usage: taup refltrans [--abs] [--debug] [--down] [--help] [--legend] [--pwave]
+                      [--shwave] [--swave] [--up] [--verbose]
+                      [--anglestep=<angleStep>] [--depth=<depth>]
+                      [--mapwidth=<mapwidth>] [--mapwidthunit=<mapWidthUnit>]
+                      [-o=<outFile>] [--prop=<toolPropsFilename>]
+                      [--rpstep=<rayparamStep>] [-x=<xAxisType>] [--xminmax=x
+                      x]... [--yminmax=y y]... [--layer=<layerParams>
+                      <layerParams> <layerParams> <layerParams> <layerParams>
+                      <layerParams>]... [-y=<yAxisType> [<yAxisType>
+                      [<yAxisType> [<yAxisType> [<yAxisType> [<yAxisType>
+                      [<yAxisType> [<yAxisType> [<yAxisType>
+                      [<yAxisType>]]]]]]]]]]... [--text | --json | --gmt |
+                      --svg] [[--mod=<modelname>] [-h=<sourceDepth>]
+                      [--stadepth=depth] [--scat=s s]...]
+plot reflection and transmission coefficients for a discontinuity
+      --abs                absolute value of amplitude factor
+      --anglestep=<angleStep>
+                           step in degrees when x is degrees
+      --debug              enable debugging output
+      --depth=<depth>      Depth in model to get boundary parameters
+      --down
+      --help               display this help message
+      --layer=<layerParams> <layerParams> <layerParams> <layerParams>
+        <layerParams> <layerParams>
+                           inbound and transmitted layer parameters, vp, vs,
+                             rho, vp, vs, rho
+      --legend             create a legend
+      --mapwidth=<mapwidth>
+                           plot width in inches for GMT, pixels for SVG.
+      --mapwidthunit=<mapWidthUnit>
+                           plot width unit for GMT. Default is i for inchs
+  -o, --output=<outFile>   output to file, default is stdout.
+      --prop=<toolPropsFilename>
+                           load defaults from properties file
+      --pwave              incident P wave
+      --rpstep=<rayparamStep>
+                           step in ray param when x is ray param
+      --shwave             incident SH wave
+      --swave              incident S wave
+      --up
+      --verbose            enable verbose output
+  -x=<xAxisType>           X axis data type, one of degree, rayparam, default
+                             is degree
+      --xminmax=x x        min and max x axis for plotting
+  -y=<yAxisType> [<yAxisType> [<yAxisType> [<yAxisType> [<yAxisType>
+       [<yAxisType> [<yAxisType> [<yAxisType> [<yAxisType> [<yAxisType>]]]]]]]]]
+                           Y axis data type, one of Rpp, Rps, Rsp, Rss, Tpp,
+                             Tps, Tsp, Tss, Rshsh, Tshsh, RppEnergy, TppEnergy,
+                             RpsEnergy, TpsEnergy, RspEnergy, TspEnergy,
+                             RssEnergy, TssEnergy, RshshEnergy, TshshEnergy,
+                             RpAngle, RsAngle, TpAngle, TsAngle, default is all
+      --yminmax=y y        min and max y axis for plotting
+Output Type
+      --gmt                outputs as GMT
+      --json               outputs as JSON
+      --svg                outputs as SVG
+      --text               outputs as text
+Model Args
+  -h, --evdepth, --sourcedepth=<sourceDepth>
+                           source depth in km
+      --mod, --model=<modelname>
+                           use velocity model "modelname" for calculations
+                                                 Default is iasp91.
+      --scat, --scatter=s s
+                           scattering depth and distance in degrees, which may
+                             be negative. Only effects phases with 'o' or 'O'
+                             in the phase name.
+      --stadepth, --receiverdepth=depth
+                           the receiver depth in km for stations not at the
+                             surface

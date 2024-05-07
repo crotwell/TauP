@@ -1,11 +1,12 @@
-Usage: taup version [arguments]
-  or, for purists, java edu.sc.seis.TauP.TauP_Version [arguments]
-
-Arguments are:
-
--o [stdout|outfile]         -- output is redirected to stdout or to the "outfile" file
---prop [propfile]   -- set configuration properties
---debug             -- enable debugging output
---verbose           -- enable verbose output
---version           -- print the version
---help              -- print this out, but you already know that!
+Usage: taup version [--debug] [--help] [--verbose] [-o=<outFile>]
+                    [--prop=<toolPropsFilename>] [--text | --json]
+print version
+      --debug              enable debugging output
+      --help               display this help message
+  -o, --output=<outFile>   output to file, default is stdout.
+      --prop=<toolPropsFilename>
+                           load defaults from properties file
+      --verbose            enable verbose output
+Output Type
+      --json               outputs as JSON
+      --text               outputs as text

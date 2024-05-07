@@ -15,11 +15,9 @@ Tools
     taup_table
     taup_setsac
     taup_velplot
-    taup_slowplot
     taup_velmerge
     taup_wavefront
     taup_create
-    taup_gui
 
 
 Tools included with the TauP package:
@@ -29,12 +27,10 @@ Tools included with the TauP package:
 :code:`taup pierce`       calculates pierce points at model discontinuities and specified depths.
 :code:`taup path`         calculates ray paths, depth versus epicentral distance.
 :code:`taup wavefront`    calculates wavefronts in steps of time, depth versus epicentral distance.
-:code:`taup gui`          a GUI that incorporates the time, pierce and path tools.
 :code:`taup curve`        calculates travel time curves, time versus epicentral distance.
 :code:`taup table`        outputs travel times for a range of depths and distances in an ASCII file
 :code:`taup setsac`       puts theoretical arrival times into sac header variables.
 :code:`taup velplot`      output velocity model as a gmt script.
-:code:`taup slowplot`     output slowness model as a gmt script.
 :code:`taup phase`        textual description of the path the phase takes through the model.
 :code:`taup create`       creates a .taup model from a velocity model.
 =======================   =========================================================================
@@ -196,8 +192,6 @@ to the \textit{ttimes} options.
 .. include:: taup_table
 .. include:: taup_setsac
 .. include:: taup_velplot
-.. include:: taup_slowplot
 .. include:: taup_velmerge
 .. include:: taup_wavefront
 .. include:: taup_create
-.. include:: taup_gui

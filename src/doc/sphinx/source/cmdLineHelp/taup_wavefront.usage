@@ -1,29 +1,61 @@
-Usage: taup wavefront [arguments]
-  or, for purists, java edu.sc.seis.TauP.TauP_Wavefront [arguments]
-
-Arguments are:
--ph phase list     -- comma separated phase list
--pf phasefile      -- file containing phases
-
--mod[el] modelname -- use velocity model "modelname" for calculations
-                      Default is iasp91.
-
--h depth           -- source depth in km
-
---stadepth depth   -- receiver depth in km
---scat[ter] depth deg   -- scattering depth and distance
-
---gmt             -- outputs path as a complete GMT script.
---svg             -- outputs path as a complete SVG file.
---mapwidth        -- sets map width for GMT script.
---rays  num      -- number of raypaths/distances to sample.
---timestep  num  -- steps in time (seconds) for output.
---timefiles      -- outputs each time into a separate .ps file within the gmt script.
---negdist        -- outputs negative distance as well so wavefronts are in both halves.
-
--o [stdout|outfile]         -- output is redirected to stdout or to the "outfile" file
---prop [propfile]   -- set configuration properties
---debug             -- enable debugging output
---verbose           -- enable verbose output
---version           -- print the version
---help              -- print this out, but you already know that!
+Usage: taup wavefront [--debug] [--help] [--legend] [--negdist]
+                      [--onlynameddiscon] [--timefiles] [--verbose]
+                      [--color=<coloring>] [--mapwidth=<mapwidth>]
+                      [--mapwidthunit=<mapWidthUnit>] [-o=<outFile>]
+                      [--prop=<toolPropsFilename>] [--timestep=<timeStep>]
+                      [--xaxis=<distAxisType>] [--yaxis=<depthAxisType>]
+                      [--degminmax=deg deg] [--depthminmax=km km]
+                      [[--mod=<modelname>] [-h=<sourceDepth>]
+                      [--stadepth=depth] [--scat=s s]...] [[-p=<phaseNames>[,
+                      <phaseNames>...]]... [--phasefile=<phaseFiles>]...]
+                      [--text | --json | --gmt | --svg]
+plot wavefronts of seismic phases at steps in time
+      --color=<coloring>    style of coloring for paths and wavefronts, one of
+                              auto, wavetype, phase
+      --debug               enable debugging output
+      --degminmax=deg deg   min and max distance in degrees for plotting
+      --depthminmax=km km   min and max depth, km,  for plotting
+      --help                display this help message
+      --legend              create a legend
+      --mapwidth=<mapwidth> plot width in inches for GMT, pixels for SVG.
+      --mapwidthunit=<mapWidthUnit>
+                            plot width unit for GMT. Default is i for inchs
+      --negdist             outputs negative distance as well so wavefronts are
+                              in both halves.
+  -o, --output=<outFile>    output to file, default is stdout.
+      --onlynameddiscon     only draw circles on the plot for named
+                              discontinuities like moho, cmb, iocb
+      --prop=<toolPropsFilename>
+                            load defaults from properties file
+      --timefiles           outputs each time into a separate .ps file within
+                              the gmt script.
+      --timestep=<timeStep> steps in time (seconds) for output, default is null
+      --verbose             enable verbose output
+      --xaxis=<distAxisType>
+                            x axis type, the distance axis, one of degree,
+                              radian, kilometer
+      --yaxis=<depthAxisType>
+                            y axis type, the depth/radius axis, one of depth,
+                              radius
+Model Args
+  -h, --evdepth, --sourcedepth=<sourceDepth>
+                            source depth in km
+      --mod, --model=<modelname>
+                            use velocity model "modelname" for calculations
+                                                  Default is iasp91.
+      --scat, --scatter=s s scattering depth and distance in degrees, which may
+                              be negative. Only effects phases with 'o' or 'O'
+                              in the phase name.
+      --stadepth, --receiverdepth=depth
+                            the receiver depth in km for stations not at the
+                              surface
+Phase Names
+  -p, --ph, --phase=<phaseNames>[,<phaseNames>...]
+                            seismic phase names
+      --phasefile=<phaseFiles>
+                            read list of phase names from file
+Output Type
+      --gmt                 outputs as GMT
+      --json                outputs as JSON
+      --svg                 outputs as SVG
+      --text                outputs as text

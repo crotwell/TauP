@@ -1,15 +1,17 @@
-Usage: taup_create [arguments]
-  or, for purists, java edu.sc.seis.TauP.TauP_Create [arguments]
-
-Arguments are:
-
-   To specify the velocity model:
--nd modelfile       -- "named discontinuities" velocity file
--tvel modelfile     -- ".tvel" velocity file, ala ttimes
-
---debug              -- enable debugging output
---prop [propfile]    -- set configuration properties
---verbose            -- enable verbose output
---version            -- print the version
---help               -- print this out, but you already know that!
-
+Usage: taup create [--debug] [--help] [--verbose] [--prop=<toolPropsFilename>]
+                   ([--mod=<modelName>] | --nd=<nDModelFilename> |
+                   --tvel=<tvelModelFilename>)
+Create .taup file from velocity model
+      --debug     enable debugging output
+      --help      display this help message
+      --prop=<toolPropsFilename>
+                  load defaults from properties file
+      --verbose   enable verbose output
+Velocity Model
+      --mod, --model=<modelName>
+                  use velocity model "modelname" for calculations, format is
+                    guessed. Default is iasp91.
+      --nd=<nDModelFilename>
+                  "named discontinuities" velocity file
+      --tvel=<tvelModelFilename>
+                  ".tvel" velocity file, ala ttimes

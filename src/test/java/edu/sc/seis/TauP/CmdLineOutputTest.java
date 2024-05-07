@@ -163,6 +163,7 @@ public class CmdLineOutputTest {
             saveTestOutputToFile(cmd);
         }
         viewSavedOutputAsHTML(allList, testOutputDir, "Command Line Test Cases");
+        usageToDocSrc();
     }
 
     public void viewSavedOutputAsHTML(List<String> allList, File outputDir, String title) throws FileNotFoundException {
@@ -534,7 +535,17 @@ public class CmdLineOutputTest {
         assertEquals(shouldBeS, priorS, "line one");
     }
 
+    public void usageToDocSrc() throws IOException {
 
+        File toolDocDir = new File("src/doc/sphinx/source/cmdLineHelp");
+        CommandLine commandLine = new CommandLine(new edu.sc.seis.TauP.ToolRun());
+        for ( String toolname : commandLine.getSubcommands().keySet()) {
+            String filename = "taup_"+toolname+".usage";
+            PrintStream fileOut = new PrintStream(new BufferedOutputStream(new FileOutputStream(new File(toolDocDir, filename))));
+            commandLine.getSubcommands().get(toolname).usage(fileOut);
+            fileOut.close();
+        }
+    }
 
     public void saveDocOutputToFile(String cmd, File outputDir) throws Exception {
         String filename = fileizeCmd(cmd);
