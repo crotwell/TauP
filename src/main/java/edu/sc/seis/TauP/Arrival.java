@@ -673,7 +673,7 @@ public class Arrival {
     }
 
 
-    public void writeJSON(PrintWriter pw, String indent) {
+    public void writeJSON(PrintWriter pw, String indent, boolean withAmp) {
         String NL = "\n";
         pw.write(indent+"{"+NL);
         String innerIndent = indent+"  ";
@@ -684,24 +684,28 @@ public class Arrival {
         pw.write(innerIndent+JSONWriter.valueToString("takeoff")+": "+JSONWriter.valueToString((float) getTakeoffAngleDegree())+","+NL);
         pw.write(innerIndent+JSONWriter.valueToString("incident")+": "+JSONWriter.valueToString((float) getIncidentAngleDegree())+","+NL);
         pw.write(innerIndent+JSONWriter.valueToString("puristdist")+": "+JSONWriter.valueToString((float)getDistDeg())+","+NL);
-        pw.write(innerIndent+JSONWriter.valueToString("puristname")+": "+JSONWriter.valueToString(getPuristName())+","+NL);
+        pw.write(innerIndent+JSONWriter.valueToString("puristname")+": "+JSONWriter.valueToString(getPuristName()));
 
-        pw.write(innerIndent+JSONWriter.valueToString("amp")+": {"+NL);
+        if (withAmp) {
 
-        try {
-            double geospread = getAmplitudeGeometricSpreadingFactor();
-            if (Double.isFinite(geospread)) {
-                pw.write(innerIndent+"  "+JSONWriter.valueToString("factorpsv")+": "+JSONWriter.valueToString((float)getAmplitudeFactorPSV())+","+NL);
-                pw.write(innerIndent+"  "+JSONWriter.valueToString("factorsh")+": "+JSONWriter.valueToString((float)getAmplitudeFactorSH())+","+NL);
-                pw.write(innerIndent+"  "+JSONWriter.valueToString("geospread")+": "+JSONWriter.valueToString((float)geospread)+","+NL);
-            } else {
-                pw.write(innerIndent+"  "+JSONWriter.valueToString("error")+": "+JSONWriter.valueToString("geometrical speading not finite")+","+NL);
+            pw.write(","+NL);
+            pw.write(innerIndent + JSONWriter.valueToString("amp") + ": {" + NL);
+
+            try {
+                double geospread = getAmplitudeGeometricSpreadingFactor();
+                if (Double.isFinite(geospread)) {
+                    pw.write(innerIndent + "  " + JSONWriter.valueToString("factorpsv") + ": " + JSONWriter.valueToString((float) getAmplitudeFactorPSV()) + "," + NL);
+                    pw.write(innerIndent + "  " + JSONWriter.valueToString("factorsh") + ": " + JSONWriter.valueToString((float) getAmplitudeFactorSH()) + "," + NL);
+                    pw.write(innerIndent + "  " + JSONWriter.valueToString("geospread") + ": " + JSONWriter.valueToString((float) geospread) + "," + NL);
+                } else {
+                    pw.write(innerIndent + "  " + JSONWriter.valueToString("error") + ": " + JSONWriter.valueToString("geometrical speading not finite") + "," + NL);
+                }
+                pw.write(innerIndent + "  " + JSONWriter.valueToString("refltranpsv") + ": " + JSONWriter.valueToString((float) getReflTransPSV()) + ", " + NL);
+                pw.write(innerIndent + "  " + JSONWriter.valueToString("refltransh") + ": " + JSONWriter.valueToString((float) getReflTransSH()) + NL);
+                pw.write(innerIndent + "}");
+            } catch (TauPException e) {
+                throw new RuntimeException(e);
             }
-            pw.write(innerIndent+"  "+JSONWriter.valueToString("refltranpsv")+": "+JSONWriter.valueToString((float)getReflTransPSV())+", "+NL);
-            pw.write(innerIndent+"  "+JSONWriter.valueToString("refltransh")+": "+JSONWriter.valueToString((float)getReflTransSH())+NL);
-            pw.write(innerIndent+"}");
-        } catch (TauPException e) {
-            throw new RuntimeException(e);
         }
 
         if (getPhase() instanceof ScatteredSeismicPhase) {
@@ -718,7 +722,7 @@ public class Arrival {
             pw.write(innerIndent+JSONWriter.valueToString("relative")+": {"+NL);
             pw.write(innerIndent+"  "+JSONWriter.valueToString("difference")+": "+JSONWriter.valueToString((float)(getTime()-relArrival.getTime()))+","+NL);
             pw.write(innerIndent+"  "+JSONWriter.valueToString("arrival")+": "+NL);
-            relArrival.writeJSON(pw, innerIndent+"  "+"  ");
+            relArrival.writeJSON(pw, innerIndent+"  "+"  ", withAmp);
             pw.write(innerIndent+"}");
         }
         if (pierce != null ) {

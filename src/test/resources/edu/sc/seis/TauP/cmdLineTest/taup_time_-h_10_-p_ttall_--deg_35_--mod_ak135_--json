@@ -12,14 +12,7 @@
       "takeoff": 26.782135,
       "incident": 26.736752,
       "puristdist": 35,
-      "puristname": "P",
-      "amp": {
-        "factorpsv": 9.141956E-8,
-        "factorsh": 0,
-        "geospread": 6.549719E-8,
-        "refltranpsv": 0.93945855, 
-        "refltransh": 0
-      }
+      "puristname": "P"
     },
     {
       "distdeg": 35,
@@ -29,14 +22,7 @@
       "takeoff": 153.19893,
       "incident": 26.755655,
       "puristdist": 35,
-      "puristname": "pP",
-      "amp": {
-        "factorpsv": -6.063311E-8,
-        "factorsh": 0,
-        "geospread": 6.546582E-8,
-        "refltranpsv": -0.6233852, 
-        "refltransh": 0
-      }
+      "puristname": "pP"
     },
     {
       "distdeg": 35,
@@ -46,14 +32,7 @@
       "takeoff": 164.39865,
       "incident": 26.751438,
       "puristdist": 35,
-      "puristname": "sP",
-      "amp": {
-        "factorpsv": 1.4820692E-7,
-        "factorsh": 0,
-        "geospread": 3.7577788E-8,
-        "refltranpsv": 0.5635634, 
-        "refltransh": 0
-      }
+      "puristname": "sP"
     },
     {
       "distdeg": 35,
@@ -63,14 +42,7 @@
       "takeoff": 40.548923,
       "incident": 40.472023,
       "puristdist": 35,
-      "puristname": "PP",
-      "amp": {
-        "factorpsv": -5.5105232E-8,
-        "factorsh": 0,
-        "geospread": 1.355864E-7,
-        "refltranpsv": -0.27355075, 
-        "refltransh": 0
-      }
+      "puristname": "PP"
     },
     {
       "distdeg": 35,
@@ -80,14 +52,7 @@
       "takeoff": 35.26966,
       "incident": 35.20608,
       "puristdist": 35,
-      "puristname": "PP",
-      "amp": {
-        "factorpsv": -1.6741721E-8,
-        "factorsh": 0,
-        "geospread": 4.1290335E-8,
-        "refltranpsv": -0.27290586, 
-        "refltransh": 0
-      }
+      "puristname": "PP"
     },
     {
       "distdeg": 35,
@@ -97,14 +62,7 @@
       "takeoff": 36.658276,
       "incident": 36.591373,
       "puristdist": 35,
-      "puristname": "PP",
-      "amp": {
-        "factorpsv": -2.1685437E-8,
-        "factorsh": 0,
-        "geospread": 5.068947E-8,
-        "refltranpsv": -0.28794637, 
-        "refltransh": 0
-      }
+      "puristname": "PP"
     },
     {
       "distdeg": 35,
@@ -114,14 +72,7 @@
       "takeoff": 45.18152,
       "incident": 45.091087,
       "puristdist": 35,
-      "puristname": "PP",
-      "amp": {
-        "factorpsv": -6.0038396E-9,
-        "factorsh": 0,
-        "geospread": 4.2359733E-8,
-        "refltranpsv": -0.09539752, 
-        "refltransh": 0
-      }
+      "puristname": "PP"
     },
     {
       "distdeg": 35,
@@ -131,14 +82,7 @@
       "takeoff": 45.0654,
       "incident": 44.975334,
       "puristdist": 35,
-      "puristname": "PP",
-      "amp": {
-        "factorpsv": -1.006073E-8,
-        "factorsh": 0,
-        "geospread": 6.528203E-8,
-        "refltranpsv": -0.10372825, 
-        "refltransh": 0
-      }
+      "puristname": "PP"
     },
     {
       "distdeg": 35,
@@ -148,14 +92,7 @@
       "takeoff": 8.744313,
       "incident": 8.73048,
       "puristdist": 35,
-      "puristname": "Pcp",
-      "amp": {
-        "factorpsv": 1.4166527E-8,
-        "factorsh": 0,
-        "geospread": 3.4384346E-8,
-        "refltranpsv": 0.2773089, 
-        "refltransh": 0
-      }
+      "puristname": "PcP"
     },
     {
       "distdeg": 35,
@@ -165,14 +102,7 @@
       "takeoff": 28.668465,
       "incident": 28.619303,
       "puristdist": 35,
-      "puristname": "S",
-      "amp": {
-        "factorpsv": 5.033804E-7,
-        "factorsh": 5.432622E-7,
-        "geospread": 6.1103414E-8,
-        "refltranpsv": 0.90920216, 
-        "refltransh": 0.98123634
-      }
+      "puristname": "S"
     },
     {
       "distdeg": 35,
@@ -182,14 +112,7 @@
       "takeoff": 126.401,
       "incident": 28.646286,
       "puristdist": 35,
-      "puristname": "pS",
-      "amp": {
-        "factorpsv": 2.3347408E-7,
-        "factorsh": 0,
-        "geospread": 1.2522088E-7,
-        "refltranpsv": 0.96927536, 
-        "refltransh": 0
-      }
+      "puristname": "pS"
     },
     {
       "distdeg": 35,
@@ -199,14 +122,7 @@
       "takeoff": 151.31593,
       "incident": 28.634874,
       "puristdist": 35,
-      "puristname": "sS",
-      "amp": {
-        "factorpsv": 5.130743E-9,
-        "factorsh": 5.4362744E-7,
-        "geospread": 6.114774E-8,
-        "refltranpsv": 0.009260394, 
-        "refltransh": 0.9811842
-      }
+      "puristname": "sS"
     },
     {
       "distdeg": 35,
@@ -216,14 +132,7 @@
       "takeoff": 28.835577,
       "incident": 53.82393,
       "puristdist": 35,
-      "puristname": "SP",
-      "amp": {
-        "factorpsv": 4.0330053E-7,
-        "factorsh": 0,
-        "geospread": 6.968835E-8,
-        "refltranpsv": 0.82694024, 
-        "refltransh": 0
-      }
+      "puristname": "SP"
     },
     {
       "distdeg": 35,
@@ -233,14 +142,7 @@
       "takeoff": 53.918713,
       "incident": 28.774641,
       "puristdist": 35,
-      "puristname": "PS",
-      "amp": {
-        "factorpsv": 2.1165467E-7,
-        "factorsh": 0,
-        "geospread": 1.17504804E-7,
-        "refltranpsv": 0.93639153, 
-        "refltransh": 0
-      }
+      "puristname": "PS"
     },
     {
       "distdeg": 35,
@@ -250,14 +152,7 @@
       "takeoff": 6.4463987,
       "incident": 10.83078,
       "puristdist": 35,
-      "puristname": "Scp",
-      "amp": {
-        "factorpsv": 6.484543E-8,
-        "factorsh": 0,
-        "geospread": 2.3660952E-8,
-        "refltranpsv": 0.39160898, 
-        "refltransh": 0
-      }
+      "puristname": "ScP"
     },
     {
       "distdeg": 35,
@@ -267,14 +162,7 @@
       "takeoff": 10.8494215,
       "incident": 6.4370666,
       "puristdist": 35,
-      "puristname": "Pcs",
-      "amp": {
-        "factorpsv": -3.5202696E-8,
-        "factorsh": 0,
-        "geospread": 3.9672127E-8,
-        "refltranpsv": -0.46129176, 
-        "refltransh": 0
-      }
+      "puristname": "PcS"
     },
     {
       "distdeg": 35,
@@ -284,14 +172,7 @@
       "takeoff": 49.03354,
       "incident": 48.93007,
       "puristdist": 35,
-      "puristname": "SS",
-      "amp": {
-        "factorpsv": 3.5253663E-7,
-        "factorsh": 3.5507867E-7,
-        "geospread": 5.1702536E-8,
-        "refltranpsv": 0.7525268, 
-        "refltransh": 0.7579531
-      }
+      "puristname": "SS"
     },
     {
       "distdeg": 35,
@@ -301,14 +182,7 @@
       "takeoff": 39.367878,
       "incident": 39.294132,
       "puristdist": 35,
-      "puristname": "SS",
-      "amp": {
-        "factorpsv": 3.531035E-7,
-        "factorsh": 3.264253E-7,
-        "geospread": 5.3808918E-8,
-        "refltranpsv": 0.72423136, 
-        "refltransh": 0.6695131
-      }
+      "puristname": "SS"
     },
     {
       "distdeg": 35,
@@ -318,14 +192,7 @@
       "takeoff": 41.057213,
       "incident": 40.978924,
       "puristdist": 35,
-      "puristname": "SS",
-      "amp": {
-        "factorpsv": 5.434838E-7,
-        "factorsh": 6.6741137E-7,
-        "geospread": 6.802257E-8,
-        "refltranpsv": 0.8817859, 
-        "refltransh": 1.0828545
-      }
+      "puristname": "SS"
     },
     {
       "distdeg": 35,
@@ -335,14 +202,7 @@
       "takeoff": 31.410543,
       "incident": 31.355642,
       "puristdist": 35,
-      "puristname": "SS",
-      "amp": {
-        "factorpsv": -1.5471716E-8,
-        "factorsh": 6.806061E-8,
-        "geospread": 2.738302E-7,
-        "refltranpsv": -0.0062357215, 
-        "refltransh": 0.02743115
-      }
+      "puristname": "SS"
     },
     {
       "distdeg": 35,
@@ -352,14 +212,7 @@
       "takeoff": 31.638874,
       "incident": 31.58348,
       "puristdist": 35,
-      "puristname": "SS",
-      "amp": {
-        "factorpsv": -4.5960783E-7,
-        "factorsh": 2.4341027E-6,
-        "geospread": 8.01121E-8,
-        "refltranpsv": -0.63316786, 
-        "refltransh": 3.3532836
-      }
+      "puristname": "SS"
     },
     {
       "distdeg": 35,
@@ -369,14 +222,7 @@
       "takeoff": 2.2802625,
       "incident": 2.2766814,
       "puristdist": 35,
-      "puristname": "PKikp",
-      "amp": {
-        "factorpsv": 5.927003E-10,
-        "factorsh": 0,
-        "geospread": 1.0188006E-8,
-        "refltranpsv": 0.0391568, 
-        "refltransh": 0
-      }
+      "puristname": "PKiKP"
     },
     {
       "distdeg": 35,
@@ -386,14 +232,7 @@
       "takeoff": 177.72018,
       "incident": 2.2762418,
       "puristdist": 35,
-      "puristname": "pPKikp",
-      "amp": {
-        "factorpsv": -5.910978E-10,
-        "factorsh": 0,
-        "geospread": 1.01861435E-8,
-        "refltranpsv": -0.039058067, 
-        "refltransh": 0
-      }
+      "puristname": "pPKiKP"
     },
     {
       "distdeg": 35,
@@ -403,14 +242,7 @@
       "takeoff": 178.64015,
       "incident": 2.2763305,
       "puristdist": 35,
-      "puristname": "sPKikp",
-      "amp": {
-        "factorpsv": 9.408961E-11,
-        "factorsh": 0,
-        "geospread": 6.075008E-9,
-        "refltranpsv": 0.0022130962, 
-        "refltransh": 0
-      }
+      "puristname": "sPKiKP"
     },
     {
       "distdeg": 35,
@@ -420,14 +252,7 @@
       "takeoff": 9.657617,
       "incident": 9.642313,
       "puristdist": 35,
-      "puristname": "Scs",
-      "amp": {
-        "factorpsv": 1.2630923E-7,
-        "factorsh": 3.3957255E-7,
-        "geospread": 3.8716585E-8,
-        "refltranpsv": 0.360054, 
-        "refltransh": 0.9679771
-      }
+      "puristname": "ScS"
     },
     {
       "distdeg": 35,
@@ -437,14 +262,7 @@
       "takeoff": 1.430901,
       "incident": 2.3953042,
       "puristdist": 35,
-      "puristname": "SedKikp",
-      "amp": {
-        "factorpsv": 1.7876517E-10,
-        "factorsh": 0,
-        "geospread": 6.3570798E-9,
-        "refltranpsv": 0.0040181926, 
-        "refltransh": 0
-      }
+      "puristname": "SKiKP"
     },
     {
       "distdeg": 35,
@@ -454,14 +272,7 @@
       "takeoff": 2.3060124,
       "incident": 2.3023908,
       "puristdist": 325,
-      "puristname": "PKIkKIkp",
-      "amp": {
-        "factorpsv": -3.5635483E-10,
-        "factorsh": 0,
-        "geospread": 1.0467781E-8,
-        "refltranpsv": -0.022913383, 
-        "refltransh": 0
-      }
+      "puristname": "PKIKKIKP"
     },
     {
       "distdeg": 35,
@@ -471,14 +282,7 @@
       "takeoff": 1.3067465,
       "incident": 2.1874034,
       "puristdist": 325,
-      "puristname": "SedKIkKIkp",
-      "amp": {
-        "factorpsv": -9.270744E-11,
-        "factorsh": 0,
-        "geospread": 5.951979E-9,
-        "refltranpsv": -0.0022256593, 
-        "refltransh": 0
-      }
+      "puristname": "SKIKKIKP"
     },
     {
       "distdeg": 35,
@@ -488,14 +292,7 @@
       "takeoff": 2.190757,
       "incident": 1.3046434,
       "puristdist": 325,
-      "puristname": "PKIkKIks",
-      "amp": {
-        "factorpsv": 7.505302E-11,
-        "factorsh": 0,
-        "geospread": 9.977422E-9,
-        "refltranpsv": 0.003910525, 
-        "refltransh": 0
-      }
+      "puristname": "PKIKKIKS"
     },
     {
       "distdeg": 35,
@@ -505,14 +302,7 @@
       "takeoff": 1.2456756,
       "incident": 1.24372,
       "puristdist": 325,
-      "puristname": "SedKIkKIks",
-      "amp": {
-        "factorpsv": 1.7688042E-11,
-        "factorsh": 0,
-        "geospread": 5.657187E-9,
-        "refltranpsv": 3.4507122E-4, 
-        "refltransh": 0
-      }
+      "puristname": "SKIKKIKS"
     },
     {
       "distdeg": 35,
@@ -522,14 +312,7 @@
       "takeoff": 2.9737089,
       "incident": 2.969037,
       "puristdist": 325,
-      "puristname": "PKIkpPKIkp",
-      "amp": {
-        "factorpsv": -1.5567894E-8,
-        "factorsh": 0,
-        "geospread": 1.3056481E-8,
-        "refltranpsv": -0.80253667, 
-        "refltransh": 0
-      }
+      "puristname": "PKIKPPKIKP"
     },
     {
       "distdeg": 35,
@@ -539,14 +322,7 @@
       "takeoff": 13.238733,
       "incident": 13.217577,
       "puristdist": 325,
-      "puristname": "PKpPKp",
-      "amp": {
-        "factorpsv": -6.957206E-9,
-        "factorsh": 0,
-        "geospread": 1.1772672E-8,
-        "refltranpsv": -0.39775994, 
-        "refltransh": 0
-      }
+      "puristname": "PKPPKP"
     },
     {
       "distdeg": 35,
@@ -556,14 +332,7 @@
       "takeoff": 1.3995245,
       "incident": 1.3973273,
       "puristdist": 325,
-      "puristname": "SedKIksSedKIks",
-      "amp": {
-        "factorpsv": 1.7991336E-11,
-        "factorsh": 0,
-        "geospread": 6.343111E-9,
-        "refltranpsv": 3.130334E-4, 
-        "refltransh": 0
-      }
+      "puristname": "SKIKSSKIKS"
     }
   ]
 }

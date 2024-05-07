@@ -12,14 +12,7 @@
       "takeoff": 26.741543,
       "incident": 26.69624,
       "puristdist": 35,
-      "puristname": "P",
-      "amp": {
-        "factorpsv": 8.651357E-8,
-        "factorsh": 0,
-        "geospread": 6.203546E-8,
-        "refltranpsv": 0.9386537, 
-        "refltransh": 0
-      }
+      "puristname": "P"
     }
   ]
 }

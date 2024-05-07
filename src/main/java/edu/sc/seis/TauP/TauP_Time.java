@@ -389,7 +389,9 @@ public class TauP_Time extends TauP_AbstractRayTool {
                 modelArgs.getSourceDepth(),
                 modelArgs.getReceiverDepth(),
                 getSeismicPhases(),
-                arrivalList);
+                arrivalList,
+                isWithAmplitude(),
+                sourceArgs.getMw());
     }
 
     public static void writeJSON(PrintWriter pw, String indent,
@@ -398,6 +400,16 @@ public class TauP_Time extends TauP_AbstractRayTool {
                                  double receiverDepth,
                                  List<SeismicPhase> phases,
                                  List<Arrival> arrivals) throws IOException {
+        writeJSON(pw, indent, modelName, depth, receiverDepth, phases, arrivals,  false, 4.0f);
+    }
+    public static void writeJSON(PrintWriter pw, String indent,
+                                 String modelName,
+                                 double depth,
+                                 double receiverDepth,
+                                 List<SeismicPhase> phases,
+                                 List<Arrival> arrivals,
+                                 boolean withAmplitude,
+                                 float Mw) throws IOException {
         String innerIndent = indent+"  ";
         String NL = "\n";
         pw.write("{"+NL);
@@ -415,7 +427,9 @@ public class TauP_Time extends TauP_AbstractRayTool {
             pw.write(JSONWriter.valueToString(phase.getName()));
         }
         pw.write(" ],"+NL);
-
+        if (withAmplitude) {
+            pw.write(innerIndent+JSONWriter.valueToString("Mw")+": "+JSONWriter.valueToString(Mw)+","+NL);
+        }
         pw.write(innerIndent+JSONWriter.valueToString("arrivals")+": ["+NL);
         first = true;
         for (Arrival arrival : arrivals) {
@@ -425,7 +439,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
                 pw.write(","+NL);
             }
             try {
-                arrival.writeJSON(pw, innerIndent + "  ");
+                arrival.writeJSON(pw, innerIndent + "  ", withAmplitude);
             } catch (JSONException e) {
                 System.err.println("Erro in json: "+ arrival);
                 throw e;

@@ -18,7 +18,7 @@ calculate travel times for seismic phases in an earth model
       --first, --onlyfirst   only output the first arrival for each phase, no
                                triplications
       --help                 display this help message
-      --mw=<mw>              scale by source moment magnitude
+      --mw=<mw>              scale amplitude by source moment magnitude
   -o, --output=<outFile>     output to file, default is stdout.
       --prop=<toolPropsFilename>
                              load defaults from properties file
