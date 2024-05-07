@@ -92,7 +92,7 @@
       "takeoff": 8.744313,
       "incident": 8.73048,
       "puristdist": 35,
-      "puristname": "PcP"
+      "puristname": "Pcp"
     },
     {
       "distdeg": 35,
@@ -152,7 +152,7 @@
       "takeoff": 6.4463987,
       "incident": 10.83078,
       "puristdist": 35,
-      "puristname": "ScP"
+      "puristname": "Scp"
     },
     {
       "distdeg": 35,
@@ -162,7 +162,7 @@
       "takeoff": 10.8494215,
       "incident": 6.4370666,
       "puristdist": 35,
-      "puristname": "PcS"
+      "puristname": "Pcs"
     },
     {
       "distdeg": 35,
@@ -222,7 +222,7 @@
       "takeoff": 2.2802625,
       "incident": 2.2766814,
       "puristdist": 35,
-      "puristname": "PKiKP"
+      "puristname": "PKikp"
     },
     {
       "distdeg": 35,
@@ -232,7 +232,7 @@
       "takeoff": 177.72018,
       "incident": 2.2762418,
       "puristdist": 35,
-      "puristname": "pPKiKP"
+      "puristname": "pPKikp"
     },
     {
       "distdeg": 35,
@@ -242,7 +242,7 @@
       "takeoff": 178.64015,
       "incident": 2.2763305,
       "puristdist": 35,
-      "puristname": "sPKiKP"
+      "puristname": "sPKikp"
     },
     {
       "distdeg": 35,
@@ -252,7 +252,7 @@
       "takeoff": 9.657617,
       "incident": 9.642313,
       "puristdist": 35,
-      "puristname": "ScS"
+      "puristname": "Scs"
     },
     {
       "distdeg": 35,
@@ -262,7 +262,7 @@
       "takeoff": 1.430901,
       "incident": 2.3953042,
       "puristdist": 35,
-      "puristname": "SKiKP"
+      "puristname": "SKikp"
     },
     {
       "distdeg": 35,
@@ -272,7 +272,7 @@
       "takeoff": 2.3060124,
       "incident": 2.3023908,
       "puristdist": 325,
-      "puristname": "PKIKKIKP"
+      "puristname": "PKIkKIkp"
     },
     {
       "distdeg": 35,
@@ -282,7 +282,7 @@
       "takeoff": 1.3067465,
       "incident": 2.1874034,
       "puristdist": 325,
-      "puristname": "SKIKKIKP"
+      "puristname": "SKIkKIkp"
     },
     {
       "distdeg": 35,
@@ -292,7 +292,7 @@
       "takeoff": 2.190757,
       "incident": 1.3046434,
       "puristdist": 325,
-      "puristname": "PKIKKIKS"
+      "puristname": "PKIkKIks"
     },
     {
       "distdeg": 35,
@@ -302,7 +302,7 @@
       "takeoff": 1.2456756,
       "incident": 1.24372,
       "puristdist": 325,
-      "puristname": "SKIKKIKS"
+      "puristname": "SKIkKIks"
     },
     {
       "distdeg": 35,
@@ -312,7 +312,7 @@
       "takeoff": 2.9737089,
       "incident": 2.969037,
       "puristdist": 325,
-      "puristname": "PKIKPPKIKP"
+      "puristname": "PKIkpPKIkp"
     },
     {
       "distdeg": 35,
@@ -322,7 +322,7 @@
       "takeoff": 13.238733,
       "incident": 13.217577,
       "puristdist": 325,
-      "puristname": "PKPPKP"
+      "puristname": "PKpPKp"
     },
     {
       "distdeg": 35,
@@ -332,7 +332,7 @@
       "takeoff": 1.3995245,
       "incident": 1.3973273,
       "puristdist": 325,
-      "puristname": "SKIKSSKIKS"
+      "puristname": "SKIksSKIks"
     }
   ]
 }

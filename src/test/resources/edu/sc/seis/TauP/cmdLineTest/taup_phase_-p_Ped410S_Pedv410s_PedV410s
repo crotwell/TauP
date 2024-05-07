@@ -8,7 +8,7 @@ Ped410S:
   S going up   as a S in the crust/mantle, layer 5 to 0, depths 2889.0 to 0.0, then end
 
 --------
-Pedv410s:
+Pedv410s (Pv410s):
   exists from 0.00 to 12.83 degrees.
   with ray parameter from   11.521 down to    0.000 sec/deg.
   travel times from   250.71 to   141.90 sec.
@@ -17,7 +17,7 @@ Pedv410s:
   s going up   as a S in the crust/mantle, layer 3 to 0, depths 410.0 to 0.0, then end
 
 --------
-PedV410s:
+PedV410s (PV410s):
   exists from 9.06 to 12.83 degrees.
   with ray parameter from   11.521 down to   11.115 sec/deg.
   travel times from   250.71 to   207.77 sec.

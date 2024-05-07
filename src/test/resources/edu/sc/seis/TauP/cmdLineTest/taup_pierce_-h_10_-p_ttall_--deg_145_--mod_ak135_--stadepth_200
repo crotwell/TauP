@@ -1,4 +1,4 @@
-> Pdiff at  1000.59 seconds at   145.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    4.446 s/deg. Receiver at depth: 200.0 km.
+> Pdiff(Pdiffp) at  1000.59 seconds at   145.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    4.446 s/deg. Receiver at depth: 200.0 km.
     0.00    10.0    0.00
     0.02    20.0    1.77
     0.06    35.0    4.16
@@ -12,7 +12,7 @@
   144.23   410.0  974.51
   144.97   210.0  999.31
   145.00   200.0 1000.59
-> pPdiff at  1003.94 seconds at   145.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    4.446 s/deg. Receiver at depth: 200.0 km.
+> pPdiff(pPdiffp) at  1003.94 seconds at   145.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    4.446 s/deg. Receiver at depth: 200.0 km.
     0.00    10.0    0.00
     0.02     0.0    1.77
     0.04    10.0    3.55
@@ -28,7 +28,7 @@
   144.23   410.0  977.86
   144.97   210.0 1002.66
   145.00   200.0 1003.94
-> sPdiff at  1005.13 seconds at   145.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    4.446 s/deg. Receiver at depth: 200.0 km.
+> sPdiff(sPdiffp) at  1005.13 seconds at   145.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    4.446 s/deg. Receiver at depth: 200.0 km.
     0.00    10.0    0.00
     0.01     0.0    2.92
     0.03    10.0    4.69
@@ -44,7 +44,7 @@
   144.23   410.0  979.05
   144.97   210.0 1003.85
   145.00   200.0 1005.13
-> PKP at  1151.31 seconds at   145.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    3.181 s/deg. Receiver at depth: 200.0 km.
+> PKP(PKp) at  1151.31 seconds at   145.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    3.181 s/deg. Receiver at depth: 200.0 km.
     0.00    10.0    0.00
     0.02    20.0    1.75
     0.04    35.0    4.10
@@ -59,7 +59,7 @@
   144.47   410.0 1126.14
   144.98   210.0 1150.06
   145.00   200.0 1151.31
-> PKP at  1151.49 seconds at   145.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    3.717 s/deg. Receiver at depth: 200.0 km.
+> PKP(PKp) at  1151.49 seconds at   145.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    3.717 s/deg. Receiver at depth: 200.0 km.
     0.00    10.0    0.00
     0.02    20.0    1.76
     0.05    35.0    4.12
@@ -74,7 +74,7 @@
   144.37   410.0 1125.98
   144.97   210.0 1150.23
   145.00   200.0 1151.49
-> PKIKP at  1151.49 seconds at   145.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    1.721 s/deg. Receiver at depth: 200.0 km.
+> PKIKP(PKIkp) at  1151.49 seconds at   145.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    1.721 s/deg. Receiver at depth: 200.0 km.
     0.00    10.0    0.00
     0.01    20.0    1.73
     0.02    35.0    4.05
@@ -91,7 +91,7 @@
   144.72   410.0 1126.94
   144.99   210.0 1150.27
   145.00   200.0 1151.49
-> pPKP at  1154.71 seconds at   145.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    3.186 s/deg. Receiver at depth: 200.0 km.
+> pPKP(pPKp) at  1154.71 seconds at   145.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    3.186 s/deg. Receiver at depth: 200.0 km.
     0.00    10.0    0.00
     0.02     0.0    1.75
     0.03    10.0    3.50
@@ -108,7 +108,7 @@
   144.47   410.0 1129.54
   144.98   210.0 1153.46
   145.00   200.0 1154.71
-> pPKP at  1154.87 seconds at   145.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    3.711 s/deg. Receiver at depth: 200.0 km.
+> pPKP(pPKp) at  1154.87 seconds at   145.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    3.711 s/deg. Receiver at depth: 200.0 km.
     0.00    10.0    0.00
     0.02     0.0    1.76
     0.04    10.0    3.51
@@ -125,7 +125,7 @@
   144.37   410.0 1129.37
   144.97   210.0 1153.61
   145.00   200.0 1154.87
-> pPKIKP at  1154.93 seconds at   145.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    1.721 s/deg. Receiver at depth: 200.0 km.
+> pPKIKP(pPKIkp) at  1154.93 seconds at   145.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    1.721 s/deg. Receiver at depth: 200.0 km.
     0.00    10.0    0.00
     0.01     0.0    1.73
     0.02    10.0    3.46
@@ -144,7 +144,7 @@
   144.72   410.0 1130.38
   144.99   210.0 1153.71
   145.00   200.0 1154.92
-> PKiKP at  1155.39 seconds at   145.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    2.057 s/deg. Receiver at depth: 200.0 km.
+> PKiKP(PKikp) at  1155.39 seconds at   145.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    2.057 s/deg. Receiver at depth: 200.0 km.
     0.00    10.0    0.00
     0.01    20.0    1.73
     0.03    35.0    4.06
@@ -159,7 +159,7 @@
   144.66   410.0 1130.74
   144.99   210.0 1154.17
   145.00   200.0 1155.39
-> sPKP at  1155.88 seconds at   145.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    3.185 s/deg. Receiver at depth: 200.0 km.
+> sPKP(sPKp) at  1155.88 seconds at   145.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    3.185 s/deg. Receiver at depth: 200.0 km.
     0.00    10.0    0.00
     0.01     0.0    2.90
     0.02    10.0    4.65
@@ -176,7 +176,7 @@
   144.47   410.0 1130.72
   144.98   210.0 1154.64
   145.00   200.0 1155.88
-> sPKP at  1156.05 seconds at   145.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    3.712 s/deg. Receiver at depth: 200.0 km.
+> sPKP(sPKp) at  1156.05 seconds at   145.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    3.712 s/deg. Receiver at depth: 200.0 km.
     0.00    10.0    0.00
     0.01     0.0    2.91
     0.03    10.0    4.67
@@ -193,7 +193,7 @@
   144.37   410.0 1130.55
   144.97   210.0 1154.79
   145.00   200.0 1156.05
-> sPKIKP at  1156.10 seconds at   145.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    1.721 s/deg. Receiver at depth: 200.0 km.
+> sPKIKP(sPKIkp) at  1156.10 seconds at   145.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    1.721 s/deg. Receiver at depth: 200.0 km.
     0.00    10.0    0.00
     0.00     0.0    2.89
     0.01    10.0    4.63
@@ -212,7 +212,7 @@
   144.72   410.0 1131.55
   144.99   210.0 1154.88
   145.00   200.0 1156.09
-> pPKiKP at  1158.82 seconds at   145.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    2.057 s/deg. Receiver at depth: 200.0 km.
+> pPKiKP(pPKikp) at  1158.82 seconds at   145.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    2.057 s/deg. Receiver at depth: 200.0 km.
     0.00    10.0    0.00
     0.01     0.0    1.73
     0.02    10.0    3.47
@@ -229,7 +229,7 @@
   144.66   410.0 1134.17
   144.99   210.0 1157.60
   145.00   200.0 1158.82
-> sPKiKP at  1159.99 seconds at   145.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    2.057 s/deg. Receiver at depth: 200.0 km.
+> sPKiKP(sPKikp) at  1159.99 seconds at   145.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    2.057 s/deg. Receiver at depth: 200.0 km.
     0.00    10.0    0.00
     0.01     0.0    2.90
     0.02    10.0    4.63
@@ -246,7 +246,7 @@
   144.66   410.0 1135.34
   144.99   210.0 1158.77
   145.00   200.0 1159.99
-> PKIKS at  1346.67 seconds at   145.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    1.608 s/deg. Receiver at depth: 200.0 km.
+> PKIKS(PKIks) at  1346.67 seconds at   145.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    1.608 s/deg. Receiver at depth: 200.0 km.
     0.00    10.0    0.00
     0.01    20.0    1.73
     0.02    35.0    4.05
@@ -292,7 +292,7 @@
   143.90   410.0 1323.88
   144.95   210.0 1350.31
   145.00   200.0 1351.66
-> PKS at  1351.90 seconds at   145.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    2.301 s/deg. Receiver at depth: 200.0 km.
+> PKS(PKs) at  1351.90 seconds at   145.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    2.301 s/deg. Receiver at depth: 200.0 km.
     0.00    10.0    0.00
     0.01    20.0    1.74
     0.03    35.0    4.07
@@ -307,7 +307,7 @@
   144.80   410.0 1306.83
   144.99   210.0 1349.66
   145.00   200.0 1351.89
-> SKIKP at  1365.80 seconds at   145.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    1.605 s/deg. Receiver at depth: 200.0 km.
+> SKIKP(SKIkp) at  1365.80 seconds at   145.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    1.605 s/deg. Receiver at depth: 200.0 km.
     0.00    10.0    0.00
     0.00    20.0    2.89
     0.01    35.0    6.80
@@ -324,7 +324,7 @@
   144.74   410.0 1341.28
   144.99   210.0 1364.58
   145.00   200.0 1365.80
-> SKP at  1371.11 seconds at   145.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    2.293 s/deg. Receiver at depth: 200.0 km.
+> SKP(SKp) at  1371.11 seconds at   145.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    2.293 s/deg. Receiver at depth: 200.0 km.
     0.00    10.0    0.00
     0.01    20.0    2.90
     0.02    35.0    6.81
@@ -339,7 +339,7 @@
   144.62   410.0 1346.36
   144.98   210.0 1369.87
   145.00   200.0 1371.09
-> SKiKP at  1371.64 seconds at   145.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    2.063 s/deg. Receiver at depth: 200.0 km.
+> SKiKP(SKikp) at  1371.64 seconds at   145.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    2.063 s/deg. Receiver at depth: 200.0 km.
     0.00    10.0    0.00
     0.01    20.0    2.90
     0.02    35.0    6.80
@@ -354,7 +354,7 @@
   144.66   410.0 1346.98
   144.99   210.0 1370.41
   145.00   200.0 1371.64
-> SKIKS at  1560.46 seconds at   145.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    1.475 s/deg. Receiver at depth: 200.0 km.
+> SKIKS(SKIks) at  1560.46 seconds at   145.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    1.475 s/deg. Receiver at depth: 200.0 km.
     0.00    10.0    0.00
     0.00    20.0    2.89
     0.01    35.0    6.79
@@ -371,7 +371,7 @@
   144.87   410.0 1515.54
   144.99   210.0 1558.24
   145.00   200.0 1560.46
-> pSKIKS at  1565.07 seconds at   145.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    1.475 s/deg. Receiver at depth: 200.0 km.
+> pSKIKS(pSKIks) at  1565.07 seconds at   145.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    1.475 s/deg. Receiver at depth: 200.0 km.
     0.00    10.0    0.00
     0.01     0.0    1.73
     0.01    10.0    4.62
@@ -390,7 +390,7 @@
   144.87   410.0 1520.15
   144.99   210.0 1562.85
   145.00   200.0 1565.07
-> sSKIKS at  1566.24 seconds at   145.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    1.475 s/deg. Receiver at depth: 200.0 km.
+> sSKIKS(sSKIks) at  1566.24 seconds at   145.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    1.475 s/deg. Receiver at depth: 200.0 km.
     0.00    10.0    0.00
     0.00     0.0    2.89
     0.01    10.0    5.79
@@ -409,7 +409,7 @@
   144.87   410.0 1521.32
   144.99   210.0 1564.02
   145.00   200.0 1566.24
-> PKIKKIKP at  1697.41 seconds at   215.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    1.924 s/deg. Receiver at depth: 200.0 km.
+> PKIKKIKP(PKIkKIkp) at  1697.41 seconds at   215.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    1.924 s/deg. Receiver at depth: 200.0 km.
     0.00    10.0    0.00
    -0.01    20.0    1.73
    -0.02    35.0    4.06
@@ -430,7 +430,7 @@
  -214.68   410.0 1672.80
  -214.99   210.0 1696.19
  -215.00   200.0 1697.41
-> SKKS at  1742.87 seconds at   145.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    5.672 s/deg. Receiver at depth: 200.0 km.
+> SKKS(SKKs) at  1742.87 seconds at   145.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    5.672 s/deg. Receiver at depth: 200.0 km.
     0.00    10.0    0.00
     0.02    20.0    2.94
     0.04    35.0    6.91
@@ -447,7 +447,7 @@
   144.49   410.0 1696.55
   144.98   210.0 1740.58
   145.00   200.0 1742.86
-> PKKS at  1831.04 seconds at   215.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    4.161 s/deg. Receiver at depth: 200.0 km.
+> PKKS(PKKs) at  1831.04 seconds at   215.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    4.161 s/deg. Receiver at depth: 200.0 km.
     0.00    10.0    0.00
    -0.02    20.0    1.77
    -0.05    35.0    4.15
@@ -464,7 +464,7 @@
  -214.63   410.0 1785.44
  -214.98   210.0 1828.79
  -215.00   200.0 1831.04
-> PKKS at  1831.27 seconds at   215.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    4.407 s/deg. Receiver at depth: 200.0 km.
+> PKKS(PKKs) at  1831.27 seconds at   215.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    4.407 s/deg. Receiver at depth: 200.0 km.
     0.00    10.0    0.00
    -0.02    20.0    1.77
    -0.06    35.0    4.16
@@ -481,7 +481,7 @@
  -214.61   410.0 1785.57
  -214.98   210.0 1829.02
  -215.00   200.0 1831.27
-> SKKP at  1850.60 seconds at   215.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    4.144 s/deg. Receiver at depth: 200.0 km.
+> SKKP(SKKp) at  1850.60 seconds at   215.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    4.144 s/deg. Receiver at depth: 200.0 km.
     0.00    10.0    0.00
    -0.01    20.0    2.91
    -0.03    35.0    6.85
@@ -498,7 +498,7 @@
  -214.29   410.0 1824.77
  -214.97   210.0 1849.33
  -215.00   200.0 1850.60
-> SKKP at  1850.90 seconds at   215.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    4.413 s/deg. Receiver at depth: 200.0 km.
+> SKKP(SKKp) at  1850.90 seconds at   215.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    4.413 s/deg. Receiver at depth: 200.0 km.
     0.00    10.0    0.00
    -0.01    20.0    2.92
    -0.03    35.0    6.86
@@ -515,7 +515,7 @@
  -214.23   410.0 1824.84
  -214.97   210.0 1849.61
  -215.00   200.0 1850.90
-> Sdiff at  1851.62 seconds at   145.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    8.341 s/deg. Receiver at depth: 200.0 km.
+> Sdiff(Sdiffs) at  1851.62 seconds at   145.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    8.341 s/deg. Receiver at depth: 200.0 km.
     0.00    10.0    0.00
     0.02    20.0    2.99
     0.07    35.0    7.06
@@ -529,7 +529,7 @@
   144.21   410.0 1803.39
   144.97   210.0 1849.26
   145.00   200.0 1851.62
-> pSdiff at  1855.97 seconds at   145.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    8.341 s/deg. Receiver at depth: 200.0 km.
+> pSdiff(pSdiffs) at  1855.97 seconds at   145.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    8.341 s/deg. Receiver at depth: 200.0 km.
     0.00    10.0    0.00
     0.04     0.0    1.92
     0.07    10.0    4.91
@@ -545,7 +545,7 @@
   144.21   410.0 1807.73
   144.97   210.0 1853.60
   145.00   200.0 1855.97
-> sSdiff at  1857.20 seconds at   145.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    8.341 s/deg. Receiver at depth: 200.0 km.
+> sSdiff(sSdiffs) at  1857.20 seconds at   145.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    8.341 s/deg. Receiver at depth: 200.0 km.
     0.00    10.0    0.00
     0.02     0.0    2.99
     0.05    10.0    5.99
@@ -561,7 +561,7 @@
   144.21   410.0 1808.97
   144.97   210.0 1854.84
   145.00   200.0 1857.20
-> PKIKKIKS at  1893.76 seconds at   215.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    1.922 s/deg. Receiver at depth: 200.0 km.
+> PKIKKIKS(PKIkKIks) at  1893.76 seconds at   215.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    1.922 s/deg. Receiver at depth: 200.0 km.
     0.00    10.0    0.00
    -0.01    20.0    1.73
    -0.02    35.0    4.06
@@ -582,7 +582,7 @@
  -214.83   410.0 1848.78
  -214.99   210.0 1891.54
  -215.00   200.0 1893.76
-> SKIKKIKP at  1912.93 seconds at   215.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    1.922 s/deg. Receiver at depth: 200.0 km.
+> SKIKKIKP(SKIkKIkp) at  1912.93 seconds at   215.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    1.922 s/deg. Receiver at depth: 200.0 km.
     0.00    10.0    0.00
    -0.01    20.0    2.90
    -0.01    35.0    6.80
@@ -603,7 +603,7 @@
  -214.68   410.0 1888.32
  -214.99   210.0 1911.71
  -215.00   200.0 1912.93
-> SKKS at  2064.31 seconds at   215.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    3.589 s/deg. Receiver at depth: 200.0 km.
+> SKKS(SKKs) at  2064.31 seconds at   215.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    3.589 s/deg. Receiver at depth: 200.0 km.
     0.00    10.0    0.00
    -0.01    20.0    2.91
    -0.03    35.0    6.84
@@ -620,7 +620,7 @@
  -214.68   410.0 2018.91
  -214.99   210.0 2062.06
  -215.00   200.0 2064.30
-> SKIKKIKS at  2109.26 seconds at   215.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    1.918 s/deg. Receiver at depth: 200.0 km.
+> SKIKKIKS(SKIkKIks) at  2109.26 seconds at   215.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    1.918 s/deg. Receiver at depth: 200.0 km.
     0.00    10.0    0.00
    -0.01    20.0    2.90
    -0.01    35.0    6.80
@@ -670,7 +670,7 @@
   143.84   410.0 2411.69
   144.95   210.0 2461.08
   145.00   200.0 2463.60
-> SKSSKS at  2542.22 seconds at   145.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    7.526 s/deg. Receiver at depth: 200.0 km.
+> SKSSKS(SKsSKs) at  2542.22 seconds at   145.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    7.526 s/deg. Receiver at depth: 200.0 km.
     0.00    10.0    0.00
     0.02    20.0    2.97
     0.06    35.0    7.01
@@ -703,7 +703,7 @@
   144.30   410.0 2494.67
   144.97   210.0 2539.88
   145.00   200.0 2542.21
-> SKSSKS at  2954.82 seconds at   215.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    4.329 s/deg. Receiver at depth: 200.0 km.
+> SKSSKS(SKsSKs) at  2954.82 seconds at   215.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    4.329 s/deg. Receiver at depth: 200.0 km.
     0.00    10.0    0.00
    -0.01    20.0    2.92
    -0.03    35.0    6.86
@@ -736,7 +736,7 @@
  -214.61   410.0 2909.15
  -214.98   210.0 2952.57
  -215.00   200.0 2954.82
-> SKIKSSKIKS at  3034.53 seconds at   215.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    1.924 s/deg. Receiver at depth: 200.0 km.
+> SKIKSSKIKS(SKIksSKIks) at  3034.53 seconds at   215.00 degrees for a     10.0 km deep source in the ak135 model with rayParam    1.924 s/deg. Receiver at depth: 200.0 km.
     0.00    10.0    0.00
    -0.01    20.0    2.90
    -0.01    35.0    6.80

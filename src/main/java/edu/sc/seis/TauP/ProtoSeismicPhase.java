@@ -942,7 +942,8 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
     }
 
     public String getPuristName() {
-        return phaseNameForSegments();
+        String pure = phaseNameForSegments();
+        return pure;
     }
 
     final List<SeismicPhaseSegment> segmentList;

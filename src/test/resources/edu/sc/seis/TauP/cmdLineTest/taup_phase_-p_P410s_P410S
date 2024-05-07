@@ -8,7 +8,7 @@ P410s:
   s going up   as a S in the crust/mantle, layer 3 to 0, depths 410.0 to 0.0, then end
 
 --------
-P410S:
+P410S (Ped410S):
   exists from 79.19 to 101.01 degrees.
   with ray parameter from   11.521 down to    8.323 sec/deg.
   travel times from  1287.59 to  1484.14 sec.

@@ -1002,7 +1002,7 @@ public class SimpleSeismicPhase implements SeismicPhase {
 
     @Override
     public String describe() {
-        String desc = getName() +" "+(getName().equals(getPuristName()) ? "" : ("("+getPuristName()+")"))+ ":\n";
+        String desc = getName() +(getName().equals(getPuristName()) ? "" : (" ("+getPuristName()+")"))+ ":\n";
         return desc+ SeismicPhase.baseDescribe(this)+"\n"+ SeismicPhase.segmentDescribe(this);
     }
 
