@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+  body {
+    background-color: gainsboro;
+  }  #testoutput {
+    background-color: white;
+  }  </style>
+</head>
+<body>
+<h3>Command Line Test Cases</h3>
+  <select name="cmdlinetests" id="cmd-select">
+  <option>taup time --mod prem -h 200 -p S,P --deg 57.4</option>
+  <option>taup pierce --mod prem -h 200 -p S,P --deg 57.4</option>
+  <option>taup pierce --turn --mod prem -h 200 -p S,P --deg 57.4</option>
+  <option>taup pierce --mod prem -h 200 -p S --sta 12 34.2 --evt -28 122 --pierce 2591 --nodiscon</option>
+  <option>taup path --mod iasp91 -h 550 --deg 74 -p S,ScS,sS,sScS --gmt</option>
+  <option>taup phase --mod prem -h 200 -p PKiKP</option>
+  <option>taup wavefront --mod iasp91 -h 550 -p S,ScS,sS,sScS --gmt</option>
+  <option>taup wavefront --mod iasp91 -h 550 -p S,ScS,sS,sScS --svg</option>
+  <option>taup curve --mod prem -h 500 -p s,S,ScS,Sdiff --gmt</option>
+  <option>taup curve --mod prem -h 500 -p s,S,ScS,Sdiff --svg</option>
+  </select>
+  <button id="prev">Prev</button>
+  <button id="next">Next</button>
+  <h5 id="cmdvalue">
+  </h5>
+  <div id="testoutput">
+  </div>
+<script>
+
+function fileizeCmd(cmd) {
+        cmd = cmd.replaceAll(",", "_");
+        return cmd.replaceAll(" ", "_");
+}
+const selectEl = document.querySelector("select");
+const outputEl = document.querySelector("#testoutput");
+const cmdEl = document.querySelector("#cmdvalue");
+function doCmd(cmd) {
+  while (outputEl.firstChild) {
+    outputEl.removeChild(outputEl.lastChild);
+  }
+  cmdEl.textContent = cmd;
+  console.log(cmd);
+  fetch(fileizeCmd(cmd), {cache: "no-cache"}).then(resp => {
+    if (!resp.ok) {
+      throw new Error(`HTTP error! Status: ${resp.status}`);
+    }
+    return resp.text();
+  }).then(textResp => {
+    if (cmd.includes("--svg")) {
+      outputEl.innerHTML = textResp;
+    } else {
+      const embEl = document.createElement("pre");
+      embEl.textContent = textResp;
+      outputEl.appendChild(embEl);
+    }
+  }).catch(e => {
+    outputEl.textContent = e;
+    console.warn(e);
+  });
+}
+selectEl.addEventListener("change", e => {
+  const cmd = e.target.value;
+  doCmd(cmd);
+});
+doCmd(selectEl.options[selectEl.selectedIndex].text);
+document.querySelector("#prev").addEventListener("click", e => {
+  let idx = selectEl.selectedIndex;
+  if (idx > 0) {
+    idx = idx-1;
+  } else {
+    idx = selectEl.options.length-1;
+  }
+  selectEl.selectedIndex = idx;
+  doCmd(selectEl.options[selectEl.selectedIndex].text);
+});
+document.querySelector("#next").addEventListener("click", e => {
+  let idx = selectEl.selectedIndex;
+  if (idx < selectEl.options.length-1) {
+    idx = idx+1;
+  } else {
+    idx = 0;
+  }
+  selectEl.selectedIndex = idx;
+  doCmd(selectEl.options[selectEl.selectedIndex].text);
+});
+
+
+
+</script>
+</body>
+</html>
+

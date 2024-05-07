@@ -1,1 +1,1 @@
-taup phase --mod prem -h 200 -p PKiKP
+taup phase --mod prem -h 200 -p PKiKP -o stdout

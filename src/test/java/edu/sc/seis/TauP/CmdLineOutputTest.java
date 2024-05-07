@@ -267,7 +267,9 @@ public class CmdLineOutputTest {
     public void regenExampleOutput() throws Exception {
         for (String cmd : docCmds) {
             System.err.println(cmd);
-            saveDocOutputToFile(cmd, docOutputDir);
+            String filename = fileizeCmd(cmd); // without -o stdout
+            cmd = cmd+" -o stdout";
+            saveDocOutputToFile(cmd, docOutputDir, filename);
         }
         viewSavedOutputAsHTML(List.of(docCmds), docOutputDir, "Command Line Test Cases");
     }
@@ -547,8 +549,7 @@ public class CmdLineOutputTest {
         }
     }
 
-    public void saveDocOutputToFile(String cmd, File outputDir) throws Exception {
-        String filename = fileizeCmd(cmd);
+    public void saveDocOutputToFile(String cmd, File outputDir, String filename) throws Exception {
         saveTestOutputToFile( cmd, outputDir, filename);
         PrintStream cmdOut = new PrintStream(new BufferedOutputStream(new FileOutputStream(new File(outputDir, filename+".cmd"))));
         cmdOut.println(cmd);
