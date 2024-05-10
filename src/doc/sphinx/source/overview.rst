@@ -4,8 +4,8 @@ Overview
 ========
 
 The algorithms employed within the TauP package are based on the
-method of \cite{bulandchapman}.
-The IASPEI \textit{ttimes} package is a widely-used implementation of
+method of :cite:t:`bulandchapman`.
+The IASPEI *ttimes* package is a widely-used implementation of
 the methodology.
 
 The main benefit of this new package is a marked increase in flexibility. It
@@ -18,7 +18,7 @@ the extraction of derivative information, such as ray paths through the
 earth, pierce and turning points, as well as travel time curves.
 
 A paper has been published in Seismological Research Letters,
-\cite{taupsrl},
+:cite:t:`taupsrl`,
 that is intended to be used as a companion to this manual. While this manual
 mainly focuses on the praticalities of using the codes,
 the paper is able to go into more detail on the methodology. A pdf copy of

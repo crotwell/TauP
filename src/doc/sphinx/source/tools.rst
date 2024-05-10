@@ -37,14 +37,14 @@ Tools included with the TauP package:
 :code:`taup create`       creates a .taup model from a velocity model.
 =======================   =========================================================================
 
-Each tool is a Java application and has an associated wrapper to make
-execution easier: sh scripts
+Each tool is a subcommand of the overall :code:`taup` Java application which is
+an wrapper to make execution easier: sh scripts
 for \textsc{Unix} and
-bat files for windows.  The applications are machine independent but the
+bat files for windows.  The application are machine independent but the
 wrappers are OS specific.
 For example, to invoke TauP Time under \textsc{Unix}, you could type
 
-:code:`java -Dtaup.model.path=\$\{TAUPPATH\} edu.sc.seis.TauP.TauP Time -mod prem`
+:code:`java edu.sc.seis.TauP.TauP time -mod prem`
 
 or simply use the script that does the same thing,
 
@@ -52,15 +52,6 @@ or simply use the script that does the same thing,
 
 Each tool has a :code:`--help` flag that will print a usage summary, as well
 as a :code:`--version` flag that will print the version.
-
-TauP is moving towards a single application with subcommands,
-but we provide individual scripts for compatibility. These
-two commands produce the same result, but the first is
-preferred and the second style will be removed in version 3.0.
-
-:code:`taup time -mod prem -deg 30 -ph P`
-
-:code:`taup\_time -mod prem -deg 30 -ph P`
 
 ------------------
 Default Parameters
@@ -79,10 +70,7 @@ In addition, many of the properties can be overridden by command line arguments.
 
 The form of the properties file is very simple. Each property is set using
 the form
-\begin{verbatim}
-taup.property.name=value
-\end{verbatim}
- one property per line.
+:code:`taup.property.name=value` one property per line.
 Comment lines are allowed, and begin with a :code:`\#`.
 Additionally, the names of all of the properties follow a convention of
 prepending ``:code:`taup.`'' to the name of the property.

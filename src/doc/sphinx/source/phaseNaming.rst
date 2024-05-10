@@ -34,6 +34,7 @@ the depth to an interface involved in an interaction.
 
 
 1. Symbols that describe wave-type are:
+
     ===========   ================================================================
     :code:`P`     compressional wave, upgoing or downgoing, in the crust or mantle
     :code:`p`     strictly upgoing P wave in the crust or mantle
@@ -58,18 +59,19 @@ the depth to an interface involved in an interaction.
     :code:`m`      interaction with the moho
     :code:`g`      appended to P or S to represent a ray turning in the crust
     :code:`n`      appended to P or S to represent a head wave along the moho
-    :code:`c`      topside reflection off the core mantle boundary
-    :code:`i`      topside reflection off the inner core outer core boundary
+    :code:`c`      interaction with the core mantle boundary
+    :code:`i`      interaction with the inner core outer core boundary
     :code:`^`      underside reflection, used primarily for crustal and mantle interfaces
     :code:`v`      topside reflection, used primarily for crustal and mantle interfaces
     :code:`V`      critical topside reflection, used primarily for crustal and mantle interfaces
     :code:`diff`   appended to P or S to represent a diffracted wave along the core mantle boundary, or to K for a diffracted wave along the inner-outer core boundary
-    :code:`kmps`   appended to a velocity to represent a horizontal phase velocity (see \ref{kmps} below)
+    :code:`kmps`   appended to a velocity to represent a horizontal phase velocity (see :ref:`kmps` below)
     ============   ================================================================
 
 3.  The characters :code:`p`, :code:`s`,
     :code:`k`, :code:`y` and :code:`j` **always** represent
     up-going legs.
+
     An example is the source to surface leg of the phase :code:`pP`
     from a source at depth.
     :code:`P` and :code:`S` can be turning waves, but
@@ -95,7 +97,7 @@ the depth to an interface involved in an interaction.
     at 0 degree distance the turning ray :code:`P` does not have an arrival but :code:`Ped` does.
 
 4.  Numbers, except velocities for :code:`kmps`
-    phases (see \ref{kmps} below),
+    phases (see :ref:`kmps` below),
     represent depths at which interactions take place.
     For example, :code:`P410s` represents a P-to-S conversion at a discontinuity at 410km
     depth.
@@ -203,7 +205,8 @@ the depth to an interface involved in an interaction.
     ``:code:`p`~is~to~:code:`P`'' is not the same as
     ``:code:`i`~is~to~:code:`I`'',
     a naming convention was created to use :code:`y` as an exclusively
-    upgoing leg in the inner core. For example in a model with a discontinuity at 5500 km depth in the inner core, the phases
+    upgoing leg in the inner core. For example in a model with a discontinuity
+    at 5500 km depth in the inner core, the phases
     :code:`PKIv5500IKP` and :code:`PKIv5500ykp` are the same. Note that
     because standard models do not have discontuities in the core, these
     phases have not received the same level of testing.
@@ -226,7 +229,9 @@ the depth to an interface involved in an interaction.
     So, :code:`PKPab` and :code:`PKPbc` are
     both labeled just :code:`PKP` while :code:`PKPdf` is called :code:`PKIKP`.
 
-11  The symbol :code:`kmps` is used to get the travel time for a
+.. _kmps:
+11  KMPS
+    The symbol :code:`kmps` is used to get the travel time for a
     specific horizontal phase velocity.
     For example, :code:`2kmps` represents a horizontal phase
     velocity of 2 kilometers per second.

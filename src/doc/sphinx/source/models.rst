@@ -12,10 +12,10 @@ Both are piecewise linear between given depth points. Support for cubic spline
 velocity models would be useful and is planned for a future release.
 
 The first format is that used by the most recent ttimes
-codes~\cite{kennett:ak135}, `.tvel`.
+codes :cite:t:`kennett:ak135`, `.tvel`.
 This format has two comment lines, followed by lines composed of depth, Vp, Vs and density, all separated by whitespace. TauP ignores the first two lines of this format and reads the remaining lines.
 
-The second format is based on the format used by Xgbm,~\cite{xgbmreport,xgbmmanual}.
+The second format is based on the format used by Xgbm, :cite:t:`xgbmreport,xgbmmanual`.
 It is referred to here
 as the `.nd` format for *named discontinuities.*
 Its biggest advantage is that it can specify the location of the major
@@ -64,8 +64,8 @@ ocean                 top of ocean layer
 
 One further enhancement to these model file formats is the support for comments
 embedded within the model files. As in shell scripting, everything after
-a \# on a line is ignored. In addition, \textit{C} style \verb"/* ... */"
-and \textit{C++} style \verb"// ..." comments are recognized.
+a :code:`\#` on a line is ignored. In addition, *C* style :code:`/* ... */`
+and :code:`// ...` comments are recognized.
 
 A very simple \textit{named discontinuities} model file might look like this:
 .. include:: verysimple.nd
@@ -88,91 +88,93 @@ Lastly, the path to the actual model file may be specified.
 TauP searches each of these
 places in order until it finds a model that matches the name.
 
-\begin{enumerate}
-\item Standard Model.
+* Standard Model.
 
-TauP first checks to see if the model name is associated with a standard model.
-Several standard models are included within the distributed jar file.
-They include
-iasp91~\cite{iasp},
-prem~\cite{dziewonski_anderson},
-ak135~\cite{kennett:ak135},
-jb~\cite{jb},
-1066a~\cite{gilbert_dziewonski},
-1066b~\cite{gilbert_dziewonski},
-pwdk~\cite{weber_davis},
-sp6~\cite{morelli} and
-herrin~\cite{herrin}. Lastly, we have included qdt, which is a coarsely sampled version of iasp91~\cite{iasp}. It is samller, and thus loads quicker, but has significantly reduced accuracy.
-We will consider adding other models to the distribution if
-they are of wide interest.
-They are included within the distribution jar file but
-taup can locate them with just the model name.
+  TauP first checks to see if the model name is associated with a standard model.
+  Several standard models are included within the distributed jar file.
+  They include
 
-\item Within the taup.model.path property.
+  ===========  =============================
+  iasp91       :cite:t:`iasp`
+  prem         :cite:t:`dziewonski_anderson`
+  ak135        :cite:t:`kennett:ak135`
+  ak135favg    :cite:t:`kennett:ak135f`
+  ak135fcont   :cite:t:`kennett:ak135f`
+  jb           :cite:t:`jb`
+  1066a        :cite:t:`gilbert_dziewonski`
+  1066b        :cite:t:`gilbert_dziewonski`
+  pwdk         :cite:t:`weber_davis`
+  sp6          :cite:t:`morelli`
+  herrin       :cite:t:`herrin`
+  ===========  =============================
 
-Users can create custom models, and place the stored models in a convenient
-location. If the taup.model.path property includes those
-directories or jar files, then they can be located.
-The search is done in the order of taup.model.path until a model matching the model
-name is found. While taup.model.path is a Java property, the shell scripts provided
-translate the environment variable TAUPPATH into this property. The user
-generally need not be aware of this fact except when the tools are invoked
-without using the provided shell scripts. A more desirable method is to
-set the taup.model.path in a properties file. See section \ref{properties} for
-more details.
+  Lastly, we have included qdt, which is a coarsely sampled version of iasp91 :cite:t:`iasp`.
+  It is samller, and thus loads quicker, but has significantly reduced accuracy.
+  We will consider adding other models to the distribution if
+  they are of wide interest.
+  They are included within the distribution jar file but
+  taup can locate them with just the model name.
 
-The taup.model.path property is constructed in the manner of standard Java CLASSPATH
-which is itself based loosely on the manner of the \textsc{Unix} PATH.
-The only real
-differences between CLASSPATH and PATH are that a jar file
-may be placed directly in the path and the path separator character
-is machine dependent, \textsc{Unix} is `:' but other systems may vary.
+* Within the taup.model.path property.
 
-The taup.model.path allows you to have directories containing saved model files
-as well as jar files of models.
-For instance, in a \textsc{Unix} system using the c shell,
-you could set your TAUPPATH to be, (all one line):
+  Users can create custom models, and place the stored models in a convenient
+  location. If the taup.model.path property includes those
+  directories or jar files, then they can be located.
+  The search is done in the order of taup.model.path until a model matching the model
+  name is found. While taup.model.path is a Java property, the shell scripts provided
+  translate the environment variable TAUPPATH into this property. The user
+  generally need not be aware of this fact except when the tools are invoked
+  without using the provided shell scripts. A more desirable method is to
+  set the taup.model.path in a properties file. See section :ref:`properties` for
+  more details.
 
-\begin{verbatim}
-setenv TAUPPATH /home/xxx/MyModels.jar:/home/xxx/ModelDir:
-/usr/local/lib/localModels.jar
-\end{verbatim}
+  The taup.model.path property is constructed in the manner of standard Java CLASSPATH
+  which is itself based loosely on the manner of the *Unix* PATH.
+  The only real
+  differences between CLASSPATH and PATH are that a jar file
+  may be placed directly in the path and the path separator character
+  is machine dependent, *Unix* is ``:`` but other systems may vary.
 
-or you could place a line in the \texttt{.taup} file in your home directory
-that accomplished the same thing, again all one line:
+  The taup.model.path allows you to have directories containing saved model files
+  as well as jar files of models.
+  For instance, in a \textsc{Unix} system using the c shell,
+  you could set your TAUPPATH to be, (all one line):
 
-\begin{verbatim}
-taup.model.path=/home/xxx/MyModels.jar:/home/xxx/ModelDir:
-/usr/local/lib/localModels.jar
-\end{verbatim}
+  ``setenv TAUPPATH /home/xxx/MyModels.jar:/home/xxx/ModelDir:
+  /usr/local/lib/localModels.jar``
 
-If you place models in a jar, TauP assumes that they are placed
-in a directory called \texttt{Models} before they are jarred.
-For example, you might
-use taup\_create to create several taup models in the Models directory
-and then create a jar file.
+  or you could place a line in the *.taup* file in your home directory
+  that accomplished the same thing, again all one line:
 
-\texttt{jar -cf MyModels.jar Models}
+  ``taup.model.path=/home/xxx/MyModels.jar:/home/xxx/ModelDir:
+  /usr/local/lib/localModels.jar``
 
-Including a ``.'' for the current working directory with the taup.model.path
-is not necessary since we
-always check there, see \ref{cwdmodel} below, but it may be used to
-change the search order.
+  If you place models in a jar, TauP assumes that they are placed
+  in a directory called ``Models`` before they are jarred.
+  For example, you might
+  use ``taup create`` to create several taup models in the Models directory
+  and then create a jar file.
 
-\item \label{cwdmodel} The last place TauP looks is for a model file specified
-on the command line.
-So, if you generate newModel.taup and want to get some times, you can just say:
-\texttt{taup\_time -mod newModel.taup}
-or even just
-\texttt{taup\_time -mod newModel}
-as TauP can add the taup suffix if necessary. A relative or absolute pathname
-may precede the model, e.g.
-\texttt{taup\_time -mod ../OtherDir/newModel.taup}.
-New in version 2.0 is the ability of the tools to load a velocity model directly
-and handle the create functionality internall, so in addition to .taup files,
-the .nd and .tvel model files can be loaded if there is not a .taup file found.
-Note that there is extra work involved in processing the velocity file, and so
-frequently used models should still be converted using TauP\_Create to avoid
-reprocessing them each time the tool starts.
+  :code:`jar -cf MyModels.jar Models`
 
-\end{enumerate}
+  Including a ``.`` for the current working directory with the taup.model.path
+  is not necessary since we
+  always check there, see :ref:`cwdmodel` below, but it may be used to
+  change the search order.
+
+* .. _cwdmodel:
+  The last place TauP looks is for a model file specified
+  on the command line.
+  So, if you generate newModel.taup and want to get some times, you can just say:
+  ``taup time -mod newModel.taup``
+  or even just
+  ``taup time -mod newModel``
+  as TauP can add the taup suffix if necessary. A relative or absolute pathname
+  may precede the model, e.g.
+  ``taup time -mod ../OtherDir/newModel.taup``.
+  New in version 2.0 is the ability of the tools to load a velocity model directly
+  and handle the create functionality internall, so in addition to ``.taup`` files,
+  the ``.nd`` and ``.tvel`` model files can be loaded if there is not a ``.taup`` file found.
+  Note that there is extra work involved in processing the velocity file, and so
+  frequently used models should still be converted using * to avoid
+  reprocessing them each time the tool starts.

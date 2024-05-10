@@ -48,4 +48,4 @@ deep source. Note that many of these phases may be too small to be detectable,
 and may not exists for all distances and source depths.
 
 
-.. literalinclude:: examples/taup_find_--max_2_--deg_35_-h_100_--time_400_420
+.. literalinclude:: examples/taup_find_--max_2_--deg_35_-h_100_--time_400_420_--exclude_210.cmd

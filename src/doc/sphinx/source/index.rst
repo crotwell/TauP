@@ -19,6 +19,7 @@ Flexible Seismic Travel-Time and Raypath Utilities.
     phaseNaming
     models
     programming
+    bibliography
 
 
 

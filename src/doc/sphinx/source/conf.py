@@ -14,12 +14,14 @@ release = '3.0'
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
-extensions = ['myst_parser']
+extensions = ['myst_parser', 'sphinxcontrib.bibtex']
+
+
 
 templates_path = ['_templates']
 exclude_patterns = []
 
-
+bibtex_bibfiles = ['refs_taup.bib']
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
