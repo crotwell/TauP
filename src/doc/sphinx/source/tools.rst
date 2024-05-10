@@ -15,6 +15,7 @@ Tools
     taup_phase
     taup_table
     taup_setsac
+    taup_setmseed3
     taup_velplot
     taup_velmerge
     taup_wavefront
@@ -71,9 +72,9 @@ In addition, many of the properties can be overridden by command line arguments.
 The form of the properties file is very simple. Each property is set using
 the form
 :code:`taup.property.name=value` one property per line.
-Comment lines are allowed, and begin with a :code:`\#`.
+Comment lines are allowed, and begin with a :code:`#`.
 Additionally, the names of all of the properties follow a convention of
-prepending ``:code:`taup.` to the name of the property.
+prepending :code:`taup.` to the name of the property.
 This helps to avoid name collisions when new properties
 are added.
 
@@ -201,6 +202,7 @@ to the *ttimes* options.
 .. include:: taup_phase
 .. include:: taup_table
 .. include:: taup_setsac
+.. include:: taup_setmseed3
 .. include:: taup_velplot
 .. include:: taup_velmerge
 .. include:: taup_wavefront

@@ -34,7 +34,10 @@ mantle
 60.0 8.08907 4.47715 3.37688
 \end{verbatim}
 
-If the discontinuity at 30 km depth is not desired, the --smbot argument will create a smooth transition from the bottom of the new model to the first depth sample in the base model. Care should be taken with named discontinuities if they are
+If the discontinuity at 30 km depth is not desired, the --smbot argument will
+create a smooth transition from the bottom of the new model to the first depth
+sample in the base model. Care should be taken with named discontinuities
+if they are
 different in the merged model by making sure there is enough
 depth in the merge to cover the named in both models. The merge
 model does not have to start at the surface, it can be just a
@@ -43,3 +46,4 @@ range of depths.
 The usage is:
 
 .. literalinclude:: cmdLineHelp/taup_velmerge.usage
+  :language: text

@@ -30,3 +30,4 @@ locsat style travel time files.
 The usage is:
 
 .. literalinclude:: cmdLineHelp/taup_table.usage
+  :language: text

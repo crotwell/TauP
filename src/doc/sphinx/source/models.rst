@@ -162,8 +162,9 @@ places in order until it finds a model that matches the name.
   always check there, see :ref:`cwdmodel` below, but it may be used to
   change the search order.
 
-* .. _cwdmodel:
-  The last place TauP looks is for a model file specified
+.. _cwdmodel:
+
+* The last place TauP looks is for a model file specified
   on the command line.
   So, if you generate newModel.taup and want to get some times, you can just say:
   ``taup time -mod newModel.taup``

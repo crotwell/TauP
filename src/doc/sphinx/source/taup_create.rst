@@ -4,16 +4,18 @@ TauP Create
 -----------
 
 TauP Create takes a ASCII velocity model file, samples the model
- and saves the tau model to a binary file.
+and saves the tau model to a binary file.
 The output file holds all
 information about the model and need only be computed once. It
 is used by all of the other tools. There are several parameters controlling
 the density of sampling. Their values can be set with properties. See section
-\ref{properties}, above.
+:ref:`properties`.
 
-Note that the use of TauP Create is no longer required as the various tools can read velocity models directly
-and effectively call TauP Create internally. However, if a model file will be used repeatedly, using a
-precomputed {\texttt .taup} file is more efficient.
+Note that the use of TauP Create is no longer required as the various tools can
+read velocity models directly
+and effectively call TauP Create internally. However, if a model file will be
+used repeatedly, using a
+precomputed `.taup` file is more efficient.
 
 The usage is:
 
@@ -25,9 +27,9 @@ The usage is:
 The :code:`-nd` format is preferred
 because the depths, and thus identities, of the major internal boundaries can
 be unambiguously determined, making phase name parsing easier.
-See section \ref{exampleCreate} for an example.
+See section :ref:`exampleCreate` for an example.
 For compatiblity, we support the :code:`-tvel` format
-currently used by the latest ttimes package,~\cite{kennett:ak135}.
+currently used by the latest ttimes package, :cite:t:`kennett:ak135`.
 
 The output will be a file named after the name of the
 velocity file, followed by :code:`.taup`. For example

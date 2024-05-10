@@ -19,7 +19,7 @@ The :code:`--rev`, :code:`--turn` and :code:`--under` flags are useful
 for limiting the output
 to just those points you care about. The :code:`--pierce depth` option
 allows you
-to specify a ``pierce'' depth that does not correspond to an
+to specify a `pierce` depth that does not correspond to an
 actual discontinuity. For instance, where does a ray pierce 300 kilometers
 above the CMB?
 
@@ -38,7 +38,8 @@ While
 
 would give you just the points that each ray turns from downgoing to upgoing.
 
-Using :code:`-rev` would give you all points that the ray changes direction and :code:`-under` gives just the underside reflections.
+Using :code:`-rev` would give you all points that the ray changes direction
+and :code:`-under` gives just the underside reflections.
 
 Using the :code:`-pierce` option
 
