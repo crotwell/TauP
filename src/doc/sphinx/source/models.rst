@@ -118,7 +118,7 @@ places in order until it finds a model that matches the name.
 * Within the taup.model.path property.
 
   Users can create custom models, and place the stored models in a convenient
-  location. If the taup.model.path property includes those
+  location. If the :code:`taup.model.path` property includes those
   directories or jar files, then they can be located.
   The search is done in the order of taup.model.path until a model matching the model
   name is found. While taup.model.path is a Java property, the shell scripts provided

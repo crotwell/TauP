@@ -1,3 +1,4 @@
+.. _phasenaming:
 
 ====================
 Phase naming in TauP
@@ -109,10 +110,10 @@ the depth to an interface involved in an interaction.
     For example, if the time for :code:`P410s` is requested in a model where the discontinuity
     was really located at 406.7 kilometers depth, the time returned would actually be for
     :code:`P406.7s`.
-    The code ``taup time'' would note that this had been done via the ``Purist Name''.
+    The code `taup time` would note that this had been done via the *Purist Name*.
     Obviously, care should be taken to ensure that there are no other discontinuities
     closer than the one of interest, but this approach allows generic interface
-    names like ``410'' and ``660'' to be used without knowing the exact depth in a given
+    names like `410` and `660` to be used without knowing the exact depth in a given
     model.
 
 5.  If a number appears between two phase legs, e.g. :code:`S410P`,
@@ -145,7 +146,7 @@ the depth to an interface involved in an interaction.
     its entire path, and hence could also be labeled :code:`p410s`.
     :code:`p410S` is often used to mean a reflection in the literature, but there
     are too many possible interactions for the phase parser to allow this.
-    If the underside reflection is desired, use the :code:`p\^\,410S` notation from
+    If the underside reflection is desired, use the :code:`p\^410S` notation from
     rule \ref{carrotv}.
 
 6.  Due to the two previous rules, :code:`P410P` and :code:`S410S`
@@ -156,7 +157,7 @@ the depth to an interface involved in an interaction.
     limit arrivals to just those that turn deeper than a discontinuity (thus avoiding
     travel time curve triplications), even though they have no real interaction with it.
 
-7.  The characters :code:`\^\,`, :code:`v` and :code:`V` are new symbols introduced here to
+7.  The characters :code:`\^`, :code:`v` and :code:`V` are new symbols introduced here to
     represent bottom-side and top-side reflections, respectively.
     They are followed by a number to
     represent the approximate depth of the reflection or
@@ -169,9 +170,9 @@ the depth to an interface involved in an interaction.
     a subset of the non-critical reflection using :code:`v`.
     Reflections from discontinuities besides the
     core-mantle boundary, :code:`c`;
-    or inner-core outer-core boundary, :code:`i`, must use the :code:`\^\,`
+    or inner-core outer-core boundary, :code:`i`, must use the :code:`\^`
     and :code:`v` notation.
-    For instance, in the TauP convention, :code:`p\^\,410S` is used to describe
+    For instance, in the TauP convention, :code:`p\^410S` is used to describe
     a near-source underside reflection.
 
     Underside reflections, except at the
@@ -179,9 +180,9 @@ the depth to an interface involved in an interaction.
     core-mantle boundary (:code:`PKKP`, :code:`SKKKS`, etc.), or
     outer-core-inner-core boundary (:code:`PKIIKP`, :code:`SKJJKS`,
     :code:`SKIIKS`, etc.), must
-    be specified with the :code:`\^\,` notation.
-    For example, :code:`P\^\,410P` and
-    :code:`P\^\,mP` would both be underside
+    be specified with the :code:`\^` notation.
+    For example, :code:`P\^410P` and
+    :code:`P\^mP` would both be underside
     reflections from the 410km discontinuity and the Moho, respectively.
     Because of the difficultly of creating interfaces where critical underside reflections
     can occur in earth-like models, we have not added this capability.
@@ -196,14 +197,14 @@ the depth to an interface involved in an interaction.
     :code:`K`, :code:`PmP` could have several meanings.
     The :code:`m` symbol just allows the user to describe phases interaction with the Moho
     without knowing its exact depth.
-    In all other respects, the :code:`\^\,`-:code:`v` nomenclature is maintained.
+    In all other respects, the :code:`\^`-:code:`v` nomenclature is maintained.
 
-8.  Starting in version 3.0, :code:`\^\,` and :code:`v` are now allowed
+8.  Starting in version 3.0, :code:`\^` and :code:`v` are now allowed
     for for all disconuities in the model, including
     the crust, mantle and core.
     However, because
-    ``:code:`p`~is~to~:code:`P`'' is not the same as
-    ``:code:`i`~is~to~:code:`I`'',
+    ":code:`p` is to :code:`P`" is not the same as
+    ":code:`i` is to :code:`I`",
     a naming convention was created to use :code:`y` as an exclusively
     upgoing leg in the inner core. For example in a model with a discontinuity
     at 5500 km depth in the inner core, the phases
@@ -230,6 +231,7 @@ the depth to an interface involved in an interaction.
     both labeled just :code:`PKP` while :code:`PKPdf` is called :code:`PKIKP`.
 
 .. _kmps:
+
 11  KMPS
     The symbol :code:`kmps` is used to get the travel time for a
     specific horizontal phase velocity.
