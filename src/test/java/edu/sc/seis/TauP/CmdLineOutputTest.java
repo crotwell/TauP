@@ -135,6 +135,7 @@ public class CmdLineOutputTest {
             "taup pierce --turn --mod prem -h 200 -p S,P --deg 57.4",
             "taup pierce --mod prem -h 200 -p S --sta 12 34.2 --evt -28 122 --pierce 2591 --nodiscon",
             "taup path --mod iasp91 -h 550 --deg 74 -p S,ScS,sS,sScS --gmt",
+            "taup path --mod iasp91 -h 550 --deg 74 -p S,ScS,sS,sScS --svg",
             "taup phase --mod prem -h 200 -p PKiKP",
             "taup wavefront --mod iasp91 -h 550 -p S,ScS,sS,sScS --gmt",
             "taup wavefront --mod iasp91 -h 550 -p S,ScS,sS,sScS --svg",
