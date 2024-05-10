@@ -3,8 +3,6 @@
 Overview
 ========
 
-\pagenumbering{arabic}
-
 The algorithms employed within the TauP package are based on the
 method of \cite{bulandchapman}.
 The IASPEI \textit{ttimes} package is a widely-used implementation of
