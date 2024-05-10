@@ -1,8 +1,9 @@
 Usage: taup find [--amp] [--debug] [--help] [--pwaveonly] [--showrayparam]
                  [--verbose] [--deltatime=<deltaTime>] --max=<maxActions>
                  [--mw=<mw>] [-o=<outFile>] [--prop=<toolPropsFilename>]
-                 [--deg=d[,d...]]... [--rayparam=<minRayParamRange>
-                 [<minRayParamRange>]]... [--time=<times> [<times>]]...
+                 [--deg=d[,d...]]... [--rayparamdeg=<minRayParamRange>
+                 [<minRayParamRange>]]... [--rayparamkm=<minRayParamRangeKm>
+                 [<minRayParamRangeKm>]]... [--time=<times> [<times>]]...
                  [--exclude=<excludeDepth>...]... [[--mod=<modelname>]
                  [-h=<sourceDepth>] [--stadepth=depth] [--scat=s s]...] [--text
                  | --json]
@@ -24,9 +25,12 @@ find seismic phases in an earth model near a search time
       --prop=<toolPropsFilename>
                            load defaults from properties file
       --pwaveonly          only P wave legs, no S
-      --rayparam=<minRayParamRange> [<minRayParamRange>]
+      --rayparamdeg=<minRayParamRange> [<minRayParamRange>]
                            only keep phases that overlap the given ray
-                             parameter range
+                             parameter range in s/deg
+      --rayparamkm=<minRayParamRangeKm> [<minRayParamRangeKm>]
+                           only keep phases that overlap the given ray
+                             parameter range in s/km
       --showrayparam       show min and max ray parameter for each phase name
       --time=<times> [<times>]
                            find arrivals within the given range

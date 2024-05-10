@@ -178,10 +178,10 @@ public class TauP_Find extends TauP_Tool {
     @CommandLine.Option(names = "--max", required = true,description = "Maximum number of reflections and phase conversion")
     int maxActions;
 
-    @CommandLine.Option(names = "--rayparamdeg", arity = "1..2", description = "only keep phases that overlap the given ray parameter range")
+    @CommandLine.Option(names = "--rayparamdeg", arity = "1..2", description = "only keep phases that overlap the given ray parameter range in s/deg")
     Double[] minRayParamRange;
 
-    @CommandLine.Option(names = "--rayparamkm", arity = "1..2", description = "only keep phases that overlap the given ray parameter range")
+    @CommandLine.Option(names = "--rayparamkm", arity = "1..2", description = "only keep phases that overlap the given ray parameter range in s/km")
     Double[] minRayParamRangeKm;
 
     protected Double[] getRayParamRange() throws TauModelException {

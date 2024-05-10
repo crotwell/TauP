@@ -16,15 +16,26 @@ The :code:`-gmt` option prepends a GMT :code:`psxy` command to the output
 file, creating a runnable script instead of just a data file.
 The output is put in taup_curve.gmt by default, so to view the results:
 
-\begin{verbatim}
-sh taup_curve.gmt
-\end{verbatim}
+:code:`sh taup_curve.gmt`
 
 and you have a plot of the wavefronts in "taup_curve.pdf".
 
 Alternatively, using --svg will generate an SVG plot of the same curves:
 
 .. literalinclude:: examples/taup_curve_--mod_prem_-h_500_-p_s_S_ScS_Sdiff_--svg.cmd
+
+and results in
+
+.. raw:: html
+    :file:  examples/taup_curve_--mod_prem_-h_500_-p_s_S_ScS_Sdiff_--svg
+
+Other paramaters besides distance vs time can be plotted using the `-x`
+and `-y` options. For example tau vs ray parameter with:
+
+.. literalinclude:: examples/taup_curve_-x_rayparam_-y_tau_--svg.cmd
+
+.. raw:: html
+    :file:  examples/taup_curve_-x_rayparam_-y_tau_--svg
 
 
 The usage is:

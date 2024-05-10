@@ -36,7 +36,8 @@ The usage is:
 
 The phases may also be limited by a ray parameter range or optionally by a
 travel time range. Note that limiting by interaction number, via :code:`--max`
-or limiting the ray parameter range via :code:`--rayparam` are simple.
+or limiting the ray parameter range via :code:`--rayparam` or
+:code:`--rayparamkm` are simple.
 Limiting by arrival time of the phase using the :code:`--time` is more
 complex as the phase must be evaluated fully in the model, which takes longer.
 Both :code:`--rayparam` and :code:`--time` accept one or two values. If one,
