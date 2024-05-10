@@ -60,9 +60,21 @@ public class SeismicPhaseWalk {
                 endingSegments.add(cons);
             }
         }
-        endingSegments.sort(Comparator.comparingInt(ProtoSeismicPhase::size));
-        endingSegments = cleanDuplicates(endingSegments);
-        return endingSegments;
+        endingSegments.sort(Comparator.naturalOrder()); // sorts alpha by proto name
+        ProtoSeismicPhase prev = null;
+        ArrayList<ProtoSeismicPhase> out = new ArrayList<>();
+        for (ProtoSeismicPhase curr : endingSegments) {
+            if (prev == null) {
+                prev = curr;
+            } else if (canMergePhases(prev, curr)) {
+                prev = mergePhases(prev, curr);
+            } else {
+                out.add(prev);
+                prev = curr;
+            }
+        }
+        out.add(prev);
+        return out;
     }
 
     public List<ProtoSeismicPhase> walkPhases(int maxAction) throws TauModelException {

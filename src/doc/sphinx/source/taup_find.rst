@@ -25,7 +25,8 @@ significant.  In the iasp91 model for a surface source, :code:`--max 1`
 results in 82 phases while :code:`--max 2` results in over 1000 phases.
 Then :code:`--max 3` results in over 13000 phases and
 :code:`--max 4` is over 150,000. The number of phase paths can be limited
-by a range of ray parameters
+by a range of ray parameters or times or by disabling interactions with
+discontinuities in the model.
 
 
 The usage is:
