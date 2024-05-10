@@ -10,6 +10,8 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
+import static edu.sc.seis.TauP.Arrival.RtoD;
+
 @CommandLine.Command(name = "find",
         description = "find seismic phases in an earth model near a search time",
         usageHelpAutoWidth = true)
@@ -36,11 +38,12 @@ public class TauP_Find extends TauP_Tool {
         TauModel tMod = modelArgs.depthCorrected();
         Double minRP = null;
         Double maxRP = null;
-        if (minRayParamRange != null && minRayParamRange.length > 0) {
-            minRP = minRayParamRange[0];
+
+        if (getRayParamRange() != null && getRayParamRange().length > 0) {
+            minRP = getRayParamRange()[0];
             maxRP = minRP;
-            if (minRayParamRange.length > 1) {
-                maxRP = minRayParamRange[1];
+            if (getRayParamRange().length > 1) {
+                maxRP = getRayParamRange()[1];
             }
         }
         SeismicPhaseWalk walker = new SeismicPhaseWalk(tMod,
@@ -108,12 +111,20 @@ public class TauP_Find extends TauP_Tool {
                     segList.phaseNameForSegments().length());
         }
         String phaseFormat = "%-" + maxNameLength + "s";
+
+        if (showrayparam) {
+            writer.println(String.format(phaseFormat, "Phase")+"    Min     Max (s/deg)");
+            for (int i = 0; i < maxNameLength; i++) {
+                writer.print("-");
+            }
+            writer.println("-----------------------");
+        }
         for (ProtoSeismicPhase segList : walk) {
             SeismicPhaseSegment endSeg = segList.get(segList.size()-1);
 
             if (showrayparam) {
                 writer.print(String.format(phaseFormat, segList.phaseNameForSegments())
-                        +" "+Outputs.formatRayParam(endSeg.minRayParam) + " " + Outputs.formatRayParam(endSeg.maxRayParam));
+                        +" "+Outputs.formatRayParam(endSeg.minRayParam / RtoD) + " " + Outputs.formatRayParam(endSeg.maxRayParam / RtoD));
             } else {
                 writer.print(segList.phaseNameForSegments());
             }
@@ -167,8 +178,31 @@ public class TauP_Find extends TauP_Tool {
     @CommandLine.Option(names = "--max", required = true,description = "Maximum number of reflections and phase conversion")
     int maxActions;
 
-    @CommandLine.Option(names = "--rayparam", arity = "1..2", description = "only keep phases that overlap the given ray parameter range")
+    @CommandLine.Option(names = "--rayparamdeg", arity = "1..2", description = "only keep phases that overlap the given ray parameter range")
     Double[] minRayParamRange;
+
+    @CommandLine.Option(names = "--rayparamkm", arity = "1..2", description = "only keep phases that overlap the given ray parameter range")
+    Double[] minRayParamRangeKm;
+
+    protected Double[] getRayParamRange() throws TauModelException {
+
+        if (minRayParamRange == null &&  minRayParamRangeKm == null) {
+            return null;
+        } else if (minRayParamRange != null &&  minRayParamRangeKm != null) {
+            throw new CommandLine.ParameterException(spec.commandLine(), "Only one of --rayparamdeg and --rayparamkm may be used");
+        }
+        Double[] rpRange = null;
+        if (minRayParamRangeKm != null) {
+            rpRange = new Double[minRayParamRangeKm.length];
+            rpRange[0] = minRayParamRangeKm[0] / modelArgs.getTauModel().getRadiusOfEarth();
+            if (minRayParamRangeKm.length > 1) {
+                rpRange[1] = minRayParamRangeKm[1] / modelArgs.getTauModel().getRadiusOfEarth();
+            }
+        } else if (minRayParamRange != null) {
+            rpRange = minRayParamRange;
+        }
+        return rpRange;
+    }
 
     @CommandLine.Option(names = "--exclude", arity = "1..", description = "Exclude boundaries from phase conversion or reflection interactions")
     List<Double> excludeDepth = new ArrayList<>();
