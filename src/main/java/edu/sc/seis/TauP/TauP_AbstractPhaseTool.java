@@ -30,24 +30,25 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
 
     public List<PhaseName> parsePhaseNameList() throws PhaseParseException {
         if (this.phaseNames == null) {
+            this.phaseNames = new ArrayList<>();
             if (phaseArgs.isEmpty()) {
                 for (String pStr : extractPhaseNames(DEFAULT_PHASES)) {
                     appendPhaseName(pStr);
                 }
-            }
-            this.phaseNames = new ArrayList<>();
-            for (String pStr : phaseArgs.phaseNames) {
-                appendPhaseName(pStr);
-            }
-            for (String filename : phaseArgs.phaseFileList) {
-                List<String> pList;
-                try {
-                    pList = readPhaseFile(filename);
-                } catch (IOException e) {
-                    throw new PhaseParseException("Unable to parse file: "+filename, e);
-                }
-                for (String pStr : pList) {
+            } else {
+                for (String pStr : phaseArgs.phaseNames) {
                     appendPhaseName(pStr);
+                }
+                for (String filename : phaseArgs.phaseFileList) {
+                    List<String> pList;
+                    try {
+                        pList = readPhaseFile(filename);
+                    } catch (IOException e) {
+                        throw new PhaseParseException("Unable to parse file: " + filename, e);
+                    }
+                    for (String pStr : pList) {
+                        appendPhaseName(pStr);
+                    }
                 }
             }
         }

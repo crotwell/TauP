@@ -140,7 +140,8 @@ public class CmdLineOutputTest {
             "taup wavefront --mod iasp91 -h 550 -p S,ScS,sS,sScS --gmt",
             "taup wavefront --mod iasp91 -h 550 -p S,ScS,sS,sScS --svg",
             "taup curve --mod prem -h 500 -p s,S,ScS,Sdiff --gmt",
-            "taup curve --mod prem -h 500 -p s,S,ScS,Sdiff --svg"
+            "taup curve --mod prem -h 500 -p s,S,ScS,Sdiff --svg",
+            "taup curve -x rayparam -y tau --svg",
     };
 
     /** 
