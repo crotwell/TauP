@@ -246,9 +246,9 @@ public class TauP_Web extends TauP_Tool {
         return null;
     }
 
-    int port = 7049;
+    public int port = 7049;
 
-    String webRoot = "taupweb";
+    public String webRoot = "taupweb";
 
     /**
      * Allows TauP_Web to run as an application. Creates an instance of

@@ -3,6 +3,7 @@ package edu.sc.seis.TauP;
 import picocli.CommandLine;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.util.concurrent.Callable;
 
 @CommandLine.Command(name = "web",
@@ -23,6 +24,11 @@ public class TauP_Web implements Callable<Integer> {
             Constructor con = webClass.getConstructor();
             if (con != null) {
                 TauP_Tool tool = (TauP_Tool)con.newInstance();
+
+                Field portField = webClass.getDeclaredField("port");
+                portField.setInt(tool, port);
+                Field webrootField = webClass.getDeclaredField("webRoot");
+                webrootField.set(tool, webRoot);
                 tool.init();
                 tool.start();
             }
@@ -32,5 +38,11 @@ public class TauP_Web implements Callable<Integer> {
         }
         return 0;
     }
+
+    @CommandLine.Option(names = {"-p", "--port"}, defaultValue = "7049", description = "port to use")
+    int port = 7049;
+
+    @CommandLine.Option(names = "webroot", description = "web root value", defaultValue = "taupweb")
+    String webRoot = "taupweb";
 
 }
