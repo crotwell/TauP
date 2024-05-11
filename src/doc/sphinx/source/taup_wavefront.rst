@@ -1,3 +1,4 @@
+.. _taup_wavefront:
 
 --------------
 TauP Wavefront

@@ -1,3 +1,4 @@
+.. _taup_setmseed3:
 
 --------------
 TauP SetMSeed3

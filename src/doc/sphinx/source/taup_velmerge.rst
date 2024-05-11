@@ -1,3 +1,4 @@
+.. _taup_velmerge:
 
 ------------------
 TauP VelocityMerge

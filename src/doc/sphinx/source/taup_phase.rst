@@ -1,3 +1,4 @@
+.. _taup_phase:
 
 ------------------
 TauP Phase

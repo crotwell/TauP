@@ -14,29 +14,31 @@ Tools
     taup_curve
     taup_phase
     taup_table
-    taup_setsac
     taup_setmseed3
-    taup_velplot
+    taup_setsac
     taup_velmerge
+    taup_velplot
     taup_wavefront
     taup_create
 
 
 Tools included with the TauP package:
 
-=======================   =========================================================================
-:code:`taup time`         calculates travel times.
-:code:`taup pierce`       calculates pierce points at model discontinuities and specified depths.
-:code:`taup path`         calculates ray paths, depth versus epicentral distance.
-:code:`taup find`         calculates all possible phases in a model with number of interactions.
-:code:`taup wavefront`    calculates wavefronts in steps of time, depth versus epicentral distance.
-:code:`taup curve`        calculates travel time curves, time versus epicentral distance.
-:code:`taup table`        outputs travel times for a range of depths and distances in an ASCII file
-:code:`taup setsac`       puts theoretical arrival times into sac header variables.
-:code:`taup velplot`      output velocity model as a gmt script.
-:code:`taup phase`        textual description of the path the phase takes through the model.
-:code:`taup create`       creates a .taup model from a velocity model.
-=======================   =========================================================================
+=================================   =========================================================================
+:ref:`time <taup_time>`             calculates travel times.
+:ref:`pierce <taup_pierce>`         calculates pierce points at model discontinuities and specified depths.
+:ref:`path <taup_path>`             calculates ray paths, depth versus epicentral distance.
+:ref:`find <taup_find>`             calculates all possible phases in a model with number of interactions.
+:ref:`wavefront <taup_wavefront>`   calculates wavefronts in steps of time, depth versus epicentral distance.
+:ref:`curve <taup_curve>`           calculates travel time curves, time versus epicentral distance.
+:ref:`phase <taup_phase>`           textual description of the path the phase takes through the model.
+:ref:`table <taup_table>`           outputs travel times for a range of depths and distances in an ASCII file
+:ref:`setmseed3 <taup_setmseed3>`   puts theoretical arrival times into extra headers.
+:ref:`setsac <taup_setsac>`         puts theoretical arrival times into sac header variables.
+:ref:`velmerge <taup_velmerge>`     merges part of one velocity model into another.
+:ref:`velplot <taup_velplot>`       output velocity model as a gmt script.
+:ref:`create <taup_create>`         creates a .taup model from a velocity model.
+=================================   =========================================================================
 
 Each tool is a subcommand of the overall :code:`taup` Java application which is
 an wrapper to make execution easier: sh scripts
