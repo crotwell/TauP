@@ -229,7 +229,7 @@ circle.discontinuity.iocb {
 <text class="title" x="260.0" y="0">ak135</text>
 <g> <!-- y axis -->
 <g  >
-  <text font-size="14" transform="translate(-64, 260) rotate(-90 )" dy=".75em" text-anchor="middle" class="ylabel" >depth</text>
+  <text font-size="14" transform="translate(-64, 260) rotate(-90 )" dy=".75em" text-anchor="middle" class="ylabel" >Depth (km)</text>
 </g>
 <line  class="tick" x1="0" y1="0" x2="0" y2="520.0" />
 <text class="ytick" font-size="12" x="-12.0" y="0.0">0.0</text>
@@ -248,7 +248,7 @@ circle.discontinuity.iocb {
 <line class="tick" x1="0" y1="489.71906" x2="-10.0" y2="489.71906" />
 </g> <!-- y axis end-->
 <g> <!-- x axis -->
-<text class="xlabel" font-size="14" x="260.0" y="556.4">velocity_density</text>
+<text class="xlabel" font-size="14" x="260.0" y="556.4">Velocity (km/s), Density (Mg/m3)</text>
 <line class="tick" x1="0" y1="520.0" x2="520.0" y2="520.0" />
 <text class="xtick" font-size="12" x="0.0" y="542.0">0.0</text>
 <line class="tick" x1="0.0" y1="520.0" x2="0.0" y2="530.0" />
@@ -285,7 +285,7 @@ circle.discontinuity.iocb {
 <g transform="translate(-0.0, -0.0)">
     <g class="autocolor">
 <g transform="scale(1,-1) translate(0.0, -6371.0)" > <!-- invert axis -->
-    <g class="both_p_swave" tauplabel="ak135 Velocity,Density / Depth"  >
+    <g class="both_p_swave" tauplabel="ak135 Velocity (km/s), Density (Mg/m3) / Depth (km)"  >
   <g>
     <desc></desc>
     <polyline  points="
@@ -425,10 +425,10 @@ circle.discontinuity.iocb {
 13.012200 6371.000000
   "  /> <!-- -->
   </g>
-    </g> <!-- end ak135 Velocity,Density / Depth -->
+    </g> <!-- end ak135 Velocity (km/s), Density (Mg/m3) / Depth (km) -->
     </g> <!-- end invert axis -->
 <g transform="scale(1,-1) translate(0.0, -6371.0)" > <!-- invert axis -->
-    <g class="pwave" tauplabel="ak135 P Vel. / Depth"  >
+    <g class="pwave" tauplabel="ak135 Velocity (km/s) / Depth (km)"  >
   <g>
     <desc></desc>
     <polyline  points="
@@ -568,10 +568,10 @@ circle.discontinuity.iocb {
 11.262200 6371.000000
   "  /> <!-- -->
   </g>
-    </g> <!-- end ak135 P Vel. / Depth -->
+    </g> <!-- end ak135 Velocity (km/s) / Depth (km) -->
     </g> <!-- end invert axis -->
 <g transform="scale(1,-1) translate(0.0, -6371.0)" > <!-- invert axis -->
-    <g class="swave" tauplabel="ak135 S Vel. / Depth"  >
+    <g class="swave" tauplabel="ak135 Velocity (km/s) / Depth (km)"  >
   <g>
     <desc></desc>
     <polyline  points="
@@ -712,7 +712,7 @@ circle.discontinuity.iocb {
 3.667800 6371.000000
   "  /> <!-- -->
   </g>
-    </g> <!-- end ak135 S Vel. / Depth -->
+    </g> <!-- end ak135 Velocity (km/s) / Depth (km) -->
     </g> <!-- end invert axis -->
     </g> <!-- end autocolor g -->
     <g class="phasename">  <!-- begin labels -->

@@ -103,8 +103,8 @@ public class TauP_VelocityPlot extends TauP_Tool {
             String xLabel = "";
             String yLabel = "";
             for (XYPlottingData xyp : xyPlotList) {
-                xLabel += " "+xyp.xAxisType;
-                yLabel += " "+xyp.yAxisType;
+                xLabel += " "+ModelAxisType.labelFor(ModelAxisType.valueOf(xyp.xAxisType));
+                yLabel += " "+ModelAxisType.labelFor(ModelAxisType.valueOf(xyp.yAxisType));
             }
             xyOut.setXLabel(xLabel);
             xyOut.setYLabel(yLabel);
@@ -125,7 +125,8 @@ public class TauP_VelocityPlot extends TauP_Tool {
             if (yAxisType == ModelAxisType.depth) {
                 xyOut.yAxisInvert = true;
             }
-            xyOut.printAsSvg(writer, cmdLineArgs, xAxisType.toString(), yAxisType.toString(), SvgUtil.createWaveTypeColorCSS(), isLegend);
+            xyOut.printAsSvg(writer, cmdLineArgs, ModelAxisType.labelFor(xAxisType), ModelAxisType.labelFor(yAxisType),
+                    SvgUtil.createWaveTypeColorCSS(), isLegend);
         } else {
             throw new IllegalArgumentException("Unknown output format: " + getOutputFormat());
         }
@@ -150,50 +151,6 @@ public class TauP_VelocityPlot extends TauP_Tool {
     @Override
     public void init() throws TauPException {
         // TODO Auto-generated method stub
-    }
-
-    public String labelFor(ModelAxisType axisType) {
-        String label;
-        switch (axisType) {
-            case depth:
-                label = "Depth";
-                break;
-            case radius:
-                label = "Radius";
-                break;
-            case velocity:
-            case velocity_p:
-                label = "P Vel.";
-                break;
-            case velocity_s:
-                label = "S Vel.";
-                break;
-            case slowness:
-            case slowness_p:
-                label = "P Slow.";
-                break;
-            case slowness_s:
-                label = "S Slow.";
-                break;
-            case density:
-                label = "Density";
-                break;
-            case velocity_density:
-                label = "Velocity,Density";
-                break;
-            case attenuation:
-                label = "Attenuation";
-                break;
-            case attenuation_p:
-                label = "P Attenuation";
-                break;
-            case attenuation_s:
-                label = "S Attenuation";
-                break;
-            default:
-                label = axisType.toString();
-        }
-        return label;
     }
 
     public boolean depthLike(ModelAxisType axisType) {
@@ -415,6 +372,12 @@ public class TauP_VelocityPlot extends TauP_Tool {
         List<XYSegment> segList = new ArrayList<>();
         segList.add(new XYSegment(xDbl, yDbl));
         List<String> cssClassList = new ArrayList<>();
+        String legendLabel;
+        if (yAxis == ModelAxisType.depth || yAxis == ModelAxisType.radius) {
+            legendLabel = ModelAxisType.legendFor(xAxis);
+        } else {
+            legendLabel = ModelAxisType.legendFor(yAxis);
+        }
         if (xAxis == ModelAxisType.velocity_p || xAxis == ModelAxisType.velocity
                 || yAxis == ModelAxisType.velocity_p || yAxis == ModelAxisType.velocity
                 || xAxis == ModelAxisType.slowness_p || xAxis == ModelAxisType.slowness
@@ -429,8 +392,8 @@ public class TauP_VelocityPlot extends TauP_Tool {
         XYPlottingData xyplot = new XYPlottingData(segList,
                 xAxis.name(),
                 yAxis.name(),
-                labelPrefix,
-                modelName+" "+labelFor(xAxis)+" / "+labelFor(yAxis),
+                (labelPrefix+" "+legendLabel).trim(),
+                modelName+" "+ModelAxisType.labelFor(xAxis)+" / "+ModelAxisType.labelFor(yAxis),
                 cssClassList
         );
         xyList.add(xyplot);

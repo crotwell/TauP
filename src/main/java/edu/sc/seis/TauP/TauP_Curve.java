@@ -512,13 +512,34 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
             case time:
                 return "Time (s)";
             case degree:
+            case degree180:
                 return "Degrees";
+            case radian:
+            case radian180:
+                return "Radian";
             case rayparam:
                 return "Ray Param (s/rad)";
             case rayparamdeg:
                 return "Ray Param (s/deg)";
             case rayparamkm:
                 return "Ray Param (s/km)";
+            case tau:
+                return "Tau";
+            case kilometer:
+            case kilometer180:
+                return "Kilometers";
+            case index:
+                return "Index";
+            case geospread:
+                return "Geometric Spreading";
+            case turndepth:
+                return "Turn Depth (km)";
+            case refltran:
+                return "Reflection/Transmission Coef. PSv,Sh";
+            case refltranpsv:
+                return "Reflection/Transmission Coef. PSv";
+            case refltransh:
+                return "Reflection/Transmission Coef. Sh";
             default:
                 return axisType.name();
         }
