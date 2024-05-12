@@ -147,8 +147,8 @@ public class TauP_WKBJ extends TauP_AbstractRayTool {
 
             for (Arrival arrival : allArrivals) {
                 int timeIdx = (int) Math.round((arrival.getTime() - startTime)/ getDeltaT());
-                double psvAmpFactor = arrival.getAmplitudeFactorPSV();
-                double shAmpFactor = arrival.getAmplitudeFactorSH();
+                double psvAmpFactor = arrival.getAmplitudeFactorPSV(sourceArgs.getMoment());
+                double shAmpFactor = arrival.getAmplitudeFactorSH(sourceArgs.getMoment());
                 double incidentAngle = arrival.getIncidentAngleDegree();
                 double rotateAngle = 0;
                 if ( ! arrival.getPhase().finalSegmentIsPWave()) {

@@ -32,17 +32,17 @@ plot traveltime and other curves for phases
       --verbose             enable verbose output
   -x, --xaxis=<xAxisType>   X axis data type, one of radian, radian180, degree,
                               degree180, kilometer, kilometer180, rayparam,
-                              time, tau, turndepth, amp, amppsv, ampsh,
-                              geospread, refltran, refltranpsv, refltransh,
-                              index, theta
+                              rayparamdeg, rayparamkm, time, tau, turndepth,
+                              amp, amppsv, ampsh, geospread, refltran,
+                              refltranpsv, refltransh, index, theta
       --xabs                X axis is absolute value
       --xlog                X axis is log
       --xminmax=x x         min and max x axis for plotting
   -y, --yaxis=<yAxisType>   Y axis data type, one of radian, radian180, degree,
                               degree180, kilometer, kilometer180, rayparam,
-                              time, tau, turndepth, amp, amppsv, ampsh,
-                              geospread, refltran, refltranpsv, refltransh,
-                              index, theta
+                              rayparamdeg, rayparamkm, time, tau, turndepth,
+                              amp, amppsv, ampsh, geospread, refltran,
+                              refltranpsv, refltransh, index, theta
       --yabs                Y axis is absolute value
       --ylog                Y axis is log
       --yminmax=y y         min and max y axis for plotting

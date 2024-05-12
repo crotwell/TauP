@@ -219,7 +219,7 @@ circle.discontinuity.iocb {
 <line class="tick" x1="0" y1="11.561157" x2="-10.0" y2="11.561157" />
 </g> <!-- y axis end-->
 <g> <!-- x axis -->
-<text class="xlabel" font-size="14" x="260.0" y="556.4">rayparam</text>
+<text class="xlabel" font-size="14" x="260.0" y="556.4">Ray Param (s/rad)</text>
 <line class="tick" x1="0" y1="520.0" x2="520.0" y2="520.0" />
 <text class="xtick" font-size="12" x="0.0" y="542.0">0.0</text>
 <line class="tick" x1="0.0" y1="520.0" x2="0.0" y2="530.0" />

@@ -9,6 +9,8 @@ public enum AxisType {
     kilometer,
     kilometer180,
     rayparam,
+    rayparamdeg,
+    rayparamkm,
     time,
     tau,
     turndepth,

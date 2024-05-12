@@ -196,7 +196,7 @@ circle.discontinuity.iocb {
 <text class="title" x="260.0" y="0">prem (h=10.0 km)</text>
 <g> <!-- y axis -->
 <g  >
-  <text font-size="14" transform="translate(-64, 260) rotate(-90 )" dy=".75em" text-anchor="middle" class="ylabel" >time</text>
+  <text font-size="14" transform="translate(-64, 260) rotate(-90 )" dy=".75em" text-anchor="middle" class="ylabel" >Time (s)</text>
 </g>
 <line  class="tick" x1="0" y1="0" x2="0" y2="520.0" />
 <text class="ytick" font-size="12" x="-12.0" y="520.0">0.0</text>

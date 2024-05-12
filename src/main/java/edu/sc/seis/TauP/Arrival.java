@@ -358,6 +358,11 @@ public class Arrival {
      * See FMGS eq 17.74
      */
     public double getAmplitudeFactorPSV() throws TauModelException, VelocityModelException, SlownessModelException {
+        return getAmplitudeFactorPSV(moment);
+    }
+
+    public double getAmplitudeFactorPSV(double moment) throws TauModelException, VelocityModelException, SlownessModelException {
+
         // dimensionaless ?
         double refltran = getReflTransPSV();
         double geoSpread = getAmplitudeGeometricSpreadingFactor(); // 1/km
@@ -379,6 +384,10 @@ public class Arrival {
      * @throws SlownessModelException
      */
     public double getAmplitudeFactorSH() throws TauModelException, VelocityModelException, SlownessModelException {
+        return getAmplitudeFactorSH(moment);
+    }
+
+    public double getAmplitudeFactorSH(double moment) throws TauModelException, VelocityModelException, SlownessModelException {
         double refltran = getReflTransSH();
         double geoSpread = getAmplitudeGeometricSpreadingFactor();
         double sourceVel = getPhase().velocityAtSource();

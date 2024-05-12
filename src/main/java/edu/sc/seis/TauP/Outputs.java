@@ -61,6 +61,7 @@ public class Outputs {
             AxisType at = AxisType.valueOf(axisType);
             return formatStringForAxisType(at);
         } catch (IllegalArgumentException e ) {
+            System.err.println("Unknown axis type: "+axisType);
             return "%f";
         }
     }
@@ -77,6 +78,8 @@ public class Outputs {
                 outFormat = distanceFormat;
                 break;
             case rayparam:
+            case rayparamdeg:
+            case rayparamkm:
             case theta:
             case tau:
                 outFormat = rayParamFormat;

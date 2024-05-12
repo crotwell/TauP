@@ -274,8 +274,8 @@ public class TauP_Time extends TauP_AbstractRayTool {
                 out.print(String.format(phasePuristFormat, currArrival.getPuristName()));
                 if (isWithAmplitude()) {
                     try {
-                        double ampFactorPSV = currArrival.getAmplitudeFactorPSV();
-                        double ampFactorSH = currArrival.getAmplitudeFactorSH();
+                        double ampFactorPSV = currArrival.getAmplitudeFactorPSV(sourceArgs.getMoment());
+                        double ampFactorSH = currArrival.getAmplitudeFactorSH(sourceArgs.getMoment());
                         out.print(" " + Outputs.formatAmpFactor(ampFactorPSV) + " " + Outputs.formatAmpFactor(ampFactorSH));
                     } catch (SlownessModelException | TauModelException | VelocityModelException e) {
                         throw new RuntimeException("SHould not happen", e);

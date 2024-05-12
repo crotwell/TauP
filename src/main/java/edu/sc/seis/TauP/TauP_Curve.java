@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static edu.sc.seis.TauP.Arrival.RtoD;
+
 @CommandLine.Command(name = "curve",
         description = "plot traveltime and other curves for phases",
         usageHelpAutoWidth = true)
@@ -104,7 +106,7 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
                         cssClasses.add(p_or_s);
                         cssClasses.add(SvgUtil.classForPhase(arrival.getName()));
                         XYPlottingData xyp = new XYPlottingData(
-                                segmentList, axisLabel(xAxisType), "Ray Param",
+                                segmentList, xAxisType.name(), "rayparam",
                                 phase.getName(), phaseDesc, cssClasses
                         );
                         out.add(xyp);
@@ -118,7 +120,7 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
                     List<String> cssClasses = new ArrayList<>();
                     cssClasses.add(p_or_s);
                     cssClasses.add(SvgUtil.classForPhase(phase.getName()));
-                    XYPlottingData xyp = new XYPlottingData(segments, axisLabel(xAxisType), axisLabel(yAxisType),
+                    XYPlottingData xyp = new XYPlottingData(segments, xAxisType.name(), yAxisType.name(),
                             phase.getName(), phaseDesc, cssClasses);
                     xyp.cssClasses.add(p_or_s);
                     out.add(xyp);
@@ -135,7 +137,7 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
                             List<XYSegment> sh_segments = XYSegment.createFromLists(xData, yData);
                             List<String> cssClassesCopy = new ArrayList<>(cssClasses);
                             cssClassesCopy.add("ampsh");
-                            out.add(new XYPlottingData(sh_segments, axisLabel(xAxisType), axisLabel(yAxisType),
+                            out.add(new XYPlottingData(sh_segments, xAxisType.name(), yAxisType.name(),
                                     phase.getName(), phaseDesc, cssClassesCopy));
                         }
                         // what about case of amp vs refltran, need 4 outputs?
@@ -149,7 +151,7 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
                             List<XYSegment> sh_segments = XYSegment.createFromLists(xData, yData);
                             List<String> cssClassesCopy = new ArrayList<>(cssClasses);
                             cssClassesCopy.add("refltransh");
-                            out.add(new XYPlottingData(sh_segments, axisLabel(xAxisType), axisLabel(yAxisType),
+                            out.add(new XYPlottingData(sh_segments, xAxisType.name(), yAxisType.name(),
                                     phase.getName(), phaseDesc, cssClassesCopy));
                         }
                     }
@@ -217,12 +219,23 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
             }
         } else if (axisType==AxisType.kilometer || axisType==AxisType.kilometer180) {
             out = phase.getDist();
-            double redToKm = getRadiusOfEarth();
+            double radToKm = getRadiusOfEarth();
             for (int i = 0; i < out.length; i++) {
-                out[i] *= redToKm;
+                out[i] *= radToKm;
             }
         } else if (axisType==AxisType.rayparam) {
             out = phase.getRayParams();
+        } else if (axisType==AxisType.rayparamdeg) {
+            out = phase.getRayParams();
+            for (int i = 0; i < out.length; i++) {
+                out[i] /= RtoD;
+            }
+        } else if (axisType==AxisType.rayparamkm) {
+            out = phase.getRayParams();
+            double radToKm = getRadiusOfEarth();
+            for (int i = 0; i < out.length; i++) {
+                out[i] /= radToKm;
+            }
         } else if (axisType==AxisType.time) {
             out = phase.getTime();
         } else if (axisType==AxisType.tau) {
@@ -243,9 +256,9 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
             for (int i = 0; i < dist.length; i++) {
                 Arrival arrival = phase.createArrivalAtIndex(i);
                 if (isAmpSH) {
-                    amp[i] = arrival.getAmplitudeFactorSH();
+                    amp[i] = arrival.getAmplitudeFactorSH(sourceArgs.getMoment());
                 } else {
-                    amp[i] = arrival.getAmplitudeFactorPSV();
+                    amp[i] = arrival.getAmplitudeFactorPSV(sourceArgs.getMoment());
                 }
             }
             out = amp;
@@ -491,11 +504,21 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
     public String axisLabel(AxisType axisType) {
         switch (axisType) {
             case amp:
-                return "Amplitude PSv,Sh "+Outputs.formatDistanceNoPad(sourceArgs.getMw())+" Mw";
+                return "Amplitude (m) PSv,Sh "+Outputs.formatDistanceNoPad(sourceArgs.getMw())+" Mw";
             case ampsh:
-                return "Amplitude Sh "+Outputs.formatDistanceNoPad(sourceArgs.getMw())+" Mw";
+                return "Amplitude (m) Sh "+Outputs.formatDistanceNoPad(sourceArgs.getMw())+" Mw";
             case amppsv:
-                return "Amplitude PSv "+Outputs.formatDistanceNoPad(sourceArgs.getMw())+" Mw";
+                return "Amplitude (m) PSv "+Outputs.formatDistanceNoPad(sourceArgs.getMw())+" Mw";
+            case time:
+                return "Time (s)";
+            case degree:
+                return "Degrees";
+            case rayparam:
+                return "Ray Param (s/rad)";
+            case rayparamdeg:
+                return "Ray Param (s/deg)";
+            case rayparamkm:
+                return "Ray Param (s/km)";
             default:
                 return axisType.name();
         }
