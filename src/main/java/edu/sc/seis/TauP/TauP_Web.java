@@ -42,7 +42,7 @@ public class TauP_Web implements Callable<Integer> {
     @CommandLine.Option(names = {"-p", "--port"}, defaultValue = "7049", description = "port to use")
     int port = 7049;
 
-    @CommandLine.Option(names = "webroot", description = "web root value", defaultValue = "taupweb")
+    @CommandLine.Option(names = "--webroot", description = "web root value", defaultValue = "taupweb")
     String webRoot = "taupweb";
 
 }
