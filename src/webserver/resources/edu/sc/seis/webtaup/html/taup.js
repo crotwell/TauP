@@ -34,7 +34,8 @@ export function valid_format(tool) {
       format = "svg";
     }
   } else if (format === "text" || format === "json") {
-    if ( tool === "curve" || tool === "wavefront" || tool === "velplot") {
+    if ( tool === "curve" || tool === "wavefront" ) {
+      // maybe text, json ok for curve and wavefront?
       format = "svg";
     }
   }
@@ -291,6 +292,10 @@ export function form_url() {
     if (isLegend) {
       url += `&legend=true`;
     }
+    let mw = document.querySelector('input[name="mw"]').value;
+    if (mw !== 4.0) {
+      url += `&mw=${mw}`;
+    }
   }
   if (toolname === "velplot") {
 
@@ -446,7 +451,7 @@ export function enableParams(tool) {
         color: lightgrey;
       }
     `;
-  } else if (tool === "wavefront" || tool === "curve" || tool === "velplot") {
+  } else if (tool === "wavefront" || tool === "curve" ) {
     document.querySelector(`input[name="format"][value="text"]`).setAttribute("disabled", "disabled");
     document.querySelector(`input[name="format"][value="json"]`).setAttribute("disabled", "disabled");
     document.querySelector(`input[name="format"][value="svg"]`).removeAttribute("disabled");
