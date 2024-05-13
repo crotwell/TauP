@@ -26,6 +26,7 @@
 
 package edu.sc.seis.TauP;
 
+import edu.sc.seis.TauP.cli.OutputTypes;
 import edu.sc.seis.TauP.cli.SeismicSourceArgs;
 import edu.sc.seis.TauP.cli.SeismogramOutputTypeArgs;
 import edu.sc.seis.seisFile.fdsnws.quakeml.*;
@@ -91,6 +92,13 @@ public class TauP_WKBJ extends TauP_AbstractRayTool {
         this.deltaT = v;
     }
 
+    @Override
+    public void validateArguments() throws TauPException {
+        super.validateArguments();
+        if (!getOutputFormat().equals(MS3)) {
+            throw new CommandLine.ParameterException(spec.commandLine(), "Unsported Output Format: "+getOutputFormat());
+        }
+    }
 
     @Override
     public void start() throws IOException, TauPException {
@@ -143,7 +151,7 @@ public class TauP_WKBJ extends TauP_AbstractRayTool {
             float[] radial = new float[numSamples];
             float[] vertical = new float[numSamples];
             float[] transverse = new float[numSamples];
-            MSeed3EH eh = createEH(degrees, defaultOriginTime, allArrivals);
+            MSeed3EH eh = createEH(degrees, getOriginTime(), allArrivals);
 
             for (Arrival arrival : allArrivals) {
                 int timeIdx = (int) Math.round((arrival.getTime() - startTime)/ getDeltaT());
@@ -166,7 +174,7 @@ public class TauP_WKBJ extends TauP_AbstractRayTool {
             spikeRecords.add(packageMSeed3(radial, staCode, "SP", "R", startTime ));
             spikeRecords.add(packageMSeed3(transverse, staCode, "SP", "T", startTime ));
             for (MSeed3Record ms3 : spikeRecords) {
-                    ms3.setStartDateTime(defaultOriginTime);
+                    ms3.setStartDateTime(getOriginTime());
                     ms3.setExtraHeaders(eh.getEH());
 
             }
@@ -271,12 +279,13 @@ public class TauP_WKBJ extends TauP_AbstractRayTool {
             //startTime += (int) (Math.round(sourceTerm[VERT_IDX].length*getDeltaT()));
             String staCode = "S"+degrees;
             if (staCode.length()> 8) { staCode = staCode.substring(8);}
-            MSeed3EH eh = createEH(degrees, defaultOriginTime, allArrivals);
+            MSeed3EH eh = createEH(degrees, getOriginTime(), allArrivals);
+            eh.setTimeseriesUnit("m");
             spikeRecords.addAll(packageMSeed3(rtz[VERT_IDX], rtz[RAD_IDX], rtz[TRANS_IDX], staCode, startTime));
             spikeRecords.add(packageMSeed3(theta_rtz[VERT_IDX], staCode, "THETA", "Z", startTime));
             for(MSeed3Record msr: spikeRecords) {
                 msr.setExtraHeaders(eh.getEH());
-                msr.setStartDateTime(defaultOriginTime);
+                msr.setStartDateTime(getOriginTime());
             }
 
             spikeRecords.add(packageMSeed3(sourceTerm[0], staCode, "XS", "Z", startTime));
@@ -532,11 +541,21 @@ public class TauP_WKBJ extends TauP_AbstractRayTool {
         return distanceArgs.getDistances();
     }
 
+    public ZonedDateTime getOriginTime() {
+        if (origintime == null ) {
+            return defaultOriginTime;
+        }
+        return origintime;
+    }
+
     ZonedDateTime defaultOriginTime = ZonedDateTime.of(2000, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC"));
 
 
     @CommandLine.Mixin
     SeismicSourceArgs sourceArgs = new SeismicSourceArgs();
+
+    @CommandLine.Option(names = "--otime", description = "event origin time, as ISO8601")
+    ZonedDateTime origintime;
 
     @CommandLine.Mixin
     SeismogramOutputTypeArgs outputTypeArgs;

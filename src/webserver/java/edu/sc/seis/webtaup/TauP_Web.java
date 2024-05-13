@@ -217,6 +217,16 @@ public class TauP_Web extends TauP_Tool {
             } else if (tool instanceof TauP_WKBJ) {
                 // special because output is not text
                 TauP_WKBJ wkbj = (TauP_WKBJ) tool;
+                try {
+                    wkbj.validateArguments();
+                } catch (Exception e) {
+                    if(exchange.isResponseChannelAvailable()) {
+                        exchange.setStatusCode(500);
+                        exchange.setReasonPhrase(e.getMessage());
+                        exchange.endExchange();
+                        return;
+                    }
+                }
                 List<MSeed3Record> allRecords = new ArrayList<>();
                 //List<MSeed3Record> wkbjRecords = wkbj.calcWKBJ(wkbj.getDistances());
                 //allRecords.addAll(wkbjRecords);
@@ -245,6 +255,7 @@ public class TauP_Web extends TauP_Tool {
             System.err.println("\nException in tool exec: "+e.getMessage()+"\n");
             System.err.println(buffer);
             System.err.println(e);
+            throw e;
         }
     }
 
