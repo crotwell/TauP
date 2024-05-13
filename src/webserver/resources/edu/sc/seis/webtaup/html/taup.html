@@ -81,14 +81,14 @@
     <fieldset class="tool_time">
         <legend>Distance:</legend>
         <div>
-          <input type="radio" id="islistdist" name="disttype" value="islistdist" checked />
+          <input type="checkbox" id="islistdist" name="islistdist" checked />
           <label for="distdeg">
               <span>Distance (deg): </span>
           </label>
           <input type="text" id="distdeg" name="distdeg" value="35" required />
         </div>
         <div>
-          <input type="radio" id="isregulardist" name="disttype" value="isregulardist" />
+          <input type="checkbox" id="isregulardist" name="isregulardist" />
           <label>Regular (deg):</label>
           <label for="distdegmin">
               <span>Min: </span>
@@ -104,7 +104,7 @@
           <input type="number" id="distdegmax" name="distdegmax" value="180" />
         </div>
         <div>
-          <input type="radio" id="isevtstadist" name="disttype" value="isevtstadist" />
+          <input type="checkbox" id="isevtstadist" name="isevtstadist" />
           <label for="eventlat">
               <span>Event (lat/lon): </span>
           </label>
@@ -117,14 +117,14 @@
           <input type="number" id="stationlon" name="stationlon" value="-81" />
         </div>
         <div>
-          <input type="radio" id="istakeoffdist" name="disttype" value="istakeoffdist" />
+          <input type="checkbox" id="istakeoffdist" name="istakeoffdist" />
           <label for="takeoffangle">
               <span>Takeoff Angle (deg): </span>
           </label>
           <input type="text" id="takeoffangle" name="takeoffangle" value="0" />
         </div>
         <div>
-          <input type="radio" id="isshootraydist" name="disttype" value="isshootraydist" />
+          <input type="checkbox" id="isshootraydist" name="isshootraydist" />
           <label for="shootray">
               <span>Ray Param: </span>
           </label>
@@ -133,11 +133,11 @@
           <label for="isshootraydeg">
               <span>(s/deg): </span>
           </label>
-          <input type="radio" id="isshootraydeg" name="shootrayunit" value="isshootraydeg" checked />
+          <input type="checkbox" id="isshootraydeg" name="shootrayunit" value="isshootraydeg" checked />
           <label for="isshootraykm">
               <span>(s/km): </span>
           </label>
-          <input type="radio" id="isshootraykm" name="shootrayunit" value="isshootraykm" />
+          <input type="checkbox" id="isshootraykm" name="shootrayunit" value="isshootraykm" />
         </div>
 
     </fieldset>

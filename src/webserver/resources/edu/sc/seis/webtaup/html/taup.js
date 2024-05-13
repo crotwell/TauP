@@ -33,11 +33,6 @@ export function valid_format(tool) {
     } else if ( tool === "velplot" ) {
       format = "svg";
     }
-  } else if (format === "text" || format === "json") {
-    if ( tool === "curve" || tool === "wavefront" ) {
-      // maybe text, json ok for curve and wavefront?
-      format = "svg";
-    }
   }
   if (tool === "wkbj") {
     format = "ms3";
@@ -171,7 +166,11 @@ export function form_url() {
   let stadepth = document.querySelector('input[name="stadepth"]').value;
 
 
-  let disttype = document.querySelector('input[name="disttype"]:checked').value;
+  let islistdist = document.querySelector('input[name="islistdist"]').checked;
+  let isregulardist = document.querySelector('input[name="isregulardist"]').checked;
+  let isevtstadist = document.querySelector('input[name="isevtstadist"]').checked;
+  let istakeoffdist = document.querySelector('input[name="istakeoffdist"]').checked;
+  let isshootraydist = document.querySelector('input[name="isshootraydist"]').checked;
 
   let scatdepth = document.querySelector('input[name="scatdepth"]').value;
   let scatdist = document.querySelector('input[name="scatdist"]').value;
@@ -203,11 +202,12 @@ export function form_url() {
   if (toolname !== "velplot" && toolname !== "curve"
       && toolname !== "wavefront"  && toolname !== "phase"
       && toolname !== "refltrans") {
-    let distparam;
-    if (disttype === "islistdist") {
+    let distparam = "";
+    if (islistdist) {
       let distdeg = document.querySelector('input[name="distdeg"]').value;
-      distparam = `&degree=${distdeg}`;
-    } else if (disttype === "isregulardist") {
+      distparam += `&degree=${distdeg}`;
+    }
+    if (isregulardist) {
       let distdegmin = document.querySelector('input[name="distdegmin"]').value;
       let distdegstep = document.querySelector('input[name="distdegstep"]').value;
       let distdegmax = document.querySelector('input[name="distdegmax"]').value;
@@ -218,27 +218,30 @@ export function form_url() {
       for (let d=mindist+step; d<=max; d+=step) {
         distlist += `,${d}`;
       }
-      distparam = `&degree=${distlist}`;
-    } else if (disttype === "isevtstadist") {
+      distparam += `&degree=${distlist}`;
+    }
+    if (isevtstadist) {
       let evla = document.querySelector('input[name="eventlat"]').value;
       let evlo = document.querySelector('input[name="eventlon"]').value;
       let stla = document.querySelector('input[name="stationlat"]').value;
       let stlo = document.querySelector('input[name="stationlon"]').value;
-      distparam = `&event=${evla},${evlo}&station=${stla},${stlo}`;
-    } else if (disttype === "istakeoffdist") {
+      distparam += `&event=${evla},${evlo}&station=${stla},${stlo}`;
+    }
+    if (istakeoffdist) {
       let takeoffangle = document.querySelector('input[name="takeoffangle"]').value;
-      distparam = `&takeoff=${takeoffangle}`;
-    } else if (disttype === "isshootraydist") {
+      distparam += `&takeoff=${takeoffangle}`;
+    }
+    if (isshootraydist) {
       let shootray = document.querySelector('input[name="shootray"]').value;
       const shootrayunitSel = document.querySelector('input[name="shootrayunit"]:checked');
       let shootrayunit = shootrayunitSel ? shootrayunitSel.value : "isshootraydeg";
 
       if (shootrayunit === "isshootraydeg") {
-        distparam = `&rayparamdeg=${shootray}`;
+        distparam += `&rayparamdeg=${shootray}`;
       } else if (shootrayunit === "isshootraykm") {
-        distparam = `&rayparamkm=${shootray}`;
+        distparam += `&rayparamkm=${shootray}`;
       } else {
-        distparam = shootrayunit;
+        distparam += shootrayunit;
       }
     }
     url += distparam;
@@ -441,29 +444,12 @@ export function enableParams(tool) {
         color: lightgrey;
       }
     `;
-  } else if (tool === "velplot" ) {
+  } else if (tool === "velplot" || tool === "wavefront" || tool === "curve" ) {
     document.querySelector(`input[name="format"][value="text"]`).removeAttribute("disabled");
     document.querySelector(`input[name="format"][value="json"]`).removeAttribute("disabled");
     document.querySelector(`input[name="format"][value="svg"]`).removeAttribute("disabled");
-    document.querySelector(`input[name="format"][value="gmt"]`).setAttribute("disabled", "disabled");
-    styleStr += `
-      label[for="format_gmt"] {
-        color: lightgrey;
-      }
-    `;
-  } else if (tool === "wavefront" || tool === "curve" ) {
-    document.querySelector(`input[name="format"][value="text"]`).setAttribute("disabled", "disabled");
-    document.querySelector(`input[name="format"][value="json"]`).setAttribute("disabled", "disabled");
-    document.querySelector(`input[name="format"][value="svg"]`).removeAttribute("disabled");
     document.querySelector(`input[name="format"][value="gmt"]`).removeAttribute("disabled");
-    styleStr += `
-      label[for="format_text"] {
-        color: lightgrey;
-      }
-      label[for="format_json"] {
-        color: lightgrey;
-      }
-    `;
+
 
   } else if (tool === "refltrans") {
     document.querySelector(`input[name="format"][value="text"]`).removeAttribute("disabled");

@@ -386,7 +386,9 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
                 cssExtra += SvgUtil.createWaveTypeColorCSS();
             } else {
             }
-            xyOut.printAsSvg(writer, cmdLineArgs, axisLabel(xAxisType), axisLabel(yAxisType), cssExtra, isLegend);
+            xyOut.printAsSvg(writer, cmdLineArgs,
+                    (isxAxisLog()?"Log ":"")+axisLabel(xAxisType),
+                    (isyAxisLog()?"Log ":"")+axisLabel(yAxisType), cssExtra, isLegend);
         } else {
             throw new IllegalArgumentException("Unknown output format: " + outputTypeArgs.getOutputFormat());
         }

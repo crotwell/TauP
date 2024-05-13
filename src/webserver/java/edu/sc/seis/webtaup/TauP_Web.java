@@ -153,6 +153,13 @@ public class TauP_Web extends TauP_Tool {
                         for (String p : qpList) {
                             out.addAll(Arrays.asList(p.split(",")));
                         }
+                    } else if (op.splitRegex().trim().equals(",")) {
+                        String commaList = "";
+                        for (String p : qpList) {
+                            commaList += p+",";
+                        }
+                        commaList = commaList.substring(0, commaList.length()-1);
+                        out.add(commaList);
                     } else {
                         // add as is and let picocli handle comma splitting
                         out.addAll(queryParams.get(qp));
