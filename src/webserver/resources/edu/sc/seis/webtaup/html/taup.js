@@ -191,7 +191,7 @@ export function form_url() {
   let url = "";
   if (toolname !== "velplot" && toolname !== "refltrans") {
     url = `${toolname}?model=${model}&evdepth=${evdepth}`;
-  } else if (toolname === "velplot" && isrefltranmodel === "refltrandepth") {
+  } else if (toolname === "velplot" || isrefltranmodel === "refltrandepth") {
     url = `${toolname}?model=${model}`;
   } else {
     url = `${toolname}?`;
@@ -250,6 +250,10 @@ export function form_url() {
     let isAmplitude = document.querySelector('input[name="amplitude"]').checked;
     if (isAmplitude) {
       url += `&amp=true`;
+      let mw = document.querySelector('input[name="mw"]').value;
+      if (mw !== 4.0) {
+        url += `&mw=${mw}`;
+      }
     }
   }
   if (toolname !== "velplot" && toolname !== "refltrans"){
