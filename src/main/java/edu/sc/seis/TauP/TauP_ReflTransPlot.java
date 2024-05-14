@@ -107,9 +107,12 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
 
     @Override
     public void validateArguments() throws TauPException {
-        if (layerParams == null && depth == -1) {
+        if (layerParams == null && depth == -1 && ! fsrf) {
             throw new TauPException(
                     "Either --layer, or --mod and --depth must be given to specify layer parameters");
+        }
+        if (fsrf && depth > 0.0) {
+            throw new CommandLine.ParameterException(spec.commandLine(), "depth must be zero for free surface receiver function, --fsfr");
         }
     }
 

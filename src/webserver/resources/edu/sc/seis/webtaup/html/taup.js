@@ -355,9 +355,13 @@ export function form_url() {
     }
   }
   if (toolname === "refltrans") {
+    let fsrf = document.querySelector('input[name="fsrf"]').checked;
+    // fsrf forces depth to be 0
     if (isrefltranmodel === "refltrandepth") {
       let depth = document.querySelector('input[name="depth"]').value;
-      url += `&depth=${depth}`;
+      if (depth != 0.0 && ! fsrf) {
+        url += `&depth=${depth}`;
+      }
     } else {
       let topvp = document.querySelector('input[name="topvp"]').value;
       let topvs = document.querySelector('input[name="topvs"]').value;
@@ -394,7 +398,7 @@ export function form_url() {
     if (inshwave) {
       url += `&shwave=true`;
     }
-    let fsrf = document.querySelector('input[name="fsrf"]').checked;
+    
     if (fsrf) {
       url += `&fsrf=true`;
     }
