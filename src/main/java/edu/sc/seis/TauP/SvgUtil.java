@@ -201,8 +201,26 @@ public class SvgUtil {
         colors.put(ReflTransAxisType.Tsp, "magenta");
         colors.put(ReflTransAxisType.Tss, "grey");
         colors.put(ReflTransAxisType.Tshsh, "violet");
+        colors.put(ReflTransAxisType.FreeRecFuncPr, "darkblue");
+        colors.put(ReflTransAxisType.FreeRecFuncSvr, "firebrick");
+        colors.put(ReflTransAxisType.FreeRecFuncPz, "cyan");
+        colors.put(ReflTransAxisType.FreeRecFuncSvz, "magenta");
+        colors.put(ReflTransAxisType.FreeRecFuncSh, "red");
 
         for (ReflTransAxisType rt : ReflTransAxisType.allCoeff) {
+            out.append("        ."+rt.name()+" {\n");
+            out.append("          stroke: "+colors.get(rt)+";\n");
+            out.append("        }\n");
+            out.append("        ."+rt.name()+".label {\n");
+            out.append("          stroke: "+colors.get(rt)+";\n");
+            out.append("          fill: "+colors.get(rt)+";\n");
+            out.append("        }\n");
+            out.append("        .legend ."+rt.name()+" {\n");
+            out.append("          stroke: "+colors.get(rt)+";\n");
+            out.append("          fill: "+colors.get(rt)+";\n");
+            out.append("        }\n");
+        }
+        for (ReflTransAxisType rt : ReflTransAxisType.allFreeRF) {
             out.append("        ."+rt.name()+" {\n");
             out.append("          stroke: "+colors.get(rt)+";\n");
             out.append("        }\n");

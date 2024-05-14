@@ -121,6 +121,61 @@
           stroke: violet;
           fill: violet;
         }
+        .FreeRecFuncPr {
+          stroke: darkblue;
+        }
+        .FreeRecFuncPr.label {
+          stroke: darkblue;
+          fill: darkblue;
+        }
+        .legend .FreeRecFuncPr {
+          stroke: darkblue;
+          fill: darkblue;
+        }
+        .FreeRecFuncSvr {
+          stroke: firebrick;
+        }
+        .FreeRecFuncSvr.label {
+          stroke: firebrick;
+          fill: firebrick;
+        }
+        .legend .FreeRecFuncSvr {
+          stroke: firebrick;
+          fill: firebrick;
+        }
+        .FreeRecFuncPz {
+          stroke: cyan;
+        }
+        .FreeRecFuncPz.label {
+          stroke: cyan;
+          fill: cyan;
+        }
+        .legend .FreeRecFuncPz {
+          stroke: cyan;
+          fill: cyan;
+        }
+        .FreeRecFuncSvz {
+          stroke: magenta;
+        }
+        .FreeRecFuncSvz.label {
+          stroke: magenta;
+          fill: magenta;
+        }
+        .legend .FreeRecFuncSvz {
+          stroke: magenta;
+          fill: magenta;
+        }
+        .FreeRecFuncSh {
+          stroke: red;
+        }
+        .FreeRecFuncSh.label {
+          stroke: red;
+          fill: red;
+        }
+        .legend .FreeRecFuncSh {
+          stroke: red;
+          fill: red;
+        }
 
 
 text.title {

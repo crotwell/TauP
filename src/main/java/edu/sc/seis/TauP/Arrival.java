@@ -365,13 +365,24 @@ public class Arrival {
 
         // dimensionaless ?
         double refltran = getReflTransPSV();
+        VelocityModel vMod = getPhase().getTauModel().getVelocityModel();
+        VelocityLayer top = vMod.getVelocityLayer(0);
+        ReflTransFreeSurface rtFree = new ReflTransFreeSurface(top.getTopPVelocity(), top.getTopSVelocity(), top.getTopDensity());
+        Complex[] freeSurfRF;
+        if (getPhase().getFinalPhaseSegment().isPWave) {
+            freeSurfRF = rtFree.getFreeSurfaceReceiverFunP(getRayParam()/vMod.getRadiusOfEarth());
+        } else {
+            freeSurfRF = rtFree.getFreeSurfaceReceiverFunSv(getRayParam()/vMod.getRadiusOfEarth());
+        }
+        double freeFactor = Complex.sqrt(freeSurfRF[0].times(freeSurfRF[0].plus(freeSurfRF[1].times(freeSurfRF[1])))).re;
         double geoSpread = getAmplitudeGeometricSpreadingFactor(); // 1/km
         // km/s
         double sourceVel = getPhase().velocityAtSource(); // km/s
         // Mg/m3 * (km/s)3 => 1e3 Kg/m3 * 1e9 (m3/s3) => 1e12 Kg /s3
         double radiationTerm = 4*Math.PI*getPhase().densityAtSource()*sourceVel*sourceVel*sourceVel*1e12;
-        //    Kg m2 / s2     1        1/km   /   ( Kg/s3 )
-        return moment * refltran * geoSpread / radiationTerm / 1e3; // s m2/km => s m / 1e3  why sec???
+        //                  Kg m2 / s2     1        1/km   /   ( Kg/s3 )
+        System.err.println("freeFactor: "+freeFactor+" refltran: "+refltran+" geosp: "+geoSpread);
+        return freeFactor* moment * refltran * geoSpread / radiationTerm / 1e3; // s m2/km => s m / 1e3  why sec???
     }
 
     /**

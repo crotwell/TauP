@@ -1,5 +1,5 @@
-Usage: taup refltrans [--abs] [--debug] [--down] [--help] [--legend] [--pwave]
-                      [--shwave] [--swave] [--up] [--verbose]
+Usage: taup refltrans [--abs] [--debug] [--down] [--fsrf] [--help] [--legend]
+                      [--pwave] [--shwave] [--swave] [--up] [--verbose]
                       [--anglestep=<angleStep>] [--depth=<depth>]
                       [--mapwidth=<mapwidth>] [--mapwidthunit=<mapWidthUnit>]
                       [-o=<outFile>] [--prop=<toolPropsFilename>]
@@ -19,6 +19,7 @@ plot reflection and transmission coefficients for a discontinuity
       --debug              enable debugging output
       --depth=<depth>      Depth in model to get boundary parameters
       --down
+      --fsrf               free surface receiver function
       --help               display this help message
       --layer=<layerParams> <layerParams> <layerParams> <layerParams>
         <layerParams> <layerParams>
@@ -48,7 +49,9 @@ plot reflection and transmission coefficients for a discontinuity
                              Tps, Tsp, Tss, Rshsh, Tshsh, RppEnergy, TppEnergy,
                              RpsEnergy, TpsEnergy, RspEnergy, TspEnergy,
                              RssEnergy, TssEnergy, RshshEnergy, TshshEnergy,
-                             RpAngle, RsAngle, TpAngle, TsAngle, default is all
+                             RpAngle, RsAngle, TpAngle, TsAngle, FreeRecFuncPr,
+                             FreeRecFuncSvr, FreeRecFuncPz, FreeRecFuncSvz,
+                             FreeRecFuncSh, default is all
       --yminmax=y y        min and max y axis for plotting
 Output Type
       --gmt                outputs as GMT

@@ -365,8 +365,8 @@ export function form_url() {
       let botvp = document.querySelector('input[name="botvp"]').value;
       let botvs = document.querySelector('input[name="botvs"]').value;
       let botden = document.querySelector('input[name="botden"]').value;
-      url += `&topvp=${topvp}&topvs=${topvs}&topden=${topden}`;
-      url += `&botvp=${botvp}&botvs=${botvs}&botden=${botden}`;
+      url += `&layer=${topvp},${topvs},${topden}`;
+      url += `,${botvp},${botvs},${botden}`;
     }
     let anglestep = document.querySelector('input[name="anglestep"]').value;
     if (anglestep > 0) {
@@ -393,6 +393,10 @@ export function form_url() {
     let inshwave = document.querySelector('input[name="inshwave"]').checked;
     if (inshwave) {
       url += `&shwave=true`;
+    }
+    let fsrf = document.querySelector('input[name="fsrf"]').checked;
+    if (fsrf) {
+      url += `&fsrf=true`;
     }
 
     let xslowness = document.querySelector('input[name="xslowness"]').checked;

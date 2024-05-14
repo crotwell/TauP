@@ -597,7 +597,22 @@ public class ReflTransTest {
         //assertEquals(Tpp_ans, FS_Tpp_perpen, 0.01);
     }
 
+    @Test
+    public void freeSurfaceRecFunc() throws VelocityModelException {
+        double rp = 0; // vertical
 
+        double topVp = 5.8;
+        double topVs = topVp/Math.sqrt(3);
+        double topDensity = 2.8;
+        double flatRP = 0;
+        ReflTransFreeSurface coeff = new ReflTransFreeSurface(topVp,topVs,topDensity);
+        Complex[] rsRecFuncP = coeff.getFreeSurfaceReceiverFunP(flatRP);
+        assertEquals(0.0, Complex.abs(rsRecFuncP[0]), 1.0e-9);
+        assertEquals(2.0, Complex.abs(rsRecFuncP[1]), 1.0e-9);
+        Complex[] rsRecFuncSv = coeff.getFreeSurfaceReceiverFunSv(flatRP);
+        assertEquals(2.0, Complex.abs(rsRecFuncSv[0]), 1.0e-9);
+        assertEquals(0.0, Complex.abs(rsRecFuncSv[1]), 1.0e-9);
+    }
 
     @Test
     public void testFreeSurfaceEnergyRP() throws VelocityModelException {
@@ -619,6 +634,8 @@ public class ReflTransTest {
             // in p wave
             double Rpp_calc = coeff.getRpp(flatRP);
             double Rps_calc = coeff.getRps(flatRP);
+            //assertEquals(2.0, 1+ -1*(cosTopVp * Rpp_calc- cosTopVs * Rps_calc), 1e-6,
+             //       flatRP+" Rpp: "+Rpp_calc+" "+Math.acos(cosTopVp)*180/Math.PI+" Rps: "+Rps_calc);
 
             // in s wave
             double Rsp_calc = coeff.getRsp(flatRP);

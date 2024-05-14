@@ -112,6 +112,55 @@ public class ReflTransFreeSurface extends ReflTrans {
         throw new VelocityModelException("Not legal for free surface");
     }
 
+    public double getFreeSurfaceReceiverFunSh(double rayParam) {
+        return 2.0;
+    }
+
+    public double getFreeSurfaceReceiverFunP_r(double rayParam) {
+        return Complex.abs(getFreeSurfaceReceiverFunP(rayParam)[0]);
+    }
+
+    public double getFreeSurfaceReceiverFunP_z(double rayParam) {
+        return Complex.abs(getFreeSurfaceReceiverFunP(rayParam)[1]);
+    }
+
+    public Complex[] getFreeSurfaceReceiverFunP(double rayParam) {
+        calcTempVars(rayParam, true);
+        double betaRpFactor = (1/(topVs*topVs)-2*sqRP);
+        Complex reyleighDenom = topVertSlownessS.times(topVertSlownessP).times(4*sqRP).plus(betaRpFactor*betaRpFactor );
+        Complex etarpFactor = topVertSlownessS.times(topVertSlownessS).minus(sqRP);
+        Complex rDisp = (topVertSlownessS.times(topVertSlownessP).times(4*topVp*rayParam/(topVs*topVs))) //.times( etarpFactor)
+            .over(reyleighDenom);
+        Complex zDisp = (topVertSlownessP.times(2*topVp/(topVs*topVs)).times( etarpFactor))
+            .over(reyleighDenom);
+        if (Complex.abs(zDisp) > 10) { zDisp = new Complex(10.0);}
+        if (Complex.abs(rDisp) > 10) { rDisp = new Complex(10.0);}
+        return new Complex[] { rDisp, zDisp };
+    }
+
+
+    public double getFreeSurfaceReceiverFunSv_r(double rayParam) {
+        return Complex.abs(getFreeSurfaceReceiverFunSv(rayParam)[0]);
+    }
+
+    public double getFreeSurfaceReceiverFunSv_z(double rayParam) {
+        return Complex.abs(getFreeSurfaceReceiverFunSv(rayParam)[1]);
+    }
+
+    public Complex[] getFreeSurfaceReceiverFunSv(double rayParam) {
+        calcTempVars(rayParam, false);
+        double betaRpFactor = (1/(topVs*topVs)-2*sqRP);
+        Complex reyleighDenom = topVertSlownessS.times(topVertSlownessP).times(4*sqRP).plus(betaRpFactor*betaRpFactor );
+        Complex etarpFactor = topVertSlownessS.times(topVertSlownessS).minus(sqRP);
+        Complex rDisp = topVertSlownessS.times(2/topVs).times(etarpFactor)
+                .over(reyleighDenom);
+        Complex zDisp = topVertSlownessS.times(topVertSlownessP).times(-4*rayParam/topVs)
+                .over(reyleighDenom);
+        if (Complex.abs(zDisp) > 10) { zDisp = new Complex(10.0);}
+        if (Complex.abs(rDisp) > 10) { rDisp = new Complex(10.0);}
+        return new Complex[] { rDisp, zDisp };
+    }
+
     @Override
     public String toString() {
         return "Solid-free surface: "+" in: Vp: "+topVp+" Vs: "+topVs+" d: "+topDensity;
