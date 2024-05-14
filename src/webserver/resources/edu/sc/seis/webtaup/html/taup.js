@@ -398,6 +398,10 @@ export function form_url() {
     if (fsrf) {
       url += `&fsrf=true`;
     }
+    let energyflux = document.querySelector('input[name="energyflux"]').checked;
+    if (energyflux) {
+      url += `&energyflux=true`;
+    }
 
     let xslowness = document.querySelector('input[name="xslowness"]').checked;
     if (xslowness) {

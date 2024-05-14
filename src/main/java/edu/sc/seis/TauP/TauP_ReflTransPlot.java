@@ -43,6 +43,10 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
             if (vMod == null) {
                 throw new TauPException("Unable to find model " + modelArgs.getModelName());
             }
+
+            if (isEnergyFlux()) {
+                yAxisType.addAll(ReflTransAxisType.allEnergy);
+            }
             if (fsrf) {
                 xypList = calculateFSRF(vMod, inpwave, inswave, inshwave, isLinearRayParam(), step);
             } else {
@@ -50,9 +54,10 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
             }
         } else {
             if (fsrf) {
-
-                yAxisType = List.of(ReflTransAxisType.FreeRecFuncPr, ReflTransAxisType.FreeRecFuncSvr,
-                        ReflTransAxisType.FreeRecFuncPz, ReflTransAxisType.FreeRecFuncSvz, ReflTransAxisType.FreeRecFuncSh);
+                yAxisType.addAll(ReflTransAxisType.allFreeRF);
+            }
+            if (isEnergyFlux()) {
+                yAxisType.addAll(ReflTransAxisType.allEnergy);
             }
             xypList = calculate(
                     layerParams.inVp, layerParams.inVs, layerParams.inRho,
@@ -646,6 +651,12 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
     }
     public boolean isIncidentShWave() { return inshwave;}
 
+    @CommandLine.Option(names = "--energyflux", description = "energy flux coefficients")
+    public void setEnergyFlux(boolean energyFlux) {
+        this.energyflux = energyFlux;
+    }
+    public boolean isEnergyFlux() { return energyflux;}
+
     @CommandLine.Option(names = "--fsrf", description = "free surface receiver function")
     public void setFreeSurfRF(boolean fsrf) {
         this.fsrf = fsrf;
@@ -765,6 +776,7 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
     protected boolean inswave = false;
     protected boolean inshwave = false;
     protected boolean absolute = false;
+    protected boolean energyflux = false;
     protected boolean fsrf = false;
 
     public boolean isLinearRayParam() {
