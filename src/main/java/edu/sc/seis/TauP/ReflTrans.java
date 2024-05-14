@@ -183,7 +183,7 @@ public abstract class ReflTrans {
     }
 
     public double getEnergyFluxTpp(double flatRP) throws VelocityModelException {
-        if (flatRP*topVp > 1) { return 0;}
+        if (flatRP*botVp > 1 ) { return 1;}
         double cosBotVp = Math.sqrt(1-flatRP*flatRP*botVp*botVp);
         double Tpp_calc = getTpp(flatRP);
         return botDensity * botVp * cosBotVp * Tpp_calc * Tpp_calc
