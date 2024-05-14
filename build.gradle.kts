@@ -63,8 +63,8 @@ dependencies {
       exclude(group = "org.apache.httpcomponents", module = "httpclient")
     }
 
-    implementation("info.picocli:picocli:4.7.5")
-    annotationProcessor("info.picocli:picocli-codegen:4.7.5")
+    implementation("info.picocli:picocli:4.7.6")
+    annotationProcessor("info.picocli:picocli-codegen:4.7.6")
 
     runtimeOnly("org.slf4j:slf4j-reload4j:2.0.5")
 
@@ -402,7 +402,7 @@ tasks.get("signTarBin").dependsOn(tasks.get("checksumDist"))
 tasks.get("signTarDist").dependsOn(tasks.get("checksumDist"))
 tasks.get("signZipDist").dependsOn(tasks.get("checksumDist"))
 
-val generatedSrcDir = file("$buildDir/generated-src/StdModels")
+val generatedSrcDir = file(layout.buildDirectory.dir("generated-src/StdModels"))
 val resourceDir =  File(generatedSrcDir, "/resources")
 val outDir =  File(resourceDir, "edu/sc/seis/TauP/StdModels/")
 sourceSets.create("stdmodels").resources {
