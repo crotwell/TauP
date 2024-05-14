@@ -380,9 +380,9 @@ public class Arrival {
         double sourceVel = getPhase().velocityAtSource(); // km/s
         // Mg/m3 * (km/s)3 => 1e3 Kg/m3 * 1e9 (m3/s3) => 1e12 Kg /s3
         double radiationTerm = 4*Math.PI*getPhase().densityAtSource()*sourceVel*sourceVel*sourceVel*1e12;
+        double attenuation = calcAttenuation(attenuationFrequency);
         //                  Kg m2 / s2     1        1/km   /   ( Kg/s3 )
-        System.err.println("freeFactor: "+freeFactor+" refltran: "+refltran+" geosp: "+geoSpread);
-        return freeFactor* moment * refltran * geoSpread / radiationTerm / 1e3; // s m2/km => s m / 1e3  why sec???
+        return attenuation * freeFactor* moment * refltran * geoSpread / radiationTerm / 1e3; // s m2/km => s m / 1e3  why sec???
     }
 
     /**
@@ -403,7 +403,9 @@ public class Arrival {
         double geoSpread = getAmplitudeGeometricSpreadingFactor();
         double sourceVel = getPhase().velocityAtSource();
         double radiationTerm = 4*Math.PI*getPhase().densityAtSource()*sourceVel*sourceVel*sourceVel*1e12;
-        return moment* refltran * geoSpread / radiationTerm / 1e3;
+        double attenuation = calcAttenuation(attenuationFrequency);
+        double freeSurfRF = 2;
+        return attenuation * freeSurfRF* moment* refltran * geoSpread / radiationTerm / 1e3;
     }
 
     public double getIncidentAngleDegree() {
@@ -522,6 +524,19 @@ public class Arrival {
             this.pierce = getPhase().calcPierceTimeDist(this).toArray(new TimeDist[0]);
         }
         return pierce;
+    }
+
+    /**
+     * Calculate attenuation over path at the given frequency. See eq B13.2.2 in FMGS, p374.
+     */
+    public double calcAttenuation(double freq) {
+        double tstar = getPhase().calcTstar(this, freq);
+        if (Double.isFinite(tstar)) {
+            return Math.pow(Math.E, -1 * Math.PI * freq * tstar);
+        } else {
+            System.err.println("tstar is NaN: "+tstar+" at "+freq+" for "+getName());
+            return 1;
+        }
     }
 
     /**
@@ -660,6 +675,8 @@ public class Arrival {
         }
         return piercepoint;
     }
+
+    public static double attenuationFrequency = 1.0;
 
     protected static final double DtoR = SphericalCoords.dtor;
 

@@ -895,6 +895,68 @@ public class SimpleSeismicPhase implements SeismicPhase {
         return pierce;
     }
 
+    public double calcTstar(Arrival currArrival, double frequency) {
+        double tstar = 0;
+        /*
+         * Find the ray parameter index that corresponds to the arrival ray
+         * parameter in the TauModel, ie it is between rayNum and rayNum+1,
+         * We know that it must be <tMod.rayParams.length-1 since the last
+         * ray parameter sample is 0, at least in a spherical model...
+         */
+        int rayNum = 0;
+        for(int i = 0; i < tMod.rayParams.length - 1; i++) {
+            if(tMod.rayParams[i] >= currArrival.getRayParam()) {
+                rayNum = i;
+            } else {
+                break;
+            }
+        }
+        for (SeismicPhaseSegment seg : getPhaseSegments()) {
+            boolean isPWave = seg.isPWave;
+            int indexIncr = seg.isDownGoing ? 1 : -1;
+            int finish = seg.endBranch + indexIncr;
+            for (int branchNum = seg.startBranch; branchNum != finish; branchNum += indexIncr) {
+                if (DEBUG) {
+                    System.err.println(seg);
+                }
+                TauBranch tauBranch = getTauModel().getTauBranch(branchNum, isPWave);
+                int layNum = 0;
+                try {
+                    layNum = getTauModel().getVelocityModel().layerNumberBelow(tauBranch.getTopDepth());
+                } catch (NoSuchLayerException e) {
+                    // should never happen...
+                    throw new RuntimeException("Can't find vel layer for tau branch? depth: "+tauBranch.getTopDepth(), e);
+                }
+                VelocityLayer velocityLayer = getTauModel().getVelocityModel().getVelocityLayer(layNum);
+                double Q = isPWave ? velocityLayer.getTopQp() : velocityLayer.getTopQs();
+                if (seg.isFlat) {
+                    double refractDist = (currArrival.getDist() - dist[0]) / countFlatLegs();
+                    double refractTime = refractDist * currArrival.getRayParam();
+                    tstar += refractTime / Q;
+                } else {
+                    // normal case
+                    double timeA, timeB;
+                    double distA, distB;
+                    distA = dist[currArrival.getRayParamIndex()];
+                    distB = dist[currArrival.getRayParamIndex() + 1];
+                    double distRatio = (currArrival.getDist() - distA) / (distB - distA);
+                    if (countFlatLegs() > 0) {
+                        /* head waves and diffracted waves are a special case. */
+                        timeA = tMod.getTauBranch(branchNum, isPWave).time[rayNum];
+                        timeB = timeA;
+                    } else {
+                        timeA = tMod.getTauBranch(branchNum, isPWave).time[rayNum];
+                        timeB = tMod.getTauBranch(branchNum, isPWave).time[rayNum + 1];
+                    }
+
+                    double branchTime = distRatio * (timeB - timeA) + timeA;
+                    tstar += branchTime / Q;
+                }
+            }
+        }
+        return tstar;
+    }
+
     @Override
     public int getNumRays() {
         return getRayParams().length;

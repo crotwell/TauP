@@ -156,6 +156,8 @@ public interface SeismicPhase extends Serializable, Cloneable {
 
     List<TimeDist> calcPierceTimeDist(Arrival arrival);
 
+    double calcTstar(Arrival currArrival, double frequency);
+
     /**
      * Split calculated array into segments for repeated ray parameter values, which indicate a
      * discontinuity in the calculations usually due to low velocity zone.

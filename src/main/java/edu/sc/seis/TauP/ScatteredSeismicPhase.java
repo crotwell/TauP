@@ -444,6 +444,11 @@ public class ScatteredSeismicPhase implements SeismicPhase {
         return out;
     }
 
+    public double calcTstar(Arrival currArrival, double frequency) {
+        return inboundArrival.getPhase().calcTstar(inboundArrival, frequency)
+            + scatteredPhase.calcTstar(currArrival, frequency);
+    }
+
     /** True is all segments of this path are only S waves.
      *
      */
