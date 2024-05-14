@@ -316,7 +316,6 @@ public class SeismicPhaseSegment {
 		return desc;
 	}
 
-
 	public ArrivalPathSegment calcPathTimeDist(Arrival currArrival, TimeDist prevEnd, int segmentIndex, int totalNumSegments) {
 		ArrayList<TimeDist[]> pathList = new ArrayList<>();
 		if ( ! isFlat) {
@@ -380,9 +379,7 @@ public class SeismicPhaseSegment {
 				prevTime,
 				prevDist,
 				0); // initial depth not used
-		TimeDist prev = cummulative;
 		TimeDist[] branchPath;
-		int numAdded = 0;
 		double longWayFactor = 1;
 		if (currArrival.isLongWayAround()) {
 			longWayFactor = -1;
@@ -390,14 +387,12 @@ public class SeismicPhaseSegment {
         for (TimeDist[] timeDists : pathList) {
             branchPath = timeDists;
             for (TimeDist timeDist : branchPath) {
-                prev = cummulative;
                 cummulative = new TimeDist(cummulative.getP(),
                         cummulative.getTime() + timeDist.getTime(),
                         cummulative.getDistRadian() + longWayFactor * timeDist.getDistRadian(),
                         timeDist.getDepth());
                 outPath.add(cummulative);
 
-                numAdded++;
             }
         }
 		outPath = ArrivalPathSegment.trimDuplicates(outPath);
