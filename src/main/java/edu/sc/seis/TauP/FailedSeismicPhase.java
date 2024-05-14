@@ -66,12 +66,12 @@ public class FailedSeismicPhase extends SimpleSeismicPhase {
 
 
     @Override
-    public double calcReflTranPSV(Arrival arrival) throws VelocityModelException, SlownessModelException {
+    public double calcEnergyReflTranPSV(Arrival arrival) throws VelocityModelException, SlownessModelException {
         return 0;
     }
 
     @Override
-    public double calcReflTranSH(Arrival arrival) throws VelocityModelException, SlownessModelException {
+    public double calcEnergyReflTranSH(Arrival arrival) throws VelocityModelException, SlownessModelException {
         return 0;
     }
 

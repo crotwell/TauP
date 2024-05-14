@@ -435,9 +435,9 @@ public class TauP_WKBJ extends TauP_AbstractRayTool {
                     if (n >= 0 && n < numSamples) {
                         try {
                             Arrival thetaArrival = arrival.getPhase().shootRay(rayParam);
-                            double psvAmpFactor = thetaArrival.getReflTransPSV();
+                            double psvAmpFactor = thetaArrival.getEnergyReflTransPSV();
                             double incidentAngle = thetaArrival.getIncidentAngleDegree();
-                            double transverseAmpFactor = thetaArrival.getReflTransSH();
+                            double transverseAmpFactor = thetaArrival.getEnergyReflTransSH();
                             double rotateAngle = 0;
                             if ( ! thetaArrival.getPhase().finalSegmentIsPWave()) {
                                 rotateAngle = 90;

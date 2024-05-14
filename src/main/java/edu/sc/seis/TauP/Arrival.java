@@ -333,8 +333,8 @@ public class Arrival {
      * @throws VelocityModelException
      * @throws SlownessModelException
      */
-    public double getReflTransPSV() throws VelocityModelException, SlownessModelException {
-        return getPhase().calcReflTranPSV(this);
+    public double getEnergyReflTransPSV() throws VelocityModelException, SlownessModelException {
+        return getPhase().calcEnergyReflTranPSV(this);
     }
 
     /**
@@ -346,8 +346,8 @@ public class Arrival {
      * @throws VelocityModelException
      * @throws SlownessModelException
      */
-    public double getReflTransSH() throws VelocityModelException, SlownessModelException {
-        return getPhase().calcReflTranSH(this);
+    public double getEnergyReflTransSH() throws VelocityModelException, SlownessModelException {
+        return getPhase().calcEnergyReflTranSH(this);
     }
 
     /**
@@ -364,7 +364,7 @@ public class Arrival {
     public double getAmplitudeFactorPSV(double moment) throws TauModelException, VelocityModelException, SlownessModelException {
 
         // dimensionaless ?
-        double refltran = getReflTransPSV();
+        double refltran = getEnergyReflTransPSV();
         VelocityModel vMod = getPhase().getTauModel().getVelocityModel();
         VelocityLayer top = vMod.getVelocityLayer(0);
         ReflTransFreeSurface rtFree = new ReflTransFreeSurface(top.getTopPVelocity(), top.getTopSVelocity(), top.getTopDensity());
@@ -374,7 +374,7 @@ public class Arrival {
         } else {
             freeSurfRF = rtFree.getFreeSurfaceReceiverFunSv(getRayParam()/vMod.getRadiusOfEarth());
         }
-        double freeFactor = Complex.sqrt(freeSurfRF[0].times(freeSurfRF[0].plus(freeSurfRF[1].times(freeSurfRF[1])))).re;
+        double freeFactor = Complex.abs(Complex.sqrt(freeSurfRF[0].times(freeSurfRF[0].plus(freeSurfRF[1].times(freeSurfRF[1])))));
         double geoSpread = getAmplitudeGeometricSpreadingFactor(); // 1/km
         // km/s
         double sourceVel = getPhase().velocityAtSource(); // km/s
@@ -399,7 +399,7 @@ public class Arrival {
     }
 
     public double getAmplitudeFactorSH(double moment) throws TauModelException, VelocityModelException, SlownessModelException {
-        double refltran = getReflTransSH();
+        double refltran = getEnergyReflTransSH();
         double geoSpread = getAmplitudeGeometricSpreadingFactor();
         double sourceVel = getPhase().velocityAtSource();
         double radiationTerm = 4*Math.PI*getPhase().densityAtSource()*sourceVel*sourceVel*sourceVel*1e12;
@@ -720,8 +720,8 @@ public class Arrival {
                 } else {
                     pw.write(innerIndent + "  " + JSONWriter.valueToString("error") + ": " + JSONWriter.valueToString("geometrical speading not finite") + "," + NL);
                 }
-                pw.write(innerIndent + "  " + JSONWriter.valueToString("refltranpsv") + ": " + JSONWriter.valueToString((float) getReflTransPSV()) + ", " + NL);
-                pw.write(innerIndent + "  " + JSONWriter.valueToString("refltransh") + ": " + JSONWriter.valueToString((float) getReflTransSH()) + NL);
+                pw.write(innerIndent + "  " + JSONWriter.valueToString("refltranpsv") + ": " + JSONWriter.valueToString((float) getEnergyReflTransPSV()) + ", " + NL);
+                pw.write(innerIndent + "  " + JSONWriter.valueToString("refltransh") + ": " + JSONWriter.valueToString((float) getEnergyReflTransSH()) + NL);
                 pw.write(innerIndent + "}");
             } catch (TauPException e) {
                 throw new RuntimeException(e);
@@ -791,8 +791,8 @@ public class Arrival {
             } else {
                 ampObj.put("error", "geometrical speading not finite");
             }
-            ampObj.put("refltranpsv", (float) getReflTransPSV());
-            ampObj.put("refltransh", (float) getReflTransSH());
+            ampObj.put("refltranpsv", (float) getEnergyReflTransPSV());
+            ampObj.put("refltransh", (float) getEnergyReflTransSH());
         } catch (TauPException e) {
             throw new RuntimeException(e);
         }

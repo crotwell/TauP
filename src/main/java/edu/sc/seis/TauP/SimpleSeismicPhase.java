@@ -924,20 +924,20 @@ public class SimpleSeismicPhase implements SeismicPhase {
     }
 
     @Override
-    public double calcReflTranPSV(Arrival arrival) throws VelocityModelException, SlownessModelException {
+    public double calcEnergyReflTranPSV(Arrival arrival) throws VelocityModelException, SlownessModelException {
         double reflTranValue = 1;
         boolean calcSH = false;
         SeismicPhaseSegment prevSeg = getPhaseSegments().get(0);
         for (SeismicPhaseSegment seg : getPhaseSegments().subList(1, getPhaseSegments().size())) {
-            reflTranValue *= prevSeg.calcReflTran(arrival, seg.isPWave, calcSH);
+            reflTranValue *= prevSeg.calcEnergyReflTran(arrival, seg.isPWave, calcSH);
             prevSeg = seg;
         }
-        reflTranValue *= prevSeg.calcReflTran(arrival, prevSeg.isPWave, calcSH); // last seg can't change phase at end
+        reflTranValue *= prevSeg.calcEnergyReflTran(arrival, prevSeg.isPWave, calcSH); // last seg can't change phase at end
         return reflTranValue;
     }
 
     @Override
-    public double calcReflTranSH(Arrival arrival) throws VelocityModelException, SlownessModelException {
+    public double calcEnergyReflTranSH(Arrival arrival) throws VelocityModelException, SlownessModelException {
         double reflTranValue = 1;
 
         boolean isAllS = isAllSWave();
@@ -945,10 +945,10 @@ public class SimpleSeismicPhase implements SeismicPhase {
         boolean calcSH = true;
         SeismicPhaseSegment prevSeg = getPhaseSegments().get(0);
         for (SeismicPhaseSegment seg : getPhaseSegments().subList(1, getPhaseSegments().size())) {
-            reflTranValue *= prevSeg.calcReflTran(arrival, seg.isPWave, calcSH);
+            reflTranValue *= prevSeg.calcEnergyReflTran(arrival, seg.isPWave, calcSH);
             prevSeg = seg;
         }
-        reflTranValue *= prevSeg.calcReflTran(arrival, prevSeg.isPWave, calcSH); // last seg can't change phase at end
+        reflTranValue *= prevSeg.calcEnergyReflTran(arrival, prevSeg.isPWave, calcSH); // last seg can't change phase at end
         return reflTranValue;
     }
 

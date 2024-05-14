@@ -150,9 +150,9 @@ public interface SeismicPhase extends Serializable, Cloneable {
 
     void dump();
 
-    double calcReflTranPSV(Arrival arrival) throws VelocityModelException, SlownessModelException;
+    double calcEnergyReflTranPSV(Arrival arrival) throws VelocityModelException, SlownessModelException;
 
-    double calcReflTranSH(Arrival arrival) throws VelocityModelException, SlownessModelException;
+    double calcEnergyReflTranSH(Arrival arrival) throws VelocityModelException, SlownessModelException;
 
     List<TimeDist> calcPierceTimeDist(Arrival arrival);
 

@@ -412,7 +412,7 @@ public class SeismicPhaseSegment {
 	 * @param nextLegIsPWave if next leg is a P wave, neede for final coefficient at end of leg
 	 * @param allSH if should calculate the SH coefficients instead of P-SV
 	 */
-	public double calcReflTran(Arrival arrival, boolean nextLegIsPWave, boolean allSH) throws VelocityModelException {
+	public double calcEnergyReflTran(Arrival arrival, boolean nextLegIsPWave, boolean allSH) throws VelocityModelException {
 		double reflTranValue = 1;
 		if (isPWave && allSH) {
 			// P wave leg in SH system, so zero
@@ -470,7 +470,6 @@ public class SeismicPhaseSegment {
 						reflTranValue *= reflTranCoef.getEnergyFluxTss(flatRayParam);
 					}
 				}
-System.err.println(branchNum+" refltran "+reflTranValue);
 			}
 			TauBranch tauBranch = tMod.getTauBranch(endBranch, isPWave);
 			double depth = isDownGoing ? tauBranch.getBotDepth() : tauBranch.getTopDepth();
