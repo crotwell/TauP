@@ -223,7 +223,7 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
             for (int i = 0; i < out.length; i++) {
                 out[i] *= radToKm;
             }
-        } else if (axisType==AxisType.rayparam) {
+        } else if (axisType==AxisType.rayparamrad) {
             out = phase.getRayParams();
         } else if (axisType==AxisType.rayparamdeg) {
             out = phase.getRayParams();
@@ -519,7 +519,7 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
             case radian:
             case radian180:
                 return "Radian";
-            case rayparam:
+            case rayparamrad:
                 return "Ray Param (s/rad)";
             case rayparamdeg:
                 return "Ray Param (s/deg)";

@@ -99,7 +99,7 @@ public class DistanceArgs {
         return rpList;
     }
 
-    public List<RayParamRay> getRayParamRays() {
+    public List<RayParamRay> getRayParamDegRays() {
         List<RayParamRay> rpList = new ArrayList<>();
         for (Double d : distArgs.shootRaypList) {
             if (hasEventLatLon() && !hasStationLatLon() && getAzimuth() != null) {
@@ -124,6 +124,36 @@ public class DistanceArgs {
                 }
             } else {
                 rpList.add(RayParamRay.ofRayParamSDegree(d));
+            }
+        }
+        return rpList;
+    }
+
+    public List<RayParamRay> getRayParamRadianRays() {
+        List<RayParamRay> rpList = new ArrayList<>();
+        for (Double d : distArgs.shootRadianRaypList) {
+            if (hasEventLatLon() && !hasStationLatLon() && getAzimuth() != null) {
+                if (distArgs.geodetic) {
+                    throw new RuntimeException("geodetic not yet...");
+                } else {
+                    for (Location evt : distArgs.eventList) {
+                        RayParamRay evtDr = RayParamRay.ofRayParamSRadian(d);
+                        evtDr.withEventAzimuth(evt, getAzimuth());
+                        rpList.add(evtDr);
+                    }
+                }
+            } else if (!hasEventLatLon() && hasStationLatLon() && getBackAzimuth() != null) {
+                if (distArgs.geodetic) {
+                    throw new RuntimeException("geodetic not yet...");
+                } else {
+                    for (Location sta : distArgs.stationList) {
+                        RayParamRay staDr = RayParamRay.ofRayParamSRadian(d);
+                        staDr.withStationBackAzimuth(sta, getBackAzimuth());
+                        rpList.add(staDr);
+                    }
+                }
+            } else {
+                rpList.add(RayParamRay.ofRayParamSRadian(d));
             }
         }
         return rpList;
@@ -162,8 +192,9 @@ public class DistanceArgs {
     public List<RayCalculateable> getRayCalculatables() {
         List<RayCalculateable> out = new ArrayList<>();
         out.addAll(getDistances());
-        out.addAll(getRayParamRays());
+        out.addAll(getRayParamDegRays());
         out.addAll(getRayParamKmRays());
+        out.addAll(getRayParamRadianRays());
         out.addAll(getTakeoffAngleRays());
         return out;
     }
@@ -229,6 +260,7 @@ public class DistanceArgs {
         distArgs.distKilometersList.clear();
         distArgs.shootRaypList.clear();
         distArgs.shootKmRaypList.clear();
+        distArgs.shootRadianRaypList.clear();
     }
 
 
@@ -270,7 +302,12 @@ public class DistanceArgs {
                 description="takeoff angle in degrees from the source zero is down, 90 horizontal, 180 is up")
         protected List<Double> takeoffAngle = new ArrayList<>();
 
-        @CommandLine.Option(names={"--shoot", "--rayparamdeg"},
+        @CommandLine.Option(names={"--rayparamrad"},
+                description="ray parameter from the source in s/rad, up or down is determined by the phase",
+                split=",")
+        protected List<Double> shootRadianRaypList = new ArrayList<>();
+
+        @CommandLine.Option(names={"--rayparamdeg"},
                 description="ray parameter from the source in s/deg, up or down is determined by the phase",
                 split=",")
         protected List<Double> shootRaypList = new ArrayList<>();

@@ -9,11 +9,11 @@ public class RayParamRay extends ShootableRay {
         this.rayParam = rayParam;
     }
 
-    public static RayParamRay ofRayParam(double d) {
+    public static RayParamRay ofRayParamSRadian(double d) {
         return new RayParamRay(d);
     }
     public static RayParamRay ofRayParamSDegree(double d) {
-        return RayParamRay.ofRayParam(d/SphericalCoords.dtor);
+        return RayParamRay.ofRayParamSRadian(d/SphericalCoords.dtor);
     }
 
     @Override

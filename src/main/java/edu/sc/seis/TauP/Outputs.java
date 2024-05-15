@@ -77,7 +77,7 @@ public class Outputs {
             case kilometer180:
                 outFormat = distanceFormat;
                 break;
-            case rayparam:
+            case rayparamrad:
             case rayparamdeg:
             case rayparamkm:
             case theta:
