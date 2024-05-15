@@ -49,6 +49,18 @@ public class TauP_Web extends TauP_Tool {
                         } catch (Exception e) {
                             System.err.println(e);
                             e.printStackTrace(System.err);
+                            if(exchange.isResponseChannelAvailable()) {
+                                final String errorPage = "<html><head><title>Error</title></head><body>"
+                                        +"<h3>Internal Error</h3>"
+                                        +"<p>"+exchange.getRequestURL()+"?"+exchange.getQueryString()+"</p>"
+                                        +"<p>"+e.getMessage()+"</p>"
+                                        +"</body></html>";
+                                exchange.getResponseHeaders().put(Headers.CONTENT_LENGTH, "" + errorPage.length());
+                                exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, "text/html");
+                                exchange.setStatusCode(500);
+                                exchange.getResponseSender().send(errorPage);
+                            }
+                            exchange.getResponseSender().send(e.getMessage());
                             throw e;
                         }
                     }
