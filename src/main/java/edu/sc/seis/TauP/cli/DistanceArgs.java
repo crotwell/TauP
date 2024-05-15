@@ -159,6 +159,37 @@ public class DistanceArgs {
         return rpList;
     }
 
+
+    public List<RayParamIndexRay> getRayParamIndexRays() {
+        List<RayParamIndexRay> rpList = new ArrayList<>();
+        for (Integer d : distArgs.shootIndexRaypList) {
+            if (hasEventLatLon() && !hasStationLatLon() && getAzimuth() != null) {
+                if (distArgs.geodetic) {
+                    throw new RuntimeException("geodetic not yet...");
+                } else {
+                    for (Location evt : distArgs.eventList) {
+                        RayParamIndexRay evtDr = new RayParamIndexRay(d);
+                        evtDr.withEventAzimuth(evt, getAzimuth());
+                        rpList.add(evtDr);
+                    }
+                }
+            } else if (!hasEventLatLon() && hasStationLatLon() && getBackAzimuth() != null) {
+                if (distArgs.geodetic) {
+                    throw new RuntimeException("geodetic not yet...");
+                } else {
+                    for (Location sta : distArgs.stationList) {
+                        RayParamIndexRay staDr = new RayParamIndexRay(d);
+                        staDr.withStationBackAzimuth(sta, getBackAzimuth());
+                        rpList.add(staDr);
+                    }
+                }
+            } else {
+                rpList.add(new RayParamIndexRay(d));
+            }
+        }
+        return rpList;
+    }
+
     public List<TakeoffAngleRay> getTakeoffAngleRays() {
         List<TakeoffAngleRay> rpList = new ArrayList<>();
         for (Double d : distArgs.takeoffAngle) {
@@ -196,6 +227,7 @@ public class DistanceArgs {
         out.addAll(getRayParamKmRays());
         out.addAll(getRayParamRadianRays());
         out.addAll(getTakeoffAngleRays());
+        out.addAll(getRayParamIndexRays());
         return out;
     }
 
@@ -261,6 +293,7 @@ public class DistanceArgs {
         distArgs.shootRaypList.clear();
         distArgs.shootKmRaypList.clear();
         distArgs.shootRadianRaypList.clear();
+        distArgs.shootIndexRaypList.clear();
     }
 
 
@@ -316,6 +349,11 @@ public class DistanceArgs {
                 description="ray parameter from the source in s/km, up or down is determined by the phase",
                 split=",")
         protected List<Double> shootKmRaypList = new ArrayList<>();
+
+        @CommandLine.Option(names={"--rayparamidx"},
+                description="ray parameter from the source as index into model sampling, up or down is determined by the phase",
+                split=",")
+        protected List<Integer> shootIndexRaypList = new ArrayList<>();
 
         @Option(names={"--sta", "--station"},
                 arity="2",

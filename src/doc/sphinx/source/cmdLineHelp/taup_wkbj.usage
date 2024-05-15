@@ -1,73 +1,94 @@
-Usage: taup wkbj [--debug] [--geodetic] [--help] [--verbose] [--az=<azimuth>]
+Usage: taup wkbj [--debug] [--geodetic] [--geodetic] [--help] [--verbose]
+                 [--az=<azimuth>] [--az=<azimuth>] [--baz=<backAzimuth>]
                  [--baz=<backAzimuth>] [--ellipflattening=<ellipflattening>]
-                 [--mw=<mw>] [-o=<outFile>] [--prop=<toolPropsFilename>]
-                 [--deg=d[,d...]]... [--exactdegree=d[,d...]]...
-                 [--exactkilometer=km[,km...]]... [--km=km[,km...]]...
-                 [--rayparamkm=<shootKmRaypList>[,<shootKmRaypList>...]]...
-                 [--shoot=<shootRaypList>[,<shootRaypList>...]]...
-                 [--takeoff=<takeoffAngle>[,<takeoffAngle>...]]...
+                 [--ellipflattening=<ellipflattening>] [--mw=<mw>]
+                 [-o=<outFile>] [--otime=<origintime>]
+                 [--prop=<toolPropsFilename>] [--deg=d[,d...]]... [--deg=d[,
+                 d...]]... [--exactdegree=d[,d...]]... [--exactdegree=d[,
+                 d...]]... [--exactkilometer=km[,km...]]... [--exactkilometer=km
+                 [,km...]]... [--km=km[,km...]]... [--km=km[,km...]]...
+                 [--rayparamdeg=<shootRaypList>[,<shootRaypList>...]]...
+                 [--rayparamdeg=<shootRaypList>[,<shootRaypList>...]]...
+                 [--rayparamidx=<shootIndexRaypList>[,
+                 <shootIndexRaypList>...]]...
+                 [--rayparamidx=<shootIndexRaypList>[,
+                 <shootIndexRaypList>...]]... [--rayparamkm=<shootKmRaypList>[,
+                 <shootKmRaypList>...]]... [--rayparamkm=<shootKmRaypList>[,
+                 <shootKmRaypList>...]]... [--rayparamrad=<shootRadianRaypList>
+                 [,<shootRadianRaypList>...]]...
+                 [--rayparamrad=<shootRadianRaypList>[,
+                 <shootRadianRaypList>...]]... [--takeoff=<takeoffAngle>[,
+                 <takeoffAngle>...]]... [--takeoff=<takeoffAngle>[,
+                 <takeoffAngle>...]]... [--evt=<eventLatLon> <eventLatLon>]...
                  [--evt=<eventLatLon> <eventLatLon>]... [--sta=<stationLatLon>
-                 <stationLatLon>]... [[--mod=<modelname>] [-h=<sourceDepth>]
-                 [--stadepth=depth] [--scat=s s]...] [[-p=<phaseNames>[,
-                 <phaseNames>...]]... [--phasefile=<phaseFiles>]...] [--ms3 |
-                 --sac]
+                 <stationLatLon>]... [--sta=<stationLatLon> <stationLatLon>]...
+                 [[--mod=<modelname>] [-h=<sourceDepth>] [--stadepth=depth]
+                 [--scat=s s]...] [[-p=<phaseNames>[,<phaseNames>...]]...
+                 [--phasefile=<phaseFiles>]...] [--ms3 | --sac]
 calc WKJB seismograms, DANGER: experimental!!!
-      --debug               enable debugging output
-      --help                display this help message
-      --mw=<mw>             scale amplitude by source moment magnitude
-  -o, --output=<outFile>    output to file, default is stdout.
+      --debug                enable debugging output
+      --help                 display this help message
+      --mw=<mw>              scale amplitude by source moment magnitude
+  -o, --output=<outFile>     output to file, default is stdout.
+      --otime=<origintime>   event origin time, as ISO8601
       --prop=<toolPropsFilename>
-                            load defaults from properties file
-      --verbose             enable verbose output
+                             load defaults from properties file
+      --verbose              enable verbose output
 Model Args
   -h, --evdepth, --sourcedepth=<sourceDepth>
-                            source depth in km
+                             source depth in km
       --mod, --model=<modelname>
-                            use velocity model "modelname" for calculations
-                                                  Default is iasp91.
-      --scat, --scatter=s s scattering depth and distance in degrees, which may
-                              be negative. Only effects phases with 'o' or 'O'
-                              in the phase name.
+                             use velocity model "modelname" for calculations
+                                                   Default is iasp91.
+      --scat, --scatter=s s  scattering depth and distance in degrees, which
+                               may be negative. Only effects phases with 'o' or
+                               'O' in the phase name.
       --stadepth, --receiverdepth=depth
-                            the receiver depth in km for stations not at the
-                              surface
+                             the receiver depth in km for stations not at the
+                               surface
 Phase Names
   -p, --ph, --phase=<phaseNames>[,<phaseNames>...]
-                            seismic phase names
+                             seismic phase names
       --phasefile=<phaseFiles>
-                            read list of phase names from file
+                             read list of phase names from file
 Distance is given by:
-      --az=<azimuth>        azimuth in degrees
-      --baz=<backAzimuth>   backazimuth in degrees
+      --az=<azimuth>         azimuth in degrees
+      --baz=<backAzimuth>    backazimuth in degrees
       --deg, --degree=d[,d...]
-                            distance in degrees
+                             distance in degrees
       --ellipflattening=<ellipflattening>
-                            Elliptical flattening for distance calculations
-                              when --geodetic, defaults to WGS84 ~ 1/298.257
+                             Elliptical flattening for distance calculations
+                               when --geodetic, defaults to WGS84 ~ 1/298.257
       --evt, --event=<eventLatLon> <eventLatLon>
-                            event latitude and longitude
-      --exactdegree=d[,d...]
-                            exact distance traveled in degrees, not 360-d
+                             event latitude and longitude
+      --exactdegree=d[,d...] exact distance traveled in degrees, not 360-d
       --exactkilometer=km[,km...]
-                            exact distance traveled in kilometers, not 360-k
-      --geodetic            use geodetic latitude for distance calculations,
-                              which implies an ellipticity. Default is
-                              spherical. Note this only affects calculation of
-                              distance from lat/lon, all travel time
-                              calculations are done in a purely spherical model.
+                             exact distance traveled in kilometers, not 360-k
+      --geodetic             use geodetic latitude for distance calculations,
+                               which implies an ellipticity. Default is
+                               spherical. Note this only affects calculation of
+                               distance from lat/lon, all travel time
+                               calculations are done in a purely spherical
+                               model.
       --km, --kilometer=km[,km...]
-                            distance in kilometers
+                             distance in kilometers
+      --rayparamdeg=<shootRaypList>[,<shootRaypList>...]
+                             ray parameter from the source in s/deg, up or down
+                               is determined by the phase
+      --rayparamidx=<shootIndexRaypList>[,<shootIndexRaypList>...]
+                             ray parameter from the source as index into model
+                               sampling, up or down is determined by the phase
       --rayparamkm=<shootKmRaypList>[,<shootKmRaypList>...]
-                            ray parameter from the source in s/km, up or down
-                              is determined by the phase
-      --shoot, --rayparamdeg=<shootRaypList>[,<shootRaypList>...]
-                            ray parameter from the source in s/deg, up or down
-                              is determined by the phase
+                             ray parameter from the source in s/km, up or down
+                               is determined by the phase
+      --rayparamrad=<shootRadianRaypList>[,<shootRadianRaypList>...]
+                             ray parameter from the source in s/rad, up or down
+                               is determined by the phase
       --sta, --station=<stationLatLon> <stationLatLon>
-                            station latitude and longitude
+                             station latitude and longitude
       --takeoff=<takeoffAngle>[,<takeoffAngle>...]
-                            takeoff angle in degrees from the source zero is
-                              down, 90 horizontal, 180 is up
+                             takeoff angle in degrees from the source zero is
+                               down, 90 horizontal, 180 is up
 Output Type
-      --ms3                 outputs as mseed3
-      --sac                 outputs as SAC
+      --ms3                  outputs as mseed3
+      --sac                  outputs as SAC

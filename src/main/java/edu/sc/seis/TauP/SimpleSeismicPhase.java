@@ -935,21 +935,18 @@ public class SimpleSeismicPhase implements SeismicPhase {
                     tstar += refractTime / Q;
                 } else {
                     // normal case
-                    double timeA, timeB;
-                    double distA, distB;
-                    distA = dist[currArrival.getRayParamIndex()];
-                    distB = dist[currArrival.getRayParamIndex() + 1];
-                    double distRatio = (currArrival.getDist() - distA) / (distB - distA);
-                    if (countFlatLegs() > 0) {
-                        /* head waves and diffracted waves are a special case. */
-                        timeA = tMod.getTauBranch(branchNum, isPWave).time[rayNum];
-                        timeB = timeA;
-                    } else {
-                        timeA = tMod.getTauBranch(branchNum, isPWave).time[rayNum];
-                        timeB = tMod.getTauBranch(branchNum, isPWave).time[rayNum + 1];
-                    }
+                    double branchTime;
 
-                    double branchTime = distRatio * (timeB - timeA) + timeA;
+                    if (currArrival.getRayParamIndex() < dist.length-1 && countFlatLegs() == 0) {
+                        double distA = dist[currArrival.getRayParamIndex()];
+                        double distB = dist[currArrival.getRayParamIndex() + 1];
+                        double timeA = tMod.getTauBranch(branchNum, isPWave).time[rayNum];
+                        double timeB = tMod.getTauBranch(branchNum, isPWave).time[rayNum + 1];
+                        double distRatio = (currArrival.getDist() - distA) / (distB - distA);
+                        branchTime = distRatio * (timeB - timeA) + timeA;
+                    } else {
+                        branchTime = tMod.getTauBranch(branchNum, isPWave).time[rayNum];
+                    }
                     tstar += branchTime / Q;
                 }
             }
