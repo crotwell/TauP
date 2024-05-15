@@ -88,12 +88,17 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
             }
             xyOut.setTitle(title);
         }
+        String yAxisActual = "";
+        for (XYPlottingData xyp : xyPlots) {
+            yAxisActual += xyp.label+",";
+        }
+        yAxisActual = yAxisActual.substring(0, yAxisActual.length()-1);
         if (getOutputFormat().equalsIgnoreCase(OutputTypes.JSON)) {
             xyOut.printAsJSON(writer, 2);
         } else if (getOutputFormat().equalsIgnoreCase(OutputTypes.TEXT) || getOutputFormat().equalsIgnoreCase(OutputTypes.GMT)) {
             xyOut.printAsGmtText(writer);
         } else if (getOutputFormat().equalsIgnoreCase(OutputTypes.SVG)) {
-            xyOut.printAsSvg(writer, cmdLineArgs, xAxisType.toString(), yAxisType.toString(), SvgUtil.createReflTransCSSColors()+"\n", isLegend);
+            xyOut.printAsSvg(writer, cmdLineArgs, xAxisType.toString(), yAxisActual, SvgUtil.createReflTransCSSColors()+"\n", isLegend);
         } else {
             throw new IllegalArgumentException("Unknown output format: " + getOutputFormat());
         }
@@ -724,7 +729,7 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
         return yAxisType;
     }
 
-    @CommandLine.Option(names = "-y", description = "Y axis data type, one of ${COMPLETION-CANDIDATES}, default is all", arity = "1..10")
+    @CommandLine.Option(names = "-y", description = "Y axis data type, one of ${COMPLETION-CANDIDATES}, default is all displacement coef.", arity = "1..*")
     public void setyAxisType(List<ReflTransAxisType> yAxisType) {
         this.yAxisType.addAll(yAxisType);
     }
