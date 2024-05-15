@@ -175,6 +175,10 @@ public abstract class ReflTrans {
     }
 
     public double getEnergyFluxRpp(double flatRP) throws VelocityModelException {
+        if (1/flatRP == topVp) {
+            // in horizontal case, flux is zero, so no change in path energy as turn doesn't lose energy
+            return 1.0;
+        }
         // careful sqrt neg number due to small rounding error
         double cosArg = 1-flatRP*flatRP* topVp* topVp;
         if (cosArg < 0) {return 0.0;}
@@ -247,11 +251,15 @@ public abstract class ReflTrans {
 
     public double getEnergyFluxRss(double flatRP) throws VelocityModelException {
         if ( topVs == 0.0 ) { return 0;}
+        if (1/flatRP == topVs) {
+            // in horizontal case, flux is zero, so no change in path energy as turn doesn't lose energy
+            return 1.0;
+        }
         // careful sqrt neg number due to small rounding error
         double cosArg = 1-flatRP*flatRP* topVs* topVs;
-        if (cosArg < 0) {return 0.0;}
+        if (cosArg < 0) {return 1.0;}
         double inboundEnergy = inboundEnergyS(flatRP);
-        if (inboundEnergy == 0) { return 0;}
+        if (inboundEnergy == 0) { return 1.0;}
         double Rss_calc = getRss(flatRP);
         return topDensity * topVs * Math.sqrt(cosArg) * Rss_calc * Rss_calc
                 / inboundEnergy;
@@ -273,6 +281,10 @@ public abstract class ReflTrans {
 
     public double getEnergyFluxRshsh(double flatRP) throws VelocityModelException {
         if ( topVs == 0.0 ) { return 0;}
+        if (1/flatRP == topVs) {
+            // in horizontal case, flux is zero, so no change in path energy as turn doesn't lose energy
+            return 1.0;
+        }
         // careful sqrt neg number due to small rounding error
         double cosArg = 1-flatRP*flatRP* topVs* topVs;
         if (cosArg < 0) {return 0.0;}

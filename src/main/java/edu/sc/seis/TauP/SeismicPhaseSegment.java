@@ -429,15 +429,12 @@ public class SeismicPhaseSegment {
 					if(arrival.getRayParam() > tauBranch.getMinTurnRayParam()) {
 						// ray can't reach bottom of branch
 						break;
-					} else if ( endAction == TURN && arrival.getRayParam() == tauBranch.getMinTurnRayParam()) {
-						// turn at the boundary
-						break;
 					}
 				} else {
 					depth = tauBranch.getTopDepth();
-					if(arrival.getRayParam() > tauBranch.getMaxRayParam()) {
+					if(arrival.getRayParam() >= tauBranch.getMaxRayParam()) {
 						// ray can't enter branch from top
-						break;
+						continue;
 					}
 				}
 				if (arrival.getSourceDepth() == depth && ! getTauModel().getVelocityModel().isDisconDepth(depth)) {
@@ -456,16 +453,35 @@ public class SeismicPhaseSegment {
 				ReflTrans reflTranCoef = vMod.calcReflTransCoef(depth, isDownGoing);
 				double flatRayParam = arrival.getRayParam() / (getTauModel().getRadiusOfEarth() - depth);
 				if (isPWave) {
-					reflTranValue *= reflTranCoef.getEnergyFluxTpp(flatRayParam);
+					if ( endAction == TURN
+							&& arrival.getRayParam() >= tauBranch.getMinRayParam()
+							&& arrival.getRayParam() <= tauBranch.getMinTurnRayParam()) {
+						// turn is actually critically reflect at the boundary
+						reflTranValue *= reflTranCoef.getEnergyFluxRpp(flatRayParam);
+					} else {
+						reflTranValue *= reflTranCoef.getEnergyFluxTpp(flatRayParam);
+					}
 				} else {
 					// SV or SH or combo???
-					if (allSH) {
-						reflTranValue *= reflTranCoef.getEnergyFluxTshsh(flatRayParam);
+					if ( endAction == TURN
+							&& arrival.getRayParam() >= tauBranch.getMinRayParam()
+							&& arrival.getRayParam() <= tauBranch.getMinTurnRayParam()) {
+						// turn is actually critically reflect at the boundary
+						if (allSH) {
+							reflTranValue *= reflTranCoef.getEnergyFluxRshsh(flatRayParam);
+						} else {
+							reflTranValue *= reflTranCoef.getEnergyFluxRss(flatRayParam);
+						}
 					} else {
-						reflTranValue *= reflTranCoef.getEnergyFluxTss(flatRayParam);
+						if (allSH) {
+							reflTranValue *= reflTranCoef.getEnergyFluxTshsh(flatRayParam);
+						} else {
+							reflTranValue *= reflTranCoef.getEnergyFluxTss(flatRayParam);
+						}
 					}
 				}
 			}
+
 			TauBranch tauBranch = tMod.getTauBranch(endBranch, isPWave);
 			double depth = isDownGoing ? tauBranch.getBotDepth() : tauBranch.getTopDepth();
 			double flatRayParam = arrival.getRayParam() / (getTauModel().getRadiusOfEarth() - depth);
@@ -535,9 +551,7 @@ public class SeismicPhaseSegment {
 					}
 				}
 			}
-			if (Double.isNaN(reflTranValue)) {
-				throw new VelocityModelException("Refltran value is NaN: "+reflTranValue+" "+flatRayParam+" "+arrival.getRayParam()+" "+depth+" "+isPWave+" "+isDownGoing+" "+endAction+" "+arrival.getName());
-			}
+
 		} else {
 			/*
 			 * Here we worry about the special case for head and
