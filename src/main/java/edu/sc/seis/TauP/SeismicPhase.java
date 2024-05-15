@@ -169,9 +169,11 @@ public interface SeismicPhase extends Serializable, Cloneable {
     static List<double[]> splitForRepeatRayParam(double[] rayParams, double[] values) {
         List<double[]> out = new ArrayList<>();
         int partialStart = 0;
-        for (int i = 0; i < values.length; i++) {
-            if(i < values.length - 1 && (rayParams[i] == rayParams[i + 1])
-                    && rayParams.length > 2) {
+        if (rayParams.length != values.length) {
+            throw new IllegalArgumentException("rayParams and values must be same length: "+rayParams.length+" "+values.length);
+        }
+        for (int i = 0; i < values.length-1; i++) {
+            if((rayParams[i] == rayParams[i + 1]) && rayParams.length > 2) {
                 double[] partialValues = new double[1+i-partialStart];
                 System.arraycopy(values, partialStart, partialValues, 0, partialValues.length);
                 out.add(partialValues);

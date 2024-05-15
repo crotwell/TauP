@@ -298,9 +298,10 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
             }
             out = amp;
         } else if (axisType == AxisType.index) {
-            out = new double[phase.getRayParams().length+1];
-            for (int i = phase.getMinRayParamIndex(); i <= phase.getMaxRayParamIndex(); i++) {
-                out[i-phase.getMinRayParamIndex()] = i;
+            out = new double[phase.getRayParams().length];
+            // maxIdx is index of max rp < minIdx
+            for (int i = phase.getMaxRayParamIndex(); i <= phase.getMinRayParamIndex(); i++) {
+                out[i-phase.getMaxRayParamIndex()] = i;
             }
         } else {
             throw new IllegalArgumentException("Unknown axisType: "+axisType);
