@@ -253,12 +253,15 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
             boolean isAmpSH = axisType==AxisType.ampsh;
             double[] dist = phase.getDist();
             double[] amp = new double[dist.length];
-            for (int i = 0; i < dist.length; i++) {
-                Arrival arrival = phase.createArrivalAtIndex(i);
-                if (isAmpSH) {
-                    amp[i] = arrival.getAmplitudeFactorSH(sourceArgs.getMoment());
-                } else {
-                    amp[i] = arrival.getAmplitudeFactorPSV(sourceArgs.getMoment());
+            if (! isAmpSH || phase.isAllSWave()) {
+                // only do Sh calc for all S wave legs in phase, otherwise zeros
+                for (int i = 0; i < dist.length; i++) {
+                    Arrival arrival = phase.createArrivalAtIndex(i);
+                    if (isAmpSH) {
+                        amp[i] = arrival.getAmplitudeFactorSH(sourceArgs.getMoment());
+                    } else {
+                        amp[i] = arrival.getAmplitudeFactorPSV(sourceArgs.getMoment());
+                    }
                 }
             }
             out = amp;
@@ -277,15 +280,19 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
             boolean isSH = axisType==AxisType.refltransh;
             double[] dist = phase.getDist();
             double[] amp = new double[dist.length];
-            for (int i = 0; i < dist.length; i++) {
-                Arrival arrival = phase.createArrivalAtIndex(i);
-                if (isSH) {
-                    amp[i] = arrival.getEnergyReflTransSH();
-                } else {
-                    amp[i] = arrival.getEnergyReflTransPSV();
-                    if (amp[i] == 0.0) {
-                        System.out.println(arrival);
-                        System.out.println("index: "+arrival.getRayParamIndex());
+
+            if ( ! isSH || phase.isAllSWave()) {
+                // only do Sh calc for all S wave legs in phase, otherwise zeros
+                for (int i = 0; i < dist.length; i++) {
+                    Arrival arrival = phase.createArrivalAtIndex(i);
+                    if (isSH) {
+                        amp[i] = arrival.getEnergyReflTransSH();
+                    } else {
+                        amp[i] = arrival.getEnergyReflTransPSV();
+                        if (amp[i] == 0.0) {
+                            System.out.println(arrival);
+                            System.out.println("index: "+arrival.getRayParamIndex());
+                        }
                     }
                 }
             }
