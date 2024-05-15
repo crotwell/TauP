@@ -175,94 +175,124 @@ public abstract class ReflTrans {
     }
 
     public double getEnergyFluxRpp(double flatRP) throws VelocityModelException {
-        if (flatRP*topVp > 1) { return 1;}
-        double cosTopVp = Math.sqrt(1-flatRP*flatRP* topVp* topVp);
+        // careful sqrt neg number due to small rounding error
+        double cosArg = 1-flatRP*flatRP* topVp* topVp;
+        if (cosArg < 0) {return 0.0;}
+        double inboundEnergy = inboundEnergyP(flatRP);
+        if (inboundEnergy == 0) { return 0;}
         double Rpp_calc = getRpp(flatRP);
-        return topDensity * topVp * cosTopVp * Rpp_calc * Rpp_calc
-                / inboundEnergyP(flatRP);
+        return topDensity * topVp * Math.sqrt(cosArg) * Rpp_calc * Rpp_calc
+                / inboundEnergy;
     }
 
     public double getEnergyFluxTpp(double flatRP) throws VelocityModelException {
-        if (flatRP*botVp > 1 ) { return 1;}
-        double cosBotVp = Math.sqrt(1-flatRP*flatRP*botVp*botVp);
+        // careful sqrt neg number due to small rounding error
+        double cosArg = 1-flatRP*flatRP* botVp*botVp;
+        if (cosArg < 0) {return 0.0;}
+        double inboundEnergy = inboundEnergyP(flatRP);
+        if (inboundEnergy == 0.0) { return 0;}
         double Tpp_calc = getTpp(flatRP);
-        return botDensity * botVp * cosBotVp * Tpp_calc * Tpp_calc
-                / inboundEnergyP(flatRP);
+        return botDensity * botVp * Math.sqrt(cosArg) * Tpp_calc * Tpp_calc
+                / inboundEnergy;
     }
 
     public double getEnergyFluxRps(double flatRP) throws VelocityModelException {
         if (topVs == 0.0) { return 0;}
-        if (flatRP*botVs > 1 ) { return 1;}
-        double cosTopVs = Math.sqrt(1-flatRP*flatRP*topVs*topVs);
+        // careful sqrt neg number due to small rounding error
+        double cosArg = 1-flatRP*flatRP* topVs*topVs;
+        if (cosArg < 0) {return 0.0;}
+        double inboundEnergy = inboundEnergyP(flatRP);
+        if (inboundEnergy == 0) { return 0;}
         double Rps_calc = getRps(flatRP);
-        return topDensity * topVs * cosTopVs * Rps_calc * Rps_calc
-                / inboundEnergyP(flatRP);
+        return topDensity * topVs * Math.sqrt(cosArg) * Rps_calc * Rps_calc
+                / inboundEnergy;
     }
 
     public double getEnergyFluxTps(double flatRP) throws VelocityModelException {
         if (botVs == 0.0) { return 0;}
-        if (flatRP*botVs > 1 ) { return 0;}
-        double cosBotVs = Math.sqrt(1-flatRP*flatRP*botVs*botVs);
+        // careful sqrt neg number due to small rounding error
+        double cosArg = 1-flatRP*flatRP* botVs*botVs;
+        if (cosArg < 0) {return 0.0;}
+        double inboundEnergy = inboundEnergyP(flatRP);
+        if (inboundEnergy == 0) { return 0;}
         double Tps_calc = getTps(flatRP);
-        return botDensity * botVs * cosBotVs * Tps_calc * Tps_calc
-                / inboundEnergyP(flatRP);
+        return botDensity * botVs * Math.sqrt(cosArg) * Tps_calc * Tps_calc
+                / inboundEnergy;
     }
 
 
     public double getEnergyFluxRsp(double flatRP) throws VelocityModelException {
         if ( topVs == 0.0) { return 0;}
-        if (flatRP*topVp > 1 ) { return 0;}
-        double cosTopVp = Math.sqrt(1-flatRP*flatRP* topVp* topVp);
+        // careful sqrt neg number due to small rounding error
+        double cosArg = 1-flatRP*flatRP* topVp* topVp;
+        if (cosArg < 0) {return 0.0;}
+        double inboundEnergy = inboundEnergyS(flatRP);
+        if (inboundEnergy == 0) { return 0;}
         double Rsp_calc = getRsp(flatRP);
-        return topDensity * topVp * cosTopVp * Rsp_calc * Rsp_calc
-                / inboundEnergyS(flatRP);
+        return topDensity * topVp * Math.sqrt(cosArg) * Rsp_calc * Rsp_calc
+                / inboundEnergy;
     }
 
     public double getEnergyFluxTsp(double flatRP) throws VelocityModelException {
-        if (flatRP*botVp > 1 ) { return 0;}
         if ( topVs == 0.0) { return 0;}
-        double cosBotVp = Math.sqrt(1-flatRP*flatRP*botVp*botVp);
+        // careful sqrt neg number due to small rounding error
+        double cosArg = 1-flatRP*flatRP* botVp* botVp;
+        if (cosArg < 0) {return 0.0;}
+        double inboundEnergy = inboundEnergyS(flatRP);
+        if (inboundEnergy == 0) { return 0;}
         double Tsp_calc = getTsp(flatRP);
-        return botDensity * botVp * cosBotVp * Tsp_calc * Tsp_calc
-                / inboundEnergyS(flatRP);
+        return botDensity * botVp * Math.sqrt(cosArg) * Tsp_calc * Tsp_calc
+                / inboundEnergy;
     }
 
     public double getEnergyFluxRss(double flatRP) throws VelocityModelException {
-        if (flatRP*topVs > 1 ) { return 1;}
         if ( topVs == 0.0 ) { return 0;}
-        double cosTopVs = Math.sqrt(1-flatRP*flatRP*topVs*topVs);
+        // careful sqrt neg number due to small rounding error
+        double cosArg = 1-flatRP*flatRP* topVs* topVs;
+        if (cosArg < 0) {return 0.0;}
+        double inboundEnergy = inboundEnergyS(flatRP);
+        if (inboundEnergy == 0) { return 0;}
         double Rss_calc = getRss(flatRP);
-        return topDensity * topVs * cosTopVs * Rss_calc * Rss_calc
-                / inboundEnergyS(flatRP);
+        return topDensity * topVs * Math.sqrt(cosArg) * Rss_calc * Rss_calc
+                / inboundEnergy;
     }
 
     public double getEnergyFluxTss(double flatRP) throws VelocityModelException {
-        if (flatRP*botVs > 1 ) { return 0;}
+        // careful sqrt neg number due to small rounding error
+        double cosArg = 1-flatRP*flatRP* botVs* botVs;
+        if (cosArg < 0) {return 0.0;}
+        double inboundEnergy = inboundEnergyS(flatRP);
+        if (inboundEnergy == 0) { return 0;}
         if ( topVs == 0.0  || botVs == 0.0) { return 0;}
-        double cosBotVs = Math.sqrt(1-flatRP*flatRP*botVs*botVs);
         double Tss_calc = getTss(flatRP);
-        return botDensity * botVs * cosBotVs * Tss_calc * Tss_calc
-                / inboundEnergyS(flatRP);
+        return botDensity * botVs * Math.sqrt(cosArg) * Tss_calc * Tss_calc
+                / inboundEnergy;
     }
 
 
 
     public double getEnergyFluxRshsh(double flatRP) throws VelocityModelException {
-        if (flatRP*botVs > 1 ) { return 1;}
         if ( topVs == 0.0 ) { return 0;}
-        double cosTopVs = Math.sqrt(1-flatRP*flatRP*topVs*topVs);
+        // careful sqrt neg number due to small rounding error
+        double cosArg = 1-flatRP*flatRP* topVs* topVs;
+        if (cosArg < 0) {return 0.0;}
+        double inboundEnergy = inboundEnergyS(flatRP);
+        if (inboundEnergy == 0) { return 0;}
         double Rshsh_calc = getRshsh(flatRP);
-        return topDensity * topVs * cosTopVs * Rshsh_calc * Rshsh_calc
-                / inboundEnergyS(flatRP);
+        return topDensity * topVs * Math.sqrt(cosArg) * Rshsh_calc * Rshsh_calc
+                / inboundEnergy;
     }
 
     public double getEnergyFluxTshsh(double flatRP) throws VelocityModelException {
-        if (flatRP*botVs > 1 ) { return 0;}
         if (topVs == 0.0  || botVs == 0.0) { return 0;}
-        double cosBotVs = Math.sqrt(1-flatRP*flatRP*botVs*botVs);
+        // careful sqrt neg number due to small rounding error
+        double cosArg = 1-flatRP*flatRP* botVs* botVs;
+        if (cosArg < 0) {return 0.0;}
+        double inboundEnergy = inboundEnergyS(flatRP);
+        if (inboundEnergy == 0) { return 0;}
         double Tshsh_calc = getTshsh(flatRP);
-        return botDensity * botVs * cosBotVs * Tshsh_calc * Tshsh_calc
-                / inboundEnergyS(flatRP);
+        return botDensity * botVs * Math.sqrt(cosArg) * Tshsh_calc * Tshsh_calc
+                / inboundEnergy;
     }
 
     protected abstract void calcTempVars(double rayParam, boolean inIsPWave);
