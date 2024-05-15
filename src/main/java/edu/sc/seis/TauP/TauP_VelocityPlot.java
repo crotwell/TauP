@@ -287,7 +287,7 @@ public class TauP_VelocityPlot extends TauP_Tool {
                 if (above) {
                     slayer = tMod.getSlownessModel().layerAbove(depth, isPWave);
                 } else {
-                    slayer = tMod.getSlownessModel().layerAbove(depth, isPWave);
+                    slayer = tMod.getSlownessModel().layerBelow(depth, isPWave);
                 }
                 try {
                     return slayer.evaluateAt_bullen(depth, tMod.getRadiusOfEarth());
