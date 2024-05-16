@@ -243,7 +243,7 @@ circle.discontinuity.iocb {
 <g clip-path="url(#curve_clip)">
 <g transform="scale(1,-1) translate(0, -520.0)">
 <g transform="scale(3.2323565805203747,0.28557586643400995)" >
-<g transform="translate(-0.0, -108.95337178722244)">
+<g transform="translate(-0.0, -108.95337)">
     <g class="autocolor">
     <g class="swave phase_s swave" tauplabel="degree180/time s for a source depth of 500.0 kilometers in the prem model"  >
   <g>
