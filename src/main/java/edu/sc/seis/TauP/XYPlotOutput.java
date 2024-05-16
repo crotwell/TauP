@@ -43,7 +43,7 @@ public class XYPlotOutput {
                 minmax[3] = 1;
             } else {
                 // 10%
-                double shift = Math.abs(minmax[0]) * ypercent;
+                double shift = Math.abs(minmax[2]) * ypercent;
                 minmax[2] = minmax[2] - shift;
                 minmax[3] = minmax[3] + shift;
             }
@@ -163,7 +163,6 @@ public class XYPlotOutput {
                 minmax = xyplot.minMax(minmax);
             }
         }
-        checkEqualMinMax(minmax, 0.1, 0.1);
         // override minmax with user supplied if
         if (xAxisMinMax.length == 2) {
             minmax[0] = xAxisMinMax[0];
@@ -173,7 +172,18 @@ public class XYPlotOutput {
             minmax[2] = yAxisMinMax[0];
             minmax[3] = yAxisMinMax[1];
         }
+        // but make sure not equal, widen by 10% if values are same?
+        checkEqualMinMax(minmax, 0.05, 0.05);
         return minmax;
+    }
+
+
+
+    public void printAsHtml(PrintWriter writer, String[] cmdLineArgs, String xAxisType, String yAxisType, String extraCSS, boolean isLegend) {
+        writer.println("<!DOCTYPE html>");
+        writer.println("<html><body>");
+        printAsSvg(writer, cmdLineArgs, xAxisType, yAxisType, extraCSS, isLegend);
+        writer.println("</body></html>");
     }
 
     public void printAsSvg(PrintWriter writer, String[] cmdLineArgs, String xAxisType, String yAxisType, String extraCSS, boolean isLegend) {
@@ -198,6 +208,14 @@ public class XYPlotOutput {
             axisMinMax[3] = axisMinMax[2];
             axisMinMax[2] = tmp;
         }
+
+        int xflip = xAxisInvert ? -1 : 1;
+        int yflip = yAxisInvert ? -1 : 1;
+        float xfliptrans = xAxisInvert ? -1*(float)(minmax[1]+minmax[0]) : 0;
+        float yfliptrans = yAxisInvert ? -1*(float)(minmax[3]+minmax[2]) : 0;
+        float xtrans = (float)  minmax[0];
+        float ytrans = (float)  minmax[2];
+
         SvgUtil.createXYAxes(writer, axisMinMax[0], axisMinMax[1], numXTicks, false,
                 axisMinMax[2], axisMinMax[3], numYTicks, false,
                 pixelWidth, margin,
@@ -209,16 +227,12 @@ public class XYPlotOutput {
         writer.println("<g transform=\"scale(1,-1) translate(0, -"+plotWidth+")\">");
 
         writer.println("<g transform=\"scale(" + (plotWidth / (minmax[1]-minmax[0])) + "," + ( plotWidth / (minmax[3]-minmax[2])) + ")\" >");
-        writer.println("<g transform=\"translate("+(-1*minmax[0])+", "+(-1*minmax[2])+")\">");
+        writer.println("<g transform=\"translate("+(-1*xtrans)+", "+(-1*ytrans)+")\">");
         if (autoColor) {
             writer.println("    <g class=\"autocolor\">");
         }
         for (XYPlottingData xyplotItem : xyPlots) {
             if (xAxisInvert || yAxisInvert) {
-                int xflip = xAxisInvert ? -1 : 1;
-                int yflip = yAxisInvert ? -1 : 1;
-                float xfliptrans = xAxisInvert ? -1*(float)minmax[1] : 0;
-                float yfliptrans = yAxisInvert ? -1*(float)minmax[3] : 0;
                 writer.println("<g transform=\"scale(" + xflip + "," + yflip + ") translate("+xfliptrans+", "+yfliptrans+")\" > <!-- invert axis -->");
             }
             xyplotItem.asSVG(writer);
