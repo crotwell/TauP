@@ -20,6 +20,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.ByteBuffer;
 import java.util.*;
+import java.util.regex.Pattern;
 
 
 public class TauP_Web extends TauP_Tool {
@@ -140,7 +141,9 @@ public class TauP_Web extends TauP_Tool {
         return tool;
     }
 
-    public static List<String> disableOptions = List.of("o", "help", "version");
+    static Pattern allowedModelNamePat = Pattern.compile("[^[\\w._-]]");
+
+    public static List<String> disableOptions = List.of("o", "output", "help", "version");
 
     public static List<String> queryParamsToCmdLineArgs(CommandLine.Model.CommandSpec spec,
                                                         Map<String, Deque<String>> queryParams) throws TauPException {
@@ -152,9 +155,19 @@ public class TauP_Web extends TauP_Tool {
                 // ignore these options
                 continue;
             }
+
             CommandLine.Model.OptionSpec op = spec.findOption(dashedQP);
 
             Deque<String> qpList = queryParams.get(qp);
+            if (qp.equalsIgnoreCase("mod") || qp.equalsIgnoreCase("model")) {
+                // since this might become a file lookup, make sure no directory chars, so model name
+                // can be only [a-zA-Z0-9._-]
+                for (String p : qpList) {
+                    if (allowedModelNamePat.matcher(p).find()) {
+                        throw new TauPException("Modelname contains unallowed characters: "+p);
+                    }
+                }
+            }
             if (op != null) {
                 out.add(dashedQP);
                 if (qpList.size() == 1 && qpList.getFirst().equalsIgnoreCase("true")) {
