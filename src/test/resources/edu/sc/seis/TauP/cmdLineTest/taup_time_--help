@@ -1,14 +1,28 @@
-Usage: taup time [--amp] [--debug] [--first] [--geodetic] [--help] [--rayp]
-                 [--time] [--verbose] [--az=<azimuth>] [--baz=<backAzimuth>]
+Usage: taup time [--amp] [--debug] [--first] [--geodetic] [--geodetic] [--help]
+                 [--rayp] [--time] [--verbose] [--az=<azimuth>]
+                 [--az=<azimuth>] [--baz=<backAzimuth>] [--baz=<backAzimuth>]
+                 [--ellipflattening=<ellipflattening>]
                  [--ellipflattening=<ellipflattening>] [--mw=<mw>]
                  [-o=<outFile>] [--prop=<toolPropsFilename>] [--deg=d[,
-                 d...]]... [--exactdegree=d[,d...]]... [--exactkilometer=km[,
-                 km...]]... [--km=km[,km...]]... [--rayparamkm=<shootKmRaypList>
-                 [,<shootKmRaypList>...]]... [--rel=<relativePhaseName>[,
-                 <relativePhaseName>...]]... [--shoot=<shootRaypList>[,
-                 <shootRaypList>...]]... [--takeoff=<takeoffAngle>[,
+                 d...]]... [--deg=d[,d...]]... [--exactdegree=d[,d...]]...
+                 [--exactdegree=d[,d...]]... [--exactkilometer=km[,km...]]...
+                 [--exactkilometer=km[,km...]]... [--km=km[,km...]]... [--km=km
+                 [,km...]]... [--rayparamdeg=<shootRaypList>[,
+                 <shootRaypList>...]]... [--rayparamdeg=<shootRaypList>[,
+                 <shootRaypList>...]]... [--rayparamidx=<shootIndexRaypList>[,
+                 <shootIndexRaypList>...]]...
+                 [--rayparamidx=<shootIndexRaypList>[,
+                 <shootIndexRaypList>...]]... [--rayparamkm=<shootKmRaypList>[,
+                 <shootKmRaypList>...]]... [--rayparamkm=<shootKmRaypList>[,
+                 <shootKmRaypList>...]]... [--rayparamrad=<shootRadianRaypList>
+                 [,<shootRadianRaypList>...]]...
+                 [--rayparamrad=<shootRadianRaypList>[,
+                 <shootRadianRaypList>...]]... [--rel=<relativePhaseName>[,
+                 <relativePhaseName>...]]... [--takeoff=<takeoffAngle>[,
+                 <takeoffAngle>...]]... [--takeoff=<takeoffAngle>[,
                  <takeoffAngle>...]]... [--evt=<eventLatLon> <eventLatLon>]...
-                 [--sta=<stationLatLon> <stationLatLon>]...
+                 [--evt=<eventLatLon> <eventLatLon>]... [--sta=<stationLatLon>
+                 <stationLatLon>]... [--sta=<stationLatLon> <stationLatLon>]...
                  [[--mod=<modelname>] [-h=<sourceDepth>] [--stadepth=depth]
                  [--scat=s s]...] [[-p=<phaseNames>[,<phaseNames>...]]...
                  [--phasefile=<phaseFiles>]...] [--text | --json]
@@ -65,11 +79,17 @@ Distance is given by:
                                model.
       --km, --kilometer=km[,km...]
                              distance in kilometers
+      --rayparamdeg=<shootRaypList>[,<shootRaypList>...]
+                             ray parameter from the source in s/deg, up or down
+                               is determined by the phase
+      --rayparamidx=<shootIndexRaypList>[,<shootIndexRaypList>...]
+                             ray parameter from the source as index into model
+                               sampling, up or down is determined by the phase
       --rayparamkm=<shootKmRaypList>[,<shootKmRaypList>...]
                              ray parameter from the source in s/km, up or down
                                is determined by the phase
-      --shoot, --rayparamdeg=<shootRaypList>[,<shootRaypList>...]
-                             ray parameter from the source in s/deg, up or down
+      --rayparamrad=<shootRadianRaypList>[,<shootRadianRaypList>...]
+                             ray parameter from the source in s/rad, up or down
                                is determined by the phase
       --sta, --station=<stationLatLon> <stationLatLon>
                              station latitude and longitude

@@ -1,21 +1,34 @@
-Usage: taup path [--debug] [--geodetic] [--help] [--onlynameddiscon]
-                 [--verbose] [--withtime] [--az=<azimuth>]
-                 [--baz=<backAzimuth>] [--color=<coloring>]
+Usage: taup path [--debug] [--geodetic] [--geodetic] [--help]
+                 [--onlynameddiscon] [--verbose] [--withtime] [--az=<azimuth>]
+                 [--az=<azimuth>] [--baz=<backAzimuth>] [--baz=<backAzimuth>]
+                 [--color=<coloring>] [--ellipflattening=<ellipflattening>]
                  [--ellipflattening=<ellipflattening>] [--mapwidth=<mapwidth>]
                  [--mapwidthunit=<mapWidthUnit>] [--maxpathinc=<maxPathInc>]
                  [-o=<outFile>] [--prop=<toolPropsFilename>]
                  [--xaxis=<distAxisType>] [--yaxis=<depthAxisType>] [--deg=d[,
-                 d...]]... [--exactdegree=d[,d...]]... [--exactkilometer=km[,
-                 km...]]... [--km=km[,km...]]... [--rayparamkm=<shootKmRaypList>
-                 [,<shootKmRaypList>...]]... [--shoot=<shootRaypList>[,
-                 <shootRaypList>...]]... [--takeoff=<takeoffAngle>[,
+                 d...]]... [--deg=d[,d...]]... [--exactdegree=d[,d...]]...
+                 [--exactdegree=d[,d...]]... [--exactkilometer=km[,km...]]...
+                 [--exactkilometer=km[,km...]]... [--km=km[,km...]]... [--km=km
+                 [,km...]]... [--rayparamdeg=<shootRaypList>[,
+                 <shootRaypList>...]]... [--rayparamdeg=<shootRaypList>[,
+                 <shootRaypList>...]]... [--rayparamidx=<shootIndexRaypList>[,
+                 <shootIndexRaypList>...]]...
+                 [--rayparamidx=<shootIndexRaypList>[,
+                 <shootIndexRaypList>...]]... [--rayparamkm=<shootKmRaypList>[,
+                 <shootKmRaypList>...]]... [--rayparamkm=<shootKmRaypList>[,
+                 <shootKmRaypList>...]]... [--rayparamrad=<shootRadianRaypList>
+                 [,<shootRadianRaypList>...]]...
+                 [--rayparamrad=<shootRadianRaypList>[,
+                 <shootRadianRaypList>...]]... [--takeoff=<takeoffAngle>[,
+                 <takeoffAngle>...]]... [--takeoff=<takeoffAngle>[,
                  <takeoffAngle>...]]... [--degminmax=deg deg] [--depthminmax=km
                  km] [--evt=<eventLatLon> <eventLatLon>]...
-                 [--sta=<stationLatLon> <stationLatLon>]...
+                 [--evt=<eventLatLon> <eventLatLon>]... [--sta=<stationLatLon>
+                 <stationLatLon>]... [--sta=<stationLatLon> <stationLatLon>]...
                  [[--mod=<modelname>] [-h=<sourceDepth>] [--stadepth=depth]
-                 [--scat=s s]...] [[--phasefile=<phaseFiles>]...
-                 [-p=<phaseNames>[,<phaseNames>...]]...] [--text | --json |
-                 --gmt | --svg]
+                 [--scat=s s]...] [[-p=<phaseNames>[,<phaseNames>...]]...
+                 [--phasefile=<phaseFiles>]...] [--text | --json | --gmt |
+                 --svg]
 plot ray paths through the earth
       --color=<coloring>    style of coloring for paths and wavefronts, one of
                               auto, wavetype, phase
@@ -80,11 +93,17 @@ Distance is given by:
                               calculations are done in a purely spherical model.
       --km, --kilometer=km[,km...]
                             distance in kilometers
+      --rayparamdeg=<shootRaypList>[,<shootRaypList>...]
+                            ray parameter from the source in s/deg, up or down
+                              is determined by the phase
+      --rayparamidx=<shootIndexRaypList>[,<shootIndexRaypList>...]
+                            ray parameter from the source as index into model
+                              sampling, up or down is determined by the phase
       --rayparamkm=<shootKmRaypList>[,<shootKmRaypList>...]
                             ray parameter from the source in s/km, up or down
                               is determined by the phase
-      --shoot, --rayparamdeg=<shootRaypList>[,<shootRaypList>...]
-                            ray parameter from the source in s/deg, up or down
+      --rayparamrad=<shootRadianRaypList>[,<shootRadianRaypList>...]
+                            ray parameter from the source in s/rad, up or down
                               is determined by the phase
       --sta, --station=<stationLatLon> <stationLatLon>
                             station latitude and longitude

@@ -1,16 +1,13 @@
-Usage: taup refltrans [--abs] [--debug] [--down] [--fsrf] [--help] [--legend]
-                      [--pwave] [--shwave] [--swave] [--up] [--verbose]
-                      [--anglestep=<angleStep>] [--depth=<depth>]
+Usage: taup refltrans [--abs] [--debug] [--down] [--energyflux] [--fsrf]
+                      [--help] [--legend] [--pwave] [--shwave] [--swave] [--up]
+                      [--verbose] [--anglestep=<angleStep>] [--depth=<depth>]
                       [--mapwidth=<mapwidth>] [--mapwidthunit=<mapWidthUnit>]
                       [-o=<outFile>] [--prop=<toolPropsFilename>]
                       [--rpstep=<rayparamStep>] [-x=<xAxisType>] [--xminmax=x
                       x]... [--yminmax=y y]... [--layer=<layerParams>
                       <layerParams> <layerParams> <layerParams> <layerParams>
-                      <layerParams>]... [-y=<yAxisType> [<yAxisType>
-                      [<yAxisType> [<yAxisType> [<yAxisType> [<yAxisType>
-                      [<yAxisType> [<yAxisType> [<yAxisType>
-                      [<yAxisType>]]]]]]]]]]... [--text | --json | --gmt |
-                      --svg] [[--mod=<modelname>] [-h=<sourceDepth>]
+                      <layerParams>]... [-y=<yAxisType>...]... [--text | --json
+                      | --gmt | --svg] [[--mod=<modelname>] [-h=<sourceDepth>]
                       [--stadepth=depth] [--scat=s s]...]
 plot reflection and transmission coefficients for a discontinuity
       --abs                absolute value of amplitude factor
@@ -19,6 +16,7 @@ plot reflection and transmission coefficients for a discontinuity
       --debug              enable debugging output
       --depth=<depth>      Depth in model to get boundary parameters
       --down
+      --energyflux         energy flux coefficients
       --fsrf               free surface receiver function
       --help               display this help message
       --layer=<layerParams> <layerParams> <layerParams> <layerParams>
@@ -43,15 +41,13 @@ plot reflection and transmission coefficients for a discontinuity
   -x=<xAxisType>           X axis data type, one of degree, rayparam, default
                              is degree
       --xminmax=x x        min and max x axis for plotting
-  -y=<yAxisType> [<yAxisType> [<yAxisType> [<yAxisType> [<yAxisType>
-       [<yAxisType> [<yAxisType> [<yAxisType> [<yAxisType> [<yAxisType>]]]]]]]]]
-                           Y axis data type, one of Rpp, Rps, Rsp, Rss, Tpp,
+  -y=<yAxisType>...        Y axis data type, one of Rpp, Rps, Rsp, Rss, Tpp,
                              Tps, Tsp, Tss, Rshsh, Tshsh, RppEnergy, TppEnergy,
                              RpsEnergy, TpsEnergy, RspEnergy, TspEnergy,
                              RssEnergy, TssEnergy, RshshEnergy, TshshEnergy,
                              RpAngle, RsAngle, TpAngle, TsAngle, FreeRecFuncPr,
                              FreeRecFuncSvr, FreeRecFuncPz, FreeRecFuncSvz,
-                             FreeRecFuncSh, default is all
+                             FreeRecFuncSh, default is all displacement coef.
       --yminmax=y y        min and max y axis for plotting
 Output Type
       --gmt                outputs as GMT

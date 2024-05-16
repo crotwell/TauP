@@ -280,7 +280,7 @@ circle.discontinuity.iocb {
 <g clip-path="url(#curve_clip)">
 <g transform="scale(1,-1) translate(0, -520.0)">
 <g transform="scale(1882.3829730361856,0.08161983989954481)" >
-<g transform="translate(-0.22375440733972052, -0.0)">
+<g transform="translate(-0.2237544, -0.0)">
     <g class="autocolor">
 <g transform="scale(1,-1) translate(0.0, -6371.0)" > <!-- invert axis -->
     <g class="both_p_swave" tauplabel="ak135 Poisson's Ratio / Depth (km)"  >
