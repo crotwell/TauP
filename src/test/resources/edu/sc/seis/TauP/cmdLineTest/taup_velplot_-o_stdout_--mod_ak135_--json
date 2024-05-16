@@ -280,7 +280,7 @@
     }]
   },
   {
-    "x": "velocity_s",
+    "x": "Vs",
     "description": "ak135 Velocity (km/s) / Depth (km)",
     "y": "depth",
     "label": "S Vel.",

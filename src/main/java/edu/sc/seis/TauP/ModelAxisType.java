@@ -5,17 +5,17 @@ public enum ModelAxisType {
     depth,
     radius,
     velocity,
-    velocity_p,
-    velocity_s,
+    Vp,
+    Vs,
     slowness,
     slowness_p,
     slowness_s,
     density,
 
     velocity_density,
-    attenuation_p,
-    attenuation_s,
-    attenuation,
+    Qp,
+    Qs,
+    Q,
 
     poisson,
     shearmodulus,
@@ -26,18 +26,18 @@ public enum ModelAxisType {
     public static String legendFor(ModelAxisType axisType) {
         switch (axisType) {
             case velocity:
-            case velocity_p:
+            case Vp:
                 return "P Vel.";
-            case velocity_s:
+            case Vs:
                 return "S Vel.";
             case velocity_density:
             case density:
                 return "Density";
-            case attenuation:
-            case attenuation_p:
-                return "P Attenuation";
-            case attenuation_s:
-                return "S Attenuation";
+            case Q:
+            case Qp:
+                return "Qp Attenuation";
+            case Qs:
+                return "Qs Attenuation";
             case poisson:
                 return "Poisson's Ratio";
             case lambda:
@@ -58,8 +58,8 @@ public enum ModelAxisType {
             case velocity_density:
                 return "Velocity (km/s), Density (Mg/m3)";
             case velocity:
-            case velocity_p:
-            case velocity_s:
+            case Vp:
+            case Vs:
                 return "Velocity (km/s)";
             case depth:
                 return "Depth (km)";
@@ -71,11 +71,11 @@ public enum ModelAxisType {
             case slowness_p:
             case slowness_s:
                 return "Slowness (s/rad)";
-            case attenuation:
+            case Q:
                 return "P,S Attenuation";
-            case attenuation_p:
+            case Qp:
                 return "P Attenuation";
-            case attenuation_s:
+            case Qs:
                 return "S Attenuation";
             case poisson:
                 return "Poisson's Ratio";

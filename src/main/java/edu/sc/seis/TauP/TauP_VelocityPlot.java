@@ -158,13 +158,13 @@ public class TauP_VelocityPlot extends TauP_Tool {
     }
     public boolean velocityLike(ModelAxisType axisType) {
         return axisType == ModelAxisType.velocity
-                || axisType == ModelAxisType.velocity_p
-                || axisType == ModelAxisType.velocity_s
+                || axisType == ModelAxisType.Vp
+                || axisType == ModelAxisType.Vs
                 || axisType == ModelAxisType.velocity_density
                 || axisType == ModelAxisType.density
-                || axisType == ModelAxisType.attenuation
-                || axisType == ModelAxisType.attenuation_p
-                || axisType == ModelAxisType.attenuation_s
+                || axisType == ModelAxisType.Q
+                || axisType == ModelAxisType.Qp
+                || axisType == ModelAxisType.Qs
                 || axisType == ModelAxisType.poisson
                 || axisType == ModelAxisType.shearmodulus
                 || axisType == ModelAxisType.lambda
@@ -199,26 +199,26 @@ public class TauP_VelocityPlot extends TauP_Tool {
                     return vMod.evaluateBelow(depth, VelocityModelMaterial.DENSITY);
                 }
             case velocity:
-            case velocity_p:
+            case Vp:
                 if (above) {
                     return vMod.evaluateAbove(depth, VelocityModelMaterial.P_VELOCITY);
                 } else {
                     return vMod.evaluateBelow(depth, VelocityModelMaterial.P_VELOCITY);
                 }
-            case velocity_s:
+            case Vs:
                 if (above) {
                     return vMod.evaluateAbove(depth, VelocityModelMaterial.S_VELOCITY);
                 } else {
                     return vMod.evaluateBelow(depth, VelocityModelMaterial.S_VELOCITY);
                 }
-            case attenuation:
-            case attenuation_p:
+            case Q:
+            case Qp:
                 if (above) {
                     return vMod.evaluateAbove(depth, VelocityModelMaterial.Q_P);
                 } else {
                     return vMod.evaluateBelow(depth, VelocityModelMaterial.Q_P);
                 }
-            case attenuation_s:
+            case Qs:
                 if (above) {
                     return vMod.evaluateAbove(depth, VelocityModelMaterial.Q_S);
                 } else {
@@ -269,10 +269,10 @@ public class TauP_VelocityPlot extends TauP_Tool {
             case density:
             case velocity:
             case velocity_density:
-            case velocity_p:
-            case velocity_s:
-            case attenuation_p:
-            case attenuation_s:
+            case Vp:
+            case Vs:
+            case Qp:
+            case Qs:
             case poisson:
             case shearmodulus:
             case lambda:
@@ -378,12 +378,12 @@ public class TauP_VelocityPlot extends TauP_Tool {
         } else {
             legendLabel = ModelAxisType.legendFor(yAxis);
         }
-        if (xAxis == ModelAxisType.velocity_p || xAxis == ModelAxisType.velocity
-                || yAxis == ModelAxisType.velocity_p || yAxis == ModelAxisType.velocity
+        if (xAxis == ModelAxisType.Vp || xAxis == ModelAxisType.velocity
+                || yAxis == ModelAxisType.Vp || yAxis == ModelAxisType.velocity
                 || xAxis == ModelAxisType.slowness_p || xAxis == ModelAxisType.slowness
                 || yAxis == ModelAxisType.slowness_p || yAxis == ModelAxisType.slowness) {
             cssClassList.add("pwave");
-        } else if (xAxis == ModelAxisType.velocity_s || yAxis == ModelAxisType.velocity_s
+        } else if (xAxis == ModelAxisType.Vs || yAxis == ModelAxisType.Vs
                 || xAxis == ModelAxisType.slowness_s || yAxis == ModelAxisType.slowness_s) {
             cssClassList.add("swave");
         } else {
@@ -401,11 +401,11 @@ public class TauP_VelocityPlot extends TauP_Tool {
 
         if (xAxis == ModelAxisType.velocity ) {
             // also do velocity_s
-            xyList.addAll(calculate(velModelArgs, ModelAxisType.velocity_s, yAxis, labelPrefix));
+            xyList.addAll(calculate(velModelArgs, ModelAxisType.Vs, yAxis, labelPrefix));
         }
         if (yAxis == ModelAxisType.velocity ) {
             // also do velocity_s
-            xyList.addAll(calculate(velModelArgs, xAxis, ModelAxisType.velocity_s, labelPrefix));
+            xyList.addAll(calculate(velModelArgs, xAxis, ModelAxisType.Vs, labelPrefix));
         }
         if (xAxis == ModelAxisType.velocity_density) {
             // also do velocity
@@ -415,13 +415,13 @@ public class TauP_VelocityPlot extends TauP_Tool {
             // also do velocity
             xyList.addAll(calculate(velModelArgs, xAxis, ModelAxisType.velocity, labelPrefix));
         }
-        if (xAxis == ModelAxisType.attenuation) {
+        if (xAxis == ModelAxisType.Q) {
             // also do attenuation_s
-            xyList.addAll(calculate(velModelArgs, ModelAxisType.attenuation_s, yAxis, labelPrefix));
+            xyList.addAll(calculate(velModelArgs, ModelAxisType.Qs, yAxis, labelPrefix));
         }
-        if (yAxis == ModelAxisType.attenuation) {
+        if (yAxis == ModelAxisType.Q) {
             // also do attenuation_s
-            xyList.addAll(calculate(velModelArgs, xAxis, ModelAxisType.attenuation_s, labelPrefix));
+            xyList.addAll(calculate(velModelArgs, xAxis, ModelAxisType.Qs, labelPrefix));
         }
         if (xAxis == ModelAxisType.slowness) {
             // also do slowness_s

@@ -21,18 +21,14 @@ plot velocity vs depth for a model
                             load defaults from properties file
       --verbose             enable verbose output
   -x, --xaxis=<xAxisType>   X axis data type, one of depth, radius, velocity,
-                              velocity_p, velocity_s, slowness, slowness_p,
-                              slowness_s, density, velocity_density,
-                              attenuation_p, attenuation_s, attenuation,
-                              poisson, shearmodulus, lambda, bulkmodulus,
-                              youngsmodulus
+                              Vp, Vs, slowness, slowness_p, slowness_s,
+                              density, velocity_density, Qp, Qs, Q, poisson,
+                              shearmodulus, lambda, bulkmodulus, youngsmodulus
       --xminmax=x x         min and max x axis for plotting
   -y, --yaxis=<yAxisType>   Y axis data type, one of depth, radius, velocity,
-                              velocity_p, velocity_s, slowness, slowness_p,
-                              slowness_s, density, velocity_density,
-                              attenuation_p, attenuation_s, attenuation,
-                              poisson, shearmodulus, lambda, bulkmodulus,
-                              youngsmodulus
+                              Vp, Vs, slowness, slowness_p, slowness_s,
+                              density, velocity_density, Qp, Qs, Q, poisson,
+                              shearmodulus, lambda, bulkmodulus, youngsmodulus
       --yminmax=y y         min and max y axis for plotting
 Velocity Model
       --mod, --model[=<modelName>...]
