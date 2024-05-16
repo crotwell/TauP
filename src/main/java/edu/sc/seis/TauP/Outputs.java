@@ -82,6 +82,7 @@ public class Outputs {
             case rayparamkm:
             case theta:
             case tau:
+            case tstar:
                 outFormat = rayParamFormat;
                 break;
             case time:
@@ -94,12 +95,17 @@ public class Outputs {
             case refltran:
             case refltranpsv:
             case refltransh:
+            case attenuation:
                 outFormat = ampFactorFormat;
                 break;
             case turndepth:
+                outFormat = distanceFormatNoPad;
+                break;
             case index:
+                outFormat = "%8.0f";
+                break;
             default:
-                outFormat = depthFormat;
+                outFormat = "%f";
                 break;
         }
         return outFormat;

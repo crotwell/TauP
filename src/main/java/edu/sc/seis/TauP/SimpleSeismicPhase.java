@@ -895,7 +895,7 @@ public class SimpleSeismicPhase implements SeismicPhase {
         return pierce;
     }
 
-    public double calcTstar(Arrival currArrival, double frequency) {
+    public double calcTstar(Arrival currArrival) {
         double tstar = 0;
         /*
          * Find the ray parameter index that corresponds to the arrival ray

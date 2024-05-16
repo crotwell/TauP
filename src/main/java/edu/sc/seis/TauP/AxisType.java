@@ -22,5 +22,7 @@ public enum AxisType {
     refltranpsv,
     refltransh,
     index,
+    tstar,
+    attenuation,
     theta
 }

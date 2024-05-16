@@ -8,8 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static edu.sc.seis.TauP.Arrival.DtoR;
-import static edu.sc.seis.TauP.Arrival.RtoD;
+import static edu.sc.seis.TauP.Arrival.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -149,6 +148,24 @@ public class ConstantModelTest {
                 dist += tMod.getTauBranch(j, isPWave).getDist(i);
             }
             doSeismicPhase(2 * dist, velocity, "P", tMod);
+        }
+    }
+
+    @Test
+    public void testTStarDirectP() throws Exception {
+        double Qp = vmod.getVelocityLayer(0).getTopQp();//const in model
+        double velocity = vp;
+        boolean isPWave = true;
+
+        SeismicPhase PPhase = SeismicPhaseFactory.createPhase("P", tMod, tMod.getSourceDepth());
+        assertTrue(PPhase.phasesExistsInModel());
+        for (int i = 0; i < tMod.rayParams.length; i++) {
+            double dist = 0;
+            double time = 0;
+            List<Arrival> arrivals = PPhase.calcTime(dist);
+            Arrival arrival = arrivals.get(0);
+            double tstar = arrival.getTime() / Qp;
+            assertEquals(tstar, arrival.calcTStar(), i+" "+tMod.getRayParams().length+" "+arrival);
         }
     }
 

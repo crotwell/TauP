@@ -530,13 +530,21 @@ public class Arrival {
      * Calculate attenuation over path at the given frequency. See eq B13.2.2 in FMGS, p374.
      */
     public double calcAttenuation(double freq) {
-        double tstar = getPhase().calcTstar(this, freq);
+        double tstar = calcTStar();
         if (Double.isFinite(tstar)) {
             return Math.pow(Math.E, -1 * Math.PI * freq * tstar);
         } else {
             System.err.println("tstar is NaN: "+tstar+" at "+freq+" for "+getName());
             return 1;
         }
+    }
+
+
+    /**
+     * Calculate t* over path at the given frequency. See eq B13.2.2 in FMGS, p374.
+     */
+    public double calcTStar() {
+        return getPhase().calcTstar(this);
     }
 
     /**

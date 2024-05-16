@@ -297,6 +297,18 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
                 }
             }
             out = amp;
+        } else if (axisType == AxisType.tstar) {
+            out = new double[phase.getRayParams().length];
+            for (int i = 0; i < out.length; i++) {
+                Arrival arrival = phase.createArrivalAtIndex(i);
+                out[i] = arrival.calcTStar();
+            }
+        } else if (axisType == AxisType.attenuation) {
+            out = new double[phase.getRayParams().length];
+            for (int i = 0; i < out.length; i++) {
+                Arrival arrival = phase.createArrivalAtIndex(i);
+                out[i] = arrival.calcAttenuation(Arrival.attenuationFrequency);
+            }
         } else if (axisType == AxisType.index) {
             out = new double[phase.getRayParams().length];
             // maxIdx is index of max rp < minIdx

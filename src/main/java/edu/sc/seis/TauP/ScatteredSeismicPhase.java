@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static edu.sc.seis.TauP.Arrival.RtoD;
-
 public class ScatteredSeismicPhase implements SeismicPhase {
 
     private final Arrival inboundArrival;
@@ -444,9 +442,9 @@ public class ScatteredSeismicPhase implements SeismicPhase {
         return out;
     }
 
-    public double calcTstar(Arrival currArrival, double frequency) {
-        return inboundArrival.getPhase().calcTstar(inboundArrival, frequency)
-            + scatteredPhase.calcTstar(currArrival, frequency);
+    public double calcTstar(Arrival currArrival) {
+        return inboundArrival.getPhase().calcTstar(inboundArrival)
+            + scatteredPhase.calcTstar(currArrival);
     }
 
     /** True is all segments of this path are only S waves.
