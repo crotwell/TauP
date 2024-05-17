@@ -117,8 +117,8 @@ public class ModelArgs {
 
         @CommandLine.Option(names={"--mod", "--model"},
                 defaultValue = "iasp91",
-                description = "use velocity model \"modelname\" for calculations\n" +
-                "                      Default is ${DEFAULT-VALUE}.",
+                description = {"use velocity model \"modelname\" for calculations. ",
+                        "Default is ${DEFAULT-VALUE}."},
 
                 completionCandidates = StdModelGenerator.StdModelCandidates.class
         )
