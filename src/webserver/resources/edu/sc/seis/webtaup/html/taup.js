@@ -496,58 +496,17 @@ export function enableParams(tool) {
     document.querySelector(`input[name="format"][value="svg"]`).removeAttribute("disabled");
     document.querySelector(`input[name="format"][value="gmt"]`).removeAttribute("disabled");
   }
-  if ( ! (tool === "time" || tool === "pierce" || tool == "path" || tool == "wkbj" || tool == "curve")) {
-    styleStr += `
-      .tool_time {
+  styleStr += `
+      fieldset {
         display: none;
       }
-    `;
-  }
-  if ( tool !== "pierce" ) {
-    styleStr += `
-      .tool_pierce {
-        display: none;
+      fieldset.tool_all {
+        display: block;
       }
-    `;
-  }
-  if ( tool !== "curve" ) {
-    styleStr += `
-      .tool_curve {
-        display: none;
+      fieldset.tool_${tool} {
+        display: block;
       }
-    `;
-  }
-  if ( tool !== "velplot" ) {
-    styleStr += `
-      .tool_velplot {
-        display: none;
-      }
-    `;
-  }
-  if ( tool !== "wavefront" ) {
-    styleStr += `
-      .tool_wavefront {
-        display: none;
-      }
-    `;
-  }
-  if ( tool !== "refltrans" ) {
-    styleStr += `
-      .tool_refltrans {
-        display: none;
-      }
-      `;
-    }
-    if ( tool === "refltrans" ) {
-      styleStr += `
-      .phase_depth {
-        display: none;
-      }
-      .scatter {
-        display: none;
-      }
-    `;
-  }
+  `;
   styleEl.textContent = styleStr;
 }
 

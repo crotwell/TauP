@@ -48,7 +48,7 @@
   <summary>Parameters for: <span><a target="_blank" href="" id="taup_url"></a></span></summary>
 
 <form>
-    <fieldset>
+    <fieldset class="tool_all" >
         <legend><a href="doc/models.html" target="_blank">Velocity Model:</a></legend>
         <input type="radio" name="model" id="iasp91" value="iasp91" checked/>
         <label for="iasp91">iasp91</label>
@@ -62,7 +62,7 @@
         <label for="prem">prem</label>
     </fieldset>
 
-    <fieldset class="phase_depth">
+    <fieldset class="phase_depth tool_time tool_pierce tool_path tool_curve tool_phase tool_wavefront">
         <label for="phase">
             <span><a href="doc/phaseNaming.html" target="_blank">Phase:</a> </span>
         </label>
@@ -78,7 +78,7 @@
         </label>
         <input type="text" id="stadepth" name="stadepth" value="0"  />
     </fieldset>
-    <fieldset class="tool_time">
+    <fieldset class="tool_time tool_pierce tool_path">
         <legend>Distance:</legend>
         <div>
           <input type="checkbox" id="islistdist" name="islistdist" checked />
@@ -142,7 +142,7 @@
 
     </fieldset>
 
-    <fieldset class="scatter">
+    <fieldset class="scatter tool_time tool_pierce tool_path tool_curve tool_phase  tool_wavefront">
         <label for="isscatter">
             <span>Scatter: </span>
         </label>
@@ -158,7 +158,7 @@
         </label>
         <input type="text" id="scatdist" name="scatdist" value="0" />
     </fieldset>
-    <fieldset class="tool_time">
+    <fieldset class="tool_time tool_curve">
       <div>
         <label for="amplitude">
             <span>Amplitude: </span>
@@ -307,17 +307,6 @@
           <input type="number" id="botden" name="botden" value="3.3" />
         </div>
       </div>
-    </fieldset>
-    <fieldset>
-        <legend>Format:</legend>
-        <input type="radio" name="format" id="format_text" value="text" checked />
-        <label for="format_text">Text</label>
-        <input type="radio" name="format" id="format_json" value="json" />
-        <label for="format_json">JSON</label>
-        <input type="radio" name="format" id="format_svg" value="svg" />
-        <label for="format_svg">SVG</label>
-        <input type="radio" name="format" id="format_gmt" value="gmt" />
-        <label for="format_gmt">GMT</label>
     </fieldset>
     <fieldset class="tool_curve">
         <legend>Curve:</legend>
@@ -526,7 +515,18 @@
 
     </fieldset>
 
-    <fieldset class="tools">
+    <fieldset class="tool_all">
+        <legend>Format:</legend>
+        <input type="radio" name="format" id="format_text" value="text" checked />
+        <label for="format_text">Text</label>
+        <input type="radio" name="format" id="format_json" value="json" />
+        <label for="format_json">JSON</label>
+        <input type="radio" name="format" id="format_svg" value="svg" />
+        <label for="format_svg">SVG</label>
+        <input type="radio" name="format" id="format_gmt" value="gmt" />
+        <label for="format_gmt">GMT</label>
+    </fieldset>
+    <fieldset class="tools tool_all">
         <legend>Tools:</legend>
         <input type="radio" name="tool" id="tool_time" value="time" checked />
         <label for="tool_time">
