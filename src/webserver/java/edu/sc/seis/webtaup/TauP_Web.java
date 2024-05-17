@@ -13,6 +13,8 @@ import io.undertow.server.handlers.resource.ClassPathResourceManager;
 import io.undertow.server.handlers.resource.ResourceHandler;
 import io.undertow.util.Headers;
 import io.undertow.util.MimeMappings;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import picocli.CommandLine;
 
 import java.io.DataOutputStream;
@@ -76,6 +78,8 @@ public class TauP_Web extends TauP_Tool {
                             webRunTool(tool, queryParams, exchange);
                         } else if (exchange.getRequestPath().equals("/favicon.ico")) {
                             new ResponseCodeHandler(404).handleRequest(exchange);
+                        } else if (exchange.getRequestPath().equals("/paramhelp")) {
+                            handleParamHelp(queryParams, exchange);
                         } else if (exchange.getRequestPath().equals("/version")) {
                             exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, "text/plain");
                             exchange.getResponseSender().send(BuildVersion.getDetailedVersion());
@@ -212,6 +216,44 @@ public class TauP_Web extends TauP_Tool {
         return out;
     }
 
+    public void handleParamHelp(Map<String, Deque<String>> queryParams, HttpServerExchange exchange) throws TauPException {
+        TauP_Tool tool;
+        if (queryParams.containsKey("tool")) {
+            String toolname = queryParams.get("tool").getFirst();
+            tool = createTool(toolname);
+            JSONObject out = new JSONObject();
+            out.put("tool", toolname);
+            CommandLine cmd = new CommandLine(tool);
+            CommandLine.Model.CommandSpec spec = cmd.getCommandSpec();
+            if (queryParams.containsKey("param")) {
+                String arg = queryParams.get("param").getFirst();
+                String dashedQP = (arg.length() == 1 ? "-" : "--")+arg;
+                CommandLine.Model.OptionSpec op = spec.findOption(dashedQP);
+                if (op != null) {
+                    String desc = "";
+                    for (String s : op.description()) {
+                        desc += s;
+                    }
+                    out.put("param", arg);
+                    out.put("desc", desc);
+                }
+            } else {
+                out.put("name", cmd.getCommandName());
+                JSONArray allOps = new JSONArray();
+                out.put("params", allOps);
+                for (CommandLine.Model.OptionSpec op : spec.options()) {
+                    JSONObject opObj = new JSONObject();
+                    opObj.put("name", op.names());
+                    opObj.put("desc", op.description());
+                    allOps.put(opObj);
+                }
+            }
+            //configContentType(OutputTypes.JSON, exchange);
+            exchange.getResponseSender().send(out.toString(2));
+            return;
+        }
+        throw new TauPException("Unable to create param help for "+exchange.getQueryString()+" "+(queryParams.containsKey("tool")));
+    }
 
     public void webRunTool(TauP_Tool tool, Map<String, Deque<String>> queryParams, HttpServerExchange exchange) throws Exception {
         StringWriter sw = new StringWriter();
