@@ -65,13 +65,17 @@ public class XYPlottingData {
     }
 
     public XYPlottingData recalcForLog(boolean xAxisLog, boolean yAxisLog) {
-        List<XYSegment> out = new ArrayList<>();
+        List<XYSegment> nanSplit = new ArrayList<>();
         for (XYSegment segment : segmentList) {
-            out.addAll(segment.recalcForLog(xAxisLog, yAxisLog));
+            nanSplit.addAll(segment.recalcForInfinite(xAxisLog, yAxisLog));
+        }
+        List<XYSegment> logList = new ArrayList<>();
+        for (XYSegment segment : nanSplit) {
+            logList.add(segment.recalcForLog(xAxisLog, yAxisLog));
         }
         String xAxis = xAxisLog ? "log "+xAxisType : xAxisType;
         String yAxis = yAxisLog ? "log "+yAxisType : yAxisType;
-        return new XYPlottingData(out, xAxis, yAxis, label, cssClasses);
+        return new XYPlottingData(logList, xAxis, yAxis, label, cssClasses);
     }
 
     public String createCSSClassParam() {

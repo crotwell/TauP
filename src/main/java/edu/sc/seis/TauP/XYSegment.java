@@ -13,7 +13,7 @@ public class XYSegment {
         this.x = x;
         this.y = y;
         if (x.length != y.length) {
-            throw new IllegalArgumentException("x and y data must be of equal length: "+x.length+" "+y.length);
+            throw new IllegalArgumentException("x and y data must be of equal length: " + x.length + " " + y.length);
         }
     }
 
@@ -31,7 +31,7 @@ public class XYSegment {
 
     public static List<XYSegment> createFromLists(List<double[]> xData, List<double[]> yData) {
         if (xData.size() != yData.size()) {
-            throw new IllegalArgumentException("xData and yData must have same size: "+xData.size()+" "+yData.size());
+            throw new IllegalArgumentException("xData and yData must have same size: " + xData.size() + " " + yData.size());
         }
         List<XYSegment> segmentList = new ArrayList<>();
         for (int i = 0; i < xData.size(); i++) {
@@ -48,8 +48,12 @@ public class XYSegment {
         double maxY = priorMinMax[3];
         for (int i = 0; i < x.length; i++) {
             if (Double.isFinite(x[i])) {
-                if (x[i] < minX) { minX = x[i];}
-                if (x[i] > maxX) { maxX = x[i];}
+                if (x[i] < minX) {
+                    minX = x[i];
+                }
+                if (x[i] > maxX) {
+                    maxX = x[i];
+                }
             }
             if (Double.isFinite(y[i])) {
                 if (y[i] < minY) {
@@ -60,7 +64,7 @@ public class XYSegment {
                 }
             }
         }
-        return new double[] { minX, maxX, minY, maxY};
+        return new double[]{minX, maxX, minY, maxY};
     }
 
     public double[] minMaxInXRange(double[] priorMinMax, double[] xRange) {
@@ -69,21 +73,29 @@ public class XYSegment {
         for (int i = 0; i < y.length; i++) {
             if (i > 0) {
                 for (int j = 0; j < 2; j++) {
-                    if ((x[i-1] < xRange[j] && xRange[j] < x[i]) || (xRange[j] > x[i] && x[i-1] > xRange[j] )) {
+                    if ((x[i - 1] < xRange[j] && xRange[j] < x[i]) || (xRange[j] > x[i] && x[i - 1] > xRange[j])) {
                         // crosses x boundary
-                        double interp = TauP_AbstractPhaseTool.linearInterp(x[i-1], y[i-1], x[i], y[i], xRange[j]);
-                        if (interp < minY) { minY = interp;}
-                        if (interp > maxY) {maxY = interp;}
+                        double interp = TauP_AbstractPhaseTool.linearInterp(x[i - 1], y[i - 1], x[i], y[i], xRange[j]);
+                        if (interp < minY) {
+                            minY = interp;
+                        }
+                        if (interp > maxY) {
+                            maxY = interp;
+                        }
                     }
                 }
             }
-            if ((x[i] - xRange[0])*(x[i]-xRange[1]) < 0) {
+            if ((x[i] - xRange[0]) * (x[i] - xRange[1]) < 0) {
                 // point inside xRange
-                if (y[i] < minY) { minY = y[i];}
-                if (y[i] > maxY) {maxY = y[i];}
+                if (y[i] < minY) {
+                    minY = y[i];
+                }
+                if (y[i] > maxY) {
+                    maxY = y[i];
+                }
             }
         }
-        return new double[] { xRange[0], xRange[1], minY, maxY};
+        return new double[]{xRange[0], xRange[1], minY, maxY};
     }
 
 
@@ -93,21 +105,29 @@ public class XYSegment {
         for (int i = 0; i < x.length; i++) {
             if (i > 0) {
                 for (int j = 0; j < 2; j++) {
-                    if ((y[i-1] < yRange[j] && yRange[j] < y[i]) || (yRange[j] > y[i] && y[i-1] > yRange[j] )) {
+                    if ((y[i - 1] < yRange[j] && yRange[j] < y[i]) || (yRange[j] > y[i] && y[i - 1] > yRange[j])) {
                         // crosses y boundary
-                        double interp = TauP_AbstractPhaseTool.linearInterp(y[i-1], x[i-1], y[i], x[i], yRange[j]);
-                        if (interp < minX) { minX = interp;}
-                        if (interp > maxX) {maxX = interp;}
+                        double interp = TauP_AbstractPhaseTool.linearInterp(y[i - 1], x[i - 1], y[i], x[i], yRange[j]);
+                        if (interp < minX) {
+                            minX = interp;
+                        }
+                        if (interp > maxX) {
+                            maxX = interp;
+                        }
                     }
                 }
             }
-            if ((y[i] - yRange[0])*(y[i]-yRange[1]) < 0) {
+            if ((y[i] - yRange[0]) * (y[i] - yRange[1]) < 0) {
                 // point inside xRange
-                if (x[i] < minX) { minX = x[i];}
-                if (x[i] > maxX) {maxX = x[i];}
+                if (x[i] < minX) {
+                    minX = x[i];
+                }
+                if (x[i] > maxX) {
+                    maxX = x[i];
+                }
             }
         }
-        return new double[] { minX, maxX, yRange[0], yRange[1]};
+        return new double[]{minX, maxX, yRange[0], yRange[1]};
     }
 
 
@@ -115,20 +135,33 @@ public class XYSegment {
         double[] outX = new double[x.length];
         double[] outY = new double[y.length];
         for (int i = 0; i < x.length; i++) {
-            outX[i] = xAxisAbs ? Math.abs(Math.abs(x[i])) : x[i];
-            outY[i] = yAxisAbs ? Math.abs(Math.abs(y[i])) : y[i];
+            outX[i] = xAxisAbs ? Math.abs(x[i]) : x[i];
+            outY[i] = yAxisAbs ? Math.abs(y[i]) : y[i];
+        }
+        return new XYSegment(outX, outY);
+    }
+    public XYSegment recalcForLog(boolean xAxisLog, boolean yAxisLog) {
+        double[] outX = new double[x.length];
+        double[] outY = new double[y.length];
+        for (int i = 0; i < x.length; i++) {
+            outX[i] = xAxisLog ? Math.log10(Math.abs(x[i])) : x[i];
+            outY[i] = yAxisLog ? Math.log10(Math.abs(y[i])) : y[i];
         }
         return new XYSegment(outX, outY);
     }
 
-    public List<XYSegment> recalcForLog(boolean xAxisLog, boolean yAxisLog) {
+    /**
+     * Splits the segment around any NaN values, or optionally for any zero values, ie for log.
+     */
+    public List<XYSegment> recalcForInfinite(boolean xAxisSplitZero, boolean yAxisSplitZero) {
         List<XYSegment> out = new ArrayList<>();
         double[] outX = new double[x.length];
         double[] outY = new double[y.length];
         int tmpOffset = 0;
         for (int i = 0; i < x.length; i++) {
-            if ((xAxisLog && x[i] == 0.0) || (yAxisLog && y[i] == 0.0) || !Double.isFinite(x[i]) || ! Double.isFinite(y[i])) {
-                // break due to log zero
+            if ( ((xAxisSplitZero && x[i] == 0.0) || (yAxisSplitZero && y[i] == 0.0))
+                || !Double.isFinite(x[i]) || ! Double.isFinite(y[i])) {
+                // break due to NaN or zero for log which would become NaN
                 if (tmpOffset > 0) {
                     double[] prex = new double[tmpOffset];
                     System.arraycopy(outX, 0, prex, 0, prex.length);
@@ -144,8 +177,8 @@ public class XYSegment {
                 outY = posty;
                 tmpOffset = 0;
             } else {
-                outX[tmpOffset] = xAxisLog ? Math.log10(Math.abs(x[i])) : x[i];
-                outY[tmpOffset] = yAxisLog ? Math.log10(Math.abs(y[i])) : y[i];
+                outX[tmpOffset] = x[i];
+                outY[tmpOffset] = y[i];
                 tmpOffset++;
             }
         }
@@ -195,12 +228,14 @@ public class XYSegment {
         writer.println("  <g>");
         writer.println("    <desc>" + description + "</desc>");
         writer.println("    <polyline " + cssClassParam + " points=\"");
+        boolean priorIsFinite = true;
         for (int i = 0; i < x.length; i++) {
             float xf = (float)x[i];
             float yf = (float)y[i];
             if (Float.isFinite(xf) && Float.isFinite(yf)) {
                 writer.println(String.format(xFormat + " " + yFormat, xf, yf));
-            } else if (i != 0 && i != x.length) {
+                priorIsFinite = true;
+            } else if (i != 0 && i != x.length && priorIsFinite) {
                 writer.println("  \"  /> <!-- " + css_class + "-->");
                 writer.println("    <polyline " + cssClassParam + " points=\"");
             }
@@ -216,9 +251,11 @@ public class XYSegment {
         for (int i = 0; i < x.length; i++) {
             float xf = (float)x[i];
             float yf = (float)y[i];
+            boolean priorIsFinite = true;
             if (Float.isFinite(xf) && Float.isFinite(yf)) {
                 writer.println(String.format(xFormat + "  " + yFormat, xf, yf));
-            } else if (i != 0 && i != x.length) {
+                priorIsFinite = true;
+            } else if (i != 0 && i != x.length && priorIsFinite) {
                 writer.println("> "+label+" NaN break "+xf+" "+yf);
             }
         }

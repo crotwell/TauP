@@ -165,6 +165,7 @@ public class TauP_VelocityPlot extends TauP_Tool {
                 || axisType == ModelAxisType.Q
                 || axisType == ModelAxisType.Qp
                 || axisType == ModelAxisType.Qs
+                || axisType == ModelAxisType.vpvs
                 || axisType == ModelAxisType.poisson
                 || axisType == ModelAxisType.shearmodulus
                 || axisType == ModelAxisType.lambda
@@ -224,6 +225,7 @@ public class TauP_VelocityPlot extends TauP_Tool {
                 } else {
                     return vMod.evaluateBelow(depth, VelocityModelMaterial.Q_S);
                 }
+            case vpvs:
             case poisson:
             case shearmodulus:
             case lambda:
@@ -244,6 +246,8 @@ public class TauP_VelocityPlot extends TauP_Tool {
                 double mu=vs*vs*rho;
                 double lambda=vp*vp*rho-2*mu;
                 switch (axisType) {
+                    case vpvs:
+                        return vp/vs;
                     case poisson:
                         return (vp * vp / 2 - vs * vs) / (vp * vp - vs * vs);
                     case shearmodulus:
@@ -273,6 +277,7 @@ public class TauP_VelocityPlot extends TauP_Tool {
             case Vs:
             case Qp:
             case Qs:
+            case vpvs:
             case poisson:
             case shearmodulus:
             case lambda:
@@ -370,7 +375,7 @@ public class TauP_VelocityPlot extends TauP_Tool {
             yDbl[i] = yVals.get(i);
         }
         List<XYSegment> segList = new ArrayList<>();
-        segList.add(new XYSegment(xDbl, yDbl));
+        segList.addAll(new XYSegment(xDbl, yDbl).recalcForInfinite(false, false));
         List<String> cssClassList = new ArrayList<>();
         String legendLabel;
         if (yAxis == ModelAxisType.depth || yAxis == ModelAxisType.radius) {

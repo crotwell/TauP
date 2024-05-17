@@ -17,6 +17,7 @@ public enum ModelAxisType {
     Qs,
     Q,
 
+    vpvs,
     poisson,
     shearmodulus,
     lambda,
@@ -38,6 +39,8 @@ public enum ModelAxisType {
                 return "Qp Attenuation";
             case Qs:
                 return "Qs Attenuation";
+            case vpvs:
+                return "Vp/Vs Ratio";
             case poisson:
                 return "Poisson's Ratio";
             case lambda:
@@ -77,6 +80,8 @@ public enum ModelAxisType {
                 return "P Attenuation";
             case Qs:
                 return "S Attenuation";
+            case vpvs:
+                return "Vp/Vs Ratio";
             case poisson:
                 return "Poisson's Ratio";
             case lambda:
