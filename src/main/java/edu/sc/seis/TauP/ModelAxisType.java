@@ -7,9 +7,12 @@ public enum ModelAxisType {
     velocity,
     Vp,
     Vs,
-    slowness,
-    slowness_p,
-    slowness_s,
+    slownessdeg,
+    slownessdeg_p,
+    slownessdeg_s,
+    slownessrad,
+    slownessrad_p,
+    slownessrad_s,
     density,
 
     velocity_density,
@@ -34,6 +37,14 @@ public enum ModelAxisType {
             case velocity_density:
             case density:
                 return "Density";
+            case slownessdeg:
+            case slownessdeg_p:
+            case slownessrad:
+            case slownessrad_p:
+                return "P Slowness";
+            case slownessrad_s:
+            case slownessdeg_s:
+                return "S Slowness";
             case Q:
             case Qp:
                 return "Qp Attenuation";
@@ -70,16 +81,20 @@ public enum ModelAxisType {
                 return "Radius (km)";
             case density:
                 return "Density (Mg/m3)";
-            case slowness:
-            case slowness_p:
-            case slowness_s:
+            case slownessdeg:
+            case slownessdeg_p:
+            case slownessdeg_s:
+                return "Slowness (s/deg)";
+            case slownessrad:
+            case slownessrad_p:
+            case slownessrad_s:
                 return "Slowness (s/rad)";
             case Q:
-                return "P,S Attenuation";
+                return "Qp,Qs Attenuation";
             case Qp:
-                return "P Attenuation";
+                return "Qp Attenuation";
             case Qs:
-                return "S Attenuation";
+                return "Qs Attenuation";
             case vpvs:
                 return "Vp/Vs Ratio";
             case poisson:

@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static edu.sc.seis.TauP.Arrival.RtoD;
 import static edu.sc.seis.TauP.cli.OutputTypes.TEXT;
 
 /**
@@ -174,8 +175,10 @@ public class TauP_VelocityPlot extends TauP_Tool {
     }
 
     public boolean slownessLike(ModelAxisType axisType) {
-        return axisType == ModelAxisType.slowness || axisType == ModelAxisType.slowness_p
-                || axisType == ModelAxisType.slowness_s;
+        return axisType == ModelAxisType.slownessrad || axisType == ModelAxisType.slownessrad_p
+                || axisType == ModelAxisType.slownessrad_s
+                || axisType == ModelAxisType.slownessdeg || axisType == ModelAxisType.slownessdeg_p
+                || axisType == ModelAxisType.slownessdeg_s;
     }
 
     public ModelAxisType dependentAxis(ModelAxisType xAxisType, ModelAxisType yAxisType) {
@@ -284,10 +287,13 @@ public class TauP_VelocityPlot extends TauP_Tool {
             case bulkmodulus:
             case youngsmodulus:
                 return calculateAtDepth(tMod.getVelocityModel(), axisType, depth, above);
-            case slowness:
-            case slowness_p:
-            case slowness_s:
-                boolean isPWave = axisType != ModelAxisType.slowness_s;
+            case slownessrad:
+            case slownessrad_p:
+            case slownessrad_s:
+            case slownessdeg:
+            case slownessdeg_p:
+            case slownessdeg_s:
+                boolean isPWave = axisType != ModelAxisType.slownessrad_s && axisType != ModelAxisType.slownessdeg_s;
                 SlownessLayer slayer;
                 if (above) {
                     slayer = tMod.getSlownessModel().layerAbove(depth, isPWave);
@@ -295,7 +301,12 @@ public class TauP_VelocityPlot extends TauP_Tool {
                     slayer = tMod.getSlownessModel().layerBelow(depth, isPWave);
                 }
                 try {
-                    return slayer.evaluateAt_bullen(depth, tMod.getRadiusOfEarth());
+                    double slowness = slayer.evaluateAt_bullen(depth, tMod.getRadiusOfEarth());
+                    if (axisType == ModelAxisType.slownessdeg
+                            || axisType == ModelAxisType.slownessdeg_p || axisType == ModelAxisType.slownessdeg_s) {
+                        slowness /= RtoD;
+                    }
+                    return slowness;
                 } catch (SlownessModelException e) {
                     throw new TauModelException(e);
                 }
@@ -333,7 +344,7 @@ public class TauP_VelocityPlot extends TauP_Tool {
             TauModel tMod = TauModelLoader.load(velModelArgs.getModelFilename(), velModelArgs.getVelFileType());
             modelName = tMod.getModelName();
             SlownessModel sMod = tMod.getSlownessModel();
-            boolean defWaveType = (xAxis != ModelAxisType.slowness_s && yAxis != ModelAxisType.slowness_s);
+            boolean defWaveType = (xAxis != ModelAxisType.slownessrad_s && yAxis != ModelAxisType.slownessrad_s);
 
             xVals.add(calculateAtDepth(tMod, xAxis, sMod.getSlownessLayer(0, defWaveType).getTopDepth(), false));
             yVals.add(calculateAtDepth(tMod, yAxis, sMod.getSlownessLayer(0, defWaveType).getTopDepth(), false));
@@ -385,11 +396,14 @@ public class TauP_VelocityPlot extends TauP_Tool {
         }
         if (xAxis == ModelAxisType.Vp || xAxis == ModelAxisType.velocity
                 || yAxis == ModelAxisType.Vp || yAxis == ModelAxisType.velocity
-                || xAxis == ModelAxisType.slowness_p || xAxis == ModelAxisType.slowness
-                || yAxis == ModelAxisType.slowness_p || yAxis == ModelAxisType.slowness) {
+                || xAxis == ModelAxisType.slownessrad_p || xAxis == ModelAxisType.slownessrad
+                || yAxis == ModelAxisType.slownessrad_p || yAxis == ModelAxisType.slownessrad
+                || xAxis == ModelAxisType.slownessdeg_p || xAxis == ModelAxisType.slownessdeg
+                || yAxis == ModelAxisType.slownessdeg_p || yAxis == ModelAxisType.slownessdeg) {
             cssClassList.add("pwave");
         } else if (xAxis == ModelAxisType.Vs || yAxis == ModelAxisType.Vs
-                || xAxis == ModelAxisType.slowness_s || yAxis == ModelAxisType.slowness_s) {
+                || xAxis == ModelAxisType.slownessrad_s || yAxis == ModelAxisType.slownessrad_s
+                || xAxis == ModelAxisType.slownessdeg_s || yAxis == ModelAxisType.slownessdeg_s) {
             cssClassList.add("swave");
         } else {
             cssClassList.add("both_p_swave");
@@ -428,13 +442,17 @@ public class TauP_VelocityPlot extends TauP_Tool {
             // also do attenuation_s
             xyList.addAll(calculate(velModelArgs, xAxis, ModelAxisType.Qs, labelPrefix));
         }
-        if (xAxis == ModelAxisType.slowness) {
+        if (xAxis == ModelAxisType.slownessrad || xAxis == ModelAxisType.slownessdeg) {
             // also do slowness_s
-            xyList.addAll(calculate(velModelArgs, ModelAxisType.slowness_s, yAxis, labelPrefix));
+            xyList.addAll(calculate(velModelArgs,
+                    xAxis == ModelAxisType.slownessrad ? ModelAxisType.slownessrad_s : ModelAxisType.slownessdeg_s,
+                    yAxis, labelPrefix));
         }
-        if (yAxis == ModelAxisType.slowness) {
+        if (yAxis == ModelAxisType.slownessrad || yAxis == ModelAxisType.slownessdeg) {
             // also do slowness_s
-            xyList.addAll(calculate(velModelArgs, xAxis, ModelAxisType.slowness_s, labelPrefix));
+            xyList.addAll(calculate(velModelArgs, xAxis,
+                    yAxis == ModelAxisType.slownessrad ? ModelAxisType.slownessrad_s : ModelAxisType.slownessdeg_s,
+                    labelPrefix));
         }
 
         return xyList;
