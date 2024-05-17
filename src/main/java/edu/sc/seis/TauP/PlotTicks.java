@@ -31,7 +31,8 @@ public class PlotTicks {
             return ticks;
         }
         double val=  fstart;
-        while (val <= fstop) {
+        // little bit more than fstop in case of rounding
+        while (val <= fstop+(step/2)) {
             ticks.add(val);
             val += step;
         }
