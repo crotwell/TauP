@@ -337,7 +337,7 @@ export function form_url() {
     if (yaxislog) {
       url += `&ylog=true`;
     }
-    let isLegend = document.querySelector('input[name="legend"]').checked;
+    let isLegend = document.querySelector('input[name="velplotlegend"]').checked;
     if (isLegend) {
       url += `&legend=true`;
     }
@@ -405,7 +405,7 @@ export function form_url() {
     if (inshwave) {
       url += `&shwave=true`;
     }
-    
+
     if (fsrf) {
       url += `&fsrf=true`;
     }
