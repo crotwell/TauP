@@ -105,19 +105,6 @@
           <input type="number" id="distdegmax" name="distdegmax" value="180" />
         </div>
         <div>
-          <input type="checkbox" id="isevtstadist" name="isevtstadist" />
-          <label for="eventlat">
-              <span>Event (lat/lon): </span>
-          </label>
-          <input type="number" id="eventlat" name="eventlat" value="30" />
-          <input type="number" id="eventlon" name="eventlon" value="-110" />
-          <label for="stalat">
-              <span> Station (lat/lon): </span>
-          </label>
-          <input type="number" id="stationlat" name="stationlat" value="35" />
-          <input type="number" id="stationlon" name="stationlon" value="-81" />
-        </div>
-        <div>
           <input type="checkbox" id="istakeoffdist" name="istakeoffdist" />
           <label for="takeoffangle">
               <span>Takeoff Angle (deg): </span>
@@ -139,6 +126,40 @@
               <span>(s/km): </span>
           </label>
           <input type="radio" id="isshootraykm" name="shootrayunit" value="isshootraykm" />
+          <label for="isshootrayrad">
+              <span>(s/rad): </span>
+          </label>
+          <input type="radio" id="isshootrayrad" name="shootrayunit" value="isshootrayrad" />
+        </div>
+        <div>
+          <input type="checkbox" id="isevtdist" name="isevtdist" />
+          <label for="eventlat">
+              <span>Event (lat/lon): </span>
+          </label>
+          <input type="number" id="eventlat" name="eventlat" value="30" />
+          <input type="number" id="eventlon" name="eventlon" value="-110" />
+        </div>
+        <div>
+          <input type="checkbox" id="isstadist" name="isstadist" />
+          <label for="stalat">
+              <span> Station (lat/lon): </span>
+          </label>
+          <input type="number" id="stationlat" name="stationlat" value="35" />
+          <input type="number" id="stationlon" name="stationlon" value="-81" />
+        </div>
+        <div>
+          <input type="checkbox" id="isazimuth" name="isazimuth" />
+          <label for="azimuth">
+              <span>Azimuth (deg): </span>
+          </label>
+          <input type="number" id="azimuth" name="azimuth" value="0" />
+        </div>
+        <div>
+          <input type="checkbox" id="isbackazimuth" name="isbackazimuth" />
+          <label for="backazimuth">
+              <span>Back Azimuth (deg): </span>
+          </label>
+          <input type="number" id="backazimuth" name="backazimuth" value="0" />
         </div>
     </fieldset>
 

@@ -175,9 +175,18 @@ export function form_url() {
 
   let islistdist = document.querySelector('input[name="islistdist"]').checked;
   let isregulardist = document.querySelector('input[name="isregulardist"]').checked;
-  let isevtstadist = document.querySelector('input[name="isevtstadist"]').checked;
+  let isevtdist = document.querySelector('input[name="isevtdist"]').checked;
+  let isstadist = document.querySelector('input[name="isstadist"]').checked;
+  let isazimuth = document.querySelector('input[name="isazimuth"]').checked;
+  let isbackazimuth = document.querySelector('input[name="isbackazimuth"]').checked;
   let istakeoffdist = document.querySelector('input[name="istakeoffdist"]').checked;
   let isshootraydist = document.querySelector('input[name="isshootraydist"]').checked;
+  let isSomeDistance = islistdist || isregulardist || (isevtdist && isstadist)
+      || istakeoffdist || isshootraydist;
+  if ( ! isSomeDistance ) {
+    document.querySelector('input[name="islistdist"]').checked = true;
+    islistdist = true;
+  }
 
   let scatdepth = document.querySelector('input[name="scatdepth"]').value;
   let scatdist = document.querySelector('input[name="scatdist"]').value;
@@ -227,12 +236,23 @@ export function form_url() {
       }
       distparam += `&degree=${distlist}`;
     }
-    if (isevtstadist) {
+    if (isevtdist) {
       let evla = document.querySelector('input[name="eventlat"]').value;
       let evlo = document.querySelector('input[name="eventlon"]').value;
+      distparam += `&event=${evla},${evlo}`;
+    }
+    if (isstadist) {
       let stla = document.querySelector('input[name="stationlat"]').value;
       let stlo = document.querySelector('input[name="stationlon"]').value;
-      distparam += `&event=${evla},${evlo}&station=${stla},${stlo}`;
+      distparam += `&station=${stla},${stlo}`;
+    }
+    if (isazimuth) {
+      let az = document.querySelector('input[name="azimuth"]').value;
+      distparam += `&az=${az}`;
+    }
+    if (isbackazimuth) {
+      let baz = document.querySelector('input[name="backazimuth"]').value;
+      distparam += `&baz=${baz}`;
     }
     if (istakeoffdist) {
       let takeoffangle = document.querySelector('input[name="takeoffangle"]').value;
@@ -248,7 +268,7 @@ export function form_url() {
       } else if (shootrayunit === "isshootraykm") {
         distparam += `&rayparamkm=${shootray}`;
       } else {
-        distparam += shootrayunit;
+        distparam += `&rayparamrad=${shootray}`;
       }
     }
     url += distparam;
