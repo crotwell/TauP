@@ -240,6 +240,20 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
             out = phase.getTime();
         } else if (axisType==AxisType.tau) {
             out = phase.getTau();
+        } else if (axisType==AxisType.takeoffangle) {
+            double[] dist = phase.getDist();
+            out = new double[dist.length];
+            for (int i = 0; i < dist.length; i++) {
+                Arrival arrival = phase.createArrivalAtIndex(i);
+                out[i] = arrival.getTakeoffAngleDegree();
+            }
+        } else if (axisType==AxisType.incidentangle) {
+            double[] dist = phase.getDist();
+            out = new double[dist.length];
+            for (int i = 0; i < dist.length; i++) {
+                Arrival arrival = phase.createArrivalAtIndex(i);
+                out[i] = arrival.getIncidentAngleDegree();
+            }
         } else if (axisType==AxisType.turndepth) {
             double[] dist = phase.getDist();
             out = new double[dist.length];
@@ -554,6 +568,10 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
                 return "Index";
             case geospread:
                 return "Geometric Spreading";
+            case takeoffangle:
+                return "Takeoff Angle (deg)";
+            case incidentangle:
+                return "Incident Angle (deg)";
             case turndepth:
                 return "Turn Depth (km)";
             case refltran:

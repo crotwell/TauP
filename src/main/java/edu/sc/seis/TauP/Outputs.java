@@ -75,6 +75,8 @@ public class Outputs {
             case degree180:
             case kilometer:
             case kilometer180:
+            case takeoffangle:
+            case incidentangle:
                 outFormat = distanceFormat;
                 break;
             case rayparamrad:

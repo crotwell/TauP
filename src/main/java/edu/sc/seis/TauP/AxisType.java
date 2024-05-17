@@ -13,6 +13,8 @@ public enum AxisType {
     rayparamkm,
     time,
     tau,
+    takeoffangle,
+    incidentangle,
     turndepth,
     amp,
     amppsv,
