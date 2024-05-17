@@ -492,12 +492,6 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
         phases = newPhases;
     }
 
-    public String getPhaseUsage() {
-        return "-ph phase list     -- comma separated phase list\n"
-                + "-pf phasefile      -- file containing phases\n\n"
-                + getModDepthUsage();
-    }
-
 
     @CommandLine.ArgGroup(heading = "Phase Names %n", exclusive = false)
     PhaseArgsInner phaseArgs = new PhaseArgsInner();

@@ -157,23 +157,6 @@ public abstract class TauP_Tool implements Callable<Integer> {
         return toolName.toLowerCase();
     }
 
-    public static String getStdUsageHead(Class toolClass) {
-        String toolName = toolNameFromClass(toolClass);
-        return "Usage: " + toolName + " [arguments]\n"
-        + "  or, for purists, java " + toolClass.getName()
-                + " [arguments]\n"
-        + "\nArguments are:\n";
-    }
-
-    public static String getModDepthUsage() {
-        return "-mod[el] modelname -- use velocity model \"modelname\" for calculations\n"
-                + "                      Default is iasp91.\n\n"
-                + "-h depth           -- source depth in km\n\n"
-                + "--stadepth depth   -- receiver depth in km\n"
-                + "--scat[ter] depth deg   -- scattering depth and distance\n\n"
-        ;
-    }
-
     public abstract void validateArguments() throws TauPException;
 
     /**

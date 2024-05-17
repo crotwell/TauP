@@ -15,8 +15,8 @@ Model Args
   -h, --evdepth, --sourcedepth=<sourceDepth>
                             source depth in km
       --mod, --model=<modelname>
-                            use velocity model "modelname" for calculations
-                                                  Default is iasp91.
+                            use velocity model "modelname" for calculations.
+                            Default is iasp91.
       --scat, --scatter=s s scattering depth and distance in degrees, which may
                               be negative. Only effects phases with 'o' or 'O'
                               in the phase name.

@@ -276,6 +276,8 @@ circle.discontinuity.iocb {
 <line class="tick" x1="444.70468107855294" y1="520.0" x2="444.70468107855294" y2="530.0" />
 <text class="xtick" font-size="12" x="482.35234053927667" y="542.0">0.48</text>
 <line class="tick" x1="482.35234053927667" y1="520.0" x2="482.35234053927667" y2="530.0" />
+<text class="xtick" font-size="12" x="520.0000000000005" y="542.0">0.5</text>
+<line class="tick" x1="520.0000000000005" y1="520.0" x2="520.0000000000005" y2="530.0" />
 </g> <!-- x axis end-->
 <g clip-path="url(#curve_clip)">
 <g transform="scale(1,-1) translate(0, -520.0)">
