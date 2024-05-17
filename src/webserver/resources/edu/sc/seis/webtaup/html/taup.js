@@ -106,10 +106,17 @@ export async function display_results(taup_url) {
         container_el.appendChild(pre_el);
         const minmaxMetadata = pre_el.querySelector("taup minmax");
         if (minmaxMetadata != null) {
-          document.querySelector('input[name="xmin"]').value = minmaxMetadata.getAttribute("xmin");
-          document.querySelector('input[name="xmax"]').value = minmaxMetadata.getAttribute("xmax");
-          document.querySelector('input[name="ymin"]').value = minmaxMetadata.getAttribute("ymin");
-          document.querySelector('input[name="ymax"]').value = minmaxMetadata.getAttribute("ymax");
+          if (toolname === "curve") {
+            document.querySelector('input[name="xmin"]').value = minmaxMetadata.getAttribute("xmin");
+            document.querySelector('input[name="xmax"]').value = minmaxMetadata.getAttribute("xmax");
+            document.querySelector('input[name="ymin"]').value = minmaxMetadata.getAttribute("ymin");
+            document.querySelector('input[name="ymax"]').value = minmaxMetadata.getAttribute("ymax");
+          } else if (toolname === "velplot") {
+            document.querySelector('input[name="velplotxmin"]').value = minmaxMetadata.getAttribute("xmin");
+            document.querySelector('input[name="velplotxmax"]').value = minmaxMetadata.getAttribute("xmax");
+            document.querySelector('input[name="velplotymin"]').value = minmaxMetadata.getAttribute("ymin");
+            document.querySelector('input[name="velplotymax"]').value = minmaxMetadata.getAttribute("ymax");
+          }
         }
       });
     } else if (format === "ms3") {
