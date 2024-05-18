@@ -48,7 +48,7 @@
   <summary>Parameters for: <span><a target="_blank" href="" id="taup_url"></a></span></summary>
 
 <form>
-    <fieldset class="tool_all" >
+    <fieldset class="model tool_all" >
         <legend><a href="doc/models.html" target="_blank">Velocity Model:</a></legend>
         <input type="radio" name="model" id="iasp91" value="iasp91" checked/>
         <label for="iasp91">iasp91</label>
@@ -69,19 +69,19 @@
         </label>
         <input class="biginput" type="text" id="phase" name="phase" value="P,S"  />
 
-        <label for="evdepth">
+        <label for="evdepth" class="evdepth">
             <span>Source Depth (km): </span>
         </label>
         <input type="text" id="evdepth" name="evdepth" value="0"  />
 
-        <label for="stadepth">
+        <label for="stadepth" class="stadepth">
             <span>Receiver Depth (km): </span>
         </label>
         <input type="text" id="stadepth" name="stadepth" value="0"  />
     </fieldset>
     <fieldset class="tool_time tool_pierce tool_path">
         <legend>Distance:</legend>
-        <div>
+        <div class="degree">
           <input type="checkbox" id="islistdist" name="islistdist" checked />
           <label for="distdeg">
               <span>Distance (deg): </span>
@@ -104,7 +104,7 @@
           </label>
           <input type="number" id="distdegmax" name="distdegmax" value="180" />
         </div>
-        <div>
+        <div class=takeoff>
           <input type="checkbox" id="istakeoffdist" name="istakeoffdist" />
           <label for="takeoffangle">
               <span>Takeoff Angle (deg): </span>

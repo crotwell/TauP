@@ -9,6 +9,31 @@ export function setup() {
   setupListeners();
   const tool = getToolName();
   enableParams(tool)
+  loadParamHelp().then(helpjson => {
+    const container_el = document.querySelector("#results");
+    while(container_el.firstChild) {
+      container_el.removeChild(container_el.firstChild);
+    }
+    const pre_el = document.createElement("pre");
+    pre_el.textContent = `got json help`;
+    container_el.appendChild(pre_el);
+    for (let param of helpjson.params) {
+      for (let name of param.name) {
+        if (name.startsWith("-")) {name = name.slice(1, name.length);}
+        if (name.startsWith("-")) {name = name.slice(1, name.length);}
+        console.log(`name: ${name}`)
+
+        let el = document.querySelector(`#${name}`);
+        if (el != null) {
+          el.title = param.desc[0];
+        }
+        el = document.querySelector(`.${name}`);
+        if (el != null) {
+          el.title = param.desc[0];
+        }
+      }
+    }
+  });
 }
 
 /**
@@ -528,6 +553,32 @@ export function enableParams(tool) {
       }
   `;
   styleEl.textContent = styleStr;
+}
+
+export function loadParamHelp() {
+  const paramHelpUrl = `paramhelp?tool=time`;
+  let timeoutSec = 10;
+  const controller = new AbortController();
+  const signal = controller.signal;
+  setTimeout(() => controller.abort(), timeoutSec * 1000);
+  let fetchInitObj = defaultFetchInitObj();
+  fetchInitObj.signal = signal;
+  return fetch(paramHelpUrl, fetchInitObj).catch(e => {
+    console.log(`fetch error: ${e}`)
+    const container_el = document.querySelector("#results");
+    while(container_el.firstChild) {
+      container_el.removeChild(container_el.firstChild);
+    }
+    let message = "Network problem connecting to TauP server...\n\n";
+    message += paramHelpUrl+"\n\n";
+    message += e;
+    const pre_el = document.createElement("pre");
+    pre_el.textContent = message;
+    container_el.appendChild(pre_el);
+    throw e;
+  }).then( response => {
+    return response.json();
+  });
 }
 
 export function getElement(child, parentEl) {
