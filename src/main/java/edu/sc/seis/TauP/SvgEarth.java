@@ -11,7 +11,7 @@ import static edu.sc.seis.TauP.Arrival.RtoD;
 
 public class SvgEarth {
 
-    private static final float plotOverScaleFactor = 1.1f;
+    private static final float plotOverScaleFactor = 1.2f;
 
     public static SvgEarthScaling calcEarthScaleTransForPhaseList(List<SeismicPhase> phaseList, DistDepthRange distDepthRange, boolean includeNegDist) {
         float R = 6371;
@@ -302,7 +302,7 @@ public class SvgEarth {
         }
         double tickLen = R * .05;
         out.println("<!-- tick marks every " + step + " degrees to " + maxTick + ".-->");
-        for (float i = minTick; i < maxTick; i += step) {
+        for (float i = minTick; i <= maxTick; i += step) {
             out.print("  <polyline  class=\"tick\"  points=\"");
             printDistRadiusAsXY(out, i, R);
             out.print(", ");
