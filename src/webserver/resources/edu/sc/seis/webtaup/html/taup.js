@@ -46,7 +46,11 @@ export function process() {
   const url_el = document.querySelector("#taup_url");
   url_el.textContent = taup_url;
   url_el.setAttribute("href", taup_url);
-  display_results(taup_url);
+
+  return display_cmdline(taup_url)
+  .then( x => {
+    return display_results(taup_url);
+  });
 }
 
 export function valid_format(tool) {
@@ -71,6 +75,49 @@ export function getToolName() {
   return toolname;
 }
 
+export async function display_cmdline(taup_url) {
+  const cmdline_url = `cmdline/${taup_url}`;
+  console.log(cmdline_url);
+  let timeoutSec = 10;
+  const controller = new AbortController();
+  const signal = controller.signal;
+  setTimeout(() => controller.abort(), timeoutSec * 1000);
+  let fetchInitObj = defaultFetchInitObj();
+  fetchInitObj.signal = signal;
+  return fetch(cmdline_url, fetchInitObj).catch(e => {
+    console.log(`fetch error: ${e}`)
+    const container_el = document.querySelector("#results");
+    while(container_el.firstChild) {
+      container_el.removeChild(container_el.firstChild);
+    }
+    let message = "Network problem connecting to TauP server...\n\n";
+    message += e;
+    const pre_el = document.createElement("pre");
+    pre_el.textContent = message;
+    container_el.appendChild(pre_el);
+    throw e;
+  }).then( response => {
+    const container_el = document.querySelector("#results");
+    while(container_el.firstChild) {
+      container_el.removeChild(container_el.firstChild);
+    }
+    if (!response.ok) {
+      const h5_el = document.createElement("h5");
+      h5_el.textContent = "Network response was not OK";
+      container_el.appendChild(h5_el);
+      return response.text().then(ans => {
+          const ans_el = document.createElement("p");
+          ans_el.textContent = ans;
+      });
+    } else {
+      const cmdEl = document.querySelector("#cmdline");
+      response.text().then( c => {
+        console.log(`response ok:  ${c}`)
+        cmdEl.textContent = c;
+      });
+    }
+  });
+}
 
 export async function display_results(taup_url) {
   console.log(`Load: ${taup_url}`);

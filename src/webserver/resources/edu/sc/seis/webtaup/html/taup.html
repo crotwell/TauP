@@ -16,6 +16,11 @@
         width: 75%;
         height: 75%;
       }
+      textarea.cmdline {
+        width: 85%;
+        background-color: whitesmoke;
+        border-color: lightgrey;
+      }
       input[type="text"].biginput {
         width: 200px;
       }
@@ -48,6 +53,12 @@
   <summary>Parameters for: <span><a target="_blank" href="" id="taup_url"></a></span></summary>
 
 <form>
+    <fieldset class="tool_all">
+      <legend>Command Line</legend>
+      <textarea class="cmdline" type="text" id="cmdline" name="cmdline" value="" readonly >
+    </textarea>
+    </fieldset>
+
     <fieldset class="model tool_all" >
         <legend><a href="doc/models.html" target="_blank">Velocity Model:</a></legend>
         <input type="radio" name="model" id="iasp91" value="iasp91" checked/>

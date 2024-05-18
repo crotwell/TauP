@@ -17,7 +17,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import picocli.CommandLine;
 
-import java.io.DataOutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.ByteBuffer;
@@ -78,6 +77,9 @@ public class TauP_Web extends TauP_Tool {
                             webRunTool(tool, queryParams, exchange);
                         } else if (exchange.getRequestPath().equals("/favicon.ico")) {
                             new ResponseCodeHandler(404).handleRequest(exchange);
+                        } else if (exchange.getRequestPath().startsWith("/cmdline")) {
+                            tool = createTool(path.substring(8));
+                            handleCmdLine(tool, queryParams, exchange);
                         } else if (exchange.getRequestPath().equals("/paramhelp")) {
                             handleParamHelp(queryParams, exchange);
                         } else if (exchange.getRequestPath().equals("/version")) {
@@ -253,6 +255,19 @@ public class TauP_Web extends TauP_Tool {
             return;
         }
         throw new TauPException("Unable to create param help for "+exchange.getQueryString()+" "+(queryParams.containsKey("tool")));
+    }
+
+    public void handleCmdLine(TauP_Tool tool, Map<String, Deque<String>> queryParams, HttpServerExchange exchange) throws TauPException {
+        CommandLine cmd = new CommandLine(tool);
+        CommandLine.Model.CommandSpec spec = cmd.getCommandSpec();
+        List<String> argList = queryParamsToCmdLineArgs(spec, queryParams);
+        StringBuffer buffer = new StringBuffer();
+        buffer.append(TauP_Tool.toolNameFromClass(tool.getClass()));
+        for (String s : argList) {
+            buffer.append(" "+s);
+        }
+        configContentType(OutputTypes.TEXT, exchange);
+        exchange.getResponseSender().send(buffer.toString());
     }
 
     public void webRunTool(TauP_Tool tool, Map<String, Deque<String>> queryParams, HttpServerExchange exchange) throws Exception {
