@@ -36,7 +36,7 @@ public class DistanceArgs {
                 for (Location evt : distArgs.eventList) {
                     DistanceRay evtDr = new DistanceRay(dr);
                     evtDr.withEventAzimuth(evt, getAzimuth());
-                    evtOut.add(dr);
+                    evtOut.add(evtDr);
                 }
             }
             out = evtOut;
@@ -47,10 +47,10 @@ public class DistanceArgs {
                     // already enough info, so just add
                     staOut.add(dr);
                 }
-                for (Location evt : distArgs.eventList) {
-                    DistanceRay evtDr = new DistanceRay(dr);
-                    evtDr.withEventAzimuth(evt, getAzimuth());
-                    staOut.add(dr);
+                for (Location sta : distArgs.stationList) {
+                    DistanceRay staDr = new DistanceRay(dr);
+                    staDr.withStationBackAzimuth(sta, getBackAzimuth());
+                    staOut.add(staDr);
                 }
             }
             out = staOut;
