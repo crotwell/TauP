@@ -12,12 +12,12 @@
     <style type="text/css"><![CDATA[
         text.label {
             font: bold ;
-            font-size: 148px;
+            font-size: 162px;
             fill: black;
         }
         g.phasename text {
             font: bold ;
-            font-size: 148px;
+            font-size: 162px;
             fill: black;
         }
 
@@ -204,8 +204,8 @@ circle.discontinuity.iocb {
 <!-- draw axis and label distances.-->
 
 <!-- scale/translate so coordinates in earth units ( square ~ 2R x 2R)-->
-<g transform="scale(0.030821478,0.030821478)" >
-<g transform="translate(7008.1,7008.1)" >
+<g transform="scale(0.02825302,0.02825302)" >
+<g transform="translate(7645.2,7645.2)" >
 <!-- scale/translate so zoomed in on area of interest -->
 <g transform="scale(2.351657,2.351657)" >
 <g transform="translate(-2171.3157,3661.8464)" >
@@ -282,6 +282,8 @@ circle.discontinuity.iocb {
   <text dominant-baseline="hanging" text-anchor="middle" class="label" x="2227.66" y="6120.43">160.0</text>
   <polyline  class="tick"  points=" 1106.31   6274.21,  1129.83   6407.61" />
   <text dominant-baseline="hanging" text-anchor="middle" class="label" x="1131.01" y="6414.28">170.0</text>
+  <polyline  class="tick"  points="    0.00   6371.00,     0.00   6506.46" />
+  <text dominant-baseline="hanging" text-anchor="middle" class="label" x="0.00" y="6513.23">180.0</text>
   </g>
 <g class="layers">
   <circle class="discontinuity surface" cx="0.0" cy="0.0" r="6371.0" />
