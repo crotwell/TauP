@@ -50,7 +50,8 @@ import java.util.List;
  * 
  */
 @CommandLine.Command(name = "table",
-        description = "create a table of travel times for a range of depths and distances",
+        description = "Create a table of travel times for a range of depths and distances.",
+        optionListHeading = "%nOptions:%n%n",
         abbreviateSynopsis = true,
         usageHelpAutoWidth = true)
 public class TauP_Table extends TauP_AbstractPhaseTool {

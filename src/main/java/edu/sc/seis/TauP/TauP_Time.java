@@ -38,7 +38,8 @@ import java.util.*;
  * @author H. Philip Crotwell
  */
 @CommandLine.Command(name = "time",
-        description = "calculate travel times for seismic phases in an earth model",
+        description = "Calculate travel times for seismic phases in an earth model",
+        optionListHeading = "%nOptions:%n%n",
         abbreviateSynopsis = true,
         usageHelpAutoWidth = true)
 public class TauP_Time extends TauP_AbstractRayTool {

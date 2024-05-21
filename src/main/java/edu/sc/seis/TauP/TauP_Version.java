@@ -9,7 +9,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 @CommandLine.Command(name = "version",
-        description = "print version",
+        description = "Print the version.",
+        optionListHeading = "%nOptions:%n%n",
         abbreviateSynopsis = true,
         usageHelpAutoWidth = true)
 public class TauP_Version extends TauP_Tool {

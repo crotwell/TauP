@@ -32,7 +32,8 @@ import java.util.List;
  * @author H. Philip Crotwell
  */
 @CommandLine.Command(name = "pierce",
-        description = "calculate pierce points for phases at discontinuities in the model",
+        description = "Calculate pierce points for phases at discontinuities in the model.",
+        optionListHeading = "%nOptions:%n%n",
         abbreviateSynopsis = true,
         usageHelpAutoWidth = true)
 public class TauP_Pierce extends TauP_Time {

@@ -22,7 +22,8 @@ import java.time.Instant;
 import java.util.*;
 
 @CommandLine.Command(name = "setmseed3",
-        description = "save travel times in the extra header of miniseed3 files",
+        description = "Save travel times in the extra header of miniseed3 files.",
+        optionListHeading = "%nOptions:%n%n",
         abbreviateSynopsis = true,
         usageHelpAutoWidth = true)
 public class TauP_SetMSeed3 extends TauP_AbstractPhaseTool {

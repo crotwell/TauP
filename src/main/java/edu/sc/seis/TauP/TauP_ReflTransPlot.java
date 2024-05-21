@@ -11,7 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @CommandLine.Command(name = "refltrans",
-        description = "plot reflection and transmission coefficients for a discontinuity",
+        description = "Plot reflection and transmission coefficients for a discontinuity.",
+        optionListHeading = "%nOptions:%n%n",
         usageHelpAutoWidth = true)
 public class TauP_ReflTransPlot extends  TauP_Tool {
 

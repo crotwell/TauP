@@ -14,7 +14,8 @@ import java.util.List;
 import static edu.sc.seis.TauP.Arrival.RtoD;
 
 @CommandLine.Command(name = "curve",
-        description = "plot traveltime and other curves for phases",
+        description = "Plot travel time vs. distance and other curves for seismic phases.",
+        optionListHeading = "%nOptions:%n%n",
         abbreviateSynopsis = true,
         usageHelpAutoWidth = true)
 public class TauP_Curve extends TauP_AbstractPhaseTool {

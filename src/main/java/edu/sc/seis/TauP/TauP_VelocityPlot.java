@@ -16,7 +16,8 @@ import static edu.sc.seis.TauP.cli.OutputTypes.TEXT;
  * Creates plots of a velocity model.
  */
 @CommandLine.Command(name = "velplot",
-        description = "plot velocity vs depth for a model",
+        description = "Plot velocity vs depth for a model.",
+        optionListHeading = "%nOptions:%n%n",
         abbreviateSynopsis = true,
         usageHelpAutoWidth = true)
 public class TauP_VelocityPlot extends TauP_Tool {

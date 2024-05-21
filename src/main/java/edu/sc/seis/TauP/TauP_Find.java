@@ -13,7 +13,8 @@ import java.util.List;
 import static edu.sc.seis.TauP.Arrival.RtoD;
 
 @CommandLine.Command(name = "find",
-        description = "find seismic phases in an earth model near a search time",
+        description = "Find seismic phases in an earth model.",
+        optionListHeading = "%nOptions:%n%n",
         abbreviateSynopsis = true,
         usageHelpAutoWidth = true)
 public class TauP_Find extends TauP_Tool {

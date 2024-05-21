@@ -14,7 +14,8 @@ import static edu.sc.seis.TauP.SvgUtil.createSurfaceWaveCSS;
  * Plots of wavefronts, distance along the ray at points in time.
  */
 @CommandLine.Command(name = "wavefront",
-        description = "plot wavefronts of seismic phases at steps in time",
+        description = "Plot wavefronts of seismic phases at steps in time.",
+        optionListHeading = "%nOptions:%n%n",
         abbreviateSynopsis = true,
         usageHelpAutoWidth = true)
 public class TauP_Wavefront extends TauP_AbstractPhaseTool {

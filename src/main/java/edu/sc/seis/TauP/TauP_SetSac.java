@@ -62,7 +62,8 @@ import java.util.List;
  * 
  */
 @CommandLine.Command(name = "setsac",
-        description = "set headers to travel times of phases using depth and distance from headers",
+        description = "Set headers to travel times of phases using depth and distance from SAC files.",
+        optionListHeading = "%nOptions:%n%n",
         abbreviateSynopsis = true,
         usageHelpAutoWidth = true)
 public class TauP_SetSac extends TauP_AbstractPhaseTool {
