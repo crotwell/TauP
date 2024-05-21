@@ -118,14 +118,17 @@ public class ModelArgs {
         @CommandLine.Option(names={"--mod", "--model"},
                 defaultValue = "iasp91",
                 description = {"use velocity model \"modelname\" for calculations. ",
-                        "Default is ${DEFAULT-VALUE}."},
+                        "Default is ${DEFAULT-VALUE}. Other builtin models include prem, ak135, ak135fcont, and ak135favg."},
 
                 completionCandidates = StdModelGenerator.StdModelCandidates.class
         )
         String modelname = toolProps.getProperty("taup.model.name",
                 "iasp91");
 
-        @CommandLine.Option(names={"-h", "--sourcedepth", "--evdepth"}, defaultValue = "0.0", description = "source depth in km")
+        @CommandLine.Option(names={"-h", "--sourcedepth", "--evdepth"},
+                paramLabel = "depth",
+                defaultValue = "0.0",
+                description = "source depth in km")
         double sourceDepth = Double.parseDouble(toolProps.getProperty("taup.source.depth", "0.0"));
 
         @CommandLine.Option(names = {"--stadepth", "--receiverdepth"},

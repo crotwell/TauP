@@ -8,6 +8,7 @@ import java.util.concurrent.Callable;
 
 @CommandLine.Command(name = "web",
         description = "web based gui for the TauP Toolkit",
+        abbreviateSynopsis = true,
         usageHelpAutoWidth = true)
 public class TauP_Web implements Callable<Integer> {
 

@@ -506,7 +506,10 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
         /**
          * names of phases to be used, ie PKIKP.
          */
-        @CommandLine.Option(names = {"-p", "--phase", "--ph"}, split = ",", description = "seismic phase names")
+        @CommandLine.Option(names = {"-p", "--phase", "--ph"},
+                paramLabel = "phase",
+                split = ",",
+                description = "seismic phase names")
         public void setPhaseNames(List<String> phaseNamesStr) {
             if (tool != null) {
                 tool.clearPhaseNames();

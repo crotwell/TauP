@@ -14,6 +14,7 @@ import static edu.sc.seis.TauP.Arrival.RtoD;
 
 @CommandLine.Command(name = "find",
         description = "find seismic phases in an earth model near a search time",
+        abbreviateSynopsis = true,
         usageHelpAutoWidth = true)
 public class TauP_Find extends TauP_Tool {
 
@@ -175,13 +176,21 @@ public class TauP_Find extends TauP_Tool {
     @CommandLine.Option(names = "--showrayparam", description = "show min and max ray parameter for each phase name")
     boolean showrayparam = false;
 
-    @CommandLine.Option(names = "--max", required = true,description = "Maximum number of reflections and phase conversion")
+    @CommandLine.Option(names = "--max",
+            required = true,
+            description = "Maximum number of reflections and phase conversion")
     int maxActions;
 
-    @CommandLine.Option(names = "--rayparamdeg", arity = "1..2", description = "only keep phases that overlap the given ray parameter range in s/deg")
+    @CommandLine.Option(names = "--rayparamdeg",
+            arity = "1..2",
+            paramLabel = "s/deg",
+            description = "only keep phases that overlap the given ray parameter range in s/deg")
     Double[] minRayParamRange;
 
-    @CommandLine.Option(names = "--rayparamkm", arity = "1..2", description = "only keep phases that overlap the given ray parameter range in s/km")
+    @CommandLine.Option(names = "--rayparamkm",
+            arity = "1..2",
+            paramLabel = "s/km",
+            description = "only keep phases that overlap the given ray parameter range in s/km")
     Double[] minRayParamRangeKm;
 
     protected Double[] getRayParamRange() throws TauModelException {
@@ -189,7 +198,8 @@ public class TauP_Find extends TauP_Tool {
         if (minRayParamRange == null &&  minRayParamRangeKm == null) {
             return null;
         } else if (minRayParamRange != null &&  minRayParamRangeKm != null) {
-            throw new CommandLine.ParameterException(spec.commandLine(), "Only one of --rayparamdeg and --rayparamkm may be used");
+            throw new CommandLine.ParameterException(spec.commandLine(),
+                    "Only one of --rayparamdeg and --rayparamkm may be used");
         }
         Double[] rpRange = null;
         if (minRayParamRangeKm != null) {
@@ -204,20 +214,29 @@ public class TauP_Find extends TauP_Tool {
         return rpRange;
     }
 
-    @CommandLine.Option(names = "--exclude", arity = "1..", description = "Exclude boundaries from phase conversion or reflection interactions")
+    @CommandLine.Option(names = "--exclude",
+            arity = "1..",
+            paramLabel = "depth",
+            description = "Exclude boundaries from phase conversion or reflection interactions")
     List<Double> excludeDepth = new ArrayList<>();
 
     @CommandLine.Option(names = "--pwaveonly", description = "only P wave legs, no S")
     boolean onlyPWave = false;
 
-    @CommandLine.Option(names = "--time", arity = "1..2", description = "find arrivals within the given range")
+    @CommandLine.Option(names = "--time",
+            arity = "1..2",
+            paramLabel = "t",
+            description = "find arrivals within the given range")
     List<Double> times = new ArrayList<>();
 
-    @CommandLine.Option(names = "--deltatime", description = "find arrivals within the +- deltatime, --times must have single time")
+    @CommandLine.Option(names = "--deltatime",
+            paramLabel = "dt",
+            description = "find arrivals within the +- deltatime, --times must have single time")
     Double deltaTime = 5.0;
 
 
-    @CommandLine.Option(names = "--amp", description = "amplitude factor for each phase")
+    @CommandLine.Option(names = "--amp",
+            description = "show amplitude factor for each phase, only if --deg")
     public boolean withAmplitude = false;
 
     public boolean isWithAmplitude() {
@@ -227,7 +246,9 @@ public class TauP_Find extends TauP_Tool {
     @CommandLine.Mixin
     SeismicSourceArgs sourceArgs = new SeismicSourceArgs();
 
-    @CommandLine.Option(names={"--deg", "--degree"}, paramLabel="d", description="distance in degrees", split=",")
+    @CommandLine.Option(names={"--deg", "--degree"},
+            paramLabel="d",
+            description="distance in degrees", split=",")
     protected void setDegree(List<Double> degreesList) {
         distanceArgs.setDegreeList(degreesList);
     }

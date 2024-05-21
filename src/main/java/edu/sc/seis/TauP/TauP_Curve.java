@@ -15,6 +15,7 @@ import static edu.sc.seis.TauP.Arrival.RtoD;
 
 @CommandLine.Command(name = "curve",
         description = "plot traveltime and other curves for phases",
+        abbreviateSynopsis = true,
         usageHelpAutoWidth = true)
 public class TauP_Curve extends TauP_AbstractPhaseTool {
     public TauP_Curve() {
@@ -138,7 +139,7 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
                             List<String> cssClassesCopy = new ArrayList<>(cssClasses);
                             cssClassesCopy.add("ampsh");
                             out.add(new XYPlottingData(sh_segments, xAxisType.name(), yAxisType.name(),
-                                    phase.getName(), phaseDesc, cssClassesCopy));
+                                    "tr "+phase.getName(), phaseDesc, cssClassesCopy));
                         }
                         // what about case of amp vs refltran, need 4 outputs?
                         if (xAxisType==AxisType.refltran
@@ -463,7 +464,10 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
         return xAxisType;
     }
 
-    @CommandLine.Option(names = {"-x", "--xaxis"}, description = "X axis data type, one of ${COMPLETION-CANDIDATES}", defaultValue = "degree180")
+    @CommandLine.Option(names = {"-x", "--xaxis"},
+            paramLabel = "type",
+            description = "X axis data type, default is ${DEFAULT-VALUE}, one of ${COMPLETION-CANDIDATES}",
+            defaultValue = "degree180")
     public void setxAxisType(AxisType xAxisType) {
         this.xAxisType = xAxisType;
     }
@@ -472,7 +476,10 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
         return yAxisType;
     }
 
-    @CommandLine.Option(names = {"-y", "--yaxis"}, description = "Y axis data type, one of ${COMPLETION-CANDIDATES}", defaultValue = "time")
+    @CommandLine.Option(names = {"-y", "--yaxis"},
+            paramLabel = "type",
+            description = "Y axis data type, default is ${DEFAULT-VALUE}, one of ${COMPLETION-CANDIDATES}",
+            defaultValue = "time")
     public void setyAxisType(AxisType yAxisType) {
         this.yAxisType = yAxisType;
     }
@@ -596,7 +603,9 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
         return relativePhaseName;
     }
 
-    @CommandLine.Option(names = "--rel", description = "plot relative to the given phase, no effect unless distance/time")
+    @CommandLine.Option(names = "--rel",
+            paramLabel = "phase",
+            description = "plot relative to the given phase, no effect unless distance/time")
     public void setRelativePhaseName(String relativePhaseName) {
         this.relativePhaseName = relativePhaseName;
     }
@@ -628,6 +637,7 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
      */
 
     @CommandLine.Option(names = "--reddeg",
+            paramLabel = "deg/s",
             description = "outputs curves with a reducing velocity (deg/sec), no effect if axis is not distance-like/time")
     public void setReduceVelDeg(double reduceVel) {
         if(reduceVel != 0.0) {
@@ -669,6 +679,7 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
      * representation is radians/second.
      */
     @CommandLine.Option(names = "--redkm",
+            paramLabel = "km/s",
             description = "outputs curves with a reducing velocity (km/sec), no effect if axis is not distance-like/time")
     public void setReduceVelKm(double reduceVel) {
         redVelString = reduceVel+" km/s";

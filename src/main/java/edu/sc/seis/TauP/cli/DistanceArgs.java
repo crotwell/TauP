@@ -299,11 +299,14 @@ public class DistanceArgs {
 
     static class DistanceArgsInner {
 
-        @CommandLine.Option(names={"--deg", "--degree"}, paramLabel="d", description="distance in degrees", split=",")
+        @CommandLine.Option(names={"--deg", "--degree"},
+                paramLabel="d",
+                description="distance in degrees", split=",")
         protected List<Double> degreesList = new ArrayList<>();
 
 
-        @CommandLine.Option(names={"--exactdegree"}, paramLabel="d",
+        @CommandLine.Option(names={"--exactdegree"},
+                paramLabel="d",
                 description="exact distance traveled in degrees, not 360-d", split=",")
         protected List<Double> exactDegreesList = new ArrayList<>();
 
@@ -311,14 +314,16 @@ public class DistanceArgs {
          * For when command line args uses --km for distance. Have to wait until
          * after the model is read in to get radius of earth.
          */
-        @CommandLine.Option(names={"--km", "--kilometer"}, paramLabel = "km",
+        @CommandLine.Option(names={"--km", "--kilometer"},
+                paramLabel = "km",
                 description="distance in kilometers", split=",")
         protected List<Double> distKilometersList = new ArrayList<>();
 
         /**
          * Exact km, no mod 360
          */
-        @CommandLine.Option(names={ "--exactkilometer"}, paramLabel = "km",
+        @CommandLine.Option(names={ "--exactkilometer"},
+                paramLabel = "km",
                 description="exact distance traveled in kilometers, not 360-k", split=",")
         protected List<Double> exactDistKilometersList = new ArrayList<>();
 
@@ -332,31 +337,37 @@ public class DistanceArgs {
 
         @Option(names="--takeoff",
                 split=",",
+                paramLabel = "deg",
                 description="takeoff angle in degrees from the source zero is down, 90 horizontal, 180 is up")
         protected List<Double> takeoffAngle = new ArrayList<>();
 
         @CommandLine.Option(names={"--rayparamrad"},
+                paramLabel = "s/rad",
                 description="ray parameter from the source in s/rad, up or down is determined by the phase",
                 split=",")
         protected List<Double> shootRadianRaypList = new ArrayList<>();
 
         @CommandLine.Option(names={"--rayparamdeg"},
+                paramLabel = "s/deg",
                 description="ray parameter from the source in s/deg, up or down is determined by the phase",
                 split=",")
         protected List<Double> shootRaypList = new ArrayList<>();
 
         @CommandLine.Option(names={"--rayparamkm"},
+                paramLabel = "s/km",
                 description="ray parameter from the source in s/km, up or down is determined by the phase",
                 split=",")
         protected List<Double> shootKmRaypList = new ArrayList<>();
 
         @CommandLine.Option(names={"--rayparamidx"},
+                paramLabel = "i",
                 description="ray parameter from the source as index into model sampling, up or down is determined by the phase",
                 split=",")
         protected List<Integer> shootIndexRaypList = new ArrayList<>();
 
         @Option(names={"--sta", "--station"},
                 arity="2",
+                paramLabel = "l",
                 description="station latitude and longitude"
                 )
         void setStationLatLon(List<Double> stationLatLon) {
@@ -373,7 +384,10 @@ public class DistanceArgs {
 
         protected List<Location> stationList = new ArrayList<>();
 
-        @Option(names={"--evt", "--event"}, arity="2", description="event latitude and longitude")
+        @Option(names={"--evt", "--event"},
+                paramLabel = "l",
+                arity="2",
+                description="event latitude and longitude")
         void setEventLatLon(List<Double> eventLatLon) {
             if (eventLatLon.isEmpty()) {
                 eventList.clear();
@@ -395,6 +409,7 @@ public class DistanceArgs {
         protected boolean geodetic = false;
 
         @Option(names= "--ellipflattening",
+                paramLabel = "f",
                 description = "Elliptical flattening for distance calculations when --geodetic, defaults to WGS84 ~ 1/298.257")
         protected double ellipflattening = DistAz.wgs85_flattening;
     }

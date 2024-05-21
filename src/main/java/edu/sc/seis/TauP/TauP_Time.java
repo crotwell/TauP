@@ -39,6 +39,7 @@ import java.util.*;
  */
 @CommandLine.Command(name = "time",
         description = "calculate travel times for seismic phases in an earth model",
+        abbreviateSynopsis = true,
         usageHelpAutoWidth = true)
 public class TauP_Time extends TauP_AbstractRayTool {
 
@@ -61,7 +62,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
     @CommandLine.Mixin
     SeismicSourceArgs sourceArgs = new SeismicSourceArgs();
 
-    @CommandLine.Option(names = "--rel", split = ",", description = "times relative to the first of the given phases")
+    @CommandLine.Option(names = "--rel", split = ",", paramLabel = "phase", description = "times relative to the first of the given phases")
     protected List<String> relativePhaseName = new ArrayList<>();
 
     protected List<SeismicPhase> relativePhaseList = new ArrayList<>();

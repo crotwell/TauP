@@ -33,6 +33,7 @@ import java.util.List;
  */
 @CommandLine.Command(name = "pierce",
         description = "calculate pierce points for phases at discontinuities in the model",
+        abbreviateSynopsis = true,
         usageHelpAutoWidth = true)
 public class TauP_Pierce extends TauP_Time {
 
@@ -77,7 +78,9 @@ public class TauP_Pierce extends TauP_Time {
         this.onlyAddPoints = onlyAddPoints;
     }
 
-    @CommandLine.Option(names= {"--pierce"}, description = "adds depth for calculating pierce points")
+    @CommandLine.Option(names= {"--pierce"},
+            paramLabel = "depth",
+            description = "adds depth for calculating pierce points")
     public void setAddDepth(List<Double> addDepths) {
         modelArgs.setModelSplitDepths(addDepths);
     }

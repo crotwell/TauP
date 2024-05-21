@@ -10,6 +10,7 @@ import java.io.PrintWriter;
 
 @CommandLine.Command(name = "version",
         description = "print version",
+        abbreviateSynopsis = true,
         usageHelpAutoWidth = true)
 public class TauP_Version extends TauP_Tool {
 

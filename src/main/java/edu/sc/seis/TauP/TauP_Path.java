@@ -37,6 +37,7 @@ import static edu.sc.seis.TauP.SvgUtil.createSurfaceWaveCSS;
  */
 @CommandLine.Command(name = "path",
 		description = "plot ray paths through the earth",
+		abbreviateSynopsis = true,
 		usageHelpAutoWidth = true)
 public class TauP_Path extends TauP_AbstractRayTool {
 
@@ -108,7 +109,7 @@ public class TauP_Path extends TauP_AbstractRayTool {
 	}
 
 	@CommandLine.Option(names = "--withtime",
-			description = "include time for each path point")
+			description = "include time for each path point, no effect for SVG.")
 	public void setWithTime(boolean withTime) {
 		this.withTime = withTime;
 	}

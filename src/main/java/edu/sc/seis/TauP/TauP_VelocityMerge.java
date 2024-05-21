@@ -17,6 +17,7 @@ import static edu.sc.seis.TauP.VelocityModel.ND;
  */
 @CommandLine.Command(name = "velmerge",
         description = "merge part of one model into another",
+        abbreviateSynopsis = true,
         usageHelpAutoWidth = true)
 public class TauP_VelocityMerge extends TauP_Tool {
 

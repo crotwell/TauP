@@ -145,7 +145,7 @@ public class VelPlotOutputTypeArgs extends AbstractOutputTypeArgs {
 
     static class VelPlotOutputType {
 
-        @CommandLine.Option(names = {"--text"}, required = true, description = "outputs as text")
+        @CommandLine.Option(names = {"--text"}, required = true, description = "outputs as Text")
         boolean _isText = false;
         @CommandLine.Option(names = {"--json"}, required = true, description = "outputs as JSON")
         boolean _isJSON = false;
@@ -154,7 +154,7 @@ public class VelPlotOutputTypeArgs extends AbstractOutputTypeArgs {
         @CommandLine.Option(names = {"--svg"}, required = true, description = "outputs as SVG")
         boolean _isSVG = false;
 
-        @CommandLine.Option(names = {"--csv"}, required = true, description = "outputs as csv")
+        @CommandLine.Option(names = {"--csv"}, required = true, description = "outputs as CSV")
         boolean _isCsv = false;
         @CommandLine.Option(names = {"--nameddiscon"}, required = true, description = "outputs as .nd named discontinuity model file")
         boolean _isND = false;

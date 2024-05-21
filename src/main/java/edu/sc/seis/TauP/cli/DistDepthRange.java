@@ -30,7 +30,11 @@ public class DistDepthRange {
     }
 
     @CommandLine.Option(names = "--yaxis",
-            description = "y axis type, the depth/radius axis, one of ${COMPLETION-CANDIDATES}"
+            paramLabel = "type",
+            description = {
+                    "y axis type, the depth/radius axis, one of ${COMPLETION-CANDIDATES}",
+                    "No effect for SVG output."
+            }
     )
     public void setDepthAxisType(DepthAxisType axisType) {
         depthAxisType = axisType;
@@ -39,7 +43,11 @@ public class DistDepthRange {
     public DepthAxisType depthAxisType = null;
 
     @CommandLine.Option(names = "--xaxis",
-            description = "x axis type, the distance axis, one of ${COMPLETION-CANDIDATES}"
+            paramLabel = "type",
+            description = {
+                    "x axis type, the depth/radius axis, one of ${COMPLETION-CANDIDATES}",
+                    "No effect for SVG output."
+            }
     )
     public void setDistAxisType(DistanceAxisType axisType) {
         this.distAxisType = axisType;

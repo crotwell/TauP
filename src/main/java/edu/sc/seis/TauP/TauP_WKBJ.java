@@ -60,6 +60,7 @@ import static edu.sc.seis.TauP.cli.OutputTypes.MS3;
  */
 @CommandLine.Command(name = "wkbj",
         description = "calc WKJB seismograms, DANGER: experimental!!!",
+        abbreviateSynopsis = true,
         usageHelpAutoWidth = true)
 public class TauP_WKBJ extends TauP_AbstractRayTool {
 

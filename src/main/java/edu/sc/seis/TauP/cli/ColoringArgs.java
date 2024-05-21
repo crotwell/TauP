@@ -9,7 +9,8 @@ public class ColoringArgs {
     }
 
     @CommandLine.Option(names = "--color",
-            description = "style of coloring for paths and wavefronts, one of ${COMPLETION-CANDIDATES}")
+            defaultValue = "auto",
+            description = "style of coloring for paths and wavefronts, one of: ${COMPLETION-CANDIDATES}")
     public void setColoring(ColorType color) {
         this.color = color;
     }

@@ -11,6 +11,7 @@ import java.util.List;
 
 @CommandLine.Command(name = "phase",
         description = "describe a seismic phase in the current model",
+        abbreviateSynopsis = true,
         usageHelpAutoWidth = true)
 public class TauP_PhaseDescribe extends TauP_AbstractPhaseTool {
 

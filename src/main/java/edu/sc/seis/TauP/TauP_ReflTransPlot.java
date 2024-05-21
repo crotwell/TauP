@@ -633,11 +633,17 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
         return outputTypeArgs.getOutputFormat();
     }
 
-    @CommandLine.Option(names = "--down", defaultValue = "true")
+    @CommandLine.Option(names = "--down",
+            defaultValue = "true",
+            description = "incident is downgoing"
+    )
     public void setIncidentDown(boolean indown) {
         this.indown = indown;
     }
-    @CommandLine.Option(names = "--up", defaultValue = "false")
+    @CommandLine.Option(names = "--up",
+            defaultValue = "false",
+            description = "incident is upgoing, reverses the sense of the boundary"
+    )
     public void setIncidentUp(boolean inup) {
         this.indown = ! inup;
     }
@@ -659,13 +665,15 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
     }
     public boolean isIncidentShWave() { return inshwave;}
 
-    @CommandLine.Option(names = "--energyflux", description = "energy flux coefficients")
+    @CommandLine.Option(names = "--energyflux",
+            description = "all energy flux coefficients, like TppEnergy")
     public void setEnergyFlux(boolean energyFlux) {
         this.energyflux = energyFlux;
     }
     public boolean isEnergyFlux() { return energyflux;}
 
-    @CommandLine.Option(names = "--fsrf", description = "free surface receiver function")
+    @CommandLine.Option(names = "--fsrf",
+            description = "all free surface receiver functions, like FreeRecFuncPz")
     public void setFreeSurfRF(boolean fsrf) {
         this.fsrf = fsrf;
     }
@@ -682,6 +690,7 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
 
     @CommandLine.Option(names = "--layer",
             arity="6",
+            paramLabel = "v",
             description = "inbound and transmitted layer parameters, vp, vs, rho, vp, vs, rho"
     )
     public void setLayerParams(double[] params) {
@@ -720,7 +729,9 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
         return xAxisType;
     }
 
-    @CommandLine.Option(names = "-x", description = "X axis data type, one of ${COMPLETION-CANDIDATES}, default is degree", defaultValue = "degree")
+    @CommandLine.Option(names = "-x",
+            paramLabel = "type",
+            description = "X axis data type, one of ${COMPLETION-CANDIDATES}, default is degree", defaultValue = "degree")
     public void setxAxisType(DegRayParam xAxisType) {
         this.xAxisType = xAxisType;
     }
@@ -729,7 +740,9 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
         return yAxisType;
     }
 
-    @CommandLine.Option(names = "-y", description = "Y axis data type, one of ${COMPLETION-CANDIDATES}, default is all displacement coef.", arity = "1..*")
+    @CommandLine.Option(names = "-y",
+            paramLabel = "type",
+            description = "Y axis data type, one or more of ${COMPLETION-CANDIDATES}, default is all displacement coef.", arity = "1..*")
     public void setyAxisType(List<ReflTransAxisType> yAxisType) {
         this.yAxisType.addAll(yAxisType);
     }
@@ -803,7 +816,9 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
         return inshwave;
     }
 
-    @CommandLine.Option(names = "--anglestep", description = "step in degrees when x is degrees")
+    @CommandLine.Option(names = "--anglestep",
+            paramLabel = "deg",
+            description = "step in degrees when x is degrees")
     public void setAngleStep(double angleStep) {
         this.angleStep = angleStep;
     }
@@ -816,7 +831,9 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
         return rayparamStep;
     }
 
-    @CommandLine.Option(names = "--rpstep", description = "step in ray param when x is ray param")
+    @CommandLine.Option(names = "--rpstep",
+            paramLabel = "s/km",
+            description = "step in ray param when x is ray param")
     public void setRayparamStep(double rayparamStep) {
         this.rayparamStep = rayparamStep;
     }

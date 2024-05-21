@@ -49,7 +49,7 @@ public class TextOutputTypeArgs extends AbstractOutputTypeArgs {
     }
 
     static class TextOutputType {
-        @CommandLine.Option(names = {"--text"}, required = true, description = "outputs as text")
+        @CommandLine.Option(names = {"--text"}, required = true, description = "outputs as Text")
         boolean _isText = false;
         @CommandLine.Option(names = {"--json"}, required = true, description = "outputs as JSON")
         boolean _isJSON = false;

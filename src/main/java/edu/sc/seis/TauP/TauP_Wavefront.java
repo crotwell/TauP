@@ -15,6 +15,7 @@ import static edu.sc.seis.TauP.SvgUtil.createSurfaceWaveCSS;
  */
 @CommandLine.Command(name = "wavefront",
         description = "plot wavefronts of seismic phases at steps in time",
+        abbreviateSynopsis = true,
         usageHelpAutoWidth = true)
 public class TauP_Wavefront extends TauP_AbstractPhaseTool {
 
@@ -32,7 +33,8 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
     @CommandLine.Option(names = "--legend", description = "create a legend")
     boolean isLegend = false;
 
-    @CommandLine.Option(names = "--onlynameddiscon", description = "only draw circles on the plot for named discontinuities like moho, cmb, iocb")
+    @CommandLine.Option(names = "--onlynameddiscon",
+            description = "only draw circles on the plot for named discontinuities like moho, cmb, iocb but not 410")
     boolean onlyNamedDiscon = false;
 
     @CommandLine.Mixin
@@ -396,7 +398,7 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
 
     @CommandLine.Option(names = "--timestep",
     defaultValue = "100",
-    description = "steps in time (seconds) for output, default is ${DEFAULT_VALUE}")
+    description = "steps in time (seconds) for output, default is ${DEFAULT-VALUE}")
     public void setTimeStep(float timeStep) {
         if (timeStep < 0) {
             throw new IllegalArgumentException("TimeStep must be positive: "+timeStep);
@@ -408,7 +410,8 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
         return separateFilesByTime;
     }
 
-    @CommandLine.Option(names="--timefiles", description = "outputs each time into a separate .ps file within the gmt script.")
+    @CommandLine.Option(names="--timefiles",
+            description = "outputs each time into a separate .ps file within the gmt script.")
     public void setSeparateFilesByTime(boolean separateFilesByTime) {
         this.separateFilesByTime = separateFilesByTime;
     }
@@ -417,7 +420,8 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
         return negDistance;
     }
 
-    @CommandLine.Option(names="--negdist", description = "outputs negative distance as well so wavefronts are in both halves.")
+    @CommandLine.Option(names="--negdist",
+            description = "outputs negative distance as well so wavefronts are in both halves.")
     public void setNegDistance(boolean negDistance) {
         this.negDistance = negDistance;
     }

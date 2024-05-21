@@ -76,13 +76,13 @@ public class TableOutputTypeArgs extends AbstractOutputTypeArgs {
     String outFileBase = "taup_table";
 
     static class TableOutputType {
-        @CommandLine.Option(names = {"--text", "--generic"}, required = true, description = "outputs as text")
+        @CommandLine.Option(names = {"--text", "--generic"}, required = true, description = "outputs as Text")
         boolean _isText = true;
         @CommandLine.Option(names = {"--json"}, required = true, description = "outputs as JSON")
         boolean _isJSON = false;
         @CommandLine.Option(names = {"--csv"}, required = true, description = "outputs as CSV")
         boolean _isCSV = false;
-        @CommandLine.Option(names = {"--locsat"}, required = true, description = "outputs as locsat")
+        @CommandLine.Option(names = {"--locsat"}, required = true, description = "outputs as Locsat")
         boolean _isLocsat = false;
     }
 
