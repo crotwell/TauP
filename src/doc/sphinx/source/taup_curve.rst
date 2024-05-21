@@ -35,11 +35,11 @@ and results in
 Other paramaters besides distance vs time can be plotted using the `-x`
 and `-y` options. For example tau vs ray parameter with:
 
-.. literalinclude:: examples/taup_curve_-x_rayparam_-y_tau_--svg.cmd
+.. literalinclude:: examples/taup_curve_-x_rayparamdeg_-y_tau_--svg.cmd
   :language: text
 
 .. raw:: html
-    :file:  examples/taup_curve_-x_rayparam_-y_tau_--svg
+    :file:  examples/taup_curve_-x_rayparamdeg_-y_tau_--svg
 
 
 The usage is:
