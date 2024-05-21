@@ -1,7 +1,17 @@
 <html>
+  <head>
+    <style>
+      .topheader {
+        display: flex;
+      }
+    </style>
+  </head>
 <body>
-<h1>TauP Web interface</h1>
+  <div class="topheader">
+    <img src="doc/_static/taupLogo.svg"/>
+    <h1>Web Interface</h1>
 
+  </div>
 <h3>Resources:</h3>
 <ul>
   <li><a href="doc/index.html" target="_blank">Documentation</a> </li>
@@ -39,8 +49,8 @@
         refltrans?&layer=6.5,3.75,2.9,8,4.5,3.3&anglestep=1&down=true&abs=true&pwave=true&x=rayparam&legend=true&format=svg</a>
     </li>
     <li>
-      phase amplitude curves: <a href="curve?model=iasp91&evdepth=0&phase=S,SKS,SKIKS&stadepth=0&x=rayparamdeg&y=amp&legend=true&format=svg">
-        curve?model=iasp91&evdepth=0&phase=S,SKS,SKIKS&stadepth=0&x=rayparamdeg&legend=true&y=amp&format=svg</a>
+      phase amplitude curves: <a href="curve?model=iasp91&evdepth=0&phase=S,SKS,SKIKS&stadepth=0&x=rayparamdeg&y=amp&ylog=true&legend=true&format=svg">
+        curve?model=iasp91&evdepth=0&phase=S,SKS,SKIKS&stadepth=0&x=rayparamdeg&y=amp&ylog=true&legend=true&format=svg</a>
     </li>
 </ul>
 
