@@ -1,8 +1,4 @@
-Usage: taup setsac [--debug] [--evdpkm] [--help] [--verbose]
-                   [--prop=<toolPropsFilename>] [[--mod=<modelname>]
-                   [-h=<sourceDepth>] [--stadepth=depth] [--scat=s s]...]
-                   [[-p=<phaseNames>[,<phaseNames>...]]...
-                   [--phasefile=<phaseFiles>]...] [<sacFileNames>...]
+Usage: taup setsac [OPTIONS] [<sacFileNames>...]
 set headers to travel times of phases using depth and distance from headers
       [<sacFileNames>...]   SAC files to process
       --debug               enable debugging output
@@ -12,11 +8,12 @@ set headers to travel times of phases using depth and distance from headers
                             load defaults from properties file
       --verbose             enable verbose output
 Model Args
-  -h, --evdepth, --sourcedepth=<sourceDepth>
+  -h, --evdepth, --sourcedepth=depth
                             source depth in km
       --mod, --model=<modelname>
                             use velocity model "modelname" for calculations.
-                            Default is iasp91.
+                            Default is iasp91. Other builtin models include
+                              prem, ak135, ak135fcont, and ak135favg.
       --scat, --scatter=s s scattering depth and distance in degrees, which may
                               be negative. Only effects phases with 'o' or 'O'
                               in the phase name.
@@ -24,7 +21,7 @@ Model Args
                             the receiver depth in km for stations not at the
                               surface
 Phase Names
-  -p, --ph, --phase=<phaseNames>[,<phaseNames>...]
+  -p, --ph, --phase=phase[,phase...]
                             seismic phase names
       --phasefile=<phaseFiles>
                             read list of phase names from file

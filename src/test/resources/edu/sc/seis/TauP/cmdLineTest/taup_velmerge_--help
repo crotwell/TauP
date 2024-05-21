@@ -1,8 +1,4 @@
-Usage: taup velmerge [--debug] [--help] [--smoothbot] [--smoothtop] [--verbose]
-                     [--elev=<elevation>] [-o=<outFile>]
-                     [--prop=<toolPropsFilename>] (--modmerge=<modelName> |
-                     --ndmerge=<nDModelFilename> |
-                     --tvelmerge=<tvelModelFilename>)
+Usage: taup velmerge [OPTIONS]
 merge part of one model into another
       --debug              enable debugging output
       --elev=<elevation>   increase topmost layer by elevation (meters)

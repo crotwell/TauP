@@ -1,35 +1,4 @@
-Usage: taup pierce [--amp] [--debug] [--first] [--geodetic] [--geodetic]
-                   [--help] [--nodiscon] [--rayp] [--rev] [--time] [--turn]
-                   [--under] [--verbose] [--az=<azimuth>] [--az=<azimuth>]
-                   [--baz=<backAzimuth>] [--baz=<backAzimuth>]
-                   [--ellipflattening=<ellipflattening>]
-                   [--ellipflattening=<ellipflattening>] [--mw=<mw>]
-                   [-o=<outFile>] [--prop=<toolPropsFilename>] [--deg=d[,
-                   d...]]... [--deg=d[,d...]]... [--exactdegree=d[,d...]]...
-                   [--exactdegree=d[,d...]]... [--exactkilometer=km[,km...]]...
-                   [--exactkilometer=km[,km...]]... [--km=km[,km...]]...
-                   [--km=km[,km...]]... [--pierce=<addDepth>]...
-                   [--rayparamdeg=<shootRaypList>[,<shootRaypList>...]]...
-                   [--rayparamdeg=<shootRaypList>[,<shootRaypList>...]]...
-                   [--rayparamidx=<shootIndexRaypList>[,
-                   <shootIndexRaypList>...]]...
-                   [--rayparamidx=<shootIndexRaypList>[,
-                   <shootIndexRaypList>...]]... [--rayparamkm=<shootKmRaypList>
-                   [,<shootKmRaypList>...]]... [--rayparamkm=<shootKmRaypList>[,
-                   <shootKmRaypList>...]]...
-                   [--rayparamrad=<shootRadianRaypList>[,
-                   <shootRadianRaypList>...]]...
-                   [--rayparamrad=<shootRadianRaypList>[,
-                   <shootRadianRaypList>...]]... [--rel=<relativePhaseName>[,
-                   <relativePhaseName>...]]... [--takeoff=<takeoffAngle>[,
-                   <takeoffAngle>...]]... [--takeoff=<takeoffAngle>[,
-                   <takeoffAngle>...]]... [--evt=<eventLatLon>
-                   <eventLatLon>]... [--evt=<eventLatLon> <eventLatLon>]...
-                   [--sta=<stationLatLon> <stationLatLon>]...
-                   [--sta=<stationLatLon> <stationLatLon>]...
-                   [[--mod=<modelname>] [-h=<sourceDepth>] [--stadepth=depth]
-                   [--scat=s s]...] [[-p=<phaseNames>[,<phaseNames>...]]...
-                   [--phasefile=<phaseFiles>]...] [--text | --json]
+Usage: taup pierce [OPTIONS]
 calculate pierce points for phases at discontinuities in the model
       --amp                  amplitude factor for each phase
       --debug                enable debugging output
@@ -40,12 +9,11 @@ calculate pierce points for phases at discontinuities in the model
       --nodiscon             only prints pierce points for the depths added
                                with -pierce
   -o, --output=<outFile>     output to file, default is stdout.
-      --pierce=<addDepth>    adds depth for calculating pierce points
+      --pierce=depth         adds depth for calculating pierce points
       --prop=<toolPropsFilename>
                              load defaults from properties file
       --rayp, --onlyrayp     only output the ray parameter
-      --rel=<relativePhaseName>[,<relativePhaseName>...]
-                             times relative to the first of the given phases
+      --rel=phase[,phase...] times relative to the first of the given phases
       --rev                  only prints underside and bottom turn points, e.g.
                                ^ and v
       --time, --onlytime     only output travel time
@@ -53,11 +21,12 @@ calculate pierce points for phases at discontinuities in the model
       --under                only prints underside reflection points, e.g. ^
       --verbose              enable verbose output
 Model Args
-  -h, --evdepth, --sourcedepth=<sourceDepth>
+  -h, --evdepth, --sourcedepth=depth
                              source depth in km
       --mod, --model=<modelname>
                              use velocity model "modelname" for calculations.
-                             Default is iasp91.
+                             Default is iasp91. Other builtin models include
+                               prem, ak135, ak135fcont, and ak135favg.
       --scat, --scatter=s s  scattering depth and distance in degrees, which
                                may be negative. Only effects phases with 'o' or
                                'O' in the phase name.
@@ -65,7 +34,7 @@ Model Args
                              the receiver depth in km for stations not at the
                                surface
 Phase Names
-  -p, --ph, --phase=<phaseNames>[,<phaseNames>...]
+  -p, --ph, --phase=phase[,phase...]
                              seismic phase names
       --phasefile=<phaseFiles>
                              read list of phase names from file
@@ -74,11 +43,9 @@ Distance is given by:
       --baz=<backAzimuth>    backazimuth in degrees
       --deg, --degree=d[,d...]
                              distance in degrees
-      --ellipflattening=<ellipflattening>
-                             Elliptical flattening for distance calculations
+      --ellipflattening=f    Elliptical flattening for distance calculations
                                when --geodetic, defaults to WGS84 ~ 1/298.257
-      --evt, --event=<eventLatLon> <eventLatLon>
-                             event latitude and longitude
+      --evt, --event=l l     event latitude and longitude
       --exactdegree=d[,d...] exact distance traveled in degrees, not 360-d
       --exactkilometer=km[,km...]
                              exact distance traveled in kilometers, not 360-k
@@ -90,23 +57,20 @@ Distance is given by:
                                model.
       --km, --kilometer=km[,km...]
                              distance in kilometers
-      --rayparamdeg=<shootRaypList>[,<shootRaypList>...]
+      --rayparamdeg=s/deg[,s/deg...]
                              ray parameter from the source in s/deg, up or down
                                is determined by the phase
-      --rayparamidx=<shootIndexRaypList>[,<shootIndexRaypList>...]
-                             ray parameter from the source as index into model
+      --rayparamidx=i[,i...] ray parameter from the source as index into model
                                sampling, up or down is determined by the phase
-      --rayparamkm=<shootKmRaypList>[,<shootKmRaypList>...]
+      --rayparamkm=s/km[,s/km...]
                              ray parameter from the source in s/km, up or down
                                is determined by the phase
-      --rayparamrad=<shootRadianRaypList>[,<shootRadianRaypList>...]
+      --rayparamrad=s/rad[,s/rad...]
                              ray parameter from the source in s/rad, up or down
                                is determined by the phase
-      --sta, --station=<stationLatLon> <stationLatLon>
-                             station latitude and longitude
-      --takeoff=<takeoffAngle>[,<takeoffAngle>...]
-                             takeoff angle in degrees from the source zero is
+      --sta, --station=l l   station latitude and longitude
+      --takeoff=deg[,deg...] takeoff angle in degrees from the source zero is
                                down, 90 horizontal, 180 is up
 Output Type
       --json                 outputs as JSON
-      --text                 outputs as text
+      --text                 outputs as Text

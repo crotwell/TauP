@@ -7,7 +7,7 @@ TauP Find
 TauP Find generates possible phase paths through the given earth model.
 It is a way of cheating in that favorite game of seismologists, what's that
 wiggle? It will attempt all possible paths within a model, subject to the
-constraints. The output is either a simple list of possible phase names or
+given constraints. The output is either a simple list of possible phase names or
 travel times in the same format as taup time.
 
 
@@ -56,9 +56,9 @@ gives you all phases with 0,1 or 2 interactions for a 100 kilometer
 deep source, excluding interactions with the 210 discontinuity. Both the
 `iasp91` and `ak135` velocity models have very small discontinuities only in
 S velocity at 210, and so it is probably best to exclude that as it is too
-small to generate interacting phases.
-Note that many of these phases may be of very small amplitude, below what
-is detectable,
+small to generate significant amplitude interacting phases.
+Note that many of these phases even with more substantial discontinuities
+may be of very small amplitude, below what is detectable,
 or may not exist at all for some distances and source depths.
 
 

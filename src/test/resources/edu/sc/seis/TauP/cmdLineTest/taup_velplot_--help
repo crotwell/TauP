@@ -1,51 +1,45 @@
-Usage: taup velplot [--debug] [--help] [--legend] [--listdiscon] [--verbose]
-                    [--mapwidth=<mapwidth>] [--mapwidthunit=<mapWidthUnit>]
-                    [-o=<outFile>] [--prop=<toolPropsFilename>]
-                    [-x=<xAxisType>] [-y=<yAxisType>] [--xminmax=x x]...
-                    [--yminmax=y y]... [--mod[=<modelName>...] [--mod
-                    [=<modelName>...]]... | --nd[=<nDModelFilename>...] [--nd
-                    [=<nDModelFilename>...]]... | --tvel
-                    [=<tvelModelFilename>...] [--tvel
-                    [=<tvelModelFilename>...]]...] [--text | --json | --gmt |
-                    --svg | --csv | --nameddiscon]
+Usage: taup velplot [OPTIONS]
 plot velocity vs depth for a model
-      --debug               enable debugging output
-      --help                display this help message
-      --legend              create a legend
-      --listdiscon          List the discontinuities in the velocity model
-      --mapwidth=<mapwidth> plot width in inches for GMT, pixels for SVG.
+      --debug              enable debugging output
+      --help               display this help message
+      --legend             create a legend
+      --listdiscon         List the discontinuities in the velocity model
+      --mapwidth=<mapwidth>
+                           plot width in inches for GMT, pixels for SVG.
       --mapwidthunit=<mapWidthUnit>
-                            plot width unit for GMT. Default is i for inchs
-  -o, --output=<outFile>    output to file, default is stdout.
+                           plot width unit for GMT. Default is i for inchs
+  -o, --output=<outFile>   output to file, default is stdout.
       --prop=<toolPropsFilename>
-                            load defaults from properties file
-      --verbose             enable verbose output
-  -x, --xaxis=<xAxisType>   X axis data type, one of depth, radius, velocity,
-                              Vp, Vs, slownessdeg, slownessdeg_p,
-                              slownessdeg_s, slownessrad, slownessrad_p,
-                              slownessrad_s, density, velocity_density, Qp, Qs,
-                              Q, vpvs, poisson, shearmodulus, lambda,
-                              bulkmodulus, youngsmodulus
-      --xminmax=x x         min and max x axis for plotting
-  -y, --yaxis=<yAxisType>   Y axis data type, one of depth, radius, velocity,
-                              Vp, Vs, slownessdeg, slownessdeg_p,
-                              slownessdeg_s, slownessrad, slownessrad_p,
-                              slownessrad_s, density, velocity_density, Qp, Qs,
-                              Q, vpvs, poisson, shearmodulus, lambda,
-                              bulkmodulus, youngsmodulus
-      --yminmax=y y         min and max y axis for plotting
+                           load defaults from properties file
+      --verbose            enable verbose output
+  -x, --xaxis=type         X axis data type, one of depth, radius, velocity,
+                             Vp, Vs, slownessdeg, slownessdeg_p, slownessdeg_s,
+                             slownessrad, slownessrad_p, slownessrad_s,
+                             density, velocity_density, Qp, Qs, Q, vpvs,
+                             poisson, shearmodulus, lambda, bulkmodulus,
+                             youngsmodulus
+                           Default is velocity.
+      --xminmax=x x        min and max x axis for plotting
+  -y, --yaxis=type         Y axis data type, one of depth, radius, velocity,
+                             Vp, Vs, slownessdeg, slownessdeg_p, slownessdeg_s,
+                             slownessrad, slownessrad_p, slownessrad_s,
+                             density, velocity_density, Qp, Qs, Q, vpvs,
+                             poisson, shearmodulus, lambda, bulkmodulus,
+                             youngsmodulus
+                           Default is depth.
+      --yminmax=y y        min and max y axis for plotting
 Velocity Model
       --mod, --model[=<modelName>...]
-                            use velocity model "modelname" for calculations,
-                              format is guessed.
+                           use velocity model "modelname" for calculations,
+                             format is guessed.
       --nd[=<nDModelFilename>...]
-                            "named discontinuities" velocity file
+                           "named discontinuities" velocity file
       --tvel[=<tvelModelFilename>...]
-                            ".tvel" velocity file, ala ttimes
+                           ".tvel" velocity file, ala ttimes
 Output Type
-      --csv                 outputs as csv
-      --gmt                 outputs as GMT
-      --json                outputs as JSON
-      --nameddiscon         outputs as .nd named discontinuity model file
-      --svg                 outputs as SVG
-      --text                outputs as text
+      --csv                outputs as CSV
+      --gmt                outputs as GMT
+      --json               outputs as JSON
+      --nameddiscon        outputs as .nd named discontinuity model file
+      --svg                outputs as SVG
+      --text               outputs as Text

@@ -1,16 +1,6 @@
-Usage: taup wavefront [--debug] [--help] [--legend] [--negdist]
-                      [--onlynameddiscon] [--timefiles] [--verbose]
-                      [--color=<coloring>] [--mapwidth=<mapwidth>]
-                      [--mapwidthunit=<mapWidthUnit>] [-o=<outFile>]
-                      [--prop=<toolPropsFilename>] [--timestep=<timeStep>]
-                      [--xaxis=<distAxisType>] [--yaxis=<depthAxisType>]
-                      [--degminmax=deg deg] [--depthminmax=km km]
-                      [[--mod=<modelname>] [-h=<sourceDepth>]
-                      [--stadepth=depth] [--scat=s s]...] [[-p=<phaseNames>[,
-                      <phaseNames>...]]... [--phasefile=<phaseFiles>]...]
-                      [--text | --json | --gmt | --svg]
+Usage: taup wavefront [OPTIONS]
 plot wavefronts of seismic phases at steps in time
-      --color=<coloring>    style of coloring for paths and wavefronts, one of
+      --color=<coloring>    style of coloring for paths and wavefronts, one of:
                               auto, wavetype, phase
       --debug               enable debugging output
       --degminmax=deg deg   min and max distance in degrees for plotting
@@ -24,25 +14,26 @@ plot wavefronts of seismic phases at steps in time
                               in both halves.
   -o, --output=<outFile>    output to file, default is stdout.
       --onlynameddiscon     only draw circles on the plot for named
-                              discontinuities like moho, cmb, iocb
+                              discontinuities like moho, cmb, iocb but not 410
       --prop=<toolPropsFilename>
                             load defaults from properties file
       --timefiles           outputs each time into a separate .ps file within
                               the gmt script.
-      --timestep=<timeStep> steps in time (seconds) for output, default is null
+      --timestep=<timeStep> steps in time (seconds) for output, default is 100
       --verbose             enable verbose output
-      --xaxis=<distAxisType>
-                            x axis type, the distance axis, one of degree,
+      --xaxis=type          x axis type, the depth/radius axis, one of degree,
                               radian, kilometer
-      --yaxis=<depthAxisType>
-                            y axis type, the depth/radius axis, one of depth,
+                            No effect for SVG output.
+      --yaxis=type          y axis type, the depth/radius axis, one of depth,
                               radius
+                            No effect for SVG output.
 Model Args
-  -h, --evdepth, --sourcedepth=<sourceDepth>
+  -h, --evdepth, --sourcedepth=depth
                             source depth in km
       --mod, --model=<modelname>
                             use velocity model "modelname" for calculations.
-                            Default is iasp91.
+                            Default is iasp91. Other builtin models include
+                              prem, ak135, ak135fcont, and ak135favg.
       --scat, --scatter=s s scattering depth and distance in degrees, which may
                               be negative. Only effects phases with 'o' or 'O'
                               in the phase name.
@@ -50,7 +41,7 @@ Model Args
                             the receiver depth in km for stations not at the
                               surface
 Phase Names
-  -p, --ph, --phase=<phaseNames>[,<phaseNames>...]
+  -p, --ph, --phase=phase[,phase...]
                             seismic phase names
       --phasefile=<phaseFiles>
                             read list of phase names from file
@@ -58,4 +49,4 @@ Output Type
       --gmt                 outputs as GMT
       --json                outputs as JSON
       --svg                 outputs as SVG
-      --text                outputs as text
+      --text                outputs as Text

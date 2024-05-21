@@ -1,9 +1,4 @@
-Usage: taup table [--debug] [--help] [--verbose] [--header=<headerFile>]
-                  [-o=<outFile>] [--prop=<toolPropsFilename>]
-                  [[--mod=<modelname>] [-h=<sourceDepth>] [--stadepth=depth]
-                  [--scat=s s]...] [[-p=<phaseNames>[,<phaseNames>...]]...
-                  [--phasefile=<phaseFiles>]...] [--text | --json | --csv |
-                  --locsat]
+Usage: taup table [OPTIONS]
 create a table of travel times for a range of depths and distances
       --debug              enable debugging output
       --header=<headerFile>
@@ -15,11 +10,12 @@ create a table of travel times for a range of depths and distances
                            load defaults from properties file
       --verbose            enable verbose output
 Model Args
-  -h, --evdepth, --sourcedepth=<sourceDepth>
+  -h, --evdepth, --sourcedepth=depth
                            source depth in km
       --mod, --model=<modelname>
                            use velocity model "modelname" for calculations.
-                           Default is iasp91.
+                           Default is iasp91. Other builtin models include
+                             prem, ak135, ak135fcont, and ak135favg.
       --scat, --scatter=s s
                            scattering depth and distance in degrees, which may
                              be negative. Only effects phases with 'o' or 'O'
@@ -28,12 +24,12 @@ Model Args
                            the receiver depth in km for stations not at the
                              surface
 Phase Names
-  -p, --ph, --phase=<phaseNames>[,<phaseNames>...]
+  -p, --ph, --phase=phase[,phase...]
                            seismic phase names
       --phasefile=<phaseFiles>
                            read list of phase names from file
 Output Type
       --csv                outputs as CSV
       --json               outputs as JSON
-      --locsat             outputs as locsat
-      --text, --generic    outputs as text
+      --locsat             outputs as Locsat
+      --text, --generic    outputs as Text

@@ -1,73 +1,66 @@
-Usage: taup curve [--debug] [--help] [--legend] [--verbose] [--xabs] [--xlog]
-                  [--yabs] [--ylog] [--color=<coloring>]
-                  [--mapwidth=<mapwidth>] [--mapwidthunit=<mapWidthUnit>]
-                  [--mw=<mw>] [-o=<outFile>] [--prop=<toolPropsFilename>]
-                  [--reddeg=<reduceVelDeg>] [--redkm=<reduceVelKm>]
-                  [--rel=<relativePhaseName>] [-x=<xAxisType>] [-y=<yAxisType>]
-                  [--xminmax=x x]... [--yminmax=y y]... [[--mod=<modelname>]
-                  [-h=<sourceDepth>] [--stadepth=depth] [--scat=s s]...]
-                  [[-p=<phaseNames>[,<phaseNames>...]]...
-                  [--phasefile=<phaseFiles>]...] [--text | --json | --gmt |
-                  --svg]
+Usage: taup curve [OPTIONS]
 plot traveltime and other curves for phases
-      --color=<coloring>    style of coloring for paths and wavefronts, one of
-                              auto, wavetype, phase
-      --debug               enable debugging output
-      --help                display this help message
-      --legend              create a legend
-      --mapwidth=<mapwidth> plot width in inches for GMT, pixels for SVG.
+      --color=<coloring>   style of coloring for paths and wavefronts, one of:
+                             auto, wavetype, phase
+      --debug              enable debugging output
+      --help               display this help message
+      --legend             create a legend
+      --mapwidth=<mapwidth>
+                           plot width in inches for GMT, pixels for SVG.
       --mapwidthunit=<mapWidthUnit>
-                            plot width unit for GMT. Default is i for inchs
-      --mw=<mw>             scale amplitude by source moment magnitude
-  -o, --output=<outFile>    output to file, default is stdout.
+                           plot width unit for GMT. Default is i for inchs
+      --mw=<mw>            scale amplitude by source moment magnitude
+  -o, --output=<outFile>   output to file, default is stdout.
       --prop=<toolPropsFilename>
-                            load defaults from properties file
-      --reddeg=<reduceVelDeg>
-                            outputs curves with a reducing velocity (deg/sec),
-                              no effect if axis is not distance-like/time
-      --redkm=<reduceVelKm> outputs curves with a reducing velocity (km/sec),
-                              no effect if axis is not distance-like/time
-      --rel=<relativePhaseName>
-                            plot relative to the given phase, no effect unless
-                              distance/time
-      --verbose             enable verbose output
-  -x, --xaxis=<xAxisType>   X axis data type, one of radian, radian180, degree,
-                              degree180, kilometer, kilometer180, rayparamrad,
-                              rayparamdeg, rayparamkm, time, tau, takeoffangle,
-                              incidentangle, turndepth, amp, amppsv, ampsh,
-                              geospread, refltran, refltranpsv, refltransh,
-                              index, tstar, attenuation, theta
-      --xabs                X axis is absolute value
-      --xlog                X axis is log
-      --xminmax=x x         min and max x axis for plotting
-  -y, --yaxis=<yAxisType>   Y axis data type, one of radian, radian180, degree,
-                              degree180, kilometer, kilometer180, rayparamrad,
-                              rayparamdeg, rayparamkm, time, tau, takeoffangle,
-                              incidentangle, turndepth, amp, amppsv, ampsh,
-                              geospread, refltran, refltranpsv, refltransh,
-                              index, tstar, attenuation, theta
-      --yabs                Y axis is absolute value
-      --ylog                Y axis is log
-      --yminmax=y y         min and max y axis for plotting
+                           load defaults from properties file
+      --reddeg=deg/s       outputs curves with a reducing velocity (deg/sec),
+                             no effect if axis is not distance-like/time
+      --redkm=km/s         outputs curves with a reducing velocity (km/sec), no
+                             effect if axis is not distance-like/time
+      --rel=phase          plot relative to the given phase, no effect unless
+                             distance/time
+      --verbose            enable verbose output
+  -x, --xaxis=type         X axis data type, default is degree180, one of
+                             radian, radian180, degree, degree180, kilometer,
+                             kilometer180, rayparamrad, rayparamdeg,
+                             rayparamkm, time, tau, takeoffangle,
+                             incidentangle, turndepth, amp, amppsv, ampsh,
+                             geospread, refltran, refltranpsv, refltransh,
+                             index, tstar, attenuation, theta
+      --xabs               X axis is absolute value
+      --xlog               X axis is log
+      --xminmax=x x        min and max x axis for plotting
+  -y, --yaxis=type         Y axis data type, default is time, one of radian,
+                             radian180, degree, degree180, kilometer,
+                             kilometer180, rayparamrad, rayparamdeg,
+                             rayparamkm, time, tau, takeoffangle,
+                             incidentangle, turndepth, amp, amppsv, ampsh,
+                             geospread, refltran, refltranpsv, refltransh,
+                             index, tstar, attenuation, theta
+      --yabs               Y axis is absolute value
+      --ylog               Y axis is log
+      --yminmax=y y        min and max y axis for plotting
 Model Args
-  -h, --evdepth, --sourcedepth=<sourceDepth>
-                            source depth in km
+  -h, --evdepth, --sourcedepth=depth
+                           source depth in km
       --mod, --model=<modelname>
-                            use velocity model "modelname" for calculations.
-                            Default is iasp91.
-      --scat, --scatter=s s scattering depth and distance in degrees, which may
-                              be negative. Only effects phases with 'o' or 'O'
-                              in the phase name.
+                           use velocity model "modelname" for calculations.
+                           Default is iasp91. Other builtin models include
+                             prem, ak135, ak135fcont, and ak135favg.
+      --scat, --scatter=s s
+                           scattering depth and distance in degrees, which may
+                             be negative. Only effects phases with 'o' or 'O'
+                             in the phase name.
       --stadepth, --receiverdepth=depth
-                            the receiver depth in km for stations not at the
-                              surface
+                           the receiver depth in km for stations not at the
+                             surface
 Phase Names
-  -p, --ph, --phase=<phaseNames>[,<phaseNames>...]
-                            seismic phase names
+  -p, --ph, --phase=phase[,phase...]
+                           seismic phase names
       --phasefile=<phaseFiles>
-                            read list of phase names from file
+                           read list of phase names from file
 Output Type
-      --gmt                 outputs as GMT
-      --json                outputs as JSON
-      --svg                 outputs as SVG
-      --text                outputs as text
+      --gmt                outputs as GMT
+      --json               outputs as JSON
+      --svg                outputs as SVG
+      --text               outputs as Text

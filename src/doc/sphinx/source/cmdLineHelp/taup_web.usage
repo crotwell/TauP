@@ -1,4 +1,4 @@
-Usage: taup web [-p=<port>] [--webroot=<webRoot>]
+Usage: taup web [OPTIONS]
 web based gui for the TauP Toolkit
   -p, --port=<port>         port to use
       --webroot=<webRoot>   web root value

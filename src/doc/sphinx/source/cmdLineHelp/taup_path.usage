@@ -1,117 +1,84 @@
-Usage: taup path [--debug] [--geodetic] [--geodetic] [--help]
-                 [--onlynameddiscon] [--verbose] [--withtime] [--az=<azimuth>]
-                 [--az=<azimuth>] [--baz=<backAzimuth>] [--baz=<backAzimuth>]
-                 [--color=<coloring>] [--ellipflattening=<ellipflattening>]
-                 [--ellipflattening=<ellipflattening>] [--mapwidth=<mapwidth>]
-                 [--mapwidthunit=<mapWidthUnit>] [--maxpathinc=<maxPathInc>]
-                 [-o=<outFile>] [--prop=<toolPropsFilename>]
-                 [--xaxis=<distAxisType>] [--yaxis=<depthAxisType>] [--deg=d[,
-                 d...]]... [--deg=d[,d...]]... [--exactdegree=d[,d...]]...
-                 [--exactdegree=d[,d...]]... [--exactkilometer=km[,km...]]...
-                 [--exactkilometer=km[,km...]]... [--km=km[,km...]]... [--km=km
-                 [,km...]]... [--rayparamdeg=<shootRaypList>[,
-                 <shootRaypList>...]]... [--rayparamdeg=<shootRaypList>[,
-                 <shootRaypList>...]]... [--rayparamidx=<shootIndexRaypList>[,
-                 <shootIndexRaypList>...]]...
-                 [--rayparamidx=<shootIndexRaypList>[,
-                 <shootIndexRaypList>...]]... [--rayparamkm=<shootKmRaypList>[,
-                 <shootKmRaypList>...]]... [--rayparamkm=<shootKmRaypList>[,
-                 <shootKmRaypList>...]]... [--rayparamrad=<shootRadianRaypList>
-                 [,<shootRadianRaypList>...]]...
-                 [--rayparamrad=<shootRadianRaypList>[,
-                 <shootRadianRaypList>...]]... [--takeoff=<takeoffAngle>[,
-                 <takeoffAngle>...]]... [--takeoff=<takeoffAngle>[,
-                 <takeoffAngle>...]]... [--degminmax=deg deg] [--depthminmax=km
-                 km] [--evt=<eventLatLon> <eventLatLon>]...
-                 [--evt=<eventLatLon> <eventLatLon>]... [--sta=<stationLatLon>
-                 <stationLatLon>]... [--sta=<stationLatLon> <stationLatLon>]...
-                 [[--mod=<modelname>] [-h=<sourceDepth>] [--stadepth=depth]
-                 [--scat=s s]...] [[-p=<phaseNames>[,<phaseNames>...]]...
-                 [--phasefile=<phaseFiles>]...] [--text | --json | --gmt |
-                 --svg]
+Usage: taup path [OPTIONS]
 plot ray paths through the earth
-      --color=<coloring>    style of coloring for paths and wavefronts, one of
-                              auto, wavetype, phase
-      --debug               enable debugging output
-      --degminmax=deg deg   min and max distance in degrees for plotting
-      --depthminmax=km km   min and max depth, km,  for plotting
-      --help                display this help message
-      --mapwidth=<mapwidth> plot width in inches for GMT, pixels for SVG.
+      --color=<coloring>     style of coloring for paths and wavefronts, one
+                               of: auto, wavetype, phase
+      --debug                enable debugging output
+      --degminmax=deg deg    min and max distance in degrees for plotting
+      --depthminmax=km km    min and max depth, km,  for plotting
+      --help                 display this help message
+      --mapwidth=<mapwidth>  plot width in inches for GMT, pixels for SVG.
       --mapwidthunit=<mapWidthUnit>
-                            plot width unit for GMT. Default is i for inchs
+                             plot width unit for GMT. Default is i for inchs
       --maxpathinc=<maxPathInc>
-                            Maximum distance increment in degrees between path
-                              points, avoid visible segmentation in plots
-  -o, --output=<outFile>    output to file, default is stdout.
-      --onlynameddiscon     only draw circles on the plot for named
-                              discontinuities like moho, cmb, iocb
+                             Maximum distance increment in degrees between path
+                               points, avoid visible segmentation in plots
+  -o, --output=<outFile>     output to file, default is stdout.
+      --onlynameddiscon      only draw circles on the plot for named
+                               discontinuities like moho, cmb, iocb
       --prop=<toolPropsFilename>
-                            load defaults from properties file
-      --verbose             enable verbose output
-      --withtime            include time for each path point
-      --xaxis=<distAxisType>
-                            x axis type, the distance axis, one of degree,
-                              radian, kilometer
-      --yaxis=<depthAxisType>
-                            y axis type, the depth/radius axis, one of depth,
-                              radius
+                             load defaults from properties file
+      --verbose              enable verbose output
+      --withtime             include time for each path point, no effect for
+                               SVG.
+      --xaxis=type           x axis type, the depth/radius axis, one of degree,
+                               radian, kilometer
+                             No effect for SVG output.
+      --yaxis=type           y axis type, the depth/radius axis, one of depth,
+                               radius
+                             No effect for SVG output.
 Model Args
-  -h, --evdepth, --sourcedepth=<sourceDepth>
-                            source depth in km
+  -h, --evdepth, --sourcedepth=depth
+                             source depth in km
       --mod, --model=<modelname>
-                            use velocity model "modelname" for calculations.
-                            Default is iasp91.
-      --scat, --scatter=s s scattering depth and distance in degrees, which may
-                              be negative. Only effects phases with 'o' or 'O'
-                              in the phase name.
+                             use velocity model "modelname" for calculations.
+                             Default is iasp91. Other builtin models include
+                               prem, ak135, ak135fcont, and ak135favg.
+      --scat, --scatter=s s  scattering depth and distance in degrees, which
+                               may be negative. Only effects phases with 'o' or
+                               'O' in the phase name.
       --stadepth, --receiverdepth=depth
-                            the receiver depth in km for stations not at the
-                              surface
+                             the receiver depth in km for stations not at the
+                               surface
 Phase Names
-  -p, --ph, --phase=<phaseNames>[,<phaseNames>...]
-                            seismic phase names
+  -p, --ph, --phase=phase[,phase...]
+                             seismic phase names
       --phasefile=<phaseFiles>
-                            read list of phase names from file
+                             read list of phase names from file
 Distance is given by:
-      --az=<azimuth>        azimuth in degrees
-      --baz=<backAzimuth>   backazimuth in degrees
+      --az=<azimuth>         azimuth in degrees
+      --baz=<backAzimuth>    backazimuth in degrees
       --deg, --degree=d[,d...]
-                            distance in degrees
-      --ellipflattening=<ellipflattening>
-                            Elliptical flattening for distance calculations
-                              when --geodetic, defaults to WGS84 ~ 1/298.257
-      --evt, --event=<eventLatLon> <eventLatLon>
-                            event latitude and longitude
-      --exactdegree=d[,d...]
-                            exact distance traveled in degrees, not 360-d
+                             distance in degrees
+      --ellipflattening=f    Elliptical flattening for distance calculations
+                               when --geodetic, defaults to WGS84 ~ 1/298.257
+      --evt, --event=l l     event latitude and longitude
+      --exactdegree=d[,d...] exact distance traveled in degrees, not 360-d
       --exactkilometer=km[,km...]
-                            exact distance traveled in kilometers, not 360-k
-      --geodetic            use geodetic latitude for distance calculations,
-                              which implies an ellipticity. Default is
-                              spherical. Note this only affects calculation of
-                              distance from lat/lon, all travel time
-                              calculations are done in a purely spherical model.
+                             exact distance traveled in kilometers, not 360-k
+      --geodetic             use geodetic latitude for distance calculations,
+                               which implies an ellipticity. Default is
+                               spherical. Note this only affects calculation of
+                               distance from lat/lon, all travel time
+                               calculations are done in a purely spherical
+                               model.
       --km, --kilometer=km[,km...]
-                            distance in kilometers
-      --rayparamdeg=<shootRaypList>[,<shootRaypList>...]
-                            ray parameter from the source in s/deg, up or down
-                              is determined by the phase
-      --rayparamidx=<shootIndexRaypList>[,<shootIndexRaypList>...]
-                            ray parameter from the source as index into model
-                              sampling, up or down is determined by the phase
-      --rayparamkm=<shootKmRaypList>[,<shootKmRaypList>...]
-                            ray parameter from the source in s/km, up or down
-                              is determined by the phase
-      --rayparamrad=<shootRadianRaypList>[,<shootRadianRaypList>...]
-                            ray parameter from the source in s/rad, up or down
-                              is determined by the phase
-      --sta, --station=<stationLatLon> <stationLatLon>
-                            station latitude and longitude
-      --takeoff=<takeoffAngle>[,<takeoffAngle>...]
-                            takeoff angle in degrees from the source zero is
-                              down, 90 horizontal, 180 is up
+                             distance in kilometers
+      --rayparamdeg=s/deg[,s/deg...]
+                             ray parameter from the source in s/deg, up or down
+                               is determined by the phase
+      --rayparamidx=i[,i...] ray parameter from the source as index into model
+                               sampling, up or down is determined by the phase
+      --rayparamkm=s/km[,s/km...]
+                             ray parameter from the source in s/km, up or down
+                               is determined by the phase
+      --rayparamrad=s/rad[,s/rad...]
+                             ray parameter from the source in s/rad, up or down
+                               is determined by the phase
+      --sta, --station=l l   station latitude and longitude
+      --takeoff=deg[,deg...] takeoff angle in degrees from the source zero is
+                               down, 90 horizontal, 180 is up
 Output Type
-      --gmt                 outputs as GMT
-      --json                outputs as JSON
-      --svg                 outputs as SVG
-      --text                outputs as text
+      --gmt                  outputs as GMT
+      --json                 outputs as JSON
+      --svg                  outputs as SVG
+      --text                 outputs as Text
