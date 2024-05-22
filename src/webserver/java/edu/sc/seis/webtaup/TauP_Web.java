@@ -68,31 +68,37 @@ public class TauP_Web extends TauP_Tool {
                     }
 
                     public void handleTauPRequest(final HttpServerExchange exchange) throws Exception {
-                        String path = exchange.getRequestPath().substring(1); // trim first slash
+                        String path = exchange.getRequestPath();
+                        while (path.startsWith("/")) {
+                            path = path.substring(1); // trim first slash
+                        }
                         System.err.println("handleRequest "+path+" from "+exchange.getRequestPath());
-                        TauP_Tool tool = createTool(path);
+
                         Map<String, Deque<String>> queryParams = exchange.getQueryParameters();
-                        if (tool != null) {
-                            System.err.println("Handle via TauP Tool:" + path);
-                            webRunTool(tool, queryParams, exchange);
-                        } else if (exchange.getRequestPath().equals("/favicon.ico")) {
+                        if (path.equals("favicon.ico")) {
                             new ResponseCodeHandler(404).handleRequest(exchange);
-                        } else if (exchange.getRequestPath().startsWith("/cmdline")) {
-                            tool = createTool(path.substring(8));
+                        } else if (path.startsWith("cmdline")) {
+                            TauP_Tool tool = createTool(path.substring(7));
                             handleCmdLine(tool, queryParams, exchange);
-                        } else if (exchange.getRequestPath().equals("/paramhelp")) {
+                        } else if (path.equals("paramhelp")) {
                             handleParamHelp(queryParams, exchange);
-                        } else if (exchange.getRequestPath().equals("/version")) {
+                        } else if (path.equals("version")) {
                             exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, "text/plain");
                             exchange.getResponseSender().send(BuildVersion.getDetailedVersion());
                         } else {
-                            System.err.println("Try to load as classpath resource: "+exchange.getRequestPath());
-                            ResourceHandler resHandler = new ResourceHandler(
-                                    new ClassPathResourceManager(TauP_Web.class.getClassLoader(),
-                                     "edu/sc/seis/webtaup/html"));
-                            MimeMappings nmm = MimeMappings.builder(true).addMapping("mjs", "application/javascript").build();
-                            resHandler.setMimeMappings(nmm);
-                            resHandler.handleRequest(exchange);
+                            TauP_Tool tool = createTool(path);
+                            if (tool != null) {
+                                System.err.println("Handle via TauP Tool:" + path);
+                                webRunTool(tool, queryParams, exchange);
+                            } else {
+                                System.err.println("Try to load as classpath resource: " + path);
+                                ResourceHandler resHandler = new ResourceHandler(
+                                        new ClassPathResourceManager(TauP_Web.class.getClassLoader(),
+                                                "edu/sc/seis/webtaup/html"));
+                                MimeMappings nmm = MimeMappings.builder(true).addMapping("mjs", "application/javascript").build();
+                                resHandler.setMimeMappings(nmm);
+                                resHandler.handleRequest(exchange);
+                            }
                         }
                     }
                 })).build();
@@ -136,7 +142,7 @@ public class TauP_Web extends TauP_Tool {
     }
 
     public TauP_Tool createTool(String toolToRun) {
-        if (toolToRun.startsWith("/")) {
+        while (toolToRun.startsWith("/")) {
             toolToRun = toolToRun.substring(1);
         }
         TauP_Tool tool = ToolRun.getToolForName(toolToRun);
