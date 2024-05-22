@@ -26,7 +26,6 @@
 
 package edu.sc.seis.TauP;
 
-import edu.sc.seis.TauP.cli.OutputTypes;
 import edu.sc.seis.TauP.cli.SeismicSourceArgs;
 import edu.sc.seis.TauP.cli.SeismogramOutputTypeArgs;
 import edu.sc.seis.seisFile.fdsnws.quakeml.*;
@@ -156,7 +155,7 @@ public class TauP_WKBJ extends TauP_AbstractRayTool {
             MSeed3EH eh = createEH(degrees, getOriginTime(), allArrivals);
 
             for (Arrival arrival : allArrivals) {
-                int timeIdx = (int) Math.round((arrival.getTime() - startTime)/ getDeltaT());
+                int timeIdx = (int) Math.ceil((arrival.getTime() - startTime)/ getDeltaT());
                 double psvAmpFactor = arrival.getAmplitudeFactorPSV(sourceArgs.getMoment());
                 double shAmpFactor = arrival.getAmplitudeFactorSH(sourceArgs.getMoment());
                 double incidentAngle = arrival.getIncidentAngleDegree();
@@ -165,9 +164,16 @@ public class TauP_WKBJ extends TauP_AbstractRayTool {
                     rotateAngle = 90;
                 }
                 incidentAngle += rotateAngle;
-                transverse[timeIdx] += shAmpFactor;
-                radial[timeIdx] += psvAmpFactor * Math.cos(incidentAngle*Math.PI/180);
-                vertical[timeIdx] += psvAmpFactor * Math.sin(incidentAngle*Math.PI/180);
+                int width = 2;
+                if (deltaT < 1) {
+                    width = (int) Math.round(1/deltaT) + 1;
+                }
+                for (int w = 0; w < width; w++) {
+
+                transverse[timeIdx+w] += shAmpFactor;
+                radial[timeIdx+w] += psvAmpFactor * Math.cos(incidentAngle*Math.PI/180);
+                vertical[timeIdx+w] += psvAmpFactor * Math.sin(incidentAngle*Math.PI/180);
+                }
             }
 
             String staCode = "S"+degrees;
@@ -236,8 +242,9 @@ public class TauP_WKBJ extends TauP_AbstractRayTool {
                                         String sourceCode, String subsourceCode,
                                         int startSecOffset) {
         MSeed3Record ms3RecZ = new MSeed3Record();
+        String bandCode = "B";
         ms3RecZ.setSourceId(new FDSNSourceId("XX", staCode, "00",
-                "B", sourceCode, subsourceCode));
+                bandCode, sourceCode, subsourceCode));
         ms3RecZ.setSampleRatePeriod(-1*getDeltaT());
         ms3RecZ.setTimeseries(data);
         ZonedDateTime startDT = ms3RecZ.getStartDateTime().plusSeconds(startSecOffset);
@@ -279,7 +286,7 @@ public class TauP_WKBJ extends TauP_AbstractRayTool {
             rtz[TRANS_IDX] = dumbconvolve(rtz[TRANS_IDX], sourceTerm[TRANS_IDX]);
             rtz[VERT_IDX] = dumbconvolve(rtz[VERT_IDX], sourceTerm[VERT_IDX]);
             //startTime += (int) (Math.round(sourceTerm[VERT_IDX].length*getDeltaT()));
-            String staCode = "S"+degrees;
+            String staCode = "S"+Math.round(degrees);
             if (staCode.length()> 8) { staCode = staCode.substring(8);}
             MSeed3EH eh = createEH(degrees, getOriginTime(), allArrivals);
             eh.setTimeseriesUnit("m");
