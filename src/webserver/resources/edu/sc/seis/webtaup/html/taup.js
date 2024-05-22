@@ -1,6 +1,6 @@
 import { startAnimation } from './wavefront_animation.js';
 
-//import * as sp from './seisplotjs_3.1.4-SNAPSHOT_standalone.mjs';
+import * as sp from './seisplotjs_3.1.4_standalone.mjs';
 
 /**
  * Set up form listeners and other initialization items.
@@ -192,30 +192,32 @@ export async function display_results(taup_url) {
         }
       });
     } else if (format === "ms3") {
-      console.log("miniseed3 format disabled");
+      //console.log("miniseed3 format disabled");
 
-      // return response.arrayBuffer().then(rawBuffer => {
-      //   const dataRecords = sp.mseed3.parseMSeed3Records(rawBuffer);
-      //   return dataRecords;
-      // }).then(dataRecords => {
-      //   return sp.mseed3.seismogramPerChannel(dataRecords);
-      // }).then(seisList => {
-      //   const data = seisList[0].y;
-      //   let seisConfig = new sp.seismographconfig.SeismographConfig();
-      //   seisConfig.isRelativeTime = true;
-      //   seisConfig.amplitudeMode = sp.scale.AMPLITUDE_MODE.Raw;
-      //   const sddList = seisList.map(seis => sp.seismogram.SeismogramDisplayData.fromSeismogram(seis));
-      //   const seismograph = new sp.organizeddisplay.OrganizedDisplay(sddList, seisConfig);
-      //   //const seismograph = new sp.seismograph.Seismograph(sddList, seisConfig);
-      //   seismograph.addStyle(`
-      //     sp-seismograph {
-      //       height: 400px;
-      //     }
-      //   `);
-      //   container_el.appendChild(seismograph);
-      //   seismograph.draw();
-      //
-      // });
+      return response.arrayBuffer().then(rawBuffer => {
+        const dataRecords = sp.mseed3.parseMSeed3Records(rawBuffer);
+        return dataRecords;
+      }).then(dataRecords => {
+        return sp.mseed3.sddPerChannel(dataRecords);
+      }).then(sddList => {
+        let seisConfig = new sp.seismographconfig.SeismographConfig();
+        //seisConfig.isRelativeTime = true;
+        seisConfig.amplitudeMode = sp.scale.AMPLITUDE_MODE.Raw;
+        seisConfig.doMarkers = false;
+
+        console.log(`quake: ${sddList[0].quake}`);
+        sddList[0].markerList.forEach((m) => console.log(m.tm));
+        const seismograph = new sp.organizeddisplay.OrganizedDisplay(sddList, seisConfig);
+        //const seismograph = new sp.seismograph.Seismograph(sddList, seisConfig);
+        seismograph.addStyle(`
+          sp-seismograph {
+            height: 400px;
+          }
+        `);
+        container_el.appendChild(seismograph);
+        seismograph.draw();
+
+      });
     }
   });
 }
