@@ -1080,10 +1080,15 @@ public class SimpleSeismicPhase implements SeismicPhase {
         out.println("{");
         out.println(SQ+"name"+QCQ+getName()+QCOMMA);
         out.println(SQ+"puristname"+QCQ+getPuristName()+QCOMMA);
-        out.println(SeismicPhase.baseDescribeJSON(this));
-        out.println(",");
+        if (proto.isFail) {
+            out.println(SQ+"fail"+QCQ+proto.failReason+QCOMMA);
+        }
+        String baseDesc = SeismicPhase.baseDescribeJSON(this);
+        if (baseDesc.length() > 0) {
+            out.println(baseDesc+",");
+        }
         out.println(SeismicPhase.segmentDescribeJSON(this));
-        out.println("}");
+        out.print("}");
         return sw.toString();
     }
 

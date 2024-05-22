@@ -264,9 +264,9 @@ public interface SeismicPhase extends Serializable, Cloneable {
                     hasPrevShadow = true;
                 }
             }
-            desc += "  ]\n";
+            desc += "  ]";
         } else {
-            desc += "  \n";
+            desc = "";
         }
         return desc;
     }
@@ -293,7 +293,7 @@ public interface SeismicPhase extends Serializable, Cloneable {
             }
             desc += indent+segment.toJSONString();
         }
-        desc += indent+"]\n";
+        desc += indent+"]";
         return desc;
     }
 

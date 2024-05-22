@@ -130,10 +130,16 @@ public class SeismicPhaseFactory {
                 || name.contains(""+ PhaseSymbols.BACKSCATTER_CODE)) {
             String[] in_scat = name.split("(["+ PhaseSymbols.SCATTER_CODE+ PhaseSymbols.BACKSCATTER_CODE+"])");
             if (in_scat.length > 2) {
-                throw new TauModelException("Scatter phase doesn't have two segments: "+name+", repeated scattering not supported");
+                FailedSeismicPhase fail = FailedSeismicPhase.failForReason(name, tMod, receiverDepth,
+                        "Scatter phase cannot have multiple scatter symbols, oO, in "+name+", repeated scattering not supported");
+                phaseList.add(fail);
+                return phaseList;
             }
-            if (scat.depth == 0.0) {
-                throw new ScatterArrivalFailException("Attempt to use scatter phase but scatter depth is zero: "+name);
+            if (scat == null ) {
+                FailedSeismicPhase fail = FailedSeismicPhase.failForReason(name, tMod, receiverDepth,
+                        "Attempt to use scatter phase but scatter is missing: "+name);
+                phaseList.add(fail);
+                return phaseList;
             }
             boolean isBackscatter = name.contains("" + PhaseSymbols.BACKSCATTER_CODE);
             TauModel tModDepthCorrected = tMod;
@@ -164,8 +170,11 @@ public class SeismicPhaseFactory {
 
             List<Arrival> inArrivals = scat.dist.calculate(inPhase);
             if (inArrivals.isEmpty()) {
-                throw new ScatterArrivalFailException("No inbound arrivals to the scatterer for "+name
+                FailedSeismicPhase fail = FailedSeismicPhase.failForReason(name, tMod, receiverDepth,
+                        "No inbound arrivals to the scatterer for "+name
                         +" at "+scat.depth+" km depth and "+scat.dist.getDegrees(tMod.getRadiusOfEarth())+" deg. Distance range for scatterer at this depth is "+inPhase.getMinDistanceDeg()+" "+inPhase.getMaxDistanceDeg()+" deg.");
+                phaseList.add(fail);
+                return phaseList;
             }
             for (Arrival inArr : inArrivals) {
                 Arrival flipInArr = inArr;
@@ -270,7 +279,7 @@ public class SeismicPhaseFactory {
         String prevLeg;
         String currLeg = legs.get(0);
         String nextLeg = currLeg;
-        boolean isPWave;
+        boolean isPWave = true;
         boolean prevIsPWave;
 
         /*
@@ -281,7 +290,8 @@ public class SeismicPhaseFactory {
             try {
                 Double.parseDouble(currLeg.substring(0, name.length() - 4));
             } catch (NumberFormatException e) {
-                throw new TauModelException(getName()+" Illegal surface wave velocity "+name.substring(0, name.length() - 4), e);
+                return ProtoSeismicPhase.failNewPhase(tMod, false, true,
+                        receiverDepth, getName()," Illegal surface wave velocity "+name.substring(0, name.length() - 4));
             }
             // KMPS fake with a head wave
             ProtoSeismicPhase proto = ProtoSeismicPhase.startEmpty(name, tMod, receiverDepth);
@@ -291,7 +301,8 @@ public class SeismicPhaseFactory {
         /* Make a check for J legs if the model doesn not allow J */
         if((name.indexOf(J) != -1 || name.indexOf(j) != -1)
                 && !tMod.getSlownessModel().isAllowInnerCoreS()) {
-            throw new TauModelException(getName()+" 'J' phases were not created for this model: "
+            return ProtoSeismicPhase.failNewPhase(tMod, false, true,
+                    receiverDepth, getName()," 'J' phases were not created for this model: "
                     + tMod.getModelName());
         }
         /* check for outer core if K */
@@ -316,7 +327,8 @@ public class SeismicPhaseFactory {
             isPWave = SWAVE;
             prevIsPWave = isPWave;
         } else {
-            throw new TauModelException(getName()+" Unknown starting phase: "+currLeg);
+            return ProtoSeismicPhase.failNewPhase(tMod, false, true,
+                    receiverDepth, getName(), getName()+" Unknown starting phase: "+currLeg);
         }
         /*
          * First, decide whether the ray is up going or downgoing from the
@@ -386,10 +398,11 @@ public class SeismicPhaseFactory {
                         receiverDepth, name, reason);
             }
         } else {
-            throw new TauModelException(getName()+" First phase not recognized: "
+            return ProtoSeismicPhase.failNewPhase(tMod, false, true,
+                    receiverDepth, getName()," First phase leg not recognized: "
                     +currLeg
                     + " Must be one of P, Pg, Pn, Pdiff, p, Ped or the S equivalents in crust/mantle, "
-                    + "or k, K, I, J, j for core sources.");
+                    + "or k, K, I, y, J, j for core sources.");
         }
         /*
          * Figure out which legs are P and S
@@ -550,38 +563,38 @@ public class SeismicPhaseFactory {
                     }
                 }
                 if (nextLeg.equals(END_CODE)) {
-                    throw new TauModelException(getName() + " Phase not recognized (12): "
+                    return failWithMessage(proto," Phase not recognized (12): "
                             + currLeg + " as last leg, then " + nextLeg);
                 }
             } else if (currLeg.startsWith("^")) {
                 if (nextLeg.equals(END_CODE)) {
-                    throw new TauModelException(getName() + " Phase not recognized (12): "
+                    return failWithMessage(proto," Phase not recognized (12): "
                             + currLeg + " as last leg, then " + nextLeg);
                 }
                 // nothing to do as will have been handled by previous leg
             } else if (currLeg.startsWith("v") || currLeg.startsWith("V")) {
                 if (nextLeg.equals(END_CODE)) {
-                    throw new TauModelException(getName() + " Phase not recognized (12): "
+                    return failWithMessage(proto," Phase not recognized (12): "
                             + currLeg + " as last leg, then " + nextLeg);
                 }
                 String depthString;
                 depthString = currLeg.substring(1);
                 int b = LegPuller.closestBranchToDepth(tMod, depthString);
                 if (b == 0) {
-                    throw new TauModelException(getName() + " Phase not recognized: " + currLeg + " looks like a top side reflection at the free surface.");
+                    return failWithMessage(proto," Phase not recognized: " + currLeg + " looks like a top side reflection at the free surface.");
                 }
             } else if (isLegDepth) {
                 // check for phase like P0s, but could also be P2s if first discon is deeper
                 int b = LegPuller.closestBranchToDepth(tMod, currLeg);
                 if (b == 0 && (nextLeg.equals("p") || nextLeg.equals("s"))) {
-                    throw new TauModelException(getName() + " Phase not recognized: " + currLeg
+                    return failWithMessage(proto," Phase not recognized: " + currLeg
                             + " followed by " + nextLeg + " looks like a upgoing wave from the free surface as closest discontinuity to " + currLeg + " is zero depth.");
                 }
             } else if (currLeg.endsWith("n")) {
                 // non-standard head wave
                 proto = currLegIs_OtherHead(proto, prevLeg, currLeg, nextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
             } else {
-                throw new TauModelException(getName() + " Phase not recognized (10): " + currLeg
+                return failWithMessage(proto," Phase not recognized (10): " + currLeg
                         + " followed by " + nextLeg);
             }
             if (proto.isFail ) {
@@ -594,7 +607,7 @@ public class SeismicPhaseFactory {
         if (proto.isSuccessful() ) {
             if ((proto.endSegment().isDownGoing && proto.endSegment().endBranch != downgoingRecBranch)
                 || (!proto.endSegment().isDownGoing && proto.endSegment().endBranch != upgoingRecBranch)) {
-                throw new TauModelException(getName()+" Phase does not end at the receiver branch, last: "+proto.endSegment());
+                return failWithMessage(proto," Phase does not end at the receiver branch, last: "+proto.endSegment());
             }
 
             if (DEBUG) {
@@ -628,11 +641,11 @@ public class SeismicPhaseFactory {
             return failWithMessage(proto, reason);
         }
         if(nextLeg.startsWith("v") || nextLeg.startsWith("V")) {
-            throw new TauModelException(getName()+" p and s and k must always be up going "
+            return failWithMessage(proto," p and s and k must always be up going "
                     + " and cannot come immediately before a top-side reflection."
                     + " currLeg=" + currLeg + " nextLeg=" + nextLeg);
         } else if(nextLeg.equals("p") || nextLeg.equals("s")) {
-            throw new TauModelException(getName()+" Phase not recognized (2): "
+            return failWithMessage(proto," Phase not recognized (2): "
                     + currLeg + " followed by " + nextLeg);
         } else if(nextLeg.startsWith("^")) {
             String depthString;
@@ -647,7 +660,7 @@ public class SeismicPhaseFactory {
                         endAction,
                         currLeg);
             } else {
-                throw new TauModelException(getName()+" Phase not recognized (2): "
+                return failWithMessage(proto," Phase not recognized (2): "
                         + currLeg + " followed by " + nextLeg
                         + " when currBranch=" + currBranch
                         + " > disconBranch=" + disconBranch);
@@ -691,12 +704,12 @@ public class SeismicPhaseFactory {
 
         } else if(nextLeg.equals("c") || nextLeg.equals("i")
                 || nextLeg.equals("I") || nextLeg.equals("J") || nextLeg.equals("j")) {
-            throw new TauModelException(getName()+" Phase not recognized (3): "
+            return failWithMessage(proto," Phase not recognized (3): "
                     + currLeg + " followed by " + nextLeg+", p and s must be upgoing in mantle and so cannot hit core.");
         } else if(isLegDepth(nextLeg)) {
             double nextLegDepth = Double.parseDouble(nextLeg);
             if (nextLegDepth >= tMod.getCmbDepth()) {
-                throw new TauModelException(getName()+" Phase not recognized (3): "
+                return failWithMessage(proto," Phase not recognized (3): "
                         + currLeg + " followed by " + nextLeg+", p and s must be upgoing in mantle and so cannot hit core.");
             }
             int disconBranch = LegPuller.closestBranchToDepth(tMod, nextLeg);
@@ -708,7 +721,7 @@ public class SeismicPhaseFactory {
                     endAction,
                     currLeg);
         } else {
-            throw new TauModelException(getName()+" Phase not recognized (3 else): "
+            return failWithMessage(proto," Phase not recognized (3 else): "+legNum+" "
                     + currLeg + " followed by " + nextLeg);
         }
         return proto;
@@ -816,7 +829,7 @@ public class SeismicPhaseFactory {
                         endAction,
                         currLeg);
             } else {
-                throw new TauModelException(getName()+" Phase not recognized (5): "
+                return failWithMessage(proto," Phase not recognized (5): "
                         + currLeg + " followed by " + nextLeg
                         + " when currBranch=" + currBranch
                         + " > disconBranch=" + disconBranch+" , prev="+prevLeg);
@@ -834,7 +847,7 @@ public class SeismicPhaseFactory {
                     endAction,
                     currLeg);
         } else if(nextLeg.equals("K") && prevLeg.equals("K")) {
-            throw new TauModelException(getName()+" Phase not recognized (5.5): "
+            return failWithMessage(proto," Phase not recognized (5.5): "
                     + currLeg + " followed by " + nextLeg
                     + " and preceeded by "+prevLeg
                     + " when currBranch=" + currBranch
@@ -858,7 +871,7 @@ public class SeismicPhaseFactory {
                         endAction,
                         currLeg);
             } else {
-                throw new TauModelException(getName()+" P or S followed by I or J can only exist if model has no outer core: "
+                return failWithMessage(proto," P or S followed by I or J can only exist if model has no outer core: "
                         + currLeg
                         + " followed by "
                         + nextLeg);
@@ -881,7 +894,7 @@ public class SeismicPhaseFactory {
                 if (disconBranch > currBranch) {
                     // check for discontinuity below the current branch
                     // when the ray should be upgoing
-                    throw new TauModelException(getName() + " Phase not recognized (6): "
+                    return failWithMessage(proto," Phase not recognized (6): "
                             + currLeg
                             + " followed by "
                             + nextLeg
@@ -943,7 +956,7 @@ public class SeismicPhaseFactory {
                         return failWithMessage(proto, reason);
                     }
                 } else {
-                    throw new TauModelException(getName() + " Phase not recognized (7): "
+                    return failWithMessage(proto," Phase not recognized (7): "
                             + currLeg
                             + " followed by "
                             + nextLeg
@@ -962,10 +975,10 @@ public class SeismicPhaseFactory {
                         endAction,
                         currLeg);
             } catch (NumberFormatException e) {
-                throw new TauModelException(getName() + " Phase not recognized (7): "
+                return failWithMessage(proto," Phase not recognized (7): "
                         + currLeg
                         + " followed by "
-                        + nextLeg + " expected number but was `" + numString + "`", e);
+                        + nextLeg + " expected number but was `" + numString + "`");
             }
 
         } else if (nextLeg.endsWith("diff") && nextLeg.length() > 4) {
@@ -988,13 +1001,13 @@ public class SeismicPhaseFactory {
                 proto.addToBranch(0, isPWave, nextIsPWave, endAction, currLeg);
 
             } catch(NumberFormatException e) {
-                throw new TauModelException(getName() + " Phase not recognized (7): "
+                return failWithMessage(proto," Phase not recognized (7): "
                         + currLeg
                         + " followed by "
-                        + nextLeg+" expected number but was `"+numString+"`", e);
+                        + nextLeg+" expected number but was `"+numString+"`");
             }
         } else {
-            throw new TauModelException(getName()+" Phase not recognized (8): "
+            return failWithMessage(proto," Phase not recognized (8): "
                     + currLeg + " followed by " + nextLeg);
         }
         return proto;
@@ -1100,7 +1113,7 @@ public class SeismicPhaseFactory {
                         endAction,
                         currLeg);
             } else {
-                throw new TauModelException(getName()+" Phase not recognized (4): "
+                return failWithMessage(proto," Phase not recognized (4): "
                         + currLeg + " followed by " + nextLeg
                         + " when currBranch=" + currBranch
                         + " < disconBranch=" + disconBranch);
@@ -1120,7 +1133,7 @@ public class SeismicPhaseFactory {
                 return failWithMessage(proto, reason);
             }
         } else {
-            throw new TauModelException(getName()+" Phase not recognized (1): "
+            return failWithMessage(proto," Phase not recognized (1): "
                     + currLeg + " followed by " + nextLeg);
         }
         return proto;
@@ -1157,7 +1170,7 @@ public class SeismicPhaseFactory {
                     // already at correct depth ?
                 } else {
                     // we are below at the right branch to diffract???
-                    throw new TauModelException("Unable to diffract, " + currBranch + " to cmb " + (tMod.getCmbBranch() - 1) + " " + endActionString(prevEndAction) + " " + prevSegment);
+                    return failWithMessage(proto,"Unable to diffract, " + currBranch + " to cmb " + (tMod.getCmbBranch() - 1) + " " + endActionString(prevEndAction) + " " + prevSegment);
                 }
                 if (nextLeg.startsWith("K") || nextLeg.equals("I") || nextLeg.equals("J")) {
                     // down into inner core
@@ -1205,7 +1218,7 @@ public class SeismicPhaseFactory {
                 } else if (nextLeg.equals("p") || nextLeg.equals("s")) {
                     // upgoing
                 } else {
-                    throw new TauModelException(getName() + " Phase not recognized (12): "
+                    return failWithMessage(proto, " Phase not recognized (12): "
                             + currLeg + " followed by " + nextLeg
                             + " when currBranch=" + currBranch);
                 }
@@ -1244,7 +1257,7 @@ public class SeismicPhaseFactory {
             }
 
         } else {
-            throw new TauModelException(getName()+" Phase not recognized for P,S: "
+            return failWithMessage(proto, " Phase not recognized for P,S: "
                     + currLeg + " followed by " + nextLeg);
         }
         return proto;
@@ -1343,7 +1356,7 @@ public class SeismicPhaseFactory {
                                 currLeg);
 
                 } else {
-                    throw new TauModelException(getName()+" Phase not recognized (12): "
+                    return failWithMessage(proto, " Phase not recognized (12): "
                             + currLeg + " followed by " + nextLeg);
                 }
             } else if(currLeg.equals("Pn") || currLeg.equals("Sn")) {
@@ -1402,15 +1415,15 @@ public class SeismicPhaseFactory {
                                 endAction,
                                 currLeg);
                     } else {
-                        throw new TauModelException(getName()+" Phase not recognized (12): "
+                        return failWithMessage(proto, " Phase not recognized (12): "
                                 + currLeg + " followed by " + nextLeg);
                     }
             } else {
-                throw new TauModelException(getName()+" Phase not recognized for P,S: "
+                return failWithMessage(proto, " Phase not recognized for P,S: "
                         + currLeg + " followed by " + nextLeg);
             }
         } else {
-            throw new TauModelException(getName()+" Phase not recognized for P,S: "
+            return failWithMessage(proto, " Phase not recognized for P,S: "
                     + currLeg + " followed by " + nextLeg);
         }
         return proto;
@@ -1664,7 +1677,7 @@ public class SeismicPhaseFactory {
                             endAction,
                             currLeg);
                 } else {
-                    throw new TauModelException(getName()+" Phase not recognized (4): "
+                    return failWithMessage(proto, " Phase not recognized (4): "
                             + currLeg + " followed by " + nextLeg
                             + " when currBranch=" + currBranch
                             + " < disconBranch=" + disconBranch);
@@ -1780,11 +1793,11 @@ public class SeismicPhaseFactory {
                         endAction,
                         currLeg);
             } else {
-                throw new TauModelException(getName()+" Phase not recognized (9b): "
+                return failWithMessage(proto, " Phase not recognized (9b): "
                         + currLeg + " followed by " + nextLeg);
             }
         } else {
-            throw new TauModelException(getName()+" Phase not recognized (9): "
+            return failWithMessage(proto, " Phase not recognized (9): "
                     + currLeg + " followed by " + nextLeg);
         }
         return proto;
@@ -1841,7 +1854,7 @@ public class SeismicPhaseFactory {
                             endAction,
                             currLeg);
                 } else {
-                    throw new TauModelException(getName()+" Phase not recognized (4): "
+                    return failWithMessage(proto, " Phase not recognized (4): "
                             + currLeg + " followed by " + nextLeg
                             + " when currBranch=" + currBranch
                             + " < disconBranch=" + disconBranch);
@@ -1879,11 +1892,11 @@ public class SeismicPhaseFactory {
                         endAction,
                         currLeg);
             } else {
-                throw new TauModelException(getName()+" Phase not recognized (9b): "
+                return failWithMessage(proto, " Phase not recognized (9b): "
                         + currLeg + " followed by " + nextLeg);
             }
         } else {
-            throw new TauModelException(getName()+" Phase not recognized (9): "
+            return failWithMessage(proto, " Phase not recognized (9): "
                     + currLeg + " followed by " + nextLeg);
         }
         return proto;
@@ -1896,7 +1909,7 @@ public class SeismicPhaseFactory {
         PhaseInteraction endAction;
         int currBranch = calcStartBranch(proto, currLeg);
         if(nextLeg.startsWith("v") || nextLeg.startsWith("V")) {
-            throw new TauModelException(getName()+" k must always be up going "
+            return failWithMessage(proto, " k must always be up going "
                     + " and cannot come immediately before a top-side reflection."
                     + " currLeg=" + currLeg + " nextLeg=" + nextLeg);
         } else if(nextLeg.startsWith("^")) {
@@ -1905,7 +1918,7 @@ public class SeismicPhaseFactory {
             endAction = REFLECT_UNDERSIDE;
             int disconBranch = LegPuller.closestBranchToDepth(tMod, depthString);
             if (disconBranch < tMod.getCmbBranch() || disconBranch >= tMod.getIocbBranch()) {
-                throw new TauModelException(getName()+" Phase not recognized (2): "
+                return failWithMessage(proto, " Phase not recognized (2): "
                         + currLeg + " followed by " + nextLeg
                         + ", discon not in outer core.");
             }
@@ -1917,7 +1930,7 @@ public class SeismicPhaseFactory {
                         endAction,
                         currLeg);
             } else {
-                throw new TauModelException(getName()+" Phase not recognized (2): "
+                return failWithMessage(proto, " Phase not recognized (2): "
                         + currLeg + " followed by " + nextLeg
                         + " when currBranch=" + currBranch
                         + " > disconBranch=" + disconBranch);
@@ -1952,7 +1965,7 @@ public class SeismicPhaseFactory {
             } else if (nextLeg.equals("K") || nextLeg.equals("Ked")) {
                 endAction = REFLECT_UNDERSIDE;
             } else {
-                throw new TauModelException(getName()+" Phase not recognized (3): "
+                return failWithMessage(proto, " Phase not recognized (3): "
                         + currLeg + " followed by " + nextLeg);
             }
             proto.addToBranch(
@@ -1963,24 +1976,24 @@ public class SeismicPhaseFactory {
                     currLeg);
 
         } else if(nextLeg.equals("c") ) {
-            throw new TauModelException(getName()+" Phase not recognized (3): "
+            return failWithMessage(proto, " Phase not recognized (3): "
                     + currLeg + " followed by " + nextLeg+", k must be upgoing in outer core and so cannot hit cmb from above.");
         } else if(nextLeg.equals("i")
                 || nextLeg.equals("I") || nextLeg.equals("J") || nextLeg.equals("j")) {
-            throw new TauModelException(getName()+" Phase not recognized (3): "
+            return failWithMessage(proto, " Phase not recognized (3): "
                     + currLeg + " followed by " + nextLeg+", k must be upgoing in outer core and so cannot hit inner core.");
         } else if(nextLeg.equals("k")) {
-            throw new TauModelException(getName()+" Phase not recognized (3): "
+            return failWithMessage(proto, " Phase not recognized (3): "
                     + currLeg + " followed by " + nextLeg+", k must be upgoing in outer core and so repeat.");
         } else if(isLegDepth(currLeg)) {
             double nextLegDepth = Double.parseDouble(currLeg);
             if (nextLegDepth >= tMod.getCmbDepth()) {
-                throw new TauModelException(getName()+" Phase not recognized (3): "
+                return failWithMessage(proto, " Phase not recognized (3): "
                         + currLeg + " followed by " + nextLeg+", p and s must be upgoing in mantle and so cannot hit core.");
             }
             int disconBranch = LegPuller.closestBranchToDepth(tMod, nextLeg);
             if (disconBranch < tMod.getCmbBranch() || disconBranch >= tMod.getIocbBranch()) {
-                throw new TauModelException(getName()+" Phase not recognized (2): "
+                return failWithMessage(proto, " Phase not recognized (2): "
                         + currLeg + " followed by " + nextLeg
                         + ", discon not in outer core.");
             }
@@ -1992,7 +2005,7 @@ public class SeismicPhaseFactory {
                     endAction,
                     currLeg);
         } else {
-            throw new TauModelException(getName()+" Phase not recognized (3): "
+            return failWithMessage(proto, " Phase not recognized (3): "
                     + currLeg + " followed by " + nextLeg);
         }
         return proto;
@@ -2066,7 +2079,7 @@ public class SeismicPhaseFactory {
                         endAction,
                         currLeg);
             } else {
-                throw new TauModelException(getName()+" Phase not recognized (4): "
+                return failWithMessage(proto, " Phase not recognized (4): "
                         + currLeg + " followed by " + nextLeg
                         + " when currBranch=" + currBranch
                         + " < disconBranch=" + disconBranch);
@@ -2077,7 +2090,7 @@ public class SeismicPhaseFactory {
             endAction = REFLECT_UNDERSIDE;
             int disconBranch = LegPuller.closestBranchToDepth(tMod, depthString);
             if (disconBranch < tMod.getIocbBranch()) {
-                throw new TauModelException(getName()+" Phase not recognized (6a): "
+                return failWithMessage(proto, " Phase not recognized (6a): "
                         + currLeg + " followed by " + nextLeg
                         + " when disconBranch=" + disconBranch
                         +" < iocbBranch="+tMod.getIocbBranch()+", likely need K leg , prev="+prevLeg);
@@ -2144,7 +2157,7 @@ public class SeismicPhaseFactory {
                     currLeg);
 
         } else {
-            throw new TauModelException(getName()+" Phase not recognized (6a): "
+            return failWithMessage(proto, " Phase not recognized (6a): "
                     + currLeg + " followed by " + nextLeg);
         }
         return proto;
@@ -2177,7 +2190,7 @@ public class SeismicPhaseFactory {
                             endAction,
                             currLeg);
                 } else {
-                    throw new TauModelException(getName()+" Phase not recognized (4): "
+                    return failWithMessage(proto, " Phase not recognized (4): "
                             + currLeg + " followed by " + nextLeg
                             + " when currBranch=" + currBranch
                             + " < disconBranch=" + disconBranch);
@@ -2215,11 +2228,11 @@ public class SeismicPhaseFactory {
                         endAction,
                         currLeg);
             } else {
-                throw new TauModelException(getName()+" Phase not recognized (9b): "
+                return failWithMessage(proto, " Phase not recognized (9b): "
                         + currLeg + " followed by " + nextLeg);
             }
         } else {
-            throw new TauModelException(getName()+" Phase not recognized (9): "
+            return failWithMessage(proto, " Phase not recognized (9): "
                     + currLeg + " followed by " + nextLeg);
         }
         return proto;
@@ -2324,7 +2337,7 @@ public class SeismicPhaseFactory {
         PhaseInteraction endAction;
         int currBranch = calcStartBranch(proto, currLeg);
         if(nextLeg.startsWith("v") || nextLeg.startsWith("V")) {
-            throw new TauModelException(getName()+" y,j must always be up going "
+            return failWithMessage(proto, " y,j must always be up going "
                     + " and cannot come immediately before a top-side reflection."
                     + " currLeg=" + currLeg + " nextLeg=" + nextLeg);
         } else if(nextLeg.startsWith("^")) {
@@ -2333,7 +2346,7 @@ public class SeismicPhaseFactory {
             endAction = REFLECT_UNDERSIDE;
             int disconBranch = LegPuller.closestBranchToDepth(tMod, depthString);
             if (disconBranch < tMod.getIocbBranch() ) {
-                throw new TauModelException(getName()+" Phase not recognized (2): "
+                return failWithMessage(proto, " Phase not recognized (2): "
                         + currLeg + " followed by " + nextLeg
                         + ", discon not in inner core.");
             }
@@ -2345,7 +2358,7 @@ public class SeismicPhaseFactory {
                         endAction,
                         currLeg);
             } else {
-                throw new TauModelException(getName()+" Phase not recognized (2): "
+                return failWithMessage(proto, " Phase not recognized (2): "
                         + currLeg + " followed by " + nextLeg
                         + " when currBranch=" + currBranch
                         + " > disconBranch=" + disconBranch);
@@ -2384,7 +2397,7 @@ public class SeismicPhaseFactory {
                     // no outer core
                     endAction = TRANSUP;
                 } else {
-                    throw new TauModelException(getName()+" Phase not recognized (3): "
+                    return failWithMessage(proto, " Phase not recognized (3): "
                             + currLeg + " followed by " + nextLeg+", outer core leg would be K or k");
                 }
             } else if (nextLeg.equals(END_CODE)) {
@@ -2393,7 +2406,7 @@ public class SeismicPhaseFactory {
                 || nextLeg.equals("J") || nextLeg.equals("Jed")) {
                 endAction = REFLECT_UNDERSIDE;
             } else {
-                throw new TauModelException(getName()+" Phase not recognized (3): "
+                return failWithMessage(proto, " Phase not recognized (3): "
                         + currLeg + " followed by " + nextLeg);
             }
             proto.addToBranch(
@@ -2404,23 +2417,23 @@ public class SeismicPhaseFactory {
                     currLeg);
 
         } else if(nextLeg.equals("i") ) {
-            throw new TauModelException(getName()+" Phase not recognized (3): "
+            return failWithMessage(proto, " Phase not recognized (3): "
                     + currLeg + " followed by " + nextLeg+", y,j must be upgoing in inner core and so cannot hit iomb from above.");
         } else if(nextLeg.equals("I") || nextLeg.equals("J") ) {
-            throw new TauModelException(getName()+" Phase not recognized (3): "
+            return failWithMessage(proto, " Phase not recognized (3): "
                     + currLeg + " followed by " + nextLeg+", y,j must be upgoing in outer core and so cannot hit inner core.");
         } else if(nextLeg.equals("y") || nextLeg.equals("j")) {
-            throw new TauModelException(getName()+" Phase not recognized (3): "
+            return failWithMessage(proto, " Phase not recognized (3): "
                     + currLeg + " followed by " + nextLeg+", y,j must be upgoing in inner core and so cannot repeat.");
         } else if(isLegDepth(currLeg)) {
             double nextLegDepth = Double.parseDouble(currLeg);
             if (nextLegDepth >= tMod.getCmbDepth()) {
-                throw new TauModelException(getName()+" Phase not recognized (3): "
+                return failWithMessage(proto, " Phase not recognized (3): "
                         + currLeg + " followed by " + nextLeg+", y and j must be upgoing in inner core and so cannot hit depth "+nextLegDepth);
             }
             int disconBranch = LegPuller.closestBranchToDepth(tMod, nextLeg);
             if (disconBranch < tMod.getIocbBranch() ) {
-                throw new TauModelException(getName()+" Phase not recognized (2): "
+                return failWithMessage(proto, " Phase not recognized (2): "
                         + currLeg + " followed by " + nextLeg
                         + ", discon not in inner core.");
             }
@@ -2432,7 +2445,7 @@ public class SeismicPhaseFactory {
                     endAction,
                     currLeg);
         } else {
-            throw new TauModelException(getName()+" Phase not recognized (3): "
+            return failWithMessage(proto, " Phase not recognized (3): "
                     + currLeg + " followed by " + nextLeg);
         }
         return proto;

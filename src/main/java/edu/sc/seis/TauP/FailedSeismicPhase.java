@@ -16,6 +16,14 @@ public class FailedSeismicPhase extends SimpleSeismicPhase {
         0,
         0,
         false);
+        this.proto.isFail = true;
+    }
+
+    public static FailedSeismicPhase failForReason(String phaseName, TauModel tMod, double receiverDepth, String failReason) {
+        ProtoSeismicPhase proto = ProtoSeismicPhase.failNewPhase(tMod, true, true,
+                receiverDepth, phaseName, failReason);
+        FailedSeismicPhase fail = new FailedSeismicPhase(proto);
+        return fail;
     }
 
     @Override
@@ -55,15 +63,10 @@ public class FailedSeismicPhase extends SimpleSeismicPhase {
 
     @Override
     public String describe() {
-        return "Failed phase "+getName()+": "+proto.failReason+"\n"
-                +super.describe();
+        return getName()+":\n  Failed phase:\n"
+                +"  "+proto.failReason
+                +"\n"+ SeismicPhase.segmentDescribe(this);
     }
-
-    @Override
-    public String describeJson() {
-        return "";
-    }
-
 
     @Override
     public double calcEnergyReflTranPSV(Arrival arrival) throws VelocityModelException, SlownessModelException {
@@ -84,4 +87,5 @@ public class FailedSeismicPhase extends SimpleSeismicPhase {
     public int getNumRays() {
         return 0;
     }
+
 }
