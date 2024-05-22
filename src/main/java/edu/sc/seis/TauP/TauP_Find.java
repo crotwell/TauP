@@ -66,10 +66,13 @@ public class TauP_Find extends TauP_Tool {
         List<RayCalculateable> distanceValues = distanceArgs.getRayCalculatables();
         if((!distanceValues.isEmpty())) {
             List<SeismicPhase> phaseList = new ArrayList<>();
+            List<String> phaseNameList = new ArrayList<>();
             for (ProtoSeismicPhase proto : walk) {
+                phaseNameList.add(proto.getName());
                 phaseList.add(proto.asSeismicPhase());
             }
             TauP_Time timeTool = new TauP_Time();
+            timeTool.setPhaseNames(phaseNameList);
             timeTool.modelArgs = modelArgs;
             timeTool.outputTypeArgs = outputTypeArgs;
             timeTool.sourceArgs = sourceArgs;
