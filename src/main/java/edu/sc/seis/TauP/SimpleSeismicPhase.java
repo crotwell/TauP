@@ -133,7 +133,7 @@ public class SimpleSeismicPhase implements SeismicPhase {
                               boolean debug) {
         if (proto == null) {throw new IllegalArgumentException("proto cannot be null");}
         try {
-            proto.validateSegList();
+            if (proto.isSuccessful()) {proto.validateSegList();}
         } catch (TauModelException e) {
             throw new RuntimeException(getName()+" fail validation:", e);
         }

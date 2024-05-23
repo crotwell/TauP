@@ -416,11 +416,11 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
             throw new IllegalArgumentException(getName()+": end branch outside range: "+endBranch);
         }
         if(endAction == TRANSUP && endBranch == 0) {
-            throw new IllegalArgumentException(getName()+": cannot TRANSUP with end branch zero: "+endBranch);
+            failNext("cannot TRANSUP with end branch zero, already at surface: "+endBranch);
         }
         if( ! isPWave && tMod.getSlownessModel().depthInFluid(tMod.getTauBranch(startBranch, isPWave).getTopDepth())) {
             // S wave in fluid
-            throw new TauModelException("Attempt to have S wave in fluid layer in "+getName()+" "+startBranch+" to "+endBranch+" "+endActionString(endAction));
+            failNext("Attempt to have S wave in fluid layer in "+getName()+" "+startBranch+" to "+endBranch+" "+endActionString(endAction));
         }
         int endOffset;
         boolean isDownGoing;
@@ -502,7 +502,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                     SlownessLayer sLayer = tMod.getSlownessModel().getSlownessLayer(slayAbove, isPWave);
                     minRayParam = Math.max(minRayParam, sLayer.getBotP());
                 } catch (NoSuchLayerException e) {
-                    throw new TauModelException(e);
+                    failNext("Unable to find layer for underside reflection: "+e.getMessage());
                 }
             }
         } else if(endAction == END) {
@@ -534,7 +534,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                             sLayer.getTopP());
 
                 } catch (NoSuchLayerException e) {
-                    throw new TauModelException(e);
+                    failNext("Unable to find layer for topside reflection: "+e.getMessage());
                 }
             }
         } else if(endAction == TRANSUP) {
@@ -551,7 +551,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
             maxRayParam = Math.min(maxRayParam, tMod.getTauBranch(endBranch, isPWave).getMinTurnRayParam());
             // and cross into lower
             if (endBranch == tMod.getNumBranches()-1) {
-                throw new TauModelException(getName()+" Cannot TRANSDOWN if endBranch: "+endBranch+" == numBranchs: "+tMod.getNumBranches());
+                failNext(" Cannot TRANSDOWN if endBranch: "+endBranch+" == numBranchs: "+tMod.getNumBranches());
             }
             maxRayParam = Math.min(maxRayParam, tMod.getTauBranch(endBranch+1, nextIsPWave).getMaxRayParam());
         } else if(endAction == HEAD) {
@@ -615,7 +615,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                 for (DepthRange fluidDR : tMod.getSlownessModel().fluidLayerDepths) {
                     if (tb.getTopDepth() >= fluidDR.topDepth && tb.getTopDepth() < fluidDR.botDepth
                             || tb.getBotDepth() > fluidDR.topDepth && tb.getBotDepth() <= fluidDR.botDepth) {
-                        throw new TauModelException("S wave branch "+currLeg+"("+isPWave+")"+" in "+getName()
+                        failNext("S wave branch "+currLeg+"("+isPWave+")"+" in "+getName()
                                 +" is in fluid: "+tb+" "+fluidDR+" "+startBranch+" "+endBranch+" "+isDownGoing);
                     }
                 }
@@ -627,7 +627,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                 // can't be downgoing as we are already below
                 minRayParam = -1;
                 maxRayParam = -1;
-                throw new TauModelException("can't be downgoing as we are already below: "+startBranch+" "+endBranch+" in "+getName());
+                failNext("can't be downgoing as we are already below: "+startBranch+" "+endBranch+" in "+getName());
             } else {
                 if(ToolRun.DEBUG) {
                     for(int i = startBranch; i <= endBranch; i++) {
@@ -643,7 +643,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                 // can't be upgoing as we are already above
                 minRayParam = -1;
                 maxRayParam = -1;
-                throw new TauModelException("can't be upgoing as we are already above: "+startBranch+" "+endBranch+" "+currLeg+" in "+getName());
+                failNext("can't be upgoing as we are already above: "+startBranch+" "+endBranch+" "+currLeg+" in "+getName());
             } else {
                 if(ToolRun.DEBUG) {
                     for(int i = startBranch; i >= endBranch; i--) {

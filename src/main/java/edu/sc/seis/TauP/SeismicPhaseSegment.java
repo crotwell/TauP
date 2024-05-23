@@ -225,7 +225,9 @@ public class SeismicPhaseSegment {
 
 	public String getDepthRangeJSON() {
 		String depthRange;
-		if (isFlat) {
+		if (startBranch == -1 || endBranch == -1) {
+			depthRange = "[]";
+		} else if (isFlat) {
 			if (prevEndAction == null) {
 				depthRange = "\" PrevAction is NULL \"";
 			} else if (prevEndAction == PhaseInteraction.DIFFRACT || prevEndAction == TRANSUPDIFFRACT) {

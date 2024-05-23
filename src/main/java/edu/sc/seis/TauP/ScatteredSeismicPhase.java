@@ -390,8 +390,15 @@ public class ScatteredSeismicPhase implements SeismicPhase {
         PrintWriter out = new PrintWriter(sw);
         out.println("{");
         out.println(SQ+"name"+QCQ+getName()+QCOMMA);
-        out.print(SeismicPhase.baseDescribeJSON(this));
-        out.println(",");
+        if (inboundArrival == null ) {
+            out.println(SQ+"fail"+QCQ+"inbound arrival to scatterer doesn't exist"+QCOMMA);
+        } else if (scatteredPhase.proto.isFail) {
+            out.println(SQ+"fail"+QCQ+"Scattered Phase "+scatteredPhase.proto.failReason+QCOMMA);
+        }
+        String baseDesc = SeismicPhase.baseDescribeJSON(this);
+        if (baseDesc.length() > 0) {
+            out.println(baseDesc+",");
+        }
         out.println(SeismicPhase.segmentDescribeJSON(this));
         out.println("}");
         return sw.toString();
