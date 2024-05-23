@@ -169,6 +169,8 @@ public class TauP_VelocityPlot extends TauP_Tool {
                 || axisType == ModelAxisType.Qp
                 || axisType == ModelAxisType.Qs
                 || axisType == ModelAxisType.vpvs
+                || axisType == ModelAxisType.vpdensity
+                || axisType == ModelAxisType.vsdensity
                 || axisType == ModelAxisType.poisson
                 || axisType == ModelAxisType.shearmodulus
                 || axisType == ModelAxisType.lambda
@@ -231,6 +233,8 @@ public class TauP_VelocityPlot extends TauP_Tool {
                     return vMod.evaluateBelow(depth, VelocityModelMaterial.Q_S);
                 }
             case vpvs:
+            case vpdensity:
+            case vsdensity:
             case poisson:
             case shearmodulus:
             case lambda:
@@ -253,6 +257,10 @@ public class TauP_VelocityPlot extends TauP_Tool {
                 switch (axisType) {
                     case vpvs:
                         return vp/vs;
+                    case vpdensity:
+                        return vp/rho;
+                    case vsdensity:
+                        return vs/rho;
                     case poisson:
                         return (vp * vp / 2 - vs * vs) / (vp * vp - vs * vs);
                     case shearmodulus:
@@ -283,6 +291,8 @@ public class TauP_VelocityPlot extends TauP_Tool {
             case Qp:
             case Qs:
             case vpvs:
+            case vpdensity:
+            case vsdensity:
             case poisson:
             case shearmodulus:
             case lambda:
