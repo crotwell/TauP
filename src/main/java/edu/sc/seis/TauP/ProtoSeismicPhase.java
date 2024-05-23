@@ -844,6 +844,8 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                 case REFLECT_UNDERSIDE:
                     if (topDepth == 0 || topDepth == tMod.cmbDepth || topDepth == tMod.iocbDepth) {
                         // no char as PP or KK or II
+                    } else if (topDepth == tMod.mohoDepth) {
+                        name += "^m";
                     } else {
                         name += "^" + (int) (topDepth);
                     }
@@ -854,6 +856,9 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                 case TRANSDOWN:
                     if (botDepth == tMod.cmbDepth || botDepth == tMod.iocbDepth) {
                         // no char as P,S -> K -> I,J
+                    } else if (botDepth == tMod.mohoDepth
+                            && seg.isPWave != next.isPWave) {
+                        name += "m";
                     } else {
                         name += (int)(botDepth);
                     }
@@ -861,11 +866,14 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                 case TRANSUP:
                     if (topDepth == tMod.cmbDepth || topDepth == tMod.iocbDepth || topDepth == tMod.surfaceDepth) {
                         // no char as P,S -> K -> I,J
-                    } else if (topDepth == tMod.mohoDepth && seg.endAction == TRANSUP
-                            && (next.endAction == END || (next.endAction == REFLECT_UNDERSIDE && next.endBranch == 0))
+                    } else if (topDepth == tMod.mohoDepth &&
+                            (next.endAction == END || next.endAction == REFLECT_UNDERSIDE && next.endBranch == 0)
                             && seg.isPWave == next.isPWave
                     ) {
                         // no char finish at surface
+                    } else if (topDepth == tMod.mohoDepth && seg.endAction == TRANSUP
+                            && seg.isPWave != next.isPWave) {
+                        name += "m";
                     } else {
                         name += (int) (topDepth);
                     }
