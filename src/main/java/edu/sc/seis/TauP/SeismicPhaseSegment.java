@@ -163,7 +163,7 @@ public class SeismicPhaseSegment {
 			} else {
 				out = "mantle";
 			}
-		} else if (startBranch <= tMod.getIocbBranch() && endBranch <= tMod.getIocbBranch()) {
+		} else if (startBranch < tMod.getIocbBranch() && endBranch < tMod.getIocbBranch()) {
 			out = "outer core";
 		} else {
 			out = "inner core";
