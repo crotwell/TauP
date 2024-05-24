@@ -35,9 +35,8 @@ public class TauP_Find extends TauP_Tool {
 
     }
 
-    @Override
-    public void start() throws IOException, TauPException {
-        TauModel tMod = modelArgs.depthCorrected();
+    public SeismicPhaseWalk createWalker(TauModel tMod, List<Double> excludeDepths) throws TauModelException {
+
         Double minRP = null;
         Double maxRP = null;
 
@@ -54,13 +53,23 @@ public class TauP_Find extends TauP_Tool {
         if (onlyPWave) {
             walker.allowSWave = false;
         }
-        walker.excludeBoundaries(excludeDepth);
-        if (isVerbose() && !excludeDepth.isEmpty()) {
-            System.out.println("Exclude: "+excludeDepth.size()+" depths:");
+        walker.excludeBoundaries(excludeDepths);
+        if (isVerbose() && !getExcludedDepths(tMod).isEmpty()) {
+            System.out.println("Exclude: "+getExcludedDepths(tMod).size()+" depths:");
             for (int i : walker.excludeBranch) {
                 System.out.println(i+" "+walker.tMod.getTauBranch(i, true).getTopDepth()+" km");
             }
         }
+        return walker;
+    }
+
+    @Override
+    public void start() throws IOException, TauPException {
+        TauModel tMod = modelArgs.depthCorrected();
+        List<Double> excludeDepths = getExcludedDepths(tMod);
+        List<Double> actualExcludeDepths = matchDepthToDiscon(excludeDepths, tMod.getVelocityModel(), excludeDepthTol);
+
+        SeismicPhaseWalk walker = createWalker(tMod, actualExcludeDepths);
         List<ProtoSeismicPhase> walk = walker.findEndingPaths(maxActions);
 
         List<RayCalculateable> distanceValues = distanceArgs.getRayCalculatables();
@@ -108,6 +117,31 @@ public class TauP_Find extends TauP_Tool {
         }
     }
 
+    public List<Double> matchDepthToDiscon(List<Double> excludeDepth, VelocityModel vMod, double tol) throws NoSuchLayerException {
+        List<Double> out = new ArrayList<>();
+        double[] disconDepths = vMod.getDisconDepths();
+        for (Double d : excludeDepth) {
+            double best = Double.MAX_VALUE;
+            for (double discon : disconDepths) {
+                if (Math.abs(d-discon) < Math.abs(d-best) && Math.abs(d-discon) < tol) {
+                    best = discon;
+                }
+            }
+            if (best != Double.MAX_VALUE) {
+                out.add(best);
+            } else {
+                String disconList = "";
+                for (double v : disconDepths) {
+                    disconList += " "+v;
+                }
+                throw new NoSuchLayerException((vMod.radiusOfEarth-d),
+                        "Unable to find discontinuity within "+tol+" km of "+d+" in "+vMod.getModelName()+"\n"
+                +"Discons in model: "+disconList);
+            }
+        }
+        return out;
+    }
+
     public void printResultText(List<ProtoSeismicPhase> walk) throws IOException {
         PrintWriter writer = outputTypeArgs.createWriter(spec.commandLine().getOut());
         int maxNameLength = 1;
@@ -146,7 +180,17 @@ public class TauP_Find extends TauP_Tool {
         out.put("max", maxActions);
         JSONArray exclude = new JSONArray();
         out.put("exclude", exclude);
-        for (double d : excludeDepth) {
+        TauModel tMod;
+        if (walk.isEmpty()) {
+            try {
+                tMod = modelArgs.getTauModel();
+            } catch (TauModelException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            tMod = walk.get(0).tMod;
+        }
+        for (double d : getExcludedDepths(tMod)) {
             exclude.put(d);
         }
         JSONArray phases = new JSONArray();
@@ -167,7 +211,10 @@ public class TauP_Find extends TauP_Tool {
 
     @Override
     public void validateArguments() throws TauPException {
-
+        TauModel tMod = modelArgs.depthCorrected();
+        List<Double> excludeDepths = getExcludedDepths(tMod);
+        // throws if cant find depth near discon
+        List<Double> actualExcludeDepths = matchDepthToDiscon(excludeDepths, tMod.getVelocityModel(), excludeDepthTol);
     }
 
 
@@ -218,11 +265,27 @@ public class TauP_Find extends TauP_Tool {
         return rpRange;
     }
 
+    public List<Double> getExcludedDepths(TauModel tMod) {
+        List<Double> exList = new ArrayList<>(excludeDepth);
+        double[] branchDepths = tMod.getBranchDepths();
+        for (double branchDepth : branchDepths) {
+            if ((onlyNamedDiscon && branchDepth != 0 &&  !tMod.getVelocityModel().isNamedDisconDepth(branchDepth))) {
+                exList.add(branchDepth);
+            }
+        }
+        return exList;
+    }
+
+    double excludeDepthTol = 10.0;
+
     @CommandLine.Option(names = "--exclude",
             arity = "1..",
             paramLabel = "depth",
             description = "Exclude boundaries from phase conversion or reflection interactions")
     List<Double> excludeDepth = new ArrayList<>();
+
+    @CommandLine.Option(names = "--onlynameddiscon", description = "only draw circles on the plot for named discontinuities like moho, cmb, iocb")
+    boolean onlyNamedDiscon = false;
 
     @CommandLine.Option(names = "--pwaveonly", description = "only P wave legs, no S")
     boolean onlyPWave = false;
