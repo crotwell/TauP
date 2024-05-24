@@ -17,7 +17,7 @@ import static edu.sc.seis.TauP.Arrival.RtoD;
         optionListHeading = "%nOptions:%n%n",
         abbreviateSynopsis = true,
         usageHelpAutoWidth = true)
-public class TauP_Find extends TauP_Tool {
+public class TauP_Find extends TauP_AbstractPhaseTool {
 
 
     public TauP_Find() {
@@ -32,7 +32,7 @@ public class TauP_Find extends TauP_Tool {
 
     @Override
     public void init() throws TauPException {
-
+        super.init();
     }
 
     public SeismicPhaseWalk createWalker(TauModel tMod, List<Double> excludeDepths) throws TauModelException {
@@ -71,6 +71,7 @@ public class TauP_Find extends TauP_Tool {
 
         SeismicPhaseWalk walker = createWalker(tMod, actualExcludeDepths);
         List<ProtoSeismicPhase> walk = walker.findEndingPaths(maxActions);
+        List<String> givenPhaseNames = extractPhaseNames("");
 
         List<RayCalculateable> distanceValues = distanceArgs.getRayCalculatables();
         if((!distanceValues.isEmpty())) {
@@ -79,6 +80,15 @@ public class TauP_Find extends TauP_Tool {
             for (ProtoSeismicPhase proto : walk) {
                 phaseNameList.add(proto.getName());
                 phaseList.add(proto.asSeismicPhase());
+            }
+            if ( ! phaseArgs.isEmpty()) {
+                List<PhaseName> givenPhases = parsePhaseNameList();
+                for (PhaseName pn : givenPhases) {
+                    phaseNameList.add(pn.getName());
+                    phaseList.addAll(SeismicPhaseFactory.createSeismicPhases(pn.getName(),
+                            tMod, modelArgs.getSourceDepth(), modelArgs.getReceiverDepth(),
+                            modelArgs.getScatterer(), isDEBUG()));
+                }
             }
             TauP_Time timeTool = new TauP_Time();
             timeTool.setPhaseNames(phaseNameList);
@@ -109,6 +119,19 @@ public class TauP_Find extends TauP_Tool {
             writer.flush();
         } else {
             System.err.println("No distances given, just find phases...");
+            List<SeismicPhase> givenPhases = new ArrayList<>();
+            if ( ! phaseArgs.isEmpty()) {
+                givenPhases = getSeismicPhases();
+            }
+            for (SeismicPhase sp : givenPhases) {
+                if (sp instanceof SimpleSeismicPhase) {
+                    SimpleSeismicPhase ssp = (SimpleSeismicPhase) sp;
+                    walk.add(ssp.proto);
+                } else {
+                    ScatteredSeismicPhase scat = (ScatteredSeismicPhase) sp;
+                    walk.add(scat.getScatteredPhase().proto);
+                }
+            }
             if (outputTypeArgs.isText()) {
                 printResultText(walk);
             } else if (outputTypeArgs.isJSON()) {
@@ -216,10 +239,6 @@ public class TauP_Find extends TauP_Tool {
         // throws if cant find depth near discon
         List<Double> actualExcludeDepths = matchDepthToDiscon(excludeDepths, tMod.getVelocityModel(), excludeDepthTol);
     }
-
-
-    @CommandLine.Mixin
-    ModelArgs modelArgs = new ModelArgs();
 
     @CommandLine.Mixin
     TextOutputTypeArgs outputTypeArgs;
