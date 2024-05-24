@@ -38,6 +38,7 @@ public class ToolRun {
     public static boolean VERBOSE = false;
 
 	public static String PHASE = "phase";
+	public static String FIND = "find";
 	public static String TIME = "time";
 	public static String PIERCE = "pierce";
 	public static String PATH = "path";
@@ -56,7 +57,7 @@ public class ToolRun {
 	public static String REFLTRANSPLOT = "refltrans";
 	public static String VERSION = "version";
 	
-	static String[] toolnames = { GUI, CREATE, CURVE, PATH, PHASE, PIERCE, SETSAC, SETMSEED3, SPLOT, TABLE, TIME,
+	static String[] toolnames = { GUI, CREATE, CURVE, PATH, PHASE, FIND, PIERCE, SETSAC, SETMSEED3, SPLOT, TABLE, TIME,
 			VPLOT, VELMERGE, WAVEFRONT, REFLTRANSPLOT, WKBJ, VERSION };
 	
 	public static String getUsage() {
@@ -110,6 +111,8 @@ public class ToolRun {
 			tool = new TauP_Path();
 		} else if (toolToRun.contentEquals(PHASE)) {
 			tool = new TauP_PhaseDescribe();
+		} else if (toolToRun.contentEquals(FIND)) {
+			tool = new TauP_Find();
 		} else if (toolToRun.contentEquals(PIERCE)) {
 			tool = new TauP_Pierce();
 		} else if (toolToRun.contentEquals(SETSAC)) {

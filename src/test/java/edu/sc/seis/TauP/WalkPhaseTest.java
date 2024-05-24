@@ -106,8 +106,8 @@ public class WalkPhaseTest {
         TauP_Find find = new TauP_Find();
         // only  moho, cmb, iocb
         find.onlyNamedDiscon = true;
-        find.excludeDepth.addAll(List.of(20.0, 210.0, 410.0, 660.0));
-        SeismicPhaseWalk allwalker = find.createWalker(tMod, find.excludeDepth);
+        find.excludeDepthNames.addAll(List.of("20", "210", "410", "660"));
+        SeismicPhaseWalk allwalker = find.createWalker(tMod, find.getExcludedDepths(tMod));
         List<ProtoSeismicPhase> allwalk = allwalker.findEndingPaths(maxActions);
 
         List<String> zeroActionNames = List.of("P", "S", "PKp", "PKIkp");

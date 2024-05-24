@@ -65,7 +65,7 @@ public class NamedVelocityDiscon implements Cloneable, Serializable {
     public static final String ICOCB = "icocb";
 
     public static final String[] knownDisconNames = {
-            ICE, ICEBED, OCEAN, SEABED, CRUST, MOHO, MANTLE, OUTERCORE, CMB, INNERCORE, ICOCB
+            ICE, ICEBED, ICECRUST, OCEAN, SEABED, CRUST, MOHO, MANTLE, OUTERCORE, CMB, INNERCORE, ICOCB
     };
 
     public static boolean isIceBed(String name) {

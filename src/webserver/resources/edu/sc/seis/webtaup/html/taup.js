@@ -7,8 +7,9 @@ import * as sp from './seisplotjs_3.1.4_standalone.mjs';
  */
 export function setup() {
   setupListeners();
+  createModelDisconRadio();
   const tool = getToolName();
-  enableParams(tool)
+  enableParams(tool);
   loadParamHelp().then(helpjson => {
     const container_el = document.querySelector("#results");
     while(container_el.firstChild) {
@@ -21,7 +22,6 @@ export function setup() {
       for (let name of param.name) {
         if (name.startsWith("-")) {name = name.slice(1, name.length);}
         if (name.startsWith("-")) {name = name.slice(1, name.length);}
-        console.log(`name: ${name}`)
 
         let el = document.querySelector(`#${name}`);
         if (el != null) {
@@ -33,6 +33,38 @@ export function setup() {
         }
       }
     }
+  });
+}
+
+export function createModelDisconRadio() {
+  const disconDiv = document.querySelector('#modeldiscon');
+  disconDiv.innerHTML = '';
+  const modelSel = document.querySelector('input[name="model"]:checked');
+  let model = modelSel ? modelSel.value : "iasp91";
+  const disconUrl = `velplot?mod=${model}&listdiscon=true&format=json`;
+  doSimpleFetch(disconUrl).then(res => {
+    if (res.ok) {
+      return res.json();
+    }
+  }).then(json => {
+    const m = json.models[0];
+    m.discon.forEach( dobj => {
+      const depthName = dobj?.name!=null?dobj.name:dobj.depth;
+      const input = document.createElement("input");
+      input.setAttribute("type", "checkbox");
+      input.setAttribute("id", `discon${depthName}`);
+      input.setAttribute("name", "discon");
+      input.setAttribute("value", depthName);
+      input.setAttribute("checked", "true");
+      input.addEventListener("change", (event) => {
+        process();
+      });
+      const label = document.createElement("label");
+      label.setAttribute("for", `discon${depthName}`);
+      label.textContent = depthName;
+      disconDiv.appendChild(input);
+      disconDiv.appendChild(label);
+    });
   });
 }
 
@@ -57,7 +89,8 @@ export function valid_format(tool) {
   let formatSel = document.querySelector('input[name="format"]:checked');
   let format = formatSel ? formatSel.value : "text";
   if (format === "svg" || format === "gmt") {
-    if (tool === "phase" || tool === "time" || tool === "pierce" || tool === "version") {
+    if (tool === "phase" || tool === "time" || tool === "pierce"
+        || tool === "find" || tool === "version") {
       format = "text";
     } else if ( tool === "velplot" ) {
       format = "svg";
@@ -75,16 +108,20 @@ export function getToolName() {
   return toolname;
 }
 
-export async function display_cmdline(taup_url) {
-  const cmdline_url = `cmdline/${taup_url}`;
-  console.log(cmdline_url);
+export async function doSimpleFetch(url) {
+  console.log(url);
   let timeoutSec = 10;
   const controller = new AbortController();
   const signal = controller.signal;
   setTimeout(() => controller.abort(), timeoutSec * 1000);
   let fetchInitObj = defaultFetchInitObj();
   fetchInitObj.signal = signal;
-  return fetch(cmdline_url, fetchInitObj).catch(e => {
+  return fetch(url, fetchInitObj);
+}
+
+export async function display_cmdline(taup_url) {
+  const cmdline_url = `cmdline/${taup_url}`;
+  doSimpleFetch(cmdline_url).catch(e => {
     console.log(`fetch error: ${e}`)
     const container_el = document.querySelector("#results");
     while(container_el.firstChild) {
@@ -277,6 +314,11 @@ export function form_url() {
   let xaxis = document.querySelector('#xaxis').value;
   let yaxis = document.querySelector('#yaxis').value;
 
+  let maxaction = document.querySelector('input[name="maxaction"]').value;
+  let disableDisconList = Array.from(document.querySelectorAll('input[name="discon"]:not(:checked)'));
+  disableDisconList = disableDisconList.map(el => el.value)
+  let disconDisableStr = disableDisconList.join();
+
   const format = valid_format(toolname);
   let url = "";
   if (toolname !== "velplot" && toolname !== "refltrans") {
@@ -286,12 +328,36 @@ export function form_url() {
   } else {
     url = `${toolname}?`;
   }
+  if (toolname === "find") {
+    url += `&max=${maxaction}`;
+    if (disconDisableStr.length > 0) {
+      url += `&exclude=${disconDisableStr}`;
+    }
+
+    let finddist = document.querySelector('input[name="findlistdist"]').checked;
+    if (finddist) {
+      let distdeg = document.querySelector('input[name="finddistdeg"]').value;
+      url += `&degree=${distdeg}`;
+      let findtime = document.querySelector('input[name="findtime"]').checked;
+      if (findtime) {
+        let timemin = document.querySelector('input[name="findtimemin"]').value;
+        let timemax = document.querySelector('input[name="findtimemax"]').value;
+        if (timemin.length > 0) {
+          url += `&time=${timemin}`;
+          if (timemax.length > 0) {
+            url += `,${timemax}`;
+          }
+        }
+      }
+    }
+
+  }
   if (toolname !== "velplot" && toolname !== "refltrans") {
     url += `&phase=${phase}`;
   }
   if (toolname !== "velplot" && toolname !== "curve"
       && toolname !== "wavefront"  && toolname !== "phase"
-      && toolname !== "refltrans") {
+      && toolname !== "refltrans" && toolname !== "find") {
     let distparam = "";
     if (islistdist) {
       let distdeg = document.querySelector('input[name="distdeg"]').value;
@@ -526,14 +592,17 @@ export function setupListeners() {
   let all_input_items = in_items.concat(sel_items)
   for (let inEl of all_input_items) {
     inEl.addEventListener("change", (event) => {
-      console.log(`change: ${event}`);
       process();
     });
+    if (inEl.hasAttribute("name") && inEl.getAttribute("name") === "model") {
+      inEl.addEventListener("change", (evetn)=> {
+        createModelDisconRadio();
+      })
+    }
   }
   let animateBtn = document.querySelector("button#animate");
   if (!animateBtn) {console.log("animate button missing");}
   animateBtn.addEventListener("click", (event) => {
-    console.log(`Click count: ${event.detail}`);
     startAnimation();
   });
 }
@@ -541,14 +610,13 @@ export function setupListeners() {
 export function enableParams(tool) {
   let styleEl = document.head.querySelector("style.toolenable");
   if (styleEl === null) {
-    console.log("no style");
     styleEl = document.createElement("style");
     styleEl.setAttribute("class", "toolenable");
     document.head.appendChild(styleEl);
   }
   let styleStr = ""
   // format radio
-  if ( tool === "time" || tool === "pierce" || tool == "phase" || tool == "version") {
+  if ( tool === "time" || tool === "pierce" || tool == "phase" || tool == "find" || tool == "version") {
     document.querySelector(`input[name="format"][value="text"]`).removeAttribute("disabled");
     document.querySelector(`input[name="format"][value="json"]`).removeAttribute("disabled");
     document.querySelector(`input[name="format"][value="svg"]`).setAttribute("disabled", "disabled");

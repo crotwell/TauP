@@ -45,12 +45,12 @@
   <div class="oneline">
 <h3>The TauP Toolkit,</h3>
 <h5>Preview version 3.0 Snapshot, web enabled.
-  <a href="doc/index.html" target="_blank">Documentation</a>
+  <a href="doc/index.html" target="taupdocs">Documentation</a>
 <a href="http://www.seis.sc.edu/taup"><h5>http://www.seis.sc.edu/taup</h5></a>
 </div>
 
 <details open="true">
-  <summary>Parameters for: <span><a target="_blank" href="" id="taup_url"></a></span></summary>
+  <summary>Parameters for: <span><a target="taupresults" href="" id="taup_url"></a></span></summary>
 
 <form>
     <fieldset class="tool_all">
@@ -60,7 +60,7 @@
     </fieldset>
 
     <fieldset class="model tool_all" >
-        <legend><a href="doc/models.html" target="_blank">Velocity Model:</a></legend>
+        <legend><a href="doc/models.html" target="taupdocs">Velocity Model:</a></legend>
         <input type="radio" name="model" id="iasp91" value="iasp91" checked/>
         <label for="iasp91">iasp91</label>
         <input type="radio" name="model" id="ak135" value="ak135" />
@@ -73,10 +73,10 @@
         <label for="prem">prem</label>
     </fieldset>
 
-    <fieldset class="phase_depth tool_time tool_pierce tool_path tool_curve tool_phase tool_wavefront tool_wkbj">
+    <fieldset class="phase_depth tool_time tool_pierce tool_path tool_curve tool_phase tool_find tool_wavefront tool_wkbj">
         <legend>Phase, Source:</legend>
         <label for="phase">
-            <span><a href="doc/phaseNaming.html" target="_blank">Phase:</a> </span>
+            <span><a href="doc/phaseNaming.html" target="taupdocs">Phase:</a> </span>
         </label>
         <input class="biginput" type="text" id="phase" name="phase" value="P,S"  />
 
@@ -191,7 +191,7 @@
         </label>
         <input type="text" id="scatdist" name="scatdist" value="0" />
     </fieldset>
-    <fieldset class="tool_time tool_curve tool_wkbj">
+    <fieldset class="tool_time tool_curve tool_find tool_wkbj">
       <legend>Amplitude:</legend>
       <div>
         <label for="amplitude">
@@ -203,6 +203,39 @@
             <span>Mw: </span>
         </label>
         <input type="number" id="mw" name="mw" value="4" />
+      </div>
+    </fieldset>
+    <fieldset class="tool_find">
+      <legend>Find:</legend>
+      <div>
+        <label for="maxaction">
+            <span>Max Action: </span>
+        </label>
+        <input type="number" id="maxaction" name="maxaction" value="2" />
+      </div>
+      <div>
+        <label for="discontinuities">
+            <span>Discontinuites: </span>
+        </label>
+        <span id="modeldiscon"></span>
+      </div>
+      <div class="degree">
+        <input type="checkbox" id="findlistdist" name="findlistdist" />
+        <label for="finddistdeg">
+            <span>Distance (deg): </span>
+        </label>
+        <input type="text" id="finddistdeg" name="finddistdeg" value="35"/>
+      </div>
+      <div>
+        <input type="checkbox" id="findtime" name="findtime" />
+        <label for="findtimemin">
+          <span>Time (s): </span>
+        </label>
+        <input type="text" id="findtimemin" name="findtimemin"/>
+        <label for="findtimemax">
+          <span>To: </span>
+        </label>
+        <input type="text" id="findtimemax" name="findtimemax"/>
       </div>
     </fieldset>
 
@@ -569,36 +602,39 @@
         <legend>Tools:</legend>
         <input type="radio" name="tool" id="tool_time" value="time" checked />
         <label for="tool_time">
-          <a href="doc/taup_time.html" target="_blank">Time</a></label>
+          <a href="doc/taup_time.html" target="taupdocs">Time</a></label>
         <input type="radio" name="tool" id="tool_pierce" value="pierce" />
         <label for="tool_pierce">
-          <a href="doc/taup_pierce.html" target="_blank">Pierce</a></label>
+          <a href="doc/taup_pierce.html" target="taupdocs">Pierce</a></label>
         <input type="radio" name="tool" id="tool_path" value="path" />
         <label for="tool_path">
-          <a href="doc/taup_path.html" target="_blank">Path</a></label>
+          <a href="doc/taup_path.html" target="taupdocs">Path</a></label>
         <input type="radio" name="tool" id="tool_curve" value="curve" />
         <label for="tool_curve">
-            <a href="doc/taup_curve.html" target="_blank">Curve</a></label>
+            <a href="doc/taup_curve.html" target="taupdocs">Curve</a></label>
         <input type="radio" name="tool" id="tool_wavefront" value="wavefront" />
         <label for="tool_wavefront">
-          <a href="doc/taup_wavefront.html" target="_blank">Wavefront</a></label>
+          <a href="doc/taup_wavefront.html" target="taupdocs">Wavefront</a></label>
+        <input type="radio" name="tool" id="taup_find" value="find" />
+        <label for="tool_find">
+          <a href="doc/taup_find.html" target="taupdocs">Find</a></label>
         <input type="radio" name="tool" id="tool_phase" value="phase" />
         <label for="tool_phase">
-          <a href="doc/taup_phase.html" target="_blank">Describe</a></label>
+          <a href="doc/taup_phase.html" target="taupdocs">Describe</a></label>
         <input type="radio" name="tool" id="tool_velplot" value="velplot" />
         <label for="tool_velplot">
-          <a href="doc/taup_velplot.html" target="_blank">Vel Model</a></label>
+          <a href="doc/taup_velplot.html" target="taupdocs">Vel Model</a></label>
         <input type="radio" name="tool" id="tool_refltrans" value="refltrans" />
         <label for="tool_refltrans">
-          <a href="doc/taup_refltrans.html" target="_blank">Refl Trans</a></label>
+          <a href="doc/taup_refltrans.html" target="taupdocs">Refl Trans</a></label>
 
         <input type="radio" name="tool" id="tool_wkbj" value="wkbj" />
         <label for="tool_wkbj" >
-          <a href="doc/taup_wkbj.html" target="_blank">Spikes</a></label>
+          <a href="doc/taup_wkbj.html" target="taupdocs">Spikes</a></label>
 
         <input type="radio" name="tool" id="tool_version" value="version" />
         <label for="tool_version">
-          <a href="doc/taup_version.html" target="_blank">Version</a></label>
+          <a href="doc/taup_version.html" target="taupdocs">Version</a></label>
     </fieldset>
 </form>
 

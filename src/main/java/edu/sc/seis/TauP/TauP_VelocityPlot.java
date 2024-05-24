@@ -1,6 +1,8 @@
 package edu.sc.seis.TauP;
 
 import edu.sc.seis.TauP.cli.*;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import picocli.CommandLine;
 
 import java.io.IOException;
@@ -42,24 +44,56 @@ public class TauP_VelocityPlot extends TauP_Tool {
         }
 
         if (listDiscon) {
-            outputTypeArgs.setOutputFormat(TEXT);
-            if (outputTypeArgs.getOutFileBase().equals(DEFAULT_OUTFILE)) {
-                outputTypeArgs.setOutFileBase("-");
-            }
-            PrintWriter writer = outputTypeArgs.createWriter(spec.commandLine().getOut());
-            for (VelocityModel vMod : vModList) {
-                writer.println("# "+vMod.getModelName());
-                for (double d : vMod.getDisconDepths()) {
-                    NamedVelocityDiscon discon = vMod.getNamedDisconForDepth(d);
-                    String disconName = discon == null ? "" : "   "+discon.getPreferredName();
-                    VelocityLayer above = vMod.getVelocityLayer(vMod.layerNumberAbove(d));
-                    VelocityLayer below = vMod.getVelocityLayer(vMod.layerNumberBelow(d));
-                    writer.println(d+disconName);
-                    writer.println("      "+Outputs.formatRayParam(above.getBotPVelocity())+" "+Outputs.formatRayParam(above.getBotSVelocity())+" "+Outputs.formatRayParam(above.getBotDensity()));
-                    writer.println("      "+Outputs.formatRayParam(below.getTopPVelocity())+" "+Outputs.formatRayParam(below.getTopSVelocity())+" "+Outputs.formatRayParam(below.getTopDensity()));
+            if (outputTypeArgs.isJSON()) {
+                if (outputTypeArgs.getOutFileBase().equals(DEFAULT_OUTFILE)) {
+                    outputTypeArgs.setOutFileBase("-");
                 }
+                JSONObject out = new JSONObject();
+                JSONArray modList = new JSONArray();
+                out.put("models", modList);
+                for (VelocityModel vMod : vModList) {
+                    JSONObject mod = new JSONObject();
+                    modList.put(mod);
+                    mod.put("name", vMod.getModelName());
+                    JSONArray discon = new JSONArray();
+                    for (double d : vMod.getDisconDepths()) {
+                        if (d == vMod.getRadiusOfEarth()) {
+                            // center not really a discon
+                            continue;
+                        }
+                        JSONObject disconObj = new JSONObject();
+                        disconObj.put("depth", d);
+                        if (vMod.isNamedDisconDepth(d)) {
+                            disconObj.put("name", vMod.getNamedDisconForDepth(d).name);
+                        }
+                        discon.put(disconObj);
+                    }
+                    mod.put("discon", discon);
+                }
+                PrintWriter writer = outputTypeArgs.createWriter(spec.commandLine().getOut());
+                out.write(writer, 2, 0);
+                writer.println();
+                writer.flush();
+            } else {
+                outputTypeArgs.setOutputFormat(TEXT);
+                if (outputTypeArgs.getOutFileBase().equals(DEFAULT_OUTFILE)) {
+                    outputTypeArgs.setOutFileBase("-");
+                }
+                PrintWriter writer = outputTypeArgs.createWriter(spec.commandLine().getOut());
+                for (VelocityModel vMod : vModList) {
+                    writer.println("# " + vMod.getModelName());
+                    for (double d : vMod.getDisconDepths()) {
+                        NamedVelocityDiscon discon = vMod.getNamedDisconForDepth(d);
+                        String disconName = discon == null ? "" : "   " + discon.getPreferredName();
+                        VelocityLayer above = vMod.getVelocityLayer(vMod.layerNumberAbove(d));
+                        VelocityLayer below = vMod.getVelocityLayer(vMod.layerNumberBelow(d));
+                        writer.println(d + disconName);
+                        writer.println("      " + Outputs.formatRayParam(above.getBotPVelocity()) + " " + Outputs.formatRayParam(above.getBotSVelocity()) + " " + Outputs.formatRayParam(above.getBotDensity()));
+                        writer.println("      " + Outputs.formatRayParam(below.getTopPVelocity()) + " " + Outputs.formatRayParam(below.getTopSVelocity()) + " " + Outputs.formatRayParam(below.getTopDensity()));
+                    }
+                }
+                writer.flush();
             }
-            writer.flush();
         } else if (outputTypeArgs.isCSV()) {
             for (VelocityModel vMod : vModList) {
                 if (!outputTypeArgs.isStdout()) {

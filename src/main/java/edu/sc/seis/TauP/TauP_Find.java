@@ -285,7 +285,7 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
     }
 
     public List<Double> getExcludedDepths(TauModel tMod) {
-        List<Double> exList = new ArrayList<>(excludeDepth);
+        List<Double> exList = new ArrayList<>(getExcludeDepth(tMod.getVelocityModel()));
         double[] branchDepths = tMod.getBranchDepths();
         for (double branchDepth : branchDepths) {
             if ((onlyNamedDiscon && branchDepth != 0 &&  !tMod.getVelocityModel().isNamedDisconDepth(branchDepth))) {
@@ -300,8 +300,48 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
     @CommandLine.Option(names = "--exclude",
             arity = "1..",
             paramLabel = "depth",
-            description = "Exclude boundaries from phase conversion or reflection interactions")
-    List<Double> excludeDepth = new ArrayList<>();
+            description = {
+                    "Exclude boundaries from phase conversion or reflection interactions",
+                    "May be depth (within tol) or named boundary like moho, cmd, iocb"
+            })
+    List<String> excludeDepthNames = new ArrayList<>();
+
+    List<Double> getExcludeDepth(VelocityModel vMod) {
+        List<Double> excludeDepth = new ArrayList<>();
+        for (String discon : excludeDepthNames) {
+            if(NamedVelocityDiscon.isMoho(discon)) {
+                excludeDepth.add(vMod.getMohoDepth());
+                continue;
+            } else if(NamedVelocityDiscon.isCmb(discon)) {
+                excludeDepth.add(vMod.getCmbDepth());
+                continue;
+            } else if(NamedVelocityDiscon.isIcocb(discon)) {
+                excludeDepth.add(vMod.getIocbDepth());
+                continue;
+            } else {
+                // others like ICE, SEABED, etc
+                boolean found = false;
+                for (NamedVelocityDiscon nd : vMod.namedDiscon) {
+                    if (discon.equals(nd.name)) {
+                        excludeDepth.add(nd.depth);
+                        found = true;
+                        break;
+                    }
+                }
+                if (found) {
+                    continue;
+                }
+            }
+            try {
+                double d = Double.parseDouble(discon);
+                excludeDepth.add(d);
+            } catch (NumberFormatException e) {
+                throw new CommandLine.ParameterException(spec.commandLine(), "Unable to find discontinuity depth for "+discon);
+            }
+        }
+        return excludeDepth;
+    }
+
 
     @CommandLine.Option(names = "--onlynameddiscon", description = "only interact with named discontinuities like moho, cmb, iocb")
     boolean onlyNamedDiscon = false;
