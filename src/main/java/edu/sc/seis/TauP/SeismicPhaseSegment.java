@@ -65,6 +65,7 @@ public class SeismicPhaseSegment {
 			case REFLECT_UNDERSIDE_CRITICAL:
 				return true;
 			case TURN:
+			case DIFFRACTTURN:
 			case DIFFRACT:
 			case TRANSUPDIFFRACT:
 			case END_DOWN:
@@ -112,6 +113,9 @@ public class SeismicPhaseSegment {
 				break;
 			case DIFFRACT:
 				action = "diffract";
+				break;
+			case DIFFRACTTURN:
+				action = "turn after diffract";
 				break;
 			case TRANSUPDIFFRACT:
 				action = "transmit up diffract";

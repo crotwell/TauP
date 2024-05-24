@@ -43,6 +43,13 @@ public enum PhaseInteraction {
      * Used by addToBranch when the path transmits up across a boundary then diffracts along that boundary.
      */
     TRANSUPDIFFRACT,
+
+    /**
+     * An upward turn after a flat diffracted segment, such as the upward leg of Pdiff. Similar to TURN, but
+     * must ray start at bottom of layer.
+     */
+    DIFFRACTTURN,
+
     /**
      * Used by addToBranch when the path is head wave along a boundary.
      */
@@ -140,6 +147,7 @@ public enum PhaseInteraction {
             case REFLECT_TOPSIDE:
             case REFLECT_TOPSIDE_CRITICAL:
             case TURN:
+            case DIFFRACTTURN:
             case END:
                 isDowngoing = false;
                 break;

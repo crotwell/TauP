@@ -242,7 +242,7 @@ public class SeismicPhaseWalk {
                     SeismicPhaseSegment m = new SeismicPhaseSegment(cS.tMod, cS.startBranch, oS.endBranch, cS.isPWave, cS.endAction, cS.isDownGoing, cS.legName, cS.minRayParam, oS.maxRayParam);
                     out.add(m);
                 }
-            } else if (prevS != null && prevS.endAction == TURN) {
+            } else if (prevS != null && (prevS.endAction == TURN || prevS.endAction == DIFFRACTTURN)) {
                 if (cS.startBranch == oS.startBranch) {
                     out.add(cS);
                 } else if (cS.startBranch < oS.startBranch) {
@@ -363,6 +363,9 @@ public class SeismicPhaseWalk {
                     // turn cannot phase convert
                     outTreeAdd(outTree, segmentList.nextSegment( prevEndSeg.isPWave, END));
                 }
+                break;
+            case DIFFRACTTURN:
+                outTreeAdd(outTree, segmentList.nextSegment( prevEndSeg.isPWave, END));
                 break;
             case REFLECT_TOPSIDE:
                 if (receiverBranch == prevEndSeg.endBranch ) {

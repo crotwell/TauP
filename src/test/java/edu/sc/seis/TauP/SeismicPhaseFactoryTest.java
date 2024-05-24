@@ -78,4 +78,26 @@ public class SeismicPhaseFactoryTest {
             }
         }
     }
+
+
+    @Test
+    public void purestName_Pdiffs() throws Exception {
+        double sourceDepth = 0.0;
+        TauModel tMod = TauModelLoader.load("ak135");
+        String name = "Pdiffs";
+        ArrayList<String> legs = LegPuller.legPuller(name);
+        String leg_puristName = LegPuller.createPuristName(tMod, legs);
+
+        SimpleSeismicPhase phase = SeismicPhaseFactory.createPhase(name, tMod, sourceDepth);
+        ProtoSeismicPhase proto = phase.proto;
+        proto.phaseName = name;
+        proto.validateSegList();
+        assertTrue(proto.isSuccessful());
+        assertTrue(proto.getPuristName().equalsIgnoreCase(leg_puristName),
+                "WARN purist name not same as legpuller: " + proto.getPuristName() + " " + leg_puristName);
+        assertTrue(proto.getPuristName().equalsIgnoreCase(name),
+                "WARN purist name not same as name: " + proto.getPuristName() + " " + name);
+        assertTrue(phase.getPuristName().equalsIgnoreCase(name),
+                "WARN purist name not same as name: " + proto.getPuristName() + " " + name);
+    }
 }

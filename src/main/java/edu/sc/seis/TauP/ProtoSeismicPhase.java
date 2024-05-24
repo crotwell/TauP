@@ -266,7 +266,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                     throw new RuntimeException("prev is TRANSDOWN, but seg is not +1\n"+prev.endAction+"  "+seg.startBranch+"\n"+phaseNameForSegments());
                 }
                 if (prev.endAction == TURN &&
-                        ( seg.endAction == TURN || seg.endAction == TRANSDOWN
+                        ( seg.endAction == TURN || seg.endAction == TRANSDOWN || seg.endAction == DIFFRACTTURN
                                 || seg.endAction == END_DOWN || seg.endAction == REFLECT_TOPSIDE)) {
                     throw new RuntimeException("prev is TURN, but seg is "+seg.endAction);
                 }
@@ -298,6 +298,9 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                     if (prev.endAction == TURN) {
                         throw new TauModelException(getName()+": Segment is downgoing, but previous action was to turn: "+currLeg);
                     }
+                    if (prev.endAction == DIFFRACTTURN) {
+                        throw new TauModelException(getName()+": Segment is downgoing, but previous action was to diff turn: "+currLeg);
+                    }
                     if (prev.endAction == TRANSUP) {
                         throw new TauModelException(getName()+": Segment is downgoing, but previous action was to transmit up: "+currLeg);
                     }
@@ -313,7 +316,9 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                         throw new TauModelException(getName()+": Segment is upgoing, but previous action was  to trans down: "+currLeg);
                     }
                     if (prev.endBranch == seg.startBranch && prev.isDownGoing == true
-                            && ! ( prev.endAction == TURN || prev.endAction == DIFFRACT || prev.endAction == HEAD || prev.endAction == REFLECT_TOPSIDE || prev.endAction == REFLECT_TOPSIDE_CRITICAL)) {
+                            && ! ( prev.endAction == TURN || prev.endAction == DIFFRACTTURN
+                            || prev.endAction == DIFFRACT || prev.endAction == HEAD
+                            || prev.endAction == REFLECT_TOPSIDE || prev.endAction == REFLECT_TOPSIDE_CRITICAL)) {
                         throw new TauModelException(getName()+": Segment is upgoing, but previous action was not to reflect topside: "+currLeg+" "+endActionString(prev.endAction));
                     }
                 }
@@ -455,8 +460,8 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                     + " endAction="+endActionString(endAction)+" "+currLeg+") isP:"+(isPWave?"P":"S"));
 
         }
-        if(endAction == TURN) {
-            if (isPWave != nextIsPWave) {
+        if(endAction == TURN || endAction == DIFFRACTTURN) {
+            if (isPWave != nextIsPWave && endAction == TURN) {
                 throw new TauModelException(getName()+" phase conversion not allowed for TURN");
             }
             endOffset = 0;
@@ -668,7 +673,24 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                                                 PhaseInteraction endAction,
                                                 String currLeg) throws TauModelException {
         // special case, add "flat" segment along bounday
-
+        switch (endAction) {
+            case END:
+            case FAIL:
+            case DIFFRACTTURN:
+            case TRANSDOWN:
+            case TRANSUP:
+                break;
+            default:
+                throw new TauModelException("End action for flat branch not allowed: "+endAction);
+        }
+        switch (prevEndAction) {
+            case DIFFRACT:
+            case HEAD:
+            case KMPS:
+                break;
+            default:
+                throw new TauModelException("End action before flat branch not allowed: "+endAction);
+        }
         int branch = calcStartBranch(currLeg);
         double minRayParam;
         double maxRayParam;
@@ -788,6 +810,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
             double topDepth = tMod.getTauBranch(seg.endBranch, seg.isPWave).getTopDepth();
             //name += " "+seg.startBranch+","+seg.endBranch+" ";
             if ( prev == null || prev.endAction != TURN
+                    || prev.isPWave != seg.isPWave
                     || (! prev.legName.equalsIgnoreCase(seg.legName) && (prev.legName.equals("I") && seg.legName.equals("y")))) {
                 String legName = legNameForSegment(tMod, seg);
                 String nextLegName = legNameForSegment(tMod, next);
@@ -804,10 +827,12 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                         legName = legName.substring(0, 1);
                     } else if ((seg.endAction == END
                             || (seg.endAction == REFLECT_UNDERSIDE && seg.endBranch == 0)
-                            || ((seg.endAction == TURN || seg.endAction == TRANSUP || seg.endAction == REFLECT_UNDERSIDE)
+                            || ((seg.endAction == TURN || seg.endAction == DIFFRACTTURN
+                                || seg.endAction == TRANSUP || seg.endAction == REFLECT_UNDERSIDE)
                                 && next.endBranch == 0))
                             && (prev != null
-                                && (prev.endAction == DIFFRACT || prev.endAction == HEAD || prev.endAction ==TRANSUP)
+                                && (prev.endAction == DIFFRACT || prev.endAction == DIFFRACTTURN
+                                    || prev.endAction == HEAD || prev.endAction ==TRANSUP)
                                 && seg.isPWave == prev.isPWave && seg.legName.equals(prev.legName))
                     ) {
                         legName = "";
@@ -851,6 +876,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                     }
                     break;
                 case TURN:
+                case DIFFRACTTURN:
                     //name += "U";
                     break;
                 case TRANSDOWN:

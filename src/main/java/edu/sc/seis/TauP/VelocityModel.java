@@ -1212,6 +1212,9 @@ public class VelocityModel implements Cloneable, Serializable {
                                  true,
                                  layers);
         vMod.fixDisconDepths();
+        vMod.namedDiscon.add(new NamedVelocityDiscon(NamedVelocityDiscon.MOHO, vMod.getMohoDepth()));
+        vMod.namedDiscon.add(new NamedVelocityDiscon(NamedVelocityDiscon.CMB, vMod.getCmbDepth()));
+        vMod.namedDiscon.add(new NamedVelocityDiscon(NamedVelocityDiscon.ICOCB, vMod.getIocbDepth()));
         return vMod;
     }
 

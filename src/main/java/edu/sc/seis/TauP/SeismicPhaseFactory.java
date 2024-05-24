@@ -1179,7 +1179,7 @@ public class SeismicPhaseFactory {
                     proto.addFlatBranch(isPWave, endAction, TRANSDOWN, currLeg);
                 } else {
                     // normal case
-                    proto.addFlatBranch(isPWave, endAction, TURN, currLeg);
+                    proto.addFlatBranch(isPWave, endAction, DIFFRACTTURN, currLeg);
                 }
                 if (nextLeg.equals(END_CODE)) {
                     endAction = END;
@@ -1245,7 +1245,7 @@ public class SeismicPhaseFactory {
                 proto.addFlatBranch(isPWave, endAction, TRANSDOWN, currLeg);
             } else {
                 // normal case
-                proto.addFlatBranch(isPWave, endAction, TURN, currLeg);
+                proto.addFlatBranch(isPWave, endAction, DIFFRACTTURN, currLeg);
             }
 
             if(nextLeg.equals(END_CODE)) {
@@ -1310,7 +1310,6 @@ public class SeismicPhaseFactory {
             }
         } else if(currLeg.equals("Pg") || currLeg.equals("Sg")
                 || currLeg.equals("Pn") || currLeg.equals("Sn")) {
-            endAction = TURN;
             if(currBranch >= tMod.getMohoBranch()) {
                 /*
                  * Pg, Pn, Sg and Sn must be above the moho and so is
@@ -1522,7 +1521,7 @@ public class SeismicPhaseFactory {
             proto.addFlatBranch(isPWave, endAction, TRANSDOWN, currLeg);
         } else {
             // normal case
-            proto.addFlatBranch(isPWave, endAction, TURN, currLeg);
+            proto.addFlatBranch(isPWave, endAction, DIFFRACTTURN, currLeg);
         }
 
         if (nextLeg.startsWith("P") || nextLeg.startsWith("S") || nextLeg.equals("p") || nextLeg.equals("s")) {
@@ -2277,7 +2276,7 @@ public class SeismicPhaseFactory {
             proto.addFlatBranch(isPWave, endAction, TRANSDOWN, currLeg);
         } else {
             // normal case
-            proto.addFlatBranch(isPWave, endAction, TURN, currLeg);
+            proto.addFlatBranch(isPWave, endAction, DIFFRACTTURN, currLeg);
         }
 
         if (nextLeg.startsWith("K")  || nextLeg.equals("k")) {
@@ -2798,11 +2797,13 @@ public class SeismicPhaseFactory {
         return currBranch;
     }
 
-    public static final String endActionString(PhaseInteraction endAction) {
+    public static String endActionString(PhaseInteraction endAction) {
         if(endAction == START) {
             return "START";
         } else if(endAction == TURN) {
             return "TURN";
+        } else if(endAction == DIFFRACTTURN) {
+            return "DIFFRACT_TURN";
         } else if(endAction == REFLECT_UNDERSIDE) {
             return "REFLECT_UNDERSIDE";
         } else if(endAction == REFLECT_UNDERSIDE_CRITICAL) {
