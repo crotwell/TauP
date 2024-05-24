@@ -7,7 +7,10 @@ Usage: taup refltrans [--abs] [--debug] [--down] [--energyflux] [--fsrf]
                       y]... [--layer=v v v v v v]... [-y=type...]... [--text |
                       --json | --gmt | --svg] [[--mod=<modelname>] [-h=depth]
                       [--stadepth=depth] [--scat=s s]...]
-plot reflection and transmission coefficients for a discontinuity
+Plot reflection and transmission coefficients for a discontinuity.
+
+Options:
+
       --abs                 absolute value of amplitude factor
       --anglestep=deg       step in degrees when x is degrees
       --debug               enable debugging output

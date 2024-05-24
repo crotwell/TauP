@@ -3,22 +3,22 @@ The TauP Toolkit
       --help      display this help message
   -V, --version   display version info
 Commands:
-  time       calculate travel times for seismic phases in an earth model
-  pierce     calculate pierce points for phases at discontinuities in the model
-  path       plot ray paths through the earth
-  create     Create .taup file from velocity model
-  curve      plot traveltime and other curves for phases
-  refltrans  plot reflection and transmission coefficients for a discontinuity
-  setmseed3  save travel times in the extra header of miniseed3 files
-  setsac     set headers to travel times of phases using depth and distance
-               from headers
-  velplot    plot velocity vs depth for a model
-  velmerge   merge part of one model into another
-  table      create a table of travel times for a range of depths and distances
-  wavefront  plot wavefronts of seismic phases at steps in time
-  phase      describe a seismic phase in the current model
-  find       find seismic phases in an earth model near a search time
-  wkbj       calc WKJB seismograms, DANGER: experimental!!!
-  web        web based gui for the TauP Toolkit
-  version    print version
+  time       Calculate travel times for seismic phases in an earth model
+  pierce     Calculate pierce points for phases at discontinuities in the model.
+  path       Plot ray paths, distance vs. depth, through the earth.
+  create     Create .taup file from a velocity model.
+  curve      Plot travel time vs. distance and other curves for seismic phases.
+  refltrans  Plot reflection and transmission coefficients for a discontinuity.
+  setmseed3  Save travel times in the extra header of miniseed3 files.
+  setsac     Set headers to travel times of phases using depth and distance
+               from SAC files.
+  velplot    Plot velocity vs depth for a model.
+  velmerge   Merge part of one model into another.
+  table      Create a table of travel times for a range of depths and distances.
+  wavefront  Plot wavefronts of seismic phases at steps in time.
+  phase      Describe a seismic phase in the current model.
+  find       Find seismic phases in an earth model.
+  wkbj       Calculate synthetic seismograms, DANGER: experimental!!!
+  web        Web based gui for the TauP Toolkit.
+  version    Print the version.
   help       Display help information about the specified command.

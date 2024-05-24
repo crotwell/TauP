@@ -1,5 +1,8 @@
 Usage: taup find [OPTIONS]
-find seismic phases in an earth model near a search time
+Find seismic phases in an earth model.
+
+Options:
+
       --amp                show amplitude factor for each phase, only if --deg
       --debug              enable debugging output
       --deg, --degree=d[,d...]
@@ -12,6 +15,8 @@ find seismic phases in an earth model near a search time
       --max=<maxActions>   Maximum number of reflections and phase conversion
       --mw=<mw>            scale amplitude by source moment magnitude
   -o, --output=<outFile>   output to file, default is stdout.
+      --onlynameddiscon    only interact with named discontinuities like moho,
+                             cmb, iocb
       --prop=<toolPropsFilename>
                            load defaults from properties file
       --pwaveonly          only P wave legs, no S

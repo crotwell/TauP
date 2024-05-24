@@ -1,5 +1,8 @@
 Usage: taup pierce [OPTIONS]
-calculate pierce points for phases at discontinuities in the model
+Calculate pierce points for phases at discontinuities in the model.
+
+Options:
+
       --amp                  amplitude factor for each phase
       --debug                enable debugging output
       --first, --onlyfirst   only output the first arrival for each phase, no

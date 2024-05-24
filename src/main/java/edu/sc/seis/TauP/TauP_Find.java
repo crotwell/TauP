@@ -284,7 +284,7 @@ public class TauP_Find extends TauP_Tool {
             description = "Exclude boundaries from phase conversion or reflection interactions")
     List<Double> excludeDepth = new ArrayList<>();
 
-    @CommandLine.Option(names = "--onlynameddiscon", description = "only draw circles on the plot for named discontinuities like moho, cmb, iocb")
+    @CommandLine.Option(names = "--onlynameddiscon", description = "only interact with named discontinuities like moho, cmb, iocb")
     boolean onlyNamedDiscon = false;
 
     @CommandLine.Option(names = "--pwaveonly", description = "only P wave legs, no S")

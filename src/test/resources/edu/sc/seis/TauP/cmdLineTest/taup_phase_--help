@@ -1,5 +1,8 @@
 Usage: taup phase [OPTIONS]
-describe a seismic phase in the current model
+Describe a seismic phase in the current model.
+
+Options:
+
       --debug              enable debugging output
       --help               display this help message
   -o, --output=<outFile>   output to file, default is stdout.

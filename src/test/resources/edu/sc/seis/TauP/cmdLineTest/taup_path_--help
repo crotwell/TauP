@@ -1,5 +1,8 @@
 Usage: taup path [OPTIONS]
-plot ray paths through the earth
+Plot ray paths, distance vs. depth, through the earth.
+
+Options:
+
       --color=<coloring>     style of coloring for paths and wavefronts, one
                                of: auto, wavetype, phase
       --debug                enable debugging output

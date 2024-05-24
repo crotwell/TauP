@@ -1,6 +1,9 @@
 Usage: taup setsac [OPTIONS] [<sacFileNames>...]
-set headers to travel times of phases using depth and distance from headers
+Set headers to travel times of phases using depth and distance from SAC files.
       [<sacFileNames>...]   SAC files to process
+
+Options:
+
       --debug               enable debugging output
       --evdpkm              sac depth header is in km, default is meters
       --help                display this help message

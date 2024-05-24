@@ -1,5 +1,8 @@
 Usage: taup velplot [OPTIONS]
-plot velocity vs depth for a model
+Plot velocity vs depth for a model.
+
+Options:
+
       --debug              enable debugging output
       --help               display this help message
       --legend             create a legend
@@ -16,16 +19,16 @@ plot velocity vs depth for a model
                              Vp, Vs, slownessdeg, slownessdeg_p, slownessdeg_s,
                              slownessrad, slownessrad_p, slownessrad_s,
                              density, velocity_density, Qp, Qs, Q, vpvs,
-                             poisson, shearmodulus, lambda, bulkmodulus,
-                             youngsmodulus
+                             vpdensity, vsdensity, poisson, shearmodulus,
+                             lambda, bulkmodulus, youngsmodulus
                            Default is velocity.
       --xminmax=x x        min and max x axis for plotting
   -y, --yaxis=type         Y axis data type, one of depth, radius, velocity,
                              Vp, Vs, slownessdeg, slownessdeg_p, slownessdeg_s,
                              slownessrad, slownessrad_p, slownessrad_s,
                              density, velocity_density, Qp, Qs, Q, vpvs,
-                             poisson, shearmodulus, lambda, bulkmodulus,
-                             youngsmodulus
+                             vpdensity, vsdensity, poisson, shearmodulus,
+                             lambda, bulkmodulus, youngsmodulus
                            Default is depth.
       --yminmax=y y        min and max y axis for plotting
 Velocity Model

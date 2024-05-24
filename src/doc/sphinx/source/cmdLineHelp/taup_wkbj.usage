@@ -1,5 +1,8 @@
 Usage: taup wkbj [OPTIONS]
-calc WKJB seismograms, DANGER: experimental!!!
+Calculate synthetic seismograms, DANGER: experimental!!!
+
+Options:
+
       --debug                enable debugging output
       --help                 display this help message
       --mw=<mw>              scale amplitude by source moment magnitude

@@ -1,5 +1,8 @@
 Usage: taup velmerge [OPTIONS]
-merge part of one model into another
+Merge part of one model into another.
+
+Options:
+
       --debug              enable debugging output
       --elev=<elevation>   increase topmost layer by elevation (meters)
       --help               display this help message

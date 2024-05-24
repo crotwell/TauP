@@ -1,5 +1,8 @@
 Usage: taup table [OPTIONS]
-create a table of travel times for a range of depths and distances
+Create a table of travel times for a range of depths and distances.
+
+Options:
+
       --debug              enable debugging output
       --header=<headerFile>
                            reads depth and distance spacing data

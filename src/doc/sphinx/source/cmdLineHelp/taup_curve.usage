@@ -1,5 +1,8 @@
 Usage: taup curve [OPTIONS]
-plot traveltime and other curves for phases
+Plot travel time vs. distance and other curves for seismic phases.
+
+Options:
+
       --color=<coloring>   style of coloring for paths and wavefronts, one of:
                              auto, wavetype, phase
       --debug              enable debugging output
