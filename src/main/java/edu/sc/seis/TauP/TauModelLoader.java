@@ -231,16 +231,19 @@ public class TauModelLoader {
         VelocityModel vMod = null;
         if (dirSepIndex == -1) {
             Class c = TauModelLoader.class;
-            String filename = basemodelName+".nd";
-            InputStream in = c.getResourceAsStream(packageName + "/" + filename);
-            if(in != null) {
-                Reader inReader = new InputStreamReader(in);
-                vMod = VelocityModel.readNDFile(inReader, modelName);
-                inReader.close();
-            } else {
+            if (fileType == null || fileType.equals("nd")) {
+                String filename = basemodelName + ".nd";
+                InputStream in = c.getResourceAsStream(packageName + "/" + filename);
+                if (in != null) {
+                    Reader inReader = new InputStreamReader(in);
+                    vMod = VelocityModel.readNDFile(inReader, modelName);
+                    inReader.close();
+                }
+            }
+            if (vMod == null) {
                 // try tvel
-                filename = basemodelName+".tvel";
-                in = c.getResourceAsStream(packageName + "/" + filename);
+                String filename = basemodelName+".tvel";
+                InputStream in = c.getResourceAsStream(packageName + "/" + filename);
                 if(in != null) {
                     Reader inReader = new InputStreamReader(in);
                     vMod =  VelocityModel.readTVelFile(inReader, modelName);
