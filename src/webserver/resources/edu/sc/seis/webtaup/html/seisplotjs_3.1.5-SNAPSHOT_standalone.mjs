@@ -42959,7 +42959,7 @@ var FDSNSourceId = class _FDSNSourceId {
     return this.asNslc().channelCode;
   }
   toString() {
-    return `${FDSN_PREFIX}${this.networkCode}${SEP}${this.stationCode}${SEP}${this.locationCode}${SEP}${this.bandCode}${SEP}${this.sourceCode}${SEP}${this.subsourceCode}`;
+    return `${FDSN_PREFIX}${this.toStringNoPrefix()}`;
   }
   toStringNoPrefix() {
     return `${this.networkCode}${SEP}${this.stationCode}${SEP}${this.locationCode}${SEP}${this.bandCode}${SEP}${this.sourceCode}${SEP}${this.subsourceCode}`;
@@ -43001,7 +43001,10 @@ var NetworkSourceId = class _NetworkSourceId {
     return new _NetworkSourceId(items[0]);
   }
   toString() {
-    return `${FDSN_PREFIX}${this.networkCode}`;
+    return `${FDSN_PREFIX}${this.toStringNoPrefix()}`;
+  }
+  toStringNoPrefix() {
+    return this.networkCode;
   }
   equals(other) {
     return this.toString() === other.toString();
@@ -43029,7 +43032,10 @@ var StationSourceId = class _StationSourceId {
     return new _StationSourceId(items[0], items[1]);
   }
   toString() {
-    return `${FDSN_PREFIX}${this.networkCode}${SEP}${this.stationCode}`;
+    return `${FDSN_PREFIX}${this.toStringNoPrefix()}`;
+  }
+  toStringNoPrefix() {
+    return `${this.networkCode}${SEP}${this.stationCode}`;
   }
   networkSourceId() {
     return new NetworkSourceId(this.networkCode);
@@ -43254,7 +43260,7 @@ __export(util_exports, {
 });
 
 // src/version.ts
-var version = "3.1.4";
+var version = "3.1.5-SNAPSHOT";
 
 // src/util.ts
 var XML_MIME = "application/xml";
@@ -61485,7 +61491,7 @@ function overlayByComponent(sddList, seisConfig) {
   return overlayBySDDFunction(
     sddList,
     "component",
-    (sdd) => sdd.channelCode.charAt(2),
+    (sdd) => sdd.sourceId.subsourceCode,
     seisConfig
   );
 }
@@ -61493,7 +61499,7 @@ function overlayByStation(sddList, seisConfig) {
   return overlayBySDDFunction(
     sddList,
     "station",
-    (sdd) => sdd.networkCode + "_" + sdd.stationCode,
+    (sdd) => sdd.sourceId.stationSourceId().toStringNoPrefix(),
     seisConfig
   );
 }
@@ -63541,7 +63547,7 @@ var MSeed3Header = class _MSeed3Header {
    * @param starttime start as DateTime
    */
   setStart(starttime) {
-    this.nanosecond = starttime.millisecond * 1e3;
+    this.nanosecond = starttime.millisecond * 1e6;
     this.year = starttime.year;
     this.dayOfYear = starttime.ordinal;
     this.hour = starttime.hour;
@@ -63618,17 +63624,23 @@ var MSeed3Header = class _MSeed3Header {
    * @returns         start time as DateTime
    */
   startAsDateTime() {
-    return DateTime.fromObject(
+    let millis = Math.round(this.nanosecond / 1e6);
+    const d = DateTime.fromObject(
       {
         year: this.year,
         ordinal: this.dayOfYear,
         hour: this.hour,
         minute: this.minute,
         second: this.second,
-        millisecond: Math.round(this.nanosecond / 1e6)
+        millisecond: 0
       },
       UTC_OPTIONS
     );
+    return d.plus(millis);
+    if (!d.isValid) {
+      throw new Error(`Start is invalid: ${this.startFieldsInUtilFormat()} ${d.invalidReason} ${d.invalidExplanation}`);
+    }
+    return d;
   }
 };
 function parseExtraHeaders(dataView) {
@@ -63687,8 +63699,6 @@ function createSeismogramSegment2(contig) {
   const bag = extractBagEH(contig[0].extraHeaders);
   if (bag?.y?.si) {
     out.yUnit = bag?.y?.si;
-  } else {
-    console.log(`no yunit in seis ${contig[0].header.identifier}`);
   }
   return out;
 }
@@ -65795,7 +65805,7 @@ async function loadFromZip(zip) {
         if (file.name.endsWith(".ms3")) {
           const seisPromise = file.async("arraybuffer").then(function(buffer) {
             const ms3records = parseMSeed3Records(buffer);
-            return sddFromMSeed3(ms3records);
+            return sddPerChannel(ms3records);
           });
           promiseArray.push(seisPromise);
         }
@@ -65855,9 +65865,13 @@ function sddFromMSeed3(ms3records, ds) {
   return out;
 }
 function insertExtraHeaders(eh, sdd, key, ds) {
-  const myEH = eh[key];
+  const myEH = extractBagEH(eh);
   if (!myEH) {
     return;
+  }
+  let quake = ehToQuake(myEH);
+  if (quake) {
+    sdd.addQuake(quake);
   }
   if (typeof myEH === "object") {
     if ("quake" in myEH) {
@@ -65883,6 +65897,7 @@ function insertExtraHeaders(eh, sdd, key, ds) {
         }
       }
     }
+    ehToMarkers;
     if ("markers" in myEH && Array.isArray(myEH["markers"])) {
       const markers = myEH["markers"];
       markers.forEach((m) => {
