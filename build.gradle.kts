@@ -117,6 +117,7 @@ tasks.register<Sync>("webserverSphinxDocs") {
   from("src/doc/sphinx/build/html")
   into("src/webserver/resources/edu/sc/seis/webtaup/html/doc")
 }
+tasks.getByName("processWebserverResources").dependsOn("webserverSphinxDocs")
 
 tasks.register<Jar>("webserverJar") {
     dependsOn("webserverClasses" )
