@@ -3,5 +3,4 @@ Web based gui for the TauP Toolkit.
 
 Options:
 
-  -p, --port=<port>         port to use
-      --webroot=<webRoot>   web root value
+  -p, --port=<port>   port to use, defaults to 7049

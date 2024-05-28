@@ -11,6 +11,8 @@ Options:
                              have single time
       --exclude=depth...   Exclude boundaries from phase conversion or
                              reflection interactions
+                           May be depth (within tol) or named boundary like
+                             moho, cmd, iocb
       --help               display this help message
       --max=<maxActions>   Maximum number of reflections and phase conversion
       --mw=<mw>            scale amplitude by source moment magnitude
@@ -43,6 +45,11 @@ Model Args
       --stadepth, --receiverdepth=depth
                            the receiver depth in km for stations not at the
                              surface
+Phase Names
+  -p, --ph, --phase=phase[,phase...]
+                           seismic phase names
+      --phasefile=<phaseFiles>
+                           read list of phase names from file
 Output Type
       --json               outputs as JSON
       --text               outputs as Text

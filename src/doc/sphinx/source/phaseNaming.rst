@@ -18,8 +18,9 @@ be familiar to seismologists, e.g. pP, PP, PcS, PKiKP, etc.
 However, the uniqueness required for parsing results in some new names for other
 familiar phases.
 
-In traditional `whole-earth` seismology, there are 3 major interfaces:  the free
-surface, the core-mantle boundary, and the inner-outer core boundary.
+In traditional `whole-earth` seismic phase names, there are 3 major
+interfaces:  the free surface, the core-mantle boundary,
+and the inner-outer core boundary.
 Phases interacting with the core-mantle boundary and the inner core boundary are easy to
 describe because the symbol for the wave type changes at the boundary (i.e. the symbol P
 changes to K within the outer core even though the wave type is the same).
@@ -59,13 +60,13 @@ the depth to an interface involved in an interaction.
     ============   ================================================================
     :code:`m`      interaction with the moho
     :code:`g`      appended to P or S to represent a ray turning in the crust
-    :code:`n`      appended to P or S to represent a head wave along the moho
+    :code:`n`      appended to P or S to represent a head wave, e.g. along the moho
     :code:`c`      interaction with the core mantle boundary
     :code:`i`      interaction with the inner core outer core boundary
     :code:`^`      underside reflection, used primarily for crustal and mantle interfaces
     :code:`v`      topside reflection, used primarily for crustal and mantle interfaces
     :code:`V`      critical topside reflection, used primarily for crustal and mantle interfaces
-    :code:`diff`   appended to P or S to represent a diffracted wave along the core mantle boundary, or to K for a diffracted wave along the inner-outer core boundary
+    :code:`diff`   appended to P or S to represent a diffracted wave, e.g. along the core mantle boundary, or to K for a diffracted wave along the inner-outer core boundary
     :code:`kmps`   appended to a velocity to represent a horizontal phase velocity (see :ref:`kmps` below)
     ============   ================================================================
 

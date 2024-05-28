@@ -68,6 +68,7 @@
 <li class="toctree-l2"><a class="reference internal" href="taup_velplot.html">TauP VelocityPlot</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_wavefront.html">TauP Wavefront</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_create.html">TauP Create</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_web.html">TauP Web</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tools.html#default-parameters">Default Parameters</a></li>
 </ul>
 </li>
@@ -132,9 +133,9 @@ boundary and sP has 2 due to one phase conversion and one reflection,
 both at the surface.</p>
 <p>Great care should be take as the combinatorial explosion is
 significant.  In the iasp91 model for a surface source, <code class="code docutils literal notranslate"><span class="pre">--max</span> <span class="pre">1</span></code>
-results in 82 phases while <code class="code docutils literal notranslate"><span class="pre">--max</span> <span class="pre">2</span></code> results in over 1000 phases.
+results in 85 phases while <code class="code docutils literal notranslate"><span class="pre">--max</span> <span class="pre">2</span></code> results in over 1000 phases.
 Then <code class="code docutils literal notranslate"><span class="pre">--max</span> <span class="pre">3</span></code> results in over 13,000 phases and
-<code class="code docutils literal notranslate"><span class="pre">--max</span> <span class="pre">4</span></code> is over 150,000. The number of phase paths can be limited
+<code class="code docutils literal notranslate"><span class="pre">--max</span> <span class="pre">4</span></code> is over 160,000. The number of phase paths can be limited
 by a range of ray parameters or times or by disabling interactions with
 discontinuities in the model.</p>
 <p>The usage is:</p>
@@ -151,6 +152,8 @@ Options:
                              have single time
       --exclude=depth...   Exclude boundaries from phase conversion or
                              reflection interactions
+                           May be depth (within tol) or named boundary like
+                             moho, cmd, iocb
       --help               display this help message
       --max=&lt;maxActions&gt;   Maximum number of reflections and phase conversion
       --mw=&lt;mw&gt;            scale amplitude by source moment magnitude
@@ -183,6 +186,11 @@ Model Args
       --stadepth, --receiverdepth=depth
                            the receiver depth in km for stations not at the
                              surface
+Phase Names
+  -p, --ph, --phase=phase[,phase...]
+                           seismic phase names
+      --phasefile=&lt;phaseFiles&gt;
+                           read list of phase names from file
 Output Type
       --json               outputs as JSON
       --text               outputs as Text

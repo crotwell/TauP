@@ -29,8 +29,6 @@ public class TauP_Web implements Callable<Integer> {
 
                 Field portField = webClass.getDeclaredField("port");
                 portField.setInt(tool, port);
-                Field webrootField = webClass.getDeclaredField("webRoot");
-                webrootField.set(tool, webRoot);
                 tool.init();
                 tool.start();
             }
@@ -41,10 +39,7 @@ public class TauP_Web implements Callable<Integer> {
         return 0;
     }
 
-    @CommandLine.Option(names = {"-p", "--port"}, defaultValue = "7049", description = "port to use")
+    @CommandLine.Option(names = {"-p", "--port"}, defaultValue = "7049", description = "port to use, defaults to ${DEFAULT-VALUE}")
     int port = 7049;
-
-    @CommandLine.Option(names = "--webroot", description = "web root value", defaultValue = "taupweb")
-    String webRoot = "taupweb";
 
 }

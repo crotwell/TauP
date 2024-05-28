@@ -23,9 +23,9 @@ both at the surface.
 
 Great care should be take as the combinatorial explosion is
 significant.  In the iasp91 model for a surface source, :code:`--max 1`
-results in 82 phases while :code:`--max 2` results in over 1000 phases.
+results in 85 phases while :code:`--max 2` results in over 1000 phases.
 Then :code:`--max 3` results in over 13,000 phases and
-:code:`--max 4` is over 150,000. The number of phase paths can be limited
+:code:`--max 4` is over 160,000. The number of phase paths can be limited
 by a range of ray parameters or times or by disabling interactions with
 discontinuities in the model.
 

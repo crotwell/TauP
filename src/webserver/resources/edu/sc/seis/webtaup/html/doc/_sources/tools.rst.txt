@@ -20,6 +20,7 @@ Tools
     taup_velplot
     taup_wavefront
     taup_create
+    taup_web
 
 
 Tools included with the TauP package:
@@ -38,6 +39,7 @@ Tools included with the TauP package:
 :ref:`velmerge <taup_velmerge>`     merges part of one velocity model into another.
 :ref:`velplot <taup_velplot>`       output velocity model as a gmt script.
 :ref:`create <taup_create>`         creates a .taup model from a velocity model.
+:ref:`web <taup_web>`               http access to the tools
 =================================   =========================================================================
 
 Each tool is a subcommand of the overall :code:`taup` Java application which is

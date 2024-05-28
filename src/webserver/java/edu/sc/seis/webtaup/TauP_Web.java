@@ -41,67 +41,75 @@ public class TauP_Web extends TauP_Tool {
         System.out.println();
         System.out.println("   http://localhost:"+port);
         System.out.println();
+
+        HttpHandler handler = new HttpHandler() {
+            @Override
+            public void handleRequest(final HttpServerExchange exchange) throws Exception {
+                try {
+                    handleTauPRequest(exchange);
+                } catch (Exception e) {
+                    System.err.println(e);
+                    e.printStackTrace(System.err);
+                    if(exchange.isResponseChannelAvailable()) {
+                        final String errorPage = "<html><head><title>Error</title></head><body>"
+                                +"<h3>Internal Error</h3>"
+                                +"<p>"+exchange.getRequestURL()+"?"+exchange.getQueryString()+"</p>"
+                                +"<p>"+e.getMessage()+"</p>"
+                                +"</body></html>";
+                        exchange.getResponseHeaders().put(Headers.CONTENT_LENGTH, "" + errorPage.length());
+                        exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, "text/html");
+                        exchange.setStatusCode(500);
+                        exchange.getResponseSender().send(errorPage);
+                    }
+                    exchange.getResponseSender().send(e.getMessage());
+                    throw e;
+                }
+            }
+
+            public void handleTauPRequest(final HttpServerExchange exchange) throws Exception {
+                String path = exchange.getRequestPath();
+                while (path.startsWith("/")) {
+                    path = path.substring(1); // trim first slash
+                }
+                System.err.println("handleRequest "+path+" from "+exchange.getRequestPath());
+
+                Map<String, Deque<String>> queryParams = exchange.getQueryParameters();
+                if (path.equals("favicon.ico")) {
+                    new ResponseCodeHandler(404).handleRequest(exchange);
+                } else if (path.startsWith("cmdline")) {
+                    TauP_Tool tool = createTool(path.substring(7));
+                    handleCmdLine(tool, queryParams, exchange);
+                } else if (path.equals("paramhelp")) {
+                    handleParamHelp(queryParams, exchange);
+                } else if (path.equals("version")) {
+                    exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, "text/plain");
+                    exchange.getResponseSender().send(BuildVersion.getDetailedVersion());
+                } else {
+                    TauP_Tool tool = createTool(path);
+                    if (tool != null) {
+                        System.err.println("Handle via TauP Tool:" + path);
+                        webRunTool(tool, queryParams, exchange);
+                    } else {
+                        System.err.println("Try to load as classpath resource: " + path);
+                        ResourceHandler resHandler = new ResourceHandler(
+                                new ClassPathResourceManager(TauP_Web.class.getClassLoader(),
+                                        "edu/sc/seis/webtaup/html"));
+                        MimeMappings nmm = MimeMappings.builder(true).addMapping("mjs", "application/javascript").build();
+                        resHandler.setMimeMappings(nmm);
+                        resHandler.handleRequest(exchange);
+                        if (exchange.isComplete()) {
+                            System.err.println(path+" ...as resource complete.");
+                        } else {
+                            System.err.println(path+" ...not loadable as resource.");
+                        }
+                    }
+                }
+            }
+        };
+
         Undertow server = Undertow.builder()
                 .addHttpListener(port, "localhost")
-                .setHandler(new BlockingHandler(new HttpHandler() {
-                    @Override
-                    public void handleRequest(final HttpServerExchange exchange) throws Exception {
-                        try {
-                            handleTauPRequest(exchange);
-                        } catch (Exception e) {
-                            System.err.println(e);
-                            e.printStackTrace(System.err);
-                            if(exchange.isResponseChannelAvailable()) {
-                                final String errorPage = "<html><head><title>Error</title></head><body>"
-                                        +"<h3>Internal Error</h3>"
-                                        +"<p>"+exchange.getRequestURL()+"?"+exchange.getQueryString()+"</p>"
-                                        +"<p>"+e.getMessage()+"</p>"
-                                        +"</body></html>";
-                                exchange.getResponseHeaders().put(Headers.CONTENT_LENGTH, "" + errorPage.length());
-                                exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, "text/html");
-                                exchange.setStatusCode(500);
-                                exchange.getResponseSender().send(errorPage);
-                            }
-                            exchange.getResponseSender().send(e.getMessage());
-                            throw e;
-                        }
-                    }
-
-                    public void handleTauPRequest(final HttpServerExchange exchange) throws Exception {
-                        String path = exchange.getRequestPath();
-                        while (path.startsWith("/")) {
-                            path = path.substring(1); // trim first slash
-                        }
-                        System.err.println("handleRequest "+path+" from "+exchange.getRequestPath());
-
-                        Map<String, Deque<String>> queryParams = exchange.getQueryParameters();
-                        if (path.equals("favicon.ico")) {
-                            new ResponseCodeHandler(404).handleRequest(exchange);
-                        } else if (path.startsWith("cmdline")) {
-                            TauP_Tool tool = createTool(path.substring(7));
-                            handleCmdLine(tool, queryParams, exchange);
-                        } else if (path.equals("paramhelp")) {
-                            handleParamHelp(queryParams, exchange);
-                        } else if (path.equals("version")) {
-                            exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, "text/plain");
-                            exchange.getResponseSender().send(BuildVersion.getDetailedVersion());
-                        } else {
-                            TauP_Tool tool = createTool(path);
-                            if (tool != null) {
-                                System.err.println("Handle via TauP Tool:" + path);
-                                webRunTool(tool, queryParams, exchange);
-                            } else {
-                                System.err.println("Try to load as classpath resource: " + path);
-                                ResourceHandler resHandler = new ResourceHandler(
-                                        new ClassPathResourceManager(TauP_Web.class.getClassLoader(),
-                                                "edu/sc/seis/webtaup/html"));
-                                MimeMappings nmm = MimeMappings.builder(true).addMapping("mjs", "application/javascript").build();
-                                resHandler.setMimeMappings(nmm);
-                                resHandler.handleRequest(exchange);
-                            }
-                        }
-                    }
-                })).build();
+                .setHandler(new BlockingHandler(handler)).build();
         server.start();
     }
 
@@ -146,10 +154,6 @@ public class TauP_Web extends TauP_Tool {
             toolToRun = toolToRun.substring(1);
         }
         TauP_Tool tool = ToolRun.getToolForName(toolToRun);
-        // special cases:
-        if (tool == null) {
-            System.err.println("Tool '"+toolToRun+"' not recognized.");
-        }
         return tool;
     }
 
@@ -352,9 +356,8 @@ public class TauP_Web extends TauP_Tool {
         return null;
     }
 
+    // see edu.sc.seis.TauP.TauP_Web for picocli cmd line interface
     public int port = 7049;
-
-    public String webRoot = "taupweb";
 
     /**
      * Allows TauP_Web to run as an application. Creates an instance of
