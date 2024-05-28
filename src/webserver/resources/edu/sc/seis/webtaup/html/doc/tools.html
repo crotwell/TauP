@@ -13,7 +13,7 @@
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="TauP Time" href="taup_time.html" />
+    <link rel="next" title="Default Parameters" href="default_params.html" />
     <link rel="prev" title="Distribution" href="distribution.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
@@ -55,6 +55,7 @@
 <li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="distribution.html">Distribution</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Tools</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="default_params.html">Default Parameters</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_time.html">TauP Time</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_pierce.html">TauP Pierce</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_path.html">TauP Path</a></li>
@@ -69,7 +70,8 @@
 <li class="toctree-l2"><a class="reference internal" href="taup_wavefront.html">TauP Wavefront</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_create.html">TauP Create</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_web.html">TauP Web</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#default-parameters">Default Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#startup-script">Startup Script</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tab-completion">Tab Completion</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="phaseNaming.html">Phase naming in TauP</a></li>
@@ -83,7 +85,7 @@
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
       <li>Previous: <a href="distribution.html" title="previous chapter">Distribution</a></li>
-      <li>Next: <a href="taup_time.html" title="next chapter">TauP Time</a></li>
+      <li>Next: <a href="default_params.html" title="next chapter">Default Parameters</a></li>
   </ul></li>
 </ul>
 </div>
@@ -164,6 +166,8 @@
 </tr>
 </tbody>
 </table>
+<section id="startup-script">
+<h2>Startup Script<a class="headerlink" href="#startup-script" title="Link to this heading">¶</a></h2>
 <p>Each tool is a subcommand of the overall <code class="code docutils literal notranslate"><span class="pre">taup</span></code> Java application which is
 an wrapper to make execution easier: sh scripts
 for textsc{Unix} and
@@ -175,138 +179,19 @@ For example, to invoke TauP Time under textsc{Unix}, you could type</p>
 <p><code class="code docutils literal notranslate"><span class="pre">taup</span> <span class="pre">time</span> <span class="pre">-mod</span> <span class="pre">prem</span></code></p>
 <p>Each tool has a <code class="code docutils literal notranslate"><span class="pre">--help</span></code> flag that will print a usage summary, as well
 as a <code class="code docutils literal notranslate"><span class="pre">--version</span></code> flag that will print the version.</p>
-<section id="default-parameters">
-<h2>Default Parameters<a class="headerlink" href="#default-parameters" title="Link to this heading">¶</a></h2>
-<p id="properties">Each of the tools use Java Properties to allow the user to specify values
-for various
-parameters. The properties all have default values, which are overridden by
-values from a Properties file. The tools use a text file to load the properties. It reads  <code class="code docutils literal notranslate"><span class="pre">.taup</span></code> in the
-current directory, which overwrites values read in from
-<code class="code docutils literal notranslate"><span class="pre">.taup</span></code> in the user’s home directory. Properties may also be specified by
-the <code class="code docutils literal notranslate"><span class="pre">--prop</span></code> command line argument.
-In addition, many of the properties can be overridden by command line arguments.</p>
-<p>The form of the properties file is very simple. Each property is set using
-the form
-<code class="code docutils literal notranslate"><span class="pre">taup.property.name=value</span></code> one property per line.
-Comment lines are allowed, and begin with a <code class="code docutils literal notranslate"><span class="pre">#</span></code>.
-Additionally, the names of all of the properties follow a convention of
-prepending <code class="code docutils literal notranslate"><span class="pre">taup.</span></code> to the name of the property.
-This helps to avoid name collisions when new properties
-are added.</p>
-<p>The currently used properties are:</p>
-<ul class="simple">
-<li><p><code class="code docutils literal notranslate"><span class="pre">taup.model.name</span></code>
-the name of the initial model to be loaded,
-iasp91 by default.</p></li>
-<li><p><code class="code docutils literal notranslate"><span class="pre">taup.model.path</span></code>
-search path for models. There is no default,
-but the value
-in the .taup file will be concatinated with any value of taup.model.path
-from the system properties. For example, the environment variable TAUPPATH
-is put into the system property taup.model.path by the wrapper shell scripts.</p></li>
-<li><p><code class="code docutils literal notranslate"><span class="pre">taup.source.depth</span></code>
-initial depth of the source, 0.0 km by default.</p></li>
-<li><p><code class="code docutils literal notranslate"><span class="pre">taup.phase.list</span></code>
-initial phase list, combined with taup.phase.file. The
-defaults are p, s, P, S, Pn, Sn, PcP, ScS, Pdiff, Sdiff, PKP, SKS, PKiKP,
-SKiKS, PKIKP, SKIKS.</p></li>
-<li><p><code class="code docutils literal notranslate"><span class="pre">taup.phase.file</span></code>
-initial phase list, combined with taup.phase.list. There
-is no default value, but the default value for taup.phase.list will not be
-used if there is a taup.phase.file property.</p></li>
-<li><p><code class="code docutils literal notranslate"><span class="pre">taup.depth.precision</span></code>
-precision for depth output, the default is 1 decimal digit.
-Note that this is precision, not accuracy. Just
-because you get more digits doesn’t imply that they have any meaning.</p></li>
-<li><p><code class="code docutils literal notranslate"><span class="pre">taup.distance.precision</span></code>
-precision for distance output,
-the default is 2 decimal digits.
-Note that this
-is precision, not accuracy. Just because you get more
-digits doesn’t imply that they have any meaning.</p></li>
-<li><p><code class="code docutils literal notranslate"><span class="pre">taup.latlon.precision</span></code>
-precision for latitude and longitude output, the
-default is 2 decimal digits.
-Note that this is precision, not accuracy. Just because you get more
-digits doesn’t imply that they have any meaning.</p></li>
-<li><p><code class="code docutils literal notranslate"><span class="pre">taup.time.precision</span></code>
-precision for time, the default is 2 decimal digits.
-Note that this is precision, not accuracy. Just because you get more
-digits doesn’t imply that they have any meaning.</p></li>
-<li><p><code class="code docutils literal notranslate"><span class="pre">taup.rayparam.precision</span></code>
-precision for ray parameter, the default is 3 decimal digits.
-Note that this is precision, not accuracy. Just because you get more
-digits doesn’t imply that they have any meaning.</p></li>
-<li><p><code class="code docutils literal notranslate"><span class="pre">taup.maxRefraction</span></code>
-The maximum degrees that a Pn or Sn can refract along the moho. Note this
-is not the total distance, only the segment along the moho. The default is 20 degrees.</p></li>
-<li><p><code class="code docutils literal notranslate"><span class="pre">taup.maxDiffraction</span></code>
-The maximum degrees that a Pdiff or Sdiff can diffract along the CMB.
-Note this is not the total distance, only the segment along the CMB. The default is 60 degrees.</p></li>
-<li><p><code class="code docutils literal notranslate"><span class="pre">taup.maxKmpsLaps</span></code>
-The maximum number of laps around the earth for
-kpms style phases.
-Note this is the number of laps, not number of arrivals, so a value of 1
-would give 2 arrivals, one going the short path and one the long way around. This can be fractional, so 0.5 would exclude the long way around
-path. The default is 1.</p></li>
-<li><p><code class="code docutils literal notranslate"><span class="pre">taup.path.maxPathInc</span></code>
-maximum distance in degrees between points of a path. This does a simple linear interpolant between nearby values in order to make plots look better. There is noo improvement in the accuracy of the path.</p></li>
-<li><p><code class="code docutils literal notranslate"><span class="pre">taup.table.locsat.maxdiff</span></code>
-maximum distance in degrees for which Pdiff
-or Sdiff are put into a locsat table. Beyond this distance Pdiff and Sdiff will
-not be added to the table, even though they may show up in the output of
-TauP Time. Instead, the next later arriving phase, if any, will be used
-instead. The default is 105 degrees.</p></li>
-<li><p><code class="code docutils literal notranslate"><span class="pre">taup.create.minDeltaP</span></code>
-Minimum difference in slowness between
-successive slowness samples. This is used to decide when to stop adding new
-samples due to the distance check.
-Used by TauP Create to create new models.
-The default is 0.1 sec/rad.</p></li>
-<li><p><code class="code docutils literal notranslate"><span class="pre">taup.create.maxDeltaP</span></code>
-Maximum difference in slowness between
-successive slowness samples. This is used to split any layers that exceed
-this slowness gap.
-Used by TauP Create to create new models.
-The default is 11.0 sec/rad.</p></li>
-<li><p><code class="code docutils literal notranslate"><span class="pre">taup.create.maxDepthInterval</span></code>
-Maximum difference between successive depth
-samples. This is used immediately after reading in a velocity model, with
-layers being split as needed.
-Used by TauP Create to create new models.
-The default is 115 km.</p></li>
-<li><p><code class="code docutils literal notranslate"><span class="pre">taup.create.maxRangeInterval</span></code>
-Maximum difference between successive
-ranges, in degrees. If the difference in distance for two adjacent rays
-is greater than this, then a new slowness sample is inserted halfway between
-the two existing slowness samples.
-The default is 2.5 degrees.</p></li>
-<li><p><code class="code docutils literal notranslate"><span class="pre">taup.create.maxInterpError</span></code>
-Maximum error for linear interpolation
-between successive sample in seconds. TauP Create uses this to try to insure
-that the maximum error due to linear interpolation is less than this amount.
-Of course, this is only an approximation based upon an estimate of the
-curvature of the travel time curve for surface focus turning waves.
-In particular, the error for more complicated phases is greater. For instance,
-if the true error for P at 30 degrees is 0.03 seconds, then the error for
-PP at 60 degrees would be twice that, 0.06 seconds.
-Used by TauP Create to create new models. The default is 0.05 seconds.</p></li>
-<li><p><code class="code docutils literal notranslate"><span class="pre">taup.create.allowInnerCoreS</span></code>
-Should we allow J phases, S in the inner core?
-Used by TauP Create to create new models.
-The default is true. Setting it to false slightly reduces storage and model
-load time.</p></li>
-</ul>
-<p>Phase files, specified with the <code class="code docutils literal notranslate"><span class="pre">taup.phase.file</span></code> property,
-are just text files with phase names, separated by either
-spaces, commas or newlines. In section <a class="reference internal" href="phaseNaming.html#phasenaming"><span class="std std-ref">Phase naming in TauP</span></a> the details of
-the phase naming convention are introduced.
-By and large, it is compatible with traditional
-seismological naming conventions, with a few additions and exceptions.
-Also, for compatiblity with <em>ttimes</em>, you may specify
-<code class="code docutils literal notranslate"><span class="pre">ttp</span></code>, <code class="code docutils literal notranslate"><span class="pre">ttp+</span></code>, <code class="code docutils literal notranslate"><span class="pre">tts</span></code>, <code class="code docutils literal notranslate"><span class="pre">tts+</span></code>,
-<code class="code docutils literal notranslate"><span class="pre">ttbasic</span></code> or <code class="code docutils literal notranslate"><span class="pre">ttall</span></code> to get a phase list corresponding
-to the <em>ttimes</em> options.</p>
+</section>
+<section id="tab-completion">
+<h2>Tab Completion<a class="headerlink" href="#tab-completion" title="Link to this heading">¶</a></h2>
+<p>New with version 3.0 is tab completion for bash and zsh. Sourcing
+<code class="code docutils literal notranslate"><span class="pre">taup_completion</span></code>, included in the distribution, will provide hints
+for the shell when hitting the tab key. For example typing:</p>
+<p><code class="code docutils literal notranslate"><span class="pre">taup</span> <span class="pre">time</span> <span class="pre">-</span></code></p>
+<p>and then hitting the tab key will display all of the possible command line
+flags. Continuing to type</p>
+<p><code class="code docutils literal notranslate"><span class="pre">taup</span> <span class="pre">time</span> <span class="pre">--mod</span></code></p>
+<p>and then hitting the tab key will display the models available for the
+<code class="code docutils literal notranslate"><span class="pre">--mod</span></code> command line argument:</p>
+<p><code class="code docutils literal notranslate"><span class="pre">ak135</span>&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">ak135favg</span>&#160;&#160; <span class="pre">ak135fcont</span>&#160; <span class="pre">iasp91</span>&#160;&#160;&#160;&#160;&#160; <span class="pre">prem</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">qdt</span></code></p>
 </section>
 </section>
 
