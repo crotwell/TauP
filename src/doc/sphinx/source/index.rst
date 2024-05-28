@@ -4,7 +4,10 @@
    contain the root `toctree` directive.
 
 The TauP Toolkit
-================================
+================
+Version 3.0 Beta
+----------------
+
 
 Flexible Seismic Travel-Time and Raypath Utilities.
 

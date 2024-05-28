@@ -31,7 +31,7 @@ html_static_path = ['_static']
 
 html_theme_options = {
     'logo': 'taupLogo.svg',
-    'description': 'Flexible Seismic Travel-Time and Raypath Utilities.',
+    'description': 'Flexible Seismic Travel-Time and Raypath Utilities. Version 3.0 Beta',
     'fixed_sidebar': "true",
     'github_user': 'crotwell',
     'github_repo': 'taup'
