@@ -51,8 +51,8 @@ public class VelocityModelListArgs {
         }
     }
 
-    public void addIfNotAlready(InputVelocityModelArgs vmodArg) {
-        for (InputVelocityModelArgs existingVMod : velocityModelArgsList) {
+    public void addIfNotAlready(VelocityModelArgs vmodArg) {
+        for (VelocityModelArgs existingVMod : velocityModelArgsList) {
             if (existingVMod.modelFilename.equals(vmodArg.getModelFilename())) {
                 return;
             }
@@ -68,9 +68,9 @@ public class VelocityModelListArgs {
         return velocityModelArgsList.size();
     }
 
-    public List<InputVelocityModelArgs> getVelocityModelArgsList() {
+    public List<VelocityModelArgs> getVelocityModelArgsList() {
         return velocityModelArgsList;
     }
 
-    List<InputVelocityModelArgs> velocityModelArgsList = new ArrayList<>();
+    List<VelocityModelArgs> velocityModelArgsList = new ArrayList<>();
 }
