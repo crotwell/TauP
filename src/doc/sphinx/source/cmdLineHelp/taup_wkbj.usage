@@ -30,22 +30,11 @@ Phase Names
       --phasefile=<phaseFiles>
                              read list of phase names from file
 Distance is given by:
-      --az=<azimuth>         azimuth in degrees
-      --baz=<backAzimuth>    backazimuth in degrees
       --deg, --degree=d[,d...]
                              distance in degrees
-      --ellipflattening=f    Elliptical flattening for distance calculations
-                               when --geodetic, defaults to WGS84 ~ 1/298.257
-      --evt, --event=l l     event latitude and longitude
       --exactdegree=d[,d...] exact distance traveled in degrees, not 360-d
       --exactkilometer=km[,km...]
                              exact distance traveled in kilometers, not 360-k
-      --geodetic             use geodetic latitude for distance calculations,
-                               which implies an ellipticity. Default is
-                               spherical. Note this only affects calculation of
-                               distance from lat/lon, all travel time
-                               calculations are done in a purely spherical
-                               model.
       --km, --kilometer=km[,km...]
                              distance in kilometers
       --rayparamdeg=s/deg[,s/deg...]
@@ -59,9 +48,23 @@ Distance is given by:
       --rayparamrad=s/rad[,s/rad...]
                              ray parameter from the source in s/rad, up or down
                                is determined by the phase
-      --sta, --station=l l   station latitude and longitude
       --takeoff=deg[,deg...] takeoff angle in degrees from the source zero is
                                down, 90 horizontal, 180 is up
+Lat,Lon influenced by:
+      --az=<azimuth>         azimuth in degrees
+      --baz=<backAzimuth>    backazimuth in degrees
+      --ellipflattening=f    Elliptical flattening for distance calculations
+                               when --geodetic, defaults to WGS84 ~ 1/298.257
+      --evt, --event=l l     event latitude and longitude.  Creates a distance
+                               if station is also given.
+      --geodetic             use geodetic latitude for distance calculations,
+                               which implies an ellipticity. Default is
+                               spherical. Note this only affects calculation of
+                               distance from lat/lon, all travel time
+                               calculations are done in a purely spherical
+                               model.
+      --sta, --station=l l   station latitude and longitude. Creates a distance
+                               if event is also given.
 Output Type
       --ms3                  outputs as mseed3
       --sac                  outputs as SAC
