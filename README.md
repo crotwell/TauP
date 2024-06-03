@@ -3,6 +3,8 @@
  [![javadoc](https://javadoc.io/badge2/edu.sc.seis/TauP/javadoc.svg)](https://javadoc.io/doc/edu.sc.seis/TauP)
 [![taup](https://snapcraft.io/taup/badge.svg)](https://snapcraft.io/taup)
 [![Tests](https://github.com/crotwell/TauP/actions/workflows/gradle.yml/badge.svg)](https://github.com/crotwell/TauP/actions/workflows/gradle.yml)
+[![Documentation Status](https://readthedocs.org/projects/taup/badge/?version=latest)](https://taup.readthedocs.io/en/latest/?badge=latest)
+
 
 
 
@@ -24,6 +26,8 @@ Scripts for the various tool for both unix (sh) and windows (bat) are in the bin
 
 The website for the TauP Toolkit is:
 http://www.seis.sc.edu/TauP
+
+Documentation is available at [Read The Docs](https://taup.readthedocs.io/en/latest/).
 
 If you like TauP and would like to cite it, please use the following:
 Crotwell, H. P., T. J. Owens, and J. Ritsema (1999). The TauP Toolkit: Flexible seismic travel-time and ray-path utilities, Seismological Research Letters 70, 154–160.
@@ -59,7 +63,7 @@ sudo snap install taup --channel=--channel=latest/edge
 ## Manually
 
 Download tarball here:
-https://www.seis.sc.edu/downloads/TauP/TauP-2.6.0.tgz
+https://www.seis.sc.edu/downloads/TauP/TauP-3.0.0.tgz
 or from the releases section on Github
 https://github.com/crotwell/TauP/releases
 
@@ -70,6 +74,8 @@ https://github.com/crotwell/TauP/releases
 
 You should not need to rebuild TauP unless you are trying to help debug, but if you do, you can build it using the Gradle wrapper script.
 
+```
 gradlew eB
+```
 
-will build TauP in build/explode.
+will build TauP into the build/explode directory.

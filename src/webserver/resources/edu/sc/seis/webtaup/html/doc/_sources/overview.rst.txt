@@ -23,3 +23,6 @@ that is intended to be used as a companion to this manual. While this manual
 mainly focuses on the praticalities of using the codes,
 the paper is able to go into more detail on the methodology. A pdf copy of
 this paper is also available in the distribution.
+
+The latest version of this documentation is available at
+`Read The Docs <https://taup.readthedocs.io/en/latest/>`_.

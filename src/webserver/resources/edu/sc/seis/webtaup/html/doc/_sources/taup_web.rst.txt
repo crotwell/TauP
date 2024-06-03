@@ -25,9 +25,8 @@ To start, run
 
 :code:`taup_web`
 
-and then open your favorite web browser to
-
-:code:`http://localhost:7049`
+and then open your favorite web browser
+to `http://localhost:7049 <http://localhost:7049>`_.
 
 Note that the web server only listens for connections from the same computer,
 as a security issue, and so the web interface is not available from other
