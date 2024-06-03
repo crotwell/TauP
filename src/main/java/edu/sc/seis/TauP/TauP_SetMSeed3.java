@@ -244,7 +244,7 @@ public class TauP_SetMSeed3 extends TauP_AbstractPhaseTool {
 
     @CommandLine.Option(names = "--qmltol",
             defaultValue = "PT1H",
-            description = "time window to search for origins in a QuakeML file")
+            description = "time window to search for origins in a QuakeML file as an ISO8601 string, default value is ${DEFAULT-VALUE}.")
     public void setQuakeOTimeTol(Duration quakeOTimeTol) {
         this.quakeOTimeTol = quakeOTimeTol;
     }
