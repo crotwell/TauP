@@ -9,7 +9,6 @@ import static edu.sc.seis.TauP.VelocityModel.TVEL;
 public class VelocityModelArgs extends InputVelocityModelArgs {
 
     public VelocityModelArgs() {
-        System.err.println("VelocityModelArgs constructor");
     }
 
     @CommandLine.Option(names={"--mod", "--model"},

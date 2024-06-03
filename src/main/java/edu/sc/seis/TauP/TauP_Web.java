@@ -6,10 +6,13 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.concurrent.Callable;
 
+import static edu.sc.seis.TauP.TauP_Tool.ABREV_SYNOPSIS;
+import static edu.sc.seis.TauP.TauP_Tool.OPTIONS_HEADING;
+
 @CommandLine.Command(name = "web",
         description = "Web based gui for the TauP Toolkit.",
-        optionListHeading = "%nOptions:%n%n",
-        abbreviateSynopsis = true,
+        optionListHeading = OPTIONS_HEADING,
+        abbreviateSynopsis = ABREV_SYNOPSIS,
         usageHelpAutoWidth = true)
 public class TauP_Web implements Callable<Integer> {
 

@@ -77,7 +77,7 @@ public class VelPlotOutputTypeArgs extends AbstractOutputTypeArgs {
         }
     }
 
-    @CommandLine.ArgGroup(heading = "Output Type %n")
+    @CommandLine.ArgGroup(heading = OUTPUTTYPE_HEADING)
     VelPlotOutputType outputType = new VelPlotOutputType();
 
     /** ps filename for use within gmt script. Usually named after the tool that created the output. */

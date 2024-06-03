@@ -1,4 +1,12 @@
-Usage: taup curve [OPTIONS]
+Usage: taup curve [--debug] [--help] [--legend] [--verbose] [--xabs] [--xlog]
+                  [--yabs] [--ylog] [--color=<coloring>]
+                  [--mapwidth=<mapwidth>] [--mapwidthunit=<mapWidthUnit>]
+                  [--mw=<mw>] [-o=<outFile>] [--prop=<toolPropsFilename>]
+                  [--reddeg=deg/s] [--redkm=km/s] [--rel=phase] [-x=type]
+                  [-y=type] [--xminmax=x x]... [--yminmax=y y]... [[-h=depth]
+                  [--mod=<modelname>] [--stadepth=depth] [--scat=s s]...]
+                  [[-p=phase[,phase...]]... [--phasefile=<phaseFiles>]...]
+                  [--gmt | --json | --svg | --text]
 Plot travel time vs. distance and other curves for seismic phases.
 
 Options:
@@ -62,7 +70,7 @@ Phase Names
                            seismic phase names
       --phasefile=<phaseFiles>
                            read list of phase names from file
-Output Type
+Output Type:
       --gmt                outputs as GMT
       --json               outputs as JSON
       --svg                outputs as SVG

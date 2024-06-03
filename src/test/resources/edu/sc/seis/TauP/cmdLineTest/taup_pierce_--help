@@ -1,4 +1,19 @@
-Usage: taup pierce [OPTIONS]
+Usage: taup pierce [--amp] [--debug] [--first] [--geodetic] [--geodetic]
+                   [--help] [--nodiscon] [--rayp] [--rev] [--time] [--turn]
+                   [--under] [--verbose] [--az=<azimuth>] [--az=<azimuth>]
+                   [--baz=<backAzimuth>] [--baz=<backAzimuth>]
+                   [--ellipflattening=f] [--ellipflattening=f] [--mw=<mw>]
+                   [-o=<outFile>] [--prop=<toolPropsFilename>] [--pierce=depth[,
+                   depth...]]... [--rel=phase[,phase...]]... [--evt=l l]...
+                   [--evt=l l]... [--sta=l l]... [--sta=l l]... [[-h=depth]
+                   [--mod=<modelname>] [--stadepth=depth] [--scat=s s]...]
+                   [[-p=phase[,phase...]]... [--phasefile=<phaseFiles>]...]
+                   [[--deg=d[,d...]]... [--exactdegree=d[,d...]]...
+                   [--exactkilometer=km[,km...]]... [--km=km[,km...]]...
+                   [--rayparamdeg=s/deg[,s/deg...]]... [--rayparamidx=i[,
+                   i...]]... [--rayparamkm=s/km[,s/km...]]...
+                   [--rayparamrad=s/rad[,s/rad...]]... [--takeoff=deg[,
+                   deg...]]...] [--json | --text]
 Calculate pierce points for phases at discontinuities in the model.
 
 Options:
@@ -12,7 +27,8 @@ Options:
       --nodiscon             only prints pierce points for the depths added
                                with -pierce
   -o, --output=<outFile>     output to file, default is stdout.
-      --pierce=depth         adds depth for calculating pierce points
+      --pierce=depth[,depth...]
+                             additional depth for calculating pierce points
       --prop=<toolPropsFilename>
                              load defaults from properties file
       --rayp, --onlyrayp     only output the ray parameter
@@ -77,6 +93,6 @@ Lat,Lon influenced by:
                                model.
       --sta, --station=l l   station latitude and longitude. Creates a distance
                                if event is also given.
-Output Type
+Output Type:
       --json                 outputs as JSON
       --text                 outputs as Text

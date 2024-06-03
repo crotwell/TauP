@@ -1,4 +1,8 @@
-Usage: taup velmerge [OPTIONS]
+Usage: taup velmerge [--debug] [--help] [--smoothbot] [--smoothtop] [--verbose]
+                     [--elev=<elevation>] [-o=<outFile>]
+                     [--prop=<toolPropsFilename>] (--modmerge=<modelName> |
+                     --ndmerge=<nDModelFilename> |
+                     --tvelmerge=<tvelModelFilename>)
 Merge part of one model into another.
 
 Options:

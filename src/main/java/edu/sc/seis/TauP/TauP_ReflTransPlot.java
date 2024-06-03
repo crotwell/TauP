@@ -10,9 +10,13 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
+import static edu.sc.seis.TauP.TauP_Tool.ABREV_SYNOPSIS;
+import static edu.sc.seis.TauP.TauP_Tool.OPTIONS_HEADING;
+
 @CommandLine.Command(name = "refltrans",
         description = "Plot reflection and transmission coefficients for a discontinuity.",
-        optionListHeading = "%nOptions:%n%n",
+        optionListHeading = OPTIONS_HEADING,
+        abbreviateSynopsis = ABREV_SYNOPSIS,
         usageHelpAutoWidth = true)
 public class TauP_ReflTransPlot extends  TauP_Tool {
 

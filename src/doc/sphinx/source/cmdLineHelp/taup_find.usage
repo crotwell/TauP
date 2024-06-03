@@ -1,4 +1,12 @@
-Usage: taup find [OPTIONS]
+Usage: taup find [--amp] [--debug] [--help] [--onlynameddiscon] [--pwaveonly]
+                 [--showrayparam] [--verbose] [--deltatime=dt]
+                 --max=<maxActions> [--mw=<mw>] [-o=<outFile>]
+                 [--prop=<toolPropsFilename>] [--deg=d[,d...]]...
+                 [--rayparamdeg=s/deg [s/deg]]... [--rayparamkm=s/km [s/km]]...
+                 [--time=t [t]]... [--exclude=depth...]... [[-h=depth]
+                 [--mod=<modelname>] [--stadepth=depth] [--scat=s s]...]
+                 [[-p=phase[,phase...]]... [--phasefile=<phaseFiles>]...]
+                 [--json | --text]
 Find seismic phases in an earth model.
 
 Options:
@@ -50,6 +58,6 @@ Phase Names
                            seismic phase names
       --phasefile=<phaseFiles>
                            read list of phase names from file
-Output Type
+Output Type:
       --json               outputs as JSON
       --text               outputs as Text

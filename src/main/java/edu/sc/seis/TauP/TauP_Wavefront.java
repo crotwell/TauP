@@ -9,14 +9,16 @@ import java.io.*;
 import java.util.*;
 
 import static edu.sc.seis.TauP.SvgUtil.createSurfaceWaveCSS;
+import static edu.sc.seis.TauP.TauP_Tool.ABREV_SYNOPSIS;
+import static edu.sc.seis.TauP.TauP_Tool.OPTIONS_HEADING;
 
 /**
  * Plots of wavefronts, distance along the ray at points in time.
  */
 @CommandLine.Command(name = "wavefront",
         description = "Plot wavefronts of seismic phases at steps in time.",
-        optionListHeading = "%nOptions:%n%n",
-        abbreviateSynopsis = true,
+        optionListHeading = OPTIONS_HEADING,
+        abbreviateSynopsis = ABREV_SYNOPSIS,
         usageHelpAutoWidth = true)
 public class TauP_Wavefront extends TauP_AbstractPhaseTool {
 

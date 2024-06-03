@@ -30,6 +30,9 @@ import picocli.CommandLine;
 import java.io.*;
 import java.util.*;
 
+import static edu.sc.seis.TauP.TauP_Tool.ABREV_SYNOPSIS;
+import static edu.sc.seis.TauP.TauP_Tool.OPTIONS_HEADING;
+
 /**
  * Calculate travel times for different branches using linear interpolation
  * between known slowness samples.
@@ -38,9 +41,9 @@ import java.util.*;
  * @author H. Philip Crotwell
  */
 @CommandLine.Command(name = "time",
-        description = "Calculate travel times for seismic phases in an earth model",
-        optionListHeading = "%nOptions:%n%n",
-        abbreviateSynopsis = true,
+        description = "Calculate travel times for seismic phases in an earth model.",
+        optionListHeading = OPTIONS_HEADING,
+        abbreviateSynopsis = ABREV_SYNOPSIS,
         usageHelpAutoWidth = true)
 public class TauP_Time extends TauP_AbstractRayTool {
 

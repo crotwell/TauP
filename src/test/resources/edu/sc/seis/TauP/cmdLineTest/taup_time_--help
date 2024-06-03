@@ -1,5 +1,18 @@
-Usage: taup time [OPTIONS]
-Calculate travel times for seismic phases in an earth model
+Usage: taup time [--amp] [--debug] [--first] [--geodetic] [--geodetic] [--help]
+                 [--rayp] [--time] [--verbose] [--az=<azimuth>]
+                 [--az=<azimuth>] [--baz=<backAzimuth>] [--baz=<backAzimuth>]
+                 [--ellipflattening=f] [--ellipflattening=f] [--mw=<mw>]
+                 [-o=<outFile>] [--prop=<toolPropsFilename>] [--rel=phase[,
+                 phase...]]... [--evt=l l]... [--evt=l l]... [--sta=l l]...
+                 [--sta=l l]... [[-h=depth] [--mod=<modelname>]
+                 [--stadepth=depth] [--scat=s s]...] [[-p=phase[,phase...]]...
+                 [--phasefile=<phaseFiles>]...] [[--deg=d[,d...]]...
+                 [--exactdegree=d[,d...]]... [--exactkilometer=km[,km...]]...
+                 [--km=km[,km...]]... [--rayparamdeg=s/deg[,s/deg...]]...
+                 [--rayparamidx=i[,i...]]... [--rayparamkm=s/km[,s/km...]]...
+                 [--rayparamrad=s/rad[,s/rad...]]... [--takeoff=deg[,
+                 deg...]]...] [--json | --text]
+Calculate travel times for seismic phases in an earth model.
 
 Options:
 
@@ -70,6 +83,6 @@ Lat,Lon influenced by:
                                model.
       --sta, --station=l l   station latitude and longitude. Creates a distance
                                if event is also given.
-Output Type
+Output Type:
       --json                 outputs as JSON
       --text                 outputs as Text

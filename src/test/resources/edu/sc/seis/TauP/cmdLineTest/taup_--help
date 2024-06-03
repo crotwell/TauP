@@ -3,7 +3,7 @@ The TauP Toolkit
       --help      display this help message
   -V, --version   display version info
 Commands:
-  time       Calculate travel times for seismic phases in an earth model
+  time       Calculate travel times for seismic phases in an earth model.
   pierce     Calculate pierce points for phases at discontinuities in the model.
   path       Plot ray paths, distance vs. depth, through the earth.
   create     Create .taup file from a velocity model.

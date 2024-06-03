@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Objects;
 
 import static edu.sc.seis.TauP.Arrival.RtoD;
+import static edu.sc.seis.TauP.TauP_Tool.ABREV_SYNOPSIS;
+import static edu.sc.seis.TauP.TauP_Tool.OPTIONS_HEADING;
 import static edu.sc.seis.TauP.cli.OutputTypes.TEXT;
 
 /**
@@ -19,8 +21,8 @@ import static edu.sc.seis.TauP.cli.OutputTypes.TEXT;
  */
 @CommandLine.Command(name = "velplot",
         description = "Plot velocity vs depth for a model.",
-        optionListHeading = "%nOptions:%n%n",
-        abbreviateSynopsis = true,
+        optionListHeading = OPTIONS_HEADING,
+        abbreviateSynopsis = ABREV_SYNOPSIS,
         usageHelpAutoWidth = true)
 public class TauP_VelocityPlot extends TauP_Tool {
 

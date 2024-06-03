@@ -1,4 +1,4 @@
-Usage: taup web [OPTIONS]
+Usage: taup web [-p=<port>]
 Web based gui for the TauP Toolkit.
 
 Options:

@@ -11,7 +11,7 @@ public class GraphicOutputTypeArgs extends AbstractOutputTypeArgs {
         setOutputFormat(defaultFormat);
     }
 
-    @CommandLine.ArgGroup(heading = "Output Type %n")
+    @CommandLine.ArgGroup(heading = OUTPUTTYPE_HEADING)
     GraphicsOutputType outputType = new GraphicsOutputType();
 
     /** ps filename for use within gmt script. Usually named after the tool that created the output. */

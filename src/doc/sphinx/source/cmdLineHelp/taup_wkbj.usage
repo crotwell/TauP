@@ -1,4 +1,16 @@
-Usage: taup wkbj [OPTIONS]
+Usage: taup wkbj [--debug] [--geodetic] [--geodetic] [--help] [--verbose]
+                 [--az=<azimuth>] [--az=<azimuth>] [--baz=<backAzimuth>]
+                 [--baz=<backAzimuth>] [--ellipflattening=f]
+                 [--ellipflattening=f] [--mw=<mw>] [-o=<outFile>]
+                 [--otime=<origintime>] [--prop=<toolPropsFilename>] [--evt=l
+                 l]... [--evt=l l]... [--sta=l l]... [--sta=l l]... [[-h=depth]
+                 [--mod=<modelname>] [--stadepth=depth] [--scat=s s]...]
+                 [[-p=phase[,phase...]]... [--phasefile=<phaseFiles>]...]
+                 [[--deg=d[,d...]]... [--exactdegree=d[,d...]]...
+                 [--exactkilometer=km[,km...]]... [--km=km[,km...]]...
+                 [--rayparamdeg=s/deg[,s/deg...]]... [--rayparamidx=i[,
+                 i...]]... [--rayparamkm=s/km[,s/km...]]... [--rayparamrad=s/rad
+                 [,s/rad...]]... [--takeoff=deg[,deg...]]...] [--ms3 | --sac]
 Calculate synthetic seismograms, DANGER: experimental!!!
 
 Options:

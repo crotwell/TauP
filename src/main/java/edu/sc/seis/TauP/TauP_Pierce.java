@@ -23,6 +23,9 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
+import static edu.sc.seis.TauP.TauP_Tool.ABREV_SYNOPSIS;
+import static edu.sc.seis.TauP.TauP_Tool.OPTIONS_HEADING;
+
 /**
  * Calculate pierce points for different branches using linear interpolation
  * between known slowness samples. A pierce point is where a ray pierces a tau
@@ -33,8 +36,8 @@ import java.util.List;
  */
 @CommandLine.Command(name = "pierce",
         description = "Calculate pierce points for phases at discontinuities in the model.",
-        optionListHeading = "%nOptions:%n%n",
-        abbreviateSynopsis = true,
+        optionListHeading = OPTIONS_HEADING,
+        abbreviateSynopsis = ABREV_SYNOPSIS,
         usageHelpAutoWidth = true)
 public class TauP_Pierce extends TauP_Time {
 
@@ -81,7 +84,8 @@ public class TauP_Pierce extends TauP_Time {
 
     @CommandLine.Option(names= {"--pierce"},
             paramLabel = "depth",
-            description = "adds depth for calculating pierce points")
+            description = "additional depth for calculating pierce points",
+            split=",")
     public void setAddDepth(List<Double> addDepths) {
         modelArgs.setModelSplitDepths(addDepths);
     }

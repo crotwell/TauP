@@ -1,4 +1,8 @@
-Usage: taup table [OPTIONS]
+Usage: taup table [--debug] [--help] [--verbose] [--header=<headerFile>]
+                  [-o=<outFile>] [--prop=<toolPropsFilename>] [[-h=depth]
+                  [--mod=<modelname>] [--stadepth=depth] [--scat=s s]...]
+                  [[-p=phase[,phase...]]... [--phasefile=<phaseFiles>]...]
+                  [--csv | --json | --locsat | --text]
 Create a table of travel times for a range of depths and distances.
 
 Options:
@@ -31,7 +35,7 @@ Phase Names
                            seismic phase names
       --phasefile=<phaseFiles>
                            read list of phase names from file
-Output Type
+Output Type:
       --csv                outputs as CSV
       --json               outputs as JSON
       --locsat             outputs as Locsat

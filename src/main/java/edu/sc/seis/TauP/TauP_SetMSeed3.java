@@ -21,10 +21,18 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
 
+import static edu.sc.seis.TauP.TauP_Tool.ABREV_SYNOPSIS;
+import static edu.sc.seis.TauP.TauP_Tool.OPTIONS_HEADING;
+
 @CommandLine.Command(name = "setmseed3",
-        description = "Save travel times in the extra header of miniseed3 files.",
-        optionListHeading = "%nOptions:%n%n",
-        abbreviateSynopsis = true,
+        description = {
+                "Save travel times in the extra header of miniseed3 files.",
+                "    https://crotwell.github.io/ms3eh/",
+                "has details on the JSON structure.",
+                ""
+        },
+        optionListHeading = OPTIONS_HEADING,
+        abbreviateSynopsis = ABREV_SYNOPSIS,
         usageHelpAutoWidth = true)
 public class TauP_SetMSeed3 extends TauP_AbstractPhaseTool {
 
@@ -225,7 +233,7 @@ public class TauP_SetMSeed3 extends TauP_AbstractPhaseTool {
     }
 
     @CommandLine.Option(names = "--eh",
-            description = "key to store full output within extra headers within, otherwise use abbreviated 'bag' markers")
+            description = "key to store full TauP JSON output within extra headers within, otherwise use abbreviated 'bag' markers")
     public void setEhKey(String ehKey) {
         this.ehKey = ehKey;
     }
@@ -264,7 +272,8 @@ public class TauP_SetMSeed3 extends TauP_AbstractPhaseTool {
         return mseed3FileNames;
     }
 
-    @CommandLine.Parameters
+    @CommandLine.Parameters(description = "Miniseed3 files to process.",
+            paramLabel = "mseed3file")
     public void setMseed3FileNames(List<String> mseed3FileNames) {
         this.mseed3FileNames = mseed3FileNames;
     }

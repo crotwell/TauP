@@ -38,6 +38,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static edu.sc.seis.TauP.TauP_Tool.ABREV_SYNOPSIS;
+import static edu.sc.seis.TauP.TauP_Tool.OPTIONS_HEADING;
+
 /**
  * Calculate times for phases and set sac headers based on gcarc or dist or
  * station lat and lon and event lat and lon.
@@ -63,8 +66,8 @@ import java.util.List;
  */
 @CommandLine.Command(name = "setsac",
         description = "Set headers to travel times of phases using depth and distance from SAC files.",
-        optionListHeading = "%nOptions:%n%n",
-        abbreviateSynopsis = true,
+        optionListHeading = OPTIONS_HEADING,
+        abbreviateSynopsis = ABREV_SYNOPSIS,
         usageHelpAutoWidth = true)
 public class TauP_SetSac extends TauP_AbstractPhaseTool {
 
@@ -84,7 +87,9 @@ public class TauP_SetSac extends TauP_AbstractPhaseTool {
         this.evdpkm = evdpkm;
     }
 
-    @CommandLine.Parameters(description = "SAC files to process")
+    @CommandLine.Parameters(description = "SAC files to process",
+            paramLabel = "sacfile"
+    )
     public void setSacFileNames(String[] sacFileNames) {
         this.sacFileNames = new ArrayList<>();
         this.sacFileNames.addAll(Arrays.asList(sacFileNames));

@@ -11,11 +11,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static edu.sc.seis.TauP.Arrival.RtoD;
+import static edu.sc.seis.TauP.TauP_Tool.ABREV_SYNOPSIS;
+import static edu.sc.seis.TauP.TauP_Tool.OPTIONS_HEADING;
 
 @CommandLine.Command(name = "find",
         description = "Find seismic phases in an earth model.",
-        optionListHeading = "%nOptions:%n%n",
-        abbreviateSynopsis = true,
+        optionListHeading = OPTIONS_HEADING,
+        abbreviateSynopsis = ABREV_SYNOPSIS,
         usageHelpAutoWidth = true)
 public class TauP_Find extends TauP_AbstractPhaseTool {
 

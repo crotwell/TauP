@@ -10,6 +10,8 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.Objects;
 
+import static edu.sc.seis.TauP.TauP_Tool.ABREV_SYNOPSIS;
+import static edu.sc.seis.TauP.TauP_Tool.OPTIONS_HEADING;
 import static edu.sc.seis.TauP.VelocityModel.ND;
 
 /**
@@ -17,8 +19,8 @@ import static edu.sc.seis.TauP.VelocityModel.ND;
  */
 @CommandLine.Command(name = "velmerge",
         description = "Merge part of one model into another.",
-        optionListHeading = "%nOptions:%n%n",
-        abbreviateSynopsis = true,
+        optionListHeading = OPTIONS_HEADING,
+        abbreviateSynopsis = ABREV_SYNOPSIS,
         usageHelpAutoWidth = true)
 public class TauP_VelocityMerge extends TauP_Tool {
 

@@ -1,4 +1,12 @@
-Usage: taup velplot [OPTIONS]
+Usage: taup velplot [--debug] [--help] [--legend] [--listdiscon] [--verbose]
+                    [--mapwidth=<mapwidth>] [--mapwidthunit=<mapWidthUnit>]
+                    [-o=<outFile>] [--prop=<toolPropsFilename>] [-x=type]
+                    [-y=type] [--xminmax=x x]... [--yminmax=y y]... [--mod
+                    [=<modelName>...] [--mod[=<modelName>...]]... | --nd
+                    [=<nDModelFilename>...] [--nd[=<nDModelFilename>...]]... |
+                    --tvel[=<tvelModelFilename>...] [--tvel
+                    [=<tvelModelFilename>...]]...] [--csv | --gmt | --json |
+                    --nameddiscon | --svg | --text]
 Plot velocity vs depth for a model.
 
 Options:
@@ -39,7 +47,7 @@ Velocity Model
                            "named discontinuities" velocity file
       --tvel[=<tvelModelFilename>...]
                            ".tvel" velocity file, ala ttimes
-Output Type
+Output Type:
       --csv                outputs as CSV
       --gmt                outputs as GMT
       --json               outputs as JSON

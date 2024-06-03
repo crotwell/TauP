@@ -38,6 +38,9 @@ import java.io.StreamTokenizer;
 import java.util.ArrayList;
 import java.util.List;
 
+import static edu.sc.seis.TauP.TauP_Tool.ABREV_SYNOPSIS;
+import static edu.sc.seis.TauP.TauP_Tool.OPTIONS_HEADING;
+
 /**
  * Creates a table of travel times for a phase. Only uses the first arrival at
  * any distance.
@@ -51,8 +54,8 @@ import java.util.List;
  */
 @CommandLine.Command(name = "table",
         description = "Create a table of travel times for a range of depths and distances.",
-        optionListHeading = "%nOptions:%n%n",
-        abbreviateSynopsis = true,
+        optionListHeading = OPTIONS_HEADING,
+        abbreviateSynopsis = ABREV_SYNOPSIS,
         usageHelpAutoWidth = true)
 public class TauP_Table extends TauP_AbstractPhaseTool {
 

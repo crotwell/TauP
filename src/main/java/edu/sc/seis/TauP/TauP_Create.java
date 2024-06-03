@@ -34,6 +34,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
 
+import static edu.sc.seis.TauP.TauP_Tool.ABREV_SYNOPSIS;
+import static edu.sc.seis.TauP.TauP_Tool.OPTIONS_HEADING;
 import static edu.sc.seis.TauP.cli.OutputTypes.TAUP;
 
 /**
@@ -50,7 +52,8 @@ import static edu.sc.seis.TauP.cli.OutputTypes.TAUP;
  */
 @CommandLine.Command(name = "create",
         description = "Create .taup file from a velocity model.",
-        optionListHeading = "%nOptions:%n%n",
+        optionListHeading = OPTIONS_HEADING,
+        abbreviateSynopsis = ABREV_SYNOPSIS,
         usageHelpAutoWidth = true)
 public class TauP_Create extends TauP_Tool {
 

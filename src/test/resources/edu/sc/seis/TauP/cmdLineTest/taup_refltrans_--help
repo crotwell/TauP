@@ -4,8 +4,8 @@ Usage: taup refltrans [--abs] [--debug] [--down] [--energyflux] [--fsrf]
                       [--mapwidth=<mapwidth>] [--mapwidthunit=<mapWidthUnit>]
                       [-o=<outFile>] [--prop=<toolPropsFilename>]
                       [--rpstep=s/km] [-x=type] [--xminmax=x x]... [--yminmax=y
-                      y]... [--layer=v v v v v v]... [-y=type...]... [--text |
-                      --json | --gmt | --svg] [[--mod=<modelname>] [-h=depth]
+                      y]... [--layer=v v v v v v]... [-y=type...]... [--gmt |
+                      --json | --svg | --text] [[-h=depth] [--mod=<modelname>]
                       [--stadepth=depth] [--scat=s s]...]
 Plot reflection and transmission coefficients for a discontinuity.
 
@@ -48,7 +48,7 @@ Options:
                               FreeRecFuncSvz, FreeRecFuncSh, default is all
                               displacement coef.
       --yminmax=y y         min and max y axis for plotting
-Output Type
+Output Type:
       --gmt                 outputs as GMT
       --json                outputs as JSON
       --svg                 outputs as SVG

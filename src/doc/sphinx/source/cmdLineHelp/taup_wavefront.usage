@@ -1,4 +1,13 @@
-Usage: taup wavefront [OPTIONS]
+Usage: taup wavefront [--debug] [--help] [--legend] [--negdist]
+                      [--onlynameddiscon] [--timefiles] [--verbose]
+                      [--color=<coloring>] [--mapwidth=<mapwidth>]
+                      [--mapwidthunit=<mapWidthUnit>] [-o=<outFile>]
+                      [--prop=<toolPropsFilename>] [--timestep=<timeStep>]
+                      [--xaxis=type] [--yaxis=type] [--degminmax=deg deg]
+                      [--depthminmax=km km] [[-h=depth] [--mod=<modelname>]
+                      [--stadepth=depth] [--scat=s s]...] [[-p=phase[,
+                      phase...]]... [--phasefile=<phaseFiles>]...] [--gmt |
+                      --json | --svg | --text]
 Plot wavefronts of seismic phases at steps in time.
 
 Options:
@@ -48,7 +57,7 @@ Phase Names
                             seismic phase names
       --phasefile=<phaseFiles>
                             read list of phase names from file
-Output Type
+Output Type:
       --gmt                 outputs as GMT
       --json                outputs as JSON
       --svg                 outputs as SVG

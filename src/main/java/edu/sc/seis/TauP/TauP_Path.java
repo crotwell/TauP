@@ -27,6 +27,8 @@ import java.util.List;
 
 import static edu.sc.seis.TauP.SvgEarth.calcEarthScaleTrans;
 import static edu.sc.seis.TauP.SvgUtil.createSurfaceWaveCSS;
+import static edu.sc.seis.TauP.TauP_Tool.ABREV_SYNOPSIS;
+import static edu.sc.seis.TauP.TauP_Tool.OPTIONS_HEADING;
 
 /**
  * Calculate travel paths for different phases using a linear interpolated ray
@@ -37,8 +39,8 @@ import static edu.sc.seis.TauP.SvgUtil.createSurfaceWaveCSS;
  */
 @CommandLine.Command(name = "path",
 		description = "Plot ray paths, distance vs. depth, through the earth.",
-		optionListHeading = "%nOptions:%n%n",
-		abbreviateSynopsis = true,
+		optionListHeading = OPTIONS_HEADING,
+		abbreviateSynopsis = ABREV_SYNOPSIS,
 		usageHelpAutoWidth = true)
 public class TauP_Path extends TauP_AbstractRayTool {
 

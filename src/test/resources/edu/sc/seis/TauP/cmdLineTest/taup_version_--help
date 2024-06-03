@@ -1,4 +1,5 @@
-Usage: taup version [OPTIONS]
+Usage: taup version [--debug] [--help] [--verbose] [-o=<outFile>]
+                    [--prop=<toolPropsFilename>] [--json | --text]
 Print the version.
 
 Options:
@@ -9,6 +10,6 @@ Options:
       --prop=<toolPropsFilename>
                            load defaults from properties file
       --verbose            enable verbose output
-Output Type
+Output Type:
       --json               outputs as JSON
       --text               outputs as Text

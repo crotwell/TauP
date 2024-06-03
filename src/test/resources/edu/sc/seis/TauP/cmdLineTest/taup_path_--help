@@ -1,4 +1,20 @@
-Usage: taup path [OPTIONS]
+Usage: taup path [--debug] [--geodetic] [--geodetic] [--help]
+                 [--onlynameddiscon] [--verbose] [--withtime] [--az=<azimuth>]
+                 [--az=<azimuth>] [--baz=<backAzimuth>] [--baz=<backAzimuth>]
+                 [--color=<coloring>] [--ellipflattening=f]
+                 [--ellipflattening=f] [--mapwidth=<mapwidth>]
+                 [--mapwidthunit=<mapWidthUnit>] [--maxpathinc=<maxPathInc>]
+                 [-o=<outFile>] [--prop=<toolPropsFilename>] [--xaxis=type]
+                 [--yaxis=type] [--degminmax=deg deg] [--depthminmax=km km]
+                 [--evt=l l]... [--evt=l l]... [--sta=l l]... [--sta=l l]...
+                 [[-h=depth] [--mod=<modelname>] [--stadepth=depth] [--scat=s
+                 s]...] [[-p=phase[,phase...]]...
+                 [--phasefile=<phaseFiles>]...] [[--deg=d[,d...]]...
+                 [--exactdegree=d[,d...]]... [--exactkilometer=km[,km...]]...
+                 [--km=km[,km...]]... [--rayparamdeg=s/deg[,s/deg...]]...
+                 [--rayparamidx=i[,i...]]... [--rayparamkm=s/km[,s/km...]]...
+                 [--rayparamrad=s/rad[,s/rad...]]... [--takeoff=deg[,
+                 deg...]]...] [--gmt | --json | --svg | --text]
 Plot ray paths, distance vs. depth, through the earth.
 
 Options:
@@ -83,7 +99,7 @@ Lat,Lon influenced by:
                                model.
       --sta, --station=l l   station latitude and longitude. Creates a distance
                                if event is also given.
-Output Type
+Output Type:
       --gmt                  outputs as GMT
       --json                 outputs as JSON
       --svg                  outputs as SVG

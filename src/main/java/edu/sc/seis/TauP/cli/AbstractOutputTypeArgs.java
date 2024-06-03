@@ -42,6 +42,8 @@ public abstract class AbstractOutputTypeArgs {
 
     public static final String STDOUT_FILENAME = "-";
 
+    public static final String OUTPUTTYPE_HEADING = "Output Type:%n";
+
     public boolean isStdout() {
         return getOutFileBase() == null || getOutFileBase().isEmpty()
                 || getOutFileBase().equals(STDOUT_FILENAME) || getOutFileBase().equals("stdout");

@@ -1,4 +1,7 @@
-Usage: taup phase [OPTIONS]
+Usage: taup phase [--debug] [--help] [--verbose] [-o=<outFile>]
+                  [--prop=<toolPropsFilename>] [[-h=depth] [--mod=<modelname>]
+                  [--stadepth=depth] [--scat=s s]...] [[-p=phase[,phase...]]...
+                  [--phasefile=<phaseFiles>]...] [--json | --text]
 Describe a seismic phase in the current model.
 
 Options:
@@ -28,6 +31,6 @@ Phase Names
                            seismic phase names
       --phasefile=<phaseFiles>
                            read list of phase names from file
-Output Type
+Output Type:
       --json               outputs as JSON
       --text               outputs as Text

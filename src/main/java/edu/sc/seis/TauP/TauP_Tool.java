@@ -159,6 +159,10 @@ public abstract class TauP_Tool implements Callable<Integer> {
 
     public abstract void validateArguments() throws TauPException;
 
+    public static final String OPTIONS_HEADING = "%nOptions:%n%n";
+    public static final boolean ABREV_SYNOPSIS = false;
+
+
     /**
      * injected by picocli
      *

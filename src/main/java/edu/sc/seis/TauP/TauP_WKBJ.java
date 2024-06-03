@@ -43,6 +43,8 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static edu.sc.seis.TauP.TauP_Tool.ABREV_SYNOPSIS;
+import static edu.sc.seis.TauP.TauP_Tool.OPTIONS_HEADING;
 import static edu.sc.seis.TauP.cli.OutputTypes.MS3;
 
 /**
@@ -59,8 +61,8 @@ import static edu.sc.seis.TauP.cli.OutputTypes.MS3;
  */
 @CommandLine.Command(name = "wkbj",
         description = "Calculate synthetic seismograms, DANGER: experimental!!!",
-        optionListHeading = "%nOptions:%n%n",
-        abbreviateSynopsis = true,
+        optionListHeading = OPTIONS_HEADING,
+        abbreviateSynopsis = ABREV_SYNOPSIS,
         usageHelpAutoWidth = true)
 public class TauP_WKBJ extends TauP_AbstractRayTool {
 

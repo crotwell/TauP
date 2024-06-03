@@ -14,7 +14,7 @@ public class TableOutputTypeArgs extends AbstractOutputTypeArgs {
         setOutputFormat(defaultFormat);
     }
 
-    @CommandLine.ArgGroup(heading = "Output Type %n")
+    @CommandLine.ArgGroup(heading = OUTPUTTYPE_HEADING)
     TableOutputType outputType = new TableOutputType();
 
 
