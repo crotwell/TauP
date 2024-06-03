@@ -26,3 +26,5 @@ this paper is also available in the distribution.
 
 The latest version of this documentation is available at
 `Read The Docs <https://taup.readthedocs.io/en/latest/>`_.
+
+The latest source is at `GitHub <https://github.com/crotwell/TauP>`_.
