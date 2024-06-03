@@ -63,7 +63,9 @@ dependencies {
       exclude(group = "org.apache.httpcomponents", module = "httpclient")
     }
 
-    implementation("info.picocli:picocli:4.7.6")
+    // temporary use modified picocli to allow sort of ArgGroup options
+    // see src/main/java/picocli
+    //implementation("info.picocli:picocli:4.7.6")
     annotationProcessor("info.picocli:picocli-codegen:4.7.6")
 
     runtimeOnly("org.slf4j:slf4j-reload4j:2.0.5")
