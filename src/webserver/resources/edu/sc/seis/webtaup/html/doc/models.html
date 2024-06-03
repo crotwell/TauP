@@ -252,7 +252,7 @@ name is found. While taup.model.path is a Java property, the shell scripts provi
 translate the environment variable TAUPPATH into this property. The user
 generally need not be aware of this fact except when the tools are invoked
 without using the provided shell scripts. A more desirable method is to
-set the taup.model.path in a properties file. See section <span class="xref std std-ref">properties</span> for
+set the taup.model.path in a properties file. See section <a class="reference internal" href="default_params.html#default-params"><span class="std std-ref">Default Parameters</span></a> for
 more details.</p>
 <p>The taup.model.path property is constructed in the manner of standard Java CLASSPATH
 which is itself based loosely on the manner of the <em>Unix</em> PATH.
@@ -278,11 +278,9 @@ and then create a jar file.</p>
 <p><code class="code docutils literal notranslate"><span class="pre">jar</span> <span class="pre">-cf</span> <span class="pre">MyModels.jar</span> <span class="pre">Models</span></code></p>
 <p>Including a <code class="docutils literal notranslate"><span class="pre">.</span></code> for the current working directory with the taup.model.path
 is not necessary since we
-always check there, see <span class="xref std std-ref">cwdmodel</span> below, but it may be used to
+always check there, see below, but it may be used to
 change the search order.</p>
 </li>
-</ul>
-<ul class="simple" id="cwdmodel">
 <li><p>The last place TauP looks is for a model file specified
 on the command line.
 So, if you generate newModel.taup and want to get some times, you can just say:

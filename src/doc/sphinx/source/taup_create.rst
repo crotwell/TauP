@@ -10,7 +10,7 @@ The output file holds all
 information about the model and need only be computed once. It
 is used by all of the other tools. There are several parameters controlling
 the density of sampling. Their values can be set with properties. See section
-:ref:`properties`.
+:ref:`default_params`.
 
 Note that the use of TauP Create is no longer required as the various tools can
 read velocity models directly

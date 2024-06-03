@@ -125,7 +125,7 @@ places in order until it finds a model that matches the name.
   translate the environment variable TAUPPATH into this property. The user
   generally need not be aware of this fact except when the tools are invoked
   without using the provided shell scripts. A more desirable method is to
-  set the taup.model.path in a properties file. See section :ref:`properties` for
+  set the taup.model.path in a properties file. See section :ref:`default_params` for
   more details.
 
   The taup.model.path property is constructed in the manner of standard Java CLASSPATH
@@ -159,10 +159,8 @@ places in order until it finds a model that matches the name.
 
   Including a ``.`` for the current working directory with the taup.model.path
   is not necessary since we
-  always check there, see :ref:`cwdmodel` below, but it may be used to
+  always check there, see below, but it may be used to
   change the search order.
-
-.. _cwdmodel:
 
 * The last place TauP looks is for a model file specified
   on the command line.
