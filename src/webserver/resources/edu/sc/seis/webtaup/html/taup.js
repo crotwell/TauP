@@ -242,8 +242,10 @@ export async function display_results(taup_url) {
         seisConfig.amplitudeMode = sp.scale.AMPLITUDE_MODE.Raw;
         seisConfig.doMarkers = false;
 
-        console.log(`quake: ${sddList[0].quake}`);
-        sddList[0].markerList.forEach((m) => console.log(m.tm));
+        if (sddList.length > 0) {
+          console.log(`quake: ${sddList[0].quake}`);
+          sddList[0].markerList.forEach((m) => console.log(m.time));
+        }
         const seismograph = new sp.organizeddisplay.OrganizedDisplay(sddList, seisConfig);
         //const seismograph = new sp.seismograph.Seismograph(sddList, seisConfig);
         seismograph.addStyle(`
