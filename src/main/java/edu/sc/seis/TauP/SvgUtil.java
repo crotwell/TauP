@@ -275,12 +275,14 @@ public class SvgUtil {
         return "phase_"+phase;
     }
 
-    public static StringBuffer createPhaseColorCSS(List<String> phaseNames) {
+
+    public static StringBuffer createPhaseColorCSS(List<PhaseName> phaseNames) {
         StringBuffer out = new StringBuffer();
         for (int i = 0; i < phaseNames.size(); i++) {
             int moduloColor = i % DEFAULT_COLORS.size();
             String color = DEFAULT_COLORS.get(moduloColor);
-            String phaseClass = classForPhase(phaseNames.get(i));
+            PhaseName phaseName = phaseNames.get(i);
+            String phaseClass = classForPhase(phaseName.getName());
             out.append("        ."+phaseClass+" {\n");
             out.append("          stroke: "+color+";\n");
             out.append("        }\n");

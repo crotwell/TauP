@@ -8,7 +8,6 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StreamTokenizer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static edu.sc.seis.TauP.Arrival.RtoD;
@@ -402,7 +401,7 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
         return splitCurve;
     }
 
-    public void printResult(PrintWriter writer, List<XYPlottingData> xyPlots) {
+    public void printResult(PrintWriter writer, List<XYPlottingData> xyPlots) throws TauPException {
         XYPlotOutput xyOut = new XYPlotOutput(xyPlots, modelArgs);
         xyOut.setPhaseNames(getPhaseNames());
         xyOut.setxAxisMinMax(xAxisMinMax);
@@ -419,7 +418,7 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
         } else if (outputTypeArgs.isSVG()) {
             String cssExtra = "";
             if (coloring.getColor() == ColorType.phase) {
-                cssExtra += SvgUtil.createPhaseColorCSS(Arrays.asList(getPhaseNames()));
+                cssExtra += SvgUtil.createPhaseColorCSS(parsePhaseNameList());
             } else if (coloring.getColor() == ColorType.wavetype) {
                 cssExtra += SvgUtil.createWaveTypeColorCSS();
             } else {

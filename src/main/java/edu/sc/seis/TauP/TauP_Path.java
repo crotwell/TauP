@@ -22,7 +22,6 @@ import picocli.CommandLine;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static edu.sc.seis.TauP.SvgEarth.calcEarthScaleTrans;
@@ -305,9 +304,10 @@ public class TauP_Path extends TauP_AbstractRayTool {
 		SvgEarthScaling scaleTrans = calcEarthScaleTrans(arrivalList, distDepthRange);
 		String extraCSS = "";
 
-		extraCSS+=createSurfaceWaveCSS(parsePhaseNameList())+"\n";
+		List<PhaseName> phaseNameList = parsePhaseNameList();
+		extraCSS+=createSurfaceWaveCSS(phaseNameList)+"\n";
 		if (coloring.getColor() == ColorType.phase) {
-			StringBuffer cssPhaseColors = SvgUtil.createPhaseColorCSS(Arrays.asList(getPhaseNames()));
+			StringBuffer cssPhaseColors = SvgUtil.createPhaseColorCSS(phaseNameList);
 			extraCSS += cssPhaseColors;
 		} else if (coloring.getColor() == ColorType.wavetype) {
 			String cssWaveTypeColors = SvgUtil.createWaveTypeColorCSS();

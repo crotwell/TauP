@@ -98,11 +98,12 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
             }
             out.println(jsonArray.toString(2));
         } else if (getOutputFormat().equals(OutputTypes.SVG)) {
+            List<PhaseName> phaseNameList = parsePhaseNameList();
             String cssExtra = "";
-            cssExtra += createSurfaceWaveCSS(parsePhaseNameList())+"\n";
+            cssExtra += createSurfaceWaveCSS(phaseNameList)+"\n";
             double maxTime = 0;
             if (coloring.getColor() == ColorType.phase) {
-                StringBuffer cssPhaseColors = SvgUtil.createPhaseColorCSS(Arrays.asList(getPhaseNames()));
+                StringBuffer cssPhaseColors = SvgUtil.createPhaseColorCSS(phaseNameList);
                 cssExtra += cssPhaseColors;
             } else if (coloring.getColor() == ColorType.wavetype) {
                 String cssWaveTypeColors = SvgUtil.createWaveTypeColorCSS();
