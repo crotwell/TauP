@@ -222,16 +222,18 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
     public static JSONObject baseResultAsJSONObject(String modelName,
                                                     double depth,
                                                     double receiverDepth,
-                                                    String[] phases) {
+                                                    List<PhaseName> phaseNameList) {
         JSONObject out = new JSONObject();
 
         out.put("model", modelName);
         out.put("sourcedepth", (float) depth);
         out.put("receiverdepth", (float) receiverDepth);
-        if (phases != null  ) {
+        if (phaseNameList != null  ) {
             JSONArray outPhases = new JSONArray();
+            for (PhaseName pn : phaseNameList) {
+                outPhases.put(pn.getName());
+            }
             out.put("phases", outPhases);
-            outPhases.putAll(phases);
         }
         return out;
     }
@@ -242,30 +244,18 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
     }
 
     /* Get/Set methods */
-    @Deprecated
-    public String[] getPhaseNames() {
+
+    public String getPhaseNamesAsString() {
         try {
-            String[] phases = new String[parsePhaseNameList().size()];
-            for (int i = 0; i < parsePhaseNameList().size(); i++) {
-                phases[i] = parsePhaseNameList().get(i).getName();
+            // in case of empty phase list
+            if (getNumPhases() == 0)
+                return "";
+            List<PhaseName> phaseNameList = parsePhaseNameList();
+            String phases = phaseNameList.get(0).getName();
+            for (int i = 1; i < getNumPhases(); i++) {
+                phases += "," + phaseNameList.get(i).getName();
             }
             return phases;
-        } catch (PhaseParseException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Deprecated
-    public String getPhaseNameString() {
-        try {
-        // in case of empty phase list
-        if (getNumPhases() == 0)
-            return "";
-        String phases = parsePhaseNameList().get(0).getName();
-        for (int i = 1; i < getNumPhases(); i++) {
-            phases += "," + parsePhaseNameList().get(i).getName();
-        }
-        return phases;
         } catch (PhaseParseException e) {
             throw new RuntimeException(e);
         }

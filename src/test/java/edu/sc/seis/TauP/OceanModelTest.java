@@ -33,7 +33,7 @@ public class OceanModelTest {
         String phase = "P";
         double dist = 30;
         SeismicPhase pPhase = SeismicPhaseFactory.createPhase(phase, tMod, tMod.sourceDepth);
-        List<Arrival> arrivals = pPhase.calcTime(dist);
+        List<Arrival> arrivals = DistanceRay.ofDegrees(dist).calculate(pPhase);
         assertEquals(1, arrivals.size());
         Arrival a = arrivals.get(0);
         assertEquals(371.95,
@@ -102,8 +102,9 @@ public class OceanModelTest {
                 SeismicPhase oceanPh = SeismicPhaseFactory.createPhase(phasename, ocean_tmod_depth, depth + ocean.getBotDepth(), ocean.getBotDepth());
                 SeismicPhase crustPh = SeismicPhaseFactory.createPhase(phasename, crust_tmod_depth, depth, 0);
                 for (float deg = 0; deg < 180; deg += 5) {
-                    List<Arrival> ocean_arr = oceanPh.calcTime(deg);
-                    List<Arrival> crust_arr = crustPh.calcTime(deg);
+                    DistanceRay distanceRay = DistanceRay.ofDegrees(deg);
+                    List<Arrival> ocean_arr = distanceRay.calculate(oceanPh);
+                    List<Arrival> crust_arr = distanceRay.calculate(crustPh);
                     assertEquals(crust_arr.size(), ocean_arr.size());
                     for (int i = 0; i < crust_arr.size(); i++) {
                         Arrival ocean_a = ocean_arr.get(i);
@@ -141,7 +142,7 @@ public class OceanModelTest {
             for (String phasename : phaseList) {
                 SeismicPhase seisPh = SeismicPhaseFactory.createPhase(phasename, europa_tmod_depth, depth, 0);
                 for (float deg = 0; deg < 180; deg += 5) {
-                    List<Arrival> arrivalList = seisPh.calcTime(deg);
+                    List<Arrival> arrivalList = DistanceRay.ofDegrees(deg).calculate(seisPh);
                     // this is not a good test, other than that no errors occur
                     assertNotEquals(-1, arrivalList.size(), phasename);
                 }
@@ -170,12 +171,13 @@ public class OceanModelTest {
         String phasename = "KIK";
         SeismicPhase seisPh = SeismicPhaseFactory.createPhase(phasename, tMod, 0, 0);
         float deg = 30;
-        List<Arrival> arrivalList = seisPh.calcTime(deg);
+        DistanceRay distanceRay = DistanceRay.ofDegrees(deg);
+        List<Arrival> arrivalList = distanceRay.calculate(seisPh);
         // this is not a good test, other than that no errors occur
         assertNotEquals(-1, arrivalList.size(), phasename);
         phasename = "PKIKP";
         seisPh = SeismicPhaseFactory.createPhase(phasename, tMod, 0, 0);
-        arrivalList = seisPh.calcTime(deg);
+        arrivalList = distanceRay.calculate(seisPh);
         assertEquals(0, arrivalList.size(), phasename);
     }
 
@@ -193,16 +195,17 @@ public class OceanModelTest {
         String phasename = "I";
         SeismicPhase seisPh = SeismicPhaseFactory.createPhase(phasename, tMod, 0, 0);
         float deg = 30;
-        List<Arrival> arrivalList = seisPh.calcTime(deg);
+        DistanceRay distanceRay = DistanceRay.ofDegrees(deg);
+        List<Arrival> arrivalList = distanceRay.calculate(seisPh);
         // this is not a good test, other than that no errors occur
         assertNotEquals(-1, arrivalList.size(), phasename);
         phasename = "PKIKP";
         seisPh = SeismicPhaseFactory.createPhase(phasename, tMod, 0, 0);
-        arrivalList = seisPh.calcTime(deg);
+        arrivalList = distanceRay.calculate(seisPh);
         assertEquals(0, arrivalList.size(), phasename);
         phasename = "KIK";
         seisPh = SeismicPhaseFactory.createPhase(phasename, tMod, 0, 0);
-        arrivalList = seisPh.calcTime(deg);
+        arrivalList = distanceRay.calculate(seisPh);
         assertEquals(0, arrivalList.size(), phasename);
     }
 }

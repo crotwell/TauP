@@ -84,19 +84,20 @@ public class ReceiverAtDepth {
         }
         for (double degrees = 0; degrees < phase.getMaxDistance() && degrees < flippedPhase.getMaxDistance(); degrees+= distStep) {
             String pre = phaseName+" sd="+tMod.getSourceDepth()+" rd="+receiverDepth+" deg="+degrees;
-            List<Arrival> phaseArrivals = phase.calcTime(degrees);
+            DistanceRay distanceRay = DistanceRay.ofDegrees(degrees);
+            List<Arrival> phaseArrivals = distanceRay.calculate(phase);
             if (upPhase != null) {
-                phaseArrivals.addAll(upPhase.calcTime(degrees));
+                phaseArrivals.addAll(distanceRay.calculate(upPhase));
             }
             if (endsDowngoingPhase != null) {
-                phaseArrivals.addAll(endsDowngoingPhase.calcTime(degrees));
+                phaseArrivals.addAll(distanceRay.calculate(endsDowngoingPhase));
             }
-            List<Arrival> flippedArrivals = flippedPhase.calcTime(degrees);
+            List<Arrival> flippedArrivals = distanceRay.calculate(flippedPhase);
             if (endsDowngoingFlippedPhase != null) {
-                flippedArrivals.addAll(endsDowngoingFlippedPhase.calcTime(degrees));
+                flippedArrivals.addAll(distanceRay.calculate(endsDowngoingFlippedPhase));
             }
             if (upFlippedPhase != null) {
-                flippedArrivals.addAll(upFlippedPhase.calcTime(degrees));
+                flippedArrivals.addAll(distanceRay.calculate(upFlippedPhase));
             }
             assertEquals(  phaseArrivals.size(), flippedArrivals.size(), pre+" arrival size "+phase.getName()+" "+flippedPhase.getName());
             for (int i = 0; i < phaseArrivals.size(); i++) {
@@ -148,9 +149,9 @@ public class ReceiverAtDepth {
         SeismicPhase p = SeismicPhaseFactory.createPhase("p", flippedMod, flippedMod.getSourceDepth(), 0);
         SeismicPhase PcP200 = SeismicPhaseFactory.createPhase("Pcp", tModRecDepth, tModRecDepth.getSourceDepth(), recDepth);
         double degrees = 0;
-        List<Arrival> PcPArrivals = PcP.calcTime(degrees);
-        List<Arrival> pArrivals = p.calcTime(degrees);
-        List<Arrival> PcP200Arrivals = PcP200.calcTime(degrees);
+        List<Arrival> PcPArrivals = DistanceRay.ofDegrees(degrees).calculate(PcP);
+        List<Arrival> pArrivals = DistanceRay.ofDegrees(degrees).calculate(p);
+        List<Arrival> PcP200Arrivals = DistanceRay.ofDegrees(degrees).calculate(PcP200);
         String pre = "PcP "+recDepth;
 
         Arrival aPcP = PcPArrivals.get(0);

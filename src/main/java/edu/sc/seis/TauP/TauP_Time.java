@@ -197,7 +197,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
     }
 
     @Override
-    public void printResult(PrintWriter out, List<Arrival> arrivalList) throws IOException, TauModelException {
+    public void printResult(PrintWriter out, List<Arrival> arrivalList) throws IOException, TauPException {
         if (getOutputFormat().equals(OutputTypes.JSON)) {
             printResultJSON(out, arrivalList);
         } else {
@@ -316,7 +316,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
         out.flush();
     }
 
-    public void printResultJSON(PrintWriter out, List<Arrival> arrivalList) throws TauModelException {
+    public void printResultJSON(PrintWriter out, List<Arrival> arrivalList) throws TauModelException, TauPException {
         writeJSON(out, "", arrivalList);
     }
 
@@ -390,7 +390,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
     public static JSONObject resultAsJSONObject(String modelName,
                                       double depth,
                                       double receiverDepth,
-                                      String[] phases,
+                                      List<PhaseName> phases,
                                       List<Arrival> arrivals) {
         JSONObject out = baseResultAsJSONObject( modelName, depth,  receiverDepth, phases);
         JSONArray outArrivals = new JSONArray();

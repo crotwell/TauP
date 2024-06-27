@@ -403,7 +403,8 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
 
     public void printResult(PrintWriter writer, List<XYPlottingData> xyPlots) throws TauPException {
         XYPlotOutput xyOut = new XYPlotOutput(xyPlots, modelArgs);
-        xyOut.setPhaseNames(getPhaseNames());
+        List<PhaseName> phaseNameList = parsePhaseNameList();
+        xyOut.setPhaseNames(phaseNameList);
         xyOut.setxAxisMinMax(xAxisMinMax);
         xyOut.setyAxisMinMax(yAxisMinMax);
         if (yAxisType == AxisType.turndepth) {
@@ -418,7 +419,7 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
         } else if (outputTypeArgs.isSVG()) {
             String cssExtra = "";
             if (coloring.getColor() == ColorType.phase) {
-                cssExtra += SvgUtil.createPhaseColorCSS(parsePhaseNameList());
+                cssExtra += SvgUtil.createPhaseColorCSS(phaseNameList);
             } else if (coloring.getColor() == ColorType.wavetype) {
                 cssExtra += SvgUtil.createWaveTypeColorCSS();
             } else {

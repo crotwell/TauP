@@ -50,7 +50,7 @@ public class ConstantModelWithoutCore {
         for (String phaseName : badPhaseList) {
                 SeismicPhase pPhase = SeismicPhaseFactory.createPhase(phaseName, tMod);
                 assertFalse( pPhase.phasesExistsInModel(), phaseName+" should not exist in model");
-                List<Arrival> arrivals = pPhase.calcTime(130);
+                List<Arrival> arrivals = DistanceRay.ofDegrees(130).calculate(pPhase);
                 assertEquals( 0, arrivals.size());
         }
     }
@@ -113,7 +113,7 @@ public class ConstantModelWithoutCore {
         double R = tMod.getRadiusOfEarth();
         SeismicPhase pPhase = SeismicPhaseFactory.createPhase(phase, tMod, tMod.sourceDepth);
         for (double dist=10; dist <= 180; dist+=10) {
-            List<Arrival> arrivals = pPhase.calcTime(dist);
+            List<Arrival> arrivals = DistanceRay.ofDegrees(dist).calculate(pPhase);
             assertEquals(1, arrivals.size());
             Arrival a = arrivals.get(0);
             // constant model, so geometrical spreading is 1/r, ie length of chord

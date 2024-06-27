@@ -90,7 +90,7 @@ public class ConstantModelTest {
             TauModel tModDepth = tauMod.depthCorrect(depth);
             SeismicPhase pPhase = SeismicPhaseFactory.createPhase(phase, tModDepth, depth);
             double dist = pPhase.getDist()[0] * 180 / Math.PI + 0.0001;
-            List<Arrival> arrivals = pPhase.calcTime(dist);
+            List<Arrival> arrivals = DistanceRay.ofDegrees(dist).calculate(pPhase);
             // find arrival with rp closest to horizontal ray from source
             double minRPdiff = 999999999;
             Arrival a = null;
@@ -162,7 +162,7 @@ public class ConstantModelTest {
         for (int i = 0; i < tMod.rayParams.length; i++) {
             double dist = 0;
             double time = 0;
-            List<Arrival> arrivals = PPhase.calcTime(dist);
+            List<Arrival> arrivals = DistanceRay.ofDegrees(dist).calculate(PPhase);
             Arrival arrival = arrivals.get(0);
             double tstar = arrival.getTime() / Qp;
             assertEquals(tstar, arrival.calcTStar(), i+" "+tMod.getRayParams().length+" "+arrival);
@@ -176,7 +176,7 @@ public class ConstantModelTest {
 
     public static void doSeismicPhase(float dist, double velocity, String phase, TauModel tMod) throws TauModelException {
         SeismicPhase pPhase = SeismicPhaseFactory.createPhase(phase, tMod, tMod.sourceDepth);
-        List<Arrival> arrivals = pPhase.calcTime(dist);
+        List<Arrival> arrivals = DistanceRay.ofDegrees(dist).calculate(pPhase);
         assertEquals( 1, arrivals.size());
         Arrival a = arrivals.get(0);
         assertEquals(2 * R * Math.sin(dist / 2 * Math.PI / 180) / velocity,
@@ -189,11 +189,12 @@ public class ConstantModelTest {
         TauModel tModDepth = tMod.depthCorrect(depth);
         SeismicPhase PPhase = SeismicPhaseFactory.createPhase(phase.toUpperCase(), tModDepth, depth);
         assertTrue(PPhase.phasesExistsInModel());
-        List<Arrival> arrivals = PPhase.calcTime(dist);
+        DistanceRay distanceRay = DistanceRay.ofDegrees(dist);
+        List<Arrival> arrivals = distanceRay.calculate(PPhase);
         SeismicPhase pPhase = SeismicPhaseFactory.createPhase(phase.toLowerCase(), tModDepth, depth);
         if (depth != 0.0) {
             assertTrue(pPhase.phasesExistsInModel());
-            arrivals.addAll(pPhase.calcTime(dist));
+            arrivals.addAll(distanceRay.calculate(pPhase));
         }
         assertEquals(1, arrivals.size(), "one arrival for "+dist+" depth="+depth+" at "+velocity);
         Arrival a = arrivals.get(0);

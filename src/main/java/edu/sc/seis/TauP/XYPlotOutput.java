@@ -67,7 +67,7 @@ public class XYPlotOutput {
         return out;
     }
 
-    public void setPhaseNames(String[] phaseNames) {
+    public void setPhaseNames(List<PhaseName> phaseNames) {
         this.phaseNames = phaseNames;
     }
 
@@ -81,7 +81,8 @@ public class XYPlotOutput {
     public JSONObject asJSON() {
         JSONObject out;
         if (modelArgs != null ) {
-            out = baseResultAsJSONObject( modelArgs.getModelName(), modelArgs.getSourceDepth(),  modelArgs.getReceiverDepth(), phaseNames);
+            out = baseResultAsJSONObject( modelArgs.getModelName(), modelArgs.getSourceDepth(),
+                    modelArgs.getReceiverDepth(), phaseNames);
         } else {
             out = new JSONObject();
         }
@@ -347,7 +348,7 @@ public class XYPlotOutput {
 
     List<XYPlottingData> xyPlots;
     ModelArgs modelArgs;
-    String[] phaseNames = null;
+    List<PhaseName> phaseNames = null;
 
     String title = null;
 

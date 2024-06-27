@@ -544,7 +544,7 @@ public class TauP_Table extends TauP_AbstractPhaseTool {
         String decimal7 = "%-7d";
         double maxDiff = Double.parseDouble(toolProps.getProperty("taup.table.locsat.maxdiff",
                 "105.0"));
-        out.print("n # " + getPhaseNameString()
+        out.print("n # " + getPhaseNamesAsString()
                 + " travel-time tables for " + modelArgs.getModelName()
                 + " structure. (From TauP_Table)\n");
         out.print(String.format(decimal7, depths.length)

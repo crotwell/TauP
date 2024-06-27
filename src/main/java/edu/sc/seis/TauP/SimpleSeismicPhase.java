@@ -308,11 +308,6 @@ public class SimpleSeismicPhase implements SeismicPhase {
 
     // Normal methods
 
-    @Deprecated
-    public List<Arrival> calcTime(double deg) {
-        return DistanceRay.ofDegrees(deg).calcSimplePhase(this);
-    }
-
     /**
      * Calculates arrivals for this phase, but only for the exact distance in radians. This does not check multiple
      * laps nor going the long way around.

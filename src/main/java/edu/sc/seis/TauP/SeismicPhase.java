@@ -91,9 +91,6 @@ public interface SeismicPhase extends Serializable, Cloneable {
         return tempDeg;
     }
 
-    List<Arrival> calcTime(double deg);
-
-
     /**
      * Creates an Arrival for a sampled ray parameter from the model. No interpolation between rays as this is a sample.
      * @param rayNum index in ray parameters

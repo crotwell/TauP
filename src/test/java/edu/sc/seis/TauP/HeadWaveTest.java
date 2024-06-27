@@ -22,7 +22,7 @@ public class HeadWaveTest {
         double receiverDepth = 0;
         SimpleSeismicPhase phase = SeismicPhaseFactory.createPhase(phaseName, tMod, tMod.getSourceDepth(), receiverDepth, DEBUG);
         assertEquals(numHeadLegs, phase.countFlatLegs(), phaseName);
-        List<Arrival> arrivalList = phase.calcTime(distDeg);
+        List<Arrival> arrivalList = DistanceRay.ofDegrees(distDeg).calculate(phase);
         double longWayDist = -1*(360-distDeg);
         double shoutWayDist = distDeg;
         double searchDist = (isLongWay ? longWayDist : shoutWayDist) *Math.PI/180;

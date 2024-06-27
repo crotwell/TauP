@@ -234,7 +234,7 @@ public class TauP_SetSac extends TauP_AbstractPhaseTool {
             }
         }
         if(isVerbose()) {
-            System.err.println(filenameForError + " searching for " + getPhaseNameString());
+            System.err.println(filenameForError + " searching for " + getPhaseNamesAsString());
         }
         for(int j = getSeismicPhases().size() - 1; j >= 0; j--) {
             SeismicPhase phase = getSeismicPhases().get(j);

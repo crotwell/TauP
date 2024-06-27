@@ -255,11 +255,6 @@ public class ScatteredSeismicPhase implements SeismicPhase {
                 isBackscatter());
     }
 
-    @Override
-    public List<Arrival> calcTime(double deg) {
-        return DistanceRay.ofDegrees(deg).calcScatteredPhase(this);
-    }
-
     public static double calcScatterDistDeg(double deg, double scattererDeg, boolean backscatter) {
         double scatDist;
         double calcDeg = deg % 360;

@@ -54,8 +54,9 @@ public class CriticalReflection {
             assertEquals(reflSeg.isPWave, critSeg.isPWave);
         }
 
-        List<Arrival> reflArrivals = reflPhase.calcTime(degrees);
-        List<Arrival> critArrivals = critPhase.calcTime(degrees);
+        DistanceRay distanceRay = DistanceRay.ofDegrees(degrees);
+        List<Arrival> reflArrivals = distanceRay.calculate(reflPhase);
+        List<Arrival> critArrivals = distanceRay.calculate(critPhase);
 
         Arrival reflArrive = reflArrivals.get(0);
         Arrival critArrive = critArrivals.get(0);

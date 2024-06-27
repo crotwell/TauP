@@ -2,6 +2,10 @@ package edu.sc.seis.TauP;
 
 import java.util.List;
 
+/**
+ * Represents a seismic phase that doesn't exist in the model, either malformed or not compatible with the broad
+ * structure of the model.
+ */
 public class FailedSeismicPhase extends SimpleSeismicPhase {
 
     public FailedSeismicPhase(ProtoSeismicPhase proto) {
@@ -34,11 +38,6 @@ public class FailedSeismicPhase extends SimpleSeismicPhase {
     @Override
     public boolean hasArrivals() {
         return false;
-    }
-
-    @Override
-    public List<Arrival> calcTime(double deg) {
-        return List.of();
     }
 
     /**

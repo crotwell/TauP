@@ -22,7 +22,7 @@ public abstract class TauP_AbstractRayTool extends TauP_AbstractPhaseTool {
     public static String resultAsJSON(String modelName,
                                       double depth,
                                       double receiverDepth,
-                                      String[] phases,
+                                      List<PhaseName> phases,
                                       List<Arrival> arrivals) {
         String Q = ""+'"';
         String COMMA = ",";
@@ -40,9 +40,9 @@ public abstract class TauP_AbstractRayTool extends TauP_AbstractPhaseTool {
         out.println(SQ+"sourcedepth"+QC+(float)depth+COMMA);
         out.println(SQ+"receiverdepth"+QC+(float)receiverDepth+COMMA);
         out.print(SQ+"phases"+Q+": [");
-        for(int p=0; p<phases.length; p++) {
-            out.print(" "+Q+phases[p]+Q);
-            if ( p != phases.length-1) {
+        for(int p=0; p<phases.size(); p++) {
+            out.print(" "+Q+phases.get(p).getName()+Q);
+            if ( p != phases.size()-1) {
                 out.print(COMMA);
             }
         }

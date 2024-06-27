@@ -32,7 +32,7 @@ public class HeadDiffWaveTest {
     TauModel tModDepth = tMod.depthCorrect(depth);
     SeismicPhase pnPhase = SeismicPhaseFactory.createPhase("Pn", tModDepth);
 
-    List<Arrival> arrivals = pnPhase.calcTime(deg);
+    List<Arrival> arrivals = DistanceRay.ofDegrees(deg).calculate(pnPhase);
     assertEquals(1, arrivals.size());
     Arrival a = arrivals.get(0);
     TimeDist[] pierce = a.getPierce();
@@ -55,7 +55,7 @@ public class HeadDiffWaveTest {
 
     int disconBranch = LegPuller.closestBranchToDepth(tModDepth, "410");
     SeismicPhase diffPhase = SeismicPhaseFactory.createPhase("P410diff", tModDepth);
-    List<Arrival> arrivals = diffPhase.calcTime(deg);
+    List<Arrival> arrivals = DistanceRay.ofDegrees(deg).calculate(diffPhase);
     assertEquals(1, arrivals.size());
     Arrival a = arrivals.get(0);
     assertEquals(tMod.getTauBranch(disconBranch - 1, true).getMinTurnRayParam(), a.getRayParam());
@@ -76,7 +76,7 @@ public class HeadDiffWaveTest {
     TauModel tModDepth = tMod.depthCorrect(depth);
     int disconBranch = LegPuller.closestBranchToDepth(tModDepth, "410");
     SeismicPhase headPhase = SeismicPhaseFactory.createPhase("P410n", tModDepth);
-    List<Arrival> headarrivals = headPhase.calcTime(deg);
+    List<Arrival> headarrivals = DistanceRay.ofDegrees(deg).calculate(headPhase);
     assertEquals(1, headarrivals.size());
     Arrival headArr = headarrivals.get(0);
     assertEquals(tMod.getTauBranch(disconBranch, true).getMaxRayParam(), headArr.getRayParam());
@@ -96,7 +96,7 @@ public class HeadDiffWaveTest {
     double deg = 90;
     TauModel tModDepth = tMod.depthCorrect(depth);
     SeismicPhase SedPdiff_Phase = SeismicPhaseFactory.createPhase("SedPdiff", tModDepth);
-    List<Arrival> SedPdiff_arrivals = SedPdiff_Phase.calcTime(deg);
+    List<Arrival> SedPdiff_arrivals = DistanceRay.ofDegrees(deg).calculate(SedPdiff_Phase);
     assertEquals(1, SedPdiff_arrivals.size());
     Arrival SedPdiff_Arr = SedPdiff_arrivals.get(0);
     assertEquals(tMod.getTauBranch(tMod.getCmbBranch()-1, true).getMinTurnRayParam(), SedPdiff_Arr.getRayParam());
@@ -105,14 +105,15 @@ public class HeadDiffWaveTest {
   @Test
   public void test_SedPdiffKP() throws TauModelException {
     double deg = 150;
+    DistanceRay distanceRay = DistanceRay.ofDegrees(deg);
     SeismicPhase SedPdiff_Phase = SeismicPhaseFactory.createPhase("SedPdiffKs", tMod);
-    List<Arrival> SedPdiff_arrivals = SedPdiff_Phase.calcTime(deg);
+    List<Arrival> SedPdiff_arrivals = distanceRay.calculate(SedPdiff_Phase);
     assertEquals(1, SedPdiff_arrivals.size());
     Arrival SedPdiff_Arr = SedPdiff_arrivals.get(0);
     assertEquals(tMod.getTauBranch(tMod.getCmbBranch()-1, true).getMinTurnRayParam(), SedPdiff_Arr.getRayParam());
     SeismicPhase SKPdiffs_Phase = SeismicPhaseFactory.createPhase("SKPdiffs", tMod);
     assertEquals(1, SKPdiffs_Phase.countFlatLegs());
-    List<Arrival> SKPdiffs_arrivals = SKPdiffs_Phase.calcTime(deg);
+    List<Arrival> SKPdiffs_arrivals = distanceRay.calculate(SKPdiffs_Phase);
     assertEquals(1, SKPdiffs_arrivals.size());
     Arrival SKPdiffs_Arr = SKPdiffs_arrivals.get(0);
     assertEquals(tMod.getTauBranch(tMod.getCmbBranch()-1, true).getMinTurnRayParam(), SKPdiffs_Arr.getRayParam());
@@ -127,7 +128,7 @@ public class HeadDiffWaveTest {
     TauModel tMod_OCD = taupCreate.createTauModel(vMod);
     double deg = 150;
     SeismicPhase SedPdiff_Phase = SeismicPhaseFactory.createPhase("PK3000diffP", tMod_OCD);
-    List<Arrival> SedPdiff_arrivals = SedPdiff_Phase.calcTime(deg);
+    List<Arrival> SedPdiff_arrivals = DistanceRay.ofDegrees(deg).calculate(SedPdiff_Phase);
     assertEquals(1, SedPdiff_arrivals.size());
     Arrival SedPdiff_Arr = SedPdiff_arrivals.get(0);
 
@@ -147,7 +148,7 @@ public class HeadDiffWaveTest {
     TauModel tMod_OCD = taupCreate.createTauModel(vMod);
     double deg = 150;
     SeismicPhase ic_diff_Phase = SeismicPhaseFactory.createPhase("PKI5500diffKP", tMod_OCD);
-    List<Arrival> ic_diff_arrivals = ic_diff_Phase.calcTime(deg);
+    List<Arrival> ic_diff_arrivals = DistanceRay.ofDegrees(deg).calculate(ic_diff_Phase);
     assertEquals(1, ic_diff_arrivals.size());
     Arrival ic_diff_Arr = ic_diff_arrivals.get(0);
 
