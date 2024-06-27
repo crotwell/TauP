@@ -161,7 +161,7 @@ public class TauP_Pierce extends TauP_Time {
 
     @Override
     public void printResultJSON(PrintWriter out, List<Arrival> arrivalList) throws TauPException {
-        String s = resultAsJSON(modelArgs.getModelName(), modelArgs.getSourceDepth(), getReceiverDepth(),
+        String s = resultAsJSON(modelArgs.getModelName(), modelArgs.getSourceDepth(), modelArgs.getReceiverDepth(),
                 parsePhaseNameList(), arrivalList);
         out.println(s);
     }

@@ -89,7 +89,7 @@ public class AK135Test  {
 
                 List<Arrival> arrivals = taup.calcAll(taup.getSeismicPhases(), List.of(DistanceRay.ofDegrees(timeDist.getDistDeg())));
                 if (timeDist.getTime() > 0) {
-                    assertFalse(arrivals.isEmpty(), "got no arrivals for " + phase + " at deg=" + timeDist.getDistDeg() + " depth=" + taup.getSourceDepth());
+                    assertFalse(arrivals.isEmpty(), "got no arrivals for " + phase + " at deg=" + timeDist.getDistDeg() + " depth=" + taup.modelArgs.getSourceDepth());
 
                 // assume first?
                 assertEquals(timeDist.getTime(),

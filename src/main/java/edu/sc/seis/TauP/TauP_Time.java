@@ -226,8 +226,8 @@ public class TauP_Time extends TauP_AbstractRayTool {
         String phasePuristFormat = "%-" + maxPuristNameLength + "s";
         if(!(onlyPrintRayP || onlyPrintTime)) {
             String modelLine =  "\nModel: " + modelArgs.getModelName();
-            if (getReceiverDepth() != 0.0) {
-                modelLine += "  Receiver Depth: "+getReceiverDepth()+" km";
+            if (modelArgs.getReceiverDepth() != 0.0) {
+                modelLine += "  Receiver Depth: "+modelArgs.getReceiverDepth()+" km";
             }
             if (getScatterer() != null && getScatterer().dist.getDegrees(getRadiusOfEarth()) != 0.0) {
                 modelLine += "  Scatter Depth: "+ getScattererDepth()+" km Dist: "+ getScatterer().dist.getDegrees(getRadiusOfEarth());

@@ -289,7 +289,7 @@ public class TauP_Path extends TauP_AbstractRayTool {
 	}
 
 	public void printResultJSON(PrintWriter out, List<Arrival> arrivalList) throws TauPException {
-		String s = resultAsJSON(modelArgs.getModelName(), modelArgs.getSourceDepth(), getReceiverDepth(),
+		String s = resultAsJSON(modelArgs.getModelName(), modelArgs.getSourceDepth(), modelArgs.getReceiverDepth(),
 				parsePhaseNameList(), arrivalList);
 		out.println(s);
 	}

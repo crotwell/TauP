@@ -268,11 +268,6 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
         }
     }
 
-    @Deprecated
-    public void setPhaseNames(PhaseName[] phaseNames) {
-        this.setPhaseNameList(Arrays.asList(phaseNames));
-    }
-
     public synchronized void appendPhaseName(String phaseName)
             throws PhaseParseException {
         for (String s : TauP_AbstractPhaseTool.extractPhaseNames(phaseName)) {
@@ -299,11 +294,6 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
     public void clearPhaseNames() {
         phases = null;
         phaseNames = new ArrayList<>();
-    }
-
-    @Deprecated
-    public double getSourceDepth() {
-        return this.modelArgs.getSourceDepth();
     }
 
     public void setSourceDepth(double depth) {
