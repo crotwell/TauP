@@ -400,6 +400,8 @@ public class Arrival {
 
     public double getAmplitudeFactorSH(double moment) throws TauModelException, VelocityModelException, SlownessModelException {
         double refltran = getEnergyReflTransSH();
+        // avoid NaN in case of no S wave legs where geo spread returns INFINITY
+        if (refltran == 0.0) {return 0.0;}
         double geoSpread = getAmplitudeGeometricSpreadingFactor();
         double sourceVel = getPhase().velocityAtSource();
         double radiationTerm = 4*Math.PI*getPhase().densityAtSource()*sourceVel*sourceVel*sourceVel*1e12;
