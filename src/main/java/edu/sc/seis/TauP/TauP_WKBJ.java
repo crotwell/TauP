@@ -133,10 +133,11 @@ public class TauP_WKBJ extends TauP_AbstractRayTool {
         validateArguments();
         modelArgs.depthCorrected();
         List<SeismicPhase> phaseList = getSeismicPhases();
-        List<Arrival> allArrivals = new ArrayList<>();
         List<MSeed3Record> spikeRecords = new ArrayList<>();
 
         for (DistanceRay distVal : degreesList) {
+            List<Arrival> allArrivals = new ArrayList<>();
+            List<MSeed3Record> componentRecords = new ArrayList<>();
             double degrees = distVal.getDegrees(getRadiusOfEarth());
             for (SeismicPhase phase : phaseList) {
                 List<Arrival> phaseArrivals = distVal.calculate(phase);
@@ -180,14 +181,15 @@ public class TauP_WKBJ extends TauP_AbstractRayTool {
 
             String staCode = "S"+degrees;
             if (staCode.length()> 8) { staCode = staCode.substring(8);}
-            spikeRecords.add(packageMSeed3(vertical, staCode, "SP", "Z", startTime ));
-            spikeRecords.add(packageMSeed3(radial, staCode, "SP", "R", startTime ));
-            spikeRecords.add(packageMSeed3(transverse, staCode, "SP", "T", startTime ));
-            for (MSeed3Record ms3 : spikeRecords) {
+            componentRecords.add(packageMSeed3(vertical, staCode, "SP", "Z", startTime ));
+            componentRecords.add(packageMSeed3(radial, staCode, "SP", "R", startTime ));
+            componentRecords.add(packageMSeed3(transverse, staCode, "SP", "T", startTime ));
+            for (MSeed3Record ms3 : componentRecords) {
                     ms3.setStartDateTime(getOriginTime());
                     ms3.setExtraHeaders(eh.getEH());
 
             }
+            spikeRecords.addAll(componentRecords);
         }
         return spikeRecords;
     }
