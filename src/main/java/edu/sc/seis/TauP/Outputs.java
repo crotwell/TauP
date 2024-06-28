@@ -61,9 +61,50 @@ public class Outputs {
             AxisType at = AxisType.valueOf(axisType);
             return formatStringForAxisType(at);
         } catch (IllegalArgumentException e ) {
-            System.err.println("Unknown axis type: "+axisType);
-            return "%f";
+            try {
+                ModelAxisType mt = ModelAxisType.valueOf(axisType);
+                return formatStringForAxisType(mt);
+            } catch (IllegalArgumentException ee ) {
+                System.err.println("Unknown axis type: " + axisType);
+                return "%f";
+            }
         }
+    }
+
+    public static String formatStringForAxisType(ModelAxisType axisType) {
+        String outFormat;
+        switch (axisType) {
+            case depth:
+            case radius:
+                outFormat = depthFormat;
+                break;
+            case velocity:
+            case Vp:
+            case Vs:
+            case vpvs:
+            case vpdensity:
+            case vsdensity:
+            case velocity_density:
+                outFormat = rayParamFormat;
+                break;
+            case youngsmodulus:
+            case poisson:
+            case shearmodulus:
+            case bulkmodulus:
+            case lambda:
+            case slownessdeg:
+            case slownessrad:
+            case slownessdeg_p:
+            case slownessdeg_s:
+            case slownessrad_p:
+            case slownessrad_s:
+                outFormat = rayParamFormat;
+                break;
+            default:
+                outFormat = "%f";
+                break;
+        }
+        return outFormat;
     }
 
     public static String formatStringForAxisType(AxisType axisType) {
