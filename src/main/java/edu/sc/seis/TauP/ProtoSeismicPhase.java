@@ -7,6 +7,10 @@ import static edu.sc.seis.TauP.PhaseInteraction.*;
 import static edu.sc.seis.TauP.PhaseSymbols.*;
 import static edu.sc.seis.TauP.SeismicPhaseFactory.endActionString;
 
+/**
+ * Represents a partial seismic phase, appended to as a name is parsed.
+ * May also fail if part way if phase is not compatible will the model.
+ */
 public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
 
     public ProtoSeismicPhase(List<SeismicPhaseSegment> segmentList, double receiverDepth) {

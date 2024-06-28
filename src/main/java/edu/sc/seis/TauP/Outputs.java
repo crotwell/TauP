@@ -56,6 +56,11 @@ public class Outputs {
                 + "e";
     }
 
+    /**
+     * Gets appropriate format spec for a given data type. Usually one of ModelAxisType or AxisType.
+     * @param axisType data type
+     * @return output format like %3.2f for use in formatting floats
+     */
     public static String formatStringForAxisType(String axisType) {
         try {
             AxisType at = AxisType.valueOf(axisType);

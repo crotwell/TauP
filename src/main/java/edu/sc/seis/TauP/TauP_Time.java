@@ -56,7 +56,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
     @CommandLine.Option(names = {"--first", "--onlyfirst"}, description = "only output the first arrival for each phase, no triplications")
     protected boolean onlyFirst = false;
 
-    @CommandLine.Option(names = "--amp", description = "amplitude factor for each phase")
+    @CommandLine.Option(names = "--amp", description = "show amplitude factor for each phase")
     public boolean withAmplitude = false;
 
     public boolean isWithAmplitude() {

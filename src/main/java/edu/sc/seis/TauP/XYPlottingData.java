@@ -7,6 +7,9 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Line, possbily in multiple segments, representing a single data type.
+ */
 public class XYPlottingData {
 
     public XYPlottingData(List<XYSegment> segments, String xAxisType, String yAxisType, String label, List<String> cssClasses) {
