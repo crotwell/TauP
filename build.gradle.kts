@@ -70,7 +70,7 @@ dependencies {
 
     runtimeOnly("org.slf4j:slf4j-reload4j:2.0.5")
 
-    webserverImplementation("io.undertow:undertow-core:2.3.13.Final")
+    webserverImplementation("io.undertow:undertow-core:2.3.14.Final")
 
     // Use JUnit Jupiter API for testing.
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.2")
