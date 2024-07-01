@@ -11,13 +11,6 @@ export function setup() {
   const tool = getToolName();
   enableParams(tool);
   loadParamHelp().then(helpjson => {
-    const container_el = document.querySelector("#results");
-    while(container_el.firstChild) {
-      container_el.removeChild(container_el.firstChild);
-    }
-    const pre_el = document.createElement("pre");
-    pre_el.textContent = `got json help`;
-    container_el.appendChild(pre_el);
     for (let param of helpjson.params) {
       for (let name of param.name) {
         if (name.startsWith("-")) {name = name.slice(1, name.length);}
@@ -323,6 +316,11 @@ export function form_url() {
 
   const format = valid_format(toolname);
   let url = "";
+  if (toolname === "version") {
+    // version needs only format, so return to avoid adding more args
+    url = `${toolname}?format=${format}`;
+    return encodeURI(url);
+  }
   if (toolname !== "velplot" && toolname !== "refltrans") {
     url = `${toolname}?model=${model}&evdepth=${evdepth}`;
   } else if (toolname === "velplot" || isrefltranmodel === "refltrandepth") {
@@ -618,7 +616,8 @@ export function enableParams(tool) {
   }
   let styleStr = ""
   // format radio
-  if ( tool === "time" || tool === "pierce" || tool == "phase" || tool == "find" || tool == "version") {
+  if ( tool === "time" || tool === "pierce" || tool == "phase"
+      || tool == "find" || tool == "version") {
     document.querySelector(`input[name="format"][value="text"]`).removeAttribute("disabled");
     document.querySelector(`input[name="format"][value="json"]`).removeAttribute("disabled");
     document.querySelector(`input[name="format"][value="svg"]`).setAttribute("disabled", "disabled");

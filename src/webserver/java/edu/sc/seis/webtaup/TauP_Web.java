@@ -81,9 +81,6 @@ public class TauP_Web extends TauP_Tool {
                     handleCmdLine(tool, queryParams, exchange);
                 } else if (path.equals("paramhelp")) {
                     handleParamHelp(queryParams, exchange);
-                } else if (path.equals("version")) {
-                    exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, "text/plain");
-                    exchange.getResponseSender().send(BuildVersion.getDetailedVersion());
                 } else {
                     TauP_Tool tool = createTool(path);
                     if (tool != null) {
