@@ -22,7 +22,8 @@ public abstract class AbstractPathSegment {
 
     String pathCssClass = "path";
 
-    public AbstractPathSegment(List<TimeDist> path, boolean isPWave, String segmentName, TimeDist prevEnd, int segmentIndex, int totalNumSegments, SeismicPhase phase) {
+    public AbstractPathSegment(List<TimeDist> path, boolean isPWave, String segmentName, TimeDist prevEnd,
+                               int segmentIndex, int totalNumSegments, SeismicPhase phase) {
         this.path = path;
         this.isPWave = isPWave;
         this.segmentName = segmentName;
@@ -141,6 +142,10 @@ public abstract class AbstractPathSegment {
     public abstract String description();
 
     public JSONObject asJSONObject() {
+        return asJSONObject(null);
+    }
+
+    public JSONObject asJSONObject(Arrival arrival) {
         JSONObject a = new JSONObject();
         a.put("name", segmentName);
         a.put("wavetype", isPWave ? "pwave" : "swave");
@@ -152,6 +157,11 @@ public abstract class AbstractPathSegment {
             tdItems.put(td.getDistDeg());
             tdItems.put(td.getDepth());
             tdItems.put(td.getTime());
+            if (arrival != null && arrival.isLatLonable()) {
+                double[] latlon = arrival.getLatLonable().calcLatLon(td.getDistDeg(), arrival.getDistDeg());
+                tdItems.put(latlon[0]);
+                tdItems.put(latlon[1]);
+            }
         }
         return a;
     }

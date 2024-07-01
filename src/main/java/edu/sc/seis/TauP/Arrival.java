@@ -845,6 +845,11 @@ public class Arrival {
                 tdItems.put(td.getDistDeg());
                 tdItems.put(td.getDepth());
                 tdItems.put(td.getTime());
+                if (isLatLonable()) {
+                    double[] latlon = getLatLonable().calcLatLon(td.getDistDeg(), getDistDeg());
+                    tdItems.put(latlon[0]);
+                    tdItems.put(latlon[1]);
+                }
             }
         }
         if (pathSegments != null) {

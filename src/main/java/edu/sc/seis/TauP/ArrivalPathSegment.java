@@ -1,5 +1,7 @@
 package edu.sc.seis.TauP;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,6 +67,10 @@ public class ArrivalPathSegment extends AbstractPathSegment {
         return out;
     }
 
+    @Override
+    public JSONObject asJSONObject() {
+        return super.asJSONObject(arrival);
+    }
 
     @Override
     public String description() {
