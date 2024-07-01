@@ -27,6 +27,22 @@ export function setup() {
       }
     }
   });
+  // copy cmd line equiv.
+  document.querySelector(".cmdline button").onclick = function(){
+    const taEl = document.querySelector(".cmdline pre");
+    navigator.clipboard.writeText(taEl.innerText);
+  }
+  // copy results
+  document.querySelector(".results button").onclick = function(){
+    const taEl = document.querySelector("#results");
+    const childEl = taEl.firstChild;
+    if (childEl instanceof HTMLDivElement && childEl.firstChild instanceof SVGSVGElement) {
+      // assume SVG in div
+      navigator.clipboard.writeText(childEl.innerHTML);
+    } else {
+      navigator.clipboard.writeText(taEl.innerText);
+    }
+  }
 }
 
 export function createModelDisconRadio() {
