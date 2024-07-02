@@ -12,7 +12,7 @@
 <h3>Command Line Test Cases</h3>
   <select name="cmdlinetests" id="cmd-select">
   <option>taup time --mod prem -h 200 -p S,P --deg 57.4</option>
-  <option>taup find --max 2 -h 100</option>
+  <option>taup find --max 2 -h 100 --exclude 210</option>
   <option>taup find --max 2 --deg 35 -h 100 --time 400 420 --exclude 210</option>
   <option>taup pierce --mod prem -h 200 -p S,P --deg 57.4</option>
   <option>taup pierce --turn --mod prem -h 200 -p S,P --deg 57.4</option>
@@ -23,10 +23,11 @@
   <option>taup wavefront --mod iasp91 -h 550 -p s,S,ScS,sS,sScS --gmt</option>
   <option>taup wavefront --mod iasp91 -h 550 -p s,S,ScS,sS,sScS --color wavetype --svg</option>
   <option>taup curve --mod prem -h 500 -p s,S,ScS,Sdiff --gmt</option>
-  <option>taup curve --mod prem -h 500 -p s,S,ScS,Sdiff --svg</option>
-  <option>taup curve -x rayparamdeg -y tau --svg</option>
+  <option>taup curve --mod prem -h 500 -p s,S,ScS,Sdiff --legend --svg</option>
+  <option>taup curve -x rayparamdeg -y tau --legend --svg</option>
   <option>taup velplot --mod ak135fcont --mod prem --svg</option>
   <option>taup velplot --mod ak135fcont -x poisson --svg</option>
+  <option>taup velplot --nameddiscon --mod iasp91</option>
   </select>
   <button id="prev">Prev</button>
   <button id="next">Next</button>

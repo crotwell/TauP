@@ -42,10 +42,17 @@ sourceSets {
         compileClasspath += sourceSets.main.get().output
         runtimeClasspath += sourceSets.main.get().output
     }
+    create("example") {
+        compileClasspath += sourceSets.main.get().output
+        runtimeClasspath += sourceSets.main.get().output
+    }
 }
 
 java {
     registerFeature("webserver") {
+        usingSourceSet(sourceSets.main.get())
+    }
+    registerFeature("example") {
         usingSourceSet(sourceSets.main.get())
     }
 }
@@ -118,6 +125,7 @@ val binDirName = project.name+"_bin-"+version
 tasks.register<Sync>("webserverSphinxDocs") {
   from("src/doc/sphinx/build/html")
   into("src/webserver/resources/edu/sc/seis/webtaup/html/doc")
+  dependsOn("copyProgramExampleFiles")
 }
 tasks.getByName("processWebserverResources").dependsOn("webserverSphinxDocs")
 
@@ -393,6 +401,10 @@ tasks.register<JavaExec>("genCmdLineHelpFiles") {
   args = listOf( "--getcmdlinehelpfiles")
   dependsOn += tasks.getByName("classes")
   outputs.files(fileTree("src/doc/sphinx/source/cmdLineHelp"))
+}
+tasks.register<Sync>("copyProgramExampleFiles") {
+  from("src/example/java/edu/sc/seis/example/TimeExample.java")
+  into("src/doc/sphinx/source/programming")
 }
 
 tasks.get("assemble").dependsOn(tasks.get("dependencyUpdates"))

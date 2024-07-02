@@ -1,7 +1,8 @@
 Usage: taup velmerge [--debug] [--help] [--smoothbot] [--smoothtop] [--verbose]
                      [--elev=<elevation>] [-o=<outFile>]
-                     [--prop=<toolPropsFilename>] (--modmerge=<modelName> |
-                     --ndmerge=<nDModelFilename> |
+                     [--prop=<toolPropsFilename>] ([--mod=<modelName>] |
+                     --nd=<nDModelFilename> | --tvel=<tvelModelFilename>)
+                     (--modmerge=<modelName> | --ndmerge=<nDModelFilename> |
                      --tvelmerge=<tvelModelFilename>)
 Merge part of one model into another.
 
@@ -16,6 +17,14 @@ Options:
       --smoothbot          smooth merge at bottom
       --smoothtop          smooth merge at top
       --verbose            enable verbose output
+Base Velocity Model
+      --mod, --model=<modelName>
+                           use velocity model "modelname" for calculations,
+                             format is guessed. Default is iasp91.
+      --nd=<nDModelFilename>
+                           "named discontinuities" velocity file
+      --tvel=<tvelModelFilename>
+                           ".tvel" velocity file, ala ttimes
 Merge Velocity Model
       --modmerge=<modelName>
                            velocity file to merge, format is guessed

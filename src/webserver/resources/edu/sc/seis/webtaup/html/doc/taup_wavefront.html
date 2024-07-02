@@ -75,8 +75,8 @@
 <li class="toctree-l2"><a class="reference internal" href="tools.html#tab-completion">Tab Completion</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="phaseNaming.html">Phase naming in TauP</a></li>
-<li class="toctree-l1"><a class="reference internal" href="models.html">Creating and Saving Velocity Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="phaseNaming.html">Phases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models.html">Velocity Models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="programming.html">Programmatic Access</a></li>
 <li class="toctree-l1"><a class="reference internal" href="bibliography.html">Bibliography</a></li>
 </ul>
@@ -133,10 +133,10 @@ have GMT installed, you can just:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>taup wavefront --mod iasp91 -h 550 -p s,S,ScS,sS,sScS --gmt
 </pre></div>
 </div>
-<p>begin{verbatim}
-taup wavefront -mod iasp91 -h 550 -ph s,S,ScS,sS,sScS –gmt
-sh taup_wavefront.gmt
-end{verbatim}</p>
+<p>and then:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sh</span> <span class="n">taup_wavefront</span><span class="o">.</span><span class="n">gmt</span>
+</pre></div>
+</div>
 <p>and you have a plot of the wavefronts in <cite>taup_wavefront.pdf</cite>.</p>
 <p>Or use –svg to generate a SVG plot</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>taup wavefront --mod iasp91 -h 550 -p s,S,ScS,sS,sScS --color wavetype --svg
@@ -8850,6 +8850,9 @@ circle.discontinuity.iocb {
   </g> <!-- end translate -->
   </g> 
 </svg>
+<p>If the one-sided plot is confusing, the <code class="code docutils literal notranslate"><span class="pre">--negdist</span></code> flag will mirror the
+wavefronts from the positive to the negative side of the figure, making a
+more pleasing display.</p>
 <p>The usage is:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Usage: taup wavefront [--debug] [--help] [--legend] [--negdist]
                       [--onlynameddiscon] [--timefiles] [--verbose]

@@ -18,10 +18,9 @@ have GMT installed, you can just:
 .. literalinclude:: examples/taup_wavefront_--mod_iasp91_-h_550_-p_s_S_ScS_sS_sScS_--gmt.cmd
   :language: text
 
-\begin{verbatim}
-taup wavefront -mod iasp91 -h 550 -ph s,S,ScS,sS,sScS --gmt
-sh taup_wavefront.gmt
-\end{verbatim}
+and then::
+
+  sh taup_wavefront.gmt
 
 and you have a plot of the wavefronts in `taup_wavefront.pdf`.
 
@@ -34,6 +33,9 @@ Or use --svg to generate a SVG plot
 .. raw:: html
     :file:  examples/taup_wavefront_--mod_iasp91_-h_550_-p_s_S_ScS_sS_sScS_--color_wavetype_--svg
 
+If the one-sided plot is confusing, the :code:`--negdist` flag will mirror the
+wavefronts from the positive to the negative side of the figure, making a
+more pleasing display.
 
 The usage is:
 

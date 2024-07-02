@@ -6,8 +6,8 @@ TauP Path
 
 TauP Path uses a model like TauP Time but
 generates  the
-angular distances from the epicenter at which the specified rays pierce
-path that the phases travel. The output can be JSON, an SVG image or
+angular distances from the epicenter along the path at which the specified rays
+travel. The output can be JSON, an SVG image or
 in GMT :cite:t:`GMT` :code:`psxy` format, and is
 placed into the file `taup_path` with approproate extension.
 If you specify the `--gmt` flag then this
@@ -19,7 +19,7 @@ have GMT installed, you can just:
 
 :code:`sh taup_path.gmt`
 
-and you have a plot of the ray paths in `TauP path.pdf`. To avoid possible plotting errors for
+and you have a plot of the ray paths in `taup_path.pdf`. To avoid possible plotting errors for
 phases like :code:`Sdiff`, the ray paths are interpolated to less than
 1 degree increments. Or similarly
 

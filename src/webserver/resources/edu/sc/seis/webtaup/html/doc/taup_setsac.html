@@ -75,8 +75,8 @@
 <li class="toctree-l2"><a class="reference internal" href="tools.html#tab-completion">Tab Completion</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="phaseNaming.html">Phase naming in TauP</a></li>
-<li class="toctree-l1"><a class="reference internal" href="models.html">Creating and Saving Velocity Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="phaseNaming.html">Phases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models.html">Velocity Models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="programming.html">Programmatic Access</a></li>
 <li class="toctree-l1"><a class="reference internal" href="bibliography.html">Bibliography</a></li>
 </ul>
@@ -141,24 +141,25 @@ the times of the multiples. For example, S-458 would put the first S arrival int
 header <code class="code docutils literal notranslate"><span class="pre">t4</span></code> and the second into <code class="code docutils literal notranslate"><span class="pre">t5</span></code> and the third into <code class="code docutils literal notranslate"><span class="pre">t8</span></code>.
 If there are more arrivals than headers, the later arrivals are not added. If there are
 more headers than arrivals, then the header is not set.</p>
-<p><strong>Warning:</strong> TauP SetSac assumes the <cite>evdp</cite> header has depth in meters unless
-the -evdpkm
+<p><strong>Warning:</strong> TauP SetSac assumes the <code class="code docutils literal notranslate"><span class="pre">evdp</span></code> header has depth in meters unless
+the <code class="code docutils literal notranslate"><span class="pre">--evdpkm</span></code>
 flag is used, in which case kilometers are assumed. This may be a problem for
 users that improperly use kilometers for the depth units. Due to much
 abuse of the <em>SAC</em> depth header units, a warning message is
 printed if the depth
-appears to be in kilometers, i.e. it is &lt; 1000, and -evdpkm is not used.
+appears to be in kilometers, i.e. it is &lt; 1000, and <code class="code docutils literal notranslate"><span class="pre">--evdpkm</span></code> is not used.
 This can be safely ignored
 if the event really is less than 1000 meters deep. See the <em>SAC</em>
 manual <span id="id3">Tull [<a class="reference internal" href="bibliography.html#id32" title="Joseph E. Tull. SAC - Seismic Analysis Code: User's Manual. Lawrence Livermore National Laboratory, Livermore, CA, revision 2 edition, 1989.">Tul89</a>]</span> for confirmation.</p>
-<p>The <em>SAC</em> files must have textsc{evdp} and the textsc{o} marker set.
-Also, if textsc{gcarc} or textsc{dist} is not
+<p>The <em>SAC</em> files must have <code class="code docutils literal notranslate"><span class="pre">evdp</span></code> and the <code class="code docutils literal notranslate"><span class="pre">o</span></code> marker set.
+Also, if <code class="code docutils literal notranslate"><span class="pre">gcarc</span></code> or <code class="code docutils literal notranslate"><span class="pre">dist</span></code> is not
 set then TauP SetSac can calculate a distance only if
-textsc{stla}, textsc{stlo}, textsc{evla} and textsc{evlo}
+<code class="code docutils literal notranslate"><span class="pre">stla</span></code>, <code class="code docutils literal notranslate"><span class="pre">stlo</span></code>, <code class="code docutils literal notranslate"><span class="pre">evla</span></code> and <code class="code docutils literal notranslate"><span class="pre">evlo</span></code>
 are set.</p>
 <p>The user should be very careful about previously set header variables.
 TauP SetSac will
-overwrite any previously set <code class="code docutils literal notranslate"><span class="pre">t</span></code> <code class="code docutils literal notranslate"><span class="pre">user</span></code> headers. A future feature may do
+overwrite any previously set <code class="code docutils literal notranslate"><span class="pre">t</span></code> or <code class="code docutils literal notranslate"><span class="pre">user</span></code> headers.
+A future feature may do
 more careful checking, but the current version makes no effort to verify that
 the header is undefined before writing.</p>
 <p>If the given filename is a directory, TauP SetSac will recursively look for

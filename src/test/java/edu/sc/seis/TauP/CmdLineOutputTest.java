@@ -129,7 +129,7 @@ public class CmdLineOutputTest {
 
     String[] docCmds = new String[] {
             "taup time --mod prem -h 200 -p S,P --deg 57.4",
-            "taup find --max 2 -h 100",
+            "taup find --max 2 -h 100 --exclude 210",
             "taup find --max 2 --deg 35 -h 100 --time 400 420 --exclude 210",
             "taup pierce --mod prem -h 200 -p S,P --deg 57.4",
             "taup pierce --turn --mod prem -h 200 -p S,P --deg 57.4",
@@ -140,10 +140,11 @@ public class CmdLineOutputTest {
             "taup wavefront --mod iasp91 -h 550 -p s,S,ScS,sS,sScS --gmt",
             "taup wavefront --mod iasp91 -h 550 -p s,S,ScS,sS,sScS --color wavetype --svg",
             "taup curve --mod prem -h 500 -p s,S,ScS,Sdiff --gmt",
-            "taup curve --mod prem -h 500 -p s,S,ScS,Sdiff --svg",
-            "taup curve -x rayparamdeg -y tau --svg",
+            "taup curve --mod prem -h 500 -p s,S,ScS,Sdiff --legend --svg",
+            "taup curve -x rayparamdeg -y tau --legend --svg",
             "taup velplot --mod ak135fcont --mod prem --svg",
             "taup velplot --mod ak135fcont -x poisson --svg",
+            "taup velplot --nameddiscon --mod iasp91",
     };
 
     /** 

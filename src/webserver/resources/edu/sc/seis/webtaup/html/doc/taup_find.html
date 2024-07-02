@@ -75,8 +75,8 @@
 <li class="toctree-l2"><a class="reference internal" href="tools.html#tab-completion">Tab Completion</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="phaseNaming.html">Phase naming in TauP</a></li>
-<li class="toctree-l1"><a class="reference internal" href="models.html">Creating and Saving Velocity Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="phaseNaming.html">Phases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models.html">Velocity Models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="programming.html">Programmatic Access</a></li>
 <li class="toctree-l1"><a class="reference internal" href="bibliography.html">Bibliography</a></li>
 </ul>
@@ -120,11 +120,11 @@
             
   <section id="taup-find">
 <span id="id1"></span><h1>TauP Find<a class="headerlink" href="#taup-find" title="Link to this heading">¶</a></h1>
-<p>TauP Find generates possible phase paths through the given earth model.
+<p>TauP Find generates many possible phase paths through the given earth model.
 It is a way of cheating in that favorite game of seismologists, what’s that
 wiggle? It will attempt all possible paths within a model, subject to the
 given constraints. The output is either a simple list of possible phase names or
-travel times in the same format as taup time.</p>
+travel times in the same format as <code class="code docutils literal notranslate"><span class="pre">taup</span> <span class="pre">time</span></code>.</p>
 <p>The complexity or length of the path is limited by the <code class="code docutils literal notranslate"><span class="pre">--max</span></code>
 command line argument, which limits the number of interactions with
 discontinuities in the model, either reflection or phase conversion.
@@ -219,7 +219,7 @@ at least a part of that range. Note <code class="code docutils literal notransla
 <code class="code docutils literal notranslate"><span class="pre">--deltatime</span></code> to allow specifying a single time and a delta time before
 and after it.</p>
 <p>For example:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>taup find --max 2 -h 100
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>taup find --max 2 -h 100 --exclude 210
 </pre></div>
 </div>
 <p>gives you all phases with 0,1 or 2 interactions for a 100 kilometer
@@ -230,9 +230,14 @@ small to generate significant amplitude interacting phases.
 Note that many of these phases even with more substantial discontinuities
 may be of very small amplitude, below what is detectable,
 or may not exist at all for some distances and source depths.</p>
+<p>This command:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>taup find --max 2 --deg 35 -h 100 --time 400 420 --exclude 210
 </pre></div>
 </div>
+<p>gives simimar phases to the previous, but also limits to arrivals between 400
+and 420 seconds at 35 degrees away. If your seismogram contained what appears
+to be an arrival at roughly 410 seconds, this would give some possible phases
+that may explain it.</p>
 </section>
 
 

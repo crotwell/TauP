@@ -27,6 +27,15 @@ Or a plot of Poisson's Ratio for the `ak135fcont` model:
 .. raw:: html
     :file:  examples/taup_velplot_--mod_ak135fcont_-x_poisson_--svg
 
+While the :code:`--nameddiscon` option is oddly named, it allows easily getting
+the velocity model file for the standard models. For example:
+
+.. literalinclude:: examples/taup_velplot_--nameddiscon_--mod_iasp91.cmd
+  :language: text
+
+will extract the iasp91 velocity model into a file name 'iasp91.nd' 
+in the current directory.
+
 
 The usage is:
 

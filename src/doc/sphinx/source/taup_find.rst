@@ -4,11 +4,11 @@
 TauP Find
 ---------
 
-TauP Find generates possible phase paths through the given earth model.
+TauP Find generates many possible phase paths through the given earth model.
 It is a way of cheating in that favorite game of seismologists, what's that
 wiggle? It will attempt all possible paths within a model, subject to the
 given constraints. The output is either a simple list of possible phase names or
-travel times in the same format as taup time.
+travel times in the same format as :code:`taup time`.
 
 
 The complexity or length of the path is limited by the :code:`--max`
@@ -49,7 +49,7 @@ and after it.
 
 For example:
 
-.. literalinclude:: examples/taup_find_--max_2_-h_100.cmd
+.. literalinclude:: examples/taup_find_--max_2_-h_100_--exclude_210.cmd
   :language: text
 
 gives you all phases with 0,1 or 2 interactions for a 100 kilometer
@@ -61,6 +61,12 @@ Note that many of these phases even with more substantial discontinuities
 may be of very small amplitude, below what is detectable,
 or may not exist at all for some distances and source depths.
 
+This command:
 
 .. literalinclude:: examples/taup_find_--max_2_--deg_35_-h_100_--time_400_420_--exclude_210.cmd
   :language: text
+
+gives simimar phases to the previous, but also limits to arrivals between 400
+and 420 seconds at 35 degrees away. If your seismogram contained what appears
+to be an arrival at roughly 410 seconds, this would give some possible phases
+that may explain it.

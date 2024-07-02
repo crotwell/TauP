@@ -18,23 +18,23 @@ and effectively call TauP Create internally. However, if a model file will be
 used repeatedly, using a
 precomputed `.taup` file is more efficient.
 
-The usage is:
-
-.. literalinclude:: cmdLineHelp/taup_create.usage
-
-
-
 :code:`modelfile` is the ASCII text file holding the velocity model.
-The :code:`-nd` format is preferred
+The :code:`--nd` format is preferred
 because the depths, and thus identities, of the major internal boundaries can
 be unambiguously determined, making phase name parsing easier.
-See section :ref:`exampleCreate` for an example.
-For compatiblity, we support the :code:`-tvel` format
+For compatiblity, we support the :code:`--tvel` format
 currently used by the latest ttimes package, :cite:t:`kennett:ak135`.
 
 The output will be a file named after the name of the
 velocity file, followed by :code:`.taup`. For example
 
-:code:`taup create -nd prem.nd`
+:code:`taup create -nd mymodel.nd`
 
-produces :code:`prem.taup`.
+produces the file :code:`mymodel.taup` which can be used later like::
+
+  taup time --mod mymodel.taup --deg 35 -p P,S
+
+
+The usage is:
+
+  .. literalinclude:: cmdLineHelp/taup_create.usage

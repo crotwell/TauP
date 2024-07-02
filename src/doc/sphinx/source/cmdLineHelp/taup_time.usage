@@ -16,7 +16,7 @@ Calculate travel times for seismic phases in an earth model.
 
 Options:
 
-      --amp                  amplitude factor for each phase
+      --amp                  show amplitude factor for each phase
       --debug                enable debugging output
       --first, --onlyfirst   only output the first arrival for each phase, no
                                triplications

@@ -27,26 +27,27 @@ header :code:`t4` and the second into :code:`t5` and the third into :code:`t8`.
 If there are more arrivals than headers, the later arrivals are not added. If there are
 more headers than arrivals, then the header is not set.
 
-**Warning:** TauP SetSac assumes the `evdp` header has depth in meters unless
-the -evdpkm
+**Warning:** TauP SetSac assumes the :code:`evdp` header has depth in meters unless
+the :code:`--evdpkm`
 flag is used, in which case kilometers are assumed. This may be a problem for
 users that improperly use kilometers for the depth units. Due to much
 abuse of the *SAC* depth header units, a warning message is
 printed if the depth
-appears to be in kilometers, i.e. it is < 1000, and -evdpkm is not used.
+appears to be in kilometers, i.e. it is < 1000, and :code:`--evdpkm` is not used.
 This can be safely ignored
 if the event really is less than 1000 meters deep. See the *SAC*
 manual :cite:t:`sacmanual` for confirmation.
 
-The *SAC* files must have \textsc{evdp} and the \textsc{o} marker set.
-Also, if \textsc{gcarc} or \textsc{dist} is not
+The *SAC* files must have :code:`evdp` and the :code:`o` marker set.
+Also, if :code:`gcarc` or :code:`dist` is not
 set then TauP SetSac can calculate a distance only if
-\textsc{stla}, \textsc{stlo}, \textsc{evla} and \textsc{evlo}
+:code:`stla`, :code:`stlo`, :code:`evla` and :code:`evlo`
 are set.
 
 The user should be very careful about previously set header variables.
 TauP SetSac will
-overwrite any previously set :code:`t` :code:`user` headers. A future feature may do
+overwrite any previously set :code:`t` or :code:`user` headers.
+A future feature may do
 more careful checking, but the current version makes no effort to verify that
 the header is undefined before writing.
 

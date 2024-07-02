@@ -4,7 +4,7 @@
 TauP Curve
 ----------
 
-TauP Curve creates a GMT style xy formated file of time versus distance.
+TauP Curve creates a xy plot of seismic phases, usually time versus distance.
 This can be used to create the familar travel time curves, but for
 only the specified phases and depth. The curves are linearly interpolated
 between known sample points, and can thus be used to get a feel for the
@@ -24,23 +24,26 @@ and you have a plot of the wavefronts in "taup_curve.pdf".
 
 Alternatively, using --svg will generate an SVG plot of the same curves:
 
-.. literalinclude:: examples/taup_curve_--mod_prem_-h_500_-p_s_S_ScS_Sdiff_--svg.cmd
+.. literalinclude:: examples/taup_curve_--mod_prem_-h_500_-p_s_S_ScS_Sdiff_--legend_--svg.cmd
   :language: text
 
 and results in
 
 .. raw:: html
-    :file:  examples/taup_curve_--mod_prem_-h_500_-p_s_S_ScS_Sdiff_--svg
+    :file:  examples/taup_curve_--mod_prem_-h_500_-p_s_S_ScS_Sdiff_--legend_--svg
 
 Other paramaters besides distance vs time can be plotted using the `-x`
 and `-y` options. For example tau vs ray parameter with:
 
-.. literalinclude:: examples/taup_curve_-x_rayparamdeg_-y_tau_--svg.cmd
+.. literalinclude:: examples/taup_curve_-x_rayparamdeg_-y_tau_--legend_--svg.cmd
   :language: text
 
 .. raw:: html
-    :file:  examples/taup_curve_-x_rayparamdeg_-y_tau_--svg
+    :file:  examples/taup_curve_-x_rayparamdeg_-y_tau_--legend_--svg
 
+Note that these images are inteded to be a quick, basic view into the results,
+and in most cases you may need to manually edit them in order to fix issues
+related to titles, labels and other image issues.
 
 The usage is:
 

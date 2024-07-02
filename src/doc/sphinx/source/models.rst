@@ -1,6 +1,6 @@
 
 ===================================
-Creating and Saving Velocity Models
+Velocity Models
 ===================================
 
 --------------------
@@ -24,16 +24,21 @@ The file consists of two types of lines, those that specify velocity at
 a depth, and those that specify the name of a discontinuity.
 
 The first type of line has between 3 and 6 numbers on a line separated
-by whitespace. They are, in order, depth in kilometers to the sample point,
-P velocity in kilometers per second,
-S velocity in kilometers per second,
-density in grams per cubic centimeter,
-$Q_p$ attenuation for compressional waves and
-$Q_s$ attenuation for shear waves.
-Only  depth, $V_p$ and $V_s$ are required.
+by whitespace. They are, in order:
+
+===========     =============================================
+Depth           Kilometers from surface to the sample point
+V\ :sub:`p`     P velocity in kilometers per second
+V\ :sub:`s`     S velocity in kilometers per second
+Rho             Density in grams per cubic centimeter
+Q\ :sub:`p`     Attenuation for compressional waves
+Q\ :sub:`s`     Attenuation for shear waves
+===========     =============================================
+
+Only  depth, V\ :sub:`p` and V\ :sub:`s` are required.
 The remaining parameters, while not needed for travel time
 calculations, are included to allow the model to be used for other purposes
-in the future. The model is assumed to be linear between given depths and
+like amplitude calculates. The model is assumed to be linear between given depths and
 repeated depths are used to represent discontinuities.
 
 The second type of line within the `.nd` format specifies one of the
@@ -67,8 +72,11 @@ embedded within the model files. As in shell scripting, everything after
 a :code:`\#` on a line is ignored. In addition, *C* style :code:`/* ... */`
 and :code:`// ...` comments are recognized.
 
-A very simple \textit{named discontinuities} model file might look like this:
-.. include:: verysimple.nd
+A very simple named discontinuities model file might look like this:
+
+.. literalinclude:: verysimple.nd
+  :language: text
+
 
 In many cases it is better and easier to make use of taup velmerge
 to create a new model by making changes to an existing global model,
@@ -162,7 +170,7 @@ places in order until it finds a model that matches the name.
   always check there, see below, but it may be used to
   change the search order.
 
-* The last place TauP looks is for a model file specified
+* The last place TauP looks is for a tau model file specified
   on the command line.
   So, if you generate newModel.taup and want to get some times, you can just say:
   ``taup time -mod newModel.taup``
@@ -171,9 +179,12 @@ places in order until it finds a model that matches the name.
   as TauP can add the taup suffix if necessary. A relative or absolute pathname
   may precede the model, e.g.
   ``taup time -mod ../OtherDir/newModel.taup``.
-  New in version 2.0 is the ability of the tools to load a velocity model directly
-  and handle the create functionality internall, so in addition to ``.taup`` files,
-  the ``.nd`` and ``.tvel`` model files can be loaded if there is not a ``.taup`` file found.
+
+* New in version 2.0 is the ability of the tools to load a velocity model directly
+  and handle the tau model create functionality internall,
+  so in addition to ``.taup`` files,
+  the ``.nd`` and ``.tvel`` model files can be loaded directly
+  if there is not a ``.taup`` file found.
   Note that there is extra work involved in processing the velocity file, and so
-  frequently used models should still be converted using * to avoid
+  frequently used models should still be converted using 'taup create' to avoid
   reprocessing them each time the tool starts.
