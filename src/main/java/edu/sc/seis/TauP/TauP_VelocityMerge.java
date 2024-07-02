@@ -33,10 +33,12 @@ public class TauP_VelocityMerge extends TauP_Tool {
     }
 
     @Override
-    public void start() throws SlownessModelException, TauModelException, VelocityModelException, IOException {
-        VelocityModel vMod = TauModelLoader.loadVelocityModel(modelName, modelType);
+    public void start() throws TauPException, IOException {
+
+        VelocityModel vMod = TauModelLoader.loadVelocityModel(inputFileArgs.getModelFilename(), inputFileArgs.getVelFileType());
         if (vMod == null) {
-            throw new IOException("Velocity model file not found: "+modelName+", tried internally and from file");
+            throw new IOException("Velocity model file not found: "+inputFileArgs.getModelFilename()
+                    +", tried internally and from file");
         }
         VelocityModel overlayVMod;
         VelocityModel outVMod = vMod; // in case no overlay
@@ -59,29 +61,26 @@ public class TauP_VelocityMerge extends TauP_Tool {
             outVMod = outVMod.elevationLayer(elevation, overlayModelArgs.getModelFilename());
         }
 
-        try {
-
-            PrintWriter dos;
-            if (Objects.equals(getOutFile(), "stdout") || Objects.equals(getOutFile(), "-")) {
-                dos = new PrintWriter(new OutputStreamWriter(System.out));
-            } else {
-                if (isDEBUG()) {
-                    System.err.println("Save to "+getOutFile());
-                }
-                dos = new PrintWriter(new BufferedWriter(new FileWriter(getOutFile())));
+        PrintWriter dos;
+        if (Objects.equals(getOutFile(), "stdout") || Objects.equals(getOutFile(), "-")) {
+            dos = new PrintWriter(new OutputStreamWriter(System.out));
+        } else {
+            if (isDEBUG()) {
+                System.err.println("Save to "+getOutFile());
             }
-            if (Objects.equals(getOutputFormat(), ND) || Objects.equals(getOutputFormat(), OutputTypes.TEXT)) {
-                outVMod.writeToND(dos);
-            } else if (Objects.equals(getOutputFormat(), VelocityModel.TVEL)) {
-                throw new RuntimeException("tvel output not yet implemented");
-            } else if (Objects.equals(getOutputFormat(), OutputTypes.JSON)) {
-                dos.write(outVMod.asJSON(true, ""));
-            }
-            dos.flush();
-            
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            dos = new PrintWriter(new BufferedWriter(new FileWriter(getOutFile())));
         }
+        if (Objects.equals(getOutputFormat(), ND) || Objects.equals(getOutputFormat(), OutputTypes.TEXT)) {
+            outVMod.writeToND(dos);
+        } else if (Objects.equals(getOutputFormat(), VelocityModel.TVEL)) {
+            throw new RuntimeException("tvel output not yet implemented");
+        } else if (Objects.equals(getOutputFormat(), OutputTypes.JSON)) {
+            dos.write(outVMod.asJSON(true, ""));
+        } else {
+            throw new TauPException("Unknown output format: "+getOutputFormat());
+        }
+        dos.flush();
+
     }
 
     @Override
@@ -105,12 +104,15 @@ public class TauP_VelocityMerge extends TauP_Tool {
 
     @Override
     public String getOutputFormat() {
-        return modelType;
+        String type = inputFileArgs.getVelFileType();
+        if (type == null) {
+            type = OutputTypes.ND;
+        }
+        return type;
     }
 
-    String modelName;
-    String modelType;
-
+    @CommandLine.ArgGroup(multiplicity = "1", heading = "Base Velocity Model %n")
+    VelocityModelArgs inputFileArgs = new VelocityModelArgs();
 
     @CommandLine.Option(names = {"-o", "--output"}, description = "output to file, default is stdout.")
     public void setOutFile(String outfile) {
