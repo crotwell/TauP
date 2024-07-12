@@ -588,7 +588,7 @@ public class TauBranch implements Serializable, Cloneable {
         if(rayParam > getMaxRayParam()) {
             return null;
         }
-        Assert.isTrue(rayParam >= 0.0, "ray parameter must not be negative.");
+        if (rayParam < 0.0) {throw new IllegalArgumentException("ray parameter must not be negative.");}
         int topLayerNum;
         int botLayerNum;
         try {

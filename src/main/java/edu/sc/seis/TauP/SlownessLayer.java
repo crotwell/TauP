@@ -45,14 +45,16 @@ public class SlownessLayer implements Serializable {
                          double topDepth,
                          double botP,
                          double botDepth) {
-        Assert.isFalse(topDepth > botDepth, "topDepth > botDepth: " + topDepth
-                + " > " + botDepth);
-        Assert.isFalse(topDepth < 0.0 || Double.isNaN(topDepth)
-                               || Double.isInfinite(topDepth),
-                       "topDepth is not a number or is negative: " + topDepth);
-        Assert.isFalse(botDepth < 0.0 || Double.isNaN(botDepth)
-                               || Double.isInfinite(botDepth),
-                       "botDepth is not a number or is negative: " + botDepth);
+        if (topDepth > botDepth) {throw new IllegalArgumentException("topDepth > botDepth: " + topDepth
+                + " > " + botDepth);}
+        if (topDepth < 0.0 || Double.isNaN(topDepth)
+                               || Double.isInfinite(topDepth)) {
+            throw new IllegalArgumentException("topDepth is not a number or is negative: " + topDepth);
+        }
+        if(botDepth < 0.0 || Double.isNaN(botDepth)
+                               || Double.isInfinite(botDepth)) {
+            throw new IllegalArgumentException("botDepth is not a number or is negative: " + botDepth);
+        }
         this.topP = topP;
         this.topDepth = topDepth;
         this.botP = botP;
@@ -66,10 +68,11 @@ public class SlownessLayer implements Serializable {
                          boolean spherical,
                          double radiusOfEarth,
                          boolean isPWave) {
-        Assert.isFalse(vLayer.getTopDepth() > vLayer.getBotDepth(),
-                       "vLayer.topDepth > vLayer.botDepth :"
-                               + vLayer.getTopDepth() + " "
-                               + vLayer.getBotDepth());
+        if (vLayer.getTopDepth() > vLayer.getBotDepth()) {
+            throw new IllegalArgumentException("vLayer.topDepth > vLayer.botDepth :"
+                    + vLayer.getTopDepth() + " "
+                    + vLayer.getBotDepth());
+        }
         topDepth = vLayer.getTopDepth();
         botDepth = vLayer.getBotDepth();
         VelocityModelMaterial waveType;
@@ -87,9 +90,10 @@ public class SlownessLayer implements Serializable {
                 topP = 1.0 / vLayer.evaluateAtTop(waveType);
                 botP = 1.0 / vLayer.evaluateAtBottom(waveType);
             }
-            Assert.isFalse(Double.isNaN(getTopP()) || Double.isNaN(getBotP()),
-                           "Slowness sample is NaN: topP=" + getTopP()
-                                   + " botP=" + getBotP()+" depth "+topDepth+" to "+botDepth);
+            if (Double.isNaN(getTopP()) || Double.isNaN(getBotP())) {
+                throw new IllegalArgumentException("Slowness sample is NaN: topP=" + getTopP()
+                        + " botP=" + getBotP()+" depth "+topDepth+" to "+botDepth);
+            }
     }
 
     /**
@@ -156,18 +160,20 @@ public class SlownessLayer implements Serializable {
      */
     public double evaluateAt_bullen(double depth, double radiusOfEarth)
             throws SlownessModelException {
-        Assert.isFalse(getBotDepth() > radiusOfEarth,
-                       "SlownessLayer.evaluateAt_bullen:"
-                               + " radiusOfEarth="
-                               + radiusOfEarth
-                               + " is smaller than the maximum depth of this layer."
-                               + " topDepth=" + getTopDepth() + " botDepth="
-                               + getBotDepth());
-        Assert.isFalse((getTopDepth() - depth) * (depth - getBotDepth()) < 0.0,
-                       "SlownessLayer.evaluateAt_bullen:" + " depth=" + depth
-                               + " is not contained within this layer."
-                               + " topDepth=" + getTopDepth() + " botDepth="
-                               + getBotDepth());
+        if (getBotDepth() > radiusOfEarth) {
+            throw new IllegalArgumentException("SlownessLayer.evaluateAt_bullen:"
+                    + " radiusOfEarth="
+                    + radiusOfEarth
+                    + " is smaller than the maximum depth of this layer."
+                    + " topDepth=" + getTopDepth() + " botDepth="
+                    + getBotDepth());
+        }
+        if((getTopDepth() - depth) * (depth - getBotDepth()) < 0.0) {
+            throw new IllegalArgumentException("SlownessLayer.evaluateAt_bullen:" + " depth=" + depth
+                    + " is not contained within this layer."
+                    + " topDepth=" + getTopDepth() + " botDepth="
+                    + getBotDepth());
+        }
         if(depth == getTopDepth()) {
             return getTopP();
         } else if(depth == getBotDepth()) {
