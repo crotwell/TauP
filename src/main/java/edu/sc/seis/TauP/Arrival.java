@@ -25,7 +25,6 @@
  */
 package edu.sc.seis.TauP;
 
-import edu.sc.seis.TauP.cmdline.args.SeismicSourceArgs;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONWriter;
@@ -148,7 +147,7 @@ public class Arrival {
     
     private final double takeoffAngleRadian;
 
-    private double moment = SeismicSourceArgs.MAG4_MOMENT;
+    private double moment = MomentMagnitude.MAG4_MOMENT;
 
     private Arrival relativeToArrival = null;
 

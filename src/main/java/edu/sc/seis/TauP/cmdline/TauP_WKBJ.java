@@ -374,7 +374,7 @@ public class TauP_WKBJ extends TauP_AbstractRayTool {
     }
 
     public static float[][] effectiveSourceTerm(float momentMag, float deltaT, int numSamples) {
-        float Mo = (float) SeismicSourceArgs.mw_to_N_m(momentMag);
+        float Mo = (float) MomentMagnitude.mw_to_N_m(momentMag);
 
         float[] radial = new float[numSamples];
         float[] vertical = new float[numSamples];
