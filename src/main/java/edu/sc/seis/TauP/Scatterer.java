@@ -1,6 +1,4 @@
-package edu.sc.seis.TauP.cmdline.args;
-
-import edu.sc.seis.TauP.FixedHemisphereDistanceRay;
+package edu.sc.seis.TauP;
 
 public class Scatterer {
     public Scatterer(double depth, double dist) {

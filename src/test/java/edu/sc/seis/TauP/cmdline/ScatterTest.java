@@ -1,7 +1,7 @@
 package edu.sc.seis.TauP.cmdline;
 
 import edu.sc.seis.TauP.*;
-import edu.sc.seis.TauP.cmdline.args.Scatterer;
+import edu.sc.seis.TauP.Scatterer;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;

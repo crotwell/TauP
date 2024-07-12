@@ -1,7 +1,5 @@
 package edu.sc.seis.TauP;
 
-import edu.sc.seis.TauP.cmdline.args.Scatterer;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;

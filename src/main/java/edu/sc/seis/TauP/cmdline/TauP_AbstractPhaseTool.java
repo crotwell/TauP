@@ -3,7 +3,7 @@ package edu.sc.seis.TauP.cmdline;
 import edu.sc.seis.TauP.*;
 import edu.sc.seis.TauP.cmdline.args.AbstractOutputTypeArgs;
 import edu.sc.seis.TauP.cmdline.args.ModelArgs;
-import edu.sc.seis.TauP.cmdline.args.Scatterer;
+import edu.sc.seis.TauP.Scatterer;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import picocli.CommandLine;
