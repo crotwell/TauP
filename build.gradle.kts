@@ -15,7 +15,7 @@ plugins {
 }
 
 application {
-  mainClass.set("edu.sc.seis.TauP.ToolRun")
+  mainClass.set("edu.sc.seis.TauP.cmdline.ToolRun")
     applicationName = "taup"
     //applicationName = "taupdev"
 }
@@ -380,7 +380,7 @@ tasks.register<Sync>("copyReflTranCompareFiles") {
 tasks.register<JavaExec>("genCmdLineTestFiles") {
     description = "generate TauP cmd line test output files"
     classpath = sourceSets.getByName("test").runtimeClasspath
-    getMainClass().set("edu.sc.seis.TauP.CmdLineOutputTest")
+    getMainClass().set("edu.sc.seis.TauP.cmdline.CmdLineOutputTest")
     dependsOn += tasks.getByName("testClasses")
     dependsOn += tasks.getByName("copyReflTranCompareFiles")
     outputs.files(fileTree("build/cmdLineTest"))
@@ -397,7 +397,7 @@ tasks.register<Sync>("copyCmdLineTestFiles") {
 tasks.register<JavaExec>("genCmdLineHelpFiles") {
   description = "generate TauP cmd line help output files"
   classpath = sourceSets["main"].runtimeClasspath + project.tasks[JavaPlugin.JAR_TASK_NAME].outputs.files
-  getMainClass().set("edu.sc.seis.TauP.ToolRun")
+  getMainClass().set("edu.sc.seis.TauP.cmdline.ToolRun")
   args = listOf( "--getcmdlinehelpfiles")
   dependsOn += tasks.getByName("classes")
   outputs.files(fileTree("src/doc/sphinx/source/cmdLineHelp"))
@@ -450,7 +450,7 @@ tasks.register<JavaExec>("genAutocomplete") {
   val outDir =  layout.buildDirectory.dir("picocli/bash_completion")
   file(outDir).mkdirs()
   val outFile = File(file(outDir), "taup_completion")
-  args = listOf("edu.sc.seis.TauP.ToolRun", "-f", "-o", outFile.path)
+  args = listOf("edu.sc.seis.TauP.cmdline.ToolRun", "-f", "-o", outFile.path)
   dependsOn += tasks.getByName("compileJava")
   outputs.files(outFile)
 }
