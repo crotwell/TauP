@@ -21,8 +21,6 @@ public class DistanceRay extends RayCalculateable {
           backAzimuth = dr.backAzimuth;
           geodetic = dr.geodetic;
           flattening = dr.flattening;
-
-          args = dr.args;
     }
     public static DistanceRay ofDegrees(double deg) {
         DistanceRay val = new DistanceRay();
@@ -182,5 +180,4 @@ public class DistanceRay extends RayCalculateable {
     protected Double degrees = null;
     protected Double kilometers = null;
 
-    protected DistanceArgs args = null;
 }
