@@ -251,7 +251,7 @@ public class DistanceArgs {
         return ! latLonArgs.stationList.isEmpty();
     }
 
-    @ArgGroup(exclusive = false, heading = "Distance is given by:%n")
+    @ArgGroup(exclusive = false, multiplicity = "1..*", heading = "Distance is given by:%n")
     DistanceArgsInner distArgs = new DistanceArgsInner();
 
     @ArgGroup(validate = false, heading = "Lat,Lon influenced by:%n")
