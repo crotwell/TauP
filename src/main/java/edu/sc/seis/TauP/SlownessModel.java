@@ -100,10 +100,10 @@ public abstract class SlownessModel implements Serializable {
     }
 
     /** True to enable debugging output. */
-    static public boolean DEBUG = ToolRun.DEBUG;
+    static public boolean DEBUG = TauPConfig.DEBUG;
 
     /** True to enable verbose output. */
-    static public boolean verbose = ToolRun.VERBOSE;
+    static public boolean verbose = TauPConfig.VERBOSE;
 
     /** Radius of the Earth in km, usually input from the velocity model. */
     protected double radiusOfEarth = 6371.0;
@@ -428,7 +428,7 @@ public abstract class SlownessModel implements Serializable {
      * Returns the SlownessLayer of the requested waveType. This is NOT a clone
      * and any changes will possibly corrupt the SlownessModel.
      */
-    protected SlownessLayer getSlownessLayer(int layerNum, boolean isPWave) {
+    public SlownessLayer getSlownessLayer(int layerNum, boolean isPWave) {
         if(isPWave) {
             return PLayers.get(layerNum);
         } else {
@@ -436,7 +436,7 @@ public abstract class SlownessModel implements Serializable {
         }
     }
 
-    protected List<SlownessLayer> getAllSlownessLayers(boolean isPWave) {
+    public List<SlownessLayer> getAllSlownessLayers(boolean isPWave) {
         if(isPWave) {
             return PLayers;
         } else {

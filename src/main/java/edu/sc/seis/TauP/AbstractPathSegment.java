@@ -1,6 +1,6 @@
 package edu.sc.seis.TauP;
 
-import edu.sc.seis.TauP.cli.DistDepthRange;
+import edu.sc.seis.TauP.cmdline.args.DistDepthRange;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONWriter;
@@ -9,7 +9,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-import static edu.sc.seis.TauP.Arrival.DtoR;
+import static edu.sc.seis.TauP.SphericalCoords.DtoR;
 
 public abstract class AbstractPathSegment {
     List<TimeDist> path;
@@ -71,10 +71,10 @@ public abstract class AbstractPathSegment {
                 // now check to see if past maxPathTime, to create partial path up to a time
                 if (prevEnd != null && prevEnd.getTime() < maxPathTime) {
                     // overlap max time, so interpolate to maxPathTime
-                    calcDist = TauP_AbstractPhaseTool.linearInterp(prevEnd.getTime(), prevEnd.getDistDeg(),
+                    calcDist = LinearInterpolation.linearInterp(prevEnd.getTime(), prevEnd.getDistDeg(),
                             td.getTime(), td.getDistDeg(),
                             maxPathTime);
-                    calcDepth = TauP_AbstractPhaseTool.linearInterp(prevEnd.getTime(), prevEnd.getDepth(),
+                    calcDepth = LinearInterpolation.linearInterp(prevEnd.getTime(), prevEnd.getDepth(),
                             td.getTime(), td.getDepth(),
                             maxPathTime);
                     calcTime = maxPathTime;
@@ -133,6 +133,18 @@ public abstract class AbstractPathSegment {
 
     public SeismicPhase getPhase() {
         return phase;
+    }
+
+    public boolean isPWave() {
+        return isPWave;
+    }
+
+    public int getSegmentIndex() {
+        return segmentIndex;
+    }
+
+    public String getSegmentName() {
+        return segmentName;
     }
 
     public TimeDist getPathPoint(int i) {

@@ -1,13 +1,12 @@
 package edu.sc.seis.TauP;
 
-import edu.sc.seis.TauP.cli.DistDepthRange;
+import edu.sc.seis.TauP.cmdline.args.DistDepthRange;
 
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-import static edu.sc.seis.TauP.Arrival.RtoD;
+import static edu.sc.seis.TauP.SphericalCoords.RtoD;
 
 public class SvgEarth {
 
@@ -373,7 +372,7 @@ public class SvgEarth {
                 + Outputs.formatDistance(y));
     }
 
-    protected static void printDistRadius(PrintWriter out, double calcDist, double radius) {
+    public static void printDistRadius(PrintWriter out, double calcDist, double radius) {
         out.print(Outputs.formatDistance(calcDist)
         + "  "
         + Outputs.formatDepth(radius));

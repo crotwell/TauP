@@ -1,7 +1,8 @@
 package edu.sc.seis.TauP;
 
-import edu.sc.seis.TauP.cli.GraphicOutputTypeArgs;
-import edu.sc.seis.TauP.cli.ModelArgs;
+import edu.sc.seis.TauP.cmdline.TauP_Tool;
+import edu.sc.seis.TauP.cmdline.args.GraphicOutputTypeArgs;
+import edu.sc.seis.TauP.cmdline.args.ModelArgs;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -11,8 +12,8 @@ import java.util.List;
 import java.util.Objects;
 
 import static edu.sc.seis.TauP.AxisType.*;
-import static edu.sc.seis.TauP.TauP_AbstractPhaseTool.baseResultAsJSONObject;
-import static edu.sc.seis.TauP.TauP_Tool.toolNameFromClass;
+import static edu.sc.seis.TauP.cmdline.TauP_AbstractPhaseTool.baseResultAsJSONObject;
+import static edu.sc.seis.TauP.cmdline.TauP_Tool.toolNameFromClass;
 
 public class XYPlotOutput {
 
@@ -50,7 +51,7 @@ public class XYPlotOutput {
         }
     }
 
-    protected static List<XYPlottingData> recalcForAbs(List<XYPlottingData> xy, boolean xAxisAbs, boolean yAxisAbs) {
+    public static List<XYPlottingData> recalcForAbs(List<XYPlottingData> xy, boolean xAxisAbs, boolean yAxisAbs) {
         List<XYPlottingData> out = new ArrayList<>();
         for(XYPlottingData xyp : xy) {
             out.add( xyp.recalcForAbs(xAxisAbs, yAxisAbs));
@@ -59,7 +60,7 @@ public class XYPlotOutput {
     }
 
 
-    protected static List<XYPlottingData> recalcForLog(List<XYPlottingData> xy, boolean xAxisLog, boolean yAxisLog) {
+    public static List<XYPlottingData> recalcForLog(List<XYPlottingData> xy, boolean xAxisLog, boolean yAxisLog) {
         List<XYPlottingData> out = new ArrayList<>();
         for(XYPlottingData xyp : xy) {
             out.add( xyp.recalcForLog(xAxisLog, yAxisLog));
@@ -344,6 +345,46 @@ public class XYPlotOutput {
         out.title = title;
         out.autoColor = autoColor;
         return out;
+    }
+
+    public boolean isAutoColor() {
+        return autoColor;
+    }
+
+    public void setAutoColor(boolean autoColor) {
+        this.autoColor = autoColor;
+    }
+
+    public int getNumXTicks() {
+        return numXTicks;
+    }
+
+    public void setNumXTicks(int numXTicks) {
+        this.numXTicks = numXTicks;
+    }
+
+    public int getNumYTicks() {
+        return numYTicks;
+    }
+
+    public void setNumYTicks(int numYTicks) {
+        this.numYTicks = numYTicks;
+    }
+
+    public boolean isxAxisInvert() {
+        return xAxisInvert;
+    }
+
+    public void setxAxisInvert(boolean xAxisInvert) {
+        this.xAxisInvert = xAxisInvert;
+    }
+
+    public boolean isyAxisInvert() {
+        return yAxisInvert;
+    }
+
+    public void setyAxisInvert(boolean yAxisInvert) {
+        this.yAxisInvert = yAxisInvert;
     }
 
     List<XYPlottingData> xyPlots;

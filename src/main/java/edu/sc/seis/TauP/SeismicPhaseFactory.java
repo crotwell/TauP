@@ -1,6 +1,6 @@
 package edu.sc.seis.TauP;
 
-import edu.sc.seis.TauP.cli.Scatterer;
+import edu.sc.seis.TauP.cmdline.args.Scatterer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -100,7 +100,7 @@ public class SeismicPhaseFactory {
         return createPhase(name, tMod, sourceDepth, 0.0);
     }
     public static SimpleSeismicPhase createPhase(String name, TauModel tMod, double sourceDepth, double receiverDepth) throws TauModelException {
-        return createPhase(name, tMod, sourceDepth, receiverDepth, ToolRun.DEBUG);
+        return createPhase(name, tMod, sourceDepth, receiverDepth, TauPConfig.DEBUG);
     }
     public static SimpleSeismicPhase createPhase(String name, TauModel tMod, double sourceDepth, double receiverDepth, boolean debug) throws TauModelException {
         SeismicPhaseFactory factory = new SeismicPhaseFactory(name, tMod, sourceDepth, receiverDepth, debug);
@@ -2536,7 +2536,7 @@ public class SeismicPhaseFactory {
             maxRayParam = rayParams[0];
             maxRayParamIndex = 1;
             return new SimpleSeismicPhase(proto, rayParams, time, dist,
-                    minRayParam, maxRayParam, minRayParamIndex, maxRayParamIndex, minDistance, maxDistance, ToolRun.DEBUG);
+                    minRayParam, maxRayParam, minRayParamIndex, maxRayParamIndex, minDistance, maxDistance, TauPConfig.DEBUG);
             } catch (NumberFormatException e) {
                 proto.failNext(" Illegal surface wave velocity "+name.substring(0, name.length() - 4));
                 return new FailedSeismicPhase(proto);
@@ -2577,7 +2577,7 @@ public class SeismicPhaseFactory {
             rayParams[0] = minRayParam;
             rayParams[1] = minRayParam;
         } else {
-            if(ToolRun.DEBUG) {
+            if(TauPConfig.DEBUG) {
                 System.err.println("SumBranches() maxRayParamIndex=" + maxRayParamIndex
                         + " minRayParamIndex=" + minRayParamIndex
                         + " tMod.rayParams.length=" + tMod.rayParams.length
@@ -2764,7 +2764,7 @@ public class SeismicPhaseFactory {
                 maxRayParamIndex,
                 minDistance,
                 maxDistance,
-                ToolRun.DEBUG);
+                TauPConfig.DEBUG);
     }
 
     /**

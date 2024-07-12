@@ -67,7 +67,7 @@ public class TauModel implements Serializable {
     }
 
     /** True to enable debugging output. */
-    public static boolean DEBUG = ToolRun.DEBUG;
+    public static boolean DEBUG = TauPConfig.DEBUG;
 
     /** True if this is a spherical slowness model. False if flat. */
     protected boolean spherical = true;

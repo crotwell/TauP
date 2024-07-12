@@ -68,6 +68,14 @@ public class Theta {
         return radians;
     }
 
+    public double[] getThetaAtX() {
+        return thetaAtX;
+    }
+
+    public double[] getRayParams() {
+        return rayParams;
+    }
+
     public double getMaxRayParam() {
         return rayParams[0];
     }

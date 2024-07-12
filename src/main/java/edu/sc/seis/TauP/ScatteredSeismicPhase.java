@@ -49,7 +49,7 @@ public class ScatteredSeismicPhase implements SeismicPhase {
     }
 
     public double getScattererDistance() {
-        return scattererDistanceDeg*Arrival.DtoR;
+        return scattererDistanceDeg* SphericalCoords.DtoR;
     }
 
     public double getScattererDistanceDeg() {

@@ -33,7 +33,7 @@ import java.lang.reflect.InvocationTargetException;
 public class TauBranch implements Serializable, Cloneable {
 
     /** Turns on debugging output. */
-    transient public boolean DEBUG = ToolRun.DEBUG;
+    transient public boolean DEBUG = TauPConfig.DEBUG;
 
     /** The type of wave for this branch, P or S. */
     protected boolean isPWave;

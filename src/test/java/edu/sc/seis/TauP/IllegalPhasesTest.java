@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import edu.sc.seis.TauP.cmdline.TauP_Time;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -146,8 +147,7 @@ class IllegalPhasesTest {
 
 		String modelName = "outerCoreDiscon.nd";
 		VelocityModel vMod = VelocityModelTest.loadTestVelMod(modelName);
-		TauP_Create taupCreate = new TauP_Create();
-		TauModel tMod_OCD = taupCreate.createTauModel(vMod);
+		TauModel tMod_OCD = TauModelLoader.createTauModel(vMod);
 
 		TauModel tModDepth = tMod_OCD.depthCorrect(10);
 		float receiverDepth = 100;

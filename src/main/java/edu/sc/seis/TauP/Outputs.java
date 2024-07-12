@@ -204,19 +204,19 @@ public class Outputs {
         return space+String.format(ampFactorFormat, ampFactor);
     }
 
-    protected static String depthFormat = "%8.1f";
+    public static String depthFormat = "%8.1f";
 
-    protected static String distanceFormat = "%8.2f";
+    public static String distanceFormat = "%8.2f";
 
-    protected static String timeFormat = "%8.2f";
+    public static String timeFormat = "%8.2f";
 
-    protected static String distanceFormatNoPad = "%.2f";
+    public static String distanceFormatNoPad = "%.2f";
 
-    protected static String timeFormatNoPad = "%.2f";
+    public static String timeFormatNoPad = "%.2f";
 
-    protected static String rayParamFormat = "%8.3f";
+    public static String rayParamFormat = "%8.3f";
 
-    protected static String latLonFormat = "%8.2f";
+    public static String latLonFormat = "%8.2f";
 
-    protected static String ampFactorFormat = "%.1e";
+    public static String ampFactorFormat = "%.1e";
 } // Outputs

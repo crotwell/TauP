@@ -58,24 +58,26 @@ public class StdModelGenerator {
     ndModelNames.add("prem");
     ndModelNames.add("ak135fcont");
     ndModelNames.add("ak135favg");
-    TauP_Create taupCreate = new TauP_Create();
-    taupCreate.setDirectory(inDir.getPath());
-    taupCreate.setVelFileType("tvel");
+
     for (String modelName: tvelModelNames) {
-        System.out.println(modelName);
-        taupCreate.setModelFilename(modelName);
-        VelocityModel vMod = taupCreate.loadVMod();
-        TauModel tMod = taupCreate.createTauModel(vMod);
-        tMod.writeModel( new File(outDir, modelName+".taup").getPath());
+      System.out.println(modelName);
+      File inVModFile = new File(inDir, modelName+".tvel");
+      VelocityModel vMod = VelocityModel.readTVelFile(inVModFile);
+      vMod.setModelName(modelName);
+      TauModel tMod = TauModelLoader.createTauModel(vMod);
+      tMod.writeModel( new File(outDir, modelName+".taup").getPath());
     }
-    taupCreate.setVelFileType("nd");
     for (String modelName: ndModelNames) {
-        System.out.println(modelName);
-        taupCreate.setModelFilename(modelName);
-        VelocityModel vMod = taupCreate.loadVMod();
-        TauModel tMod = taupCreate.createTauModel(vMod);
-        tMod.writeModel( new File(outDir, modelName+".taup").getPath());
+      System.out.println(modelName);
+      File inVModFile = new File(inDir, modelName+".nd");
+      VelocityModel vMod = VelocityModel.readNDFile(inVModFile);
+      vMod.setModelName(modelName);
+      TauModel tMod = TauModelLoader.createTauModel(vMod);
+      tMod.writeModel( new File(outDir, modelName+".taup").getPath());
     }
+
+    System.err.println("WARN, NOT GENERATING QDT");
+/*
     // qdt with bigger tol.
     taupCreate.setVelFileType("tvel");
     taupCreate.setMinDeltaP(0.5f);
@@ -90,5 +92,6 @@ public class StdModelGenerator {
     System.out.println(vMod.getModelName());
     TauModel tMod = taupCreate.createTauModel(vMod);
     tMod.writeModel( new File(outDir, "qdt.taup").getPath());
+ */
   }
 }

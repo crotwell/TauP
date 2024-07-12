@@ -1,5 +1,6 @@
 package edu.sc.seis.TauP;
 
+import edu.sc.seis.TauP.cmdline.TauP_Time;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -19,7 +20,7 @@ public class AK135Test  {
 
     @BeforeEach
     protected void setUp() throws Exception {
-        taup = new TauP_Time("ak135");
+        taup = new TimeTester("ak135");
         loadTable();
     }
 
@@ -72,13 +73,12 @@ public class AK135Test  {
     public static float RAY_PARAM_TOL = 0.11f; // seconds per degree
 
     public void doTable(String phase) throws TauPException {
-        taup.clearPhaseNames();
         if (phase.equals("P")) {
             taup.setPhaseNames(List.of("p", "P", "Pdiff"));
-            assertEquals(3, taup.parsePhaseNameList().size());
+            assertEquals(3, taup.phaseNameList.size());
         } else if (phase.equals("S")) {
             taup.setPhaseNames(List.of("s", "S", "Sdiff"));
-            assertEquals(3, taup.parsePhaseNameList().size());
+            assertEquals(3, taup.phaseNameList.size());
         } else {
             taup.setPhaseNames(List.of(phase));
         }
@@ -128,7 +128,7 @@ public class AK135Test  {
                 }
             }
             for (int i = 0; i < rayParam.length; i++) {
-                TimeDist td = new TimeDist(rayParam[i], time[i], Arrival.DtoR*dist, depths[i]);
+                TimeDist td = new TimeDist(rayParam[i], time[i], SphericalCoords.DtoR*dist, depths[i]);
                 phaseTable.get(depths[i]).add(td);
             }
         }
@@ -145,5 +145,5 @@ public class AK135Test  {
 
     HashMap<String, HashMap<Float, List<TimeDist>>> table;
 
-    TauP_Time taup;
+    TimeTester taup;
 }

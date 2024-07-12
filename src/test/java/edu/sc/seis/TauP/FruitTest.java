@@ -16,8 +16,7 @@ public class FruitTest {
     @BeforeEach
     public void setUp() throws Exception {
         VelocityModel vMod = VelocityModelTest.loadTestVelMod(fruitModelFile);
-        TauP_Create taupCreate = new TauP_Create();
-        tMod = taupCreate.createTauModel(vMod);
+        tMod = TauModelLoader.createTauModel(vMod);
         sMod = tMod.getSlownessModel();
     }
 

@@ -459,7 +459,7 @@ public class ReflTransTest {
         double botVp = 8;
         double botVs = 0;
         double botDensity = 10;
-        double flatRP = Math.sin(Arrival.DtoR*(30))/botVp;
+        double flatRP = Math.sin(SphericalCoords.DtoR*(30))/botVp;
 
         ReflTransFluidSolid coeff = new ReflTransFluidSolid(botVp, botDensity, topVp, topVs, topDensity );
 

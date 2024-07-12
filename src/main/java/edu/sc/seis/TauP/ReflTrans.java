@@ -1,6 +1,6 @@
 package edu.sc.seis.TauP;
 
-import static edu.sc.seis.TauP.Arrival.RtoD;
+import static edu.sc.seis.TauP.SphericalCoords.RtoD;
 
 public abstract class ReflTrans {
 
@@ -305,6 +305,30 @@ public abstract class ReflTrans {
         double Tshsh_calc = getTshsh(flatRP);
         return botDensity * botVs * Math.sqrt(cosArg) * Tshsh_calc * Tshsh_calc
                 / inboundEnergy;
+    }
+
+    public double getTopVp() {
+        return topVp;
+    }
+
+    public double getTopVs() {
+        return topVs;
+    }
+
+    public double getTopDensity() {
+        return topDensity;
+    }
+
+    public double getBotVp() {
+        return botVp;
+    }
+
+    public double getBotVs() {
+        return botVs;
+    }
+
+    public double getBotDensity() {
+        return botDensity;
     }
 
     protected abstract void calcTempVars(double rayParam, boolean inIsPWave);

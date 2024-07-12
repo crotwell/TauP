@@ -199,10 +199,10 @@ public interface SeismicPhase extends Serializable, Cloneable {
             desc += "  exists from "+Outputs.formatDistanceNoPad(phase.getMinDistanceDeg())+mod180Min+" to "
                     +Outputs.formatDistanceNoPad(phase.getMaxDistanceDeg())+mod180Max+" degrees.\n";
             if (phase.getMaxRayParam() > phase.getMinRayParam()) {
-                desc += "  with ray parameter from " + Outputs.formatRayParam(phase.getMaxRayParam() / Arrival.RtoD)
-                        + " down to " + Outputs.formatRayParam(phase.getMinRayParam() / Arrival.RtoD) + " sec/deg.\n";
+                desc += "  with ray parameter from " + Outputs.formatRayParam(phase.getMaxRayParam() / SphericalCoords.RtoD)
+                        + " down to " + Outputs.formatRayParam(phase.getMinRayParam() / SphericalCoords.RtoD) + " sec/deg.\n";
             } else {
-                desc += "  with degenerate ray parameter of " + Outputs.formatRayParam(phase.getMaxRayParam() / Arrival.RtoD) + " sec/deg.\n";
+                desc += "  with degenerate ray parameter of " + Outputs.formatRayParam(phase.getMaxRayParam() / SphericalCoords.RtoD) + " sec/deg.\n";
             }
             double[] time = phase.getTime();
             double[] dist = phase.getDist();
@@ -213,8 +213,8 @@ public interface SeismicPhase extends Serializable, Cloneable {
                 if (i < dist.length - 1 && (rayParams[i] == rayParams[i + 1])
                         && rayParams.length > 2) {
                     /* Here we have a shadow zone, so output a warning of break in curve. */
-                    builder.append( "\n  with shadow zone between " + Outputs.formatDistance(Arrival.RtoD * dist[i])
-                            + " and " + Outputs.formatDistance(Arrival.RtoD * dist[i + 1]) + " deg");
+                    builder.append( "\n  with shadow zone between " + Outputs.formatDistance(SphericalCoords.RtoD * dist[i])
+                            + " and " + Outputs.formatDistance(SphericalCoords.RtoD * dist[i + 1]) + " deg");
                 }
             }
             builder.append(".\n");
@@ -235,13 +235,13 @@ public interface SeismicPhase extends Serializable, Cloneable {
             desc += "  \"minexists\": { \n"+
                     "    \"dist\": "+Outputs.formatDistanceNoPad(phase.getMinDistanceDeg())+",\n"+
                     "    \"modulodist\": "+Outputs.formatDistanceNoPad(SeismicPhase.distanceTrim180(phase.getMinDistanceDeg()))+",\n"+
-                    "    \"rayparameter\": "+Outputs.formatRayParam(phase.getMaxRayParam() / Arrival.RtoD)+",\n"+
+                    "    \"rayparameter\": "+Outputs.formatRayParam(phase.getMaxRayParam() / SphericalCoords.RtoD)+",\n"+
                     "    \"time\": "+Outputs.formatTimeNoPad(time[0])+"\n"+
                     "  },"+
                     "  \"maxexists\": { \n"+
                     "    \"dist\": "+Outputs.formatDistanceNoPad(phase.getMaxDistanceDeg())+",\n"+
                     "    \"modulodist\": "+Outputs.formatDistanceNoPad(SeismicPhase.distanceTrim180(phase.getMaxDistanceDeg()))+",\n"+
-                    "    \"rayparameter\": "+Outputs.formatRayParam(phase.getMinRayParam() / Arrival.RtoD)+",\n"+
+                    "    \"rayparameter\": "+Outputs.formatRayParam(phase.getMinRayParam() / SphericalCoords.RtoD)+",\n"+
                     "    \"time\": "+Outputs.formatTimeNoPad(time[time.length - 1])+"\n"+
                     "  },\n"+
                     "  \"shadow\": [";
@@ -255,8 +255,8 @@ public interface SeismicPhase extends Serializable, Cloneable {
                     }
                     /* Here we have a shadow zone, so output a warning of break in curve. */
                     desc += "  {"+
-                            "    \"min_dist\": " + Outputs.formatDistance(Arrival.RtoD * dist[i])+",\n"+
-                            "    \"max_dist\": " + Outputs.formatDistance(Arrival.RtoD * dist[i + 1])+",\n"+
+                            "    \"min_dist\": " + Outputs.formatDistance(SphericalCoords.RtoD * dist[i])+",\n"+
+                            "    \"max_dist\": " + Outputs.formatDistance(SphericalCoords.RtoD * dist[i + 1])+",\n"+
                             "  }";
                     hasPrevShadow = true;
                 }

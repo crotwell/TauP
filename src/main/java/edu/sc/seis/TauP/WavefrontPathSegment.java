@@ -26,5 +26,9 @@ public class WavefrontPathSegment extends  AbstractPathSegment {
                 segmentIndex, totalNumSegments, phase, timeVal);
     }
 
+    public double getTimeVal() {
+        return timeVal;
+    }
+
     double timeVal;
 }

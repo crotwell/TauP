@@ -13,8 +13,7 @@ public class NoOuterCoreTest {
 
     public NoOuterCoreTest() throws VelocityModelException, SlownessModelException, TauModelException, IOException {
          vMod = VelocityModelTest.loadTestVelMod(modelName);
-         TauP_Create taupCreate = new TauP_Create();
-         tMod = taupCreate.createTauModel(vMod);
+         tMod = TauModelLoader.createTauModel(vMod);
     }
     
     String modelName = "noOuterCore.nd";

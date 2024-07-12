@@ -49,8 +49,10 @@ import edu.sc.seis.seisFile.Location;
 public class SphericalCoords {
 
     protected static final double dtor = Math.PI / 180.0;
+    public static final double DtoR = dtor;
 
     protected static final double rtod = 180.0 / Math.PI;
+    public static final double RtoD = rtod;
 
     public static final double TWOPI = 2*Math.PI;
 

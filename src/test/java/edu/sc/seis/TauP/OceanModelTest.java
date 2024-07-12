@@ -25,8 +25,7 @@ public class OceanModelTest {
         assertEquals(10, vMod.getMohoDepth());
         assertEquals(2891.50, vMod.getCmbDepth());
         assertEquals(5153.50, vMod.getIocbDepth());
-        TauP_Create taupCreate = new TauP_Create();
-        TauModel tMod = taupCreate.createTauModel(vMod);
+        TauModel tMod = TauModelLoader.createTauModel(vMod);
         assertEquals(10, tMod.getNumBranches());
         assertEquals(979, tMod.getRayParams().length);
         assertEquals(2, tMod.getSlownessModel().fluidLayerDepths.size());
@@ -50,7 +49,7 @@ public class OceanModelTest {
      * @throws SlownessModelException
      */
     @Test
-    public void iasp91_ocean() throws TauModelException, VelocityModelException, SlownessModelException {
+    public void iasp91_ocean() throws TauModelException, VelocityModelException, SlownessModelException, IOException {
 
         String modelName = "iasp91";
         TauModel tMod = TauModelLoader.load(modelName);
@@ -89,10 +88,7 @@ public class OceanModelTest {
                 prev.getBotDepth(),
                 true,
                 vlayers);
-        TauP_Create create = new TauP_Create();
-        TauModel oceanTMod = create.createTauModel(oceanVMod);
-        TauP_Time ocean_time = new TauP_Time(oceanTMod);
-        TauP_Time crust_time = new TauP_Time(modelName);
+        TauModel oceanTMod = TauModelLoader.createTauModel(oceanVMod);
         String[] phaseList = new String[]{"P", "S", "PKP", "PKIKP"};
         double[] depths = new double[]{0, 5, 10, 45, 100, 300};
         for (double depth : depths) {
@@ -132,8 +128,7 @@ public class OceanModelTest {
         assertEquals(105, europaVMod.getMohoDepth());
         assertEquals(900, europaVMod.getCmbDepth());
         assertEquals(europaVMod.getRadiusOfEarth(), europaVMod.getIocbDepth());
-        TauP_Create taupCreate = new TauP_Create();
-        TauModel europaTMod = taupCreate.createTauModel(europaVMod);
+        TauModel europaTMod = TauModelLoader.createTauModel(europaVMod);
 
         String[] phaseList = new String[]{"P", "PKP", "PKIKP"};
         double[] depths = new double[]{0, 5, 10, 45, 100, 300};
@@ -156,8 +151,7 @@ public class OceanModelTest {
         assertEquals(10, ioVMod.getMohoDepth());
         assertEquals(900, ioVMod.getCmbDepth());
         assertEquals(ioVMod.getRadiusOfEarth(), ioVMod.getIocbDepth());
-        TauP_Create taupCreate = new TauP_Create();
-        TauModel tMod = taupCreate.createTauModel(ioVMod);
+        TauModel tMod = TauModelLoader.createTauModel(ioVMod);
 
     }
 
@@ -166,8 +160,7 @@ public class OceanModelTest {
         VelocityModel ioVMod = VelocityModelTest.loadTestVelMod("allCore.nd");
         assertEquals(0, ioVMod.getCmbDepth());
         assertEquals(5154.9, ioVMod.getIocbDepth());
-        TauP_Create taupCreate = new TauP_Create();
-        TauModel tMod = taupCreate.createTauModel(ioVMod);
+        TauModel tMod = TauModelLoader.createTauModel(ioVMod);
         String phasename = "KIK";
         SeismicPhase seisPh = SeismicPhaseFactory.createPhase(phasename, tMod, 0, 0);
         float deg = 30;
@@ -187,8 +180,7 @@ public class OceanModelTest {
         assertEquals(0, ioVMod.getMohoDepth());
         assertEquals(0, ioVMod.getCmbDepth());
         assertEquals(0, ioVMod.getIocbDepth());
-        TauP_Create taupCreate = new TauP_Create();
-        TauModel tMod = taupCreate.createTauModel(ioVMod);
+        TauModel tMod = TauModelLoader.createTauModel(ioVMod);
         assertEquals(0, tMod.getMohoDepth());
         assertEquals(0, tMod.getCmbDepth());
         assertEquals(0, tMod.getIocbDepth());

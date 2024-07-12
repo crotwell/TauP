@@ -37,6 +37,7 @@ import java.io.StreamCorruptedException;
 import java.lang.ref.SoftReference;
 import java.nio.file.FileSystems;
 import java.util.HashMap;
+import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -183,8 +184,7 @@ public class TauModelLoader {
         try {
             VelocityModel vmod = loadVelocityModel(modelName);
             if (vmod != null) {
-                TauP_Create tauPCreate = new TauP_Create();
-                return tauPCreate.createTauModel(vmod);
+                return createTauModel(vmod);
             }
         } catch(Exception e) {
             throw new TauModelException("Can't find any saved models for "
@@ -268,6 +268,59 @@ public class TauModelLoader {
             }
         }
         return vMod;
+    }
+
+
+    public static TauModel createTauModel(VelocityModel vMod) throws VelocityModelException, SlownessModelException, TauModelException, IOException {
+        return createTauModel(vMod, PropertyLoader.load());
+    }
+
+    public static TauModel createTauModel(VelocityModel vMod, Properties toolProps) throws VelocityModelException, SlownessModelException, TauModelException {
+        if (vMod == null) {throw new IllegalArgumentException("vMod cannot be null");}
+        if(!vMod.getSpherical()) {
+            throw new SlownessModelException("Flat slowness model not yet implemented.");
+        }
+
+        SlownessModel.DEBUG = TauPConfig.DEBUG;
+        SphericalSModel sMod = new SphericalSModel(vMod,
+                Double.parseDouble(toolProps.getProperty("taup.create.minDeltaP",
+                        "0.1")),
+                Double.parseDouble(toolProps.getProperty("taup.create.maxDeltaP",
+                        "11.0")),
+                Double.parseDouble(toolProps.getProperty("taup.create.maxDepthInterval",
+                        "115.0")),
+                Double.parseDouble(toolProps.getProperty("taup.create.maxRangeInterval",
+                        "2.5")) *Math.PI/180,
+                Double.parseDouble(toolProps.getProperty("taup.create.maxInterpError",
+                        "0.05")),
+                Boolean.parseBoolean(toolProps.getProperty("taup.create.allowInnerCoreS",
+                        "true")),
+                SlownessModel.DEFAULT_SLOWNESS_TOLERANCE);
+        if(TauPConfig.VERBOSE) {
+            System.err.println("Parameters are:");
+            System.err.println("taup.create.minDeltaP = "
+                    + sMod.getMinDeltaP() + " sec / radian");
+            System.err.println("taup.create.maxDeltaP = "
+                    + sMod.getMaxDeltaP() + " sec / radian");
+            System.err.println("taup.create.maxDepthInterval = "
+                    + sMod.getMaxDepthInterval() + " kilometers");
+            System.err.println("taup.create.maxRangeInterval = "
+                    + sMod.getMaxRangeInterval() + " degrees");
+            System.err.println("taup.create.maxInterpError = "
+                    + sMod.getMaxInterpError() + " seconds");
+            System.err.println("taup.create.allowInnerCoreS = "
+                    + sMod.isAllowInnerCoreS());
+            System.err.println("Slow model "
+                    + " " + sMod.getNumLayers(true) + " P layers,"
+                    + sMod.getNumLayers(false) + " S layers");
+        }
+        if(TauPConfig.DEBUG) {
+            System.err.println(sMod);
+        }
+        TauModel.DEBUG = TauPConfig.DEBUG;
+        SlownessModel.DEBUG = TauPConfig.DEBUG;
+        // Creates tau model from slownesses
+        return new TauModel(sMod);
     }
     
     protected static TauModel loadFromCache(String modelName) {

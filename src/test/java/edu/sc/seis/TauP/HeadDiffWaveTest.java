@@ -124,8 +124,7 @@ public class HeadDiffWaveTest {
   public void test_PK3000diffP() throws VelocityModelException, SlownessModelException, TauModelException, IOException {
     String modelName = "outerCoreDiscon.nd";
     VelocityModel vMod = VelocityModelTest.loadTestVelMod(modelName);
-    TauP_Create taupCreate = new TauP_Create();
-    TauModel tMod_OCD = taupCreate.createTauModel(vMod);
+    TauModel tMod_OCD = TauModelLoader.createTauModel(vMod);
     double deg = 150;
     SeismicPhase SedPdiff_Phase = SeismicPhaseFactory.createPhase("PK3000diffP", tMod_OCD);
     List<Arrival> SedPdiff_arrivals = DistanceRay.ofDegrees(deg).calculate(SedPdiff_Phase);
@@ -144,8 +143,7 @@ public class HeadDiffWaveTest {
     // outerCoreDiscon has discon at 3000 in outer core and at 5500 in inner core
     String modelName = "outerCoreDiscon.nd";
     VelocityModel vMod = VelocityModelTest.loadTestVelMod(modelName);
-    TauP_Create taupCreate = new TauP_Create();
-    TauModel tMod_OCD = taupCreate.createTauModel(vMod);
+    TauModel tMod_OCD = TauModelLoader.createTauModel(vMod);
     double deg = 150;
     SeismicPhase ic_diff_Phase = SeismicPhaseFactory.createPhase("PKI5500diffKP", tMod_OCD);
     List<Arrival> ic_diff_arrivals = DistanceRay.ofDegrees(deg).calculate(ic_diff_Phase);

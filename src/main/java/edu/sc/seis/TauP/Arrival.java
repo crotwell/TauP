@@ -25,7 +25,7 @@
  */
 package edu.sc.seis.TauP;
 
-import edu.sc.seis.TauP.cli.SeismicSourceArgs;
+import edu.sc.seis.TauP.cmdline.args.SeismicSourceArgs;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONWriter;
@@ -204,7 +204,7 @@ public class Arrival {
      * returns travel distance in degrees.
      */
     public double getDistDeg() {
-        return RtoD * getDist();
+        return SphericalCoords.RtoD * getDist();
     }
 
     /**
@@ -263,7 +263,7 @@ public class Arrival {
 
     /** returns ray parameter in seconds per deg */
     public double getRayParamDeg() {
-        return getRayParam()/RtoD;
+        return getRayParam()/ SphericalCoords.RtoD;
     }
 
     public double getDRayParamDDelta() {
@@ -271,7 +271,7 @@ public class Arrival {
     }
 
     public double getDRayParamDDeltaDeg() {
-        return dRPdDist/RtoD/RtoD;
+        return dRPdDist/ SphericalCoords.RtoD/ SphericalCoords.RtoD;
     }
 
 
@@ -315,7 +315,7 @@ public class Arrival {
         }
         double dtakeoff_ddelta = (getTakeoffAngleRadian()-neighbor.getTakeoffAngleRadian())/
                 (getDist()-neighbor.getDist());
-        double cosIncident = Math.cos(getIncidentAngleDegree()*DtoR);
+        double cosIncident = Math.cos(getIncidentAngleDegree()* SphericalCoords.DtoR);
         if (Double.isNaN(cosIncident)) {
             // divide by zero???
             return Double.POSITIVE_INFINITY;
@@ -411,7 +411,7 @@ public class Arrival {
     }
 
     public double getIncidentAngleDegree() {
-        return getIncidentAngleRadian()*RtoD;
+        return getIncidentAngleRadian()* SphericalCoords.RtoD;
     }
 
     public double getIncidentAngleRadian() {
@@ -419,7 +419,7 @@ public class Arrival {
     }
 
     public double getTakeoffAngleDegree() {
-        return getTakeoffAngleRadian()*RtoD;
+        return getTakeoffAngleRadian()* SphericalCoords.RtoD;
     }
     
     public double getTakeoffAngleRadian() {
@@ -687,10 +687,6 @@ public class Arrival {
     }
 
     public static double attenuationFrequency = 1.0;
-
-    protected static final double DtoR = SphericalCoords.dtor;
-
-    protected static final double RtoD = SphericalCoords.rtod;
 
     protected static final double KMtoM = 1000.0; // 1000 m per km
 

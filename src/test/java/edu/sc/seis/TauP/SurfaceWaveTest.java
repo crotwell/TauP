@@ -3,6 +3,7 @@ package edu.sc.seis.TauP;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import edu.sc.seis.TauP.cmdline.TauP_Time;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -58,10 +59,10 @@ public class SurfaceWaveTest {
         String phaseName = phaseVel+"kmps";
         assertEquals("3.2kmps", phaseName);
         float depth = 0;
-        double distDeg = distKm/taup.modelArgs.getTauModel().getRadiusOfEarth()*180.0/Math.PI;
+        double distDeg = distKm/taup.getTauModelDepthCorrected().getRadiusOfEarth()*180.0/Math.PI;
         assertEquals(0.8993, distDeg, 0.0001);
         double longWayDistDeg = 360.0-distDeg;
-        double longWayDistKm = longWayDistDeg*taup.modelArgs.getTauModel().getRadiusOfEarth()*Math.PI/180.0;
+        double longWayDistKm = longWayDistDeg*taup.getTauModelDepthCorrected().getRadiusOfEarth()*Math.PI/180.0;
         taup.setPhaseNames(List.of(phaseName));
         taup.setSourceDepth(depth);
         List<SeismicPhase> phaseList = taup.getSeismicPhases();

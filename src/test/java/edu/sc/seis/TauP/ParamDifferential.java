@@ -2,6 +2,7 @@ package edu.sc.seis.TauP;
 
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.PrintStream;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -34,8 +35,8 @@ public class ParamDifferential {
 
     public VelocityModel getAK135VelModel() {
         try {
-            return new TauP_Time("ak135").modelArgs.getTauModel().getVelocityModel();
-        } catch(TauModelException e) {
+            return TauModelLoader.loadVelocityModel("ak135");
+        } catch(IOException | VelocityModelException e) {
             //shouldn't happen
             throw new RuntimeException(e);
         }

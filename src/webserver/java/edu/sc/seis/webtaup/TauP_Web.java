@@ -1,8 +1,10 @@
 package edu.sc.seis.webtaup;
 
 import edu.sc.seis.TauP.*;
-import edu.sc.seis.TauP.cli.OutputTypes;
-import edu.sc.seis.seisFile.BuildVersion;
+import edu.sc.seis.TauP.cmdline.TauP_Tool;
+import edu.sc.seis.TauP.cmdline.TauP_WKBJ;
+import edu.sc.seis.TauP.cmdline.ToolRun;
+import edu.sc.seis.TauP.cmdline.args.OutputTypes;
 import edu.sc.seis.seisFile.mseed3.MSeed3Record;
 import io.undertow.Undertow;
 import io.undertow.server.HttpHandler;

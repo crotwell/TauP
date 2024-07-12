@@ -114,7 +114,7 @@ public class TimeDist implements Cloneable {
     }
     
     public double getDistDeg() {
-        return Arrival.RtoD * getDistRadian();
+        return SphericalCoords.RtoD * getDistRadian();
     }
 
     public Object clone() {

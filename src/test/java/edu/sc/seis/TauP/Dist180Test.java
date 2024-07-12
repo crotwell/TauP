@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collections;
 import java.util.List;
 
 
@@ -58,10 +59,9 @@ public class Dist180Test {
      * @throws TauModelException
      */
     public void straightThroughRay(String modelName) throws TauPException {
-        TauP_Time time = new TauP_Time(modelName);
+        TimeTester time = new TimeTester(modelName);
         time.setSourceDepth(0);
-        time.clearPhaseNames();
-        time.appendPhaseName("PKIKP");
+        time.setPhaseNames(Collections.singletonList("PKIKP"));
         List<Arrival> arrivals = time.calcAll(time.getSeismicPhases(), List.of(DistanceRay.ofDegrees(180)));
         assertEquals(integrateVelocity(time.modelArgs.getTauModel().getVelocityModel()), arrivals.get(0).getTime(), 0.006);
     }

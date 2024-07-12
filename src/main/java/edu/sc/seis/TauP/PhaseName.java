@@ -25,6 +25,8 @@
  */
 package edu.sc.seis.TauP;
 
+import edu.sc.seis.TauP.cmdline.TauP_SetSac;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 

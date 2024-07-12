@@ -288,7 +288,7 @@ public class SeismicPhaseWalk {
                             nextSegmentTree.add(conProto);
                             walkedAStep = true;
                         } else {
-                            if (ToolRun.DEBUG) {
+                            if (TauPConfig.DEBUG) {
                                 ProtoSeismicPhase conProto = consolidateSegment(calcSegList);
                                 System.out.println("skip " + conProto.phaseNameForSegments()
                                         + " " + (calcSegList.calcInteractionNumber() <= maxLegs)
@@ -531,7 +531,29 @@ public class SeismicPhaseWalk {
         return conProto;
     }
 
+    public boolean isAllowSWave() {
+        return allowSWave;
+    }
 
+    public void setAllowSWave(boolean allowSWave) {
+        this.allowSWave = allowSWave;
+    }
+
+    public boolean isAllowPWave() {
+        return allowPWave;
+    }
+
+    public void setAllowPWave(boolean allowPWave) {
+        this.allowPWave = allowPWave;
+    }
+
+    public TauModel gettMod() {
+        return tMod;
+    }
+
+    public List<Integer> getExcludeBranch() {
+        return excludeBranch;
+    }
 
     boolean allowSWave = true;
     boolean allowPWave = true;

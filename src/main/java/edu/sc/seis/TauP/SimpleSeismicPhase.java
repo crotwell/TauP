@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static edu.sc.seis.TauP.Arrival.RtoD;
+import static edu.sc.seis.TauP.SphericalCoords.RtoD;
 
 /**
  * Stores and transforms seismic phase names to and from their corresponding
@@ -224,6 +224,14 @@ public class SimpleSeismicPhase implements SeismicPhase {
             v = Math.max(v, d);
         }
         return v;
+    }
+
+    public ProtoSeismicPhase getProto() {
+        return proto;
+    }
+
+    public TauModel gettMod() {
+        return tMod;
     }
 
     @Override

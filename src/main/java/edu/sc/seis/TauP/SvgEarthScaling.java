@@ -1,6 +1,6 @@
 package edu.sc.seis.TauP;
 
-import static edu.sc.seis.TauP.Arrival.RtoD;
+import static edu.sc.seis.TauP.SphericalCoords.RtoD;
 
 public class SvgEarthScaling {
 

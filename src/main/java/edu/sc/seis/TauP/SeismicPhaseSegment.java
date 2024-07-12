@@ -203,6 +203,14 @@ public class SeismicPhaseSegment {
 		return tMod;
 	}
 
+	public double getMinRayParam() {
+		return minRayParam;
+	}
+
+	public double getMaxRayParam() {
+		return maxRayParam;
+	}
+
 	public String getDepthRangeString() {
 		String depthRange;
 		if (startBranch == -1 && endBranch == -1) {
@@ -327,7 +335,7 @@ public class SeismicPhaseSegment {
 		if ( ! isFlat) {
 			int bStep = isDownGoing ? 1 : -1;
 			for (int branchNum = startBranch; (isDownGoing && branchNum <= endBranch) || (!isDownGoing && branchNum >= endBranch); branchNum += bStep) {
-				if (ToolRun.DEBUG) {
+				if (TauPConfig.DEBUG) {
 					System.err.println(" branchNum=" + branchNum
 							+ " isPWave=" + isPWave + " downgoing="
 							+ isDownGoing);
@@ -423,7 +431,7 @@ public class SeismicPhaseSegment {
 		if ( ! isFlat) {
 			int bStep = isDownGoing ? 1 : -1;
 			for (int branchNum = startBranch; (isDownGoing && branchNum < endBranch) || (!isDownGoing && branchNum > endBranch); branchNum += bStep) {
-				if (ToolRun.DEBUG) {
+				if (TauPConfig.DEBUG) {
 					System.err.println(" branchNum=" + branchNum
 							+ " isPWave=" + isPWave + " downgoing="
 							+ isDownGoing);

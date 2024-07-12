@@ -47,7 +47,7 @@ public class LegPuller {
     protected static ArrayList<String> legPuller(String name) throws PhaseParseException {
         // check against regex for coarse validation
         if ( ! regExCheck(name)) {
-            if (ToolRun.DEBUG) {
+            if (TauPConfig.DEBUG) {
                 throw new PhaseParseException("Do not understand Phase "+name+" doesn't match phase regex: "+phaseRegEx, name, 0);
             }
             throw new PhaseParseException("Do not understand Phase "+name+", (regex) skipping.", name, 0);

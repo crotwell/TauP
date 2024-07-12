@@ -13,8 +13,7 @@ public class TimeExample {
         // or a custom velocity model, from a file in current directory, can be
         // loaded and then turned into a TauModel
         VelocityModel vMod = TauModelLoader.loadVelocityModel("mymodel.nd");
-        TauP_Create tauPCreate = new TauP_Create();
-        TauModel tMod = tauPCreate.createTauModel(vMod);
+        TauModel tMod = TauModelLoader.createTauModel(vMod);
 
         // A seismic phase for a phase name like 'P' can be created for that model
         double sourceDepth = 100;  // earthquake depth in kilometers

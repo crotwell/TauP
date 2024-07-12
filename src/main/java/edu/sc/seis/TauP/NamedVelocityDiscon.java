@@ -46,6 +46,14 @@ public class NamedVelocityDiscon implements Cloneable, Serializable {
         return (NamedVelocityDiscon) super.clone();
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public double getDepth() {
+        return depth;
+    }
+
     String name;
     String preferredName = null;
     double depth;
