@@ -950,6 +950,9 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
     public List<Integer> branchNumSeg() {
         List<Integer> branchSeq = new ArrayList<>();
         for (SeismicPhaseSegment seg : segmentList) {
+            if (seg.endAction == FAIL) {
+                break;
+            }
             int indexIncr = seg.isDownGoing ? 1 : -1;
             int finish = seg.endBranch + indexIncr;
             for (int branchNum = seg.startBranch; branchNum != finish; branchNum += indexIncr) {

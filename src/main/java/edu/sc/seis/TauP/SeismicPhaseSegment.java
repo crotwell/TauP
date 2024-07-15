@@ -153,7 +153,9 @@ public class SeismicPhaseSegment {
 
 	public static String describeBranchRange(TauModel tMod, int startBranch, int endBranch) {
 		String out;
-		if (startBranch < tMod.getMohoBranch() && endBranch < tMod.getMohoBranch()) {
+		if (startBranch == -1 || endBranch == -1) {
+			out = "?";
+		} else if (startBranch < tMod.getMohoBranch() && endBranch < tMod.getMohoBranch()) {
 			out = "crust";
 		} else if (startBranch < tMod.getCmbBranch() && endBranch < tMod.getCmbBranch()) {
 			if (startBranch < tMod.getMohoBranch() && endBranch >= tMod.getMohoBranch()) {
