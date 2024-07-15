@@ -71,9 +71,10 @@ public class NamedVelocityDiscon implements Cloneable, Serializable {
     public static final String CMB = "cmb";
     public static final String INNERCORE = "inner-core";
     public static final String ICOCB = "icocb";
+    public static final String IOCB = "iocb";
 
     public static final String[] knownDisconNames = {
-            ICE, ICEBED, ICECRUST, OCEAN, SEABED, CRUST, MOHO, MANTLE, OUTERCORE, CMB, INNERCORE, ICOCB
+            ICE, ICEBED, ICECRUST, OCEAN, SEABED, CRUST, MOHO, MANTLE, OUTERCORE, CMB, INNERCORE, ICOCB, IOCB
     };
 
     public static boolean isIceBed(String name) {
@@ -98,6 +99,7 @@ public class NamedVelocityDiscon implements Cloneable, Serializable {
 
     public static boolean isIcocb(String name) {
         return name != null && ( name.equalsIgnoreCase(NamedVelocityDiscon.ICOCB) ||
+                name.equalsIgnoreCase(NamedVelocityDiscon.IOCB) ||
                 name.equalsIgnoreCase(NamedVelocityDiscon.INNERCORE));
     }
 }
