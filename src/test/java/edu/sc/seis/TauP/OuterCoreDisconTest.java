@@ -27,7 +27,7 @@ public class OuterCoreDisconTest {
             "PKIIkp", "PKIv5500ykp"
     };
     String[] otherPhaseNames = {
-            "PKIv5500yIkpPKIKP"
+            "PKIv5500yIkpPKIKP", "PKI5500JKP"
     };
 
 

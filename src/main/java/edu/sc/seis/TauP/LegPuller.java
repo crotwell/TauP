@@ -290,6 +290,11 @@ public class LegPuller {
         return name.substring(offset, idx);
     }
 
+    /**
+     * Tests if the leg is a model boundary, like m, c, i or a number as a depth like 410
+     * @param leg leg name
+     * @return true if a boundary
+     */
     public static boolean isBoundary(String leg) {
         if (leg.length() == 1 && (leg.charAt(0) == m || leg.charAt(0) == c || leg.charAt(0) == i)) {
             return true;
@@ -299,6 +304,25 @@ public class LegPuller {
             return true;
         } catch (NumberFormatException e) {
             return false;
+        }
+    }
+
+    /**
+     * Converts leg name to depth, if is a number (depth) or m, c, i. Null otherwise.
+     */
+    public static Double legAsDepthBoundary(TauModel tMod, String leg) {
+        switch (leg) {
+            case "" + m:
+                return tMod.getMohoDepth();
+            case "" + c:
+                return tMod.getCmbDepth();
+            case "" + i:
+                return tMod.getIocbDepth();
+        }
+        try {
+            return Double.parseDouble(leg);
+        } catch (NumberFormatException e) {
+            return null;
         }
     }
 

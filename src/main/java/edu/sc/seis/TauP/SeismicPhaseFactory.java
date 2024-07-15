@@ -7,26 +7,21 @@ import java.util.Properties;
 import static edu.sc.seis.TauP.PhaseInteraction.*;
 import static edu.sc.seis.TauP.PhaseInteraction.REFLECT_TOPSIDE_CRITICAL;
 import static edu.sc.seis.TauP.PhaseSymbols.*;
+import static edu.sc.seis.TauP.SimpleSeismicPhase.PWAVE;
+import static edu.sc.seis.TauP.SimpleSeismicPhase.SWAVE;
 import static edu.sc.seis.TauP.ProtoSeismicPhase.failNewPhase;
 
 public class SeismicPhaseFactory {
 
     boolean DEBUG;
     String name;
-    double sourceDepth;
     double receiverDepth;
     TauModel tMod;
 
     // temp vars used in calculation of phase
     int upgoingRecBranch;
     int downgoingRecBranch;
-    double nextLegDepth = 0.0;
-    boolean isLegDepth, isNextLegDepth = false;
     PhaseInteraction prevEndAction = START;
-
-    public static final boolean PWAVE = SimpleSeismicPhase.PWAVE;
-
-    public static final boolean SWAVE = SimpleSeismicPhase.SWAVE;
 
     /**
      * The maximum degrees that a Pn or Sn can refract along the moho. Note this
@@ -84,7 +79,6 @@ public class SeismicPhaseFactory {
         }
         this.tMod = sourceDepthTMod.splitBranch(receiverDepth);
         this.name = name;
-        this.sourceDepth = sourceDepth;
         this.receiverDepth = receiverDepth;
 
         // where we end up, depending on if we end going down or up
@@ -434,15 +428,6 @@ public class SeismicPhaseFactory {
                     continue;
                 }
             }
-            isLegDepth = isNextLegDepth;
-            // find out if the next leg represents a phase conversion depth or head/diff wave at discon
-            try {
-                nextLegDepth = Double.parseDouble(nextLeg);
-                isNextLegDepth = true;
-            } catch(NumberFormatException e) {
-                nextLegDepth = -1;
-                isNextLegDepth = false;
-            }
             /* set currWave to be the wave type for this leg, 'P' or 'S'. */
             prevIsPWave = isPWave;
             isPWave = isLegPWave[legNum];
@@ -510,7 +495,8 @@ public class SeismicPhaseFactory {
                 if (currLeg.equals("I") || currLeg.equals("J")) {
                     /* And now consider inner core, I and J. */
                     if (checkDegenerateInnerCore(prevLeg, currLeg, nextLeg, isPWave, prevIsPWave, legNum)) {
-                        proto = currLegIs_I_J(proto, prevLeg, currLeg, nextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
+                        String nextNextLeg = legNum < legs.size()-2 ? legs.get(legNum+2) : END_CODE;
+                        proto = currLegIs_I_J(proto, prevLeg, currLeg, nextLeg, nextNextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
                     } else {
                         String reason = "DegenerateInnerCore";
                         proto.failNext(reason);
@@ -583,7 +569,7 @@ public class SeismicPhaseFactory {
                 if (b == 0) {
                     return failWithMessage(proto," Phase not recognized: " + currLeg + " looks like a top side reflection at the free surface.");
                 }
-            } else if (isLegDepth) {
+            } else if (LegPuller.isBoundary(currLeg)) {
                 // check for phase like P0s, but could also be P2s if first discon is deeper
                 int b = LegPuller.closestBranchToDepth(tMod, currLeg);
                 if (b == 0 && (nextLeg.equals("p") || nextLeg.equals("s"))) {
@@ -876,8 +862,8 @@ public class SeismicPhaseFactory {
                         + " followed by "
                         + nextLeg);
             }
-        } else if(nextLeg.equals("m")
-                || (isNextLegDepth && nextLegDepth < tMod.getCmbDepth())) {
+        } else if( LegPuller.isBoundary(nextLeg) && ( nextLeg.equals("m")
+                || (0 < LegPuller.legAsDepthBoundary(tMod, nextLeg) && LegPuller.legAsDepthBoundary(tMod, nextLeg) < tMod.getCmbDepth()))) {
             // treat the moho in the same wasy as 410 type
             // discontinuities
             int disconBranch = LegPuller.closestBranchToDepth(tMod, nextLeg);
@@ -1079,18 +1065,19 @@ public class SeismicPhaseFactory {
                     nextIsPWave,
                     endAction,
                     currLeg);
-        } else if( isNextLegDepth) {
+        } else if(nextLeg.equals("c") || nextLeg.equals("i")) {
             int disconBranch = LegPuller.closestBranchToDepth(tMod, nextLeg);
-            endAction = TRANSDOWN;
+            endAction = REFLECT_TOPSIDE;
             proto.addToBranch(
                     disconBranch - 1,
                     isPWave,
                     nextIsPWave,
                     endAction,
                     currLeg);
-        } else if(nextLeg.equals("c") || nextLeg.equals("i")) {
+        } else if( LegPuller.isBoundary(nextLeg)) {
+            // but not m, c or i
             int disconBranch = LegPuller.closestBranchToDepth(tMod, nextLeg);
-            endAction = REFLECT_TOPSIDE;
+            endAction = TRANSDOWN;
             proto.addToBranch(
                     disconBranch - 1,
                     isPWave,
@@ -2025,7 +2012,7 @@ public class SeismicPhaseFactory {
     }
 
     ProtoSeismicPhase currLegIs_I_J(ProtoSeismicPhase proto,
-                                   String prevLeg, String currLeg, String nextLeg,
+                                   String prevLeg, String currLeg, String nextLeg, String nextNextLeg,
                                    boolean prevIsPWave, boolean isPWave, boolean nextIsPWave, int legNum)
             throws TauModelException {
         PhaseInteraction endAction;
@@ -2154,7 +2141,91 @@ public class SeismicPhaseFactory {
                     nextIsPWave,
                     endAction,
                     currLeg);
-
+        } else if( LegPuller.isBoundary(nextLeg) &&
+                 (tMod.getIocbDepth() < LegPuller.legAsDepthBoundary(tMod, nextLeg) )) {
+            // conversion at inner core discontinuity
+            int disconBranch = LegPuller.closestBranchToDepth(tMod, nextLeg);
+            if (DEBUG) {
+                System.err.println("DisconBranch=" + disconBranch
+                        + " for " + nextLeg);
+                System.err.println(tMod.getTauBranch(disconBranch,
+                                isPWave)
+                        .getTopDepth());
+            }
+            if (prevEndAction == TURN || prevEndAction == REFLECT_TOPSIDE
+                    || prevEndAction == REFLECT_TOPSIDE_CRITICAL || prevEndAction == TRANSUP) {
+                // upgoing section
+                if (disconBranch > currBranch) {
+                    // check for discontinuity below the current branch
+                    // when the ray should be upgoing
+                    return failWithMessage(proto," Phase not recognized (6): "
+                            + currLeg
+                            + " followed by "
+                            + nextLeg
+                            + " when currBranch="
+                            + currBranch
+                            + " > disconBranch=" + disconBranch);
+                }
+                endAction = TRANSUP;
+                proto.addToBranch(
+                        disconBranch,
+                        isPWave,
+                        nextIsPWave,
+                        endAction,
+                        currLeg);
+            } else {
+                // downgoing section, must look at the leg after the
+                // next
+                // leg to determine whether to convert on the downgoing
+                // or
+                // upgoing part of the path
+                if (nextNextLeg.equals("y") || nextNextLeg.equals("j")) {
+                    // convert on upgoing section
+                    endAction = TURN;
+                    proto.addToBranch(
+                            tMod.getNumBranches()-1,
+                            isPWave,
+                            isPWave,
+                            endAction,
+                            currLeg);
+                    endAction = TRANSUP;
+                    proto.addToBranch(
+                            disconBranch,
+                            isPWave,
+                            nextIsPWave,
+                            endAction,
+                            currLeg);
+                } else if (nextNextLeg.equals("I")
+                        || nextNextLeg.equals("J")) {
+                    if (disconBranch > currBranch) {
+                        // discon is below current loc
+                        endAction = TRANSDOWN;
+                        proto.addToBranch(
+                                disconBranch - 1,
+                                isPWave,
+                                nextIsPWave,
+                                endAction,
+                                currLeg);
+                    } else {
+                        // discon is above current loc, but we have a
+                        // downgoing ray, so this is an illegal ray for
+                        // this source depth
+                        String reason = "Cannot phase convert on the "
+                                + "downgoing side if the discontinuity is above "
+                                + "the phase leg starting point, "
+                                + currLeg+ " "+ nextLeg+ " "+ nextNextLeg
+                                + ", so this phase, "+ getName()
+                                + " is illegal for this sourceDepth.";
+                        return failWithMessage(proto, reason);
+                    }
+                } else {
+                    return failWithMessage(proto," Phase not recognized (7): "
+                            + currLeg
+                            + " followed by "
+                            + nextLeg
+                            + " followed by " + nextNextLeg);
+                }
+            }
         } else {
             return failWithMessage(proto, " Phase not recognized (6a): "
                     + currLeg + " followed by " + nextLeg);
