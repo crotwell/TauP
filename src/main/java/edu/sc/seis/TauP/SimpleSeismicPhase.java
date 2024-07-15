@@ -211,6 +211,9 @@ public class SimpleSeismicPhase implements SeismicPhase {
     }
 
     public double getMinTime() {
+        if (time.length == 0) {
+            return -1;
+        }
         double v = time[0];
         for (double d : time) {
             v = Math.min(v, d);
@@ -219,6 +222,9 @@ public class SimpleSeismicPhase implements SeismicPhase {
     }
 
     public double getMaxTime() {
+        if (time.length == 0) {
+            return -1;
+        }
         double v = time[0];
         for (double d : time) {
             v = Math.max(v, d);

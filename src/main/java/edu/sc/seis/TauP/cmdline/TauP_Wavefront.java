@@ -111,7 +111,7 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
                 cssExtra += cssWaveTypeColors;
             } else {
                 for (SeismicPhase phase : getSeismicPhases()) {
-                    if (phase.getMaxTime() > maxTime) {
+                    if (phase.hasArrivals() && phase.getMaxTime() > maxTime) {
                         maxTime = phase.getMaxTime();
                     }
                 }
@@ -217,6 +217,10 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
     }
 
     public Map<Double, List<WavefrontPathSegment>> calcIsochronSegmentsForPhase(SeismicPhase phase, double timeStep) {
+        Map<Double, List<WavefrontPathSegment>> out = new HashMap<>();
+        if (! phase.hasArrivals()) {
+            return out;
+        }
         int totalNumSegments = (int) Math.floor(phase.getMaxTime()/timeStep);
         int waveSegIdx = 0;
         List<Arrival> allArrival = new ArrayList<>();
@@ -231,7 +235,6 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
             segIdx.put(arrival, 0);
             prevTimeDistMap.put(arrival, arrival.getSourceTimeDist());
         }
-        Map<Double, List<WavefrontPathSegment>> out = new HashMap<>();
         double timeVal = 0;
         boolean done=false;
         while( ! done) {

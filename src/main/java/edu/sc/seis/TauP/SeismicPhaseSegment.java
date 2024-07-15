@@ -263,7 +263,9 @@ public class SeismicPhaseSegment {
 
 	public double[] getDepthRange() {
 		double[] depthRange;
-		if (isFlat) {
+		if (startBranch == -1 || endBranch == -1) {
+			depthRange = new double[0];
+		} else if (isFlat) {
 			if (prevEndAction == null) {
 				depthRange = new double[0];
 			} else if (prevEndAction == PhaseInteraction.DIFFRACT || prevEndAction == TRANSUPDIFFRACT) {
