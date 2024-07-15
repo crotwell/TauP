@@ -3,6 +3,8 @@ package edu.sc.seis.TauP;
 import static edu.sc.seis.TauP.PhaseSymbols.isExclusiveDowngoingSymbol;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -74,7 +76,10 @@ public class ReceiverAtDepth {
             if (phase.getFinalPhaseSegment().isDownGoing ) {
                 // downgoing at receiver
                 assertTrue(phase.getFinalPhaseSegment().maxRayParam <= tMod.getTauBranch(downgoingRecBranch,
-                                        phase.getFinalPhaseSegment().isPWave).getMinTurnRayParam());
+                                        phase.getFinalPhaseSegment().isPWave).getMinTurnRayParam(),
+                        "max "+phase.getFinalPhaseSegment().maxRayParam
+                                +" mod "+tMod.getTauBranch(downgoingRecBranch,
+                                phase.getFinalPhaseSegment().isPWave).getMinTurnRayParam());
             } else {
                 // upgoing at receiver
                 assertTrue(phase.getFinalPhaseSegment().maxRayParam <= tMod.getTauBranch(upgoingRecBranch,
@@ -209,5 +214,20 @@ public class ReceiverAtDepth {
         check(tModRecDepth, flippedMod, "PKI", .1);
         System.out.println("Check S source="+srcDepth+" receiver="+recDepth);
         check(tModRecDepth, flippedMod, "SKI", .1);
+    }
+
+    @Test
+    public void testInnerCoreRecConvPhase() throws Exception {
+        float srcDepth = 2.39f;
+        float recDepth = 6000f;
+        float surfaceRecDepth = 0;
+        String modelName = "outerCoreDiscon.nd";
+        VelocityModel vMod = VelocityModelTest.loadTestVelMod(modelName);
+        TauModel tMod = TauModelLoader.createTauModel(vMod);
+        TauModel tModDepth = tMod.depthCorrect(srcDepth);
+        TauModel tModRecDepth = tModDepth.splitBranch(recDepth);
+        assertTrue(SeismicPhaseFactory.createPhase("PKIed5500Jed", tModRecDepth, srcDepth, recDepth).hasArrivals());
+        assertTrue(SeismicPhaseFactory.createPhase("PKIed5500I", tModRecDepth, srcDepth, recDepth).hasArrivals());
+        assertTrue(SeismicPhaseFactory.createPhase("PKI5500jkp", tModRecDepth, srcDepth, surfaceRecDepth).hasArrivals());
     }
 }

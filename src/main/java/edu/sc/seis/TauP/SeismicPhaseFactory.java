@@ -515,7 +515,8 @@ public class SeismicPhaseFactory {
                 } else if (currLeg.equals("Ied") || currLeg.equals("Jed")) {
                     /* And now consider inner core, Ied and Jed. */
                     if (checkDegenerateInnerCore(prevLeg, currLeg, nextLeg, isPWave, prevIsPWave, legNum)) {
-                        proto = currLegIs_Ied_Jed(proto, prevLeg, currLeg, nextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
+                        String nextNextLeg = legNum < legs.size()-2 ? legs.get(legNum+2) : END_CODE;
+                        proto = currLegIs_Ied_Jed(proto, prevLeg, currLeg, nextLeg, nextNextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
                     } else {
                         String reason = "DegenerateInnerCore";
                         proto.failNext(reason);
@@ -2017,7 +2018,7 @@ public class SeismicPhaseFactory {
             throws TauModelException {
         PhaseInteraction endAction;
         int currBranch = calcStartBranch(proto, currLeg);
-        if( ! nextLeg.startsWith("v") && ! nextLeg.startsWith("V")
+        if( ! nextLeg.startsWith("v") && ! nextLeg.startsWith("V") && ! LegPuller.isBoundary(nextLeg)
                 && (prevEndAction == START || prevEndAction == TRANSDOWN || prevEndAction == REFLECT_UNDERSIDE || prevEndAction == REFLECT_UNDERSIDE_CRITICAL)) {
             // was downgoing, not reflecting, so must first turn in inner core
             endAction = TURN;
@@ -2195,8 +2196,9 @@ public class SeismicPhaseFactory {
                             nextIsPWave,
                             endAction,
                             currLeg);
-                } else if (nextNextLeg.equals("I")
-                        || nextNextLeg.equals("J")) {
+                } else if (nextNextLeg.equals("I") || nextNextLeg.equals("Ied")
+                        || nextNextLeg.equals("J")
+                        || nextNextLeg.equals("Jed")) {
                     if (disconBranch > currBranch) {
                         // discon is below current loc
                         endAction = TRANSDOWN;
@@ -2235,7 +2237,7 @@ public class SeismicPhaseFactory {
 
 
     ProtoSeismicPhase currLegIs_Ied_Jed(ProtoSeismicPhase proto,
-                                       String prevLeg, String currLeg, String nextLeg,
+                                       String prevLeg, String currLeg, String nextLeg, String nextNextLeg,
                                        boolean prevIsPWave, boolean isPWave, boolean nextIsPWave, int legNum)
             throws TauModelException {
         PhaseInteraction endAction;
@@ -2297,7 +2299,92 @@ public class SeismicPhaseFactory {
                         nextIsPWave,
                         endAction,
                         currLeg);
-            } else {
+            } else if( LegPuller.isBoundary(nextLeg) &&
+                    (tMod.getIocbDepth() < LegPuller.legAsDepthBoundary(tMod, nextLeg) )) {
+                // conversion at inner core discontinuity
+                int disconBranch = LegPuller.closestBranchToDepth(tMod, nextLeg);
+                if (DEBUG) {
+                    System.err.println("DisconBranch=" + disconBranch
+                            + " for " + nextLeg);
+                    System.err.println(tMod.getTauBranch(disconBranch,
+                                    isPWave)
+                            .getTopDepth());
+                }
+                if (prevEndAction == TURN || prevEndAction == REFLECT_TOPSIDE
+                        || prevEndAction == REFLECT_TOPSIDE_CRITICAL || prevEndAction == TRANSUP) {
+                    // upgoing section
+                    if (disconBranch > currBranch) {
+                        // check for discontinuity below the current branch
+                        // when the ray should be upgoing
+                        return failWithMessage(proto," Phase not recognized (6): "
+                                + currLeg
+                                + " followed by "
+                                + nextLeg
+                                + " when currBranch="
+                                + currBranch
+                                + " > disconBranch=" + disconBranch);
+                    }
+                    endAction = TRANSUP;
+                    proto.addToBranch(
+                            disconBranch,
+                            isPWave,
+                            nextIsPWave,
+                            endAction,
+                            currLeg);
+                } else {
+                    // downgoing section, must look at the leg after the
+                    // next
+                    // leg to determine whether to convert on the downgoing
+                    // or
+                    // upgoing part of the path
+                    if (nextNextLeg.equals("y") || nextNextLeg.equals("j")) {
+                        // convert on upgoing section
+                        endAction = TURN;
+                        proto.addToBranch(
+                                tMod.getNumBranches()-1,
+                                isPWave,
+                                isPWave,
+                                endAction,
+                                currLeg);
+                        endAction = TRANSUP;
+                        proto.addToBranch(
+                                disconBranch,
+                                isPWave,
+                                nextIsPWave,
+                                endAction,
+                                currLeg);
+                    } else if (nextNextLeg.equals("I") || nextNextLeg.equals("Ied")
+                            || nextNextLeg.equals("J")
+                            || nextNextLeg.equals("Jed")) {
+                        if (disconBranch > currBranch) {
+                            // discon is below current loc
+                            endAction = TRANSDOWN;
+                            proto.addToBranch(
+                                    disconBranch - 1,
+                                    isPWave,
+                                    nextIsPWave,
+                                    endAction,
+                                    currLeg);
+                        } else {
+                            // discon is above current loc, but we have a
+                            // downgoing ray, so this is an illegal ray for
+                            // this source depth
+                            String reason = "Cannot phase convert on the "
+                                    + "downgoing side if the discontinuity is above "
+                                    + "the phase leg starting point, "
+                                    + currLeg+ " "+ nextLeg+ " "+ nextNextLeg
+                                    + ", so this phase, "+ getName()
+                                    + " is illegal for this sourceDepth.";
+                            return failWithMessage(proto, reason);
+                        }
+                    } else {
+                        return failWithMessage(proto," Phase not recognized (7): "
+                                + currLeg
+                                + " followed by "
+                                + nextLeg
+                                + " followed by " + nextNextLeg);
+                    }
+                }            } else {
                 return failWithMessage(proto, " Phase not recognized (9b): "
                         + currLeg + " followed by " + nextLeg);
             }
