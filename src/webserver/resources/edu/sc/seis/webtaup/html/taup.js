@@ -429,7 +429,7 @@ export function form_url() {
     }
     url += distparam;
   }
-  if (toolname === "time") {
+  if (toolname === "time" || toolname === "find") {
     let isAmplitude = document.querySelector('input[name="amplitude"]').checked;
     if (isAmplitude) {
       url += `&amp=true`;
