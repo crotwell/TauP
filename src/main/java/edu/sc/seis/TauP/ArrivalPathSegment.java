@@ -32,14 +32,14 @@ public class ArrivalPathSegment extends AbstractPathSegment {
         double finalPathDist = lastSeg.getPathEnd().getDistRadian()- firstPoint.getDistRadian();
         if (!inPath.isEmpty() && distRadian != 0 && finalPathDist != 0) {
             double shifty = distRadian/finalPathDist;
+            if (arrival.isLongWayAround()) {
+                shifty *= -1;
+            }
             if (Math.abs(1.0-shifty) > .02 && Math.abs(1+shifty) > 1e-5 ) {
                 // don't flag shifty that just reflects, ie -1
                 System.err.println("Path error is greater than 2%, correction may cause errors. "+shifty);
                 System.err.println("  "+arrival);
                 System.err.println("  "+distRadian+" "+finalPathDist+"  "+arrival.isLongWayAround());
-            }
-            if (arrival.isLongWayAround()) {
-                shifty *= -1;
             }
             List<ArrivalPathSegment> out = new ArrayList<>();
             TimeDist prevEnd = inPath.get(0).prevEnd;
