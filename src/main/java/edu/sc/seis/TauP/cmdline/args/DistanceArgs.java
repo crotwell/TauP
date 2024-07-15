@@ -193,6 +193,9 @@ public class DistanceArgs {
     public List<TakeoffAngleRay> getTakeoffAngleRays() {
         List<TakeoffAngleRay> rpList = new ArrayList<>();
         for (Double d : distArgs.takeoffAngle) {
+            if (d < 0 || d > 180) {
+                throw new IllegalArgumentException("Takeoff angle should be between 0 and 180 degrees: "+d);
+            }
             if (hasEventLatLon() && !hasStationLatLon() && getAzimuth() != null) {
                 if (latLonArgs.geodetic) {
                     throw new RuntimeException("geodetic not yet...");
@@ -249,6 +252,14 @@ public class DistanceArgs {
 
     public boolean hasStationLatLon() {
         return ! latLonArgs.stationList.isEmpty();
+    }
+
+    public void validateArguments() {
+        for (Double d : distArgs.takeoffAngle) {
+            if (d < 0 || d > 180) {
+                throw new IllegalArgumentException("Takeoff angle should be between 0 and 180 degrees: " + d);
+            }
+        }
     }
 
     @ArgGroup(exclusive = false, multiplicity = "1..*", heading = "Distance is given by:%n")

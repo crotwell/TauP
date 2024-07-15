@@ -84,6 +84,7 @@ public abstract class TauP_AbstractRayTool extends TauP_AbstractPhaseTool {
             throw new TauModelException("Scatterer depth of "+modelArgs.getScatterer().depth+" in '"+this.getTauModelName()
                     +"' is greater than radius of earth, "+modelArgs.getTauModel().getRadiusOfEarth()+", unable to calculate.");
         }
+        distanceArgs.validateArguments();
 
     }
 

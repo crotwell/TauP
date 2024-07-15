@@ -343,7 +343,7 @@ public class TauP_Path extends TauP_AbstractRayTool {
 	public void start() throws IOException, TauPException {
 		List<RayCalculateable> calcRayList = distanceArgs.getRayCalculatables();
 		if (calcRayList.isEmpty()) {
-			throw new CommandLine.ParameterException(spec.commandLine(), "No distance arguments given, one of --deg, --km, --shoot, --takeoff required");
+			throw new CommandLine.ParameterException(spec.commandLine(), "No distance arguments given, one of --deg, --km, etc required");
 		}
 		List<Arrival> arrivalList = calcAll(getSeismicPhases(), calcRayList);
 		PrintWriter writer = outputTypeArgs.createWriter(spec.commandLine().getOut());

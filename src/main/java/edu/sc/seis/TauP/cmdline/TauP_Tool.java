@@ -39,7 +39,7 @@ public abstract class TauP_Tool implements Callable<Integer> {
         init();
         try {
             validateArguments();
-        } catch (TauPException e) {
+        } catch (TauPException | IllegalArgumentException e) {
             if (spec != null ) {
                 throw new CommandLine.ParameterException(spec.commandLine(), e.getMessage(), e);
             } else {
