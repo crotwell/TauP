@@ -255,14 +255,21 @@ public class DistanceArgs {
     }
 
     public void validateArguments() {
+        if (distArgs.allEmpty() && (latLonArgs.eventList.isEmpty() || latLonArgs.stationList.isEmpty())) {
+            throw new IllegalArgumentException("Must specify at least one distance or station, event.");
+        }
         for (Double d : distArgs.takeoffAngle) {
             if (d < 0 || d > 180) {
                 throw new IllegalArgumentException("Takeoff angle should be between 0 and 180 degrees: " + d);
             }
         }
+        if (!latLonArgs.eventList.isEmpty() && !latLonArgs.stationList.isEmpty()
+                && (hasAzimuth() || hasBackAzimuth())) {
+            throw new IllegalArgumentException("Cannot specify azimuth or back azimuth when both station and event are given");
+        }
     }
 
-    @ArgGroup(exclusive = false, multiplicity = "1..*", heading = "Distance is given by:%n")
+    @ArgGroup(exclusive = false, multiplicity = "0..*", heading = "Distance is given by:%n")
     DistanceArgsInner distArgs = new DistanceArgsInner();
 
     @ArgGroup(validate = false, heading = "Lat,Lon influenced by:%n")
@@ -372,6 +379,17 @@ public class DistanceArgs {
                 split=",")
         protected List<Integer> shootIndexRaypList = new ArrayList<>();
 
+        public boolean allEmpty() {
+            return degreesList.isEmpty()
+                    && distKilometersList.isEmpty()
+                    && exactDegreesList.isEmpty()
+                    && exactDistKilometersList.isEmpty()
+                    && shootIndexRaypList.isEmpty()
+                    && shootKmRaypList.isEmpty()
+                    && shootRadianRaypList.isEmpty()
+                    && shootRaypList.isEmpty()
+                    && takeoffAngle.isEmpty();
+        }
     }
 
     static class LatLonInner {
@@ -414,11 +432,11 @@ public class DistanceArgs {
         protected List<Location> eventList = new ArrayList<>();
 
         @Option(names="--az", description="azimuth in degrees")
-        protected Double azimuth = Double.MAX_VALUE;
+        protected Double azimuth = null;
 
 
         @Option(names="--baz", description="backazimuth in degrees")
-        protected Double backAzimuth = Double.MAX_VALUE;
+        protected Double backAzimuth = null;
 
         @Option(names = "--geodetic",
                 description = "use geodetic latitude for distance calculations, which implies an ellipticity. "
