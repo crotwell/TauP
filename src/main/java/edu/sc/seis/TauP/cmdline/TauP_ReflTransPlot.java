@@ -95,16 +95,43 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
             xyOut.setTitle(title);
         }
         String yAxisActual = "";
+        boolean hasDisplacement = false;
+        boolean hasEnergy = false;
+        boolean hasFreeSurface = false;
         for (XYPlottingData xyp : xyPlots) {
-            yAxisActual += xyp.label+",";
+            try {
+                ReflTransAxisType axisType = ReflTransAxisType.valueOf(xyp.yAxisType);
+                if (ReflTransAxisType.allDisplacement.contains(axisType)) {
+                    hasDisplacement = true;
+                } else if (ReflTransAxisType.allEnergy.contains(axisType)) {
+                    hasEnergy = true;
+                } else if (ReflTransAxisType.allFreeRF.contains(axisType)) {
+                    hasFreeSurface = true;
+                } else {
+                    yAxisActual += xyp.label + ",";
+                }
+            } catch (IllegalArgumentException e) {
+                System.err.println("Unknown ReflTransAxisType: '"+xyp.yAxisType+"'");
+                yAxisActual += xyp.label + ",";
+            }
         }
-        yAxisActual = yAxisActual.substring(0, yAxisActual.length()-1);
+        if (hasDisplacement) {
+            yAxisActual += " Displacement,";
+        }
+        if (hasEnergy) {
+            yAxisActual += " Energy,";
+        }
+        if (hasFreeSurface) {
+            yAxisActual += " Free Surface RF,";
+        }
+        yAxisActual = yAxisActual.substring(0, yAxisActual.length()-1) + " Coeff.";
         if (getOutputFormat().equalsIgnoreCase(OutputTypes.JSON)) {
             xyOut.printAsJSON(writer, 2);
         } else if (getOutputFormat().equalsIgnoreCase(OutputTypes.TEXT) || getOutputFormat().equalsIgnoreCase(OutputTypes.GMT)) {
             xyOut.printAsGmtText(writer);
         } else if (getOutputFormat().equalsIgnoreCase(OutputTypes.SVG)) {
-            xyOut.printAsSvg(writer, cmdLineArgs, xAxisType.toString(), yAxisActual, SvgUtil.createReflTransCSSColors()+"\n", isLegend);
+            //String xLabel = ReflTransAxisType.labelFor(xAxisType);
+            xyOut.printAsSvg(writer, cmdLineArgs, DegRayParam.labelFor(xAxisType), yAxisActual, SvgUtil.createReflTransCSSColors()+"\n", isLegend);
         } else {
             throw new IllegalArgumentException("Unknown output format: " + getOutputFormat());
         }
@@ -213,11 +240,10 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
             maxX = 1.0 / ((inswave || inshwave) ? reflTranCoef.getTopVs() : reflTranCoef.getTopVp());
         }
 
-        String label;
         boolean doAll =  (!inpwave && ! inswave && ! inshwave);
 
         if (yAxisType.isEmpty()) {
-            yAxisType = ReflTransAxisType.allCoeff;
+            yAxisType = ReflTransAxisType.allDisplacement;
         }
         if (inpwave || doAll) {
             double invel = reflTranCoef.getTopVp();
@@ -229,62 +255,62 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
                 maxX_inP = 1.0 / reflTranCoef.getTopVp();
             }
             if (yAxisType.contains(ReflTransAxisType.Rpp)) {
-                label = "Rpp";
-                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX_inP, step, linearRayParam, oneOverV, label,
+                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX_inP, step, linearRayParam, oneOverV,
+                        ReflTransAxisType.Rpp,
                         reflTranCoef::getRpp
                 );
                 out.add(xyp);
             }
             if (yAxisType.contains(ReflTransAxisType.RppEnergy)) {
-                label = "Rpp Energy";
-                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX_inP, step, linearRayParam, oneOverV, label,
+                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX_inP, step, linearRayParam, oneOverV,
+                        ReflTransAxisType.RppEnergy,
                         reflTranCoef::getEnergyFluxRpp
                 );
                 out.add(xyp);
             }
 
             if (yAxisType.contains(ReflTransAxisType.Tpp)) {
-                label = "Tpp";
-                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX_inP, step, linearRayParam, oneOverV, label,
+                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX_inP, step, linearRayParam, oneOverV,
+                        ReflTransAxisType.Tpp,
                         reflTranCoef::getTpp
                 );
                 out.add(xyp);
             }
 
             if (yAxisType.contains(ReflTransAxisType.TppEnergy)) {
-                label = "Tpp Energy";
-                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX_inP, step, linearRayParam, oneOverV, label,
+                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX_inP, step, linearRayParam, oneOverV,
+                        ReflTransAxisType.TppEnergy,
                         reflTranCoef::getEnergyFluxTpp
                 );
                 out.add(xyp);
             }
 
             if (yAxisType.contains(ReflTransAxisType.Rps)) {
-                label = "Rps";
-                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX_inP, step, linearRayParam, oneOverV, label,
+                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX_inP, step, linearRayParam, oneOverV,
+                        ReflTransAxisType.Rps,
                         reflTranCoef::getRps
                 );
                 out.add(xyp);
             }
             if (yAxisType.contains(ReflTransAxisType.RpsEnergy)) {
-                label = "Rps Energy";
-                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX_inP, step, linearRayParam, oneOverV, label,
+                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX_inP, step, linearRayParam, oneOverV,
+                        ReflTransAxisType.RpsEnergy,
                         reflTranCoef::getEnergyFluxRps
                 );
                 out.add(xyp);
             }
 
             if (yAxisType.contains(ReflTransAxisType.Tps)) {
-                label = "Tps";
-                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX_inP, step, linearRayParam, oneOverV, label,
+                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX_inP, step, linearRayParam, oneOverV,
+                        ReflTransAxisType.Tps,
                         reflTranCoef::getTps
                 );
                 out.add(xyp);
             }
 
             if (yAxisType.contains(ReflTransAxisType.TpsEnergy)) {
-                label = "Tps Energy";
-                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX_inP, step, linearRayParam, oneOverV, label,
+                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX_inP, step, linearRayParam, oneOverV,
+                        ReflTransAxisType.TpsEnergy,
                         reflTranCoef::getEnergyFluxTps
                 );
                 out.add(xyp);
@@ -293,32 +319,32 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
             // angle calculations
 
             if (yAxisType.contains(ReflTransAxisType.RpAngle)) {
-                label = "Rpp Angle";
-                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label,
+                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV,
+                        ReflTransAxisType.RpAngle,
                         reflTranCoef::getAngleR_p
                 );
                 out.add(xyp);
             }
 
             if (yAxisType.contains(ReflTransAxisType.RsAngle)) {
-                label = "Rps Angle";
-                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label,
+                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV,
+                        ReflTransAxisType.RsAngle,
                         reflTranCoef::getAngleR_s
                 );
                 out.add(xyp);
             }
 
             if (yAxisType.contains(ReflTransAxisType.TpAngle)) {
-                label = "Tpp Angle";
-                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label,
+                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV,
+                        ReflTransAxisType.TpAngle,
                         reflTranCoef::getAngleT_p
                 );
                 out.add(xyp);
             }
 
             if (yAxisType.contains(ReflTransAxisType.TsAngle)) {
-                label = "Tps Angle";
-                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label,
+                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV,
+                        ReflTransAxisType.TsAngle,
                         reflTranCoef::getAngleT_s
                 );
                 out.add(xyp);
@@ -328,8 +354,8 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
                     throw new VelocityModelException("ReflTran not for free surface: "+(reflTranCoef.getClass().getName()));
                 }
                 ReflTransFreeSurface rtfree = (ReflTransFreeSurface)reflTranCoef;
-                label = ReflTransAxisType.FreeRecFuncPz.name();
-                XYPlottingData xyp_z = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label,
+                XYPlottingData xyp_z = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV,
+                        ReflTransAxisType.FreeRecFuncPz,
                         rtfree::getFreeSurfaceReceiverFunP_z
                 );
                 out.add(xyp_z);
@@ -339,8 +365,8 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
                     throw new VelocityModelException("ReflTran not for free surface: "+(reflTranCoef.getClass().getName()));
                 }
                 ReflTransFreeSurface rtfree = (ReflTransFreeSurface)reflTranCoef;
-                label = ReflTransAxisType.FreeRecFuncPr.name();
-                XYPlottingData xyp_r = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label,
+                XYPlottingData xyp_r = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV,
+                        ReflTransAxisType.FreeRecFuncPr,
                         rtfree::getFreeSurfaceReceiverFunP_r
                 );
                 out.add(xyp_r);
@@ -353,60 +379,60 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
             double oneOverV = 1.0 / invel;
 
             if (yAxisType.contains(ReflTransAxisType.Rsp)) {
-                label = "Rsp";
-                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label,
+                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV,
+                        ReflTransAxisType.Rsp,
                         reflTranCoef::getRsp
                 );
                 out.add(xyp);
             }
             if (yAxisType.contains(ReflTransAxisType.RspEnergy)) {
-                label = "Rsp Energy";
-                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label,
+                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV,
+                        ReflTransAxisType.RspEnergy,
                         reflTranCoef::getEnergyFluxRsp
                 );
                 out.add(xyp);
             }
 
             if (yAxisType.contains(ReflTransAxisType.Tsp)) {
-                label = "Tsp";
-                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label,
+                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV,
+                        ReflTransAxisType.Tsp,
                         reflTranCoef::getTsp
                 );
                 out.add(xyp);
             }
             if (yAxisType.contains(ReflTransAxisType.TspEnergy)) {
-                label = "Tsp Energy";
-                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label,
+                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV,
+                        ReflTransAxisType.TspEnergy,
                         reflTranCoef::getEnergyFluxTsp
                 );
                 out.add(xyp);
             }
 
             if (yAxisType.contains(ReflTransAxisType.Rss)) {
-                label = "Rss";
-                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label,
+                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV,
+                        ReflTransAxisType.Rss,
                         reflTranCoef::getRss
                 );
                 out.add(xyp);
             }
             if (yAxisType.contains(ReflTransAxisType.RssEnergy)) {
-                label = "Rss Energy";
-                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label,
+                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV,
+                        ReflTransAxisType.RssEnergy,
                         reflTranCoef::getEnergyFluxRss
                 );
                 out.add(xyp);
             }
 
             if (yAxisType.contains(ReflTransAxisType.Tss)) {
-                label = "Tss";
-                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label,
+                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV,
+                        ReflTransAxisType.Tss,
                         reflTranCoef::getTss
                 );
                 out.add(xyp);
             }
             if (yAxisType.contains(ReflTransAxisType.TssEnergy)) {
-                label = "Tss Energy";
-                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label,
+                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV,
+                        ReflTransAxisType.TssEnergy,
                         reflTranCoef::getEnergyFluxTss
                 );
                 out.add(xyp);
@@ -414,32 +440,32 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
 
 
             if (yAxisType.contains(ReflTransAxisType.RpAngle)) {
-                label = "Rsp Angle";
-                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label,
+                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV,
+                        ReflTransAxisType.RpAngle,
                         reflTranCoef::getAngleR_p
                 );
                 out.add(xyp);
             }
 
             if (yAxisType.contains(ReflTransAxisType.RsAngle)) {
-                label = "Rss Angle";
-                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label,
+                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV,
+                        ReflTransAxisType.RsAngle,
                         reflTranCoef::getAngleR_s
                 );
                 out.add(xyp);
             }
 
             if (yAxisType.contains(ReflTransAxisType.TpAngle)) {
-                label = "Tsp Angle";
-                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label,
+                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV,
+                        ReflTransAxisType.TpAngle,
                         reflTranCoef::getAngleT_p
                 );
                 out.add(xyp);
             }
 
             if (yAxisType.contains(ReflTransAxisType.TsAngle)) {
-                label = "Tss Angle";
-                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label,
+                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV,
+                        ReflTransAxisType.TsAngle,
                         reflTranCoef::getAngleT_s
                 );
                 out.add(xyp);
@@ -450,8 +476,8 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
                     throw new VelocityModelException("ReflTran not for free surface: "+(reflTranCoef.getClass().getName()));
                 }
                 ReflTransFreeSurface rtfree = (ReflTransFreeSurface)reflTranCoef;
-                label = ReflTransAxisType.FreeRecFuncSvz.name();
-                XYPlottingData xyp_z = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label,
+                XYPlottingData xyp_z = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV,
+                        ReflTransAxisType.FreeRecFuncSvz,
                         rtfree::getFreeSurfaceReceiverFunSv_z
                 );
                 out.add(xyp_z);
@@ -461,8 +487,8 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
                     throw new VelocityModelException("ReflTran not for free surface: "+(reflTranCoef.getClass().getName()));
                 }
                 ReflTransFreeSurface rtfree = (ReflTransFreeSurface)reflTranCoef;
-                label = ReflTransAxisType.FreeRecFuncSvr.name();
-                XYPlottingData xyp_r = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label,
+                XYPlottingData xyp_r = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV,
+                        ReflTransAxisType.FreeRecFuncSvr,
                         rtfree::getFreeSurfaceReceiverFunSv_r
                 );
                 out.add(xyp_r);
@@ -474,30 +500,30 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
             double oneOverV = 1.0 / invel;
 
             if (yAxisType.contains(ReflTransAxisType.Rshsh)) {
-                label = "Rshsh";
-                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label,
+                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV,
+                        ReflTransAxisType.Rshsh,
                         reflTranCoef::getRshsh
                 );
                 out.add(xyp);
             }
             if (yAxisType.contains(ReflTransAxisType.RshshEnergy)) {
-                label = "Rshsh Energy";
-                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label,
+                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV,
+                        ReflTransAxisType.RshshEnergy,
                         reflTranCoef::getEnergyFluxRshsh
                 );
                 out.add(xyp);
             }
 
             if (yAxisType.contains(ReflTransAxisType.Tshsh)) {
-                label = "Tshsh";
-                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label,
+                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV,
+                        ReflTransAxisType.Tshsh,
                         reflTranCoef::getTshsh
                 );
                 out.add(xyp);
             }
             if (yAxisType.contains(ReflTransAxisType.TshshEnergy)) {
-                label = "Tshsh Energy";
-                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label,
+                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV,
+                        ReflTransAxisType.TshshEnergy,
                         reflTranCoef::getEnergyFluxTshsh
                 );
                 out.add(xyp);
@@ -505,8 +531,8 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
 
 
             if (yAxisType.contains(ReflTransAxisType.RsAngle)) {
-                label = "Rshsh Angle";
-                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label,
+                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV,
+                        ReflTransAxisType.RsAngle,
                         reflTranCoef::getAngleR_s
                 );
                 out.add(xyp);
@@ -514,16 +540,16 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
 
 
             if (yAxisType.contains(ReflTransAxisType.TsAngle)) {
-                label = "Tshsh Angle";
-                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label,
+                XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV,
+                        ReflTransAxisType.TsAngle,
                         reflTranCoef::getAngleT_s
                 );
                 out.add(xyp);
             }
             if (yAxisType.contains(ReflTransAxisType.FreeRecFuncSh) && reflTranCoef instanceof ReflTransFreeSurface) {
                 ReflTransFreeSurface rtfree = (ReflTransFreeSurface)reflTranCoef;
-                label = ReflTransAxisType.FreeRecFuncSh.name();
-                XYPlottingData xyp_z = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV, label,
+                XYPlottingData xyp_z = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV,
+                        ReflTransAxisType.FreeRecFuncSh,
                         rtfree::getFreeSurfaceReceiverFunSh
                 );
                 out.add(xyp_z);
@@ -535,18 +561,17 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
         return out;
     }
 
-
     protected XYPlottingData calculateForType(ReflTrans reflTranCoef,
                                double minX, double maxX, double step,
                                boolean linearRayParam, double oneOverV,
-                               String label,
+                               ReflTransAxisType label,
                                CalcReflTranFunction<Double, Double> calcFn) throws VelocityModelException {
         List<XYSegment> segments = new ArrayList<>();
-        String xLabel = linearRayParam ? "Horiz. Slowness (s/km)" : "Angle (deg)";
-        String yLabel = "Amp Factor";
+        String xAxisType = linearRayParam ? DegRayParam.rayparam.name() : DegRayParam.degree.name();
+        String yLabel = "Coefficient";
         List<String> cssClassList = new ArrayList<>();
-        cssClassList.add(label);
-        XYPlottingData xyp = new XYPlottingData(segments, xLabel, yLabel, label, cssClassList);
+        cssClassList.add(label.name());
+        XYPlottingData xyp = new XYPlottingData(segments, xAxisType, label.name(), ReflTransAxisType.labelFor(label), cssClassList);
         try {
             // side effect, check type is allowed, ie may be S in fluid
             calcFn.apply(0.0);
@@ -789,7 +814,18 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
 
     public enum DegRayParam {
         degree,
-        rayparam,
+        rayparam;
+
+        public static String labelFor(DegRayParam val) {
+            switch (val) {
+                case rayparam:
+                    return "Ray Parameter (s/km)";
+                case degree:
+                    return "Incident Angle (deg)";
+                default:
+                    return val.name();
+            }
+        }
     }
 
     protected DegRayParam xAxisType = DegRayParam.degree;

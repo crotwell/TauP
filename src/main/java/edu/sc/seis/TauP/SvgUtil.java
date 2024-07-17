@@ -192,22 +192,35 @@ public class SvgUtil {
 
         HashMap<ReflTransAxisType, String> colors = new HashMap<>();
         colors.put(ReflTransAxisType.Rpp , "blue");
+        colors.put(ReflTransAxisType.RppEnergy , colors.get(ReflTransAxisType.Rpp));
         colors.put(ReflTransAxisType.Rps, "green");
+        colors.put(ReflTransAxisType.RpsEnergy , colors.get(ReflTransAxisType.Rps));
         colors.put(ReflTransAxisType.Rsp , "red");
+        colors.put(ReflTransAxisType.RspEnergy , colors.get(ReflTransAxisType.Rsp));
         colors.put(ReflTransAxisType.Rss, "orange");
+        colors.put(ReflTransAxisType.RssEnergy , colors.get(ReflTransAxisType.Rss));
         colors.put(ReflTransAxisType.Rshsh, "mediumslateblue");
+        colors.put(ReflTransAxisType.RshshEnergy , colors.get(ReflTransAxisType.Rshsh));
         colors.put(ReflTransAxisType.Tpp, "cyan");
+        colors.put(ReflTransAxisType.TppEnergy , colors.get(ReflTransAxisType.Tpp));
         colors.put(ReflTransAxisType.Tps, "gold");
+        colors.put(ReflTransAxisType.TpsEnergy , colors.get(ReflTransAxisType.Tps));
         colors.put(ReflTransAxisType.Tsp, "magenta");
+        colors.put(ReflTransAxisType.TspEnergy , colors.get(ReflTransAxisType.Tsp));
         colors.put(ReflTransAxisType.Tss, "grey");
+        colors.put(ReflTransAxisType.TssEnergy , colors.get(ReflTransAxisType.Tss));
         colors.put(ReflTransAxisType.Tshsh, "violet");
+        colors.put(ReflTransAxisType.TshshEnergy , colors.get(ReflTransAxisType.Tshsh));
         colors.put(ReflTransAxisType.FreeRecFuncPr, "darkblue");
         colors.put(ReflTransAxisType.FreeRecFuncSvr, "firebrick");
         colors.put(ReflTransAxisType.FreeRecFuncPz, "cyan");
         colors.put(ReflTransAxisType.FreeRecFuncSvz, "magenta");
         colors.put(ReflTransAxisType.FreeRecFuncSh, "red");
 
-        for (ReflTransAxisType rt : ReflTransAxisType.allCoeff) {
+        List<ReflTransAxisType> allCoeff = new ArrayList<>();
+        allCoeff.addAll(ReflTransAxisType.allDisplacement);
+        allCoeff.addAll(ReflTransAxisType.allEnergy);
+        for (ReflTransAxisType rt : allCoeff) {
             out.append("        ."+rt.name()+" {\n");
             out.append("          stroke: "+colors.get(rt)+";\n");
             out.append("        }\n");

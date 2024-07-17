@@ -25,6 +25,8 @@
  */
 package edu.sc.seis.TauP;
 
+import edu.sc.seis.TauP.cmdline.TauP_ReflTransPlot;
+
 import java.util.Properties;
 
 /**
@@ -62,6 +64,12 @@ public class Outputs {
      * @return output format like %3.2f for use in formatting floats
      */
     public static String formatStringForAxisType(String axisType) {
+        // TauPReflTrans.DegRayParam
+        if (axisType.equals(TauP_ReflTransPlot.DegRayParam.degree.name())) {
+            return "%8.3f";
+        } else if (axisType.equals(TauP_ReflTransPlot.DegRayParam.rayparam.name())) {
+            return "%8.5f";
+        }
         try {
             AxisType at = AxisType.valueOf(axisType);
             return formatStringForAxisType(at);
@@ -70,8 +78,13 @@ public class Outputs {
                 ModelAxisType mt = ModelAxisType.valueOf(axisType);
                 return formatStringForAxisType(mt);
             } catch (IllegalArgumentException ee ) {
-                System.err.println("Unknown axis type: " + axisType);
-                return "%f";
+                try {
+                    ReflTransAxisType mt = ReflTransAxisType.valueOf(axisType);
+                    return formatStringForAxisType(mt);
+                } catch (IllegalArgumentException eee ) {
+                    System.err.println("Unknown axis type: " + axisType);
+                    return "%f";
+                }
             }
         }
     }
@@ -157,6 +170,10 @@ public class Outputs {
                 break;
         }
         return outFormat;
+    }
+
+    public static String formatStringForAxisType(ReflTransAxisType axisType) {
+        return "%f";
     }
 
     public static String formatDepth(double depth) {

@@ -76,7 +76,7 @@ public enum ModelAxisType {
     public static String labelFor(ModelAxisType axisType) {
         switch (axisType) {
             case velocity_density:
-                return "Velocity (km/s), Density (Mg/m3)";
+                return "Velocity (km/s), Density (Mg/m³)";
             case velocity:
             case Vp:
             case Vs:
@@ -86,7 +86,7 @@ public enum ModelAxisType {
             case radius:
                 return "Radius (km)";
             case density:
-                return "Density (Mg/m3)";
+                return "Density (Mg/m³)";
             case slownessdeg:
             case slownessdeg_p:
             case slownessdeg_s:
