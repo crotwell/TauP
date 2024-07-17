@@ -11,7 +11,7 @@ Usage: taup time [--amp] [--debug] [--first] [--geodetic] [--geodetic] [--help]
                  [--km=km[,km...]]... [--rayparamdeg=s/deg[,s/deg...]]...
                  [--rayparamidx=i[,i...]]... [--rayparamkm=s/km[,s/km...]]...
                  [--rayparamrad=s/rad[,s/rad...]]... [--takeoff=deg[,
-                 deg...]]...] [--json | --text]
+                 deg...]]...]... [--json | --text]
 Calculate travel times for seismic phases in an earth model.
 
 Options:

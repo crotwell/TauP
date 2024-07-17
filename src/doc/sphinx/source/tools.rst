@@ -19,9 +19,12 @@ Tools
     taup_setsac
     taup_velmerge
     taup_velplot
+    taup_refltrans
     taup_wavefront
     taup_create
     taup_web
+    taup_version
+    taup_help
 
 
 Tools included with the TauP package:
@@ -40,7 +43,10 @@ Tools included with the TauP package:
 :ref:`velmerge <taup_velmerge>`     merges part of one velocity model into another.
 :ref:`velplot <taup_velplot>`       output velocity model as a gmt script.
 :ref:`create <taup_create>`         creates a .taup model from a velocity model.
+:ref:`refltrans <taup_refltrans>`   plot reflection and transmission coefficients for a discontinuity.
 :ref:`web <taup_web>`               http access to the tools
+:ref:`version <taup_version>`       print the version.
+:ref:`help <taup_help>`             display help information about the specified command.
 =================================   =========================================================================
 
 Startup Script
@@ -48,12 +54,12 @@ Startup Script
 
 Each tool is a subcommand of the overall :code:`taup` Java application which is
 an wrapper to make execution easier: sh scripts
-for \textsc{Unix} and
+for *Unix* and
 bat files for windows.  The application are machine independent but the
 wrappers are OS specific.
-For example, to invoke TauP Time under \textsc{Unix}, you could type
+For example, to invoke TauP Time under *Unix*, you could type
 
-:code:`java edu.sc.seis.TauP.TauP time -mod prem`
+:code:`java -classpath ... edu.sc.seis.TauP.TauP time -mod prem`
 
 or simply use the script that does the same thing,
 
@@ -96,4 +102,8 @@ and then hitting the tab key will display the models available for the
 .. include:: taup_velplot
 .. include:: taup_velmerge
 .. include:: taup_wavefront
+.. include:: taup_refltrans
+.. include:: taup_web
 .. include:: taup_create
+.. include:: taup_version
+.. include:: taup_help

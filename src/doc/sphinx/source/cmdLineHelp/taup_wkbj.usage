@@ -10,7 +10,7 @@ Usage: taup wkbj [--debug] [--geodetic] [--geodetic] [--help] [--verbose]
                  [--exactkilometer=km[,km...]]... [--km=km[,km...]]...
                  [--rayparamdeg=s/deg[,s/deg...]]... [--rayparamidx=i[,
                  i...]]... [--rayparamkm=s/km[,s/km...]]... [--rayparamrad=s/rad
-                 [,s/rad...]]... [--takeoff=deg[,deg...]]...] [--ms3 | --sac]
+                 [,s/rad...]]... [--takeoff=deg[,deg...]]...]... [--ms3 | --sac]
 Calculate synthetic seismograms, DANGER: experimental!!!
 
 Options:

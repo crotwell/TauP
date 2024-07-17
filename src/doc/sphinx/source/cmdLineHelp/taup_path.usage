@@ -14,7 +14,7 @@ Usage: taup path [--debug] [--geodetic] [--geodetic] [--help]
                  [--km=km[,km...]]... [--rayparamdeg=s/deg[,s/deg...]]...
                  [--rayparamidx=i[,i...]]... [--rayparamkm=s/km[,s/km...]]...
                  [--rayparamrad=s/rad[,s/rad...]]... [--takeoff=deg[,
-                 deg...]]...] [--gmt | --json | --svg | --text]
+                 deg...]]...]... [--gmt | --json | --svg | --text]
 Plot ray paths, distance vs. depth, through the earth.
 
 Options:

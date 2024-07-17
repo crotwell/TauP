@@ -145,7 +145,7 @@ places in order until it finds a model that matches the name.
 
   The taup.model.path allows you to have directories containing saved model files
   as well as jar files of models.
-  For instance, in a \textsc{Unix} system using the c shell,
+  For instance, in a *Unix* system using the c shell,
   you could set your TAUPPATH to be, (all one line):
 
   ``setenv TAUPPATH /home/xxx/MyModels.jar:/home/xxx/ModelDir:

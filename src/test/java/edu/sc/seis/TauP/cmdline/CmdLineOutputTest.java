@@ -146,6 +146,8 @@ public class CmdLineOutputTest {
             "taup velplot --mod ak135fcont --mod prem --svg",
             "taup velplot --mod ak135fcont -x poisson --svg",
             "taup velplot --nameddiscon --mod iasp91",
+            "taup refltrans --mod ak135 --depth 35 --svg",
+            "taup refltrans --mod ak135 --depth 35 --energyflux --svg",
     };
 
     /** 

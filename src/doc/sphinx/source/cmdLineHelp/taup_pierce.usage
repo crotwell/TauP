@@ -13,7 +13,7 @@ Usage: taup pierce [--amp] [--debug] [--first] [--geodetic] [--geodetic]
                    [--rayparamdeg=s/deg[,s/deg...]]... [--rayparamidx=i[,
                    i...]]... [--rayparamkm=s/km[,s/km...]]...
                    [--rayparamrad=s/rad[,s/rad...]]... [--takeoff=deg[,
-                   deg...]]...] [--json | --text]
+                   deg...]]...]... [--json | --text]
 Calculate pierce points for phases at discontinuities in the model.
 
 Options:

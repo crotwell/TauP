@@ -68,9 +68,12 @@
 <li class="toctree-l2"><a class="reference internal" href="taup_setsac.html">TauP SetSac</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_velmerge.html">TauP VelocityMerge</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_velplot.html">TauP VelocityPlot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_refltrans.html">TauP ReflTrans</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_wavefront.html">TauP Wavefront</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_create.html">TauP Create</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_web.html">TauP Web</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_version.html">TauP Version</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_help.html">TauP Help</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#startup-script">Startup Script</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#tab-completion">Tab Completion</a></li>
 </ul>
@@ -162,8 +165,17 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="taup_create.html#taup-create"><span class="std std-ref">create</span></a></p></td>
 <td><p>creates a .taup model from a velocity model.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="taup_web.html#taup-web"><span class="std std-ref">web</span></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="taup_refltrans.html#taup-refltrans"><span class="std std-ref">refltrans</span></a></p></td>
+<td><p>plot reflection and transmission coefficients for a discontinuity.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="taup_web.html#taup-web"><span class="std std-ref">web</span></a></p></td>
 <td><p>http access to the tools</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="taup_version.html#taup-version"><span class="std std-ref">version</span></a></p></td>
+<td><p>print the version.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="taup_help.html#taup-help"><span class="std std-ref">help</span></a></p></td>
+<td><p>display help information about the specified command.</p></td>
 </tr>
 </tbody>
 </table>
@@ -171,11 +183,11 @@
 <h2>Startup Script<a class="headerlink" href="#startup-script" title="Link to this heading">¶</a></h2>
 <p>Each tool is a subcommand of the overall <code class="code docutils literal notranslate"><span class="pre">taup</span></code> Java application which is
 an wrapper to make execution easier: sh scripts
-for textsc{Unix} and
+for <em>Unix</em> and
 bat files for windows.  The application are machine independent but the
 wrappers are OS specific.
-For example, to invoke TauP Time under textsc{Unix}, you could type</p>
-<p><code class="code docutils literal notranslate"><span class="pre">java</span> <span class="pre">edu.sc.seis.TauP.TauP</span> <span class="pre">time</span> <span class="pre">-mod</span> <span class="pre">prem</span></code></p>
+For example, to invoke TauP Time under <em>Unix</em>, you could type</p>
+<p><code class="code docutils literal notranslate"><span class="pre">java</span> <span class="pre">-classpath</span> <span class="pre">...</span> <span class="pre">edu.sc.seis.TauP.TauP</span> <span class="pre">time</span> <span class="pre">-mod</span> <span class="pre">prem</span></code></p>
 <p>or simply use the script that does the same thing,</p>
 <p><code class="code docutils literal notranslate"><span class="pre">taup</span> <span class="pre">time</span> <span class="pre">-mod</span> <span class="pre">prem</span></code></p>
 <p>Each tool has a <code class="code docutils literal notranslate"><span class="pre">--help</span></code> flag that will print a usage summary, as well

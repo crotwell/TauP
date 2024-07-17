@@ -184,6 +184,25 @@ tools. It may be helpful to experiment with the web gui at</p>
 <p><a class="reference external" href="http://localhost:7049/taup.html">http://localhost:7049/taup.html</a></p>
 <p>to see how the URL is encoded and what the results are. Note that the web form
 does not yet include all possible parameters that the web tools support.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>
+<span class="kn">import</span> <span class="nn">requests</span>
+
+<span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;model&#39;</span><span class="p">:</span><span class="s1">&#39;ak135&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;evdepth&#39;</span><span class="p">:</span><span class="mi">100</span><span class="p">,</span>
+    <span class="s1">&#39;phase&#39;</span><span class="p">:</span><span class="s1">&#39;P,S&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;degree&#39;</span><span class="p">:</span><span class="mi">35</span><span class="p">,</span>
+    <span class="s1">&#39;amp&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="s1">&#39;format&#39;</span><span class="p">:</span><span class="s1">&#39;json&#39;</span>
+<span class="p">}</span>
+
+<span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;http://localhost:7049/time&#39;</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+
+<span class="n">jsonTimes</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">jsonTimes</span><span class="p">[</span><span class="s2">&quot;arrivals&quot;</span><span class="p">]:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">a</span><span class="p">[</span><span class="s1">&#39;phase&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">a</span><span class="p">[</span><span class="s1">&#39;distdeg&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">a</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
 </section>
 </section>
 
