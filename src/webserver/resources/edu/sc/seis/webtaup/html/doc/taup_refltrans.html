@@ -129,9 +129,6 @@ calculations are done using a flat earth ray parameter, 1/s, instead of the
 usual spherical ray parameter, radian/sec, as in the rest of the calculations.</p>
 <p>For example, this would generate an SVG plot of the displacement
 reflection and transmission coefficients from the moho in the ak135 model:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>taup refltrans --mod ak135 --depth 35 --svg
-</pre></div>
-</div>
 <p>and the result would be:</p>
 <svg version="1.1" baseProfile="full" xmlns="http://www.w3.org/2000/svg" 
      viewBox="-80 -80 760.0 760.0"
@@ -1677,9 +1674,51 @@ circle.discontinuity.iocb {
   </g> <!-- end scale -->
   </g> <!-- end scaletranslate -->
   </g> <!-- end clip-path -->
+<g class="legend " transform="translate(52.0,52.0)"> <!-- legend -->
+<g class="Rpp Displacement">
+<line class="Rpp Displacement" x1="0" y1="0" x2="10" y2="0" />
+<text class="Rpp Displacement" font-size="14" x="11" y="0">Rpp Displacement</text>
+</g>
+<g class="Tpp Displacement">
+<line class="Tpp Displacement" x1="0" y1="16" x2="10" y2="16" />
+<text class="Tpp Displacement" font-size="14" x="11" y="16">Tpp Displacement</text>
+</g>
+<g class="Rps Displacement">
+<line class="Rps Displacement" x1="0" y1="32" x2="10" y2="32" />
+<text class="Rps Displacement" font-size="14" x="11" y="32">Rps Displacement</text>
+</g>
+<g class="Tps Displacement">
+<line class="Tps Displacement" x1="0" y1="48" x2="10" y2="48" />
+<text class="Tps Displacement" font-size="14" x="11" y="48">Tps Displacement</text>
+</g>
+<g class="Rsp Displacement">
+<line class="Rsp Displacement" x1="0" y1="64" x2="10" y2="64" />
+<text class="Rsp Displacement" font-size="14" x="11" y="64">Rsp Displacement</text>
+</g>
+<g class="Tsp Displacement">
+<line class="Tsp Displacement" x1="0" y1="80" x2="10" y2="80" />
+<text class="Tsp Displacement" font-size="14" x="11" y="80">Tsp Displacement</text>
+</g>
+<g class="Rss Displacement">
+<line class="Rss Displacement" x1="0" y1="96" x2="10" y2="96" />
+<text class="Rss Displacement" font-size="14" x="11" y="96">Rss Displacement</text>
+</g>
+<g class="Tss Displacement">
+<line class="Tss Displacement" x1="0" y1="112" x2="10" y2="112" />
+<text class="Tss Displacement" font-size="14" x="11" y="112">Tss Displacement</text>
+</g>
+<g class="Rshsh Displacement">
+<line class="Rshsh Displacement" x1="0" y1="128" x2="10" y2="128" />
+<text class="Rshsh Displacement" font-size="14" x="11" y="128">Rshsh Displacement</text>
+</g>
+<g class="Tshsh Displacement">
+<line class="Tshsh Displacement" x1="0" y1="144" x2="10" y2="144" />
+<text class="Tshsh Displacement" font-size="14" x="11" y="144">Tshsh Displacement</text>
+</g>
+</g> <!-- legend end-->
 </svg>
 <p>This calculates the coefficients for energy flux instead of displacement:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>taup refltrans --mod ak135 --depth 35 --energyflux --svg
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>taup refltrans --mod ak135 --depth 35 --legend --energyflux --svg
 </pre></div>
 </div>
 <p>and the result would be:</p>
@@ -3217,6 +3256,48 @@ circle.discontinuity.iocb {
   </g> <!-- end scale -->
   </g> <!-- end scaletranslate -->
   </g> <!-- end clip-path -->
+<g class="legend " transform="translate(52.0,52.0)"> <!-- legend -->
+<g class="Rpp Energy">
+<line class="Rpp Energy" x1="0" y1="0" x2="10" y2="0" />
+<text class="Rpp Energy" font-size="14" x="11" y="0">Rpp Energy</text>
+</g>
+<g class="Tpp Energy">
+<line class="Tpp Energy" x1="0" y1="16" x2="10" y2="16" />
+<text class="Tpp Energy" font-size="14" x="11" y="16">Tpp Energy</text>
+</g>
+<g class="Rps Energy">
+<line class="Rps Energy" x1="0" y1="32" x2="10" y2="32" />
+<text class="Rps Energy" font-size="14" x="11" y="32">Rps Energy</text>
+</g>
+<g class="Tps Energy">
+<line class="Tps Energy" x1="0" y1="48" x2="10" y2="48" />
+<text class="Tps Energy" font-size="14" x="11" y="48">Tps Energy</text>
+</g>
+<g class="Rsp Energy">
+<line class="Rsp Energy" x1="0" y1="64" x2="10" y2="64" />
+<text class="Rsp Energy" font-size="14" x="11" y="64">Rsp Energy</text>
+</g>
+<g class="Tsp Energy">
+<line class="Tsp Energy" x1="0" y1="80" x2="10" y2="80" />
+<text class="Tsp Energy" font-size="14" x="11" y="80">Tsp Energy</text>
+</g>
+<g class="Rss Energy">
+<line class="Rss Energy" x1="0" y1="96" x2="10" y2="96" />
+<text class="Rss Energy" font-size="14" x="11" y="96">Rss Energy</text>
+</g>
+<g class="Tss Energy">
+<line class="Tss Energy" x1="0" y1="112" x2="10" y2="112" />
+<text class="Tss Energy" font-size="14" x="11" y="112">Tss Energy</text>
+</g>
+<g class="Rshsh Energy">
+<line class="Rshsh Energy" x1="0" y1="128" x2="10" y2="128" />
+<text class="Rshsh Energy" font-size="14" x="11" y="128">Rshsh Energy</text>
+</g>
+<g class="Tshsh Energy">
+<line class="Tshsh Energy" x1="0" y1="144" x2="10" y2="144" />
+<text class="Tshsh Energy" font-size="14" x="11" y="144">Tshsh Energy</text>
+</g>
+</g> <!-- legend end-->
 </svg>
 <p>The usage is:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Usage: taup refltrans [--abs] [--debug] [--down] [--energyflux] [--fsrf]

@@ -1532,4 +1532,46 @@ circle.discontinuity.iocb {
   </g> <!-- end scale -->
   </g> <!-- end scaletranslate -->
   </g> <!-- end clip-path -->
+<g class="legend " transform="translate(52.0,52.0)"> <!-- legend -->
+<g class="Rpp Energy">
+<line class="Rpp Energy" x1="0" y1="0" x2="10" y2="0" />
+<text class="Rpp Energy" font-size="14" x="11" y="0">Rpp Energy</text>
+</g>
+<g class="Tpp Energy">
+<line class="Tpp Energy" x1="0" y1="16" x2="10" y2="16" />
+<text class="Tpp Energy" font-size="14" x="11" y="16">Tpp Energy</text>
+</g>
+<g class="Rps Energy">
+<line class="Rps Energy" x1="0" y1="32" x2="10" y2="32" />
+<text class="Rps Energy" font-size="14" x="11" y="32">Rps Energy</text>
+</g>
+<g class="Tps Energy">
+<line class="Tps Energy" x1="0" y1="48" x2="10" y2="48" />
+<text class="Tps Energy" font-size="14" x="11" y="48">Tps Energy</text>
+</g>
+<g class="Rsp Energy">
+<line class="Rsp Energy" x1="0" y1="64" x2="10" y2="64" />
+<text class="Rsp Energy" font-size="14" x="11" y="64">Rsp Energy</text>
+</g>
+<g class="Tsp Energy">
+<line class="Tsp Energy" x1="0" y1="80" x2="10" y2="80" />
+<text class="Tsp Energy" font-size="14" x="11" y="80">Tsp Energy</text>
+</g>
+<g class="Rss Energy">
+<line class="Rss Energy" x1="0" y1="96" x2="10" y2="96" />
+<text class="Rss Energy" font-size="14" x="11" y="96">Rss Energy</text>
+</g>
+<g class="Tss Energy">
+<line class="Tss Energy" x1="0" y1="112" x2="10" y2="112" />
+<text class="Tss Energy" font-size="14" x="11" y="112">Tss Energy</text>
+</g>
+<g class="Rshsh Energy">
+<line class="Rshsh Energy" x1="0" y1="128" x2="10" y2="128" />
+<text class="Rshsh Energy" font-size="14" x="11" y="128">Rshsh Energy</text>
+</g>
+<g class="Tshsh Energy">
+<line class="Tshsh Energy" x1="0" y1="144" x2="10" y2="144" />
+<text class="Tshsh Energy" font-size="14" x="11" y="144">Tshsh Energy</text>
+</g>
+</g> <!-- legend end-->
 </svg>
