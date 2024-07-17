@@ -239,6 +239,9 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
             // max rp always S if using
             maxX = 1.0 / ((inswave || inshwave) ? reflTranCoef.getTopVs() : reflTranCoef.getTopVp());
         }
+        // slightly smaller as horizontal ray has error in Rpp calc, sign reversal
+        float maxXPercent = 0.999999f;
+        maxX = maxX * maxXPercent;
 
         boolean doAll =  (!inpwave && ! inswave && ! inshwave);
 
@@ -252,7 +255,7 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
             double maxX_inP = maxX;
             if (linearRayParam) {
                 // max rp always S if using
-                maxX_inP = 1.0 / reflTranCoef.getTopVp();
+                maxX_inP = 1.0 / reflTranCoef.getTopVp() * maxXPercent;
             }
             if (yAxisType.contains(ReflTransAxisType.Rpp)) {
                 XYPlottingData xyp = calculateForType(reflTranCoef, minX, maxX_inP, step, linearRayParam, oneOverV,
@@ -568,7 +571,6 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
                                CalcReflTranFunction<Double, Double> calcFn) throws VelocityModelException {
         List<XYSegment> segments = new ArrayList<>();
         String xAxisType = linearRayParam ? DegRayParam.rayparam.name() : DegRayParam.degree.name();
-        String yLabel = "Coefficient";
         List<String> cssClassList = new ArrayList<>();
         cssClassList.add(label.name());
         XYPlottingData xyp = new XYPlottingData(segments, xAxisType, label.name(), ReflTransAxisType.labelFor(label), cssClassList);
@@ -605,19 +607,23 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
             xList.add(i);
             yList.add(val);
             for (double critSlowness : critSlownesses) {
-                if (rayParam < critSlowness && nextrayParam > critSlowness) {
+                if ( rayParam < critSlowness && nextrayParam > critSlowness) {
                     double xval = linearRayParam ? critSlowness : Math.asin(critSlowness / oneOverV) * SphericalCoords.RtoD;
-                    val = calcFn.apply(critSlowness);
-                    if (isAbsolute()) {
-                        val = Math.abs(val);
+                    if (xval < maxX) {
+                        // maxX may be crit slowness, but handle adding it below, and should not add if xval > maxX
+                        val = calcFn.apply(critSlowness);
+                        if (isAbsolute()) {
+                            val = Math.abs(val);
+                        }
+                        xList.add(xval);
+                        yList.add(val);
                     }
-                    xList.add(xval);
-                    yList.add(val);
                 }
             }
         }
-        if (i < maxX+step ) {
+        if ( i < maxX+step ) {
             // perhaps step was not even divide (max-min) when just one S,P, so add last value
+            // but step back from end a touch as equation doesn't make sense at horizontal, and can get odd result
             double rayParam;
             if (linearRayParam) {
                 rayParam = maxX;
@@ -628,7 +634,7 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
             if (isAbsolute()) {
                 val = Math.abs(val);
             }
-            xList.add(i);
+            xList.add(maxX);
             yList.add(val);
         }
         XYSegment seg = XYSegment.fromSingleList(xList, yList);

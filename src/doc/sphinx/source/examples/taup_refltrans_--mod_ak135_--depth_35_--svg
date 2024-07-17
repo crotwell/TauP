@@ -6,7 +6,7 @@
       <command>xyplotoutput </command>
       <version>3.0.0-SNAPSHOT5</version>
       <a href="https://github.com/crotwell/TauP">https://github.com/crotwell/TauP</a>
-    <minmax xmin="0.0" xmax="90.0" ymin="-0.9999999999999994" ymax="3.073594389528412" />
+    <minmax xmin="0.0" xmax="89.9999088048935" ymin="-0.13902910789262635" ymax="3.073594389528412" />
     </taup>
   </metadata>
   <defs>
@@ -475,43 +475,65 @@ circle.discontinuity.iocb {
   <text font-size="14" transform="translate(-64, 260) rotate(-90 )" dy=".75em" text-anchor="middle" class="ylabel" > Displacement Coeff.</text>
 </g>
 <line  class="tick" x1="0" y1="0" x2="0" y2="520.0" />
-<text class="ytick" font-size="12" x="-12.0" y="392.3486">0.0</text>
-<line class="tick" x1="0" y1="392.3486" x2="-10.0" y2="392.3486" />
-<text class="ytick" font-size="12" x="-12.0" y="264.6972">1.0</text>
-<line class="tick" x1="0" y1="264.6972" x2="-10.0" y2="264.6972" />
-<text class="ytick" font-size="12" x="-12.0" y="137.0458">2.0</text>
-<line class="tick" x1="0" y1="137.0458" x2="-10.0" y2="137.0458" />
-<text class="ytick" font-size="12" x="-12.0" y="9.39444">3.0</text>
-<line class="tick" x1="0" y1="9.39444" x2="-10.0" y2="9.39444" />
+<text class="ytick" font-size="12" x="-12.0" y="497.49655">0.0</text>
+<line class="tick" x1="0" y1="497.49655" x2="-10.0" y2="497.49655" />
+<text class="ytick" font-size="12" x="-12.0" y="465.12424">0.2</text>
+<line class="tick" x1="0" y1="465.12424" x2="-10.0" y2="465.12424" />
+<text class="ytick" font-size="12" x="-12.0" y="432.75195">0.4</text>
+<line class="tick" x1="0" y1="432.75195" x2="-10.0" y2="432.75195" />
+<text class="ytick" font-size="12" x="-12.0" y="400.37964">0.6</text>
+<line class="tick" x1="0" y1="400.37964" x2="-10.0" y2="400.37964" />
+<text class="ytick" font-size="12" x="-12.0" y="368.00735">0.8</text>
+<line class="tick" x1="0" y1="368.00735" x2="-10.0" y2="368.00735" />
+<text class="ytick" font-size="12" x="-12.0" y="335.63507">1.0</text>
+<line class="tick" x1="0" y1="335.63507" x2="-10.0" y2="335.63507" />
+<text class="ytick" font-size="12" x="-12.0" y="303.26276">1.2</text>
+<line class="tick" x1="0" y1="303.26276" x2="-10.0" y2="303.26276" />
+<text class="ytick" font-size="12" x="-12.0" y="270.89047">1.4</text>
+<line class="tick" x1="0" y1="270.89047" x2="-10.0" y2="270.89047" />
+<text class="ytick" font-size="12" x="-12.0" y="238.51816">1.6</text>
+<line class="tick" x1="0" y1="238.51816" x2="-10.0" y2="238.51816" />
+<text class="ytick" font-size="12" x="-12.0" y="206.14587">1.8</text>
+<line class="tick" x1="0" y1="206.14587" x2="-10.0" y2="206.14587" />
+<text class="ytick" font-size="12" x="-12.0" y="173.77359">2.0</text>
+<line class="tick" x1="0" y1="173.77359" x2="-10.0" y2="173.77359" />
+<text class="ytick" font-size="12" x="-12.0" y="141.40128">2.2</text>
+<line class="tick" x1="0" y1="141.40128" x2="-10.0" y2="141.40128" />
+<text class="ytick" font-size="12" x="-12.0" y="109.02899">2.4</text>
+<line class="tick" x1="0" y1="109.02899" x2="-10.0" y2="109.02899" />
+<text class="ytick" font-size="12" x="-12.0" y="76.65668">2.6</text>
+<line class="tick" x1="0" y1="76.65668" x2="-10.0" y2="76.65668" />
+<text class="ytick" font-size="12" x="-12.0" y="44.284393">2.8</text>
+<line class="tick" x1="0" y1="44.284393" x2="-10.0" y2="44.284393" />
+<text class="ytick" font-size="12" x="-12.0" y="11.912109">3.0</text>
+<line class="tick" x1="0" y1="11.912109" x2="-10.0" y2="11.912109" />
 </g> <!-- y axis end-->
 <g> <!-- x axis -->
 <text class="xlabel" font-size="14" x="260.0" y="556.4">Incident Angle (deg)</text>
 <line class="tick" x1="0" y1="520.0" x2="520.0" y2="520.0" />
 <text class="xtick" font-size="12" x="0.0" y="542.0">0.0</text>
 <line class="tick" x1="0.0" y1="520.0" x2="0.0" y2="530.0" />
-<text class="xtick" font-size="12" x="57.77777777777777" y="542.0">10.0</text>
-<line class="tick" x1="57.77777777777777" y1="520.0" x2="57.77777777777777" y2="530.0" />
-<text class="xtick" font-size="12" x="115.55555555555554" y="542.0">20.0</text>
-<line class="tick" x1="115.55555555555554" y1="520.0" x2="115.55555555555554" y2="530.0" />
-<text class="xtick" font-size="12" x="173.33333333333331" y="542.0">30.0</text>
-<line class="tick" x1="173.33333333333331" y1="520.0" x2="173.33333333333331" y2="530.0" />
-<text class="xtick" font-size="12" x="231.1111111111111" y="542.0">40.0</text>
-<line class="tick" x1="231.1111111111111" y1="520.0" x2="231.1111111111111" y2="530.0" />
-<text class="xtick" font-size="12" x="288.8888888888889" y="542.0">50.0</text>
-<line class="tick" x1="288.8888888888889" y1="520.0" x2="288.8888888888889" y2="530.0" />
-<text class="xtick" font-size="12" x="346.66666666666663" y="542.0">60.0</text>
-<line class="tick" x1="346.66666666666663" y1="520.0" x2="346.66666666666663" y2="530.0" />
-<text class="xtick" font-size="12" x="404.44444444444446" y="542.0">70.0</text>
-<line class="tick" x1="404.44444444444446" y1="520.0" x2="404.44444444444446" y2="530.0" />
-<text class="xtick" font-size="12" x="462.2222222222222" y="542.0">80.0</text>
-<line class="tick" x1="462.2222222222222" y1="520.0" x2="462.2222222222222" y2="530.0" />
-<text class="xtick" font-size="12" x="520.0" y="542.0">90.0</text>
-<line class="tick" x1="520.0" y1="520.0" x2="520.0" y2="530.0" />
+<text class="xtick" font-size="12" x="57.77783632284374" y="542.0">10.0</text>
+<line class="tick" x1="57.77783632284374" y1="520.0" x2="57.77783632284374" y2="530.0" />
+<text class="xtick" font-size="12" x="115.55567264568748" y="542.0">20.0</text>
+<line class="tick" x1="115.55567264568748" y1="520.0" x2="115.55567264568748" y2="530.0" />
+<text class="xtick" font-size="12" x="173.33350896853122" y="542.0">30.0</text>
+<line class="tick" x1="173.33350896853122" y1="520.0" x2="173.33350896853122" y2="530.0" />
+<text class="xtick" font-size="12" x="231.11134529137496" y="542.0">40.0</text>
+<line class="tick" x1="231.11134529137496" y1="520.0" x2="231.11134529137496" y2="530.0" />
+<text class="xtick" font-size="12" x="288.8891816142187" y="542.0">50.0</text>
+<line class="tick" x1="288.8891816142187" y1="520.0" x2="288.8891816142187" y2="530.0" />
+<text class="xtick" font-size="12" x="346.66701793706244" y="542.0">60.0</text>
+<line class="tick" x1="346.66701793706244" y1="520.0" x2="346.66701793706244" y2="530.0" />
+<text class="xtick" font-size="12" x="404.4448542599062" y="542.0">70.0</text>
+<line class="tick" x1="404.4448542599062" y1="520.0" x2="404.4448542599062" y2="530.0" />
+<text class="xtick" font-size="12" x="462.2226905827499" y="542.0">80.0</text>
+<line class="tick" x1="462.2226905827499" y1="520.0" x2="462.2226905827499" y2="530.0" />
 </g> <!-- x axis end-->
 <g clip-path="url(#curve_clip)">
 <g transform="scale(1,-1) translate(0, -520.0)">
-<g transform="scale(5.777777777777778,127.65139340743224)" >
-<g transform="translate(-0.0, 1.0)">
+<g transform="scale(5.7777836322843745,161.86148187530677)" >
+<g transform="translate(-0.0, 0.1390291)">
     <g class="Rpp" tauplabel=""  >
   <g>
     <desc></desc>
@@ -607,7 +629,7 @@ circle.discontinuity.iocb {
   87.000 0.991250
   88.000 0.994145
   89.000 0.997064
-  90.000 -1.000000
+  90.000 1.000000
   "  /> <!-- -->
   </g>
     </g> <!-- end  -->
@@ -706,7 +728,7 @@ circle.discontinuity.iocb {
   87.000 0.100536
   88.000 0.067000
   89.000 0.033512
-  90.000 0.000000
+  90.000 0.000003
   "  /> <!-- -->
   </g>
     </g> <!-- end  -->
@@ -805,7 +827,7 @@ circle.discontinuity.iocb {
   87.000 0.031230
   88.000 0.020881
   89.000 0.010465
-  90.000 0.000000
+  90.000 -0.000001
   "  /> <!-- -->
   </g>
     </g> <!-- end  -->
@@ -904,7 +926,7 @@ circle.discontinuity.iocb {
   87.000 0.028012
   88.000 0.018732
   89.000 0.009389
-  90.000 -0.000000
+  90.000 -0.000001
   "  /> <!-- -->
   </g>
     </g> <!-- end  -->
@@ -1005,7 +1027,7 @@ circle.discontinuity.iocb {
   87.000 0.043371
   88.000 0.028881
   89.000 0.014431
-  90.000 -0.000000
+  90.000 -0.000001
   "  /> <!-- -->
   </g>
     </g> <!-- end  -->
@@ -1308,7 +1330,7 @@ circle.discontinuity.iocb {
   87.000 0.111521
   88.000 0.074056
   89.000 0.036941
-  90.000 0.000000
+  90.000 0.000003
   "  /> <!-- -->
   </g>
     </g> <!-- end  -->
@@ -1409,7 +1431,7 @@ circle.discontinuity.iocb {
   87.000 1.000000
   88.000 1.000000
   89.000 1.000000
-  90.000 -1.000000
+  90.000 1.000000
   "  /> <!-- -->
   </g>
     </g> <!-- end  -->
@@ -1510,7 +1532,7 @@ circle.discontinuity.iocb {
   87.000 0.133374
   88.000 0.088788
   89.000 0.044356
-  90.000 0.000000
+  90.000 0.000004
   "  /> <!-- -->
   </g>
     </g> <!-- end  -->
