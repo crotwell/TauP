@@ -17,13 +17,9 @@ The usage is:
 
 The modelname is from :code:`modelname.taup`, a previously created file
 from TauP Create or a :code:`modelname.nd` or :code:`modelname.tvel` velocity model file.
-If there is insufficient information given on the command line, then you start
-in interactive mode, otherwise it assumes you only want one set of times.
 
 The phases are specified on the command line with the ``-p`` option,
 in a phase file with the ``--phasefile`` option, or in a properties file.
-The model, phases, depth and distance can be changed within the interactive
-section of TauP Time.
 
 For example:
 

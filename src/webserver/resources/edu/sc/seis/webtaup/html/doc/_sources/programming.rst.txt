@@ -3,7 +3,8 @@
 Programmatic Access
 ===================
 
-TauP can be used as a library in addition to the command line tools.
+TauP can be used as a library in addition to the command line tools. The web
+interface provides an alternative for non-JVM languages.
 
 
 Java

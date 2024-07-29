@@ -12,7 +12,7 @@ usual spherical ray parameter, radian/sec, as in the rest of the calculations.
 For example, this would generate an SVG plot of the displacement
 reflection and transmission coefficients from the moho in the ak135 model:
 
-.. literalinclude:: examples/taup_refltrans_--mod_ak135_--legend_--depth_35_--svg.cmd
+.. literalinclude:: examples/taup_refltrans_--mod_ak135_--depth_35_--legend_--svg.cmd
   :language: text
 
 and the result would be:

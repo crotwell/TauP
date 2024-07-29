@@ -163,6 +163,12 @@ val binDistFiles: CopySpec = copySpec {
     from("build/picocli/bash_completion") {
         include("taup_completion")
     }
+    from(".") {
+        include("VERSION")
+        include("CITATION.cff")
+        include("LICENSE")
+        include("README.md")
+    }
 }
 
 val distFiles: CopySpec = copySpec {
@@ -180,15 +186,7 @@ val distFiles: CopySpec = copySpec {
       into("docs")
     }
     from(".") {
-        include("VERSION")
-        include("CITATION.cff")
-        include("LICENSE")
-        include("jacl/**")
-        include("groovy/**")
-        include("native/**")
         include("src/**")
-        include("README.md")
-        exclude("**/*.svn")
     }
     from(".") {
         include("gradle/**")

@@ -20,7 +20,7 @@ The :code:`--rev`, :code:`--turn` and :code:`--under` flags are useful
 for limiting the output
 to just those points you care about. The :code:`--pierce depth` option
 allows you
-to specify a `pierce` depth that does not correspond to an
+to specify an additional `pierce` depth that does not correspond to an
 actual discontinuity. For instance, where does a ray pierce 300 kilometers
 above the CMB?
 
@@ -32,12 +32,18 @@ For example:
 would give you pierce points for S, and P for a 200 kilometer
 deep source at a distance of 57.4 degrees.
 
+.. literalinclude:: examples/taup_pierce_--mod_prem_-h_200_-p_S_P_--deg_57.4
+  :language: text
+
 While
 
 .. literalinclude:: examples/taup_pierce_--turn_--mod_prem_-h_200_-p_S_P_--deg_57.4.cmd
   :language: text
 
 would give you just the points that each ray turns from downgoing to upgoing.
+
+.. literalinclude:: examples/taup_pierce_--turn_--mod_prem_-h_200_-p_S_P_--deg_57.4
+  :language: text
 
 Using :code:`-rev` would give you all points that the ray changes direction
 and :code:`-under` gives just the underside reflections.

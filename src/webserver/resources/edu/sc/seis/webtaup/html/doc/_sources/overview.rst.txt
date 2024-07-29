@@ -28,3 +28,7 @@ The latest version of this documentation is available at
 `Read The Docs <https://taup.readthedocs.io/en/latest/>`_.
 
 The latest source is at `GitHub <https://github.com/crotwell/TauP>`_.
+
+If you find the TauP Toolkit useful, please cite :cite:t:`taupsrl` as well
+as the `Zenodo DOI <https://zenodo.org/doi/10.5281/zenodo.10794857>`_
+for the version you are using.

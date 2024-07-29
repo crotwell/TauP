@@ -7,15 +7,17 @@ Distribution
 What and Where
 --------------
 
-The current distribution of the TauP package is 3.0, dated June XX, 2022.
+The current distribution of the TauP package is 3.0, dated July XX, 2024.
 
 The distribution directory obtained from either the gzipped tar file or
-the jar file contains:
+the zip file contains:
 
 +-------------+----------------------------------------------------------------+
 | README.md   | getting started information                                    |
 +-------------+----------------------------------------------------------------+
 | LICENSE     | the GNU LGPL license                                           |
++-------------+----------------------------------------------------------------+
+| CITATION.cff| citation information                                           |
 +-------------+----------------------------------------------------------------+
 | StdModels   | standard models included in the jar in lib                     |
 +-------------+----------------------------------------------------------------+
@@ -31,16 +33,6 @@ the jar file contains:
 |             | included are javadocs, example properties, history, Maple      |
 |             | version of equations used, and a simple model file.            |
 +-------------+----------------------------------------------------------------+
-| groovy      | a directory with Groovy example script for accessing the TauP  |
-|             | package directly within scripts.                               |
-+-------------+----------------------------------------------------------------+
-| jacl        | a directory with Jacl examples for accessing the TauP package  |
-|             | directly within scripts.                                       |
-+-------------+----------------------------------------------------------------+
-| native      | a directory with a C library and example program that use the  |
-|             | Java Native Interface, providing a basic interface between C   |
-|             | programs and the TauP package.                                 |
-+-------------+----------------------------------------------------------------+
 | src         | a directory with all of the java source code.                  |
 +-------------+----------------------------------------------------------------+
 | gradlew     | rebuild TauP using Gradle.                                     |
@@ -49,9 +41,6 @@ the jar file contains:
 +-------------+----------------------------------------------------------------+
 
 
-The taup.jar file contains everything needed for a working version of the package.
-This greatly simplifies the installation process and reduces potential errors.
-See appendix \ref{install} for detailed installation instructions.
 
 ---------------------------------
 Advantages of the Current Release

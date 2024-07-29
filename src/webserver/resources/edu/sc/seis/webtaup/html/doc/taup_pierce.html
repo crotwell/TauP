@@ -232,7 +232,7 @@ Output Type:
 for limiting the output
 to just those points you care about. The <code class="code docutils literal notranslate"><span class="pre">--pierce</span> <span class="pre">depth</span></code> option
 allows you
-to specify a <cite>pierce</cite> depth that does not correspond to an
+to specify an additional <cite>pierce</cite> depth that does not correspond to an
 actual discontinuity. For instance, where does a ray pierce 300 kilometers
 above the CMB?</p>
 <p>For example:</p>
@@ -241,11 +241,45 @@ above the CMB?</p>
 </div>
 <p>would give you pierce points for S, and P for a 200 kilometer
 deep source at a distance of 57.4 degrees.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; P at   566.77 seconds at    57.40 degrees for a    200.0 km deep source in the prem model with rayParam    6.969 s/deg.
+    0.00   200.0    0.00
+    0.11   220.0    2.92
+    1.31   400.0   28.13
+    3.72   670.0   65.40
+   28.17  1501.4  268.52
+   52.62   670.0  471.64
+   55.03   400.0  508.91
+   56.23   220.0  534.12
+   56.34   200.0  537.04
+   57.31    24.4  562.45
+   57.35    15.0  563.97
+   57.40     0.0  566.75
+&gt; S at  1028.61 seconds at    57.40 degrees for a    200.0 km deep source in the prem model with rayParam   13.018 s/deg.
+    0.00   200.0    0.00
+    0.12   220.0    5.35
+    1.33   400.0   52.28
+    3.80   670.0  121.81
+   28.15  1416.2  487.16
+   52.50   670.0  852.51
+   54.97   400.0  922.05
+   56.18   220.0  968.97
+   56.29   200.0  974.33
+   57.30    24.4 1020.82
+   57.35    15.0 1023.53
+   57.40     0.0 1028.59
+</pre></div>
+</div>
 <p>While</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>taup pierce --turn --mod prem -h 200 -p S,P --deg 57.4
 </pre></div>
 </div>
 <p>would give you just the points that each ray turns from downgoing to upgoing.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; P at   566.77 seconds at    57.40 degrees for a    200.0 km deep source in the prem model with rayParam    6.969 s/deg.
+   28.17  1501.4  268.52
+&gt; S at  1028.61 seconds at    57.40 degrees for a    200.0 km deep source in the prem model with rayParam   13.018 s/deg.
+   28.15  1416.2  487.16
+</pre></div>
+</div>
 <p>Using <code class="code docutils literal notranslate"><span class="pre">-rev</span></code> would give you all points that the ray changes direction
 and <code class="code docutils literal notranslate"><span class="pre">-under</span></code> gives just the underside reflections.</p>
 <p>Using the <code class="code docutils literal notranslate"><span class="pre">-pierce</span></code> option</p>
