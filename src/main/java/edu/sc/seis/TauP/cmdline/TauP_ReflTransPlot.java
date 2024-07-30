@@ -1,6 +1,7 @@
 package edu.sc.seis.TauP.cmdline;
 
 import edu.sc.seis.TauP.*;
+import edu.sc.seis.TauP.cmdline.args.ColorType;
 import edu.sc.seis.TauP.cmdline.args.GraphicOutputTypeArgs;
 import edu.sc.seis.TauP.cmdline.args.ModelArgs;
 import edu.sc.seis.TauP.cmdline.args.OutputTypes;
@@ -82,7 +83,7 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
         XYPlotOutput xyOut = new XYPlotOutput(xyPlots, modelArgs);
         xyOut.setxAxisMinMax(xAxisMinMax);
         xyOut.setyAxisMinMax(yAxisMinMax);
-        xyOut.setAutoColor(false);
+        xyOut.getColoringArgs().setColoring(ColorType.phase);
         if (layerParams != null) {
             xyOut.setTitle(layerParams.asName());
         } else {
@@ -131,7 +132,7 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
             xyOut.printAsGmtText(writer);
         } else if (getOutputFormat().equalsIgnoreCase(OutputTypes.SVG)) {
             //String xLabel = ReflTransAxisType.labelFor(xAxisType);
-            xyOut.printAsSvg(writer, cmdLineArgs, DegRayParam.labelFor(xAxisType), yAxisActual, SvgUtil.createReflTransCSSColors()+"\n", isLegend);
+            xyOut.printAsSvg(writer, toolNameFromClass(this.getClass()), getCmdLineArgs(), DegRayParam.labelFor(xAxisType), yAxisActual, SvgUtil.createReflTransCSSColors()+"\n", isLegend);
         } else {
             throw new IllegalArgumentException("Unknown output format: " + getOutputFormat());
         }

@@ -68,7 +68,7 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
 
     }
 
-    public void printIsochron(PrintWriter out, Map<Double, List<WavefrontPathSegment>> timeSegmentMap, String psFile) throws TauPException {
+    public void printIsochron(PrintWriter out, Map<Double, List<WavefrontPathSegment>> timeSegmentMap) throws TauPException {
         List<Double> sortedKeys = new ArrayList<>(timeSegmentMap.keySet());
         Collections.sort(sortedKeys);
         if (getOutputFormat().equals(OutputTypes.JSON)) {
@@ -103,11 +103,11 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
             String cssExtra = "";
             cssExtra += createSurfaceWaveCSS(phaseNameList)+"\n";
             double maxTime = 0;
-            if (coloring.getColor() == ColorType.phase) {
+            if (coloring.getColoring() == ColorType.phase) {
                 StringBuffer cssPhaseColors = SvgUtil.createPhaseColorCSS(phaseNameList);
                 cssExtra += cssPhaseColors;
-            } else if (coloring.getColor() == ColorType.wavetype) {
-                String cssWaveTypeColors = SvgUtil.createWaveTypeColorCSS();
+            } else if (coloring.getColoring() == ColorType.wavetype) {
+                String cssWaveTypeColors = SvgUtil.createWaveTypeColorCSS(coloring);
                 cssExtra += cssWaveTypeColors;
             } else {
                 for (SeismicPhase phase : getSeismicPhases()) {
@@ -123,11 +123,11 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
             SvgEarthScaling scaleTrans = SvgEarth.calcEarthScaleTransForPhaseList(getSeismicPhases(), distDepthRangeArgs, isNegDistance());
 
             SvgEarth.printScriptBeginningSvg(out, modelArgs.getTauModel(), pixelWidth,
-                    scaleTrans, toolNameFromClass(this.getClass()), cmdLineArgs, cssExtra);
+                    scaleTrans, toolNameFromClass(this.getClass()), getCmdLineArgs(), cssExtra);
 
             SvgEarth.printModelAsSVG(out, modelArgs.getTauModel(), pixelWidth, scaleTrans, onlyNamedDiscon);
 
-            if (coloring.getColor() == ColorType.auto){
+            if (coloring.getColoring() == ColorType.auto){
                 SvgUtil.startAutocolorG(out);
             }
             for (Double timeVal : sortedKeys) {
@@ -141,16 +141,16 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
                 }
                 out.println("</g>");
             }
-            if (coloring.getColor() == ColorType.auto) {
+            if (coloring.getColoring() == ColorType.auto) {
                 SvgUtil.endAutocolorG(out);
             }
             SvgEarth.printSvgEndZoom(out);
             if (isLegend) {
                 float xtrans = (int)(-1*pixelWidth*.05);
                 float ytrans = (int) (pixelWidth*.05);
-                if (coloring.getColor() == ColorType.phase) {
+                if (coloring.getColoring() == ColorType.phase) {
                     SvgUtil.createPhaseLegend(out, getSeismicPhases(), "" , xtrans, ytrans);
-                } else if (coloring.getColor() == ColorType.wavetype) {
+                } else if (coloring.getColoring() == ColorType.wavetype) {
                     SvgUtil.createWavetypeLegend(out, xtrans, ytrans, false);
                 } else {
                     SvgUtil.createTimeStepLegend(out, timeStep, maxTime, "autocolor", xtrans, ytrans );
@@ -161,39 +161,51 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
             // text/gmt
 
             if (getGraphicOutputTypeArgs().isGMT()) {
-                SvgEarth.printGmtScriptBeginning(out, psFile, modelArgs.depthCorrected(), outputTypeArgs.mapwidth,
-                        outputTypeArgs.mapWidthUnit, onlyNamedDiscon);
-                if (coloring.getColor() != ColorType.wavetype) {
-                    out.write("gmt psxy -P -R -K -O -JP -m -A >> " + psFile + " <<END\n");
+                SvgEarth.printGmtScriptBeginning(out, outputTypeArgs.getOutFileBase(),
+                        modelArgs.depthCorrected(), outputTypeArgs.mapwidth,
+                        outputTypeArgs.mapWidthUnit, onlyNamedDiscon,
+                        toolNameFromClass(this.getClass()), getCmdLineArgs());
+                if (coloring.getColoring() == ColorType.none) {
+                    out.write("gmt plot -Wblack -A <<END\n");
                 }
             }
 
             boolean withTime = false;
+            int idx = -1;
             for (Double timeVal : sortedKeys) {
+                idx++;
+                String lineColor = "";
+                if (coloring.getColoring() == ColorType.auto) {
+                    lineColor = "-W,"+SvgUtil.colorForIndex(idx);
+                    out.write("gmt plot "+lineColor+" -A  <<END\n");
+                }
                 for (WavefrontPathSegment segment : timeSegmentMap.get(timeVal)) {
-                    if (coloring.getColor() == ColorType.wavetype) {
-                        String colorArg = "-W"+(segment.isPWave() ?"blue":"red")+" ";
-                        out.write("gmt psxy -P -R -K -O -JP "+colorArg+" -m -A >> " + psFile + " <<END\n");
+                    if (coloring.getColoring() == ColorType.wavetype) {
+                        lineColor = "-W"+(segment.isPWave() ?"blue":"red")+" ";
+                        out.write("gmt plot "+lineColor+" -A  <<END\n");
+                    } else if (coloring.getColoring() == ColorType.phase) {
+                        int phaseIdx = getSeismicPhases().indexOf(segment.getPhase());
+                        lineColor = "-W,"+SvgUtil.gmtColor(SvgUtil.colorForIndex(phaseIdx));
+                        out.write("gmt plot "+lineColor+" -A  <<END\n");
                     }
                     segment.writeGMTText(out, distDepthRangeArgs, Outputs.distanceFormat, Outputs.depthFormat, withTime);
-                    if (coloring.getColor() == ColorType.wavetype) {
+                    if (coloring.getColoring() == ColorType.wavetype || coloring.getColoring() == ColorType.phase) {
                         out.println("END");
                     }
                 }
+                if (coloring.getColoring() == ColorType.auto) {
+                    out.write("END\n");
+                }
             }
             if (getGraphicOutputTypeArgs().isGMT()) {
-                if (coloring.getColor() != ColorType.wavetype) {
+                if (coloring.getColoring() == ColorType.none) {
                     out.write("END\n");
                 }
                 out.println("# end postscript");
-                out.println("gmt psxy -P -R -O -JP -m -A -T >> " + psFile);
-                out.println("# convert ps to pdf, clean up .ps file");
-                out.println("gmt psconvert -P -Tf  " + psFile+" && rm " + psFile);
-                out.println("# clean up after gmt...");
-                out.println("rm gmt.history");
-                out.flush();
+                out.println("gmt end ");
             }
         }
+        out.flush();
     }
 
 
@@ -470,12 +482,12 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
                     }
                     String timeExt = "_" + String.format(formatStr, timeVal);
                     String byTimePsFile = psFileBase + timeExt + ".ps";
-                    printIsochron(timeWriter, singleTimeIsochronMap, byTimePsFile);
+                    printIsochron(timeWriter, singleTimeIsochronMap);
                     timeWriter.close();
                 }
             } else {
                 PrintWriter writer = outputTypeArgs.createWriter(spec.commandLine().getOut());
-                printIsochron(writer, isochronMap, outputTypeArgs.getPsFile());
+                printIsochron(writer, isochronMap);
                 writer.close();
             }
         }

@@ -64,7 +64,7 @@ public class XYPlottingData {
         }
         String xAxis = xAxisAbs ? "abs "+xAxisType : xAxisType;
         String yAxis = yAxisAbs ? "abs "+yAxisType : yAxisType;
-        return new XYPlottingData(out, xAxis, yAxis, label, cssClasses);
+        return new XYPlottingData(out, xAxis, yAxis, label, description, cssClasses);
     }
 
     public XYPlottingData recalcForLog(boolean xAxisLog, boolean yAxisLog) {
@@ -78,7 +78,7 @@ public class XYPlottingData {
         }
         String xAxis = xAxisLog ? "log "+xAxisType : xAxisType;
         String yAxis = yAxisLog ? "log "+yAxisType : yAxisType;
-        return new XYPlottingData(logList, xAxis, yAxis, label, cssClasses);
+        return new XYPlottingData(logList, xAxis, yAxis, label, description, cssClasses);
     }
 
     public String createCSSClassParam() {

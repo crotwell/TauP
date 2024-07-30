@@ -4,6 +4,8 @@ import edu.sc.seis.TauP.DepthAxisType;
 import edu.sc.seis.TauP.DistanceAxisType;
 import picocli.CommandLine;
 
+import java.util.List;
+
 public class DistDepthRange {
 
     public double[] getDistAxisMinMax() {
@@ -62,6 +64,14 @@ public class DistDepthRange {
             arity = "2",
             paramLabel = "deg",
             description = "min and max distance in degrees for plotting")
+    public void setDegreeMinMax(double[] minMax) {
+        if (minMax.length == 2) {
+            setDegreeMinMax(minMax[0], minMax[1]);
+        } else {
+            throw new IllegalArgumentException("Min max must have 2 values, but given: "+minMax.length);
+        }
+    }
+
     public void setDegreeMinMax(double min, double max) {
         if (min < max) {
             distAxisMinMax = new double[]{min, max};
@@ -74,6 +84,14 @@ public class DistDepthRange {
             arity = "2",
             paramLabel = "km",
             description = "min and max depth, km,  for plotting")
+    public void setDepthMinMax(double[] minMax) {
+        if (minMax.length == 2) {
+            setDepthMinMax(minMax[0], minMax[1]);
+        } else {
+            throw new IllegalArgumentException("Min max must have 2 values, but given: "+minMax.length);
+        }
+    }
+
     public void setDepthMinMax(double min, double max) {
         if (min < max) {
             depthAxisMinMax = new double[]{min, max};

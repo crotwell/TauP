@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Reader;
+import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.Callable;
 
@@ -73,6 +74,9 @@ public abstract class TauP_Tool implements Callable<Integer> {
     @CommandLine.Option(names = {"--help"}, usageHelp = true, description = "display this help message")
     boolean usageHelpRequested;
 
+    public List<String> getCmdLineArgs() {
+        return spec.commandLine().getParseResult().expandedArgs();
+    }
     public String[] cmdLineArgs = new String[0];
 
     protected Properties toolProps;
@@ -116,14 +120,8 @@ public abstract class TauP_Tool implements Callable<Integer> {
         abstractOutputTypeArgs.setOutFileExtension(outFileExtension);
     }
 
-    public static void endGmtAndCleanUp(PrintWriter out, String psFile, String projectionType) {
-        out.println("# end postscript"); 
-        out.println("gmt psxy -J"+projectionType+" -R -m -O -T  >> " + psFile);
-        out.println("# convert ps to pdf, clean up .ps file"); 
-        out.println("gmt psconvert -P -Tf  " + psFile+" && rm " + psFile);
-        
-        out.println("# clean up after gmt...");
-        out.println("rm gmt.history");
+    public static void endGmtAndCleanUp(PrintWriter out) {
+        out.println("gmt end ");
     }
 
     @CommandLine.Option(names = "--prop", description = "load defaults from properties file")

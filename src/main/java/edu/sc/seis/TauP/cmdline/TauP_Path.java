@@ -170,8 +170,8 @@ public class TauP_Path extends TauP_AbstractRayTool {
 			printResultJSON(out, arrivalList);
 		} else if (getOutputFormat().equals(OutputTypes.SVG)) {
 			float pixelWidth = (72.0f * getGraphicOutputTypeArgs().mapwidth);
-			printScriptBeginningSVG(out, arrivalList, pixelWidth, distDepthRange, modelArgs, cmdLineArgs);
-			if (coloring.getColor() == ColorType.auto){
+			printScriptBeginningSVG(out, arrivalList, pixelWidth, distDepthRange, modelArgs, getCmdLineArgs());
+			if (coloring.getColoring() == ColorType.auto){
 				SvgUtil.startAutocolorG(out);
 			}
 			for (Arrival arrival : arrivalList) {
@@ -187,7 +187,7 @@ public class TauP_Path extends TauP_AbstractRayTool {
 				}
 				out.println("</g>");
 			}
-			if (coloring.getColor() == ColorType.auto) {
+			if (coloring.getColoring() == ColorType.auto) {
 				SvgUtil.endAutocolorG(out);
 			}
 			labelPathsSVG(out, arrivalList);
@@ -195,31 +195,34 @@ public class TauP_Path extends TauP_AbstractRayTool {
 		} else {
 			// text/gmt
 			if (getGraphicOutputTypeArgs().isGMT()) {
-				SvgEarth.printGmtScriptBeginning(out, outputTypeArgs.getPsFile(),
+				SvgEarth.printGmtScriptBeginning(out, outputTypeArgs.getOutFileBase(),
 						modelArgs.depthCorrected(), outputTypeArgs.mapwidth,
-						outputTypeArgs.mapWidthUnit, onlyNamedDiscon);
-				if (coloring.getColor() != ColorType.wavetype) {
-					out.write("gmt psxy -P -R -K -O -JP -m -A >> " + outputTypeArgs.getPsFile() + " <<END\n");
+						outputTypeArgs.mapWidthUnit, onlyNamedDiscon,
+						toolNameFromClass(this.getClass()), getCmdLineArgs());
+				if (coloring.getColoring() != ColorType.wavetype) {
+					out.write("gmt plot -A <<END\n");
 				}
 			}
 			for (Arrival arrival : arrivalList) {
 				for (ArrivalPathSegment seg : arrival.getPathSegments()) {
 					ArrivalPathSegment interpSeg = ArrivalPathSegment.linearInterpPath(seg, maxPathInc, maxPathTime);
-					if (coloring.getColor() == ColorType.wavetype) {
+					if (coloring.getColoring() == ColorType.wavetype) {
 						String colorArg = "-W"+(interpSeg.isPWave() ?"blue":"red")+" ";
-						out.write("gmt psxy -P -R -K -O -JP "+colorArg+" -m -A >> " + outputTypeArgs.getPsFile() + " <<END\n");
+						out.write("gmt plot "+colorArg+" -A  <<END\n");
 					}
 					interpSeg.writeGMTText(out, distDepthRange, Outputs.distanceFormat, Outputs.depthFormat, withTime);
-					if (coloring.getColor() == ColorType.wavetype) {
+					if (coloring.getColoring() == ColorType.wavetype) {
 						out.println("END");
 					}
 				}
 			}
 			if (getGraphicOutputTypeArgs().isGMT()) {
-				if (coloring.getColor() != ColorType.wavetype) {
+				if (coloring.getColoring() != ColorType.wavetype) {
 					out.write("END\n");
 				}
 				printLabelsGMT(out, arrivalList);
+				out.println("# end postscript");
+				out.println("gmt end ");
 			}
 		}
 		out.flush();
@@ -230,7 +233,7 @@ public class TauP_Path extends TauP_AbstractRayTool {
 		// label paths with phase name
 
 		if (getGraphicOutputTypeArgs().isGMT()) {
-			out.write("gmt pstext -JP -P -R  -O -K >> " + getGraphicOutputTypeArgs().getPsFile() + " <<ENDLABELS\n");
+			out.write("gmt text -F+f+a+j <<ENDLABELS\n");
 		}
 
 		if (getGraphicOutputTypeArgs().isGMT()) {
@@ -243,8 +246,7 @@ public class TauP_Path extends TauP_AbstractRayTool {
                 double radius = radiusOfEarth - calcDepth;
                 if (getGraphicOutputTypeArgs().isGMT()) {
                     SvgEarth.printDistRadius(out, calcDist, radius);
-                    out.write(" 10 0 0 9 "
-                            + currArrival.getName() + "\n");
+                    out.write(" 10 0 MR "+ currArrival.getName() + "\n");
                 }
             }
 		}
@@ -252,14 +254,6 @@ public class TauP_Path extends TauP_AbstractRayTool {
 			out.write("ENDLABELS\n");
 		}
 
-		if (getGraphicOutputTypeArgs().isGMT()) {
-			out.println("# end postscript");
-			out.println("gmt psxy -P -R -O -JP -m -A -T  >> " + getGraphicOutputTypeArgs().getPsFile());
-			out.println("# convert ps to pdf, clean up .ps file");
-			out.println("gmt psconvert -P -Tf  " + getGraphicOutputTypeArgs().getPsFile()+" && rm " + getGraphicOutputTypeArgs().getPsFile());
-			out.println("# clean up after gmt...");
-			out.println("rm gmt.history");
-		}
 	}
 
 	public void labelPathsSVG(PrintWriter out, List<Arrival> arrivalList) {
@@ -300,7 +294,7 @@ public class TauP_Path extends TauP_AbstractRayTool {
 										float pixelWidth,
 										DistDepthRange distDepthRange,
 										ModelArgs modelArgs,
-										String[] cmdLineArgs) throws TauModelException {
+										List<String> cmdLineArgs) throws TauModelException {
 
 		TauModel tMod = modelArgs.depthCorrected();
 		SvgEarthScaling scaleTrans = calcEarthScaleTrans(arrivalList, distDepthRange);
@@ -308,31 +302,21 @@ public class TauP_Path extends TauP_AbstractRayTool {
 
 		List<PhaseName> phaseNameList = parsePhaseNameList();
 		extraCSS+=createSurfaceWaveCSS(phaseNameList)+"\n";
-		if (coloring.getColor() == ColorType.phase) {
+		if (coloring.getColoring() == ColorType.phase) {
 			StringBuffer cssPhaseColors = SvgUtil.createPhaseColorCSS(phaseNameList);
 			extraCSS += cssPhaseColors;
-		} else if (coloring.getColor() == ColorType.wavetype) {
-			String cssWaveTypeColors = SvgUtil.createWaveTypeColorCSS();
+		} else if (coloring.getColoring() == ColorType.wavetype) {
+			String cssWaveTypeColors = SvgUtil.createWaveTypeColorCSS(coloring);
 			extraCSS += cssWaveTypeColors;
 		} else {
 			// autocolor?
 		}
 		SvgEarth.printScriptBeginningSvg(out, tMod, pixelWidth, scaleTrans, toolNameFromClass(this.getClass()), cmdLineArgs, extraCSS);
-		if (coloring.getColor() == ColorType.phase) {
+		if (coloring.getColoring() == ColorType.phase) {
 			SvgUtil.createPhaseLegend(out, getSeismicPhases(), "",  (int)(pixelWidth*.9), (int) (pixelWidth*.05));
 		}
 
 		SvgEarth.printModelAsSVG(out, tMod, pixelWidth, scaleTrans, onlyNamedDiscon);
-	}
-
-
-	public String getLimitUsage() {
-		return "--first            -- only output the first arrival for each phase, no triplications\n"
-				+"--withtime        -- include time for each path point\n"
-				+"--gmt             -- outputs path as a complete GMT script.\n"
-				+"--svg             -- outputs path as a complete SVG file.\n"
-				+"--mapwidth        -- sets map width for GMT script.\n"
-				;
 	}
 
 	@Override

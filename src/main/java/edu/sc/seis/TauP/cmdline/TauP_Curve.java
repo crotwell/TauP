@@ -84,11 +84,11 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
         List<XYPlottingData> out = new ArrayList<>();
         for (SeismicPhase phase: phaseList) {
             String phaseDesc = xAxisType+"/"+yAxisType+" "+phase.getName()+" for a source depth of "+modelArgs.getSourceDepth()+" kilometers in the "+modelArgs.getModelName()+" model";
-            String p_or_s = "both_p_swave";
+            String p_or_s = ColoringArgs.BOTH_PSWAVE;
             if (phase.isAllSWave()) {
-                p_or_s = "swave";
+                p_or_s = ColoringArgs.SWAVE;
             } else if (phase.isAllPWave()) {
-                p_or_s = "pwave";
+                p_or_s = ColoringArgs.PWAVE;
             }
             boolean ensure180 = (xAxisType==AxisType.degree180 || yAxisType==AxisType.degree180
                     || xAxisType==AxisType.radian180 || yAxisType==AxisType.radian180);
@@ -404,6 +404,7 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
 
     public void printResult(PrintWriter writer, List<XYPlottingData> xyPlots) throws TauPException {
         XYPlotOutput xyOut = new XYPlotOutput(xyPlots, modelArgs);
+        xyOut.setColoringArgs(coloring);
         List<PhaseName> phaseNameList = parsePhaseNameList();
         xyOut.setPhaseNames(phaseNameList);
         xyOut.setxAxisMinMax(xAxisMinMax);
@@ -416,16 +417,16 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
         } else if (outputTypeArgs.isText()) {
             xyOut.printAsGmtText(writer);
         } else if (outputTypeArgs.isGMT()) {
-            xyOut.printAsGmtScript(writer, outputTypeArgs, isLegend);
+            xyOut.printAsGmtScript(writer, toolNameFromClass(this.getClass()), getCmdLineArgs(), outputTypeArgs, isLegend);
         } else if (outputTypeArgs.isSVG()) {
             String cssExtra = "";
-            if (coloring.getColor() == ColorType.phase) {
+            if (coloring.getColoring() == ColorType.phase) {
                 cssExtra += SvgUtil.createPhaseColorCSS(phaseNameList);
-            } else if (coloring.getColor() == ColorType.wavetype) {
-                cssExtra += SvgUtil.createWaveTypeColorCSS();
+            } else if (coloring.getColoring() == ColorType.wavetype) {
+                cssExtra += SvgUtil.createWaveTypeColorCSS(coloring);
             } else {
             }
-            xyOut.printAsSvg(writer, cmdLineArgs,
+            xyOut.printAsSvg(writer, toolNameFromClass(this.getClass()), getCmdLineArgs(),
                     (isxAxisLog()?"Log ":"")+axisLabel(xAxisType),
                     (isyAxisLog()?"Log ":"")+axisLabel(yAxisType), cssExtra, isLegend);
         } else {

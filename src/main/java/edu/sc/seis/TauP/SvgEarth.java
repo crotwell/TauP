@@ -29,7 +29,7 @@ public class SvgEarth {
             maxDist = (float) Math.PI;
             scaleTrans = new float[]{1, 0, 0, minDist, maxDist};
             scaling = new SvgEarthScaling(R);
-        } else if (distDepthRange.hasDistAxisMinMax() && distDepthRange.hasDistAxisMinMax()) {
+        } else if (distDepthRange.hasDistAxisMinMax() && distDepthRange.hasDepthAxisMinMax()) {
             // user specified box
             double[] bbox = SvgEarth.findPierceBoundingBox(distDepthRange.getDistAxisMinMax(), distDepthRange.getDepthAxisMinMax(), R);
             scaling = new SvgEarthScaling(bbox, R);
@@ -100,7 +100,7 @@ public class SvgEarth {
         if (arrivalList.isEmpty() && ! distDepthRange.hasDistAxisMinMax() && ! distDepthRange.hasDepthAxisMinMax()) {
             // no arrivals, show whole earth
             scaling = new SvgEarthScaling(R);
-        } else if (distDepthRange.hasDistAxisMinMax() && distDepthRange.hasDistAxisMinMax()) {
+        } else if (distDepthRange.hasDistAxisMinMax() && distDepthRange.hasDepthAxisMinMax()) {
             // user specified box
             double[] bbox = SvgEarth.findPierceBoundingBox(distDepthRange.getDistAxisMinMax(), distDepthRange.getDepthAxisMinMax(), R);
             scaling = new SvgEarthScaling(bbox, R);
@@ -435,19 +435,17 @@ public class SvgEarth {
     }
 
     public static void printGmtScriptBeginning(PrintWriter out, String psFile, TauModel tMod,
-                                               float mapWidth, String mapWidthUnit, boolean onlyNamedDiscon) {
-        out.println("#!/bin/sh");
-        out.println("#\n# This script will plot ray paths using GMT. If you want to\n"
-        + "#use this as a data file for psxy in another script, delete these"
-        + "\n# first lines, to the last psxy, as well as the last line.\n#");
-        out.println("/bin/rm -f " + psFile);
+                                               float mapWidth, String mapWidthUnit, boolean onlyNamedDiscon,
+                                               String toolName, List<String> cmdLineArgs) {
+        out.println("#!/usr/bin/env bash");
+        SvgUtil.taupMetadataGMT(out, toolName, cmdLineArgs, null);
+        out.println("gmt begin "+psFile);
         out.println("# draw surface and label distances.\n"
-        + "gmt psbasemap -K -P -R0/360/0/"+tMod.getRadiusOfEarth()+" -JP" + mapWidth + mapWidthUnit
-        + " -Bx30  > " + psFile);
+        + "gmt basemap -R0/360/0/"+tMod.getRadiusOfEarth()+" -JP" + mapWidth + mapWidthUnit
+        + " -Bx30  ");
         out.println("# draw circles for branches, note these are scaled for a \n"
         + "# map using -JP" + mapWidth + mapWidthUnit + "\n"
-        + "gmt psxy -K -O -P -R -JP -Sc -A >> " + psFile
-        + " <<ENDLAYERS");
+        + "gmt plot  -Sc -A  <<ENDLAYERS");
         // whole earth radius (scales to mapWidth)
         out.println("0.0 0.0 " + mapWidth + mapWidthUnit);
         // other boundaries
@@ -466,7 +464,7 @@ public class SvgEarth {
     }
 
     public static void printScriptBeginningSvg(PrintWriter out, TauModel tMod, float pixelWidth,
-                                               SvgEarthScaling scaleTrans, String toolName, String[] cmdLineArgs, String extraCSS) {
+                                               SvgEarthScaling scaleTrans, String toolName, List<String> cmdLineArgs, String extraCSS) {
         float zoomScale = scaleTrans.getZoomScale();
         int plotOffset = 0;
         float R = (float) tMod.getRadiusOfEarth();

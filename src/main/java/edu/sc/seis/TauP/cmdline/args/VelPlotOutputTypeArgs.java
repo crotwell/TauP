@@ -12,6 +12,15 @@ public class VelPlotOutputTypeArgs extends AbstractOutputTypeArgs {
         setOutputFormat(defaultFormat);
     }
 
+    /**
+     * Remap from this to GraphicOutputTypeArgs due to issue with inheritence and picocli. Needed mainly for GMT
+     * output.
+     */
+    public GraphicOutputTypeArgs asGraphicOutputTypeArgs() {
+        GraphicOutputTypeArgs out = new GraphicOutputTypeArgs(getOutputFormat(), getOutFileBase());
+        return out;
+    }
+
     @Override
     public String getOutputFormat() {
 

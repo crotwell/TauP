@@ -1,6 +1,8 @@
 package edu.sc.seis.TauP;
 
 import edu.sc.seis.TauP.cmdline.TauP_Tool;
+import edu.sc.seis.TauP.cmdline.args.ColorType;
+import edu.sc.seis.TauP.cmdline.args.ColoringArgs;
 import edu.sc.seis.TauP.cmdline.args.GraphicOutputTypeArgs;
 import edu.sc.seis.TauP.cmdline.args.ModelArgs;
 import org.json.JSONArray;
@@ -8,12 +10,12 @@ import org.json.JSONObject;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
 import static edu.sc.seis.TauP.AxisType.*;
 import static edu.sc.seis.TauP.cmdline.TauP_AbstractPhaseTool.baseResultAsJSONObject;
-import static edu.sc.seis.TauP.cmdline.TauP_Tool.toolNameFromClass;
 
 public class XYPlotOutput {
 
@@ -100,24 +102,48 @@ public class XYPlotOutput {
     }
 
     public void printAsGmtScript(PrintWriter writer,
+                                 String toolname, List<String> cmdLineArgs,
                                  GraphicOutputTypeArgs outputTypeArgs,
                                  boolean isLegend) {
-        String projection = "X";
-        printGmtScriptBeginning(writer, outputTypeArgs, isLegend);
-        printAsGmtText(writer);
-        writer.println("END");
-        TauP_Tool.endGmtAndCleanUp(writer, outputTypeArgs.getPsFile(), projection);
+        printGmtScriptBeginning(writer, toolname, cmdLineArgs, outputTypeArgs);
+        int idx = 0;
+        for (XYPlottingData xyplotItem : xyPlots) {
+            String lineColor = "";
+            if (coloringArgs.getColoring() == ColorType.auto || coloringArgs.getColoring() == ColorType.phase) {
+                lineColor = "-W,"+SvgUtil.colorForIndex(idx);
+            } else if (coloringArgs.getColoring() == ColorType.wavetype) {
+                HashMap<String, String> colorMap = coloringArgs.getWavetypeColors();
+                for (String colorval : colorMap.keySet()) {
+                    if (xyplotItem.cssClasses.contains(colorval)) {
+                        lineColor= "-W,"+colorMap.get(colorval);
+                        break;
+                    }
+                }
+            } else if (coloringArgs.getColoring() == ColorType.none) {
+                lineColor= "-W,black";
+            }
+
+            writer.println("# "+xyplotItem.label);
+            // +" -lxxx"+xyplotItem.label
+            writer.println("gmt plot "+" -l"+xyplotItem.label+" "+lineColor+" <<END");
+            xyplotItem.asGMT(writer);
+            writer.println("END");
+            writer.println("# "+xyplotItem.label);
+            idx++;
+        }
+        if (isLegend) {
+            printGmtScriptLegend(writer);
+        }
+        TauP_Tool.endGmtAndCleanUp(writer);
     }
 
     public void printGmtScriptBeginning(PrintWriter writer,
-                                        GraphicOutputTypeArgs outputTypeArgs,
-                                        boolean isLegend) {
-        String psFile = outputTypeArgs.getPsFile();
-        writer.println("#!/bin/sh");
-        writer.println("#\n# This script will plot curves using GMT. If you want to\n"
-                + "#use this as a data file for psxy in another script, delete these"
-                + "\n# first lines, as well as the last line.\n#");
-        writer.println("/bin/rm -f " + psFile + "\n");
+                                        String toolname, List<String> cmdLineArgs,
+                                        GraphicOutputTypeArgs outputTypeArgs) {
+        String psFile = outputTypeArgs.getOutFileBase();
+        writer.println("#!/usr/bin/env bash");
+        SvgUtil.taupMetadataGMT(writer, toolname, cmdLineArgs, null);
+        writer.println("gmt begin " + psFile + "\n");
         double[] minmax = calcMinMax();
         ArrayList<Double> xTicks = PlotTicks.getTicks(minmax[0], minmax[1], numXTicks, false);
         double xTickStep = xTicks.size()>1 ? xTicks.get(1) - xTicks.get(0) : 1;
@@ -131,19 +157,13 @@ public class XYPlotOutput {
         if (!getYLabel().isEmpty()) {
             yLabelParam += "+l'"+getYLabel()+"'";
         }
-        writer.println("gmt psbasemap -JX" + outputTypeArgs.mapwidth + outputTypeArgs.mapWidthUnit + " -P -R"+minmax[0]+"/"+minmax[1]+"/" + minmax[2] + "/" + minmax[3]
-                + xLabelParam+yLabelParam+" -BWSne+t'" + getTitle() + "' -K > " + psFile);
-        if (isLegend) {
-            printGmtScriptLegend(writer, psFile);
-        }
-        writer.println("gmt psxy -JX -R -m -O -K >> " + psFile + " <<END");
+        writer.println("gmt basemap -JX" + outputTypeArgs.mapwidth + outputTypeArgs.mapWidthUnit + " -R"+minmax[0]+"/"+minmax[1]+"/" + minmax[2] + "/" + minmax[3]
+                + xLabelParam+yLabelParam+" -BWSne+t'" + getTitle() + "' " );
 
     }
 
-    public void printGmtScriptLegend(PrintWriter writer, String psFile) {
-        writer.println("gmt pstext -JX -P -R  -O -K >> " + psFile + " <<END");
-        //writer.print(scriptStuff);
-        writer.println("END\n");
+    public void printGmtScriptLegend(PrintWriter writer) {
+        writer.println("gmt legend -DjTL+o0.25i -Mh -F ");
     }
 
     public void printAsGmtText(PrintWriter writer) {
@@ -181,19 +201,19 @@ public class XYPlotOutput {
 
 
 
-    public void printAsHtml(PrintWriter writer, String[] cmdLineArgs, String xAxisType, String yAxisType, String extraCSS, boolean isLegend) {
+    public void printAsHtml(PrintWriter writer, String toolname, List<String> cmdLineArgs, String xAxisType, String yAxisType, String extraCSS, boolean isLegend) {
         writer.println("<!DOCTYPE html>");
         writer.println("<html><body>");
-        printAsSvg(writer, cmdLineArgs, xAxisType, yAxisType, extraCSS, isLegend);
+        printAsSvg(writer, toolname, cmdLineArgs, xAxisType, yAxisType, extraCSS, isLegend);
         writer.println("</body></html>");
     }
 
-    public void printAsSvg(PrintWriter writer, String[] cmdLineArgs, String xAxisType, String yAxisType, String extraCSS, boolean isLegend) {
+    public void printAsSvg(PrintWriter writer, String toolname, List<String> cmdLineArgs, String xAxisType, String yAxisType, String extraCSS, boolean isLegend) {
 
         int margin = 80;
         int pixelWidth = 600+margin;//Math.round(72*mapWidth);
         double[] minmax = calcMinMax();
-        SvgUtil.xyplotScriptBeginning(writer, toolNameFromClass(this.getClass()),
+        SvgUtil.xyplotScriptBeginning(writer, toolname,
             cmdLineArgs,  pixelWidth, margin, extraCSS, minmax);
 
         float plotWidth = pixelWidth - 2*margin;
@@ -230,7 +250,7 @@ public class XYPlotOutput {
 
         writer.println("<g transform=\"scale(" + (plotWidth / (minmax[1]-minmax[0])) + "," + ( plotWidth / (minmax[3]-minmax[2])) + ")\" >");
         writer.println("<g transform=\"translate("+(-1*xtrans)+", "+(-1*ytrans)+")\">");
-        if (autoColor) {
+        if (coloringArgs.getColoring() == ColorType.auto) {
             writer.println("    <g class=\"autocolor\">");
         }
         for (XYPlottingData xyplotItem : xyPlots) {
@@ -243,7 +263,7 @@ public class XYPlotOutput {
             }
         }
 
-        if (autoColor) {
+        if (coloringArgs.getColoring() == ColorType.auto) {
             writer.println("    </g> <!-- end autocolor g -->");
         }
 
@@ -267,7 +287,8 @@ public class XYPlotOutput {
                 labelClasses.add(xyp.label);
             }
 
-            SvgUtil.createLegend(writer, labels, labelClasses, autoColor ? "autocolor" : "", (int) (plotWidth * .1), (int) (plotWidth * .1));
+            String autocolorStr = coloringArgs.getColoring() == ColorType.auto ? "autocolor" : "";
+            SvgUtil.createLegend(writer, labels, labelClasses, autocolorStr , (int) (plotWidth * .1), (int) (plotWidth * .1));
         }
         writer.println("</svg>");
     }
@@ -343,16 +364,24 @@ public class XYPlotOutput {
         XYPlotOutput out = new XYPlotOutput(convXYPlotList, modelArgs);
         out.setPhaseNames(phaseNames);
         out.title = title;
-        out.autoColor = autoColor;
+        out.coloringArgs = coloringArgs;
         return out;
     }
 
     public boolean isAutoColor() {
-        return autoColor;
+        return coloringArgs.getColoring() == ColorType.auto;
     }
 
     public void setAutoColor(boolean autoColor) {
-        this.autoColor = autoColor;
+        coloringArgs.setColoring(ColorType.auto);
+    }
+
+    public ColoringArgs getColoringArgs() {
+        return coloringArgs;
+    }
+
+    public void setColoringArgs(ColoringArgs ca) {
+        coloringArgs = ca;
     }
 
     public int getNumXTicks() {
@@ -393,7 +422,7 @@ public class XYPlotOutput {
 
     String title = null;
 
-    boolean autoColor = true;
+    ColoringArgs coloringArgs = new ColoringArgs();
 
     int numXTicks = 8;
     int numYTicks = 8;

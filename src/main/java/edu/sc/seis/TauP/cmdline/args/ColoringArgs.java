@@ -2,9 +2,11 @@ package edu.sc.seis.TauP.cmdline.args;
 
 import picocli.CommandLine;
 
+import java.util.HashMap;
+
 public class ColoringArgs {
 
-    public ColorType getColor() {
+    public ColorType getColoring() {
         return color;
     }
 
@@ -15,6 +17,18 @@ public class ColoringArgs {
         this.color = color;
     }
 
+    public HashMap<String, String> getWavetypeColors() {
+        HashMap<String, String> colors = new HashMap<>();
+        colors.put(PWAVE, "blue");
+        colors.put(SWAVE, "red");
+        colors.put(BOTH_PSWAVE, "green");
+        return colors;
+    }
+
     ColorType color = ColorType.auto;
+
+    public static final String PWAVE = "pwave";
+    public static final String SWAVE = "swave";
+    public static final String BOTH_PSWAVE = "both_p_swave";
 
 }

@@ -158,15 +158,18 @@ public class TauP_VelocityPlot extends TauP_Tool {
             xyOut.printAsJSON(writer, 2);
         } else if (getOutputTypeArgs().isText()) {
             xyOut.printAsGmtText(writer);
-        } else if (getOutputFormat().equalsIgnoreCase(OutputTypes.GMT)) {
-            throw new RuntimeException("temporary disable GMT output");
-//            xyOut.printAsGmtScript(writer, outputTypeArgs, isLegend);
+
+        } else if (getOutputTypeArgs().isGMT()) {
+            xyOut.printAsGmtScript(writer, toolNameFromClass(this.getClass()), getCmdLineArgs(),
+                    getOutputTypeArgs().asGraphicOutputTypeArgs(), isLegend);
         } else if (getOutputTypeArgs().isSVG()) {
             if (yAxisType == ModelAxisType.depth) {
                 xyOut.setyAxisInvert(true);
             }
-            xyOut.printAsSvg(writer, cmdLineArgs, ModelAxisType.labelFor(xAxisType), ModelAxisType.labelFor(yAxisType),
-                    SvgUtil.createWaveTypeColorCSS(), isLegend);
+            ColoringArgs coloringArgs = new ColoringArgs(); // velplot always uses default
+            xyOut.printAsSvg(writer, toolNameFromClass(this.getClass()), getCmdLineArgs(),
+                    ModelAxisType.labelFor(xAxisType), ModelAxisType.labelFor(yAxisType),
+                    SvgUtil.createWaveTypeColorCSS(coloringArgs), isLegend);
         } else {
             throw new IllegalArgumentException("Unknown output format: " + getOutputFormat());
         }
