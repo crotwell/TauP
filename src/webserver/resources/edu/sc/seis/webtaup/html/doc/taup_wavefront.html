@@ -150,7 +150,7 @@ have GMT installed, you can just:</p>
      >
   <metadata>
     <taup>
-      <command>taup wavefront </command>
+      <command>taup wavefront &#45;&#45;mod iasp91 -h 550 -p s,S,ScS,sS,sScS &#45;&#45;color wavetype &#45;&#45;svg -o stdout </command>
       <version>3.0.0-SNAPSHOT5</version>
       <a href="https://github.com/crotwell/TauP">https://github.com/crotwell/TauP</a>
     </taup>
@@ -8862,8 +8862,8 @@ more pleasing display.</p>
                       [--color=&lt;coloring&gt;] [--mapwidth=&lt;mapwidth&gt;]
                       [--mapwidthunit=&lt;mapWidthUnit&gt;] [-o=&lt;outFile&gt;]
                       [--prop=&lt;toolPropsFilename&gt;] [--timestep=&lt;timeStep&gt;]
-                      [--xaxis=type] [--yaxis=type] [--degminmax=deg deg]
-                      [--depthminmax=km km] [[-h=depth] [--mod=&lt;modelname&gt;]
+                      [--xaxis=type] [--yaxis=type] [--degminmax=deg deg]...
+                      [--depthminmax=km km]... [[-h=depth] [--mod=&lt;modelname&gt;]
                       [--stadepth=depth] [--scat=s s]...] [[-p=phase[,
                       phase...]]... [--phasefile=&lt;phaseFiles&gt;]...] [--gmt |
                       --json | --svg | --text]
@@ -8872,7 +8872,7 @@ Plot wavefronts of seismic phases at steps in time.
 Options:
 
       --color=&lt;coloring&gt;    style of coloring for paths and wavefronts, one of:
-                              auto, wavetype, phase
+                              auto, wavetype, phase, none
       --debug               enable debugging output
       --degminmax=deg deg   min and max distance in degrees for plotting
       --depthminmax=km km   min and max depth, km,  for plotting

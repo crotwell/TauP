@@ -3,7 +3,7 @@
      >
   <metadata>
     <taup>
-      <command>taup wavefront </command>
+      <command>taup wavefront -o stdout &#45;&#45;mod ak135 &#45;&#45;svg -h 10 -p P,S,PedOP &#45;&#45;scatter 200 -5 &#45;&#45;timestep 25 &#45;&#45;color wavetype </command>
       <version>3.0.0-SNAPSHOT5</version>
       <a href="https://github.com/crotwell/TauP">https://github.com/crotwell/TauP</a>
     </taup>

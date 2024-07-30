@@ -128,7 +128,7 @@ public class XYPlotOutput {
             writer.println("gmt plot "+" -l"+xyplotItem.label+" "+lineColor+" <<END");
             xyplotItem.asGMT(writer);
             writer.println("END");
-            writer.println("# "+xyplotItem.label);
+            writer.println("# end of "+xyplotItem.label);
             idx++;
         }
         if (isLegend) {

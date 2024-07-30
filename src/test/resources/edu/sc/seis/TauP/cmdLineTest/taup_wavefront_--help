@@ -3,8 +3,8 @@ Usage: taup wavefront [--debug] [--help] [--legend] [--negdist]
                       [--color=<coloring>] [--mapwidth=<mapwidth>]
                       [--mapwidthunit=<mapWidthUnit>] [-o=<outFile>]
                       [--prop=<toolPropsFilename>] [--timestep=<timeStep>]
-                      [--xaxis=type] [--yaxis=type] [--degminmax=deg deg]
-                      [--depthminmax=km km] [[-h=depth] [--mod=<modelname>]
+                      [--xaxis=type] [--yaxis=type] [--degminmax=deg deg]...
+                      [--depthminmax=km km]... [[-h=depth] [--mod=<modelname>]
                       [--stadepth=depth] [--scat=s s]...] [[-p=phase[,
                       phase...]]... [--phasefile=<phaseFiles>]...] [--gmt |
                       --json | --svg | --text]
@@ -13,7 +13,7 @@ Plot wavefronts of seismic phases at steps in time.
 Options:
 
       --color=<coloring>    style of coloring for paths and wavefronts, one of:
-                              auto, wavetype, phase
+                              auto, wavetype, phase, none
       --debug               enable debugging output
       --degminmax=deg deg   min and max distance in degrees for plotting
       --depthminmax=km km   min and max depth, km,  for plotting

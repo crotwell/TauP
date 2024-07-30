@@ -93,7 +93,7 @@ public class CmdLineOutputTest {
             "taup velplot -o stdout --mod ak135 --yminmax 0 700 --svg",
             "taup velplot -o stdout --mod ak135 --csv",
             "taup velplot -o stdout --mod ak135 --text",
-            //"taup velplot -o stdout --mod ak135 --gmt",
+            "taup velplot -o stdout --mod ak135 --gmt",
             "taup velplot -o stdout --mod ak135 --json",
             "taup velplot -o stdout --mod ak135 --svg ",
             "taup velplot -o stdout --mod ak135 --svg -x poisson",
