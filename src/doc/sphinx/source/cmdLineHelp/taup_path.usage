@@ -5,10 +5,10 @@ Usage: taup path [--debug] [--geodetic] [--geodetic] [--help]
                  [--ellipflattening=f] [--mapwidth=<mapwidth>]
                  [--mapwidthunit=<mapWidthUnit>] [--maxpathinc=<maxPathInc>]
                  [-o=<outFile>] [--prop=<toolPropsFilename>] [--xaxis=type]
-                 [--yaxis=type] [--degminmax=deg deg] [--depthminmax=km km]
-                 [--evt=l l]... [--evt=l l]... [--sta=l l]... [--sta=l l]...
-                 [[-h=depth] [--mod=<modelname>] [--stadepth=depth] [--scat=s
-                 s]...] [[-p=phase[,phase...]]...
+                 [--yaxis=type] [--degminmax=deg deg]... [--depthminmax=km
+                 km]... [--evt=l l]... [--evt=l l]... [--sta=l l]... [--sta=l
+                 l]... [[-h=depth] [--mod=<modelname>] [--stadepth=depth]
+                 [--scat=s s]...] [[-p=phase[,phase...]]...
                  [--phasefile=<phaseFiles>]...] [[--deg=d[,d...]]...
                  [--exactdegree=d[,d...]]... [--exactkilometer=km[,km...]]...
                  [--km=km[,km...]]... [--rayparamdeg=s/deg[,s/deg...]]...
@@ -20,7 +20,7 @@ Plot ray paths, distance vs. depth, through the earth.
 Options:
 
       --color=<coloring>     style of coloring for paths and wavefronts, one
-                               of: auto, wavetype, phase
+                               of: auto, wavetype, phase, none
       --debug                enable debugging output
       --degminmax=deg deg    min and max distance in degrees for plotting
       --depthminmax=km km    min and max depth, km,  for plotting

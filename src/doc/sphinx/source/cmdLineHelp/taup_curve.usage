@@ -12,7 +12,7 @@ Plot travel time vs. distance and other curves for seismic phases.
 Options:
 
       --color=<coloring>   style of coloring for paths and wavefronts, one of:
-                             auto, wavetype, phase
+                             auto, wavetype, phase, none
       --debug              enable debugging output
       --help               display this help message
       --legend             create a legend
