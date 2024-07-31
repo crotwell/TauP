@@ -49,32 +49,20 @@ import static edu.sc.seis.TauP.cmdline.TauP_Tool.ABREV_SYNOPSIS;
 import static edu.sc.seis.TauP.cmdline.TauP_Tool.OPTIONS_HEADING;
 import static edu.sc.seis.TauP.cmdline.args.OutputTypes.MS3;
 
-/**
- * TauP_WKBJ.java
- * 
- * 
- * 
- * 
- * @author Philip Crotwell
- * @version 1.1.3 Wed Jul 18 15:00:35 GMT 2001
- * 
- * 
- * 
- */
 @CommandLine.Command(name = "spikes",
         description = "Calculate spike seismograms",
         optionListHeading = OPTIONS_HEADING,
         abbreviateSynopsis = ABREV_SYNOPSIS,
         usageHelpAutoWidth = true)
-public class TauP_WKBJ extends TauP_AbstractRayTool {
+public class TauP_Spikes extends TauP_AbstractRayTool {
 
     /**
      * deltaT of the seismogram, default is .05 which gives 20 sps.
      */
     protected double deltaT = .05;
 
-    public TauP_WKBJ() {
-        super(new SeismogramOutputTypeArgs(MS3, "taup_wkbj"));
+    public TauP_Spikes() {
+        super(new SeismogramOutputTypeArgs(MS3, "taup_spikes"));
         outputTypeArgs = (SeismogramOutputTypeArgs) abstractOutputTypeArgs;
     }
 
@@ -101,7 +89,7 @@ public class TauP_WKBJ extends TauP_AbstractRayTool {
     public void validateArguments() throws TauPException {
         super.validateArguments();
         if (!getOutputFormat().equals(MS3)) {
-            throw new CommandLine.ParameterException(spec.commandLine(), "Unsported Output Format: "+getOutputFormat());
+            throw new CommandLine.ParameterException(spec.commandLine(), "Unsupported Output Format: "+getOutputFormat());
         }
     }
 
@@ -110,8 +98,6 @@ public class TauP_WKBJ extends TauP_AbstractRayTool {
         try {
 
             List<MSeed3Record> allRecords = new ArrayList<>();
-            //List<MSeed3Record> wkbjRecords = calcWKBJ(distanceArgs.getDistances());
-            //allRecords.addAll(wkbjRecords);
             List<MSeed3Record> spikeRecords = calcSpikes(distanceArgs.getDistances());
             allRecords.addAll(spikeRecords);
 
@@ -262,6 +248,12 @@ public class TauP_WKBJ extends TauP_AbstractRayTool {
     public static final int TRANS_IDX = 1;
     public static final int VERT_IDX = 2;
 
+    /**
+     * WARNING: Experimental.
+     *
+     * Probably doesn't work due to wkbj formalism is flat earth and so doesn't translate to spherical.
+     * Possible to recalculate via EFT, but not sure worth it.
+     */
     public List<MSeed3Record> calcWKBJ(List<DistanceRay> degreesList) throws TauPException {
         validateArguments();
         modelArgs.depthCorrected();
@@ -574,4 +566,4 @@ public class TauP_WKBJ extends TauP_AbstractRayTool {
 
     @CommandLine.Mixin
     SeismogramOutputTypeArgs outputTypeArgs;
-} // TauP_WKBJ
+}
