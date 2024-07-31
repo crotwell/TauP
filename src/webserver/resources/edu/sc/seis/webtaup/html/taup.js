@@ -105,7 +105,7 @@ export function valid_format(tool) {
       format = "svg";
     }
   }
-  if (tool === "wkbj") {
+  if (tool === "spikes") {
     format = "ms3";
   }
   return format;

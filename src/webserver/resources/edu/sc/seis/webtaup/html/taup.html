@@ -74,7 +74,7 @@
         <label for="prem">prem</label>
     </fieldset>
 
-    <fieldset class="phase_depth tool_time tool_pierce tool_path tool_curve tool_phase tool_find tool_wavefront tool_wkbj">
+    <fieldset class="phase_depth tool_time tool_pierce tool_path tool_curve tool_phase tool_find tool_wavefront tool_spikes">
         <legend>Phase, Source:</legend>
         <label for="phase">
             <span><a href="doc/phaseNaming.html" target="taupdocs">Phase:</a> </span>
@@ -91,7 +91,7 @@
         </label>
         <input type="number" id="stadepth" name="stadepth" value="0"  />
     </fieldset>
-    <fieldset class="tool_time tool_pierce tool_path tool_wkbj">
+    <fieldset class="tool_time tool_pierce tool_path tool_spikes">
         <legend>Distance:</legend>
         <div class="degree">
           <input type="checkbox" id="islistdist" name="islistdist" checked />
@@ -175,7 +175,7 @@
         </div>
     </fieldset>
 
-    <fieldset class="scatter tool_time tool_pierce tool_path tool_curve tool_phase  tool_wavefront tool_wkbj">
+    <fieldset class="scatter tool_time tool_pierce tool_path tool_curve tool_phase  tool_wavefront tool_spikes">
         <legend>Scattering:</legend>
         <label for="isscatter">
             <span>Scatter: </span>
@@ -192,7 +192,7 @@
         </label>
         <input type="text" id="scatdist" name="scatdist" value="0" />
     </fieldset>
-    <fieldset class="tool_time tool_curve tool_find tool_wkbj">
+    <fieldset class="tool_time tool_curve tool_find tool_spikes">
       <legend>Amplitude:</legend>
       <div>
         <label for="amplitude">
@@ -629,9 +629,9 @@
         <label for="tool_refltrans">
           <a href="doc/taup_refltrans.html" target="taupdocs">Refl Trans</a></label>
 
-        <input type="radio" name="tool" id="tool_wkbj" value="wkbj" />
-        <label for="tool_wkbj" >
-          <a href="doc/taup_wkbj.html" target="taupdocs">Spikes</a></label>
+        <input type="radio" name="tool" id="tool_spikes" value="spikes" />
+        <label for="tool_spikes" >
+          <a href="doc/taup_spikes.html" target="taupdocs">Spikes</a></label>
 
         <input type="radio" name="tool" id="tool_version" value="version" />
         <label for="tool_version">

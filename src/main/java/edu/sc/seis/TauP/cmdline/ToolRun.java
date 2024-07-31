@@ -28,7 +28,7 @@ import java.util.Arrays;
 				TauP_Wavefront.class,
 				TauP_PhaseDescribe.class,
 				TauP_Find.class,
-				TauP_WKBJ.class,
+				TauP_Spikes.class,
 				TauP_Web.class,
 				TauP_Version.class,
 				CommandLine.HelpCommand.class
@@ -52,12 +52,12 @@ public class ToolRun {
     public static String VELMERGE = "velmerge";
 	public static String WAVEFRONT = "wavefront";
 	public static String WEB = "web";
-	public static String WKBJ = "wkbj";
+	public static String SPIKES = "spikes";
 	public static String REFLTRANSPLOT = "refltrans";
 	public static String VERSION = "version";
 	
 	static String[] toolnames = { GUI, CREATE, CURVE, PATH, PHASE, FIND, PIERCE, SETSAC, SETMSEED3, SPLOT, TABLE, TIME,
-			VPLOT, VELMERGE, WAVEFRONT, REFLTRANSPLOT, WKBJ, VERSION };
+			VPLOT, VELMERGE, WAVEFRONT, REFLTRANSPLOT, SPIKES, VERSION };
 	
 	public static String getUsage() {
 		return "Usage: taup <tool> <options>\n"
@@ -130,8 +130,8 @@ public class ToolRun {
 			tool = new TauP_Wavefront();
 		} else if (toolToRun.contentEquals(REFLTRANSPLOT)) {
 			tool = new TauP_ReflTransPlot();
-		} else if (toolToRun.contentEquals(WKBJ)) {
-			tool = new TauP_WKBJ();
+		} else if (toolToRun.contentEquals(SPIKES)) {
+			tool = new TauP_Spikes();
 		} else if (toolToRun.contentEquals(VERSION)) {
 			tool = new TauP_Version();
 		}

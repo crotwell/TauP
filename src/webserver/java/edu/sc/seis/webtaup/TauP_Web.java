@@ -2,7 +2,7 @@ package edu.sc.seis.webtaup;
 
 import edu.sc.seis.TauP.*;
 import edu.sc.seis.TauP.cmdline.TauP_Tool;
-import edu.sc.seis.TauP.cmdline.TauP_WKBJ;
+import edu.sc.seis.TauP.cmdline.TauP_Spikes;
 import edu.sc.seis.TauP.cmdline.ToolRun;
 import edu.sc.seis.TauP.cmdline.args.OutputTypes;
 import edu.sc.seis.seisFile.mseed3.MSeed3Record;
@@ -305,9 +305,9 @@ public class TauP_Web extends TauP_Tool {
                 // Did user request version help (--version)?
             } else if (cmd.isVersionHelpRequested()) {
                 cmd.printVersionHelp(cmd.getOut());
-            } else if (tool instanceof TauP_WKBJ) {
+            } else if (tool instanceof TauP_Spikes) {
                 // special because output is not text
-                TauP_WKBJ wkbj = (TauP_WKBJ) tool;
+                TauP_Spikes wkbj = (TauP_Spikes) tool;
                 try {
                     wkbj.validateArguments();
                 } catch (Exception e) {

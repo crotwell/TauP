@@ -61,8 +61,8 @@ import static edu.sc.seis.TauP.cmdline.args.OutputTypes.MS3;
  * 
  * 
  */
-@CommandLine.Command(name = "wkbj",
-        description = "Calculate synthetic seismograms, DANGER: experimental!!!",
+@CommandLine.Command(name = "spikes",
+        description = "Calculate spike seismograms",
         optionListHeading = OPTIONS_HEADING,
         abbreviateSynopsis = ABREV_SYNOPSIS,
         usageHelpAutoWidth = true)
