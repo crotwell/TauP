@@ -9,9 +9,9 @@
 #
 gmt begin stdout
 
-gmt basemap -JX6.0i -R0.0/160.87334025390405/108.95337178722244/1929.8355299795362 -Bxa20.0 -Bya200.0 -BWSne+t'prem (h=500.0 km)' 
+gmt basemap -JX6.0i/6.0i -R0.0/160.87334025390405/108.95337178722244/1929.8355299795362 -Bxa20.0+l'Degrees' -Bya200.0+l'Time (s)' -BWSne+t'prem (h=500.0 km)' 
 # s
-gmt plot  -ls -W,skyblue <<END
+gmt plot  -l's' -W,skyblue <<END
 > 1/1 s degree180/time s for a source depth of 500.0 kilometers in the prem model
    10.64    264.19
     8.87    229.56
@@ -436,7 +436,7 @@ gmt plot  -ls -W,skyblue <<END
 END
 # end of s
 # S
-gmt plot  -lS -W,olivedrab <<END
+gmt plot  -l'S' -W,olivedrab <<END
 > 1/1 S degree180/time S for a source depth of 500.0 kilometers in the prem model
    10.64    264.19
    12.72    304.94
@@ -664,7 +664,7 @@ gmt plot  -lS -W,olivedrab <<END
 END
 # end of S
 # ScS
-gmt plot  -lScS -W,goldenrod <<END
+gmt plot  -l'ScS' -W,goldenrod <<END
 > 1/1 ScS degree180/time ScS for a source depth of 500.0 kilometers in the prem model
   100.87   1428.20
    97.71   1401.72
@@ -867,7 +867,7 @@ gmt plot  -lScS -W,goldenrod <<END
 END
 # end of ScS
 # Sdiff
-gmt plot  -lSdiff -W,firebrick <<END
+gmt plot  -l'Sdiff' -W,firebrick <<END
 > 1/1 Sdiff degree180/time Sdiff for a source depth of 500.0 kilometers in the prem model
   100.87   1428.20
   160.87   1929.84

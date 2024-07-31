@@ -9,9 +9,9 @@
 #
 gmt begin stdout
 
-gmt basemap -JX6.0i -R0.0/13.6602/0.0/6371.0 -Bxa1.0+l' Velocity (km/s) Velocity (km/s)' -Bya1000.0+l' Depth (km) Depth (km)' -BWSne+t'ak135' 
+gmt basemap -JX6.0i/-6.0i -R0.0/13.6602/0.0/6371.0 -Bxa1.0+l'Velocity (km/s)' -Bya1000.0+l'Depth (km)' -BWSne+t'ak135' 
 # P Vel.
-gmt plot  -lP Vel. -W,skyblue <<END
+gmt plot  -l'P Vel.' -W,blue <<END
 > 1/1 P Vel. ak135 Velocity (km/s) / Depth (km)
    5.800       0.0
    5.800      20.0
@@ -150,7 +150,7 @@ gmt plot  -lP Vel. -W,skyblue <<END
 END
 # end of P Vel.
 # S Vel.
-gmt plot  -lS Vel. -W,olivedrab <<END
+gmt plot  -l'S Vel.' -W,red <<END
 > 1/1 S Vel. ak135 Velocity (km/s) / Depth (km)
    3.460       0.0
    3.460      20.0

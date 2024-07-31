@@ -126,13 +126,15 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
             yAxisActual += " Free Surface RF,";
         }
         yAxisActual = yAxisActual.substring(0, yAxisActual.length()-1) + " Coeff.";
+        xyOut.setXLabel(DegRayParam.labelFor(xAxisType));
+        xyOut.setYLabel(yAxisActual);
         if (getOutputFormat().equalsIgnoreCase(OutputTypes.JSON)) {
             xyOut.printAsJSON(writer, 2);
         } else if (getOutputFormat().equalsIgnoreCase(OutputTypes.TEXT) || getOutputFormat().equalsIgnoreCase(OutputTypes.GMT)) {
             xyOut.printAsGmtText(writer);
         } else if (getOutputFormat().equalsIgnoreCase(OutputTypes.SVG)) {
             //String xLabel = ReflTransAxisType.labelFor(xAxisType);
-            xyOut.printAsSvg(writer, toolNameFromClass(this.getClass()), getCmdLineArgs(), DegRayParam.labelFor(xAxisType), yAxisActual, SvgUtil.createReflTransCSSColors()+"\n", isLegend);
+            xyOut.printAsSvg(writer, toolNameFromClass(this.getClass()), getCmdLineArgs(), SvgUtil.createReflTransCSSColors()+"\n", isLegend);
         } else {
             throw new IllegalArgumentException("Unknown output format: " + getOutputFormat());
         }

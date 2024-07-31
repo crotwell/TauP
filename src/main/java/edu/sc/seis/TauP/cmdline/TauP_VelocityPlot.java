@@ -9,6 +9,7 @@ import picocli.CommandLine;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
@@ -133,6 +134,24 @@ public class TauP_VelocityPlot extends TauP_Tool {
                 List<XYPlottingData> modxyPlotList = calculate(vmodArg, getxAxisType(), getyAxisType(), modelLabel);
                 xyPlotList.addAll(modxyPlotList);
             }
+            HashMap<String, String> wavetypeColors = coloringArgs.getWavetypeColors();
+            List<String> colorList = new ArrayList<>();
+            int idx = -1;
+            for (XYPlottingData xyp : xyPlotList) {
+                idx++;
+                boolean notFound = true;
+                for (String wt : wavetypeColors.keySet()) {
+                    if (xyp.cssClasses.contains(wt)) {
+                        colorList.add(wavetypeColors.get(wt));
+                        notFound = false;
+                        break;
+                    }
+                }
+                if (notFound) {
+                    colorList.add(coloringArgs.colorForIndex(idx));
+                }
+            }
+            coloringArgs.setColorList(colorList);
             ModelArgs modelArgs = new ModelArgs();
             modelArgs.setModelName("");
             XYPlotOutput xyOut = new XYPlotOutput(xyPlotList, null);
@@ -140,14 +159,12 @@ public class TauP_VelocityPlot extends TauP_Tool {
             xyOut.setTitle(title.trim());
             xyOut.setxAxisMinMax(xAxisMinMax);
             xyOut.setyAxisMinMax(yAxisMinMax);
-            String xLabel = "";
-            String yLabel = "";
-            for (XYPlottingData xyp : xyPlotList) {
-                xLabel += " "+ModelAxisType.labelFor(ModelAxisType.valueOf(xyp.xAxisType));
-                yLabel += " "+ModelAxisType.labelFor(ModelAxisType.valueOf(xyp.yAxisType));
+            xyOut.setXLabel(ModelAxisType.labelFor(xAxisType));
+            xyOut.setYLabel(ModelAxisType.labelFor(yAxisType));
+            xyOut.setColoringArgs(coloringArgs);
+            if (yAxisType == ModelAxisType.depth) {
+                xyOut.setyAxisInvert(true);
             }
-            xyOut.setXLabel(xLabel);
-            xyOut.setYLabel(yLabel);
             printResult(writer, xyOut);
             writer.close();
         }
@@ -158,17 +175,13 @@ public class TauP_VelocityPlot extends TauP_Tool {
             xyOut.printAsJSON(writer, 2);
         } else if (getOutputTypeArgs().isText()) {
             xyOut.printAsGmtText(writer);
-
         } else if (getOutputTypeArgs().isGMT()) {
             xyOut.printAsGmtScript(writer, toolNameFromClass(this.getClass()), getCmdLineArgs(),
-                    getOutputTypeArgs().asGraphicOutputTypeArgs(), isLegend);
+                    getOutputTypeArgs().asGraphicOutputTypeArgs(),
+                    isLegend);
         } else if (getOutputTypeArgs().isSVG()) {
-            if (yAxisType == ModelAxisType.depth) {
-                xyOut.setyAxisInvert(true);
-            }
-            ColoringArgs coloringArgs = new ColoringArgs(); // velplot always uses default
+            // coloring is auto as we have populated list with blue/red where needed
             xyOut.printAsSvg(writer, toolNameFromClass(this.getClass()), getCmdLineArgs(),
-                    ModelAxisType.labelFor(xAxisType), ModelAxisType.labelFor(yAxisType),
                     SvgUtil.createWaveTypeColorCSS(coloringArgs), isLegend);
         } else {
             throw new IllegalArgumentException("Unknown output format: " + getOutputFormat());
@@ -452,13 +465,13 @@ public class TauP_VelocityPlot extends TauP_Tool {
                 || yAxis == ModelAxisType.slownessrad_p || yAxis == ModelAxisType.slownessrad
                 || xAxis == ModelAxisType.slownessdeg_p || xAxis == ModelAxisType.slownessdeg
                 || yAxis == ModelAxisType.slownessdeg_p || yAxis == ModelAxisType.slownessdeg) {
-            cssClassList.add("pwave");
+            cssClassList.add(ColoringArgs.PWAVE);
         } else if (xAxis == ModelAxisType.Vs || yAxis == ModelAxisType.Vs
                 || xAxis == ModelAxisType.slownessrad_s || yAxis == ModelAxisType.slownessrad_s
                 || xAxis == ModelAxisType.slownessdeg_s || yAxis == ModelAxisType.slownessdeg_s) {
-            cssClassList.add("swave");
+            cssClassList.add(ColoringArgs.SWAVE);
         } else {
-            cssClassList.add("both_p_swave");
+            cssClassList.add(ColoringArgs.BOTH_PSWAVE);
         }
         XYPlottingData xyplot = new XYPlottingData(segList,
                 xAxis.name(),
@@ -607,6 +620,8 @@ public class TauP_VelocityPlot extends TauP_Tool {
 
     @CommandLine.Option(names = "--listdiscon", description = "List the discontinuities in the velocity model")
     public boolean listDiscon = false;
+
+    ColoringArgs coloringArgs = new ColoringArgs();
 
     ModelAxisType xAxisType = ModelAxisType.velocity;
     ModelAxisType yAxisType = ModelAxisType.depth;

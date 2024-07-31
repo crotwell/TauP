@@ -11,28 +11,33 @@ import java.util.List;
 public class SvgUtil {
 
 
-    public static void xyplotScriptBeginning(PrintWriter out, String toolName, List<String> cmdLineArgs, float pixelWidth, int plotOffset) {
-        xyplotScriptBeginning( out,  toolName,  cmdLineArgs,  pixelWidth,  plotOffset, "", null);
+    public static void xyplotScriptBeginning(PrintWriter out,
+                                             String toolName, List<String> cmdLineArgs,
+                                             float pixelWidth, int plotOffset,
+                                             List<String> colorList) {
+        xyplotScriptBeginning( out,  toolName,  cmdLineArgs,  pixelWidth,  plotOffset, colorList, "", null);
     }
 
     public static void xyplotScriptBeginning(PrintWriter out,
                                              String toolName, List<String> cmdLineArgs,
                                              float pixelWidth, int plotOffset,
+                                             List<String> colorList,
                                              String extraCSS) {
-        xyplotScriptBeginning( out,  toolName,  cmdLineArgs,  pixelWidth,  plotOffset, extraCSS, null);
+        xyplotScriptBeginning( out,  toolName,  cmdLineArgs,  pixelWidth,  plotOffset, colorList, extraCSS, null);
     }
 
     public static void xyplotScriptBeginning(PrintWriter out,
                                              String toolName, List<String> cmdLineArgs,
                                              float pixelWidth, int plotOffset,
+                                             List<String> colorList,
                                              String extraCSS, double[] minmax) {
         StringBuffer css = new StringBuffer();
         css.append(extraCSS+"\n");
         StringBuffer stdcss = loadStandardCSS();
         css.append(stdcss+"\n");
-        css.append(createCSSColors( "g.autocolor", List.of("stroke"), DEFAULT_COLORS)+"\n");
-        css.append(createCSSColors(  ".autocolor.phaselabel", List.of("fill"), DEFAULT_COLORS)+"\n");
-        css.append(createCSSColors(  ".autocolor.legend", List.of("fill"), DEFAULT_COLORS)+"\n");
+        css.append(createCSSColors( "g.autocolor", List.of("stroke"), colorList)+"\n");
+        css.append(createCSSColors(  ".autocolor.phaselabel", List.of("fill"), colorList)+"\n");
+        css.append(createCSSColors(  ".autocolor.legend", List.of("fill"), colorList)+"\n");
         out.println("<svg version=\"1.1\" baseProfile=\"full\" xmlns=\"http://www.w3.org/2000/svg\" ");
         //out.println("     width=\""+(pixelWidth)+"\" height=\""+(pixelWidth)+"\"");
         out.println("     viewBox=\""+(-1*plotOffset)+" "+(-1*plotOffset)+" "+(pixelWidth+plotOffset)+" "+(pixelWidth+plotOffset)+"\"");
@@ -312,10 +317,10 @@ public class SvgUtil {
     }
 
 
-    public static StringBuffer createPhaseColorCSS(List<PhaseName> phaseNames) {
+    public static StringBuffer createPhaseColorCSS(List<PhaseName> phaseNames, ColoringArgs coloringArgs) {
         StringBuffer out = new StringBuffer();
         for (int i = 0; i < phaseNames.size(); i++) {
-            String color = colorForIndex(i);
+            String color = coloringArgs.colorForIndex(i);
             PhaseName phaseName = phaseNames.get(i);
             String phaseClass = classForPhase(phaseName.getName());
             out.append("        ."+phaseClass+" {\n");
@@ -340,11 +345,11 @@ public class SvgUtil {
         return "time_"+Outputs.formatTimeNoPad(timeVal).trim().replaceAll("\\.", "_");
     }
 
-    public static StringBuffer createTimeStepColorCSS(float timestep, float maxTime) {
+    public static StringBuffer createTimeStepColorCSS(float timestep, float maxTime, ColoringArgs coloringArgs) {
         StringBuffer out = new StringBuffer();
         for (int i = 1; i < maxTime/timestep; i++) {
             String timeLabel = formatTimeForCss( i*timestep);
-            String color = colorForIndex(i-1);
+            String color = coloringArgs.colorForIndex(i-1);
             out.append("        ."+timeLabel+" {\n");
             out.append("          stroke: "+color+";\n");
             out.append("        }\n");
@@ -402,38 +407,4 @@ public class SvgUtil {
         return extrtaCSS.toString();
     }
 
-    public static void setColorList(List<String> cList) {
-        colorList =  cList;
-    }
-
-    public static List<String> getColorList() {
-        return colorList;
-    }
-
-    public static String colorForIndex(int idx) {
-        List<String> cl = getColorList();
-        return cl.get(idx % cl.size());
-    }
-
-    public static String gmtColor(String cssColor) {
-        if (cssColor.equals("rebeccapurple")) {
-            cssColor = "purple";
-        }
-        return cssColor;
-    }
-
-
-    public static List<String> DEFAULT_COLORS = List.of(
-            "skyblue",
-            "olivedrab",
-            "goldenrod",
-            "firebrick",
-            "darkcyan",
-            "chocolate",
-            "darkmagenta",
-            "mediumvioletred",
-            "sienna",
-            "rebeccapurple");
-
-    public static List<String> colorList = DEFAULT_COLORS;
 }

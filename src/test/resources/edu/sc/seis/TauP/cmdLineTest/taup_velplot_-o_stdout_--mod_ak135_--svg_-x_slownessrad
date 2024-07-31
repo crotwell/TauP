@@ -125,97 +125,25 @@ circle.discontinuity.iocb {
     fill: burlywood;
 }
 
-        g.autocolor > :nth-child(10n+1) {
-            stroke: skyblue;
+        g.autocolor > :nth-child(2n+1) {
+            stroke: blue;
         }
-        g.autocolor > :nth-child(10n+2) {
-            stroke: olivedrab;
-        }
-        g.autocolor > :nth-child(10n+3) {
-            stroke: goldenrod;
-        }
-        g.autocolor > :nth-child(10n+4) {
-            stroke: firebrick;
-        }
-        g.autocolor > :nth-child(10n+5) {
-            stroke: darkcyan;
-        }
-        g.autocolor > :nth-child(10n+6) {
-            stroke: chocolate;
-        }
-        g.autocolor > :nth-child(10n+7) {
-            stroke: darkmagenta;
-        }
-        g.autocolor > :nth-child(10n+8) {
-            stroke: mediumvioletred;
-        }
-        g.autocolor > :nth-child(10n+9) {
-            stroke: sienna;
-        }
-        g.autocolor > :nth-child(10n+10) {
-            stroke: rebeccapurple;
+        g.autocolor > :nth-child(2n+2) {
+            stroke: red;
         }
 
-        .autocolor.phaselabel > :nth-child(10n+1) {
-            fill: skyblue;
+        .autocolor.phaselabel > :nth-child(2n+1) {
+            fill: blue;
         }
-        .autocolor.phaselabel > :nth-child(10n+2) {
-            fill: olivedrab;
-        }
-        .autocolor.phaselabel > :nth-child(10n+3) {
-            fill: goldenrod;
-        }
-        .autocolor.phaselabel > :nth-child(10n+4) {
-            fill: firebrick;
-        }
-        .autocolor.phaselabel > :nth-child(10n+5) {
-            fill: darkcyan;
-        }
-        .autocolor.phaselabel > :nth-child(10n+6) {
-            fill: chocolate;
-        }
-        .autocolor.phaselabel > :nth-child(10n+7) {
-            fill: darkmagenta;
-        }
-        .autocolor.phaselabel > :nth-child(10n+8) {
-            fill: mediumvioletred;
-        }
-        .autocolor.phaselabel > :nth-child(10n+9) {
-            fill: sienna;
-        }
-        .autocolor.phaselabel > :nth-child(10n+10) {
-            fill: rebeccapurple;
+        .autocolor.phaselabel > :nth-child(2n+2) {
+            fill: red;
         }
 
-        .autocolor.legend > :nth-child(10n+1) {
-            fill: skyblue;
+        .autocolor.legend > :nth-child(2n+1) {
+            fill: blue;
         }
-        .autocolor.legend > :nth-child(10n+2) {
-            fill: olivedrab;
-        }
-        .autocolor.legend > :nth-child(10n+3) {
-            fill: goldenrod;
-        }
-        .autocolor.legend > :nth-child(10n+4) {
-            fill: firebrick;
-        }
-        .autocolor.legend > :nth-child(10n+5) {
-            fill: darkcyan;
-        }
-        .autocolor.legend > :nth-child(10n+6) {
-            fill: chocolate;
-        }
-        .autocolor.legend > :nth-child(10n+7) {
-            fill: darkmagenta;
-        }
-        .autocolor.legend > :nth-child(10n+8) {
-            fill: mediumvioletred;
-        }
-        .autocolor.legend > :nth-child(10n+9) {
-            fill: sienna;
-        }
-        .autocolor.legend > :nth-child(10n+10) {
-            fill: rebeccapurple;
+        .autocolor.legend > :nth-child(2n+2) {
+            fill: red;
         }
 
 

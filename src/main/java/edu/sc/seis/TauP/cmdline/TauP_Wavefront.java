@@ -104,7 +104,7 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
             cssExtra += createSurfaceWaveCSS(phaseNameList)+"\n";
             double maxTime = 0;
             if (coloring.getColoring() == ColorType.phase) {
-                StringBuffer cssPhaseColors = SvgUtil.createPhaseColorCSS(phaseNameList);
+                StringBuffer cssPhaseColors = SvgUtil.createPhaseColorCSS(phaseNameList, coloring);
                 cssExtra += cssPhaseColors;
             } else if (coloring.getColoring() == ColorType.wavetype) {
                 String cssWaveTypeColors = SvgUtil.createWaveTypeColorCSS(coloring);
@@ -115,7 +115,7 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
                         maxTime = phase.getMaxTime();
                     }
                 }
-                StringBuffer cssTimeColors = SvgUtil.createTimeStepColorCSS(timeStep, (float) maxTime);
+                StringBuffer cssTimeColors = SvgUtil.createTimeStepColorCSS(timeStep, (float) maxTime, coloring);
                 cssExtra += cssTimeColors;
                 // autocolor?
             }
@@ -123,7 +123,8 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
             SvgEarthScaling scaleTrans = SvgEarth.calcEarthScaleTransForPhaseList(getSeismicPhases(), distDepthRangeArgs, isNegDistance());
 
             SvgEarth.printScriptBeginningSvg(out, modelArgs.getTauModel(), pixelWidth,
-                    scaleTrans, toolNameFromClass(this.getClass()), getCmdLineArgs(), cssExtra);
+                    scaleTrans, toolNameFromClass(this.getClass()), getCmdLineArgs(),
+                    coloring.getColorList(), cssExtra);
 
             SvgEarth.printModelAsSVG(out, modelArgs.getTauModel(), pixelWidth, scaleTrans, onlyNamedDiscon);
 
@@ -176,7 +177,7 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
                 idx++;
                 String lineColor = "";
                 if (coloring.getColoring() == ColorType.auto) {
-                    lineColor = "-W,"+SvgUtil.colorForIndex(idx);
+                    lineColor = "-W,"+coloring.colorForIndex(idx);
                     out.write("gmt plot "+lineColor+" -A  <<END\n");
                 }
                 for (WavefrontPathSegment segment : timeSegmentMap.get(timeVal)) {
@@ -185,7 +186,7 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
                         out.write("gmt plot "+lineColor+" -A  <<END\n");
                     } else if (coloring.getColoring() == ColorType.phase) {
                         int phaseIdx = getSeismicPhases().indexOf(segment.getPhase());
-                        lineColor = "-W,"+SvgUtil.gmtColor(SvgUtil.colorForIndex(phaseIdx));
+                        lineColor = "-W,"+ColoringArgs.gmtColor(coloring.colorForIndex(phaseIdx));
                         out.write("gmt plot "+lineColor+" -A  <<END\n");
                     }
                     segment.writeGMTText(out, distDepthRangeArgs, Outputs.distanceFormat, Outputs.depthFormat, withTime);

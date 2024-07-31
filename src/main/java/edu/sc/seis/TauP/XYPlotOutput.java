@@ -110,7 +110,7 @@ public class XYPlotOutput {
         for (XYPlottingData xyplotItem : xyPlots) {
             String lineColor = "";
             if (coloringArgs.getColoring() == ColorType.auto || coloringArgs.getColoring() == ColorType.phase) {
-                lineColor = "-W,"+SvgUtil.colorForIndex(idx);
+                lineColor = "-W,"+coloringArgs.colorForIndex(idx);
             } else if (coloringArgs.getColoring() == ColorType.wavetype) {
                 HashMap<String, String> colorMap = coloringArgs.getWavetypeColors();
                 for (String colorval : colorMap.keySet()) {
@@ -125,7 +125,7 @@ public class XYPlotOutput {
 
             writer.println("# "+xyplotItem.label);
             // +" -lxxx"+xyplotItem.label
-            writer.println("gmt plot "+" -l"+xyplotItem.label+" "+lineColor+" <<END");
+            writer.println("gmt plot "+" -l'"+xyplotItem.label+"' "+lineColor+" <<END");
             xyplotItem.asGMT(writer);
             writer.println("END");
             writer.println("# end of "+xyplotItem.label);
@@ -157,7 +157,16 @@ public class XYPlotOutput {
         if (!getYLabel().isEmpty()) {
             yLabelParam += "+l'"+getYLabel()+"'";
         }
-        writer.println("gmt basemap -JX" + outputTypeArgs.mapwidth + outputTypeArgs.mapWidthUnit + " -R"+minmax[0]+"/"+minmax[1]+"/" + minmax[2] + "/" + minmax[3]
+        String xScale = outputTypeArgs.mapwidth + outputTypeArgs.mapWidthUnit;
+        if (isxAxisInvert()) {
+            xScale = "-"+xScale;
+        }
+        String yScale = outputTypeArgs.mapwidth + outputTypeArgs.mapWidthUnit;
+        if (isyAxisInvert()) {
+            yScale = "-"+yScale;
+        }
+        String dataRange = " -R"+minmax[0]+"/"+minmax[1]+"/" + minmax[2] + "/" + minmax[3];
+        writer.println("gmt basemap -JX" + xScale+"/"+yScale + dataRange
                 + xLabelParam+yLabelParam+" -BWSne+t'" + getTitle() + "' " );
 
     }
@@ -201,20 +210,21 @@ public class XYPlotOutput {
 
 
 
-    public void printAsHtml(PrintWriter writer, String toolname, List<String> cmdLineArgs, String xAxisType, String yAxisType, String extraCSS, boolean isLegend) {
+    public void printAsHtml(PrintWriter writer, String toolname, List<String> cmdLineArgs, String extraCSS, boolean isLegend) {
         writer.println("<!DOCTYPE html>");
         writer.println("<html><body>");
-        printAsSvg(writer, toolname, cmdLineArgs, xAxisType, yAxisType, extraCSS, isLegend);
+        printAsSvg(writer, toolname, cmdLineArgs, extraCSS, isLegend);
         writer.println("</body></html>");
     }
 
-    public void printAsSvg(PrintWriter writer, String toolname, List<String> cmdLineArgs, String xAxisType, String yAxisType, String extraCSS, boolean isLegend) {
+    public void printAsSvg(PrintWriter writer, String toolname, List<String> cmdLineArgs,
+                           String extraCSS, boolean isLegend) {
 
         int margin = 80;
         int pixelWidth = 600+margin;//Math.round(72*mapWidth);
         double[] minmax = calcMinMax();
         SvgUtil.xyplotScriptBeginning(writer, toolname,
-            cmdLineArgs,  pixelWidth, margin, extraCSS, minmax);
+            cmdLineArgs,  pixelWidth, margin, coloringArgs.getColorList(), extraCSS, minmax);
 
         float plotWidth = pixelWidth - 2*margin;
         double[] axisMinMax = new double[4];
@@ -242,7 +252,7 @@ public class XYPlotOutput {
                 axisMinMax[2], axisMinMax[3], numYTicks, false,
                 pixelWidth, margin,
                 getTitle(),
-                xAxisType, yAxisType);
+                getXLabel(), getYLabel());
 
         writer.println("<g clip-path=\"url(#curve_clip)\">");
 

@@ -409,6 +409,8 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
         xyOut.setPhaseNames(phaseNameList);
         xyOut.setxAxisMinMax(xAxisMinMax);
         xyOut.setyAxisMinMax(yAxisMinMax);
+        xyOut.setXLabel((isxAxisLog()?"Log ":"")+axisLabel(xAxisType));
+        xyOut.setYLabel((isyAxisLog()?"Log ":"")+axisLabel(yAxisType));
         if (yAxisType == AxisType.turndepth) {
             xyOut.setyAxisInvert(true);
         }
@@ -421,14 +423,13 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
         } else if (outputTypeArgs.isSVG()) {
             String cssExtra = "";
             if (coloring.getColoring() == ColorType.phase) {
-                cssExtra += SvgUtil.createPhaseColorCSS(phaseNameList);
+                cssExtra += SvgUtil.createPhaseColorCSS(phaseNameList, coloring);
             } else if (coloring.getColoring() == ColorType.wavetype) {
                 cssExtra += SvgUtil.createWaveTypeColorCSS(coloring);
             } else {
             }
             xyOut.printAsSvg(writer, toolNameFromClass(this.getClass()), getCmdLineArgs(),
-                    (isxAxisLog()?"Log ":"")+axisLabel(xAxisType),
-                    (isyAxisLog()?"Log ":"")+axisLabel(yAxisType), cssExtra, isLegend);
+                    cssExtra, isLegend);
         } else {
             throw new IllegalArgumentException("Unknown output format: " + outputTypeArgs.getOutputFormat());
         }

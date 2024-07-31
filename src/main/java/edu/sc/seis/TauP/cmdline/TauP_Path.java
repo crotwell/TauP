@@ -303,7 +303,7 @@ public class TauP_Path extends TauP_AbstractRayTool {
 		List<PhaseName> phaseNameList = parsePhaseNameList();
 		extraCSS+=createSurfaceWaveCSS(phaseNameList)+"\n";
 		if (coloring.getColoring() == ColorType.phase) {
-			StringBuffer cssPhaseColors = SvgUtil.createPhaseColorCSS(phaseNameList);
+			StringBuffer cssPhaseColors = SvgUtil.createPhaseColorCSS(phaseNameList, coloring);
 			extraCSS += cssPhaseColors;
 		} else if (coloring.getColoring() == ColorType.wavetype) {
 			String cssWaveTypeColors = SvgUtil.createWaveTypeColorCSS(coloring);
@@ -311,7 +311,9 @@ public class TauP_Path extends TauP_AbstractRayTool {
 		} else {
 			// autocolor?
 		}
-		SvgEarth.printScriptBeginningSvg(out, tMod, pixelWidth, scaleTrans, toolNameFromClass(this.getClass()), cmdLineArgs, extraCSS);
+		SvgEarth.printScriptBeginningSvg(out, tMod, pixelWidth, scaleTrans,
+				toolNameFromClass(this.getClass()), cmdLineArgs,
+				coloring.getColorList(), extraCSS);
 		if (coloring.getColoring() == ColorType.phase) {
 			SvgUtil.createPhaseLegend(out, getSeismicPhases(), "",  (int)(pixelWidth*.9), (int) (pixelWidth*.05));
 		}

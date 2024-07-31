@@ -464,7 +464,9 @@ public class SvgEarth {
     }
 
     public static void printScriptBeginningSvg(PrintWriter out, TauModel tMod, float pixelWidth,
-                                               SvgEarthScaling scaleTrans, String toolName, List<String> cmdLineArgs, String extraCSS) {
+                                               SvgEarthScaling scaleTrans, String toolName,
+                                               List<String> cmdLineArgs,
+                                               List<String> colorList, String extraCSS) {
         float zoomScale = scaleTrans.getZoomScale();
         int plotOffset = 0;
         float R = (float) tMod.getRadiusOfEarth();
@@ -476,7 +478,7 @@ public class SvgEarth {
         addCSS.append(extraCSS);
 
         SvgUtil.xyplotScriptBeginning( out, toolName,
-                cmdLineArgs,  pixelWidth, plotOffset, addCSS.toString());
+                cmdLineArgs,  pixelWidth, plotOffset, colorList, addCSS.toString());
 
     }
 }
