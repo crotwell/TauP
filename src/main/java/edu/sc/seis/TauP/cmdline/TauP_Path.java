@@ -207,7 +207,7 @@ public class TauP_Path extends TauP_AbstractRayTool {
 				for (ArrivalPathSegment seg : arrival.getPathSegments()) {
 					ArrivalPathSegment interpSeg = ArrivalPathSegment.linearInterpPath(seg, maxPathInc, maxPathTime);
 					if (coloring.getColoring() == ColorType.wavetype) {
-						String colorArg = "-W"+(interpSeg.isPWave() ?"blue":"red")+" ";
+						String colorArg = "-W"+(interpSeg.isPWave() ?ColoringArgs.PWAVE_COLOR:ColoringArgs.SWAVE_COLOR)+" ";
 						out.write("gmt plot "+colorArg+" -A  <<END\n");
 					}
 					interpSeg.writeGMTText(out, distDepthRange, Outputs.distanceFormat, Outputs.depthFormat, withTime);

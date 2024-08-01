@@ -223,11 +223,11 @@ public class SvgUtil {
         colors.put(ReflTransAxisType.RppEnergy , colors.get(ReflTransAxisType.Rpp));
         colors.put(ReflTransAxisType.Rps, "green");
         colors.put(ReflTransAxisType.RpsEnergy , colors.get(ReflTransAxisType.Rps));
-        colors.put(ReflTransAxisType.Rsp , "red");
+        colors.put(ReflTransAxisType.Rsp , "mediumslateblue");
         colors.put(ReflTransAxisType.RspEnergy , colors.get(ReflTransAxisType.Rsp));
-        colors.put(ReflTransAxisType.Rss, "orange");
+        colors.put(ReflTransAxisType.Rss, "red");
         colors.put(ReflTransAxisType.RssEnergy , colors.get(ReflTransAxisType.Rss));
-        colors.put(ReflTransAxisType.Rshsh, "mediumslateblue");
+        colors.put(ReflTransAxisType.Rshsh, "orange");
         colors.put(ReflTransAxisType.RshshEnergy , colors.get(ReflTransAxisType.Rshsh));
         colors.put(ReflTransAxisType.Tpp, "cyan");
         colors.put(ReflTransAxisType.TppEnergy , colors.get(ReflTransAxisType.Tpp));

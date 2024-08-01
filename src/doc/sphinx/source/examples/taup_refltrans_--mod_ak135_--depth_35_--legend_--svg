@@ -56,26 +56,26 @@
           fill: gold;
         }
         .Rsp {
-          stroke: red;
+          stroke: mediumslateblue;
         }
         .Rsp.label {
-          stroke: red;
-          fill: red;
+          stroke: mediumslateblue;
+          fill: mediumslateblue;
         }
         .legend .Rsp {
+          stroke: mediumslateblue;
+          fill: mediumslateblue;
+        }
+        .Rss {
+          stroke: red;
+        }
+        .Rss.label {
           stroke: red;
           fill: red;
         }
-        .Rss {
-          stroke: orange;
-        }
-        .Rss.label {
-          stroke: orange;
-          fill: orange;
-        }
         .legend .Rss {
-          stroke: orange;
-          fill: orange;
+          stroke: red;
+          fill: red;
         }
         .Tsp {
           stroke: magenta;
@@ -100,15 +100,15 @@
           fill: grey;
         }
         .Rshsh {
-          stroke: mediumslateblue;
+          stroke: orange;
         }
         .Rshsh.label {
-          stroke: mediumslateblue;
-          fill: mediumslateblue;
+          stroke: orange;
+          fill: orange;
         }
         .legend .Rshsh {
-          stroke: mediumslateblue;
-          fill: mediumslateblue;
+          stroke: orange;
+          fill: orange;
         }
         .Tshsh {
           stroke: violet;
@@ -166,15 +166,15 @@
           fill: gold;
         }
         .RspEnergy {
-          stroke: red;
+          stroke: mediumslateblue;
         }
         .RspEnergy.label {
-          stroke: red;
-          fill: red;
+          stroke: mediumslateblue;
+          fill: mediumslateblue;
         }
         .legend .RspEnergy {
-          stroke: red;
-          fill: red;
+          stroke: mediumslateblue;
+          fill: mediumslateblue;
         }
         .TspEnergy {
           stroke: magenta;
@@ -188,15 +188,15 @@
           fill: magenta;
         }
         .RssEnergy {
-          stroke: orange;
+          stroke: red;
         }
         .RssEnergy.label {
-          stroke: orange;
-          fill: orange;
+          stroke: red;
+          fill: red;
         }
         .legend .RssEnergy {
-          stroke: orange;
-          fill: orange;
+          stroke: red;
+          fill: red;
         }
         .TssEnergy {
           stroke: grey;
@@ -210,15 +210,15 @@
           fill: grey;
         }
         .RshshEnergy {
-          stroke: mediumslateblue;
+          stroke: orange;
         }
         .RshshEnergy.label {
-          stroke: mediumslateblue;
-          fill: mediumslateblue;
+          stroke: orange;
+          fill: orange;
         }
         .legend .RshshEnergy {
-          stroke: mediumslateblue;
-          fill: mediumslateblue;
+          stroke: orange;
+          fill: orange;
         }
         .TshshEnergy {
           stroke: violet;

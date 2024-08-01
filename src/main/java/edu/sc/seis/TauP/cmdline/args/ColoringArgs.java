@@ -20,17 +20,20 @@ public class ColoringArgs {
 
     public HashMap<String, String> getWavetypeColors() {
         HashMap<String, String> colors = new HashMap<>();
-        colors.put(PWAVE, "blue");
-        colors.put(SWAVE, "red");
-        colors.put(BOTH_PSWAVE, "green");
+        colors.put(PWAVE, PWAVE_COLOR);
+        colors.put(SWAVE, SWAVE_COLOR);
+        colors.put(BOTH_PSWAVE, BOTH_PSWAVE_COLOR);
         return colors;
     }
 
     ColorType color = ColorType.auto;
 
     public static final String PWAVE = "pwave";
+    public static final String PWAVE_COLOR = "blue";
     public static final String SWAVE = "swave";
+    public static final String SWAVE_COLOR = "red";
     public static final String BOTH_PSWAVE = "both_p_swave";
+    public static final String BOTH_PSWAVE_COLOR = "green";
 
 
     public void setColorList(List<String> cList) {

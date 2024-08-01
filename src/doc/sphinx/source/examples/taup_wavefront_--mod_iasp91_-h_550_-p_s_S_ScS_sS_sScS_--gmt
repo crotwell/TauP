@@ -6863,7 +6863,7 @@ gmt plot -W,sienna -A  <<END
     0.43    5616.8
     0.00    5616.9
 END
-gmt plot -W,rebeccapurple -A  <<END
+gmt plot -W,purple -A  <<END
 > seg 9/13 S of S at  1000.00
    59.63    6371.0
    60.13    6347.8

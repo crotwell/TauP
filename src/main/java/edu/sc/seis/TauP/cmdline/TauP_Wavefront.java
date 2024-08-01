@@ -177,12 +177,12 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
                 idx++;
                 String lineColor = "";
                 if (coloring.getColoring() == ColorType.auto) {
-                    lineColor = "-W,"+coloring.colorForIndex(idx);
+                    lineColor = "-W,"+ColoringArgs.gmtColor(coloring.colorForIndex(idx));
                     out.write("gmt plot "+lineColor+" -A  <<END\n");
                 }
                 for (WavefrontPathSegment segment : timeSegmentMap.get(timeVal)) {
                     if (coloring.getColoring() == ColorType.wavetype) {
-                        lineColor = "-W"+(segment.isPWave() ?"blue":"red")+" ";
+                        lineColor = "-W"+(segment.isPWave() ?ColoringArgs.PWAVE_COLOR:ColoringArgs.SWAVE_COLOR)+" ";
                         out.write("gmt plot "+lineColor+" -A  <<END\n");
                     } else if (coloring.getColoring() == ColorType.phase) {
                         int phaseIdx = getSeismicPhases().indexOf(segment.getPhase());
