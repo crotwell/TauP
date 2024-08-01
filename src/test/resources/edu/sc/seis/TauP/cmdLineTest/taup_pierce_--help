@@ -1,11 +1,11 @@
-Usage: taup pierce [--amp] [--debug] [--first] [--geodetic] [--geodetic]
-                   [--help] [--nodiscon] [--rayp] [--rev] [--time] [--turn]
-                   [--under] [--verbose] [--az=<azimuth>] [--az=<azimuth>]
+Usage: taup pierce [--amp] [--debug] [--first] [--geodetic] [--help]
+                   [--nodiscon] [--rayp] [--rev] [--time] [--turn] [--under]
+                   [--verbose] [--az=<azimuth>] [--az=<azimuth>]
                    [--baz=<backAzimuth>] [--baz=<backAzimuth>]
-                   [--ellipflattening=f] [--ellipflattening=f] [--mw=<mw>]
-                   [-o=<outFile>] [--prop=<toolPropsFilename>] [--pierce=depth[,
-                   depth...]]... [--rel=phase[,phase...]]... [--evt=l l]...
-                   [--evt=l l]... [--sta=l l]... [--sta=l l]... [[-h=depth]
+                   [--ellipflattening=f] [--mw=<mw>] [-o=<outFile>]
+                   [--prop=<toolPropsFilename>] [--pierce=depth[,depth...]]...
+                   [--rel=phase[,phase...]]... [--evt=l l]... [--evt=l l]...
+                   [--sta=l l]... [--sta=l l]... [[-h=depth]
                    [--mod=<modelname>] [--stadepth=depth] [--scat=s s]...]
                    [[-p=phase[,phase...]]... [--phasefile=<phaseFiles>]...]
                    [[--deg=d[,d...]]... [--exactdegree=d[,d...]]...
@@ -20,8 +20,16 @@ Options:
 
       --amp                  show amplitude factor for each phase
       --debug                enable debugging output
+      --ellipflattening=f    Elliptical flattening for distance calculations
+                               when --geodetic, defaults to WGS84 ~ 1/298.257
       --first, --onlyfirst   only output the first arrival for each phase, no
                                triplications
+      --geodetic             use geodetic latitude for distance calculations,
+                               which implies an ellipticity. Default is
+                               spherical. Note this only affects calculation of
+                               distance from lat/lon pairs, all travel time
+                               calculations are done in a purely spherical
+                               model.
       --help                 display this help message
       --mw=<mw>              scale amplitude by source moment magnitude
       --nodiscon             only prints pierce points for the depths added
@@ -81,16 +89,8 @@ Distance is given by:
 Lat,Lon influenced by:
       --az=<azimuth>         azimuth in degrees
       --baz=<backAzimuth>    backazimuth in degrees
-      --ellipflattening=f    Elliptical flattening for distance calculations
-                               when --geodetic, defaults to WGS84 ~ 1/298.257
       --evt, --event=l l     event latitude and longitude.  Creates a distance
                                if station is also given.
-      --geodetic             use geodetic latitude for distance calculations,
-                               which implies an ellipticity. Default is
-                               spherical. Note this only affects calculation of
-                               distance from lat/lon pairs, all travel time
-                               calculations are done in a purely spherical
-                               model.
       --sta, --station=l l   station latitude and longitude. Creates a distance
                                if event is also given.
 Output Type:

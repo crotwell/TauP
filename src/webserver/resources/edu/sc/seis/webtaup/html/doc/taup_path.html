@@ -2211,23 +2211,23 @@ circle.discontinuity.iocb {
   </g> 
 </svg>
 <p>The usage is:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Usage: taup path [--debug] [--geodetic] [--geodetic] [--help]
-                 [--onlynameddiscon] [--verbose] [--withtime] [--az=&lt;azimuth&gt;]
-                 [--az=&lt;azimuth&gt;] [--baz=&lt;backAzimuth&gt;] [--baz=&lt;backAzimuth&gt;]
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Usage: taup path [--debug] [--geodetic] [--help] [--onlynameddiscon]
+                 [--verbose] [--withtime] [--az=&lt;azimuth&gt;] [--az=&lt;azimuth&gt;]
+                 [--baz=&lt;backAzimuth&gt;] [--baz=&lt;backAzimuth&gt;]
                  [--color=&lt;coloring&gt;] [--ellipflattening=f]
-                 [--ellipflattening=f] [--mapwidth=&lt;mapwidth&gt;]
-                 [--mapwidthunit=&lt;mapWidthUnit&gt;] [--maxpathinc=&lt;maxPathInc&gt;]
-                 [-o=&lt;outFile&gt;] [--prop=&lt;toolPropsFilename&gt;] [--xaxis=type]
-                 [--yaxis=type] [--degminmax=deg deg]... [--depthminmax=km
-                 km]... [--evt=l l]... [--evt=l l]... [--sta=l l]... [--sta=l
-                 l]... [[-h=depth] [--mod=&lt;modelname&gt;] [--stadepth=depth]
-                 [--scat=s s]...] [[-p=phase[,phase...]]...
-                 [--phasefile=&lt;phaseFiles&gt;]...] [[--deg=d[,d...]]...
-                 [--exactdegree=d[,d...]]... [--exactkilometer=km[,km...]]...
-                 [--km=km[,km...]]... [--rayparamdeg=s/deg[,s/deg...]]...
-                 [--rayparamidx=i[,i...]]... [--rayparamkm=s/km[,s/km...]]...
-                 [--rayparamrad=s/rad[,s/rad...]]... [--takeoff=deg[,
-                 deg...]]...]... [--gmt | --json | --svg | --text]
+                 [--mapwidth=&lt;mapwidth&gt;] [--mapwidthunit=&lt;mapWidthUnit&gt;]
+                 [--maxpathinc=&lt;maxPathInc&gt;] [-o=&lt;outFile&gt;]
+                 [--prop=&lt;toolPropsFilename&gt;] [--xaxis=type] [--yaxis=type]
+                 [--degminmax=deg deg]... [--depthminmax=km km]... [--evt=l
+                 l]... [--evt=l l]... [--sta=l l]... [--sta=l l]... [[-h=depth]
+                 [--mod=&lt;modelname&gt;] [--stadepth=depth] [--scat=s s]...]
+                 [[-p=phase[,phase...]]... [--phasefile=&lt;phaseFiles&gt;]...]
+                 [[--deg=d[,d...]]... [--exactdegree=d[,d...]]...
+                 [--exactkilometer=km[,km...]]... [--km=km[,km...]]...
+                 [--rayparamdeg=s/deg[,s/deg...]]... [--rayparamidx=i[,
+                 i...]]... [--rayparamkm=s/km[,s/km...]]... [--rayparamrad=s/rad
+                 [,s/rad...]]... [--takeoff=deg[,deg...]]...]... [--gmt |
+                 --json | --svg | --text]
 Plot ray paths, distance vs. depth, through the earth.
 
 Options:
@@ -2237,6 +2237,14 @@ Options:
       --debug                enable debugging output
       --degminmax=deg deg    min and max distance in degrees for plotting
       --depthminmax=km km    min and max depth, km,  for plotting
+      --ellipflattening=f    Elliptical flattening for distance calculations
+                               when --geodetic, defaults to WGS84 ~ 1/298.257
+      --geodetic             use geodetic latitude for distance calculations,
+                               which implies an ellipticity. Default is
+                               spherical. Note this only affects calculation of
+                               distance from lat/lon pairs, all travel time
+                               calculations are done in a purely spherical
+                               model.
       --help                 display this help message
       --mapwidth=&lt;mapwidth&gt;  plot width in inches for GMT, pixels for SVG.
       --mapwidthunit=&lt;mapWidthUnit&gt;
@@ -2300,16 +2308,8 @@ Distance is given by:
 Lat,Lon influenced by:
       --az=&lt;azimuth&gt;         azimuth in degrees
       --baz=&lt;backAzimuth&gt;    backazimuth in degrees
-      --ellipflattening=f    Elliptical flattening for distance calculations
-                               when --geodetic, defaults to WGS84 ~ 1/298.257
       --evt, --event=l l     event latitude and longitude.  Creates a distance
                                if station is also given.
-      --geodetic             use geodetic latitude for distance calculations,
-                               which implies an ellipticity. Default is
-                               spherical. Note this only affects calculation of
-                               distance from lat/lon pairs, all travel time
-                               calculations are done in a purely spherical
-                               model.
       --sta, --station=l l   station latitude and longitude. Creates a distance
                                if event is also given.
 Output Type:

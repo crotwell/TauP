@@ -128,14 +128,14 @@
 <em>.nd</em> or <em>.tvel</em> format and generates
 travel times for specified phases through the given earth model.</p>
 <p>The usage is:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Usage: taup time [--amp] [--debug] [--first] [--geodetic] [--geodetic] [--help]
-                 [--rayp] [--time] [--verbose] [--az=&lt;azimuth&gt;]
-                 [--az=&lt;azimuth&gt;] [--baz=&lt;backAzimuth&gt;] [--baz=&lt;backAzimuth&gt;]
-                 [--ellipflattening=f] [--ellipflattening=f] [--mw=&lt;mw&gt;]
-                 [-o=&lt;outFile&gt;] [--prop=&lt;toolPropsFilename&gt;] [--rel=phase[,
-                 phase...]]... [--evt=l l]... [--evt=l l]... [--sta=l l]...
-                 [--sta=l l]... [[-h=depth] [--mod=&lt;modelname&gt;]
-                 [--stadepth=depth] [--scat=s s]...] [[-p=phase[,phase...]]...
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Usage: taup time [--amp] [--debug] [--first] [--geodetic] [--help] [--rayp]
+                 [--time] [--verbose] [--az=&lt;azimuth&gt;] [--az=&lt;azimuth&gt;]
+                 [--baz=&lt;backAzimuth&gt;] [--baz=&lt;backAzimuth&gt;]
+                 [--ellipflattening=f] [--mw=&lt;mw&gt;] [-o=&lt;outFile&gt;]
+                 [--prop=&lt;toolPropsFilename&gt;] [--rel=phase[,phase...]]...
+                 [--evt=l l]... [--evt=l l]... [--sta=l l]... [--sta=l l]...
+                 [[-h=depth] [--mod=&lt;modelname&gt;] [--stadepth=depth] [--scat=s
+                 s]...] [[-p=phase[,phase...]]...
                  [--phasefile=&lt;phaseFiles&gt;]...] [[--deg=d[,d...]]...
                  [--exactdegree=d[,d...]]... [--exactkilometer=km[,km...]]...
                  [--km=km[,km...]]... [--rayparamdeg=s/deg[,s/deg...]]...
@@ -148,8 +148,16 @@ Options:
 
       --amp                  show amplitude factor for each phase
       --debug                enable debugging output
+      --ellipflattening=f    Elliptical flattening for distance calculations
+                               when --geodetic, defaults to WGS84 ~ 1/298.257
       --first, --onlyfirst   only output the first arrival for each phase, no
                                triplications
+      --geodetic             use geodetic latitude for distance calculations,
+                               which implies an ellipticity. Default is
+                               spherical. Note this only affects calculation of
+                               distance from lat/lon pairs, all travel time
+                               calculations are done in a purely spherical
+                               model.
       --help                 display this help message
       --mw=&lt;mw&gt;              scale amplitude by source moment magnitude
   -o, --output=&lt;outFile&gt;     output to file, default is stdout.
@@ -201,16 +209,8 @@ Distance is given by:
 Lat,Lon influenced by:
       --az=&lt;azimuth&gt;         azimuth in degrees
       --baz=&lt;backAzimuth&gt;    backazimuth in degrees
-      --ellipflattening=f    Elliptical flattening for distance calculations
-                               when --geodetic, defaults to WGS84 ~ 1/298.257
       --evt, --event=l l     event latitude and longitude.  Creates a distance
                                if station is also given.
-      --geodetic             use geodetic latitude for distance calculations,
-                               which implies an ellipticity. Default is
-                               spherical. Note this only affects calculation of
-                               distance from lat/lon pairs, all travel time
-                               calculations are done in a purely spherical
-                               model.
       --sta, --station=l l   station latitude and longitude. Creates a distance
                                if event is also given.
 Output Type:

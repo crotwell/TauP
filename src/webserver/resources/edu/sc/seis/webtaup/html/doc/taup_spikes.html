@@ -127,9 +127,8 @@
 <p>TauP Spikes calculates travel times and amplitudes and generates
 a spike seismogram for specified phases through the given earth model.</p>
 <p>The usage is:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Usage: taup spikes [--debug] [--geodetic] [--geodetic] [--help] [--verbose]
-                   [--az=&lt;azimuth&gt;] [--az=&lt;azimuth&gt;] [--baz=&lt;backAzimuth&gt;]
-                   [--baz=&lt;backAzimuth&gt;] [--ellipflattening=f]
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Usage: taup spikes [--debug] [--geodetic] [--help] [--verbose] [--az=&lt;azimuth&gt;]
+                   [--az=&lt;azimuth&gt;] [--baz=&lt;backAzimuth&gt;] [--baz=&lt;backAzimuth&gt;]
                    [--ellipflattening=f] [--mw=&lt;mw&gt;] [-o=&lt;outFile&gt;]
                    [--otime=&lt;origintime&gt;] [--prop=&lt;toolPropsFilename&gt;] [--evt=l
                    l]... [--evt=l l]... [--sta=l l]... [--sta=l l]...
@@ -146,6 +145,14 @@ Calculate spike seismograms
 Options:
 
       --debug                enable debugging output
+      --ellipflattening=f    Elliptical flattening for distance calculations
+                               when --geodetic, defaults to WGS84 ~ 1/298.257
+      --geodetic             use geodetic latitude for distance calculations,
+                               which implies an ellipticity. Default is
+                               spherical. Note this only affects calculation of
+                               distance from lat/lon pairs, all travel time
+                               calculations are done in a purely spherical
+                               model.
       --help                 display this help message
       --mw=&lt;mw&gt;              scale amplitude by source moment magnitude
   -o, --output=&lt;outFile&gt;     output to file, default is stdout.
@@ -195,16 +202,8 @@ Distance is given by:
 Lat,Lon influenced by:
       --az=&lt;azimuth&gt;         azimuth in degrees
       --baz=&lt;backAzimuth&gt;    backazimuth in degrees
-      --ellipflattening=f    Elliptical flattening for distance calculations
-                               when --geodetic, defaults to WGS84 ~ 1/298.257
       --evt, --event=l l     event latitude and longitude.  Creates a distance
                                if station is also given.
-      --geodetic             use geodetic latitude for distance calculations,
-                               which implies an ellipticity. Default is
-                               spherical. Note this only affects calculation of
-                               distance from lat/lon pairs, all travel time
-                               calculations are done in a purely spherical
-                               model.
       --sta, --station=l l   station latitude and longitude. Creates a distance
                                if event is also given.
 Output Type
