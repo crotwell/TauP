@@ -21,6 +21,7 @@ Tools
     taup_velplot
     taup_refltrans
     taup_wavefront
+    taup_spikes
     taup_create
     taup_web
     taup_version
@@ -43,6 +44,7 @@ Tools included with the TauP package:
 :ref:`velmerge <taup_velmerge>`     merges part of one velocity model into another.
 :ref:`velplot <taup_velplot>`       output velocity model as a gmt script.
 :ref:`create <taup_create>`         creates a .taup model from a velocity model.
+:ref:`spikes <taup_spikes>`         create spike seismogram.
 :ref:`refltrans <taup_refltrans>`   plot reflection and transmission coefficients for a discontinuity.
 :ref:`web <taup_web>`               http access to the tools
 :ref:`version <taup_version>`       print the version.
@@ -104,6 +106,7 @@ and then hitting the tab key will display the models available for the
 .. include:: taup_wavefront
 .. include:: taup_refltrans
 .. include:: taup_web
+.. include:: taup_spikes
 .. include:: taup_create
 .. include:: taup_version
 .. include:: taup_help

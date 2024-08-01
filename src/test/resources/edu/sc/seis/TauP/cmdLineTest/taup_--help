@@ -18,7 +18,7 @@ Commands:
   wavefront  Plot wavefronts of seismic phases at steps in time.
   phase      Describe a seismic phase in the current model.
   find       Find seismic phases in an earth model.
-  wkbj       Calculate synthetic seismograms, DANGER: experimental!!!
+  spikes     Calculate spike seismograms
   web        Web based gui for the TauP Toolkit.
   version    Print the version.
   help       Display help information about the specified command.
