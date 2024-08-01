@@ -337,7 +337,16 @@ public class TauP_Path extends TauP_AbstractRayTool {
 		writer.close();
 	}
 
-
+	@Override
+	public void validateArguments() throws TauPException {
+		super.validateArguments();
+		if (getGraphicOutputTypeArgs().isSVG() || getGraphicOutputTypeArgs().isGMT() ) {
+			if ((distDepthRange.distAxisType != null) || distDepthRange.depthAxisType != null) {
+				throw new CommandLine.ParameterException(spec.commandLine(),
+						"--xaxis and --yaxis not compatible with --svg or --gmt");
+			}
+		}
+	}
 
 	/**
 	 * Allows TauP_Path to run as an application. Creates an instance of
