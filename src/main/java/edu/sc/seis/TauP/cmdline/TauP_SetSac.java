@@ -26,6 +26,7 @@
 package edu.sc.seis.TauP.cmdline;
 
 import edu.sc.seis.TauP.*;
+import edu.sc.seis.TauP.cmdline.args.GeodeticArgs;
 import edu.sc.seis.TauP.cmdline.args.OutputTypes;
 import edu.sc.seis.seisFile.Location;
 import edu.sc.seis.seisFile.sac.SacConstants;
@@ -95,6 +96,9 @@ public class TauP_SetSac extends TauP_AbstractPhaseTool {
         this.sacFileNames = new ArrayList<>();
         this.sacFileNames.addAll(Arrays.asList(sacFileNames));
     }
+
+    @CommandLine.Mixin
+    GeodeticArgs geodeticArgs = new GeodeticArgs();
 
     protected TauP_SetSac() {
         super(null);
@@ -210,13 +214,18 @@ public class TauP_SetSac extends TauP_AbstractPhaseTool {
             }
             Alert.warning("Warning: Sac header gcarc is not set in "+filenameForError+",",
                           "using lat and lons to calculate distance.");
-            Alert.warning("Using WGS85 ellipticity flattening.",
-                          "This may introduce errors. Please see the manual.");
-            rayCalculateable = DistanceRay.ofGeodeticStationEvent(
-                    new Location(header.getStla(), header.getStlo()),
-                    new Location(header.getEvla(), header.getEvlo(), header.getEvdp()),
-                    DistAz.wgs85_flattening
-                    );
+            if (geodeticArgs.isGeodetic()) {
+                rayCalculateable = DistanceRay.ofGeodeticStationEvent(
+                        new Location(header.getStla(), header.getStlo()),
+                        new Location(header.getEvla(), header.getEvlo(), header.getEvdp()),
+                        DistAz.wgs85_flattening
+                );
+            } else {
+                rayCalculateable = DistanceRay.ofStationEvent(
+                        new Location(header.getStla(), header.getStlo()),
+                        new Location(header.getEvla(), header.getEvlo(), header.getEvdp())
+                );
+            }
         } else {
             /* can't get a distance, skipping */
             throw new SetSacException("Can't get a distance, all distance fields are undef in "+filenameForError);

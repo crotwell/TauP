@@ -1,6 +1,7 @@
 package edu.sc.seis.TauP.cmdline;
 
 import edu.sc.seis.TauP.*;
+import edu.sc.seis.TauP.cmdline.args.GeodeticArgs;
 import edu.sc.seis.TauP.cmdline.args.OutputTypes;
 import edu.sc.seis.seisFile.Location;
 import edu.sc.seis.seisFile.SeisFileException;
@@ -137,11 +138,15 @@ public class TauP_SetMSeed3 extends TauP_AbstractPhaseTool {
 
         if (staLoc != null && evLoc != null) {
             // geodetic vs spherical???
-            rayCalculateable = DistanceRay.ofGeodeticStationEvent(
-                    staLoc,
-                    evLoc,
-                    DistAz.wgs85_flattening
-            );
+            if (geodeticArgs.isGeodetic()) {
+                rayCalculateable = DistanceRay.ofGeodeticStationEvent(
+                        staLoc,
+                        evLoc,
+                        geodeticArgs.getEllipFlattening()
+                );
+            } else {
+                rayCalculateable = DistanceRay.ofStationEvent(staLoc, evLoc);
+            }
         } else if (eh.gcarc() != null) {
             rayCalculateable = DistanceRay.ofDegrees(eh.gcarc());
         } else {
@@ -307,4 +312,7 @@ public class TauP_SetMSeed3 extends TauP_AbstractPhaseTool {
     protected Map<Network, List<Station>> networks = new HashMap<>();
 
     protected List<Event> quakes = new ArrayList<>();
+
+    @CommandLine.Mixin
+    GeodeticArgs geodeticArgs = new GeodeticArgs();
 }

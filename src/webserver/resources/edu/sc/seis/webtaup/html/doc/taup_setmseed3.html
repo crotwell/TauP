@@ -70,6 +70,7 @@
 <li class="toctree-l2"><a class="reference internal" href="taup_velplot.html">TauP VelocityPlot</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_refltrans.html">TauP ReflTrans</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_wavefront.html">TauP Wavefront</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_spikes.html">TauP Spikes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_create.html">TauP Create</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_web.html">TauP Web</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_version.html">TauP Version</a></li>
@@ -133,7 +134,8 @@ can be calculated by just giving the phases of interest. Alternatively,
 a depth and distance can be given, or earthquake and station information
 can be extracted from QuakeML and StationXML files.</p>
 <p>The usage is:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Usage: taup setmseed3 [--debug] [--help] [--verbose] [--eh=&lt;ehKey&gt;]
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Usage: taup setmseed3 [--debug] [--geodetic] [--help] [--verbose]
+                      [--eh=&lt;ehKey&gt;] [--ellipflattening=f]
                       [--prop=&lt;toolPropsFilename&gt;] [--qml=&lt;quakemlFilename&gt;]
                       [--qmltol=&lt;quakeOTimeTol&gt;]
                       [--staxml=&lt;stationxmlFilename&gt;] [[-h=depth]
@@ -144,43 +146,51 @@ Save travel times in the extra header of miniseed3 files.
     https://crotwell.github.io/ms3eh/
 has details on the JSON structure.
 
-      [mseed3file...]   Miniseed3 files to process.
+      [mseed3file...]       Miniseed3 files to process.
 
 Options:
 
-      --debug           enable debugging output
-      --eh=&lt;ehKey&gt;      key to store full TauP JSON output within extra headers
-                          within, otherwise use abbreviated &#39;bag&#39; markers
-      --help            display this help message
+      --debug               enable debugging output
+      --eh=&lt;ehKey&gt;          key to store full TauP JSON output within extra
+                              headers within, otherwise use abbreviated &#39;bag&#39;
+                              markers
+      --ellipflattening=f   Elliptical flattening for distance calculations
+                              when --geodetic, defaults to WGS84 ~ 1/298.257
+      --geodetic            use geodetic latitude for distance calculations,
+                              which implies an ellipticity. Default is
+                              spherical. Note this only affects calculation of
+                              distance from lat/lon pairs, all travel time
+                              calculations are done in a purely spherical model.
+      --help                display this help message
       --prop=&lt;toolPropsFilename&gt;
-                        load defaults from properties file
+                            load defaults from properties file
       --qml, --quakeml=&lt;quakemlFilename&gt;
-                        QuakeML file to load to search for origins that match
-                          this waveform
+                            QuakeML file to load to search for origins that
+                              match this waveform
       --qmltol=&lt;quakeOTimeTol&gt;
-                        time window to search for origins in a QuakeML file as
-                          an ISO8601 string, default value is PT1H.
+                            time window to search for origins in a QuakeML file
+                              as an ISO8601 string, default value is PT1H.
       --staxml=&lt;stationxmlFilename&gt;
-                        StationXML file to extract station lat/lon from
-      --verbose         enable verbose output
+                            StationXML file to extract station lat/lon from
+      --verbose             enable verbose output
 Model Args
   -h, --evdepth, --sourcedepth=depth
-                        source depth in km
+                            source depth in km
       --mod, --model=&lt;modelname&gt;
-                        use velocity model &quot;modelname&quot; for calculations.
-                        Default is iasp91. Other builtin models include prem,
-                          ak135, ak135fcont, and ak135favg.
-      --scat, --scatter=s s
-                        scattering depth and distance in degrees, which may be
-                          negative. Only effects phases with &#39;o&#39; or &#39;O&#39; in the
-                          phase name.
+                            use velocity model &quot;modelname&quot; for calculations.
+                            Default is iasp91. Other builtin models include
+                              prem, ak135, ak135fcont, and ak135favg.
+      --scat, --scatter=s s scattering depth and distance in degrees, which may
+                              be negative. Only effects phases with &#39;o&#39; or &#39;O&#39;
+                              in the phase name.
       --stadepth, --receiverdepth=depth
-                        the receiver depth in km for stations not at the surface
+                            the receiver depth in km for stations not at the
+                              surface
 Phase Names
   -p, --ph, --phase=phase[,phase...]
-                        seismic phase names
+                            seismic phase names
       --phasefile=&lt;phaseFiles&gt;
-                        read list of phase names from file
+                            read list of phase names from file
 </pre></div>
 </div>
 </section>

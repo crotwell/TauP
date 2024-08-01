@@ -58,8 +58,8 @@ public class DistanceArgs {
             // now add evt-station pairs, already have latlonable
             for (Location evtLoc : latLonArgs.eventList) {
                 for (Location staLoc : latLonArgs.stationList) {
-                    if (latLonArgs.geodetic) {
-                        throw new RuntimeException("geodetic not yet...");
+                    if (latLonArgs.isGeodetic()) {
+                        out.add(DistanceRay.ofGeodeticStationEvent(staLoc, evtLoc, latLonArgs.getEllipFlattening()));
                     } else {
                         out.add(DistanceRay.ofStationEvent(staLoc, evtLoc));
                     }
@@ -73,8 +73,8 @@ public class DistanceArgs {
         List<RayParamKmRay> rpList = new ArrayList<>();
         for (Double d : distArgs.shootKmRaypList) {
             if (hasEventLatLon() && !hasStationLatLon() && getAzimuth() != null) {
-                if (latLonArgs.geodetic) {
-                    throw new RuntimeException("geodetic not yet...");
+                if (latLonArgs.isGeodetic()) {
+                    throw new RuntimeException("geodetic not yet for az from event...");
                 } else {
                     for (Location evt : latLonArgs.eventList) {
                         RayParamKmRay evtDr = new RayParamKmRay(d);
@@ -83,8 +83,8 @@ public class DistanceArgs {
                     }
                 }
             } else if (!hasEventLatLon() && hasStationLatLon() && getBackAzimuth() != null) {
-                if (latLonArgs.geodetic) {
-                    throw new RuntimeException("geodetic not yet...");
+                if (latLonArgs.isGeodetic()) {
+                    throw new RuntimeException("geodetic not yet for baz from station...");
                 } else {
                     for (Location sta : latLonArgs.stationList) {
                         RayParamKmRay staDr = new RayParamKmRay(d);
@@ -103,7 +103,7 @@ public class DistanceArgs {
         List<RayParamRay> rpList = new ArrayList<>();
         for (Double d : distArgs.shootRaypList) {
             if (hasEventLatLon() && !hasStationLatLon() && getAzimuth() != null) {
-                if (latLonArgs.geodetic) {
+                if (latLonArgs.isGeodetic()) {
                     throw new RuntimeException("geodetic not yet...");
                 } else {
                     for (Location evt : latLonArgs.eventList) {
@@ -113,8 +113,8 @@ public class DistanceArgs {
                     }
                 }
             } else if (!hasEventLatLon() && hasStationLatLon() && getBackAzimuth() != null) {
-                if (latLonArgs.geodetic) {
-                    throw new RuntimeException("geodetic not yet...");
+                if (latLonArgs.isGeodetic()) {
+                    throw new RuntimeException("geodetic not yet for baz from station...");
                 } else {
                     for (Location sta : latLonArgs.stationList) {
                         RayParamRay staDr = RayParamRay.ofRayParamSDegree(d);
@@ -133,7 +133,7 @@ public class DistanceArgs {
         List<RayParamRay> rpList = new ArrayList<>();
         for (Double d : distArgs.shootRadianRaypList) {
             if (hasEventLatLon() && !hasStationLatLon() && getAzimuth() != null) {
-                if (latLonArgs.geodetic) {
+                if (latLonArgs.isGeodetic()) {
                     throw new RuntimeException("geodetic not yet...");
                 } else {
                     for (Location evt : latLonArgs.eventList) {
@@ -143,8 +143,8 @@ public class DistanceArgs {
                     }
                 }
             } else if (!hasEventLatLon() && hasStationLatLon() && getBackAzimuth() != null) {
-                if (latLonArgs.geodetic) {
-                    throw new RuntimeException("geodetic not yet...");
+                if (latLonArgs.isGeodetic()) {
+                    throw new RuntimeException("geodetic not yet for baz from station...");
                 } else {
                     for (Location sta : latLonArgs.stationList) {
                         RayParamRay staDr = RayParamRay.ofRayParamSRadian(d);
@@ -164,7 +164,7 @@ public class DistanceArgs {
         List<RayParamIndexRay> rpList = new ArrayList<>();
         for (Integer d : distArgs.shootIndexRaypList) {
             if (hasEventLatLon() && !hasStationLatLon() && getAzimuth() != null) {
-                if (latLonArgs.geodetic) {
+                if (latLonArgs.isGeodetic()) {
                     throw new RuntimeException("geodetic not yet...");
                 } else {
                     for (Location evt : latLonArgs.eventList) {
@@ -174,7 +174,7 @@ public class DistanceArgs {
                     }
                 }
             } else if (!hasEventLatLon() && hasStationLatLon() && getBackAzimuth() != null) {
-                if (latLonArgs.geodetic) {
+                if (latLonArgs.isGeodetic()) {
                     throw new RuntimeException("geodetic not yet...");
                 } else {
                     for (Location sta : latLonArgs.stationList) {
@@ -197,7 +197,7 @@ public class DistanceArgs {
                 throw new IllegalArgumentException("Takeoff angle should be between 0 and 180 degrees: "+d);
             }
             if (hasEventLatLon() && !hasStationLatLon() && getAzimuth() != null) {
-                if (latLonArgs.geodetic) {
+                if (latLonArgs.isGeodetic()) {
                     throw new RuntimeException("geodetic not yet...");
                 } else {
                     for (Location evt : latLonArgs.eventList) {
@@ -207,7 +207,7 @@ public class DistanceArgs {
                     }
                 }
             } else if (!hasEventLatLon() && hasStationLatLon() && getBackAzimuth() != null) {
-                if (latLonArgs.geodetic) {
+                if (latLonArgs.isGeodetic()) {
                     throw new RuntimeException("geodetic not yet...");
                 } else {
                     for (Location sta : latLonArgs.stationList) {
@@ -392,7 +392,7 @@ public class DistanceArgs {
         }
     }
 
-    static class LatLonInner {
+    static class LatLonInner extends GeodeticArgs {
 
         @Option(names={"--sta", "--station"},
                 arity="2",
@@ -438,15 +438,5 @@ public class DistanceArgs {
         @Option(names="--baz", description="backazimuth in degrees")
         protected Double backAzimuth = null;
 
-        @Option(names = "--geodetic",
-                description = "use geodetic latitude for distance calculations, which implies an ellipticity. "
-                        +"Default is spherical. Note this only affects calculation of distance from lat/lon, "
-                        +"all travel time calculations are done in a purely spherical model.")
-        protected boolean geodetic = false;
-
-        @Option(names= "--ellipflattening",
-                paramLabel = "f",
-                description = "Elliptical flattening for distance calculations when --geodetic, defaults to WGS84 ~ 1/298.257")
-        protected double ellipflattening = DistAz.wgs85_flattening;
     }
 }

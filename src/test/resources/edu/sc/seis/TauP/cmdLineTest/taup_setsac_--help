@@ -1,33 +1,41 @@
-Usage: taup setsac [--debug] [--evdpkm] [--help] [--verbose]
-                   [--prop=<toolPropsFilename>] [[-h=depth] [--mod=<modelname>]
-                   [--stadepth=depth] [--scat=s s]...] [[-p=phase[,
-                   phase...]]... [--phasefile=<phaseFiles>]...] [sacfile...]
+Usage: taup setsac [--debug] [--evdpkm] [--geodetic] [--help] [--verbose]
+                   [--ellipflattening=f] [--prop=<toolPropsFilename>]
+                   [[-h=depth] [--mod=<modelname>] [--stadepth=depth] [--scat=s
+                   s]...] [[-p=phase[,phase...]]...
+                   [--phasefile=<phaseFiles>]...] [sacfile...]
 Set headers to travel times of phases using depth and distance from SAC files.
-      [sacfile...]   SAC files to process
+      [sacfile...]          SAC files to process
 
 Options:
 
-      --debug        enable debugging output
-      --evdpkm       sac depth header is in km, default is meters
-      --help         display this help message
+      --debug               enable debugging output
+      --ellipflattening=f   Elliptical flattening for distance calculations
+                              when --geodetic, defaults to WGS84 ~ 1/298.257
+      --evdpkm              sac depth header is in km, default is meters
+      --geodetic            use geodetic latitude for distance calculations,
+                              which implies an ellipticity. Default is
+                              spherical. Note this only affects calculation of
+                              distance from lat/lon pairs, all travel time
+                              calculations are done in a purely spherical model.
+      --help                display this help message
       --prop=<toolPropsFilename>
-                     load defaults from properties file
-      --verbose      enable verbose output
+                            load defaults from properties file
+      --verbose             enable verbose output
 Model Args
   -h, --evdepth, --sourcedepth=depth
-                     source depth in km
+                            source depth in km
       --mod, --model=<modelname>
-                     use velocity model "modelname" for calculations.
-                     Default is iasp91. Other builtin models include prem,
-                       ak135, ak135fcont, and ak135favg.
-      --scat, --scatter=s s
-                     scattering depth and distance in degrees, which may be
-                       negative. Only effects phases with 'o' or 'O' in the
-                       phase name.
+                            use velocity model "modelname" for calculations.
+                            Default is iasp91. Other builtin models include
+                              prem, ak135, ak135fcont, and ak135favg.
+      --scat, --scatter=s s scattering depth and distance in degrees, which may
+                              be negative. Only effects phases with 'o' or 'O'
+                              in the phase name.
       --stadepth, --receiverdepth=depth
-                     the receiver depth in km for stations not at the surface
+                            the receiver depth in km for stations not at the
+                              surface
 Phase Names
   -p, --ph, --phase=phase[,phase...]
-                     seismic phase names
+                            seismic phase names
       --phasefile=<phaseFiles>
-                     read list of phase names from file
+                            read list of phase names from file
