@@ -122,15 +122,17 @@ tasks.named("sourcesJar") {
 val dirName = project.name+"-"+version
 val binDirName = project.name+"_bin-"+version
 
-tasks.register<Sync>("webserverSphinxDocs") {
-  from("src/doc/sphinx/build/html")
-  into("src/webserver/resources/edu/sc/seis/webtaup/html/doc")
+tasks.register<Exec>("sphinxDocs") {
+  workingDir("src/doc/sphinx")
+  commandLine("make", "html")
   dependsOn("copyProgramExampleFiles")
+  dependsOn("genCmdLineHelpFiles")
+  dependsOn("versionToDocFiles")
 }
-tasks.getByName("processWebserverResources").dependsOn("webserverSphinxDocs")
 
 tasks.register<Jar>("webserverJar") {
     dependsOn("webserverClasses" )
+    dependsOn("sphinxDocs")
     from(sourceSets["main"].output)
     from(sourceSets["webserver"].output)
     from("src/doc/sphinx/build/html") {
@@ -394,15 +396,25 @@ tasks.register<Sync>("copyCmdLineTestFiles") {
 
 tasks.register<JavaExec>("genCmdLineHelpFiles") {
   description = "generate TauP cmd line help output files"
-  classpath = sourceSets["main"].runtimeClasspath + project.tasks[JavaPlugin.JAR_TASK_NAME].outputs.files
-  getMainClass().set("edu.sc.seis.TauP.cmdline.ToolRun")
-  args = listOf( "--getcmdlinehelpfiles")
-  dependsOn += tasks.getByName("classes")
-  outputs.files(fileTree("src/doc/sphinx/source/cmdLineHelp"))
+  classpath = sourceSets.getByName("test").runtimeClasspath
+  getMainClass().set("edu.sc.seis.TauP.cmdline.GenCmdLineUsage")
+  dependsOn += tasks.getByName("testClasses")
+  outputs.files(fileTree("build/cmdLineHelp"))
 }
+tasks.register<Sync>("copyCmdLineHelpFiles") {
+  from(tasks.getByName("genCmdLineHelpFiles").outputs)
+  into("src/doc/sphinx/source/cmdLineHelp")
+  dependsOn("genCmdLineHelpFiles")
+}
+
 tasks.register<Sync>("copyProgramExampleFiles") {
   from("src/example/java/edu/sc/seis/example/TimeExample.java")
   into("src/doc/sphinx/source/programming")
+}
+tasks.register("versionToDocFiles") {
+    inputs.files("build.gradle.kts")
+    outputs.files("src/doc/sphinx/source/VERSION")
+    File("src/doc/sphinx/source/VERSION").writeText(""+version)
 }
 
 tasks.get("assemble").dependsOn(tasks.get("dependencyUpdates"))

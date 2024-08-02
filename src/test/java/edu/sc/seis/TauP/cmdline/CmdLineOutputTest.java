@@ -558,11 +558,10 @@ public class CmdLineOutputTest {
 
     public void usageToDocSrc() throws IOException {
 
-        File toolDocDir = new File("src/doc/sphinx/source/cmdLineHelp");
         CommandLine commandLine = new CommandLine(new ToolRun());
         for ( String toolname : commandLine.getSubcommands().keySet()) {
             String filename = "taup_"+toolname+".usage";
-            PrintStream fileOut = new PrintStream(new BufferedOutputStream(new FileOutputStream(new File(toolDocDir, filename))));
+            PrintStream fileOut = new PrintStream(new BufferedOutputStream(new FileOutputStream(new File(helpOutputDir, filename))));
             commandLine.getSubcommands().get(toolname).usage(fileOut);
             fileOut.close();
         }
@@ -570,6 +569,7 @@ public class CmdLineOutputTest {
 
     File docOutputDir = new File("src/doc/sphinx/source/examples");
     File testOutputDir = new File("build/cmdLineTest");
+    File helpOutputDir = new File("build/cmdLineHelp");
 
     public void saveTestOutputToFile(String cmd) throws Exception {
         String filename = fileizeCmd(cmd);
