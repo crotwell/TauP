@@ -1,10 +1,10 @@
-.. _taup_setmseed3:
+.. _taup_setms3:
 
 --------------
-TauP SetMSeed3
+TauP SetMS3
 --------------
 
-TauP setmseed3 saves travel times into the extra headers of miniseed3 records.
+TauP setms3 saves travel times into the extra headers of miniseed3 records.
 The source depth and distance used for the calculations can be provided
 on the command line or can be extracted from
 `bag style json <https://crotwell.github.io/ms3eh/>`_ in the records.
@@ -17,5 +17,5 @@ can be extracted from QuakeML and StationXML files.
 
 The usage is:
 
-.. literalinclude:: cmdLineHelp/taup_setmseed3.usage
+.. literalinclude:: cmdLineHelp/taup_setms3.usage
   :language: text

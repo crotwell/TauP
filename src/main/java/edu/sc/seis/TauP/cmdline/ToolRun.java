@@ -45,7 +45,7 @@ public class ToolRun {
 	public static String CREATE = "create";
     public static String GUI = "gui";
 	public static String SETSAC = "setsac";
-	public static String SETMSEED3 = "setmseed3";
+	public static String SETMSEED3 = "setms3";
     public static String SPLOT = "slowplot";
 	public static String TABLE = "table";
     public static String VPLOT = "velplot";

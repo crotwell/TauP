@@ -15,7 +15,7 @@ Tools
     taup_curve
     taup_phase
     taup_table
-    taup_setmseed3
+    taup_setms3
     taup_setsac
     taup_velmerge
     taup_velplot
@@ -39,7 +39,7 @@ Tools included with the TauP package:
 :ref:`curve <taup_curve>`           calculates travel time curves, time versus epicentral distance.
 :ref:`phase <taup_phase>`           textual description of the path the phase takes through the model.
 :ref:`table <taup_table>`           outputs travel times for a range of depths and distances in an ASCII file
-:ref:`setmseed3 <taup_setmseed3>`   puts theoretical arrival times into extra headers.
+:ref:`setms3 <taup_setms3>`         puts theoretical arrival times into extra headers.
 :ref:`setsac <taup_setsac>`         puts theoretical arrival times into sac header variables.
 :ref:`velmerge <taup_velmerge>`     merges part of one velocity model into another.
 :ref:`velplot <taup_velplot>`       output velocity model as a gmt script.
@@ -100,7 +100,7 @@ and then hitting the tab key will display the models available for the
 .. include:: taup_phase
 .. include:: taup_table
 .. include:: taup_setsac
-.. include:: taup_setmseed3
+.. include:: taup_setms3
 .. include:: taup_velplot
 .. include:: taup_velmerge
 .. include:: taup_wavefront

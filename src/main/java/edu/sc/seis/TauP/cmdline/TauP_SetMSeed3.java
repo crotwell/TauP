@@ -26,7 +26,7 @@ import java.util.*;
 import static edu.sc.seis.TauP.cmdline.TauP_Tool.ABREV_SYNOPSIS;
 import static edu.sc.seis.TauP.cmdline.TauP_Tool.OPTIONS_HEADING;
 
-@CommandLine.Command(name = "setmseed3",
+@CommandLine.Command(name = "setms3",
         description = {
                 "Save travel times in the extra header of miniseed3 files.",
                 "    https://crotwell.github.io/ms3eh/",

@@ -1,11 +1,10 @@
-Usage: taup setmseed3 [--debug] [--geodetic] [--help] [--verbose]
-                      [--eh=<ehKey>] [--ellipflattening=f]
-                      [--prop=<toolPropsFilename>] [--qml=<quakemlFilename>]
-                      [--qmltol=<quakeOTimeTol>]
-                      [--staxml=<stationxmlFilename>] [[-h=depth]
-                      [--mod=<modelname>] [--stadepth=depth] [--scat=s s]...]
-                      [[-p=phase[,phase...]]... [--phasefile=<phaseFiles>]...]
-                      [mseed3file...]
+Usage: taup setms3 [--debug] [--geodetic] [--help] [--verbose] [--eh=<ehKey>]
+                   [--ellipflattening=f] [--prop=<toolPropsFilename>]
+                   [--qml=<quakemlFilename>] [--qmltol=<quakeOTimeTol>]
+                   [--staxml=<stationxmlFilename>] [[-h=depth]
+                   [--mod=<modelname>] [--stadepth=depth] [--scat=s s]...]
+                   [[-p=phase[,phase...]]... [--phasefile=<phaseFiles>]...]
+                   [mseed3file...]
 Save travel times in the extra header of miniseed3 files.
     https://crotwell.github.io/ms3eh/
 has details on the JSON structure.
