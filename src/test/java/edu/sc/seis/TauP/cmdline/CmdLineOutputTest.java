@@ -565,6 +565,12 @@ public class CmdLineOutputTest {
             commandLine.getSubcommands().get(toolname).usage(fileOut);
             fileOut.close();
         }
+        // also write version as json
+        String filename = "VERSION.json";
+        PrintWriter fileOut = new PrintWriter(new BufferedWriter(new FileWriter(new File(helpOutputDir, filename))));
+        TauP_Version taup_version = new TauP_Version();
+        taup_version.printResultJSON(fileOut);
+        fileOut.close();
     }
 
     File docOutputDir = new File("src/doc/sphinx/source/examples");

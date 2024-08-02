@@ -7,38 +7,58 @@ Distribution
 What and Where
 --------------
 
-The current distribution of the TauP package is 3.0, dated July XX, 2024.
+The current distribution of the TauP package is |release|, created |today|.
+
+Downloads available from either
+`GitHub <https://github.com/crotwell/TauP/releases>`_ or
+`Zenodo <https://zenodo.org/records/10794858>`_. Installation also
+available for Macintosh OSX via
+`Homebrew <https://brew.sh/>`_ with:
+
+.. code-block:: bash
+
+  brew tap crotwell/crotwell && brew install taup
+
+or for Linux via
+`Snap <https://snapcraft.io/taup>`_ with:
+
+.. code-block:: bash
+
+  sudo snap install taup
 
 The distribution directory obtained from either the gzipped tar file or
 the zip file contains:
 
-+-------------+----------------------------------------------------------------+
-| README.md   | getting started information                                    |
-+-------------+----------------------------------------------------------------+
-| LICENSE     | the GNU LGPL license                                           |
-+-------------+----------------------------------------------------------------+
-| CITATION.cff| citation information                                           |
-+-------------+----------------------------------------------------------------+
-| StdModels   | standard models included in the jar in lib                     |
-+-------------+----------------------------------------------------------------+
-| bin         | directory containing the *wrapper script* to start the tools   |
-|             | each will print a usage with a --help command line argument.   |
-+-------------+----------------------------------------------------------------+
-| lib         | all the Java classes included in the package, along with       |
-|             | saved models for prem, iasp91, and ak135 in the TauP jar file. |
-|             | Also included are dependancy jars.                             |
-+-------------+----------------------------------------------------------------+
-| docs        | a directory with the TauP paper published in SRL and this      |
-|             | manual,installation instructions are in the appendix. Also     |
-|             | included are javadocs, example properties, history, Maple      |
-|             | version of equations used, and a simple model file.            |
-+-------------+----------------------------------------------------------------+
-| src         | a directory with all of the java source code.                  |
-+-------------+----------------------------------------------------------------+
-| gradlew     | rebuild TauP using Gradle.                                     |
-+-------------+----------------------------------------------------------------+
-| gradle      | helper file for rebuild TauP using Gradle.                     |
-+-------------+----------------------------------------------------------------+
++-----------------+----------------------------------------------------------------+
+| README.md       | getting started information                                    |
++-----------------+----------------------------------------------------------------+
+| LICENSE         | the GNU LGPL license                                           |
++-----------------+----------------------------------------------------------------+
+| VERSION         | the current version                                            |
++-----------------+----------------------------------------------------------------+
+| CITATION.cff    | citation information                                           |
++-----------------+----------------------------------------------------------------+
+| StdModels       | standard models included within the jar in lib                 |
++-----------------+----------------------------------------------------------------+
+| bin             | directory containing the *wrapper script* to start the tools   |
+|                 | each will print a usage with a --help command line argument.   |
++-----------------+----------------------------------------------------------------+
+| lib             | all the Java classes included in the package, along with       |
+|                 | saved models for prem, iasp91, and ak135 in the TauP jar file. |
+|                 | Also included are dependancy jars.                             |
++-----------------+----------------------------------------------------------------+
+| docs            | a directory with the TauP paper published in SRL and this      |
+|                 | manual,installation instructions are in the appendix. Also     |
+|                 | included are javadocs, example properties, history, Maple      |
+|                 | version of equations used, and a simple model file.            |
++-----------------+----------------------------------------------------------------+
+| src             | a directory with all of the java source code.                  |
++-----------------+----------------------------------------------------------------+
+| gradle*         | rebuild TauP using Gradle. Not needed unless recompiling for   |
+|                 | debugging or code modification.                                |
++-----------------+----------------------------------------------------------------+
+| taup_completion | helper file for rebuild TauP using Gradle.                     |
++-----------------+----------------------------------------------------------------+
 
 
 
@@ -54,7 +74,8 @@ these are:
   was made to make as few assumptions as possible about the nature of the model.
   Therefore,
   even models that have very different structures than common global models can be
-  used.
+  used. Users have calculated travel times for various earth models, models
+  of Mars, the Moon, and even a kiwi. Yes, the fruit!
 * Phase parsing. Phases are not hard coded into the program, instead the phase
   names are parsed. This creates an opportunity for the study of less common
   phases that are not present in previous travel time calculators.
@@ -65,32 +86,9 @@ these are:
   the objects within this package. In addition, Groovy, a popular Java
   scripting language, provides a simple means of directly accessing the public
   methods within the package.
-
-
-------------
-Future Plans
-------------
-
-There are several ideas for improvements that we may pursue, such as:
-
-* A GUI. A graphical user interface would greatly improve the usefulness
-  of this package, especially for non command line uses such as on the Macintosh
-  or within web browsers. The beginings of such a GUI are there in the TauP tool,
-  but at present it cannot access all of the functionality of the tools.
-* Use of the $\tau$ function. In spite of the name, TauP does not yet use
-  Tau splines. At present I do not believe that this would provide a large
-  improvement over the current linear interpolation, but it is likely worth doing.
-* Web based applet. One of Java's main uses currently is for the development of web based applets. An applet is a small application that is downloaded and
-  executed within a web browser. This is an attractive opportunity and we have a simple
-  example of one included in this distribution.
-  There are difficulties as the network time to download the
-  model files may be unacceptable, as well as the lack of support for Java~1.1 in current browsers. A client server architecture as well as the continued improvement of commercial web browsers
-  may be able to address these issues.
-
-* 1.1D models. There is nothing in the method that requires the source and
-  receiver velocity models to be the same. With this idea, a separate crustal
-  model appropriate to each region could be used for the source and receiver.
-
-* WKBJ synthetics. The calculation of $\tau$ is a necessary step for WKBJ
-  synthetics, and so this is a natural direction. It likely involves significant
-  effort, however.
+* Web server interface. Version 3 ships with an embedded web server and web
+  page that allows access to the tools via a web browser. This functions both as
+  a GUI and as a way to extract results from other programming languages via
+  JSON and a HTTP query.
+* Simple amplitudes. Also new is the ability to calculate an amplitude
+  approximation from reflection and transmission coefficients and spreading.

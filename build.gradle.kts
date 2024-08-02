@@ -126,9 +126,16 @@ tasks.register<Exec>("sphinxDocs") {
   workingDir("src/doc/sphinx")
   commandLine("make", "html")
   dependsOn("copyProgramExampleFiles")
-  dependsOn("genCmdLineHelpFiles")
-  dependsOn("versionToDocFiles")
+  dependsOn("copyCmdLineHelpFiles")
 }
+tasks.register<Exec>("sphinxClean") {
+  workingDir("src/doc/sphinx")
+  commandLine("make", "clean")
+}
+tasks.named("clean") {
+    dependsOn("sphinxClean")
+}
+
 
 tasks.register<Jar>("webserverJar") {
     dependsOn("webserverClasses" )
@@ -395,6 +402,7 @@ tasks.register<Sync>("copyCmdLineTestFiles") {
 }
 
 tasks.register<JavaExec>("genCmdLineHelpFiles") {
+  inputs.files("build.gradle.kts") // for version.json
   description = "generate TauP cmd line help output files"
   classpath = sourceSets.getByName("test").runtimeClasspath
   getMainClass().set("edu.sc.seis.TauP.cmdline.GenCmdLineUsage")
@@ -410,11 +418,6 @@ tasks.register<Sync>("copyCmdLineHelpFiles") {
 tasks.register<Sync>("copyProgramExampleFiles") {
   from("src/example/java/edu/sc/seis/example/TimeExample.java")
   into("src/doc/sphinx/source/programming")
-}
-tasks.register("versionToDocFiles") {
-    inputs.files("build.gradle.kts")
-    outputs.files("src/doc/sphinx/source/VERSION")
-    File("src/doc/sphinx/source/VERSION").writeText(""+version)
 }
 
 tasks.get("assemble").dependsOn(tasks.get("dependencyUpdates"))

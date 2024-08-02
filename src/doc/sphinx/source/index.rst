@@ -5,8 +5,8 @@
 
 The TauP Toolkit
 ================
-Version 3.0 Beta
-----------------
+Version |version|
+-----------------
 
 
 Flexible Seismic Travel-Time and Raypath Utilities.
