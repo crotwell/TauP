@@ -139,7 +139,7 @@ tasks.named("clean") {
 
 tasks.register<Jar>("webserverJar") {
     dependsOn("webserverClasses" )
-    dependsOn("sphinxDocs")
+    //dependsOn("sphinxDocs") // this fails on github actions
     from(sourceSets["main"].output)
     from(sourceSets["webserver"].output)
     from("src/doc/sphinx/build/html") {
@@ -218,7 +218,7 @@ val distFiles: CopySpec = copySpec {
 
 tasks.register<Sync>("explodeBin") {
   dependsOn("jar")
-    dependsOn("webserverJar")
+  dependsOn("webserverJar")
   dependsOn("startScripts")
   dependsOn("genModels")
     with( binDistFiles)
