@@ -10,6 +10,7 @@ Version |version|
 
 
 Flexible Seismic Travel-Time and Raypath Utilities.
+Release |release|, created |today|.
 
 .. toctree::
     :maxdepth: 2

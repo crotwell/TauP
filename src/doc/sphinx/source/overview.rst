@@ -3,7 +3,8 @@
 Overview
 ========
 
-This documentation is for version |version| of The TauP Toolkit.
+This documentation is for version |release| of The TauP Toolkit
+created |today|.
 
 The algorithms employed within the TauP package are based on the
 method of :cite:t:`bulandchapman`.
