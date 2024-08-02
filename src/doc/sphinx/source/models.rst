@@ -50,14 +50,16 @@ in phase names to avoid confusing the phase parser. These labels
 are placed on a line by themselves between the two lines representing the
 sample points above and below the depth of the
 discontinuity.
+
 These help to determine where a particular phase propagates. For instance,
 in a model that has many crustal and upper mantle layers, from which
-discontinuity does the phase \texttt{PvmP} reflect?
+discontinuity does the phase :code:`PvmP` reflect?
 Explicit labeling eliminates potential ambiguity.
 
 =================     =============================================
 Labels                Description
 =================     =============================================
+crust                 top of crust
 mantle, moho          moho, crust-mantle boundary
 outer-core, cmb       mantle-core boundary
 inner-core, icocb     inner outer core boundary
@@ -65,7 +67,16 @@ ice                   top of ice layer
 ice-ocean             ice above ocean boundary
 ice-crust             ice above crust boundary
 ocean                 top of ocean layer
+seabed                ocean above crust boundary
 =================     =============================================
+
+
+For example a very simplistic model of Europa, showing the use of other
+named discontinuities, might look like:
+
+
+.. literalinclude:: EuropaLike.nd
+  :language: text
 
 One further enhancement to these model file formats is the support for comments
 embedded within the model files. As in shell scripting, everything after
@@ -181,7 +192,7 @@ places in order until it finds a model that matches the name.
   ``taup time -mod ../OtherDir/newModel.taup``.
 
 * New in version 2.0 is the ability of the tools to load a velocity model directly
-  and handle the tau model create functionality internall,
+  and handle the tau model create functionality internally,
   so in addition to ``.taup`` files,
   the ``.nd`` and ``.tvel`` model files can be loaded directly
   if there is not a ``.taup`` file found.

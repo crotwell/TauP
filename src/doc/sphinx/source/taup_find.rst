@@ -29,12 +29,6 @@ Then :code:`--max 3` results in over 13,000 phases and
 by a range of ray parameters or times or by disabling interactions with
 discontinuities in the model.
 
-
-The usage is:
-
-.. literalinclude:: cmdLineHelp/taup_find.usage
-  :language: text
-
 The phases may also be limited by a ray parameter range or optionally by a
 travel time range. Note that limiting by interaction number, via :code:`--max`
 or limiting the ray parameter range via :code:`--rayparam` or
@@ -70,3 +64,9 @@ gives simimar phases to the previous, but also limits to arrivals between 400
 and 420 seconds at 35 degrees away. If your seismogram contained what appears
 to be an arrival at roughly 410 seconds, this would give some possible phases
 that may explain it.
+
+
+The usage is:
+
+.. literalinclude:: cmdLineHelp/taup_find.usage
+  :language: text

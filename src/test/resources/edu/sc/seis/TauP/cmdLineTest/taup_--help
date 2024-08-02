@@ -9,7 +9,7 @@ Commands:
   create     Create .taup file from a velocity model.
   curve      Plot travel time vs. distance and other curves for seismic phases.
   refltrans  Plot reflection and transmission coefficients for a discontinuity.
-  setmseed3  Save travel times in the extra header of miniseed3 files.
+  setms3     Save travel times in the extra header of miniseed3 files.
   setsac     Set headers to travel times of phases using depth and distance
                from SAC files.
   velplot    Plot velocity vs depth for a model.

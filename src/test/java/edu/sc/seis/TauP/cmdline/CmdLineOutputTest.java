@@ -117,7 +117,7 @@ public class CmdLineOutputTest {
                                           "taup create --help",
                                           "taup refltrans --help",
                                           "taup setsac --help",
-                                          "taup setmseed3 --help",
+                                          "taup setms3 --help",
                                           "taup version --help",
                                           "taup spikes --help",
     };
@@ -557,7 +557,7 @@ public class CmdLineOutputTest {
     }
 
     public void usageToDocSrc() throws IOException {
-
+        helpOutputDir.mkdirs();
         CommandLine commandLine = new CommandLine(new ToolRun());
         for ( String toolname : commandLine.getSubcommands().keySet()) {
             String filename = "taup_"+toolname+".usage";

@@ -8,7 +8,7 @@ TauP Wavefront is similar to TauP Path, but plots the wavefront at timesteps ins
 ray paths. It also uses a model like TauP Time and
 generates  depth versus
 angular distances from the epicenter for the phases, but done at time slices instead of depth slices.
-The output is in GMT~\cite{GMT} `psxy` format, and is
+The output is in GMT, :cite:t:`GMT`, plot format, and is
 placed into the file `taup_wavefront.gmt`.
 The colums are distance, depth, time and ray param, although only the first two are used by the GMT script.
 If you specify the `-gmt` flag then this
@@ -20,7 +20,7 @@ have GMT installed, you can just:
 
 and then::
 
-  sh taup_wavefront.gmt
+  bash taup_wavefront.gmt
 
 and you have a plot of the wavefronts in `taup_wavefront.pdf`.
 

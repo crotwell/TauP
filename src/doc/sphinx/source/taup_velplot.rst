@@ -33,7 +33,7 @@ the velocity model file for the standard models. For example:
 .. literalinclude:: examples/taup_velplot_--nameddiscon_--mod_iasp91.cmd
   :language: text
 
-will extract the iasp91 velocity model into a file name 'iasp91.nd' 
+will extract the iasp91 velocity model into a file named 'iasp91.nd'
 in the current directory.
 
 

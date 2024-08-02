@@ -9,12 +9,6 @@ determines the
 angular distances from the epicenter at which the specified rays pierce
 discontinuities or specified depths in the model.
 
-The usage is:
-
-.. literalinclude:: cmdLineHelp/taup_pierce.usage
-  :language: text
-
-
 
 The :code:`--rev`, :code:`--turn` and :code:`--under` flags are useful
 for limiting the output
@@ -63,4 +57,9 @@ a map view of where the rays encounter the chosen depth. Here is the output,
 distance, depth, latitude and longitude, respectively.
 
 .. literalinclude:: examples/taup_pierce_--mod_prem_-h_200_-p_S_--sta_12_34.2_--evt_-28_122_--pierce_2591_--nodiscon
+  :language: text
+
+The usage is:
+
+.. literalinclude:: cmdLineHelp/taup_pierce.usage
   :language: text

@@ -21,7 +21,7 @@ Javadocs for the package are at available at
 `javadoc.io <https://javadoc.io/doc/edu.sc.seis/TauP>`_.
 
 While the TauP jar and its dependencies are included in the distribution, it is
-often easier to depend on the publication with
+often easier to depend on the publication within the 
 `Maven Central <https://central.sonatype.com/artifact/edu.sc.seis/TauP/overview>`_
 repository
 as this facilitates download and updates and provides for automatic dependency
