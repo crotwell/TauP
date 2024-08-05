@@ -20,14 +20,10 @@ earth, pierce and turning points. It handles many types of velocity models and
 can calculate times for virtually any seismic phase with a phase parser.
 It is written in Java so it should run on any Java enabled platform.
 
-The manual for the TauP Toolkit can be found in doc/taup.pdf. A copy of the TauP paper published in SRL can be found in doc/SRL_paper/taup_srl_with_figs.pdf.
-
-Scripts for the various tool for both unix (sh) and windows (bat) are in the bin directory.
-
 The website for the TauP Toolkit is:
-http://www.seis.sc.edu/TauP
+https://github.com/crotwell/TauP
 
-Documentation is available at [Read The Docs](https://taup.readthedocs.io/en/latest/).
+Documentation is available at [Read The Docs](https://taup.readthedocs.io/en/latest/), or in docs/manual directory of the distribution.
 
 If you like TauP and would like to cite it, please use the following:
 Crotwell, H. P., T. J. Owens, and J. Ritsema (1999). The TauP Toolkit: Flexible seismic travel-time and ray-path utilities, Seismological Research Letters 70, 154–160, as well as the [Zenodo DOI](https://zenodo.org/doi/10.5281/zenodo.10794857) for the version you are using..
@@ -62,12 +58,10 @@ sudo snap install taup --channel=--channel=latest/edge
 
 ## Manually
 
-Download tarball here:
-https://www.seis.sc.edu/downloads/TauP/TauP-3.0.0.tgz
+Download tarball from Zenodo here:
+https://zenodo.org/records/10794858
 or from the releases section on Github
 https://github.com/crotwell/TauP/releases
-
-`tar zxf` and add the bin to your PATH.
 
 
 ### Rebuilding

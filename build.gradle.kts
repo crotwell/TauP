@@ -186,6 +186,10 @@ val distFiles: CopySpec = copySpec {
         include("build.gradle.kts")
         include("settings.gradle.kts")
     }
+    from("src/doc/sphinx/build/html") {
+      include("**")
+      into("docs/manual")
+    }
     from("build/docs") {
         include("javadoc/**")
         into("docs")
