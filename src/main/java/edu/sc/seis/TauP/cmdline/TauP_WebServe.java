@@ -92,7 +92,7 @@ public class TauP_WebServe extends TauP_Tool {
                         System.err.println("Try to load as classpath resource: " + path);
                         ResourceHandler resHandler = new ResourceHandler(
                                 new ClassPathResourceManager(TauP_Web.class.getClassLoader(),
-                                        "edu/sc/seis/webtaup/html"));
+                                        "edu/sc/seis/TauP/html"));
                         MimeMappings nmm = MimeMappings.builder(true).addMapping("mjs", "application/javascript").build();
                         resHandler.setMimeMappings(nmm);
                         resHandler.handleRequest(exchange);
