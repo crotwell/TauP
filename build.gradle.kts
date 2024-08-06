@@ -30,6 +30,7 @@ java {
     withJavadocJar()
     withSourcesJar()
 }
+
 tasks.withType<JavaCompile>().configureEach {
     options.compilerArgs.addAll(arrayOf("-Xlint:deprecation"))
     // for picocli
@@ -38,10 +39,6 @@ tasks.withType<JavaCompile>().configureEach {
 
 
 sourceSets {
-    create("webserver") {
-        compileClasspath += sourceSets.main.get().output
-        runtimeClasspath += sourceSets.main.get().output
-    }
     create("example") {
         compileClasspath += sourceSets.main.get().output
         runtimeClasspath += sourceSets.main.get().output
@@ -91,7 +88,7 @@ dependencies {
 
 repositories {
     mavenCentral()
-        mavenLocal()
+    mavenLocal()
     maven {
         name = "oss.sonatype.org snapshots"
         url = uri("https://oss.sonatype.org/content/repositories/snapshots/")
@@ -122,42 +119,12 @@ tasks.named("sourcesJar") {
 val dirName = project.name+"-"+version
 val binDirName = project.name+"_bin-"+version
 
-tasks.register<Exec>("sphinxDocs") {
-  workingDir("src/doc/sphinx")
-  commandLine("make", "html")
-  dependsOn("copyProgramExampleFiles")
-  dependsOn("copyCmdLineHelpFiles")
-}
-tasks.register<Exec>("sphinxClean") {
-  workingDir("src/doc/sphinx")
-  commandLine("make", "clean")
-}
-tasks.named("clean") {
-    dependsOn("sphinxClean")
-}
-
-
-tasks.register<Jar>("webserverJar") {
-    dependsOn("webserverClasses" )
-    //dependsOn("sphinxDocs") // this fails on github actions
-    from(sourceSets["main"].output)
-    from(sourceSets["webserver"].output)
-    from("src/doc/sphinx/build/html") {
-      into("edu/sc/seis/webtaup/html/doc")
-    }
-    archiveBaseName.set("taup_webserver")
-}
-
-
 val binDistFiles: CopySpec = copySpec {
     from("build/scripts") {
         include("*")
         into("bin")
     }
     from(tasks.named("jar")) {
-        into("lib")
-    }
-    from(tasks.named("webserverJar")) {
         into("lib")
     }
     from(configurations.runtimeClasspath) {
@@ -185,10 +152,6 @@ val distFiles: CopySpec = copySpec {
     from(".") {
         include("build.gradle.kts")
         include("settings.gradle.kts")
-    }
-    from("src/doc/sphinx/build/html") {
-      include("**")
-      into("docs/manual")
     }
     from("build/docs") {
         include("javadoc/**")
@@ -222,10 +185,8 @@ val distFiles: CopySpec = copySpec {
 
 tasks.register<Sync>("explodeBin") {
   dependsOn("jar")
-  dependsOn("webserverJar")
   dependsOn("startScripts")
-  dependsOn("genModels")
-    with( binDistFiles)
+  with( binDistFiles)
   into( layout.buildDirectory.dir("explode"))
 }
 
@@ -342,19 +303,6 @@ tasks.named("startScripts") {
     dependsOn("createRunScripts")
 }
 
-tasks.register<CreateStartScripts>("taup_web") {
-    dependsOn(tasks.named("webserverJar"))
-    outputDir = file("build/scripts")
-    mainClass.set("edu.sc.seis.webtaup.TauP_Web")
-    applicationName = "taup_web"
-    classpath = sourceSets["webserver"].runtimeClasspath +
-            project.tasks[JavaPlugin.JAR_TASK_NAME].outputs.files +
-            project.tasks["webserverJar"].outputs.files
-}
-tasks.named("createRunScripts") {
-    dependsOn("taup_web")
-}
-
 tasks.register<JavaExec>("genModels") {
   description = "generate TauP default model files"
   classpath = sourceSets.getByName("main").runtimeClasspath
@@ -422,6 +370,34 @@ tasks.register<Sync>("copyCmdLineHelpFiles") {
 tasks.register<Sync>("copyProgramExampleFiles") {
   from("src/example/java/edu/sc/seis/example/TimeExample.java")
   into("src/doc/sphinx/source/programming")
+}
+
+tasks.register<Exec>("sphinxDocs") {
+  workingDir("src/doc/sphinx")
+  commandLine("make", "html")
+  outputs.files(fileTree("src/doc/sphinx/build/html"))
+  dependsOn("copyProgramExampleFiles")
+  dependsOn("copyCmdLineHelpFiles")
+}
+tasks.register<Sync>("copySphinxToDocs") {
+  from("src/doc/sphinx/build/html")
+  into("docs/manual")
+  dependsOn("sphinxDocs")
+}
+tasks.register<Sync>("copySphinxToResources") {
+  from("src/doc/sphinx/build/html")
+  into("src/main/resources/edu/sc/seis/TauP/html/doc")
+  dependsOn("sphinxDocs")
+}
+tasks.register<Exec>("sphinxClean") {
+  workingDir("src/doc/sphinx")
+  commandLine("make", "clean")
+}
+tasks.named("clean") {
+    dependsOn("sphinxClean")
+}
+tasks.named("jar") {
+  dependsOn("copySphinxToResources")
 }
 
 tasks.get("assemble").dependsOn(tasks.get("dependencyUpdates"))

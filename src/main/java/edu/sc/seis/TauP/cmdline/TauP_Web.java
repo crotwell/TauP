@@ -2,8 +2,6 @@ package edu.sc.seis.TauP.cmdline;
 
 import picocli.CommandLine;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 import java.util.concurrent.Callable;
 
 import static edu.sc.seis.TauP.cmdline.TauP_Tool.ABREV_SYNOPSIS;
@@ -17,26 +15,25 @@ import static edu.sc.seis.TauP.cmdline.TauP_Tool.OPTIONS_HEADING;
 public class TauP_Web implements Callable<Integer> {
 
     /**
-     * Computes a result, or throws an exception if unable to do so.
+     * Indirect startup for TauP webserver. This allows picocli to function for help even if the
+     * dependencies (like undertow) are not on the classpath. See TauP_WebServe for the actual
+     * implementation.
      *
-     * @return computed result
-     * @throws Exception if unable to compute a result
+     * @return 1 if successful, 0 otherwise
+     * @throws Exception web startup fails
      */
     @Override
     public Integer call() throws Exception {
         try {
-            Class webClass = Class.forName("edu.sc.seis.webtaup.TauP_Web");
-            Constructor con = webClass.getConstructor();
-            if (con != null) {
-                TauP_Tool tool = (TauP_Tool)con.newInstance();
+            TauP_WebServe tool = new TauP_WebServe();
+            tool.port = port;
 
-                Field portField = webClass.getDeclaredField("port");
-                portField.setInt(tool, port);
-                tool.init();
-                tool.start();
-            }
-        } catch (ClassNotFoundException e) {
-            System.err.println("TauP Web does not seem to be installed, the required jar is not on the classpath.");
+            tool.init();
+            tool.start();
+        } catch (NoClassDefFoundError e) {
+            System.err.println("TauP Web does not seem to be installed, a required jar is not on the classpath.");
+            System.err.println(e.getMessage());
+            System.err.println(e.getCause()!=null?e.getCause().getMessage():"");
             return 1;
         }
         return 0;

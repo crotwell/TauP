@@ -1,4 +1,4 @@
-package edu.sc.seis.webtaup;
+package edu.sc.seis.TauP.cmdline;
 
 import edu.sc.seis.TauP.*;
 import edu.sc.seis.TauP.cmdline.TauP_Tool;
@@ -26,10 +26,10 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 
-public class TauP_Web extends TauP_Tool {
+public class TauP_WebServe extends TauP_Tool {
 
 
-    public TauP_Web() {
+    public TauP_WebServe() {
         super(null);
     }
 
