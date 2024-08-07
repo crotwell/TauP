@@ -99,7 +99,8 @@ tasks {
   jar {
       manifest {
         attributes(
-            mapOf("Implementation-Title" to project.name,
+            mapOf("Automatic-Module-Name" to "edu.sc.seis.TauP",
+                  "Implementation-Title" to project.name,
                   "Implementation-Version" to archiveVersion,
                   "TauP-Compile-Date" to Date()))
       }
