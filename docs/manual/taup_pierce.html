@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>TauP Pierce &#8212; TauP 3.0.0-SNAPSHOT5 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=a66d8bb5" />
+    <script src="_static/documentation_options.js?v=2752e3a5"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="TauP Path" href="taup_path.html" />
+    <link rel="prev" title="TauP Time" href="taup_time.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="index.html">
+    <img class="logo" src="_static/taupLogo.svg" alt="Logo" />
+    
+  </a>
+</p>
+
+
+
+<p class="blurb">Flexible Seismic Travel-Time and Raypath Utilities. Version 3.0.0-SNAPSHOT5</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=crotwell&repo=taup&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="distribution.html">Distribution</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="tools.html">Tools</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="default_params.html">Default Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_time.html">TauP Time</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">TauP Pierce</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_path.html">TauP Path</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_find.html">TauP Find</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_curve.html">TauP Curve</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_phase.html">TauP Phase</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_table.html">TauP Table</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_setms3.html">TauP SetMS3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_setsac.html">TauP SetSac</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_velmerge.html">TauP VelocityMerge</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_velplot.html">TauP VelocityPlot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_refltrans.html">TauP ReflTrans</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_wavefront.html">TauP Wavefront</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_spikes.html">TauP Spikes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_create.html">TauP Create</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_web.html">TauP Web</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_version.html">TauP Version</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_help.html">TauP Help</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tools.html#startup-script">Startup Script</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tools.html#tab-completion">Tab Completion</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="phaseNaming.html">Phases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models.html">Velocity Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="programming.html">Programmatic Access</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bibliography.html">Bibliography</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="tools.html">Tools</a><ul>
+      <li>Previous: <a href="taup_time.html" title="previous chapter">TauP Time</a></li>
+      <li>Next: <a href="taup_path.html" title="next chapter">TauP Path</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="taup-pierce">
+<span id="id1"></span><h1>TauP Pierce<a class="headerlink" href="#taup-pierce" title="Link to this heading">¶</a></h1>
+<p>TauP Pierce uses a model like TauP Time but
+determines the
+angular distances from the epicenter at which the specified rays pierce
+discontinuities or specified depths in the model.</p>
+<p>The <code class="code docutils literal notranslate"><span class="pre">--rev</span></code>, <code class="code docutils literal notranslate"><span class="pre">--turn</span></code> and <code class="code docutils literal notranslate"><span class="pre">--under</span></code> flags are useful
+for limiting the output
+to just those points you care about. The <code class="code docutils literal notranslate"><span class="pre">--pierce</span> <span class="pre">depth</span></code> option
+allows you
+to specify an additional <cite>pierce</cite> depth that does not correspond to an
+actual discontinuity. For instance, where does a ray pierce 300 kilometers
+above the CMB?</p>
+<p>For example:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>taup pierce --mod prem -h 200 -p S,P --deg 57.4
+</pre></div>
+</div>
+<p>would give you pierce points for S, and P for a 200 kilometer
+deep source at a distance of 57.4 degrees.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; P at   566.77 seconds at    57.40 degrees for a    200.0 km deep source in the prem model with rayParam    6.969 s/deg.
+    0.00   200.0    0.00
+    0.11   220.0    2.92
+    1.31   400.0   28.13
+    3.72   670.0   65.40
+   28.17  1501.4  268.52
+   52.62   670.0  471.64
+   55.03   400.0  508.91
+   56.23   220.0  534.12
+   56.34   200.0  537.04
+   57.31    24.4  562.45
+   57.35    15.0  563.97
+   57.40     0.0  566.75
+&gt; S at  1028.61 seconds at    57.40 degrees for a    200.0 km deep source in the prem model with rayParam   13.018 s/deg.
+    0.00   200.0    0.00
+    0.12   220.0    5.35
+    1.33   400.0   52.28
+    3.80   670.0  121.81
+   28.15  1416.2  487.16
+   52.50   670.0  852.51
+   54.97   400.0  922.05
+   56.18   220.0  968.97
+   56.29   200.0  974.33
+   57.30    24.4 1020.82
+   57.35    15.0 1023.53
+   57.40     0.0 1028.59
+</pre></div>
+</div>
+<p>While</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>taup pierce --turn --mod prem -h 200 -p S,P --deg 57.4
+</pre></div>
+</div>
+<p>would give you just the points that each ray turns from downgoing to upgoing.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; P at   566.77 seconds at    57.40 degrees for a    200.0 km deep source in the prem model with rayParam    6.969 s/deg.
+   28.17  1501.4  268.52
+&gt; S at  1028.61 seconds at    57.40 degrees for a    200.0 km deep source in the prem model with rayParam   13.018 s/deg.
+   28.15  1416.2  487.16
+</pre></div>
+</div>
+<p>Using <code class="code docutils literal notranslate"><span class="pre">-rev</span></code> would give you all points that the ray changes direction
+and <code class="code docutils literal notranslate"><span class="pre">-under</span></code> gives just the underside reflections.</p>
+<p>Using the <code class="code docutils literal notranslate"><span class="pre">-pierce</span></code> option</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>taup pierce --mod prem -h 200 -p S --sta 12 34.2 --evt -28 122 --pierce 2591 --nodiscon
+</pre></div>
+</div>
+<p>would give you just the points at which S crossed a depth of 2591 kilometers
+from an event at (28 S, 122 E)
+to a station at (12 N, 34.2 E).
+Because we specified the latitudes and longitudes, we also get the
+latitudes and longitudes of
+the pierce points, useful for making
+a map view of where the rays encounter the chosen depth. Here is the output,
+distance, depth, latitude and longitude, respectively.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; S at  1424.11 seconds at    93.70 degrees for a    200.0 km deep source in the prem model with rayParam    8.717 s/deg.
+   31.56  2591.0  552.57    -17.87     89.41
+   61.47  2591.0  822.01     -3.89     62.40
+</pre></div>
+</div>
+<p>The usage is:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Usage: taup pierce [--amp] [--debug] [--first] [--geodetic] [--help]
+                   [--nodiscon] [--rayp] [--rev] [--time] [--turn] [--under]
+                   [--verbose] [--az=&lt;azimuth&gt;] [--az=&lt;azimuth&gt;]
+                   [--baz=&lt;backAzimuth&gt;] [--baz=&lt;backAzimuth&gt;]
+                   [--ellipflattening=f] [--mw=&lt;mw&gt;] [-o=&lt;outFile&gt;]
+                   [--prop=&lt;toolPropsFilename&gt;] [--pierce=depth[,depth...]]...
+                   [--rel=phase[,phase...]]... [--evt=l l]... [--evt=l l]...
+                   [--sta=l l]... [--sta=l l]... [[-h=depth]
+                   [--mod=&lt;modelname&gt;] [--stadepth=depth] [--scat=s s]...]
+                   [[-p=phase[,phase...]]... [--phasefile=&lt;phaseFiles&gt;]...]
+                   [[--deg=d[,d...]]... [--exactdegree=d[,d...]]...
+                   [--exactkilometer=km[,km...]]... [--km=km[,km...]]...
+                   [--rayparamdeg=s/deg[,s/deg...]]... [--rayparamidx=i[,
+                   i...]]... [--rayparamkm=s/km[,s/km...]]...
+                   [--rayparamrad=s/rad[,s/rad...]]... [--takeoff=deg[,
+                   deg...]]...]... [--json | --text]
+Calculate pierce points for phases at discontinuities in the model.
+
+Options:
+
+      --amp                  show amplitude factor for each phase
+      --debug                enable debugging output
+      --ellipflattening=f    Elliptical flattening for distance calculations
+                               when --geodetic, defaults to WGS84 ~ 1/298.257
+      --first, --onlyfirst   only output the first arrival for each phase, no
+                               triplications
+      --geodetic             use geodetic latitude for distance calculations,
+                               which implies an ellipticity. Default is
+                               spherical. Note this only affects calculation of
+                               distance from lat/lon pairs, all travel time
+                               calculations are done in a purely spherical
+                               model.
+      --help                 display this help message
+      --mw=&lt;mw&gt;              scale amplitude by source moment magnitude
+      --nodiscon             only prints pierce points for the depths added
+                               with -pierce
+  -o, --output=&lt;outFile&gt;     output to file, default is stdout.
+      --pierce=depth[,depth...]
+                             additional depth for calculating pierce points
+      --prop=&lt;toolPropsFilename&gt;
+                             load defaults from properties file
+      --rayp, --onlyrayp     only output the ray parameter
+      --rel=phase[,phase...] times relative to the first of the given phases
+      --rev                  only prints underside and bottom turn points, e.g.
+                               ^ and v
+      --time, --onlytime     only output travel time
+      --turn                 only prints bottom turning points, e.g. v
+      --under                only prints underside reflection points, e.g. ^
+      --verbose              enable verbose output
+Model Args
+  -h, --evdepth, --sourcedepth=depth
+                             source depth in km
+      --mod, --model=&lt;modelname&gt;
+                             use velocity model &quot;modelname&quot; for calculations.
+                             Default is iasp91. Other builtin models include
+                               prem, ak135, ak135fcont, and ak135favg.
+      --scat, --scatter=s s  scattering depth and distance in degrees, which
+                               may be negative. Only effects phases with &#39;o&#39; or
+                               &#39;O&#39; in the phase name.
+      --stadepth, --receiverdepth=depth
+                             the receiver depth in km for stations not at the
+                               surface
+Phase Names
+  -p, --ph, --phase=phase[,phase...]
+                             seismic phase names
+      --phasefile=&lt;phaseFiles&gt;
+                             read list of phase names from file
+Distance is given by:
+      --deg, --degree=d[,d...]
+                             distance in degrees
+      --exactdegree=d[,d...] exact distance traveled in degrees, not 360-d
+      --exactkilometer=km[,km...]
+                             exact distance traveled in kilometers, not 360-k
+      --km, --kilometer=km[,km...]
+                             distance in kilometers
+      --rayparamdeg=s/deg[,s/deg...]
+                             ray parameter from the source in s/deg, up or down
+                               is determined by the phase
+      --rayparamidx=i[,i...] ray parameter from the source as index into model
+                               sampling, up or down is determined by the phase
+      --rayparamkm=s/km[,s/km...]
+                             ray parameter from the source in s/km, up or down
+                               is determined by the phase
+      --rayparamrad=s/rad[,s/rad...]
+                             ray parameter from the source in s/rad, up or down
+                               is determined by the phase
+      --takeoff=deg[,deg...] takeoff angle in degrees from the source zero is
+                               down, 90 horizontal, 180 is up
+Lat,Lon influenced by:
+      --az=&lt;azimuth&gt;         azimuth in degrees
+      --baz=&lt;backAzimuth&gt;    backazimuth in degrees
+      --evt, --event=l l     event latitude and longitude.  Creates a distance
+                               if station is also given.
+      --sta, --station=l l   station latitude and longitude. Creates a distance
+                               if event is also given.
+Output Type:
+      --json                 outputs as JSON
+      --text                 outputs as Text
+</pre></div>
+</div>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &#169;2024, Philip Crotwell.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="_sources/taup_pierce.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
