@@ -16,8 +16,8 @@ plugins {
 
 application {
   mainClass.set("edu.sc.seis.TauP.cmdline.ToolRun")
-    applicationName = "taup"
-    //applicationName = "taupdev"
+  applicationName = "taup"
+  //applicationName = "taupdev"
 }
 
 group = "edu.sc.seis"
@@ -29,6 +29,29 @@ java {
     }
     withJavadocJar()
     withSourcesJar()
+}
+
+distributions {
+    main {
+      contents {
+        from(".") {
+            include("VERSION")
+            include("CITATION.cff")
+            include("LICENSE")
+            include("README.md")
+        }
+        from("build/picocli/bash_completion") {
+          include("taup_completion")
+        }
+        from("docs") {
+          into("docs")
+        }
+        from("build/docs") {
+            include("javadoc/**")
+            into("docs")
+        }
+      }
+    }
 }
 
 tasks.withType<JavaCompile>().configureEach {
@@ -373,34 +396,27 @@ tasks.register<Sync>("copyProgramExampleFiles") {
   into("src/doc/sphinx/source/programming")
 }
 
-tasks.register<Exec>("sphinxDocs") {
+tasks.register<Exec>("sphinxMakeHtml") {
   workingDir("src/doc/sphinx")
   commandLine("make", "html")
-  outputs.files(fileTree("src/doc/sphinx/build/html"))
+  inputs.files(fileTree(project.file("src/doc/sphinx")))
+  outputs.files(fileTree(layout.buildDirectory.dir("sphinx/html")))
   dependsOn("copyProgramExampleFiles")
   dependsOn("copyCmdLineHelpFiles")
 }
 tasks.register<Sync>("copySphinxToDocs") {
-  from("src/doc/sphinx/build/html")
+  from(tasks.named("sphinxMakeHtml"))
   into("docs/manual")
-  dependsOn("sphinxDocs")
+  dependsOn("sphinxMakeHtml")
+  exclude("_sources")
+  exclude(".buildinfo")
 }
-tasks.register<Sync>("copySphinxToResources") {
-  from("src/doc/sphinx/build/html")
-  into("src/main/resources/edu/sc/seis/TauP/html/doc")
-  dependsOn("sphinxDocs")
-}
-tasks.register<Exec>("sphinxClean") {
-  workingDir("src/doc/sphinx")
-  commandLine("make", "clean")
-}
-tasks.named("clean") {
-    dependsOn("sphinxClean")
-}
-tasks.named("jar") {
-  dependsOn("copySphinxToResources")
+tasks.register("sphinx") {
+  dependsOn("sphinxMakeHtml")
+  dependsOn("copySphinxToDocs")
 }
 
+tasks.get("installDist").dependsOn(tasks.get("javadoc"))
 tasks.get("assemble").dependsOn(tasks.get("dependencyUpdates"))
 
 // note can pass password for signing in with -Psigning.password=secret
@@ -427,6 +443,10 @@ tasks.get("processStdmodelsResources").dependsOn("genModels")
 tasks.jar {
     dependsOn("processStdmodelsResources")
     from(sourceSets["stdmodels"].output)
+    from("docs/manual") {
+      into("edu/sc/seis/TauP/html/doc")
+    }
+    mustRunAfter("sphinx")
 }
 
 tasks.register("versionToVersionFile") {
