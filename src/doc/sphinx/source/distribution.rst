@@ -54,10 +54,8 @@ the zip file contains:
 +-----------------+----------------------------------------------------------------+
 | src             | a directory with all of the java source code.                  |
 +-----------------+----------------------------------------------------------------+
-| gradle*         | rebuild TauP using Gradle. Not needed unless recompiling for   |
+| gradlew*         | rebuild TauP using Gradle. Not needed unless recompiling for   |
 |                 | debugging or code modification.                                |
-+-----------------+----------------------------------------------------------------+
-| taup_completion | helper file for rebuild TauP using Gradle.                     |
 +-----------------+----------------------------------------------------------------+
 
 

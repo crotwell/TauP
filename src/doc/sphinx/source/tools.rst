@@ -74,9 +74,17 @@ as a :code:`--version` flag that will print the version.
 Tab Completion
 --------------
 
-New with version 3.0 is tab completion for bash and zsh. Sourcing
-:code:`taup_completion`, included in the distribution, will provide hints
-for the shell when hitting the tab key. For example typing:
+New with version 3.0 is tab completion for bash and zsh. Sourcing the output of
+:code:`taup generate-completion` will provide hints
+for the shell when hitting the tab key for bash or zsh. You can enable it
+with running this command:
+
+:code:`source <(taup generate-completion)`
+
+Adding this to your .bash_profile or .zshrc will enable it for future logins.
+
+Once sourced, you will be able to get hints or completion for most arguments
+within TauP. For example typing:
 
 :code:`taup time -`
 

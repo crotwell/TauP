@@ -2,6 +2,7 @@ package edu.sc.seis.TauP.cmdline;
 
 import edu.sc.seis.TauP.TauPConfig;
 import edu.sc.seis.TauP.cmdline.args.VersionProvider;
+import picocli.AutoComplete;
 import picocli.CommandLine;
 
 import java.io.*;
@@ -30,6 +31,7 @@ import java.util.Arrays;
 				TauP_Find.class,
 				TauP_Spikes.class,
 				TauP_Web.class,
+				AutoComplete.GenerateCompletion.class,
 				TauP_Version.class,
 				CommandLine.HelpCommand.class
 		},

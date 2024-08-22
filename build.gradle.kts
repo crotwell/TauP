@@ -40,9 +40,6 @@ distributions {
             include("LICENSE")
             include("README.md")
         }
-        from("build/picocli/bash_completion") {
-          include("taup_completion")
-        }
         from("docs") {
           into("docs")
         }
@@ -160,9 +157,6 @@ val binDistFiles: CopySpec = copySpec {
         into("lib")
     }
      */
-    from("build/picocli/bash_completion") {
-        include("taup_completion")
-    }
     from(".") {
         include("VERSION")
         include("CITATION.cff")
@@ -455,20 +449,6 @@ tasks.register("versionToVersionFile") {
   File("VERSION").writeText(""+version)
 }
 tasks.get("assemble").dependsOn("versionToVersionFile")
-
-
-tasks.register<JavaExec>("genAutocomplete") {
-  description = "generate TauP bash Autocomplete file"
-  classpath = sourceSets.getByName("main").runtimeClasspath
-  getMainClass().set("picocli.AutoComplete")
-  val outDir =  layout.buildDirectory.dir("picocli/bash_completion")
-  file(outDir).mkdirs()
-  val outFile = File(file(outDir), "taup_completion")
-  args = listOf("edu.sc.seis.TauP.cmdline.ToolRun", "-f", "-o", outFile.path)
-  dependsOn += tasks.getByName("compileJava")
-  outputs.files(outFile)
-}
-tasks.get("explodeBin").dependsOn(tasks.get("genAutocomplete"))
 
 // this is really dumb, but gradle wants something....
 gradle.taskGraph.whenReady {
