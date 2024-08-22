@@ -5,8 +5,7 @@ plugins {
   id("edu.sc.seis.version-class") version "1.3.0"
   id("org.gradle.crypto.checksum") version "1.4.0"
   `java-library`
-    `java-library-distribution`
-  eclipse
+  `java-library-distribution`
   `project-report`
   `maven-publish`
   signing
@@ -32,23 +31,47 @@ java {
 }
 
 distributions {
-    main {
-      contents {
-        from(".") {
-            include("VERSION")
-            include("CITATION.cff")
-            include("LICENSE")
-            include("README.md")
-        }
-        from("docs") {
+  main {
+    distributionBaseName = "TauP"
+    contents {
+      from(".") {
+          include("VERSION")
+          include("CITATION.cff")
+          include("LICENSE")
+          include("README.md")
+      }
+      from("docs") {
+        into("docs")
+      }
+      from(tasks.named("javadoc")) {
+          into("docs/javadoc")
+      }
+      from(".") {
+          include("build.gradle.kts")
+          include("settings.gradle.kts")
+      }
+      from(".") {
+          include("src/**")
+      }
+      from(".") {
+          include("gradle/**")
+          include("gradlew")
+          include("gradlew.bat")
+      }
+      from("src/main/resources/edu/sc/seis/TauP") {
+          include("defaultProps")
           into("docs")
-        }
-        from("build/docs") {
-            include("javadoc/**")
-            into("docs")
-        }
+      }
+      from("src/main/resources/edu/sc/seis/TauP") {
+          include("StdModels/*.tvel")
+          include("StdModels/*.nd")
+      }
+      from("build/generated-src/modVersion") {
+          include("java/**")
+          into("src/main")
       }
     }
+  }
 }
 
 tasks.withType<JavaCompile>().configureEach {
@@ -77,8 +100,8 @@ java {
 val webserverImplementation by configurations.getting {
     extendsFrom(configurations.implementation.get())
 }
-dependencies {
 
+dependencies {
     implementation("org.json:json:20240303")
     //implementation("edu.sc.seis:seisFile:2.1.0-SNAPSHOT4") {
     // or
@@ -136,128 +159,13 @@ tasks.named("sourcesJar") {
     dependsOn("makeVersionClass")
 }
 
-
-val dirName = project.name+"-"+version
-val binDirName = project.name+"_bin-"+version
-
-val binDistFiles: CopySpec = copySpec {
-    from("build/scripts") {
-        include("*")
-        into("bin")
-    }
-    from(tasks.named("jar")) {
-        into("lib")
-    }
-    from(configurations.runtimeClasspath) {
-        into("lib")
-    }
-    /*
-    // don't think this is needed...
-    from(configurations.runtimeClasspath.get().allArtifacts.files) {
-        into("lib")
-    }
-     */
-    from(".") {
-        include("VERSION")
-        include("CITATION.cff")
-        include("LICENSE")
-        include("README.md")
-    }
-}
-
-val distFiles: CopySpec = copySpec {
-    with(binDistFiles)
-    from(".") {
-        include("build.gradle.kts")
-        include("settings.gradle.kts")
-    }
-    from("build/docs") {
-        include("javadoc/**")
-        into("docs")
-    }
-    from("docs") {
-      include("*")
-      into("docs")
-    }
-    from(".") {
-        include("src/**")
-    }
-    from(".") {
-        include("gradle/**")
-        include("gradlew")
-        include("gradlew.bat")
-    }
-    from("src/main/resources/edu/sc/seis/TauP") {
-        include("defaultProps")
-        into("docs")
-    }
-    from("src/main/resources/edu/sc/seis/TauP") {
-        include("StdModels/*.tvel")
-        include("StdModels/*.nd")
-    }
-    from("build/generated-src/modVersion") {
-        include("java/**")
-        into("src/main")
-    }
-}
-
-tasks.register<Sync>("explodeBin") {
-  dependsOn("jar")
-  dependsOn("startScripts")
-  with( binDistFiles)
-  into( layout.buildDirectory.dir("explode"))
-}
-
-tasks.register<Tar>("tarBin") {
-  archiveAppendix.set("bin")
-  dependsOn("explodeBin")
-  compression = Compression.GZIP
-  into(dirName) {
-      with( binDistFiles)
-  }
-}
-tasks.register<Zip>("zipBin") {
-  archiveAppendix.set("bin")
-  dependsOn("explodeBin")
-    into(dirName) {
-        with( binDistFiles)
-    }
-}
-
-tasks.register<Sync>("explodeDist") {
-  dependsOn("explodeBin")
-  dependsOn("javadoc")
-  dependsOn("wrapper")
-    with(distFiles)
-    into( layout.buildDirectory.dir("explode"))
-}
-
-tasks.register<Tar>("tarDist") {
-  dependsOn("explodeDist")
-    compression = Compression.GZIP
-    into(dirName) {
-        with( distFiles)
-    }
-}
-
-
 tasks.register<Checksum>("checksumDist") {
-  dependsOn("tarBin")
-  dependsOn("tarDist")
-  dependsOn("zipDist")
   dependsOn("distZip")
-  inputs.files(tasks.getByName("tarBin").outputs.files)
-    inputs.files(tasks.getByName("tarDist").outputs.files)
-    inputs.files(tasks.getByName("zipDist").outputs.files)
-    outputs.dir(layout.buildDirectory.dir("distributions"))
+  dependsOn("distTar")
+  inputs.files(tasks.getByName("distTar").outputs.files)
+  inputs.files(tasks.getByName("distZip").outputs.files)
+  outputs.dir(layout.buildDirectory.dir("distributions"))
   algorithm = Checksum.Algorithm.SHA512
-}
-
-tasks.register<Zip>("zipDist") {
-  dependsOn("explodeDist")
-    into(dirName) {
-        with( distFiles)
-    }
 }
 
 publishing {
@@ -311,14 +219,8 @@ publishing {
 
 signing {
     sign(publishing.publications["mavenJava"])
-    sign(tasks.getByName("tarDist"))
-    sign(tasks.getByName("zipDist"))
-    sign(tasks.getByName("tarBin"))
-}
-
-tasks.register("createRunScripts"){}
-tasks.named("startScripts") {
-    dependsOn("createRunScripts")
+    sign(tasks.getByName("distTar"))
+    sign(tasks.getByName("distZip"))
 }
 
 tasks.register<JavaExec>("genModels") {
@@ -410,16 +312,13 @@ tasks.register("sphinx") {
   dependsOn("copySphinxToDocs")
 }
 
-tasks.get("installDist").dependsOn(tasks.get("javadoc"))
 tasks.get("assemble").dependsOn(tasks.get("dependencyUpdates"))
 
 // note can pass password for signing in with -Psigning.password=secret
-tasks.get("assemble").dependsOn(tasks.get("signTarBin"))
-tasks.get("assemble").dependsOn(tasks.get("signTarDist"))
-tasks.get("assemble").dependsOn(tasks.get("signZipDist"))
-tasks.get("signTarBin").dependsOn(tasks.get("checksumDist"))
-tasks.get("signTarDist").dependsOn(tasks.get("checksumDist"))
-tasks.get("signZipDist").dependsOn(tasks.get("checksumDist"))
+tasks.get("assemble").dependsOn(tasks.get("signDistZip"))
+tasks.get("assemble").dependsOn(tasks.get("signDistTar"))
+tasks.get("signDistTar").dependsOn(tasks.get("checksumDist"))
+tasks.get("signDistZip").dependsOn(tasks.get("checksumDist"))
 
 val generatedSrcDir = file(layout.buildDirectory.dir("generated-src/StdModels"))
 val resourceDir =  File(generatedSrcDir, "/resources")

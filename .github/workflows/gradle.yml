@@ -28,6 +28,6 @@ jobs:
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@v3
     - name: Build with Gradle
-      run: ./gradlew eB
+      run: ./gradlew installDist
     - name: Test with Gradle
-      run: ./gradlew  test
+      run: ./gradlew  check

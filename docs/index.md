@@ -69,7 +69,7 @@ https://github.com/crotwell/TauP/releases
 You should not need to rebuild TauP unless you are trying to help debug, but if you do, you can build it using the Gradle wrapper script.
 
 ```
-gradlew eB
+gradlew installDist
 ```
 
-will build TauP into the build/explode directory.
+will build TauP into the build/install/TauP directory.
