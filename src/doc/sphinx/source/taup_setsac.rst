@@ -55,6 +55,13 @@ If the given filename is a directory, TauP SetSac will recursively look for
 files within that directory to process. Thus,
 a large directory structure of Sac files can be processed easily.
 
+For example, if the event and station headers are set in
+my_earthquake.sac, then this will set travel times for P and S into the
+T0 and T1 headers:
+
+.. literalinclude:: examples/taup_setsac_-p_P_S_my_earthquake.sac.cmd
+  :language: text
+
 The usage is:
 
 .. literalinclude:: cmdLineHelp/taup_setsac.usage

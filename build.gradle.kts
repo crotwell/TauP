@@ -347,6 +347,7 @@ tasks.register("versionToVersionFile") {
   outputs.files("VERSION")
   File("VERSION").writeText(""+version)
 }
+tasks.get("installDist").dependsOn("versionToVersionFile")
 tasks.get("assemble").dependsOn("versionToVersionFile")
 
 // this is really dumb, but gradle wants something....

@@ -199,9 +199,14 @@ as a <code class="code docutils literal notranslate"><span class="pre">--version
 </section>
 <section id="tab-completion">
 <h2>Tab Completion<a class="headerlink" href="#tab-completion" title="Link to this heading">¶</a></h2>
-<p>New with version 3.0 is tab completion for bash and zsh. Sourcing
-<code class="code docutils literal notranslate"><span class="pre">taup_completion</span></code>, included in the distribution, will provide hints
-for the shell when hitting the tab key. For example typing:</p>
+<p>New with version 3.0 is tab completion for bash and zsh. Sourcing the output of
+<code class="code docutils literal notranslate"><span class="pre">taup</span> <span class="pre">generate-completion</span></code> will provide hints
+for the shell when hitting the tab key for bash or zsh. You can enable it
+with running this command:</p>
+<p><code class="code docutils literal notranslate"><span class="pre">source</span> <span class="pre">&lt;(taup</span> <span class="pre">generate-completion)</span></code></p>
+<p>Adding this to your .bash_profile or .zshrc will enable it for future logins.</p>
+<p>Once sourced, you will be able to get hints or completion for most arguments
+within TauP. For example typing:</p>
 <p><code class="code docutils literal notranslate"><span class="pre">taup</span> <span class="pre">time</span> <span class="pre">-</span></code></p>
 <p>and then hitting the tab key will display all of the possible command line
 flags. Continuing to type</p>

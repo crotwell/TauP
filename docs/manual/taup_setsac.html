@@ -169,6 +169,12 @@ the header is undefined before writing.</p>
 <p>If the given filename is a directory, TauP SetSac will recursively look for
 files within that directory to process. Thus,
 a large directory structure of Sac files can be processed easily.</p>
+<p>For example, if the event and station headers are set in
+my_earthquake.sac, then this will set travel times for P and S into the
+T0 and T1 headers:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>taup setsac -p P,S my_earthquake.sac
+</pre></div>
+</div>
 <p>The usage is:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Usage: taup setsac [--debug] [--evdpkm] [--geodetic] [--help] [--verbose]
                    [--ellipflattening=f] [--prop=&lt;toolPropsFilename&gt;]
