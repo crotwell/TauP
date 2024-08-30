@@ -20,7 +20,7 @@ Options:
       --exclude=depth...   Exclude boundaries from phase conversion or
                              reflection interactions
                            May be depth (within tol) or named boundary like
-                             moho, cmd, iocb
+                             moho, cmb, iocb
       --help               display this help message
       --max=<maxActions>   Maximum number of reflections and phase conversion
       --mw=<mw>            scale amplitude by source moment magnitude

@@ -305,7 +305,7 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
             paramLabel = "depth",
             description = {
                     "Exclude boundaries from phase conversion or reflection interactions",
-                    "May be depth (within tol) or named boundary like moho, cmd, iocb"
+                    "May be depth (within tol) or named boundary like moho, cmb, iocb"
             })
     List<String> excludeDepthNames = new ArrayList<>();
 
