@@ -291,7 +291,9 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
         List<Double> exList = new ArrayList<>(getExcludeDepth(tMod.getVelocityModel()));
         double[] branchDepths = tMod.getBranchDepths();
         for (double branchDepth : branchDepths) {
-            if ((onlyNamedDiscon && branchDepth != 0 &&  !tMod.getVelocityModel().isNamedDisconDepth(branchDepth))) {
+            if ((onlyNamedDiscon && branchDepth != 0
+                    && !tMod.isNoDisconDepth(branchDepth)
+                    &&  !tMod.getVelocityModel().isNamedDisconDepth(branchDepth))) {
                 exList.add(branchDepth);
             }
         }

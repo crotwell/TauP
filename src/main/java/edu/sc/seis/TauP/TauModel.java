@@ -191,6 +191,7 @@ public class TauModel implements Serializable {
 
     /**
      * Is the given depth a "noDisconDepth"?
+     * Usually because model was split at the source or receiver depth, or an added depth used by taup pierce.
      */
     public boolean isNoDisconDepth(double noDisconDepth) {
         for(int i = 0; i < noDisconDepths.length; i++) {
