@@ -205,6 +205,11 @@ for the shell when hitting the tab key for bash or zsh. You can enable it
 with running this command:</p>
 <p><code class="code docutils literal notranslate"><span class="pre">source</span> <span class="pre">&lt;(taup</span> <span class="pre">generate-completion)</span></code></p>
 <p>Adding this to your .bash_profile or .zshrc will enable it for future logins.</p>
+<p>Note, for bash 3.2, which the default verion on OSX, there is a bug that
+prevents this from working. The alterantive is to save it as a file like:</p>
+<p><code class="code docutils literal notranslate"><span class="pre">taup</span> <span class="pre">generate-completion</span> <span class="pre">&gt;</span> <span class="pre">taup_completion</span></code></p>
+<p>and then source the file:</p>
+<p><code class="code docutils literal notranslate"><span class="pre">source</span> <span class="pre">taup_completion</span></code></p>
 <p>Once sourced, you will be able to get hints or completion for most arguments
 within TauP. For example typing:</p>
 <p><code class="code docutils literal notranslate"><span class="pre">taup</span> <span class="pre">time</span> <span class="pre">-</span></code></p>

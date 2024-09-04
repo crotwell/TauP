@@ -83,6 +83,15 @@ with running this command:
 
 Adding this to your .bash_profile or .zshrc will enable it for future logins.
 
+Note, for bash 3.2, which the default verion on OSX, there is a bug that
+prevents this from working. The alterantive is to save it as a file like:
+
+:code:`taup generate-completion > taup_completion`
+
+and then source the file:
+
+:code:`source taup_completion`
+
 Once sourced, you will be able to get hints or completion for most arguments
 within TauP. For example typing:
 

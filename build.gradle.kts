@@ -30,15 +30,23 @@ java {
     withSourcesJar()
 }
 
+tasks.register("versionToVersionFile") {
+  inputs.files("build.gradle.kts")
+  outputs.files("VERSION")
+  File("VERSION").writeText(""+version)
+}
+
 distributions {
   main {
     distributionBaseName = "TauP"
     contents {
       from(".") {
-          include("VERSION")
           include("CITATION.cff")
           include("LICENSE")
           include("README.md")
+      }
+      from(tasks.named("versionToVersionFile")) {
+        into(".")
       }
       from("docs") {
         into("docs")
@@ -153,7 +161,6 @@ tasks {
 tasks.named<Test>("test") {
     useJUnitPlatform()
 }
-
 
 tasks.named("sourcesJar") {
     dependsOn("makeVersionClass")
@@ -272,6 +279,10 @@ tasks.register<Sync>("copyCmdLineTestFiles") {
   into("src/test/resources/edu/sc/seis/TauP/cmdLineTest")
   dependsOn("genCmdLineTestFiles")
 }
+tasks.get("test").mustRunAfter("copyCmdLineTestFiles")
+tasks.get("installDist").mustRunAfter("copyCmdLineTestFiles")
+tasks.get("distTar").mustRunAfter("copyCmdLineTestFiles")
+tasks.get("distZip").mustRunAfter("copyCmdLineTestFiles")
 
 tasks.register<JavaExec>("genCmdLineHelpFiles") {
   inputs.files("build.gradle.kts") // for version.json
@@ -342,13 +353,6 @@ tasks.jar {
     mustRunAfter("sphinx")
 }
 
-tasks.register("versionToVersionFile") {
-  inputs.files("build.gradle.kts")
-  outputs.files("VERSION")
-  File("VERSION").writeText(""+version)
-}
-tasks.get("installDist").dependsOn("versionToVersionFile")
-tasks.get("assemble").dependsOn("versionToVersionFile")
 
 // this is really dumb, but gradle wants something....
 gradle.taskGraph.whenReady {
