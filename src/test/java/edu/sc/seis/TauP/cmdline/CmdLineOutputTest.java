@@ -1,6 +1,8 @@
 package edu.sc.seis.TauP.cmdline;
 
 import edu.sc.seis.TauP.BuildVersion;
+import edu.sc.seis.seisFile.sac.*;
+import edu.sc.seis.seisFile.mseed3.*;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.junit.jupiter.api.Disabled;
@@ -9,6 +11,7 @@ import picocli.CommandLine;
 
 import java.io.*;
 import java.net.URL;
+import java.time.Instant;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -147,7 +150,13 @@ public class CmdLineOutputTest {
             "taup velplot --mod ak135fcont -x poisson --svg",
             "taup velplot --nameddiscon --mod iasp91",
             "taup refltrans --mod ak135 --depth 35 --legend --svg",
-            "taup refltrans --mod ak135 --depth 35 --legend --energyflux --svg",
+            "taup refltrans --mod ak135 --depth 35 --legend --energyflux --svg"
+    };
+
+    String[] setInFileCmds = new String[] {
+
+            "taup setsac -p P,S my_earthquake.sac",
+            "taup setms3 -p P,S my_earthquake.ms3"
     };
 
     /** 
@@ -275,6 +284,42 @@ public class CmdLineOutputTest {
     }
 
     public void regenExampleOutput() throws Exception {
+        // create dummy sac and ms3 files for setsac and setms3 examples
+        SacHeader sacHeader = SacHeader.createEmptyEvenSampledTimeSeriesHeader();
+        sacHeader.setNzTime(Instant.parse("2024-08-30T17:47:41Z"));
+        sacHeader.setSourceId(FDSNSourceId.createUnknown(sacHeader.getDelta()));
+        sacHeader.setEvla(52);
+        sacHeader.setEvlo(-33);
+        sacHeader.setEvdp(10*1000);
+        sacHeader.setMag(5.2f);
+        sacHeader.setStla(34.28f);
+        sacHeader.setStlo(-81.25f);
+        sacHeader.setStel(0);
+        sacHeader.setStdp(0);
+        sacHeader.setO(0);
+        sacHeader.setB(0);
+
+        SacTimeSeries sac = new SacTimeSeries(sacHeader, new float[] { 0, 0, 1, 2, 3, 3, 2, 1, -1, -2, -3 -2, 1, 0});
+        sac.write(new File(docOutputDir, "my_earthquake.sac"));
+        MSeed3Record ms3 = MSeed3Convert.convertSacTo3(sac);
+        OutputStream dos = new BufferedOutputStream(new FileOutputStream(new File(docOutputDir, "my_earthquake.ms3")));
+        try {
+            ms3.write(dos);
+        } finally {
+            dos.close();
+        }
+
+        for (String cmd : setInFileCmds) {
+            String inDirCmd = cmd.replaceAll(" my_", " "+docOutputDir+"/my_");
+            System.err.println(inDirCmd);
+            String filename = fileizeCmd(cmd);
+            saveTestOutputToFile( inDirCmd, docOutputDir, filename);
+            PrintStream cmdOut = new PrintStream(new BufferedOutputStream(new FileOutputStream(new File(docOutputDir, filename+".cmd"))));
+            cmdOut.println(cmd);
+            cmdOut.close();
+        }
+
+
         for (String cmd : docCmds) {
             System.err.println(cmd);
             String filename = fileizeCmd(cmd); // without -o stdout
