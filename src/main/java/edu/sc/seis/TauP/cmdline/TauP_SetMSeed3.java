@@ -239,8 +239,8 @@ public class TauP_SetMSeed3 extends TauP_AbstractPhaseTool {
         return ehKey;
     }
 
-    @CommandLine.Option(names = "--eh",
-            description = "key to store full TauP JSON output within extra headers within, otherwise use abbreviated 'bag' markers")
+    @CommandLine.Option(names = "--taupeh",
+            description = "key to store full TauP JSON output within extra headers within, otherwise use abbreviated 'bag' style markers.")
     public void setEhKey(String ehKey) {
         this.ehKey = ehKey;
     }
