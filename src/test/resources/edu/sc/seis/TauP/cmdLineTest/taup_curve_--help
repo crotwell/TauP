@@ -3,10 +3,11 @@ Usage: taup curve [--debug] [--help] [--legend] [--verbose] [--xabs] [--xlog]
                   [--mapwidth=<mapwidth>] [--mapwidthunit=<mapWidthUnit>]
                   [--mw=<mw>] [-o=<outFile>] [--prop=<toolPropsFilename>]
                   [--reddeg=deg/s] [--redkm=km/s] [--rel=phase] [-x=type]
-                  [-y=type] [--xminmax=x x]... [--yminmax=y y]... [[-h=depth]
-                  [--mod=<modelname>] [--stadepth=depth] [--scat=s s]...]
-                  [[-p=phase[,phase...]]... [--phasefile=<phaseFiles>]...]
-                  [--gmt | --json | --svg | --text]
+                  [-y=type] [--xminmax=x x]... [--yminmax=y y]...
+                  [[--mod=<modelname>] [--stadepth=depth] [-h=depth[,
+                  depth...]]... [--scat=s s]...] [[-p=phase[,phase...]]...
+                  [--phasefile=<phaseFiles>]...] [--gmt | --json | --svg |
+                  --text]
 Plot travel time vs. distance and other curves for seismic phases.
 
 Options:
@@ -52,7 +53,7 @@ Options:
       --ylog               Y axis is log
       --yminmax=y y        min and max y axis for plotting
 Model Args
-  -h, --evdepth, --sourcedepth=depth
+  -h, --evdepth, --sourcedepth=depth[,depth...]
                            source depth in km
       --mod, --model=<modelname>
                            use velocity model "modelname" for calculations.

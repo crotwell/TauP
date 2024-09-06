@@ -201,13 +201,13 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
     }
 
     public static JSONObject baseResultAsJSONObject(String modelName,
-                                                    double depth,
+                                                    List<Double> depth,
                                                     double receiverDepth,
                                                     List<PhaseName> phaseNameList) {
         JSONObject out = new JSONObject();
 
         out.put("model", modelName);
-        out.put("sourcedepth", (float) depth);
+        out.put("sourcedepth",  depth);
         out.put("receiverdepth", (float) receiverDepth);
         if (phaseNameList != null  ) {
             JSONArray outPhases = new JSONArray();
@@ -277,8 +277,8 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
         phaseNames = new ArrayList<>();
     }
 
-    public void setSourceDepth(double depth) {
-        this.modelArgs.setSourceDepth( depth);
+    public void setSingleSourceDepth(double depth) {
+        this.modelArgs.setSourceDepth( Collections.singletonList(depth));
         toolProps.put("taup.source.depth", Double.toString(depth));
         clearPhases();
     }
@@ -314,8 +314,8 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
     /**
      * Gets depth corrected TauModel.
      */
-    public TauModel getTauModelDepthCorrected() throws TauModelException {
-        return modelArgs.depthCorrected();
+    public TauModel getTauModelDepthCorrected(double sourceDepth) throws TauModelException {
+        return modelArgs.depthCorrected(sourceDepth);
     }
 
     public void setModelName(String modelName) {
@@ -340,11 +340,57 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
         phases = null;
     }
 
-    public List<SeismicPhase> getSeismicPhases() throws TauModelException {
-        if (phases == null) {
-            recalcPhases();
+    /**
+     * Calculates the seismic phases using a possibly new or changed tau model for the given source depth.
+     */
+    public List<SeismicPhase> calcSeismicPhases(double sourceDepth) throws TauModelException {
+        List<SeismicPhase> newPhases = new ArrayList<>();
+        TauModel tModDepth = modelArgs.depthCorrected(sourceDepth);
+        for (PhaseName phaseName : parsePhaseNameList()) {
+            String tempPhaseName = phaseName.getName();
+            // didn't find it precomputed, so recalculate
+            try {
+                List<SeismicPhase> calcPhaseList = SeismicPhaseFactory.createSeismicPhases(
+                        phaseName.getName(),
+                        tModDepth,
+                        sourceDepth,
+                        modelArgs.getReceiverDepth(),
+                        modelArgs.getScatterer(),
+                        isDEBUG());
+                newPhases.addAll(calcPhaseList);
+                for (SeismicPhase seismicPhase : newPhases) {
+                    if (isVerbose()) {
+                        Alert.info(seismicPhase.toString());
+                    }
+                }
+            } catch (ScatterArrivalFailException e) {
+                Alert.warning(e.getMessage() + ", skipping this phase");
+                if (isVerbose() || isDEBUG()) {
+                    e.printStackTrace();
+                }
+            } catch (TauModelException e) {
+                Alert.warning("Error with phase=" + tempPhaseName,
+                        e.getMessage() + "\nSkipping this phase");
+                if (isVerbose() || isDEBUG()) {
+                    e.printStackTrace();
+                }
+            } finally {
+                if (isVerbose()) {
+                    Alert.info("-----------------");
+                }
+            }
         }
-        return Collections.unmodifiableList(phases);
+        return newPhases;
+    }
+
+    public List<SeismicPhase> getSeismicPhases() throws TauPException {
+        if (phases == null) {
+            phases = new ArrayList<>();
+            for (Double sourceDepth : modelArgs.getSourceDepth()) {
+                phases.addAll(calcSeismicPhases(sourceDepth));
+            }
+        }
+        return phases;
     }
 
     /**
@@ -408,14 +454,9 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
         return out;
     }
 
-    /**
-     * recalculates the given phases using a possibly new or changed tau model.
-     * This should not need to be called by outside classes as it is called by
-     * depthCorrect, and calculate.
-     */
-    protected synchronized void recalcPhases() throws TauModelException {
+    public synchronized List<SeismicPhase> recalcPhases(double sourceDepth) throws TauModelException {
         List<SeismicPhase> newPhases = new ArrayList<>();
-        TauModel tModDepth = modelArgs.depthCorrected();
+        TauModel tModDepth = modelArgs.depthCorrected(sourceDepth);
         for (PhaseName phaseName : parsePhaseNameList()) {
             String tempPhaseName = phaseName.getName();
             // didn't find it precomputed, so recalculate
@@ -423,7 +464,7 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
                 List<SeismicPhase> calcPhaseList = SeismicPhaseFactory.createSeismicPhases(
                         phaseName.getName(),
                         tModDepth,
-                        modelArgs.getSourceDepth(),
+                        sourceDepth,
                         modelArgs.getReceiverDepth(),
                         modelArgs.getScatterer(),
                         isDEBUG());
@@ -450,7 +491,7 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
                 }
             }
         }
-        phases = newPhases;
+        return newPhases;
     }
 
 

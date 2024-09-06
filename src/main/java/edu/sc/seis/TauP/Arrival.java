@@ -719,6 +719,8 @@ public class Arrival {
         String NL = "\n";
         pw.write(indent+"{"+NL);
         String innerIndent = indent+"  ";
+
+        pw.write(innerIndent+JSONWriter.valueToString("sourcedepth")+": "+JSONWriter.valueToString((float)getSourceDepth())+","+NL);
         pw.write(innerIndent+JSONWriter.valueToString("distdeg")+": "+JSONWriter.valueToString((float)getModuloDistDeg())+","+NL);
         pw.write(innerIndent+JSONWriter.valueToString("phase")+": "+JSONWriter.valueToString(getName())+","+NL);
         pw.write(innerIndent+JSONWriter.valueToString("time")+": "+JSONWriter.valueToString((float)getTime())+","+NL);
@@ -795,6 +797,7 @@ public class Arrival {
     public JSONObject asJSONObject() {
         JSONObject a = new JSONObject();
         a.put("distdeg", (float)getModuloDistDeg());
+        a.put("sourcedepth", (float)getSourceDepth());
         a.put("phase", getName());
         a.put("time", (float)getTime());
         a.put("rayparam", (float)(Math.PI / 180.0 * getRayParam()));

@@ -3,6 +3,7 @@ package edu.sc.seis.TauP.cmdline;
 import edu.sc.seis.TauP.*;
 import edu.sc.seis.TauP.cmdline.args.GeodeticArgs;
 import edu.sc.seis.TauP.cmdline.args.OutputTypes;
+import edu.sc.seis.TauP.cmdline.args.QmlStaxmlArgs;
 import edu.sc.seis.seisFile.Location;
 import edu.sc.seis.seisFile.SeisFileException;
 import edu.sc.seis.seisFile.fdsnws.quakeml.Event;
@@ -55,22 +56,22 @@ public class TauP_SetMSeed3 extends TauP_AbstractPhaseTool {
         }
 
         try {
-            if (stationxmlFilename != null ) {
-                FDSNStationXML staxml = FDSNStationXML.loadStationXML(stationxmlFilename);
+            if (qmlStaxmlArgs.hasStationXML() ) {
+                FDSNStationXML staxml = FDSNStationXML.loadStationXML(qmlStaxmlArgs.getStationxmlFilename());
                 networks = staxml.extractAllNetworks();
             }
         } catch (XMLStreamException | SeisFileException e) {
-            throw new TauPException("Unable to process stationxml from "+stationxmlFilename, e);
+            throw new TauPException("Unable to process stationxml from "+qmlStaxmlArgs.getStationxmlFilename(), e);
         }
         try {
-            if (quakemlFilename != null) {
-                FileReader reader = new FileReader(quakemlFilename);
+            if (qmlStaxmlArgs.hasQml()) {
+                FileReader reader = new FileReader(qmlStaxmlArgs.getQuakemlFilename());
                 Quakeml quakeml = Quakeml.loadQuakeML(reader);
                 quakes = quakeml.extractAllEvents();
                 reader.close();
             }
         } catch (XMLStreamException | SeisFileException e) {
-            throw new TauPException("Unable to process quakeml from "+quakemlFilename, e);
+            throw new TauPException("Unable to process quakeml from "+qmlStaxmlArgs.getQuakemlFilename(), e);
         }
         for (String filename : mseed3FileNames) {
             try {
@@ -166,14 +167,14 @@ public class TauP_SetMSeed3 extends TauP_AbstractPhaseTool {
         } else {
             modelArgs.setReceiverDepth(0);
         }
+        double depth = 0;
         if (evLoc != null) {
-            modelArgs.setSourceDepth(evLoc.getDepthKm());
-        } else {
-            modelArgs.setSourceDepth(0);
+            depth = evLoc.getDepthKm();
         }
+        List<SeismicPhase> seismicPhaseList = calcSeismicPhases( depth);
 
         List<Arrival> arrivals = new ArrayList<>();
-        for (SeismicPhase phase : getSeismicPhases()) {
+        for (SeismicPhase phase : seismicPhaseList) {
             arrivals.addAll(rayCalculateable.calculate(phase));
         }
 
@@ -256,25 +257,6 @@ public class TauP_SetMSeed3 extends TauP_AbstractPhaseTool {
         this.quakeOTimeTol = quakeOTimeTol;
     }
 
-    public String getQuakemlFilename() {
-        return quakemlFilename;
-    }
-
-    @CommandLine.Option(names = {"--qml", "--quakeml"},
-            description = "QuakeML file to load to search for origins that match this waveform")
-    public void setQuakemlFilename(String quakemlFilename) {
-        this.quakemlFilename = quakemlFilename;
-    }
-
-    public String getStationxmlFilename() {
-        return stationxmlFilename;
-    }
-
-    @CommandLine.Option(names = "--staxml", description = "StationXML file to extract station lat/lon from")
-    public void setStationxmlFilename(String stationxmlFilename) {
-        this.stationxmlFilename = stationxmlFilename;
-    }
-
     public List<String> getMseed3FileNames() {
         return mseed3FileNames;
     }
@@ -304,8 +286,9 @@ public class TauP_SetMSeed3 extends TauP_AbstractPhaseTool {
     protected String ehKey = null;
 
     protected Duration quakeOTimeTol = Duration.ofSeconds(3600);
-    protected String quakemlFilename = null;
-    protected String stationxmlFilename = null;
+
+    @CommandLine.Mixin
+    protected QmlStaxmlArgs qmlStaxmlArgs = new QmlStaxmlArgs();
 
     protected List<String> mseed3FileNames = new ArrayList<>();
 

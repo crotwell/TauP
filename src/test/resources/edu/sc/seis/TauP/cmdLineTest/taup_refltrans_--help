@@ -5,8 +5,9 @@ Usage: taup refltrans [--abs] [--debug] [--down] [--energyflux] [--fsrf]
                       [-o=<outFile>] [--prop=<toolPropsFilename>]
                       [--rpstep=s/km] [-x=type] [--xminmax=x x]... [--yminmax=y
                       y]... [--layer=v v v v v v]... [-y=type...]... [--gmt |
-                      --json | --svg | --text] [[-h=depth] [--mod=<modelname>]
-                      [--stadepth=depth] [--scat=s s]...]
+                      --json | --svg | --text] [[--mod=<modelname>]
+                      [--stadepth=depth] [-h=depth[,depth...]]... [--scat=s
+                      s]...]
 Plot reflection and transmission coefficients for a discontinuity.
 
 Options:
@@ -54,7 +55,7 @@ Output Type:
       --svg                 outputs as SVG
       --text                outputs as Text
 Model Args
-  -h, --evdepth, --sourcedepth=depth
+  -h, --evdepth, --sourcedepth=depth[,depth...]
                             source depth in km
       --mod, --model=<modelname>
                             use velocity model "modelname" for calculations.

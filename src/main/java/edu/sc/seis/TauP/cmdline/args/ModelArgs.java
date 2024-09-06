@@ -19,17 +19,33 @@ public class ModelArgs {
         modelArgsInner.modelname = modelName;
     }
 
-    public double getSourceDepth() {
+    public List<Double> getSourceDepth() {
+        if (modelArgsInner.sourceDepth == null || modelArgsInner.sourceDepth.size() == 0) {
+            return List.of(Double.parseDouble(toolProps.getProperty("taup.source.depth", "0.0")));
+        }
         return modelArgsInner.sourceDepth;
     }
-    public void setSourceDepth(double depth) {
-        modelArgsInner.sourceDepth = depth;
+    public void setSourceDepth(List<Double> depths) {
+        modelArgsInner.sourceDepth = depths;
     }
     public double getReceiverDepth() {
         return modelArgsInner.receiverDepth;
     }
     public void setReceiverDepth(double depth) {
         modelArgsInner.receiverDepth = depth;
+    }
+
+    public static String depthsToString(List<Double> depths) {
+        StringBuffer buf = new StringBuffer();
+        boolean first = true;
+        for (Double d : depths) {
+            if ( ! first) {
+                buf.append(", ");
+            }
+            buf.append(d);
+            first = false;
+        }
+        return buf.toString();
     }
 
     /**
@@ -74,12 +90,12 @@ public class ModelArgs {
         return modelSplitDepths;
     }
 
-    public TauModel depthCorrected() throws TauModelException {
+    public TauModel depthCorrected(double sourceDepth) throws TauModelException {
         if (tModDepth == null) {
             tModDepth = getTauModel();
         }
-        if (tModDepth.getSourceDepth() != getSourceDepth()) {
-            tModDepth = getTauModel().depthCorrect(getSourceDepth());
+        if (tModDepth.getSourceDepth() != sourceDepth) {
+            tModDepth = getTauModel().depthCorrect(sourceDepth);
             if (!tModDepth.isBranchDepth(getReceiverDepth())) {
                 tModDepth = tModDepth.splitBranch(getReceiverDepth());
             }
@@ -129,8 +145,9 @@ public class ModelArgs {
         @CommandLine.Option(names={"-h", "--sourcedepth", "--evdepth"},
                 paramLabel = "depth",
                 defaultValue = "0.0",
+                split=",",
                 description = "source depth in km")
-        double sourceDepth = Double.parseDouble(toolProps.getProperty("taup.source.depth", "0.0"));
+        List<Double> sourceDepth = new ArrayList<>();
 
         @CommandLine.Option(names = {"--stadepth", "--receiverdepth"},
                 defaultValue = "0.0",

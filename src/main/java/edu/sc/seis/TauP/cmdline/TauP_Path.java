@@ -147,7 +147,6 @@ public class TauP_Path extends TauP_AbstractRayTool {
 	@Override
 	public List<Arrival> calcAll(List<SeismicPhase> phaseList, List<RayCalculateable> shootables) throws TauPException {
 		List<Arrival> arrivals = new ArrayList<>();
-		modelArgs.depthCorrected();
 		for (SeismicPhase phase : phaseList) {
 			for (RayCalculateable shoot : shootables) {
 				arrivals.addAll(shoot.calculate(phase));
@@ -167,7 +166,12 @@ public class TauP_Path extends TauP_AbstractRayTool {
 	@Override
 	public void printResult(PrintWriter out, List<Arrival> arrivalList) throws IOException, TauPException {
 		if (getOutputFormat().equals(OutputTypes.JSON)) {
-			printResultJSON(out, arrivalList);
+			TauP_AbstractRayTool.writeJSON(out, "",
+					getTauModelName(),
+					modelArgs.getSourceDepth(),
+					modelArgs.getReceiverDepth(),
+					getSeismicPhases(),
+					arrivalList);
 		} else if (getOutputFormat().equals(OutputTypes.SVG)) {
 			float pixelWidth = (72.0f * getGraphicOutputTypeArgs().mapwidth);
 			printScriptBeginningSVG(out, arrivalList, pixelWidth, distDepthRange, modelArgs, getCmdLineArgs());
@@ -196,7 +200,7 @@ public class TauP_Path extends TauP_AbstractRayTool {
 			// text/gmt
 			if (getGraphicOutputTypeArgs().isGMT()) {
 				SvgEarth.printGmtScriptBeginning(out, outputTypeArgs.getOutFileBase(),
-						modelArgs.depthCorrected(), outputTypeArgs.mapwidth,
+						modelArgs.getTauModel(), outputTypeArgs.mapwidth,
 						outputTypeArgs.mapWidthUnit, onlyNamedDiscon,
 						toolNameFromClass(this.getClass()), getCmdLineArgs());
 				if (coloring.getColoring() != ColorType.wavetype) {
@@ -283,20 +287,14 @@ public class TauP_Path extends TauP_AbstractRayTool {
 		out.println("    </g> <!-- end labels -->");
 	}
 
-	public void printResultJSON(PrintWriter out, List<Arrival> arrivalList) throws TauPException {
-		String s = resultAsJSON(modelArgs.getModelName(), modelArgs.getSourceDepth(), modelArgs.getReceiverDepth(),
-				parsePhaseNameList(), arrivalList);
-		out.println(s);
-	}
-
 	public void printScriptBeginningSVG(PrintWriter out,
 										List<Arrival> arrivalList,
 										float pixelWidth,
 										DistDepthRange distDepthRange,
 										ModelArgs modelArgs,
-										List<String> cmdLineArgs) throws TauModelException {
+										List<String> cmdLineArgs) throws TauPException {
 
-		TauModel tMod = modelArgs.depthCorrected();
+		TauModel tMod = modelArgs.getTauModel();
 		SvgEarthScaling scaleTrans = calcEarthScaleTrans(arrivalList, distDepthRange);
 		String extraCSS = "";
 

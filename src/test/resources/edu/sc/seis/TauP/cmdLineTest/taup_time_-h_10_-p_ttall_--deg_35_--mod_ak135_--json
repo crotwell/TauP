@@ -1,10 +1,11 @@
 {
   "model": "ak135",
-  "sourcedepth": 10,
+  "sourcedepthlist": [10],
   "receiverdepth": 0,
   "phases": [ "p", "P", "Pn", "Pdiff", "PKP", "PKiKP", "PKIKP", "s", "S", "Sn", "Sdiff", "SKS", "SKIKS", "PcP", "pP", "pPdiff", "pPKP", "pPKIKP", "pPKiKP", "sP", "sPdiff", "sPKP", "sPKIKP", "sPKiKP", "sS", "sSdiff", "sSKS", "sSKIKS", "ScS", "pS", "pSdiff", "pSKS", "pSKIKS", "ScP", "SKP", "SKIKP", "PKKP", "PKIKKIKP", "SKKP", "SKIKKIKP", "PP", "PKPPKP", "PKIKPPKIKP", "SKiKP", "PcS", "PKS", "PKIKS", "PKKS", "PKIKKIKS", "SKKS", "SKIKKIKS", "SKSSKS", "SKIKSSKIKS", "SS", "SP", "PS" ],
   "arrivals": [
     {
+      "sourcedepth": 10,
       "distdeg": 35,
       "phase": "P",
       "time": 412.51175,
@@ -15,6 +16,7 @@
       "puristname": "P"
     },
     {
+      "sourcedepth": 10,
       "distdeg": 35,
       "phase": "pP",
       "time": 415.59045,
@@ -25,6 +27,7 @@
       "puristname": "pP"
     },
     {
+      "sourcedepth": 10,
       "distdeg": 35,
       "phase": "sP",
       "time": 416.83505,
@@ -35,6 +38,7 @@
       "puristname": "sP"
     },
     {
+      "sourcedepth": 10,
       "distdeg": 35,
       "phase": "PP",
       "time": 489.44415,
@@ -45,6 +49,7 @@
       "puristname": "PP"
     },
     {
+      "sourcedepth": 10,
       "distdeg": 35,
       "phase": "PP",
       "time": 491.84778,
@@ -55,6 +60,7 @@
       "puristname": "PP"
     },
     {
+      "sourcedepth": 10,
       "distdeg": 35,
       "phase": "PP",
       "time": 493.22867,
@@ -65,6 +71,7 @@
       "puristname": "PP"
     },
     {
+      "sourcedepth": 10,
       "distdeg": 35,
       "phase": "PP",
       "time": 493.25827,
@@ -75,6 +82,7 @@
       "puristname": "PP"
     },
     {
+      "sourcedepth": 10,
       "distdeg": 35,
       "phase": "PP",
       "time": 493.2891,
@@ -85,6 +93,7 @@
       "puristname": "PP"
     },
     {
+      "sourcedepth": 10,
       "distdeg": 35,
       "phase": "PcP",
       "time": 564.61035,
@@ -95,6 +104,7 @@
       "puristname": "Pcp"
     },
     {
+      "sourcedepth": 10,
       "distdeg": 35,
       "phase": "S",
       "time": 744.42035,
@@ -105,6 +115,7 @@
       "puristname": "S"
     },
     {
+      "sourcedepth": 10,
       "distdeg": 35,
       "phase": "pS",
       "time": 747.98193,
@@ -115,6 +126,7 @@
       "puristname": "pS"
     },
     {
+      "sourcedepth": 10,
       "distdeg": 35,
       "phase": "sS",
       "time": 749.4929,
@@ -125,6 +137,7 @@
       "puristname": "sS"
     },
     {
+      "sourcedepth": 10,
       "distdeg": 35,
       "phase": "SP",
       "time": 750.45154,
@@ -135,6 +148,7 @@
       "puristname": "SP"
     },
     {
+      "sourcedepth": 10,
       "distdeg": 35,
       "phase": "PS",
       "time": 751.9675,
@@ -145,6 +159,7 @@
       "puristname": "PS"
     },
     {
+      "sourcedepth": 10,
       "distdeg": 35,
       "phase": "ScP",
       "time": 790.18524,
@@ -155,6 +170,7 @@
       "puristname": "Scp"
     },
     {
+      "sourcedepth": 10,
       "distdeg": 35,
       "phase": "PcS",
       "time": 791.36383,
@@ -165,6 +181,7 @@
       "puristname": "Pcs"
     },
     {
+      "sourcedepth": 10,
       "distdeg": 35,
       "phase": "SS",
       "time": 879.71454,
@@ -175,6 +192,7 @@
       "puristname": "SS"
     },
     {
+      "sourcedepth": 10,
       "distdeg": 35,
       "phase": "SS",
       "time": 896.2998,
@@ -185,6 +203,7 @@
       "puristname": "SS"
     },
     {
+      "sourcedepth": 10,
       "distdeg": 35,
       "phase": "SS",
       "time": 898.70404,
@@ -195,6 +214,7 @@
       "puristname": "SS"
     },
     {
+      "sourcedepth": 10,
       "distdeg": 35,
       "phase": "SS",
       "time": 930.7437,
@@ -205,6 +225,7 @@
       "puristname": "SS"
     },
     {
+      "sourcedepth": 10,
       "distdeg": 35,
       "phase": "SS",
       "time": 930.7906,
@@ -215,6 +236,7 @@
       "puristname": "SS"
     },
     {
+      "sourcedepth": 10,
       "distdeg": 35,
       "phase": "PKiKP",
       "time": 1006.5768,
@@ -225,6 +247,7 @@
       "puristname": "PKikp"
     },
     {
+      "sourcedepth": 10,
       "distdeg": 35,
       "phase": "pPKiKP",
       "time": 1010.02234,
@@ -235,6 +258,7 @@
       "puristname": "pPKikp"
     },
     {
+      "sourcedepth": 10,
       "distdeg": 35,
       "phase": "sPKiKP",
       "time": 1011.18896,
@@ -245,6 +269,7 @@
       "puristname": "sPKikp"
     },
     {
+      "sourcedepth": 10,
       "distdeg": 35,
       "phase": "ScS",
       "time": 1033.835,
@@ -255,6 +280,7 @@
       "puristname": "Scs"
     },
     {
+      "sourcedepth": 10,
       "distdeg": 35,
       "phase": "SKiKP",
       "time": 1218.1917,
@@ -265,6 +291,7 @@
       "puristname": "SKikp"
     },
     {
+      "sourcedepth": 10,
       "distdeg": 35,
       "phase": "PKIKKIKP",
       "time": 1898.0303,
@@ -275,6 +302,7 @@
       "puristname": "PKIkKIkp"
     },
     {
+      "sourcedepth": 10,
       "distdeg": 35,
       "phase": "SKIKKIKP",
       "time": 2109.5889,
@@ -285,6 +313,7 @@
       "puristname": "SKIkKIkp"
     },
     {
+      "sourcedepth": 10,
       "distdeg": 35,
       "phase": "PKIKKIKS",
       "time": 2110.7554,
@@ -295,6 +324,7 @@
       "puristname": "PKIkKIks"
     },
     {
+      "sourcedepth": 10,
       "distdeg": 35,
       "phase": "SKIKKIKS",
       "time": 2322.2493,
@@ -305,6 +335,7 @@
       "puristname": "SKIkKIks"
     },
     {
+      "sourcedepth": 10,
       "distdeg": 35,
       "phase": "PKIKPPKIKP",
       "time": 2405.7,
@@ -315,6 +346,7 @@
       "puristname": "PKIkpPKIkp"
     },
     {
+      "sourcedepth": 10,
       "distdeg": 35,
       "phase": "PKPPKP",
       "time": 2501.4019,
@@ -325,6 +357,7 @@
       "puristname": "PKpPKp"
     },
     {
+      "sourcedepth": 10,
       "distdeg": 35,
       "phase": "SKIKSSKIKS",
       "time": 3256.4753,

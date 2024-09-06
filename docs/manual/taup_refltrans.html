@@ -3311,8 +3311,9 @@ circle.discontinuity.iocb {
                       [-o=&lt;outFile&gt;] [--prop=&lt;toolPropsFilename&gt;]
                       [--rpstep=s/km] [-x=type] [--xminmax=x x]... [--yminmax=y
                       y]... [--layer=v v v v v v]... [-y=type...]... [--gmt |
-                      --json | --svg | --text] [[-h=depth] [--mod=&lt;modelname&gt;]
-                      [--stadepth=depth] [--scat=s s]...]
+                      --json | --svg | --text] [[--mod=&lt;modelname&gt;]
+                      [--stadepth=depth] [-h=depth[,depth...]]... [--scat=s
+                      s]...]
 Plot reflection and transmission coefficients for a discontinuity.
 
 Options:
@@ -3360,7 +3361,7 @@ Output Type:
       --svg                 outputs as SVG
       --text                outputs as Text
 Model Args
-  -h, --evdepth, --sourcedepth=depth
+  -h, --evdepth, --sourcedepth=depth[,depth...]
                             source depth in km
       --mod, --model=&lt;modelname&gt;
                             use velocity model &quot;modelname&quot; for calculations.

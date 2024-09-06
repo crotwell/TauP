@@ -3,8 +3,8 @@ Usage: taup find [--amp] [--debug] [--help] [--onlynameddiscon] [--pwaveonly]
                  --max=<maxActions> [--mw=<mw>] [-o=<outFile>]
                  [--prop=<toolPropsFilename>] [--deg=d[,d...]]...
                  [--rayparamdeg=s/deg [s/deg]]... [--rayparamkm=s/km [s/km]]...
-                 [--time=t [t]]... [--exclude=depth...]... [[-h=depth]
-                 [--mod=<modelname>] [--stadepth=depth] [--scat=s s]...]
+                 [--time=t [t]]... [--exclude=depth...]... [[--mod=<modelname>]
+                 [--stadepth=depth] [-h=depth[,depth...]]... [--scat=s s]...]
                  [[-p=phase[,phase...]]... [--phasefile=<phaseFiles>]...]
                  [--json | --text]
 Find seismic phases in an earth model.
@@ -40,7 +40,7 @@ Options:
       --time=t [t]         find arrivals within the given range
       --verbose            enable verbose output
 Model Args
-  -h, --evdepth, --sourcedepth=depth
+  -h, --evdepth, --sourcedepth=depth[,depth...]
                            source depth in km
       --mod, --model=<modelname>
                            use velocity model "modelname" for calculations.

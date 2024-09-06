@@ -3051,10 +3051,11 @@ related to titles, labels and other image issues.</p>
                   [--mapwidth=&lt;mapwidth&gt;] [--mapwidthunit=&lt;mapWidthUnit&gt;]
                   [--mw=&lt;mw&gt;] [-o=&lt;outFile&gt;] [--prop=&lt;toolPropsFilename&gt;]
                   [--reddeg=deg/s] [--redkm=km/s] [--rel=phase] [-x=type]
-                  [-y=type] [--xminmax=x x]... [--yminmax=y y]... [[-h=depth]
-                  [--mod=&lt;modelname&gt;] [--stadepth=depth] [--scat=s s]...]
-                  [[-p=phase[,phase...]]... [--phasefile=&lt;phaseFiles&gt;]...]
-                  [--gmt | --json | --svg | --text]
+                  [-y=type] [--xminmax=x x]... [--yminmax=y y]...
+                  [[--mod=&lt;modelname&gt;] [--stadepth=depth] [-h=depth[,
+                  depth...]]... [--scat=s s]...] [[-p=phase[,phase...]]...
+                  [--phasefile=&lt;phaseFiles&gt;]...] [--gmt | --json | --svg |
+                  --text]
 Plot travel time vs. distance and other curves for seismic phases.
 
 Options:
@@ -3100,7 +3101,7 @@ Options:
       --ylog               Y axis is log
       --yminmax=y y        min and max y axis for plotting
 Model Args
-  -h, --evdepth, --sourcedepth=depth
+  -h, --evdepth, --sourcedepth=depth[,depth...]
                            source depth in km
       --mod, --model=&lt;modelname&gt;
                            use velocity model &quot;modelname&quot; for calculations.

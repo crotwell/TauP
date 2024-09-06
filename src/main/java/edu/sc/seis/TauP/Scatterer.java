@@ -10,6 +10,11 @@ public class Scatterer {
         this.dist = dist;
     }
 
+    public Double getDistanceDegree() {
+        // we know created via ofDegrees, so do not need radius to calc
+        return dist.degrees;
+    }
+
     public final double depth;
     public final FixedHemisphereDistanceRay dist;
 

@@ -1,10 +1,11 @@
 Usage: taup spikes [--debug] [--geodetic] [--help] [--verbose] [--az=<azimuth>]
                    [--az=<azimuth>] [--baz=<backAzimuth>] [--baz=<backAzimuth>]
                    [--ellipflattening=f] [--mw=<mw>] [-o=<outFile>]
-                   [--otime=<origintime>] [--prop=<toolPropsFilename>] [--evt=l
-                   l]... [--evt=l l]... [--sta=l l]... [--sta=l l]...
-                   [[-h=depth] [--mod=<modelname>] [--stadepth=depth] [--scat=s
-                   s]...] [[-p=phase[,phase...]]...
+                   [--otime=<origintime>] [--prop=<toolPropsFilename>]
+                   [--qml=<quakemlFilename>] [--staxml=<stationxmlFilename>]
+                   [--evt=l l]... [--evt=l l]... [--sta=l l]... [--sta=l l]...
+                   [[--mod=<modelname>] [--stadepth=depth] [-h=depth[,
+                   depth...]]... [--scat=s s]...] [[-p=phase[,phase...]]...
                    [--phasefile=<phaseFiles>]...] [[--deg=d[,d...]]...
                    [--exactdegree=d[,d...]]... [--exactkilometer=km[,km...]]...
                    [--km=km[,km...]]... [--rayparamdeg=s/deg[,s/deg...]]...
@@ -30,9 +31,14 @@ Options:
       --otime=<origintime>   event origin time, as ISO8601
       --prop=<toolPropsFilename>
                              load defaults from properties file
+      --qml, --quakeml=<quakemlFilename>
+                             QuakeML file to load for earthquake origins to use
+      --staxml=<stationxmlFilename>
+                             StationXML file to extract station latitudes and
+                               longitudes from
       --verbose              enable verbose output
 Model Args
-  -h, --evdepth, --sourcedepth=depth
+  -h, --evdepth, --sourcedepth=depth[,depth...]
                              source depth in km
       --mod, --model=<modelname>
                              use velocity model "modelname" for calculations.

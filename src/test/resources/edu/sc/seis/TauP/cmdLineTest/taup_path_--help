@@ -4,17 +4,18 @@ Usage: taup path [--debug] [--geodetic] [--help] [--onlynameddiscon]
                  [--color=<coloring>] [--ellipflattening=f]
                  [--mapwidth=<mapwidth>] [--mapwidthunit=<mapWidthUnit>]
                  [--maxpathinc=<maxPathInc>] [-o=<outFile>]
-                 [--prop=<toolPropsFilename>] [--xaxis=type] [--yaxis=type]
+                 [--prop=<toolPropsFilename>] [--qml=<quakemlFilename>]
+                 [--staxml=<stationxmlFilename>] [--xaxis=type] [--yaxis=type]
                  [--degminmax=deg deg]... [--depthminmax=km km]... [--evt=l
-                 l]... [--evt=l l]... [--sta=l l]... [--sta=l l]... [[-h=depth]
-                 [--mod=<modelname>] [--stadepth=depth] [--scat=s s]...]
-                 [[-p=phase[,phase...]]... [--phasefile=<phaseFiles>]...]
-                 [[--deg=d[,d...]]... [--exactdegree=d[,d...]]...
-                 [--exactkilometer=km[,km...]]... [--km=km[,km...]]...
-                 [--rayparamdeg=s/deg[,s/deg...]]... [--rayparamidx=i[,
-                 i...]]... [--rayparamkm=s/km[,s/km...]]... [--rayparamrad=s/rad
-                 [,s/rad...]]... [--takeoff=deg[,deg...]]...]... [--gmt |
-                 --json | --svg | --text]
+                 l]... [--evt=l l]... [--sta=l l]... [--sta=l l]...
+                 [[--mod=<modelname>] [--stadepth=depth] [-h=depth[,
+                 depth...]]... [--scat=s s]...] [[-p=phase[,phase...]]...
+                 [--phasefile=<phaseFiles>]...] [[--deg=d[,d...]]...
+                 [--exactdegree=d[,d...]]... [--exactkilometer=km[,km...]]...
+                 [--km=km[,km...]]... [--rayparamdeg=s/deg[,s/deg...]]...
+                 [--rayparamidx=i[,i...]]... [--rayparamkm=s/km[,s/km...]]...
+                 [--rayparamrad=s/rad[,s/rad...]]... [--takeoff=deg[,
+                 deg...]]...]... [--gmt | --json | --svg | --text]
 Plot ray paths, distance vs. depth, through the earth.
 
 Options:
@@ -44,6 +45,11 @@ Options:
                                discontinuities like moho, cmb, iocb
       --prop=<toolPropsFilename>
                              load defaults from properties file
+      --qml, --quakeml=<quakemlFilename>
+                             QuakeML file to load for earthquake origins to use
+      --staxml=<stationxmlFilename>
+                             StationXML file to extract station latitudes and
+                               longitudes from
       --verbose              enable verbose output
       --withtime             include time for each path point, no effect for
                                SVG.
@@ -54,7 +60,7 @@ Options:
                                radius
                              No effect for SVG output.
 Model Args
-  -h, --evdepth, --sourcedepth=depth
+  -h, --evdepth, --sourcedepth=depth[,depth...]
                              source depth in km
       --mod, --model=<modelname>
                              use velocity model "modelname" for calculations.

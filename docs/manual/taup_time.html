@@ -150,10 +150,11 @@ Distance   Depth   Phase   Travel    Ray Param  Takeoff  Incident  Purist   Puri
                  [--time] [--verbose] [--az=&lt;azimuth&gt;] [--az=&lt;azimuth&gt;]
                  [--baz=&lt;backAzimuth&gt;] [--baz=&lt;backAzimuth&gt;]
                  [--ellipflattening=f] [--mw=&lt;mw&gt;] [-o=&lt;outFile&gt;]
-                 [--prop=&lt;toolPropsFilename&gt;] [--rel=phase[,phase...]]...
+                 [--prop=&lt;toolPropsFilename&gt;] [--qml=&lt;quakemlFilename&gt;]
+                 [--staxml=&lt;stationxmlFilename&gt;] [--rel=phase[,phase...]]...
                  [--evt=l l]... [--evt=l l]... [--sta=l l]... [--sta=l l]...
-                 [[-h=depth] [--mod=&lt;modelname&gt;] [--stadepth=depth] [--scat=s
-                 s]...] [[-p=phase[,phase...]]...
+                 [[--mod=&lt;modelname&gt;] [--stadepth=depth] [-h=depth[,
+                 depth...]]... [--scat=s s]...] [[-p=phase[,phase...]]...
                  [--phasefile=&lt;phaseFiles&gt;]...] [[--deg=d[,d...]]...
                  [--exactdegree=d[,d...]]... [--exactkilometer=km[,km...]]...
                  [--km=km[,km...]]... [--rayparamdeg=s/deg[,s/deg...]]...
@@ -181,12 +182,17 @@ Options:
   -o, --output=&lt;outFile&gt;     output to file, default is stdout.
       --prop=&lt;toolPropsFilename&gt;
                              load defaults from properties file
+      --qml, --quakeml=&lt;quakemlFilename&gt;
+                             QuakeML file to load for earthquake origins to use
       --rayp, --onlyrayp     only output the ray parameter
       --rel=phase[,phase...] times relative to the first of the given phases
+      --staxml=&lt;stationxmlFilename&gt;
+                             StationXML file to extract station latitudes and
+                               longitudes from
       --time, --onlytime     only output travel time
       --verbose              enable verbose output
 Model Args
-  -h, --evdepth, --sourcedepth=depth
+  -h, --evdepth, --sourcedepth=depth[,depth...]
                              source depth in km
       --mod, --model=&lt;modelname&gt;
                              use velocity model &quot;modelname&quot; for calculations.

@@ -91,6 +91,9 @@ public class TauP_Spikes extends TauP_AbstractRayTool {
         if (!getOutputFormat().equals(MS3)) {
             throw new CommandLine.ParameterException(spec.commandLine(), "Unsupported Output Format: "+getOutputFormat());
         }
+        if (modelArgs.getSourceDepth().size() > 1) {
+            throw new CommandLine.ParameterException(spec.commandLine(), "Multiple source depths unsupported: "+modelArgs.getSourceDepth().size());
+        }
     }
 
     @Override
@@ -119,7 +122,6 @@ public class TauP_Spikes extends TauP_AbstractRayTool {
 
 
         validateArguments();
-        modelArgs.depthCorrected();
         List<SeismicPhase> phaseList = getSeismicPhases();
         List<MSeed3Record> spikeRecords = new ArrayList<>();
 
@@ -185,6 +187,9 @@ public class TauP_Spikes extends TauP_AbstractRayTool {
     public MSeed3EH createEH(double degrees, ZonedDateTime startDateTime, List<Arrival> allArrivals) {
         MSeed3EH eh = new MSeed3EH();
 
+        // assume single source
+        double sourceDepth = modelArgs.getSourceDepth().isEmpty() ? 0 : modelArgs.getSourceDepth().get(0);
+        RayCalculateable rayCalc = allArrivals.get(0).getRayCalculateable();
         Float deg = (float) degrees;
         Float az = distanceArgs.hasAzimuth() ? distanceArgs.getAzimuth().floatValue() : null;
         Float baz = distanceArgs.hasBackAzimuth() ? distanceArgs.getBackAzimuth().floatValue() : null;
@@ -192,7 +197,7 @@ public class TauP_Spikes extends TauP_AbstractRayTool {
         eh.addToBag(path);
 
         Origin origin = new Origin();
-        origin.setDepth(new RealQuantity((float) modelArgs.getSourceDepth()));
+        origin.setDepth(new RealQuantity((float) sourceDepth));
         origin.setTime(new Time(startDateTime.toInstant()));
 
         float olat = 0;
@@ -256,7 +261,6 @@ public class TauP_Spikes extends TauP_AbstractRayTool {
      */
     public List<MSeed3Record> calcWKBJ(List<DistanceRay> degreesList) throws TauPException {
         validateArguments();
-        modelArgs.depthCorrected();
         List<SeismicPhase> phaseList = getSeismicPhases();
         List<MSeed3Record> spikeRecords = new ArrayList<>();
         float[][] sourceTerm = effectiveSourceTerm( sourceArgs.getMw(), (float) deltaT,  1000);
@@ -504,7 +508,6 @@ public class TauP_Spikes extends TauP_AbstractRayTool {
     @Override
     public List<Arrival> calcAll(List<SeismicPhase> phaseList, List<RayCalculateable> shootables) throws TauPException {
         List<Arrival> arrivals = new ArrayList<>();
-        modelArgs.depthCorrected();
         for (SeismicPhase phase : phaseList) {
             List<Arrival> phaseArrivals = new ArrayList<>();
             for (RayCalculateable shoot : shootables) {
@@ -544,7 +547,7 @@ public class TauP_Spikes extends TauP_AbstractRayTool {
         return outputTypeArgs.getOutFileExtension();
     }
 
-    public List<DistanceRay> getDistances() {
+    public List<DistanceRay> getDistances() throws TauPException {
         return distanceArgs.getDistances();
     }
 

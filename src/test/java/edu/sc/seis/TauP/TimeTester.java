@@ -3,6 +3,7 @@ package edu.sc.seis.TauP;
 import edu.sc.seis.TauP.cmdline.args.ModelArgs;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -36,20 +37,21 @@ public class TimeTester {
     List<String> phaseNameList;
 
     public void setSourceDepth(double depth) {
-        modelArgs.setSourceDepth(depth);
+        modelArgs.setSourceDepth(Collections.singletonList(depth));
     }
 
     ModelArgs modelArgs = new ModelArgs();
 
     public List<SeismicPhase> getSeismicPhases() throws TauModelException {
-        TauModel tModDepth = modelArgs.depthCorrected();
+        double sourceDepth = modelArgs.getSourceDepth().get(0);
+        TauModel tModDepth = modelArgs.depthCorrected(sourceDepth);
         boolean isDEBUG = false;
         List<SeismicPhase> newPhases = new ArrayList<>();
         for (String ph : phaseNameList) {
             newPhases.addAll(SeismicPhaseFactory.createSeismicPhases(
                     ph,
                     tModDepth,
-                    modelArgs.getSourceDepth(),
+                    sourceDepth,
                     modelArgs.getReceiverDepth(),
                     modelArgs.getScatterer(),
                     isDEBUG));

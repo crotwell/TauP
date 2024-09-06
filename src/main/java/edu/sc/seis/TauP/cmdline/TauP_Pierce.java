@@ -118,6 +118,10 @@ public class TauP_Pierce extends TauP_Time {
 
     @Override
     public void printResultText(PrintWriter out, List<Arrival> arrivalList) {
+        printPierceAsText(out, arrivalList);
+    }
+
+    public void printPierceAsText(PrintWriter out, List<Arrival> arrivalList) {
         double prevDepth, nextDepth;
         for (Arrival arrival : arrivalList) {
             out.println("> " + arrival.getCommentLine());
@@ -158,13 +162,6 @@ public class TauP_Pierce extends TauP_Time {
                 prevDepth = pierce[j].getDepth();
             }
         }
-    }
-
-    @Override
-    public void printResultJSON(PrintWriter out, List<Arrival> arrivalList) throws TauPException {
-        String s = resultAsJSON(modelArgs.getModelName(), modelArgs.getSourceDepth(), modelArgs.getReceiverDepth(),
-                parsePhaseNameList(), arrivalList);
-        out.println(s);
     }
 
     /**

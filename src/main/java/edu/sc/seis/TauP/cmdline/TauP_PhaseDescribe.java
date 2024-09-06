@@ -52,7 +52,6 @@ public class TauP_PhaseDescribe extends TauP_AbstractPhaseTool {
     public void start() throws IOException, TauPException {
         PrintWriter writer = outputTypeArgs.createWriter(spec.commandLine().getOut());
         if (!getSeismicPhases().isEmpty()) {
-            modelArgs.depthCorrected();
             printResult(writer);
         } else {
             writer.println("No phases to describe.");
@@ -65,7 +64,7 @@ public class TauP_PhaseDescribe extends TauP_AbstractPhaseTool {
 
     }
 
-    public void printResult(PrintWriter writer) throws TauModelException {
+    public void printResult(PrintWriter writer) throws TauPException {
         if (getOutputFormat().equals(OutputTypes.TEXT)) {
             printResultText(writer);
         } else if (getOutputFormat().equals(OutputTypes.JSON)) {
@@ -76,7 +75,7 @@ public class TauP_PhaseDescribe extends TauP_AbstractPhaseTool {
         writer.flush();
     }
 
-    public void printResultText(PrintWriter writer) throws TauModelException {
+    public void printResultText(PrintWriter writer) throws TauPException {
         List<SeismicPhase> phaseList = getSeismicPhases();
         for (SeismicPhase phase: phaseList) {
             writer.println(phase.describe());
@@ -95,7 +94,7 @@ public class TauP_PhaseDescribe extends TauP_AbstractPhaseTool {
         }
     }
 
-    public void printResultJSON(PrintWriter writer) throws TauModelException {
+    public void printResultJSON(PrintWriter writer) throws TauPException {
         List<SeismicPhase> phaseList = getSeismicPhases();
         writer.println("[");
         boolean first = true;

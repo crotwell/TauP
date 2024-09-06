@@ -2,10 +2,11 @@ Usage: taup time [--amp] [--debug] [--first] [--geodetic] [--help] [--rayp]
                  [--time] [--verbose] [--az=<azimuth>] [--az=<azimuth>]
                  [--baz=<backAzimuth>] [--baz=<backAzimuth>]
                  [--ellipflattening=f] [--mw=<mw>] [-o=<outFile>]
-                 [--prop=<toolPropsFilename>] [--rel=phase[,phase...]]...
+                 [--prop=<toolPropsFilename>] [--qml=<quakemlFilename>]
+                 [--staxml=<stationxmlFilename>] [--rel=phase[,phase...]]...
                  [--evt=l l]... [--evt=l l]... [--sta=l l]... [--sta=l l]...
-                 [[-h=depth] [--mod=<modelname>] [--stadepth=depth] [--scat=s
-                 s]...] [[-p=phase[,phase...]]...
+                 [[--mod=<modelname>] [--stadepth=depth] [-h=depth[,
+                 depth...]]... [--scat=s s]...] [[-p=phase[,phase...]]...
                  [--phasefile=<phaseFiles>]...] [[--deg=d[,d...]]...
                  [--exactdegree=d[,d...]]... [--exactkilometer=km[,km...]]...
                  [--km=km[,km...]]... [--rayparamdeg=s/deg[,s/deg...]]...
@@ -33,12 +34,17 @@ Options:
   -o, --output=<outFile>     output to file, default is stdout.
       --prop=<toolPropsFilename>
                              load defaults from properties file
+      --qml, --quakeml=<quakemlFilename>
+                             QuakeML file to load for earthquake origins to use
       --rayp, --onlyrayp     only output the ray parameter
       --rel=phase[,phase...] times relative to the first of the given phases
+      --staxml=<stationxmlFilename>
+                             StationXML file to extract station latitudes and
+                               longitudes from
       --time, --onlytime     only output travel time
       --verbose              enable verbose output
 Model Args
-  -h, --evdepth, --sourcedepth=depth
+  -h, --evdepth, --sourcedepth=depth[,depth...]
                              source depth in km
       --mod, --model=<modelname>
                              use velocity model "modelname" for calculations.

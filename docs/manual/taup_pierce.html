@@ -205,15 +205,16 @@ distance, depth, latitude and longitude, respectively.</p>
                    [--verbose] [--az=&lt;azimuth&gt;] [--az=&lt;azimuth&gt;]
                    [--baz=&lt;backAzimuth&gt;] [--baz=&lt;backAzimuth&gt;]
                    [--ellipflattening=f] [--mw=&lt;mw&gt;] [-o=&lt;outFile&gt;]
-                   [--prop=&lt;toolPropsFilename&gt;] [--pierce=depth[,depth...]]...
-                   [--rel=phase[,phase...]]... [--evt=l l]... [--evt=l l]...
-                   [--sta=l l]... [--sta=l l]... [[-h=depth]
-                   [--mod=&lt;modelname&gt;] [--stadepth=depth] [--scat=s s]...]
-                   [[-p=phase[,phase...]]... [--phasefile=&lt;phaseFiles&gt;]...]
-                   [[--deg=d[,d...]]... [--exactdegree=d[,d...]]...
-                   [--exactkilometer=km[,km...]]... [--km=km[,km...]]...
-                   [--rayparamdeg=s/deg[,s/deg...]]... [--rayparamidx=i[,
-                   i...]]... [--rayparamkm=s/km[,s/km...]]...
+                   [--prop=&lt;toolPropsFilename&gt;] [--qml=&lt;quakemlFilename&gt;]
+                   [--staxml=&lt;stationxmlFilename&gt;] [--pierce=depth[,
+                   depth...]]... [--rel=phase[,phase...]]... [--evt=l l]...
+                   [--evt=l l]... [--sta=l l]... [--sta=l l]...
+                   [[--mod=&lt;modelname&gt;] [--stadepth=depth] [-h=depth[,
+                   depth...]]... [--scat=s s]...] [[-p=phase[,phase...]]...
+                   [--phasefile=&lt;phaseFiles&gt;]...] [[--deg=d[,d...]]...
+                   [--exactdegree=d[,d...]]... [--exactkilometer=km[,km...]]...
+                   [--km=km[,km...]]... [--rayparamdeg=s/deg[,s/deg...]]...
+                   [--rayparamidx=i[,i...]]... [--rayparamkm=s/km[,s/km...]]...
                    [--rayparamrad=s/rad[,s/rad...]]... [--takeoff=deg[,
                    deg...]]...]... [--json | --text]
 Calculate pierce points for phases at discontinuities in the model.
@@ -241,16 +242,21 @@ Options:
                              additional depth for calculating pierce points
       --prop=&lt;toolPropsFilename&gt;
                              load defaults from properties file
+      --qml, --quakeml=&lt;quakemlFilename&gt;
+                             QuakeML file to load for earthquake origins to use
       --rayp, --onlyrayp     only output the ray parameter
       --rel=phase[,phase...] times relative to the first of the given phases
       --rev                  only prints underside and bottom turn points, e.g.
                                ^ and v
+      --staxml=&lt;stationxmlFilename&gt;
+                             StationXML file to extract station latitudes and
+                               longitudes from
       --time, --onlytime     only output travel time
       --turn                 only prints bottom turning points, e.g. v
       --under                only prints underside reflection points, e.g. ^
       --verbose              enable verbose output
 Model Args
-  -h, --evdepth, --sourcedepth=depth
+  -h, --evdepth, --sourcedepth=depth[,depth...]
                              source depth in km
       --mod, --model=&lt;modelname&gt;
                              use velocity model &quot;modelname&quot; for calculations.

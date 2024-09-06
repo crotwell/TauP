@@ -2,16 +2,21 @@ package edu.sc.seis.TauP.cmdline.args;
 
 import edu.sc.seis.TauP.*;
 import edu.sc.seis.seisFile.Location;
+import edu.sc.seis.seisFile.fdsnws.quakeml.Event;
+import edu.sc.seis.seisFile.fdsnws.stationxml.Channel;
+import edu.sc.seis.seisFile.fdsnws.stationxml.Network;
+import edu.sc.seis.seisFile.fdsnws.stationxml.Station;
 import picocli.CommandLine;
 import picocli.CommandLine.ArgGroup;
 import picocli.CommandLine.Option;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class DistanceArgs {
 
-    public List<DistanceRay> getDistances() {
+    public List<DistanceRay> getDistances() throws TauPException {
         List<DistanceRay> out = new ArrayList<>();
         for (Double d : distArgs.degreesList) {
             out.add(DistanceRay.ofDegrees(d));
@@ -62,6 +67,37 @@ public class DistanceArgs {
                         out.add(DistanceRay.ofGeodeticStationEvent(staLoc, evtLoc, geodeticArgs.getEllipFlattening()));
                     } else {
                         out.add(DistanceRay.ofStationEvent(staLoc, evtLoc));
+                    }
+                }
+            }
+        }
+        // load pairs of events and sta/chan
+        Map<Network, List<Station>> networks = qmlStaxmlArgs.loadStationXML();
+        List<Event> quakes = qmlStaxmlArgs.loadQuakeML();
+        for (Event evt : quakes) {
+            Location evtLoc = new Location(evt);
+            for (Network net : networks.keySet()) {
+                for (Station sta : networks.get(net)) {
+                    List<Location> allChans = new ArrayList<>();
+                    for (Channel chan : sta.getChannelList()) {
+                        Location cLoc = new Location(chan);
+                        boolean found = false;
+                        for (Location prev : allChans) {
+                            if (prev.equals(cLoc)) {
+                                found = true;
+                                break;
+                            }
+                        }
+                        if ( ! found) {
+                            allChans.add(cLoc);
+                        }
+                    }
+                    for (Location chanLoc : allChans) {
+                        if (geodeticArgs.isGeodetic()) {
+                            out.add(DistanceRay.ofGeodeticStationEvent(chanLoc, evtLoc, geodeticArgs.getEllipFlattening()));
+                        } else {
+                            out.add(DistanceRay.ofStationEvent(chanLoc, evtLoc));
+                        }
                     }
                 }
             }
@@ -223,7 +259,7 @@ public class DistanceArgs {
         return rpList;
     }
 
-    public List<RayCalculateable> getRayCalculatables() {
+    public List<RayCalculateable> getRayCalculatables() throws TauPException {
         List<RayCalculateable> out = new ArrayList<>();
         out.addAll(getDistances());
         out.addAll(getRayParamDegRays());
@@ -255,7 +291,10 @@ public class DistanceArgs {
     }
 
     public void validateArguments() {
-        if (distArgs.allEmpty() && (latLonArgs.eventList.isEmpty() || latLonArgs.stationList.isEmpty())) {
+        if (distArgs.allEmpty()
+                && (latLonArgs.eventList.isEmpty() || latLonArgs.stationList.isEmpty())
+                && ! ( qmlStaxmlArgs.hasQml() && qmlStaxmlArgs.hasStationXML())
+        ) {
             throw new IllegalArgumentException("Must specify at least one distance or station, event.");
         }
         for (Double d : distArgs.takeoffAngle) {
@@ -277,6 +316,9 @@ public class DistanceArgs {
 
     @CommandLine.Mixin
     GeodeticArgs geodeticArgs = new GeodeticArgs();
+
+    @CommandLine.Mixin
+    QmlStaxmlArgs qmlStaxmlArgs = new QmlStaxmlArgs();
 
     public List<Location> getStationList() {
         return latLonArgs.stationList;

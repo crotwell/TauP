@@ -68,80 +68,124 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
 
     @Override
     public void start() throws IOException, TauPException {
-        TauModel tMod = modelArgs.depthCorrected();
-        List<Double> excludeDepths = getExcludedDepths(tMod);
-        List<Double> actualExcludeDepths = matchDepthToDiscon(excludeDepths, tMod.getVelocityModel(), excludeDepthTol);
-
-        SeismicPhaseWalk walker = createWalker(tMod, actualExcludeDepths);
-        List<ProtoSeismicPhase> walk = walker.findEndingPaths(maxActions);
         List<String> givenPhaseNames = extractPhaseNames("");
-
         List<RayCalculateable> distanceValues = distanceArgs.getRayCalculatables();
+        List<Arrival> arrivalList = new ArrayList<>();
+        List<ProtoSeismicPhase> allwalk = new ArrayList<>();
+        for (Double sourceDepth : modelArgs.getSourceDepth()) {
+            TauModel tMod = modelArgs.depthCorrected(sourceDepth);
+            List<Double> excludeDepths = getExcludedDepths(tMod);
+            List<Double> actualExcludeDepths = matchDepthToDiscon(excludeDepths, tMod.getVelocityModel(), excludeDepthTol);
+
+            SeismicPhaseWalk walker = createWalker(tMod, actualExcludeDepths);
+            List<ProtoSeismicPhase> walk = walker.findEndingPaths(maxActions);
+
+            if((!distanceValues.isEmpty())) {
+                arrivalList.addAll(findForDist(walk, tMod, distanceValues));
+            } else {
+                allwalk.addAll(findForAllDepth(walk));
+            }
+        }
         if((!distanceValues.isEmpty())) {
-            List<SeismicPhase> phaseList = new ArrayList<>();
-            List<String> phaseNameList = new ArrayList<>();
-            for (ProtoSeismicPhase proto : walk) {
-                phaseNameList.add(proto.getName());
-                phaseList.add(proto.asSeismicPhase());
-            }
-            if ( ! phaseArgs.isEmpty()) {
-                List<PhaseName> givenPhases = parsePhaseNameList();
-                for (PhaseName pn : givenPhases) {
-                    phaseNameList.add(pn.getName());
-                    phaseList.addAll(SeismicPhaseFactory.createSeismicPhases(pn.getName(),
-                            tMod, modelArgs.getSourceDepth(), modelArgs.getReceiverDepth(),
-                            modelArgs.getScatterer(), isDEBUG()));
-                }
-            }
-            TauP_Time timeTool = new TauP_Time();
-            timeTool.setPhaseNames(phaseNameList);
-            timeTool.modelArgs = modelArgs;
-            timeTool.outputTypeArgs = outputTypeArgs;
-            timeTool.sourceArgs = sourceArgs;
-            timeTool.withAmplitude= withAmplitude;
-            List<Arrival> arrivalList = timeTool.calcAll(phaseList,distanceValues);
-            if (!times.isEmpty()) {
-                double minTime = times.get(0);
-                double maxTime;
-                if (times.size()>1) {
-                    maxTime = times.get(1);
-                } else {
-                    maxTime = minTime + deltaTime;
-                    minTime = minTime - deltaTime;
-                }
-                List<Arrival> timedArrivalList = new ArrayList<>();
-                for (Arrival a : arrivalList) {
-                    if (minTime <= a.getTime() && a.getTime() <= maxTime) {
-                        timedArrivalList.add(a);
-                    }
-                }
-                arrivalList = timedArrivalList;
-            }
             PrintWriter writer = outputTypeArgs.createWriter(spec.commandLine().getOut());
-            timeTool.printResult(writer, arrivalList);
+            printResult(writer, arrivalList);
             writer.flush();
         } else {
-            System.err.println("No distances given, just find phases...");
-            List<SeismicPhase> givenPhases = new ArrayList<>();
-            if ( ! phaseArgs.isEmpty()) {
-                givenPhases = getSeismicPhases();
-            }
-            for (SeismicPhase sp : givenPhases) {
-                if (sp instanceof SimpleSeismicPhase) {
-                    SimpleSeismicPhase ssp = (SimpleSeismicPhase) sp;
-                    walk.add(ssp.getProto());
-                } else {
-                    ScatteredSeismicPhase scat = (ScatteredSeismicPhase) sp;
-                    walk.add(scat.getScatteredPhase().getProto());
-                }
-            }
             if (outputTypeArgs.isText()) {
-                printResultText(walk);
+                printResultText(allwalk);
             } else if (outputTypeArgs.isJSON()) {
-                printResultJson(walk);
+                printResultJson(allwalk);
             }
         }
     }
+
+    public List<Arrival> findForDist(List<ProtoSeismicPhase> walk, TauModel tMod, List<RayCalculateable> distanceValues) throws IOException, TauPException {
+        List<SeismicPhase> phaseList = new ArrayList<>();
+        List<String> phaseNameList = new ArrayList<>();
+        for (ProtoSeismicPhase proto : walk) {
+            phaseNameList.add(proto.getName());
+            phaseList.add(proto.asSeismicPhase());
+        }
+        if ( ! phaseArgs.isEmpty()) {
+            List<PhaseName> givenPhases = parsePhaseNameList();
+            for (PhaseName pn : givenPhases) {
+                phaseNameList.add(pn.getName());
+                phaseList.addAll(SeismicPhaseFactory.createSeismicPhases(pn.getName(),
+                        tMod, tMod.getSourceDepth(), modelArgs.getReceiverDepth(),
+                        modelArgs.getScatterer(), isDEBUG()));
+            }
+        }
+        TauP_Time timeTool = new TauP_Time();
+        timeTool.setPhaseNames(phaseNameList);
+        timeTool.modelArgs = modelArgs;
+        timeTool.outputTypeArgs = outputTypeArgs;
+        timeTool.sourceArgs = sourceArgs;
+        timeTool.withAmplitude= withAmplitude;
+        List<Arrival> arrivalList = timeTool.calcAll(phaseList,distanceValues);
+        if (!times.isEmpty()) {
+            double minTime = times.get(0);
+            double maxTime;
+            if (times.size()>1) {
+                maxTime = times.get(1);
+            } else {
+                maxTime = minTime + deltaTime;
+                minTime = minTime - deltaTime;
+            }
+            List<Arrival> timedArrivalList = new ArrayList<>();
+            for (Arrival a : arrivalList) {
+                if (minTime <= a.getTime() && a.getTime() <= maxTime) {
+                    timedArrivalList.add(a);
+                }
+            }
+            arrivalList = timedArrivalList;
+        }
+        return arrivalList;
+    }
+
+
+    public void printResult(PrintWriter out, List<Arrival> arrivalList) throws IOException, TauPException {
+        if (getOutputFormat().equals(OutputTypes.JSON)) {
+            TauP_AbstractRayTool.writeJSON(out, "",
+                    getTauModelName(),
+                    modelArgs.getSourceDepth(),
+                    modelArgs.getReceiverDepth(),
+                    getSeismicPhases(),
+                    arrivalList);
+        } else {
+            boolean onlyFirst = false;
+            boolean onlyPrintTime = false;
+            boolean onlyPrintRayP = false;
+            List<String> relativePhaseName = new ArrayList<>();
+            TauP_Time.printArrivalsAsText(out, arrivalList,
+                    modelArgs.getModelName(),
+                    modelArgs.getSourceDepth(),
+                    getReceiverDepth(),
+                    getScatterer(),
+                    onlyFirst, onlyPrintTime, onlyPrintRayP,
+                    isWithAmplitude(), sourceArgs.getMw(),
+                    relativePhaseName);
+        }
+        out.flush();
+    }
+
+    public List<ProtoSeismicPhase> findForAllDepth(List<ProtoSeismicPhase> walk) throws IOException, TauPException {
+        System.err.println("No distances given, just find phases...");
+        List<SeismicPhase> givenPhases = new ArrayList<>();
+        if ( ! phaseArgs.isEmpty()) {
+            givenPhases = getSeismicPhases();
+        }
+        for (SeismicPhase sp : givenPhases) {
+            if (sp instanceof SimpleSeismicPhase) {
+                SimpleSeismicPhase ssp = (SimpleSeismicPhase) sp;
+                walk.add(ssp.getProto());
+            } else {
+                ScatteredSeismicPhase scat = (ScatteredSeismicPhase) sp;
+                walk.add(scat.getScatteredPhase().getProto());
+            }
+        }
+        return walk;
+    }
+
 
     public List<Double> matchDepthToDiscon(List<Double> excludeDepth, VelocityModel vMod, double tol) throws NoSuchLayerException {
         List<Double> out = new ArrayList<>();
@@ -237,7 +281,7 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
 
     @Override
     public void validateArguments() throws TauPException {
-        TauModel tMod = modelArgs.depthCorrected();
+        TauModel tMod = modelArgs.getTauModel();
         List<Double> excludeDepths = getExcludedDepths(tMod);
         // throws if cant find depth near discon
         List<Double> actualExcludeDepths = matchDepthToDiscon(excludeDepths, tMod.getVelocityModel(), excludeDepthTol);

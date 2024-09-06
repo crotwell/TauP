@@ -24,6 +24,20 @@ public abstract class RayCalculateable {
     public abstract boolean isLatLonable();
     public abstract LatLonable getLatLonable();
 
+    public boolean hasSourceDepth() {
+        return evtLatLon != null && evtLatLon.hasDepth();
+    }
+    public Double getSourceDepth() {
+        return evtLatLon != null ? evtLatLon.getDepthKm() : null;
+    }
+
+    public boolean hasReceiverDepth() {
+        return staLatLon != null && staLatLon.hasDepth();
+    }
+    public Double getReceiverDepth() {
+        return staLatLon != null ? staLatLon.getDepthKm() : null;
+    }
+
 
     protected Location staLatLon = null;
     protected Location evtLatLon = null;

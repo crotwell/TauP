@@ -3,13 +3,17 @@ package edu.sc.seis.TauP.cmdline;
 import edu.sc.seis.TauP.*;
 import edu.sc.seis.TauP.cmdline.args.AbstractOutputTypeArgs;
 import edu.sc.seis.TauP.cmdline.args.DistanceArgs;
+import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONWriter;
 import picocli.CommandLine;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public abstract class TauP_AbstractRayTool extends TauP_AbstractPhaseTool {
 
@@ -20,51 +24,93 @@ public abstract class TauP_AbstractRayTool extends TauP_AbstractPhaseTool {
         super(outputTypeArgs);
     }
 
-    public static String resultAsJSON(String modelName,
-                                      double depth,
-                                      double receiverDepth,
-                                      List<PhaseName> phases,
-                                      List<Arrival> arrivals) {
-        String Q = ""+'"';
-        String COMMA = ",";
-        String QCOMMA = Q+COMMA;
-        String COLON = ": "; // plus space
-        String S = "  ";
-        String QC = Q+COLON;
-        String QCQ = QC+Q;
-        String SQ = S+Q;
-        // use cast to float to limit digits printed
-        StringWriter sw = new StringWriter();
-        PrintWriter out = new PrintWriter(sw);
-        out.println("{");
-        out.println(SQ+"model"+QCQ+modelName+QCOMMA);
-        out.println(SQ+"sourcedepth"+QC+(float)depth+COMMA);
-        out.println(SQ+"receiverdepth"+QC+(float)receiverDepth+COMMA);
-        out.print(SQ+"phases"+Q+": [");
-        for(int p=0; p<phases.size(); p++) {
-            out.print(" "+Q+phases.get(p).getName()+Q);
-            if ( p != phases.size()-1) {
-                out.print(COMMA);
+    public static void writeJSON(PrintWriter pw, String indent,
+                                 String modelName,
+                                 List<Double> depthList,
+                                 double receiverDepth,
+                                 List<SeismicPhase> phases,
+                                 List<Arrival> arrivals) {
+        TauP_AbstractRayTool.writeJSON(pw, indent, modelName, depthList, receiverDepth, phases, arrivals,  false, 4.0f);
+    }
+
+    public static void writeJSON(PrintWriter pw, String indent,
+                                 String modelName,
+                                 List<Double> depthList,
+                                 double receiverDepth,
+                                 List<SeismicPhase> phases,
+                                 List<Arrival> arrivals,
+                                 boolean withAmplitude,
+                                 float Mw) {
+        String innerIndent = indent+"  ";
+        String NL = "\n";
+        pw.write("{"+NL);
+        pw.write(innerIndent+ JSONWriter.valueToString("model")+": "+JSONWriter.valueToString(modelName)+","+NL);
+        pw.write(innerIndent+JSONWriter.valueToString("sourcedepthlist")+": [");
+
+        boolean firstDp = true;
+        for (Double depth : depthList) {
+            pw.write((firstDp ? "" : ", ") + JSONWriter.valueToString(depth.floatValue()));
+            firstDp = false;
+        }
+
+        pw.write("]," +NL);
+        pw.write(innerIndent+JSONWriter.valueToString("receiverdepth")+": "+JSONWriter.valueToString((float)receiverDepth)+","+NL);
+        pw.write(innerIndent+JSONWriter.valueToString("phases")+": [ ");
+        boolean first = true;
+        for (SeismicPhase phase : phases) {
+            if (first) {
+                first = false;
+            } else {
+                pw.write(", ");
+            }
+            pw.write(JSONWriter.valueToString(phase.getName()));
+        }
+        pw.write(" ],"+NL);
+        if (withAmplitude) {
+            pw.write(innerIndent+JSONWriter.valueToString("Mw")+": "+JSONWriter.valueToString(Mw)+","+NL);
+        }
+        pw.write(innerIndent+JSONWriter.valueToString("arrivals")+": ["+NL);
+        first = true;
+        for (Arrival arrival : arrivals) {
+            if (first) {
+                first = false;
+            } else {
+                pw.write(","+NL);
+            }
+            try {
+                arrival.writeJSON(pw, innerIndent + "  ", withAmplitude);
+            } catch (JSONException e) {
+                System.err.println("Error in json: "+ arrival);
+                throw e;
             }
         }
-        out.println(" ]"+COMMA);
-        out.println(SQ+"arrivals"+Q+": [");
-        for(int j = 0; j < arrivals.size(); j++) {
-            Arrival currArrival = arrivals.get(j);
-            JSONObject asjson = currArrival.asJSONObject();
-            out.print(asjson.toString(2));
-            if (j != arrivals.size()-1) {
-                out.print(COMMA);
-            }
-            out.println();
-        }
-        out.println(S+"]");
-        out.print("}");
-        return sw.toString();
+        pw.write(NL);
+        pw.write(innerIndent+"]"+NL);
+        pw.write("}"+NL);
     }
 
     public DistanceArgs getDistanceArgs() {
         return this.distanceArgs;
+    }
+
+
+    @Override
+    public List<SeismicPhase> getSeismicPhases() throws TauPException {
+        List<SeismicPhase> phases = super.getSeismicPhases();
+        // add any depths that are part of eventLatLon locations so we calculate those phases as well
+        Set<Double> knownDepths = new HashSet<>();
+        for (DistanceRay dr : getDistanceArgs().getDistances()) {
+            if (dr.hasSourceDepth()) {
+                knownDepths.add(dr.getSourceDepth());
+            }
+        }
+        for (SeismicPhase phase : phases) {
+            knownDepths.remove(phase.getSourceDepth());
+        }
+        for (Double depth : knownDepths) {
+            phases.addAll(calcSeismicPhases(depth));
+        }
+        return phases;
     }
 
     @Override
@@ -72,9 +118,11 @@ public abstract class TauP_AbstractRayTool extends TauP_AbstractPhaseTool {
         if (modelArgs.getTauModel() == null) {
             throw new TauModelException("Model for '"+this.getTauModelName()+"' is null, unable to calculate.");
         }
-        if (modelArgs.getTauModel().getRadiusOfEarth() < modelArgs.getSourceDepth()) {
-            throw new TauModelException("Source depth of "+modelArgs.getSourceDepth()+" in '"+this.getTauModelName()
-                    +"' is greater than radius of earth, "+modelArgs.getTauModel().getRadiusOfEarth()+", unable to calculate.");
+        for (double sourceDepth : modelArgs.getSourceDepth()) {
+            if (modelArgs.getTauModel().getRadiusOfEarth() < sourceDepth) {
+                throw new TauModelException("Source depth of " + sourceDepth + " in '" + this.getTauModelName()
+                        + "' is greater than radius of earth, " + modelArgs.getTauModel().getRadiusOfEarth() + ", unable to calculate.");
+            }
         }
         if (modelArgs.getTauModel().getRadiusOfEarth() < modelArgs.getReceiverDepth()) {
             throw new TauModelException("Receiver depth of "+modelArgs.getReceiverDepth()+" in '"+this.getTauModelName()
@@ -92,4 +140,5 @@ public abstract class TauP_AbstractRayTool extends TauP_AbstractPhaseTool {
 
 
     public abstract void printResult(PrintWriter out, List<Arrival> arrivalList) throws IOException, TauPException;
+
 }

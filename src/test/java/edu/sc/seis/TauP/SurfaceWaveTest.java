@@ -27,10 +27,10 @@ public class SurfaceWaveTest {
         float depth = 23;
         float deg = 30;
         taup.setPhaseNames(List.of(phaseName));
-        taup.setSourceDepth(depth);
+        taup.setSingleSourceDepth(depth);
 
 
-        List<SeismicPhase> phaseList = taup.getSeismicPhases();
+        List<SeismicPhase> phaseList = taup.calcSeismicPhases(depth);
         List<RayCalculateable> distanceValues = List.of(DistanceRay.ofDegrees(deg));
         List<Arrival> arrivals = taup.calcAll(phaseList, distanceValues);
         assertTrue(arrivals.size() > 0,
@@ -58,27 +58,27 @@ public class SurfaceWaveTest {
         double phaseVel = 3.2;
         String phaseName = phaseVel+"kmps";
         assertEquals("3.2kmps", phaseName);
-        float depth = 0;
-        double distDeg = distKm/taup.getTauModelDepthCorrected().getRadiusOfEarth()*180.0/Math.PI;
+        float sourceDepth = 0;
+        double distDeg = distKm/taup.getTauModelDepthCorrected(sourceDepth).getRadiusOfEarth()*180.0/Math.PI;
         assertEquals(0.8993, distDeg, 0.0001);
         double longWayDistDeg = 360.0-distDeg;
-        double longWayDistKm = longWayDistDeg*taup.getTauModelDepthCorrected().getRadiusOfEarth()*Math.PI/180.0;
+        double longWayDistKm = longWayDistDeg*taup.getTauModelDepthCorrected(sourceDepth).getRadiusOfEarth()*Math.PI/180.0;
         taup.setPhaseNames(List.of(phaseName));
-        taup.setSourceDepth(depth);
-        List<SeismicPhase> phaseList = taup.getSeismicPhases();
+        taup.setSingleSourceDepth(sourceDepth);
+        List<SeismicPhase> phaseList = taup.calcSeismicPhases(sourceDepth);
         List<RayCalculateable> distanceValues = List.of(DistanceRay.ofDegrees(distDeg));
         List<Arrival> arrivals = taup.calcAll(phaseList, distanceValues);
         assertEquals(2, arrivals.size(),
-                phaseName + " has arrivals for depth " + depth + " at dist " + distDeg);
+                phaseName + " has arrivals for depth " + sourceDepth + " at dist " + distDeg);
         assertTrue(arrivals.get(0).getTime() < arrivals.get(1).getTime());
         assertEquals(distKm/phaseVel,
                 arrivals.get(0).getTime(),
                 0.001f,
-                phaseName + " time for depth " + depth + " at dist " + distDeg+"/"+distKm+" "+arrivals.get(0));
+                phaseName + " time for depth " + sourceDepth + " at dist " + distDeg+"/"+distKm+" "+arrivals.get(0));
         // long way around
         assertEquals(longWayDistKm/phaseVel,
                 arrivals.get(1).getTime(),
                 0.001f,
-                phaseName + " time for depth " + depth + " at dist " + longWayDistDeg+"/"+longWayDistKm+" "+arrivals.get(1));
+                phaseName + " time for depth " + sourceDepth + " at dist " + longWayDistDeg+"/"+longWayDistKm+" "+arrivals.get(1));
     }
 }

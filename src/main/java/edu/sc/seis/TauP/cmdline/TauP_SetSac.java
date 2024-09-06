@@ -186,7 +186,7 @@ public class TauP_SetSac extends TauP_AbstractPhaseTool {
         }
     }
 
-    public void processSacTimeSeries(SacTimeSeries sacFile, String filenameForError) throws SetSacException, TauModelException, SlownessModelException, NoSuchLayerException {
+    public void processSacTimeSeries(SacTimeSeries sacFile, String filenameForError) throws TauPException {
         SacHeader header = sacFile.getHeader();
         if(SacConstants.isUndef(header.getEvdp())) {
             throw new SetSacException("Depth not set in "
@@ -230,7 +230,7 @@ public class TauP_SetSac extends TauP_AbstractPhaseTool {
             /* can't get a distance, skipping */
             throw new SetSacException("Can't get a distance, all distance fields are undef in "+filenameForError);
         }
-        if(!((evdpkm && modelArgs.getSourceDepth() == header.getEvdp()) || (!evdpkm && modelArgs.getSourceDepth() == 1000 * header.getEvdp()))) {
+        if(modelArgs.getSourceDepth().size()!= 1 || !((evdpkm && modelArgs.getSourceDepth().get(0) == header.getEvdp()) || (!evdpkm && modelArgs.getSourceDepth().get(0) == 1000 * header.getEvdp()))) {
             if(!evdpkm && header.getEvdp() != 0 && header.getEvdp() < 1000.0) {
                 Alert.warning("Sac header evdp is < 1000 in "
                                       + filenameForError,
@@ -238,9 +238,9 @@ public class TauP_SetSac extends TauP_AbstractPhaseTool {
                                       + "(default), you should use the -evdpkm flag");
             }
             if(evdpkm) {
-                setSourceDepth(header.getEvdp());
+                setSingleSourceDepth(header.getEvdp());
             } else {
-                setSourceDepth(header.getEvdp() / 1000.0);
+                setSingleSourceDepth(header.getEvdp() / 1000.0);
             }
         }
         if(isVerbose()) {

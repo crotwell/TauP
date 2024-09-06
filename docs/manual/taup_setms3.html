@@ -140,13 +140,13 @@ headers, then this will add markers to the extra headers for P and S:</p>
 </pre></div>
 </div>
 <p>The usage is:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Usage: taup setms3 [--debug] [--geodetic] [--help] [--verbose] [--eh=&lt;ehKey&gt;]
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Usage: taup setms3 [--debug] [--geodetic] [--help] [--verbose]
                    [--ellipflattening=f] [--prop=&lt;toolPropsFilename&gt;]
                    [--qml=&lt;quakemlFilename&gt;] [--qmltol=&lt;quakeOTimeTol&gt;]
-                   [--staxml=&lt;stationxmlFilename&gt;] [[-h=depth]
-                   [--mod=&lt;modelname&gt;] [--stadepth=depth] [--scat=s s]...]
-                   [[-p=phase[,phase...]]... [--phasefile=&lt;phaseFiles&gt;]...]
-                   [mseed3file...]
+                   [--staxml=&lt;stationxmlFilename&gt;] [--taupeh=&lt;ehKey&gt;]
+                   [[--mod=&lt;modelname&gt;] [--stadepth=depth] [-h=depth[,
+                   depth...]]... [--scat=s s]...] [[-p=phase[,phase...]]...
+                   [--phasefile=&lt;phaseFiles&gt;]...] [mseed3file...]
 Save travel times in the extra header of miniseed3 files.
     https://crotwell.github.io/ms3eh/
 has details on the JSON structure.
@@ -156,9 +156,6 @@ has details on the JSON structure.
 Options:
 
       --debug               enable debugging output
-      --eh=&lt;ehKey&gt;          key to store full TauP JSON output within extra
-                              headers within, otherwise use abbreviated &#39;bag&#39;
-                              markers
       --ellipflattening=f   Elliptical flattening for distance calculations
                               when --geodetic, defaults to WGS84 ~ 1/298.257
       --geodetic            use geodetic latitude for distance calculations,
@@ -170,16 +167,19 @@ Options:
       --prop=&lt;toolPropsFilename&gt;
                             load defaults from properties file
       --qml, --quakeml=&lt;quakemlFilename&gt;
-                            QuakeML file to load to search for origins that
-                              match this waveform
+                            QuakeML file to load for earthquake origins to use
       --qmltol=&lt;quakeOTimeTol&gt;
                             time window to search for origins in a QuakeML file
                               as an ISO8601 string, default value is PT1H.
       --staxml=&lt;stationxmlFilename&gt;
-                            StationXML file to extract station lat/lon from
+                            StationXML file to extract station latitudes and
+                              longitudes from
+      --taupeh=&lt;ehKey&gt;      key to store full TauP JSON output within extra
+                              headers within, otherwise use abbreviated &#39;bag&#39;
+                              style markers.
       --verbose             enable verbose output
 Model Args
-  -h, --evdepth, --sourcedepth=depth
+  -h, --evdepth, --sourcedepth=depth[,depth...]
                             source depth in km
       --mod, --model=&lt;modelname&gt;
                             use velocity model &quot;modelname&quot; for calculations.

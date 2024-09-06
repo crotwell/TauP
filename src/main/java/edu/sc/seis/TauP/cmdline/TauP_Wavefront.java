@@ -160,10 +160,9 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
             SvgEarth.printSvgEnd(out);
         } else {
             // text/gmt
-
             if (getGraphicOutputTypeArgs().isGMT()) {
                 SvgEarth.printGmtScriptBeginning(out, outputTypeArgs.getOutFileBase(),
-                        modelArgs.depthCorrected(), outputTypeArgs.mapwidth,
+                        modelArgs.getTauModel(), outputTypeArgs.mapwidth,
                         outputTypeArgs.mapWidthUnit, onlyNamedDiscon,
                         toolNameFromClass(this.getClass()), getCmdLineArgs());
                 if (coloring.getColoring() == ColorType.none) {
@@ -211,16 +210,18 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
 
 
 
-    public Map<Double, List<WavefrontPathSegment>> calcIsochron() throws TauModelException {
+    public Map<Double, List<WavefrontPathSegment>> calcIsochron() throws TauPException {
         Map<Double, List<WavefrontPathSegment>> out = new HashMap<>();
 
         double maxTime = 0;
         for (SeismicPhase phase : getSeismicPhases()) {
-            if ( ! phase.hasArrivals()) { continue;}
+            if (!phase.hasArrivals()) {
+                continue;
+            }
             maxTime = Math.max(maxTime, phase.getMaxTime());
             Map<Double, List<WavefrontPathSegment>> wavefrontPathSegments = calcIsochronSegmentsForPhase(phase, timeStep);
             for (Double timeVal : wavefrontPathSegments.keySet()) {
-                if ( ! out.containsKey(timeVal)) {
+                if (!out.containsKey(timeVal)) {
                     out.put(timeVal, new ArrayList<>());
                 }
                 out.get(timeVal).addAll(wavefrontPathSegments.get(timeVal));

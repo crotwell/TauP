@@ -16,6 +16,7 @@ import java.util.Objects;
 
 import static edu.sc.seis.TauP.AxisType.*;
 import static edu.sc.seis.TauP.cmdline.TauP_AbstractPhaseTool.baseResultAsJSONObject;
+import static edu.sc.seis.TauP.cmdline.args.ModelArgs.depthsToString;
 
 public class XYPlotOutput {
 
@@ -305,7 +306,7 @@ public class XYPlotOutput {
 
     public String getTitle() {
         if (title == null && modelArgs != null) {
-            return modelArgs.getModelName() + " (h=" + modelArgs.getSourceDepth() + " km)";
+            return modelArgs.getModelName() + " (h=" + depthsToString(modelArgs.getSourceDepth()) + " km)";
         } else {
             return title;
         }

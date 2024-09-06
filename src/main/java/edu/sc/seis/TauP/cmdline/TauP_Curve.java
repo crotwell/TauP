@@ -36,31 +36,9 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
 
     @Override
     public void start() throws IOException, TauPException {
-        double tempDepth;
         PrintWriter writer = outputTypeArgs.createWriter(spec.commandLine().getOut());
-        if(modelArgs.getSourceDepth() != -1 * Double.MAX_VALUE) {
-            /* enough info given on cmd line, so just do one calc. */
-
-            List<XYPlottingData> xy = calculate(xAxisType, yAxisType);
-            printResult(writer, xy);
-        } else {
-            StreamTokenizer tokenIn = new StreamTokenizer(new InputStreamReader(System.in));
-            tokenIn.parseNumbers();
-            tokenIn.wordChars(',', ',');
-            tokenIn.wordChars('_', '_');
-            System.out.print("Enter Depth: ");
-            tokenIn.nextToken();
-            tempDepth = tokenIn.nval;
-            if(tempDepth < 0.0 || tempDepth > getRadiusOfEarth()) {
-                System.out.println("Depth must be >= 0.0 and "
-                        + "<= tMod.getRadiusOfEarth().\ndepth = " + tempDepth);
-                return;
-            }
-            setSourceDepth(tempDepth);
-
-            List<XYPlottingData> xy = calculate(xAxisType, yAxisType);
-            printResult(writer, xy);
-        }
+        List<XYPlottingData> xy = calculate(xAxisType, yAxisType);
+        printResult(writer, xy);
         writer.close();
     }
 
@@ -78,12 +56,11 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
         return xy;
     }
 
-    public List<XYPlottingData> calculateLinear(AxisType xAxisType, AxisType yAxisType) throws TauModelException, VelocityModelException, SlownessModelException {
-        modelArgs.depthCorrected();
+    public List<XYPlottingData> calculateLinear(AxisType xAxisType, AxisType yAxisType) throws TauPException {
         List<SeismicPhase> phaseList = getSeismicPhases();
         List<XYPlottingData> out = new ArrayList<>();
         for (SeismicPhase phase: phaseList) {
-            String phaseDesc = xAxisType+"/"+yAxisType+" "+phase.getName()+" for a source depth of "+modelArgs.getSourceDepth()+" kilometers in the "+modelArgs.getModelName()+" model";
+            String phaseDesc = xAxisType+"/"+yAxisType+" "+phase.getName()+" for a source depth of "+phase.getSourceDepth()+" kilometers in the "+phase.getTauModel().getModelName()+" model";
             String p_or_s = ColoringArgs.BOTH_PSWAVE;
             if (phase.isAllSWave()) {
                 p_or_s = ColoringArgs.SWAVE;

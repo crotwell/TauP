@@ -1,10 +1,11 @@
 {
   "model": "iasp91",
-  "sourcedepth": 10,
+  "sourcedepthlist": [10],
   "receiverdepth": 0,
   "phases": [ "P" ],
   "arrivals": [
     {
+      "sourcedepth": 10,
       "distdeg": 35,
       "phase": "P",
       "time": 412.4329,

@@ -148,12 +148,13 @@ public class ScatterTest {
     public void isLongWayTest() throws TauPException {
         // PKKP is 234 to 287 deg, so is always long way around
         String modelname = "iasp91";
+        double sourceDepth = 0;
         TauP_Time time = new TauP_Time(modelname);
-        time.setSourceDepth(0);
+        time.setSingleSourceDepth(sourceDepth);
         time.clearPhaseNames();
         time.appendPhaseName("PKKP");
 
-        List<Arrival> arrivals = time.calcAll(time.getSeismicPhases(), List.of(DistanceRay.ofDegrees(70)));
+        List<Arrival> arrivals = time.calcAll(time.calcSeismicPhases(sourceDepth), List.of(DistanceRay.ofDegrees(70)));
         for (Arrival a : arrivals) {
             assertTrue(a.isLongWayAround());
         }
@@ -163,7 +164,8 @@ public class ScatterTest {
     public void pierceScatterPKoKP() throws TauPException {
         String modelname = "iasp91";
         TauP_Pierce pierce = new TauP_Pierce(modelname);
-        pierce.setSourceDepth(0);
+        double sourceDepth = 0;
+        pierce.setSingleSourceDepth(sourceDepth);
         Scatterer scat = new Scatterer(3500, 120);
         pierce.setScatterer(scat);
         pierce.clearPhaseNames();
@@ -172,7 +174,7 @@ public class ScatterTest {
 
         DistanceRay dRay = DistanceRay.ofDegrees(360-110);
         ScatteredSeismicPhase scatPhase = (ScatteredSeismicPhase) SeismicPhaseFactory.createSeismicPhases(phaseName,
-                pierce.getTauModelDepthCorrected(),
+                pierce.getTauModelDepthCorrected(sourceDepth),
                 0,
                 0,
                 scat,
@@ -189,17 +191,17 @@ public class ScatterTest {
         List<Arrival> dRayArrivalList = dRay.calcScatteredPhase(scatPhase);
         assertEquals(1, dRayArrivalList.size());
 
-        List<Arrival> arrivalsAt250a = pierce.calcAll(pierce.getSeismicPhases(), List.of(DistanceRay.ofDegrees(360-110)));
+        List<Arrival> arrivalsAt250a = pierce.calcAll(pierce.calcSeismicPhases(sourceDepth), List.of(DistanceRay.ofDegrees(360-110)));
         assertEquals(1, arrivalsAt250a.size());
 
 
-        List<Arrival> arrivals = pierce.calcAll(pierce.getSeismicPhases(), List.of(DistanceRay.ofDegrees(-110)));
+        List<Arrival> arrivals = pierce.calcAll(pierce.calcSeismicPhases(sourceDepth), List.of(DistanceRay.ofDegrees(-110)));
         assertEquals(1, arrivals.size());
         Arrival a_neg110 = arrivals.get(0);
         TimeDist[] p_neg110 = a_neg110.getPierce();
 
 
-        List<Arrival> arrivalsAt250 = pierce.calcAll(pierce.getSeismicPhases(), List.of(DistanceRay.ofDegrees(250)));
+        List<Arrival> arrivalsAt250 = pierce.calcAll(pierce.calcSeismicPhases(sourceDepth), List.of(DistanceRay.ofDegrees(250)));
         assertEquals(1, arrivalsAt250.size());
         Arrival a_250 = arrivalsAt250.get(0);
         TimeDist[] p_250 = a_250.getPierce();
@@ -212,15 +214,16 @@ public class ScatterTest {
     @Test
     public void pathBackscatterPedOP() throws TauPException {
         String modelname = "iasp91";
+        double sourceDepth = 0;
         TauP_Path path = new TauP_Path(modelname);
         Scatterer scat = new Scatterer(800, -10);
         path.setScatterer(scat);
 
         path.clearPhaseNames();
         path.appendPhaseName("PedOP");
-        path.recalcPhases();
+        List<SeismicPhase> seismicPhaseList = path.calcSeismicPhases(sourceDepth);
 
-        List<Arrival> arrivals = path.calcAll(path.getSeismicPhases(), Arrays.asList(DistanceRay.ofDegrees(35)));
+        List<Arrival> arrivals = path.calcAll(seismicPhaseList, Arrays.asList(DistanceRay.ofDegrees(35)));
         assertEquals(1, arrivals.size());
         Arrival a_35 = arrivals.get(0);
         ScatteredArrival scatA = (ScatteredArrival) a_35;
