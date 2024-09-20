@@ -166,6 +166,10 @@ tasks.named("sourcesJar") {
     dependsOn("makeVersionClass")
 }
 
+tasks.named("makeVersionClass") {
+  inputs.files("src/main/")
+}
+
 tasks.register<Checksum>("checksumDist") {
   dependsOn("distZip")
   dependsOn("distTar")
