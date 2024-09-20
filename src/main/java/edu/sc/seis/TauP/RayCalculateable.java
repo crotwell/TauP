@@ -38,6 +38,16 @@ public abstract class RayCalculateable {
         return staLatLon != null ? staLatLon.getDepthKm() : null;
     }
 
+    public boolean hasDescription() {
+        return description != null && ! description.isEmpty();
+    }
+    public String getDescription() {
+        return description;
+    }
+    public void setDescription(String desc) {
+        this.description = desc;
+    }
+
 
     protected Location staLatLon = null;
     protected Location evtLatLon = null;
@@ -45,5 +55,6 @@ public abstract class RayCalculateable {
     protected Double backAzimuth = null;
     protected boolean geodetic = false;
     protected Double flattening = null;
+    protected String description = null;
 
 }

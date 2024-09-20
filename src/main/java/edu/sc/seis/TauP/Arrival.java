@@ -623,6 +623,9 @@ public class Arrival {
             desc += "   * ";
         }
         desc += getPuristName();
+        if (getRayCalculateable().hasDescription()) {
+            desc += " "+getRayCalculateable().getDescription();
+        }
         return desc;
     }
 
@@ -729,6 +732,10 @@ public class Arrival {
         pw.write(innerIndent+JSONWriter.valueToString("incident")+": "+JSONWriter.valueToString((float) getIncidentAngleDegree())+","+NL);
         pw.write(innerIndent+JSONWriter.valueToString("puristdist")+": "+JSONWriter.valueToString((float)getDistDeg())+","+NL);
         pw.write(innerIndent+JSONWriter.valueToString("puristname")+": "+JSONWriter.valueToString(getPuristName()));
+        if (getRayCalculateable().hasDescription()) {
+            pw.write(","+NL);
+            pw.write(innerIndent+JSONWriter.valueToString("desc")+": "+JSONWriter.valueToString(getRayCalculateable().getDescription()));
+        }
 
         if (withAmp) {
 
@@ -805,6 +812,9 @@ public class Arrival {
         a.put("incident", (float) getIncidentAngleDegree());
         a.put("puristdist", (float)getDistDeg());
         a.put("puristname", getPuristName());
+        if (getRayCalculateable().hasDescription()) {
+            a.put("desc", getRayCalculateable().getDescription());
+        }
         JSONObject ampObj = new JSONObject();
         a.put("amp", ampObj);
         try {

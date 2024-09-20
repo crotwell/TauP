@@ -314,6 +314,9 @@ public class TauP_Time extends TauP_AbstractRayTool {
                         out.print(String.format(phaseFormat, " no arrival"));
                     }
                 }
+                if (arrival.getRayCalculateable().hasDescription()) {
+                    out.print(" "+arrival.getRayCalculateable().getDescription());
+                }
 
                 out.println();
             }

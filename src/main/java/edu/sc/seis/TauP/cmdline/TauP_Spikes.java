@@ -184,7 +184,7 @@ public class TauP_Spikes extends TauP_AbstractRayTool {
         return spikeRecords;
     }
 
-    public MSeed3EH createEH(double degrees, ZonedDateTime startDateTime, List<Arrival> allArrivals) {
+    public MSeed3EH createEH(double degrees, ZonedDateTime startDateTime, List<Arrival> allArrivals) throws TauPException {
         MSeed3EH eh = new MSeed3EH();
 
         // assume single source

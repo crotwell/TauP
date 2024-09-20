@@ -3,6 +3,8 @@ package edu.sc.seis.TauP.cmdline.args;
 import edu.sc.seis.TauP.*;
 import edu.sc.seis.seisFile.Location;
 import edu.sc.seis.seisFile.fdsnws.quakeml.Event;
+import edu.sc.seis.seisFile.fdsnws.quakeml.Magnitude;
+import edu.sc.seis.seisFile.fdsnws.quakeml.Origin;
 import edu.sc.seis.seisFile.fdsnws.stationxml.Channel;
 import edu.sc.seis.seisFile.fdsnws.stationxml.Network;
 import edu.sc.seis.seisFile.fdsnws.stationxml.Station;
@@ -10,97 +12,106 @@ import picocli.CommandLine;
 import picocli.CommandLine.ArgGroup;
 import picocli.CommandLine.Option;
 
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static edu.sc.seis.seisFile.TimeUtils.TZ_UTC;
 
 public class DistanceArgs {
 
     public List<DistanceRay> getDistances() throws TauPException {
         List<DistanceRay> out = new ArrayList<>();
+        List<DistanceRay> simpleDistanceList = new ArrayList<>();
         for (Double d : distArgs.degreesList) {
-            out.add(DistanceRay.ofDegrees(d));
+            simpleDistanceList.add(DistanceRay.ofDegrees(d));
         }
         for (Double d : distArgs.exactDegreesList) {
-            out.add(ExactDistanceRay.ofDegrees(d));
+            simpleDistanceList.add(ExactDistanceRay.ofDegrees(d));
         }
         for (Double d : distArgs.distKilometersList) {
-            out.add(DistanceRay.ofKilometers(d));
+            simpleDistanceList.add(DistanceRay.ofKilometers(d));
         }
         for (Double d : distArgs.exactDistKilometersList) {
-            out.add(ExactDistanceRay.ofKilometers(d));
+            simpleDistanceList.add(ExactDistanceRay.ofKilometers(d));
         }
 
-        if (hasEventLatLon() && !hasStationLatLon() && getAzimuth() != null) {
+
+        boolean hasEvent = hasEventLatLon() || qmlStaxmlArgs.hasQml();
+        List<Location> quakes = new ArrayList<>();
+        if (hasEvent) {
+            quakes = getEventList();
+            hasEvent = ! quakes.isEmpty();
+        }
+
+        boolean hasStation = hasStationLatLon() || qmlStaxmlArgs.hasStationXML();
+        List<Location> stationList = new ArrayList<>();
+        if (hasStation) {
+            stationList = getStationList();
+        }
+        hasStation = ! stationList.isEmpty();
+
+
+        if (hasEvent && getAzimuth() != null) {
             List<DistanceRay> evtOut = new ArrayList<>();
-            for (DistanceRay dr : out) {
+            for (DistanceRay dr : simpleDistanceList) {
                 if (dr.isLatLonable()) {
                     // already enough info, so just add
                     evtOut.add(dr);
-                }
-                for (Location evt : latLonArgs.eventList) {
-                    DistanceRay evtDr = new DistanceRay(dr);
-                    evtDr.withEventAzimuth(evt, getAzimuth());
-                    evtOut.add(evtDr);
+                } else {
+                    for (Location evtLoc : quakes) {
+                        DistanceRay evtDr = new DistanceRay(dr);
+                        evtDr.withEventAzimuth(evtLoc, getAzimuth());
+                        if (evtLoc.hasDescription()) {
+                            dr.setDescription(dr.getDescription());
+                        }
+                        evtOut.add(evtDr);
+                    }
                 }
             }
-            out = evtOut;
-        } else if ( ! hasEventLatLon() && hasStationLatLon() && getBackAzimuth() != null) {
+            out.addAll( evtOut);
+        } else if ( ! hasEvent && hasStation && getBackAzimuth() != null) {
             List<DistanceRay> staOut = new ArrayList<>();
-            for (DistanceRay dr : out) {
+            for (DistanceRay dr : simpleDistanceList) {
                 if (dr.isLatLonable()) {
                     // already enough info, so just add
                     staOut.add(dr);
-                }
-                for (Location sta : latLonArgs.stationList) {
-                    DistanceRay staDr = new DistanceRay(dr);
-                    staDr.withStationBackAzimuth(sta, getBackAzimuth());
-                    staOut.add(staDr);
+                } else {
+                    for (Location staLoc : stationList) {
+                        DistanceRay staDr = new DistanceRay(dr);
+                        staDr.withStationBackAzimuth(staLoc, getBackAzimuth());
+                        if (staLoc.hasDescription()) {
+                            staDr.setDescription(staLoc.getDescription());
+                        }
+                        staOut.add(staDr);
+                    }
                 }
             }
-            out = staOut;
-        } else if (hasEventLatLon() && hasStationLatLon()) {
+            out.addAll(staOut);
+        } else if (hasEvent && hasStation) {
             // now add evt-station pairs, already have latlonable
-            for (Location evtLoc : latLonArgs.eventList) {
-                for (Location staLoc : latLonArgs.stationList) {
+            for (Location evtLoc : quakes) {
+                for (Location staLoc : stationList) {
+                    DistanceRay dr;
                     if (geodeticArgs.isGeodetic()) {
-                        out.add(DistanceRay.ofGeodeticStationEvent(staLoc, evtLoc, geodeticArgs.getEllipFlattening()));
+                        dr = DistanceRay.ofGeodeticStationEvent(staLoc, evtLoc, geodeticArgs.getEllipFlattening());
                     } else {
-                        out.add(DistanceRay.ofStationEvent(staLoc, evtLoc));
+                        dr = DistanceRay.ofStationEvent(staLoc, evtLoc);
                     }
+                    if (staLoc.hasDescription()) {
+                        dr.setDescription(staLoc.getDescription());
+                    }
+                    if (evtLoc.hasDescription()) {
+                        dr.setDescription(dr.getDescription()+" "+evtLoc.getDescription());
+                    }
+                    out.add(dr);
                 }
             }
-        }
-        // load pairs of events and sta/chan
-        Map<Network, List<Station>> networks = qmlStaxmlArgs.loadStationXML();
-        List<Event> quakes = qmlStaxmlArgs.loadQuakeML();
-        for (Event evt : quakes) {
-            Location evtLoc = new Location(evt);
-            for (Network net : networks.keySet()) {
-                for (Station sta : networks.get(net)) {
-                    List<Location> allChans = new ArrayList<>();
-                    for (Channel chan : sta.getChannelList()) {
-                        Location cLoc = new Location(chan);
-                        boolean found = false;
-                        for (Location prev : allChans) {
-                            if (prev.equals(cLoc)) {
-                                found = true;
-                                break;
-                            }
-                        }
-                        if ( ! found) {
-                            allChans.add(cLoc);
-                        }
-                    }
-                    for (Location chanLoc : allChans) {
-                        if (geodeticArgs.isGeodetic()) {
-                            out.add(DistanceRay.ofGeodeticStationEvent(chanLoc, evtLoc, geodeticArgs.getEllipFlattening()));
-                        } else {
-                            out.add(DistanceRay.ofStationEvent(chanLoc, evtLoc));
-                        }
-                    }
-                }
-            }
+        } else {
+            // no event or station, so just add simple distances
+            out.addAll(simpleDistanceList);
         }
         return out;
     }
@@ -320,15 +331,60 @@ public class DistanceArgs {
     @CommandLine.Mixin
     QmlStaxmlArgs qmlStaxmlArgs = new QmlStaxmlArgs();
 
-    public List<Location> getStationList() {
-        return latLonArgs.stationList;
+    public List<Location> getStationList() throws TauPException {
+        List<Location> staList = new ArrayList<>();
+        staList.addAll(latLonArgs.stationList);
+        Map<Network, List<Station>> networks = qmlStaxmlArgs.loadStationXML();
+        for (Network net : networks.keySet()) {
+            for (Station sta : networks.get(net)) {
+                List<Location> allChans = new ArrayList<>();
+                for (Channel chan : sta.getChannelList()) {
+                    Location cLoc = new Location(chan);
+                    boolean found = false;
+                    for (Location prev : allChans) {
+                        if (prev.equals(cLoc)) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        cLoc.setDescription(sta.getNetworkCode()+"."+sta.getStationCode());
+                        allChans.add(cLoc);
+                    }
+                }
+                staList.addAll(allChans);
+            }
+        }
+        return staList;
     }
+
     public void clearStationLatLon() {
         latLonArgs.stationList.clear();
     }
 
-    public List<Location> getEventList() {
-        return latLonArgs.eventList;
+    public List<Location> getEventList() throws TauPException {
+        List<Location> eventLocs = new ArrayList<>();
+        eventLocs.addAll(latLonArgs.eventList);
+        List<Event> quakes = qmlStaxmlArgs.loadQuakeML();
+        DateTimeFormatter dformat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss").withZone(TZ_UTC);
+        for (Event evt : quakes) {
+            Location evtLoc = new Location(evt);
+            Origin origin = evt.getPreferredOrigin();
+            Magnitude mag = evt.getPreferredMagnitude();
+            String desc = "";
+            if (origin != null) {
+                desc = dformat.format(origin.getTime().asInstant());
+            }
+            if (mag != null) {
+                if (!desc.isEmpty()) {desc += " ";}
+                desc += mag.getType()+" "+mag.getMag().getValue();
+            }
+            if ( ! desc.isEmpty()) {
+                evtLoc.setDescription(desc);
+            }
+            eventLocs.add(evtLoc);
+        }
+        return eventLocs;
     }
     public void clearEventLatLon() {
         latLonArgs.eventList.clear();
