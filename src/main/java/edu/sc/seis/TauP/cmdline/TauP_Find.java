@@ -38,7 +38,7 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
         super.init();
     }
 
-    public SeismicPhaseWalk createWalker(TauModel tMod, List<Double> excludeDepths) throws TauModelException {
+    public SeismicPhaseWalk createWalker(TauModel tMod, double receiverDepth, List<Double> excludeDepths) throws TauModelException {
 
         Double minRP = null;
         Double maxRP = null;
@@ -52,7 +52,7 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
         }
         SeismicPhaseWalk walker = new SeismicPhaseWalk(tMod,
                 minRP, maxRP,
-                tMod.findBranch(modelArgs.getReceiverDepth()));
+                tMod.findBranch(receiverDepth));
         if (onlyPWave) {
             walker.setAllowSWave(false);
         }
@@ -74,16 +74,19 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
         List<ProtoSeismicPhase> allwalk = new ArrayList<>();
         for (Double sourceDepth : modelArgs.getSourceDepth()) {
             TauModel tMod = modelArgs.depthCorrected(sourceDepth);
-            List<Double> excludeDepths = getExcludedDepths(tMod);
-            List<Double> actualExcludeDepths = matchDepthToDiscon(excludeDepths, tMod.getVelocityModel(), excludeDepthTol);
+            for (Double recDepth : modelArgs.getReceiverDepth()) {
+                TauModel tModRecDepth = tMod.splitBranch(recDepth);
+                List<Double> excludeDepths = getExcludedDepths(tModRecDepth);
+                List<Double> actualExcludeDepths = matchDepthToDiscon(excludeDepths, tMod.getVelocityModel(), excludeDepthTol);
 
-            SeismicPhaseWalk walker = createWalker(tMod, actualExcludeDepths);
-            List<ProtoSeismicPhase> walk = walker.findEndingPaths(maxActions);
+                SeismicPhaseWalk walker = createWalker(tModRecDepth, recDepth, actualExcludeDepths);
+                List<ProtoSeismicPhase> walk = walker.findEndingPaths(maxActions);
 
-            if((!distanceValues.isEmpty())) {
-                arrivalList.addAll(findForDist(walk, tMod, distanceValues));
-            } else {
-                allwalk.addAll(findForAllDepth(walk));
+                if ((!distanceValues.isEmpty())) {
+                    arrivalList.addAll(findForDist(walk, tModRecDepth, distanceValues));
+                } else {
+                    allwalk.addAll(findForAllDepth(walk));
+                }
             }
         }
         if((!distanceValues.isEmpty())) {
@@ -110,9 +113,11 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
             List<PhaseName> givenPhases = parsePhaseNameList();
             for (PhaseName pn : givenPhases) {
                 phaseNameList.add(pn.getName());
-                phaseList.addAll(SeismicPhaseFactory.createSeismicPhases(pn.getName(),
-                        tMod, tMod.getSourceDepth(), modelArgs.getReceiverDepth(),
-                        modelArgs.getScatterer(), isDEBUG()));
+                for (Double rd : modelArgs.getReceiverDepth()) {
+                    phaseList.addAll(SeismicPhaseFactory.createSeismicPhases(pn.getName(),
+                            tMod, tMod.getSourceDepth(), rd,
+                            modelArgs.getScatterer(), isDEBUG()));
+                }
             }
         }
         TauP_Time timeTool = new TauP_Time();
@@ -159,7 +164,7 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
             TauP_Time.printArrivalsAsText(out, arrivalList,
                     modelArgs.getModelName(),
                     modelArgs.getSourceDepth(),
-                    getReceiverDepth(),
+                    modelArgs.getReceiverDepth(),
                     getScatterer(),
                     onlyFirst, onlyPrintTime, onlyPrintRayP,
                     isWithAmplitude(), sourceArgs.getMw(),

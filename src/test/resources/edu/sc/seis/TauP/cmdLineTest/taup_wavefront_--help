@@ -4,8 +4,8 @@ Usage: taup wavefront [--debug] [--help] [--legend] [--negdist]
                       [--mapwidthunit=<mapWidthUnit>] [-o=<outFile>]
                       [--prop=<toolPropsFilename>] [--timestep=<timeStep>]
                       [--xaxis=type] [--yaxis=type] [--degminmax=deg deg]...
-                      [--depthminmax=km km]... [[--mod=<modelname>]
-                      [--stadepth=depth] [-h=depth[,depth...]]... [--scat=s
+                      [--depthminmax=km km]... [[--mod=<modelname>] [-h=depth[,
+                      depth...]]... [--stadepth=depth[,depth...]]... [--scat=s
                       s]...] [[-p=phase[,phase...]]...
                       [--phasefile=<phaseFiles>]...] [--gmt | --json | --svg |
                       --text]
@@ -50,7 +50,7 @@ Model Args
       --scat, --scatter=s s scattering depth and distance in degrees, which may
                               be negative. Only effects phases with 'o' or 'O'
                               in the phase name.
-      --stadepth, --receiverdepth=depth
+      --stadepth, --receiverdepth=depth[,depth...]
                             the receiver depth in km for stations not at the
                               surface
 Phase Names

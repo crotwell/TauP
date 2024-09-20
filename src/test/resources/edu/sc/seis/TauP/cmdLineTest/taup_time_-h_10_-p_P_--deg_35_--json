@@ -1,7 +1,7 @@
 {
   "model": "iasp91",
   "sourcedepthlist": [10],
-  "receiverdepth": 0,
+  "receiverdepthlist": [0],
   "phases": [ "P" ],
   "arrivals": [
     {

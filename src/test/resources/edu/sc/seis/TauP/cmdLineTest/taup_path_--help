@@ -8,8 +8,8 @@ Usage: taup path [--debug] [--geodetic] [--help] [--onlynameddiscon]
                  [--staxml=<stationxmlFilename>] [--xaxis=type] [--yaxis=type]
                  [--degminmax=deg deg]... [--depthminmax=km km]... [--evt=l
                  l]... [--evt=l l]... [--sta=l l]... [--sta=l l]...
-                 [[--mod=<modelname>] [--stadepth=depth] [-h=depth[,
-                 depth...]]... [--scat=s s]...] [[-p=phase[,phase...]]...
+                 [[--mod=<modelname>] [-h=depth[,depth...]]... [--stadepth=depth
+                 [,depth...]]... [--scat=s s]...] [[-p=phase[,phase...]]...
                  [--phasefile=<phaseFiles>]...] [[--deg=d[,d...]]...
                  [--exactdegree=d[,d...]]... [--exactkilometer=km[,km...]]...
                  [--km=km[,km...]]... [--rayparamdeg=s/deg[,s/deg...]]...
@@ -69,7 +69,7 @@ Model Args
       --scat, --scatter=s s  scattering depth and distance in degrees, which
                                may be negative. Only effects phases with 'o' or
                                'O' in the phase name.
-      --stadepth, --receiverdepth=depth
+      --stadepth, --receiverdepth=depth[,depth...]
                              the receiver depth in km for stations not at the
                                surface
 Phase Names

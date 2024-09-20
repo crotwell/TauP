@@ -26,6 +26,19 @@ deep source at a distance of 57.4 degrees.
 .. literalinclude:: examples/taup_time_--mod_prem_-h_200_-p_S_P_--deg_57.4
   :language: text
 
+If you have a QuakeML file for earthquakes or a StationXML file for stations
+and channels, you can use those to calculate the distances directly. For
+example:
+
+.. literalinclude:: examples/taup_time_--quakeml_my_midatlantic.qml_--staxml_my_stations.staml_-p_P_S.cmd
+  :language: text
+
+gives you arrival times for S and P for these earthquakes at those stations.
+
+.. literalinclude:: examples/taup_time_--quakeml_my_midatlantic.qml_--staxml_my_stations.staml_-p_P_S
+  :language: text
+
+
 The usage is:
 
 .. literalinclude:: cmdLineHelp/taup_time.usage

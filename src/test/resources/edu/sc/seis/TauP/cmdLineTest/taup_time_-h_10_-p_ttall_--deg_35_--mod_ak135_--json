@@ -1,7 +1,7 @@
 {
   "model": "ak135",
   "sourcedepthlist": [10],
-  "receiverdepth": 0,
+  "receiverdepthlist": [0],
   "phases": [ "p", "P", "Pn", "Pdiff", "PKP", "PKiKP", "PKIKP", "s", "S", "Sn", "Sdiff", "SKS", "SKIKS", "PcP", "pP", "pPdiff", "pPKP", "pPKIKP", "pPKiKP", "sP", "sPdiff", "sPKP", "sPKIKP", "sPKiKP", "sS", "sSdiff", "sSKS", "sSKIKS", "ScS", "pS", "pSdiff", "pSKS", "pSKIKS", "ScP", "SKP", "SKIKP", "PKKP", "PKIKKIKP", "SKKP", "SKIKKIKP", "PP", "PKPPKP", "PKIKPPKIKP", "SKiKP", "PcS", "PKS", "PKIKS", "PKKS", "PKIKKIKS", "SKKS", "SKIKKIKS", "SKSSKS", "SKIKSSKIKS", "SS", "SP", "PS" ],
   "arrivals": [
     {

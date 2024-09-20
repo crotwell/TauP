@@ -4,10 +4,10 @@ Usage: taup curve [--debug] [--help] [--legend] [--verbose] [--xabs] [--xlog]
                   [--mw=<mw>] [-o=<outFile>] [--prop=<toolPropsFilename>]
                   [--reddeg=deg/s] [--redkm=km/s] [--rel=phase] [-x=type]
                   [-y=type] [--xminmax=x x]... [--yminmax=y y]...
-                  [[--mod=<modelname>] [--stadepth=depth] [-h=depth[,
-                  depth...]]... [--scat=s s]...] [[-p=phase[,phase...]]...
-                  [--phasefile=<phaseFiles>]...] [--gmt | --json | --svg |
-                  --text]
+                  [[--mod=<modelname>] [-h=depth[,depth...]]...
+                  [--stadepth=depth[,depth...]]... [--scat=s s]...] [[-p=phase[,
+                  phase...]]... [--phasefile=<phaseFiles>]...] [--gmt | --json
+                  | --svg | --text]
 Plot travel time vs. distance and other curves for seismic phases.
 
 Options:
@@ -63,7 +63,7 @@ Model Args
                            scattering depth and distance in degrees, which may
                              be negative. Only effects phases with 'o' or 'O'
                              in the phase name.
-      --stadepth, --receiverdepth=depth
+      --stadepth, --receiverdepth=depth[,depth...]
                            the receiver depth in km for stations not at the
                              surface
 Phase Names

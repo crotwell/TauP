@@ -163,9 +163,9 @@ public class TauP_SetMSeed3 extends TauP_AbstractPhaseTool {
         }
 
         if (staLoc != null) {
-            modelArgs.setReceiverDepth(staLoc.getDepthKm());
+            setSingleReceiverDepth(staLoc.getDepthKm());
         } else {
-            modelArgs.setReceiverDepth(0);
+            setSingleReceiverDepth(0);
         }
         double depth = 0;
         if (evLoc != null) {

@@ -1,8 +1,8 @@
 Usage: taup phase [--debug] [--help] [--verbose] [-o=<outFile>]
-                  [--prop=<toolPropsFilename>] [[--mod=<modelname>]
-                  [--stadepth=depth] [-h=depth[,depth...]]... [--scat=s s]...]
-                  [[-p=phase[,phase...]]... [--phasefile=<phaseFiles>]...]
-                  [--json | --text]
+                  [--prop=<toolPropsFilename>] [[--mod=<modelname>] [-h=depth[,
+                  depth...]]... [--stadepth=depth[,depth...]]... [--scat=s
+                  s]...] [[-p=phase[,phase...]]...
+                  [--phasefile=<phaseFiles>]...] [--json | --text]
 Describe a seismic phase in the current model.
 
 Options:
@@ -24,7 +24,7 @@ Model Args
                            scattering depth and distance in degrees, which may
                              be negative. Only effects phases with 'o' or 'O'
                              in the phase name.
-      --stadepth, --receiverdepth=depth
+      --stadepth, --receiverdepth=depth[,depth...]
                            the receiver depth in km for stations not at the
                              surface
 Phase Names

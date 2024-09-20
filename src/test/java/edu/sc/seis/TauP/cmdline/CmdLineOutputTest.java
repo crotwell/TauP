@@ -29,6 +29,8 @@ public class CmdLineOutputTest {
                                           "taup time -h 10 -p ttall --deg 145 --mod ak135 --rel P",
                                           "taup time -h 10 -p ttall --deg 145 --mod ak135 --rel P,PKP",
             "taup time -h 10 -p ttall --deg 145 --mod ak135 --stadepth 200",
+            "taup time -h 10,100 -p P --deg 35",
+            "taup time -h 10 --stadepth 1,10 -p P --deg 3",
                                             };
 
     String[] pierceTestCmds = new String[] {"taup pierce -h 10 -p P --deg 35 --mod prem",
@@ -156,7 +158,8 @@ public class CmdLineOutputTest {
     String[] setInFileCmds = new String[] {
 
             "taup setsac -p P,S my_earthquake.sac",
-            "taup setms3 -p P,S my_earthquake.ms3"
+            "taup setms3 -p P,S my_earthquake.ms3",
+            "taup time --quakeml my_midatlantic.qml --staxml my_stations.staml -p P,S"
     };
 
     /** 

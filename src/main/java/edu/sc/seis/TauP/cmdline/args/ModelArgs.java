@@ -5,6 +5,7 @@ import edu.sc.seis.TauP.cmdline.TauP_Tool;
 import picocli.CommandLine;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
@@ -28,11 +29,15 @@ public class ModelArgs {
     public void setSourceDepth(List<Double> depths) {
         modelArgsInner.sourceDepth = depths;
     }
-    public double getReceiverDepth() {
+    public List<Double> getReceiverDepth() {
+        if (modelArgsInner.receiverDepth.isEmpty()) {
+            // default if not receiver depths given is surface
+            return Collections.singletonList(0.0);
+        }
         return modelArgsInner.receiverDepth;
     }
-    public void setReceiverDepth(double depth) {
-        modelArgsInner.receiverDepth = depth;
+    public void setReceiverDepth(List<Double> depths) {
+        modelArgsInner.receiverDepth = depths;
     }
 
     public static String depthsToString(List<Double> depths) {
@@ -96,9 +101,6 @@ public class ModelArgs {
         }
         if (tModDepth.getSourceDepth() != sourceDepth) {
             tModDepth = getTauModel().depthCorrect(sourceDepth);
-            if (!tModDepth.isBranchDepth(getReceiverDepth())) {
-                tModDepth = tModDepth.splitBranch(getReceiverDepth());
-            }
             if (getScatterer() != null && !tModDepth.isBranchDepth(getScatterer().depth)) {
                 tModDepth = tModDepth.splitBranch(getScatterer().depth);
             }
@@ -152,8 +154,9 @@ public class ModelArgs {
         @CommandLine.Option(names = {"--stadepth", "--receiverdepth"},
                 defaultValue = "0.0",
                 paramLabel = "depth",
+                split=",",
                 description = "the receiver depth in km for stations not at the surface")
-        double receiverDepth = 0.0;
+        List<Double> receiverDepth = new ArrayList<>();
 
         @CommandLine.Option(names = {"--scat", "--scatter"},
                 arity = "2",

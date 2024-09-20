@@ -11,6 +11,7 @@ import picocli.CommandLine;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -27,7 +28,7 @@ public abstract class TauP_AbstractRayTool extends TauP_AbstractPhaseTool {
     public static void writeJSON(PrintWriter pw, String indent,
                                  String modelName,
                                  List<Double> depthList,
-                                 double receiverDepth,
+                                 List<Double> receiverDepth,
                                  List<SeismicPhase> phases,
                                  List<Arrival> arrivals) {
         TauP_AbstractRayTool.writeJSON(pw, indent, modelName, depthList, receiverDepth, phases, arrivals,  false, 4.0f);
@@ -36,7 +37,7 @@ public abstract class TauP_AbstractRayTool extends TauP_AbstractPhaseTool {
     public static void writeJSON(PrintWriter pw, String indent,
                                  String modelName,
                                  List<Double> depthList,
-                                 double receiverDepth,
+                                 List<Double> receiverDepth,
                                  List<SeismicPhase> phases,
                                  List<Arrival> arrivals,
                                  boolean withAmplitude,
@@ -52,9 +53,17 @@ public abstract class TauP_AbstractRayTool extends TauP_AbstractPhaseTool {
             pw.write((firstDp ? "" : ", ") + JSONWriter.valueToString(depth.floatValue()));
             firstDp = false;
         }
+        pw.write("],"+NL);
 
-        pw.write("]," +NL);
-        pw.write(innerIndent+JSONWriter.valueToString("receiverdepth")+": "+JSONWriter.valueToString((float)receiverDepth)+","+NL);
+        pw.write(innerIndent+JSONWriter.valueToString("receiverdepthlist")+": [");
+
+        boolean firstRecDp = true;
+        for (Double depth : receiverDepth) {
+            pw.write((firstRecDp ? "" : ", ") + JSONWriter.valueToString(depth.floatValue()));
+            firstRecDp = false;
+        }
+        pw.write("],"+NL);
+
         pw.write(innerIndent+JSONWriter.valueToString("phases")+": [ ");
         boolean first = true;
         for (SeismicPhase phase : phases) {
@@ -104,11 +113,25 @@ public abstract class TauP_AbstractRayTool extends TauP_AbstractPhaseTool {
                 knownDepths.add(dr.getSourceDepth());
             }
         }
+        // remove any depths already calculated
         for (SeismicPhase phase : phases) {
             knownDepths.remove(phase.getSourceDepth());
         }
+        Set<Double> knownReceiverDepths = new HashSet<>();
+        for (DistanceRay dr : getDistanceArgs().getDistances()) {
+            if (dr.hasReceiverDepth()) {
+                knownReceiverDepths.add(dr.getReceiverDepth());
+            }
+        }
+        // remove any receiver depths already calculated
+        for (SeismicPhase phase : phases) {
+            knownReceiverDepths.remove(phase.getReceiverDepth());
+        }
+        List<Double> receiverDepthList = new ArrayList<>(knownReceiverDepths);
+
+        // calculate any new phase-only depths
         for (Double depth : knownDepths) {
-            phases.addAll(calcSeismicPhases(depth));
+            phases.addAll(calcSeismicPhases(depth, receiverDepthList));
         }
         return phases;
     }
@@ -124,9 +147,11 @@ public abstract class TauP_AbstractRayTool extends TauP_AbstractPhaseTool {
                         + "' is greater than radius of earth, " + modelArgs.getTauModel().getRadiusOfEarth() + ", unable to calculate.");
             }
         }
-        if (modelArgs.getTauModel().getRadiusOfEarth() < modelArgs.getReceiverDepth()) {
-            throw new TauModelException("Receiver depth of "+modelArgs.getReceiverDepth()+" in '"+this.getTauModelName()
-                    +"' is greater than radius of earth, "+modelArgs.getTauModel().getRadiusOfEarth()+", unable to calculate.");
+        for (Double recDepth : modelArgs.getReceiverDepth() ) {
+            if (modelArgs.getTauModel().getRadiusOfEarth() < recDepth) {
+                throw new TauModelException("Receiver depth of " + recDepth + " in '" + this.getTauModelName()
+                        + "' is greater than radius of earth, " + modelArgs.getTauModel().getRadiusOfEarth() + ", unable to calculate.");
+            }
         }
         if (modelArgs.getScatterer() != null && modelArgs.getTauModel().getRadiusOfEarth() < getScattererDepth()) {
             throw new TauModelException("Scatterer depth of "+modelArgs.getScatterer().depth+" in '"+this.getTauModelName()

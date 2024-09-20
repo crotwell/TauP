@@ -431,7 +431,10 @@ public class TauP_Table extends TauP_AbstractPhaseTool {
 
     @Override
     public void validateArguments() throws TauModelException {
-
+        if (modelArgs.getReceiverDepth().size() > 1) {
+            throw new TauModelException("Table only allows a single receiver depth, but was given "
+                    +modelArgs.getReceiverDepth().size()+" depths.");
+        }
     }
 
     @Override
@@ -471,16 +474,20 @@ public class TauP_Table extends TauP_AbstractPhaseTool {
     protected List<SeismicPhase> recalcPhases(List<PhaseName> phaseNames, double depth) throws TauModelException {
         List<SeismicPhase> newPhases = new ArrayList<>();
         TauModel tModDepth = modelArgs.depthCorrected(depth);
-        for (PhaseName phaseName : phaseNames) {
-            List<SeismicPhase> calcPhaseList = SeismicPhaseFactory.createSeismicPhases(
-                    phaseName.getName(),
-                    tModDepth,
-                    depth,
-                    modelArgs.getReceiverDepth(),
-                    modelArgs.getScatterer(),
-                    isDEBUG());
-            newPhases.addAll(calcPhaseList);
+        for (Double recDepth : modelArgs.getReceiverDepth()) {
+            // should only be one rec depth, but...
+            TauModel tModRecDepth = tModDepth.splitBranch(recDepth);
+            for (PhaseName phaseName : phaseNames) {
+                List<SeismicPhase> calcPhaseList = SeismicPhaseFactory.createSeismicPhases(
+                        phaseName.getName(),
+                        tModRecDepth,
+                        depth,
+                        recDepth,
+                        modelArgs.getScatterer(),
+                        isDEBUG());
+                newPhases.addAll(calcPhaseList);
 
+            }
         }
         return newPhases;
     }

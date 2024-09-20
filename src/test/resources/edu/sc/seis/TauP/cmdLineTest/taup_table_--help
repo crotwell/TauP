@@ -1,9 +1,9 @@
 Usage: taup table [--debug] [--help] [--verbose] [--header=<headerFile>]
                   [-o=<outFile>] [--prop=<toolPropsFilename>]
-                  [[--mod=<modelname>] [--stadepth=depth] [-h=depth[,
-                  depth...]]... [--scat=s s]...] [[-p=phase[,phase...]]...
-                  [--phasefile=<phaseFiles>]...] [--csv | --json | --locsat |
-                  --text]
+                  [[--mod=<modelname>] [-h=depth[,depth...]]...
+                  [--stadepth=depth[,depth...]]... [--scat=s s]...] [[-p=phase[,
+                  phase...]]... [--phasefile=<phaseFiles>]...] [--csv | --json
+                  | --locsat | --text]
 Create a table of travel times for a range of depths and distances.
 
 Options:
@@ -28,7 +28,7 @@ Model Args
                            scattering depth and distance in degrees, which may
                              be negative. Only effects phases with 'o' or 'O'
                              in the phase name.
-      --stadepth, --receiverdepth=depth
+      --stadepth, --receiverdepth=depth[,depth...]
                            the receiver depth in km for stations not at the
                              surface
 Phase Names

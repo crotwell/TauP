@@ -202,13 +202,13 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
 
     public static JSONObject baseResultAsJSONObject(String modelName,
                                                     List<Double> depth,
-                                                    double receiverDepth,
+                                                    List<Double> receiverDepth,
                                                     List<PhaseName> phaseNameList) {
         JSONObject out = new JSONObject();
 
         out.put("model", modelName);
         out.put("sourcedepth",  depth);
-        out.put("receiverdepth", (float) receiverDepth);
+        out.put("receiverdepth", receiverDepth);
         if (phaseNameList != null  ) {
             JSONArray outPhases = new JSONArray();
             for (PhaseName pn : phaseNameList) {
@@ -283,15 +283,12 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
         clearPhases();
     }
 
-    public double getReceiverDepth() {
-        return modelArgs.getReceiverDepth();
-    }
-
     public void setReceiverDepth(double receiverDepth) {
-        if (modelArgs.getReceiverDepth() != receiverDepth) {
-            clearPhases();
-        }
-        modelArgs.setReceiverDepth(receiverDepth);
+
+    }
+    public void setSingleReceiverDepth(double receiverDepth) {
+        this.modelArgs.setReceiverDepth(Collections.singletonList(receiverDepth));
+        clearPhases();
     }
 
     public double getScattererDepth() {
@@ -344,39 +341,46 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
      * Calculates the seismic phases using a possibly new or changed tau model for the given source depth.
      */
     public List<SeismicPhase> calcSeismicPhases(double sourceDepth) throws TauModelException {
+        return calcSeismicPhases(sourceDepth, modelArgs.getReceiverDepth());
+    }
+
+    public List<SeismicPhase> calcSeismicPhases(double sourceDepth, List<Double> receiverDepths) throws TauModelException {
         List<SeismicPhase> newPhases = new ArrayList<>();
         TauModel tModDepth = modelArgs.depthCorrected(sourceDepth);
-        for (PhaseName phaseName : parsePhaseNameList()) {
-            String tempPhaseName = phaseName.getName();
-            // didn't find it precomputed, so recalculate
-            try {
-                List<SeismicPhase> calcPhaseList = SeismicPhaseFactory.createSeismicPhases(
-                        phaseName.getName(),
-                        tModDepth,
-                        sourceDepth,
-                        modelArgs.getReceiverDepth(),
-                        modelArgs.getScatterer(),
-                        isDEBUG());
-                newPhases.addAll(calcPhaseList);
-                for (SeismicPhase seismicPhase : newPhases) {
-                    if (isVerbose()) {
-                        Alert.info(seismicPhase.toString());
+        if (receiverDepths.isEmpty()) { throw new RuntimeException("receiverDepths should not be empty");}
+        for (Double receiverDepth : receiverDepths) {
+            TauModel tModRecDepth = tModDepth.splitBranch(receiverDepth);
+            for (PhaseName phaseName : parsePhaseNameList()) {
+                String tempPhaseName = phaseName.getName();
+                try {
+                    List<SeismicPhase> calcPhaseList = SeismicPhaseFactory.createSeismicPhases(
+                            phaseName.getName(),
+                            tModRecDepth,
+                            sourceDepth,
+                            receiverDepth,
+                            modelArgs.getScatterer(),
+                            isDEBUG());
+                    newPhases.addAll(calcPhaseList);
+                    for (SeismicPhase seismicPhase : newPhases) {
+                        if (isVerbose()) {
+                            Alert.info(seismicPhase.toString());
+                        }
                     }
-                }
-            } catch (ScatterArrivalFailException e) {
-                Alert.warning(e.getMessage() + ", skipping this phase");
-                if (isVerbose() || isDEBUG()) {
-                    e.printStackTrace();
-                }
-            } catch (TauModelException e) {
-                Alert.warning("Error with phase=" + tempPhaseName,
-                        e.getMessage() + "\nSkipping this phase");
-                if (isVerbose() || isDEBUG()) {
-                    e.printStackTrace();
-                }
-            } finally {
-                if (isVerbose()) {
-                    Alert.info("-----------------");
+                } catch (ScatterArrivalFailException e) {
+                    Alert.warning(e.getMessage() + ", skipping this phase");
+                    if (isVerbose() || isDEBUG()) {
+                        e.printStackTrace();
+                    }
+                } catch (TauModelException e) {
+                    Alert.warning("Error with phase=" + tempPhaseName,
+                            e.getMessage() + "\nSkipping this phase");
+                    if (isVerbose() || isDEBUG()) {
+                        e.printStackTrace();
+                    }
+                } finally {
+                    if (isVerbose()) {
+                        Alert.info("-----------------");
+                    }
                 }
             }
         }
@@ -452,46 +456,6 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
             }
         }
         return out;
-    }
-
-    public synchronized List<SeismicPhase> recalcPhases(double sourceDepth) throws TauModelException {
-        List<SeismicPhase> newPhases = new ArrayList<>();
-        TauModel tModDepth = modelArgs.depthCorrected(sourceDepth);
-        for (PhaseName phaseName : parsePhaseNameList()) {
-            String tempPhaseName = phaseName.getName();
-            // didn't find it precomputed, so recalculate
-            try {
-                List<SeismicPhase> calcPhaseList = SeismicPhaseFactory.createSeismicPhases(
-                        phaseName.getName(),
-                        tModDepth,
-                        sourceDepth,
-                        modelArgs.getReceiverDepth(),
-                        modelArgs.getScatterer(),
-                        isDEBUG());
-                newPhases.addAll(calcPhaseList);
-                for (SeismicPhase seismicPhase : newPhases) {
-                    if (isVerbose()) {
-                        Alert.info(seismicPhase.toString());
-                    }
-                }
-            } catch (ScatterArrivalFailException e) {
-                Alert.warning(e.getMessage() + ", skipping this phase");
-                if (isVerbose() || isDEBUG()) {
-                    e.printStackTrace();
-                }
-            } catch (TauModelException e) {
-                Alert.warning("Error with phase=" + tempPhaseName,
-                        e.getMessage() + "\nSkipping this phase");
-                if (isVerbose() || isDEBUG()) {
-                    e.printStackTrace();
-                }
-            } finally {
-                if (isVerbose()) {
-                    Alert.info("-----------------");
-                }
-            }
-        }
-        return newPhases;
     }
 
 

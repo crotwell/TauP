@@ -138,26 +138,22 @@ public class TauP_Time extends TauP_AbstractRayTool {
             for (Arrival arr : arrivals) {
                 distList.add(arr.getModuloDist());
             }
-            HashMap<Double, Arrival> earliestAtDist = new HashMap<>();
+            HashMap<Double, List<Arrival>> earliestAtDist = new HashMap<>();
             for (Double dist : distList) {
                 DistanceRay distRay = DistanceRay.ofRadians(dist);
                 List<Arrival> relativeArrivals = new ArrayList<>();
                 for (SeismicPhase relPhase : relativePhaseList) {
                     relativeArrivals.addAll(distRay.calculate(relPhase));
                 }
-                relativeArrivals = Arrival.sortArrivals(relativeArrivals);
-                if (!relativeArrivals.isEmpty()) {
-                    Arrival earliest = relativeArrivals.get(0);
-                    earliestAtDist.put(dist, earliest);
-                } else {
-                    earliestAtDist.put(dist, null);
-                }
+                Arrival.sortArrivals(relativeArrivals);
+                earliestAtDist.put(dist, relativeArrivals);
             }
             for (Arrival arrival : arrivals) {
-                for (Double dist : earliestAtDist.keySet()) {
-                    if (dist == arrival.getModuloDist()) {
-                        Arrival earliest =earliestAtDist.get(dist);
-                        arrival.setRelativeToArrival(earliest);
+                List<Arrival> relativeArrivals = earliestAtDist.get(arrival.getModuloDist());
+                for (Arrival relArrival : relativeArrivals) {
+                    if (relArrival.getSourceDepth() == arrival.getSourceDepth() && relArrival.getReceiverDepth() == arrival.getReceiverDepth()) {
+                        arrival.setRelativeToArrival(relArrival);
+                        break;
                     }
                 }
             }
@@ -174,21 +170,24 @@ public class TauP_Time extends TauP_AbstractRayTool {
         List<SeismicPhase> phaseList = super.calcSeismicPhases(sourceDepth);
         relativePhaseList = new ArrayList<>();
         if (!relativePhaseName.isEmpty()) {
-            for (String sName : relativePhaseName) {
-                try {
-                    List<SeismicPhase> calcRelPhaseList = SeismicPhaseFactory.createSeismicPhases(
-                            sName,
-                            modelArgs.depthCorrected(sourceDepth),
-                            sourceDepth,
-                            modelArgs.getReceiverDepth(),
-                            modelArgs.getScatterer(),
-                            isDEBUG());
-                    relativePhaseList.addAll(calcRelPhaseList);
-                } catch (ScatterArrivalFailException e) {
-                    Alert.warning(e.getMessage(),
-                            "    Skipping this relative phase");
-                    if (isVerbose() || isDEBUG()) {
-                        e.printStackTrace();
+            for (Double recDepth : modelArgs.getReceiverDepth()) {
+                TauModel sourceReceiverTMod = modelArgs.depthCorrected(sourceDepth).splitBranch(recDepth);
+                for (String sName : relativePhaseName) {
+                    try {
+                        List<SeismicPhase> calcRelPhaseList = SeismicPhaseFactory.createSeismicPhases(
+                                sName,
+                                sourceReceiverTMod,
+                                sourceDepth,
+                                recDepth,
+                                modelArgs.getScatterer(),
+                                isDEBUG());
+                        relativePhaseList.addAll(calcRelPhaseList);
+                    } catch (ScatterArrivalFailException e) {
+                        Alert.warning(e.getMessage(),
+                                "    Skipping this relative phase");
+                        if (isVerbose() || isDEBUG()) {
+                            e.printStackTrace();
+                        }
                     }
                 }
             }
@@ -210,7 +209,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
         printArrivalsAsText(out, arrivalList,
                 modelArgs.getModelName(),
                 modelArgs.getSourceDepth(),
-                getReceiverDepth(),
+                modelArgs.getReceiverDepth(),
                 getScatterer(),
                 onlyFirst, onlyPrintTime, onlyPrintRayP,
                 isWithAmplitude(), sourceArgs.getMw(),
@@ -221,7 +220,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
                                            List<Arrival> arrivalList,
                                            String modelName,
                                            List<Double> sourceDepthList,
-                                           double receiverDepth,
+                                           List<Double>  receiverDepthList,
                                            Scatterer scatterer,
                                            boolean onlyFirst, boolean onlyPrintTime, boolean onlyPrintRayP,
                                            boolean withAmplitude, double Mw,
@@ -245,17 +244,17 @@ public class TauP_Time extends TauP_AbstractRayTool {
         String phasePuristFormat = "%-" + maxPuristNameLength + "s";
         if(!(onlyPrintRayP || onlyPrintTime)) {
             String modelLine =  "\nModel: " + modelName;
-            if (receiverDepth != 0.0) {
-                modelLine += "  Receiver Depth: "+receiverDepth+" km";
-            }
+
             if (scatterer != null && scatterer.depth != 0.0) {
                 modelLine += "  Scatter Depth: "+ scatterer.depth+" km Dist: "+ scatterer.getDistanceDegree();
             }
             out.println(modelLine);
             String lineOne = "Distance   Depth   " + String.format(phaseFormat, "Phase")
-                    + "   Travel    Ray Param  Takeoff  Incident  Purist   "+String.format(phasePuristFormat, "Purist");
+                    + "   Travel    Ray Param  Takeoff  Incident Station   Purist   "
+                    + String.format(phasePuristFormat, "Purist");
             String lineTwo = "  (deg)     (km)   " + String.format(phaseFormat, "Name ")
-                    + "   Time (s)  p (s/deg)   (deg)    (deg)   Distance   "+String.format(phasePuristFormat, "Name");
+                    + "   Time (s)  p (s/deg)   (deg)    (deg)    (km)     Distance  "
+                    + String.format(phasePuristFormat, "Name");
             if (withAmplitude) {
                 lineOne += "    Amp  ~"+Outputs.formatDistanceNoPad(Mw)+" Mw";
                 lineTwo += "  Factor PSv   Sh";
@@ -289,6 +288,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
                         + Outputs.formatRayParam(currArrival.getRayParam() / SphericalCoords.RtoD) + "  ");
                 out.print(Outputs.formatDistance(currArrival.getTakeoffAngleDegree()) + " ");
                 out.print(Outputs.formatDistance(currArrival.getIncidentAngleDegree()) + " ");
+                out.print(Outputs.formatDepth(currArrival.getReceiverDepth()) + " ");
                 out.print(Outputs.formatDistance(currArrival.getDistDeg()));
                 if (currArrival.getName().equals(currArrival.getPuristName())) {
                     out.print("   = ");
@@ -350,10 +350,10 @@ public class TauP_Time extends TauP_AbstractRayTool {
     }
 
     public static JSONObject resultAsJSONObject(String modelName,
-                                      List<Double> depth,
-                                      double receiverDepth,
-                                      List<PhaseName> phases,
-                                      List<Arrival> arrivals) {
+                                                List<Double> depth,
+                                                List<Double> receiverDepth,
+                                                List<PhaseName> phases,
+                                                List<Arrival> arrivals) {
         JSONObject out = baseResultAsJSONObject( modelName, depth,  receiverDepth, phases);
         JSONArray outArrivals = new JSONArray();
         out.put("arrivals", outArrivals);
