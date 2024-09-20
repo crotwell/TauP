@@ -1,8 +1,8 @@
 Usage: taup setsac [--debug] [--evdpkm] [--geodetic] [--help] [--verbose]
                    [--ellipflattening=f] [--prop=<toolPropsFilename>]
-                   [[--mod=<modelname>] [--stadepth=depth] [-h=depth[,
-                   depth...]]... [--scat=s s]...] [[-p=phase[,phase...]]...
-                   [--phasefile=<phaseFiles>]...] [sacfile...]
+                   [[--mod=<modelname>] [-h=depth[,depth...]]...
+                   [--stadepth=depth[,depth...]]... [--scat=s s]...] [[-p=phase
+                   [,phase...]]... [--phasefile=<phaseFiles>]...] [sacfile...]
 Set headers to travel times of phases using depth and distance from SAC files.
       [sacfile...]          SAC files to process
 
@@ -31,7 +31,7 @@ Model Args
       --scat, --scatter=s s scattering depth and distance in degrees, which may
                               be negative. Only effects phases with 'o' or 'O'
                               in the phase name.
-      --stadepth, --receiverdepth=depth
+      --stadepth, --receiverdepth=depth[,depth...]
                             the receiver depth in km for stations not at the
                               surface
 Phase Names

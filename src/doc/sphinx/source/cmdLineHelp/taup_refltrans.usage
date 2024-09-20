@@ -5,8 +5,8 @@ Usage: taup refltrans [--abs] [--debug] [--down] [--energyflux] [--fsrf]
                       [-o=<outFile>] [--prop=<toolPropsFilename>]
                       [--rpstep=s/km] [-x=type] [--xminmax=x x]... [--yminmax=y
                       y]... [--layer=v v v v v v]... [-y=type...]... [--gmt |
-                      --json | --svg | --text] [[--mod=<modelname>]
-                      [--stadepth=depth] [-h=depth[,depth...]]... [--scat=s
+                      --json | --svg | --text] [[--mod=<modelname>] [-h=depth[,
+                      depth...]]... [--stadepth=depth[,depth...]]... [--scat=s
                       s]...]
 Plot reflection and transmission coefficients for a discontinuity.
 
@@ -64,6 +64,6 @@ Model Args
       --scat, --scatter=s s scattering depth and distance in degrees, which may
                               be negative. Only effects phases with 'o' or 'O'
                               in the phase name.
-      --stadepth, --receiverdepth=depth
+      --stadepth, --receiverdepth=depth[,depth...]
                             the receiver depth in km for stations not at the
                               surface

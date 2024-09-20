@@ -2,9 +2,10 @@ Usage: taup setms3 [--debug] [--geodetic] [--help] [--verbose]
                    [--ellipflattening=f] [--prop=<toolPropsFilename>]
                    [--qml=<quakemlFilename>] [--qmltol=<quakeOTimeTol>]
                    [--staxml=<stationxmlFilename>] [--taupeh=<ehKey>]
-                   [[--mod=<modelname>] [--stadepth=depth] [-h=depth[,
-                   depth...]]... [--scat=s s]...] [[-p=phase[,phase...]]...
-                   [--phasefile=<phaseFiles>]...] [mseed3file...]
+                   [[--mod=<modelname>] [-h=depth[,depth...]]...
+                   [--stadepth=depth[,depth...]]... [--scat=s s]...] [[-p=phase
+                   [,phase...]]... [--phasefile=<phaseFiles>]...]
+                   [mseed3file...]
 Save travel times in the extra header of miniseed3 files.
     https://crotwell.github.io/ms3eh/
 has details on the JSON structure.
@@ -46,7 +47,7 @@ Model Args
       --scat, --scatter=s s scattering depth and distance in degrees, which may
                               be negative. Only effects phases with 'o' or 'O'
                               in the phase name.
-      --stadepth, --receiverdepth=depth
+      --stadepth, --receiverdepth=depth[,depth...]
                             the receiver depth in km for stations not at the
                               surface
 Phase Names

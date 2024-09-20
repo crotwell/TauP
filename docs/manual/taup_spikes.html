@@ -133,14 +133,14 @@ a spike seismogram for specified phases through the given earth model.</p>
                    [--otime=&lt;origintime&gt;] [--prop=&lt;toolPropsFilename&gt;]
                    [--qml=&lt;quakemlFilename&gt;] [--staxml=&lt;stationxmlFilename&gt;]
                    [--evt=l l]... [--evt=l l]... [--sta=l l]... [--sta=l l]...
-                   [[--mod=&lt;modelname&gt;] [--stadepth=depth] [-h=depth[,
-                   depth...]]... [--scat=s s]...] [[-p=phase[,phase...]]...
-                   [--phasefile=&lt;phaseFiles&gt;]...] [[--deg=d[,d...]]...
-                   [--exactdegree=d[,d...]]... [--exactkilometer=km[,km...]]...
-                   [--km=km[,km...]]... [--rayparamdeg=s/deg[,s/deg...]]...
-                   [--rayparamidx=i[,i...]]... [--rayparamkm=s/km[,s/km...]]...
-                   [--rayparamrad=s/rad[,s/rad...]]... [--takeoff=deg[,
-                   deg...]]...]... [--ms3 | --sac]
+                   [[--mod=&lt;modelname&gt;] [-h=depth[,depth...]]...
+                   [--stadepth=depth[,depth...]]... [--scat=s s]...] [[-p=phase
+                   [,phase...]]... [--phasefile=&lt;phaseFiles&gt;]...] [[--deg=d[,
+                   d...]]... [--exactdegree=d[,d...]]... [--exactkilometer=km[,
+                   km...]]... [--km=km[,km...]]... [--rayparamdeg=s/deg[,
+                   s/deg...]]... [--rayparamidx=i[,i...]]... [--rayparamkm=s/km
+                   [,s/km...]]... [--rayparamrad=s/rad[,s/rad...]]...
+                   [--takeoff=deg[,deg...]]...]... [--ms3 | --sac]
 Calculate spike seismograms
 
 Options:
@@ -176,7 +176,7 @@ Model Args
       --scat, --scatter=s s  scattering depth and distance in degrees, which
                                may be negative. Only effects phases with &#39;o&#39; or
                                &#39;O&#39; in the phase name.
-      --stadepth, --receiverdepth=depth
+      --stadepth, --receiverdepth=depth[,depth...]
                              the receiver depth in km for stations not at the
                                surface
 Phase Names

@@ -144,9 +144,10 @@ headers, then this will add markers to the extra headers for P and S:</p>
                    [--ellipflattening=f] [--prop=&lt;toolPropsFilename&gt;]
                    [--qml=&lt;quakemlFilename&gt;] [--qmltol=&lt;quakeOTimeTol&gt;]
                    [--staxml=&lt;stationxmlFilename&gt;] [--taupeh=&lt;ehKey&gt;]
-                   [[--mod=&lt;modelname&gt;] [--stadepth=depth] [-h=depth[,
-                   depth...]]... [--scat=s s]...] [[-p=phase[,phase...]]...
-                   [--phasefile=&lt;phaseFiles&gt;]...] [mseed3file...]
+                   [[--mod=&lt;modelname&gt;] [-h=depth[,depth...]]...
+                   [--stadepth=depth[,depth...]]... [--scat=s s]...] [[-p=phase
+                   [,phase...]]... [--phasefile=&lt;phaseFiles&gt;]...]
+                   [mseed3file...]
 Save travel times in the extra header of miniseed3 files.
     https://crotwell.github.io/ms3eh/
 has details on the JSON structure.
@@ -188,7 +189,7 @@ Model Args
       --scat, --scatter=s s scattering depth and distance in degrees, which may
                               be negative. Only effects phases with &#39;o&#39; or &#39;O&#39;
                               in the phase name.
-      --stadepth, --receiverdepth=depth
+      --stadepth, --receiverdepth=depth[,depth...]
                             the receiver depth in km for stations not at the
                               surface
 Phase Names

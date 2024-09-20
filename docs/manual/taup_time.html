@@ -138,11 +138,42 @@ in a phase file with the <code class="docutils literal notranslate"><span class=
 <p>gives you arrival times for S and P for a 200 kilometer
 deep source at a distance of 57.4 degrees.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Model: prem
-Distance   Depth   Phase   Travel    Ray Param  Takeoff  Incident  Purist   Purist
-  (deg)     (km)   Name    Time (s)  p (s/deg)   (deg)    (deg)   Distance   Name 
-----------------------------------------------------------------------------------
-   57.40   200.0   P        566.77     6.969     31.18    21.31    57.40   = P    
-   57.40   200.0   S       1028.61    13.018     32.34    22.00    57.40   = S    
+Distance   Depth   Phase   Travel    Ray Param  Takeoff  Incident Station   Purist   Purist
+  (deg)     (km)   Name    Time (s)  p (s/deg)   (deg)    (deg)    (km)     Distance  Name 
+-------------------------------------------------------------------------------------------
+   57.40   200.0   P        566.77     6.969     31.18    21.31      0.0    57.40   = P    
+   57.40   200.0   S       1028.61    13.018     32.34    22.00      0.0    57.40   = S    
+</pre></div>
+</div>
+<p>If you have a QuakeML file for earthquakes or a StationXML file for stations
+and channels, you can use those to calculate the distances directly. For
+example:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>taup time --quakeml my_midatlantic.qml --staxml my_stations.staml -p P,S
+</pre></div>
+</div>
+<p>gives you arrival times for S and P for these earthquakes at those stations.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Model: iasp91
+Distance   Depth   Phase   Travel    Ray Param  Takeoff  Incident Station   Purist   Purist
+  (deg)     (km)   Name    Time (s)  p (s/deg)   (deg)    (deg)    (km)     Distance  Name 
+-------------------------------------------------------------------------------------------
+   30.47    10.0   P        372.85     8.830     27.47    27.43      0.1    30.47   = P     IU.KBS 2024-08-30T09:32:19 mww 5.6
+   30.47    10.0   P        372.86     8.830     27.47    27.43      0.0    30.47   = P     IU.KBS 2024-08-30T09:32:19 mww 5.6
+   30.47    10.0   P        372.86     8.830     27.47    27.43      0.0    30.47   = P     IU.KBS 2024-08-30T09:32:19 mww 5.6
+   38.44    10.0   P        441.66     8.405     26.05    26.00      0.1    38.44   = P     CO.JSC 2024-08-30T09:32:19 mww 5.6
+   38.44    10.0   P        441.67     8.405     26.05    26.00      0.0    38.44   = P     CO.JSC 2024-08-30T09:32:19 mww 5.6
+   38.44    10.0   P        441.67     8.405     26.05    26.00      0.0    38.44   = P     CO.JSC 2024-08-30T09:32:19 mww 5.6
+   57.62    10.0   P        590.07     7.048     21.60    21.57      0.1    57.62   = P     IU.TUC 2024-08-30T09:32:19 mww 5.6
+   57.62    10.0   P        590.08     7.048     21.60    21.57      0.0    57.62   = P     IU.TUC 2024-08-30T09:32:19 mww 5.6
+   57.62    10.0   P        590.08     7.048     21.60    21.57      0.0    57.62   = P     IU.TUC 2024-08-30T09:32:19 mww 5.6
+   30.47    10.0   S        674.94    15.646     28.26    28.21      0.1    30.47   = S     IU.KBS 2024-08-30T09:32:19 mww 5.6
+   30.47    10.0   S        674.96    15.646     28.26    28.21      0.0    30.47   = S     IU.KBS 2024-08-30T09:32:19 mww 5.6
+   30.47    10.0   S        674.96    15.646     28.26    28.21      0.0    30.47   = S     IU.KBS 2024-08-30T09:32:19 mww 5.6
+   38.44    10.0   S        797.60    15.089     27.17    27.13      0.1    38.44   = S     CO.JSC 2024-08-30T09:32:19 mww 5.6
+   38.44    10.0   S        797.62    15.089     27.17    27.13      0.0    38.44   = S     CO.JSC 2024-08-30T09:32:19 mww 5.6
+   38.44    10.0   S        797.62    15.089     27.17    27.13      0.0    38.44   = S     CO.JSC 2024-08-30T09:32:19 mww 5.6
+   57.62    10.0   S       1068.99    13.129     23.41    23.37      0.1    57.62   = S     IU.TUC 2024-08-30T09:32:19 mww 5.6
+   57.62    10.0   S       1069.02    13.129     23.41    23.37      0.0    57.62   = S     IU.TUC 2024-08-30T09:32:19 mww 5.6
+   57.62    10.0   S       1069.02    13.129     23.41    23.37      0.0    57.62   = S     IU.TUC 2024-08-30T09:32:19 mww 5.6
 </pre></div>
 </div>
 <p>The usage is:</p>
@@ -153,8 +184,8 @@ Distance   Depth   Phase   Travel    Ray Param  Takeoff  Incident  Purist   Puri
                  [--prop=&lt;toolPropsFilename&gt;] [--qml=&lt;quakemlFilename&gt;]
                  [--staxml=&lt;stationxmlFilename&gt;] [--rel=phase[,phase...]]...
                  [--evt=l l]... [--evt=l l]... [--sta=l l]... [--sta=l l]...
-                 [[--mod=&lt;modelname&gt;] [--stadepth=depth] [-h=depth[,
-                 depth...]]... [--scat=s s]...] [[-p=phase[,phase...]]...
+                 [[--mod=&lt;modelname&gt;] [-h=depth[,depth...]]... [--stadepth=depth
+                 [,depth...]]... [--scat=s s]...] [[-p=phase[,phase...]]...
                  [--phasefile=&lt;phaseFiles&gt;]...] [[--deg=d[,d...]]...
                  [--exactdegree=d[,d...]]... [--exactkilometer=km[,km...]]...
                  [--km=km[,km...]]... [--rayparamdeg=s/deg[,s/deg...]]...
@@ -201,7 +232,7 @@ Model Args
       --scat, --scatter=s s  scattering depth and distance in degrees, which
                                may be negative. Only effects phases with &#39;o&#39; or
                                &#39;O&#39; in the phase name.
-      --stadepth, --receiverdepth=depth
+      --stadepth, --receiverdepth=depth[,depth...]
                              the receiver depth in km for stations not at the
                                surface
 Phase Names

@@ -147,10 +147,10 @@ differs from common seismological usage.</p>
 </div>
 <p>The usage is:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Usage: taup phase [--debug] [--help] [--verbose] [-o=&lt;outFile&gt;]
-                  [--prop=&lt;toolPropsFilename&gt;] [[--mod=&lt;modelname&gt;]
-                  [--stadepth=depth] [-h=depth[,depth...]]... [--scat=s s]...]
-                  [[-p=phase[,phase...]]... [--phasefile=&lt;phaseFiles&gt;]...]
-                  [--json | --text]
+                  [--prop=&lt;toolPropsFilename&gt;] [[--mod=&lt;modelname&gt;] [-h=depth[,
+                  depth...]]... [--stadepth=depth[,depth...]]... [--scat=s
+                  s]...] [[-p=phase[,phase...]]...
+                  [--phasefile=&lt;phaseFiles&gt;]...] [--json | --text]
 Describe a seismic phase in the current model.
 
 Options:
@@ -172,7 +172,7 @@ Model Args
                            scattering depth and distance in degrees, which may
                              be negative. Only effects phases with &#39;o&#39; or &#39;O&#39;
                              in the phase name.
-      --stadepth, --receiverdepth=depth
+      --stadepth, --receiverdepth=depth[,depth...]
                            the receiver depth in km for stations not at the
                              surface
 Phase Names

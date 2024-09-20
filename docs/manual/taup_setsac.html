@@ -178,9 +178,9 @@ T0 and T1 headers:</p>
 <p>The usage is:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Usage: taup setsac [--debug] [--evdpkm] [--geodetic] [--help] [--verbose]
                    [--ellipflattening=f] [--prop=&lt;toolPropsFilename&gt;]
-                   [[--mod=&lt;modelname&gt;] [--stadepth=depth] [-h=depth[,
-                   depth...]]... [--scat=s s]...] [[-p=phase[,phase...]]...
-                   [--phasefile=&lt;phaseFiles&gt;]...] [sacfile...]
+                   [[--mod=&lt;modelname&gt;] [-h=depth[,depth...]]...
+                   [--stadepth=depth[,depth...]]... [--scat=s s]...] [[-p=phase
+                   [,phase...]]... [--phasefile=&lt;phaseFiles&gt;]...] [sacfile...]
 Set headers to travel times of phases using depth and distance from SAC files.
       [sacfile...]          SAC files to process
 
@@ -209,7 +209,7 @@ Model Args
       --scat, --scatter=s s scattering depth and distance in degrees, which may
                               be negative. Only effects phases with &#39;o&#39; or &#39;O&#39;
                               in the phase name.
-      --stadepth, --receiverdepth=depth
+      --stadepth, --receiverdepth=depth[,depth...]
                             the receiver depth in km for stations not at the
                               surface
 Phase Names
