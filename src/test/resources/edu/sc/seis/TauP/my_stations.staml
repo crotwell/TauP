@@ -1,0 +1,1089 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+ <FDSNStationXML xmlns="http://www.fdsn.org/xml/station/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:iris="http://www.fdsn.org/xml/station/1/iris" xsi:schemaLocation="http://www.fdsn.org/xml/station/1 http://www.fdsn.org/xml/station/fdsn-station-1.1.xsd" schemaVersion="1.1">
+  <Source>IRIS-DMC</Source>
+  <Sender>IRIS-DMC</Sender>
+  <Module>IRIS WEB SERVICE: fdsnws-station | version: 1.1.52</Module>
+  <ModuleURI>https://service.iris.edu/fdsnws/station/1/query?net=II,IU,CO&amp;sta=SNZO,TUC,KBS,JSC&amp;cha=H??&amp;starttime=2024-08-30T00:00:00Z&amp;endtime=2024-08-31T00:00:00Z&amp;level=channel&amp;format=xml&amp;includecomments=false&amp;nodata=404</ModuleURI>
+  <Created>2024-09-20T20:26:10.7360</Created>
+  <Network code="CO" startDate="1987-01-01T00:00:00.0000" restrictedStatus="open">
+   <Description>South Carolina Seismic Network (SCSN)</Description>
+   <Identifier type="DOI">10.7914/SN/CO
+   </Identifier>
+   <TotalNumberStations>18</TotalNumberStations>
+   <SelectedNumberStations>1</SelectedNumberStations>
+   <Station code="JSC" startDate="2009-04-13T00:00:00.0000" restrictedStatus="open" iris:alternateNetworkCodes="_CEUSN,.CEUSN-CONTRIB,.GREG,_REALTIME,.UNRESTRICTED,_US-REGIONAL">
+    <Latitude>34.2818</Latitude>
+    <Longitude>-81.25966</Longitude>
+    <Elevation>103.0</Elevation>
+    <Site>
+     <Name>Jenkinsville, South Carolina</Name>
+     <Region>SC</Region>
+     <Country>USA</Country>
+    </Site>
+    <CreationDate>2009-04-13T00:00:00.0000</CreationDate>
+    <TotalNumberChannels>122</TotalNumberChannels>
+    <SelectedNumberChannels>6</SelectedNumberChannels>
+    <Channel code="HHE" locationCode="00" startDate="2023-09-18T18:00:00.0000" restrictedStatus="open">
+     <Description>Instrument Swap</Description>
+     <Latitude>34.2818</Latitude>
+     <Longitude>-81.25966</Longitude>
+     <Elevation>103</Elevation>
+     <Depth>0</Depth>
+     <Azimuth>90</Azimuth>
+     <Dip>0</Dip>
+     <Type>CONTINUOUS</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>1E02</SampleRate>
+     <Sensor>
+      <Type>NANOMETRICS</Type>
+      <Description>Velocity Sensor</Description>
+      <Manufacturer>NANOMETRICS</Manufacturer>
+      <Model>TRILLIUM 120PA</Model>
+      <SerialNumber>001623</SerialNumber>
+     </Sensor>
+     <DataLogger>
+      <Type>QUANTERRA</Type>
+      <Manufacturer>QUANTERRA</Manufacturer>
+      <Model>Q330S</Model>
+      <SerialNumber>5463</SerialNumber>
+     </DataLogger>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>5.0431188410000354E8</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s</Name>
+         <Description>Velocity in meters per second</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Count in Digital counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HHN" locationCode="00" startDate="2023-09-18T18:00:00.0000" restrictedStatus="open">
+     <Description>Instrument Swap</Description>
+     <Latitude>34.2818</Latitude>
+     <Longitude>-81.25966</Longitude>
+     <Elevation>103</Elevation>
+     <Depth>0</Depth>
+     <Azimuth>0</Azimuth>
+     <Dip>0</Dip>
+     <Type>CONTINUOUS</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>1E02</SampleRate>
+     <Sensor>
+      <Type>NANOMETRICS</Type>
+      <Description>Velocity Sensor</Description>
+      <Manufacturer>NANOMETRICS</Manufacturer>
+      <Model>TRILLIUM 120PA</Model>
+      <SerialNumber>001623</SerialNumber>
+     </Sensor>
+     <DataLogger>
+      <Type>QUANTERRA</Type>
+      <Manufacturer>QUANTERRA</Manufacturer>
+      <Model>Q330S</Model>
+      <SerialNumber>5463</SerialNumber>
+     </DataLogger>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>5.0431188410000354E8</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s</Name>
+         <Description>Velocity in meters per second</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Count in Digital counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HHZ" locationCode="00" startDate="2023-09-18T18:00:00.0000" restrictedStatus="open">
+     <Description>Instrument Swap</Description>
+     <Latitude>34.2818</Latitude>
+     <Longitude>-81.25966</Longitude>
+     <Elevation>103</Elevation>
+     <Depth>0</Depth>
+     <Azimuth>0</Azimuth>
+     <Dip>-90</Dip>
+     <Type>CONTINUOUS</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>1E02</SampleRate>
+     <Sensor>
+      <Type>NANOMETRICS</Type>
+      <Description>Velocity Sensor</Description>
+      <Manufacturer>NANOMETRICS</Manufacturer>
+      <Model>TRILLIUM 120PA</Model>
+      <SerialNumber>001623</SerialNumber>
+     </Sensor>
+     <DataLogger>
+      <Type>QUANTERRA</Type>
+      <Manufacturer>QUANTERRA</Manufacturer>
+      <Model>Q330S</Model>
+      <SerialNumber>5463</SerialNumber>
+     </DataLogger>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>5.0431188410000354E8</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s</Name>
+         <Description>Velocity in meters per second</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Count in Digital counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HNE" locationCode="00" startDate="2022-06-01T16:00:00.0000" restrictedStatus="open">
+     <Description>Instrument Swap</Description>
+     <Latitude>34.2818</Latitude>
+     <Longitude>-81.25966</Longitude>
+     <Elevation>103</Elevation>
+     <Depth>0</Depth>
+     <Azimuth>90</Azimuth>
+     <Dip>0</Dip>
+     <Type>CONTINUOUS</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>2E02</SampleRate>
+     <Sensor>
+      <Type>KINEMETRICS</Type>
+      <Description>Accelerometer</Description>
+      <Manufacturer>KINEMETRICS</Manufacturer>
+      <Model>EPISENSOR ES-T</Model>
+      <SerialNumber>9776</SerialNumber>
+     </Sensor>
+     <DataLogger>
+      <Type>QUANTERRA</Type>
+      <Manufacturer>QUANTERRA</Manufacturer>
+      <Model>Q330S</Model>
+      <SerialNumber>5463</SerialNumber>
+     </DataLogger>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>213976.9105368826</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s**2</Name>
+         <Description>Acceleration in meters per second squared</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Count in Digital counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HNN" locationCode="00" startDate="2022-06-01T16:00:00.0000" restrictedStatus="open">
+     <Description>Instrument Swap</Description>
+     <Latitude>34.2818</Latitude>
+     <Longitude>-81.25966</Longitude>
+     <Elevation>103</Elevation>
+     <Depth>0</Depth>
+     <Azimuth>0</Azimuth>
+     <Dip>0</Dip>
+     <Type>CONTINUOUS</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>2E02</SampleRate>
+     <Sensor>
+      <Type>KINEMETRICS</Type>
+      <Description>Accelerometer</Description>
+      <Manufacturer>KINEMETRICS</Manufacturer>
+      <Model>EPISENSOR ES-T</Model>
+      <SerialNumber>9776</SerialNumber>
+     </Sensor>
+     <DataLogger>
+      <Type>QUANTERRA</Type>
+      <Manufacturer>QUANTERRA</Manufacturer>
+      <Model>Q330S</Model>
+      <SerialNumber>5463</SerialNumber>
+     </DataLogger>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>213976.9105368826</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s**2</Name>
+         <Description>Acceleration in meters per second squared</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Count in Digital counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HNZ" locationCode="00" startDate="2022-06-01T16:00:00.0000" restrictedStatus="open">
+     <Description>Instrument Swap</Description>
+     <Latitude>34.2818</Latitude>
+     <Longitude>-81.25966</Longitude>
+     <Elevation>103</Elevation>
+     <Depth>0</Depth>
+     <Azimuth>0</Azimuth>
+     <Dip>-90</Dip>
+     <Type>CONTINUOUS</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>2E02</SampleRate>
+     <Sensor>
+      <Type>KINEMETRICS</Type>
+      <Description>Accelerometer</Description>
+      <Manufacturer>KINEMETRICS</Manufacturer>
+      <Model>EPISENSOR ES-T</Model>
+      <SerialNumber>9776</SerialNumber>
+     </Sensor>
+     <DataLogger>
+      <Type>QUANTERRA</Type>
+      <Manufacturer>QUANTERRA</Manufacturer>
+      <Model>Q330S</Model>
+      <SerialNumber>5463</SerialNumber>
+     </DataLogger>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>213976.9105368826</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s**2</Name>
+         <Description>Acceleration in meters per second squared</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Count in Digital counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+   </Station>
+  </Network>
+  <Network code="IU" startDate="1988-01-01T00:00:00.0000" restrictedStatus="open">
+   <Description>Global Seismograph Network - IRIS/USGS (GSN)</Description>
+   <Identifier type="DOI">10.7914/SN/IU
+   </Identifier>
+   <TotalNumberStations>128</TotalNumberStations>
+   <SelectedNumberStations>3</SelectedNumberStations>
+   <Station code="KBS" startDate="1994-11-05T00:00:00.0000" restrictedStatus="open" iris:alternateNetworkCodes="_ARCTIC,_FDSN,_FDSN-ALL,_GLISN,_GSN,_GSN-BROADBAND,_REALTIME,_STS-1,.UNRESTRICTED">
+    <Description>(GSN) IRIS/USGS (IU), GEOFON (GE), AWI, and UB</Description>
+    <Latitude>78.9154</Latitude>
+    <Longitude>11.9385</Longitude>
+    <Elevation>90.0</Elevation>
+    <Site>
+     <Name>Ny-Alesund, Spitzbergen, Norway</Name>
+    </Site>
+    <CreationDate>1994-11-05T00:00:00.0000</CreationDate>
+    <TotalNumberChannels>200</TotalNumberChannels>
+    <SelectedNumberChannels>9</SelectedNumberChannels>
+    <Channel code="HH1" locationCode="00" startDate="2022-10-25T14:00:00.0000" restrictedStatus="open">
+     <Latitude>78.9154</Latitude>
+     <Longitude>11.9385</Longitude>
+     <Elevation>87</Elevation>
+     <Depth>3</Depth>
+     <Azimuth>0</Azimuth>
+     <Dip>0</Dip>
+     <Type>TRIGGERED</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>1E02</SampleRate>
+     <ClockDrift>0E00</ClockDrift>
+     <Sensor>
+      <Description>Trillium T360 Surface Seismometer</Description>
+     </Sensor>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>3.3286E9</Value>
+       <Frequency>0.02</Frequency>
+       <InputUnits>
+         <Name>m/s</Name>
+         <Description>Velocity in Meters Per Second</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HH2" locationCode="00" startDate="2022-10-25T14:00:00.0000" restrictedStatus="open">
+     <Latitude>78.9154</Latitude>
+     <Longitude>11.9385</Longitude>
+     <Elevation>87</Elevation>
+     <Depth>3</Depth>
+     <Azimuth>90</Azimuth>
+     <Dip>0</Dip>
+     <Type>TRIGGERED</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>1E02</SampleRate>
+     <ClockDrift>0E00</ClockDrift>
+     <Sensor>
+      <Description>Trillium T360 Surface Seismometer</Description>
+     </Sensor>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>3.3286E9</Value>
+       <Frequency>0.02</Frequency>
+       <InputUnits>
+         <Name>m/s</Name>
+         <Description>Velocity in Meters Per Second</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HHZ" locationCode="00" startDate="2022-10-25T14:00:00.0000" restrictedStatus="open">
+     <Latitude>78.9154</Latitude>
+     <Longitude>11.9385</Longitude>
+     <Elevation>87</Elevation>
+     <Depth>3</Depth>
+     <Azimuth>0</Azimuth>
+     <Dip>-90</Dip>
+     <Type>TRIGGERED</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>1E02</SampleRate>
+     <ClockDrift>0E00</ClockDrift>
+     <Sensor>
+      <Description>Trillium T360 Surface Seismometer</Description>
+     </Sensor>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>3.3286E9</Value>
+       <Frequency>0.02</Frequency>
+       <InputUnits>
+         <Name>m/s</Name>
+         <Description>Velocity in Meters Per Second</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HH1" locationCode="10" startDate="2019-03-19T15:23:00.0000" restrictedStatus="open">
+     <Latitude>78.9154</Latitude>
+     <Longitude>11.9385</Longitude>
+     <Elevation>87</Elevation>
+     <Depth>3</Depth>
+     <Azimuth>10</Azimuth>
+     <Dip>0</Dip>
+     <Type>CONTINUOUS</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>1E02</SampleRate>
+     <ClockDrift>0E00</ClockDrift>
+     <Sensor>
+      <Description>Streckeisen STS-2 Standard-gain</Description>
+     </Sensor>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>2.44779E9</Value>
+       <Frequency>0.02</Frequency>
+       <InputUnits>
+         <Name>m/s</Name>
+         <Description>Velocity in Meters Per Second</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HH2" locationCode="10" startDate="2019-03-19T15:23:00.0000" restrictedStatus="open">
+     <Latitude>78.9154</Latitude>
+     <Longitude>11.9385</Longitude>
+     <Elevation>87</Elevation>
+     <Depth>3</Depth>
+     <Azimuth>100</Azimuth>
+     <Dip>0</Dip>
+     <Type>CONTINUOUS</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>1E02</SampleRate>
+     <ClockDrift>0E00</ClockDrift>
+     <Sensor>
+      <Description>Streckeisen STS-2 Standard-gain</Description>
+     </Sensor>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>2.44779E9</Value>
+       <Frequency>0.02</Frequency>
+       <InputUnits>
+         <Name>m/s</Name>
+         <Description>Velocity in Meters Per Second</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HHZ" locationCode="10" startDate="2019-03-19T15:23:00.0000" restrictedStatus="open">
+     <Latitude>78.9154</Latitude>
+     <Longitude>11.9385</Longitude>
+     <Elevation>87</Elevation>
+     <Depth>3</Depth>
+     <Azimuth>0</Azimuth>
+     <Dip>-90</Dip>
+     <Type>CONTINUOUS</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>1E02</SampleRate>
+     <ClockDrift>0E00</ClockDrift>
+     <Sensor>
+      <Description>Streckeisen STS-2 Standard-gain</Description>
+     </Sensor>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>2.44779E9</Value>
+       <Frequency>0.02</Frequency>
+       <InputUnits>
+         <Name>m/s</Name>
+         <Description>Velocity in Meters Per Second</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HN1" locationCode="20" startDate="2022-10-26T10:00:00.0000" restrictedStatus="open">
+     <Latitude>78.9154</Latitude>
+     <Longitude>11.9385</Longitude>
+     <Elevation>87</Elevation>
+     <Depth>3</Depth>
+     <Azimuth>0</Azimuth>
+     <Dip>0</Dip>
+     <Type>TRIGGERED</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>1E02</SampleRate>
+     <ClockDrift>0E00</ClockDrift>
+     <Sensor>
+      <Description>Kinemetrics FBA ES-T EpiSensor Accelerometer</Description>
+     </Sensor>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>428476.0</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s**2</Name>
+         <Description>Acceleration in Meters Per Second Per Second</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HN2" locationCode="20" startDate="2022-10-26T10:00:00.0000" restrictedStatus="open">
+     <Latitude>78.9154</Latitude>
+     <Longitude>11.9385</Longitude>
+     <Elevation>87</Elevation>
+     <Depth>3</Depth>
+     <Azimuth>90</Azimuth>
+     <Dip>0</Dip>
+     <Type>TRIGGERED</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>1E02</SampleRate>
+     <ClockDrift>0E00</ClockDrift>
+     <Sensor>
+      <Description>Kinemetrics FBA ES-T EpiSensor Accelerometer</Description>
+     </Sensor>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>428476.0</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s**2</Name>
+         <Description>Acceleration in Meters Per Second Per Second</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HNZ" locationCode="20" startDate="2022-10-26T10:00:00.0000" restrictedStatus="open">
+     <Latitude>78.9154</Latitude>
+     <Longitude>11.9385</Longitude>
+     <Elevation>87</Elevation>
+     <Depth>3</Depth>
+     <Azimuth>0</Azimuth>
+     <Dip>-90</Dip>
+     <Type>TRIGGERED</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>1E02</SampleRate>
+     <ClockDrift>0E00</ClockDrift>
+     <Sensor>
+      <Description>Kinemetrics FBA ES-T EpiSensor Accelerometer</Description>
+     </Sensor>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>428476.0</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s**2</Name>
+         <Description>Acceleration in Meters Per Second Per Second</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+   </Station>
+   <Station code="SNZO" startDate="1992-04-07T00:00:00.0000" restrictedStatus="open" iris:alternateNetworkCodes="_FDSN,_FDSN-ALL,_GSN,_GSN-BROADBAND,_REALTIME,.UNRESTRICTED">
+    <Description>(GSN) IRIS/USGS (IU) and GNS Science</Description>
+    <Latitude>-41.3087</Latitude>
+    <Longitude>174.7043</Longitude>
+    <Elevation>120.0</Elevation>
+    <Site>
+     <Name>South Karori, New Zealand</Name>
+    </Site>
+    <CreationDate>1992-04-07T00:00:00.0000</CreationDate>
+    <TotalNumberChannels>218</TotalNumberChannels>
+    <SelectedNumberChannels>9</SelectedNumberChannels>
+    <Channel code="HH1" locationCode="00" startDate="2018-03-21T00:00:00.0000" restrictedStatus="open">
+     <Latitude>-41.3087</Latitude>
+     <Longitude>174.7043</Longitude>
+     <Elevation>29</Elevation>
+     <Depth>91</Depth>
+     <Azimuth>107</Azimuth>
+     <Dip>0</Dip>
+     <Type>TRIGGERED</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>1E02</SampleRate>
+     <ClockDrift>0E00</ClockDrift>
+     <Sensor>
+      <Description>Streckeisen STS-6A VBB Seismometer</Description>
+     </Sensor>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>1.98474E9</Value>
+       <Frequency>0.02</Frequency>
+       <InputUnits>
+         <Name>m/s</Name>
+         <Description>Velocity in Meters Per Second</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HH2" locationCode="00" startDate="2018-03-21T00:00:00.0000" restrictedStatus="open">
+     <Latitude>-41.3087</Latitude>
+     <Longitude>174.7043</Longitude>
+     <Elevation>29</Elevation>
+     <Depth>91</Depth>
+     <Azimuth>197</Azimuth>
+     <Dip>0</Dip>
+     <Type>TRIGGERED</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>1E02</SampleRate>
+     <ClockDrift>0E00</ClockDrift>
+     <Sensor>
+      <Description>Streckeisen STS-6A VBB Seismometer</Description>
+     </Sensor>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>1.98474E9</Value>
+       <Frequency>0.02</Frequency>
+       <InputUnits>
+         <Name>m/s</Name>
+         <Description>Velocity in Meters Per Second</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HHZ" locationCode="00" startDate="2018-03-21T00:00:00.0000" restrictedStatus="open">
+     <Latitude>-41.3087</Latitude>
+     <Longitude>174.7043</Longitude>
+     <Elevation>29</Elevation>
+     <Depth>91</Depth>
+     <Azimuth>0</Azimuth>
+     <Dip>-90</Dip>
+     <Type>TRIGGERED</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>1E02</SampleRate>
+     <ClockDrift>0E00</ClockDrift>
+     <Sensor>
+      <Description>Streckeisen STS-6A VBB Seismometer</Description>
+     </Sensor>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>1.98474E9</Value>
+       <Frequency>0.02</Frequency>
+       <InputUnits>
+         <Name>m/s</Name>
+         <Description>Velocity in Meters Per Second</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HH1" locationCode="10" startDate="2018-03-21T20:00:00.0000" restrictedStatus="open">
+     <Latitude>-41.3087</Latitude>
+     <Longitude>174.7043</Longitude>
+     <Elevation>120</Elevation>
+     <Depth>0</Depth>
+     <Azimuth>359</Azimuth>
+     <Dip>0</Dip>
+     <Type>TRIGGERED</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>1E02</SampleRate>
+     <ClockDrift>0E00</ClockDrift>
+     <Sensor>
+      <Description>Streckeisen STS-2.5</Description>
+     </Sensor>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>2.4478E9</Value>
+       <Frequency>0.02</Frequency>
+       <InputUnits>
+         <Name>m/s</Name>
+         <Description>Velocity in Meters Per Second</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HH2" locationCode="10" startDate="2018-03-21T20:00:00.0000" restrictedStatus="open">
+     <Latitude>-41.3087</Latitude>
+     <Longitude>174.7043</Longitude>
+     <Elevation>120</Elevation>
+     <Depth>0</Depth>
+     <Azimuth>89</Azimuth>
+     <Dip>0</Dip>
+     <Type>TRIGGERED</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>1E02</SampleRate>
+     <ClockDrift>0E00</ClockDrift>
+     <Sensor>
+      <Description>Streckeisen STS-2.5</Description>
+     </Sensor>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>2.4478E9</Value>
+       <Frequency>0.02</Frequency>
+       <InputUnits>
+         <Name>m/s</Name>
+         <Description>Velocity in Meters Per Second</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HHZ" locationCode="10" startDate="2018-03-21T20:00:00.0000" restrictedStatus="open">
+     <Latitude>-41.3087</Latitude>
+     <Longitude>174.7043</Longitude>
+     <Elevation>120</Elevation>
+     <Depth>0</Depth>
+     <Azimuth>0</Azimuth>
+     <Dip>-90</Dip>
+     <Type>TRIGGERED</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>1E02</SampleRate>
+     <ClockDrift>0E00</ClockDrift>
+     <Sensor>
+      <Description>Streckeisen STS-2.5</Description>
+     </Sensor>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>2.4478E9</Value>
+       <Frequency>0.02</Frequency>
+       <InputUnits>
+         <Name>m/s</Name>
+         <Description>Velocity in Meters Per Second</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HN1" locationCode="20" startDate="2024-05-16T17:00:00.0000" restrictedStatus="open">
+     <Latitude>-41.3087</Latitude>
+     <Longitude>174.7043</Longitude>
+     <Elevation>120</Elevation>
+     <Depth>0</Depth>
+     <Azimuth>0</Azimuth>
+     <Dip>0</Dip>
+     <Type>TRIGGERED</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>2E02</SampleRate>
+     <ClockDrift>0E00</ClockDrift>
+     <Sensor>
+      <Description>Kinemetrics FBA ES-T EpiSensor Accelerometer</Description>
+     </Sensor>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>428202.0</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s**2</Name>
+         <Description>Acceleration in Meters Per Second Per Second</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HN2" locationCode="20" startDate="2024-05-16T17:00:00.0000" restrictedStatus="open">
+     <Latitude>-41.3087</Latitude>
+     <Longitude>174.7043</Longitude>
+     <Elevation>120</Elevation>
+     <Depth>0</Depth>
+     <Azimuth>90</Azimuth>
+     <Dip>0</Dip>
+     <Type>TRIGGERED</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>2E02</SampleRate>
+     <ClockDrift>0E00</ClockDrift>
+     <Sensor>
+      <Description>Kinemetrics FBA ES-T EpiSensor Accelerometer</Description>
+     </Sensor>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>428202.0</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s**2</Name>
+         <Description>Acceleration in Meters Per Second Per Second</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HNZ" locationCode="20" startDate="2024-05-16T17:00:00.0000" restrictedStatus="open">
+     <Latitude>-41.3087</Latitude>
+     <Longitude>174.7043</Longitude>
+     <Elevation>120</Elevation>
+     <Depth>0</Depth>
+     <Azimuth>0</Azimuth>
+     <Dip>-90</Dip>
+     <Type>TRIGGERED</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>2E02</SampleRate>
+     <ClockDrift>0E00</ClockDrift>
+     <Sensor>
+      <Description>Kinemetrics FBA ES-T EpiSensor Accelerometer</Description>
+     </Sensor>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>428202.0</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s**2</Name>
+         <Description>Acceleration in Meters Per Second Per Second</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+   </Station>
+   <Station code="TUC" startDate="2009-05-28T19:40:00.0000" restrictedStatus="open" iris:alternateNetworkCodes="_ANSS-BB,_CARIBE-EWS,.EARTHSCOPE,_FDSN,_FDSN-ALL,.GREG,_GSN,_GSN-BROADBAND,_REALTIME,_STS-1,.UNRESTRICTED,_US-ALL,_US-REF,_US-TA">
+    <Description>(GSN) IRIS/USGS (IU), Univ. of Arizona, and ANSS</Description>
+    <Latitude>32.3098</Latitude>
+    <Longitude>-110.7847</Longitude>
+    <Elevation>910.0</Elevation>
+    <Site>
+     <Name>Tucson, Arizona</Name>
+    </Site>
+    <CreationDate>2009-05-28T19:40:00.0000</CreationDate>
+    <TotalNumberChannels>231</TotalNumberChannels>
+    <SelectedNumberChannels>9</SelectedNumberChannels>
+    <Channel code="HH1" locationCode="00" startDate="2021-09-24T00:00:00.0000" restrictedStatus="open">
+     <Latitude>32.3098</Latitude>
+     <Longitude>-110.7847</Longitude>
+     <Elevation>909</Elevation>
+     <Depth>1</Depth>
+     <Azimuth>0</Azimuth>
+     <Dip>0</Dip>
+     <Type>TRIGGERED</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>1E02</SampleRate>
+     <ClockDrift>0E00</ClockDrift>
+     <Sensor>
+      <Description>Streckeisen STS-6A VBB Seismometer</Description>
+     </Sensor>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>1.98474E9</Value>
+       <Frequency>0.02</Frequency>
+       <InputUnits>
+         <Name>m/s</Name>
+         <Description>Velocity in Meters Per Second</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HH2" locationCode="00" startDate="2021-09-24T00:00:00.0000" restrictedStatus="open">
+     <Latitude>32.3098</Latitude>
+     <Longitude>-110.7847</Longitude>
+     <Elevation>909</Elevation>
+     <Depth>1</Depth>
+     <Azimuth>90</Azimuth>
+     <Dip>0</Dip>
+     <Type>TRIGGERED</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>1E02</SampleRate>
+     <ClockDrift>0E00</ClockDrift>
+     <Sensor>
+      <Description>Streckeisen STS-6A VBB Seismometer</Description>
+     </Sensor>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>1.98474E9</Value>
+       <Frequency>0.02</Frequency>
+       <InputUnits>
+         <Name>m/s</Name>
+         <Description>Velocity in Meters Per Second</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HHZ" locationCode="00" startDate="2021-09-24T00:00:00.0000" restrictedStatus="open">
+     <Latitude>32.3098</Latitude>
+     <Longitude>-110.7847</Longitude>
+     <Elevation>909</Elevation>
+     <Depth>1</Depth>
+     <Azimuth>0</Azimuth>
+     <Dip>-90</Dip>
+     <Type>TRIGGERED</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>1E02</SampleRate>
+     <ClockDrift>0E00</ClockDrift>
+     <Sensor>
+      <Description>Streckeisen STS-6A VBB Seismometer</Description>
+     </Sensor>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>1.98474E9</Value>
+       <Frequency>0.02</Frequency>
+       <InputUnits>
+         <Name>m/s</Name>
+         <Description>Velocity in Meters Per Second</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HH1" locationCode="10" startDate="2017-09-06T15:30:00.0000" restrictedStatus="open">
+     <Latitude>32.3098</Latitude>
+     <Longitude>-110.7847</Longitude>
+     <Elevation>909</Elevation>
+     <Depth>1</Depth>
+     <Azimuth>0</Azimuth>
+     <Dip>0</Dip>
+     <Type>TRIGGERED</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>1E02</SampleRate>
+     <ClockDrift>0E00</ClockDrift>
+     <Sensor>
+      <Description>Streckeisen STS-2.5</Description>
+     </Sensor>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>2.4478E9</Value>
+       <Frequency>0.02</Frequency>
+       <InputUnits>
+         <Name>m/s</Name>
+         <Description>Velocity in Meters Per Second</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HH2" locationCode="10" startDate="2017-09-06T15:30:00.0000" restrictedStatus="open">
+     <Latitude>32.3098</Latitude>
+     <Longitude>-110.7847</Longitude>
+     <Elevation>909</Elevation>
+     <Depth>1</Depth>
+     <Azimuth>90</Azimuth>
+     <Dip>0</Dip>
+     <Type>TRIGGERED</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>1E02</SampleRate>
+     <ClockDrift>0E00</ClockDrift>
+     <Sensor>
+      <Description>Streckeisen STS-2.5</Description>
+     </Sensor>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>2.4478E9</Value>
+       <Frequency>0.02</Frequency>
+       <InputUnits>
+         <Name>m/s</Name>
+         <Description>Velocity in Meters Per Second</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HHZ" locationCode="10" startDate="2017-09-06T15:30:00.0000" restrictedStatus="open">
+     <Latitude>32.3098</Latitude>
+     <Longitude>-110.7847</Longitude>
+     <Elevation>909</Elevation>
+     <Depth>1</Depth>
+     <Azimuth>0</Azimuth>
+     <Dip>-90</Dip>
+     <Type>TRIGGERED</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>1E02</SampleRate>
+     <ClockDrift>0E00</ClockDrift>
+     <Sensor>
+      <Description>Streckeisen STS-2.5</Description>
+     </Sensor>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>2.4478E9</Value>
+       <Frequency>0.02</Frequency>
+       <InputUnits>
+         <Name>m/s</Name>
+         <Description>Velocity in Meters Per Second</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HN1" locationCode="20" startDate="2014-03-26T19:17:00.0000" restrictedStatus="open">
+     <Latitude>32.3098</Latitude>
+     <Longitude>-110.7847</Longitude>
+     <Elevation>909</Elevation>
+     <Depth>1</Depth>
+     <Azimuth>0</Azimuth>
+     <Dip>0</Dip>
+     <Type>TRIGGERED</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>1E02</SampleRate>
+     <ClockDrift>0E00</ClockDrift>
+     <Sensor>
+      <Description>Kinemetrics FBA ES-T EpiSensor Accelerometer</Description>
+     </Sensor>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>425789.0</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s**2</Name>
+         <Description>Acceleration in Meters Per Second Per Second</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HN2" locationCode="20" startDate="2014-03-26T19:17:00.0000" restrictedStatus="open">
+     <Latitude>32.3098</Latitude>
+     <Longitude>-110.7847</Longitude>
+     <Elevation>909</Elevation>
+     <Depth>1</Depth>
+     <Azimuth>90</Azimuth>
+     <Dip>0</Dip>
+     <Type>TRIGGERED</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>1E02</SampleRate>
+     <ClockDrift>0E00</ClockDrift>
+     <Sensor>
+      <Description>Kinemetrics FBA ES-T EpiSensor Accelerometer</Description>
+     </Sensor>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>425915.0</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s**2</Name>
+         <Description>Acceleration in Meters Per Second Per Second</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HNZ" locationCode="20" startDate="2014-03-26T19:17:00.0000" restrictedStatus="open">
+     <Latitude>32.3098</Latitude>
+     <Longitude>-110.7847</Longitude>
+     <Elevation>909</Elevation>
+     <Depth>1</Depth>
+     <Azimuth>0</Azimuth>
+     <Dip>-90</Dip>
+     <Type>TRIGGERED</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>1E02</SampleRate>
+     <ClockDrift>0E00</ClockDrift>
+     <Sensor>
+      <Description>Kinemetrics FBA ES-T EpiSensor Accelerometer</Description>
+     </Sensor>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>425831.0</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s**2</Name>
+         <Description>Acceleration in Meters Per Second Per Second</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+   </Station>
+  </Network>
+ </FDSNStationXML>

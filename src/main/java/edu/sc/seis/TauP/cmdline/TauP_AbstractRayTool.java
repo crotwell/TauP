@@ -102,38 +102,40 @@ public abstract class TauP_AbstractRayTool extends TauP_AbstractPhaseTool {
         return this.distanceArgs;
     }
 
-
     @Override
-    public List<SeismicPhase> getSeismicPhases() throws TauPException {
-        List<SeismicPhase> phases = super.getSeismicPhases();
-        // add any depths that are part of eventLatLon locations so we calculate those phases as well
+    public List<Double> getSourceDepths() throws TauPException {
+        List<Double> simpleSourceDepths = modelArgs.getSourceDepth();
+        List<Double> out = new ArrayList<>();
         Set<Double> knownDepths = new HashSet<>();
+        knownDepths.addAll(simpleSourceDepths);
         for (DistanceRay dr : getDistanceArgs().getDistances()) {
             if (dr.hasSourceDepth()) {
                 knownDepths.add(dr.getSourceDepth());
             }
         }
-        // remove any depths already calculated
-        for (SeismicPhase phase : phases) {
-            knownDepths.remove(phase.getSourceDepth());
+        out.addAll(knownDepths);
+        if (out.isEmpty()) {
+            out.add(Double.parseDouble(toolProps.getProperty("taup.source.depth", "0.0")));
         }
-        Set<Double> knownReceiverDepths = new HashSet<>();
+        return out;
+    }
+
+    @Override
+    public List<Double> getReceiverDepths() throws TauPException {
+        List<Double> simpleReceiverDepths = modelArgs.getReceiverDepth();
+        List<Double> out = new ArrayList<>();
+        Set<Double> knownDepths = new HashSet<>();
+        knownDepths.addAll(simpleReceiverDepths);
         for (DistanceRay dr : getDistanceArgs().getDistances()) {
             if (dr.hasReceiverDepth()) {
-                knownReceiverDepths.add(dr.getReceiverDepth());
+                knownDepths.add(dr.getReceiverDepth());
             }
         }
-        // remove any receiver depths already calculated
-        for (SeismicPhase phase : phases) {
-            knownReceiverDepths.remove(phase.getReceiverDepth());
+        out.addAll(knownDepths);
+        if (out.isEmpty()) {
+            out.add(0.0);
         }
-        List<Double> receiverDepthList = new ArrayList<>(knownReceiverDepths);
-
-        // calculate any new phase-only depths
-        for (Double depth : knownDepths) {
-            phases.addAll(calcSeismicPhases(depth, receiverDepthList));
-        }
-        return phases;
+        return out;
     }
 
     @Override

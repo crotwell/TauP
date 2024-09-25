@@ -109,13 +109,14 @@ public class TauP_Time extends TauP_AbstractRayTool {
 
 
     @Override
-    public List<Arrival> calcAll(List<SeismicPhase> phaseList, List<RayCalculateable> shootables) throws TauPException {
+    public List<Arrival> calcAll(List<SeismicPhase> phaseList, List<RayCalculateable> rayCalcList) throws TauPException {
         List<Arrival> arrivals = new ArrayList<>();
         for (SeismicPhase phase : phaseList) {
             List<Arrival> phaseArrivals = new ArrayList<>();
-            for (RayCalculateable shoot : shootables) {
-                if (! shoot.hasSourceDepth() || shoot.getSourceDepth() == phase.getSourceDepth()) {
-                    phaseArrivals.addAll(shoot.calculate(phase));
+            for (RayCalculateable rayCalc : rayCalcList) {
+                if (( ! rayCalc.hasSourceDepth() || rayCalc.getSourceDepth() == phase.getSourceDepth())
+                        && ( ! rayCalc.hasReceiverDepth() || rayCalc.getReceiverDepth() == phase.getReceiverDepth())) {
+                    phaseArrivals.addAll(rayCalc.calculate(phase));
                 }
             }
             if (!onlyFirst) {
@@ -166,11 +167,11 @@ public class TauP_Time extends TauP_AbstractRayTool {
      * Also calculates the relativePhase list.
      */
     @Override
-    public synchronized List<SeismicPhase> calcSeismicPhases(double sourceDepth) throws TauModelException {
-        List<SeismicPhase> phaseList = super.calcSeismicPhases(sourceDepth);
+    public synchronized List<SeismicPhase> calcSeismicPhases(double sourceDepth, List<Double> receiverDepths) throws TauModelException {
+        List<SeismicPhase> phaseList = super.calcSeismicPhases(sourceDepth, receiverDepths);
         relativePhaseList = new ArrayList<>();
         if (!relativePhaseName.isEmpty()) {
-            for (Double recDepth : modelArgs.getReceiverDepth()) {
+            for (Double recDepth : receiverDepths) {
                 TauModel sourceReceiverTMod = modelArgs.depthCorrected(sourceDepth).splitBranch(recDepth);
                 for (String sName : relativePhaseName) {
                     try {

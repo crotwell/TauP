@@ -430,8 +430,8 @@ public class TauP_Table extends TauP_AbstractPhaseTool {
     }
 
     @Override
-    public void validateArguments() throws TauModelException {
-        if (modelArgs.getReceiverDepth().size() > 1) {
+    public void validateArguments() throws TauPException {
+        if (getReceiverDepths().size() > 1) {
             throw new TauModelException("Table only allows a single receiver depth, but was given "
                     +modelArgs.getReceiverDepth().size()+" depths.");
         }
@@ -578,7 +578,7 @@ public class TauP_Table extends TauP_AbstractPhaseTool {
             out.println();
         }
         for (double depth : depths) {
-            List<SeismicPhase> seismicPhaseList = calcSeismicPhases( depth);
+            List<SeismicPhase> seismicPhaseList = calcSeismicPhases( depth, getReceiverDepths());
             out.println("#  Travel time for z =    " + depth);
             for (double distance : distances) {
                 List<Arrival> arrivals = calcAll(seismicPhaseList, List.of(DistanceRay.ofDegrees(distance)));

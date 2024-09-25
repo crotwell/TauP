@@ -54,7 +54,7 @@ public class DistanceArgs {
         hasStation = ! stationList.isEmpty();
 
 
-        if (hasEvent && getAzimuth() != null) {
+        if (hasEvent && getAzimuth() != null && !hasStation) {
             List<DistanceRay> evtOut = new ArrayList<>();
             for (DistanceRay dr : simpleDistanceList) {
                 if (dr.isLatLonable()) {
@@ -91,6 +91,8 @@ public class DistanceArgs {
             }
             out.addAll(staOut);
         } else if (hasEvent && hasStation) {
+            // add simple distances
+            out.addAll(simpleDistanceList);
             // now add evt-station pairs, already have latlonable
             for (Location evtLoc : quakes) {
                 for (Location staLoc : stationList) {
@@ -303,8 +305,8 @@ public class DistanceArgs {
 
     public void validateArguments() {
         if (distArgs.allEmpty()
-                && (latLonArgs.eventList.isEmpty() || latLonArgs.stationList.isEmpty())
-                && ! ( qmlStaxmlArgs.hasQml() && qmlStaxmlArgs.hasStationXML())
+                && ( (latLonArgs.eventList.isEmpty() && !qmlStaxmlArgs.hasQml() )
+                    || (latLonArgs.stationList.isEmpty() && ! qmlStaxmlArgs.hasStationXML()) )
         ) {
             throw new IllegalArgumentException("Must specify at least one distance or station, event.");
         }

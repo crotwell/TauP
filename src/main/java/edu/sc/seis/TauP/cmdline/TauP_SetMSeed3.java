@@ -162,16 +162,19 @@ public class TauP_SetMSeed3 extends TauP_AbstractPhaseTool {
             eh.addToBag(chan);
         }
 
+        List<Double> receiverDepthList = new ArrayList<>();
         if (staLoc != null) {
             setSingleReceiverDepth(staLoc.getDepthKm());
+            receiverDepthList.add(staLoc.getDepthKm());
         } else {
             setSingleReceiverDepth(0);
+            receiverDepthList.add(0.0);
         }
         double depth = 0;
         if (evLoc != null) {
             depth = evLoc.getDepthKm();
         }
-        List<SeismicPhase> seismicPhaseList = calcSeismicPhases( depth);
+        List<SeismicPhase> seismicPhaseList = calcSeismicPhases( depth, receiverDepthList);
 
         List<Arrival> arrivals = new ArrayList<>();
         for (SeismicPhase phase : seismicPhaseList) {

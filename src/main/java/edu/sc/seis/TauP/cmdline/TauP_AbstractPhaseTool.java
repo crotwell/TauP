@@ -340,8 +340,8 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
     /**
      * Calculates the seismic phases using a possibly new or changed tau model for the given source depth.
      */
-    public List<SeismicPhase> calcSeismicPhases(double sourceDepth) throws TauModelException {
-        return calcSeismicPhases(sourceDepth, modelArgs.getReceiverDepth());
+    public List<SeismicPhase> calcSeismicPhases(double sourceDepth) throws TauPException {
+        return calcSeismicPhases(sourceDepth, getReceiverDepths());
     }
 
     public List<SeismicPhase> calcSeismicPhases(double sourceDepth, List<Double> receiverDepths) throws TauModelException {
@@ -387,11 +387,30 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
         return newPhases;
     }
 
+    public List<Double> getSourceDepths() throws TauPException {
+        List<Double> out = new ArrayList<>();
+        out.addAll(modelArgs.getSourceDepth());
+        if ( out.isEmpty()) {
+            out.add(Double.parseDouble(toolProps.getProperty("taup.source.depth", "0.0")));
+        }
+        return out;
+    }
+
+    public List<Double> getReceiverDepths() throws TauPException {
+        List<Double> out = modelArgs.getReceiverDepth();
+        if (out.isEmpty()) {
+            // default if not receiver depths given is surface
+            out.add(0.0);
+        }
+        return out;
+    }
+
     public List<SeismicPhase> getSeismicPhases() throws TauPException {
         if (phases == null) {
             phases = new ArrayList<>();
-            for (Double sourceDepth : modelArgs.getSourceDepth()) {
-                phases.addAll(calcSeismicPhases(sourceDepth));
+            List<Double> receiverDepths = getReceiverDepths();
+            for (Double sourceDepth : getSourceDepths()) {
+                phases.addAll(calcSeismicPhases(sourceDepth, receiverDepths));
             }
         }
         return phases;

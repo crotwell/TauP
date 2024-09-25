@@ -21,19 +21,12 @@ public class ModelArgs {
     }
 
     public List<Double> getSourceDepth() {
-        if (modelArgsInner.sourceDepth == null || modelArgsInner.sourceDepth.size() == 0) {
-            return List.of(Double.parseDouble(toolProps.getProperty("taup.source.depth", "0.0")));
-        }
         return modelArgsInner.sourceDepth;
     }
     public void setSourceDepth(List<Double> depths) {
         modelArgsInner.sourceDepth = depths;
     }
     public List<Double> getReceiverDepth() {
-        if (modelArgsInner.receiverDepth.isEmpty()) {
-            // default if not receiver depths given is surface
-            return Collections.singletonList(0.0);
-        }
         return modelArgsInner.receiverDepth;
     }
     public void setReceiverDepth(List<Double> depths) {

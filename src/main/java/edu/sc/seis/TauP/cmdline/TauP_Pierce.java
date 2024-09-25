@@ -108,8 +108,8 @@ public class TauP_Pierce extends TauP_Time {
     }
 
     @Override
-    public List<Arrival> calcAll(List<SeismicPhase> phaseList, List<RayCalculateable> shootables) throws TauPException {
-        List<Arrival> arrivalList = super.calcAll(phaseList, shootables);
+    public List<Arrival> calcAll(List<SeismicPhase> phaseList, List<RayCalculateable> rayCalcList) throws TauPException {
+        List<Arrival> arrivalList = super.calcAll(phaseList, rayCalcList);
         for (Arrival arrival : arrivalList) {
             arrival.getPierce(); // side effect of calculating pierce points
         }
