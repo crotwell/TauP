@@ -68,6 +68,14 @@ public class FailedSeismicPhase extends SimpleSeismicPhase {
     }
 
     @Override
+    public String describeShort() {
+        String desc = getName() +(getName().equals(getPuristName()) ? "" : (" ("+getPuristName()+")"))
+                + " source: "+getSourceDepth()+" km, receiver: "+getReceiverDepth()+" km"
+                +" Failed phase: "+proto.failReason;
+        return desc;
+    }
+
+    @Override
     public double calcEnergyReflTranPSV(Arrival arrival) throws VelocityModelException, SlownessModelException {
         return 0;
     }

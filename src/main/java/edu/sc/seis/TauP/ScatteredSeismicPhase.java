@@ -370,6 +370,14 @@ public class ScatteredSeismicPhase implements SeismicPhase {
     }
 
     @Override
+    public String describeShort() {
+        String desc = getName() +(getName().equals(getPuristName()) ? "" : (" ("+getPuristName()+")"))
+                + " source: "+getSourceDepth()+" km, receiver: "+getReceiverDepth()+" km,"
+                + " scatter: "+getScattererDepth()+" km,"+getScattererDistanceDeg()+" deg";
+        return desc;
+    }
+
+    @Override
     public String describeJson() {
 
         String Q = ""+'"';

@@ -171,9 +171,14 @@ public class Arrival {
                 + Outputs.formatDepth(getSourceDepth())
                 + " km deep source in the " + getPhase().getTauModel().getModelName() + " model with rayParam "
                 + Outputs.formatRayParam(Math.PI / 180 * getRayParam())
-                + " s/deg.";
+                + " s/deg";
         if (getPhase().getReceiverDepth() != 0.0) {
-            out += " Receiver at depth: "+getPhase().getReceiverDepth()+" km.";
+            out += ", receiver at depth: "+getPhase().getReceiverDepth()+" km";
+        }
+        if (getRayCalculateable().hasDescription()) {
+            out += ", "+getRayCalculateable().getDescription()+".";
+        } else {
+            out += ".";
         }
         return out;
     }

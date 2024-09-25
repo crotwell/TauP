@@ -644,7 +644,7 @@ public class CmdLineOutputTest {
         assertNotNull( res, "Resource " + resource + " for " + cmd + " not found.");
         InputStream inStream = this.getClass()
                 .getClassLoader()
-                .getResourceAsStream("edu/sc/seis/TauP/cmdLineTest/" + fileizeCmd(cmd));
+                .getResourceAsStream(resource);
         assertNotNull(inStream, "Resource " + fileizeCmd(cmd) + " for " + cmd + " not found.");
         System.err.println("Load "+resource);
         BufferedReader in = new BufferedReader(new InputStreamReader(inStream));

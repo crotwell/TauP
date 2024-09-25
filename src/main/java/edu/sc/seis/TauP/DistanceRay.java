@@ -166,13 +166,18 @@ public class DistanceRay extends RayCalculateable {
     }
 
     public String toString() {
+        String out = "";
         if (radians != null) {
-            return radians+" rad";
+            out += radians+" rad";
+        } else if (degrees != null) {
+            out += degrees+" deg";
+        } else {
+            out += kilometers + " km";
         }
-        if (degrees != null) {
-            return degrees+" deg";
+        if (hasDescription()) {
+            out += ", "+getDescription();
         }
-        return kilometers+" km";
+        return out;
     }
 
     protected Double radians = null;

@@ -141,6 +141,8 @@ public interface SeismicPhase extends Serializable, Cloneable {
 
     String describe();
 
+    String describeShort();
+
     String describeJson();
 
     String toString();

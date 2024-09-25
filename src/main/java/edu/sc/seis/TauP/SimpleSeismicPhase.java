@@ -1072,6 +1072,13 @@ public class SimpleSeismicPhase implements SeismicPhase {
     }
 
     @Override
+    public String describeShort() {
+        String desc = getName() +(getName().equals(getPuristName()) ? "" : (" ("+getPuristName()+")"))
+                + " source: "+getSourceDepth()+" km, receiver: "+getReceiverDepth()+" km";
+        return desc;
+    }
+
+    @Override
     public String describeJson() {
         String Q = ""+'"';
         String COMMA = ",";

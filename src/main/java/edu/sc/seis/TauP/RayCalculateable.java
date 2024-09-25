@@ -48,6 +48,13 @@ public abstract class RayCalculateable {
         this.description = desc;
     }
 
+    public String toString() {
+        if (hasDescription()) {
+            return getDescription();
+        }
+        return super.toString();
+    }
+
 
     protected Location staLatLon = null;
     protected Location evtLatLon = null;
