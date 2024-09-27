@@ -83,7 +83,15 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
                 List<ProtoSeismicPhase> walk = walker.findEndingPaths(maxActions);
 
                 if ((!distanceValues.isEmpty())) {
-                    arrivalList.addAll(findForDist(walk, tModRecDepth, distanceValues));
+                    double[] rayParamRange = new double[2];
+                    if (getRayParamRange().length == 1) {
+                        rayParamRange[0] = getRayParamRange()[0]-deltaRayParam;
+                        rayParamRange[1] = getRayParamRange()[0]+deltaRayParam;
+                    } else {
+                        rayParamRange[0] = getRayParamRange()[0];
+                        rayParamRange[1] = getRayParamRange()[1];
+                    }
+                    arrivalList.addAll(findForDist(walk, tModRecDepth, distanceValues, rayParamRange));
                 } else {
                     allwalk.addAll(findForAllDepth(walk));
                 }
@@ -102,7 +110,10 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
         }
     }
 
-    public List<Arrival> findForDist(List<ProtoSeismicPhase> walk, TauModel tMod, List<RayCalculateable> distanceValues) throws IOException, TauPException {
+    public List<Arrival> findForDist(List<ProtoSeismicPhase> walk,
+                                     TauModel tMod,
+                                     List<RayCalculateable> distanceValues,
+                                     double[] rayParamRange) throws IOException, TauPException {
         List<SeismicPhase> phaseList = new ArrayList<>();
         List<String> phaseNameList = new ArrayList<>();
         for (ProtoSeismicPhase proto : walk) {
@@ -144,6 +155,15 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
             }
             arrivalList = timedArrivalList;
         }
+        if ( rayParamRange != null) {
+            List<Arrival> rpArrivalList = new ArrayList<>();
+            for (Arrival a : arrivalList) {
+                if (rayParamRange[0] <= a.getRayParam() && a.getRayParam() <= rayParamRange[1]) {
+                    rpArrivalList.add(a);
+                }
+            }
+            arrivalList = rpArrivalList;
+        }
         return arrivalList;
     }
 
@@ -174,7 +194,6 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
     }
 
     public List<ProtoSeismicPhase> findForAllDepth(List<ProtoSeismicPhase> walk) throws IOException, TauPException {
-        System.err.println("No distances given, just find phases...");
         List<SeismicPhase> givenPhases = new ArrayList<>();
         if ( ! phaseArgs.isEmpty()) {
             givenPhases = getSeismicPhases();
@@ -290,6 +309,18 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
         List<Double> excludeDepths = getExcludedDepths(tMod);
         // throws if cant find depth near discon
         List<Double> actualExcludeDepths = matchDepthToDiscon(excludeDepths, tMod.getVelocityModel(), excludeDepthTol);
+
+        if (rayParamRangeDeg != null &&  rayParamRangeKm != null) {
+            throw new CommandLine.ParameterException(spec.commandLine(),
+                    "Only one of --rayparamdeg and --rayparamkm may be used");
+        }
+        if (!distanceArgs.getRayCalculatables().isEmpty()
+                && (rayParamRangeDeg != null ||  rayParamRangeKm != null)
+                && getRayParamRange().length == 1) {
+            throw new CommandLine.ParameterException(spec.commandLine(),
+                    "Single value for --rayparamdeg or --rayparamkm not allowed when also giving --degree distance.");
+        }
+
     }
 
     @CommandLine.Mixin
@@ -307,31 +338,35 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
             arity = "1..2",
             paramLabel = "s/deg",
             description = "only keep phases that overlap the given ray parameter range in s/deg")
-    Double[] minRayParamRange;
+    Double[] rayParamRangeDeg;
 
     @CommandLine.Option(names = "--rayparamkm",
             arity = "1..2",
             paramLabel = "s/km",
             description = "only keep phases that overlap the given ray parameter range in s/km")
-    Double[] minRayParamRangeKm;
+    Double[] rayParamRangeKm;
 
     protected Double[] getRayParamRange() throws TauModelException {
 
-        if (minRayParamRange == null &&  minRayParamRangeKm == null) {
+        if (rayParamRangeDeg == null &&  rayParamRangeKm == null) {
             return null;
-        } else if (minRayParamRange != null &&  minRayParamRangeKm != null) {
+        } else if (rayParamRangeDeg != null &&  rayParamRangeKm != null) {
             throw new CommandLine.ParameterException(spec.commandLine(),
                     "Only one of --rayparamdeg and --rayparamkm may be used");
         }
         Double[] rpRange = null;
-        if (minRayParamRangeKm != null) {
-            rpRange = new Double[minRayParamRangeKm.length];
-            rpRange[0] = minRayParamRangeKm[0] / modelArgs.getTauModel().getRadiusOfEarth();
-            if (minRayParamRangeKm.length > 1) {
-                rpRange[1] = minRayParamRangeKm[1] / modelArgs.getTauModel().getRadiusOfEarth();
+        if (rayParamRangeKm != null) {
+            rpRange = new Double[rayParamRangeKm.length];
+            rpRange[0] = rayParamRangeKm[0] / modelArgs.getTauModel().getRadiusOfEarth();
+            if (rayParamRangeKm.length > 1) {
+                rpRange[1] = rayParamRangeKm[1] / modelArgs.getTauModel().getRadiusOfEarth();
             }
-        } else if (minRayParamRange != null) {
-            rpRange = minRayParamRange;
+        } else if (rayParamRangeDeg != null) {
+            rpRange = new Double[rayParamRangeDeg.length];
+            rpRange[0] = rayParamRangeDeg[0] / SphericalCoords.DtoR;
+            if (rayParamRangeDeg.length > 1) {
+                rpRange[1] = rayParamRangeDeg[1] / SphericalCoords.DtoR;
+            }
         }
         return rpRange;
     }
@@ -414,6 +449,11 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
             description = "find arrivals within the +- deltatime, --times must have single time")
     Double deltaTime = 5.0;
 
+    /**
+     * Used to limit times when only one ray param is given instead of range. Matches default precision from
+     * text output of arrival ray param.
+     */
+    Double deltaRayParam = 0.001 / SphericalCoords.DtoR;
 
     @CommandLine.Option(names = "--amp",
             description = "show amplitude factor for each phase, only if --deg")
