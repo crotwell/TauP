@@ -289,6 +289,22 @@ public class VelocityModel implements Cloneable, Serializable {
         this.spherical = spherical;
     }
 
+    public boolean densityIsDefault() {
+        boolean allDensityDefault = true;
+        for(VelocityLayer vlay: getLayers() ) {
+            allDensityDefault &= vlay.densityIsDefault();
+        }
+        return allDensityDefault;
+    }
+
+    public boolean QIsDefault() {
+        boolean allQDefault = true;
+        for(VelocityLayer vlay: getLayers() ) {
+            allQDefault &= vlay.QIsDefault();
+        }
+        return allQDefault;
+    }
+
     public VelocityLayer getVelocityLayerClone(int layerNum) {
         return (VelocityLayer)(layer.get(layerNum)).clone();
     }
@@ -912,6 +928,8 @@ public class VelocityModel implements Cloneable, Serializable {
 
     public void writeToND(Writer out) throws IOException {
         VelocityLayer prev = null;
+        boolean allDensityDefault = densityIsDefault();
+        boolean allQDefault = QIsDefault();
         for(VelocityLayer vlay: getLayers() ) {
             if (prev == null ||
                     vlay.getBotDepth() == getMohoDepth() ||
@@ -920,17 +938,25 @@ public class VelocityModel implements Cloneable, Serializable {
                     prev.getBotPVelocity()!=vlay.getTopPVelocity() ||
                     prev.getBotSVelocity()!=vlay.getTopSVelocity() ||
                     prev.getBotDensity()!=vlay.getTopDensity()) {
-                out.write(vlay.getTopDepth()+" "+vlay.getTopPVelocity()+" "+vlay.getTopSVelocity()+" "+vlay.getTopDensity()+"\n");
+                out.write(vlay.getTopDepth()+" "+vlay.getTopPVelocity()+" "+vlay.getTopSVelocity());
+                if (!allDensityDefault) {
+                    out.write(" "+vlay.getTopDensity());
+                }
+                if (!allQDefault) {
+                    out.write(" "+vlay.getTopQp()+" "+vlay.getTopQs());
+                }
+                out.write("\n");
             }
-            out.write(vlay.getBotDepth()+" "+vlay.getBotPVelocity()+" "+vlay.getBotSVelocity()+" "+vlay.getBotDensity()+"\n");
-            if (vlay.getBotDepth() == getMohoDepth()) {
-                out.write("mantle\n");
+            out.write(vlay.getBotDepth()+" "+vlay.getBotPVelocity()+" "+vlay.getBotSVelocity()+" "+vlay.getBotDensity());
+            if (!allDensityDefault) {
+                out.write(" "+vlay.getBotDensity());
             }
-            if (vlay.getBotDepth() == getCmbDepth()) {
-                out.write("outer-core\n");
+            if (!allQDefault) {
+                out.write(" "+vlay.getBotQp()+" "+vlay.getBotQs());
             }
-            if (vlay.getBotDepth() == getIocbDepth()) {
-                out.write("inner-core\n");
+            out.write("\n");
+            if (isNamedDisconDepth(vlay.getBotDepth()) ) {
+                out.write(getNamedDisconForDepth(vlay.getBotDepth()).getName()+"\n");
             }
             prev = vlay;
         }

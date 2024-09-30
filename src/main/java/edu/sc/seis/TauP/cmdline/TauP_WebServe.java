@@ -127,6 +127,8 @@ public class TauP_WebServe extends TauP_Tool {
         switch (format) {
             case OutputTypes.TEXT:
             case OutputTypes.GMT:
+            case OutputTypes.ND:
+            case OutputTypes.LOCSAT:
                 contentType = "text/plain";
                 break;
             case OutputTypes.CSV:

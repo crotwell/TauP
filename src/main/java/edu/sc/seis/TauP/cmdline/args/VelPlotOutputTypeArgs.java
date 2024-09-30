@@ -140,7 +140,7 @@ public class VelPlotOutputTypeArgs extends AbstractOutputTypeArgs {
     }
 
     public boolean isND() {
-        return ((VelPlotOutputType)outputType)._isND;
+        return outputType._isND;
     }
     public boolean isCSV() {
         return ((VelPlotOutputType)outputType)._isCsv;

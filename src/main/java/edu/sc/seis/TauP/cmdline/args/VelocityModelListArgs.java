@@ -13,9 +13,9 @@ public class VelocityModelListArgs {
 
 
     @CommandLine.Option(names={"--mod", "--model"},
-            arity = "0..",
             description = "use velocity model \"modelname\" for calculations" +
                     ", format is guessed.",
+            paramLabel="model",
             completionCandidates = StdModelGenerator.StdModelCandidates.class
     )
     public void setModelName(List<String> modelFilenames) {
@@ -28,7 +28,7 @@ public class VelocityModelListArgs {
     }
 
     @CommandLine.Option(names = "--nd",
-            arity = "0..",
+            paramLabel="model",
             description = "\"named discontinuities\" velocity file")
     public void setNDModelFilename(List<String> modelFilenames) {
         for (String modname : modelFilenames) {
@@ -40,7 +40,7 @@ public class VelocityModelListArgs {
     }
 
     @CommandLine.Option(names = "--tvel",
-            arity = "0..",
+            paramLabel="model",
             description = "\".tvel\" velocity file, ala ttimes")
     public void setTvelModelFilename(List<String> modelFilenames) {
         for (String modname : modelFilenames) {

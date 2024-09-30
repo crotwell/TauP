@@ -250,8 +250,10 @@ often results in hard to catch errors.</p>
 </section>
 <section id="using-saved-tau-models">
 <h2>Using Saved Tau Models<a class="headerlink" href="#using-saved-tau-models" title="Link to this heading">¶</a></h2>
-<p>There are three ways of finding a previously generated model file. First, as
-a standard model as part of the distribution. Second, a list of directories and jar files to
+<p>There are three ways of finding a previously generated model file. If no
+model is given, then the iasp91 model will be used. The search is first, as
+a standard model as part of the distribution.
+Second, a list of directories and jar files to
 be searched can be specified with the taup.model.path property.
 Lastly, the path to the actual model file may be specified.
 TauP searches each of these
@@ -259,12 +261,12 @@ places in order until it finds a model that matches the name.</p>
 <ul>
 <li><p>Standard Model.</p>
 <p>TauP first checks to see if the model name is associated with a standard model.
-Several standard models are included within the distributed jar file.
-They include</p>
+Several standard models are precomputed and included within the distributed jar file.
+They are:</p>
 <table class="docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p>iasp91</p></td>
-<td><p><span id="id3">Kennett and Engdahl [<a class="reference internal" href="bibliography.html#id3" title="B. L. N. Kennett and E. R. Engdahl. Traveltimes for global earthquake location and phase identification. Geophysical Journal International, 105:429-465, 1991.">KE91</a>]</span></p></td>
+<td><p><span id="id3">Kennett and Engdahl [<a class="reference internal" href="bibliography.html#id3" title="B. L. N. Kennett and E. R. Engdahl. Traveltimes for global earthquake location and phase identification. Geophysical Journal International, 105:429-465, 1991.">KE91</a>]</span> (default)</p></td>
 </tr>
 <tr class="row-even"><td><p>prem</p></td>
 <td><p><span id="id4">Dziewonski and Anderson [<a class="reference internal" href="bibliography.html#id12" title="A. M. Dziewonski and D. L. Anderson. Structure, elastic and rheological properties and density of the earth's interior, gravity and pressure. In K. Fuch and H. Soffel, editors, Landoldt-Bönstein, Group V, volume 2a, pages 84-96. Springer, Berlin, 1984.">DA84</a>]</span></p></td>
@@ -278,29 +280,9 @@ They include</p>
 <tr class="row-odd"><td><p>ak135fcont</p></td>
 <td><p><span id="id7">Montagner and Kennett [<a class="reference internal" href="bibliography.html#id5" title="J.P. Montagner and B.L.N. Kennett. How to reconcile body-wave and normal-mode reference earth models? Geophysical Journal International, 125:229-248, 1995.">MK95</a>]</span></p></td>
 </tr>
-<tr class="row-even"><td><p>jb</p></td>
-<td><p><span id="id8">Jeffreys and Bullen [<a class="reference internal" href="bibliography.html#id9" title="H. Jeffreys and K. E. Bullen. Seismological Tables. British Association for the Advancement of Science, Burlington House, London, 1940.">JB40</a>]</span></p></td>
-</tr>
-<tr class="row-odd"><td><p>1066a</p></td>
-<td><p><span id="id9">Gilbert and Dziewonski [<a class="reference internal" href="bibliography.html#id11" title="F. Gilbert and A. M. Dziewonski. An application of normal mode theory to the retrieval of structural parameters and source mechanisms from seismic spectra. Philisophical Transactions of the Royal Society, London A, 278:187-269, 1975.">GD75</a>]</span></p></td>
-</tr>
-<tr class="row-even"><td><p>1066b</p></td>
-<td><p><span id="id10">Gilbert and Dziewonski [<a class="reference internal" href="bibliography.html#id11" title="F. Gilbert and A. M. Dziewonski. An application of normal mode theory to the retrieval of structural parameters and source mechanisms from seismic spectra. Philisophical Transactions of the Royal Society, London A, 278:187-269, 1975.">GD75</a>]</span></p></td>
-</tr>
-<tr class="row-odd"><td><p>pwdk</p></td>
-<td><p><span id="id11">Weber and Davis [<a class="reference internal" href="bibliography.html#id15" title="M. Weber and J. P. Davis. Evidence of a laterally variable lower mantle structure from p- and s-waves. Geophysics Journal International, 102(1):231-255, 1990.">WD90</a>]</span></p></td>
-</tr>
-<tr class="row-even"><td><p>sp6</p></td>
-<td><p><span id="id12">Morelli and Dziewonski [<a class="reference internal" href="bibliography.html#id14" title="A. Morelli and A. M. Dziewonski. Body wave traveltimes and a spherically symmetric p- and s-wave velocity model. Geophysics Journal International, 112(2):178-194, 1993.">MD93</a>]</span></p></td>
-</tr>
-<tr class="row-odd"><td><p>herrin</p></td>
-<td><p><span id="id13">Herrin [<a class="reference internal" href="bibliography.html#id10" title="E. Herrin. 1968 seismological tables for p phases. Bull. Seism. Soc. Am., 58(4):1193-1241, 1968.">Her68</a>]</span></p></td>
-</tr>
 </tbody>
 </table>
-<p>Lastly, we have included qdt, which is a coarsely sampled version of iasp91 <span id="id14">Kennett and Engdahl [<a class="reference internal" href="bibliography.html#id3" title="B. L. N. Kennett and E. R. Engdahl. Traveltimes for global earthquake location and phase identification. Geophysical Journal International, 105:429-465, 1991.">KE91</a>]</span>.
-It is samller, and thus loads quicker, but has significantly reduced accuracy.
-We will consider adding other models to the distribution if
+<p>We will consider adding other models to the distribution if
 they are of wide interest.
 They are included within the distribution jar file but
 taup can locate them with just the model name.</p>

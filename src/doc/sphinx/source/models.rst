@@ -100,8 +100,10 @@ often results in hard to catch errors.
 Using Saved Tau Models
 ----------------------
 
-There are three ways of finding a previously generated model file. First, as
-a standard model as part of the distribution. Second, a list of directories and jar files to
+There are three ways of finding a previously generated model file. If no
+model is given, then the iasp91 model will be used. The search is first, as
+a standard model as part of the distribution.
+Second, a list of directories and jar files to
 be searched can be specified with the taup.model.path property.
 Lastly, the path to the actual model file may be specified.
 TauP searches each of these
@@ -110,25 +112,17 @@ places in order until it finds a model that matches the name.
 * Standard Model.
 
   TauP first checks to see if the model name is associated with a standard model.
-  Several standard models are included within the distributed jar file.
-  They include
+  Several standard models are precomputed and included within the distributed jar file.
+  They are:
 
   ===========  =============================
-  iasp91       :cite:t:`iasp`
+  iasp91       :cite:t:`iasp` (default)
   prem         :cite:t:`dziewonski_anderson`
   ak135        :cite:t:`kennett:ak135`
   ak135favg    :cite:t:`kennett:ak135f`
   ak135fcont   :cite:t:`kennett:ak135f`
-  jb           :cite:t:`jb`
-  1066a        :cite:t:`gilbert_dziewonski`
-  1066b        :cite:t:`gilbert_dziewonski`
-  pwdk         :cite:t:`weber_davis`
-  sp6          :cite:t:`morelli`
-  herrin       :cite:t:`herrin`
   ===========  =============================
 
-  Lastly, we have included qdt, which is a coarsely sampled version of iasp91 :cite:t:`iasp`.
-  It is samller, and thus loads quicker, but has significantly reduced accuracy.
   We will consider adding other models to the distribution if
   they are of wide interest.
   They are included within the distribution jar file but

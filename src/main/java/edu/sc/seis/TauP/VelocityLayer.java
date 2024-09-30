@@ -57,17 +57,21 @@ public class VelocityLayer implements Cloneable, Serializable {
 
     private double botSVelocity;
 
-    private double topDensity = 2.6;
+    private double topDensity = DEFAULT_DENSITY;
 
-    private double botDensity = 2.6;
+    private double botDensity = DEFAULT_DENSITY;
 
-    private double topQp = 1000;
+    private double topQp = DEFAULT_QP;
 
-    private double botQp = 1000;
+    private double botQp = DEFAULT_QP;
 
-    private double topQs = 2000;
+    private double topQs = DEFAULT_QS;
 
-    private double botQs = 2000;
+    private double botQs = DEFAULT_QS;
+
+    public static double DEFAULT_DENSITY = 2.6;
+    public static double DEFAULT_QP = 1000;
+    public static double DEFAULT_QS = 2000;
 
     public VelocityLayer(int myLayerNumber,
                          double topDepth,
@@ -383,6 +387,10 @@ public class VelocityLayer implements Cloneable, Serializable {
         return botDensity;
     }
 
+    public boolean densityIsDefault() {
+        return topDensity == DEFAULT_DENSITY && botDensity == DEFAULT_DENSITY;
+    }
+
     public void setTopQp(double topQp) {
         this.topQp = topQp;
     }
@@ -397,6 +405,12 @@ public class VelocityLayer implements Cloneable, Serializable {
 
     public double getBotQp() {
         return botQp;
+    }
+    public boolean QpIsDefault() {
+        return topQp == DEFAULT_QP && botQp == DEFAULT_QP;
+    }
+    public boolean QIsDefault() {
+        return QpIsDefault() && QsIsDefault();
     }
 
     public void setTopQs(double topQs) {
@@ -413,6 +427,10 @@ public class VelocityLayer implements Cloneable, Serializable {
 
     public double getBotQs() {
         return botQs;
+    }
+
+    public boolean QsIsDefault() {
+        return topQs == DEFAULT_QS && botQs == DEFAULT_QS;
     }
 
     public double getThickness() {

@@ -1,56 +1,50 @@
 Usage: taup velplot [--debug] [--help] [--legend] [--listdiscon] [--verbose]
                     [--mapwidth=<mapwidth>] [--mapwidthunit=<mapWidthUnit>]
                     [-o=<outFile>] [--prop=<toolPropsFilename>] [-x=type]
-                    [-y=type] [--xminmax=x x]... [--yminmax=y y]... [--mod
-                    [=<modelName>...] [--mod[=<modelName>...]]... | --nd
-                    [=<nDModelFilename>...] [--nd[=<nDModelFilename>...]]... |
-                    --tvel[=<tvelModelFilename>...] [--tvel
-                    [=<tvelModelFilename>...]]...] [--csv | --gmt | --json |
+                    [-y=type] [--xminmax=x x]... [--yminmax=y y]...
+                    [--mod=model [--mod=model]... | --nd=model [--nd=model]...
+                    | --tvel=model [--tvel=model]...] [--csv | --gmt | --json |
                     --nameddiscon | --svg | --text]
 Plot velocity vs depth for a model.
 
 Options:
 
-      --debug              enable debugging output
-      --help               display this help message
-      --legend             create a legend
-      --listdiscon         List the discontinuities in the velocity model
-      --mapwidth=<mapwidth>
-                           plot width in inches for GMT, pixels for SVG.
+      --debug                enable debugging output
+      --help                 display this help message
+      --legend               create a legend
+      --listdiscon           List the discontinuities in the velocity model
+      --mapwidth=<mapwidth>  plot width in inches for GMT, pixels for SVG.
       --mapwidthunit=<mapWidthUnit>
-                           plot width unit for GMT. Default is i for inchs
-  -o, --output=<outFile>   output to file, default is stdout.
+                             plot width unit for GMT. Default is i for inchs
+  -o, --output=<outFile>     output to file, default is stdout.
       --prop=<toolPropsFilename>
-                           load defaults from properties file
-      --verbose            enable verbose output
-  -x, --xaxis=type         X axis data type, one of depth, radius, velocity,
-                             Vp, Vs, slownessdeg, slownessdeg_p, slownessdeg_s,
-                             slownessrad, slownessrad_p, slownessrad_s,
-                             density, velocity_density, Qp, Qs, Q, vpvs,
-                             vpdensity, vsdensity, poisson, shearmodulus,
-                             lambda, bulkmodulus, youngsmodulus
-                           Default is velocity.
-      --xminmax=x x        min and max x axis for plotting
-  -y, --yaxis=type         Y axis data type, one of depth, radius, velocity,
-                             Vp, Vs, slownessdeg, slownessdeg_p, slownessdeg_s,
-                             slownessrad, slownessrad_p, slownessrad_s,
-                             density, velocity_density, Qp, Qs, Q, vpvs,
-                             vpdensity, vsdensity, poisson, shearmodulus,
-                             lambda, bulkmodulus, youngsmodulus
-                           Default is depth.
-      --yminmax=y y        min and max y axis for plotting
+                             load defaults from properties file
+      --verbose              enable verbose output
+  -x, --xaxis=type           X axis data type, one of depth, radius, velocity,
+                               Vp, Vs, slownessdeg, slownessdeg_p,
+                               slownessdeg_s, slownessrad, slownessrad_p,
+                               slownessrad_s, density, velocity_density, Qp,
+                               Qs, Q, vpvs, vpdensity, vsdensity, poisson,
+                               shearmodulus, lambda, bulkmodulus, youngsmodulus
+                             Default is velocity.
+      --xminmax=x x          min and max x axis for plotting
+  -y, --yaxis=type           Y axis data type, one of depth, radius, velocity,
+                               Vp, Vs, slownessdeg, slownessdeg_p,
+                               slownessdeg_s, slownessrad, slownessrad_p,
+                               slownessrad_s, density, velocity_density, Qp,
+                               Qs, Q, vpvs, vpdensity, vsdensity, poisson,
+                               shearmodulus, lambda, bulkmodulus, youngsmodulus
+                             Default is depth.
+      --yminmax=y y          min and max y axis for plotting
 Velocity Model
-      --mod, --model[=<modelName>...]
-                           use velocity model "modelname" for calculations,
-                             format is guessed.
-      --nd[=<nDModelFilename>...]
-                           "named discontinuities" velocity file
-      --tvel[=<tvelModelFilename>...]
-                           ".tvel" velocity file, ala ttimes
+      --mod, --model=model   use velocity model "modelname" for calculations,
+                               format is guessed.
+      --nd=model             "named discontinuities" velocity file
+      --tvel=model           ".tvel" velocity file, ala ttimes
 Output Type:
-      --csv                outputs as CSV
-      --gmt                outputs as GMT
-      --json               outputs as JSON
-      --nameddiscon        outputs as .nd named discontinuity model file
-      --svg                outputs as SVG
-      --text               outputs as Text
+      --csv                  outputs as CSV
+      --gmt                  outputs as GMT
+      --json                 outputs as JSON
+      --nameddiscon          outputs as .nd named discontinuity model file
+      --svg                  outputs as SVG
+      --text                 outputs as Text
