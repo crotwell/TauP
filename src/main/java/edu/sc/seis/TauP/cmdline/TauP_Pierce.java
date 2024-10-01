@@ -146,7 +146,7 @@ public class TauP_Pierce extends TauP_Time {
                         || (onlyTurnPoints && j != 0
                         && ((prevDepth - pierce[j].getDepth()) <= 0
                         && (pierce[j].getDepth() - nextDepth) >= 0))
-                        || (onlyUnderPoints
+                        || (onlyUnderPoints && j != 0 && j != pierce.length-1
                         && ((prevDepth - pierce[j].getDepth()) >= 0
                         && (pierce[j].getDepth() - nextDepth) <= 0)))) {
                     out.write(Outputs.formatDistance(calcDist));
