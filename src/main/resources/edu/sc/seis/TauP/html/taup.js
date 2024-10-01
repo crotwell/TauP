@@ -10,23 +10,6 @@ export function setup() {
   createModelDisconRadio();
   const tool = getToolName();
   enableParams(tool);
-  loadParamHelp().then(helpjson => {
-    for (let param of helpjson.params) {
-      for (let name of param.name) {
-        if (name.startsWith("-")) {name = name.slice(1, name.length);}
-        if (name.startsWith("-")) {name = name.slice(1, name.length);}
-
-        let el = document.querySelector(`#${name}`);
-        if (el != null) {
-          el.title = param.desc[0];
-        }
-        el = document.querySelector(`.${name}`);
-        if (el != null) {
-          el.title = param.desc[0];
-        }
-      }
-    }
-  });
   // copy cmd line equiv.
   document.querySelector(".cmdline button").onclick = function(){
     const taEl = document.querySelector(".cmdline pre");
@@ -43,6 +26,7 @@ export function setup() {
       navigator.clipboard.writeText(taEl.innerText);
     }
   }
+  enableToolHelp(tool);
 }
 
 export function createModelDisconRadio() {
@@ -82,7 +66,7 @@ export function createModelDisconRadio() {
  */
 export function process() {
   const tool = getToolName();
-  enableParams(tool)
+  enableParams(tool);
   const taup_url = form_url()
   const url_el = document.querySelector("#taup_url");
   url_el.textContent = taup_url;
@@ -91,6 +75,8 @@ export function process() {
   return display_cmdline(taup_url)
   .then( x => {
     return display_results(taup_url);
+  }).then( x => {
+    return enableToolHelp(tool).then(() => x);
   });
 }
 
@@ -297,14 +283,14 @@ export function form_url() {
 
   let islistdist = document.querySelector('input[name="islistdist"]').checked;
   let isregulardist = document.querySelector('input[name="isregulardist"]').checked;
-  let isevtdist = document.querySelector('input[name="isevtdist"]').checked;
-  let isstadist = document.querySelector('input[name="isstadist"]').checked;
-  let isazimuth = document.querySelector('input[name="isazimuth"]').checked;
-  let isbackazimuth = document.querySelector('input[name="isbackazimuth"]').checked;
+  let isevtdist = document.querySelector('input[name="isevent"]').checked;
+  let isstadist = document.querySelector('input[name="isstation"]').checked;
+  let isazimuth = document.querySelector('input[name="isaz"]').checked;
+  let isbackazimuth = document.querySelector('input[name="isbaz"]').checked;
   let istakeoffdist = document.querySelector('input[name="istakeoffdist"]').checked;
-  let isshootraydist = document.querySelector('input[name="isshootraydist"]').checked;
+  let israyparamdist = document.querySelector('input[name="israyparamdist"]').checked;
   let isSomeDistance = islistdist || isregulardist || (isevtdist && isstadist)
-      || istakeoffdist || isshootraydist;
+      || istakeoffdist || israyparamdist;
   if ( ! isSomeDistance ) {
     document.querySelector('input[name="islistdist"]').checked = true;
     islistdist = true;
@@ -403,28 +389,31 @@ export function form_url() {
       distparam += `&station=${stla},${stlo}`;
     }
     if (isazimuth) {
-      let az = document.querySelector('input[name="azimuth"]').value;
+      let az = document.querySelector('input[name="az"]').value;
       distparam += `&az=${az}`;
     }
     if (isbackazimuth) {
-      let baz = document.querySelector('input[name="backazimuth"]').value;
+      let baz = document.querySelector('input[name="baz"]').value;
       distparam += `&baz=${baz}`;
     }
     if (istakeoffdist) {
       let takeoffangle = document.querySelector('input[name="takeoffangle"]').value;
       distparam += `&takeoff=${takeoffangle}`;
     }
-    if (isshootraydist) {
-      let shootray = document.querySelector('input[name="shootray"]').value;
-      const shootrayunitSel = document.querySelector('input[name="shootrayunit"]:checked');
-      let shootrayunit = shootrayunitSel ? shootrayunitSel.value : "isshootraydeg";
+    if (israyparamdist) {
+      let rayparam = document.querySelector('input[name="rayparam"]').value;
+      const rayparamunitSel = document.querySelector('input[name="rayparamunit"]:checked');
+      let rayparamunit = rayparamunitSel ? rayparamunitSel.value : "israyparamdeg";
 
-      if (shootrayunit === "isshootraydeg") {
-        distparam += `&rayparamdeg=${shootray}`;
-      } else if (shootrayunit === "isshootraykm") {
-        distparam += `&rayparamkm=${shootray}`;
+      if (rayparamunit === "israyparamdeg") {
+        distparam += `&rayparamdeg=${rayparam}`;
+      } else if (rayparamunit === "israyparamkm") {
+        distparam += `&rayparamkm=${rayparam}`;
+      } else if (rayparamunit === "israyparamrad") {
+        distparam += `&rayparamkm=${rayparam}`;
+        distparam += `&rayparamrad=${rayparam}`;
       } else {
-        distparam += `&rayparamrad=${shootray}`;
+        throw new Exception(`Unknown ray param unit: ${rayparamunit}`)
       }
     }
     url += distparam;
@@ -522,8 +511,14 @@ export function form_url() {
     if (piercedepth.length > 0) {
       url += `&piercedepth=${piercedepth}`;
     }
-    if (piercelimit !== "all") {
-      url += `&piercelimit=${piercelimit}`;
+    if (piercelimit === "rev") {
+      url += `&${piercelimit}=true`;
+    } else if (piercelimit !== "turn") {
+      url += `&${piercelimit}=true`;
+    } else if (piercelimit !== "under") {
+      url += `&${piercelimit}=true`;
+    } else if (piercelimit !== "all") {
+      // no op, default
     }
   }
   if (toolname === "wavefront") {
@@ -689,8 +684,8 @@ export function enableParams(tool) {
   styleEl.textContent = styleStr;
 }
 
-export function loadParamHelp() {
-  const paramHelpUrl = `paramhelp?tool=time`;
+export function loadParamHelp(toolname) {
+  const paramHelpUrl = `paramhelp?tool=${toolname}`;
   let timeoutSec = 10;
   const controller = new AbortController();
   const signal = controller.signal;
@@ -712,6 +707,32 @@ export function loadParamHelp() {
     throw e;
   }).then( response => {
     return response.json();
+  });
+}
+
+export function enableToolHelp(toolname) {
+  return loadParamHelp(toolname).then(helpjson => {
+    for (let param of helpjson.params) {
+      for (let name of param.name) {
+        if (name.startsWith("-")) {name = name.slice(1, name.length);}
+        // also grab second dash for long params
+        if (name.startsWith("-")) {name = name.slice(1, name.length);}
+        let el = document.querySelector(`#${name}`);
+        if (el != null) {
+          el.title = param.desc[0];
+        }
+        el = document.querySelector(`.${name}`);
+        if (el != null) {
+          el.title = param.desc[0];
+        }
+        // some special ones
+        // try isname, for some checkboxes
+        el = document.querySelector(`#is${name}`);
+        if (el != null) {
+          el.title = param.desc[0];
+        }
+      }
+    }
   });
 }
 

@@ -54,14 +54,17 @@
   <summary>Parameters for: <span><a target="taupresults" href="" id="taup_url"></a></span></summary>
 
     <div class="tool_all cmdline">
-      <span>Equivalent Command Line: <button name="Copy">&#10697;</button></span>
+      <span>Equivalent Command Line: <button name="Copy" title="Copy command line">&#10697;</button></span>
       <pre id="cmdline"></pre>
     </div>
 
 <form>
 
     <fieldset class="model tool_all" >
-        <legend><a href="doc/models.html" target="taupdocs">Velocity Model:</a></legend>
+        <legend>
+          <a href="doc/models.html" target="taupdocs">Velocity Model:</a>
+          <span class="paramhelp" taupparam="model">?</span>
+        </legend>
         <input type="radio" name="model" id="iasp91" value="iasp91" checked/>
         <label for="iasp91"><a href="/velplot?model=iasp91&format=nameddiscon" target="taupdocs">iasp91</a></label>
         <input type="radio" name="model" id="ak135" value="ak135" />
@@ -124,27 +127,27 @@
           <input type="text" id="takeoffangle" name="takeoffangle" value="0" />
         </div>
         <div>
-          <input type="checkbox" id="isshootraydist" name="isshootraydist" />
-          <label for="shootray">
+          <input type="checkbox" id="israyparamdist" name="israyparamdist" />
+          <label for="rayparam">
               <span>Ray Param: </span>
           </label>
-          <input type="text" id="shootray" name="shootray" value="0" />
+          <input type="text" id="rayparam" name="rayparam" value="0" />
 
-          <input type="radio" id="isshootraydeg" name="shootrayunit" value="isshootraydeg" checked />
-          <label for="isshootraydeg">
+          <input type="radio" id="israyparamdeg" name="rayparamunit" value="israyparamdeg" checked />
+          <label for="israyparamdeg">
               <span>(s/deg): </span>
           </label>
-          <input type="radio" id="isshootraykm" name="shootrayunit" value="isshootraykm" />
-          <label for="isshootraykm">
+          <input type="radio" id="rayparamkm" name="rayparamunit" value="israyparamkm" />
+          <label for="israyparamkm">
               <span>(s/km): </span>
           </label>
-          <input type="radio" id="isshootrayrad" name="shootrayunit" value="isshootrayrad" />
-          <label for="isshootrayrad">
+          <input type="radio" id="israyparamrad" name="rayparamunit" value="israyparamrad" />
+          <label for="israyparamrad">
               <span>(s/rad): </span>
           </label>
         </div>
         <div>
-          <input type="checkbox" id="isevtdist" name="isevtdist" />
+          <input type="checkbox" id="isevent" name="isevent" />
           <label for="eventlat">
               <span>Event (lat/lon): </span>
           </label>
@@ -152,7 +155,7 @@
           <input type="number" id="eventlon" name="eventlon" value="-110" />
         </div>
         <div>
-          <input type="checkbox" id="isstadist" name="isstadist" />
+          <input type="checkbox" id="isstation" name="isstation" />
           <label for="stalat">
               <span> Station (lat/lon): </span>
           </label>
@@ -160,18 +163,18 @@
           <input type="number" id="stationlon" name="stationlon" value="-81" />
         </div>
         <div>
-          <input type="checkbox" id="isazimuth" name="isazimuth" />
-          <label for="azimuth">
+          <input type="checkbox" id="isaz" name="isaz" />
+          <label for="az">
               <span>Azimuth (deg): </span>
           </label>
-          <input type="number" id="azimuth" name="azimuth" value="0" />
+          <input type="number" id="az" name="az" value="0" />
         </div>
         <div>
-          <input type="checkbox" id="isbackazimuth" name="isbackazimuth" />
-          <label for="backazimuth">
+          <input type="checkbox" id="isbaz" name="isbaz" />
+          <label for="baz">
               <span>Back Azimuth (deg): </span>
           </label>
-          <input type="number" id="backazimuth" name="backazimuth" value="0" />
+          <input type="number" id="baz" name="baz" value="0" />
         </div>
     </fieldset>
 
@@ -195,10 +198,10 @@
     <fieldset class="tool_time tool_curve tool_find tool_spikes">
       <legend>Amplitude:</legend>
       <div>
-        <label for="amplitude">
+        <label for="amp">
             <span>Amplitude: </span>
         </label>
-        <input type="checkbox" id="amplitude" name="amplitude" checked />
+        <input type="checkbox" id="amp" name="amplitude" checked />
 
         <label for="mw">
             <span>Mw: </span>
@@ -249,12 +252,12 @@
 
         <input type="radio" name="pierce" id="pierce_all" value="all" checked />
         <label for="pierce_all">All</label>
-        <input type="radio" name="pierce" id="pierce_rev" value="rev"  />
-        <label for="pierce_rev">Rev</label>
-        <input type="radio" name="pierce" id="pierce_turn" value="turn" />
-        <label for="pierce_turn">Turn</label>
-        <input type="radio" name="pierce" id="pierce_under" value="under" />
-        <label for="pierce_under">Under</label>
+        <input type="radio" name="pierce" id="isrev" value="rev"  />
+        <label for="isrev">Rev</label>
+        <input type="radio" name="pierce" id="isturn" value="turn" />
+        <label for="isturn">Turn</label>
+        <input type="radio" name="pierce" id="isunder" value="under" />
+        <label for="isunder">Under</label>
     </fieldset>
 
     <fieldset class="tool_wavefront">
@@ -642,10 +645,12 @@
 </details>
 
 <div class="results">
-  <span>Results: <button name="CopyResults">&#10697;</button></span>
+  <span>Results: <button name="CopyResults" title="Copy results">&#10697;</button></span>
   <div id="results">
   </div>
 </div>
+
+<div id="popoverholder"></div>
 
 <script type="module" >
   import * as taup from "./taup.js";
