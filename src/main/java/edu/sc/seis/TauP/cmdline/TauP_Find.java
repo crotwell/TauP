@@ -82,9 +82,11 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
                 SeismicPhaseWalk walker = createWalker(tModRecDepth, recDepth, actualExcludeDepths);
                 List<ProtoSeismicPhase> walk = walker.findEndingPaths(maxActions);
 
-                if ((!distanceValues.isEmpty())) {
+                if (!distanceValues.isEmpty()) {
                     double[] rayParamRange = new double[2];
-                    if (getRayParamRange().length == 1) {
+                    if (getRayParamRange().length == 0) {
+                        rayParamRange = new double[0];
+                    } else if (getRayParamRange().length == 1) {
                         rayParamRange[0] = getRayParamRange()[0]-deltaRayParam;
                         rayParamRange[1] = getRayParamRange()[0]+deltaRayParam;
                     } else {
@@ -155,7 +157,7 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
             }
             arrivalList = timedArrivalList;
         }
-        if ( rayParamRange != null) {
+        if ( rayParamRange != null && rayParamRange.length == 2) {
             List<Arrival> rpArrivalList = new ArrayList<>();
             for (Arrival a : arrivalList) {
                 if (rayParamRange[0] <= a.getRayParam() && a.getRayParam() <= rayParamRange[1]) {
@@ -349,12 +351,12 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
     protected Double[] getRayParamRange() throws TauModelException {
 
         if (rayParamRangeDeg == null &&  rayParamRangeKm == null) {
-            return null;
+            return new Double[0];
         } else if (rayParamRangeDeg != null &&  rayParamRangeKm != null) {
             throw new CommandLine.ParameterException(spec.commandLine(),
                     "Only one of --rayparamdeg and --rayparamkm may be used");
         }
-        Double[] rpRange = null;
+        Double[] rpRange = new Double[0];
         if (rayParamRangeKm != null) {
             rpRange = new Double[rayParamRangeKm.length];
             rpRange[0] = rayParamRangeKm[0] / modelArgs.getTauModel().getRadiusOfEarth();
