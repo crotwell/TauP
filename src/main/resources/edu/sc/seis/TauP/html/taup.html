@@ -245,10 +245,10 @@
 
     <fieldset class="tool_pierce">
         <legend>Pierce:</legend>
-        <label for="piercedepth">
+        <label for="pierce">
             <span>Add Depths (km): </span>
         </label>
-        <input type="text" id="piercedepth" name="piercedepth" value="" />
+        <input type="text" id="pierce" name="piercedepth" value="" />
 
         <input type="radio" name="pierce" id="pierce_all" value="all" checked />
         <label for="pierce_all">All</label>
@@ -268,14 +268,14 @@
       </label>
       <input type="number" id="timestep" name="timestep" value="100" />
 
-      <fieldset class="tool_wavefront">
+      <fieldset class="tool_wavefront color">
           <legend>Color by:</legend>
-          <input type="radio" name="color" id="auto" value="auto" checked/>
-          <label for="auto">Time</label>
-          <input type="radio" name="color" id="phase" value="phase" />
-          <label for="auto">Phase</label>
-          <input type="radio" name="color" id="wavetype" value="wavetype" />
-          <label for="auto">WaveType</label>
+          <input type="radio" name="color" id="color_auto" value="auto" checked/>
+          <label for="color_auto">Time</label>
+          <input type="radio" name="color" id="color_phase" value="phase" />
+          <label for="color_phase">Phase</label>
+          <input type="radio" name="color" id="color_wavetype" value="wavetype" />
+          <label for="color_wavetype">WaveType</label>
       </fieldset>
 
       <label for="negdist">
@@ -385,7 +385,7 @@
                 <option value="degree">Distance in Degrees</option>
                 <option value="kilometer">Distance in Kilometers</option>
                 <option value="kilometer180">Distance in Kilometers, mod 180</option>
-                <option value="radian_pi">Distance in Radians, mod pi</option>
+                <option value="radian180">Distance in Radians, mod pi</option>
                 <option value="radian">Distance in Radians</option>
                 <option value="rayparamdeg">Ray Parameter (s/deg)</option>
                 <option value="rayparamrad">Ray Parameter (s/rad)</option>
@@ -436,7 +436,7 @@
                 <option value="degree">Distance in Degrees</option>
                 <option value="kilometer">Distance in Kilometers</option>
                 <option value="kilometer180">Distance in Kilometers, mod 180</option>
-                <option value="radian_pi">Distance in Radians, mod pi</option>
+                <option value="radian180">Distance in Radians, mod pi</option>
                 <option value="radian">Distance in Radians</option>
                 <option value="rayparamdeg">Ray Parameter (s/deg)</option>
                 <option value="rayparamrad">Ray Parameter (s/rad)</option>

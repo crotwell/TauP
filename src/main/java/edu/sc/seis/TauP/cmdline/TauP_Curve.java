@@ -68,6 +68,7 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
                 p_or_s = ColoringArgs.PWAVE;
             }
             boolean ensure180 = (xAxisType==AxisType.degree180 || yAxisType==AxisType.degree180
+                    || xAxisType==AxisType.kilometer180 || yAxisType==AxisType.kilometer180
                     || xAxisType==AxisType.radian180 || yAxisType==AxisType.radian180);
             if(phase.hasArrivals()) {
                 if (yAxisType==AxisType.theta) {

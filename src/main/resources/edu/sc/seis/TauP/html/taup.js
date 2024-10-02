@@ -509,15 +509,15 @@ export function form_url() {
   }
   if (toolname === "pierce") {
     if (piercedepth.length > 0) {
-      url += `&piercedepth=${piercedepth}`;
+      url += `&pierce=${piercedepth}`;
     }
     if (piercelimit === "rev") {
       url += `&${piercelimit}=true`;
-    } else if (piercelimit !== "turn") {
+    } else if (piercelimit === "turn") {
       url += `&${piercelimit}=true`;
-    } else if (piercelimit !== "under") {
+    } else if (piercelimit === "under") {
       url += `&${piercelimit}=true`;
-    } else if (piercelimit !== "all") {
+    } else if (piercelimit === "all") {
       // no op, default
     }
   }
