@@ -947,7 +947,7 @@ public class VelocityModel implements Cloneable, Serializable {
                 }
                 out.write("\n");
             }
-            out.write(vlay.getBotDepth()+" "+vlay.getBotPVelocity()+" "+vlay.getBotSVelocity()+" "+vlay.getBotDensity());
+            out.write(vlay.getBotDepth()+" "+vlay.getBotPVelocity()+" "+vlay.getBotSVelocity());
             if (!allDensityDefault) {
                 out.write(" "+vlay.getBotDensity());
             }
