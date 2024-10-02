@@ -258,7 +258,6 @@ tasks.register<JavaExec>("genModels") {
   outputs.files(layout.buildDirectory.file(outDirStr+"/ak135.taup"))
     outputs.files(layout.buildDirectory.file(outDirStr+"/iasp91.taup"))
     outputs.files(layout.buildDirectory.file(outDirStr+"/prem.taup"))
-    outputs.files(layout.buildDirectory.file(outDirStr+"/qdt.taup"))
     outputs.files(layout.buildDirectory.file(outDirStr+"/ak135favg.taup"))
     outputs.files(layout.buildDirectory.file(outDirStr+"/ak135fcont.taup"))
 }

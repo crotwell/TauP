@@ -404,7 +404,10 @@ you the phase list corresponding to <code class="code docutils literal notransla
 Similarly there are <code class="code docutils literal notranslate"><span class="pre">tts</span></code>, <code class="code docutils literal notranslate"><span class="pre">ttp+</span></code>,
 <code class="code docutils literal notranslate"><span class="pre">tts+</span></code>, <code class="code docutils literal notranslate"><span class="pre">ttbasic</span></code> and <code class="code docutils literal notranslate"><span class="pre">ttall</span></code>.</p>
 </div></blockquote>
-<p>It is also possible to generate a list of all possible phase paths within
+<p>The <code class="code docutils literal notranslate"><span class="pre">taup</span> <span class="pre">phase</span></code> tool can be very helpful in understanding the phase
+naming convention by providing a detailed description of the path a phase
+takes through the model.
+It is also possible to generate a list of all possible phase paths within
 a model, using the <code class="code docutils literal notranslate"><span class="pre">taup</span> <span class="pre">find</span></code> tool. This takes a
 <code class="code docutils literal notranslate"><span class="pre">--max</span> <span class="pre">n</span></code> argument that speficies the maximum number of interactions
 that the phase has with discontinuities in the model, other than start,
@@ -417,7 +420,7 @@ end and transmission without phase change.</p>
         </div>
       </div>
     <div class="clearer"></div>
-  </div>
+  </div> 
     <div class="footer">
       &#169;2024, Philip Crotwell.
       
@@ -433,5 +436,15 @@ end and transmission without phase change.</p>
     
 
     
+
+  <style>
+    @media screen and (min-width: 876px) {
+      div.body { max-width: 95%;}
+      div.document { width: unset;}
+      div.sphinxsidebar { margin-left: 10px; margin-right: 10px;}
+    }
+  </style>
+
+
   </body>
 </html>
