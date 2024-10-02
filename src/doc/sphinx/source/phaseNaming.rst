@@ -265,6 +265,9 @@ the depth to an interface involved in an interaction.
     Similarly there are :code:`tts`, :code:`ttp+`,
     :code:`tts+`, :code:`ttbasic` and :code:`ttall`.
 
+The :code:`taup phase` tool can be very helpful in understanding the phase
+naming convention by providing a detailed description of the path a phase
+takes through the model.
 It is also possible to generate a list of all possible phase paths within
 a model, using the :code:`taup find` tool. This takes a
 :code:`--max n` argument that speficies the maximum number of interactions
