@@ -1,6 +1,9 @@
-Usage: taup web [-p=<port>]
+Usage: taup web [-p=<port>] [--models=<extraModelNames>[,
+                <extraModelNames>...]]...
 Web based gui for the TauP Toolkit.
 
 Options:
 
+      --models=<extraModelNames>[,<extraModelNames>...]
+                      List of additional models to use
   -p, --port=<port>   port to use, defaults to 7049

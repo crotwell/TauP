@@ -2,42 +2,80 @@ import { startAnimation } from './wavefront_animation.js';
 
 import * as sp from './seisplotjs_3.1.5-SNAPSHOT_standalone.mjs';
 
+export function start() {
+  return setup().then(()=>{
+    // go ahead and process the form "as is" so user sees something
+    process();
+  });
+}
 /**
  * Set up form listeners and other initialization items.
  */
 export function setup() {
-  setupListeners();
-  createModelDisconRadio();
-  const tool = getToolName();
-  enableParams(tool);
-  // copy cmd line equiv.
-  document.querySelector(".cmdline button").onclick = function(){
-    const taEl = document.querySelector(".cmdline pre");
-    navigator.clipboard.writeText(taEl.innerText);
-  }
-  // copy results
-  document.querySelector(".results button").onclick = function(){
-    const taEl = document.querySelector("#results");
-    const childEl = taEl.firstChild;
-    if (childEl instanceof HTMLDivElement && childEl.firstChild instanceof SVGSVGElement) {
-      // assume SVG in div
-      navigator.clipboard.writeText(childEl.innerHTML);
-    } else {
+  return createModelNamesRadios().then(() => {
+    setupListeners();
+    const tool = getToolName();
+    enableParams(tool);
+    // copy cmd line equiv.
+    document.querySelector(".cmdline button").onclick = function(){
+      const taEl = document.querySelector(".cmdline pre");
       navigator.clipboard.writeText(taEl.innerText);
     }
-  }
-  enableToolHelp(tool);
+    // copy results
+    document.querySelector(".results button").onclick = function(){
+      const taEl = document.querySelector("#results");
+      const childEl = taEl.firstChild;
+      if (childEl instanceof HTMLDivElement && childEl.firstChild instanceof SVGSVGElement) {
+        // assume SVG in div
+        navigator.clipboard.writeText(childEl.innerHTML);
+      } else {
+        navigator.clipboard.writeText(taEl.innerText);
+      }
+    }
+    return tool;
+  }).then( (tool) => {
+    enableToolHelp(tool);
+    createModelDisconRadio();
+  });
+}
+
+export function createModelNamesRadios() {
+  const modelNamesURL = "modelnames";
+  return doSimpleFetch(modelNamesURL).then(res => {
+    if (res.ok) {
+      return res.json();
+    }
+  }).then(json => {
+    const modelFieldset = document.querySelector("#velocity_models");
+    if (json.length > 0) {
+      let inHtml = "";
+      let firstIsChecked = "checked";
+      for( const modName of json) {
+        inHtml += `<input type="radio" name="model" id="${modName}" value="${modName}" ${firstIsChecked}/>
+        <label for="${modName}"><a href="/velplot?model=${modName}&format=nameddiscon" target="taupdocs">${modName}</a></label>`;
+        firstIsChecked = "";
+      }
+      modelFieldset.innerHTML = inHtml;
+    }
+  });
 }
 
 export function createModelDisconRadio() {
   const disconDiv = document.querySelector('#modeldiscon');
   disconDiv.innerHTML = '';
-  const modelSel = document.querySelector('input[name="model"]:checked');
-  let model = modelSel ? modelSel.value : "iasp91";
+  let modelSel = document.querySelector('input[name="model"]:checked');
+  if (modelSel == null) {
+    // just try first one?
+    modelSel = document.querySelector('input[name="model"]');
+  }
+  let model = modelSel ? modelSel.value : "";
+  if (model.length == 0) { return;}
   const disconUrl = `velplot?mod=${model}&listdiscon=true&format=json`;
   doSimpleFetch(disconUrl).then(res => {
     if (res.ok) {
       return res.json();
+    } else {
+      return { model: []};
     }
   }).then(json => {
     const m = json.models[0];
@@ -237,10 +275,6 @@ export async function display_results(taup_url) {
         seisConfig.amplitudeMode = sp.scale.AMPLITUDE_MODE.Raw;
         seisConfig.doMarkers = false;
 
-        if (sddList.length > 0) {
-          console.log(`quake: ${sddList[0].quake}`);
-          sddList[0].markerList.forEach((m) => console.log(m.time));
-        }
         const seismograph = new sp.organizeddisplay.OrganizedDisplay(sddList, seisConfig);
         //const seismograph = new sp.seismograph.Seismograph(sddList, seisConfig);
         seismograph.addStyle(`
@@ -275,7 +309,7 @@ export function defaultFetchInitObj(mimeType) {
 export function form_url() {
   let toolname = getToolName();
   const modelSel = document.querySelector('input[name="model"]:checked');
-  let model = modelSel ? modelSel.value : "iasp91";
+  let model = modelSel ? modelSel.value : "";
   let phase = document.querySelector('input[name="phase"]').value;
   let evdepth = document.querySelector('input[name="evdepth"]').value;
   let stadepth = document.querySelector('input[name="stadepth"]').value;
@@ -324,7 +358,10 @@ export function form_url() {
     return encodeURI(url);
   }
   if (toolname !== "velplot" && toolname !== "refltrans") {
-    url = `${toolname}?model=${model}`;
+    url = `${toolname}?`;
+    if (model.length > 0) {
+      url += `model=${model}`;
+    }
     if (evdepth !== "0") {
       url += `&evdepth=${evdepth}`;
     }

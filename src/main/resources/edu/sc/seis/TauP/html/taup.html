@@ -65,16 +65,18 @@
           <a href="doc/models.html" target="taupdocs">Velocity Model:</a>
           <span class="paramhelp" taupparam="model">?</span>
         </legend>
-        <input type="radio" name="model" id="iasp91" value="iasp91" checked/>
-        <label for="iasp91"><a href="/velplot?model=iasp91&format=nameddiscon" target="taupdocs">iasp91</a></label>
-        <input type="radio" name="model" id="ak135" value="ak135" />
-        <label for="ak135"><a href="/velplot?model=ak135&format=nameddiscon" target="taupdocs">ak135</a></label>
-        <input type="radio" name="model" id="ak135fcont" value="ak135fcont" />
-        <label for="ak135fcont"><a href="/velplot?model=ak135fcont&format=nameddiscon" target="taupdocs">ak135fcont</a></label>
-        <input type="radio" name="model" id="ak135favg" value="ak135favg" />
-        <label for="ak135favg"><a href="/velplot?model=ak135favg&format=nameddiscon" target="taupdocs">ak135favg</a></label>
-        <input type="radio" name="model" id="prem" value="prem" />
-        <label for="prem"><a href="/velplot?model=prem&format=nameddiscon" target="taupdocs">prem</a></label>
+        <span id="velocity_models">
+          <input type="radio" name="model" id="iasp91" value="iasp91" checked/>
+          <label for="iasp91"><a href="/velplot?model=iasp91&format=nameddiscon" target="taupdocs">iasp91</a></label>
+          <input type="radio" name="model" id="ak135" value="ak135" />
+          <label for="ak135"><a href="/velplot?model=ak135&format=nameddiscon" target="taupdocs">ak135</a></label>
+          <input type="radio" name="model" id="ak135fcont" value="ak135fcont" />
+          <label for="ak135fcont"><a href="/velplot?model=ak135fcont&format=nameddiscon" target="taupdocs">ak135fcont</a></label>
+          <input type="radio" name="model" id="ak135favg" value="ak135favg" />
+          <label for="ak135favg"><a href="/velplot?model=ak135favg&format=nameddiscon" target="taupdocs">ak135favg</a></label>
+          <input type="radio" name="model" id="prem" value="prem" />
+          <label for="prem"><a href="/velplot?model=prem&format=nameddiscon" target="taupdocs">prem</a></label>
+      </span>
     </fieldset>
 
     <fieldset class="phase_depth tool_time tool_pierce tool_path tool_curve tool_phase tool_find tool_wavefront tool_spikes">
@@ -666,9 +668,7 @@
 <script type="module" >
   import * as taup from "./taup.js";
   // set up listeners on all the form inputs
-  taup.setup();
-  // go ahead and process the form "as is" so user sees something
-  taup.process();
+  taup.start();
 </script>
 
 <script type="module" src="getversion.js">

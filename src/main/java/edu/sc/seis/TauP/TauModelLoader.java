@@ -37,6 +37,7 @@ import java.io.StreamCorruptedException;
 import java.lang.ref.SoftReference;
 import java.nio.file.FileSystems;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -55,6 +56,8 @@ import java.util.zip.ZipFile;
 public class TauModelLoader {
 
     protected static String packageName = "/edu/sc/seis/TauP/StdModels";
+
+    public static List<String> defaultModelList = List.of("iasp91", "ak135", "ak135favg", "ak135fcont", "prem");
     
     public static TauModel load(String modelName) throws TauModelException {
         return load(modelName, System.getProperty("taup.model.path"));

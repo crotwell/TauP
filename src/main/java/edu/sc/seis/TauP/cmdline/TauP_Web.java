@@ -1,7 +1,12 @@
 package edu.sc.seis.TauP.cmdline;
 
+import edu.sc.seis.TauP.TauModelLoader;
+import edu.sc.seis.TauP.VelocityModel;
+import edu.sc.seis.TauP.VelocityModelException;
 import picocli.CommandLine;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Callable;
 
 import static edu.sc.seis.TauP.cmdline.TauP_Tool.ABREV_SYNOPSIS;
@@ -27,6 +32,14 @@ public class TauP_Web implements Callable<Integer> {
         try {
             TauP_WebServe tool = new TauP_WebServe();
             tool.port = port;
+            for (String modName : extraModelNames) {
+                VelocityModel vMod = TauModelLoader.loadVelocityModel(modName);
+                if (vMod == null) {
+                    // were not able to find it
+                    throw new VelocityModelException("Unable to load model: "+modName);
+                }
+            }
+            tool.additionalModels.addAll(extraModelNames);
 
             tool.init();
             tool.start();
@@ -42,4 +55,9 @@ public class TauP_Web implements Callable<Integer> {
     @CommandLine.Option(names = {"-p", "--port"}, defaultValue = "7049", description = "port to use, defaults to ${DEFAULT-VALUE}")
     int port = 7049;
 
+    @CommandLine.Option(names = {"--models"},
+            arity = "1..*",
+            description = "List of additional models to use"
+    )
+    List<String> extraModelNames = new ArrayList<>();
 }

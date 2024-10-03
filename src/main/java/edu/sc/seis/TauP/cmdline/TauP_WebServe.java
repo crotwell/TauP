@@ -83,6 +83,8 @@ public class TauP_WebServe extends TauP_Tool {
                     handleCmdLine(tool, queryParams, exchange);
                 } else if (path.equals("paramhelp")) {
                     handleParamHelp(queryParams, exchange);
+                } else if (path.equals("modelnames")) {
+                    handleKnownModels(queryParams, exchange);
                 } else {
                     TauP_Tool tool = createTool(path);
                     if (tool != null) {
@@ -160,7 +162,7 @@ public class TauP_WebServe extends TauP_Tool {
 
     static Pattern allowedModelNamePat = Pattern.compile("[^[\\w._-]]");
 
-    public static List<String> disableOptions = List.of("o", "output", "help", "version");
+    public static List<String> disableOptions = List.of("o", "output", "help", "version", "phasefile");
 
     public static List<String> queryParamsToCmdLineArgs(CommandLine.Model.CommandSpec spec,
                                                         Map<String, Deque<String>> queryParams) throws TauPException {
@@ -170,7 +172,7 @@ public class TauP_WebServe extends TauP_Tool {
             String dashedQP = (qp.length() == 1 ? "-" : "--")+qp;
             if (disableOptions.contains(qp)) {
                 // ignore these options
-                continue;
+                throw new TauPException("Query param not allowed: "+qp);
             }
 
             CommandLine.Model.OptionSpec op = spec.findOption(dashedQP);
@@ -268,6 +270,20 @@ public class TauP_WebServe extends TauP_Tool {
         throw new TauPException("Unable to create param help for "+exchange.getQueryString()+" "+(queryParams.containsKey("tool")));
     }
 
+    public void handleKnownModels(Map<String, Deque<String>> queryParams, HttpServerExchange exchange) {
+        JSONArray modList = new JSONArray();
+        if (additionalModels.isEmpty()) {
+            for (String mod : TauModelLoader.defaultModelList) {
+                modList.put(mod);
+            }
+        } else {
+            for (String mod : additionalModels) {
+                modList.put(mod);
+            }
+        }
+        exchange.getResponseSender().send(modList.toString(2));
+    }
+
     public void handleCmdLine(TauP_Tool tool, Map<String, Deque<String>> queryParams, HttpServerExchange exchange) throws TauPException {
         CommandLine cmd = new CommandLine(tool);
         CommandLine.Model.CommandSpec spec = cmd.getCommandSpec();
@@ -287,6 +303,18 @@ public class TauP_WebServe extends TauP_Tool {
         cmd.setOut(new PrintWriter(sw));
         CommandLine.Model.CommandSpec spec = cmd.getCommandSpec();
         List<String> argList = queryParamsToCmdLineArgs(spec, queryParams);
+        ArrayList<String> modList = new ArrayList<>();
+        if (queryParams.containsKey("mod")) {
+            modList.addAll(queryParams.get("mod"));
+        }
+        if (queryParams.containsKey("model")) {
+            modList.addAll(queryParams.get("model"));
+        }
+        for (String mod : modList) {
+            if ( ! additionalModels.contains(mod)) {
+                throw new VelocityModelException("Unknown model "+mod+" in "+tool.getClass().getName());
+            }
+        }
         argList.add("-o");
         argList.add("stdout");
         
@@ -360,6 +388,7 @@ public class TauP_WebServe extends TauP_Tool {
     // see edu.sc.seis.TauP.TauP_Web for picocli cmd line interface
     public int port = 7049;
 
+    public List<String> additionalModels = new ArrayList<>();
     /**
      * Allows TauP_Web to run as an application. Creates an instance of
      * TauP_Web.
