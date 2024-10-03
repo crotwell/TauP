@@ -75,7 +75,7 @@ export function createModelDisconRadio() {
     if (res.ok) {
       return res.json();
     } else {
-      return { model: []};
+      return { models: [ { discon: [] }]};
     }
   }).then(json => {
     const m = json.models[0];

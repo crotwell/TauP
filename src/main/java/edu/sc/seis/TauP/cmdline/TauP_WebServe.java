@@ -272,16 +272,22 @@ public class TauP_WebServe extends TauP_Tool {
 
     public void handleKnownModels(Map<String, Deque<String>> queryParams, HttpServerExchange exchange) {
         JSONArray modList = new JSONArray();
+        modList.putAll(getKnownModels());
+        exchange.getResponseSender().send(modList.toString(2));
+    }
+
+    public List<String> getKnownModels() {
+        List<String> out = new ArrayList<>();
         if (additionalModels.isEmpty()) {
             for (String mod : TauModelLoader.defaultModelList) {
-                modList.put(mod);
+                out.add(mod);
             }
         } else {
             for (String mod : additionalModels) {
-                modList.put(mod);
+                out.add(mod);
             }
         }
-        exchange.getResponseSender().send(modList.toString(2));
+        return out;
     }
 
     public void handleCmdLine(TauP_Tool tool, Map<String, Deque<String>> queryParams, HttpServerExchange exchange) throws TauPException {
@@ -310,8 +316,9 @@ public class TauP_WebServe extends TauP_Tool {
         if (queryParams.containsKey("model")) {
             modList.addAll(queryParams.get("model"));
         }
+        List<String> knownModels = getKnownModels();
         for (String mod : modList) {
-            if ( ! additionalModels.contains(mod)) {
+            if ( ! knownModels.contains(mod)) {
                 throw new VelocityModelException("Unknown model "+mod+" in "+tool.getClass().getName());
             }
         }
