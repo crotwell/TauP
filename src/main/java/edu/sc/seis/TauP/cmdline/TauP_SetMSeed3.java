@@ -143,7 +143,7 @@ public class TauP_SetMSeed3 extends TauP_AbstractPhaseTool {
                 rayCalculateable = DistanceRay.ofGeodeticStationEvent(
                         staLoc,
                         evLoc,
-                        geodeticArgs.getEllipFlattening()
+                        geodeticArgs.getInverseEllipFlattening()
                 );
             } else {
                 rayCalculateable = DistanceRay.ofStationEvent(staLoc, evLoc);

@@ -139,7 +139,7 @@ public class CmdLineOutputTest {
             "taup find --max 2 --deg 35 -h 100 --time 400 420 --exclude 210",
             "taup pierce --mod prem -h 200 -p S,P --deg 57.4",
             "taup pierce --turn --mod prem -h 200 -p S,P --deg 57.4",
-            "taup pierce --mod prem -h 200 -p S --sta 12 34.2 --evt -28 122 --pierce 2591 --nodiscon",
+            "taup pierce --mod prem -h 200 -p S --sta 12 34.2 --evt -28 122 --geodetic --pierce 2591 --nodiscon",
             "taup path --mod iasp91 -h 550 --deg 74 -p S,ScS,sS,sScS --gmt",
             "taup path --mod iasp91 -h 550 --deg 74 -p S,ScS,sS,sScS --svg",
             "taup phase --mod prem -h 200 -p PKiKP",
@@ -159,7 +159,7 @@ public class CmdLineOutputTest {
 
             "taup setsac -p P,S my_earthquake.sac",
             "taup setms3 -p P,S my_earthquake.ms3",
-            "taup time --quakeml my_midatlantic.qml --staxml my_stations.staml -p P,S"
+            "taup time --quakeml my_midatlantic.qml --staxml my_stations.staml --geodetic -p P,S"
     };
 
     /** 

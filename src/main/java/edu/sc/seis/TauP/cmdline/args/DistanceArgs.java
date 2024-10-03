@@ -14,7 +14,6 @@ import picocli.CommandLine.Option;
 
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -98,7 +97,7 @@ public class DistanceArgs {
                 for (Location staLoc : stationList) {
                     DistanceRay dr;
                     if (geodeticArgs.isGeodetic()) {
-                        dr = DistanceRay.ofGeodeticStationEvent(staLoc, evtLoc, geodeticArgs.getEllipFlattening());
+                        dr = DistanceRay.ofGeodeticStationEvent(staLoc, evtLoc, geodeticArgs.getInverseEllipFlattening());
                     } else {
                         dr = DistanceRay.ofStationEvent(staLoc, evtLoc);
                     }

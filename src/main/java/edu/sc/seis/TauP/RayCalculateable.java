@@ -61,7 +61,7 @@ public abstract class RayCalculateable {
     protected Double azimuth = null;
     protected Double backAzimuth = null;
     protected boolean geodetic = false;
-    protected Double flattening = null;
+    protected Double invFlattening = null;
     protected String description = null;
 
 }

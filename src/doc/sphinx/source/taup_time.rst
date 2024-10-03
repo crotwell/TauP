@@ -27,15 +27,17 @@ deep source at a distance of 57.4 degrees.
   :language: text
 
 If you have a QuakeML file for earthquakes or a StationXML file for stations
-and channels, you can use those to calculate the distances directly. For
+and channels, you can use those to calculate the distances directly. It is
+often useful to use the ``--geodetic`` when using latitudes and longitudes
+so that the distance calculation is more accurate. For
 example:
 
-.. literalinclude:: examples/taup_time_--quakeml_my_midatlantic.qml_--staxml_my_stations.staml_-p_P_S.cmd
+.. literalinclude:: examples/taup_time_--quakeml_my_midatlantic.qml_--staxml_my_stations.staml_--geodetic_-p_P_S.cmd
   :language: text
 
 gives you arrival times for S and P for these earthquakes at those stations.
 
-.. literalinclude:: examples/taup_time_--quakeml_my_midatlantic.qml_--staxml_my_stations.staml_-p_P_S
+.. literalinclude:: examples/taup_time_--quakeml_my_midatlantic.qml_--staxml_my_stations.staml_--geodetic_-p_P_S
   :language: text
 
 

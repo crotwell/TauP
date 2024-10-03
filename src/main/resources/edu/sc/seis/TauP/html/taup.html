@@ -153,6 +153,8 @@
           </label>
           <input type="number" id="eventlat" name="eventlat" value="30" />
           <input type="number" id="eventlon" name="eventlon" value="-110" />
+          <input type="checkbox" id="isgeodetic" name="isgeodetic" />
+          <label for="geodetic"><span>Geodetic</span></label>
         </div>
         <div>
           <input type="checkbox" id="isstation" name="isstation" />
@@ -161,6 +163,15 @@
           </label>
           <input type="number" id="stationlat" name="stationlat" value="35" />
           <input type="number" id="stationlon" name="stationlon" value="-81" />
+          <label for="geodeticflattening"><span>1/Ellipticity</span></label>
+          <input type="text" id="geodeticflattening" name="geodeticflattening" value="298.257223563" />
+          <label for="planetEllip">Planets</label>
+          <select id="knownPlanetEllip">
+            <option value="">choose</option>
+            <option value="298.257223563">Earth WGS84</option>
+            <option value="825">Moon</option>
+            <option value="170">Mars</option>
+          </select>
         </div>
         <div>
           <input type="checkbox" id="isaz" name="isaz" />

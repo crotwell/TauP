@@ -15,13 +15,13 @@ public class GeodeticArgs {
                     +"all travel time calculations are done in a purely spherical model.")
     protected boolean geodetic = false;
 
-    @CommandLine.Option(names= "--ellipflattening",
+    @CommandLine.Option(names= "--geodeticflattening",
             paramLabel = "f",
-            description = "Elliptical flattening for distance calculations when --geodetic, "
-                    +"defaults to WGS84 ~ 1/298.257")
-    protected double ellipflattening = DistAz.wgs85_flattening;
+            description = "Inverse Elliptical flattening for distance calculations when --geodetic, "
+                    +"defaults to WGS84 ~ 298.257. The distance calculation uses 1/x.")
+    protected double geodeticFlattening = DistAz.wgs85_invflattening;
 
-    public double getEllipFlattening() {
-        return ellipflattening;
+    public double getInverseEllipFlattening() {
+        return geodeticFlattening;
     }
 }

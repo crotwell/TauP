@@ -324,7 +324,10 @@ export function form_url() {
     return encodeURI(url);
   }
   if (toolname !== "velplot" && toolname !== "refltrans") {
-    url = `${toolname}?model=${model}&evdepth=${evdepth}`;
+    url = `${toolname}?model=${model}`;
+    if (evdepth !== "0") {
+      url += `&evdepth=${evdepth}`;
+    }
   } else if (toolname === "velplot" || isrefltranmodel === "refltrandepth") {
     url = `${toolname}?model=${model}`;
   } else {
@@ -396,6 +399,16 @@ export function form_url() {
       let baz = document.querySelector('input[name="baz"]').value;
       distparam += `&baz=${baz}`;
     }
+    if (isevtdist || isstadist || isazimuth || isbackazimuth) {
+      let isgeod = document.querySelector('input[name="isgeodetic"]').checked;
+      if (isgeod) {
+        distparam += `&geodetic=true`;
+        let ellip = document.querySelector('input[name="geodeticflattening"]').value;
+        if (ellip != "" && ellip !== "298.257223563") {
+          distparam += `&geodeticflattening=${ellip}`;
+        }
+      }
+    }
     if (istakeoffdist) {
       let takeoffangle = document.querySelector('input[name="takeoffangle"]').value;
       distparam += `&takeoff=${takeoffangle}`;
@@ -429,7 +442,7 @@ export function form_url() {
     }
   }
   if (toolname !== "velplot" && toolname !== "refltrans"){
-    if (stadepth !== 0) {
+    if (stadepth !== "0") {
       url += `&stadepth=${stadepth}`;
     }
     if (isScatter ) {
@@ -472,7 +485,7 @@ export function form_url() {
       url += `&legend=true`;
     }
     let mw = document.querySelector('input[name="mw"]').value;
-    if (mw !== 4.0) {
+    if (mw !== "4.0") {
       url += `&mw=${mw}`;
     }
   }
@@ -600,7 +613,8 @@ export function form_url() {
 export function setupListeners() {
   let in_items = Array.from(document.querySelectorAll("input"));
   let sel_items = Array.from(document.querySelectorAll("select"));
-  let all_input_items = in_items.concat(sel_items)
+  let all_input_items = in_items.concat(sel_items);
+  all_input_items = all_input_items.filter( inEl => inEl.getAttribute("id") !== "knownPlanetEllip");
   for (let inEl of all_input_items) {
     inEl.addEventListener("change", (event) => {
       process();
@@ -615,6 +629,17 @@ export function setupListeners() {
   if (!animateBtn) {console.log("animate button missing");}
   animateBtn.addEventListener("click", (event) => {
     startAnimation();
+  });
+  // ellipticity choice
+  document.querySelector("#knownPlanetEllip").addEventListener("change", (event) => {
+    document.querySelector("#geodeticflattening").value = event.target.value;
+    let isgeod = document.querySelector('input[name="isgeodetic"]').checked;
+    if (isgeod) {
+      process();
+    }
+  });
+  document.querySelector("#geodeticflattening").addEventListener("change", (event) => {
+    document.querySelector("#knownPlanetEllip").selectedIndex = -1;
   });
 }
 

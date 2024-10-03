@@ -7,7 +7,8 @@ import edu.sc.seis.seisFile.fdsnws.stationxml.Channel;
 
 public class DistAz {
 
-    public static final double wgs85_flattening = 1/298.257223563;
+    public static final double wgs85_invflattening = 298.257223563;
+    public static final double wgs85_flattening = 1/wgs85_invflattening;
 
     public static final double wgs85_meanEarthRadius = 6371.0088;
 

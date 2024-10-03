@@ -19,7 +19,7 @@ public class DistanceRay extends RayCalculateable {
           azimuth = dr.azimuth;
           backAzimuth = dr.backAzimuth;
           geodetic = dr.geodetic;
-          flattening = dr.flattening;
+          invFlattening = dr.invFlattening;
     }
     public static DistanceRay ofDegrees(double deg) {
         DistanceRay val = new DistanceRay();
@@ -47,14 +47,14 @@ public class DistanceRay extends RayCalculateable {
     }
 
 
-    public static DistanceRay ofGeodeticStationEvent(Location sta, Location evt, double flattening) {
-        DistAz distAz = new DistAz(sta, evt, flattening);
+    public static DistanceRay ofGeodeticStationEvent(Location sta, Location evt, double invFlattening) {
+        DistAz distAz = new DistAz(sta, evt, 1.0/invFlattening);
         DistanceRay val = ofDegrees(distAz.getDelta());
         val.staLatLon = sta;
         val.evtLatLon = evt;
         val.azimuth = distAz.getAz();
         val.backAzimuth = distAz.getBaz();
-        val.flattening = flattening;
+        val.invFlattening = invFlattening;
         val.geodetic = true;
         return val;
     }
