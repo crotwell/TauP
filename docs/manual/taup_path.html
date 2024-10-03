@@ -2214,7 +2214,7 @@ circle.discontinuity.iocb {
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Usage: taup path [--debug] [--geodetic] [--help] [--onlynameddiscon]
                  [--verbose] [--withtime] [--az=&lt;azimuth&gt;] [--az=&lt;azimuth&gt;]
                  [--baz=&lt;backAzimuth&gt;] [--baz=&lt;backAzimuth&gt;]
-                 [--color=&lt;coloring&gt;] [--ellipflattening=f]
+                 [--color=&lt;coloring&gt;] [--geodeticflattening=f]
                  [--mapwidth=&lt;mapwidth&gt;] [--mapwidthunit=&lt;mapWidthUnit&gt;]
                  [--maxpathinc=&lt;maxPathInc&gt;] [-o=&lt;outFile&gt;]
                  [--prop=&lt;toolPropsFilename&gt;] [--qml=&lt;quakemlFilename&gt;]
@@ -2238,14 +2238,15 @@ Options:
       --debug                enable debugging output
       --degminmax=deg deg    min and max distance in degrees for plotting
       --depthminmax=km km    min and max depth, km,  for plotting
-      --ellipflattening=f    Elliptical flattening for distance calculations
-                               when --geodetic, defaults to WGS84 ~ 1/298.257
       --geodetic             use geodetic latitude for distance calculations,
                                which implies an ellipticity. Default is
                                spherical. Note this only affects calculation of
                                distance from lat/lon pairs, all travel time
                                calculations are done in a purely spherical
                                model.
+      --geodeticflattening=f Inverse Elliptical flattening for distance
+                               calculations when --geodetic, defaults to WGS84
+                               ~ 298.257. The distance calculation uses 1/x.
       --help                 display this help message
       --mapwidth=&lt;mapwidth&gt;  plot width in inches for GMT, pixels for SVG.
       --mapwidthunit=&lt;mapWidthUnit&gt;

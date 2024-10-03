@@ -183,7 +183,7 @@ deep source at a distance of 57.4 degrees.</p>
 <p>Using <code class="code docutils literal notranslate"><span class="pre">-rev</span></code> would give you all points that the ray changes direction
 and <code class="code docutils literal notranslate"><span class="pre">-under</span></code> gives just the underside reflections.</p>
 <p>Using the <code class="code docutils literal notranslate"><span class="pre">-pierce</span></code> option</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>taup pierce --mod prem -h 200 -p S --sta 12 34.2 --evt -28 122 --pierce 2591 --nodiscon
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>taup pierce --mod prem -h 200 -p S --sta 12 34.2 --evt -28 122 --geodetic --pierce 2591 --nodiscon
 </pre></div>
 </div>
 <p>would give you just the points at which S crossed a depth of 2591 kilometers
@@ -192,11 +192,14 @@ to a station at (12 N, 34.2 E).
 Because we specified the latitudes and longitudes, we also get the
 latitudes and longitudes of
 the pierce points, useful for making
-a map view of where the rays encounter the chosen depth. Here is the output,
+a map view of where the rays encounter the chosen depth.
+Using the <code class="docutils literal notranslate"><span class="pre">--geodetic</span></code> is useful for the distance calculation with
+latitudes and longitudes.
+Here is the output,
 distance, depth, latitude and longitude, respectively.</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; S at  1424.11 seconds at    93.70 degrees for a    200.0 km deep source in the prem model with rayParam    8.717 s/deg.
-   31.56  2591.0  552.57    -17.87     89.41
-   61.47  2591.0  822.01     -3.89     62.40
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; S at  1423.51 seconds at    93.63 degrees for a    200.0 km deep source in the prem model with rayParam    8.718 s/deg.
+   31.57  2591.0  552.69    -17.87     89.40
+   61.38  2591.0  821.30     -3.93     62.47
 </pre></div>
 </div>
 <p>The usage is:</p>
@@ -204,7 +207,7 @@ distance, depth, latitude and longitude, respectively.</p>
                    [--nodiscon] [--rayp] [--rev] [--time] [--turn] [--under]
                    [--verbose] [--az=&lt;azimuth&gt;] [--az=&lt;azimuth&gt;]
                    [--baz=&lt;backAzimuth&gt;] [--baz=&lt;backAzimuth&gt;]
-                   [--ellipflattening=f] [--mw=&lt;mw&gt;] [-o=&lt;outFile&gt;]
+                   [--geodeticflattening=f] [--mw=&lt;mw&gt;] [-o=&lt;outFile&gt;]
                    [--prop=&lt;toolPropsFilename&gt;] [--qml=&lt;quakemlFilename&gt;]
                    [--staxml=&lt;stationxmlFilename&gt;] [--pierce=depth[,
                    depth...]]... [--rel=phase[,phase...]]... [--evt=l l]...
@@ -223,8 +226,6 @@ Options:
 
       --amp                  show amplitude factor for each phase
       --debug                enable debugging output
-      --ellipflattening=f    Elliptical flattening for distance calculations
-                               when --geodetic, defaults to WGS84 ~ 1/298.257
       --first, --onlyfirst   only output the first arrival for each phase, no
                                triplications
       --geodetic             use geodetic latitude for distance calculations,
@@ -233,6 +234,9 @@ Options:
                                distance from lat/lon pairs, all travel time
                                calculations are done in a purely spherical
                                model.
+      --geodeticflattening=f Inverse Elliptical flattening for distance
+                               calculations when --geodetic, defaults to WGS84
+                               ~ 298.257. The distance calculation uses 1/x.
       --help                 display this help message
       --mw=&lt;mw&gt;              scale amplitude by source moment magnitude
       --nodiscon             only prints pierce points for the depths added

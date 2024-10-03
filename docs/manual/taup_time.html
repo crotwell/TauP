@@ -146,9 +146,11 @@ Distance   Depth   Phase   Travel    Ray Param  Takeoff  Incident Station   Puri
 </pre></div>
 </div>
 <p>If you have a QuakeML file for earthquakes or a StationXML file for stations
-and channels, you can use those to calculate the distances directly. For
+and channels, you can use those to calculate the distances directly. It is
+often useful to use the <code class="docutils literal notranslate"><span class="pre">--geodetic</span></code> when using latitudes and longitudes
+so that the distance calculation is more accurate. For
 example:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>taup time --quakeml my_midatlantic.qml --staxml my_stations.staml -p P,S
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>taup time --quakeml my_midatlantic.qml --staxml my_stations.staml --geodetic -p P,S
 </pre></div>
 </div>
 <p>gives you arrival times for S and P for these earthquakes at those stations.</p>
@@ -156,19 +158,19 @@ example:</p>
 Distance   Depth   Phase   Travel    Ray Param  Takeoff  Incident Station   Purist   Purist
   (deg)     (km)   Name    Time (s)  p (s/deg)   (deg)    (deg)    (km)     Distance  Name 
 -------------------------------------------------------------------------------------------
-   30.47    10.0   P        372.86     8.830     27.47    27.43      0.0    30.47   = P     IU.KBS 2024-08-30T09:32:19 mww 5.6
-   38.44    10.0   P        441.67     8.405     26.05    26.00      0.0    38.44   = P     CO.JSC 2024-08-30T09:32:19 mww 5.6
-   57.62    10.0   P        590.08     7.048     21.60    21.57      0.0    57.62   = P     IU.TUC 2024-08-30T09:32:19 mww 5.6
-   30.47    10.0   S        674.96    15.646     28.26    28.21      0.0    30.47   = S     IU.KBS 2024-08-30T09:32:19 mww 5.6
-   38.44    10.0   S        797.62    15.089     27.17    27.13      0.0    38.44   = S     CO.JSC 2024-08-30T09:32:19 mww 5.6
-   57.62    10.0   S       1069.02    13.129     23.41    23.37      0.0    57.62   = S     IU.TUC 2024-08-30T09:32:19 mww 5.6
+   30.61    10.0   P        374.11     8.825     27.46    27.41      0.0    30.61   = P     IU.KBS 2024-08-30T09:32:19 mww 5.6
+   38.53    10.0   P        442.46     8.399     26.03    25.98      0.0    38.53   = P     CO.JSC 2024-08-30T09:32:19 mww 5.6
+   57.78    10.0   P        591.23     7.036     21.57    21.53      0.0    57.78   = P     IU.TUC 2024-08-30T09:32:19 mww 5.6
+   30.61    10.0   S        677.16    15.639     28.25    28.20      0.0    30.61   = S     IU.KBS 2024-08-30T09:32:19 mww 5.6
+   38.53    10.0   S        799.04    15.082     27.16    27.11      0.0    38.53   = S     CO.JSC 2024-08-30T09:32:19 mww 5.6
+   57.78    10.0   S       1071.16    13.110     23.38    23.34      0.0    57.78   = S     IU.TUC 2024-08-30T09:32:19 mww 5.6
 </pre></div>
 </div>
 <p>The usage is:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Usage: taup time [--amp] [--debug] [--first] [--geodetic] [--help] [--rayp]
                  [--time] [--verbose] [--az=&lt;azimuth&gt;] [--az=&lt;azimuth&gt;]
                  [--baz=&lt;backAzimuth&gt;] [--baz=&lt;backAzimuth&gt;]
-                 [--ellipflattening=f] [--mw=&lt;mw&gt;] [-o=&lt;outFile&gt;]
+                 [--geodeticflattening=f] [--mw=&lt;mw&gt;] [-o=&lt;outFile&gt;]
                  [--prop=&lt;toolPropsFilename&gt;] [--qml=&lt;quakemlFilename&gt;]
                  [--staxml=&lt;stationxmlFilename&gt;] [--rel=phase[,phase...]]...
                  [--evt=l l]... [--evt=l l]... [--sta=l l]... [--sta=l l]...
@@ -186,8 +188,6 @@ Options:
 
       --amp                  show amplitude factor for each phase
       --debug                enable debugging output
-      --ellipflattening=f    Elliptical flattening for distance calculations
-                               when --geodetic, defaults to WGS84 ~ 1/298.257
       --first, --onlyfirst   only output the first arrival for each phase, no
                                triplications
       --geodetic             use geodetic latitude for distance calculations,
@@ -196,6 +196,9 @@ Options:
                                distance from lat/lon pairs, all travel time
                                calculations are done in a purely spherical
                                model.
+      --geodeticflattening=f Inverse Elliptical flattening for distance
+                               calculations when --geodetic, defaults to WGS84
+                               ~ 298.257. The distance calculation uses 1/x.
       --help                 display this help message
       --mw=&lt;mw&gt;              scale amplitude by source moment magnitude
   -o, --output=&lt;outFile&gt;     output to file, default is stdout.
