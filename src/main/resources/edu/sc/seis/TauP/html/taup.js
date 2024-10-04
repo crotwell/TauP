@@ -156,33 +156,24 @@ export async function display_cmdline(taup_url) {
   const cmdline_url = `cmdline/${taup_url}`;
   doSimpleFetch(cmdline_url).catch(e => {
     console.log(`fetch error: ${e}`)
-    const container_el = document.querySelector("#results");
-    while(container_el.firstChild) {
-      container_el.removeChild(container_el.firstChild);
-    }
-    let message = "Network problem connecting to TauP server...\n\n";
-    message += e;
-    const pre_el = document.createElement("pre");
-    pre_el.textContent = message;
-    container_el.appendChild(pre_el);
+    let message = "Network problem connecting to TauP server...";
+    displayErrorMessage(message, cmdline_url, e);
     throw e;
   }).then( response => {
     const container_el = document.querySelector("#results");
     while(container_el.firstChild) {
       container_el.removeChild(container_el.firstChild);
     }
+    console.log(`cmdline response: ${response.ok} ${response.ok === true}`)
     if (!response.ok) {
-      const h5_el = document.createElement("h5");
-      h5_el.textContent = "Network response was not OK";
-      container_el.appendChild(h5_el);
-      return response.text().then(ans => {
-          const ans_el = document.createElement("p");
-          ans_el.textContent = ans;
+      return response.text().then( errMsg => {
+        let message = "Command line server response not ok";
+        displayErrorMessage(message, cmdline_url, new Error(errMsg));
       });
     } else {
       const cmdEl = document.querySelector("#cmdline");
       response.text().then( c => {
-        console.log(`response ok:  ${c}`)
+        console.log(`cmdline response ok:  ${c}`)
         cmdEl.textContent = c;
       });
     }
@@ -201,15 +192,8 @@ export async function display_results(taup_url) {
   fetchInitObj.signal = signal;
   return fetch(taup_url, fetchInitObj).catch(e => {
     console.log(`fetch error: ${e}`)
-    const container_el = document.querySelector("#results");
-    while(container_el.firstChild) {
-      container_el.removeChild(container_el.firstChild);
-    }
-    let message = "Network problem connecting to TauP server...\n\n";
-    message += e;
-    const pre_el = document.createElement("pre");
-    pre_el.textContent = message;
-    container_el.appendChild(pre_el);
+    let message = "Network problem connecting to TauP server...";
+    displayErrorMessage(message, taup_url, e);
     throw e;
   }).then( response => {
     const container_el = document.querySelector("#results");
@@ -217,13 +201,9 @@ export async function display_results(taup_url) {
       container_el.removeChild(container_el.firstChild);
     }
     if (!response.ok) {
-      const h5_el = document.createElement("h5");
-      h5_el.textContent = "Network response was not OK";
-      container_el.appendChild(h5_el);
-      return response.text().then(ans => {
-        const pre_el = document.createElement("pre");
-        pre_el.textContent = ans;
-        container_el.appendChild(pre_el);
+      return response.text().then( errMsg => {
+        let message = "TauP server response not ok";
+        displayErrorMessage(message, taup_url, new Error(errMsg));
       });
     } else if (format === "text" || format === "gmt") {
       return response.text().then(ans => {
@@ -288,6 +268,38 @@ export async function display_results(taup_url) {
       });
     }
   });
+}
+
+export function displayErrorMessage(title, the_url, exception) {
+  const container_el = document.querySelector("#results");
+  while(container_el.firstChild) {
+    container_el.removeChild(container_el.firstChild);
+  }
+  const msgDiv = document.createElement("div");
+  container_el.appendChild(msgDiv);
+  const head = document.createElement("h3");
+  head.classList.add("errmsg");
+  msgDiv.appendChild(head);
+  head.textContent = title;
+  const descEl = document.createElement("p");
+  msgDiv.appendChild(descEl);
+  const link = document.createElement("a");
+  descEl.appendChild(link);
+  link.setAttribute("href", the_url);
+  link.textContent = the_url;
+  const exceptDiv = document.createElement("div");
+  msgDiv.appendChild(exceptDiv);
+  if (exception.message && exception.message.startsWith("<html>")) {
+    const exHTML = Document.parseHTMLUnsafe(exception.message);
+    const body = exHTML.body;
+    for (const exEl of body.children) {
+      exceptDiv.appendChild(exEl);
+    }
+  } else {
+    const pre_el = document.createElement("pre");
+    pre_el.textContent = ""+exception;
+    exceptDiv.appendChild(pre_el);
+  }
 }
 
 export function defaultFetchInitObj(mimeType) {
@@ -756,19 +768,19 @@ export function loadParamHelp(toolname) {
   fetchInitObj.signal = signal;
   return fetch(paramHelpUrl, fetchInitObj).catch(e => {
     console.log(`fetch error: ${e}`)
-    const container_el = document.querySelector("#results");
-    while(container_el.firstChild) {
-      container_el.removeChild(container_el.firstChild);
-    }
-    let message = "Network problem connecting to TauP server...\n\n";
-    message += paramHelpUrl+"\n\n";
-    message += e;
-    const pre_el = document.createElement("pre");
-    pre_el.textContent = message;
-    container_el.appendChild(pre_el);
+    let message = "Network problem connecting to TauP server...";
+    displayErrorMessage(message, paramHelpUrl, e);
     throw e;
   }).then( response => {
-    return response.json();
+    if (!response.ok) {
+      return response.text().then( errMsg => {
+        let message = "Parameter help response not ok";
+        displayErrorMessage(message, taup_url, new Error(errMsg));
+      });
+      return {};
+    } else {
+      return response.json();
+    }
   });
 }
 
