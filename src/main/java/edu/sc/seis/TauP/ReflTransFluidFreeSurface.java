@@ -11,6 +11,32 @@ public class ReflTransFluidFreeSurface extends ReflTrans {
         }
     }
 
+
+    public double getFreeSurfaceReceiverFunP_r(double rayParam) {
+        return Complex.abs(getFreeSurfaceReceiverFunP(rayParam)[0]);
+    }
+
+    public double getFreeSurfaceReceiverFunP_z(double rayParam) {
+        return Complex.abs(getFreeSurfaceReceiverFunP(rayParam)[1]);
+    }
+
+    public Complex[] getFreeSurfaceReceiverFunP(double rayParam) {
+        return new Complex[] { new Complex(1), new Complex(-1)};
+    }
+
+    // no-ops for S, always 0
+    public double getFreeSurfaceReceiverFunSv_r(double rayParam) {
+        return Complex.abs(getFreeSurfaceReceiverFunSv(rayParam)[0]);
+    }
+
+    public double getFreeSurfaceReceiverFunSv_z(double rayParam) {
+        return Complex.abs(getFreeSurfaceReceiverFunSv(rayParam)[1]);
+    }
+
+    public Complex[] getFreeSurfaceReceiverFunSv(double rayParam) {
+        return new Complex[] { new Complex(0), new Complex(0)};
+    }
+
     @Override
     public Complex getComplexRpp(double rayParam) throws VelocityModelException {
         return new Complex(1);
