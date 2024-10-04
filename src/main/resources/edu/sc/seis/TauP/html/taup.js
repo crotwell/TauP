@@ -121,12 +121,13 @@ export function process() {
 export function valid_format(tool) {
   let formatSel = document.querySelector('input[name="format"]:checked');
   let format = formatSel ? formatSel.value : "text";
+  if (format === "nameddiscon" && tool !== "velplot") {
+    format = "text"; // shouldn't happen
+  }
   if (format === "svg" || format === "gmt") {
     if (tool === "phase" || tool === "time" || tool === "pierce"
         || tool === "find" || tool === "version") {
       format = "text";
-    } else if ( tool === "velplot" ) {
-      format = "svg";
     }
   }
   if (tool === "spikes") {
@@ -205,7 +206,7 @@ export async function display_results(taup_url) {
         let message = "TauP server response not ok";
         displayErrorMessage(message, taup_url, new Error(errMsg));
       });
-    } else if (format === "text" || format === "gmt") {
+    } else if (format === "text" || format === "gmt" || format === "nameddiscon") {
       return response.text().then(ans => {
         const pre_el = document.createElement("pre");
         if (ans.length != 0) {
@@ -265,6 +266,12 @@ export async function display_results(taup_url) {
         container_el.appendChild(seismograph);
         seismograph.draw();
 
+      });
+    } else {
+      let message = `Unknown output format: ${format}`;
+      console.log(message);
+      return response.text().then( errMsg => {
+        displayErrorMessage(message, taup_url, new Error(errMsg));
       });
     }
   });
@@ -701,6 +708,16 @@ export function enableParams(tool) {
   }
   let styleStr = ""
   // format radio
+  if (tool === "velplot") {
+    document.querySelector(`input[name="format"][value="nameddiscon"]`).removeAttribute("disabled");
+  } else {
+    document.querySelector(`input[name="format"][value="nameddiscon"]`).setAttribute("disabled", "disabled");
+    styleStr += `
+      label[for="format_nd"] {
+        color: lightgrey;
+      }
+    `;
+  }
   if ( tool === "time" || tool === "pierce" || tool == "phase"
       || tool == "find" || tool == "version") {
     document.querySelector(`input[name="format"][value="text"]`).removeAttribute("disabled");
@@ -720,7 +737,6 @@ export function enableParams(tool) {
     document.querySelector(`input[name="format"][value="json"]`).removeAttribute("disabled");
     document.querySelector(`input[name="format"][value="svg"]`).removeAttribute("disabled");
     document.querySelector(`input[name="format"][value="gmt"]`).removeAttribute("disabled");
-
 
   } else if (tool === "refltrans") {
     document.querySelector(`input[name="format"][value="text"]`).removeAttribute("disabled");
