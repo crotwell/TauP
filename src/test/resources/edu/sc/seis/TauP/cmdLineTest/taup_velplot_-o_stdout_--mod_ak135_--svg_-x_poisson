@@ -4,7 +4,7 @@
   <metadata>
     <taup>
       <command>taup velplot -o stdout &#45;&#45;mod ak135 &#45;&#45;svg -x poisson </command>
-      <version>3.0.0-SNAPSHOT5</version>
+      <version>3.0.0-SNAPSHOT6</version>
       <a href="https://github.com/crotwell/TauP">https://github.com/crotwell/TauP</a>
     <minmax xmin="0.22375440733972052" xmax="0.5" ymin="0.0" ymax="6371.0" />
     </taup>

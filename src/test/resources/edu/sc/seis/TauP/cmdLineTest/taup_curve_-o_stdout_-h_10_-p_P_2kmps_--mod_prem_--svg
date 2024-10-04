@@ -4,7 +4,7 @@
   <metadata>
     <taup>
       <command>taup curve -o stdout -h 10 -p P,2kmps &#45;&#45;mod prem &#45;&#45;svg </command>
-      <version>3.0.0-SNAPSHOT5</version>
+      <version>3.0.0-SNAPSHOT6</version>
       <a href="https://github.com/crotwell/TauP">https://github.com/crotwell/TauP</a>
     <minmax xmin="0.0" xmax="180.0" ymin="0.0" ymax="20015.086796020572" />
     </taup>
