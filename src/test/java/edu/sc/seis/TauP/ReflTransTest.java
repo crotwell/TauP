@@ -605,7 +605,7 @@ public class ReflTransTest {
         double topVs = topVp/Math.sqrt(3);
         double topDensity = 2.8;
         double flatRP = 0;
-        ReflTransFreeSurface coeff = new ReflTransFreeSurface(topVp,topVs,topDensity);
+        ReflTransSolidFreeSurface coeff = new ReflTransSolidFreeSurface(topVp,topVs,topDensity);
         Complex[] rsRecFuncP = coeff.getFreeSurfaceReceiverFunP(flatRP);
         assertEquals(0.0, Complex.abs(rsRecFuncP[0]), 1.0e-9);
         assertEquals(2.0, Complex.abs(rsRecFuncP[1]), 1.0e-9);
@@ -621,7 +621,7 @@ public class ReflTransTest {
         double topVs = 3;
         double topDensity = 2.8;
         double flatRP;
-        ReflTransFreeSurface coeff = new ReflTransFreeSurface(topVp,topVs,topDensity);
+        ReflTransSolidFreeSurface coeff = new ReflTransSolidFreeSurface(topVp,topVs,topDensity);
 
         // non vertical incidence
         for (flatRP = 0.0; flatRP < 1/topVp; flatRP+= 0.01) {

@@ -1,8 +1,8 @@
 package edu.sc.seis.TauP;
 
-public class ReflTransFreeSurface extends ReflTrans {
+public class ReflTransSolidFreeSurface extends ReflTransFreeSurface {
 
-    public ReflTransFreeSurface(double inVp, double inVs, double inDensity) throws VelocityModelException {
+    public ReflTransSolidFreeSurface(double inVp, double inVs, double inDensity) throws VelocityModelException {
         super(inVp, inVs, inDensity, 0.0, 0.0, 0.0);
         if (topVp*topVs*topDensity == 0.0) {
             throw new VelocityModelException("Free Surface Solid-solid reflection and transmission coefficients must have non-zero layer params:"
@@ -112,18 +112,22 @@ public class ReflTransFreeSurface extends ReflTrans {
         throw new VelocityModelException("Not legal for free surface");
     }
 
+    @Override
     public double getFreeSurfaceReceiverFunSh(double rayParam) {
         return 2.0;
     }
 
+    @Override
     public double getFreeSurfaceReceiverFunP_r(double rayParam) {
         return Complex.abs(getFreeSurfaceReceiverFunP(rayParam)[0]);
     }
 
+    @Override
     public double getFreeSurfaceReceiverFunP_z(double rayParam) {
         return Complex.abs(getFreeSurfaceReceiverFunP(rayParam)[1]);
     }
 
+    @Override
     public Complex[] getFreeSurfaceReceiverFunP(double rayParam) {
         calcTempVars(rayParam, true);
         double betaRpFactor = (1/(topVs*topVs)-2*sqRP);
@@ -139,14 +143,17 @@ public class ReflTransFreeSurface extends ReflTrans {
     }
 
 
+    @Override
     public double getFreeSurfaceReceiverFunSv_r(double rayParam) {
         return Complex.abs(getFreeSurfaceReceiverFunSv(rayParam)[0]);
     }
 
+    @Override
     public double getFreeSurfaceReceiverFunSv_z(double rayParam) {
         return Complex.abs(getFreeSurfaceReceiverFunSv(rayParam)[1]);
     }
 
+    @Override
     public Complex[] getFreeSurfaceReceiverFunSv(double rayParam) {
         calcTempVars(rayParam, false);
         double betaRpFactor = (1/(topVs*topVs)-2*sqRP);

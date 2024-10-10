@@ -172,9 +172,15 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
         System.err.println("Calc FSRF "+depth+" isdown"+downgoing);
         ReflTrans reflTranCoef = vMod.calcReflTransCoef(depth, downgoing);
 
-        yAxisType = List.of(ReflTransAxisType.FreeRecFuncPr, ReflTransAxisType.FreeRecFuncSvr,
-                ReflTransAxisType.FreeRecFuncPz, ReflTransAxisType.FreeRecFuncSvz, ReflTransAxisType.FreeRecFuncSh);
+        if (vMod.getVelocityLayer(0).getTopSVelocity() == 0.0) {
+            // ocean at free surface
+            yAxisType = List.of(ReflTransAxisType.FreeRecFuncPr,
+                    ReflTransAxisType.FreeRecFuncPz);
+        } else {
+            yAxisType = List.of(ReflTransAxisType.FreeRecFuncPr, ReflTransAxisType.FreeRecFuncSvr,
+                    ReflTransAxisType.FreeRecFuncPz, ReflTransAxisType.FreeRecFuncSvz, ReflTransAxisType.FreeRecFuncSh);
 
+        }
         return calculate(reflTranCoef, inpwave, inswave, inshwave, linearRayParam, angleStep);
     }
 
@@ -239,8 +245,9 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
         double minX = 0.0f;
         double maxX = 90.0f;
         if (linearRayParam) {
-            // max rp always S if using
-            maxX = 1.0 / ((inswave || inshwave) ? reflTranCoef.getTopVs() : reflTranCoef.getTopVp());
+            // max rp always S if using, but check for 0.0 from fluid
+            maxX = 1.0 / (((inswave || inshwave) && reflTranCoef.getTopVs()!=0.0) ? reflTranCoef.getTopVs() : reflTranCoef.getTopVp());
+
         }
         // slightly smaller as horizontal ray has error in Rpp calc, sign reversal
         float maxXPercent = 0.999999f;
@@ -356,13 +363,20 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
                 out.add(xyp);
             }
             if (yAxisType.contains(ReflTransAxisType.FreeRecFuncPz)) {
-                if (! (reflTranCoef instanceof ReflTransFreeSurface)) {
+                CalcReflTranFunction<Double, Double> calcFn=null;
+                if (reflTranCoef instanceof ReflTransSolidFreeSurface) {
+                    ReflTransSolidFreeSurface rtfree = (ReflTransSolidFreeSurface)reflTranCoef;
+                    calcFn = rtfree::getFreeSurfaceReceiverFunP_z;
+                } else if (reflTranCoef instanceof ReflTransFluidFreeSurface) {
+                    ReflTransFluidFreeSurface rtfree = (ReflTransFluidFreeSurface)reflTranCoef;
+                    calcFn = rtfree::getFreeSurfaceReceiverFunP_z;
+                } else {
                     throw new VelocityModelException("ReflTran not for free surface: "+(reflTranCoef.getClass().getName()));
                 }
-                ReflTransFreeSurface rtfree = (ReflTransFreeSurface)reflTranCoef;
+
                 XYPlottingData xyp_z = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV,
                         ReflTransAxisType.FreeRecFuncPz,
-                        rtfree::getFreeSurfaceReceiverFunP_z
+                        calcFn
                 );
                 out.add(xyp_z);
             }
@@ -552,8 +566,8 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
                 );
                 out.add(xyp);
             }
-            if (yAxisType.contains(ReflTransAxisType.FreeRecFuncSh) && reflTranCoef instanceof ReflTransFreeSurface) {
-                ReflTransFreeSurface rtfree = (ReflTransFreeSurface)reflTranCoef;
+            if (yAxisType.contains(ReflTransAxisType.FreeRecFuncSh) && reflTranCoef instanceof ReflTransSolidFreeSurface) {
+                ReflTransSolidFreeSurface rtfree = (ReflTransSolidFreeSurface)reflTranCoef;
                 XYPlottingData xyp_z = calculateForType(reflTranCoef, minX, maxX, step, linearRayParam, oneOverV,
                         ReflTransAxisType.FreeRecFuncSh,
                         rtfree::getFreeSurfaceReceiverFunSh

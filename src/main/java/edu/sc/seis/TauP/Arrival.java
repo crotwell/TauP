@@ -373,22 +373,11 @@ public class Arrival {
         VelocityLayer top = vMod.getVelocityLayer(0);
         double freeFactor;
         Complex[] freeSurfRF;
-        if (top.getTopSVelocity() != 0.0) {
-            // solid free surface
-            ReflTransFreeSurface rtFree = new ReflTransFreeSurface(top.getTopPVelocity(), top.getTopSVelocity(), top.getTopDensity());
-            if (getPhase().getFinalPhaseSegment().isPWave) {
-                freeSurfRF = rtFree.getFreeSurfaceReceiverFunP(getRayParam() / vMod.getRadiusOfEarth());
-            } else {
-                freeSurfRF = rtFree.getFreeSurfaceReceiverFunSv(getRayParam() / vMod.getRadiusOfEarth());
-            }
+        ReflTransFreeSurface rtFree = ReflTransFreeSurface.createReflTransFreeSurface(top.getTopPVelocity(), top.getTopSVelocity(), top.getTopDensity());
+        if (getPhase().getFinalPhaseSegment().isPWave) {
+            freeSurfRF = rtFree.getFreeSurfaceReceiverFunP(getRayParam() / vMod.getRadiusOfEarth());
         } else {
-            // fluid free surface, ie ocean, result is 2 but do calc anyway
-            ReflTransFluidFreeSurface rtFree = new ReflTransFluidFreeSurface(top.getTopPVelocity(), top.getTopDensity());
-            if (getPhase().getFinalPhaseSegment().isPWave) {
-                freeSurfRF = rtFree.getFreeSurfaceReceiverFunP(getRayParam() / vMod.getRadiusOfEarth());
-            } else {
-                freeSurfRF = rtFree.getFreeSurfaceReceiverFunSv(getRayParam() / vMod.getRadiusOfEarth());
-            }
+            freeSurfRF = rtFree.getFreeSurfaceReceiverFunSv(getRayParam() / vMod.getRadiusOfEarth());
         }
         freeFactor = Complex.abs(Complex.sqrt(freeSurfRF[0].times(freeSurfRF[0].plus(freeSurfRF[1].times(freeSurfRF[1])))));
         double geoSpread = getAmplitudeGeometricSpreadingFactor(); // 1/km

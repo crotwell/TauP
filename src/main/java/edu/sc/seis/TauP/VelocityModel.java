@@ -1663,20 +1663,13 @@ public class VelocityModel implements Cloneable, Serializable {
             if (downgoing) {
                 throw new VelocityModelException("Downgoing to free surface is not possible");
             }
-            if (belowSVel == 0.0) {
-                rtCoef = new ReflTransFluidFreeSurface(belowPVel, belowRho);
-            } else {
-                rtCoef = new ReflTransFreeSurface(belowPVel, belowSVel, belowRho);
-            }
+            rtCoef = ReflTransFreeSurface.createReflTransFreeSurface(belowPVel, belowSVel, belowRho);
         } else if (belowPVel == 0.0 || belowRho == 0.0) {
             if (!downgoing) {
                 throw new VelocityModelException("Upgoing to inverted free surface is not possible");
             }
-            if (aboveSVel == 0.0) {
-                rtCoef = new ReflTransFluidFreeSurface(abovePVel, aboveRho);
-            } else {
-                rtCoef = new ReflTransFreeSurface(abovePVel, aboveSVel, aboveRho);
-            }
+            rtCoef = ReflTransFreeSurface.createReflTransFreeSurface(abovePVel, aboveSVel, aboveRho);
+
         } else if (aboveSVel == 0.0 && belowSVel == 0.0) {
             rtCoef = new ReflTransFluidFluid(abovePVel, aboveRho, belowPVel, belowRho);
             if (!downgoing) {
