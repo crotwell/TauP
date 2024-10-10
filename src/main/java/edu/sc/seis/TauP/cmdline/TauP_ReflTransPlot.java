@@ -169,7 +169,6 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
         if (!vMod.isDisconDepth(depth)) {
             throw new CommandLine.ParameterException(spec.commandLine(), "Depth is not a discontinuity in " + vMod.getModelName() + ": " + depth);
         }
-        System.err.println("Calc FSRF "+depth+" isdown"+downgoing);
         ReflTrans reflTranCoef = vMod.calcReflTransCoef(depth, downgoing);
 
         if (vMod.getVelocityLayer(0).getTopSVelocity() == 0.0) {
