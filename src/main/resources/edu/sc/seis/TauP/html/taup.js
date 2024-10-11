@@ -121,7 +121,7 @@ export function process() {
 export function valid_format(tool) {
   let formatSel = document.querySelector('input[name="format"]:checked');
   let format = formatSel ? formatSel.value : "text";
-  if (format === "nameddiscon" && tool !== "velplot") {
+  if ((format === "nameddiscon" || format === "csv") && tool !== "velplot") {
     format = "text"; // shouldn't happen
   }
   if (format === "svg" || format === "gmt") {
@@ -206,20 +206,25 @@ export async function display_results(taup_url) {
         let message = "TauP server response not ok";
         displayErrorMessage(message, taup_url, new Error(errMsg));
       });
-    } else if (format === "text" || format === "gmt" || format === "nameddiscon") {
+    } else if (format === "text" || format === "gmt"
+        || format === "nameddiscon" || format === "csv") {
       return response.text().then(ans => {
         const pre_el = document.createElement("pre");
+        const samp_el = document.createElement("samp");
         if (ans.length != 0) {
-          pre_el.textContent = ans;
+          samp_el.textContent = ans;
         } else {
-          pre_el.textContent = "This page is intentionally blank...";
+          samp_el.textContent = "This page is intentionally blank...";
         }
+        pre_el.appendChild(samp_el);
         container_el.appendChild(pre_el);
       });
     } else if (format === "json") {
       return response.json().then(ans => {
         const pre_el = document.createElement("pre");
-        pre_el.textContent = JSON.stringify(ans, null, 2);
+        const samp_el = document.createElement("samp");
+        samp_el.textContent = JSON.stringify(ans, null, 2);
+        pre_el.appendChild(samp_el);
         container_el.appendChild(pre_el);
       });
     } else if (format === "svg") {
@@ -710,10 +715,15 @@ export function enableParams(tool) {
   // format radio
   if (tool === "velplot") {
     document.querySelector(`input[name="format"][value="nameddiscon"]`).removeAttribute("disabled");
+    document.querySelector(`input[name="format"][value="csv"]`).removeAttribute("disabled");
   } else {
     document.querySelector(`input[name="format"][value="nameddiscon"]`).setAttribute("disabled", "disabled");
+    document.querySelector(`input[name="format"][value="csv"]`).setAttribute("disabled", "disabled");
     styleStr += `
       label[for="format_nd"] {
+        color: lightgrey;
+      }
+      label[for="format_csv"] {
         color: lightgrey;
       }
     `;
