@@ -1,0 +1,48 @@
+
+form div {
+}
+form div.tools {
+  margin-bottom: 5px;
+  background-color: whitesmoke;
+}
+form div.tooloptions {
+  overflow-y: auto;
+  max-height: 30vh;
+  margin-top: 5px;
+  background-color: whitesmoke;
+}
+#results {
+  overflow-y: auto;
+  max-height: 80vh;
+}
+#results svg {
+  width: 75%;
+  height: 75%;
+}
+.errmsg {
+  color: red;
+}
+#cmdlinetext {
+  width: 85%;
+  background-color: whitesmoke;
+  border-color: lightgrey;
+  font-family: monospace;
+}
+input[type="text"].biginput {
+  width: 200px;
+}
+input[type="text"] {
+  width: 100px;
+}
+input[type="number"] {
+  width: 100px;
+}
+.oneline {
+  display: flex;
+}
+.oneline h3 {
+  margin-right: 1em;
+}
+sp-seismograph {
+  height: 400px;
+}

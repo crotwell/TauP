@@ -18,7 +18,7 @@ export function setup() {
     enableParams(tool);
     // copy cmd line equiv.
     document.querySelector(".cmdline button").onclick = function(){
-      const taEl = document.querySelector(".cmdline pre");
+      const taEl = document.querySelector("#cmdlinetext");
       navigator.clipboard.writeText(taEl.innerText);
     }
     // copy results
@@ -172,10 +172,10 @@ export async function display_cmdline(taup_url) {
         displayErrorMessage(message, cmdline_url, new Error(errMsg));
       });
     } else {
-      const cmdEl = document.querySelector("#cmdline");
+      const cmdEl = document.querySelector("#cmdlinetext");
       response.text().then( c => {
         console.log(`cmdline response ok:  ${c}`)
-        cmdEl.textContent = c;
+        cmdEl.innerText = c;
       });
     }
   });

@@ -3,47 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>TauP</title>
-    <style>
-      form {
-        overflow-y: auto;
-        max-height: 50vh;
-        background-color: whitesmoke;
-      }
-      #results {
-        overflow-y: auto;
-        max-height: 80vh;
-      }
-      #results svg {
-        width: 75%;
-        height: 75%;
-      }
-      .errmsg {
-        color: red;
-      }
-      .cmdline pre {
-        width: 85%;
-        background-color: whitesmoke;
-        border-color: lightgrey;
-      }
-      input[type="text"].biginput {
-        width: 200px;
-      }
-      input[type="text"] {
-        width: 100px;
-      }
-      input[type="number"] {
-        width: 100px;
-      }
-      .oneline {
-        display: flex;
-      }
-      .oneline h3 {
-        margin-right: 1em;
-      }
-      sp-seismograph {
-        height: 400px;
-      }
-    </style>
+    <link href="taup.css" rel="stylesheet" />
 </head>
 <body>
   <div class="oneline">
@@ -56,572 +16,17 @@
 <details open="true">
   <summary>Parameters for: <span><a target="taupresults" href="" id="taup_url"></a></span></summary>
 
-    <div class="tool_all cmdline">
-      <span>Equivalent Command Line: <button name="Copy" title="Copy command line">&#10697;</button></span>
-      <pre id="cmdline"></pre>
+    <div class="tool_all cmdline" title="Equivalent options for using the command line">
+      <span>Command Line: </span>
+      <span>
+        <button name="Copy" title="Copy command line">&#10697;</button>
+      </span>
+      <span id="cmdlinetext"></span>
     </div>
 
-<form>
-
-    <fieldset class="model tool_all" >
-        <legend>
-          <a href="doc/models.html" target="taupdocs">Velocity Model:</a>
-          <span class="paramhelp" taupparam="model">?</span>
-        </legend>
-        <span id="velocity_models">
-          <input type="radio" name="model" id="iasp91" value="iasp91" checked/>
-          <label for="iasp91"><a href="/velplot?model=iasp91&format=nameddiscon" target="taupdocs">iasp91</a></label>
-          <input type="radio" name="model" id="ak135" value="ak135" />
-          <label for="ak135"><a href="/velplot?model=ak135&format=nameddiscon" target="taupdocs">ak135</a></label>
-          <input type="radio" name="model" id="ak135fcont" value="ak135fcont" />
-          <label for="ak135fcont"><a href="/velplot?model=ak135fcont&format=nameddiscon" target="taupdocs">ak135fcont</a></label>
-          <input type="radio" name="model" id="ak135favg" value="ak135favg" />
-          <label for="ak135favg"><a href="/velplot?model=ak135favg&format=nameddiscon" target="taupdocs">ak135favg</a></label>
-          <input type="radio" name="model" id="prem" value="prem" />
-          <label for="prem"><a href="/velplot?model=prem&format=nameddiscon" target="taupdocs">prem</a></label>
-      </span>
-    </fieldset>
-
-    <fieldset class="phase_depth tool_time tool_pierce tool_path tool_curve tool_phase tool_find tool_wavefront tool_spikes">
-        <legend>Phase, Source:</legend>
-        <label for="phase">
-            <span><a href="doc/phaseNaming.html" target="taupdocs">Phase:</a> </span>
-        </label>
-        <input class="biginput" type="text" id="phase" name="phase" value="P,S"  />
-
-        <label for="evdepth" class="evdepth">
-            <span>Source Depth (km): </span>
-        </label>
-        <input id="evdepth" name="evdepth" value="0"  />
-
-        <label for="stadepth" class="stadepth">
-            <span>Receiver Depth (km): </span>
-        </label>
-        <input id="stadepth" name="stadepth" value="0"  />
-    </fieldset>
-    <fieldset class="tool_time tool_pierce tool_path tool_spikes">
-        <legend>Distance:</legend>
-        <div class="degree">
-          <input type="checkbox" id="islistdist" name="islistdist" checked />
-          <label for="distdeg">
-              <span>Distance (deg): </span>
-          </label>
-          <input type="text" id="distdeg" name="distdeg" value="35" required />
-        </div>
-        <div>
-          <input type="checkbox" id="isregulardist" name="isregulardist" />
-          <label>Regular (deg):</label>
-          <label for="distdegmin">
-              <span>Min: </span>
-          </label>
-          <input type="number" id="distdegmin" name="distdegmin" value="0"  />
-          <label for="distdegstep">
-              <span>Step: </span>
-          </label>
-          <input type="number" id="distdegstep" name="distdegstep" value="30"  />
-          <label for="distdegmax">
-              <span>Max: </span>
-          </label>
-          <input type="number" id="distdegmax" name="distdegmax" value="180" />
-        </div>
-        <div class=takeoff>
-          <input type="checkbox" id="istakeoffdist" name="istakeoffdist" />
-          <label for="takeoffangle">
-              <span>Takeoff Angle (deg): </span>
-          </label>
-          <input type="text" id="takeoffangle" name="takeoffangle" value="0" />
-        </div>
-        <div>
-          <input type="checkbox" id="israyparamdist" name="israyparamdist" />
-          <label for="rayparam">
-              <span>Ray Param: </span>
-          </label>
-          <input type="text" id="rayparam" name="rayparam" value="0" />
-
-          <input type="radio" id="israyparamdeg" name="rayparamunit" value="israyparamdeg" checked />
-          <label for="israyparamdeg">
-              <span>(s/deg): </span>
-          </label>
-          <input type="radio" id="rayparamkm" name="rayparamunit" value="israyparamkm" />
-          <label for="israyparamkm">
-              <span>(s/km): </span>
-          </label>
-          <input type="radio" id="israyparamrad" name="rayparamunit" value="israyparamrad" />
-          <label for="israyparamrad">
-              <span>(s/rad): </span>
-          </label>
-        </div>
-        <div>
-          <input type="checkbox" id="isevent" name="isevent" />
-          <label for="eventlat">
-              <span>Event (lat/lon): </span>
-          </label>
-          <input type="number" id="eventlat" name="eventlat" value="30" />
-          <input type="number" id="eventlon" name="eventlon" value="-110" />
-          <input type="checkbox" id="isgeodetic" name="isgeodetic" />
-          <label for="geodetic"><span>Geodetic</span></label>
-        </div>
-        <div>
-          <input type="checkbox" id="isstation" name="isstation" />
-          <label for="stalat">
-              <span> Station (lat/lon): </span>
-          </label>
-          <input type="number" id="stationlat" name="stationlat" value="35" />
-          <input type="number" id="stationlon" name="stationlon" value="-81" />
-          <label for="geodeticflattening"><span>1/Ellipticity</span></label>
-          <input type="text" id="geodeticflattening" name="geodeticflattening" value="298.257223563" />
-          <label for="planetEllip">Planets</label>
-          <select id="knownPlanetEllip">
-            <option value="">choose</option>
-            <option value="298.257223563">Earth WGS84</option>
-            <option value="825">Moon</option>
-            <option value="170">Mars</option>
-          </select>
-        </div>
-        <div>
-          <input type="checkbox" id="isaz" name="isaz" />
-          <label for="az">
-              <span>Azimuth (deg): </span>
-          </label>
-          <input type="number" id="az" name="az" value="0" />
-        </div>
-        <div>
-          <input type="checkbox" id="isbaz" name="isbaz" />
-          <label for="baz">
-              <span>Back Azimuth (deg): </span>
-          </label>
-          <input type="number" id="baz" name="baz" value="0" />
-        </div>
-    </fieldset>
-
-    <fieldset class="scatter tool_time tool_pierce tool_path tool_curve tool_phase  tool_wavefront tool_spikes">
-        <legend>Scattering:</legend>
-        <label for="isscatter">
-            <span>Scatter: </span>
-        </label>
-        <input type="checkbox" id="isscatter" name="isscatter" />
-
-        <label for="scatdepth">
-            <span>Depth (km): </span>
-        </label>
-        <input type="text" id="scatdepth" name="scatdepth" value="0" />
-
-        <label for="scatdist">
-            <span>Distance (deg): </span>
-        </label>
-        <input type="text" id="scatdist" name="scatdist" value="0" />
-    </fieldset>
-    <fieldset class="tool_time tool_curve tool_find tool_spikes">
-      <legend>Amplitude:</legend>
-      <div>
-        <label for="amp">
-            <span>Amplitude: </span>
-        </label>
-        <input type="checkbox" id="amp" name="amplitude" checked />
-
-        <label for="mw">
-            <span>Mw: </span>
-        </label>
-        <input type="number" id="mw" name="mw" value="4" />
-      </div>
-    </fieldset>
-    <fieldset class="tool_find">
-      <legend>Find:</legend>
-      <div>
-        <label for="maxaction">
-            <span>Max Action: </span>
-        </label>
-        <input type="number" id="maxaction" name="maxaction" value="2" />
-      </div>
-      <div>
-        <label for="discontinuities">
-            <span>Discontinuites: </span>
-        </label>
-        <span id="modeldiscon"></span>
-      </div>
-      <div class="degree">
-        <input type="checkbox" id="findlistdist" name="findlistdist" />
-        <label for="finddistdeg">
-            <span>Distance (deg): </span>
-        </label>
-        <input type="text" id="finddistdeg" name="finddistdeg" value="35"/>
-      </div>
-      <div>
-        <input type="checkbox" id="findtime" name="findtime" />
-        <label for="findtimemin">
-          <span>Time (s): </span>
-        </label>
-        <input type="text" id="findtimemin" name="findtimemin"/>
-        <label for="findtimemax">
-          <span>To: </span>
-        </label>
-        <input type="text" id="findtimemax" name="findtimemax"/>
-      </div>
-    </fieldset>
-
-    <fieldset class="tool_pierce">
-        <legend>Pierce:</legend>
-        <label for="pierce">
-            <span>Add Depths (km): </span>
-        </label>
-        <input type="text" id="pierce" name="piercedepth" value="" />
-
-        <input type="radio" name="pierce" id="pierce_all" value="all" checked />
-        <label for="pierce_all">All</label>
-        <input type="radio" name="pierce" id="isrev" value="rev"  />
-        <label for="isrev">Rev</label>
-        <input type="radio" name="pierce" id="isturn" value="turn" />
-        <label for="isturn">Turn</label>
-        <input type="radio" name="pierce" id="isunder" value="under" />
-        <label for="isunder">Under</label>
-    </fieldset>
-
-    <fieldset class="tool_wavefront">
-      <legend>Wavefront:</legend>
-
-      <label for="timestep">
-          <span>Timestep (s): </span>
-      </label>
-      <input type="number" id="timestep" name="timestep" value="100" />
-
-      <fieldset class="tool_wavefront color">
-          <legend>Color by:</legend>
-          <input type="radio" name="color" id="color_auto" value="auto" checked/>
-          <label for="color_auto">Time</label>
-          <input type="radio" name="color" id="color_phase" value="phase" />
-          <label for="color_phase">Phase</label>
-          <input type="radio" name="color" id="color_wavetype" value="wavetype" />
-          <label for="color_wavetype">WaveType</label>
-      </fieldset>
-
-      <label for="negdist">
-          <span>Negative Distances: </span>
-      </label>
-      <input type="checkbox" id="negdist" name="negdist" checked />
-      <button id="animate" type="button" >Animate</button>
-    </fieldset>
-
-    <fieldset class="tool_refltrans">
-      <legend>Reflection/Transmission:</legend>
-      <label for="refltran">
-          <span>Reflection and Transmission: </span>
-      </label>
-
-      <label for="anglestep">
-          <span>Step (deg): </span>
-      </label>
-      <input type="number" id="anglestep" name="anglestep" value="1" />
-
-      <input type="checkbox" id="indowngoing" name="indowngoing" checked />
-      <label for="indowngoing">
-          <span>Incident Downgoing: </span>
-      </label>
-
-      <div>
-        <input type="checkbox" id="inpwave" name="inpwave" checked />
-        <label for="inpwave">
-            <span>Incident P Wave: </span>
-        </label>
-
-        <input type="checkbox" id="inswave" name="inswave" checked />
-        <label for="inswave">
-            <span>Incident S Wave: </span>
-        </label>
-
-        <input type="checkbox" id="inshwave" name="inshwave" />
-        <label for="inshwave">
-            <span>Incident Sh Wave: </span>
-        </label>
-        <input type="checkbox" id="fsrf" name="fsrf" />
-        <label for="fsrf">
-            <span>Free Surface Receiver Function: </span>
-        </label>
-        <input type="checkbox" id="energyflux" name="energyflux" />
-        <label for="energyflux">
-            <span>Energy Flux: </span>
-        </label>
-      </div>
-      <div>
-        <input type="checkbox" id="xslowness" name="xslowness" checked />
-        <label for="xslowness">
-            <span>x is ray parameter: </span>
-        </label>
-
-        <input type="checkbox" id="absolute" name="absolute" checked />
-        <label for="absolute">
-            <span>absolute val: </span>
-        </label>
-      </div>
-
-      <div>
-        <input type="radio" name="isrefltranmodel" id="refltrandepth" value="refltrandepth" checked />
-        <label for="depth">
-              <span>Model Depth (km): </span>
-          </label>
-          <input type="number" id="depth" name="depth" value="35" />
-      </div>
-      <div>
-        <input type="radio" name="isrefltranmodel" id="refltranvalues" value="refltranvalues" />
-        <div>
-          <label for="topvp">
-              <span>top Vp (km/s): </span>
-          </label>
-          <input type="number" id="topvp" name="topvp" value="6.5" />
-          <label for="topvs">
-              <span>top Vs (km/s): </span>
-          </label>
-          <input type="number" id="topvs" name="topvs" value="3.75" />
-          <label for="topden">
-              <span>top Den (kg/m3): </span>
-          </label>
-          <input type="number" id="topden" name="topden" value="2.9" />
-        </div>
-        <div>
-          <label for="botvp">
-              <span>bot Vp (km/s): </span>
-          </label>
-          <input type="number" id="botvp" name="botvp" value="8" />
-          <label for="botvs">
-              <span>bot Vs (km/s): </span>
-          </label>
-          <input type="number" id="botvs" name="botvs" value="4.5" />
-          <label for="botden">
-              <span>bot Den (kg/m3): </span>
-          </label>
-          <input type="number" id="botden" name="botden" value="3.3" />
-        </div>
-      </div>
-    </fieldset>
-    <fieldset class="tool_curve">
-        <legend>Curve:</legend>
-        <div>
-            <label for="xaxis">X Axis</label>
-            <select name="xaxis" id="xaxis">
-                <option value="degree180">Distance in Degrees, mod 180</option>
-                <option value="degree">Distance in Degrees</option>
-                <option value="kilometer">Distance in Kilometers</option>
-                <option value="kilometer180">Distance in Kilometers, mod 180</option>
-                <option value="radian180">Distance in Radians, mod pi</option>
-                <option value="radian">Distance in Radians</option>
-                <option value="rayparamdeg">Ray Parameter (s/deg)</option>
-                <option value="rayparamrad">Ray Parameter (s/rad)</option>
-                <option value="rayparamkm">Ray Parameter (s/km)</option>
-                <option value="time">Time</option>
-                <option value="tau">Tau</option>
-                <option value="turndepth">Turn Depth</option>
-                <option value="takeoffangle">Takeoff Angle</option>
-                <option value="incidentangle">Incident Angle</option>
-                <option value="amp">P-Sv, Sh Amplitude</option>
-                <option value="amppsv">P-Sv Amplitude</option>
-                <option value="ampsh">Sh Amplitude</option>
-                <option value="geospread">Geometrical Spreading</option>
-                <option value="refltran">P-Sv, Sh Refl Trans</option>
-                <option value="refltranpsv">Only P-Sv Refl Trans</option>
-                <option value="refltransh">Only Sh Refl Trans</option>
-                <option value="tstar">t* attenuation</option>
-                <option value="attenuation">attenuation</option>
-                <option value="index">Sampling Index</option>
-            </select>
-
-            <input type="checkbox" id="xminmaxauto" name="xminmaxauto" checked />
-            <label for="xminmaxauto">
-                <span>Auto-range: </span>
-            </label>
-            <label for="xmin">
-                <span>Min: </span>
-            </label>
-            <input type="number" id="xmin" name="xmin" value="0" />
-            <label for="xmax">
-                <span>Max: </span>
-            </label>
-            <input type="number" id="xmax" name="xmax" value="0" />
-
-            <label for="xaxislog">
-                <span>Log: </span>
-            </label>
-            <input type="checkbox" id="xaxislog" name="xaxislog"  />
-            <label for="xaxisabs">
-                <span>Abs: </span>
-            </label>
-            <input type="checkbox" id="xaxisabs" name="xaxisabs"  />
-        </div>
-        <div>
-            <label for="yaxis">Y Axis</label>
-            <select name="yaxis" id="yaxis">
-                <option value="degree180">Distance in Degrees, mod 180</option>
-                <option value="degree">Distance in Degrees</option>
-                <option value="kilometer">Distance in Kilometers</option>
-                <option value="kilometer180">Distance in Kilometers, mod 180</option>
-                <option value="radian180">Distance in Radians, mod pi</option>
-                <option value="radian">Distance in Radians</option>
-                <option value="rayparamdeg">Ray Parameter (s/deg)</option>
-                <option value="rayparamrad">Ray Parameter (s/rad)</option>
-                <option value="rayparamkm">Ray Parameter (s/km)</option>
-                <option value="time" selected>Time</option>
-                <option value="tau">Tau</option>
-                <option value="turndepth">Turn Depth</option>
-                <option value="takeoffangle">Takeoff Angle</option>
-                <option value="incidentangle">Incident Angle</option>
-                <option value="amp">P-Sv, Sh Amplitude</option>
-                <option value="amppsv">Only P-Sv Amplitude</option>
-                <option value="ampsh">Only Sh Amplitude</option>
-                <option value="geospread">Geometrical Spreading</option>
-                <option value="refltran">P-Sv, Sh Refl Trans</option>
-                <option value="refltranpsv">Only P-Sv Refl Trans</option>
-                <option value="refltransh">Only Sh Refl Trans</option>
-                <option value="tstar">t* attenuation</option>
-                <option value="attenuation">attenuation</option>
-                <option value="index">Sampling Index</option>
-                <option value="theta">Theta</option>
-            </select>
-            <input type="checkbox" id="yminmaxauto" name="yminmaxauto" checked />
-            <label for="yminmaxauto">
-                <span>Auto-range: </span>
-            </label>
-            <label for="ymin">
-                <span>Min: </span>
-            </label>
-            <input type="number" id="ymin" name="ymin" value="0" />
-            <label for="ymax">
-                <span>Max: </span>
-            </label>
-            <input type="number" id="ymax" name="ymax" value="0" />
-            <label for="yaxislog">
-                <span>Log: </span>
-            </label>
-            <input type="checkbox" id="yaxislog" name="yaxislog"  />
-            <label for="yaxisabs">
-                <span>Abs: </span>
-            </label>
-            <input type="checkbox" id="yaxisabs" name="yaxisabs"  />
-        </div>
-        <div>
-          <label for="legend">
-              <span>Legend: </span>
-          </label>
-          <input type="checkbox" id="legend" name="legend" checked />
-
-        </div>
-
-    </fieldset>
-    <fieldset class="tool_velplot">
-        <legend>Velocity Model Plot:</legend>
-        <div>
-            <label for="velplotxaxis">X Axis</label>
-            <select name="xaxis" id="velplotxaxis">
-                <option value="depth">Depth</option>
-                <option value="radius">Radius</option>
-                <option value="velocity">P and S Velocity</option>
-                <option value="Vp">P Velocity</option>
-                <option value="Vs">S Velocity</option>
-                <option value="slownessdeg">P and S Slowness (s/deg)</option>
-                <option value="slownessdeg_p">P Slowness (s/deg)</option>
-                <option value="slownessdeg_s">S Slowness (s/deg)</option>
-                <option value="slownessrad">P and S Slowness (s/rad)</option>
-                <option value="slownessrad_p">P Slowness (s/rad)</option>
-                <option value="slownessrad_s">S Slowness (s/rad)</option>
-                <option value="density">Density</option>
-                <option value="velocity_density" selected>P and S Velocity and Density</option>
-                <option value="Q">Qp and Qs Attenuation</option>
-                <option value="Qp">Qp Attenuation</option>
-                <option value="Qs">Qs Attenuation</option>
-                <option value="vpvs">Vp/Vs Ratio</option>
-                <option value="vpdensity">Vp/Density Ratio</option>
-                <option value="vsdensity">Vs/Density Ratio</option>
-                <option value="poisson">Poisson's Ratio, 𝛎</option>
-                <option value="shearmodulus">Shear Modulus, 𝛍</option>
-                <option value="lambda">Lambda Lamé Parameter, 𝛌</option>
-                <option value="bulkmodulus">Bulk Modulus, 𝛫</option>
-                <option value="youngsmodulus">Young's Modulus, 𝚬</option>
-            </select>
-
-            <input type="checkbox" id="velplotxminmaxauto" name="velplotxminmaxauto" checked />
-            <label for="velplotxminmaxauto">
-                <span>Auto-range: </span>
-            </label>
-            <label for="velplotxmin">
-                <span>Min: </span>
-            </label>
-            <input type="number" id="velplotxmin" name="velplotxmin" value="0" />
-            <label for="velplotxmax">
-                <span>Max: </span>
-            </label>
-            <input type="number" id="velplotxmax" name="velplotxmax" value="0" />
-
-            <label for="velplotxaxislog">
-                <span>Log: </span>
-            </label>
-            <input type="checkbox" id="velplotxaxislog" name="velplotxaxislog"  />
-        </div>
-        <div>
-            <label for="velplotyaxis">Y Axis</label>
-            <select name="velplotyaxis" id="velplotyaxis">
-                <option value="depth"  selected>Depth</option>
-                <option value="radius">Radius</option>
-                <option value="velocity">P and S Velocity</option>
-                <option value="Vp">P Velocity</option>
-                <option value="Vs">S Velocity</option>
-                <option value="slownessdeg">P and S Slowness (s/deg)</option>
-                <option value="slownessdeg_p">P Slowness (s/deg)</option>
-                <option value="slownessdeg_s">S Slowness (s/deg)</option>
-                <option value="slownessrad">P and S Slowness (s/rad)</option>
-                <option value="slownessrad_p">P Slowness (s/rad)</option>
-                <option value="slownessrad_s">S Slowness (s/rad)</option>
-                <option value="density">Density</option>
-                <option value="velocity_density">P and S Velocity and Density</option>
-                <option value="Q">Qp and Qs Attenuation</option>
-                <option value="Qp">Qp Attenuation</option>
-                <option value="Qs">Qs Attenuation</option>
-                <option value="vpvs">Vp/Vs Ratio</option>
-                <option value="vpdensity">Vp/Density Ratio</option>
-                <option value="vsdensity">Vs/Density Ratio</option>
-                <option value="poisson">Poisson's Ratio, 𝛎</option>
-                <option value="shearmodulus">Shear Modulus, 𝛍</option>
-                <option value="lambda">Lamé's First Parameter, 𝛌</option>
-                <option value="bulkmodulus">Bulk Modulus, 𝛫</option>
-                <option value="youngsmodulus">Young's Modulus, 𝚬</option>
-            </select>
-            <input type="checkbox" id="velplotyminmaxauto" name="velplotyminmaxauto" checked />
-            <label for="velplotyminmaxauto">
-                <span>Auto-range: </span>
-            </label>
-            <label for="velplotymin">
-                <span>Min: </span>
-            </label>
-            <input type="number" id="velplotymin" name="velplotymin" value="0" />
-            <label for="velplotymax">
-                <span>Max: </span>
-            </label>
-            <input type="number" id="velplotymax" name="velplotymax" value="0" />
-            <label for="velplotyaxislog">
-                <span>Log: </span>
-            </label>
-            <input type="checkbox" id="velplotyaxislog" name="velplotyaxislog"  />
-        </div>
-        <div>
-          <label for="velplotlegend">
-              <span>Legend: </span>
-          </label>
-          <input type="checkbox" id="velplotlegend" name="velplotlegend" checked />
-        </div>
-
-    </fieldset>
-
-    <fieldset class="tool_all">
-        <legend>Format:</legend>
-        <input type="radio" name="format" id="format_text" value="text" checked />
-        <label for="format_text">Text</label>
-        <input type="radio" name="format" id="format_json" value="json" />
-        <label for="format_json">JSON</label>
-        <input type="radio" name="format" id="format_svg" value="svg" />
-        <label for="format_svg">SVG</label>
-        <input type="radio" name="format" id="format_gmt" value="gmt" />
-        <label for="format_gmt">GMT</label>
-        <input type="radio" name="format" id="format_nd" value="nameddiscon" />
-        <label for="format_gmt">ND</label>
-
-    </fieldset>
-    <fieldset class="tools tool_all">
+  <form>
+    <div class="tools">
+      <fieldset class="tools tool_all">
         <legend>Tools:</legend>
         <input type="radio" name="tool" id="tool_time" value="time" checked />
         <label for="tool_time">
@@ -658,8 +63,569 @@
         <input type="radio" name="tool" id="tool_version" value="version" />
         <label for="tool_version">
           <a href="doc/taup_version.html" target="taupdocs">Version</a></label>
-    </fieldset>
-</form>
+      </fieldset>
+      <fieldset class="tool_all">
+        <legend>Format:</legend>
+        <input type="radio" name="format" id="format_text" value="text" checked />
+        <label for="format_text">Text</label>
+        <input type="radio" name="format" id="format_json" value="json" />
+        <label for="format_json">JSON</label>
+        <input type="radio" name="format" id="format_svg" value="svg" />
+        <label for="format_svg">SVG</label>
+        <input type="radio" name="format" id="format_gmt" value="gmt" />
+        <label for="format_gmt">GMT</label>
+        <input type="radio" name="format" id="format_nd" value="nameddiscon" />
+        <label for="format_gmt">ND</label>
+      </fieldset>
+    </div>
+    <div>
+      <label>Paramters:</label>
+    </div>
+    <div class="tooloptions">
+      <fieldset class="model tool_all" >
+          <legend>
+            <a href="doc/models.html" target="taupdocs">Velocity Model:</a>
+          </legend>
+          <span id="velocity_models">
+            <input type="radio" name="model" id="iasp91" value="iasp91" checked/>
+            <label for="iasp91"><a href="/velplot?model=iasp91&format=nameddiscon" target="taupdocs">iasp91</a></label>
+            <input type="radio" name="model" id="ak135" value="ak135" />
+            <label for="ak135"><a href="/velplot?model=ak135&format=nameddiscon" target="taupdocs">ak135</a></label>
+            <input type="radio" name="model" id="ak135fcont" value="ak135fcont" />
+            <label for="ak135fcont"><a href="/velplot?model=ak135fcont&format=nameddiscon" target="taupdocs">ak135fcont</a></label>
+            <input type="radio" name="model" id="ak135favg" value="ak135favg" />
+            <label for="ak135favg"><a href="/velplot?model=ak135favg&format=nameddiscon" target="taupdocs">ak135favg</a></label>
+            <input type="radio" name="model" id="prem" value="prem" />
+            <label for="prem"><a href="/velplot?model=prem&format=nameddiscon" target="taupdocs">prem</a></label>
+        </span>
+      </fieldset>
+
+      <fieldset class="phase_depth tool_time tool_pierce tool_path tool_curve tool_phase tool_find tool_wavefront tool_spikes">
+          <legend>Phase, Source:</legend>
+          <label for="phase">
+              <span><a href="doc/phaseNaming.html" target="taupdocs">Phase:</a> </span>
+          </label>
+          <input class="biginput" type="text" id="phase" name="phase" value="P,S"  />
+
+          <label for="evdepth" class="evdepth">
+              <span>Source Depth (km): </span>
+          </label>
+          <input id="evdepth" name="evdepth" value="0"  />
+
+          <label for="stadepth" class="stadepth">
+              <span>Receiver Depth (km): </span>
+          </label>
+          <input id="stadepth" name="stadepth" value="0"  />
+      </fieldset>
+      <fieldset class="tool_time tool_pierce tool_path tool_spikes">
+          <legend>Distance:</legend>
+          <div class="degree">
+            <input type="checkbox" id="islistdist" name="islistdist" checked />
+            <label for="distdeg">
+                <span>Distance (deg): </span>
+            </label>
+            <input type="text" id="distdeg" name="distdeg" value="35" required />
+          </div>
+          <div>
+            <input type="checkbox" id="isregulardist" name="isregulardist" />
+            <label>Regular (deg):</label>
+            <label for="distdegmin">
+                <span>Min: </span>
+            </label>
+            <input type="number" id="distdegmin" name="distdegmin" value="0"  />
+            <label for="distdegstep">
+                <span>Step: </span>
+            </label>
+            <input type="number" id="distdegstep" name="distdegstep" value="30"  />
+            <label for="distdegmax">
+                <span>Max: </span>
+            </label>
+            <input type="number" id="distdegmax" name="distdegmax" value="180" />
+          </div>
+          <div class=takeoff>
+            <input type="checkbox" id="istakeoffdist" name="istakeoffdist" />
+            <label for="takeoffangle">
+                <span>Takeoff Angle (deg): </span>
+            </label>
+            <input type="text" id="takeoffangle" name="takeoffangle" value="0" />
+          </div>
+          <div>
+            <input type="checkbox" id="israyparamdist" name="israyparamdist" />
+            <label for="rayparam">
+                <span>Ray Param: </span>
+            </label>
+            <input type="text" id="rayparam" name="rayparam" value="0" />
+
+            <input type="radio" id="israyparamdeg" name="rayparamunit" value="israyparamdeg" checked />
+            <label for="israyparamdeg">
+                <span>(s/deg): </span>
+            </label>
+            <input type="radio" id="rayparamkm" name="rayparamunit" value="israyparamkm" />
+            <label for="israyparamkm">
+                <span>(s/km): </span>
+            </label>
+            <input type="radio" id="israyparamrad" name="rayparamunit" value="israyparamrad" />
+            <label for="israyparamrad">
+                <span>(s/rad): </span>
+            </label>
+          </div>
+          <div>
+            <input type="checkbox" id="isevent" name="isevent" />
+            <label for="eventlat">
+                <span>Event (lat/lon): </span>
+            </label>
+            <input type="number" id="eventlat" name="eventlat" value="30" />
+            <input type="number" id="eventlon" name="eventlon" value="-110" />
+            <input type="checkbox" id="isgeodetic" name="isgeodetic" />
+            <label for="geodetic"><span>Geodetic</span></label>
+          </div>
+          <div>
+            <input type="checkbox" id="isstation" name="isstation" />
+            <label for="stalat">
+                <span> Station (lat/lon): </span>
+            </label>
+            <input type="number" id="stationlat" name="stationlat" value="35" />
+            <input type="number" id="stationlon" name="stationlon" value="-81" />
+            <label for="geodeticflattening"><span>1/Ellipticity</span></label>
+            <input type="text" id="geodeticflattening" name="geodeticflattening" value="298.257223563" />
+            <label for="planetEllip">Planets</label>
+            <select id="knownPlanetEllip">
+              <option value="">choose</option>
+              <option value="298.257223563">Earth WGS84</option>
+              <option value="825">Moon</option>
+              <option value="170">Mars</option>
+            </select>
+          </div>
+          <div>
+            <input type="checkbox" id="isaz" name="isaz" />
+            <label for="az">
+                <span>Azimuth (deg): </span>
+            </label>
+            <input type="number" id="az" name="az" value="0" />
+          </div>
+          <div>
+            <input type="checkbox" id="isbaz" name="isbaz" />
+            <label for="baz">
+                <span>Back Azimuth (deg): </span>
+            </label>
+            <input type="number" id="baz" name="baz" value="0" />
+          </div>
+      </fieldset>
+
+      <fieldset class="scatter tool_time tool_pierce tool_path tool_curve tool_phase  tool_wavefront tool_spikes">
+          <legend>Scattering:</legend>
+          <label for="isscatter">
+              <span>Scatter: </span>
+          </label>
+          <input type="checkbox" id="isscatter" name="isscatter" />
+
+          <label for="scatdepth">
+              <span>Depth (km): </span>
+          </label>
+          <input type="text" id="scatdepth" name="scatdepth" value="0" />
+
+          <label for="scatdist">
+              <span>Distance (deg): </span>
+          </label>
+          <input type="text" id="scatdist" name="scatdist" value="0" />
+      </fieldset>
+      <fieldset class="tool_time tool_curve tool_find tool_spikes">
+        <legend>Amplitude:</legend>
+        <div>
+          <label for="amp">
+              <span>Amplitude: </span>
+          </label>
+          <input type="checkbox" id="amp" name="amplitude" checked />
+
+          <label for="mw">
+              <span>Mw: </span>
+          </label>
+          <input type="number" id="mw" name="mw" value="4" />
+        </div>
+      </fieldset>
+      <fieldset class="tool_find">
+        <legend>Find:</legend>
+        <div>
+          <label for="maxaction">
+              <span>Max Action: </span>
+          </label>
+          <input type="number" id="maxaction" name="maxaction" value="2" />
+        </div>
+        <div>
+          <label for="discontinuities">
+              <span>Discontinuites: </span>
+          </label>
+          <span id="modeldiscon"></span>
+        </div>
+        <div class="degree">
+          <input type="checkbox" id="findlistdist" name="findlistdist" />
+          <label for="finddistdeg">
+              <span>Distance (deg): </span>
+          </label>
+          <input type="text" id="finddistdeg" name="finddistdeg" value="35"/>
+        </div>
+        <div>
+          <input type="checkbox" id="findtime" name="findtime" />
+          <label for="findtimemin">
+            <span>Time (s): </span>
+          </label>
+          <input type="text" id="findtimemin" name="findtimemin"/>
+          <label for="findtimemax">
+            <span>To: </span>
+          </label>
+          <input type="text" id="findtimemax" name="findtimemax"/>
+        </div>
+      </fieldset>
+
+      <fieldset class="tool_pierce">
+          <legend>Pierce:</legend>
+          <label for="pierce">
+              <span>Add Depths (km): </span>
+          </label>
+          <input type="text" id="pierce" name="piercedepth" value="" />
+
+          <input type="radio" name="pierce" id="pierce_all" value="all" checked />
+          <label for="pierce_all">All</label>
+          <input type="radio" name="pierce" id="isrev" value="rev"  />
+          <label for="isrev">Rev</label>
+          <input type="radio" name="pierce" id="isturn" value="turn" />
+          <label for="isturn">Turn</label>
+          <input type="radio" name="pierce" id="isunder" value="under" />
+          <label for="isunder">Under</label>
+      </fieldset>
+
+      <fieldset class="tool_wavefront">
+        <legend>Wavefront:</legend>
+
+        <label for="timestep">
+            <span>Timestep (s): </span>
+        </label>
+        <input type="number" id="timestep" name="timestep" value="100" />
+
+        <fieldset class="tool_wavefront color">
+            <legend>Color by:</legend>
+            <input type="radio" name="color" id="color_auto" value="auto" checked/>
+            <label for="color_auto">Time</label>
+            <input type="radio" name="color" id="color_phase" value="phase" />
+            <label for="color_phase">Phase</label>
+            <input type="radio" name="color" id="color_wavetype" value="wavetype" />
+            <label for="color_wavetype">WaveType</label>
+        </fieldset>
+
+        <label for="negdist">
+            <span>Negative Distances: </span>
+        </label>
+        <input type="checkbox" id="negdist" name="negdist" checked />
+        <button id="animate" type="button" >Animate</button>
+      </fieldset>
+
+      <fieldset class="tool_refltrans">
+        <legend>Reflection/Transmission:</legend>
+        <label for="refltran">
+            <span>Reflection and Transmission: </span>
+        </label>
+
+        <label for="anglestep">
+            <span>Step (deg): </span>
+        </label>
+        <input type="number" id="anglestep" name="anglestep" value="1" />
+
+        <input type="checkbox" id="indowngoing" name="indowngoing" checked />
+        <label for="indowngoing">
+            <span>Incident Downgoing: </span>
+        </label>
+
+        <div>
+          <input type="checkbox" id="inpwave" name="inpwave" checked />
+          <label for="inpwave">
+              <span>Incident P Wave: </span>
+          </label>
+
+          <input type="checkbox" id="inswave" name="inswave" checked />
+          <label for="inswave">
+              <span>Incident S Wave: </span>
+          </label>
+
+          <input type="checkbox" id="inshwave" name="inshwave" />
+          <label for="inshwave">
+              <span>Incident Sh Wave: </span>
+          </label>
+          <input type="checkbox" id="fsrf" name="fsrf" />
+          <label for="fsrf">
+              <span>Free Surface Receiver Function: </span>
+          </label>
+          <input type="checkbox" id="energyflux" name="energyflux" />
+          <label for="energyflux">
+              <span>Energy Flux: </span>
+          </label>
+        </div>
+        <div>
+          <input type="checkbox" id="xslowness" name="xslowness" checked />
+          <label for="xslowness">
+              <span>x is ray parameter: </span>
+          </label>
+
+          <input type="checkbox" id="absolute" name="absolute" checked />
+          <label for="absolute">
+              <span>absolute val: </span>
+          </label>
+        </div>
+
+        <div>
+          <input type="radio" name="isrefltranmodel" id="refltrandepth" value="refltrandepth" checked />
+          <label for="depth">
+                <span>Model Depth (km): </span>
+            </label>
+            <input type="number" id="depth" name="depth" value="35" />
+        </div>
+        <div>
+          <input type="radio" name="isrefltranmodel" id="refltranvalues" value="refltranvalues" />
+          <div>
+            <label for="topvp">
+                <span>top Vp (km/s): </span>
+            </label>
+            <input type="number" id="topvp" name="topvp" value="6.5" />
+            <label for="topvs">
+                <span>top Vs (km/s): </span>
+            </label>
+            <input type="number" id="topvs" name="topvs" value="3.75" />
+            <label for="topden">
+                <span>top Den (kg/m3): </span>
+            </label>
+            <input type="number" id="topden" name="topden" value="2.9" />
+          </div>
+          <div>
+            <label for="botvp">
+                <span>bot Vp (km/s): </span>
+            </label>
+            <input type="number" id="botvp" name="botvp" value="8" />
+            <label for="botvs">
+                <span>bot Vs (km/s): </span>
+            </label>
+            <input type="number" id="botvs" name="botvs" value="4.5" />
+            <label for="botden">
+                <span>bot Den (kg/m3): </span>
+            </label>
+            <input type="number" id="botden" name="botden" value="3.3" />
+          </div>
+        </div>
+      </fieldset>
+      <fieldset class="tool_curve">
+          <legend>Curve:</legend>
+          <div>
+              <label for="xaxis">X Axis</label>
+              <select name="xaxis" id="xaxis">
+                  <option value="degree180">Distance in Degrees, mod 180</option>
+                  <option value="degree">Distance in Degrees</option>
+                  <option value="kilometer">Distance in Kilometers</option>
+                  <option value="kilometer180">Distance in Kilometers, mod 180</option>
+                  <option value="radian180">Distance in Radians, mod pi</option>
+                  <option value="radian">Distance in Radians</option>
+                  <option value="rayparamdeg">Ray Parameter (s/deg)</option>
+                  <option value="rayparamrad">Ray Parameter (s/rad)</option>
+                  <option value="rayparamkm">Ray Parameter (s/km)</option>
+                  <option value="time">Time</option>
+                  <option value="tau">Tau</option>
+                  <option value="turndepth">Turn Depth</option>
+                  <option value="takeoffangle">Takeoff Angle</option>
+                  <option value="incidentangle">Incident Angle</option>
+                  <option value="amp">P-Sv, Sh Amplitude</option>
+                  <option value="amppsv">P-Sv Amplitude</option>
+                  <option value="ampsh">Sh Amplitude</option>
+                  <option value="geospread">Geometrical Spreading</option>
+                  <option value="refltran">P-Sv, Sh Refl Trans</option>
+                  <option value="refltranpsv">Only P-Sv Refl Trans</option>
+                  <option value="refltransh">Only Sh Refl Trans</option>
+                  <option value="tstar">t* attenuation</option>
+                  <option value="attenuation">attenuation</option>
+                  <option value="index">Sampling Index</option>
+              </select>
+
+              <input type="checkbox" id="xminmaxauto" name="xminmaxauto" checked />
+              <label for="xminmaxauto">
+                  <span>Auto-range: </span>
+              </label>
+              <label for="xmin">
+                  <span>Min: </span>
+              </label>
+              <input type="number" id="xmin" name="xmin" value="0" />
+              <label for="xmax">
+                  <span>Max: </span>
+              </label>
+              <input type="number" id="xmax" name="xmax" value="0" />
+
+              <label for="xaxislog">
+                  <span>Log: </span>
+              </label>
+              <input type="checkbox" id="xaxislog" name="xaxislog"  />
+              <label for="xaxisabs">
+                  <span>Abs: </span>
+              </label>
+              <input type="checkbox" id="xaxisabs" name="xaxisabs"  />
+          </div>
+          <div>
+              <label for="yaxis">Y Axis</label>
+              <select name="yaxis" id="yaxis">
+                  <option value="degree180">Distance in Degrees, mod 180</option>
+                  <option value="degree">Distance in Degrees</option>
+                  <option value="kilometer">Distance in Kilometers</option>
+                  <option value="kilometer180">Distance in Kilometers, mod 180</option>
+                  <option value="radian180">Distance in Radians, mod pi</option>
+                  <option value="radian">Distance in Radians</option>
+                  <option value="rayparamdeg">Ray Parameter (s/deg)</option>
+                  <option value="rayparamrad">Ray Parameter (s/rad)</option>
+                  <option value="rayparamkm">Ray Parameter (s/km)</option>
+                  <option value="time" selected>Time</option>
+                  <option value="tau">Tau</option>
+                  <option value="turndepth">Turn Depth</option>
+                  <option value="takeoffangle">Takeoff Angle</option>
+                  <option value="incidentangle">Incident Angle</option>
+                  <option value="amp">P-Sv, Sh Amplitude</option>
+                  <option value="amppsv">Only P-Sv Amplitude</option>
+                  <option value="ampsh">Only Sh Amplitude</option>
+                  <option value="geospread">Geometrical Spreading</option>
+                  <option value="refltran">P-Sv, Sh Refl Trans</option>
+                  <option value="refltranpsv">Only P-Sv Refl Trans</option>
+                  <option value="refltransh">Only Sh Refl Trans</option>
+                  <option value="tstar">t* attenuation</option>
+                  <option value="attenuation">attenuation</option>
+                  <option value="index">Sampling Index</option>
+                  <option value="theta">Theta</option>
+              </select>
+              <input type="checkbox" id="yminmaxauto" name="yminmaxauto" checked />
+              <label for="yminmaxauto">
+                  <span>Auto-range: </span>
+              </label>
+              <label for="ymin">
+                  <span>Min: </span>
+              </label>
+              <input type="number" id="ymin" name="ymin" value="0" />
+              <label for="ymax">
+                  <span>Max: </span>
+              </label>
+              <input type="number" id="ymax" name="ymax" value="0" />
+              <label for="yaxislog">
+                  <span>Log: </span>
+              </label>
+              <input type="checkbox" id="yaxislog" name="yaxislog"  />
+              <label for="yaxisabs">
+                  <span>Abs: </span>
+              </label>
+              <input type="checkbox" id="yaxisabs" name="yaxisabs"  />
+          </div>
+          <div>
+            <label for="legend">
+                <span>Legend: </span>
+            </label>
+            <input type="checkbox" id="legend" name="legend" checked />
+
+          </div>
+
+      </fieldset>
+      <fieldset class="tool_velplot">
+          <legend>Velocity Model Plot:</legend>
+          <div>
+              <label for="velplotxaxis">X Axis</label>
+              <select name="xaxis" id="velplotxaxis">
+                  <option value="depth">Depth</option>
+                  <option value="radius">Radius</option>
+                  <option value="velocity">P and S Velocity</option>
+                  <option value="Vp">P Velocity</option>
+                  <option value="Vs">S Velocity</option>
+                  <option value="slownessdeg">P and S Slowness (s/deg)</option>
+                  <option value="slownessdeg_p">P Slowness (s/deg)</option>
+                  <option value="slownessdeg_s">S Slowness (s/deg)</option>
+                  <option value="slownessrad">P and S Slowness (s/rad)</option>
+                  <option value="slownessrad_p">P Slowness (s/rad)</option>
+                  <option value="slownessrad_s">S Slowness (s/rad)</option>
+                  <option value="density">Density</option>
+                  <option value="velocity_density" selected>P and S Velocity and Density</option>
+                  <option value="Q">Qp and Qs Attenuation</option>
+                  <option value="Qp">Qp Attenuation</option>
+                  <option value="Qs">Qs Attenuation</option>
+                  <option value="vpvs">Vp/Vs Ratio</option>
+                  <option value="vpdensity">Vp/Density Ratio</option>
+                  <option value="vsdensity">Vs/Density Ratio</option>
+                  <option value="poisson">Poisson's Ratio, 𝛎</option>
+                  <option value="shearmodulus">Shear Modulus, 𝛍</option>
+                  <option value="lambda">Lambda Lamé Parameter, 𝛌</option>
+                  <option value="bulkmodulus">Bulk Modulus, 𝛫</option>
+                  <option value="youngsmodulus">Young's Modulus, 𝚬</option>
+              </select>
+
+              <input type="checkbox" id="velplotxminmaxauto" name="velplotxminmaxauto" checked />
+              <label for="velplotxminmaxauto">
+                  <span>Auto-range: </span>
+              </label>
+              <label for="velplotxmin">
+                  <span>Min: </span>
+              </label>
+              <input type="number" id="velplotxmin" name="velplotxmin" value="0" />
+              <label for="velplotxmax">
+                  <span>Max: </span>
+              </label>
+              <input type="number" id="velplotxmax" name="velplotxmax" value="0" />
+
+              <label for="velplotxaxislog">
+                  <span>Log: </span>
+              </label>
+              <input type="checkbox" id="velplotxaxislog" name="velplotxaxislog"  />
+          </div>
+          <div>
+              <label for="velplotyaxis">Y Axis</label>
+              <select name="velplotyaxis" id="velplotyaxis">
+                  <option value="depth"  selected>Depth</option>
+                  <option value="radius">Radius</option>
+                  <option value="velocity">P and S Velocity</option>
+                  <option value="Vp">P Velocity</option>
+                  <option value="Vs">S Velocity</option>
+                  <option value="slownessdeg">P and S Slowness (s/deg)</option>
+                  <option value="slownessdeg_p">P Slowness (s/deg)</option>
+                  <option value="slownessdeg_s">S Slowness (s/deg)</option>
+                  <option value="slownessrad">P and S Slowness (s/rad)</option>
+                  <option value="slownessrad_p">P Slowness (s/rad)</option>
+                  <option value="slownessrad_s">S Slowness (s/rad)</option>
+                  <option value="density">Density</option>
+                  <option value="velocity_density">P and S Velocity and Density</option>
+                  <option value="Q">Qp and Qs Attenuation</option>
+                  <option value="Qp">Qp Attenuation</option>
+                  <option value="Qs">Qs Attenuation</option>
+                  <option value="vpvs">Vp/Vs Ratio</option>
+                  <option value="vpdensity">Vp/Density Ratio</option>
+                  <option value="vsdensity">Vs/Density Ratio</option>
+                  <option value="poisson">Poisson's Ratio, 𝛎</option>
+                  <option value="shearmodulus">Shear Modulus, 𝛍</option>
+                  <option value="lambda">Lamé's First Parameter, 𝛌</option>
+                  <option value="bulkmodulus">Bulk Modulus, 𝛫</option>
+                  <option value="youngsmodulus">Young's Modulus, 𝚬</option>
+              </select>
+              <input type="checkbox" id="velplotyminmaxauto" name="velplotyminmaxauto" checked />
+              <label for="velplotyminmaxauto">
+                  <span>Auto-range: </span>
+              </label>
+              <label for="velplotymin">
+                  <span>Min: </span>
+              </label>
+              <input type="number" id="velplotymin" name="velplotymin" value="0" />
+              <label for="velplotymax">
+                  <span>Max: </span>
+              </label>
+              <input type="number" id="velplotymax" name="velplotymax" value="0" />
+              <label for="velplotyaxislog">
+                  <span>Log: </span>
+              </label>
+              <input type="checkbox" id="velplotyaxislog" name="velplotyaxislog"  />
+          </div>
+          <div>
+            <label for="velplotlegend">
+                <span>Legend: </span>
+            </label>
+            <input type="checkbox" id="velplotlegend" name="velplotlegend" checked />
+          </div>
+
+      </fieldset>
+    </div>
+  </form>
 
 </details>
 
