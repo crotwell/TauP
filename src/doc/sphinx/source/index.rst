@@ -20,6 +20,7 @@ Release |release|, created |today|.
     overview
     distribution
     tools
+    calculations
     phaseNaming
     models
     programming
