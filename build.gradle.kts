@@ -306,6 +306,14 @@ tasks.register<Sync>("copyProgramExampleFiles") {
   into("src/doc/sphinx/source/programming")
 }
 
+tasks.register<Sync>("copyStdModelsToSphinx") {
+  from("src/main/resources/edu/sc/seis/TauP/StdModels") {
+      include("*.tvel")
+      include("*.nd")
+  }
+  into("src/doc/sphinx/source/_static/StdModels")
+}
+
 tasks.register<Exec>("sphinxMakeHtml") {
   workingDir("src/doc/sphinx")
   commandLine("make", "html")
@@ -313,6 +321,7 @@ tasks.register<Exec>("sphinxMakeHtml") {
   outputs.files(fileTree(layout.buildDirectory.dir("sphinx/html")))
   dependsOn("copyProgramExampleFiles")
   dependsOn("copyCmdLineHelpFiles")
+  dependsOn("copyStdModelsToSphinx")
 }
 tasks.register<Sync>("copySphinxToDocs") {
   from(tasks.named("sphinxMakeHtml"))

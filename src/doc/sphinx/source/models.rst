@@ -115,17 +115,17 @@ places in order until it finds a model that matches the name.
   Several standard models are precomputed and included within the distributed jar file.
   They are:
 
-  ===========  =============================
-  iasp91       :cite:t:`iasp` (default)
-  prem         :cite:t:`dziewonski_anderson`
-  ak135        :cite:t:`kennett:ak135`
-  ak135favg    :cite:t:`kennett:ak135f`
-  ak135fcont   :cite:t:`kennett:ak135f`
-  ===========  =============================
+  ===============================================   =============================
+  `iasp91 <_static/StdModels/iasp91.tvel>`_         :cite:t:`iasp` (default)
+  `prem <_static/StdModels/prem.nd>`_               :cite:t:`dziewonski_anderson`
+  `ak135 <_static/StdModels/ak135.tvel>`_           :cite:t:`kennett:ak135`
+  `ak135favg <_static/StdModels/ak135favg.nd>`_     :cite:t:`kennett:ak135f`
+  `ak135fcont <_static/StdModels/ak135fcont.nd>`_   :cite:t:`kennett:ak135f`
+  ===============================================   =============================
 
   We will consider adding other models to the distribution if
   they are of wide interest.
-  They are included within the distribution jar file but
+  They are included within the distribution jar file and
   taup can locate them with just the model name.
 
 * Within the taup.model.path property.
