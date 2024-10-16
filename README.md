@@ -54,7 +54,7 @@ Note: I have only tested this on Ubuntu on amd64.
 
 You may also get the lastest development version via
 ```
-sudo snap install taup --channel=--channel=latest/edge
+sudo snap install taup --channel=latest/edge
 ```
 
 ## Manually
