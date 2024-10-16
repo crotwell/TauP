@@ -18,6 +18,7 @@ Release |release|, created |today|.
     :includehidden:
 
     overview
+    install
     distribution
     tools
     calculations
