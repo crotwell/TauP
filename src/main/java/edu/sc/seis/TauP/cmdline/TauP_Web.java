@@ -5,6 +5,10 @@ import edu.sc.seis.TauP.VelocityModel;
 import edu.sc.seis.TauP.VelocityModelException;
 import picocli.CommandLine;
 
+import java.awt.Desktop;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -43,6 +47,14 @@ public class TauP_Web implements Callable<Integer> {
 
             tool.init();
             tool.start();
+
+            try {
+                if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+                    Desktop.getDesktop().browse(new URI("http://localhost:"+port));
+                }
+            } catch (IOException | URISyntaxException e) {
+                throw new RuntimeException(e);
+            }
         } catch (NoClassDefFoundError e) {
             System.err.println("TauP Web does not seem to be installed, a required jar is not on the classpath.");
             System.err.println(e.getMessage());
