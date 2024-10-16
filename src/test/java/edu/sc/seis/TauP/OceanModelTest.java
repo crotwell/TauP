@@ -200,4 +200,21 @@ public class OceanModelTest {
         arrivalList = distanceRay.calculate(seisPh);
         assertEquals(0, arrivalList.size(), phasename);
     }
+
+    @Test
+    public void marsLiquidLowerMantleTest() throws VelocityModelException, IOException, SlownessModelException, TauModelException {
+        VelocityModel marsVMod = VelocityModelTest.loadTestVelMod("MarsLiquidLowerMantle.nd");
+        assertEquals(0.0, marsVMod.getVelocityLayer(marsVMod.layerNumberAbove(1560)).getTopSVelocity());
+        TauModel tMod = TauModelLoader.createTauModel(marsVMod);
+        assertEquals(tMod.getCmbDepth(), 1679.894f, 0.001);
+        String phasename = "S";
+        SeismicPhase seisPh = SeismicPhaseFactory.createPhase(phasename, tMod, 0, 0);
+        assertTrue(seisPh.phasesExistsInModel());
+        seisPh = SeismicPhaseFactory.createPhase("SS", tMod, 0, 0);
+        assertTrue(seisPh.phasesExistsInModel());
+        seisPh = SeismicPhaseFactory.createPhase("SKS", tMod, 0, 0);
+        assertFalse(seisPh.phasesExistsInModel());
+        seisPh = SeismicPhaseFactory.createPhase("S1554PKP1554S", tMod, 0, 0);
+        assertTrue(seisPh.phasesExistsInModel());
+    }
 }

@@ -737,7 +737,7 @@ public class SeismicPhaseFactory {
                 proto.addToBranch(
                         tMod.getCmbBranch() - 1,
                         isPWave,
-                        isPWave,
+                        isPWave, //next same as curr for turn
                         endAction,
                         currLeg);
             }

@@ -269,6 +269,18 @@ public class TauModel implements Serializable {
         return tauBranches[0].length;
     }
 
+
+    /**
+     * Gets the branch that either has the depth as its top boundary, or
+     * strictly contains the depth. Also, we allow the bottommost branch to
+     * contain its bottom depth, so that the center if the earth is contained
+     * within the bottom branch.
+     */
+    public TauBranch getTauBranchAtDepth(double depth, boolean isPWave) throws TauModelException {
+        int idx = findBranch(depth);
+        return getTauBranch(idx, isPWave);
+    }
+
     public TauBranch getTauBranch(int branchNum, boolean isPWave) {
         if(isPWave) {
             return tauBranches[0][branchNum];

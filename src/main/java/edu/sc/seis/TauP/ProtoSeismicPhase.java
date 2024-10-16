@@ -427,7 +427,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
         if(endAction == TRANSUP && endBranch == 0) {
             failNext("cannot TRANSUP with end branch zero, already at surface: "+endBranch);
         }
-        if( ! isPWave && tMod.getSlownessModel().depthInFluid(tMod.getTauBranch(startBranch, isPWave).getTopDepth())) {
+        if( ! isPWave && tMod.isFluidBranch(startBranch)) {
             // S wave in fluid
             failNext("Attempt to have S wave in fluid layer in "+getName()+" "+startBranch+" to "+endBranch+" "+endActionString(endAction));
         }
@@ -473,6 +473,22 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
             minRayParam = Math.max(minRayParam, tMod.getTauBranch(endBranch,
                             isPWave)
                     .getMinTurnRayParam());
+
+
+            // careful S wave and fluid layers, know at least startBranch is not fluid from above check,
+            // stop path at first fluid layer
+            if ( !isPWave) {
+                for (int bNum = startBranch+1; bNum <= endBranch; bNum++) {
+                    if (tMod.isFluidBranch(bNum)) {
+                        // fluid at bottom, just trim these layers from turn segment
+                        endBranch = bNum - 1;
+                        minRayParam = Math.max(minRayParam, tMod.getTauBranch(endBranch,
+                                        isPWave)
+                                .getMinTurnRayParam());
+                        break;
+                    }
+                }
+            }
             // careful if the ray param cannot turn due to high slowness. Do not use these
             // layers if their top is in high slowness for the given ray parameter
             // and the bottom is not a critical reflection, rp > max rp in next branch
@@ -630,7 +646,6 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                 }
             }
         }
-
         if(isDownGoing) {
             if (startBranch > endBranch) {
                 // can't be downgoing as we are already below
