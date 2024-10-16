@@ -3,8 +3,8 @@
 Calculations
 ===================
 
-Distance
---------
+Spherical vs Elliptical
+-----------------------
 
 The TauP Toolkit, and the underlying methodology, are inheirently spherical. But
 of course the earth is not quite a sphere, and so there are differences
@@ -31,6 +31,18 @@ the :code:`--geodetic` parameter, which implies that the given latitudes
 are geodetic instead of geocentric.
 And for use with models of other planets,
 the default flattening can be changed with the :code:`--geodeticflattening`.
+
+Oceans
+------
+
+TauP is capable of handling models,
+like `ak135favg <_static/StdModels/ak135favg.nd>`_, that have an ocean layer.
+However, care should be taken with S waves as they cannot propigate in a fliud
+layer. So the phase SS doesn't exist in ak135favg. Also, the default station
+depth is the model surface, but we generall don't think of seismic stations
+floating on top of the ocean, so it may be more appropriate to locate the
+station at depth, on the bottom of the ocean layer. Or perhaps in this case,
+using `ak135fcont <_static/StdModels/ak135fcont.nd>`_ is more appropriate.
 
 Amplitude
 ---------
@@ -59,4 +71,7 @@ The factors that contribute to this estimate are:
 * The free surface receiver function value, if the receiver depth is zero.
 
 Amplitudes for seismic waves are notoriously difficult to calulate without error,
-and so the values given should be taken with a healthy dose of skepticism.
+and so the values given should be taken with a healthy dose of skepticism. In
+addition, for large earthquakes the amplitude of body wave phases will saturate.
+So a larger magnitude will not generate a larger arrival amplitude, even 
+though this calculation will be larger.
