@@ -4,7 +4,7 @@
   <metadata>
     <taup>
       <command>taup path &#45;&#45;mod iasp91 -h 550 &#45;&#45;deg 74 -p S,ScS,sS,sScS &#45;&#45;svg -o stdout </command>
-      <version>3.0.0-SNAPSHOT6</version>
+      <version>3.0.0-SNAPSHOT7</version>
       <a href="https://github.com/crotwell/TauP">https://github.com/crotwell/TauP</a>
     </taup>
   </metadata>

@@ -4,7 +4,7 @@
   <metadata>
     <taup>
       <command>taup wavefront -o stdout &#45;&#45;mod ak135 &#45;&#45;svg -h 100 -p P,S,PKIKP </command>
-      <version>3.0.0-SNAPSHOT6</version>
+      <version>3.0.0-SNAPSHOT7</version>
       <a href="https://github.com/crotwell/TauP">https://github.com/crotwell/TauP</a>
     </taup>
   </metadata>
