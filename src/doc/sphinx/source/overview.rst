@@ -32,6 +32,8 @@ The latest version of this documentation is available at
 
 The latest source is at `GitHub <https://github.com/crotwell/TauP>`_.
 
-If you find the TauP Toolkit useful, please cite :cite:t:`taupsrl` as well
-as the `Zenodo DOI <https://zenodo.org/doi/10.5281/zenodo.10794857>`_
-for the version you are using.
+If you find TauP useful and would like to cite it, please use the following:
+
+  Crotwell, H. P., T. J. Owens, and J. Ritsema (1999). The TauP Toolkit: Flexible seismic travel-time and ray-path utilities, Seismological Research Letters 70, 154–160.
+
+  Crotwell, H. P. (2022). The TauP Toolkit (2.6.1). Zenodo. https://doi.org/10.5281/zenodo.10794858
