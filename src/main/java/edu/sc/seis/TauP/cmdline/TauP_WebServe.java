@@ -95,7 +95,11 @@ public class TauP_WebServe extends TauP_Tool {
                         ResourceHandler resHandler = new ResourceHandler(
                                 new ClassPathResourceManager(TauP_Web.class.getClassLoader(),
                                         "edu/sc/seis/TauP/html"));
-                        MimeMappings nmm = MimeMappings.builder(true).addMapping("mjs", "application/javascript").build();
+                        MimeMappings nmm = MimeMappings.builder(true)
+                                .addMapping("mjs", "application/javascript")
+                                .addMapping("tvel", "text/plain")
+                                .addMapping("nd", "text/plain")
+                                .build();
                         resHandler.setMimeMappings(nmm);
                         resHandler.handleRequest(exchange);
                         if (exchange.isComplete()) {
