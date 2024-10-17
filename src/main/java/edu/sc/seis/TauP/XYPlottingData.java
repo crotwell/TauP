@@ -81,14 +81,20 @@ public class XYPlottingData {
         return new XYPlottingData(logList, xAxis, yAxis, label, description, cssClasses);
     }
 
-    public String createCSSClassParam() {
+    public String cssClassesAsString() {
         String cssClassParam = "";
-        if (cssClasses != null && !cssClasses.isEmpty()){
-            cssClassParam = "";
+        if (cssClasses != null && !cssClasses.isEmpty()) {
             for (String s : cssClasses) {
                 cssClassParam += " " + s;
             }
-            cssClassParam = "class=\""+cssClassParam.trim()+"\"";
+        }
+        return cssClassParam.trim();
+    }
+
+    public String createCSSClassParam() {
+        String cssClassParam = cssClassesAsString();
+        if (cssClasses != null && !cssClasses.isEmpty()){
+            cssClassParam = "class=\""+cssClassParam+"\"";
         }
         return cssClassParam;
     }
