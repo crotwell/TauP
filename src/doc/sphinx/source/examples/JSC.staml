@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+ <FDSNStationXML xmlns="http://www.fdsn.org/xml/station/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:iris="http://www.fdsn.org/xml/station/1/iris" xsi:schemaLocation="http://www.fdsn.org/xml/station/1 http://www.fdsn.org/xml/station/fdsn-station-1.1.xsd" schemaVersion="1.1">
+  <Source>IRIS-DMC</Source>
+  <Sender>IRIS-DMC</Sender>
+  <Module>IRIS WEB SERVICE: fdsnws-station | version: 1.1.52</Module>
+  <ModuleURI>http://service.iris.edu/fdsnws/station/1/query?net=CO&amp;sta=JSC&amp;cha=HH?&amp;starttime=2024-08-30T00:00:00Z&amp;endtime=2024-08-31T00:00:00Z&amp;level=channel&amp;format=xml&amp;includecomments=true&amp;nodata=404</ModuleURI>
+  <Created>2024-08-30T21:24:44.2883</Created>
+  <Network code="CO" startDate="1987-01-01T00:00:00.0000" restrictedStatus="open">
+   <Description>South Carolina Seismic Network (SCSN)</Description>
+   <Identifier type="DOI">10.7914/SN/CO
+   </Identifier>
+   <TotalNumberStations>18</TotalNumberStations>
+   <SelectedNumberStations>1</SelectedNumberStations>
+   <Station code="JSC" startDate="2009-04-13T00:00:00.0000" restrictedStatus="open" iris:alternateNetworkCodes="_CEUSN,.CEUSN-CONTRIB,.GREG,_REALTIME,.UNRESTRICTED,_US-REGIONAL">
+    <Latitude>34.2818</Latitude>
+    <Longitude>-81.25966</Longitude>
+    <Elevation>103.0</Elevation>
+    <Site>
+     <Name>Jenkinsville, South Carolina</Name>
+     <Region>SC</Region>
+     <Country>USA</Country>
+    </Site>
+    <CreationDate>2009-04-13T00:00:00.0000</CreationDate>
+    <TotalNumberChannels>122</TotalNumberChannels>
+    <SelectedNumberChannels>3</SelectedNumberChannels>
+    <Channel code="HHE" locationCode="00" startDate="2023-09-18T18:00:00.0000" restrictedStatus="open">
+     <Description>Instrument Swap</Description>
+     <Comment>
+      <Value>[SENSOR::TRILLIUM 120PA::001623]</Value>
+      <BeginEffectiveTime>2023-09-18T18:00:00.0000</BeginEffectiveTime>
+     </Comment>
+     <Latitude>34.2818</Latitude>
+     <Longitude>-81.25966</Longitude>
+     <Elevation>103</Elevation>
+     <Depth>0</Depth>
+     <Azimuth>90</Azimuth>
+     <Dip>0</Dip>
+     <Type>CONTINUOUS</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>1E02</SampleRate>
+     <Sensor>
+      <Type>NANOMETRICS</Type>
+      <Description>Velocity Sensor</Description>
+      <Manufacturer>NANOMETRICS</Manufacturer>
+      <Model>TRILLIUM 120PA</Model>
+      <SerialNumber>001623</SerialNumber>
+     </Sensor>
+     <DataLogger>
+      <Type>QUANTERRA</Type>
+      <Manufacturer>QUANTERRA</Manufacturer>
+      <Model>Q330S</Model>
+      <SerialNumber>5463</SerialNumber>
+     </DataLogger>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>5.0431188410000354E8</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s</Name>
+         <Description>Velocity in meters per second</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Count in Digital counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HHN" locationCode="00" startDate="2023-09-18T18:00:00.0000" restrictedStatus="open">
+     <Description>Instrument Swap</Description>
+     <Comment>
+      <Value>[SENSOR::TRILLIUM 120PA::001623]</Value>
+      <BeginEffectiveTime>2023-09-18T18:00:00.0000</BeginEffectiveTime>
+     </Comment>
+     <Latitude>34.2818</Latitude>
+     <Longitude>-81.25966</Longitude>
+     <Elevation>103</Elevation>
+     <Depth>0</Depth>
+     <Azimuth>0</Azimuth>
+     <Dip>0</Dip>
+     <Type>CONTINUOUS</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>1E02</SampleRate>
+     <Sensor>
+      <Type>NANOMETRICS</Type>
+      <Description>Velocity Sensor</Description>
+      <Manufacturer>NANOMETRICS</Manufacturer>
+      <Model>TRILLIUM 120PA</Model>
+      <SerialNumber>001623</SerialNumber>
+     </Sensor>
+     <DataLogger>
+      <Type>QUANTERRA</Type>
+      <Manufacturer>QUANTERRA</Manufacturer>
+      <Model>Q330S</Model>
+      <SerialNumber>5463</SerialNumber>
+     </DataLogger>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>5.0431188410000354E8</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s</Name>
+         <Description>Velocity in meters per second</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Count in Digital counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+    <Channel code="HHZ" locationCode="00" startDate="2023-09-18T18:00:00.0000" restrictedStatus="open">
+     <Description>Instrument Swap</Description>
+     <Comment>
+      <Value>[SENSOR::TRILLIUM 120PA::001623]</Value>
+      <BeginEffectiveTime>2023-09-18T18:00:00.0000</BeginEffectiveTime>
+     </Comment>
+     <Latitude>34.2818</Latitude>
+     <Longitude>-81.25966</Longitude>
+     <Elevation>103</Elevation>
+     <Depth>0</Depth>
+     <Azimuth>0</Azimuth>
+     <Dip>-90</Dip>
+     <Type>CONTINUOUS</Type>
+     <Type>GEOPHYSICAL</Type>
+     <SampleRate>1E02</SampleRate>
+     <Sensor>
+      <Type>NANOMETRICS</Type>
+      <Description>Velocity Sensor</Description>
+      <Manufacturer>NANOMETRICS</Manufacturer>
+      <Model>TRILLIUM 120PA</Model>
+      <SerialNumber>001623</SerialNumber>
+     </Sensor>
+     <DataLogger>
+      <Type>QUANTERRA</Type>
+      <Manufacturer>QUANTERRA</Manufacturer>
+      <Model>Q330S</Model>
+      <SerialNumber>5463</SerialNumber>
+     </DataLogger>
+     <Response>
+     <InstrumentSensitivity>
+       <Value>5.0431188410000354E8</Value>
+       <Frequency>1.0</Frequency>
+       <InputUnits>
+         <Name>m/s</Name>
+         <Description>Velocity in meters per second</Description>
+       </InputUnits>
+       <OutputUnits>
+         <Name>counts</Name>
+         <Description>Digital Count in Digital counts</Description>
+       </OutputUnits>
+     </InstrumentSensitivity>
+     </Response>
+    </Channel>
+   </Station>
+  </Network>
+ </FDSNStationXML>
