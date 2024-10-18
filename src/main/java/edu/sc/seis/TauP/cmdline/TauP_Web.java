@@ -49,7 +49,7 @@ public class TauP_Web implements Callable<Integer> {
             tool.start();
 
             try {
-                if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+                if (autoopen && Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
                     Desktop.getDesktop().browse(new URI("http://localhost:"+port));
                 }
             } catch (IOException | URISyntaxException e) {
@@ -72,4 +72,7 @@ public class TauP_Web implements Callable<Integer> {
             description = "List of additional models to use"
     )
     List<String> extraModelNames = new ArrayList<>();
+
+    @CommandLine.Option(names="--open", defaultValue="false", description = "autoopen web page")
+    Boolean autoopen = false;
 }
