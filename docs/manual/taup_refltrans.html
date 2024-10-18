@@ -5,10 +5,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>TauP ReflTrans &#8212; TauP 3.0.0-SNAPSHOT5 documentation</title>
+    <title>TauP ReflTrans &#8212; TauP 3.0.0-SNAPSHOT7 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d1102ebc" />
     <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=a66d8bb5" />
-    <script src="_static/documentation_options.js?v=2752e3a5"></script>
+    <script src="_static/documentation_options.js?v=b4d2edd6"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -36,7 +36,7 @@
 
 
 
-<p class="blurb">Flexible Seismic Travel-Time and Raypath Utilities. Version 3.0.0-SNAPSHOT5</p>
+<p class="blurb">Flexible Seismic Travel-Time and Raypath Utilities. Version 3.0.0-SNAPSHOT7</p>
 
 
 
@@ -54,6 +54,7 @@
 <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="distribution.html">Distribution</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="tools.html">Tools</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="default_params.html">Default Parameters</a></li>
@@ -79,6 +80,7 @@
 <li class="toctree-l2"><a class="reference internal" href="tools.html#tab-completion">Tab Completion</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="calculations.html">Calculations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="phaseNaming.html">Phases</a></li>
 <li class="toctree-l1"><a class="reference internal" href="models.html">Velocity Models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="programming.html">Programmatic Access</a></li>
@@ -140,7 +142,7 @@ reflection and transmission coefficients from the moho in the ak135 model:</p>
   <metadata>
     <taup>
       <command>taup refltransplot &#45;&#45;mod ak135 &#45;&#45;depth 35 &#45;&#45;legend &#45;&#45;svg -o stdout </command>
-      <version>3.0.0-SNAPSHOT5</version>
+      <version>3.0.0-SNAPSHOT7</version>
       <a href="https://github.com/crotwell/TauP">https://github.com/crotwell/TauP</a>
     <minmax xmin="0.0" xmax="89.9999088048935" ymin="-0.13902910789262635" ymax="3.073594389528412" />
     </taup>
@@ -446,7 +448,6 @@ circle {
 .legend line {
     text-anchor: end;
     dominant-baseline: middle;
-    stroke: black;
     fill: transparent;
 }
 .legend text {
@@ -1679,45 +1680,45 @@ circle.discontinuity.iocb {
   </g> <!-- end scaletranslate -->
   </g> <!-- end clip-path -->
 <g class="legend " transform="translate(52.0,52.0)"> <!-- legend -->
-<g class="Rpp Displacement">
-<line class="Rpp Displacement" x1="0" y1="0" x2="10" y2="0" />
-<text class="Rpp Displacement" font-size="14" x="11" y="0">Rpp Displacement</text>
+<g class="Rpp">
+<line class="Rpp" x1="0" y1="0" x2="10" y2="0" />
+<text class="Rpp" font-size="14" x="11" y="0">Rpp Displacement</text>
 </g>
-<g class="Tpp Displacement">
-<line class="Tpp Displacement" x1="0" y1="16" x2="10" y2="16" />
-<text class="Tpp Displacement" font-size="14" x="11" y="16">Tpp Displacement</text>
+<g class="Tpp">
+<line class="Tpp" x1="0" y1="16" x2="10" y2="16" />
+<text class="Tpp" font-size="14" x="11" y="16">Tpp Displacement</text>
 </g>
-<g class="Rps Displacement">
-<line class="Rps Displacement" x1="0" y1="32" x2="10" y2="32" />
-<text class="Rps Displacement" font-size="14" x="11" y="32">Rps Displacement</text>
+<g class="Rps">
+<line class="Rps" x1="0" y1="32" x2="10" y2="32" />
+<text class="Rps" font-size="14" x="11" y="32">Rps Displacement</text>
 </g>
-<g class="Tps Displacement">
-<line class="Tps Displacement" x1="0" y1="48" x2="10" y2="48" />
-<text class="Tps Displacement" font-size="14" x="11" y="48">Tps Displacement</text>
+<g class="Tps">
+<line class="Tps" x1="0" y1="48" x2="10" y2="48" />
+<text class="Tps" font-size="14" x="11" y="48">Tps Displacement</text>
 </g>
-<g class="Rsp Displacement">
-<line class="Rsp Displacement" x1="0" y1="64" x2="10" y2="64" />
-<text class="Rsp Displacement" font-size="14" x="11" y="64">Rsp Displacement</text>
+<g class="Rsp">
+<line class="Rsp" x1="0" y1="64" x2="10" y2="64" />
+<text class="Rsp" font-size="14" x="11" y="64">Rsp Displacement</text>
 </g>
-<g class="Tsp Displacement">
-<line class="Tsp Displacement" x1="0" y1="80" x2="10" y2="80" />
-<text class="Tsp Displacement" font-size="14" x="11" y="80">Tsp Displacement</text>
+<g class="Tsp">
+<line class="Tsp" x1="0" y1="80" x2="10" y2="80" />
+<text class="Tsp" font-size="14" x="11" y="80">Tsp Displacement</text>
 </g>
-<g class="Rss Displacement">
-<line class="Rss Displacement" x1="0" y1="96" x2="10" y2="96" />
-<text class="Rss Displacement" font-size="14" x="11" y="96">Rss Displacement</text>
+<g class="Rss">
+<line class="Rss" x1="0" y1="96" x2="10" y2="96" />
+<text class="Rss" font-size="14" x="11" y="96">Rss Displacement</text>
 </g>
-<g class="Tss Displacement">
-<line class="Tss Displacement" x1="0" y1="112" x2="10" y2="112" />
-<text class="Tss Displacement" font-size="14" x="11" y="112">Tss Displacement</text>
+<g class="Tss">
+<line class="Tss" x1="0" y1="112" x2="10" y2="112" />
+<text class="Tss" font-size="14" x="11" y="112">Tss Displacement</text>
 </g>
-<g class="Rshsh Displacement">
-<line class="Rshsh Displacement" x1="0" y1="128" x2="10" y2="128" />
-<text class="Rshsh Displacement" font-size="14" x="11" y="128">Rshsh Displacement</text>
+<g class="Rshsh">
+<line class="Rshsh" x1="0" y1="128" x2="10" y2="128" />
+<text class="Rshsh" font-size="14" x="11" y="128">Rshsh Displacement</text>
 </g>
-<g class="Tshsh Displacement">
-<line class="Tshsh Displacement" x1="0" y1="144" x2="10" y2="144" />
-<text class="Tshsh Displacement" font-size="14" x="11" y="144">Tshsh Displacement</text>
+<g class="Tshsh">
+<line class="Tshsh" x1="0" y1="144" x2="10" y2="144" />
+<text class="Tshsh" font-size="14" x="11" y="144">Tshsh Displacement</text>
 </g>
 </g> <!-- legend end-->
 </svg>
@@ -1732,7 +1733,7 @@ circle.discontinuity.iocb {
   <metadata>
     <taup>
       <command>taup refltransplot &#45;&#45;mod ak135 &#45;&#45;depth 35 &#45;&#45;legend &#45;&#45;energyflux &#45;&#45;svg -o stdout </command>
-      <version>3.0.0-SNAPSHOT5</version>
+      <version>3.0.0-SNAPSHOT7</version>
       <a href="https://github.com/crotwell/TauP">https://github.com/crotwell/TauP</a>
     <minmax xmin="0.0" xmax="89.9999088048935" ymin="0.0" ymax="1.00001667986517" />
     </taup>
@@ -2038,7 +2039,6 @@ circle {
 .legend line {
     text-anchor: end;
     dominant-baseline: middle;
-    stroke: black;
     fill: transparent;
 }
 .legend text {
@@ -3261,45 +3261,45 @@ circle.discontinuity.iocb {
   </g> <!-- end scaletranslate -->
   </g> <!-- end clip-path -->
 <g class="legend " transform="translate(52.0,52.0)"> <!-- legend -->
-<g class="Rpp Energy">
-<line class="Rpp Energy" x1="0" y1="0" x2="10" y2="0" />
-<text class="Rpp Energy" font-size="14" x="11" y="0">Rpp Energy</text>
+<g class="RppEnergy">
+<line class="RppEnergy" x1="0" y1="0" x2="10" y2="0" />
+<text class="RppEnergy" font-size="14" x="11" y="0">Rpp Energy</text>
 </g>
-<g class="Tpp Energy">
-<line class="Tpp Energy" x1="0" y1="16" x2="10" y2="16" />
-<text class="Tpp Energy" font-size="14" x="11" y="16">Tpp Energy</text>
+<g class="TppEnergy">
+<line class="TppEnergy" x1="0" y1="16" x2="10" y2="16" />
+<text class="TppEnergy" font-size="14" x="11" y="16">Tpp Energy</text>
 </g>
-<g class="Rps Energy">
-<line class="Rps Energy" x1="0" y1="32" x2="10" y2="32" />
-<text class="Rps Energy" font-size="14" x="11" y="32">Rps Energy</text>
+<g class="RpsEnergy">
+<line class="RpsEnergy" x1="0" y1="32" x2="10" y2="32" />
+<text class="RpsEnergy" font-size="14" x="11" y="32">Rps Energy</text>
 </g>
-<g class="Tps Energy">
-<line class="Tps Energy" x1="0" y1="48" x2="10" y2="48" />
-<text class="Tps Energy" font-size="14" x="11" y="48">Tps Energy</text>
+<g class="TpsEnergy">
+<line class="TpsEnergy" x1="0" y1="48" x2="10" y2="48" />
+<text class="TpsEnergy" font-size="14" x="11" y="48">Tps Energy</text>
 </g>
-<g class="Rsp Energy">
-<line class="Rsp Energy" x1="0" y1="64" x2="10" y2="64" />
-<text class="Rsp Energy" font-size="14" x="11" y="64">Rsp Energy</text>
+<g class="RspEnergy">
+<line class="RspEnergy" x1="0" y1="64" x2="10" y2="64" />
+<text class="RspEnergy" font-size="14" x="11" y="64">Rsp Energy</text>
 </g>
-<g class="Tsp Energy">
-<line class="Tsp Energy" x1="0" y1="80" x2="10" y2="80" />
-<text class="Tsp Energy" font-size="14" x="11" y="80">Tsp Energy</text>
+<g class="TspEnergy">
+<line class="TspEnergy" x1="0" y1="80" x2="10" y2="80" />
+<text class="TspEnergy" font-size="14" x="11" y="80">Tsp Energy</text>
 </g>
-<g class="Rss Energy">
-<line class="Rss Energy" x1="0" y1="96" x2="10" y2="96" />
-<text class="Rss Energy" font-size="14" x="11" y="96">Rss Energy</text>
+<g class="RssEnergy">
+<line class="RssEnergy" x1="0" y1="96" x2="10" y2="96" />
+<text class="RssEnergy" font-size="14" x="11" y="96">Rss Energy</text>
 </g>
-<g class="Tss Energy">
-<line class="Tss Energy" x1="0" y1="112" x2="10" y2="112" />
-<text class="Tss Energy" font-size="14" x="11" y="112">Tss Energy</text>
+<g class="TssEnergy">
+<line class="TssEnergy" x1="0" y1="112" x2="10" y2="112" />
+<text class="TssEnergy" font-size="14" x="11" y="112">Tss Energy</text>
 </g>
-<g class="Rshsh Energy">
-<line class="Rshsh Energy" x1="0" y1="128" x2="10" y2="128" />
-<text class="Rshsh Energy" font-size="14" x="11" y="128">Rshsh Energy</text>
+<g class="RshshEnergy">
+<line class="RshshEnergy" x1="0" y1="128" x2="10" y2="128" />
+<text class="RshshEnergy" font-size="14" x="11" y="128">Rshsh Energy</text>
 </g>
-<g class="Tshsh Energy">
-<line class="Tshsh Energy" x1="0" y1="144" x2="10" y2="144" />
-<text class="Tshsh Energy" font-size="14" x="11" y="144">Tshsh Energy</text>
+<g class="TshshEnergy">
+<line class="TshshEnergy" x1="0" y1="144" x2="10" y2="144" />
+<text class="TshshEnergy" font-size="14" x="11" y="144">Tshsh Energy</text>
 </g>
 </g> <!-- legend end-->
 </svg>

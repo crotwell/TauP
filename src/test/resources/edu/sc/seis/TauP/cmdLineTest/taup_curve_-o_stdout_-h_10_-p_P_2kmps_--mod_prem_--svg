@@ -184,37 +184,6 @@ circle.discontinuity.iocb {
             fill: rebeccapurple;
         }
 
-        .autocolor.legend line > :nth-child(10n+1) {
-            stroke: skyblue;
-        }
-        .autocolor.legend line > :nth-child(10n+2) {
-            stroke: olivedrab;
-        }
-        .autocolor.legend line > :nth-child(10n+3) {
-            stroke: goldenrod;
-        }
-        .autocolor.legend line > :nth-child(10n+4) {
-            stroke: firebrick;
-        }
-        .autocolor.legend line > :nth-child(10n+5) {
-            stroke: darkcyan;
-        }
-        .autocolor.legend line > :nth-child(10n+6) {
-            stroke: chocolate;
-        }
-        .autocolor.legend line > :nth-child(10n+7) {
-            stroke: darkmagenta;
-        }
-        .autocolor.legend line > :nth-child(10n+8) {
-            stroke: mediumvioletred;
-        }
-        .autocolor.legend line > :nth-child(10n+9) {
-            stroke: sienna;
-        }
-        .autocolor.legend line > :nth-child(10n+10) {
-            stroke: rebeccapurple;
-        }
-
 
     ]]></style>
   <clipPath id="curve_clip">

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Calculations &#8212; TauP 3.0.0-SNAPSHOT7 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=a66d8bb5" />
+    <script src="_static/documentation_options.js?v=b4d2edd6"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Phases" href="phaseNaming.html" />
+    <link rel="prev" title="TauP Help" href="taup_help.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="index.html">
+    <img class="logo" src="_static/taupLogo.svg" alt="Logo" />
+    
+  </a>
+</p>
+
+
+
+<p class="blurb">Flexible Seismic Travel-Time and Raypath Utilities. Version 3.0.0-SNAPSHOT7</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=crotwell&repo=taup&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="distribution.html">Distribution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tools.html">Tools</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Calculations</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#spherical-vs-elliptical">Spherical vs Elliptical</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#oceans">Oceans</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#amplitude">Amplitude</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="phaseNaming.html">Phases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models.html">Velocity Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="programming.html">Programmatic Access</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bibliography.html">Bibliography</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="taup_help.html" title="previous chapter">TauP Help</a></li>
+      <li>Next: <a href="phaseNaming.html" title="next chapter">Phases</a></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="calculations">
+<h1>Calculations<a class="headerlink" href="#calculations" title="Link to this heading">¶</a></h1>
+<section id="spherical-vs-elliptical">
+<h2>Spherical vs Elliptical<a class="headerlink" href="#spherical-vs-elliptical" title="Link to this heading">¶</a></h2>
+<p>The TauP Toolkit, and the underlying methodology, are inheirently spherical. But
+of course the earth is not quite a sphere, and so there are differences
+between the calculated times in a model and the actual travel times within
+the earth.</p>
+<p>An additional source of error can be the calculation of distances
+from source and receiver latitude and longitude. The angular distance
+between two latitude and longitude points can be based on the surface distance
+or the angle from the center of the earth. In a sphere, these are equivalent,
+but on an ellipsoid they are not. It is generally more accurate to base the
+traveltime calculations based on the geocentric angle instead of the surface
+arc distance. This discrepency arrised from the difference in definition of
+the <a class="reference external" href="https://en.wikipedia.org/wiki/Geodetic_coordinates#Geodetic_vs._geocentric_coordinates">geodetic and geocenticlatitude</a>.
+Geodetic, defined as the angle of the surface normal plane and the equatorial
+plane. Geocentric is angle between the radius to the point and the equator.
+For example, the geocentric angle between
+an earthquake at latitude, longitude (0,30)
+to a station at (0/0) is 30 degrees, which is slightly larger than that between
+an earthquake at (30,0) to the same station, 29.83 degrees. Because TauP is
+spherical, the default is to not take the elliptical nature of the earth
+into account when calculating these distances. But this can be changed with
+the <code class="code docutils literal notranslate"><span class="pre">--geodetic</span></code> parameter, which implies that the given latitudes
+are geodetic instead of geocentric.
+And for use with models of other planets,
+the default flattening can be changed with the <code class="code docutils literal notranslate"><span class="pre">--geodeticflattening</span></code>.</p>
+</section>
+<section id="oceans">
+<h2>Oceans<a class="headerlink" href="#oceans" title="Link to this heading">¶</a></h2>
+<p>TauP is capable of handling models,
+like <a class="reference external" href="_static/StdModels/ak135favg.nd">ak135favg</a>, that have an ocean layer.
+However, care should be taken with S waves as they cannot propigate in a fliud
+layer. So the phase SS doesn’t exist in ak135favg. Also, the default station
+depth is the model surface, but we generall don’t think of seismic stations
+floating on top of the ocean, so it may be more appropriate to locate the
+station at depth, on the bottom of the ocean layer. Or perhaps in this case,
+using <a class="reference external" href="_static/StdModels/ak135fcont.nd">ak135fcont</a> is more appropriate.</p>
+</section>
+<section id="amplitude">
+<h2>Amplitude<a class="headerlink" href="#amplitude" title="Link to this heading">¶</a></h2>
+<p>TauP can calculate an amplitude factor estimate for some simple phases, as long
+as the phase path is simple turning or reflection, but not for head or diffracted
+phases. The amplitude factor, given for both the P-Sv and Sh systems is the
+product of multiple factors. For details, see <span id="id1">Ammon <em>et al.</em> [<a class="reference internal" href="bibliography.html#id20" title="Charles J. Ammon, Aaron A. Velasco, Thorne Lay, and Terry C. Wallace. Foundations of Modern Global Seismology. Academic Press, second edition edition, 2020. ISBN 978-0-12-815679-7. doi:10.1016/C2017-0-03756-4.">AVLW20</a>]</span>
+<a class="reference external" href="https://doi.org/10.1016/C2017-0-03756-4">chapter 13</a>.</p>
+<p>The factors that contribute to this estimate are:</p>
+<ul class="simple">
+<li><p>A nominal source term for a Mw 4.0 earthquake, but without the
+source orientation, so should be thought of as a bound, rather than an actual
+amplitude.</p></li>
+<li><p>A radiation term, based on the density and velocity at the source depth.</p></li>
+<li><p>Geometrical spreading factor.</p></li>
+<li><p>The product of energy reflection and transmission coefficients for each
+boundary encountered along the path.</p></li>
+<li><p>Attenuation for a 1 Hz wave.</p></li>
+<li><p>The free surface receiver function value, if the receiver depth is zero.</p></li>
+</ul>
+<p>Amplitudes for seismic waves are notoriously difficult to calulate without error,
+and so the values given should be taken with a healthy dose of skepticism. In
+addition, for large earthquakes the amplitude of body wave phases will saturate.
+So a larger magnitude will not generate a larger arrival amplitude, even
+though this calculation will be larger.</p>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div> 
+    <div class="footer">
+      &#169;2024, Philip Crotwell.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="_sources/calculations.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+
+  <style>
+    @media screen and (min-width: 876px) {
+      div.body { max-width: 95%;}
+      div.document { width: unset;}
+      div.sphinxsidebar { margin-left: 10px; margin-right: 10px;}
+    }
+  </style>
+
+
+  </body>
+</html>
