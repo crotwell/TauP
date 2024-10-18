@@ -30,7 +30,7 @@ public class ReflTransFluidFreeSurface extends ReflTransFreeSurface {
 
     @Override
     public Complex[] getFreeSurfaceReceiverFunP(double rayParam) {
-        return new Complex[] { new Complex(1), new Complex(-1)};
+        return new Complex[] { new Complex(2), new Complex(0)};
     }
 
     // no-ops for S, always 0
