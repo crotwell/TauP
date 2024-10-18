@@ -371,15 +371,17 @@ public class Arrival {
         double refltran = getEnergyReflTransPSV();
         VelocityModel vMod = getPhase().getTauModel().getVelocityModel();
         VelocityLayer top = vMod.getVelocityLayer(0);
-        double freeFactor;
-        Complex[] freeSurfRF;
-        ReflTransFreeSurface rtFree = ReflTransFreeSurface.createReflTransFreeSurface(top.getTopPVelocity(), top.getTopSVelocity(), top.getTopDensity());
-        if (getPhase().getFinalPhaseSegment().isPWave) {
-            freeSurfRF = rtFree.getFreeSurfaceReceiverFunP(getRayParam() / vMod.getRadiusOfEarth());
-        } else {
-            freeSurfRF = rtFree.getFreeSurfaceReceiverFunSv(getRayParam() / vMod.getRadiusOfEarth());
+        double freeFactor = 1.0;
+        if (getReceiverDepth() <= 1.0) {
+            Complex[] freeSurfRF;
+            ReflTransFreeSurface rtFree = ReflTransFreeSurface.createReflTransFreeSurface(top.getTopPVelocity(), top.getTopSVelocity(), top.getTopDensity());
+            if (getPhase().getFinalPhaseSegment().isPWave) {
+                freeSurfRF = rtFree.getFreeSurfaceReceiverFunP(getRayParam() / vMod.getRadiusOfEarth());
+            } else {
+                freeSurfRF = rtFree.getFreeSurfaceReceiverFunSv(getRayParam() / vMod.getRadiusOfEarth());
+            }
+            freeFactor = Complex.abs(Complex.sqrt(freeSurfRF[0].times(freeSurfRF[0].plus(freeSurfRF[1].times(freeSurfRF[1])))));
         }
-        freeFactor = Complex.abs(Complex.sqrt(freeSurfRF[0].times(freeSurfRF[0].plus(freeSurfRF[1].times(freeSurfRF[1])))));
         double geoSpread = getAmplitudeGeometricSpreadingFactor(); // 1/km
         // km/s
         double sourceVel = getPhase().velocityAtSource(); // km/s
