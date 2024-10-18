@@ -310,7 +310,6 @@ circle {
 .legend line {
     text-anchor: end;
     dominant-baseline: middle;
-    stroke: black;
     fill: transparent;
 }
 .legend text {

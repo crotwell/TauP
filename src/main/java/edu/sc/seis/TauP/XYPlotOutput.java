@@ -295,7 +295,7 @@ public class XYPlotOutput {
             List<String> labelClasses = new ArrayList<>();
             for (XYPlottingData xyp : xyPlots) {
                 labels.add(xyp.label);
-                labelClasses.add(xyp.label+" "+xyp.cssClassesAsString());
+                labelClasses.add(xyp.cssClassesAsString());
             }
 
             String autocolorStr = coloringArgs.getColoring() == ColorType.auto ? "autocolor" : "";

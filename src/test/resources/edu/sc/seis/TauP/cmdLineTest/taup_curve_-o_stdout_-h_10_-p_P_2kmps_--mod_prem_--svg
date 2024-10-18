@@ -4,7 +4,7 @@
   <metadata>
     <taup>
       <command>taup curve -o stdout -h 10 -p P,2kmps &#45;&#45;mod prem &#45;&#45;svg </command>
-      <version>3.0.0-SNAPSHOT6</version>
+      <version>3.0.0-SNAPSHOT7</version>
       <a href="https://github.com/crotwell/TauP">https://github.com/crotwell/TauP</a>
     <minmax xmin="0.0" xmax="180.0" ymin="0.0" ymax="20015.086796020572" />
     </taup>
@@ -34,7 +34,6 @@ circle {
 .legend line {
     text-anchor: end;
     dominant-baseline: middle;
-    stroke: black;
     fill: transparent;
 }
 .legend text {
@@ -183,6 +182,37 @@ circle.discontinuity.iocb {
         }
         .autocolor.legend > :nth-child(10n+10) {
             fill: rebeccapurple;
+        }
+
+        .autocolor.legend line > :nth-child(10n+1) {
+            stroke: skyblue;
+        }
+        .autocolor.legend line > :nth-child(10n+2) {
+            stroke: olivedrab;
+        }
+        .autocolor.legend line > :nth-child(10n+3) {
+            stroke: goldenrod;
+        }
+        .autocolor.legend line > :nth-child(10n+4) {
+            stroke: firebrick;
+        }
+        .autocolor.legend line > :nth-child(10n+5) {
+            stroke: darkcyan;
+        }
+        .autocolor.legend line > :nth-child(10n+6) {
+            stroke: chocolate;
+        }
+        .autocolor.legend line > :nth-child(10n+7) {
+            stroke: darkmagenta;
+        }
+        .autocolor.legend line > :nth-child(10n+8) {
+            stroke: mediumvioletred;
+        }
+        .autocolor.legend line > :nth-child(10n+9) {
+            stroke: sienna;
+        }
+        .autocolor.legend line > :nth-child(10n+10) {
+            stroke: rebeccapurple;
         }
 
 

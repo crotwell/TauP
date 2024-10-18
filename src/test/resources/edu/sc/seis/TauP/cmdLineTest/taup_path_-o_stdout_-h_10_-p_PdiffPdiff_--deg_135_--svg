@@ -4,7 +4,7 @@
   <metadata>
     <taup>
       <command>taup path -o stdout -h 10 -p PdiffPdiff &#45;&#45;deg 135 &#45;&#45;svg </command>
-      <version>3.0.0-SNAPSHOT6</version>
+      <version>3.0.0-SNAPSHOT7</version>
       <a href="https://github.com/crotwell/TauP">https://github.com/crotwell/TauP</a>
     </taup>
   </metadata>
@@ -44,7 +44,6 @@ circle {
 .legend line {
     text-anchor: end;
     dominant-baseline: middle;
-    stroke: black;
     fill: transparent;
 }
 .legend text {

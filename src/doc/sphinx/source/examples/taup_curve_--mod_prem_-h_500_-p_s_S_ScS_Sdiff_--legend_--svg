@@ -34,7 +34,6 @@ circle {
 .legend line {
     text-anchor: end;
     dominant-baseline: middle;
-    stroke: black;
     fill: transparent;
 }
 .legend text {
@@ -1124,21 +1123,21 @@ circle.discontinuity.iocb {
   </g> <!-- end scaletranslate -->
   </g> <!-- end clip-path -->
 <g class="legend autocolor" transform="translate(52.0,52.0)"> <!-- legend -->
-<g class="s">
-<line class="s" x1="0" y1="0" x2="10" y2="0" />
-<text class="s" font-size="14" x="11" y="0">s</text>
+<g class="swave phase_s swave">
+<line class="swave phase_s swave" x1="0" y1="0" x2="10" y2="0" />
+<text class="swave phase_s swave" font-size="14" x="11" y="0">s</text>
 </g>
-<g class="S">
-<line class="S" x1="0" y1="16" x2="10" y2="16" />
-<text class="S" font-size="14" x="11" y="16">S</text>
+<g class="swave phase_S swave">
+<line class="swave phase_S swave" x1="0" y1="16" x2="10" y2="16" />
+<text class="swave phase_S swave" font-size="14" x="11" y="16">S</text>
 </g>
-<g class="ScS">
-<line class="ScS" x1="0" y1="32" x2="10" y2="32" />
-<text class="ScS" font-size="14" x="11" y="32">ScS</text>
+<g class="swave phase_ScS swave">
+<line class="swave phase_ScS swave" x1="0" y1="32" x2="10" y2="32" />
+<text class="swave phase_ScS swave" font-size="14" x="11" y="32">ScS</text>
 </g>
-<g class="Sdiff">
-<line class="Sdiff" x1="0" y1="48" x2="10" y2="48" />
-<text class="Sdiff" font-size="14" x="11" y="48">Sdiff</text>
+<g class="swave phase_Sdiff swave">
+<line class="swave phase_Sdiff swave" x1="0" y1="48" x2="10" y2="48" />
+<text class="swave phase_Sdiff swave" font-size="14" x="11" y="48">Sdiff</text>
 </g>
 </g> <!-- legend end-->
 </svg>

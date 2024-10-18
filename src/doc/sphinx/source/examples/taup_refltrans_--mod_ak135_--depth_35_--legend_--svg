@@ -310,7 +310,6 @@ circle {
 .legend line {
     text-anchor: end;
     dominant-baseline: middle;
-    stroke: black;
     fill: transparent;
 }
 .legend text {
@@ -1543,45 +1542,45 @@ circle.discontinuity.iocb {
   </g> <!-- end scaletranslate -->
   </g> <!-- end clip-path -->
 <g class="legend " transform="translate(52.0,52.0)"> <!-- legend -->
-<g class="Rpp Displacement">
-<line class="Rpp Displacement" x1="0" y1="0" x2="10" y2="0" />
-<text class="Rpp Displacement" font-size="14" x="11" y="0">Rpp Displacement</text>
+<g class="Rpp">
+<line class="Rpp" x1="0" y1="0" x2="10" y2="0" />
+<text class="Rpp" font-size="14" x="11" y="0">Rpp Displacement</text>
 </g>
-<g class="Tpp Displacement">
-<line class="Tpp Displacement" x1="0" y1="16" x2="10" y2="16" />
-<text class="Tpp Displacement" font-size="14" x="11" y="16">Tpp Displacement</text>
+<g class="Tpp">
+<line class="Tpp" x1="0" y1="16" x2="10" y2="16" />
+<text class="Tpp" font-size="14" x="11" y="16">Tpp Displacement</text>
 </g>
-<g class="Rps Displacement">
-<line class="Rps Displacement" x1="0" y1="32" x2="10" y2="32" />
-<text class="Rps Displacement" font-size="14" x="11" y="32">Rps Displacement</text>
+<g class="Rps">
+<line class="Rps" x1="0" y1="32" x2="10" y2="32" />
+<text class="Rps" font-size="14" x="11" y="32">Rps Displacement</text>
 </g>
-<g class="Tps Displacement">
-<line class="Tps Displacement" x1="0" y1="48" x2="10" y2="48" />
-<text class="Tps Displacement" font-size="14" x="11" y="48">Tps Displacement</text>
+<g class="Tps">
+<line class="Tps" x1="0" y1="48" x2="10" y2="48" />
+<text class="Tps" font-size="14" x="11" y="48">Tps Displacement</text>
 </g>
-<g class="Rsp Displacement">
-<line class="Rsp Displacement" x1="0" y1="64" x2="10" y2="64" />
-<text class="Rsp Displacement" font-size="14" x="11" y="64">Rsp Displacement</text>
+<g class="Rsp">
+<line class="Rsp" x1="0" y1="64" x2="10" y2="64" />
+<text class="Rsp" font-size="14" x="11" y="64">Rsp Displacement</text>
 </g>
-<g class="Tsp Displacement">
-<line class="Tsp Displacement" x1="0" y1="80" x2="10" y2="80" />
-<text class="Tsp Displacement" font-size="14" x="11" y="80">Tsp Displacement</text>
+<g class="Tsp">
+<line class="Tsp" x1="0" y1="80" x2="10" y2="80" />
+<text class="Tsp" font-size="14" x="11" y="80">Tsp Displacement</text>
 </g>
-<g class="Rss Displacement">
-<line class="Rss Displacement" x1="0" y1="96" x2="10" y2="96" />
-<text class="Rss Displacement" font-size="14" x="11" y="96">Rss Displacement</text>
+<g class="Rss">
+<line class="Rss" x1="0" y1="96" x2="10" y2="96" />
+<text class="Rss" font-size="14" x="11" y="96">Rss Displacement</text>
 </g>
-<g class="Tss Displacement">
-<line class="Tss Displacement" x1="0" y1="112" x2="10" y2="112" />
-<text class="Tss Displacement" font-size="14" x="11" y="112">Tss Displacement</text>
+<g class="Tss">
+<line class="Tss" x1="0" y1="112" x2="10" y2="112" />
+<text class="Tss" font-size="14" x="11" y="112">Tss Displacement</text>
 </g>
-<g class="Rshsh Displacement">
-<line class="Rshsh Displacement" x1="0" y1="128" x2="10" y2="128" />
-<text class="Rshsh Displacement" font-size="14" x="11" y="128">Rshsh Displacement</text>
+<g class="Rshsh">
+<line class="Rshsh" x1="0" y1="128" x2="10" y2="128" />
+<text class="Rshsh" font-size="14" x="11" y="128">Rshsh Displacement</text>
 </g>
-<g class="Tshsh Displacement">
-<line class="Tshsh Displacement" x1="0" y1="144" x2="10" y2="144" />
-<text class="Tshsh Displacement" font-size="14" x="11" y="144">Tshsh Displacement</text>
+<g class="Tshsh">
+<line class="Tshsh" x1="0" y1="144" x2="10" y2="144" />
+<text class="Tshsh" font-size="14" x="11" y="144">Tshsh Displacement</text>
 </g>
 </g> <!-- legend end-->
 </svg>
