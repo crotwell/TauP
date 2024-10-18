@@ -246,6 +246,10 @@ public class XYSegment {
     }
 
 
+    public void asGMT(PrintWriter writer, String label) {
+        asGMT(writer, label, "%3g", "%3g");
+    }
+
     public void asGMT(PrintWriter writer, String label, String xFormat, String yFormat) {
         writer.println("> "+label);
         for (int i = 0; i < x.length; i++) {

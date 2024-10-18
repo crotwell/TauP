@@ -128,8 +128,6 @@ public class Outputs {
     public static String formatStringForAxisType(AxisType axisType) {
         String outFormat;
         switch (axisType) {
-            case radian:
-            case radian180:
             case degree:
             case degree180:
             case kilometer:
@@ -138,6 +136,8 @@ public class Outputs {
             case incidentangle:
                 outFormat = distanceFormat;
                 break;
+            case radian:
+            case radian180:
             case rayparamrad:
             case rayparamdeg:
             case rayparamkm:

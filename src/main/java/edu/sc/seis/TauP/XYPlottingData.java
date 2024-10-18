@@ -109,17 +109,15 @@ public class XYPlottingData {
         String cssClassParam = createCSSClassParam();
         writer.println("    <g "+cssClassParam+" tauplabel=\"" + description + "\" " +" >");
         for (XYSegment segment : segmentList) {
-            segment.asSVG(writer, "", Outputs.formatStringForAxisType(xAxisType), Outputs.formatStringForAxisType(yAxisType));
+            segment.asSVG(writer, "");
         }
         writer.println("    </g> <!-- end "+ description+" -->");
     }
 
     public void asGMT(PrintWriter writer) {
-        String xFormat = Outputs.formatStringForAxisType(xAxisType);
-        String yFormat = Outputs.formatStringForAxisType(yAxisType);
         int idx = 1;
         for (XYSegment segment : segmentList) {
-            segment.asGMT(writer, idx+"/"+segmentList.size()+" "+label+" "+description, xFormat, yFormat);
+            segment.asGMT(writer, idx+"/"+segmentList.size()+" "+label+" "+description);
             idx++;
         }
     }
