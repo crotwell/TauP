@@ -68,13 +68,13 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
 
     @Override
     public void start() throws IOException, TauPException {
-        List<String> givenPhaseNames = extractPhaseNames("");
+        List<String> givenPhaseNames = PhaseArgs.extractPhaseNames("");
         List<RayCalculateable> distanceValues = distanceArgs.getRayCalculatables();
         List<Arrival> arrivalList = new ArrayList<>();
         List<ProtoSeismicPhase> allwalk = new ArrayList<>();
-        for (Double sourceDepth : modelArgs.getSourceDepth()) {
+        for (Double sourceDepth : modelArgs.getSourceDepths()) {
             TauModel tMod = modelArgs.depthCorrected(sourceDepth);
-            for (Double recDepth : modelArgs.getReceiverDepth()) {
+            for (Double recDepth : modelArgs.getReceiverDepths()) {
                 TauModel tModRecDepth = tMod.splitBranch(recDepth);
                 List<Double> excludeDepths = getExcludedDepths(tModRecDepth);
                 List<Double> actualExcludeDepths = matchDepthToDiscon(excludeDepths, tMod.getVelocityModel(), excludeDepthTol);
@@ -126,7 +126,7 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
             List<PhaseName> givenPhases = parsePhaseNameList();
             for (PhaseName pn : givenPhases) {
                 phaseNameList.add(pn.getName());
-                for (Double rd : modelArgs.getReceiverDepth()) {
+                for (Double rd : modelArgs.getReceiverDepths()) {
                     phaseList.addAll(SeismicPhaseFactory.createSeismicPhases(pn.getName(),
                             tMod, tMod.getSourceDepth(), rd,
                             modelArgs.getScatterer(), isDEBUG()));
@@ -174,8 +174,8 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
         if (getOutputFormat().equals(OutputTypes.JSON)) {
             TauP_AbstractRayTool.writeJSON(out, "",
                     getTauModelName(),
-                    modelArgs.getSourceDepth(),
-                    modelArgs.getReceiverDepth(),
+                    modelArgs.getSourceDepths(),
+                    modelArgs.getReceiverDepths(),
                     getSeismicPhases(),
                     arrivalList);
         } else {
@@ -185,8 +185,8 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
             List<String> relativePhaseName = new ArrayList<>();
             TauP_Time.printArrivalsAsText(out, arrivalList,
                     modelArgs.getModelName(),
-                    modelArgs.getSourceDepth(),
-                    modelArgs.getReceiverDepth(),
+                    modelArgs.getSourceDepths(),
+                    modelArgs.getReceiverDepths(),
                     getScatterer(),
                     onlyFirst, onlyPrintTime, onlyPrintRayP,
                     isWithAmplitude(), sourceArgs.getMw(),
@@ -271,8 +271,8 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
     public void printResultJson(List<ProtoSeismicPhase> walk) throws IOException {
         JSONObject out = new JSONObject();
         out.put("model", modelArgs.getModelName());
-        out.put("sourcedepth", modelArgs.getSourceDepth());
-        out.put("receiverdepth", modelArgs.getReceiverDepth());
+        out.put("sourcedepth", modelArgs.getSourceDepths());
+        out.put("receiverdepth", modelArgs.getReceiverDepths());
         out.put("max", maxActions);
         JSONArray exclude = new JSONArray();
         out.put("exclude", exclude);

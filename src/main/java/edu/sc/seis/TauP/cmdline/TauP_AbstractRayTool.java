@@ -104,7 +104,7 @@ public abstract class TauP_AbstractRayTool extends TauP_AbstractPhaseTool {
 
     @Override
     public List<Double> getSourceDepths() throws TauPException {
-        List<Double> simpleSourceDepths = modelArgs.getSourceDepth();
+        List<Double> simpleSourceDepths = modelArgs.getSourceDepths();
         List<Double> out = new ArrayList<>();
         Set<Double> knownDepths = new HashSet<>();
         knownDepths.addAll(simpleSourceDepths);
@@ -122,7 +122,7 @@ public abstract class TauP_AbstractRayTool extends TauP_AbstractPhaseTool {
 
     @Override
     public List<Double> getReceiverDepths() throws TauPException {
-        List<Double> simpleReceiverDepths = modelArgs.getReceiverDepth();
+        List<Double> simpleReceiverDepths = modelArgs.getReceiverDepths();
         List<Double> out = new ArrayList<>();
         Set<Double> knownDepths = new HashSet<>();
         knownDepths.addAll(simpleReceiverDepths);
@@ -143,13 +143,13 @@ public abstract class TauP_AbstractRayTool extends TauP_AbstractPhaseTool {
         if (modelArgs.getTauModel() == null) {
             throw new TauModelException("Model for '"+this.getTauModelName()+"' is null, unable to calculate.");
         }
-        for (double sourceDepth : modelArgs.getSourceDepth()) {
+        for (double sourceDepth : modelArgs.getSourceDepths()) {
             if (modelArgs.getTauModel().getRadiusOfEarth() < sourceDepth) {
                 throw new TauModelException("Source depth of " + sourceDepth + " in '" + this.getTauModelName()
                         + "' is greater than radius of earth, " + modelArgs.getTauModel().getRadiusOfEarth() + ", unable to calculate.");
             }
         }
-        for (Double recDepth : modelArgs.getReceiverDepth() ) {
+        for (Double recDepth : modelArgs.getReceiverDepths() ) {
             if (modelArgs.getTauModel().getRadiusOfEarth() < recDepth) {
                 throw new TauModelException("Receiver depth of " + recDepth + " in '" + this.getTauModelName()
                         + "' is greater than radius of earth, " + modelArgs.getTauModel().getRadiusOfEarth() + ", unable to calculate.");

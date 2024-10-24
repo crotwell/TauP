@@ -37,14 +37,14 @@ public class TimeTester {
     List<String> phaseNameList;
 
     public void setSourceDepth(double depth) {
-        modelArgs.setSourceDepth(Collections.singletonList(depth));
+        modelArgs.setSourceDepths(Collections.singletonList(depth));
     }
 
     ModelArgs modelArgs = new ModelArgs();
 
     public List<SeismicPhase> getSeismicPhases() throws TauModelException {
-        double sourceDepth = modelArgs.getSourceDepth().get(0);
-        double receiverDepth = modelArgs.getReceiverDepth().isEmpty() ? 0.0 : modelArgs.getReceiverDepth().get(0);
+        double sourceDepth = modelArgs.getSourceDepths().get(0);
+        double receiverDepth = modelArgs.getReceiverDepths().isEmpty() ? 0.0 : modelArgs.getReceiverDepths().get(0);
         TauModel tModDepth = modelArgs.depthCorrected(sourceDepth);
         boolean isDEBUG = false;
         List<SeismicPhase> newPhases = new ArrayList<>();

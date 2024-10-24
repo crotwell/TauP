@@ -28,6 +28,7 @@ package edu.sc.seis.TauP.cmdline;
 import edu.sc.seis.TauP.*;
 import edu.sc.seis.TauP.cmdline.args.GeodeticArgs;
 import edu.sc.seis.TauP.cmdline.args.OutputTypes;
+import edu.sc.seis.TauP.cmdline.args.PhaseArgs;
 import edu.sc.seis.seisFile.Location;
 import edu.sc.seis.seisFile.sac.SacConstants;
 import edu.sc.seis.seisFile.sac.SacHeader;
@@ -230,7 +231,7 @@ public class TauP_SetSac extends TauP_AbstractPhaseTool {
             /* can't get a distance, skipping */
             throw new SetSacException("Can't get a distance, all distance fields are undef in "+filenameForError);
         }
-        if(modelArgs.getSourceDepth().size()!= 1 || !((evdpkm && modelArgs.getSourceDepth().get(0) == header.getEvdp()) || (!evdpkm && modelArgs.getSourceDepth().get(0) == 1000 * header.getEvdp()))) {
+        if(modelArgs.getSourceDepths().size()!= 1 || !((evdpkm && modelArgs.getSourceDepths().get(0) == header.getEvdp()) || (!evdpkm && modelArgs.getSourceDepths().get(0) == 1000 * header.getEvdp()))) {
             if(!evdpkm && header.getEvdp() != 0 && header.getEvdp() < 1000.0) {
                 Alert.warning("Sac header evdp is < 1000 in "
                                       + filenameForError,
@@ -244,7 +245,7 @@ public class TauP_SetSac extends TauP_AbstractPhaseTool {
             }
         }
         if(isVerbose()) {
-            System.err.println(filenameForError + " searching for " + getPhaseNamesAsString());
+            System.err.println(filenameForError + " searching for " + PhaseArgs.getPhaseNamesAsString(parsePhaseNameList()));
         }
         for(int j = getSeismicPhases().size() - 1; j >= 0; j--) {
             SeismicPhase phase = getSeismicPhases().get(j);

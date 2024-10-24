@@ -4,8 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import edu.sc.seis.TauP.cmdline.TauP_Time;
-import org.junit.jupiter.api.Disabled;
+import edu.sc.seis.TauP.cmdline.args.PhaseArgs;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -28,7 +27,7 @@ public class SourceInCoreTest {
         TauModel tMod = TauModelLoader.load(modelName);
         float[] sourceDepths = {0, 1000, 2000, 3500, 6000 };
         float receiverDepth = 0;
-        List<String> mantlePhases = TauP_Time.extractPhaseNames("ttall");
+        List<String> mantlePhases = PhaseArgs.extractPhaseNames("ttall");
         List<String> legalPhases = new ArrayList<String>();
         legalPhases.addAll(mantlePhases);
         legalPhases.addAll(outerCoreSourcePhases);

@@ -185,7 +185,7 @@ public class TauP_SetMSeed3 extends TauP_AbstractPhaseTool {
 
             if (ehKey != null && !ehKey.isEmpty()) {
                 JSONObject taup = TauP_Time.resultAsJSONObject(modelArgs.getModelName(),
-                        modelArgs.getSourceDepth(), modelArgs.getReceiverDepth(), parsePhaseNameList(), arrivals);
+                        modelArgs.getSourceDepths(), modelArgs.getReceiverDepths(), parsePhaseNameList(), arrivals);
                 eh.getEH().put(ehKey, taup);
             } else {
                 JSONObject bag = eh.getBagEH();

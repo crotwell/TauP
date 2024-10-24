@@ -1,6 +1,5 @@
 package edu.sc.seis.TauP;
 
-import edu.sc.seis.TauP.cmdline.TauP_Time;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -89,7 +88,7 @@ public class AK135Test  {
 
                 List<Arrival> arrivals = taup.calcAll(taup.getSeismicPhases(), List.of(DistanceRay.ofDegrees(timeDist.getDistDeg())));
                 if (timeDist.getTime() > 0) {
-                    assertFalse(arrivals.isEmpty(), "got no arrivals for " + phase + " at deg=" + timeDist.getDistDeg() + " depth=" + taup.modelArgs.getSourceDepth());
+                    assertFalse(arrivals.isEmpty(), "got no arrivals for " + phase + " at deg=" + timeDist.getDistDeg() + " depth=" + taup.modelArgs.getSourceDepths());
 
                 // assume first?
                 assertEquals(timeDist.getTime(),

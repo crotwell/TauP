@@ -168,8 +168,8 @@ public class TauP_Path extends TauP_AbstractRayTool {
 		if (getOutputFormat().equals(OutputTypes.JSON)) {
 			TauP_AbstractRayTool.writeJSON(out, "",
 					getTauModelName(),
-					modelArgs.getSourceDepth(),
-					modelArgs.getReceiverDepth(),
+					modelArgs.getSourceDepths(),
+					modelArgs.getReceiverDepths(),
 					getSeismicPhases(),
 					arrivalList);
 		} else if (getOutputFormat().equals(OutputTypes.SVG)) {

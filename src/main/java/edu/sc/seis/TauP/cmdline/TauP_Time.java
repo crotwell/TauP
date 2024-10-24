@@ -209,8 +209,8 @@ public class TauP_Time extends TauP_AbstractRayTool {
     public void printResultText(PrintWriter out, List<Arrival> arrivalList) {
         printArrivalsAsText(out, arrivalList,
                 modelArgs.getModelName(),
-                modelArgs.getSourceDepth(),
-                modelArgs.getReceiverDepth(),
+                modelArgs.getSourceDepths(),
+                modelArgs.getReceiverDepths(),
                 getScatterer(),
                 onlyFirst, onlyPrintTime, onlyPrintRayP,
                 isWithAmplitude(), sourceArgs.getMw(),
@@ -342,8 +342,8 @@ public class TauP_Time extends TauP_AbstractRayTool {
     public void printResultJSON(PrintWriter out, List<Arrival> arrivalList) throws TauModelException, TauPException {
         TauP_AbstractRayTool.writeJSON(out, "",
                 getTauModelName(),
-                modelArgs.getSourceDepth(),
-                modelArgs.getReceiverDepth(),
+                modelArgs.getSourceDepths(),
+                modelArgs.getReceiverDepths(),
                 getSeismicPhases(),
                 arrivalList,
                 isWithAmplitude(),

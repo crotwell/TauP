@@ -5,8 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import edu.sc.seis.TauP.cmdline.TauP_Time;
-import org.junit.jupiter.api.Disabled;
+import edu.sc.seis.TauP.cmdline.args.PhaseArgs;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -100,7 +99,7 @@ class IllegalPhasesTest {
 	String[] mantleSourceNoArrivalPhases = { "Pn", "Pvmp", "Sn", "Svms", "PmPv410P", "PmP^410P" };
 
 	ArrayList<String> createIllegalPhases() {
-		List<String> legalPhases = TauP_Time.extractPhaseNames("ttall");
+		List<String> legalPhases = PhaseArgs.extractPhaseNames("ttall");
 		ArrayList<String> illegalEndPhases = new ArrayList<>();
 		legalPhases.addAll(otherLegalPhases);
 		for (String phaseName : legalPhases) {
@@ -151,7 +150,7 @@ class IllegalPhasesTest {
 
 		TauModel tModDepth = tMod_OCD.depthCorrect(10);
 		float receiverDepth = 100;
-		List<String> legalPhases = TauP_Time.extractPhaseNames("ttall");
+		List<String> legalPhases = PhaseArgs.extractPhaseNames("ttall");
 		legalPhases.addAll(otherLegalPhases);
 		for (String phaseName : legalPhases) {
 			try {
@@ -170,7 +169,7 @@ class IllegalPhasesTest {
 	void checkLegalScatterPhasesTest() throws TauModelException, VelocityModelException, SlownessModelException, IOException {
 		boolean DEBUG = true;
 		// maybe dumb test, just check that leg puller doesn't die
-		List<String> legalPhases = TauP_Time.extractPhaseNames("ttall");
+		List<String> legalPhases = PhaseArgs.extractPhaseNames("ttall");
 		legalPhases.addAll(scatterLegalPhases);
 		for (String phaseName : legalPhases) {
 			List<String> legs = LegPuller.legPuller(phaseName);

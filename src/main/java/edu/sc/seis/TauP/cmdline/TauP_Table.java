@@ -27,6 +27,7 @@ package edu.sc.seis.TauP.cmdline;
 
 import edu.sc.seis.TauP.*;
 import edu.sc.seis.TauP.cmdline.args.OutputTypes;
+import edu.sc.seis.TauP.cmdline.args.PhaseArgs;
 import edu.sc.seis.TauP.cmdline.args.TableOutputTypeArgs;
 import picocli.CommandLine;
 
@@ -609,6 +610,9 @@ public class TauP_Table extends TauP_AbstractPhaseTool {
 
     @CommandLine.Mixin
     TableOutputTypeArgs outputTypeArgs;
+
+    @CommandLine.ArgGroup(heading = "Phase Names %n", exclusive = false)
+    PhaseArgs phaseArgs = new PhaseArgs();
 
     /**
     * ToolRun.main should be used instead.

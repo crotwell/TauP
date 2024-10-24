@@ -1,6 +1,5 @@
 package edu.sc.seis.TauP;
 
-import edu.sc.seis.TauP.cmdline.TauP_Tool;
 import edu.sc.seis.TauP.cmdline.args.ColorType;
 import edu.sc.seis.TauP.cmdline.args.ColoringArgs;
 import edu.sc.seis.TauP.cmdline.args.GraphicOutputTypeArgs;
@@ -85,8 +84,8 @@ public class XYPlotOutput {
     public JSONObject asJSON() {
         JSONObject out;
         if (modelArgs != null ) {
-            out = baseResultAsJSONObject( modelArgs.getModelName(), modelArgs.getSourceDepth(),
-                    modelArgs.getReceiverDepth(), phaseNames);
+            out = baseResultAsJSONObject( modelArgs.getModelName(), modelArgs.getSourceDepths(),
+                    modelArgs.getReceiverDepths(), phaseNames);
         } else {
             out = new JSONObject();
         }
@@ -135,7 +134,7 @@ public class XYPlotOutput {
         if (isLegend) {
             printGmtScriptLegend(writer);
         }
-        TauP_Tool.endGmtAndCleanUp(writer);
+        writer.println("gmt end ");
     }
 
     public void printGmtScriptBeginning(PrintWriter writer,
@@ -306,7 +305,7 @@ public class XYPlotOutput {
 
     public String getTitle() {
         if (title == null && modelArgs != null) {
-            return modelArgs.getModelName() + " (h=" + depthsToString(modelArgs.getSourceDepth()) + " km)";
+            return modelArgs.getModelName() + " (h=" + depthsToString(modelArgs.getSourceDepths()) + " km)";
         } else {
             return title;
         }
