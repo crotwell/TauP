@@ -534,6 +534,10 @@ public class TauP_VelocityPlot extends TauP_Tool {
         if (velModelArgs.size() == 0) {
             throw new CommandLine.ParameterException(spec.commandLine(), "must give at least one model");
         }
+        if (getOutputFormat() == OutputTypes.ND
+                && (xAxisType != ModelAxisType.velocity || yAxisType != ModelAxisType.depth)) {
+            throw new CommandLine.ParameterException(spec.commandLine(), "cannot specify axis type for --nd output");
+        }
     }
 
     public VelPlotOutputTypeArgs getOutputTypeArgs() {
