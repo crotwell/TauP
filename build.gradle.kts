@@ -111,9 +111,9 @@ val webserverImplementation by configurations.getting {
 
 dependencies {
     implementation("org.json:json:20240303")
-    //implementation("edu.sc.seis:seisFile:2.2.0-SNAPSHOT") {
+    implementation("edu.sc.seis:seisFile:2.2.1-SNAPSHOT") {
     // or
-    implementation("edu.sc.seis:seisFile:2.2.0") {
+    //implementation("edu.sc.seis:seisFile:2.2.0") {
       // we need seisFile for sac/mseed3 output, but not all the other functionality
       exclude(group = "org.apache.httpcomponents", module = "httpclient")
     }

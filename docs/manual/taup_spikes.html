@@ -129,13 +129,14 @@
 <p>TauP Spikes calculates travel times and amplitudes and generates
 a spike seismogram for specified phases through the given earth model.</p>
 <p>The usage is:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Usage: taup spikes [--debug] [--geodetic] [--help] [--verbose] [--az=&lt;azimuth&gt;]
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Usage: taup spikes [--debug] [--geodetic] [--help] [--verbose]
+                   [--attenuationfreq=&lt;attenuationFreq&gt;] [--az=&lt;azimuth&gt;]
                    [--az=&lt;azimuth&gt;] [--baz=&lt;backAzimuth&gt;] [--baz=&lt;backAzimuth&gt;]
                    [--geodeticflattening=f] [--mw=&lt;mw&gt;] [-o=&lt;outFile&gt;]
                    [--otime=&lt;origintime&gt;] [--prop=&lt;toolPropsFilename&gt;]
                    [--qml=&lt;quakemlFilename&gt;] [--staxml=&lt;stationxmlFilename&gt;]
                    [--evt=l l]... [--evt=l l]... [--sta=l l]... [--sta=l l]...
-                   [[--mod=&lt;modelname&gt;] [-h=depth[,depth...]]...
+                   [[--mod=&lt;modelName&gt;] [-h=depth[,depth...]]...
                    [--stadepth=depth[,depth...]]... [--scat=s s]...] [[-p=phase
                    [,phase...]]... [--phasefile=&lt;phaseFiles&gt;]...] [[--deg=d[,
                    d...]]... [--exactdegree=d[,d...]]... [--exactkilometer=km[,
@@ -147,6 +148,8 @@ Calculate spike seismograms
 
 Options:
 
+      --attenuationfreq=&lt;attenuationFreq&gt;
+                             attenuation frequency for amplitude calculations
       --debug                enable debugging output
       --geodetic             use geodetic latitude for distance calculations,
                                which implies an ellipticity. Default is
@@ -172,8 +175,8 @@ Options:
 Model Args
   -h, --evdepth, --sourcedepth=depth[,depth...]
                              source depth in km
-      --mod, --model=&lt;modelname&gt;
-                             use velocity model &quot;modelname&quot; for calculations.
+      --mod, --model=&lt;modelName&gt;
+                             use velocity model &quot;modelName&quot; for calculations.
                              Default is iasp91. Other builtin models include
                                prem, ak135, ak135fcont, and ak135favg.
       --scat, --scatter=s s  scattering depth and distance in degrees, which

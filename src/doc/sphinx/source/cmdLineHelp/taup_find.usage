@@ -1,9 +1,10 @@
 Usage: taup find [--amp] [--debug] [--help] [--onlynameddiscon] [--pwaveonly]
-                 [--showrayparam] [--verbose] [--deltatime=dt]
+                 [--showrayparam] [--verbose]
+                 [--attenuationfreq=<attenuationFreq>] [--deltatime=dt]
                  --max=<maxActions> [--mw=<mw>] [-o=<outFile>]
                  [--prop=<toolPropsFilename>] [--deg=d[,d...]]...
                  [--rayparamdeg=s/deg [s/deg]]... [--rayparamkm=s/km [s/km]]...
-                 [--time=t [t]]... [--exclude=depth...]... [[--mod=<modelname>]
+                 [--time=t [t]]... [--exclude=depth...]... [[--mod=<modelName>]
                  [-h=depth[,depth...]]... [--stadepth=depth[,depth...]]...
                  [--scat=s s]...] [[-p=phase[,phase...]]...
                  [--phasefile=<phaseFiles>]...] [--json | --text]
@@ -12,6 +13,8 @@ Find seismic phases in an earth model.
 Options:
 
       --amp                show amplitude factor for each phase, only if --deg
+      --attenuationfreq=<attenuationFreq>
+                           attenuation frequency for amplitude calculations
       --debug              enable debugging output
       --deg, --degree=d[,d...]
                            distance in degrees
@@ -42,8 +45,8 @@ Options:
 Model Args
   -h, --evdepth, --sourcedepth=depth[,depth...]
                            source depth in km
-      --mod, --model=<modelname>
-                           use velocity model "modelname" for calculations.
+      --mod, --model=<modelName>
+                           use velocity model "modelName" for calculations.
                            Default is iasp91. Other builtin models include
                              prem, ak135, ak135fcont, and ak135favg.
       --scat, --scatter=s s

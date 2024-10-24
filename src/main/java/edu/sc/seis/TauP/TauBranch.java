@@ -1,3 +1,5 @@
+package edu.sc.seis.TauP;
+
 /*
  * The TauP Toolkit: Flexible Seismic Travel-Time and Raypath Utilities.
  * Copyright (C) 1998-2000 University of South Carolina This program is free
@@ -14,7 +16,6 @@
  * should be directed to H. Philip Crotwell, crotwell@seis.sc.edu or Tom Owens,
  * owens@seis.sc.edu
  */
-package edu.sc.seis.TauP;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;

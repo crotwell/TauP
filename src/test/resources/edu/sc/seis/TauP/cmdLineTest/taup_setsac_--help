@@ -1,6 +1,6 @@
 Usage: taup setsac [--debug] [--evdpkm] [--geodetic] [--help] [--verbose]
                    [--geodeticflattening=f] [--prop=<toolPropsFilename>]
-                   [[--mod=<modelname>] [-h=depth[,depth...]]...
+                   [[--mod=<modelName>] [-h=depth[,depth...]]...
                    [--stadepth=depth[,depth...]]... [--scat=s s]...] [[-p=phase
                    [,phase...]]... [--phasefile=<phaseFiles>]...] [sacfile...]
 Set headers to travel times of phases using depth and distance from SAC files.
@@ -26,8 +26,8 @@ Options:
 Model Args
   -h, --evdepth, --sourcedepth=depth[,depth...]
                      source depth in km
-      --mod, --model=<modelname>
-                     use velocity model "modelname" for calculations.
+      --mod, --model=<modelName>
+                     use velocity model "modelName" for calculations.
                      Default is iasp91. Other builtin models include prem,
                        ak135, ak135fcont, and ak135favg.
       --scat, --scatter=s s

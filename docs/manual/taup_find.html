@@ -180,11 +180,12 @@ to be an arrival at roughly 410 seconds, this would give some possible phases
 that may explain it.</p>
 <p>The usage is:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Usage: taup find [--amp] [--debug] [--help] [--onlynameddiscon] [--pwaveonly]
-                 [--showrayparam] [--verbose] [--deltatime=dt]
+                 [--showrayparam] [--verbose]
+                 [--attenuationfreq=&lt;attenuationFreq&gt;] [--deltatime=dt]
                  --max=&lt;maxActions&gt; [--mw=&lt;mw&gt;] [-o=&lt;outFile&gt;]
                  [--prop=&lt;toolPropsFilename&gt;] [--deg=d[,d...]]...
                  [--rayparamdeg=s/deg [s/deg]]... [--rayparamkm=s/km [s/km]]...
-                 [--time=t [t]]... [--exclude=depth...]... [[--mod=&lt;modelname&gt;]
+                 [--time=t [t]]... [--exclude=depth...]... [[--mod=&lt;modelName&gt;]
                  [-h=depth[,depth...]]... [--stadepth=depth[,depth...]]...
                  [--scat=s s]...] [[-p=phase[,phase...]]...
                  [--phasefile=&lt;phaseFiles&gt;]...] [--json | --text]
@@ -193,6 +194,8 @@ Find seismic phases in an earth model.
 Options:
 
       --amp                show amplitude factor for each phase, only if --deg
+      --attenuationfreq=&lt;attenuationFreq&gt;
+                           attenuation frequency for amplitude calculations
       --debug              enable debugging output
       --deg, --degree=d[,d...]
                            distance in degrees
@@ -223,8 +226,8 @@ Options:
 Model Args
   -h, --evdepth, --sourcedepth=depth[,depth...]
                            source depth in km
-      --mod, --model=&lt;modelname&gt;
-                           use velocity model &quot;modelname&quot; for calculations.
+      --mod, --model=&lt;modelName&gt;
+                           use velocity model &quot;modelName&quot; for calculations.
                            Default is iasp91. Other builtin models include
                              prem, ak135, ak135fcont, and ak135favg.
       --scat, --scatter=s s

@@ -732,7 +732,7 @@ public class Arrival {
         }
         return latestArrival;
     }
-    
+
     public void writeJSON(PrintWriter pw, String indent, boolean withAmp) {
         writeJSON(pw, indent, withAmp, MomentMagnitude.MAG4_MOMENT, DEFAULT_ATTENUATION_FREQUENCY);
     }

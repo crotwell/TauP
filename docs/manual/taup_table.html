@@ -149,29 +149,31 @@ Pdiff and Sdiff while not be output. This is to align the output with preexistin
 locsat style travel time files.</p>
 <p>The usage is:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Usage: taup table [--debug] [--help] [--verbose] [--header=&lt;headerFile&gt;]
-                  [-o=&lt;outFile&gt;] [--prop=&lt;toolPropsFilename&gt;]
-                  [[--mod=&lt;modelname&gt;] [-h=depth[,depth...]]...
-                  [--stadepth=depth[,depth...]]... [--scat=s s]...] [[-p=phase[,
-                  phase...]]... [--phasefile=&lt;phaseFiles&gt;]...] [--csv | --json
-                  | --locsat | --text]
+                  [-o=&lt;outFile&gt;] [--prop=&lt;toolPropsFilename&gt;] [--csv | --json |
+                  --locsat | --text] [[--mod=&lt;modelName&gt;] [--stadepth=depth[,
+                  depth...]]... [--scat=s s]...] [[-p=phase[,phase...]]...
+                  [--phasefile=&lt;phaseFiles&gt;]...]
 Create a table of travel times for a range of depths and distances.
 
 Options:
 
       --debug              enable debugging output
       --header=&lt;headerFile&gt;
-                           reads depth and distance spacing data
-                                                 from a LOCSAT style file.
+                           reads depth and distance spacing data from a LOCSAT
+                             style file.
       --help               display this help message
   -o, --output=&lt;outFile&gt;   output to file, default is stdout.
       --prop=&lt;toolPropsFilename&gt;
                            load defaults from properties file
       --verbose            enable verbose output
+Output Type:
+      --csv                outputs as CSV
+      --json               outputs as JSON
+      --locsat             outputs as Locsat
+      --text, --generic    outputs as Text
 Model Args
-  -h, --evdepth, --sourcedepth=depth[,depth...]
-                           source depth in km
-      --mod, --model=&lt;modelname&gt;
-                           use velocity model &quot;modelname&quot; for calculations.
+      --mod, --model=&lt;modelName&gt;
+                           use velocity model &quot;modelName&quot; for calculations.
                            Default is iasp91. Other builtin models include
                              prem, ak135, ak135fcont, and ak135favg.
       --scat, --scatter=s s
@@ -186,11 +188,6 @@ Phase Names
                            seismic phase names
       --phasefile=&lt;phaseFiles&gt;
                            read list of phase names from file
-Output Type:
-      --csv                outputs as CSV
-      --json               outputs as JSON
-      --locsat             outputs as Locsat
-      --text, --generic    outputs as Text
 </pre></div>
 </div>
 </section>

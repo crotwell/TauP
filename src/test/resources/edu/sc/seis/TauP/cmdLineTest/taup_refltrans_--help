@@ -5,7 +5,7 @@ Usage: taup refltrans [--abs] [--debug] [--down] [--energyflux] [--fsrf]
                       [-o=<outFile>] [--prop=<toolPropsFilename>]
                       [--rpstep=s/km] [-x=type] [--xminmax=x x]... [--yminmax=y
                       y]... [--layer=v v v v v v]... [-y=type...]... [--gmt |
-                      --json | --svg | --text] [[--mod=<modelname>] [-h=depth[,
+                      --json | --svg | --text] [[--mod=<modelName>] [-h=depth[,
                       depth...]]... [--stadepth=depth[,depth...]]... [--scat=s
                       s]...]
 Plot reflection and transmission coefficients for a discontinuity.
@@ -57,8 +57,8 @@ Output Type:
 Model Args
   -h, --evdepth, --sourcedepth=depth[,depth...]
                             source depth in km
-      --mod, --model=<modelname>
-                            use velocity model "modelname" for calculations.
+      --mod, --model=<modelName>
+                            use velocity model "modelName" for calculations.
                             Default is iasp91. Other builtin models include
                               prem, ak135, ak135fcont, and ak135favg.
       --scat, --scatter=s s scattering depth and distance in degrees, which may

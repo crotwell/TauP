@@ -1,10 +1,11 @@
-Usage: taup spikes [--debug] [--geodetic] [--help] [--verbose] [--az=<azimuth>]
+Usage: taup spikes [--debug] [--geodetic] [--help] [--verbose]
+                   [--attenuationfreq=<attenuationFreq>] [--az=<azimuth>]
                    [--az=<azimuth>] [--baz=<backAzimuth>] [--baz=<backAzimuth>]
                    [--geodeticflattening=f] [--mw=<mw>] [-o=<outFile>]
                    [--otime=<origintime>] [--prop=<toolPropsFilename>]
                    [--qml=<quakemlFilename>] [--staxml=<stationxmlFilename>]
                    [--evt=l l]... [--evt=l l]... [--sta=l l]... [--sta=l l]...
-                   [[--mod=<modelname>] [-h=depth[,depth...]]...
+                   [[--mod=<modelName>] [-h=depth[,depth...]]...
                    [--stadepth=depth[,depth...]]... [--scat=s s]...] [[-p=phase
                    [,phase...]]... [--phasefile=<phaseFiles>]...] [[--deg=d[,
                    d...]]... [--exactdegree=d[,d...]]... [--exactkilometer=km[,
@@ -16,6 +17,8 @@ Calculate spike seismograms
 
 Options:
 
+      --attenuationfreq=<attenuationFreq>
+                             attenuation frequency for amplitude calculations
       --debug                enable debugging output
       --geodetic             use geodetic latitude for distance calculations,
                                which implies an ellipticity. Default is
@@ -41,8 +44,8 @@ Options:
 Model Args
   -h, --evdepth, --sourcedepth=depth[,depth...]
                              source depth in km
-      --mod, --model=<modelname>
-                             use velocity model "modelname" for calculations.
+      --mod, --model=<modelName>
+                             use velocity model "modelName" for calculations.
                              Default is iasp91. Other builtin models include
                                prem, ak135, ak135fcont, and ak135favg.
       --scat, --scatter=s s  scattering depth and distance in degrees, which

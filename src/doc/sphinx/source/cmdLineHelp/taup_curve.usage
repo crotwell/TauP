@@ -1,17 +1,20 @@
 Usage: taup curve [--debug] [--help] [--legend] [--verbose] [--xabs] [--xlog]
-                  [--yabs] [--ylog] [--color=<coloring>]
-                  [--mapwidth=<mapwidth>] [--mapwidthunit=<mapWidthUnit>]
-                  [--mw=<mw>] [-o=<outFile>] [--prop=<toolPropsFilename>]
-                  [--reddeg=deg/s] [--redkm=km/s] [--rel=phase] [-x=type]
-                  [-y=type] [--xminmax=x x]... [--yminmax=y y]...
-                  [[--mod=<modelname>] [-h=depth[,depth...]]...
-                  [--stadepth=depth[,depth...]]... [--scat=s s]...] [[-p=phase[,
-                  phase...]]... [--phasefile=<phaseFiles>]...] [--gmt | --json
-                  | --svg | --text]
+                  [--yabs] [--ylog] [--attenuationfreq=<attenuationFreq>]
+                  [--color=<coloring>] [--mapwidth=<mapwidth>]
+                  [--mapwidthunit=<mapWidthUnit>] [--mw=<mw>] [-o=<outFile>]
+                  [--prop=<toolPropsFilename>] [--reddeg=deg/s] [--redkm=km/s]
+                  [--rel=phase] [-x=type] [-y=type] [--xminmax=x x]...
+                  [--yminmax=y y]... [[--mod=<modelName>] [-h=depth[,
+                  depth...]]... [--stadepth=depth[,depth...]]... [--scat=s
+                  s]...] [[-p=phase[,phase...]]...
+                  [--phasefile=<phaseFiles>]...] [--gmt | --json | --svg |
+                  --text]
 Plot travel time vs. distance and other curves for seismic phases.
 
 Options:
 
+      --attenuationfreq=<attenuationFreq>
+                           attenuation frequency for amplitude calculations
       --color=<coloring>   style of coloring for paths and wavefronts, one of:
                              auto, wavetype, phase, none
       --debug              enable debugging output
@@ -55,8 +58,8 @@ Options:
 Model Args
   -h, --evdepth, --sourcedepth=depth[,depth...]
                            source depth in km
-      --mod, --model=<modelname>
-                           use velocity model "modelname" for calculations.
+      --mod, --model=<modelName>
+                           use velocity model "modelName" for calculations.
                            Default is iasp91. Other builtin models include
                              prem, ak135, ak135fcont, and ak135favg.
       --scat, --scatter=s s

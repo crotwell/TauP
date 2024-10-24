@@ -1,12 +1,13 @@
 Usage: taup time [--amp] [--debug] [--first] [--geodetic] [--help] [--rayp]
-                 [--time] [--verbose] [--az=<azimuth>] [--az=<azimuth>]
-                 [--baz=<backAzimuth>] [--baz=<backAzimuth>]
-                 [--geodeticflattening=f] [--mw=<mw>] [-o=<outFile>]
-                 [--prop=<toolPropsFilename>] [--qml=<quakemlFilename>]
-                 [--staxml=<stationxmlFilename>] [--rel=phase[,phase...]]...
-                 [--evt=l l]... [--evt=l l]... [--sta=l l]... [--sta=l l]...
-                 [[--mod=<modelname>] [-h=depth[,depth...]]... [--stadepth=depth
-                 [,depth...]]... [--scat=s s]...] [[-p=phase[,phase...]]...
+                 [--time] [--verbose] [--attenuationfreq=<attenuationFreq>]
+                 [--az=<azimuth>] [--az=<azimuth>] [--baz=<backAzimuth>]
+                 [--baz=<backAzimuth>] [--geodeticflattening=f] [--mw=<mw>]
+                 [-o=<outFile>] [--prop=<toolPropsFilename>]
+                 [--qml=<quakemlFilename>] [--staxml=<stationxmlFilename>]
+                 [--rel=phase[,phase...]]... [--evt=l l]... [--evt=l l]...
+                 [--sta=l l]... [--sta=l l]... [[--mod=<modelName>] [-h=depth[,
+                 depth...]]... [--stadepth=depth[,depth...]]... [--scat=s
+                 s]...] [[-p=phase[,phase...]]...
                  [--phasefile=<phaseFiles>]...] [[--deg=d[,d...]]...
                  [--exactdegree=d[,d...]]... [--exactkilometer=km[,km...]]...
                  [--km=km[,km...]]... [--rayparamdeg=s/deg[,s/deg...]]...
@@ -18,6 +19,8 @@ Calculate travel times for seismic phases in an earth model.
 Options:
 
       --amp                  show amplitude factor for each phase
+      --attenuationfreq=<attenuationFreq>
+                             attenuation frequency for amplitude calculations
       --debug                enable debugging output
       --first, --onlyfirst   only output the first arrival for each phase, no
                                triplications
@@ -47,8 +50,8 @@ Options:
 Model Args
   -h, --evdepth, --sourcedepth=depth[,depth...]
                              source depth in km
-      --mod, --model=<modelname>
-                             use velocity model "modelname" for calculations.
+      --mod, --model=<modelName>
+                             use velocity model "modelName" for calculations.
                              Default is iasp91. Other builtin models include
                                prem, ak135, ak135fcont, and ak135favg.
       --scat, --scatter=s s  scattering depth and distance in degrees, which

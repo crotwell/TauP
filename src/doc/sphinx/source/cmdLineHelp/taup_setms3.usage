@@ -1,8 +1,8 @@
-Usage: taup setms3 [--debug] [--geodetic] [--help] [--verbose]
-                   [--geodeticflattening=f] [--prop=<toolPropsFilename>]
-                   [--qml=<quakemlFilename>] [--qmltol=<quakeOTimeTol>]
-                   [--staxml=<stationxmlFilename>] [--taupeh=<ehKey>]
-                   [[--mod=<modelname>] [-h=depth[,depth...]]...
+Usage: taup setms3 [--debug] [--geodetic] [--help] [--verbose] [--taupeh
+                   [=<ehKey>]] [--geodeticflattening=f]
+                   [--prop=<toolPropsFilename>] [--qml=<quakemlFilename>]
+                   [--qmltol=<quakeOTimeTol>] [--staxml=<stationxmlFilename>]
+                   [[--mod=<modelName>] [-h=depth[,depth...]]...
                    [--stadepth=depth[,depth...]]... [--scat=s s]...] [[-p=phase
                    [,phase...]]... [--phasefile=<phaseFiles>]...]
                    [mseed3file...]
@@ -10,51 +10,52 @@ Save travel times in the extra header of miniseed3 files.
     https://crotwell.github.io/ms3eh/
 has details on the JSON structure.
 
-      [mseed3file...]    Miniseed3 files to process.
+      [mseed3file...]      Miniseed3 files to process.
 
 Options:
 
-      --debug            enable debugging output
-      --geodetic         use geodetic latitude for distance calculations, which
-                           implies an ellipticity. Default is spherical. Note
-                           this only affects calculation of distance from
-                           lat/lon pairs, all travel time calculations are done
-                           in a purely spherical model.
+      --debug              enable debugging output
+      --geodetic           use geodetic latitude for distance calculations,
+                             which implies an ellipticity. Default is
+                             spherical. Note this only affects calculation of
+                             distance from lat/lon pairs, all travel time
+                             calculations are done in a purely spherical model.
       --geodeticflattening=f
-                         Inverse Elliptical flattening for distance
-                           calculations when --geodetic, defaults to WGS84 ~
-                           298.257. The distance calculation uses 1/x.
-      --help             display this help message
+                           Inverse Elliptical flattening for distance
+                             calculations when --geodetic, defaults to WGS84 ~
+                             298.257. The distance calculation uses 1/x.
+      --help               display this help message
       --prop=<toolPropsFilename>
-                         load defaults from properties file
+                           load defaults from properties file
       --qml, --quakeml=<quakemlFilename>
-                         QuakeML file to load for earthquake origins to use
+                           QuakeML file to load for earthquake origins to use
       --qmltol=<quakeOTimeTol>
-                         time window to search for origins in a QuakeML file as
-                           an ISO8601 string, default value is PT1H.
+                           time window to search for origins in a QuakeML file
+                             as an ISO8601 string, default value is PT1H.
       --staxml=<stationxmlFilename>
-                         StationXML file to extract station latitudes and
-                           longitudes from
-      --taupeh=<ehKey>   key to store full TauP JSON output within extra
-                           headers within, otherwise use abbreviated 'bag'
-                           style markers.
-      --verbose          enable verbose output
+                           StationXML file to extract station latitudes and
+                             longitudes from
+      --taupeh[=<ehKey>]   key to store full TauP JSON output within extra
+                             headers within, otherwise use abbreviated 'bag'
+                             style markers.If specified without parameter,
+                             extra header key of taup will be used.
+      --verbose            enable verbose output
 Model Args
   -h, --evdepth, --sourcedepth=depth[,depth...]
-                         source depth in km
-      --mod, --model=<modelname>
-                         use velocity model "modelname" for calculations.
-                         Default is iasp91. Other builtin models include prem,
-                           ak135, ak135fcont, and ak135favg.
+                           source depth in km
+      --mod, --model=<modelName>
+                           use velocity model "modelName" for calculations.
+                           Default is iasp91. Other builtin models include
+                             prem, ak135, ak135fcont, and ak135favg.
       --scat, --scatter=s s
-                         scattering depth and distance in degrees, which may be
-                           negative. Only effects phases with 'o' or 'O' in the
-                           phase name.
+                           scattering depth and distance in degrees, which may
+                             be negative. Only effects phases with 'o' or 'O'
+                             in the phase name.
       --stadepth, --receiverdepth=depth[,depth...]
-                         the receiver depth in km for stations not at the
-                           surface
+                           the receiver depth in km for stations not at the
+                             surface
 Phase Names
   -p, --ph, --phase=phase[,phase...]
-                         seismic phase names
+                           seismic phase names
       --phasefile=<phaseFiles>
-                         read list of phase names from file
+                           read list of phase names from file
