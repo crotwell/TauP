@@ -33,6 +33,7 @@ import edu.sc.seis.TauP.cmdline.args.SeismogramOutputTypeArgs;
 import edu.sc.seis.seisFile.fdsnws.quakeml.*;
 import edu.sc.seis.seisFile.mseed3.FDSNSourceId;
 import edu.sc.seis.seisFile.mseed3.MSeed3EH;
+import edu.sc.seis.seisFile.mseed3.MSeed3EHKeys;
 import edu.sc.seis.seisFile.mseed3.MSeed3Record;
 import edu.sc.seis.seisFile.mseed3.ehbag.Marker;
 import edu.sc.seis.seisFile.mseed3.ehbag.Path;
@@ -94,6 +95,11 @@ public class TauP_Spikes extends TauP_AbstractRayTool {
         if (modelArgs.getSourceDepths().size() > 1) {
             throw new CommandLine.ParameterException(spec.commandLine(), "Multiple source depths unsupported: "+modelArgs.getSourceDepths().size());
         }
+    }
+
+    @Override
+    public void init() throws TauPException {
+        super.init();
     }
 
     @Override
@@ -220,7 +226,7 @@ public class TauP_Spikes extends TauP_AbstractRayTool {
         for (Arrival a : allArrivals) {
             ZonedDateTime arrTime = startDateTime.plusNanos(Math.round(a.getTime() * 1e9));
             String desc = "";
-            Marker m = new Marker(a.getName(), arrTime, Marker.MARKER_PREDIC_MODEL, desc);
+            Marker m = new Marker(a.getName(), arrTime, MSeed3EHKeys.MARKER_MODELED, desc);
             eh.addToBag(m);
         }
         return eh;

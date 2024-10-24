@@ -15,6 +15,7 @@ import edu.sc.seis.seisFile.TimeUtils;
 
 import java.io.*;
 
+import edu.sc.seis.seisFile.mseed3.ehbag.Marker;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import picocli.CommandLine;
@@ -192,6 +193,11 @@ public class TauP_SetMSeed3 extends TauP_AbstractPhaseTool {
                 if (evTime == null) {
                     System.err.println("Unable to extract event origin time, skipping record");
                 }
+
+                List<Marker> mList = new ArrayList<>();
+                for (Arrival arrival : arrivals) {
+                    mList.add(createEHMarker(arrival, evTime));
+                }
                 insertMarkers(bag, arrivals, evTime);
             }
         }
@@ -208,12 +214,10 @@ public class TauP_SetMSeed3 extends TauP_AbstractPhaseTool {
         bag.put("mark", markers);
     }
 
-    public static JSONObject createEHMarker(Arrival arrival, Instant evTime) {
-        JSONObject mark = new JSONObject();
-        mark.put("n", arrival.getName());
-        mark.put("tm", TimeUtils.toISOString(evTime.plusMillis(Math.round(arrival.getTime()*1000))));
-        mark.put("mtype", "md");
-        return mark;
+    public static Marker createEHMarker(Arrival arrival, Instant evTime) {
+        Marker m = new Marker(arrival.getName(), evTime.plusMillis(Math.round(arrival.getTime()*1000)).atZone(TimeUtils.TZ_UTC));
+        m.setType(MSeed3EHKeys.MARKER_MODELED);
+        return m;
     }
 
     Event findQuakeInTime(Instant time, Duration tol) {
@@ -244,7 +248,10 @@ public class TauP_SetMSeed3 extends TauP_AbstractPhaseTool {
     }
 
     @CommandLine.Option(names = "--taupeh",
-            description = "key to store full TauP JSON output within extra headers within, otherwise use abbreviated 'bag' style markers.")
+            arity = "0..1",
+            fallbackValue = "taup",
+            description = "key to store full TauP JSON output within extra headers within, otherwise use abbreviated 'bag' style markers."+
+                    "If specified without parameter, extra header key of ${FALLBACK-VALUE} will be used.")
     public void setEhKey(String ehKey) {
         this.ehKey = ehKey;
     }
