@@ -149,8 +149,8 @@ public class TauP_Spikes extends TauP_AbstractRayTool {
 
             for (Arrival arrival : allArrivals) {
                 int timeIdx = (int) Math.ceil((arrival.getTime() - startTime)/ getDeltaT());
-                double psvAmpFactor = arrival.getAmplitudeFactorPSV(sourceArgs.getMoment());
-                double shAmpFactor = arrival.getAmplitudeFactorSH(sourceArgs.getMoment());
+                double psvAmpFactor = arrival.getAmplitudeFactorPSV(sourceArgs.getMoment(), sourceArgs.getAttenuationFrequency());
+                double shAmpFactor = arrival.getAmplitudeFactorSH(sourceArgs.getMoment(), sourceArgs.getAttenuationFrequency());
                 double incidentAngle = arrival.getIncidentAngleDegree();
                 double rotateAngle = 0;
                 if ( ! arrival.getPhase().finalSegmentIsPWave()) {

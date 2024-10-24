@@ -213,7 +213,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
                 modelArgs.getReceiverDepths(),
                 getScatterer(),
                 onlyFirst, onlyPrintTime, onlyPrintRayP,
-                isWithAmplitude(), sourceArgs.getMw(),
+                isWithAmplitude(), sourceArgs.getMw(), sourceArgs.getAttenuationFrequency(),
                 relativePhaseName);
     }
 
@@ -224,7 +224,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
                                            List<Double>  receiverDepthList,
                                            Scatterer scatterer,
                                            boolean onlyFirst, boolean onlyPrintTime, boolean onlyPrintRayP,
-                                           boolean withAmplitude, double Mw,
+                                           boolean withAmplitude, double Mw, double attenuationFrequency,
                                            List<String> relativePhaseName) {
         Arrival currArrival;
         int maxNameLength = 5;
@@ -299,8 +299,8 @@ public class TauP_Time extends TauP_AbstractRayTool {
                 out.print(String.format(phasePuristFormat, currArrival.getPuristName()));
                 if (withAmplitude) {
                     try {
-                        double ampFactorPSV = currArrival.getAmplitudeFactorPSV(MomentMagnitude.mw_to_N_m(Mw));
-                        double ampFactorSH = currArrival.getAmplitudeFactorSH(MomentMagnitude.mw_to_N_m(Mw));
+                        double ampFactorPSV = currArrival.getAmplitudeFactorPSV(MomentMagnitude.mw_to_N_m(Mw), attenuationFrequency);
+                        double ampFactorSH = currArrival.getAmplitudeFactorSH(MomentMagnitude.mw_to_N_m(Mw), attenuationFrequency);
                         out.print(" " + Outputs.formatAmpFactor(ampFactorPSV) + " " + Outputs.formatAmpFactor(ampFactorSH));
                     } catch (SlownessModelException | TauModelException | VelocityModelException e) {
                         throw new RuntimeException("Should not happen", e);
@@ -347,7 +347,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
                 getSeismicPhases(),
                 arrivalList,
                 isWithAmplitude(),
-                sourceArgs.getMw());
+                sourceArgs.getMw(), sourceArgs.getAttenuationFrequency());
     }
 
     public static JSONObject resultAsJSONObject(String modelName,

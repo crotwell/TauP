@@ -71,7 +71,7 @@ public class VelocityLayer implements Cloneable, Serializable {
 
     public static double DEFAULT_DENSITY = 2.6;
     public static double DEFAULT_QP = 1000;
-    public static double DEFAULT_QS = 2000;
+    public static double DEFAULT_QS = 500;
 
     public VelocityLayer(int myLayerNumber,
                          double topDepth,

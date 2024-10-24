@@ -189,7 +189,7 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
                     modelArgs.getReceiverDepths(),
                     getScatterer(),
                     onlyFirst, onlyPrintTime, onlyPrintRayP,
-                    isWithAmplitude(), sourceArgs.getMw(),
+                    isWithAmplitude(), sourceArgs.getMw(), sourceArgs.getAttenuationFrequency(),
                     relativePhaseName);
         }
         out.flush();

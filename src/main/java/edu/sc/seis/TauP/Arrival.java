@@ -362,10 +362,10 @@ public class Arrival {
      * See FMGS eq 17.74
      */
     public double getAmplitudeFactorPSV() throws TauModelException, VelocityModelException, SlownessModelException {
-        return getAmplitudeFactorPSV(moment);
+        return getAmplitudeFactorPSV(moment, DEFAULT_ATTENUATION_FREQUENCY);
     }
 
-    public double getAmplitudeFactorPSV(double moment) throws TauModelException, VelocityModelException, SlownessModelException {
+    public double getAmplitudeFactorPSV(double moment, double attenuationFrequency) throws TauModelException, VelocityModelException, SlownessModelException {
 
         // dimensionaless ?
         double refltran = getEnergyReflTransPSV();
@@ -402,10 +402,10 @@ public class Arrival {
      * @throws SlownessModelException
      */
     public double getAmplitudeFactorSH() throws TauModelException, VelocityModelException, SlownessModelException {
-        return getAmplitudeFactorSH(moment);
+        return getAmplitudeFactorSH(moment, DEFAULT_ATTENUATION_FREQUENCY);
     }
 
-    public double getAmplitudeFactorSH(double moment) throws TauModelException, VelocityModelException, SlownessModelException {
+    public double getAmplitudeFactorSH(double moment, double attenuationFrequency) throws TauModelException, VelocityModelException, SlownessModelException {
         double refltran = getEnergyReflTransSH();
         // avoid NaN in case of no S wave legs where geo spread returns INFINITY
         if (refltran == 0.0) {return 0.0;}
@@ -533,6 +533,13 @@ public class Arrival {
             this.pierce = getPhase().calcPierceTimeDist(this).toArray(new TimeDist[0]);
         }
         return pierce;
+    }
+
+    /**
+     * Calculate attenuation over path at the default frequency. See eq B13.2.2 in FMGS, p374.
+     */
+    public double calcAttenuation() {
+        return calcAttenuation(DEFAULT_ATTENUATION_FREQUENCY);
     }
 
     /**
@@ -696,7 +703,8 @@ public class Arrival {
         return piercepoint;
     }
 
-    public static double attenuationFrequency = 1.0;
+
+    public static final float DEFAULT_ATTENUATION_FREQUENCY = 1.0f;
 
     protected static final double KMtoM = 1000.0; // 1000 m per km
 
@@ -724,9 +732,12 @@ public class Arrival {
         }
         return latestArrival;
     }
-
-
+    
     public void writeJSON(PrintWriter pw, String indent, boolean withAmp) {
+        writeJSON(pw, indent, withAmp, MomentMagnitude.MAG4_MOMENT, DEFAULT_ATTENUATION_FREQUENCY);
+    }
+
+    public void writeJSON(PrintWriter pw, String indent, boolean withAmp, double moment, double attenuationFrequency) {
         String NL = "\n";
         pw.write(indent+"{"+NL);
         String innerIndent = indent+"  ";
@@ -753,8 +764,8 @@ public class Arrival {
             try {
                 double geospread = getAmplitudeGeometricSpreadingFactor();
                 if (Double.isFinite(geospread)) {
-                    pw.write(innerIndent + "  " + JSONWriter.valueToString("factorpsv") + ": " + JSONWriter.valueToString((float) getAmplitudeFactorPSV()) + "," + NL);
-                    pw.write(innerIndent + "  " + JSONWriter.valueToString("factorsh") + ": " + JSONWriter.valueToString((float) getAmplitudeFactorSH()) + "," + NL);
+                    pw.write(innerIndent + "  " + JSONWriter.valueToString("factorpsv") + ": " + JSONWriter.valueToString((float) getAmplitudeFactorPSV(moment, attenuationFrequency)) + "," + NL);
+                    pw.write(innerIndent + "  " + JSONWriter.valueToString("factorsh") + ": " + JSONWriter.valueToString((float) getAmplitudeFactorSH(moment, attenuationFrequency)) + "," + NL);
                     pw.write(innerIndent + "  " + JSONWriter.valueToString("geospread") + ": " + JSONWriter.valueToString((float) geospread) + "," + NL);
                 } else {
                     pw.write(innerIndent + "  " + JSONWriter.valueToString("error") + ": " + JSONWriter.valueToString("geometrical speading not finite") + "," + NL);
@@ -781,7 +792,7 @@ public class Arrival {
             pw.write(innerIndent+JSONWriter.valueToString("relative")+": {"+NL);
             pw.write(innerIndent+"  "+JSONWriter.valueToString("difference")+": "+JSONWriter.valueToString((float)(getTime()-relArrival.getTime()))+","+NL);
             pw.write(innerIndent+"  "+JSONWriter.valueToString("arrival")+": "+NL);
-            relArrival.writeJSON(pw, innerIndent+"  "+"  ", withAmp);
+            relArrival.writeJSON(pw, innerIndent+"  "+"  ", withAmp, moment, attenuationFrequency);
             pw.write(innerIndent+"}");
         }
         if (pierce != null ) {
@@ -834,7 +845,11 @@ public class Arrival {
         return line;
     }
 
+
     public JSONObject asJSONObject() {
+        return asJSONObject(moment, DEFAULT_ATTENUATION_FREQUENCY);
+    }
+    public JSONObject asJSONObject(double moment, double attenuationFrequency) {
         JSONObject a = new JSONObject();
         a.put("distdeg", (float)getModuloDistDeg());
         a.put("sourcedepth", (float)getSourceDepth());
@@ -853,8 +868,8 @@ public class Arrival {
         try {
             double geospread = getAmplitudeGeometricSpreadingFactor();
             if (Double.isFinite(geospread)) {
-                ampObj.put("factorpsv", (float) getAmplitudeFactorPSV());
-                ampObj.put("factorsh", (float) getAmplitudeFactorSH());
+                ampObj.put("factorpsv", (float) getAmplitudeFactorPSV(moment, attenuationFrequency));
+                ampObj.put("factorsh", (float) getAmplitudeFactorSH(moment, attenuationFrequency));
                 ampObj.put("geospread", (float) geospread);
             } else {
                 ampObj.put("error", "geometrical speading not finite");

@@ -254,9 +254,9 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
                 for (int i = 0; i < dist.length; i++) {
                     Arrival arrival = phase.createArrivalAtIndex(i);
                     if (isAmpSH) {
-                        amp[i] = arrival.getAmplitudeFactorSH(sourceArgs.getMoment());
+                        amp[i] = arrival.getAmplitudeFactorSH(sourceArgs.getMoment(), sourceArgs.getAttenuationFrequency());
                     } else {
-                        amp[i] = arrival.getAmplitudeFactorPSV(sourceArgs.getMoment());
+                        amp[i] = arrival.getAmplitudeFactorPSV(sourceArgs.getMoment(), sourceArgs.getAttenuationFrequency());
                     }
                 }
             }
@@ -303,7 +303,7 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
             out = new double[phase.getRayParams().length];
             for (int i = 0; i < out.length; i++) {
                 Arrival arrival = phase.createArrivalAtIndex(i);
-                out[i] = arrival.calcAttenuation(Arrival.attenuationFrequency);
+                out[i] = arrival.calcAttenuation(sourceArgs.getAttenuationFrequency());
             }
         } else if (axisType == AxisType.index) {
             out = new double[phase.getRayParams().length];

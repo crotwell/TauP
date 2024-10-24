@@ -13,7 +13,7 @@ public class TableModelArgs {
 
     @CommandLine.Option(names={"--mod", "--model"},
             defaultValue = "iasp91",
-            description = {"use velocity model \"modelname\" for calculations. ",
+            description = {"use velocity model \"modelName\" for calculations. ",
                     "Default is ${DEFAULT-VALUE}. Other builtin models include prem, ak135, ak135fcont, and ak135favg."},
 
             completionCandidates = StdModelGenerator.StdModelCandidates.class

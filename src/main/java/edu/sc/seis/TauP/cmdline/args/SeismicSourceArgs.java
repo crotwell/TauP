@@ -21,4 +21,17 @@ public class SeismicSourceArgs {
         return MomentMagnitude.mw_to_N_m(getMw());
     }
 
+    @CommandLine.Option(names="--attenuationfreq",
+            defaultValue=""+Arrival.DEFAULT_ATTENUATION_FREQUENCY,
+            description = "attenuation frequency for amplitude calculations")
+    Float attenuationFreq = null;
+
+    public float getAttenuationFrequency() {
+        if (attenuationFreq == null) {
+            return Arrival.DEFAULT_ATTENUATION_FREQUENCY;
+        } else {
+            return attenuationFreq;
+        }
+    }
+
 }

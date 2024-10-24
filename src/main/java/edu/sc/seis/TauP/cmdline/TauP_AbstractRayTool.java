@@ -3,6 +3,7 @@ package edu.sc.seis.TauP.cmdline;
 import edu.sc.seis.TauP.*;
 import edu.sc.seis.TauP.cmdline.args.AbstractOutputTypeArgs;
 import edu.sc.seis.TauP.cmdline.args.DistanceArgs;
+import edu.sc.seis.TauP.cmdline.args.SeismicSourceArgs;
 import org.json.JSONException;
 import org.json.JSONWriter;
 import picocli.CommandLine;
@@ -29,7 +30,9 @@ public abstract class TauP_AbstractRayTool extends TauP_AbstractPhaseTool {
                                  List<Double> receiverDepth,
                                  List<SeismicPhase> phases,
                                  List<Arrival> arrivals) {
-        TauP_AbstractRayTool.writeJSON(pw, indent, modelName, depthList, receiverDepth, phases, arrivals,  false, 4.0f);
+        TauP_AbstractRayTool.writeJSON(pw, indent, modelName, depthList, receiverDepth,
+                phases, arrivals,  false,
+                MomentMagnitude.MAG4, Arrival.DEFAULT_ATTENUATION_FREQUENCY);
     }
 
     public static void writeJSON(PrintWriter pw, String indent,
@@ -39,7 +42,8 @@ public abstract class TauP_AbstractRayTool extends TauP_AbstractPhaseTool {
                                  List<SeismicPhase> phases,
                                  List<Arrival> arrivals,
                                  boolean withAmplitude,
-                                 float Mw) {
+                                 float Mw,
+                                 double attenuationFrequency) {
         String innerIndent = indent+"  ";
         String NL = "\n";
         pw.write("{"+NL);
@@ -73,6 +77,7 @@ public abstract class TauP_AbstractRayTool extends TauP_AbstractPhaseTool {
             pw.write(JSONWriter.valueToString(phase.getName()));
         }
         pw.write(" ],"+NL);
+        double moment = MomentMagnitude.mw_to_N_m(Mw);
         if (withAmplitude) {
             pw.write(innerIndent+JSONWriter.valueToString("Mw")+": "+JSONWriter.valueToString(Mw)+","+NL);
         }
@@ -85,7 +90,7 @@ public abstract class TauP_AbstractRayTool extends TauP_AbstractPhaseTool {
                 pw.write(","+NL);
             }
             try {
-                arrival.writeJSON(pw, innerIndent + "  ", withAmplitude);
+                arrival.writeJSON(pw, innerIndent + "  ", withAmplitude, moment, attenuationFrequency);
             } catch (JSONException e) {
                 System.err.println("Error in json: "+ arrival);
                 throw e;
