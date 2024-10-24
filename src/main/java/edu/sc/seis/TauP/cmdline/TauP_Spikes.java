@@ -91,8 +91,8 @@ public class TauP_Spikes extends TauP_AbstractRayTool {
         if (!getOutputFormat().equals(MS3)) {
             throw new CommandLine.ParameterException(spec.commandLine(), "Unsupported Output Format: "+getOutputFormat());
         }
-        if (modelArgs.getSourceDepth().size() > 1) {
-            throw new CommandLine.ParameterException(spec.commandLine(), "Multiple source depths unsupported: "+modelArgs.getSourceDepth().size());
+        if (modelArgs.getSourceDepths().size() > 1) {
+            throw new CommandLine.ParameterException(spec.commandLine(), "Multiple source depths unsupported: "+modelArgs.getSourceDepths().size());
         }
     }
 
@@ -188,7 +188,7 @@ public class TauP_Spikes extends TauP_AbstractRayTool {
         MSeed3EH eh = new MSeed3EH();
 
         // assume single source
-        double sourceDepth = modelArgs.getSourceDepth().isEmpty() ? 0 : modelArgs.getSourceDepth().get(0);
+        double sourceDepth = modelArgs.getSourceDepths().isEmpty() ? 0 : modelArgs.getSourceDepths().get(0);
         RayCalculateable rayCalc = allArrivals.get(0).getRayCalculateable();
         Float deg = (float) degrees;
         Float az = distanceArgs.hasAzimuth() ? distanceArgs.getAzimuth().floatValue() : null;

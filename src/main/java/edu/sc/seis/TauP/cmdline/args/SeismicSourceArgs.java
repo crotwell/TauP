@@ -1,5 +1,6 @@
 package edu.sc.seis.TauP.cmdline.args;
 
+import edu.sc.seis.TauP.Arrival;
 import edu.sc.seis.TauP.MomentMagnitude;
 import picocli.CommandLine;
 
