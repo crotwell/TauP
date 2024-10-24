@@ -174,7 +174,7 @@ public class TauP_SetMSeed3 extends TauP_AbstractPhaseTool {
         if (evLoc != null) {
             depth = evLoc.getDepthKm();
         }
-        List<SeismicPhase> seismicPhaseList = calcSeismicPhases( depth, receiverDepthList);
+        List<SeismicPhase> seismicPhaseList = calcSeismicPhases( depth, receiverDepthList, modelArgs.getScatterer());
 
         List<Arrival> arrivals = new ArrayList<>();
         for (SeismicPhase phase : seismicPhaseList) {

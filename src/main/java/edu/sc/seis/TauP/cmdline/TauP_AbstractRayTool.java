@@ -4,13 +4,11 @@ import edu.sc.seis.TauP.*;
 import edu.sc.seis.TauP.cmdline.args.AbstractOutputTypeArgs;
 import edu.sc.seis.TauP.cmdline.args.DistanceArgs;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.json.JSONWriter;
 import picocli.CommandLine;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;

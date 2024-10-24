@@ -195,6 +195,53 @@ public class SeismicPhaseFactory {
         return phaseList;
     }
 
+    public static List<SeismicPhase> calculateSeismicPhases(TauModel tMod,
+                                                            List<PhaseName> phaseNameList,
+                                                            double sourceDepth,
+                                                            List<Double> receiverDepths,
+                                                            Scatterer scatterer) throws TauModelException {
+        List<SeismicPhase> newPhases = new ArrayList<>();
+        TauModel tModDepth = tMod.depthCorrect(sourceDepth);
+        if (receiverDepths.isEmpty()) { throw new RuntimeException("receiverDepths should not be empty");}
+        for (Double receiverDepth : receiverDepths) {
+            TauModel tModRecDepth = tModDepth.splitBranch(receiverDepth);
+            for (PhaseName phaseName : phaseNameList) {
+                String tempPhaseName = phaseName.getName();
+                try {
+                    List<SeismicPhase> calcPhaseList = createSeismicPhases(
+                            phaseName.getName(),
+                            tModRecDepth,
+                            sourceDepth,
+                            receiverDepth,
+                            scatterer,
+                            TauPConfig.DEBUG);
+                    newPhases.addAll(calcPhaseList);
+                    for (SeismicPhase seismicPhase : newPhases) {
+                        if (TauPConfig.VERBOSE) {
+                            Alert.info(seismicPhase.toString());
+                        }
+                    }
+                } catch (ScatterArrivalFailException e) {
+                    Alert.warning(e.getMessage() + ", skipping this phase");
+                    if (TauPConfig.VERBOSE || TauPConfig.DEBUG) {
+                        e.printStackTrace();
+                    }
+                } catch (TauModelException e) {
+                    Alert.warning("Error with phase=" + tempPhaseName,
+                            e.getMessage() + "\nSkipping this phase");
+                    if (TauPConfig.VERBOSE || TauPConfig.DEBUG) {
+                        e.printStackTrace();
+                    }
+                } finally {
+                    if (TauPConfig.VERBOSE) {
+                        Alert.info("-----------------");
+                    }
+                }
+            }
+        }
+        return newPhases;
+    }
+
     SimpleSeismicPhase internalCreatePhase() throws TauModelException {
         ArrayList<String> legs = LegPuller.legPuller(name);
 

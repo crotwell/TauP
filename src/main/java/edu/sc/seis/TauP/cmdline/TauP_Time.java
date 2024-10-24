@@ -167,8 +167,8 @@ public class TauP_Time extends TauP_AbstractRayTool {
      * Also calculates the relativePhase list.
      */
     @Override
-    public synchronized List<SeismicPhase> calcSeismicPhases(double sourceDepth, List<Double> receiverDepths) throws TauModelException {
-        List<SeismicPhase> phaseList = super.calcSeismicPhases(sourceDepth, receiverDepths);
+    public synchronized List<SeismicPhase> calcSeismicPhases(double sourceDepth, List<Double> receiverDepths, Scatterer scatterer) throws TauModelException {
+        List<SeismicPhase> phaseList = super.calcSeismicPhases(sourceDepth, receiverDepths, scatterer);
         relativePhaseList = new ArrayList<>();
         if (!relativePhaseName.isEmpty()) {
             for (Double recDepth : receiverDepths) {

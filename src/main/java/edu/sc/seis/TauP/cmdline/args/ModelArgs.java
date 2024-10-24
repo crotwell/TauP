@@ -1,36 +1,33 @@
 package edu.sc.seis.TauP.cmdline.args;
 
 import edu.sc.seis.TauP.*;
-import edu.sc.seis.TauP.cmdline.TauP_Tool;
 import picocli.CommandLine;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Properties;
 
 public class ModelArgs {
 
     public String getModelName() {
-        return modelArgsInner.modelname;
+        return modelArgsInner.getModelName();
     }
     public void setModelName(String modelName) {
         unsetDepthCorrected();
         tMod = null;
-        modelArgsInner.modelname = modelName;
+        modelArgsInner.setModelName( modelName);
     }
 
-    public List<Double> getSourceDepth() {
+    public List<Double> getSourceDepths() {
         return modelArgsInner.sourceDepth;
     }
-    public void setSourceDepth(List<Double> depths) {
+    public void setSourceDepths(List<Double> depths) {
         modelArgsInner.sourceDepth = depths;
     }
-    public List<Double> getReceiverDepth() {
-        return modelArgsInner.receiverDepth;
+    public List<Double> getReceiverDepths() {
+        return modelArgsInner.getReceiverDepths();
     }
-    public void setReceiverDepth(List<Double> depths) {
-        modelArgsInner.receiverDepth = depths;
+    public void setReceiverDepths(List<Double> depths) {
+        modelArgsInner.receiverDepths = depths;
     }
 
     public static String depthsToString(List<Double> depths) {
@@ -52,10 +49,7 @@ public class ModelArgs {
      * @return the scatterer
      */
     public Scatterer getScatterer() {
-        if (modelArgsInner.scattererDepth != null &&  modelArgsInner.scattererDist != null) {
-            return new Scatterer(modelArgsInner.scattererDepth, modelArgsInner.scattererDist);
-        }
-        return null;
+        return modelArgsInner.getScatterer();
     }
     public void setScatterer(double depth, double dist) {
         modelArgsInner.setScatterer( depth,  dist);
@@ -63,7 +57,7 @@ public class ModelArgs {
 
     public TauModel getTauModel() throws TauModelException {
         if (tMod == null) {
-            tMod = TauModelLoader.load(getModelName());
+            tMod = modelArgsInner.getTauModel();
         }
         return tMod;
     }
@@ -123,19 +117,7 @@ public class ModelArgs {
     @CommandLine.ArgGroup(heading = "Model Args %n", exclusive = false)
     ModelArgsInner modelArgsInner = new ModelArgsInner();
 
-    static Properties toolProps = TauP_Tool.configDefaults();
-
-    static class ModelArgsInner {
-
-        @CommandLine.Option(names={"--mod", "--model"},
-                defaultValue = "iasp91",
-                description = {"use velocity model \"modelname\" for calculations. ",
-                        "Default is ${DEFAULT-VALUE}. Other builtin models include prem, ak135, ak135fcont, and ak135favg."},
-
-                completionCandidates = StdModelGenerator.StdModelCandidates.class
-        )
-        String modelname = toolProps.getProperty("taup.model.name",
-                "iasp91");
+    static class ModelArgsInner extends TableModelArgs {
 
         @CommandLine.Option(names={"-h", "--sourcedepth", "--evdepth"},
                 paramLabel = "depth",
@@ -144,36 +126,6 @@ public class ModelArgs {
                 description = "source depth in km")
         List<Double> sourceDepth = new ArrayList<>();
 
-        @CommandLine.Option(names = {"--stadepth", "--receiverdepth"},
-                defaultValue = "0.0",
-                paramLabel = "depth",
-                split=",",
-                description = "the receiver depth in km for stations not at the surface")
-        List<Double> receiverDepth = new ArrayList<>();
-
-        @CommandLine.Option(names = {"--scat", "--scatter"},
-                arity = "2",
-                paramLabel = "s",
-                description = "scattering depth and distance in degrees, which may be negative. "+
-                        "Only effects phases with 'o' or 'O' in the phase name."
-        )
-        public void setScatterer(List<Double> depth_dist) {
-            if (depth_dist.size() == 2) {
-                setScatterer(depth_dist.get(0), depth_dist.get(1));
-            } else {
-                unsetScatterer();
-            }
-        }
-        public void setScatterer(double depth, double dist) {
-            scattererDepth = depth;
-            scattererDist = dist;
-        }
-        public void unsetScatterer() {
-            scattererDepth = null;
-            scattererDist = null;
-        }
-        public Double scattererDepth;
-        public Double scattererDist;
     }
 
 }

@@ -28,6 +28,7 @@ package edu.sc.seis.TauP.cmdline;
 import edu.sc.seis.TauP.*;
 import edu.sc.seis.TauP.cmdline.args.OutputTypes;
 import edu.sc.seis.TauP.cmdline.args.PhaseArgs;
+import edu.sc.seis.TauP.cmdline.args.TableModelArgs;
 import edu.sc.seis.TauP.cmdline.args.TableOutputTypeArgs;
 import picocli.CommandLine;
 
@@ -60,7 +61,9 @@ import static edu.sc.seis.TauP.cmdline.TauP_Tool.OPTIONS_HEADING;
         optionListHeading = OPTIONS_HEADING,
         abbreviateSynopsis = ABREV_SYNOPSIS,
         usageHelpAutoWidth = true)
-public class TauP_Table extends TauP_AbstractPhaseTool {
+public class TauP_Table extends TauP_Tool {
+
+    public static final String DEFAULT_PHASES = PhaseArgs.DEFAULT_PHASES;
 
     protected String headerFile;
 
@@ -325,7 +328,6 @@ public class TauP_Table extends TauP_AbstractPhaseTool {
     }
 
     public void init() throws TauPException {
-        super.init();
         if(headerFile != null) {
             try {
                 StreamTokenizer head = new StreamTokenizer(new BufferedReader(new FileReader(headerFile)));
@@ -409,15 +411,22 @@ public class TauP_Table extends TauP_AbstractPhaseTool {
 
     public void start() throws TauPException, IOException {
         PrintWriter writer = outputTypeArgs.createWriter(spec.commandLine().getOut());
+        List<PhaseName> phaseNames = phaseArgs.parsePhaseNameList();
+        TauModel tMod = modelArgs.getTauModel();
+        List<RayCalculateable> rayCalcList = new ArrayList<>();
+        double receiverDepth = modelArgs.getReceiverDepths().get(0);
+        for (double distance : distances) {
+            rayCalcList.add(DistanceRay.ofDegrees(distance));
+        }
         if(outputTypeArgs.isCSV()) {
-            csvTable(writer);
+            csvTable(writer, tMod, phaseNames, depths, receiverDepth, modelArgs.getScatterer(), rayCalcList);
         } else if (outputTypeArgs.isLocsat()) {
-            locsatTable(writer);
+            locsatTable(writer, tMod, phaseNames, depths, receiverDepth, modelArgs.getScatterer(), rayCalcList);
         } else if (outputTypeArgs.isJSON()) {
-            jsonTable(writer);
+            jsonTable(writer, tMod, phaseNames, depths, receiverDepth, modelArgs.getScatterer(), rayCalcList);
         } else if(outputTypeArgs.isText()) {
                 // GENERIC:
-                genericTable(writer);
+                genericTable(writer, tMod, phaseNames, depths, receiverDepth, modelArgs.getScatterer(), rayCalcList);
         } else {
             throw new TauPException("TauP_Table: undefined state for output type: "
                         + getOutputFormat());
@@ -432,9 +441,9 @@ public class TauP_Table extends TauP_AbstractPhaseTool {
 
     @Override
     public void validateArguments() throws TauPException {
-        if (getReceiverDepths().size() > 1) {
+        if (modelArgs.getReceiverDepths().size() > 1) {
             throw new TauModelException("Table only allows a single receiver depth, but was given "
-                    +modelArgs.getReceiverDepth().size()+" depths.");
+                    +modelArgs.getReceiverDepths().size()+" depths.");
         }
     }
 
@@ -454,17 +463,18 @@ public class TauP_Table extends TauP_AbstractPhaseTool {
         return arrivals;
     }
 
-    protected void jsonTable(PrintWriter out) throws TauPException, IOException {
+    protected void jsonTable(PrintWriter out, TauModel tMod, List<PhaseName> phaseNames,
+                             double[] depths, double receiverDepth, Scatterer scatterer,
+                             List<RayCalculateable> rayCalcList) throws TauPException, IOException {
         out.println("[");
         for (double depth : depths) {
-            List<SeismicPhase> phaseList = recalcPhases(parsePhaseNameList(), depth);
-            for (double distance : distances) {
-                List<RayCalculateable> shootables = List.of(DistanceRay.ofDegrees(distance));
-                List<Arrival> arrivals = calcAll(phaseList, shootables);
+            List<SeismicPhase> phaseList = recalcPhases(tMod, phaseNames, depth, receiverDepth, scatterer);
+            for (RayCalculateable distCalc : rayCalcList) {
+                List<Arrival> arrivals = calcAll(phaseList, List.of(distCalc));
                 TauP_AbstractRayTool.writeJSON(out, "",
-                        getTauModelName(),
-                        Collections.singletonList(depth),
-                        modelArgs.getReceiverDepth(),
+                        tMod.getModelName(),
+                        List.of(depth),
+                        List.of(receiverDepth),
                         phaseList,
                         arrivals);
             }
@@ -472,60 +482,48 @@ public class TauP_Table extends TauP_AbstractPhaseTool {
         out.println("]");
     }
 
-    protected List<SeismicPhase> recalcPhases(List<PhaseName> phaseNames, double depth) throws TauModelException {
+    protected List<SeismicPhase> recalcPhases(TauModel tMod, List<PhaseName> phaseNames, double depth, double receiverDepth, Scatterer scatterer) throws TauModelException {
         List<SeismicPhase> newPhases = new ArrayList<>();
-        TauModel tModDepth = modelArgs.depthCorrected(depth);
-        for (Double recDepth : modelArgs.getReceiverDepth()) {
-            // should only be one rec depth, but...
-            TauModel tModRecDepth = tModDepth.splitBranch(recDepth);
-            for (PhaseName phaseName : phaseNames) {
-                List<SeismicPhase> calcPhaseList = SeismicPhaseFactory.createSeismicPhases(
-                        phaseName.getName(),
-                        tModRecDepth,
-                        depth,
-                        recDepth,
-                        modelArgs.getScatterer(),
-                        isDEBUG());
-                newPhases.addAll(calcPhaseList);
+        TauModel tModDepth = tMod.depthCorrect(depth);
+        TauModel tModRecDepth = tModDepth.splitBranch(receiverDepth);
+        for (PhaseName phaseName : phaseNames) {
+            List<SeismicPhase> calcPhaseList = SeismicPhaseFactory.createSeismicPhases(
+                    phaseName.getName(),
+                    tModRecDepth,
+                    depth,
+                    receiverDepth,
+                    scatterer,
+                    isDEBUG());
+            newPhases.addAll(calcPhaseList);
 
-            }
         }
         return newPhases;
     }
 
-    protected void csvTable(PrintWriter out) throws TauPException {
-        String sep = ",";
-        String header = "Model,Distance (deg),Depth (km),Phase,Time (s),RayParam (deg/s),Takeoff Angle,Incident Angle,Purist Distance,Purist Name";
-        out.println(header);
+    protected void csvTable(PrintWriter out, TauModel tMod, List<PhaseName> phaseNames,
+                            double[] depths, double receiverDepth, Scatterer scatterer,
+                            List<RayCalculateable> rayCalcList) throws TauPException {
+        out.println(Arrival.CSVHeader());
         for (double depth : depths) {
-            List<SeismicPhase> phaseList = recalcPhases(parsePhaseNameList(), depth);
-            for (double distance : distances) {
-                List<Arrival> arrivals = calcAll(getSeismicPhases(), List.of(DistanceRay.ofDegrees(distance)));
+            List<SeismicPhase> phaseList = recalcPhases(tMod, phaseNames, depth, receiverDepth, scatterer);
+            for (RayCalculateable distCalc : rayCalcList) {
+                List<Arrival> arrivals = calcAll(phaseList, List.of(distCalc));
                 for (Arrival currArrival : arrivals) {
-                    double moduloDist = currArrival.getModuloDistDeg();
-                    String line = modelArgs.getModelName() + sep
-                            + Outputs.formatDistance(moduloDist).trim() + sep
-                            + Outputs.formatDepth(depth).trim() + sep
-                            + currArrival.getName().trim() + sep
-                            + Outputs.formatTime(currArrival.getTime()).trim() + sep
-                            + Outputs.formatRayParam(Math.PI / 180.0 * currArrival.getRayParam()).trim() + sep
-                            + Outputs.formatDistance(currArrival.getTakeoffAngleDegree()).trim() + sep
-                            + Outputs.formatDistance(currArrival.getIncidentAngleDegree()).trim() + sep
-                            + Outputs.formatDistance(currArrival.getDistDeg()).trim() + sep
-                            + currArrival.getPuristName().trim();
-                    out.println(line);
+                    out.println(currArrival.asCSVRow());
                 }
             }
         }
         out.flush();
-
     }
 
-    protected void genericTable(PrintWriter out) throws TauPException {
+    protected void genericTable(PrintWriter out, TauModel tMod, List<PhaseName> phaseNames,
+                                double[] depths, double receiverDepth, Scatterer scatterer,
+                                List<RayCalculateable> rayCalcList) throws TauPException {
+
         for (double depth : depths) {
-            List<SeismicPhase> seismicPhaseList = calcSeismicPhases( depth);
-            for (double distance : distances) {
-                List<Arrival> arrivals = calcAll(seismicPhaseList, List.of(DistanceRay.ofDegrees(distance)));
+            List<SeismicPhase> phaseList = recalcPhases(tMod, phaseNames, depth, receiverDepth, scatterer);
+            for (RayCalculateable distCalc : rayCalcList) {
+                List<Arrival> arrivals = calcAll(phaseList, List.of(distCalc));
                 for (Arrival currArrival : arrivals) {
                     double moduloDist = currArrival.getModuloDistDeg();
                     out.print(modelArgs.getModelName() + " "
@@ -547,14 +545,16 @@ public class TauP_Table extends TauP_AbstractPhaseTool {
         out.flush();
     }
 
-    protected void locsatTable(PrintWriter out) throws TauPException {
+    protected void locsatTable(PrintWriter out, TauModel tMod, List<PhaseName> phaseNames,
+                               double[] depths, double receiverDepth, Scatterer scatterer,
+                               List<RayCalculateable> rayCalcList) throws TauPException {
         String float15_4 = "%15.4f";
         String float7_2 = "%7.2f";
         String decimal7 = "%-7d";
         double maxDiff = Double.parseDouble(toolProps.getProperty("taup.table.locsat.maxdiff",
                 "105.0"));
-        out.print("n # " + getPhaseNamesAsString()
-                + " travel-time tables for " + modelArgs.getModelName()
+        out.print("n # " + PhaseArgs.getPhaseNamesAsString(phaseNames)
+                + " travel-time tables for " + tMod.getModelName()
                 + " structure. (From TauP_Table)\n");
         out.print(String.format(decimal7, depths.length)
                 + "# number of depth samples\n");
@@ -567,28 +567,36 @@ public class TauP_Table extends TauP_AbstractPhaseTool {
         if((depths.length - 1) % 10 != 9) {
             out.println();
         }
-        out.println(String.format(decimal7, distances.length)
+        out.println(String.format(decimal7, rayCalcList.size())
                 + "# number of distances");
-        for(int distNum = 0; distNum < distances.length; distNum++) {
-            out.print(String.format(float7_2, distances[distNum]));
+        for(int distNum = 0; distNum < rayCalcList.size(); distNum++) {
+            RayCalculateable rayCalc = rayCalcList.get(distNum);
+            if ( ! (rayCalc instanceof DistanceRay)) {
+                throw new TauPException("RayCalc is not a distance: "+rayCalc);
+            }
+            DistanceRay dr = (DistanceRay)rayCalc;
+            out.print(String.format(float7_2, dr.getDegrees(tMod.getRadiusOfEarth())));
             if(distNum % 10 == 9) {
                 out.println();
             }
         }
-        if((distances.length - 1) % 10 != 9) {
+        if((rayCalcList.size() - 1) % 10 != 9) {
             out.println();
         }
+
         for (double depth : depths) {
-            List<SeismicPhase> seismicPhaseList = calcSeismicPhases( depth, getReceiverDepths());
             out.println("#  Travel time for z =    " + depth);
-            for (double distance : distances) {
-                List<Arrival> arrivals = calcAll(seismicPhaseList, List.of(DistanceRay.ofDegrees(distance)));
+            List<SeismicPhase> phaseList = recalcPhases(tMod, phaseNames, depth, receiverDepth, scatterer);
+            for (RayCalculateable distCalc : rayCalcList) {
+                DistanceRay dr = (DistanceRay)distCalc;
+                double distance = dr.getDegrees(tMod.getRadiusOfEarth());
+                List<Arrival> arrivals = calcAll(phaseList, List.of(distCalc));
                 String outString = String.format(float15_4, -1.0) + "    none\n";
-                for (Arrival arrival : arrivals) {
+                for (Arrival currArrival : arrivals) {
                     if (distance > maxDiff
-                            && (arrival.getName().endsWith("diff"))) {
+                            && (currArrival.getName().endsWith("diff"))) {
                     } else {
-                        outString = String.format(float15_4, arrival.getTime()) + "    " + arrival.getName() + "\n";
+                        outString = String.format(float15_4, currArrival.getTime()) + "    " + currArrival.getName() + "\n";
                         break;
                     }
                 }
@@ -602,14 +610,19 @@ public class TauP_Table extends TauP_AbstractPhaseTool {
         return headerFile;
     }
 
-    @CommandLine.Option(names = "--header", description = "reads depth and distance spacing data\n" +
-            "                      from a LOCSAT style file.")
+    @CommandLine.Option(names = "--header", description = "reads depth and distance spacing data " +
+            "from a LOCSAT style file.")
     public void setHeaderFile(String headerFile) {
         this.headerFile = headerFile;
     }
 
     @CommandLine.Mixin
     TableOutputTypeArgs outputTypeArgs;
+
+
+    @CommandLine.ArgGroup(heading = "Model Args %n", exclusive = false)
+    TableModelArgs modelArgs = new TableModelArgs();
+
 
     @CommandLine.ArgGroup(heading = "Phase Names %n", exclusive = false)
     PhaseArgs phaseArgs = new PhaseArgs();

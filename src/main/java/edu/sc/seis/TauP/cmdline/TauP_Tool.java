@@ -77,7 +77,6 @@ public abstract class TauP_Tool implements Callable<Integer> {
     public List<String> getCmdLineArgs() {
         return spec.commandLine().getParseResult().expandedArgs();
     }
-    public String[] cmdLineArgs = new String[0];
 
     protected Properties toolProps;
     
@@ -118,10 +117,6 @@ public abstract class TauP_Tool implements Callable<Integer> {
     
     public void setOutFileExtension(String outFileExtension) {
         abstractOutputTypeArgs.setOutFileExtension(outFileExtension);
-    }
-
-    public static void endGmtAndCleanUp(PrintWriter out) {
-        out.println("gmt end ");
     }
 
     @CommandLine.Option(names = "--prop", description = "load defaults from properties file")

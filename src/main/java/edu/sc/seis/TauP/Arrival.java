@@ -809,6 +809,31 @@ public class Arrival {
         pw.write(indent+"}"); // main end
     }
 
+    public static String CSVHeader() {
+        String header = "Model,Distance (deg),Depth (km),Phase,Time (s),RayParam (deg/s),Takeoff Angle,Incident Angle,Purist Distance,Purist Name,Recv Depth";
+        return header;
+    }
+
+    public String asCSVRow() {
+        String sep = ",";
+        String modelName = getPhase().getTauModel().getModelName().replaceAll("\"", " ");
+        if (modelName.contains(",")) {
+            modelName = "\""+modelName+"\"";
+        }
+        String line = modelName + sep
+                + Outputs.formatDistance(getModuloDistDeg()).trim() + sep
+                + Outputs.formatDepth(getSourceDepth()).trim() + sep
+                + getName().trim() + sep
+                + Outputs.formatTime(getTime()).trim() + sep
+                + Outputs.formatRayParam(getRayParamDeg()).trim() + sep
+                + Outputs.formatDistance(getTakeoffAngleDegree()).trim() + sep
+                + Outputs.formatDistance(getIncidentAngleDegree()).trim() + sep
+                + Outputs.formatDistance(getDistDeg()).trim() + sep
+                + getPuristName().trim()
+                + receiverDepth;
+        return line;
+    }
+
     public JSONObject asJSONObject() {
         JSONObject a = new JSONObject();
         a.put("distdeg", (float)getModuloDistDeg());
