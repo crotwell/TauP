@@ -133,15 +133,19 @@ public class SeismicPhaseFactory {
                 phaseList.add(fail);
                 return phaseList;
             }
+            String prescatterPhaseName = in_scat[0];
+            String postscatterPhaseName = in_scat[1];
             boolean isBackscatter = name.contains("" + PhaseSymbols.BACKSCATTER_CODE);
             TauModel tModDepthCorrected = tMod;
             if (tModDepthCorrected.getSourceDepth()!= sourceDepth) {
                 tModDepthCorrected= tMod.depthCorrect(sourceDepth);
             }
             tModDepthCorrected = tModDepthCorrected.splitBranch(receiverDepth);
-            SeismicPhase inPhase = SeismicPhaseFactory.createPhase(in_scat[0],
+            TauModel scatTMod = tModDepthCorrected.depthRecorrect(scat.depth);
+            SimpleSeismicPhase inPhase = SeismicPhaseFactory.createPhase(prescatterPhaseName,
                     tModDepthCorrected, sourceDepth, scat.depth, debug);
-            SeismicPhaseSegment lastSegment = inPhase.getPhaseSegments().get(inPhase.getPhaseSegments().size()-1);
+
+            SeismicPhaseSegment lastSegment = inPhase.getPhaseSegments().get(inPhase.getPhaseSegments().size() - 1);
             PhaseInteraction endAction = lastSegment.endAction;
             if (endAction == END_DOWN) {
                 if (isBackscatter) {
@@ -156,18 +160,20 @@ public class SeismicPhaseFactory {
                     lastSegment.endAction = SCATTER;
                 }
             }
-            TauModel scatTMod = tModDepthCorrected.depthRecorrect(scat.depth);
-            SimpleSeismicPhase scatPhase = SeismicPhaseFactory.createPhase(in_scat[1],
-                    scatTMod, scat.depth, receiverDepth, debug);
-
             List<Arrival> inArrivals = scat.dist.calculate(inPhase);
             if (inArrivals.isEmpty()) {
+                StringBuffer failReason = new StringBuffer("No inbound arrivals to the scatterer for "+name
+                        +" at "+scat.depth+" km depth and "+scat.dist.getDegrees(tMod.getRadiusOfEarth())
+                        +" deg. Distance range for scatterer at this depth is"
+                        +" "+inPhase.getMinDistanceDeg()+" "+inPhase.getMaxDistanceDeg()+" deg");
+
                 FailedSeismicPhase fail = FailedSeismicPhase.failForReason(name, tMod, receiverDepth,
-                        "No inbound arrivals to the scatterer for "+name
-                        +" at "+scat.depth+" km depth and "+scat.dist.getDegrees(tMod.getRadiusOfEarth())+" deg. Distance range for scatterer at this depth is "+inPhase.getMinDistanceDeg()+" "+inPhase.getMaxDistanceDeg()+" deg.");
+                                failReason.toString());
                 phaseList.add(fail);
                 return phaseList;
             }
+            SimpleSeismicPhase scatPhase = SeismicPhaseFactory.createPhase(postscatterPhaseName,
+                    scatTMod, scat.depth, receiverDepth, debug);
             for (Arrival inArr : inArrivals) {
                 Arrival flipInArr = inArr;
                 if (inArr.getDistDeg() == -1 * scat.dist.getDegrees(scatPhase.getTauModel().getRadiusOfEarth())) {
