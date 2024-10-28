@@ -5,8 +5,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class MoonLowVelocityTest {
 
@@ -40,5 +39,7 @@ public class MoonLowVelocityTest {
         List<Arrival> arrivalList = dr.calculate(P_phase);
         assertEquals(1, arrivalList.size());
         assertEquals(521.75, arrivalList.get(0).getTime(), 0.01);
+        SeismicPhase Pdiff = SeismicPhaseFactory.createPhase("Pdiff", tmod, 0);
+        assertFalse(Pdiff.phasesExistsInModel());
     }
 }

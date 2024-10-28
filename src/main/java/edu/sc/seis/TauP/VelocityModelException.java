@@ -34,7 +34,7 @@ package edu.sc.seis.TauP;
  *
  * @author H. Philip Crotwell
  */
-public class VelocityModelException extends TauPException {
+public class VelocityModelException extends TauModelException {
 
     public VelocityModelException(String message) {
         super("VelocityModel Exception: " + message);

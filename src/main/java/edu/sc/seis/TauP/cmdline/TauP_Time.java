@@ -302,7 +302,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
                         double ampFactorPSV = currArrival.getAmplitudeFactorPSV(MomentMagnitude.mw_to_N_m(Mw), attenuationFrequency);
                         double ampFactorSH = currArrival.getAmplitudeFactorSH(MomentMagnitude.mw_to_N_m(Mw), attenuationFrequency);
                         out.print(" " + Outputs.formatAmpFactor(ampFactorPSV) + " " + Outputs.formatAmpFactor(ampFactorSH));
-                    } catch (SlownessModelException | TauModelException | VelocityModelException e) {
+                    } catch (SlownessModelException | TauModelException e) {
                         throw new RuntimeException("Should not happen", e);
                     }
                 }

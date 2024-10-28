@@ -1213,6 +1213,10 @@ public class SeismicPhaseFactory {
                     // we are below at the right branch to diffract???
                     return failWithMessage(proto,"Unable to diffract, " + currBranch + " to cmb " + (tMod.getCmbBranch() - 1) + " " + endActionString(prevEndAction) + " " + prevSegment);
                 }
+                if ( ! tMod.isDiffractionBranch(tMod.getCmbBranch(), isPWave)) {
+                    return failWithMessage(proto,"Unable to diffract, " + currBranch + " to cmb "
+                            + (tMod.getCmbBranch() - 1)+", CMB is not negative velocity discontinuity.");
+                }
                 if (nextLeg.startsWith("K") || nextLeg.equals("I") || nextLeg.equals("J")) {
                     // down into inner core
                     proto.addFlatBranch(isPWave, endAction, TRANSDOWN, currLeg);
@@ -1279,6 +1283,11 @@ public class SeismicPhaseFactory {
                     nextIsPWave,
                     endAction,
                     currLeg);
+
+            if ( ! tMod.isDiffractionBranch(disconBranch, isPWave)) {
+                return failWithMessage(proto,"Unable to diffract " + currLeg + ", "
+                        + disconBranch+" is not negative velocity discontinuity.");
+            }
             if (nextLeg.startsWith("K") || nextLeg.equals("I") || nextLeg.equals("J")) {
                 // down into  core
                 proto.addFlatBranch(isPWave, endAction, TRANSDOWN, currLeg);
@@ -1548,6 +1557,10 @@ public class SeismicPhaseFactory {
             throw new TauModelException("Not Kdiff " + currLeg + " in currLegIs_Kdiff " + getName());
         }
 
+        if ( ! tMod.isDiffractionBranch(disconBranch, isPWave)) {
+            return failWithMessage(proto,"Unable to diffract " + currLeg + ", "
+                    + disconBranch+" is not negative velocity discontinuity.");
+        }
         endAction = DIFFRACT;
         proto.addToBranch(
                 disconBranch - 1,
@@ -2480,6 +2493,11 @@ public class SeismicPhaseFactory {
                 nextIsPWave,
                 endAction,
                 currLeg);
+
+        if ( ! tMod.isDiffractionBranch(disconBranch, isPWave)) {
+            return failWithMessage(proto,"Unable to diffract " + currLeg + ", "
+                    + disconBranch+" is not negative velocity discontinuity.");
+        }
         if (nextLeg.equals("I") || nextLeg.equals("J")) {
             // down into inner core
             proto.addFlatBranch(isPWave, endAction, TRANSDOWN, currLeg);

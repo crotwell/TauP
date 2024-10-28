@@ -189,6 +189,19 @@ public class TauModel implements Serializable {
         return getSlownessModel().depthInFluid(getTauBranch(branchNum, false).getTopDepth());
     }
 
+    public boolean isDiffractionBranch(int branchNum, boolean isPWave) throws NoSuchLayerException {
+        double topDepth = getTauBranch(branchNum, false).getTopDepth();
+        int aboveIdx = getVelocityModel().layerNumberAbove(topDepth);
+        VelocityLayer above = getVelocityModel().getVelocityLayer(aboveIdx);
+        int belowIdx = getVelocityModel().layerNumberAbove(topDepth);
+        VelocityLayer below = getVelocityModel().getVelocityLayer(belowIdx);
+        if (isPWave) {
+            return above.getBotPVelocity() != below.getTopPVelocity();
+        } else {
+            return above.getBotSVelocity() != below.getTopSVelocity();
+        }
+    }
+
     /**
      * Is the given depth a "noDisconDepth"?
      * Usually because model was split at the source or receiver depth, or an added depth used by taup pierce.
