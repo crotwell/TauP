@@ -9,7 +9,7 @@ import static edu.sc.seis.TauP.SeismicPhaseFactory.endActionString;
 
 /**
  * Represents a partial seismic phase, appended to as a name is parsed.
- * May also fail if part way if phase is not compatible will the model.
+ * May also fail if part way if phase is not compatible with the model.
  */
 public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
 
@@ -34,6 +34,9 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
         this.segmentList = segmentList;
         this.receiverDepth = receiverDepth;
         this.phaseName = phaseName; // possible overwrite later
+        if ( ! segmentList.isEmpty()) {
+            this.tMod = segmentList.get(0).tMod;
+        }
     }
 
     public static ProtoSeismicPhase startEmpty(String phaseName, TauModel tMod, double receiverDepth) {
@@ -1006,6 +1009,13 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
         return tMod;
     }
 
+    public String segmentListAsString() {
+        StringBuffer sb = new StringBuffer();
+        for (SeismicPhaseSegment seg : segmentList) {
+            sb.append(", "+seg.startBranch+" "+seg.endBranch+" then "+seg.endAction);
+        }
+        return sb.substring(2).toString();
+    }
     final List<SeismicPhaseSegment> segmentList;
 
     TauModel tMod;
