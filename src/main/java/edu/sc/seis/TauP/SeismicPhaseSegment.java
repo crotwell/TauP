@@ -505,6 +505,8 @@ public class SeismicPhaseSegment {
 			double flatRayParam = arrival.getRayParam() / (getTauModel().getRadiusOfEarth() - depth);
 			if (arrival.getSourceDepth() == depth && ! getTauModel().getVelocityModel().isDisconDepth(depth)) {
 				// branch exists just for source
+			} else if (! getTauModel().getVelocityModel().isDisconDepth(depth)) {
+				// branch not a discon, perhaps due to source, receiver or high slowness?
 			} else if (arrival.getReceiverDepth() == depth && ! getTauModel().getVelocityModel().isDisconDepth(depth)) {
 				// branch exists just for receiver
 			} else {
