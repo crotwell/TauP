@@ -461,16 +461,13 @@ public class SimpleSeismicPhase implements SeismicPhase {
             if(timesBranches[0][j] != 0) {
                 int topLayerNum = tMod.getSlownessModel().layerNumberBelow(tMod.getTauBranch(j, PWAVE).getTopDepth(), PWAVE);
                 int botLayerNum = tMod.getSlownessModel().layerNumberAbove(tMod.getTauBranch(j, PWAVE).getBotDepth(), PWAVE);
-                TimeDist td = tMod.getTauBranch(j, PWAVE).calcTimeDist(tMod.getSlownessModel(),
-                                                                       topLayerNum,
-                                                                       botLayerNum,
-                                                                       rayParam,
-                                                                       true);
-                td = new TimeDist(rayParam,
+                TimeDist td = tMod.getTauBranch(j, PWAVE)
+                        .calcTimeDist(tMod.getSlownessModel(), topLayerNum, botLayerNum, rayParam, true);
+                TimeDist mulTD = new TimeDist(rayParam,
                                   timesBranches[0][j]*td.getTime(),
                                   timesBranches[0][j]*td.getDistRadian(),
                                   td.getDepth());
-                sum = sum.add(td);
+                sum = sum.add(mulTD);
             }
             if(timesBranches[1][j] != 0) {
                 int topLayerNum = tMod.getSlownessModel().layerNumberBelow(tMod.getTauBranch(j, SWAVE).getTopDepth(), SWAVE);
