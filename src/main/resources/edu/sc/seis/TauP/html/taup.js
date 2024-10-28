@@ -721,7 +721,8 @@ export function enableParams(tool) {
     let formatSel = document.querySelector('input[name="format"]:checked');
     if (formatSel === "nameddiscon") {
       document.querySelector('#velplotaxis').setAttribute("disabled", "disabled");
-    } else {2
+    } else {
+      document.querySelector('#velplotaxis').removeAttribute("disabled");
     }
 
   } else {
