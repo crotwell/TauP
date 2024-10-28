@@ -2882,12 +2882,11 @@ public class SeismicPhaseFactory {
                     SeismicPhaseSegment prev = null;
                     for (SeismicPhaseSegment seg : proto.segmentList) {
                         // check for downgoing legs that cross the high slowness
-                        // zone
-                        // with the same wave type
+                        // zone with the same wave type
                         if (seg.isDownGoing
                                 && seg.isPWave == isPWave
-                                && seg.startBranch >= branchNum
-                                && ( prev != null && prev.endBranch < branchNum
+                                && (seg.startBranch < branchNum && seg.endBranch >= branchNum)
+                                || (prev != null && seg.startBranch == branchNum && prev.endBranch == branchNum-1
                                 && prev.isDownGoing
                                 && prev.isPWave == isPWave)) {
                             foundOverlap = true;
@@ -2896,7 +2895,6 @@ public class SeismicPhaseFactory {
                         prev = seg;
                     }
                     if(foundOverlap) {
-                        System.err.println("High slowness overlap");
                         double[] newdist = new double[dist.length + 1];
                         double[] newtime = new double[time.length + 1];
                         double[] newrayParams = new double[rayParams.length + 1];
