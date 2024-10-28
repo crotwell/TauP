@@ -2,6 +2,10 @@ package edu.sc.seis.TauP;
 
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class MoonLowVelocityTest {
@@ -23,5 +27,18 @@ public class MoonLowVelocityTest {
         assertNotNull(tmod); // just to make sure loaded
         TauModel tmoddepth = tmod.depthCorrect(933);
         assertNotNull(tmoddepth);
+    }
+
+    @Test
+    public void testMoonKhan_JGR_2014() throws SlownessModelException, VelocityModelException, IOException, TauModelException {
+        String lunarModelFile = "MoonKhan_JGR_2014_mod1.nd";
+        VelocityModel vmod = VelocityModelTest.loadTestVelMod(lunarModelFile);
+        SlownessModel smod = new SphericalSModel(vmod);
+        TauModel tmod = new TauModel(smod);
+        SeismicPhase P_phase = SeismicPhaseFactory.createSinglePhase("P", tmod, 800);
+        DistanceRay dr = DistanceRay.ofDegrees(50);
+        List<Arrival> arrivalList = dr.calculate(P_phase);
+        assertEquals(1, arrivalList.size());
+        assertEquals(521.75, arrivalList.get(0).getTime(), 0.01);
     }
 }
