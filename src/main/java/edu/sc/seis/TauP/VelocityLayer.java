@@ -87,8 +87,8 @@ public class VelocityLayer implements Cloneable, Serializable {
              botPVelocity,
              topSVelocity,
              botSVelocity,
-             2.6,
-             2.6);
+             VelocityLayer.DEFAULT_DENSITY,
+             VelocityLayer.DEFAULT_DENSITY);
     }
 
     public VelocityLayer(int myLayerNumber,
@@ -109,10 +109,10 @@ public class VelocityLayer implements Cloneable, Serializable {
              botSVelocity,
              topDensity,
              bottomDensity,
-             1000,
-             1000,
-             2000,
-             2000);
+             VelocityLayer.DEFAULT_QP,
+             VelocityLayer.DEFAULT_QP,
+             VelocityLayer.DEFAULT_QS,
+             VelocityLayer.DEFAULT_QS);
     }
 
     public VelocityLayer(int myLayerNumber,

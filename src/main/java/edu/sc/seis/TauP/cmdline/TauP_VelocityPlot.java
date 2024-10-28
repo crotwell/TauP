@@ -191,14 +191,27 @@ public class TauP_VelocityPlot extends TauP_Tool {
 
     public void printCSV(PrintWriter out, VelocityModel vMod) {
         VelocityLayer prev = null;
-        out.println("Depth,P Velocity,S Velocity,Density");
+        boolean hasQ = ! vMod.QIsDefault();
+        out.print("Depth,P Velocity,S Velocity,Density");
+        if (hasQ) {
+            out.print(",Qp,Qs");
+        }
+        out.println();
         for (VelocityLayer vLayer : vMod.getLayers()) {
             if (prev == null
                     || prev.getBotPVelocity() != vLayer.getTopPVelocity()
                     || prev.getBotSVelocity() != vLayer.getTopSVelocity()) {
-                out.println((float)(vLayer.getTopDepth())+","+(float) vLayer.getTopPVelocity() + "," + (float)vLayer.getTopSVelocity() + "," + (float)vLayer.getTopDensity());
+                out.print((float)(vLayer.getTopDepth())+","+(float) vLayer.getTopPVelocity() + "," + (float)vLayer.getTopSVelocity() + "," + (float)vLayer.getTopDensity());
+                if (hasQ) {
+                    out.print(","+(float) vLayer.getTopQp()+","+(float) vLayer.getTopQs());
+                }
+                out.println();
             }
-            out.println((float)(vLayer.getBotDepth())+","+(float) vLayer.getBotPVelocity() + "," + (float)vLayer.getBotSVelocity() + "," + (float)vLayer.getBotDensity());
+            out.print((float)(vLayer.getBotDepth())+","+(float) vLayer.getBotPVelocity() + "," + (float)vLayer.getBotSVelocity() + "," + (float)vLayer.getBotDensity());
+            if (hasQ) {
+                out.print(","+(float) vLayer.getBotQp()+","+(float) vLayer.getBotQs());
+            }
+            out.println();
             prev = vLayer;
         }
         out.flush();

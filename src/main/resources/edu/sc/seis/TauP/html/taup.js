@@ -554,27 +554,29 @@ export function form_url() {
 
     let xaxis = document.querySelector('#velplotxaxis').value;
     let yaxis = document.querySelector('#velplotyaxis').value;
-    url += `&xaxis=${xaxis}&yaxis=${yaxis}`;
+    if (format !== "nameddiscon") {
+      url += `&xaxis=${xaxis}&yaxis=${yaxis}`;
 
-    let xautorange = document.querySelector('input[name="velplotxminmaxauto"]').checked;
-    if ( ! xautorange) {
-        let xmin = document.querySelector('input[name="velplotxmin"]').value;
-        let xmax = document.querySelector('input[name="velplotxmax"]').value;
-        url += `&xminmax=${xmin},${xmax}`;
-    }
-    let xaxislog = document.querySelector('input[name="velplotxaxislog"]').checked;
-    if (xaxislog) {
-      url += `&xlog=true`;
-    }
-    let yautorange = document.querySelector('input[name="velplotyminmaxauto"]').checked;
-    if ( ! yautorange) {
-        let ymin = document.querySelector('input[name="velplotymin"]').value;
-        let ymax = document.querySelector('input[name="velplotymax"]').value;
-        url += `&yminmax=${ymin},${ymax}`;
-    }
-    let yaxislog = document.querySelector('input[name="velplotyaxislog"]').checked;
-    if (yaxislog) {
-      url += `&ylog=true`;
+      let xautorange = document.querySelector('input[name="velplotxminmaxauto"]').checked;
+      if ( ! xautorange) {
+          let xmin = document.querySelector('input[name="velplotxmin"]').value;
+          let xmax = document.querySelector('input[name="velplotxmax"]').value;
+          url += `&xminmax=${xmin},${xmax}`;
+      }
+      let xaxislog = document.querySelector('input[name="velplotxaxislog"]').checked;
+      if (xaxislog) {
+        url += `&xlog=true`;
+      }
+      let yautorange = document.querySelector('input[name="velplotyminmaxauto"]').checked;
+      if ( ! yautorange) {
+          let ymin = document.querySelector('input[name="velplotymin"]').value;
+          let ymax = document.querySelector('input[name="velplotymax"]').value;
+          url += `&yminmax=${ymin},${ymax}`;
+      }
+      let yaxislog = document.querySelector('input[name="velplotyaxislog"]').checked;
+      if (yaxislog) {
+        url += `&ylog=true`;
+      }
     }
     let isLegend = document.querySelector('input[name="velplotlegend"]').checked;
     if (isLegend) {
@@ -716,6 +718,12 @@ export function enableParams(tool) {
   if (tool === "velplot") {
     document.querySelector(`input[name="format"][value="nameddiscon"]`).removeAttribute("disabled");
     document.querySelector(`input[name="format"][value="csv"]`).removeAttribute("disabled");
+    let formatSel = document.querySelector('input[name="format"]:checked');
+    if (formatSel === "nameddiscon") {
+      document.querySelector('#velplotaxis').setAttribute("disabled", "disabled");
+    } else {2
+    }
+
   } else {
     document.querySelector(`input[name="format"][value="nameddiscon"]`).setAttribute("disabled", "disabled");
     document.querySelector(`input[name="format"][value="csv"]`).setAttribute("disabled", "disabled");
@@ -747,7 +755,6 @@ export function enableParams(tool) {
     document.querySelector(`input[name="format"][value="json"]`).removeAttribute("disabled");
     document.querySelector(`input[name="format"][value="svg"]`).removeAttribute("disabled");
     document.querySelector(`input[name="format"][value="gmt"]`).removeAttribute("disabled");
-
   } else if (tool === "refltrans") {
     document.querySelector(`input[name="format"][value="text"]`).removeAttribute("disabled");
     document.querySelector(`input[name="format"][value="json"]`).removeAttribute("disabled");

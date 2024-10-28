@@ -1316,7 +1316,7 @@ public class VelocityModel implements Cloneable, Serializable {
         int myLayerNumber = 0;
         VelocityLayer tempLayer;
         VelocityLayer lastZeroThickLayer = null;
-        double topDepth, topPVel, topSVel, topDensity = 2.6, topQp = 1000, topQs = 2000;
+        double topDepth, topPVel, topSVel, topDensity = 2.6, topQp = VelocityLayer.DEFAULT_QP, topQs = VelocityLayer.DEFAULT_QS;
         double botDepth, botPVel, botSVel, botDensity = topDensity, botQp = topQp, botQs = topQs;
         List<NamedVelocityDiscon> namedDiscon = new ArrayList<>();
         double mohoDepth = DEFAULT_MOHO;
