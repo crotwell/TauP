@@ -35,7 +35,7 @@ public class MoonLowVelocityTest {
         VelocityModel vmod = VelocityModelTest.loadTestVelMod(lunarModelFile);
         SlownessModel smod = new SphericalSModel(vmod);
         TauModel tmod = new TauModel(smod);
-        SeismicPhase P_phase = SeismicPhaseFactory.createSinglePhase("P", tmod, 800);
+        SeismicPhase P_phase = SeismicPhaseFactory.createPhase("P", tmod, 800);
         DistanceRay dr = DistanceRay.ofDegrees(50);
         List<Arrival> arrivalList = dr.calculate(P_phase);
         assertEquals(1, arrivalList.size());
