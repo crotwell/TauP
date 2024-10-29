@@ -216,5 +216,7 @@ public class OceanModelTest {
         assertFalse(seisPh.phasesExistsInModel());
         seisPh = SeismicPhaseFactory.createPhase("S1554PKP1554S", tMod, 0, 0);
         assertTrue(seisPh.phasesExistsInModel());
+        seisPh = SeismicPhaseFactory.createPhase("Pdiff^1554Pdiff", tMod, 0, 0);
+        assertTrue(seisPh.phasesExistsInModel());
     }
 }

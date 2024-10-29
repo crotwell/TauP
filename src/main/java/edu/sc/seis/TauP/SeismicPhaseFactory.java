@@ -1287,30 +1287,64 @@ public class SeismicPhaseFactory {
             String numString = currLeg.substring(depthIdx, currLeg.length()-4);
             double diffDepth = Double.parseDouble(numString);
             int disconBranch = LegPuller.closestBranchToDepth(tMod, numString);
+            SeismicPhaseSegment prevSegment = !proto.segmentList.isEmpty() ? proto.endSegment() : null;
+
             endAction = DIFFRACT;
-            proto.addToBranch(
-                    disconBranch - 1,
-                    isPWave,
-                    nextIsPWave,
-                    endAction,
-                    currLeg);
+            if (currBranch < disconBranch - 1 || prevEndAction == START ||
+                    (currBranch == disconBranch-1 && prevSegment != null && prevSegment.endsAtTop())
+            ) {
+                proto.addToBranch(
+                        disconBranch - 1,
+                        isPWave,
+                        nextIsPWave,
+                        endAction,
+                        currLeg);
+            } else if (currBranch == disconBranch - 1
+                    && (prevSegment.endAction == DIFFRACT || prevSegment.endAction == TRANSUPDIFFRACT
+                    || prevSegment.endAction == TRANSUP)) {
+                // already at correct depth ?
+            } else {
+                // we are below at the right branch to diffract???
+                return failWithMessage(proto,"Unable to diffract, " + currBranch +" of "+proto.phaseName+" "+ (disconBranch - 1) + " " + endActionString(prevEndAction) + " " + prevSegment);
+            }
 
             if ( ! tMod.isDiffractionBranch(disconBranch, isPWave)) {
                 return failWithMessage(proto,"Unable to diffract " + currLeg + ", "
-                        + disconBranch+" is not negative velocity discontinuity.");
+                        + disconBranch+", "+numString+" is not velocity discontinuity.");
             }
-            if (nextLeg.startsWith("K") || nextLeg.equals("I") || nextLeg.equals("J")) {
-                // down into  core
-                proto.addFlatBranch(isPWave, endAction, TRANSDOWN, currLeg);
-            } else {
-                // normal case
-                proto.addFlatBranch(isPWave, endAction, DIFFRACTTURN, currLeg);
-            }
+            // is possible to diffract downward? maybe if low velocity zone??
+            // normal case
+            proto.addFlatBranch(isPWave, endAction, DIFFRACTTURN, currLeg);
+
 
             if(nextLeg.equals(END_CODE)) {
                 endAction = END;
                 proto.addToBranch(
                         upgoingRecBranch,
+                        isPWave,
+                        nextIsPWave,
+                        endAction,
+                        currLeg);
+            } else if (nextLeg.startsWith("^")) {
+                String depthString;
+                depthString = nextLeg.substring(1);
+                endAction = REFLECT_UNDERSIDE;
+                int reflectDisconBranch = LegPuller.closestBranchToDepth(tMod, depthString);
+                if (reflectDisconBranch >= disconBranch ) {
+                    String reason = "Attempt to underside reflect " + currLeg
+                            + " from deeper layer: " + nextLeg;
+                    return failWithMessage(proto, reason);
+                }
+                proto.addToBranch(
+                        reflectDisconBranch,
+                        isPWave,
+                        nextIsPWave,
+                        endAction,
+                        currLeg);
+            } else if (nextLeg.startsWith("P") || nextLeg.startsWith("S")) {
+                endAction = REFLECT_UNDERSIDE;
+                proto.addToBranch(
+                        0,
                         isPWave,
                         nextIsPWave,
                         endAction,

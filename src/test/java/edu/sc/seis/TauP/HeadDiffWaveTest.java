@@ -70,12 +70,19 @@ public class HeadDiffWaveTest {
 
   }
   @Test
+  public void testNoHeadWave() throws TauModelException {
+    SimpleSeismicPhase phase = SeismicPhaseFactory.createPhase("P2889n", tMod);
+    assertFalse(phase.phasesExistsInModel());
+  }
+
+  @Test
   public void test_P410n() throws TauModelException {
     double depth = 0;
     double deg = 30;
     TauModel tModDepth = tMod.depthCorrect(depth);
     int disconBranch = LegPuller.closestBranchToDepth(tModDepth, "410");
     SeismicPhase headPhase = SeismicPhaseFactory.createPhase("P410n", tModDepth);
+    assertTrue(headPhase.phasesExistsInModel());
     List<Arrival> headarrivals = DistanceRay.ofDegrees(deg).calculate(headPhase);
     assertEquals(1, headarrivals.size());
     Arrival headArr = headarrivals.get(0);
@@ -159,6 +166,18 @@ public class HeadDiffWaveTest {
     SeismicPhase reflectPhase = SeismicPhaseFactory.createPhase("PKIv5500ykp", tMod_OCD);
     Arrival reflectArrr = reflectPhase.getEarliestArrival(25);
     assertNotNull(reflectArrr);
+  }
+
+  @Test
+  public void undersideReflectionBetweenDiff() throws TauModelException {
+    SeismicPhase reflectPhase = SeismicPhaseFactory.createPhase("P20diffP20diff", tMod);
+    assertTrue(reflectPhase.phasesExistsInModel());
+    reflectPhase = SeismicPhaseFactory.createPhase("P660diffP660diff", tMod);
+    assertTrue(reflectPhase.phasesExistsInModel());
+    reflectPhase = SeismicPhaseFactory.createPhase("P660diff^410P660diff", tMod);
+    assertTrue(reflectPhase.phasesExistsInModel());
+    reflectPhase = SeismicPhaseFactory.createPhase("Pdiff^410Pdiff", tMod);
+    assertTrue(reflectPhase.phasesExistsInModel());
   }
 
 
