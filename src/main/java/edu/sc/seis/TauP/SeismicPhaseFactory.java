@@ -1608,7 +1608,7 @@ public class SeismicPhaseFactory {
 
         if (currLeg.equals("Kdiff")) {
             disconBranch = tMod.getIocbBranch();
-        } else if (currLeg.endsWith("diff") && currLeg.length() > 5) {
+        } else if (currLeg.endsWith(DIFF) && currLeg.length() > 5) {
             int depthIdx = 0;
             if (currLeg.startsWith("K")) {
                 depthIdx = 1;
@@ -1897,7 +1897,7 @@ public class SeismicPhaseFactory {
                         nextIsPWave,
                         endAction,
                         currLeg);
-            } else if (nextLeg.endsWith("diff") && nextLeg.length() > 4) {
+            } else if (nextLeg.endsWith(DIFF) && nextLeg.length() > 4) {
                 String numString = nextLeg.substring(0, nextLeg.length()-4);
                 double diffDepth = Double.parseDouble(numString);
                 int disconBranch = LegPuller.closestBranchToDepth(tMod, numString);
@@ -2000,7 +2000,7 @@ public class SeismicPhaseFactory {
                         nextIsPWave,
                         endAction,
                         currLeg);
-            } else if (nextLeg.endsWith("diff") && nextLeg.length() > 4) {
+            } else if (nextLeg.endsWith(DIFF) && nextLeg.length() > 4) {
                 String numString = nextLeg.substring(0, nextLeg.length()-4);
                 double diffDepth = Double.parseDouble(numString);
                 int disconBranch = LegPuller.closestBranchToDepth(tMod, numString);
@@ -2268,7 +2268,7 @@ public class SeismicPhaseFactory {
                     nextIsPWave,
                     endAction,
                     currLeg);
-        } else if (nextLeg.endsWith("diff") && nextLeg.length() > 4) {
+        } else if (nextLeg.endsWith(DIFF) && nextLeg.length() > 4) {
             String numString = nextLeg.substring(0, nextLeg.length()-4);
             double diffDepth = Double.parseDouble(numString);
             int disconBranch = LegPuller.closestBranchToDepth(tMod, numString);
@@ -2429,7 +2429,7 @@ public class SeismicPhaseFactory {
                         nextIsPWave,
                         endAction,
                         currLeg);
-            } else if (nextLeg.endsWith("diff") && nextLeg.length() > 4) {
+            } else if (nextLeg.endsWith(DIFF) && nextLeg.length() > 4) {
                 String numString = nextLeg.substring(0, nextLeg.length()-4);
                 double diffDepth = Double.parseDouble(numString);
                 int disconBranch = LegPuller.closestBranchToDepth(tMod, numString);
@@ -2554,7 +2554,7 @@ public class SeismicPhaseFactory {
         }
         int disconBranch = tMod.getIocbBranch();
 
-        if (currLeg.endsWith("diff") && currLeg.length() > 5) {
+        if (currLeg.endsWith(DIFF) && currLeg.length() > 5) {
             int depthIdx = 0;
             if (currLeg.startsWith("I") || currLeg.startsWith("J")) {
                 depthIdx = 1;
@@ -2596,7 +2596,7 @@ public class SeismicPhaseFactory {
                     currLeg);
 
         } else if (nextLeg.equals("I") || nextLeg.equals("I")
-                || ((nextLeg.startsWith("I") || nextLeg.startsWith("J")) && nextLeg.endsWith("diff"))) {
+                || ((nextLeg.startsWith("I") || nextLeg.startsWith("J")) && nextLeg.endsWith(DIFF))) {
             endAction = REFLECT_UNDERSIDE;
             proto.addToBranch(
                     tMod.getIocbBranch(),
