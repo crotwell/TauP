@@ -1197,7 +1197,7 @@ public class SeismicPhaseFactory {
 
                 SeismicPhaseSegment prevSegment = !proto.segmentList.isEmpty() ? proto.endSegment() : null;
                 if (currBranch < tMod.getCmbBranch() - 1 || prevEndAction == START ||
-                        (currBranch == tMod.getCmbBranch() && prevSegment != null && prevSegment.endsAtTop())
+                        (currBranch == tMod.getCmbBranch()-1 && prevSegment != null && prevSegment.endsAtTop())
                 ) {
                     proto.addToBranch(
                             tMod.getCmbBranch() - 1,
