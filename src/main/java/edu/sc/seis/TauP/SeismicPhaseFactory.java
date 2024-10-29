@@ -2595,7 +2595,7 @@ public class SeismicPhaseFactory {
                     endAction,
                     currLeg);
 
-        } else if (nextLeg.equals("I") || nextLeg.equals("I")
+        } else if (nextLeg.equals("I") || nextLeg.equals("J")
                 || ((nextLeg.startsWith("I") || nextLeg.startsWith("J")) && nextLeg.endsWith(DIFF))) {
             endAction = REFLECT_UNDERSIDE;
             proto.addToBranch(
