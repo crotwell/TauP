@@ -279,7 +279,7 @@ public class LegPuller {
         if (allowHeadDiff && name.length() >= idx + 4 && name.startsWith(DIFF, idx)) {
             // diffraction off other layer
             idx+=4;
-        } else if (allowHeadDiff && idx < name.length() && name.charAt(idx) == HEAD_CODE) {
+        } else if (allowHeadDiff && idx < name.length() && name.startsWith(HEAD_CODE, idx)) {
             // head wave off other layer
             idx++;
         } // else normal discon interaction

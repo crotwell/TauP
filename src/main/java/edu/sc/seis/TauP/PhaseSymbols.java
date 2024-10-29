@@ -27,7 +27,7 @@ public class PhaseSymbols {
     public static final char TOPSIDE_CRITICAL_REFLECTION = 'V';
     public static final char UNDERSIDE_REFLECTION = '^';
     // head and diffracted
-    public static final char HEAD_CODE = 'n';
+    public static final String HEAD_CODE = "n";
     public static final String DIFF = "diff";
 
     // specialized codes

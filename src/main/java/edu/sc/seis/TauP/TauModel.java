@@ -189,11 +189,42 @@ public class TauModel implements Serializable {
         return getSlownessModel().depthInFluid(getTauBranch(branchNum, false).getTopDepth());
     }
 
+    /**
+     * True if a boundary can generate a head wave, must be a discontinuity and an increase in velocity with depth.
+     *
+     * @param branchNum branch layer number
+     * @param isPWave true for P, false for S
+     * @return head wave possible
+     * @throws NoSuchLayerException
+     */
+    public boolean isHeadWaveBranch(int branchNum, boolean isPWave) throws NoSuchLayerException {
+        double topDepth = getTauBranch(branchNum, false).getTopDepth();
+        int aboveIdx = getVelocityModel().layerNumberAbove(topDepth);
+        VelocityLayer above = getVelocityModel().getVelocityLayer(aboveIdx);
+        int belowIdx = getVelocityModel().layerNumberBelow(topDepth);
+        VelocityLayer below = getVelocityModel().getVelocityLayer(belowIdx);
+        System.err.println("above: "+above);
+        System.err.println("below: "+below);
+        if (isPWave) {
+            return above.getBotPVelocity() < below.getTopPVelocity();
+        } else {
+            return above.getBotSVelocity() < below.getTopSVelocity();
+        }
+    }
+
+    /**
+     * True if a boundary can generate a diffracted wave, currently just ensure a discontinuity.
+     *
+     * @param branchNum branch layer number
+     * @param isPWave true for P, false for S
+     * @return diffracted wave possible
+     * @throws NoSuchLayerException
+     */
     public boolean isDiffractionBranch(int branchNum, boolean isPWave) throws NoSuchLayerException {
         double topDepth = getTauBranch(branchNum, false).getTopDepth();
         int aboveIdx = getVelocityModel().layerNumberAbove(topDepth);
         VelocityLayer above = getVelocityModel().getVelocityLayer(aboveIdx);
-        int belowIdx = getVelocityModel().layerNumberAbove(topDepth);
+        int belowIdx = getVelocityModel().layerNumberBelow(topDepth);
         VelocityLayer below = getVelocityModel().getVelocityLayer(belowIdx);
         if (isPWave) {
             return above.getBotPVelocity() != below.getTopPVelocity();
