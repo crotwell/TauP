@@ -2824,7 +2824,7 @@ public class SeismicPhaseFactory {
             return new FailedSeismicPhase(proto);
         }
         /* Special case for surface waves. */
-        if(name.endsWith("kmps")) {
+        if(name.endsWith(KMPS_CODE)) {
             try {
             dist = new double[2];
             time = new double[2];

@@ -143,7 +143,7 @@ public class PhaseSymbols {
     }
     public static boolean isHead(String name, int offset) {
         // simple like Pn
-        return isDowngoingSymbol(name, offset) && name.startsWith("" + HEAD_CODE, offset + 1);
+        return isDowngoingSymbol(name, offset) && name.startsWith( HEAD_CODE, offset + 1);
     }
 
     public static boolean isSurfaceWave(String name) {
