@@ -117,6 +117,46 @@ public class TimeDist implements Cloneable {
         return SphericalCoords.RtoD * getDistRadian();
     }
 
+    /**
+     * Linearly interpolates two TimeDist objects using depth as the interpolation variable.
+     *
+     * @param tdA
+     * @param tdB
+     * @param depth
+     * @return
+     */
+    public static TimeDist linearInterpOnDepth(TimeDist tdA, TimeDist tdB, double depth) {
+        double distConnect = LinearInterpolation.linearInterp(tdA.getDepth(), tdA.getDistRadian(),
+                tdB.getDepth(), tdB.getDistRadian(), depth);
+        double raypConnect = LinearInterpolation.linearInterp(tdA.getDepth(), tdA.getP(),
+                tdB.getDepth(), tdB.getP(), depth);
+        double timeConnect = LinearInterpolation.linearInterp(tdA.getDepth(), tdA.getTime(),
+                tdB.getDepth(), tdB.getTime(), depth);
+        TimeDist disconInterp = new TimeDist(raypConnect, timeConnect, distConnect, depth);
+        return disconInterp;
+    }
+
+    /**
+     * Linearly interpolates two TimeDist objects using time as the interpolation variable.
+     *
+     * @param tdA first TimeDist
+     * @param tdB second TimeDist
+     * @param time interp time
+     * @return
+     */
+    public static TimeDist linearInterpOnTime(TimeDist tdA, TimeDist tdB, double time) {
+        double distConnect = LinearInterpolation.linearInterp(tdA.getTime(), tdA.getDistRadian(),
+                tdB.getTime(), tdB.getDistRadian(), time);
+        double depthConnect = LinearInterpolation.linearInterp(tdA.getTime(), tdA.getDepth(),
+                tdB.getTime(), tdB.getDepth(), time);
+        double raypConnect = LinearInterpolation.linearInterp(tdA.getTime(), tdA.getP(),
+                tdB.getTime(), tdB.getP(), time);
+        TimeDist disconInterp = new TimeDist(raypConnect, time, distConnect, depthConnect);
+        return disconInterp;
+    }
+
+
+
     public Object clone() {
         try {
             return super.clone();

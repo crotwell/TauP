@@ -407,9 +407,22 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
                                 TimeDist prevEnd = curWaveSeg == null ? null : curWaveSeg.getPathEnd();
                                 List<TimeDist> tdList = new ArrayList<>();
                                 if (prevEnd != null) {
-                                    // connect segments by adding prev end to start of new
-                                    // kind of wrong as phase change happened somewhere in between, but better than a gap???
-                                    tdList.add(prevEnd);
+                                    boolean found = false;
+                                    for (double disconDepth : phase.getTauModel().getVelocityModel().getDisconDepths()) {
+                                        if ((prevEnd.getDepth() - disconDepth)*(disconDepth-interp.getDepth()) > 0) {
+                                            // maybe discon is where phase change happens??? hopefully only one
+                                            TimeDist disconInterp = TimeDist.linearInterpOnDepth(prevEnd, interp, disconDepth);
+                                            curWaveSeg.getPath().add(disconInterp);
+                                            tdList.add(disconInterp);
+                                            found = true;
+                                            break;
+                                        }
+                                    }
+                                    if (! found) {
+                                        // connect segments by adding prev end to start of new
+                                        // kind of wrong as phase change happened somewhere in between, but better than a gap???
+                                        tdList.add(prevEnd);
+                                    }
                                 }
                                 curWaveSeg = new WavefrontPathSegment(tdList, curPathSeg.isPWave(), curPathSeg.getSegmentName(),
                                         prevEnd, waveSegIdx++, totalNumSegments, arrival.getPhase(), timeVal);
