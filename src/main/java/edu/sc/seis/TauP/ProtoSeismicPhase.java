@@ -863,7 +863,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                         // ed not needed as legname changes
                         legName = legName.substring(0, 1);
                     } else if ((seg.endAction == END
-                            || (seg.endAction == REFLECT_UNDERSIDE && seg.endBranch == 0)
+                            || (seg.endAction == REFLECT_UNDERSIDE )
                             || ((seg.endAction == TURN || seg.endAction == DIFFRACTTURN
                                 || seg.endAction == TRANSUP || seg.endAction == REFLECT_UNDERSIDE)
                                 && next.endBranch == 0))
