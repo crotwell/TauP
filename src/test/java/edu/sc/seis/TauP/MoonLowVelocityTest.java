@@ -39,7 +39,22 @@ public class MoonLowVelocityTest {
         List<Arrival> arrivalList = dr.calculate(P_phase);
         assertEquals(1, arrivalList.size());
         assertEquals(521.75, arrivalList.get(0).getTime(), 0.01);
-        SeismicPhase Pdiff = SeismicPhaseFactory.createPhase("Pdiff", tmod, 0);
-        assertFalse(Pdiff.phasesExistsInModel());
+        SeismicPhase Pdiff = SeismicPhaseFactory.createPhase("Pdiff", tmod);
+        assertTrue(Pdiff.phasesExistsInModel());
+
+    }
+
+    @Test
+    public void testMarsLiquidLowerMantle() throws TauModelException, IOException, SlownessModelException {
+        String mars = "MarsLiquidLowerMantle.nd";
+        VelocityModel vmod = VelocityModelTest.loadTestVelMod(mars);
+        SlownessModel smod = new SphericalSModel(vmod);
+        TauModel tmod = new TauModel(smod);
+        SeismicPhase Pdiff = SeismicPhaseFactory.createPhase("Pdiff", tmod);
+        assertTrue(Pdiff.phasesExistsInModel());
+        SeismicPhase PdiffUnderRefl = SeismicPhaseFactory.createPhase("Pdiff^1554Pdiff", tmod);
+        assertTrue(PdiffUnderRefl.phasesExistsInModel());
+        SeismicPhase PCMBHead = SeismicPhaseFactory.createPhase("P1690n", tmod);
+        assertFalse(PCMBHead.phasesExistsInModel());
     }
 }
