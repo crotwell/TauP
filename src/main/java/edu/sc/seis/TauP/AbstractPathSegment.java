@@ -200,17 +200,41 @@ public abstract class AbstractPathSegment {
         return pathCssClass+" "+SvgUtil.classForPhase(getPhase().getName()) + (isPWave ? " pwave" : " swave");
     }
 
+
     public void writeSVGCartesian(PrintWriter pw) {
+        writeSVGCartesian(pw, 0);
+    }
+
+    public void writeSVGCartesian(PrintWriter pw, double minPolylineSize) {
         double radiusOfEarth = getPhase().getTauModel().getRadiusOfEarth();
         pw.println("    <g>");
         pw.println("      <desc>" + description() + "</desc>");
-
-        pw.println("      <polyline class=\"" + getCssClasses() + "\" points=\"");
-        for (TimeDist td : path) {
-            SvgEarth.printDistRadiusAsXY(pw, td.getDistDeg(), radiusOfEarth - td.getDepth());
-            pw.println();
+        boolean isDegenerate = path.size() <= 2;
+        double[] prevXY = SvgEarth.xyForDistRadius( path.get(0).getDistDeg(), radiusOfEarth - path.get(0).getDepth());
+        if (minPolylineSize > 0) {
+            // check if points are all within minPolylineSize, in which case we will draw a circle instead of a polyline
+            for (TimeDist td : path) {
+                double[] xy = SvgEarth.xyForDistRadius(td.getDistDeg(), radiusOfEarth - td.getDepth());
+                if (Math.abs(xy[0] - prevXY[0]) > minPolylineSize || Math.abs(xy[1] - prevXY[1]) > minPolylineSize) {
+                    // different enough to plot line
+                    isDegenerate = false;
+                    break;
+                }
+                isDegenerate = true;
+            }
         }
-        pw.println("\" />");
+        if (isDegenerate) {
+            TimeDist td = path.get(0);
+            double[] xy = SvgEarth.xyForDistRadius( td.getDistDeg(), radiusOfEarth - td.getDepth());
+            pw.println("      <circle class=\"" + getCssClasses() + "\" cx=\""+xy[0] + "\" cy=\""+xy[1] + "\" r=\""+minPolylineSize+"\"/>");
+        } else {
+            pw.println("      <polyline class=\"" + getCssClasses() + "\" points=\"");
+            for (TimeDist td : path) {
+                SvgEarth.printDistRadiusAsXY(pw, td.getDistDeg(), radiusOfEarth - td.getDepth());
+                pw.println();
+            }
+            pw.println("\" />");
+        }
         pw.println("    </g>");
     }
 

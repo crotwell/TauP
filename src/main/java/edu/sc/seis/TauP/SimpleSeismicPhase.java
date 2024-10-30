@@ -442,7 +442,7 @@ public class SimpleSeismicPhase implements SeismicPhase {
 
     @Override
     public Arrival shootRay(double rayParam) throws SlownessModelException, NoSuchLayerException {
-        if(countFlatLegs() > 0) {
+        if(countFlatLegs() > 0 && rayParam != getMinRayParam()) {
             throw new SlownessModelException("Unable to shoot ray in non-body, head, diffracted waves");
         }
         if (rayParam < minRayParam || maxRayParam < rayParam) {

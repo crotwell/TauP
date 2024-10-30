@@ -4,12 +4,18 @@ export function animateStep(styleEl, svgEl, start, step) {
     polyline.wavefront {
       visibility: hidden;
     }
+    circle.wavefront {
+      visibility: hidden;
+    }
     polyline.wavefront.time_${start}_00 {
+      visibility: visible;
+    }
+    circle.wavefront.time_${start}_00 {
       visibility: visible;
     }
   `;
   start+=step;
-  if (svgEl.querySelector(`polyline.wavefront.time_${start}_00`)) {
+  if (svgEl.querySelector(`.wavefront.time_${start}_00`)) {
     setTimeout(() => {
       animateStep(styleEl, svgEl, start, step);
     }, step*.01*1000);

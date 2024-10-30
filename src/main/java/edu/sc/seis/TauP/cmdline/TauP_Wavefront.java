@@ -9,6 +9,7 @@ import picocli.CommandLine;
 import java.io.*;
 import java.util.*;
 
+import static edu.sc.seis.TauP.SvgEarth.calcFontSizeForEarthScale;
 import static edu.sc.seis.TauP.SvgUtil.createSurfaceWaveCSS;
 import static edu.sc.seis.TauP.cmdline.TauP_Tool.ABREV_SYNOPSIS;
 import static edu.sc.seis.TauP.cmdline.TauP_Tool.OPTIONS_HEADING;
@@ -121,7 +122,10 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
             }
             float pixelWidth = getGraphicOutputTypeArgs().getPixelWidth();
             SvgEarthScaling scaleTrans = SvgEarth.calcEarthScaleTransForPhaseList(getSeismicPhases(), distDepthRangeArgs, isNegDistance());
-
+            double minPolylineSize = 2;
+            if (scaleTrans != null) {
+                minPolylineSize = calcFontSizeForEarthScale(modelArgs.getTauModel(), scaleTrans)/ 20.0;
+            }
             SvgEarth.printScriptBeginningSvg(out, modelArgs.getTauModel(), pixelWidth,
                     scaleTrans, toolNameFromClass(this.getClass()), getCmdLineArgs(),
                     coloring.getColorList(), cssExtra);
@@ -135,9 +139,9 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
                 out.println("    <g>");
                 out.println("      <desc>Time" + Outputs.formatTimeNoPad(timeVal) + "</desc>");
                 for (WavefrontPathSegment segment : timeSegmentMap.get(timeVal)) {
-                    segment.writeSVGCartesian(out);
+                    segment.writeSVGCartesian(out, minPolylineSize);
                     if (isNegDistance()) {
-                        segment.asNegativeDistance().writeSVGCartesian(out);
+                        segment.asNegativeDistance().writeSVGCartesian(out, minPolylineSize);
                     }
                 }
                 out.println("</g>");
@@ -235,11 +239,46 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
         if (! phase.hasArrivals()) {
             return out;
         }
-        int totalNumSegments = (int) Math.floor(phase.getMaxTime()/timeStep);
+        int totalNumSegments = (int) Math.floor(phase.getMaxTime()/timeStep) +1;
         int waveSegIdx = 0;
         List<Arrival> allArrival = new ArrayList<>();
-        for (int i=0; i<phase.getNumRays(); i++) {
-            allArrival.add(phase.createArrivalAtIndex(i));
+        int minArrivalsForPlot = 10;
+        if ( phase.getNumRays() > minArrivalsForPlot) {
+            for (int i = 0; i < phase.getNumRays(); i++) {
+                allArrival.add(phase.createArrivalAtIndex(i));
+            }
+        } else {
+            if (phase.getMinRayParam() < phase.getMaxRayParam()) {
+                // normal phase, maybe just have very few rays??? interp on ray param
+                double rpStep = (phase.getMaxRayParam() - phase.getMinRayParam()) / minArrivalsForPlot;
+                for (double rp = phase.getMinRayParam(); rp < phase.getMaxRayParam(); rp += rpStep) {
+                    RayParamRay rpRay = new RayParamRay(rp);
+                    try {
+                        allArrival.addAll(rpRay.calculate(phase));
+                    } catch (SlownessModelException e) {
+                        throw new RuntimeException(e);
+                    } catch (NoSuchLayerException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+                RayParamRay rpRay = new RayParamRay(phase.getMaxRayParam());
+                try {
+                    allArrival.addAll(rpRay.calculate(phase));
+                } catch (SlownessModelException e) {
+                    throw new RuntimeException(e);
+                } catch (NoSuchLayerException e) {
+                    throw new RuntimeException(e);
+                }
+            } else {
+                // head or diff wave, only one ray param, interp on distance
+                double distStep = (phase.getMaxDistance()-phase.getMinDistance())/minArrivalsForPlot;
+                for (double distRadian = phase.getMinDistance(); distRadian < phase.getMaxDistance() ; distRadian+=distStep) {
+                    DistanceRay dRay = DistanceRay.ofRadians(distRadian);
+                    allArrival.addAll(dRay.calculate(phase));
+                }
+                DistanceRay dRay = DistanceRay.ofRadians(phase.getMaxDistance());
+                allArrival.addAll(dRay.calculate(phase));
+            }
         }
         HashMap<Arrival, Integer> pathIdx = new HashMap<>();
         HashMap<Arrival, Integer> segIdx = new HashMap<>();
@@ -250,6 +289,14 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
             prevTimeDistMap.put(arrival, arrival.getSourceTimeDist());
         }
         double timeVal = 0;
+        // add degenerate segment for source
+        TimeDist sourcePoint = new TimeDist(phase.getMinRayParam(), 0, 0, phase.getSourceDepth());
+        SeismicPhaseSegment initialSeg = phase.getInitialPhaseSegment();
+        WavefrontPathSegment initialWaveSeg = WavefrontPathSegment.degenerateSegment(sourcePoint,
+                initialSeg.getIsPWave(), initialSeg.getLegName(),
+                sourcePoint, waveSegIdx++, totalNumSegments, phase, timeVal);
+        out.put(timeVal, List.of(initialWaveSeg));
+
         boolean done=false;
         while( ! done) {
             done = true;
@@ -273,26 +320,15 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
                 done = dist + timeStep / phase.getRayParams(0) > phase.getMaxDistance();
                 continue;
             } else if (phase instanceof ScatteredSeismicPhase &&
-                    ((ScatteredSeismicPhase) phase).getInboundArrival().getTime() > timeVal
-            ) {
+                    ((ScatteredSeismicPhase) phase).getInboundArrival().getTime() > timeVal) {
                 Arrival inboundArrival = ((ScatteredSeismicPhase) phase).getInboundArrival();
                 TimeDist prevTD = null;
                 for (ArrivalPathSegment curPathSeg : inboundArrival.getPathSegments()) {
                     for (TimeDist currTD : curPathSeg.getPath()) {
                         if (prevTD != null && prevTD.getTime() <= timeVal && timeVal <= currTD.getTime()) {
                             TimeDist interp = interp(prevTD, currTD, timeVal);
-                            double deltaDepth = phase.getTauModel().getRadiusOfEarth() * 0.01;
-                            TimeDist shallowerTd = new TimeDist(
-                                    interp.getP(),
-                                    timeVal,
-                                    interp.getDistRadian(),
-                                    interp.getDepth() - deltaDepth
-                            );
-                            List<TimeDist> tdList = new ArrayList<>();
-                            tdList.add(interp);
-                            tdList.add(shallowerTd);
                             TimeDist prevEnd = null;
-                            curWaveSeg = new WavefrontPathSegment(tdList, curPathSeg.isPWave(), curPathSeg.getSegmentName(),
+                            curWaveSeg = WavefrontPathSegment.degenerateSegment(interp, curPathSeg.isPWave(), curPathSeg.getSegmentName(),
                                     prevEnd, waveSegIdx++, totalNumSegments, phase, timeVal);
                             wavefrontSegments.add(curWaveSeg);
                             done = false;

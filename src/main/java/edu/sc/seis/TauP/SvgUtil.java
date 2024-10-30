@@ -326,6 +326,9 @@ public class SvgUtil {
             out.append("        ."+phaseClass+" {\n");
             out.append("          stroke: "+color+";\n");
             out.append("        }\n");
+            out.append("        circle."+phaseClass+" {\n");
+            out.append("          fill: "+color+";\n");
+            out.append("        }\n");
             out.append("        ."+phaseClass+".label {\n");
             out.append("          stroke: "+color+";\n");
             out.append("          fill: "+color+";\n");
@@ -352,6 +355,9 @@ public class SvgUtil {
             String color = coloringArgs.colorForIndex(i-1);
             out.append("        ."+timeLabel+" {\n");
             out.append("          stroke: "+color+";\n");
+            out.append("        }\n");
+            out.append("        circle."+timeLabel+" {\n");
+            out.append("          fill: "+color+";\n");
             out.append("        }\n");
             out.append("        ."+timeLabel+".label {\n");
             out.append("          stroke: "+color+";\n");
@@ -394,6 +400,9 @@ public class SvgUtil {
             String color = colors.get(wavetype);
             extrtaCSS.append("        polyline."+wavetype+" {\n");
             extrtaCSS.append("            stroke: "+color+";\n");
+            extrtaCSS.append("        }\n");
+            extrtaCSS.append("        circle."+wavetype+" {\n");
+            extrtaCSS.append("            fill: "+color+";\n");
             extrtaCSS.append("        }\n");
             extrtaCSS.append("        ."+wavetype+".label {\n");
             extrtaCSS.append("          stroke: "+color+";\n");

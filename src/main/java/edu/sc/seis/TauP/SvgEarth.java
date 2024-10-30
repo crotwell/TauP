@@ -363,13 +363,18 @@ public class SvgEarth {
         out.println("<!-- draw paths, coordinates are x,y not degree,radius due to SVG using only cartesian -->");
     }
 
-    protected static void printDistRadiusAsXY(PrintWriter out, double calcDist, double radius) {
+    protected static double[] xyForDistRadius(double calcDist, double radius) {
         double radian = (calcDist-90)*Math.PI/180;
         double x = radius*Math.cos(radian);
         double y = radius*Math.sin(radian);
-        out.print(Outputs.formatDistance(x)
+        return new double[] {x, y};
+    }
+
+    protected static void printDistRadiusAsXY(PrintWriter out, double calcDist, double radius) {
+        double[] xy = xyForDistRadius(calcDist, radius);
+        out.print(Outputs.formatDistance(xy[0])
                 + "  "
-                + Outputs.formatDistance(y));
+                + Outputs.formatDistance(xy[1]));
     }
 
     public static void printDistRadius(PrintWriter out, double calcDist, double radius) {
@@ -463,17 +468,22 @@ public class SvgEarth {
         out.println("# draw paths");
     }
 
-    public static void printScriptBeginningSvg(PrintWriter out, TauModel tMod, float pixelWidth,
-                                               SvgEarthScaling scaleTrans, String toolName,
-                                               List<String> cmdLineArgs,
-                                               List<String> colorList, String extraCSS) {
+    public static int calcFontSizeForEarthScale(TauModel tMod, SvgEarthScaling scaleTrans) {
         float zoomScale = scaleTrans.getZoomScale();
-        int plotOffset = 0;
         float R = (float) tMod.getRadiusOfEarth();
         float plotSize = R * plotOverScaleFactor;
 
         int fontSize = (int) (plotSize / 20);
         fontSize = (int) (fontSize / zoomScale);
+        return fontSize;
+    }
+
+    public static void printScriptBeginningSvg(PrintWriter out, TauModel tMod, float pixelWidth,
+                                               SvgEarthScaling scaleTrans, String toolName,
+                                               List<String> cmdLineArgs,
+                                               List<String> colorList, String extraCSS) {
+        int plotOffset = 0;
+        int fontSize = calcFontSizeForEarthScale(tMod, scaleTrans);
         StringBuffer addCSS = SvgUtil.resizeLabels(fontSize);
         addCSS.append(extraCSS);
 

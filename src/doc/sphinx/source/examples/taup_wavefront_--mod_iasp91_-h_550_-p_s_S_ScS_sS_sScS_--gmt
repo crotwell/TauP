@@ -26,7 +26,19 @@ ENDLAYERS
 
 # draw paths
 gmt plot -W,skyblue -A  <<END
-> seg 0/2 s of s at   100.00
+> seg 0/3 s of s at     0.00
+    0.00    5821.0
+> seg 0/14 S of S at     0.00
+    0.00    5821.0
+> seg 0/14 S of ScS at     0.00
+    0.00    5821.0
+> seg 0/17 s of sS at     0.00
+    0.00    5821.0
+> seg 0/17 s of sScS at     0.00
+    0.00    5821.0
+END
+gmt plot -W,olivedrab -A  <<END
+> seg 1/3 s of s at   100.00
     5.13    5899.9
     4.94    5951.9
     4.76    5987.1
@@ -413,7 +425,7 @@ gmt plot -W,skyblue -A  <<END
     0.03    6298.6
     0.02    6298.6
     0.00    6298.6
-> seg 0/13 S of S at   100.00
+> seg 1/14 S of S at   100.00
     5.13    5899.9
     5.26    5845.4
     5.32    5809.3
@@ -592,7 +604,7 @@ gmt plot -W,skyblue -A  <<END
     3.35    5307.0
     3.34    5306.3
     3.30    5303.8
-> seg 0/13 S of ScS at   100.00
+> seg 1/14 S of ScS at   100.00
     3.30    5303.8
     3.30    5303.7
     3.30    5303.7
@@ -802,7 +814,7 @@ gmt plot -W,skyblue -A  <<END
     0.06    5207.7
     0.03    5207.7
     0.00    5207.6
-> seg 0/16 s of sS at   100.00
+> seg 1/17 s of sS at   100.00
     5.13    5899.9
     4.94    5951.9
     4.76    5987.1
@@ -981,7 +993,7 @@ gmt plot -W,skyblue -A  <<END
     1.77    6263.6
     1.76    6263.9
     1.74    6264.8
-> seg 0/16 s of sScS at   100.00
+> seg 1/17 s of sScS at   100.00
     1.74    6264.8
     1.74    6264.8
     1.74    6264.8
@@ -1192,8 +1204,8 @@ gmt plot -W,skyblue -A  <<END
     0.02    6298.6
     0.00    6298.6
 END
-gmt plot -W,olivedrab -A  <<END
-> seg 1/2 s of s at   200.00
+gmt plot -W,goldenrod -A  <<END
+> seg 2/3 s of s at   200.00
     9.24    6122.4
     8.63    6209.0
     8.26    6259.0
@@ -1208,7 +1220,7 @@ gmt plot -W,olivedrab -A  <<END
     7.30    6362.8
     7.25    6366.1
     7.21    6369.2
-> seg 1/13 S of S at   200.00
+> seg 2/14 S of S at   200.00
     9.24    6122.4
     9.87    6022.3
    10.26    5949.8
@@ -1387,7 +1399,7 @@ gmt plot -W,olivedrab -A  <<END
     8.08    4797.8
     8.06    4796.0
     7.97    4789.6
-> seg 1/13 S of ScS at   200.00
+> seg 2/14 S of ScS at   200.00
     7.97    4789.6
     7.97    4789.4
     7.97    4789.3
@@ -1597,7 +1609,7 @@ gmt plot -W,olivedrab -A  <<END
     0.16    4540.5
     0.08    4540.4
     0.00    4540.4
-> seg 1/16 s of sS at   200.00
+> seg 2/17 s of sS at   200.00
     9.24    6122.4
     8.63    6209.0
     8.26    6259.0
@@ -1776,7 +1788,7 @@ gmt plot -W,olivedrab -A  <<END
     3.11    6072.7
     3.10    6072.3
     3.06    6070.7
-> seg 1/16 S of sScS at   200.00
+> seg 2/17 S of sScS at   200.00
     3.06    6070.7
     3.06    6070.6
     3.06    6070.6
@@ -1987,8 +1999,8 @@ gmt plot -W,olivedrab -A  <<END
     0.03    6008.2
     0.00    6008.2
 END
-gmt plot -W,goldenrod -A  <<END
-> seg 2/13 S of S at   300.00
+gmt plot -W,firebrick -A  <<END
+> seg 3/14 S of S at   300.00
    12.56    6371.0
    13.29    6294.5
    13.91    6212.6
@@ -2155,7 +2167,7 @@ gmt plot -W,goldenrod -A  <<END
    14.34    4329.7
    14.31    4326.3
    14.18    4314.6
-> seg 2/13 S of ScS at   300.00
+> seg 3/14 S of ScS at   300.00
    14.18    4314.6
    14.17    4314.4
    14.17    4314.1
@@ -2365,7 +2377,7 @@ gmt plot -W,goldenrod -A  <<END
     0.31    3840.4
     0.15    3840.3
     0.00    3840.3
-> seg 2/16 S of sS at   300.00
+> seg 3/17 S of sS at   300.00
    12.18    6340.3
    11.48    6248.2
    11.08    6195.0
@@ -2544,7 +2556,7 @@ gmt plot -W,goldenrod -A  <<END
     5.49    5595.0
     5.47    5594.0
     5.41    5590.4
-> seg 2/16 S of sScS at   300.00
+> seg 3/17 S of sScS at   300.00
     5.41    5590.4
     5.41    5590.3
     5.41    5590.3
@@ -2755,8 +2767,8 @@ gmt plot -W,goldenrod -A  <<END
     0.05    5442.5
     0.00    5442.5
 END
-gmt plot -W,firebrick -A  <<END
-> seg 3/13 S of S at   400.00
+gmt plot -W,darkcyan -A  <<END
+> seg 4/14 S of S at   400.00
    17.92    6371.0
    18.02    6363.6
    18.18    6352.5
@@ -2901,7 +2913,7 @@ gmt plot -W,firebrick -A  <<END
    22.44    3936.0
    22.39    3930.7
    22.24    3912.2
-> seg 3/13 S of ScS at   400.00
+> seg 4/14 S of ScS at   400.00
    22.24    3912.2
    22.24    3911.8
    22.23    3911.4
@@ -3111,7 +3123,7 @@ gmt plot -W,firebrick -A  <<END
     0.51    3847.5
     0.26    3847.8
     0.00    3847.8
-> seg 3/16 S of sS at   400.00
+> seg 4/17 S of sS at   400.00
    15.50    6065.1
    15.03    5982.9
    14.81    5937.2
@@ -3290,7 +3302,7 @@ gmt plot -W,firebrick -A  <<END
     9.51    5075.0
     9.48    5073.1
     9.38    5066.4
-> seg 3/16 S of sScS at   400.00
+> seg 4/17 S of sScS at   400.00
     9.38    5066.4
     9.38    5066.3
     9.38    5066.1
@@ -3501,8 +3513,8 @@ gmt plot -W,firebrick -A  <<END
     0.10    4788.8
     0.00    4788.8
 END
-gmt plot -W,darkcyan -A  <<END
-> seg 4/13 S of S at   500.00
+gmt plot -W,chocolate -A  <<END
+> seg 5/14 S of S at   500.00
    24.57    6371.0
    25.08    6339.1
    25.77    6277.4
@@ -3635,7 +3647,7 @@ gmt plot -W,darkcyan -A  <<END
    32.47    3659.3
    32.43    3651.6
    32.30    3625.2
-> seg 4/13 S of ScS at   500.00
+> seg 5/14 S of ScS at   500.00
    32.30    3625.2
    32.30    3624.6
    32.30    3624.1
@@ -3845,7 +3857,7 @@ gmt plot -W,darkcyan -A  <<END
     0.66    4547.3
     0.33    4547.6
     0.00    4547.6
-> seg 4/16 S of sS at   500.00
+> seg 5/17 S of sS at   500.00
    19.90    5869.7
    19.83    5830.6
    19.80    5806.9
@@ -4024,7 +4036,7 @@ gmt plot -W,darkcyan -A  <<END
    14.88    4580.6
    14.85    4577.5
    14.71    4566.5
-> seg 4/16 S of sScS at   500.00
+> seg 5/17 S of sScS at   500.00
    14.71    4566.5
    14.71    4566.3
    14.71    4566.0
@@ -4235,8 +4247,8 @@ gmt plot -W,darkcyan -A  <<END
     0.16    4100.4
     0.00    4100.3
 END
-gmt plot -W,chocolate -A  <<END
-> seg 5/13 S of S at   600.00
+gmt plot -W,darkmagenta -A  <<END
+> seg 6/14 S of S at   600.00
    31.02    6371.0
    31.99    6301.6
    32.81    6230.3
@@ -4362,7 +4374,7 @@ gmt plot -W,chocolate -A  <<END
    43.93    3545.8
    43.90    3528.5
    43.88    3499.7
-> seg 5/13 S of ScS at   600.00
+> seg 6/14 S of ScS at   600.00
    43.88    3499.7
    43.87    3496.2
    43.87    3494.3
@@ -4572,7 +4584,7 @@ gmt plot -W,chocolate -A  <<END
     0.75    5214.1
     0.38    5214.4
     0.00    5214.5
-> seg 5/16 S of sS at   600.00
+> seg 6/17 S of sS at   600.00
    25.11    5825.9
    25.10    5832.3
    25.11    5827.1
@@ -4751,7 +4763,7 @@ gmt plot -W,chocolate -A  <<END
    21.94    4141.3
    21.89    4136.5
    21.73    4119.9
-> seg 5/16 S of sScS at   600.00
+> seg 6/17 S of sScS at   600.00
    21.73    4119.9
    21.72    4119.6
    21.72    4119.2
@@ -4962,8 +4974,8 @@ gmt plot -W,chocolate -A  <<END
     0.26    3583.3
     0.00    3583.4
 END
-gmt plot -W,darkmagenta -A  <<END
-> seg 6/13 S of S at   700.00
+gmt plot -W,mediumvioletred -A  <<END
+> seg 7/14 S of S at   700.00
    37.67    6371.0
    38.44    6322.2
    39.20    6259.9
@@ -5084,7 +5096,7 @@ gmt plot -W,darkmagenta -A  <<END
    55.64    3579.8
    55.67    3568.3
    55.79    3522.7
-> seg 6/13 S of ScS at   700.00
+> seg 7/14 S of ScS at   700.00
    55.79    3522.7
    55.71    3548.3
    55.67    3559.3
@@ -5294,7 +5306,7 @@ gmt plot -W,darkmagenta -A  <<END
     0.82    5826.3
     0.41    5826.6
     0.00    5826.7
-> seg 6/16 S of sS at   700.00
+> seg 7/17 S of sS at   700.00
    30.12    5936.5
    29.88    5988.4
    29.80    6002.5
@@ -5457,7 +5469,7 @@ gmt plot -W,darkmagenta -A  <<END
    30.91    3794.4
    30.87    3787.6
    30.71    3764.2
-> seg 6/16 S of sScS at   700.00
+> seg 7/17 S of sScS at   700.00
    30.71    3764.2
    30.71    3763.7
    30.70    3763.2
@@ -5668,8 +5680,8 @@ gmt plot -W,darkmagenta -A  <<END
     0.34    4295.0
     0.00    4295.0
 END
-gmt plot -W,mediumvioletred -A  <<END
-> seg 7/13 S of S at   800.00
+gmt plot -W,sienna -A  <<END
+> seg 8/14 S of S at   800.00
    44.60    6371.0
    44.60    6371.0
    44.99    6350.6
@@ -5784,7 +5796,7 @@ gmt plot -W,mediumvioletred -A  <<END
    66.47    3784.7
    66.56    3769.5
    66.89    3718.3
-> seg 7/13 S of ScS at   800.00
+> seg 8/14 S of ScS at   800.00
    66.89    3718.3
    66.54    3771.6
    66.37    3794.4
@@ -5994,7 +6006,7 @@ gmt plot -W,mediumvioletred -A  <<END
     0.85    6303.0
     0.42    6303.2
     0.00    6303.3
-> seg 7/16 S of sS at   800.00
+> seg 8/17 S of sS at   800.00
    33.94    6182.1
    33.41    6254.8
    33.24    6276.9
@@ -6142,7 +6154,7 @@ gmt plot -W,mediumvioletred -A  <<END
    41.69    3584.4
    41.66    3575.2
    41.57    3544.9
-> seg 7/16 S of sScS at   800.00
+> seg 8/17 S of sScS at   800.00
    41.57    3544.9
    41.57    3544.3
    41.57    3543.6
@@ -6353,8 +6365,8 @@ gmt plot -W,mediumvioletred -A  <<END
     0.40    4974.3
     0.00    4974.4
 END
-gmt plot -W,sienna -A  <<END
-> seg 8/13 S of S at   900.00
+gmt plot -W,purple -A  <<END
+> seg 9/14 S of S at   900.00
    51.89    6371.0
    52.46    6342.2
    52.54    6337.8
@@ -6447,7 +6459,7 @@ gmt plot -W,sienna -A  <<END
    75.51    4127.6
    75.67    4111.0
    76.20    4055.0
-> seg 8/13 S of ScS at   900.00
+> seg 9/14 S of ScS at   900.00
    76.20    4055.0
    75.47    4130.3
    75.15    4161.9
@@ -6524,7 +6536,7 @@ gmt plot -W,sienna -A  <<END
    31.29    6364.1
    31.17    6366.2
    31.09    6367.5
-> seg 8/16 S of sS at   900.00
+> seg 9/17 S of sS at   900.00
    39.26    6371.0
    39.29    6368.8
    40.26    6297.0
@@ -6652,7 +6664,7 @@ gmt plot -W,sienna -A  <<END
    53.39    3543.8
    53.42    3526.5
    53.43    3490.4
-> seg 8/16 S of sScS at   900.00
+> seg 9/17 S of sScS at   900.00
    53.43    3490.4
    53.42    3497.9
    53.41    3501.5
@@ -6863,8 +6875,8 @@ gmt plot -W,sienna -A  <<END
     0.43    5616.8
     0.00    5616.9
 END
-gmt plot -W,purple -A  <<END
-> seg 9/13 S of S at  1000.00
+gmt plot -W,skyblue -A  <<END
+> seg 10/14 S of S at  1000.00
    59.63    6371.0
    60.13    6347.8
    60.45    6330.2
@@ -6944,7 +6956,7 @@ gmt plot -W,purple -A  <<END
    82.62    4564.5
    82.83    4547.1
    83.52    4489.7
-> seg 9/13 S of ScS at  1000.00
+> seg 10/14 S of ScS at  1000.00
    83.52    4489.7
    82.43    4578.9
    81.97    4615.8
@@ -6986,7 +6998,7 @@ gmt plot -W,purple -A  <<END
    49.12    6335.2
    49.04    6337.4
    47.81    6367.7
-> seg 9/16 S of sS at  1000.00
+> seg 10/17 S of sS at  1000.00
    45.86    6371.0
    46.54    6328.6
    47.18    6275.9
@@ -7108,7 +7120,7 @@ gmt plot -W,purple -A  <<END
    64.88    3652.3
    64.94    3638.9
    65.14    3592.8
-> seg 9/16 S of sScS at  1000.00
+> seg 10/17 S of sScS at  1000.00
    65.14    3592.8
    64.97    3630.3
    64.88    3647.1
@@ -7319,8 +7331,8 @@ gmt plot -W,purple -A  <<END
     0.46    6138.2
     0.00    6138.2
 END
-gmt plot -W,skyblue -A  <<END
-> seg 10/13 S of S at  1100.00
+gmt plot -W,olivedrab -A  <<END
+> seg 11/14 S of S at  1100.00
    67.92    6371.0
    68.54    6344.3
    68.55    6343.9
@@ -7382,7 +7394,7 @@ gmt plot -W,skyblue -A  <<END
    88.05    5057.5
    88.29    5040.2
    89.09    4983.2
-> seg 10/13 S of ScS at  1100.00
+> seg 11/14 S of ScS at  1100.00
    89.09    4983.2
    87.72    5079.9
    87.14    5119.6
@@ -7406,7 +7418,7 @@ gmt plot -W,skyblue -A  <<END
    65.02    6254.7
    63.69    6303.3
    62.43    6346.7
-> seg 10/16 S of sS at  1100.00
+> seg 11/17 S of sS at  1100.00
    52.76    6371.0
    52.99    6358.8
    53.33    6339.8
@@ -7521,7 +7533,7 @@ gmt plot -W,skyblue -A  <<END
    74.97    3924.3
    75.09    3908.7
    75.50    3856.6
-> seg 10/16 S of sScS at  1100.00
+> seg 11/17 S of sScS at  1100.00
    75.50    3856.6
    74.98    3921.2
    74.75    3948.4
@@ -7635,8 +7647,8 @@ gmt plot -W,skyblue -A  <<END
    24.42    6360.8
    23.67    6370.5
 END
-gmt plot -W,olivedrab -A  <<END
-> seg 11/13 S of S at  1200.00
+gmt plot -W,goldenrod -A  <<END
+> seg 12/14 S of S at  1200.00
    76.94    6371.0
    76.96    6370.0
    76.99    6368.8
@@ -7681,7 +7693,7 @@ gmt plot -W,olivedrab -A  <<END
    92.11    5577.0
    92.38    5560.2
    93.26    5505.1
-> seg 11/13 S of ScS at  1200.00
+> seg 12/14 S of ScS at  1200.00
    93.26    5505.1
    91.65    5604.3
    90.98    5644.7
@@ -7697,7 +7709,7 @@ gmt plot -W,olivedrab -A  <<END
    78.04    6235.4
    76.63    6290.1
    75.35    6339.0
-> seg 11/16 S of sS at  1200.00
+> seg 12/17 S of sS at  1200.00
    60.05    6371.0
    60.19    6364.3
    60.27    6360.6
@@ -7790,7 +7802,7 @@ gmt plot -W,olivedrab -A  <<END
    83.13    4314.7
    83.31    4298.3
    83.89    4243.7
-> seg 11/16 S of sScS at  1200.00
+> seg 12/17 S of sScS at  1200.00
    83.89    4243.7
    82.99    4326.2
    82.60    4360.5
@@ -7844,8 +7856,8 @@ gmt plot -W,olivedrab -A  <<END
    44.07    6358.9
    43.86    6363.2
 END
-gmt plot -W,goldenrod -A  <<END
-> seg 12/13 S of S at  1300.00
+gmt plot -W,firebrick -A  <<END
+> seg 13/14 S of S at  1300.00
    87.00    6371.0
    87.36    6359.5
    87.41    6357.6
@@ -7869,7 +7881,7 @@ gmt plot -W,goldenrod -A  <<END
    94.55    6057.8
    94.87    6044.3
    95.91    5999.6
-> seg 12/13 S of ScS at  1300.00
+> seg 13/14 S of ScS at  1300.00
    95.91    5999.6
    93.96    6082.1
    93.16    6115.3
@@ -7878,7 +7890,7 @@ gmt plot -W,goldenrod -A  <<END
    89.24    6272.2
    88.24    6311.9
    86.52    6369.6
-> seg 12/16 S of sS at  1300.00
+> seg 13/17 S of sS at  1300.00
    67.85    6371.0
    67.86    6370.2
    68.44    6343.7
@@ -7956,7 +7968,7 @@ gmt plot -W,goldenrod -A  <<END
    89.45    4780.9
    89.66    4764.3
    90.37    4709.3
-> seg 12/16 S of sScS at  1300.00
+> seg 13/17 S of sScS at  1300.00
    90.37    4709.3
    89.15    4802.7
    88.63    4841.2
@@ -7991,8 +8003,8 @@ gmt plot -W,goldenrod -A  <<END
    60.81    6297.3
    59.25    6348.2
 END
-gmt plot -W,firebrick -A  <<END
-> seg 13/16 S of sS at  1400.00
+gmt plot -W,darkcyan -A  <<END
+> seg 14/17 S of sS at  1400.00
    76.28    6371.0
    76.78    6350.9
    77.31    6324.1
@@ -8047,7 +8059,7 @@ gmt plot -W,firebrick -A  <<END
    94.23    5289.2
    94.47    5272.8
    95.27    5219.1
-> seg 13/16 S of sScS at  1400.00
+> seg 14/17 S of sScS at  1400.00
    95.27    5219.1
    93.78    5317.6
    93.16    5357.9
@@ -8068,8 +8080,8 @@ gmt plot -W,firebrick -A  <<END
    74.33    6277.3
    72.53    6343.3
 END
-gmt plot -W,darkcyan -A  <<END
-> seg 14/16 S of sS at  1500.00
+gmt plot -W,chocolate -A  <<END
+> seg 15/17 S of sS at  1500.00
    85.58    6371.0
    85.96    6357.2
    86.38    6341.2
@@ -8108,7 +8120,7 @@ gmt plot -W,darkcyan -A  <<END
    97.64    5804.5
    97.92    5790.0
    98.85    5742.3
-> seg 14/16 S of sScS at  1500.00
+> seg 15/17 S of sScS at  1500.00
    98.85    5742.3
    97.04    5833.7
    96.29    5870.5
@@ -8122,8 +8134,8 @@ gmt plot -W,darkcyan -A  <<END
    86.24    6293.7
    84.30    6361.8
 END
-gmt plot -W,chocolate -A  <<END
-> seg 15/16 S of sS at  1600.00
+gmt plot -W,darkmagenta -A  <<END
+> seg 16/17 S of sS at  1600.00
    96.22    6371.0
    97.24    6338.7
    98.01    6307.7
@@ -8131,13 +8143,13 @@ gmt plot -W,chocolate -A  <<END
    99.44    6249.1
    99.75    6236.7
   100.75    6196.4
-> seg 15/16 S of sScS at  1600.00
+> seg 16/17 S of sScS at  1600.00
   100.75    6196.4
    98.75    6276.0
    97.94    6308.4
    96.77    6351.2
 END
-gmt plot -W,darkmagenta -A  <<END
+gmt plot -W,mediumvioletred -A  <<END
 END
 # end postscript
 gmt end 

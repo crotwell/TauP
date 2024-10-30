@@ -1,5 +1,6 @@
 package edu.sc.seis.TauP;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class WavefrontPathSegment extends  AbstractPathSegment {
@@ -9,6 +10,14 @@ public class WavefrontPathSegment extends  AbstractPathSegment {
         super(path, isPWave, segmentName, prevEnd, segmentIndex, totalNumSegments, phase);
         this.timeVal = timeVal;
         this.pathCssClass = "wavefront";
+    }
+
+    public static WavefrontPathSegment degenerateSegment(TimeDist pathPoint,
+                                                         boolean isPWave, String segmentName, TimeDist prevEnd,
+                                                         int segmentIndex, int totalNumSegments,
+                                                         SeismicPhase phase, double timeVal) {
+        List<TimeDist> path = List.of(pathPoint);
+        return new WavefrontPathSegment(path, isPWave, segmentName, prevEnd, segmentIndex, totalNumSegments, phase, timeVal);
     }
 
     @Override

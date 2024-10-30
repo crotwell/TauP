@@ -201,6 +201,10 @@ public class SeismicPhaseSegment {
 		return desc;
 	}
 
+	public boolean getIsPWave() { return isPWave;}
+	public boolean getIsFlat() {return isFlat;}
+	public String getLegName() {return legName;}
+
 	public TauModel getTauModel() {
 		return tMod;
 	}

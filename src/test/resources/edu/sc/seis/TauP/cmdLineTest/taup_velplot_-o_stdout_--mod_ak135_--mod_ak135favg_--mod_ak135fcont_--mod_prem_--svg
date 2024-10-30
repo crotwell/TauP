@@ -14,6 +14,9 @@
         polyline.swave {
             stroke: red;
         }
+        circle.swave {
+            fill: red;
+        }
         .swave.label {
           stroke: red;
           fill: red;
@@ -25,6 +28,9 @@
         polyline.pwave {
             stroke: blue;
         }
+        circle.pwave {
+            fill: blue;
+        }
         .pwave.label {
           stroke: blue;
           fill: blue;
@@ -35,6 +41,9 @@
         }
         polyline.both_p_swave {
             stroke: green;
+        }
+        circle.both_p_swave {
+            fill: green;
         }
         .both_p_swave.label {
           stroke: green;
