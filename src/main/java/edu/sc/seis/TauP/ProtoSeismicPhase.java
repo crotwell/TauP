@@ -126,13 +126,15 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
     }
 
 
-    public void failNext(String reason) {
+    public SeismicPhaseSegment failNext(String reason) {
         if (TauPConfig.DEBUG){
             System.err.println("Fail: " + reason + " empty: " + segmentList.isEmpty());
         }
-        segmentList.add(SeismicPhaseSegment.failSegment(tMod));
+        SeismicPhaseSegment failSeg = SeismicPhaseSegment.failSegment(tMod);
+        segmentList.add(failSeg);
         isFail = true;
         failReason = reason;
+        return failSeg;
     }
 
     public ProtoSeismicPhase nextSegment(boolean isPWave,
@@ -419,7 +421,10 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                                            boolean nextIsPWave,
                                            PhaseInteraction endAction,
                                            String currLeg) throws TauModelException {
-
+        if (isFail) {
+            // phase has already failed, don't add more segments, return last (failed) segment.
+            return segmentList.get(segmentList.size()-1);
+        }
         int startBranch = calcStartBranch(currLeg);
         if (startBranch < 0 || startBranch > tMod.getNumBranches()) {
             throw new IllegalArgumentException(getName()+": start branch outside range: (0-"+tMod.getNumBranches()+") "+startBranch);
@@ -697,6 +702,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
         // special case, add "flat" segment along bounday
         switch (endAction) {
             case END:
+            case END_DOWN:
             case FAIL:
             case DIFFRACTTURN:
             case TRANSDOWN:
@@ -710,6 +716,10 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
             case HEAD:
             case KMPS:
                 break;
+            case END:
+            case END_DOWN:
+            case FAIL:
+                throw new TauModelException("Phase already finished: "+prevEndAction);
             default:
                 throw new TauModelException("End action before flat branch not allowed: "+endAction);
         }
@@ -744,6 +754,8 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                     // can't do head wave, no rp match
                     minRayParam = -1;
                     maxRayParam = -1;
+                    return failNext("Head wave ray parameter, "+headRP
+                            +", outside of min,max rayparameter for phase "+minRayParam+" "+maxRayParam);
                 } else {
                     minRayParam = headRP;
                     maxRayParam = headRP;
@@ -756,6 +768,8 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                     // can't do diff wave, no rp match
                     minRayParam = -1;
                     maxRayParam = -1;
+                    return failNext("Diffraction ray parameter, "+diffRP
+                            +", outside of min,max rayparameter for phase "+minRayParam+" "+maxRayParam);
                 } else {
                     minRayParam = diffRP;
                     maxRayParam = diffRP;
@@ -768,6 +782,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
         }
         flatSegment.isFlat = true;
         flatSegment.prevEndAction = prevEndAction;
+
 
         if(TauPConfig.DEBUG) {
             System.err.println("after addFlatBranch: minRP="+minRayParam+"  maxRP="+maxRayParam);
