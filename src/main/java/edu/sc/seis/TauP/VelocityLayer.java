@@ -29,8 +29,6 @@ import org.json.JSONObject;
 
 import java.io.Serializable;
 
-import static edu.sc.seis.TauP.LinearInterpolation.linInterp;
-
 /**
  * The VelocityModelLayer class stores and manipulates a singly layer. An entire
  * velocity model is implemented as an Vector of layers.
@@ -233,27 +231,34 @@ public class VelocityLayer implements Cloneable, Serializable {
 
     public double evaluateAt(double depth, VelocityModelMaterial materialProperty) {
         double answer;
+        double botY;
+        double topY;
         switch(materialProperty){
             case P_VELOCITY:
-                answer = linInterp(getBotDepth(), getTopDepth(), getBotPVelocity(), getTopPVelocity(), depth);
+                botY = getBotPVelocity();
+                topY = getTopPVelocity();
                 break;
             case S_VELOCITY:
-                answer = linInterp(getBotDepth(), getTopDepth(), getBotSVelocity(), getTopSVelocity(), depth);
+                botY = getBotSVelocity();
+                topY = getTopSVelocity();
                 break;
             case DENSITY:
-                answer = linInterp(getBotDepth(), getTopDepth(), getBotDensity(), getTopDensity(), depth);
+                botY = getBotDensity();
+                topY = getTopDensity();
                 break;
             case Q_P:
-                answer = linInterp(getBotDepth(), getTopDepth(), getBotQp(), getTopQp(), depth);
+                botY = getBotQp();
+                topY = getTopQp();
                 break;
             case Q_S:
-                answer = linInterp(getBotDepth(), getTopDepth(), getBotQs(), getTopQs(), depth);
+                botY = getBotQs();
+                topY = getTopQs();
                 break;
             default:
                 throw new IllegalArgumentException("I don't understand this material property: "
                         + materialProperty);
         }
-        return answer;
+        return LinearInterpolation.linearInterp(getBotDepth(), botY, getTopDepth(), topY, depth);
     }
 
     public String toString() {

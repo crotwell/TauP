@@ -1,13 +1,6 @@
 package edu.sc.seis.TauP;
 
 public class LinearInterpolation {
-    public static double linInterp(double xa,
-                                   double xb,
-                                   double ya,
-                                   double yb,
-                                   double x) {
-        return (yb - ya) * (x - xa) / (xb - xa) + ya;
-    }
 
     /**
      * solves the equation (yb-ya)/(xb-xa) = (y-ya)/(x-xa) for y given x. Useful
