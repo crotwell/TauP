@@ -106,6 +106,7 @@ public class CmdLineOutputTest {
 
     String[] reflTransPlotTestCmds = new String[] {
             "taup refltrans -o stdout --mod ak135 --depth 35 --svg",
+            "taup refltrans -o stdout --abs --anglestep 1 --svg --fsrf --legend --model ak135fcont --pwave --swave -x rayparam",
             "taup refltrans -o stdout --abs --anglestep 1 --svg --fsrf --legend --model ak135favg --pwave --swave -x rayparam"
     };
 
@@ -333,7 +334,7 @@ public class CmdLineOutputTest {
             cmdOut.println(cmd);
             cmdOut.close();
         }
-        viewSavedOutputAsHTML(List.of(docCmds), docOutputDir, "Command Line Test Cases");
+        viewSavedOutputAsHTML(List.of(docCmds), docOutputDir, "Command Line Doc Examples");
     }
 
     /**
