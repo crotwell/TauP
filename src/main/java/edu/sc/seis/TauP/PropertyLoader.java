@@ -77,7 +77,7 @@ public class PropertyLoader {
             if(in != null) {
                 defaultProps.load(new BufferedInputStream(in));
             } else {
-                System.err.println("Warning: unable to load default configuration properties from jar, "+packageName+"/"+defaultPropFileName);
+                Alert.warning("Warning: unable to load default configuration properties from jar, "+packageName+"/"+defaultPropFileName);
             }
         } catch(FileNotFoundException e) {
             // can't find defaults, so we'll just have to use an empty
@@ -129,13 +129,4 @@ public class PropertyLoader {
         propFile.close();
     }
 
-    public static void main(String[] args) {
-        try {
-            Properties props = PropertyLoader.load();
-            props.put("Key", "Value and another value");
-            save(props, "testProperties");
-        } catch(IOException e) {
-            System.err.println("Caught IOException: " + e.getMessage());
-        }
-    }
 }

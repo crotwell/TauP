@@ -780,55 +780,55 @@ public class VelocityModel implements Cloneable, Serializable {
         VelocityLayer currVelocityLayer, prevVelocityLayer;
         /* is radiusOfEarth positive? */
         if(radiusOfEarth <= 0.0) {
-            System.err.println("Radius of earth is not positive. radiusOfEarth = "
+            Alert.warning("Radius of earth is not positive. radiusOfEarth = "
                     + radiusOfEarth);
             return false;
         }
         /* is mohoDepth non-negative? */
         if(mohoDepth < 0.0) {
-            System.err.println("mohoDepth is not non-negative. mohoDepth = "
+            Alert.warning("mohoDepth is not non-negative. mohoDepth = "
                     + mohoDepth);
             return false;
         }
         /* is cmbDepth >= mohoDepth? */
         if(cmbDepth < mohoDepth) {
-            System.err.println("cmbDepth < mohoDepth. cmbDepth = " + cmbDepth
+            Alert.warning("cmbDepth < mohoDepth. cmbDepth = " + cmbDepth
                     + " mohoDepth = " + mohoDepth);
             return false;
         }
         /* is cmbDepth non-negative? */
         if(cmbDepth < 0.0) {
-            System.err.println("cmbDepth is negative. cmbDepth = "
+            Alert.warning("cmbDepth is negative. cmbDepth = "
                     + cmbDepth);
             return false;
         }
         /* is iocbDepth >= cmbDepth? */
         if(iocbDepth < cmbDepth) {
-            System.err.println("iocbDepth < cmbDepth. iocbDepth = " + iocbDepth
+            Alert.warning("iocbDepth < cmbDepth. iocbDepth = " + iocbDepth
                     + " cmbDepth = " + cmbDepth);
             return false;
         }
         /* is iocbDepth non-negative? */
         if(iocbDepth < 0.0) {
-            System.err.println("iocbDepth is negative. iocbDepth = "
+            Alert.warning("iocbDepth is negative. iocbDepth = "
                     + iocbDepth);
             return false;
         }
         /* is minRadius non-negative? */
         if(minRadius < 0.0) {
-            System.err.println("minRadius is not non-negative. minRadius = "
+            Alert.warning("minRadius is not non-negative. minRadius = "
                     + minRadius);
             return false;
         }
         /* is maxRadius positive? */
         if(maxRadius <= 0.0) {
-            System.err.println("maxRadius is not positive. maxRadius = "
+            Alert.warning("maxRadius is not positive. maxRadius = "
                     + maxRadius);
             return false;
         }
         /* is maxRadius > minRadius? */
         if(maxRadius <= minRadius) {
-            System.err.println("maxRadius <= minRadius. maxRadius = "
+            Alert.warning("maxRadius <= minRadius. maxRadius = "
                     + maxRadius + " minRadius = " + minRadius);
             return false;
         }
@@ -848,21 +848,21 @@ public class VelocityModel implements Cloneable, Serializable {
                 /*
                  * There is a gap in the velocity model!
                  */
-                System.err.println("There is a gap in the velocity model "
+                Alert.warning("There is a gap in the velocity model "
                         + "between layers " + (layerNum - 1) + " and "
                         + layerNum);
-                System.err.println("prevVelocityLayer=" + prevVelocityLayer);
-                System.err.println("currVelocityLayer=" + currVelocityLayer);
+                Alert.warning("prevVelocityLayer=" + prevVelocityLayer);
+                Alert.warning("currVelocityLayer=" + currVelocityLayer);
                 return false;
             }
             if(currVelocityLayer.getBotDepth() == currVelocityLayer.getTopDepth()) {
                 /*
                  * This layer has zero thickness.
                  */
-                System.err.println("There is a zero thickness layer in the "
+                Alert.warning("There is a zero thickness layer in the "
                         + "velocity model at layer " + layerNum);
-                System.err.println("prevVelocityLayer=" + prevVelocityLayer);
-                System.err.println("currVelocityLayer=" + currVelocityLayer);
+                Alert.warning("prevVelocityLayer=" + prevVelocityLayer);
+                Alert.warning("currVelocityLayer=" + currVelocityLayer);
                 return false;
             }
             if(currVelocityLayer.getTopPVelocity() <= 0.0
@@ -870,7 +870,7 @@ public class VelocityModel implements Cloneable, Serializable {
                 /*
                  * This layer has a negative or zero P velocity.
                  */
-                System.err.println("There is a negative P velocity layer in the "
+                Alert.warning("There is a negative P velocity layer in the "
                         + "velocity model at layer " + layerNum);
                 return false;
             }
@@ -879,7 +879,7 @@ public class VelocityModel implements Cloneable, Serializable {
                 /*
                  * This layer has a negative S velocity.
                  */
-                System.err.println("There is a negative S velocity layer in the "
+                Alert.warning("There is a negative S velocity layer in the "
                         + "velocity model at layer " + layerNum);
                 return false;
             }
@@ -888,7 +888,7 @@ public class VelocityModel implements Cloneable, Serializable {
                 /*
                  * This layer goes to zero P velocity without a discontinuity.
                  */
-                System.err.println("There is a layer that goes to zero P velocity "
+                Alert.warning("There is a layer that goes to zero P velocity "
                         + "without a discontinuity in the "
                         + "velocity model at layer "
                         + layerNum
@@ -902,7 +902,7 @@ public class VelocityModel implements Cloneable, Serializable {
                 /*
                  * This layer goes to zero S velocity without a discontinuity.
                  */
-                System.err.println("There is a layer that goes to zero S velocity "
+                Alert.warning("There is a layer that goes to zero S velocity "
                         + "without a discontinuity in the "
                         + "velocity model at layer "
                         + layerNum

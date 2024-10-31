@@ -1,5 +1,6 @@
 package edu.sc.seis.TauP.cmdline;
 
+import edu.sc.seis.TauP.Alert;
 import edu.sc.seis.TauP.TauModelLoader;
 import edu.sc.seis.TauP.VelocityModel;
 import edu.sc.seis.TauP.VelocityModelException;
@@ -56,9 +57,9 @@ public class TauP_Web implements Callable<Integer> {
                 throw new RuntimeException(e);
             }
         } catch (NoClassDefFoundError e) {
-            System.err.println("TauP Web does not seem to be installed, a required jar is not on the classpath.");
-            System.err.println(e.getMessage());
-            System.err.println(e.getCause()!=null?e.getCause().getMessage():"");
+            Alert.warning("TauP Web does not seem to be installed, a required jar is not on the classpath.");
+            Alert.warning(e.getMessage());
+            Alert.warning(e.getCause()!=null?e.getCause().getMessage():"");
             return 1;
         }
         return 0;

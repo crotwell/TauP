@@ -50,7 +50,7 @@ public class TauP_WebServe extends TauP_Tool {
                 try {
                     handleTauPRequest(exchange);
                 } catch (Exception e) {
-                    System.err.println(e);
+                    Alert.warning(e);
                     e.printStackTrace(System.err);
                     if(exchange.isResponseChannelAvailable()) {
                         final String errorPage = "<html><head><title>Error</title></head><body>"
@@ -73,7 +73,7 @@ public class TauP_WebServe extends TauP_Tool {
                 while (path.startsWith("/")) {
                     path = path.substring(1); // trim first slash
                 }
-                System.err.println("handleRequest "+path+" from "+exchange.getRequestPath());
+                Alert.debug("handleRequest "+path+" from "+exchange.getRequestPath());
 
                 Map<String, Deque<String>> queryParams = exchange.getQueryParameters();
                 if (path.equals("favicon.ico")) {
@@ -88,10 +88,10 @@ public class TauP_WebServe extends TauP_Tool {
                 } else {
                     TauP_Tool tool = createTool(path);
                     if (tool != null) {
-                        System.err.println("Handle via TauP Tool:" + path);
+                        Alert.debug("Handle via TauP Tool:" + path);
                         webRunTool(tool, queryParams, exchange);
                     } else {
-                        System.err.println("Try to load as classpath resource: " + path);
+                        Alert.debug("Try to load as classpath resource: " + path);
                         ResourceHandler resHandler = new ResourceHandler(
                                 new ClassPathResourceManager(TauP_Web.class.getClassLoader(),
                                         "edu/sc/seis/TauP/html"));
@@ -103,9 +103,9 @@ public class TauP_WebServe extends TauP_Tool {
                         resHandler.setMimeMappings(nmm);
                         resHandler.handleRequest(exchange);
                         if (exchange.isComplete()) {
-                            System.err.println(path+" ...as resource complete.");
+                            Alert.debug(path+" ...as resource complete.");
                         } else {
-                            System.err.println(path+" ...not loadable as resource.");
+                            Alert.warning(path+" ...not loadable as resource.");
                         }
                     }
                 }
@@ -227,9 +227,9 @@ public class TauP_WebServe extends TauP_Tool {
                 }
             }
             for (String unarg : spec.commandLine().getUnmatchedArguments()) {
-                System.err.println(unarg);
+                Alert.warning(unarg);
             }
-            System.err.println(spec.commandLine().getUsageMessage());
+            Alert.warning(spec.commandLine().getUsageMessage());
             throw new TauPException("Unknown parameter: "+qp+" value:"+qpList.getFirst());
         }
         return out;
@@ -334,7 +334,7 @@ public class TauP_WebServe extends TauP_Tool {
         for (String s : argList) {
             buffer.append(" "+s);
         }
-        System.err.println(buffer);
+        Alert.debug("  "+buffer);
         try {
             CommandLine.ParseResult parseResult = cmd.parseArgs(argList.toArray(argList.toArray(new String[0])));
             tool.setOutFileBase("stdout");
@@ -375,7 +375,7 @@ public class TauP_WebServe extends TauP_Tool {
                 Integer statusCode = tool.call();
                 cmd.setExecutionResult(statusCode);
                 if (statusCode != 0) {
-                    System.err.println("\nWARN: status code non-zero: "+statusCode+"\n");
+                    Alert.warning("\nWARN: status code non-zero: "+statusCode+"\n");
                 }
 
                 configContentType(tool.getOutputFormat(), exchange);
@@ -384,9 +384,9 @@ public class TauP_WebServe extends TauP_Tool {
             }
 
         } catch (Exception e) {
-            System.err.println("\nException in tool exec: "+e.getMessage()+"\n");
-            System.err.println(buffer);
-            System.err.println(e);
+            Alert.warning("\nException in tool exec: "+e.getMessage()+"\n");
+            Alert.warning("  "+buffer);
+            Alert.warning("  "+e);
             throw e;
         }
     }

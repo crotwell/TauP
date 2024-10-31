@@ -344,7 +344,7 @@ public class SeismicPhaseSegment {
 			int bStep = isDownGoing ? 1 : -1;
 			for (int branchNum = startBranch; (isDownGoing && branchNum <= endBranch) || (!isDownGoing && branchNum >= endBranch); branchNum += bStep) {
 				if (TauPConfig.DEBUG) {
-					System.err.println(" branchNum=" + branchNum
+					Alert.debug(" branchNum=" + branchNum
 							+ " isPWave=" + isPWave + " downgoing="
 							+ isDownGoing);
 				}
@@ -440,7 +440,7 @@ public class SeismicPhaseSegment {
 			int bStep = isDownGoing ? 1 : -1;
 			for (int branchNum = startBranch; (isDownGoing && branchNum < endBranch) || (!isDownGoing && branchNum > endBranch); branchNum += bStep) {
 				if (TauPConfig.DEBUG) {
-					System.err.println(" branchNum=" + branchNum
+					Alert.debug(" branchNum=" + branchNum
 							+ " isPWave=" + isPWave + " downgoing="
 							+ isDownGoing);
 				}

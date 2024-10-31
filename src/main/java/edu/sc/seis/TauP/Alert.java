@@ -85,7 +85,19 @@ public class Alert {
         }
     }
 
+    /**
+     * Simple proxy method so don't have System.err.println scattered in code.
+     * @param message message to print
+     */
+    public static void debug(String message) {
+        System.err.println(message);
+    }
+
     public static void setGUI(boolean newGUI) {
         GUI = newGUI;
+    }
+
+    public static void warning(Exception e) {
+        warning("" +e);
     }
 }

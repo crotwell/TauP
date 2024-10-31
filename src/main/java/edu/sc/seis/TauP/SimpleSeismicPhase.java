@@ -345,12 +345,12 @@ public class SimpleSeismicPhase implements SeismicPhase {
                     continue;
                 }
                 if(DEBUG) {
-                    System.err.println("SeismicPhase " + name
+                    Alert.debug("SeismicPhase " + name
                             + ", found arrival:\n" + "dist "
                             + (float)(180 / Math.PI * dist[rayNum]) + " "
                             + (float)(180 / Math.PI * searchDist) + " "
                             + (float)(180 / Math.PI * dist[rayNum + 1]));
-                    System.err.println("time "
+                    Alert.debug("time "
                             +  time[rayNum] + " --  "
                             + time[rayNum + 1]);
                 }
@@ -404,8 +404,8 @@ public class SimpleSeismicPhase implements SeismicPhase {
         if (linInterp.getRayParam() == rightEstimate.getRayParam()) { return rightEstimate;}
 
         if(DEBUG) {
-            System.err.println("Phase: "+this);
-            System.err.println("Refine: "+maxRecursion+"\nleft:  "+leftEstimate+"\nright: "+rightEstimate+"\nlinInterp: "+linInterp);
+            Alert.debug("Phase: "+this);
+            Alert.debug("Refine: "+maxRecursion+"\nleft:  "+leftEstimate+"\nright: "+rightEstimate+"\nlinInterp: "+linInterp);
         }
 
         if (leftEstimate.getRayParam() < minRayParam || maxRayParam < leftEstimate.getRayParam()) {
@@ -766,9 +766,6 @@ public class SimpleSeismicPhase implements SeismicPhase {
             int indexIncr = seg.isDownGoing ? 1 : -1;
             int finish = seg.endBranch + indexIncr;
             for (int branchNum = seg.startBranch; branchNum != finish; branchNum += indexIncr) {
-                if (DEBUG) {
-                    System.err.println(seg);
-                }
 
                 if (seg.isFlat) {
                     double refractDist = (currArrival.getDist() - dist[0]) / countFlatLegs();
@@ -870,17 +867,17 @@ public class SimpleSeismicPhase implements SeismicPhase {
                                 negMulDist * branchDist,
                                 branchDepth));
                         if (DEBUG) {
-                            System.err.println("------->  add pierce " + branchDepth);
-                            System.err.println(" branchTime=" + branchTime
+                            Alert.debug("------->  add pierce " + branchDepth);
+                            Alert.debug(" branchTime=" + branchTime
                                     + " branchDist=" + branchDist + " branchDepth="
                                     + branchDepth);
-                            System.err.println("incrementTime = "
+                            Alert.debug("incrementTime = "
                                     + (distRatio * (timeB - timeA)) + " timeB="
                                     + timeB + " timeA=" + timeA);
                         }
                     } else {
                         if (DEBUG) {
-                            System.err.println("Time inc in branch tiny: " + " branchTime=" + branchTime
+                            Alert.debug("Time inc in branch tiny: " + " branchTime=" + branchTime
                                     + " branchDist=" + branchDist + " branchDepth="
                                     + branchDepth);
                         }
@@ -922,9 +919,6 @@ public class SimpleSeismicPhase implements SeismicPhase {
             int indexIncr = seg.isDownGoing ? 1 : -1;
             int finish = seg.endBranch + indexIncr;
             for (int branchNum = seg.startBranch; branchNum != finish; branchNum += indexIncr) {
-                if (DEBUG) {
-                    System.err.println(seg);
-                }
                 TauBranch tauBranch = getTauModel().getTauBranch(branchNum, isPWave);
                 int layNum = 0;
                 try {
@@ -1038,7 +1032,6 @@ public class SimpleSeismicPhase implements SeismicPhase {
             ArrivalPathSegment segPath = seg.calcPathTimeDist(currArrival, prevEnd, idx++, prevIdx+ getPhaseSegments().size());
 
             if (segPath.path.isEmpty()) {
-                System.err.println("segPath.size() is 0 "+seg);
                 continue;
             }
             segmentPaths.add(segPath);

@@ -82,7 +82,7 @@ public class Outputs {
                     ReflTransAxisType mt = ReflTransAxisType.valueOf(axisType);
                     return formatStringForAxisType(mt);
                 } catch (IllegalArgumentException eee ) {
-                    System.err.println("Unknown axis type: " + axisType);
+                    Alert.warning("Unknown axis type: " + axisType);
                     return "%f";
                 }
             }

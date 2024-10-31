@@ -302,7 +302,7 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
             done = true;
             timeVal += timeStep;
             if (isVerbose()) {
-                System.err.println("wavefront calc for " + timeVal);
+                Alert.debug("wavefront calc for " + timeVal);
             }
             List<WavefrontPathSegment> wavefrontSegments = new ArrayList<>();
             out.put(timeVal, wavefrontSegments);

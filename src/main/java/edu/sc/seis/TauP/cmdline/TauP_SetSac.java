@@ -149,7 +149,7 @@ public class TauP_SetSac extends TauP_AbstractPhaseTool {
         }
         for (String filename : sacFileNames) {
             if(isVerbose()) {
-                System.err.println(filename);
+                Alert.debug(filename);
             }
             processSacFile(new File(filename));
         }
@@ -183,7 +183,7 @@ public class TauP_SetSac extends TauP_AbstractPhaseTool {
             processSacTimeSeries(sacFile, f.getName());
             sacFile.write(f);
         } catch (SetSacException e) {
-            System.err.println(e.getMessage()+", skipping.");
+            Alert.warning(e.getMessage()+", skipping.");
         }
     }
 
@@ -200,18 +200,18 @@ public class TauP_SetSac extends TauP_AbstractPhaseTool {
         RayCalculateable rayCalculateable;
         if(! SacConstants.isUndef(header.getGcarc())) {
             if(isVerbose()) {
-                System.err.println("Using gcarc: " + header.getGcarc());
+                Alert.debug("Using gcarc: " + header.getGcarc());
             }
             rayCalculateable = DistanceRay.ofDegrees(header.getGcarc());
         } else if(! SacConstants.isUndef(header.getDist())) {
             if(isVerbose()) {
-                System.err.println("Using dist: " + header.getDist());
+                Alert.debug("Using dist: " + header.getDist());
             }
             rayCalculateable = DistanceRay.ofKilometers(header.getDist());
         } else if( ! SacConstants.isUndef(sacFile.getHeader().getStla()) && ! SacConstants.isUndef(sacFile.getHeader().getStlo())
                 && ! SacConstants.isUndef(sacFile.getHeader().getEvla()) && ! SacConstants.isUndef(sacFile.getHeader().getEvlo())) {
             if(isVerbose()) {
-                System.err.println("Using stla,stlo, evla,evlo to calculate");
+                Alert.debug("Using stla,stlo, evla,evlo to calculate");
             }
             Alert.warning("Warning: Sac header gcarc is not set in "+filenameForError+",",
                           "using lat and lons to calculate distance.");
@@ -245,7 +245,7 @@ public class TauP_SetSac extends TauP_AbstractPhaseTool {
             }
         }
         if(isVerbose()) {
-            System.err.println(filenameForError + " searching for " + PhaseArgs.getPhaseNamesAsString(parsePhaseNameList()));
+            Alert.debug(filenameForError + " searching for " + PhaseArgs.getPhaseNamesAsString(parsePhaseNameList()));
         }
         for(int j = getSeismicPhases().size() - 1; j >= 0; j--) {
             SeismicPhase phase = getSeismicPhases().get(j);
@@ -266,7 +266,7 @@ public class TauP_SetSac extends TauP_AbstractPhaseTool {
                 Arrival tripArrival = arrivalList.get(tripNum);
                 if (tripHeader != SKIP_HEADER) {
                     if (isVerbose()) {
-                        System.err.println(
+                        Alert.debug(
                                 " phase found " + pn.name + " = "
                                 + tripArrival.getName() + " trip(" + tripNum + ")"
                                 + " -> t"
@@ -277,7 +277,7 @@ public class TauP_SetSac extends TauP_AbstractPhaseTool {
                     setSacTHeader(sacFile, tripHeader, tripArrival);
                 } else {
                     if (isVerbose()) {
-                        System.err.println(
+                        Alert.debug(
                                 " phase found " + pn.name + " = "
                                 + tripArrival.getName() + " trip(" + tripNum + ")"
                                 + " -> skip"

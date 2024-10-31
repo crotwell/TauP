@@ -92,7 +92,7 @@ public abstract class TauP_AbstractRayTool extends TauP_AbstractPhaseTool {
             try {
                 arrival.writeJSON(pw, innerIndent + "  ", withAmplitude, moment, attenuationFrequency);
             } catch (JSONException e) {
-                System.err.println("Error in json: "+ arrival);
+                Alert.warning("Error in json: "+ arrival);
                 throw e;
             }
         }

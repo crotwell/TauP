@@ -75,23 +75,5 @@ public class StdModelGenerator {
       TauModel tMod = TauModelLoader.createTauModel(vMod);
       tMod.writeModel( new File(outDir, modelName+".taup").getPath());
     }
-
-    System.err.println("WARN, NOT GENERATING QDT");
-/*
-    // qdt with bigger tol.
-    taupCreate.setVelFileType("tvel");
-    taupCreate.setMinDeltaP(0.5f);
-    taupCreate.setMaxDeltaP(50.0f);
-    taupCreate.setMaxDepthInterval(915.0f);
-    taupCreate.setMaxRangeInterval(10.0f);
-    taupCreate.setMaxInterpError(1.0f);
-    taupCreate.setAllowInnerCoreS(false);
-    taupCreate.setModelFilename("iasp91");
-    VelocityModel vMod = taupCreate.loadVMod();
-    vMod.setModelName("qdt");
-    System.out.println(vMod.getModelName());
-    TauModel tMod = taupCreate.createTauModel(vMod);
-    tMod.writeModel( new File(outDir, "qdt.taup").getPath());
- */
   }
 }

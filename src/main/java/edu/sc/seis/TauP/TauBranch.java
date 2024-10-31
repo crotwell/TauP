@@ -218,7 +218,7 @@ public class TauBranch implements Serializable, Cloneable {
             if(topSLayer.getTopDepth() != getTopDepth()
                     && Math.abs(topSLayer.getTopDepth() - getTopDepth()) < 0.000001) {
                 // really close, so just move top
-                System.err.println("Changing topDepth: " + "\ntopDepth: "
+                Alert.warning("Changing topDepth: " + "\ntopDepth: "
                         + getTopDepth() + " " + topSLayer.getTopDepth()
                         + "\nbotDepth: " + getBotDepth() + " "
                         + botSLayer.getBotDepth());
@@ -226,7 +226,7 @@ public class TauBranch implements Serializable, Cloneable {
             } else if(botSLayer.getBotDepth() != getBotDepth()
                     && Math.abs(botSLayer.getBotDepth() - getBotDepth()) < 0.000001) {
                 // really close, so just move bottom
-                System.err.println("Changing botDepth: " + "\ntopDepth: "
+                Alert.warning("Changing botDepth: " + "\ntopDepth: "
                         + getTopDepth() + " " + topSLayer.getTopDepth()
                         + "\nbotDepth: " + getBotDepth() + " "
                         + botSLayer.getBotDepth());

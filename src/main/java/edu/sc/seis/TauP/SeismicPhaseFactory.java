@@ -472,7 +472,7 @@ public class SeismicPhaseFactory {
             }
 
             if(DEBUG) {
-                System.err.println("Iterate legs: "+legNum + "  " + prevLeg + "  cur=" + currLeg
+                Alert.debug("Iterate legs: "+legNum + "  " + prevLeg + "  cur=" + currLeg
                         + "  " + nextLeg);
             }
             if (currLeg.contentEquals(END_CODE)) {
@@ -652,7 +652,7 @@ public class SeismicPhaseFactory {
             }
 
             if (DEBUG) {
-                System.err.println("Last action is: "+proto.endSegment());
+                Alert.debug("Last action is: "+proto.endSegment());
             }
 
         }
@@ -923,11 +923,8 @@ public class SeismicPhaseFactory {
             // discontinuities
             int disconBranch = LegPuller.closestBranchToDepth(tMod, nextLeg);
             if (DEBUG) {
-                System.err.println("DisconBranch=" + disconBranch
-                        + " for " + nextLeg);
-                System.err.println(tMod.getTauBranch(disconBranch,
-                                isPWave)
-                        .getTopDepth());
+                Alert.debug("DisconBranch=" + disconBranch + " for " + nextLeg);
+                Alert.debug("  "+tMod.getTauBranch(disconBranch, isPWave).getTopDepth());
             }
             if (prevEndAction == TURN || prevEndAction == REFLECT_TOPSIDE
                     || prevEndAction == REFLECT_TOPSIDE_CRITICAL || prevEndAction == TRANSUP) {
@@ -1574,7 +1571,7 @@ public class SeismicPhaseFactory {
         if (tMod.getCmbDepth() == tMod.getRadiusOfEarth()) {
             // degenerate case, CMB is at center, so model without a core
             if(DEBUG) {
-                System.err.println("Cannot have K phase "
+                Alert.debug("Cannot have K phase "
                         + currLeg + " within phase " + name
                         + " for this model as it has no core, cmb depth = radius of Earth.");
             }
@@ -1583,7 +1580,7 @@ public class SeismicPhaseFactory {
         if (tMod.getCmbDepth() == tMod.getIocbDepth()) {
             // degenerate case, CMB is same as IOCB, so model without an outer core
             if(DEBUG) {
-                System.err.println("Cannot have K phase "
+                Alert.debug("Cannot have K phase "
                         + currLeg + " within phase " + name
                         + " for this model as it has no outer core, cmb depth = iocb depth, "+tMod.getCmbDepth());
             }
@@ -2141,7 +2138,7 @@ public class SeismicPhaseFactory {
         if (tMod.getIocbDepth() == tMod.getRadiusOfEarth()) {
             // degenerate case, IOCB is at center, so model without an inner core
             if (DEBUG) {
-                System.err.println("Cannot have I or J phase "
+                Alert.debug("Cannot have I or J phase "
                         + currLeg + " within phase " + name
                         + " for this model as it has no inner core, iocb depth = radius of Earth.");
             }
@@ -2289,11 +2286,8 @@ public class SeismicPhaseFactory {
             // conversion at inner core discontinuity
             int disconBranch = LegPuller.closestBranchToDepth(tMod, nextLeg);
             if (DEBUG) {
-                System.err.println("DisconBranch=" + disconBranch
-                        + " for " + nextLeg);
-                System.err.println(tMod.getTauBranch(disconBranch,
-                                isPWave)
-                        .getTopDepth());
+                Alert.debug("DisconBranch=" + disconBranch+ " for " + nextLeg);
+                Alert.debug("  "+tMod.getTauBranch(disconBranch,isPWave).getTopDepth());
             }
             if (prevEndAction == TURN || prevEndAction == REFLECT_TOPSIDE
                     || prevEndAction == REFLECT_TOPSIDE_CRITICAL || prevEndAction == TRANSUP) {
@@ -2450,11 +2444,8 @@ public class SeismicPhaseFactory {
                 // conversion at inner core discontinuity
                 int disconBranch = LegPuller.closestBranchToDepth(tMod, nextLeg);
                 if (DEBUG) {
-                    System.err.println("DisconBranch=" + disconBranch
-                            + " for " + nextLeg);
-                    System.err.println(tMod.getTauBranch(disconBranch,
-                                    isPWave)
-                            .getTopDepth());
+                    Alert.debug("DisconBranch=" + disconBranch+ " for " + nextLeg);
+                    Alert.debug("  "+tMod.getTauBranch(disconBranch,isPWave).getTopDepth());
                 }
                 if (prevEndAction == TURN || prevEndAction == REFLECT_TOPSIDE
                         || prevEndAction == REFLECT_TOPSIDE_CRITICAL || prevEndAction == TRANSUP) {
@@ -2761,7 +2752,7 @@ public class SeismicPhaseFactory {
 
     ProtoSeismicPhase failWithMessage(ProtoSeismicPhase proto, String reason) {
         if (DEBUG) {
-            System.err.println("FAIL: "+name+" "+reason);
+            Alert.debug("FAIL: "+name+" "+reason);
         }
         proto.failNext(reason);
         return proto;
@@ -2885,7 +2876,7 @@ public class SeismicPhaseFactory {
             rayParams[1] = minRayParam;
         } else {
             if(TauPConfig.DEBUG) {
-                System.err.println("SumBranches() maxRayParamIndex=" + maxRayParamIndex
+                Alert.debug("SumBranches() maxRayParamIndex=" + maxRayParamIndex
                         + " minRayParamIndex=" + minRayParamIndex
                         + " tMod.rayParams.length=" + tMod.rayParams.length
                         + " tMod.rayParams[0]=" + tMod.rayParams[0]

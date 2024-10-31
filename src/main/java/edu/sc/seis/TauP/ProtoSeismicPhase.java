@@ -65,7 +65,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
         failed.isFail = true;
         failed.failReason = reason;
         if(TauPConfig.DEBUG) {
-            System.err.println("FAIL: "+reason+" within phase " + phaseName);
+            Alert.debug("FAIL: "+reason+" within phase " + phaseName);
         }
         return failed;
     }
@@ -128,7 +128,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
 
     public SeismicPhaseSegment failNext(String reason) {
         if (TauPConfig.DEBUG){
-            System.err.println("Fail: " + reason + " empty: " + segmentList.isEmpty());
+            Alert.debug("Fail: " + reason + " empty: " + segmentList.isEmpty());
         }
         SeismicPhaseSegment failSeg = SeismicPhaseSegment.failSegment(tMod);
         segmentList.add(failSeg);
@@ -335,7 +335,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
             prev = seg;
         }
         if (TauPConfig.VERBOSE) {
-            System.err.println("#### VALIDATE OK " + getName());
+            Alert.debug("#### VALIDATE OK " + getName());
         }
     }
 
@@ -467,8 +467,8 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
             maxRayParam = endSegment().maxRayParam;
         }
         if(TauPConfig.DEBUG) {
-            System.err.println("before addToBranch: minRP="+minRayParam+"  maxRP="+maxRayParam);
-            System.err.println("addToBranch( start=" + startBranch + " end=" + endBranch
+            Alert.debug("before addToBranch: minRP="+minRayParam+"  maxRP="+maxRayParam);
+            Alert.debug("addToBranch( start=" + startBranch + " end=" + endBranch
                     + " endAction="+endActionString(endAction)+" "+currLeg+") isP:"+(isPWave?"P":"S"));
 
         }
@@ -509,7 +509,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                     // tau branch is in high slowness, so turn is not possible, only
                     // non-critical reflect, so do not add these branches
                     if (TauPConfig.DEBUG) {
-                        System.err.println("Warn, ray cannot turn in layer "+bNum+" due to high slowness layer at bottom depth "+tMod.getTauBranch(bNum, isPWave).getBotDepth());
+                        Alert.debug("Warn, ray cannot turn in layer "+bNum+" due to high slowness layer at bottom depth "+tMod.getTauBranch(bNum, isPWave).getBotDepth());
                     }
                     endBranch = bNum-1;
                     bNum--;
@@ -663,7 +663,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
             } else {
                 if(TauPConfig.DEBUG) {
                     for(int i = startBranch; i <= endBranch; i++) {
-                        System.err.println("i=" + i + " isDownGoing=" + isDownGoing
+                        Alert.debug("i=" + i + " isDownGoing=" + isDownGoing
                                 + " isPWave=" + isPWave + " startBranch="
                                 + startBranch + " endBranch=" + endBranch + " "
                                 + endActionString(endAction));
@@ -679,7 +679,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
             } else {
                 if(TauPConfig.DEBUG) {
                     for(int i = startBranch; i >= endBranch; i--) {
-                        System.err.println("i=" + i + " isDownGoing=" + isDownGoing
+                        Alert.debug("i=" + i + " isDownGoing=" + isDownGoing
                                 + " isPWave=" + isPWave + " startBranch="
                                 + startBranch + " endBranch=" + endBranch + " "
                                 + endActionString(endAction));
@@ -688,7 +688,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
             }
         }
         if(TauPConfig.DEBUG) {
-            System.err.println("after addToBranch: minRP="+minRayParam+"  maxRP="+maxRayParam+" endOffset="+endOffset+" isDownGoing="+isDownGoing);
+            Alert.debug("after addToBranch: minRP="+minRayParam+"  maxRP="+maxRayParam+" endOffset="+endOffset+" isDownGoing="+isDownGoing);
         }
         add(segment);
         return segment;
@@ -743,8 +743,8 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
             }
             maxRayParam = endSegment().maxRayParam;
             if(TauPConfig.DEBUG) {
-                System.err.println("before addFlatBranch: minRP="+minRayParam+"  maxRP="+maxRayParam);
-                System.err.println("addFlatBranch( " + branch
+                Alert.debug("before addFlatBranch: minRP="+minRayParam+"  maxRP="+maxRayParam);
+                Alert.debug("addFlatBranch( " + branch
                         + " endAction="+endActionString(endAction)+" "+currLeg+") isP:"+(isPWave?"P":"S"));
 
             }
@@ -785,7 +785,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
 
 
         if(TauPConfig.DEBUG) {
-            System.err.println("after addFlatBranch: minRP="+minRayParam+"  maxRP="+maxRayParam);
+            Alert.debug("after addFlatBranch: minRP="+minRayParam+"  maxRP="+maxRayParam);
         }
         add(flatSegment);
         return flatSegment;

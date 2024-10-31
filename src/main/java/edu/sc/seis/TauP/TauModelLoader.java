@@ -115,7 +115,7 @@ public class TauModelLoader {
         } catch(Exception ex) {
             // couldn't get as a resource, so keep going
             if(verbose)
-                System.err.println("couldn't load as resource: " + filename
+                Alert.warning("couldn't load as resource: " + filename
                         + "\n message: " + ex.getMessage());
         }
         /* couldn't find as a resource, try in classpath. */
@@ -300,25 +300,25 @@ public class TauModelLoader {
                         "true")),
                 SlownessModel.DEFAULT_SLOWNESS_TOLERANCE);
         if(TauPConfig.VERBOSE) {
-            System.err.println("Parameters are:");
-            System.err.println("taup.create.minDeltaP = "
+            Alert.debug("Parameters are:");
+            Alert.debug("taup.create.minDeltaP = "
                     + sMod.getMinDeltaP() + " sec / radian");
-            System.err.println("taup.create.maxDeltaP = "
+            Alert.debug("taup.create.maxDeltaP = "
                     + sMod.getMaxDeltaP() + " sec / radian");
-            System.err.println("taup.create.maxDepthInterval = "
+            Alert.debug("taup.create.maxDepthInterval = "
                     + sMod.getMaxDepthInterval() + " kilometers");
-            System.err.println("taup.create.maxRangeInterval = "
+            Alert.debug("taup.create.maxRangeInterval = "
                     + sMod.getMaxRangeInterval() + " degrees");
-            System.err.println("taup.create.maxInterpError = "
+            Alert.debug("taup.create.maxInterpError = "
                     + sMod.getMaxInterpError() + " seconds");
-            System.err.println("taup.create.allowInnerCoreS = "
+            Alert.debug("taup.create.allowInnerCoreS = "
                     + sMod.isAllowInnerCoreS());
-            System.err.println("Slow model "
+            Alert.debug("Slow model "
                     + " " + sMod.getNumLayers(true) + " P layers,"
                     + sMod.getNumLayers(false) + " S layers");
         }
         if(TauPConfig.DEBUG) {
-            System.err.println(sMod);
+            Alert.debug(sMod.toString());
         }
         TauModel.DEBUG = TauPConfig.DEBUG;
         SlownessModel.DEBUG = TauPConfig.DEBUG;

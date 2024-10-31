@@ -203,8 +203,6 @@ public class TauModel implements Serializable {
         VelocityLayer above = getVelocityModel().getVelocityLayer(aboveIdx);
         int belowIdx = getVelocityModel().layerNumberBelow(topDepth);
         VelocityLayer below = getVelocityModel().getVelocityLayer(belowIdx);
-        System.err.println("above: "+above);
-        System.err.println("below: "+below);
         if (isPWave) {
             return above.getBotPVelocity() < below.getTopPVelocity();
         } else {
@@ -381,7 +379,7 @@ public class TauModel implements Serializable {
          * distance. Otherwise we must signal an exception.
          */
         if(DEBUG) {
-            System.err.println("Size of slowness model:"
+            Alert.debug("Size of slowness model:"
                     + " sMod.getNumLayers('P') = " + sMod.getNumLayers(true)
                     + ", sMod.getNumLayers('S') = " + sMod.getNumLayers(false));
         }
@@ -464,7 +462,7 @@ public class TauModel implements Serializable {
             rayParams[rayParams.length-i-1] = tmp;
         }
         if(DEBUG) {
-            System.err.println("Number of slowness samples for tau =" + numUnique);
+            Alert.debug("Number of slowness samples for tau =" + numUnique);
         }
         CriticalDepth topCritDepth, botCritDepth;
         int waveNum;
@@ -477,7 +475,7 @@ public class TauModel implements Serializable {
                 botCritDepth = sMod.getCriticalDepth(critNum + 1);
                 botCritLayerNum = botCritDepth.getLayerNum(isPWave) - 1;
                 if(DEBUG) {
-                    System.err.println("Calculating " + (isPWave ? "P" : "S")
+                    Alert.debug("Calculating " + (isPWave ? "P" : "S")
                             + " tau branch for branch " + critNum
                             + " topCritLayerNum=" + topCritLayerNum+" ("+topCritDepth.getDepth()+")"
                             + " botCritLayerNum=" + botCritLayerNum+" ("+botCritDepth.getDepth()+")");
@@ -910,7 +908,7 @@ public class TauModel implements Serializable {
     public boolean validate() {
         for(int i = 0; i < rayParams.length - 1; i++) {
             if(rayParams[i + 1] >= rayParams[i]) {
-                System.err.println("RayParams are not monotonically decreasing. "
+                Alert.warning("RayParams are not monotonically decreasing. "
                         + "rayParams["
                         + i
                         + "]="
@@ -920,36 +918,36 @@ public class TauModel implements Serializable {
             }
         }
         if(tauBranches[0].length != tauBranches[1].length) {
-            System.err.println("TauBranches for P and S are not equal. "
+            Alert.warning("TauBranches for P and S are not equal. "
                     + tauBranches[0].length + " " + tauBranches[1].length);
             return false;
         }
         if(tauBranches[0][0].getTopDepth() != 0
                 || tauBranches[1][0].getTopDepth() != 0) {
-            System.err.println("branch 0 topDepth != 0");
+            Alert.warning("branch 0 topDepth != 0");
             return false;
         }
         for(int i = 1; i < getNumBranches(); i++) {
             if(tauBranches[0][i].getTopDepth() != tauBranches[1][i].getTopDepth()) {
-                System.err.println("branch " + i + " P topDepth != S topDepth");
+                Alert.warning("branch " + i + " P topDepth != S topDepth");
                 return false;
             }
             if(tauBranches[0][i].getBotDepth() != tauBranches[1][i].getBotDepth()) {
-                System.err.println("branch " + i + " P botDepth != S botDepth");
+                Alert.warning("branch " + i + " P botDepth != S botDepth");
                 return false;
             }
             if(tauBranches[0][i].getTopDepth() != tauBranches[0][i - 1].getBotDepth()) {
-                System.err.println("branch " + i + " topDepth != botDepth of "
+                Alert.warning("branch " + i + " topDepth != botDepth of "
                         + (i - 1));
                 return false;
             }
         }
         if(tauBranches[0][getNumBranches() - 1].getMinRayParam() != 0) {
-            System.err.println("branch tauBranches[0].length-1 minRayParam != 0");
+            Alert.warning("branch tauBranches[0].length-1 minRayParam != 0");
             return false;
         }
         if(tauBranches[1][getNumBranches() - 1].getMinRayParam() != 0) {
-            System.err.println("branch tauBranches[1].length-1 minRayParam != 0");
+            Alert.warning("branch tauBranches[1].length-1 minRayParam != 0");
             return false;
         }
         return true;
@@ -958,28 +956,28 @@ public class TauModel implements Serializable {
     public void print() {
         double deg, time;
         if(DEBUG)
-            System.err.println("Starting print() in TauModel");
-        System.err.println("Delta tau for each slowness sample and layer.");
+            Alert.debug("Starting print() in TauModel");
+        Alert.debug("Delta tau for each slowness sample and layer.");
         for(int j = 0; j < rayParams.length; j++) {
             deg = 0;
             time = 0;
             for(int i = 0; i < getNumBranches(); i++) {
                 deg += tauBranches[0][i].getDist(j) * 180 / Math.PI;
                 time += tauBranches[0][i].time[j];
-                System.err.println(" i " + i + " j " + j + " rayParam "
+                Alert.debug(" i " + i + " j " + j + " rayParam "
                         + rayParams[j] + " tau " + tauBranches[0][i].tau[j]
                         + " time " + tauBranches[0][i].time[j] + " dist "
                         + tauBranches[0][i].getDist(j) + " degrees "
                         + (tauBranches[0][i].getDist(j) * 180 / Math.PI));
             }
-            System.err.println();
-            System.err.println("deg= " + deg + "  time=" + time);
+            Alert.debug("");
+            Alert.debug("deg= " + deg + "  time=" + time);
         }
     }
 
     public String toString() {
         if(DEBUG)
-            System.err.println("Starting toString() in TauModel");
+            Alert.debug("Starting toString() in TauModel");
         String desc = "Delta tau for each slowness sample and layer.\n";
         for(int j = 0; j < rayParams.length; j++) {
             for(int i = 0; i < tauBranches[0].length; i++) {

@@ -1,5 +1,6 @@
 package edu.sc.seis.TauP.cmdline;
 
+import edu.sc.seis.TauP.Alert;
 import edu.sc.seis.TauP.TauPConfig;
 import edu.sc.seis.TauP.cmdline.args.VersionProvider;
 import picocli.AutoComplete;
@@ -174,7 +175,7 @@ public class ToolRun {
 		int result = commandLine.execute(args);
 
 		if (result != 0) {
-			System.err.println("Error code: " + result);
+			Alert.warning("Error code: " + result);
 		}
 		return result;
 	}
@@ -192,7 +193,7 @@ public class ToolRun {
 				System.exit(result);
 			}
 		} catch(Exception e) {
-			System.err.println("Error starting tool: "+args[0]+" "+e);
+			Alert.warning("Error starting tool: "+args[0]+" "+e);
 			e.printStackTrace();
 			System.exit(1001);
 		}

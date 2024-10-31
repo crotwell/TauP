@@ -112,7 +112,7 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
                     yAxisActual += xyp.label + ",";
                 }
             } catch (IllegalArgumentException e) {
-                System.err.println("Unknown ReflTransAxisType: '"+xyp.yAxisType+"'");
+                Alert.warning("Unknown ReflTransAxisType: '"+xyp.yAxisType+"'");
                 yAxisActual += xyp.label + ",";
             }
         }
@@ -597,7 +597,7 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
             // illegal refltrans type for this coef, ie Tss for solid-fluid
             // just skip
             if (isDEBUG()) {
-                System.err.println("Skip as type not allowed: "+calcFn);
+                Alert.warning("Skip as type not allowed: "+calcFn);
             }
             return xyp;
         }

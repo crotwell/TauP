@@ -170,13 +170,13 @@ public class TauP_Create extends TauP_Tool {
         String filename = directory + file_sep + inputFileArgs.getModelFilename();
         File f = new File(filename);
         if(isVerbose())
-            System.err.println("filename =" + directory + file_sep
+            Alert.debug("filename =" + directory + file_sep
                     + inputFileArgs.getModelFilename());
         try {
             vMod = VelocityModel.readVelocityFile(filename, inputFileArgs.getVelFileType());
         } catch(FileNotFoundException e) {
             if (isDEBUG()) {
-                System.err.println("Unable to load from directory "+filename);
+                Alert.debug("Unable to load from directory "+filename);
             }
         }
         if (vMod == null) {
@@ -187,13 +187,13 @@ public class TauP_Create extends TauP_Tool {
             throw new IOException("Velocity model file not found: "+ inputFileArgs.getModelFilename() +", tried internally and from file: "+f);
         }
         if(isVerbose()) {
-            System.err.println("Done reading velocity model.");
-            System.err.println("Radius of model " + vMod.getModelName()
+            Alert.debug("Done reading velocity model.");
+            Alert.debug("Radius of model " + vMod.getModelName()
                     + " is " + vMod.getRadiusOfEarth());
         }
 
         if(isDEBUG())
-            System.err.println("velocity mode: "+vMod);
+            Alert.debug("velocity mode: "+vMod);
         return vMod;
     }
 
@@ -205,13 +205,13 @@ public class TauP_Create extends TauP_Tool {
     public void start() throws SlownessModelException, TauModelException, VelocityModelException, IOException {
         try {
             if (isVerbose()) {
-                System.err.println("TauP_Create starting...");
+                Alert.debug("TauP_Create starting...");
             }
             String file_sep = System.getProperty("file.separator");
             TauModel tMod = TauModelLoader.createTauModel(vMod, toolProps);
 
             if(isDEBUG())
-                System.err.println("Done calculating Tau branches.");
+                Alert.debug("Done calculating Tau branches.");
             if(isDEBUG())
                 tMod.print();
             String outFile;
@@ -222,17 +222,17 @@ public class TauP_Create extends TauP_Tool {
             }
             tMod.writeModel(outFile);
             if(isVerbose()) {
-                System.err.println("Done Saving " + outFile);
+                Alert.debug("Done Saving " + outFile);
             }
 
         } catch(IOException e) {
-            System.err.println("Tried to write!\n Caught IOException "
+            Alert.warning("Tried to write!\n Caught IOException "
                     + e.getMessage()
                     + "\nDo you have write permission in this directory?");
             throw e;
         } finally {
             if(isVerbose()) {
-                System.err.println("Done!");
+                Alert.debug("Done!");
             }
         }
     }

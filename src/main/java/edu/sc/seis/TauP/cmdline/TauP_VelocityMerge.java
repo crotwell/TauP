@@ -1,9 +1,6 @@
 package edu.sc.seis.TauP.cmdline;
 
-import edu.sc.seis.TauP.TauModelException;
-import edu.sc.seis.TauP.TauModelLoader;
-import edu.sc.seis.TauP.TauPException;
-import edu.sc.seis.TauP.VelocityModel;
+import edu.sc.seis.TauP.*;
 import edu.sc.seis.TauP.cmdline.args.OutputTypes;
 import edu.sc.seis.TauP.cmdline.args.OverlayVelocityModelArgs;
 import edu.sc.seis.TauP.cmdline.args.VelModelOutputTypeArgs;
@@ -52,16 +49,16 @@ public class TauP_VelocityMerge extends TauP_Tool {
         if (overlayModelArgs.getModelFilename() != null && !overlayModelArgs.getModelFilename().isEmpty()) {
 
             if(isDEBUG()) {
-                System.err.println("base model: "+ vMod.getModelName());
-                System.err.println("merge model: "+overlayModelArgs.getModelFilename());
+                Alert.debug("base model: "+ vMod.getModelName());
+                Alert.debug("merge model: "+overlayModelArgs.getModelFilename());
             }
             overlayVMod = TauModelLoader.loadVelocityModel(overlayModelArgs.getModelFilename(), overlayModelArgs.getVelFileType());
             outVMod = vMod.replaceLayers(overlayVMod.getLayers(), overlayVMod.getModelName(), smoothTop, smoothBottom);
             outVMod.setModelName(vMod.getModelName() +"_"+overlayVMod.getModelName());
         } else {
             if (isDEBUG()) {
-                System.err.println("base model: "+ vMod.getModelName());
-                System.err.println("no merge model requested.");
+                Alert.debug("base model: "+ vMod.getModelName());
+                Alert.debug("no merge model requested.");
             }
         }
         if (elevation != 0) {
@@ -73,7 +70,7 @@ public class TauP_VelocityMerge extends TauP_Tool {
             dos = new PrintWriter(new OutputStreamWriter(System.out));
         } else {
             if (isDEBUG()) {
-                System.err.println("Save to "+getOutFile());
+                Alert.debug("Save to "+getOutFile());
             }
             dos = new PrintWriter(new BufferedWriter(new FileWriter(getOutFile())));
         }

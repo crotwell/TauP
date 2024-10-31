@@ -550,7 +550,6 @@ public class Arrival {
         if (Double.isFinite(tstar)) {
             return Math.pow(Math.E, -1 * Math.PI * freq * tstar);
         } else {
-            System.err.println("tstar is NaN: "+tstar+" at "+freq+" for "+getName());
             return 1;
         }
     }

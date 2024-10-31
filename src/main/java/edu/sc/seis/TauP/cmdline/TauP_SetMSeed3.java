@@ -77,7 +77,7 @@ public class TauP_SetMSeed3 extends TauP_AbstractPhaseTool {
         for (String filename : mseed3FileNames) {
             try {
                 if (isVerbose()) {
-                    System.err.println(filename);
+                    Alert.debug(filename);
                 }
                 processMSeed3File(new File(filename));
             } catch(SeisFileException e) {
@@ -191,7 +191,7 @@ public class TauP_SetMSeed3 extends TauP_AbstractPhaseTool {
             } else {
                 JSONObject bag = eh.getBagEH();
                 if (evTime == null) {
-                    System.err.println("Unable to extract event origin time, skipping record");
+                    Alert.warning("Unable to extract event origin time, skipping record");
                 }
 
                 List<Marker> mList = new ArrayList<>();
