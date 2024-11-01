@@ -7,6 +7,7 @@ public class TakeoffAngleRay extends ShootableRay {
 
     public TakeoffAngleRay(Double takeoffAngle) {
         this.takeoffAngle = takeoffAngle;
+        setDescription("Takeoff: "+takeoffAngle);
     }
 
     public static TakeoffAngleRay ofTakeoffAngle(Double d) {
@@ -37,7 +38,6 @@ public class TakeoffAngleRay extends ShootableRay {
         }
         return new RayParamRay(rayParam);
     }
-
 
     Double takeoffAngle;
 

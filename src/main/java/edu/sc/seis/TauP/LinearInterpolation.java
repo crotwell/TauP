@@ -21,4 +21,13 @@ public class LinearInterpolation {
         }
         return (yb - ya) * (x - xa) / (xb - xa) + ya;
     }
+
+    public static double[] slopeIntercept(double xa,
+                                          double ya,
+                                          double xb,
+                                          double yb) {
+        double slope = (yb-ya)/(xb-xa);
+        double intercept = linearInterp(xa, ya, xb, yb, 0.0);
+        return new double[] {slope, intercept};
+    }
 }

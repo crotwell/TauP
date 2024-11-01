@@ -243,15 +243,23 @@ public class SlownessLayer implements Serializable {
         if(getTopDepth() == getBotDepth()) {
             return new TimeDist(p, 0.0, 0.0, outDepth);
         }
+        if (getBotDepth() == radiusOfEarth) {
+            // special case for center of earth due to power law divide by zero, treat as constant layer
+            // time is just top slowness
+            double distRadian = Math.PI / 2.0;
+            double time = getTopP();
+            return new TimeDist(p, time, distRadian, outDepth);
+        }
         // only do bullen radial slowness if the layer is not too thin
         // here we use 1 micron = .000000001
         // just return 0 in this case
         if(getBotDepth() - getTopDepth() < .000000001) {
             return new TimeDist(p, 0.0, 0.0, outDepth);
         }
-        double B = Math.log(getTopP() / getBotP())
-                / Math.log((radiusOfEarth - getTopDepth())
-                        / (radiusOfEarth - getBotDepth()));
+
+        double[] AB = calcBullenAB(radiusOfEarth);
+        double A = AB[0];
+        double B = AB[1];
         double sqrtTopTopMpp = Math.sqrt(getTopP() * getTopP() - p * p);
         double sqrtBotBotMpp = Math.sqrt(getBotP() * getBotP() - p * p);
         double distRadian = (Math.atan2(p, sqrtBotBotMpp) - Math.atan2(p,
@@ -287,11 +295,9 @@ public class SlownessLayer implements Serializable {
             if (getTopP() == rayParam) {return getTopDepth();}
             if (getBotP() == rayParam) {return getBotDepth();}
             if(getBotP() != 0.0 && getBotDepth() != radiusOfEarth) {
-                double B = Math.log(getTopP() / getBotP())
-                        / Math.log((radiusOfEarth - getTopDepth())
-                                / (radiusOfEarth - getBotDepth()));
-                double A = getTopP()
-                        / Math.pow((radiusOfEarth - getTopDepth()), B);
+                double[] AB = calcBullenAB(radiusOfEarth);
+                double A = AB[0];
+                double B = AB[1];
                 if (A != 0 && B != 0) {
                 tempDepth = radiusOfEarth
                         - Math.exp(1.0 / B * Math.log(rayParam / A));
@@ -361,6 +367,15 @@ public class SlownessLayer implements Serializable {
                     + " is not contained within this slowness layer. topP="
                     + getTopP() + " botP=" + getBotP());
         }
+    }
+
+    public double[] calcBullenAB(double radiusOfEarth) {
+        double B = Math.log(getTopP() / getBotP())
+                / Math.log(  (radiusOfEarth - getTopDepth())
+                            /(radiusOfEarth - getBotDepth()));
+        double A = getTopP()
+                / Math.pow((radiusOfEarth - getTopDepth()), B);
+        return new double[] {A, B};
     }
 
     /** returns a String description of this SlownessLayer. */

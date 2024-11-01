@@ -339,19 +339,25 @@ export function form_url() {
   let stadepth = document.querySelector('input[name="stadepth"]').value;
 
 
-  let islistdist = document.querySelector('input[name="islistdist"]').checked;
-  let isregulardist = document.querySelector('input[name="isregulardist"]').checked;
+  let islistdegdist = document.querySelector('input[name="islistdegdist"]').checked;
+  let isdegreerange = document.querySelector('input[name="isdegreerange"]').checked;
+  let islistkmdist = document.querySelector('input[name="iskilometerdist"]').checked;
+  let iskilometerrange = document.querySelector('input[name="iskilometerrange"]').checked;
   let isevtdist = document.querySelector('input[name="isevent"]').checked;
   let isstadist = document.querySelector('input[name="isstation"]').checked;
   let isazimuth = document.querySelector('input[name="isaz"]').checked;
   let isbackazimuth = document.querySelector('input[name="isbaz"]').checked;
   let istakeoffdist = document.querySelector('input[name="istakeoffdist"]').checked;
+  let istakeoffrange = document.querySelector('input[name="istakeoffrange"]').checked;
   let israyparamdist = document.querySelector('input[name="israyparamdist"]').checked;
-  let isSomeDistance = islistdist || isregulardist || (isevtdist && isstadist)
-      || istakeoffdist || israyparamdist;
+  let isSomeDistance = islistdegdist || isdegreerange
+      || islistkmdist || iskilometerrange
+      || (isevtdist && isstadist)
+      || istakeoffdist || istakeoffrange
+      || israyparamdist;
   if ( ! isSomeDistance ) {
-    document.querySelector('input[name="islistdist"]').checked = true;
-    islistdist = true;
+    document.querySelector('input[name="islistdegdist"]').checked = true;
+    islistdegdist = true;
   }
 
   let scatdepth = document.querySelector('input[name="scatdepth"]').value;
@@ -425,22 +431,25 @@ export function form_url() {
       && toolname !== "wavefront"  && toolname !== "phase"
       && toolname !== "refltrans" && toolname !== "find") {
     let distparam = "";
-    if (islistdist) {
+    if (islistdegdist) {
       let distdeg = document.querySelector('input[name="distdeg"]').value;
       distparam += `&degree=${distdeg}`;
     }
-    if (isregulardist) {
+    if (isdegreerange) {
       let distdegmin = document.querySelector('input[name="distdegmin"]').value;
       let distdegstep = document.querySelector('input[name="distdegstep"]').value;
       let distdegmax = document.querySelector('input[name="distdegmax"]').value;
-      let mindist = parseFloat(distdegmin);
-      let step = parseFloat(distdegstep);
-      let max = parseFloat(distdegmax);
-      let distlist =`${mindist}`;
-      for (let d=mindist+step; d<=max; d+=step) {
-        distlist += `,${d}`;
-      }
-      distparam += `&degree=${distlist}`;
+      distparam += `&degreerange=${distdegmin},${distdegmax},${distdegstep}`;
+    }
+    if (islistkmdist) {
+      let distdeg = document.querySelector('input[name="kilometer"]').value;
+      distparam += `&kilometer=${distdeg}`;
+    }
+    if (iskilometerrange) {
+      let distdegmin = document.querySelector('input[name="kilometerrangemin"]').value;
+      let distdegstep = document.querySelector('input[name="kilometerrangestep"]').value;
+      let distdegmax = document.querySelector('input[name="kilometerrangemax"]').value;
+      distparam += `&kilometerrange=${distdegmin},${distdegmax},${distdegstep}`;
     }
     if (isevtdist) {
       let evla = document.querySelector('input[name="eventlat"]').value;
@@ -473,6 +482,12 @@ export function form_url() {
     if (istakeoffdist) {
       let takeoffangle = document.querySelector('input[name="takeoffangle"]').value;
       distparam += `&takeoff=${takeoffangle}`;
+    }
+    if (istakeoffrange) {
+      let distdegmin = document.querySelector('input[name="takeoffrangemin"]').value;
+      let distdegstep = document.querySelector('input[name="takeoffrangestep"]').value;
+      let distdegmax = document.querySelector('input[name="takeoffrangemax"]').value;
+      distparam += `&takeoffrange=${distdegmin},${distdegmax},${distdegstep}`;
     }
     if (israyparamdist) {
       let rayparam = document.querySelector('input[name="rayparam"]').value;

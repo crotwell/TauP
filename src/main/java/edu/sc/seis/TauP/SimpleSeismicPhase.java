@@ -539,23 +539,47 @@ public class SimpleSeismicPhase implements SeismicPhase {
 
     @Override
     public double calcRayParamForTakeoffAngle(double takeoffDegree) throws NoArrivalException {
+        if (takeoffDegree < 0 || takeoffDegree > 180) {
+            throw new IllegalArgumentException("Takeoff angle should be 0 to 180, but was "+takeoffDegree);
+        }
         if (getPhaseSegments().isEmpty()) {
             throw new NoArrivalException("No phase segments for "+getName());
         }
-        double takeoffVelocity;
-        VelocityModel vMod = getTauModel().getVelocityModel();
-        VelocityModelMaterial material = getPhaseSegments().get(0).isPWave ? VelocityModelMaterial.P_VELOCITY : VelocityModelMaterial.S_VELOCITY;
+
+        boolean firstIsPWave = getPhaseSegments().get(0).isPWave;
+        double rayParam;
         try {
-            if (getPhaseSegments().get(0).isDownGoing) {
-                takeoffVelocity = vMod.evaluateBelow(sourceDepth, material);
-            } else {
-                takeoffVelocity = vMod.evaluateAbove(sourceDepth, material);
-            }
-            double rayParam = (getTauModel().getRadiusOfEarth()-sourceDepth)*Math.sin(takeoffDegree*Math.PI/180)/takeoffVelocity;
-            return rayParam;
+            rayParam = calcRayParamForTakeoffAngleInModel(takeoffDegree, firstIsPWave, tMod,
+                    getPhaseSegments().get(0).isDownGoing);
         } catch(NoSuchLayerException e) {
+            throw new RuntimeException("Should not happen",e);
+        } catch (SlownessModelException e) {
             throw new RuntimeException("Should not happen", e);
         }
+        return rayParam;
+    }
+
+    public static double calcRayParamForTakeoffAngleInModel(double takeoffDegree,
+                                                            boolean isPWave,
+                                                            TauModel tMod,
+                                                            boolean isDownGoing)
+            throws NoArrivalException, NoSuchLayerException, SlownessModelException {
+        if ((isDownGoing && (takeoffDegree > 90))
+                || ( ! isDownGoing && (takeoffDegree < 90))
+        ) {
+            throw new SlownessModelException("Phase downgoing and takeoff different up/down "+isDownGoing+" "+takeoffDegree);
+        }
+        SlownessLayer sLayer;
+        if (isDownGoing) {
+            int layerNum = tMod.getSlownessModel().layerNumberBelow(tMod.getSourceDepth(), isPWave);
+            sLayer = tMod.getSlownessModel().getSlownessLayer(layerNum, isPWave);
+        } else {
+            int layerNum = tMod.getSlownessModel().layerNumberAbove(tMod.getSourceDepth(), isPWave);
+            sLayer = tMod.getSlownessModel().getSlownessLayer(layerNum, isPWave);
+        }
+        double rayParam = sLayer.evaluateAt_bullen(tMod.getSourceDepth(), tMod.radiusOfEarth)
+                *Math.sin(takeoffDegree*SphericalCoords.DtoR);
+        return rayParam;
     }
 
     @Override

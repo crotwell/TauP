@@ -1,9 +1,10 @@
 package edu.sc.seis.TauP;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public class ShootTest {
@@ -51,5 +52,41 @@ public class ShootTest {
             assertEquals( phase.getDist()[i+1], maxRPArrival.getDist(), 0.1, i+"th+1 ray param dist");
             assertEquals( phase.getTime()[i+1], maxRPArrival.getTime(), timeTol, i+"th+1 ray param time");
         }
+    }
+
+    @Test
+    public void takeoff90Test() throws Exception {
+        TauPConfig.DEBUG = false;
+        TauModel tMod = TauModelLoader.load("iasp91");
+        double depth = 200;
+        double takeoffAngle = 90.0;
+        boolean PWAVE = true;
+
+        TauModel tModDepth = tMod.depthCorrect(depth);
+        SimpleSeismicPhase p_phase = SeismicPhaseFactory.createPhase("p", tModDepth, depth, 0, true);
+        SimpleSeismicPhase P_phase = SeismicPhaseFactory.createPhase("P", tModDepth, depth, 0, true);
+
+        assertEquals(p_phase.getMaxRayParam(), P_phase.getMaxRayParam());
+
+        TakeoffAngleRay toRay = new TakeoffAngleRay(90.0);
+        List<Arrival> p_arrList = toRay.calculate(p_phase);
+        List<Arrival> P_arrList = toRay.calculate(P_phase);
+        assertFalse(p_arrList.isEmpty());
+        assertFalse(P_arrList.isEmpty());
+
+        int p_slowIdx = tMod.getSlownessModel().layerNumberAbove(depth, PWAVE);
+        double p_horRPFromSMod = tMod.getSlownessModel().getSlownessLayer(p_slowIdx, PWAVE).evaluateAt_bullen(depth, tMod.radiusOfEarth);
+        int P_slowIdx = tMod.getSlownessModel().layerNumberBelow(depth, PWAVE);
+        double P_horRPFromSMod = tMod.getSlownessModel().getSlownessLayer(P_slowIdx, PWAVE).evaluateAt_bullen(depth, tMod.radiusOfEarth);
+        assertEquals(p_horRPFromSMod, P_horRPFromSMod);
+        assertEquals(p_horRPFromSMod, p_phase.calcRayParamForTakeoffAngle(takeoffAngle));
+        assertEquals(p_horRPFromSMod, P_phase.calcRayParamForTakeoffAngle(takeoffAngle));
+
+        assertEquals(p_arrList.get(0).getRayParam(), P_arrList.get(0).getRayParam());
+
+
+        assertEquals(p_arrList.get(0).getDist(), P_arrList.get(0).getDist());
+        assertEquals(p_arrList.get(0).getTime(), P_arrList.get(0).getTime());
+
     }
 }

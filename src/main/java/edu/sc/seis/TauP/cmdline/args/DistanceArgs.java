@@ -30,6 +30,12 @@ public class DistanceArgs {
         for (Double d : distArgs.exactDegreesList) {
             simpleDistanceList.add(ExactDistanceRay.ofDegrees(d));
         }
+
+        if (!distArgs.degreeRange.isEmpty()) {
+            for (Double d : createListFromRange(distArgs.degreeRange, 0, 10, 180)) {
+                simpleDistanceList.add(DistanceRay.ofDegrees(d));
+            }
+        }
         for (Double d : distArgs.distKilometersList) {
             simpleDistanceList.add(DistanceRay.ofKilometers(d));
         }
@@ -37,6 +43,11 @@ public class DistanceArgs {
             simpleDistanceList.add(ExactDistanceRay.ofKilometers(d));
         }
 
+        if (!distArgs.kilometerRange.isEmpty()) {
+            for (Double d : createListFromRange(distArgs.kilometerRange, 0, 1000, 100)) {
+                simpleDistanceList.add(DistanceRay.ofKilometers(d));
+            }
+        }
 
         boolean hasEvent = hasEventLatLon() || qmlStaxmlArgs.hasQml();
         List<Location> quakes = new ArrayList<>();
@@ -240,7 +251,12 @@ public class DistanceArgs {
 
     public List<TakeoffAngleRay> getTakeoffAngleRays() {
         List<TakeoffAngleRay> rpList = new ArrayList<>();
-        for (Double d : distArgs.takeoffAngle) {
+        List<Double> takeoffInputList = new ArrayList<>();
+        takeoffInputList.addAll(distArgs.takeoffAngle);
+        if (!distArgs.takeoffRange.isEmpty()) {
+            takeoffInputList.addAll(createListFromRange(distArgs.takeoffRange));
+        }
+        for (Double d : takeoffInputList) {
             if (d < 0 || d > 180) {
                 throw new IllegalArgumentException("Takeoff angle should be between 0 and 180 degrees: "+d);
             }
@@ -270,6 +286,40 @@ public class DistanceArgs {
         }
         return rpList;
     }
+
+    public static List<Double> createListFromRange(List<Double> minMaxStep) {
+        double step = 10;
+        double start = 0;
+        double stop = 180;
+        return createListFromRange(minMaxStep, start, stop, step);
+    }
+
+    public static List<Double> createListFromRange(List<Double> minMaxStep, double defaultStart, double defaultStop, double defaultStep) {
+        double step = defaultStep;
+        double start = defaultStart;
+        double stop = defaultStop;
+        switch (minMaxStep.size()) {
+            case 3:
+                step = minMaxStep.get(2);
+            case 2:
+                start = minMaxStep.get(0);
+                stop = minMaxStep.get(1);
+                break;
+            case 1:
+                stop = minMaxStep.get(0);
+                break;
+            default:
+                throw new IllegalArgumentException("range length should be 1-3 but was "+minMaxStep.size());
+        }
+        double d = start;
+        List<Double> out = new ArrayList<>();
+        while (d<= stop) {
+            out.add(d);
+            d+=step;
+        }
+        return out;
+    }
+
 
     public List<RayCalculateable> getRayCalculatables() throws TauPException {
         List<RayCalculateable> out = new ArrayList<>();
@@ -433,6 +483,15 @@ public class DistanceArgs {
                 description="exact distance traveled in degrees, not 360-d", split=",")
         protected List<Double> exactDegreesList = new ArrayList<>();
 
+
+        @CommandLine.Option(names={"--degreerange"},
+                paramLabel="d",
+                arity = "1..3",
+                description="regular distance range in degrees, one of max min,max or min,max,step"
+                        +"Default min is 0 and step is 10.",
+                split=",")
+        protected List<Double> degreeRange = new ArrayList<>();
+
         /**
          * For when command line args uses --km for distance. Have to wait until
          * after the model is read in to get radius of earth.
@@ -450,12 +509,29 @@ public class DistanceArgs {
                 description="exact distance traveled in kilometers, not 360-k", split=",")
         protected List<Double> exactDistKilometersList = new ArrayList<>();
 
+        @CommandLine.Option(names={"--kilometerrange"},
+                paramLabel="k",
+                arity = "1..3",
+                description="regular distance range in kilometers, one of max min,max or min,max,step."
+                +"Default min is 0 and step is 10.",
+                split=",")
+        protected List<Double> kilometerRange = new ArrayList<>();
+
 
         @Option(names="--takeoff",
                 split=",",
                 paramLabel = "deg",
                 description="takeoff angle in degrees from the source zero is down, 90 horizontal, 180 is up")
         protected List<Double> takeoffAngle = new ArrayList<>();
+
+
+        @CommandLine.Option(names={"--takeoffrange"},
+                paramLabel="k",
+                arity = "1..3",
+                description="regular range in takeoff angle in degrees, one of max min,max or min,max,step."
+                        +"Default min is 0 and step is 10.",
+                split=",")
+        protected List<Double> takeoffRange = new ArrayList<>();
 
         @CommandLine.Option(names={"--rayparamrad"},
                 paramLabel = "s/rad",
@@ -485,12 +561,15 @@ public class DistanceArgs {
             return degreesList.isEmpty()
                     && distKilometersList.isEmpty()
                     && exactDegreesList.isEmpty()
+                    && degreeRange.isEmpty()
                     && exactDistKilometersList.isEmpty()
+                    && kilometerRange.isEmpty()
                     && shootIndexRaypList.isEmpty()
                     && shootKmRaypList.isEmpty()
                     && shootRadianRaypList.isEmpty()
                     && shootRaypList.isEmpty()
-                    && takeoffAngle.isEmpty();
+                    && takeoffAngle.isEmpty()
+                    && takeoffRange.isEmpty();
         }
     }
 
