@@ -923,57 +923,27 @@ public class SimpleSeismicPhase implements SeismicPhase {
     }
 
     public double calcTstar(Arrival currArrival) {
+        // path tstar
         double tstar = 0;
-        /*
-         * Find the ray parameter index that corresponds to the arrival ray
-         * parameter in the TauModel, ie it is between rayNum and rayNum+1,
-         * We know that it must be <tMod.rayParams.length-1 since the last
-         * ray parameter sample is 0, at least in a spherical model...
-         */
-        int rayNum = 0;
-        for(int i = 0; i < tMod.rayParams.length - 1; i++) {
-            if(tMod.rayParams[i] >= currArrival.getRayParam()) {
-                rayNum = i;
-            } else {
-                break;
-            }
-        }
-        for (SeismicPhaseSegment seg : getPhaseSegments()) {
-            boolean isPWave = seg.isPWave;
-            int indexIncr = seg.isDownGoing ? 1 : -1;
-            int finish = seg.endBranch + indexIncr;
-            for (int branchNum = seg.startBranch; branchNum != finish; branchNum += indexIncr) {
-                TauBranch tauBranch = getTauModel().getTauBranch(branchNum, isPWave);
-                int layNum = 0;
-                try {
-                    layNum = getTauModel().getVelocityModel().layerNumberBelow(tauBranch.getTopDepth());
-                } catch (NoSuchLayerException e) {
-                    // should never happen...
-                    throw new RuntimeException("Can't find vel layer for tau branch? depth: "+tauBranch.getTopDepth(), e);
+        TauModel tMod = getTauModel();
+        VelocityModel vMod = tMod.getVelocityModel();
+        List<ArrivalPathSegment> pathSegList = currArrival.getPathSegments();
+        TimeDist prev = new TimeDist();
+        try {
+            for (ArrivalPathSegment pseg : pathSegList) {
+                for (TimeDist td : pseg.getPath()) {
+                    double timeInc = td.getTime()-prev.getTime();
+                    int layNum = vMod.layerNumberBelow(td.getDepth());
+                    VelocityLayer velocityLayer = vMod.getVelocityLayer(layNum);
+                    double Q = pseg.isPWave ? velocityLayer.getTopQp() : velocityLayer.getTopQs();
+                    tstar += timeInc / Q;
+                    prev = td;
                 }
-                VelocityLayer velocityLayer = getTauModel().getVelocityModel().getVelocityLayer(layNum);
-                double Q = isPWave ? velocityLayer.getTopQp() : velocityLayer.getTopQs();
-                if (seg.isFlat) {
-                    double refractDist = (currArrival.getDist() - dist[0]) / countFlatLegs();
-                    double refractTime = refractDist * currArrival.getRayParam();
-                    tstar += refractTime / Q;
-                } else {
-                    // normal case
-                    double branchTime;
+            }
 
-                    if (currArrival.getRayParamIndex() < dist.length-1 && countFlatLegs() == 0) {
-                        double distA = dist[currArrival.getRayParamIndex()];
-                        double distB = dist[currArrival.getRayParamIndex() + 1];
-                        double timeA = tMod.getTauBranch(branchNum, isPWave).time[rayNum];
-                        double timeB = tMod.getTauBranch(branchNum, isPWave).time[rayNum + 1];
-                        double distRatio = (currArrival.getDist() - distA) / (distB - distA);
-                        branchTime = distRatio * (timeB - timeA) + timeA;
-                    } else {
-                        branchTime = tMod.getTauBranch(branchNum, isPWave).time[rayNum];
-                    }
-                    tstar += branchTime / Q;
-                }
-            }
+        } catch (NoSuchLayerException e) {
+            // should never happen...
+            throw new RuntimeException("Can't find vel layer for tau branch? depth", e);
         }
         return tstar;
     }
