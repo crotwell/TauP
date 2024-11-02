@@ -50,7 +50,7 @@ public class SvgUtil {
         out.println(css);
         out.println("    ]]></style>");
         out.println("  <clipPath id=\"curve_clip\">");
-        out.println("    <rect x=\""+0+"\" y=\""+0+"\" width=\""+(pixelWidth-2*plotOffset+1)+"\" height=\""+(pixelWidth-2*plotOffset+1)+"\"/>");
+        out.println("    <rect x=\""+-1+"\" y=\""+-1+"\" width=\""+(pixelWidth-2*plotOffset+1)+"\" height=\""+(pixelWidth-2*plotOffset+1)+"\"/>");
         out.println("  </clipPath>");
         out.println("  </defs>");
         //out.println("<g transform=\"translate("+plotOffset+","+plotOffset+")\" >");
