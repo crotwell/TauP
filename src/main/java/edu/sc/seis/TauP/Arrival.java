@@ -413,7 +413,10 @@ public class Arrival {
         double sourceVel = getPhase().velocityAtSource();
         double radiationTerm = 4*Math.PI*getPhase().densityAtSource()*sourceVel*sourceVel*sourceVel*1e12;
         double attenuation = calcAttenuation(attenuationFrequency);
-        double freeSurfRF = 2;
+        double freeSurfRF =  1.0;
+        if (getReceiverDepth() <= 1.0) {
+            freeSurfRF = 2;
+        }
         return attenuation * freeSurfRF* moment* refltran * geoSpread / radiationTerm / 1e3;
     }
 
