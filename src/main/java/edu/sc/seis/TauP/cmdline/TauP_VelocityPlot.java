@@ -477,11 +477,14 @@ public class TauP_VelocityPlot extends TauP_Tool {
                 || xAxis == ModelAxisType.slownessrad_p || xAxis == ModelAxisType.slownessrad
                 || yAxis == ModelAxisType.slownessrad_p || yAxis == ModelAxisType.slownessrad
                 || xAxis == ModelAxisType.slownessdeg_p || xAxis == ModelAxisType.slownessdeg
-                || yAxis == ModelAxisType.slownessdeg_p || yAxis == ModelAxisType.slownessdeg) {
+                || yAxis == ModelAxisType.slownessdeg_p || yAxis == ModelAxisType.slownessdeg
+                || xAxis == ModelAxisType.Qp || xAxis == ModelAxisType.Q
+                || yAxis == ModelAxisType.Qp || yAxis == ModelAxisType.Q) {
             cssClassList.add(ColoringArgs.PWAVE);
         } else if (xAxis == ModelAxisType.Vs || yAxis == ModelAxisType.Vs
                 || xAxis == ModelAxisType.slownessrad_s || yAxis == ModelAxisType.slownessrad_s
-                || xAxis == ModelAxisType.slownessdeg_s || yAxis == ModelAxisType.slownessdeg_s) {
+                || xAxis == ModelAxisType.slownessdeg_s || yAxis == ModelAxisType.slownessdeg_s
+                || xAxis == ModelAxisType.Qs || yAxis == ModelAxisType.Qs) {
             cssClassList.add(ColoringArgs.SWAVE);
         } else {
             cssClassList.add(ColoringArgs.BOTH_PSWAVE);
