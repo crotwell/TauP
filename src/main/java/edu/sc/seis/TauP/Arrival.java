@@ -736,10 +736,13 @@ public class Arrival {
     }
 
     public void writeJSON(PrintWriter pw, String indent, boolean withAmp) {
-        writeJSON(pw, indent, withAmp, MomentMagnitude.MAG4_MOMENT, DEFAULT_ATTENUATION_FREQUENCY);
+        writeJSON(pw, indent, false, false, withAmp, MomentMagnitude.MAG4_MOMENT, DEFAULT_ATTENUATION_FREQUENCY);
     }
 
-    public void writeJSON(PrintWriter pw, String indent, boolean withAmp, double moment, double attenuationFrequency) {
+    public void writeJSON(PrintWriter pw, String indent,
+                          boolean withPierce,
+                          boolean withPath,
+                          boolean withAmp, double moment, double attenuationFrequency) {
         String NL = "\n";
         pw.write(indent+"{"+NL);
         String innerIndent = indent+"  ";
@@ -794,10 +797,10 @@ public class Arrival {
             pw.write(innerIndent+JSONWriter.valueToString("relative")+": {"+NL);
             pw.write(innerIndent+"  "+JSONWriter.valueToString("difference")+": "+JSONWriter.valueToString((float)(getTime()-relArrival.getTime()))+","+NL);
             pw.write(innerIndent+"  "+JSONWriter.valueToString("arrival")+": "+NL);
-            relArrival.writeJSON(pw, innerIndent+"  "+"  ", withAmp, moment, attenuationFrequency);
+            relArrival.writeJSON(pw, innerIndent+"  "+"  ", withPierce, withPath, withAmp, moment, attenuationFrequency);
             pw.write(innerIndent+"}");
         }
-        if (pierce != null ) {
+        if (withPierce ) {
             pw.write(","+NL);
             pw.write(innerIndent+JSONWriter.valueToString("pierce")+": ["+NL);
             TimeDist[] tdArray = getPierce();
@@ -809,7 +812,7 @@ public class Arrival {
             }
             pw.write(innerIndent+"]");
         }
-        if (pathSegments != null) {
+        if (withPath ) {
             pw.write(","+NL);
             pw.write(innerIndent+JSONWriter.valueToString("path")+": ["+NL);
             for (ArrivalPathSegment seg : pathSegments) {

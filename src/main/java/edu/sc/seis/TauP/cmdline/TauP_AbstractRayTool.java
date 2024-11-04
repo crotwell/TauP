@@ -31,7 +31,8 @@ public abstract class TauP_AbstractRayTool extends TauP_AbstractPhaseTool {
                                  List<SeismicPhase> phases,
                                  List<Arrival> arrivals) {
         TauP_AbstractRayTool.writeJSON(pw, indent, modelName, depthList, receiverDepth,
-                phases, arrivals,  false,
+                phases, arrivals,  false, false,
+                false,
                 MomentMagnitude.MAG4, Arrival.DEFAULT_ATTENUATION_FREQUENCY);
     }
 
@@ -41,6 +42,8 @@ public abstract class TauP_AbstractRayTool extends TauP_AbstractPhaseTool {
                                  List<Double> receiverDepth,
                                  List<SeismicPhase> phases,
                                  List<Arrival> arrivals,
+                                 boolean withPierce,
+                                 boolean withPath,
                                  boolean withAmplitude,
                                  float Mw,
                                  double attenuationFrequency) {
@@ -90,7 +93,7 @@ public abstract class TauP_AbstractRayTool extends TauP_AbstractPhaseTool {
                 pw.write(","+NL);
             }
             try {
-                arrival.writeJSON(pw, innerIndent + "  ", withAmplitude, moment, attenuationFrequency);
+                arrival.writeJSON(pw, innerIndent + "  ", withPierce, withPath, withAmplitude, moment, attenuationFrequency);
             } catch (JSONException e) {
                 Alert.warning("Error in json: "+ arrival);
                 throw e;

@@ -164,6 +164,21 @@ public class TauP_Pierce extends TauP_Time {
         }
     }
 
+    @Override
+    public void printResultJSON(PrintWriter out, List<Arrival> arrivalList) throws TauModelException, TauPException {
+        boolean withPierce = true;
+        boolean withPath = false;
+        TauP_AbstractRayTool.writeJSON(out, "",
+                getTauModelName(),
+                modelArgs.getSourceDepths(),
+                modelArgs.getReceiverDepths(),
+                getSeismicPhases(),
+                arrivalList,
+                withPierce, withPath,
+                isWithAmplitude(),
+                sourceArgs.getMw(), sourceArgs.getAttenuationFrequency());
+    }
+
     /**
      * checks to see if the given depth has been "added" as a pierce point.
      */

@@ -165,13 +165,19 @@ public class TauP_Path extends TauP_AbstractRayTool {
 
 	@Override
 	public void printResult(PrintWriter out, List<Arrival> arrivalList) throws IOException, TauPException {
+		boolean withPierce = false;
+		boolean withPath = true;
+		boolean withAmp = false;
 		if (getOutputFormat().equals(OutputTypes.JSON)) {
 			TauP_AbstractRayTool.writeJSON(out, "",
 					getTauModelName(),
 					modelArgs.getSourceDepths(),
 					modelArgs.getReceiverDepths(),
 					getSeismicPhases(),
-					arrivalList);
+					arrivalList,
+					withPierce, withPath,
+					withAmp,
+					MomentMagnitude.MAG4, Arrival.DEFAULT_ATTENUATION_FREQUENCY);
 		} else if (getOutputFormat().equals(OutputTypes.SVG)) {
 			float pixelWidth = (72.0f * getGraphicOutputTypeArgs().mapwidth);
 			printScriptBeginningSVG(out, arrivalList, pixelWidth, distDepthRange, modelArgs, getCmdLineArgs());

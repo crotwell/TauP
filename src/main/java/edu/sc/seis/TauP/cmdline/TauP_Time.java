@@ -340,12 +340,15 @@ public class TauP_Time extends TauP_AbstractRayTool {
     }
 
     public void printResultJSON(PrintWriter out, List<Arrival> arrivalList) throws TauModelException, TauPException {
+        boolean withPierce = false;
+        boolean withPath = false;
         TauP_AbstractRayTool.writeJSON(out, "",
                 getTauModelName(),
                 modelArgs.getSourceDepths(),
                 modelArgs.getReceiverDepths(),
                 getSeismicPhases(),
                 arrivalList,
+                withPierce, withPath,
                 isWithAmplitude(),
                 sourceArgs.getMw(), sourceArgs.getAttenuationFrequency());
     }
