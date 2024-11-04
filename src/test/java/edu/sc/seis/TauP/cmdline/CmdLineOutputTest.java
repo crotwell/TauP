@@ -186,6 +186,9 @@ public class CmdLineOutputTest {
             System.err.println(cmd);
             saveTestOutputToFile(cmd);
         }
+        // java verison only for html view
+        allList.add("java --version");
+        saveJavaVersionToFile(testOutputDir);
         viewSavedOutputAsHTML(allList, testOutputDir, "Command Line Test Cases");
         usageToDocSrc();
     }
@@ -636,6 +639,18 @@ public class CmdLineOutputTest {
         if ( ! dir.isDirectory()) {dir.mkdir(); }
         PrintWriter fileOut = new PrintWriter(new BufferedWriter(new FileWriter(new File(dir, filename))));
         runCmdWithWriter(cmd, fileOut);
+        fileOut.flush();
+        fileOut.close();
+    }
+
+    public void saveJavaVersionToFile(File dir) throws IOException {
+        String cmd = "java --version";
+        String filename = fileizeCmd(cmd);
+        if ( ! dir.isDirectory()) {dir.mkdir(); }
+        PrintWriter fileOut = new PrintWriter(new BufferedWriter(new FileWriter(new File(dir, filename))));
+        fileOut.println(System.getProperty("java.runtime.name")+" "+System.getProperty("java.runtime.version")+" class: "+System.getProperty("java.class.version"));
+        fileOut.println(System.getProperty("java.vendor")+" "+System.getProperty("java.version")+" "+System.getProperty("java.version.date"));
+        fileOut.println(System.getProperty("java.vm.name")+" "+System.getProperty("java.vm.vendor")+" "+System.getProperty("java.vm.version")+" "+System.getProperty("java.vm.info"));
         fileOut.flush();
         fileOut.close();
     }
