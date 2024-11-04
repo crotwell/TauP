@@ -367,7 +367,6 @@ public class ReflTransTest {
 
 
     @Test
-    @Disabled
     public void testVerticalFluidFluid() throws VelocityModelException {
         double topVp = 1;
         double topDensity = 1;
