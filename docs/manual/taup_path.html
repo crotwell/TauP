@@ -345,7 +345,7 @@ circle.discontinuity.iocb {
 
     ]]></style>
   <clipPath id="curve_clip">
-    <rect x="0" y="0" width="433.0" height="433.0"/>
+    <rect x="-1" y="-1" width="433.0" height="433.0"/>
   </clipPath>
   </defs>
 <!-- draw axis and label distances.-->
@@ -2229,7 +2229,9 @@ circle.discontinuity.iocb {
                  [--km=km[,km...]]... [--rayparamdeg=s/deg[,s/deg...]]...
                  [--rayparamidx=i[,i...]]... [--rayparamkm=s/km[,s/km...]]...
                  [--rayparamrad=s/rad[,s/rad...]]... [--takeoff=deg[,
-                 deg...]]...]... [--gmt | --json | --svg | --text]
+                 deg...]]... [--degreerange=d[,d...] [d [d]]]...
+                 [--kilometerrange=k[,k...] [k [k]]]... [--takeoffrange=k[,
+                 k...] [k [k]]]...]... [--gmt | --json | --svg | --text]
 Plot ray paths, distance vs. depth, through the earth.
 
 Options:
@@ -2295,9 +2297,17 @@ Phase Names
 Distance is given by:
       --deg, --degree=d[,d...]
                              distance in degrees
+      --degreerange=d[,d...] [d [d]]
+                             regular distance range in degrees, one of max min,
+                               max or min,max,stepDefault min is 0 and step is
+                               10.
       --exactdegree=d[,d...] exact distance traveled in degrees, not 360-d
       --exactkilometer=km[,km...]
                              exact distance traveled in kilometers, not 360-k
+      --kilometerrange=k[,k...] [k [k]]
+                             regular distance range in kilometers, one of max
+                               min,max or min,max,step.Default min is 0 and
+                               step is 10.
       --km, --kilometer=km[,km...]
                              distance in kilometers
       --rayparamdeg=s/deg[,s/deg...]
@@ -2313,6 +2323,10 @@ Distance is given by:
                                is determined by the phase
       --takeoff=deg[,deg...] takeoff angle in degrees from the source zero is
                                down, 90 horizontal, 180 is up
+      --takeoffrange=k[,k...] [k [k]]
+                             regular range in takeoff angle in degrees, one of
+                               max min,max or min,max,step.Default min is 0 and
+                               step is 10.
 Lat,Lon influenced by:
       --az=&lt;azimuth&gt;         azimuth in degrees
       --baz=&lt;backAzimuth&gt;    backazimuth in degrees

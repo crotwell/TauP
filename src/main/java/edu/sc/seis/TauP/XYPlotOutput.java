@@ -264,6 +264,7 @@ public class XYPlotOutput {
             writer.println("    <g class=\"autocolor\">");
         }
         for (XYPlottingData xyplotItem : xyPlots) {
+            // need repeat flip g so autocolor works
             if (xAxisInvert || yAxisInvert) {
                 writer.println("<g transform=\"scale(" + xflip + "," + yflip + ") translate("+xfliptrans+", "+yfliptrans+")\" > <!-- invert axis -->");
             }
