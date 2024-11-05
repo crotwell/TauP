@@ -385,7 +385,7 @@ public class ReflTransTest {
         assertEquals(Rpp_perpen, Rpp_calc_perpen, 0.00001);
 
         // non vertical incidence, up to value where we get complex results
-        for (double flatRP = 0.0; flatRP < 1/botVp; flatRP+= 0.2) {
+        for (double flatRP = 0.0; flatRP < 1/botVp; flatRP+= 0.02) {
             double cosTopVp = Math.sqrt(1 - flatRP * flatRP * coeff.topVp * coeff.topVp);
             double cosBotVp = Math.sqrt(1 - flatRP * flatRP * coeff.botVp * coeff.botVp);
             // energy
