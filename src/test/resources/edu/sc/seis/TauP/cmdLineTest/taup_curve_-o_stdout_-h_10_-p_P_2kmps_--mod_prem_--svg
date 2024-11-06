@@ -1,5 +1,5 @@
 <svg version="1.1" baseProfile="full" xmlns="http://www.w3.org/2000/svg" 
-     viewBox="-80 -80 760.0 760.0"
+     viewBox="-80 -80 656.0 656.0"
      >
   <metadata>
     <taup>
@@ -11,6 +11,52 @@
   </metadata>
   <defs>
     <style type="text/css"><![CDATA[
+        .phase_P {
+          stroke: skyblue;
+        }
+        circle.phase_P {
+          fill: skyblue;
+          stroke: skyblue;
+        }
+        .phase_P.label {
+          stroke: skyblue;
+          fill: skyblue;
+        }
+        .legend .phase_P line {
+          stroke: skyblue;
+        }
+        .legend .phase_P text {
+          fill: skyblue;
+          stroke: transparent;
+        }
+        .label text.phase_P{
+          font: bold ;
+          fill: skyblue;
+          stroke: transparent;
+        }
+        .phase_2kmps {
+          stroke: olivedrab;
+        }
+        circle.phase_2kmps {
+          fill: olivedrab;
+          stroke: olivedrab;
+        }
+        .phase_2kmps.label {
+          stroke: olivedrab;
+          fill: olivedrab;
+        }
+        .legend .phase_2kmps line {
+          stroke: olivedrab;
+        }
+        .legend .phase_2kmps text {
+          fill: olivedrab;
+          stroke: transparent;
+        }
+        .label text.phase_2kmps{
+          font: bold ;
+          fill: olivedrab;
+          stroke: transparent;
+        }
 
 text.title {
     text-anchor: middle;
@@ -187,67 +233,67 @@ circle.discontinuity.iocb {
 
     ]]></style>
   <clipPath id="curve_clip">
-    <rect x="-1" y="-1" width="521.0" height="521.0"/>
+    <rect x="-1" y="-1" width="417.0" height="417.0"/>
   </clipPath>
   </defs>
 <!-- draw axis and label distances.-->
 
-<text class="title" x="260.0" y="0">prem (h=10.0 km)</text>
+<text class="title" x="208.0" y="0">prem (h=10.0 km)</text>
 <g> <!-- y axis -->
 <g  >
-  <text font-size="14" transform="translate(-64, 260) rotate(-90 )" dy=".75em" text-anchor="middle" class="ylabel" >Time (s)</text>
+  <text font-size="14" transform="translate(-64, 208) rotate(-90 )" dy=".75em" text-anchor="middle" class="ylabel" >Time (s)</text>
 </g>
-<line  class="tick" x1="0" y1="0" x2="0" y2="520.0" />
-<text class="ytick" font-size="12" x="-12.0" y="520.0">0.0</text>
-<line class="tick" x1="0" y1="520.0" x2="-10.0" y2="520.0" />
-<text class="ytick" font-size="12" x="-12.0" y="468.03918">2000.0</text>
-<line class="tick" x1="0" y1="468.03918" x2="-10.0" y2="468.03918" />
-<text class="ytick" font-size="12" x="-12.0" y="416.0784">4000.0</text>
-<line class="tick" x1="0" y1="416.0784" x2="-10.0" y2="416.0784" />
-<text class="ytick" font-size="12" x="-12.0" y="364.11758">6000.0</text>
-<line class="tick" x1="0" y1="364.11758" x2="-10.0" y2="364.11758" />
-<text class="ytick" font-size="12" x="-12.0" y="312.1568">8000.0</text>
-<line class="tick" x1="0" y1="312.1568" x2="-10.0" y2="312.1568" />
-<text class="ytick" font-size="12" x="-12.0" y="260.19598">10000.0</text>
-<line class="tick" x1="0" y1="260.19598" x2="-10.0" y2="260.19598" />
-<text class="ytick" font-size="12" x="-12.0" y="208.23517">12000.0</text>
-<line class="tick" x1="0" y1="208.23517" x2="-10.0" y2="208.23517" />
-<text class="ytick" font-size="12" x="-12.0" y="156.27438">14000.0</text>
-<line class="tick" x1="0" y1="156.27438" x2="-10.0" y2="156.27438" />
-<text class="ytick" font-size="12" x="-12.0" y="104.31357">16000.0</text>
-<line class="tick" x1="0" y1="104.31357" x2="-10.0" y2="104.31357" />
-<text class="ytick" font-size="12" x="-12.0" y="52.352753">18000.0</text>
-<line class="tick" x1="0" y1="52.352753" x2="-10.0" y2="52.352753" />
-<text class="ytick" font-size="12" x="-12.0" y="0.39196777">20000.0</text>
-<line class="tick" x1="0" y1="0.39196777" x2="-10.0" y2="0.39196777" />
+<line  class="tick" x1="0" y1="0" x2="0" y2="416.0" />
+<text class="ytick" font-size="12" x="-12.0" y="416.0">0.0</text>
+<line class="tick" x1="0" y1="416.0" x2="-10.0" y2="416.0" />
+<text class="ytick" font-size="12" x="-12.0" y="374.43137">2000.0</text>
+<line class="tick" x1="0" y1="374.43137" x2="-10.0" y2="374.43137" />
+<text class="ytick" font-size="12" x="-12.0" y="332.86273">4000.0</text>
+<line class="tick" x1="0" y1="332.86273" x2="-10.0" y2="332.86273" />
+<text class="ytick" font-size="12" x="-12.0" y="291.29407">6000.0</text>
+<line class="tick" x1="0" y1="291.29407" x2="-10.0" y2="291.29407" />
+<text class="ytick" font-size="12" x="-12.0" y="249.72543">8000.0</text>
+<line class="tick" x1="0" y1="249.72543" x2="-10.0" y2="249.72543" />
+<text class="ytick" font-size="12" x="-12.0" y="208.15678">10000.0</text>
+<line class="tick" x1="0" y1="208.15678" x2="-10.0" y2="208.15678" />
+<text class="ytick" font-size="12" x="-12.0" y="166.58813">12000.0</text>
+<line class="tick" x1="0" y1="166.58813" x2="-10.0" y2="166.58813" />
+<text class="ytick" font-size="12" x="-12.0" y="125.0195">14000.0</text>
+<line class="tick" x1="0" y1="125.0195" x2="-10.0" y2="125.0195" />
+<text class="ytick" font-size="12" x="-12.0" y="83.45087">16000.0</text>
+<line class="tick" x1="0" y1="83.45087" x2="-10.0" y2="83.45087" />
+<text class="ytick" font-size="12" x="-12.0" y="41.882202">18000.0</text>
+<line class="tick" x1="0" y1="41.882202" x2="-10.0" y2="41.882202" />
+<text class="ytick" font-size="12" x="-12.0" y="0.31356812">20000.0</text>
+<line class="tick" x1="0" y1="0.31356812" x2="-10.0" y2="0.31356812" />
 </g> <!-- y axis end-->
 <g> <!-- x axis -->
-<text class="xlabel" font-size="14" x="260.0" y="556.4">Degrees</text>
-<line class="tick" x1="0" y1="520.0" x2="520.0" y2="520.0" />
-<text class="xtick" font-size="12" x="0.0" y="542.0">0.0</text>
-<line class="tick" x1="0.0" y1="520.0" x2="0.0" y2="530.0" />
-<text class="xtick" font-size="12" x="57.77777777777777" y="542.0">20.0</text>
-<line class="tick" x1="57.77777777777777" y1="520.0" x2="57.77777777777777" y2="530.0" />
-<text class="xtick" font-size="12" x="115.55555555555554" y="542.0">40.0</text>
-<line class="tick" x1="115.55555555555554" y1="520.0" x2="115.55555555555554" y2="530.0" />
-<text class="xtick" font-size="12" x="173.33333333333331" y="542.0">60.0</text>
-<line class="tick" x1="173.33333333333331" y1="520.0" x2="173.33333333333331" y2="530.0" />
-<text class="xtick" font-size="12" x="231.1111111111111" y="542.0">80.0</text>
-<line class="tick" x1="231.1111111111111" y1="520.0" x2="231.1111111111111" y2="530.0" />
-<text class="xtick" font-size="12" x="288.8888888888889" y="542.0">100.0</text>
-<line class="tick" x1="288.8888888888889" y1="520.0" x2="288.8888888888889" y2="530.0" />
-<text class="xtick" font-size="12" x="346.66666666666663" y="542.0">120.0</text>
-<line class="tick" x1="346.66666666666663" y1="520.0" x2="346.66666666666663" y2="530.0" />
-<text class="xtick" font-size="12" x="404.44444444444446" y="542.0">140.0</text>
-<line class="tick" x1="404.44444444444446" y1="520.0" x2="404.44444444444446" y2="530.0" />
-<text class="xtick" font-size="12" x="462.2222222222222" y="542.0">160.0</text>
-<line class="tick" x1="462.2222222222222" y1="520.0" x2="462.2222222222222" y2="530.0" />
-<text class="xtick" font-size="12" x="520.0" y="542.0">180.0</text>
-<line class="tick" x1="520.0" y1="520.0" x2="520.0" y2="530.0" />
+<text class="xlabel" font-size="14" x="208.0" y="452.4">Degrees</text>
+<line class="tick" x1="0" y1="416.0" x2="416.0" y2="416.0" />
+<text class="xtick" font-size="12" x="0.0" y="438.0">0.0</text>
+<line class="tick" x1="0.0" y1="416.0" x2="0.0" y2="426.0" />
+<text class="xtick" font-size="12" x="46.22222222222222" y="438.0">20.0</text>
+<line class="tick" x1="46.22222222222222" y1="416.0" x2="46.22222222222222" y2="426.0" />
+<text class="xtick" font-size="12" x="92.44444444444444" y="438.0">40.0</text>
+<line class="tick" x1="92.44444444444444" y1="416.0" x2="92.44444444444444" y2="426.0" />
+<text class="xtick" font-size="12" x="138.66666666666666" y="438.0">60.0</text>
+<line class="tick" x1="138.66666666666666" y1="416.0" x2="138.66666666666666" y2="426.0" />
+<text class="xtick" font-size="12" x="184.88888888888889" y="438.0">80.0</text>
+<line class="tick" x1="184.88888888888889" y1="416.0" x2="184.88888888888889" y2="426.0" />
+<text class="xtick" font-size="12" x="231.11111111111111" y="438.0">100.0</text>
+<line class="tick" x1="231.11111111111111" y1="416.0" x2="231.11111111111111" y2="426.0" />
+<text class="xtick" font-size="12" x="277.3333333333333" y="438.0">120.0</text>
+<line class="tick" x1="277.3333333333333" y1="416.0" x2="277.3333333333333" y2="426.0" />
+<text class="xtick" font-size="12" x="323.55555555555554" y="438.0">140.0</text>
+<line class="tick" x1="323.55555555555554" y1="416.0" x2="323.55555555555554" y2="426.0" />
+<text class="xtick" font-size="12" x="369.77777777777777" y="438.0">160.0</text>
+<line class="tick" x1="369.77777777777777" y1="416.0" x2="369.77777777777777" y2="426.0" />
+<text class="xtick" font-size="12" x="416.0" y="438.0">180.0</text>
+<line class="tick" x1="416.0" y1="416.0" x2="416.0" y2="426.0" />
 </g> <!-- x axis end-->
 <g clip-path="url(#curve_clip)">
-<g transform="scale(1,-1) translate(0, -520.0)">
-<g transform="scale(2.888888888888889,0.025980401948763325)" >
+<g transform="scale(1,-1) translate(0, -416.0)">
+<g transform="scale(2.311111111111111,0.020784321559010662)" >
 <g transform="translate(-0.0, -0.0)">
     <g class="autocolor">
     <g class="pwave phase_P pwave" tauplabel="degree180/time P for a source depth of 10.0 kilometers in the prem model"  >

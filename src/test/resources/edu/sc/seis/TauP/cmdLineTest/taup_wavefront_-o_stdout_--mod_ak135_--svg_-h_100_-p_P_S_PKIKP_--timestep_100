@@ -1,9 +1,9 @@
 <svg version="1.1" baseProfile="full" xmlns="http://www.w3.org/2000/svg" 
-     viewBox="0 0 432.0 432.0"
+     viewBox="0 0 576.0 576.0"
      >
   <metadata>
     <taup>
-      <command>taup wavefront -o stdout &#45;&#45;mod ak135 &#45;&#45;svg -h 100 -p P,S,PKIKP </command>
+      <command>taup wavefront -o stdout &#45;&#45;mod ak135 &#45;&#45;svg -h 100 -p P,S,PKIKP &#45;&#45;timestep 100 </command>
       <version>3.0.0-SNAPSHOT8</version>
       <a href="https://github.com/crotwell/TauP">https://github.com/crotwell/TauP</a>
     </taup>
@@ -11,225 +11,296 @@
   <defs>
     <style type="text/css"><![CDATA[
         text.label {
-            font: bold ;
             font-size: 382px;
-            fill: black;
         }
         g.phasename text {
-            font: bold ;
             font-size: 382px;
-            fill: black;
         }
 
-        .time_100_00 {
+        .time_0_00 {
           stroke: skyblue;
+        }
+        circle.time_0_00 {
+          stroke: skyblue;
+          fill: skyblue;
+        }
+        .time_0_00.label {
+          stroke: skyblue;
+          fill: skyblue;
+        }
+        .legend .time_0_00 {
+          stroke: skyblue;
+          fill: skyblue;
+        }
+        .legend .time_0_00 text {
+          fill: skyblue;
+          stroke: transparent;
+        }
+        .time_100_00 {
+          stroke: olivedrab;
         }
         circle.time_100_00 {
-          stroke: skyblue;
-          fill: skyblue;
+          stroke: olivedrab;
+          fill: olivedrab;
         }
         .time_100_00.label {
-          stroke: skyblue;
-          fill: skyblue;
+          stroke: olivedrab;
+          fill: olivedrab;
         }
         .legend .time_100_00 {
-          stroke: skyblue;
-          fill: skyblue;
+          stroke: olivedrab;
+          fill: olivedrab;
+        }
+        .legend .time_100_00 text {
+          fill: olivedrab;
+          stroke: transparent;
         }
         .time_200_00 {
-          stroke: olivedrab;
+          stroke: goldenrod;
         }
         circle.time_200_00 {
-          stroke: olivedrab;
-          fill: olivedrab;
+          stroke: goldenrod;
+          fill: goldenrod;
         }
         .time_200_00.label {
-          stroke: olivedrab;
-          fill: olivedrab;
+          stroke: goldenrod;
+          fill: goldenrod;
         }
         .legend .time_200_00 {
-          stroke: olivedrab;
-          fill: olivedrab;
+          stroke: goldenrod;
+          fill: goldenrod;
+        }
+        .legend .time_200_00 text {
+          fill: goldenrod;
+          stroke: transparent;
         }
         .time_300_00 {
-          stroke: goldenrod;
+          stroke: firebrick;
         }
         circle.time_300_00 {
-          stroke: goldenrod;
-          fill: goldenrod;
+          stroke: firebrick;
+          fill: firebrick;
         }
         .time_300_00.label {
-          stroke: goldenrod;
-          fill: goldenrod;
+          stroke: firebrick;
+          fill: firebrick;
         }
         .legend .time_300_00 {
-          stroke: goldenrod;
-          fill: goldenrod;
+          stroke: firebrick;
+          fill: firebrick;
+        }
+        .legend .time_300_00 text {
+          fill: firebrick;
+          stroke: transparent;
         }
         .time_400_00 {
-          stroke: firebrick;
+          stroke: darkcyan;
         }
         circle.time_400_00 {
-          stroke: firebrick;
-          fill: firebrick;
+          stroke: darkcyan;
+          fill: darkcyan;
         }
         .time_400_00.label {
-          stroke: firebrick;
-          fill: firebrick;
+          stroke: darkcyan;
+          fill: darkcyan;
         }
         .legend .time_400_00 {
-          stroke: firebrick;
-          fill: firebrick;
+          stroke: darkcyan;
+          fill: darkcyan;
+        }
+        .legend .time_400_00 text {
+          fill: darkcyan;
+          stroke: transparent;
         }
         .time_500_00 {
-          stroke: darkcyan;
+          stroke: chocolate;
         }
         circle.time_500_00 {
-          stroke: darkcyan;
-          fill: darkcyan;
+          stroke: chocolate;
+          fill: chocolate;
         }
         .time_500_00.label {
-          stroke: darkcyan;
-          fill: darkcyan;
+          stroke: chocolate;
+          fill: chocolate;
         }
         .legend .time_500_00 {
+          stroke: chocolate;
+          fill: chocolate;
+        }
+        .legend .time_500_00 text {
+          fill: chocolate;
+          stroke: transparent;
+        }
+        .time_600_00 {
+          stroke: darkmagenta;
+        }
+        circle.time_600_00 {
+          stroke: darkmagenta;
+          fill: darkmagenta;
+        }
+        .time_600_00.label {
+          stroke: darkmagenta;
+          fill: darkmagenta;
+        }
+        .legend .time_600_00 {
+          stroke: darkmagenta;
+          fill: darkmagenta;
+        }
+        .legend .time_600_00 text {
+          fill: darkmagenta;
+          stroke: transparent;
+        }
+        .time_700_00 {
+          stroke: mediumvioletred;
+        }
+        circle.time_700_00 {
+          stroke: mediumvioletred;
+          fill: mediumvioletred;
+        }
+        .time_700_00.label {
+          stroke: mediumvioletred;
+          fill: mediumvioletred;
+        }
+        .legend .time_700_00 {
+          stroke: mediumvioletred;
+          fill: mediumvioletred;
+        }
+        .legend .time_700_00 text {
+          fill: mediumvioletred;
+          stroke: transparent;
+        }
+        .time_800_00 {
+          stroke: sienna;
+        }
+        circle.time_800_00 {
+          stroke: sienna;
+          fill: sienna;
+        }
+        .time_800_00.label {
+          stroke: sienna;
+          fill: sienna;
+        }
+        .legend .time_800_00 {
+          stroke: sienna;
+          fill: sienna;
+        }
+        .legend .time_800_00 text {
+          fill: sienna;
+          stroke: transparent;
+        }
+        .time_900_00 {
+          stroke: rebeccapurple;
+        }
+        circle.time_900_00 {
+          stroke: rebeccapurple;
+          fill: rebeccapurple;
+        }
+        .time_900_00.label {
+          stroke: rebeccapurple;
+          fill: rebeccapurple;
+        }
+        .legend .time_900_00 {
+          stroke: rebeccapurple;
+          fill: rebeccapurple;
+        }
+        .legend .time_900_00 text {
+          fill: rebeccapurple;
+          stroke: transparent;
+        }
+        .time_1000_00 {
+          stroke: skyblue;
+        }
+        circle.time_1000_00 {
+          stroke: skyblue;
+          fill: skyblue;
+        }
+        .time_1000_00.label {
+          stroke: skyblue;
+          fill: skyblue;
+        }
+        .legend .time_1000_00 {
+          stroke: skyblue;
+          fill: skyblue;
+        }
+        .legend .time_1000_00 text {
+          fill: skyblue;
+          stroke: transparent;
+        }
+        .time_1100_00 {
+          stroke: olivedrab;
+        }
+        circle.time_1100_00 {
+          stroke: olivedrab;
+          fill: olivedrab;
+        }
+        .time_1100_00.label {
+          stroke: olivedrab;
+          fill: olivedrab;
+        }
+        .legend .time_1100_00 {
+          stroke: olivedrab;
+          fill: olivedrab;
+        }
+        .legend .time_1100_00 text {
+          fill: olivedrab;
+          stroke: transparent;
+        }
+        .time_1200_00 {
+          stroke: goldenrod;
+        }
+        circle.time_1200_00 {
+          stroke: goldenrod;
+          fill: goldenrod;
+        }
+        .time_1200_00.label {
+          stroke: goldenrod;
+          fill: goldenrod;
+        }
+        .legend .time_1200_00 {
+          stroke: goldenrod;
+          fill: goldenrod;
+        }
+        .legend .time_1200_00 text {
+          fill: goldenrod;
+          stroke: transparent;
+        }
+        .time_1300_00 {
+          stroke: firebrick;
+        }
+        circle.time_1300_00 {
+          stroke: firebrick;
+          fill: firebrick;
+        }
+        .time_1300_00.label {
+          stroke: firebrick;
+          fill: firebrick;
+        }
+        .legend .time_1300_00 {
+          stroke: firebrick;
+          fill: firebrick;
+        }
+        .legend .time_1300_00 text {
+          fill: firebrick;
+          stroke: transparent;
+        }
+        .time_1400_00 {
+          stroke: darkcyan;
+        }
+        circle.time_1400_00 {
           stroke: darkcyan;
           fill: darkcyan;
         }
-        .time_600_00 {
-          stroke: chocolate;
-        }
-        circle.time_600_00 {
-          stroke: chocolate;
-          fill: chocolate;
-        }
-        .time_600_00.label {
-          stroke: chocolate;
-          fill: chocolate;
-        }
-        .legend .time_600_00 {
-          stroke: chocolate;
-          fill: chocolate;
-        }
-        .time_700_00 {
-          stroke: darkmagenta;
-        }
-        circle.time_700_00 {
-          stroke: darkmagenta;
-          fill: darkmagenta;
-        }
-        .time_700_00.label {
-          stroke: darkmagenta;
-          fill: darkmagenta;
-        }
-        .legend .time_700_00 {
-          stroke: darkmagenta;
-          fill: darkmagenta;
-        }
-        .time_800_00 {
-          stroke: mediumvioletred;
-        }
-        circle.time_800_00 {
-          stroke: mediumvioletred;
-          fill: mediumvioletred;
-        }
-        .time_800_00.label {
-          stroke: mediumvioletred;
-          fill: mediumvioletred;
-        }
-        .legend .time_800_00 {
-          stroke: mediumvioletred;
-          fill: mediumvioletred;
-        }
-        .time_900_00 {
-          stroke: sienna;
-        }
-        circle.time_900_00 {
-          stroke: sienna;
-          fill: sienna;
-        }
-        .time_900_00.label {
-          stroke: sienna;
-          fill: sienna;
-        }
-        .legend .time_900_00 {
-          stroke: sienna;
-          fill: sienna;
-        }
-        .time_1000_00 {
-          stroke: rebeccapurple;
-        }
-        circle.time_1000_00 {
-          stroke: rebeccapurple;
-          fill: rebeccapurple;
-        }
-        .time_1000_00.label {
-          stroke: rebeccapurple;
-          fill: rebeccapurple;
-        }
-        .legend .time_1000_00 {
-          stroke: rebeccapurple;
-          fill: rebeccapurple;
-        }
-        .time_1100_00 {
-          stroke: skyblue;
-        }
-        circle.time_1100_00 {
-          stroke: skyblue;
-          fill: skyblue;
-        }
-        .time_1100_00.label {
-          stroke: skyblue;
-          fill: skyblue;
-        }
-        .legend .time_1100_00 {
-          stroke: skyblue;
-          fill: skyblue;
-        }
-        .time_1200_00 {
-          stroke: olivedrab;
-        }
-        circle.time_1200_00 {
-          stroke: olivedrab;
-          fill: olivedrab;
-        }
-        .time_1200_00.label {
-          stroke: olivedrab;
-          fill: olivedrab;
-        }
-        .legend .time_1200_00 {
-          stroke: olivedrab;
-          fill: olivedrab;
-        }
-        .time_1300_00 {
-          stroke: goldenrod;
-        }
-        circle.time_1300_00 {
-          stroke: goldenrod;
-          fill: goldenrod;
-        }
-        .time_1300_00.label {
-          stroke: goldenrod;
-          fill: goldenrod;
-        }
-        .legend .time_1300_00 {
-          stroke: goldenrod;
-          fill: goldenrod;
-        }
-        .time_1400_00 {
-          stroke: firebrick;
-        }
-        circle.time_1400_00 {
-          stroke: firebrick;
-          fill: firebrick;
-        }
         .time_1400_00.label {
-          stroke: firebrick;
-          fill: firebrick;
+          stroke: darkcyan;
+          fill: darkcyan;
         }
         .legend .time_1400_00 {
-          stroke: firebrick;
-          fill: firebrick;
+          stroke: darkcyan;
+          fill: darkcyan;
+        }
+        .legend .time_1400_00 text {
+          fill: darkcyan;
+          stroke: transparent;
         }
 
 text.title {
@@ -407,13 +478,13 @@ circle.discontinuity.iocb {
 
     ]]></style>
   <clipPath id="curve_clip">
-    <rect x="-1" y="-1" width="433.0" height="433.0"/>
+    <rect x="-1" y="-1" width="577.0" height="577.0"/>
   </clipPath>
   </defs>
 <!-- draw axis and label distances.-->
 
 <!-- scale/translate so coordinates in earth units ( square ~ 2R x 2R)-->
-<g transform="scale(0.02825302,0.02825302)" >
+<g transform="scale(0.037670694,0.037670694)" >
 <g transform="translate(7645.2,7645.2)" >
 <!-- scale/translate so zoomed in on area of interest -->
 <g transform="scale(1.0,1.0)" >

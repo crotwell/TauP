@@ -1,5 +1,5 @@
 <svg version="1.1" baseProfile="full" xmlns="http://www.w3.org/2000/svg" 
-     viewBox="-80 -80 760.0 760.0"
+     viewBox="-80 -80 656.0 656.0"
      >
   <metadata>
     <taup>
@@ -22,6 +22,10 @@
           stroke: blue;
           fill: blue;
         }
+        .legend .Rpp text {
+          fill: blue;
+          stroke: transparent;
+        }
         .Rps {
           stroke: green;
         }
@@ -32,6 +36,10 @@
         .legend .Rps {
           stroke: green;
           fill: green;
+        }
+        .legend .Rps text {
+          fill: green;
+          stroke: transparent;
         }
         .Tpp {
           stroke: cyan;
@@ -44,6 +52,10 @@
           stroke: cyan;
           fill: cyan;
         }
+        .legend .Tpp text {
+          fill: cyan;
+          stroke: transparent;
+        }
         .Tps {
           stroke: gold;
         }
@@ -54,6 +66,10 @@
         .legend .Tps {
           stroke: gold;
           fill: gold;
+        }
+        .legend .Tps text {
+          fill: gold;
+          stroke: transparent;
         }
         .Rsp {
           stroke: mediumslateblue;
@@ -66,6 +82,10 @@
           stroke: mediumslateblue;
           fill: mediumslateblue;
         }
+        .legend .Rsp text {
+          fill: mediumslateblue;
+          stroke: transparent;
+        }
         .Rss {
           stroke: red;
         }
@@ -76,6 +96,10 @@
         .legend .Rss {
           stroke: red;
           fill: red;
+        }
+        .legend .Rss text {
+          fill: red;
+          stroke: transparent;
         }
         .Tsp {
           stroke: magenta;
@@ -88,6 +112,10 @@
           stroke: magenta;
           fill: magenta;
         }
+        .legend .Tsp text {
+          fill: magenta;
+          stroke: transparent;
+        }
         .Tss {
           stroke: grey;
         }
@@ -98,6 +126,10 @@
         .legend .Tss {
           stroke: grey;
           fill: grey;
+        }
+        .legend .Tss text {
+          fill: grey;
+          stroke: transparent;
         }
         .Rshsh {
           stroke: orange;
@@ -110,6 +142,10 @@
           stroke: orange;
           fill: orange;
         }
+        .legend .Rshsh text {
+          fill: orange;
+          stroke: transparent;
+        }
         .Tshsh {
           stroke: violet;
         }
@@ -120,6 +156,10 @@
         .legend .Tshsh {
           stroke: violet;
           fill: violet;
+        }
+        .legend .Tshsh text {
+          fill: violet;
+          stroke: transparent;
         }
         .RppEnergy {
           stroke: blue;
@@ -132,6 +172,10 @@
           stroke: blue;
           fill: blue;
         }
+        .legend .RppEnergy text {
+          fill: blue;
+          stroke: transparent;
+        }
         .TppEnergy {
           stroke: cyan;
         }
@@ -142,6 +186,10 @@
         .legend .TppEnergy {
           stroke: cyan;
           fill: cyan;
+        }
+        .legend .TppEnergy text {
+          fill: cyan;
+          stroke: transparent;
         }
         .RpsEnergy {
           stroke: green;
@@ -154,6 +202,10 @@
           stroke: green;
           fill: green;
         }
+        .legend .RpsEnergy text {
+          fill: green;
+          stroke: transparent;
+        }
         .TpsEnergy {
           stroke: gold;
         }
@@ -164,6 +216,10 @@
         .legend .TpsEnergy {
           stroke: gold;
           fill: gold;
+        }
+        .legend .TpsEnergy text {
+          fill: gold;
+          stroke: transparent;
         }
         .RspEnergy {
           stroke: mediumslateblue;
@@ -176,6 +232,10 @@
           stroke: mediumslateblue;
           fill: mediumslateblue;
         }
+        .legend .RspEnergy text {
+          fill: mediumslateblue;
+          stroke: transparent;
+        }
         .TspEnergy {
           stroke: magenta;
         }
@@ -186,6 +246,10 @@
         .legend .TspEnergy {
           stroke: magenta;
           fill: magenta;
+        }
+        .legend .TspEnergy text {
+          fill: magenta;
+          stroke: transparent;
         }
         .RssEnergy {
           stroke: red;
@@ -198,6 +262,10 @@
           stroke: red;
           fill: red;
         }
+        .legend .RssEnergy text {
+          fill: red;
+          stroke: transparent;
+        }
         .TssEnergy {
           stroke: grey;
         }
@@ -208,6 +276,10 @@
         .legend .TssEnergy {
           stroke: grey;
           fill: grey;
+        }
+        .legend .TssEnergy text {
+          fill: grey;
+          stroke: transparent;
         }
         .RshshEnergy {
           stroke: orange;
@@ -220,6 +292,10 @@
           stroke: orange;
           fill: orange;
         }
+        .legend .RshshEnergy text {
+          fill: orange;
+          stroke: transparent;
+        }
         .TshshEnergy {
           stroke: violet;
         }
@@ -230,6 +306,10 @@
         .legend .TshshEnergy {
           stroke: violet;
           fill: violet;
+        }
+        .legend .TshshEnergy text {
+          fill: violet;
+          stroke: transparent;
         }
         .FreeRecFuncPr {
           stroke: darkblue;
@@ -242,6 +322,10 @@
           stroke: darkblue;
           fill: darkblue;
         }
+        .legend .FreeRecFuncPr text {
+          fill: darkblue;
+          stroke: transparent;
+        }
         .FreeRecFuncSvr {
           stroke: firebrick;
         }
@@ -252,6 +336,10 @@
         .legend .FreeRecFuncSvr {
           stroke: firebrick;
           fill: firebrick;
+        }
+        .legend .FreeRecFuncSvr text {
+          fill: firebrick;
+          stroke: transparent;
         }
         .FreeRecFuncPz {
           stroke: cyan;
@@ -264,6 +352,10 @@
           stroke: cyan;
           fill: cyan;
         }
+        .legend .FreeRecFuncPz text {
+          fill: cyan;
+          stroke: transparent;
+        }
         .FreeRecFuncSvz {
           stroke: magenta;
         }
@@ -275,6 +367,10 @@
           stroke: magenta;
           fill: magenta;
         }
+        .legend .FreeRecFuncSvz text {
+          fill: magenta;
+          stroke: transparent;
+        }
         .FreeRecFuncSh {
           stroke: red;
         }
@@ -285,6 +381,10 @@
         .legend .FreeRecFuncSh {
           stroke: red;
           fill: red;
+        }
+        .legend .FreeRecFuncSh text {
+          fill: red;
+          stroke: transparent;
         }
 
 
@@ -463,75 +563,75 @@ circle.discontinuity.iocb {
 
     ]]></style>
   <clipPath id="curve_clip">
-    <rect x="-1" y="-1" width="521.0" height="521.0"/>
+    <rect x="-1" y="-1" width="417.0" height="417.0"/>
   </clipPath>
   </defs>
 <!-- draw axis and label distances.-->
 
-<text class="title" x="260.0" y="0">ak135 at 35.0 km</text>
+<text class="title" x="208.0" y="0">ak135 at 35.0 km</text>
 <g> <!-- y axis -->
 <g  >
-  <text font-size="14" transform="translate(-64, 260) rotate(-90 )" dy=".75em" text-anchor="middle" class="ylabel" > Displacement Coeff.</text>
+  <text font-size="14" transform="translate(-64, 208) rotate(-90 )" dy=".75em" text-anchor="middle" class="ylabel" > Displacement Coeff.</text>
 </g>
-<line  class="tick" x1="0" y1="0" x2="0" y2="520.0" />
-<text class="ytick" font-size="12" x="-12.0" y="497.49655">0.0</text>
-<line class="tick" x1="0" y1="497.49655" x2="-10.0" y2="497.49655" />
-<text class="ytick" font-size="12" x="-12.0" y="465.12424">0.2</text>
-<line class="tick" x1="0" y1="465.12424" x2="-10.0" y2="465.12424" />
-<text class="ytick" font-size="12" x="-12.0" y="432.75195">0.4</text>
-<line class="tick" x1="0" y1="432.75195" x2="-10.0" y2="432.75195" />
-<text class="ytick" font-size="12" x="-12.0" y="400.37964">0.6</text>
-<line class="tick" x1="0" y1="400.37964" x2="-10.0" y2="400.37964" />
-<text class="ytick" font-size="12" x="-12.0" y="368.00735">0.8</text>
-<line class="tick" x1="0" y1="368.00735" x2="-10.0" y2="368.00735" />
-<text class="ytick" font-size="12" x="-12.0" y="335.63507">1.0</text>
-<line class="tick" x1="0" y1="335.63507" x2="-10.0" y2="335.63507" />
-<text class="ytick" font-size="12" x="-12.0" y="303.26276">1.2</text>
-<line class="tick" x1="0" y1="303.26276" x2="-10.0" y2="303.26276" />
-<text class="ytick" font-size="12" x="-12.0" y="270.89047">1.4</text>
-<line class="tick" x1="0" y1="270.89047" x2="-10.0" y2="270.89047" />
-<text class="ytick" font-size="12" x="-12.0" y="238.51816">1.6</text>
-<line class="tick" x1="0" y1="238.51816" x2="-10.0" y2="238.51816" />
-<text class="ytick" font-size="12" x="-12.0" y="206.14587">1.8</text>
-<line class="tick" x1="0" y1="206.14587" x2="-10.0" y2="206.14587" />
-<text class="ytick" font-size="12" x="-12.0" y="173.77359">2.0</text>
-<line class="tick" x1="0" y1="173.77359" x2="-10.0" y2="173.77359" />
-<text class="ytick" font-size="12" x="-12.0" y="141.40128">2.2</text>
-<line class="tick" x1="0" y1="141.40128" x2="-10.0" y2="141.40128" />
-<text class="ytick" font-size="12" x="-12.0" y="109.02899">2.4</text>
-<line class="tick" x1="0" y1="109.02899" x2="-10.0" y2="109.02899" />
-<text class="ytick" font-size="12" x="-12.0" y="76.65668">2.6</text>
-<line class="tick" x1="0" y1="76.65668" x2="-10.0" y2="76.65668" />
-<text class="ytick" font-size="12" x="-12.0" y="44.284393">2.8</text>
-<line class="tick" x1="0" y1="44.284393" x2="-10.0" y2="44.284393" />
-<text class="ytick" font-size="12" x="-12.0" y="11.912109">3.0</text>
-<line class="tick" x1="0" y1="11.912109" x2="-10.0" y2="11.912109" />
+<line  class="tick" x1="0" y1="0" x2="0" y2="416.0" />
+<text class="ytick" font-size="12" x="-12.0" y="397.99722">0.0</text>
+<line class="tick" x1="0" y1="397.99722" x2="-10.0" y2="397.99722" />
+<text class="ytick" font-size="12" x="-12.0" y="372.0994">0.2</text>
+<line class="tick" x1="0" y1="372.0994" x2="-10.0" y2="372.0994" />
+<text class="ytick" font-size="12" x="-12.0" y="346.20157">0.4</text>
+<line class="tick" x1="0" y1="346.20157" x2="-10.0" y2="346.20157" />
+<text class="ytick" font-size="12" x="-12.0" y="320.3037">0.6</text>
+<line class="tick" x1="0" y1="320.3037" x2="-10.0" y2="320.3037" />
+<text class="ytick" font-size="12" x="-12.0" y="294.40588">0.8</text>
+<line class="tick" x1="0" y1="294.40588" x2="-10.0" y2="294.40588" />
+<text class="ytick" font-size="12" x="-12.0" y="268.50806">1.0</text>
+<line class="tick" x1="0" y1="268.50806" x2="-10.0" y2="268.50806" />
+<text class="ytick" font-size="12" x="-12.0" y="242.61021">1.2</text>
+<line class="tick" x1="0" y1="242.61021" x2="-10.0" y2="242.61021" />
+<text class="ytick" font-size="12" x="-12.0" y="216.71237">1.4</text>
+<line class="tick" x1="0" y1="216.71237" x2="-10.0" y2="216.71237" />
+<text class="ytick" font-size="12" x="-12.0" y="190.81454">1.6</text>
+<line class="tick" x1="0" y1="190.81454" x2="-10.0" y2="190.81454" />
+<text class="ytick" font-size="12" x="-12.0" y="164.9167">1.8</text>
+<line class="tick" x1="0" y1="164.9167" x2="-10.0" y2="164.9167" />
+<text class="ytick" font-size="12" x="-12.0" y="139.01886">2.0</text>
+<line class="tick" x1="0" y1="139.01886" x2="-10.0" y2="139.01886" />
+<text class="ytick" font-size="12" x="-12.0" y="113.12103">2.2</text>
+<line class="tick" x1="0" y1="113.12103" x2="-10.0" y2="113.12103" />
+<text class="ytick" font-size="12" x="-12.0" y="87.223175">2.4</text>
+<line class="tick" x1="0" y1="87.223175" x2="-10.0" y2="87.223175" />
+<text class="ytick" font-size="12" x="-12.0" y="61.325348">2.6</text>
+<line class="tick" x1="0" y1="61.325348" x2="-10.0" y2="61.325348" />
+<text class="ytick" font-size="12" x="-12.0" y="35.42752">2.8</text>
+<line class="tick" x1="0" y1="35.42752" x2="-10.0" y2="35.42752" />
+<text class="ytick" font-size="12" x="-12.0" y="9.529663">3.0</text>
+<line class="tick" x1="0" y1="9.529663" x2="-10.0" y2="9.529663" />
 </g> <!-- y axis end-->
 <g> <!-- x axis -->
-<text class="xlabel" font-size="14" x="260.0" y="556.4">Incident Angle (deg)</text>
-<line class="tick" x1="0" y1="520.0" x2="520.0" y2="520.0" />
-<text class="xtick" font-size="12" x="0.0" y="542.0">0.0</text>
-<line class="tick" x1="0.0" y1="520.0" x2="0.0" y2="530.0" />
-<text class="xtick" font-size="12" x="57.77783632284374" y="542.0">10.0</text>
-<line class="tick" x1="57.77783632284374" y1="520.0" x2="57.77783632284374" y2="530.0" />
-<text class="xtick" font-size="12" x="115.55567264568748" y="542.0">20.0</text>
-<line class="tick" x1="115.55567264568748" y1="520.0" x2="115.55567264568748" y2="530.0" />
-<text class="xtick" font-size="12" x="173.33350896853122" y="542.0">30.0</text>
-<line class="tick" x1="173.33350896853122" y1="520.0" x2="173.33350896853122" y2="530.0" />
-<text class="xtick" font-size="12" x="231.11134529137496" y="542.0">40.0</text>
-<line class="tick" x1="231.11134529137496" y1="520.0" x2="231.11134529137496" y2="530.0" />
-<text class="xtick" font-size="12" x="288.8891816142187" y="542.0">50.0</text>
-<line class="tick" x1="288.8891816142187" y1="520.0" x2="288.8891816142187" y2="530.0" />
-<text class="xtick" font-size="12" x="346.66701793706244" y="542.0">60.0</text>
-<line class="tick" x1="346.66701793706244" y1="520.0" x2="346.66701793706244" y2="530.0" />
-<text class="xtick" font-size="12" x="404.4448542599062" y="542.0">70.0</text>
-<line class="tick" x1="404.4448542599062" y1="520.0" x2="404.4448542599062" y2="530.0" />
-<text class="xtick" font-size="12" x="462.2226905827499" y="542.0">80.0</text>
-<line class="tick" x1="462.2226905827499" y1="520.0" x2="462.2226905827499" y2="530.0" />
+<text class="xlabel" font-size="14" x="208.0" y="452.4">Incident Angle (deg)</text>
+<line class="tick" x1="0" y1="416.0" x2="416.0" y2="416.0" />
+<text class="xtick" font-size="12" x="0.0" y="438.0">0.0</text>
+<line class="tick" x1="0.0" y1="416.0" x2="0.0" y2="426.0" />
+<text class="xtick" font-size="12" x="46.222269058274996" y="438.0">10.0</text>
+<line class="tick" x1="46.222269058274996" y1="416.0" x2="46.222269058274996" y2="426.0" />
+<text class="xtick" font-size="12" x="92.44453811654999" y="438.0">20.0</text>
+<line class="tick" x1="92.44453811654999" y1="416.0" x2="92.44453811654999" y2="426.0" />
+<text class="xtick" font-size="12" x="138.66680717482498" y="438.0">30.0</text>
+<line class="tick" x1="138.66680717482498" y1="416.0" x2="138.66680717482498" y2="426.0" />
+<text class="xtick" font-size="12" x="184.88907623309998" y="438.0">40.0</text>
+<line class="tick" x1="184.88907623309998" y1="416.0" x2="184.88907623309998" y2="426.0" />
+<text class="xtick" font-size="12" x="231.111345291375" y="438.0">50.0</text>
+<line class="tick" x1="231.111345291375" y1="416.0" x2="231.111345291375" y2="426.0" />
+<text class="xtick" font-size="12" x="277.33361434964996" y="438.0">60.0</text>
+<line class="tick" x1="277.33361434964996" y1="416.0" x2="277.33361434964996" y2="426.0" />
+<text class="xtick" font-size="12" x="323.55588340792497" y="438.0">70.0</text>
+<line class="tick" x1="323.55588340792497" y1="416.0" x2="323.55588340792497" y2="426.0" />
+<text class="xtick" font-size="12" x="369.77815246619997" y="438.0">80.0</text>
+<line class="tick" x1="369.77815246619997" y1="416.0" x2="369.77815246619997" y2="426.0" />
 </g> <!-- x axis end-->
 <g clip-path="url(#curve_clip)">
-<g transform="scale(1,-1) translate(0, -520.0)">
-<g transform="scale(5.7777836322843745,161.86148187530677)" >
+<g transform="scale(1,-1) translate(0, -416.0)">
+<g transform="scale(4.6222269058275,129.4891855002454)" >
 <g transform="translate(-0.0, 0.1390291)">
     <g class="Rpp" tauplabel=""  >
   <g>

@@ -1,5 +1,5 @@
 <svg version="1.1" baseProfile="full" xmlns="http://www.w3.org/2000/svg" 
-     viewBox="0 0 432.0 432.0"
+     viewBox="0 0 576.0 576.0"
      >
   <metadata>
     <taup>
@@ -11,16 +11,35 @@
   <defs>
     <style type="text/css"><![CDATA[
         text.label {
-            font: bold ;
             font-size: 382px;
-            fill: black;
         }
         g.phasename text {
-            font: bold ;
             font-size: 382px;
-            fill: black;
         }
 
+        .phase_Pdiff {
+          stroke: skyblue;
+        }
+        circle.phase_Pdiff {
+          fill: skyblue;
+          stroke: skyblue;
+        }
+        .phase_Pdiff.label {
+          stroke: skyblue;
+          fill: skyblue;
+        }
+        .legend .phase_Pdiff line {
+          stroke: skyblue;
+        }
+        .legend .phase_Pdiff text {
+          fill: skyblue;
+          stroke: transparent;
+        }
+        .label text.phase_Pdiff{
+          font: bold ;
+          fill: skyblue;
+          stroke: transparent;
+        }
 
 text.title {
     text-anchor: middle;
@@ -197,13 +216,13 @@ circle.discontinuity.iocb {
 
     ]]></style>
   <clipPath id="curve_clip">
-    <rect x="-1" y="-1" width="433.0" height="433.0"/>
+    <rect x="-1" y="-1" width="577.0" height="577.0"/>
   </clipPath>
   </defs>
 <!-- draw axis and label distances.-->
 
 <!-- scale/translate so coordinates in earth units ( square ~ 2R x 2R)-->
-<g transform="scale(0.02825302,0.02825302)" >
+<g transform="scale(0.037670694,0.037670694)" >
 <g transform="translate(7645.2,7645.2)" >
 <!-- scale/translate so zoomed in on area of interest -->
 <g transform="scale(1.0,1.0)" >
@@ -721,9 +740,6 @@ circle.discontinuity.iocb {
     </g>
 </g>
   </g> <!-- end autocolor -->
-    <g class="phasename">
-      <text class="phase_Pdiff" x=" 3497.47" y="   70.63">Pdiff</text>
-    </g> <!-- end labels -->
   </g> 
   </g> <!-- end zoom -->
   </g> <!-- end translate -->

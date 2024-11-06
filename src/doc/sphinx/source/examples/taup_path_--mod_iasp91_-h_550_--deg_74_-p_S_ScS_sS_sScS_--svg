@@ -1,5 +1,5 @@
 <svg version="1.1" baseProfile="full" xmlns="http://www.w3.org/2000/svg" 
-     viewBox="0 0 432.0 432.0"
+     viewBox="0 0 576.0 576.0"
      >
   <metadata>
     <taup>
@@ -11,16 +11,104 @@
   <defs>
     <style type="text/css"><![CDATA[
         text.label {
-            font: bold ;
             font-size: 183px;
-            fill: black;
         }
         g.phasename text {
-            font: bold ;
             font-size: 183px;
-            fill: black;
         }
 
+        .phase_S {
+          stroke: skyblue;
+        }
+        circle.phase_S {
+          fill: skyblue;
+          stroke: skyblue;
+        }
+        .phase_S.label {
+          stroke: skyblue;
+          fill: skyblue;
+        }
+        .legend .phase_S line {
+          stroke: skyblue;
+        }
+        .legend .phase_S text {
+          fill: skyblue;
+          stroke: transparent;
+        }
+        .label text.phase_S{
+          font: bold ;
+          fill: skyblue;
+          stroke: transparent;
+        }
+        .phase_ScS {
+          stroke: olivedrab;
+        }
+        circle.phase_ScS {
+          fill: olivedrab;
+          stroke: olivedrab;
+        }
+        .phase_ScS.label {
+          stroke: olivedrab;
+          fill: olivedrab;
+        }
+        .legend .phase_ScS line {
+          stroke: olivedrab;
+        }
+        .legend .phase_ScS text {
+          fill: olivedrab;
+          stroke: transparent;
+        }
+        .label text.phase_ScS{
+          font: bold ;
+          fill: olivedrab;
+          stroke: transparent;
+        }
+        .phase_sS {
+          stroke: goldenrod;
+        }
+        circle.phase_sS {
+          fill: goldenrod;
+          stroke: goldenrod;
+        }
+        .phase_sS.label {
+          stroke: goldenrod;
+          fill: goldenrod;
+        }
+        .legend .phase_sS line {
+          stroke: goldenrod;
+        }
+        .legend .phase_sS text {
+          fill: goldenrod;
+          stroke: transparent;
+        }
+        .label text.phase_sS{
+          font: bold ;
+          fill: goldenrod;
+          stroke: transparent;
+        }
+        .phase_sScS {
+          stroke: firebrick;
+        }
+        circle.phase_sScS {
+          fill: firebrick;
+          stroke: firebrick;
+        }
+        .phase_sScS.label {
+          stroke: firebrick;
+          fill: firebrick;
+        }
+        .legend .phase_sScS line {
+          stroke: firebrick;
+        }
+        .legend .phase_sScS text {
+          fill: firebrick;
+          stroke: transparent;
+        }
+        .label text.phase_sScS{
+          font: bold ;
+          fill: firebrick;
+          stroke: transparent;
+        }
 
 text.title {
     text-anchor: middle;
@@ -197,13 +285,13 @@ circle.discontinuity.iocb {
 
     ]]></style>
   <clipPath id="curve_clip">
-    <rect x="-1" y="-1" width="433.0" height="433.0"/>
+    <rect x="-1" y="-1" width="577.0" height="577.0"/>
   </clipPath>
   </defs>
 <!-- draw axis and label distances.-->
 
 <!-- scale/translate so coordinates in earth units ( square ~ 2R x 2R)-->
-<g transform="scale(0.02825302,0.02825302)" >
+<g transform="scale(0.037670694,0.037670694)" >
 <g transform="translate(7645.2,7645.2)" >
 <!-- scale/translate so zoomed in on area of interest -->
 <g transform="scale(2.0805988,2.0805988)" >
@@ -2052,12 +2140,6 @@ circle.discontinuity.iocb {
     </g>
 </g>
   </g> <!-- end autocolor -->
-    <g class="phasename">
-      <text class="phase_S" x=" 4224.56" y="-2469.31">S</text>
-      <text class="phase_ScS" x=" 3403.32" y="-2332.65">ScS</text>
-      <text class="phase_sS" x=" 1359.31" y="-4919.75">sS</text>
-      <text class="phase_sScS" x=" 1407.03" y="-3878.68">sScS</text>
-    </g> <!-- end labels -->
   </g> 
   </g> <!-- end zoom -->
   </g> <!-- end translate -->

@@ -1,5 +1,5 @@
 <svg version="1.1" baseProfile="full" xmlns="http://www.w3.org/2000/svg" 
-     viewBox="0 0 432.0 432.0"
+     viewBox="0 0 576.0 576.0"
      >
   <metadata>
     <taup>
@@ -11,14 +11,10 @@
   <defs>
     <style type="text/css"><![CDATA[
         text.label {
-            font: bold ;
             font-size: 224px;
-            fill: black;
         }
         g.phasename text {
-            font: bold ;
             font-size: 224px;
-            fill: black;
         }
 
         polyline.swave {
@@ -36,6 +32,10 @@
           stroke: red;
           fill: red;
         }
+        .legend .swave text {
+          fill: red;
+          stroke: transparent;
+        }
         polyline.pwave {
             stroke: blue;
         }
@@ -51,6 +51,10 @@
           stroke: blue;
           fill: blue;
         }
+        .legend .pwave text {
+          fill: blue;
+          stroke: transparent;
+        }
         polyline.both_p_swave {
             stroke: green;
         }
@@ -65,6 +69,10 @@
         .legend .both_p_swave {
           stroke: green;
           fill: green;
+        }
+        .legend .both_p_swave text {
+          fill: green;
+          stroke: transparent;
         }
 
 text.title {
@@ -242,13 +250,13 @@ circle.discontinuity.iocb {
 
     ]]></style>
   <clipPath id="curve_clip">
-    <rect x="-1" y="-1" width="433.0" height="433.0"/>
+    <rect x="-1" y="-1" width="577.0" height="577.0"/>
   </clipPath>
   </defs>
 <!-- draw axis and label distances.-->
 
 <!-- scale/translate so coordinates in earth units ( square ~ 2R x 2R)-->
-<g transform="scale(0.02825302,0.02825302)" >
+<g transform="scale(0.037670694,0.037670694)" >
 <g transform="translate(7645.2,7645.2)" >
 <!-- scale/translate so zoomed in on area of interest -->
 <g transform="scale(1.7038383,1.7038383)" >

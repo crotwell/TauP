@@ -1,5 +1,5 @@
 <svg version="1.1" baseProfile="full" xmlns="http://www.w3.org/2000/svg" 
-     viewBox="0 0 432.0 432.0"
+     viewBox="0 0 576.0 576.0"
      >
   <metadata>
     <taup>
@@ -11,16 +11,1300 @@
   <defs>
     <style type="text/css"><![CDATA[
         text.label {
-            font: bold ;
             font-size: 382px;
-            fill: black;
         }
         g.phasename text {
-            font: bold ;
             font-size: 382px;
-            fill: black;
         }
 
+        .phase_p {
+          stroke: skyblue;
+        }
+        circle.phase_p {
+          fill: skyblue;
+          stroke: skyblue;
+        }
+        .phase_p.label {
+          stroke: skyblue;
+          fill: skyblue;
+        }
+        .legend .phase_p line {
+          stroke: skyblue;
+        }
+        .legend .phase_p text {
+          fill: skyblue;
+          stroke: transparent;
+        }
+        .label text.phase_p{
+          font: bold ;
+          fill: skyblue;
+          stroke: transparent;
+        }
+        .phase_P {
+          stroke: olivedrab;
+        }
+        circle.phase_P {
+          fill: olivedrab;
+          stroke: olivedrab;
+        }
+        .phase_P.label {
+          stroke: olivedrab;
+          fill: olivedrab;
+        }
+        .legend .phase_P line {
+          stroke: olivedrab;
+        }
+        .legend .phase_P text {
+          fill: olivedrab;
+          stroke: transparent;
+        }
+        .label text.phase_P{
+          font: bold ;
+          fill: olivedrab;
+          stroke: transparent;
+        }
+        .phase_Pn {
+          stroke: goldenrod;
+        }
+        circle.phase_Pn {
+          fill: goldenrod;
+          stroke: goldenrod;
+        }
+        .phase_Pn.label {
+          stroke: goldenrod;
+          fill: goldenrod;
+        }
+        .legend .phase_Pn line {
+          stroke: goldenrod;
+        }
+        .legend .phase_Pn text {
+          fill: goldenrod;
+          stroke: transparent;
+        }
+        .label text.phase_Pn{
+          font: bold ;
+          fill: goldenrod;
+          stroke: transparent;
+        }
+        .phase_Pdiff {
+          stroke: firebrick;
+        }
+        circle.phase_Pdiff {
+          fill: firebrick;
+          stroke: firebrick;
+        }
+        .phase_Pdiff.label {
+          stroke: firebrick;
+          fill: firebrick;
+        }
+        .legend .phase_Pdiff line {
+          stroke: firebrick;
+        }
+        .legend .phase_Pdiff text {
+          fill: firebrick;
+          stroke: transparent;
+        }
+        .label text.phase_Pdiff{
+          font: bold ;
+          fill: firebrick;
+          stroke: transparent;
+        }
+        .phase_PKP {
+          stroke: darkcyan;
+        }
+        circle.phase_PKP {
+          fill: darkcyan;
+          stroke: darkcyan;
+        }
+        .phase_PKP.label {
+          stroke: darkcyan;
+          fill: darkcyan;
+        }
+        .legend .phase_PKP line {
+          stroke: darkcyan;
+        }
+        .legend .phase_PKP text {
+          fill: darkcyan;
+          stroke: transparent;
+        }
+        .label text.phase_PKP{
+          font: bold ;
+          fill: darkcyan;
+          stroke: transparent;
+        }
+        .phase_PKiKP {
+          stroke: chocolate;
+        }
+        circle.phase_PKiKP {
+          fill: chocolate;
+          stroke: chocolate;
+        }
+        .phase_PKiKP.label {
+          stroke: chocolate;
+          fill: chocolate;
+        }
+        .legend .phase_PKiKP line {
+          stroke: chocolate;
+        }
+        .legend .phase_PKiKP text {
+          fill: chocolate;
+          stroke: transparent;
+        }
+        .label text.phase_PKiKP{
+          font: bold ;
+          fill: chocolate;
+          stroke: transparent;
+        }
+        .phase_PKIKP {
+          stroke: darkmagenta;
+        }
+        circle.phase_PKIKP {
+          fill: darkmagenta;
+          stroke: darkmagenta;
+        }
+        .phase_PKIKP.label {
+          stroke: darkmagenta;
+          fill: darkmagenta;
+        }
+        .legend .phase_PKIKP line {
+          stroke: darkmagenta;
+        }
+        .legend .phase_PKIKP text {
+          fill: darkmagenta;
+          stroke: transparent;
+        }
+        .label text.phase_PKIKP{
+          font: bold ;
+          fill: darkmagenta;
+          stroke: transparent;
+        }
+        .phase_s {
+          stroke: mediumvioletred;
+        }
+        circle.phase_s {
+          fill: mediumvioletred;
+          stroke: mediumvioletred;
+        }
+        .phase_s.label {
+          stroke: mediumvioletred;
+          fill: mediumvioletred;
+        }
+        .legend .phase_s line {
+          stroke: mediumvioletred;
+        }
+        .legend .phase_s text {
+          fill: mediumvioletred;
+          stroke: transparent;
+        }
+        .label text.phase_s{
+          font: bold ;
+          fill: mediumvioletred;
+          stroke: transparent;
+        }
+        .phase_S {
+          stroke: sienna;
+        }
+        circle.phase_S {
+          fill: sienna;
+          stroke: sienna;
+        }
+        .phase_S.label {
+          stroke: sienna;
+          fill: sienna;
+        }
+        .legend .phase_S line {
+          stroke: sienna;
+        }
+        .legend .phase_S text {
+          fill: sienna;
+          stroke: transparent;
+        }
+        .label text.phase_S{
+          font: bold ;
+          fill: sienna;
+          stroke: transparent;
+        }
+        .phase_Sn {
+          stroke: rebeccapurple;
+        }
+        circle.phase_Sn {
+          fill: rebeccapurple;
+          stroke: rebeccapurple;
+        }
+        .phase_Sn.label {
+          stroke: rebeccapurple;
+          fill: rebeccapurple;
+        }
+        .legend .phase_Sn line {
+          stroke: rebeccapurple;
+        }
+        .legend .phase_Sn text {
+          fill: rebeccapurple;
+          stroke: transparent;
+        }
+        .label text.phase_Sn{
+          font: bold ;
+          fill: rebeccapurple;
+          stroke: transparent;
+        }
+        .phase_Sdiff {
+          stroke: skyblue;
+        }
+        circle.phase_Sdiff {
+          fill: skyblue;
+          stroke: skyblue;
+        }
+        .phase_Sdiff.label {
+          stroke: skyblue;
+          fill: skyblue;
+        }
+        .legend .phase_Sdiff line {
+          stroke: skyblue;
+        }
+        .legend .phase_Sdiff text {
+          fill: skyblue;
+          stroke: transparent;
+        }
+        .label text.phase_Sdiff{
+          font: bold ;
+          fill: skyblue;
+          stroke: transparent;
+        }
+        .phase_SKS {
+          stroke: olivedrab;
+        }
+        circle.phase_SKS {
+          fill: olivedrab;
+          stroke: olivedrab;
+        }
+        .phase_SKS.label {
+          stroke: olivedrab;
+          fill: olivedrab;
+        }
+        .legend .phase_SKS line {
+          stroke: olivedrab;
+        }
+        .legend .phase_SKS text {
+          fill: olivedrab;
+          stroke: transparent;
+        }
+        .label text.phase_SKS{
+          font: bold ;
+          fill: olivedrab;
+          stroke: transparent;
+        }
+        .phase_SKIKS {
+          stroke: goldenrod;
+        }
+        circle.phase_SKIKS {
+          fill: goldenrod;
+          stroke: goldenrod;
+        }
+        .phase_SKIKS.label {
+          stroke: goldenrod;
+          fill: goldenrod;
+        }
+        .legend .phase_SKIKS line {
+          stroke: goldenrod;
+        }
+        .legend .phase_SKIKS text {
+          fill: goldenrod;
+          stroke: transparent;
+        }
+        .label text.phase_SKIKS{
+          font: bold ;
+          fill: goldenrod;
+          stroke: transparent;
+        }
+        .phase_PcP {
+          stroke: firebrick;
+        }
+        circle.phase_PcP {
+          fill: firebrick;
+          stroke: firebrick;
+        }
+        .phase_PcP.label {
+          stroke: firebrick;
+          fill: firebrick;
+        }
+        .legend .phase_PcP line {
+          stroke: firebrick;
+        }
+        .legend .phase_PcP text {
+          fill: firebrick;
+          stroke: transparent;
+        }
+        .label text.phase_PcP{
+          font: bold ;
+          fill: firebrick;
+          stroke: transparent;
+        }
+        .phase_pP {
+          stroke: darkcyan;
+        }
+        circle.phase_pP {
+          fill: darkcyan;
+          stroke: darkcyan;
+        }
+        .phase_pP.label {
+          stroke: darkcyan;
+          fill: darkcyan;
+        }
+        .legend .phase_pP line {
+          stroke: darkcyan;
+        }
+        .legend .phase_pP text {
+          fill: darkcyan;
+          stroke: transparent;
+        }
+        .label text.phase_pP{
+          font: bold ;
+          fill: darkcyan;
+          stroke: transparent;
+        }
+        .phase_pPdiff {
+          stroke: chocolate;
+        }
+        circle.phase_pPdiff {
+          fill: chocolate;
+          stroke: chocolate;
+        }
+        .phase_pPdiff.label {
+          stroke: chocolate;
+          fill: chocolate;
+        }
+        .legend .phase_pPdiff line {
+          stroke: chocolate;
+        }
+        .legend .phase_pPdiff text {
+          fill: chocolate;
+          stroke: transparent;
+        }
+        .label text.phase_pPdiff{
+          font: bold ;
+          fill: chocolate;
+          stroke: transparent;
+        }
+        .phase_pPKP {
+          stroke: darkmagenta;
+        }
+        circle.phase_pPKP {
+          fill: darkmagenta;
+          stroke: darkmagenta;
+        }
+        .phase_pPKP.label {
+          stroke: darkmagenta;
+          fill: darkmagenta;
+        }
+        .legend .phase_pPKP line {
+          stroke: darkmagenta;
+        }
+        .legend .phase_pPKP text {
+          fill: darkmagenta;
+          stroke: transparent;
+        }
+        .label text.phase_pPKP{
+          font: bold ;
+          fill: darkmagenta;
+          stroke: transparent;
+        }
+        .phase_pPKIKP {
+          stroke: mediumvioletred;
+        }
+        circle.phase_pPKIKP {
+          fill: mediumvioletred;
+          stroke: mediumvioletred;
+        }
+        .phase_pPKIKP.label {
+          stroke: mediumvioletred;
+          fill: mediumvioletred;
+        }
+        .legend .phase_pPKIKP line {
+          stroke: mediumvioletred;
+        }
+        .legend .phase_pPKIKP text {
+          fill: mediumvioletred;
+          stroke: transparent;
+        }
+        .label text.phase_pPKIKP{
+          font: bold ;
+          fill: mediumvioletred;
+          stroke: transparent;
+        }
+        .phase_pPKiKP {
+          stroke: sienna;
+        }
+        circle.phase_pPKiKP {
+          fill: sienna;
+          stroke: sienna;
+        }
+        .phase_pPKiKP.label {
+          stroke: sienna;
+          fill: sienna;
+        }
+        .legend .phase_pPKiKP line {
+          stroke: sienna;
+        }
+        .legend .phase_pPKiKP text {
+          fill: sienna;
+          stroke: transparent;
+        }
+        .label text.phase_pPKiKP{
+          font: bold ;
+          fill: sienna;
+          stroke: transparent;
+        }
+        .phase_sP {
+          stroke: rebeccapurple;
+        }
+        circle.phase_sP {
+          fill: rebeccapurple;
+          stroke: rebeccapurple;
+        }
+        .phase_sP.label {
+          stroke: rebeccapurple;
+          fill: rebeccapurple;
+        }
+        .legend .phase_sP line {
+          stroke: rebeccapurple;
+        }
+        .legend .phase_sP text {
+          fill: rebeccapurple;
+          stroke: transparent;
+        }
+        .label text.phase_sP{
+          font: bold ;
+          fill: rebeccapurple;
+          stroke: transparent;
+        }
+        .phase_sPdiff {
+          stroke: skyblue;
+        }
+        circle.phase_sPdiff {
+          fill: skyblue;
+          stroke: skyblue;
+        }
+        .phase_sPdiff.label {
+          stroke: skyblue;
+          fill: skyblue;
+        }
+        .legend .phase_sPdiff line {
+          stroke: skyblue;
+        }
+        .legend .phase_sPdiff text {
+          fill: skyblue;
+          stroke: transparent;
+        }
+        .label text.phase_sPdiff{
+          font: bold ;
+          fill: skyblue;
+          stroke: transparent;
+        }
+        .phase_sPKP {
+          stroke: olivedrab;
+        }
+        circle.phase_sPKP {
+          fill: olivedrab;
+          stroke: olivedrab;
+        }
+        .phase_sPKP.label {
+          stroke: olivedrab;
+          fill: olivedrab;
+        }
+        .legend .phase_sPKP line {
+          stroke: olivedrab;
+        }
+        .legend .phase_sPKP text {
+          fill: olivedrab;
+          stroke: transparent;
+        }
+        .label text.phase_sPKP{
+          font: bold ;
+          fill: olivedrab;
+          stroke: transparent;
+        }
+        .phase_sPKIKP {
+          stroke: goldenrod;
+        }
+        circle.phase_sPKIKP {
+          fill: goldenrod;
+          stroke: goldenrod;
+        }
+        .phase_sPKIKP.label {
+          stroke: goldenrod;
+          fill: goldenrod;
+        }
+        .legend .phase_sPKIKP line {
+          stroke: goldenrod;
+        }
+        .legend .phase_sPKIKP text {
+          fill: goldenrod;
+          stroke: transparent;
+        }
+        .label text.phase_sPKIKP{
+          font: bold ;
+          fill: goldenrod;
+          stroke: transparent;
+        }
+        .phase_sPKiKP {
+          stroke: firebrick;
+        }
+        circle.phase_sPKiKP {
+          fill: firebrick;
+          stroke: firebrick;
+        }
+        .phase_sPKiKP.label {
+          stroke: firebrick;
+          fill: firebrick;
+        }
+        .legend .phase_sPKiKP line {
+          stroke: firebrick;
+        }
+        .legend .phase_sPKiKP text {
+          fill: firebrick;
+          stroke: transparent;
+        }
+        .label text.phase_sPKiKP{
+          font: bold ;
+          fill: firebrick;
+          stroke: transparent;
+        }
+        .phase_sS {
+          stroke: darkcyan;
+        }
+        circle.phase_sS {
+          fill: darkcyan;
+          stroke: darkcyan;
+        }
+        .phase_sS.label {
+          stroke: darkcyan;
+          fill: darkcyan;
+        }
+        .legend .phase_sS line {
+          stroke: darkcyan;
+        }
+        .legend .phase_sS text {
+          fill: darkcyan;
+          stroke: transparent;
+        }
+        .label text.phase_sS{
+          font: bold ;
+          fill: darkcyan;
+          stroke: transparent;
+        }
+        .phase_sSdiff {
+          stroke: chocolate;
+        }
+        circle.phase_sSdiff {
+          fill: chocolate;
+          stroke: chocolate;
+        }
+        .phase_sSdiff.label {
+          stroke: chocolate;
+          fill: chocolate;
+        }
+        .legend .phase_sSdiff line {
+          stroke: chocolate;
+        }
+        .legend .phase_sSdiff text {
+          fill: chocolate;
+          stroke: transparent;
+        }
+        .label text.phase_sSdiff{
+          font: bold ;
+          fill: chocolate;
+          stroke: transparent;
+        }
+        .phase_sSKS {
+          stroke: darkmagenta;
+        }
+        circle.phase_sSKS {
+          fill: darkmagenta;
+          stroke: darkmagenta;
+        }
+        .phase_sSKS.label {
+          stroke: darkmagenta;
+          fill: darkmagenta;
+        }
+        .legend .phase_sSKS line {
+          stroke: darkmagenta;
+        }
+        .legend .phase_sSKS text {
+          fill: darkmagenta;
+          stroke: transparent;
+        }
+        .label text.phase_sSKS{
+          font: bold ;
+          fill: darkmagenta;
+          stroke: transparent;
+        }
+        .phase_sSKIKS {
+          stroke: mediumvioletred;
+        }
+        circle.phase_sSKIKS {
+          fill: mediumvioletred;
+          stroke: mediumvioletred;
+        }
+        .phase_sSKIKS.label {
+          stroke: mediumvioletred;
+          fill: mediumvioletred;
+        }
+        .legend .phase_sSKIKS line {
+          stroke: mediumvioletred;
+        }
+        .legend .phase_sSKIKS text {
+          fill: mediumvioletred;
+          stroke: transparent;
+        }
+        .label text.phase_sSKIKS{
+          font: bold ;
+          fill: mediumvioletred;
+          stroke: transparent;
+        }
+        .phase_ScS {
+          stroke: sienna;
+        }
+        circle.phase_ScS {
+          fill: sienna;
+          stroke: sienna;
+        }
+        .phase_ScS.label {
+          stroke: sienna;
+          fill: sienna;
+        }
+        .legend .phase_ScS line {
+          stroke: sienna;
+        }
+        .legend .phase_ScS text {
+          fill: sienna;
+          stroke: transparent;
+        }
+        .label text.phase_ScS{
+          font: bold ;
+          fill: sienna;
+          stroke: transparent;
+        }
+        .phase_pS {
+          stroke: rebeccapurple;
+        }
+        circle.phase_pS {
+          fill: rebeccapurple;
+          stroke: rebeccapurple;
+        }
+        .phase_pS.label {
+          stroke: rebeccapurple;
+          fill: rebeccapurple;
+        }
+        .legend .phase_pS line {
+          stroke: rebeccapurple;
+        }
+        .legend .phase_pS text {
+          fill: rebeccapurple;
+          stroke: transparent;
+        }
+        .label text.phase_pS{
+          font: bold ;
+          fill: rebeccapurple;
+          stroke: transparent;
+        }
+        .phase_pSdiff {
+          stroke: skyblue;
+        }
+        circle.phase_pSdiff {
+          fill: skyblue;
+          stroke: skyblue;
+        }
+        .phase_pSdiff.label {
+          stroke: skyblue;
+          fill: skyblue;
+        }
+        .legend .phase_pSdiff line {
+          stroke: skyblue;
+        }
+        .legend .phase_pSdiff text {
+          fill: skyblue;
+          stroke: transparent;
+        }
+        .label text.phase_pSdiff{
+          font: bold ;
+          fill: skyblue;
+          stroke: transparent;
+        }
+        .phase_pSKS {
+          stroke: olivedrab;
+        }
+        circle.phase_pSKS {
+          fill: olivedrab;
+          stroke: olivedrab;
+        }
+        .phase_pSKS.label {
+          stroke: olivedrab;
+          fill: olivedrab;
+        }
+        .legend .phase_pSKS line {
+          stroke: olivedrab;
+        }
+        .legend .phase_pSKS text {
+          fill: olivedrab;
+          stroke: transparent;
+        }
+        .label text.phase_pSKS{
+          font: bold ;
+          fill: olivedrab;
+          stroke: transparent;
+        }
+        .phase_pSKIKS {
+          stroke: goldenrod;
+        }
+        circle.phase_pSKIKS {
+          fill: goldenrod;
+          stroke: goldenrod;
+        }
+        .phase_pSKIKS.label {
+          stroke: goldenrod;
+          fill: goldenrod;
+        }
+        .legend .phase_pSKIKS line {
+          stroke: goldenrod;
+        }
+        .legend .phase_pSKIKS text {
+          fill: goldenrod;
+          stroke: transparent;
+        }
+        .label text.phase_pSKIKS{
+          font: bold ;
+          fill: goldenrod;
+          stroke: transparent;
+        }
+        .phase_ScP {
+          stroke: firebrick;
+        }
+        circle.phase_ScP {
+          fill: firebrick;
+          stroke: firebrick;
+        }
+        .phase_ScP.label {
+          stroke: firebrick;
+          fill: firebrick;
+        }
+        .legend .phase_ScP line {
+          stroke: firebrick;
+        }
+        .legend .phase_ScP text {
+          fill: firebrick;
+          stroke: transparent;
+        }
+        .label text.phase_ScP{
+          font: bold ;
+          fill: firebrick;
+          stroke: transparent;
+        }
+        .phase_SKP {
+          stroke: darkcyan;
+        }
+        circle.phase_SKP {
+          fill: darkcyan;
+          stroke: darkcyan;
+        }
+        .phase_SKP.label {
+          stroke: darkcyan;
+          fill: darkcyan;
+        }
+        .legend .phase_SKP line {
+          stroke: darkcyan;
+        }
+        .legend .phase_SKP text {
+          fill: darkcyan;
+          stroke: transparent;
+        }
+        .label text.phase_SKP{
+          font: bold ;
+          fill: darkcyan;
+          stroke: transparent;
+        }
+        .phase_SKIKP {
+          stroke: chocolate;
+        }
+        circle.phase_SKIKP {
+          fill: chocolate;
+          stroke: chocolate;
+        }
+        .phase_SKIKP.label {
+          stroke: chocolate;
+          fill: chocolate;
+        }
+        .legend .phase_SKIKP line {
+          stroke: chocolate;
+        }
+        .legend .phase_SKIKP text {
+          fill: chocolate;
+          stroke: transparent;
+        }
+        .label text.phase_SKIKP{
+          font: bold ;
+          fill: chocolate;
+          stroke: transparent;
+        }
+        .phase_PKKP {
+          stroke: darkmagenta;
+        }
+        circle.phase_PKKP {
+          fill: darkmagenta;
+          stroke: darkmagenta;
+        }
+        .phase_PKKP.label {
+          stroke: darkmagenta;
+          fill: darkmagenta;
+        }
+        .legend .phase_PKKP line {
+          stroke: darkmagenta;
+        }
+        .legend .phase_PKKP text {
+          fill: darkmagenta;
+          stroke: transparent;
+        }
+        .label text.phase_PKKP{
+          font: bold ;
+          fill: darkmagenta;
+          stroke: transparent;
+        }
+        .phase_PKIKKIKP {
+          stroke: mediumvioletred;
+        }
+        circle.phase_PKIKKIKP {
+          fill: mediumvioletred;
+          stroke: mediumvioletred;
+        }
+        .phase_PKIKKIKP.label {
+          stroke: mediumvioletred;
+          fill: mediumvioletred;
+        }
+        .legend .phase_PKIKKIKP line {
+          stroke: mediumvioletred;
+        }
+        .legend .phase_PKIKKIKP text {
+          fill: mediumvioletred;
+          stroke: transparent;
+        }
+        .label text.phase_PKIKKIKP{
+          font: bold ;
+          fill: mediumvioletred;
+          stroke: transparent;
+        }
+        .phase_SKKP {
+          stroke: sienna;
+        }
+        circle.phase_SKKP {
+          fill: sienna;
+          stroke: sienna;
+        }
+        .phase_SKKP.label {
+          stroke: sienna;
+          fill: sienna;
+        }
+        .legend .phase_SKKP line {
+          stroke: sienna;
+        }
+        .legend .phase_SKKP text {
+          fill: sienna;
+          stroke: transparent;
+        }
+        .label text.phase_SKKP{
+          font: bold ;
+          fill: sienna;
+          stroke: transparent;
+        }
+        .phase_SKIKKIKP {
+          stroke: rebeccapurple;
+        }
+        circle.phase_SKIKKIKP {
+          fill: rebeccapurple;
+          stroke: rebeccapurple;
+        }
+        .phase_SKIKKIKP.label {
+          stroke: rebeccapurple;
+          fill: rebeccapurple;
+        }
+        .legend .phase_SKIKKIKP line {
+          stroke: rebeccapurple;
+        }
+        .legend .phase_SKIKKIKP text {
+          fill: rebeccapurple;
+          stroke: transparent;
+        }
+        .label text.phase_SKIKKIKP{
+          font: bold ;
+          fill: rebeccapurple;
+          stroke: transparent;
+        }
+        .phase_PP {
+          stroke: skyblue;
+        }
+        circle.phase_PP {
+          fill: skyblue;
+          stroke: skyblue;
+        }
+        .phase_PP.label {
+          stroke: skyblue;
+          fill: skyblue;
+        }
+        .legend .phase_PP line {
+          stroke: skyblue;
+        }
+        .legend .phase_PP text {
+          fill: skyblue;
+          stroke: transparent;
+        }
+        .label text.phase_PP{
+          font: bold ;
+          fill: skyblue;
+          stroke: transparent;
+        }
+        .phase_PKPPKP {
+          stroke: olivedrab;
+        }
+        circle.phase_PKPPKP {
+          fill: olivedrab;
+          stroke: olivedrab;
+        }
+        .phase_PKPPKP.label {
+          stroke: olivedrab;
+          fill: olivedrab;
+        }
+        .legend .phase_PKPPKP line {
+          stroke: olivedrab;
+        }
+        .legend .phase_PKPPKP text {
+          fill: olivedrab;
+          stroke: transparent;
+        }
+        .label text.phase_PKPPKP{
+          font: bold ;
+          fill: olivedrab;
+          stroke: transparent;
+        }
+        .phase_PKIKPPKIKP {
+          stroke: goldenrod;
+        }
+        circle.phase_PKIKPPKIKP {
+          fill: goldenrod;
+          stroke: goldenrod;
+        }
+        .phase_PKIKPPKIKP.label {
+          stroke: goldenrod;
+          fill: goldenrod;
+        }
+        .legend .phase_PKIKPPKIKP line {
+          stroke: goldenrod;
+        }
+        .legend .phase_PKIKPPKIKP text {
+          fill: goldenrod;
+          stroke: transparent;
+        }
+        .label text.phase_PKIKPPKIKP{
+          font: bold ;
+          fill: goldenrod;
+          stroke: transparent;
+        }
+        .phase_SKiKP {
+          stroke: firebrick;
+        }
+        circle.phase_SKiKP {
+          fill: firebrick;
+          stroke: firebrick;
+        }
+        .phase_SKiKP.label {
+          stroke: firebrick;
+          fill: firebrick;
+        }
+        .legend .phase_SKiKP line {
+          stroke: firebrick;
+        }
+        .legend .phase_SKiKP text {
+          fill: firebrick;
+          stroke: transparent;
+        }
+        .label text.phase_SKiKP{
+          font: bold ;
+          fill: firebrick;
+          stroke: transparent;
+        }
+        .phase_PcS {
+          stroke: darkcyan;
+        }
+        circle.phase_PcS {
+          fill: darkcyan;
+          stroke: darkcyan;
+        }
+        .phase_PcS.label {
+          stroke: darkcyan;
+          fill: darkcyan;
+        }
+        .legend .phase_PcS line {
+          stroke: darkcyan;
+        }
+        .legend .phase_PcS text {
+          fill: darkcyan;
+          stroke: transparent;
+        }
+        .label text.phase_PcS{
+          font: bold ;
+          fill: darkcyan;
+          stroke: transparent;
+        }
+        .phase_PKS {
+          stroke: chocolate;
+        }
+        circle.phase_PKS {
+          fill: chocolate;
+          stroke: chocolate;
+        }
+        .phase_PKS.label {
+          stroke: chocolate;
+          fill: chocolate;
+        }
+        .legend .phase_PKS line {
+          stroke: chocolate;
+        }
+        .legend .phase_PKS text {
+          fill: chocolate;
+          stroke: transparent;
+        }
+        .label text.phase_PKS{
+          font: bold ;
+          fill: chocolate;
+          stroke: transparent;
+        }
+        .phase_PKIKS {
+          stroke: darkmagenta;
+        }
+        circle.phase_PKIKS {
+          fill: darkmagenta;
+          stroke: darkmagenta;
+        }
+        .phase_PKIKS.label {
+          stroke: darkmagenta;
+          fill: darkmagenta;
+        }
+        .legend .phase_PKIKS line {
+          stroke: darkmagenta;
+        }
+        .legend .phase_PKIKS text {
+          fill: darkmagenta;
+          stroke: transparent;
+        }
+        .label text.phase_PKIKS{
+          font: bold ;
+          fill: darkmagenta;
+          stroke: transparent;
+        }
+        .phase_PKKS {
+          stroke: mediumvioletred;
+        }
+        circle.phase_PKKS {
+          fill: mediumvioletred;
+          stroke: mediumvioletred;
+        }
+        .phase_PKKS.label {
+          stroke: mediumvioletred;
+          fill: mediumvioletred;
+        }
+        .legend .phase_PKKS line {
+          stroke: mediumvioletred;
+        }
+        .legend .phase_PKKS text {
+          fill: mediumvioletred;
+          stroke: transparent;
+        }
+        .label text.phase_PKKS{
+          font: bold ;
+          fill: mediumvioletred;
+          stroke: transparent;
+        }
+        .phase_PKIKKIKS {
+          stroke: sienna;
+        }
+        circle.phase_PKIKKIKS {
+          fill: sienna;
+          stroke: sienna;
+        }
+        .phase_PKIKKIKS.label {
+          stroke: sienna;
+          fill: sienna;
+        }
+        .legend .phase_PKIKKIKS line {
+          stroke: sienna;
+        }
+        .legend .phase_PKIKKIKS text {
+          fill: sienna;
+          stroke: transparent;
+        }
+        .label text.phase_PKIKKIKS{
+          font: bold ;
+          fill: sienna;
+          stroke: transparent;
+        }
+        .phase_SKKS {
+          stroke: rebeccapurple;
+        }
+        circle.phase_SKKS {
+          fill: rebeccapurple;
+          stroke: rebeccapurple;
+        }
+        .phase_SKKS.label {
+          stroke: rebeccapurple;
+          fill: rebeccapurple;
+        }
+        .legend .phase_SKKS line {
+          stroke: rebeccapurple;
+        }
+        .legend .phase_SKKS text {
+          fill: rebeccapurple;
+          stroke: transparent;
+        }
+        .label text.phase_SKKS{
+          font: bold ;
+          fill: rebeccapurple;
+          stroke: transparent;
+        }
+        .phase_SKIKKIKS {
+          stroke: skyblue;
+        }
+        circle.phase_SKIKKIKS {
+          fill: skyblue;
+          stroke: skyblue;
+        }
+        .phase_SKIKKIKS.label {
+          stroke: skyblue;
+          fill: skyblue;
+        }
+        .legend .phase_SKIKKIKS line {
+          stroke: skyblue;
+        }
+        .legend .phase_SKIKKIKS text {
+          fill: skyblue;
+          stroke: transparent;
+        }
+        .label text.phase_SKIKKIKS{
+          font: bold ;
+          fill: skyblue;
+          stroke: transparent;
+        }
+        .phase_SKSSKS {
+          stroke: olivedrab;
+        }
+        circle.phase_SKSSKS {
+          fill: olivedrab;
+          stroke: olivedrab;
+        }
+        .phase_SKSSKS.label {
+          stroke: olivedrab;
+          fill: olivedrab;
+        }
+        .legend .phase_SKSSKS line {
+          stroke: olivedrab;
+        }
+        .legend .phase_SKSSKS text {
+          fill: olivedrab;
+          stroke: transparent;
+        }
+        .label text.phase_SKSSKS{
+          font: bold ;
+          fill: olivedrab;
+          stroke: transparent;
+        }
+        .phase_SKIKSSKIKS {
+          stroke: goldenrod;
+        }
+        circle.phase_SKIKSSKIKS {
+          fill: goldenrod;
+          stroke: goldenrod;
+        }
+        .phase_SKIKSSKIKS.label {
+          stroke: goldenrod;
+          fill: goldenrod;
+        }
+        .legend .phase_SKIKSSKIKS line {
+          stroke: goldenrod;
+        }
+        .legend .phase_SKIKSSKIKS text {
+          fill: goldenrod;
+          stroke: transparent;
+        }
+        .label text.phase_SKIKSSKIKS{
+          font: bold ;
+          fill: goldenrod;
+          stroke: transparent;
+        }
+        .phase_SS {
+          stroke: firebrick;
+        }
+        circle.phase_SS {
+          fill: firebrick;
+          stroke: firebrick;
+        }
+        .phase_SS.label {
+          stroke: firebrick;
+          fill: firebrick;
+        }
+        .legend .phase_SS line {
+          stroke: firebrick;
+        }
+        .legend .phase_SS text {
+          fill: firebrick;
+          stroke: transparent;
+        }
+        .label text.phase_SS{
+          font: bold ;
+          fill: firebrick;
+          stroke: transparent;
+        }
+        .phase_SP {
+          stroke: darkcyan;
+        }
+        circle.phase_SP {
+          fill: darkcyan;
+          stroke: darkcyan;
+        }
+        .phase_SP.label {
+          stroke: darkcyan;
+          fill: darkcyan;
+        }
+        .legend .phase_SP line {
+          stroke: darkcyan;
+        }
+        .legend .phase_SP text {
+          fill: darkcyan;
+          stroke: transparent;
+        }
+        .label text.phase_SP{
+          font: bold ;
+          fill: darkcyan;
+          stroke: transparent;
+        }
+        .phase_PS {
+          stroke: chocolate;
+        }
+        circle.phase_PS {
+          fill: chocolate;
+          stroke: chocolate;
+        }
+        .phase_PS.label {
+          stroke: chocolate;
+          fill: chocolate;
+        }
+        .legend .phase_PS line {
+          stroke: chocolate;
+        }
+        .legend .phase_PS text {
+          fill: chocolate;
+          stroke: transparent;
+        }
+        .label text.phase_PS{
+          font: bold ;
+          fill: chocolate;
+          stroke: transparent;
+        }
 
 text.title {
     text-anchor: middle;
@@ -197,13 +1481,13 @@ circle.discontinuity.iocb {
 
     ]]></style>
   <clipPath id="curve_clip">
-    <rect x="-1" y="-1" width="433.0" height="433.0"/>
+    <rect x="-1" y="-1" width="577.0" height="577.0"/>
   </clipPath>
   </defs>
 <!-- draw axis and label distances.-->
 
 <!-- scale/translate so coordinates in earth units ( square ~ 2R x 2R)-->
-<g transform="scale(0.02825302,0.02825302)" >
+<g transform="scale(0.037670694,0.037670694)" >
 <g transform="translate(7645.2,7645.2)" >
 <!-- scale/translate so zoomed in on area of interest -->
 <g transform="scale(1.0,1.0)" >
@@ -18641,41 +19925,6 @@ circle.discontinuity.iocb {
     </g>
 </g>
   </g> <!-- end autocolor -->
-    <g class="phasename">
-      <text class="phase_P" x=" 2090.80" y="-5153.53">P</text>
-      <text class="phase_pP" x=" 1255.35" y="-5417.97">pP</text>
-      <text class="phase_sP" x=" 1251.53" y="-5418.85">sP</text>
-      <text class="phase_PP" x=" 1912.36" y="-6075.90">PP</text>
-      <text class="phase_PP" x=" 1912.89" y="-6075.73">PP</text>
-      <text class="phase_PP" x=" 1912.76" y="-6075.77">PP</text>
-      <text class="phase_PP" x=" 1911.83" y="-6076.07">PP</text>
-      <text class="phase_PP" x=" 1911.83" y="-6076.06">PP</text>
-      <text class="phase_PcP" x=" 1102.48" y="-3355.18">PcP</text>
-      <text class="phase_S" x=" 2047.17" y="-5157.48">S</text>
-      <text class="phase_pS" x=" 1307.50" y="-5392.68">pS</text>
-      <text class="phase_sS" x=" 1293.91" y="-5395.95">sS</text>
-      <text class="phase_SP" x=" 2563.00" y="-5083.66">SP</text>
-      <text class="phase_PS" x="  944.00" y="-5562.81">PS</text>
-      <text class="phase_ScP" x="  572.32" y="-3714.80">ScP</text>
-      <text class="phase_PcS" x=" 1696.33" y="-3401.52">PcS</text>
-      <text class="phase_SS" x=" 1912.48" y="-6074.56">SS</text>
-      <text class="phase_SS" x=" 1913.17" y="-6074.34">SS</text>
-      <text class="phase_SS" x=" 1913.07" y="-6074.37">SS</text>
-      <text class="phase_SS" x=" 1913.64" y="-6074.19">SS</text>
-      <text class="phase_SS" x=" 1913.63" y="-6074.19">SS</text>
-      <text class="phase_PKiKP" x="  432.97" y="-1243.39">PKiKP</text>
-      <text class="phase_pPKiKP" x="  358.52" y="-1266.86">pPKiKP</text>
-      <text class="phase_sPKiKP" x="  358.50" y="-1266.87">sPKiKP</text>
-      <text class="phase_ScS" x=" 1101.45" y="-3355.52">ScS</text>
-      <text class="phase_SKiKP" x="  279.58" y="-1799.48">SKiKP</text>
-      <text class="phase_PKIKKIKP" x=" 1046.47" y=" 3319.20">PKIKKIKP</text>
-      <text class="phase_SKIKKIKP" x=" 1054.82" y=" 3106.48">SKIKKIKP</text>
-      <text class="phase_PKIKKIKS" x="  879.06" y=" 3056.10">PKIKKIKS</text>
-      <text class="phase_SKIKKIKS" x=" 1046.43" y=" 3319.21">SKIKKIKS</text>
-      <text class="phase_PKIKPPKIKP" x=" 1915.61" y=" 6074.87">PKIKPPKIKP</text>
-      <text class="phase_PKPPKP" x=" 1916.26" y=" 6074.67">PKPPKP</text>
-      <text class="phase_SKIKSSKIKS" x=" 1915.10" y=" 6073.73">SKIKSSKIKS</text>
-    </g> <!-- end labels -->
   </g> 
   </g> <!-- end zoom -->
   </g> <!-- end translate -->

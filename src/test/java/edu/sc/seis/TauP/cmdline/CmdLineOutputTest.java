@@ -58,6 +58,7 @@ public class CmdLineOutputTest {
             "taup path -o stdout -h 10 -p PnPn --deg 10 --svg",
             "taup path -o stdout -h 10 -p PdiffPdiff --deg 135 --svg",
             "taup path -o stdout -h 10 -p ttall --deg 35 --svg",
+            "taup path -o stdout --mod ak135 --svg -h 10 -p P,S,PedOP --scatter 200 -5 --deg 40"
     };
 
     String[] phaseDescribeTestCmds = new String[] {
@@ -85,9 +86,8 @@ public class CmdLineOutputTest {
     };
 
     String[] wavefrontTestCmds = new String[] {
-            "taup wavefront -o stdout --mod ak135 --svg -h 100 -p P,S,PKIKP",
-            "taup wavefront -o stdout --mod ak135 --svg -h 10 -p P,S,PedOP --scatter 200 -5 --timestep 25 --color wavetype",
-            "taup path -o stdout --mod ak135 --svg -h 10 -p P,S,PedOP --scatter 200 -5 --deg 40"
+            "taup wavefront -o stdout --mod ak135 --svg -h 100 -p P,S,PKIKP --timestep 100",
+            "taup wavefront -o stdout --mod ak135 --svg -h 10 -p P,S,PedOP --scatter 200 -5 --timestep 25 --color wavetype"
     };
 
     String[] velplotTestCmds = new String[] {

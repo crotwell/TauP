@@ -1,5 +1,5 @@
 <svg version="1.1" baseProfile="full" xmlns="http://www.w3.org/2000/svg" 
-     viewBox="-80 -80 760.0 760.0"
+     viewBox="-80 -80 656.0 656.0"
      >
   <metadata>
     <taup>
@@ -11,6 +11,98 @@
   </metadata>
   <defs>
     <style type="text/css"><![CDATA[
+        .phase_s {
+          stroke: skyblue;
+        }
+        circle.phase_s {
+          fill: skyblue;
+          stroke: skyblue;
+        }
+        .phase_s.label {
+          stroke: skyblue;
+          fill: skyblue;
+        }
+        .legend .phase_s line {
+          stroke: skyblue;
+        }
+        .legend .phase_s text {
+          fill: skyblue;
+          stroke: transparent;
+        }
+        .label text.phase_s{
+          font: bold ;
+          fill: skyblue;
+          stroke: transparent;
+        }
+        .phase_S {
+          stroke: olivedrab;
+        }
+        circle.phase_S {
+          fill: olivedrab;
+          stroke: olivedrab;
+        }
+        .phase_S.label {
+          stroke: olivedrab;
+          fill: olivedrab;
+        }
+        .legend .phase_S line {
+          stroke: olivedrab;
+        }
+        .legend .phase_S text {
+          fill: olivedrab;
+          stroke: transparent;
+        }
+        .label text.phase_S{
+          font: bold ;
+          fill: olivedrab;
+          stroke: transparent;
+        }
+        .phase_ScS {
+          stroke: goldenrod;
+        }
+        circle.phase_ScS {
+          fill: goldenrod;
+          stroke: goldenrod;
+        }
+        .phase_ScS.label {
+          stroke: goldenrod;
+          fill: goldenrod;
+        }
+        .legend .phase_ScS line {
+          stroke: goldenrod;
+        }
+        .legend .phase_ScS text {
+          fill: goldenrod;
+          stroke: transparent;
+        }
+        .label text.phase_ScS{
+          font: bold ;
+          fill: goldenrod;
+          stroke: transparent;
+        }
+        .phase_Sdiff {
+          stroke: firebrick;
+        }
+        circle.phase_Sdiff {
+          fill: firebrick;
+          stroke: firebrick;
+        }
+        .phase_Sdiff.label {
+          stroke: firebrick;
+          fill: firebrick;
+        }
+        .legend .phase_Sdiff line {
+          stroke: firebrick;
+        }
+        .legend .phase_Sdiff text {
+          fill: firebrick;
+          stroke: transparent;
+        }
+        .label text.phase_Sdiff{
+          font: bold ;
+          fill: firebrick;
+          stroke: transparent;
+        }
 
 text.title {
     text-anchor: middle;
@@ -187,61 +279,61 @@ circle.discontinuity.iocb {
 
     ]]></style>
   <clipPath id="curve_clip">
-    <rect x="-1" y="-1" width="521.0" height="521.0"/>
+    <rect x="-1" y="-1" width="417.0" height="417.0"/>
   </clipPath>
   </defs>
 <!-- draw axis and label distances.-->
 
-<text class="title" x="260.0" y="0">prem (h=500.0 km)</text>
+<text class="title" x="208.0" y="0">prem (h=500.0 km)</text>
 <g> <!-- y axis -->
 <g  >
-  <text font-size="14" transform="translate(-64, 260) rotate(-90 )" dy=".75em" text-anchor="middle" class="ylabel" >Time (s)</text>
+  <text font-size="14" transform="translate(-64, 208) rotate(-90 )" dy=".75em" text-anchor="middle" class="ylabel" >Time (s)</text>
 </g>
-<line  class="tick" x1="0" y1="0" x2="0" y2="520.0" />
-<text class="ytick" font-size="12" x="-12.0" y="493.99927">200.0</text>
-<line class="tick" x1="0" y1="493.99927" x2="-10.0" y2="493.99927" />
-<text class="ytick" font-size="12" x="-12.0" y="436.8841">400.0</text>
-<line class="tick" x1="0" y1="436.8841" x2="-10.0" y2="436.8841" />
-<text class="ytick" font-size="12" x="-12.0" y="379.76892">600.0</text>
-<line class="tick" x1="0" y1="379.76892" x2="-10.0" y2="379.76892" />
-<text class="ytick" font-size="12" x="-12.0" y="322.65375">800.0</text>
-<line class="tick" x1="0" y1="322.65375" x2="-10.0" y2="322.65375" />
-<text class="ytick" font-size="12" x="-12.0" y="265.53857">1000.0</text>
-<line class="tick" x1="0" y1="265.53857" x2="-10.0" y2="265.53857" />
-<text class="ytick" font-size="12" x="-12.0" y="208.4234">1200.0</text>
-<line class="tick" x1="0" y1="208.4234" x2="-10.0" y2="208.4234" />
-<text class="ytick" font-size="12" x="-12.0" y="151.30823">1400.0</text>
-<line class="tick" x1="0" y1="151.30823" x2="-10.0" y2="151.30823" />
-<text class="ytick" font-size="12" x="-12.0" y="94.193054">1600.0</text>
-<line class="tick" x1="0" y1="94.193054" x2="-10.0" y2="94.193054" />
-<text class="ytick" font-size="12" x="-12.0" y="37.07788">1800.0</text>
-<line class="tick" x1="0" y1="37.07788" x2="-10.0" y2="37.07788" />
+<line  class="tick" x1="0" y1="0" x2="0" y2="416.0" />
+<text class="ytick" font-size="12" x="-12.0" y="395.19943">200.0</text>
+<line class="tick" x1="0" y1="395.19943" x2="-10.0" y2="395.19943" />
+<text class="ytick" font-size="12" x="-12.0" y="349.5073">400.0</text>
+<line class="tick" x1="0" y1="349.5073" x2="-10.0" y2="349.5073" />
+<text class="ytick" font-size="12" x="-12.0" y="303.81516">600.0</text>
+<line class="tick" x1="0" y1="303.81516" x2="-10.0" y2="303.81516" />
+<text class="ytick" font-size="12" x="-12.0" y="258.123">800.0</text>
+<line class="tick" x1="0" y1="258.123" x2="-10.0" y2="258.123" />
+<text class="ytick" font-size="12" x="-12.0" y="212.43086">1000.0</text>
+<line class="tick" x1="0" y1="212.43086" x2="-10.0" y2="212.43086" />
+<text class="ytick" font-size="12" x="-12.0" y="166.73872">1200.0</text>
+<line class="tick" x1="0" y1="166.73872" x2="-10.0" y2="166.73872" />
+<text class="ytick" font-size="12" x="-12.0" y="121.0466">1400.0</text>
+<line class="tick" x1="0" y1="121.0466" x2="-10.0" y2="121.0466" />
+<text class="ytick" font-size="12" x="-12.0" y="75.35446">1600.0</text>
+<line class="tick" x1="0" y1="75.35446" x2="-10.0" y2="75.35446" />
+<text class="ytick" font-size="12" x="-12.0" y="29.662323">1800.0</text>
+<line class="tick" x1="0" y1="29.662323" x2="-10.0" y2="29.662323" />
 </g> <!-- y axis end-->
 <g> <!-- x axis -->
-<text class="xlabel" font-size="14" x="260.0" y="556.4">Degrees</text>
-<line class="tick" x1="0" y1="520.0" x2="520.0" y2="520.0" />
-<text class="xtick" font-size="12" x="0.0" y="542.0">0.0</text>
-<line class="tick" x1="0.0" y1="520.0" x2="0.0" y2="530.0" />
-<text class="xtick" font-size="12" x="64.64713161040748" y="542.0">20.0</text>
-<line class="tick" x1="64.64713161040748" y1="520.0" x2="64.64713161040748" y2="530.0" />
-<text class="xtick" font-size="12" x="129.29426322081497" y="542.0">40.0</text>
-<line class="tick" x1="129.29426322081497" y1="520.0" x2="129.29426322081497" y2="530.0" />
-<text class="xtick" font-size="12" x="193.94139483122248" y="542.0">60.0</text>
-<line class="tick" x1="193.94139483122248" y1="520.0" x2="193.94139483122248" y2="530.0" />
-<text class="xtick" font-size="12" x="258.58852644162994" y="542.0">80.0</text>
-<line class="tick" x1="258.58852644162994" y1="520.0" x2="258.58852644162994" y2="530.0" />
-<text class="xtick" font-size="12" x="323.2356580520375" y="542.0">100.0</text>
-<line class="tick" x1="323.2356580520375" y1="520.0" x2="323.2356580520375" y2="530.0" />
-<text class="xtick" font-size="12" x="387.88278966244496" y="542.0">120.0</text>
-<line class="tick" x1="387.88278966244496" y1="520.0" x2="387.88278966244496" y2="530.0" />
-<text class="xtick" font-size="12" x="452.52992127285245" y="542.0">140.0</text>
-<line class="tick" x1="452.52992127285245" y1="520.0" x2="452.52992127285245" y2="530.0" />
-<text class="xtick" font-size="12" x="517.1770528832599" y="542.0">160.0</text>
-<line class="tick" x1="517.1770528832599" y1="520.0" x2="517.1770528832599" y2="530.0" />
+<text class="xlabel" font-size="14" x="208.0" y="452.4">Degrees</text>
+<line class="tick" x1="0" y1="416.0" x2="416.0" y2="416.0" />
+<text class="xtick" font-size="12" x="0.0" y="438.0">0.0</text>
+<line class="tick" x1="0.0" y1="416.0" x2="0.0" y2="426.0" />
+<text class="xtick" font-size="12" x="51.71770528832599" y="438.0">20.0</text>
+<line class="tick" x1="51.71770528832599" y1="416.0" x2="51.71770528832599" y2="426.0" />
+<text class="xtick" font-size="12" x="103.43541057665198" y="438.0">40.0</text>
+<line class="tick" x1="103.43541057665198" y1="416.0" x2="103.43541057665198" y2="426.0" />
+<text class="xtick" font-size="12" x="155.153115864978" y="438.0">60.0</text>
+<line class="tick" x1="155.153115864978" y1="416.0" x2="155.153115864978" y2="426.0" />
+<text class="xtick" font-size="12" x="206.87082115330395" y="438.0">80.0</text>
+<line class="tick" x1="206.87082115330395" y1="416.0" x2="206.87082115330395" y2="426.0" />
+<text class="xtick" font-size="12" x="258.58852644162994" y="438.0">100.0</text>
+<line class="tick" x1="258.58852644162994" y1="416.0" x2="258.58852644162994" y2="426.0" />
+<text class="xtick" font-size="12" x="310.306231729956" y="438.0">120.0</text>
+<line class="tick" x1="310.306231729956" y1="416.0" x2="310.306231729956" y2="426.0" />
+<text class="xtick" font-size="12" x="362.02393701828197" y="438.0">140.0</text>
+<line class="tick" x1="362.02393701828197" y1="416.0" x2="362.02393701828197" y2="426.0" />
+<text class="xtick" font-size="12" x="413.7416423066079" y="438.0">160.0</text>
+<line class="tick" x1="413.7416423066079" y1="416.0" x2="413.7416423066079" y2="426.0" />
 </g> <!-- x axis end-->
 <g clip-path="url(#curve_clip)">
-<g transform="scale(1,-1) translate(0, -520.0)">
-<g transform="scale(3.2323565805203747,0.28557586643400995)" >
+<g transform="scale(1,-1) translate(0, -416.0)">
+<g transform="scale(2.5858852644162997,0.228460693147208)" >
 <g transform="translate(-0.0, -108.95337)">
     <g class="autocolor">
     <g class="swave phase_s swave" tauplabel="degree180/time s for a source depth of 500.0 kilometers in the prem model"  >
@@ -1122,22 +1214,22 @@ circle.discontinuity.iocb {
   </g> <!-- end scale -->
   </g> <!-- end scaletranslate -->
   </g> <!-- end clip-path -->
-<g class="legend autocolor" transform="translate(52.0,52.0)"> <!-- legend -->
+<g class="legend autocolor" transform="translate(41.0,41.0)"> <!-- legend -->
 <g class="swave phase_s swave">
 <line class="swave phase_s swave" x1="0" y1="0" x2="10" y2="0" />
-<text class="swave phase_s swave" font-size="14" x="11" y="0">s</text>
+<text class="swave phase_s swave" font-size="12" x="11" y="0">s</text>
 </g>
 <g class="swave phase_S swave">
-<line class="swave phase_S swave" x1="0" y1="16" x2="10" y2="16" />
-<text class="swave phase_S swave" font-size="14" x="11" y="16">S</text>
+<line class="swave phase_S swave" x1="0" y1="14" x2="10" y2="14" />
+<text class="swave phase_S swave" font-size="12" x="11" y="14">S</text>
 </g>
 <g class="swave phase_ScS swave">
-<line class="swave phase_ScS swave" x1="0" y1="32" x2="10" y2="32" />
-<text class="swave phase_ScS swave" font-size="14" x="11" y="32">ScS</text>
+<line class="swave phase_ScS swave" x1="0" y1="28" x2="10" y2="28" />
+<text class="swave phase_ScS swave" font-size="12" x="11" y="28">ScS</text>
 </g>
 <g class="swave phase_Sdiff swave">
-<line class="swave phase_Sdiff swave" x1="0" y1="48" x2="10" y2="48" />
-<text class="swave phase_Sdiff swave" font-size="14" x="11" y="48">Sdiff</text>
+<line class="swave phase_Sdiff swave" x1="0" y1="42" x2="10" y2="42" />
+<text class="swave phase_Sdiff swave" font-size="12" x="11" y="42">Sdiff</text>
 </g>
 </g> <!-- legend end-->
 </svg>

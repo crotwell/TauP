@@ -1,5 +1,5 @@
 <svg version="1.1" baseProfile="full" xmlns="http://www.w3.org/2000/svg" 
-     viewBox="-80 -80 760.0 760.0"
+     viewBox="-80 -80 656.0 656.0"
      >
   <metadata>
     <taup>
@@ -26,6 +26,10 @@
           stroke: red;
           fill: red;
         }
+        .legend .swave text {
+          fill: red;
+          stroke: transparent;
+        }
         polyline.pwave {
             stroke: blue;
         }
@@ -41,6 +45,10 @@
           stroke: blue;
           fill: blue;
         }
+        .legend .pwave text {
+          fill: blue;
+          stroke: transparent;
+        }
         polyline.both_p_swave {
             stroke: green;
         }
@@ -55,6 +63,10 @@
         .legend .both_p_swave {
           stroke: green;
           fill: green;
+        }
+        .legend .both_p_swave text {
+          fill: green;
+          stroke: transparent;
         }
 
 text.title {
@@ -214,67 +226,67 @@ circle.discontinuity.iocb {
 
     ]]></style>
   <clipPath id="curve_clip">
-    <rect x="-1" y="-1" width="521.0" height="521.0"/>
+    <rect x="-1" y="-1" width="417.0" height="417.0"/>
   </clipPath>
   </defs>
 <!-- draw axis and label distances.-->
 
-<text class="title" x="260.0" y="0">ak135, ak135favg, ak135fcont, prem</text>
+<text class="title" x="208.0" y="0">ak135, ak135favg, ak135fcont, prem</text>
 <g> <!-- y axis -->
 <g  >
-  <text font-size="14" transform="translate(-64, 260) rotate(-90 )" dy=".75em" text-anchor="middle" class="ylabel" >Depth (km)</text>
+  <text font-size="14" transform="translate(-64, 208) rotate(-90 )" dy=".75em" text-anchor="middle" class="ylabel" >Depth (km)</text>
 </g>
-<line  class="tick" x1="0" y1="0" x2="0" y2="520.0" />
+<line  class="tick" x1="0" y1="0" x2="0" y2="416.0" />
 <text class="ytick" font-size="12" x="-12.0" y="0.0">0.0</text>
 <line class="tick" x1="0" y1="0.0" x2="-10.0" y2="0.0" />
-<text class="ytick" font-size="12" x="-12.0" y="81.61984">1000.0</text>
-<line class="tick" x1="0" y1="81.61984" x2="-10.0" y2="81.61984" />
-<text class="ytick" font-size="12" x="-12.0" y="163.23969">2000.0</text>
-<line class="tick" x1="0" y1="163.23969" x2="-10.0" y2="163.23969" />
-<text class="ytick" font-size="12" x="-12.0" y="244.85953">3000.0</text>
-<line class="tick" x1="0" y1="244.85953" x2="-10.0" y2="244.85953" />
-<text class="ytick" font-size="12" x="-12.0" y="326.47937">4000.0</text>
+<text class="ytick" font-size="12" x="-12.0" y="65.29587">1000.0</text>
+<line class="tick" x1="0" y1="65.29587" x2="-10.0" y2="65.29587" />
+<text class="ytick" font-size="12" x="-12.0" y="130.59174">2000.0</text>
+<line class="tick" x1="0" y1="130.59174" x2="-10.0" y2="130.59174" />
+<text class="ytick" font-size="12" x="-12.0" y="195.88762">3000.0</text>
+<line class="tick" x1="0" y1="195.88762" x2="-10.0" y2="195.88762" />
+<text class="ytick" font-size="12" x="-12.0" y="261.18347">4000.0</text>
+<line class="tick" x1="0" y1="261.18347" x2="-10.0" y2="261.18347" />
+<text class="ytick" font-size="12" x="-12.0" y="326.47937">5000.0</text>
 <line class="tick" x1="0" y1="326.47937" x2="-10.0" y2="326.47937" />
-<text class="ytick" font-size="12" x="-12.0" y="408.09918">5000.0</text>
-<line class="tick" x1="0" y1="408.09918" x2="-10.0" y2="408.09918" />
-<text class="ytick" font-size="12" x="-12.0" y="489.71906">6000.0</text>
-<line class="tick" x1="0" y1="489.71906" x2="-10.0" y2="489.71906" />
+<text class="ytick" font-size="12" x="-12.0" y="391.77524">6000.0</text>
+<line class="tick" x1="0" y1="391.77524" x2="-10.0" y2="391.77524" />
 </g> <!-- y axis end-->
 <g> <!-- x axis -->
-<text class="xlabel" font-size="14" x="260.0" y="556.4">Velocity (km/s)</text>
-<line class="tick" x1="0" y1="520.0" x2="520.0" y2="520.0" />
-<text class="xtick" font-size="12" x="0.0" y="542.0">0.0</text>
-<line class="tick" x1="0.0" y1="520.0" x2="0.0" y2="530.0" />
-<text class="xtick" font-size="12" x="37.91026930872082" y="542.0">1.0</text>
-<line class="tick" x1="37.91026930872082" y1="520.0" x2="37.91026930872082" y2="530.0" />
-<text class="xtick" font-size="12" x="75.82053861744164" y="542.0">2.0</text>
-<line class="tick" x1="75.82053861744164" y1="520.0" x2="75.82053861744164" y2="530.0" />
-<text class="xtick" font-size="12" x="113.73080792616246" y="542.0">3.0</text>
-<line class="tick" x1="113.73080792616246" y1="520.0" x2="113.73080792616246" y2="530.0" />
-<text class="xtick" font-size="12" x="151.64107723488328" y="542.0">4.0</text>
-<line class="tick" x1="151.64107723488328" y1="520.0" x2="151.64107723488328" y2="530.0" />
-<text class="xtick" font-size="12" x="189.55134654360413" y="542.0">5.0</text>
-<line class="tick" x1="189.55134654360413" y1="520.0" x2="189.55134654360413" y2="530.0" />
-<text class="xtick" font-size="12" x="227.4616158523249" y="542.0">6.0</text>
-<line class="tick" x1="227.4616158523249" y1="520.0" x2="227.4616158523249" y2="530.0" />
-<text class="xtick" font-size="12" x="265.3718851610457" y="542.0">7.0</text>
-<line class="tick" x1="265.3718851610457" y1="520.0" x2="265.3718851610457" y2="530.0" />
-<text class="xtick" font-size="12" x="303.28215446976657" y="542.0">8.0</text>
-<line class="tick" x1="303.28215446976657" y1="520.0" x2="303.28215446976657" y2="530.0" />
-<text class="xtick" font-size="12" x="341.1924237784874" y="542.0">9.0</text>
-<line class="tick" x1="341.1924237784874" y1="520.0" x2="341.1924237784874" y2="530.0" />
-<text class="xtick" font-size="12" x="379.10269308720825" y="542.0">10.0</text>
-<line class="tick" x1="379.10269308720825" y1="520.0" x2="379.10269308720825" y2="530.0" />
-<text class="xtick" font-size="12" x="417.012962395929" y="542.0">11.0</text>
-<line class="tick" x1="417.012962395929" y1="520.0" x2="417.012962395929" y2="530.0" />
-<text class="xtick" font-size="12" x="454.9232317046498" y="542.0">12.0</text>
-<line class="tick" x1="454.9232317046498" y1="520.0" x2="454.9232317046498" y2="530.0" />
-<text class="xtick" font-size="12" x="492.83350101337066" y="542.0">13.0</text>
-<line class="tick" x1="492.83350101337066" y1="520.0" x2="492.83350101337066" y2="530.0" />
+<text class="xlabel" font-size="14" x="208.0" y="452.4">Velocity (km/s)</text>
+<line class="tick" x1="0" y1="416.0" x2="416.0" y2="416.0" />
+<text class="xtick" font-size="12" x="0.0" y="438.0">0.0</text>
+<line class="tick" x1="0.0" y1="416.0" x2="0.0" y2="426.0" />
+<text class="xtick" font-size="12" x="30.328215446976657" y="438.0">1.0</text>
+<line class="tick" x1="30.328215446976657" y1="416.0" x2="30.328215446976657" y2="426.0" />
+<text class="xtick" font-size="12" x="60.65643089395331" y="438.0">2.0</text>
+<line class="tick" x1="60.65643089395331" y1="416.0" x2="60.65643089395331" y2="426.0" />
+<text class="xtick" font-size="12" x="90.98464634092997" y="438.0">3.0</text>
+<line class="tick" x1="90.98464634092997" y1="416.0" x2="90.98464634092997" y2="426.0" />
+<text class="xtick" font-size="12" x="121.31286178790663" y="438.0">4.0</text>
+<line class="tick" x1="121.31286178790663" y1="416.0" x2="121.31286178790663" y2="426.0" />
+<text class="xtick" font-size="12" x="151.64107723488328" y="438.0">5.0</text>
+<line class="tick" x1="151.64107723488328" y1="416.0" x2="151.64107723488328" y2="426.0" />
+<text class="xtick" font-size="12" x="181.96929268185994" y="438.0">6.0</text>
+<line class="tick" x1="181.96929268185994" y1="416.0" x2="181.96929268185994" y2="426.0" />
+<text class="xtick" font-size="12" x="212.29750812883657" y="438.0">7.0</text>
+<line class="tick" x1="212.29750812883657" y1="416.0" x2="212.29750812883657" y2="426.0" />
+<text class="xtick" font-size="12" x="242.62572357581325" y="438.0">8.0</text>
+<line class="tick" x1="242.62572357581325" y1="416.0" x2="242.62572357581325" y2="426.0" />
+<text class="xtick" font-size="12" x="272.95393902278994" y="438.0">9.0</text>
+<line class="tick" x1="272.95393902278994" y1="416.0" x2="272.95393902278994" y2="426.0" />
+<text class="xtick" font-size="12" x="303.28215446976657" y="438.0">10.0</text>
+<line class="tick" x1="303.28215446976657" y1="416.0" x2="303.28215446976657" y2="426.0" />
+<text class="xtick" font-size="12" x="333.6103699167432" y="438.0">11.0</text>
+<line class="tick" x1="333.6103699167432" y1="416.0" x2="333.6103699167432" y2="426.0" />
+<text class="xtick" font-size="12" x="363.9385853637199" y="438.0">12.0</text>
+<line class="tick" x1="363.9385853637199" y1="416.0" x2="363.9385853637199" y2="426.0" />
+<text class="xtick" font-size="12" x="394.2668008106965" y="438.0">13.0</text>
+<line class="tick" x1="394.2668008106965" y1="416.0" x2="394.2668008106965" y2="426.0" />
 </g> <!-- x axis end-->
 <g clip-path="url(#curve_clip)">
-<g transform="scale(1,-1) translate(0, -520.0)">
-<g transform="scale(37.91026930872082,0.08161983989954481)" >
+<g transform="scale(1,-1) translate(0, -416.0)">
+<g transform="scale(30.328215446976657,0.06529587191963585)" >
 <g transform="translate(-0.0, -0.0)">
     <g class="autocolor">
 <g transform="scale(1,-1) translate(0.0, -6371.0)" > <!-- invert axis -->

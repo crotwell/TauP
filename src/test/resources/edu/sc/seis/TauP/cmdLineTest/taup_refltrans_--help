@@ -24,9 +24,9 @@ Options:
       --layer=v v v v v v   inbound and transmitted layer parameters, vp, vs,
                               rho, vp, vs, rho
       --legend              create a legend
-      --mapwidth=<mapwidth> plot width in inches for GMT, pixels for SVG.
+      --mapwidth=<mapwidth> plot width in units from --mapwidthunit.
       --mapwidthunit=<mapWidthUnit>
-                            plot width unit for GMT. Default is i for inchs
+                            plot width unit, i for inch, c for cm or p for px.
   -o, --output=<outFile>    output to file, default is stdout.
       --prop=<toolPropsFilename>
                             load defaults from properties file

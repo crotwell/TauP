@@ -1,5 +1,5 @@
 <svg version="1.1" baseProfile="full" xmlns="http://www.w3.org/2000/svg" 
-     viewBox="-80 -80 760.0 760.0"
+     viewBox="-80 -80 656.0 656.0"
      >
   <metadata>
     <taup>
@@ -11,6 +11,374 @@
   </metadata>
   <defs>
     <style type="text/css"><![CDATA[
+        .phase_p {
+          stroke: skyblue;
+        }
+        circle.phase_p {
+          fill: skyblue;
+          stroke: skyblue;
+        }
+        .phase_p.label {
+          stroke: skyblue;
+          fill: skyblue;
+        }
+        .legend .phase_p line {
+          stroke: skyblue;
+        }
+        .legend .phase_p text {
+          fill: skyblue;
+          stroke: transparent;
+        }
+        .label text.phase_p{
+          font: bold ;
+          fill: skyblue;
+          stroke: transparent;
+        }
+        .phase_s {
+          stroke: olivedrab;
+        }
+        circle.phase_s {
+          fill: olivedrab;
+          stroke: olivedrab;
+        }
+        .phase_s.label {
+          stroke: olivedrab;
+          fill: olivedrab;
+        }
+        .legend .phase_s line {
+          stroke: olivedrab;
+        }
+        .legend .phase_s text {
+          fill: olivedrab;
+          stroke: transparent;
+        }
+        .label text.phase_s{
+          font: bold ;
+          fill: olivedrab;
+          stroke: transparent;
+        }
+        .phase_P {
+          stroke: goldenrod;
+        }
+        circle.phase_P {
+          fill: goldenrod;
+          stroke: goldenrod;
+        }
+        .phase_P.label {
+          stroke: goldenrod;
+          fill: goldenrod;
+        }
+        .legend .phase_P line {
+          stroke: goldenrod;
+        }
+        .legend .phase_P text {
+          fill: goldenrod;
+          stroke: transparent;
+        }
+        .label text.phase_P{
+          font: bold ;
+          fill: goldenrod;
+          stroke: transparent;
+        }
+        .phase_S {
+          stroke: firebrick;
+        }
+        circle.phase_S {
+          fill: firebrick;
+          stroke: firebrick;
+        }
+        .phase_S.label {
+          stroke: firebrick;
+          fill: firebrick;
+        }
+        .legend .phase_S line {
+          stroke: firebrick;
+        }
+        .legend .phase_S text {
+          fill: firebrick;
+          stroke: transparent;
+        }
+        .label text.phase_S{
+          font: bold ;
+          fill: firebrick;
+          stroke: transparent;
+        }
+        .phase_Pn {
+          stroke: darkcyan;
+        }
+        circle.phase_Pn {
+          fill: darkcyan;
+          stroke: darkcyan;
+        }
+        .phase_Pn.label {
+          stroke: darkcyan;
+          fill: darkcyan;
+        }
+        .legend .phase_Pn line {
+          stroke: darkcyan;
+        }
+        .legend .phase_Pn text {
+          fill: darkcyan;
+          stroke: transparent;
+        }
+        .label text.phase_Pn{
+          font: bold ;
+          fill: darkcyan;
+          stroke: transparent;
+        }
+        .phase_Sn {
+          stroke: chocolate;
+        }
+        circle.phase_Sn {
+          fill: chocolate;
+          stroke: chocolate;
+        }
+        .phase_Sn.label {
+          stroke: chocolate;
+          fill: chocolate;
+        }
+        .legend .phase_Sn line {
+          stroke: chocolate;
+        }
+        .legend .phase_Sn text {
+          fill: chocolate;
+          stroke: transparent;
+        }
+        .label text.phase_Sn{
+          font: bold ;
+          fill: chocolate;
+          stroke: transparent;
+        }
+        .phase_PcP {
+          stroke: darkmagenta;
+        }
+        circle.phase_PcP {
+          fill: darkmagenta;
+          stroke: darkmagenta;
+        }
+        .phase_PcP.label {
+          stroke: darkmagenta;
+          fill: darkmagenta;
+        }
+        .legend .phase_PcP line {
+          stroke: darkmagenta;
+        }
+        .legend .phase_PcP text {
+          fill: darkmagenta;
+          stroke: transparent;
+        }
+        .label text.phase_PcP{
+          font: bold ;
+          fill: darkmagenta;
+          stroke: transparent;
+        }
+        .phase_ScS {
+          stroke: mediumvioletred;
+        }
+        circle.phase_ScS {
+          fill: mediumvioletred;
+          stroke: mediumvioletred;
+        }
+        .phase_ScS.label {
+          stroke: mediumvioletred;
+          fill: mediumvioletred;
+        }
+        .legend .phase_ScS line {
+          stroke: mediumvioletred;
+        }
+        .legend .phase_ScS text {
+          fill: mediumvioletred;
+          stroke: transparent;
+        }
+        .label text.phase_ScS{
+          font: bold ;
+          fill: mediumvioletred;
+          stroke: transparent;
+        }
+        .phase_Pdiff {
+          stroke: sienna;
+        }
+        circle.phase_Pdiff {
+          fill: sienna;
+          stroke: sienna;
+        }
+        .phase_Pdiff.label {
+          stroke: sienna;
+          fill: sienna;
+        }
+        .legend .phase_Pdiff line {
+          stroke: sienna;
+        }
+        .legend .phase_Pdiff text {
+          fill: sienna;
+          stroke: transparent;
+        }
+        .label text.phase_Pdiff{
+          font: bold ;
+          fill: sienna;
+          stroke: transparent;
+        }
+        .phase_Sdiff {
+          stroke: rebeccapurple;
+        }
+        circle.phase_Sdiff {
+          fill: rebeccapurple;
+          stroke: rebeccapurple;
+        }
+        .phase_Sdiff.label {
+          stroke: rebeccapurple;
+          fill: rebeccapurple;
+        }
+        .legend .phase_Sdiff line {
+          stroke: rebeccapurple;
+        }
+        .legend .phase_Sdiff text {
+          fill: rebeccapurple;
+          stroke: transparent;
+        }
+        .label text.phase_Sdiff{
+          font: bold ;
+          fill: rebeccapurple;
+          stroke: transparent;
+        }
+        .phase_PKP {
+          stroke: skyblue;
+        }
+        circle.phase_PKP {
+          fill: skyblue;
+          stroke: skyblue;
+        }
+        .phase_PKP.label {
+          stroke: skyblue;
+          fill: skyblue;
+        }
+        .legend .phase_PKP line {
+          stroke: skyblue;
+        }
+        .legend .phase_PKP text {
+          fill: skyblue;
+          stroke: transparent;
+        }
+        .label text.phase_PKP{
+          font: bold ;
+          fill: skyblue;
+          stroke: transparent;
+        }
+        .phase_SKS {
+          stroke: olivedrab;
+        }
+        circle.phase_SKS {
+          fill: olivedrab;
+          stroke: olivedrab;
+        }
+        .phase_SKS.label {
+          stroke: olivedrab;
+          fill: olivedrab;
+        }
+        .legend .phase_SKS line {
+          stroke: olivedrab;
+        }
+        .legend .phase_SKS text {
+          fill: olivedrab;
+          stroke: transparent;
+        }
+        .label text.phase_SKS{
+          font: bold ;
+          fill: olivedrab;
+          stroke: transparent;
+        }
+        .phase_PKiKP {
+          stroke: goldenrod;
+        }
+        circle.phase_PKiKP {
+          fill: goldenrod;
+          stroke: goldenrod;
+        }
+        .phase_PKiKP.label {
+          stroke: goldenrod;
+          fill: goldenrod;
+        }
+        .legend .phase_PKiKP line {
+          stroke: goldenrod;
+        }
+        .legend .phase_PKiKP text {
+          fill: goldenrod;
+          stroke: transparent;
+        }
+        .label text.phase_PKiKP{
+          font: bold ;
+          fill: goldenrod;
+          stroke: transparent;
+        }
+        .phase_SKiKS {
+          stroke: firebrick;
+        }
+        circle.phase_SKiKS {
+          fill: firebrick;
+          stroke: firebrick;
+        }
+        .phase_SKiKS.label {
+          stroke: firebrick;
+          fill: firebrick;
+        }
+        .legend .phase_SKiKS line {
+          stroke: firebrick;
+        }
+        .legend .phase_SKiKS text {
+          fill: firebrick;
+          stroke: transparent;
+        }
+        .label text.phase_SKiKS{
+          font: bold ;
+          fill: firebrick;
+          stroke: transparent;
+        }
+        .phase_PKIKP {
+          stroke: darkcyan;
+        }
+        circle.phase_PKIKP {
+          fill: darkcyan;
+          stroke: darkcyan;
+        }
+        .phase_PKIKP.label {
+          stroke: darkcyan;
+          fill: darkcyan;
+        }
+        .legend .phase_PKIKP line {
+          stroke: darkcyan;
+        }
+        .legend .phase_PKIKP text {
+          fill: darkcyan;
+          stroke: transparent;
+        }
+        .label text.phase_PKIKP{
+          font: bold ;
+          fill: darkcyan;
+          stroke: transparent;
+        }
+        .phase_SKIKS {
+          stroke: chocolate;
+        }
+        circle.phase_SKIKS {
+          fill: chocolate;
+          stroke: chocolate;
+        }
+        .phase_SKIKS.label {
+          stroke: chocolate;
+          fill: chocolate;
+        }
+        .legend .phase_SKIKS line {
+          stroke: chocolate;
+        }
+        .legend .phase_SKIKS text {
+          fill: chocolate;
+          stroke: transparent;
+        }
+        .label text.phase_SKIKS{
+          font: bold ;
+          fill: chocolate;
+          stroke: transparent;
+        }
 
 text.title {
     text-anchor: middle;
@@ -187,77 +555,77 @@ circle.discontinuity.iocb {
 
     ]]></style>
   <clipPath id="curve_clip">
-    <rect x="-1" y="-1" width="521.0" height="521.0"/>
+    <rect x="-1" y="-1" width="417.0" height="417.0"/>
   </clipPath>
   </defs>
 <!-- draw axis and label distances.-->
 
-<text class="title" x="260.0" y="0">iasp91 (h=0.0 km)</text>
+<text class="title" x="208.0" y="0">iasp91 (h=0.0 km)</text>
 <g> <!-- y axis -->
 <g  >
-  <text font-size="14" transform="translate(-64, 260) rotate(-90 )" dy=".75em" text-anchor="middle" class="ylabel" >Tau</text>
+  <text font-size="14" transform="translate(-64, 208) rotate(-90 )" dy=".75em" text-anchor="middle" class="ylabel" >Tau</text>
 </g>
-<line  class="tick" x1="0" y1="0" x2="0" y2="520.0" />
-<text class="ytick" font-size="12" x="-12.0" y="520.0">0.0</text>
-<line class="tick" x1="0" y1="520.0" x2="-10.0" y2="520.0" />
-<text class="ytick" font-size="12" x="-12.0" y="456.44513">200.0</text>
-<line class="tick" x1="0" y1="456.44513" x2="-10.0" y2="456.44513" />
-<text class="ytick" font-size="12" x="-12.0" y="392.8903">400.0</text>
-<line class="tick" x1="0" y1="392.8903" x2="-10.0" y2="392.8903" />
-<text class="ytick" font-size="12" x="-12.0" y="329.33545">600.0</text>
-<line class="tick" x1="0" y1="329.33545" x2="-10.0" y2="329.33545" />
-<text class="ytick" font-size="12" x="-12.0" y="265.78058">800.0</text>
-<line class="tick" x1="0" y1="265.78058" x2="-10.0" y2="265.78058" />
-<text class="ytick" font-size="12" x="-12.0" y="202.22571">1000.0</text>
-<line class="tick" x1="0" y1="202.22571" x2="-10.0" y2="202.22571" />
-<text class="ytick" font-size="12" x="-12.0" y="138.67087">1200.0</text>
-<line class="tick" x1="0" y1="138.67087" x2="-10.0" y2="138.67087" />
-<text class="ytick" font-size="12" x="-12.0" y="75.116">1400.0</text>
-<line class="tick" x1="0" y1="75.116" x2="-10.0" y2="75.116" />
-<text class="ytick" font-size="12" x="-12.0" y="11.561157">1600.0</text>
-<line class="tick" x1="0" y1="11.561157" x2="-10.0" y2="11.561157" />
+<line  class="tick" x1="0" y1="0" x2="0" y2="416.0" />
+<text class="ytick" font-size="12" x="-12.0" y="416.0">0.0</text>
+<line class="tick" x1="0" y1="416.0" x2="-10.0" y2="416.0" />
+<text class="ytick" font-size="12" x="-12.0" y="365.15613">200.0</text>
+<line class="tick" x1="0" y1="365.15613" x2="-10.0" y2="365.15613" />
+<text class="ytick" font-size="12" x="-12.0" y="314.31223">400.0</text>
+<line class="tick" x1="0" y1="314.31223" x2="-10.0" y2="314.31223" />
+<text class="ytick" font-size="12" x="-12.0" y="263.46835">600.0</text>
+<line class="tick" x1="0" y1="263.46835" x2="-10.0" y2="263.46835" />
+<text class="ytick" font-size="12" x="-12.0" y="212.62447">800.0</text>
+<line class="tick" x1="0" y1="212.62447" x2="-10.0" y2="212.62447" />
+<text class="ytick" font-size="12" x="-12.0" y="161.78058">1000.0</text>
+<line class="tick" x1="0" y1="161.78058" x2="-10.0" y2="161.78058" />
+<text class="ytick" font-size="12" x="-12.0" y="110.93671">1200.0</text>
+<line class="tick" x1="0" y1="110.93671" x2="-10.0" y2="110.93671" />
+<text class="ytick" font-size="12" x="-12.0" y="60.092804">1400.0</text>
+<line class="tick" x1="0" y1="60.092804" x2="-10.0" y2="60.092804" />
+<text class="ytick" font-size="12" x="-12.0" y="9.248932">1600.0</text>
+<line class="tick" x1="0" y1="9.248932" x2="-10.0" y2="9.248932" />
 </g> <!-- y axis end-->
 <g> <!-- x axis -->
-<text class="xlabel" font-size="14" x="260.0" y="556.4">Ray Param (s/deg)</text>
-<line class="tick" x1="0" y1="520.0" x2="520.0" y2="520.0" />
-<text class="xtick" font-size="12" x="0.0" y="542.0">0.0</text>
-<line class="tick" x1="0.0" y1="520.0" x2="0.0" y2="530.0" />
-<text class="xtick" font-size="12" x="31.42589419722412" y="542.0">2.0</text>
-<line class="tick" x1="31.42589419722412" y1="520.0" x2="31.42589419722412" y2="530.0" />
-<text class="xtick" font-size="12" x="62.85178839444824" y="542.0">4.0</text>
-<line class="tick" x1="62.85178839444824" y1="520.0" x2="62.85178839444824" y2="530.0" />
-<text class="xtick" font-size="12" x="94.27768259167236" y="542.0">6.0</text>
-<line class="tick" x1="94.27768259167236" y1="520.0" x2="94.27768259167236" y2="530.0" />
-<text class="xtick" font-size="12" x="125.70357678889648" y="542.0">8.0</text>
-<line class="tick" x1="125.70357678889648" y1="520.0" x2="125.70357678889648" y2="530.0" />
-<text class="xtick" font-size="12" x="157.1294709861206" y="542.0">10.0</text>
-<line class="tick" x1="157.1294709861206" y1="520.0" x2="157.1294709861206" y2="530.0" />
-<text class="xtick" font-size="12" x="188.55536518334472" y="542.0">12.0</text>
-<line class="tick" x1="188.55536518334472" y1="520.0" x2="188.55536518334472" y2="530.0" />
-<text class="xtick" font-size="12" x="219.98125938056884" y="542.0">14.0</text>
-<line class="tick" x1="219.98125938056884" y1="520.0" x2="219.98125938056884" y2="530.0" />
-<text class="xtick" font-size="12" x="251.40715357779297" y="542.0">16.0</text>
-<line class="tick" x1="251.40715357779297" y1="520.0" x2="251.40715357779297" y2="530.0" />
-<text class="xtick" font-size="12" x="282.8330477750171" y="542.0">18.0</text>
-<line class="tick" x1="282.8330477750171" y1="520.0" x2="282.8330477750171" y2="530.0" />
-<text class="xtick" font-size="12" x="314.2589419722412" y="542.0">20.0</text>
-<line class="tick" x1="314.2589419722412" y1="520.0" x2="314.2589419722412" y2="530.0" />
-<text class="xtick" font-size="12" x="345.6848361694653" y="542.0">22.0</text>
-<line class="tick" x1="345.6848361694653" y1="520.0" x2="345.6848361694653" y2="530.0" />
-<text class="xtick" font-size="12" x="377.11073036668944" y="542.0">24.0</text>
-<line class="tick" x1="377.11073036668944" y1="520.0" x2="377.11073036668944" y2="530.0" />
-<text class="xtick" font-size="12" x="408.53662456391356" y="542.0">26.0</text>
-<line class="tick" x1="408.53662456391356" y1="520.0" x2="408.53662456391356" y2="530.0" />
-<text class="xtick" font-size="12" x="439.9625187611377" y="542.0">28.0</text>
-<line class="tick" x1="439.9625187611377" y1="520.0" x2="439.9625187611377" y2="530.0" />
-<text class="xtick" font-size="12" x="471.3884129583618" y="542.0">30.0</text>
-<line class="tick" x1="471.3884129583618" y1="520.0" x2="471.3884129583618" y2="530.0" />
-<text class="xtick" font-size="12" x="502.81430715558594" y="542.0">32.0</text>
-<line class="tick" x1="502.81430715558594" y1="520.0" x2="502.81430715558594" y2="530.0" />
+<text class="xlabel" font-size="14" x="208.0" y="452.4">Ray Param (s/deg)</text>
+<line class="tick" x1="0" y1="416.0" x2="416.0" y2="416.0" />
+<text class="xtick" font-size="12" x="0.0" y="438.0">0.0</text>
+<line class="tick" x1="0.0" y1="416.0" x2="0.0" y2="426.0" />
+<text class="xtick" font-size="12" x="25.140715357779296" y="438.0">2.0</text>
+<line class="tick" x1="25.140715357779296" y1="416.0" x2="25.140715357779296" y2="426.0" />
+<text class="xtick" font-size="12" x="50.28143071555859" y="438.0">4.0</text>
+<line class="tick" x1="50.28143071555859" y1="416.0" x2="50.28143071555859" y2="426.0" />
+<text class="xtick" font-size="12" x="75.42214607333788" y="438.0">6.0</text>
+<line class="tick" x1="75.42214607333788" y1="416.0" x2="75.42214607333788" y2="426.0" />
+<text class="xtick" font-size="12" x="100.56286143111718" y="438.0">8.0</text>
+<line class="tick" x1="100.56286143111718" y1="416.0" x2="100.56286143111718" y2="426.0" />
+<text class="xtick" font-size="12" x="125.70357678889648" y="438.0">10.0</text>
+<line class="tick" x1="125.70357678889648" y1="416.0" x2="125.70357678889648" y2="426.0" />
+<text class="xtick" font-size="12" x="150.84429214667577" y="438.0">12.0</text>
+<line class="tick" x1="150.84429214667577" y1="416.0" x2="150.84429214667577" y2="426.0" />
+<text class="xtick" font-size="12" x="175.98500750445507" y="438.0">14.0</text>
+<line class="tick" x1="175.98500750445507" y1="416.0" x2="175.98500750445507" y2="426.0" />
+<text class="xtick" font-size="12" x="201.12572286223437" y="438.0">16.0</text>
+<line class="tick" x1="201.12572286223437" y1="416.0" x2="201.12572286223437" y2="426.0" />
+<text class="xtick" font-size="12" x="226.26643822001367" y="438.0">18.0</text>
+<line class="tick" x1="226.26643822001367" y1="416.0" x2="226.26643822001367" y2="426.0" />
+<text class="xtick" font-size="12" x="251.40715357779297" y="438.0">20.0</text>
+<line class="tick" x1="251.40715357779297" y1="416.0" x2="251.40715357779297" y2="426.0" />
+<text class="xtick" font-size="12" x="276.54786893557224" y="438.0">22.0</text>
+<line class="tick" x1="276.54786893557224" y1="416.0" x2="276.54786893557224" y2="426.0" />
+<text class="xtick" font-size="12" x="301.68858429335154" y="438.0">24.0</text>
+<line class="tick" x1="301.68858429335154" y1="416.0" x2="301.68858429335154" y2="426.0" />
+<text class="xtick" font-size="12" x="326.82929965113084" y="438.0">26.0</text>
+<line class="tick" x1="326.82929965113084" y1="416.0" x2="326.82929965113084" y2="426.0" />
+<text class="xtick" font-size="12" x="351.97001500891014" y="438.0">28.0</text>
+<line class="tick" x1="351.97001500891014" y1="416.0" x2="351.97001500891014" y2="426.0" />
+<text class="xtick" font-size="12" x="377.11073036668944" y="438.0">30.0</text>
+<line class="tick" x1="377.11073036668944" y1="416.0" x2="377.11073036668944" y2="426.0" />
+<text class="xtick" font-size="12" x="402.25144572446874" y="438.0">32.0</text>
+<line class="tick" x1="402.25144572446874" y1="416.0" x2="402.25144572446874" y2="426.0" />
 </g> <!-- x axis end-->
 <g clip-path="url(#curve_clip)">
-<g transform="scale(1,-1) translate(0, -520.0)">
-<g transform="scale(15.71294709861206,0.317774277933276)" >
+<g transform="scale(1,-1) translate(0, -416.0)">
+<g transform="scale(12.570357678889648,0.2542194223466208)" >
 <g transform="translate(-0.0, -0.0)">
     <g class="autocolor">
     <g class="pwave phase_P pwave" tauplabel="rayparamdeg/tau P for a source depth of 0.0 kilometers in the iasp91 model"  >
@@ -1688,62 +2056,62 @@ circle.discontinuity.iocb {
   </g> <!-- end scale -->
   </g> <!-- end scaletranslate -->
   </g> <!-- end clip-path -->
-<g class="legend autocolor" transform="translate(52.0,52.0)"> <!-- legend -->
+<g class="legend autocolor" transform="translate(41.0,41.0)"> <!-- legend -->
 <g class="pwave phase_P pwave">
 <line class="pwave phase_P pwave" x1="0" y1="0" x2="10" y2="0" />
-<text class="pwave phase_P pwave" font-size="14" x="11" y="0">P</text>
+<text class="pwave phase_P pwave" font-size="12" x="11" y="0">P</text>
 </g>
 <g class="swave phase_S swave">
-<line class="swave phase_S swave" x1="0" y1="16" x2="10" y2="16" />
-<text class="swave phase_S swave" font-size="14" x="11" y="16">S</text>
+<line class="swave phase_S swave" x1="0" y1="14" x2="10" y2="14" />
+<text class="swave phase_S swave" font-size="12" x="11" y="14">S</text>
 </g>
 <g class="pwave phase_Pn pwave">
-<line class="pwave phase_Pn pwave" x1="0" y1="32" x2="10" y2="32" />
-<text class="pwave phase_Pn pwave" font-size="14" x="11" y="32">Pn</text>
+<line class="pwave phase_Pn pwave" x1="0" y1="28" x2="10" y2="28" />
+<text class="pwave phase_Pn pwave" font-size="12" x="11" y="28">Pn</text>
 </g>
 <g class="swave phase_Sn swave">
-<line class="swave phase_Sn swave" x1="0" y1="48" x2="10" y2="48" />
-<text class="swave phase_Sn swave" font-size="14" x="11" y="48">Sn</text>
+<line class="swave phase_Sn swave" x1="0" y1="42" x2="10" y2="42" />
+<text class="swave phase_Sn swave" font-size="12" x="11" y="42">Sn</text>
 </g>
 <g class="pwave phase_PcP pwave">
-<line class="pwave phase_PcP pwave" x1="0" y1="64" x2="10" y2="64" />
-<text class="pwave phase_PcP pwave" font-size="14" x="11" y="64">PcP</text>
+<line class="pwave phase_PcP pwave" x1="0" y1="56" x2="10" y2="56" />
+<text class="pwave phase_PcP pwave" font-size="12" x="11" y="56">PcP</text>
 </g>
 <g class="swave phase_ScS swave">
-<line class="swave phase_ScS swave" x1="0" y1="80" x2="10" y2="80" />
-<text class="swave phase_ScS swave" font-size="14" x="11" y="80">ScS</text>
+<line class="swave phase_ScS swave" x1="0" y1="70" x2="10" y2="70" />
+<text class="swave phase_ScS swave" font-size="12" x="11" y="70">ScS</text>
 </g>
 <g class="pwave phase_Pdiff pwave">
-<line class="pwave phase_Pdiff pwave" x1="0" y1="96" x2="10" y2="96" />
-<text class="pwave phase_Pdiff pwave" font-size="14" x="11" y="96">Pdiff</text>
+<line class="pwave phase_Pdiff pwave" x1="0" y1="84" x2="10" y2="84" />
+<text class="pwave phase_Pdiff pwave" font-size="12" x="11" y="84">Pdiff</text>
 </g>
 <g class="swave phase_Sdiff swave">
-<line class="swave phase_Sdiff swave" x1="0" y1="112" x2="10" y2="112" />
-<text class="swave phase_Sdiff swave" font-size="14" x="11" y="112">Sdiff</text>
+<line class="swave phase_Sdiff swave" x1="0" y1="98" x2="10" y2="98" />
+<text class="swave phase_Sdiff swave" font-size="12" x="11" y="98">Sdiff</text>
 </g>
 <g class="pwave phase_PKP pwave">
-<line class="pwave phase_PKP pwave" x1="0" y1="128" x2="10" y2="128" />
-<text class="pwave phase_PKP pwave" font-size="14" x="11" y="128">PKP</text>
+<line class="pwave phase_PKP pwave" x1="0" y1="112" x2="10" y2="112" />
+<text class="pwave phase_PKP pwave" font-size="12" x="11" y="112">PKP</text>
 </g>
 <g class="both_p_swave phase_SKS both_p_swave">
-<line class="both_p_swave phase_SKS both_p_swave" x1="0" y1="144" x2="10" y2="144" />
-<text class="both_p_swave phase_SKS both_p_swave" font-size="14" x="11" y="144">SKS</text>
+<line class="both_p_swave phase_SKS both_p_swave" x1="0" y1="126" x2="10" y2="126" />
+<text class="both_p_swave phase_SKS both_p_swave" font-size="12" x="11" y="126">SKS</text>
 </g>
 <g class="pwave phase_PKiKP pwave">
-<line class="pwave phase_PKiKP pwave" x1="0" y1="160" x2="10" y2="160" />
-<text class="pwave phase_PKiKP pwave" font-size="14" x="11" y="160">PKiKP</text>
+<line class="pwave phase_PKiKP pwave" x1="0" y1="140" x2="10" y2="140" />
+<text class="pwave phase_PKiKP pwave" font-size="12" x="11" y="140">PKiKP</text>
 </g>
 <g class="both_p_swave phase_SKiKS both_p_swave">
-<line class="both_p_swave phase_SKiKS both_p_swave" x1="0" y1="176" x2="10" y2="176" />
-<text class="both_p_swave phase_SKiKS both_p_swave" font-size="14" x="11" y="176">SKiKS</text>
+<line class="both_p_swave phase_SKiKS both_p_swave" x1="0" y1="154" x2="10" y2="154" />
+<text class="both_p_swave phase_SKiKS both_p_swave" font-size="12" x="11" y="154">SKiKS</text>
 </g>
 <g class="pwave phase_PKIKP pwave">
-<line class="pwave phase_PKIKP pwave" x1="0" y1="192" x2="10" y2="192" />
-<text class="pwave phase_PKIKP pwave" font-size="14" x="11" y="192">PKIKP</text>
+<line class="pwave phase_PKIKP pwave" x1="0" y1="168" x2="10" y2="168" />
+<text class="pwave phase_PKIKP pwave" font-size="12" x="11" y="168">PKIKP</text>
 </g>
 <g class="both_p_swave phase_SKIKS both_p_swave">
-<line class="both_p_swave phase_SKIKS both_p_swave" x1="0" y1="208" x2="10" y2="208" />
-<text class="both_p_swave phase_SKIKS both_p_swave" font-size="14" x="11" y="208">SKIKS</text>
+<line class="both_p_swave phase_SKIKS both_p_swave" x1="0" y1="182" x2="10" y2="182" />
+<text class="both_p_swave phase_SKIKS both_p_swave" font-size="12" x="11" y="182">SKIKS</text>
 </g>
 </g> <!-- legend end-->
 </svg>
