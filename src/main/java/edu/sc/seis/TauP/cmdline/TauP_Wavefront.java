@@ -104,21 +104,24 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
             String cssExtra = "";
             cssExtra += createSurfaceWaveCSS(phaseNameList)+"\n";
             double maxTime = 0;
-            if (coloring.getColoring() == ColorType.phase) {
-                StringBuffer cssPhaseColors = SvgUtil.createPhaseColorCSS(phaseNameList, coloring);
-                cssExtra += cssPhaseColors;
-            } else if (coloring.getColoring() == ColorType.wavetype) {
-                String cssWaveTypeColors = SvgUtil.createWaveTypeColorCSS(coloring);
-                cssExtra += cssWaveTypeColors;
-            } else {
-                for (SeismicPhase phase : getSeismicPhases()) {
-                    if (phase.hasArrivals() && phase.getMaxTime() > maxTime) {
-                        maxTime = phase.getMaxTime();
+            switch (coloring.getColoring()) {
+                case phase:
+                    cssExtra += SvgUtil.createPhaseColorCSS(phaseNameList, coloring);
+                    break;
+                case wavetype:
+                    cssExtra += SvgUtil.createWaveTypeColorCSS(coloring);
+                    break;
+                case none:
+                    cssExtra += SvgUtil.createNoneColorCSS(coloring);
+                case auto:
+                default:
+                    for (SeismicPhase phase : getSeismicPhases()) {
+                        if (phase.hasArrivals() && phase.getMaxTime() > maxTime) {
+                            maxTime = phase.getMaxTime();
+                        }
                     }
-                }
-                StringBuffer cssTimeColors = SvgUtil.createTimeStepColorCSS(timeStep, (float) maxTime, coloring);
-                cssExtra += cssTimeColors;
-                // autocolor?
+                    StringBuffer cssTimeColors = SvgUtil.createTimeStepColorCSS(timeStep, (float) maxTime, coloring);
+                    cssExtra += cssTimeColors;
             }
             float pixelWidth = getGraphicOutputTypeArgs().getPixelWidth();
             SvgEarthScaling scaleTrans = SvgEarth.calcEarthScaleTransForPhaseList(getSeismicPhases(), distDepthRangeArgs, isNegDistance());
@@ -151,12 +154,12 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
             }
             SvgEarth.printSvgEndZoom(out);
             if (isLegend) {
-                float xtrans = (int)(-1*pixelWidth*.05);
+                float xtrans = (int)(pixelWidth*.01);
                 float ytrans = (int) (pixelWidth*.05);
                 if (coloring.getColoring() == ColorType.phase) {
                     SvgUtil.createPhaseLegend(out, getSeismicPhases(), "" , xtrans, ytrans);
                 } else if (coloring.getColoring() == ColorType.wavetype) {
-                    SvgUtil.createWavetypeLegend(out, xtrans, ytrans, false);
+                    SvgUtil.createWavetypeLegend(out, false, xtrans, ytrans);
                 } else {
                     SvgUtil.createTimeStepLegend(out, timeStep, maxTime, "autocolor", xtrans, ytrans );
                 }

@@ -30,7 +30,7 @@ public class SvgUtil {
                                              String toolName, List<String> cmdLineArgs,
                                              float pixelWidth, int plotOffset,
                                              List<String> colorList,
-                                             String extraCSS, double[] minmax) {
+                                             CharSequence extraCSS, double[] minmax) {
         StringBuffer css = new StringBuffer();
         css.append(extraCSS+"\n");
         StringBuffer stdcss = loadStandardCSS();
@@ -153,7 +153,7 @@ public class SvgUtil {
 
     public static void createLegend(PrintWriter out, List<String> labels, List<String> labelClasses, String outerGcss, float xtrans, float ytrans) {
         int lineLength = 10;
-        int font_size = 14;
+        int font_size = 12;
         int yoffset = font_size+2;
         out.println("<g class=\"legend "+outerGcss+"\" transform=\"translate("+xtrans+","+ytrans+")\"> <!-- legend -->");
         for (int i = 0; i < labels.size(); i++) {
@@ -189,12 +189,12 @@ public class SvgUtil {
         SvgUtil.createLegend(out, labelList, classList, "",  xtrans, ytrans);
     }
 
-    public static void createWavetypeLegend(PrintWriter out, float xtrans, float ytrans, boolean withBoth) {
+    public static void createWavetypeLegend(PrintWriter out, boolean withBoth, float xtrans, float ytrans) {
         List<String> waveLabels = new ArrayList<>();
         List<String> waveLabelClasses = new ArrayList<>();
-        waveLabels.add("P");
+        waveLabels.add("P Wave");
         waveLabelClasses.add("pwave");
-        waveLabels.add("S");
+        waveLabels.add("S Wave");
         waveLabelClasses.add("swave");
         if (withBoth){
             waveLabels.add("Both");
@@ -248,6 +248,7 @@ public class SvgUtil {
         List<ReflTransAxisType> allCoeff = new ArrayList<>();
         allCoeff.addAll(ReflTransAxisType.allDisplacement);
         allCoeff.addAll(ReflTransAxisType.allEnergy);
+        allCoeff.addAll(ReflTransAxisType.allFreeRF);
         for (ReflTransAxisType rt : allCoeff) {
             out.append("        ."+rt.name()+" {\n");
             out.append("          stroke: "+colors.get(rt)+";\n");
@@ -260,18 +261,9 @@ public class SvgUtil {
             out.append("          stroke: "+colors.get(rt)+";\n");
             out.append("          fill: "+colors.get(rt)+";\n");
             out.append("        }\n");
-        }
-        for (ReflTransAxisType rt : ReflTransAxisType.allFreeRF) {
-            out.append("        ."+rt.name()+" {\n");
-            out.append("          stroke: "+colors.get(rt)+";\n");
-            out.append("        }\n");
-            out.append("        ."+rt.name()+".label {\n");
-            out.append("          stroke: "+colors.get(rt)+";\n");
+            out.append("        .legend ."+rt.name()+" text {\n");
             out.append("          fill: "+colors.get(rt)+";\n");
-            out.append("        }\n");
-            out.append("        .legend ."+rt.name()+" {\n");
-            out.append("          stroke: "+colors.get(rt)+";\n");
-            out.append("          fill: "+colors.get(rt)+";\n");
+            out.append("          stroke: transparent;\n");
             out.append("        }\n");
         }
         return out;
@@ -341,8 +333,41 @@ public class SvgUtil {
             out.append("          fill: "+color+";\n");
             out.append("          stroke: transparent;\n");
             out.append("        }\n");
+            out.append("        .label text."+phaseClass+"{\n");
+            out.append("          font: bold ;\n");
+            out.append("          fill: "+color+";\n");
+            out.append("          stroke: transparent;\n");
+            out.append("        }\n");
         }
         return out;
+    }
+
+    public static StringBuffer createNoneColorCSS(ColoringArgs coloringArgs) {
+        String color = "darkgrey";
+        StringBuffer extrtaCSS = new StringBuffer();
+        HashMap<String, String> colors = coloringArgs.getWavetypeColors();
+        for (String wavetype : colors.keySet()) {
+            extrtaCSS.append("        polyline."+wavetype+" {\n");
+            extrtaCSS.append("            stroke: "+color+";\n");
+            extrtaCSS.append("        }\n");
+            extrtaCSS.append("        circle."+wavetype+" {\n");
+            extrtaCSS.append("            stroke: "+color+";\n");
+            extrtaCSS.append("            fill: "+color+";\n");
+            extrtaCSS.append("        }\n");
+            extrtaCSS.append("        ."+wavetype+".label {\n");
+            extrtaCSS.append("          stroke: "+color+";\n");
+            extrtaCSS.append("          fill: "+color+";\n");
+            extrtaCSS.append("        }\n");
+            extrtaCSS.append("        .legend ."+wavetype+" {\n");
+            extrtaCSS.append("          stroke: "+color+";\n");
+            extrtaCSS.append("          fill: "+color+";\n");
+            extrtaCSS.append("        }\n");
+            extrtaCSS.append("        .legend ."+wavetype+" text {\n");
+            extrtaCSS.append("          fill: "+color+";\n");
+            extrtaCSS.append("          stroke: transparent;\n");
+            extrtaCSS.append("        }\n");
+        }
+        return extrtaCSS;
     }
 
     public static String formatTimeForCss(double timeVal) {
@@ -351,9 +376,9 @@ public class SvgUtil {
 
     public static StringBuffer createTimeStepColorCSS(float timestep, float maxTime, ColoringArgs coloringArgs) {
         StringBuffer out = new StringBuffer();
-        for (int i = 1; i < maxTime/timestep; i++) {
+        for (int i = 0; i*timestep <= maxTime; i++) {
             String timeLabel = formatTimeForCss( i*timestep);
-            String color = coloringArgs.colorForIndex(i-1);
+            String color = coloringArgs.colorForIndex(i);
             out.append("        ."+timeLabel+" {\n");
             out.append("          stroke: "+color+";\n");
             out.append("        }\n");
@@ -369,6 +394,10 @@ public class SvgUtil {
             out.append("          stroke: "+color+";\n");
             out.append("          fill: "+color+";\n");
             out.append("        }\n");
+            out.append("        .legend ."+timeLabel+" text {\n");
+            out.append("          fill: "+color+";\n");
+            out.append("          stroke: transparent;\n");
+            out.append("        }\n");
         }
         return out;
     }
@@ -383,19 +412,15 @@ public class SvgUtil {
     public static StringBuffer resizeLabels(int fontSize) {
         StringBuffer extrtaCSS = new StringBuffer();
         extrtaCSS.append("        text.label {\n");
-        extrtaCSS.append("            font: bold ;\n");
         extrtaCSS.append("            font-size: "+fontSize+"px;\n");
-        extrtaCSS.append("            fill: black;\n");
         extrtaCSS.append("        }\n");
         extrtaCSS.append("        g.phasename text {\n");
-        extrtaCSS.append("            font: bold ;\n");
         extrtaCSS.append("            font-size: "+fontSize+"px;\n");
-        extrtaCSS.append("            fill: black;\n");
         extrtaCSS.append("        }\n");
         return extrtaCSS;
     }
 
-    public static String createWaveTypeColorCSS(ColoringArgs coloringArgs) {
+    public static StringBuffer createWaveTypeColorCSS(ColoringArgs coloringArgs) {
         StringBuffer extrtaCSS = new StringBuffer();
         HashMap<String, String> colors = coloringArgs.getWavetypeColors();
         for (String wavetype : colors.keySet()) {
@@ -415,8 +440,12 @@ public class SvgUtil {
             extrtaCSS.append("          stroke: "+color+";\n");
             extrtaCSS.append("          fill: "+color+";\n");
             extrtaCSS.append("        }\n");
+            extrtaCSS.append("        .legend ."+wavetype+" text {\n");
+            extrtaCSS.append("          fill: "+color+";\n");
+            extrtaCSS.append("          stroke: transparent;\n");
+            extrtaCSS.append("        }\n");
         }
-        return extrtaCSS.toString();
+        return extrtaCSS;
     }
 
 }

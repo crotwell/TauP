@@ -400,13 +400,19 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
             xyOut.printAsGmtScript(writer, toolNameFromClass(this.getClass()), getCmdLineArgs(), outputTypeArgs, isLegend);
         } else if (outputTypeArgs.isSVG()) {
             String cssExtra = "";
-            if (coloring.getColoring() == ColorType.phase) {
-                cssExtra += SvgUtil.createPhaseColorCSS(phaseNameList, coloring);
-            } else if (coloring.getColoring() == ColorType.wavetype) {
-                cssExtra += SvgUtil.createWaveTypeColorCSS(coloring);
-            } else {
+            switch (coloring.getColoring()) {
+                case phase:
+                case auto:
+                    cssExtra += SvgUtil.createPhaseColorCSS(phaseNameList, coloring);
+                    break;
+                case wavetype:
+                    cssExtra += SvgUtil.createWaveTypeColorCSS(coloring);
+                    break;
+                default:
+                    cssExtra += SvgUtil.createNoneColorCSS(coloring);
             }
             xyOut.printAsSvg(writer, toolNameFromClass(this.getClass()), getCmdLineArgs(),
+                    outputTypeArgs.getPixelWidth(),
                     cssExtra, isLegend);
         } else {
             throw new IllegalArgumentException("Unknown output format: " + outputTypeArgs.getOutputFormat());

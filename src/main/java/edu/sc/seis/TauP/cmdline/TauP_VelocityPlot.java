@@ -182,6 +182,7 @@ public class TauP_VelocityPlot extends TauP_Tool {
         } else if (getOutputTypeArgs().isSVG()) {
             // coloring is auto as we have populated list with blue/red where needed
             xyOut.printAsSvg(writer, toolNameFromClass(this.getClass()), getCmdLineArgs(),
+                    outputTypeArgs.getPixelWidth(),
                     SvgUtil.createWaveTypeColorCSS(coloringArgs), isLegend);
         } else {
             throw new IllegalArgumentException("Unknown output format: " + getOutputFormat());

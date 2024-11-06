@@ -157,11 +157,11 @@ public class XYPlotOutput {
         if (!getYLabel().isEmpty()) {
             yLabelParam += "+l'"+getYLabel()+"'";
         }
-        String xScale = outputTypeArgs.mapwidth + outputTypeArgs.mapWidthUnit;
+        String xScale = outputTypeArgs.mapWidthGMT();
         if (isxAxisInvert()) {
             xScale = "-"+xScale;
         }
-        String yScale = outputTypeArgs.mapwidth + outputTypeArgs.mapWidthUnit;
+        String yScale = outputTypeArgs.mapWidthGMT();
         if (isyAxisInvert()) {
             yScale = "-"+yScale;
         }
@@ -213,15 +213,15 @@ public class XYPlotOutput {
     public void printAsHtml(PrintWriter writer, String toolname, List<String> cmdLineArgs, String extraCSS, boolean isLegend) {
         writer.println("<!DOCTYPE html>");
         writer.println("<html><body>");
-        printAsSvg(writer, toolname, cmdLineArgs, extraCSS, isLegend);
+        printAsSvg(writer, toolname, cmdLineArgs, 1000, extraCSS, isLegend);
         writer.println("</body></html>");
     }
 
     public void printAsSvg(PrintWriter writer, String toolname, List<String> cmdLineArgs,
-                           String extraCSS, boolean isLegend) {
+                           float pixelWidth,
+                           CharSequence extraCSS, boolean isLegend) {
 
         int margin = 80;
-        int pixelWidth = 600+margin;//Math.round(72*mapWidth);
         double[] minmax = calcMinMax();
         SvgUtil.xyplotScriptBeginning(writer, toolname,
             cmdLineArgs,  pixelWidth, margin, coloringArgs.getColorList(), extraCSS, minmax);

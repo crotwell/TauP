@@ -17,11 +17,13 @@ public class GraphicOutputTypeArgs extends AbstractOutputTypeArgs {
 
     public boolean gmtScript = false;
 
-    @CommandLine.Option(names="--mapwidth", description = "plot width in inches for GMT, pixels for SVG.")
+    @CommandLine.Option(names="--mapwidth", description = "plot width in units from --mapwidthunit.")
     public Float mapwidth = 6f;
 
 
-    @CommandLine.Option(names="--mapwidthunit", defaultValue = "i", description = "plot width unit for GMT. Default is i for inchs")
+    @CommandLine.Option(names="--mapwidthunit",
+            defaultValue = "i",
+            description = "plot width unit, i for inch, c for cm or p for px.")
     public String mapWidthUnit = "i";
 
     public String getPsFile() {
@@ -49,6 +51,10 @@ public class GraphicOutputTypeArgs extends AbstractOutputTypeArgs {
 
     public void setMapWidthUnit(String mapWidthUnit) {
         this.mapWidthUnit = mapWidthUnit;
+    }
+
+    public String mapWidthGMT() {
+        return mapwidth+mapWidthUnit;
     }
 
     public boolean isText() {
@@ -113,7 +119,22 @@ public class GraphicOutputTypeArgs extends AbstractOutputTypeArgs {
     }
 
     public float getPixelWidth() {
-        return (72.0f * mapwidth);
+        return getPixelWidth(mapwidth, mapWidthUnit);
+    }
+
+    public static float getPixelWidth(float mapwidth, String mapWidthUnit) {
+        if (mapWidthUnit.equals("i")) {
+            // inch
+            return (96.0f * mapwidth);
+        } else if (mapWidthUnit.equals("c")) {
+            // cm = 1/2.54 * in
+            return (96.0f/2.54f * mapwidth);
+        } else if (mapWidthUnit.equals("p") || mapwidth > 100) {
+            // no unit, assume in pixels if large
+            return mapwidth;
+        }
+        // default 1000?
+        return 1000;
     }
 
     static class GraphicsOutputType {

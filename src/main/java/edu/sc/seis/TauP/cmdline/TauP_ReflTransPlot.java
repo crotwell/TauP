@@ -134,7 +134,9 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
             xyOut.printAsGmtText(writer);
         } else if (getOutputFormat().equalsIgnoreCase(OutputTypes.SVG)) {
             //String xLabel = ReflTransAxisType.labelFor(xAxisType);
-            xyOut.printAsSvg(writer, toolNameFromClass(this.getClass()), getCmdLineArgs(), SvgUtil.createReflTransCSSColors()+"\n", isLegend);
+            xyOut.printAsSvg(writer, toolNameFromClass(this.getClass()), getCmdLineArgs(),
+                    outputTypeArgs.getPixelWidth(),
+                    SvgUtil.createReflTransCSSColors()+"\n", isLegend);
         } else {
             throw new IllegalArgumentException("Unknown output format: " + getOutputFormat());
         }

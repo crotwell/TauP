@@ -54,6 +54,12 @@ public class TauP_Path extends TauP_AbstractRayTool {
 	@CommandLine.Mixin
     ColoringArgs coloring = new ColoringArgs();
 
+	@CommandLine.Option(names = "--legend", description = "create a legend")
+	boolean isLegend = false;
+
+	@CommandLine.Option(names = "--label", description = "label with phase name")
+	boolean isLabel = false;
+
 	@CommandLine.Mixin
 	DistDepthRange distDepthRange = new DistDepthRange();
 
@@ -179,7 +185,8 @@ public class TauP_Path extends TauP_AbstractRayTool {
 					withAmp,
 					MomentMagnitude.MAG4, Arrival.DEFAULT_ATTENUATION_FREQUENCY);
 		} else if (getOutputFormat().equals(OutputTypes.SVG)) {
-			float pixelWidth = (72.0f * getGraphicOutputTypeArgs().mapwidth);
+			int margin = 80;
+			float pixelWidth = outputTypeArgs.getPixelWidth();
 			printScriptBeginningSVG(out, arrivalList, pixelWidth, distDepthRange, modelArgs, getCmdLineArgs());
 			if (coloring.getColoring() == ColorType.auto){
 				SvgUtil.startAutocolorG(out);
@@ -200,8 +207,28 @@ public class TauP_Path extends TauP_AbstractRayTool {
 			if (coloring.getColoring() == ColorType.auto) {
 				SvgUtil.endAutocolorG(out);
 			}
-			labelPathsSVG(out, arrivalList);
-			SvgEarth.printSvgEnding(out);
+			if (isLabel) {
+				labelPathsSVG(out, arrivalList);
+			}
+			SvgEarth.printSvgEndZoom(out);
+
+			if (isLegend) {
+				float xtrans = (int)(pixelWidth*.01);
+				float ytrans = (int) (pixelWidth*.05);
+				switch (coloring.getColoring()) {
+					case auto:
+					case phase:
+						SvgUtil.createPhaseLegend(out, getSeismicPhases(), "" , xtrans, ytrans);
+						break;
+					case wavetype:
+						SvgUtil.createWavetypeLegend(out, false, xtrans, ytrans);
+						break;
+					case none:
+					default:
+						// no op
+				}
+			}
+			SvgEarth.printSvgEnd(out);
 		} else {
 			// text/gmt
 			if (getGraphicOutputTypeArgs().isGMT()) {
@@ -269,7 +296,7 @@ public class TauP_Path extends TauP_AbstractRayTool {
 	public void labelPathsSVG(PrintWriter out, List<Arrival> arrivalList) {
 		// label paths with phase name
 
-        out.println("    <g class=\"phasename\">");
+        out.println("    <g class=\"label phasename\">");
 
         for (Arrival currArrival : arrivalList) {
 			double radiusOfEarth = currArrival.getPhase().getTauModel().getRadiusOfEarth();
@@ -306,21 +333,20 @@ public class TauP_Path extends TauP_AbstractRayTool {
 
 		List<PhaseName> phaseNameList = parsePhaseNameList();
 		extraCSS+=createSurfaceWaveCSS(phaseNameList)+"\n";
-		if (coloring.getColoring() == ColorType.phase) {
-			StringBuffer cssPhaseColors = SvgUtil.createPhaseColorCSS(phaseNameList, coloring);
-			extraCSS += cssPhaseColors;
-		} else if (coloring.getColoring() == ColorType.wavetype) {
-			String cssWaveTypeColors = SvgUtil.createWaveTypeColorCSS(coloring);
-			extraCSS += cssWaveTypeColors;
-		} else {
-			// autocolor?
+		switch (coloring.getColoring()) {
+			case phase:
+			case auto:
+				extraCSS += SvgUtil.createPhaseColorCSS(phaseNameList, coloring);
+				break;
+			case wavetype:
+				extraCSS += SvgUtil.createWaveTypeColorCSS(coloring);
+				break;
+			default:
+				extraCSS += SvgUtil.createNoneColorCSS(coloring);
 		}
 		SvgEarth.printScriptBeginningSvg(out, tMod, pixelWidth, scaleTrans,
 				toolNameFromClass(this.getClass()), cmdLineArgs,
 				coloring.getColorList(), extraCSS);
-		if (coloring.getColoring() == ColorType.phase) {
-			SvgUtil.createPhaseLegend(out, getSeismicPhases(), "",  (int)(pixelWidth*.9), (int) (pixelWidth*.05));
-		}
 
 		SvgEarth.printModelAsSVG(out, tMod, pixelWidth, scaleTrans, onlyNamedDiscon);
 	}

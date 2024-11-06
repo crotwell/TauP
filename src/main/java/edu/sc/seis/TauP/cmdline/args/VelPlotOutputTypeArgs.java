@@ -18,6 +18,8 @@ public class VelPlotOutputTypeArgs extends AbstractOutputTypeArgs {
      */
     public GraphicOutputTypeArgs asGraphicOutputTypeArgs() {
         GraphicOutputTypeArgs out = new GraphicOutputTypeArgs(getOutputFormat(), getOutFileBase());
+        out.mapWidthUnit = mapWidthUnit;
+        out.mapwidth = mapwidth;
         return out;
     }
 
@@ -92,11 +94,13 @@ public class VelPlotOutputTypeArgs extends AbstractOutputTypeArgs {
 
     public boolean gmtScript = false;
 
-    @CommandLine.Option(names="--mapwidth", description = "plot width in inches for GMT, pixels for SVG.")
+    @CommandLine.Option(names="--mapwidth", description = "plot width in units from --mapwidthunit.")
     public Float mapwidth = 6f;
 
 
-    @CommandLine.Option(names="--mapwidthunit", defaultValue = "i", description = "plot width unit for GMT. Default is i for inchs")
+    @CommandLine.Option(names="--mapwidthunit",
+            defaultValue = "i",
+            description = "plot width unit, i for inch, c for cm or p for px.")
     public String mapWidthUnit = "i";
 
     public String getPsFile() {
@@ -147,7 +151,7 @@ public class VelPlotOutputTypeArgs extends AbstractOutputTypeArgs {
     }
 
     public float getPixelWidth() {
-        return (72.0f * mapwidth);
+        return GraphicOutputTypeArgs.getPixelWidth(mapwidth, mapWidthUnit);
     }
 
     static class VelPlotOutputType {

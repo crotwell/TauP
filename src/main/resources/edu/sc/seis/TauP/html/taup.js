@@ -368,8 +368,10 @@ export function form_url() {
 
   let timestep = document.querySelector('input[name="timestep"]').value;
   let isNegDist = document.querySelector('input[name="negdist"]').checked;
-  let colorTypeEl = document.querySelector('input[name="color"]:checked');
-  let colorType = colorTypeEl ? colorTypeEl.value : "auto";
+  let wavefrontcolorTypeEl = document.querySelector('input[name="wavefrontcolor"]:checked');
+  let wavefrontcolorType = wavefrontcolorTypeEl ? wavefrontcolorTypeEl.value : "auto";
+  let pathcolorTypeEl = document.querySelector('input[name="pathcolor"]:checked');
+  let pathcolorType = pathcolorTypeEl ? pathcolorTypeEl.value : "auto";
   let isrefltranmodel = document.querySelector('input[name="isrefltranmodel"]:checked').value;
 
   let xaxis = document.querySelector('#xaxis').value;
@@ -556,7 +558,7 @@ export function form_url() {
     if (yaxisabs) {
       url += `&yabs=true`;
     }
-    let isLegend = document.querySelector('input[name="legend"]').checked;
+    const isLegend = document.querySelector('input[name="legend"]').checked;
     if (isLegend) {
       url += `&legend=true`;
     }
@@ -593,7 +595,7 @@ export function form_url() {
         url += `&ylog=true`;
       }
     }
-    let isLegend = document.querySelector('input[name="velplotlegend"]').checked;
+    const isLegend = document.querySelector('input[name="velplotlegend"]').checked;
     if (isLegend) {
       url += `&legend=true`;
     }
@@ -612,6 +614,19 @@ export function form_url() {
       // no op, default
     }
   }
+  if (toolname === "path") {
+    const isLegend = document.querySelector('input[name="pathlegend"]').checked;
+    if (isLegend) {
+      url += `&legend=true`;
+    }
+    const isLabel = document.querySelector('input[name="pathlabel"]').checked;
+    if (isLabel) {
+      url += `&label=true`;
+    }
+    if (pathcolorType && pathcolorType !== "auto") {
+      url += `&color=${pathcolorType}`
+    }
+  }
   if (toolname === "wavefront") {
     if (timestep > 0) {
       url += `&timestep=${timestep}`;
@@ -619,8 +634,12 @@ export function form_url() {
     if (isNegDist) {
       url += `&negdist=true`;
     }
-    if (colorType && colorType !== "auto") {
-      url += `&color=${colorType}`
+    if (wavefrontcolorType && wavefrontcolorType !== "auto") {
+      url += `&color=${wavefrontcolorType}`
+    }
+    const isLegend = document.querySelector('input[name="wavefrontlegend"]').checked;
+    if (isLegend) {
+      url += `&legend=true`;
     }
   }
   if (toolname === "refltrans") {

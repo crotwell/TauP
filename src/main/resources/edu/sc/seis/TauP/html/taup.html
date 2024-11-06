@@ -335,6 +335,31 @@
           <label for="isunder">Under</label>
       </fieldset>
 
+      <fieldset class="tool_path">
+
+        <fieldset class="tool_path color">
+            <legend>Color by:</legend>
+            <input type="radio" name="pathcolor" id="pathcolor_phase" value="phase" checked/>
+            <label for="pathcolor_phase">Phase</label>
+            <input type="radio" name="pathcolor" id="pathcolor_wavetype" value="wavetype" />
+            <label for="pathcolor_wavetype">WaveType</label>
+            <input type="radio" name="pathcolor" id="pathcolor_none" value="none" />
+            <label for="pathcolor_none">None</label>
+        </fieldset>
+
+        <div>
+          <label for="pathlegend">
+              <span>Legend: </span>
+          </label>
+          <input type="checkbox" id="pathlegend" name="pathlegend" checked />
+
+          <label for="pathlabel">
+              <span>Label: </span>
+          </label>
+          <input type="checkbox" id="pathlabel" name="pathlabel" checked/>
+        </div>
+      </fieldset>
+
       <fieldset class="tool_wavefront">
         <legend>Wavefront:</legend>
 
@@ -345,19 +370,25 @@
 
         <fieldset class="tool_wavefront color">
             <legend>Color by:</legend>
-            <input type="radio" name="color" id="color_auto" value="auto" checked/>
-            <label for="color_auto">Time</label>
-            <input type="radio" name="color" id="color_phase" value="phase" />
-            <label for="color_phase">Phase</label>
-            <input type="radio" name="color" id="color_wavetype" value="wavetype" />
-            <label for="color_wavetype">WaveType</label>
+            <input type="radio" name="wavefrontcolor" id="wavefrontcolor_auto" value="auto" checked/>
+            <label for="wavefrontcolor_auto">Time</label>
+            <input type="radio" name="wavefrontcolor" id="wavefrontcolor_phase" value="phase" />
+            <label for="wavefrontcolor_phase">Phase</label>
+            <input type="radio" name="wavefrontcolor" id="wavefrontcolor_wavetype" value="wavetype" />
+            <label for="wavefrontcolor_wavetype">WaveType</label>
         </fieldset>
 
-        <label for="negdist">
-            <span>Negative Distances: </span>
-        </label>
-        <input type="checkbox" id="negdist" name="negdist" checked />
-        <button id="animate" type="button" >Animate</button>
+        <div>
+          <label for="wavefrontlegend">
+              <span>Legend: </span>
+          </label>
+          <input type="checkbox" id="wavefrontlegend" name="wavefrontlegend" checked />
+          <label for="negdist">
+              <span>Negative Distances: </span>
+          </label>
+          <input type="checkbox" id="negdist" name="negdist" checked />
+          <button id="animate" type="button" >Animate</button>
+        </div>
       </fieldset>
 
       <fieldset class="tool_refltrans">
