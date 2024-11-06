@@ -24,7 +24,7 @@ import static edu.sc.seis.TauP.cmdline.TauP_Tool.OPTIONS_HEADING;
         usageHelpAutoWidth = true)
 public class TauP_Wavefront extends TauP_AbstractPhaseTool {
 
-    float timeStep = 100;
+    float timeStep = 10;
 
     boolean separateFilesByTime = false;
 
@@ -471,7 +471,7 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
     }
 
     @CommandLine.Option(names = "--timestep",
-    defaultValue = "100",
+    defaultValue = "10",
     description = "steps in time (seconds) for output, default is ${DEFAULT-VALUE}")
     public void setTimeStep(float timeStep) {
         if (timeStep < 0) {
