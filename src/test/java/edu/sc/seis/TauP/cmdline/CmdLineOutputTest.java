@@ -564,7 +564,11 @@ public class CmdLineOutputTest {
         while (prior.ready() && current.ready()) {
             priorLine = prior.readLine();
             currentLine = current.readLine();
-            System.out.println(currentLine);
+            String priorTrimmed = priorLine.trim();
+            if ((priorTrimmed.startsWith("# version") || priorTrimmed.startsWith("<version>"))) {
+                // don't check version lines as those different even if no actual change
+                continue;
+            }
             assertEquals(priorLine, currentLine, cmd + " line " + lineNum);
             lineNum++;
         }
