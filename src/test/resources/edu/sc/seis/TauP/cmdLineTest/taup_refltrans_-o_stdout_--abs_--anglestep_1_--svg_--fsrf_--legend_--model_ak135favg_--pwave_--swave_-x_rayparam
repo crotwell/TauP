@@ -568,7 +568,7 @@ circle.discontinuity.iocb {
   </defs>
 <!-- draw axis and label distances.-->
 
-<text class="title" x="208.0" y="0">ak135favg at -1.0 km</text>
+<text class="title" x="208.0" y="0">ak135favg at  surface</text>
 <g> <!-- y axis -->
 <g  >
   <text font-size="14" transform="translate(-64, 208) rotate(-90 )" dy=".75em" text-anchor="middle" class="ylabel" > Free Surface RF Coeff.</text>

@@ -88,8 +88,8 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
             xyOut.setTitle(layerParams.asName());
         } else {
             String title = modelArgs.getModelName() +" at ";
-            if (depth == 0) {
-                title += " surface, ";
+            if (fsrf || depth == 0) {
+                title += " surface";
             } else {
                 title += depth+" km";
             }
