@@ -15,6 +15,7 @@
             stroke: red;
         }
         circle.swave {
+            stroke: red;
             fill: red;
         }
         .swave.label {
@@ -29,6 +30,7 @@
             stroke: blue;
         }
         circle.pwave {
+            stroke: blue;
             fill: blue;
         }
         .pwave.label {
@@ -43,6 +45,7 @@
             stroke: green;
         }
         circle.both_p_swave {
+            stroke: green;
             fill: green;
         }
         .both_p_swave.label {

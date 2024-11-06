@@ -25,6 +25,7 @@
           stroke: skyblue;
         }
         circle.time_100_00 {
+          stroke: skyblue;
           fill: skyblue;
         }
         .time_100_00.label {
@@ -39,6 +40,7 @@
           stroke: olivedrab;
         }
         circle.time_200_00 {
+          stroke: olivedrab;
           fill: olivedrab;
         }
         .time_200_00.label {
@@ -53,6 +55,7 @@
           stroke: goldenrod;
         }
         circle.time_300_00 {
+          stroke: goldenrod;
           fill: goldenrod;
         }
         .time_300_00.label {
@@ -67,6 +70,7 @@
           stroke: firebrick;
         }
         circle.time_400_00 {
+          stroke: firebrick;
           fill: firebrick;
         }
         .time_400_00.label {
@@ -81,6 +85,7 @@
           stroke: darkcyan;
         }
         circle.time_500_00 {
+          stroke: darkcyan;
           fill: darkcyan;
         }
         .time_500_00.label {
@@ -95,6 +100,7 @@
           stroke: chocolate;
         }
         circle.time_600_00 {
+          stroke: chocolate;
           fill: chocolate;
         }
         .time_600_00.label {
@@ -109,6 +115,7 @@
           stroke: darkmagenta;
         }
         circle.time_700_00 {
+          stroke: darkmagenta;
           fill: darkmagenta;
         }
         .time_700_00.label {
@@ -123,6 +130,7 @@
           stroke: mediumvioletred;
         }
         circle.time_800_00 {
+          stroke: mediumvioletred;
           fill: mediumvioletred;
         }
         .time_800_00.label {
@@ -137,6 +145,7 @@
           stroke: sienna;
         }
         circle.time_900_00 {
+          stroke: sienna;
           fill: sienna;
         }
         .time_900_00.label {
@@ -151,6 +160,7 @@
           stroke: rebeccapurple;
         }
         circle.time_1000_00 {
+          stroke: rebeccapurple;
           fill: rebeccapurple;
         }
         .time_1000_00.label {
@@ -165,6 +175,7 @@
           stroke: skyblue;
         }
         circle.time_1100_00 {
+          stroke: skyblue;
           fill: skyblue;
         }
         .time_1100_00.label {
@@ -179,6 +190,7 @@
           stroke: olivedrab;
         }
         circle.time_1200_00 {
+          stroke: olivedrab;
           fill: olivedrab;
         }
         .time_1200_00.label {
@@ -193,6 +205,7 @@
           stroke: goldenrod;
         }
         circle.time_1300_00 {
+          stroke: goldenrod;
           fill: goldenrod;
         }
         .time_1300_00.label {
@@ -207,6 +220,7 @@
           stroke: firebrick;
         }
         circle.time_1400_00 {
+          stroke: firebrick;
           fill: firebrick;
         }
         .time_1400_00.label {
