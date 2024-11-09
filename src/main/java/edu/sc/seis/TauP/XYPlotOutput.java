@@ -140,7 +140,7 @@ public class XYPlotOutput {
     public void printGmtScriptBeginning(PrintWriter writer,
                                         String toolname, List<String> cmdLineArgs,
                                         GraphicOutputTypeArgs outputTypeArgs) {
-        String psFile = outputTypeArgs.getOutFileBase();
+        String psFile = outputTypeArgs.getGmtOutFileBase(toolname);
         writer.println("#!/usr/bin/env bash");
         SvgUtil.taupMetadataGMT(writer, toolname, cmdLineArgs, null);
         writer.println("gmt begin " + psFile + "\n");

@@ -232,7 +232,7 @@ public class TauP_Path extends TauP_AbstractRayTool {
 		} else {
 			// text/gmt
 			if (getGraphicOutputTypeArgs().isGMT()) {
-				SvgEarth.printGmtScriptBeginning(out, outputTypeArgs.getOutFileBase(),
+				SvgEarth.printGmtScriptBeginning(out, outputTypeArgs.getGmtOutFileBase("taup_path"),
 						modelArgs.getTauModel(), outputTypeArgs.mapwidth,
 						outputTypeArgs.mapWidthUnit, onlyNamedDiscon,
 						toolNameFromClass(this.getClass()), getCmdLineArgs());

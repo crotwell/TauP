@@ -530,7 +530,7 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
                     singleTimeIsochronMap.put(timeVal, isochronMap.get(timeVal));
                     File timeOutFile = new File(outputTypeArgs.getOutFileBase()+timeStr+"."+outputTypeArgs.getOutFileExtension());
                     PrintWriter timeWriter = new PrintWriter(new BufferedWriter(new FileWriter(timeOutFile)));
-                    String psFileBase = outputTypeArgs.getPsFile();
+                    String psFileBase = outputTypeArgs.getGmtOutFileBase("taup_wavefront");
                     if (outputTypeArgs.gmtScript && psFileBase.endsWith(".ps")) {
                         psFileBase = psFileBase.substring(0, psFileBase.length() - 3);
                     }

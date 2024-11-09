@@ -26,11 +26,15 @@ public class GraphicOutputTypeArgs extends AbstractOutputTypeArgs {
             description = "plot width unit, i for inch, c for cm or p for px.")
     public String mapWidthUnit = "i";
 
-    public String getPsFile() {
+    public String getGmtOutFileBase(String toolName) {
         if (psFile != null) {
             return psFile;
         }
-        return getOutFileBase()+".ps";
+        String base = getOutFileBase();
+        if (base.equals(STDOUT_FILENAME) || base.equals("stdout")) {
+            base = toolName;
+        }
+        return base;
     }
 
     public void setPsFile(String psFile) {
