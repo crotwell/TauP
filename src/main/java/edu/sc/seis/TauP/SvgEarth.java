@@ -446,7 +446,7 @@ public class SvgEarth {
         SvgUtil.taupMetadataGMT(out, toolName, cmdLineArgs, null);
         out.println("gmt begin "+psFile);
         out.println("# draw surface and label distances.\n"
-        + "gmt basemap -R0/360/0/"+tMod.getRadiusOfEarth()+" -JP" + mapWidth + mapWidthUnit
+        + "gmt basemap -R0/360/0/"+tMod.getRadiusOfEarth()+" -JPa" + mapWidth + mapWidthUnit+""
         + " -Bx30  ");
         out.println("# draw circles for branches, note these are scaled for a \n"
         + "# map using -JP" + mapWidth + mapWidthUnit + "\n"
