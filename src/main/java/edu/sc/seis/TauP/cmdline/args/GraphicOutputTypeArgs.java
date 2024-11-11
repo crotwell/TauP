@@ -2,6 +2,8 @@ package edu.sc.seis.TauP.cmdline.args;
 
 import picocli.CommandLine;
 
+import java.io.File;
+
 public class GraphicOutputTypeArgs extends AbstractOutputTypeArgs {
 
     public GraphicOutputTypeArgs(String defaultFormat, String filebase) {
@@ -33,6 +35,12 @@ public class GraphicOutputTypeArgs extends AbstractOutputTypeArgs {
         String base = getOutFileBase();
         if (base.equals(STDOUT_FILENAME) || base.equals("stdout")) {
             base = toolName;
+        } else if (base.contains(java.io.File.separator)) {
+            File tosplit = new File(base);
+            base = tosplit.getName();
+        }
+        if (base.endsWith(".gmt")) {
+            base = base.substring(0, base.length()-4);
         }
         return base;
     }
