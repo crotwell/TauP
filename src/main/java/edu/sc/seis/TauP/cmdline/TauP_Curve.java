@@ -5,13 +5,12 @@ import edu.sc.seis.TauP.cmdline.args.*;
 import picocli.CommandLine;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.io.StreamTokenizer;
 import java.util.ArrayList;
 import java.util.List;
 
 import static edu.sc.seis.TauP.SphericalCoords.RtoD;
+import static edu.sc.seis.TauP.XYPlottingData.trimAllToMinMax;
 import static edu.sc.seis.TauP.cmdline.TauP_Tool.ABREV_SYNOPSIS;
 import static edu.sc.seis.TauP.cmdline.TauP_Tool.OPTIONS_HEADING;
 
@@ -38,6 +37,9 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
     public void start() throws IOException, TauPException {
         PrintWriter writer = outputTypeArgs.createWriter(spec.commandLine().getOut());
         List<XYPlottingData> xy = calculate(xAxisType, yAxisType);
+        if (xAxisMinMax.length == 2 || yAxisMinMax.length == 2) {
+            xy = trimAllToMinMax(xy, xAxisMinMax, yAxisMinMax);
+        }
         printResult(writer, xy);
         writer.close();
     }

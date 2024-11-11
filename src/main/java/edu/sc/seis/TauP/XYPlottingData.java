@@ -56,6 +56,31 @@ public class XYPlottingData {
         return priorMinMax;
     }
 
+    public XYPlottingData trimToMinMax(double[] xAxisMinMax, double[] yAxisMinMax) {
+        List<XYSegment> outSeg = new ArrayList<>();
+        for (XYSegment seg : segmentList) {
+            XYSegment trimmed = seg.trimToMinMax(xAxisMinMax, yAxisMinMax);
+            if (trimmed != null) {
+                outSeg.add(trimmed);
+            }
+        }
+        XYPlottingData out = new XYPlottingData(outSeg, xAxisType, yAxisType, label, description, cssClasses);
+        return out;
+    }
+
+    public static List<XYPlottingData> trimAllToMinMax(List<XYPlottingData> xyList, double[] xAxisMinMax, double[] yAxisMinMax) {
+        if (xAxisMinMax.length == 2 || yAxisMinMax.length == 2) {
+            List<XYPlottingData> trimmed = new ArrayList<>();
+            for (XYPlottingData xyp : xyList) {
+                XYPlottingData t = xyp.trimToMinMax(xAxisMinMax, yAxisMinMax);
+                if (t != null) {
+                    trimmed.add(t);
+                }
+            }
+            xyList = trimmed;
+        }
+        return xyList;
+    }
 
     public XYPlottingData recalcForAbs(boolean xAxisAbs, boolean yAxisAbs) {
         List<XYSegment> out = new ArrayList<>();

@@ -41,6 +41,51 @@ public class XYSegment {
         return segmentList;
     }
 
+    public XYSegment trimToMinMax(double[] xAxisMinMax, double[] yAxisMinMax) {
+        double[] outX = new double[x.length];
+        double[] outY = new double[y.length];
+        int numKept = 0;
+        if (xAxisMinMax.length == 2 && yAxisMinMax.length == 0) {
+            for (int i = 0; i < x.length; i++) {
+                if (xAxisMinMax[0] <= x[i] && x[i] < xAxisMinMax[1] ) {
+                    outX[numKept] = x[i];
+                    outY[numKept] = y[i];
+                    numKept++;
+                }
+            }
+        } else if (xAxisMinMax.length == 0 && yAxisMinMax.length == 2) {
+            for (int i = 0; i < x.length; i++) {
+                if (yAxisMinMax[0] <= y[i] && y[i] <= yAxisMinMax[1]) {
+                    outX[numKept] = x[i];
+                    outY[numKept] = y[i];
+                    numKept++;
+                }
+            }
+        } else if (xAxisMinMax.length == 2 && yAxisMinMax.length == 2) {
+            for (int i = 0; i < x.length; i++) {
+                if (xAxisMinMax[0] <= x[i] && x[i] < xAxisMinMax[1] && yAxisMinMax[0] <= y[i] && y[i] <= yAxisMinMax[1]) {
+                    outX[numKept] = x[i];
+                    outY[numKept] = y[i];
+                    numKept++;
+                }
+            }
+        } else {
+            // no trim, both zero length
+            return this;
+        }
+        double[] tmp = new double[numKept];
+        System.arraycopy(outX, 0, tmp, 0, numKept);
+        outX = tmp;
+        tmp = new double[numKept];
+        System.arraycopy(outY, 0, tmp, 0, numKept);
+        outY = tmp;
+
+        XYSegment out = new XYSegment(outX, outY);
+        out.description = description;
+        out.cssClasses = cssClasses;
+        return out;
+    }
+
     public double[] minMax(double[] priorMinMax) {
         double minX = priorMinMax[0];
         double maxX = priorMinMax[1];

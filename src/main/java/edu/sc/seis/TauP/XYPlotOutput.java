@@ -181,6 +181,11 @@ public class XYPlotOutput {
         }
     }
 
+    /**
+     * Calculates min and max for x and y.
+     *
+     * @return [xmin, xmax, ymin, ymax]
+     */
     public double[] calcMinMax() {
         double[] minmax = XYPlottingData.initMinMax();
         for (XYPlottingData xyplot : xyPlots) {
@@ -247,6 +252,8 @@ public class XYPlotOutput {
         float yfliptrans = yAxisInvert ? -1*(float)(minmax[3]+minmax[2]) : 0;
         float xtrans = (float)  minmax[0];
         float ytrans = (float)  minmax[2];
+        float minMaxScaleX = (float)(plotWidth / (minmax[1]-minmax[0]));
+        float minMaxScaleY = (float)( plotWidth / (minmax[3]-minmax[2]));
 
         SvgUtil.createXYAxes(writer, axisMinMax[0], axisMinMax[1], numXTicks, false,
                 axisMinMax[2], axisMinMax[3], numYTicks, false,
@@ -258,7 +265,7 @@ public class XYPlotOutput {
 
         writer.println("<g transform=\"scale(1,-1) translate(0, -"+plotWidth+")\">");
 
-        writer.println("<g transform=\"scale(" + (plotWidth / (minmax[1]-minmax[0])) + "," + ( plotWidth / (minmax[3]-minmax[2])) + ")\" >");
+        writer.println("<g transform=\"scale(" + minMaxScaleX + "," + minMaxScaleY + ")\" >");
         writer.println("<g transform=\"translate("+(-1*xtrans)+", "+(-1*ytrans)+")\">");
         if (coloringArgs.getColoring() == ColorType.auto) {
             writer.println("    <g class=\"autocolor\">");
