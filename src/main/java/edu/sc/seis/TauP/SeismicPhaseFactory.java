@@ -1192,6 +1192,11 @@ public class SeismicPhaseFactory {
                                        boolean prevIsPWave, boolean isPWave, boolean nextIsPWave, int legNum)
             throws TauModelException {
         PhaseInteraction endAction;
+        if (tMod.getCmbBranch() == tMod.tauBranches[0].length) {
+            // cmb is center of earth, no core
+            String reason = "cmb is center of earth, no core to diffract";
+            return failWithMessage(proto, reason);
+        }
         int currBranch = calcStartBranch(proto, currLeg);
         if (tMod.getVelocityModel().cmbDepth == 0) {
             // no crust or mantle, so no P or S
@@ -1598,7 +1603,7 @@ public class SeismicPhaseFactory {
 
         if (tMod.getCmbBranch() == tMod.tauBranches[0].length || tMod.getIocbBranch() == tMod.tauBranches[0].length) {
             // cmb or iocb is center of earth, no core or inner core to diffract
-            String reason = "mb or iocb is center of earth, no core or inner core to diffract";
+            String reason = "cmb or iocb is center of earth, no core or inner core to diffract";
             return failWithMessage(proto, reason);
         }
         int disconBranch = tMod.getIocbBranch();
@@ -2029,6 +2034,11 @@ public class SeismicPhaseFactory {
                                  boolean prevIsPWave, boolean isPWave, boolean nextIsPWave, int legNum)
             throws TauModelException {
         PhaseInteraction endAction;
+        if (tMod.getCmbBranch() == tMod.tauBranches[0].length) {
+            // cmb is center of earth, no core
+            String reason = "cmb is center of earth, no core";
+            return failWithMessage(proto, reason);
+        }
         int currBranch = calcStartBranch(proto, currLeg);
         if(nextLeg.startsWith("v") || nextLeg.startsWith("V")) {
             return failWithMessage(proto, " k must always be up going "
@@ -2377,6 +2387,10 @@ public class SeismicPhaseFactory {
                                        boolean prevIsPWave, boolean isPWave, boolean nextIsPWave, int legNum)
             throws TauModelException {
         PhaseInteraction endAction;
+        if (tMod.getIocbBranch() == tMod.tauBranches[0].length ) {
+            String reason = "iocb is center of earth, no inner core";
+            return failWithMessage(proto, reason);
+        }
         int currBranch = calcStartBranch(proto, currLeg);
         if (currLeg.equals("Ied") || currLeg.equals("Jed")) {
             if(nextLeg.equals(END_CODE)) {
@@ -2540,7 +2554,7 @@ public class SeismicPhaseFactory {
         int currBranch = calcStartBranch(proto, currLeg);
 
         if (tMod.getIocbBranch() == tMod.tauBranches[0].length ) {
-            String reason = "cmb or iocb is center of earth, no core or inner core to diffract";
+            String reason = "iocb is center of earth, no inner core to diffract";
             return failWithMessage(proto, reason);
         }
         int disconBranch = tMod.getIocbBranch();
@@ -2634,6 +2648,10 @@ public class SeismicPhaseFactory {
                                    boolean prevIsPWave, boolean isPWave, boolean nextIsPWave, int legNum)
             throws TauModelException {
         PhaseInteraction endAction;
+        if (tMod.getIocbBranch() == tMod.tauBranches[0].length ) {
+            String reason = "iocb is center of earth, no inner core";
+            return failWithMessage(proto, reason);
+        }
         int currBranch = calcStartBranch(proto, currLeg);
         if(nextLeg.startsWith("v") || nextLeg.startsWith("V")) {
             return failWithMessage(proto, " y,j must always be up going "
