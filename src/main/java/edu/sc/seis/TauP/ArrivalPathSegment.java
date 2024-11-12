@@ -78,6 +78,14 @@ public class ArrivalPathSegment extends AbstractPathSegment {
 
     }
 
+    public SeismicPhaseSegment getPhaseSegment() {
+        return phaseSegment;
+    }
+
+    public Arrival getArrival() {
+        return arrival;
+    }
+
     SeismicPhaseSegment phaseSegment;
 
     Arrival arrival;

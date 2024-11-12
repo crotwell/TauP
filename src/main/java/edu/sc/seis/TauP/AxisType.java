@@ -26,5 +26,7 @@ public enum AxisType {
     index,
     tstar,
     attenuation,
-    theta
+    theta,
+    energygeospread,
+    pathlength
 }

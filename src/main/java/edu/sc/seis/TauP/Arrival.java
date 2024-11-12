@@ -565,6 +565,37 @@ public class Arrival {
         return getPhase().calcTstar(this);
     }
 
+    public double calcPathLength() {
+        // path length
+        double length = 0;
+        TauModel tMod = getPhase().getTauModel();
+        double R = tMod.radiusOfEarth;
+        List<ArrivalPathSegment> pathSegList = getPathSegments();
+        TimeDist prev = new TimeDist();
+        for (ArrivalPathSegment pseg : pathSegList) {
+            if (pseg.getPhaseSegment().getIsFlat()) {
+                // flat so calc circle length at depth
+
+                for (TimeDist td : pseg.getPath()) {
+                    double radianInc = td.getDistRadian() - prev.getDistRadian();
+                    length += radianInc*(R-td.getDepth());
+                }
+            } else {
+                // normal segment
+                for (TimeDist td : pseg.getPath()) {
+                    double radianInc = td.getDistRadian() - prev.getDistRadian();
+                    double radius_a = R - prev.getDepth();
+                    double radius_b = R - td.getDepth();
+                    double pathInc = Math.sqrt(radius_a * radius_a + radius_b * radius_b - 2 * radius_a * radius_b * Math.cos(radianInc));
+                    length += pathInc;
+                    prev = td;
+                }
+            }
+        }
+
+        return length;
+    }
+
     /**
      * returns path points as TimeDist objects.
      * */
@@ -814,6 +845,8 @@ public class Arrival {
         }
         if (withPath ) {
             pw.write(","+NL);
+            pw.write(","+NL);
+            pw.write(innerIndent+JSONWriter.valueToString("pathlength")+": "+calcPathLength()+","+NL);
             pw.write(innerIndent+JSONWriter.valueToString("path")+": ["+NL);
             for (ArrivalPathSegment seg : pathSegments) {
                 seg.writeJSON(pw, innerIndent);
@@ -914,6 +947,7 @@ public class Arrival {
             }
         }
         if (pathSegments != null) {
+            a.put("pathlength", calcPathLength());
             JSONArray points = new JSONArray();
             a.put("path", points);
             for (ArrivalPathSegment seg : pathSegments) {

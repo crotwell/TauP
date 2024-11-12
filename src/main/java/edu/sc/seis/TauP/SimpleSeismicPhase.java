@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static edu.sc.seis.TauP.SphericalCoords.DtoR;
 import static edu.sc.seis.TauP.SphericalCoords.RtoD;
 
 /**

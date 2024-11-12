@@ -313,6 +313,24 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
             for (int i = phase.getMaxRayParamIndex(); i <= phase.getMinRayParamIndex(); i++) {
                 out[i-phase.getMaxRayParamIndex()] = i;
             }
+        } else if (axisType==AxisType.energygeospread) {
+            double[] dist = phase.getDist();
+            double[] amp = new double[dist.length];
+            System.err.println("curve geospread phase: " + phase.getNumRays());
+            for (int i = 0; i < phase.getNumRays(); i++) {
+                System.err.println(phase.getPuristName() + " " + i + " " + phase.getDist(i));
+            }
+            for (int i = 0; i < dist.length; i++) {
+                Arrival arrival = phase.createArrivalAtIndex(i);
+                amp[i] = arrival.getEnergyGeometricSpreadingFactor();
+            }
+            out = amp;
+        } else if (axisType==AxisType.pathlength) {
+            out = new double[phase.getRayParams().length];
+            for (int i = 0; i < out.length; i++) {
+                Arrival arrival = phase.createArrivalAtIndex(i);
+                out[i] = arrival.calcPathLength();
+            }
         } else {
             throw new IllegalArgumentException("Unknown axisType: "+axisType);
         }
@@ -566,7 +584,9 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
             case index:
                 return "Index";
             case geospread:
-                return "Geometric Spreading";
+                return "Geometric Spreading (1/km)";
+            case energygeospread:
+                return "Energy Geometric Spreading (1/km2)";
             case takeoffangle:
                 return "Takeoff Angle (deg)";
             case incidentangle:
@@ -579,6 +599,8 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
                 return "Reflection/Transmission Coef. PSv";
             case refltransh:
                 return "Reflection/Transmission Coef. Sh";
+            case pathlength:
+                return "Path Length (km)";
             default:
                 return axisType.name();
         }
