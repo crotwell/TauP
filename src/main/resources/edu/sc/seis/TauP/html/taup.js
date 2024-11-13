@@ -566,6 +566,10 @@ export function form_url() {
     if (mw !== "4.0") {
       url += `&mw=${mw}`;
     }
+    let attenuationfreq = document.querySelector('input[name="attenuationfreq"]').value;
+    if (attenuationfreq !== "1.0") {
+      url += `&attenuationfreq=${attenuationfreq}`;
+    }
   }
   if (toolname === "velplot") {
 
