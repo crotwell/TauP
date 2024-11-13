@@ -265,14 +265,36 @@ public class SeismicPhaseSegment {
 		return depthRange;
 	}
 
+	public double getTopDepth() {
+		if (isFlat) {
+			return getDepthRange()[0];
+		} else {
+			if (isDownGoing) {
+				return tMod.getTauBranch(startBranch, isPWave).getTopDepth();
+			} else {
+				return tMod.getTauBranch(endBranch, isPWave).getTopDepth();
+			}
+		}
+	}
+
+	public double getBotDepth() {
+		if (isFlat) {
+			return getDepthRange()[0];
+		} else {
+			if (isDownGoing) {
+				return tMod.getTauBranch(endBranch, isPWave).getBotDepth();
+			} else {
+				return tMod.getTauBranch(startBranch, isPWave).getBotDepth();
+			}
+		}
+	}
+
 	public double[] getDepthRange() {
 		double[] depthRange;
 		if (startBranch == -1 || endBranch == -1) {
 			depthRange = new double[0];
 		} else if (isFlat) {
-			if (prevEndAction == null) {
-				depthRange = new double[0];
-			} else if (prevEndAction == PhaseInteraction.DIFFRACT || prevEndAction == TRANSUPDIFFRACT) {
+			if (prevEndAction == PhaseInteraction.DIFFRACT || prevEndAction == TRANSUPDIFFRACT) {
 				depthRange = new double[] {tMod.getTauBranch(endBranch, isPWave).getBotDepth()};
 			} else if (prevEndAction == PhaseInteraction.HEAD) {
 				depthRange = new double[] { tMod.getTauBranch(endBranch, isPWave).getTopDepth()};

@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static edu.sc.seis.TauP.PhaseInteraction.TRANSUPDIFFRACT;
 import static edu.sc.seis.TauP.SphericalCoords.DtoR;
 import static edu.sc.seis.TauP.SphericalCoords.RtoD;
 
@@ -934,9 +935,28 @@ public class SimpleSeismicPhase implements SeismicPhase {
             for (ArrivalPathSegment pseg : pathSegList) {
                 for (TimeDist td : pseg.getPath()) {
                     double timeInc = td.getTime()-prev.getTime();
-                    int layNum = vMod.layerNumberBelow(td.getDepth());
-                    VelocityLayer velocityLayer = vMod.getVelocityLayer(layNum);
-                    double Q = pseg.isPWave ? velocityLayer.getTopQp() : velocityLayer.getTopQs();
+                    double Q;
+                    if (pseg.getPhaseSegment().isFlat) {
+                        // does tstar make sense for flat ray???
+                        if (pseg.getPhaseSegment().prevEndAction == PhaseInteraction.DIFFRACT
+                                || pseg.getPhaseSegment().prevEndAction == TRANSUPDIFFRACT) {
+                            Q = vMod.evaluateAbove(td.getDepth(), pseg.isPWave ? VelocityModelMaterial.Q_P : VelocityModelMaterial.Q_S);
+                        } else if (pseg.getPhaseSegment().prevEndAction == PhaseInteraction.HEAD) {
+                            Q = vMod.evaluateBelow(td.getDepth(), pseg.isPWave ? VelocityModelMaterial.Q_P : VelocityModelMaterial.Q_S);
+                        } else {
+                            throw new RuntimeException("tstar unknown for flat for prevendaction= "+pseg.getPhaseSegment().prevEndAction);
+                        }
+                    } else if (td.getDepth() == pseg.getPhaseSegment().getBotDepth()) {
+                        // careful of turning at bottom, use above istead of below
+                        Q = vMod.evaluateAbove(td.getDepth(), pseg.isPWave ? VelocityModelMaterial.Q_P : VelocityModelMaterial.Q_S);
+                    } else {
+                        Q = vMod.evaluateBelow(td.getDepth(), pseg.isPWave ? VelocityModelMaterial.Q_P : VelocityModelMaterial.Q_S);
+                    }
+                    if (Q <= 0) {
+                        System.err.println(td.getDepth()+" == "+pseg.getPhaseSegment().getBotDepth()+ " " );
+                        throw new RuntimeException("Q <= 0 for "+getName()+" "+td+"   depthrange: "
+                                +pseg.getPhaseSegment().getDepthRange()[0]+" "+(pseg.getPhaseSegment().getDepthRange()[1]));
+                    }
                     tstar += timeInc / Q;
                     prev = td;
                 }
