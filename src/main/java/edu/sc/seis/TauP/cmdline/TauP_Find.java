@@ -179,7 +179,6 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
                     getSeismicPhases(),
                     arrivalList);
         } else {
-            boolean onlyFirst = false;
             boolean onlyPrintTime = false;
             boolean onlyPrintRayP = false;
             List<String> relativePhaseName = new ArrayList<>();
@@ -188,7 +187,7 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
                     modelArgs.getSourceDepths(),
                     modelArgs.getReceiverDepths(),
                     getScatterer(),
-                    onlyFirst, onlyPrintTime, onlyPrintRayP,
+                    onlyPrintTime, onlyPrintRayP,
                     isWithAmplitude(), sourceArgs.getMw(), sourceArgs.getAttenuationFrequency(),
                     relativePhaseName);
         }

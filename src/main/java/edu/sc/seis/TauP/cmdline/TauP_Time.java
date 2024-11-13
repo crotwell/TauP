@@ -212,7 +212,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
                 modelArgs.getSourceDepths(),
                 modelArgs.getReceiverDepths(),
                 getScatterer(),
-                onlyFirst, onlyPrintTime, onlyPrintRayP,
+                onlyPrintTime, onlyPrintRayP,
                 isWithAmplitude(), sourceArgs.getMw(), sourceArgs.getAttenuationFrequency(),
                 relativePhaseName);
     }
@@ -223,7 +223,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
                                            List<Double> sourceDepthList,
                                            List<Double>  receiverDepthList,
                                            Scatterer scatterer,
-                                           boolean onlyFirst, boolean onlyPrintTime, boolean onlyPrintRayP,
+                                           boolean onlyPrintTime, boolean onlyPrintRayP,
                                            boolean withAmplitude, double Mw, double attenuationFrequency,
                                            List<String> relativePhaseName) {
         Arrival currArrival;
