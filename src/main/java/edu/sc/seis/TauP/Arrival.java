@@ -158,6 +158,25 @@ public class Arrival {
         return arrivals;
     }
 
+    public static List<Arrival> onlyFirst(List<Arrival> arrivalList) {
+        List<Arrival> first = new ArrayList<>();
+        List<Arrival> copyList = new ArrayList<>(arrivalList);
+        copyList = Arrival.sortArrivals(copyList);
+        while (!copyList.isEmpty()) {
+            Arrival early = copyList.get(0);
+            first.add(early);
+            copyList.remove(early);
+            List<Arrival> samePhase = new ArrayList<>();
+            for (Arrival a : copyList) {
+                if (a.getPhase() == early.getPhase()) {
+                    samePhase.add(a);
+                }
+            }
+            copyList.removeAll(samePhase);
+        }
+        return first;
+    }
+
     public  String getCommentLine() {
         String outName = getName();
         if ( ! getName().equals(getPuristName())) {
