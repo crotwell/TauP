@@ -440,7 +440,7 @@ public class SeismicPhaseFactory {
                  * p and s for zero source depth are only at zero distance and
                  * then can be called P or S.
                  */
-                String reason = " Upgoing initial leg but already at surface, so no ray parameters satisfy path.";
+                String reason = " Upgoing initial leg but already at surface, so no ray parameters satisfy path."+tMod.getSourceBranch();
                 return failNewPhase(tMod, isCompressionalWaveSymbol(legs.get(0)), isDowngoingSymbol(legs.get(0)),
                         receiverDepth, name, reason);
             }
