@@ -228,22 +228,36 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
             double[] dist = phase.getDist();
             out = new double[dist.length];
             for (int i = 0; i < dist.length; i++) {
-                Arrival arrival = phase.createArrivalAtIndex(i);
+                Arrival arrival = arrivalAtIndex(i, phase);
                 out[i] = arrival.getTakeoffAngleDegree();
             }
         } else if (axisType==AxisType.incidentangle) {
             double[] dist = phase.getDist();
             out = new double[dist.length];
             for (int i = 0; i < dist.length; i++) {
-                Arrival arrival = phase.createArrivalAtIndex(i);
+                Arrival arrival = arrivalAtIndex(i, phase);
                 out[i] = arrival.getIncidentAngleDegree();
             }
         } else if (axisType==AxisType.turndepth) {
             double[] dist = phase.getDist();
             out = new double[dist.length];
             for (int i = 0; i < dist.length; i++) {
-                Arrival arrival = phase.createArrivalAtIndex(i);
+                Arrival arrival = arrivalAtIndex(i, phase);
                 out[i] = arrival.getDeepestPierce().getDepth();
+            }
+        } else if (axisType==AxisType.radiationpsv) {
+            double[] dist = phase.getDist();
+            out = new double[dist.length];
+            for (int i = 0; i < dist.length; i++) {
+                Arrival arrival = arrivalAtIndex(i, phase);
+                out[i] = arrival.getRadiationPatternPSV();
+            }
+        } else if (axisType==AxisType.radiationsh) {
+            double[] dist = phase.getDist();
+            out = new double[dist.length];
+            for (int i = 0; i < dist.length; i++) {
+                Arrival arrival = arrivalAtIndex(i, phase);
+                out[i] = arrival.getRadiationPatternSH();
             }
         } else if (axisType==AxisType.amp ||
                 axisType==AxisType.amppsv ||
@@ -268,7 +282,7 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
             double[] dist = phase.getDist();
             double[] amp = new double[dist.length];
             for (int i = 0; i < dist.length; i++) {
-                Arrival arrival = phase.createArrivalAtIndex(i);
+                Arrival arrival = arrivalAtIndex(i, phase);
                 amp[i] = arrival.getAmplitudeGeometricSpreadingFactor();
             }
             out = amp;
@@ -282,7 +296,7 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
             if ( ! isSH || phase.isAllSWave()) {
                 // only do Sh calc for all S wave legs in phase, otherwise zeros
                 for (int i = 0; i < dist.length; i++) {
-                    Arrival arrival = phase.createArrivalAtIndex(i);
+                    Arrival arrival = arrivalAtIndex(i, phase);
                     if (isSH) {
                         amp[i] = arrival.getEnergyReflTransSH();
                     } else {
@@ -298,14 +312,14 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
         } else if (axisType == AxisType.tstar) {
             out = new double[phase.getRayParams().length];
             for (int i = 0; i < out.length; i++) {
-                Arrival arrival = phase.createArrivalAtIndex(i);
+                Arrival arrival = arrivalAtIndex(i, phase);
                 out[i] = arrival.calcTStar();
             }
         } else if (axisType == AxisType.attenuation) {
             out = new double[phase.getRayParams().length];
             for (int i = 0; i < out.length; i++) {
-                Arrival arrival = phase.createArrivalAtIndex(i);
-                out[i] = arrival.calcAttenuation(sourceArgs.getAttenuationFrequency());
+                Arrival arrival = arrivalAtIndex(i, phase);
+                out[i] = arrival.calcAttenuation(sourceArgs.getAttenuationFrequency(), sourceArgs.getNumFrequencies());
             }
         } else if (axisType == AxisType.index) {
             out = new double[phase.getRayParams().length];
@@ -321,14 +335,14 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
                 System.err.println(phase.getPuristName() + " " + i + " " + phase.getDist(i));
             }
             for (int i = 0; i < dist.length; i++) {
-                Arrival arrival = phase.createArrivalAtIndex(i);
+                Arrival arrival = arrivalAtIndex(i, phase);
                 amp[i] = arrival.getEnergyGeometricSpreadingFactor();
             }
             out = amp;
         } else if (axisType==AxisType.pathlength) {
             out = new double[phase.getRayParams().length];
             for (int i = 0; i < out.length; i++) {
-                Arrival arrival = phase.createArrivalAtIndex(i);
+                Arrival arrival = arrivalAtIndex(i, phase);
                 out[i] = arrival.calcPathLength();
             }
         } else {
@@ -400,6 +414,14 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
         return splitCurve;
     }
 
+    public Arrival arrivalAtIndex(int i, SeismicPhase phase) throws SlownessModelException, NoSuchLayerException {
+        RayParamIndexRay rc = new RayParamIndexRay(i);
+        rc.setSourceArgs(sourceArgs);
+        rc.setAzimuth(azimuth);
+        rc.setDescription("Index "+i);
+        return rc.calculate(phase).get(0);
+    }
+
     public void printResult(PrintWriter writer, List<XYPlottingData> xyPlots) throws TauPException {
         XYPlotOutput xyOut = new XYPlotOutput(xyPlots, modelArgs);
         xyOut.setColoringArgs(coloring);
@@ -467,7 +489,10 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
 
     @Override
     public void validateArguments() throws TauModelException {
-
+        sourceArgs.validateArguments();
+        if (sourceArgs.hasStrikeDipRake() && azimuth == null) {
+            throw new TauModelException("strike,dip,rake requires azimuth");
+        }
     }
 
     public AxisType getxAxisType() {
@@ -715,6 +740,8 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
     @CommandLine.Mixin
     SeismicSourceArgs sourceArgs = new SeismicSourceArgs();
 
+    @CommandLine.Option(names="--az", description="azimuth in degrees, for amp calculations")
+    protected Double azimuth = null;
 
     protected boolean xAxisAbs = false;
     protected boolean yAxisAbs = false;
