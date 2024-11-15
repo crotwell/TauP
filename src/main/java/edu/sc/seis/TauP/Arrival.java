@@ -332,29 +332,6 @@ public class Arrival {
         return out;
     }
 
-        // find neighbor ray
-        Arrival neighbor;
-        if (getRayParamIndex() == 0) {
-            neighbor = getPhase().createArrivalAtIndex(getRayParamIndex()+1);
-        } else {
-            neighbor = getPhase().createArrivalAtIndex(getRayParamIndex()-1);
-        }
-        if (neighbor.getDist() == getDist()) {
-            // could create better neighbor implementation as shoot ray may give rp that is not same as index???
-            throw new TauModelException("Neighbor ray has same dist: "+getPhase().getName()+" "+getDistDeg());
-        }
-        double dtakeoff_ddelta = (getTakeoffAngleRadian()-neighbor.getTakeoffAngleRadian())/
-                (getDist()-neighbor.getDist());
-        double cosIncident = Math.cos(getIncidentAngleDegree()* SphericalCoords.DtoR);
-        if (Double.isNaN(cosIncident)) {
-            // divide by zero???
-            return Double.POSITIVE_INFINITY;
-        }
-        //units of 1/km^2 ?
-        return Math.sin(getTakeoffAngleRadian())* Math.abs(dtakeoff_ddelta)
-                / ( recRadius * recRadius * cosIncident * Math.sin(getModuloDist()));
-    }
-
     /**
      * Calculates the product of the reflection and transmission coefficients for all discontinuities along the path
      * of this arrival in the P-SV plane. Note that this may not give accurate results for certain wave types,
@@ -906,15 +883,45 @@ public class Arrival {
             pw.write(innerIndent + JSONWriter.valueToString("amp") + ": {" + NL);
 
             try {
+
+                // dimensionaless ?
                 double refltran = getEnergyReflTransPSV();
                 VelocityModel vMod = getPhase().getTauModel().getVelocityModel();
                 VelocityLayer top = vMod.getVelocityLayer(0);
                 double freeFactor = 1.0;
+                if (getReceiverDepth() <= 1.0) {
+                    Complex[] freeSurfRF;
+                    ReflTransFreeSurface rtFree = ReflTransFreeSurface.createReflTransFreeSurface(top.getTopPVelocity(), top.getTopSVelocity(), top.getTopDensity());
+                    if (getPhase().getFinalPhaseSegment().isPWave) {
+                        freeSurfRF = rtFree.getFreeSurfaceReceiverFunP(getRayParam() / vMod.getRadiusOfEarth());
+                    } else {
+                        freeSurfRF = rtFree.getFreeSurfaceReceiverFunSv(getRayParam() / vMod.getRadiusOfEarth());
+                    }
+                    freeFactor = Complex.abs(Complex.sqrt(freeSurfRF[0].times(freeSurfRF[0].plus(freeSurfRF[1].times(freeSurfRF[1])))));
+                }
+                double geoSpread = getAmplitudeGeometricSpreadingFactor(); // 1/km
+                // km/s
+                double sourceVel = getPhase().velocityAtSource(); // km/s
+                // Mg/m3 * (km/s)3 => 1e3 Kg/m3 * 1e9 (m3/s3) => 1e12 Kg /s3
+                double radiationTerm = 4*Math.PI*getPhase().densityAtSource()*sourceVel*sourceVel*sourceVel*1e12;
+                double attenuation = calcAttenuation(attenuationFrequency, SeismicSourceArgs.DEFAULT_NUM_FREQUENCIES);
+                //                          Kg m2 / s2     1        1/km   /   ( Kg/s3 )
+                // attenuation * freeFactor* moment * refltran * geoSpread / radiationTerm / 1e3; // s m2/km => s m / 1e3  why sec???
+
+
+
+
                 double geospread = getAmplitudeGeometricSpreadingFactor();
                 if (Double.isFinite(geospread)) {
-                    pw.write(innerIndent + "  " + JSONWriter.valueToString("factorpsv") + ": " + JSONWriter.valueToString((float) getAmplitudeFactorPSV(moment, attenuationFrequency)) + "," + NL);
-                    pw.write(innerIndent + "  " + JSONWriter.valueToString("factorsh") + ": " + JSONWriter.valueToString((float) getAmplitudeFactorSH(moment, attenuationFrequency)) + "," + NL);
+                    pw.write(innerIndent + "  " + JSONWriter.valueToString("factorpsv") + ": " + JSONWriter.valueToString((float) getAmplitudeFactorPSV()) + "," + NL);
+                    pw.write(innerIndent + "  " + JSONWriter.valueToString("factorsh") + ": " + JSONWriter.valueToString((float) getAmplitudeFactorSH()) + "," + NL);
                     pw.write(innerIndent + "  " + JSONWriter.valueToString("geospread") + ": " + JSONWriter.valueToString((float) geospread) + "," + NL);
+                    pw.write(innerIndent + "  " + JSONWriter.valueToString("attenuation") + ": " + JSONWriter.valueToString((float) attenuation) + "," + NL);
+                    pw.write(innerIndent + "  " + JSONWriter.valueToString("freeFactor") + ": " + JSONWriter.valueToString((float) freeFactor) + "," + NL);
+                    pw.write(innerIndent + "  " + JSONWriter.valueToString("moment") + ": " + JSONWriter.valueToString((float) moment) + "," + NL);
+                    pw.write(innerIndent + "  " + JSONWriter.valueToString("refltran") + ": " + JSONWriter.valueToString((float) refltran) + "," + NL);
+                    pw.write(innerIndent + "  " + JSONWriter.valueToString("radiationTerm") + ": " + JSONWriter.valueToString((float) radiationTerm) + "," + NL);
+                    pw.write(innerIndent + "  " + JSONWriter.valueToString("unitconv") + ": " + JSONWriter.valueToString((float) 1e-3) + "," + NL);
                 } else {
                     pw.write(innerIndent + "  " + JSONWriter.valueToString("error") + ": " + JSONWriter.valueToString("geometrical speading not finite") + "," + NL);
                 }
@@ -1078,4 +1085,5 @@ public class Arrival {
     public LatLonable getLatLonable() {
         return getRayCalculateable() != null ? getRayCalculateable().getLatLonable() : null;
     }
+
 }
