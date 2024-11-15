@@ -185,7 +185,7 @@ export async function display_results(taup_url) {
   console.log(`Load: ${taup_url}`);
   let toolname = getToolName();
   const format = valid_format(toolname);
-  let timeoutSec = 10;
+  let timeoutSec = 30;
   const controller = new AbortController();
   const signal = controller.signal;
   setTimeout(() => controller.abort(), timeoutSec * 1000);
