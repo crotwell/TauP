@@ -282,11 +282,40 @@
               <span>Mw: </span>
           </label>
           <input type="number" id="mw" name="mw" value="4" />
-          
+
           <label for="attenuationfreq">
-              <span>Attenuation Freq: </span>
+              <span>Attenuation Max Freq: </span>
           </label>
           <input type="number" id="attenuationfreq" name="attenuationfreq" value="1" />
+          <label for="numattenuationfreq">
+              <span>Num Freq: </span>
+          </label>
+          <input type="number" id="numattenuationfreq" name="numattenuationfreq" value="1" />
+
+
+          <label for="withstrikediprake">
+              <span>Fault: </span>
+          </label>
+          <input type="checkbox" id="withstrikediprake" name="withstrikediprake" checked />
+
+          <label for="strike">
+              <span>Strike: </span>
+          </label>
+          <input type="number" id="strike" name="strike" value="0" />
+          <label for="dip">
+              <span>Dip: </span>
+          </label>
+          <input type="number" id="dip" name="dip" value="90" />
+          <label for="rake">
+              <span>Rake: </span>
+          </label>
+          <input type="number" id="rake" name="rake" value="0" />
+
+
+          <label for="curveazimuth">
+              <span>Azimuth: </span>
+          </label>
+          <input type="number" id="curveazimuth" name="curveazimuth" value="45" />
         </div>
       </fieldset>
       <fieldset class="tool_find">
@@ -517,6 +546,8 @@
                   <option value="refltran">P-Sv, Sh Refl Trans</option>
                   <option value="refltranpsv">Only P-Sv Refl Trans</option>
                   <option value="refltransh">Only Sh Refl Trans</option>
+                  <option value="radiationpsv">Radiation Pattern PSv</option>
+                  <option value="radiationsh">Radiation Pattern Sh</option>
                   <option value="index">Sampling Index</option>
               </select>
 
@@ -570,6 +601,8 @@
                   <option value="refltran">P-Sv, Sh Refl Trans</option>
                   <option value="refltranpsv">Only P-Sv Refl Trans</option>
                   <option value="refltransh">Only Sh Refl Trans</option>
+                  <option value="radiationpsv">Radiation Pattern PSv</option>
+                  <option value="radiationsh">Radiation Pattern Sh</option>
                   <option value="index">Sampling Index</option>
                   <option value="theta">Theta</option>
               </select>

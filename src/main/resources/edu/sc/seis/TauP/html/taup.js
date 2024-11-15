@@ -570,6 +570,16 @@ export function form_url() {
     if (attenuationfreq !== "1.0") {
       url += `&attenuationfreq=${attenuationfreq}`;
     }
+
+
+    let withstrikediprake = document.querySelector('input[name="withstrikediprake"]').checked;
+    if (withstrikediprake) {
+      let strike = document.querySelector('input[name="strike"]').value;
+      let dip = document.querySelector('input[name="dip"]').value;
+      let rake = document.querySelector('input[name="rake"]').value;
+      let curveazimuth = document.querySelector('input[name="curveazimuth"]').value;
+      url += `&strikediprake=${strike},${dip},${rake}&az=${curveazimuth}`;
+    }
   }
   if (toolname === "velplot") {
 
