@@ -259,7 +259,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
         }
         SeismicPhaseSegment prev = null;
         for (SeismicPhaseSegment seg : segmentList) {
-            if (seg.maxRayParam == 0) {
+            if (seg.maxRayParam < 0) {
                 throw new RuntimeException("maxRayParam is zero: "+phaseNameForSegments());
             }
             if (seg.endBranch == seg.tMod.getNumBranches()-1 && seg.isDownGoing && seg.endAction != TURN) {
@@ -351,6 +351,11 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
         if (isEmpty()) {throw new RuntimeException("Segment list is empty");}
         return segmentList.get(segmentList.size()-1);
     }
+    public final SeismicPhaseSegment sourceSegment() {
+        if (isEmpty()) {throw new RuntimeException("Segment list is empty");}
+        return segmentList.get(0);
+    }
+
 
     public boolean isSuccessful() {
         return( !isFail) && endSegment().endAction != FAIL;
