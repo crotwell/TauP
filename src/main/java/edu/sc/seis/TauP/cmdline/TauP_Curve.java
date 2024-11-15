@@ -261,23 +261,24 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
             }
         } else if (axisType==AxisType.amp ||
                 axisType==AxisType.amppsv ||
-                axisType==AxisType.ampsh) {
+                axisType==AxisType.ampsh
+        ) {
             boolean isAmpSH = axisType==AxisType.ampsh;
             double[] dist = phase.getDist();
             double[] amp = new double[dist.length];
+            double attenFreq = 0;
             if (! isAmpSH || phase.isAllSWave()) {
                 // only do Sh calc for all S wave legs in phase, otherwise zeros
                 for (int i = 0; i < dist.length; i++) {
-                    Arrival arrival = phase.createArrivalAtIndex(i);
+                    Arrival arrival = arrivalAtIndex(i, phase);
                     if (isAmpSH) {
-                        amp[i] = arrival.getAmplitudeFactorSH(sourceArgs.getMoment(), sourceArgs.getAttenuationFrequency());
+                        amp[i] = arrival.getAmplitudeFactorSH();
                     } else {
-                        amp[i] = arrival.getAmplitudeFactorPSV(sourceArgs.getMoment(), sourceArgs.getAttenuationFrequency());
+                        amp[i] = arrival.getAmplitudeFactorPSV();
                     }
                 }
             }
             out = amp;
-
         } else if (axisType==AxisType.geospread) {
             double[] dist = phase.getDist();
             double[] amp = new double[dist.length];
@@ -330,10 +331,6 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
         } else if (axisType==AxisType.energygeospread) {
             double[] dist = phase.getDist();
             double[] amp = new double[dist.length];
-            System.err.println("curve geospread phase: " + phase.getNumRays());
-            for (int i = 0; i < phase.getNumRays(); i++) {
-                System.err.println(phase.getPuristName() + " " + i + " " + phase.getDist(i));
-            }
             for (int i = 0; i < dist.length; i++) {
                 Arrival arrival = arrivalAtIndex(i, phase);
                 amp[i] = arrival.getEnergyGeometricSpreadingFactor();
@@ -443,8 +440,9 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
         } else if (outputTypeArgs.isSVG()) {
             String cssExtra = "";
             switch (coloring.getColoring()) {
-                case phase:
                 case auto:
+                    break;
+                case phase:
                     cssExtra += SvgUtil.createPhaseColorCSS(phaseNameList, coloring);
                     break;
                 case wavetype:
@@ -626,6 +624,10 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
                 return "Reflection/Transmission Coef. Sh";
             case pathlength:
                 return "Path Length (km)";
+            case radiationpsv:
+                return "PSv Radiation Pattern";
+            case radiationsh:
+                return "Sh Radiation Pattern";
             default:
                 return axisType.name();
         }
