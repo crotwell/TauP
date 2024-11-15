@@ -95,6 +95,7 @@ public class TauP_Spikes extends TauP_AbstractRayTool {
         if (modelArgs.getSourceDepths().size() > 1) {
             throw new CommandLine.ParameterException(spec.commandLine(), "Multiple source depths unsupported: "+modelArgs.getSourceDepths().size());
         }
+        sourceArgs.validateArguments();
     }
 
     @Override
@@ -132,6 +133,9 @@ public class TauP_Spikes extends TauP_AbstractRayTool {
         List<MSeed3Record> spikeRecords = new ArrayList<>();
 
         for (DistanceRay distVal : degreesList) {
+            if ( ! distVal.hasSourceArgs()) {
+                distVal.setSourceArgs(sourceArgs);
+            }
             List<Arrival> allArrivals = new ArrayList<>();
             List<MSeed3Record> componentRecords = new ArrayList<>();
             double degrees = distVal.getDegrees(getRadiusOfEarth());

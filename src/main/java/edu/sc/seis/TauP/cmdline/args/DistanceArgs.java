@@ -320,8 +320,11 @@ public class DistanceArgs {
         return out;
     }
 
-
     public List<RayCalculateable> getRayCalculatables() throws TauPException {
+        return getRayCalculatables(null);
+    }
+
+    public List<RayCalculateable> getRayCalculatables(SeismicSourceArgs sourceArgs) throws TauPException {
         List<RayCalculateable> out = new ArrayList<>();
         out.addAll(getDistances());
         out.addAll(getRayParamDegRays());
@@ -329,6 +332,20 @@ public class DistanceArgs {
         out.addAll(getRayParamRadianRays());
         out.addAll(getTakeoffAngleRays());
         out.addAll(getRayParamIndexRays());
+        if (hasAzimuth()) {
+            for (RayCalculateable rc : out) {
+                if (!rc.hasAzimuth()) {
+                    rc.setAzimuth(getAzimuth());
+                }
+            }
+        }
+        if (sourceArgs != null) {
+            for (RayCalculateable rc : out) {
+                if (!rc.hasSourceArgs()) {
+                    rc.setSourceArgs(sourceArgs);
+                }
+            }
+        }
         return out;
     }
 
@@ -367,6 +384,9 @@ public class DistanceArgs {
         if (!latLonArgs.eventList.isEmpty() && !latLonArgs.stationList.isEmpty()
                 && (hasAzimuth() || hasBackAzimuth())) {
             throw new IllegalArgumentException("Cannot specify azimuth or back azimuth when both station and event are given");
+        }
+        if ((hasAzimuth() && hasBackAzimuth())) {
+            throw new IllegalArgumentException("Cannot specify both azimuth and back azimuth");
         }
     }
 

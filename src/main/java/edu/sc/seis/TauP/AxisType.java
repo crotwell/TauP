@@ -28,5 +28,7 @@ public enum AxisType {
     attenuation,
     theta,
     energygeospread,
-    pathlength
+    pathlength,
+    radiationpsv,
+    radiationsh
 }

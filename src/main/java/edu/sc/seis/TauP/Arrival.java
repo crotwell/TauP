@@ -25,6 +25,7 @@
  */
 package edu.sc.seis.TauP;
 
+import edu.sc.seis.TauP.cmdline.args.SeismicSourceArgs;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONWriter;
@@ -147,11 +148,7 @@ public class Arrival {
     
     private final double takeoffAngleRadian;
 
-    private double moment = MomentMagnitude.MAG4_MOMENT;
-
     private Arrival relativeToArrival = null;
-
-
 
     public static List<Arrival> sortArrivals(List<Arrival> arrivals) {
         arrivals.sort(Comparator.comparingDouble(Arrival::getTime));
@@ -309,21 +306,31 @@ public class Arrival {
         if (d < 0) throw new RuntimeException("energy geo spread is neg "+getDistDeg()+" "+d);
         return Math.sqrt(getEnergyGeometricSpreadingFactor());
     }
+
+
     /**
-     * Geometrical spreading factor.
-     * See Fundamentals of Modern Global Seismology, ch 13, eq 13.9.
-     * Note that eq 13.10 has divide by zero in case of a horizontal ray leaving the source.
+     * Energy Geometrical spreading factor.
+     * See Fundamentals of Modern Global Seismology, ch 13, eq 13.10.
+     * Note that eq 13.10 has divide by zero in case of a horizontal ray arriving at the receiver.
      *
      * @throws TauModelException
      */
     public double getEnergyGeometricSpreadingFactor() throws TauModelException {
-        double rofE = getPhase().getTauModel().getRadiusOfEarth();
-        double recRadius = rofE-getReceiverDepth();
-        double sourceRadius = rofE-getSourceDepth();
-        if (getModuloDist() == 0.0 || getModuloDist() == 180.0) {
-            // zero dist and antipode have divide by zero,
-            return Double.POSITIVE_INFINITY;
+        double out = 1;
+        TauModel tMod = getPhase().getTauModel();
+        double R = tMod.radiusOfEarth;
+        out *= getPhase().velocityAtSource()/
+                ((R-getReceiverDepth())*(R-getReceiverDepth())*(R-getSourceDepth()));
+        double takeoffRadian = getTakeoffAngleRadian();
+        if ( ! getPhase().getInitialPhaseSegment().isDownGoing) {
+            takeoffRadian = Math.PI-takeoffRadian;
         }
+        out *= Math.tan(takeoffRadian)/Math.cos(getIncidentAngleRadian());
+        out *= 1/Math.sin(getModuloDist());
+        double dRPdDist = getDRayParamDDelta(); // dp/ddelta = dT/ddelta
+        out *= Math.abs(dRPdDist);
+        return out;
+    }
 
         // find neighbor ray
         Arrival neighbor;
@@ -381,17 +388,35 @@ public class Arrival {
      * See FMGS eq 17.74
      */
     public double getAmplitudeFactorPSV() throws TauModelException, VelocityModelException, SlownessModelException {
-        return getAmplitudeFactorPSV(moment, DEFAULT_ATTENUATION_FREQUENCY);
+        SeismicSourceArgs sourceArgs = getRayCalculateable().getSourceArgs();
+        if (sourceArgs == null) {
+            throw new TauModelException("sourceArgs is null, RayCalc:"+getRayCalculateable());
+        }
+
+        double ampFactor = getAmplitudeFactorPSV(sourceArgs.getMoment(), sourceArgs.getAttenuationFrequency(), sourceArgs.getNumFrequencies());
+        if (sourceArgs.hasStrikeDipRake() && searchCalc.azimuth != null ) {
+            double[] radiationPattern = sourceArgs.calcRadiationPat( searchCalc.azimuth, getTakeoffAngleDegree());
+            double radTerm = 1;
+            if (getPhase().getPhaseSegments().get(0).isPWave) {
+                radTerm = radiationPattern[0];
+            } else {
+                radTerm = radiationPattern[1];
+            }
+            ampFactor *= radTerm;
+        } else if (sourceArgs.getStrikeDipRake() != null && searchCalc.azimuth == null ) {
+            // change to TauPException
+            throw new TauModelException("Amplitude with Strike-dip-rake requires azimuth");
+        }
+        return ampFactor;
     }
 
-    public double getAmplitudeFactorPSV(double moment, double attenuationFrequency) throws TauModelException, VelocityModelException, SlownessModelException {
-
-        // dimensionaless ?
+    public double getAmplitudeFactorPSV(double momentRate, double attenuationFrequency, int numFreq) throws TauModelException, VelocityModelException, SlownessModelException {
+        // dimensionaless
         double refltran = getEnergyReflTransPSV();
-        VelocityModel vMod = getPhase().getTauModel().getVelocityModel();
-        VelocityLayer top = vMod.getVelocityLayer(0);
         double freeFactor = 1.0;
         if (getReceiverDepth() <= 1.0) {
+            VelocityModel vMod = getPhase().getTauModel().getVelocityModel();
+            VelocityLayer top = vMod.getVelocityLayer(0);
             Complex[] freeSurfRF;
             ReflTransFreeSurface rtFree = ReflTransFreeSurface.createReflTransFreeSurface(top.getTopPVelocity(), top.getTopSVelocity(), top.getTopDensity());
             if (getPhase().getFinalPhaseSegment().isPWave) {
@@ -402,26 +427,45 @@ public class Arrival {
             freeFactor = Complex.abs(Complex.sqrt(freeSurfRF[0].times(freeSurfRF[0].plus(freeSurfRF[1].times(freeSurfRF[1])))));
         }
         double geoSpread = getAmplitudeGeometricSpreadingFactor(); // 1/km
-        // km/s
-        double sourceVel = getPhase().velocityAtSource(); // km/s
-        // Mg/m3 * (km/s)3 => 1e3 Kg/m3 * 1e9 (m3/s3) => 1e12 Kg /s3
+        //       km/s
+        double sourceVel = getPhase().velocityAtSource();
+        //                                           Mg/m3 * (km/s)3 => 1e3 Kg/m3 * 1e9 (m3/s3) => 1e12 Kg /s3
         double radiationTerm = 4*Math.PI*getPhase().densityAtSource()*sourceVel*sourceVel*sourceVel*1e12;
-        double attenuation = calcAttenuation(attenuationFrequency);
-        //                  Kg m2 / s2     1        1/km   /   ( Kg/s3 )
-        return attenuation * freeFactor* moment * refltran * geoSpread / radiationTerm / 1e3; // s m2/km => s m / 1e3  why sec???
+        double attenuation=1;
+        if (attenuationFrequency > 0) {
+            attenuation = calcAttenuation(attenuationFrequency, numFreq);
+        }
+        //                             Kg m2 / s3     1        1/km   /   ( Kg/s3 )
+        return 1
+                * attenuation         // 1
+                * freeFactor       // 1
+                * momentRate       // Kg m2 / s3
+                * refltran         // 1
+                * geoSpread        // 1/km
+                / radiationTerm    // 1/(Kg/s3)
+                / 1e3; //  m2/km =>  m / 1e3
     }
 
-    /**
-     * Calculates the amplitude factor, 1/sqrt(density*vel) times reflection/tranmission coefficient times geometric spreading, for the
-     * arrival. Note this is only an approximation of amplitude as the source radiation magnitude and pattern is
-     * not included, and this may not give accurate results for certain wave types, such as head or diffracted waves.
-     * @return
-     * @throws TauModelException
-     * @throws VelocityModelException
-     * @throws SlownessModelException
-     */
+        /**
+         * Calculates the amplitude factor, 1/sqrt(density*vel) times reflection/tranmission coefficient times geometric spreading, for the
+         * arrival. Note this is only an approximation of amplitude as the source radiation magnitude and pattern is
+         * not included, and this may not give accurate results for certain wave types, such as head or diffracted waves.
+         * @return
+         * @throws TauModelException
+         * @throws VelocityModelException
+         * @throws SlownessModelException
+         */
     public double getAmplitudeFactorSH() throws TauModelException, VelocityModelException, SlownessModelException {
-        return getAmplitudeFactorSH(moment, DEFAULT_ATTENUATION_FREQUENCY);
+        SeismicSourceArgs sourceArgs = getRayCalculateable().getSourceArgs();
+        double ampFactor = getAmplitudeFactorSH(sourceArgs.getMoment(), sourceArgs.getAttenuationFrequency());
+        if (sourceArgs.hasStrikeDipRake() && searchCalc.azimuth != null ) {
+            double[] radiationPattern = sourceArgs.calcRadiationPat( searchCalc.azimuth, getTakeoffAngleDegree());
+            ampFactor *= radiationPattern[2];
+        } else if (sourceArgs.hasStrikeDipRake() && searchCalc.azimuth == null ) {
+            // change to TauPException
+            throw new TauModelException("Amplitude with Strike-dip-rake requires azimuth");
+        }
+        return ampFactor;
     }
 
     public double getAmplitudeFactorSH(double moment, double attenuationFrequency) throws TauModelException, VelocityModelException, SlownessModelException {
@@ -431,12 +475,51 @@ public class Arrival {
         double geoSpread = getAmplitudeGeometricSpreadingFactor();
         double sourceVel = getPhase().velocityAtSource();
         double radiationTerm = 4*Math.PI*getPhase().densityAtSource()*sourceVel*sourceVel*sourceVel*1e12;
-        double attenuation = calcAttenuation(attenuationFrequency);
+        double attenuation=1;
+        if (attenuationFrequency > 0) {
+            attenuation = 0;
+            int N = SeismicSourceArgs.DEFAULT_NUM_FREQUENCIES;
+            attenuation = calcAttenuation(attenuationFrequency, N);
+        }
         double freeSurfRF =  1.0;
         if (getReceiverDepth() <= 1.0) {
             freeSurfRF = 2;
         }
-        return attenuation * freeSurfRF* moment* refltran * geoSpread / radiationTerm / 1e3;
+        return 1
+                * attenuation
+                * freeSurfRF
+                * moment
+                * refltran
+                * geoSpread
+                / radiationTerm / 1e3;
+    }
+
+    public double getRadiationPatternPSV() {
+        SeismicSourceArgs sourceArgs = getRayCalculateable().getSourceArgs();
+        double radTerm = 1;
+        if (sourceArgs != null && sourceArgs.hasStrikeDipRake() && searchCalc.azimuth != null ) {
+            double[] radiationPattern = sourceArgs.calcRadiationPat( searchCalc.azimuth, getTakeoffAngleDegree());
+            if (getPhase().getPhaseSegments().get(0).isPWave) {
+                radTerm = radiationPattern[0];
+            } else {
+                radTerm = radiationPattern[1];
+            }
+        }
+        return radTerm;
+    }
+
+    public double getRadiationPatternSH() {
+        SeismicSourceArgs sourceArgs = getRayCalculateable().getSourceArgs();
+        double radTerm = 1;
+        if (sourceArgs != null && sourceArgs.hasStrikeDipRake() && searchCalc.azimuth != null ) {
+            double[] radiationPattern = sourceArgs.calcRadiationPat( searchCalc.azimuth, getTakeoffAngleDegree());
+            if (getPhase().getPhaseSegments().get(0).isPWave) {
+                radTerm = 0;
+            } else {
+                radTerm = radiationPattern[2];
+            }
+        }
+        return radTerm;
     }
 
     public double getIncidentAngleDegree() {
@@ -561,19 +644,29 @@ public class Arrival {
      * Calculate attenuation over path at the default frequency. See eq B13.2.2 in FMGS, p374.
      */
     public double calcAttenuation() {
-        return calcAttenuation(DEFAULT_ATTENUATION_FREQUENCY);
+        return calcAttenuation(DEFAULT_ATTENUATION_FREQUENCY, SeismicSourceArgs.DEFAULT_NUM_FREQUENCIES);
     }
 
     /**
      * Calculate attenuation over path at the given frequency. See eq B13.2.2 in FMGS, p374.
+     * Averages over N+1 frequencies from 0 to maxfreq.
      */
-    public double calcAttenuation(double freq) {
+    public double calcAttenuation(double maxfreq, int N) {
         double tstar = calcTStar();
+        double atten = 0;
         if (Double.isFinite(tstar)) {
-            return Math.pow(Math.E, -1 * Math.PI * freq * tstar);
+            if (N == 0 || N == 1) {
+                // only do maxfreq
+                atten = Math.pow(Math.E, -1 * Math.PI * maxfreq * tstar);
+            } else {
+                for (int n = 0; n <= N; n++) {
+                    atten +=  Math.pow(Math.E, -1 * Math.PI * maxfreq * tstar * n/N) / N;
+                }
+            }
         } else {
-            return 1;
+            atten = 1;
         }
+        return atten;
     }
 
 
@@ -668,10 +761,6 @@ public class Arrival {
 
     public void setRelativeToArrival(Arrival relativeToArrival) {
         this.relativeToArrival = relativeToArrival;
-    }
-
-    public void setSeismicMoment(double moment) {
-        this.moment = moment;
     }
 
     public String toString() {
@@ -817,6 +906,10 @@ public class Arrival {
             pw.write(innerIndent + JSONWriter.valueToString("amp") + ": {" + NL);
 
             try {
+                double refltran = getEnergyReflTransPSV();
+                VelocityModel vMod = getPhase().getTauModel().getVelocityModel();
+                VelocityLayer top = vMod.getVelocityLayer(0);
+                double freeFactor = 1.0;
                 double geospread = getAmplitudeGeometricSpreadingFactor();
                 if (Double.isFinite(geospread)) {
                     pw.write(innerIndent + "  " + JSONWriter.valueToString("factorpsv") + ": " + JSONWriter.valueToString((float) getAmplitudeFactorPSV(moment, attenuationFrequency)) + "," + NL);
@@ -904,9 +997,6 @@ public class Arrival {
 
 
     public JSONObject asJSONObject() {
-        return asJSONObject(moment, DEFAULT_ATTENUATION_FREQUENCY);
-    }
-    public JSONObject asJSONObject(double moment, double attenuationFrequency) {
         JSONObject a = new JSONObject();
         a.put("distdeg", (float)getModuloDistDeg());
         a.put("sourcedepth", (float)getSourceDepth());
@@ -925,9 +1015,11 @@ public class Arrival {
         try {
             double geospread = getAmplitudeGeometricSpreadingFactor();
             if (Double.isFinite(geospread)) {
-                ampObj.put("factorpsv", (float) getAmplitudeFactorPSV(moment, attenuationFrequency));
-                ampObj.put("factorsh", (float) getAmplitudeFactorSH(moment, attenuationFrequency));
+                SeismicSourceArgs sourceArgs = getRayCalculateable().sourceArgs;
+                ampObj.put("factorpsv", (float) getAmplitudeFactorPSV());
+                ampObj.put("factorsh", (float) getAmplitudeFactorSH());
                 ampObj.put("geospread", (float) geospread);
+                ampObj.put("source", getRayCalculateable().getSourceArgs().asJSONObject());
             } else {
                 ampObj.put("error", "geometrical speading not finite");
             }

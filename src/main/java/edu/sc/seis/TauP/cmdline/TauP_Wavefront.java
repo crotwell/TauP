@@ -248,7 +248,14 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
         int minArrivalsForPlot = 10;
         if ( phase.getNumRays() > minArrivalsForPlot) {
             for (int i = 0; i < phase.getNumRays(); i++) {
-                allArrival.add(phase.createArrivalAtIndex(i));
+                RayParamIndexRay rc = new RayParamIndexRay(i);
+                try {
+                    allArrival.add(rc.calculate(phase).get(0));
+                } catch (SlownessModelException e) {
+                    throw new RuntimeException(e);
+                } catch (NoSuchLayerException e) {
+                    throw new RuntimeException(e);
+                }
             }
         } else {
             if (phase.getMinRayParam() < phase.getMaxRayParam()) {

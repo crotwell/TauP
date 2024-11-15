@@ -10,7 +10,9 @@ public class RayParamIndexRay extends ShootableRay {
 
     @Override
     public List<Arrival> calculate(SeismicPhase phase) throws SlownessModelException, NoSuchLayerException {
-        return List.of(phase.createArrivalAtIndex(index));
+        Arrival a = phase.createArrivalAtIndex(index);
+        a.setSearchValue(this);
+        return List.of(a);
     }
 
     int index;

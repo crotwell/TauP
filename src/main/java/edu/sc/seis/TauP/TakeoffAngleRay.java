@@ -20,7 +20,11 @@ public class TakeoffAngleRay extends ShootableRay {
         if (rayParamRay == null) {
             return new ArrayList<>();
         }
-        return rayParamRay.calculate(phase);
+        List<Arrival> arrivals = rayParamRay.calculate(phase);
+        for (Arrival a : arrivals) {
+            a.setSearchValue(this);
+        }
+        return arrivals;
     }
 
     public RayParamRay forPhase(SeismicPhase phase) {

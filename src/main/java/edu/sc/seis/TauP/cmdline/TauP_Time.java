@@ -127,12 +127,6 @@ public class TauP_Time extends TauP_AbstractRayTool {
                 }
             }
         }
-        if (isWithAmplitude()) {
-            for (Arrival a : arrivals) {
-                // need to change this to be per-source somehow
-                a.setSeismicMoment(sourceArgs.getMoment());
-            }
-        }
 
         if(!relativePhaseList.isEmpty()) {
             Set<Double> distList = new HashSet<>();
@@ -213,7 +207,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
                 modelArgs.getReceiverDepths(),
                 getScatterer(),
                 onlyPrintTime, onlyPrintRayP,
-                isWithAmplitude(), sourceArgs.getMw(), sourceArgs.getAttenuationFrequency(),
+                isWithAmplitude(), sourceArgs,
                 relativePhaseName);
     }
 
@@ -224,7 +218,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
                                            List<Double>  receiverDepthList,
                                            Scatterer scatterer,
                                            boolean onlyPrintTime, boolean onlyPrintRayP,
-                                           boolean withAmplitude, double Mw, double attenuationFrequency,
+                                           boolean withAmplitude, SeismicSourceArgs sourceArgs,
                                            List<String> relativePhaseName) {
         Arrival currArrival;
         int maxNameLength = 5;
@@ -257,7 +251,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
                     + "   Time (s)  p (s/deg)   (deg)    (deg)    (km)     Distance  "
                     + String.format(phasePuristFormat, "Name");
             if (withAmplitude) {
-                lineOne += "    Amp  ~"+Outputs.formatDistanceNoPad(Mw)+" Mw";
+                lineOne += "    Amp  ~"+Outputs.formatDistanceNoPad(sourceArgs.getMw())+" Mw";
                 lineTwo += "  Factor PSv   Sh";
             }
             if (!relativePhaseName.isEmpty()) {
@@ -299,8 +293,8 @@ public class TauP_Time extends TauP_AbstractRayTool {
                 out.print(String.format(phasePuristFormat, currArrival.getPuristName()));
                 if (withAmplitude) {
                     try {
-                        double ampFactorPSV = currArrival.getAmplitudeFactorPSV(MomentMagnitude.mw_to_N_m(Mw), attenuationFrequency);
-                        double ampFactorSH = currArrival.getAmplitudeFactorSH(MomentMagnitude.mw_to_N_m(Mw), attenuationFrequency);
+                        double ampFactorPSV = currArrival.getAmplitudeFactorPSV();
+                        double ampFactorSH = currArrival.getAmplitudeFactorSH();
                         out.print(" " + Outputs.formatAmpFactor(ampFactorPSV) + " " + Outputs.formatAmpFactor(ampFactorSH));
                     } catch (SlownessModelException | TauModelException e) {
                         throw new RuntimeException("Should not happen", e);
@@ -378,7 +372,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
 
     @Override
     public void start() throws IOException, TauPException {
-        List<RayCalculateable> distanceValues = getDistanceArgs().getRayCalculatables();
+        List<RayCalculateable> distanceValues = getDistanceArgs().getRayCalculatables(this.sourceArgs);
         List<Arrival> arrivalList = calcAll(getSeismicPhases(), distanceValues);
         PrintWriter writer = outputTypeArgs.createWriter(spec.commandLine().getOut());
         printResult(writer, arrivalList);
@@ -388,6 +382,19 @@ public class TauP_Time extends TauP_AbstractRayTool {
     @Override
     public void destroy() throws TauPException {
 
+    }
+
+    @Override
+    public void validateArguments() throws TauPException {
+        super.validateArguments();
+        sourceArgs.validateArguments();
+        if (isWithAmplitude() && sourceArgs.getStrikeDipRake() != null) {
+            for (RayCalculateable rc : getDistanceArgs().getRayCalculatables(sourceArgs)) {
+                if (!rc.hasAzimuth()) {
+                    throw new IllegalArgumentException("Amplitude with Strike,Dip,Rake requires azimuth: "+rc);
+                }
+            }
+        }
     }
 
     /**

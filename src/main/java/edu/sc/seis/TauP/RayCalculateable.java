@@ -1,5 +1,6 @@
 package edu.sc.seis.TauP;
 
+import edu.sc.seis.TauP.cmdline.args.SeismicSourceArgs;
 import edu.sc.seis.seisFile.Location;
 
 import java.util.List;
@@ -38,6 +39,23 @@ public abstract class RayCalculateable {
         return staLatLon != null ? staLatLon.getDepthKm() : null;
     }
 
+    public boolean hasAzimuth() {
+        return azimuth != null || (this.staLatLon!=null && this.backAzimuth!=null);
+    }
+    public void setAzimuth(Double azimuth) {
+        this.azimuth = azimuth;
+    }
+
+    public boolean hasSourceArgs() {
+        return sourceArgs != null;
+    }
+    public void setSourceArgs(SeismicSourceArgs sourceArgs) {
+        this.sourceArgs = sourceArgs;
+    }
+    public SeismicSourceArgs getSourceArgs() {
+        return sourceArgs;
+    }
+
     public boolean hasDescription() {
         return description != null && ! description.isEmpty();
     }
@@ -63,5 +81,10 @@ public abstract class RayCalculateable {
     protected boolean geodetic = false;
     protected Double invFlattening = null;
     protected String description = null;
+
+    /**
+     * Optional source args for amp calculations.
+     */
+    protected SeismicSourceArgs sourceArgs = null;
 
 }

@@ -69,7 +69,7 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
     @Override
     public void start() throws IOException, TauPException {
         List<String> givenPhaseNames = PhaseArgs.extractPhaseNames("");
-        List<RayCalculateable> distanceValues = distanceArgs.getRayCalculatables();
+        List<RayCalculateable> distanceValues = distanceArgs.getRayCalculatables(sourceArgs);
         List<Arrival> arrivalList = new ArrayList<>();
         List<ProtoSeismicPhase> allwalk = new ArrayList<>();
         for (Double sourceDepth : modelArgs.getSourceDepths()) {
@@ -188,7 +188,7 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
                     modelArgs.getReceiverDepths(),
                     getScatterer(),
                     onlyPrintTime, onlyPrintRayP,
-                    isWithAmplitude(), sourceArgs.getMw(), sourceArgs.getAttenuationFrequency(),
+                    isWithAmplitude(), sourceArgs,
                     relativePhaseName);
         }
         out.flush();
@@ -315,13 +315,13 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
             throw new CommandLine.ParameterException(spec.commandLine(),
                     "Only one of --rayparamdeg and --rayparamkm may be used");
         }
-        if (!distanceArgs.getRayCalculatables().isEmpty()
+        sourceArgs.validateArguments();
+        if (!distanceArgs.getRayCalculatables(sourceArgs).isEmpty()
                 && (rayParamRangeDeg != null ||  rayParamRangeKm != null)
                 && getRayParamRange().length == 1) {
             throw new CommandLine.ParameterException(spec.commandLine(),
                     "Single value for --rayparamdeg or --rayparamkm not allowed when also giving --degree distance.");
         }
-
     }
 
     @CommandLine.Mixin
