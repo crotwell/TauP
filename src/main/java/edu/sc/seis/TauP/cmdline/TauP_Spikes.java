@@ -143,9 +143,6 @@ public class TauP_Spikes extends TauP_AbstractRayTool {
                 List<Arrival> phaseArrivals = distVal.calculate(phase);
                 allArrivals.addAll(phaseArrivals);
             }
-            for ( Arrival a : allArrivals) {
-                a.setSeismicMoment(sourceArgs.getMoment());
-            }
             Arrival last = Arrival.getLatestArrival(allArrivals);
             double lastTime = last == null ? 0 : last.getTime();
             //int startTime = (int) (Math.round(firstTime) - 120);
@@ -159,8 +156,8 @@ public class TauP_Spikes extends TauP_AbstractRayTool {
 
             for (Arrival arrival : allArrivals) {
                 int timeIdx = (int) Math.ceil((arrival.getTime() - startTime)/ getDeltaT());
-                double psvAmpFactor = arrival.getAmplitudeFactorPSV(sourceArgs.getMoment(), sourceArgs.getAttenuationFrequency());
-                double shAmpFactor = arrival.getAmplitudeFactorSH(sourceArgs.getMoment(), sourceArgs.getAttenuationFrequency());
+                double psvAmpFactor = arrival.getAmplitudeFactorPSV();
+                double shAmpFactor = arrival.getAmplitudeFactorSH();
                 double incidentAngle = arrival.getIncidentAngleDegree();
                 double rotateAngle = 0;
                 if ( ! arrival.getPhase().finalSegmentIsPWave()) {
@@ -526,13 +523,7 @@ public class TauP_Spikes extends TauP_AbstractRayTool {
             if (!phaseArrivals.isEmpty()) {
                 arrivals.add(phaseArrivals.get(0));
             }
-
         }
-        for (Arrival a : arrivals) {
-            a.setSeismicMoment(sourceArgs.getMoment());
-        }
-
-
         return Arrival.sortArrivals(arrivals);
     }
 
