@@ -402,8 +402,15 @@ public class SimpleSeismicPhase implements SeismicPhase {
             // can't shoot/refine for diffracted, head and non-body waves
             return linInterp;
         }
-        if (linInterp.getRayParam() == leftEstimate.getRayParam()) { return leftEstimate;}
-        if (linInterp.getRayParam() == rightEstimate.getRayParam()) { return rightEstimate;}
+        if (leftEstimate.getRayParam() == rightEstimate.getRayParam()) {
+            return linInterp;
+        }
+        if (linInterp.getRayParam() == leftEstimate.getRayParam()) {
+            return leftEstimate;
+        }
+        if (linInterp.getRayParam() == rightEstimate.getRayParam()) {
+            return rightEstimate;
+        }
 
         if(DEBUG) {
             Alert.debug("Phase: "+this);
