@@ -97,9 +97,9 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
 
                     }
                 } else {
-
-                    List<double[]> xData = calculatePlotForType(phase, xAxisType, ensure180);
-                    List<double[]> yData = calculatePlotForType(phase, yAxisType, ensure180);
+                    SeismicPhase interpolatedPhase = phase.interpolatePhase(2);
+                    List<double[]> xData = calculatePlotForType(interpolatedPhase, xAxisType, ensure180);
+                    List<double[]> yData = calculatePlotForType(interpolatedPhase, yAxisType, ensure180);
                     List<XYSegment> segments = XYSegment.createFromLists(xData, yData);
                     List<String> cssClasses = new ArrayList<>();
                     cssClasses.add(p_or_s);
@@ -130,8 +130,8 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
                             AxisType xOther = xAxisType==AxisType.refltran ? AxisType.refltransh : xAxisType;
                             AxisType yOther = yAxisType==AxisType.refltran ? AxisType.refltransh : yAxisType;
 
-                            xData = calculatePlotForType(phase, xOther, ensure180);
-                            yData = calculatePlotForType(phase, yOther, ensure180);
+                            xData = calculatePlotForType(interpolatedPhase, xOther, ensure180);
+                            yData = calculatePlotForType(interpolatedPhase, yOther, ensure180);
                             List<XYSegment> sh_segments = XYSegment.createFromLists(xData, yData);
                             List<String> cssClassesCopy = new ArrayList<>(cssClasses);
                             cssClassesCopy.add("refltransh");

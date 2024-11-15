@@ -479,6 +479,11 @@ public class ScatteredSeismicPhase implements SeismicPhase {
         return true;
     }
 
+    @Override
+    public SeismicPhase interpolatePhase(double maxDeltaDeg) {
+        return new ScatteredSeismicPhase(inboundArrival, scatteredPhase.interpolateSimplePhase(maxDeltaDeg), scattererDepth, scattererDistanceDeg, backscatter);
+    }
+
     /**
      *  Calculation of a amplitude for a scattered phase doesn't make any sense given 1D ray, so always returns zero.
      */

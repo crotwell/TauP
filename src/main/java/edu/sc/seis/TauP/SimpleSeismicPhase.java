@@ -339,7 +339,7 @@ public class SimpleSeismicPhase implements SeismicPhase {
                     * (searchDist - dist[rayNum + 1]) >= 0.0) {
                 /* look for distances that bracket the search distance */
                 if((rayParams[rayNum] == rayParams[rayNum + 1])
-                        && rayParams.length > 2) {
+                        && getMaxRayParam() > getMinRayParam()) {
                     /*
                      * Here we have a shadow zone, so it is not really an
                      * arrival.
@@ -450,6 +450,67 @@ public class SimpleSeismicPhase implements SeismicPhase {
     }
 
     @Override
+    public SeismicPhase interpolatePhase(double maxDeltaDeg) {
+        return interpolateSimplePhase(maxDeltaDeg);
+    }
+
+    /**
+     * Interpolates the time-dist arrays so adjacent rays are no more than maxDeltaDeg apart.
+     *
+     * @param maxDeltaDeg max separation in degrees
+     * @return new phase interpolated
+     */
+    public SimpleSeismicPhase interpolateSimplePhase(double maxDeltaDeg) {
+        int numToAdd = 0;
+        double maxDeltaRadian = maxDeltaDeg*DtoR;
+        for (int i = 0; i < rayParams.length-1; i++) {
+            if (Math.abs(dist[i]-dist[i+1]) > maxDeltaRadian) {
+
+                numToAdd+=(int) Math.ceil(Math.abs(dist[i + 1] - dist[i]) / maxDeltaRadian)-1;
+            }
+        }
+        double[] out_rayParams = new double[rayParams.length+numToAdd];
+        double[] out_dist = new double[rayParams.length+numToAdd];
+        double[] out_time = new double[rayParams.length+numToAdd];
+        int shift = 0;
+        int prior = 0;
+        for (int i = 0; i < rayParams.length-1; i++) {
+            out_dist[i + shift] = dist[i];
+            out_rayParams[i + shift] = rayParams[i];
+            out_time[i + shift] = time[i];
+
+            int numRPs = (int) Math.ceil(Math.abs(dist[i + 1] - dist[i]) / maxDeltaRadian);
+            double deltaDist=(dist[i + 1] - dist[i]) /numRPs;
+            for (int j = 1; j < numRPs; j++) {
+                List<Arrival> aList = ExactDistanceRay.ofRadians(dist[i] + j * deltaDist).calcSimplePhase(this);
+                for (Arrival a : aList) {
+                    if (rayParams[i+1] <= a.getRayParam() && a.getRayParam() <= rayParams[i]) {
+                        shift++;
+                        out_dist[i + shift] = a.getDist();
+                        out_time[i + shift] = a.getTime();
+                        out_rayParams[i + shift] = a.getRayParam();
+                        break;
+                    }
+                }
+                if (aList.size() == 0) {
+                    throw new RuntimeException("Bad calc for interp "+j+" "+(dist[i] + j * deltaDist)*RtoD+" for "+getName());
+                }
+            }
+
+        }
+        // add last sample
+        out_dist[rayParams.length-1 + shift] = dist[rayParams.length-1];
+        out_rayParams[rayParams.length-1 + shift] = rayParams[rayParams.length-1];
+        out_time[rayParams.length-1 + shift] = time[rayParams.length-1];
+        SimpleSeismicPhase out = new SimpleSeismicPhase(proto, out_rayParams, out_time, out_dist,
+                minRayParam, maxRayParam, minRayParamIndex, maxRayParamIndex, minDistance, maxDistance, false);
+        if (shift != numToAdd) {
+            throw new RuntimeException("shifty not numAdd "+shift+" "+numToAdd);
+        }
+        return out;
+    }
+
+    @Override
     public Arrival shootRay(double rayParam) throws SlownessModelException, NoSuchLayerException {
         if(countFlatLegs() > 0 && rayParam != getMinRayParam()) {
             throw new SlownessModelException("Unable to shoot ray in non-body, head, diffracted waves");
@@ -518,6 +579,7 @@ public class SimpleSeismicPhase implements SeismicPhase {
         if (right.getDist() == searchDist) {
             return right;
         }
+
         double arrivalRayParam = (searchDist - right.getDist())
                 * (left.getRayParam() - right.getRayParam())
                 / (left.getDist() - right.getDist())
