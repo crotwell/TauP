@@ -116,8 +116,8 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
                             AxisType xOther = xAxisType==AxisType.amp ? AxisType.ampsh : xAxisType;
                             AxisType yOther = yAxisType==AxisType.amp ? AxisType.ampsh : yAxisType;
 
-                            xData = calculatePlotForType(phase, xOther, ensure180);
-                            yData = calculatePlotForType(phase, yOther, ensure180);
+                            xData = calculatePlotForType(interpolatedPhase, xOther, ensure180);
+                            yData = calculatePlotForType(interpolatedPhase, yOther, ensure180);
                             List<XYSegment> sh_segments = XYSegment.createFromLists(xData, yData);
                             List<String> cssClassesCopy = new ArrayList<>(cssClasses);
                             cssClassesCopy.add("ampsh");
