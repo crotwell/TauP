@@ -39,6 +39,9 @@ public class SeismicSourceArgs {
         }
     }
 
+    @CommandLine.Option(names="--numattenuationfreq",
+            defaultValue=""+DEFAULT_NUM_FREQUENCIES,
+            description = " number attenuations frequency for amplitude calculations")
     int numFrequencies = DEFAULT_NUM_FREQUENCIES;
 
     public int getNumFrequencies() {

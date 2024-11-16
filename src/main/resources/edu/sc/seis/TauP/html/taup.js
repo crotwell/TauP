@@ -571,6 +571,11 @@ export function form_url() {
       url += `&attenuationfreq=${attenuationfreq}`;
     }
 
+    let numattenuationfreq = document.querySelector('input[name="numattenuationfreq"]').value;
+    if (numattenuationfreq !== "1.0") {
+      url += `&numattenuationfreq=${numattenuationfreq}`;
+    }
+
 
     let withstrikediprake = document.querySelector('input[name="withstrikediprake"]').checked;
     if (withstrikediprake) {

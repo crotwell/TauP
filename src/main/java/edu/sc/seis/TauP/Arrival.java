@@ -434,7 +434,7 @@ public class Arrival {
          */
     public double getAmplitudeFactorSH() throws TauModelException, VelocityModelException, SlownessModelException {
         SeismicSourceArgs sourceArgs = getRayCalculateable().getSourceArgs();
-        double ampFactor = getAmplitudeFactorSH(sourceArgs.getMoment(), sourceArgs.getAttenuationFrequency());
+        double ampFactor = getAmplitudeFactorSH(sourceArgs.getMoment(), sourceArgs.getAttenuationFrequency(), sourceArgs.getNumFrequencies());
         if (sourceArgs.hasStrikeDipRake() && searchCalc.azimuth != null ) {
             double[] radiationPattern = sourceArgs.calcRadiationPat( searchCalc.azimuth, getTakeoffAngleDegree());
             ampFactor *= radiationPattern[2];
@@ -445,7 +445,7 @@ public class Arrival {
         return ampFactor;
     }
 
-    public double getAmplitudeFactorSH(double moment, double attenuationFrequency) throws TauModelException, VelocityModelException, SlownessModelException {
+    public double getAmplitudeFactorSH(double moment, double attenuationFrequency, int numFreq) throws TauModelException, VelocityModelException, SlownessModelException {
         double refltran = getEnergyReflTransSH();
         // avoid NaN in case of no S wave legs where geo spread returns INFINITY
         if (refltran == 0.0) {return 0.0;}
@@ -454,9 +454,7 @@ public class Arrival {
         double radiationTerm = 4*Math.PI*getPhase().densityAtSource()*sourceVel*sourceVel*sourceVel*1e12;
         double attenuation=1;
         if (attenuationFrequency > 0) {
-            attenuation = 0;
-            int N = SeismicSourceArgs.DEFAULT_NUM_FREQUENCIES;
-            attenuation = calcAttenuation(attenuationFrequency, N);
+            attenuation = calcAttenuation(attenuationFrequency, numFreq);
         }
         double freeSurfRF =  1.0;
         if (getReceiverDepth() <= 1.0) {
@@ -621,7 +619,8 @@ public class Arrival {
      * Calculate attenuation over path at the default frequency. See eq B13.2.2 in FMGS, p374.
      */
     public double calcAttenuation() {
-        return calcAttenuation(DEFAULT_ATTENUATION_FREQUENCY, SeismicSourceArgs.DEFAULT_NUM_FREQUENCIES);
+        return calcAttenuation(getRayCalculateable().getSourceArgs().getAttenuationFrequency(),
+                getRayCalculateable().getSourceArgs().getNumFrequencies());
     }
 
     /**
@@ -904,7 +903,7 @@ public class Arrival {
                 double sourceVel = getPhase().velocityAtSource(); // km/s
                 // Mg/m3 * (km/s)3 => 1e3 Kg/m3 * 1e9 (m3/s3) => 1e12 Kg /s3
                 double radiationTerm = 4*Math.PI*getPhase().densityAtSource()*sourceVel*sourceVel*sourceVel*1e12;
-                double attenuation = calcAttenuation(attenuationFrequency, SeismicSourceArgs.DEFAULT_NUM_FREQUENCIES);
+                double attenuation = calcAttenuation();
                 //                          Kg m2 / s2     1        1/km   /   ( Kg/s3 )
                 // attenuation * freeFactor* moment * refltran * geoSpread / radiationTerm / 1e3; // s m2/km => s m / 1e3  why sec???
 
