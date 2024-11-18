@@ -1311,8 +1311,8 @@ public class SeismicPhaseFactory {
             }
 
             if ( ! tMod.isDiffractionBranch(disconBranch, isPWave)) {
-                return failWithMessage(proto,"Unable to diffract " + currLeg + ", "
-                        + disconBranch+", "+numString+" is not velocity discontinuity.");
+                return failWithMessage(proto,"Unable to diffract " + currLeg + ", "+disconBranch+" at "+
+                        + tMod.getTauBranch(disconBranch, isPWave).getTopDepth()+" km, "+numString+" is not velocity discontinuity.");
             }
             // is possible to diffract downward? maybe if low velocity zone??
             // normal case
@@ -1624,7 +1624,8 @@ public class SeismicPhaseFactory {
 
         if ( ! tMod.isDiffractionBranch(disconBranch, isPWave)) {
             return failWithMessage(proto,"Unable to diffract " + currLeg + ", "
-                    + disconBranch+" is not negative velocity discontinuity.");
+                    + tMod.getTauBranch(disconBranch, isPWave).getTopDepth()+" km, "+
+                    + disconBranch+" is not a velocity discontinuity.");
         }
         endAction = DIFFRACT;
         proto.addToBranch(
@@ -2581,7 +2582,8 @@ public class SeismicPhaseFactory {
 
         if ( ! tMod.isDiffractionBranch(disconBranch, isPWave)) {
             return failWithMessage(proto,"Unable to diffract " + currLeg + ", "
-                    + disconBranch+" is not negative velocity discontinuity.");
+                    + tMod.getTauBranch(disconBranch, isPWave).getTopDepth()+" km, "+
+                    + disconBranch+" is not a velocity discontinuity.");
         }
         if (nextLeg.equals("I") || nextLeg.equals("J")) {
             // down into inner core
