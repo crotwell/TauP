@@ -610,7 +610,7 @@ public class TauModel implements Serializable {
             depthCorrected = splitBranch(depth);
             depthCorrected.sourceDepth = depth;
             /* Check to see if depth is center of earth. */
-            if(depthCorrected.tauBranches[0][tauBranches[0].length - 1].getBotDepth() == depth) {
+            if(depthCorrected.tauBranches[0][depthCorrected.tauBranches[0].length - 1].getBotDepth() == depth) {
                 depthCorrected.sourceBranch = depthCorrected.tauBranches[0].length; // one past bottom
             } else {
                 depthCorrected.sourceBranch = depthCorrected.findBranch(depth);
