@@ -53,7 +53,7 @@ public class HeadDiffWaveTest {
     double deg = 30;
     TauModel tModDepth = tMod.depthCorrect(depth);
 
-    int disconBranch = LegPuller.closestBranchToDepth(tModDepth, "410");
+    int disconBranch = LegPuller.closestDisconBranchToDepth(tModDepth, "410");
     SeismicPhase diffPhase = SeismicPhaseFactory.createPhase("P410diff", tModDepth);
     List<Arrival> arrivals = DistanceRay.ofDegrees(deg).calculate(diffPhase);
     assertEquals(1, arrivals.size());
@@ -80,7 +80,7 @@ public class HeadDiffWaveTest {
     double depth = 0;
     double deg = 30;
     TauModel tModDepth = tMod.depthCorrect(depth);
-    int disconBranch = LegPuller.closestBranchToDepth(tModDepth, "410");
+    int disconBranch = LegPuller.closestDisconBranchToDepth(tModDepth, "410");
     SeismicPhase headPhase = SeismicPhaseFactory.createPhase("P410n", tModDepth);
     assertTrue(headPhase.phasesExistsInModel());
     List<Arrival> headarrivals = DistanceRay.ofDegrees(deg).calculate(headPhase);
@@ -138,7 +138,7 @@ public class HeadDiffWaveTest {
     assertEquals(1, SedPdiff_arrivals.size());
     Arrival SedPdiff_Arr = SedPdiff_arrivals.get(0);
 
-    int disconBranch = LegPuller.closestBranchToDepth(tMod, "3000");
+    int disconBranch = LegPuller.closestDisconBranchToDepth(tMod, "3000");
     assertEquals(tMod_OCD.getTauBranch(disconBranch-1, true).getMinTurnRayParam(), SedPdiff_Arr.getRayParam());
 
 }
@@ -157,7 +157,7 @@ public class HeadDiffWaveTest {
     assertEquals(1, ic_diff_arrivals.size());
     Arrival ic_diff_Arr = ic_diff_arrivals.get(0);
 
-    int disconBranch = LegPuller.closestBranchToDepth(tMod_OCD, "5500");
+    int disconBranch = LegPuller.closestDisconBranchToDepth(tMod_OCD, "5500");
     TauBranch tBranch = tMod_OCD.getTauBranch(disconBranch-1, true);
     assertEquals(5500, tBranch.getBotDepth());
     assertEquals(tBranch.getMinTurnRayParam(), ic_diff_Arr.getRayParam());

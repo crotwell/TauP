@@ -250,13 +250,13 @@ public class LegPuller {
                     legs.add(boundId);
                     offset+=boundId.length();
                     if(offset == name.length()) {
-                        throw new PhaseParseException("Invalid phase name:\n"
+                        throw new PhaseParseException("Invalid phase name: "
                                 + boundId
                                 + " cannot be last in " + name+" at "+offset, name, offset);
 
                     }
                 } else {
-                    throw new PhaseParseException("Invalid phase name:\n"
+                    throw new PhaseParseException("Invalid phase name at "
                             + name.substring(offset) + " in " + name+" at "+offset, name, offset);
                 }
             }
@@ -363,11 +363,12 @@ public class LegPuller {
 
     /**
      * Finds the closest discontinuity to the given depth that can have
-     * reflections and phase transformations.
+     * reflections and phase transformations. May return 1 past total number of
+     * branchs if depth is center of earth.
      *
      * @return the branch number with the closest top depth.
      */
-    public static int closestBranchToDepth(TauModel tMod, String depthString) {
+    public static int closestDisconBranchToDepth(TauModel tMod, String depthString) {
         switch (depthString) {
             case "" + m:
                 return tMod.getMohoBranch();
@@ -383,10 +384,13 @@ public class LegPuller {
         TauBranch tBranch;
         for(int i = 0; i < tMod.getNumBranches(); i++) {
             tBranch = tMod.getTauBranch(i, SimpleSeismicPhase.PWAVE);
-            if(Math.abs(disconDepth - tBranch.getTopDepth()) < disconMax
-                    && !tMod.isNoDisconDepth(tBranch.getTopDepth())) {
-                disconBranch = i;
-                disconMax = Math.abs(disconDepth - tBranch.getTopDepth());
+            if (tMod.isDiscontinuityBranch(i, SimpleSeismicPhase.PWAVE)) {
+                double foundDepth = tBranch.getTopDepth();
+                if (Math.abs(disconDepth - foundDepth) < disconMax
+                        && !tMod.isNoDisconDepth(foundDepth)) {
+                    disconBranch = i;
+                    disconMax = Math.abs(disconDepth - foundDepth);
+                }
             }
         }
         return disconBranch;
@@ -417,7 +421,7 @@ public class LegPuller {
             Matcher matcher = reflectDepthPattern.matcher(currLeg);
             if(matcher.matches()) {
                 puristName.append(currLeg.charAt(0));
-                disconBranch = closestBranchToDepth(tMod, currLeg.substring(1));
+                disconBranch = closestDisconBranchToDepth(tMod, currLeg.substring(1));
 
                 if (disconBranch == tMod.getMohoBranch()) {
                     puristName.append(m);
