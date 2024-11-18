@@ -10,9 +10,11 @@ public class LegPuller {
 
     public static final String number = "((([0-9]*[.])?[0-9]+)|([0-9]*[.]))";
 
-    public static final String travelSuffix = "((diff)|(ed)|n|g)";
+    public static final String travelSuffix = "((?:"+DIFFDOWN+")|(?:"+DIFF+")|(?:ed)|n|g)";
 
-    public static final String headDiffRE = "(([PSIJK]([mci]|"+number+")?)((diff)|n))";
+    public static final String headDiffRE = "(([PSIJK]([mci]|"+number+")?)((?:"+DIFFDOWN+")|(?:"+DIFF+")|"+HEAD_CODE+"))";
+
+    public static final String namedHeadDiffRE = "(([PSIJK]([mci]|"+number+")?)(?<hd>(?:"+DIFFDOWN+")|(?:"+DIFF+")|"+HEAD_CODE+"))";
 
     public static final String travelLeg = "(([PpSsKkIyJj]"+travelSuffix+"?)|"+headDiffRE+")";
 
@@ -104,6 +106,18 @@ public class LegPuller {
                         // Ied, Jed
                         legs.add(name.substring(offset, offset + 3));
                         offset = offset + 3;
+                    } else if (isHead(name, offset)) {
+                        String headLeg = name.substring(offset, name.indexOf(HEAD_CODE,offset+1) + HEAD_CODE.length());
+                        legs.add(headLeg);
+                        offset += headLeg.length();
+                    } else if (isDiffractedDown(name, offset)) {
+                        String diffLeg = name.substring(offset, name.indexOf(DIFFDOWN,offset+1) + DIFFDOWN.length());
+                        legs.add(diffLeg);
+                        offset += diffLeg.length();
+                    } else if (isDiffracted(name, offset)) {
+                        String diffLeg = name.substring(offset, name.indexOf(DIFF,offset+1) + DIFF.length());
+                        legs.add(diffLeg);
+                        offset += diffLeg.length();
                     } else if (PhaseSymbols.isBoundary(name, offset+1)) {
                         offset = extractPhaseBoundaryInteraction(name, offset, 1, legs);
                     } else {
@@ -124,17 +138,14 @@ public class LegPuller {
                             || name.charAt(offset + 1) == c) {
                         legs.add(name.substring(offset, offset + 1));
                         offset++;
-                    } else if (PhaseSymbols.isBoundary(name, offset+1)) {
-                        offset = extractPhaseBoundaryInteraction(name, offset, 1, legs);
                     } else if (isUpgoingSymbol(name, offset+1)) {
                         throw new PhaseParseException("Invalid phase name:\n"
                                 + name.charAt(offset)
                                 + " cannot be followed by upgoing phase"
                                 + name.charAt(offset + 1) + " in " + name+" at "+offset, name, offset);
                     } else if (name.charAt(offset + 1) == g
-                            || name.charAt(offset + 1) == b
-                            || isHead(name, offset)) {
-                        /* The leg is not described by one letter, check for 2. */
+                            || name.charAt(offset + 1) == b) {
+                        /* Crustal phases like Pb and Pg. */
                         legs.add(name.substring(offset, offset + 2));
                         offset = offset + 2;
                     } else if (isExclusiveDowngoingSymbol(name, offset)) {
@@ -144,10 +155,20 @@ public class LegPuller {
                                 legs.add(name.substring(offset, offset + 3));
                                 offset = offset + 3;
                             }
+                    } else if (isHead(name, offset)) {
+                        String headLeg = name.substring(offset, name.indexOf(HEAD_CODE,offset+1) + HEAD_CODE.length());
+                        legs.add(headLeg);
+                        offset += headLeg.length();
+                    } else if (isDiffractedDown(name, offset)) {
+                        String diffLeg = name.substring(offset, name.indexOf(DIFFDOWN,offset+1) + DIFFDOWN.length());
+                        legs.add(diffLeg);
+                        offset += diffLeg.length();
                     } else if (isDiffracted(name, offset)) {
                         String diffLeg = name.substring(offset, name.indexOf(DIFF,offset+1) + DIFF.length());
                         legs.add(diffLeg);
                         offset += diffLeg.length();
+                    } else if (PhaseSymbols.isBoundary(name, offset+1)) {
+                        offset = extractPhaseBoundaryInteraction(name, offset, 1, legs);
                     } else {
                         throw new PhaseParseException("Invalid phase name:\n"
                                 + name.substring(offset) + " in " + name+" at "+offset, name, offset);
@@ -163,16 +184,23 @@ public class LegPuller {
                             ) {
                         legs.add(name.substring(offset, offset + 1));
                         offset++;
-                    } else if (PhaseSymbols.isBoundary(name, offset+1)) {
-                        offset = extractPhaseBoundaryInteraction(name, offset, 1, legs);
                     } else if(isExclusiveDowngoingSymbol(name, offset)) {
                         legs.add(name.substring(offset, offset + 3));
                         offset = offset + 3;
-
+                    } else if (isHead(name, offset)) {
+                        String headLeg = name.substring(offset, name.indexOf(HEAD_CODE,offset+1) + HEAD_CODE.length());
+                        legs.add(headLeg);
+                        offset += headLeg.length();
+                    } else if (isDiffractedDown(name, offset)) {
+                        String diffLeg = name.substring(offset, name.indexOf(DIFFDOWN,offset+1) + DIFFDOWN.length());
+                        legs.add(diffLeg);
+                        offset += diffLeg.length();
                     } else if (isDiffracted(name, offset)) {
                         String diffLeg = name.substring(offset, name.indexOf(DIFF,offset+1) + DIFF.length());
                         legs.add(diffLeg);
                         offset += diffLeg.length();
+                    } else if (PhaseSymbols.isBoundary(name, offset+1)) {
+                        offset = extractPhaseBoundaryInteraction(name, offset, 1, legs);
                     } else {
                         throw new PhaseParseException("Invalid phase name:\n"
                                 + name.substring(offset) + " in " + name+" at "+offset, name, offset);
@@ -249,8 +277,8 @@ public class LegPuller {
         if (boundId.isEmpty()) {
             throw new PhaseParseException("Got empty boundary from extractBoundaryId() in phaseBoundary "+phaseChar+" "+offset+" in "+name, name, offset);
         }
-        if (boundId.endsWith(DIFF) || boundId.endsWith(String.valueOf(HEAD_CODE))) {
-            // like Pn, Pdiff or PKdiffP, add as single leg
+        if (boundId.endsWith(DIFF) || boundId.endsWith(DIFFDOWN) || boundId.endsWith(String.valueOf(HEAD_CODE))) {
+            // like Pn, Pdiff or P410diff, add as single leg
             legs.add(phaseChar+boundId);
             idx += boundId.length();
         } else  if (offset+phaseChar.length()+boundId.length() == name.length()) {
@@ -266,20 +294,27 @@ public class LegPuller {
         return idx;
     }
 
-    public static String extractBoundaryId(String name, int offset, boolean allowHeadDiff) throws PhaseParseException {
+    public static String extractBoundaryId(String name, int offset, boolean includeHeadDiff) throws PhaseParseException {
         if(offset == name.length()-1) {
             throw new PhaseParseException("Invalid phase name:\n"
                     + name.charAt(offset)
                     + " cannot be last char in " + name, name, offset);
         }
-        int idx = offset;
+        int startIdx=offset;
+        while(startIdx < name.length() && !PhaseSymbols.isBoundary(name, startIdx)) {
+            startIdx++;
+        }
+        int idx = startIdx;
         while(idx < name.length() && PhaseSymbols.isBoundary(name, idx)) {
             idx++;
         }
-        if (allowHeadDiff && name.length() >= idx + 4 && name.startsWith(DIFF, idx)) {
+        if (includeHeadDiff && name.length() >= idx + DIFF.length() && name.startsWith(DIFF, idx)) {
             // diffraction off other layer
-            idx+=4;
-        } else if (allowHeadDiff && idx < name.length() && name.startsWith(HEAD_CODE, idx)) {
+            idx+=DIFF.length();
+        } else if (includeHeadDiff && name.length() >= idx + DIFFDOWN.length() && name.startsWith(DIFFDOWN, idx)) {
+            // diffraction off other layer
+            idx+=DIFFDOWN.length();
+        } else if (includeHeadDiff && idx < name.length() && name.startsWith(HEAD_CODE, idx)) {
             // head wave off other layer
             idx++;
         } // else normal discon interaction
@@ -438,7 +473,7 @@ public class LegPuller {
         String prevToken;
         String nextToken;
         boolean prevIsReflect = false;
-        /* Special cases for diffracted waves. */
+        /* Special cases for simple diffracted waves like Pdiff and surface waves like 2kmps. */
         if(legs.size() == 2
                 && (isDiffracted(currToken, 0) || isSurfaceWave(currToken, 0))
                 && legs.get(1).equals(PhaseSymbols.END_CODE)) {

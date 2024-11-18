@@ -6,6 +6,7 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static edu.sc.seis.TauP.LegPuller.extractBoundaryId;
 import static edu.sc.seis.TauP.PhaseInteraction.*;
 import static edu.sc.seis.TauP.PhaseInteraction.REFLECT_TOPSIDE_CRITICAL;
 import static edu.sc.seis.TauP.PhaseSymbols.*;
@@ -530,11 +531,15 @@ public class SeismicPhaseFactory {
                     //special, need nextnextleg too
                     String nextNextLeg = legNum < legs.size()-2 ? legs.get(legNum+2) : END_CODE;
                     proto = currLegIs_P_S(proto, prevLeg, currLeg, nextLeg, nextNextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
-                } else if ((currLeg.startsWith("P") || currLeg.startsWith("S")) && isDiffracted(currLeg)) {
+                } else if ((currLeg.startsWith("P") || currLeg.startsWith("S")) && (isDiffracted(currLeg) || isDiffractedDown(currLeg))) {
                     proto = currLegIs_Pdiff_Sdiff(proto, prevLeg, currLeg, nextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
                 } else if ((currLeg.startsWith("P") || currLeg.startsWith("S")) &&
-                        (currLeg.endsWith(HEAD_CODE) || currLeg.endsWith("g"))) {
+                        (isHead(currLeg,0) || currLeg.endsWith("g"))) {
                     proto = currLegIs_Pn_Sn(proto, prevLeg, currLeg, nextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
+                } else {
+                    String reason = "Unknown phase in crust/mantle";
+                    proto.failNext(reason);
+                    return proto;
                 }
             } else if (isOuterCoreLeg(currLeg)) {
                 if (currLeg.equals("K")) {
@@ -555,7 +560,7 @@ public class SeismicPhaseFactory {
                         proto.failNext(reason);
                         return proto;
                     }
-                } else if (currLeg.startsWith("K") && isDiffracted(currLeg)) {
+                } else if (currLeg.startsWith("K") && (isDiffracted(currLeg) || isDiffractedDown(currLeg))) {
                     /* Now deal with Kdiff. */
                     if (checkDegenerateOuterCore(prevLeg, currLeg, nextLeg, isPWave, prevIsPWave, legNum)) {
                         proto = currLegIs_Kdiff(proto, prevLeg, currLeg, nextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
@@ -585,7 +590,7 @@ public class SeismicPhaseFactory {
                         proto.failNext(reason);
                         return proto;
                     }
-                } else if ((currLeg.startsWith("I") || currLeg.startsWith("J")) && isDiffracted(currLeg)) {
+                } else if ((currLeg.startsWith("I") || currLeg.startsWith("J")) && ( isDiffracted(currLeg) || isDiffractedDown(currLeg))) {
                     /* Now deal with I5500diff. */
                     if (checkDegenerateInnerCore(prevLeg, currLeg, nextLeg, isPWave, prevIsPWave, legNum)) {
                         proto = currLegIs_I_Jdiff(proto, prevLeg, currLeg, nextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
@@ -1031,7 +1036,7 @@ public class SeismicPhaseFactory {
                 }
             }
         } else if (nextLeg.endsWith(HEAD_CODE) && nextLeg.length() > 1) {
-            String numString = nextLeg.substring(0, nextLeg.length() - 1);
+            String numString = extractBoundaryId(nextLeg, 0, false);
             try {
                 int disconBranch = LegPuller.closestBranchToDepth(tMod, numString);
                 if ( ! tMod.isHeadWaveBranch(disconBranch, isPWave)) {
@@ -1052,9 +1057,9 @@ public class SeismicPhaseFactory {
                         + nextLeg + " expected number but was `" + numString + "`");
             }
 
-        } else if (nextLeg.endsWith("diff") && nextLeg.length() > 4) {
+        } else if (isDiffracted(nextLeg) || isDiffractedDown(nextLeg)) {
             // diff but not Pdiff or Sdiff
-            String numString = nextLeg.substring(0, nextLeg.length()-4);
+            String numString = extractBoundaryId(nextLeg, 0, false);
             try {
                 int disconBranch = LegPuller.closestBranchToDepth(tMod, numString);
 
@@ -1113,7 +1118,7 @@ public class SeismicPhaseFactory {
                     endAction,
                     currLeg);
         } else if (nextLeg.endsWith(HEAD_CODE) && nextLeg.length() > 1) {
-            String numString = nextLeg.substring(0, nextLeg.length()-1);
+            String numString = extractBoundaryId(nextLeg, 0, false);
             double headDepth = Double.parseDouble(numString);
             int disconBranch = LegPuller.closestBranchToDepth(tMod, numString);
 
@@ -1128,9 +1133,8 @@ public class SeismicPhaseFactory {
                     nextIsPWave,
                     endAction,
                     currLeg);
-        } else if (nextLeg.endsWith("diff") && nextLeg.length() > 4) {
-            String numString = nextLeg.substring(0, nextLeg.length()-4);
-            double diffDepth = Double.parseDouble(numString);
+        } else if (isDiffracted(nextLeg) || isDiffractedDown(nextLeg)) {
+            String numString = extractBoundaryId(nextLeg, 0, false);
             int disconBranch = LegPuller.closestBranchToDepth(tMod, numString);
             endAction = DIFFRACT;
             proto.addToBranch(
@@ -1310,13 +1314,12 @@ public class SeismicPhaseFactory {
                             + " when currBranch=" + currBranch);
                 }
 
-        } else if (currLeg.endsWith("diff") && currLeg.length()>5) {
+        } else if (isDiffracted(currLeg) || isDiffractedDown(currLeg)) {
             int depthIdx = 0;
             if (currLeg.startsWith("P") || currLeg.startsWith("S")) {
                 depthIdx = 1;
             }
-            String numString = currLeg.substring(depthIdx, currLeg.length()-4);
-            double diffDepth = Double.parseDouble(numString);
+            String numString = extractBoundaryId(currLeg, depthIdx , false);
             int disconBranch = LegPuller.closestBranchToDepth(tMod, numString);
             SeismicPhaseSegment prevSegment = !proto.segmentList.isEmpty() ? proto.endSegment() : null;
 
@@ -1344,8 +1347,12 @@ public class SeismicPhaseFactory {
                         + tMod.getTauBranch(disconBranch, isPWave).getTopDepth()+" km, "+numString+" is not velocity discontinuity.");
             }
             // is possible to diffract downward? maybe if low velocity zone??
-            // normal case
-            proto.addFlatBranch(isPWave, endAction, DIFFRACTTURN, currLeg);
+            if (currLeg.endsWith(DIFFDOWN)) {
+                proto.addFlatBranch(isPWave, endAction, TRANSDOWN, currLeg);
+            } else {
+                // normal case
+                proto.addFlatBranch(isPWave, endAction, DIFFRACTTURN, currLeg);
+            }
 
 
             if(nextLeg.equals(END_CODE)) {
@@ -1404,7 +1411,8 @@ public class SeismicPhaseFactory {
             if (currLeg.startsWith("P") || currLeg.startsWith("S")) {
                 depthIdx = 1;
             }
-            String numString = currLeg.substring(depthIdx, currLeg.length()-1);
+            String numString = extractBoundaryId(currLeg, depthIdx, false);
+
             double headDepth = Double.parseDouble(numString);
             int disconBranch = LegPuller.closestBranchToDepth(tMod, numString);
 
@@ -1571,13 +1579,12 @@ public class SeismicPhaseFactory {
                     || currLeg.startsWith("I") || currLeg.startsWith("J")) {
                 depthIdx = 1;
             }
-            String numString = currLeg.substring(depthIdx, currLeg.length()-1);
-            double headDepth = Double.parseDouble(numString);
+            String numString = extractBoundaryId(currLeg, depthIdx, false);
             int disconBranch = LegPuller.closestBranchToDepth(tMod, numString);
 
             if ( ! tMod.isHeadWaveBranch(disconBranch, isPWave)) {
                 return failWithMessage(proto,"Unable to head wave, "+ currLeg+", "
-                        + disconBranch +", "+headDepth+ " is not positive velocity discontinuity.");
+                        + disconBranch +", "+numString+ " is not positive velocity discontinuity.");
             }
             if(nextLeg.equals(END_CODE)) {
                 endAction = END;
@@ -1639,13 +1646,12 @@ public class SeismicPhaseFactory {
 
         if (currLeg.equals("Kdiff")) {
             disconBranch = tMod.getIocbBranch();
-        } else if (currLeg.endsWith(DIFF) && currLeg.length() > 5) {
+        } else if (isDiffracted  (currLeg) || isDiffractedDown(currLeg)) {
             int depthIdx = 0;
             if (currLeg.startsWith("K")) {
                 depthIdx = 1;
             }
-            String numString = currLeg.substring(depthIdx, currLeg.length() - 4);
-            double diffDepth = Double.parseDouble(numString);
+            String numString = extractBoundaryId(currLeg, depthIdx, false);
             disconBranch = LegPuller.closestBranchToDepth(tMod, numString);
         } else {
             throw new TauModelException("Not Kdiff " + currLeg + " in currLegIs_Kdiff " + getName());
@@ -1909,8 +1915,7 @@ public class SeismicPhaseFactory {
                             + " > disconBranch=" + disconBranch + " , prev=" + prevLeg);
                 }
             } else if (nextLeg.endsWith(HEAD_CODE) && nextLeg.length() > 1) {
-                String numString = nextLeg.substring(0, nextLeg.length()-1);
-                double headDepth = Double.parseDouble(numString);
+                String numString = extractBoundaryId(nextLeg,0, false);
                 int disconBranch = LegPuller.closestBranchToDepth(tMod, numString);
                 if (disconBranch < tMod.cmbBranch) {
                     return failWithMessage(proto, " Phase not recognized (5): "
@@ -1920,7 +1925,7 @@ public class SeismicPhaseFactory {
 
                 if ( ! tMod.isHeadWaveBranch(disconBranch, isPWave)) {
                     return failWithMessage(proto,"Unable to head wave, "+ currLeg+", "
-                            + disconBranch +", "+headDepth+ " is not positive velocity discontinuity.");
+                            + disconBranch +", "+numString+ " is not positive velocity discontinuity.");
                 }
                 endAction = HEAD;
                 proto.addToBranch(
@@ -1930,8 +1935,7 @@ public class SeismicPhaseFactory {
                         endAction,
                         currLeg);
             } else if (nextLeg.endsWith(DIFF) && nextLeg.length() > 4) {
-                String numString = nextLeg.substring(0, nextLeg.length()-4);
-                double diffDepth = Double.parseDouble(numString);
+                String numString = extractBoundaryId(nextLeg, 0, false);
                 int disconBranch = LegPuller.closestBranchToDepth(tMod, numString);
                 if (disconBranch < tMod.cmbBranch) {
                     return failWithMessage(proto, " Phase not recognized (5): "
@@ -2013,8 +2017,7 @@ public class SeismicPhaseFactory {
                             + " < disconBranch=" + disconBranch);
                 }
             } else if (nextLeg.endsWith(HEAD_CODE) && nextLeg.length() > 1) {
-                String numString = nextLeg.substring(0, nextLeg.length()-1);
-                double headDepth = Double.parseDouble(numString);
+                String numString = extractBoundaryId(nextLeg, 0, false);
                 int disconBranch = LegPuller.closestBranchToDepth(tMod, numString);
                 if (disconBranch < tMod.cmbBranch) {
                     return failWithMessage(proto,  " Phase not recognized (5): "
@@ -2023,7 +2026,7 @@ public class SeismicPhaseFactory {
                 }
                 if ( ! tMod.isHeadWaveBranch(disconBranch, isPWave)) {
                     return failWithMessage(proto,"Unable to head wave, "+ currLeg+", "
-                            + disconBranch +", "+headDepth+ " is not positive velocity discontinuity.");
+                            + disconBranch +", "+numString+ " is not positive velocity discontinuity.");
                 }
                 endAction = HEAD;
                 proto.addToBranch(
@@ -2033,8 +2036,7 @@ public class SeismicPhaseFactory {
                         endAction,
                         currLeg);
             } else if (nextLeg.endsWith(DIFF) && nextLeg.length() > 4) {
-                String numString = nextLeg.substring(0, nextLeg.length()-4);
-                double diffDepth = Double.parseDouble(numString);
+                String numString = extractBoundaryId(nextLeg, 0, false);
                 int disconBranch = LegPuller.closestBranchToDepth(tMod, numString);
                 if (disconBranch < tMod.cmbBranch) {
                     return failWithMessage(proto,  " Phase not recognized (5): "
@@ -2286,8 +2288,7 @@ public class SeismicPhaseFactory {
                 return failWithMessage(proto, reason);
             }
         } else if (nextLeg.endsWith(HEAD_CODE) && nextLeg.length() > 1) {
-            String numString = nextLeg.substring(0, nextLeg.length()-1);
-            double headDepth = Double.parseDouble(numString);
+            String numString = extractBoundaryId(nextLeg, 0, false);
             int disconBranch = LegPuller.closestBranchToDepth(tMod, numString);
             if (disconBranch < tMod.iocbBranch) {
                 return failWithMessage(proto,  " Phase not recognized (5): "
@@ -2296,7 +2297,7 @@ public class SeismicPhaseFactory {
             }
             if ( ! tMod.isHeadWaveBranch(disconBranch, isPWave)) {
                 return failWithMessage(proto,"Unable to head wave, "+ currLeg+", "
-                        + disconBranch +", "+headDepth+ " is not positive velocity discontinuity.");
+                        + disconBranch +", "+numString+ " is not positive velocity discontinuity.");
             }
             endAction = HEAD;
             proto.addToBranch(
@@ -2306,8 +2307,7 @@ public class SeismicPhaseFactory {
                     endAction,
                     currLeg);
         } else if (nextLeg.endsWith(DIFF) && nextLeg.length() > 4) {
-            String numString = nextLeg.substring(0, nextLeg.length()-4);
-            double diffDepth = Double.parseDouble(numString);
+            String numString = extractBoundaryId(nextLeg,0, false);
             int disconBranch = LegPuller.closestBranchToDepth(tMod, numString);
             if (disconBranch < tMod.iocbBranch) {
                 return failWithMessage(proto, " Phase not recognized (5): "
@@ -2448,8 +2448,7 @@ public class SeismicPhaseFactory {
                             + " < disconBranch=" + disconBranch);
                 }
             } else if (nextLeg.endsWith(HEAD_CODE) && nextLeg.length() > 1) {
-                String numString = nextLeg.substring(0, nextLeg.length()-1);
-                double headDepth = Double.parseDouble(numString);
+                String numString = extractBoundaryId(nextLeg, 0, false);
                 int disconBranch = LegPuller.closestBranchToDepth(tMod, numString);
                 if (disconBranch < tMod.iocbBranch) {
                     return failWithMessage(proto,  " Phase not recognized (5): "
@@ -2458,7 +2457,7 @@ public class SeismicPhaseFactory {
                 }
                 if ( ! tMod.isHeadWaveBranch(disconBranch, isPWave)) {
                     return failWithMessage(proto,"Unable to head wave, "+ currLeg+", "
-                            + disconBranch +", "+headDepth+ " is not positive velocity discontinuity.");
+                            + disconBranch +", "+numString+ " is not positive velocity discontinuity.");
                 }
                 endAction = HEAD;
                 proto.addToBranch(
@@ -2468,8 +2467,7 @@ public class SeismicPhaseFactory {
                         endAction,
                         currLeg);
             } else if (nextLeg.endsWith(DIFF) && nextLeg.length() > 4) {
-                String numString = nextLeg.substring(0, nextLeg.length()-4);
-                double diffDepth = Double.parseDouble(numString);
+                String numString = extractBoundaryId(nextLeg, 0, false);
                 int disconBranch = LegPuller.closestBranchToDepth(tMod, numString);
                 if (disconBranch < tMod.iocbBranch) {
                     return failWithMessage(proto,  " Phase not recognized (5): "
@@ -2594,8 +2592,7 @@ public class SeismicPhaseFactory {
             if (currLeg.startsWith("I") || currLeg.startsWith("J")) {
                 depthIdx = 1;
             }
-            String numString = currLeg.substring(depthIdx, currLeg.length() - 4);
-            double diffDepth = Double.parseDouble(numString);
+            String numString = extractBoundaryId(currLeg, depthIdx, false);
             disconBranch = LegPuller.closestBranchToDepth(tMod, numString);
         } else {
             throw new TauModelException("Not I or Jdiff " + currLeg + " in currLegIs_I_Jdiff " + getName());

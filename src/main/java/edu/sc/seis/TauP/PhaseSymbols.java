@@ -29,6 +29,7 @@ public class PhaseSymbols {
     // head and diffracted
     public static final String HEAD_CODE = "n";
     public static final String DIFF = "diff";
+    public static final String DIFFDOWN = "diffdn";
 
     // specialized codes
     public static final char g = 'g'; // crust only like Pg
@@ -124,17 +125,42 @@ public class PhaseSymbols {
     }
 
     /**
-     * Match phase segments like Pdiff, S410diff, Kdiff
+     * Match phase segments like Pdiff, S410diff, Kdiff, PdiffdownKS
      * @param name
      * @param offset
      * @return
      */
     public static boolean isDiffracted(String name, int offset) {
-        Pattern phaseRegEx = Pattern.compile("^"+LegPuller.headDiffRE);
+        Pattern phaseRegEx = Pattern.compile("^"+LegPuller.namedHeadDiffRE);
         Matcher m = phaseRegEx.matcher(name.substring(offset));
         if (m.find()) {
-            return m.group(m.groupCount()-1).equals(DIFF);
+            return DIFF.equals(m.group("hd"));
         }
+        return false;
+    }
+
+    /**
+     * Match phase segments like  SedPdiffdnKS
+     * @param name
+     * @return
+     */
+    public static boolean isDiffractedDown(String name) {
+        return isDiffractedDown(name, 0);
+    }
+    /**
+     * Match phase segments like  SedPdiffdnKS
+     * @param name to match
+     * @param offset start at offset
+     * @return
+     */
+    public static boolean isDiffractedDown(String name, int offset) {
+        Pattern phaseRegEx = Pattern.compile("^"+LegPuller.namedHeadDiffRE);
+        Matcher m = phaseRegEx.matcher(name.substring(offset));
+        if (m.find()) {
+            System.err.println("group hd "+m.group("hd"));
+            return DIFFDOWN.equals(m.group("hd"));
+        }
+        System.err.println("No match");
         return false;
     }
 
@@ -143,7 +169,17 @@ public class PhaseSymbols {
     }
     public static boolean isHead(String name, int offset) {
         // simple like Pn
-        return isDowngoingSymbol(name, offset) && name.startsWith( HEAD_CODE, offset + 1);
+        //return isDowngoingSymbol(name, offset) && name.startsWith( HEAD_CODE, offset + 1);
+        Pattern phaseRegEx = Pattern.compile("^"+LegPuller.namedHeadDiffRE);
+        Matcher m = phaseRegEx.matcher(name.substring(offset));
+        if (m.find()) {
+            System.err.println("isHead "+name+" 1 "+m.group(m.groupCount()-1)+" 2"+m.group(m.groupCount()));
+            for (int i = 0; i <= m.groupCount(); i++) {
+                System.err.println(i+" "+m.group(i));
+            }
+            return HEAD_CODE.equals(m.group("hd"));
+        }
+        return false;
     }
 
     public static boolean isSurfaceWave(String name) {
