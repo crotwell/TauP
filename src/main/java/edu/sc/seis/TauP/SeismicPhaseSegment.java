@@ -606,4 +606,18 @@ public class SeismicPhaseSegment {
 		}
 		return Math.sqrt(reflTranValue);
 	}
+
+
+	public static String segmentDescribe(List<SeismicPhaseSegment> segmentList) {
+		String desc = "";
+		String indent = "  ";
+		for(SeismicPhaseSegment segment : segmentList) {
+			if (segment.endAction != PhaseInteraction.FAIL || segment.endBranch != -1) {
+				desc += indent + segment.toString() + "\n";
+			} else {
+				desc += indent + "then " + segment.endAction + "\n";
+			}
+		}
+		return desc;
+	}
 }

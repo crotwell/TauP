@@ -273,16 +273,7 @@ public interface SeismicPhase extends Serializable, Cloneable {
     }
 
     static String segmentDescribe(SeismicPhase phase) {
-        String desc = "";
-        String indent = "  ";
-        for(SeismicPhaseSegment segment : phase.getPhaseSegments()) {
-            if (segment.endAction != PhaseInteraction.FAIL || segment.endBranch != -1) {
-                desc += indent + segment.toString() + "\n";
-            } else {
-                desc += indent + "then " + segment.endAction + "\n";
-            }
-        }
-        return desc;
+        return SeismicPhaseSegment.segmentDescribe(phase.getPhaseSegments());
     }
     static String segmentDescribeJSON(SeismicPhase phase) {
         String desc = "";
