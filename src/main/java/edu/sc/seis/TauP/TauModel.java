@@ -219,10 +219,33 @@ public class TauModel implements Serializable {
      * @throws NoSuchLayerException
      */
     public boolean isDiffractionBranch(int branchNum, boolean isPWave) throws NoSuchLayerException {
-        double topDepth = getTauBranch(branchNum, false).getTopDepth();
-        int aboveIdx = getVelocityModel().layerNumberAbove(topDepth);
+        return isDiscontinuityBranch(branchNum, isPWave);
+    }
+
+    /**
+     * True if a boundary at top of branch is a discontinuity for the given phase type in the velocity model.
+     *
+     * @param branchNum branch layer number
+     * @param isPWave true for P, false for S
+     * @return if a velocity discontinuity
+     */
+    public boolean isDiscontinuityBranch(int branchNum, boolean isPWave) {
+        double topDepth = getTauBranch(branchNum, isPWave).getTopDepth();
+        int aboveIdx;
+        try {
+            aboveIdx = getVelocityModel().layerNumberAbove(topDepth);
+        } catch (NoSuchLayerException e) {
+            // no above means free surface, so is discon
+            return true;
+        }
         VelocityLayer above = getVelocityModel().getVelocityLayer(aboveIdx);
-        int belowIdx = getVelocityModel().layerNumberBelow(topDepth);
+        int belowIdx;
+        try {
+            belowIdx = getVelocityModel().layerNumberBelow(topDepth);
+        } catch (NoSuchLayerException e) {
+            // no layer below means center of earth, so not discon
+            return false;
+        }
         VelocityLayer below = getVelocityModel().getVelocityLayer(belowIdx);
         if (isPWave) {
             return above.getBotPVelocity() != below.getTopPVelocity();

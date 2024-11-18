@@ -2971,10 +2971,17 @@ public class SeismicPhaseFactory {
             double horizontalDistDeg = numHead/(numHead+numDiff) * getMaxRefraction() + numDiff/(numHead+numDiff)*getMaxDiffraction();
             dist[1] = dist[0] + horizontalDistDeg * Math.PI / 180.0;
             time[1] = time[0] + horizontalDistDeg * Math.PI / 180.0 * minRayParam;
-        } else if(maxRayParamIndex == minRayParamIndex) {
-            // one ray param but no head/diff phases ???
-            dist[1] = dist[0];
-            time[1] = time[0];
+        } else if(rayParams.length == 2 && maxRayParamIndex == minRayParamIndex) {
+            if (!proto.sourceSegment().isDownGoing && tMod.getSourceDepth() == tMod.getRadiusOfEarth()) {
+                // special case for source at center of earth, weird but sometimes useful for testing
+                dist[0] = 0;
+                dist[1] = 2*Math.PI;
+                time[1] = time[0];
+            } else {
+                // one ray param but no head/diff phases, weird degenerate case of single ray working ???
+                dist[1] = dist[0];
+                time[1] = time[0];
+            }
         }
         minDistance = Double.MAX_VALUE;
         maxDistance = 0.0;

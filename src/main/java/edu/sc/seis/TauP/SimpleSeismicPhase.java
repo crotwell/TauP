@@ -588,6 +588,12 @@ public class SimpleSeismicPhase implements SeismicPhase {
         // use closest edge to interpolate time
         double arrivalTime;
         double dRPdDist;
+        if (maxRayParam == minRayParam) {
+            // degenerate phase, all ray parameters are the same, just interpolate time
+            arrivalTime = LinearInterpolation.linearInterp(left.getDist(), left.getTime(),
+                    right.getDist(), right.getTime(), searchDist);
+            dRPdDist = 0;
+        } else
         if (Math.abs(searchDist - left.getDist()) < Math.abs(searchDist - right.getDist())) {
             arrivalTime = left.getTime() + arrivalRayParam * (searchDist - left.getDist());
             dRPdDist = (left.getRayParam()-arrivalRayParam)/ (left.getDist()-searchDist);
