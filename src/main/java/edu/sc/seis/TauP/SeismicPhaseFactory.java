@@ -3,6 +3,8 @@ package edu.sc.seis.TauP;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static edu.sc.seis.TauP.PhaseInteraction.*;
 import static edu.sc.seis.TauP.PhaseInteraction.REFLECT_TOPSIDE_CRITICAL;
@@ -118,10 +120,37 @@ public class SeismicPhaseFactory {
                                                          Scatterer scat,
                                                          boolean debug) throws TauModelException {
         List<SeismicPhase> phaseList = new ArrayList<>();
-        if (name.contains(""+ SCATTER_CODE)
-                || name.contains(""+ BACKSCATTER_CODE)) {
-            String[] in_scat = name.split("(["+ SCATTER_CODE+ BACKSCATTER_CODE+"])");
-            if (in_scat.length > 2) {
+
+        Pattern scatPattern = Pattern.compile(LegPuller.scatterWave);
+        Matcher m = scatPattern.matcher(name);
+        if (m.matches()) {
+            String inbound = m.group("inscat");
+            String scatType = m.group("scat");
+            String outbound = m.group("outscat");
+            if (inbound.length()==0 || name.charAt(0) == SCATTER_CODE || name.charAt(0) == BACKSCATTER_CODE) {
+                // this probably can't pass the RE, but...
+                FailedSeismicPhase fail = FailedSeismicPhase.failForReason(name, tMod, receiverDepth,
+                        "Scatter phase cannot start with symbols, oO, in "+name+", must have phase from source to scatterer.");
+                phaseList.add(fail);
+                return phaseList;
+            }
+            if (outbound.charAt(0) == SCATTER_CODE || outbound.charAt(0) == BACKSCATTER_CODE) {
+                // this probably can't pass the RE, but...
+                FailedSeismicPhase fail = FailedSeismicPhase.failForReason(name, tMod, receiverDepth,
+                        "Scatter phase cannot have repeat symbols, oO, in "+name+", must have only one scatterer.");
+                phaseList.add(fail);
+                return phaseList;
+            }
+            if (outbound.length()==0) {
+                // this probably can't pass the RE, but...
+                FailedSeismicPhase fail = FailedSeismicPhase.failForReason(name, tMod, receiverDepth,
+                        "Scatter phase cannot end with symbols, oO, in "+name+", must have phase from scatterer to receiver.");
+                phaseList.add(fail);
+                return phaseList;
+            }
+            // check second scatterer in outbound
+            Matcher outM = scatPattern.matcher(outbound);
+            if (outM.matches()) {
                 FailedSeismicPhase fail = FailedSeismicPhase.failForReason(name, tMod, receiverDepth,
                         "Scatter phase cannot have multiple scatter symbols, oO, in "+name+", repeated scattering not supported");
                 phaseList.add(fail);
@@ -133,8 +162,8 @@ public class SeismicPhaseFactory {
                 phaseList.add(fail);
                 return phaseList;
             }
-            String prescatterPhaseName = in_scat[0];
-            String postscatterPhaseName = in_scat[1];
+            String prescatterPhaseName = inbound;
+            String postscatterPhaseName = outbound;
             boolean isBackscatter = name.contains("" + BACKSCATTER_CODE);
             TauModel tModDepthCorrected = tMod;
             if (tModDepthCorrected.getSourceDepth()!= sourceDepth) {

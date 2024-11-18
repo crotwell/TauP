@@ -23,7 +23,7 @@ public class LegPuller {
     public static final String surfaceWave = "("+number+"kmps)";
     public static final String bodyWave = travelLeg+"("+interactPointsRE+"?"+travelLeg+")*";
 
-    public static final String scatterWave = "("+bodyWave+")(["+ PhaseSymbols.SCATTER_CODE+ PhaseSymbols.BACKSCATTER_CODE+"])("+bodyWave+")";
+    public static final String scatterWave = "(?<inscat>"+bodyWave+")(?<scat>["+ PhaseSymbols.SCATTER_CODE+ PhaseSymbols.BACKSCATTER_CODE+"])(?<outscat>"+bodyWave+")";
 
     public static final Pattern phaseRegEx =
             Pattern.compile("^("+surfaceWave+"|"+ scatterWave+"|"+ bodyWave+")$");
@@ -475,6 +475,12 @@ public class LegPuller {
                 nextToken = legs.get(i+1);
             } else {
                 nextToken = "";
+            }
+            // repeated scatter code
+            if ((prevToken.equals(""+SCATTER_CODE) || prevToken.equals(""+BACKSCATTER_CODE))
+                    && (currToken.equals(""+SCATTER_CODE) || currToken.equals(""+BACKSCATTER_CODE))
+            ) {
+                return "Repeated scattering code no allowed.";
             }
             /* Check for 2 reflections/depths with no leg between them. */
             if(isReflectSymbol(currToken, 0)

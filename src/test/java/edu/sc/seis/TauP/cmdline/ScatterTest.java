@@ -12,6 +12,46 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ScatterTest {
 
     @Test
+    public void failScatterPhases() throws Exception {
+        String[] badScatPhases = {
+                "oP",
+                "OP",
+                "Po",
+                "PO",
+                "Pedo",
+                "PedO",
+                "PedoPSoS",
+                "SOPop",
+                "SOPOP",
+                "PedoOp",
+                "PedOop"
+        };
+        double scatterDepth = 100;
+        double scatterDistDeg = 2;
+        double sourceDepth = 0;
+        double receiverDepth = 0;
+        TauModel tMod = TauModelLoader.load("iasp91");
+        Scatterer scat = new Scatterer(scatterDepth, scatterDistDeg);
+        for (String p : badScatPhases) {
+            try {
+                List<SeismicPhase> scatPhaseList = SeismicPhaseFactory.createSeismicPhases(
+                        p,
+                        tMod,
+                        sourceDepth,
+                        receiverDepth,
+                        scat,
+                        false
+                );
+                for (SeismicPhase seismicPhase : scatPhaseList) {
+                    assertTrue(seismicPhase instanceof FailedSeismicPhase, p);
+                }
+            } catch (PhaseParseException e) {
+                // should throw for bad scat phases that can't be Failed
+            }
+        }
+    }
+
+    @Test
     public void scatterTest_B() throws TauPException {
         String toScatPhase = "Ped";
         String scatToRecPhase = "p";
@@ -35,6 +75,17 @@ public class ScatterTest {
         double dist = 50;
         Scatterer scat = new Scatterer(scatterDepth, scatterDistDeg);
         doScatterTest(toScatPhase, scatToRecPhase, sourceDepth, receiverDepth, scat, dist);
+    }
+
+    @Test
+    public void ykpinnerCoreScatterTest() throws TauPException {
+        String scatToRecPhase = "ykp";
+        double scatterDepth = 5500;
+        SeismicPhase outboundPhase = SeismicPhaseFactory.createPhase(scatToRecPhase, TauModelLoader.load("iasp91"), scatterDepth, 0, false);
+        List<Arrival> outAListIndex = new RayParamRay(0).calculate(outboundPhase);
+        assertNotEquals(0, outAListIndex.size());
+        assertEquals(0.0, outAListIndex.get(0).getRayParam());
+        assertEquals(0.0, outAListIndex.get(0).getDist());
     }
 
     @Test
