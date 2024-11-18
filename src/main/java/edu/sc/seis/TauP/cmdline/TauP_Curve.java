@@ -191,9 +191,10 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
     }
 
 
-    public List<double[]> calculatePlotForType(SeismicPhase phase, AxisType axisType, boolean ensure180) throws VelocityModelException, SlownessModelException, TauModelException {
+    public List<double[]> calculatePlotForType(SeismicPhase phase, AxisType axisType, boolean ensure180)
+            throws VelocityModelException, SlownessModelException, TauModelException {
         double[] out;
-        boolean flatPhase = phase.getRayParams().length == 2;
+        boolean flatPhase = phase.getMaxRayParam() == phase.getMinRayParam();
         if (axisType==AxisType.radian || axisType==AxisType.radian180) {
             out = phase.getDist();
         } else if (axisType==AxisType.degree || axisType==AxisType.degree180) {
