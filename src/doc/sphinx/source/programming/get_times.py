@@ -6,7 +6,6 @@ params = {
     'evdepth':100,
     'phase':'P,S',
     'degree':35,
-    'amp': True,
     'format':'json'
 }
 

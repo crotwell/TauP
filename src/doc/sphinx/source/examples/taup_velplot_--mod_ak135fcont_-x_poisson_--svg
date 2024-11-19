@@ -223,7 +223,7 @@ circle.discontinuity.iocb {
 </g> <!-- x axis end-->
 <g clip-path="url(#curve_clip)">
 <g transform="scale(1,-1) translate(0, -416.0)">
-<g transform="scale(1505.9063784289485,0.06529587191963585)" >
+<g transform="scale(1505.9064,0.065295875)" >
 <g transform="translate(-0.2237544, -0.0)">
     <g class="autocolor">
 <g transform="scale(1,-1) translate(0.0, -6371.0)" > <!-- invert axis -->

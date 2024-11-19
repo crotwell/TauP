@@ -5,10 +5,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>TauP ReflTrans &#8212; TauP 3.0.0-SNAPSHOT7 documentation</title>
+    <title>TauP ReflTrans &#8212; TauP 3.0.0-SNAPSHOT8 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d1102ebc" />
     <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=a66d8bb5" />
-    <script src="_static/documentation_options.js?v=b4d2edd6"></script>
+    <script src="_static/documentation_options.js?v=5cc84e14"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -36,7 +36,7 @@
 
 
 
-<p class="blurb">Flexible Seismic Travel-Time and Raypath Utilities. Version 3.0.0-SNAPSHOT7</p>
+<p class="blurb">Flexible Seismic Travel-Time and Raypath Utilities. Version 3.0.0-SNAPSHOT8</p>
 
 
 
@@ -137,12 +137,12 @@ reflection and transmission coefficients from the moho in the ak135 model:</p>
 </div>
 <p>and the result would be:</p>
 <svg version="1.1" baseProfile="full" xmlns="http://www.w3.org/2000/svg" 
-     viewBox="-80 -80 760.0 760.0"
+     viewBox="-80 -80 656.0 656.0"
      >
   <metadata>
     <taup>
       <command>taup refltransplot &#45;&#45;mod ak135 &#45;&#45;depth 35 &#45;&#45;legend &#45;&#45;svg -o stdout </command>
-      <version>3.0.0-SNAPSHOT7</version>
+      <version>3.0.0-SNAPSHOT8</version>
       <a href="https://github.com/crotwell/TauP">https://github.com/crotwell/TauP</a>
     <minmax xmin="0.0" xmax="89.9999088048935" ymin="-0.13902910789262635" ymax="3.073594389528412" />
     </taup>
@@ -160,6 +160,10 @@ reflection and transmission coefficients from the moho in the ak135 model:</p>
           stroke: blue;
           fill: blue;
         }
+        .legend .Rpp text {
+          fill: blue;
+          stroke: transparent;
+        }
         .Rps {
           stroke: green;
         }
@@ -170,6 +174,10 @@ reflection and transmission coefficients from the moho in the ak135 model:</p>
         .legend .Rps {
           stroke: green;
           fill: green;
+        }
+        .legend .Rps text {
+          fill: green;
+          stroke: transparent;
         }
         .Tpp {
           stroke: cyan;
@@ -182,6 +190,10 @@ reflection and transmission coefficients from the moho in the ak135 model:</p>
           stroke: cyan;
           fill: cyan;
         }
+        .legend .Tpp text {
+          fill: cyan;
+          stroke: transparent;
+        }
         .Tps {
           stroke: gold;
         }
@@ -192,6 +204,10 @@ reflection and transmission coefficients from the moho in the ak135 model:</p>
         .legend .Tps {
           stroke: gold;
           fill: gold;
+        }
+        .legend .Tps text {
+          fill: gold;
+          stroke: transparent;
         }
         .Rsp {
           stroke: mediumslateblue;
@@ -204,6 +220,10 @@ reflection and transmission coefficients from the moho in the ak135 model:</p>
           stroke: mediumslateblue;
           fill: mediumslateblue;
         }
+        .legend .Rsp text {
+          fill: mediumslateblue;
+          stroke: transparent;
+        }
         .Rss {
           stroke: red;
         }
@@ -214,6 +234,10 @@ reflection and transmission coefficients from the moho in the ak135 model:</p>
         .legend .Rss {
           stroke: red;
           fill: red;
+        }
+        .legend .Rss text {
+          fill: red;
+          stroke: transparent;
         }
         .Tsp {
           stroke: magenta;
@@ -226,6 +250,10 @@ reflection and transmission coefficients from the moho in the ak135 model:</p>
           stroke: magenta;
           fill: magenta;
         }
+        .legend .Tsp text {
+          fill: magenta;
+          stroke: transparent;
+        }
         .Tss {
           stroke: grey;
         }
@@ -236,6 +264,10 @@ reflection and transmission coefficients from the moho in the ak135 model:</p>
         .legend .Tss {
           stroke: grey;
           fill: grey;
+        }
+        .legend .Tss text {
+          fill: grey;
+          stroke: transparent;
         }
         .Rshsh {
           stroke: orange;
@@ -248,6 +280,10 @@ reflection and transmission coefficients from the moho in the ak135 model:</p>
           stroke: orange;
           fill: orange;
         }
+        .legend .Rshsh text {
+          fill: orange;
+          stroke: transparent;
+        }
         .Tshsh {
           stroke: violet;
         }
@@ -258,6 +294,10 @@ reflection and transmission coefficients from the moho in the ak135 model:</p>
         .legend .Tshsh {
           stroke: violet;
           fill: violet;
+        }
+        .legend .Tshsh text {
+          fill: violet;
+          stroke: transparent;
         }
         .RppEnergy {
           stroke: blue;
@@ -270,6 +310,10 @@ reflection and transmission coefficients from the moho in the ak135 model:</p>
           stroke: blue;
           fill: blue;
         }
+        .legend .RppEnergy text {
+          fill: blue;
+          stroke: transparent;
+        }
         .TppEnergy {
           stroke: cyan;
         }
@@ -280,6 +324,10 @@ reflection and transmission coefficients from the moho in the ak135 model:</p>
         .legend .TppEnergy {
           stroke: cyan;
           fill: cyan;
+        }
+        .legend .TppEnergy text {
+          fill: cyan;
+          stroke: transparent;
         }
         .RpsEnergy {
           stroke: green;
@@ -292,6 +340,10 @@ reflection and transmission coefficients from the moho in the ak135 model:</p>
           stroke: green;
           fill: green;
         }
+        .legend .RpsEnergy text {
+          fill: green;
+          stroke: transparent;
+        }
         .TpsEnergy {
           stroke: gold;
         }
@@ -302,6 +354,10 @@ reflection and transmission coefficients from the moho in the ak135 model:</p>
         .legend .TpsEnergy {
           stroke: gold;
           fill: gold;
+        }
+        .legend .TpsEnergy text {
+          fill: gold;
+          stroke: transparent;
         }
         .RspEnergy {
           stroke: mediumslateblue;
@@ -314,6 +370,10 @@ reflection and transmission coefficients from the moho in the ak135 model:</p>
           stroke: mediumslateblue;
           fill: mediumslateblue;
         }
+        .legend .RspEnergy text {
+          fill: mediumslateblue;
+          stroke: transparent;
+        }
         .TspEnergy {
           stroke: magenta;
         }
@@ -324,6 +384,10 @@ reflection and transmission coefficients from the moho in the ak135 model:</p>
         .legend .TspEnergy {
           stroke: magenta;
           fill: magenta;
+        }
+        .legend .TspEnergy text {
+          fill: magenta;
+          stroke: transparent;
         }
         .RssEnergy {
           stroke: red;
@@ -336,6 +400,10 @@ reflection and transmission coefficients from the moho in the ak135 model:</p>
           stroke: red;
           fill: red;
         }
+        .legend .RssEnergy text {
+          fill: red;
+          stroke: transparent;
+        }
         .TssEnergy {
           stroke: grey;
         }
@@ -346,6 +414,10 @@ reflection and transmission coefficients from the moho in the ak135 model:</p>
         .legend .TssEnergy {
           stroke: grey;
           fill: grey;
+        }
+        .legend .TssEnergy text {
+          fill: grey;
+          stroke: transparent;
         }
         .RshshEnergy {
           stroke: orange;
@@ -358,6 +430,10 @@ reflection and transmission coefficients from the moho in the ak135 model:</p>
           stroke: orange;
           fill: orange;
         }
+        .legend .RshshEnergy text {
+          fill: orange;
+          stroke: transparent;
+        }
         .TshshEnergy {
           stroke: violet;
         }
@@ -368,6 +444,10 @@ reflection and transmission coefficients from the moho in the ak135 model:</p>
         .legend .TshshEnergy {
           stroke: violet;
           fill: violet;
+        }
+        .legend .TshshEnergy text {
+          fill: violet;
+          stroke: transparent;
         }
         .FreeRecFuncPr {
           stroke: darkblue;
@@ -380,6 +460,10 @@ reflection and transmission coefficients from the moho in the ak135 model:</p>
           stroke: darkblue;
           fill: darkblue;
         }
+        .legend .FreeRecFuncPr text {
+          fill: darkblue;
+          stroke: transparent;
+        }
         .FreeRecFuncSvr {
           stroke: firebrick;
         }
@@ -390,6 +474,10 @@ reflection and transmission coefficients from the moho in the ak135 model:</p>
         .legend .FreeRecFuncSvr {
           stroke: firebrick;
           fill: firebrick;
+        }
+        .legend .FreeRecFuncSvr text {
+          fill: firebrick;
+          stroke: transparent;
         }
         .FreeRecFuncPz {
           stroke: cyan;
@@ -402,6 +490,10 @@ reflection and transmission coefficients from the moho in the ak135 model:</p>
           stroke: cyan;
           fill: cyan;
         }
+        .legend .FreeRecFuncPz text {
+          fill: cyan;
+          stroke: transparent;
+        }
         .FreeRecFuncSvz {
           stroke: magenta;
         }
@@ -413,6 +505,10 @@ reflection and transmission coefficients from the moho in the ak135 model:</p>
           stroke: magenta;
           fill: magenta;
         }
+        .legend .FreeRecFuncSvz text {
+          fill: magenta;
+          stroke: transparent;
+        }
         .FreeRecFuncSh {
           stroke: red;
         }
@@ -423,6 +519,10 @@ reflection and transmission coefficients from the moho in the ak135 model:</p>
         .legend .FreeRecFuncSh {
           stroke: red;
           fill: red;
+        }
+        .legend .FreeRecFuncSh text {
+          fill: red;
+          stroke: transparent;
         }
 
 
@@ -601,75 +701,75 @@ circle.discontinuity.iocb {
 
     ]]></style>
   <clipPath id="curve_clip">
-    <rect x="-1" y="-1" width="521.0" height="521.0"/>
+    <rect x="-1" y="-1" width="417.0" height="417.0"/>
   </clipPath>
   </defs>
 <!-- draw axis and label distances.-->
 
-<text class="title" x="260.0" y="0">ak135 at 35.0 km</text>
+<text class="title" x="208.0" y="0">ak135 at 35.0 km</text>
 <g> <!-- y axis -->
 <g  >
-  <text font-size="14" transform="translate(-64, 260) rotate(-90 )" dy=".75em" text-anchor="middle" class="ylabel" > Displacement Coeff.</text>
+  <text font-size="14" transform="translate(-64, 208) rotate(-90 )" dy=".75em" text-anchor="middle" class="ylabel" > Displacement Coeff.</text>
 </g>
-<line  class="tick" x1="0" y1="0" x2="0" y2="520.0" />
-<text class="ytick" font-size="12" x="-12.0" y="497.49655">0.0</text>
-<line class="tick" x1="0" y1="497.49655" x2="-10.0" y2="497.49655" />
-<text class="ytick" font-size="12" x="-12.0" y="465.12424">0.2</text>
-<line class="tick" x1="0" y1="465.12424" x2="-10.0" y2="465.12424" />
-<text class="ytick" font-size="12" x="-12.0" y="432.75195">0.4</text>
-<line class="tick" x1="0" y1="432.75195" x2="-10.0" y2="432.75195" />
-<text class="ytick" font-size="12" x="-12.0" y="400.37964">0.6</text>
-<line class="tick" x1="0" y1="400.37964" x2="-10.0" y2="400.37964" />
-<text class="ytick" font-size="12" x="-12.0" y="368.00735">0.8</text>
-<line class="tick" x1="0" y1="368.00735" x2="-10.0" y2="368.00735" />
-<text class="ytick" font-size="12" x="-12.0" y="335.63507">1.0</text>
-<line class="tick" x1="0" y1="335.63507" x2="-10.0" y2="335.63507" />
-<text class="ytick" font-size="12" x="-12.0" y="303.26276">1.2</text>
-<line class="tick" x1="0" y1="303.26276" x2="-10.0" y2="303.26276" />
-<text class="ytick" font-size="12" x="-12.0" y="270.89047">1.4</text>
-<line class="tick" x1="0" y1="270.89047" x2="-10.0" y2="270.89047" />
-<text class="ytick" font-size="12" x="-12.0" y="238.51816">1.6</text>
-<line class="tick" x1="0" y1="238.51816" x2="-10.0" y2="238.51816" />
-<text class="ytick" font-size="12" x="-12.0" y="206.14587">1.8</text>
-<line class="tick" x1="0" y1="206.14587" x2="-10.0" y2="206.14587" />
-<text class="ytick" font-size="12" x="-12.0" y="173.77359">2.0</text>
-<line class="tick" x1="0" y1="173.77359" x2="-10.0" y2="173.77359" />
-<text class="ytick" font-size="12" x="-12.0" y="141.40128">2.2</text>
-<line class="tick" x1="0" y1="141.40128" x2="-10.0" y2="141.40128" />
-<text class="ytick" font-size="12" x="-12.0" y="109.02899">2.4</text>
-<line class="tick" x1="0" y1="109.02899" x2="-10.0" y2="109.02899" />
-<text class="ytick" font-size="12" x="-12.0" y="76.65668">2.6</text>
-<line class="tick" x1="0" y1="76.65668" x2="-10.0" y2="76.65668" />
-<text class="ytick" font-size="12" x="-12.0" y="44.284393">2.8</text>
-<line class="tick" x1="0" y1="44.284393" x2="-10.0" y2="44.284393" />
-<text class="ytick" font-size="12" x="-12.0" y="11.912109">3.0</text>
-<line class="tick" x1="0" y1="11.912109" x2="-10.0" y2="11.912109" />
+<line  class="tick" x1="0" y1="0" x2="0" y2="416.0" />
+<text class="ytick" font-size="12" x="-12.0" y="397.99722">0.0</text>
+<line class="tick" x1="0" y1="397.99722" x2="-10.0" y2="397.99722" />
+<text class="ytick" font-size="12" x="-12.0" y="372.0994">0.2</text>
+<line class="tick" x1="0" y1="372.0994" x2="-10.0" y2="372.0994" />
+<text class="ytick" font-size="12" x="-12.0" y="346.20157">0.4</text>
+<line class="tick" x1="0" y1="346.20157" x2="-10.0" y2="346.20157" />
+<text class="ytick" font-size="12" x="-12.0" y="320.3037">0.6</text>
+<line class="tick" x1="0" y1="320.3037" x2="-10.0" y2="320.3037" />
+<text class="ytick" font-size="12" x="-12.0" y="294.40588">0.8</text>
+<line class="tick" x1="0" y1="294.40588" x2="-10.0" y2="294.40588" />
+<text class="ytick" font-size="12" x="-12.0" y="268.50806">1.0</text>
+<line class="tick" x1="0" y1="268.50806" x2="-10.0" y2="268.50806" />
+<text class="ytick" font-size="12" x="-12.0" y="242.61021">1.2</text>
+<line class="tick" x1="0" y1="242.61021" x2="-10.0" y2="242.61021" />
+<text class="ytick" font-size="12" x="-12.0" y="216.71237">1.4</text>
+<line class="tick" x1="0" y1="216.71237" x2="-10.0" y2="216.71237" />
+<text class="ytick" font-size="12" x="-12.0" y="190.81454">1.6</text>
+<line class="tick" x1="0" y1="190.81454" x2="-10.0" y2="190.81454" />
+<text class="ytick" font-size="12" x="-12.0" y="164.9167">1.8</text>
+<line class="tick" x1="0" y1="164.9167" x2="-10.0" y2="164.9167" />
+<text class="ytick" font-size="12" x="-12.0" y="139.01886">2.0</text>
+<line class="tick" x1="0" y1="139.01886" x2="-10.0" y2="139.01886" />
+<text class="ytick" font-size="12" x="-12.0" y="113.12103">2.2</text>
+<line class="tick" x1="0" y1="113.12103" x2="-10.0" y2="113.12103" />
+<text class="ytick" font-size="12" x="-12.0" y="87.223175">2.4</text>
+<line class="tick" x1="0" y1="87.223175" x2="-10.0" y2="87.223175" />
+<text class="ytick" font-size="12" x="-12.0" y="61.325348">2.6</text>
+<line class="tick" x1="0" y1="61.325348" x2="-10.0" y2="61.325348" />
+<text class="ytick" font-size="12" x="-12.0" y="35.42752">2.8</text>
+<line class="tick" x1="0" y1="35.42752" x2="-10.0" y2="35.42752" />
+<text class="ytick" font-size="12" x="-12.0" y="9.529663">3.0</text>
+<line class="tick" x1="0" y1="9.529663" x2="-10.0" y2="9.529663" />
 </g> <!-- y axis end-->
 <g> <!-- x axis -->
-<text class="xlabel" font-size="14" x="260.0" y="556.4">Incident Angle (deg)</text>
-<line class="tick" x1="0" y1="520.0" x2="520.0" y2="520.0" />
-<text class="xtick" font-size="12" x="0.0" y="542.0">0.0</text>
-<line class="tick" x1="0.0" y1="520.0" x2="0.0" y2="530.0" />
-<text class="xtick" font-size="12" x="57.77783632284374" y="542.0">10.0</text>
-<line class="tick" x1="57.77783632284374" y1="520.0" x2="57.77783632284374" y2="530.0" />
-<text class="xtick" font-size="12" x="115.55567264568748" y="542.0">20.0</text>
-<line class="tick" x1="115.55567264568748" y1="520.0" x2="115.55567264568748" y2="530.0" />
-<text class="xtick" font-size="12" x="173.33350896853122" y="542.0">30.0</text>
-<line class="tick" x1="173.33350896853122" y1="520.0" x2="173.33350896853122" y2="530.0" />
-<text class="xtick" font-size="12" x="231.11134529137496" y="542.0">40.0</text>
-<line class="tick" x1="231.11134529137496" y1="520.0" x2="231.11134529137496" y2="530.0" />
-<text class="xtick" font-size="12" x="288.8891816142187" y="542.0">50.0</text>
-<line class="tick" x1="288.8891816142187" y1="520.0" x2="288.8891816142187" y2="530.0" />
-<text class="xtick" font-size="12" x="346.66701793706244" y="542.0">60.0</text>
-<line class="tick" x1="346.66701793706244" y1="520.0" x2="346.66701793706244" y2="530.0" />
-<text class="xtick" font-size="12" x="404.4448542599062" y="542.0">70.0</text>
-<line class="tick" x1="404.4448542599062" y1="520.0" x2="404.4448542599062" y2="530.0" />
-<text class="xtick" font-size="12" x="462.2226905827499" y="542.0">80.0</text>
-<line class="tick" x1="462.2226905827499" y1="520.0" x2="462.2226905827499" y2="530.0" />
+<text class="xlabel" font-size="14" x="208.0" y="452.4">Incident Angle (deg)</text>
+<line class="tick" x1="0" y1="416.0" x2="416.0" y2="416.0" />
+<text class="xtick" font-size="12" x="0.0" y="438.0">0.0</text>
+<line class="tick" x1="0.0" y1="416.0" x2="0.0" y2="426.0" />
+<text class="xtick" font-size="12" x="46.222269058274996" y="438.0">10.0</text>
+<line class="tick" x1="46.222269058274996" y1="416.0" x2="46.222269058274996" y2="426.0" />
+<text class="xtick" font-size="12" x="92.44453811654999" y="438.0">20.0</text>
+<line class="tick" x1="92.44453811654999" y1="416.0" x2="92.44453811654999" y2="426.0" />
+<text class="xtick" font-size="12" x="138.66680717482498" y="438.0">30.0</text>
+<line class="tick" x1="138.66680717482498" y1="416.0" x2="138.66680717482498" y2="426.0" />
+<text class="xtick" font-size="12" x="184.88907623309998" y="438.0">40.0</text>
+<line class="tick" x1="184.88907623309998" y1="416.0" x2="184.88907623309998" y2="426.0" />
+<text class="xtick" font-size="12" x="231.111345291375" y="438.0">50.0</text>
+<line class="tick" x1="231.111345291375" y1="416.0" x2="231.111345291375" y2="426.0" />
+<text class="xtick" font-size="12" x="277.33361434964996" y="438.0">60.0</text>
+<line class="tick" x1="277.33361434964996" y1="416.0" x2="277.33361434964996" y2="426.0" />
+<text class="xtick" font-size="12" x="323.55588340792497" y="438.0">70.0</text>
+<line class="tick" x1="323.55588340792497" y1="416.0" x2="323.55588340792497" y2="426.0" />
+<text class="xtick" font-size="12" x="369.77815246619997" y="438.0">80.0</text>
+<line class="tick" x1="369.77815246619997" y1="416.0" x2="369.77815246619997" y2="426.0" />
 </g> <!-- x axis end-->
 <g clip-path="url(#curve_clip)">
-<g transform="scale(1,-1) translate(0, -520.0)">
-<g transform="scale(5.7777836322843745,161.86148187530677)" >
+<g transform="scale(1,-1) translate(0, -416.0)">
+<g transform="scale(4.6222267,129.48918)" >
 <g transform="translate(-0.0, 0.1390291)">
     <g class="Rpp" tauplabel=""  >
   <g>
@@ -865,7 +965,7 @@ circle.discontinuity.iocb {
 87.0000 0.100536
 88.0000 0.0669995
 89.0000 0.0335123
-89.9999 3.05965e-06
+89.9999 3.05948e-06
   "  /> <!-- -->
   </g>
     </g> <!-- end  -->
@@ -964,7 +1064,7 @@ circle.discontinuity.iocb {
 87.0000 0.0312300
 88.0000 0.0208806
 89.0000 0.0104647
-89.9999 -8.17935e-07
+89.9999 -8.17887e-07
   "  /> <!-- -->
   </g>
     </g> <!-- end  -->
@@ -1063,7 +1163,7 @@ circle.discontinuity.iocb {
 87.0000 0.0280124
 88.0000 0.0187323
 89.0000 0.00938897
-89.9999 -6.85426e-07
+89.9999 -6.85387e-07
   "  /> <!-- -->
   </g>
     </g> <!-- end  -->
@@ -1679,46 +1779,46 @@ circle.discontinuity.iocb {
   </g> <!-- end scale -->
   </g> <!-- end scaletranslate -->
   </g> <!-- end clip-path -->
-<g class="legend " transform="translate(52.0,52.0)"> <!-- legend -->
+<g class="legend " transform="translate(41.0,41.0)"> <!-- legend -->
 <g class="Rpp">
 <line class="Rpp" x1="0" y1="0" x2="10" y2="0" />
-<text class="Rpp" font-size="14" x="11" y="0">Rpp Displacement</text>
+<text class="Rpp" font-size="12" x="11" y="0">Rpp Displacement</text>
 </g>
 <g class="Tpp">
-<line class="Tpp" x1="0" y1="16" x2="10" y2="16" />
-<text class="Tpp" font-size="14" x="11" y="16">Tpp Displacement</text>
+<line class="Tpp" x1="0" y1="14" x2="10" y2="14" />
+<text class="Tpp" font-size="12" x="11" y="14">Tpp Displacement</text>
 </g>
 <g class="Rps">
-<line class="Rps" x1="0" y1="32" x2="10" y2="32" />
-<text class="Rps" font-size="14" x="11" y="32">Rps Displacement</text>
+<line class="Rps" x1="0" y1="28" x2="10" y2="28" />
+<text class="Rps" font-size="12" x="11" y="28">Rps Displacement</text>
 </g>
 <g class="Tps">
-<line class="Tps" x1="0" y1="48" x2="10" y2="48" />
-<text class="Tps" font-size="14" x="11" y="48">Tps Displacement</text>
+<line class="Tps" x1="0" y1="42" x2="10" y2="42" />
+<text class="Tps" font-size="12" x="11" y="42">Tps Displacement</text>
 </g>
 <g class="Rsp">
-<line class="Rsp" x1="0" y1="64" x2="10" y2="64" />
-<text class="Rsp" font-size="14" x="11" y="64">Rsp Displacement</text>
+<line class="Rsp" x1="0" y1="56" x2="10" y2="56" />
+<text class="Rsp" font-size="12" x="11" y="56">Rsp Displacement</text>
 </g>
 <g class="Tsp">
-<line class="Tsp" x1="0" y1="80" x2="10" y2="80" />
-<text class="Tsp" font-size="14" x="11" y="80">Tsp Displacement</text>
+<line class="Tsp" x1="0" y1="70" x2="10" y2="70" />
+<text class="Tsp" font-size="12" x="11" y="70">Tsp Displacement</text>
 </g>
 <g class="Rss">
-<line class="Rss" x1="0" y1="96" x2="10" y2="96" />
-<text class="Rss" font-size="14" x="11" y="96">Rss Displacement</text>
+<line class="Rss" x1="0" y1="84" x2="10" y2="84" />
+<text class="Rss" font-size="12" x="11" y="84">Rss Displacement</text>
 </g>
 <g class="Tss">
-<line class="Tss" x1="0" y1="112" x2="10" y2="112" />
-<text class="Tss" font-size="14" x="11" y="112">Tss Displacement</text>
+<line class="Tss" x1="0" y1="98" x2="10" y2="98" />
+<text class="Tss" font-size="12" x="11" y="98">Tss Displacement</text>
 </g>
 <g class="Rshsh">
-<line class="Rshsh" x1="0" y1="128" x2="10" y2="128" />
-<text class="Rshsh" font-size="14" x="11" y="128">Rshsh Displacement</text>
+<line class="Rshsh" x1="0" y1="112" x2="10" y2="112" />
+<text class="Rshsh" font-size="12" x="11" y="112">Rshsh Displacement</text>
 </g>
 <g class="Tshsh">
-<line class="Tshsh" x1="0" y1="144" x2="10" y2="144" />
-<text class="Tshsh" font-size="14" x="11" y="144">Tshsh Displacement</text>
+<line class="Tshsh" x1="0" y1="126" x2="10" y2="126" />
+<text class="Tshsh" font-size="12" x="11" y="126">Tshsh Displacement</text>
 </g>
 </g> <!-- legend end-->
 </svg>
@@ -1728,12 +1828,12 @@ circle.discontinuity.iocb {
 </div>
 <p>and the result would be:</p>
 <svg version="1.1" baseProfile="full" xmlns="http://www.w3.org/2000/svg" 
-     viewBox="-80 -80 760.0 760.0"
+     viewBox="-80 -80 656.0 656.0"
      >
   <metadata>
     <taup>
       <command>taup refltransplot &#45;&#45;mod ak135 &#45;&#45;depth 35 &#45;&#45;legend &#45;&#45;energyflux &#45;&#45;svg -o stdout </command>
-      <version>3.0.0-SNAPSHOT7</version>
+      <version>3.0.0-SNAPSHOT8</version>
       <a href="https://github.com/crotwell/TauP">https://github.com/crotwell/TauP</a>
     <minmax xmin="0.0" xmax="89.9999088048935" ymin="0.0" ymax="1.00001667986517" />
     </taup>
@@ -1751,6 +1851,10 @@ circle.discontinuity.iocb {
           stroke: blue;
           fill: blue;
         }
+        .legend .Rpp text {
+          fill: blue;
+          stroke: transparent;
+        }
         .Rps {
           stroke: green;
         }
@@ -1761,6 +1865,10 @@ circle.discontinuity.iocb {
         .legend .Rps {
           stroke: green;
           fill: green;
+        }
+        .legend .Rps text {
+          fill: green;
+          stroke: transparent;
         }
         .Tpp {
           stroke: cyan;
@@ -1773,6 +1881,10 @@ circle.discontinuity.iocb {
           stroke: cyan;
           fill: cyan;
         }
+        .legend .Tpp text {
+          fill: cyan;
+          stroke: transparent;
+        }
         .Tps {
           stroke: gold;
         }
@@ -1783,6 +1895,10 @@ circle.discontinuity.iocb {
         .legend .Tps {
           stroke: gold;
           fill: gold;
+        }
+        .legend .Tps text {
+          fill: gold;
+          stroke: transparent;
         }
         .Rsp {
           stroke: mediumslateblue;
@@ -1795,6 +1911,10 @@ circle.discontinuity.iocb {
           stroke: mediumslateblue;
           fill: mediumslateblue;
         }
+        .legend .Rsp text {
+          fill: mediumslateblue;
+          stroke: transparent;
+        }
         .Rss {
           stroke: red;
         }
@@ -1805,6 +1925,10 @@ circle.discontinuity.iocb {
         .legend .Rss {
           stroke: red;
           fill: red;
+        }
+        .legend .Rss text {
+          fill: red;
+          stroke: transparent;
         }
         .Tsp {
           stroke: magenta;
@@ -1817,6 +1941,10 @@ circle.discontinuity.iocb {
           stroke: magenta;
           fill: magenta;
         }
+        .legend .Tsp text {
+          fill: magenta;
+          stroke: transparent;
+        }
         .Tss {
           stroke: grey;
         }
@@ -1827,6 +1955,10 @@ circle.discontinuity.iocb {
         .legend .Tss {
           stroke: grey;
           fill: grey;
+        }
+        .legend .Tss text {
+          fill: grey;
+          stroke: transparent;
         }
         .Rshsh {
           stroke: orange;
@@ -1839,6 +1971,10 @@ circle.discontinuity.iocb {
           stroke: orange;
           fill: orange;
         }
+        .legend .Rshsh text {
+          fill: orange;
+          stroke: transparent;
+        }
         .Tshsh {
           stroke: violet;
         }
@@ -1849,6 +1985,10 @@ circle.discontinuity.iocb {
         .legend .Tshsh {
           stroke: violet;
           fill: violet;
+        }
+        .legend .Tshsh text {
+          fill: violet;
+          stroke: transparent;
         }
         .RppEnergy {
           stroke: blue;
@@ -1861,6 +2001,10 @@ circle.discontinuity.iocb {
           stroke: blue;
           fill: blue;
         }
+        .legend .RppEnergy text {
+          fill: blue;
+          stroke: transparent;
+        }
         .TppEnergy {
           stroke: cyan;
         }
@@ -1871,6 +2015,10 @@ circle.discontinuity.iocb {
         .legend .TppEnergy {
           stroke: cyan;
           fill: cyan;
+        }
+        .legend .TppEnergy text {
+          fill: cyan;
+          stroke: transparent;
         }
         .RpsEnergy {
           stroke: green;
@@ -1883,6 +2031,10 @@ circle.discontinuity.iocb {
           stroke: green;
           fill: green;
         }
+        .legend .RpsEnergy text {
+          fill: green;
+          stroke: transparent;
+        }
         .TpsEnergy {
           stroke: gold;
         }
@@ -1893,6 +2045,10 @@ circle.discontinuity.iocb {
         .legend .TpsEnergy {
           stroke: gold;
           fill: gold;
+        }
+        .legend .TpsEnergy text {
+          fill: gold;
+          stroke: transparent;
         }
         .RspEnergy {
           stroke: mediumslateblue;
@@ -1905,6 +2061,10 @@ circle.discontinuity.iocb {
           stroke: mediumslateblue;
           fill: mediumslateblue;
         }
+        .legend .RspEnergy text {
+          fill: mediumslateblue;
+          stroke: transparent;
+        }
         .TspEnergy {
           stroke: magenta;
         }
@@ -1915,6 +2075,10 @@ circle.discontinuity.iocb {
         .legend .TspEnergy {
           stroke: magenta;
           fill: magenta;
+        }
+        .legend .TspEnergy text {
+          fill: magenta;
+          stroke: transparent;
         }
         .RssEnergy {
           stroke: red;
@@ -1927,6 +2091,10 @@ circle.discontinuity.iocb {
           stroke: red;
           fill: red;
         }
+        .legend .RssEnergy text {
+          fill: red;
+          stroke: transparent;
+        }
         .TssEnergy {
           stroke: grey;
         }
@@ -1937,6 +2105,10 @@ circle.discontinuity.iocb {
         .legend .TssEnergy {
           stroke: grey;
           fill: grey;
+        }
+        .legend .TssEnergy text {
+          fill: grey;
+          stroke: transparent;
         }
         .RshshEnergy {
           stroke: orange;
@@ -1949,6 +2121,10 @@ circle.discontinuity.iocb {
           stroke: orange;
           fill: orange;
         }
+        .legend .RshshEnergy text {
+          fill: orange;
+          stroke: transparent;
+        }
         .TshshEnergy {
           stroke: violet;
         }
@@ -1959,6 +2135,10 @@ circle.discontinuity.iocb {
         .legend .TshshEnergy {
           stroke: violet;
           fill: violet;
+        }
+        .legend .TshshEnergy text {
+          fill: violet;
+          stroke: transparent;
         }
         .FreeRecFuncPr {
           stroke: darkblue;
@@ -1971,6 +2151,10 @@ circle.discontinuity.iocb {
           stroke: darkblue;
           fill: darkblue;
         }
+        .legend .FreeRecFuncPr text {
+          fill: darkblue;
+          stroke: transparent;
+        }
         .FreeRecFuncSvr {
           stroke: firebrick;
         }
@@ -1981,6 +2165,10 @@ circle.discontinuity.iocb {
         .legend .FreeRecFuncSvr {
           stroke: firebrick;
           fill: firebrick;
+        }
+        .legend .FreeRecFuncSvr text {
+          fill: firebrick;
+          stroke: transparent;
         }
         .FreeRecFuncPz {
           stroke: cyan;
@@ -1993,6 +2181,10 @@ circle.discontinuity.iocb {
           stroke: cyan;
           fill: cyan;
         }
+        .legend .FreeRecFuncPz text {
+          fill: cyan;
+          stroke: transparent;
+        }
         .FreeRecFuncSvz {
           stroke: magenta;
         }
@@ -2004,6 +2196,10 @@ circle.discontinuity.iocb {
           stroke: magenta;
           fill: magenta;
         }
+        .legend .FreeRecFuncSvz text {
+          fill: magenta;
+          stroke: transparent;
+        }
         .FreeRecFuncSh {
           stroke: red;
         }
@@ -2014,6 +2210,10 @@ circle.discontinuity.iocb {
         .legend .FreeRecFuncSh {
           stroke: red;
           fill: red;
+        }
+        .legend .FreeRecFuncSh text {
+          fill: red;
+          stroke: transparent;
         }
 
 
@@ -2192,65 +2392,65 @@ circle.discontinuity.iocb {
 
     ]]></style>
   <clipPath id="curve_clip">
-    <rect x="-1" y="-1" width="521.0" height="521.0"/>
+    <rect x="-1" y="-1" width="417.0" height="417.0"/>
   </clipPath>
   </defs>
 <!-- draw axis and label distances.-->
 
-<text class="title" x="260.0" y="0">ak135 at 35.0 km</text>
+<text class="title" x="208.0" y="0">ak135 at 35.0 km</text>
 <g> <!-- y axis -->
 <g  >
-  <text font-size="14" transform="translate(-64, 260) rotate(-90 )" dy=".75em" text-anchor="middle" class="ylabel" > Energy Coeff.</text>
+  <text font-size="14" transform="translate(-64, 208) rotate(-90 )" dy=".75em" text-anchor="middle" class="ylabel" > Energy Coeff.</text>
 </g>
-<line  class="tick" x1="0" y1="0" x2="0" y2="520.0" />
-<text class="ytick" font-size="12" x="-12.0" y="520.0">0.0</text>
-<line class="tick" x1="0" y1="520.0" x2="-10.0" y2="520.0" />
-<text class="ytick" font-size="12" x="-12.0" y="468.00085">0.1</text>
-<line class="tick" x1="0" y1="468.00085" x2="-10.0" y2="468.00085" />
-<text class="ytick" font-size="12" x="-12.0" y="416.00174">0.2</text>
-<line class="tick" x1="0" y1="416.00174" x2="-10.0" y2="416.00174" />
-<text class="ytick" font-size="12" x="-12.0" y="364.00262">0.3</text>
-<line class="tick" x1="0" y1="364.00262" x2="-10.0" y2="364.00262" />
-<text class="ytick" font-size="12" x="-12.0" y="312.00348">0.4</text>
-<line class="tick" x1="0" y1="312.00348" x2="-10.0" y2="312.00348" />
-<text class="ytick" font-size="12" x="-12.0" y="260.00433">0.5</text>
-<line class="tick" x1="0" y1="260.00433" x2="-10.0" y2="260.00433" />
-<text class="ytick" font-size="12" x="-12.0" y="208.00522">0.6</text>
-<line class="tick" x1="0" y1="208.00522" x2="-10.0" y2="208.00522" />
-<text class="ytick" font-size="12" x="-12.0" y="156.00607">0.7</text>
-<line class="tick" x1="0" y1="156.00607" x2="-10.0" y2="156.00607" />
-<text class="ytick" font-size="12" x="-12.0" y="104.00693">0.8</text>
-<line class="tick" x1="0" y1="104.00693" x2="-10.0" y2="104.00693" />
-<text class="ytick" font-size="12" x="-12.0" y="52.007812">0.9</text>
-<line class="tick" x1="0" y1="52.007812" x2="-10.0" y2="52.007812" />
-<text class="ytick" font-size="12" x="-12.0" y="0.008666992">1.0</text>
-<line class="tick" x1="0" y1="0.008666992" x2="-10.0" y2="0.008666992" />
+<line  class="tick" x1="0" y1="0" x2="0" y2="416.0" />
+<text class="ytick" font-size="12" x="-12.0" y="416.0">0.0</text>
+<line class="tick" x1="0" y1="416.0" x2="-10.0" y2="416.0" />
+<text class="ytick" font-size="12" x="-12.0" y="374.4007">0.1</text>
+<line class="tick" x1="0" y1="374.4007" x2="-10.0" y2="374.4007" />
+<text class="ytick" font-size="12" x="-12.0" y="332.8014">0.2</text>
+<line class="tick" x1="0" y1="332.8014" x2="-10.0" y2="332.8014" />
+<text class="ytick" font-size="12" x="-12.0" y="291.2021">0.3</text>
+<line class="tick" x1="0" y1="291.2021" x2="-10.0" y2="291.2021" />
+<text class="ytick" font-size="12" x="-12.0" y="249.60277">0.4</text>
+<line class="tick" x1="0" y1="249.60277" x2="-10.0" y2="249.60277" />
+<text class="ytick" font-size="12" x="-12.0" y="208.00346">0.5</text>
+<line class="tick" x1="0" y1="208.00346" x2="-10.0" y2="208.00346" />
+<text class="ytick" font-size="12" x="-12.0" y="166.40416">0.6</text>
+<line class="tick" x1="0" y1="166.40416" x2="-10.0" y2="166.40416" />
+<text class="ytick" font-size="12" x="-12.0" y="124.80487">0.7</text>
+<line class="tick" x1="0" y1="124.80487" x2="-10.0" y2="124.80487" />
+<text class="ytick" font-size="12" x="-12.0" y="83.205536">0.8</text>
+<line class="tick" x1="0" y1="83.205536" x2="-10.0" y2="83.205536" />
+<text class="ytick" font-size="12" x="-12.0" y="41.60623">0.9</text>
+<line class="tick" x1="0" y1="41.60623" x2="-10.0" y2="41.60623" />
+<text class="ytick" font-size="12" x="-12.0" y="0.0069274902">1.0</text>
+<line class="tick" x1="0" y1="0.0069274902" x2="-10.0" y2="0.0069274902" />
 </g> <!-- y axis end-->
 <g> <!-- x axis -->
-<text class="xlabel" font-size="14" x="260.0" y="556.4">Incident Angle (deg)</text>
-<line class="tick" x1="0" y1="520.0" x2="520.0" y2="520.0" />
-<text class="xtick" font-size="12" x="0.0" y="542.0">0.0</text>
-<line class="tick" x1="0.0" y1="520.0" x2="0.0" y2="530.0" />
-<text class="xtick" font-size="12" x="57.77783632284374" y="542.0">10.0</text>
-<line class="tick" x1="57.77783632284374" y1="520.0" x2="57.77783632284374" y2="530.0" />
-<text class="xtick" font-size="12" x="115.55567264568748" y="542.0">20.0</text>
-<line class="tick" x1="115.55567264568748" y1="520.0" x2="115.55567264568748" y2="530.0" />
-<text class="xtick" font-size="12" x="173.33350896853122" y="542.0">30.0</text>
-<line class="tick" x1="173.33350896853122" y1="520.0" x2="173.33350896853122" y2="530.0" />
-<text class="xtick" font-size="12" x="231.11134529137496" y="542.0">40.0</text>
-<line class="tick" x1="231.11134529137496" y1="520.0" x2="231.11134529137496" y2="530.0" />
-<text class="xtick" font-size="12" x="288.8891816142187" y="542.0">50.0</text>
-<line class="tick" x1="288.8891816142187" y1="520.0" x2="288.8891816142187" y2="530.0" />
-<text class="xtick" font-size="12" x="346.66701793706244" y="542.0">60.0</text>
-<line class="tick" x1="346.66701793706244" y1="520.0" x2="346.66701793706244" y2="530.0" />
-<text class="xtick" font-size="12" x="404.4448542599062" y="542.0">70.0</text>
-<line class="tick" x1="404.4448542599062" y1="520.0" x2="404.4448542599062" y2="530.0" />
-<text class="xtick" font-size="12" x="462.2226905827499" y="542.0">80.0</text>
-<line class="tick" x1="462.2226905827499" y1="520.0" x2="462.2226905827499" y2="530.0" />
+<text class="xlabel" font-size="14" x="208.0" y="452.4">Incident Angle (deg)</text>
+<line class="tick" x1="0" y1="416.0" x2="416.0" y2="416.0" />
+<text class="xtick" font-size="12" x="0.0" y="438.0">0.0</text>
+<line class="tick" x1="0.0" y1="416.0" x2="0.0" y2="426.0" />
+<text class="xtick" font-size="12" x="46.222269058274996" y="438.0">10.0</text>
+<line class="tick" x1="46.222269058274996" y1="416.0" x2="46.222269058274996" y2="426.0" />
+<text class="xtick" font-size="12" x="92.44453811654999" y="438.0">20.0</text>
+<line class="tick" x1="92.44453811654999" y1="416.0" x2="92.44453811654999" y2="426.0" />
+<text class="xtick" font-size="12" x="138.66680717482498" y="438.0">30.0</text>
+<line class="tick" x1="138.66680717482498" y1="416.0" x2="138.66680717482498" y2="426.0" />
+<text class="xtick" font-size="12" x="184.88907623309998" y="438.0">40.0</text>
+<line class="tick" x1="184.88907623309998" y1="416.0" x2="184.88907623309998" y2="426.0" />
+<text class="xtick" font-size="12" x="231.111345291375" y="438.0">50.0</text>
+<line class="tick" x1="231.111345291375" y1="416.0" x2="231.111345291375" y2="426.0" />
+<text class="xtick" font-size="12" x="277.33361434964996" y="438.0">60.0</text>
+<line class="tick" x1="277.33361434964996" y1="416.0" x2="277.33361434964996" y2="426.0" />
+<text class="xtick" font-size="12" x="323.55588340792497" y="438.0">70.0</text>
+<line class="tick" x1="323.55588340792497" y1="416.0" x2="323.55588340792497" y2="426.0" />
+<text class="xtick" font-size="12" x="369.77815246619997" y="438.0">80.0</text>
+<line class="tick" x1="369.77815246619997" y1="416.0" x2="369.77815246619997" y2="426.0" />
 </g> <!-- x axis end-->
 <g clip-path="url(#curve_clip)">
-<g transform="scale(1,-1) translate(0, -520.0)">
-<g transform="scale(5.7777836322843745,519.9913266147826)" >
+<g transform="scale(1,-1) translate(0, -416.0)">
+<g transform="scale(4.6222267,415.99307)" >
 <g transform="translate(-0.0, -0.0)">
     <g class="RppEnergy" tauplabel=""  >
   <g>
@@ -2347,7 +2547,7 @@ circle.discontinuity.iocb {
 87.0000 0.982577
 88.0000 0.988324
 89.0000 0.994137
-89.9999 1.00002
+89.9999 1.00001
   "  /> <!-- -->
   </g>
     </g> <!-- end  -->
@@ -2545,7 +2745,7 @@ circle.discontinuity.iocb {
 87.0000 0.00890003
 88.0000 0.00596399
 89.0000 0.00299474
-89.9999 2.00585e-07
+89.9999 2.00573e-07
   "  /> <!-- -->
   </g>
     </g> <!-- end  -->
@@ -2644,7 +2844,7 @@ circle.discontinuity.iocb {
 87.0000 0.00852303
 88.0000 0.00571165
 89.0000 0.00286812
-89.9999 1.67576e-07
+89.9999 1.67567e-07
   "  /> <!-- -->
   </g>
     </g> <!-- end  -->
@@ -3260,46 +3460,46 @@ circle.discontinuity.iocb {
   </g> <!-- end scale -->
   </g> <!-- end scaletranslate -->
   </g> <!-- end clip-path -->
-<g class="legend " transform="translate(52.0,52.0)"> <!-- legend -->
+<g class="legend " transform="translate(41.0,41.0)"> <!-- legend -->
 <g class="RppEnergy">
 <line class="RppEnergy" x1="0" y1="0" x2="10" y2="0" />
-<text class="RppEnergy" font-size="14" x="11" y="0">Rpp Energy</text>
+<text class="RppEnergy" font-size="12" x="11" y="0">Rpp Energy</text>
 </g>
 <g class="TppEnergy">
-<line class="TppEnergy" x1="0" y1="16" x2="10" y2="16" />
-<text class="TppEnergy" font-size="14" x="11" y="16">Tpp Energy</text>
+<line class="TppEnergy" x1="0" y1="14" x2="10" y2="14" />
+<text class="TppEnergy" font-size="12" x="11" y="14">Tpp Energy</text>
 </g>
 <g class="RpsEnergy">
-<line class="RpsEnergy" x1="0" y1="32" x2="10" y2="32" />
-<text class="RpsEnergy" font-size="14" x="11" y="32">Rps Energy</text>
+<line class="RpsEnergy" x1="0" y1="28" x2="10" y2="28" />
+<text class="RpsEnergy" font-size="12" x="11" y="28">Rps Energy</text>
 </g>
 <g class="TpsEnergy">
-<line class="TpsEnergy" x1="0" y1="48" x2="10" y2="48" />
-<text class="TpsEnergy" font-size="14" x="11" y="48">Tps Energy</text>
+<line class="TpsEnergy" x1="0" y1="42" x2="10" y2="42" />
+<text class="TpsEnergy" font-size="12" x="11" y="42">Tps Energy</text>
 </g>
 <g class="RspEnergy">
-<line class="RspEnergy" x1="0" y1="64" x2="10" y2="64" />
-<text class="RspEnergy" font-size="14" x="11" y="64">Rsp Energy</text>
+<line class="RspEnergy" x1="0" y1="56" x2="10" y2="56" />
+<text class="RspEnergy" font-size="12" x="11" y="56">Rsp Energy</text>
 </g>
 <g class="TspEnergy">
-<line class="TspEnergy" x1="0" y1="80" x2="10" y2="80" />
-<text class="TspEnergy" font-size="14" x="11" y="80">Tsp Energy</text>
+<line class="TspEnergy" x1="0" y1="70" x2="10" y2="70" />
+<text class="TspEnergy" font-size="12" x="11" y="70">Tsp Energy</text>
 </g>
 <g class="RssEnergy">
-<line class="RssEnergy" x1="0" y1="96" x2="10" y2="96" />
-<text class="RssEnergy" font-size="14" x="11" y="96">Rss Energy</text>
+<line class="RssEnergy" x1="0" y1="84" x2="10" y2="84" />
+<text class="RssEnergy" font-size="12" x="11" y="84">Rss Energy</text>
 </g>
 <g class="TssEnergy">
-<line class="TssEnergy" x1="0" y1="112" x2="10" y2="112" />
-<text class="TssEnergy" font-size="14" x="11" y="112">Tss Energy</text>
+<line class="TssEnergy" x1="0" y1="98" x2="10" y2="98" />
+<text class="TssEnergy" font-size="12" x="11" y="98">Tss Energy</text>
 </g>
 <g class="RshshEnergy">
-<line class="RshshEnergy" x1="0" y1="128" x2="10" y2="128" />
-<text class="RshshEnergy" font-size="14" x="11" y="128">Rshsh Energy</text>
+<line class="RshshEnergy" x1="0" y1="112" x2="10" y2="112" />
+<text class="RshshEnergy" font-size="12" x="11" y="112">Rshsh Energy</text>
 </g>
 <g class="TshshEnergy">
-<line class="TshshEnergy" x1="0" y1="144" x2="10" y2="144" />
-<text class="TshshEnergy" font-size="14" x="11" y="144">Tshsh Energy</text>
+<line class="TshshEnergy" x1="0" y1="126" x2="10" y2="126" />
+<text class="TshshEnergy" font-size="12" x="11" y="126">Tshsh Energy</text>
 </g>
 </g> <!-- legend end-->
 </svg>
@@ -3330,9 +3530,9 @@ Options:
       --layer=v v v v v v   inbound and transmitted layer parameters, vp, vs,
                               rho, vp, vs, rho
       --legend              create a legend
-      --mapwidth=&lt;mapwidth&gt; plot width in inches for GMT, pixels for SVG.
+      --mapwidth=&lt;mapwidth&gt; plot width in units from --mapwidthunit.
       --mapwidthunit=&lt;mapWidthUnit&gt;
-                            plot width unit for GMT. Default is i for inchs
+                            plot width unit, i for inch, c for cm or p for px.
   -o, --output=&lt;outFile&gt;    output to file, default is stdout.
       --prop=&lt;toolPropsFilename&gt;
                             load defaults from properties file

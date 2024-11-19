@@ -20,9 +20,9 @@ Options:
       --depthminmax=km km   min and max depth, km,  for plotting
       --help                display this help message
       --legend              create a legend
-      --mapwidth=<mapwidth> plot width in inches for GMT, pixels for SVG.
+      --mapwidth=<mapwidth> plot width in units from --mapwidthunit.
       --mapwidthunit=<mapWidthUnit>
-                            plot width unit for GMT. Default is i for inchs
+                            plot width unit, i for inch, c for cm or p for px.
       --negdist             outputs negative distance as well so wavefronts are
                               in both halves.
   -o, --output=<outFile>    output to file, default is stdout.
@@ -32,7 +32,7 @@ Options:
                             load defaults from properties file
       --timefiles           outputs each time into a separate .ps file within
                               the gmt script.
-      --timestep=<timeStep> steps in time (seconds) for output, default is 100
+      --timestep=<timeStep> steps in time (seconds) for output, default is 10
       --verbose             enable verbose output
       --xaxis=type          x axis type, the depth/radius axis, one of degree,
                               radian, kilometer

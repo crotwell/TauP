@@ -3,11 +3,12 @@ Usage: taup pierce [--amp] [--debug] [--first] [--geodetic] [--help]
                    [--verbose] [--attenuationfreq=<attenuationFreq>]
                    [--az=<azimuth>] [--az=<azimuth>] [--baz=<backAzimuth>]
                    [--baz=<backAzimuth>] [--geodeticflattening=f] [--mw=<mw>]
-                   [-o=<outFile>] [--prop=<toolPropsFilename>]
-                   [--qml=<quakemlFilename>] [--staxml=<stationxmlFilename>]
-                   [--pierce=depth[,depth...]]... [--rel=phase[,phase...]]...
-                   [--evt=l l]... [--evt=l l]... [--sta=l l]... [--sta=l l]...
-                   [[--mod=<modelName>] [-h=depth[,depth...]]...
+                   [--numattenuationfreq=<numFrequencies>] [-o=<outFile>]
+                   [--prop=<toolPropsFilename>] [--qml=<quakemlFilename>]
+                   [--staxml=<stationxmlFilename>] [--pierce=depth[,
+                   depth...]]... [--rel=phase[,phase...]]... [--strikediprake=s
+                   [,s...]]... [--evt=l l]... [--evt=l l]... [--sta=l l]...
+                   [--sta=l l]... [[--mod=<modelName>] [-h=depth[,depth...]]...
                    [--stadepth=depth[,depth...]]... [--scat=s s]...] [[-p=phase
                    [,phase...]]... [--phasefile=<phaseFiles>]...] [[--deg=d[,
                    d...]]... [--exactdegree=d[,d...]]... [--exactkilometer=km[,
@@ -40,6 +41,9 @@ Options:
       --mw=<mw>              scale amplitude by source moment magnitude
       --nodiscon             only prints pierce points for the depths added
                                with -pierce
+      --numattenuationfreq=<numFrequencies>
+                              number attenuations frequency for amplitude
+                               calculations
   -o, --output=<outFile>     output to file, default is stdout.
       --pierce=depth[,depth...]
                              additional depth for calculating pierce points
@@ -54,6 +58,8 @@ Options:
       --staxml=<stationxmlFilename>
                              StationXML file to extract station latitudes and
                                longitudes from
+      --strikediprake=s[,s...]
+                             fault strike, dip, rake for amplitude calculations
       --time, --onlytime     only output travel time
       --turn                 only prints bottom turning points, e.g. v
       --under                only prints underside reflection points, e.g. ^

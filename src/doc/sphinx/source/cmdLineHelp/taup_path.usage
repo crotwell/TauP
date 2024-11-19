@@ -1,6 +1,6 @@
-Usage: taup path [--debug] [--geodetic] [--help] [--onlynameddiscon]
-                 [--verbose] [--withtime] [--az=<azimuth>] [--az=<azimuth>]
-                 [--baz=<backAzimuth>] [--baz=<backAzimuth>]
+Usage: taup path [--debug] [--geodetic] [--help] [--label] [--legend]
+                 [--onlynameddiscon] [--verbose] [--withtime] [--az=<azimuth>]
+                 [--az=<azimuth>] [--baz=<backAzimuth>] [--baz=<backAzimuth>]
                  [--color=<coloring>] [--geodeticflattening=f]
                  [--mapwidth=<mapwidth>] [--mapwidthunit=<mapWidthUnit>]
                  [--maxpathinc=<maxPathInc>] [-o=<outFile>]
@@ -37,9 +37,11 @@ Options:
                                calculations when --geodetic, defaults to WGS84
                                ~ 298.257. The distance calculation uses 1/x.
       --help                 display this help message
-      --mapwidth=<mapwidth>  plot width in inches for GMT, pixels for SVG.
+      --label                label with phase name
+      --legend               create a legend
+      --mapwidth=<mapwidth>  plot width in units from --mapwidthunit.
       --mapwidthunit=<mapWidthUnit>
-                             plot width unit for GMT. Default is i for inchs
+                             plot width unit, i for inch, c for cm or p for px.
       --maxpathinc=<maxPathInc>
                              Maximum distance increment in degrees between path
                                points, avoid visible segmentation in plots

@@ -1,12 +1,14 @@
 Usage: taup find [--amp] [--debug] [--help] [--onlynameddiscon] [--pwaveonly]
                  [--showrayparam] [--verbose]
                  [--attenuationfreq=<attenuationFreq>] [--deltatime=dt]
-                 --max=<maxActions> [--mw=<mw>] [-o=<outFile>]
+                 --max=<maxActions> [--mw=<mw>]
+                 [--numattenuationfreq=<numFrequencies>] [-o=<outFile>]
                  [--prop=<toolPropsFilename>] [--deg=d[,d...]]...
-                 [--rayparamdeg=s/deg [s/deg]]... [--rayparamkm=s/km [s/km]]...
-                 [--time=t [t]]... [--exclude=depth...]... [[--mod=<modelName>]
-                 [-h=depth[,depth...]]... [--stadepth=depth[,depth...]]...
-                 [--scat=s s]...] [[-p=phase[,phase...]]...
+                 [--strikediprake=s[,s...]]... [--rayparamdeg=s/deg [s/deg]]...
+                 [--rayparamkm=s/km [s/km]]... [--time=t [t]]...
+                 [--exclude=depth...]... [[--mod=<modelName>] [-h=depth[,
+                 depth...]]... [--stadepth=depth[,depth...]]... [--scat=s
+                 s]...] [[-p=phase[,phase...]]...
                  [--phasefile=<phaseFiles>]...] [--json | --text]
 Find seismic phases in an earth model.
 
@@ -27,6 +29,9 @@ Options:
       --help               display this help message
       --max=<maxActions>   Maximum number of reflections and phase conversion
       --mw=<mw>            scale amplitude by source moment magnitude
+      --numattenuationfreq=<numFrequencies>
+                            number attenuations frequency for amplitude
+                             calculations
   -o, --output=<outFile>   output to file, default is stdout.
       --onlynameddiscon    only interact with named discontinuities like moho,
                              cmb, iocb
@@ -40,6 +45,8 @@ Options:
                            only keep phases that overlap the given ray
                              parameter range in s/km
       --showrayparam       show min and max ray parameter for each phase name
+      --strikediprake=s[,s...]
+                           fault strike, dip, rake for amplitude calculations
       --time=t [t]         find arrivals within the given range
       --verbose            enable verbose output
 Model Args

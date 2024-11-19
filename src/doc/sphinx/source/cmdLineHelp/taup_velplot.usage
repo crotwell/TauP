@@ -13,9 +13,9 @@ Options:
       --help                 display this help message
       --legend               create a legend
       --listdiscon           List the discontinuities in the velocity model
-      --mapwidth=<mapwidth>  plot width in inches for GMT, pixels for SVG.
+      --mapwidth=<mapwidth>  plot width in units from --mapwidthunit.
       --mapwidthunit=<mapWidthUnit>
-                             plot width unit for GMT. Default is i for inchs
+                             plot width unit, i for inch, c for cm or p for px.
   -o, --output=<outFile>     output to file, default is stdout.
       --prop=<toolPropsFilename>
                              load defaults from properties file

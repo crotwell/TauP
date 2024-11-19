@@ -2,9 +2,10 @@ Usage: taup time [--amp] [--debug] [--first] [--geodetic] [--help] [--rayp]
                  [--time] [--verbose] [--attenuationfreq=<attenuationFreq>]
                  [--az=<azimuth>] [--az=<azimuth>] [--baz=<backAzimuth>]
                  [--baz=<backAzimuth>] [--geodeticflattening=f] [--mw=<mw>]
-                 [-o=<outFile>] [--prop=<toolPropsFilename>]
-                 [--qml=<quakemlFilename>] [--staxml=<stationxmlFilename>]
-                 [--rel=phase[,phase...]]... [--evt=l l]... [--evt=l l]...
+                 [--numattenuationfreq=<numFrequencies>] [-o=<outFile>]
+                 [--prop=<toolPropsFilename>] [--qml=<quakemlFilename>]
+                 [--staxml=<stationxmlFilename>] [--rel=phase[,phase...]]...
+                 [--strikediprake=s[,s...]]... [--evt=l l]... [--evt=l l]...
                  [--sta=l l]... [--sta=l l]... [[--mod=<modelName>] [-h=depth[,
                  depth...]]... [--stadepth=depth[,depth...]]... [--scat=s
                  s]...] [[-p=phase[,phase...]]...
@@ -37,6 +38,9 @@ Options:
                                ~ 298.257. The distance calculation uses 1/x.
       --help                 display this help message
       --mw=<mw>              scale amplitude by source moment magnitude
+      --numattenuationfreq=<numFrequencies>
+                              number attenuations frequency for amplitude
+                               calculations
   -o, --output=<outFile>     output to file, default is stdout.
       --prop=<toolPropsFilename>
                              load defaults from properties file
@@ -47,6 +51,8 @@ Options:
       --staxml=<stationxmlFilename>
                              StationXML file to extract station latitudes and
                                longitudes from
+      --strikediprake=s[,s...]
+                             fault strike, dip, rake for amplitude calculations
       --time, --onlytime     only output travel time
       --verbose              enable verbose output
 Model Args

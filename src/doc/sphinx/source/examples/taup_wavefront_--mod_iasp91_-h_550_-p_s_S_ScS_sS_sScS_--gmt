@@ -9,7 +9,7 @@
 #
 gmt begin stdout
 # draw surface and label distances.
-gmt basemap -R0/360/0/6371.0 -JP6.0i -Bx30  
+gmt basemap -R0/360/0/6371.0 -JPa6.0i -Bx30  
 # draw circles for branches, note these are scaled for a 
 # map using -JP6.0i
 gmt plot  -Sc -A  <<ENDLAYERS

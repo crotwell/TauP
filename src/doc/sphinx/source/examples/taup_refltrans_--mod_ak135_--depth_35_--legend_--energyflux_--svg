@@ -621,7 +621,7 @@ circle.discontinuity.iocb {
 </g> <!-- x axis end-->
 <g clip-path="url(#curve_clip)">
 <g transform="scale(1,-1) translate(0, -416.0)">
-<g transform="scale(4.6222269058275,415.993061291826)" >
+<g transform="scale(4.6222267,415.99307)" >
 <g transform="translate(-0.0, -0.0)">
     <g class="RppEnergy" tauplabel=""  >
   <g>

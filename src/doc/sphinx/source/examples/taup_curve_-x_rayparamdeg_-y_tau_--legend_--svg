@@ -11,374 +11,6 @@
   </metadata>
   <defs>
     <style type="text/css"><![CDATA[
-        .phase_p {
-          stroke: skyblue;
-        }
-        circle.phase_p {
-          fill: skyblue;
-          stroke: skyblue;
-        }
-        .phase_p.label {
-          stroke: skyblue;
-          fill: skyblue;
-        }
-        .legend .phase_p line {
-          stroke: skyblue;
-        }
-        .legend .phase_p text {
-          fill: skyblue;
-          stroke: transparent;
-        }
-        .label text.phase_p{
-          font: bold ;
-          fill: skyblue;
-          stroke: transparent;
-        }
-        .phase_s {
-          stroke: olivedrab;
-        }
-        circle.phase_s {
-          fill: olivedrab;
-          stroke: olivedrab;
-        }
-        .phase_s.label {
-          stroke: olivedrab;
-          fill: olivedrab;
-        }
-        .legend .phase_s line {
-          stroke: olivedrab;
-        }
-        .legend .phase_s text {
-          fill: olivedrab;
-          stroke: transparent;
-        }
-        .label text.phase_s{
-          font: bold ;
-          fill: olivedrab;
-          stroke: transparent;
-        }
-        .phase_P {
-          stroke: goldenrod;
-        }
-        circle.phase_P {
-          fill: goldenrod;
-          stroke: goldenrod;
-        }
-        .phase_P.label {
-          stroke: goldenrod;
-          fill: goldenrod;
-        }
-        .legend .phase_P line {
-          stroke: goldenrod;
-        }
-        .legend .phase_P text {
-          fill: goldenrod;
-          stroke: transparent;
-        }
-        .label text.phase_P{
-          font: bold ;
-          fill: goldenrod;
-          stroke: transparent;
-        }
-        .phase_S {
-          stroke: firebrick;
-        }
-        circle.phase_S {
-          fill: firebrick;
-          stroke: firebrick;
-        }
-        .phase_S.label {
-          stroke: firebrick;
-          fill: firebrick;
-        }
-        .legend .phase_S line {
-          stroke: firebrick;
-        }
-        .legend .phase_S text {
-          fill: firebrick;
-          stroke: transparent;
-        }
-        .label text.phase_S{
-          font: bold ;
-          fill: firebrick;
-          stroke: transparent;
-        }
-        .phase_Pn {
-          stroke: darkcyan;
-        }
-        circle.phase_Pn {
-          fill: darkcyan;
-          stroke: darkcyan;
-        }
-        .phase_Pn.label {
-          stroke: darkcyan;
-          fill: darkcyan;
-        }
-        .legend .phase_Pn line {
-          stroke: darkcyan;
-        }
-        .legend .phase_Pn text {
-          fill: darkcyan;
-          stroke: transparent;
-        }
-        .label text.phase_Pn{
-          font: bold ;
-          fill: darkcyan;
-          stroke: transparent;
-        }
-        .phase_Sn {
-          stroke: chocolate;
-        }
-        circle.phase_Sn {
-          fill: chocolate;
-          stroke: chocolate;
-        }
-        .phase_Sn.label {
-          stroke: chocolate;
-          fill: chocolate;
-        }
-        .legend .phase_Sn line {
-          stroke: chocolate;
-        }
-        .legend .phase_Sn text {
-          fill: chocolate;
-          stroke: transparent;
-        }
-        .label text.phase_Sn{
-          font: bold ;
-          fill: chocolate;
-          stroke: transparent;
-        }
-        .phase_PcP {
-          stroke: darkmagenta;
-        }
-        circle.phase_PcP {
-          fill: darkmagenta;
-          stroke: darkmagenta;
-        }
-        .phase_PcP.label {
-          stroke: darkmagenta;
-          fill: darkmagenta;
-        }
-        .legend .phase_PcP line {
-          stroke: darkmagenta;
-        }
-        .legend .phase_PcP text {
-          fill: darkmagenta;
-          stroke: transparent;
-        }
-        .label text.phase_PcP{
-          font: bold ;
-          fill: darkmagenta;
-          stroke: transparent;
-        }
-        .phase_ScS {
-          stroke: mediumvioletred;
-        }
-        circle.phase_ScS {
-          fill: mediumvioletred;
-          stroke: mediumvioletred;
-        }
-        .phase_ScS.label {
-          stroke: mediumvioletred;
-          fill: mediumvioletred;
-        }
-        .legend .phase_ScS line {
-          stroke: mediumvioletred;
-        }
-        .legend .phase_ScS text {
-          fill: mediumvioletred;
-          stroke: transparent;
-        }
-        .label text.phase_ScS{
-          font: bold ;
-          fill: mediumvioletred;
-          stroke: transparent;
-        }
-        .phase_Pdiff {
-          stroke: sienna;
-        }
-        circle.phase_Pdiff {
-          fill: sienna;
-          stroke: sienna;
-        }
-        .phase_Pdiff.label {
-          stroke: sienna;
-          fill: sienna;
-        }
-        .legend .phase_Pdiff line {
-          stroke: sienna;
-        }
-        .legend .phase_Pdiff text {
-          fill: sienna;
-          stroke: transparent;
-        }
-        .label text.phase_Pdiff{
-          font: bold ;
-          fill: sienna;
-          stroke: transparent;
-        }
-        .phase_Sdiff {
-          stroke: rebeccapurple;
-        }
-        circle.phase_Sdiff {
-          fill: rebeccapurple;
-          stroke: rebeccapurple;
-        }
-        .phase_Sdiff.label {
-          stroke: rebeccapurple;
-          fill: rebeccapurple;
-        }
-        .legend .phase_Sdiff line {
-          stroke: rebeccapurple;
-        }
-        .legend .phase_Sdiff text {
-          fill: rebeccapurple;
-          stroke: transparent;
-        }
-        .label text.phase_Sdiff{
-          font: bold ;
-          fill: rebeccapurple;
-          stroke: transparent;
-        }
-        .phase_PKP {
-          stroke: skyblue;
-        }
-        circle.phase_PKP {
-          fill: skyblue;
-          stroke: skyblue;
-        }
-        .phase_PKP.label {
-          stroke: skyblue;
-          fill: skyblue;
-        }
-        .legend .phase_PKP line {
-          stroke: skyblue;
-        }
-        .legend .phase_PKP text {
-          fill: skyblue;
-          stroke: transparent;
-        }
-        .label text.phase_PKP{
-          font: bold ;
-          fill: skyblue;
-          stroke: transparent;
-        }
-        .phase_SKS {
-          stroke: olivedrab;
-        }
-        circle.phase_SKS {
-          fill: olivedrab;
-          stroke: olivedrab;
-        }
-        .phase_SKS.label {
-          stroke: olivedrab;
-          fill: olivedrab;
-        }
-        .legend .phase_SKS line {
-          stroke: olivedrab;
-        }
-        .legend .phase_SKS text {
-          fill: olivedrab;
-          stroke: transparent;
-        }
-        .label text.phase_SKS{
-          font: bold ;
-          fill: olivedrab;
-          stroke: transparent;
-        }
-        .phase_PKiKP {
-          stroke: goldenrod;
-        }
-        circle.phase_PKiKP {
-          fill: goldenrod;
-          stroke: goldenrod;
-        }
-        .phase_PKiKP.label {
-          stroke: goldenrod;
-          fill: goldenrod;
-        }
-        .legend .phase_PKiKP line {
-          stroke: goldenrod;
-        }
-        .legend .phase_PKiKP text {
-          fill: goldenrod;
-          stroke: transparent;
-        }
-        .label text.phase_PKiKP{
-          font: bold ;
-          fill: goldenrod;
-          stroke: transparent;
-        }
-        .phase_SKiKS {
-          stroke: firebrick;
-        }
-        circle.phase_SKiKS {
-          fill: firebrick;
-          stroke: firebrick;
-        }
-        .phase_SKiKS.label {
-          stroke: firebrick;
-          fill: firebrick;
-        }
-        .legend .phase_SKiKS line {
-          stroke: firebrick;
-        }
-        .legend .phase_SKiKS text {
-          fill: firebrick;
-          stroke: transparent;
-        }
-        .label text.phase_SKiKS{
-          font: bold ;
-          fill: firebrick;
-          stroke: transparent;
-        }
-        .phase_PKIKP {
-          stroke: darkcyan;
-        }
-        circle.phase_PKIKP {
-          fill: darkcyan;
-          stroke: darkcyan;
-        }
-        .phase_PKIKP.label {
-          stroke: darkcyan;
-          fill: darkcyan;
-        }
-        .legend .phase_PKIKP line {
-          stroke: darkcyan;
-        }
-        .legend .phase_PKIKP text {
-          fill: darkcyan;
-          stroke: transparent;
-        }
-        .label text.phase_PKIKP{
-          font: bold ;
-          fill: darkcyan;
-          stroke: transparent;
-        }
-        .phase_SKIKS {
-          stroke: chocolate;
-        }
-        circle.phase_SKIKS {
-          fill: chocolate;
-          stroke: chocolate;
-        }
-        .phase_SKIKS.label {
-          stroke: chocolate;
-          fill: chocolate;
-        }
-        .legend .phase_SKIKS line {
-          stroke: chocolate;
-        }
-        .legend .phase_SKIKS text {
-          fill: chocolate;
-          stroke: transparent;
-        }
-        .label text.phase_SKIKS{
-          font: bold ;
-          fill: chocolate;
-          stroke: transparent;
-        }
 
 text.title {
     text-anchor: middle;
@@ -625,7 +257,7 @@ circle.discontinuity.iocb {
 </g> <!-- x axis end-->
 <g clip-path="url(#curve_clip)">
 <g transform="scale(1,-1) translate(0, -416.0)">
-<g transform="scale(12.570357678889648,0.2542194223466208)" >
+<g transform="scale(12.570357,0.2542194)" >
 <g transform="translate(-0.0, -0.0)">
     <g class="autocolor">
     <g class="pwave phase_P pwave" tauplabel="rayparamdeg/tau P for a source depth of 0.0 kilometers in the iasp91 model"  >
@@ -634,6 +266,7 @@ circle.discontinuity.iocb {
     <polyline  points="
 19.1715 0.00000
 19.1715 1.61722e-06
+19.1705 0.000878639
 19.1678 0.00572697
 19.1640 0.0161462
 19.1565 0.0455955
@@ -672,7 +305,9 @@ circle.discontinuity.iocb {
 17.0482 3.14521
 17.0431 3.16585
 17.0331 3.22127
+17.0239 3.28448
 17.0129 3.37211
+17.0117 3.38153
 17.0071 3.41225
 17.0012 3.44578
 16.9895 3.50376
@@ -715,18 +350,22 @@ circle.discontinuity.iocb {
 13.9384 7.37958
 13.8396 7.45487
 13.7542 7.51877
+13.7534 7.51997
 13.7511 7.52581
 13.7479 7.53676
 13.7416 7.56580
 13.7290 7.64403
 13.7165 7.74258
 13.7039 7.85755
+13.6919 7.97988
 13.6787 8.12855
 13.6535 8.44605
 13.6451 8.56041
 13.6221 8.89787
 13.5990 9.26471
+13.5767 9.64537
 13.5529 10.0779
+13.5503 10.1236
 13.5405 10.2880
 13.5282 10.4847
 13.5035 10.8607
@@ -766,6 +405,7 @@ circle.discontinuity.iocb {
 11.5215 45.5617
 11.5204 45.5842
 11.5194 45.6064
+11.5058 45.8792
 11.4783 46.4078
 11.4372 47.1545
 11.3961 47.8667
@@ -773,6 +413,7 @@ circle.discontinuity.iocb {
 11.2737 49.8443
 11.1924 51.0683
 11.1153 52.1763
+11.1102 52.2511
 11.0942 52.5039
 11.0730 52.8546
 11.0308 53.5954
@@ -790,6 +431,7 @@ circle.discontinuity.iocb {
 9.93209 79.2780
 9.77877 83.5150
 9.77213 83.7016
+9.76766 83.8237
 9.75390 84.1856
 9.73567 84.6472
 9.69921 85.5312
@@ -812,6 +454,7 @@ circle.discontinuity.iocb {
 8.94748 101.969
 8.87274 104.098
 8.85783 104.532
+8.83457 105.229
 8.79074 106.587
 8.72364 108.752
 8.71692 108.974
@@ -922,12 +565,14 @@ circle.discontinuity.iocb {
     <desc></desc>
     <polyline  points="
 33.0937 0.00000
+33.0921 0.00126863
 33.0872 0.00982607
 33.0807 0.0277926
 33.0678 0.0786109
 33.0418 0.222354
 33.0158 0.408506
 32.9898 0.628961
+32.9876 0.647028
 32.9797 0.703807
 32.9696 0.767093
 32.9494 0.876833
@@ -954,7 +599,9 @@ circle.discontinuity.iocb {
 29.5502 5.34249
 29.5414 5.37839
 29.5240 5.47471
+29.5080 5.58449
 29.4891 5.73665
+29.4872 5.75147
 29.4800 5.79943
 29.4710 5.85238
 29.4529 5.94450
@@ -974,6 +621,7 @@ circle.discontinuity.iocb {
 24.7236 12.2987
 24.7079 12.3631
 24.6767 12.5348
+24.6482 12.7296
 24.6143 12.9993
 24.5527 13.5773
 24.4910 14.2518
@@ -1008,6 +656,7 @@ circle.discontinuity.iocb {
 21.7004 69.3832
 21.5318 73.1293
 21.3633 76.9443
+21.3510 77.2141
 21.3131 78.0086
 21.2630 79.0095
 21.2128 79.9710
@@ -1017,6 +666,7 @@ circle.discontinuity.iocb {
 20.8149 86.7832
 20.6677 89.0533
 20.5205 91.2244
+20.5081 91.4130
 20.4675 92.0679
 20.4145 92.9701
 20.3615 93.9074
@@ -1056,6 +706,7 @@ circle.discontinuity.iocb {
 17.9858 148.520
 17.9632 149.120
 17.7992 153.529
+17.7892 153.794
 17.7582 154.575
 17.7172 155.570
 17.6763 156.533
@@ -1078,6 +729,7 @@ circle.discontinuity.iocb {
 16.9661 170.798
 16.9192 171.636
 16.7522 174.546
+16.7414 174.739
 16.7070 175.388
 16.6618 176.282
 16.5715 178.161
@@ -1088,6 +740,7 @@ circle.discontinuity.iocb {
 16.0697 189.761
 15.8880 194.291
 15.7711 197.282
+15.7630 197.495
 15.7411 198.098
 15.7111 198.952
 15.6812 199.832
@@ -1230,6 +883,15 @@ circle.discontinuity.iocb {
     <polyline  points="
 13.7542 7.51877
 13.7542 7.51877
+13.7542 7.51877
+13.7542 7.51877
+13.7542 7.51877
+13.7542 7.51877
+13.7542 7.51877
+13.7542 7.51877
+13.7542 7.51877
+13.7542 7.51877
+13.7542 7.51877
   "  /> <!-- -->
   </g>
     </g> <!-- end rayparamdeg/tau Pn for a source depth of 0.0 kilometers in the iasp91 model -->
@@ -1237,6 +899,15 @@ circle.discontinuity.iocb {
   <g>
     <desc></desc>
     <polyline  points="
+24.7392 12.2576
+24.7392 12.2576
+24.7392 12.2576
+24.7392 12.2576
+24.7392 12.2576
+24.7392 12.2576
+24.7392 12.2576
+24.7392 12.2576
+24.7392 12.2576
 24.7392 12.2576
 24.7392 12.2576
   "  /> <!-- -->
@@ -1247,30 +918,46 @@ circle.discontinuity.iocb {
     <desc></desc>
     <polyline  points="
 4.43892 382.855
+4.43818 382.927
 4.43597 383.137
 4.43302 383.414
+4.43034 383.661
 4.42712 383.956
 4.42122 384.487
 4.41532 385.009
+4.40975 385.495
 4.40352 386.033
 4.39172 387.033
+4.38061 387.956
 4.36812 388.976
+4.35682 389.883
 4.34452 390.856
+4.33314 391.743
 4.32098 392.679
 4.29745 394.455
+4.28120 395.658
 4.26385 396.922
+4.24751 398.095
 4.23025 399.316
+4.20321 401.194
 4.17408 403.174
+4.14685 404.987
 4.11791 406.874
+4.07861 409.380
 4.03637 412.002
 4.00744 413.758
+3.95501 416.863
 3.89866 420.097
+3.84668 422.990
 3.79158 425.970
 3.77679 426.755
+3.73236 429.077
 3.68605 431.442
+3.63513 433.978
 3.58205 436.555
 3.51861 439.549
 3.47949 441.349
+3.42969 443.593
 3.37826 445.855
 3.27834 450.097
 3.26178 450.781
@@ -1371,6 +1058,7 @@ circle.discontinuity.iocb {
     <desc></desc>
     <polyline  points="
 8.32327 690.184
+8.32275 690.235
 8.32120 690.386
 8.31913 690.586
 8.31499 690.980
@@ -1381,12 +1069,14 @@ circle.discontinuity.iocb {
 8.25688 696.223
 8.24023 697.660
 8.22359 699.075
+8.20763 700.414
 8.19030 701.849
 8.15702 704.557
 8.12452 707.145
 8.09203 709.684
 8.05953 712.178
 8.02704 714.630
+7.99620 716.921
 7.96350 719.314
 7.89996 723.865
 7.83782 728.200
@@ -1588,6 +1278,36 @@ circle.discontinuity.iocb {
     <polyline  points="
 4.43892 382.855
 4.43892 382.855
+4.43892 382.855
+4.43892 382.855
+4.43892 382.855
+4.43892 382.855
+4.43892 382.855
+4.43892 382.855
+4.43892 382.855
+4.43892 382.855
+4.43892 382.855
+4.43892 382.855
+4.43892 382.855
+4.43892 382.855
+4.43892 382.855
+4.43892 382.855
+4.43892 382.855
+4.43892 382.855
+4.43892 382.855
+4.43892 382.855
+4.43892 382.855
+4.43892 382.855
+4.43892 382.855
+4.43892 382.855
+4.43892 382.855
+4.43892 382.855
+4.43892 382.855
+4.43892 382.855
+4.43892 382.855
+4.43892 382.855
+4.43892 382.855
+4.43892 382.855
   "  /> <!-- -->
   </g>
     </g> <!-- end rayparamdeg/tau Pdiff for a source depth of 0.0 kilometers in the iasp91 model -->
@@ -1595,6 +1315,35 @@ circle.discontinuity.iocb {
   <g>
     <desc></desc>
     <polyline  points="
+8.32327 690.184
+8.32327 690.184
+8.32327 690.184
+8.32327 690.184
+8.32327 690.184
+8.32327 690.184
+8.32327 690.184
+8.32327 690.184
+8.32327 690.184
+8.32327 690.184
+8.32327 690.184
+8.32327 690.184
+8.32327 690.184
+8.32327 690.184
+8.32327 690.184
+8.32327 690.184
+8.32327 690.184
+8.32327 690.184
+8.32327 690.184
+8.32327 690.184
+8.32327 690.184
+8.32327 690.184
+8.32327 690.184
+8.32327 690.184
+8.32327 690.184
+8.32327 690.184
+8.32327 690.184
+8.32327 690.184
+8.32327 690.184
 8.32327 690.184
 8.32327 690.184
   "  /> <!-- -->
@@ -1605,13 +1354,16 @@ circle.discontinuity.iocb {
     <desc></desc>
     <polyline  points="
 4.43892 529.603
+4.43819 529.731
 4.43597 530.118
 4.43302 530.626
+4.43036 531.082
 4.42712 531.633
 4.42122 532.629
 4.41532 533.617
 4.40352 535.574
 4.39172 537.511
+4.38072 539.301
 4.36812 541.336
 4.34452 545.109
 4.32098 548.831
@@ -1662,6 +1414,7 @@ circle.discontinuity.iocb {
 7.57486 745.491
 7.56153 746.387
 7.53485 748.222
+7.50953 749.999
 7.47646 752.359
 7.41807 756.608
 7.39769 758.110
@@ -1778,18 +1531,25 @@ circle.discontinuity.iocb {
     <desc></desc>
     <polyline  points="
 2.07085 882.636
+2.07058 882.678
+2.06978 882.801
 2.06846 883.000
+2.06737 883.163
 2.06607 883.356
 2.06368 883.708
 2.06129 884.056
+2.05902 884.384
 2.05650 884.744
 2.05172 885.421
 2.04693 886.089
 2.04215 886.749
 2.03737 887.402
 2.03258 888.049
+2.02794 888.671
 2.02301 889.323
+2.01834 889.938
 2.01345 890.576
+2.00876 891.183
 2.00388 891.809
 1.99431 893.023
 1.98442 894.259
@@ -1810,45 +1570,79 @@ circle.discontinuity.iocb {
 1.87431 907.016
 1.86408 908.122
 1.85385 909.215
+1.84374 910.284
 1.83340 911.367
+1.82331 912.411
 1.81301 913.467
+1.80292 914.492
 1.79262 915.526
 1.77223 917.544
 1.75185 919.523
 1.74341 920.331
+1.72543 922.031
 1.70697 923.748
+1.68896 925.394
 1.67052 927.051
+1.65050 928.820
 1.62999 930.598
+1.60994 932.305
 1.58946 934.017
+1.56945 935.660
 1.54904 937.305
+1.52901 938.891
 1.50863 940.476
 1.49315 941.660
+1.47697 942.881
 1.46057 944.100
+1.44438 945.286
 1.42800 946.468
+1.40803 947.887
 1.38778 949.298
+1.36779 950.666
 1.34755 952.026
+1.32761 953.341
 1.30743 954.648
+1.28749 955.915
 1.26731 957.173
 1.24342 958.632
+1.21554 960.292
 1.18726 961.931
+1.16094 963.415
+1.13431 964.878
 1.10736 966.319
+1.08106 967.687
+1.05447 969.032
 1.02761 970.352
 0.994215 971.941
+0.971206 973.002
 0.948017 974.043
+0.921747 975.190
+0.895260 976.310
 0.868562 977.403
+0.829102 978.954
 0.789219 980.443
+0.767337 981.227
 0.745339 981.991
 0.709976 983.171
+0.670572 984.414
 0.630846 985.593
+0.591462 986.688
 0.551802 987.717
+0.524337 988.386
 0.496755 989.023
 0.472834 989.547
+0.433473 990.352
 0.393917 991.089
+0.354573 991.751
 0.315072 992.346
+0.281736 992.792
 0.248311 993.189
 0.236270 993.320
+0.196928 993.701
 0.157500 994.014
+0.118144 994.257
 0.0787368 994.430
+0.0393769 994.534
 0.00000 994.569
   "  /> <!-- -->
   </g>
@@ -1858,17 +1652,23 @@ circle.discontinuity.iocb {
     <desc></desc>
     <polyline  points="
 2.07085 1317.75
+2.07058 1317.79
+2.06978 1317.91
 2.06846 1318.09
+2.06737 1318.24
 2.06607 1318.42
 2.06368 1318.75
 2.06129 1319.07
+2.05902 1319.37
 2.05650 1319.70
 2.05172 1320.33
 2.04693 1320.94
 2.04215 1321.55
 2.03737 1322.15
 2.03258 1322.75
+2.02794 1323.32
 2.02301 1323.92
+2.01835 1324.48
 2.01345 1325.07
 2.00388 1326.20
 1.99431 1327.31
@@ -1890,45 +1690,73 @@ circle.discontinuity.iocb {
 1.87431 1340.08
 1.86408 1341.08
 1.85385 1342.08
+1.84375 1343.05
 1.83340 1344.03
 1.81301 1345.94
 1.79262 1347.81
 1.77223 1349.64
 1.75185 1351.43
 1.74341 1352.16
+1.72544 1353.70
 1.70697 1355.25
+1.68897 1356.74
 1.67052 1358.24
+1.65051 1359.84
 1.62999 1361.44
+1.60996 1362.98
 1.58946 1364.53
+1.56946 1366.01
 1.54904 1367.50
+1.52902 1368.92
 1.50863 1370.35
 1.49315 1371.42
+1.47697 1372.52
 1.46057 1373.62
 1.42800 1375.75
+1.40804 1377.02
 1.38778 1378.29
+1.36780 1379.52
 1.34755 1380.75
+1.32762 1381.93
 1.30743 1383.10
+1.28749 1384.24
 1.26731 1385.37
 1.24342 1386.68
+1.21555 1388.17
 1.18726 1389.64
+1.16096 1390.97
+1.13433 1392.29
 1.10736 1393.58
+1.06782 1395.41
 1.02761 1397.20
 0.994215 1398.62
+0.971211 1399.57
 0.948017 1400.50
+0.908545 1402.03
 0.868562 1403.51
+0.829115 1404.90
 0.789219 1406.23
 0.745339 1407.62
 0.709976 1408.67
+0.670581 1409.79
 0.630846 1410.84
+0.591470 1411.82
 0.551802 1412.74
+0.524340 1413.34
 0.496755 1413.91
 0.472834 1414.38
+0.433478 1415.10
 0.393917 1415.76
+0.354577 1416.35
 0.315072 1416.88
+0.281738 1417.28
 0.248311 1417.63
 0.236270 1417.75
+0.196930 1418.09
 0.157500 1418.37
+0.118145 1418.59
 0.0787368 1418.74
+0.0393773 1418.83
 0.00000 1418.86
   "  /> <!-- -->
   </g>
@@ -1938,16 +1766,21 @@ circle.discontinuity.iocb {
     <desc></desc>
     <polyline  points="
 1.91521 902.471
+1.91494 902.502
+1.91411 902.600
 1.91266 902.771
+1.91151 902.909
 1.91010 903.079
 1.90754 903.390
 1.90499 903.706
 1.89987 904.344
 1.89476 904.992
+1.89002 905.600
 1.88453 906.308
 1.87431 907.647
 1.86408 909.002
 1.85385 910.373
+1.84424 911.674
 1.83340 913.151
 1.81301 915.961
 1.79262 918.804
@@ -1996,16 +1829,21 @@ circle.discontinuity.iocb {
     <desc></desc>
     <polyline  points="
 1.91521 1335.94
+1.91494 1335.97
+1.91410 1336.06
 1.91266 1336.21
+1.91150 1336.34
 1.91010 1336.50
 1.90754 1336.78
 1.90499 1337.07
 1.89987 1337.66
 1.89476 1338.26
+1.89001 1338.82
 1.88453 1339.47
 1.87431 1340.71
 1.86408 1341.96
 1.85385 1343.24
+1.84420 1344.45
 1.83340 1345.82
 1.81301 1348.43
 1.79262 1351.08
@@ -2027,6 +1865,7 @@ circle.discontinuity.iocb {
 1.26731 1426.00
 1.24342 1429.62
 1.18726 1438.18
+1.14818 1444.18
 1.10736 1450.50
 1.02761 1462.95
 0.994215 1468.21
