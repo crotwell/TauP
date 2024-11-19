@@ -443,7 +443,7 @@ public class LegPuller {
                     double d = Double.parseDouble(currLeg);
                     // only get this far if the currLeg is a number,
                     // otherwise exception
-                    disconBranch = closestBranchToDepth(tMod, currLeg);
+                    disconBranch = closestDisconBranchToDepth(tMod, currLeg);
                     if (disconBranch == tMod.getMohoBranch()) {
                         puristName.append(m);
                     } else if (disconBranch == tMod.getCmbBranch()) {
