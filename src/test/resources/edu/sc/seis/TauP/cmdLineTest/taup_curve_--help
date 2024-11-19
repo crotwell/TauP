@@ -1,20 +1,22 @@
 Usage: taup curve [--debug] [--help] [--legend] [--verbose] [--xabs] [--xlog]
                   [--yabs] [--ylog] [--attenuationfreq=<attenuationFreq>]
-                  [--color=<coloring>] [--mapwidth=<mapwidth>]
-                  [--mapwidthunit=<mapWidthUnit>] [--mw=<mw>] [-o=<outFile>]
+                  [--az=<azimuth>] [--color=<coloring>] [--mapwidth=<mapwidth>]
+                  [--mapwidthunit=<mapWidthUnit>] [--mw=<mw>]
+                  [--numattenuationfreq=<numFrequencies>] [-o=<outFile>]
                   [--prop=<toolPropsFilename>] [--reddeg=deg/s] [--redkm=km/s]
-                  [--rel=phase] [-x=type] [-y=type] [--xminmax=x x]...
-                  [--yminmax=y y]... [[--mod=<modelName>] [-h=depth[,
-                  depth...]]... [--stadepth=depth[,depth...]]... [--scat=s
-                  s]...] [[-p=phase[,phase...]]...
-                  [--phasefile=<phaseFiles>]...] [--gmt | --json | --svg |
-                  --text]
+                  [--rel=phase] [-x=type] [-y=type] [--strikediprake=s[,
+                  s...]]... [--xminmax=x x]... [--yminmax=y y]...
+                  [[--mod=<modelName>] [-h=depth[,depth...]]...
+                  [--stadepth=depth[,depth...]]... [--scat=s s]...] [[-p=phase[,
+                  phase...]]... [--phasefile=<phaseFiles>]...] [--gmt | --json
+                  | --svg | --text]
 Plot travel time vs. distance and other curves for seismic phases.
 
 Options:
 
       --attenuationfreq=<attenuationFreq>
                            attenuation frequency for amplitude calculations
+      --az=<azimuth>       azimuth in degrees, for amp calculations
       --color=<coloring>   style of coloring for paths and wavefronts, one of:
                              auto, wavetype, phase, none
       --debug              enable debugging output
@@ -25,6 +27,9 @@ Options:
       --mapwidthunit=<mapWidthUnit>
                            plot width unit, i for inch, c for cm or p for px.
       --mw=<mw>            scale amplitude by source moment magnitude
+      --numattenuationfreq=<numFrequencies>
+                            number attenuations frequency for amplitude
+                             calculations
   -o, --output=<outFile>   output to file, default is stdout.
       --prop=<toolPropsFilename>
                            load defaults from properties file
@@ -34,6 +39,8 @@ Options:
                              effect if axis is not distance-like/time
       --rel=phase          plot relative to the given phase, no effect unless
                              distance/time
+      --strikediprake=s[,s...]
+                           fault strike, dip, rake for amplitude calculations
       --verbose            enable verbose output
   -x, --xaxis=type         X axis data type, default is degree180, one of
                              radian, radian180, degree, degree180, kilometer,
@@ -41,7 +48,8 @@ Options:
                              rayparamkm, time, tau, takeoffangle,
                              incidentangle, turndepth, amp, amppsv, ampsh,
                              geospread, refltran, refltranpsv, refltransh,
-                             index, tstar, attenuation, theta
+                             index, tstar, attenuation, theta, energygeospread,
+                             pathlength, radiationpsv, radiationsh
       --xabs               X axis is absolute value
       --xlog               X axis is log
       --xminmax=x x        min and max x axis for plotting
@@ -51,7 +59,8 @@ Options:
                              rayparamkm, time, tau, takeoffangle,
                              incidentangle, turndepth, amp, amppsv, ampsh,
                              geospread, refltran, refltranpsv, refltransh,
-                             index, tstar, attenuation, theta
+                             index, tstar, attenuation, theta, energygeospread,
+                             pathlength, radiationpsv, radiationsh
       --yabs               Y axis is absolute value
       --ylog               Y axis is log
       --yminmax=y y        min and max y axis for plotting

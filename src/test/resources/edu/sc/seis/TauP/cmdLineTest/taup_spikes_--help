@@ -1,20 +1,22 @@
 Usage: taup spikes [--debug] [--geodetic] [--help] [--verbose]
                    [--attenuationfreq=<attenuationFreq>] [--az=<azimuth>]
                    [--az=<azimuth>] [--baz=<backAzimuth>] [--baz=<backAzimuth>]
-                   [--geodeticflattening=f] [--mw=<mw>] [-o=<outFile>]
+                   [--geodeticflattening=f] [--mw=<mw>]
+                   [--numattenuationfreq=<numFrequencies>] [-o=<outFile>]
                    [--otime=<origintime>] [--prop=<toolPropsFilename>]
                    [--qml=<quakemlFilename>] [--staxml=<stationxmlFilename>]
-                   [--evt=l l]... [--evt=l l]... [--sta=l l]... [--sta=l l]...
-                   [[--mod=<modelName>] [-h=depth[,depth...]]...
-                   [--stadepth=depth[,depth...]]... [--scat=s s]...] [[-p=phase
-                   [,phase...]]... [--phasefile=<phaseFiles>]...] [[--deg=d[,
-                   d...]]... [--exactdegree=d[,d...]]... [--exactkilometer=km[,
-                   km...]]... [--km=km[,km...]]... [--rayparamdeg=s/deg[,
-                   s/deg...]]... [--rayparamidx=i[,i...]]... [--rayparamkm=s/km
-                   [,s/km...]]... [--rayparamrad=s/rad[,s/rad...]]...
-                   [--takeoff=deg[,deg...]]... [--degreerange=d[,d...] [d
-                   [d]]]... [--kilometerrange=k[,k...] [k [k]]]...
-                   [--takeoffrange=k[,k...] [k [k]]]...]... [--ms3 | --sac]
+                   [--strikediprake=s[,s...]]... [--evt=l l]... [--evt=l l]...
+                   [--sta=l l]... [--sta=l l]... [[--mod=<modelName>] [-h=depth
+                   [,depth...]]... [--stadepth=depth[,depth...]]... [--scat=s
+                   s]...] [[-p=phase[,phase...]]...
+                   [--phasefile=<phaseFiles>]...] [[--deg=d[,d...]]...
+                   [--exactdegree=d[,d...]]... [--exactkilometer=km[,km...]]...
+                   [--km=km[,km...]]... [--rayparamdeg=s/deg[,s/deg...]]...
+                   [--rayparamidx=i[,i...]]... [--rayparamkm=s/km[,s/km...]]...
+                   [--rayparamrad=s/rad[,s/rad...]]... [--takeoff=deg[,
+                   deg...]]... [--degreerange=d[,d...] [d [d]]]...
+                   [--kilometerrange=k[,k...] [k [k]]]... [--takeoffrange=k[,
+                   k...] [k [k]]]...]... [--ms3 | --sac]
 Calculate spike seismograms
 
 Options:
@@ -33,6 +35,9 @@ Options:
                                ~ 298.257. The distance calculation uses 1/x.
       --help                 display this help message
       --mw=<mw>              scale amplitude by source moment magnitude
+      --numattenuationfreq=<numFrequencies>
+                              number attenuations frequency for amplitude
+                               calculations
   -o, --output=<outFile>     output to file, default is stdout.
       --otime=<origintime>   event origin time, as ISO8601
       --prop=<toolPropsFilename>
@@ -42,6 +47,8 @@ Options:
       --staxml=<stationxmlFilename>
                              StationXML file to extract station latitudes and
                                longitudes from
+      --strikediprake=s[,s...]
+                             fault strike, dip, rake for amplitude calculations
       --verbose              enable verbose output
 Model Args
   -h, --evdepth, --sourcedepth=depth[,depth...]
