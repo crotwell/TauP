@@ -623,7 +623,7 @@ circle.discontinuity.iocb {
 </g> <!-- x axis end-->
 <g clip-path="url(#curve_clip)">
 <g transform="scale(1,-1) translate(0, -416.0)">
-<g transform="scale(1439.3614584746833,74.70511825857294)" >
+<g transform="scale(1439.3615,74.70512)" >
 <g transform="translate(-0.0, -0.0)">
     <g class="FreeRecFuncPz" tauplabel=""  >
   <g>
