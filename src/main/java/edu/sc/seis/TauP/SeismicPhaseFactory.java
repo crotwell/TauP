@@ -1604,7 +1604,7 @@ public class SeismicPhaseFactory {
                 nextIsPWave,
                 endAction,
                 currLeg);
-        if (nextLeg.equals("I") || nextLeg.equals("J")) {
+        if (nextLeg.startsWith("I") || nextLeg.startsWith("J")) {
             // down into inner core
             proto.addFlatBranch(isPWave, endAction, TRANSDOWN, currLeg);
         } else {
@@ -1621,7 +1621,7 @@ public class SeismicPhaseFactory {
                     endAction,
                     currLeg);
 
-        } else if (nextLeg.equals("K") || (nextLeg.startsWith("K") && nextLeg.endsWith(DIFF))) {
+        } else if (nextLeg.equals("K") || (nextLeg.startsWith("K") && isDiffracted(nextLeg))) {
             endAction = REFLECT_UNDERSIDE;
             proto.addToBranch(
                     tMod.getCmbBranch(),
@@ -2520,17 +2520,18 @@ public class SeismicPhaseFactory {
             String reason = "iocb is center of earth, no inner core to diffract";
             return failWithMessage(proto, reason);
         }
-        int disconBranch = tMod.getIocbBranch();
 
-        if (currLeg.endsWith(DIFF) && currLeg.length() > 5) {
-            int depthIdx = 0;
-            if (currLeg.startsWith("I") || currLeg.startsWith("J")) {
-                depthIdx = 1;
-            }
-            String numString = extractBoundaryId(currLeg, depthIdx, false);
-            disconBranch = LegPuller.closestDisconBranchToDepth(tMod, numString);
-        } else {
-            throw new TauModelException("Not I or Jdiff " + currLeg + " in currLegIs_I_Jdiff " + getName());
+        int depthIdx = 0;
+        if (currLeg.startsWith("I") || currLeg.startsWith("J")) {
+            depthIdx = 1;
+        }
+        String numString = extractBoundaryId(currLeg, depthIdx, false);
+        // must be other discon in inner core as can't diff from center of earth
+        int disconBranch = LegPuller.closestDisconBranchToDepth(tMod, numString);
+        if (disconBranch == tMod.getNumBranches()) {
+            return failWithMessage(proto,"Unable to diffract " + currLeg + ", "
+                    + tMod.getTauBranch(disconBranch-1, isPWave).getBotDepth()+" km, "+
+                    + disconBranch+" is center of earth.");
         }
 
         endAction = DIFFRACT;
@@ -2546,7 +2547,7 @@ public class SeismicPhaseFactory {
                     + tMod.getTauBranch(disconBranch, isPWave).getTopDepth()+" km, "+
                     + disconBranch+" is not a velocity discontinuity.");
         }
-        if (nextLeg.equals("I") || nextLeg.equals("J")) {
+        if (nextLeg.equals("I") || nextLeg.equals("J") || nextLeg.equals("Ied") || nextLeg.equals("Jed")) {
             // down into inner core
             proto.addFlatBranch(isPWave, endAction, TRANSDOWN, currLeg);
         } else {
@@ -2564,7 +2565,7 @@ public class SeismicPhaseFactory {
                     currLeg);
 
         } else if (nextLeg.equals("I") || nextLeg.equals("J")
-                || ((nextLeg.startsWith("I") || nextLeg.startsWith("J")) && nextLeg.endsWith(DIFF))) {
+                || ((nextLeg.startsWith("I") || nextLeg.startsWith("J")) && isDiffracted(nextLeg))) {
             endAction = REFLECT_UNDERSIDE;
             proto.addToBranch(
                     tMod.getIocbBranch(),
