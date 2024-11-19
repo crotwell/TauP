@@ -141,6 +141,7 @@ public class XYPlotOutput {
                                         String toolname, List<String> cmdLineArgs,
                                         GraphicOutputTypeArgs outputTypeArgs) {
         String psFile = outputTypeArgs.getGmtOutFileBase(toolname);
+        psFile = psFile.replaceAll(" ", "_");
         writer.println("#!/usr/bin/env bash");
         SvgUtil.taupMetadataGMT(writer, toolname, cmdLineArgs, null);
         writer.println("gmt begin " + psFile + "\n");

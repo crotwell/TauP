@@ -7,7 +7,7 @@
 # https://github.com/crotwell/TauP
 #
 #
-gmt begin stdout
+gmt begin taup_velplot
 
 gmt basemap -JX6.0i/-6.0i -R0.0/13.6602/0.0/6371.0 -Bxa1.0+l'Velocity (km/s)' -Bya1000.0+l'Depth (km)' -BWSne+t'ak135' 
 # P Vel.
