@@ -718,6 +718,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
         }
         switch (prevEndAction) {
             case DIFFRACT:
+            case TRANSUPDIFFRACT:
             case HEAD:
             case KMPS:
                 break;
