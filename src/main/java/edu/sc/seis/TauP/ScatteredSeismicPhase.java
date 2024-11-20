@@ -488,7 +488,7 @@ public class ScatteredSeismicPhase implements SeismicPhase {
      *  Calculation of a amplitude for a scattered phase doesn't make any sense given 1D ray, so always returns zero.
      */
     @Override
-    public double calcEnergyReflTranPSV(Arrival arrival) {
+    public double calcEnergyFluxFactorReflTranPSV(Arrival arrival) {
         return 0;
     }
 
@@ -496,7 +496,7 @@ public class ScatteredSeismicPhase implements SeismicPhase {
      *  Calculation of a amplitude for a scattered phase doesn't make any sense given 1D ray, so always returns zero.
      */
     @Override
-    public double calcEnergyReflTranSH(Arrival arrival) {
+    public double calcEnergyFluxFactorReflTranSH(Arrival arrival) {
         return 0;
     }
 

@@ -300,9 +300,9 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
                 for (int i = 0; i < dist.length; i++) {
                     Arrival arrival = arrivalAtIndex(i, phase);
                     if (isSH) {
-                        amp[i] = arrival.getEnergyReflTransSH();
+                        amp[i] = arrival.getEnergyFluxFactorReflTransSH();
                     } else {
-                        amp[i] = arrival.getEnergyReflTransPSV();
+                        amp[i] = arrival.getEnergyFluxFactorReflTransPSV();
                         if (amp[i] == 0.0) {
                             System.out.println(arrival);
                             System.out.println("index: "+arrival.getRayParamIndex());

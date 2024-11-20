@@ -175,6 +175,10 @@ public abstract class ReflTrans {
     }
 
     public double getEnergyFluxRpp(double flatRP) throws VelocityModelException {
+        double eff =  getEnergyFluxFactorRpp(flatRP);
+        return eff*eff;
+    }
+    public double getEnergyFluxFactorRpp(double flatRP) throws VelocityModelException {
         if (1/flatRP == topVp) {
             // in horizontal case, flux is zero, so no change in path energy as turn doesn't lose energy
             return 1.0;
@@ -185,22 +189,32 @@ public abstract class ReflTrans {
         double inboundEnergy = inboundEnergyP(flatRP);
         if (inboundEnergy == 0) { return 0;}
         double Rpp_calc = getRpp(flatRP);
-        return topDensity * topVp * Math.sqrt(cosArg) * Rpp_calc * Rpp_calc
-                / inboundEnergy;
+        return Rpp_calc * Math.sqrt(topDensity * topVp * Math.sqrt(cosArg)
+                / inboundEnergy);
     }
 
+
     public double getEnergyFluxTpp(double flatRP) throws VelocityModelException {
+        double eff =  getEnergyFluxFactorTpp(flatRP);
+        return eff*eff;
+    }
+    public double getEnergyFluxFactorTpp(double flatRP) throws VelocityModelException {
         // careful sqrt neg number due to small rounding error
         double cosArg = 1-flatRP*flatRP* botVp*botVp;
         if (cosArg < 0) {return 0.0;}
         double inboundEnergy = inboundEnergyP(flatRP);
         if (inboundEnergy == 0.0) { return 0;}
         double Tpp_calc = getTpp(flatRP);
-        return botDensity * botVp * Math.sqrt(cosArg) * Tpp_calc * Tpp_calc
-                / inboundEnergy;
+        return Tpp_calc * Math.sqrt(botDensity * botVp * Math.sqrt(cosArg)
+                / inboundEnergy);
     }
 
+
     public double getEnergyFluxRps(double flatRP) throws VelocityModelException {
+        double eff =  getEnergyFluxFactorRps(flatRP);
+        return eff*eff;
+    }
+    public double getEnergyFluxFactorRps(double flatRP) throws VelocityModelException {
         if (topVs == 0.0) { return 0;}
         // careful sqrt neg number due to small rounding error
         double cosArg = 1-flatRP*flatRP* topVs*topVs;
@@ -208,11 +222,16 @@ public abstract class ReflTrans {
         double inboundEnergy = inboundEnergyP(flatRP);
         if (inboundEnergy == 0) { return 0;}
         double Rps_calc = getRps(flatRP);
-        return topDensity * topVs * Math.sqrt(cosArg) * Rps_calc * Rps_calc
-                / inboundEnergy;
+        return Rps_calc * Math.sqrt(topDensity * topVs * Math.sqrt(cosArg)
+                / inboundEnergy);
     }
 
+
     public double getEnergyFluxTps(double flatRP) throws VelocityModelException {
+        double eff =  getEnergyFluxFactorTps(flatRP);
+        return eff*eff;
+    }
+    public double getEnergyFluxFactorTps(double flatRP) throws VelocityModelException {
         if (botVs == 0.0) { return 0;}
         // careful sqrt neg number due to small rounding error
         double cosArg = 1-flatRP*flatRP* botVs*botVs;
@@ -220,12 +239,17 @@ public abstract class ReflTrans {
         double inboundEnergy = inboundEnergyP(flatRP);
         if (inboundEnergy == 0) { return 0;}
         double Tps_calc = getTps(flatRP);
-        return botDensity * botVs * Math.sqrt(cosArg) * Tps_calc * Tps_calc
-                / inboundEnergy;
+        return Tps_calc * Math.sqrt(botDensity * botVs * Math.sqrt(cosArg)
+                / inboundEnergy);
     }
 
 
+
     public double getEnergyFluxRsp(double flatRP) throws VelocityModelException {
+        double eff =  getEnergyFluxFactorRsp(flatRP);
+        return eff*eff;
+    }
+    public double getEnergyFluxFactorRsp(double flatRP) throws VelocityModelException {
         if ( topVs == 0.0) { return 0;}
         // careful sqrt neg number due to small rounding error
         double cosArg = 1-flatRP*flatRP* topVp* topVp;
@@ -233,11 +257,16 @@ public abstract class ReflTrans {
         double inboundEnergy = inboundEnergyS(flatRP);
         if (inboundEnergy == 0) { return 0;}
         double Rsp_calc = getRsp(flatRP);
-        return topDensity * topVp * Math.sqrt(cosArg) * Rsp_calc * Rsp_calc
-                / inboundEnergy;
+        return Rsp_calc * Math.sqrt(topDensity * topVp * Math.sqrt(cosArg)
+                / inboundEnergy);
     }
 
+
     public double getEnergyFluxTsp(double flatRP) throws VelocityModelException {
+        double eff =  getEnergyFluxFactorTsp(flatRP);
+        return eff*eff;
+    }
+    public double getEnergyFluxFactorTsp(double flatRP) throws VelocityModelException {
         if ( topVs == 0.0) { return 0;}
         // careful sqrt neg number due to small rounding error
         double cosArg = 1-flatRP*flatRP* botVp* botVp;
@@ -245,11 +274,16 @@ public abstract class ReflTrans {
         double inboundEnergy = inboundEnergyS(flatRP);
         if (inboundEnergy == 0) { return 0;}
         double Tsp_calc = getTsp(flatRP);
-        return botDensity * botVp * Math.sqrt(cosArg) * Tsp_calc * Tsp_calc
-                / inboundEnergy;
+        return Tsp_calc * Math.sqrt(botDensity * botVp * Math.sqrt(cosArg)
+                / inboundEnergy);
     }
 
+
     public double getEnergyFluxRss(double flatRP) throws VelocityModelException {
+        double eff =  getEnergyFluxFactorRss(flatRP);
+        return eff*eff;
+    }
+    public double getEnergyFluxFactorRss(double flatRP) throws VelocityModelException {
         if ( topVs == 0.0 ) { return 0;}
         if (1/flatRP == topVs) {
             // in horizontal case, flux is zero, so no change in path energy as turn doesn't lose energy
@@ -261,11 +295,16 @@ public abstract class ReflTrans {
         double inboundEnergy = inboundEnergyS(flatRP);
         if (inboundEnergy == 0) { return 1.0;}
         double Rss_calc = getRss(flatRP);
-        return topDensity * topVs * Math.sqrt(cosArg) * Rss_calc * Rss_calc
-                / inboundEnergy;
+        return Rss_calc * Math.sqrt(topDensity * topVs * Math.sqrt(cosArg)
+                / inboundEnergy);
     }
 
+
     public double getEnergyFluxTss(double flatRP) throws VelocityModelException {
+        double eff =  getEnergyFluxFactorTss(flatRP);
+        return eff*eff;
+    }
+    public double getEnergyFluxFactorTss(double flatRP) throws VelocityModelException {
         // careful sqrt neg number due to small rounding error
         double cosArg = 1-flatRP*flatRP* botVs* botVs;
         if (cosArg < 0) {return 0.0;}
@@ -273,13 +312,18 @@ public abstract class ReflTrans {
         if (inboundEnergy == 0) { return 0;}
         if ( topVs == 0.0  || botVs == 0.0) { return 0;}
         double Tss_calc = getTss(flatRP);
-        return botDensity * botVs * Math.sqrt(cosArg) * Tss_calc * Tss_calc
-                / inboundEnergy;
+        return Tss_calc * Math.sqrt(botDensity * botVs * Math.sqrt(cosArg)
+                / inboundEnergy);
     }
 
 
 
+
     public double getEnergyFluxRshsh(double flatRP) throws VelocityModelException {
+        double eff =  getEnergyFluxFactorRshsh(flatRP);
+        return eff*eff;
+    }
+    public double getEnergyFluxFactorRshsh(double flatRP) throws VelocityModelException {
         if ( topVs == 0.0 ) { return 0;}
         if (1/flatRP == topVs) {
             // in horizontal case, flux is zero, so no change in path energy as turn doesn't lose energy
@@ -291,11 +335,16 @@ public abstract class ReflTrans {
         double inboundEnergy = inboundEnergyS(flatRP);
         if (inboundEnergy == 0) { return 0;}
         double Rshsh_calc = getRshsh(flatRP);
-        return topDensity * topVs * Math.sqrt(cosArg) * Rshsh_calc * Rshsh_calc
-                / inboundEnergy;
+        return Rshsh_calc * Math.sqrt( topDensity * topVs * Math.sqrt(cosArg)
+                / inboundEnergy);
     }
 
+
     public double getEnergyFluxTshsh(double flatRP) throws VelocityModelException {
+        double eff =  getEnergyFluxFactorTshsh(flatRP);
+        return eff*eff;
+    }
+    public double getEnergyFluxFactorTshsh(double flatRP) throws VelocityModelException {
         if (topVs == 0.0  || botVs == 0.0) { return 0;}
         // careful sqrt neg number due to small rounding error
         double cosArg = 1-flatRP*flatRP* botVs* botVs;
@@ -303,8 +352,8 @@ public abstract class ReflTrans {
         double inboundEnergy = inboundEnergyS(flatRP);
         if (inboundEnergy == 0) { return 0;}
         double Tshsh_calc = getTshsh(flatRP);
-        return botDensity * botVs * Math.sqrt(cosArg) * Tshsh_calc * Tshsh_calc
-                / inboundEnergy;
+        return Tshsh_calc * Math.sqrt(botDensity * botVs * Math.sqrt(cosArg)
+                / inboundEnergy);
     }
 
     public double getTopVp() {

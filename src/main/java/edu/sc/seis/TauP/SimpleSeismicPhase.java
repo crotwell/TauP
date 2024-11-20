@@ -1028,7 +1028,6 @@ public class SimpleSeismicPhase implements SeismicPhase {
                         Q = vMod.evaluateBelow(td.getDepth(), pseg.isPWave ? VelocityModelMaterial.Q_P : VelocityModelMaterial.Q_S);
                     }
                     if (Q <= 0) {
-                        System.err.println(td.getDepth()+" == "+pseg.getPhaseSegment().getBotDepth()+ " " );
                         throw new RuntimeException("Q <= 0 for "+getName()+" "+td+"   depthrange: "
                                 +pseg.getPhaseSegment().getDepthRange()[0]+" "+(pseg.getPhaseSegment().getDepthRange()[1]));
                     }
@@ -1073,20 +1072,21 @@ public class SimpleSeismicPhase implements SeismicPhase {
     }
 
     @Override
-    public double calcEnergyReflTranPSV(Arrival arrival) throws VelocityModelException, SlownessModelException {
+    public double calcEnergyFluxFactorReflTranPSV(Arrival arrival) throws VelocityModelException, SlownessModelException {
         double reflTranValue = 1;
         boolean calcSH = false;
         SeismicPhaseSegment prevSeg = getPhaseSegments().get(0);
         for (SeismicPhaseSegment seg : getPhaseSegments().subList(1, getPhaseSegments().size())) {
-            reflTranValue *= prevSeg.calcEnergyReflTran(arrival, seg.isPWave, calcSH);
+
+            reflTranValue *= prevSeg.calcEnergyFluxFactorReflTran(arrival, seg.isPWave, calcSH);
             prevSeg = seg;
         }
-        reflTranValue *= prevSeg.calcEnergyReflTran(arrival, prevSeg.isPWave, calcSH); // last seg can't change phase at end
+        reflTranValue *= prevSeg.calcEnergyFluxFactorReflTran(arrival, prevSeg.isPWave, calcSH); // last seg can't change phase at end
         return reflTranValue;
     }
 
     @Override
-    public double calcEnergyReflTranSH(Arrival arrival) throws VelocityModelException, SlownessModelException {
+    public double calcEnergyFluxFactorReflTranSH(Arrival arrival) throws VelocityModelException, SlownessModelException {
         double reflTranValue = 1;
 
         boolean isAllS = isAllSWave();
@@ -1094,10 +1094,10 @@ public class SimpleSeismicPhase implements SeismicPhase {
         boolean calcSH = true;
         SeismicPhaseSegment prevSeg = getPhaseSegments().get(0);
         for (SeismicPhaseSegment seg : getPhaseSegments().subList(1, getPhaseSegments().size())) {
-            reflTranValue *= prevSeg.calcEnergyReflTran(arrival, seg.isPWave, calcSH);
+            reflTranValue *= prevSeg.calcEnergyFluxFactorReflTran(arrival, seg.isPWave, calcSH);
             prevSeg = seg;
         }
-        reflTranValue *= prevSeg.calcEnergyReflTran(arrival, prevSeg.isPWave, calcSH); // last seg can't change phase at end
+        reflTranValue *= prevSeg.calcEnergyFluxFactorReflTran(arrival, prevSeg.isPWave, calcSH); // last seg can't change phase at end
         return reflTranValue;
     }
 

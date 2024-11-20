@@ -340,8 +340,8 @@ public class Arrival {
      * @throws VelocityModelException
      * @throws SlownessModelException
      */
-    public double getEnergyReflTransPSV() throws VelocityModelException, SlownessModelException {
-        return getPhase().calcEnergyReflTranPSV(this);
+    public double getEnergyFluxFactorReflTransPSV() throws VelocityModelException, SlownessModelException {
+        return getPhase().calcEnergyFluxFactorReflTranPSV(this);
     }
 
     /**
@@ -353,8 +353,8 @@ public class Arrival {
      * @throws VelocityModelException
      * @throws SlownessModelException
      */
-    public double getEnergyReflTransSH() throws VelocityModelException, SlownessModelException {
-        return getPhase().calcEnergyReflTranSH(this);
+    public double getEnergyFluxFactorReflTransSH() throws VelocityModelException, SlownessModelException {
+        return getPhase().calcEnergyFluxFactorReflTranSH(this);
     }
 
     /**
@@ -389,7 +389,7 @@ public class Arrival {
 
     public double getAmplitudeFactorPSV(double momentRate, double attenuationFrequency, int numFreq) throws TauModelException, VelocityModelException, SlownessModelException {
         // dimensionaless
-        double refltran = getEnergyReflTransPSV();
+        double refltran = getEnergyFluxFactorReflTransPSV();
         double freeFactor = 1.0;
         if (getReceiverDepth() <= 1.0) {
             VelocityModel vMod = getPhase().getTauModel().getVelocityModel();
@@ -446,7 +446,7 @@ public class Arrival {
     }
 
     public double getAmplitudeFactorSH(double moment, double attenuationFrequency, int numFreq) throws TauModelException, VelocityModelException, SlownessModelException {
-        double refltran = getEnergyReflTransSH();
+        double refltran = getEnergyFluxFactorReflTransSH();
         // avoid NaN in case of no S wave legs where geo spread returns INFINITY
         if (refltran == 0.0) {return 0.0;}
         double geoSpread = getAmplitudeGeometricSpreadingFactor();
@@ -884,7 +884,7 @@ public class Arrival {
             try {
 
                 // dimensionaless ?
-                double refltran = getEnergyReflTransPSV();
+                double refltran = getEnergyFluxFactorReflTransPSV();
                 VelocityModel vMod = getPhase().getTauModel().getVelocityModel();
                 VelocityLayer top = vMod.getVelocityLayer(0);
                 double freeFactor = 1.0;
@@ -924,8 +924,8 @@ public class Arrival {
                 } else {
                     pw.write(innerIndent + "  " + JSONWriter.valueToString("error") + ": " + JSONWriter.valueToString("geometrical speading not finite") + "," + NL);
                 }
-                pw.write(innerIndent + "  " + JSONWriter.valueToString("refltranpsv") + ": " + JSONWriter.valueToString((float) getEnergyReflTransPSV()) + ", " + NL);
-                pw.write(innerIndent + "  " + JSONWriter.valueToString("refltransh") + ": " + JSONWriter.valueToString((float) getEnergyReflTransSH()) + NL);
+                pw.write(innerIndent + "  " + JSONWriter.valueToString("refltranpsv") + ": " + JSONWriter.valueToString((float) getEnergyFluxFactorReflTransPSV()) + ", " + NL);
+                pw.write(innerIndent + "  " + JSONWriter.valueToString("refltransh") + ": " + JSONWriter.valueToString((float) getEnergyFluxFactorReflTransSH()) + NL);
                 pw.write(innerIndent + "}");
             } catch (TauPException e) {
                 throw new RuntimeException(e);
@@ -1029,8 +1029,8 @@ public class Arrival {
             } else {
                 ampObj.put("error", "geometrical speading not finite");
             }
-            ampObj.put("refltranpsv", (float) getEnergyReflTransPSV());
-            ampObj.put("refltransh", (float) getEnergyReflTransSH());
+            ampObj.put("refltranpsv", (float) getEnergyFluxFactorReflTransPSV());
+            ampObj.put("refltransh", (float) getEnergyFluxFactorReflTransSH());
         } catch (TauPException e) {
             throw new RuntimeException(e);
         }

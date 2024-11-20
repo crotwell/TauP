@@ -191,13 +191,13 @@ public class ReflTransTest {
             assertEquals(topDensity * topVp * cosTopVp, coeff.inboundEnergyP(flatRP), 1e-6);
 
             assertEquals(coeff.getEnergyFluxRpp(flatRP),
-                    topDensity * topVp * cosTopVp * Rpp_calc * Rpp_calc/coeff.inboundEnergyP(flatRP));
+                    topDensity * topVp * cosTopVp * Rpp_calc * Rpp_calc/coeff.inboundEnergyP(flatRP), 1e-15);
             assertEquals( topDensity * topVs * cosTopVs * Rps_calc * Rps_calc/coeff.inboundEnergyP(flatRP),
-                    coeff.getEnergyFluxRps(flatRP));
+                    coeff.getEnergyFluxRps(flatRP), 1e-15);
             assertEquals( botDensity * botVp * cosBotVp * Tpp_calc * Tpp_calc/coeff.inboundEnergyP(flatRP),
-                    coeff.getEnergyFluxTpp(flatRP));
+                    coeff.getEnergyFluxTpp(flatRP), 1e-15);
             assertEquals( botDensity * botVs * cosBotVs * Tps_calc * Tps_calc/coeff.inboundEnergyP(flatRP),
-                    coeff.getEnergyFluxTps(flatRP));
+                    coeff.getEnergyFluxTps(flatRP), 1e-15);
             assertEquals(1,
                     coeff.getEnergyFluxRpp(flatRP)
                             + coeff.getEnergyFluxRps(flatRP)
@@ -662,5 +662,35 @@ public class ReflTransTest {
                     "flatrp="+flatRP
             );
         }
+    }
+
+    @Test
+    public void reflectionEnergyFluxOne() throws VelocityModelException {
+        double topDensity = 3;
+        double topVp = 6;
+        double topVs = 3.5;
+        double botDensity = 4;
+        double botVp = 7;
+        double botVs = 4.2;
+
+        ReflTransSolidSolid coeff = new ReflTransSolidSolid(topVp,topVs,topDensity,botVp,botVs,botDensity);
+        ReflTransSolidSolid flip = coeff.flip();
+
+        // non vertical incidence, up to value where we get complex results
+        for (double flatRP = 0.0; flatRP < 1/topVp; flatRP+= 0.01) {
+            assertEquals(Math.abs(coeff.getRpp(flatRP)), Math.sqrt(coeff.getEnergyFluxRpp(flatRP)), 1e-9, "Rpp "+flatRP);
+            assertEquals(Math.abs(coeff.getRss(flatRP)), Math.sqrt(coeff.getEnergyFluxRss(flatRP)), 1e-9, "Rss "+flatRP);
+            assertEquals(coeff.getRpp(flatRP), coeff.getEnergyFluxFactorRpp(flatRP), 1e-15);
+            assertEquals(coeff.getRss(flatRP), coeff.getEnergyFluxFactorRss(flatRP), 1e-15);
+        }
+
+        // non vertical incidence, up to value where we get complex results
+        for (double flatRP = 0.0; flatRP < 1/botVp; flatRP+= 0.01) {
+            assertEquals(Math.abs(flip.getRpp(flatRP)), Math.sqrt(flip.getEnergyFluxRpp(flatRP)), 1e-9, "Rpp");
+            assertEquals(Math.abs(flip.getRss(flatRP)), Math.sqrt(flip.getEnergyFluxRss(flatRP)), 1e-9, "Rss");
+            assertEquals(flip.getRpp(flatRP), flip.getEnergyFluxFactorRpp(flatRP), 1e-15);
+            assertEquals(flip.getRss(flatRP), flip.getEnergyFluxFactorRss(flatRP), 1e-15);
+        }
+
     }
 }

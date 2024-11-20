@@ -151,9 +151,9 @@ public interface SeismicPhase extends Serializable, Cloneable {
 
     SeismicPhase interpolatePhase(double maxDeltaDeg);
 
-    double calcEnergyReflTranPSV(Arrival arrival) throws VelocityModelException, SlownessModelException;
+    double calcEnergyFluxFactorReflTranPSV(Arrival arrival) throws VelocityModelException, SlownessModelException;
 
-    double calcEnergyReflTranSH(Arrival arrival) throws VelocityModelException, SlownessModelException;
+    double calcEnergyFluxFactorReflTranSH(Arrival arrival) throws VelocityModelException, SlownessModelException;
 
     List<TimeDist> calcPierceTimeDist(Arrival arrival);
 
