@@ -70,7 +70,11 @@ public class ReflTransTest {
         assertEquals(ans, coeff.getTshsh(rayParameter), 0.00001f);
     }
 
-
+    /**
+     * Energy flux matrix from Aki and Richards, 2nd ed. p 147.
+     *
+     * @throws VelocityModelException
+     */
     @Test
     public void testEnergyFluxMatrix() throws VelocityModelException {
         double topDensity = 3;
@@ -124,7 +128,7 @@ public class ReflTransTest {
         assertEquals(cosTopVs, cos_j1,1e-6);
         assertEquals(cosBotVp, cos_i2,1e-6);
         assertEquals(cosBotVs, cos_j2, 1e-6);
-        // energy inbound s wave
+        // energy inbound s wave from top
         assertEquals(topDensity*topVs*cos_j1, coeff.inboundEnergyS(flatRP));
         assertEquals(topDensity*topVs*cos_j1,
                 topDensity*topVp*cos_i1*coeff.getRsp(flatRP)*coeff.getRsp(flatRP)
@@ -133,7 +137,8 @@ public class ReflTransTest {
                         + botDensity*botVs*cos_j2*coeff.getTss(flatRP)*coeff.getTss(flatRP),
                 0.0001, "in S wave energy flux");
 
-        // energy inbound p wave
+        // energy inbound p wave from top
+        // expect inbound energy to match sum of all 4 outbound energies
         assertEquals(topDensity*topVp*cos_i1, coeff.inboundEnergyP(flatRP));
         assertEquals(topDensity*topVp*cos_i1,
                     topDensity*topVp*cos_i1*coeff.getRpp(flatRP)*coeff.getRpp(flatRP)
