@@ -635,9 +635,15 @@ public class Arrival {
                 // only do maxfreq
                 atten = Math.pow(Math.E, -1 * Math.PI * maxfreq * tstar);
             } else {
-                for (int n = 0; n <= N; n++) {
-                    atten +=  Math.pow(Math.E, -1 * Math.PI * maxfreq * tstar * n/N) / N;
+                for (int n = 0; n <= N/2+1; n++) {
+                    double freq = n*maxfreq/N;
+                    int factor = 2;
+                    if (n==0 || n==N) {
+                        factor = 1;
+                    }
+                    atten +=  factor*Math.pow(Math.E, -1 * Math.PI * freq * tstar );
                 }
+                atten = atten / N;
             }
         } else {
             atten = 1;
