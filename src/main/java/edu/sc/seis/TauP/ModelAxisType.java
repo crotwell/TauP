@@ -121,4 +121,32 @@ public enum ModelAxisType {
                 return axisType.name();
         }
     }
+
+
+    public static boolean needsDensity(ModelAxisType axisType) {
+        switch (axisType) {
+            case velocity_density:
+            case density:
+            case vpdensity:
+            case vsdensity:
+            case lambda:
+            case bulkmodulus:
+            case shearmodulus:
+            case youngsmodulus:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    public static boolean needsQ(ModelAxisType axisType) {
+        switch (axisType) {
+            case Q:
+            case Qp:
+            case Qs:
+                return true;
+            default:
+                return false;
+        }
+    }
 }
