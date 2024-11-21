@@ -387,6 +387,13 @@ public class TauP_Time extends TauP_AbstractRayTool {
     @Override
     public void validateArguments() throws TauPException {
         super.validateArguments();
+
+        if (isWithAmplitude() && modelArgs.getTauModel().getVelocityModel().densityIsDefault()) {
+            throw new TauModelException("model "+modelArgs.getModelName()+" does not include density, but amplitude requires density.");
+        }
+        if (isWithAmplitude() && modelArgs.getTauModel().getVelocityModel().QIsDefault()) {
+            throw new TauModelException("model "+modelArgs.getModelName()+" does not include Q, but amplitude requires Q.");
+        }
         sourceArgs.validateArguments();
         if (isWithAmplitude() && sourceArgs.getStrikeDipRake() != null) {
             for (RayCalculateable rc : getDistanceArgs().getRayCalculatables(sourceArgs)) {

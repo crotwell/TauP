@@ -555,6 +555,26 @@ public class TauP_VelocityPlot extends TauP_Tool {
                 && (xAxisType != ModelAxisType.velocity || yAxisType != ModelAxisType.depth)) {
             throw new CommandLine.ParameterException(spec.commandLine(), "cannot specify axis type for --nd output");
         }
+        if ( ! (listDiscon || outputTypeArgs.isCSV() || outputTypeArgs.isND())) {
+            try {
+                if ((ModelAxisType.needsDensity(xAxisType) || ModelAxisType.needsDensity(yAxisType))) {
+                    for (VelocityModel vMod : getVelocityModels()) {
+                        if (vMod.densityIsDefault()) {
+                            throw new TauModelException("model " + vMod.getModelName() + " does not include density, but " + xAxisType + "/" + yAxisType + " requires density.");
+                        }
+                    }
+                }
+                if ((ModelAxisType.needsQ(xAxisType) || ModelAxisType.needsQ(yAxisType))) {
+                    for (VelocityModel vMod : getVelocityModels()) {
+                        if (vMod.QIsDefault()) {
+                            throw new TauModelException("model " + vMod.getModelName() + " does not include Q, but " + xAxisType + "/" + yAxisType + " requires Q.");
+                        }
+                    }
+                }
+            } catch (IOException e ) {
+                throw new TauPException(e);
+            }
+        }
     }
 
     public VelPlotOutputTypeArgs getOutputTypeArgs() {

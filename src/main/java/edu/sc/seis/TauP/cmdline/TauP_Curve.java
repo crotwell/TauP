@@ -124,6 +124,19 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
                             out.add(new XYPlottingData(sh_segments, xAxisType.name(), yAxisType.name(),
                                     "tr "+phase.getName(), phaseDesc, cssClassesCopy));
                         }
+                        if (xAxisType==AxisType.radiation
+                                || yAxisType==AxisType.radiation) {
+                            AxisType xOther = xAxisType==AxisType.radiation ? AxisType.radiationsh : xAxisType;
+                            AxisType yOther = yAxisType==AxisType.radiation ? AxisType.radiationsh : yAxisType;
+
+                            xData = calculatePlotForType(interpolatedPhase, xOther, ensure180);
+                            yData = calculatePlotForType(interpolatedPhase, yOther, ensure180);
+                            List<XYSegment> sh_segments = XYSegment.createFromLists(xData, yData);
+                            List<String> cssClassesCopy = new ArrayList<>(cssClasses);
+                            cssClassesCopy.add("radiationsh");
+                            out.add(new XYPlottingData(sh_segments, xAxisType.name(), yAxisType.name(),
+                                    "tr "+phase.getName(), phaseDesc, cssClassesCopy));
+                        }
                         // what about case of amp vs refltran, need 4 outputs?
                         if (xAxisType==AxisType.refltran
                                 || yAxisType==AxisType.refltran) {
@@ -246,7 +259,7 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
                 Arrival arrival = arrivalAtIndex(i, phase);
                 out[i] = arrival.getDeepestPierce().getDepth();
             }
-        } else if (axisType==AxisType.radiationpsv) {
+        } else if (axisType==AxisType.radiation || axisType==AxisType.radiationpsv) {
             double[] dist = phase.getDist();
             out = new double[dist.length];
             for (int i = 0; i < dist.length; i++) {
@@ -488,6 +501,12 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
 
     @Override
     public void validateArguments() throws TauModelException {
+        if ((AxisType.needsDensity(xAxisType) || AxisType.needsDensity(yAxisType)) && modelArgs.getTauModel().getVelocityModel().densityIsDefault()) {
+            throw new TauModelException("model "+modelArgs.getModelName()+" does not include density, but "+xAxisType+"/"+yAxisType+" requires density.");
+        }
+        if ((AxisType.needsQ(xAxisType) || AxisType.needsQ(yAxisType)) && modelArgs.getTauModel().getVelocityModel().QIsDefault()) {
+            throw new TauModelException("model "+modelArgs.getModelName()+" does not include Q, but "+xAxisType+"/"+yAxisType+" requires Q.");
+        }
         sourceArgs.validateArguments();
         if (sourceArgs.hasStrikeDipRake() && azimuth == null) {
             throw new TauModelException("strike,dip,rake requires azimuth");
@@ -618,13 +637,15 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
             case turndepth:
                 return "Turn Depth (km)";
             case refltran:
-                return "Reflection/Transmission Coef. PSv,Sh";
+                return "Energy Flux Factor Reflection/Transmission Coef. PSv,Sh";
             case refltranpsv:
-                return "Reflection/Transmission Coef. PSv";
+                return "Energy Flux Factor Reflection/Transmission Coef. PSv";
             case refltransh:
-                return "Reflection/Transmission Coef. Sh";
+                return "Energy Flux Factor Reflection/Transmission Coef. Sh";
             case pathlength:
                 return "Path Length (km)";
+            case radiation:
+                return "PSvSh Radiation Pattern";
             case radiationpsv:
                 return "PSv Radiation Pattern";
             case radiationsh:

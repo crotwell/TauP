@@ -315,6 +315,12 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
             throw new CommandLine.ParameterException(spec.commandLine(),
                     "Only one of --rayparamdeg and --rayparamkm may be used");
         }
+        if (isWithAmplitude() && modelArgs.getTauModel().getVelocityModel().densityIsDefault()) {
+            throw new TauModelException("model "+modelArgs.getModelName()+" does not include density, but amplitude requires density.");
+        }
+        if (isWithAmplitude() && modelArgs.getTauModel().getVelocityModel().QIsDefault()) {
+            throw new TauModelException("model "+modelArgs.getModelName()+" does not include Q, but amplitude requires Q.");
+        }
         sourceArgs.validateArguments();
         if (!distanceArgs.getRayCalculatables(sourceArgs).isEmpty()
                 && (rayParamRangeDeg != null ||  rayParamRangeKm != null)
