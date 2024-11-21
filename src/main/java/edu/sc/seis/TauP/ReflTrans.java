@@ -164,12 +164,20 @@ public abstract class ReflTrans {
 
     public double inboundEnergyP(double flatRP) {
         calcTempVars(flatRP, true);
+        if (this.topVertSlownessP.isInfinite()) {
+            // horizontal ray, inbound energy is zero?
+            return 0.0;
+        }
         double cos_j1 = Complex.abs(this.topVertSlownessP) * topVp;
         return topDensity*topVp*cos_j1;
     }
 
     public double inboundEnergyS(double flatRP) {
         calcTempVars(flatRP, false);
+        if (this.topVertSlownessP.isInfinite()) {
+            // horizontal ray, inbound energy is zero?
+            return 0.0;
+        }
         double cos_j1 = Complex.abs(this.topVertSlownessS) * topVs;
         return topDensity*topVs*cos_j1;
     }
