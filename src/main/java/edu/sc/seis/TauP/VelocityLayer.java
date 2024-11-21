@@ -441,4 +441,22 @@ public class VelocityLayer implements Cloneable, Serializable {
     public double getThickness() {
         return getBotDepth()-getTopDepth();
     }
+
+    public double calcTopQp() {
+        return calcQpFromQs(getTopQs(), getTopPVelocity(), getTopSVelocity());
+    }
+    public double calcBotQp() {
+        return calcQpFromQs(getBotQs(), getBotPVelocity(), getBotSVelocity());
+    }
+    /**
+     * Calculate Qp from Qs assuming Q_kappa is negligible.
+     * See Montagner and Kennett, 1996, eqn 2.6
+     * @param Qs S wave Q factor, aka Q_mu
+     * @param vp P wave velocity
+     * @param vs S wave velocity
+     * @return Qp P wave Q factor
+     */
+    public static double calcQpFromQs(double Qs, double vp, double vs) {
+        return 3.0/4*((vp*vp)/(vs*vs))*Qs;
+    }
 }
