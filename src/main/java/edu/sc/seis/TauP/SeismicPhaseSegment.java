@@ -604,7 +604,7 @@ public class SeismicPhaseSegment {
 			 * diffracted waves.
 			 */
 		}
-		return Math.sqrt(reflTranValue);
+		return reflTranValue;
 	}
 
 
