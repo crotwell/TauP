@@ -43,11 +43,11 @@ public class StdModelGenerator {
     createStandardModels( inDir,  outDir);
   }
 
-    public static class StdModelCandidates extends ArrayList<String> {
-        StdModelCandidates() {
-            super(Arrays.asList("iasp91", "ak135", "prem", "ak135fcont", "ak135favg", "qdt"));
-        }
-    }
+  public static class StdModelCandidates extends ArrayList<String> {
+      StdModelCandidates() {
+          super(Arrays.asList("iasp91", "ak135", "prem", "ak135fcont", "ak135favg", "ak135fsyngine"));
+      }
+  }
 
   public static void createStandardModels(File inDir, File outDir)
   throws IOException, TauPException {
@@ -58,6 +58,7 @@ public class StdModelGenerator {
     ndModelNames.add("prem");
     ndModelNames.add("ak135fcont");
     ndModelNames.add("ak135favg");
+    ndModelNames.add("ak135fsyngine");
 
     for (String modelName: tvelModelNames) {
       System.out.println(modelName);
