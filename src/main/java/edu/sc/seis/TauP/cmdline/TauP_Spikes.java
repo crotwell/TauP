@@ -453,9 +453,9 @@ public class TauP_Spikes extends TauP_AbstractRayTool {
                     if (n >= 0 && n < numSamples) {
                         try {
                             Arrival thetaArrival = arrival.getPhase().shootRay(rayParam);
-                            double psvAmpFactor = thetaArrival.getEnergyReflTransPSV();
+                            double psvAmpFactor = thetaArrival.getEnergyFluxFactorReflTransPSV();
                             double incidentAngle = thetaArrival.getIncidentAngleDegree();
-                            double transverseAmpFactor = thetaArrival.getEnergyReflTransSH();
+                            double transverseAmpFactor = thetaArrival.getEnergyFluxFactorReflTransSH();
                             double rotateAngle = 0;
                             if ( ! thetaArrival.getPhase().finalSegmentIsPWave()) {
                                 rotateAngle = 90;
