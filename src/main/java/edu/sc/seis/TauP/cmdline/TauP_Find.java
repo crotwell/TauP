@@ -70,6 +70,11 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
     public void start() throws IOException, TauPException {
         List<String> givenPhaseNames = PhaseArgs.extractPhaseNames("");
         List<RayCalculateable> distanceValues = distanceArgs.getRayCalculatables(sourceArgs);
+        if (azimuth != null) {
+            for (RayCalculateable rc : distanceValues) {
+                rc.setAzimuth(azimuth);
+            }
+        }
         List<Arrival> arrivalList = new ArrayList<>();
         List<ProtoSeismicPhase> allwalk = new ArrayList<>();
         for (Double sourceDepth : modelArgs.getSourceDepths()) {
@@ -322,6 +327,9 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
             throw new TauModelException("model "+modelArgs.getModelName()+" does not include Q, but amplitude requires Q.");
         }
         sourceArgs.validateArguments();
+        if (sourceArgs.hasStrikeDipRake() && azimuth == null) {
+            throw new TauModelException("strike,dip,rake requires azimuth");
+        }
         if (!distanceArgs.getRayCalculatables(sourceArgs).isEmpty()
                 && (rayParamRangeDeg != null ||  rayParamRangeKm != null)
                 && getRayParamRange().length == 1) {
@@ -472,6 +480,9 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
 
     @CommandLine.Mixin
     SeismicSourceArgs sourceArgs = new SeismicSourceArgs();
+
+    @CommandLine.Option(names="--az", description="azimuth in degrees, for amp calculations")
+    protected Double azimuth = null;
 
     @CommandLine.Option(names={"--deg", "--degree"},
             paramLabel="d",
