@@ -1,5 +1,7 @@
 package edu.sc.seis.TauP;
 
+import edu.sc.seis.TauP.cmdline.args.PhaseArgs;
+import edu.sc.seis.TauP.cmdline.args.SeismicSourceArgs;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import java.io.IOException;
@@ -38,6 +40,31 @@ public class OceanModelTest {
         assertEquals(371.95,
                 a.getTime(),
                 0.01);
+
+    }
+
+    @Test
+    public void ttallOcean() throws TauModelException, SlownessModelException {
+        String modelName = "ak135favg.nd";
+        TauModel tMod = TauModelLoader.load(modelName);
+        List<String> phaseNameList = PhaseArgs.extractPhaseNames("ttall");
+        List<SeismicPhase> phaseList = new ArrayList<>();
+        for (String pn : phaseNameList) {
+            SeismicPhase sp = SeismicPhaseFactory.createPhase(pn, tMod, tMod.sourceDepth);
+            phaseList.add(sp);
+        }
+        SeismicSourceArgs sourceArgs = new SeismicSourceArgs();
+        double dist = 5;
+        for (SeismicPhase sp : phaseList) {
+            DistanceRay dr = DistanceRay.ofDegrees(dist);
+            dr.setSourceArgs(sourceArgs);
+            List<Arrival> arrivals = dr.calculate(sp);
+            for (Arrival aa : arrivals) {
+                assertNotNull(aa);
+                assertNotNull(aa.getAmplitudeFactorPSV(), sp.getName());
+
+            }
+        }
     }
 
     /**

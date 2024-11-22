@@ -112,6 +112,10 @@ public class ReflTransFluidFreeSurface extends ReflTransFreeSurface {
         this.rp = rayParam; // ray parameter
 
         if(rayParam != lastRayParam || inIsPWave != lastInIsPWave) {
+            lastRayParam = -1.0; // in case of failure in method
+            sqRP = rp * rp; // rp squared
+            topVertSlownessP = calcInVerticalSlownessP(rp);
+            topVertSlownessS = calcInVerticalSlownessS(rp);
 
             lastRayParam = rayParam;
             lastInIsPWave = inIsPWave;
