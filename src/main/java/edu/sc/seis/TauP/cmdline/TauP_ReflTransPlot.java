@@ -54,11 +54,13 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
 
             if (isEnergyFlux()) {
                 yAxisType.addAll(ReflTransAxisType.allEnergy);
+            } else {
+                yAxisType.addAll(ReflTransAxisType.allDisplacement);
             }
             if (fsrf) {
                 xypList = calculateFSRF(vMod, inpwave, inswave, inshwave, isLinearRayParam(), step);
             } else {
-                xypList = calculate(vMod, depth, indown, inpwave, inswave, inshwave, isLinearRayParam(), step);
+                xypList = calculate(vMod, depth, isIncidentDown(), inpwave, inswave, inshwave, isLinearRayParam(), step);
             }
         } else {
             if (fsrf) {
@@ -66,11 +68,13 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
             }
             if (isEnergyFlux()) {
                 yAxisType.addAll(ReflTransAxisType.allEnergy);
+            } else {
+                yAxisType.addAll(ReflTransAxisType.allDisplacement);
             }
             xypList = calculate(
                     layerParams.inVp, layerParams.inVs, layerParams.inRho,
                     layerParams.trVp, layerParams.trVs, layerParams.trRho,
-                    indown, inpwave, inswave, inshwave, isLinearRayParam(), step);
+                    isIncidentDown(), inpwave, inswave, inshwave, isLinearRayParam(), step);
 
             modelArgs.setModelName(layerParams.asName());
         }
@@ -694,10 +698,10 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
     }
 
     @CommandLine.Option(names = "--down",
-            defaultValue = "true",
             description = "incident is downgoing"
     )
     public void setIncidentDown(boolean indown) {
+        System.err.println("set in down "+indown);
         this.indown = indown;
     }
     @CommandLine.Option(names = "--up",
@@ -705,7 +709,15 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
             description = "incident is upgoing, reverses the sense of the boundary"
     )
     public void setIncidentUp(boolean inup) {
+        System.err.println("set in up "+inup);
         this.indown = ! inup;
+    }
+
+    public boolean isIncidentDown() {
+        if (indown == null) {
+            return true;
+        }
+        return indown;
     }
 
     @CommandLine.Option(names = "--pwave", description = "incident P wave")
@@ -863,7 +875,7 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
     protected double[] yAxisMinMax = new double[0];
 
     protected double step = -1.0;
-    protected boolean indown = true;
+    protected Boolean indown = null;
     protected boolean inpwave = false;
     protected boolean inswave = false;
     protected boolean inshwave = false;

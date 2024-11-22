@@ -666,7 +666,7 @@ export function form_url() {
     // fsrf forces depth to be 0
     if (isrefltranmodel === "refltrandepth") {
       let depth = document.querySelector('input[name="depth"]').value;
-      if (depth != 0.0 && ! fsrf) {
+      if ( ! fsrf) {
         url += `&depth=${depth}`;
       }
     } else {
@@ -686,6 +686,8 @@ export function form_url() {
     let indowngoing = document.querySelector('input[name="indowngoing"]').checked;
     if (indowngoing) {
       url += `&down=true`;
+    } else {
+      url += `&up=true`;
     }
     let absolute = document.querySelector('input[name="absolute"]').checked;
     if (absolute) {
