@@ -296,7 +296,7 @@ public class Arrival {
 
 
     /**
-     * Geometrical spreading factor for amplitude.
+     * Geometrical spreading factor for amplitude, sqrt of energy spreading.
      * See Fundamentals of Modern Global Seismology, ch 13, eq 13.19.
      *
      * @throws TauModelException
@@ -412,15 +412,14 @@ public class Arrival {
         if (attenuationFrequency > 0) {
             attenuation = calcAttenuation(attenuationFrequency, numFreq);
         }
-        //                             Kg m2 / s3     1        1/km   /   ( Kg/s3 )
-        return 1
-                * attenuation         // 1
+        return 1                   // units:
+                * attenuation      // 1
                 * freeFactor       // 1
                 * momentRate       // Kg m2 / s3
                 * refltran         // 1
                 * geoSpread        // 1/km
                 / radiationTerm    // 1/(Kg/s3)
-                / 1e3; //  m2/km =>  m / 1e3
+                / 1e3;             //  m2/km =>  m / 1e3
     }
 
         /**
@@ -445,7 +444,7 @@ public class Arrival {
         return ampFactor;
     }
 
-    public double getAmplitudeFactorSH(double moment, double attenuationFrequency, int numFreq) throws TauModelException, VelocityModelException, SlownessModelException {
+    public double getAmplitudeFactorSH(double momentRate, double attenuationFrequency, int numFreq) throws TauModelException, VelocityModelException, SlownessModelException {
         double refltran = getEnergyFluxFactorReflTransSH();
         // avoid NaN in case of no S wave legs where geo spread returns INFINITY
         if (refltran == 0.0) {return 0.0;}
@@ -456,17 +455,27 @@ public class Arrival {
         if (attenuationFrequency > 0) {
             attenuation = calcAttenuation(attenuationFrequency, numFreq);
         }
-        double freeSurfRF =  1.0;
+        double freeFactor =  1.0;
         if (getReceiverDepth() <= 1.0) {
-            freeSurfRF = 2;
+            // should be exactly 2.0, but go through the steps so looks like PSv case
+            VelocityModel vMod = getPhase().getTauModel().getVelocityModel();
+            VelocityLayer top = vMod.getVelocityLayer(0);
+            Complex[] freeSurfRF;
+            ReflTransFreeSurface rtFree = ReflTransFreeSurface.createReflTransFreeSurface(top.getTopPVelocity(), top.getTopSVelocity(), top.getTopDensity());
+
+            freeFactor = rtFree.getFreeSurfaceReceiverFunSh(getRayParam() / vMod.getRadiusOfEarth());
+
+            //freeFactor = Complex.abs(Complex.sqrt(freeSurfRF[0].times(freeSurfRF[0].plus(freeSurfRF[1].times(freeSurfRF[1])))));
         }
-        return 1
-                * attenuation
-                * freeSurfRF
-                * moment
-                * refltran
-                * geoSpread
-                / radiationTerm / 1e3;
+
+        return 1                   // units:
+                * attenuation      // 1
+                * freeFactor       // 1
+                * momentRate       // Kg m2 / s3
+                * refltran         // 1
+                * geoSpread        // 1/km
+                / radiationTerm    // 1/(Kg/s3)
+                / 1e3;             //  m2/km =>  m / 1e3
     }
 
     public double getRadiationPatternPSV() {
