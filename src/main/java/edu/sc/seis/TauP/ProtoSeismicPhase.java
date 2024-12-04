@@ -886,6 +886,8 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                             && seg.isPWave == prev.isPWave && seg.legName.equals(prev.legName))
                 ) {
                     legName = "";
+                } else if (prev != null && prev.endAction == TURN && (prev.isPWave == seg.isPWave) && !seg.isDownGoing){
+                    legName="";
                 }
                 if (seg.isFlat && (prev.isPWave == seg.isPWave)) {
                     // no phase change and flat leg, so no leg symbol needed

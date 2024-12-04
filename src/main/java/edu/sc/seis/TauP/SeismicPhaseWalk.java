@@ -192,7 +192,26 @@ public class SeismicPhaseWalk {
     }
 
     public boolean canMergePhases(ProtoSeismicPhase curr, ProtoSeismicPhase other) {
-        if (curr.size() != other.size()) {
+
+        if (curr.size() == other.size()-1
+                && curr.get(0).endAction == TURN
+                && other.get(0).endAction==TRANSDOWN
+                && curr.get(0).endBranch == other.get(0).endBranch
+                && curr.get(0).isPWave == other.get(0).isPWave) {
+            // phase like P vs Ped20P
+            // later legs match, but with offset of 1
+            for (int s = 0; s < curr.size() && s < other.size()-1; s++) {
+                SeismicPhaseSegment cS = curr.get(s);
+                SeismicPhaseSegment oS = other.get(s+1);
+                if (cS.isPWave != oS.isPWave
+                        || cS.isDownGoing != oS.isDownGoing
+                        || cS.endAction != oS.endAction
+                        || !Objects.equals(cS.legName.substring(0,1), oS.legName)) {
+                    return false;
+                }
+            }
+            return true;
+        } else if (curr.size() != other.size()) {
             return false;
         }
         SeismicPhaseSegment pS = null;
@@ -327,6 +346,7 @@ public class SeismicPhaseWalk {
         int startBranchNum;
 
         if (isPWave != prevEndSeg.isPWave) {
+            // don't do phase change at excluded boundary
             if (prevEndSeg.isDownGoing && excludeBranch.contains(prevEndSeg.endBranch + 1)) {
                 return outTree;
             }
@@ -418,7 +438,7 @@ public class SeismicPhaseWalk {
                 if (isPWave == prevEndSeg.isPWave) {
                     // turn cannot phase convert
                     if (prevEndSeg.endBranch > 0) {
-                            // exclude phase converstion if fluid
+                            // exclude phase convertion if fluid
                         if (isPWave || ! tMod.isFluidBranch(startBranchNum)) {
                             outTreeAdd(outTree, proto.nextSegment(prevEndSeg.isPWave, TRANSUP));
                         }
@@ -522,7 +542,7 @@ public class SeismicPhaseWalk {
             if (prev != null
                     && (prev.endAction == TRANSDOWN || prev.endAction == TRANSUP)
                     && prev.isPWave == seg.isPWave
-                    && Objects.equals(prev.legName, seg.legName)) {
+                    && Objects.equals(prev.legName.charAt(0), seg.legName.charAt(0))) {
                 SeismicPhaseSegment conSeg = new SeismicPhaseSegment(prev.tMod,
                         prev.startBranch, seg.endBranch, prev.isPWave, seg.endAction, prev.isDownGoing,
                         prev.legName,

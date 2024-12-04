@@ -120,6 +120,28 @@ public class WalkPhaseTest {
         assertEquals(merged.get(merged.size()-1).minRayParam, 0);
 
     }
+
+    @Test
+    public void merge210Test() throws TauModelException {
+        TauModel tMod = TauModelLoader.load("ak135").depthCorrect(100);
+        SeismicPhaseWalk walker = new SeismicPhaseWalk(tMod);
+        boolean isPWave = true;
+        walker.allowSWave = false;
+
+
+        List<SeismicPhaseSegment> upper = new ArrayList<>();
+        upper.add(new SeismicPhaseSegment(tMod, 1, 1, isPWave, TURN, true, "P", 0, 100));
+        upper.add(new SeismicPhaseSegment(tMod, 1, 0, isPWave, END, false, "p", 0, 100));
+        ProtoSeismicPhase upperProto = new ProtoSeismicPhase(upper, 0);
+        List<SeismicPhaseSegment> lower = new ArrayList<>();
+        lower.add(new SeismicPhaseSegment(tMod, 1, 2, isPWave, TURN, true, "P", 0, 10));
+        lower.add(new SeismicPhaseSegment(tMod, 2, 0, isPWave, END, false, "p", 0, 10));
+        ProtoSeismicPhase lowerProto = new ProtoSeismicPhase(lower, 0);
+
+        assertTrue(walker.canMergePhases(upperProto, lowerProto));
+
+    }
+
     @Test
     public void mergeUndersideTest() throws TauModelException {
         boolean isPWave = true;
