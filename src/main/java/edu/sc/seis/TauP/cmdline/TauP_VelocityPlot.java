@@ -38,14 +38,7 @@ public class TauP_VelocityPlot extends TauP_Tool {
     
     @Override
     public void start() throws TauPException, IOException {
-        List<VelocityModel> vModList = new ArrayList<>();
-        for (InputVelocityModelArgs vmodArg : velModelArgs.getVelocityModelArgsList()) {
-            VelocityModel vMod = TauModelLoader.loadVelocityModel(vmodArg.getModelFilename(), vmodArg.getVelFileType());
-            if (vMod == null) {
-                throw new IOException("Velocity model file not found: "+vmodArg.getModelFilename()+", tried internally and from file");
-            }
-            vModList.add(vMod);
-        }
+        List<VelocityModel> vModList = getVelocityModels();
 
         if (listDiscon) {
             if (outputTypeArgs.isJSON()) {
@@ -547,7 +540,7 @@ public class TauP_VelocityPlot extends TauP_Tool {
     }
 
     @Override
-    public void validateArguments() throws TauModelException {
+    public void validateArguments() throws TauPException {
         if (velModelArgs.size() == 0) {
             throw new CommandLine.ParameterException(spec.commandLine(), "must give at least one model");
         }
@@ -595,8 +588,24 @@ public class TauP_VelocityPlot extends TauP_Tool {
         return velModelArgs;
     }
 
+    public List<VelocityModel> getVelocityModels() throws VelocityModelException, IOException {
+        if (vModList == null) {
+            vModList = new ArrayList<>();
+            for (InputVelocityModelArgs vmodArg : velModelArgs.getVelocityModelArgsList()) {
+                VelocityModel vMod = TauModelLoader.loadVelocityModel(vmodArg.getModelFilename(), vmodArg.getVelFileType());
+                if (vMod == null) {
+                    throw new VelocityModelException("Velocity model file not found: " + vmodArg.getModelFilename() + ", tried internally and from file");
+                }
+                vModList.add(vMod);
+            }
+        }
+        return vModList;
+    }
+
     @CommandLine.ArgGroup(heading = "Velocity Model %n")
     VelocityModelListArgs velModelArgs = new VelocityModelListArgs();
+
+    List<VelocityModel> vModList = null;
 
     @CommandLine.Mixin
     VelPlotOutputTypeArgs outputTypeArgs;
