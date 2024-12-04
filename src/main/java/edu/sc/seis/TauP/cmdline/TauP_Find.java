@@ -404,6 +404,7 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
     @CommandLine.Option(names = "--exclude",
             arity = "1..",
             paramLabel = "depth",
+            split = ",",
             description = {
                     "Exclude boundaries from phase conversion or reflection interactions",
                     "May be depth (within tol) or named boundary like moho, cmb, iocb"
