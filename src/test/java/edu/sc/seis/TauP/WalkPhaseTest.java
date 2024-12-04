@@ -23,7 +23,7 @@ public class WalkPhaseTest {
         ProtoSeismicPhase transDProto = ProtoSeismicPhase.start( new SeismicPhaseSegment(tMod,
                 startBranch, startBranch,
                 isPWave, TRANSDOWN, true,
-                walker.legNameForTauBranch(tMod, tMod.getSourceBranch(), isPWave, true),
+                walker.legNameForTauBranch(tMod, tMod.getSourceBranch(), isPWave, true, false),
                 0, sourceBranchP.getMinRayParam()), receiverDepth);
         outTree = walker.nextLegs(tMod, transDProto, true);
         ProtoSeismicPhase Pedvmp = null;
@@ -68,7 +68,7 @@ public class WalkPhaseTest {
         ProtoSeismicPhase transDProto = ProtoSeismicPhase.start( new SeismicPhaseSegment(tMod,
                 startBranch, startBranch,
                 false, TRANSDOWN, true,
-                walker.legNameForTauBranch(tMod, tMod.getSourceBranch(), isPWave, true),
+                walker.legNameForTauBranch(tMod, tMod.getSourceBranch(), isPWave, true, false),
                 0, sourceBranchP.getMinRayParam()), receiverDepth);
         outTree = walker.nextLegs(tMod, transDProto, isPWave);
         ProtoSeismicPhase phaseS20P = null;

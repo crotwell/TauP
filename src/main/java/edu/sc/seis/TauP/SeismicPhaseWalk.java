@@ -101,7 +101,7 @@ public class SeismicPhaseWalk {
                 ProtoSeismicPhase upProto = ProtoSeismicPhase.start( new SeismicPhaseSegment(tMod,
                         aboveStartBranch, aboveStartBranch,
                         isPWave, END, false,
-                        legNameForTauBranch(tMod, tMod.getSourceBranch(), isPWave, false),
+                        legNameForTauBranch(tMod, tMod.getSourceBranch(), isPWave, false, false),
                         0, aboveSourceBranchP.getMinTurnRayParam()), receiverDepth);
                 segmentTree.add(upProto);
             }
@@ -109,7 +109,7 @@ public class SeismicPhaseWalk {
                 ProtoSeismicPhase reflProto = ProtoSeismicPhase.start(new SeismicPhaseSegment(tMod,
                         aboveStartBranch, aboveStartBranch,
                         isPWave, REFLECT_UNDERSIDE, false,
-                        legNameForTauBranch(tMod, tMod.getSourceBranch(), isPWave, false),
+                        legNameForTauBranch(tMod, tMod.getSourceBranch(), isPWave, false, false),
                         0, aboveSourceBranchP.getMinTurnRayParam()), receiverDepth);
                 segmentTree.add(reflProto);
             }
@@ -117,7 +117,7 @@ public class SeismicPhaseWalk {
                 ProtoSeismicPhase upProto = ProtoSeismicPhase.start(new SeismicPhaseSegment(tMod,
                         aboveStartBranch, aboveStartBranch,
                         isPWave, TRANSUP, false,
-                        legNameForTauBranch(tMod, tMod.getSourceBranch(), isPWave, false),
+                        legNameForTauBranch(tMod, tMod.getSourceBranch(), isPWave, false, false),
                         0, aboveSourceBranchP.getMinTurnRayParam()), receiverDepth);
                 segmentTree.add(upProto);
             }
@@ -131,7 +131,7 @@ public class SeismicPhaseWalk {
         ProtoSeismicPhase turnProto = ProtoSeismicPhase.start( new SeismicPhaseSegment(tMod,
                 startBranch, startBranch,
                 isPWave, TURN, true,
-                legNameForTauBranch(tMod, tMod.getSourceBranch(), isPWave, true),
+                legNameForTauBranch(tMod, tMod.getSourceBranch(), isPWave, true, false),
                 sourceBranchP.getMinRayParam(),
                 sourceBranchP.getMaxRayParam()), receiverDepth);
         segmentTree.add(turnProto);
@@ -139,7 +139,7 @@ public class SeismicPhaseWalk {
             ProtoSeismicPhase endProto = ProtoSeismicPhase.start( new SeismicPhaseSegment(tMod,
                     startBranch, startBranch,
                     isPWave, END, true,
-                    legNameForTauBranch(tMod, tMod.getSourceBranch(), isPWave, true),
+                    legNameForTauBranch(tMod, tMod.getSourceBranch(), isPWave, true, false),
                     sourceBranchP.getMinRayParam(),
                     sourceBranchP.getMaxRayParam()), receiverDepth);
             segmentTree.add(endProto);
@@ -149,14 +149,14 @@ public class SeismicPhaseWalk {
                 ProtoSeismicPhase reflProto = ProtoSeismicPhase.start(new SeismicPhaseSegment(tMod,
                         startBranch, startBranch,
                         isPWave, REFLECT_TOPSIDE, true,
-                        legNameForTauBranch(tMod, tMod.getSourceBranch(), isPWave, true),
+                        legNameForTauBranch(tMod, tMod.getSourceBranch(), isPWave, true, false),
                         0, sourceBranchP.getMinTurnRayParam()), receiverDepth);
                 segmentTree.add(reflProto);
             }
             ProtoSeismicPhase transDProto = ProtoSeismicPhase.start( new SeismicPhaseSegment(tMod,
                     startBranch, startBranch,
                     isPWave, TRANSDOWN, true,
-                    legNameForTauBranch(tMod, tMod.getSourceBranch(), isPWave, true),
+                    legNameForTauBranch(tMod, tMod.getSourceBranch(), isPWave, true, false),
                     0, sourceBranchP.getMinRayParam()), receiverDepth);
             segmentTree.add(transDProto);
         }
@@ -450,20 +450,24 @@ public class SeismicPhaseWalk {
         }
     }
 
-    public static String legNameForTauBranch(TauModel tMod, int branchNum, boolean isPWave, boolean isDowngoing) {
+    public static String legNameForTauBranch(TauModel tMod, int branchNum, boolean isPWave, boolean isDowngoing, boolean isFlat) {
         if (branchNum < 0 || branchNum >= tMod.getNumBranches()) {
             return "unknown";
         }
         TauBranch tauBranch = tMod.getTauBranch(branchNum, isPWave);
         if (branchNum >= tMod.getIocbBranch()) {
             if (tauBranch.isPWave) {
-                if (isDowngoing) {
+                if (isFlat) {
+                    return "I";
+                } else if (isDowngoing) {
                     return "Ied";
                 } else {
                     return "y";
                 }
             } else {
-                if (isDowngoing) {
+                if (isFlat) {
+                    return "J";
+                } else if (isDowngoing) {
                     return "Jed";
                 } else {
                     return "j";
@@ -472,7 +476,9 @@ public class SeismicPhaseWalk {
         }
         if (branchNum >= tMod.getCmbBranch()) {
             if (tauBranch.isPWave) {
-                if (isDowngoing) {
+                if (isFlat) {
+                    return "K";
+                } else if (isDowngoing) {
                     return "Ked";
                 } else {
                     return "k";
@@ -482,13 +488,17 @@ public class SeismicPhaseWalk {
             }
         }
         if (tauBranch.isPWave) {
-            if (isDowngoing) {
+            if (isFlat) {
+                return "P";
+            } else if (isDowngoing) {
                 return "Ped";
             } else {
                 return "p";
             }
         } else {
-            if (isDowngoing) {
+            if (isFlat) {
+                return "S";
+            } else if (isDowngoing) {
                 return "Sed";
             } else {
                 return "s";

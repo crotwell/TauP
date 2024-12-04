@@ -79,7 +79,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
         if ( ! isDownGoing) {
             startBranchNum = startBranchNum-1;
         }
-        String legName = legNameForSegment(tMod, startBranchNum, isPWave, isDownGoing, endAction);
+        String legName = legNameForSegment(tMod, startBranchNum, isPWave, isDownGoing, false, endAction);
         ProtoSeismicPhase proto = startEmpty(legName, tMod, receiverDepth);
         TauBranch startBranch = tMod.getTauBranch(startBranchNum, isPWave);
         double minRayParam = 0.0;
@@ -191,7 +191,8 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                 startBranchNum = priorEndBranchNum;
         }
         int endBranchNum = findEndDiscon(tMod, startBranchNum, isPWave, isDowngoing); // usually same as start
-        String nextLegName = SeismicPhaseWalk.legNameForTauBranch(tMod, startBranchNum, isPWave, isDowngoing);
+        boolean isFlat = false;
+        String nextLegName = SeismicPhaseWalk.legNameForTauBranch(tMod, startBranchNum, isPWave, isFlat, isDowngoing);
         TauBranch nextBranch = tMod.getTauBranch(startBranchNum, isPWave);
 
         double minRayParam = endSeg.minRayParam;
@@ -976,10 +977,10 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
     }
 
     public static String legNameForSegment(TauModel tMod, SeismicPhaseSegment seg) {
-        return legNameForSegment(tMod, seg.endBranch, seg.isPWave, seg.isDownGoing, seg.endAction);
+        return legNameForSegment(tMod, seg.endBranch, seg.isPWave, seg.isDownGoing, seg.isFlat, seg.endAction);
     }
-    public static String legNameForSegment(TauModel tMod, int endBranch, boolean isPWave, boolean isDownGoing, PhaseInteraction endAction) {
-        String name = SeismicPhaseWalk.legNameForTauBranch(tMod, endBranch, isPWave, isDownGoing);
+    public static String legNameForSegment(TauModel tMod, int endBranch, boolean isPWave, boolean isDownGoing, boolean isFlat, PhaseInteraction endAction) {
+        String name = SeismicPhaseWalk.legNameForTauBranch(tMod, endBranch, isPWave, isDownGoing, isFlat);
         if (endAction == TURN && name.endsWith("ed")) {
             name = name.substring(0, name.length()-2);
         }
