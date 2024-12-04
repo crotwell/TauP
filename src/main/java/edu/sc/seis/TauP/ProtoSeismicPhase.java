@@ -293,9 +293,9 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                         }
                     } else {
                         if (prev.endsAtTop() && prev.endBranch != seg.startBranch +1) {
-                            throw new TauModelException(getName() + ": Flat Segment is ends at top, but start is not next shallower branch: " + currLeg+" "+prev.endBranch +"!= "+seg.startBranch+"+1");
+                            throw new TauModelException(getName() + ": Flat Segment is ends at top, but upgoing start is not next shallower branch: " + currLeg+" "+prev.endBranch +"!= "+seg.startBranch+"+1");
                         } else if (!prev.endsAtTop() && prev.endBranch != seg.startBranch) {
-                            throw new TauModelException(getName() + ": Flat Segment is ends at bottom, but start is not current branch: " + currLeg+" "+prev.endBranch +"!= "+seg.startBranch);
+                            throw new TauModelException(getName() + ": Flat Segment is ends at bottom, but upgoing start is not current branch: " + currLeg+" "+prev.endBranch +"!= "+seg.startBranch);
                         }
                     }
                 } else if (seg.isDownGoing) {
@@ -421,7 +421,6 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
         return currBranch;
     }
 
-
     public SeismicPhaseSegment addToBranch(int endBranch,
                                            boolean isPWave,
                                            boolean nextIsPWave,
@@ -432,6 +431,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
             return segmentList.get(segmentList.size()-1);
         }
         int startBranch = calcStartBranch(currLeg);
+
         if (startBranch < 0 || startBranch > tMod.getNumBranches()) {
             throw new IllegalArgumentException(getName()+": start branch outside range: (0-"+tMod.getNumBranches()+") "+startBranch);
         }
@@ -858,29 +858,38 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                     || (! prev.legName.equalsIgnoreCase(seg.legName) && (prev.legName.equals("I") && seg.legName.equals("y")))) {
                 String legName = legNameForSegment(tMod, seg);
                 String nextLegName = legNameForSegment(tMod, next);
-                if (zapED) {
-                    if ((seg.endAction == TRANSDOWN || seg.endAction == DIFFRACT|| seg.endAction == HEAD)
-                            && legName.endsWith("ed")
-                            && seg.isPWave == next.isPWave || ( seg.legName.equals("Sed") && nextLegName.equals("K"))
-                            && !legName.startsWith(nextLegName.substring(0, 1))) {
+                if (zapED && legName.endsWith("ed")) {
+                    if ((seg.endAction == DIFFRACT || seg.endAction == HEAD) && seg.isPWave == next.isPWave) {
+                        legName = legName.substring(0, 1);
+                    } else if ((seg.endAction == TRANSDOWN)
+                            && (legName.startsWith("P") || legName.startsWith("S")) && !(nextLegName.startsWith("P") || nextLegName.startsWith("S"))
+                            && (legName.startsWith("K")) && !(nextLegName.startsWith("K"))
+                            && (legName.startsWith("I") || legName.startsWith("J")) && !(nextLegName.startsWith("I") || nextLegName.startsWith("J"))
+                        //&& seg.isPWave == next.isPWave || ( seg.legName.equals("Sed") && nextLegName.equals("K"))
+                        //&& !legName.startsWith(nextLegName.substring(0, 1))
+                    ) {
                         legName = legName.substring(0, 1);
                     } else if ((seg.endAction == REFLECT_TOPSIDE || seg.endAction == REFLECT_TOPSIDE_CRITICAL ||
-                            (seg.endAction == TRANSDOWN && (botDepth == tMod.cmbDepth || botDepth == tMod.iocbDepth)))
-                            && legName.endsWith("ed")) {
+                            (seg.endAction == TRANSDOWN && (botDepth == tMod.cmbDepth || botDepth == tMod.iocbDepth)))) {
                         // ed not needed as legname changes
                         legName = legName.substring(0, 1);
-                    } else if ((seg.endAction == END
-                            || (seg.endAction == REFLECT_UNDERSIDE )
-                            || ((seg.endAction == TURN || seg.endAction == DIFFRACTTURN
-                                || seg.endAction == TRANSUP || seg.endAction == REFLECT_UNDERSIDE)
-                                && next.endBranch == 0))
-                            && (prev != null
-                                && (prev.endAction == DIFFRACT || prev.endAction == DIFFRACTTURN
-                                    || prev.endAction == HEAD || prev.endAction ==TRANSUP)
-                                && seg.isPWave == prev.isPWave && seg.legName.equals(prev.legName))
-                    ) {
-                        legName = "";
                     }
+                }
+                if ((seg.endAction == END
+                        || (seg.endAction == REFLECT_UNDERSIDE )
+                        || ((seg.endAction == TURN || seg.endAction == DIFFRACTTURN
+                            || seg.endAction == TRANSUP || seg.endAction == REFLECT_UNDERSIDE)
+                            && next.endBranch == 0))
+                        && (prev != null
+                            && (prev.endAction == DIFFRACT || prev.endAction == DIFFRACTTURN
+                                || prev.endAction == HEAD || prev.endAction ==TRANSUP)
+                            && seg.isPWave == prev.isPWave && seg.legName.equals(prev.legName))
+                ) {
+                    legName = "";
+                }
+                if (seg.isFlat && (prev.isPWave == seg.isPWave)) {
+                    // no phase change and flat leg, so no leg symbol needed
+                    legName = "";
                 }
                 name += legName;
             } else {
@@ -924,10 +933,10 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                     //name += "U";
                     break;
                 case TRANSDOWN:
-                    if (botDepth == tMod.cmbDepth || botDepth == tMod.iocbDepth) {
+                    if (seg.isFlat || botDepth == tMod.cmbDepth || botDepth == tMod.iocbDepth) {
+                        // flat no char as already at depth
                         // no char as P,S -> K -> I,J
-                    } else if (botDepth == tMod.mohoDepth
-                            && seg.isPWave != next.isPWave) {
+                    } else if (botDepth == tMod.mohoDepth) {
                         name += "m";
                     } else {
                         name += (int)(botDepth);
@@ -941,8 +950,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                             && seg.isPWave == next.isPWave
                     ) {
                         // no char finish at surface
-                    } else if (topDepth == tMod.mohoDepth && seg.endAction == TRANSUP
-                            && seg.isPWave != next.isPWave) {
+                    } else if (topDepth == tMod.mohoDepth ) {
                         name += "m";
                     } else {
                         name += (int) (topDepth);
@@ -952,17 +960,15 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                     name += "n";
                     break;
                 case DIFFRACT:
-                    if (botDepth == tMod.cmbDepth || botDepth == tMod.iocbDepth) {
-                        name += "diff";
-                    } else {
-                        name += (int) (botDepth)+"diff";
-                    }
-                    break;
                 case TRANSUPDIFFRACT:
-                    if (topDepth == tMod.cmbDepth || topDepth == tMod.iocbDepth) {
-                        name += "diff";
+                    String diff = "diff";
+                    if (next != null && next.endAction == TRANSDOWN) {
+                        diff = "diffdn";
+                    }
+                    if (botDepth == tMod.cmbDepth || botDepth == tMod.iocbDepth) {
+                        name += diff;
                     } else {
-                        name += (int) (topDepth)+"diff";
+                        name += (int) (botDepth)+diff;
                     }
                     break;
                 case END:
