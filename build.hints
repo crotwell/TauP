@@ -1,0 +1,28 @@
+
+# rerun sphinx for docs
+conda activate sphinx
+./gradlew sphinx
+
+# check for dep updates
+./gradlew dependencyUpdates
+
+# wrapper
+./gradlew wrapper --gradle-version 8.10 --distribution-type bin
+
+
+# On release:
+--------------
+get new DOI
+  https://help.zenodo.org/docs/deposit/describe-records/reserve-doi/
+
+update cite, version in
+  README.md
+  overview.rst
+  docs/index.md
+
+update CITATION.cff via
+  https://citation-file-format.github.io/cff-initializer-javascript/
+
+
+upload to zenodo, check auto upload from github so maybe just edit fields
+  https://zenodo.org/me/uploads?q=&l=list&p=1&s=10&sort=newest
