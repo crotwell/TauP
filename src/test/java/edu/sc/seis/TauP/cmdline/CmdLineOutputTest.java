@@ -532,23 +532,27 @@ public class CmdLineOutputTest {
     }
 
     public void runCmdWithWriter(String cmd, PrintWriter writer) throws Exception {
-        String[] s = cmd.split(" +");
-        String tool = s[0];
-        if ( ! tool.equalsIgnoreCase("taup")) {
-            throw new Exception("Unknown first word of command: "+tool+", should be taup");
+        try {
+            String[] s = cmd.split(" +");
+            String tool = s[0];
+            if (!tool.equalsIgnoreCase("taup")) {
+                throw new Exception("Unknown first word of command: " + tool + ", should be taup");
+            }
+            String[] cmdArgs = new String[s.length - 1];
+            System.arraycopy(s, 1, cmdArgs, 0, cmdArgs.length);
+            System.err.println(cmd);
+
+            ToolRun toolRun = new ToolRun();
+            CommandLine cmdLine = new CommandLine(toolRun);
+
+            cmdLine.setOut(writer);
+
+            int exitCode = cmdLine.execute(cmdArgs);
+            assertEquals(0, exitCode, "exit code=" + exitCode + "  " + cmd);
+            writer.flush();
+        } catch (Exception e) {
+            throw new Exception("problem with cmd: "+cmd, e);
         }
-        String[] cmdArgs = new String[s.length - 1];
-        System.arraycopy(s, 1, cmdArgs, 0, cmdArgs.length);
-        System.err.println(cmd);
-
-        ToolRun toolRun = new ToolRun();
-        CommandLine cmdLine = new CommandLine(toolRun);
-
-        cmdLine.setOut(writer);
-
-        int exitCode = cmdLine.execute(cmdArgs);
-        assertEquals(0, exitCode, "exit code="+exitCode+"  "+cmd);
-        writer.flush();
     }
 
     public void testCmd(String cmd) throws Exception {
