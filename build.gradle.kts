@@ -272,6 +272,7 @@ tasks.register<JavaExec>("genCmdLineTestFiles") {
     description = "generate TauP cmd line test output files"
     classpath = sourceSets.getByName("test").runtimeClasspath
     getMainClass().set("edu.sc.seis.TauP.cmdline.CmdLineOutputTest")
+    dependsOn += tasks.getByName("classes")
     dependsOn += tasks.getByName("testClasses")
     dependsOn += tasks.getByName("copyReflTranCompareFiles")
     outputs.files(fileTree("build/cmdLineTest"))
@@ -285,7 +286,7 @@ tasks.register<Sync>("copyCmdLineTestFiles") {
   dependsOn("genCmdLineTestFiles")
 }
 tasks.get("test").mustRunAfter("copyCmdLineTestFiles")
-tasks.get("installDist").mustRunAfter("copyCmdLineTestFiles")
+tasks.get("jar").mustRunAfter("copyCmdLineTestFiles")
 tasks.get("distTar").mustRunAfter("copyCmdLineTestFiles")
 tasks.get("distZip").mustRunAfter("copyCmdLineTestFiles")
 
