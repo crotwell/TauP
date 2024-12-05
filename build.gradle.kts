@@ -254,11 +254,13 @@ tasks.register<JavaExec>("genModels") {
   inputs.files("src/main/resources/edu/sc/seis/TauP/StdModels/iasp91.tvel")
   inputs.files("src/main/resources/edu/sc/seis/TauP/StdModels/prem.nd")
   inputs.files("src/main/resources/edu/sc/seis/TauP/StdModels/ak135favg.nd")
+  inputs.files("src/main/resources/edu/sc/seis/TauP/StdModels/ak135fsyngine.nd")
   inputs.files("src/main/resources/edu/sc/seis/TauP/StdModels/ak135fcont.nd")
   outputs.files(layout.buildDirectory.file(outDirStr+"/ak135.taup"))
     outputs.files(layout.buildDirectory.file(outDirStr+"/iasp91.taup"))
     outputs.files(layout.buildDirectory.file(outDirStr+"/prem.taup"))
     outputs.files(layout.buildDirectory.file(outDirStr+"/ak135favg.taup"))
+    outputs.files(layout.buildDirectory.file(outDirStr+"/ak135fsyngine.taup"))
     outputs.files(layout.buildDirectory.file(outDirStr+"/ak135fcont.taup"))
 }
 

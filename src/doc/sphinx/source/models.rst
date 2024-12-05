@@ -193,3 +193,126 @@ places in order until it finds a model that matches the name.
   Note that there is extra work involved in processing the velocity file, and so
   frequently used models should still be converted using 'taup create' to avoid
   reprocessing them each time the tool starts.
+
+
+------------------------
+Notes on Standard Models
+------------------------
+
+* ak135
+
+  There is a discontinuity in S velocity, but not for P or density at 210 km.
+  The effect on travel times is small, but this odd discontinuity in S
+  velocity at 210 creates odd reflection and transmission coefficients at
+  this depth. This discontinuity does not exist in the ak135f models for
+  velocity, but the 210 a discontinuity in the Q model.
+
+  ``
+  210.000      8.3000      4.5180      3.4258
+  210.000      8.3000      4.5230      3.4258
+  ``
+
+  There is a non-discontinuity discontinuity within the published ak135 model
+  at 2740 km depth. This causes no issues within TauP as there is no change
+  in velocity at that depth.
+
+  ``
+  2740.000     13.6494      7.2490      5.4817
+  2740.000     13.6494      7.2490      5.4817
+  ``
+
+  Between 4700 and 4800 km depth there appears to be a missing line in the
+  published model as before and after the depth increment is approximately
+  50 km, but is 100 at this depth.
+  This may have a small effect on outer core phases. The
+  missing line does appear in the ak135f models, which are supposed to share
+  the velocity structure, but to be consistent with the published paper we
+  have not changed the file. We do recomment using ak135fcont instead,
+  which is ak135 with Q and the "continental structure" above 120 km.
+
+  ``
+  4650.590     10.0439      0.0000     11.8437
+  4700.920     10.0768      0.0000     11.8772
+  4801.580     10.1415      0.0000     11.9414
+  4851.910     10.1739      0.0000     11.9722
+  ``
+
+  The source web page for ak135f lists attentuation parameters as Qkappa and Qmu,
+  but the reference paper, :cite:t:`kennett:ak135f` says:
+
+  :quote: We did not attempt to invert for Q K ,which is
+    known to be poorly resolved. To a first approximation, Q K-1
+    is very close to zero except in the core.
+
+  and so it seems reasonable that this column is actually Qp (or equivalently
+  Q_alpha) and is derived from the Qs =Q_mu paramter via equation 2.6 where
+
+    1/Q_alpha = (4/3)(beta/alpha)^2 (1/Q_beta)
+
+  Checking the given values shows that the Q_kappa column to actually be Q_p within
+  +-0.03 for all values except fluid layers, where Qp is set to a generic large
+  value of 57822.0, which is the same default value used in PREM. For comparison,
+  the PREM model here:
+  https://ds.iris.edu/ds/products/emc-prem/
+  does in fact contain Q_kappa as the last column in PREM_1s.csv and the value is
+  constant at 57823 except in the inner core, where it is 1327.7. We therefore
+  are using this column as Q_alpha and not Q_kappa.
+
+* ak135fcont
+
+  There is a small discrepancy in how to create a "continental structure"
+  variant of ak135f at 120 km depth. In the online version
+  at https://rses.anu.edu.au/seismology/ak135/ak135f.html
+  there is a small discontinuity in P velocity if the continental model
+  is pasted on top of the base model that does not exist for the average
+  model, where vp=8.0500 in the continent vs 8.0505 in the base,
+  which would make the 120 km depth a very odd
+  discontinuity as density and S velocity are continuous.
+  We have constructed
+  the "continental structure" model, ak135fcont, so that Vp is continuous
+  at this depth with Vp=8.0505.
+
+  There is a difference between the text version of the model,
+  https://rses.anu.edu.au/seismology/ak135/ak135f.txt
+  and the html version here
+  https://rses.anu.edu.au/seismology/ak135/ak135f.html
+  with the text version showing a depth sample in the average structure at 120 km
+  that matches the 120 km sample in the base model. As both lines are the same,
+  this doesn't change the model, but seems to indicate that the 120 km depth
+  sample in the continental model should not be viewed as creating a discontinuity.
+
+  At 210 km depth, there is a non-discontinuity in velocity, but a discontinuity
+  in the Q model.
+
+  ``
+  210.00    3.3243    8.3007    4.5184    200.97     79.40     0.000
+  210.00    3.3243    8.3007    4.5184    338.47    133.72     0.000
+  ``
+
+  The "continental structure" model does not list density, Qp or Qs for the
+  upper 120 km. Because these values are useful for amplitude calculations,
+  we have inserted the density from ak135 for these depth samples and used values
+  roughly compatible with the ak135f average model for Qp and Qs.
+
+* Syngine/Instaseis
+
+  The very useful syngine web service hosted by IRIS,
+  https://service.iris.edu/irisws/syngine/1/
+  allows calculation of synthetic seismograms for several 1D earth models. The
+  ak135f model used by Syngine appears to be a variant of the ak135favg model
+  where the 3 km ocean and 0.3 km sediment layers have been replaced by
+  velocities from the lower crustal layer, resulting in a 10 km thick
+  crust with constant velocity. Note this is different from the ak135fcont
+  model that includes a thicker, 35 km thick two layer crust and a slightly different
+  uppermost mantle structure, from 35 to 120 km. Travel times from TauP
+  for ak135f will thus be similar, but not exactly match the output of syngine.
+  We have included a ak135fsyngine model with these modifications for
+  compatibility.
+
+* PREM
+
+  The Qp values in prem.nd are all also derived from Qs via the equation above
+  for ak135f, except for the inner core, where values near 600 are given but
+  the equation from Qs predicts a Qp value closer to 430-445. Note that PREM
+  gives a different Qkappa in the inner core from the rest of the model,
+  which likely explains the difference.
