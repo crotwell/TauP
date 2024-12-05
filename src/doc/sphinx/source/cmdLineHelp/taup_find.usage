@@ -1,14 +1,14 @@
 Usage: taup find [--amp] [--debug] [--help] [--onlynameddiscon] [--pwaveonly]
                  [--showrayparam] [--verbose]
-                 [--attenuationfreq=<attenuationFreq>] [--deltatime=dt]
-                 --max=<maxActions> [--mw=<mw>]
+                 [--attenuationfreq=<attenuationFreq>] [--az=<azimuth>]
+                 [--deltatime=dt] --max=<maxActions> [--mw=<mw>]
                  [--numattenuationfreq=<numFrequencies>] [-o=<outFile>]
                  [--prop=<toolPropsFilename>] [--deg=d[,d...]]...
                  [--strikediprake=s[,s...]]... [--rayparamdeg=s/deg [s/deg]]...
                  [--rayparamkm=s/km [s/km]]... [--time=t [t]]...
-                 [--exclude=depth...]... [[--mod=<modelName>] [-h=depth[,
-                 depth...]]... [--stadepth=depth[,depth...]]... [--scat=s
-                 s]...] [[-p=phase[,phase...]]...
+                 [--exclude=depth[,depth...]...]... [[--mod=<modelName>]
+                 [-h=depth[,depth...]]... [--stadepth=depth[,depth...]]...
+                 [--scat=s s]...] [[-p=phase[,phase...]]...
                  [--phasefile=<phaseFiles>]...] [--json | --text]
 Find seismic phases in an earth model.
 
@@ -17,12 +17,14 @@ Options:
       --amp                show amplitude factor for each phase, only if --deg
       --attenuationfreq=<attenuationFreq>
                            attenuation frequency for amplitude calculations
+      --az=<azimuth>       azimuth in degrees, for amp calculations
       --debug              enable debugging output
       --deg, --degree=d[,d...]
                            distance in degrees
       --deltatime=dt       find arrivals within the +- deltatime, --times must
                              have single time
-      --exclude=depth...   Exclude boundaries from phase conversion or
+      --exclude=depth[,depth...]...
+                           Exclude boundaries from phase conversion or
                              reflection interactions
                            May be depth (within tol) or named boundary like
                              moho, cmb, iocb

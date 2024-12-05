@@ -181,15 +181,15 @@ that may explain it.</p>
 <p>The usage is:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Usage: taup find [--amp] [--debug] [--help] [--onlynameddiscon] [--pwaveonly]
                  [--showrayparam] [--verbose]
-                 [--attenuationfreq=&lt;attenuationFreq&gt;] [--deltatime=dt]
-                 --max=&lt;maxActions&gt; [--mw=&lt;mw&gt;]
+                 [--attenuationfreq=&lt;attenuationFreq&gt;] [--az=&lt;azimuth&gt;]
+                 [--deltatime=dt] --max=&lt;maxActions&gt; [--mw=&lt;mw&gt;]
                  [--numattenuationfreq=&lt;numFrequencies&gt;] [-o=&lt;outFile&gt;]
                  [--prop=&lt;toolPropsFilename&gt;] [--deg=d[,d...]]...
                  [--strikediprake=s[,s...]]... [--rayparamdeg=s/deg [s/deg]]...
                  [--rayparamkm=s/km [s/km]]... [--time=t [t]]...
-                 [--exclude=depth...]... [[--mod=&lt;modelName&gt;] [-h=depth[,
-                 depth...]]... [--stadepth=depth[,depth...]]... [--scat=s
-                 s]...] [[-p=phase[,phase...]]...
+                 [--exclude=depth[,depth...]...]... [[--mod=&lt;modelName&gt;]
+                 [-h=depth[,depth...]]... [--stadepth=depth[,depth...]]...
+                 [--scat=s s]...] [[-p=phase[,phase...]]...
                  [--phasefile=&lt;phaseFiles&gt;]...] [--json | --text]
 Find seismic phases in an earth model.
 
@@ -198,12 +198,14 @@ Options:
       --amp                show amplitude factor for each phase, only if --deg
       --attenuationfreq=&lt;attenuationFreq&gt;
                            attenuation frequency for amplitude calculations
+      --az=&lt;azimuth&gt;       azimuth in degrees, for amp calculations
       --debug              enable debugging output
       --deg, --degree=d[,d...]
                            distance in degrees
       --deltatime=dt       find arrivals within the +- deltatime, --times must
                              have single time
-      --exclude=depth...   Exclude boundaries from phase conversion or
+      --exclude=depth[,depth...]...
+                           Exclude boundaries from phase conversion or
                              reflection interactions
                            May be depth (within tol) or named boundary like
                              moho, cmb, iocb
