@@ -367,7 +367,10 @@ tasks.jar {
     }
     mustRunAfter("sphinx")
 }
-
+tasks.get("installDist").mustRunAfter("sphinx")
+tasks.get("installDist").mustRunAfter("copyCmdLineHelpFiles")
+tasks.get("installDist").mustRunAfter("copyStdModelsToSphinx")
+tasks.get("installDist").mustRunAfter("copyProgramExampleFiles")
 
 // this is really dumb, but gradle wants something....
 gradle.taskGraph.whenReady {
