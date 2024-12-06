@@ -442,10 +442,10 @@ public class VelocityLayer implements Cloneable, Serializable {
         return getBotDepth()-getTopDepth();
     }
 
-    public double calcTopQp() {
+    public double calcTopQpFromQs() {
         return calcQpFromQs(getTopQs(), getTopPVelocity(), getTopSVelocity());
     }
-    public double calcBotQp() {
+    public double calcBotQpFromQs() {
         return calcQpFromQs(getBotQs(), getBotPVelocity(), getBotSVelocity());
     }
     /**
