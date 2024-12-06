@@ -1,0 +1,84 @@
+taup --help
+taup time --help
+taup pierce --help
+taup path --help
+taup phase --help
+taup curve --help
+taup wavefront --help
+taup table --help
+taup velmerge --help
+taup velplot --help
+taup create --help
+taup refltrans --help
+taup setsac --help
+taup setms3 --help
+taup version --help
+taup spikes --help
+taup time -h 10 -p P --deg 35 --mod prem
+taup time -h 10 -p P --deg 35
+taup time -h 10 -p P --deg 35 --mod ak135
+taup time -h 10 -p ttall --deg 35 --mod prem
+taup time -h 10 -p ttall --deg 35
+taup time -h 10 -p ttall --deg 35 --mod ak135
+taup time -h 10 -p ttall --deg 35 --mod ak135 --json
+taup time -h 10 -p ttall --deg 145 --mod ak135 --rel P
+taup time -h 10 -p ttall --deg 145 --mod ak135 --rel P,PKP
+taup time -h 10 -p ttall --deg 145 --mod ak135 --stadepth 200
+taup time -h 10,100 -p P --deg 35
+taup time -h 10 --stadepth 1,10 -p P --deg 3
+taup pierce -h 10 -p P --deg 35 --mod prem
+taup pierce -h 10 -p P --deg 35
+taup pierce -h 10 -p P --deg 35 --mod ak135
+taup pierce --mod prem -h 600 --deg 45 -p PKiKP --pierce 5049.5
+taup pierce -h 0 -p Pn --deg 6
+taup pierce -h 0 -p Pdiff --deg 120
+taup pierce -h 10 -p ttall --deg 145 --mod ak135 --stadepth 200
+taup path -o stdout -h 10 -p P --deg 35 --mod prem
+taup path -o stdout -h 10 -p P --deg 35
+taup path -o stdout -h 10 -p Pdiff --deg 135
+taup path -o stdout -h 10 -p 2kmps --deg 35
+taup path -o stdout -h 10 -p Pn --deg 10
+taup path -o stdout -h 10 -p PnPn --deg 10
+taup path -o stdout -h 10 -p PdiffPdiff --deg 135
+taup path -o stdout -h 10 -p P --deg 35 --svg
+taup path -o stdout -h 10 -p P --deg 35 --mod ak135
+taup path -o stdout -h 10 -p Pdiff --deg 135 --svg
+taup path -o stdout -h 10 -p 2kmps --deg 35 --svg
+taup path -o stdout -h 10 -p Pn --deg 10 --svg
+taup path -o stdout -h 10 -p PnPn --deg 10 --svg
+taup path -o stdout -h 10 -p PdiffPdiff --deg 135 --svg
+taup path -o stdout -h 10 -p ttall --deg 35 --svg
+taup path -o stdout --mod ak135 --svg -h 10 -p P,S,PedOP --scatter 200 -5 --deg 40
+taup curve -o stdout -h 10 -p P --mod prem
+taup curve -o stdout -h 10 -p P
+taup curve -o stdout -h 10 -p P --mod ak135
+taup curve -o stdout -h 10 -p P --mod ak135 --redkm 8
+taup curve -o stdout -h 10 -p P,2kmps --mod prem --svg
+taup wavefront -o stdout --mod ak135 --svg -h 100 -p P,S,PKIKP --timestep 100
+taup wavefront -o stdout --mod ak135 --svg -h 10 -p P,S,PedOP --scatter 200 -5 --timestep 25 --color wavetype
+taup velplot -o stdout --mod ak135 --svg
+taup velplot -o stdout --mod ak135 --mod ak135favg --mod ak135fcont --mod prem --svg
+taup velplot -o stdout --mod ak135 --svg -x velocity_density
+taup velplot -o stdout --mod ak135 --svg -x slownessrad
+taup velplot -o stdout --mod ak135 --yminmax 0 700 --svg
+taup velplot -o stdout --mod ak135 --csv
+taup velplot -o stdout --mod ak135 --text
+taup velplot -o stdout --mod ak135 --gmt
+taup velplot -o stdout --mod ak135 --json
+taup velplot -o stdout --mod ak135 --svg 
+taup velplot -o stdout --mod ak135 --svg -x poisson
+taup refltrans -o stdout --mod ak135 --depth 35 --svg
+taup refltrans -o stdout --abs --anglestep 1 --svg --fsrf --legend --model ak135fcont --pwave --swave -x rayparam
+taup refltrans -o stdout --abs --anglestep 1 --svg --fsrf --legend --model ak135favg --pwave --swave -x rayparam
+taup phase -p Pdiff
+taup phase -p P410diff
+taup phase -p Pv410p,PV410p
+taup phase -p P410s,P410S
+taup phase -p Ped410S,Pedv410s,PedV410s
+taup phase -p PKviKP
+taup phase -p PKv5153KP
+taup phase -p PKv5153.9KP
+taup phase -p PK5153.9diffP
+taup phase -p PKP410S
+taup time -h 10 -p P --deg 35 --json
+java --version

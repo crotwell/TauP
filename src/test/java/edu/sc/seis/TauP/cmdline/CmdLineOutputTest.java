@@ -190,6 +190,12 @@ public class CmdLineOutputTest {
         allList.add("java --version");
         saveJavaVersionToFile(testOutputDir);
         viewSavedOutputAsHTML(allList, testOutputDir, "Command Line Test Cases");
+        BufferedWriter out = new BufferedWriter(new FileWriter(new File(testOutputDir, "all_commands.txt")));
+        for (String cmd : allList) {
+            out.write(cmd);
+            out.newLine();
+        }
+        out.close();
         usageToDocSrc();
     }
 
