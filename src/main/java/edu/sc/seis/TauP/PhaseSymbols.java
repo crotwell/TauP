@@ -139,6 +139,15 @@ public class PhaseSymbols {
         return false;
     }
 
+    public static boolean isUpDiffracted(String name, int offset) {
+        Pattern phaseRegEx = Pattern.compile("^"+LegPuller.upDiffRE);
+        Matcher m = phaseRegEx.matcher(name.substring(offset));
+        if (m.find()) {
+            return DIFF.equals(m.group("hd"));
+        }
+        return false;
+    }
+
     /**
      * Match phase segments like  SedPdiffdnKS
      * @param name

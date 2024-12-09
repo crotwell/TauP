@@ -523,7 +523,7 @@ public class SeismicPhaseFactory {
                 if (currLeg.equals("Ped") || currLeg.equals("Sed")) {
                     /* Deal with P and S exclusively downgoing case . */
                     proto = currLegIs_Ped_Sed(proto, prevLeg, currLeg, nextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
-                } else if (currLeg.equals("p") || currLeg.equals("s")) {
+                } else if (currLeg.startsWith("p") || currLeg.startsWith("s")) {
                     /* Deal with p and s case . */
                     proto = currLegIs_p_s(proto, prevLeg, currLeg, nextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
                 } else if (currLeg.equals("P") || currLeg.equals("S")) {
@@ -537,7 +537,7 @@ public class SeismicPhaseFactory {
                         (isHead(currLeg,0) || currLeg.endsWith("g"))) {
                     proto = currLegIs_Pn_Sn(proto, prevLeg, currLeg, nextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
                 } else {
-                    String reason = "Unknown phase in crust/mantle";
+                    String reason = "Unknown phase in crust/mantle: "+currLeg;
                     proto.failNext(reason);
                     return proto;
                 }
@@ -720,8 +720,62 @@ public class SeismicPhaseFactory {
                     + " and cannot come immediately before a top-side reflection."
                     + " currLeg=" + currLeg + " nextLeg=" + nextLeg);
         } else if(nextLeg.equals("p") || nextLeg.equals("s")) {
-            return failWithMessage(proto," Phase not recognized (2): "
+            return failWithMessage(proto, " Phase not recognized (2): "
                     + currLeg + " followed by " + nextLeg);
+        } else if (isUpDiffracted(currLeg, 0)){
+            String depthString = extractBoundaryId(currLeg, 1, false);
+            int disconBranch = LegPuller.closestDisconBranchToDepth(tMod, depthString);
+            if(currBranch >= disconBranch) {
+                endAction = TRANSUPDIFFRACT;
+                proto.addToBranch(
+                        disconBranch,
+                        isPWave,
+                        nextIsPWave,
+                        endAction,
+                        currLeg);
+            }
+            proto.addFlatBranch(isPWave, TRANSUPDIFFRACT, TRANSUP, currLeg);
+
+            // diff acts kind of like turn, so may need to add more
+            if(nextLeg.equals(END_CODE)) {
+                endAction = END;
+                proto.addToBranch(
+                        upgoingRecBranch,
+                        isPWave,
+                        nextIsPWave,
+                        endAction,
+                        currLeg);
+            } else if (nextLeg.startsWith("^")) {
+                String nextdepthString;
+                nextdepthString = nextLeg.substring(1);
+                endAction = REFLECT_UNDERSIDE;
+                int reflectDisconBranch = LegPuller.closestDisconBranchToDepth(tMod, nextdepthString);
+                if (reflectDisconBranch >= disconBranch ) {
+                    String reason = "Attempt to underside reflect " + currLeg
+                            + " from deeper layer: " + nextLeg;
+                    return failWithMessage(proto, reason);
+                }
+                proto.addToBranch(
+                        reflectDisconBranch,
+                        isPWave,
+                        nextIsPWave,
+                        endAction,
+                        currLeg);
+            } else if (nextLeg.startsWith("P") || nextLeg.startsWith("S")) {
+                endAction = REFLECT_UNDERSIDE;
+                proto.addToBranch(
+                        0,
+                        isPWave,
+                        nextIsPWave,
+                        endAction,
+                        currLeg);
+            } else if (nextLeg.equals("p") || nextLeg.equals("s")) {
+                // upgoing
+            } else {
+                return failWithMessage(proto, " Phase not recognized (p12): "
+                        + currLeg + " followed by " + nextLeg
+                        + " when currBranch=" + currBranch);
+            }
         } else if(nextLeg.startsWith("^")) {
             String depthString;
             depthString = nextLeg.substring(1);
@@ -2007,7 +2061,69 @@ public class SeismicPhaseFactory {
             return failWithMessage(proto, reason);
         }
         int currBranch = calcStartBranch(proto, currLeg);
-        if(nextLeg.startsWith("v") || nextLeg.startsWith("V")) {
+
+        if (isUpDiffracted(currLeg, 0)) {
+            String depthString = extractBoundaryId(currLeg, 1, false);
+            int disconBranch = LegPuller.closestDisconBranchToDepth(tMod, depthString);
+            if (currBranch >= disconBranch) {
+                endAction = TRANSUPDIFFRACT;
+                proto.addToBranch(
+                        disconBranch,
+                        isPWave,
+                        nextIsPWave,
+                        endAction,
+                        currLeg);
+            }
+            proto.addFlatBranch(isPWave, TRANSUPDIFFRACT, TRANSUP, currLeg);
+
+            // diff acts kind of like turn, so may need to add more
+            if (nextLeg.startsWith("P") || nextLeg.startsWith("S") || nextLeg.equals("p") || nextLeg.equals("s")) {
+                endAction = TRANSUP;
+                proto.addToBranch(
+                        tMod.getCmbBranch(),
+                        PWAVE,
+                        nextIsPWave,
+                        endAction,
+                        currLeg);
+
+            } else if (nextLeg.equals("K") || (nextLeg.startsWith("K") && isDiffracted(nextLeg))) {
+                endAction = REFLECT_UNDERSIDE;
+                proto.addToBranch(
+                        tMod.getCmbBranch(),
+                        PWAVE,
+                        nextIsPWave,
+                        endAction,
+                        currLeg);
+            } else if (nextLeg.startsWith("^")) {
+                String reflectdepthString = nextLeg.substring(1);
+                endAction = REFLECT_UNDERSIDE;
+                int reflectBranch = LegPuller.closestDisconBranchToDepth(tMod, reflectdepthString);
+                if (reflectBranch < tMod.getCmbBranch()) {
+                    return failWithMessage(proto, " Phase not recognized (5a): "
+                            + currLeg + " followed by " + nextLeg
+                            + " when reflectBranch=" + reflectBranch
+                            + " < cmbBranch=" + tMod.getCmbBranch() + ", likely need P or S leg , prev=" + prevLeg);
+                }
+                if (reflectBranch >= disconBranch) {
+                    return failWithMessage(proto,  " Phase not recognized (5b): "
+                            + currLeg + " followed by " + nextLeg
+                            + " when reflectBranch=" + reflectBranch
+                            + " > disconBranch=" + disconBranch + ", likely need K, I or J leg , prev=" + prevLeg);
+                }
+                if (reflectBranch == tMod.getNumBranches()) {
+                    String reason = "Attempt to underside reflect from center of earth: " + nextLeg;
+                    return failWithMessage(proto, reason);
+                }
+                proto.addToBranch(
+                        reflectBranch,
+                        isPWave,
+                        nextIsPWave,
+                        endAction,
+                        currLeg);
+            } else {
+                throw new TauModelException("Should not allow " + currLeg + " followed by " + nextLeg);
+            }
+        } else if(nextLeg.startsWith("v") || nextLeg.startsWith("V")) {
             return failWithMessage(proto, " k must always be up going "
                     + " and cannot come immediately before a top-side reflection."
                     + " currLeg=" + currLeg + " nextLeg=" + nextLeg);

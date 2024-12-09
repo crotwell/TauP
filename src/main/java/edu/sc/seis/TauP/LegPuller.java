@@ -16,6 +16,8 @@ public class LegPuller {
 
     public static final String namedHeadDiffRE = "(([PSIJK]([mci]|"+number+")?)(?<hd>(?:"+DIFFDOWN+")|(?:"+DIFF+")|"+HEAD_CODE+"))";
 
+    public static final String upDiffRE = "(([pskyj]([mci]|"+number+")?)(?<hd>(?:"+DIFF+")"+"))";
+
     public static final String travelLeg = "(([PpSsKkIyJj]"+travelSuffix+"?)|"+headDiffRE+")";
 
     public static final String interactPrefix = "[vV^]";
@@ -70,8 +72,15 @@ public class LegPuller {
                             + PhaseSymbols.EX_DOWN_CODE+ " in " + name+" at "+offset, name, offset);
                 } else if(isUpgoingSymbol(name, offset)) {
                     // Do the strictly upgoing, easy ones, ie k,y,j,p,s
-                    legs.add(name.substring(offset, offset + 1));
-                    offset = offset + 1;
+                    if (isUpDiffracted(name, offset)) {
+                        // upgoind to diffraction? weird but maybe possible
+                        String diffLeg = name.substring(offset, name.indexOf(DIFF, offset + 1) + DIFF.length());
+                        legs.add(diffLeg);
+                        offset += diffLeg.length();
+                    } else {
+                        legs.add(name.substring(offset, offset + 1));
+                        offset = offset + 1;
+                    }
                 } else if(name.charAt(offset) == m) {
                     // moho
                     legs.add(name.substring(offset, offset + 1));
