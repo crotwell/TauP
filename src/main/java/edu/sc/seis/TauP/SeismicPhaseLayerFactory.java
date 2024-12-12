@@ -28,7 +28,6 @@ public class SeismicPhaseLayerFactory {
         } else if (botBranchNum == tMod.getNumBranches()) {
             this.botDepth = tMod.getRadiusOfEarth();
         } else {
-            System.err.println("botBranch: "+botBranchNum+" of "+tMod.getNumBranches());
             this.botDepth = tMod.getTauBranch(botBranchNum, true).getBotDepth();
         }
     }
@@ -559,7 +558,6 @@ public class SeismicPhaseLayerFactory {
                     endAction,
                     currLeg);
         } else if(getAboveFactory()!= null &&   getAboveFactory().isLayerLeg(nextLeg)) {
-            System.err.println(" check down for START "+prevLeg+" "+currLeg+" of "+baseFactory.name);
             if ((proto.getEndAction()== START && PhaseSymbols.isDowngoingSymbol(currLeg) ) || isDowngoingActionAfter(proto.getEndAction())) {
                 endAction = TURN;
                 proto.addToBranch(
@@ -727,7 +725,6 @@ public class SeismicPhaseLayerFactory {
         PhaseInteraction prevEndAction = proto.getEndAction();
         int prevEndBranch = proto.isEmpty() ? -1 : proto.endSegment().endBranch;
         int currBranch = baseFactory.calcStartBranch(proto, currLeg);
-        System.err.println("diff: prevEnd "+prevEndBranch+"  currBranch: "+currBranch+" for "+prevLeg+" "+currLeg);
         int depthIdx = 0;
         if (currLeg.startsWith(""+p_leg) || currLeg.startsWith(""+s_leg)) {
             depthIdx = 1;
@@ -744,7 +741,6 @@ public class SeismicPhaseLayerFactory {
         SeismicPhaseSegment prevSegment = !proto.segmentList.isEmpty() ? proto.endSegment() : null;
 
         endAction = DIFFRACT;
-        System.err.println("splf check "+currBranch+" < "+(disconBranch-1));
         if (prevEndBranch < disconBranch - 1 || prevEndAction == START ||
                 (prevEndBranch == disconBranch-1 && prevSegment != null && prevSegment.endsAtTop())
         ) {

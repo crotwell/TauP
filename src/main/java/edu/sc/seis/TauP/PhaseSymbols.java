@@ -178,10 +178,8 @@ public class PhaseSymbols {
         Pattern phaseRegEx = Pattern.compile("^"+LegPuller.namedHeadDiffRE);
         Matcher m = phaseRegEx.matcher(name.substring(offset));
         if (m.find()) {
-            System.err.println("group hd "+m.group("hd"));
             return DIFFDOWN.equals(m.group("hd"));
         }
-        System.err.println("No match");
         return false;
     }
 
@@ -194,10 +192,6 @@ public class PhaseSymbols {
         Pattern phaseRegEx = Pattern.compile("^"+LegPuller.namedHeadDiffRE);
         Matcher m = phaseRegEx.matcher(name.substring(offset));
         if (m.find()) {
-            System.err.println("isHead "+name+" 1 "+m.group(m.groupCount()-1)+" 2"+m.group(m.groupCount()));
-            for (int i = 0; i <= m.groupCount(); i++) {
-                System.err.println(i+" "+m.group(i));
-            }
             return HEAD_CODE.equals(m.group("hd"));
         }
         return false;
