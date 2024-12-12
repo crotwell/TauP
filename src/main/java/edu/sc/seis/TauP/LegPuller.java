@@ -266,7 +266,7 @@ public class LegPuller {
                     }
                 } else {
                     throw new PhaseParseException("Invalid phase name at "
-                            + name.substring(offset) + " in " + name+" at "+offset, name, offset);
+                            + name.substring(offset) + " in " + name+" at "+offset+" '"+name.substring(0, offset)+"' '"+name.substring(offset)+"'", name, offset);
                 }
             }
         legs.add(PhaseSymbols.END_CODE);
