@@ -442,9 +442,19 @@ public class VelocityLayer implements Cloneable, Serializable {
         return getBotDepth()-getTopDepth();
     }
 
+
+    /**
+     * Calculate Qp from Qs assuming Q_kappa is negligible, at top of layer.
+     *
+     */
     public double calcTopQpFromQs() {
         return calcQpFromQs(getTopQs(), getTopPVelocity(), getTopSVelocity());
     }
+
+    /**
+     * Calculate Qp from Qs assuming Q_kappa is negligible, at bottom of layer.
+     *
+     */
     public double calcBotQpFromQs() {
         return calcQpFromQs(getBotQs(), getBotPVelocity(), getBotSVelocity());
     }
