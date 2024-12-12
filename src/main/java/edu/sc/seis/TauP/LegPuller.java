@@ -50,7 +50,8 @@ public class LegPuller {
      */
     protected static ArrayList<String> legPuller(String name) throws PhaseParseException {
         // check against regex for coarse validation
-        if ( ! regExCheck(name)) {
+        // currently disabled as regex has issues and is really big
+        if ( false && ! regExCheck(name)) {
             if (TauPConfig.DEBUG) {
                 throw new PhaseParseException("Do not understand Phase "+name+" doesn't match phase regex: "+phaseRegEx, name, 0);
             }
