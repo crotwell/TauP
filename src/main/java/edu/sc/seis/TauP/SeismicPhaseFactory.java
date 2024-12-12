@@ -16,6 +16,8 @@ import static edu.sc.seis.TauP.ProtoSeismicPhase.failNewPhase;
 
 public class SeismicPhaseFactory {
 
+    public static boolean OLD_PARSE = false;
+
     boolean DEBUG;
     String name;
     double receiverDepth;
@@ -519,6 +521,19 @@ public class SeismicPhaseFactory {
                 nextIsPWave = isLegPWave[legNum + 1];
             }
 
+            // crust/mantle, outer core, inner core
+            List<SeismicPhaseLayerFactory> layerFactories = SeismicPhaseLayerFactory.createFactory(this);
+            String nextNextLeg = legNum < legs.size()-2 ? legs.get(legNum+2) : END_CODE;
+            if ( ! OLD_PARSE) {
+                if (isCrustMantleLeg(currLeg)) {
+                    proto = layerFactories.get(0).parse(proto, prevLeg, currLeg, nextLeg, nextNextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
+                } else if (isOuterCoreLeg(currLeg)) {
+                    proto = layerFactories.get(1).parse(proto, prevLeg, currLeg, nextLeg, nextNextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
+                } else if (isInnerCoreLeg(currLeg)) {
+                    proto = layerFactories.get(2).parse(proto, prevLeg, currLeg, nextLeg, nextNextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
+                }
+            } else {
+            // old parse
             if (isCrustMantleLeg(currLeg)) {
                 if (currLeg.equals("Ped") || currLeg.equals("Sed")) {
                     /* Deal with P and S exclusively downgoing case . */
@@ -529,15 +544,14 @@ public class SeismicPhaseFactory {
                 } else if (currLeg.equals("P") || currLeg.equals("S")) {
                     /* Now deal with P and S case. */
                     //special, need nextnextleg too
-                    String nextNextLeg = legNum < legs.size()-2 ? legs.get(legNum+2) : END_CODE;
                     proto = currLegIs_P_S(proto, prevLeg, currLeg, nextLeg, nextNextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
                 } else if ((currLeg.startsWith("P") || currLeg.startsWith("S")) && (isDiffracted(currLeg) || isDiffractedDown(currLeg))) {
                     proto = currLegIs_Pdiff_Sdiff(proto, prevLeg, currLeg, nextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
                 } else if ((currLeg.startsWith("P") || currLeg.startsWith("S")) &&
-                        (isHead(currLeg,0) || currLeg.endsWith("g"))) {
+                        (isHead(currLeg, 0) || currLeg.endsWith("g"))) {
                     proto = currLegIs_Pn_Sn(proto, prevLeg, currLeg, nextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
                 } else {
-                    String reason = "Unknown phase in crust/mantle: "+currLeg;
+                    String reason = "Unknown phase in crust/mantle: " + currLeg;
                     proto.failNext(reason);
                     return proto;
                 }
@@ -583,14 +597,13 @@ public class SeismicPhaseFactory {
                 if (currLeg.equals("I") || currLeg.equals("J")) {
                     /* And now consider inner core, I and J. */
                     if (checkDegenerateInnerCore(prevLeg, currLeg, nextLeg, isPWave, prevIsPWave, legNum)) {
-                        String nextNextLeg = legNum < legs.size()-2 ? legs.get(legNum+2) : END_CODE;
                         proto = currLegIs_I_J(proto, prevLeg, currLeg, nextLeg, nextNextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
                     } else {
                         String reason = "DegenerateInnerCore";
                         proto.failNext(reason);
                         return proto;
                     }
-                } else if ((currLeg.startsWith("I") || currLeg.startsWith("J")) && ( isDiffracted(currLeg) || isDiffractedDown(currLeg))) {
+                } else if ((currLeg.startsWith("I") || currLeg.startsWith("J")) && (isDiffracted(currLeg) || isDiffractedDown(currLeg))) {
                     /* Now deal with I5500diff. */
                     if (checkDegenerateInnerCore(prevLeg, currLeg, nextLeg, isPWave, prevIsPWave, legNum)) {
                         proto = currLegIs_I_Jdiff(proto, prevLeg, currLeg, nextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
@@ -603,7 +616,6 @@ public class SeismicPhaseFactory {
                 } else if (currLeg.equals("Ied") || currLeg.equals("Jed")) {
                     /* And now consider inner core, Ied and Jed. */
                     if (checkDegenerateInnerCore(prevLeg, currLeg, nextLeg, isPWave, prevIsPWave, legNum)) {
-                        String nextNextLeg = legNum < legs.size()-2 ? legs.get(legNum+2) : END_CODE;
                         proto = currLegIs_Ied_Jed(proto, prevLeg, currLeg, nextLeg, nextNextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
                     } else {
                         String reason = "DegenerateInnerCore";
@@ -638,40 +650,42 @@ public class SeismicPhaseFactory {
                     }
                 }
                 if (nextLeg.equals(END_CODE)) {
-                    return failWithMessage(proto," Phase not recognized (12): "
+                    return failWithMessage(proto, " Phase not recognized (12): "
                             + currLeg + " as last leg, then " + nextLeg);
                 }
             } else if (currLeg.startsWith("^")) {
                 if (nextLeg.equals(END_CODE)) {
-                    return failWithMessage(proto," Phase not recognized (12): "
+                    return failWithMessage(proto, " Phase not recognized (12): "
                             + currLeg + " as last leg, then " + nextLeg);
                 }
                 // nothing to do as will have been handled by previous leg
             } else if (currLeg.startsWith("v") || currLeg.startsWith("V")) {
                 if (nextLeg.equals(END_CODE)) {
-                    return failWithMessage(proto," Phase not recognized (12): "
+                    return failWithMessage(proto, " Phase not recognized (12): "
                             + currLeg + " as last leg, then " + nextLeg);
                 }
                 String depthString;
                 depthString = currLeg.substring(1);
                 int b = LegPuller.closestDisconBranchToDepth(tMod, depthString);
                 if (b == 0) {
-                    return failWithMessage(proto," Phase not recognized: " + currLeg + " looks like a top side reflection at the free surface.");
+                    return failWithMessage(proto, " Phase not recognized: " + currLeg + " looks like a top side reflection at the free surface.");
                 }
             } else if (LegPuller.isBoundary(currLeg)) {
                 // check for phase like P0s, but could also be P2s if first discon is deeper
                 int b = LegPuller.closestDisconBranchToDepth(tMod, currLeg);
                 if (b == 0 && (nextLeg.equals("p") || nextLeg.equals("s"))) {
-                    return failWithMessage(proto," Phase not recognized: " + currLeg
+                    return failWithMessage(proto, " Phase not recognized: " + currLeg
                             + " followed by " + nextLeg + " looks like a upgoing wave from the free surface as closest discontinuity to " + currLeg + " is zero depth.");
                 }
             } else if (currLeg.endsWith(HEAD_CODE)) {
                 // non-standard head wave
                 proto = currLegIs_OtherHead(proto, prevLeg, currLeg, nextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
             } else {
-                return failWithMessage(proto," Phase not recognized (10): " + currLeg
+                return failWithMessage(proto, " Phase not recognized (10): " + currLeg
                         + " followed by " + nextLeg);
             }
+        }
+
             if (proto.isFail ) {
                 // phase has no arrivals, so stop looping over legs
                 break;

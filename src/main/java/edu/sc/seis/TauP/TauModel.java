@@ -309,6 +309,42 @@ public class TauModel implements Serializable {
     }
 
     /**
+     * Check if crust is missing, moho at surface
+     * @return
+     */
+    public boolean isDegenerateCrust() {
+        // degenerate case, moho at surface
+        return getMohoDepth() == 0;
+    }
+
+    /**
+     * Check if mantle is missing, model is only core, cmb at surface
+     * @return
+     */
+    public boolean isDegenerateCrustMantle() {
+        // degenerate case, cmb is surface
+        return getCmbDepth() == 0;
+    }
+
+    /**
+     * Check if inner core is missing, iocb at center of earth
+     * @return
+     */
+    public boolean isDegenerateInnerCore() {
+        return getIocbDepth() == getRadiusOfEarth() ;
+        // degenerate case, IOCB is at center, so model without an inner core
+    }
+
+    /**
+     * Check if outer core is missing, iocb at cmb
+     * @return
+     */
+    public boolean isDegenerateOuterCore() {
+        return getIocbDepth() == getCmbDepth() ;
+        // degenerate case, IOCB is at CMB, so model without an outer core
+    }
+
+    /**
      * @return the radius of the Earth in km, usually input from the velocity
      *          model.
      */

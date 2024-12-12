@@ -115,6 +115,11 @@ public enum PhaseInteraction {
 
     FAIL;
 
+
+    public static boolean isUpgoingActionBefore(PhaseInteraction endAction) {
+        return ! isDowngoingActionBefore(endAction);
+    }
+
     public static boolean isDowngoingActionBefore(PhaseInteraction endAction) {
         boolean isDowngoing;
         switch (endAction) {
@@ -138,6 +143,10 @@ public enum PhaseInteraction {
                 throw new IllegalArgumentException("End action case not yet impl: "+endAction);
         }
         return isDowngoing;
+    }
+
+    public static boolean isUpgoingActionAfter(PhaseInteraction endAction) {
+        return ! isDowngoingActionAfter(endAction);
     }
 
     public static boolean isDowngoingActionAfter(PhaseInteraction endAction) {

@@ -348,10 +348,17 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
         return segmentList.isEmpty();
     }
 
+    public final PhaseInteraction getEndAction() {
+        if (isEmpty()) {
+            return START;
+        }
+        return endSegment().endAction;
+    }
     public final SeismicPhaseSegment endSegment() {
         if (isEmpty()) {throw new RuntimeException("Segment list is empty");}
         return segmentList.get(segmentList.size()-1);
     }
+
     public final SeismicPhaseSegment sourceSegment() {
         if (isEmpty()) {throw new RuntimeException("Segment list is empty");}
         return segmentList.get(0);

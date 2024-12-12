@@ -39,6 +39,7 @@ public class PhaseSymbols {
     public static final char BACKSCATTER_CODE = 'O';
     public static final String EX_DOWN_CODE = "ed";
     public static final String END_CODE = "END";
+    public static final String START_CODE = "START";
 
 
     public static boolean isCompressionalWaveSymbol(String name) {
@@ -86,7 +87,18 @@ public class PhaseSymbols {
     }
     public static boolean isReflectSymbol(String name, int offset) {
         char c = name.charAt(offset);
-        return c == TOPSIDE_REFLECTION || c == TOPSIDE_CRITICAL_REFLECTION || c == UNDERSIDE_REFLECTION;
+        return isTopsideReflectSymbol(name, offset) || isUndersideReflectSymbol(name, offset);
+    }
+    public static boolean isTopsideReflectSymbol(String name, int offset) {
+        char c = name.charAt(offset);
+        return c == TOPSIDE_REFLECTION || c == TOPSIDE_CRITICAL_REFLECTION
+                || c == PhaseSymbols.i || c == PhaseSymbols.c;
+    }
+    public static boolean isCriticalReflectSymbol(String name) {
+        return isReflectSymbol(name, 0) && name.charAt(0) == PhaseSymbols.TOPSIDE_CRITICAL_REFLECTION;
+    }
+    public static boolean isUndersideReflectSymbol(String name, int offset) {
+        return name.charAt(offset) == PhaseSymbols.UNDERSIDE_REFLECTION;
     }
 
     public static boolean isScatterSymbol(String name) {

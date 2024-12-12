@@ -224,14 +224,14 @@ public class SeismicPhaseSegment {
 		} else if (isFlat) {
 			if (prevEndAction == null) {
 				depthRange = " PrevAction is NULL ";
-			} else if (prevEndAction == PhaseInteraction.DIFFRACT || prevEndAction == TRANSUPDIFFRACT) {
+			} else if (prevEndAction == PhaseInteraction.DIFFRACT || prevEndAction == DIFFRACTTURN || prevEndAction == TRANSUPDIFFRACT) {
 				depthRange = " at "+tMod.getTauBranch(endBranch, isPWave).getBotDepth()+" (DIFF)";
 			} else if (prevEndAction == PhaseInteraction.HEAD) {
 				depthRange = " at " + tMod.getTauBranch(endBranch, isPWave).getTopDepth()+" (HEAD)";
 			} else if (prevEndAction == KMPS) {
 				depthRange = " at surface (KMPS)";
 			} else {
-				throw new RuntimeException("isFlat but prev not HEAD or DIFFRACT: "+endActionToString(prevEndAction)+" "+endAction);
+				throw new RuntimeException("isFlat but prev not HEAD or DIFFRACT: "+endActionToString(prevEndAction)+"prev: "+prevEndAction+" end:"+endAction);
 			}
 		} else if (isDownGoing) {
 			depthRange = tMod.getTauBranch(startBranch, isPWave).getTopDepth() + " to " + tMod.getTauBranch(endBranch, isPWave).getBotDepth();
