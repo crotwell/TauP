@@ -529,6 +529,10 @@ public class SeismicPhaseFactory {
                 proto = layerFactories.get(1).parse(proto, prevLeg, currLeg, nextLeg, nextNextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
             } else if (isInnerCoreLeg(currLeg)) {
                 proto = layerFactories.get(2).parse(proto, prevLeg, currLeg, nextLeg, nextNextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
+            } else if (isLegDepth(currLeg) || isReflectSymbol(currLeg) || currLeg.equals(""+ m)) {
+                // depth interaction leg, no action
+            } else {
+                return failWithMessage(proto,"Unknown leg: "+currLeg);
             }
 
             if (proto.isFail ) {
