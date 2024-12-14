@@ -5,10 +5,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Calculations &#8212; TauP 3.0.0-SNAPSHOT8 documentation</title>
+    <title>Calculations &#8212; TauP 3.0.0-SNAPSHOT9 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d1102ebc" />
     <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=a66d8bb5" />
-    <script src="_static/documentation_options.js?v=5cc84e14"></script>
+    <script src="_static/documentation_options.js?v=f8b0ca0d"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -36,7 +36,7 @@
 
 
 
-<p class="blurb">Flexible Seismic Travel-Time and Raypath Utilities. Version 3.0.0-SNAPSHOT8</p>
+<p class="blurb">Flexible Seismic Travel-Time and Raypath Utilities. Version 3.0.0-SNAPSHOT9</p>
 
 
 
@@ -108,7 +108,7 @@
 <h1>Calculations<a class="headerlink" href="#calculations" title="Link to this heading">¶</a></h1>
 <section id="spherical-vs-elliptical">
 <h2>Spherical vs Elliptical<a class="headerlink" href="#spherical-vs-elliptical" title="Link to this heading">¶</a></h2>
-<p>The TauP Toolkit, and the underlying methodology, are inheirently spherical. But
+<p>The TauP Toolkit, and the underlying methodology, are inherently spherical. But
 of course the earth is not quite a sphere, and so there are differences
 between the calculated times in a model and the actual travel times within
 the earth.</p>
@@ -118,7 +118,7 @@ between two latitude and longitude points can be based on the surface distance
 or the angle from the center of the earth. In a sphere, these are equivalent,
 but on an ellipsoid they are not. It is generally more accurate to base the
 traveltime calculations based on the geocentric angle instead of the surface
-arc distance. This discrepency arrised from the difference in definition of
+arc distance. This discrepancy arrised from the difference in definition of
 the <a class="reference external" href="https://en.wikipedia.org/wiki/Geodetic_coordinates#Geodetic_vs._geocentric_coordinates">geodetic and geocenticlatitude</a>.
 Geodetic, defined as the angle of the surface normal plane and the equatorial
 plane. Geocentric is angle between the radius to the point and the equator.
@@ -138,7 +138,9 @@ the default flattening can be changed with the <code class="code docutils litera
 <p>TauP is capable of handling models,
 like <a class="reference external" href="_static/StdModels/ak135favg.nd">ak135favg</a>, that have an ocean layer.
 However, care should be taken with S waves as they cannot propigate in a fliud
-layer. So the phase SS doesn’t exist in ak135favg. Also, the default station
+layer. So the phase SS doesn’t exist in ak135favg, but the phase
+<cite>S^3S</cite> potentially does, if the source and receiver are below the ocean layer.
+Also, the default station
 depth is the model surface, but we generall don’t think of seismic stations
 floating on top of the ocean, so it may be more appropriate to locate the
 station at depth, on the bottom of the ocean layer. Or perhaps in this case,
@@ -146,6 +148,13 @@ using <a class="reference external" href="_static/StdModels/ak135fcont.nd">ak135
 </section>
 <section id="amplitude">
 <h2>Amplitude<a class="headerlink" href="#amplitude" title="Link to this heading">¶</a></h2>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Amplitudes are an experimental feature and may not generate correct
+results. They are provided in the hope that they are helpful and to
+allow feedback from the community, but testing of their correctness
+is ongoing.</p>
+</div>
 <p>TauP can calculate an amplitude factor estimate for some simple phases, as long
 as the phase path is simple turning or reflection, but not for head or diffracted
 phases. The amplitude factor, given for both the P-Sv and Sh systems is the
@@ -153,21 +162,23 @@ product of multiple factors. For details, see <span id="id1">Ammon <em>et al.</e
 <a class="reference external" href="https://doi.org/10.1016/C2017-0-03756-4">chapter 13</a>.</p>
 <p>The factors that contribute to this estimate are:</p>
 <ul class="simple">
-<li><p>A nominal source term for a Mw 4.0 earthquake, but without the
-source orientation, so should be thought of as a bound, rather than an actual
-amplitude.</p></li>
+<li><p>A nominal source term for a Mw 4.0 earthquake, but without</p></li>
+<li><p>An optional source orientation, strike, dip and rake.</p></li>
 <li><p>A radiation term, based on the density and velocity at the source depth.</p></li>
 <li><p>Geometrical spreading factor.</p></li>
 <li><p>The product of energy reflection and transmission coefficients for each
 boundary encountered along the path.</p></li>
-<li><p>Attenuation for a 1 Hz wave.</p></li>
-<li><p>The free surface receiver function value, if the receiver depth is zero.</p></li>
+<li><p>Attenuation for a regular sampled frequencies, up to a maximum.</p></li>
+<li><p>The free surface receiver function value, if the receiver depth is less than 1.</p></li>
 </ul>
-<p>Amplitudes for seismic waves are notoriously difficult to calulate without error,
+<p>Amplitudes for seismic waves are notoriously difficult to calculate without error,
 and so the values given should be taken with a healthy dose of skepticism. In
 addition, for large earthquakes the amplitude of body wave phases will saturate.
 So a larger magnitude will not generate a larger arrival amplitude, even
-though this calculation will be larger.</p>
+though this calculation will be larger. These values may be more useful for
+comparing relative amplitude between phases at at distance,
+or for the same phase at multiple distances, rather than expecting the
+observed amplitude on a real seismogram to match to any accuracy.</p>
 </section>
 </section>
 
