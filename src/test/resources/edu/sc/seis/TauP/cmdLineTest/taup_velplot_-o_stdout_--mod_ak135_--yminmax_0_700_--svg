@@ -4,7 +4,7 @@
   <metadata>
     <taup>
       <command>taup velplot -o stdout &#45;&#45;mod ak135 &#45;&#45;yminmax 0 700 &#45;&#45;svg </command>
-      <version>3.0.0-SNAPSHOT8</version>
+      <version>3.0.0-SNAPSHOT9</version>
       <a href="https://github.com/crotwell/TauP">https://github.com/crotwell/TauP</a>
     <minmax xmin="3.46" xmax="10.89632" ymin="0.0" ymax="700.0" />
     </taup>
