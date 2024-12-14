@@ -397,15 +397,14 @@ public class SeismicPhaseLayerFactory {
                     endAction,
                     currLeg);
 
-        } else if(nextLeg.equals("c") || nextLeg.equals("i")
-                || nextLeg.equals("I") || nextLeg.equals("J") || nextLeg.equals("j")) {
+        } else if(belowLayerFactory.isLayerLeg(nextLeg)) {
             return baseFactory.failWithMessage(proto," Phase not recognized (3): "
-                    + currLeg + " followed by " + nextLeg+", p and s must be upgoing in mantle and so cannot hit core.");
+                    + currLeg + " followed by " + nextLeg+", must be upgoing and so cannot hit lower layers.");
         } else if(baseFactory.isLegDepth(nextLeg)) {
             double nextLegDepth = Double.parseDouble(nextLeg);
-            if (nextLegDepth >= tMod.getCmbDepth()) {
+            if (nextLegDepth >= botDepth) {
                 return baseFactory.failWithMessage(proto," Phase not recognized (3): "
-                        + currLeg + " followed by " + nextLeg+", p and s must be upgoing in mantle and so cannot hit core.");
+                        + currLeg + " followed by " + nextLeg+",  must be upgoing and so cannot hit lower depth.");
             }
             int disconBranch = LegPuller.closestDisconBranchToDepth(tMod, nextLeg, depthTolerance);
             if (!validateDisconWithinLayers(proto, disconBranch, currLeg)) {
@@ -418,13 +417,7 @@ public class SeismicPhaseLayerFactory {
                     nextIsPWave,
                     endAction,
                     currLeg);
-        } else if((nextLeg.charAt(0) == getBelowPLegSymbol() || nextLeg.charAt(0) == getBelowSLegSymbol() )) {
-            return baseFactory.failWithMessage(proto," Phase not recognized (5.5): "
-                    + currLeg + " followed by " + nextLeg
-                    + " upgoing leg cannot go to lower layer"
-            );
-        } else if(nextLeg.charAt(0) == getAbovePLegSymbol() || nextLeg.charAt(0) == getAboveSLegSymbol()
-                || nextLeg.charAt(0) == getAboveUpPLegSymbol() || nextLeg.charAt(0) == getAboveUpSLegSymbol()) {
+        } else if(aboveLayerFactory.isLayerLeg(nextLeg)) {
             endAction = TRANSUP;
             proto.addToBranch(
                     topBranchNum,
