@@ -6,7 +6,7 @@ Calculations
 Spherical vs Elliptical
 -----------------------
 
-The TauP Toolkit, and the underlying methodology, are inheirently spherical. But
+The TauP Toolkit, and the underlying methodology, are inherently spherical. But
 of course the earth is not quite a sphere, and so there are differences
 between the calculated times in a model and the actual travel times within
 the earth.
@@ -17,7 +17,7 @@ between two latitude and longitude points can be based on the surface distance
 or the angle from the center of the earth. In a sphere, these are equivalent,
 but on an ellipsoid they are not. It is generally more accurate to base the
 traveltime calculations based on the geocentric angle instead of the surface
-arc distance. This discrepency arrised from the difference in definition of
+arc distance. This discrepancy arrised from the difference in definition of
 the `geodetic and geocenticlatitude <https://en.wikipedia.org/wiki/Geodetic_coordinates#Geodetic_vs._geocentric_coordinates>`_.
 Geodetic, defined as the angle of the surface normal plane and the equatorial
 plane. Geocentric is angle between the radius to the point and the equator.
@@ -38,7 +38,9 @@ Oceans
 TauP is capable of handling models,
 like `ak135favg <_static/StdModels/ak135favg.nd>`_, that have an ocean layer.
 However, care should be taken with S waves as they cannot propigate in a fliud
-layer. So the phase SS doesn't exist in ak135favg. Also, the default station
+layer. So the phase SS doesn't exist in ak135favg, but the phase
+`S^3S` potentially does, if the source and receiver are below the ocean layer. 
+Also, the default station
 depth is the model surface, but we generall don't think of seismic stations
 floating on top of the ocean, so it may be more appropriate to locate the
 station at depth, on the bottom of the ocean layer. Or perhaps in this case,
@@ -46,6 +48,13 @@ using `ak135fcont <_static/StdModels/ak135fcont.nd>`_ is more appropriate.
 
 Amplitude
 ---------
+
+.. warning::
+
+  Amplitudes are an experimental feature and may not generate correct
+  results. They are provided in the hope that they are helpful and to
+  allow feedback from the community, but testing of their correctness
+  is ongoing.
 
 TauP can calculate an amplitude factor estimate for some simple phases, as long
 as the phase path is simple turning or reflection, but not for head or diffracted
@@ -55,9 +64,9 @@ product of multiple factors. For details, see :cite:t:`fmgs`
 
 The factors that contribute to this estimate are:
 
-* A nominal source term for a Mw 4.0 earthquake, but without the
-  source orientation, so should be thought of as a bound, rather than an actual
-  amplitude.
+* A nominal source term for a Mw 4.0 earthquake, but without
+
+* An optional source orientation, strike, dip and rake.
 
 * A radiation term, based on the density and velocity at the source depth.
 
@@ -66,12 +75,15 @@ The factors that contribute to this estimate are:
 * The product of energy reflection and transmission coefficients for each
   boundary encountered along the path.
 
-* Attenuation for a 1 Hz wave.
+* Attenuation for a regular sampled frequencies, up to a maximum.
 
-* The free surface receiver function value, if the receiver depth is zero.
+* The free surface receiver function value, if the receiver depth is less than 1.
 
-Amplitudes for seismic waves are notoriously difficult to calulate without error,
+Amplitudes for seismic waves are notoriously difficult to calculate without error,
 and so the values given should be taken with a healthy dose of skepticism. In
 addition, for large earthquakes the amplitude of body wave phases will saturate.
-So a larger magnitude will not generate a larger arrival amplitude, even 
-though this calculation will be larger.
+So a larger magnitude will not generate a larger arrival amplitude, even
+though this calculation will be larger. These values may be more useful for
+comparing relative amplitude between phases at at distance,
+or for the same phase at multiple distances, rather than expecting the
+observed amplitude on a real seismogram to match to any accuracy.
