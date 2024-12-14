@@ -111,7 +111,7 @@ the depth to an interface involved in an interaction.
     included, this represents a P-wave  converting to an S-wave when it hits the interface
     from below.
     The numbers given need not be the actual depth, the closest depth corresponding to a
-    discontinuity in the model will be used.
+    discontinuity in the model will be used, within a tolerance of 10 km.
     For example, if the time for :code:`P410s` is requested in a model where the discontinuity
     was really located at 406.7 kilometers depth, the time returned would actually be for
     :code:`P406.7s`.
@@ -119,7 +119,8 @@ the depth to an interface involved in an interaction.
     Obviously, care should be taken to ensure that there are no other discontinuities
     closer than the one of interest, but this approach allows generic interface
     names like `410` and `660` to be used without knowing the exact depth in a given
-    model.
+    model. Use of a depth number greater than 10 km from any discontinuity
+    will result in a failed phase name.
 
 5.  Conversion at depth:
 
@@ -184,7 +185,7 @@ the depth to an interface involved in an interaction.
     or inner-core outer-core boundary, :code:`i`, must use the :code:`\^`
     and :code:`v` notation.
     For instance, in the TauP convention, :code:`p\^410S` is used to describe
-    a near-source underside reflection.
+    a near-source underside reflection from the 410 discontinuity.
 
     Underside reflections, except at the
     surface (:code:`PP`, :code:`sS`, etc.),
@@ -213,7 +214,7 @@ the depth to an interface involved in an interaction.
 8.  Core reflections:
 
     Starting in version 3.0, :code:`\^` and :code:`v` are now allowed
-    for for all disconuities in the model, including
+    for for all discontinuities in the model, including
     the crust, mantle and core.
     However, because
     ":code:`p` is to :code:`P`" is not the same as
@@ -222,7 +223,7 @@ the depth to an interface involved in an interaction.
     upgoing leg in the inner core. For example in a model with a discontinuity
     at 5500 km depth in the inner core, the phases
     :code:`PKIv5500IKP` and :code:`PKIv5500ykp` are the same. Note that
-    because standard models do not have discontuities in the core, these
+    because standard models do not have discontinuities in the core, these
     phases have not received the same level of testing.
 
 9   Scattered phases:
@@ -232,7 +233,7 @@ the depth to an interface involved in an interaction.
     Forward scattering is in the sense that the phase continues around the earth
     in the same direction, while backscattering would reverse direction.
     Note that for some phases that go the long way around the earth, the sense of
-    scattering may not match the positive anglular direction.
+    scattering may not match the positive angular direction.
 
 10  Core phase names:
 
@@ -270,6 +271,6 @@ naming convention by providing a detailed description of the path a phase
 takes through the model.
 It is also possible to generate a list of all possible phase paths within
 a model, using the :code:`taup find` tool. This takes a
-:code:`--max n` argument that speficies the maximum number of interactions
+:code:`--max n` argument that specifies the maximum number of interactions
 that the phase has with discontinuities in the model, other than start,
 end and transmission without phase change.
