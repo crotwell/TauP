@@ -138,7 +138,7 @@ public class HeadDiffWaveTest {
     assertEquals(1, SedPdiff_arrivals.size());
     Arrival SedPdiff_Arr = SedPdiff_arrivals.get(0);
 
-    int disconBranch = LegPuller.closestDisconBranchToDepth(tMod, "3000");
+    int disconBranch = LegPuller.closestDisconBranchToDepth(tMod_OCD, "3000");
     assertEquals(tMod_OCD.getTauBranch(disconBranch-1, true).getMinTurnRayParam(), SedPdiff_Arr.getRayParam());
 
 }

@@ -374,11 +374,16 @@ public class LegPuller {
     /**
      * Finds the closest discontinuity to the given depth that can have
      * reflections and phase transformations. May return 1 past total number of
-     * branchs if depth is center of earth.
+     * branchs if depth is center of earth or -1 if no layer is within
+     * 10 km of depth as a number.
      *
      * @return the branch number with the closest top depth.
      */
     public static int closestDisconBranchToDepth(TauModel tMod, String depthString) {
+        return closestDisconBranchToDepth(tMod, depthString, 10);
+    }
+
+    public static int closestDisconBranchToDepth(TauModel tMod, String depthString, double tolerance) {
         switch (depthString) {
             case "" + m:
                 return tMod.getMohoBranch();
@@ -389,19 +394,24 @@ public class LegPuller {
         }
         // nonstandard boundary, given by a number, so we must look for it
         int disconBranch = -1;
-        double disconMax = Double.MAX_VALUE;
+        double disconMax = tolerance;
         double disconDepth = Double.parseDouble(depthString);
         TauBranch tBranch;
         for(int i = 0; i < tMod.getNumBranches(); i++) {
             tBranch = tMod.getTauBranch(i, SimpleSeismicPhase.PWAVE);
             if (tMod.isDiscontinuityBranch(i, SimpleSeismicPhase.PWAVE)) {
                 double foundDepth = tBranch.getTopDepth();
-                if (Math.abs(disconDepth - foundDepth) < disconMax
+                double depthDelta = Math.abs(disconDepth - foundDepth);
+                if (depthDelta < disconMax
                         && !tMod.isNoDisconDepth(foundDepth)) {
                     disconBranch = i;
                     disconMax = Math.abs(disconDepth - foundDepth);
                 }
             }
+        }
+        if (disconBranch == -1) {
+            // not found within tolerence
+
         }
         return disconBranch;
     }

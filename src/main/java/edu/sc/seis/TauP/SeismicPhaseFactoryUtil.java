@@ -25,8 +25,14 @@ public class SeismicPhaseFactoryUtil {
             } else {
                 endAction = REFLECT_TOPSIDE;
             }
+            String depthString = nextLeg.substring(1);
             int disconBranch = LegPuller.closestDisconBranchToDepth(proto.tMod,
-                    nextLeg.substring(1));
+                    depthString, factory.depthTolerance);
+
+            if (disconBranch == -1) {
+                proto.failNext("No boundary in model within "+factory.depthTolerance+" km of "+depthString);
+                return;
+            }
             if (currBranch <= disconBranch - 1) {
                 boolean isPWave = proto.endSegment().isPWave;
                 boolean nextIsPWave = isPWave(nextLeg, isPWave);

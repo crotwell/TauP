@@ -163,14 +163,15 @@ public class SeismicPhaseLayerFactory {
         } else if (nextLeg.endsWith(HEAD_CODE) && nextLeg.length() > 1) {
             String numString = extractBoundaryId(nextLeg, 0, false);
             double headDepth = Double.parseDouble(numString);
-            int disconBranch = LegPuller.closestDisconBranchToDepth(tMod, numString);
-
+            int disconBranch = LegPuller.closestDisconBranchToDepth(tMod, numString, depthTolerance);
             if ( ! tMod.isHeadWaveBranch(disconBranch, isPWave)) {
                 return baseFactory.failWithMessage(proto,"Unable to head wave, "+ currLeg+", "
                         + disconBranch +", "+headDepth+ " is not positive velocity discontinuity.");
             }
 
-            validateDisconWithinLayers(proto, disconBranch-1, currLeg);
+            if (!validateDisconWithinLayers(proto, disconBranch-1, currLeg)) {
+                return proto;
+            }
             endAction = HEAD;
             proto.addToBranch(
                     disconBranch-1,
@@ -180,8 +181,10 @@ public class SeismicPhaseLayerFactory {
                     currLeg);
         } else if (isDiffracted(nextLeg) || isDiffractedDown(nextLeg)) {
             String numString = extractBoundaryId(nextLeg, 0, false);
-            int disconBranch = LegPuller.closestDisconBranchToDepth(tMod, numString);
-            validateDisconWithinLayers(proto, disconBranch-1, currLeg);
+            int disconBranch = LegPuller.closestDisconBranchToDepth(tMod, numString, depthTolerance);
+            if (!validateDisconWithinLayers(proto, disconBranch-1, currLeg)) {
+                return proto;
+            }
             endAction = DIFFRACT;
             proto.addToBranch(
                     disconBranch - 1,
@@ -206,8 +209,10 @@ public class SeismicPhaseLayerFactory {
                     endAction,
                     currLeg);
         } else if(nextLeg.equals("c") || nextLeg.equals("i")) {
-            int disconBranch = LegPuller.closestDisconBranchToDepth(tMod, nextLeg);
-            validateDisconWithinLayers(proto, disconBranch-1, currLeg);
+            int disconBranch = LegPuller.closestDisconBranchToDepth(tMod, nextLeg, depthTolerance);
+            if (!validateDisconWithinLayers(proto, disconBranch-1, currLeg)) {
+                return proto;
+            }
             endAction = REFLECT_TOPSIDE;
             proto.addToBranch(
                     disconBranch - 1,
@@ -217,8 +222,11 @@ public class SeismicPhaseLayerFactory {
                     currLeg);
         } else if( LegPuller.isBoundary(nextLeg)) {
             // but not m, c or i
-            int disconBranch = LegPuller.closestDisconBranchToDepth(tMod, nextLeg);
-            validateDisconWithinLayers(proto, disconBranch-1, currLeg);
+            int disconBranch = LegPuller.closestDisconBranchToDepth(tMod, nextLeg, depthTolerance);
+
+            if (!validateDisconWithinLayers(proto, disconBranch-1, currLeg)) {
+                return proto;
+            }
             endAction = TRANSDOWN;
             proto.addToBranch(
                     disconBranch - 1,
@@ -233,9 +241,11 @@ public class SeismicPhaseLayerFactory {
                 endAction = REFLECT_TOPSIDE;
             }
             int disconBranch = LegPuller.closestDisconBranchToDepth(tMod,
-                    nextLeg.substring(1));
+                    nextLeg.substring(1), depthTolerance);
             if(currBranch <= disconBranch - 1) {
-                validateDisconWithinLayers(proto, disconBranch-1, currLeg);
+                if(!validateDisconWithinLayers(proto, disconBranch-1, currLeg)) {
+                    return proto;
+                }
                 proto.addToBranch(
                         disconBranch - 1,
                         isPWave,
@@ -271,9 +281,11 @@ public class SeismicPhaseLayerFactory {
                     + currLeg + " followed by " + nextLeg);
         } else if (isUpDiffracted(currLeg, 0)){
             String depthString = extractBoundaryId(currLeg, 1, false);
-            int disconBranch = LegPuller.closestDisconBranchToDepth(tMod, depthString);
+            int disconBranch = LegPuller.closestDisconBranchToDepth(tMod, depthString, depthTolerance);
             if(currBranch >= disconBranch) {
-                validateDisconWithinLayers(proto, disconBranch, currLeg);
+                if (!validateDisconWithinLayers(proto, disconBranch, currLeg)) {
+                    return proto;
+                }
                 endAction = TRANSUPDIFFRACT;
                 proto.addToBranch(
                         disconBranch,
@@ -297,13 +309,15 @@ public class SeismicPhaseLayerFactory {
                 String nextdepthString;
                 nextdepthString = nextLeg.substring(1);
                 endAction = REFLECT_UNDERSIDE;
-                int reflectDisconBranch = LegPuller.closestDisconBranchToDepth(tMod, nextdepthString);
+                int reflectDisconBranch = LegPuller.closestDisconBranchToDepth(tMod, nextdepthString, depthTolerance);
                 if (reflectDisconBranch >= disconBranch ) {
                     String reason = "Attempt to underside reflect " + currLeg
                             + " from deeper layer: " + nextLeg;
                     return baseFactory.failWithMessage(proto, reason);
                 }
-                validateDisconWithinLayers(proto, reflectDisconBranch, currLeg);
+                if (!validateDisconWithinLayers(proto, reflectDisconBranch, currLeg)) {
+                    return proto;
+                }
                 proto.addToBranch(
                         reflectDisconBranch,
                         isPWave,
@@ -329,9 +343,11 @@ public class SeismicPhaseLayerFactory {
             String depthString;
             depthString = nextLeg.substring(1);
             endAction = REFLECT_UNDERSIDE;
-            int disconBranch = LegPuller.closestDisconBranchToDepth(tMod, depthString);
+            int disconBranch = LegPuller.closestDisconBranchToDepth(tMod, depthString, depthTolerance);
             if(currBranch >= disconBranch) {
-                validateDisconWithinLayers(proto, disconBranch, currLeg);
+                if (!validateDisconWithinLayers(proto, disconBranch, currLeg)) {
+                    return proto;
+                }
                 proto.addToBranch(
                         disconBranch,
                         isPWave,
@@ -391,8 +407,10 @@ public class SeismicPhaseLayerFactory {
                 return baseFactory.failWithMessage(proto," Phase not recognized (3): "
                         + currLeg + " followed by " + nextLeg+", p and s must be upgoing in mantle and so cannot hit core.");
             }
-            int disconBranch = LegPuller.closestDisconBranchToDepth(tMod, nextLeg);
-            validateDisconWithinLayers(proto, disconBranch, currLeg);
+            int disconBranch = LegPuller.closestDisconBranchToDepth(tMod, nextLeg, depthTolerance);
+            if (!validateDisconWithinLayers(proto, disconBranch, currLeg)) {
+                return proto;
+            }
             endAction = TRANSUP;
             proto.addToBranch(
                     disconBranch,
@@ -461,10 +479,12 @@ public class SeismicPhaseLayerFactory {
                 disconBranch = tMod.getCmbBranch();
             } else {
                 disconBranch = LegPuller.closestDisconBranchToDepth(tMod,
-                        nextLeg.substring(1));
+                        nextLeg.substring(1), depthTolerance);
             }
             if(currBranch <= disconBranch - 1) {
-                validateDisconWithinLayers(proto, disconBranch-1, currLeg);
+                if (!validateDisconWithinLayers(proto, disconBranch-1, currLeg)) {
+                    return proto;
+                }
                 proto.addToBranch(
                         disconBranch - 1,
                         isPWave,
@@ -480,12 +500,14 @@ public class SeismicPhaseLayerFactory {
             String depthString;
             depthString = nextLeg.substring(1);
             endAction = REFLECT_UNDERSIDE;
-            int disconBranch = LegPuller.closestDisconBranchToDepth(tMod, depthString);
+            int disconBranch = LegPuller.closestDisconBranchToDepth(tMod, depthString, depthTolerance);
             if (disconBranch == tMod.getNumBranches()) {
                 String reason = "Attempt to underside reflect from center of earth: "+nextLeg;
                 return baseFactory.failWithMessage(proto, reason);
             }
-            validateDisconWithinLayers(proto, disconBranch, currLeg);
+            if (!validateDisconWithinLayers(proto, disconBranch, currLeg)) {
+                return proto;
+            }
             if(getBelowFactory()!= null && getBelowFactory().isLayerLeg(prevLeg)) {
                 proto.addToBranch(
                         disconBranch,
@@ -511,7 +533,7 @@ public class SeismicPhaseLayerFactory {
                         endAction,
                         currLeg);
             } else if((isTopsideReflectSymbol(prevLeg, 0)
-                    && disconBranch < LegPuller.closestDisconBranchToDepth(tMod, prevLeg.substring(1)))
+                    && disconBranch < LegPuller.closestDisconBranchToDepth(tMod, prevLeg.substring(1), depthTolerance))
                     || (prevLeg.equals("m") && disconBranch < tMod.getMohoBranch())
                     || (prevLeg.equals("c") && disconBranch < tMod.getCmbBranch())) {
                 if (disconBranch == tMod.getNumBranches()) {
@@ -579,9 +601,12 @@ public class SeismicPhaseLayerFactory {
                     currLeg);
         } else if( LegPuller.isBoundary(nextLeg) && ( nextLeg.equals("m")
                 || (topDepth < LegPuller.legAsDepthBoundary(tMod, nextLeg) && LegPuller.legAsDepthBoundary(tMod, nextLeg) < botDepth))) {
-            // treat the moho in the same wasy as 410 type
-            // discontinuities
-            int disconBranch = LegPuller.closestDisconBranchToDepth(tMod, nextLeg);
+            // treat the moho in the same wasy as 410 type discontinuities
+
+            int disconBranch = LegPuller.closestDisconBranchToDepth(tMod, nextLeg, depthTolerance);
+            if (!validateDisconWithinLayers(proto, disconBranch, currLeg)) {
+                return proto;
+            }
             if (baseFactory.DEBUG) {
                 Alert.debug("DisconBranch=" + disconBranch + " for " + nextLeg);
                 Alert.debug("  "+tMod.getTauBranch(disconBranch, isPWave).getTopDepth());
@@ -600,7 +625,6 @@ public class SeismicPhaseLayerFactory {
                             + currBranch
                             + " > disconBranch=" + disconBranch);
                 }
-                validateDisconWithinLayers(proto, disconBranch, currLeg);
                 endAction = TRANSUP;
                 proto.addToBranch(
                         disconBranch,
@@ -665,12 +689,14 @@ public class SeismicPhaseLayerFactory {
         } else if (nextLeg.endsWith(HEAD_CODE) && nextLeg.length() > 1) {
             String numString = extractBoundaryId(nextLeg, 0, false);
             try {
-                int disconBranch = LegPuller.closestDisconBranchToDepth(tMod, numString);
+                int disconBranch = LegPuller.closestDisconBranchToDepth(tMod, numString, depthTolerance);
+                if (!validateDisconWithinLayers(proto, disconBranch-1, currLeg)) {
+                    return proto;
+                }
                 if ( ! tMod.isHeadWaveBranch(disconBranch, isPWave)) {
                     return baseFactory.failWithMessage(proto,"Unable to head wave, "+ currLeg+", "
                             + disconBranch +", "+numString+ " is not positive velocity discontinuity.");
                 }
-                validateDisconWithinLayers(proto, disconBranch-1, currLeg);
                 endAction = HEAD;
                 proto.addToBranch(
                         disconBranch - 1,
@@ -689,7 +715,10 @@ public class SeismicPhaseLayerFactory {
             // diff but not Pdiff or Sdiff
             String numString = extractBoundaryId(nextLeg, 0, false);
             try {
-                int disconBranch = LegPuller.closestDisconBranchToDepth(tMod, numString);
+                int disconBranch = LegPuller.closestDisconBranchToDepth(tMod, numString, depthTolerance);
+                if (!validateDisconWithinLayers(proto, disconBranch, nextLeg)) {
+                    return proto;
+                }
 
                 if(prevEndAction == START || prevEndAction == TRANSDOWN || prevEndAction == REFLECT_UNDERSIDE|| prevEndAction == REFLECT_UNDERSIDE_CRITICAL) {
                     // was downgoing, so must first turn in layer
@@ -736,7 +765,10 @@ public class SeismicPhaseLayerFactory {
             disconBranch = botBranchNum+1; // diff at bottom
         } else {
             numString = extractBoundaryId(currLeg, depthIdx, false);
-            disconBranch = LegPuller.closestDisconBranchToDepth(tMod, numString);
+            disconBranch = LegPuller.closestDisconBranchToDepth(tMod, numString, depthTolerance);
+        }
+        if (!validateDisconWithinLayers(proto, disconBranch-1, currLeg)) {
+            return proto;
         }
         SeismicPhaseSegment prevSegment = !proto.segmentList.isEmpty() ? proto.endSegment() : null;
 
@@ -744,7 +776,6 @@ public class SeismicPhaseLayerFactory {
         if (prevEndBranch < disconBranch - 1 || prevEndAction == START ||
                 (prevEndBranch == disconBranch-1 && prevSegment != null && prevSegment.endsAtTop())
         ) {
-            validateDisconWithinLayers(proto, disconBranch-1, currLeg);
             proto.addToBranch(
                     disconBranch - 1,
                     isPWave,
@@ -791,13 +822,15 @@ public class SeismicPhaseLayerFactory {
                 String depthString;
                 depthString = nextLeg.substring(1);
                 endAction = REFLECT_UNDERSIDE;
-                int reflectDisconBranch = LegPuller.closestDisconBranchToDepth(tMod, depthString);
+                int reflectDisconBranch = LegPuller.closestDisconBranchToDepth(tMod, depthString, depthTolerance);
                 if (reflectDisconBranch >= disconBranch ) {
                     String reason = "Attempt to underside reflect " + currLeg
                             + " from deeper layer: " + nextLeg;
                     return baseFactory.failWithMessage(proto, reason);
                 }
-                validateDisconWithinLayers(proto, reflectDisconBranch, currLeg);
+                if (!validateDisconWithinLayers(proto, reflectDisconBranch, currLeg)) {
+                    return proto;
+                }
                 proto.addToBranch(
                         reflectDisconBranch,
                         isPWave,
@@ -872,12 +905,14 @@ public class SeismicPhaseLayerFactory {
                 String depthString;
                 depthString = nextLeg.substring(1);
                 endAction = REFLECT_UNDERSIDE;
-                int disconBranch = LegPuller.closestDisconBranchToDepth(tMod, depthString);
+                int disconBranch = LegPuller.closestDisconBranchToDepth(tMod, depthString, depthTolerance);
                 if (disconBranch >= tMod.getMohoBranch()) {
                     String reason = "Attempt to underside reflect "+currLeg+" from deeper layer: "+nextLeg;
                     return baseFactory.failWithMessage(proto, reason);
                 }
-                validateDisconWithinLayers(proto, disconBranch, currLeg);
+                if (!validateDisconWithinLayers(proto, disconBranch, currLeg)) {
+                    return proto;
+                }
                 proto.addToBranch(
                         disconBranch,
                         isPWave,
@@ -918,13 +953,15 @@ public class SeismicPhaseLayerFactory {
                     depthIdx = 1;
                 }
                 numString = extractBoundaryId(currLeg, depthIdx, false);
-                disconBranch = LegPuller.closestDisconBranchToDepth(tMod, numString);
+                disconBranch = LegPuller.closestDisconBranchToDepth(tMod, numString, depthTolerance);
+            }
+            if (!validateDisconWithinLayers(proto, disconBranch-1, currLeg)) {
+                return proto;
             }
             if ( ! tMod.isHeadWaveBranch(disconBranch, isPWave)) {
                 return baseFactory.failWithMessage(proto,"Unable to head wave, "+ currLeg+", "
                         + disconBranch +", "+numString+ " is not positive velocity discontinuity.");
             }
-            validateDisconWithinLayers(proto, disconBranch-1, currLeg);
             endAction = HEAD;
             proto.addToBranch(
                     disconBranch-1,
@@ -1058,12 +1095,17 @@ public class SeismicPhaseLayerFactory {
         return false;
     }
 
-    public void validateDisconWithinLayers(ProtoSeismicPhase proto, int disconNum, String currLeg) throws TauModelException {
+    public boolean validateDisconWithinLayers(ProtoSeismicPhase proto, int disconNum, String currLeg) throws TauModelException {
+        if (disconNum <= -1) {
+            baseFactory.failWithMessage(proto, "No boundary in model within "+depthTolerance+" km of "+currLeg);
+            return false;
+        }
         if (topBranchNum <= disconNum && disconNum <= botBranchNum) {
-            return;
+            return true;
         }
         baseFactory.failWithMessage(proto, "Illegal phase, cannot reach discontinuity "+disconNum
                 +" at depth "+tMod.getTauBranch(disconNum,true).getTopDepth()+" for phase symbol "+currLeg);
+        return false;
     }
 
     String layerName;
@@ -1077,6 +1119,7 @@ public class SeismicPhaseLayerFactory {
     int botBranchNum;
     double topDepth;
     double botDepth;
+    double depthTolerance = 10;
     SeismicPhaseFactory baseFactory;
     SeismicPhaseLayerFactory aboveLayerFactory;
     SeismicPhaseLayerFactory belowLayerFactory;
