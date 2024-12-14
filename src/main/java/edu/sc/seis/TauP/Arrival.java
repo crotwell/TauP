@@ -919,24 +919,27 @@ public class Arrival {
                 double attenuation = calcAttenuation();
                 //                          Kg m2 / s2     1        1/km   /   ( Kg/s3 )
                 // attenuation * freeFactor* moment * refltran * geoSpread / radiationTerm / 1e3; // s m2/km => s m / 1e3  why sec???
+                SeismicSourceArgs sourceArgs = getRayCalculateable().getSourceArgs();
+                double[] radiationPattern = sourceArgs.calcRadiationPat( searchCalc.azimuth, getTakeoffAngleDegree());
 
-
-
-
-                double geospread = getAmplitudeGeometricSpreadingFactor();
-                if (Double.isFinite(geospread)) {
+                if (Double.isFinite(geoSpread)) {
                     pw.write(innerIndent + "  " + JSONWriter.valueToString("factorpsv") + ": " + JSONWriter.valueToString((float) getAmplitudeFactorPSV()) + "," + NL);
                     pw.write(innerIndent + "  " + JSONWriter.valueToString("factorsh") + ": " + JSONWriter.valueToString((float) getAmplitudeFactorSH()) + "," + NL);
-                    pw.write(innerIndent + "  " + JSONWriter.valueToString("geospread") + ": " + JSONWriter.valueToString((float) geospread) + "," + NL);
+                    pw.write(innerIndent + "  " + JSONWriter.valueToString("geospread") + ": " + JSONWriter.valueToString((float) geoSpread) + "," + NL);
                     pw.write(innerIndent + "  " + JSONWriter.valueToString("attenuation") + ": " + JSONWriter.valueToString((float) attenuation) + "," + NL);
                     pw.write(innerIndent + "  " + JSONWriter.valueToString("freeFactor") + ": " + JSONWriter.valueToString((float) freeFactor) + "," + NL);
                     pw.write(innerIndent + "  " + JSONWriter.valueToString("moment") + ": " + JSONWriter.valueToString((float) moment) + "," + NL);
-                    pw.write(innerIndent + "  " + JSONWriter.valueToString("refltran") + ": " + JSONWriter.valueToString((float) refltran) + "," + NL);
+                    pw.write(innerIndent + "  " + JSONWriter.valueToString("radiationPattern") + ": ["
+                            + (float) radiationPattern[0]+", "
+                            + (float) radiationPattern[1]+", "
+                            + (float) radiationPattern[2]+"] "
+                            + "," + NL);
                     pw.write(innerIndent + "  " + JSONWriter.valueToString("radiationTerm") + ": " + JSONWriter.valueToString((float) radiationTerm) + "," + NL);
                     pw.write(innerIndent + "  " + JSONWriter.valueToString("unitconv") + ": " + JSONWriter.valueToString((float) 1e-3) + "," + NL);
                 } else {
                     pw.write(innerIndent + "  " + JSONWriter.valueToString("error") + ": " + JSONWriter.valueToString("geometrical speading not finite") + "," + NL);
                 }
+
                 pw.write(innerIndent + "  " + JSONWriter.valueToString("refltranpsv") + ": " + JSONWriter.valueToString((float) getEnergyFluxFactorReflTransPSV()) + ", " + NL);
                 pw.write(innerIndent + "  " + JSONWriter.valueToString("refltransh") + ": " + JSONWriter.valueToString((float) getEnergyFluxFactorReflTransSH()) + NL);
                 pw.write(innerIndent + "}");
