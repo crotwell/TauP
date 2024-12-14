@@ -644,13 +644,11 @@ public class Arrival {
                 // only do maxfreq
                 atten = Math.pow(Math.E, -1 * Math.PI * maxfreq * tstar);
             } else {
-                for (int n = 0; n <= N/2+1; n++) {
-                    double freq = n*maxfreq/N;
-                    int factor = 2;
-                    if (n==0 || n==N) {
-                        factor = 1;
-                    }
-                    atten +=  factor*Math.pow(Math.E, -1 * Math.PI * freq * tstar );
+                double deltaFreq = maxfreq/(N-1);
+                for (int n = 0; n <= N; n++) {
+                    double freq = n*deltaFreq;
+                    // attenuation is dispirsive, maybe phase shift a cosine by XXX
+                    atten += Math.pow(Math.E, -1 * Math.PI * freq * tstar);
                 }
                 atten = atten / N;
             }
