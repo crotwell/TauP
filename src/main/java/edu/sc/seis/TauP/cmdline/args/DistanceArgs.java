@@ -394,7 +394,7 @@ public class DistanceArgs {
     DistanceArgsInner distArgs = new DistanceArgsInner();
 
     @ArgGroup(validate = false, heading = "Lat,Lon influenced by:%n")
-    LatLonInner latLonArgs = new LatLonInner();
+    LatLonAzBazArgs latLonArgs = new LatLonAzBazArgs();
 
     @CommandLine.Mixin
     GeodeticArgs geodeticArgs = new GeodeticArgs();
@@ -404,28 +404,8 @@ public class DistanceArgs {
 
     public List<Location> getStationList() throws TauPException {
         List<Location> staList = new ArrayList<>();
-        staList.addAll(latLonArgs.stationList);
-        Map<Network, List<Station>> networks = qmlStaxmlArgs.loadStationXML();
-        for (Network net : networks.keySet()) {
-            for (Station sta : networks.get(net)) {
-                List<Location> allChans = new ArrayList<>();
-                for (Channel chan : sta.getChannelList()) {
-                    Location cLoc = new Location(chan);
-                    boolean found = false;
-                    for (Location prev : allChans) {
-                        if (prev.equals(cLoc)) {
-                            found = true;
-                            break;
-                        }
-                    }
-                    if (!found) {
-                        cLoc.setDescription(sta.getNetworkCode()+"."+sta.getStationCode());
-                        allChans.add(cLoc);
-                    }
-                }
-                staList.addAll(allChans);
-            }
-        }
+        staList.addAll(latLonArgs.getStationLocations());
+        staList.addAll(qmlStaxmlArgs.getStationLocations());
         return staList;
     }
 
@@ -435,26 +415,8 @@ public class DistanceArgs {
 
     public List<Location> getEventList() throws TauPException {
         List<Location> eventLocs = new ArrayList<>();
-        eventLocs.addAll(latLonArgs.eventList);
-        List<Event> quakes = qmlStaxmlArgs.loadQuakeML();
-        DateTimeFormatter dformat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss").withZone(TZ_UTC);
-        for (Event evt : quakes) {
-            Location evtLoc = new Location(evt);
-            Origin origin = evt.getPreferredOrigin();
-            Magnitude mag = evt.getPreferredMagnitude();
-            String desc = "";
-            if (origin != null) {
-                desc = dformat.format(origin.getTime().asInstant());
-            }
-            if (mag != null) {
-                if (!desc.isEmpty()) {desc += " ";}
-                desc += mag.getType()+" "+mag.getMag().getValue();
-            }
-            if ( ! desc.isEmpty()) {
-                evtLoc.setDescription(desc);
-            }
-            eventLocs.add(evtLoc);
-        }
+        eventLocs.addAll(latLonArgs.getEventLocations());
+        eventLocs.addAll(qmlStaxmlArgs.getEventLocations());
         return eventLocs;
     }
     public void clearEventLatLon() {
@@ -593,51 +555,4 @@ public class DistanceArgs {
         }
     }
 
-    static class LatLonInner {
-
-        @Option(names={"--sta", "--station"},
-                arity="2",
-                paramLabel = "l",
-                description="station latitude and longitude. Creates a distance if event is also given."
-        )
-        void setStationLatLon(List<Double> stationLatLon) {
-            if (stationLatLon.isEmpty()) {
-                stationList.clear();
-            }
-            if (stationLatLon.size() % 2 != 0) {
-                throw new IllegalArgumentException("Station lat lon must have even number of items: "+stationLatLon.size());
-            }
-            for (int i = 0; i < stationLatLon.size()/2; i+=2) {
-                stationList.add(new Location(stationLatLon.get(i), stationLatLon.get(i+1)));
-            }
-        }
-
-        protected List<Location> stationList = new ArrayList<>();
-
-        @Option(names={"--evt", "--event"},
-                paramLabel = "l",
-                arity="2",
-                description="event latitude and longitude.  Creates a distance if station is also given.")
-        void setEventLatLon(List<Double> eventLatLon) {
-            if (eventLatLon.isEmpty()) {
-                eventList.clear();
-            }
-            if (eventLatLon.size() % 2 != 0) {
-                throw new IllegalArgumentException("Event lat lon must have even number of items: "+eventLatLon.size());
-            }
-            for (int i = 0; i < eventLatLon.size()/2; i+=2) {
-                eventList.add(new Location(eventLatLon.get(i), eventLatLon.get(i+1)));
-            }
-        }
-
-        protected List<Location> eventList = new ArrayList<>();
-
-        @Option(names="--az", description="azimuth in degrees")
-        protected Double azimuth = null;
-
-
-        @Option(names="--baz", description="backazimuth in degrees")
-        protected Double backAzimuth = null;
-
-    }
 }

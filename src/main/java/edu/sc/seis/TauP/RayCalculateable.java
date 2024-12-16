@@ -42,8 +42,58 @@ public abstract class RayCalculateable {
     public boolean hasAzimuth() {
         return azimuth != null || (this.staLatLon!=null && this.backAzimuth!=null);
     }
+    public double getAzimuth() {
+        if (azimuth != null ) {
+            return azimuth;
+        } else if (this.staLatLon!=null && this.backAzimuth!=null) {
+            if (getLatLonable().isGeodetic()) {
+                throw new RuntimeException("geodtic not yet");
+            } else {
+                throw new RuntimeException("geodtic not yet");
+            }
+        } else if (this.evtLatLon!=null && this.staLatLon!=null) {
+            if (getLatLonable().isGeodetic()) {
+                DistAz distAz = new DistAz(this.staLatLon, this.evtLatLon, invFlattening);
+                return distAz.getAz();
+            } else {
+                return SphericalCoords.azimuth(evtLatLon, staLatLon);
+            }
+        } else {
+            throw new RuntimeException("should not happen");
+        }
+    }
     public void setAzimuth(Double azimuth) {
         this.azimuth = azimuth;
+    }
+
+
+    public boolean hasBackAzimuth() {
+        return backAzimuth != null || (this.evtLatLon!=null && this.azimuth!=null);
+    }
+    public double getBackAzimuth() {
+        if (backAzimuth != null ) {
+            return backAzimuth;
+        } else if (this.staLatLon!=null && this.azimuth!=null) {
+            // shoudl be able to calc
+            if (getLatLonable().isGeodetic()) {
+                throw new RuntimeException("geodtic not yet");
+            } else {
+                throw new RuntimeException("getBackAzimuth not yet");
+            }
+        } else if (this.evtLatLon!=null && this.staLatLon!=null) {
+            if (getLatLonable().isGeodetic()) {
+                DistAz distAz = new DistAz(this.staLatLon, this.evtLatLon, invFlattening);
+                return distAz.getBaz();
+            } else {
+                return SphericalCoords.azimuth(staLatLon, evtLatLon);
+            }
+        } else {
+            throw new RuntimeException("should not happen");
+        }
+    }
+
+    public void setBackAzimuth(Double backAzimuth) {
+        this.backAzimuth = backAzimuth;
     }
 
     public boolean hasSourceArgs() {
@@ -70,7 +120,7 @@ public abstract class RayCalculateable {
         if (hasDescription()) {
             return getDescription();
         }
-        return super.toString();
+        return "";
     }
 
 

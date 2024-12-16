@@ -5,6 +5,8 @@ import edu.sc.seis.TauP.TauPException;
 import edu.sc.seis.seisFile.Location;
 import edu.sc.seis.seisFile.SeisFileException;
 import edu.sc.seis.seisFile.fdsnws.quakeml.Event;
+import edu.sc.seis.seisFile.fdsnws.quakeml.Magnitude;
+import edu.sc.seis.seisFile.fdsnws.quakeml.Origin;
 import edu.sc.seis.seisFile.fdsnws.quakeml.Quakeml;
 import edu.sc.seis.seisFile.fdsnws.stationxml.Channel;
 import edu.sc.seis.seisFile.fdsnws.stationxml.FDSNStationXML;
@@ -16,12 +18,66 @@ import javax.xml.stream.XMLStreamException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.time.Duration;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static edu.sc.seis.seisFile.TimeUtils.TZ_UTC;
+
 public class QmlStaxmlArgs {
+
+
+    public List<Location> getStationLocations() throws TauPException {
+        List<Location> staList = new ArrayList<>();
+        Map<Network, List<Station>> networks = loadStationXML();
+        for (Network net : networks.keySet()) {
+            for (Station sta : networks.get(net)) {
+                List<Location> allChans = new ArrayList<>();
+                for (Channel chan : sta.getChannelList()) {
+                    Location cLoc = new Location(chan);
+                    boolean found = false;
+                    for (Location prev : allChans) {
+                        if (prev.equals(cLoc)) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        cLoc.setDescription(sta.getNetworkCode()+"."+sta.getStationCode());
+                        allChans.add(cLoc);
+                    }
+                }
+                staList.addAll(allChans);
+            }
+        }
+        return staList;
+    }
+
+    public List<Location> getEventLocations() throws TauPException {
+        List<Location> eventLocs = new ArrayList<>();
+        List<Event> quakes = loadQuakeML();
+        DateTimeFormatter dformat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss").withZone(TZ_UTC);
+        for (Event evt : quakes) {
+            Location evtLoc = new Location(evt);
+            Origin origin = evt.getPreferredOrigin();
+            Magnitude mag = evt.getPreferredMagnitude();
+            String desc = "";
+            if (origin != null) {
+                desc = dformat.format(origin.getTime().asInstant());
+            }
+            if (mag != null) {
+                if (!desc.isEmpty()) {desc += " ";}
+                desc += mag.getType()+" "+mag.getMag().getValue();
+            }
+            if ( ! desc.isEmpty()) {
+                evtLoc.setDescription(desc);
+            }
+            eventLocs.add(evtLoc);
+        }
+        return eventLocs;
+    }
 
     public boolean hasQml() {
         return getQuakemlFilename() != null;

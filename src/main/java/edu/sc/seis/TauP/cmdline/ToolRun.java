@@ -30,6 +30,7 @@ import java.util.Arrays;
 				TauP_Wavefront.class,
 				TauP_PhaseDescribe.class,
 				TauP_Find.class,
+				TauP_DistAz.class,
 				TauP_Spikes.class,
 				TauP_Web.class,
 				AutoComplete.GenerateCompletion.class,
@@ -46,35 +47,16 @@ public class ToolRun {
 	public static String PATH = "path";
 	public static String CURVE = "curve";
 	public static String CREATE = "create";
-    public static String GUI = "gui";
 	public static String SETSAC = "setsac";
 	public static String SETMSEED3 = "setms3";
-    public static String SPLOT = "slowplot";
 	public static String TABLE = "table";
     public static String VPLOT = "velplot";
     public static String VELMERGE = "velmerge";
 	public static String WAVEFRONT = "wavefront";
-	public static String WEB = "web";
 	public static String SPIKES = "spikes";
 	public static String REFLTRANSPLOT = "refltrans";
+	public static String DISTAZ = "distaz";
 	public static String VERSION = "version";
-	
-	static String[] toolnames = { GUI, CREATE, CURVE, PATH, PHASE, FIND, PIERCE, SETSAC, SETMSEED3, SPLOT, TABLE, TIME,
-			VPLOT, VELMERGE, WAVEFRONT, REFLTRANSPLOT, SPIKES, VERSION };
-	
-	public static String getUsage() {
-		return "Usage: taup <tool> <options>\n"
-		+" where tool is one of "+Arrays.deepToString(toolnames)+"\n"
-		+" taup <tool> --help\n"
-        +" for help with a particular tool.";
-	}
-
-	public static void genUsageDocFiles() throws IOException {
-		File toolDocDir = new File("src/doc/sphinx/source/cmdLineHelp");
-		for ( String toolname : toolnames) {
-			saveUsageToFile(toolname, toolDocDir, "taup_"+toolname+".usage");
-		}
-	}
 
 	public static void saveUsageToFile(String toolname, File dir, String filename) throws IOException {
 		TauP_Tool tool = getToolForName(toolname);
@@ -115,6 +97,8 @@ public class ToolRun {
 			tool = new TauP_PhaseDescribe();
 		} else if (toolToRun.contentEquals(FIND)) {
 			tool = new TauP_Find();
+		} else if (toolToRun.contentEquals(DISTAZ)) {
+			tool = new TauP_DistAz();
 		} else if (toolToRun.contentEquals(PIERCE)) {
 			tool = new TauP_Pierce();
 		} else if (toolToRun.contentEquals(SETSAC)) {
