@@ -23,6 +23,8 @@ Commands:
   wavefront            Plot wavefronts of seismic phases at steps in time.
   phase                Describe a seismic phase in the current model.
   find                 Find seismic phases in an earth model.
+  distaz               Calc distance, az and baz for event lat,lon and station
+                         lat,lon pairs.
   spikes               Calculate spike seismograms
   web                  Web based gui for the TauP Toolkit.
   generate-completion  Generate bash/zsh completion script for taup.

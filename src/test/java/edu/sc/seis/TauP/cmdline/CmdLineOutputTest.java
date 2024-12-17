@@ -110,6 +110,17 @@ public class CmdLineOutputTest {
             "taup refltrans -o stdout --abs --anglestep 1 --svg --fsrf --legend --model ak135favg --pwave --swave -x rayparam"
     };
 
+    String[] findTestCmds = new String[] {
+            "taup find -o stdout --mod ak135fcont --sourcedepth 100 --max 3 --pwaveonly --exclude 20,moho,iocb",
+            "taup find -o stdout --mod ak135fcont --sourcedepth 100 --max 2 --exclude 20,moho,iocb --deg 35 --time 475",
+    };
+
+
+    String[] distazTestCmds = new String[] {
+            "taup distaz -o stdout --sta 35 -82 --sta 33 -81 --evt -101 22",
+            "taup distaz -o stdout --sta 35 -82 --sta 33 -81 --evt -101 22 --json ",
+    };
+
 
     String[] helpTestCmds = new String[] {"taup --help",
                                           "taup time --help",
@@ -126,6 +137,8 @@ public class CmdLineOutputTest {
                                           "taup setsac --help",
                                           "taup setms3 --help",
                                           "taup version --help",
+                                          "taup find --help",
+                                          "taup distaz --help",
                                           "taup spikes --help",
     };
 
@@ -161,7 +174,8 @@ public class CmdLineOutputTest {
 
             "taup setsac -p P,S my_earthquake.sac",
             "taup setms3 -p P,S my_earthquake.ms3",
-            "taup time --quakeml my_midatlantic.qml --staxml my_stations.staml --geodetic -p P,S"
+            "taup time --quakeml my_midatlantic.qml --staxml my_stations.staml --geodetic -p P,S",
+            "taup distaz --quakeml my_midatlantic.qml --staxml my_stations.staml --geodetic"
     };
 
     /** 
@@ -180,6 +194,8 @@ public class CmdLineOutputTest {
         allList.addAll(Arrays.asList(wavefrontTestCmds));
         allList.addAll(Arrays.asList(velplotTestCmds));
         allList.addAll(Arrays.asList(reflTransPlotTestCmds));
+        allList.addAll(Arrays.asList(findTestCmds));
+        allList.addAll(Arrays.asList(distazTestCmds));
         allList.addAll(Arrays.asList(phaseDescribeTestCmds));
         allList.addAll(Arrays.asList(jsonTestCmds));
         for (String cmd : allList) {
@@ -505,6 +521,16 @@ public class CmdLineOutputTest {
     @Test
     public void testTauPReflTransplot() throws Exception {
         runTests(reflTransPlotTestCmds);
+    }
+
+    @Test
+    public void testTauPFind() throws Exception {
+        runTests(findTestCmds);
+    }
+
+    @Test
+    public void testTauPDiataz() throws Exception {
+        runTests(distazTestCmds);
     }
 
 

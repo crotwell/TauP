@@ -1,0 +1,75 @@
+Usage: taup find [--amp] [--debug] [--help] [--onlynameddiscon] [--pwaveonly]
+                 [--showrayparam] [--verbose]
+                 [--attenuationfreq=<attenuationFreq>] [--az=<azimuth>]
+                 [--deltatime=dt] --max=<maxActions> [--mw=<mw>]
+                 [--numattenuationfreq=<numFrequencies>] [-o=<outFile>]
+                 [--prop=<toolPropsFilename>] [--deg=d[,d...]]...
+                 [--strikediprake=s[,s...]]... [--rayparamdeg=s/deg [s/deg]]...
+                 [--rayparamkm=s/km [s/km]]... [--time=t [t]]...
+                 [--exclude=depth[,depth...]...]... [[--mod=<modelName>]
+                 [-h=depth[,depth...]]... [--stadepth=depth[,depth...]]...
+                 [--scat=s s]...] [[-p=phase[,phase...]]...
+                 [--phasefile=<phaseFiles>]...] [--json | --text]
+Find seismic phases in an earth model.
+
+Options:
+
+      --amp                show amplitude factor for each phase, only if --deg
+      --attenuationfreq=<attenuationFreq>
+                           attenuation frequency for amplitude calculations
+      --az=<azimuth>       azimuth in degrees, for amp calculations
+      --debug              enable debugging output
+      --deg, --degree=d[,d...]
+                           distance in degrees
+      --deltatime=dt       find arrivals within the +- deltatime, --times must
+                             have single time
+      --exclude=depth[,depth...]...
+                           Exclude boundaries from phase conversion or
+                             reflection interactions
+                           May be depth (within tol) or named boundary like
+                             moho, cmb, iocb
+      --help               display this help message
+      --max=<maxActions>   Maximum number of reflections and phase conversion
+      --mw=<mw>            scale amplitude by source moment magnitude
+      --numattenuationfreq=<numFrequencies>
+                            number attenuations frequency for amplitude
+                             calculations
+  -o, --output=<outFile>   output to file, default is stdout.
+      --onlynameddiscon    only interact with named discontinuities like moho,
+                             cmb, iocb
+      --prop=<toolPropsFilename>
+                           load defaults from properties file
+      --pwaveonly          only P wave legs, no S
+      --rayparamdeg=s/deg [s/deg]
+                           only keep phases that overlap the given ray
+                             parameter range in s/deg
+      --rayparamkm=s/km [s/km]
+                           only keep phases that overlap the given ray
+                             parameter range in s/km
+      --showrayparam       show min and max ray parameter for each phase name
+      --strikediprake=s[,s...]
+                           fault strike, dip, rake for amplitude calculations
+      --time=t [t]         find arrivals within the given range
+      --verbose            enable verbose output
+Model Args
+  -h, --evdepth, --sourcedepth=depth[,depth...]
+                           source depth in km
+      --mod, --model=<modelName>
+                           use velocity model "modelName" for calculations.
+                           Default is iasp91. Other builtin models include
+                             prem, ak135, ak135fcont, and ak135favg.
+      --scat, --scatter=s s
+                           scattering depth and distance in degrees, which may
+                             be negative. Only effects phases with 'o' or 'O'
+                             in the phase name.
+      --stadepth, --receiverdepth=depth[,depth...]
+                           the receiver depth in km for stations not at the
+                             surface
+Phase Names
+  -p, --ph, --phase=phase[,phase...]
+                           seismic phase names
+      --phasefile=<phaseFiles>
+                           read list of phase names from file
+Output Type:
+      --json               outputs as JSON
+      --text               outputs as Text
