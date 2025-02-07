@@ -196,7 +196,6 @@ public class TauP_Spikes extends TauP_AbstractRayTool {
 
         // assume single source
         double sourceDepth = modelArgs.getSourceDepths().isEmpty() ? 0 : modelArgs.getSourceDepths().get(0);
-        RayCalculateable rayCalc = allArrivals.get(0).getRayCalculateable();
         Float deg = (float) degrees;
         Float az = distanceArgs.hasAzimuth() ? distanceArgs.getAzimuth().floatValue() : null;
         Float baz = distanceArgs.hasBackAzimuth() ? distanceArgs.getBackAzimuth().floatValue() : null;
