@@ -10,7 +10,7 @@ plugins {
   `maven-publish`
   signing
   application
-  id("com.github.ben-manes.versions") version "0.51.0"
+  id("com.github.ben-manes.versions") version "0.52.0"
 }
 
 application {
@@ -110,10 +110,10 @@ val webserverImplementation by configurations.getting {
 }
 
 dependencies {
-    implementation("org.json:json:20240303")
+    implementation("org.json:json:20250107")
     //implementation("edu.sc.seis:seisFile:2.2.2-SNAPSHO") {
     // or
-    implementation("edu.sc.seis:seisFile:2.2.1") {
+    implementation("edu.sc.seis:seisFile:2.2.2") {
       // we need seisFile for sac/mseed3 output, but not all the other functionality
       exclude(group = "org.apache.httpcomponents", module = "httpclient")
     }
@@ -127,12 +127,12 @@ dependencies {
 
     webserverImplementation("io.undertow:undertow-core:2.3.18.Final")
 
-    // Use JUnit Jupiter API for testing.
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.11.3")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:5.11.3")
+        // Use JUnit Jupiter API for testing.
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.12.0")
 
     // Use JUnit Jupiter Engine for testing.
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
 }
 
