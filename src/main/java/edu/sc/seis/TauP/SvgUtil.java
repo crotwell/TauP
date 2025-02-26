@@ -92,6 +92,9 @@ public class SvgUtil {
         out.println("# version "+BuildVersion.getVersion());
         out.println("# https://github.com/crotwell/TauP");
         out.println("#");
+        out.println("# for use with GMT6, modern syntax");
+        out.println("# https://docs.generic-mapping-tools.org/latest/changes.html#modern-mode-modules-in-gmt-6-0");
+        out.println("#");
         if (minmax != null && minmax.length==4) {
             out.println("#     xmin=\"" + minmax[0] + "\" xmax=\"" + minmax[1] + "\" ymin=\"" + minmax[2] + "\" ymax=\"" + minmax[3]);
         }

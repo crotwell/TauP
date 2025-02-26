@@ -6,6 +6,9 @@
 # version 3.0.0-SNAPSHOT9
 # https://github.com/crotwell/TauP
 #
+# for use with GMT6, modern syntax
+# https://docs.generic-mapping-tools.org/latest/changes.html#modern-mode-modules-in-gmt-6-0
+#
 #
 gmt begin taup_path
 # draw surface and label distances.
