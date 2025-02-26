@@ -115,13 +115,14 @@ places in order until it finds a model that matches the name.
   Several standard models are precomputed and included within the distributed jar file.
   They are:
 
-  ===============================================   =============================
-  `iasp91 <_static/StdModels/iasp91.tvel>`_         :cite:t:`iasp` (default)
-  `prem <_static/StdModels/prem.nd>`_               :cite:t:`dziewonski_anderson`
-  `ak135 <_static/StdModels/ak135.tvel>`_           :cite:t:`kennett:ak135`
-  `ak135favg <_static/StdModels/ak135favg.nd>`_     :cite:t:`kennett:ak135f`
-  `ak135fcont <_static/StdModels/ak135fcont.nd>`_   :cite:t:`kennett:ak135f`
-  ===============================================   =============================
+  ====================================================== =============================
+  `iasp91 <_static/StdModels/iasp91.tvel>`_              :cite:t:`iasp` (default)
+  `prem <_static/StdModels/prem.nd>`_                    :cite:t:`dziewonski_anderson`
+  `ak135 <_static/StdModels/ak135.tvel>`_                :cite:t:`kennett:ak135`
+  `ak135favg <_static/StdModels/ak135favg.nd>`_          :cite:t:`kennett:ak135f`
+  `ak135fcont <_static/StdModels/ak135fcont.nd>`_        :cite:t:`kennett:ak135f`
+  `ak135fsyngine` <_static/StdModels/ak135fsyngine.nd>`_ :cite:t:`kennett:ak135f`
+  ====================================================== =============================
 
   We will consider adding other models to the distribution if
   they are of wide interest.
@@ -202,10 +203,10 @@ Notes on Standard Models
 * ak135
 
   There is a discontinuity in S velocity, but not for P or density at 210 km.
-  The effect on travel times is small, but this odd discontinuity in S
+  The effect on travel times is small, but this discontinuity in S
   velocity at 210 creates odd reflection and transmission coefficients at
   this depth. This discontinuity does not exist in the ak135f models for
-  velocity, but the 210 a discontinuity in the Q model.
+  velocity, but the 210 is a discontinuity in the Q model.
 
   ``
   210.000      8.3000      4.5180      3.4258
