@@ -12,6 +12,8 @@ conda activate sphinx
 
 # On release:
 --------------
+publish to oss.sonatype
+
 get new DOI
   https://help.zenodo.org/docs/deposit/describe-records/reserve-doi/
 
