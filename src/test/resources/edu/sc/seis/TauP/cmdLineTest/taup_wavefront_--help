@@ -32,7 +32,7 @@ Options:
                             load defaults from properties file
       --timefiles           outputs each time into a separate .ps file within
                               the gmt script.
-      --timestep=<timeStep> steps in time (seconds) for output, default is 10
+      --timestep=<timeStep> steps in time (seconds) for output, default is 100
       --verbose             enable verbose output
       --xaxis=type          x axis type, the depth/radius axis, one of degree,
                               radian, kilometer
