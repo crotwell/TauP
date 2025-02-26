@@ -322,7 +322,6 @@ circle.discontinuity.iocb {
       <desc>seg 1/6 Pn of PnPn at   151.38 seconds at    10.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   13.754 s/deg. in crust</desc>
       <polyline class="path phase_PnPn pwave" points="
     0.00  -6361.00
-    0.00  -6361.00
     5.17  -6356.00
    10.34  -6350.99
    11.62  -6350.05
@@ -354,7 +353,6 @@ circle.discontinuity.iocb {
   527.84  -6329.03
   533.42  -6333.58
   538.99  -6338.12
-  538.99  -6338.12
   544.56  -6342.66
   547.34  -6344.93
   548.73  -6346.07
@@ -366,11 +364,9 @@ circle.discontinuity.iocb {
       <desc>seg 4/6 Pn of PnPn at   151.38 seconds at    10.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam   13.754 s/deg. in crust</desc>
       <polyline class="path phase_PnPn pwave" points="
   550.13  -6347.20
-  550.13  -6347.20
   551.31  -6345.84
   552.48  -6344.49
   554.83  -6341.77
-  559.53  -6336.34
   559.53  -6336.34
   564.24  -6330.90
   568.95  -6325.46
@@ -403,11 +399,9 @@ circle.discontinuity.iocb {
  1082.52  -6258.06
  1088.47  -6262.10
  1094.42  -6266.14
- 1094.42  -6266.14
  1100.37  -6270.18
  1103.34  -6272.19
  1104.82  -6273.20
- 1106.31  -6274.21
  1106.31  -6274.21
 " />
     </g>

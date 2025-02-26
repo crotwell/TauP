@@ -302,11 +302,8 @@ public class SvgEarth {
         double tickLen = R * .05;
         out.println("<!-- tick marks every " + step + " degrees to " + maxTick + ".-->");
         for (float i = minTick; i <= maxTick; i += step) {
-            out.print("  <polyline  class=\"tick\"  points=\"");
-            printDistRadiusAsXY(out, i, R);
-            out.print(", ");
-            printDistRadiusAsXY(out, i, R + tickLen / zoomScale);
-            out.println("\" />");
+            out.println("  <polyline  class=\"tick\"  points=\"" +
+                formatDistRadiusAsXY(i, R)+", "+formatDistRadiusAsXY(i, R + tickLen / zoomScale)+"\" />");
 
             double radian = (i - 90) * Math.PI / 180;
             double x = (R + (tickLen * 1.05) / zoomScale) * Math.cos(radian);
@@ -370,17 +367,17 @@ public class SvgEarth {
         return new double[] {x, y};
     }
 
-    protected static void printDistRadiusAsXY(PrintWriter out, double calcDist, double radius) {
+    protected static String formatDistRadiusAsXY(double calcDist, double radius) {
         double[] xy = xyForDistRadius(calcDist, radius);
-        out.print(Outputs.formatDistance(xy[0])
+        return Outputs.formatDistance(xy[0])
                 + "  "
-                + Outputs.formatDistance(xy[1]));
+                + Outputs.formatDistance(xy[1]);
     }
 
-    public static void printDistRadius(PrintWriter out, double calcDist, double radius) {
-        out.print(Outputs.formatDistance(calcDist)
-        + "  "
-        + Outputs.formatDepth(radius));
+    public static String formatDistRadius(double calcDist, double radius) {
+        return Outputs.formatDistance(calcDist)
+                + "  "
+                + Outputs.formatDepth(radius);
     }
 
     public static SvgEarthScaling calcZoomScaleTranslate(List<Arrival> arrivals) {

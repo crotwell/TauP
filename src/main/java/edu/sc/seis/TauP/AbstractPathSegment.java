@@ -187,11 +187,15 @@ public abstract class AbstractPathSegment {
         pw.write(innerIndent + JSONWriter.valueToString("wavetype") + ": " + JSONWriter.valueToString(isPWave ? "pwave" : "swave") + "," + NL);
 
         pw.write(innerIndent + JSONWriter.valueToString("path") + ": [" + NL);
+        String prevLine = "";
         for (TimeDist td : path) {
-            pw.write(innerIndent + "  [ " +
-                    JSONWriter.valueToString((float) td.getDistDeg()) + ", " +
+            String line = JSONWriter.valueToString((float) td.getDistDeg()) + ", " +
                     JSONWriter.valueToString((float) td.getDepth()) + ", " +
-                    JSONWriter.valueToString((float) td.getTime()) + " ]," + NL);
+                    JSONWriter.valueToString((float) td.getTime());
+            if ( ! line.equals(prevLine)) {
+                pw.write(innerIndent + "  [ " + line + " ]," + NL);
+            }
+            prevLine = line;
         }
         pw.write(innerIndent + "]");
     }
@@ -229,9 +233,13 @@ public abstract class AbstractPathSegment {
             pw.println("      <circle class=\"" + getCssClasses() + "\" cx=\""+xy[0] + "\" cy=\""+xy[1] + "\" r=\""+minPolylineSize+"\"/>");
         } else {
             pw.println("      <polyline class=\"" + getCssClasses() + "\" points=\"");
+            String prevLine = "";
             for (TimeDist td : path) {
-                SvgEarth.printDistRadiusAsXY(pw, td.getDistDeg(), radiusOfEarth - td.getDepth());
-                pw.println();
+                String line = SvgEarth.formatDistRadiusAsXY(td.getDistDeg(), radiusOfEarth - td.getDepth());
+                if ( ! line.equals(prevLine)) {
+                    pw.println(line);
+                }
+                prevLine = line;
             }
             pw.println("\" />");
         }
@@ -244,6 +252,7 @@ public abstract class AbstractPathSegment {
         DepthAxisType depthAxisType = distDepthRange.depthAxisType != null ? distDepthRange.depthAxisType : DepthAxisType.radius;
         pw.println("> " + description());
         double R = getPhase().getTauModel().getRadiusOfEarth();
+        String prevLine = "";
         for (TimeDist td : path) {
             double xVal;
             double yVal;
@@ -267,11 +276,15 @@ public abstract class AbstractPathSegment {
                 default:
                     yVal = R - td.getDepth();
             }
-            String timeStr = "";
+            String line = String.format(xFormat, xVal) + "  " + String.format(yFormat, yVal);
             if (withTime) {
-                pw.print(" " + Outputs.formatTime(td.getTime()));
+                line += " " + Outputs.formatTime(td.getTime());
             }
-            pw.println(String.format(xFormat, xVal) + "  " + String.format(yFormat, yVal) + timeStr);
+            if (! line.equals(prevLine)) {
+                // avoid duplicate lines in output, usually due to changes smaller than the output format
+                pw.println(line);
+            }
+            prevLine = line;
         }
     }
 }

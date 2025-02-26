@@ -274,7 +274,6 @@ circle.discontinuity.iocb {
       <desc>seg 1/3 Pdiff of Pdiff at   980.43 seconds at   135.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    4.439 s/deg. in crust/mantle</desc>
       <polyline class="path phase_Pdiff pwave" points="
     0.00  -6361.00
-    0.00  -6361.00
     1.19  -6356.00
     2.38  -6351.00
     2.64  -6350.06
@@ -729,7 +728,6 @@ circle.discontinuity.iocb {
  4493.72   4486.63
  4494.20   4487.47
  4496.89   4491.84
- 4499.59   4496.22
  4499.59   4496.22
  4502.28   4500.60
  4503.63   4502.78

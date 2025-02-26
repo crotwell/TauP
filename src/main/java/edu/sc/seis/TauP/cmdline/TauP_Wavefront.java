@@ -453,6 +453,10 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
                 }
                 prevArrival = arrival;
             }
+            // remove items that are empty, often last time step is due to rounding
+            if (out.get(timeVal).isEmpty()) {
+                out.remove(timeVal);
+            }
         }
         return out;
     }

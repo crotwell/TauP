@@ -322,7 +322,6 @@ circle.discontinuity.iocb {
       <desc>seg 1/2 P of P at   412.43 seconds at    35.00 degrees for a     10.0 km deep source in the iasp91 model with rayParam    8.613 s/deg. in crust/mantle</desc>
       <polyline class="path phase_P pwave" points="
     0.00  -6361.00
-    0.00  -6361.00
     2.52  -6356.00
     5.04  -6351.00
     5.59  -6350.06
@@ -518,7 +517,6 @@ circle.discontinuity.iocb {
  3633.55  -5207.74
  3634.54  -5208.20
  3639.47  -5210.85
- 3644.40  -5213.51
  3644.40  -5213.51
  3649.32  -5216.16
  3651.79  -5217.49

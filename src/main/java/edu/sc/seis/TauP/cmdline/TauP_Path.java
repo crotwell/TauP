@@ -282,8 +282,7 @@ public class TauP_Path extends TauP_AbstractRayTool {
                 double calcDist = path[midSample].getDistDeg();
                 double radius = radiusOfEarth - calcDepth;
                 if (getGraphicOutputTypeArgs().isGMT()) {
-                    SvgEarth.printDistRadius(out, calcDist, radius);
-                    out.write(" 10 0 MR "+ currArrival.getName() + "\n");
+                    out.write(SvgEarth.formatDistRadius(calcDist, radius)+" 10 0 MR "+ currArrival.getName() + "\n");
                 }
             }
 		}
