@@ -119,7 +119,7 @@ public class TauP_VelocityPlot extends TauP_Tool {
             String modelLabel = "";
             String title = "";
             List<XYPlottingData> xyPlotList = new ArrayList<>();
-            for (InputVelocityModelArgs vmodArg : velModelArgs.getVelocityModelArgsList()) {
+            for (VelocityModelArgs vmodArg : velModelArgs.getVelocityModelArgsList()) {
                 title += ", "+vmodArg.getModelFilename();
                 if (velModelArgs.size()>1) {
                     modelLabel = vmodArg.getModelFilename()+" ";
@@ -591,7 +591,7 @@ public class TauP_VelocityPlot extends TauP_Tool {
     public List<VelocityModel> getVelocityModels() throws VelocityModelException, IOException {
         if (vModList == null) {
             vModList = new ArrayList<>();
-            for (InputVelocityModelArgs vmodArg : velModelArgs.getVelocityModelArgsList()) {
+            for (VelocityModelArgs vmodArg : velModelArgs.getVelocityModelArgsList()) {
                 VelocityModel vMod = TauModelLoader.loadVelocityModel(vmodArg.getModelFilename(), vmodArg.getVelFileType());
                 if (vMod == null) {
                     throw new VelocityModelException("Velocity model file not found: " + vmodArg.getModelFilename() + ", tried internally and from file");

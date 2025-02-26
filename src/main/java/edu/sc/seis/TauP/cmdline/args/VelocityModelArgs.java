@@ -13,8 +13,7 @@ public class VelocityModelArgs extends InputVelocityModelArgs {
 
     @CommandLine.Option(names={"--mod", "--model"},
             description = "use velocity model \"modelname\" for calculations" +
-                    ", format is guessed. Default is ${DEFAULT-VALUE}.",
-            defaultValue = "iasp91",
+                    ", format is guessed.",
             completionCandidates = StdModelGenerator.StdModelCandidates.class
     )
     public void setModelName(String modelFilename) {
