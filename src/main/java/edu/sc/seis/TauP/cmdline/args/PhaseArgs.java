@@ -153,7 +153,9 @@ public class PhaseArgs {
     List<String> phaseNames = new ArrayList<>();
 
     /**
-     * names of phases to be used, ie PKIKP.
+     * names of phases to be used, ie P,S,PKIKP.
+     *
+     * @param phaseNamesStr phases to calculate
      */
     @CommandLine.Option(names = {"-p", "--phase", "--ph"},
             paramLabel = "phase",
@@ -231,7 +233,8 @@ public class PhaseArgs {
      * them fine. Also, comments are allowed, either # or // are comments to the
      * end of the line while c style slash-star make a block a comment.
      *
-     * @return
+     * @param filename file to read
+     * @return list of phase names from file
      */
     protected List<String> readPhaseFile(String filename) throws IOException {
         List<String> out = new ArrayList<>();

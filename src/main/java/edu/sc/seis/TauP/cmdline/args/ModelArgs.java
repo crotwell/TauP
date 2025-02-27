@@ -74,10 +74,13 @@ public class ModelArgs {
     /**
      * Additional depths, beyond source, receiver and scatterer depths to split the model branches. For example
      * to generate pierce points at other depths.
+     *
+     * @param modelSplitDepths list of additional depths
      */
     public void setModelSplitDepths(List<Double> modelSplitDepths) {
         this.modelSplitDepths = modelSplitDepths;
     }
+
     public List<Double> getModelSplitDepths() {
         return modelSplitDepths;
     }

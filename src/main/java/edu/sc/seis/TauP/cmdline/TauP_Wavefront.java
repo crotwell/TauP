@@ -564,13 +564,4 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
 
     }
 
-    /**
-     * Allows TauP_Isochron to run as an application. Creates an instance of
-     * TauP_Wavefront.
-     *  
-     * ToolRun.main should be used instead.
-     */
-    public static void main(String[] args) throws IOException {
-        ToolRun.legacyRunTool(ToolRun.WAVEFRONT, args);
-    }
 }

@@ -234,14 +234,6 @@ public class TauP_SetMSeed3 extends TauP_AbstractPhaseTool {
         }
         return null;
     }
-    /**
-     * Allows TauP_SetMSeed3 to run as an application. Creates an instance of
-     * TauP_SetMSeed3.
-     * ToolRun.main should be used instead.
-     */
-    public static void main(String[] args) throws IOException {
-        ToolRun.legacyRunTool(ToolRun.SETMSEED3, args);
-    }
 
     public String getEhKey() {
         return ehKey;

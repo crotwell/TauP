@@ -144,16 +144,6 @@ public class TauP_Create extends TauP_Tool {
         toolProps.setProperty("taup.create.allowInnerCoreS", ""+allowInnerCoreS);
     }
 
-    /**
-     * Allows TauP_Create to run as an application. Creates an instance of
-     * TauP_Create and calls tauPCreate.init() and tauPCreate.start().
-     * 
-     * ToolRun.main should be used instead.
-     */
-    public static void main(String[] args) throws IOException {
-        ToolRun.legacyRunTool(ToolRun.CREATE, args);
-    }
-
     public void parseFileName(String modelFilename) {
         int j = modelFilename.lastIndexOf(System.getProperty("file.separator"));
         this.inputFileArgs.setModelFilename(modelFilename.substring(j + 1));

@@ -190,14 +190,5 @@ public class TauP_Pierce extends TauP_Time {
         }
         return false;
     }
-
-    /**
-     * Allows TauP_Pierce to run as an application. Creates an instance of
-     * TauP_Pierce. 
-     * ToolRun.main should be used instead.
-     */
-    public static void main(String[] args) throws IOException {
-        ToolRun.legacyRunTool(ToolRun.PIERCE, args);
-    }
     
 }

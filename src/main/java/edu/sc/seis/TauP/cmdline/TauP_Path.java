@@ -374,12 +374,4 @@ public class TauP_Path extends TauP_AbstractRayTool {
 		}
 	}
 
-	/**
-	 * Allows TauP_Path to run as an application. Creates an instance of
-	 * TauP_Path and calls TauP_Path.init() and TauP_Path.start().
-     * ToolRun.main should be used instead.
-     */
-    public static void main(String[] args) throws IOException {
-        ToolRun.legacyRunTool(ToolRun.PATH, args);
-    }
 }

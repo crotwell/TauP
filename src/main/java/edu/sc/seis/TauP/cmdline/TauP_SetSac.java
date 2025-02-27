@@ -305,13 +305,4 @@ public class TauP_SetSac extends TauP_AbstractPhaseTool {
         }
     }
 
-    /**
-     * Allows TauP_SetSac to run as an application. Creates an instance of
-     * TauP_SetSac. 
-     * 
-     * ToolRun.main should be used instead.
-     */
-    public static void main(String[] args) throws IOException {
-        ToolRun.legacyRunTool(ToolRun.SETSAC, args);
-    }
 }

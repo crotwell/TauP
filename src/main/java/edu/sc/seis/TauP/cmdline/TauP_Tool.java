@@ -51,7 +51,11 @@ public abstract class TauP_Tool implements Callable<Integer> {
         return 0;
     }
 
-    /** Turns on debugging output. */
+    /**
+     * Turns on debugging output.
+     *
+     * @param debug on or off
+     * */
     @CommandLine.Option(names="--debug", description="enable debugging output")
     public void setDEBUG(boolean debug) {
         TauPConfig.DEBUG = debug;
@@ -61,7 +65,11 @@ public abstract class TauP_Tool implements Callable<Integer> {
         return TauPConfig.DEBUG;
     }
 
-    /** Turns on verbose output. */
+    /**
+     * Turns on verbose output.
+     *
+     * @param verbose on or off
+     */
     @CommandLine.Option(names="--verbose", description="enable verbose output")
     public void setVerbose(boolean verbose) {
         TauPConfig.VERBOSE = verbose;

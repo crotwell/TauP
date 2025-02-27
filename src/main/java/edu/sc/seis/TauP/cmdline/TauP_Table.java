@@ -627,10 +627,4 @@ public class TauP_Table extends TauP_Tool {
     @CommandLine.ArgGroup(heading = "Phase Names %n", exclusive = false)
     PhaseArgs phaseArgs = new PhaseArgs();
 
-    /**
-    * ToolRun.main should be used instead.
-    */
-   public static void main(String[] args) throws IOException {
-       ToolRun.legacyRunTool(ToolRun.TABLE, args);
-   }
 }

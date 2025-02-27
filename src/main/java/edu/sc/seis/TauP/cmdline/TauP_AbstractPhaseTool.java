@@ -147,6 +147,10 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
 
     /**
      * Gets depth corrected TauModel.
+     *
+     * @param sourceDepth earthqauke source depth
+     * @throws TauModelException if depth correct fails
+     * @return corrected tau model
      */
     public TauModel getTauModelDepthCorrected(double sourceDepth) throws TauModelException {
         return modelArgs.depthCorrected(sourceDepth);
@@ -176,6 +180,10 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
 
     /**
      * Calculates the seismic phases using a possibly new or changed tau model for the given source depth.
+     *
+     * @param sourceDepth earthquake source depth
+     * @throws TauModelException if calculation fails
+     * @return calculated seismic phases
      */
     public List<SeismicPhase> calcSeismicPhases(double sourceDepth) throws TauPException {
         return calcSeismicPhases(sourceDepth, getReceiverDepths(), modelArgs.getScatterer());
@@ -223,7 +231,8 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
      * previous phases have been added, put P in T0, PcP in T1, ScP in T5, Sn in
      * T2, SS in T3, and S^410S in T6.
      *
-     * @return
+     * @param phaseList comma separates list of phase names
+     * @return list of phases
      */
     public List<PhaseName> parsePhaseList(String phaseList) {
         List<PhaseName> out = new ArrayList<>();

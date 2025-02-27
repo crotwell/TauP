@@ -404,13 +404,4 @@ public class TauP_Time extends TauP_AbstractRayTool {
         }
     }
 
-    /**
-     * Allows TauP_Time to run as an application. Creates an instance of
-     * TauP_Time.
-     *
-     * ToolRun.main should be used instead.
-     */
-    public static void main(String[] args) throws IOException {
-        ToolRun.legacyRunTool(ToolRun.TIME, args);
-    }
 }

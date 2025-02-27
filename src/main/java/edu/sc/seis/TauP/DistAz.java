@@ -236,19 +236,4 @@ public class DistAz {
         return kilometers / kmPerDeg(radius);
     }
 
-    public static void main(String[] args) {
-        if (args.length != 4) {
-            System.out.println("Usage: java DistAz sta_lat sta_lon evt_lat evt_lon");
-            System.out.println("       Returns:  Delta Baz Az");
-        } else {
-            double stalat = Double.parseDouble(args[0]);
-            double stalon = Double.parseDouble(args[1]);
-            double evtlat = Double.parseDouble(args[2]);
-            double evtlon = Double.parseDouble(args[3]);
-
-            DistAz distaz = new DistAz(stalat, stalon, evtlat, evtlon);
-            System.out.println("   dist="+distaz.delta+"   baz="+distaz.baz+
-                                   "   az="+distaz.az);
-        } // end of else
-    }
 }

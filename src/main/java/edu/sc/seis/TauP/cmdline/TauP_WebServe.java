@@ -401,17 +401,4 @@ public class TauP_WebServe extends TauP_Tool {
 
     public List<String> additionalModels = new ArrayList<>();
 
-    /**
-     * Allows TauP_Web to run as an application. Creates an instance of
-     * TauP_Web.
-     *
-     * ToolRun.main should be used instead.
-     */
-    public static void main(String[] args) {
-
-        String[] argsPlusName = new String[args.length+1];
-        argsPlusName[0] = "web";
-        System.arraycopy(args, 0, argsPlusName, 1, args.length);
-        ToolRun.main(argsPlusName);
-    }
 }
