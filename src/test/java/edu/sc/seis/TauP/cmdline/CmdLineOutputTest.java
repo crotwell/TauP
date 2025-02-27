@@ -118,7 +118,7 @@ public class CmdLineOutputTest {
 
     String[] distazTestCmds = new String[] {
             "taup distaz -o stdout --sta 35 -82 --sta 33 -81 --evt -101 22",
-            "taup distaz -o stdout --sta 35 -82 --sta 33 -81 --evt -101 22 --json ",
+            "taup distaz -o stdout --sta 35 -82 --sta 33 -81 --evt -101 22 --json",
     };
 
 
