@@ -1583,8 +1583,6 @@ public class VelocityModel implements Cloneable, Serializable {
      * model via the earth flattening transform.
      * 
      * @return the flattened VelocityModel object.
-     * @exception VelocityModelException
-     *                occurs ???.
      */
     public VelocityModel earthFlattenTransform() {
         VelocityLayer newLayer, oldLayer;
