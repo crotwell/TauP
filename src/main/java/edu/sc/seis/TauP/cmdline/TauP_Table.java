@@ -39,10 +39,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StreamTokenizer;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-import static edu.sc.seis.TauP.cmdline.TauP_Tool.ABREV_SYNOPSIS;
 import static edu.sc.seis.TauP.cmdline.TauP_Tool.OPTIONS_HEADING;
 
 /**
@@ -59,11 +57,8 @@ import static edu.sc.seis.TauP.cmdline.TauP_Tool.OPTIONS_HEADING;
 @CommandLine.Command(name = "table",
         description = "Create a table of travel times for a range of depths and distances.",
         optionListHeading = OPTIONS_HEADING,
-        abbreviateSynopsis = ABREV_SYNOPSIS,
         usageHelpAutoWidth = true)
 public class TauP_Table extends TauP_Tool {
-
-    public static final String DEFAULT_PHASES = PhaseArgs.DEFAULT_PHASES;
 
     protected String headerFile;
 
@@ -465,7 +460,7 @@ public class TauP_Table extends TauP_Tool {
 
     protected void jsonTable(PrintWriter out, TauModel tMod, List<PhaseName> phaseNames,
                              double[] depths, double receiverDepth, Scatterer scatterer,
-                             List<RayCalculateable> rayCalcList) throws TauPException, IOException {
+                             List<RayCalculateable> rayCalcList) throws TauPException {
         out.println("[");
         for (double depth : depths) {
             List<SeismicPhase> phaseList = recalcPhases(tMod, phaseNames, depth, receiverDepth, scatterer);

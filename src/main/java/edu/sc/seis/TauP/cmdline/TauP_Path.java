@@ -185,7 +185,6 @@ public class TauP_Path extends TauP_AbstractRayTool {
 					withAmp,
 					MomentMagnitude.MAG4, Arrival.DEFAULT_ATTENUATION_FREQUENCY);
 		} else if (getOutputFormat().equals(OutputTypes.SVG)) {
-			int margin = 80;
 			float pixelWidth = outputTypeArgs.getPixelWidth();
 			printScriptBeginningSVG(out, arrivalList, pixelWidth, distDepthRange, modelArgs, getCmdLineArgs());
 			if (coloring.getColoring() == ColorType.auto){

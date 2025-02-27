@@ -12,7 +12,9 @@ import static edu.sc.seis.TauP.SphericalCoords.DtoR;
 public class SeismicSourceArgs {
 
 
-    @CommandLine.Option(names = "--mw", defaultValue = "4.0", description = "scale amplitude by source moment magnitude")
+    @CommandLine.Option(names = "--mw",
+            defaultValue = "4.0",
+            description = "scale amplitude by source moment magnitude, default is ${DEFAULT-VALUE}")
     Float mw = null;
 
     public float getMw() {
@@ -28,7 +30,7 @@ public class SeismicSourceArgs {
 
     @CommandLine.Option(names="--attenuationfreq",
             defaultValue=""+Arrival.DEFAULT_ATTENUATION_FREQUENCY,
-            description = "attenuation frequency for amplitude calculations")
+            description = "attenuation frequency for amplitude calculations, default is ${DEFAULT-VALUE}")
     Float attenuationFreq = null;
 
     public float getAttenuationFrequency() {
@@ -41,18 +43,31 @@ public class SeismicSourceArgs {
 
     @CommandLine.Option(names="--numattenuationfreq",
             defaultValue=""+DEFAULT_NUM_FREQUENCIES,
-            description = " number attenuations frequency for amplitude calculations")
+            description = " number attenuations frequency for amplitude calculations, default is ${DEFAULT-VALUE}")
     int numFrequencies = DEFAULT_NUM_FREQUENCIES;
 
     public int getNumFrequencies() {
         return numFrequencies;
     }
 
+    List<Float> strikeDipRake = null;
+
     @CommandLine.Option(names="--strikediprake",
             paramLabel="s",
             split=",",
-            description = "fault strike, dip, rake for amplitude calculations")
-    List<Float> strikeDipRake = null;
+            description = "fault strike, dip, rake for amplitude calculations. If not given radiation pattern is unity.")
+    public void setStrikeDipRake(List<Float> sdr) {
+        System.err.println("sdr: "+sdr.size());
+        if (sdr.size() == 0) {
+            // unset by picocli, as no default value
+            this.strikeDipRake = null;
+        } else if (sdr.size() != 3) {
+            throw new IllegalArgumentException(
+                    String.format("Invalid value '%d' for option '--strikediprake': " +
+                            "must give 3 values.", sdr.size()));
+        }
+        this.strikeDipRake = sdr;
+    }
 
     public boolean hasStrikeDipRake() {
         return strikeDipRake != null;

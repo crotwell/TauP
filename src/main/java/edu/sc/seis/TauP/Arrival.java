@@ -313,9 +313,8 @@ public class Arrival {
      * See Fundamentals of Modern Global Seismology, ch 13, eq 13.10.
      * Note that eq 13.10 has divide by zero in case of a horizontal ray arriving at the receiver.
      *
-     * @throws TauModelException
      */
-    public double getEnergyGeometricSpreadingFactor() throws TauModelException {
+    public double getEnergyGeometricSpreadingFactor() {
         double out = 1;
         TauModel tMod = getPhase().getTauModel();
         double R = tMod.radiusOfEarth;
@@ -361,10 +360,10 @@ public class Arrival {
      * Calculates the amplitude factor, 1/sqrt(density*vel) times reflection/tranmission coefficient times geometric spreading, for the
      * arrival. Note this is only an approximation of amplitude as the source radiation magnitude and pattern is
      * not included, and this may not give accurate results for certain wave types, such as head or diffracted waves.
-     *
+     * <p>
      * See FMGS eq 17.74
      */
-    public double getAmplitudeFactorPSV() throws TauModelException, VelocityModelException, SlownessModelException {
+    public double getAmplitudeFactorPSV() throws TauModelException, SlownessModelException {
         SeismicSourceArgs sourceArgs = getRayCalculateable().getSourceArgs();
         if (sourceArgs == null) {
             throw new TauModelException("sourceArgs is null, RayCalc:"+getRayCalculateable());
@@ -387,7 +386,8 @@ public class Arrival {
         return ampFactor;
     }
 
-    public double getAmplitudeFactorPSV(double momentRate, double attenuationFrequency, int numFreq) throws TauModelException, VelocityModelException, SlownessModelException {
+    public double getAmplitudeFactorPSV(double momentRate, double attenuationFrequency, int numFreq)
+            throws TauModelException, SlownessModelException {
         // dimensionaless
         double refltran = getEnergyFluxFactorReflTransPSV();
         double freeFactor = 1.0;
@@ -444,7 +444,8 @@ public class Arrival {
         return ampFactor;
     }
 
-    public double getAmplitudeFactorSH(double momentRate, double attenuationFrequency, int numFreq) throws TauModelException, VelocityModelException, SlownessModelException {
+    public double getAmplitudeFactorSH(double momentRate, double attenuationFrequency, int numFreq)
+            throws TauModelException, SlownessModelException {
         double refltran = getEnergyFluxFactorReflTransSH();
         // avoid NaN in case of no S wave legs where geo spread returns INFINITY
         if (refltran == 0.0) {return 0.0;}
@@ -460,7 +461,6 @@ public class Arrival {
             // should be exactly 2.0, but go through the steps so looks like PSv case
             VelocityModel vMod = getPhase().getTauModel().getVelocityModel();
             VelocityLayer top = vMod.getVelocityLayer(0);
-            Complex[] freeSurfRF;
             ReflTransFreeSurface rtFree = ReflTransFreeSurface.createReflTransFreeSurface(top.getTopPVelocity(), top.getTopSVelocity(), top.getTopDensity());
 
             freeFactor = rtFree.getFreeSurfaceReceiverFunSh(getRayParam() / vMod.getRadiusOfEarth());
@@ -895,9 +895,6 @@ public class Arrival {
             pw.write(innerIndent + JSONWriter.valueToString("amp") + ": {" + NL);
 
             try {
-
-                // dimensionaless ?
-                double refltran = getEnergyFluxFactorReflTransPSV();
                 VelocityModel vMod = getPhase().getTauModel().getVelocityModel();
                 VelocityLayer top = vMod.getVelocityLayer(0);
                 double freeFactor = 1.0;
@@ -993,8 +990,7 @@ public class Arrival {
     }
 
     public static String CSVHeader() {
-        String header = "Model,Distance (deg),Depth (km),Phase,Time (s),RayParam (deg/s),Takeoff Angle,Incident Angle,Purist Distance,Purist Name,Recv Depth";
-        return header;
+        return "Model,Distance (deg),Depth (km),Phase,Time (s),RayParam (deg/s),Takeoff Angle,Incident Angle,Purist Distance,Purist Name,Recv Depth";
     }
 
     public String asCSVRow() {

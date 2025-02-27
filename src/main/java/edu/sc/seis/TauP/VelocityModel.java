@@ -1054,7 +1054,7 @@ public class VelocityModel implements Cloneable, Serializable {
     public static VelocityModel readVelocityFile(String filename,
                                                  String fileType)
             throws IOException, VelocityModelException {
-        if (fileType == null || fileType.equals("")) {
+        if (fileType == null || fileType.isEmpty()) {
             if (filename.endsWith(".nd")) {
                 fileType = ".nd";
             } else if (filename.endsWith(".tvel")) {
@@ -1062,7 +1062,7 @@ public class VelocityModel implements Cloneable, Serializable {
             }
         }
         if (fileType.startsWith(".")) {
-            fileType = fileType.substring(1, fileType.length());
+            fileType = fileType.substring(1);
         }
         File f = new File(filename);
         if ( ! f.exists() && ! filename.endsWith("."+fileType) && new File(filename+"."+fileType).exists()) {
@@ -1256,15 +1256,15 @@ public class VelocityModel implements Cloneable, Serializable {
      * This feature makes phase interpretation much easier to
      * code. Also, as they are not needed for travel time calculations, the
      * density, Qp and Qs may be omitted.
-     * 
+     * <p>
      * The velocities are assumed to be linear between sample points. Because
      * this type of model file doesn't give complete information we make the
      * following assumptions: 
-     * 
+     * <p>
      * modelname - from the filename, with ".nd" dropped, if present 
-     * 
+     * <p>
      * radiusOfEarth - the largest depth in the model
-     * 
+     * <p>
      * Also, because this method makes use of the string tokenizer, comments are
      * allowed. # as well as // signify that the rest of the line is a comment.
      * C style slash-star comments are also allowed.
@@ -1586,7 +1586,7 @@ public class VelocityModel implements Cloneable, Serializable {
      * @exception VelocityModelException
      *                occurs ???.
      */
-    public VelocityModel earthFlattenTransform() throws VelocityModelException {
+    public VelocityModel earthFlattenTransform() {
         VelocityLayer newLayer, oldLayer;
         boolean spherical = false;
         List<VelocityLayer> layers = new ArrayList<VelocityLayer>(vectorLength);

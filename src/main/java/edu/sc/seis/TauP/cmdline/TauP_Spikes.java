@@ -263,7 +263,7 @@ public class TauP_Spikes extends TauP_AbstractRayTool {
 
     /**
      * WARNING: Experimental.
-     *
+     * <p>
      * Probably doesn't work due to wkbj formalism is flat earth and so doesn't translate to spherical.
      * Possible to recalculate via EFT, but not sure worth it.
      */

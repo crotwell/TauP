@@ -181,7 +181,7 @@ public class SvgUtil {
             phasenameList.add(p.getName());
             phaseClassList.add(SvgUtil.classForPhase(p.getName()));
         }
-        SvgUtil.createLegend(out, phasenameList, phaseClassList, "",  xtrans, ytrans);
+        SvgUtil.createLegend(out, phasenameList, phaseClassList, outerGcss,  xtrans, ytrans);
     }
 
     public static void createTimeStepLegend(PrintWriter out, double timeStep, double maxTime, String outerGcss, float xtrans, float ytrans) {
@@ -192,7 +192,7 @@ public class SvgUtil {
             labelList.add(Outputs.formatTimeNoPad(timeVal)+" s");
             classList.add(SvgUtil.formatTimeForCss(timeVal));
         }
-        SvgUtil.createLegend(out, labelList, classList, "",  xtrans, ytrans);
+        SvgUtil.createLegend(out, labelList, classList, outerGcss,  xtrans, ytrans);
     }
 
     public static void createWavetypeLegend(PrintWriter out, boolean withBoth, float xtrans, float ytrans) {

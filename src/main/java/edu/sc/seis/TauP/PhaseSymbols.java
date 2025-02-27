@@ -89,7 +89,6 @@ public class PhaseSymbols {
         return isReflectSymbol(name, 0);
     }
     public static boolean isReflectSymbol(String name, int offset) {
-        char c = name.charAt(offset);
         return isTopsideReflectSymbol(name, offset) || isUndersideReflectSymbol(name, offset);
     }
     public static boolean isTopsideReflectSymbol(String name, int offset) {

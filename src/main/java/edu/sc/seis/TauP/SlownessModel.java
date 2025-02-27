@@ -1131,7 +1131,7 @@ public abstract class SlownessModel implements Serializable {
             fluidZone.botDepth = currVLayer.getBotDepth();
             fluidLayerDepths.add(fluidZone);
         }
-        if(DEBUG && criticalDepths.size() != 0) {
+        if(DEBUG && !criticalDepths.isEmpty()) {
             int botCriticalLayerNum, topCriticalLayerNum;
             String desc = "**** Critical Velocity Layers ************************\n";
             botCriticalLayerNum = criticalDepths.get(0).getVelLayerNum() - 1;
@@ -1143,7 +1143,7 @@ public abstract class SlownessModel implements Serializable {
             Alert.debug(desc);
         }
         if (DEBUG) {
-            if (highSlownessLayerDepthsP.size() != 0) {
+            if (!highSlownessLayerDepthsP.isEmpty()) {
                 Alert.debug("high slowness layer depths P: ");
                 for (int layerNum = 0; layerNum < highSlownessLayerDepthsP.size(); layerNum++) {
                     Alert.debug("  "+highSlownessLayerDepthsP.get(layerNum));
@@ -2101,7 +2101,7 @@ public abstract class SlownessModel implements Serializable {
      * prints out the slowness model into a file in a for suitable for plotting
      * with GMT.
      */
-    public void printGMT(PrintWriter dos) throws IOException {
+    public void printGMT(PrintWriter dos) {
         dos.println("> P velocity for " + vMod.modelName + "  below");
         printGMT(dos, true);
         dos.println("> S velocity for " + vMod.modelName + "  below");
@@ -2338,7 +2338,7 @@ public abstract class SlownessModel implements Serializable {
             }
         }
         desc += "\n";
-        if(highSlownessLayerDepthsP.size() != 0) {
+        if(!highSlownessLayerDepthsP.isEmpty()) {
             desc += "\n**** P High Slowness Layer Depths ****************\n";
             for(int i = 0; i < highSlownessLayerDepthsP.size(); i++) {
                 desc += highSlownessLayerDepthsP.get(i).topDepth
@@ -2348,7 +2348,7 @@ public abstract class SlownessModel implements Serializable {
             }
         }
         desc += "\n";
-        if(highSlownessLayerDepthsS.size() != 0) {
+        if(!highSlownessLayerDepthsS.isEmpty()) {
             desc += "\n**** S High Slowness Layer Depths ****************\n";
             for(int i = 0; i < highSlownessLayerDepthsS.size(); i++) {
                 desc += highSlownessLayerDepthsS.get(i).topDepth

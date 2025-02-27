@@ -791,7 +791,7 @@ public class SeismicPhaseLayerFactory {
 
         if ( ! tMod.isDiffractionBranch(disconBranch, isPWave)) {
             return baseFactory.failWithMessage(proto,"Unable to diffract, not diffraction depth " + currLeg + ", "+disconBranch+" at "+
-                    + tMod.getTauBranch(disconBranch, isPWave).getTopDepth()+" km, "+numString+" is not velocity discontinuity.");
+                tMod.getTauBranch(disconBranch, isPWave).getTopDepth()+" km, "+numString+" is not velocity discontinuity.");
         }
         // is possible to diffract downward? maybe if low velocity zone??
         if (currLeg.endsWith(DIFFDOWN)
@@ -1092,7 +1092,7 @@ public class SeismicPhaseLayerFactory {
         return false;
     }
 
-    public boolean validateDisconWithinLayers(ProtoSeismicPhase proto, int disconNum, String currLeg) throws TauModelException {
+    public boolean validateDisconWithinLayers(ProtoSeismicPhase proto, int disconNum, String currLeg) {
         if (disconNum <= -1) {
             baseFactory.failWithMessage(proto, "No boundary in model within "+depthTolerance+" km of "+currLeg);
             return false;

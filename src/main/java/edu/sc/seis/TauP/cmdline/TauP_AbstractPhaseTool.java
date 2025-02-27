@@ -9,9 +9,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import picocli.CommandLine;
 
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.StreamTokenizer;
 import java.util.*;
 
 public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
@@ -120,9 +117,6 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
         clearPhases();
     }
 
-    public void setReceiverDepth(double receiverDepth) {
-
-    }
     public void setSingleReceiverDepth(double receiverDepth) {
         this.modelArgs.setReceiverDepths(Collections.singletonList(receiverDepth));
         clearPhases();
@@ -193,8 +187,7 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
     }
 
     public List<Double> getSourceDepths() throws TauPException {
-        List<Double> out = new ArrayList<>();
-        out.addAll(modelArgs.getSourceDepths());
+        List<Double> out = new ArrayList<>(modelArgs.getSourceDepths());
         if ( out.isEmpty()) {
             out.add(Double.parseDouble(toolProps.getProperty("taup.source.depth", "0.0")));
         }
@@ -219,37 +212,6 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
             }
         }
         return phases;
-    }
-
-
-    /**
-     * parses a comma separated list of phase names and adds them to the
-     * phaseNames vector. Each phase can have an optional argument after a dash.
-     * This would be used for specifying which sac header to put the time in, or
-     * for other unforeseen uses. This may be called multiple times to append
-     * more phases. For example: P-0,PcP-1,ScP-4,Sn,SS,S^410S would, assuming no
-     * previous phases have been added, put P in T0, PcP in T1, ScP in T5, Sn in
-     * T2, SS in T3, and S^410S in T6.
-     *
-     * @param phaseList comma separates list of phase names
-     * @return list of phases
-     */
-    public List<PhaseName> parsePhaseList(String phaseList) {
-        List<PhaseName> out = new ArrayList<>();
-        String phaseEntry = "";
-        String[] namesInList = PhaseArgs.splitPhaseNameList(phaseList);
-        for (String s : namesInList) {
-            try {
-                out.add(PhaseName.parseName(s));
-            } catch (TauModelException e) {
-                Alert.warning("Problem with phase=" + phaseEntry + " "
-                        + e.getMessage(), "Skipping this phase: ");
-                if (isVerbose() || isDEBUG()) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        return out;
     }
 
 

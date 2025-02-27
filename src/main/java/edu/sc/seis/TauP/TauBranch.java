@@ -203,7 +203,7 @@ public class TauBranch implements Serializable, Cloneable {
      *                if the slownessmodel and taumodel are not compatible
      */
     public void createBranch(SlownessModel sMod,
-                             double[] rayParams) throws NoSuchLayerException,
+                             double[] rayParams) throws
             SlownessModelException, TauModelException {
         TimeDist timeDist;
         double p;
@@ -334,7 +334,7 @@ public class TauBranch implements Serializable, Cloneable {
      * see edu.sc.seis.TauP.TauModel.depthCorrect(double)
      */
     protected void insert(double rayParam, SlownessModel sMod, int index)
-            throws NoSuchLayerException, SlownessModelException,
+            throws SlownessModelException,
             TauModelException {
         int topLayerNum = sMod.layerNumberBelow(getTopDepth(), isPWave);
         int botLayerNum = sMod.layerNumberAbove(getBotDepth(), isPWave);
@@ -376,7 +376,7 @@ public class TauBranch implements Serializable, Cloneable {
      * generates a new tau branch by "subtracting" the given tau branch from
      * this tau branch. The given tau branch is assumed to by the upper part of
      * this branch.
-     * 
+     * <p>
      *  indexP specifies where a new ray coresponding to a P wave
      *           sample has been added, it is -1 if no ray parameter has been
      *           added to topBranch.
@@ -390,7 +390,7 @@ public class TauBranch implements Serializable, Cloneable {
                                    int indexS,
                                    SlownessModel sMod,
                                    double[] rayParams)
-            throws NoSuchLayerException, SlownessModelException,
+            throws SlownessModelException,
             TauModelException {
         if(topBranch.getTopDepth() != getTopDepth()
                 || topBranch.getBotDepth() > getBotDepth()) {
@@ -734,9 +734,7 @@ public class TauBranch implements Serializable, Cloneable {
         TauBranch tBranch;
         try {
             tBranch = (TauBranch)tBranchClass.getDeclaredConstructor().newInstance();
-        } catch (InvocationTargetException e) {
-            throw new TauPException("Problem creating TauBranch", e);
-        } catch (NoSuchMethodException e) {
+        } catch (InvocationTargetException | NoSuchMethodException e) {
             throw new TauPException("Problem creating TauBranch", e);
         }
         tBranch.topDepth = dis.readDouble();

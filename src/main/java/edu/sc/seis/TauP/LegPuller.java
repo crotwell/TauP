@@ -348,7 +348,7 @@ public class LegPuller {
             return true;
         }
         try {
-            double d = Double.parseDouble(leg);
+            Double.parseDouble(leg);
             return true;
         } catch (NumberFormatException e) {
             return false;
@@ -463,7 +463,7 @@ public class LegPuller {
                 }
             } else {
                 try {
-                    double d = Double.parseDouble(currLeg);
+                    Double.parseDouble(currLeg);
                     // only get this far if the currLeg is a number,
                     // otherwise exception
                     disconBranch = closestDisconBranchToDepth(tMod, currLeg);

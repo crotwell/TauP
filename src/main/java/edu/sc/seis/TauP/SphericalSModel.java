@@ -163,7 +163,6 @@ public class SphericalSModel extends SlownessModel implements Serializable {
              * should equally space the depths. ???? This probably won't happen,
              * but...
              */
-            depth = Double.MAX_VALUE;
             throw new SlownessModelException("Neg velocity gradient "
                     + "just balances the earth flattening!"
                     + " What should I do?!?!?!? topDepth= " + topDepth);

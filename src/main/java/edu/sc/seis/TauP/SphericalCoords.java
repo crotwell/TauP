@@ -33,10 +33,10 @@ import edu.sc.seis.seisFile.Location;
  * lon, lat, lon you can find the distance or azimuth and given lat, lon,
  * distance, azimuth you can find the lat lon of the resultant point. Just uses
  * spherical relations, no ellpticity correction is applied.
- * 
+ * <p>
  * See Appendix A of "Seismology and Plate Tectonics" by David Gubbins Cambridge
  * University Press, 1990
- * 
+ * <p>
  * and Chapter 3 of "Plate Tectonics: How it Works" by Allan Cox and Robert
  * Brian Hart Blackwell Scientific Publications, 1986
  * 

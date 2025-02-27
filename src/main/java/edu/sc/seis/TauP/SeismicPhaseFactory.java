@@ -6,7 +6,6 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static edu.sc.seis.TauP.LegPuller.extractBoundaryId;
 import static edu.sc.seis.TauP.PhaseInteraction.*;
 import static edu.sc.seis.TauP.PhaseInteraction.REFLECT_TOPSIDE_CRITICAL;
 import static edu.sc.seis.TauP.PhaseSymbols.*;
@@ -129,9 +128,8 @@ public class SeismicPhaseFactory {
         Matcher m = scatPattern.matcher(name);
         if (m.matches()) {
             String inbound = m.group("inscat");
-            String scatType = m.group("scat");
             String outbound = m.group("outscat");
-            if (inbound.length()==0 || name.charAt(0) == SCATTER_CODE || name.charAt(0) == BACKSCATTER_CODE) {
+            if (inbound.isEmpty() || name.charAt(0) == SCATTER_CODE || name.charAt(0) == BACKSCATTER_CODE) {
                 // this probably can't pass the RE, but...
                 FailedSeismicPhase fail = FailedSeismicPhase.failForReason(name, tMod, receiverDepth,
                         "Scatter phase cannot start with symbols, oO, in "+name+", must have phase from source to scatterer.");
@@ -145,7 +143,7 @@ public class SeismicPhaseFactory {
                 phaseList.add(fail);
                 return phaseList;
             }
-            if (outbound.length()==0) {
+            if (outbound.isEmpty()) {
                 // this probably can't pass the RE, but...
                 FailedSeismicPhase fail = FailedSeismicPhase.failForReason(name, tMod, receiverDepth,
                         "Scatter phase cannot end with symbols, oO, in "+name+", must have phase from scatterer to receiver.");
@@ -571,44 +569,6 @@ public class SeismicPhaseFactory {
         return proto;
     }
 
-    boolean checkDegenerateOuterCore(String prevLeg, String currLeg, String nextLeg,
-                                 boolean isPWave, boolean isPWavePrev, int legNum)
-            throws TauModelException {
-        if (tMod.getCmbDepth() == tMod.getRadiusOfEarth()) {
-            // degenerate case, CMB is at center, so model without a core
-            if(DEBUG) {
-                Alert.debug("Cannot have K phase "
-                        + currLeg + " within phase " + name
-                        + " for this model as it has no core, cmb depth = radius of Earth.");
-            }
-            return false;
-        }
-        if (tMod.getCmbDepth() == tMod.getIocbDepth()) {
-            // degenerate case, CMB is same as IOCB, so model without an outer core
-            if(DEBUG) {
-                Alert.debug("Cannot have K phase "
-                        + currLeg + " within phase " + name
-                        + " for this model as it has no outer core, cmb depth = iocb depth, "+tMod.getCmbDepth());
-            }
-            return false;
-        }
-        return true;
-    }
-
-    boolean checkDegenerateInnerCore(String prevLeg, String currLeg, String nextLeg,
-                                   boolean isPWave, boolean isPWavePrev, int legNum) {
-        if (tMod.getIocbDepth() == tMod.getRadiusOfEarth()) {
-            // degenerate case, IOCB is at center, so model without an inner core
-            if (DEBUG) {
-                Alert.debug("Cannot have I or J phase "
-                        + currLeg + " within phase " + name
-                        + " for this model as it has no inner core, iocb depth = radius of Earth.");
-            }
-            return false;
-        }
-        return true;
-    }
-
     ProtoSeismicPhase failWithMessage(ProtoSeismicPhase proto, String reason) {
         if (DEBUG) {
             Alert.debug("FAIL: "+name+" "+reason);
@@ -681,8 +641,7 @@ public class SeismicPhaseFactory {
             rayParams = new double[2];
             dist[0] = 0.0;
             time[0] = 0.0;
-            double velocity = Double.valueOf(name.substring(0, name.length() - 4))
-                    .doubleValue();
+            double velocity = Double.valueOf(name.substring(0, name.length() - 4));
             rayParams[0] = tMod.radiusOfEarth / velocity;
             dist[1] = getMaxKmpsLaps() * 2 * Math.PI;
             time[1] = getMaxKmpsLaps() * 2 * Math.PI * tMod.radiusOfEarth / velocity;
@@ -781,7 +740,7 @@ public class SeismicPhaseFactory {
         if (numDiff>0 || numHead>0) {
             // proportionally share head/diff, although this probably can't actually happen in a single ray
             // and will usually be either refraction or diffraction
-            double horizontalDistDeg = numHead/(numHead+numDiff) * getMaxRefraction() + numDiff/(numHead+numDiff)*getMaxDiffraction();
+            double horizontalDistDeg = 1.0*numHead/(numHead+numDiff) * getMaxRefraction() + 1.0*numDiff/(numHead+numDiff)*getMaxDiffraction();
             dist[1] = dist[0] + horizontalDistDeg * Math.PI / 180.0;
             time[1] = time[0] + horizontalDistDeg * Math.PI / 180.0 * minRayParam;
         } else if(rayParams.length == 2 && maxRayParamIndex == minRayParamIndex) {

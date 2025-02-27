@@ -7,7 +7,6 @@ import picocli.AutoComplete;
 import picocli.CommandLine;
 
 import java.io.*;
-import java.util.Arrays;
 
 
 @CommandLine.Command(name = "taup",
@@ -169,6 +168,7 @@ public class ToolRun {
 			if (arg.equals("web")) {
 				// need taup web to stay alive after calling start
 				doSysExit = false;
+				break;
 			}
 		}
 		try {
@@ -181,13 +181,6 @@ public class ToolRun {
 			e.printStackTrace();
 			System.exit(1001);
 		}
-	}
-	
-	static void legacyRunTool(String toolname, String[] args) {
-	    String[] argsPlusName = new String[args.length+1];
-	    argsPlusName[0] = toolname;
-	    System.arraycopy(args, 0, argsPlusName, 1, args.length);
-	    ToolRun.main(argsPlusName);
 	}
 
 }

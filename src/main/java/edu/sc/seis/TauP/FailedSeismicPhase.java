@@ -51,7 +51,7 @@ public class FailedSeismicPhase extends SimpleSeismicPhase {
     }
 
     @Override
-    public Arrival shootRay(double rayParam) throws SlownessModelException, NoSuchLayerException {
+    public Arrival shootRay(double rayParam) {
         return null;
     }
 
@@ -76,12 +76,12 @@ public class FailedSeismicPhase extends SimpleSeismicPhase {
     }
 
     @Override
-    public double calcEnergyFluxFactorReflTranPSV(Arrival arrival) throws VelocityModelException, SlownessModelException {
+    public double calcEnergyFluxFactorReflTranPSV(Arrival arrival) {
         return 0;
     }
 
     @Override
-    public double calcEnergyFluxFactorReflTranSH(Arrival arrival) throws VelocityModelException, SlownessModelException {
+    public double calcEnergyFluxFactorReflTranSH(Arrival arrival) {
         return 0;
     }
 

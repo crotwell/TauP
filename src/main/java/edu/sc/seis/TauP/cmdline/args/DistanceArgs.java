@@ -469,7 +469,7 @@ public class DistanceArgs {
         @CommandLine.Option(names={"--degreerange"},
                 paramLabel="d",
                 arity = "1..3",
-                description="regular distance range in degrees, one of max min,max or min,max,step"
+                description="regular distance range in degrees, one of max min,max or min,max,step. "
                         +"Default min is 0 and step is 10.",
                 split=",")
         protected List<Double> degreeRange = new ArrayList<>();
@@ -480,7 +480,7 @@ public class DistanceArgs {
          */
         @CommandLine.Option(names={"--km", "--kilometer"},
                 paramLabel = "km",
-                description="distance in kilometers", split=",")
+                description="distance in kilometers along surface.", split=",")
         protected List<Double> distKilometersList = new ArrayList<>();
 
         /**
@@ -494,7 +494,7 @@ public class DistanceArgs {
         @CommandLine.Option(names={"--kilometerrange"},
                 paramLabel="k",
                 arity = "1..3",
-                description="regular distance range in kilometers, one of max min,max or min,max,step."
+                description="regular distance range in kilometers, one of max min,max or min,max,step. "
                 +"Default min is 0 and step is 10.",
                 split=",")
         protected List<Double> kilometerRange = new ArrayList<>();
@@ -503,14 +503,14 @@ public class DistanceArgs {
         @Option(names="--takeoff",
                 split=",",
                 paramLabel = "deg",
-                description="takeoff angle in degrees from the source zero is down, 90 horizontal, 180 is up")
+                description="takeoff angle in degrees from the source, zero is down, 90 horizontal, 180 is up.")
         protected List<Double> takeoffAngle = new ArrayList<>();
 
 
         @CommandLine.Option(names={"--takeoffrange"},
                 paramLabel="k",
                 arity = "1..3",
-                description="regular range in takeoff angle in degrees, one of max min,max or min,max,step."
+                description="regular range in takeoff angle in degrees, one of max min,max or min,max,step. "
                         +"Default min is 0 and step is 10.",
                 split=",")
         protected List<Double> takeoffRange = new ArrayList<>();

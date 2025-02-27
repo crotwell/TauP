@@ -11,7 +11,6 @@ import java.util.*;
 
 import static edu.sc.seis.TauP.SvgEarth.calcFontSizeForEarthScale;
 import static edu.sc.seis.TauP.SvgUtil.createSurfaceWaveCSS;
-import static edu.sc.seis.TauP.cmdline.TauP_Tool.ABREV_SYNOPSIS;
 import static edu.sc.seis.TauP.cmdline.TauP_Tool.OPTIONS_HEADING;
 
 /**
@@ -20,7 +19,6 @@ import static edu.sc.seis.TauP.cmdline.TauP_Tool.OPTIONS_HEADING;
 @CommandLine.Command(name = "wavefront",
         description = "Plot wavefronts of seismic phases at steps in time.",
         optionListHeading = OPTIONS_HEADING,
-        abbreviateSynopsis = ABREV_SYNOPSIS,
         usageHelpAutoWidth = true)
 public class TauP_Wavefront extends TauP_AbstractPhaseTool {
 
@@ -181,7 +179,7 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
             int idx = -1;
             for (Double timeVal : sortedKeys) {
                 idx++;
-                String lineColor = "";
+                String lineColor;
                 if (coloring.getColoring() == ColorType.auto) {
                     lineColor = "-W,"+ColoringArgs.gmtColor(coloring.colorForIndex(idx));
                     out.write("gmt plot "+lineColor+" -A  <<END\n");
@@ -251,9 +249,7 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
                 RayParamIndexRay rc = new RayParamIndexRay(i);
                 try {
                     allArrival.add(rc.calculate(phase).get(0));
-                } catch (SlownessModelException e) {
-                    throw new RuntimeException(e);
-                } catch (NoSuchLayerException e) {
+                } catch (SlownessModelException | NoSuchLayerException e) {
                     throw new RuntimeException(e);
                 }
             }
@@ -265,18 +261,14 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
                     RayParamRay rpRay = new RayParamRay(rp);
                     try {
                         allArrival.addAll(rpRay.calculate(phase));
-                    } catch (SlownessModelException e) {
-                        throw new RuntimeException(e);
-                    } catch (NoSuchLayerException e) {
+                    } catch (SlownessModelException | NoSuchLayerException e) {
                         throw new RuntimeException(e);
                     }
                 }
                 RayParamRay rpRay = new RayParamRay(phase.getMaxRayParam());
                 try {
                     allArrival.addAll(rpRay.calculate(phase));
-                } catch (SlownessModelException e) {
-                    throw new RuntimeException(e);
-                } catch (NoSuchLayerException e) {
+                } catch (SlownessModelException | NoSuchLayerException e) {
                     throw new RuntimeException(e);
                 }
             } else {
@@ -496,7 +488,7 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
     }
 
     @CommandLine.Option(names="--timefiles",
-            description = "outputs each time into a separate .ps file within the gmt script.")
+            description = "outputs each time into a separate file within the gmt script.")
     public void setSeparateFilesByTime(boolean separateFilesByTime) {
         this.separateFilesByTime = separateFilesByTime;
     }
@@ -534,19 +526,12 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
                 while (Math.pow(10, numDigits) < lastTime) {
                     numDigits++;
                 }
-                String formatStr = "%0"+numDigits+".0f";
                 for (Double timeVal : sortedKeys) {
                     String timeStr = String.format("_%05.2f", timeVal);
                     Map<Double, List<WavefrontPathSegment>> singleTimeIsochronMap = new HashMap<>();
                     singleTimeIsochronMap.put(timeVal, isochronMap.get(timeVal));
                     File timeOutFile = new File(outputTypeArgs.getOutFileBase()+timeStr+"."+outputTypeArgs.getOutFileExtension());
                     PrintWriter timeWriter = new PrintWriter(new BufferedWriter(new FileWriter(timeOutFile)));
-                    String psFileBase = outputTypeArgs.getGmtOutFileBase("taup_wavefront");
-                    if (outputTypeArgs.gmtScript && psFileBase.endsWith(".ps")) {
-                        psFileBase = psFileBase.substring(0, psFileBase.length() - 3);
-                    }
-                    String timeExt = "_" + String.format(formatStr, timeVal);
-                    String byTimePsFile = psFileBase + timeExt + ".ps";
                     printIsochron(timeWriter, singleTimeIsochronMap);
                     timeWriter.close();
                 }

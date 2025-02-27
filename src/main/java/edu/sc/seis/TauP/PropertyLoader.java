@@ -54,7 +54,7 @@ public class PropertyLoader {
      * directory, followed by ".taup" in the current directory if it can be
      * found. If neither can be found then the default Properties object is
      * returned unmodified.
-     * 
+     * <p>
      * A special case is made for the taup.model.path property. If it is defined
      * in the system properties, then the system version is prepended to the
      * users version. This allows for setting system wide search paths on UNIX

@@ -14,13 +14,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-import static edu.sc.seis.TauP.cmdline.TauP_Tool.ABREV_SYNOPSIS;
 import static edu.sc.seis.TauP.cmdline.TauP_Tool.OPTIONS_HEADING;
 
 @CommandLine.Command(name = "web",
         description = "Web based gui for the TauP Toolkit.",
         optionListHeading = OPTIONS_HEADING,
-        abbreviateSynopsis = ABREV_SYNOPSIS,
         usageHelpAutoWidth = true)
 public class TauP_Web implements Callable<Integer> {
 

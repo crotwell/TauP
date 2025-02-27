@@ -47,12 +47,12 @@ import static edu.sc.seis.TauP.cmdline.TauP_Tool.OPTIONS_HEADING;
 /**
  * Calculate times for phases and set sac headers based on gcarc or dist or
  * station lat and lon and event lat and lon.
- * 
+ * <p>
  * Note that triplicated phases will cause problems, as there is only one spot
  * to put a time. An improved method would allow a phase to have several t#'s
  * associated with it, so that all arrivals could be marked. Currently however,
  * only the first arrival for a phase name is used.
- * 
+ * <p>
  * Warning: I assume the evdp header has depth in meters unless the -evdpkm flag
  * is set, in which case I assume kilometers. This may be a problem for users
  * that improperly use kilometers for the depth units. Due to much abuse of the

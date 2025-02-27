@@ -1,27 +1,18 @@
 package edu.sc.seis.TauP.cmdline;
 
-import edu.sc.seis.TauP.DistAz;
 import edu.sc.seis.TauP.DistanceRay;
 import edu.sc.seis.TauP.Outputs;
 import edu.sc.seis.TauP.TauPException;
 import edu.sc.seis.TauP.cmdline.args.*;
 import edu.sc.seis.seisFile.Location;
-import edu.sc.seis.seisFile.fdsnws.quakeml.Event;
-import edu.sc.seis.seisFile.fdsnws.quakeml.Magnitude;
-import edu.sc.seis.seisFile.fdsnws.quakeml.Origin;
 import picocli.CommandLine;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
-import static edu.sc.seis.TauP.cmdline.TauP_Tool.ABREV_SYNOPSIS;
 import static edu.sc.seis.TauP.cmdline.TauP_Tool.OPTIONS_HEADING;
-import static edu.sc.seis.seisFile.TimeUtils.TZ_UTC;
 
 /**
  * Calc distance, az and baz for event lat,lon and station lat,lon pairs.
@@ -29,7 +20,6 @@ import static edu.sc.seis.seisFile.TimeUtils.TZ_UTC;
 @CommandLine.Command(name = "distaz",
         description = "Calc distance, az and baz for event lat,lon and station lat,lon pairs.",
         optionListHeading = OPTIONS_HEADING,
-        abbreviateSynopsis = ABREV_SYNOPSIS,
         usageHelpAutoWidth = true)
 public class TauP_DistAz extends TauP_Tool {
 
@@ -70,14 +60,14 @@ public class TauP_DistAz extends TauP_Tool {
                 } else {
                     dr = DistanceRay.ofStationEvent(staLoc, evtLoc);
                 }
-                String staDesc = "";
+                String staDesc;
                 if (staLoc.hasDescription()) {
                     staDesc = staLoc.getDescription();
                 } else {
                     staDesc = Outputs.formatLatLon(staLoc.getLatitude()).trim()
                             +"/"+Outputs.formatLatLon(staLoc.getLongitude()).trim();
                 }
-                String evtDesc = "";
+                String evtDesc;
                 if (evtLoc.hasDescription()) {
                     evtDesc = evtLoc.getDescription();
                 } else {
@@ -88,19 +78,10 @@ public class TauP_DistAz extends TauP_Tool {
                 distList.add(dr);
             }
         }
-        Collections.sort(distList, new Comparator<DistanceRay>() {
-            @Override
-            public int compare(DistanceRay lhs, DistanceRay rhs) {
-                // radus only used if DistanceRay created with km, so doesn't
-                // matter in this case
-                if (lhs.getDegrees(1) > rhs.getDegrees(1)) {
-                    return -1;
-                } else if (lhs.getDegrees(1) < rhs.getDegrees(1)) {
-                    return 1;
-                } else{
-                    return 0;
-                }
-            }
+        distList.sort((lhs, rhs) -> {
+            // radus only used if DistanceRay created with km, so doesn't
+            // matter in this case
+            return Double.compare(rhs.getDegrees(1), lhs.getDegrees(1));
         });
         PrintWriter  out = outputTypeArgs.createWriter(spec.commandLine().getOut());
         if (outputTypeArgs.isText()) {

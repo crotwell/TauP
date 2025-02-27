@@ -321,7 +321,8 @@ public class TauP_Time extends TauP_AbstractRayTool {
                 out.print((float) (currArrival.getTime()) + " ");
             }
             out.println();
-        } else if(onlyPrintRayP) {
+        } else {
+            // onlyPrintRayP must be true
             for (Arrival arrival : arrivalList) {
                 currArrival = arrival;
                 out.write((float) (Math.PI / 180.0 * currArrival.getRayParam())
@@ -333,7 +334,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
         out.flush();
     }
 
-    public void printResultJSON(PrintWriter out, List<Arrival> arrivalList) throws TauModelException, TauPException {
+    public void printResultJSON(PrintWriter out, List<Arrival> arrivalList) throws TauPException {
         boolean withPierce = false;
         boolean withPath = false;
         TauP_AbstractRayTool.writeJSON(out, "",

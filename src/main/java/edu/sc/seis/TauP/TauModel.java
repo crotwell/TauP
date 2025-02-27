@@ -30,7 +30,7 @@ import java.util.HashMap;
 public class TauModel implements Serializable {
 
 
-    public TauModel(SlownessModel sMod) throws NoSuchLayerException,
+    public TauModel(SlownessModel sMod) throws
             SlownessModelException, TauModelException {
         this.sMod = sMod;
         calcTauIncFrom();
@@ -216,9 +216,8 @@ public class TauModel implements Serializable {
      * @param branchNum branch layer number
      * @param isPWave true for P, false for S
      * @return diffracted wave possible
-     * @throws NoSuchLayerException
      */
-    public boolean isDiffractionBranch(int branchNum, boolean isPWave) throws NoSuchLayerException {
+    public boolean isDiffractionBranch(int branchNum, boolean isPWave) {
         return isDiscontinuityBranch(branchNum, isPWave);
     }
 
@@ -430,7 +429,7 @@ public class TauModel implements Serializable {
      *                distance without a layer.
      */
     private void calcTauIncFrom() throws SlownessModelException,
-            NoSuchLayerException, TauModelException {
+            TauModelException {
         SlownessLayer topSLayer, botSLayer, currSLayer, prevSLayer;
         int topCritLayerNum, botCritLayerNum;
         /*

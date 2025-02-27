@@ -62,7 +62,7 @@ public class Alert {
      * ie GUI or command line.
      */
     public static void warning(String message, String extra) {
-        String nl_extra = (extra != null && extra.length()>0) ?  (nl + extra) : "";
+        String nl_extra = (extra != null && !extra.isEmpty()) ?  (nl + extra) : "";
         if(GUI) {
             System.err.println("Warning: " + message + nl_extra);
         } else {

@@ -402,7 +402,7 @@ public class ScatteredSeismicPhase implements SeismicPhase {
             out.println(SQ+"fail"+QCQ+"Scattered Phase "+scatteredPhase.proto.failReason+QCOMMA);
         }
         String baseDesc = SeismicPhase.baseDescribeJSON(this);
-        if (baseDesc.length() > 0) {
+        if (!baseDesc.isEmpty()) {
             out.println(baseDesc+",");
         }
         out.println(SeismicPhase.segmentDescribeJSON(this));

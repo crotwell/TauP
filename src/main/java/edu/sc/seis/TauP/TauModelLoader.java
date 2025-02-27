@@ -26,14 +26,11 @@
 package edu.sc.seis.TauP;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.InvalidClassException;
-import java.io.OptionalDataException;
 import java.io.Reader;
-import java.io.StreamCorruptedException;
 import java.lang.ref.SoftReference;
 import java.nio.file.FileSystems;
 import java.util.HashMap;
@@ -274,11 +271,11 @@ public class TauModelLoader {
     }
 
 
-    public static TauModel createTauModel(VelocityModel vMod) throws VelocityModelException, SlownessModelException, TauModelException, IOException {
+    public static TauModel createTauModel(VelocityModel vMod) throws SlownessModelException, TauModelException, IOException {
         return createTauModel(vMod, PropertyLoader.load());
     }
 
-    public static TauModel createTauModel(VelocityModel vMod, Properties toolProps) throws VelocityModelException, SlownessModelException, TauModelException {
+    public static TauModel createTauModel(VelocityModel vMod, Properties toolProps) throws SlownessModelException, TauModelException {
         if (vMod == null) {throw new IllegalArgumentException("vMod cannot be null");}
         if(!vMod.getSpherical()) {
             throw new SlownessModelException("Flat slowness model not yet implemented.");

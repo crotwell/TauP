@@ -8,11 +8,11 @@ import java.util.List;
 
 public class LatLonAzBazArgs extends LatLonArgs {
 
-    @CommandLine.Option(names = "--az", description = "azimuth in degrees")
+    @CommandLine.Option(names = "--az", description = "azimuth in degrees, source to receiver")
     protected Double azimuth = null;
 
 
-    @CommandLine.Option(names = "--baz", description = "backazimuth in degrees")
+    @CommandLine.Option(names = "--baz", description = "backazimuth in degrees, receiver to source")
     protected Double backAzimuth = null;
 
 }

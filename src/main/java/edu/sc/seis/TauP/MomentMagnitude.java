@@ -14,7 +14,6 @@ public class MomentMagnitude {
      * 1 N-m = 1e7 dyne cm, so minus 7
      */
     public static double mw_to_N_m(double Mw) {
-        double scalar_moment_N_m = Math.pow(10, (1.5*Mw + 9.1 ));
-        return scalar_moment_N_m;
+        return Math.pow(10, (1.5*Mw + 9.1 ));
     }
 }

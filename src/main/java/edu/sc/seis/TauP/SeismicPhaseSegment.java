@@ -616,7 +616,7 @@ public class SeismicPhaseSegment {
 		String indent = "  ";
 		for(SeismicPhaseSegment segment : segmentList) {
 			if (segment.endAction != PhaseInteraction.FAIL || segment.endBranch != -1) {
-				desc += indent + segment.toString() + "\n";
+				desc += indent + segment + "\n";
 			} else {
 				desc += indent + "then " + segment.endAction + "\n";
 			}

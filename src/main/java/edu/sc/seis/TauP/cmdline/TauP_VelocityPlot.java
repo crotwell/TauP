@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Objects;
 
 import static edu.sc.seis.TauP.SphericalCoords.RtoD;
-import static edu.sc.seis.TauP.cmdline.TauP_Tool.ABREV_SYNOPSIS;
 import static edu.sc.seis.TauP.cmdline.TauP_Tool.OPTIONS_HEADING;
 import static edu.sc.seis.TauP.cmdline.args.OutputTypes.TEXT;
 
@@ -24,7 +23,6 @@ import static edu.sc.seis.TauP.cmdline.args.OutputTypes.TEXT;
 @CommandLine.Command(name = "velplot",
         description = "Plot velocity vs depth for a model.",
         optionListHeading = OPTIONS_HEADING,
-        abbreviateSynopsis = ABREV_SYNOPSIS,
         usageHelpAutoWidth = true)
 public class TauP_VelocityPlot extends TauP_Tool {
 
@@ -253,7 +251,8 @@ public class TauP_VelocityPlot extends TauP_Tool {
         }
     }
 
-    public static double calculateAtDepth(VelocityModel vMod, ModelAxisType axisType, double depth, boolean above) throws NoSuchLayerException, TauModelException {
+    public static double calculateAtDepth(VelocityModel vMod, ModelAxisType axisType, double depth, boolean above)
+            throws TauModelException {
         switch (axisType) {
             case radius:
                 return vMod.getRadiusOfEarth() - depth;
@@ -337,7 +336,8 @@ public class TauP_VelocityPlot extends TauP_Tool {
                 throw new TauModelException(axisType + " is not a velocity model property");
         }
     }
-    public static double calculateAtDepth(TauModel tMod, ModelAxisType axisType, double depth, boolean above) throws NoSuchLayerException, TauModelException {
+    public static double calculateAtDepth(TauModel tMod, ModelAxisType axisType, double depth, boolean above)
+            throws TauModelException {
         switch (axisType) {
             case radius:
                 return tMod.getRadiusOfEarth()-depth;
@@ -387,7 +387,8 @@ public class TauP_VelocityPlot extends TauP_Tool {
         }
     }
 
-    public List<XYPlottingData> calculate(InputVelocityModelArgs velModelArgs, ModelAxisType xAxis, ModelAxisType yAxis, String labelPrefix) throws VelocityModelException, IOException, TauModelException, SlownessModelException {
+    public List<XYPlottingData> calculate(InputVelocityModelArgs velModelArgs, ModelAxisType xAxis, ModelAxisType yAxis, String labelPrefix)
+            throws IOException, TauModelException, SlownessModelException {
         List<XYPlottingData> xyList = new ArrayList<>();
         String modelName;
 
@@ -544,7 +545,7 @@ public class TauP_VelocityPlot extends TauP_Tool {
         if (velModelArgs.size() == 0) {
             throw new CommandLine.ParameterException(spec.commandLine(), "must give at least one model");
         }
-        if (getOutputFormat() == OutputTypes.ND
+        if (Objects.equals(getOutputFormat(), OutputTypes.ND)
                 && (xAxisType != ModelAxisType.velocity || yAxisType != ModelAxisType.depth)) {
             throw new CommandLine.ParameterException(spec.commandLine(), "cannot specify axis type for --nd output");
         }

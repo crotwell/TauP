@@ -32,7 +32,7 @@ import static edu.sc.seis.TauP.SphericalCoords.RtoD;
  *
  * @version 1.1.3 Wed Jul 18 15:00:35 GMT 2001
  * @author H. Philip Crotwell
- *
+ * <p>
  * Modified to add "expert" mode wherein paths may start in the core. Principal
  * use is to calculate leg contributions for scattered phases. Nomenclature: "K" -
  * downgoing wave from source in core; "k" - upgoing wave from source in core.
@@ -442,9 +442,7 @@ public class SimpleSeismicPhase implements SeismicPhase {
                     return refineArrival(shoot, rightEstimate, searchDist, distTolRadian, maxRecursion-1);
                 }
             }
-        } catch(NoSuchLayerException e) {
-            throw new RuntimeException("Should not happen: "+getName(), e);
-        } catch(SlownessModelException e) {
+        } catch(NoSuchLayerException | SlownessModelException e) {
             throw new RuntimeException("Should not happen: "+getName(), e);
         }
     }
@@ -473,7 +471,6 @@ public class SimpleSeismicPhase implements SeismicPhase {
         double[] out_dist = new double[rayParams.length+numToAdd];
         double[] out_time = new double[rayParams.length+numToAdd];
         int shift = 0;
-        int prior = 0;
         for (int i = 0; i < rayParams.length-1; i++) {
             out_dist[i + shift] = dist[i];
             out_rayParams[i + shift] = rayParams[i];
@@ -492,7 +489,7 @@ public class SimpleSeismicPhase implements SeismicPhase {
                         break;
                     }
                 }
-                if (aList.size() == 0) {
+                if (aList.isEmpty()) {
                     throw new RuntimeException("Bad calc for interp "+j+" "+(dist[i] + j * deltaDist)*RtoD+" for "+getName());
                 }
             }
@@ -628,10 +625,8 @@ public class SimpleSeismicPhase implements SeismicPhase {
         try {
             rayParam = calcRayParamForTakeoffAngleInModel(takeoffDegree, firstIsPWave, tMod,
                     getPhaseSegments().get(0).isDownGoing);
-        } catch(NoSuchLayerException e) {
+        } catch(NoSuchLayerException | SlownessModelException e) {
             throw new RuntimeException("Should not happen",e);
-        } catch (SlownessModelException e) {
-            throw new RuntimeException("Should not happen", e);
         }
         return rayParam;
     }
@@ -640,7 +635,7 @@ public class SimpleSeismicPhase implements SeismicPhase {
                                                             boolean isPWave,
                                                             TauModel tMod,
                                                             boolean isDownGoing)
-            throws NoArrivalException, NoSuchLayerException, SlownessModelException {
+            throws NoSuchLayerException, SlownessModelException {
         if ((isDownGoing && (takeoffDegree > 90))
                 || ( ! isDownGoing && (takeoffDegree < 90))
         ) {
@@ -1072,7 +1067,7 @@ public class SimpleSeismicPhase implements SeismicPhase {
     }
 
     @Override
-    public double calcEnergyFluxFactorReflTranPSV(Arrival arrival) throws VelocityModelException, SlownessModelException {
+    public double calcEnergyFluxFactorReflTranPSV(Arrival arrival) throws VelocityModelException {
         double reflTranValue = 1;
         boolean calcSH = false;
         SeismicPhaseSegment prevSeg = getPhaseSegments().get(0);
@@ -1086,7 +1081,7 @@ public class SimpleSeismicPhase implements SeismicPhase {
     }
 
     @Override
-    public double calcEnergyFluxFactorReflTranSH(Arrival arrival) throws VelocityModelException, SlownessModelException {
+    public double calcEnergyFluxFactorReflTranSH(Arrival arrival) throws VelocityModelException {
         double reflTranValue = 1;
 
         boolean isAllS = isAllSWave();
@@ -1180,7 +1175,7 @@ public class SimpleSeismicPhase implements SeismicPhase {
             out.println(SQ+"fail"+QCQ+proto.failReason+QCOMMA);
         }
         String baseDesc = SeismicPhase.baseDescribeJSON(this);
-        if (baseDesc.length() > 0) {
+        if (!baseDesc.isEmpty()) {
             out.println(baseDesc+",");
         }
         out.println(SeismicPhase.segmentDescribeJSON(this));

@@ -12,13 +12,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static edu.sc.seis.TauP.SphericalCoords.RtoD;
-import static edu.sc.seis.TauP.cmdline.TauP_Tool.ABREV_SYNOPSIS;
 import static edu.sc.seis.TauP.cmdline.TauP_Tool.OPTIONS_HEADING;
 
 @CommandLine.Command(name = "find",
         description = "Find seismic phases in an earth model.",
         optionListHeading = OPTIONS_HEADING,
-        abbreviateSynopsis = ABREV_SYNOPSIS,
         usageHelpAutoWidth = true)
 public class TauP_Find extends TauP_AbstractPhaseTool {
 
@@ -68,7 +66,6 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
 
     @Override
     public void start() throws IOException, TauPException {
-        List<String> givenPhaseNames = PhaseArgs.extractPhaseNames("");
         List<RayCalculateable> distanceValues = distanceArgs.getRayCalculatables(sourceArgs);
         if (azimuth != null) {
             for (RayCalculateable rc : distanceValues) {
@@ -120,7 +117,7 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
     public List<Arrival> findForDist(List<ProtoSeismicPhase> walk,
                                      TauModel tMod,
                                      List<RayCalculateable> distanceValues,
-                                     double[] rayParamRange) throws IOException, TauPException {
+                                     double[] rayParamRange) throws TauPException {
         List<SeismicPhase> phaseList = new ArrayList<>();
         List<String> phaseNameList = new ArrayList<>();
         for (ProtoSeismicPhase proto : walk) {
@@ -199,7 +196,7 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
         out.flush();
     }
 
-    public List<ProtoSeismicPhase> findForAllDepth(List<ProtoSeismicPhase> walk) throws IOException, TauPException {
+    public List<ProtoSeismicPhase> findForAllDepth(List<ProtoSeismicPhase> walk) throws TauPException {
         List<SeismicPhase> givenPhases = new ArrayList<>();
         if ( ! phaseArgs.isEmpty()) {
             givenPhases = getSeismicPhases();

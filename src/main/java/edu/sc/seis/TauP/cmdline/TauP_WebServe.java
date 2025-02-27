@@ -1,9 +1,6 @@
 package edu.sc.seis.TauP.cmdline;
 
 import edu.sc.seis.TauP.*;
-import edu.sc.seis.TauP.cmdline.TauP_Tool;
-import edu.sc.seis.TauP.cmdline.TauP_Spikes;
-import edu.sc.seis.TauP.cmdline.ToolRun;
 import edu.sc.seis.TauP.cmdline.args.OutputTypes;
 import edu.sc.seis.seisFile.mseed3.MSeed3Record;
 import io.undertow.Undertow;
@@ -160,8 +157,7 @@ public class TauP_WebServe extends TauP_Tool {
         while (toolToRun.startsWith("/")) {
             toolToRun = toolToRun.substring(1);
         }
-        TauP_Tool tool = ToolRun.getToolForName(toolToRun);
-        return tool;
+        return ToolRun.getToolForName(toolToRun);
     }
 
     static Pattern allowedModelNamePat = Pattern.compile("[^[\\w._-]]");
@@ -283,13 +279,9 @@ public class TauP_WebServe extends TauP_Tool {
     public List<String> getKnownModels() {
         List<String> out = new ArrayList<>();
         if (additionalModels.isEmpty()) {
-            for (String mod : TauModelLoader.defaultModelList) {
-                out.add(mod);
-            }
+            out.addAll(TauModelLoader.defaultModelList);
         } else {
-            for (String mod : additionalModels) {
-                out.add(mod);
-            }
+            out.addAll(additionalModels);
         }
         return out;
     }
@@ -298,7 +290,7 @@ public class TauP_WebServe extends TauP_Tool {
         CommandLine cmd = new CommandLine(tool);
         CommandLine.Model.CommandSpec spec = cmd.getCommandSpec();
         List<String> argList = queryParamsToCmdLineArgs(spec, queryParams);
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         buffer.append(TauP_Tool.toolNameFromClass(tool.getClass()));
         for (String s : argList) {
             buffer.append(" "+s);
@@ -329,7 +321,7 @@ public class TauP_WebServe extends TauP_Tool {
         argList.add("-o");
         argList.add("stdout");
         
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         buffer.append(TauP_Tool.toolNameFromClass(tool.getClass()));
         for (String s : argList) {
             buffer.append(" "+s);

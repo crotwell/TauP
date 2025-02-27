@@ -55,17 +55,17 @@ public class VelocityLayer implements Cloneable, Serializable {
 
     private double botSVelocity;
 
-    private double topDensity = DEFAULT_DENSITY;
+    private double topDensity;
 
-    private double botDensity = DEFAULT_DENSITY;
+    private double botDensity;
 
-    private double topQp = DEFAULT_QP;
+    private double topQp;
 
-    private double botQp = DEFAULT_QP;
+    private double botQp;
 
-    private double topQs = DEFAULT_QS;
+    private double topQs;
 
-    private double botQs = DEFAULT_QS;
+    private double botQs;
 
     public static double DEFAULT_DENSITY = 2.6;
     public static double DEFAULT_QP = 1000;

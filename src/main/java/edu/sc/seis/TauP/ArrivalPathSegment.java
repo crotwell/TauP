@@ -24,9 +24,9 @@ public class ArrivalPathSegment extends AbstractPathSegment {
      * Because we are shooting a ray parameter through the model, and that ray parameter came from an
      * interpolation, it can happen for long paths that the output path doesn't quite end at the requested
      * distance. We do a simple scaling of all path distances so it hits the output.
-     * @param inPath
-     * @param arrival
-     * @return
+     * @param inPath input path
+     * @param arrival arrival for path
+     * @return adjusted path
      */
     public static List<ArrivalPathSegment> adjustPath(List<ArrivalPathSegment> inPath, Arrival arrival) {
         double distRadian = arrival.getDist();

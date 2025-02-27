@@ -1051,7 +1051,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
         for (SeismicPhaseSegment seg : segmentList) {
             sb.append(", "+seg.startBranch+" "+seg.endBranch+" then "+seg.endAction);
         }
-        return sb.substring(2).toString();
+        return sb.substring(2);
     }
     final List<SeismicPhaseSegment> segmentList;
 

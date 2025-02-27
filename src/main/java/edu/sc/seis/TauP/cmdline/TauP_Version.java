@@ -11,13 +11,11 @@ import picocli.CommandLine;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import static edu.sc.seis.TauP.cmdline.TauP_Tool.ABREV_SYNOPSIS;
 import static edu.sc.seis.TauP.cmdline.TauP_Tool.OPTIONS_HEADING;
 
 @CommandLine.Command(name = "version",
         description = "Print the version.",
         optionListHeading = OPTIONS_HEADING,
-        abbreviateSynopsis = ABREV_SYNOPSIS,
         usageHelpAutoWidth = true)
 public class TauP_Version extends TauP_Tool {
 

@@ -1,6 +1,5 @@
 package edu.sc.seis.TauP;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**

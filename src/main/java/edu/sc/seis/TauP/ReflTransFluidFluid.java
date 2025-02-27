@@ -18,7 +18,7 @@ public class ReflTransFluidFluid extends ReflTrans {
     }
 
     @Override
-    public Complex getComplexRpp(double rayParam) throws VelocityModelException {
+    public Complex getComplexRpp(double rayParam) {
         calcTempVars(rayParam, true);
         Complex num = botVertSlownessP.times(topDensity).minus(topVertSlownessP.times(botDensity));
         return num.over(denom);
@@ -31,7 +31,7 @@ public class ReflTransFluidFluid extends ReflTrans {
     }
 
     @Override
-    public Complex getComplexTpp(double rayParam) throws VelocityModelException {
+    public Complex getComplexTpp(double rayParam) {
         calcTempVars(rayParam, true);
         Complex num = new Complex(topVp/botVp*2*topDensity).times(topVertSlownessP);
         return num.over(denom);

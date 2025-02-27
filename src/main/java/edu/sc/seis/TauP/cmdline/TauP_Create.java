@@ -35,7 +35,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
 
-import static edu.sc.seis.TauP.cmdline.TauP_Tool.ABREV_SYNOPSIS;
 import static edu.sc.seis.TauP.cmdline.TauP_Tool.OPTIONS_HEADING;
 import static edu.sc.seis.TauP.cmdline.args.OutputTypes.TAUP;
 
@@ -54,7 +53,6 @@ import static edu.sc.seis.TauP.cmdline.args.OutputTypes.TAUP;
 @CommandLine.Command(name = "create",
         description = "Create .taup file from a velocity model.",
         optionListHeading = OPTIONS_HEADING,
-        abbreviateSynopsis = ABREV_SYNOPSIS,
         usageHelpAutoWidth = true)
 public class TauP_Create extends TauP_Tool {
 
@@ -144,16 +142,6 @@ public class TauP_Create extends TauP_Tool {
         toolProps.setProperty("taup.create.allowInnerCoreS", ""+allowInnerCoreS);
     }
 
-    public void parseFileName(String modelFilename) {
-        int j = modelFilename.lastIndexOf(System.getProperty("file.separator"));
-        this.inputFileArgs.setModelFilename(modelFilename.substring(j + 1));
-        if(j == -1) {
-            directory = ".";
-        } else {
-            directory = modelFilename.substring(0, j);
-        }
-    }
-
     public VelocityModel loadVMod() throws IOException, VelocityModelException {
         String file_sep = System.getProperty("file.separator");
         // Read the velocity model file.
@@ -192,7 +180,7 @@ public class TauP_Create extends TauP_Tool {
 
     }
     
-    public void start() throws SlownessModelException, TauModelException, VelocityModelException, IOException {
+    public void start() throws SlownessModelException, TauModelException, IOException {
         try {
             if (isVerbose()) {
                 Alert.debug("TauP_Create starting...");

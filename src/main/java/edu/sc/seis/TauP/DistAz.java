@@ -206,17 +206,13 @@ public class DistAz {
 
     public int hashCode(){
         int result = 24;
-        result = 37*result + hashDouble(stalat);
-        result = 37*result + hashDouble(stalon);
-        result = 37*result + hashDouble(evtlat);
-        result = 37*result + hashDouble(evtlon);
+        result = 37*result + Double.hashCode(stalat);
+        result = 37*result + Double.hashCode(stalon);
+        result = 37*result + Double.hashCode(evtlat);
+        result = 37*result + Double.hashCode(evtlon);
         return result;
     }
 
-    private static int hashDouble(double d){
-        long bits = Double.doubleToLongBits(d);
-        return (int)(bits^(bits>>>32));
-    }
 
     private final double delta;
     private double az;

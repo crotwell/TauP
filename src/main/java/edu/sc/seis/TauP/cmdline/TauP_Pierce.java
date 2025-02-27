@@ -19,12 +19,10 @@ package edu.sc.seis.TauP.cmdline;
 import edu.sc.seis.TauP.*;
 import picocli.CommandLine;
 
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-import static edu.sc.seis.TauP.cmdline.TauP_Tool.ABREV_SYNOPSIS;
 import static edu.sc.seis.TauP.cmdline.TauP_Tool.OPTIONS_HEADING;
 
 /**
@@ -38,7 +36,6 @@ import static edu.sc.seis.TauP.cmdline.TauP_Tool.OPTIONS_HEADING;
 @CommandLine.Command(name = "pierce",
         description = "Calculate pierce points for phases at discontinuities in the model.",
         optionListHeading = OPTIONS_HEADING,
-        abbreviateSynopsis = ABREV_SYNOPSIS,
         usageHelpAutoWidth = true)
 public class TauP_Pierce extends TauP_Time {
 
@@ -165,7 +162,7 @@ public class TauP_Pierce extends TauP_Time {
     }
 
     @Override
-    public void printResultJSON(PrintWriter out, List<Arrival> arrivalList) throws TauModelException, TauPException {
+    public void printResultJSON(PrintWriter out, List<Arrival> arrivalList) throws TauPException {
         boolean withPierce = true;
         boolean withPath = false;
         TauP_AbstractRayTool.writeJSON(out, "",

@@ -258,7 +258,6 @@ public class SlownessLayer implements Serializable {
         }
 
         double[] AB = calcBullenAB(radiusOfEarth);
-        double A = AB[0];
         double B = AB[1];
         double sqrtTopTopMpp = Math.sqrt(getTopP() * getTopP() - p * p);
         double sqrtBotBotMpp = Math.sqrt(getBotP() * getBotP() - p * p);

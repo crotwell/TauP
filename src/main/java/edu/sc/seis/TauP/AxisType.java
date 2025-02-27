@@ -34,7 +34,7 @@ public enum AxisType {
     radiationsh;
 
     public static boolean needsDensity(AxisType axisType) {
-        boolean needs = false;
+        boolean needs;
         switch (axisType) {
             case degree:
             case degree180:
@@ -77,7 +77,7 @@ public enum AxisType {
     }
 
     public static boolean needsQ(AxisType axisType) {
-        boolean needs = false;
+        boolean needs;
         switch (axisType) {
             case degree:
             case degree180:

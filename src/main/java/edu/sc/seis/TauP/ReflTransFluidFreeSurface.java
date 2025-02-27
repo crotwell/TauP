@@ -53,7 +53,7 @@ public class ReflTransFluidFreeSurface extends ReflTransFreeSurface {
     }
 
     @Override
-    public Complex getComplexRpp(double rayParam) throws VelocityModelException {
+    public Complex getComplexRpp(double rayParam) {
         return new Complex(1);
     }
 

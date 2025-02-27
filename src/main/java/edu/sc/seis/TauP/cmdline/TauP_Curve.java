@@ -11,13 +11,11 @@ import java.util.List;
 
 import static edu.sc.seis.TauP.SphericalCoords.RtoD;
 import static edu.sc.seis.TauP.XYPlottingData.trimAllToMinMax;
-import static edu.sc.seis.TauP.cmdline.TauP_Tool.ABREV_SYNOPSIS;
 import static edu.sc.seis.TauP.cmdline.TauP_Tool.OPTIONS_HEADING;
 
 @CommandLine.Command(name = "curve",
         description = "Plot travel time vs. distance and other curves for seismic phases.",
         optionListHeading = OPTIONS_HEADING,
-        abbreviateSynopsis = ABREV_SYNOPSIS,
         usageHelpAutoWidth = true)
 public class TauP_Curve extends TauP_AbstractPhaseTool {
     public TauP_Curve() {
@@ -205,7 +203,7 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
 
 
     public List<double[]> calculatePlotForType(SeismicPhase phase, AxisType axisType, boolean ensure180)
-            throws VelocityModelException, SlownessModelException, TauModelException {
+            throws SlownessModelException, TauModelException {
         double[] out;
         boolean flatPhase = phase.getMaxRayParam() == phase.getMinRayParam();
         if (axisType==AxisType.radian || axisType==AxisType.radian180) {
@@ -280,7 +278,6 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
             boolean isAmpSH = axisType==AxisType.ampsh;
             double[] dist = phase.getDist();
             double[] amp = new double[dist.length];
-            double attenFreq = 0;
             if (! isAmpSH || phase.isAllSWave()) {
                 // only do Sh calc for all S wave legs in phase, otherwise zeros
                 for (int i = 0; i < dist.length; i++) {
