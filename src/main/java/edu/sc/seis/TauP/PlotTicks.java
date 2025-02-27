@@ -2,6 +2,9 @@ package edu.sc.seis.TauP;
 
 import java.util.ArrayList;
 
+/**
+ * Tick spacing for plots.
+ */
 public class PlotTicks {
 
     public static ArrayList<Double> getTicks(double start, double stop, int count, boolean startStopFixed) {

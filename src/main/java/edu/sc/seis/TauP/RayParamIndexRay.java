@@ -2,6 +2,9 @@ package edu.sc.seis.TauP;
 
 import java.util.List;
 
+/**
+ * Calculatable ray based on index into the phase sampling. Mainly useful for debugging.
+ */
 public class RayParamIndexRay extends ShootableRay {
 
     public RayParamIndexRay(int index) {

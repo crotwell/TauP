@@ -2,6 +2,9 @@ package edu.sc.seis.TauP;
 
 import edu.sc.seis.seisFile.Location;
 
+/**
+ * Abstract calculatable ray where initial departure ray parameter from source is known, but receiver is not.
+ */
 public abstract class ShootableRay extends RayCalculateable {
 
     public void withEventAzimuth(Location evt, double azimuth) {

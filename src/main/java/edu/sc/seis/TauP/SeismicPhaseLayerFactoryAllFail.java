@@ -1,5 +1,10 @@
 package edu.sc.seis.TauP;
 
+/**
+ * Seismic phase factory that can never generate phases.
+ * For example an inner core factory for a model that does not have
+ *  * a core, which would fail any phase with an I leg.
+ */
 public class SeismicPhaseLayerFactoryAllFail extends SeismicPhaseLayerFactory {
 
     public SeismicPhaseLayerFactoryAllFail(SeismicPhaseFactory baseFactory, String layerName, int topBranchNum, int botBranchNum, String reason) {

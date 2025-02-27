@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * Utility methods for SVG xy plots.
+ */
 public class SvgUtil {
 
 

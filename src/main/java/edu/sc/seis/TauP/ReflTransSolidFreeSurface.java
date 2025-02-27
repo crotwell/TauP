@@ -1,5 +1,8 @@
 package edu.sc.seis.TauP;
 
+/**
+ * Reflection and transmission coefficients at a solid-free surface boundary.
+ */
 public class ReflTransSolidFreeSurface extends ReflTransFreeSurface {
 
     public ReflTransSolidFreeSurface(double inVp, double inVs, double inDensity) throws VelocityModelException {

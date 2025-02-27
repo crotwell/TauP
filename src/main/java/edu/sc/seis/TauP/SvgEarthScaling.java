@@ -2,6 +2,9 @@ package edu.sc.seis.TauP;
 
 import static edu.sc.seis.TauP.SphericalCoords.RtoD;
 
+/**
+ * Scaling SVG plots of earth models.
+ */
 public class SvgEarthScaling {
 
     /**

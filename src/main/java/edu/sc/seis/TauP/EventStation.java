@@ -3,6 +3,9 @@ package edu.sc.seis.TauP;
 
 import edu.sc.seis.seisFile.Location;
 
+/**
+ * Calculatable ray from a source lat,lon to a receiver lat,lon.
+ */
 public class EventStation extends LatLonable {
 
     public EventStation(Location evt, Location sta) {

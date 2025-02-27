@@ -6,6 +6,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import static edu.sc.seis.TauP.PhaseSymbols.*;
 
+/**
+ * Converts a seismic phase name like PKiKP into a list of tokens P K i K P
+ */
 public class LegPuller {
 
     public static final String number = "((([0-9]*[.])?[0-9]+)|([0-9]*[.]))";

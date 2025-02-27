@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * A seismic phase that scatters. Includes a specific inbound Arrival, then an outbound seismic phase.
+ */
 public class ScatteredSeismicPhase implements SeismicPhase {
 
     private final Arrival inboundArrival;

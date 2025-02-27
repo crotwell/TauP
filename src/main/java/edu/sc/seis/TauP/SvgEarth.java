@@ -8,6 +8,10 @@ import java.util.List;
 
 import static edu.sc.seis.TauP.SphericalCoords.RtoD;
 
+/**
+ * Utilities for generating SVG plots of a slice through the earth model.
+ * Used for plotting ray paths or wavefronts.
+ */
 public class SvgEarth {
 
     private static final float plotOverScaleFactor = 1.2f;

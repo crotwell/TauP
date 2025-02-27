@@ -5,6 +5,9 @@ import edu.sc.seis.seisFile.fdsnws.quakeml.Event;
 import edu.sc.seis.seisFile.fdsnws.quakeml.Origin;
 import edu.sc.seis.seisFile.fdsnws.stationxml.Channel;
 
+/**
+ * Distance, azimuth and back azimuth between two lat,lon pairs.
+ */
 public class DistAz {
 
     public static final double wgs85_invflattening = 298.257223563;

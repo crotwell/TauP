@@ -11,6 +11,9 @@ import java.util.List;
 
 import static edu.sc.seis.TauP.SphericalCoords.DtoR;
 
+/**
+ * Part of either the path of a seismic phase, or portion of a wavefront.
+ */
 public abstract class AbstractPathSegment {
     List<TimeDist> path;
     boolean isPWave;

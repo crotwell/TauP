@@ -1,5 +1,8 @@
 package edu.sc.seis.TauP;
 
+/**
+ * Arrival from a seismic phase that scatters from
+ */
 public class ScatteredArrival extends Arrival {
 
     private final Arrival inboundArrival;

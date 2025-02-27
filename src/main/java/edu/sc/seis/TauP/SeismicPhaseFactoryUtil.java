@@ -6,6 +6,9 @@ import static edu.sc.seis.TauP.PhaseSymbols.*;
 import static edu.sc.seis.TauP.SimpleSeismicPhase.PWAVE;
 import static edu.sc.seis.TauP.SimpleSeismicPhase.SWAVE;
 
+/**
+ * Utility methods for seismic phase calculation.
+ */
 public class SeismicPhaseFactoryUtil {
 
     public static boolean isPWave(String currLeg, boolean prevIsP) {

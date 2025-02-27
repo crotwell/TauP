@@ -5,6 +5,10 @@ import edu.sc.seis.seisFile.Location;
 
 import java.util.List;
 
+/**
+ * Base class for information used to calculate a particular path for a seismic phase. For example distance from
+ * source to receiver, or takeoff angle from source.
+ */
 public abstract class RayCalculateable {
 
 

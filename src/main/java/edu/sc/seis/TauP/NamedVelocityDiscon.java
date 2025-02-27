@@ -2,6 +2,9 @@ package edu.sc.seis.TauP;
 
 import java.io.Serializable;
 
+/**
+ * Allows the naming of velocity discontinuities in a model, like moho or cmb.
+ */
 public class NamedVelocityDiscon implements Cloneable, Serializable {
 
     public NamedVelocityDiscon(String name, double depth) {

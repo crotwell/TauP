@@ -1,5 +1,8 @@
 package edu.sc.seis.TauP;
 
+/**
+ * Abstract class for reflection and transmission coefficients at a solid-solid boundary.
+ */
 public class ReflTransSolidSolid extends ReflTrans {
 
     public ReflTransSolidSolid(double topVp,

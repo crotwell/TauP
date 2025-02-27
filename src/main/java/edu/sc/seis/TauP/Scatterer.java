@@ -1,5 +1,9 @@
 package edu.sc.seis.TauP;
 
+/**
+ * Represents a scatterer within a model. Acts as an intermediary receiver and then source in calculation of a
+ * scattered seismic phase.
+ */
 public class Scatterer {
     public Scatterer(double depth, double dist) {
         this(depth, FixedHemisphereDistanceRay.ofDegrees(dist));

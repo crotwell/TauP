@@ -1,5 +1,8 @@
 package edu.sc.seis.TauP;
 
+/**
+ * Simple linear interpolation for a value.
+ */
 public class LinearInterpolation {
 
     /**

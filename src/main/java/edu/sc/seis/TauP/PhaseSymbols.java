@@ -3,6 +3,9 @@ package edu.sc.seis.TauP;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * List of symbols allowed to be used in a seismic phase name.
+ */
 public class PhaseSymbols {
     public PhaseSymbols() {}
 

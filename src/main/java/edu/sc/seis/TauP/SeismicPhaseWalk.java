@@ -4,6 +4,9 @@ import java.util.*;
 
 import static edu.sc.seis.TauP.PhaseInteraction.*;
 
+/**
+ * Walks all possible seismic phases, up to a maximum number of turns and reflections within a model.
+ */
 public class SeismicPhaseWalk {
 
 

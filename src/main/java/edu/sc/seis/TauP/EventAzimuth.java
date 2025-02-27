@@ -2,6 +2,9 @@ package edu.sc.seis.TauP;
 
 import edu.sc.seis.seisFile.Location;
 
+/**
+ * Calculatable ray that knows its source lot,lon and azimuth of departure.
+ */
 public class EventAzimuth extends LatLonable {
     double azimuth;
 

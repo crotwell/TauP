@@ -14,6 +14,9 @@ import static edu.sc.seis.TauP.SimpleSeismicPhase.PWAVE;
 import static edu.sc.seis.TauP.SimpleSeismicPhase.SWAVE;
 import static edu.sc.seis.TauP.ProtoSeismicPhase.failNewPhase;
 
+/**
+ * Factory for calculating seismic phase from a phase name within a model.
+ */
 public class SeismicPhaseFactory {
 
     boolean DEBUG;

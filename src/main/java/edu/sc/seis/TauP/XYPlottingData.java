@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Line, possbily in multiple segments, representing a single data type.
+ * Line, possbily in multiple segments, representing a single data type in an xy plot.
  */
 public class XYPlottingData {
 

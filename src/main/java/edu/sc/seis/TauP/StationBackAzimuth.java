@@ -2,6 +2,9 @@ package edu.sc.seis.TauP;
 
 import edu.sc.seis.seisFile.Location;
 
+/**
+ * Calculatable ray that knows its receiver lot,lon and back azimuth of the arriving ray.
+ */
 public class StationBackAzimuth extends LatLonable {
 
     public StationBackAzimuth(Location staLatLon, Double backAzimuth) {

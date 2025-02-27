@@ -7,6 +7,10 @@ import static edu.sc.seis.TauP.PhaseInteraction.*;
 import static edu.sc.seis.TauP.PhaseSymbols.*;
 import static edu.sc.seis.TauP.PhaseSymbols.isDiffractedDown;
 
+/**
+ * Factor for calculating seismic phase from phase name within a major section of the model, like mantle or inner core.
+ * This understands the phase symbols for P and S waves within these layer, like K is the P wave in the outer core.
+ */
 public class SeismicPhaseLayerFactory {
 
     public SeismicPhaseLayerFactory(SeismicPhaseFactory baseFactory, String layerName, int topBranchNum, int botBranchNum) {

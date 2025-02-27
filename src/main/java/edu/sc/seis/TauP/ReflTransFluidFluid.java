@@ -1,5 +1,8 @@
 package edu.sc.seis.TauP;
 
+/**
+ * Reflection and transmission coefficients at a fluid-fluid boundary.
+ */
 public class ReflTransFluidFluid extends ReflTrans {
 
 

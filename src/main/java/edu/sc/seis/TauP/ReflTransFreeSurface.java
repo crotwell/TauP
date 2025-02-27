@@ -1,5 +1,8 @@
 package edu.sc.seis.TauP;
 
+/**
+ * Reflection and transmission coefficients at a solid-free surface boundary.
+ */
 public abstract class ReflTransFreeSurface extends ReflTrans {
 
     ReflTransFreeSurface(double topVp, double topVs, double topDensity, double botVp, double botVs, double botDensity) {

@@ -3,6 +3,9 @@ package edu.sc.seis.TauP;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Calculatable ray that covers an exact distance, disallowing n*360-x and n*360+x.
+ */
 public class ExactDistanceRay extends DistanceRay {
 
     ExactDistanceRay() {

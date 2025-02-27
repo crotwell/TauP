@@ -5,6 +5,10 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+
+/**
+ * Segment of the path of a seismic phase. Usually a segment between discontinuities in the model, or turning point.
+ */
 public class ArrivalPathSegment extends AbstractPathSegment {
 
     public ArrivalPathSegment(List<TimeDist> path, boolean isPWave, String segmentName, TimeDist prevEnd, Arrival arrival,

@@ -17,6 +17,9 @@ import static edu.sc.seis.TauP.AxisType.*;
 import static edu.sc.seis.TauP.cmdline.TauP_AbstractPhaseTool.baseResultAsJSONObject;
 import static edu.sc.seis.TauP.cmdline.args.ModelArgs.depthsToString;
 
+/**
+ * Represents an XY plot, with data and axis.
+ */
 public class XYPlotOutput {
 
     public XYPlotOutput(List<XYPlottingData> xyPlots, ModelArgs modelArgs) {

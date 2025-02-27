@@ -5,6 +5,9 @@ import java.util.List;
 
 import static edu.sc.seis.TauP.PhaseInteraction.*;
 
+/**
+ * Partial segment of a full seismic phase, usually between major boundaries or turn points.
+ */
 public class SeismicPhaseSegment {
 	TauModel tMod;
 	int startBranch;

@@ -7,6 +7,9 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Segment of a XYPlottineData line in an xy plot.
+ */
 public class XYSegment {
 
     public XYSegment(double[] x, double[] y) {

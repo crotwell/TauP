@@ -3,6 +3,10 @@ package edu.sc.seis.TauP;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Segment of the path of wavefront of a seismic phase at a time step.
+ * Usually a segment the full wavefront between discontinuities in the model, or turning point.
+ */
 public class WavefrontPathSegment extends  AbstractPathSegment {
 
     public WavefrontPathSegment(List<TimeDist> path, boolean isPWave, String segmentName, TimeDist prevEnd,

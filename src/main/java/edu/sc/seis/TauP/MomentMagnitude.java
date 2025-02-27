@@ -1,5 +1,8 @@
 package edu.sc.seis.TauP;
 
+/**
+ * Conversion from Mw to Mo in newton meters.
+ */
 public class MomentMagnitude {
     public static float MAG4 = 4.0f;
     public static double MAG4_MOMENT = mw_to_N_m(MAG4);

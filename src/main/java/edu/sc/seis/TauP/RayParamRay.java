@@ -3,6 +3,9 @@ package edu.sc.seis.TauP;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Calculatable ray based on ray parameter departing the source in seconds per radian or seconds per degree.
+ */
 public class RayParamRay extends ShootableRay {
 
     public RayParamRay(double rayParam) {

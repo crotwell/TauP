@@ -2,6 +2,9 @@ package edu.sc.seis.TauP;
 
 import static edu.sc.seis.TauP.SphericalCoords.RtoD;
 
+/**
+ * Abstract class for reflection and transmission coefficients at a boundary of some kind.
+ */
 public abstract class ReflTrans {
 
     public ReflTrans(double topVp,

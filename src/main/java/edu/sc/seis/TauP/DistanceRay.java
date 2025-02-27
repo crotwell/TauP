@@ -7,6 +7,9 @@ import java.util.List;
 
 import static edu.sc.seis.TauP.ScatteredSeismicPhase.calcScatterDistDeg;
 
+/**
+ * Calculatable ray corresponding to a arc distance from source to receiver.
+ */
 public class DistanceRay extends RayCalculateable {
 
     DistanceRay() {}
