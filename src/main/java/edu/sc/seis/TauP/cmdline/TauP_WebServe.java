@@ -188,10 +188,16 @@ public class TauP_WebServe extends TauP_Tool {
                 }
             }
             if (op != null) {
-                out.add(dashedQP);
-                if (qpList.size() == 1 && qpList.getFirst().equalsIgnoreCase("true")) {
-                    // skip as just a flag
+                if (op.typeInfo().isBoolean()) {
+                    System.err.println(qp+" is boolean: "+qpList.getFirst());
+                    if (qpList.size() == 1 && qpList.getFirst().equalsIgnoreCase("false")) {
+                        // don't add boolean flags if value is false as flag means true
+                    } else if (qpList.size() == 1 && qpList.getFirst().equalsIgnoreCase("true")) {
+                        // skip value as just a flag
+                        out.add(dashedQP);
+                    }
                 } else {
+                    out.add(dashedQP);
                     if (op.splitRegex().trim().isEmpty()) {
                         // default split is whitespace, so split on comma
                         for (String p : qpList) {
