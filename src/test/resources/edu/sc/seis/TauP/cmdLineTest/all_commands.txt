@@ -75,7 +75,7 @@ taup refltrans -o stdout --abs --anglestep 1 --svg --fsrf --legend --model ak135
 taup find -o stdout --mod ak135fcont --sourcedepth 100 --max 3 --pwaveonly --exclude 20,moho,iocb
 taup find -o stdout --mod ak135fcont --sourcedepth 100 --max 2 --exclude 20,moho,iocb --deg 35 --time 475
 taup distaz -o stdout --sta 35 -82 --sta 33 -81 --evt -101 22
-taup distaz -o stdout --sta 35 -82 --sta 33 -81 --evt -101 22 --json 
+taup distaz -o stdout --sta 35 -82 --sta 33 -81 --evt -101 22 --json
 taup phase -p Pdiff
 taup phase -p P410diff
 taup phase -p Pv410p,PV410p
