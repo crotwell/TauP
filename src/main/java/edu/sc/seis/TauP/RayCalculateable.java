@@ -48,7 +48,7 @@ public abstract class RayCalculateable {
     }
 
     /**
-     * Returns azimuth, if available, in the range -180<az<=180.
+     * Returns azimuth, if available, in the range -180&lt;baz&lt;=180.
      * @return azimuth
      */
     public Double getNormalizedAzimuth() {
@@ -95,7 +95,7 @@ public abstract class RayCalculateable {
         return backAzimuth != null || (this.evtLatLon!=null && this.staLatLon!=null);
     }
     /**
-     * Returns back azimuth, if available, in the range -180<baz<=180.
+     * Returns back azimuth, if available, in the range -180&lt;baz&lt;=180.
      * @return back azimuth
      */
     public Double getNormalizedBackAzimuth() {
