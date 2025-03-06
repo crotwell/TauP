@@ -1,0 +1,48 @@
+{
+  "phases": [
+{
+  "name": "Pv410p",
+  "puristname": "Pv410p",
+  "minexists": { 
+    "dist": 0.00,
+    "modulodist": 0.00,
+    "rayparameter":   11.521,
+    "time":   100.85
+  },
+  "maxexists": { 
+    "dist": 21.42,
+    "modulodist": 21.42,
+    "rayparameter":    0.000,
+    "time":   292.39
+  },
+  "shadow": [  ],
+  "segments": [
+
+  {  "name": "P", "updown": "down", "type": "P", "branch_desc": "crust/mantle", "branches": [ 0, 3], "depths": [0.0, 410.0], "then": "reflect topside"},
+  {  "name": "p", "updown": "up", "type": "P", "branch_desc": "crust/mantle", "branches": [ 3, 0], "depths": [410.0, 0.0], "then": "end"}
+  ]
+},
+{
+  "name": "PV410p",
+  "puristname": "PV410p",
+  "minexists": { 
+    "dist": 14.08,
+    "modulodist": 14.08,
+    "rayparameter":   11.521,
+    "time":   208.70
+  },
+  "maxexists": { 
+    "dist": 21.42,
+    "modulodist": 21.42,
+    "rayparameter":   11.115,
+    "time":   292.39
+  },
+  "shadow": [  ],
+  "segments": [
+
+  {  "name": "P", "updown": "down", "type": "P", "branch_desc": "crust/mantle", "branches": [ 0, 3], "depths": [0.0, 410.0], "then": "critical reflect topside"},
+  {  "name": "p", "updown": "up", "type": "P", "branch_desc": "crust/mantle", "branches": [ 3, 0], "depths": [410.0, 0.0], "then": "end"}
+  ]
+}
+  ]
+}

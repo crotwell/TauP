@@ -347,7 +347,7 @@ public class SeismicPhaseSegment {
 			}
 			String branchRangeJSON = "["+(startBranch == endBranch ? " "+startBranch : " "+startBranch+", "+endBranch)+"]";
 			String depthRange = getDepthRangeJSON();
-			desc += "{\n"
+			desc += "{"
 					+"  \"name\": \""+legName+"\","
 					+" \"updown\": \""+upDown+"\","
 					+ " \"type\": \""+ isPString+"\","
@@ -355,7 +355,7 @@ public class SeismicPhaseSegment {
 					+ " \"branches\": "+branchRangeJSON+","
 					+ " \"depths\": "+depthRange+","
 					+ " \"then\": \"" +action+"\""
-					+ "}\n";
+					+ "}";
 
 		} else {
 			desc += "END";

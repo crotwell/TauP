@@ -86,5 +86,13 @@ taup phase -p PKv5153KP
 taup phase -p PKv5153.9KP
 taup phase -p PK5153.9diffP
 taup phase -p PKP410S
+taup curve -o stdout -h 10 -p P,2kmps --mod prem --json
 taup time -h 10 -p P --deg 35 --json
+taup time -h 10 -p ttall --deg 35 --mod ak135 --json
+taup pierce -o stdout -h 10 -p P,pP,S,ScS --deg 15 --json
+taup path -o stdout -h 10 -p P,pP,S,ScS --deg 15 --json
+taup phase -p Pv410p,PV410p --json
+taup distaz -o stdout --sta 35 -82 --sta 33 -81 --evt -101 22 --json
+taup velplot -o stdout --mod ak135 --json
+taup wavefront -o stdout --mod ak135 -h 100 -p P,S,PKIKP --timestep 500 --json
 java --version

@@ -240,13 +240,13 @@ public interface SeismicPhase extends Serializable, Cloneable {
                     "    \"dist\": "+Outputs.formatDistanceNoPad(phase.getMinDistanceDeg())+",\n"+
                     "    \"modulodist\": "+Outputs.formatDistanceNoPad(SeismicPhase.distanceTrim180(phase.getMinDistanceDeg()))+",\n"+
                     "    \"rayparameter\": "+Outputs.formatRayParam(phase.getMaxRayParam() / SphericalCoords.RtoD)+",\n"+
-                    "    \"time\": "+Outputs.formatTimeNoPad(time[0])+"\n"+
-                    "  },"+
+                    "    \"time\": "+Outputs.formatTimeNoPad(phase.getMinTime())+"\n"+
+                    "  },\n"+
                     "  \"maxexists\": { \n"+
                     "    \"dist\": "+Outputs.formatDistanceNoPad(phase.getMaxDistanceDeg())+",\n"+
                     "    \"modulodist\": "+Outputs.formatDistanceNoPad(SeismicPhase.distanceTrim180(phase.getMaxDistanceDeg()))+",\n"+
                     "    \"rayparameter\": "+Outputs.formatRayParam(phase.getMinRayParam() / SphericalCoords.RtoD)+",\n"+
-                    "    \"time\": "+Outputs.formatTimeNoPad(time[time.length - 1])+"\n"+
+                    "    \"time\": "+Outputs.formatTimeNoPad(phase.getMaxTime())+"\n"+
                     "  },\n"+
                     "  \"shadow\": [";
 
@@ -278,7 +278,7 @@ public interface SeismicPhase extends Serializable, Cloneable {
     static String segmentDescribeJSON(SeismicPhase phase) {
         String desc = "";
         String indent = "  ";
-        desc += indent+"\"segment\": [\n";
+        desc += indent+"\"segments\": [\n";
         boolean first=true;
         for(SeismicPhaseSegment segment : phase.getPhaseSegments()) {
             if (first) {
@@ -289,7 +289,7 @@ public interface SeismicPhase extends Serializable, Cloneable {
             }
             desc += indent+segment.toJSONString();
         }
-        desc += indent+"]";
+        desc += "\n"+indent+"]";
         return desc;
     }
 

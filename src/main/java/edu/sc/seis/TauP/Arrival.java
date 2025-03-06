@@ -966,24 +966,35 @@ public class Arrival {
             pw.write(","+NL);
             pw.write(innerIndent+JSONWriter.valueToString("pierce")+": ["+NL);
             TimeDist[] tdArray = getPierce();
+            boolean first = true;
             for (TimeDist td : tdArray) {
+                if (!first) {
+                    pw.write(","+NL);
+                } else {
+                    first = false;
+                }
                 pw.write(innerIndent+"  [ "+
                         JSONWriter.valueToString((float)td.getDistDeg())+", "+
                         JSONWriter.valueToString((float)td.getDepth())+", "+
-                        JSONWriter.valueToString((float)td.getTime())+" ],"+NL);
+                        JSONWriter.valueToString((float)td.getTime())+" ]");
             }
+            pw.write(NL);
             pw.write(innerIndent+"]");
         }
         if (withPath ) {
             pw.write(","+NL);
-            pw.write(","+NL);
-            pw.write(innerIndent+JSONWriter.valueToString("pathlength")+": "+calcPathLength()+","+NL);
+            pw.write(innerIndent+JSONWriter.valueToString("pathlength")+": "+((float)calcPathLength())+","+NL);
             pw.write(innerIndent+JSONWriter.valueToString("path")+": ["+NL);
+            boolean first = true;
             for (ArrivalPathSegment seg : pathSegments) {
+                if (!first) {
+                    pw.write(","+NL);
+                } else {
+                    first = false;
+                }
                 seg.writeJSON(pw, innerIndent);
-                pw.write(","+NL);
             }
-            pw.write(innerIndent+"]");
+            pw.write(NL+innerIndent+"]");
         }
         pw.write(NL);
         pw.write(indent+"}"); // main end

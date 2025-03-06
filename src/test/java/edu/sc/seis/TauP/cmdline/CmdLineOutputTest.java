@@ -143,7 +143,15 @@ public class CmdLineOutputTest {
     };
 
     String[] jsonTestCmds = new String[] {
+            "taup curve -o stdout -h 10 -p P,2kmps --mod prem --json",
             "taup time -h 10 -p P --deg 35 --json",
+            "taup time -h 10 -p ttall --deg 35 --mod ak135 --json",
+            "taup pierce -o stdout -h 10 -p P,pP,S,ScS --deg 15 --json",
+            "taup path -o stdout -h 10 -p P,pP,S,ScS --deg 15 --json",
+            "taup phase -p Pv410p,PV410p --json",
+            "taup distaz -o stdout --sta 35 -82 --sta 33 -81 --evt -101 22 --json",
+            "taup velplot -o stdout --mod ak135 --json",
+            "taup wavefront -o stdout --mod ak135 -h 100 -p P,S,PKIKP --timestep 500 --json",
     };
 
     String versionCmd = "taup --version";
@@ -560,13 +568,13 @@ public class CmdLineOutputTest {
         }
     }
 
-    public String runCmd(String cmd) throws Exception {
+    public static String runCmd(String cmd) throws Exception {
         StringWriter sw = new StringWriter();
         runCmdWithWriter(cmd, new PrintWriter(sw));
         return sw.toString();
     }
 
-    public void runCmdWithWriter(String cmd, PrintWriter writer) throws Exception {
+    public static void runCmdWithWriter(String cmd, PrintWriter writer) throws Exception {
         try {
             String[] s = cmd.split(" +");
             String tool = s[0];

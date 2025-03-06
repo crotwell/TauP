@@ -7,6 +7,7 @@ import edu.sc.seis.TauP.TauPException;
 import edu.sc.seis.TauP.cmdline.args.AbstractOutputTypeArgs;
 import edu.sc.seis.TauP.cmdline.args.OutputTypes;
 import edu.sc.seis.TauP.cmdline.args.TextOutputTypeArgs;
+import org.json.JSONWriter;
 import picocli.CommandLine;
 
 import java.io.IOException;
@@ -93,8 +94,11 @@ public class TauP_PhaseDescribe extends TauP_AbstractPhaseTool {
     }
 
     public void printResultJSON(PrintWriter writer) throws TauPException {
+        writer.println("{");
+        String indent = "  ";
         List<SeismicPhase> phaseList = getSeismicPhases();
-        writer.println("[");
+        writer.write(indent+ JSONWriter.valueToString("phases")+": [");
+
         boolean first = true;
         for (SeismicPhase phase : phaseList) {
             if (first) {
@@ -105,6 +109,7 @@ public class TauP_PhaseDescribe extends TauP_AbstractPhaseTool {
             }
             writer.print(phase.describeJson());
         }
-        writer.println("]\n");
+        writer.println("\n"+indent+"]");
+        writer.println("}");
     }
 }

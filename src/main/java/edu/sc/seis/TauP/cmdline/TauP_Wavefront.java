@@ -71,7 +71,10 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
         List<Double> sortedKeys = new ArrayList<>(timeSegmentMap.keySet());
         Collections.sort(sortedKeys);
         if (getOutputFormat().equals(OutputTypes.JSON)) {
+            JSONObject topObj = new JSONObject();
+            topObj.put("timesteps", new JSONArray(sortedKeys));
             JSONArray jsonArray = new JSONArray();
+            topObj.put("wavefronttimes", jsonArray);
             for (Double timeVal : sortedKeys) {
                 JSONObject timeObject = new JSONObject();
                 jsonArray.put(timeObject);
@@ -96,7 +99,7 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
                     jsonObject.put("segments", seg.asJSONObject());
                 }
             }
-            out.println(jsonArray.toString(2));
+            out.println(topObj.toString(2));
         } else if (getOutputFormat().equals(OutputTypes.SVG)) {
             List<PhaseName> phaseNameList = parsePhaseNameList();
             String cssExtra = "";

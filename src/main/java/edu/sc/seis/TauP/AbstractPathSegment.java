@@ -189,18 +189,25 @@ public abstract class AbstractPathSegment {
         pw.write(innerIndent + JSONWriter.valueToString("name") + ": " + JSONWriter.valueToString(segmentName) + "," + NL);
         pw.write(innerIndent + JSONWriter.valueToString("wavetype") + ": " + JSONWriter.valueToString(isPWave ? "pwave" : "swave") + "," + NL);
 
-        pw.write(innerIndent + JSONWriter.valueToString("path") + ": [" + NL);
+        pw.write(innerIndent + JSONWriter.valueToString("segment") + ": [" + NL);
         String prevLine = "";
+        boolean first = true;
         for (TimeDist td : path) {
             String line = JSONWriter.valueToString((float) td.getDistDeg()) + ", " +
                     JSONWriter.valueToString((float) td.getDepth()) + ", " +
                     JSONWriter.valueToString((float) td.getTime());
             if ( ! line.equals(prevLine)) {
-                pw.write(innerIndent + "  [ " + line + " ]," + NL);
+                if (!first) {
+                    pw.write(","+NL);
+                } else {
+                    first = false;
+                }
+                pw.write(innerIndent + "  [ " + line + " ]");
             }
             prevLine = line;
         }
-        pw.write(innerIndent + "]");
+        pw.write(NL+innerIndent + "]"+NL);
+        pw.write(indent + "}");
     }
 
     public String getCssClasses() {
