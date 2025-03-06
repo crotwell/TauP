@@ -126,7 +126,7 @@ export function valid_format(tool) {
   }
   if (format === "svg" || format === "gmt") {
     if (tool === "phase" || tool === "time" || tool === "pierce"
-        || tool === "find" || tool === "version") {
+        || tool === "find" || tool === "distaz"|| tool === "version") {
       format = "text";
     }
   }
@@ -389,7 +389,9 @@ export function form_url() {
     url = `${toolname}?format=${format}`;
     return encodeURI(url);
   }
-  if (toolname !== "velplot" && toolname !== "refltrans") {
+  if (toolname === "distaz") {
+    url = `${toolname}?`;
+  } else if (toolname !== "velplot" && toolname !== "refltrans") {
     url = `${toolname}?`;
     if (model.length > 0) {
       url += `model=${model}`;
@@ -426,7 +428,7 @@ export function form_url() {
     }
 
   }
-  if (toolname !== "velplot" && toolname !== "refltrans") {
+  if (toolname !== "distaz" && toolname !== "velplot" && toolname !== "refltrans") {
     url += `&phase=${phase}`;
   }
   if (toolname !== "velplot" && toolname !== "curve"

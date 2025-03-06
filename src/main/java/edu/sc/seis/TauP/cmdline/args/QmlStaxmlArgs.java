@@ -1,6 +1,6 @@
 package edu.sc.seis.TauP.cmdline.args;
 
-import edu.sc.seis.TauP.DistanceRay;
+import edu.sc.seis.TauP.Outputs;
 import edu.sc.seis.TauP.TauPException;
 import edu.sc.seis.seisFile.Location;
 import edu.sc.seis.seisFile.SeisFileException;
@@ -17,7 +17,6 @@ import picocli.CommandLine;
 import javax.xml.stream.XMLStreamException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.time.Duration;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,7 +44,10 @@ public class QmlStaxmlArgs {
                         }
                     }
                     if (!found) {
-                        cLoc.setDescription(sta.getNetworkCode()+"."+sta.getStationCode());
+                        String desc = sta.getNetworkCode()+"."+sta.getStationCode()
+                                +" " + Outputs.formatLatLon(cLoc.getLatitude()).trim()
+                                + "/" + Outputs.formatLatLon(cLoc.getLongitude()).trim();
+                        cLoc.setDescription(desc);
                         allChans.add(cLoc);
                     }
                 }
@@ -63,16 +65,24 @@ public class QmlStaxmlArgs {
             Location evtLoc = new Location(evt);
             Origin origin = evt.getPreferredOrigin();
             Magnitude mag = evt.getPreferredMagnitude();
-            String desc = "";
+            StringBuilder desc = new StringBuilder();
             if (origin != null) {
-                desc = dformat.format(origin.getTime().asInstant());
+                desc.append(dformat.format(origin.getTime().asInstant()));
             }
             if (mag != null) {
-                if (!desc.isEmpty()) {desc += " ";}
-                desc += mag.getType()+" "+mag.getMag().getValue();
+                if (desc.length()!= 0) {
+                    desc.append(" ");
+                }
+                desc.append(mag.getMag().getValue()).append(" ").append(mag.getType());
             }
-            if ( ! desc.isEmpty()) {
-                evtLoc.setDescription(desc);
+            if (desc.length() != 0) {
+                desc.append(" ");
+            }
+            desc.append(Outputs.formatLatLon(evtLoc.getLatitude()).trim())
+                    .append("/")
+                    .append(Outputs.formatLatLon(evtLoc.getLongitude()).trim());
+            if ( desc.length()!= 0) {
+                evtLoc.setDescription(desc.toString());
             }
             eventLocs.add(evtLoc);
         }
@@ -120,7 +130,6 @@ public class QmlStaxmlArgs {
     }
 
     @CommandLine.Option(names = {"--qml", "--quakeml"},
-            required = false,
             description = "QuakeML file to load for earthquake origins to use")
     public void setQuakemlFilename(String quakemlFilename) {
         this.quakemlFilename = quakemlFilename;
@@ -131,10 +140,20 @@ public class QmlStaxmlArgs {
     }
 
     @CommandLine.Option(names = "--staxml",
-            required = false,
             description = "StationXML file to extract station latitudes and longitudes from")
     public void setStationxmlFilename(String stationxmlFilename) {
         this.stationxmlFilename = stationxmlFilename;
+    }
+
+    public static String createDescription(Location evtLoc) {
+        String evtDesc;
+        if (evtLoc.hasDescription()) {
+            evtDesc = evtLoc.getDescription();
+        } else {
+            evtDesc = Outputs.formatLatLon(evtLoc.getLatitude()).trim()
+                    +"/"+Outputs.formatLatLon(evtLoc.getLongitude()).trim();
+        }
+        return evtDesc;
     }
     
     protected String quakemlFilename = null;

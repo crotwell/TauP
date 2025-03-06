@@ -11,6 +11,7 @@ Tools
     taup_time
     taup_pierce
     taup_path
+    taup_distaz
     taup_find
     taup_curve
     taup_phase
@@ -35,6 +36,7 @@ Tools included with the TauP package:
 :ref:`pierce <taup_pierce>`         calculates pierce points at model discontinuities and specified depths.
 :ref:`path <taup_path>`             calculates ray paths, depth versus epicentral distance.
 :ref:`find <taup_find>`             calculates all possible phases in a model with number of interactions.
+:ref:`distaz <taup_distaz>`         distance, azimuth and back azimuth between points.
 :ref:`wavefront <taup_wavefront>`   calculates wavefronts in steps of time, depth versus epicentral distance.
 :ref:`curve <taup_curve>`           calculates travel time curves, time versus epicentral distance.
 :ref:`phase <taup_phase>`           textual description of the path the phase takes through the model.

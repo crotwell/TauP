@@ -216,15 +216,15 @@ public class TauP_SetSac extends TauP_AbstractPhaseTool {
             Alert.warning("Warning: Sac header gcarc is not set in "+filenameForError+",",
                           "using lat and lons to calculate distance.");
             if (geodeticArgs.isGeodetic()) {
-                rayCalculateable = DistanceRay.ofGeodeticStationEvent(
-                        new Location(header.getStla(), header.getStlo()),
+                rayCalculateable = DistanceRay.ofGeodeticEventStation(
                         new Location(header.getEvla(), header.getEvlo(), header.getEvdp()),
+                        new Location(header.getStla(), header.getStlo()),
                         DistAz.wgs85_flattening
                 );
             } else {
-                rayCalculateable = DistanceRay.ofStationEvent(
-                        new Location(header.getStla(), header.getStlo()),
-                        new Location(header.getEvla(), header.getEvlo(), header.getEvdp())
+                rayCalculateable = DistanceRay.ofEventStation(
+                        new Location(header.getEvla(), header.getEvlo(), header.getEvdp()),
+                        new Location(header.getStla(), header.getStlo())
                 );
             }
         } else {

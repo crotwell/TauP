@@ -43,6 +43,9 @@
         <input type="radio" name="tool" id="tool_wavefront" value="wavefront" />
         <label for="tool_wavefront">
           <a href="doc/taup_wavefront.html" target="taupdocs">Wavefront</a></label>
+        <input type="radio" name="tool" id="taup_distaz" value="distaz" />
+        <label for="tool_distaz">
+          <a href="doc/taup_distaz.html" target="taupdocs">DistAz</a></label>
         <input type="radio" name="tool" id="taup_find" value="find" />
         <label for="tool_find">
           <a href="doc/taup_find.html" target="taupdocs">Find</a></label>
@@ -84,7 +87,7 @@
       <label>Paramters:</label>
     </div>
     <div class="tooloptions">
-      <fieldset class="model tool_all" >
+      <fieldset class="model tool_time tool_pierce tool_path tool_curve tool_phase tool_find tool_wavefront tool_spikes tool_velplot tool_refltrans" >
           <legend>
             <a href="doc/models.html" target="taupdocs">Velocity Model:</a>
           </legend>
@@ -119,7 +122,7 @@
           </label>
           <input id="stadepth" name="stadepth" value="0"  />
       </fieldset>
-      <fieldset class="tool_time tool_pierce tool_path tool_spikes">
+      <fieldset class="tool_time tool_pierce tool_path tool_spikes tool_distaz">
           <legend>Distance:</legend>
           <div class="degree">
             <input type="checkbox" id="islistdegdist" name="islistdegdist" checked />

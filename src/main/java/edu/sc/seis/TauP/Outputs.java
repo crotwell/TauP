@@ -186,6 +186,10 @@ public class Outputs {
         return String.format( distanceFormat, distance);
     }
 
+    public static String formatKilometer(double kilometers) {
+        return String.format( depthFormat, kilometers);
+    }
+
     public static String formatTime(double time) {
 
         return String.format( timeFormat, time);
@@ -236,4 +240,5 @@ public class Outputs {
     public static String latLonFormat = "%8.2f";
 
     public static String ampFactorFormat = "%.1e";
+
 } // Outputs

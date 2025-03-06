@@ -40,7 +40,7 @@ public class DistanceRay extends RayCalculateable {
         return val;
     }
 
-    public static DistanceRay ofStationEvent(Location sta, Location evt) {
+    public static DistanceRay ofEventStation(Location evt, Location sta) {
         DistanceRay val = DistanceRay.ofDegrees(SphericalCoords.distance(evt, sta));
         val.evtLatLon = evt;
         val.staLatLon = sta;
@@ -49,9 +49,8 @@ public class DistanceRay extends RayCalculateable {
         return val;
     }
 
-
-    public static DistanceRay ofGeodeticStationEvent(Location sta, Location evt, double invFlattening) {
-        DistAz distAz = new DistAz(sta, evt, 1.0/invFlattening);
+    public static DistanceRay ofGeodeticEventStation(Location evt, Location sta, double invFlattening) {
+        DistAz distAz = new DistAz(evt, sta, 1.0/invFlattening);
         DistanceRay val = ofDegrees(distAz.getDelta());
         val.staLatLon = sta;
         val.evtLatLon = evt;
@@ -124,6 +123,13 @@ public class DistanceRay extends RayCalculateable {
             return kilometers/radius;
         }
         return degrees*SphericalCoords.dtor;
+    }
+
+    public double getKilometers(double radius) {
+        if (kilometers != null) {
+            return kilometers;
+        }
+        return getRadians(radius)*radius;
     }
 
     public List<Double> calcRadiansInRange(double minRadian, double maxRadian, double radius, boolean phaseBothHemisphere) {

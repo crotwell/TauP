@@ -44,16 +44,36 @@ public abstract class RayCalculateable {
     }
 
     public boolean hasAzimuth() {
-        return azimuth != null || (this.staLatLon!=null && this.backAzimuth!=null);
+        return azimuth != null || (this.staLatLon!=null && this.evtLatLon!=null);
     }
-    public double getAzimuth() {
+
+    /**
+     * Returns azimuth, if available, in the range -180<az<=180.
+     * @return azimuth
+     */
+    public Double getNormalizedAzimuth() {
+        Double az = getAzimuth();
+        if (az != null ) {
+            az = az % 360;
+            if (az > 180) {
+                az = az - 360;
+            }
+        }
+        return az;
+    }
+
+    /**
+     * Gets azimuth if available, null otherwise.
+     * @return azimuth
+     */
+    public Double getAzimuth() {
         if (azimuth != null ) {
             return azimuth;
         } else if (this.staLatLon!=null && this.backAzimuth!=null) {
             if (getLatLonable().isGeodetic()) {
-                throw new RuntimeException("geodtic not yet");
+                return null;
             } else {
-                throw new RuntimeException("geodtic not yet");
+                return null;
             }
         } else if (this.evtLatLon!=null && this.staLatLon!=null) {
             if (getLatLonable().isGeodetic()) {
@@ -72,17 +92,35 @@ public abstract class RayCalculateable {
 
 
     public boolean hasBackAzimuth() {
-        return backAzimuth != null || (this.evtLatLon!=null && this.azimuth!=null);
+        return backAzimuth != null || (this.evtLatLon!=null && this.staLatLon!=null);
     }
-    public double getBackAzimuth() {
+    /**
+     * Returns back azimuth, if available, in the range -180<baz<=180.
+     * @return back azimuth
+     */
+    public Double getNormalizedBackAzimuth() {
+        Double az = getBackAzimuth();
+        if (az != null ) {
+            az = az % 360;
+            if (az > 180) {
+                az = az - 360;
+            }
+        }
+        return az;
+    }
+    /**
+     * Gets azimuth if available, null otherwise.
+     * @return azimuth
+     */
+    public Double getBackAzimuth() {
         if (backAzimuth != null ) {
             return backAzimuth;
         } else if (this.staLatLon!=null && this.azimuth!=null) {
             // shoudl be able to calc
             if (getLatLonable().isGeodetic()) {
-                throw new RuntimeException("geodtic not yet");
+                return null;
             } else {
-                throw new RuntimeException("getBackAzimuth not yet");
+                return null;
             }
         } else if (this.evtLatLon!=null && this.staLatLon!=null) {
             if (getLatLonable().isGeodetic()) {

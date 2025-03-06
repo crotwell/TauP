@@ -141,13 +141,11 @@ public class TauP_SetMSeed3 extends TauP_AbstractPhaseTool {
         if (staLoc != null && evLoc != null) {
             // geodetic vs spherical???
             if (geodeticArgs.isGeodetic()) {
-                rayCalculateable = DistanceRay.ofGeodeticStationEvent(
-                        staLoc,
-                        evLoc,
+                rayCalculateable = DistanceRay.ofGeodeticEventStation(evLoc, staLoc,
                         geodeticArgs.getInverseEllipFlattening()
                 );
             } else {
-                rayCalculateable = DistanceRay.ofStationEvent(staLoc, evLoc);
+                rayCalculateable = DistanceRay.ofEventStation(evLoc, staLoc);
             }
         } else if (eh.gcarc() != null) {
             rayCalculateable = DistanceRay.ofDegrees(eh.gcarc());

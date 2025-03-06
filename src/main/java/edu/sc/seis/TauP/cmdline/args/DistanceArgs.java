@@ -2,22 +2,11 @@ package edu.sc.seis.TauP.cmdline.args;
 
 import edu.sc.seis.TauP.*;
 import edu.sc.seis.seisFile.Location;
-import edu.sc.seis.seisFile.fdsnws.quakeml.Event;
-import edu.sc.seis.seisFile.fdsnws.quakeml.Magnitude;
-import edu.sc.seis.seisFile.fdsnws.quakeml.Origin;
-import edu.sc.seis.seisFile.fdsnws.stationxml.Channel;
-import edu.sc.seis.seisFile.fdsnws.stationxml.Network;
-import edu.sc.seis.seisFile.fdsnws.stationxml.Station;
 import picocli.CommandLine;
 import picocli.CommandLine.ArgGroup;
-import picocli.CommandLine.Option;
 
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-
-import static edu.sc.seis.seisFile.TimeUtils.TZ_UTC;
 
 public class DistanceArgs {
 
@@ -32,7 +21,7 @@ public class DistanceArgs {
         }
 
         if (!distArgs.degreeRange.isEmpty()) {
-            for (Double d : createListFromRange(distArgs.degreeRange, 0, 10, 180)) {
+            for (Double d : createListFromRange(distArgs.degreeRange, 0, 180, 10)) {
                 simpleDistanceList.add(DistanceRay.ofDegrees(d));
             }
         }
@@ -74,9 +63,14 @@ public class DistanceArgs {
                     for (Location evtLoc : quakes) {
                         DistanceRay evtDr = new DistanceRay(dr);
                         evtDr.withEventAzimuth(evtLoc, getAzimuth());
+                        String desc;
                         if (evtLoc.hasDescription()) {
-                            dr.setDescription(dr.getDescription());
+                            desc = evtLoc.getDescription();
+                        } else {
+                            desc = Outputs.formatLatLon(evtLoc.getLatitude()).trim()
+                                    + "/" + Outputs.formatLatLon(evtLoc.getLongitude()).trim();
                         }
+                        dr.setDescription(desc+" to az "+Outputs.formatDistance(getAzimuth()));
                         evtOut.add(evtDr);
                     }
                 }
@@ -92,9 +86,14 @@ public class DistanceArgs {
                     for (Location staLoc : stationList) {
                         DistanceRay staDr = new DistanceRay(dr);
                         staDr.withStationBackAzimuth(staLoc, getBackAzimuth());
+                        String desc;
                         if (staLoc.hasDescription()) {
-                            staDr.setDescription(staLoc.getDescription());
+                            desc = staLoc.getDescription();
+                        } else {
+                            desc = Outputs.formatLatLon(staLoc.getLatitude()).trim()
+                                    + "/" + Outputs.formatLatLon(staLoc.getLongitude()).trim();
                         }
+                        staDr.setDescription("baz "+Outputs.formatDistance(getAzimuth())+" to "+desc);
                         staOut.add(staDr);
                     }
                 }
@@ -108,15 +107,20 @@ public class DistanceArgs {
                 for (Location staLoc : stationList) {
                     DistanceRay dr;
                     if (geodeticArgs.isGeodetic()) {
-                        dr = DistanceRay.ofGeodeticStationEvent(staLoc, evtLoc, geodeticArgs.getInverseEllipFlattening());
+                        dr = DistanceRay.ofGeodeticEventStation(evtLoc, staLoc, geodeticArgs.getInverseEllipFlattening());
                     } else {
-                        dr = DistanceRay.ofStationEvent(staLoc, evtLoc);
+                        dr = DistanceRay.ofEventStation(evtLoc, staLoc);
                     }
-                    if (staLoc.hasDescription()) {
-                        dr.setDescription(staLoc.getDescription());
-                    }
-                    if (evtLoc.hasDescription()) {
-                        dr.setDescription(dr.getDescription()+" "+evtLoc.getDescription());
+                    if (evtLoc.hasDescription() && staLoc.hasDescription()) {
+                        dr.setDescription(evtLoc.getDescription()+" to "+staLoc.getDescription());
+                    } else if (staLoc.hasDescription()) {
+                        String evt_desc = Outputs.formatLatLon(evtLoc.getLatitude()).trim()
+                                + "/" + Outputs.formatLatLon(evtLoc.getLongitude()).trim();
+                        dr.setDescription(evt_desc+" to "+staLoc.getDescription());
+                    } else if (evtLoc.hasDescription()) {
+                        String sta_desc = Outputs.formatLatLon(staLoc.getLatitude()).trim()
+                                + "/" + Outputs.formatLatLon(staLoc.getLongitude()).trim();
+                        dr.setDescription(evtLoc.getDescription()+" to "+sta_desc);
                     }
                     out.add(dr);
                 }
@@ -308,8 +312,13 @@ public class DistanceArgs {
             case 1:
                 stop = minMaxStep.get(0);
                 break;
+            case 0:
+                break;
             default:
                 throw new IllegalArgumentException("range length should be 1-3 but was "+minMaxStep.size());
+        }
+        if (step == 0.0) {
+            throw new IllegalArgumentException("Step cannot be zero");
         }
         double d = start;
         List<Double> out = new ArrayList<>();
@@ -353,12 +362,12 @@ public class DistanceArgs {
         return latLonArgs.azimuth;
     }
     public void setAzimuth(double val) { latLonArgs.azimuth = val;}
-    public boolean hasAzimuth() {return latLonArgs.azimuth != null;}
+    public boolean hasAzimuth() {return latLonArgs.hasAzimuth();}
 
     public Double getBackAzimuth() {
         return latLonArgs.backAzimuth;
     }
-    public boolean hasBackAzimuth() {return latLonArgs.backAzimuth != null;}
+    public boolean hasBackAzimuth() {return latLonArgs.hasBackAzimuth();}
     public void setBackAzimuth(double val) { latLonArgs.backAzimuth = val;}
 
     public boolean hasEventLatLon() {
@@ -391,7 +400,7 @@ public class DistanceArgs {
     }
 
     @ArgGroup(exclusive = false, multiplicity = "0..*", heading = "Distance is given by:%n")
-    DistanceArgsInner distArgs = new DistanceArgsInner();
+    DistanceRayArgs distArgs = new DistanceRayArgs();
 
     @ArgGroup(validate = false, heading = "Lat,Lon influenced by:%n")
     LatLonAzBazArgs latLonArgs = new LatLonAzBazArgs();
@@ -451,108 +460,5 @@ public class DistanceArgs {
         distArgs.shootIndexRaypList.clear();
     }
 
-
-    static class DistanceArgsInner {
-
-        @CommandLine.Option(names={"--deg", "--degree"},
-                paramLabel="d",
-                description="distance in degrees", split=",")
-        protected List<Double> degreesList = new ArrayList<>();
-
-
-        @CommandLine.Option(names={"--exactdegree"},
-                paramLabel="d",
-                description="exact distance traveled in degrees, not 360-d", split=",")
-        protected List<Double> exactDegreesList = new ArrayList<>();
-
-
-        @CommandLine.Option(names={"--degreerange"},
-                paramLabel="d",
-                arity = "1..3",
-                description="regular distance range in degrees, one of max min,max or min,max,step. "
-                        +"Default min is 0 and step is 10.",
-                split=",")
-        protected List<Double> degreeRange = new ArrayList<>();
-
-        /**
-         * For when command line args uses --km for distance. Have to wait until
-         * after the model is read in to get radius of earth.
-         */
-        @CommandLine.Option(names={"--km", "--kilometer"},
-                paramLabel = "km",
-                description="distance in kilometers along surface.", split=",")
-        protected List<Double> distKilometersList = new ArrayList<>();
-
-        /**
-         * Exact km, no mod 360
-         */
-        @CommandLine.Option(names={ "--exactkilometer"},
-                paramLabel = "km",
-                description="exact distance traveled in kilometers, not 360-k", split=",")
-        protected List<Double> exactDistKilometersList = new ArrayList<>();
-
-        @CommandLine.Option(names={"--kilometerrange"},
-                paramLabel="k",
-                arity = "1..3",
-                description="regular distance range in kilometers, one of max min,max or min,max,step. "
-                +"Default min is 0 and step is 10.",
-                split=",")
-        protected List<Double> kilometerRange = new ArrayList<>();
-
-
-        @Option(names="--takeoff",
-                split=",",
-                paramLabel = "deg",
-                description="takeoff angle in degrees from the source, zero is down, 90 horizontal, 180 is up.")
-        protected List<Double> takeoffAngle = new ArrayList<>();
-
-
-        @CommandLine.Option(names={"--takeoffrange"},
-                paramLabel="k",
-                arity = "1..3",
-                description="regular range in takeoff angle in degrees, one of max min,max or min,max,step. "
-                        +"Default min is 0 and step is 10.",
-                split=",")
-        protected List<Double> takeoffRange = new ArrayList<>();
-
-        @CommandLine.Option(names={"--rayparamrad"},
-                paramLabel = "s/rad",
-                description="ray parameter from the source in s/rad, up or down is determined by the phase",
-                split=",")
-        protected List<Double> shootRadianRaypList = new ArrayList<>();
-
-        @CommandLine.Option(names={"--rayparamdeg"},
-                paramLabel = "s/deg",
-                description="ray parameter from the source in s/deg, up or down is determined by the phase",
-                split=",")
-        protected List<Double> shootRaypList = new ArrayList<>();
-
-        @CommandLine.Option(names={"--rayparamkm"},
-                paramLabel = "s/km",
-                description="ray parameter from the source in s/km, up or down is determined by the phase",
-                split=",")
-        protected List<Double> shootKmRaypList = new ArrayList<>();
-
-        @CommandLine.Option(names={"--rayparamidx"},
-                paramLabel = "i",
-                description="ray parameter from the source as index into model sampling, up or down is determined by the phase",
-                split=",")
-        protected List<Integer> shootIndexRaypList = new ArrayList<>();
-
-        public boolean allEmpty() {
-            return degreesList.isEmpty()
-                    && distKilometersList.isEmpty()
-                    && exactDegreesList.isEmpty()
-                    && degreeRange.isEmpty()
-                    && exactDistKilometersList.isEmpty()
-                    && kilometerRange.isEmpty()
-                    && shootIndexRaypList.isEmpty()
-                    && shootKmRaypList.isEmpty()
-                    && shootRadianRaypList.isEmpty()
-                    && shootRaypList.isEmpty()
-                    && takeoffAngle.isEmpty()
-                    && takeoffRange.isEmpty();
-        }
-    }
 
 }

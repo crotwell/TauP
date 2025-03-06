@@ -1,5 +1,6 @@
 package edu.sc.seis.TauP;
 
+import edu.sc.seis.seisFile.Location;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -30,6 +31,36 @@ public class DistanceRayTest {
         List<Double> fdistList = fdr.calcRadiansInRange(0, 4*Math.PI, 6371, true);
         assertEquals(2, fdistList.size());
 
+    }
+
+    @Test
+    public void testCalcAzBaz() {
+        Location staLoc = new Location(10, 0);
+        Location evtLoc = new Location(0, 0);
+        DistanceRay dr = DistanceRay.ofEventStation(evtLoc, staLoc);
+        assertEquals(0, dr.getNormalizedAzimuth(), 0.01);
+        assertEquals(180, dr.getNormalizedBackAzimuth(), 0.01);
+
+        DistanceRay gdr = DistanceRay.ofGeodeticEventStation(evtLoc, staLoc, DistAz.wgs85_invflattening);
+        assertEquals(dr.getNormalizedAzimuth(), gdr.getNormalizedAzimuth(), 0.1);
+        assertEquals(dr.getNormalizedBackAzimuth(), gdr.getNormalizedBackAzimuth(), 0.1);
+
+
+        Location staLocE = new Location(10, 10);
+        DistanceRay drE = DistanceRay.ofEventStation(evtLoc, staLocE);
+        assertEquals(45, drE.getNormalizedAzimuth(), 1);
+        assertEquals(-135, drE.getNormalizedBackAzimuth(), 1);
+        DistanceRay gdrE = DistanceRay.ofGeodeticEventStation(evtLoc, staLocE, DistAz.wgs85_invflattening);
+        assertEquals(drE.getNormalizedAzimuth(), gdrE.getNormalizedAzimuth(), 0.5, "az");
+        assertEquals(drE.getNormalizedBackAzimuth(), gdrE.getNormalizedBackAzimuth(), 0.5, "baz");
+
+        Location evtLocW = new Location(0, -10);
+        DistanceRay drW = DistanceRay.ofEventStation(evtLocW, staLoc);
+        assertEquals(45, drW.getNormalizedAzimuth(), 1);
+        assertEquals(-135, drW.getNormalizedBackAzimuth(), 1);
+        DistanceRay gdrW = DistanceRay.ofGeodeticEventStation(evtLocW, staLoc, DistAz.wgs85_invflattening);
+        assertEquals(drW.getNormalizedAzimuth(), gdrW.getNormalizedAzimuth(), 0.5);
+        assertEquals(drW.getNormalizedBackAzimuth(), gdrW.getNormalizedBackAzimuth(), 0.5);
     }
 
 }

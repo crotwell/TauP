@@ -20,8 +20,8 @@ public class DistAz {
      c getAz()     Azimuth from channel to event in degrees
      c getBaz()    Back Azimuth from event to channel in degrees
      */
-    public DistAz(Channel chan, Event ev){
-        this(chan, ev.getPreferredOrigin());
+    public DistAz(Event ev, Channel chan){
+        this( ev.getPreferredOrigin(), chan);
     }
 
     /**
@@ -29,8 +29,8 @@ public class DistAz {
      c getAz()     Azimuth from channel to origin in degrees
      c getBaz()    Back Azimuth from origin to channel in degrees
      */
-    public DistAz(Channel chan, Origin origin){
-        this(chan.asLocation(), origin.asLocation());
+    public DistAz(Origin origin, Channel chan){
+        this(origin.asLocation(), chan.asLocation());
     }
 
     /**
@@ -38,8 +38,8 @@ public class DistAz {
      c getAz()     Azimuth from channel to origin in degrees
      c getBaz()    Back Azimuth from origin to channel in degrees
      */
-    public DistAz(Channel chan, Location eventLoc){
-        this(chan.asLocation(), eventLoc);
+    public DistAz(Location eventLoc, Channel chan){
+        this(eventLoc, chan.asLocation());
     }
 
     /**
@@ -74,10 +74,10 @@ public class DistAz {
         this(lat1, lon1, lat2, lon2, wgs85_flattening);
     }
     public DistAz(double lat1, double lon1, double lat2, double lon2, double flattening){
-        this.stalat = lat1;
-        this.stalon = lon1;
-        this.evtlat = lat2;
-        this.evtlon = lon2;
+        this.evtlat = lat1;
+        this.evtlon = lon1;
+        this.stalat = lat2;
+        this.stalon = lon2;
         if ((lat1 == lat2)&&(lon1 == lon2)) {
             delta = 0.0;
             az = 0.0;
@@ -100,10 +100,10 @@ public class DistAz {
         //sph=1.0/298.257;
         sph = flattening;
 
-        scolat=Math.PI/2.0 - Math.atan((1.-sph)*(1.-sph)*Math.tan(lat1*rad));
-        ecolat=Math.PI/2.0 - Math.atan((1.-sph)*(1.-sph)*Math.tan(lat2*rad));
-        slon=lon1*rad;
-        elon=lon2*rad;
+        scolat=Math.PI/2.0 - Math.atan((1.-sph)*(1.-sph)*Math.tan(stalat*rad));
+        ecolat=Math.PI/2.0 - Math.atan((1.-sph)*(1.-sph)*Math.tan(evtlat*rad));
+        slon=stalon*rad;
+        elon=evtlon*rad;
         /*
          c
          c  a - e are as defined by Bullen (pg. 154, Sec 10.2)

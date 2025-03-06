@@ -167,7 +167,10 @@ public class CmdLineOutputTest {
             "taup velplot --mod ak135fcont -x poisson --svg",
             "taup velplot --nameddiscon --mod iasp91",
             "taup refltrans --mod ak135 --depth 35 --legend --svg",
-            "taup refltrans --mod ak135 --depth 35 --legend --energyflux --svg"
+            "taup refltrans --mod ak135 --depth 35 --legend --energyflux --svg",
+            "taup distaz --sta -11 21 --baz -135 --deg 30",
+            "taup distaz --evt -11 21 --az 35 --km 3000",
+            "taup distaz --sta 31 -80 --evt -11 21"
     };
 
     String[] setInFileCmds = new String[] {
