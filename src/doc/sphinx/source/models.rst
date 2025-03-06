@@ -121,7 +121,7 @@ places in order until it finds a model that matches the name.
   `ak135 <_static/StdModels/ak135.tvel>`_                :cite:t:`kennett:ak135`
   `ak135favg <_static/StdModels/ak135favg.nd>`_          :cite:t:`kennett:ak135f`
   `ak135fcont <_static/StdModels/ak135fcont.nd>`_        :cite:t:`kennett:ak135f`
-  `ak135fsyngine` <_static/StdModels/ak135fsyngine.nd>`_ :cite:t:`kennett:ak135f`
+  `ak135fsyngine <_static/StdModels/ak135fsyngine.nd>`_  :cite:t:`kennett:ak135f`
   ====================================================== =============================
 
   We will consider adding other models to the distribution if
@@ -208,19 +208,20 @@ Notes on Standard Models
   this depth. This discontinuity does not exist in the ak135f models for
   velocity, but the 210 is a discontinuity in the Q model.
 
-  ``
-  210.000      8.3000      4.5180      3.4258
-  210.000      8.3000      4.5230      3.4258
-  ``
+  .. code-block::
+
+    210.000      8.3000      4.5180      3.4258
+    210.000      8.3000      4.5230      3.4258
+
 
   There is a non-discontinuity discontinuity within the published ak135 model
   at 2740 km depth. This causes no issues within TauP as there is no change
   in velocity at that depth.
 
-  ``
-  2740.000     13.6494      7.2490      5.4817
-  2740.000     13.6494      7.2490      5.4817
-  ``
+  .. code-block::
+
+    2740.000     13.6494      7.2490      5.4817
+    2740.000     13.6494      7.2490      5.4817
 
   Between 4700 and 4800 km depth there appears to be a missing line in the
   published model as before and after the depth increment is approximately
@@ -231,12 +232,12 @@ Notes on Standard Models
   have not changed the file. We do recomment using ak135fcont instead,
   which is ak135 with Q and the "continental structure" above 120 km.
 
-  ``
-  4650.590     10.0439      0.0000     11.8437
-  4700.920     10.0768      0.0000     11.8772
-  4801.580     10.1415      0.0000     11.9414
-  4851.910     10.1739      0.0000     11.9722
-  ``
+  .. code-block::
+
+    4650.590     10.0439      0.0000     11.8437
+    4700.920     10.0768      0.0000     11.8772
+    4801.580     10.1415      0.0000     11.9414
+    4851.910     10.1739      0.0000     11.9722
 
   The source web page for ak135f lists attentuation parameters as Qkappa and Qmu,
   but the reference paper, :cite:t:`kennett:ak135f` says:
@@ -285,10 +286,10 @@ Notes on Standard Models
   At 210 km depth, there is a non-discontinuity in velocity, but a discontinuity
   in the Q model.
 
-  ``
-  210.00    3.3243    8.3007    4.5184    200.97     79.40     0.000
-  210.00    3.3243    8.3007    4.5184    338.47    133.72     0.000
-  ``
+  .. code-block::
+
+    210.00    3.3243    8.3007    4.5184    200.97     79.40     0.000
+    210.00    3.3243    8.3007    4.5184    338.47    133.72     0.000
 
   The "continental structure" model does not list density, Qp or Qs for the
   upper 120 km. Because these values are useful for amplitude calculations,
