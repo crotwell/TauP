@@ -115,6 +115,7 @@ and then hitting the tab key will display the models available for the
 .. include:: taup_time
 .. include:: taup_pierce
 .. include:: taup_path
+.. include:: taup_distaz
 .. include:: taup_find
 .. include:: taup_curve
 .. include:: taup_phase

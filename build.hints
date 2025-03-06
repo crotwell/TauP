@@ -7,8 +7,12 @@ conda activate sphinx
 ./gradlew dependencyUpdates
 
 # wrapper
-./gradlew wrapper --gradle-version 8.10 --distribution-type bin
+./gradlew wrapper --gradle-version 8.13 --distribution-type bin
 
+# regen cmd line tests, check for any differences
+./gradlew cCLTF
+
+./gradlew sphinx iD check
 
 # On release:
 --------------

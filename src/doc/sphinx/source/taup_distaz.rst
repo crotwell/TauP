@@ -1,4 +1,4 @@
-.. _taup_time:
+.. _taup_distaz:
 
 ---------
 TauP Distaz
