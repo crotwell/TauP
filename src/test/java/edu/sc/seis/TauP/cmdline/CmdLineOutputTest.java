@@ -1,6 +1,7 @@
 package edu.sc.seis.TauP.cmdline;
 
 import edu.sc.seis.TauP.BuildVersion;
+import edu.sc.seis.TauP.JsonOutputTest;
 import edu.sc.seis.seisFile.sac.*;
 import edu.sc.seis.seisFile.mseed3.*;
 import org.json.JSONObject;
@@ -142,18 +143,6 @@ public class CmdLineOutputTest {
                                           "taup spikes --help",
     };
 
-    String[] jsonTestCmds = new String[] {
-            "taup curve -o stdout -h 10 -p P,2kmps --mod prem --json",
-            "taup time -h 10 -p P --deg 35 --json",
-            "taup time -h 10 -p ttall --deg 35 --mod ak135 --json",
-            "taup pierce -o stdout -h 10 -p P,pP,S,ScS --deg 15 --json",
-            "taup path -o stdout -h 10 -p P,pP,S,ScS --deg 15 --json",
-            "taup phase -p Pv410p,PV410p --json",
-            "taup distaz -o stdout --sta 35 -82 --sta 33 -81 --evt -101 22 --json",
-            "taup velplot -o stdout --mod ak135 --json",
-            "taup wavefront -o stdout --mod ak135 -h 100 -p P,S,PKIKP --timestep 500 --json",
-    };
-
     String versionCmd = "taup --version";
 
     String[] docCmds = new String[] {
@@ -208,7 +197,7 @@ public class CmdLineOutputTest {
         allList.addAll(Arrays.asList(findTestCmds));
         allList.addAll(Arrays.asList(distazTestCmds));
         allList.addAll(Arrays.asList(phaseDescribeTestCmds));
-        allList.addAll(Arrays.asList(jsonTestCmds));
+        allList.addAll(Arrays.asList(JsonOutputTest.jsonTestCmds));
         for (String cmd : allList) {
             System.err.println(cmd);
             saveTestOutputToFile(cmd);
@@ -544,11 +533,6 @@ public class CmdLineOutputTest {
         runTests(distazTestCmds);
     }
 
-
-    @Test
-    public void testTauPJSON() throws Exception {
-        runJsonTests(jsonTestCmds);
-    }
     @Test
     @Disabled
     public void testTauPTable() throws Exception {
@@ -559,12 +543,6 @@ public class CmdLineOutputTest {
     public void runTests(String[] cmds) throws Exception {
         for (int i = 0; i < cmds.length; i++) {
             testCmd(cmds[i]);
-        }
-    }
-
-    public void runJsonTests(String[] cmds) throws Exception {
-        for (int i = 0; i < cmds.length; i++) {
-            testJsonCmd(cmds[i]);
         }
     }
 
@@ -631,19 +609,6 @@ public class CmdLineOutputTest {
         System.err.println("Done with " + cmd);
     }
 
-    public void testJsonCmd(String cmd) throws Exception {
-        String outContent = runCmd(cmd);
-        assertNotNull(outContent);
-        assertNotEquals(0, outContent.length());
-        BufferedReader prior = getPriorOutput(cmd);
-        BufferedReader current = new BufferedReader(new StringReader(outContent));
-        JSONTokener jsonIn = new JSONTokener(prior);
-        JSONObject priorJson = new JSONObject(jsonIn);
-        JSONTokener currentIn = new JSONTokener(current);
-        JSONObject currentJson = new JSONObject(currentIn);
-        assertTrue(priorJson.similar(currentJson), currentJson.toString(2));
-    }
-
     /**
      * test loading prior results text file from test resources. Kind of a meta-test... :)
      * @throws Exception
@@ -706,11 +671,11 @@ public class CmdLineOutputTest {
         fileOut.close();
     }
 
-    public BufferedReader getPriorOutput(String cmd) throws IOException {
+    public static BufferedReader getPriorOutput(String cmd) throws IOException {
         String resource = "edu/sc/seis/TauP/cmdLineTest/" + fileizeCmd(cmd);
-        URL res = this.getClass().getClassLoader().getResource(resource);
+        URL res = CmdLineOutputTest.class.getClassLoader().getResource(resource);
         assertNotNull( res, "Resource " + resource + " for " + cmd + " not found.");
-        InputStream inStream = this.getClass()
+        InputStream inStream = CmdLineOutputTest.class
                 .getClassLoader()
                 .getResourceAsStream(resource);
         assertNotNull(inStream, "Resource " + fileizeCmd(cmd) + " for " + cmd + " not found.");
@@ -719,7 +684,7 @@ public class CmdLineOutputTest {
         return in;
     }
 
-    public String fileizeCmd(String cmd) {
+    public static String fileizeCmd(String cmd) {
         cmd = cmd.replaceAll(",", "_");
         return cmd.replaceAll(" ", "_");
     }
