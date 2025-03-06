@@ -1,6 +1,6 @@
 Usage: taup velmerge [--debug] [--help] [--smoothbot] [--smoothtop] [--verbose]
                      [--elev=<elevation>] [-o=<outFile>]
-                     [--prop=<toolPropsFilename>] ([--mod=<modelName>] |
+                     [--prop=<toolPropsFilename>] (--mod=<modelName> |
                      --nd=<nDModelFilename> | --tvel=<tvelModelFilename>)
                      (--modmerge=<modelName> | --ndmerge=<nDModelFilename> |
                      --tvelmerge=<tvelModelFilename>)
@@ -20,7 +20,7 @@ Options:
 Base Velocity Model
       --mod, --model=<modelName>
                            use velocity model "modelname" for calculations,
-                             format is guessed. Default is iasp91.
+                             format is guessed.
       --nd=<nDModelFilename>
                            "named discontinuities" velocity file
       --tvel=<tvelModelFilename>

@@ -61,6 +61,7 @@
 <li class="toctree-l2 current"><a class="current reference internal" href="#">TauP Time</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_pierce.html">TauP Pierce</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_path.html">TauP Path</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_distaz.html">TauP Distaz</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_find.html">TauP Find</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_curve.html">TauP Curve</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_phase.html">TauP Phase</a></li>
@@ -157,15 +158,15 @@ example:</p>
 </div>
 <p>gives you arrival times for S and P for these earthquakes at those stations.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Model: iasp91
-Distance   Depth   Phase   Travel    Ray Param  Takeoff  Incident Station   Purist   Purist
-  (deg)     (km)   Name    Time (s)  p (s/deg)   (deg)    (deg)    (km)     Distance  Name 
--------------------------------------------------------------------------------------------
-   30.61    10.0   P        374.11     8.825     27.46    27.41      0.0    30.61   = P     IU.KBS 2024-08-30T09:32:19 mww 5.6
-   38.53    10.0   P        442.46     8.399     26.03    25.98      0.0    38.53   = P     CO.JSC 2024-08-30T09:32:19 mww 5.6
-   57.78    10.0   P        591.23     7.036     21.57    21.53      0.0    57.78   = P     IU.TUC 2024-08-30T09:32:19 mww 5.6
-   30.61    10.0   S        677.16    15.639     28.25    28.20      0.0    30.61   = S     IU.KBS 2024-08-30T09:32:19 mww 5.6
-   38.53    10.0   S        799.04    15.082     27.16    27.11      0.0    38.53   = S     CO.JSC 2024-08-30T09:32:19 mww 5.6
-   57.78    10.0   S       1071.16    13.110     23.38    23.34      0.0    57.78   = S     IU.TUC 2024-08-30T09:32:19 mww 5.6
+Distance   Depth   Phase   Travel    Ray Param  Takeoff  Incident Station   Purist   Purist Description
+  (deg)     (km)   Name    Time (s)  p (s/deg)   (deg)    (deg)    (km)     Distance  Name             
+-------------------------------------------------------------------------------------------------------
+   30.61    10.0   P        374.11     8.825     27.46    27.41      0.0    30.61   = P     2024-08-30T09:32:19 5.6 mww 52.61/-33.27 to IU.KBS 78.92/11.94
+   38.53    10.0   P        442.46     8.399     26.03    25.98      0.0    38.53   = P     2024-08-30T09:32:19 5.6 mww 52.61/-33.27 to CO.JSC 34.28/-81.26
+   57.78    10.0   P        591.23     7.036     21.57    21.53      0.0    57.78   = P     2024-08-30T09:32:19 5.6 mww 52.61/-33.27 to IU.TUC 32.31/-110.78
+   30.61    10.0   S        677.16    15.639     28.25    28.20      0.0    30.61   = S     2024-08-30T09:32:19 5.6 mww 52.61/-33.27 to IU.KBS 78.92/11.94
+   38.53    10.0   S        799.04    15.082     27.16    27.11      0.0    38.53   = S     2024-08-30T09:32:19 5.6 mww 52.61/-33.27 to CO.JSC 34.28/-81.26
+   57.78    10.0   S       1071.16    13.110     23.38    23.34      0.0    57.78   = S     2024-08-30T09:32:19 5.6 mww 52.61/-33.27 to IU.TUC 32.31/-110.78
 </pre></div>
 </div>
 <p>The usage is:</p>
@@ -194,7 +195,8 @@ Options:
 
       --amp                  show amplitude factor for each phase
       --attenuationfreq=&lt;attenuationFreq&gt;
-                             attenuation frequency for amplitude calculations
+                             attenuation frequency for amplitude calculations,
+                               default is 1.0
       --debug                enable debugging output
       --first, --onlyfirst   only output the first arrival for each phase, no
                                triplications
@@ -208,10 +210,11 @@ Options:
                                calculations when --geodetic, defaults to WGS84
                                ~ 298.257. The distance calculation uses 1/x.
       --help                 display this help message
-      --mw=&lt;mw&gt;              scale amplitude by source moment magnitude
+      --mw=&lt;mw&gt;              scale amplitude by source moment magnitude,
+                               default is 4.0
       --numattenuationfreq=&lt;numFrequencies&gt;
                               number attenuations frequency for amplitude
-                               calculations
+                               calculations, default is 64
   -o, --output=&lt;outFile&gt;     output to file, default is stdout.
       --prop=&lt;toolPropsFilename&gt;
                              load defaults from properties file
@@ -223,7 +226,9 @@ Options:
                              StationXML file to extract station latitudes and
                                longitudes from
       --strikediprake=s[,s...]
-                             fault strike, dip, rake for amplitude calculations
+                             fault strike, dip, rake for amplitude
+                               calculations. If not given radiation pattern is
+                               unity.
       --time, --onlytime     only output travel time
       --verbose              enable verbose output
 Model Args
@@ -249,17 +254,17 @@ Distance is given by:
                              distance in degrees
       --degreerange=d[,d...] [d [d]]
                              regular distance range in degrees, one of max min,
-                               max or min,max,stepDefault min is 0 and step is
-                               10.
+                               max or min,max,step. Default min is 0 and step
+                               is 10.
       --exactdegree=d[,d...] exact distance traveled in degrees, not 360-d
       --exactkilometer=km[,km...]
                              exact distance traveled in kilometers, not 360-k
       --kilometerrange=k[,k...] [k [k]]
                              regular distance range in kilometers, one of max
-                               min,max or min,max,step.Default min is 0 and
+                               min,max or min,max,step. Default min is 0 and
                                step is 10.
       --km, --kilometer=km[,km...]
-                             distance in kilometers
+                             distance in kilometers along surface.
       --rayparamdeg=s/deg[,s/deg...]
                              ray parameter from the source in s/deg, up or down
                                is determined by the phase
@@ -271,15 +276,15 @@ Distance is given by:
       --rayparamrad=s/rad[,s/rad...]
                              ray parameter from the source in s/rad, up or down
                                is determined by the phase
-      --takeoff=deg[,deg...] takeoff angle in degrees from the source zero is
-                               down, 90 horizontal, 180 is up
+      --takeoff=deg[,deg...] takeoff angle in degrees from the source, zero is
+                               down, 90 horizontal, 180 is up.
       --takeoffrange=k[,k...] [k [k]]
                              regular range in takeoff angle in degrees, one of
-                               max min,max or min,max,step.Default min is 0 and
-                               step is 10.
+                               max min,max or min,max,step. Default min is 0
+                               and step is 10.
 Lat,Lon influenced by:
-      --az=&lt;azimuth&gt;         azimuth in degrees
-      --baz=&lt;backAzimuth&gt;    backazimuth in degrees
+      --az=&lt;azimuth&gt;         azimuth in degrees, source to receiver
+      --baz=&lt;backAzimuth&gt;    backazimuth in degrees, receiver to source
       --evt, --event=l l     event latitude and longitude.  Creates a distance
                                if station is also given.
       --sta, --station=l l   station latitude and longitude. Creates a distance

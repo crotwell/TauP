@@ -13,7 +13,7 @@
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="TauP Find" href="taup_find.html" />
+    <link rel="next" title="TauP Distaz" href="taup_distaz.html" />
     <link rel="prev" title="TauP Pierce" href="taup_pierce.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
@@ -61,6 +61,7 @@
 <li class="toctree-l2"><a class="reference internal" href="taup_time.html">TauP Time</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_pierce.html">TauP Pierce</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">TauP Path</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_distaz.html">TauP Distaz</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_find.html">TauP Find</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_curve.html">TauP Curve</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_phase.html">TauP Phase</a></li>
@@ -93,7 +94,7 @@
   <li><a href="index.html">Documentation overview</a><ul>
   <li><a href="tools.html">Tools</a><ul>
       <li>Previous: <a href="taup_pierce.html" title="previous chapter">TauP Pierce</a></li>
-      <li>Next: <a href="taup_find.html" title="next chapter">TauP Find</a></li>
+      <li>Next: <a href="taup_distaz.html" title="next chapter">TauP Distaz</a></li>
   </ul></li>
   </ul></li>
 </ul>
@@ -798,7 +799,6 @@ circle.discontinuity.iocb {
  5533.15  -1876.17
  5533.56  -1876.06
  5533.96  -1875.94
- 5533.96  -1875.94
  5542.89  -1873.40
  5554.65  -1870.08
  5564.86  -1867.23
@@ -1206,7 +1206,6 @@ circle.discontinuity.iocb {
  5560.22  -1794.36
  5560.60  -1794.31
  5560.98  -1794.26
- 5560.98  -1794.26
  5569.34  -1793.25
  5580.35  -1791.93
  5589.92  -1790.80
@@ -1289,7 +1288,6 @@ circle.discontinuity.iocb {
    16.14  -5841.87
    16.66  -5842.56
    16.93  -5842.91
-   17.19  -5843.25
    17.19  -5843.25
    23.03  -5850.88
    30.67  -5860.92
@@ -1418,7 +1416,6 @@ circle.discontinuity.iocb {
   605.01  -5838.51
   610.62  -5829.10
   617.12  -5818.28
-  622.09  -5810.07
   622.09  -5810.07
   622.31  -5809.70
   622.54  -5809.33
@@ -1746,7 +1743,6 @@ circle.discontinuity.iocb {
     9.93  -5842.58
    10.08  -5842.92
    10.24  -5843.27
-   10.24  -5843.27
    13.73  -5850.90
    18.31  -5860.97
    22.27  -5869.73
@@ -1874,7 +1870,6 @@ circle.discontinuity.iocb {
   377.60  -5857.61
   380.96  -5848.61
   384.84  -5838.25
-  387.80  -5830.39
   387.80  -5830.39
   387.94  -5830.04
   388.07  -5829.68
@@ -2222,7 +2217,6 @@ circle.discontinuity.iocb {
  5561.16  -1791.44
  5561.54  -1791.40
  5561.92  -1791.36
- 5561.92  -1791.36
  5570.26  -1790.39
  5581.25  -1789.14
  5590.79  -1788.07
@@ -2383,17 +2377,17 @@ Distance is given by:
                              distance in degrees
       --degreerange=d[,d...] [d [d]]
                              regular distance range in degrees, one of max min,
-                               max or min,max,stepDefault min is 0 and step is
-                               10.
+                               max or min,max,step. Default min is 0 and step
+                               is 10.
       --exactdegree=d[,d...] exact distance traveled in degrees, not 360-d
       --exactkilometer=km[,km...]
                              exact distance traveled in kilometers, not 360-k
       --kilometerrange=k[,k...] [k [k]]
                              regular distance range in kilometers, one of max
-                               min,max or min,max,step.Default min is 0 and
+                               min,max or min,max,step. Default min is 0 and
                                step is 10.
       --km, --kilometer=km[,km...]
-                             distance in kilometers
+                             distance in kilometers along surface.
       --rayparamdeg=s/deg[,s/deg...]
                              ray parameter from the source in s/deg, up or down
                                is determined by the phase
@@ -2405,15 +2399,15 @@ Distance is given by:
       --rayparamrad=s/rad[,s/rad...]
                              ray parameter from the source in s/rad, up or down
                                is determined by the phase
-      --takeoff=deg[,deg...] takeoff angle in degrees from the source zero is
-                               down, 90 horizontal, 180 is up
+      --takeoff=deg[,deg...] takeoff angle in degrees from the source, zero is
+                               down, 90 horizontal, 180 is up.
       --takeoffrange=k[,k...] [k [k]]
                              regular range in takeoff angle in degrees, one of
-                               max min,max or min,max,step.Default min is 0 and
-                               step is 10.
+                               max min,max or min,max,step. Default min is 0
+                               and step is 10.
 Lat,Lon influenced by:
-      --az=&lt;azimuth&gt;         azimuth in degrees
-      --baz=&lt;backAzimuth&gt;    backazimuth in degrees
+      --az=&lt;azimuth&gt;         azimuth in degrees, source to receiver
+      --baz=&lt;backAzimuth&gt;    backazimuth in degrees, receiver to source
       --evt, --event=l l     event latitude and longitude.  Creates a distance
                                if station is also given.
       --sta, --station=l l   station latitude and longitude. Creates a distance

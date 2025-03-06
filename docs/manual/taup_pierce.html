@@ -61,6 +61,7 @@
 <li class="toctree-l2"><a class="reference internal" href="taup_time.html">TauP Time</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">TauP Pierce</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_path.html">TauP Path</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_distaz.html">TauP Distaz</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_find.html">TauP Find</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_curve.html">TauP Curve</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_phase.html">TauP Phase</a></li>
@@ -231,7 +232,8 @@ Options:
 
       --amp                  show amplitude factor for each phase
       --attenuationfreq=&lt;attenuationFreq&gt;
-                             attenuation frequency for amplitude calculations
+                             attenuation frequency for amplitude calculations,
+                               default is 1.0
       --debug                enable debugging output
       --first, --onlyfirst   only output the first arrival for each phase, no
                                triplications
@@ -245,12 +247,13 @@ Options:
                                calculations when --geodetic, defaults to WGS84
                                ~ 298.257. The distance calculation uses 1/x.
       --help                 display this help message
-      --mw=&lt;mw&gt;              scale amplitude by source moment magnitude
+      --mw=&lt;mw&gt;              scale amplitude by source moment magnitude,
+                               default is 4.0
       --nodiscon             only prints pierce points for the depths added
                                with -pierce
       --numattenuationfreq=&lt;numFrequencies&gt;
                               number attenuations frequency for amplitude
-                               calculations
+                               calculations, default is 64
   -o, --output=&lt;outFile&gt;     output to file, default is stdout.
       --pierce=depth[,depth...]
                              additional depth for calculating pierce points
@@ -266,7 +269,9 @@ Options:
                              StationXML file to extract station latitudes and
                                longitudes from
       --strikediprake=s[,s...]
-                             fault strike, dip, rake for amplitude calculations
+                             fault strike, dip, rake for amplitude
+                               calculations. If not given radiation pattern is
+                               unity.
       --time, --onlytime     only output travel time
       --turn                 only prints bottom turning points, e.g. v
       --under                only prints underside reflection points, e.g. ^
@@ -294,17 +299,17 @@ Distance is given by:
                              distance in degrees
       --degreerange=d[,d...] [d [d]]
                              regular distance range in degrees, one of max min,
-                               max or min,max,stepDefault min is 0 and step is
-                               10.
+                               max or min,max,step. Default min is 0 and step
+                               is 10.
       --exactdegree=d[,d...] exact distance traveled in degrees, not 360-d
       --exactkilometer=km[,km...]
                              exact distance traveled in kilometers, not 360-k
       --kilometerrange=k[,k...] [k [k]]
                              regular distance range in kilometers, one of max
-                               min,max or min,max,step.Default min is 0 and
+                               min,max or min,max,step. Default min is 0 and
                                step is 10.
       --km, --kilometer=km[,km...]
-                             distance in kilometers
+                             distance in kilometers along surface.
       --rayparamdeg=s/deg[,s/deg...]
                              ray parameter from the source in s/deg, up or down
                                is determined by the phase
@@ -316,15 +321,15 @@ Distance is given by:
       --rayparamrad=s/rad[,s/rad...]
                              ray parameter from the source in s/rad, up or down
                                is determined by the phase
-      --takeoff=deg[,deg...] takeoff angle in degrees from the source zero is
-                               down, 90 horizontal, 180 is up
+      --takeoff=deg[,deg...] takeoff angle in degrees from the source, zero is
+                               down, 90 horizontal, 180 is up.
       --takeoffrange=k[,k...] [k [k]]
                              regular range in takeoff angle in degrees, one of
-                               max min,max or min,max,step.Default min is 0 and
-                               step is 10.
+                               max min,max or min,max,step. Default min is 0
+                               and step is 10.
 Lat,Lon influenced by:
-      --az=&lt;azimuth&gt;         azimuth in degrees
-      --baz=&lt;backAzimuth&gt;    backazimuth in degrees
+      --az=&lt;azimuth&gt;         azimuth in degrees, source to receiver
+      --baz=&lt;backAzimuth&gt;    backazimuth in degrees, receiver to source
       --evt, --event=l l     event latitude and longitude.  Creates a distance
                                if station is also given.
       --sta, --station=l l   station latitude and longitude. Creates a distance

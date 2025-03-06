@@ -61,6 +61,7 @@
 <li class="toctree-l2"><a class="reference internal" href="taup_time.html">TauP Time</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_pierce.html">TauP Pierce</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_path.html">TauP Path</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_distaz.html">TauP Distaz</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_find.html">TauP Find</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_curve.html">TauP Curve</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_phase.html">TauP Phase</a></li>
@@ -154,7 +155,7 @@ velocity file, followed by <code class="code docutils literal notranslate"><span
 <p>The usage is:</p>
 <blockquote>
 <div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Usage</span><span class="p">:</span> <span class="n">taup</span> <span class="n">create</span> <span class="p">[</span><span class="o">--</span><span class="n">debug</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">help</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">verbose</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">prop</span><span class="o">=&lt;</span><span class="n">toolPropsFilename</span><span class="o">&gt;</span><span class="p">]</span>
-                   <span class="p">([</span><span class="o">--</span><span class="n">mod</span><span class="o">=&lt;</span><span class="n">modelName</span><span class="o">&gt;</span><span class="p">]</span> <span class="o">|</span> <span class="o">--</span><span class="n">nd</span><span class="o">=&lt;</span><span class="n">nDModelFilename</span><span class="o">&gt;</span> <span class="o">|</span>
+                   <span class="p">(</span><span class="o">--</span><span class="n">mod</span><span class="o">=&lt;</span><span class="n">modelName</span><span class="o">&gt;</span> <span class="o">|</span> <span class="o">--</span><span class="n">nd</span><span class="o">=&lt;</span><span class="n">nDModelFilename</span><span class="o">&gt;</span> <span class="o">|</span>
                    <span class="o">--</span><span class="n">tvel</span><span class="o">=&lt;</span><span class="n">tvelModelFilename</span><span class="o">&gt;</span><span class="p">)</span>
 <span class="n">Create</span> <span class="o">.</span><span class="n">taup</span> <span class="n">file</span> <span class="kn">from</span> <span class="nn">a</span> <span class="n">velocity</span> <span class="n">model</span><span class="o">.</span>
 
@@ -168,7 +169,7 @@ velocity file, followed by <code class="code docutils literal notranslate"><span
 <span class="n">Velocity</span> <span class="n">Model</span>
       <span class="o">--</span><span class="n">mod</span><span class="p">,</span> <span class="o">--</span><span class="n">model</span><span class="o">=&lt;</span><span class="n">modelName</span><span class="o">&gt;</span>
                   <span class="n">use</span> <span class="n">velocity</span> <span class="n">model</span> <span class="s2">&quot;modelname&quot;</span> <span class="k">for</span> <span class="n">calculations</span><span class="p">,</span> <span class="nb">format</span> <span class="ow">is</span>
-                    <span class="n">guessed</span><span class="o">.</span> <span class="n">Default</span> <span class="ow">is</span> <span class="n">iasp91</span><span class="o">.</span>
+                    <span class="n">guessed</span><span class="o">.</span>
       <span class="o">--</span><span class="n">nd</span><span class="o">=&lt;</span><span class="n">nDModelFilename</span><span class="o">&gt;</span>
                   <span class="s2">&quot;named discontinuities&quot;</span> <span class="n">velocity</span> <span class="n">file</span>
       <span class="o">--</span><span class="n">tvel</span><span class="o">=&lt;</span><span class="n">tvelModelFilename</span><span class="o">&gt;</span>

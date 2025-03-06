@@ -1,14 +1,17 @@
 Usage: taup distaz [--debug] [--geodetic] [--help] [--verbose] [--az=<azimuth>]
                    [--baz=<backAzimuth>] [--geodeticflattening=f]
                    [-o=<outFile>] [--prop=<toolPropsFilename>]
-                   [--qml=<quakemlFilename>] [--staxml=<stationxmlFilename>]
-                   [--evt=l l]... [--sta=l l]... [--json | --text]
+                   [--qml=<quakemlFilename>] [--radius=<radiusOfEarth>]
+                   [--staxml=<stationxmlFilename>] [--evt=l l]... [--sta=l
+                   l]... [--json | --text] [[--deg=d[,d...]]... [--km=km[,
+                   km...]]... [--degreerange=d[,d...] [d [d]]]...
+                   [--kilometerrange=k[,k...] [k [k]]]...]...
 Calc distance, az and baz for event lat,lon and station lat,lon pairs.
 
 Options:
 
-      --az=<azimuth>         azimuth in degrees
-      --baz=<backAzimuth>    backazimuth in degrees
+      --az=<azimuth>         azimuth in degrees, source to receiver
+      --baz=<backAzimuth>    backazimuth in degrees, receiver to source
       --debug                enable debugging output
       --evt, --event=l l     event latitude and longitude.  Creates a distance
                                if station is also given.
@@ -27,6 +30,9 @@ Options:
                              load defaults from properties file
       --qml, --quakeml=<quakemlFilename>
                              QuakeML file to load for earthquake origins to use
+      --radius=<radiusOfEarth>
+                             radius of earth in km, used when distance given in
+                               km
       --sta, --station=l l   station latitude and longitude. Creates a distance
                                if event is also given.
       --staxml=<stationxmlFilename>
@@ -36,3 +42,16 @@ Options:
 Output Type:
       --json                 outputs as JSON
       --text                 outputs as Text
+Optional distance is given by:
+      --deg, --degree=d[,d...]
+                             distance in degrees
+      --degreerange=d[,d...] [d [d]]
+                             regular distance range in degrees, one of max min,
+                               max or min,max,step. Default min is 0 and step
+                               is 10.
+      --kilometerrange=k[,k...] [k [k]]
+                             regular distance range in kilometers, one of max
+                               min,max or min,max,step. Default min is 0 and
+                               step is 10.
+      --km, --kilometer=km[,km...]
+                             distance in kilometers along surface.

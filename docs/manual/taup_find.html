@@ -14,7 +14,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="TauP Curve" href="taup_curve.html" />
-    <link rel="prev" title="TauP Path" href="taup_path.html" />
+    <link rel="prev" title="TauP Distaz" href="taup_distaz.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -61,6 +61,7 @@
 <li class="toctree-l2"><a class="reference internal" href="taup_time.html">TauP Time</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_pierce.html">TauP Pierce</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_path.html">TauP Path</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_distaz.html">TauP Distaz</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">TauP Find</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_curve.html">TauP Curve</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_phase.html">TauP Phase</a></li>
@@ -92,7 +93,7 @@
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
   <li><a href="tools.html">Tools</a><ul>
-      <li>Previous: <a href="taup_path.html" title="previous chapter">TauP Path</a></li>
+      <li>Previous: <a href="taup_distaz.html" title="previous chapter">TauP Distaz</a></li>
       <li>Next: <a href="taup_curve.html" title="next chapter">TauP Curve</a></li>
   </ul></li>
   </ul></li>
@@ -197,7 +198,8 @@ Options:
 
       --amp                show amplitude factor for each phase, only if --deg
       --attenuationfreq=&lt;attenuationFreq&gt;
-                           attenuation frequency for amplitude calculations
+                           attenuation frequency for amplitude calculations,
+                             default is 1.0
       --az=&lt;azimuth&gt;       azimuth in degrees, for amp calculations
       --debug              enable debugging output
       --deg, --degree=d[,d...]
@@ -211,10 +213,11 @@ Options:
                              moho, cmb, iocb
       --help               display this help message
       --max=&lt;maxActions&gt;   Maximum number of reflections and phase conversion
-      --mw=&lt;mw&gt;            scale amplitude by source moment magnitude
+      --mw=&lt;mw&gt;            scale amplitude by source moment magnitude, default
+                             is 4.0
       --numattenuationfreq=&lt;numFrequencies&gt;
                             number attenuations frequency for amplitude
-                             calculations
+                             calculations, default is 64
   -o, --output=&lt;outFile&gt;   output to file, default is stdout.
       --onlynameddiscon    only interact with named discontinuities like moho,
                              cmb, iocb
@@ -229,7 +232,8 @@ Options:
                              parameter range in s/km
       --showrayparam       show min and max ray parameter for each phase name
       --strikediprake=s[,s...]
-                           fault strike, dip, rake for amplitude calculations
+                           fault strike, dip, rake for amplitude calculations.
+                             If not given radiation pattern is unity.
       --time=t [t]         find arrivals within the given range
       --verbose            enable verbose output
 Model Args

@@ -1,5 +1,5 @@
 Usage: taup create [--debug] [--help] [--verbose] [--prop=<toolPropsFilename>]
-                   ([--mod=<modelName>] | --nd=<nDModelFilename> |
+                   (--mod=<modelName> | --nd=<nDModelFilename> |
                    --tvel=<tvelModelFilename>)
 Create .taup file from a velocity model.
 
@@ -13,7 +13,7 @@ Options:
 Velocity Model
       --mod, --model=<modelName>
                   use velocity model "modelname" for calculations, format is
-                    guessed. Default is iasp91.
+                    guessed.
       --nd=<nDModelFilename>
                   "named discontinuities" velocity file
       --tvel=<tvelModelFilename>

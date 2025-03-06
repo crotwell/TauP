@@ -16,7 +16,8 @@ Options:
 
       --amp                show amplitude factor for each phase, only if --deg
       --attenuationfreq=<attenuationFreq>
-                           attenuation frequency for amplitude calculations
+                           attenuation frequency for amplitude calculations,
+                             default is 1.0
       --az=<azimuth>       azimuth in degrees, for amp calculations
       --debug              enable debugging output
       --deg, --degree=d[,d...]
@@ -30,10 +31,11 @@ Options:
                              moho, cmb, iocb
       --help               display this help message
       --max=<maxActions>   Maximum number of reflections and phase conversion
-      --mw=<mw>            scale amplitude by source moment magnitude
+      --mw=<mw>            scale amplitude by source moment magnitude, default
+                             is 4.0
       --numattenuationfreq=<numFrequencies>
                             number attenuations frequency for amplitude
-                             calculations
+                             calculations, default is 64
   -o, --output=<outFile>   output to file, default is stdout.
       --onlynameddiscon    only interact with named discontinuities like moho,
                              cmb, iocb
@@ -48,7 +50,8 @@ Options:
                              parameter range in s/km
       --showrayparam       show min and max ray parameter for each phase name
       --strikediprake=s[,s...]
-                           fault strike, dip, rake for amplitude calculations
+                           fault strike, dip, rake for amplitude calculations.
+                             If not given radiation pattern is unity.
       --time=t [t]         find arrivals within the given range
       --verbose            enable verbose output
 Model Args

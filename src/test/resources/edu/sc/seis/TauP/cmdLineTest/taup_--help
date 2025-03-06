@@ -3,29 +3,29 @@ The TauP Toolkit
       --help      display this help message
   -V, --version   display version info
 Commands:
-  time                 Calculate travel times for seismic phases in an earth
-                         model.
-  pierce               Calculate pierce points for phases at discontinuities in
-                         the model.
-  path                 Plot ray paths, distance vs. depth, through the earth.
   create               Create .taup file from a velocity model.
   curve                Plot travel time vs. distance and other curves for
                          seismic phases.
+  distaz               Calc distance, az and baz for event lat,lon and station
+                         lat,lon pairs.
+  find                 Find seismic phases in an earth model.
+  path                 Plot ray paths, distance vs. depth, through the earth.
+  phase                Describe a seismic phase in the current model.
+  pierce               Calculate pierce points for phases at discontinuities in
+                         the model.
   refltrans            Plot reflection and transmission coefficients for a
                          discontinuity.
   setms3               Save travel times in the extra header of miniseed3 files.
   setsac               Set headers to travel times of phases using depth and
                          distance from SAC files.
-  velplot              Plot velocity vs depth for a model.
-  velmerge             Merge part of one model into another.
+  spikes               Calculate spike seismograms
   table                Create a table of travel times for a range of depths and
                          distances.
+  time                 Calculate travel times for seismic phases in an earth
+                         model.
+  velmerge             Merge part of one model into another.
+  velplot              Plot velocity vs depth for a model.
   wavefront            Plot wavefronts of seismic phases at steps in time.
-  phase                Describe a seismic phase in the current model.
-  find                 Find seismic phases in an earth model.
-  distaz               Calc distance, az and baz for event lat,lon and station
-                         lat,lon pairs.
-  spikes               Calculate spike seismograms
   web                  Web based gui for the TauP Toolkit.
   generate-completion  Generate bash/zsh completion script for taup.
   version              Print the version.

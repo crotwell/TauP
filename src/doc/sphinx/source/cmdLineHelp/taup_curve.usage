@@ -15,7 +15,8 @@ Plot travel time vs. distance and other curves for seismic phases.
 Options:
 
       --attenuationfreq=<attenuationFreq>
-                           attenuation frequency for amplitude calculations
+                           attenuation frequency for amplitude calculations,
+                             default is 1.0
       --az=<azimuth>       azimuth in degrees, for amp calculations
       --color=<coloring>   style of coloring for paths and wavefronts, one of:
                              auto, wavetype, phase, none
@@ -26,10 +27,11 @@ Options:
                            plot width in units from --mapwidthunit.
       --mapwidthunit=<mapWidthUnit>
                            plot width unit, i for inch, c for cm or p for px.
-      --mw=<mw>            scale amplitude by source moment magnitude
+      --mw=<mw>            scale amplitude by source moment magnitude, default
+                             is 4.0
       --numattenuationfreq=<numFrequencies>
                             number attenuations frequency for amplitude
-                             calculations
+                             calculations, default is 64
   -o, --output=<outFile>   output to file, default is stdout.
       --prop=<toolPropsFilename>
                            load defaults from properties file
@@ -40,7 +42,8 @@ Options:
       --rel=phase          plot relative to the given phase, no effect unless
                              distance/time
       --strikediprake=s[,s...]
-                           fault strike, dip, rake for amplitude calculations
+                           fault strike, dip, rake for amplitude calculations.
+                             If not given radiation pattern is unity.
       --verbose            enable verbose output
   -x, --xaxis=type         X axis data type, default is degree180, one of
                              radian, radian180, degree, degree180, kilometer,

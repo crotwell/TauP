@@ -61,6 +61,7 @@
 <li class="toctree-l2"><a class="reference internal" href="taup_time.html">TauP Time</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_pierce.html">TauP Pierce</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_path.html">TauP Path</a></li>
+<li class="toctree-l2"><a class="reference internal" href="taup_distaz.html">TauP Distaz</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_find.html">TauP Find</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">TauP Curve</a></li>
 <li class="toctree-l2"><a class="reference internal" href="taup_phase.html">TauP Phase</a></li>
@@ -3311,7 +3312,8 @@ Plot travel time vs. distance and other curves for seismic phases.
 Options:
 
       --attenuationfreq=&lt;attenuationFreq&gt;
-                           attenuation frequency for amplitude calculations
+                           attenuation frequency for amplitude calculations,
+                             default is 1.0
       --az=&lt;azimuth&gt;       azimuth in degrees, for amp calculations
       --color=&lt;coloring&gt;   style of coloring for paths and wavefronts, one of:
                              auto, wavetype, phase, none
@@ -3322,10 +3324,11 @@ Options:
                            plot width in units from --mapwidthunit.
       --mapwidthunit=&lt;mapWidthUnit&gt;
                            plot width unit, i for inch, c for cm or p for px.
-      --mw=&lt;mw&gt;            scale amplitude by source moment magnitude
+      --mw=&lt;mw&gt;            scale amplitude by source moment magnitude, default
+                             is 4.0
       --numattenuationfreq=&lt;numFrequencies&gt;
                             number attenuations frequency for amplitude
-                             calculations
+                             calculations, default is 64
   -o, --output=&lt;outFile&gt;   output to file, default is stdout.
       --prop=&lt;toolPropsFilename&gt;
                            load defaults from properties file
@@ -3336,7 +3339,8 @@ Options:
       --rel=phase          plot relative to the given phase, no effect unless
                              distance/time
       --strikediprake=s[,s...]
-                           fault strike, dip, rake for amplitude calculations
+                           fault strike, dip, rake for amplitude calculations.
+                             If not given radiation pattern is unity.
       --verbose            enable verbose output
   -x, --xaxis=type         X axis data type, default is degree180, one of
                              radian, radian180, degree, degree180, kilometer,

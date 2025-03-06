@@ -22,7 +22,8 @@ Calculate spike seismograms
 Options:
 
       --attenuationfreq=<attenuationFreq>
-                             attenuation frequency for amplitude calculations
+                             attenuation frequency for amplitude calculations,
+                               default is 1.0
       --debug                enable debugging output
       --geodetic             use geodetic latitude for distance calculations,
                                which implies an ellipticity. Default is
@@ -34,10 +35,11 @@ Options:
                                calculations when --geodetic, defaults to WGS84
                                ~ 298.257. The distance calculation uses 1/x.
       --help                 display this help message
-      --mw=<mw>              scale amplitude by source moment magnitude
+      --mw=<mw>              scale amplitude by source moment magnitude,
+                               default is 4.0
       --numattenuationfreq=<numFrequencies>
                               number attenuations frequency for amplitude
-                               calculations
+                               calculations, default is 64
   -o, --output=<outFile>     output to file, default is stdout.
       --otime=<origintime>   event origin time, as ISO8601
       --prop=<toolPropsFilename>
@@ -48,7 +50,9 @@ Options:
                              StationXML file to extract station latitudes and
                                longitudes from
       --strikediprake=s[,s...]
-                             fault strike, dip, rake for amplitude calculations
+                             fault strike, dip, rake for amplitude
+                               calculations. If not given radiation pattern is
+                               unity.
       --verbose              enable verbose output
 Model Args
   -h, --evdepth, --sourcedepth=depth[,depth...]
@@ -73,17 +77,17 @@ Distance is given by:
                              distance in degrees
       --degreerange=d[,d...] [d [d]]
                              regular distance range in degrees, one of max min,
-                               max or min,max,stepDefault min is 0 and step is
-                               10.
+                               max or min,max,step. Default min is 0 and step
+                               is 10.
       --exactdegree=d[,d...] exact distance traveled in degrees, not 360-d
       --exactkilometer=km[,km...]
                              exact distance traveled in kilometers, not 360-k
       --kilometerrange=k[,k...] [k [k]]
                              regular distance range in kilometers, one of max
-                               min,max or min,max,step.Default min is 0 and
+                               min,max or min,max,step. Default min is 0 and
                                step is 10.
       --km, --kilometer=km[,km...]
-                             distance in kilometers
+                             distance in kilometers along surface.
       --rayparamdeg=s/deg[,s/deg...]
                              ray parameter from the source in s/deg, up or down
                                is determined by the phase
@@ -95,15 +99,15 @@ Distance is given by:
       --rayparamrad=s/rad[,s/rad...]
                              ray parameter from the source in s/rad, up or down
                                is determined by the phase
-      --takeoff=deg[,deg...] takeoff angle in degrees from the source zero is
-                               down, 90 horizontal, 180 is up
+      --takeoff=deg[,deg...] takeoff angle in degrees from the source, zero is
+                               down, 90 horizontal, 180 is up.
       --takeoffrange=k[,k...] [k [k]]
                              regular range in takeoff angle in degrees, one of
-                               max min,max or min,max,step.Default min is 0 and
-                               step is 10.
+                               max min,max or min,max,step. Default min is 0
+                               and step is 10.
 Lat,Lon influenced by:
-      --az=<azimuth>         azimuth in degrees
-      --baz=<backAzimuth>    backazimuth in degrees
+      --az=<azimuth>         azimuth in degrees, source to receiver
+      --baz=<backAzimuth>    backazimuth in degrees, receiver to source
       --evt, --event=l l     event latitude and longitude.  Creates a distance
                                if station is also given.
       --sta, --station=l l   station latitude and longitude. Creates a distance
