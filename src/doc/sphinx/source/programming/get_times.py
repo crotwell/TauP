@@ -9,7 +9,7 @@ params = {
     'format':'json'
 }
 
-r = requests.get('http://localhost:7049/time', params=params)
+r = requests.get('http://localhost:7409/time', params=params)
 
 jsonTimes = r.json()
 for a in jsonTimes["arrivals"]:
