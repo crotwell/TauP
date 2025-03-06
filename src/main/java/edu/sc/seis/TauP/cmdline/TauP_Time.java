@@ -266,12 +266,20 @@ public class TauP_Time extends TauP_AbstractRayTool {
                 }
                 lineTwo += "  "+String.format(phaseFormat, allRelPhase);
             }
+            for (Arrival arrival : arrivalList) {
+                if (arrival.getRayCalculateable().hasDescription()) {
+                    lineOne += " Description";
+                    lineTwo += "            ";
+                    break;
+                }
+            }
             out.println(lineOne);
             out.println(lineTwo);
+            StringBuilder dashes = new StringBuilder();
             for(int i = 0; i < Math.max(lineOne.length(), lineTwo.length()); i++) {
-                out.write("-");
+                dashes.append("-");
             }
-            out.write("\n");
+            out.write(dashes.append("\n").toString());
             for (Arrival arrival : arrivalList) {
                 currArrival = arrival;
                 out.print(Outputs.formatDistance(currArrival.getSearchDistDeg()));
