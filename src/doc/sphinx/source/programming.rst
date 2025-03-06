@@ -44,7 +44,7 @@ it does limit the languages available. For
 other languages, the simplest way is to make use of the built in web access within
 TauP to access the tools via an HTTP request returning JSON.
 
-Running :code:`taup_web` in the distribution will start up a web server
+Running :code:`taup web` in the distribution will start up a web server
 on port 7409 to allow this type of access, although only from connections on the
 local machine.
 
