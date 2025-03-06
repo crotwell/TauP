@@ -48,9 +48,9 @@ You should not need to rebuild TauP from source unless you are trying
 to help debug an issue, but if
 you do, you can build it using the Gradle wrapper script::
 
-  ./gradlew eB
+  ./gradlew installDist
 
-will rebuild TauP into the build/explode directory.
+will rebuild TauP into the build/install directory.
 
 
 
