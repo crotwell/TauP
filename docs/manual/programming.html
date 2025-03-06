@@ -171,7 +171,7 @@ it does limit the languages available. For
 other languages, the simplest way is to make use of the built in web access within
 TauP to access the tools via an HTTP request returning JSON.</p>
 <p>Running <code class="code docutils literal notranslate"><span class="pre">taup_web</span></code> in the distribution will start up a web server
-on port 7049 to allow this type of access, although only from connections on the
+on port 7409 to allow this type of access, although only from connections on the
 local machine.</p>
 <p>An example in Python using the
 <a class="reference external" href="https://docs.python-requests.org/en/latest/user/quickstart/">Requests library</a>
@@ -180,11 +180,11 @@ interface, and almost all command line arguments can be sent
 via a corresponding URL query parameter by removing leading dashes.
 For example to calculate the at a distance in kilometers, where the command
 line tool uses ‘–km 100’, the URL would include ‘km=100’ like:</p>
-<p><a class="reference external" href="http://localhost:7049/time?phase=P,S&amp;km=100&amp;format=json">http://localhost:7049/time?phase=P,S&amp;km=100&amp;format=json</a></p>
+<p><a class="reference external" href="http://localhost:7409/time?phase=P,S&amp;km=100&amp;format=json">http://localhost:7409/time?phase=P,S&amp;km=100&amp;format=json</a></p>
 <p>Boolean command line flags, like ‘–amp’, can be given a true value as in
 ‘amp=true’. Many options have default values, just as in the command line
 tools. It may be helpful to experiment with the web gui at</p>
-<p><a class="reference external" href="http://localhost:7049/taup.html">http://localhost:7049/taup.html</a></p>
+<p><a class="reference external" href="http://localhost:7409/taup.html">http://localhost:7409/taup.html</a></p>
 <p>to see how the URL is encoded and what the results are. Note that the web form
 does not yet include all possible parameters that the web tools support.</p>
 </section>
