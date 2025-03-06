@@ -39,7 +39,7 @@ TauP is capable of handling models,
 like `ak135favg <_static/StdModels/ak135favg.nd>`_, that have an ocean layer.
 However, care should be taken with S waves as they cannot propigate in a fliud
 layer. So the phase SS doesn't exist in ak135favg, but the phase
-`S^3S` potentially does, if the source and receiver are below the ocean layer. 
+`S^3S` potentially does, if the source and receiver are below the ocean layer.
 Also, the default station
 depth is the model surface, but we generall don't think of seismic stations
 floating on top of the ocean, so it may be more appropriate to locate the
@@ -64,7 +64,7 @@ product of multiple factors. For details, see :cite:t:`fmgs`
 
 The factors that contribute to this estimate are:
 
-* A nominal source term for a Mw 4.0 earthquake, but without
+* A nominal source term for a Mw 4.0 earthquake.
 
 * An optional source orientation, strike, dip and rake.
 
@@ -84,6 +84,6 @@ and so the values given should be taken with a healthy dose of skepticism. In
 addition, for large earthquakes the amplitude of body wave phases will saturate.
 So a larger magnitude will not generate a larger arrival amplitude, even
 though this calculation will be larger. These values may be more useful for
-comparing relative amplitude between phases at at distance,
+comparing relative amplitude between phases at a distance,
 or for the same phase at multiple distances, rather than expecting the
 observed amplitude on a real seismogram to match to any accuracy.
