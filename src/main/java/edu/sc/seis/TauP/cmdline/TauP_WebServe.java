@@ -395,7 +395,7 @@ public class TauP_WebServe extends TauP_Tool {
     }
 
     // see edu.sc.seis.TauP.TauP_Web for picocli cmd line interface
-    public int port = 7049;
+    public int port = 7409;
 
     public List<String> additionalModels = new ArrayList<>();
 

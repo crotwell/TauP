@@ -6,4 +6,4 @@ Options:
       --models=<extraModelNames>...
                       List of additional models to use
       --open          autoopen web page
-  -p, --port=<port>   port to use, defaults to 7049
+  -p, --port=<port>   port to use, defaults to 7409

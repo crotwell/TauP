@@ -63,8 +63,8 @@ public class TauP_Web implements Callable<Integer> {
         return 0;
     }
 
-    @CommandLine.Option(names = {"-p", "--port"}, defaultValue = "7049", description = "port to use, defaults to ${DEFAULT-VALUE}")
-    int port = 7049;
+    @CommandLine.Option(names = {"-p", "--port"}, defaultValue = "7409", description = "port to use, defaults to ${DEFAULT-VALUE}")
+    int port = 7409;
 
     @CommandLine.Option(names = {"--models"},
             arity = "1..*",

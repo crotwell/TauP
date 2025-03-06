@@ -21,7 +21,7 @@ Javadocs for the package are at available at
 `javadoc.io <https://javadoc.io/doc/edu.sc.seis/TauP>`_.
 
 While the TauP jar and its dependencies are included in the distribution, it is
-often easier to depend on the publication within the 
+often easier to depend on the publication within the
 `Maven Central <https://central.sonatype.com/artifact/edu.sc.seis/TauP/overview>`_
 repository
 as this facilitates download and updates and provides for automatic dependency
@@ -45,7 +45,7 @@ other languages, the simplest way is to make use of the built in web access with
 TauP to access the tools via an HTTP request returning JSON.
 
 Running :code:`taup_web` in the distribution will start up a web server
-on port 7049 to allow this type of access, although only from connections on the
+on port 7409 to allow this type of access, although only from connections on the
 local machine.
 
 An example in Python using the
@@ -56,13 +56,13 @@ via a corresponding URL query parameter by removing leading dashes.
 For example to calculate the at a distance in kilometers, where the command
 line tool uses '--km 100', the URL would include 'km=100' like:
 
-http://localhost:7049/time?phase=P,S&km=100&format=json
+http://localhost:7409/time?phase=P,S&km=100&format=json
 
 Boolean command line flags, like '--amp', can be given a true value as in
 'amp=true'. Many options have default values, just as in the command line
 tools. It may be helpful to experiment with the web gui at
 
-http://localhost:7049/taup.html
+http://localhost:7409/taup.html
 
 to see how the URL is encoded and what the results are. Note that the web form
 does not yet include all possible parameters that the web tools support.
