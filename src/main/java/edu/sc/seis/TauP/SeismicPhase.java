@@ -6,22 +6,13 @@ import java.util.List;
 
 public interface SeismicPhase extends Serializable, Cloneable {
 
-    static Arrival getEarliestArrival(List<SeismicPhase> phases, double degrees) {
-        Arrival minArrival = null;
-        for (SeismicPhase seismicPhase : phases) {
-            Arrival currArrival = seismicPhase.getEarliestArrival(degrees);
-            if (currArrival != null && (minArrival == null || minArrival.getTime() > currArrival.getTime())) {
-                minArrival = currArrival;
-            }
-        }
-        return minArrival;
-    }
+    boolean PWAVE = true;
+    boolean SWAVE = false;
+
 
     boolean phasesExistsInModel();
 
     Arrival getEarliestArrival(double degrees);
-
-    TauModel getTauModel();
 
     double getMinDistanceDeg();
 
@@ -35,11 +26,8 @@ public interface SeismicPhase extends Serializable, Cloneable {
 
     double getMinRayParam();
 
-    int getMaxRayParamIndex();
-
-    int getMinRayParamIndex();
-
     double getMinTime();
+
     double getMaxTime();
 
     String getName();
@@ -49,6 +37,35 @@ public interface SeismicPhase extends Serializable, Cloneable {
     double getSourceDepth();
 
     double getReceiverDepth();
+
+    boolean hasArrivals();
+
+    String describe();
+
+    String describeShort();
+
+    String describeJson();
+
+    TauModel getTauModel();
+
+    static Arrival getEarliestArrival(List<SeismicPhase> phases, double degrees) {
+        Arrival minArrival = null;
+        for (SeismicPhase seismicPhase : phases) {
+            Arrival currArrival = seismicPhase.getEarliestArrival(degrees);
+            if (currArrival != null && (minArrival == null || minArrival.getTime() > currArrival.getTime())) {
+                minArrival = currArrival;
+            }
+        }
+        return minArrival;
+    }
+
+    boolean isFail();
+
+    String failReason();
+
+    int getMaxRayParamIndex();
+
+    int getMinRayParamIndex();
 
     List<SeismicPhaseSegment> getPhaseSegments();
 
@@ -73,8 +90,6 @@ public interface SeismicPhase extends Serializable, Cloneable {
     double getTau(int i);
 
     double[] getTau();
-
-    boolean hasArrivals();
 
     static double distanceTrim180(double deg) {
         double tempDeg = deg;
@@ -138,12 +153,6 @@ public interface SeismicPhase extends Serializable, Cloneable {
     boolean finalSegmentIsPWave();
 
     List<ArrivalPathSegment> calcSegmentPaths(Arrival currArrival);
-
-    String describe();
-
-    String describeShort();
-
-    String describeJson();
 
     String toString();
 

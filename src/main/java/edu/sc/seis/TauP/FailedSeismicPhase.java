@@ -6,7 +6,7 @@ import java.util.List;
  * Represents a seismic phase that doesn't exist in the model, either malformed or not compatible with the broad
  * structure of the model.
  */
-public class FailedSeismicPhase extends SimpleSeismicPhase {
+public class FailedSeismicPhase extends SimpleContigSeismicPhase {
 
     public FailedSeismicPhase(ProtoSeismicPhase proto) {
         super(proto,
@@ -33,6 +33,19 @@ public class FailedSeismicPhase extends SimpleSeismicPhase {
     @Override
     public boolean phasesExistsInModel() {
         return false;
+    }
+
+    @Override
+    public boolean isFail() {
+        return ! phasesExistsInModel();
+    }
+
+    @Override
+    public String failReason() {
+        if (isFail()) {
+            return proto.failReason;
+        }
+        return "";
     }
 
     @Override

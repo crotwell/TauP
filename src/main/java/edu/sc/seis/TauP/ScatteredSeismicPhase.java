@@ -398,8 +398,8 @@ public class ScatteredSeismicPhase implements SeismicPhase {
         out.println(SQ+"name"+QCQ+getName()+QCOMMA);
         if (inboundArrival == null ) {
             out.println(SQ+"fail"+QCQ+"inbound arrival to scatterer doesn't exist"+QCOMMA);
-        } else if (scatteredPhase.proto.isFail) {
-            out.println(SQ+"fail"+QCQ+"Scattered Phase "+scatteredPhase.proto.failReason+QCOMMA);
+        } else if (scatteredPhase.isFail()) {
+            out.println(SQ+"fail"+QCQ+"Scattered Phase "+scatteredPhase.failReason()+QCOMMA);
         }
         String baseDesc = SeismicPhase.baseDescribeJSON(this);
         if (!baseDesc.isEmpty()) {
@@ -408,6 +408,19 @@ public class ScatteredSeismicPhase implements SeismicPhase {
         out.println(SeismicPhase.segmentDescribeJSON(this));
         out.println("}");
         return sw.toString();
+    }
+
+    @Override
+    public boolean isFail() {
+        return inboundArrival == null || scatteredPhase.isFail();
+    }
+
+    @Override
+    public String failReason() {
+        if (isFail()) {
+
+        }
+        return "";
     }
 
     @Override

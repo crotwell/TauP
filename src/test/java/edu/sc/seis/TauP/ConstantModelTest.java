@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static edu.sc.seis.TauP.Arrival.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -55,12 +54,12 @@ public class ConstantModelTest {
 
     @Test
     public void testDirectP() {
-        doDirectTest(tMod, SimpleSeismicPhase.PWAVE);
+        doDirectTest(tMod, SeismicPhase.PWAVE);
     }
 
     @Test
     public void testDirectS() {
-        doDirectTest(tMod, SimpleSeismicPhase.SWAVE);
+        doDirectTest(tMod, SeismicPhase.SWAVE);
     }
 
 /**

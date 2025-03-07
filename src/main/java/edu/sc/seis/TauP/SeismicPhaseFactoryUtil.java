@@ -3,8 +3,6 @@ package edu.sc.seis.TauP;
 import static edu.sc.seis.TauP.PhaseInteraction.REFLECT_TOPSIDE;
 import static edu.sc.seis.TauP.PhaseInteraction.REFLECT_TOPSIDE_CRITICAL;
 import static edu.sc.seis.TauP.PhaseSymbols.*;
-import static edu.sc.seis.TauP.SimpleSeismicPhase.PWAVE;
-import static edu.sc.seis.TauP.SimpleSeismicPhase.SWAVE;
 
 /**
  * Utility methods for seismic phase calculation.
@@ -13,9 +11,9 @@ public class SeismicPhaseFactoryUtil {
 
     public static boolean isPWave(String currLeg, boolean prevIsP) {
         if(isCompressionalWaveSymbol(currLeg)) {
-            return PWAVE;
+            return SeismicPhase.PWAVE;
         } else if(isTransverseWaveSymbol(currLeg)) {
-            return SWAVE;
+            return SeismicPhase.SWAVE;
         }
         return prevIsP;
     }

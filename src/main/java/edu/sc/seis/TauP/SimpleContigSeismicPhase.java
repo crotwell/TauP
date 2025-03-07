@@ -30,16 +30,8 @@ import static edu.sc.seis.TauP.SphericalCoords.RtoD;
  * Stores and transforms seismic phase names to and from their corresponding
  * sequence of branches.
  *
- * @version 1.1.3 Wed Jul 18 15:00:35 GMT 2001
- * @author H. Philip Crotwell
- * <p>
- * Modified to add "expert" mode wherein paths may start in the core. Principal
- * use is to calculate leg contributions for scattered phases. Nomenclature: "K" -
- * downgoing wave from source in core; "k" - upgoing wave from source in core.
- *
- * G. Helffrich/U. Bristol 24 Feb. 2007
  */
-public class SimpleSeismicPhase implements SeismicPhase {
+public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
 
     ProtoSeismicPhase proto;
 
@@ -117,12 +109,8 @@ public class SimpleSeismicPhase implements SeismicPhase {
 
     protected int maxRecursion = 5;
 
-    public static final boolean PWAVE = true;
 
-    public static final boolean SWAVE = false;
-
-
-    public SimpleSeismicPhase(ProtoSeismicPhase proto,
+    public SimpleContigSeismicPhase(ProtoSeismicPhase proto,
                               double[] rayParams,
                               double[] time,
                               double[] dist,
@@ -238,6 +226,16 @@ public class SimpleSeismicPhase implements SeismicPhase {
         return proto;
     }
 
+    @Override
+    public boolean isFail() {
+        return proto.isFail;
+    }
+
+    @Override
+    public String failReason() {
+        return proto.failReason;
+    }
+
     public TauModel gettMod() {
         return tMod;
     }
@@ -320,6 +318,20 @@ public class SimpleSeismicPhase implements SeismicPhase {
     @Override
     public boolean hasArrivals() {
         return dist != null && dist.length != 0;
+    }
+
+    public List<ShadowZone> getShadowZones() throws SlownessModelException, NoSuchLayerException {
+        List<ShadowZone> out = new ArrayList<>();
+        for (int i=0; i<rayParams.length-1; i++) {
+            if (rayParams[i] == rayParams[i+1]) {
+                // shadow?
+                System.err.println("shad: "+i+" rp "+rayParams[i] +" "+ rayParams[i+1]+" dist "+dist[i]+" "+(i+1)+" "+dist[i+1]);
+                Arrival preArrival = new RayParamIndexRay(i).calculate(this).get(0);
+                Arrival postArrival = new RayParamIndexRay(i+1).calculate(this).get(0);
+                out.add(new ShadowZone(this, rayParams[i], i, preArrival, postArrival));
+            }
+        }
+        return out;
     }
 
     // Normal methods
@@ -458,7 +470,7 @@ public class SimpleSeismicPhase implements SeismicPhase {
      * @param maxDeltaDeg max separation in degrees
      * @return new phase interpolated
      */
-    public SimpleSeismicPhase interpolateSimplePhase(double maxDeltaDeg) {
+    public SimpleContigSeismicPhase interpolateSimplePhase(double maxDeltaDeg) {
         int numToAdd = 0;
         double maxDeltaRadian = maxDeltaDeg*DtoR;
         for (int i = 0; i < rayParams.length-1; i++) {
@@ -499,7 +511,7 @@ public class SimpleSeismicPhase implements SeismicPhase {
         out_dist[rayParams.length-1 + shift] = dist[rayParams.length-1];
         out_rayParams[rayParams.length-1 + shift] = rayParams[rayParams.length-1];
         out_time[rayParams.length-1 + shift] = time[rayParams.length-1];
-        SimpleSeismicPhase out = new SimpleSeismicPhase(proto, out_rayParams, out_time, out_dist,
+        SimpleContigSeismicPhase out = new SimpleContigSeismicPhase(proto, out_rayParams, out_time, out_dist,
                 minRayParam, maxRayParam, minRayParamIndex, maxRayParamIndex, minDistance, maxDistance, false);
         if (shift != numToAdd) {
             throw new RuntimeException("shifty not numAdd "+shift+" "+numToAdd);
@@ -527,7 +539,7 @@ public class SimpleSeismicPhase implements SeismicPhase {
         /* Sum the branches with the appropriate multiplier. */
         for(int j = 0; j < tMod.getNumBranches(); j++) {
             if(timesBranches[0][j] != 0) {
-                TimeDist td = tMod.getTauBranch(j, PWAVE).calcTimeDist(rayParam, true);
+                TimeDist td = tMod.getTauBranch(j, SeismicPhase.PWAVE).calcTimeDist(rayParam, true);
                 TimeDist mulTD = new TimeDist(rayParam,
                                   timesBranches[0][j]*td.getTime(),
                                   timesBranches[0][j]*td.getDistRadian(),
@@ -535,7 +547,7 @@ public class SimpleSeismicPhase implements SeismicPhase {
                 sum = sum.add(mulTD);
             }
             if(timesBranches[1][j] != 0) {
-                TimeDist td = tMod.getTauBranch(j, SWAVE).calcTimeDist(rayParam, true);
+                TimeDist td = tMod.getTauBranch(j, SeismicPhase.SWAVE).calcTimeDist(rayParam, true);
 
                 td = new TimeDist(rayParam,
                                   timesBranches[1][j]*td.getTime(),
@@ -900,7 +912,7 @@ public class SimpleSeismicPhase implements SeismicPhase {
                                                 tMod.getTauBranch(branchNum,
                                                                 isPWave)
                                                         .getBotDepth(),
-                                                PWAVE);
+                                                SeismicPhase.PWAVE);
                             } else {
                                 turnDepth = tMod.getSlownessModel()
                                         .findDepth(distRayParam,
@@ -1087,35 +1099,6 @@ public class SimpleSeismicPhase implements SeismicPhase {
         }
         reflTranValue *= prevSeg.calcEnergyFluxFactorReflTran(arrival, prevSeg.isPWave, calcSH); // last seg can't change phase at end
         return reflTranValue;
-    }
-
-    @Override
-    public List<ArrivalPathSegment> calcSegmentPaths(Arrival currArrival) {
-        return calcSegmentPaths(currArrival, null, 0);
-    }
-
-    /**
-     * Calc path with a starting time-distance possibly not zero. Used when this simple phase
-     * is the outbound phase of a scattered phase and so the path needs to start at the
-     * scatterer distance.
-     *
-     * @param currArrival
-     * @param prevEnd
-     * @return
-     */
-    public List<ArrivalPathSegment> calcSegmentPaths(Arrival currArrival, TimeDist prevEnd, int prevIdx) {
-        int idx = prevIdx+1;
-        List<ArrivalPathSegment> segmentPaths = new ArrayList<>();
-        for (SeismicPhaseSegment seg : getPhaseSegments()) {
-            ArrivalPathSegment segPath = seg.calcPathTimeDist(currArrival, prevEnd, idx++, prevIdx+ getPhaseSegments().size());
-
-            if (segPath.path.isEmpty()) {
-                continue;
-            }
-            segmentPaths.add(segPath);
-            prevEnd = segPath.getPathEnd();
-        }
-        return ArrivalPathSegment.adjustPath(segmentPaths, currArrival);
     }
 
     public static List<TimeDist> removeDuplicatePathPoints(List<TimeDist> inPath) {

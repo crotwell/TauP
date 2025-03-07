@@ -9,8 +9,6 @@ import java.util.regex.Pattern;
 import static edu.sc.seis.TauP.PhaseInteraction.*;
 import static edu.sc.seis.TauP.PhaseInteraction.REFLECT_TOPSIDE_CRITICAL;
 import static edu.sc.seis.TauP.PhaseSymbols.*;
-import static edu.sc.seis.TauP.SimpleSeismicPhase.PWAVE;
-import static edu.sc.seis.TauP.SimpleSeismicPhase.SWAVE;
 import static edu.sc.seis.TauP.ProtoSeismicPhase.failNewPhase;
 
 /**
@@ -279,6 +277,8 @@ public class SeismicPhaseFactory {
         return newPhases;
     }
 
+
+
     SimpleSeismicPhase internalCreatePhase() throws TauModelException {
         ArrayList<String> legs = LegPuller.legPuller(name);
 
@@ -302,9 +302,9 @@ public class SeismicPhaseFactory {
 
     public static Boolean legIsPWave(String currLeg) {
         if (PhaseSymbols.isCompressionalWaveSymbol(currLeg, 0)) {
-                return PWAVE;
+                return SeismicPhase.PWAVE;
         } else if(PhaseSymbols.isTransverseWaveSymbol(currLeg, 0)) {
-            return SWAVE;
+            return SeismicPhase.SWAVE;
         } else {
             // otherwise, curr leg is same as prev, like for reflections
             return null;
@@ -399,10 +399,10 @@ public class SeismicPhaseFactory {
         }
         /* set currWave to be the wave type for this leg, 'P' or 'S'. */
         if(isCompressionalWaveSymbol(currLeg)) {
-            isPWave = PWAVE;
+            isPWave = SeismicPhase.PWAVE;
             prevIsPWave = isPWave;
         } else if(isTransverseWaveSymbol(currLeg)) {
-            isPWave = SWAVE;
+            isPWave = SeismicPhase.SWAVE;
             prevIsPWave = isPWave;
         } else {
             return ProtoSeismicPhase.failNewPhase(tMod, false, true,
@@ -628,20 +628,25 @@ public class SeismicPhaseFactory {
         int minRayParamIndex = 0;
         int maxRayParamIndex = tMod.rayParams.length;
         String name = proto.getName();
-        if(endSeg.maxRayParam < 0.0 || endSeg.minRayParam > endSeg.maxRayParam) {
+        if (endSeg.maxRayParam < 0.0 || endSeg.minRayParam > endSeg.maxRayParam) {
             /* Phase has no arrivals, possibly due to source depth. */
             proto.failNext("Phase has no arrivals, possibly due to source depth");
             return new FailedSeismicPhase(proto);
         }
         /* Special case for surface waves. */
-        if(name.endsWith(KMPS_CODE)) {
+        if (name.endsWith(KMPS_CODE)) {
+            double velocity;
             try {
+                velocity = Double.valueOf(name.substring(0, name.length() - 4));
+            } catch (NumberFormatException e) {
+                proto.failNext(" Illegal surface wave velocity " + name.substring(0, name.length() - 4));
+                return new FailedSeismicPhase(proto);
+            }
             dist = new double[2];
             time = new double[2];
             rayParams = new double[2];
             dist[0] = 0.0;
             time[0] = 0.0;
-            double velocity = Double.valueOf(name.substring(0, name.length() - 4));
             rayParams[0] = tMod.radiusOfEarth / velocity;
             dist[1] = getMaxKmpsLaps() * 2 * Math.PI;
             time[1] = getMaxKmpsLaps() * 2 * Math.PI * tMod.radiusOfEarth / velocity;
@@ -651,13 +656,39 @@ public class SeismicPhaseFactory {
             minRayParam = rayParams[0];
             maxRayParam = rayParams[0];
             maxRayParamIndex = 1;
-            return new SimpleSeismicPhase(proto, rayParams, time, dist,
+            SimpleSeismicPhase sp = new SimpleContigSeismicPhase(proto, rayParams, time, dist,
                     minRayParam, maxRayParam, minRayParamIndex, maxRayParamIndex, minDistance, maxDistance, TauPConfig.DEBUG);
-            } catch (NumberFormatException e) {
-                proto.failNext(" Illegal surface wave velocity "+name.substring(0, name.length() - 4));
-                return new FailedSeismicPhase(proto);
-            }
+            return sp;
         }
+        // split for any high slowness zones
+        List<ProtoSeismicPhase> hszSplitProtoList = proto.splitForAllHighSlowness();
+        List<SimpleContigSeismicPhase> contigPhaseList = new ArrayList<>();
+        for (ProtoSeismicPhase hszProto : hszSplitProtoList) {
+            contigPhaseList.add(internalSumContigPhase(hszProto));
+        }
+        if (contigPhaseList.size()==1) {
+            return contigPhaseList.get(0);
+        }
+        return new CompositeSeismicPhase(contigPhaseList);
+    }
+
+    protected static SimpleContigSeismicPhase internalSumContigPhase(ProtoSeismicPhase proto) throws TauModelException {
+        TauModel tMod = proto.tMod;
+        SeismicPhaseSegment endSeg = proto.endSegment();
+        double minRayParam = endSeg.minRayParam;
+        double maxRayParam = endSeg.maxRayParam;
+        if (endSeg.endAction == FAIL) {
+            throw new RuntimeException("Cannot sum failed phase");
+        }
+        double[] rayParams;
+        double[] dist;
+        double[] time;
+        double minDistance;
+        double maxDistance;
+        int minRayParamIndex = 0;
+        int maxRayParamIndex = tMod.rayParams.length;
+        String name = proto.getName();
+
         /*
          * Find the ray parameter index that corresponds to the minRayParam and
          * maxRayParam.
@@ -794,6 +825,8 @@ public class SeismicPhaseFactory {
                         prev = seg;
                     }
                     if(foundOverlap) {
+
+
                         double[] newdist = new double[dist.length + 1];
                         double[] newtime = new double[time.length + 1];
                         double[] newrayParams = new double[rayParams.length + 1];
@@ -805,14 +838,14 @@ public class SeismicPhaseFactory {
                         }
                         System.arraycopy(dist, 0, newdist, 0, hSZIndex);
                         System.arraycopy(time, 0, newtime, 0, hSZIndex);
-                        System.arraycopy(rayParams,
-                                0,
-                                newrayParams,
-                                0,
-                                hSZIndex);
+                        System.arraycopy(rayParams, 0, newrayParams,0, hSZIndex);
                         newrayParams[hSZIndex] = hsz[i].rayParam;
                         /* Sum the branches with the appropriate multiplier. */
+
                         TimeDist td = calcForIndex(proto, hSZIndex, maxRayParamIndex, newrayParams);
+                        if (td.getDistRadian() == dist[hSZIndex-1]) {
+                            throw new RuntimeException("shadow but same dist "+hSZIndex+" "+dist[hSZIndex]+" "+td);
+                        }
                         newdist[hSZIndex] = td.getDistRadian();
                         newtime[hSZIndex] = td.getTime();
                         System.arraycopy(dist,
@@ -839,7 +872,7 @@ public class SeismicPhaseFactory {
             }
         }
 
-        return new SimpleSeismicPhase(proto,
+        return new SimpleContigSeismicPhase(proto,
                 rayParams,
                 time,
                 dist,

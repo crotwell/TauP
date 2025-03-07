@@ -401,8 +401,8 @@ public class LegPuller {
         double disconDepth = Double.parseDouble(depthString);
         TauBranch tBranch;
         for(int i = 0; i < tMod.getNumBranches(); i++) {
-            tBranch = tMod.getTauBranch(i, SimpleSeismicPhase.PWAVE);
-            if (tMod.isDiscontinuityBranch(i, SimpleSeismicPhase.PWAVE)) {
+            tBranch = tMod.getTauBranch(i, SeismicPhase.PWAVE);
+            if (tMod.isDiscontinuityBranch(i, SeismicPhase.PWAVE)) {
                 double foundDepth = tBranch.getTopDepth();
                 double depthDelta = Math.abs(disconDepth - foundDepth);
                 if (depthDelta < disconMax

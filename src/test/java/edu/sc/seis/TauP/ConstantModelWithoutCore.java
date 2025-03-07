@@ -36,12 +36,12 @@ public class ConstantModelWithoutCore {
 
     @Test
     public void testDirectP() {
-        ConstantModelTest.doDirectTest(tMod, SimpleSeismicPhase.PWAVE);
+        ConstantModelTest.doDirectTest(tMod, SeismicPhase.PWAVE);
     }
 
     @Test
     public void testDirectS() {
-        ConstantModelTest.doDirectTest(tMod, SimpleSeismicPhase.SWAVE);
+        ConstantModelTest.doDirectTest(tMod, SeismicPhase.SWAVE);
     }
     
     @Test

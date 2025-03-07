@@ -340,6 +340,126 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
         }
     }
 
+    public List<ProtoSeismicPhase> splitForAllHighSlowness() throws TauModelException {
+        SlownessModel sMod = tMod.getSlownessModel();
+        DepthRange[] hszP = sMod.getHighSlowness(true);
+        DepthRange[] hszS = sMod.getHighSlowness(false);
+        List<ProtoSeismicPhase> inList = List.of(this);
+        for (DepthRange dr : hszS) {
+            List<ProtoSeismicPhase> outList = new ArrayList<>();
+            for (ProtoSeismicPhase inProto : inList) {
+                outList.addAll(inProto.splitForHighSlowness(dr, false));
+            }
+            inList = outList;
+        }
+        for (DepthRange dr : hszP) {
+            List<ProtoSeismicPhase> outList = new ArrayList<>();
+            for (ProtoSeismicPhase inProto : inList) {
+                outList.addAll(inProto.splitForHighSlowness(dr, true));
+            }
+            inList = outList;
+        }
+        return inList;
+    }
+
+    public List<ProtoSeismicPhase> splitForHighSlowness(DepthRange hszDepths, boolean hszPWave) throws TauModelException {
+        boolean found = false;
+        List<SeismicPhaseSegment> preShadowSegList = new ArrayList<>();
+        List<SeismicPhaseSegment> postShadowSegList = new ArrayList<>();
+        SeismicPhaseSegment seg = null;
+        for (SeismicPhaseSegment next : segmentList) {
+            if (seg != null && seg.endAction == TURN
+                    && seg.isPWave == hszPWave
+                    && seg.getTopDepth() <= hszDepths.topDepth
+                    && seg.getBotDepth() >= hszDepths.botDepth) {
+                found = true;
+                System.err.println("Found seg overlap HSz: "+hszDepths.topDepth+" "+hszDepths.botDepth);
+                System.err.println(seg.describeBranchRange()+" "+branchNumSeqStr()+" depth: "+seg.getTopDepth()+" "+seg.getBotDepth()+" "+seg.endAction);
+
+                int hszBranch = seg.tMod.findBranch(hszDepths.topDepth)-1;
+                double hszRayParam = seg.tMod.getTauBranch(hszBranch, hszPWave).getMinRayParam();
+                // phase that turns above HSZ
+                SeismicPhaseSegment downSplitSeg = new SeismicPhaseSegment(
+                        seg.tMod,
+                        seg.startBranch,
+                        hszBranch,
+                        seg.isPWave,
+                        seg.endAction,
+                        seg.isDownGoing,
+                        seg.legName,
+                        hszRayParam,
+                        seg.maxRayParam
+                );
+                downSplitSeg.prevEndAction = seg.prevEndAction;
+                System.err.println("downSplitSeg: "+downSplitSeg.startBranch+" to "+downSplitSeg.endBranch+" "+downSplitSeg.endAction);
+                preShadowSegList.add(downSplitSeg);
+                SeismicPhaseSegment upSplitSeg = new SeismicPhaseSegment(
+                        next.tMod,
+                        hszBranch,
+                        next.endBranch,
+                        next.isPWave,
+                        next.endAction,
+                        next.isDownGoing,
+                        next.legName,
+                        hszRayParam,
+                        seg.maxRayParam
+                );
+                upSplitSeg.prevEndAction = next.prevEndAction;
+                System.err.println("upSplitSeg: "+upSplitSeg.startBranch+" to "+upSplitSeg.endBranch+" "+upSplitSeg.endAction);
+                preShadowSegList.add(upSplitSeg);
+
+                // phase that turns below HSZ
+                SeismicPhaseSegment downBelowSeg = new SeismicPhaseSegment(
+                        seg.tMod,
+                        seg.startBranch,
+                        seg.endBranch,
+                        seg.isPWave,
+                        seg.endAction,
+                        seg.isDownGoing,
+                        seg.legName,
+                        seg.minRayParam,
+                        hszRayParam
+                );
+                downBelowSeg.prevEndAction = seg.prevEndAction;
+                System.err.println("downBelowSeg: "+downBelowSeg.startBranch+" to "+downBelowSeg.endBranch+" "+downBelowSeg.endAction);
+
+                postShadowSegList.add(downBelowSeg);
+                SeismicPhaseSegment upBelowSeg = new SeismicPhaseSegment(
+                        next.tMod,
+                        next.startBranch,
+                        next.endBranch,
+                        next.isPWave,
+                        next.endAction,
+                        next.isDownGoing,
+                        next.legName,
+                        seg.minRayParam,
+                        hszRayParam
+                );
+                upBelowSeg.prevEndAction = next.prevEndAction;
+                System.err.println("upBelowSeg: "+upBelowSeg.startBranch+" to "+upBelowSeg.endBranch+" "+upBelowSeg.endAction);
+                postShadowSegList.add(upBelowSeg);
+                seg = null;
+            } else {
+                if (seg != null) {
+                    preShadowSegList.add(seg);
+                    postShadowSegList.add(seg);
+                }
+                seg = next;
+            }
+        }
+        if (found) {
+            if (seg != null ) {
+                preShadowSegList.add(seg);
+                postShadowSegList.add(seg);
+            }
+            ProtoSeismicPhase preShadow = new ProtoSeismicPhase(preShadowSegList, receiverDepth, phaseName);
+            ProtoSeismicPhase postShadow = new ProtoSeismicPhase(postShadowSegList, receiverDepth, phaseName);
+            return List.of(preShadow, postShadow);
+        } else {
+            return List.of(this);
+        }
+    }
+
     public final SeismicPhaseSegment get(int i) {
         return segmentList.get(i);
     }
@@ -1025,7 +1145,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
         return out;
     }
 
-    public SeismicPhase asSeismicPhase() throws TauModelException {
+    public SimpleSeismicPhase asSeismicPhase() throws TauModelException {
         return SeismicPhaseFactory.sumBranches(tMod, this);
 
     }

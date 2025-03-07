@@ -202,12 +202,25 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
             givenPhases = getSeismicPhases();
         }
         for (SeismicPhase sp : givenPhases) {
-            if (sp instanceof SimpleSeismicPhase) {
-                SimpleSeismicPhase ssp = (SimpleSeismicPhase) sp;
+            if (sp instanceof SimpleContigSeismicPhase) {
+                SimpleContigSeismicPhase ssp = (SimpleContigSeismicPhase) sp;
                 walk.add(ssp.getProto());
+            } else if (sp instanceof CompositeSeismicPhase) {
+                CompositeSeismicPhase csp = (CompositeSeismicPhase) sp;
+                for (SimpleContigSeismicPhase subsp : csp.getSubPhaseList()) {
+                    walk.add(subsp.getProto());
+                }
             } else {
                 ScatteredSeismicPhase scat = (ScatteredSeismicPhase) sp;
-                walk.add(scat.getScatteredPhase().getProto());
+                if (scat.getScatteredPhase() instanceof SimpleContigSeismicPhase) {
+                    SimpleContigSeismicPhase ssp = (SimpleContigSeismicPhase) scat.getScatteredPhase();
+                    walk.add(ssp.getProto());
+                } else if (scat.getScatteredPhase() instanceof CompositeSeismicPhase) {
+                    CompositeSeismicPhase csp = (CompositeSeismicPhase) scat.getScatteredPhase();
+                    for (SimpleContigSeismicPhase subsp : csp.getSubPhaseList()) {
+                        walk.add(subsp.getProto());
+                    }
+                }
             }
         }
         return walk;

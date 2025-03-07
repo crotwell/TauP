@@ -84,10 +84,10 @@ public class SeismicPhaseWalk {
 
         List<ProtoSeismicPhase> segmentTree = new ArrayList<>();
         if (allowSWave) {
-            segmentTree.addAll( createSourceSegments(tMod, SimpleSeismicPhase.SWAVE, receiverDepth));
+            segmentTree.addAll( createSourceSegments(tMod, SeismicPhase.SWAVE, receiverDepth));
         }
         if (allowPWave) {
-            segmentTree.addAll( createSourceSegments(tMod, SimpleSeismicPhase.PWAVE, receiverDepth));
+            segmentTree.addAll( createSourceSegments(tMod, SeismicPhase.PWAVE, receiverDepth));
         }
         segmentTree = overlapsRayParam(segmentTree, minRayParam, maxRayParam);
         segmentTree = walkPhases(tMod, segmentTree, maxAction);
@@ -296,10 +296,10 @@ public class SeismicPhaseWalk {
                     segList.validateSegList();
                     List<ProtoSeismicPhase> calcedNext = new ArrayList<>();
                     if (allowPWave) {
-                        calcedNext.addAll(nextLegs(tMod, segList, SimpleSeismicPhase.PWAVE));
+                        calcedNext.addAll(nextLegs(tMod, segList, SeismicPhase.PWAVE));
                     }
                     if (allowSWave) {
-                        calcedNext.addAll(nextLegs(tMod, segList, SimpleSeismicPhase.SWAVE));
+                        calcedNext.addAll(nextLegs(tMod, segList, SeismicPhase.SWAVE));
                     }
                     for (ProtoSeismicPhase calcSegList : calcedNext) {
                         SeismicPhaseSegment calcendSeg = calcSegList.get(calcSegList.size()-1);
@@ -372,7 +372,7 @@ public class SeismicPhaseWalk {
             default:
                 startBranchNum = prevEndSeg.endBranch;
         }
-        if (isPWave == SimpleSeismicPhase.SWAVE
+        if (isPWave == SeismicPhase.SWAVE
                 && tMod.getSlownessModel().depthInFluid(tMod.getTauBranch(startBranchNum, true).getTopDepth())) {
             // no s wave in fluid layer
             return outTree;
