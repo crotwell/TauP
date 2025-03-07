@@ -383,6 +383,18 @@ public class TauP_Time extends TauP_AbstractRayTool {
     public void start() throws IOException, TauPException {
         List<RayCalculateable> distanceValues = getDistanceArgs().getRayCalculatables(this.sourceArgs);
         List<Arrival> arrivalList = calcAll(getSeismicPhases(), distanceValues);
+        if (getDistanceArgs().isAllIndexRays()) {
+            List<Arrival> indexArrivalList = new ArrayList<>();
+            for (SeismicPhase phase : getSeismicPhases()) {
+                if (phase instanceof SimpleSeismicPhase) {
+                    SimpleSeismicPhase simpPhase = (SimpleSeismicPhase) phase;
+                    for (int i = 0; i < simpPhase.getNumRays(); i++) {
+                        indexArrivalList.addAll(new RayParamIndexRay(i).calculate(simpPhase));
+                    }
+                }
+            }
+            arrivalList.addAll(indexArrivalList);
+        }
         PrintWriter writer = outputTypeArgs.createWriter(spec.commandLine().getOut());
         printResult(writer, arrivalList);
         writer.close();

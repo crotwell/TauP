@@ -399,6 +399,10 @@ public class DistanceArgs {
         }
     }
 
+    public boolean isAllIndexRays() {
+        return distArgs.allIndexRays;
+    }
+
     @ArgGroup(exclusive = false, multiplicity = "0..*", heading = "Distance is given by:%n")
     DistanceRayArgs distArgs = new DistanceRayArgs();
 

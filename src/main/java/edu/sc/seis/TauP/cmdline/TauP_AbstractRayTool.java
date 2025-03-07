@@ -3,6 +3,7 @@ package edu.sc.seis.TauP.cmdline;
 import edu.sc.seis.TauP.*;
 import edu.sc.seis.TauP.cmdline.args.AbstractOutputTypeArgs;
 import edu.sc.seis.TauP.cmdline.args.DistanceArgs;
+import edu.sc.seis.TauP.cmdline.args.DistanceRayArgs;
 import org.json.JSONException;
 import org.json.JSONWriter;
 import picocli.CommandLine;

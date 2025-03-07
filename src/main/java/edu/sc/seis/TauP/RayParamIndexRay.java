@@ -18,5 +18,15 @@ public class RayParamIndexRay extends ShootableRay {
         return List.of(a);
     }
 
+    @Override
+    public boolean hasDescription() {
+        return true;
+    }
+
+    @Override
+    public String getDescription() {
+        return "rp index "+index;
+    }
+
     int index;
 }

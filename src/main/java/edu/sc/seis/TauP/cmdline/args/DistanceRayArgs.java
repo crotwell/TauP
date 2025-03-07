@@ -5,7 +5,7 @@ import picocli.CommandLine;
 import java.util.ArrayList;
 import java.util.List;
 
-class DistanceRayArgs extends DistanceLengthArgs {
+public class DistanceRayArgs extends DistanceLengthArgs {
 
     @CommandLine.Option(names = {"--exactdegree"},
             paramLabel = "d",
@@ -25,7 +25,7 @@ class DistanceRayArgs extends DistanceLengthArgs {
             split = ",",
             paramLabel = "deg",
             description = "takeoff angle in degrees from the source, zero is down, 90 horizontal, 180 is up.")
-    protected List<Double> takeoffAngle = new ArrayList<>();
+    public List<Double> takeoffAngle = new ArrayList<>();
 
 
     @CommandLine.Option(names = {"--takeoffrange"},
@@ -34,31 +34,36 @@ class DistanceRayArgs extends DistanceLengthArgs {
             description = "regular range in takeoff angle in degrees, one of max min,max or min,max,step. "
                     + "Default min is 0 and step is 10.",
             split = ",")
-    protected List<Double> takeoffRange = new ArrayList<>();
+    public List<Double> takeoffRange = new ArrayList<>();
 
     @CommandLine.Option(names = {"--rayparamrad"},
             paramLabel = "s/rad",
             description = "ray parameter from the source in s/rad, up or down is determined by the phase",
             split = ",")
-    protected List<Double> shootRadianRaypList = new ArrayList<>();
+    public List<Double> shootRadianRaypList = new ArrayList<>();
 
     @CommandLine.Option(names = {"--rayparamdeg"},
             paramLabel = "s/deg",
             description = "ray parameter from the source in s/deg, up or down is determined by the phase",
             split = ",")
-    protected List<Double> shootRaypList = new ArrayList<>();
+    public List<Double> shootRaypList = new ArrayList<>();
 
     @CommandLine.Option(names = {"--rayparamkm"},
             paramLabel = "s/km",
             description = "ray parameter from the source in s/km, up or down is determined by the phase",
             split = ",")
-    protected List<Double> shootKmRaypList = new ArrayList<>();
+    public List<Double> shootKmRaypList = new ArrayList<>();
 
     @CommandLine.Option(names = {"--rayparamidx"},
             paramLabel = "i",
             description = "ray parameter from the source as index into model sampling, up or down is determined by the phase",
             split = ",")
-    protected List<Integer> shootIndexRaypList = new ArrayList<>();
+    public List<Integer> shootIndexRaypList = new ArrayList<>();
+
+    @CommandLine.Option(names = {"--allindex"},
+            description = "all arrivals at sampling of model"
+    )
+    public boolean allIndexRays = false;
 
     @Override
     public boolean allEmpty() {
