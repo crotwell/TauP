@@ -36,6 +36,10 @@ public class TauBranch implements Serializable, Cloneable {
     /** Turns on debugging output. */
     transient public boolean DEBUG = TauPConfig.DEBUG;
 
+    protected SlownessModel sMod;
+    protected int topLayerNum;
+    protected int botLayerNum;
+
     /** The type of wave for this branch, P or S. */
     protected boolean isPWave;
 
@@ -99,11 +103,15 @@ public class TauBranch implements Serializable, Cloneable {
         this.tau = tau;
     }
     
-    public TauBranch(double topDepth, double botDepth, boolean isPWave) {
+    public TauBranch(SlownessModel sMod,double topDepth, double botDepth, boolean isPWave) throws NoSuchLayerException {
+        this.sMod = sMod;
         this.topDepth = topDepth;
         this.botDepth = botDepth;
         this.isPWave = isPWave;
-        }
+
+        this.topLayerNum = sMod.layerNumberBelow(getTopDepth(), isPWave);
+        this.botLayerNum = sMod.layerNumberAbove(getBotDepth(), isPWave);
+    }
 
     // Methods -------------------------------------------------------------
     // Accessor methods
@@ -202,33 +210,34 @@ public class TauBranch implements Serializable, Cloneable {
      * @exception TauModelException
      *                if the slownessmodel and taumodel are not compatible
      */
-    public void createBranch(SlownessModel sMod,
-                             double[] rayParams) throws
+    public static TauBranch createBranch(SlownessModel sMod,
+                             double[] rayParams,
+                             double topDepth, double botDepth, boolean isPWave, boolean DEBUG) throws
             SlownessModelException, TauModelException {
+        TauBranch tb = new TauBranch(sMod, topDepth, botDepth, isPWave);
+        tb.DEBUG = DEBUG;
         TimeDist timeDist;
         double p;
-        int topLayerNum = sMod.layerNumberBelow(getTopDepth(), isPWave);
-        int botLayerNum = sMod.layerNumberAbove(getBotDepth(), isPWave);
-        SlownessLayer topSLayer = sMod.getSlownessLayer(topLayerNum,
+        SlownessLayer topSLayer = sMod.getSlownessLayer(tb.topLayerNum,
                                                              isPWave);
-        SlownessLayer botSLayer = sMod.getSlownessLayer(botLayerNum,
+        SlownessLayer botSLayer = sMod.getSlownessLayer(tb.botLayerNum,
                                                              isPWave);
-        if(topSLayer.getTopDepth() != getTopDepth()
-                || botSLayer.getBotDepth() != getBotDepth()) {
-            if(topSLayer.getTopDepth() != getTopDepth()
-                    && Math.abs(topSLayer.getTopDepth() - getTopDepth()) < 0.000001) {
+        if(topSLayer.getTopDepth() != tb.getTopDepth()
+                || botSLayer.getBotDepth() != tb.getBotDepth()) {
+            if(topSLayer.getTopDepth() != tb.getTopDepth()
+                    && Math.abs(topSLayer.getTopDepth() - tb.getTopDepth()) < 0.000001) {
                 // really close, so just move top
                 Alert.warning("Changing topDepth: " + "\ntopDepth: "
-                        + getTopDepth() + " " + topSLayer.getTopDepth()
-                        + "\nbotDepth: " + getBotDepth() + " "
+                        + tb.getTopDepth() + " " + topSLayer.getTopDepth()
+                        + "\nbotDepth: " + tb.getBotDepth() + " "
                         + botSLayer.getBotDepth());
                 topDepth = topSLayer.getTopDepth();
-            } else if(botSLayer.getBotDepth() != getBotDepth()
-                    && Math.abs(botSLayer.getBotDepth() - getBotDepth()) < 0.000001) {
+            } else if(botSLayer.getBotDepth() != tb.getBotDepth()
+                    && Math.abs(botSLayer.getBotDepth() - tb.getBotDepth()) < 0.000001) {
                 // really close, so just move bottom
                 Alert.warning("Changing botDepth: " + "\ntopDepth: "
-                        + getTopDepth() + " " + topSLayer.getTopDepth()
-                        + "\nbotDepth: " + getBotDepth() + " "
+                        + tb.getTopDepth() + " " + topSLayer.getTopDepth()
+                        + "\nbotDepth: " + tb.getBotDepth() + " "
                         + botSLayer.getBotDepth());
                 botDepth = botSLayer.getBotDepth();
             } else {
@@ -237,11 +246,11 @@ public class TauBranch implements Serializable, Cloneable {
                         + "SP".charAt(isPWave ? 1 : 0)
                         + ":"
                         + "\ntopDepth: "
-                        + getTopDepth()
+                        + tb.getTopDepth()
                         + " "
                         + topSLayer.getTopDepth()
                         + "\nbotDepth: "
-                        + getBotDepth()
+                        + tb.getBotDepth()
                         + " "
                         + botSLayer.getBotDepth());
             }
@@ -255,20 +264,21 @@ public class TauBranch implements Serializable, Cloneable {
          */
         // max ray param cannot be larger than the largest of the top and bottom p
         // branches should be monotonic wrt slowness
-        maxRayParam = Math.max(topSLayer.getTopP(), botSLayer.getBotP());
-        minTurnRayParam = sMod.getMinTurnRayParam(getBotDepth(), isPWave);
-        minRayParam = sMod.getMinRayParam(getBotDepth(), isPWave);
-        tau = new double[rayParams.length];
-        dist = new double[rayParams.length];
-        time = new double[rayParams.length];
+        tb.maxRayParam = Math.max(topSLayer.getTopP(), botSLayer.getBotP());
+        tb.minTurnRayParam = sMod.getMinTurnRayParam(tb.getBotDepth(), isPWave);
+        tb.minRayParam = sMod.getMinRayParam(tb.getBotDepth(), isPWave);
+        tb.tau = new double[rayParams.length];
+        tb.dist = new double[rayParams.length];
+        tb.time = new double[rayParams.length];
 
         for(int rayNum = 0; rayNum < rayParams.length; rayNum++) {
             p = rayParams[rayNum];
-            timeDist = calcTimeDist(sMod, topLayerNum, botLayerNum, p, false);
-            dist[rayNum] = timeDist.getDistRadian();
-            time[rayNum] = timeDist.getTime();
-            tau[rayNum] = time[rayNum] - p * dist[rayNum];
+            timeDist = tb.calcTimeDist(p, false);
+            tb.dist[rayNum] = timeDist.getDistRadian();
+            tb.time[rayNum] = timeDist.getTime();
+            tb.tau[rayNum] = tb.time[rayNum] - p * tb.dist[rayNum];
         }
+        return tb;
     }
 
     /**
@@ -280,18 +290,12 @@ public class TauBranch implements Serializable, Cloneable {
      *                if the ray with ray parameter p turns within a layer
      *                instead of at the bottom.
      */
-    public TimeDist calcTimeDist(SlownessModel sMod,
-                                 int topLayerNum,
-                                 int botLayerNum,
-                                 double p) throws
+    public TimeDist calcTimeDist(double p) throws
             SlownessModelException {
-        return calcTimeDist(sMod, topLayerNum, botLayerNum, p, false);
+        return calcTimeDist(p, false);
     }
 
-    public TimeDist calcTimeDist(SlownessModel sMod,
-                                 int topLayerNum,
-                                 int botLayerNum,
-                                 double p,
+    public TimeDist calcTimeDist(double p,
                                  boolean allowTurnInLayer) throws
             SlownessModelException {
         int layerNum;
@@ -478,9 +482,10 @@ public class TauBranch implements Serializable, Cloneable {
         }
         // construct the new TauBranch, going from the bottom of
         // the top half to the bottom of the whole branch
-        TauBranch botBranch = new TauBranch(topBranch.getBotDepth(),
+        TauBranch botBranch = new TauBranch(sMod, topBranch.getBotDepth(),
                                             getBotDepth(),
                                             isPWave);
+        botBranch.sMod = sMod;
         botBranch.maxRayParam = topBranch.getMinRayParam();
         botBranch.minTurnRayParam = getMinTurnRayParam();
         botBranch.minRayParam = getMinRayParam();
@@ -491,18 +496,12 @@ public class TauBranch implements Serializable, Cloneable {
         if(indexP != -1) {
             arrayLength++;
             PRayParam = rayParams[indexP];
-            timeDistP = botBranch.calcTimeDist(sMod,
-                                               topLayerNum,
-                                               botLayerNum,
-                                               PRayParam);
+            timeDistP = botBranch.calcTimeDist(PRayParam);
         }
         if(indexS != -1 && indexS != indexP) {
             arrayLength++;
             SRayParam = rayParams[indexS];
-            timeDistS = botBranch.calcTimeDist(sMod,
-                                               topLayerNum,
-                                               botLayerNum,
-                                               SRayParam);
+            timeDistS = botBranch.calcTimeDist(SRayParam);
         } else {
             // in case indexS==indexP then we only need one
             indexS = -1;
@@ -774,13 +773,17 @@ public class TauBranch implements Serializable, Cloneable {
 //        System.arraycopy(time, 0, newTime, 0, dist.length);
 //        double[] newTau = new double[tau.length];
 //        System.arraycopy(tau, 0, newTau, 0, dist.length);
-        return new TauBranch(isPWave,
+        TauBranch tb = new TauBranch(isPWave,
                              topDepth,
                              botDepth,
                              maxRayParam,
                              minTurnRayParam,
                              minRayParam,
                              dist, time, tau);
+        tb.sMod = sMod;
+        tb.topLayerNum = topLayerNum;
+        tb.botLayerNum = botLayerNum;
+        return tb;
     }
 
     public String toString() {

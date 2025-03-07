@@ -693,7 +693,7 @@ public class SeismicPhaseFactory {
             rayParams[0] = minRayParam;
             rayParams[1] = minRayParam;
         } else {
-            if(TauPConfig.DEBUG) {
+            if(true || TauPConfig.DEBUG) {
                 Alert.debug("SumBranches() maxRayParamIndex=" + maxRayParamIndex
                         + " minRayParamIndex=" + minRayParamIndex
                         + " tMod.rayParams.length=" + tMod.rayParams.length
@@ -714,27 +714,12 @@ public class SeismicPhaseFactory {
         }
         dist = new double[rayParams.length];
         time = new double[rayParams.length];
-        /* counter for passes through each branch. 0 is P and 1 is S. */
-        int[][] timesBranches = calcBranchMultiplier(tMod, proto.segmentList);
-        /* Sum the branches with the appropriate multiplier. */
-        for(int j = 0; j < tMod.getNumBranches(); j++) {
-            if(timesBranches[0][j] != 0) {
-                for(int i = maxRayParamIndex; i < minRayParamIndex + 1; i++) {
-                    dist[i - maxRayParamIndex] += timesBranches[0][j]
-                            * tMod.getTauBranch(j, PWAVE).getDist(i);
-                    time[i - maxRayParamIndex] += timesBranches[0][j]
-                            * tMod.getTauBranch(j, PWAVE).time[i];
-                }
-            }
-            if(timesBranches[1][j] != 0) {
-                for(int i = maxRayParamIndex; i < minRayParamIndex + 1; i++) {
-                    dist[i - maxRayParamIndex] += timesBranches[1][j]
-                            * tMod.getTauBranch(j, SWAVE).getDist(i);
-                    time[i - maxRayParamIndex] += timesBranches[1][j]
-                            * tMod.getTauBranch(j, SWAVE).time[i];
-                }
-            }
+        for(int i = 0; i < rayParams.length; i++) {
+            TimeDist td = calcForIndex(proto, i, maxRayParamIndex, rayParams);
+            dist[i] = td.getDistRadian();
+            time[i] = td.getTime();
         }
+
         int numHead = proto.countHeadLegs();
         int numDiff = proto.countDiffLegs();
         if (numDiff>0 || numHead>0) {
@@ -827,30 +812,9 @@ public class SeismicPhaseFactory {
                                 hSZIndex);
                         newrayParams[hSZIndex] = hsz[i].rayParam;
                         /* Sum the branches with the appropriate multiplier. */
-                        newdist[hSZIndex] = 0.0;
-                        newtime[hSZIndex] = 0.0;
-                        for(int j = 0; j < tMod.getNumBranches(); j++) {
-                            if(timesBranches[0][j] != 0
-                                    && tMod.getTauBranch(j, PWAVE)
-                                    .getTopDepth() < hsz[i].topDepth) {
-                                newdist[hSZIndex] += timesBranches[0][j]
-                                        * tMod.getTauBranch(j, PWAVE).dist[maxRayParamIndex
-                                        + hSZIndex - indexOffset];
-                                newtime[hSZIndex] += timesBranches[0][j]
-                                        * tMod.getTauBranch(j, PWAVE).time[maxRayParamIndex
-                                        + hSZIndex - indexOffset];
-                            }
-                            if(timesBranches[1][j] != 0
-                                    && tMod.getTauBranch(j, SWAVE)
-                                    .getTopDepth() < hsz[i].topDepth) {
-                                newdist[hSZIndex] += timesBranches[1][j]
-                                        * tMod.getTauBranch(j, SWAVE).dist[maxRayParamIndex
-                                        + hSZIndex - indexOffset];
-                                newtime[hSZIndex] += timesBranches[1][j]
-                                        * tMod.getTauBranch(j, SWAVE).time[maxRayParamIndex
-                                        + hSZIndex - indexOffset];
-                            }
-                        }
+                        TimeDist td = calcForIndex(proto, hSZIndex, maxRayParamIndex, newrayParams);
+                        newdist[hSZIndex] = td.getDistRadian();
+                        newtime[hSZIndex] = td.getTime();
                         System.arraycopy(dist,
                                 hSZIndex,
                                 newdist,
@@ -886,6 +850,24 @@ public class SeismicPhaseFactory {
                 minDistance,
                 maxDistance,
                 TauPConfig.DEBUG);
+    }
+
+    public static TimeDist calcForIndex(ProtoSeismicPhase proto, int idx, int maxRayParamIndex, double[] rayParams){
+        double rp = rayParams[idx];
+        double dist = 0;
+        double time = 0;
+        for (SeismicPhaseSegment seg : proto.segmentList) {
+            if (seg.isFlat) {continue;}
+            int add = seg.isDownGoing ? 1 : -1;
+            for (int b = seg.startBranch; (seg.isDownGoing && b <= seg.endBranch) || (!seg.isDownGoing && b >= seg.endBranch); b+=add) {
+                TauBranch tauBranch = proto.tMod.getTauBranch(b, seg.isPWave);
+                if (rp <= tauBranch.getMaxRayParam()) {
+                    dist += tauBranch.getDist(idx+maxRayParamIndex);
+                    time += tauBranch.getTime(idx+maxRayParamIndex);
+                }
+            }
+        }
+        return new TimeDist(rp, time, dist);
     }
 
     /**

@@ -73,11 +73,11 @@ public class TauBranchTest {
         TauBranch orig = tMod.getTauBranch(tMod.findBranch(depth), true);
         
 
-        TauBranch topBranch = new TauBranch(orig.getTopDepth(),
-                                                            depth,
-                                                            true);
-        topBranch.createBranch(tMod.getSlownessModel(),
-                               rayParams);
+        TauBranch topBranch = TauBranch.createBranch(tMod.getSlownessModel(),
+                               rayParams,
+                orig.getTopDepth(),
+                depth,
+                true, false);
         assertEquals( rayParams.length, orig.dist.length, "orig branch dist length");
         assertEquals(rayParams.length, topBranch.dist.length, "new branch dist length");
         assertEquals(rayParams.length, topBranch.time.length, "new branch time length");
@@ -123,14 +123,14 @@ public class TauBranchTest {
         TauBranch orig = tMod.getTauBranch(tMod.findBranch(depth), true);
         TauBranch tBranch = orig.clone();
         tBranch.insert(rp, tMod.getSlownessModel(), rpIndex);
-        
 
-        TauBranch topBranch = new TauBranch(orig.getTopDepth(),
-                                                            depth,
-                                                            true);
         SlownessModel smod = tMod.getSlownessModel().splitLayer(depth, true).getSlownessModel();
-        topBranch.createBranch(smod,
-                               outRayParams);
+
+        TauBranch topBranch =  TauBranch.createBranch(smod,
+                               outRayParams,
+                orig.getTopDepth(),
+                depth,
+                true, false);
         TauBranch botBranch = orig.difference(topBranch,
                                               rpIndex,
                                               -1,

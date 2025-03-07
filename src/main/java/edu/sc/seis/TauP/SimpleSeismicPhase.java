@@ -520,16 +520,14 @@ public class SimpleSeismicPhase implements SeismicPhase {
         for (rayParamIndex = 0; rayParamIndex < rayParams.length-1 && rayParams[rayParamIndex+1] >= rayParam; rayParamIndex++) {
             // find index for ray param, done in for-loop check
         }
+
         /* counter for passes through each branch. 0 is P and 1 is S. */
         int[][] timesBranches = SeismicPhaseFactory.calcBranchMultiplier(tMod, getPhaseSegments());
         TimeDist sum = new TimeDist(rayParam);
         /* Sum the branches with the appropriate multiplier. */
         for(int j = 0; j < tMod.getNumBranches(); j++) {
             if(timesBranches[0][j] != 0) {
-                int topLayerNum = tMod.getSlownessModel().layerNumberBelow(tMod.getTauBranch(j, PWAVE).getTopDepth(), PWAVE);
-                int botLayerNum = tMod.getSlownessModel().layerNumberAbove(tMod.getTauBranch(j, PWAVE).getBotDepth(), PWAVE);
-                TimeDist td = tMod.getTauBranch(j, PWAVE)
-                        .calcTimeDist(tMod.getSlownessModel(), topLayerNum, botLayerNum, rayParam, true);
+                TimeDist td = tMod.getTauBranch(j, PWAVE).calcTimeDist(rayParam, true);
                 TimeDist mulTD = new TimeDist(rayParam,
                                   timesBranches[0][j]*td.getTime(),
                                   timesBranches[0][j]*td.getDistRadian(),
@@ -537,13 +535,8 @@ public class SimpleSeismicPhase implements SeismicPhase {
                 sum = sum.add(mulTD);
             }
             if(timesBranches[1][j] != 0) {
-                int topLayerNum = tMod.getSlownessModel().layerNumberBelow(tMod.getTauBranch(j, SWAVE).getTopDepth(), SWAVE);
-                int botLayerNum = tMod.getSlownessModel().layerNumberAbove(tMod.getTauBranch(j, SWAVE).getBotDepth(), SWAVE);
-                TimeDist td = tMod.getTauBranch(j, SWAVE).calcTimeDist(tMod.getSlownessModel(),
-                                                                       topLayerNum,
-                                                                       botLayerNum,
-                                                                       rayParam,
-                                                                       true);
+                TimeDist td = tMod.getTauBranch(j, SWAVE).calcTimeDist(rayParam, true);
+
                 td = new TimeDist(rayParam,
                                   timesBranches[1][j]*td.getTime(),
                                   timesBranches[1][j]*td.getDistRadian(),

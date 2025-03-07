@@ -538,12 +538,11 @@ public class TauModel implements Serializable {
                             + " topCritLayerNum=" + topCritLayerNum+" ("+topCritDepth.getDepth()+")"
                             + " botCritLayerNum=" + botCritLayerNum+" ("+botCritDepth.getDepth()+")");
                 }
-                tauBranches[waveNum][critNum] = new TauBranch(topCritDepth.getDepth(),
-                                                              botCritDepth.getDepth(),
-                                                              isPWave);
-                tauBranches[waveNum][critNum].DEBUG = DEBUG;
-                tauBranches[waveNum][critNum].createBranch(sMod,
-                                                           rayParams);
+                tauBranches[waveNum][critNum] =
+                        TauBranch.createBranch(sMod,
+                                rayParams, topCritDepth.getDepth(),
+                                botCritDepth.getDepth(),
+                                isPWave, DEBUG);
                 /*
                  * update minPSoFar. Note that the new minPSoFar could be at the
                  * start of a discontinuty over a high slowness zone, so we need
@@ -808,11 +807,12 @@ public class TauModel implements Serializable {
                 }
             }
             for(int pOrS = 0; pOrS < 2; pOrS++) {
-                newtauBranches[pOrS][branchToSplit] = new TauBranch(tauBranches[pOrS][branchToSplit].getTopDepth(),
-                                                                    depth,
-                                                                    pOrS == 0);
-                newtauBranches[pOrS][branchToSplit].createBranch(outSMod,
-                                                                 outRayParams);
+                newtauBranches[pOrS][branchToSplit] =
+                        TauBranch.createBranch(outSMod,
+                                outRayParams,
+                                tauBranches[pOrS][branchToSplit].getTopDepth(),
+                                depth,
+                                pOrS == 0, DEBUG);
                 newtauBranches[pOrS][branchToSplit + 1] = tauBranches[pOrS][branchToSplit].difference(newtauBranches[pOrS][branchToSplit],
                                                                                                       indexP,
                                                                                                       indexS,
