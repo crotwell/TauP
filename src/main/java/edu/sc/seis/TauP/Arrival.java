@@ -752,6 +752,9 @@ public class Arrival {
         this.relativeToArrival = relativeToArrival;
     }
 
+    public static String toStringHeader() {
+        return "Dist(deg)  Source  Name  Time    RayParam  Takeoff  Incident  PureDist  = PureName";
+    }
     public String toString() {
         double moduloDistDeg = getModuloDistDeg();
         if (getSearchDistDeg() < 0) {
