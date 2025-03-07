@@ -9,6 +9,32 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class MoonLowVelocityTest {
 
+    @Test
+    public void testsplitForHighSlowness() throws Exception {
+        String lunarModelFile = "MoonKhan_JGR_2014_mod1.nd";
+        VelocityModel vmod = VelocityModelTest.loadTestVelMod(lunarModelFile);
+        SlownessModel smod = new SphericalSModel(vmod);
+        TauModel tmod = new TauModel(smod);
+        DepthRange hsz = smod.getHighSlowness(true)[0];
+        SimpleSeismicPhase P_phase = SeismicPhaseFactory.createPhase("P", tmod, 0);
+        List<ProtoSeismicPhase> split = P_phase.getProto().splitForHighSlowness(hsz, true);
+        assertEquals(2, split.size());
+        System.err.println("HSZ: "+hsz.topDepth+" "+hsz.botDepth);
+        System.err.println("above HSZ: "+split.get(0).branchNumSeqStr());
+        System.err.println("below HSZ: "+split.get(1).branchNumSeqStr());
+        List<SimpleSeismicPhase> contigList = SeismicPhaseFactory.sumBranches(tmod, split.get(0));
+        assertEquals(2, contigList.size());
+        SimpleSeismicPhase P_phase_above = contigList.get(0);
+        System.err.println("above HSZ: "+P_phase_above.describe());
+        SimpleSeismicPhase P_phase_below = contigList.get(1);
+        System.err.println("below HSZ: "+P_phase_below.describe());
+        assertEquals(P_phase_above.minRayParam, P_phase_below.maxRayParam);
+
+        List<ProtoSeismicPhase> allSplit = P_phase.getProto().splitForAllHighSlowness();
+        System.err.println("allSplit: "+allSplit.size());
+        assertTrue(false, "autofail");
+
+    }
 
     @Test
     public void testTMod() throws Exception {
