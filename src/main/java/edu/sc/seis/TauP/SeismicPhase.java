@@ -303,4 +303,6 @@ public interface SeismicPhase extends Serializable, Cloneable {
     }
 
     int getNumRays();
+
+    List<ShadowZone> getShadowZones() throws SlownessModelException, NoSuchLayerException;
 }

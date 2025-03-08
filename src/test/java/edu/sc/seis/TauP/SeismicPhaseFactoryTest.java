@@ -6,8 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static edu.sc.seis.TauP.cmdline.args.PhaseArgs.extractPhaseNames;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SeismicPhaseFactoryTest {
 
@@ -66,7 +65,9 @@ public class SeismicPhaseFactoryTest {
             ArrayList<String> legs = LegPuller.legPuller(name);
             String leg_puristName = LegPuller.createPuristName(tModDepth, legs);
             SimpleSeismicPhase phase = SeismicPhaseFactory.createPhase(name, tModDepth, sourceDepth);
-            ProtoSeismicPhase proto = phase.proto;
+            assertInstanceOf(SimpleContigSeismicPhase.class, phase);
+            SimpleContigSeismicPhase contigPhase = (SimpleContigSeismicPhase)phase;
+            ProtoSeismicPhase proto = contigPhase.proto;
             proto.phaseName = name;
             proto.validateSegList();
 
@@ -88,7 +89,9 @@ public class SeismicPhaseFactoryTest {
         String leg_puristName = LegPuller.createPuristName(tMod, legs);
 
         SimpleSeismicPhase phase = SeismicPhaseFactory.createPhase(name, tMod, sourceDepth);
-        ProtoSeismicPhase proto = phase.proto;
+        assertInstanceOf(SimpleContigSeismicPhase.class, phase);
+        SimpleContigSeismicPhase contigPhase = (SimpleContigSeismicPhase)phase;
+        ProtoSeismicPhase proto = contigPhase.proto;
         proto.phaseName = name;
         proto.validateSegList();
         assertTrue(proto.isSuccessful());

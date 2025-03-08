@@ -83,7 +83,9 @@ public class Arrival {
                    double takeoffAngleRadian,
                    double incidentAngleRadian,
                    double dRPdDist) {
-
+        if ( ! (phase instanceof SimpleContigSeismicPhase || phase instanceof ScatteredSeismicPhase)) {
+            throw new IllegalArgumentException("Phase must be SimpleContigSeismicPhase or ScatteredSeismicPhase");
+        }
         if (Double.isNaN(time)) {
             throw new IllegalArgumentException("Time cannot be NaN");
         }
