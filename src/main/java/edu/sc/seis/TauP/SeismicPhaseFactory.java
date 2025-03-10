@@ -26,6 +26,10 @@ public class SeismicPhaseFactory {
     int downgoingRecBranch;
     PhaseInteraction prevEndAction = START;
 
+    public static final int CRUST_MANTLE_FACTORY = 0;
+    public static final int OUTER_CORE_FACTOR = 1;
+    public static final int INNER_CORE_FACTORY = 2;
+
     /**
      * The maximum degrees that a Pn or Sn can refract along the moho. Note this
      * is not the total distance, only the segment along the moho. The default
@@ -525,11 +529,11 @@ public class SeismicPhaseFactory {
             String nextNextLeg = legNum < legs.size()-2 ? legs.get(legNum+2) : END_CODE;
 
             if (isCrustMantleLeg(currLeg)) {
-                proto = layerFactories.get(0).parse(proto, prevLeg, currLeg, nextLeg, nextNextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
+                proto = layerFactories.get(CRUST_MANTLE_FACTORY).parse(proto, prevLeg, currLeg, nextLeg, nextNextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
             } else if (isOuterCoreLeg(currLeg)) {
-                proto = layerFactories.get(1).parse(proto, prevLeg, currLeg, nextLeg, nextNextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
+                proto = layerFactories.get(OUTER_CORE_FACTOR).parse(proto, prevLeg, currLeg, nextLeg, nextNextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
             } else if (isInnerCoreLeg(currLeg)) {
-                proto = layerFactories.get(2).parse(proto, prevLeg, currLeg, nextLeg, nextNextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
+                proto = layerFactories.get(INNER_CORE_FACTORY).parse(proto, prevLeg, currLeg, nextLeg, nextNextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
             } else if (isLegDepth(currLeg) || isReflectSymbol(currLeg) || currLeg.equals(""+ m)) {
                 // depth interaction leg, no action
             } else {
