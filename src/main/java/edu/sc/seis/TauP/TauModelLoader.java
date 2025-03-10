@@ -35,6 +35,7 @@ import java.lang.ref.SoftReference;
 import java.nio.file.FileSystems;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -54,8 +55,10 @@ public class TauModelLoader {
 
     protected static String packageName = "/edu/sc/seis/TauP/StdModels";
 
-    public static List<String> defaultModelList = List.of("iasp91", "ak135", "ak135favg", "ak135fcont", "prem");
-    
+    public static List<String> defaultModelList = List.of("iasp91", "ak135", "ak135favg", "ak135fcont", "ak135fsyngine", "prem");
+
+    public static Map<String, VelocityModel> otherVelocityModels = new HashMap<>();
+
     public static TauModel load(String modelName) throws TauModelException {
         return load(modelName, System.getProperty("taup.model.path"));
     }
@@ -98,6 +101,19 @@ public class TauModelLoader {
         String pathEntry;
         File jarFile;
         File modelFile;
+        /* is model in configured otherVelocityModels */
+            if (otherVelocityModels.containsKey(modelName)) {
+                VelocityModel vMod = otherVelocityModels.get(modelName);
+                try {
+                    VelocityModel vmod = loadVelocityModel(modelName);
+                    if (vmod != null) {
+                        return createTauModel(vmod);
+                    }
+                } catch(Exception e) {
+                    throw new TauModelException("Can't find any saved models for "
+                            + modelName+" and creation from velocity model failed.", e);
+                }
+            }
         /* First we try to find the model in the distributed taup.jar file. */
         Class c = null;
         try {
@@ -213,6 +229,14 @@ public class TauModelLoader {
      * @throws VelocityModelException
      */
     public static VelocityModel loadVelocityModel(String modelName, String fileType) throws IOException, VelocityModelException {
+        /* is model in configured otherVelocityModels */
+        if (otherVelocityModels.containsKey(modelName)) {
+            VelocityModel vMod = otherVelocityModels.get(modelName);
+            if (vMod == null) {
+                throw new VelocityModelException("Velocity model "+modelName+" is null");
+            }
+            return vMod;
+        }
         if (modelName == null) {modelName = "iasp91"; fileType = "tvel";}
         String basemodelName = modelName;
         int dirSepIndex = modelName.lastIndexOf(FileSystems.getDefault().getSeparator());

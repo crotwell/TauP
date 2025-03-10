@@ -41,7 +41,7 @@ public class TauP_Web implements Callable<Integer> {
                     // were not able to find it
                     throw new VelocityModelException("Unable to load model: "+modName);
                 }
-                tool.additionalModels.add(vMod.getModelName());
+                TauModelLoader.otherVelocityModels.put(vMod.getModelName(), vMod);
             }
 
             tool.init();
