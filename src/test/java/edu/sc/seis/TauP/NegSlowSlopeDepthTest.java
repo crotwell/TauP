@@ -39,7 +39,7 @@ public class NegSlowSlopeDepthTest {
         assertTrue(shadowZoneList!= null);
         for (ShadowZone shadow : shadowZoneList) {
             System.err.println("rp: "+shadow.rayParam+" "+shadow.preArrival.getRayCalculateable()+" "+shadow.postArrival.getRayCalculateable());
-            System.err.println("ph idx "+phaseSS.minRayParamIndex+" "+phaseSS.maxRayParamIndex);
+            System.err.println("ph idx "+phaseSS.getMinRayParamIndex()+" "+phaseSS.getMaxRayParamIndex());
             System.err.println("sh rp idx "+shadow.rayParamIndex+" "+phaseSS.getRayParams(shadow.rayParamIndex)+" "+phaseSS.getRayParams(shadow.rayParamIndex+1));
             System.err.println("      "+Arrival.toStringHeader());
             System.err.println("pre:  "+shadow.preArrival+" "+shadow.preArrival.getDeepestPierce());
@@ -58,7 +58,7 @@ public class NegSlowSlopeDepthTest {
     }
 
     @Test
-    public void testSSPhaseForRP() throws TauModelException, SlownessModelException {
+    public void testSSPhaseForRP() throws TauPException {
         double badRP = 737.7642067530021;
         SeismicPhase phaseSS = SeismicPhaseFactory.createPhase("SS", tmod);
         Arrival arrival = phaseSS.shootRay(badRP);

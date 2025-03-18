@@ -201,8 +201,20 @@ public class TauP_Curve extends TauP_AbstractPhaseTool {
         return out;
     }
 
-
     public List<double[]> calculatePlotForType(SeismicPhase phase, AxisType axisType, boolean ensure180)
+            throws SlownessModelException, TauModelException {
+        if (phase instanceof CompositeSeismicPhase) {
+            List<double[]> out = new ArrayList<>();
+            for (SimpleContigSeismicPhase subphase : ((CompositeSeismicPhase) phase).getSubPhaseList()) {
+                out.addAll(calculatePlotForTypeContig(subphase, axisType, ensure180));
+            }
+            return out;
+        } else {
+            return calculatePlotForTypeContig(phase, axisType, ensure180);
+        }
+    }
+
+    protected List<double[]> calculatePlotForTypeContig(SeismicPhase phase, AxisType axisType, boolean ensure180)
             throws SlownessModelException, TauModelException {
         double[] out;
         boolean flatPhase = phase.getMaxRayParam() == phase.getMinRayParam();

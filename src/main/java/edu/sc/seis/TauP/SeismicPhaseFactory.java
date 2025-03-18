@@ -617,8 +617,9 @@ public class SeismicPhaseFactory {
      *             within the TauModel. This should never happen and would
      *             indicate an invalid TauModel.
      */
-    protected static SimpleSeismicPhase sumBranches(TauModel tMod, ProtoSeismicPhase proto) throws TauModelException {
+    protected static SimpleSeismicPhase sumBranches(TauModel tModA, ProtoSeismicPhase proto) throws TauModelException {
         SeismicPhaseSegment endSeg = proto.endSegment();
+        TauModel tMod = proto.gettMod();
         double minRayParam = endSeg.minRayParam;
         double maxRayParam = endSeg.maxRayParam;
         if (endSeg.endAction == FAIL) {
@@ -630,11 +631,15 @@ public class SeismicPhaseFactory {
         double minDistance;
         double maxDistance;
         int minRayParamIndex = 0;
-        int maxRayParamIndex = tMod.rayParams.length;
+        int maxRayParamIndex;
         String name = proto.getName();
         if (endSeg.maxRayParam < 0.0 || endSeg.minRayParam > endSeg.maxRayParam) {
             /* Phase has no arrivals, possibly due to source depth. */
             proto.failNext("Phase has no arrivals, possibly due to source depth");
+            return new FailedSeismicPhase(proto);
+        }
+        if (endSeg.maxRayParam == endSeg.minRayParam && proto.countFlatLegs()==0) {
+            proto.failNext("Phase has singleton ray parameter, but no flat legs (head or diff).");
             return new FailedSeismicPhase(proto);
         }
         /* Special case for surface waves. */
@@ -727,6 +732,12 @@ public class SeismicPhaseFactory {
             rayParams = new double[2];
             rayParams[0] = minRayParam;
             rayParams[1] = minRayParam;
+
+            if (proto.countFlatLegs() == 0) {
+                throw new TauModelException("min and max rp index are same, only one ray but not flat? "+
+                        proto.getName()+" "+minRayParamIndex+" "+maxRayParamIndex
+                        +"  rp "+minRayParam+" "+maxRayParam+" "+proto.branchNumSeqStr());
+            }
         } else {
             if(true || TauPConfig.DEBUG) {
                 Alert.debug("SumBranches() maxRayParamIndex=" + maxRayParamIndex
@@ -783,96 +794,6 @@ public class SeismicPhaseFactory {
             }
             if(dist[j] > maxDistance) {
                 maxDistance = dist[j];
-            }
-        }
-        /*
-         * Now check to see if our ray parameter range includes any ray
-         * parameters that are associated with high slowness zones. If so, then
-         * we will need to insert a "shadow zone" into our time and distance
-         * arrays. It is represented by a repeated ray parameter.
-         */
-        DepthRange[] hsz;
-        int hSZIndex;
-        int indexOffset;
-        boolean foundOverlap = false;
-        boolean isPWave;
-        int branchNum;
-        int dummy;
-        for(dummy = 0, isPWave = true; dummy < 2; dummy++, isPWave = false) {
-            hsz = tMod.getSlownessModel().getHighSlowness(isPWave);
-            hSZIndex = 0;
-            indexOffset = 0;
-            for(int i = 0; i < hsz.length; i++) {
-                if(maxRayParam > hsz[i].rayParam
-                        && hsz[i].rayParam > minRayParam) {
-                    /*
-                     * There is a high slowness zone within our ray parameter
-                     * range so we might need to add a shadow zone. We need to
-                     * check to see if this wave type, P or S, is part of the
-                     * phase at this depth/ray parameter.
-                     */
-                    branchNum = tMod.findBranch(hsz[i].topDepth);
-                    foundOverlap = false;
-                    SeismicPhaseSegment prev = null;
-                    for (SeismicPhaseSegment seg : proto.segmentList) {
-                        // check for downgoing legs that cross the high slowness
-                        // zone with the same wave type
-                        if (seg.isDownGoing
-                                && seg.isPWave == isPWave
-                                && (seg.startBranch < branchNum && seg.endBranch >= branchNum)
-                                || (prev != null && seg.startBranch == branchNum && prev.endBranch == branchNum-1
-                                && prev.isDownGoing
-                                && prev.isPWave == isPWave)) {
-                            foundOverlap = true;
-                            break;
-                        }
-                        prev = seg;
-                    }
-                    if(foundOverlap) {
-
-
-                        double[] newdist = new double[dist.length + 1];
-                        double[] newtime = new double[time.length + 1];
-                        double[] newrayParams = new double[rayParams.length + 1];
-                        for(int j = 0; j < rayParams.length; j++) {
-                            if(rayParams[j] == hsz[i].rayParam) {
-                                hSZIndex = j;
-                                break;
-                            }
-                        }
-                        System.arraycopy(dist, 0, newdist, 0, hSZIndex);
-                        System.arraycopy(time, 0, newtime, 0, hSZIndex);
-                        System.arraycopy(rayParams, 0, newrayParams,0, hSZIndex);
-                        newrayParams[hSZIndex] = hsz[i].rayParam;
-                        /* Sum the branches with the appropriate multiplier. */
-
-                        TimeDist td = calcForIndex(proto, hSZIndex, maxRayParamIndex, newrayParams);
-                        if (td.getDistRadian() == dist[hSZIndex-1]) {
-                            throw new RuntimeException("shadow but same dist "+hSZIndex+" "+dist[hSZIndex]+" "+td);
-                        }
-                        newdist[hSZIndex] = td.getDistRadian();
-                        newtime[hSZIndex] = td.getTime();
-                        System.arraycopy(dist,
-                                hSZIndex,
-                                newdist,
-                                hSZIndex + 1,
-                                dist.length - hSZIndex);
-                        System.arraycopy(time,
-                                hSZIndex,
-                                newtime,
-                                hSZIndex + 1,
-                                time.length - hSZIndex);
-                        System.arraycopy(rayParams,
-                                hSZIndex,
-                                newrayParams,
-                                hSZIndex + 1,
-                                rayParams.length - hSZIndex);
-                        indexOffset++;
-                        dist = newdist;
-                        time = newtime;
-                        rayParams = newrayParams;
-                    }
-                }
             }
         }
 

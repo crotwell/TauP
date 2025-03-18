@@ -953,7 +953,7 @@ public abstract class SlownessModel implements Serializable {
                     Alert.debug(prevSLayer + "\n" + currSLayer);
                     Alert.debug(prevPLayer + "\n" + currPLayer);
                 }
-                if(inHighSlownessZoneS && (currSLayer.getTopP() < minSSoFar)) {
+                if(inHighSlownessZoneS && (currSLayer.getTopP() < highSlownessZoneS.rayParam)) {
                     // top of current layer is the bottom of a high slowness
                     // zone.
                     if(DEBUG) {
@@ -964,7 +964,7 @@ public abstract class SlownessModel implements Serializable {
                     highSlownessLayerDepthsS.add(highSlownessZoneS);
                     inHighSlownessZoneS = false;
                 }
-                if(inHighSlownessZoneP && (currPLayer.getTopP() < minPSoFar)) {
+                if(inHighSlownessZoneP && (currPLayer.getTopP() < highSlownessZoneP.rayParam)) {
                     // top of current layer is the bottom of a high slowness
                     // zone.
                     if(DEBUG) {
@@ -996,7 +996,7 @@ public abstract class SlownessModel implements Serializable {
                     inHighSlownessZoneS = true;
                     highSlownessZoneS = new DepthRange();
                     highSlownessZoneS.topDepth = currSLayer.getTopDepth();
-                    highSlownessZoneS.rayParam = minSSoFar;
+                    highSlownessZoneS.rayParam = Math.min(prevSLayer.getBotP(), currSLayer.getTopP());
                 }
                 if(!inHighSlownessZoneP
                         && (prevPLayer.getBotP() < currPLayer.getTopP() || currPLayer.getTopP() < currPLayer.getBotP())) {
@@ -1009,6 +1009,7 @@ public abstract class SlownessModel implements Serializable {
                     highSlownessZoneP = new DepthRange();
                     highSlownessZoneP.topDepth = currPLayer.getTopDepth();
                     highSlownessZoneP.rayParam = minPSoFar;
+                    highSlownessZoneP.rayParam = Math.min(prevPLayer.getBotP(), currPLayer.getTopP());
                 }
             } else {
                 if(layerNum == 0 || layerNum == vMod.getNumLayers()
@@ -1038,7 +1039,7 @@ public abstract class SlownessModel implements Serializable {
                         inHighSlownessZoneP = true;
                         highSlownessZoneP = new DepthRange();
                         highSlownessZoneP.topDepth = currPLayer.getTopDepth();
-                        highSlownessZoneP.rayParam = minPSoFar;
+                        highSlownessZoneS.rayParam = currPLayer.getTopP();
                     }
                     if(!inHighSlownessZoneS
                             && (currSLayer.getTopP() < currSLayer.getBotP())) {
@@ -1051,33 +1052,33 @@ public abstract class SlownessModel implements Serializable {
                         inHighSlownessZoneS = true;
                         highSlownessZoneS = new DepthRange();
                         highSlownessZoneS.topDepth = currSLayer.getTopDepth();
-                        highSlownessZoneS.rayParam = minSSoFar;
+                        highSlownessZoneS.rayParam = currSLayer.getTopP();
                     }
                 }
             }
-            if(inHighSlownessZoneP && (currPLayer.getBotP() < minPSoFar)) {
+            if(inHighSlownessZoneP && (currPLayer.getBotP() < highSlownessZoneP.rayParam)) {
                 // layer contains the bottom of a high slowness zone.
                 if(DEBUG) {
                     Alert.debug("layer contains the bottom of a P "
-                            + "high slowness zone. minPSoFar=" + minPSoFar
+                            + "high slowness zone. rp=" + highSlownessZoneP.rayParam
                             + " " + currPLayer);
                 }
-                highSlownessZoneP.botDepth = findDepth(minPSoFar,
+                highSlownessZoneP.botDepth = findDepth(highSlownessZoneP.rayParam,
                                                        layerNum,
                                                        layerNum,
                                                        PWAVE);
                 highSlownessLayerDepthsP.add(highSlownessZoneP);
                 inHighSlownessZoneP = false;
             }
-            if(inHighSlownessZoneS && (currSLayer.getBotP() < minSSoFar)) {
+            if(inHighSlownessZoneS && (currSLayer.getBotP() < highSlownessZoneS.rayParam)) {
                 // layer contains the bottom of a high slowness zone.
                 if(DEBUG) {
                     Alert.debug("layer contains the bottom of a S "
-                            + "high slowness zone. minSSoFar=" + minSSoFar
+                            + "high slowness zone. rp=" + highSlownessZoneS.rayParam
                             + " " + currSLayer);
                 }
                 // in fluid layers we want to check PWAVE structure when looking for S wave critical points
-                highSlownessZoneS.botDepth = findDepth(minSSoFar,
+                highSlownessZoneS.botDepth = findDepth(highSlownessZoneS.rayParam,
                                                        layerNum,
                                                        layerNum,
                                                        (currSLayer == currPLayer)?PWAVE:SWAVE);
@@ -1098,11 +1099,11 @@ public abstract class SlownessModel implements Serializable {
             }
             if(DEBUG && inHighSlownessZoneS) {
                 Alert.debug("In S high slowness zone, layerNum = "
-                        + layerNum + " minSSoFar=" + minSSoFar);
+                        + layerNum + " rp=" + highSlownessZoneS.rayParam);
             }
             if(DEBUG && inHighSlownessZoneP) {
                 Alert.debug("In P high slowness zone, layerNum = "
-                        + layerNum + " minPSoFar=" + minPSoFar);
+                        + layerNum + " rp=" + highSlownessZoneP.rayParam);
             }
         }
         // We know that the bottommost depth is always a critical slowness,
@@ -1112,7 +1113,7 @@ public abstract class SlownessModel implements Serializable {
                                                          -1,
                                                          -1));
         // Check if the bottommost depth is contained within a high slowness
-        // zone, might happen in a flat non-whole-earth model
+        // zone, might happen in a flat non-whole-earth model?
         if(inHighSlownessZoneS) {
             highSlownessZoneS.botDepth = currVLayer.getBotDepth();
             highSlownessLayerDepthsS.add(highSlownessZoneS);

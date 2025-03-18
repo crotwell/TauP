@@ -23,12 +23,34 @@ public class ShadowZone {
 
     public ShadowZone(SeismicPhase phase,
                       double rayParam,
-                      int rayParamIndex,
                       Arrival preArrival,
                       Arrival postArrival) {
         this.rayParam = rayParam;
         this.rayParamIndex = rayParamIndex;
         this.postArrival = postArrival;
         this.preArrival = preArrival;
+    }
+
+    public String toString() {
+        return "Shadow zone for ray param "+Outputs.formatRayParam(Math.PI / 180.0 * getRayParam())+" s/deg between \n"
+                +Arrival.toStringHeader()+"\n"
+                +preArrival.toString()+"\n"
+                +postArrival.toString();
+    }
+
+    public double getRayParam() {
+        return rayParam;
+    }
+
+    public int getRayParamIndex() {
+        return rayParamIndex;
+    }
+
+    public Arrival getPostArrival() {
+        return postArrival;
+    }
+
+    public Arrival getPreArrival() {
+        return preArrival;
     }
 }
