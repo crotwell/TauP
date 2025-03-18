@@ -12,7 +12,7 @@ public abstract class SimpleSeismicPhase implements SeismicPhase {
      *  */
     public abstract List<Arrival> calcTimeExactDistance(double searchDist);
 
-    public List<ArrivalPathSegment> calcSegmentPaths(Arrival currArrival) {
+    public List<ArrivalPathSegment> calcSegmentPaths(Arrival currArrival) throws NoArrivalException {
         return calcSegmentPaths(currArrival, null, 0);
     }
 
@@ -25,7 +25,7 @@ public abstract class SimpleSeismicPhase implements SeismicPhase {
      * @param prevEnd
      * @return
      */
-    public List<ArrivalPathSegment> calcSegmentPaths(Arrival currArrival, TimeDist prevEnd, int prevIdx) {
+    public List<ArrivalPathSegment> calcSegmentPaths(Arrival currArrival, TimeDist prevEnd, int prevIdx) throws NoArrivalException {
         int idx = prevIdx+1;
         List<ArrivalPathSegment> segmentPaths = new ArrayList<>();
         for (SeismicPhaseSegment seg : getPhaseSegments()) {

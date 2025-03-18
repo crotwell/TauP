@@ -433,7 +433,7 @@ public class ScatteredSeismicPhase implements SeismicPhase {
     }
 
     @Override
-    public List<TimeDist> calcPierceTimeDist(Arrival arrival) {
+    public List<TimeDist> calcPierceTimeDist(Arrival arrival) throws NoArrivalException {
         List<TimeDist> out = new ArrayList<>();
         ScatteredArrival scatA = (ScatteredArrival) arrival;
         double scatDistance = inboundArrival.getDist();
@@ -468,7 +468,7 @@ public class ScatteredSeismicPhase implements SeismicPhase {
         return out;
     }
 
-    public double calcTstar(Arrival currArrival) {
+    public double calcTstar(Arrival currArrival) throws NoArrivalException {
         return inboundArrival.getPhase().calcTstar(inboundArrival)
             + scatteredPhase.calcTstar(currArrival);
     }
@@ -517,7 +517,7 @@ public class ScatteredSeismicPhase implements SeismicPhase {
     }
 
     @Override
-    public List<ArrivalPathSegment> calcSegmentPaths(Arrival arrival) {
+    public List<ArrivalPathSegment> calcSegmentPaths(Arrival arrival) throws NoArrivalException {
         List<ArrivalPathSegment> out = new ArrayList<>();
         List<ArrivalPathSegment> inboundPath = inboundArrival.getPathSegments();
         for (ArrivalPathSegment seg : inboundPath) {

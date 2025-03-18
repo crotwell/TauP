@@ -12,7 +12,7 @@ public class RayParamKmRay extends ShootableRay {
     }
 
     @Override
-    public List<Arrival> calculate(SeismicPhase phase) throws SlownessModelException, NoSuchLayerException {
+    public List<Arrival> calculate(SeismicPhase phase) throws TauPException {
         RayParamRay rpRay = RayParamRay.ofRayParamSRadian(getRayParamSKm()*phase.getTauModel().getRadiusOfEarth());
         List<Arrival> arrivals = rpRay.calculate(phase);
         for (Arrival a : arrivals) {

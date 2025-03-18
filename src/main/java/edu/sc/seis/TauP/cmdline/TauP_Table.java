@@ -447,7 +447,7 @@ public class TauP_Table extends TauP_Tool {
         return "";
     }
 
-    public List<Arrival> calcAll(List<SeismicPhase> phaseList, List<RayCalculateable> shootables) throws SlownessModelException, NoSuchLayerException {
+    public List<Arrival> calcAll(List<SeismicPhase> phaseList, List<RayCalculateable> shootables) throws TauPException {
         List<Arrival> arrivals =  new ArrayList<>();
         for (SeismicPhase phase : phaseList) {
             for (RayCalculateable shoot : shootables) {

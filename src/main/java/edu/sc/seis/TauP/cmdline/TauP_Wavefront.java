@@ -264,14 +264,14 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
                     RayParamRay rpRay = new RayParamRay(rp);
                     try {
                         allArrival.addAll(rpRay.calculate(phase));
-                    } catch (SlownessModelException | NoSuchLayerException e) {
+                    } catch (TauPException e) {
                         throw new RuntimeException(e);
                     }
                 }
                 RayParamRay rpRay = new RayParamRay(phase.getMaxRayParam());
                 try {
                     allArrival.addAll(rpRay.calculate(phase));
-                } catch (SlownessModelException | NoSuchLayerException e) {
+                } catch (TauPException e) {
                     throw new RuntimeException(e);
                 }
             } else {

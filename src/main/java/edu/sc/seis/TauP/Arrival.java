@@ -342,7 +342,11 @@ public class Arrival {
      * @throws SlownessModelException
      */
     public double getEnergyFluxFactorReflTransPSV() throws VelocityModelException, SlownessModelException {
-        return getPhase().calcEnergyFluxFactorReflTranPSV(this);
+        try {
+            return getPhase().calcEnergyFluxFactorReflTranPSV(this);
+        } catch (NoArrivalException e) {
+            throw new RuntimeException("Should never happen "+getName(), e);
+        }
     }
 
     /**
@@ -355,7 +359,11 @@ public class Arrival {
      * @throws SlownessModelException
      */
     public double getEnergyFluxFactorReflTransSH() throws VelocityModelException, SlownessModelException {
-        return getPhase().calcEnergyFluxFactorReflTranSH(this);
+        try {
+            return getPhase().calcEnergyFluxFactorReflTranSH(this);
+        } catch (NoArrivalException e) {
+            throw new RuntimeException("Should never happen "+getName(), e);
+        }
     }
 
     /**
@@ -621,7 +629,11 @@ public class Arrival {
     /** returns pierce points as TimeDist objects. */
     public TimeDist[] getPierce() {
         if (pierce == null) {
-            this.pierce = getPhase().calcPierceTimeDist(this).toArray(new TimeDist[0]);
+            try {
+                this.pierce = getPhase().calcPierceTimeDist(this).toArray(new TimeDist[0]);
+            } catch (NoArrivalException e) {
+                throw new RuntimeException("Should never happen "+getName(), e);
+            }
         }
         return pierce;
     }
@@ -665,7 +677,11 @@ public class Arrival {
      * Calculate t* over path at the given frequency. See eq B13.2.2 in FMGS, p374.
      */
     public double calcTStar() {
-        return getPhase().calcTstar(this);
+        try {
+            return getPhase().calcTstar(this);
+        } catch (NoArrivalException e) {
+            throw new RuntimeException("Should never happen "+getName(), e);
+        }
     }
 
     public double calcPathLength() {
@@ -704,7 +720,11 @@ public class Arrival {
      * */
     public TimeDist[] getPath() {
         if (pathSegments == null) {
-            this.pathSegments = getPhase().calcSegmentPaths(this);
+            try {
+                this.pathSegments = getPhase().calcSegmentPaths(this);
+            } catch (NoArrivalException e) {
+                throw new RuntimeException("Should never happen "+getName(), e);
+            }
 
         }
         List<TimeDist> pathList = new ArrayList<>();
@@ -716,7 +736,11 @@ public class Arrival {
 
     public List<ArrivalPathSegment> getPathSegments() {
         if (pathSegments == null) {
-            pathSegments = getPhase().calcSegmentPaths(this);
+            try {
+                pathSegments = getPhase().calcSegmentPaths(this);
+            } catch (NoArrivalException e) {
+                throw new RuntimeException("Should never happen "+getName(), e);
+            }
         }
         return this.pathSegments;
     }

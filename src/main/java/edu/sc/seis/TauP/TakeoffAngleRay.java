@@ -15,7 +15,7 @@ public class TakeoffAngleRay extends ShootableRay {
     }
 
     @Override
-    public List<Arrival> calculate(SeismicPhase phase) throws SlownessModelException, NoSuchLayerException {
+    public List<Arrival> calculate(SeismicPhase phase) throws TauPException {
         RayParamRay rayParamRay = forPhase(phase);
         if (rayParamRay == null) {
             return new ArrayList<>();

@@ -20,7 +20,7 @@ public class RayParamRay extends ShootableRay {
     }
 
     @Override
-    public List<Arrival> calculate(SeismicPhase phase) throws SlownessModelException, NoSuchLayerException {
+    public List<Arrival> calculate(SeismicPhase phase) throws TauPException {
         List<Arrival> arrivals = new ArrayList<>();
         if (phase instanceof SimpleSeismicPhase &&
                 phase.getMinRayParam() <= rayParam && rayParam <= phase.getMaxRayParam()) {

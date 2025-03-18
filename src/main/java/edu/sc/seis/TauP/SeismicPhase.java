@@ -112,7 +112,7 @@ public interface SeismicPhase extends Serializable, Cloneable {
      */
     Arrival createArrivalAtIndex(int rayNum);
 
-    Arrival shootRay(double rayParam) throws SlownessModelException, NoSuchLayerException;
+    Arrival shootRay(double rayParam) throws TauPException;
 
     /** True is all segments of this path are only P waves.
      *
@@ -152,7 +152,7 @@ public interface SeismicPhase extends Serializable, Cloneable {
      */
     boolean finalSegmentIsPWave();
 
-    List<ArrivalPathSegment> calcSegmentPaths(Arrival currArrival);
+    List<ArrivalPathSegment> calcSegmentPaths(Arrival currArrival) throws NoArrivalException;
 
     String toString();
 
@@ -160,13 +160,13 @@ public interface SeismicPhase extends Serializable, Cloneable {
 
     SeismicPhase interpolatePhase(double maxDeltaDeg);
 
-    double calcEnergyFluxFactorReflTranPSV(Arrival arrival) throws VelocityModelException, SlownessModelException;
+    double calcEnergyFluxFactorReflTranPSV(Arrival arrival) throws VelocityModelException, SlownessModelException, NoArrivalException;
 
-    double calcEnergyFluxFactorReflTranSH(Arrival arrival) throws VelocityModelException, SlownessModelException;
+    double calcEnergyFluxFactorReflTranSH(Arrival arrival) throws VelocityModelException, SlownessModelException, NoArrivalException;
 
-    List<TimeDist> calcPierceTimeDist(Arrival arrival);
+    List<TimeDist> calcPierceTimeDist(Arrival arrival) throws NoArrivalException;
 
-    double calcTstar(Arrival currArrival);
+    double calcTstar(Arrival currArrival) throws NoArrivalException;
 
     /**
      * Split calculated array into segments for repeated ray parameter values, which indicate a
