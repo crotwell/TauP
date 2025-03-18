@@ -207,7 +207,7 @@ public class ScatterTest {
 
         List<Arrival> arrivals = time.calcAll(time.calcSeismicPhases(sourceDepth), List.of(DistanceRay.ofDegrees(70)));
         for (Arrival a : arrivals) {
-            assertTrue(a.isLongWayAround());
+            assertTrue(a.isLongWayAround(), a.toString());
         }
     }
 
