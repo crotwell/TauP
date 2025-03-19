@@ -178,7 +178,7 @@ public class SeismicPhaseFactory {
             SimpleSeismicPhase inPhase = SeismicPhaseFactory.createPhase(prescatterPhaseName,
                     tModDepthCorrected, sourceDepth, scat.depth, debug);
 
-            SeismicPhaseSegment lastSegment = inPhase.getPhaseSegments().get(inPhase.getPhaseSegments().size() - 1);
+            SeismicPhaseSegment lastSegment = inPhase.getFinalPhaseSegment();
             PhaseInteraction endAction = lastSegment.endAction;
             if (endAction == END_DOWN) {
                 if (isBackscatter) {

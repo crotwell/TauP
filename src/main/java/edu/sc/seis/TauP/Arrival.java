@@ -51,12 +51,14 @@ import static edu.sc.seis.TauP.SphericalCoords.TWOPI;
 public class Arrival {
 
     public Arrival(SeismicPhase phase,
+                   SimpleContigSeismicPhase simpleContigSeismicPhase,
                    double time,
                    double dist,
                    double rayParam,
                    int rayParamIndex,
                    double dRPdDist) {
         this(phase,
+                simpleContigSeismicPhase,
                 time,
                 dist,
                 rayParam,
@@ -68,9 +70,11 @@ public class Arrival {
                 phase.getReceiverDepth(),
                 phase.calcTakeoffAngle(rayParam),
                 phase.calcIncidentAngle(rayParam),
-                dRPdDist);
+                dRPdDist
+        );
     }
     public Arrival(SeismicPhase phase,
+                   SimpleContigSeismicPhase simpleContigSeismicPhase,
                    double time,
                    double dist,
                    double rayParam,
@@ -105,8 +109,12 @@ public class Arrival {
         this.takeoffAngleRadian = takeoffAngleRadian;
         this.incidentAngleRadian = incidentAngleRadian;
         this.dRPdDist = dRPdDist;
+        this.simpleContigSeismicPhase = simpleContigSeismicPhase;
     }
 
+
+    /** phase that generated this arrival. */
+    private final SimpleContigSeismicPhase simpleContigSeismicPhase;
 
     /** phase that generated this arrival. */
     private final SeismicPhase phase;
@@ -202,9 +210,46 @@ public class Arrival {
     }
 
     // get set methods
+
     /** @return the phase used to calculate this arrival. */
     public SeismicPhase getPhase() {
         return phase;
+    }
+
+    /**
+     * Returns the contiguous part of the phase that generated this arrival.
+     * Usually the same as getPhase(), except in the
+     * case of CompositeSeismicPhase where several contiguous phases are separated by shadow zones.
+     *
+     * @return
+     */
+    public SimpleContigSeismicPhase getSimpleContigSeismicPhase() {
+        if (phase instanceof SimpleContigSeismicPhase) {
+            return (SimpleContigSeismicPhase) phase;
+        }
+        return simpleContigSeismicPhase;
+    }
+
+    public boolean isFromCompositePhase() {
+        return phase instanceof CompositeSeismicPhase;
+    }
+
+    public List<SeismicPhaseSegment> listPhaseSegments() {
+        if (phase instanceof SimpleContigSeismicPhase) {
+            return ((SimpleContigSeismicPhase)phase).getPhaseSegments();
+        }
+        if (phase instanceof CompositeSeismicPhase) {
+            return getSimpleContigSeismicPhase().getPhaseSegments();
+        }
+        throw new RuntimeException("SHould not happen, can't find phase segments for arrival");
+    }
+
+    /**
+     *
+     * @return TauModel used to generate the phase that this arrival came from
+     */
+    public TauModel getTauModel() {
+        return phase.getTauModel();
     }
 
     /** @return travel time in seconds */
@@ -258,7 +303,7 @@ public class Arrival {
      */
     public double getSearchDistDeg() {
         if (this.searchCalc instanceof DistanceRay) {
-            return ((DistanceRay)this.searchCalc).getDegrees(getPhase().getTauModel().getRadiusOfEarth());
+            return ((DistanceRay)this.searchCalc).getDegrees(getTauModel().getRadiusOfEarth());
         }
         return this.getDistDeg();
     }
@@ -318,7 +363,7 @@ public class Arrival {
      */
     public double getEnergyGeometricSpreadingFactor() {
         double out = 1;
-        TauModel tMod = getPhase().getTauModel();
+        TauModel tMod = getTauModel();
         double R = tMod.radiusOfEarth;
         out *= getPhase().velocityAtSource()/
                 ((R-getReceiverDepth())*(R-getReceiverDepth())*(R-getSourceDepth()));
@@ -383,7 +428,7 @@ public class Arrival {
         if (sourceArgs.hasStrikeDipRake() && searchCalc.azimuth != null ) {
             double[] radiationPattern = sourceArgs.calcRadiationPat( searchCalc.azimuth, getTakeoffAngleDegree());
             double radTerm = 1;
-            if (getPhase().getPhaseSegments().get(0).isPWave) {
+            if (getPhase().getInitialPhaseSegment().isPWave) {
                 radTerm = radiationPattern[0];
             } else {
                 radTerm = radiationPattern[1];
@@ -402,7 +447,7 @@ public class Arrival {
         double refltran = getEnergyFluxFactorReflTransPSV();
         double freeFactor = 1.0;
         if (getReceiverDepth() <= 1.0) {
-            VelocityModel vMod = getPhase().getTauModel().getVelocityModel();
+            VelocityModel vMod = getTauModel().getVelocityModel();
             VelocityLayer top = vMod.getVelocityLayer(0);
             Complex[] freeSurfRF;
             ReflTransFreeSurface rtFree = ReflTransFreeSurface.createReflTransFreeSurface(top.getTopPVelocity(), top.getTopSVelocity(), top.getTopDensity());
@@ -469,7 +514,7 @@ public class Arrival {
         double freeFactor =  1.0;
         if (getReceiverDepth() <= 1.0) {
             // should be exactly 2.0, but go through the steps so looks like PSv case
-            VelocityModel vMod = getPhase().getTauModel().getVelocityModel();
+            VelocityModel vMod = getTauModel().getVelocityModel();
             VelocityLayer top = vMod.getVelocityLayer(0);
             ReflTransFreeSurface rtFree = ReflTransFreeSurface.createReflTransFreeSurface(top.getTopPVelocity(), top.getTopSVelocity(), top.getTopDensity());
 
@@ -493,7 +538,7 @@ public class Arrival {
         double radTerm = 1;
         if (sourceArgs != null && sourceArgs.hasStrikeDipRake() && searchCalc.azimuth != null ) {
             double[] radiationPattern = sourceArgs.calcRadiationPat( searchCalc.azimuth, getTakeoffAngleDegree());
-            if (getPhase().getPhaseSegments().get(0).isPWave) {
+            if (getPhase().getInitialPhaseSegment().isPWave) {
                 radTerm = radiationPattern[0];
             } else {
                 radTerm = radiationPattern[1];
@@ -507,7 +552,7 @@ public class Arrival {
         double radTerm = 1;
         if (sourceArgs != null && sourceArgs.hasStrikeDipRake() && searchCalc.azimuth != null ) {
             double[] radiationPattern = sourceArgs.calcRadiationPat( searchCalc.azimuth, getTakeoffAngleDegree());
-            if (getPhase().getPhaseSegments().get(0).isPWave) {
+            if (getPhase().getInitialPhaseSegment().isPWave) {
                 radTerm = 0;
             } else {
                 radTerm = radiationPattern[2];
@@ -538,7 +583,7 @@ public class Arrival {
 
     public double radialSlownessAtSource() {
         double srcVel = velocityAtSource();
-        double rofE = getPhase().getTauModel().getRadiusOfEarth();
+        double rofE = getTauModel().getRadiusOfEarth();
         double srcRadius = rofE - getSourceDepth();
         double radSlow = Math.sqrt(1/(srcVel*srcVel) - getRayParam()*getRayParam()/(srcRadius*srcRadius));
         if (! Double.isFinite(radSlow)
@@ -557,7 +602,7 @@ public class Arrival {
 
     public double radialSlownessAtReceiver() {
         double recVel = velocityAtReceiver();
-        double rofE = getPhase().getTauModel().getRadiusOfEarth();
+        double rofE = getTauModel().getRadiusOfEarth();
         double recRadius = rofE - getReceiverDepth();
         return Math.sqrt(1/(recVel*recVel) - getRayParam()*getRayParam()/(recRadius*recRadius));
     }
@@ -687,7 +732,7 @@ public class Arrival {
     public double calcPathLength() {
         // path length
         double length = 0;
-        TauModel tMod = getPhase().getTauModel();
+        TauModel tMod = getTauModel();
         double R = tMod.radiusOfEarth;
         List<ArrivalPathSegment> pathSegList = getPathSegments();
         TimeDist prev = new TimeDist();
@@ -752,18 +797,19 @@ public class Arrival {
      */
     public Arrival negateDistance() {
         return new Arrival( phase,
-            time,
-            -1* dist,
-            rayParam,
-            rayParamIndex,
-            searchCalc,
-            name,
-            puristName,
-            sourceDepth,
-            receiverDepth,
+                simpleContigSeismicPhase, time,
+                -1* dist,
+                rayParam,
+                rayParamIndex,
+                searchCalc,
+                name,
+                puristName,
+                sourceDepth,
+                receiverDepth,
                 takeoffAngleRadian,
                 incidentAngleRadian,
-            dRPdDist);
+                dRPdDist
+        );
     }
 
     public boolean isRelativeToArrival() {
@@ -924,7 +970,7 @@ public class Arrival {
             pw.write(innerIndent + JSONWriter.valueToString("amp") + ": {" + NL);
 
             try {
-                VelocityModel vMod = getPhase().getTauModel().getVelocityModel();
+                VelocityModel vMod = getTauModel().getVelocityModel();
                 VelocityLayer top = vMod.getVelocityLayer(0);
                 double freeFactor = 1.0;
                 if (getReceiverDepth() <= 1.0) {
@@ -1035,7 +1081,7 @@ public class Arrival {
 
     public String asCSVRow() {
         String sep = ",";
-        String modelName = getPhase().getTauModel().getModelName().replaceAll("\"", " ");
+        String modelName = getTauModel().getModelName().replaceAll("\"", " ");
         if (modelName.contains(",")) {
             modelName = "\""+modelName+"\"";
         }

@@ -162,13 +162,17 @@ public class ScatteredSeismicPhase implements SeismicPhase {
     }
 
     @Override
-    public List<SeismicPhaseSegment> getPhaseSegments() {
-        List<SeismicPhaseSegment> out = new ArrayList<>();
-        out.addAll(inboundArrival.getPhase().getPhaseSegments());
-        out.addAll(scatteredPhase.getPhaseSegments());
+    public List<List<SeismicPhaseSegment>> getListPhaseSegments() {
+        List<List<SeismicPhaseSegment>> out = new ArrayList<>();
+        List<SeismicPhaseSegment> inboundSegList = inboundArrival.listPhaseSegments();
+        for (List<SeismicPhaseSegment> subphaseSeg : scatteredPhase.getListPhaseSegments()) {
+            List<SeismicPhaseSegment> inSegList = new ArrayList<>();
+            inSegList.addAll(inboundSegList);
+            inSegList.addAll(subphaseSeg);
+            out.add(inSegList);
+        }
         return out;
     }
-
 
     public SeismicPhaseSegment getInitialPhaseSegment() {
         return inboundArrival.getPhase().getInitialPhaseSegment();
@@ -345,12 +349,12 @@ public class ScatteredSeismicPhase implements SeismicPhase {
 
     @Override
     public boolean sourceSegmentIsPWave() {
-        return getPhaseSegments().get(0).isPWave;
+        return getInitialPhaseSegment().isPWave;
     }
 
     @Override
     public boolean finalSegmentIsPWave() {
-        return getPhaseSegments().get(getPhaseSegments().size()-1).isPWave;
+        return getFinalPhaseSegment().isPWave;
     }
 
     public String describe() {
@@ -473,24 +477,32 @@ public class ScatteredSeismicPhase implements SeismicPhase {
             + scatteredPhase.calcTstar(currArrival);
     }
 
-    /** True is all segments of this path are only S waves.
-     *
+    /**
+     * True is all segments of this path are only S waves.
      */
     @Override
     public boolean isAllPWave() {
-        for (SeismicPhaseSegment seg: getPhaseSegments()) {
-            if (seg.isPWave) { return false; }
+        for (List<SeismicPhaseSegment> subList : getListPhaseSegments()){
+            for (SeismicPhaseSegment seg : subList) {
+                if (!seg.isPWave) {
+                    return false;
+                }
+            }
         }
         return true;
     }
 
-    /** True is all segments of this path are only S waves.
-     *
+    /**
+     * True is all segments of this path are only S waves.
      */
     @Override
     public boolean isAllSWave() {
-        for (SeismicPhaseSegment seg: getPhaseSegments()) {
-            if (seg.isPWave) { return false; }
+        for (List<SeismicPhaseSegment> subList : getListPhaseSegments()){
+            for (SeismicPhaseSegment seg : subList) {
+                if (seg.isPWave) {
+                    return false;
+                }
+            }
         }
         return true;
     }

@@ -436,7 +436,7 @@ public class TauP_Spikes extends TauP_AbstractRayTool {
             return rtz;
         }
         // so have at least one arrival
-        double radiusEarthMeter = allArrivals.get(0).getPhase().getTauModel().getRadiusOfEarth()*1000;
+        double radiusEarthMeter = allArrivals.get(0).getTauModel().getRadiusOfEarth()*1000;
         for (Arrival arrival : allArrivals) {
             Theta thetaAtX = new Theta(arrival);
 

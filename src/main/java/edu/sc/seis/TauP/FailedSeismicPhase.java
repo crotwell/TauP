@@ -77,7 +77,7 @@ public class FailedSeismicPhase extends SimpleContigSeismicPhase {
     public String describe() {
         return getName()+":\n  Failed phase:\n"
                 +"  "+proto.failReason
-                +"\n"+ SeismicPhase.segmentDescribe(this);
+                +"\n"+ SeismicPhaseSegment.segmentListDescribe(this.getListPhaseSegments());
     }
 
     @Override

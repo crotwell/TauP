@@ -22,7 +22,7 @@ public class GeospreadingTest {
 
     public double geospread(Arrival a) throws TauModelException {
         double out = 1;
-        TauModel tMod = a.getPhase().getTauModel();
+        TauModel tMod = a.getTauModel();
         double R = tMod.radiusOfEarth;
         VelocityModel vMod = tMod.getVelocityModel();
         out *= a.getPhase().velocityAtSource()/

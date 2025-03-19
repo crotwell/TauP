@@ -16,8 +16,6 @@
  */
 package edu.sc.seis.TauP;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -260,8 +258,12 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
         return receiverDepth;
     }
 
-    /** Description of segments of the phase. */
     @Override
+    public List<List<SeismicPhaseSegment>> getListPhaseSegments() {
+        return List.of(getPhaseSegments());
+    }
+
+    /** Description of segments of the phase. */
     public List<SeismicPhaseSegment> getPhaseSegments() {
     	return Collections.unmodifiableList(proto.segmentList);
     }
@@ -386,11 +388,12 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
 
         }
         return new Arrival(this,
-                getTime(rayNum),
+                this, getTime(rayNum),
                 getDist(rayNum),
                 getRayParams(rayNum),
                 rayNum,
-                dRPdDist);
+                dRPdDist
+        );
     }
 
     public Arrival refineArrival(int rayNum, double distRadian, double distTolRadian, int maxRecursion) {
@@ -543,11 +546,12 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
         }
         double dRPdDist = (rayParam-rayParams[rayParamIndex])/(sum.getDistRadian()-dist[rayParamIndex]);
         return new Arrival(this,
-                           sum.getTime(),
+                this, sum.getTime(),
                            sum.getDistRadian(),
                            rayParam,
                            rayParamIndex,
-                dRPdDist);
+                dRPdDist
+        );
     }
 
     /**
@@ -594,11 +598,12 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
         }
 
         return new Arrival(this,
-                           arrivalTime,
+                this, arrivalTime,
                            searchDist,
                            arrivalRayParam,
                            left.getRayParamIndex(),
-                dRPdDist);
+                dRPdDist
+        );
     }
 
     @Override
@@ -610,11 +615,11 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
             throw new NoArrivalException("No phase segments for "+getName());
         }
 
-        boolean firstIsPWave = getPhaseSegments().get(0).isPWave;
+        boolean firstIsPWave = getInitialPhaseSegment().isPWave;
         double rayParam;
         try {
             rayParam = calcRayParamForTakeoffAngleInModel(takeoffDegree, firstIsPWave, tMod,
-                    getPhaseSegments().get(0).isDownGoing);
+                    getInitialPhaseSegment().isDownGoing);
         } catch(NoSuchLayerException | SlownessModelException e) {
             throw new RuntimeException("Should not happen",e);
         }
@@ -650,12 +655,12 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
             double takeoffVelocity;
             VelocityModelMaterial firstLeg;
             VelocityModel vMod = getTauModel().getVelocityModel();
-            if (getPhaseSegments().get(0).isPWave) {
+            if (getInitialPhaseSegment().isPWave) {
                 firstLeg = VelocityModelMaterial.P_VELOCITY;
             } else {
                 firstLeg = VelocityModelMaterial.S_VELOCITY;
             }
-            if (getPhaseSegments().get(0).isDownGoing) {
+            if (getInitialPhaseSegment().isDownGoing) {
                 takeoffVelocity = vMod.evaluateBelow(sourceDepth, firstLeg);
             } else {
                 takeoffVelocity = vMod.evaluateAbove(sourceDepth, firstLeg);
@@ -768,7 +773,7 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
 
     @Override
     public boolean sourceSegmentIsPWave() {
-        return getPhaseSegments().get(0).isPWave;
+        return getInitialPhaseSegment().isPWave;
     }
 
 
@@ -1104,7 +1109,8 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
     @Override
     public String describe() {
         String desc = getName() +(getName().equals(getPuristName()) ? "" : (" ("+getPuristName()+")"))+ ":\n";
-        return desc+ SeismicPhase.baseDescribe(this)+"\n"+ SeismicPhase.segmentDescribe(this);
+        return desc+ SeismicPhase.baseDescribe(this)+"\n"+
+                SeismicPhaseSegment.segmentDescribe(this.getPhaseSegments());
     }
 
     @Override
@@ -1112,36 +1118,6 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
         String desc = getName() +(getName().equals(getPuristName()) ? "" : (" ("+getPuristName()+")"))
                 + " source: "+getSourceDepth()+" km, receiver: "+getReceiverDepth()+" km";
         return desc;
-    }
-
-    @Override
-    public String describeJson() {
-        String Q = ""+'"';
-        String COMMA = ",";
-        String QCOMMA = Q+COMMA;
-        String COLON = ": "; // plus space
-        String S = "  ";
-        String QC = Q+COLON;
-        String QCQ = QC+Q;
-        String SS = S+S;
-        String SQ = S+Q;
-        String SSQ = S+SQ;
-        String SSSQ = S+SSQ;
-        StringWriter sw = new StringWriter();
-        PrintWriter out = new PrintWriter(sw);
-        out.println("{");
-        out.println(SQ+"name"+QCQ+getName()+QCOMMA);
-        out.println(SQ+"puristname"+QCQ+getPuristName()+QCOMMA);
-        if (proto.isFail) {
-            out.println(SQ+"fail"+QCQ+proto.failReason+QCOMMA);
-        }
-        String baseDesc = SeismicPhase.baseDescribeJSON(this);
-        if (!baseDesc.isEmpty()) {
-            out.println(baseDesc+",");
-        }
-        out.println(SeismicPhase.segmentDescribeJSON(this));
-        out.print("}");
-        return sw.toString();
     }
 
     @Override

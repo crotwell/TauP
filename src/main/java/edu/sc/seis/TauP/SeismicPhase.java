@@ -67,7 +67,7 @@ public interface SeismicPhase extends Serializable, Cloneable {
 
     int getMinRayParamIndex();
 
-    List<SeismicPhaseSegment> getPhaseSegments();
+    List<List<SeismicPhaseSegment>> getListPhaseSegments();
 
     SeismicPhaseSegment getInitialPhaseSegment();
 
@@ -282,23 +282,34 @@ public interface SeismicPhase extends Serializable, Cloneable {
     }
 
     static String segmentDescribe(SeismicPhase phase) {
-        return SeismicPhaseSegment.segmentDescribe(phase.getPhaseSegments());
+        return SeismicPhaseSegment.segmentListDescribe(phase.getListPhaseSegments());
     }
     static String segmentDescribeJSON(SeismicPhase phase) {
         String desc = "";
         String indent = "  ";
         desc += indent+"\"segments\": [\n";
-        boolean first=true;
-        for(SeismicPhaseSegment segment : phase.getPhaseSegments()) {
-            if (first) {
-                first = false;
-                desc+= "\n";
+        desc += indent+"   [\n";
+        boolean firstOuter=true;
+        for (List<SeismicPhaseSegment> segList : phase.getListPhaseSegments()) {
+            if (firstOuter) {
+                firstOuter = false;
+                desc += "\n";
             } else {
-                desc+= ",\n";
+                desc += ",\n";
             }
-            desc += indent+segment.toJSONString();
+            boolean firstInner=true;
+            for (SeismicPhaseSegment segment : segList) {
+                if (firstInner) {
+                    firstInner = false;
+                    desc += "\n";
+                } else {
+                    desc += ",\n";
+                }
+                desc += indent + segment.toJSONString();
+            }
+            desc += "\n" + indent + "]";
         }
-        desc += "\n"+indent+"]";
+        desc += "\n" + indent + "]";
         return desc;
     }
 

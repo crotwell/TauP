@@ -51,7 +51,7 @@ public class JsonOutputTest {
         JSONTokener currentIn = new JSONTokener(current);
         JSONObject currentJson = new JSONObject(currentIn);
         String simOut = similar(priorJson, currentJson);
-        assertNull(simOut, cmd);
+        assertNull(simOut, "JSON not similare for "+cmd);
     }
 
     /**

@@ -1,5 +1,8 @@
 package edu.sc.seis.TauP;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Arrival from a seismic phase that scatters from
  */
@@ -18,6 +21,7 @@ public class ScatteredArrival extends Arrival {
     }
     public ScatteredArrival(ScatteredSeismicPhase phase, RayCalculateable searchVal, Arrival inboundArrival, Arrival scatteredArrival, boolean isBackscatter) {
         super(phase,
+                null,
                 inboundArrival.getTime()+scatteredArrival.getTime(),
                 inboundArrival.getDist()+scatteredArrival.getDist(),
                 scatteredArrival.getRayParam(),
@@ -29,7 +33,8 @@ public class ScatteredArrival extends Arrival {
                 scatteredArrival.getPhase().getReceiverDepth(),
                 inboundArrival.getPhase().calcTakeoffAngle(inboundArrival.getRayParam()),
                 scatteredArrival.getPhase().calcIncidentAngle(scatteredArrival.getRayParam()),
-                scatteredArrival.getDRayParamDDelta());
+                scatteredArrival.getDRayParamDDelta()
+        );
         this.inboundArrival = inboundArrival;
         this.scatteredArrival = scatteredArrival;
         this.isBackscatter = isBackscatter;
@@ -61,5 +66,13 @@ public class ScatteredArrival extends Arrival {
     public boolean isScatterNegativeDirection() {
         double scatDist = getScatteredSeismicPhase().getScattererDistanceDeg();
         return (scatDist >= 0 && isBackscatter()) || (scatDist < 0 && !isBackscatter());
+    }
+
+    @Override
+    public List<SeismicPhaseSegment> listPhaseSegments() {
+        List<SeismicPhaseSegment> out = new ArrayList<>();
+        out.addAll(inboundArrival.listPhaseSegments());
+        out.addAll(scatteredArrival.listPhaseSegments());
+        return out;
     }
 }

@@ -274,7 +274,7 @@ public class TauP_Path extends TauP_AbstractRayTool {
 
 		if (getGraphicOutputTypeArgs().isGMT()) {
             for (Arrival currArrival : arrivalList) {
-                double radiusOfEarth = currArrival.getPhase().getTauModel().getRadiusOfEarth();
+                double radiusOfEarth = currArrival.getTauModel().getRadiusOfEarth();
                 TimeDist[] path = currArrival.getPath();
                 int midSample = path.length / 2;
                 double calcDepth = path[midSample].getDepth();
@@ -297,7 +297,7 @@ public class TauP_Path extends TauP_AbstractRayTool {
         out.println("    <g class=\"label phasename\">");
 
         for (Arrival currArrival : arrivalList) {
-			double radiusOfEarth = currArrival.getPhase().getTauModel().getRadiusOfEarth();
+			double radiusOfEarth = currArrival.getTauModel().getRadiusOfEarth();
 
 			double distFactor = 1;
             if (currArrival.isLongWayAround()) {

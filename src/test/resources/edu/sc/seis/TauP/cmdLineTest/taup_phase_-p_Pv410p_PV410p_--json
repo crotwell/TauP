@@ -17,9 +17,12 @@
   },
   "shadow": [  ],
   "segments": [
+     [
+
 
   {  "name": "P", "updown": "down", "type": "P", "branch_desc": "crust/mantle", "branches": [ 0, 3], "depths": [0.0, 410.0], "then": "reflect topside"},
   {  "name": "p", "updown": "up", "type": "P", "branch_desc": "crust/mantle", "branches": [ 3, 0], "depths": [410.0, 0.0], "then": "end"}
+  ]
   ]
 },
 {
@@ -39,9 +42,12 @@
   },
   "shadow": [  ],
   "segments": [
+     [
+
 
   {  "name": "P", "updown": "down", "type": "P", "branch_desc": "crust/mantle", "branches": [ 0, 3], "depths": [0.0, 410.0], "then": "critical reflect topside"},
   {  "name": "p", "updown": "up", "type": "P", "branch_desc": "crust/mantle", "branches": [ 3, 0], "depths": [410.0, 0.0], "then": "end"}
+  ]
   ]
 }
   ]

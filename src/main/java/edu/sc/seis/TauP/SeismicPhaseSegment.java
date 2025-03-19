@@ -611,6 +611,14 @@ public class SeismicPhaseSegment {
 	}
 
 
+	public static String segmentListDescribe(List<List<SeismicPhaseSegment>> segmentListList) {
+		StringBuilder out = new StringBuilder();
+		for (List<SeismicPhaseSegment> segList : segmentListList) {
+			out.append(segmentDescribe(segList));
+		}
+		return out.toString();
+	}
+
 	public static String segmentDescribe(List<SeismicPhaseSegment> segmentList) {
 		String desc = "";
 		String indent = "  ";

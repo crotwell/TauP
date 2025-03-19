@@ -135,7 +135,7 @@ public class TauP_Pierce extends TauP_Time {
                 if (!(onlyTurnPoints || onlyRevPoints || onlyUnderPoints || onlyAddPoints)
                         || (onlyRevPoints
                         && (getScatterer() != null && pierce[j].getDepth() == getScatterer().depth  // scat are always rev points
-                        && pierce[j].getDistDeg() == getScatterer().dist.getDegrees(arrival.getPhase().getTauModel().getRadiusOfEarth()))
+                        && pierce[j].getDistDeg() == getScatterer().dist.getDegrees(arrival.getTauModel().getRadiusOfEarth()))
                 )
                         || ((onlyAddPoints && isAddDepth(pierce[j].getDepth()))
                         || (onlyRevPoints && ((prevDepth - pierce[j].getDepth())

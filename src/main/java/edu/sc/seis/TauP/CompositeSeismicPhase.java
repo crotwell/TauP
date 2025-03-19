@@ -34,6 +34,20 @@ public class CompositeSeismicPhase extends SimpleSeismicPhase {
                         prev.createArrivalAtIndex(prev.getNumRays()-1),
                         subphase.createArrivalAtIndex(0)
                 ));
+                if (
+                    prev.getInitialPhaseSegment().isDownGoing != subphase.getInitialPhaseSegment().isDownGoing ||
+                    prev.getInitialPhaseSegment().isPWave != subphase.getInitialPhaseSegment().isPWave ||
+                    prev.getInitialPhaseSegment().startBranch != subphase.getInitialPhaseSegment().startBranch
+                ) {
+                    throw new IllegalArgumentException("Initial phase segments not the same "+prev+" "+subphase);
+                }
+                if (
+                    prev.getFinalPhaseSegment().isDownGoing != subphase.getFinalPhaseSegment().isDownGoing ||
+                    prev.getFinalPhaseSegment().isPWave != subphase.getFinalPhaseSegment().isPWave ||
+                    prev.getFinalPhaseSegment().endBranch != subphase.getFinalPhaseSegment().endBranch
+                ) {
+                    throw new IllegalArgumentException("Final phase segments not the same "+prev+" "+subphase);
+                }
 
             }
             prev = subphase;
@@ -218,8 +232,12 @@ public class CompositeSeismicPhase extends SimpleSeismicPhase {
     }
 
     @Override
-    public List<SeismicPhaseSegment> getPhaseSegments() {
-        throw new RuntimeException("getPhaseSegments no impl for CompositeSeismicPhase");
+    public List<List<SeismicPhaseSegment>> getListPhaseSegments() {
+        List<List<SeismicPhaseSegment>> out = new ArrayList<>();
+        for (SimpleContigSeismicPhase subphase : getSubPhaseList()) {
+            out.add(subphase.getPhaseSegments());
+        }
+        return out;
     }
 
     @Override
@@ -234,12 +252,25 @@ public class CompositeSeismicPhase extends SimpleSeismicPhase {
 
     @Override
     public int countFlatLegs() {
-        throw new RuntimeException("getPhaseSegments no impl for CompositeSeismicPhase");
+        int numFlat = simplePhaseList.get(0).countFlatLegs();
+        for (SimpleContigSeismicPhase subphase : simplePhaseList) {
+            if (numFlat != subphase.countFlatLegs()) {
+                throw new RuntimeException("SHouldn't happen, num flat legs differs across shadow zone for "+getName());
+            }
+        }
+        return numFlat;
     }
 
     @Override
-    public double getRayParams(int i) {
-        throw new RuntimeException("getPhaseSegments no impl for CompositeSeismicPhase");
+    public double getRayParams(int rayNum) {
+        int idx = 0;
+        for (SimpleContigSeismicPhase sp : simplePhaseList) {
+            if (rayNum-idx < sp.getNumRays()) {
+                return sp.getRayParams(rayNum-idx);
+            }
+            idx += sp.getNumRays();
+        }
+        throw new ArrayIndexOutOfBoundsException(rayNum+" >= "+getNumRays()+" for CompositeSeismicPhase");
     }
 
     @Override
@@ -248,8 +279,15 @@ public class CompositeSeismicPhase extends SimpleSeismicPhase {
     }
 
     @Override
-    public double getDist(int i) {
-        throw new RuntimeException("getPhaseSegments no impl for CompositeSeismicPhase");
+    public double getDist(int rayNum) {
+        int idx = 0;
+        for (SimpleContigSeismicPhase sp : simplePhaseList) {
+            if (rayNum-idx < sp.getNumRays()) {
+                return sp.getDist(rayNum-idx);
+            }
+            idx += sp.getNumRays();
+        }
+        throw new ArrayIndexOutOfBoundsException(rayNum+" >= "+getNumRays()+" for CompositeSeismicPhase");
     }
 
     @Override
@@ -258,8 +296,15 @@ public class CompositeSeismicPhase extends SimpleSeismicPhase {
     }
 
     @Override
-    public double getTime(int i) {
-        throw new RuntimeException("getPhaseSegments no impl for CompositeSeismicPhase");
+    public double getTime(int rayNum) {
+        int idx = 0;
+        for (SimpleContigSeismicPhase sp : simplePhaseList) {
+            if (rayNum-idx < sp.getNumRays()) {
+                return sp.getTime(rayNum-idx);
+            }
+            idx += sp.getNumRays();
+        }
+        throw new ArrayIndexOutOfBoundsException(rayNum+" >= "+getNumRays()+" for CompositeSeismicPhase");
     }
 
     @Override
@@ -268,8 +313,15 @@ public class CompositeSeismicPhase extends SimpleSeismicPhase {
     }
 
     @Override
-    public double getTau(int i) {
-        throw new RuntimeException("getPhaseSegments no impl for CompositeSeismicPhase");
+    public double getTau(int rayNum) {
+        int idx = 0;
+        for (SimpleContigSeismicPhase sp : simplePhaseList) {
+            if (rayNum-idx < sp.getNumRays()) {
+                return sp.getTau(rayNum-idx);
+            }
+            idx += sp.getNumRays();
+        }
+        throw new ArrayIndexOutOfBoundsException(rayNum+" >= "+getNumRays()+" for CompositeSeismicPhase");
     }
 
     @Override
@@ -293,6 +345,7 @@ public class CompositeSeismicPhase extends SimpleSeismicPhase {
         }
         throw new ArrayIndexOutOfBoundsException(rayNum+" >= "+getNumRays()+" for CompositeSeismicPhase");
     }
+
 
     @Override
     public Arrival shootRay(double rayParam) throws TauPException {
@@ -397,31 +450,16 @@ public class CompositeSeismicPhase extends SimpleSeismicPhase {
         return out;
     }
 
-    public SimpleContigSeismicPhase findSubphaseForArrival(Arrival currArrival) throws NoArrivalException {
-        for (SimpleContigSeismicPhase sp : simplePhaseList) {
-            if (sp.getMinRayParam() <= currArrival.getRayParam() && currArrival.getRayParam() <= sp.getMaxRayParam()) {
-                try {
-                    Arrival subphaseArrival = sp.shootRay(currArrival.getRayParam());
-                    if (subphaseArrival.getTime() == currArrival.getTime() && subphaseArrival.getDist() == currArrival.getDist()) {
-                        // found the phase that generated the arrival
-                        return sp;
-                    }
-                } catch (SlownessModelException | NoSuchLayerException e) {
-                    // not right subphase?
-                }
-            }
-        }
-        throw new NoArrivalException("can't find arrival within this phase "+currArrival.getName());
-    }
-
     @Override
-    public List<ArrivalPathSegment> calcSegmentPaths(Arrival currArrival, TimeDist prevEnd, int prevIdx) throws NoArrivalException {
-        return findSubphaseForArrival(currArrival).calcSegmentPaths(currArrival, prevEnd, prevIdx);
+    public List<ArrivalPathSegment> calcSegmentPaths(Arrival arrival, TimeDist prevEnd, int prevIdx) throws NoArrivalException {
+        return arrival.getSimpleContigSeismicPhase().calcSegmentPaths(arrival, prevEnd, prevIdx);
     }
 
     @Override
     public void dump() {
-        throw new RuntimeException("no impl for CompositeSeismicPhase");
+        for (SimpleContigSeismicPhase subphase : simplePhaseList) {
+            subphase.dump();
+        }
     }
 
     @Override
@@ -435,22 +473,22 @@ public class CompositeSeismicPhase extends SimpleSeismicPhase {
 
     @Override
     public double calcEnergyFluxFactorReflTranPSV(Arrival arrival) throws VelocityModelException, NoArrivalException {
-        return findSubphaseForArrival(arrival).calcEnergyFluxFactorReflTranPSV(arrival);
+        return arrival.getSimpleContigSeismicPhase().calcEnergyFluxFactorReflTranPSV(arrival);
     }
 
     @Override
     public double calcEnergyFluxFactorReflTranSH(Arrival arrival) throws VelocityModelException, NoArrivalException {
-        return findSubphaseForArrival(arrival).calcEnergyFluxFactorReflTranSH(arrival);
+        return arrival.getSimpleContigSeismicPhase().calcEnergyFluxFactorReflTranSH(arrival);
     }
 
     @Override
     public List<TimeDist> calcPierceTimeDist(Arrival arrival) throws NoArrivalException {
-        return findSubphaseForArrival(arrival).calcPierceTimeDist(arrival);
+        return arrival.getSimpleContigSeismicPhase().calcPierceTimeDist(arrival);
     }
 
     @Override
     public double calcTstar(Arrival arrival) throws NoArrivalException {
-        return findSubphaseForArrival(arrival).calcTstar(arrival);
+        return arrival.getSimpleContigSeismicPhase().calcTstar(arrival);
     }
 
     @Override
@@ -485,11 +523,6 @@ public class CompositeSeismicPhase extends SimpleSeismicPhase {
             s.append(sp.describeShort()).append("\n");
         }
         return s.toString();
-    }
-
-    @Override
-    public String describeJson() {
-        throw new RuntimeException("no impl for CompositeSeismicPhase");
     }
 
 }

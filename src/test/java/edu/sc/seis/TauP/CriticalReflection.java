@@ -1,12 +1,11 @@
 package edu.sc.seis.TauP;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CriticalReflection {
 
@@ -33,11 +32,17 @@ public class CriticalReflection {
         compareReflections( reflPhase,  critReflPhase,  degrees, 0.0);
     }
 
-    public void compareReflections(String reflPhaseName, String critReflPhaseName, double degrees, double depth) throws Exception {
+    public void compareReflections(String reflPhaseName, String critReflPhaseName, double degrees, double depth)
+            throws Exception {
         String modelName = "iasp91";
         TauModel tMod = TauModelLoader.load(modelName).depthCorrect(depth);
-        SimpleSeismicPhase reflPhase = SeismicPhaseFactory.createPhase(reflPhaseName, tMod);
-        SimpleSeismicPhase critPhase = SeismicPhaseFactory.createPhase(critReflPhaseName, tMod);
+        SimpleSeismicPhase reflPhaseCalc = SeismicPhaseFactory.createPhase(reflPhaseName, tMod);
+        assertInstanceOf(SimpleContigSeismicPhase.class, reflPhaseCalc);
+        SimpleContigSeismicPhase reflPhase = (SimpleContigSeismicPhase)reflPhaseCalc;
+        SimpleSeismicPhase critPhaseCalc = SeismicPhaseFactory.createPhase(critReflPhaseName, tMod);
+        assertInstanceOf(SimpleContigSeismicPhase.class, critPhaseCalc);
+        SimpleContigSeismicPhase critPhase = (SimpleContigSeismicPhase)critPhaseCalc;
+
 
         // critcial is subset of uncrit reflection
         assertTrue(reflPhase.getMinDistanceDeg() <= critPhase.getMinDistanceDeg());

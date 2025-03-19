@@ -50,11 +50,17 @@ public class SvgEarth {
                 if (phase.getMinDistance() < minDist) {
                     minDist = (float) phase.getMinDistance();
                 }
-                for (SeismicPhaseSegment phaseSeg : phase.getPhaseSegments()) {
-                    double[] depths = phaseSeg.getDepthRange();
-                    for (double d : depths) {
-                        if (d < minDepth) { minDepth = d;}
-                        if (d > maxDepth) { maxDepth = d;}
+                for (List<SeismicPhaseSegment> segList : phase.getListPhaseSegments()) {
+                    for (SeismicPhaseSegment phaseSeg : segList) {
+                        double[] depths = phaseSeg.getDepthRange();
+                        for (double d : depths) {
+                            if (d < minDepth) {
+                                minDepth = d;
+                            }
+                            if (d > maxDepth) {
+                                maxDepth = d;
+                            }
+                        }
                     }
                 }
             }
@@ -96,7 +102,7 @@ public class SvgEarth {
 
     public static SvgEarthScaling calcEarthScaleTrans(List<Arrival> arrivalList, DistDepthRange distDepthRange) {
         float R = 6371;
-        if (!arrivalList.isEmpty()) {R = (float) arrivalList.get(0).getPhase().getTauModel().getRadiusOfEarth();}
+        if (!arrivalList.isEmpty()) {R = (float) arrivalList.get(0).getTauModel().getRadiusOfEarth();}
         double minDepth = 0;
         double maxDepth = 0;
         SvgEarthScaling scaling;
@@ -211,7 +217,7 @@ public class SvgEarth {
         if (!arrivals.isEmpty()) {
             Arrival arrival = arrivals.get(0);
             arrival.getPierce();
-            R = arrival.getPhase().getTauModel().getRadiusOfEarth();
+            R = arrival.getTauModel().getRadiusOfEarth();
             TimeDist td = arrival.getPiercePoint(0);
             xmin = Math.sin(td.getDistRadian()) * (R - td.getDepth());
             xmax = xmin;
@@ -386,7 +392,7 @@ public class SvgEarth {
 
     public static SvgEarthScaling calcZoomScaleTranslate(List<Arrival> arrivals) {
         float R = 6371;
-        if (!arrivals.isEmpty()) {R = (float) arrivals.get(0).getPhase().getTauModel().getRadiusOfEarth();}
+        if (!arrivals.isEmpty()) {R = (float) arrivals.get(0).getTauModel().getRadiusOfEarth();}
         if (arrivals.isEmpty()) {
             return new SvgEarthScaling(R);
         }
