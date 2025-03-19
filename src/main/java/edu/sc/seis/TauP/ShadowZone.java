@@ -7,8 +7,6 @@ public class ShadowZone {
 
     double rayParam;
 
-    int rayParamIndex;
-
     /**
      * The Arrival for the ray that arrives after the shadow zone. For example the first ray that penetrates and turns
      * below a low velocity zone.
@@ -26,7 +24,6 @@ public class ShadowZone {
                       Arrival preArrival,
                       Arrival postArrival) {
         this.rayParam = rayParam;
-        this.rayParamIndex = rayParamIndex;
         this.postArrival = postArrival;
         this.preArrival = preArrival;
     }
@@ -40,10 +37,6 @@ public class ShadowZone {
 
     public double getRayParam() {
         return rayParam;
-    }
-
-    public int getRayParamIndex() {
-        return rayParamIndex;
     }
 
     public Arrival getPostArrival() {

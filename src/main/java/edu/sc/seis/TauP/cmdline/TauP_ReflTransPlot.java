@@ -701,7 +701,6 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
             description = "incident is downgoing"
     )
     public void setIncidentDown(boolean indown) {
-        System.err.println("set in down "+indown);
         this.indown = indown;
     }
     @CommandLine.Option(names = "--up",
@@ -709,7 +708,6 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
             description = "incident is upgoing, reverses the sense of the boundary"
     )
     public void setIncidentUp(boolean inup) {
-        System.err.println("set in up "+inup);
         this.indown = ! inup;
     }
 

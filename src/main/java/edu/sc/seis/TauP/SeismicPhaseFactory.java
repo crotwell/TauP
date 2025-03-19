@@ -718,6 +718,7 @@ public class SeismicPhaseFactory {
             throw new RuntimeException(proto.getName()+" Should not happen, did not find min ray param"+minRayParam);
         }
 
+
         if(maxRayParamIndex == 0
                 && minRayParamIndex == tMod.rayParams.length - 1) {
             // all ray parameters are valid so just copy
@@ -739,7 +740,7 @@ public class SeismicPhaseFactory {
                         +"  rp "+minRayParam+" "+maxRayParam+" "+proto.branchNumSeqStr());
             }
         } else {
-            if(true || TauPConfig.DEBUG) {
+            if(TauPConfig.DEBUG) {
                 Alert.debug("SumBranches() maxRayParamIndex=" + maxRayParamIndex
                         + " minRayParamIndex=" + minRayParamIndex
                         + " tMod.rayParams.length=" + tMod.rayParams.length

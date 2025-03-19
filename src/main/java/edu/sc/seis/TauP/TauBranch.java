@@ -89,7 +89,8 @@ public class TauBranch implements Serializable, Cloneable {
     private double botRayParam;
 
     // Constructors --------------------------------------------------------
-    public TauBranch(boolean isPWave,
+    public TauBranch(SlownessModel sMod,
+                     boolean isPWave,
                      double topDepth,
                      double botDepth,
                      double maxRayParam,
@@ -98,6 +99,7 @@ public class TauBranch implements Serializable, Cloneable {
                      double[] dist,
                      double[] time,
                      double[] tau) {
+        this.sMod = sMod;
         this.isPWave = isPWave;
         this.topDepth = topDepth;
         this.botDepth = botDepth;
@@ -117,6 +119,12 @@ public class TauBranch implements Serializable, Cloneable {
 
         this.topLayerNum = sMod.layerNumberBelow(getTopDepth(), isPWave);
         this.botLayerNum = sMod.layerNumberAbove(getBotDepth(), isPWave);
+        SlownessLayer topSLayer = sMod.getSlownessLayer(topLayerNum,
+                isPWave);
+        SlownessLayer botSLayer = sMod.getSlownessLayer(botLayerNum,
+                isPWave);
+        this.topRayParam = topSLayer.getTopP();
+        this.botRayParam = botSLayer.getBotP();
     }
 
     // Methods -------------------------------------------------------------
@@ -283,8 +291,7 @@ public class TauBranch implements Serializable, Cloneable {
         tb.maxRayParam = Math.max(topSLayer.getTopP(), botSLayer.getBotP());
         tb.minTurnRayParam = sMod.getMinTurnRayParam(tb.getBotDepth(), isPWave);
         tb.minRayParam = sMod.getMinRayParam(tb.getBotDepth(), isPWave);
-        tb.topRayParam = topSLayer.getTopP();
-        tb.botRayParam = botSLayer.getBotP();
+
         tb.tau = new double[rayParams.length];
         tb.dist = new double[rayParams.length];
         tb.time = new double[rayParams.length];
@@ -791,16 +798,19 @@ public class TauBranch implements Serializable, Cloneable {
 //        System.arraycopy(time, 0, newTime, 0, dist.length);
 //        double[] newTau = new double[tau.length];
 //        System.arraycopy(tau, 0, newTau, 0, dist.length);
-        TauBranch tb = new TauBranch(isPWave,
-                             topDepth,
-                             botDepth,
-                             maxRayParam,
-                             minTurnRayParam,
-                             minRayParam,
-                             dist, time, tau);
+        TauBranch tb = new TauBranch(sMod,
+                isPWave,
+                topDepth,
+                botDepth,
+                maxRayParam,
+                minTurnRayParam,
+                minRayParam,
+                dist, time, tau);
         tb.sMod = sMod;
         tb.topLayerNum = topLayerNum;
         tb.botLayerNum = botLayerNum;
+        tb.topRayParam = topRayParam;
+        tb.botRayParam = botRayParam;
         return tb;
     }
 

@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class NegSlowSlopeDepthTest {
     public static String modname = "negSlowSlopeDepth.nd";
@@ -19,33 +19,20 @@ public class NegSlowSlopeDepthTest {
     }
 
     @Test
-    public void critDepthsInSMod() {
-        SlownessModel sMod = tmod.getSlownessModel();
-        for(int critNum = 0; critNum < sMod.getNumCriticalDepths() - 1; critNum++) {
-            System.err.println(critNum+" "+sMod.getCriticalDepth(critNum).getDepth()+" "+sMod.getSlownessLayer(critNum, false));
-        }
-        System.err.println("TauBranch");
-        for (int bNum = 0; bNum < tmod.getNumBranches(); bNum++) {
-            System.err.println(bNum+" "+tmod.getTauBranch(bNum, false).getBotDepth());
-        }
-        assertTrue(false);
-    }
-
-    @Test
     public void testShadowSPhase() throws TauModelException, SlownessModelException {
         SimpleSeismicPhase phaseSS = SeismicPhaseFactory.createPhase("S", tmod);
 
         List<ShadowZone> shadowZoneList = phaseSS.getShadowZones();
         assertTrue(shadowZoneList!= null);
+        assertInstanceOf(CompositeSeismicPhase.class, phaseSS);
+        CompositeSeismicPhase compPhaseS = (CompositeSeismicPhase)phaseSS;
+        assertEquals(2, compPhaseS.getSubPhaseList().size());
+        SimpleContigSeismicPhase pre = compPhaseS.getSubPhaseList().get(0);
+        SimpleContigSeismicPhase post = compPhaseS.getSubPhaseList().get(1);
         for (ShadowZone shadow : shadowZoneList) {
-            System.err.println("rp: "+shadow.rayParam+" "+shadow.preArrival.getRayCalculateable()+" "+shadow.postArrival.getRayCalculateable());
-            System.err.println("ph idx "+phaseSS.getMinRayParamIndex()+" "+phaseSS.getMaxRayParamIndex());
-            System.err.println("sh rp idx "+shadow.rayParamIndex+" "+phaseSS.getRayParams(shadow.rayParamIndex)+" "+phaseSS.getRayParams(shadow.rayParamIndex+1));
-            System.err.println("      "+Arrival.toStringHeader());
-            System.err.println("pre:  "+shadow.preArrival+" "+shadow.preArrival.getDeepestPierce());
-            System.err.println("post: "+shadow.postArrival+" "+shadow.postArrival.getDeepestPierce());
+            assertEquals(pre.getMinRayParam(), shadow.rayParam);
+            assertEquals(post.getMaxRayParam(), shadow.rayParam);
         }
-        assertTrue(false);
     }
 
     @Test
@@ -62,5 +49,6 @@ public class NegSlowSlopeDepthTest {
         double badRP = 737.7642067530021;
         SeismicPhase phaseSS = SeismicPhaseFactory.createPhase("SS", tmod);
         Arrival arrival = phaseSS.shootRay(badRP);
+        assertNotNull(arrival);
     }
 }

@@ -358,21 +358,8 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
                             +  time[rayNum] + " --  "
                             + time[rayNum + 1]);
                 }
-                try {
-                    arrivals.add(refineArrival(rayNum, searchDist, refineDistToleranceRadian, maxRecursion));
-                } catch (RuntimeException e) {
-                    System.err.println("SeismicPhase " + name
-                            + ", found arrival:\n" + "dist "
-                            + (float)(180 / Math.PI * dist[rayNum]) + " "
-                            + (float)(180 / Math.PI * searchDist) + " "
-                            + (float)(180 / Math.PI * dist[rayNum + 1]));
-                    System.err.println("time "
-                            +  time[rayNum] + " --  "
-                            + time[rayNum + 1]);
-                    System.err.println("Phase ray param: "+getMinRayParam()+" "+getMaxRayParam());
-                    System.err.println(rayParams[rayNum]+" "+rayParams[rayNum+1]);
-                    throw e;
-                }
+                arrivals.add(refineArrival(rayNum, searchDist, refineDistToleranceRadian, maxRecursion));
+
             }
         }
         return arrivals;
@@ -409,17 +396,7 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
     public Arrival refineArrival(int rayNum, double distRadian, double distTolRadian, int maxRecursion) {
         Arrival left = createArrivalAtIndex(rayNum);
         Arrival right = createArrivalAtIndex(rayNum+1);
-        try {
-            return refineArrival(left, right, distRadian, distTolRadian, maxRecursion);
-        } catch (RuntimeException e) {
-            System.err.println("RuntimeException refineArrival "+rayNum);
-            System.err.println(e.getMessage());
-            System.err.println(left);
-            System.err.println(right);
-            System.err.println("leftrp "+left.getRayParam()+" right rp "+right.getRayParam());
-            System.err.println("minrp "+minRayParam+" max rp "+maxRayParam);
-            throw new RuntimeException(e);
-        }
+        return refineArrival(left, right, distRadian, distTolRadian, maxRecursion);
     }
 
     public Arrival refineArrival(Arrival leftEstimate, Arrival rightEstimate, double searchDist, double distTolRadian, int maxRecursion) {
@@ -536,7 +513,7 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
     @Override
     public Arrival shootRay(double rayParam) throws SlownessModelException, NoSuchLayerException {
         if(countFlatLegs() > 0 && rayParam != getMinRayParam()) {
-            throw new SlownessModelException("Unable to shoot ray in non-body, head, diffracted waves");
+            throw new SlownessModelException("Unable to shoot ray in non-body, head, diffracted waves: "+getName());
         }
         if (rayParam < minRayParam || maxRayParam < rayParam) {
             throw new SlownessModelException("Ray param "+rayParam+" is outside range for this phase: "+getName()+" min="+minRayParam+" max="+maxRayParam);
@@ -551,28 +528,17 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
         int[][] timesBranches = SeismicPhaseFactory.calcBranchMultiplier(tMod, getPhaseSegments());
         TimeDist sum = new TimeDist(rayParam);
         /* Sum the branches with the appropriate multiplier. */
-        for(int j = 0; j < tMod.getNumBranches(); j++) {
-            if(timesBranches[0][j] != 0) {
-                try {
-                    TimeDist td = tMod.getTauBranch(j, SeismicPhase.PWAVE).calcTimeDist(rayParam, true);
+        for (Boolean isPWave : List.of(true, false)) {
+            int pIdx = isPWave ? 0 : 1;
+            for (int j = 0; j < tMod.getNumBranches(); j++) {
+                if (timesBranches[pIdx][j] != 0) {
+                    TimeDist td = tMod.getTauBranch(j, isPWave).calcTimeDist(rayParam, true);
                     TimeDist mulTD = new TimeDist(rayParam,
-                            timesBranches[0][j] * td.getTime(),
-                            timesBranches[0][j] * td.getDistRadian(),
+                            timesBranches[pIdx][j] * td.getTime(),
+                            timesBranches[pIdx][j] * td.getDistRadian(),
                             td.getDepth());
                     sum = sum.add(mulTD);
-                } catch (SlownessModelException e) {
-                    System.err.println(this);
-                    throw e;
                 }
-            }
-            if(timesBranches[1][j] != 0) {
-                TimeDist td = tMod.getTauBranch(j, SeismicPhase.SWAVE).calcTimeDist(rayParam, true);
-
-                td = new TimeDist(rayParam,
-                                  timesBranches[1][j]*td.getTime(),
-                                  timesBranches[1][j]*td.getDistRadian(),
-                                  td.getDepth());
-                sum = sum.add(td);
             }
         }
         double dRPdDist = (rayParam-rayParams[rayParamIndex])/(sum.getDistRadian()-dist[rayParamIndex]);
