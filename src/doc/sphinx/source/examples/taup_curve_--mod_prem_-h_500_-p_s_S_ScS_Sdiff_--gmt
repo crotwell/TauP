@@ -12,7 +12,7 @@
 #
 gmt begin taup_curve
 
-gmt basemap -JX6.0i/6.0i -R0.0/160.87334025390405/108.95337178722244/1929.8355299795362 -Bxa20.0+l'Degrees' -Bya200.0+l'Time (s)' -BWSne+t'prem (h=500.0 km)' 
+gmt basemap -JX6.0i/6.0i -R0.0/160.87334025390402/108.95337178722247/1929.835529979536 -Bxa20.0+l'Degrees' -Bya200.0+l'Time (s)' -BWSne+t'prem (h=500.0 km)' 
 # s
 gmt plot  -l's' -W,skyblue <<END
 > 1/1 s degree180/time s for a source depth of 500.0 kilometers in the prem model
