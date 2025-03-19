@@ -10,9 +10,10 @@ conda activate sphinx
 ./gradlew wrapper --gradle-version 8.13 --distribution-type bin
 
 # regen cmd line tests, check for any differences
+export PATH="/opt/homebrew/opt/openjdk@11/bin:$PATH" 
 ./gradlew cCLTF
 
-./gradlew sphinx iD check
+./gradlew javadoc sphinx iD check
 
 # On release:
 --------------
