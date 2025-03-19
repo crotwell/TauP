@@ -7,7 +7,7 @@
 # https://github.com/crotwell/TauP
 #
 # for use with GMT6, modern syntax
-# https://docs.generic-mapping-tools.org/latest/changes.html#modern-mode-modules-in-gmt-6-0
+# https://docs.generic-mapping-tools.org/latest/reference/introduction.html#modern-and-classic-mode
 #
 #
 gmt begin taup_path
