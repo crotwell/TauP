@@ -97,16 +97,9 @@ sourceSets {
 }
 
 java {
-    registerFeature("webserver") {
-        usingSourceSet(sourceSets.main.get())
-    }
     registerFeature("example") {
-        usingSourceSet(sourceSets.main.get())
+        usingSourceSet(sourceSets["example"])
     }
-}
-
-val webserverImplementation by configurations.getting {
-    extendsFrom(configurations.implementation.get())
 }
 
 dependencies {
@@ -125,7 +118,7 @@ dependencies {
 
     runtimeOnly("org.slf4j:slf4j-reload4j:2.0.6")
 
-    webserverImplementation("io.undertow:undertow-core:2.3.18.Final")
+    implementation("io.undertow:undertow-core:2.3.18.Final")
 
         // Use JUnit Jupiter API for testing.
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.12.1")
