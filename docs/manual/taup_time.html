@@ -181,12 +181,12 @@ Distance   Depth   Phase   Travel    Ray Param  Takeoff  Incident Station   Puri
                  [--sta=l l]... [--sta=l l]... [[--mod=&lt;modelName&gt;] [-h=depth[,
                  depth...]]... [--stadepth=depth[,depth...]]... [--scat=s
                  s]...] [[-p=phase[,phase...]]...
-                 [--phasefile=&lt;phaseFiles&gt;]...] [[--deg=d[,d...]]...
-                 [--exactdegree=d[,d...]]... [--exactkilometer=km[,km...]]...
-                 [--km=km[,km...]]... [--rayparamdeg=s/deg[,s/deg...]]...
-                 [--rayparamidx=i[,i...]]... [--rayparamkm=s/km[,s/km...]]...
-                 [--rayparamrad=s/rad[,s/rad...]]... [--takeoff=deg[,
-                 deg...]]... [--degreerange=d[,d...] [d [d]]]...
+                 [--phasefile=&lt;phaseFiles&gt;]...] [[--allindex] [--deg=d[,
+                 d...]]... [--exactdegree=d[,d...]]... [--exactkilometer=km[,
+                 km...]]... [--km=km[,km...]]... [--rayparamdeg=s/deg[,
+                 s/deg...]]... [--rayparamidx=i[,i...]]... [--rayparamkm=s/km[,
+                 s/km...]]... [--rayparamrad=s/rad[,s/rad...]]... [--takeoff=deg
+                 [,deg...]]... [--degreerange=d[,d...] [d [d]]]...
                  [--kilometerrange=k[,k...] [k [k]]]... [--takeoffrange=k[,
                  k...] [k [k]]]...]... [--json | --text]
 Calculate travel times for seismic phases in an earth model.
@@ -250,6 +250,7 @@ Phase Names
       --phasefile=&lt;phaseFiles&gt;
                              read list of phase names from file
 Distance is given by:
+      --allindex             all arrivals at sampling of model
       --deg, --degree=d[,d...]
                              distance in degrees
       --degreerange=d[,d...] [d [d]]
