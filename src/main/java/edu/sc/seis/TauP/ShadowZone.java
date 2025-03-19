@@ -29,10 +29,10 @@ public class ShadowZone {
     }
 
     public String toString() {
-        return "Shadow zone for ray param "+Outputs.formatRayParam(Math.PI / 180.0 * getRayParam())+" s/deg between \n"
-                +Arrival.toStringHeader()+"\n"
-                +preArrival.toString()+"\n"
-                +postArrival.toString();
+        return preArrival.getName()+" Shadow zone for ray param "+Outputs.formatRayParam(Math.PI / 180.0 * getRayParam())+" s/deg between \n"
+                +"  "+Arrival.toStringHeader()+"\n"
+                +"  "+preArrival.toString()+"\n"
+                +"  "+postArrival.toString();
     }
 
     public double getRayParam() {
