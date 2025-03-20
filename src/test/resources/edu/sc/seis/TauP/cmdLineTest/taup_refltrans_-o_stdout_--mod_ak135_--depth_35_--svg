@@ -4,7 +4,7 @@
   <metadata>
     <taup>
       <command>taup refltransplot -o stdout &#45;&#45;mod ak135 &#45;&#45;depth 35 &#45;&#45;svg </command>
-      <version>3.0.0-SNAPSHOT9</version>
+      <version>3.0.0-SNAPSHOT10</version>
       <a href="https://github.com/crotwell/TauP">https://github.com/crotwell/TauP</a>
     <minmax xmin="0.0" xmax="89.9999088048935" ymin="-0.13902910789262635" ymax="3.073594389528412" />
     </taup>
