@@ -1,6 +1,7 @@
 /bin/
 build
 .gradle
+Notes/Models
 *.aux
 taup.bbl
 taup.blg
@@ -11,7 +12,8 @@ testing
 tmp
 /cmdLineTest/
 .idea
-src/test/resources/edu/sc/seis/TauP/cmdLineTest/index.html
-src/test/resources/edu/sc/seis/TauP/cmdLineTest/refltranCompare/*.svg
-src/test/resources/edu/sc/seis/TauP/cmdLineTest/refltranCompare/index.html
-src/doc/sphinx/source/_static/StdModels
+/src/test/resources/edu/sc/seis/TauP/cmdLineTest/index.html
+/src/test/resources/edu/sc/seis/TauP/cmdLineTest/refltranCompare/*.svg
+/src/test/resources/edu/sc/seis/TauP/cmdLineTest/refltranCompare/index.html
+/src/doc/sphinx/source/_static/StdModels
+/test
