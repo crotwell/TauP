@@ -13,19 +13,23 @@ public class LegPuller {
 
     public static final String number = "((([0-9]*[.])?[0-9]+)|([0-9]*[.]))";
 
+    public static final String customDiscon = "("+NAMED_DISCON_START+"[a-zA-Z][0-9a-zA-Z-]*"+ NAMED_DISCON_END+")";
+
+    public static final String discon = "[mci]|"+number+"|"+customDiscon;
+
     public static final String travelSuffix = "((?:"+DIFFDOWN+")|(?:"+DIFF+")|(?:ed)|n|g)";
 
-    public static final String headDiffRE = "(([PSIJK]([mci]|"+number+")?)((?:"+DIFFDOWN+")|(?:"+DIFF+")|"+HEAD_CODE+"))";
+    public static final String headDiffRE = "(([PSIJK]("+discon+")?)((?:"+DIFFDOWN+")|(?:"+DIFF+")|"+HEAD_CODE+"))";
 
-    public static final String namedHeadDiffRE = "(([PSIJK]([mci]|"+number+")?)(?<hd>(?:"+DIFFDOWN+")|(?:"+DIFF+")|"+HEAD_CODE+"))";
+    public static final String namedHeadDiffRE = "(([PSIJK]("+discon+")?)(?<hd>(?:"+DIFFDOWN+")|(?:"+DIFF+")|"+HEAD_CODE+"))";
 
-    public static final String upDiffRE = "(([pskyj]([mci]|"+number+")?)(?<hd>(?:"+DIFF+")"+"))";
+    public static final String upDiffRE = "(([pskyj]("+discon+")?)(?<hd>(?:"+DIFF+")"+"))";
 
     public static final String travelLeg = "(([PpSsKkIyJj]"+travelSuffix+"?)|"+headDiffRE+")";
 
     public static final String interactPrefix = "[vV^]";
 
-    public static final String interactPointsRE = "(("+interactPrefix+")?([mci]|"+number+"))";
+    public static final String interactPointsRE = "(("+interactPrefix+")?("+discon+"))";
 
     public static final String surfaceWave = "("+number+"kmps)";
     public static final String bodyWave = travelLeg+"("+interactPointsRE+"?"+travelLeg+")*";
@@ -279,7 +283,8 @@ public class LegPuller {
         return legs;
     }
 
-    public static int extractPhaseBoundaryInteraction(String name, int offset, int phaseCharLength, List<String> legs) throws PhaseParseException {
+    public static int extractPhaseBoundaryInteraction(String name, int offset, int phaseCharLength, List<String> legs)
+            throws PhaseParseException {
         int idx = offset;
         String phaseChar = name.substring(offset, offset+phaseCharLength);
         idx+=phaseCharLength;
@@ -311,12 +316,22 @@ public class LegPuller {
                     + " cannot be last char in " + name, name, offset);
         }
         int startIdx=offset;
-        while(startIdx < name.length() && !PhaseSymbols.isBoundary(name, startIdx)) {
-            startIdx++;
-        }
         int idx = startIdx;
-        while(idx < name.length() && PhaseSymbols.isBoundary(name, idx)) {
-            idx++;
+        if (PhaseSymbols.isCustomBoundarySymbol(name, startIdx)) {
+            idx = name.indexOf(NAMED_DISCON_END, startIdx+1);
+            if (idx == -1) {
+                throw new PhaseParseException("Unable to find end custom discon symbol: "+ NAMED_DISCON_END
+                        +" in "+name.substring(startIdx), name, offset);
+            }
+            idx+=1; // include end symbol
+        } else {
+            while (startIdx < name.length() && !PhaseSymbols.isBoundary(name, startIdx)) {
+                startIdx++;
+            }
+            idx = startIdx;
+            while (idx < name.length() && PhaseSymbols.isBoundary(name, idx)) {
+                idx++;
+            }
         }
         if (includeHeadDiff && name.length() >= idx + DIFF.length() && name.startsWith(DIFF, idx)) {
             // diffraction off other layer
@@ -344,6 +359,10 @@ public class LegPuller {
         if (leg.length() == 1 && (leg.charAt(0) == m || leg.charAt(0) == c || leg.charAt(0) == i)) {
             return true;
         }
+        if (PhaseSymbols.isCustomBoundarySymbol(leg, 0)
+                && PhaseSymbols.isCustomBoundarySymbol(leg, leg.length()-1)) {
+            return true;
+        }
         try {
             Double.parseDouble(leg);
             return true;
@@ -356,20 +375,11 @@ public class LegPuller {
      * Converts leg name to depth, if is a number (depth) or m, c, i. Null otherwise.
      */
     public static Double legAsDepthBoundary(TauModel tMod, String leg) {
-        switch (leg) {
-            case "" + m:
-                return tMod.getMohoDepth();
-            case "" + c:
-                return tMod.getCmbDepth();
-            case "" + i:
-                return tMod.getIocbDepth();
-        }
-        try {
-            return Double.parseDouble(leg);
-        } catch (NumberFormatException e) {
-            return null;
-        }
+        int branch = closestDisconBranchToDepth(tMod,leg);
+        return tMod.getTauBranch(branch, true).getTopDepth();
     }
+
+    public static final double DISCON_DEPTH_TOLERANCE = 10;
 
     /**
      * Finds the closest discontinuity to the given depth that can have
@@ -380,7 +390,7 @@ public class LegPuller {
      * @return the branch number with the closest top depth.
      */
     public static int closestDisconBranchToDepth(TauModel tMod, String depthString) {
-        return closestDisconBranchToDepth(tMod, depthString, 10);
+        return closestDisconBranchToDepth(tMod, depthString, DISCON_DEPTH_TOLERANCE);
     }
 
     public static int closestDisconBranchToDepth(TauModel tMod, String depthString, double tolerance) {
@@ -392,6 +402,25 @@ public class LegPuller {
             case "" + i:
                 return tMod.getIocbBranch();
         }
+        if (depthString.charAt(0) == PhaseSymbols.NAMED_DISCON_START) {
+            VelocityModel vMod = tMod.getVelocityModel();
+            String customName = depthString.substring(1, depthString.indexOf(NAMED_DISCON_END, 1));
+            System.err.println("Look for "+customName+" as custom discon");
+            for (NamedVelocityDiscon namedDiscon : vMod.namedDiscon) {
+                if (customName.equalsIgnoreCase(namedDiscon.getName())
+                        || customName.equalsIgnoreCase(namedDiscon.getPreferredName())) {
+                    try {
+                        return tMod.findBranch(namedDiscon.getDepth());
+                    } catch (TauModelException e) {
+                        // weird, all named discontinuities should exist???
+                        Alert.debug("Unable to find tau branch for named discon: " + namedDiscon);
+                        return -1;
+                    }
+                }
+            }
+            Alert.debug("Unable to find named discontinuity "+customName+" within velocity model "+vMod.modelName);
+            return -1;
+        }
         // nonstandard boundary, given by a number, so we must look for it
         int disconBranch = -1;
         double disconMax = tolerance;
@@ -399,7 +428,8 @@ public class LegPuller {
         TauBranch tBranch;
         for(int i = 0; i < tMod.getNumBranches(); i++) {
             tBranch = tMod.getTauBranch(i, SeismicPhase.PWAVE);
-            if (tMod.isDiscontinuityBranch(i, SeismicPhase.PWAVE)) {
+            if (tMod.isDiscontinuityBranch(i, SeismicPhase.PWAVE)
+                    || tMod.isDiscontinuityBranch(i, SeismicPhase.SWAVE)) {
                 double foundDepth = tBranch.getTopDepth();
                 double depthDelta = Math.abs(disconDepth - foundDepth);
                 if (depthDelta < disconMax

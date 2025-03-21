@@ -11,6 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class OuterCoreDisconTest {
 
+    public static String customDisconUnob = "molten-unobtainium";
 
     public OuterCoreDisconTest() throws VelocityModelException, SlownessModelException, TauModelException, IOException {
         vMod = VelocityModelTest.loadTestVelMod(modelName);
@@ -24,18 +25,36 @@ public class OuterCoreDisconTest {
     String[] zeroDistPhaseNames = {
             "PKiKP", "PKv3000kp", "PKik^3000KiKP", "PKv3000kKiKP",
             "PKIIKP", "PKIv5500Ikp", "PKI^5500IKP", "PKIv5500IKP",
-            "PKIIkp", "PKIv5500ykp"
+            "PKIIkp", "PKIv5500ykp",
+            "PKv"+PhaseSymbols.NAMED_DISCON_START+customDisconUnob+PhaseSymbols.NAMED_DISCON_END+"KP"
     };
     String[] otherPhaseNames = {
             "PKIv5500yIkpPKIKP", "PKI5500JKP"
     };
 
+    @Test
+    public void branchForCustomDiscon() throws TauModelException {
+        String customInPhase = PhaseSymbols.NAMED_DISCON_START+customDisconUnob+PhaseSymbols.NAMED_DISCON_END;
+        int disconBranch = LegPuller.closestDisconBranchToDepth(tMod, customInPhase, 10);
+        assertNotEquals(-1, disconBranch);
+        NamedVelocityDiscon namedDiscon = null;
+        for (NamedVelocityDiscon nd : tMod.getVelocityModel().namedDiscon) {
+            if (nd.getName().equalsIgnoreCase(customDisconUnob) || nd.getPreferredName().equalsIgnoreCase(customDisconUnob)) {
+                namedDiscon = nd;
+            }
+        }
+        assertNotNull(namedDiscon);
+        int found = tMod.findBranch(namedDiscon.getDepth());
+        assertEquals(7, found);
+        assertEquals(7, disconBranch);
+    }
 
     @Test
     void zeroDistPhasesTest() throws TauModelException {
         boolean debug = false;
         for(String name : zeroDistPhaseNames) {
             SeismicPhase phase = SeismicPhaseFactory.createPhase(name, tMod, tMod.getSourceDepth(), 0, debug);
+            assertTrue(phase.phasesExistsInModel(), name+" exists");
             List<Arrival> arrivals = DistanceRay.ofDegrees(0).calculate(phase);
             assertEquals( 1, arrivals.size(), name);
         }

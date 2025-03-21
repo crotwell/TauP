@@ -1,5 +1,6 @@
 package edu.sc.seis.TauP;
 
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -25,6 +26,9 @@ public class PhaseSymbols {
     public static final char m = 'm';
     public static final char c = 'c';
     public static final char i = 'i';
+    // custom named discontinuities
+    public static final char NAMED_DISCON_START = '_';
+    public static final char NAMED_DISCON_END = '_';
     // reflections
     public static final char TOPSIDE_REFLECTION = 'v';
     public static final char TOPSIDE_CRITICAL_REFLECTION = 'V';
@@ -218,6 +222,12 @@ public class PhaseSymbols {
     }
     public static boolean isBoundary(String name, int offset) {
         char ch = name.charAt(offset);
-        return Character.isDigit(ch) || ch == '.' || ch == m || ch == c || ch == i;
+        return Character.isDigit(ch) || ch == '.'
+                || ch == m || ch == c || ch == i
+                || ch == NAMED_DISCON_START;
+    }
+
+    public static boolean isCustomBoundarySymbol(String name, int offset) {
+        return Objects.equals(NAMED_DISCON_START, name.charAt(offset));
     }
 }

@@ -18,11 +18,12 @@ public class SeismicPhaseFactoryTest {
         TauModel tMod = TauModelLoader.load("ak135").depthCorrect(100);
         String phaseName = "s35p";
         SeismicPhaseFactory factory = new SeismicPhaseFactory(phaseName, tMod, sourceDepth, receiverDepth, debug);
-        assertTrue(factory.isLegDepth("35"));
-        SeismicPhaseFactory.createSeismicPhases(phaseName, tMod, tMod.getSourceDepth(), 0, null, true);
-
-
-
+        assertTrue(PhaseSymbols.isBoundary("35"));
+        assertEquals(tMod.getMohoDepth(), LegPuller.legAsDepthBoundary(tMod, "35"));
+        List<SeismicPhase> phaseList = SeismicPhaseFactory.createSeismicPhases(phaseName, tMod, tMod.getSourceDepth(), 0, null, true);
+        for (SeismicPhase phase : phaseList) {
+            assertTrue(phase.phasesExistsInModel());
+        }
     }
 
     @Test

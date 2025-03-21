@@ -534,7 +534,7 @@ public class SeismicPhaseFactory {
                 proto = layerFactories.get(OUTER_CORE_FACTOR).parse(proto, prevLeg, currLeg, nextLeg, nextNextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
             } else if (isInnerCoreLeg(currLeg)) {
                 proto = layerFactories.get(INNER_CORE_FACTORY).parse(proto, prevLeg, currLeg, nextLeg, nextNextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
-            } else if (isLegDepth(currLeg) || isReflectSymbol(currLeg) || currLeg.equals(""+ m)) {
+            } else if (isBoundary(currLeg) || isReflectSymbol(currLeg) || currLeg.equals(""+ m)) {
                 // depth interaction leg, no action
             } else {
                 return failWithMessage(proto,"Unknown leg: "+currLeg);
@@ -827,22 +827,6 @@ public class SeismicPhaseFactory {
             }
         }
         return new TimeDist(rp, time, dist);
-    }
-
-    /**
-     * find out if the next leg represents a phase conversion depth
-     * @param leg
-     * @return
-     */
-    public boolean isLegDepth(String leg) {
-        boolean isNextLegDepth;
-        try {
-            double nextLegDepth = Double.parseDouble(leg);
-            isNextLegDepth = true;
-        } catch(NumberFormatException e) {
-            isNextLegDepth = false;
-        }
-        return isNextLegDepth;
     }
 
     public int calcStartBranch(ProtoSeismicPhase proto, String currLeg) {

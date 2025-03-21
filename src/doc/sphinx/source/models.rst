@@ -45,8 +45,11 @@ The second type of line within the `.nd` format specifies one of the
 major internal boundaries. The original format was limited to *mantle*,
 *outer-core* and *inner-core*, but in version 3.0 this was expanded to include
 more crustal boundaries and synonyms. User defined labels are also allowed but
-must start with a non-number character and care should be taken when using
-in phase names to avoid confusing the phase parser. These labels
+must start with a non-number character, include only letters, numbers and the
+dash symbol and care should be taken when using
+in phase names to avoid confusing the phase parser.
+The phase parser uses the underscore to deliniate custom names, so an underscore
+cannot be used within the custom names. These labels
 are placed on a line by themselves between the two lines representing the
 sample points above and below the depth of the
 discontinuity.

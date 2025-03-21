@@ -157,7 +157,8 @@ public class OceanModelTest {
         assertEquals(europaVMod.getRadiusOfEarth(), europaVMod.getIocbDepth());
         TauModel europaTMod = TauModelLoader.createTauModel(europaVMod);
 
-        String[] phaseList = new String[]{"P", "PKP", "PKIKP"};
+        String[] phaseList = new String[]{"P", "PKP", "PKIKP",
+                "Pv" + PhaseSymbols.NAMED_DISCON_START + "ocean-crust" + PhaseSymbols.NAMED_DISCON_END + "s"};
         double[] depths = new double[]{0, 5, 10, 45, 100, 300};
         for (double depth : depths) {
             TauModel europa_tmod_depth = europaTMod.depthCorrect(depth);
@@ -245,5 +246,55 @@ public class OceanModelTest {
         assertTrue(seisPh.phasesExistsInModel());
         seisPh = SeismicPhaseFactory.createPhase("Pdiff^1554Pdiff", tMod, 0, 0);
         assertTrue(seisPh.phasesExistsInModel());
+
+        String depthOfDiscon = "1554";
+        String disconLiqSil = PhaseSymbols.NAMED_DISCON_START+marsCustomDiscon+PhaseSymbols.NAMED_DISCON_END;
+
+        String depthDisconPhase = "S1554Pcp";
+        seisPh = SeismicPhaseFactory.createPhase(depthDisconPhase, tMod, 0, 0);
+        assertTrue(seisPh.phasesExistsInModel());
+        String namedDisconPhase = depthDisconPhase.replaceAll(depthOfDiscon, disconLiqSil);
+        seisPh = SeismicPhaseFactory.createPhase(namedDisconPhase, tMod, 0, 0);
+        assertTrue(seisPh.phasesExistsInModel());
+
+        assertTrue(LegPuller.isBoundary(disconLiqSil));
+        assertEquals(LegPuller.closestDisconBranchToDepth(tMod,depthOfDiscon),
+                LegPuller.closestDisconBranchToDepth(tMod, disconLiqSil));
+        assertEquals(LegPuller.legAsDepthBoundary(tMod, depthOfDiscon),
+                LegPuller.legAsDepthBoundary(tMod, disconLiqSil));
+
+        seisPh = SeismicPhaseFactory.createPhase(namedDisconPhase, tMod, 0, 0);
+        assertTrue(seisPh.phasesExistsInModel(), namedDisconPhase);
+
+        String twoDisconPhase = "S1554PKP1554S";
+        String twoNamedDisconPhase = twoDisconPhase.replaceAll(depthOfDiscon, disconLiqSil);
+        seisPh = SeismicPhaseFactory.createPhase(twoDisconPhase, tMod, 0, 0);
+        assertTrue(seisPh.phasesExistsInModel());
+        seisPh = SeismicPhaseFactory.createPhase(twoNamedDisconPhase, tMod, 0, 0);
+        assertTrue(seisPh.phasesExistsInModel(), twoNamedDisconPhase);
+
+        String undersidePhase = "Pdiff^1554Pdiff";
+        String undersideNamedDisconPhase = undersidePhase.replaceAll(depthOfDiscon, disconLiqSil);
+        seisPh = SeismicPhaseFactory.createPhase(undersidePhase, tMod, 0, 0);
+        assertTrue(seisPh.phasesExistsInModel(), undersidePhase);
+        seisPh = SeismicPhaseFactory.createPhase(undersideNamedDisconPhase, tMod, 0, 0);
+        assertTrue(seisPh.phasesExistsInModel(), undersideNamedDisconPhase);
+
     }
+
+
+    @Test
+    public void marsLiquidLowerMantleDiff() throws VelocityModelException, IOException, SlownessModelException, TauModelException {
+        VelocityModel marsVMod = VelocityModelTest.loadTestVelMod("MarsLiquidLowerMantle.nd");
+        assertEquals(0.0, marsVMod.getVelocityLayer(marsVMod.layerNumberAbove(1560)).getTopSVelocity());
+        TauModel tMod = TauModelLoader.createTauModel(marsVMod);
+        String Pdiff = "Pdiff";
+        assertTrue(PhaseSymbols.isDiffracted(Pdiff, 0), "isDiffracted "+Pdiff+" re: "+LegPuller.namedHeadDiffRE) ;
+        String liqsilDiffName = "P" + PhaseSymbols.NAMED_DISCON_START + marsCustomDiscon + PhaseSymbols.NAMED_DISCON_END + "diff";
+        assertTrue(PhaseSymbols.isDiffracted(liqsilDiffName, 0), "isDiffracted "+liqsilDiffName);
+        SeismicPhase liqsilDiff = SeismicPhaseFactory.createPhase(liqsilDiffName, tMod, 0, 0);
+        assertTrue(liqsilDiff.phasesExistsInModel());
+    }
+
+    public static final String marsCustomDiscon = "liquid-silicate";
 }

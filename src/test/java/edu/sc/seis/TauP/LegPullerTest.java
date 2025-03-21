@@ -91,4 +91,41 @@ public class LegPullerTest {
         assertEquals("P", legs.get(4));
         assertEquals("END", legs.get(5));
     }
+
+    @Test
+    public void pullCustomNamedDiscon() throws Exception {
+        String customDiscon = PhaseSymbols.NAMED_DISCON_START+"my-discon"+PhaseSymbols.NAMED_DISCON_END;
+        String phaseName = "P"+customDiscon+"diff";
+        String boundId = LegPuller.extractBoundaryId(phaseName, 1, false);
+        assertEquals(customDiscon, boundId);
+        ArrayList<String> legs = LegPuller.legPuller(phaseName);
+        assertEquals(2, legs.size());
+        assertEquals(phaseName, legs.get(0));
+        assertEquals("END", legs.get(1));
+
+    }
+
+    @Test
+    public void pullCustomNamedDisconB() throws Exception {
+        String depthDisconPhase = "S410PcP";
+        ArrayList<String> simplegs = LegPuller.legPuller(depthDisconPhase);
+        assertEquals(6, simplegs.size(), simplegs.toString());
+
+        String customDiscon = PhaseSymbols.NAMED_DISCON_START+"liquid-silicate"+PhaseSymbols.NAMED_DISCON_END;
+        String phaseName = "S"+customDiscon+"PKP"+customDiscon+"s";
+        String boundId = LegPuller.extractBoundaryId(phaseName, 1, false);
+        assertEquals(customDiscon, boundId);
+        ArrayList<String> legs = LegPuller.legPuller(phaseName);
+        assertEquals(8, legs.size());
+        assertEquals("S", legs.get(0));
+        assertEquals(customDiscon, legs.get(1));
+        assertEquals("P", legs.get(2));
+        assertEquals("K", legs.get(3));
+        assertEquals("P", legs.get(4));
+        assertEquals(customDiscon, legs.get(5));
+        assertEquals("s", legs.get(6));
+        assertEquals("END", legs.get(7));
+
+        customDiscon = "S_liquid-silicate_PKP_liquid-silicate_S";
+    }
 }
