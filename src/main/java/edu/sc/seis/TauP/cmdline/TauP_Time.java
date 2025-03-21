@@ -61,6 +61,12 @@ public class TauP_Time extends TauP_AbstractRayTool {
         return withAmplitude;
     }
 
+    public static final String AMPLITUDE_WARNING = "    WARNING: \n"+
+            "      Amplitudes are an experimental feature and may not generate correct\n" +
+            "      results. They are provided in the hope that they are helpful and to\n" +
+            "      allow feedback from the community, but testing of their correctness\n" +
+            "      is ongoing.";
+
     @CommandLine.Mixin
     SeismicSourceArgs sourceArgs = new SeismicSourceArgs();
 
@@ -242,6 +248,9 @@ public class TauP_Time extends TauP_AbstractRayTool {
 
             if (scatterer != null && scatterer.depth != 0.0) {
                 modelLine += "  Scatter Depth: "+ scatterer.depth+" km Dist: "+ scatterer.getDistanceDegree();
+            }
+            if (withAmplitude) {
+                out.println(AMPLITUDE_WARNING);
             }
             out.println(modelLine);
             String lineOne = "Distance   Depth   " + String.format(phaseFormat, "Phase")
