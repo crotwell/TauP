@@ -35,6 +35,12 @@ public class LegPuller {
     public static final Pattern phaseRegEx =
             Pattern.compile("^("+surfaceWave+"|"+ scatterWave+"|"+ bodyWave+")$");
 
+    /**
+     * check against regex for coarse validation.
+     * currently disabled as regex has issues and is really big
+     * @param name
+     * @return
+     */
     public static boolean regExCheck(String name) {
         Matcher m = phaseRegEx.matcher(name);
         return m.matches();
@@ -52,15 +58,6 @@ public class LegPuller {
      *             if the phase name cannot be tokenized.
      */
     protected static ArrayList<String> legPuller(String name) throws PhaseParseException {
-        // check against regex for coarse validation
-        // currently disabled as regex has issues and is really big
-        if ( false && ! regExCheck(name)) {
-            if (TauPConfig.DEBUG) {
-                throw new PhaseParseException("Do not understand Phase "+name+" doesn't match phase regex: "+phaseRegEx, name, 0);
-            }
-            throw new PhaseParseException("Do not understand Phase "+name+", (regex) skipping.", name, 0);
-        }
-
         int offset = 0;
         ArrayList<String> legs = new ArrayList<>();
         /* Special case for surface wave velocity. */
