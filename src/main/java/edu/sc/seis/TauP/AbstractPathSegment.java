@@ -169,13 +169,13 @@ public abstract class AbstractPathSegment {
         for (TimeDist td : path) {
             JSONArray tdItems = new JSONArray();
             points.put(tdItems);
-            tdItems.put(td.getDistDeg());
-            tdItems.put(td.getDepth());
-            tdItems.put(td.getTime());
+            tdItems.put((float)td.getDistDeg());
+            tdItems.put((float)td.getDepth());
+            tdItems.put((float)td.getTime());
             if (arrival != null && arrival.isLatLonable()) {
                 double[] latlon = arrival.getLatLonable().calcLatLon(td.getDistDeg(), arrival.getDistDeg());
-                tdItems.put(latlon[0]);
-                tdItems.put(latlon[1]);
+                tdItems.put((float)latlon[0]);
+                tdItems.put((float)latlon[1]);
             }
         }
         return a;
