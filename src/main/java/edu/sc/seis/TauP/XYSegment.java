@@ -315,6 +315,7 @@ public class XYSegment {
 
     /**
      * Output as JSON Object. NaN and Infinity values are skipped per JSON spec.
+     * Also convert double to float as digits not significant.
      * @return
      */
     public JSONObject asJSON() {
@@ -324,8 +325,8 @@ public class XYSegment {
         for (int i = 0; i < x.length; i++) {
             if ( Double.isFinite(x[i]) && Double.isFinite(y[i])) {
                 // skip NaN/Infinity values due to JSON limitation
-                xarr.put(x[i]);
-                yarr.put(y[i]);
+                xarr.put((float)x[i]);
+                yarr.put((float)y[i]);
             }
         }
         out.put("x", xarr);
