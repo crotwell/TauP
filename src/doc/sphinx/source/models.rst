@@ -120,7 +120,7 @@ places in order until it finds a model that matches the name.
 
   ====================================================== =============================
   `iasp91 <_static/StdModels/iasp91.tvel>`_              :cite:t:`iasp` (default)
-  `prem <_static/StdModels/prem.nd>`_                    :cite:t:`dziewonski_anderson`
+  `prem <_static/StdModels/prem.nd>`_                    :cite:t:`prem`
   `ak135 <_static/StdModels/ak135.tvel>`_                :cite:t:`kennett:ak135`
   `ak135favg <_static/StdModels/ak135favg.nd>`_          :cite:t:`kennett:ak135f`
   `ak135fcont <_static/StdModels/ak135fcont.nd>`_        :cite:t:`kennett:ak135f`

@@ -30,7 +30,12 @@ this paper is also available in the distribution.
 The latest version of this documentation is available at
 `Read The Docs <https://taup.readthedocs.io/en/latest/>`_.
 
-The latest source is at `GitHub <https://github.com/crotwell/TauP>`_.
+The latest source is at GitHub,
+https://github.com/crotwell/TauP
+.
+Please file bug reports there,
+https://github.com/crotwell/TauP/issues
+.
 
 If you find TauP useful and would like to cite it, please use the following:
 

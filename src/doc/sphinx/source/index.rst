@@ -26,6 +26,7 @@ Release |release|, created |today|.
     models
     programming
     bibliography
+    Source <https://github.com/crotwell/TauP>
 
 
 
