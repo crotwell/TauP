@@ -311,6 +311,26 @@ tasks.register<Sync>("copyStdModelsToSphinx") {
   into("src/doc/sphinx/source/_static/StdModels")
 }
 
+tasks.register<JavaExec>("genAutocomplete") {
+  description = "generate TauP cmd line help output files"
+  dependsOn += tasks.getByName("classes")
+  classpath = sourceSets.getByName("main").runtimeClasspath
+  getMainClass().set("picocli.AutoComplete")
+  args = listOf("edu.sc.seis.TauP.cmdline.ToolRun", "--force")
+  dependsOn += tasks.getByName("compileJava")
+  workingDir = File("build/autocomplete")
+  outputs.files(fileTree("build/autocomplete"))
+}
+distributions {
+  main {
+    contents {
+      from(tasks.named("genAutocomplete")) {
+        into(".")
+      }
+    }
+  }
+}
+
 tasks.register<Exec>("sphinxMakeHtml") {
   workingDir("src/doc/sphinx")
   commandLine("make", "html")
