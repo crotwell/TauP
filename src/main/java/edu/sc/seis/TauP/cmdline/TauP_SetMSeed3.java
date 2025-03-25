@@ -187,16 +187,13 @@ public class TauP_SetMSeed3 extends TauP_AbstractPhaseTool {
                         modelArgs.getSourceDepths(), modelArgs.getReceiverDepths(), parsePhaseNameList(), arrivals);
                 eh.getEH().put(ehKey, taup);
             } else {
-                JSONObject bag = eh.getBagEH();
                 if (evTime == null) {
                     Alert.warning("Unable to extract event origin time, skipping record");
                 }
 
-                List<Marker> mList = new ArrayList<>();
                 for (Arrival arrival : arrivals) {
-                    mList.add(createEHMarker(arrival, evTime));
+                    eh.addToBag(createEHMarker(arrival, evTime));
                 }
-                insertMarkers(bag, arrivals, evTime);
             }
         }
     }
