@@ -24,6 +24,7 @@ Release |release|, created |today|.
     calculations
     phaseNaming
     models
+    distances
     programming
     bibliography
     Source <https://github.com/crotwell/TauP>
