@@ -18,7 +18,8 @@ or the angle from the center of the earth. In a sphere, these are equivalent,
 but on an ellipsoid they are not. It is generally more accurate to base the
 traveltime calculations based on the geocentric angle instead of the surface
 arc distance. This discrepancy arrised from the difference in definition of
-the `geodetic and geocenticlatitude <https://en.wikipedia.org/wiki/Geodetic_coordinates#Geodetic_vs._geocentric_coordinates>`_.
+the
+`geodetic and geocentic latitude <https://en.wikipedia.org/wiki/Geodetic_coordinates#Geodetic_vs._geocentric_coordinates>`_.
 Geodetic, defined as the angle of the surface normal plane and the equatorial
 plane. Geocentric is angle between the radius to the point and the equator.
 For example, the geocentric angle between
@@ -64,9 +65,9 @@ product of multiple factors. For details, see :cite:t:`fmgs`
 
 The factors that contribute to this estimate are:
 
-* A nominal source term for a Mw 4.0 earthquake.
+* A nominal source magnitude term, default is for a Mw 4.0 earthquake.
 
-* An optional source orientation, strike, dip and rake.
+* An optional source orientation, strike, dip and rake, default is a unity factor.
 
 * A radiation term, based on the density and velocity at the source depth.
 
@@ -77,7 +78,7 @@ The factors that contribute to this estimate are:
 
 * Attenuation for a regular sampled frequencies, up to a maximum.
 
-* The free surface receiver function value, if the receiver depth is less than 1.
+* The free surface receiver function value, if the receiver depth is less than 1 km.
 
 Amplitudes for seismic waves are notoriously difficult to calculate without error,
 and so the values given should be taken with a healthy dose of skepticism. In
