@@ -56,7 +56,9 @@ class IllegalPhasesTest {
 			"PKIkp",
 			"P410diffp",
 			"P410diff",
-			"P410diffS"
+			"P410diffS",
+			"Pvmp",
+			"Pv_moho_p"
 	);
 
 	static List<String> scatterLegalPhases = Arrays.asList(

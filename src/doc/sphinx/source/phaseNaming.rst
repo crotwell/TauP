@@ -68,6 +68,7 @@ the depth to an interface involved in an interaction.
     :code:`V`      critical topside reflection, used primarily for crustal and mantle interfaces
     :code:`diff`   appended to P or S to represent a diffracted wave, e.g. along the core mantle boundary, or to K for a diffracted wave along the inner-outer core boundary
     :code:`kmps`   appended to a velocity to represent a horizontal phase velocity
+    :code:`_`      delimits a named discontinuty within a phase
     ============   ================================================================
 
 3.  Exclusively upgoing and downgoing:
@@ -121,6 +122,17 @@ the depth to an interface involved in an interaction.
     names like `410` and `660` to be used without knowing the exact depth in a given
     model. Use of a depth number greater than 10 km from any discontinuity
     will result in a failed phase name.
+
+    In addition, models given in the *named discontinuities* format,
+    the name for a discontinuity can be used instead of the depth within a phase.
+    The name is pre and postpended by an underscore, :code:`_`, and can only
+    contain letters, numbers and the dash symbol, :code:`-`.
+    For example, if a model contained a discontinuity at 1000 km depth that
+    was named `mid-mantle`, then the phase :code:`Pv1000p` and
+    :code:`Pv_mid-mantle_p` would both refer to the same phase, which reflects
+    off of the top of the discontinuity at 1000 km depth. The standard
+    discontinuity names can also be used in this manner, with
+    :code:`Pvmp` and :code:`Pv_moho_p` being the same phase.
 
 5.  Conversion at depth:
 
