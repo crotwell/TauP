@@ -122,7 +122,9 @@ public class TauP_DistAz extends TauP_Tool {
         } else {
             out.println("{");
             out.println("  \"calctype\": \""+(geodeticArgs.isGeodetic()?"geodetic":"spherical")+"\",");
-            out.println("  \"invflattening\": "+(geodeticArgs.isGeodetic()?geodeticArgs.getInverseEllipFlattening():"0")+",");
+            if (geodeticArgs.isGeodetic()) {
+                out.println("  \"invflattening\": " + (geodeticArgs.isGeodetic() ? geodeticArgs.getInverseEllipFlattening() : "0") + ",");
+            }
             out.println("  \"events\": [");
             boolean isFirst = true;
             for (Location evtLoc : eventLocs) {
@@ -132,9 +134,14 @@ public class TauP_DistAz extends TauP_Tool {
                 isFirst = false;
                 out.println("    {");
                 out.println("      \"lat\": "+Outputs.formatLatLon(evtLoc.getLatitude()).trim()+",");
-                out.println("      \"lon\": "+Outputs.formatLatLon(evtLoc.getLongitude()).trim()+",");
+                out.print("      \"lon\": "+Outputs.formatLatLon(evtLoc.getLongitude()).trim());
                 String evtDesc = evtLoc.getDescription()==null?"":evtLoc.getDescription().trim();
-                out.println("      \"desc\": \""+evtDesc+"\"");
+                if (!evtDesc.isEmpty()) {
+                    out.println(",");
+                    out.println("      \"desc\": \"" + evtDesc + "\"");
+                } else {
+                    out.println();
+                }
             }
             out.println("    }");
             out.println("  ],");
@@ -147,9 +154,14 @@ public class TauP_DistAz extends TauP_Tool {
                 isFirst = false;
                 out.println("    {");
                 out.println("      \"lat\": "+Outputs.formatLatLon(staLoc.getLatitude()).trim()+",");
-                out.println("      \"lon\": "+Outputs.formatLatLon(staLoc.getLongitude()).trim()+",");
+                out.print("      \"lon\": "+Outputs.formatLatLon(staLoc.getLongitude()).trim());
                 String staDesc = staLoc.getDescription()==null?"":staLoc.getDescription().trim();
-                out.println("      \"desc\": \""+staDesc+"\"");
+                if (!staDesc.isEmpty()) {
+                    out.println(",");
+                    out.println("      \"desc\": \"" + staDesc + "\"");
+                } else {
+                    out.println();
+                }
             }
             out.println("    }");
             out.println("  ],");
@@ -195,6 +207,8 @@ public class TauP_DistAz extends TauP_Tool {
         if ( (latLonArgs.getStationLocations().isEmpty() && ! qmlStaxmlArgs.hasStationXML()) && !latLonArgs.hasAzimuth()) {
             throw new IllegalArgumentException("Either azimuth, station lat,lon or StationXML file must be given");
         }
+        latLonArgs.validateArguments();
+        geodeticArgs.validateArguments();
     }
 
     public List<Double> createDistDegreeList() {

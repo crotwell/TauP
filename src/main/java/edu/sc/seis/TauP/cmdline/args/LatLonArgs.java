@@ -50,4 +50,22 @@ public class LatLonArgs {
     public List<Location> getEventLocations() {
         return eventList;
     }
+
+    public void validateArguments() {
+        for (Location loc : getEventLocations()) {
+            if (loc.getLatitude() < -90 || loc.getLatitude() > 90) {
+                String desc = loc.getDescription();
+                desc = (desc != null) ? desc : loc.getLatitude()+"/"+loc.getLongitude();
+                throw new IllegalArgumentException("Latitude must be -90 <= lat <= 90, but was "
+                        +loc.getLatitude()+" for "+desc);
+            }
+        }
+        for (Location loc : getStationLocations()) {
+            if (loc.getLatitude() < -90 || loc.getLatitude() > 90) {
+                String desc = loc.getDescription();
+                desc = (desc != null) ? desc : loc.getLatitude()+"/"+loc.getLongitude();
+                throw new IllegalArgumentException("Latitude must be -90 <= lat <= 90, but was "
+                        +loc.getLatitude()+" for "+desc);            }
+        }
+    }
 }

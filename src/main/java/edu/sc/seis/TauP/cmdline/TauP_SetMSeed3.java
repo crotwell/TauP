@@ -93,7 +93,7 @@ public class TauP_SetMSeed3 extends TauP_AbstractPhaseTool {
 
     @Override
     public void validateArguments() throws TauPException {
-
+        geodeticArgs.validateArguments();
     }
 
     public void processMSeed3File(File msd3File) throws IOException, SeisFileException, TauPException {

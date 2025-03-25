@@ -162,7 +162,7 @@ public class TauP_SetSac extends TauP_AbstractPhaseTool {
 
     @Override
     public void validateArguments() throws TauPException {
-
+        geodeticArgs.validateArguments();
     }
 
     public void processSacFile(File f) throws IOException, TauPException {

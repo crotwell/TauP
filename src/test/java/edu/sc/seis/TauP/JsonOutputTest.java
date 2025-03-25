@@ -24,7 +24,7 @@ public class JsonOutputTest {
             "taup pierce -o stdout -h 10 -p P,pP,S,ScS --deg 15 --json",
             "taup path -o stdout -h 10 -p P,pP,S,ScS --deg 15 --json",
             "taup phase -p Pv410p,PV410p --json",
-            "taup distaz -o stdout --sta 35 -82 --sta 33 -81 --evt -101 22 --json",
+            "taup distaz -o stdout --sta 35 -82 --sta 33 -81 --evt 22 -101 --json",
             "taup velplot -o stdout --mod ak135 --json",
             "taup wavefront -o stdout --mod ak135 -h 100 -p P,S,PKIKP --timestep 500 --json",
     };

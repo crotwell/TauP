@@ -433,7 +433,8 @@ export function form_url() {
   }
   if (toolname !== "velplot" && toolname !== "curve"
       && toolname !== "wavefront"  && toolname !== "phase"
-      && toolname !== "refltrans" && toolname !== "find") {
+      && toolname !== "refltrans" && toolname !== "find"
+     && toolname !== "distaz") {
     let distparam = "";
     if (islistdegdist) {
       let distdeg = document.querySelector('input[name="distdeg"]').value;
@@ -454,34 +455,6 @@ export function form_url() {
       let distdegstep = document.querySelector('input[name="kilometerrangestep"]').value;
       let distdegmax = document.querySelector('input[name="kilometerrangemax"]').value;
       distparam += `&kilometerrange=${distdegmin},${distdegmax},${distdegstep}`;
-    }
-    if (isevtdist) {
-      let evla = document.querySelector('input[name="eventlat"]').value;
-      let evlo = document.querySelector('input[name="eventlon"]').value;
-      distparam += `&event=${evla},${evlo}`;
-    }
-    if (isstadist) {
-      let stla = document.querySelector('input[name="stationlat"]').value;
-      let stlo = document.querySelector('input[name="stationlon"]').value;
-      distparam += `&station=${stla},${stlo}`;
-    }
-    if (isazimuth) {
-      let az = document.querySelector('input[name="az"]').value;
-      distparam += `&az=${az}`;
-    }
-    if (isbackazimuth) {
-      let baz = document.querySelector('input[name="baz"]').value;
-      distparam += `&baz=${baz}`;
-    }
-    if (isevtdist || isstadist || isazimuth || isbackazimuth) {
-      let isgeod = document.querySelector('input[name="isgeodetic"]').checked;
-      if (isgeod) {
-        distparam += `&geodetic=true`;
-        let ellip = document.querySelector('input[name="geodeticflattening"]').value;
-        if (ellip != "" && ellip !== "298.257223563") {
-          distparam += `&geodeticflattening=${ellip}`;
-        }
-      }
     }
     if (istakeoffdist) {
       let takeoffangle = document.querySelector('input[name="takeoffangle"]').value;
@@ -507,6 +480,45 @@ export function form_url() {
         distparam += `&rayparamrad=${rayparam}`;
       } else {
         throw new Exception(`Unknown ray param unit: ${rayparamunit}`)
+      }
+    }
+    url += distparam;
+  }
+  if (toolname !== "velplot" && toolname !== "curve"
+      && toolname !== "wavefront"  && toolname !== "phase"
+      && toolname !== "refltrans" && toolname !== "find") {
+    let distazEnsureLatLon = false;
+    if (toolname === "distaz"
+      && ! (isevtdist || isstadist || isazimuth || isbackazimuth)) {
+        distazEnsureLatLon = true;
+      }
+    let distparam = "";
+    if (isevtdist || distazEnsureLatLon) {
+      let evla = document.querySelector('input[name="eventlat"]').value;
+      let evlo = document.querySelector('input[name="eventlon"]').value;
+      distparam += `&event=${evla},${evlo}`;
+    }
+    if (isstadist || distazEnsureLatLon) {
+      let stla = document.querySelector('input[name="stationlat"]').value;
+      let stlo = document.querySelector('input[name="stationlon"]').value;
+      distparam += `&station=${stla},${stlo}`;
+    }
+    if (isazimuth) {
+      let az = document.querySelector('input[name="az"]').value;
+      distparam += `&az=${az}`;
+    }
+    if (isbackazimuth) {
+      let baz = document.querySelector('input[name="baz"]').value;
+      distparam += `&baz=${baz}`;
+    }
+    if (distazEnsureLatLon || isevtdist || isstadist || isazimuth || isbackazimuth) {
+      let isgeod = document.querySelector('input[name="isgeodetic"]').checked;
+      if (isgeod) {
+        distparam += `&geodetic=true`;
+        let ellip = document.querySelector('input[name="geodeticflattening"]').value;
+        if (ellip != "" && ellip !== "298.257223563") {
+          distparam += `&geodeticflattening=${ellip}`;
+        }
       }
     }
     url += distparam;
@@ -795,7 +807,7 @@ export function enableParams(tool) {
     `;
   }
   if ( tool === "time" || tool === "pierce" || tool == "phase"
-      || tool == "find" || tool == "version") {
+      || tool == "find" || tool == "distaz" || tool == "version") {
     document.querySelector(`input[name="format"][value="text"]`).removeAttribute("disabled");
     document.querySelector(`input[name="format"][value="json"]`).removeAttribute("disabled");
     document.querySelector(`input[name="format"][value="svg"]`).setAttribute("disabled", "disabled");

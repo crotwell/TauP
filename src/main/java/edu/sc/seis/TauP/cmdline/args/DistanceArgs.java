@@ -397,6 +397,8 @@ public class DistanceArgs {
         if ((hasAzimuth() && hasBackAzimuth())) {
             throw new IllegalArgumentException("Cannot specify both azimuth and back azimuth");
         }
+        latLonArgs.validateArguments();
+        geodeticArgs.validateArguments();
     }
 
     public boolean isAllIndexRays() {
