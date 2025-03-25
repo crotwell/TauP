@@ -15,8 +15,8 @@ public class DistanceLengthArgs {
     @CommandLine.Option(names = {"--degreerange"},
             paramLabel = "d",
             arity = "1..3",
-            description = "regular distance range in degrees, one of max min,max or min,max,step. "
-                    + "Default min is 0 and step is 10.",
+            description = "regular distance range in degrees, one of step; min,max or min,max,step. "
+                    + "Default min is 0, max is 180 and step is 10.",
             split = ",")
     public List<Double> degreeRange = new ArrayList<>();
 
@@ -32,8 +32,8 @@ public class DistanceLengthArgs {
     @CommandLine.Option(names = {"--kilometerrange"},
             paramLabel = "k",
             arity = "1..3",
-            description = "regular distance range in kilometers, one of max min,max or min,max,step. "
-                    + "Default min is 0 and step is 10.",
+            description = "regular distance range in kilometers, one of step; min,max or min,max,step. "
+                    + "Default min is 0, max is 1000 and step is 100.",
             split = ",")
     public List<Double> kilometerRange = new ArrayList<>();
 

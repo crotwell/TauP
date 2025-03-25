@@ -21,7 +21,7 @@ public class DistanceArgs {
         }
 
         if (!distArgs.degreeRange.isEmpty()) {
-            for (Double d : createListFromRange(distArgs.degreeRange, 0, 180, 10)) {
+            for (Double d : createListFromRangeDeg(distArgs.degreeRange)) {
                 simpleDistanceList.add(DistanceRay.ofDegrees(d));
             }
         }
@@ -33,7 +33,7 @@ public class DistanceArgs {
         }
 
         if (!distArgs.kilometerRange.isEmpty()) {
-            for (Double d : createListFromRange(distArgs.kilometerRange, 0, 1000, 100)) {
+            for (Double d : createListFromRangeKm(distArgs.kilometerRange)) {
                 simpleDistanceList.add(DistanceRay.ofKilometers(d));
             }
         }
@@ -258,7 +258,7 @@ public class DistanceArgs {
         List<Double> takeoffInputList = new ArrayList<>();
         takeoffInputList.addAll(distArgs.takeoffAngle);
         if (!distArgs.takeoffRange.isEmpty()) {
-            takeoffInputList.addAll(createListFromRange(distArgs.takeoffRange));
+            takeoffInputList.addAll(createListFromRangeDeg(distArgs.takeoffRange));
         }
         for (Double d : takeoffInputList) {
             if (d < 0 || d > 180) {
@@ -329,10 +329,17 @@ public class DistanceArgs {
         return rpList;
     }
 
-    public static List<Double> createListFromRange(List<Double> minMaxStep) {
+    public static List<Double> createListFromRangeDeg(List<Double> minMaxStep) {
         double step = 10;
         double start = 0;
         double stop = 180;
+        return createListFromRange(minMaxStep, start, stop, step);
+    }
+
+    public static List<Double> createListFromRangeKm(List<Double> minMaxStep) {
+        double step = 100;
+        double start = 0;
+        double stop = 1000;
         return createListFromRange(minMaxStep, start, stop, step);
     }
 
@@ -348,7 +355,7 @@ public class DistanceArgs {
                 stop = minMaxStep.get(1);
                 break;
             case 1:
-                stop = minMaxStep.get(0);
+                step = minMaxStep.get(0);
                 break;
             case 0:
                 break;

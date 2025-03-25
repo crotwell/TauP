@@ -46,12 +46,12 @@ Optional distance is given by:
       --deg, --degree=d[,d...]
                              distance in degrees
       --degreerange=d[,d...] [d [d]]
-                             regular distance range in degrees, one of max min,
-                               max or min,max,step. Default min is 0 and step
-                               is 10.
+                             regular distance range in degrees, one of step;
+                               min,max or min,max,step. Default min is 0, max
+                               is 180 and step is 10.
       --kilometerrange=k[,k...] [k [k]]
-                             regular distance range in kilometers, one of max
-                               min,max or min,max,step. Default min is 0 and
-                               step is 10.
+                             regular distance range in kilometers, one of step;
+                               min,max or min,max,step. Default min is 0, max
+                               is 1000 and step is 100.
       --km, --kilometer=km[,km...]
                              distance in kilometers along surface.
