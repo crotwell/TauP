@@ -189,7 +189,6 @@ public class TauP_WebServe extends TauP_Tool {
             }
             if (op != null) {
                 if (op.typeInfo().isBoolean()) {
-                    System.err.println(qp+" is boolean: "+qpList.getFirst());
                     if (qpList.size() == 1 && qpList.getFirst().equalsIgnoreCase("false")) {
                         // don't add boolean flags if value is false as flag means true
                     } else if (qpList.size() == 1 && qpList.getFirst().equalsIgnoreCase("true")) {

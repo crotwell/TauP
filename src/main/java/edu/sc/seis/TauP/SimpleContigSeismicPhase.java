@@ -662,10 +662,8 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
         boolean firstIsPWave = getFinalPhaseSegment().isPWave;
         double rayParam;
         try {
-            System.err.println(getName()+" "+incidentDegree+", "+firstIsPWave+" down: "+ getFinalPhaseSegment().isDownGoing);
             rayParam = calcRayParamForIncidentAngleInModel(incidentDegree, firstIsPWave, getProto(),
                     getFinalPhaseSegment().isDownGoing);
-            System.err.println("Got "+rayParam);
         } catch(NoSuchLayerException | SlownessModelException e) {
             throw new RuntimeException("Should not happen",e);
         }
