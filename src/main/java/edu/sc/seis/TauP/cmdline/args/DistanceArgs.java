@@ -291,6 +291,44 @@ public class DistanceArgs {
         return rpList;
     }
 
+    public List<IncidentAngleRay> getIncidentAngleRays() {
+        List<IncidentAngleRay> rpList = new ArrayList<>();
+        List<Double> incidentAngleInputList = new ArrayList<>();
+        incidentAngleInputList.addAll(distArgs.incidentAngle);
+        if (!distArgs.incidentRange.isEmpty()) {
+            incidentAngleInputList.addAll(createListFromRangeDeg(distArgs.incidentRange));
+        }
+        for (Double d : incidentAngleInputList) {
+            if (d < 0 || d > 180) {
+                throw new IllegalArgumentException("Incident angle should be between 0 and 180 degrees: "+d);
+            }
+            if (hasEventLatLon() && !hasStationLatLon() && getAzimuth() != null) {
+                if (geodeticArgs.isGeodetic()) {
+                    throw new IllegalArgumentException("geodetic not yet...");
+                } else {
+                    for (Location evt : latLonArgs.eventList) {
+                        IncidentAngleRay evtDr = new IncidentAngleRay(d);
+                        evtDr.withEventAzimuth(evt, getAzimuth());
+                        rpList.add(evtDr);
+                    }
+                }
+            } else if (!hasEventLatLon() && hasStationLatLon() && getBackAzimuth() != null) {
+                if (geodeticArgs.isGeodetic()) {
+                    throw new IllegalArgumentException("geodetic not yet...");
+                } else {
+                    for (Location sta : latLonArgs.stationList) {
+                        IncidentAngleRay staDr = new IncidentAngleRay(d);
+                        staDr.withStationBackAzimuth(sta, getBackAzimuth());
+                        rpList.add(staDr);
+                    }
+                }
+            } else {
+                rpList.add(IncidentAngleRay.ofIncidentAngle(d));
+            }
+        }
+        return rpList;
+    }
+
     public static List<Double> createListFromRange(List<Double> minMaxStep) {
         double step = 10;
         double start = 0;
@@ -340,6 +378,7 @@ public class DistanceArgs {
         out.addAll(getRayParamKmRays());
         out.addAll(getRayParamRadianRays());
         out.addAll(getTakeoffAngleRays());
+        out.addAll(getIncidentAngleRays());
         out.addAll(getRayParamIndexRays());
         if (hasAzimuth()) {
             for (RayCalculateable rc : out) {
@@ -458,6 +497,7 @@ public class DistanceArgs {
         latLonArgs.stationList.clear();
         latLonArgs.eventList.clear();
         distArgs.takeoffAngle.clear();
+        distArgs.incidentAngle.clear();
         distArgs.degreesList.clear();
         distArgs.distKilometersList.clear();
         distArgs.shootRaypList.clear();

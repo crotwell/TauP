@@ -12,10 +12,11 @@ Usage: taup path [--debug] [--geodetic] [--help] [--label] [--legend]
                  [,depth...]]... [--scat=s s]...] [[-p=phase[,phase...]]...
                  [--phasefile=<phaseFiles>]...] [[--allindex] [--deg=d[,
                  d...]]... [--exactdegree=d[,d...]]... [--exactkilometer=km[,
-                 km...]]... [--km=km[,km...]]... [--rayparamdeg=s/deg[,
-                 s/deg...]]... [--rayparamidx=i[,i...]]... [--rayparamkm=s/km[,
-                 s/km...]]... [--rayparamrad=s/rad[,s/rad...]]... [--takeoff=deg
-                 [,deg...]]... [--degreerange=d[,d...] [d [d]]]...
+                 km...]]... [--incident=deg[,deg...]]... [--km=km[,km...]]...
+                 [--rayparamdeg=s/deg[,s/deg...]]... [--rayparamidx=i[,
+                 i...]]... [--rayparamkm=s/km[,s/km...]]... [--rayparamrad=s/rad
+                 [,s/rad...]]... [--takeoff=deg[,deg...]]... [--degreerange=d[,
+                 d...] [d [d]]]... [--incidentrange=k[,k...] [k [k]]]...
                  [--kilometerrange=k[,k...] [k [k]]]... [--takeoffrange=k[,
                  k...] [k [k]]]...]... [--gmt | --json | --svg | --text]
 Plot ray paths, distance vs. depth, through the earth.
@@ -93,6 +94,13 @@ Distance is given by:
       --exactdegree=d[,d...] exact distance traveled in degrees, not 360-d
       --exactkilometer=km[,km...]
                              exact distance traveled in kilometers, not 360-k
+      --incident=deg[,deg...]
+                             incident angle in degrees at the receiver, zero is
+                               down, 90 horizontal, 180 is up.
+      --incidentrange=k[,k...] [k [k]]
+                             regular range in incident angle in degrees, one of
+                               max min,max or min,max,step. Default min is 0
+                               and step is 10.
       --kilometerrange=k[,k...] [k [k]]
                              regular distance range in kilometers, one of max
                                min,max or min,max,step. Default min is 0 and

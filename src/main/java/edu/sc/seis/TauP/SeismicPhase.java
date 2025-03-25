@@ -126,6 +126,8 @@ public interface SeismicPhase extends Serializable, Cloneable {
 
     double calcRayParamForTakeoffAngle(double takeoffDegree) throws NoArrivalException;
 
+    double calcRayParamForIncidentAngle(double incidentDegree) throws NoArrivalException;
+
     double velocityAtSource();
 
     double velocityAtReceiver();

@@ -36,6 +36,21 @@ public class DistanceRayArgs extends DistanceLengthArgs {
             split = ",")
     public List<Double> takeoffRange = new ArrayList<>();
 
+    @CommandLine.Option(names = "--incident",
+            split = ",",
+            paramLabel = "deg",
+            description = "incident angle in degrees at the receiver, zero is down, 90 horizontal, 180 is up.")
+    public List<Double> incidentAngle = new ArrayList<>();
+
+
+    @CommandLine.Option(names = {"--incidentrange"},
+            paramLabel = "k",
+            arity = "1..3",
+            description = "regular range in incident angle in degrees, one of max min,max or min,max,step. "
+                    + "Default min is 0 and step is 10.",
+            split = ",")
+    public List<Double> incidentRange = new ArrayList<>();
+
     @CommandLine.Option(names = {"--rayparamrad"},
             paramLabel = "s/rad",
             description = "ray parameter from the source in s/rad, up or down is determined by the phase",
@@ -75,6 +90,8 @@ public class DistanceRayArgs extends DistanceLengthArgs {
                 && shootRadianRaypList.isEmpty()
                 && shootRaypList.isEmpty()
                 && takeoffAngle.isEmpty()
-                && takeoffRange.isEmpty();
+                && takeoffRange.isEmpty()
+                && incidentAngle.isEmpty()
+                && incidentRange.isEmpty();
     }
 }

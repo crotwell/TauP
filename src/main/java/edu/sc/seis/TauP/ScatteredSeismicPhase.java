@@ -310,6 +310,11 @@ public class ScatteredSeismicPhase implements SeismicPhase {
     }
 
     @Override
+    public double calcRayParamForIncidentAngle(double incidentDegree) throws NoArrivalException {
+        return getScatteredPhase().calcRayParamForIncidentAngle(incidentDegree);
+    }
+
+    @Override
     public double velocityAtSource() {
         return inboundArrival.getPhase().velocityAtSource();
     }

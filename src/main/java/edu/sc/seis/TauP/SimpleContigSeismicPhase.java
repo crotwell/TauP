@@ -649,6 +649,52 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
         return rayParam;
     }
 
+
+    @Override
+    public double calcRayParamForIncidentAngle(double incidentDegree) throws NoArrivalException {
+        if (incidentDegree < 0 || incidentDegree > 180) {
+            throw new IllegalArgumentException("Takeoff angle should be 0 to 180, but was "+incidentDegree);
+        }
+        if (getPhaseSegments().isEmpty()) {
+            throw new NoArrivalException("No phase segments for "+getName());
+        }
+
+        boolean firstIsPWave = getFinalPhaseSegment().isPWave;
+        double rayParam;
+        try {
+            System.err.println(getName()+" "+incidentDegree+", "+firstIsPWave+" down: "+ getFinalPhaseSegment().isDownGoing);
+            rayParam = calcRayParamForIncidentAngleInModel(incidentDegree, firstIsPWave, getProto(),
+                    getFinalPhaseSegment().isDownGoing);
+            System.err.println("Got "+rayParam);
+        } catch(NoSuchLayerException | SlownessModelException e) {
+            throw new RuntimeException("Should not happen",e);
+        }
+        return rayParam;
+    }
+
+    public static double calcRayParamForIncidentAngleInModel(double incidentDegree,
+                                                            boolean isPWave,
+                                                            ProtoSeismicPhase proto,
+                                                            boolean isDownGoing)
+            throws NoSuchLayerException, SlownessModelException {
+        if ((isDownGoing && (incidentDegree < 90))
+                || ( ! isDownGoing && (incidentDegree > 90))
+        ) {
+            throw new SlownessModelException("Phase ends downgoing and incident different up/down "+isDownGoing+" "+incidentDegree);
+        }
+        SlownessLayer sLayer;
+        if ( ! isDownGoing) {
+            int layerNum = proto.tMod.getSlownessModel().layerNumberBelow(proto.receiverDepth, isPWave);
+            sLayer = proto.tMod.getSlownessModel().getSlownessLayer(layerNum, isPWave);
+        } else {
+            int layerNum = proto.tMod.getSlownessModel().layerNumberAbove(proto.receiverDepth, isPWave);
+            sLayer = proto.tMod.getSlownessModel().getSlownessLayer(layerNum, isPWave);
+        }
+        double rayParam = sLayer.evaluateAt_bullen(proto.receiverDepth, proto.tMod.radiusOfEarth)
+                *Math.sin(incidentDegree*SphericalCoords.DtoR);
+        return rayParam;
+    }
+
     @Override
     public double velocityAtSource() {
         try {

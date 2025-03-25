@@ -378,6 +378,10 @@ public class CompositeSeismicPhase extends SimpleSeismicPhase {
     public double calcRayParamForTakeoffAngle(double takeoffDegree) throws NoArrivalException {
         return getSubPhaseList().get(0).calcRayParamForTakeoffAngle(takeoffDegree);
     }
+    @Override
+    public double calcRayParamForIncidentAngle(double incidentDegree) throws NoArrivalException {
+        return getSubPhaseList().get(0).calcRayParamForIncidentAngle(incidentDegree);
+    }
 
     @Override
     public double velocityAtSource() {
