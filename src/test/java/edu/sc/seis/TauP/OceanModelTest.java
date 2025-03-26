@@ -24,7 +24,7 @@ public class OceanModelTest {
                 assertEquals(3, nd.depth);
             }
         }
-        assertEquals(10, vMod.getMohoDepth());
+        assertEquals(18, vMod.getMohoDepth());
         assertEquals(2891.50, vMod.getCmbDepth());
         assertEquals(5153.50, vMod.getIocbDepth());
         TauModel tMod = TauModelLoader.createTauModel(vMod);

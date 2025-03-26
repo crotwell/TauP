@@ -281,13 +281,15 @@ Notes on Standard Models
   https://rses.anu.edu.au/seismology/ak135/ak135f.txt
   and the html version here
   https://rses.anu.edu.au/seismology/ak135/ak135f.html
-  with the text version showing a depth sample in the average structure at 120 km
+  with the html version showing an additional depth sample in the
+  "Spherical average structure" at 120 km
   that matches the 120 km sample in the base model. As both lines are the same,
   this doesn't change the model, but seems to indicate that the 120 km depth
-  sample in the continental model should not be viewed as creating a discontinuity.
+  sample in the "continental structure" model should not be viewed as
+  creating a discontinuity.
 
-  At 210 km depth, there is a non-discontinuity in velocity, but a discontinuity
-  in the Q model.
+  At 210 km depth, there is a non-discontinuity discontinuity in velocity,
+  which is a discontinuity in the Q model.
 
   .. code-block::
 
@@ -305,18 +307,23 @@ Notes on Standard Models
   https://service.iris.edu/irisws/syngine/1/
   allows calculation of synthetic seismograms for several 1D earth models. The
   ak135f model used by Syngine appears to be a variant of the ak135favg model
-  where the 3 km ocean and 0.3 km sediment layers have been replaced by
-  velocities from the lower crustal layer, resulting in a 10 km thick
+  where the 3 km thick ocean and 0.3 km thick sediment layers have been replaced by
+  velocities from the 10 km depth crustal layer, resulting in a 18 km thick
   crust with constant velocity. Note this is different from the ak135fcont
-  model that includes a thicker, 35 km thick two layer crust and a slightly different
+  model that includes a thicker, 35 km thick layer crust and a slightly different
   uppermost mantle structure, from 35 to 120 km. Travel times from TauP
   for ak135f will thus be similar, but not exactly match the output of syngine.
   We have included a ak135fsyngine model with these modifications for
   compatibility.
 
+  The model used within syngine, embedded as FORTRAN and using cubic splines,
+  is here, lines 184-305:
+  https://github.com/geodynamics/axisem/blob/master/MESHER/background_models.F90
+
 * PREM
 
-  The Qp values in prem.nd are all also derived from Qs via the equation above
+  The Qp values in prem.nd are all also equivalent to being
+  derived from Qs via the equation above
   for ak135f, except for the inner core, where values near 600 are given but
   the equation from Qs predicts a Qp value closer to 430-445. Note that PREM
   gives a different Qkappa in the inner core from the rest of the model,
