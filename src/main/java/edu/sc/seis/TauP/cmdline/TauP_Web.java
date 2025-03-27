@@ -35,6 +35,7 @@ public class TauP_Web implements Callable<Integer> {
         try {
             TauP_WebServe tool = new TauP_WebServe();
             tool.port = port;
+            tool.host = host;
             for (String modName : extraModelNames) {
                 VelocityModel vMod = TauModelLoader.loadVelocityModel(modName);
                 if (vMod == null) {
@@ -65,6 +66,9 @@ public class TauP_Web implements Callable<Integer> {
 
     @CommandLine.Option(names = {"-p", "--port"}, defaultValue = "7409", description = "port to use, defaults to ${DEFAULT-VALUE}")
     int port = 7409;
+
+    @CommandLine.Option(names = {"--host"}, defaultValue = "localhost", description = "host to expose port on, defaults to ${DEFAULT-VALUE}")
+    String host = "localhost";
 
     @CommandLine.Option(names = {"--models"},
             arity = "1..*",

@@ -110,7 +110,7 @@ public class TauP_WebServe extends TauP_Tool {
         };
 
         Undertow server = Undertow.builder()
-                .addHttpListener(port, "localhost")
+                .addHttpListener(port, host)
                 .setHandler(new BlockingHandler(handler)).build();
         server.start();
     }
@@ -394,6 +394,8 @@ public class TauP_WebServe extends TauP_Tool {
 
     // see edu.sc.seis.TauP.TauP_Web for picocli cmd line interface
     public int port = 7409;
+
+    public String host = "localhost";
 
     public Map<String, VelocityModel> additionalModels = new HashMap<>();
 
