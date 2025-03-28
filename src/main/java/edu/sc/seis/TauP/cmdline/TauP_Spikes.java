@@ -211,8 +211,8 @@ public class TauP_Spikes extends TauP_AbstractRayTool {
         float olat = 0;
         float olon = 0;
         if (distanceArgs.hasEventLatLon()) {
-            olat = (float) distanceArgs.getEventList().get(0).getLatitude();
-            olon = (float) distanceArgs.getEventList().get(0).getLongitude();
+            olat = (float) distanceArgs.getEventLatLon().get(0).getLatitude();
+            olon = (float) distanceArgs.getEventLatLon().get(0).getLongitude();
         }
         origin.setLatitude(new RealQuantity(olat));
         origin.setLongitude(new RealQuantity(olon));

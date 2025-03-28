@@ -5,10 +5,11 @@ Usage: taup pierce [--amp] [--debug] [--first] [--geodetic] [--help]
                    [--baz=<backAzimuth>] [--geodeticflattening=f] [--mw=<mw>]
                    [--numattenuationfreq=<numFrequencies>] [-o=<outFile>]
                    [--prop=<toolPropsFilename>] [--qml=<quakemlFilename>]
-                   [--staxml=<stationxmlFilename>] [--pierce=depth[,
-                   depth...]]... [--rel=phase[,phase...]]... [--strikediprake=s
-                   [,s...]]... [--evt=l l]... [--evt=l l]... [--sta=l l]...
-                   [--sta=l l]... [[--mod=<modelName>] [-h=depth[,depth...]]...
+                   [--staxml=<stationxmlFilename>] [--eid=evt[,evt...]]...
+                   [--pierce=depth[,depth...]]... [--rel=phase[,phase...]]...
+                   [--sid=sta[,sta...]]... [--strikediprake=s[,s...]]...
+                   [--evt=l l]... [--evt=l l]... [--sta=l l]... [--sta=l l]...
+                   [[--mod=<modelName>] [-h=depth[,depth...]]...
                    [--stadepth=depth[,depth...]]... [--scat=s s]...] [[-p=phase
                    [,phase...]]... [--phasefile=<phaseFiles>]...] [[--allindex]
                    [--deg=d[,d...]]... [--exactdegree=d[,d...]]...
@@ -29,6 +30,9 @@ Options:
                              attenuation frequency for amplitude calculations,
                                default is 1.0
       --debug                enable debugging output
+      --eid=evt[,evt...]     event id, like  	us7000pn9s, for lookup via USGS
+                               fdsn event web service. Creates a distance if
+                               event is also given.
       --first, --onlyfirst   only output the first arrival for each phase, no
                                triplications
       --geodetic             use geodetic latitude for distance calculations,
@@ -59,6 +63,9 @@ Options:
       --rel=phase[,phase...] times relative to the first of the given phases
       --rev                  only prints underside and bottom turn points, e.g.
                                ^ and v
+      --sid=sta[,sta...]     station id, like CO.HAW or FDSN:CO_HAW, for lookup
+                               via fedcat web service. Creates a distance if
+                               event is also given.
       --staxml=<stationxmlFilename>
                              StationXML file to extract station latitudes and
                                longitudes from

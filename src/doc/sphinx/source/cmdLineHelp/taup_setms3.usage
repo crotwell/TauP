@@ -2,6 +2,7 @@ Usage: taup setms3 [--debug] [--geodetic] [--help] [--verbose] [--taupeh
                    [=<ehKey>]] [--geodeticflattening=f]
                    [--prop=<toolPropsFilename>] [--qml=<quakemlFilename>]
                    [--qmltol=<quakeOTimeTol>] [--staxml=<stationxmlFilename>]
+                   [--eid=evt[,evt...]]... [--sid=sta[,sta...]]...
                    [[--mod=<modelName>] [-h=depth[,depth...]]...
                    [--stadepth=depth[,depth...]]... [--scat=s s]...] [[-p=phase
                    [,phase...]]... [--phasefile=<phaseFiles>]...]
@@ -15,6 +16,9 @@ has details on the JSON structure.
 Options:
 
       --debug              enable debugging output
+      --eid=evt[,evt...]   event id, like  	us7000pn9s, for lookup via USGS
+                             fdsn event web service. Creates a distance if
+                             event is also given.
       --geodetic           use geodetic latitude for distance calculations,
                              which implies an ellipticity. Default is
                              spherical. Note this only affects calculation of
@@ -32,6 +36,9 @@ Options:
       --qmltol=<quakeOTimeTol>
                            time window to search for origins in a QuakeML file
                              as an ISO8601 string, default value is PT1H.
+      --sid=sta[,sta...]   station id, like CO.HAW or FDSN:CO_HAW, for lookup
+                             via fedcat web service. Creates a distance if
+                             event is also given.
       --staxml=<stationxmlFilename>
                            StationXML file to extract station latitudes and
                              longitudes from

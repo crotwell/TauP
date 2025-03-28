@@ -1,8 +1,10 @@
-Usage: taup web [--open] [-p=<port>] [--models=<extraModelNames>...]...
+Usage: taup web [--open] [--host=<host>] [-p=<port>]
+                [--models=<extraModelNames>...]...
 Web based gui for the TauP Toolkit.
 
 Options:
 
+      --host=<host>   host to expose port on, defaults to localhost
       --models=<extraModelNames>...
                       List of additional models to use
       --open          autoopen web page

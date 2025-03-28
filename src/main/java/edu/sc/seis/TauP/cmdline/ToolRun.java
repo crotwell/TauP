@@ -5,6 +5,8 @@ import edu.sc.seis.TauP.TauPConfig;
 import edu.sc.seis.TauP.cmdline.args.VersionProvider;
 import picocli.AutoComplete;
 import picocli.CommandLine;
+import org.apache.log4j.Logger;
+import org.apache.log4j.BasicConfigurator;
 
 import java.io.*;
 
@@ -130,8 +132,13 @@ public class ToolRun {
 	@CommandLine.Option(names = {"--help"}, usageHelp = true, description = "display this help message")
 	boolean usageHelpRequested;
 
+	public static void configLogging() {
+		BasicConfigurator.configure();
+		org.apache.log4j.Logger.getRootLogger().setLevel(org.apache.log4j.Level.INFO);
+	}
 
 	public static int mainWithExitCode(String[] args) {
+		configLogging();
 		// precheck args for debug and verbose to aid in debugging picocli issues
 		for (String arg : args) {
 			if(dashEquals("verbose", arg)) {

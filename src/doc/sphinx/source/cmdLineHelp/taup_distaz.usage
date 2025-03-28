@@ -2,10 +2,11 @@ Usage: taup distaz [--debug] [--geodetic] [--help] [--verbose] [--az=<azimuth>]
                    [--baz=<backAzimuth>] [--geodeticflattening=f]
                    [-o=<outFile>] [--prop=<toolPropsFilename>]
                    [--qml=<quakemlFilename>] [--radius=<radiusOfEarth>]
-                   [--staxml=<stationxmlFilename>] [--evt=l l]... [--sta=l
-                   l]... [--json | --text] [[--deg=d[,d...]]... [--km=km[,
-                   km...]]... [--degreerange=d[,d...] [d [d]]]...
-                   [--kilometerrange=k[,k...] [k [k]]]...]...
+                   [--staxml=<stationxmlFilename>] [--eid=evt[,evt...]]...
+                   [--sid=sta[,sta...]]... [--evt=l l]... [--sta=l l]...
+                   [--json | --text] [[--deg=d[,d...]]... [--km=km[,km...]]...
+                   [--degreerange=d[,d...] [d [d]]]... [--kilometerrange=k[,
+                   k...] [k [k]]]...]...
 Calc distance, az and baz for event lat,lon and station lat,lon pairs.
 
 Options:
@@ -13,6 +14,9 @@ Options:
       --az=<azimuth>         azimuth in degrees, source to receiver
       --baz=<backAzimuth>    backazimuth in degrees, receiver to source
       --debug                enable debugging output
+      --eid=evt[,evt...]     event id, like  	us7000pn9s, for lookup via USGS
+                               fdsn event web service. Creates a distance if
+                               event is also given.
       --evt, --event=l l     event latitude and longitude.  Creates a distance
                                if station is also given.
       --geodetic             use geodetic latitude for distance calculations,
@@ -33,6 +37,9 @@ Options:
       --radius=<radiusOfEarth>
                              radius of earth in km, used when distance given in
                                km
+      --sid=sta[,sta...]     station id, like CO.HAW or FDSN:CO_HAW, for lookup
+                               via fedcat web service. Creates a distance if
+                               event is also given.
       --sta, --station=l l   station latitude and longitude. Creates a distance
                                if event is also given.
       --staxml=<stationxmlFilename>

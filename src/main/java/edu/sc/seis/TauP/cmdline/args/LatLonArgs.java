@@ -28,7 +28,13 @@ public class LatLonArgs {
     }
 
     public List<Location> getStationLocations() {
-        return stationList;
+        List<Location> out = new ArrayList<>();
+        out.addAll(stationList);
+        return out;
+    }
+
+    public boolean hasStationLatLon() {
+        return !( this.stationList.isEmpty()) ;
     }
 
     @CommandLine.Option(names = {"--evt", "--event"},
@@ -49,6 +55,10 @@ public class LatLonArgs {
 
     public List<Location> getEventLocations() {
         return eventList;
+    }
+
+    public boolean hasEventLatLon() {
+        return !( this.eventList.isEmpty()) ;
     }
 
     public void validateArguments() {

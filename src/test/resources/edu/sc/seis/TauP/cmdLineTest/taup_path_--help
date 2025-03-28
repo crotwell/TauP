@@ -6,6 +6,7 @@ Usage: taup path [--debug] [--geodetic] [--help] [--label] [--legend]
                  [--maxpathinc=<maxPathInc>] [-o=<outFile>]
                  [--prop=<toolPropsFilename>] [--qml=<quakemlFilename>]
                  [--staxml=<stationxmlFilename>] [--xaxis=type] [--yaxis=type]
+                 [--eid=evt[,evt...]]... [--sid=sta[,sta...]]...
                  [--degminmax=deg deg]... [--depthminmax=km km]... [--evt=l
                  l]... [--evt=l l]... [--sta=l l]... [--sta=l l]...
                  [[--mod=<modelName>] [-h=depth[,depth...]]... [--stadepth=depth
@@ -28,6 +29,9 @@ Options:
       --debug                enable debugging output
       --degminmax=deg deg    min and max distance in degrees for plotting
       --depthminmax=km km    min and max depth, km,  for plotting
+      --eid=evt[,evt...]     event id, like  	us7000pn9s, for lookup via USGS
+                               fdsn event web service. Creates a distance if
+                               event is also given.
       --geodetic             use geodetic latitude for distance calculations,
                                which implies an ellipticity. Default is
                                spherical. Note this only affects calculation of
@@ -53,6 +57,9 @@ Options:
                              load defaults from properties file
       --qml, --quakeml=<quakemlFilename>
                              QuakeML file to load for earthquake origins to use
+      --sid=sta[,sta...]     station id, like CO.HAW or FDSN:CO_HAW, for lookup
+                               via fedcat web service. Creates a distance if
+                               event is also given.
       --staxml=<stationxmlFilename>
                              StationXML file to extract station latitudes and
                                longitudes from
