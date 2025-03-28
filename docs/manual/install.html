@@ -57,6 +57,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#macintosh">Macintosh</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#linux">Linux</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#docker">Docker</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#manually">Manually</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#rebuilding">Rebuilding</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#tab-completion">Tab completion</a></li>
@@ -67,8 +68,10 @@
 <li class="toctree-l1"><a class="reference internal" href="calculations.html">Calculations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="phaseNaming.html">Phases</a></li>
 <li class="toctree-l1"><a class="reference internal" href="models.html">Velocity Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="distances.html">Rays and Distances</a></li>
 <li class="toctree-l1"><a class="reference internal" href="programming.html">Programmatic Access</a></li>
 <li class="toctree-l1"><a class="reference internal" href="bibliography.html">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/crotwell/TauP">Source</a></li>
 </ul>
 
 <div class="relations">
@@ -129,6 +132,10 @@
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">snap</span> <span class="n">install</span> <span class="n">taup</span> <span class="o">--</span><span class="n">channel</span><span class="o">=</span><span class="n">latest</span><span class="o">/</span><span class="n">edge</span>
 </pre></div>
 </div>
+</section>
+<section id="docker">
+<h2>Docker<a class="headerlink" href="#docker" title="Link to this heading">¶</a></h2>
+<p><code class="code docutils literal notranslate"><span class="pre">docker</span> <span class="pre">run</span> <span class="pre">-p</span> <span class="pre">127.0.0.1:7409:7409</span> <span class="pre">crotwell/taup:v3.0.0-snapshot10</span> <span class="pre">web</span> <span class="pre">--host</span> <span class="pre">0.0.0.0</span></code></p>
 </section>
 <section id="manually">
 <h2>Manually<a class="headerlink" href="#manually" title="Link to this heading">¶</a></h2>

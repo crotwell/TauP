@@ -84,8 +84,10 @@
 <li class="toctree-l1"><a class="reference internal" href="calculations.html">Calculations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="phaseNaming.html">Phases</a></li>
 <li class="toctree-l1"><a class="reference internal" href="models.html">Velocity Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="distances.html">Rays and Distances</a></li>
 <li class="toctree-l1"><a class="reference internal" href="programming.html">Programmatic Access</a></li>
 <li class="toctree-l1"><a class="reference internal" href="bibliography.html">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/crotwell/TauP">Source</a></li>
 </ul>
 
 <div class="relations">
@@ -172,10 +174,11 @@ but this is limited to spherical, not geodetic.</p>
                    [--baz=&lt;backAzimuth&gt;] [--geodeticflattening=f]
                    [-o=&lt;outFile&gt;] [--prop=&lt;toolPropsFilename&gt;]
                    [--qml=&lt;quakemlFilename&gt;] [--radius=&lt;radiusOfEarth&gt;]
-                   [--staxml=&lt;stationxmlFilename&gt;] [--evt=l l]... [--sta=l
-                   l]... [--json | --text] [[--deg=d[,d...]]... [--km=km[,
-                   km...]]... [--degreerange=d[,d...] [d [d]]]...
-                   [--kilometerrange=k[,k...] [k [k]]]...]...
+                   [--staxml=&lt;stationxmlFilename&gt;] [--eid=evt[,evt...]]...
+                   [--sid=sta[,sta...]]... [--evt=l l]... [--sta=l l]...
+                   [--json | --text] [[--deg=d[,d...]]... [--km=km[,km...]]...
+                   [--degreerange=d[,d...] [d [d]]]... [--kilometerrange=k[,
+                   k...] [k [k]]]...]...
 Calc distance, az and baz for event lat,lon and station lat,lon pairs.
 
 Options:
@@ -183,6 +186,9 @@ Options:
       --az=&lt;azimuth&gt;         azimuth in degrees, source to receiver
       --baz=&lt;backAzimuth&gt;    backazimuth in degrees, receiver to source
       --debug                enable debugging output
+      --eid=evt[,evt...]     event id, like  	us7000pn9s, for lookup via USGS
+                               fdsn event web service. Creates a distance if
+                               event is also given.
       --evt, --event=l l     event latitude and longitude.  Creates a distance
                                if station is also given.
       --geodetic             use geodetic latitude for distance calculations,
@@ -203,6 +209,9 @@ Options:
       --radius=&lt;radiusOfEarth&gt;
                              radius of earth in km, used when distance given in
                                km
+      --sid=sta[,sta...]     station id, like CO.HAW or FDSN:CO_HAW, for lookup
+                               via fedcat web service. Creates a distance if
+                               event is also given.
       --sta, --station=l l   station latitude and longitude. Creates a distance
                                if event is also given.
       --staxml=&lt;stationxmlFilename&gt;
@@ -216,13 +225,13 @@ Optional distance is given by:
       --deg, --degree=d[,d...]
                              distance in degrees
       --degreerange=d[,d...] [d [d]]
-                             regular distance range in degrees, one of max min,
-                               max or min,max,step. Default min is 0 and step
-                               is 10.
+                             regular distance range in degrees, one of step;
+                               min,max or min,max,step. Default min is 0, max
+                               is 180 and step is 10.
       --kilometerrange=k[,k...] [k [k]]
-                             regular distance range in kilometers, one of max
-                               min,max or min,max,step. Default min is 0 and
-                               step is 10.
+                             regular distance range in kilometers, one of step;
+                               min,max or min,max,step. Default min is 0, max
+                               is 1000 and step is 100.
       --km, --kilometer=km[,km...]
                              distance in kilometers along surface.
 </pre></div>

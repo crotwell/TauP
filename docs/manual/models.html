@@ -13,7 +13,7 @@
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Programmatic Access" href="programming.html" />
+    <link rel="next" title="Rays and Distances" href="distances.html" />
     <link rel="prev" title="Phases" href="phaseNaming.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
@@ -65,8 +65,10 @@
 <li class="toctree-l2"><a class="reference internal" href="#notes-on-standard-models">Notes on Standard Models</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="distances.html">Rays and Distances</a></li>
 <li class="toctree-l1"><a class="reference internal" href="programming.html">Programmatic Access</a></li>
 <li class="toctree-l1"><a class="reference internal" href="bibliography.html">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/crotwell/TauP">Source</a></li>
 </ul>
 
 <div class="relations">
@@ -74,7 +76,7 @@
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
       <li>Previous: <a href="phaseNaming.html" title="previous chapter">Phases</a></li>
-      <li>Next: <a href="programming.html" title="next chapter">Programmatic Access</a></li>
+      <li>Next: <a href="distances.html" title="next chapter">Rays and Distances</a></li>
   </ul></li>
 </ul>
 </div>
@@ -112,7 +114,7 @@
 Both are piecewise linear between given depth points. Support for cubic spline
 velocity models would be useful and is planned for a future release.</p>
 <p>The first format is that used by the most recent ttimes
-codes <span id="id1">Kennett <em>et al.</em> [<a class="reference internal" href="bibliography.html#id4" title="B. L. N. Kennett, E. R. Engdahl, and R. Buland. Constraints on seismic velocities in the earth from traveltimes. Geophysical Journal International, 122:108-124, 1995.">KEB95</a>]</span>, <cite>.tvel</cite>.
+codes <span id="id1">Kennett <em>et al.</em> [<a class="reference internal" href="bibliography.html#id4" title="B. L. N. Kennett, E. R. Engdahl, and R. Buland. Constraints on seismic velocities in the earth from traveltimes. Geophysical Journal International, 122:108-124, 1995. doi:10.1111/j.1365-246X.1995.tb03540.x.">KEB95</a>]</span>, <cite>.tvel</cite>.
 This format has two comment lines, followed by lines composed of depth, Vp, Vs and density, all separated by whitespace. TauP ignores the first two lines of this format and reads the remaining lines.</p>
 <p>The second format is based on the format used by Xgbm, <span id="id2">Davis and Henson [<a class="reference internal" href="bibliography.html#id17" title="J. P. Davis and I. H. Henson. Development of an x-windows tool to compute gaussian bean synthetic seismograms. Technical Report TGAL-93-03, Phillip Laboratory, Hancom AFB, MA, 1993.">DH93a</a>], Davis and Henson [<a class="reference internal" href="bibliography.html#id18" title="J. P. Davis and I. H. Henson. User's Guide to Xgbm: An X-Windows System to compute Gaussian bean synthetic seismograms. Teledyne Geotech Alexandria Laboratories, Alexandria, VA, 1.1 edition, 1993.">DH93b</a>]</span>.
 It is referred to here
@@ -272,22 +274,22 @@ They are:</p>
 <table class="docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference external" href="_static/StdModels/iasp91.tvel">iasp91</a></p></td>
-<td><p><span id="id3">Kennett and Engdahl [<a class="reference internal" href="bibliography.html#id3" title="B. L. N. Kennett and E. R. Engdahl. Traveltimes for global earthquake location and phase identification. Geophysical Journal International, 105:429-465, 1991.">KE91</a>]</span> (default)</p></td>
+<td><p><span id="id3">Kennett and Engdahl [<a class="reference internal" href="bibliography.html#id3" title="B. L. N. Kennett and E. R. Engdahl. Traveltimes for global earthquake location and phase identification. Geophysical Journal International, 105:429-465, 1991. doi:10.1785/BSSA0880030722.">KE91</a>]</span> (default)</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference external" href="_static/StdModels/prem.nd">prem</a></p></td>
-<td><p><span id="id4">Dziewonski and Anderson [<a class="reference internal" href="bibliography.html#id12" title="A. M. Dziewonski and D. L. Anderson. Structure, elastic and rheological properties and density of the earth's interior, gravity and pressure. In K. Fuch and H. Soffel, editors, Landoldt-Bönstein, Group V, volume 2a, pages 84-96. Springer, Berlin, 1984.">DA84</a>]</span></p></td>
+<td><p><span id="id4">Dziewonski and Anderson [<a class="reference internal" href="bibliography.html#id16" title="A. M. Dziewonski and D. L. Anderson. Preliminary reference earth model. Physics of the Earth and Planetary Interiors, 25(4):297-356, 1981. doi:10.1016/0031-9201(81)90046-7.">DA81</a>]</span></p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference external" href="_static/StdModels/ak135.tvel">ak135</a></p></td>
-<td><p><span id="id5">Kennett <em>et al.</em> [<a class="reference internal" href="bibliography.html#id4" title="B. L. N. Kennett, E. R. Engdahl, and R. Buland. Constraints on seismic velocities in the earth from traveltimes. Geophysical Journal International, 122:108-124, 1995.">KEB95</a>]</span></p></td>
+<td><p><span id="id5">Kennett <em>et al.</em> [<a class="reference internal" href="bibliography.html#id4" title="B. L. N. Kennett, E. R. Engdahl, and R. Buland. Constraints on seismic velocities in the earth from traveltimes. Geophysical Journal International, 122:108-124, 1995. doi:10.1111/j.1365-246X.1995.tb03540.x.">KEB95</a>]</span></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference external" href="_static/StdModels/ak135favg.nd">ak135favg</a></p></td>
-<td><p><span id="id6">Montagner and Kennett [<a class="reference internal" href="bibliography.html#id5" title="J.P. Montagner and B.L.N. Kennett. How to reconcile body-wave and normal-mode reference earth models? Geophysical Journal International, 125:229-248, 1995.">MK95</a>]</span></p></td>
+<td><p><span id="id6">Montagner and Kennett [<a class="reference internal" href="bibliography.html#id5" title="J.P. Montagner and B.L.N. Kennett. How to reconcile body-wave and normal-mode reference earth models? Geophysical Journal International, 125:229-248, 1995. doi:10.1111/j.1365-246X.1996.tb06548.x.">MK95</a>]</span></p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference external" href="_static/StdModels/ak135fcont.nd">ak135fcont</a></p></td>
-<td><p><span id="id7">Montagner and Kennett [<a class="reference internal" href="bibliography.html#id5" title="J.P. Montagner and B.L.N. Kennett. How to reconcile body-wave and normal-mode reference earth models? Geophysical Journal International, 125:229-248, 1995.">MK95</a>]</span></p></td>
+<td><p><span id="id7">Montagner and Kennett [<a class="reference internal" href="bibliography.html#id5" title="J.P. Montagner and B.L.N. Kennett. How to reconcile body-wave and normal-mode reference earth models? Geophysical Journal International, 125:229-248, 1995. doi:10.1111/j.1365-246X.1996.tb06548.x.">MK95</a>]</span></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference external" href="_static/StdModels/ak135fsyngine.nd">ak135fsyngine</a></p></td>
-<td><p><span id="id8">Montagner and Kennett [<a class="reference internal" href="bibliography.html#id5" title="J.P. Montagner and B.L.N. Kennett. How to reconcile body-wave and normal-mode reference earth models? Geophysical Journal International, 125:229-248, 1995.">MK95</a>]</span></p></td>
+<td><p><span id="id8">Montagner and Kennett [<a class="reference internal" href="bibliography.html#id5" title="J.P. Montagner and B.L.N. Kennett. How to reconcile body-wave and normal-mode reference earth models? Geophysical Journal International, 125:229-248, 1995. doi:10.1111/j.1365-246X.1996.tb06548.x.">MK95</a>]</span></p></td>
 </tr>
 </tbody>
 </table>
@@ -388,7 +390,7 @@ which is ak135 with Q and the “continental structure” above 120 km.</p>
 </pre></div>
 </div>
 <p>The source web page for ak135f lists attentuation parameters as Qkappa and Qmu,
-but the reference paper, <span id="id9">Montagner and Kennett [<a class="reference internal" href="bibliography.html#id5" title="J.P. Montagner and B.L.N. Kennett. How to reconcile body-wave and normal-mode reference earth models? Geophysical Journal International, 125:229-248, 1995.">MK95</a>]</span> says:</p>
+but the reference paper, <span id="id9">Montagner and Kennett [<a class="reference internal" href="bibliography.html#id5" title="J.P. Montagner and B.L.N. Kennett. How to reconcile body-wave and normal-mode reference earth models? Geophysical Journal International, 125:229-248, 1995. doi:10.1111/j.1365-246X.1996.tb06548.x.">MK95</a>]</span> says:</p>
 <dl class="field-list simple">
 <dt class="field-odd">quote<span class="colon">:</span></dt>
 <dd class="field-odd"><p>We did not attempt to invert for Q K ,which is
@@ -426,12 +428,14 @@ at this depth with Vp=8.0505.</p>
 <a class="reference external" href="https://rses.anu.edu.au/seismology/ak135/ak135f.txt">https://rses.anu.edu.au/seismology/ak135/ak135f.txt</a>
 and the html version here
 <a class="reference external" href="https://rses.anu.edu.au/seismology/ak135/ak135f.html">https://rses.anu.edu.au/seismology/ak135/ak135f.html</a>
-with the text version showing a depth sample in the average structure at 120 km
+with the html version showing an additional depth sample in the
+“Spherical average structure” at 120 km
 that matches the 120 km sample in the base model. As both lines are the same,
 this doesn’t change the model, but seems to indicate that the 120 km depth
-sample in the continental model should not be viewed as creating a discontinuity.</p>
-<p>At 210 km depth, there is a non-discontinuity in velocity, but a discontinuity
-in the Q model.</p>
+sample in the “continental structure” model should not be viewed as
+creating a discontinuity.</p>
+<p>At 210 km depth, there is a non-discontinuity discontinuity in velocity,
+which is a discontinuity in the Q model.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mf">210.00</span>    <span class="mf">3.3243</span>    <span class="mf">8.3007</span>    <span class="mf">4.5184</span>    <span class="mf">200.97</span>     <span class="mf">79.40</span>     <span class="mf">0.000</span>
 <span class="mf">210.00</span>    <span class="mf">3.3243</span>    <span class="mf">8.3007</span>    <span class="mf">4.5184</span>    <span class="mf">338.47</span>    <span class="mf">133.72</span>     <span class="mf">0.000</span>
 </pre></div>
@@ -446,17 +450,21 @@ roughly compatible with the ak135f average model for Qp and Qs.</p>
 <a class="reference external" href="https://service.iris.edu/irisws/syngine/1/">https://service.iris.edu/irisws/syngine/1/</a>
 allows calculation of synthetic seismograms for several 1D earth models. The
 ak135f model used by Syngine appears to be a variant of the ak135favg model
-where the 3 km ocean and 0.3 km sediment layers have been replaced by
-velocities from the lower crustal layer, resulting in a 10 km thick
+where the 3 km thick ocean and 0.3 km thick sediment layers have been replaced by
+velocities from the 10 km depth crustal layer, resulting in a 18 km thick
 crust with constant velocity. Note this is different from the ak135fcont
-model that includes a thicker, 35 km thick two layer crust and a slightly different
+model that includes a thicker, 35 km thick layer crust and a slightly different
 uppermost mantle structure, from 35 to 120 km. Travel times from TauP
 for ak135f will thus be similar, but not exactly match the output of syngine.
 We have included a ak135fsyngine model with these modifications for
 compatibility.</p>
+<p>The model used within syngine, embedded as FORTRAN and using cubic splines,
+is here, lines 184-305:
+<a class="reference external" href="https://github.com/geodynamics/axisem/blob/master/MESHER/background_models.F90">https://github.com/geodynamics/axisem/blob/master/MESHER/background_models.F90</a></p>
 </li>
 <li><p>PREM</p>
-<p>The Qp values in prem.nd are all also derived from Qs via the equation above
+<p>The Qp values in prem.nd are all also equivalent to being
+derived from Qs via the equation above
 for ak135f, except for the inner core, where values near 600 are given but
 the equation from Qs predicts a Qp value closer to 430-445. Note that PREM
 gives a different Qkappa in the inner core from the rest of the model,

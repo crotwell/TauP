@@ -60,8 +60,10 @@
 <li class="toctree-l1"><a class="reference internal" href="calculations.html">Calculations</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Phases</a></li>
 <li class="toctree-l1"><a class="reference internal" href="models.html">Velocity Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="distances.html">Rays and Distances</a></li>
 <li class="toctree-l1"><a class="reference internal" href="programming.html">Programmatic Access</a></li>
 <li class="toctree-l1"><a class="reference internal" href="bibliography.html">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/crotwell/TauP">Source</a></li>
 </ul>
 
 <div class="relations">
@@ -217,6 +219,9 @@ the depth to an interface involved in an interaction.</p>
 <tr class="row-even"><td><p><code class="code docutils literal notranslate"><span class="pre">kmps</span></code></p></td>
 <td><p>appended to a velocity to represent a horizontal phase velocity</p></td>
 </tr>
+<tr class="row-odd"><td><p><code class="code docutils literal notranslate"><span class="pre">_</span></code></p></td>
+<td><p>delimits a named discontinuty within a phase</p></td>
+</tr>
 </tbody>
 </table>
 </div></blockquote>
@@ -268,6 +273,16 @@ closer than the one of interest, but this approach allows generic interface
 names like <cite>410</cite> and <cite>660</cite> to be used without knowing the exact depth in a given
 model. Use of a depth number greater than 10 km from any discontinuity
 will result in a failed phase name.</p>
+<p>In addition, models given in the <em>named discontinuities</em> format,
+the name for a discontinuity can be used instead of the depth within a phase.
+The name is pre and postpended by an underscore, <code class="code docutils literal notranslate"><span class="pre">_</span></code>, and can only
+contain letters, numbers and the dash symbol, <code class="code docutils literal notranslate"><span class="pre">-</span></code>.
+For example, if a model contained a discontinuity at 1000 km depth that
+was named <cite>mid-mantle</cite>, then the phase <code class="code docutils literal notranslate"><span class="pre">Pv1000p</span></code> and
+<code class="code docutils literal notranslate"><span class="pre">Pv_mid-mantle_p</span></code> would both refer to the same phase, which reflects
+off of the top of the discontinuity at 1000 km depth. The standard
+discontinuity names can also be used in this manner, with
+<code class="code docutils literal notranslate"><span class="pre">Pvmp</span></code> and <code class="code docutils literal notranslate"><span class="pre">Pv_moho_p</span></code> being the same phase.</p>
 </li>
 <li><p>Conversion at depth:</p>
 <p>If a number appears between two phase legs, e.g. <code class="code docutils literal notranslate"><span class="pre">S410P</span></code>,

@@ -84,8 +84,10 @@
 <li class="toctree-l1"><a class="reference internal" href="calculations.html">Calculations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="phaseNaming.html">Phases</a></li>
 <li class="toctree-l1"><a class="reference internal" href="models.html">Velocity Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="distances.html">Rays and Distances</a></li>
 <li class="toctree-l1"><a class="reference internal" href="programming.html">Programmatic Access</a></li>
 <li class="toctree-l1"><a class="reference internal" href="bibliography.html">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/crotwell/TauP">Source</a></li>
 </ul>
 
 <div class="relations">
@@ -147,6 +149,7 @@ headers, then this will add markers to the extra headers for P and S:</p>
                    [=&lt;ehKey&gt;]] [--geodeticflattening=f]
                    [--prop=&lt;toolPropsFilename&gt;] [--qml=&lt;quakemlFilename&gt;]
                    [--qmltol=&lt;quakeOTimeTol&gt;] [--staxml=&lt;stationxmlFilename&gt;]
+                   [--eid=evt[,evt...]]... [--sid=sta[,sta...]]...
                    [[--mod=&lt;modelName&gt;] [-h=depth[,depth...]]...
                    [--stadepth=depth[,depth...]]... [--scat=s s]...] [[-p=phase
                    [,phase...]]... [--phasefile=&lt;phaseFiles&gt;]...]
@@ -160,6 +163,9 @@ has details on the JSON structure.
 Options:
 
       --debug              enable debugging output
+      --eid=evt[,evt...]   event id, like  	us7000pn9s, for lookup via USGS
+                             fdsn event web service. Creates a distance if
+                             event is also given.
       --geodetic           use geodetic latitude for distance calculations,
                              which implies an ellipticity. Default is
                              spherical. Note this only affects calculation of
@@ -177,6 +183,9 @@ Options:
       --qmltol=&lt;quakeOTimeTol&gt;
                            time window to search for origins in a QuakeML file
                              as an ISO8601 string, default value is PT1H.
+      --sid=sta[,sta...]   station id, like CO.HAW or FDSN:CO_HAW, for lookup
+                             via fedcat web service. Creates a distance if
+                             event is also given.
       --staxml=&lt;stationxmlFilename&gt;
                            StationXML file to extract station latitudes and
                              longitudes from

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Rays and Distances &#8212; TauP 3.0.0-SNAPSHOT10 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=a66d8bb5" />
+    <script src="_static/documentation_options.js?v=95eb0a88"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Programmatic Access" href="programming.html" />
+    <link rel="prev" title="Velocity Models" href="models.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="index.html">
+    <img class="logo" src="_static/taupLogo.svg" alt="Logo" />
+    
+  </a>
+</p>
+
+
+
+<p class="blurb">Flexible Seismic Travel-Time and Raypath Utilities. Version 3.0.0-SNAPSHOT10</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=crotwell&repo=taup&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="distribution.html">Distribution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tools.html">Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="calculations.html">Calculations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="phaseNaming.html">Phases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models.html">Velocity Models</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Rays and Distances</a></li>
+<li class="toctree-l1"><a class="reference internal" href="programming.html">Programmatic Access</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bibliography.html">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/crotwell/TauP">Source</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="models.html" title="previous chapter">Velocity Models</a></li>
+      <li>Next: <a href="programming.html" title="next chapter">Programmatic Access</a></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="rays-and-distances">
+<span id="distances"></span><h1>Rays and Distances<a class="headerlink" href="#rays-and-distances" title="Link to this heading">¶</a></h1>
+<p>For many of the tools within the TauP Toolkit, a large part
+of the work is determining the ray through the model that
+answers the question. But depending on the question there are
+many ways to specify the ray. For example, what time does
+<code class="code docutils literal notranslate"><span class="pre">P</span></code> arrive at 35 degrees? Or where does a ray that leaves
+the source at a 25 degree takeoff angle arrive?</p>
+<p>Traditionally, we are interested in arrivals at a known distance. So
+Using the <code class="code docutils literal notranslate"><span class="pre">--deg</span></code>: option gives that distance in degrees while
+the <code class="code docutils literal notranslate"><span class="pre">--km</span></code> gives it in kilometers. Multiple of either of these
+can be given, like <code class="code docutils literal notranslate"><span class="pre">--deg</span> <span class="pre">10,30,60</span></code>.
+But if we want a regular sampling, we can give
+<code class="code docutils literal notranslate"><span class="pre">--degreerange</span> <span class="pre">5</span></code> to get every 5 degrees or
+<code class="code docutils literal notranslate"><span class="pre">--degreerange</span> <span class="pre">30,60</span></code> to get every 10 degrees from 30 to 60, or even
+<code class="code docutils literal notranslate"><span class="pre">--degreerange</span> <span class="pre">30,60,5</span></code> to get every 5 degrees from 30 to 60.
+The <code class="code docutils literal notranslate"><span class="pre">--kilometerrange</span></code> argument provides the same functionality,
+except for kilometers along the surface, with defaul step of 100 and
+default maximum of 1000.</p>
+<p>Some times it is helpful to generate only arrivals at an exact distance
+and to disregard those that arrive the other way around, or that lap
+around the earth multiple times. For example a phase like SKKKS that can travel
+a path of more than once around, we may want to get
+the arrival at 200 degrees but not the one at 160 degrees. The
+argument <code class="code docutils literal notranslate"><span class="pre">--exactdegree</span> <span class="pre">200</span></code> does this. Similar functionality exists
+for kilometers with <code class="code docutils literal notranslate"><span class="pre">--exactkilometer</span></code>.</p>
+<p>If we know the event and station locations, we can use the <code class="code docutils literal notranslate"><span class="pre">--evt</span></code> and
+<code class="code docutils literal notranslate"><span class="pre">--sta</span></code> to give the latitude and longitudes and TauP can calculate the
+distance. The <code class="code docutils literal notranslate"><span class="pre">--geodetic</span></code> argument does the distance calculation using
+an ellipticity, the default is purely spherical. The internal time calculations
+are always spherical. We can also read station locations from a StationXML
+file with <code class="code docutils literal notranslate"><span class="pre">--staxml</span></code> and event locations from a QuakeML file with
+<code class="code docutils literal notranslate"><span class="pre">--qml</span></code>. Even more fun is to give a station id, like CO_HAW or a
+USGS event id, like us7000pn9s, and TauP will use the IRIS FedCat and
+USGS FDSN Event web services to get the station and event locations.
+TauP will do the calculations for all event station pairs.</p>
+<p>There are also times when we do not know the final distance, but are interested
+in rays that start or end in a particular way. For example we can shoot
+rays of specific ray parameters with <code class="code docutils literal notranslate"><span class="pre">--rayparamdeg</span></code>, <code class="code docutils literal notranslate"><span class="pre">--rayparamkm</span></code>
+and <code class="code docutils literal notranslate"><span class="pre">--rayparamrad</span></code> for ray parameters of seconds per degree, kilometer
+or radian. Or we can give a takeoff angle with <code class="code docutils literal notranslate"><span class="pre">--takeoff</span></code> and a range
+of takeoff angles with <code class="code docutils literal notranslate"><span class="pre">--takeoffrange</span></code> similar to the distance range
+arguments. And we can give an incident angle with <code class="code docutils literal notranslate"><span class="pre">--incident</span></code> and a range
+of incident angles with <code class="code docutils literal notranslate"><span class="pre">--incidentrange</span></code>.</p>
+<p>As long as we are using spherical calulcations, not <code class="code docutils literal notranslate"><span class="pre">--geodetic</span></code>, then
+if we give event location via <code class="code docutils literal notranslate"><span class="pre">--evt</span></code> and azimuth via <code class="code docutils literal notranslate"><span class="pre">--az</span></code>, then
+the resulting station location will be calculated. The reverse, giving
+station location via <code class="code docutils literal notranslate"><span class="pre">--sta</span></code> and back azimuth via <code class="code docutils literal notranslate"><span class="pre">--baz</span></code> will
+calculate the event location.</p>
+<p>For debugging purposes, the <code class="code docutils literal notranslate"><span class="pre">--allindex</span></code> and <code class="code docutils literal notranslate"><span class="pre">--rayparamidx</span></code>
+will show the calculation at the model sampling, for all or one ray by
+index.</p>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div> 
+    <div class="footer">
+      &#169;2024, Philip Crotwell.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.3.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="_sources/distances.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+
+  <style>
+    @media screen and (min-width: 876px) {
+      div.body { max-width: 95%;}
+      div.document { width: unset;}
+      div.sphinxsidebar { margin-left: 10px; margin-right: 10px;}
+    }
+  </style>
+
+
+  </body>
+</html>

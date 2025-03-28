@@ -14,7 +14,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Bibliography" href="bibliography.html" />
-    <link rel="prev" title="Velocity Models" href="models.html" />
+    <link rel="prev" title="Rays and Distances" href="distances.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -60,19 +60,23 @@
 <li class="toctree-l1"><a class="reference internal" href="calculations.html">Calculations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="phaseNaming.html">Phases</a></li>
 <li class="toctree-l1"><a class="reference internal" href="models.html">Velocity Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="distances.html">Rays and Distances</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Programmatic Access</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#java">Java</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#http-access">HTTP Access</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#python">Python</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#graalvm-and-graalpy">Graalvm and Graalpy</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="bibliography.html">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/crotwell/TauP">Source</a></li>
 </ul>
 
 <div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="models.html" title="previous chapter">Velocity Models</a></li>
+      <li>Previous: <a href="distances.html" title="previous chapter">Rays and Distances</a></li>
       <li>Next: <a href="bibliography.html" title="next chapter">Bibliography</a></li>
   </ul></li>
 </ul>
@@ -205,6 +209,91 @@ does not yet include all possible parameters that the web tools support.</p>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">a</span><span class="p">[</span><span class="s1">&#39;phase&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">a</span><span class="p">[</span><span class="s1">&#39;distdeg&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">a</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
+</section>
+<section id="python">
+<h2>Python<a class="headerlink" href="#python" title="Link to this heading">¶</a></h2>
+<p>A slightly less efficient, but perhaps good enough for most uses is to execute
+the command line tools within another script, and then parse output of the
+tool from json. This has the disadvantage that a new subprocess must start
+for each call to get times, and so can be slower, but has the advantage of
+access to all of the command line arguments available.</p>
+<p>An example that gets travel times via Python show how this could be done.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+
+
+<span class="k">def</span> <span class="nf">getTauPAsJson</span><span class="p">(</span><span class="n">cmd</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Gets results for a TauP command via json. The --json parameter is</span>
+<span class="sd">    automatically appended to the command.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">splitCmd</span> <span class="o">=</span> <span class="n">cmd</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
+    <span class="n">splitCmd</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;--json&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">splitCmd</span><span class="p">))</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">splitCmd</span><span class="p">,</span> <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">result</span><span class="o">.</span><span class="n">check_returncode</span><span class="p">()</span> <span class="c1"># will raise CalledProcessError if not ok</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">stdout</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;taup.out&quot;</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+    <span class="n">taupjson</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">taupjson</span>
+
+<span class="k">def</span> <span class="nf">taup_time</span><span class="p">(</span><span class="n">degrees</span><span class="p">,</span> <span class="n">phases</span><span class="p">,</span> <span class="n">sourcedepth</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">amp</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculates arrivals for the phases.</span>
+<span class="sd">    Parameters:</span>
+<span class="sd">    -----------</span>
+<span class="sd">    degrees - either a single distance or a list of distances</span>
+<span class="sd">    phases  - comma separated list of phases, or list of phases</span>
+<span class="sd">    sourcedepth - optional source depth, defaults to zero</span>
+
+<span class="sd">    Returns dict parsed from the json containing &#39;arrivals&#39; with a list of the</span>
+<span class="sd">    Arrival objects.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">degrees</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="n">deg</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">degrees</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">deg</span> <span class="o">=</span> <span class="n">degrees</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">phases</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="n">ph</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">phases</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">ph</span> <span class="o">=</span> <span class="n">phases</span>
+    <span class="n">cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;taup time --deg </span><span class="si">{</span><span class="n">deg</span><span class="si">}</span><span class="s2"> -p </span><span class="si">{</span><span class="n">ph</span><span class="si">}</span><span class="s2"> -h </span><span class="si">{</span><span class="n">sourcedepth</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="c1">#cmd = f&quot;{TAUP_PATH}/taup time --deg {deg} -p {ph} -h {sourcedepth}&quot;</span>
+    <span class="k">if</span> <span class="n">model</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">cmd</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; --mod </span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">if</span> <span class="n">amp</span><span class="p">:</span>
+        <span class="n">cmd</span> <span class="o">+=</span> <span class="s2">&quot; --amp&quot;</span>
+    <span class="n">taupjson</span> <span class="o">=</span> <span class="n">getTauPAsJson</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">taupjson</span>
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="c1"># calculate travel times and parse the output json.</span>
+    <span class="c1"># Note that taup must be on your PATH env var</span>
+    <span class="n">degrees</span> <span class="o">=</span> <span class="mi">35</span>
+    <span class="n">depth</span> <span class="o">=</span> <span class="mi">100</span>
+    <span class="n">phases</span> <span class="o">=</span> <span class="s2">&quot;P,S,SKKKS&quot;</span>
+
+    <span class="n">taupjson</span> <span class="o">=</span> <span class="n">taup_time</span><span class="p">(</span><span class="n">degrees</span><span class="p">,</span> <span class="n">phases</span><span class="p">,</span> <span class="n">depth</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Got </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">taupjson</span><span class="p">[</span><span class="s1">&#39;arrivals&#39;</span><span class="p">])</span><span class="si">}</span><span class="s2"> arrivals:&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">arr</span> <span class="ow">in</span> <span class="n">taupjson</span><span class="p">[</span><span class="s2">&quot;arrivals&quot;</span><span class="p">]:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">arr</span><span class="p">[</span><span class="s1">&#39;phase&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> arrives at </span><span class="si">{</span><span class="n">arr</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> and traveled </span><span class="si">{</span><span class="n">arr</span><span class="p">[</span><span class="s1">&#39;puristdist&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> deg.&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="mi">0</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
+</pre></div>
+</div>
+</section>
+<section id="graalvm-and-graalpy">
+<h2>Graalvm and Graalpy<a class="headerlink" href="#graalvm-and-graalpy" title="Link to this heading">¶</a></h2>
+<p>It is also possible for python code to interact more directly with
+TauP’s Java code by using Graalvm and
+Graalpy. We are considering how best to leverage these tools.</p>
 </section>
 </section>
 

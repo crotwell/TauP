@@ -84,8 +84,10 @@
 <li class="toctree-l1"><a class="reference internal" href="calculations.html">Calculations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="phaseNaming.html">Phases</a></li>
 <li class="toctree-l1"><a class="reference internal" href="models.html">Velocity Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="distances.html">Rays and Distances</a></li>
 <li class="toctree-l1"><a class="reference internal" href="programming.html">Programmatic Access</a></li>
 <li class="toctree-l1"><a class="reference internal" href="bibliography.html">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/crotwell/TauP">Source</a></li>
 </ul>
 
 <div class="relations">
@@ -213,18 +215,20 @@ distance, depth, latitude and longitude, respectively.</p>
                    [--baz=&lt;backAzimuth&gt;] [--geodeticflattening=f] [--mw=&lt;mw&gt;]
                    [--numattenuationfreq=&lt;numFrequencies&gt;] [-o=&lt;outFile&gt;]
                    [--prop=&lt;toolPropsFilename&gt;] [--qml=&lt;quakemlFilename&gt;]
-                   [--staxml=&lt;stationxmlFilename&gt;] [--pierce=depth[,
-                   depth...]]... [--rel=phase[,phase...]]... [--strikediprake=s
-                   [,s...]]... [--evt=l l]... [--evt=l l]... [--sta=l l]...
-                   [--sta=l l]... [[--mod=&lt;modelName&gt;] [-h=depth[,depth...]]...
+                   [--staxml=&lt;stationxmlFilename&gt;] [--eid=evt[,evt...]]...
+                   [--pierce=depth[,depth...]]... [--rel=phase[,phase...]]...
+                   [--sid=sta[,sta...]]... [--strikediprake=s[,s...]]...
+                   [--evt=l l]... [--evt=l l]... [--sta=l l]... [--sta=l l]...
+                   [[--mod=&lt;modelName&gt;] [-h=depth[,depth...]]...
                    [--stadepth=depth[,depth...]]... [--scat=s s]...] [[-p=phase
                    [,phase...]]... [--phasefile=&lt;phaseFiles&gt;]...] [[--allindex]
                    [--deg=d[,d...]]... [--exactdegree=d[,d...]]...
-                   [--exactkilometer=km[,km...]]... [--km=km[,km...]]...
-                   [--rayparamdeg=s/deg[,s/deg...]]... [--rayparamidx=i[,
-                   i...]]... [--rayparamkm=s/km[,s/km...]]...
-                   [--rayparamrad=s/rad[,s/rad...]]... [--takeoff=deg[,
-                   deg...]]... [--degreerange=d[,d...] [d [d]]]...
+                   [--exactkilometer=km[,km...]]... [--incident=deg[,
+                   deg...]]... [--km=km[,km...]]... [--rayparamdeg=s/deg[,
+                   s/deg...]]... [--rayparamidx=i[,i...]]... [--rayparamkm=s/km
+                   [,s/km...]]... [--rayparamrad=s/rad[,s/rad...]]...
+                   [--takeoff=deg[,deg...]]... [--degreerange=d[,d...] [d
+                   [d]]]... [--incidentrange=k[,k...] [k [k]]]...
                    [--kilometerrange=k[,k...] [k [k]]]... [--takeoffrange=k[,
                    k...] [k [k]]]...]... [--json | --text]
 Calculate pierce points for phases at discontinuities in the model.
@@ -236,6 +240,9 @@ Options:
                              attenuation frequency for amplitude calculations,
                                default is 1.0
       --debug                enable debugging output
+      --eid=evt[,evt...]     event id, like  	us7000pn9s, for lookup via USGS
+                               fdsn event web service. Creates a distance if
+                               event is also given.
       --first, --onlyfirst   only output the first arrival for each phase, no
                                triplications
       --geodetic             use geodetic latitude for distance calculations,
@@ -266,6 +273,9 @@ Options:
       --rel=phase[,phase...] times relative to the first of the given phases
       --rev                  only prints underside and bottom turn points, e.g.
                                ^ and v
+      --sid=sta[,sta...]     station id, like CO.HAW or FDSN:CO_HAW, for lookup
+                               via fedcat web service. Creates a distance if
+                               event is also given.
       --staxml=&lt;stationxmlFilename&gt;
                              StationXML file to extract station latitudes and
                                longitudes from
@@ -300,16 +310,23 @@ Distance is given by:
       --deg, --degree=d[,d...]
                              distance in degrees
       --degreerange=d[,d...] [d [d]]
-                             regular distance range in degrees, one of max min,
-                               max or min,max,step. Default min is 0 and step
-                               is 10.
+                             regular distance range in degrees, one of step;
+                               min,max or min,max,step. Default min is 0, max
+                               is 180 and step is 10.
       --exactdegree=d[,d...] exact distance traveled in degrees, not 360-d
       --exactkilometer=km[,km...]
                              exact distance traveled in kilometers, not 360-k
+      --incident=deg[,deg...]
+                             incident angle in degrees at the receiver, zero is
+                               down, 90 horizontal, 180 is up.
+      --incidentrange=k[,k...] [k [k]]
+                             regular range in incident angle in degrees, one of
+                               step; min,max or min,max,step. Default min is 0
+                               and step is 10.
       --kilometerrange=k[,k...] [k [k]]
-                             regular distance range in kilometers, one of max
-                               min,max or min,max,step. Default min is 0 and
-                               step is 10.
+                             regular distance range in kilometers, one of step;
+                               min,max or min,max,step. Default min is 0, max
+                               is 1000 and step is 100.
       --km, --kilometer=km[,km...]
                              distance in kilometers along surface.
       --rayparamdeg=s/deg[,s/deg...]
@@ -327,7 +344,7 @@ Distance is given by:
                                down, 90 horizontal, 180 is up.
       --takeoffrange=k[,k...] [k [k]]
                              regular range in takeoff angle in degrees, one of
-                               max min,max or min,max,step. Default min is 0
+                               step; min,max or min,max,step. Default min is 0
                                and step is 10.
 Lat,Lon influenced by:
       --az=&lt;azimuth&gt;         azimuth in degrees, source to receiver
