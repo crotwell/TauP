@@ -84,3 +84,10 @@ An example that gets travel times via Python show how this could be done.
 
 .. literalinclude:: programming/grab_times_subprocess.py
   :language: python
+
+Graalvm and Graalpy
+-------------------
+
+It is also possible for python code to interact more directly with
+TauP's Java code by using Graalvm and
+Graalpy. We are considering how best to leverage these tools.
