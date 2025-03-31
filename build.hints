@@ -10,16 +10,30 @@ conda activate sphinx
 ./gradlew wrapper --gradle-version 8.13 --distribution-type bin
 
 # regen cmd line tests, check for any differences
-export PATH="/opt/homebrew/opt/openjdk@11/bin:$PATH" 
+export PATH="/opt/homebrew/opt/openjdk@11/bin:$PATH"
 ./gradlew cCLTF
 
 ./gradlew javadoc sphinx iD check
+
+JReleaser
+---------
+To create templates for brew, snap, docker, etc, in case need to modify:
+jreleaser template generate -b src/jreleaser -p brew -d taup
+
+dryrun is set to true in build.gradle.kts to avoid accidentaly upload
+
+
 
 # On release:
 --------------
 publish to oss.sonatype
 
 get new DOI
+  Go to existing TauP on zenodo, log in, then
+  https://zenodo.org/records/10794858
+  then click "Manage Record"
+  then "New Version"
+
   https://help.zenodo.org/docs/deposit/describe-records/reserve-doi/
 
 update cite, version in
