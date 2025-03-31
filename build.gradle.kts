@@ -379,6 +379,9 @@ tasks.jar {
     from("docs/manual") {
       into("edu/sc/seis/TauP/html/doc")
     }
+    from("src/doc/favicon") {
+      into("edu/sc/seis/TauP/html")
+    }
     mustRunAfter("sphinx")
 }
 tasks.get("installDist").mustRunAfter("sphinx")
