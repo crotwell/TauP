@@ -104,19 +104,17 @@ java {
 
 dependencies {
     implementation("org.json:json:20250107")
-    //implementation("edu.sc.seis:seisFile:2.2.2-SNAPSHO") {
+    implementation("edu.sc.seis:seisFile:2.2.3-snapshot")
     // or
-    implementation("edu.sc.seis:seisFile:2.2.2") {
-      // we need seisFile for sac/mseed3 output, but not all the other functionality
-      exclude(group = "org.apache.httpcomponents", module = "httpclient")
-    }
+    //implementation("edu.sc.seis:seisFile:2.2.2")
 
     // temporary use modified picocli to allow sort of ArgGroup options
     // see src/main/java/picocli
     //implementation("info.picocli:picocli:4.7.6")
     annotationProcessor("info.picocli:picocli-codegen:4.7.6")
 
-    runtimeOnly("org.slf4j:slf4j-reload4j:2.0.6")
+    implementation("org.slf4j:slf4j-reload4j:2.0.6")
+
 
     implementation("io.undertow:undertow-core:2.3.18.Final")
 
