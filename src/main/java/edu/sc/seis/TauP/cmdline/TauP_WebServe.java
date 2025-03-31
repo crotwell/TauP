@@ -7,6 +7,7 @@ import io.undertow.Undertow;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.BlockingHandler;
+import io.undertow.server.handlers.PathHandler;
 import io.undertow.server.handlers.ResponseCodeHandler;
 import io.undertow.server.handlers.resource.ClassPathResourceManager;
 import io.undertow.server.handlers.resource.ResourceHandler;
@@ -41,7 +42,7 @@ public class TauP_WebServe extends TauP_Tool {
         System.out.println("   http://localhost:"+port);
         System.out.println();
 
-        HttpHandler handler = new HttpHandler() {
+        HttpHandler taupToolHandler = new HttpHandler() {
             @Override
             public void handleRequest(final HttpServerExchange exchange) throws Exception {
                 try {
@@ -67,51 +68,126 @@ public class TauP_WebServe extends TauP_Tool {
 
             public void handleTauPRequest(final HttpServerExchange exchange) throws Exception {
                 String path = exchange.getRequestPath();
+                Alert.debug("handle TauP: "+path);
+                if (path.equals("favicon.ico")) {
+                    new ResponseCodeHandler(404).handleRequest(exchange);
+                    return;
+                }
                 while (path.startsWith("/")) {
                     path = path.substring(1); // trim first slash
                 }
-                Alert.debug("handleRequest "+path+" from "+exchange.getRequestPath());
+                String namespace = "";
+                String service = DEFAULT_SERVICE;
+                String version = DEFAULT_SERVICE_VERSION;
+                String toolname = "";
+                String cmdLineToolname = "";
+                String[] splitPath = path.split("/");
 
-                Map<String, Deque<String>> queryParams = exchange.getQueryParameters();
-                if (path.equals("favicon.ico")) {
-                    new ResponseCodeHandler(404).handleRequest(exchange);
-                } else if (path.startsWith("cmdline")) {
-                    TauP_Tool tool = createTool(path.substring(7));
-                    handleCmdLine(tool, queryParams, exchange);
-                } else if (path.equals("paramhelp")) {
-                    handleParamHelp(queryParams, exchange);
-                } else if (path.equals("modelnames")) {
-                    handleKnownModels(queryParams, exchange);
-                } else {
-                    TauP_Tool tool = createTool(path);
-                    if (tool != null) {
-                        Alert.debug("Handle via TauP Tool:" + path);
-                        webRunTool(tool, queryParams, exchange);
-                    } else {
-                        Alert.debug("Try to load as classpath resource: " + path);
-                        ResourceHandler resHandler = new ResourceHandler(
-                                new ClassPathResourceManager(TauP_Web.class.getClassLoader(),
-                                        "edu/sc/seis/TauP/html"));
-                        MimeMappings nmm = MimeMappings.builder(true)
-                                .addMapping("mjs", "application/javascript")
-                                .addMapping("tvel", "text/plain")
-                                .addMapping("nd", "text/plain")
-                                .build();
-                        resHandler.setMimeMappings(nmm);
-                        resHandler.handleRequest(exchange);
-                        if (exchange.isComplete()) {
-                            Alert.debug(path+" ...as resource complete.");
-                        } else {
-                            Alert.warning(path+" ...not loadable as resource.");
+                if (splitPath.length >= 4) {
+                    // namespace, service, verson, tool like FDSNWS
+                    // uscws/taup/1/time?deg=35&p=PKP
+                    namespace = splitPath[0];
+                    service = splitPath[1];
+                    version = splitPath[2];
+                    toolname = splitPath[3];
+                    if (splitPath.length>=5) {
+                        cmdLineToolname = splitPath[4];
+                    }
+                    Alert.debug("load via split: "+namespace+" "+service+" "+version+" "+toolname);
+                } else if (splitPath.length >= 1) {
+                    // simple url where tool is whole path
+                    namespace = wsNamespace;
+                    service = wsServiceName;
+                    version = wsServiceVersion;
+                    if (isKnownTool(splitPath[0])) {
+                        toolname = splitPath[0];
+                        if (splitPath.length>=2) {
+                            cmdLineToolname = splitPath[1];
                         }
+                        Alert.debug("load via single: "+toolname);
+                    }
+                }
+                if (wsNamespace.equals(namespace) && wsServiceName.equals(service)
+                        && wsServiceVersion.equals(version)) {
+                    if (ToolRun.isKnownToolName(toolname)) {
+                        handleTauPTool(exchange, namespace, service, version, toolname);
+                    } else if (toolname.equals(MODEL_NAMES)) {
+                        handleKnownModels(exchange);
+                    } else if (toolname.equals(CMD_LINE) && ToolRun.isKnownToolName(cmdLineToolname)) {
+                        TauP_Tool tool = createTool(cmdLineToolname);
+                        handleCmdLine(tool, exchange);
+                    } else if (toolname.equals(PARAM_HELP)) {
+                        handleParamHelp(exchange);
                     }
                 }
             }
+
+            public boolean isKnownTool(String toolname) {
+                if (toolname == null || toolname.isEmpty()) {
+                    return false;
+                }
+                if (toolname.startsWith(CMD_LINE)
+                        || toolname.equals(PARAM_HELP)
+                        || toolname.equals(MODEL_NAMES)) {
+                    return true;
+                }
+                return ToolRun.isKnownToolName(toolname);
+            }
+
+            public void handleTauPTool(final HttpServerExchange exchange,
+                                       String namespace,
+                                       String service,
+                                       String version,
+                                       String toolname) throws Exception {
+                Alert.debug("Try to run as tool: " + toolname);
+                Map<String, Deque<String>> queryParams = exchange.getQueryParameters();
+
+                if ( ! ToolRun.isKnownToolName(toolname)) {
+                    return;
+                }
+                TauP_Tool tool = createTool(toolname);
+                if (tool != null) {
+                    Alert.debug("Handle via TauP Tool:" + toolname);
+                    webRunTool(tool, queryParams, exchange);
+                } else {
+                    Alert.debug("Can't find tool for :"+toolname+" in "+exchange.getRequestPath());
+                }
+
+            }
         };
 
+        ResourceHandler resHandler = new ResourceHandler(
+                new ClassPathResourceManager(TauP_Web.class.getClassLoader(),
+                        "edu/sc/seis/TauP/html"));
+        MimeMappings nmm = MimeMappings.builder(true)
+                .addMapping("mjs", "application/javascript")
+                .addMapping("tvel", "text/plain")
+                .addMapping("nd", "text/plain")
+                .build();
+        resHandler.setMimeMappings(nmm);
+        resHandler.addWelcomeFiles("index.html");
+        PathHandler pathHandler = new PathHandler(resHandler);
+        String prefix = wsNamespace+"/"+wsServiceName+"/"+wsServiceVersion+"/";
+        HttpHandler toolAndResHandler = new HttpHandler() {
+            @Override
+            public void handleRequest(HttpServerExchange exchange) throws Exception {
+                taupToolHandler.handleRequest(exchange);
+                if (exchange.isComplete()) {
+                    return;
+                }
+                if (exchange.getRequestPath().startsWith(prefix)) {
+                    exchange.setRequestPath(exchange.getRequestPath().substring(prefix.length()));
+                }
+                resHandler.handleRequest(exchange);
+            }
+        };
+        // add taup tools at ws path like /uscws/taup/3/time?deg=35&p=P
+        pathHandler.addPrefixPath(prefix, toolAndResHandler);
+        // also add taup tools at root, like /time?deg=35&p=P
+        pathHandler.addPrefixPath("/", toolAndResHandler);
         Undertow server = Undertow.builder()
                 .addHttpListener(port, host)
-                .setHandler(new BlockingHandler(handler)).build();
+                .setHandler(new BlockingHandler(pathHandler)).build();
         server.start();
     }
 
@@ -236,8 +312,9 @@ public class TauP_WebServe extends TauP_Tool {
         return out;
     }
 
-    public void handleParamHelp(Map<String, Deque<String>> queryParams, HttpServerExchange exchange) throws TauPException {
+    public void handleParamHelp(HttpServerExchange exchange) throws TauPException {
         TauP_Tool tool;
+        Map<String, Deque<String>> queryParams = exchange.getQueryParameters();
         if (queryParams.containsKey("tool")) {
             String toolname = queryParams.get("tool").getFirst();
             tool = createTool(toolname);
@@ -275,7 +352,7 @@ public class TauP_WebServe extends TauP_Tool {
         throw new TauPException("Unable to create param help for "+exchange.getQueryString()+" "+(queryParams.containsKey("tool")));
     }
 
-    public void handleKnownModels(Map<String, Deque<String>> queryParams, HttpServerExchange exchange) {
+    public void handleKnownModels(HttpServerExchange exchange) {
         JSONArray modList = new JSONArray();
         modList.putAll(getKnownModels());
         exchange.getResponseSender().send(modList.toString(2));
@@ -284,20 +361,18 @@ public class TauP_WebServe extends TauP_Tool {
     public List<String> getKnownModels() {
         List<String> out = new ArrayList<>();
             out.addAll(TauModelLoader.defaultModelList);
-        for (String vmodName : TauModelLoader.otherVelocityModels.keySet()) {
-            out.add(vmodName);
-        }
+        out.addAll(TauModelLoader.otherVelocityModels.keySet());
         return out;
     }
 
-    public void handleCmdLine(TauP_Tool tool, Map<String, Deque<String>> queryParams, HttpServerExchange exchange) throws TauPException {
+    public void handleCmdLine(TauP_Tool tool, HttpServerExchange exchange) throws TauPException {
         CommandLine cmd = new CommandLine(tool);
         CommandLine.Model.CommandSpec spec = cmd.getCommandSpec();
-        List<String> argList = queryParamsToCmdLineArgs(spec, queryParams);
+        List<String> argList = queryParamsToCmdLineArgs(spec, exchange.getQueryParameters());
         StringBuilder buffer = new StringBuilder();
         buffer.append(TauP_Tool.toolNameFromClass(tool.getClass()));
         for (String s : argList) {
-            buffer.append(" "+s);
+            buffer.append(" " + s);
         }
         configContentType(OutputTypes.TEXT, exchange);
         exchange.getResponseSender().send(buffer.toString());
@@ -397,6 +472,16 @@ public class TauP_WebServe extends TauP_Tool {
 
     public String host = "localhost";
 
-    public Map<String, VelocityModel> additionalModels = new HashMap<>();
+    public String wsNamespace = DEFAULT_SERVICE_NAMESPACE;
+    public String wsServiceName = DEFAULT_SERVICE;
+    public String wsServiceVersion = DEFAULT_SERVICE_VERSION;
+
+    public static final String PARAM_HELP = "paramhelp";
+    public static final String CMD_LINE = "cmdline";
+    public static final String MODEL_NAMES = "modelnames";
+
+    public static final String DEFAULT_SERVICE_NAMESPACE = "uscws";
+    public static final String DEFAULT_SERVICE = "taup";
+    public static final String DEFAULT_SERVICE_VERSION = "3";
 
 }

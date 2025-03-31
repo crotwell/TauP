@@ -5,7 +5,6 @@ import edu.sc.seis.TauP.TauPConfig;
 import edu.sc.seis.TauP.cmdline.args.VersionProvider;
 import picocli.AutoComplete;
 import picocli.CommandLine;
-import org.apache.log4j.Logger;
 import org.apache.log4j.BasicConfigurator;
 
 import java.io.*;
@@ -41,23 +40,23 @@ import java.io.*;
 		usageHelpAutoWidth = true)
 public class ToolRun {
 
-	public static String PHASE = "phase";
-	public static String FIND = "find";
-	public static String TIME = "time";
-	public static String PIERCE = "pierce";
-	public static String PATH = "path";
-	public static String CURVE = "curve";
-	public static String CREATE = "create";
-	public static String SETSAC = "setsac";
-	public static String SETMSEED3 = "setms3";
-	public static String TABLE = "table";
-    public static String VPLOT = "velplot";
-    public static String VELMERGE = "velmerge";
-	public static String WAVEFRONT = "wavefront";
-	public static String SPIKES = "spikes";
-	public static String REFLTRANSPLOT = "refltrans";
-	public static String DISTAZ = "distaz";
-	public static String VERSION = "version";
+	public static final String PHASE = "phase";
+	public static final String FIND = "find";
+	public static final String TIME = "time";
+	public static final String PIERCE = "pierce";
+	public static final String PATH = "path";
+	public static final String CURVE = "curve";
+	public static final String CREATE = "create";
+	public static final String SETSAC = "setsac";
+	public static final String SETMSEED3 = "setms3";
+	public static final String TABLE = "table";
+    public static final String VPLOT = "velplot";
+	public static final String VELMERGE = "velmerge";
+	public static final String WAVEFRONT = "wavefront";
+	public static final String SPIKES = "spikes";
+	public static final String REFLTRANSPLOT = "refltrans";
+	public static final String DISTAZ = "distaz";
+	public static final String VERSION = "version";
 
 	public static void saveUsageToFile(String toolname, File dir, String filename) throws IOException {
 		TauP_Tool tool = getToolForName(toolname);
@@ -85,6 +84,30 @@ public class ToolRun {
 			.errors      (CommandLine.Help.Ansi.Style.fg_red, CommandLine.Help.Ansi.Style.bold)
 			.stackTraces (CommandLine.Help.Ansi.Style.italic).build();
 
+	public static boolean isKnownToolName(String toolToRun) {
+		switch (toolToRun) {
+			case CREATE:
+			case CURVE:
+			case PATH:
+			case PHASE:
+			case FIND:
+			case DISTAZ:
+			case PIERCE:
+			case SETSAC:
+			case SETMSEED3:
+			case TABLE:
+			case TIME:
+			case VPLOT:
+			case VELMERGE:
+			case WAVEFRONT:
+			case REFLTRANSPLOT:
+			case SPIKES:
+			case VERSION:
+				return true;
+			default:
+				return false;
+		}
+	}
 
 	public static TauP_Tool getToolForName(String toolToRun) {
 		TauP_Tool tool = null;
