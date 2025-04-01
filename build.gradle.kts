@@ -153,9 +153,7 @@ java {
 
 dependencies {
     implementation("org.json:json:20250107")
-    implementation("edu.sc.seis:seisFile:2.2.3-snapshot")
-    // or
-    //implementation("edu.sc.seis:seisFile:2.2.2")
+    implementation("edu.sc.seis:seisFile:2.3.0")
 
     // temporary use modified picocli to allow sort of ArgGroup options
     // see src/main/java/picocli
