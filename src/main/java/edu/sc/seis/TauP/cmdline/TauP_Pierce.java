@@ -171,9 +171,10 @@ public class TauP_Pierce extends TauP_Time {
                 modelArgs.getReceiverDepths(),
                 getSeismicPhases(),
                 arrivalList,
+                getScatterer(),
                 withPierce, withPath,
                 isWithAmplitude(),
-                sourceArgs.getMw(), sourceArgs.getAttenuationFrequency());
+                sourceArgs);
     }
 
     /**

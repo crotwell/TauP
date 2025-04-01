@@ -110,7 +110,7 @@ public class ScatterTest {
         SimpleSeismicPhase outboundPhase = SeismicPhaseFactory.createPhase(scatToRecPhase, tMod, scat.depth, receiverDepth, false);
         Arrival outArr = outboundPhase.getEarliestArrival(dist-scat.dist.getDegrees(tMod.getRadiusOfEarth()));
         assertNotNull(outArr);
-        ScatteredSeismicPhase scatPhase = new ScatteredSeismicPhase(inArr, outboundPhase, scat.depth, scat.dist.getDegrees(tMod.getRadiusOfEarth()), backscatter);
+        ScatteredSeismicPhase scatPhase = new ScatteredSeismicPhase(inArr, outboundPhase, scat, backscatter);
         List<Arrival> arrList = DistanceRay.ofDegrees(dist).calcScatteredPhase(scatPhase);
         assertNotEquals(0, arrList.size());
         Arrival scatArr = scatPhase.getEarliestArrival(dist);

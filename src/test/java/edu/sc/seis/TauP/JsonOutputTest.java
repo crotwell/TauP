@@ -1,16 +1,16 @@
 package edu.sc.seis.TauP;
 
 import edu.sc.seis.TauP.cmdline.CmdLineOutputTest;
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.json.JSONString;
-import org.json.JSONTokener;
+import edu.sc.seis.TauP.cmdline.TauP_Time;
+import org.json.*;
 import org.junit.jupiter.api.Test;
 
 import java.io.BufferedReader;
+import java.io.PrintWriter;
 import java.io.StringReader;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -20,8 +20,10 @@ public class JsonOutputTest {
     public static String[] jsonTestCmds = new String[] {
             "taup curve -o stdout -h 10 -p P,2kmps --mod prem --json",
             "taup time -h 10 -p P --deg 35 --json",
+            "taup time --mod ak135 -h 10 -p P,S,PedOP --scatter 200 -5 --deg 40 --json",
             "taup time -h 10 -p ttall --deg 35 --mod ak135 --json",
             "taup pierce -o stdout -h 10 -p P,pP,S,ScS --deg 15 --json",
+            "taup pierce --mod ak135 -h 10 -p P,S,PedOP --scatter 200 -5 --deg 40 --json",
             "taup path -o stdout -h 10 -p P,pP,S,ScS --deg 15 --json",
             "taup phase -p Pv410p,PV410p --json",
             "taup distaz -o stdout --sta 35 -82 --sta 33 -81 --evt 22 -101 --json",
@@ -51,7 +53,46 @@ public class JsonOutputTest {
         JSONTokener currentIn = new JSONTokener(current);
         JSONObject currentJson = new JSONObject(currentIn);
         String simOut = similar(priorJson, currentJson);
-        assertNull(simOut, "JSON not similare for "+cmd);
+        assertNull(simOut, "JSON not similar for "+cmd);
+    }
+
+    @Test
+    public void testasJsonObject() throws TauPException {
+        TauP_Time tool = new TauP_Time();
+        tool.getDistanceArgs().setDegreeList(List.of(35.0));
+        tool.clearPhases();
+        tool.getPhaseArgs().setPhaseNames(List.of("P","S"));
+        boolean withAmplitude = true;
+        tool.getSourceArgs().withAmplitude = withAmplitude;
+        assertEquals("P,S", tool.getPhaseArgs().getPhaseNamesAsString(tool.getPhaseArgs().parsePhaseNameList()));
+        assertEquals(2, tool.parsePhaseNameList().size());
+        StringBuilderWriter sb = new StringBuilderWriter();
+
+        List<RayCalculateable> distanceValues = tool.getDistanceArgs().getRayCalculatables(tool.getSourceArgs());
+        assertEquals(1, distanceValues.size());
+        assertEquals(2, tool.getSeismicPhases().size());
+        List<Arrival> arrivalList = tool.calcAll(tool.getSeismicPhases(), distanceValues);
+        assertEquals(2, arrivalList.size());
+
+        PrintWriter out = new PrintWriter(sb);
+        tool.printResultJSON(out, arrivalList);
+        out.close();
+        System.err.println("######  printResultJSON result  ");
+        System.err.println(sb.toString());
+
+        JSONObject pwJson = new JSONObject(new JSONTokener(new StringReader(sb.toString())));
+
+
+        JSONObject resultJson = TauP_Time.resultAsJSONObject(tool.getTauModelName(),
+                tool.getSourceDepths(), tool.getReceiverDepths(),
+                tool.parsePhaseNameList(), arrivalList, tool.getScatterer(),
+                false, false, withAmplitude, tool.getSourceArgs());
+
+        System.err.println("######  JSONObject result  ");
+        System.err.println(resultJson.toString(2));
+
+        String simOut = similar(pwJson, resultJson);
+        assertNull(simOut, "JSON not similar ");
     }
 
     /**

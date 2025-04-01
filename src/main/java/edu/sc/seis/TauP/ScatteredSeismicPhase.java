@@ -13,19 +13,16 @@ public class ScatteredSeismicPhase implements SeismicPhase {
 
     private final Arrival inboundArrival;
     private final SimpleSeismicPhase scatteredPhase;
-    private final double scattererDepth;
-    private final double scattererDistanceDeg;
+    private final Scatterer scatterer;
     private final boolean backscatter;
 
     public ScatteredSeismicPhase(Arrival inboundArrival,
                                  SimpleSeismicPhase scatteredPhase,
-                                 double scattererDepth,
-                                 double scattererDistanceDeg,
+                                 Scatterer scatterer,
                                  boolean backscatter) {
         this.inboundArrival = inboundArrival;
         this.scatteredPhase = scatteredPhase;
-        this.scattererDepth = scattererDepth;
-        this.scattererDistanceDeg = scattererDistanceDeg;
+        this.scatterer = scatterer;
         this.backscatter = backscatter;
     }
 
@@ -48,15 +45,15 @@ public class ScatteredSeismicPhase implements SeismicPhase {
     }
 
     public double getScattererDepth() {
-        return scattererDepth;
+        return scatterer.depth;
     }
 
     public double getScattererDistance() {
-        return scattererDistanceDeg* SphericalCoords.DtoR;
+        return scatterer.getDistanceDegree()* SphericalCoords.DtoR;
     }
 
     public double getScattererDistanceDeg() {
-        return scattererDistanceDeg ;
+        return scatterer.getDistanceDegree() ;
     }
 
     public boolean isBackscatter() {
@@ -375,7 +372,7 @@ public class ScatteredSeismicPhase implements SeismicPhase {
         desc +="\nInbound to Scatterer: "+inboundArrival.getPhase().getName()+"\n"
                 +SeismicPhase.baseDescribe(inboundArrival.getPhase())
                 +"Arrival at Scatterer: "+printArrival
-                +"\n"+scat_direction+" from "+ scattererDepth +", "+ scattererDistanceDeg
+                +"\n"+scat_direction+" from "+ scatterer.depth +", "+ scatterer.getDistanceDegree()
                 +"\nOutbound from Scatterer: "+scatteredPhase.getName()+"\n"
                 +SeismicPhase.baseDescribe(scatteredPhase);
         return desc;
@@ -437,7 +434,7 @@ public class ScatteredSeismicPhase implements SeismicPhase {
         double[] dist = scatteredPhase.getDist();
         double[] rayParams = scatteredPhase.getRayParams();
         for(int j = 0; j < dist.length; j++) {
-            System.out.println(j + "  " + (scattererDistanceDeg +dist[j]) + "  " + rayParams[j]);
+            System.out.println(j + "  " + (scatterer.getDistanceDegree() +dist[j]) + "  " + rayParams[j]);
         }
     }
 
@@ -514,7 +511,7 @@ public class ScatteredSeismicPhase implements SeismicPhase {
 
     @Override
     public SeismicPhase interpolatePhase(double maxDeltaDeg) {
-        return new ScatteredSeismicPhase(inboundArrival, scatteredPhase.interpolateSimplePhase(maxDeltaDeg), scattererDepth, scattererDistanceDeg, backscatter);
+        return new ScatteredSeismicPhase(inboundArrival, scatteredPhase.interpolateSimplePhase(maxDeltaDeg), scatterer, backscatter);
     }
 
     /**
@@ -559,5 +556,9 @@ public class ScatteredSeismicPhase implements SeismicPhase {
     @Override
     public List<ShadowZone> getShadowZones() throws SlownessModelException, NoSuchLayerException {
         return scatteredPhase.getShadowZones();
+    }
+
+    public Scatterer getScatterer() {
+        return scatterer;
     }
 }

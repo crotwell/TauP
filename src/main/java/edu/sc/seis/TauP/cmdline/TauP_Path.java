@@ -18,6 +18,7 @@ package edu.sc.seis.TauP.cmdline;
 
 import edu.sc.seis.TauP.*;
 import edu.sc.seis.TauP.cmdline.args.*;
+import org.json.JSONObject;
 import picocli.CommandLine;
 
 import java.io.IOException;
@@ -174,6 +175,7 @@ public class TauP_Path extends TauP_AbstractRayTool {
 		boolean withPierce = false;
 		boolean withPath = true;
 		boolean withAmp = false;
+		SeismicSourceArgs sourceArgs = null;
 		if (getOutputFormat().equals(OutputTypes.JSON)) {
 			TauP_AbstractRayTool.writeJSON(out, "",
 					getTauModelName(),
@@ -181,9 +183,10 @@ public class TauP_Path extends TauP_AbstractRayTool {
 					modelArgs.getReceiverDepths(),
 					getSeismicPhases(),
 					arrivalList,
+					getScatterer(),
 					withPierce, withPath,
 					withAmp,
-					MomentMagnitude.MAG4, Arrival.DEFAULT_ATTENUATION_FREQUENCY);
+					sourceArgs);
 		} else if (getOutputFormat().equals(OutputTypes.SVG)) {
 			float pixelWidth = outputTypeArgs.getPixelWidth();
 			printScriptBeginningSVG(out, arrivalList, pixelWidth, distDepthRange, modelArgs, getCmdLineArgs());
@@ -373,4 +376,17 @@ public class TauP_Path extends TauP_AbstractRayTool {
 		}
 	}
 
+
+	public static JSONObject resultAsJSONObject(String modelName,
+												List<Double> depth,
+												List<Double> receiverDepth,
+												List<PhaseName> phases,
+												List<Arrival> arrivals,
+												Scatterer scatterer,
+												boolean withAmplitude,
+												SeismicSourceArgs sourceArgs
+	) {
+		return TauP_Time.resultAsJSONObject(modelName, depth, receiverDepth, phases,
+				arrivals, scatterer, false, true, withAmplitude, sourceArgs);
+	}
 }

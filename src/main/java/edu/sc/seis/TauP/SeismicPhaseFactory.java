@@ -215,8 +215,7 @@ public class SeismicPhaseFactory {
                 ScatteredSeismicPhase seismicPhase = new ScatteredSeismicPhase(
                         flipInArr,
                         scatPhase,
-                        scat.depth,
-                        scat.dist.getDegrees(tMod.getRadiusOfEarth()),
+                        scat,
                         isBackscatter);
                 phaseList.add(seismicPhase);
             }

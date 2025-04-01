@@ -1,10 +1,13 @@
 package edu.sc.seis.TauP.cmdline.args;
 
 import edu.sc.seis.TauP.Arrival;
+import edu.sc.seis.TauP.JSONLabels;
 import edu.sc.seis.TauP.MomentMagnitude;
 import org.json.JSONObject;
+import org.json.JSONWriter;
 import picocli.CommandLine;
 
+import java.io.PrintWriter;
 import java.util.List;
 
 import static edu.sc.seis.TauP.SphericalCoords.DtoR;
@@ -12,9 +15,13 @@ import static edu.sc.seis.TauP.SphericalCoords.DtoR;
 public class SeismicSourceArgs {
 
 
+
     @CommandLine.Option(names = "--mw",
-            defaultValue = "4.0",
+            defaultValue = DEFAULT_MW_STR,
             description = "scale amplitude by source moment magnitude, default is ${DEFAULT-VALUE}")
+    public void setMw(float mw) {
+        this.mw = mw;
+    }
     Float mw = null;
 
     public float getMw() {
@@ -143,20 +150,44 @@ public class SeismicSourceArgs {
         }
     }
 
+    public void writeJSON(PrintWriter pw, String indent) {
+        String NL = "\n";
+        pw.write(" {"+NL);
+        String innerIndent = indent+"  ";
+
+        pw.write(innerIndent+ JSONWriter.valueToString(JSONLabels.MW)+": "+JSONWriter.valueToString((float)getMw())+","+NL);
+        pw.write(innerIndent+ JSONWriter.valueToString(JSONLabels.ATTEN_FREQ)+": "+JSONWriter.valueToString((float)getAttenuationFrequency()));
+        if (hasStrikeDipRake()) {
+            pw.write(","+NL);
+            pw.write(innerIndent + JSONWriter.valueToString(JSONLabels.FAULT) + ": {" + NL);
+            pw.write(innerIndent+"  "+ JSONWriter.valueToString(JSONLabels.STRIKE)+": "+JSONWriter.valueToString((float)getStrikeDipRake().get(0))+","+NL);
+            pw.write(innerIndent+"  "+ JSONWriter.valueToString(JSONLabels.DIP)+": "+JSONWriter.valueToString((float)getStrikeDipRake().get(1))+","+NL);
+            pw.write(innerIndent+"  "+ JSONWriter.valueToString(JSONLabels.RAKE)+": "+JSONWriter.valueToString((float)getStrikeDipRake().get(2))+NL);
+
+            pw.write(innerIndent + "  }");
+        } else {
+            pw.write(NL);
+        }
+        pw.write(indent + "}");
+    }
+
     public JSONObject asJSONObject() {
         JSONObject json = new JSONObject();
-        json.put("mw", getMw());
-        json.put("attenfreq", getAttenuationFrequency());
+        json.put(JSONLabels.MW, getMw());
+        json.put(JSONLabels.ATTEN_FREQ, getAttenuationFrequency());
         if (hasStrikeDipRake()) {
             JSONObject jsonSDR = new JSONObject();
-            json.put("fault", jsonSDR);
-            jsonSDR.put("strike", getStrikeDipRake().get(0));
-            jsonSDR.put("dip", getStrikeDipRake().get(1));
-            jsonSDR.put("rake", getStrikeDipRake().get(2));
+            json.put(JSONLabels.FAULT, jsonSDR);
+            jsonSDR.put(JSONLabels.STRIKE, getStrikeDipRake().get(0));
+            jsonSDR.put(JSONLabels.DIP, getStrikeDipRake().get(1));
+            jsonSDR.put(JSONLabels.RAKE, getStrikeDipRake().get(2));
 
         }
         return json;
     }
+
+    public static final float DEFAULT_MW = 4.0f;
+    public static final String DEFAULT_MW_STR = ""+DEFAULT_MW;
 
     public static final int DEFAULT_NUM_FREQUENCIES = 64;
 }

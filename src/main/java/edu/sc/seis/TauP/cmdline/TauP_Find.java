@@ -140,7 +140,6 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
         timeTool.modelArgs = modelArgs;
         timeTool.outputTypeArgs = outputTypeArgs;
         timeTool.sourceArgs = sourceArgs;
-        timeTool.withAmplitude= withAmplitude;
         List<Arrival> arrivalList = timeTool.calcAll(phaseList,distanceValues);
         if (!times.isEmpty()) {
             double minTime = times.get(0);
@@ -179,7 +178,8 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
                     modelArgs.getSourceDepths(),
                     modelArgs.getReceiverDepths(),
                     getSeismicPhases(),
-                    arrivalList);
+                    arrivalList,
+                    getScatterer());
         } else {
             boolean onlyPrintTime = false;
             boolean onlyPrintRayP = false;
@@ -481,16 +481,16 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
      */
     Double deltaRayParam = 0.001 / SphericalCoords.DtoR;
 
-    @CommandLine.Option(names = "--amp",
-            description = "show amplitude factor for each phase, only if --deg")
-    public boolean withAmplitude = false;
-
     public boolean isWithAmplitude() {
-        return withAmplitude;
+        return getSourceArgs().isWithAmplitude();
     }
 
     @CommandLine.Mixin
-    SeismicSourceArgs sourceArgs = new SeismicSourceArgs();
+    AmplitudeArgs sourceArgs = new AmplitudeArgs();
+
+    public AmplitudeArgs getSourceArgs() {
+        return sourceArgs;
+    }
 
     @CommandLine.Option(names="--az", description="azimuth in degrees, for amp calculations")
     protected Double azimuth = null;

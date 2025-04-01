@@ -1,5 +1,4 @@
 {
-  "receiverdepth": [0],
   "curves": [
     {
       "x": "degree180",
@@ -1036,8 +1035,9 @@
       }]
     }
   ],
+  "receiverdepthlist": [0],
   "model": "prem",
-  "sourcedepth": [10],
+  "sourcedepthlist": [10],
   "phases": [
     "P",
     "2kmps"

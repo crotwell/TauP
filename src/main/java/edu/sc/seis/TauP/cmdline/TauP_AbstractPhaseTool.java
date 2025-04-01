@@ -5,11 +5,15 @@ import edu.sc.seis.TauP.cmdline.args.AbstractOutputTypeArgs;
 import edu.sc.seis.TauP.cmdline.args.ModelArgs;
 import edu.sc.seis.TauP.Scatterer;
 import edu.sc.seis.TauP.cmdline.args.PhaseArgs;
+import edu.sc.seis.TauP.cmdline.args.SeismicSourceArgs;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.json.JSONWriter;
 import picocli.CommandLine;
 
 import java.util.*;
+
+import static edu.sc.seis.TauP.JSONLabels.*;
 
 public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
 
@@ -53,18 +57,24 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
     public static JSONObject baseResultAsJSONObject(String modelName,
                                                     List<Double> depth,
                                                     List<Double> receiverDepth,
-                                                    List<PhaseName> phaseNameList) {
+                                                    List<PhaseName> phaseNameList,
+                                                    Scatterer scatterer,
+                                                    boolean withAmplitude,
+                                                    SeismicSourceArgs sourceArgs) {
         JSONObject out = new JSONObject();
 
-        out.put("model", modelName);
-        out.put("sourcedepth",  depth);
-        out.put("receiverdepth", receiverDepth);
+        out.put(MODEL, modelName);
+        out.put(SOURCEDEPTH_LIST,  depth);
+        out.put(RECEIVERDEPTH_LIST, receiverDepth);
         if (phaseNameList != null  ) {
             JSONArray outPhases = new JSONArray();
             for (PhaseName pn : phaseNameList) {
                 outPhases.put(pn.getName());
             }
-            out.put("phases", outPhases);
+            out.put(PHASE_LIST, outPhases);
+        }
+        if (scatterer != null) {
+            out.put(SCATTER, scatterer.asJSONObject());
         }
         return out;
     }
@@ -95,6 +105,9 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
             // make sure not null string
             return;
         }
+        if (this.phaseNames == null) {
+            this.phaseNames = new ArrayList<>();
+        }
         this.phaseNames.add(phaseName);
     }
 
@@ -108,7 +121,7 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
 
     public void clearPhaseNames() {
         phases = null;
-        phaseNames = new ArrayList<>();
+        phaseNames = null;
     }
 
     public void setSingleSourceDepth(double depth) {
@@ -214,8 +227,11 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
         return phases;
     }
 
-
     @CommandLine.ArgGroup(heading = "Phase Names %n", exclusive = false)
     PhaseArgs phaseArgs = new PhaseArgs();
+
+    public PhaseArgs getPhaseArgs() {
+        return phaseArgs;
+    }
 
 }

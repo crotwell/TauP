@@ -1,12 +1,14 @@
-Usage: taup setms3 [--debug] [--geodetic] [--help] [--verbose] [--taupeh
-                   [=<ehKey>]] [--geodeticflattening=f]
+Usage: taup setms3 [--amp] [--debug] [--geodetic] [--help] [--verbose] [--taupeh
+                   [=<ehKey>]] [--attenuationfreq=<attenuationFreq>]
+                   [--geodeticflattening=f] [--mw=<mw>]
+                   [--numattenuationfreq=<numFrequencies>]
                    [--prop=<toolPropsFilename>] [--qml=<quakemlFilename>]
                    [--qmltol=<quakeOTimeTol>] [--staxml=<stationxmlFilename>]
                    [--eid=evt[,evt...]]... [--sid=sta[,sta...]]...
-                   [[--mod=<modelName>] [-h=depth[,depth...]]...
-                   [--stadepth=depth[,depth...]]... [--scat=s s]...] [[-p=phase
-                   [,phase...]]... [--phasefile=<phaseFiles>]...]
-                   [mseed3file...]
+                   [--strikediprake=s[,s...]]... [[--mod=<modelName>] [-h=depth
+                   [,depth...]]... [--stadepth=depth[,depth...]]... [--scat=s
+                   s]...] [[-p=phase[,phase...]]...
+                   [--phasefile=<phaseFiles>]...] [mseed3file...]
 Save travel times in the extra header of miniseed3 files.
     https://crotwell.github.io/ms3eh/
 has details on the JSON structure.
@@ -15,6 +17,10 @@ has details on the JSON structure.
 
 Options:
 
+      --amp                show amplitude factor for each phase
+      --attenuationfreq=<attenuationFreq>
+                           attenuation frequency for amplitude calculations,
+                             default is 1.0
       --debug              enable debugging output
       --eid=evt[,evt...]   event id, like  	us7000pn9s, for lookup via USGS
                              fdsn event web service. Creates a distance if
@@ -29,6 +35,11 @@ Options:
                              calculations when --geodetic, defaults to WGS84 ~
                              298.257. The distance calculation uses 1/x.
       --help               display this help message
+      --mw=<mw>            scale amplitude by source moment magnitude, default
+                             is 4.0
+      --numattenuationfreq=<numFrequencies>
+                            number attenuations frequency for amplitude
+                             calculations, default is 64
       --prop=<toolPropsFilename>
                            load defaults from properties file
       --qml, --quakeml=<quakemlFilename>
@@ -42,6 +53,9 @@ Options:
       --staxml=<stationxmlFilename>
                            StationXML file to extract station latitudes and
                              longitudes from
+      --strikediprake=s[,s...]
+                           fault strike, dip, rake for amplitude calculations.
+                             If not given radiation pattern is unity.
       --taupeh[=<ehKey>]   key to store full TauP JSON output within extra
                              headers within, otherwise use abbreviated 'bag'
                              style markers.If specified without parameter,

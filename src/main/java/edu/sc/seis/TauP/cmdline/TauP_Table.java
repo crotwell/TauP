@@ -471,7 +471,8 @@ public class TauP_Table extends TauP_Tool {
                         List.of(depth),
                         List.of(receiverDepth),
                         phaseList,
-                        arrivals);
+                        arrivals,
+                        scatterer);
             }
         }
         out.println("]");

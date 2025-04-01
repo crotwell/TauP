@@ -149,12 +149,12 @@ public class XYPlottingData {
 
     public JSONObject asJSON() {
         JSONObject out = new JSONObject();
-        out.put("label", label);
-        out.put("description", description);
-        out.put("x", xAxisType);
-        out.put("y", yAxisType);
+        out.put(JSONLabels.LABEL, label);
+        out.put(JSONLabels.DESCRIPTION, description);
+        out.put(JSONLabels.X_AXIS, xAxisType);
+        out.put(JSONLabels.Y_AXIS, yAxisType);
         JSONArray segarr = new JSONArray();
-        out.put("segments", segarr);
+        out.put(JSONLabels.SEGMENTS, segarr);
         for (XYSegment seg : segmentList) {
             segarr.put(seg.asJSON());
         }

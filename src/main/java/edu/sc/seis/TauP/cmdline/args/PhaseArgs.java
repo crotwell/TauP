@@ -221,7 +221,7 @@ public class PhaseArgs {
             return "";
         StringBuffer phases = new StringBuffer();
         phases.append(phaseNameList.get(0).getName());
-        for (PhaseName phaseName : phaseNameList) {
+        for (PhaseName phaseName : phaseNameList.subList(1, phaseNameList.size())) {
             phases.append(",").append(phaseName.getName());
         }
         return phases.toString();

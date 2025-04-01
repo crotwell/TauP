@@ -405,7 +405,6 @@ public class LegPuller {
         if (depthString.charAt(0) == PhaseSymbols.NAMED_DISCON_START) {
             VelocityModel vMod = tMod.getVelocityModel();
             String customName = depthString.substring(1, depthString.indexOf(NAMED_DISCON_END, 1));
-            System.err.println("Look for "+customName+" as custom discon");
             for (NamedVelocityDiscon namedDiscon : vMod.namedDiscon) {
                 if (customName.equalsIgnoreCase(namedDiscon.getName())
                         || customName.equalsIgnoreCase(namedDiscon.getPreferredName())) {

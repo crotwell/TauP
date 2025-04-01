@@ -3,7 +3,7 @@ package edu.sc.seis.TauP.cmdline;
 import edu.sc.seis.TauP.*;
 import edu.sc.seis.TauP.cmdline.args.AbstractOutputTypeArgs;
 import edu.sc.seis.TauP.cmdline.args.DistanceArgs;
-import edu.sc.seis.TauP.cmdline.args.DistanceRayArgs;
+import edu.sc.seis.TauP.cmdline.args.SeismicSourceArgs;
 import org.json.JSONException;
 import org.json.JSONWriter;
 import picocli.CommandLine;
@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import static edu.sc.seis.TauP.JSONLabels.*;
 
 public abstract class TauP_AbstractRayTool extends TauP_AbstractPhaseTool {
 
@@ -29,11 +31,12 @@ public abstract class TauP_AbstractRayTool extends TauP_AbstractPhaseTool {
                                  List<Double> depthList,
                                  List<Double> receiverDepth,
                                  List<SeismicPhase> phases,
-                                 List<Arrival> arrivals) {
+                                 List<Arrival> arrivals,
+                                 Scatterer scatterer) {
         TauP_AbstractRayTool.writeJSON(pw, indent, modelName, depthList, receiverDepth,
-                phases, arrivals,  false, false,
-                false,
-                MomentMagnitude.MAG4, Arrival.DEFAULT_ATTENUATION_FREQUENCY);
+                phases, arrivals,  scatterer,
+                false, false, false,
+                null);
     }
 
     public static void writeJSON(PrintWriter pw, String indent,
@@ -42,16 +45,16 @@ public abstract class TauP_AbstractRayTool extends TauP_AbstractPhaseTool {
                                  List<Double> receiverDepth,
                                  List<SeismicPhase> phases,
                                  List<Arrival> arrivals,
+                                 Scatterer scatterer,
                                  boolean withPierce,
                                  boolean withPath,
                                  boolean withAmplitude,
-                                 float Mw,
-                                 double attenuationFrequency) {
+                                 SeismicSourceArgs sourceArgs) {
         String innerIndent = indent+"  ";
         String NL = "\n";
         pw.write("{"+NL);
-        pw.write(innerIndent+ JSONWriter.valueToString("model")+": "+JSONWriter.valueToString(modelName)+","+NL);
-        pw.write(innerIndent+JSONWriter.valueToString("sourcedepthlist")+": [");
+        pw.write(innerIndent+ JSONWriter.valueToString(JSONLabels.MODEL)+": "+JSONWriter.valueToString(modelName)+","+NL);
+        pw.write(innerIndent+JSONWriter.valueToString(SOURCEDEPTH_LIST)+": [");
 
         boolean firstDp = true;
         for (Double depth : depthList) {
@@ -60,7 +63,7 @@ public abstract class TauP_AbstractRayTool extends TauP_AbstractPhaseTool {
         }
         pw.write("],"+NL);
 
-        pw.write(innerIndent+JSONWriter.valueToString("receiverdepthlist")+": [");
+        pw.write(innerIndent+JSONWriter.valueToString(RECEIVERDEPTH_LIST)+": [");
 
         boolean firstRecDp = true;
         for (Double depth : receiverDepth) {
@@ -68,8 +71,13 @@ public abstract class TauP_AbstractRayTool extends TauP_AbstractPhaseTool {
             firstRecDp = false;
         }
         pw.write("],"+NL);
+        if (scatterer!=null) {
+            pw.write(innerIndent + JSONWriter.valueToString(SCATTER) + ": ");
+            scatterer.writeJSON(pw, innerIndent);
+            pw.write("," + NL);
+        }
 
-        pw.write(innerIndent+JSONWriter.valueToString("phases")+": [ ");
+        pw.write(innerIndent+JSONWriter.valueToString(PHASE_LIST)+": [ ");
         boolean first = true;
         for (SeismicPhase phase : phases) {
             if (first) {
@@ -80,11 +88,7 @@ public abstract class TauP_AbstractRayTool extends TauP_AbstractPhaseTool {
             pw.write(JSONWriter.valueToString(phase.getName()));
         }
         pw.write(" ],"+NL);
-        double moment = MomentMagnitude.mw_to_N_m(Mw);
-        if (withAmplitude) {
-            pw.write(innerIndent+JSONWriter.valueToString("Mw")+": "+JSONWriter.valueToString(Mw)+","+NL);
-        }
-        pw.write(innerIndent+JSONWriter.valueToString("arrivals")+": ["+NL);
+        pw.write(innerIndent+JSONWriter.valueToString(ARRIVAL_LIST)+": ["+NL);
         first = true;
         for (Arrival arrival : arrivals) {
             if (first) {
@@ -93,7 +97,7 @@ public abstract class TauP_AbstractRayTool extends TauP_AbstractPhaseTool {
                 pw.write(","+NL);
             }
             try {
-                arrival.writeJSON(pw, innerIndent + "  ", withPierce, withPath, withAmplitude, moment, attenuationFrequency);
+                arrival.writeJSON(pw, innerIndent + "  ", withPierce, withPath, withAmplitude);
             } catch (JSONException e) {
                 Alert.warning("Error in json: "+ arrival);
                 throw e;

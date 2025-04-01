@@ -1,9 +1,7 @@
 package edu.sc.seis.TauP.cmdline;
 
 import edu.sc.seis.TauP.*;
-import edu.sc.seis.TauP.cmdline.args.GeodeticArgs;
-import edu.sc.seis.TauP.cmdline.args.OutputTypes;
-import edu.sc.seis.TauP.cmdline.args.QmlStaxmlArgs;
+import edu.sc.seis.TauP.cmdline.args.*;
 import edu.sc.seis.seisFile.Location;
 import edu.sc.seis.seisFile.SeisFileException;
 import edu.sc.seis.seisFile.fdsnws.quakeml.Event;
@@ -156,6 +154,12 @@ public class TauP_SetMSeed3 extends TauP_AbstractPhaseTool {
         // save values used to make calc, if not already from eh
         if (quake != null) {
             eh.addToBag(quake);
+            SeismicSourceArgs quakeSourceArgs = new SeismicSourceArgs();
+            if (quake.getPreferredMagnitude() != null && sourceArgs.getMw()==SeismicSourceArgs.DEFAULT_MW) {
+                // may not be Mw, but better than nothing???
+                quakeSourceArgs.setMw(quake.getPreferredMagnitude().getMag().getValue());
+                rayCalculateable.setSourceArgs(quakeSourceArgs);
+            }
         }
         if (chan != null) {
             eh.addToBag(chan);
@@ -184,7 +188,8 @@ public class TauP_SetMSeed3 extends TauP_AbstractPhaseTool {
 
             if (ehKey != null && !ehKey.isEmpty()) {
                 JSONObject taup = TauP_Time.resultAsJSONObject(modelArgs.getModelName(),
-                        modelArgs.getSourceDepths(), modelArgs.getReceiverDepths(), parsePhaseNameList(), arrivals);
+                        modelArgs.getSourceDepths(), modelArgs.getReceiverDepths(), parsePhaseNameList(),
+                        arrivals, modelArgs.getScatterer(), false, false, isWithAmplitude(), getSourceArgs());
                 eh.getEH().put(ehKey, taup);
             } else {
                 if (evTime == null) {
@@ -295,4 +300,16 @@ public class TauP_SetMSeed3 extends TauP_AbstractPhaseTool {
 
     @CommandLine.Mixin
     GeodeticArgs geodeticArgs = new GeodeticArgs();
+
+
+    @CommandLine.Mixin
+    AmplitudeArgs sourceArgs = new AmplitudeArgs();
+
+    public AmplitudeArgs getSourceArgs() {
+        return sourceArgs;
+    }
+
+    public boolean isWithAmplitude() {
+        return getSourceArgs().isWithAmplitude();
+    }
 }

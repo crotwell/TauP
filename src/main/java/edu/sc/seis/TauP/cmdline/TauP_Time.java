@@ -17,10 +17,7 @@
 package edu.sc.seis.TauP.cmdline;
 
 import edu.sc.seis.TauP.*;
-import edu.sc.seis.TauP.cmdline.args.AbstractOutputTypeArgs;
-import edu.sc.seis.TauP.cmdline.args.OutputTypes;
-import edu.sc.seis.TauP.cmdline.args.SeismicSourceArgs;
-import edu.sc.seis.TauP.cmdline.args.TextOutputTypeArgs;
+import edu.sc.seis.TauP.cmdline.args.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import picocli.CommandLine;
@@ -54,21 +51,16 @@ public class TauP_Time extends TauP_AbstractRayTool {
     @CommandLine.Option(names = {"--first", "--onlyfirst"}, description = "only output the first arrival for each phase, no triplications")
     protected boolean onlyFirst = false;
 
-    @CommandLine.Option(names = "--amp", description = "show amplitude factor for each phase")
-    public boolean withAmplitude = false;
+    @CommandLine.Mixin
+    AmplitudeArgs sourceArgs = new AmplitudeArgs();
 
-    public boolean isWithAmplitude() {
-        return withAmplitude;
+    public AmplitudeArgs getSourceArgs() {
+        return sourceArgs;
     }
 
-    public static final String AMPLITUDE_WARNING = "    WARNING: \n"+
-            "      Amplitudes are an experimental feature and may not generate correct\n" +
-            "      results. They are provided in the hope that they are helpful and to\n" +
-            "      allow feedback from the community, but testing of their correctness\n" +
-            "      is ongoing.";
-
-    @CommandLine.Mixin
-    SeismicSourceArgs sourceArgs = new SeismicSourceArgs();
+    public boolean isWithAmplitude() {
+        return getSourceArgs().isWithAmplitude();
+    }
 
     @CommandLine.Option(names = "--rel", split = ",", paramLabel = "phase", description = "times relative to the first of the given phases")
     protected List<String> relativePhaseName = new ArrayList<>();
@@ -250,7 +242,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
                 modelLine += "  Scatter Depth: "+ scatterer.depth+" km Dist: "+ scatterer.getDistanceDegree();
             }
             if (withAmplitude) {
-                out.println(AMPLITUDE_WARNING);
+                out.println(AmplitudeArgs.AMPLITUDE_WARNING);
             }
             out.println(modelLine);
             String lineOne = "Distance   Depth   " + String.format(phaseFormat, "Phase")
@@ -356,25 +348,42 @@ public class TauP_Time extends TauP_AbstractRayTool {
         boolean withPath = false;
         TauP_AbstractRayTool.writeJSON(out, "",
                 getTauModelName(),
-                modelArgs.getSourceDepths(),
-                modelArgs.getReceiverDepths(),
+                getSourceDepths(),
+                getReceiverDepths(),
                 getSeismicPhases(),
                 arrivalList,
+                getScatterer(),
                 withPierce, withPath,
                 isWithAmplitude(),
-                sourceArgs.getMw(), sourceArgs.getAttenuationFrequency());
+                sourceArgs);
+    }
+
+
+    public static JSONObject resultAsJSONObject(String modelName,
+                                                List<Double> depth,
+                                                List<Double> receiverDepth,
+                                                List<PhaseName> phases,
+                                                List<Arrival> arrivals,
+                                                Scatterer scatterer) {
+        return resultAsJSONObject(modelName, depth, receiverDepth, phases, arrivals, scatterer,
+                false, false, false, new SeismicSourceArgs());
     }
 
     public static JSONObject resultAsJSONObject(String modelName,
                                                 List<Double> depth,
                                                 List<Double> receiverDepth,
                                                 List<PhaseName> phases,
-                                                List<Arrival> arrivals) {
-        JSONObject out = baseResultAsJSONObject( modelName, depth,  receiverDepth, phases);
+                                                List<Arrival> arrivals,
+                                                Scatterer scatterer,
+                                                boolean withPierce,
+                                                boolean withPath,
+                                                boolean withAmplitude,
+                                                SeismicSourceArgs sourceArgs) {
+        JSONObject out = baseResultAsJSONObject( modelName, depth,  receiverDepth, phases, scatterer, withAmplitude, sourceArgs);
         JSONArray outArrivals = new JSONArray();
         out.put("arrivals", outArrivals);
         for (Arrival currArrival : arrivals) {
-            outArrivals.put(currArrival.asJSONObject());
+            outArrivals.put(currArrival.asJSONObject(withPierce, withPath, withAmplitude));
         }
         return out;
     }

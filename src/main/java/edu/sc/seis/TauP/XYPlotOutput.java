@@ -88,7 +88,7 @@ public class XYPlotOutput {
         JSONObject out;
         if (modelArgs != null ) {
             out = baseResultAsJSONObject( modelArgs.getModelName(), modelArgs.getSourceDepths(),
-                    modelArgs.getReceiverDepths(), phaseNames);
+                    modelArgs.getReceiverDepths(), phaseNames, modelArgs.getScatterer(), false, null);
         } else {
             out = new JSONObject();
         }
