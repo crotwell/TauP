@@ -748,6 +748,11 @@ public class Arrival {
         }
     }
 
+    /**
+     * Calculate radiation pattern terms, Fp, Fsv, Fsh for the given fault orientation and az,takeoff.
+     *
+     * @return  Fp, Fsv, Fsh
+     */
     public double[] calcRadiationPattern() {
         SeismicSourceArgs sourceArgs = getRayCalculateable().getSourceArgs();
 
@@ -986,6 +991,9 @@ public class Arrival {
         String innerIndent = indent+"  ";
 
         pw.write(innerIndent+JSONWriter.valueToString(JSONLabels.SOURCEDEPTH)+": "+JSONWriter.valueToString((float)getSourceDepth())+","+NL);
+        if (getReceiverDepth() != 0.0) {
+            pw.write(innerIndent+JSONWriter.valueToString(JSONLabels.RECEIVERDEPTH)+": "+JSONWriter.valueToString((float)getReceiverDepth())+","+NL);
+        }
         pw.write(innerIndent+JSONWriter.valueToString(JSONLabels.DISTDEG_LABEL)+": "+JSONWriter.valueToString((float)getModuloDistDeg())+","+NL);
         pw.write(innerIndent+JSONWriter.valueToString(JSONLabels.PHASE)+": "+JSONWriter.valueToString(getName())+","+NL);
         pw.write(innerIndent+JSONWriter.valueToString(JSONLabels.TIME)+": "+JSONWriter.valueToString((float)getTime())+","+NL);
@@ -1075,7 +1083,12 @@ public class Arrival {
                 pw.write(innerIndent+"  [ "+
                         JSONWriter.valueToString((float)td.getDistDeg())+", "+
                         JSONWriter.valueToString((float)td.getDepth())+", "+
-                        JSONWriter.valueToString((float)td.getTime())+" ]");
+                        JSONWriter.valueToString((float)td.getTime()));
+                if (isLatLonable()) {
+                    double[] latlon = getLatLonable().calcLatLon(td.getDistDeg(), getDistDeg());
+                    pw.write(", "+(float)latlon[0]+", "+(float)latlon[1]);
+                }
+                pw.write(" ]");
             }
             pw.write(NL);
             pw.write(innerIndent+"]");
@@ -1133,6 +1146,7 @@ public class Arrival {
         JSONObject a = new JSONObject();
         a.put(JSONLabels.DISTDEG_LABEL, (float)getModuloDistDeg());
         a.put(JSONLabels.SOURCEDEPTH, (float)getSourceDepth());
+        a.put(JSONLabels.RECEIVERDEPTH, (float)getReceiverDepth());
         a.put(JSONLabels.PHASE, getName());
         a.put(JSONLabels.TIME, (float)getTime());
         a.put(JSONLabels.RAYPARAM, (float)(Math.PI / 180.0 * getRayParam()));

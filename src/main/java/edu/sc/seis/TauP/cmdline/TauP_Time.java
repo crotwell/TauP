@@ -134,6 +134,7 @@ public class TauP_Time extends TauP_AbstractRayTool {
             HashMap<Double, List<Arrival>> earliestAtDist = new HashMap<>();
             for (Double dist : distList) {
                 DistanceRay distRay = DistanceRay.ofRadians(dist);
+                distRay.setSourceArgs(sourceArgs);
                 List<Arrival> relativeArrivals = new ArrayList<>();
                 for (SeismicPhase relPhase : relativePhaseList) {
                     relativeArrivals.addAll(distRay.calculate(relPhase));
