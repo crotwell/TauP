@@ -14,7 +14,7 @@ public class CompositeSeismicPhase extends SimpleSeismicPhase {
 
     public CompositeSeismicPhase(List<SimpleContigSeismicPhase> subphaseList) {
         this(subphaseList, new ArrayList<>());
-        assert subphaseList.size() == 1;
+        assert subphaseList.size() != 1;
     }
     public CompositeSeismicPhase(List<SimpleContigSeismicPhase> subphaseList,
                                  List<ShadowZone> shadowZones) {
