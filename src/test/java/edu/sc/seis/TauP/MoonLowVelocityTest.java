@@ -29,8 +29,8 @@ public class MoonLowVelocityTest {
         proto.addToBranch(3, true, true, PhaseInteraction.TURN, "P");
         proto.addToBranch(0, true, true, PhaseInteraction.END, "P");
         assertEquals("0 1 2 3 3 2 1 0 ", proto.branchNumSeqStr());
-        List<ProtoSeismicPhase> hszSplitProtoList = proto.splitForAllHighSlowness();
-        assertEquals(2, hszSplitProtoList.size());
+        List<ShadowOrProto> hszSplitProtoList = proto.splitForAllHighSlowness();
+        assertEquals(3, hszSplitProtoList.size());
     }
 
     @Test
