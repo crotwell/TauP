@@ -1,9 +1,13 @@
 package edu.sc.seis.TauP;
 
+import org.json.JSONObject;
+
 /**
  * Represents a shadow zone within a phase.
  */
 public class ShadowZone {
+
+    private final TauBranch hszBranch;
 
     double rayParam;
 
@@ -19,17 +23,22 @@ public class ShadowZone {
      */
     Arrival preArrival;
 
-    public ShadowZone(SeismicPhase phase,
-                      double rayParam,
-                      Arrival preArrival,
-                      Arrival postArrival) {
+    boolean isPWave;
+
+    public ShadowZone(double rayParam, TauBranch hszBranch) {
         this.rayParam = rayParam;
+        this.hszBranch = hszBranch;
+    }
+
+    public void setPrePostArrival(Arrival preArrival,
+                                  Arrival postArrival) {
         this.postArrival = postArrival;
         this.preArrival = preArrival;
     }
 
     public String toString() {
-        return preArrival.getName()+" Shadow zone for ray param "+Outputs.formatRayParam(Math.PI / 180.0 * getRayParam())+" s/deg between \n"
+        return preArrival.getName()+" Shadow zone for ray param "+Outputs.formatRayParam(Math.PI / 180.0 * getRayParam())+" s/deg "
+                +" depths "+hszBranch.getTopDepth()+" to "+hszBranch.getBotDepth()+",  between arrivals:\n"
                 +"  "+Arrival.toStringHeader()+"\n"
                 +"  "+preArrival.toString()+"\n"
                 +"  "+postArrival.toString();
@@ -39,11 +48,29 @@ public class ShadowZone {
         return rayParam;
     }
 
+    public double getTopDepth() {
+        return hszBranch.getTopDepth();
+    }
+
+    public double getBotDepth() {
+        return hszBranch.getBotDepth();
+    }
+
     public Arrival getPostArrival() {
         return postArrival;
     }
 
     public Arrival getPreArrival() {
         return preArrival;
+    }
+
+    public JSONObject asJSON() {
+        JSONObject out = new JSONObject();
+        out.put(JSONLabels.RAYPARAM, getRayParam());
+        out.put(JSONLabels.TOP_DEPTH, getTopDepth());
+        out.put(JSONLabels.BOT_DEPTH, getBotDepth());
+        out.put(JSONLabels.SHADOW_PRE_ARRIVAL, getPreArrival());
+        out.put(JSONLabels.SHADOW_POST_ARRIVAL, getPostArrival());
+        return out;
     }
 }

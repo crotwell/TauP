@@ -340,8 +340,8 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
         }
     }
 
-    public List<ProtoSeismicPhase> splitForAllHighSlowness() throws TauModelException {
-        List<ProtoSeismicPhase> shadowSplits = List.of(this);
+    public List<ShadowOrProto> splitForAllHighSlowness() throws TauModelException {
+        List<ShadowOrProto> shadowSplits = List.of(new ShadowOrProto(this));
         for (int psIdx = 0; psIdx < 2; psIdx++) {
             TauBranch prevTB = null;
             boolean isPWave = psIdx==0;
@@ -350,19 +350,27 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                 TauBranch tb = tMod.getTauBranch(tbNum, isPWave);
                 if (tb.isHighSlowness() && tb.getTopRayParam() <= endSegment().maxRayParam) {
                     // ray param range overlaps shadow ray param for HSZ, split proto
-                    List<ProtoSeismicPhase> outList = new ArrayList<>();
-                    for (ProtoSeismicPhase inProto : shadowSplits) {
-                        List<ProtoSeismicPhase> splitList = inProto.splitForHighSlowness(tb);
-                        outList.addAll(splitList);
+                    List<ShadowOrProto> outList = new ArrayList<>();
+                    for (ShadowOrProto inVal : shadowSplits) {
+                        if (inVal.isProto()) {
+                            List<ShadowOrProto> splitList = inVal.getProto().splitForHighSlowness(tb);
+                            outList.addAll(splitList);
+                        } else {
+                            outList.add(inVal);
+                        }
                     }
                     shadowSplits = outList;
                 }
                 if (prevTB != null && prevTB.getBotRayParam() < tb.getTopRayParam()) {
                     // LVZ discon
-                    List<ProtoSeismicPhase> outList = new ArrayList<>();
-                    for (ProtoSeismicPhase inProto : shadowSplits) {
-                        List<ProtoSeismicPhase> splitList = inProto.splitForHighSlownessDiscon(tbNum, isPWave);
-                        outList.addAll(splitList);
+                    List<ShadowOrProto> outList = new ArrayList<>();
+                    for (ShadowOrProto inVal : shadowSplits) {
+                        if (inVal.isProto()) {
+                            List<ShadowOrProto> splitList = inVal.getProto().splitForHighSlownessDiscon(tbNum, isPWave);
+                            outList.addAll(splitList);
+                        } else {
+                            outList.add(inVal);
+                        }
                     }
                     shadowSplits = outList;
                 }
@@ -373,7 +381,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
         return shadowSplits;
     }
 
-    public List<ProtoSeismicPhase> splitForHighSlowness(TauBranch hszBranch) throws TauModelException {
+    public List<ShadowOrProto> splitForHighSlowness(TauBranch hszBranch) throws TauModelException {
         boolean found = false;
         int hszBranchNum = -1;
         for (int bNum = 0; bNum < tMod.getNumBranches(); bNum++) {
@@ -389,7 +397,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
 
         if (!hszBranch.isHighSlowness() || hszRayParam < minRayParam ||  maxRayParam < hszRayParam) {
             // phase doesn't strictly contain HSZ ray param, so no shadow zone
-            return List.of(this);
+            return List.of(new ShadowOrProto(this));
         }
         List<SeismicPhaseSegment> preShadowSegList = new ArrayList<>();
         List<SeismicPhaseSegment> postShadowSegList = new ArrayList<>();
@@ -495,17 +503,18 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                 postShadow.failNext("Single ray parameter with no flat segments");
             }
             if (preShadow.isFail) {
-                return List.of(postShadow);
+                return List.of(new ShadowOrProto(postShadow));
             }
             if (postShadow.isFail) {
-                return List.of(preShadow);
+                return List.of(new ShadowOrProto(preShadow));
             }
             if (preShadow.endSegment().minRayParam != postShadow.endSegment().maxRayParam) {
                 throw new TauModelException("Shadow ray params don't match: "+preShadow.endSegment().maxRayParam+" != "+postShadow.endSegment().minRayParam);
             }
-            return List.of(preShadow, postShadow);
+            ShadowZone shadow = new ShadowZone(preShadow.endSegment().minRayParam, hszBranch);
+            return List.of(new ShadowOrProto(preShadow), new ShadowOrProto(shadow), new ShadowOrProto(postShadow));
         } else {
-            return List.of(this);
+            return List.of(new ShadowOrProto(this));
         }
     }
 
@@ -520,17 +529,17 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
      * @return phase split for shadow zone
      * @throws TauModelException
      */
-    public List<ProtoSeismicPhase> splitForHighSlownessDiscon(int hszBranchNum, boolean isPWave)
+    public List<ShadowOrProto> splitForHighSlownessDiscon(int hszBranchNum, boolean isPWave)
             throws TauModelException {
         if (hszBranchNum == 0) {
             // discon at free surface?
-            return List.of(this);
+            return List.of(new ShadowOrProto(this));
         }
         TauBranch abovehszBranch = tMod.getTauBranch(hszBranchNum-1, isPWave);
         TauBranch hszBranch = tMod.getTauBranch(hszBranchNum, isPWave);
         if (abovehszBranch.getBotRayParam() >= hszBranch.getTopRayParam()) {
             // normal discon or not a discon at all, so no negative jump in velocity
-            return List.of(this);
+            return List.of(new ShadowOrProto(this));
         }
         SeismicPhaseSegment endSeg = endSegment();
         double minRayParam = endSeg.minRayParam;
@@ -558,7 +567,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
 
         if (!foundSegRPOverlap || hszRayParam < minRayParam ||  maxRayParam < hszRayParam) {
             // phase doesn't strictly contain HSZ ray param, so no shadow zone
-            return List.of(this);
+            return List.of(new ShadowOrProto(this));
         }
         List<SeismicPhaseSegment> preShadowSegList = new ArrayList<>();
         List<SeismicPhaseSegment> postShadowSegList = new ArrayList<>();
@@ -667,17 +676,20 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                 postShadow.failNext("Single ray parameter with no flat segments");
             }
             if (preShadow.isFail) {
-                return List.of(postShadow);
+                return List.of(new ShadowOrProto(postShadow));
             }
             if (postShadow.isFail) {
-                return List.of(preShadow);
+                return List.of(new ShadowOrProto(preShadow));
             }
             if (preShadow.endSegment().minRayParam != postShadow.endSegment().maxRayParam) {
                 throw new TauModelException("Shadow ray params don't match: "+preShadow.endSegment().maxRayParam+" != "+postShadow.endSegment().minRayParam);
             }
-            return List.of(preShadow, postShadow);
+            ShadowZone shadow = new ShadowZone(preShadow.endSegment().minRayParam, hszBranch);
+            return List.of(new ShadowOrProto(preShadow),
+                    new ShadowOrProto(shadow),
+                    new ShadowOrProto(postShadow));
         } else {
-            return List.of(this);
+            return List.of(new ShadowOrProto(this));
         }
     }
 

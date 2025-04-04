@@ -322,7 +322,7 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
         return dist != null && dist.length != 0;
     }
 
-    public List<ShadowZone> getShadowZones() throws SlownessModelException, NoSuchLayerException {
+    public List<ShadowZone> getShadowZones() {
         return new ArrayList<>();
     }
 

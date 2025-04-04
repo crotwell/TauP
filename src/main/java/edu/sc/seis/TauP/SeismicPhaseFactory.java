@@ -669,15 +669,30 @@ public class SeismicPhaseFactory {
             return sp;
         }
         // split for any high slowness zones
-        List<ProtoSeismicPhase> hszSplitProtoList = proto.splitForAllHighSlowness();
+        List<ShadowOrProto> hszSplitProtoList = proto.splitForAllHighSlowness();
         List<SimpleContigSeismicPhase> contigPhaseList = new ArrayList<>();
-        for (ProtoSeismicPhase hszProto : hszSplitProtoList) {
-            contigPhaseList.add(internalSumContigPhase(hszProto));
+        List<ShadowZone> shadowZones = new ArrayList<>();
+        SimpleContigSeismicPhase prevPhaseSeg = null;
+        ShadowZone prevShadow = null;
+        for (ShadowOrProto hszProto : hszSplitProtoList) {
+            if (hszProto.isProto()) {
+                SimpleContigSeismicPhase phaseSeg = internalSumContigPhase(hszProto.getProto());
+                contigPhaseList.add(phaseSeg);
+                if (prevShadow != null) {
+                    prevShadow.setPrePostArrival(prevPhaseSeg.createArrivalAtIndex(prevPhaseSeg.getNumRays()-1),
+                            phaseSeg.createArrivalAtIndex(0));
+                }
+                prevShadow = null;
+                prevPhaseSeg = phaseSeg;
+            } else {
+                prevShadow = hszProto.getShadow();
+                shadowZones.add(prevShadow);
+            }
         }
         if (contigPhaseList.size()==1) {
             return contigPhaseList.get(0);
         }
-        return new CompositeSeismicPhase(contigPhaseList);
+        return new CompositeSeismicPhase(contigPhaseList, shadowZones);
     }
 
     protected static SimpleContigSeismicPhase internalSumContigPhase(ProtoSeismicPhase proto) throws TauModelException {

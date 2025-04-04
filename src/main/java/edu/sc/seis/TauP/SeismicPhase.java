@@ -212,25 +212,21 @@ public interface SeismicPhase extends Serializable, Cloneable {
                 mod180Max = " ("+Outputs.formatDistanceNoPad(SeismicPhase.distanceTrim180(phase.getMaxDistanceDeg()))+") ";
             }
             desc += "  exists from "+Outputs.formatDistanceNoPad(phase.getMinDistanceDeg())+mod180Min+" to "
-                    +Outputs.formatDistanceNoPad(phase.getMaxDistanceDeg())+mod180Max+" degrees.\n";
+                    +Outputs.formatDistanceNoPad(phase.getMaxDistanceDeg())+mod180Max+" degrees in the "
+                    +phase.getTauModel().getModelName()+" model.\n";
             if (phase.getMaxRayParam() > phase.getMinRayParam()) {
                 desc += "  with ray parameter from " + Outputs.formatRayParam(phase.getMaxRayParam() / SphericalCoords.RtoD)
                         + " down to " + Outputs.formatRayParam(phase.getMinRayParam() / SphericalCoords.RtoD) + " sec/deg.\n";
             } else {
                 desc += "  with degenerate ray parameter of " + Outputs.formatRayParam(phase.getMaxRayParam() / SphericalCoords.RtoD) + " sec/deg.\n";
             }
-            double[] time = phase.getTime();
-            double[] dist = phase.getDist();
-            double[] rayParams = phase.getRayParams();
-            desc += "  travel times from " + Outputs.formatTimeNoPad(time[0]) + " to " + Outputs.formatTimeNoPad(time[time.length - 1]) + " sec";
+            desc += "  travel times from " + Outputs.formatTimeNoPad(phase.getMinTime()) + " to " + Outputs.formatTimeNoPad(phase.getMaxTime()) + " sec";
             StringBuilder builder = new StringBuilder();
-            for (int i = 0; i < dist.length; i++) {
-                if (i < dist.length - 1 && (rayParams[i] == rayParams[i + 1])
-                        && rayParams.length > 2) {
-                    /* Here we have a shadow zone, so output a warning of break in curve. */
-                    builder.append( "\n  with shadow zone between " + Outputs.formatDistance(SphericalCoords.RtoD * dist[i])
-                            + " and " + Outputs.formatDistance(SphericalCoords.RtoD * dist[i + 1]) + " deg");
-                }
+            for (ShadowZone shad : phase.getShadowZones()) {
+                Arrival pre = shad.getPreArrival();
+                Arrival post = shad.getPostArrival();
+                builder.append( "\n  with shadow zone between " + Outputs.formatDistance(pre.getDistDeg())
+                        + " and " + Outputs.formatDistance(post.getDistDeg()) + " deg");
             }
             builder.append(".\n");
             desc += builder.toString();
@@ -243,9 +239,6 @@ public interface SeismicPhase extends Serializable, Cloneable {
     static String baseDescribeJSON(SeismicPhase phase) {
         String desc = "";
         if (phase.phasesExistsInModel()) {
-            double[] time = phase.getTime();
-            double[] dist = phase.getDist();
-            double[] rayParams = phase.getRayParams();
 
             desc += "  \"minexists\": { \n"+
                     "    \"dist\": "+Outputs.formatDistanceNoPad(phase.getMinDistanceDeg())+",\n"+
@@ -260,21 +253,13 @@ public interface SeismicPhase extends Serializable, Cloneable {
                     "    \"time\": "+Outputs.formatTimeNoPad(phase.getMaxTime())+"\n"+
                     "  },\n"+
                     "  \"shadow\": [";
-
             boolean hasPrevShadow = false;
-            for (int i = 0; i < dist.length; i++) {
-                if (i < dist.length - 1 && (rayParams[i] == rayParams[i + 1])
-                        && rayParams.length > 2) {
-                    if (hasPrevShadow) {
-                        desc +=",\n";
-                    }
-                    /* Here we have a shadow zone, so output a warning of break in curve. */
-                    desc += "  {"+
-                            "    \"min_dist\": " + Outputs.formatDistance(SphericalCoords.RtoD * dist[i])+",\n"+
-                            "    \"max_dist\": " + Outputs.formatDistance(SphericalCoords.RtoD * dist[i + 1])+",\n"+
-                            "  }";
-                    hasPrevShadow = true;
+            for (ShadowZone shad : phase.getShadowZones()) {
+                if (hasPrevShadow) {
+                    desc +=",\n";
                 }
+                desc += shad.asJSON().toString()+",\n";
+                hasPrevShadow = true;
             }
             desc += "  ]";
         } else {
@@ -290,26 +275,28 @@ public interface SeismicPhase extends Serializable, Cloneable {
         String desc = "";
         String indent = "  ";
         desc += indent+"\"segments\": [\n";
-        desc += indent+"   [\n";
         boolean firstOuter=true;
         for (List<SeismicPhaseSegment> segList : phase.getListPhaseSegments()) {
             if (firstOuter) {
                 firstOuter = false;
-                desc += "\n";
             } else {
                 desc += ",\n";
             }
             boolean firstInner=true;
+            desc += indent+"   {\n";
+            desc += indent+"     \"maxrayparam\": "+segList.get(segList.size()-1).getMaxRayParam()+",\n";
+            desc += indent+"     \"minrayparam\": "+segList.get(segList.size()-1).getMinRayParam()+",\n";
+            desc += indent+"     \"branchseq\": [\n";
             for (SeismicPhaseSegment segment : segList) {
                 if (firstInner) {
                     firstInner = false;
-                    desc += "\n";
                 } else {
                     desc += ",\n";
                 }
-                desc += indent + segment.toJSONString();
+                desc += indent +"       "+ segment.toJSONString();
             }
-            desc += "\n" + indent + "]";
+            desc += "\n" + indent + "     ]";
+            desc += "\n" + indent + "   }";
         }
         desc += "\n" + indent + "]";
         return desc;
@@ -317,5 +304,5 @@ public interface SeismicPhase extends Serializable, Cloneable {
 
     int getNumRays();
 
-    List<ShadowZone> getShadowZones() throws SlownessModelException, NoSuchLayerException;
+    List<ShadowZone> getShadowZones();
 }

@@ -50,4 +50,14 @@ public interface JSONLabels {
     String STRIKE = "strike";
     String DIP = "dip";
     String RAKE = "rake";
+
+    String DESCRIPTIONS = "descriptions";
+
+    String SHADOW_PRE_ARRIVAL = "preshadow";
+    String SHADOW_POST_ARRIVAL = "postshadow";
+
+    String NL = "\n";
+    String TOP_DEPTH = "topdepth";
+    String BOT_DEPTH = "botdepth";
+    String CURVES = "curves";
 }

@@ -554,7 +554,7 @@ public class ScatteredSeismicPhase implements SeismicPhase {
     }
 
     @Override
-    public List<ShadowZone> getShadowZones() throws SlownessModelException, NoSuchLayerException {
+    public List<ShadowZone> getShadowZones() {
         return scatteredPhase.getShadowZones();
     }
 

@@ -10,10 +10,16 @@ public class CompositeSeismicPhase extends SimpleSeismicPhase {
 
     private final List<SimpleContigSeismicPhase> simplePhaseList;
 
-    private final List<ShadowZone> shadowZones = new ArrayList<>();
+    private final List<ShadowZone> shadowZones;
 
     public CompositeSeismicPhase(List<SimpleContigSeismicPhase> subphaseList) {
+        this(subphaseList, new ArrayList<>());
+        assert subphaseList.size() == 1;
+    }
+    public CompositeSeismicPhase(List<SimpleContigSeismicPhase> subphaseList,
+                                 List<ShadowZone> shadowZones) {
         this.simplePhaseList = subphaseList;
+        this.shadowZones = shadowZones;
         if (simplePhaseList.size() < 2) {
             throw new IllegalArgumentException("Subphase list must not be empty or single: "+simplePhaseList.size());
         }
@@ -30,10 +36,6 @@ public class CompositeSeismicPhase extends SimpleSeismicPhase {
                     throw new IllegalArgumentException("subphase are not adjacent in ray param: "+
                             prev.getMinRayParam()+" "+subphase.getMaxRayParam());
                 }
-                shadowZones.add(new ShadowZone(this, prev.getMinRayParam(),
-                        prev.createArrivalAtIndex(prev.getNumRays()-1),
-                        subphase.createArrivalAtIndex(0)
-                ));
                 if (
                     prev.getInitialPhaseSegment().isDownGoing != subphase.getInitialPhaseSegment().isDownGoing ||
                     prev.getInitialPhaseSegment().isPWave != subphase.getInitialPhaseSegment().isPWave ||
@@ -309,8 +311,9 @@ public class CompositeSeismicPhase extends SimpleSeismicPhase {
 
     @Override
     public double[] getTime() {
-        throw new RuntimeException("getPhaseSegments no impl for CompositeSeismicPhase");
+        throw new RuntimeException("getTime no impl for CompositeSeismicPhase");
     }
+
 
     @Override
     public double getTau(int rayNum) {
