@@ -10,25 +10,10 @@ import static edu.sc.seis.TauP.SphericalCoords.TWOPI;
  */
 public class FixedHemisphereDistanceRay extends DistanceRay {
 
-    public FixedHemisphereDistanceRay() {
+    private final ExactDistanceRay distanceRay;
 
-    }
-
-    public static FixedHemisphereDistanceRay ofDegrees(double deg) {
-        FixedHemisphereDistanceRay val = new FixedHemisphereDistanceRay();
-        val.degrees = deg;
-        return val;
-    }
-
-    public static FixedHemisphereDistanceRay ofKilometers(double km) {
-        FixedHemisphereDistanceRay val = new FixedHemisphereDistanceRay();
-        val.kilometers = km;
-        return val;
-    }
-    public static FixedHemisphereDistanceRay ofRadians(double rad) {
-        FixedHemisphereDistanceRay val = new FixedHemisphereDistanceRay();
-        val.radians = rad;
-        return val;
+    public FixedHemisphereDistanceRay(ExactDistanceRay dr) {
+        this.distanceRay = dr;
     }
 
     public boolean isNegativeHemisphere() {
@@ -44,6 +29,21 @@ public class FixedHemisphereDistanceRay extends DistanceRay {
     @Override
     public List<Arrival> calcScatteredPhase(ScatteredSeismicPhase phase) {
         return fixNegDistance(super.calcScatteredPhase(phase));
+    }
+
+    @Override
+    public double getDegrees(double radius) {
+        return distanceRay.getDegrees(radius);
+    }
+
+    @Override
+    public double getRadians(double radius) {
+        return distanceRay.getRadians(radius);
+    }
+
+    @Override
+    public double getKilometers(double radius) {
+        return distanceRay.getKilometers(radius);
     }
 
     public List<Arrival> fixNegDistance(List<Arrival> arrivalList) {
@@ -82,6 +82,12 @@ public class FixedHemisphereDistanceRay extends DistanceRay {
         return out;
     }
 
+    protected FixedHemisphereDistanceRay duplicate()  {
+        ExactDistanceRay inner = distanceRay.duplicate();
+        FixedHemisphereDistanceRay dr = new FixedHemisphereDistanceRay(inner);
+        dr.copyFrom(this);
+        return dr;
+    }
 
     public String toString() {
         return"exact hemi "+super.toString();

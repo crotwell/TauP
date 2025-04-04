@@ -14,7 +14,7 @@ import static edu.sc.seis.TauP.JSONLabels.DISTDEG_LABEL;
  */
 public class Scatterer {
     public Scatterer(double depth, double dist) {
-        this(depth, FixedHemisphereDistanceRay.ofDegrees(dist));
+        this(depth, DistanceRay.ofFixedHemisphereDegrees(dist));
     }
 
     public Scatterer(double depth, FixedHemisphereDistanceRay dist) {
@@ -24,7 +24,7 @@ public class Scatterer {
 
     public Double getDistanceDegree() {
         // we know created via ofDegrees, so do not need radius to calc
-        return dist.degrees;
+        return dist.getDegrees(0);
     }
 
     public void writeJSON(PrintWriter pw, String indent) {

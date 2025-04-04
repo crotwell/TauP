@@ -10,38 +10,65 @@ import static edu.sc.seis.TauP.ScatteredSeismicPhase.calcScatterDistDeg;
 /**
  * Calculatable ray corresponding to a arc distance from source to receiver.
  */
-public class DistanceRay extends RayCalculateable {
+public abstract class DistanceRay extends RayCalculateable implements Cloneable {
 
     DistanceRay() {}
-    public DistanceRay(DistanceRay dr) {
-          radians = dr.radians;
-          degrees = dr.degrees;
-          kilometers = dr.kilometers;
-          staLatLon = dr.staLatLon;
-          evtLatLon = dr.evtLatLon;
-          azimuth = dr.azimuth;
-          backAzimuth = dr.backAzimuth;
-          geodetic = dr.geodetic;
-          invFlattening = dr.invFlattening;
+
+    public static FixedHemisphereDistanceRay ofFixedHemisphereDegrees(double deg) {
+        FixedHemisphereDistanceRay val = new FixedHemisphereDistanceRay(DistanceRay.ofExactDegrees(deg));
+        return val;
     }
-    public static DistanceRay ofDegrees(double deg) {
-        DistanceRay val = new DistanceRay();
+
+    public static FixedHemisphereDistanceRay ofFixedHemisphereKilometers(double km) {
+        FixedHemisphereDistanceRay val = new FixedHemisphereDistanceRay(DistanceRay.ofExactKilometers(km));
+        return val;
+    }
+
+    public static FixedHemisphereDistanceRay ofFixedHemisphereRadians(double rad) {
+        FixedHemisphereDistanceRay val = new FixedHemisphereDistanceRay(DistanceRay.ofExactRadians(rad));
+        return val;
+    }
+
+    void copyFrom(DistanceRay dr) {
+        staLatLon = dr.staLatLon;
+        evtLatLon = dr.evtLatLon;
+        azimuth = dr.azimuth;
+        backAzimuth = dr.backAzimuth;
+        geodetic = dr.geodetic;
+        invFlattening = dr.invFlattening;
+    }
+    public static DistanceAngleRay ofDegrees(double deg) {
+        DistanceAngleRay val = new DistanceAngleRay();
         val.degrees = deg;
         return val;
     }
-    public static DistanceRay ofKilometers(double km) {
-        DistanceRay val = new DistanceRay();
-        val.kilometers = km;
+    public static DistanceKmRay ofKilometers(double km) {
+        DistanceKmRay val = new DistanceKmRay(km);
         return val;
     }
-    public static DistanceRay ofRadians(double rad) {
-        DistanceRay val = new DistanceRay();
+    public static DistanceAngleRay ofRadians(double rad) {
+        DistanceAngleRay val = new DistanceAngleRay();
         val.radians = rad;
         return val;
     }
 
-    public static DistanceRay ofEventStation(Location evt, Location sta) {
-        DistanceRay val = DistanceRay.ofDegrees(SphericalCoords.distance(evt, sta));
+    public static ExactDistanceRay ofExactDegrees(double deg) {
+        ExactDistanceRay val = new ExactDistanceRay(DistanceRay.ofDegrees(deg));
+        return val;
+    }
+
+    public static ExactDistanceRay ofExactKilometers(double km) {
+        ExactDistanceRay val = new ExactDistanceRay(DistanceRay.ofKilometers(km));
+        return val;
+    }
+
+    public static ExactDistanceRay ofExactRadians(double rad) {
+        ExactDistanceRay val = new ExactDistanceRay(DistanceRay.ofRadians(rad));
+        return val;
+    }
+
+    public static DistanceAngleRay ofEventStation(Location evt, Location sta) {
+        DistanceAngleRay val = ofDegrees(SphericalCoords.distance(evt, sta));
         val.evtLatLon = evt;
         val.staLatLon = sta;
         val.azimuth = SphericalCoords.azimuth(evt, sta);
@@ -49,9 +76,9 @@ public class DistanceRay extends RayCalculateable {
         return val;
     }
 
-    public static DistanceRay ofGeodeticEventStation(Location evt, Location sta, double invFlattening) {
+    public static DistanceAngleRay ofGeodeticEventStation(Location evt, Location sta, double invFlattening) {
         DistAz distAz = new DistAz(evt, sta, 1.0/invFlattening);
-        DistanceRay val = ofDegrees(distAz.getDelta());
+        DistanceAngleRay val = ofDegrees(distAz.getDelta());
         val.staLatLon = sta;
         val.evtLatLon = evt;
         val.azimuth = distAz.getAz();
@@ -88,7 +115,7 @@ public class DistanceRay extends RayCalculateable {
     public List<Arrival> calcScatteredPhase(ScatteredSeismicPhase phase) {
         double deg = getDegrees(phase.getTauModel().getRadiusOfEarth());
         double scatDistDeg = calcScatterDistDeg(deg, phase.getScattererDistanceDeg(), phase.isBackscatter());
-        FixedHemisphereDistanceRay scatRay = FixedHemisphereDistanceRay.ofDegrees(scatDistDeg);
+        FixedHemisphereDistanceRay scatRay = ofFixedHemisphereDegrees(scatDistDeg);
 
         SimpleSeismicPhase scatteredPhase = phase.getScatteredPhase();
         List<Double> arrivalDistList = scatRay.calcRadiansInRange(scatteredPhase.getMinDistance(), scatteredPhase.getMaxDistance(),
@@ -105,32 +132,11 @@ public class DistanceRay extends RayCalculateable {
         return Arrival.sortArrivals(scatArrivals);
     }
 
-    public double getDegrees(double radius) {
-        if (degrees != null) {
-            return degrees;
-        }
-        if (radians != null) {
-            return radians*SphericalCoords.rtod;
-        }
-        return kilometers/DistAz.kmPerDeg(radius);
-    }
+    public abstract double getDegrees(double radius);
 
-    public double getRadians(double radius) {
-        if (radians != null) {
-            return radians;
-        }
-        if (kilometers != null) {
-            return kilometers/radius;
-        }
-        return degrees*SphericalCoords.dtor;
-    }
+    public abstract double getRadians(double radius);
 
-    public double getKilometers(double radius) {
-        if (kilometers != null) {
-            return kilometers;
-        }
-        return getRadians(radius)*radius;
-    }
+    public abstract double getKilometers(double radius);
 
     public List<Double> calcRadiansInRange(double minRadian, double maxRadian, double radius, boolean phaseBothHemisphere) {
         List<Double> out = new ArrayList<>();
@@ -174,23 +180,18 @@ public class DistanceRay extends RayCalculateable {
         return null;
     }
 
-    public String toString() {
-        String out = "";
-        if (radians != null) {
-            out += radians+" rad";
-        } else if (degrees != null) {
-            out += degrees+" deg";
+    public static DistanceRay duplicate(DistanceRay dr) {
+        if (dr instanceof DistanceAngleRay) {
+            return ((DistanceAngleRay)dr).duplicate();
+        } else if (dr instanceof DistanceKmRay) {
+            return ((DistanceKmRay)dr).duplicate();
+        } else if (dr instanceof ExactDistanceRay) {
+            return ((ExactDistanceRay)dr).duplicate();
+        } else if (dr instanceof FixedHemisphereDistanceRay) {
+            return ((FixedHemisphereDistanceRay)dr).duplicate();
         } else {
-            out += kilometers + " km";
+            throw new RuntimeException("Duplicate unknown DistanceRay type: "+dr.getClass().getName());
         }
-        if (hasDescription()) {
-            out += ", "+getDescription();
-        }
-        return out;
     }
-
-    protected Double radians = null;
-    protected Double degrees = null;
-    protected Double kilometers = null;
-
 }
+

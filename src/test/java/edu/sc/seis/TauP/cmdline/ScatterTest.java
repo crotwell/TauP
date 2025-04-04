@@ -295,7 +295,7 @@ public class ScatterTest {
         String modelname = "iasp91";
         TauModel tMod = TauModelLoader.load(modelname);
         String phaseName = "PedOP";
-        Scatterer scat = new Scatterer(400, FixedHemisphereDistanceRay.ofDegrees(-5));
+        Scatterer scat = new Scatterer(400, FixedHemisphereDistanceRay.ofFixedHemisphereDegrees(-5));
         List<SeismicPhase> phaseList = SeismicPhaseFactory.createSeismicPhases(phaseName, tMod, 0, 0, scat, false);
         ScatteredSeismicPhase phase = (ScatteredSeismicPhase) phaseList.get(0);
         DistanceRay distRay = DistanceRay.ofDegrees(10);

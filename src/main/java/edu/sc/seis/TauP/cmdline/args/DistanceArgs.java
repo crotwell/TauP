@@ -61,7 +61,7 @@ public class DistanceArgs {
                     evtOut.add(dr);
                 } else {
                     for (Location evtLoc : quakes) {
-                        DistanceRay evtDr = new DistanceRay(dr);
+                        DistanceRay evtDr = DistanceRay.duplicate(dr);
                         evtDr.withEventAzimuth(evtLoc, getAzimuth());
                         String desc;
                         if (evtLoc.hasDescription()) {
@@ -84,7 +84,7 @@ public class DistanceArgs {
                     staOut.add(dr);
                 } else {
                     for (Location staLoc : stationList) {
-                        DistanceRay staDr = new DistanceRay(dr);
+                        DistanceRay staDr = DistanceRay.duplicate(dr);
                         staDr.withStationBackAzimuth(staLoc, getBackAzimuth());
                         String desc;
                         if (staLoc.hasDescription()) {
