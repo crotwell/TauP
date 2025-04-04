@@ -469,18 +469,11 @@ public class DistanceArgs {
         return staList;
     }
 
-    public void clearStationLatLon() {
-        latLonArgs.stationList.clear();
-    }
-
     public List<Location> getEventLatLon() throws TauPException {
         List<Location> eventLocs = new ArrayList<>();
         eventLocs.addAll(latLonArgs.getEventLocations());
         eventLocs.addAll(qmlStaxmlArgs.getEventLocations());
         return eventLocs;
-    }
-    public void clearEventLatLon() {
-        latLonArgs.eventList.clear();
     }
 
     public void setDegreeList(List<Double> degreesList) {
@@ -500,8 +493,8 @@ public class DistanceArgs {
     }
 
     public void clear() {
-        latLonArgs.stationList.clear();
-        latLonArgs.eventList.clear();
+        latLonArgs.stationLatLonList.clear();
+        latLonArgs.eventLatLonList.clear();
         distArgs.takeoffAngle.clear();
         distArgs.incidentAngle.clear();
         distArgs.degreesList.clear();

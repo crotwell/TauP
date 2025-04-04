@@ -7,58 +7,50 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LatLonArgs {
-    protected List<Location> stationList = new ArrayList<>();
-    protected List<Location> eventList = new ArrayList<>();
 
     @CommandLine.Option(names = {"--sta", "--station"},
             arity = "2",
             paramLabel = "l",
             description = "station latitude and longitude. Creates a distance if event is also given."
     )
+    protected List<Double> stationLatLonList = new ArrayList<>();
+
     public void setStationLatLon(List<Double> stationLatLon) {
-        if (stationLatLon.isEmpty()) {
-            stationList.clear();
-        }
-        if (stationLatLon.size() % 2 != 0) {
-            throw new IllegalArgumentException("Station lat lon must have even number of items: " + stationLatLon.size());
-        }
-        for (int i = 0; i < stationLatLon.size() / 2; i += 2) {
-            stationList.add(new Location(stationLatLon.get(i), stationLatLon.get(i + 1)));
-        }
+        stationLatLonList = stationLatLon;
     }
 
     public List<Location> getStationLocations() {
         List<Location> out = new ArrayList<>();
-        out.addAll(stationList);
+        for (int i = 0; i < stationLatLonList.size(); i += 2) {
+            out.add(new Location(stationLatLonList.get(i), stationLatLonList.get(i + 1)));
+        }
         return out;
     }
 
     public boolean hasStationLatLon() {
-        return !( this.stationList.isEmpty()) ;
+        return !( this.stationLatLonList.isEmpty()) ;
     }
 
     @CommandLine.Option(names = {"--evt", "--event"},
             paramLabel = "l",
             arity = "2",
             description = "event latitude and longitude.  Creates a distance if station is also given.")
+    protected List<Double> eventLatLonList = new ArrayList<>();
+
     public void setEventLatLon(List<Double> eventLatLon) {
-        if (eventLatLon.isEmpty()) {
-            eventList.clear();
-        }
-        if (eventLatLon.size() % 2 != 0) {
-            throw new IllegalArgumentException("Event lat lon must have even number of items: " + eventLatLon.size());
-        }
-        for (int i = 0; i < eventLatLon.size() / 2; i += 2) {
-            eventList.add(new Location(eventLatLon.get(i), eventLatLon.get(i + 1)));
-        }
+        eventLatLonList = eventLatLon;
     }
 
     public List<Location> getEventLocations() {
-        return eventList;
+        List<Location> out = new ArrayList<>();
+        for (int i = 0; i < eventLatLonList.size(); i += 2) {
+            out.add(new Location(eventLatLonList.get(i), eventLatLonList.get(i + 1)));
+        }
+        return out;
     }
 
     public boolean hasEventLatLon() {
-        return !( this.eventList.isEmpty()) ;
+        return !( this.eventLatLonList.isEmpty()) ;
     }
 
     public void validateArguments() {
