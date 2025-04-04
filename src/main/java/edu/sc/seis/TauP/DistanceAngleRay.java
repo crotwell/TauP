@@ -2,6 +2,9 @@ package edu.sc.seis.TauP;
 
 public class DistanceAngleRay extends DistanceRay {
 
+    public boolean isDegrees() {
+        return this.degrees != null;
+    }
 
     public double getDegrees(double radius) {
         return getDegrees();

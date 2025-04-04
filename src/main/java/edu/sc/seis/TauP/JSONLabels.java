@@ -38,6 +38,7 @@ public interface JSONLabels {
     String PATHLENGTH = "pathlength";
     String PATH = "path";
     String SOURCE = "source";
+    String RECEIVER = "receiver";
     String LABEL = "label";
     String DESCRIPTION = "description";
     String X_AXIS = "x";
@@ -60,4 +61,18 @@ public interface JSONLabels {
     String TOP_DEPTH = "topdepth";
     String BOT_DEPTH = "botdepth";
     String CURVES = "curves";
+
+    String CALCTYPE = "calctype";
+    String INVFLATTENING = "invflattening";
+    String SOURCE_LIST = "sources";
+    String RECEIVER_LIST = "receivers";
+    String LAT = "lat";
+    String LON = "lon";
+    String DEG = "deg";
+    String AZ = "az";
+    String BAZ = "baz";
+    String FROM = "from";
+    String TO = "to";
+    String DISTANCES = "distances";
+    String RADIAN = "radian";
 }

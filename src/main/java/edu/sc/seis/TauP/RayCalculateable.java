@@ -35,6 +35,12 @@ public abstract class RayCalculateable {
     public Double getSourceDepth() {
         return evtLatLon != null ? evtLatLon.getDepthKm() : null;
     }
+    public boolean hasSource() {
+        return evtLatLon != null;
+    }
+    public Location getSource() {
+        return evtLatLon;
+    }
 
     public boolean hasReceiverDepth() {
         return staLatLon != null && staLatLon.hasDepth();
@@ -43,6 +49,12 @@ public abstract class RayCalculateable {
         return staLatLon != null ? staLatLon.getDepthKm() : null;
     }
 
+    public boolean hasReceiver() {
+        return staLatLon != null;
+    }
+    public Location getReceiver() {
+        return staLatLon;
+    }
     public boolean hasAzimuth() {
         return azimuth != null || (this.staLatLon!=null && this.evtLatLon!=null);
     }
