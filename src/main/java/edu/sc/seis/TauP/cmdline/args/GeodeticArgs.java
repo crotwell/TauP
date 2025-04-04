@@ -30,4 +30,15 @@ public class GeodeticArgs {
             throw new IllegalArgumentException("Inverse Elliptical flattening must be positive: " + getInverseEllipFlattening());
         }
     }
+
+    public String getCalcType() {
+        if (geodetic) {
+            return GEODETIC;
+        } else {
+            return SPHERICAL;
+        }
+    }
+
+    public static final String GEODETIC = "geodetic";
+    public static final String SPHERICAL = "spherical";
 }
