@@ -11,6 +11,7 @@ import org.json.JSONObject;
 import org.json.JSONWriter;
 import picocli.CommandLine;
 
+import java.io.PrintWriter;
 import java.util.*;
 
 import static edu.sc.seis.TauP.JSONLabels.*;
@@ -20,6 +21,51 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
     public TauP_AbstractPhaseTool(AbstractOutputTypeArgs outputTypeArgs) {
         super(outputTypeArgs);
         phaseArgs.setTool(this);
+    }
+
+    public static void writeBaseJSON(PrintWriter pw, String indent,
+                                     String modelName,
+                                     List<Double> depthList,
+                                     List<Double> receiverDepth,
+                                     List<SeismicPhase> phases,
+                                     Scatterer scatterer,
+                                     SeismicSourceArgs sourceArgs) {
+        String innerIndent = indent + "  ";
+        pw.write(innerIndent + JSONWriter.valueToString(JSONLabels.MODEL) + ": " + JSONWriter.valueToString(modelName) + "," + NL);
+        pw.write(innerIndent + JSONWriter.valueToString(SOURCEDEPTH_LIST) + ": [");
+
+        boolean firstDp = true;
+        for (Double depth : depthList) {
+            pw.write((firstDp ? "" : ", ") + JSONWriter.valueToString(depth.floatValue()));
+            firstDp = false;
+        }
+        pw.write("]," + NL);
+
+        pw.write(innerIndent + JSONWriter.valueToString(RECEIVERDEPTH_LIST) + ": [");
+
+        boolean firstRecDp = true;
+        for (Double depth : receiverDepth) {
+            pw.write((firstRecDp ? "" : ", ") + JSONWriter.valueToString(depth.floatValue()));
+            firstRecDp = false;
+        }
+        pw.write("]," + NL);
+        if (scatterer != null) {
+            pw.write(innerIndent + JSONWriter.valueToString(SCATTER) + ": ");
+            scatterer.writeJSON(pw, innerIndent);
+            pw.write("," + NL);
+        }
+
+        pw.write(innerIndent + JSONWriter.valueToString(PHASE_LIST) + ": [ ");
+        boolean first = true;
+        for (SeismicPhase phase : phases) {
+            if (first) {
+                first = false;
+            } else {
+                pw.write(", ");
+            }
+            pw.write(JSONWriter.valueToString(phase.getName()));
+        }
+        pw.write(" ]");
     }
 
     public double getRadiusOfEarth() {

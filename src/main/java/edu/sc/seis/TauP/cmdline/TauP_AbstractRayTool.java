@@ -50,46 +50,13 @@ public abstract class TauP_AbstractRayTool extends TauP_AbstractPhaseTool {
                                  boolean withPath,
                                  boolean withAmplitude,
                                  SeismicSourceArgs sourceArgs) {
-        String innerIndent = indent+"  ";
-        String NL = "\n";
-        pw.write("{"+NL);
-        pw.write(innerIndent+ JSONWriter.valueToString(JSONLabels.MODEL)+": "+JSONWriter.valueToString(modelName)+","+NL);
-        pw.write(innerIndent+JSONWriter.valueToString(SOURCEDEPTH_LIST)+": [");
 
-        boolean firstDp = true;
-        for (Double depth : depthList) {
-            pw.write((firstDp ? "" : ", ") + JSONWriter.valueToString(depth.floatValue()));
-            firstDp = false;
-        }
-        pw.write("],"+NL);
-
-        pw.write(innerIndent+JSONWriter.valueToString(RECEIVERDEPTH_LIST)+": [");
-
-        boolean firstRecDp = true;
-        for (Double depth : receiverDepth) {
-            pw.write((firstRecDp ? "" : ", ") + JSONWriter.valueToString(depth.floatValue()));
-            firstRecDp = false;
-        }
-        pw.write("],"+NL);
-        if (scatterer!=null) {
-            pw.write(innerIndent + JSONWriter.valueToString(SCATTER) + ": ");
-            scatterer.writeJSON(pw, innerIndent);
-            pw.write("," + NL);
-        }
-
-        pw.write(innerIndent+JSONWriter.valueToString(PHASE_LIST)+": [ ");
-        boolean first = true;
-        for (SeismicPhase phase : phases) {
-            if (first) {
-                first = false;
-            } else {
-                pw.write(", ");
-            }
-            pw.write(JSONWriter.valueToString(phase.getName()));
-        }
-        pw.write(" ],"+NL);
+        pw.write(indent+"{" + NL);
+        writeBaseJSON(pw, indent, modelName, depthList, receiverDepth, phases, scatterer, sourceArgs);
+        pw.write("," + NL);
+        String innerIndent = indent + "  ";
         pw.write(innerIndent+JSONWriter.valueToString(ARRIVAL_LIST)+": ["+NL);
-        first = true;
+        boolean first = true;
         for (Arrival arrival : arrivals) {
             if (first) {
                 first = false;
@@ -107,6 +74,8 @@ public abstract class TauP_AbstractRayTool extends TauP_AbstractPhaseTool {
         pw.write(innerIndent+"]"+NL);
         pw.write("}"+NL);
     }
+
+
 
     public DistanceArgs getDistanceArgs() {
         return this.distanceArgs;

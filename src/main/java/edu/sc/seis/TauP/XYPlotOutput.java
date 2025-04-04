@@ -96,7 +96,7 @@ public class XYPlotOutput {
         for (XYPlottingData plotItem : xyPlots) {
             phaseCurves.put(plotItem.asJSON());
         }
-        out.put("curves", phaseCurves);
+        out.put(JSONLabels.CURVES, phaseCurves);
         return out;
     }
 

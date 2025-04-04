@@ -14,6 +14,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 
+import static edu.sc.seis.TauP.JSONLabels.DESCRIPTIONS;
+import static edu.sc.seis.TauP.JSONLabels.NL;
 import static edu.sc.seis.TauP.cmdline.TauP_Tool.OPTIONS_HEADING;
 
 @CommandLine.Command(name = "phase",
@@ -96,8 +98,12 @@ public class TauP_PhaseDescribe extends TauP_AbstractPhaseTool {
     public void printResultJSON(PrintWriter writer) throws TauPException {
         writer.println("{");
         String indent = "  ";
+        writeBaseJSON(writer, "  ", getTauModelName(),
+                getSourceDepths(), getReceiverDepths(),
+                getSeismicPhases(), getScatterer(), null);
+        writer.write("," + NL);
         List<SeismicPhase> phaseList = getSeismicPhases();
-        writer.write(indent+ JSONWriter.valueToString("phases")+": [");
+        writer.write(indent+ JSONWriter.valueToString(DESCRIPTIONS)+": [");
 
         boolean first = true;
         for (SeismicPhase phase : phaseList) {
