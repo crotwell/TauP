@@ -485,7 +485,8 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
             int numRPs = (int) Math.ceil(Math.abs(dist[i + 1] - dist[i]) / maxDeltaRadian);
             double deltaDist=(dist[i + 1] - dist[i]) /numRPs;
             for (int j = 1; j < numRPs; j++) {
-                List<Arrival> aList = ExactDistanceRay.ofRadians(dist[i] + j * deltaDist).calcSimplePhase(this);
+                List<Arrival> aList = DistanceRay.ofExactRadians(dist[i] + j * deltaDist).calcSimplePhase(this);
+
                 for (Arrival a : aList) {
                     if (rayParams[i+1] <= a.getRayParam() && a.getRayParam() <= rayParams[i]) {
                         shift++;
