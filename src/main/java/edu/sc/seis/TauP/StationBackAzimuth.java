@@ -16,7 +16,7 @@ public class StationBackAzimuth extends LatLonable {
     public double[] calcLatLon(double calcDist, double totalDist) {
         double[] out =  new double[2];
         if (isGeodetic()) {
-            throw new RuntimeException("geodtic not yet");
+            throw new RuntimeException("geodetic not yet");
         }
         double evtLat = SphericalCoords.latFor(staLatLon.getLatitude(), staLatLon.getLongitude(), backAzimuth, totalDist);
         double evtLon = SphericalCoords.lonFor(staLatLon.getLatitude(), staLatLon.getLongitude(), backAzimuth, totalDist);
