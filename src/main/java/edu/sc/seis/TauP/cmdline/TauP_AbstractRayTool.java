@@ -3,9 +3,6 @@ package edu.sc.seis.TauP.cmdline;
 import edu.sc.seis.TauP.*;
 import edu.sc.seis.TauP.cmdline.args.AbstractOutputTypeArgs;
 import edu.sc.seis.TauP.cmdline.args.DistanceArgs;
-import edu.sc.seis.TauP.cmdline.args.SeismicSourceArgs;
-import org.json.JSONException;
-import org.json.JSONWriter;
 import picocli.CommandLine;
 
 import java.io.IOException;
@@ -15,8 +12,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static edu.sc.seis.TauP.JSONLabels.*;
-
 public abstract class TauP_AbstractRayTool extends TauP_AbstractPhaseTool {
 
     @CommandLine.Mixin
@@ -25,56 +20,6 @@ public abstract class TauP_AbstractRayTool extends TauP_AbstractPhaseTool {
     public TauP_AbstractRayTool(AbstractOutputTypeArgs outputTypeArgs) {
         super(outputTypeArgs);
     }
-
-    public static void writeJSON(PrintWriter pw, String indent,
-                                 String modelName,
-                                 List<Double> depthList,
-                                 List<Double> receiverDepth,
-                                 List<SeismicPhase> phases,
-                                 List<Arrival> arrivals,
-                                 Scatterer scatterer) {
-        TauP_AbstractRayTool.writeJSON(pw, indent, modelName, depthList, receiverDepth,
-                phases, arrivals,  scatterer,
-                false, false, false,
-                null);
-    }
-
-    public static void writeJSON(PrintWriter pw, String indent,
-                                 String modelName,
-                                 List<Double> depthList,
-                                 List<Double> receiverDepth,
-                                 List<SeismicPhase> phases,
-                                 List<Arrival> arrivals,
-                                 Scatterer scatterer,
-                                 boolean withPierce,
-                                 boolean withPath,
-                                 boolean withAmplitude,
-                                 SeismicSourceArgs sourceArgs) {
-
-        pw.write(indent+"{" + NL);
-        writeBaseJSON(pw, indent, modelName, depthList, receiverDepth, phases, scatterer, sourceArgs);
-        pw.write("," + NL);
-        String innerIndent = indent + "  ";
-        pw.write(innerIndent+JSONWriter.valueToString(ARRIVAL_LIST)+": ["+NL);
-        boolean first = true;
-        for (Arrival arrival : arrivals) {
-            if (first) {
-                first = false;
-            } else {
-                pw.write(","+NL);
-            }
-            try {
-                arrival.writeJSON(pw, innerIndent + "  ", withPierce, withPath, withAmplitude);
-            } catch (JSONException e) {
-                Alert.warning("Error in json: "+ arrival);
-                throw e;
-            }
-        }
-        pw.write(NL);
-        pw.write(innerIndent+"]"+NL);
-        pw.write("}"+NL);
-    }
-
 
 
     public DistanceArgs getDistanceArgs() {

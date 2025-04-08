@@ -1,8 +1,5 @@
 package edu.sc.seis.TauP;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
@@ -311,27 +308,6 @@ public class XYSegment {
                 writer.println("> "+label+" NaN break "+xf+" "+yf);
             }
         }
-    }
-
-    /**
-     * Output as JSON Object. NaN and Infinity values are skipped per JSON spec.
-     * Also convert double to float as digits not significant.
-     * @return
-     */
-    public JSONObject asJSON() {
-        JSONObject out = new JSONObject();
-        JSONArray xarr = new JSONArray();
-        JSONArray yarr = new JSONArray();
-        for (int i = 0; i < x.length; i++) {
-            if ( Double.isFinite(x[i]) && Double.isFinite(y[i])) {
-                // skip NaN/Infinity values due to JSON limitation
-                xarr.put((float)x[i]);
-                yarr.put((float)y[i]);
-            }
-        }
-        out.put("x", xarr);
-        out.put("y", yarr);
-        return out;
     }
 
     public final double[] x;

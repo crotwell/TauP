@@ -1,9 +1,11 @@
 package edu.sc.seis.TauP.cmdline;
 
+import com.google.gson.JsonObject;
 import edu.sc.seis.TauP.*;
 import edu.sc.seis.TauP.cmdline.args.*;
-import org.json.JSONArray;
-import org.json.JSONObject;
+import edu.sc.seis.TauP.gson.AbstractPhaseResult;
+import edu.sc.seis.TauP.gson.GsonUtil;
+import edu.sc.seis.TauP.gson.TimeResult;
 import picocli.CommandLine;
 
 import java.io.*;
@@ -71,35 +73,11 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
         List<Double> sortedKeys = new ArrayList<>(timeSegmentMap.keySet());
         Collections.sort(sortedKeys);
         if (getOutputFormat().equals(OutputTypes.JSON)) {
-            JSONObject topObj = new JSONObject();
-            topObj.put("timesteps", new JSONArray(sortedKeys));
-            JSONArray jsonArray = new JSONArray();
-            topObj.put("wavefronttimes", jsonArray);
-            for (Double timeVal : sortedKeys) {
-                JSONObject timeObject = new JSONObject();
-                jsonArray.put(timeObject);
-                timeObject.put("time", timeVal);
-                JSONArray wavefrontArray = new JSONArray();
-                timeObject.put("wavefronts", wavefrontArray);
-                for (WavefrontPathSegment seg : timeSegmentMap.get(timeVal)) {
-                    JSONObject jsonObject = new JSONObject();
-                    wavefrontArray.put(jsonObject);
-                    jsonObject.put("time", seg.getTimeVal());
-                    jsonObject.put("phase", seg.getPhase().getName());
-                    jsonObject.put("model", seg.getPhase().getTauModel().getModelName());
-                    jsonObject.put("sourcedepth", seg.getPhase().getSourceDepth());
-                    jsonObject.put("receiverdepth", seg.getPhase().getReceiverDepth());
-                    if (seg.getPhase() instanceof ScatteredSeismicPhase) {
-                        ScatteredSeismicPhase scatPhase = (ScatteredSeismicPhase) seg.getPhase();
-                        jsonObject.put("scatterdepth", (float) scatPhase.getScattererDepth());
-                        jsonObject.put("scatterdistdeg", scatPhase.getScattererDistanceDeg());
-                    }
-                    jsonObject.put("pwave", seg.isPWave());
-                    jsonObject.put("segment_idx", seg.getSegmentIndex());
-                    jsonObject.put("segments", seg.asJSONObject());
-                }
-            }
-            out.println(topObj.toString(2));
+            WavefrontResult result = new WavefrontResult(getTauModelName(),
+                    getSourceDepths(), getReceiverDepths(),
+                    phaseNames, getScatterer(), timeSegmentMap);
+            out.println(GsonUtil.toJson(result));
+
         } else if (getOutputFormat().equals(OutputTypes.SVG)) {
             List<PhaseName> phaseNameList = parsePhaseNameList();
             String cssExtra = "";
@@ -552,4 +530,21 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
 
     }
 
+}
+
+class WavefrontResult extends AbstractPhaseResult {
+
+    public WavefrontResult(String modelName, List<Double> depth, List<Double> receiverDepth,
+                           List<PhaseName> phaseNameList, Scatterer scatterer,
+                           Map<Double, List<WavefrontPathSegment>> isochronMap) {
+        super(modelName, depth, receiverDepth, phaseNameList, scatterer);
+        timesteps = new ArrayList<>(isochronMap.keySet());
+        Collections.sort(timesteps);
+        for (Double d : timesteps) {
+            isochrons.add(new Isochron(d, isochronMap.get(d)));
+        }
+    }
+
+    List<Double> timesteps;
+    List<Isochron> isochrons = new ArrayList<>();
 }

@@ -331,6 +331,22 @@ public class SeismicPhaseSegment {
 		return upDown;
 	}
 
+	public BranchDescription describe() {
+		BranchDescription b = new BranchDescription();
+		b.updown = getUpDownJSON();
+		b.then = endActionToString(endAction);
+		if (startBranch != endBranch) {
+			b.branches = new int[] {startBranch, endBranch};
+		} else {
+			b.branches = new int[] { startBranch};
+		}
+		b.depths = new float[getDepthRange().length];
+		for (int i = 0; i < getDepthRange().length; i++) {
+			b.depths[i] = (float)getDepthRange()[i];
+		}
+		return b;
+	}
+
 	public String toJSONString() {
 		String desc = "";
 		if ( ! legName.contentEquals("END")) {

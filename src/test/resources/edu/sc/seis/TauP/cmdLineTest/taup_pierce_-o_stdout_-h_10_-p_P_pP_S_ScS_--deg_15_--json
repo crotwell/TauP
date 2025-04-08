@@ -6,6 +6,7 @@
   "arrivals": [
     {
       "sourcedepth": 10,
+      "receiverdepth": 0.0,
       "distdeg": 15,
       "phase": "P",
       "time": 212.01474,
@@ -27,6 +28,7 @@
     },
     {
       "sourcedepth": 10,
+      "receiverdepth": 0.0,
       "distdeg": 15,
       "phase": "P",
       "time": 212.01631,
@@ -48,6 +50,7 @@
     },
     {
       "sourcedepth": 10,
+      "receiverdepth": 0.0,
       "distdeg": 15,
       "phase": "P",
       "time": 212.19066,
@@ -69,6 +72,7 @@
     },
     {
       "sourcedepth": 10,
+      "receiverdepth": 0.0,
       "distdeg": 15,
       "phase": "pP",
       "time": 214.43987,
@@ -92,6 +96,7 @@
     },
     {
       "sourcedepth": 10,
+      "receiverdepth": 0.0,
       "distdeg": 15,
       "phase": "pP",
       "time": 214.51471,
@@ -115,6 +120,7 @@
     },
     {
       "sourcedepth": 10,
+      "receiverdepth": 0.0,
       "distdeg": 15,
       "phase": "pP",
       "time": 214.63586,
@@ -138,6 +144,7 @@
     },
     {
       "sourcedepth": 10,
+      "receiverdepth": 0.0,
       "distdeg": 15,
       "phase": "P",
       "time": 217.50003,
@@ -163,6 +170,7 @@
     },
     {
       "sourcedepth": 10,
+      "receiverdepth": 0.0,
       "distdeg": 15,
       "phase": "P",
       "time": 217.56256,
@@ -186,6 +194,7 @@
     },
     {
       "sourcedepth": 10,
+      "receiverdepth": 0.0,
       "distdeg": 15,
       "phase": "pP",
       "time": 220.30894,
@@ -213,6 +222,7 @@
     },
     {
       "sourcedepth": 10,
+      "receiverdepth": 0.0,
       "distdeg": 15,
       "phase": "pP",
       "time": 220.35645,
@@ -238,6 +248,7 @@
     },
     {
       "sourcedepth": 10,
+      "receiverdepth": 0.0,
       "distdeg": 15,
       "phase": "S",
       "time": 379.31848,
@@ -259,6 +270,7 @@
     },
     {
       "sourcedepth": 10,
+      "receiverdepth": 0.0,
       "distdeg": 15,
       "phase": "S",
       "time": 396.69766,
@@ -284,6 +296,7 @@
     },
     {
       "sourcedepth": 10,
+      "receiverdepth": 0.0,
       "distdeg": 15,
       "phase": "S",
       "time": 396.74612,
@@ -307,6 +320,7 @@
     },
     {
       "sourcedepth": 10,
+      "receiverdepth": 0.0,
       "distdeg": 15,
       "phase": "ScS",
       "time": 952.2641,

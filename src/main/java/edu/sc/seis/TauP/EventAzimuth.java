@@ -19,7 +19,7 @@ public class EventAzimuth extends LatLonable {
     public double[] calcLatLon(double calcDist, double totalDist) {
         double[] out =  new double[2];
         if (isGeodetic()) {
-            throw new RuntimeException("geodtic not yet");
+            throw new RuntimeException("geodetic not yet");
         }
         out[0] = SphericalCoords.latFor(evtLatLon.getLatitude(), evtLatLon.getLongitude(), calcDist, azimuth);
         out[1] = SphericalCoords.lonFor(evtLatLon.getLatitude(), evtLatLon.getLongitude(), calcDist, azimuth);

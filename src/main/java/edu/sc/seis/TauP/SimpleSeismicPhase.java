@@ -1,7 +1,5 @@
 package edu.sc.seis.TauP;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,33 +43,4 @@ public abstract class SimpleSeismicPhase implements SeismicPhase {
 
     public abstract SimpleSeismicPhase interpolateSimplePhase(double maxDeltaDeg);
 
-    @Override
-    public String describeJson() {
-        String Q = ""+'"';
-        String COMMA = ",";
-        String QCOMMA = Q+COMMA;
-        String COLON = ": "; // plus space
-        String S = "  ";
-        String QC = Q+COLON;
-        String QCQ = QC+Q;
-        String SS = S+S;
-        String SQ = S+Q;
-        String SSQ = S+SQ;
-        String SSSQ = S+SSQ;
-        StringWriter sw = new StringWriter();
-        PrintWriter out = new PrintWriter(sw);
-        out.println("{");
-        out.println(SQ+"name"+QCQ+getName()+QCOMMA);
-        out.println(SQ+"puristname"+QCQ+getPuristName()+QCOMMA);
-        if (isFail()) {
-            out.println(SQ+"fail"+QCQ+failReason()+QCOMMA);
-        }
-        String baseDesc = SeismicPhase.baseDescribeJSON(this);
-        if (!baseDesc.isEmpty()) {
-            out.println(baseDesc+",");
-        }
-        out.println(SeismicPhase.segmentDescribeJSON(this));
-        out.print("}");
-        return sw.toString();
-    }
 }

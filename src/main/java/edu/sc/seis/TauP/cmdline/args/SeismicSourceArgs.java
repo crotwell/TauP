@@ -1,13 +1,9 @@
 package edu.sc.seis.TauP.cmdline.args;
 
 import edu.sc.seis.TauP.Arrival;
-import edu.sc.seis.TauP.JSONLabels;
 import edu.sc.seis.TauP.MomentMagnitude;
-import org.json.JSONObject;
-import org.json.JSONWriter;
 import picocli.CommandLine;
 
-import java.io.PrintWriter;
 import java.util.List;
 
 import static edu.sc.seis.TauP.SphericalCoords.DtoR;
@@ -148,42 +144,6 @@ public class SeismicSourceArgs {
         if (strikeDipRake != null && strikeDipRake.size() != 3) {
             throw new IllegalArgumentException("StrikeDipRake must have 3 values, but was: "+strikeDipRake.size());
         }
-    }
-
-    public void writeJSON(PrintWriter pw, String indent) {
-        String NL = "\n";
-        pw.write(" {"+NL);
-        String innerIndent = indent+"  ";
-
-        pw.write(innerIndent+ JSONWriter.valueToString(JSONLabels.MW)+": "+JSONWriter.valueToString((float)getMw())+","+NL);
-        pw.write(innerIndent+ JSONWriter.valueToString(JSONLabels.ATTEN_FREQ)+": "+JSONWriter.valueToString((float)getAttenuationFrequency()));
-        if (hasStrikeDipRake()) {
-            pw.write(","+NL);
-            pw.write(innerIndent + JSONWriter.valueToString(JSONLabels.FAULT) + ": {" + NL);
-            pw.write(innerIndent+"  "+ JSONWriter.valueToString(JSONLabels.STRIKE)+": "+JSONWriter.valueToString((float)getStrikeDipRake().get(0))+","+NL);
-            pw.write(innerIndent+"  "+ JSONWriter.valueToString(JSONLabels.DIP)+": "+JSONWriter.valueToString((float)getStrikeDipRake().get(1))+","+NL);
-            pw.write(innerIndent+"  "+ JSONWriter.valueToString(JSONLabels.RAKE)+": "+JSONWriter.valueToString((float)getStrikeDipRake().get(2))+NL);
-
-            pw.write(innerIndent + "  }");
-        } else {
-            pw.write(NL);
-        }
-        pw.write(indent + "}");
-    }
-
-    public JSONObject asJSONObject() {
-        JSONObject json = new JSONObject();
-        json.put(JSONLabels.MW, getMw());
-        json.put(JSONLabels.ATTEN_FREQ, getAttenuationFrequency());
-        if (hasStrikeDipRake()) {
-            JSONObject jsonSDR = new JSONObject();
-            json.put(JSONLabels.FAULT, jsonSDR);
-            jsonSDR.put(JSONLabels.STRIKE, getStrikeDipRake().get(0));
-            jsonSDR.put(JSONLabels.DIP, getStrikeDipRake().get(1));
-            jsonSDR.put(JSONLabels.RAKE, getStrikeDipRake().get(2));
-
-        }
-        return json;
     }
 
     public static final float DEFAULT_MW = 4.0f;

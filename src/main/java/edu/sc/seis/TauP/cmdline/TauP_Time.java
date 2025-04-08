@@ -16,10 +16,12 @@
  */
 package edu.sc.seis.TauP.cmdline;
 
+import com.google.gson.GsonBuilder;
 import edu.sc.seis.TauP.*;
 import edu.sc.seis.TauP.cmdline.args.*;
-import org.json.JSONArray;
-import org.json.JSONObject;
+import edu.sc.seis.TauP.gson.ArrivalSerializer;
+import edu.sc.seis.TauP.gson.GsonUtil;
+import edu.sc.seis.TauP.gson.TimeResult;
 import picocli.CommandLine;
 
 import java.io.*;
@@ -189,10 +191,20 @@ public class TauP_Time extends TauP_AbstractRayTool {
         return phaseList;
     }
 
+    public GsonBuilder createGsonBuilder() {
+        GsonBuilder gsonBld = GsonUtil.createGsonBuilder();
+        gsonBld.registerTypeAdapter(Arrival.class,
+                new ArrivalSerializer(false, false, isWithAmplitude()));
+        return gsonBld;
+    }
+
     @Override
     public void printResult(PrintWriter out, List<Arrival> arrivalList) throws IOException, TauPException {
         if (getOutputFormat().equals(OutputTypes.JSON)) {
-            printResultJSON(out, arrivalList);
+            TimeResult result = createTimeResult(isWithAmplitude(), sourceArgs, arrivalList);
+            GsonBuilder gsonBld = createGsonBuilder();
+            out.println(gsonBld.create().toJson(result));
+            //printResultJSON(out, arrivalList);
         } else {
             printResultText(out, arrivalList);
         }
@@ -342,51 +354,6 @@ public class TauP_Time extends TauP_AbstractRayTool {
         }
         out.println();
         out.flush();
-    }
-
-    public void printResultJSON(PrintWriter out, List<Arrival> arrivalList) throws TauPException {
-        boolean withPierce = false;
-        boolean withPath = false;
-        TauP_AbstractRayTool.writeJSON(out, "",
-                getTauModelName(),
-                getSourceDepths(),
-                getReceiverDepths(),
-                getSeismicPhases(),
-                arrivalList,
-                getScatterer(),
-                withPierce, withPath,
-                isWithAmplitude(),
-                sourceArgs);
-    }
-
-
-    public static JSONObject resultAsJSONObject(String modelName,
-                                                List<Double> depth,
-                                                List<Double> receiverDepth,
-                                                List<PhaseName> phases,
-                                                List<Arrival> arrivals,
-                                                Scatterer scatterer) {
-        return resultAsJSONObject(modelName, depth, receiverDepth, phases, arrivals, scatterer,
-                false, false, false, new SeismicSourceArgs());
-    }
-
-    public static JSONObject resultAsJSONObject(String modelName,
-                                                List<Double> depth,
-                                                List<Double> receiverDepth,
-                                                List<PhaseName> phases,
-                                                List<Arrival> arrivals,
-                                                Scatterer scatterer,
-                                                boolean withPierce,
-                                                boolean withPath,
-                                                boolean withAmplitude,
-                                                SeismicSourceArgs sourceArgs) {
-        JSONObject out = baseResultAsJSONObject( modelName, depth,  receiverDepth, phases, scatterer, withAmplitude, sourceArgs);
-        JSONArray outArrivals = new JSONArray();
-        out.put("arrivals", outArrivals);
-        for (Arrival currArrival : arrivals) {
-            outArrivals.put(currArrival.asJSONObject(withPierce, withPath, withAmplitude));
-        }
-        return out;
     }
 
     /**

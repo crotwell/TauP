@@ -1,8 +1,5 @@
 package edu.sc.seis.TauP;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
@@ -145,20 +142,6 @@ public class XYPlottingData {
             segment.asGMT(writer, idx+"/"+segmentList.size()+" "+label+" "+description);
             idx++;
         }
-    }
-
-    public JSONObject asJSON() {
-        JSONObject out = new JSONObject();
-        out.put(JSONLabels.LABEL, label);
-        out.put(JSONLabels.DESCRIPTION, description);
-        out.put(JSONLabels.X_AXIS, xAxisType);
-        out.put(JSONLabels.Y_AXIS, yAxisType);
-        JSONArray segarr = new JSONArray();
-        out.put(JSONLabels.SEGMENTS, segarr);
-        for (XYSegment seg : segmentList) {
-            segarr.put(seg.asJSON());
-        }
-        return out;
     }
 
     public final List<XYSegment> segmentList;

@@ -1,7 +1,11 @@
 package edu.sc.seis.TauP.cmdline;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import edu.sc.seis.TauP.*;
 import edu.sc.seis.TauP.cmdline.args.OutputTypes;
+import edu.sc.seis.TauP.gson.GsonUtil;
 import edu.sc.seis.seisFile.mseed3.MSeed3Record;
 import io.undertow.Undertow;
 import io.undertow.server.HttpHandler;
@@ -13,8 +17,6 @@ import io.undertow.server.handlers.resource.ClassPathResourceManager;
 import io.undertow.server.handlers.resource.ResourceHandler;
 import io.undertow.util.Headers;
 import io.undertow.util.MimeMappings;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import picocli.CommandLine;
 
 import java.io.PrintWriter;
@@ -318,8 +320,8 @@ public class TauP_WebServe extends TauP_Tool {
         if (queryParams.containsKey("tool")) {
             String toolname = queryParams.get("tool").getFirst();
             tool = createTool(toolname);
-            JSONObject out = new JSONObject();
-            out.put("tool", toolname);
+            JsonObject out = new JsonObject();
+            out.addProperty("tool", toolname);
             CommandLine cmd = new CommandLine(tool);
             CommandLine.Model.CommandSpec spec = cmd.getCommandSpec();
             if (queryParams.containsKey("param")) {
@@ -331,31 +333,39 @@ public class TauP_WebServe extends TauP_Tool {
                     for (String s : op.description()) {
                         desc += s;
                     }
-                    out.put("param", arg);
-                    out.put("desc", desc);
+                    out.addProperty("param", arg);
+                    out.addProperty(JSONLabels.DESC, desc);
                 }
             } else {
-                out.put("name", cmd.getCommandName());
-                JSONArray allOps = new JSONArray();
-                out.put("params", allOps);
+                out.addProperty("name", cmd.getCommandName());
+                JsonArray allOps = new JsonArray();
+                out.add("params", allOps);
                 for (CommandLine.Model.OptionSpec op : spec.options()) {
-                    JSONObject opObj = new JSONObject();
-                    opObj.put("name", op.names());
-                    opObj.put("desc", op.description());
-                    allOps.put(opObj);
+                    JsonObject opObj = new JsonObject();
+                    JsonArray nameArr = new JsonArray(op.names().length);
+                    for (String n : op.names()) {
+                        nameArr.add(n);
+                    }
+                    opObj.add("name", nameArr);
+                    String descStr = "";
+                    for (String n : op.description()) {
+                        descStr += n+"\n";
+                    }
+                    opObj.addProperty("desc", descStr.trim());
+                    allOps.add(opObj);
                 }
             }
             //configContentType(OutputTypes.JSON, exchange);
-            exchange.getResponseSender().send(out.toString(2));
+            Gson gson = GsonUtil.createGsonBuilder().create();
+            exchange.getResponseSender().send(gson.toJson(out));
             return;
         }
         throw new TauPException("Unable to create param help for "+exchange.getQueryString()+" "+(queryParams.containsKey("tool")));
     }
 
     public void handleKnownModels(HttpServerExchange exchange) {
-        JSONArray modList = new JSONArray();
-        modList.putAll(getKnownModels());
-        exchange.getResponseSender().send(modList.toString(2));
+        Gson gson = GsonUtil.createGsonBuilder().create();
+        exchange.getResponseSender().send(gson.toJson(getKnownModels()));
     }
 
     public List<String> getKnownModels() {

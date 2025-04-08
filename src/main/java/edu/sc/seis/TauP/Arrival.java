@@ -26,11 +26,7 @@
 package edu.sc.seis.TauP;
 
 import edu.sc.seis.TauP.cmdline.args.SeismicSourceArgs;
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.json.JSONWriter;
 
-import java.io.PrintWriter;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -343,6 +339,9 @@ public class Arrival {
         return dRPdDist/ SphericalCoords.RtoD/ SphericalCoords.RtoD;
     }
 
+    public ArrivalAmplitude calcAmplitude() throws SlownessModelException, TauModelException {
+        return new ArrivalAmplitude(this);
+    }
 
     /**
      * Geometrical spreading factor for amplitude, sqrt of energy spreading.
@@ -978,140 +977,6 @@ public class Arrival {
         return latestArrival;
     }
 
-    public void writeJSON(PrintWriter pw, String indent, boolean withAmp) {
-        writeJSON(pw, indent, false, false, withAmp);
-    }
-
-    public void writeJSON(PrintWriter pw, String indent,
-                          boolean withPierce,
-                          boolean withPath,
-                          boolean withAmp) {
-        String NL = "\n";
-        pw.write(indent+"{"+NL);
-        String innerIndent = indent+"  ";
-
-        pw.write(innerIndent+JSONWriter.valueToString(JSONLabels.SOURCEDEPTH)+": "+JSONWriter.valueToString((float)getSourceDepth())+","+NL);
-        if (getReceiverDepth() != 0.0) {
-            pw.write(innerIndent+JSONWriter.valueToString(JSONLabels.RECEIVERDEPTH)+": "+JSONWriter.valueToString((float)getReceiverDepth())+","+NL);
-        }
-        pw.write(innerIndent+JSONWriter.valueToString(JSONLabels.DISTDEG_LABEL)+": "+JSONWriter.valueToString((float)getModuloDistDeg())+","+NL);
-        pw.write(innerIndent+JSONWriter.valueToString(JSONLabels.PHASE)+": "+JSONWriter.valueToString(getName())+","+NL);
-        pw.write(innerIndent+JSONWriter.valueToString(JSONLabels.TIME)+": "+JSONWriter.valueToString((float)getTime())+","+NL);
-        pw.write(innerIndent+JSONWriter.valueToString(JSONLabels.RAYPARAM)+": "+JSONWriter.valueToString((float)(Math.PI / 180.0 * getRayParam()))+","+NL);
-        pw.write(innerIndent+JSONWriter.valueToString(JSONLabels.TAKEOFF)+": "+JSONWriter.valueToString((float) getTakeoffAngleDegree())+","+NL);
-        pw.write(innerIndent+JSONWriter.valueToString(JSONLabels.INCIDENT)+": "+JSONWriter.valueToString((float) getIncidentAngleDegree())+","+NL);
-        pw.write(innerIndent+JSONWriter.valueToString(JSONLabels.PURISTDIST)+": "+JSONWriter.valueToString((float)getDistDeg())+","+NL);
-        pw.write(innerIndent+JSONWriter.valueToString(JSONLabels.PURISTNAME)+": "+JSONWriter.valueToString(getPuristName()));
-        if (getRayCalculateable().hasDescription()) {
-            pw.write(","+NL);
-            pw.write(innerIndent+JSONWriter.valueToString(JSONLabels.DESC)+": "+JSONWriter.valueToString(getRayCalculateable().getDescription()));
-        }
-
-        if (withAmp) {
-
-            pw.write(","+NL);
-            pw.write(innerIndent + JSONWriter.valueToString(JSONLabels.AMP) + ": {" + NL);
-
-            try {
-                double freeFactor = calcFreeFactor();
-                double geoSpread = getAmplitudeGeometricSpreadingFactor(); // 1/km
-                // km/s
-                double sourceVel = getPhase().velocityAtSource(); // km/s
-                // Mg/m3 * (km/s)3 => 1e3 Kg/m3 * 1e9 (m3/s3) => 1e12 Kg /s3
-                double radiationTerm = calcRadiationTerm();
-                double attenuation = calcAttenuation();
-                //                          Kg m2 / s2     1        1/km   /   ( Kg/s3 )
-                // attenuation * freeFactor* moment * refltran * geoSpread / radiationTerm / 1e3; // s m2/km => s m / 1e3  why sec???
-                SeismicSourceArgs sourceArgs = getRayCalculateable().getSourceArgs();
-
-                double[] radiationPattern = calcRadiationPattern();
-
-                if (Double.isFinite(geoSpread)) {
-                    pw.write(innerIndent + "  " + JSONWriter.valueToString(JSONLabels.FACTORPSV) + ": " + JSONWriter.valueToString((float) getAmplitudeFactorPSV()) + "," + NL);
-                    pw.write(innerIndent + "  " + JSONWriter.valueToString(JSONLabels.FACTORSH) + ": " + JSONWriter.valueToString((float) getAmplitudeFactorSH()) + "," + NL);
-                    pw.write(innerIndent + "  " + JSONWriter.valueToString(JSONLabels.GEOSPREAD) + ": " + JSONWriter.valueToString((float) geoSpread) + "," + NL);
-                    pw.write(innerIndent + "  " + JSONWriter.valueToString(JSONLabels.ATTENUATION) + ": " + JSONWriter.valueToString((float) attenuation) + "," + NL);
-                    pw.write(innerIndent + "  " + JSONWriter.valueToString(JSONLabels.FREE_FACTOR) + ": " + JSONWriter.valueToString((float) freeFactor) + "," + NL);
-                    pw.write(innerIndent + "  " + JSONWriter.valueToString(JSONLabels.RADIATION_PATTERN) + ": ["
-                            + (float) radiationPattern[0]+", "
-                            + (float) radiationPattern[1]+", "
-                            + (float) radiationPattern[2]+"] "
-                            + "," + NL);
-                    pw.write(innerIndent + "  " + JSONWriter.valueToString(JSONLabels.RADIATION_TERM) + ": " + JSONWriter.valueToString((float) radiationTerm) + "," + NL);
-                    pw.write(innerIndent + "  " + JSONWriter.valueToString(JSONLabels.UNITCONV) + ": " + JSONWriter.valueToString((float) 1e-3) + "," + NL);
-                } else {
-                    pw.write(innerIndent + "  " + JSONWriter.valueToString(JSONLabels.ERROR) + ": " + JSONWriter.valueToString("geometrical speading not finite") + "," + NL);
-                }
-
-                pw.write(innerIndent + "  " + JSONWriter.valueToString(JSONLabels.REFLTRANPSV) + ": " + JSONWriter.valueToString((float) getEnergyFluxFactorReflTransPSV()) + ", " + NL);
-                pw.write(innerIndent + "  " + JSONWriter.valueToString(JSONLabels.REFLTRANSH) + ": " + JSONWriter.valueToString((float) getEnergyFluxFactorReflTransSH()) + ","+NL);
-
-                pw.write(innerIndent + "  " + JSONWriter.valueToString(JSONLabels.SOURCE)+ ": " );
-                getRayCalculateable().getSourceArgs().writeJSON(pw, innerIndent+"  ");
-                pw.write( NL+innerIndent+"}");
-            } catch (TauPException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        if (getPhase() instanceof ScatteredSeismicPhase) {
-            pw.write(","+NL);
-            ScatteredSeismicPhase scatPhase = (ScatteredSeismicPhase)getPhase();
-            pw.write(innerIndent+JSONWriter.valueToString(JSONLabels.SCATTER)+": "+NL);
-            scatPhase.getScatterer().writeJSON(pw, innerIndent);
-        }
-        if (isRelativeToArrival()) {
-            pw.write(","+NL);
-            Arrival relArrival = getRelativeToArrival();
-            pw.write(innerIndent+JSONWriter.valueToString(JSONLabels.RELATIVE)+": {"+NL);
-            pw.write(innerIndent+"  "+JSONWriter.valueToString(JSONLabels.DIFFERENCE)+": "+JSONWriter.valueToString((float)(getTime()-relArrival.getTime()))+","+NL);
-            pw.write(innerIndent+"  "+JSONWriter.valueToString(JSONLabels.ARRIVAL)+": "+NL);
-            relArrival.writeJSON(pw, innerIndent+"  "+"  ", withPierce, withPath, withAmp);
-            pw.write(innerIndent+"}");
-        }
-        if (withPierce ) {
-            pw.write(","+NL);
-            pw.write(innerIndent+JSONWriter.valueToString(JSONLabels.PIERCE)+": ["+NL);
-            TimeDist[] tdArray = getPierce();
-            boolean first = true;
-            for (TimeDist td : tdArray) {
-                if (!first) {
-                    pw.write(","+NL);
-                } else {
-                    first = false;
-                }
-                pw.write(innerIndent+"  [ "+
-                        JSONWriter.valueToString((float)td.getDistDeg())+", "+
-                        JSONWriter.valueToString((float)td.getDepth())+", "+
-                        JSONWriter.valueToString((float)td.getTime()));
-                if (isLatLonable()) {
-                    double[] latlon = getLatLonable().calcLatLon(td.getDistDeg(), getDistDeg());
-                    pw.write(", "+(float)latlon[0]+", "+(float)latlon[1]);
-                }
-                pw.write(" ]");
-            }
-            pw.write(NL);
-            pw.write(innerIndent+"]");
-        }
-        if (withPath ) {
-            pw.write(","+NL);
-            pw.write(innerIndent+JSONWriter.valueToString(JSONLabels.PATHLENGTH)+": "+((float)calcPathLength())+","+NL);
-            pw.write(innerIndent+JSONWriter.valueToString(JSONLabels.PATH)+": ["+NL);
-            boolean first = true;
-            for (ArrivalPathSegment seg : pathSegments) {
-                if (!first) {
-                    pw.write(","+NL);
-                } else {
-                    first = false;
-                }
-                seg.writeJSON(pw, innerIndent);
-            }
-            pw.write(NL+innerIndent+"]");
-        }
-        pw.write(NL);
-        pw.write(indent+"}"); // main end
-    }
-
     public static String CSVHeader() {
         return "Model,Distance (deg),Depth (km),Phase,Time (s),RayParam (deg/s),Takeoff Angle,Incident Angle,Purist Distance,Purist Name,Recv Depth";
     }
@@ -1134,92 +999,6 @@ public class Arrival {
                 + getPuristName().trim()
                 + receiverDepth;
         return line;
-    }
-
-    public JSONObject asJSONObject() {
-        return asJSONObject(false, false, false);
-    }
-
-    public JSONObject asJSONObject(boolean withPierce,
-                                   boolean withPath,
-                                   boolean withAmplitude) {
-        JSONObject a = new JSONObject();
-        a.put(JSONLabels.DISTDEG_LABEL, (float)getModuloDistDeg());
-        a.put(JSONLabels.SOURCEDEPTH, (float)getSourceDepth());
-        a.put(JSONLabels.RECEIVERDEPTH, (float)getReceiverDepth());
-        a.put(JSONLabels.PHASE, getName());
-        a.put(JSONLabels.TIME, (float)getTime());
-        a.put(JSONLabels.RAYPARAM, (float)(Math.PI / 180.0 * getRayParam()));
-        a.put(JSONLabels.TAKEOFF, (float) getTakeoffAngleDegree());
-        a.put(JSONLabels.INCIDENT, (float) getIncidentAngleDegree());
-        a.put(JSONLabels.PURISTDIST, (float)getDistDeg());
-        a.put(JSONLabels.PURISTNAME, getPuristName());
-        if (getRayCalculateable().hasDescription()) {
-            a.put(JSONLabels.DESC, getRayCalculateable().getDescription());
-        }
-        if (withAmplitude) {
-            JSONObject ampObj = new JSONObject();
-            a.put(JSONLabels.AMP, ampObj);
-            try {
-                double geospread = getAmplitudeGeometricSpreadingFactor();
-                if (Double.isFinite(geospread)) {
-                    SeismicSourceArgs sourceArgs = getRayCalculateable().sourceArgs;
-                    ampObj.put(JSONLabels.FACTORPSV, (float) getAmplitudeFactorPSV());
-                    ampObj.put(JSONLabels.FACTORSH, (float) getAmplitudeFactorSH());
-                    ampObj.put(JSONLabels.GEOSPREAD, (float) geospread);
-                    ampObj.put(JSONLabels.ATTENUATION, (float) calcAttenuation());
-                    ampObj.put(JSONLabels.FREE_FACTOR, (float) calcFreeFactor());
-                    JSONArray radPatArr = new JSONArray(calcRadiationPattern());
-                    ampObj.put(JSONLabels.RADIATION_PATTERN, radPatArr);
-                    ampObj.put(JSONLabels.RADIATION_TERM, (float)calcRadiationTerm());
-                    ampObj.put(JSONLabels.UNITCONV, (float)1e-3);
-                } else {
-                    ampObj.put(JSONLabels.ERROR, "geometrical speading not finite");
-                }
-                ampObj.put(JSONLabels.SOURCE, getRayCalculateable().getSourceArgs().asJSONObject());
-                ampObj.put(JSONLabels.REFLTRANPSV, (float) getEnergyFluxFactorReflTransPSV());
-                ampObj.put(JSONLabels.REFLTRANSH, (float) getEnergyFluxFactorReflTransSH());
-            } catch (TauPException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        if (getPhase() instanceof ScatteredSeismicPhase) {
-            ScatteredSeismicPhase scatPhase = (ScatteredSeismicPhase)getPhase();
-            a.put(JSONLabels.SCATTER, scatPhase.getScatterer().asJSONObject());
-        }
-        if (isRelativeToArrival()) {
-            Arrival relArrival = getRelativeToArrival();
-            JSONObject relA = new JSONObject();
-            a.put(JSONLabels.RELATIVE, relA);
-            relA.put(JSONLabels.DIFFERENCE, (float)(getTime()-relArrival.getTime()));
-            relA.put(JSONLabels.ARRIVAL, relArrival.asJSONObject());
-        }
-        if (withPierce) {
-            JSONArray points = new JSONArray();
-            a.put(JSONLabels.PIERCE, points);
-            TimeDist[] tdArray = getPierce();
-            for (TimeDist td : tdArray) {
-                JSONArray tdItems = new JSONArray();
-                points.put(tdItems);
-                tdItems.put(td.getDistDeg());
-                tdItems.put(td.getDepth());
-                tdItems.put(td.getTime());
-                if (isLatLonable()) {
-                    double[] latlon = getLatLonable().calcLatLon(td.getDistDeg(), getDistDeg());
-                    tdItems.put(latlon[0]);
-                    tdItems.put(latlon[1]);
-                }
-            }
-        }
-        if (withPath) {
-            a.put(JSONLabels.PATHLENGTH, calcPathLength());
-            JSONArray points = new JSONArray();
-            a.put(JSONLabels.PATH, points);
-            for (ArrivalPathSegment seg : getPathSegments()) {
-                points.put(seg.asJSONObject());
-            }
-        }
-        return a;
     }
 
     public RayCalculateable getRayCalculateable() {

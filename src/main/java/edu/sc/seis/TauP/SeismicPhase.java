@@ -44,8 +44,6 @@ public interface SeismicPhase extends Serializable, Cloneable {
 
     String describeShort();
 
-    String describeJson();
-
     TauModel getTauModel();
 
     static Arrival getEarliestArrival(List<SeismicPhase> phases, double degrees) {
@@ -236,70 +234,8 @@ public interface SeismicPhase extends Serializable, Cloneable {
         return desc;
     }
 
-    static String baseDescribeJSON(SeismicPhase phase) {
-        String desc = "";
-        if (phase.phasesExistsInModel()) {
-
-            desc += "  \"minexists\": { \n"+
-                    "    \"dist\": "+Outputs.formatDistanceNoPad(phase.getMinDistanceDeg())+",\n"+
-                    "    \"modulodist\": "+Outputs.formatDistanceNoPad(SeismicPhase.distanceTrim180(phase.getMinDistanceDeg()))+",\n"+
-                    "    \"rayparameter\": "+Outputs.formatRayParam(phase.getMaxRayParam() / SphericalCoords.RtoD)+",\n"+
-                    "    \"time\": "+Outputs.formatTimeNoPad(phase.getMinTime())+"\n"+
-                    "  },\n"+
-                    "  \"maxexists\": { \n"+
-                    "    \"dist\": "+Outputs.formatDistanceNoPad(phase.getMaxDistanceDeg())+",\n"+
-                    "    \"modulodist\": "+Outputs.formatDistanceNoPad(SeismicPhase.distanceTrim180(phase.getMaxDistanceDeg()))+",\n"+
-                    "    \"rayparameter\": "+Outputs.formatRayParam(phase.getMinRayParam() / SphericalCoords.RtoD)+",\n"+
-                    "    \"time\": "+Outputs.formatTimeNoPad(phase.getMaxTime())+"\n"+
-                    "  },\n"+
-                    "  \"shadow\": [";
-            boolean hasPrevShadow = false;
-            for (ShadowZone shad : phase.getShadowZones()) {
-                if (hasPrevShadow) {
-                    desc +=",\n";
-                }
-                desc += shad.asJSON().toString()+",\n";
-                hasPrevShadow = true;
-            }
-            desc += "  ]";
-        } else {
-            desc = "";
-        }
-        return desc;
-    }
-
     static String segmentDescribe(SeismicPhase phase) {
         return SeismicPhaseSegment.segmentListDescribe(phase.getListPhaseSegments());
-    }
-    static String segmentDescribeJSON(SeismicPhase phase) {
-        String desc = "";
-        String indent = "  ";
-        desc += indent+"\"segments\": [\n";
-        boolean firstOuter=true;
-        for (List<SeismicPhaseSegment> segList : phase.getListPhaseSegments()) {
-            if (firstOuter) {
-                firstOuter = false;
-            } else {
-                desc += ",\n";
-            }
-            boolean firstInner=true;
-            desc += indent+"   {\n";
-            desc += indent+"     \"maxrayparam\": "+segList.get(segList.size()-1).getMaxRayParam()+",\n";
-            desc += indent+"     \"minrayparam\": "+segList.get(segList.size()-1).getMinRayParam()+",\n";
-            desc += indent+"     \"branchseq\": [\n";
-            for (SeismicPhaseSegment segment : segList) {
-                if (firstInner) {
-                    firstInner = false;
-                } else {
-                    desc += ",\n";
-                }
-                desc += indent +"       "+ segment.toJSONString();
-            }
-            desc += "\n" + indent + "     ]";
-            desc += "\n" + indent + "   }";
-        }
-        desc += "\n" + indent + "]";
-        return desc;
     }
 
     int getNumRays();

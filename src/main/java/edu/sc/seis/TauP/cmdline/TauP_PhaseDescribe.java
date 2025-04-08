@@ -1,21 +1,21 @@
 package edu.sc.seis.TauP.cmdline;
 
-import edu.sc.seis.TauP.SeismicPhase;
-import edu.sc.seis.TauP.SphericalCoords;
-import edu.sc.seis.TauP.TauModelException;
-import edu.sc.seis.TauP.TauPException;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import edu.sc.seis.TauP.*;
 import edu.sc.seis.TauP.cmdline.args.AbstractOutputTypeArgs;
 import edu.sc.seis.TauP.cmdline.args.OutputTypes;
 import edu.sc.seis.TauP.cmdline.args.TextOutputTypeArgs;
-import org.json.JSONWriter;
+import edu.sc.seis.TauP.gson.AbstractPhaseResult;
+import edu.sc.seis.TauP.gson.ArrivalSerializer;
+import edu.sc.seis.TauP.gson.GsonUtil;
 import picocli.CommandLine;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.List;
 
-import static edu.sc.seis.TauP.JSONLabels.DESCRIPTIONS;
-import static edu.sc.seis.TauP.JSONLabels.NL;
 import static edu.sc.seis.TauP.cmdline.TauP_Tool.OPTIONS_HEADING;
 
 @CommandLine.Command(name = "phase",
@@ -69,7 +69,16 @@ public class TauP_PhaseDescribe extends TauP_AbstractPhaseTool {
         if (getOutputFormat().equals(OutputTypes.TEXT)) {
             printResultText(writer);
         } else if (getOutputFormat().equals(OutputTypes.JSON)) {
-            printResultJSON(writer);
+            List<PhaseDescription> phaseDesc = new ArrayList<>();
+            for (SeismicPhase sp : getSeismicPhases()) {
+                phaseDesc.add(new PhaseDescription(sp));
+            }
+            PhaseDescribeResult result = new PhaseDescribeResult(modelArgs.getModelName(),
+                    modelArgs.getSourceDepths(), modelArgs.getReceiverDepths(),
+                    getPhaseArgs().parsePhaseNameList(),
+                    getScatterer(), phaseDesc);
+            GsonBuilder gsonBld = GsonUtil.createGsonBuilder();
+            writer.println(gsonBld.create().toJson(result));
         } else {
             throw new IllegalArgumentException("Output format "+getOutputFormat()+" not recognized");
         }
@@ -94,28 +103,16 @@ public class TauP_PhaseDescribe extends TauP_AbstractPhaseTool {
             writer.println("--------");
         }
     }
+}
 
-    public void printResultJSON(PrintWriter writer) throws TauPException {
-        writer.println("{");
-        String indent = "  ";
-        writeBaseJSON(writer, "  ", getTauModelName(),
-                getSourceDepths(), getReceiverDepths(),
-                getSeismicPhases(), getScatterer(), null);
-        writer.write("," + NL);
-        List<SeismicPhase> phaseList = getSeismicPhases();
-        writer.write(indent+ JSONWriter.valueToString(DESCRIPTIONS)+": [");
+class PhaseDescribeResult extends AbstractPhaseResult {
 
-        boolean first = true;
-        for (SeismicPhase phase : phaseList) {
-            if (first) {
-                writer.println("");
-                first = false;
-            } else {
-                writer.println(",");
-            }
-            writer.print(phase.describeJson());
-        }
-        writer.println("\n"+indent+"]");
-        writer.println("}");
+    public PhaseDescribeResult(String modelName, List<Double> depth, List<Double> receiverDepth,
+                      List<PhaseName> phaseNameList, Scatterer scatterer, List<PhaseDescription> phaseDescList
+                      ) {
+        super(modelName, depth, receiverDepth, phaseNameList, scatterer);
+        this.phaseDescList = phaseDescList;
     }
+
+    List<PhaseDescription> phaseDescList;
 }

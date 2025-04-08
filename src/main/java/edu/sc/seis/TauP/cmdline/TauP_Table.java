@@ -30,6 +30,8 @@ import edu.sc.seis.TauP.cmdline.args.OutputTypes;
 import edu.sc.seis.TauP.cmdline.args.PhaseArgs;
 import edu.sc.seis.TauP.cmdline.args.TableModelArgs;
 import edu.sc.seis.TauP.cmdline.args.TableOutputTypeArgs;
+import edu.sc.seis.TauP.gson.GsonUtil;
+import edu.sc.seis.TauP.gson.TimeResult;
 import picocli.CommandLine;
 
 import java.io.BufferedReader;
@@ -466,13 +468,14 @@ public class TauP_Table extends TauP_Tool {
             List<SeismicPhase> phaseList = recalcPhases(tMod, phaseNames, depth, receiverDepth, scatterer);
             for (RayCalculateable distCalc : rayCalcList) {
                 List<Arrival> arrivals = calcAll(phaseList, List.of(distCalc));
-                TauP_AbstractRayTool.writeJSON(out, "",
-                        tMod.getModelName(),
+                TimeResult result = new TimeResult(tMod.getModelName(),
                         List.of(depth),
                         List.of(receiverDepth),
-                        phaseList,
-                        arrivals,
-                        scatterer);
+                        phaseNames,
+                        scatterer,
+                        false, null,
+                        arrivals);
+                out.println(GsonUtil.toJson(result));
             }
         }
         out.println("]");

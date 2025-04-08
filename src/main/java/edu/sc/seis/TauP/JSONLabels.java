@@ -30,6 +30,7 @@ public interface JSONLabels {
     String REFLTRANSH = "refltransh";
     String DEPTH = "depth";
     String SCATTER = "scatter";
+    String SCATTERER = "scatterer";
     String RELATIVE = "relative";
     String DIFFERENCE = "difference";
     String ARRIVAL_LIST = "arrivals";
@@ -75,4 +76,12 @@ public interface JSONLabels {
     String TO = "to";
     String DISTANCES = "distances";
     String RADIAN = "radian";
+    String POINTS = "points";
+    String SEGNAME = "name";
+    String WAVETYPE = "wavetype";
+    String SEGINDEX = "segindex";
+    String SEGMENT = "segment";
+    String NAME = "name";
+    String PREFNAME = "prefferedname";
+    String ISBACKSCATTER = "isbackscatter";
 }

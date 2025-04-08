@@ -1,6 +1,6 @@
 package edu.sc.seis.TauP;
 
-import org.json.JSONObject;
+import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,8 +72,8 @@ public class ArrivalPathSegment extends AbstractPathSegment {
     }
 
     @Override
-    public JSONObject asJSONObject() {
-        return super.asJSONObject(arrival);
+    public JsonObject asJsonObject() {
+        return super.asJsonObject(arrival);
     }
 
     @Override

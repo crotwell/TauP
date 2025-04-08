@@ -1,9 +1,11 @@
 package edu.sc.seis.TauP.cmdline;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import edu.sc.seis.TauP.*;
 import edu.sc.seis.TauP.cmdline.args.*;
-import org.json.JSONArray;
-import org.json.JSONObject;
+import edu.sc.seis.TauP.gson.GsonUtil;
 import picocli.CommandLine;
 
 import java.io.IOException;
@@ -43,31 +45,13 @@ public class TauP_VelocityPlot extends TauP_Tool {
                 if (outputTypeArgs.getOutFileBase().equals(DEFAULT_OUTFILE)) {
                     outputTypeArgs.setOutFileBase("-");
                 }
-                JSONObject out = new JSONObject();
-                JSONArray modList = new JSONArray();
-                out.put("models", modList);
+                List<ModelDiscontinuites> outList = new ArrayList<>();
                 for (VelocityModel vMod : vModList) {
-                    JSONObject mod = new JSONObject();
-                    modList.put(mod);
-                    mod.put("name", vMod.getModelName());
-                    JSONArray discon = new JSONArray();
-                    for (double d : vMod.getDisconDepths()) {
-                        if (d == vMod.getRadiusOfEarth()) {
-                            // center not really a discon
-                            continue;
-                        }
-                        JSONObject disconObj = new JSONObject();
-                        disconObj.put("depth", d);
-                        if (vMod.isNamedDisconDepth(d)) {
-                            disconObj.put("name", vMod.getNamedDisconForDepth(d).getName());
-                        }
-                        discon.put(disconObj);
-                    }
-                    mod.put("discon", discon);
+                    outList.add(new ModelDiscontinuites(vMod));
                 }
                 PrintWriter writer = outputTypeArgs.createWriter(spec.commandLine().getOut());
-                out.write(writer, 2, 0);
-                writer.println();
+                Gson gson = GsonUtil.createGsonBuilder().create();
+                writer.println(gson.toJson(outList));
                 writer.flush();
             } else {
                 outputTypeArgs.setOutputFormat(TEXT);

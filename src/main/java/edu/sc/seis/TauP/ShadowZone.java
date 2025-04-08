@@ -1,6 +1,6 @@
 package edu.sc.seis.TauP;
 
-import org.json.JSONObject;
+import com.google.gson.JsonObject;
 
 /**
  * Represents a shadow zone within a phase.
@@ -62,15 +62,5 @@ public class ShadowZone {
 
     public Arrival getPreArrival() {
         return preArrival;
-    }
-
-    public JSONObject asJSON() {
-        JSONObject out = new JSONObject();
-        out.put(JSONLabels.RAYPARAM, getRayParam());
-        out.put(JSONLabels.TOP_DEPTH, getTopDepth());
-        out.put(JSONLabels.BOT_DEPTH, getBotDepth());
-        out.put(JSONLabels.SHADOW_PRE_ARRIVAL, getPreArrival());
-        out.put(JSONLabels.SHADOW_POST_ARRIVAL, getPostArrival());
-        return out;
     }
 }

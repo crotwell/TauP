@@ -1,7 +1,5 @@
 package edu.sc.seis.TauP;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -384,36 +382,6 @@ public class ScatteredSeismicPhase implements SeismicPhase {
                 + " source: "+getSourceDepth()+" km, receiver: "+getReceiverDepth()+" km,"
                 + " scatter: "+getScattererDepth()+" km,"+getScattererDistanceDeg()+" deg";
         return desc;
-    }
-
-    @Override
-    public String describeJson() {
-
-        String Q = ""+'"';
-        String COMMA = ",";
-        String QCOMMA = Q+COMMA;
-        String COLON = ": "; // plus space
-        String S = "  ";
-        String QC = Q+COLON;
-        String QCQ = QC+Q;
-        String SQ = S+Q;
-        String SSQ = S+SQ;
-        StringWriter sw = new StringWriter();
-        PrintWriter out = new PrintWriter(sw);
-        out.println("{");
-        out.println(SQ+"name"+QCQ+getName()+QCOMMA);
-        if (inboundArrival == null ) {
-            out.println(SQ+"fail"+QCQ+"inbound arrival to scatterer doesn't exist"+QCOMMA);
-        } else if (scatteredPhase.isFail()) {
-            out.println(SQ+"fail"+QCQ+"Scattered Phase "+scatteredPhase.failReason()+QCOMMA);
-        }
-        String baseDesc = SeismicPhase.baseDescribeJSON(this);
-        if (!baseDesc.isEmpty()) {
-            out.println(baseDesc+",");
-        }
-        out.println(SeismicPhase.segmentDescribeJSON(this));
-        out.println("}");
-        return sw.toString();
     }
 
     @Override

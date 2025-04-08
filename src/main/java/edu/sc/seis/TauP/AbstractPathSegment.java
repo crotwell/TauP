@@ -1,9 +1,8 @@
 package edu.sc.seis.TauP;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import edu.sc.seis.TauP.cmdline.args.DistDepthRange;
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.json.JSONWriter;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -156,58 +155,30 @@ public abstract class AbstractPathSegment {
 
     public abstract String description();
 
-    public JSONObject asJSONObject() {
-        return asJSONObject(null);
+    public JsonObject asJsonObject() {
+        return asJsonObject(null);
     }
 
-    public JSONObject asJSONObject(Arrival arrival) {
-        JSONObject a = new JSONObject();
-        a.put("name", segmentName);
-        a.put("wavetype", isPWave ? "pwave" : "swave");
-        JSONArray points = new JSONArray();
-        a.put("path", points);
+    public JsonObject asJsonObject(Arrival arrival) {
+        JsonObject a = new JsonObject();
+        a.addProperty(JSONLabels.SEGINDEX, segmentIndex);
+        a.addProperty(JSONLabels.SEGNAME, segmentName);
+        a.addProperty(JSONLabels.WAVETYPE, isPWave ? "pwave" : "swave");
+        JsonArray points = new JsonArray();
+        a.add(JSONLabels.SEGMENT, points);
         for (TimeDist td : path) {
-            JSONArray tdItems = new JSONArray();
-            points.put(tdItems);
-            tdItems.put((float)td.getDistDeg());
-            tdItems.put((float)td.getDepth());
-            tdItems.put((float)td.getTime());
+            JsonArray tdItems = new JsonArray();
+            points.add(tdItems);
+            tdItems.add((float)td.getDistDeg());
+            tdItems.add((float)td.getDepth());
+            tdItems.add((float)td.getTime());
             if (arrival != null && arrival.isLatLonable()) {
                 double[] latlon = arrival.getLatLonable().calcLatLon(td.getDistDeg(), arrival.getDistDeg());
-                tdItems.put((float)latlon[0]);
-                tdItems.put((float)latlon[1]);
+                tdItems.add((float)latlon[0]);
+                tdItems.add((float)latlon[1]);
             }
         }
         return a;
-    }
-
-    public void writeJSON(PrintWriter pw, String indent) {
-        String NL = "\n";
-        pw.write(indent + "{" + NL);
-        String innerIndent = indent + "  ";
-        pw.write(innerIndent + JSONWriter.valueToString("index") + ": " + JSONWriter.valueToString(segmentIndex) + "," + NL);
-        pw.write(innerIndent + JSONWriter.valueToString("name") + ": " + JSONWriter.valueToString(segmentName) + "," + NL);
-        pw.write(innerIndent + JSONWriter.valueToString("wavetype") + ": " + JSONWriter.valueToString(isPWave ? "pwave" : "swave") + "," + NL);
-
-        pw.write(innerIndent + JSONWriter.valueToString("segment") + ": [" + NL);
-        String prevLine = "";
-        boolean first = true;
-        for (TimeDist td : path) {
-            String line = JSONWriter.valueToString((float) td.getDistDeg()) + ", " +
-                    JSONWriter.valueToString((float) td.getDepth()) + ", " +
-                    JSONWriter.valueToString((float) td.getTime());
-            if ( ! line.equals(prevLine)) {
-                if (!first) {
-                    pw.write(","+NL);
-                } else {
-                    first = false;
-                }
-                pw.write(innerIndent + "  [ " + line + " ]");
-            }
-            prevLine = line;
-        }
-        pw.write(NL+innerIndent + "]"+NL);
-        pw.write(indent + "}");
     }
 
     public String getCssClasses() {

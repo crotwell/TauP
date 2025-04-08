@@ -1,8 +1,11 @@
 package edu.sc.seis.TauP;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import edu.sc.seis.TauP.cmdline.CmdLineOutputTest;
 import edu.sc.seis.TauP.cmdline.TauP_Time;
-import org.json.*;
+import edu.sc.seis.TauP.gson.TimeResult;
 import org.junit.jupiter.api.Test;
 
 import java.io.BufferedReader;
@@ -48,51 +51,10 @@ public class JsonOutputTest {
         assertNotEquals(0, outContent.length());
         BufferedReader prior = CmdLineOutputTest.getPriorOutput(cmd);
         BufferedReader current = new BufferedReader(new StringReader(outContent));
-        JSONTokener jsonIn = new JSONTokener(prior);
-        JSONObject priorJson = new JSONObject(jsonIn);
-        JSONTokener currentIn = new JSONTokener(current);
-        JSONObject currentJson = new JSONObject(currentIn);
+        JsonObject priorJson = JsonParser.parseReader(prior).getAsJsonObject();
+        JsonObject currentJson = JsonParser.parseReader(current).getAsJsonObject();
         String simOut = similar(priorJson, currentJson);
-        assertNull(simOut, "JSON not similar for "+cmd);
-    }
-
-    @Test
-    public void testasJsonObject() throws TauPException {
-        TauP_Time tool = new TauP_Time();
-        tool.getDistanceArgs().setDegreeList(List.of(35.0));
-        tool.clearPhases();
-        tool.getPhaseArgs().setPhaseNames(List.of("P","S"));
-        boolean withAmplitude = true;
-        tool.getSourceArgs().withAmplitude = withAmplitude;
-        assertEquals("P,S", tool.getPhaseArgs().getPhaseNamesAsString(tool.getPhaseArgs().parsePhaseNameList()));
-        assertEquals(2, tool.parsePhaseNameList().size());
-        StringBuilderWriter sb = new StringBuilderWriter();
-
-        List<RayCalculateable> distanceValues = tool.getDistanceArgs().getRayCalculatables(tool.getSourceArgs());
-        assertEquals(1, distanceValues.size());
-        assertEquals(2, tool.getSeismicPhases().size());
-        List<Arrival> arrivalList = tool.calcAll(tool.getSeismicPhases(), distanceValues);
-        assertEquals(2, arrivalList.size());
-
-        PrintWriter out = new PrintWriter(sb);
-        tool.printResultJSON(out, arrivalList);
-        out.close();
-        System.err.println("######  printResultJSON result  ");
-        System.err.println(sb.toString());
-
-        JSONObject pwJson = new JSONObject(new JSONTokener(new StringReader(sb.toString())));
-
-
-        JSONObject resultJson = TauP_Time.resultAsJSONObject(tool.getTauModelName(),
-                tool.getSourceDepths(), tool.getReceiverDepths(),
-                tool.parsePhaseNameList(), arrivalList, tool.getScatterer(),
-                false, false, withAmplitude, tool.getSourceArgs());
-
-        System.err.println("######  JSONObject result  ");
-        System.err.println(resultJson.toString(2));
-
-        String simOut = similar(pwJson, resultJson);
-        assertNull(simOut, "JSON not similar ");
+        assertNull(simOut, "JSON not similar for prior,curr: "+cmd);
     }
 
     /**
@@ -104,10 +66,14 @@ public class JsonOutputTest {
      * @param other The other JSONObject
      * @return null if they are equal, reason if not equal
      */
-    public static String similar(JSONObject first, JSONObject other) {
+    public static String similar(JsonObject first, JsonObject other) {
 
-            if (!first.keySet().equals(((JSONObject)other).keySet())) {
-                return "keySet not same";
+            if (!first.keySet().equals(((JsonObject)other).keySet())) {
+                String fks = "";
+                for (String k : first.keySet()) { fks += " "+k;}
+                String oks = "";
+                for (String k : other.keySet()) { oks += " "+k;}
+                return "keySet not same "+first.keySet().size()+" "+other.keySet().size()+", "+fks+" != "+oks;
             }
             for (String name : first.keySet()) {
             //for (final Map.Entry<String,?> entry : first.entrySet()) {
@@ -120,16 +86,19 @@ public class JsonOutputTest {
                 if(valueThis == null) {
                     return "value for "+name+" is null in first";
                 }
-                if (valueThis instanceof JSONObject) {
-                    String subSim = similar((JSONObject)valueThis, (JSONObject)valueOther);
+                if (valueThis instanceof JsonObject) {
+                    if (! (valueOther instanceof JsonObject)) {
+                        return name+" obj in first but not in other";
+                    }
+                    String subSim = similar((JsonObject)valueThis, (JsonObject)valueOther);
                     if (subSim != null) {
                         return name+"."+subSim;
                     }
-                } else if (valueThis instanceof JSONArray) {
-                    if (! (valueOther instanceof JSONArray)) {
+                } else if (valueThis instanceof JsonArray) {
+                    if (! (valueOther instanceof JsonArray)) {
                         return name+" arr in first but not in other";
                     }
-                    String subSim = similar((JSONArray)valueThis, (JSONArray)valueOther);
+                    String subSim = similar((JsonArray)valueThis, (JsonArray)valueOther);
                     if (subSim != null) {
                         return name+" "+subSim;
                     }
@@ -140,11 +109,11 @@ public class JsonOutputTest {
                     if (!isNumberSimilar((Number)valueThis, (Number)valueOther)) {
                         return name+" "+valueThis+" != "+valueOther;
                     }
-                } else if (valueThis instanceof JSONString && valueOther instanceof JSONString) {
-                    if (!(valueOther instanceof JSONString)) {
+                } else if (valueThis instanceof String && valueOther instanceof String) {
+                    if (!(valueOther instanceof String)) {
                         return name+" str in first but not in other";
                     }
-                    if (!((JSONString) valueThis).toJSONString().equals(((JSONString) valueOther).toJSONString())) {
+                    if (!((String) valueThis).equals(((String) valueOther))) {
                         return name+" string "+valueThis+" != "+valueOther;
                     }
                 } else if (!valueThis.equals(valueOther)) {
@@ -163,10 +132,10 @@ public class JsonOutputTest {
      * @param other The other JSONArray
      * @return null if they are equal, string reason if not
      */
-    public static String similar(JSONArray first, JSONArray other) {
-        int len = first.length();
-        if (len != other.length()) {
-            return "len "+len+"!="+other.length();
+    public static String similar(JsonArray first, JsonArray other) {
+        int len = first.size();
+        if (len != other.size()) {
+            return "len "+len+"!="+other.size();
         }
         for (int i = 0; i < len; i += 1) {
             Object valueThis = first.get(i);
@@ -177,19 +146,19 @@ public class JsonOutputTest {
             if(valueThis == null) {
                 return i+" is null in first";
             }
-            if (valueThis instanceof JSONObject) {
-                if (! (valueOther instanceof JSONObject)) {
+            if (valueThis instanceof JsonObject) {
+                if (! (valueOther instanceof JsonObject)) {
                     return i+" obj in first but not in other";
                 }
-                String subSim = similar((JSONObject)valueThis, (JSONObject)valueOther);
+                String subSim = similar((JsonObject)valueThis, (JsonObject)valueOther);
                 if (subSim != null) {
                     return i+" "+subSim;
                 }
-            } else if (valueThis instanceof JSONArray) {
-                if (! (valueOther instanceof JSONArray)) {
+            } else if (valueThis instanceof JsonArray) {
+                if (! (valueOther instanceof JsonArray)) {
                     return i+" arr in first but not in other";
                 }
-                String subSim = similar((JSONArray)valueThis, (JSONArray)valueOther);
+                String subSim = similar((JsonArray)valueThis, (JsonArray)valueOther);
                 if (subSim != null) {
                     return i+" "+subSim;
                 }
@@ -200,11 +169,11 @@ public class JsonOutputTest {
                 if (!isNumberSimilar((Number)valueThis, (Number)valueOther)) {
                     return i+" "+valueThis+" != "+valueOther;
                 }
-            } else if (valueThis instanceof JSONString ) {
-                if (!(valueOther instanceof JSONString)) {
+            } else if (valueThis instanceof String ) {
+                if (!(valueOther instanceof String)) {
                     return i+" str in first but not in other";
                 }
-                if (!((JSONString) valueThis).toJSONString().equals(((JSONString) valueOther).toJSONString())) {
+                if (!((String) valueThis).equals(((String) valueOther))) {
                     return i+" "+valueThis+" != "+valueOther;
                 }
             } else if (!valueThis.equals(valueOther)) {

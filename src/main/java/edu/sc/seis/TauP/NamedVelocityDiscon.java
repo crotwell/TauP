@@ -1,11 +1,18 @@
 package edu.sc.seis.TauP;
 
+import com.google.gson.JsonObject;
+
 import java.io.Serializable;
 
 /**
  * Allows the naming of velocity discontinuities in a model, like moho or cmb.
  */
 public class NamedVelocityDiscon implements Cloneable, Serializable {
+    public NamedVelocityDiscon(double depth) {
+        // unnamed discon
+        this.name = null;
+        this.depth = depth;
+    }
 
     public NamedVelocityDiscon(String name, double depth) {
         if (name == null ) {
@@ -16,6 +23,13 @@ public class NamedVelocityDiscon implements Cloneable, Serializable {
         if (name.equalsIgnoreCase(MANTLE)) { this.preferredName = MOHO;}
         if (name.equalsIgnoreCase(OUTERCORE)) { this.preferredName = CMB;}
         if (name.equalsIgnoreCase(INNERCORE)) { this.preferredName = ICOCB;}
+    }
+
+    public boolean hasPreferredName() {
+        if (preferredName != null) {
+            return true;
+        }
+        return false;
     }
 
     public String getPreferredName() {
@@ -55,6 +69,16 @@ public class NamedVelocityDiscon implements Cloneable, Serializable {
 
     public double getDepth() {
         return depth;
+    }
+
+    public JsonObject asJSON() {
+        JsonObject json = new JsonObject();
+        json.addProperty(JSONLabels.NAME, getName());
+        if (preferredName != null) {
+            json.addProperty(JSONLabels.PREFNAME, getName());
+        }
+        json.addProperty(JSONLabels.DEPTH, (float)getDepth());
+        return json;
     }
 
     String name;

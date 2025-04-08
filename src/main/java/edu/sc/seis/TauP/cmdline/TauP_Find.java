@@ -1,9 +1,11 @@
 package edu.sc.seis.TauP.cmdline;
 
+import com.google.gson.Gson;
 import edu.sc.seis.TauP.*;
 import edu.sc.seis.TauP.cmdline.args.*;
-import org.json.JSONArray;
-import org.json.JSONObject;
+import edu.sc.seis.TauP.gson.AbstractPhaseResult;
+import edu.sc.seis.TauP.gson.GsonUtil;
+import edu.sc.seis.TauP.gson.TimeResult;
 import picocli.CommandLine;
 
 import java.io.IOException;
@@ -173,13 +175,8 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
 
     public void printResult(PrintWriter out, List<Arrival> arrivalList) throws IOException, TauPException {
         if (getOutputFormat().equals(OutputTypes.JSON)) {
-            TauP_AbstractRayTool.writeJSON(out, "",
-                    getTauModelName(),
-                    modelArgs.getSourceDepths(),
-                    modelArgs.getReceiverDepths(),
-                    getSeismicPhases(),
-                    arrivalList,
-                    getScatterer());
+            FindTimeResult result = createTimeResult(arrivalList, modelArgs.getTauModel());
+            out.println(GsonUtil.toJson(result));
         } else {
             boolean onlyPrintTime = false;
             boolean onlyPrintRayP = false;
@@ -282,35 +279,48 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
         }
         writer.flush();
     }
-    public void printResultJson(List<ProtoSeismicPhase> walk) throws IOException {
-        JSONObject out = new JSONObject();
-        out.put("model", modelArgs.getModelName());
-        out.put("sourcedepth", modelArgs.getSourceDepths());
-        out.put("receiverdepth", modelArgs.getReceiverDepths());
-        out.put("max", maxActions);
-        JSONArray exclude = new JSONArray();
-        out.put("exclude", exclude);
-        TauModel tMod;
-        if (walk.isEmpty()) {
-            try {
-                tMod = modelArgs.getTauModel();
-            } catch (TauModelException e) {
-                throw new RuntimeException(e);
-            }
-        } else {
+    public FindTimeResult createTimeResult(List<Arrival> arrivals, TauModel optTauModel) throws TauPException {
+        TauModel tMod = optTauModel;
+        if (!arrivals.isEmpty()) {
+            tMod = arrivals.get(0).getTauModel();
+        }
+        List<Float> excludeList = new ArrayList<>();
+        for (double d : getExcludedDepths(tMod)) {
+            excludeList.add((float) d);
+        }
+        List<String> phases = new ArrayList();
+        FindTimeResult result = new FindTimeResult(getTauModelName(), getSourceDepths(), getReceiverDepths(),
+                getPhaseArgs().parsePhaseNameList(), getScatterer(),
+                false, sourceArgs,
+                arrivals,
+                maxActions, excludeList, phases);
+        return result;
+    }
+    public FindResult createResult(List<ProtoSeismicPhase> walk, TauModel optTauModel) throws TauPException {
+        TauModel tMod = optTauModel;
+        if (!walk.isEmpty()) {
             tMod = walk.get(0).gettMod();
         }
+        List<Float> excludeList = new ArrayList<>();
         for (double d : getExcludedDepths(tMod)) {
-            exclude.put(d);
+            excludeList.add((float) d);
         }
-        JSONArray phases = new JSONArray();
-        out.put("phases", phases);
+        List<String> phases = new ArrayList();
         for (ProtoSeismicPhase segList : walk) {
-            phases.put(segList.phaseNameForSegments());
+            phases.add(segList.phaseNameForSegments());
         }
+        FindResult result = new FindResult(getTauModelName(), getSourceDepths(), getReceiverDepths(),
+                getPhaseArgs().parsePhaseNameList(), getScatterer(),
+                maxActions, excludeList, phases
+        );
+        return result;
+    }
+    public void printResultJson(List<ProtoSeismicPhase> walk) throws IOException, TauPException {
+        FindResult result = createResult(walk, modelArgs.getTauModel());
+        Gson gson = GsonUtil.createGsonBuilder().create();
+
         PrintWriter writer = outputTypeArgs.createWriter(spec.commandLine().getOut());
-        out.write(writer, 2, 0);
-        writer.println();
+        writer.println(gson.toJson(result));
         writer.flush();
     }
 
@@ -503,4 +513,40 @@ public class TauP_Find extends TauP_AbstractPhaseTool {
     }
 
     DistanceArgs distanceArgs = new DistanceArgs();
+}
+
+
+class FindResult extends AbstractPhaseResult {
+
+    public FindResult(String modelName, List<Double> depth, List<Double> receiverDepth,
+                      List<PhaseName> phaseNameList, Scatterer scatterer,
+                      int maxActions, List<Float> exclude,
+                      List<String> foundphases) {
+        super(modelName, depth, receiverDepth, phaseNameList, scatterer);
+        this.maxactions = maxActions;
+        this.exclude = exclude;
+        this.foundphases = foundphases;
+    }
+
+    int maxactions;
+    List<Float> exclude = new ArrayList<>();
+    List<String> foundphases;
+}
+
+
+class FindTimeResult extends TimeResult {
+
+    public FindTimeResult(String modelName, List<Double> depth, List<Double> receiverDepth,
+                          List<PhaseName> phaseNameList, Scatterer scatterer,
+                          boolean withAmp, SeismicSourceArgs sourceArgs, List<Arrival> arrivals,
+                          int maxActions, List<Float> exclude,
+                          List<String> foundphases) {
+        super(modelName, depth, receiverDepth, phaseNameList, scatterer, withAmp, sourceArgs, arrivals);
+        this.maxactions = maxActions;
+        this.exclude = exclude;
+        this.foundphases = foundphases;
+    }
+    int maxactions;
+    List<Float> exclude = new ArrayList<>();
+    List<String> foundphases;
 }

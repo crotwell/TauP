@@ -1,4 +1,5 @@
-{"curves": [
+{
+  "curves": [
   {
     "x": "velocity",
     "description": "ak135 Velocity (km/s) / Depth (km)",

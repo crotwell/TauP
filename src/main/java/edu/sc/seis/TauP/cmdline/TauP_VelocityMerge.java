@@ -1,10 +1,12 @@
 package edu.sc.seis.TauP.cmdline;
 
+import com.google.gson.Gson;
 import edu.sc.seis.TauP.*;
 import edu.sc.seis.TauP.cmdline.args.OutputTypes;
 import edu.sc.seis.TauP.cmdline.args.OverlayVelocityModelArgs;
 import edu.sc.seis.TauP.cmdline.args.VelModelOutputTypeArgs;
 import edu.sc.seis.TauP.cmdline.args.VelocityModelArgs;
+import edu.sc.seis.TauP.gson.GsonUtil;
 import picocli.CommandLine;
 
 import java.io.BufferedWriter;
@@ -77,7 +79,8 @@ public class TauP_VelocityMerge extends TauP_Tool {
         } else if (Objects.equals(getOutputFormat(), VelocityModel.TVEL)) {
             throw new RuntimeException("tvel output not yet implemented");
         } else if (Objects.equals(getOutputFormat(), OutputTypes.JSON)) {
-            dos.write(outVMod.asJSON(true, ""));
+            Gson gson = GsonUtil.createGsonBuilder().create();
+            dos.println(gson.toJson(outVMod));
         } else {
             throw new TauPException("Unknown output format: "+getOutputFormat());
         }

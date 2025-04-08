@@ -1,11 +1,11 @@
 package edu.sc.seis.TauP;
 
+import com.google.gson.Gson;
 import edu.sc.seis.TauP.cmdline.args.ColorType;
 import edu.sc.seis.TauP.cmdline.args.ColoringArgs;
 import edu.sc.seis.TauP.cmdline.args.GraphicOutputTypeArgs;
 import edu.sc.seis.TauP.cmdline.args.ModelArgs;
-import org.json.JSONArray;
-import org.json.JSONObject;
+import edu.sc.seis.TauP.gson.GsonUtil;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Objects;
 
 import static edu.sc.seis.TauP.AxisType.*;
-import static edu.sc.seis.TauP.cmdline.TauP_AbstractPhaseTool.baseResultAsJSONObject;
 import static edu.sc.seis.TauP.cmdline.args.ModelArgs.depthsToString;
 
 /**
@@ -84,24 +83,8 @@ public class XYPlotOutput {
         this.yAxisMinMax = minMax;
     }
 
-    public JSONObject asJSON() {
-        JSONObject out;
-        if (modelArgs != null ) {
-            out = baseResultAsJSONObject( modelArgs.getModelName(), modelArgs.getSourceDepths(),
-                    modelArgs.getReceiverDepths(), phaseNames, modelArgs.getScatterer(), false, null);
-        } else {
-            out = new JSONObject();
-        }
-        JSONArray phaseCurves = new JSONArray();
-        for (XYPlottingData plotItem : xyPlots) {
-            phaseCurves.put(plotItem.asJSON());
-        }
-        out.put(JSONLabels.CURVES, phaseCurves);
-        return out;
-    }
-
     public void printAsJSON(PrintWriter writer, int indentFactor) {
-        writer.println(asJSON().toString(indentFactor));
+        writer.println(GsonUtil.toJson(this));
     }
 
     public void printAsGmtScript(PrintWriter writer,
@@ -455,4 +438,15 @@ public class XYPlotOutput {
     boolean xAxisInvert = false;
     boolean yAxisInvert = false;
 
+    public ModelArgs getModelArgs() {
+        return modelArgs;
+    }
+
+    public List<PhaseName> getPhaseNames() {
+        return phaseNames;
+    }
+
+    public List<XYPlottingData> getXYPlots() {
+        return xyPlots;
+    }
 }

@@ -63,4 +63,14 @@ public class DistanceRayTest {
         assertEquals(drW.getNormalizedBackAzimuth(), gdrW.getNormalizedBackAzimuth(), 0.5);
     }
 
+    @Test
+    public void surfaceWaveDist() throws TauModelException {
+        double deg = 270;
+        ExactDistanceRay dr = DistanceRay.ofExactDegrees(deg);
+        SimpleSeismicPhase phase = SeismicPhaseFactory.createPhase("2kmps", TauModelLoader.load("prem"));
+        List<Arrival> arrList = dr.calculate(phase);
+        assertEquals(1, arrList.size());
+        assertEquals(deg, arrList.get(0).getDistDeg());
+    }
+
 }

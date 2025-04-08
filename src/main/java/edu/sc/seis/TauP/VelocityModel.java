@@ -29,8 +29,8 @@
  */
 package edu.sc.seis.TauP;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -177,6 +177,9 @@ public class VelocityModel implements Cloneable, Serializable {
         return false;
     }
 
+    public List<NamedVelocityDiscon> getNamedDiscons() {
+        return namedDiscon;
+    }
 
     public NamedVelocityDiscon getNamedDisconForDepth(double depth) {
         for (NamedVelocityDiscon nDiscon : namedDiscon) {
@@ -966,66 +969,6 @@ public class VelocityModel implements Cloneable, Serializable {
         for(int i = 0; i < getNumLayers(); i++) {
             System.out.println(getVelocityLayer(i));
         }
-    }
-
-    public JSONObject asJSON() {
-        JSONObject json = new JSONObject();
-        json.put("modelName", getModelName());
-        json.put("radiusOfEarth", getRadiusOfEarth());
-        json.put("mohoDepth", getMohoDepth());
-        json.put("cmbDepth", getCmbDepth());
-        json.put("iocbDepth", getIocbDepth());
-        json.put("minRadius", getMinRadius());
-        json.put("maxRadius", getMaxRadius());
-        json.put("spherical", getSpherical());
-        JSONArray layers = new JSONArray();
-        json.put("layers", layers);
-        for (VelocityLayer vl : getLayers()) {
-            layers.put(vl.asJSON());
-        }
-        return json;
-    }
-
-    public String asJSON(boolean pretty, String indent) {
-        String NL = "";
-        if (pretty) {
-            NL = "\n";
-        }
-        String Q = ""+'"';
-        String COMMA = ",";
-        String QCOMMA = Q+COMMA;
-        String COLON = ": "; // plus space
-        String S = "  ";
-        String QC = Q+COLON;
-        String QCQ = QC+Q;
-        String SS = S+S;
-        String SQ = S+Q;
-        String SSQ = S+SQ;
-        StringBuilder out = new StringBuilder();
-        out.append(indent+"{"+NL);
-        out.append(indent+SQ+"modelName"+QC+Q+modelName+Q+COMMA+NL);
-        out.append(indent+SQ+"radiusOfEarth"+QC+radiusOfEarth+COMMA+NL);
-        out.append(indent+SQ+"mohoDepth"+QC+mohoDepth+COMMA+NL);
-        out.append(indent+SQ+"cmbDepth"+QC+cmbDepth+COMMA+NL);
-        out.append(indent+SQ+"iocbDepth"+QC+iocbDepth+COMMA+NL);
-        out.append(indent+SQ+"minRadius"+QC+minRadius+COMMA+NL);
-        out.append(indent+SQ+"maxRadius"+QC+maxRadius+COMMA+NL);
-        out.append(indent+SQ+"spherical"+QC+spherical+COMMA+NL);
-        out.append(indent+SQ+"numLayers"+QC+getNumLayers()+COMMA+NL);
-        out.append(indent+SQ+"layers"+QC+"[");
-        boolean first = true;
-        for (VelocityLayer vl : getLayers()) {
-            if (first) {
-                first = false;
-                out.append(NL);
-            } else {
-                out.append(COMMA+NL);
-            }
-            out.append(vl.asJSON( pretty, indent));
-        }
-        out.append(indent+S+"]"+NL);
-        out.append(indent+"}");
-        return out.toString();
     }
 
     public static String getModelNameFromFileName(String filename) {

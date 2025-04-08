@@ -16,9 +16,13 @@
  */
 package edu.sc.seis.TauP.cmdline;
 
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import edu.sc.seis.TauP.*;
 import edu.sc.seis.TauP.cmdline.args.*;
-import org.json.JSONObject;
+import edu.sc.seis.TauP.gson.ArrivalSerializer;
+import edu.sc.seis.TauP.gson.GsonUtil;
+import edu.sc.seis.TauP.gson.TimeResult;
 import picocli.CommandLine;
 
 import java.io.IOException;
@@ -177,16 +181,10 @@ public class TauP_Path extends TauP_AbstractRayTool {
 		boolean withAmp = false;
 		SeismicSourceArgs sourceArgs = null;
 		if (getOutputFormat().equals(OutputTypes.JSON)) {
-			TauP_AbstractRayTool.writeJSON(out, "",
-					getTauModelName(),
-					modelArgs.getSourceDepths(),
-					modelArgs.getReceiverDepths(),
-					getSeismicPhases(),
-					arrivalList,
-					getScatterer(),
-					withPierce, withPath,
-					withAmp,
-					sourceArgs);
+			TimeResult result = createTimeResult(withAmp, sourceArgs, arrivalList);
+			GsonBuilder gsonBuilder = GsonUtil.createGsonBuilder();
+			gsonBuilder.registerTypeAdapter(Arrival.class, new ArrivalSerializer(withPierce, withPath, withAmp));
+			out.println(gsonBuilder.create().toJson(result));
 		} else if (getOutputFormat().equals(OutputTypes.SVG)) {
 			float pixelWidth = outputTypeArgs.getPixelWidth();
 			printScriptBeginningSVG(out, arrivalList, pixelWidth, distDepthRange, modelArgs, getCmdLineArgs());
@@ -376,17 +374,4 @@ public class TauP_Path extends TauP_AbstractRayTool {
 		}
 	}
 
-
-	public static JSONObject resultAsJSONObject(String modelName,
-												List<Double> depth,
-												List<Double> receiverDepth,
-												List<PhaseName> phases,
-												List<Arrival> arrivals,
-												Scatterer scatterer,
-												boolean withAmplitude,
-												SeismicSourceArgs sourceArgs
-	) {
-		return TauP_Time.resultAsJSONObject(modelName, depth, receiverDepth, phases,
-				arrivals, scatterer, false, true, withAmplitude, sourceArgs);
-	}
 }

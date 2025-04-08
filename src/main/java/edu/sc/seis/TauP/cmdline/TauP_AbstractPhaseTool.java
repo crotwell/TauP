@@ -6,15 +6,10 @@ import edu.sc.seis.TauP.cmdline.args.ModelArgs;
 import edu.sc.seis.TauP.Scatterer;
 import edu.sc.seis.TauP.cmdline.args.PhaseArgs;
 import edu.sc.seis.TauP.cmdline.args.SeismicSourceArgs;
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.json.JSONWriter;
+import edu.sc.seis.TauP.gson.TimeResult;
 import picocli.CommandLine;
 
-import java.io.PrintWriter;
 import java.util.*;
-
-import static edu.sc.seis.TauP.JSONLabels.*;
 
 public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
 
@@ -23,49 +18,11 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
         phaseArgs.setTool(this);
     }
 
-    public static void writeBaseJSON(PrintWriter pw, String indent,
-                                     String modelName,
-                                     List<Double> depthList,
-                                     List<Double> receiverDepth,
-                                     List<SeismicPhase> phases,
-                                     Scatterer scatterer,
-                                     SeismicSourceArgs sourceArgs) {
-        String innerIndent = indent + "  ";
-        pw.write(innerIndent + JSONWriter.valueToString(JSONLabels.MODEL) + ": " + JSONWriter.valueToString(modelName) + "," + NL);
-        pw.write(innerIndent + JSONWriter.valueToString(SOURCEDEPTH_LIST) + ": [");
-
-        boolean firstDp = true;
-        for (Double depth : depthList) {
-            pw.write((firstDp ? "" : ", ") + JSONWriter.valueToString(depth.floatValue()));
-            firstDp = false;
-        }
-        pw.write("]," + NL);
-
-        pw.write(innerIndent + JSONWriter.valueToString(RECEIVERDEPTH_LIST) + ": [");
-
-        boolean firstRecDp = true;
-        for (Double depth : receiverDepth) {
-            pw.write((firstRecDp ? "" : ", ") + JSONWriter.valueToString(depth.floatValue()));
-            firstRecDp = false;
-        }
-        pw.write("]," + NL);
-        if (scatterer != null) {
-            pw.write(innerIndent + JSONWriter.valueToString(SCATTER) + ": ");
-            scatterer.writeJSON(pw, innerIndent);
-            pw.write("," + NL);
-        }
-
-        pw.write(innerIndent + JSONWriter.valueToString(PHASE_LIST) + ": [ ");
-        boolean first = true;
-        for (SeismicPhase phase : phases) {
-            if (first) {
-                first = false;
-            } else {
-                pw.write(", ");
-            }
-            pw.write(JSONWriter.valueToString(phase.getName()));
-        }
-        pw.write(" ]");
+    public TimeResult createTimeResult(boolean isWithAmplitude, SeismicSourceArgs sourceArgs, List<Arrival> arrivalList) throws PhaseParseException {
+        return new TimeResult(modelArgs.getModelName(),
+                modelArgs.getSourceDepths(), modelArgs.getReceiverDepths(),
+                getPhaseArgs().parsePhaseNameList(),
+                getScatterer(), isWithAmplitude, sourceArgs, arrivalList);
     }
 
     public double getRadiusOfEarth() {
@@ -99,31 +56,6 @@ public abstract class TauP_AbstractPhaseTool extends TauP_Tool {
      * vector to hold the SeismicPhases for the phases named in phaseNames.
      */
     private List<SeismicPhase> phases = null;
-
-    public static JSONObject baseResultAsJSONObject(String modelName,
-                                                    List<Double> depth,
-                                                    List<Double> receiverDepth,
-                                                    List<PhaseName> phaseNameList,
-                                                    Scatterer scatterer,
-                                                    boolean withAmplitude,
-                                                    SeismicSourceArgs sourceArgs) {
-        JSONObject out = new JSONObject();
-
-        out.put(MODEL, modelName);
-        out.put(SOURCEDEPTH_LIST,  depth);
-        out.put(RECEIVERDEPTH_LIST, receiverDepth);
-        if (phaseNameList != null  ) {
-            JSONArray outPhases = new JSONArray();
-            for (PhaseName pn : phaseNameList) {
-                outPhases.put(pn.getName());
-            }
-            out.put(PHASE_LIST, outPhases);
-        }
-        if (scatterer != null) {
-            out.put(SCATTER, scatterer.asJSONObject());
-        }
-        return out;
-    }
 
     @Override
     public void init() throws TauPException {

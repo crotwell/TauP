@@ -1,7 +1,12 @@
 package edu.sc.seis.TauP.cmdline;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import edu.sc.seis.TauP.*;
 import edu.sc.seis.TauP.cmdline.args.*;
+import edu.sc.seis.TauP.gson.GsonUtil;
+import edu.sc.seis.TauP.gson.TimeResult;
 import edu.sc.seis.seisFile.Location;
 import edu.sc.seis.seisFile.SeisFileException;
 import edu.sc.seis.seisFile.fdsnws.quakeml.Event;
@@ -14,8 +19,6 @@ import edu.sc.seis.seisFile.TimeUtils;
 import java.io.*;
 
 import edu.sc.seis.seisFile.mseed3.ehbag.Marker;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import picocli.CommandLine;
 
 import javax.xml.stream.XMLStreamException;
@@ -187,10 +190,13 @@ public class TauP_SetMSeed3 extends TauP_AbstractPhaseTool {
         if (!arrivals.isEmpty()) {
 
             if (ehKey != null && !ehKey.isEmpty()) {
-                JSONObject taup = TauP_Time.resultAsJSONObject(modelArgs.getModelName(),
-                        modelArgs.getSourceDepths(), modelArgs.getReceiverDepths(), parsePhaseNameList(),
-                        arrivals, modelArgs.getScatterer(), false, false, isWithAmplitude(), getSourceArgs());
-                eh.getEH().put(ehKey, taup);
+                TimeResult result = createTimeResult(isWithAmplitude(), sourceArgs, arrivals);
+                Gson gson = GsonUtil.createGsonBuilder().create();
+                JsonObject jsonObj = JsonParser.parseString(dr3.getExtraHeadersAsString(0)).getAsJsonObject();
+                if (jsonObj.has(ehKey)) {
+                    jsonObj.add(ehKey, gson.toJsonTree(result));
+                }
+                dr3.setExtraHeaders(jsonObj.getAsString());
             } else {
                 if (evTime == null) {
                     Alert.warning("Unable to extract event origin time, skipping record");
@@ -201,17 +207,6 @@ public class TauP_SetMSeed3 extends TauP_AbstractPhaseTool {
                 }
             }
         }
-    }
-
-    public static void insertMarkers(JSONObject bag, List<Arrival> arrivals, Instant evTime) {
-        JSONArray markers = new JSONArray();
-        if (bag.has("mark")) {
-            markers = bag.getJSONArray("mark");
-        }
-        for (Arrival arrival : arrivals) {
-            markers.put(createEHMarker(arrival, evTime));
-        }
-        bag.put("mark", markers);
     }
 
     public static Marker createEHMarker(Arrival arrival, Instant evTime) {

@@ -16,9 +16,12 @@
  */
 package edu.sc.seis.TauP.cmdline;
 
+import com.google.gson.GsonBuilder;
 import edu.sc.seis.TauP.*;
+import edu.sc.seis.TauP.gson.ArrivalSerializer;
 import picocli.CommandLine;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
@@ -114,6 +117,14 @@ public class TauP_Pierce extends TauP_Time {
     }
 
     @Override
+    public GsonBuilder createGsonBuilder() {
+        GsonBuilder gsonBld = super.createGsonBuilder();
+        gsonBld.registerTypeAdapter(Arrival.class,
+                new ArrivalSerializer(true, false, isWithAmplitude()));
+        return gsonBld;
+    }
+
+    @Override
     public void printResultText(PrintWriter out, List<Arrival> arrivalList) {
         printPierceAsText(out, arrivalList);
     }
@@ -159,22 +170,6 @@ public class TauP_Pierce extends TauP_Time {
                 prevDepth = pierce[j].getDepth();
             }
         }
-    }
-
-    @Override
-    public void printResultJSON(PrintWriter out, List<Arrival> arrivalList) throws TauPException {
-        boolean withPierce = true;
-        boolean withPath = false;
-        TauP_AbstractRayTool.writeJSON(out, "",
-                getTauModelName(),
-                modelArgs.getSourceDepths(),
-                modelArgs.getReceiverDepths(),
-                getSeismicPhases(),
-                arrivalList,
-                getScatterer(),
-                withPierce, withPath,
-                isWithAmplitude(),
-                sourceArgs);
     }
 
     /**

@@ -25,8 +25,6 @@
  */
 package edu.sc.seis.TauP;
 
-import org.json.JSONObject;
-
 import java.io.Serializable;
 
 /**
@@ -270,56 +268,6 @@ public class VelocityLayer implements Cloneable, Serializable {
         return description;
     }
 
-    public JSONObject asJSON() {
-        JSONObject json = new JSONObject();
-        json.put("num", myLayerNumber);
-        JSONObject top = new JSONObject();
-        top.put("depth", getTopDepth());
-        top.put("vp", getTopPVelocity());
-        top.put("vs", getTopSVelocity());
-        top.put("rho", getTopDensity());
-        json.put("top", top);
-        JSONObject bot = new JSONObject();
-        bot.put("depth", getBotDepth());
-        bot.put("vp", getBotPVelocity());
-        bot.put("vs", getBotSVelocity());
-        bot.put("rho", getBotDensity());
-        json.put("bot", bot);
-        return json;
-    }
-
-    public String asJSON(boolean pretty, String indent) {
-        String NL = "";
-        if (pretty) {
-            NL = "\n";
-        }
-        String Q = ""+'"';
-        String COMMA = ",";
-        String QCOMMA = Q+COMMA;
-        String COLON = ": "; // plus space
-        String S = "  ";
-        String QC = Q+COLON;
-        String QCQ = QC+Q;
-        String SS = S+S;
-        String SQ = S+Q;
-        String SSQ = S+SQ;
-        StringBuilder out = new StringBuilder();
-        out.append(indent+"{"+NL);
-        out.append(indent+SQ+"num"+QC+myLayerNumber+COMMA+NL);
-        out.append(indent+SQ+"top"+QC+"{"+NL);
-        out.append(indent+SQ+"depth"+QC+getTopDepth()+COMMA+NL);
-        out.append(indent+SQ+"vp"+QC+getTopPVelocity()+COMMA+NL);
-        out.append(indent+SQ+"vs"+QC+getTopSVelocity()+COMMA+NL);
-        out.append(indent+SQ+"rho"+QC+getTopDensity()+"}"+COMMA+NL);
-        out.append(indent+SQ+"bot"+QC+"{"+NL);
-        out.append(indent+SQ+"depth"+QC+getBotDepth()+COMMA+NL);
-        out.append(indent+SQ+"vp"+QC+getBotPVelocity()+COMMA+NL);
-        out.append(indent+SQ+"vs"+QC+getBotSVelocity()+COMMA+NL);
-        out.append(indent+SQ+"rho"+QC+getBotDensity()+"}");
-        out.append(indent+"}"+NL);
-        return out.toString();
-    }
-    
     public int getLayerNum() {
         return myLayerNumber;
     }
