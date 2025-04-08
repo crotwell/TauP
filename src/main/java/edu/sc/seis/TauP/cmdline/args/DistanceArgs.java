@@ -17,7 +17,7 @@ public class DistanceArgs {
             simpleDistanceList.add(DistanceRay.ofDegrees(d));
         }
         for (Double d : distArgs.exactDegreesList) {
-            simpleDistanceList.add(ExactDistanceRay.ofDegrees(d));
+            simpleDistanceList.add(DistanceRay.ofExactDegrees(d));
         }
 
         if (!distArgs.degreeRange.isEmpty()) {
@@ -29,7 +29,7 @@ public class DistanceArgs {
             simpleDistanceList.add(DistanceRay.ofKilometers(d));
         }
         for (Double d : distArgs.exactDistKilometersList) {
-            simpleDistanceList.add(ExactDistanceRay.ofKilometers(d));
+            simpleDistanceList.add(DistanceRay.ofExactKilometers(d));
         }
 
         if (!distArgs.kilometerRange.isEmpty()) {
