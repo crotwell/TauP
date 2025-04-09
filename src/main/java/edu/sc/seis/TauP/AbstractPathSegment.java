@@ -141,6 +141,10 @@ public abstract class AbstractPathSegment {
         return isPWave;
     }
 
+    public String getWavetypeStr() {
+        return isPWave ? JSONLabels.PWAVE : JSONLabels.SWAVE;
+    }
+
     public int getSegmentIndex() {
         return segmentIndex;
     }
@@ -161,7 +165,6 @@ public abstract class AbstractPathSegment {
 
     public JsonObject asJsonObject(Arrival arrival) {
         JsonObject a = new JsonObject();
-        a.addProperty(JSONLabels.SEGINDEX, segmentIndex);
         a.addProperty(JSONLabels.SEGNAME, segmentName);
         a.addProperty(JSONLabels.WAVETYPE, isPWave ? JSONLabels.PWAVE : JSONLabels.SWAVE);
         JsonArray points = new JsonArray();

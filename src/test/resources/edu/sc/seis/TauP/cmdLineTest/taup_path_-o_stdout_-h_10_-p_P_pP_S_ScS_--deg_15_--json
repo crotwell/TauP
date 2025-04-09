@@ -18,7 +18,6 @@
       "pathlength": 1700.8848,
       "path": [
       {
-        "index": 1,
         "name": "P",
         "wavetype": "pwave",
         "segment": [
@@ -55,7 +54,6 @@
         ]
       },
       {
-        "index": 2,
         "name": "P",
         "wavetype": "pwave",
         "segment": [
@@ -112,7 +110,6 @@
       "pathlength": 1687.1029,
       "path": [
       {
-        "index": 1,
         "name": "P",
         "wavetype": "pwave",
         "segment": [
@@ -138,7 +135,6 @@
         ]
       },
       {
-        "index": 2,
         "name": "P",
         "wavetype": "pwave",
         "segment": [
@@ -184,7 +180,6 @@
       "pathlength": 1689.6921,
       "path": [
       {
-        "index": 1,
         "name": "P",
         "wavetype": "pwave",
         "segment": [
@@ -215,7 +210,6 @@
         ]
       },
       {
-        "index": 2,
         "name": "P",
         "wavetype": "pwave",
         "segment": [
@@ -266,7 +260,6 @@
       "pathlength": 1695.5564,
       "path": [
       {
-        "index": 1,
         "name": "p",
         "wavetype": "pwave",
         "segment": [
@@ -279,7 +272,6 @@
         ]
       },
       {
-        "index": 2,
         "name": "P",
         "wavetype": "pwave",
         "segment": [
@@ -310,7 +302,6 @@
         ]
       },
       {
-        "index": 3,
         "name": "P",
         "wavetype": "pwave",
         "segment": [
@@ -356,7 +347,6 @@
       "pathlength": 1708.6523,
       "path": [
       {
-        "index": 1,
         "name": "p",
         "wavetype": "pwave",
         "segment": [
@@ -369,7 +359,6 @@
         ]
       },
       {
-        "index": 2,
         "name": "P",
         "wavetype": "pwave",
         "segment": [
@@ -411,7 +400,6 @@
         ]
       },
       {
-        "index": 3,
         "name": "P",
         "wavetype": "pwave",
         "segment": [
@@ -468,7 +456,6 @@
       "pathlength": 1698.6182,
       "path": [
       {
-        "index": 1,
         "name": "p",
         "wavetype": "pwave",
         "segment": [
@@ -481,7 +468,6 @@
         ]
       },
       {
-        "index": 2,
         "name": "P",
         "wavetype": "pwave",
         "segment": [
@@ -518,7 +504,6 @@
         ]
       },
       {
-        "index": 3,
         "name": "P",
         "wavetype": "pwave",
         "segment": [
@@ -570,7 +555,6 @@
       "pathlength": 1832.8384,
       "path": [
       {
-        "index": 1,
         "name": "P",
         "wavetype": "pwave",
         "segment": [
@@ -636,7 +620,6 @@
         ]
       },
       {
-        "index": 2,
         "name": "P",
         "wavetype": "pwave",
         "segment": [
@@ -722,7 +705,6 @@
       "pathlength": 1825.3733,
       "path": [
       {
-        "index": 1,
         "name": "P",
         "wavetype": "pwave",
         "segment": [
@@ -787,7 +769,6 @@
         ]
       },
       {
-        "index": 2,
         "name": "P",
         "wavetype": "pwave",
         "segment": [
@@ -872,7 +853,6 @@
       "pathlength": 1843.997,
       "path": [
       {
-        "index": 1,
         "name": "p",
         "wavetype": "pwave",
         "segment": [
@@ -885,7 +865,6 @@
         ]
       },
       {
-        "index": 2,
         "name": "P",
         "wavetype": "pwave",
         "segment": [
@@ -956,7 +935,6 @@
         ]
       },
       {
-        "index": 3,
         "name": "P",
         "wavetype": "pwave",
         "segment": [
@@ -1042,7 +1020,6 @@
       "pathlength": 1837.3668,
       "path": [
       {
-        "index": 1,
         "name": "p",
         "wavetype": "pwave",
         "segment": [
@@ -1055,7 +1032,6 @@
         ]
       },
       {
-        "index": 2,
         "name": "P",
         "wavetype": "pwave",
         "segment": [
@@ -1125,7 +1101,6 @@
         ]
       },
       {
-        "index": 3,
         "name": "P",
         "wavetype": "pwave",
         "segment": [
@@ -1210,7 +1185,6 @@
       "pathlength": 1686.8524,
       "path": [
       {
-        "index": 1,
         "name": "S",
         "wavetype": "swave",
         "segment": [
@@ -1235,7 +1209,6 @@
         ]
       },
       {
-        "index": 2,
         "name": "S",
         "wavetype": "swave",
         "segment": [
@@ -1279,7 +1252,6 @@
       "pathlength": 1826.3488,
       "path": [
       {
-        "index": 1,
         "name": "S",
         "wavetype": "swave",
         "segment": [
@@ -1330,7 +1302,6 @@
         ]
       },
       {
-        "index": 2,
         "name": "S",
         "wavetype": "swave",
         "segment": [
@@ -1400,7 +1371,6 @@
       "pathlength": 1821.3586,
       "path": [
       {
-        "index": 1,
         "name": "S",
         "wavetype": "swave",
         "segment": [
@@ -1450,7 +1420,6 @@
         ]
       },
       {
-        "index": 2,
         "name": "S",
         "wavetype": "swave",
         "segment": [
@@ -1519,7 +1488,6 @@
       "pathlength": 5909.861,
       "path": [
       {
-        "index": 1,
         "name": "S",
         "wavetype": "swave",
         "segment": [
@@ -1752,7 +1720,6 @@
         ]
       },
       {
-        "index": 2,
         "name": "S",
         "wavetype": "swave",
         "segment": [

@@ -3,20 +3,20 @@ package edu.sc.seis.TauP;
 import java.util.List;
 
 public class Isochron {
-    public Isochron(double timeval, List<WavefrontPathSegment> segmentList) {
-        this.timeval = timeval;
-        this.segmentList = segmentList;
+    public Isochron(double time, List<WavefrontPathSegment> wavefront) {
+        this.time = time;
+        this.wavefront = wavefront;
     }
 
-    public double getTimeval() {
-        return timeval;
+    public double getTime() {
+        return time;
     }
 
-    public List<WavefrontPathSegment> getSegmentList() {
-        return segmentList;
+    public List<WavefrontPathSegment> getWavefront() {
+        return wavefront;
     }
 
-    double timeval;
-    List<WavefrontPathSegment> segmentList;
+    double time;
+    List<WavefrontPathSegment> wavefront;
 
 }

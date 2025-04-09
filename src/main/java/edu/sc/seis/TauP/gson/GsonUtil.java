@@ -34,6 +34,7 @@ public class GsonUtil {
         gson.registerTypeAdapter(ScatteredArrival.class, new ScatteredArrivalSerializer(false, false, false));
         gson.registerTypeAdapter(TimeResult.class, new TimeResultSerializer());
         gson.registerTypeAdapter(PhaseDescribeResult.class, new PhaseDescribeSerializer());
+        gson.registerTypeAdapter(WavefrontResult.class, new WavefrontSerializer());
 
     }
 

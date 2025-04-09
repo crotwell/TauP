@@ -2,7 +2,6 @@ package edu.sc.seis.TauP.cmdline;
 
 import edu.sc.seis.TauP.*;
 import edu.sc.seis.TauP.cmdline.args.*;
-import edu.sc.seis.TauP.AbstractPhaseResult;
 import edu.sc.seis.TauP.gson.GsonUtil;
 import picocli.CommandLine;
 
@@ -530,19 +529,3 @@ public class TauP_Wavefront extends TauP_AbstractPhaseTool {
 
 }
 
-class WavefrontResult extends AbstractPhaseResult {
-
-    public WavefrontResult(String modelName, List<Double> depth, List<Double> receiverDepth,
-                           List<PhaseName> phaseNameList, Scatterer scatterer,
-                           Map<Double, List<WavefrontPathSegment>> isochronMap) {
-        super(modelName, depth, receiverDepth, phaseNameList, scatterer);
-        timesteps = new ArrayList<>(isochronMap.keySet());
-        Collections.sort(timesteps);
-        for (Double d : timesteps) {
-            isochrons.add(new Isochron(d, isochronMap.get(d)));
-        }
-    }
-
-    List<Double> timesteps;
-    List<Isochron> isochrons = new ArrayList<>();
-}
