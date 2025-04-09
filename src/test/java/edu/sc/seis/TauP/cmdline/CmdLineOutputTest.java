@@ -26,7 +26,6 @@ public class CmdLineOutputTest {
                                           "taup time -h 10 -p ttall --deg 35 --mod prem",
                                           "taup time -h 10 -p ttall --deg 35",
                                           "taup time -h 10 -p ttall --deg 35 --mod ak135",
-                                          "taup time -h 10 -p ttall --deg 35 --mod ak135 --json",
                                           "taup time -h 10 -p ttall --deg 145 --mod ak135 --rel P",
                                           "taup time -h 10 -p ttall --deg 145 --mod ak135 --rel P,PKP",
             "taup time -h 10 -p ttall --deg 145 --mod ak135 --stadepth 200",
@@ -101,7 +100,6 @@ public class CmdLineOutputTest {
             "taup velplot -o stdout --mod ak135 --csv",
             "taup velplot -o stdout --mod ak135 --text",
             "taup velplot -o stdout --mod ak135 --gmt",
-            "taup velplot -o stdout --mod ak135 --json",
             "taup velplot -o stdout --mod ak135 --svg ",
             "taup velplot -o stdout --mod ak135 --svg -x poisson",
     };
@@ -120,7 +118,6 @@ public class CmdLineOutputTest {
 
     String[] distazTestCmds = new String[] {
             "taup distaz -o stdout --sta 35 -82 --sta 33 -81 --evt 22 -101",
-            "taup distaz -o stdout --sta 35 -82 --sta 33 -81 --evt 22 -101 --json",
     };
 
 

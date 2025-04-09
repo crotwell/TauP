@@ -74,10 +74,8 @@ public class ArrivalSerializer implements JsonSerializer<Arrival> {
             relA.add(JSONLabels.ARRIVAL, context.serialize(relArrival));
         }
         if (withPierce) {
-            JsonObject piercePts = new JsonObject();
-            a.add(JSONLabels.PIERCE, piercePts);
             JsonArray points = new JsonArray();
-            piercePts.add(JSONLabels.POINTS, points);
+            a.add(JSONLabels.PIERCE, points);
             TimeDist[] tdArray = arr.getPierce();
             for (TimeDist td : tdArray) {
                 JsonArray tdItems = new JsonArray();
@@ -93,11 +91,9 @@ public class ArrivalSerializer implements JsonSerializer<Arrival> {
             }
         }
         if (withPath) {
-            JsonObject pathPts = new JsonObject();
-            a.add(JSONLabels.PATH, pathPts);
-            pathPts.addProperty(JSONLabels.PATHLENGTH, arr.calcPathLength());
+            a.addProperty(JSONLabels.PATHLENGTH, (float)arr.calcPathLength());
             JsonArray points = new JsonArray();
-            pathPts.add(JSONLabels.SEGMENTS, points);
+            a.add(JSONLabels.PATH, points);
             for (ArrivalPathSegment seg : arr.getPathSegments()) {
                 points.add(seg.asJsonObject());
             }
@@ -105,4 +101,3 @@ public class ArrivalSerializer implements JsonSerializer<Arrival> {
         return a;
     }
 }
-

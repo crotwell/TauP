@@ -10,6 +10,7 @@
   "arrivals": [
     {
       "sourcedepth": 10,
+      "receiverdepth": 0,
       "distdeg": 40,
       "phase": "P",
       "time": 454.8581,
@@ -39,6 +40,7 @@
     },
     {
       "sourcedepth": 10,
+      "receiverdepth": 0,
       "distdeg": 40,
       "phase": "PedOP",
       "time": 548.49677,
@@ -52,6 +54,7 @@
         "depth": 200,
         "distdeg": -5
       },
+      "isbackscatter": true,
       "pierce": [
         [ 0, 10, 0 ],
         [ 0.055307906, 20, 1.9900439 ],
@@ -73,6 +76,7 @@
     },
     {
       "sourcedepth": 10,
+      "receiverdepth": 0,
       "distdeg": 40,
       "phase": "S",
       "time": 820.35944,

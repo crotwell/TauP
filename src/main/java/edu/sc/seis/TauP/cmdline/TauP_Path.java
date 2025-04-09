@@ -22,6 +22,7 @@ import edu.sc.seis.TauP.*;
 import edu.sc.seis.TauP.cmdline.args.*;
 import edu.sc.seis.TauP.gson.ArrivalSerializer;
 import edu.sc.seis.TauP.gson.GsonUtil;
+import edu.sc.seis.TauP.gson.ScatteredArrivalSerializer;
 import edu.sc.seis.TauP.gson.TimeResult;
 import picocli.CommandLine;
 
@@ -184,6 +185,7 @@ public class TauP_Path extends TauP_AbstractRayTool {
 			TimeResult result = createTimeResult(withAmp, sourceArgs, arrivalList);
 			GsonBuilder gsonBuilder = GsonUtil.createGsonBuilder();
 			gsonBuilder.registerTypeAdapter(Arrival.class, new ArrivalSerializer(withPierce, withPath, withAmp));
+			gsonBuilder.registerTypeAdapter(ScatteredArrival.class, new ScatteredArrivalSerializer(withPierce, withPath, withAmp));
 			out.println(gsonBuilder.create().toJson(result));
 		} else if (getOutputFormat().equals(OutputTypes.SVG)) {
 			float pixelWidth = outputTypeArgs.getPixelWidth();

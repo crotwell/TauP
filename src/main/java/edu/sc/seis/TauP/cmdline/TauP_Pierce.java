@@ -19,6 +19,7 @@ package edu.sc.seis.TauP.cmdline;
 import com.google.gson.GsonBuilder;
 import edu.sc.seis.TauP.*;
 import edu.sc.seis.TauP.gson.ArrivalSerializer;
+import edu.sc.seis.TauP.gson.ScatteredArrivalSerializer;
 import picocli.CommandLine;
 
 import java.io.IOException;
@@ -121,6 +122,8 @@ public class TauP_Pierce extends TauP_Time {
         GsonBuilder gsonBld = super.createGsonBuilder();
         gsonBld.registerTypeAdapter(Arrival.class,
                 new ArrivalSerializer(true, false, isWithAmplitude()));
+        gsonBld.registerTypeAdapter(ScatteredArrival.class,
+                new ScatteredArrivalSerializer(true, false, isWithAmplitude()));
         return gsonBld;
     }
 

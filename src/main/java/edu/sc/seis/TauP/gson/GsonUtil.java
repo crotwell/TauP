@@ -32,6 +32,7 @@ public class GsonUtil {
         XYPlotSerializers.registerSerializers(gson);
         gson.registerTypeAdapter(Arrival.class, new ArrivalSerializer(false, false, false));
         gson.registerTypeAdapter(ScatteredArrival.class, new ScatteredArrivalSerializer(false, false, false));
+        gson.registerTypeAdapter(TimeResult.class, new TimeResultSerializer());
     }
 
 }

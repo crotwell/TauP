@@ -204,7 +204,6 @@ public class TauP_Time extends TauP_AbstractRayTool {
             TimeResult result = createTimeResult(isWithAmplitude(), sourceArgs, arrivalList);
             GsonBuilder gsonBld = createGsonBuilder();
             out.println(gsonBld.create().toJson(result));
-            //printResultJSON(out, arrivalList);
         } else {
             printResultText(out, arrivalList);
         }

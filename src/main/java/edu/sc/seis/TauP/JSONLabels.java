@@ -79,7 +79,7 @@ public interface JSONLabels {
     String POINTS = "points";
     String SEGNAME = "name";
     String WAVETYPE = "wavetype";
-    String SEGINDEX = "segindex";
+    String SEGINDEX = "index";
     String SEGMENT = "segment";
     String NAME = "name";
     String PREFNAME = "prefferedname";
