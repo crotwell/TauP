@@ -31,7 +31,7 @@ import edu.sc.seis.TauP.cmdline.args.PhaseArgs;
 import edu.sc.seis.TauP.cmdline.args.TableModelArgs;
 import edu.sc.seis.TauP.cmdline.args.TableOutputTypeArgs;
 import edu.sc.seis.TauP.gson.GsonUtil;
-import edu.sc.seis.TauP.gson.TimeResult;
+import edu.sc.seis.TauP.TimeResult;
 import picocli.CommandLine;
 
 import java.io.BufferedReader;

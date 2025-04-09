@@ -1,54 +1,129 @@
 {
+  "model": "iasp91",
+  "sourcedepthlist": [
+    0.0
+  ],
+  "receiverdepthlist": [
+    0.0
+  ],
   "phases": [
-{
-  "name": "Pv410p",
-  "puristname": "Pv410p",
-  "minexists": { 
-    "dist": 0.00,
-    "modulodist": 0.00,
-    "rayparameter":   11.521,
-    "time":   100.85
-  },
-  "maxexists": { 
-    "dist": 21.42,
-    "modulodist": 21.42,
-    "rayparameter":    0.000,
-    "time":   292.39
-  },
-  "shadow": [  ],
-  "segments": [
-     [
-
-
-  {  "name": "P", "updown": "down", "type": "P", "branch_desc": "crust/mantle", "branches": [ 0, 3], "depths": [0.0, 410.0], "then": "reflect topside"},
-  {  "name": "p", "updown": "up", "type": "P", "branch_desc": "crust/mantle", "branches": [ 3, 0], "depths": [410.0, 0.0], "then": "end"}
-  ]
-  ]
-},
-{
-  "name": "PV410p",
-  "puristname": "PV410p",
-  "minexists": { 
-    "dist": 14.08,
-    "modulodist": 14.08,
-    "rayparameter":   11.521,
-    "time":   208.70
-  },
-  "maxexists": { 
-    "dist": 21.42,
-    "modulodist": 21.42,
-    "rayparameter":   11.115,
-    "time":   292.39
-  },
-  "shadow": [  ],
-  "segments": [
-     [
-
-
-  {  "name": "P", "updown": "down", "type": "P", "branch_desc": "crust/mantle", "branches": [ 0, 3], "depths": [0.0, 410.0], "then": "critical reflect topside"},
-  {  "name": "p", "updown": "up", "type": "P", "branch_desc": "crust/mantle", "branches": [ 3, 0], "depths": [410.0, 0.0], "then": "end"}
-  ]
-  ]
-}
+    "Pv410p",
+    "PV410p"
+  ],
+  "descriptions": [
+    {
+      "name": "Pv410p",
+      "puristname": "Pv410p",
+      "sourcedepth": 0.0,
+      "receiverdepth": 0.0,
+      "minexists": {
+        "dist": 0.0,
+        "modulodist": 0.0,
+        "rayparameter": 0.0,
+        "time": 100.853386
+      },
+      "maxexists": {
+        "dist": 21.423576,
+        "modulodist": 21.423576,
+        "rayparameter": 11.521492,
+        "time": 292.3933
+      },
+      "shadow": [],
+      "segments": [
+        {
+          "maxrayparam": 11.521492,
+          "minrayparam": 0.0,
+          "branchseq": [
+            {
+              "name": "P",
+              "updown": "down",
+              "type": "pwave",
+              "branch_desc": "crust/mantle",
+              "branches": [
+                0,
+                3
+              ],
+              "depths": [
+                0.0,
+                410.0
+              ],
+              "then": "reflect topside"
+            },
+            {
+              "name": "p",
+              "updown": "up",
+              "type": "pwave",
+              "branch_desc": "crust/mantle",
+              "branches": [
+                3,
+                0
+              ],
+              "depths": [
+                410.0,
+                0.0
+              ],
+              "then": "end"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "PV410p",
+      "puristname": "PV410p",
+      "sourcedepth": 0.0,
+      "receiverdepth": 0.0,
+      "minexists": {
+        "dist": 14.081857,
+        "modulodist": 14.081857,
+        "rayparameter": 11.115286,
+        "time": 208.7002
+      },
+      "maxexists": {
+        "dist": 21.423576,
+        "modulodist": 21.423576,
+        "rayparameter": 11.521492,
+        "time": 292.3933
+      },
+      "shadow": [],
+      "segments": [
+        {
+          "maxrayparam": 11.521492,
+          "minrayparam": 11.115286,
+          "branchseq": [
+            {
+              "name": "P",
+              "updown": "down",
+              "type": "pwave",
+              "branch_desc": "crust/mantle",
+              "branches": [
+                0,
+                3
+              ],
+              "depths": [
+                0.0,
+                410.0
+              ],
+              "then": "critical reflect topside"
+            },
+            {
+              "name": "p",
+              "updown": "up",
+              "type": "pwave",
+              "branch_desc": "crust/mantle",
+              "branches": [
+                3,
+                0
+              ],
+              "depths": [
+                410.0,
+                0.0
+              ],
+              "then": "end"
+            }
+          ]
+        }
+      ]
+    }
   ]
 }

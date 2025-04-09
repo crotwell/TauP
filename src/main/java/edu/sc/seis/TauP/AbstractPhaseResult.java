@@ -1,7 +1,5 @@
-package edu.sc.seis.TauP.gson;
+package edu.sc.seis.TauP;
 
-import edu.sc.seis.TauP.PhaseName;
-import edu.sc.seis.TauP.Scatterer;
 import edu.sc.seis.TauP.cmdline.args.SeismicSourceArgs;
 
 import java.util.List;
@@ -35,6 +33,30 @@ public class AbstractPhaseResult {
         } else {
             this.sourceArg = null;
         }
+    }
+
+    public String getModel() {
+        return model;
+    }
+
+    public List<Double> getSourcedepthlist() {
+        return sourcedepthlist;
+    }
+
+    public List<Double> getReceiverdepthlist() {
+        return receiverdepthlist;
+    }
+
+    public List<String> getPhases() {
+        return phases;
+    }
+
+    public Scatterer getScatter() {
+        return scatter;
+    }
+
+    public SeismicSourceArgs getSourceArg() {
+        return sourceArg;
     }
 
     String model;

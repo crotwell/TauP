@@ -4,22 +4,22 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import edu.sc.seis.TauP.cmdline.CmdLineOutputTest;
-import edu.sc.seis.TauP.cmdline.TauP_Time;
-import edu.sc.seis.TauP.gson.TimeResult;
 import org.junit.jupiter.api.Test;
 
 import java.io.BufferedReader;
-import java.io.PrintWriter;
 import java.io.StringReader;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 
 public class JsonOutputTest {
 
+    public JsonOutputTest() throws TauPException {
+        String[] testVelModels = new String[] { "highSlownessDiscon.nd" };
+        CmdLineOutputTest.loadTestVelocityModels(testVelModels);
+    }
     public static String[] jsonTestCmds = new String[] {
             "taup curve -o stdout -h 10 -p P,2kmps --mod prem --json",
             "taup time -h 10 -p P --deg 35 --json",
@@ -29,6 +29,7 @@ public class JsonOutputTest {
             "taup pierce --mod ak135 -h 10 -p P,S,PedOP --scatter 200 -5 --deg 40 --json",
             "taup path -o stdout -h 10 -p P,pP,S,ScS --deg 15 --json",
             "taup phase -p Pv410p,PV410p --json",
+            "taup phase -p S --json --mod highSlownessDiscon.nd",
             "taup distaz -o stdout --sta 35 -82 --sta 33 -81 --evt 22 -101 --json",
             "taup velplot -o stdout --mod ak135 --json",
             "taup wavefront -o stdout --mod ak135 -h 100 -p P,S,PKIKP --timestep 500 --json",

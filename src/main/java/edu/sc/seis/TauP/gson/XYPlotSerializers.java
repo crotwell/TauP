@@ -1,10 +1,7 @@
 package edu.sc.seis.TauP.gson;
 
 import com.google.gson.*;
-import edu.sc.seis.TauP.JSONLabels;
-import edu.sc.seis.TauP.XYPlotOutput;
-import edu.sc.seis.TauP.XYPlottingData;
-import edu.sc.seis.TauP.XYSegment;
+import edu.sc.seis.TauP.*;
 import edu.sc.seis.TauP.cmdline.args.ModelArgs;
 
 import java.lang.reflect.Type;

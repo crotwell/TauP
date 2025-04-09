@@ -1,7 +1,7 @@
 package edu.sc.seis.TauP.cmdline;
 
+import edu.sc.seis.TauP.*;
 import edu.sc.seis.TauP.BuildVersion;
-import edu.sc.seis.TauP.JsonOutputTest;
 import edu.sc.seis.seisFile.sac.*;
 import edu.sc.seis.seisFile.mseed3.*;
 import org.json.JSONObject;
@@ -19,6 +19,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 public class CmdLineOutputTest {
+
+    public CmdLineOutputTest() throws TauPException {
+        loadTestVelocityModels(testVelModels);
+    }
 
     String[] timeTestCmds = new String[] {"taup time -h 10 -p P --deg 35 --mod prem",
                                           "taup time -h 10 -p P --deg 35",
@@ -175,6 +179,21 @@ public class CmdLineOutputTest {
             "taup time --quakeml my_midatlantic.qml --staxml my_stations.staml --geodetic -p P,S",
             "taup distaz --quakeml my_midatlantic.qml --staxml my_stations.staml --geodetic"
     };
+
+    String[] testVelModels = new String[] { "highSlownessDiscon.nd" };
+
+    public static void loadTestVelocityModels(String[] testVelModels) throws TauPException {
+        for (String modelName : testVelModels) {
+            try {
+                VelocityModel vMod = VelocityModelTest.loadTestVelMod(modelName);
+                TauModel tMod = TauModelLoader.createTauModel(vMod);
+                TauModelLoader.addToCache(modelName, tMod);
+                // model should remain in loader cache
+            } catch (IOException e) {
+                throw new TauPException("can't load "+modelName, e);
+            }
+        }
+    }
 
     /** 
      * regenerating the cmd line output test resources.

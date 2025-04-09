@@ -105,6 +105,9 @@ public class SimpleContigSeismicPhase extends SimpleSeismicPhase {
 
     protected double refineDistToleranceRadian = 0.0049*Math.PI/180;
 
+    /**
+     * Maximum recursion for refine arrival.
+     */
     protected int maxRecursion = 5;
 
 

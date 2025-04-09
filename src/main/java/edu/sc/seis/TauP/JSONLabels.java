@@ -84,4 +84,9 @@ public interface JSONLabels {
     String NAME = "name";
     String PREFNAME = "prefferedname";
     String ISBACKSCATTER = "isbackscatter";
+    String PWAVE = "pwave";
+    String SWAVE = "swave";
+    String UP = "up";
+    String DOWN = "down";
+    String FLAT = "flat";
 }

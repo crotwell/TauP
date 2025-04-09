@@ -17,13 +17,12 @@
 package edu.sc.seis.TauP.cmdline;
 
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
 import edu.sc.seis.TauP.*;
 import edu.sc.seis.TauP.cmdline.args.*;
 import edu.sc.seis.TauP.gson.ArrivalSerializer;
 import edu.sc.seis.TauP.gson.GsonUtil;
 import edu.sc.seis.TauP.gson.ScatteredArrivalSerializer;
-import edu.sc.seis.TauP.gson.TimeResult;
+import edu.sc.seis.TauP.TimeResult;
 import picocli.CommandLine;
 
 import java.io.IOException;

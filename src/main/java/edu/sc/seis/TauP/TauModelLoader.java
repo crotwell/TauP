@@ -78,9 +78,13 @@ public class TauModelLoader {
         TauModel out = loadFromCache(modelName);
         if (out == null) {
             out = internalLoad(modelName, searchPath, verbose);
-            tModCache.put(modelName, new SoftReference<TauModel>(out));
+            addToCache(modelName, out);
         }
         return out;
+    }
+
+    public static void addToCache(String modelName, TauModel tMod) {
+        tModCache.put(modelName, new SoftReference<TauModel>(tMod));
     }
 
     public static TauModel internalLoad(String modelName,
@@ -352,9 +356,13 @@ public class TauModelLoader {
         if (sr != null) {
             TauModel out = sr.get();
             if (out == null) {
+                System.err.println("cache empty softref for "+modelName);
                 tModCache.remove(modelName);
             }
             return out;
+        }
+        for (String m : tModCache.keySet()) {
+            System.err.println("cache: "+m);
         }
         return null;
     }

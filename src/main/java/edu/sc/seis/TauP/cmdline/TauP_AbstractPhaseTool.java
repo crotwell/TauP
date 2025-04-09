@@ -6,7 +6,7 @@ import edu.sc.seis.TauP.cmdline.args.ModelArgs;
 import edu.sc.seis.TauP.Scatterer;
 import edu.sc.seis.TauP.cmdline.args.PhaseArgs;
 import edu.sc.seis.TauP.cmdline.args.SeismicSourceArgs;
-import edu.sc.seis.TauP.gson.TimeResult;
+import edu.sc.seis.TauP.TimeResult;
 import picocli.CommandLine;
 
 import java.util.*;

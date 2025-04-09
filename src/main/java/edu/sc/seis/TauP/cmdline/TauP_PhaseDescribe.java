@@ -1,13 +1,10 @@
 package edu.sc.seis.TauP.cmdline;
 
-import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import edu.sc.seis.TauP.*;
 import edu.sc.seis.TauP.cmdline.args.AbstractOutputTypeArgs;
 import edu.sc.seis.TauP.cmdline.args.OutputTypes;
 import edu.sc.seis.TauP.cmdline.args.TextOutputTypeArgs;
-import edu.sc.seis.TauP.gson.AbstractPhaseResult;
-import edu.sc.seis.TauP.gson.ArrivalSerializer;
 import edu.sc.seis.TauP.gson.GsonUtil;
 import picocli.CommandLine;
 
@@ -105,14 +102,3 @@ public class TauP_PhaseDescribe extends TauP_AbstractPhaseTool {
     }
 }
 
-class PhaseDescribeResult extends AbstractPhaseResult {
-
-    public PhaseDescribeResult(String modelName, List<Double> depth, List<Double> receiverDepth,
-                      List<PhaseName> phaseNameList, Scatterer scatterer, List<PhaseDescription> phaseDescList
-                      ) {
-        super(modelName, depth, receiverDepth, phaseNameList, scatterer);
-        this.phaseDescList = phaseDescList;
-    }
-
-    List<PhaseDescription> phaseDescList;
-}

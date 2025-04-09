@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static edu.sc.seis.TauP.PhaseInteraction.*;
+import static edu.sc.seis.TauP.SphericalCoords.RtoD;
 
 /**
  * Partial segment of a full seismic phase, usually between major boundaries or turn points.
@@ -143,6 +144,9 @@ public class SeismicPhaseSegment {
 				break;
 			case FAIL:
 				action = "fail";
+				break;
+			case KMPS:
+				action = "surfacewave";
 				break;
 			default:
 				// should never happen
@@ -321,18 +325,21 @@ public class SeismicPhaseSegment {
 			if (prevEndAction != null) {
 				upDown = endActionToString(prevEndAction);
 			} else {
-				upDown = "none";
+				upDown = JSONLabels.FLAT;
 			}
 		} else if (isDownGoing) {
-			upDown = "down";
+			upDown = JSONLabels.DOWN;
 		} else {
-			upDown = "up";
+			upDown = JSONLabels.UP;
 		}
 		return upDown;
 	}
 
 	public BranchDescription describe() {
 		BranchDescription b = new BranchDescription();
+		b.name = getLegName();
+		b.branch_desc = describeBranchRange();
+		b.type = getIsPWave() ? JSONLabels.PWAVE : JSONLabels.SWAVE;
 		b.updown = getUpDownJSON();
 		b.then = endActionToString(endAction);
 		if (startBranch != endBranch) {

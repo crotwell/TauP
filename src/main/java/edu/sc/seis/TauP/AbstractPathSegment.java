@@ -163,7 +163,7 @@ public abstract class AbstractPathSegment {
         JsonObject a = new JsonObject();
         a.addProperty(JSONLabels.SEGINDEX, segmentIndex);
         a.addProperty(JSONLabels.SEGNAME, segmentName);
-        a.addProperty(JSONLabels.WAVETYPE, isPWave ? "pwave" : "swave");
+        a.addProperty(JSONLabels.WAVETYPE, isPWave ? JSONLabels.PWAVE : JSONLabels.SWAVE);
         JsonArray points = new JsonArray();
         a.add(JSONLabels.SEGMENT, points);
         for (TimeDist td : path) {
