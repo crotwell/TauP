@@ -447,10 +447,25 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                 if (downSplitSeg.maxRayParam < downSplitSeg.minRayParam) {throw new RuntimeException("downSplitSeg max rp < min rp");}
                 if (upSplitSeg.maxRayParam < upSplitSeg.minRayParam) {throw new RuntimeException("upSplitSeg max rp < min rp");}
 
+                // phase that transmits HSZ
+                SeismicPhaseSegment downTransSeg = new SeismicPhaseSegment(
+                        seg.tMod,
+                        seg.startBranch,
+                        hszBranchNum - 1,
+                        seg.isPWave,
+                        TRANSDOWN,
+                        seg.isDownGoing,
+                        seg.legName,
+                        seg.minRayParam,
+                        hszRayParam
+                );
+                downTransSeg.prevEndAction = seg.prevEndAction;
+                postShadowSegList.add(downTransSeg);
+
                 // phase that turns below HSZ
                 SeismicPhaseSegment downBelowSeg = new SeismicPhaseSegment(
                         seg.tMod,
-                        seg.startBranch,
+                        hszBranchNum,
                         seg.endBranch,
                         seg.isPWave,
                         seg.endAction,
@@ -459,7 +474,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                         seg.minRayParam,
                         hszRayParam
                 );
-                downBelowSeg.prevEndAction = seg.prevEndAction;
+                downBelowSeg.prevEndAction = downTransSeg.endAction;
                 if (downBelowSeg.maxRayParam < downBelowSeg.minRayParam) {throw new RuntimeException("downBelowSeg max rp < min rp");}
 
                 postShadowSegList.add(downBelowSeg);
@@ -620,10 +635,25 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                 if (downSplitSeg.maxRayParam < downSplitSeg.minRayParam) {throw new RuntimeException("downSplitSeg max rp < min rp");}
                 if (upSplitSeg.maxRayParam < upSplitSeg.minRayParam) {throw new RuntimeException("upSplitSeg max rp < min rp");}
 
+                // phase that transmits HSZ
+                SeismicPhaseSegment downTransSeg = new SeismicPhaseSegment(
+                        seg.tMod,
+                        seg.startBranch,
+                        hszBranchNum,
+                        seg.isPWave,
+                        TRANSDOWN,
+                        seg.isDownGoing,
+                        seg.legName,
+                        seg.minRayParam,
+                        hszRayParam
+                );
+                downTransSeg.prevEndAction = seg.prevEndAction;
+                postShadowSegList.add(downTransSeg);
+
                 // phase that turns below HSZ
                 SeismicPhaseSegment downBelowSeg = new SeismicPhaseSegment(
                         seg.tMod,
-                        seg.startBranch,
+                        hszBranchNum+1,
                         seg.endBranch,
                         seg.isPWave,
                         seg.endAction,
@@ -632,7 +662,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                         seg.minRayParam,
                         hszRayParam
                 );
-                downBelowSeg.prevEndAction = seg.prevEndAction;
+                downBelowSeg.prevEndAction = downTransSeg.endAction;
                 if (downBelowSeg.maxRayParam < downBelowSeg.minRayParam) {throw new RuntimeException("downBelowSeg max rp < min rp");}
 
                 postShadowSegList.add(downBelowSeg);
