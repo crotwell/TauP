@@ -33,20 +33,13 @@ public class FruitTest {
     public void noMantleP() throws Exception {
         SimpleSeismicPhase P = SeismicPhaseFactory.createPhase("P", tMod);
         double tol = 0.01;
-        assertInstanceOf(CompositeSeismicPhase.class, P);
-        CompositeSeismicPhase comP = (CompositeSeismicPhase)P;
-        assertEquals(2, comP.getSubPhaseList().size());
-        SimpleContigSeismicPhase preshadow = comP.getSubPhaseList().get(0);
-        SimpleContigSeismicPhase postshadow = comP.getSubPhaseList().get(1);
+        assertInstanceOf(SimpleContigSeismicPhase.class, P);
+        SimpleContigSeismicPhase preshadow = (SimpleContigSeismicPhase)P;
+        System.err.println("preshad:  "+preshadow.getMinRayParam()+" "+preshadow.getMaxRayParam());
         assertEquals(0.0, P.getMinDistanceDeg(), tol);
         assertEquals(0.0, preshadow.getMinDistanceDeg(), tol);
         assertEquals(71.32, preshadow.getMaxDistanceDeg(), tol);
 
-        assertEquals(72.66, P.getMaxDistanceDeg(), tol);
-        assertEquals(71.32, postshadow.getMinDistanceDeg(), tol);
-        assertEquals(72.66, postshadow.getMaxDistanceDeg(), tol);
-
-        assertEquals(2, postshadow.getPhaseSegments().size());
         assertEquals(0, P.getInitialPhaseSegment().startBranch);
         assertEquals(0, P.getInitialPhaseSegment().endBranch);
         assertEquals(0, P.getFinalPhaseSegment().startBranch);

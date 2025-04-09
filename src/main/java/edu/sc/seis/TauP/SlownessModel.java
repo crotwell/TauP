@@ -348,17 +348,24 @@ public abstract class SlownessModel implements Serializable {
      */
     public double getMinTurnRayParam(double depth, boolean isPWave)
             throws NoSuchLayerException, SlownessModelException {
-        double minPSoFar = Double.MAX_VALUE;
-        SlownessLayer sLayer;
-        List<SlownessLayer> layers;
-        if(isPWave) {
-            layers = PLayers;
-        } else {
-            layers = SLayers;
-        }
+        return getMinTurnRayParam(0, depth, isPWave);
+    }
+
+    public double getMinTurnRayParam(double topDepth, double depth, boolean isPWave)
+            throws NoSuchLayerException, SlownessModelException {
+        double minPSoFar;
+        // must enter layers, so must be at least smaller than topP of top layer
+        SlownessLayer topLayer = getSlownessLayer(layerNumberBelow(topDepth, isPWave), isPWave);
+        minPSoFar = topLayer.getTopP();
+
         if(depthInHighSlowness(depth, Double.MAX_VALUE, isPWave)) {
-            for(int i = 0; i < layers.size(); i++) {
-                sLayer = getSlownessLayer(i, isPWave);
+            int topLNum = 0;
+            if (topDepth > 0 ) {
+                topLNum = layerNumberBelow(topDepth, isPWave);
+            }
+            int botLNum = layerNumberBelow(depth, isPWave)-1;
+            for(int i = topLNum; i < botLNum; i++) {
+                SlownessLayer sLayer = getSlownessLayer(i, isPWave);
                 if(sLayer.getBotDepth() == depth) {
                     minPSoFar = Math.min(minPSoFar, sLayer.getBotP());
                     return minPSoFar;
@@ -372,7 +379,7 @@ public abstract class SlownessModel implements Serializable {
                 }
             }
         } else {
-            sLayer = getSlownessLayer(layerNumberAbove(depth, isPWave), isPWave);
+            SlownessLayer sLayer = getSlownessLayer(layerNumberAbove(depth, isPWave), isPWave);
             if(depth == sLayer.getBotDepth()) {
                 minPSoFar = sLayer.getBotP();
             } else {

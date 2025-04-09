@@ -289,7 +289,7 @@ public class TauBranch implements Serializable, Cloneable {
         // max ray param cannot be larger than the largest of the top and bottom p
         // branches should be monotonic wrt slowness
         tb.maxRayParam = Math.max(topSLayer.getTopP(), botSLayer.getBotP());
-        tb.minTurnRayParam = sMod.getMinTurnRayParam(tb.getBotDepth(), isPWave);
+        tb.minTurnRayParam = sMod.getMinTurnRayParam(tb.getTopDepth(), tb.getBotDepth(), isPWave);
         tb.minRayParam = sMod.getMinRayParam(tb.getBotDepth(), isPWave);
 
         tb.tau = new double[rayParams.length];
