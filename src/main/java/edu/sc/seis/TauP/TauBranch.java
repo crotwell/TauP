@@ -821,6 +821,7 @@ public class TauBranch implements Serializable, Cloneable {
         desc += " maxRayParam=" + getMaxRayParam() + " minTurnRayParam="
                 + getMinTurnRayParam();
         desc += " minRayParam=" + getMinRayParam() + "\n";
+        desc += " topRP="+getTopRayParam()+" botRP="+getBotRayParam();
         /*
          * for (int i=0;i <tau.length;i++) { desc += "i = "+i+" time="+time[i]+"
          * dist="+dist[i]+" tau="+tau[i]+"\n"; }
