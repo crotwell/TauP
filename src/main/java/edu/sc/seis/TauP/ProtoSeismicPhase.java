@@ -348,7 +348,8 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
 
             for (int tbNum = 0; tbNum < tMod.getNumBranches(); tbNum++) {
                 TauBranch tb = tMod.getTauBranch(tbNum, isPWave);
-                if (tb.isHighSlowness() && tb.getTopRayParam() <= endSegment().maxRayParam) {
+                if (tb.isHighSlowness() && tb.getTopRayParam() <= endSegment().maxRayParam
+                        && tb.getTopRayParam() > endSegment().minRayParam) {
                     // ray param range overlaps shadow ray param for HSZ, split proto
                     List<ShadowOrProto> outList = new ArrayList<>();
                     for (ShadowOrProto inVal : shadowSplits) {
@@ -361,7 +362,10 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                     }
                     shadowSplits = outList;
                 }
-                if (prevTB != null && prevTB.getBotRayParam() < tb.getTopRayParam()) {
+                if (prevTB != null && prevTB.getBotRayParam() < tb.getTopRayParam()
+                        && endSegment().minRayParam < prevTB.getBotRayParam()
+                        &&  prevTB.getBotRayParam() < endSegment().maxRayParam ) {
+
                     // LVZ discon
                     List<ShadowOrProto> outList = new ArrayList<>();
                     for (ShadowOrProto inVal : shadowSplits) {
@@ -447,7 +451,10 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                 if (downSplitSeg.maxRayParam < downSplitSeg.minRayParam) {throw new RuntimeException("downSplitSeg max rp < min rp");}
                 if (upSplitSeg.maxRayParam < upSplitSeg.minRayParam) {throw new RuntimeException("upSplitSeg max rp < min rp");}
 
+                // now go below HSZ
+
                 // phase that transmits HSZ
+                TauBranch transBranch = tMod.getTauBranch(hszBranchNum - 1, seg.isPWave);
                 SeismicPhaseSegment downTransSeg = new SeismicPhaseSegment(
                         seg.tMod,
                         seg.startBranch,
@@ -457,7 +464,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                         seg.isDownGoing,
                         seg.legName,
                         seg.minRayParam,
-                        hszRayParam
+                        Math.min(hszRayParam, transBranch.getBotRayParam())
                 );
                 downTransSeg.prevEndAction = seg.prevEndAction;
                 postShadowSegList.add(downTransSeg);
@@ -562,7 +569,10 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
         // only concerned with high slowness discontinuities strictly contained within
         // the SeismicPhaseSegment. Discontinuities at the boundary of the SeismicPhaseSegment
         // are handled by min/max ray param and can't create shadow zones inside of a phase.
-
+        if (minRayParam > hszBranch.getTopRayParam()  || maxRayParam <= abovehszBranch.getBotRayParam()) {
+            // ray parameters don't overlap the discon ray paramters
+            return List.of(new ShadowOrProto(this));
+        }
         // find max ray param that makes it to the discontinuity
 
         double hszRayParam = abovehszBranch.getBotRayParam();
@@ -573,7 +583,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
             }
             if (seg != null
                     && seg.isPWave == hszBranch.isPWave
-                    && seg.startBranch < hszBranchNum
+                    && seg.startBranch <= hszBranchNum
                     && seg.endBranch >= hszBranchNum) {
                 // found the seg containing the hsz discon,
                 foundSegRPOverlap = true;
@@ -592,6 +602,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
             if (seg != null && seg.endAction == TURN
                     && seg.isPWave == hszBranch.isPWave
                     && hszRayParam < seg.maxRayParam
+                    && seg.minRayParam < hszRayParam
                     && seg.startBranch < hszBranchNum
                     && seg.endBranch >= hszBranchNum) {
                 found = true;
@@ -860,6 +871,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
         double minRayParam = isEmpty() ? 0 : endSegment().minRayParam;
         double maxRayParam;
         if (isEmpty()) {
+            // max ray param from source
             if(isDowngoingSymbol(currLeg) || tMod.getSourceDepth() == 0) {
                 maxRayParam = tMod.getTauBranch(tMod.getSourceBranch(),
                         isPWave).getMaxRayParam();
@@ -938,6 +950,10 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                     break;
                 }
             }
+            if(TauPConfig.DEBUG) {
+                Alert.debug("after addToBranch: minRP="+minRayParam+"  maxRP="+maxRayParam);
+
+            }
         } else if(endAction == REFLECT_UNDERSIDE || endAction == REFLECT_UNDERSIDE_CRITICAL) {
             endOffset = 0;
             isDownGoing = false;
@@ -1004,10 +1020,13 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
             maxRayParam = Math.min(maxRayParam, tMod.getTauBranch(endBranch, isPWave).getMinTurnRayParam());
             // and cross into lower
             if (endBranch == tMod.getNumBranches()-1) {
-                failNext(" Cannot TRANSDOWN if endBranch: "+endBranch+" == numBranchs: "+tMod.getNumBranches());
+                failNext(" Cannot TRANSDOWN center of earth, endBranch: "+endBranch+" == numBranchs: "+tMod.getNumBranches());
             }
             maxRayParam = Math.min(maxRayParam, tMod.getTauBranch(endBranch+1, nextIsPWave).getMaxRayParam());
         } else if(endAction == HEAD) {
+            if (endBranch == tMod.getNumBranches()-1) {
+                failNext(" Cannot head wave at center of earth, endBranch: "+endBranch+" == numBranchs: "+tMod.getNumBranches());
+            }
             endOffset = 0;
             isDownGoing = true;
             // ray must reach discon, at turn/critical ray parameter
@@ -1019,6 +1038,14 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                     tMod.getTauBranch(endBranch+1, nextIsPWave).getMaxRayParam());
             minRayParam = Math.max(minRayParam, maxRayParam);
         } else if(endAction == DIFFRACT) {
+            if (endBranch == tMod.getNumBranches()-1 ) {
+                /*
+                 * No diffraction if diffraction is at center of earth.
+                 */
+                failNext("No diffraction if diffraction is at center of earth.");
+                minRayParam = -1;
+                maxRayParam = -1;
+            }
             endOffset = 0;
             isDownGoing = true;
             // ray must reach discon
@@ -1030,11 +1057,9 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
             // min rp same as max
             minRayParam = Math.max(minRayParam, maxRayParam);
             double depth = tMod.getTauBranch(endBranch, isPWave).getBotDepth();
-            if (depth == tMod.radiusOfEarth ||
-                    tMod.getSlownessModel().depthInHighSlowness(depth - 1e-10, minRayParam, isPWave)) {
-                /*
-                 * No diffraction if diffraction is at zero radius or there is a high slowness zone.
-                 */
+            if (tMod.getTauBranch(endBranch, isPWave).isHighSlowness()) {
+                // should diff be allowed if in neg slowness gradient at boundary???
+                failNext("No diffraction as above branch is a high slowness gradient");
                 minRayParam = -1;
                 maxRayParam = -1;
             }
@@ -1046,12 +1071,11 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
             maxRayParam = Math.min(maxRayParam,
                     tMod.getTauBranch(endBranch-1, nextIsPWave).getMinTurnRayParam());
             minRayParam = Math.max(minRayParam, maxRayParam);
-            double depth = tMod.getTauBranch(endBranch, isPWave).getBotDepth();
-            if (depth == tMod.radiusOfEarth ||
-                    tMod.getSlownessModel().depthInHighSlowness(depth - 1e-10, minRayParam, isPWave)) {
+            if (tMod.getTauBranch(endBranch-1, nextIsPWave).isHighSlowness()) {
                 /*
-                 * No diffraction if diffraction is at zero radius or there is a high slowness zone.
+                 * No diffraction if above branch is a high slowness gradient.
                  */
+                failNext("No transup diffraction as above branch is a high slowness gradient");
                 minRayParam = -1;
                 maxRayParam = -1;
             }
