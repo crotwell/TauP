@@ -101,17 +101,15 @@ public class TauP_DistAz extends TauP_Tool {
             }
         }
         distList.sort((lhs, rhs) -> {
-            // radus only used if DistanceRay created with km, so doesn't
-            // matter in this case
-            return Double.compare(rhs.getDegrees(1), lhs.getDegrees(1));
+            return Double.compare(lhs.getDegrees(), rhs.getDegrees());
         });
         PrintWriter  out = outputTypeArgs.createWriter(spec.commandLine().getOut());
         if (outputTypeArgs.isText()) {
             String geoditic = geodeticArgs.isGeodetic() ? "Geodetic "+geodeticArgs.getInverseEllipFlattening() : "Spherical";
             out.println("Degrees      Km     Azimuth  BackAzimuth  Description   ("+geoditic+")  ");
             out.println("----------------------------------------------------------------------");
-            for (DistanceRay dr : distList) {
-                out.println(Outputs.formatDistance(dr.getDegrees(1))
+            for (DistanceAngleRay dr : distList) {
+                out.println(Outputs.formatDistance(dr.getDegrees())
                         +" "+Outputs.formatKilometer (dr.getKilometers(radiusOfEarth))
                         +" "+Outputs.formatDistance(dr.getNormalizedAzimuth())
                         +"  "+Outputs.formatDistance(dr.getNormalizedBackAzimuth())
