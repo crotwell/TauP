@@ -128,4 +128,11 @@ public class LegPullerTest {
 
         customDiscon = "S_liquid-silicate_PKP_liquid-silicate_S";
     }
+
+    @Test
+    public void extractBoundaryId() throws PhaseParseException {
+        String phaseName = "K3000diff";
+        String boundId = LegPuller.extractBoundaryId(phaseName, 1, false);
+        assertEquals("3000", boundId);
+    }
 }

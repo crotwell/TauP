@@ -183,6 +183,14 @@ public class SeismicPhaseLayerFactory {
                     nextIsPWave,
                     endAction,
                     currLeg);
+        } else if(nextLeg.charAt(0) == getBelowPLegSymbol() || nextLeg.charAt(0) == getBelowSLegSymbol()) {
+            endAction = TRANSDOWN;
+            proto.addToBranch(
+                    botBranchNum,
+                    isPWave,
+                    nextIsPWave,
+                    endAction,
+                    currLeg);
         } else if (isDiffracted(nextLeg) || isDiffractedDown(nextLeg)) {
             String numString = extractBoundaryId(nextLeg, 0, false);
             int disconBranch = LegPuller.closestDisconBranchToDepth(tMod, numString, depthTolerance);
@@ -192,14 +200,6 @@ public class SeismicPhaseLayerFactory {
             endAction = DIFFRACT;
             proto.addToBranch(
                     disconBranch - 1,
-                    isPWave,
-                    nextIsPWave,
-                    endAction,
-                    currLeg);
-        } else if(nextLeg.charAt(0) == getBelowPLegSymbol() || nextLeg.charAt(0) == getBelowSLegSymbol()) {
-            endAction = TRANSDOWN;
-            proto.addToBranch(
-                    botBranchNum,
                     isPWave,
                     nextIsPWave,
                     endAction,

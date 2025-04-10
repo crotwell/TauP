@@ -48,6 +48,7 @@ class IllegalPhasesTest {
 			"PedPdiffKP",
 			"PKdiffP",
 			"PK3000diffP",// assuming discon in outer core at 3000
+			"SedK3000diffp",
 			"PKv3000kP",
 			"PK^3000KP",
 			"PKI5500diffkp", // assuming discon in inner core at 5500

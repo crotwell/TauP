@@ -550,7 +550,7 @@ public class LegPuller {
                 || headDiffRegEx.matcher(currToken).matches()
         )) {
             return "First leg ("+ currToken
-                    + ") must be one of Pg, Pb, Pn, Pdiff, Sg, Sb, Sn, Sdiff, P, S, p, s, k, K, Ked, I, J, y, j, "
+                    + ") must be one of Pg, Pb, Pn, Pdiff, Sg, Sb, Sn, Sdiff, P, S, p, s, Ped, Sed, k, K, Ked, I, J, y, j, "
                     + " or like P410diff or P410n";
         }
         for(int i = 1; i < legs.size(); i++) {
@@ -605,6 +605,8 @@ public class LegPuller {
                     || currToken.equals("Pdiff") || currToken.equals("Sdiff")
                     || currToken.equals("P") || currToken.equals("S")
                     || currToken.equals("K") || currToken.equals("Ked")
+                    || (currToken.startsWith("K") &&
+                        (currToken.endsWith(DIFF) ||currToken.endsWith(PhaseSymbols.DIFFDOWN) ||currToken.endsWith(HEAD_CODE) ))
                     || currToken.startsWith("v") || currToken.startsWith("V")
                     || currToken.equals("c") || currToken.equals("m")
                     || currToken.equals(""+ PhaseSymbols.SCATTER_CODE)
