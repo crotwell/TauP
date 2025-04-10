@@ -1,7 +1,7 @@
 PKviKP (PKikp):
-  exists from 0.00 to 155.49 degrees.
+  exists from 0.00 to 155.49 degrees in the iasp91 model.
   with ray parameter from    2.071 down to    0.000 sec/deg.
-  travel times from  1204.64 to   994.57 sec.
+  travel times from   994.57 to  1204.64 sec.
 
   P going down as a P in the crust/mantle, layer 0 to 5, depths 0.0 to 2889.0, then transmit down
   K going down as a P in the outer core, layer 6, depths 2889.0 to 5153.9, then reflect topside

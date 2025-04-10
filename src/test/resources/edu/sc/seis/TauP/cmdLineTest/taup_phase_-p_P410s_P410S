@@ -1,5 +1,5 @@
 P410s:
-  exists from 9.06 to 97.74 degrees.
+  exists from 9.06 to 97.74 degrees in the iasp91 model.
   with ray parameter from   11.115 down to    4.439 sec/deg.
   travel times from   207.77 to   859.15 sec.
 
@@ -9,9 +9,9 @@ P410s:
 
 --------
 P410S (Ped410S):
-  exists from 79.19 to 101.01 degrees.
+  exists from 79.19 to 101.01 degrees in the iasp91 model.
   with ray parameter from   11.521 down to    8.323 sec/deg.
-  travel times from  1287.59 to  1484.14 sec.
+  travel times from  1274.47 to  1484.14 sec.
 
   P going down as a P in the crust/mantle, layer 0 to 3, depths 0.0 to 410.0, then transmit down
   S going down as a S in the mantle, layer 4 to 5, depths 410.0 to 2889.0, then turn

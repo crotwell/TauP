@@ -1,4 +1,14 @@
 {
+  "model": "iasp91",
+  "sourcedepthlist": [
+    10.0
+  ],
+  "receiverdepthlist": [
+    0.0
+  ],
+  "phases": [
+    "P"
+  ],
   "arrivals": [
     {
       "sourcedepth": 10.0,
@@ -12,15 +22,5 @@
       "puristdist": 35.0,
       "puristname": "P"
     }
-  ],
-  "model": "iasp91",
-  "sourcedepthlist": [
-    10.0
-  ],
-  "receiverdepthlist": [
-    0.0
-  ],
-  "phases": [
-    "P"
   ]
 }

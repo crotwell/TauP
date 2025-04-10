@@ -22,7 +22,6 @@ taup time -h 10 -p P --deg 35 --mod ak135
 taup time -h 10 -p ttall --deg 35 --mod prem
 taup time -h 10 -p ttall --deg 35
 taup time -h 10 -p ttall --deg 35 --mod ak135
-taup time -h 10 -p ttall --deg 35 --mod ak135 --json
 taup time -h 10 -p ttall --deg 145 --mod ak135 --rel P
 taup time -h 10 -p ttall --deg 145 --mod ak135 --rel P,PKP
 taup time -h 10 -p ttall --deg 145 --mod ak135 --stadepth 200
@@ -67,7 +66,6 @@ taup velplot -o stdout --mod ak135 --yminmax 0 700 --svg
 taup velplot -o stdout --mod ak135 --csv
 taup velplot -o stdout --mod ak135 --text
 taup velplot -o stdout --mod ak135 --gmt
-taup velplot -o stdout --mod ak135 --json
 taup velplot -o stdout --mod ak135 --svg 
 taup velplot -o stdout --mod ak135 --svg -x poisson
 taup refltrans -o stdout --mod ak135 --depth 35 --svg
@@ -76,7 +74,6 @@ taup refltrans -o stdout --abs --anglestep 1 --svg --fsrf --legend --model ak135
 taup find -o stdout --mod ak135fcont --sourcedepth 100 --max 3 --pwaveonly --exclude 20,moho,iocb
 taup find -o stdout --mod ak135fcont --sourcedepth 100 --max 2 --exclude 20,moho,iocb --deg 35 --time 475
 taup distaz -o stdout --sta 35 -82 --sta 33 -81 --evt 22 -101
-taup distaz -o stdout --sta 35 -82 --sta 33 -81 --evt 22 -101 --json
 taup phase -p Pdiff
 taup phase -p P410diff
 taup phase -p Pv410p,PV410p
@@ -95,6 +92,7 @@ taup pierce -o stdout -h 10 -p P,pP,S,ScS --deg 15 --json
 taup pierce --mod ak135 -h 10 -p P,S,PedOP --scatter 200 -5 --deg 40 --json
 taup path -o stdout -h 10 -p P,pP,S,ScS --deg 15 --json
 taup phase -p Pv410p,PV410p --json
+taup phase -p S --json --mod highSlownessDiscon.nd
 taup distaz -o stdout --sta 35 -82 --sta 33 -81 --evt 22 -101 --json
 taup velplot -o stdout --mod ak135 --json
 taup wavefront -o stdout --mod ak135 -h 100 -p P,S,PKIKP --timestep 500 --json
