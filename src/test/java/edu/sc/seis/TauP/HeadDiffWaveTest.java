@@ -132,8 +132,8 @@ public class HeadDiffWaveTest {
     String modelName = "outerCoreDiscon.nd";
     VelocityModel vMod = VelocityModelTest.loadTestVelMod(modelName);
     TauModel tMod_OCD = TauModelLoader.createTauModel(vMod);
-    double deg = 150;
-    SeismicPhase SedPdiff_Phase = SeismicPhaseFactory.createPhase("SK3000diffP", tMod_OCD);
+    double deg = 120;
+    SeismicPhase SedPdiff_Phase = SeismicPhaseFactory.createPhase("SK3000diffs", tMod_OCD);
     List<Arrival> SedPdiff_arrivals = DistanceRay.ofDegrees(deg).calculate(SedPdiff_Phase);
     assertEquals(1, SedPdiff_arrivals.size());
     Arrival SedPdiff_Arr = SedPdiff_arrivals.get(0);
@@ -149,9 +149,12 @@ public class HeadDiffWaveTest {
     TauModel tMod_OCD = TauModelLoader.createTauModel(vMod);
     double deg = 150;
 
+    SeismicPhase SK3000diffP_Phase = SeismicPhaseFactory.createPhase("SK3000diffP", tMod_OCD);
+    assertTrue(SK3000diffP_Phase.isFail(), "diffract rp can't be P in mantle, only S");
+
     SeismicPhase K3000diffP_Phase = SeismicPhaseFactory.createPhase("PK3000diffP", tMod_OCD);
-    // 3000 km is in shadow for PK, so cannot diffract
-    assertTrue(K3000diffP_Phase.isFail());
+    assertTrue(K3000diffP_Phase.isFail(), "3000 km is in shadow for PK, so cannot diffract");
+
 }
 
 

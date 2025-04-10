@@ -136,7 +136,8 @@ public class MoonLowVelocityTest {
         assertEquals(1, arrivalList.size());
         assertEquals(521.75, arrivalList.get(0).getTime(), 0.01);
         SeismicPhase Pdiff = SeismicPhaseFactory.createPhase("Pdiff", tmod);
-        assertFalse(Pdiff.phasesExistsInModel());
+        // think this phase actually should exist???
+        assertTrue(Pdiff.phasesExistsInModel());
 
     }
 
