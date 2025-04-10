@@ -14,7 +14,7 @@ Find seismic phases in an earth model.
 
 Options:
 
-      --amp                show amplitude factor for each phase, only if --deg
+      --amp                show amplitude factor for each phase
       --attenuationfreq=<attenuationFreq>
                            attenuation frequency for amplitude calculations,
                              default is 1.0

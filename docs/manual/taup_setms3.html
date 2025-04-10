@@ -145,15 +145,17 @@ headers, then this will add markers to the extra headers for P and S:</p>
 </pre></div>
 </div>
 <p>The usage is:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Usage: taup setms3 [--debug] [--geodetic] [--help] [--verbose] [--taupeh
-                   [=&lt;ehKey&gt;]] [--geodeticflattening=f]
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Usage: taup setms3 [--amp] [--debug] [--geodetic] [--help] [--verbose] [--taupeh
+                   [=&lt;ehKey&gt;]] [--attenuationfreq=&lt;attenuationFreq&gt;]
+                   [--geodeticflattening=f] [--mw=&lt;mw&gt;]
+                   [--numattenuationfreq=&lt;numFrequencies&gt;]
                    [--prop=&lt;toolPropsFilename&gt;] [--qml=&lt;quakemlFilename&gt;]
                    [--qmltol=&lt;quakeOTimeTol&gt;] [--staxml=&lt;stationxmlFilename&gt;]
                    [--eid=evt[,evt...]]... [--sid=sta[,sta...]]...
-                   [[--mod=&lt;modelName&gt;] [-h=depth[,depth...]]...
-                   [--stadepth=depth[,depth...]]... [--scat=s s]...] [[-p=phase
-                   [,phase...]]... [--phasefile=&lt;phaseFiles&gt;]...]
-                   [mseed3file...]
+                   [--strikediprake=s[,s...]]... [[--mod=&lt;modelName&gt;] [-h=depth
+                   [,depth...]]... [--stadepth=depth[,depth...]]... [--scat=s
+                   s]...] [[-p=phase[,phase...]]...
+                   [--phasefile=&lt;phaseFiles&gt;]...] [mseed3file...]
 Save travel times in the extra header of miniseed3 files.
     https://crotwell.github.io/ms3eh/
 has details on the JSON structure.
@@ -162,6 +164,10 @@ has details on the JSON structure.
 
 Options:
 
+      --amp                show amplitude factor for each phase
+      --attenuationfreq=&lt;attenuationFreq&gt;
+                           attenuation frequency for amplitude calculations,
+                             default is 1.0
       --debug              enable debugging output
       --eid=evt[,evt...]   event id, like  	us7000pn9s, for lookup via USGS
                              fdsn event web service. Creates a distance if
@@ -176,6 +182,11 @@ Options:
                              calculations when --geodetic, defaults to WGS84 ~
                              298.257. The distance calculation uses 1/x.
       --help               display this help message
+      --mw=&lt;mw&gt;            scale amplitude by source moment magnitude, default
+                             is 4.0
+      --numattenuationfreq=&lt;numFrequencies&gt;
+                            number attenuations frequency for amplitude
+                             calculations, default is 64
       --prop=&lt;toolPropsFilename&gt;
                            load defaults from properties file
       --qml, --quakeml=&lt;quakemlFilename&gt;
@@ -189,6 +200,9 @@ Options:
       --staxml=&lt;stationxmlFilename&gt;
                            StationXML file to extract station latitudes and
                              longitudes from
+      --strikediprake=s[,s...]
+                           fault strike, dip, rake for amplitude calculations.
+                             If not given radiation pattern is unity.
       --taupeh[=&lt;ehKey&gt;]   key to store full TauP JSON output within extra
                              headers within, otherwise use abbreviated &#39;bag&#39;
                              style markers.If specified without parameter,

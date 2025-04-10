@@ -23,10 +23,11 @@ It is written in Java so it should run on any Java enabled platform.
 The website for the TauP Toolkit is:
 https://github.com/crotwell/TauP
 
-Documentation is available at [Read The Docs](https://taup.readthedocs.io/en/latest/), or in the [docs/manual](manual/index.html) directory of the distribution.
+Documentation is available at [Read The Docs](https://taup.readthedocs.io/en/latest/), or in docs/manual directory of the distribution.
 
 If you like TauP and would like to cite it, please use the following:
 Crotwell, H. P., T. J. Owens, and J. Ritsema (1999). The TauP Toolkit: Flexible seismic travel-time and ray-path utilities, Seismological Research Letters 70, 154–160, as well as the [Zenodo DOI](https://zenodo.org/doi/10.5281/zenodo.10794857) for the version you are using..
+Crotwell, H. P. (2022). The TauP Toolkit (2.6.1). Zenodo. https://doi.org/10.5281/zenodo.10794858
 
 Comments, criticism and random remarks may be sent to taup@seis.sc.edu.
 
@@ -53,7 +54,7 @@ Note: I have only tested this on Ubuntu on amd64.
 
 You may also get the lastest development version via
 ```
-sudo snap install taup --channel=--channel=latest/edge
+sudo snap install taup --channel=latest/edge
 ```
 
 ## Manually
@@ -69,7 +70,7 @@ https://github.com/crotwell/TauP/releases
 You should not need to rebuild TauP unless you are trying to help debug, but if you do, you can build it using the Gradle wrapper script.
 
 ```
-gradlew installDist
+./gradlew installDist
 ```
 
-will build TauP into the build/install/TauP directory.
+will build TauP into the build/install directory.
