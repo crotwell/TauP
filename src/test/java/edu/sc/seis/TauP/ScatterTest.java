@@ -1,7 +1,8 @@
-package edu.sc.seis.TauP.cmdline;
+package edu.sc.seis.TauP;
 
-import edu.sc.seis.TauP.*;
-import edu.sc.seis.TauP.Scatterer;
+import edu.sc.seis.TauP.cmdline.TauP_Path;
+import edu.sc.seis.TauP.cmdline.TauP_Pierce;
+import edu.sc.seis.TauP.cmdline.TauP_Time;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
