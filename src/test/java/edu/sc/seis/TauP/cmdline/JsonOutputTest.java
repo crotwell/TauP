@@ -1,9 +1,9 @@
-package edu.sc.seis.TauP;
+package edu.sc.seis.TauP.cmdline;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import edu.sc.seis.TauP.cmdline.CmdLineOutputTest;
+import edu.sc.seis.TauP.TauPException;
 import org.junit.jupiter.api.Test;
 
 import java.io.BufferedReader;
