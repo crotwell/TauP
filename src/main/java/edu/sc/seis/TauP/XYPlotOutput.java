@@ -423,7 +423,7 @@ public class XYPlotOutput {
 
     List<XYPlottingData> xyPlots;
     ModelArgs modelArgs;
-    List<PhaseName> phaseNames = null;
+    List<PhaseName> phaseNames = new ArrayList<>();
 
     String title = null;
 
