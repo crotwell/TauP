@@ -51,7 +51,10 @@ public class TauP_VelocityPlot extends TauP_Tool {
                 }
                 PrintWriter writer = outputTypeArgs.createWriter(spec.commandLine().getOut());
                 Gson gson = GsonUtil.createGsonBuilder().create();
-                writer.println(gson.toJson(outList));
+
+                JsonObject out = new JsonObject();
+                out.add(JSONLabels.MODEL_LIST, gson.toJsonTree(outList));
+                writer.println(gson.toJson(out));
                 writer.flush();
             } else {
                 outputTypeArgs.setOutputFormat(TEXT);

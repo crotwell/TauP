@@ -91,4 +91,5 @@ public interface JSONLabels {
     String TIMESTEPS = "timesteps";
     String ISOCHRON = "isochrons";
     String WAVEFRONT = "wavefronts";
+    String MODEL_LIST = "models";
 }
