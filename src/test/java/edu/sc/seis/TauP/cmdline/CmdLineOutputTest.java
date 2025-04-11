@@ -4,8 +4,6 @@ import edu.sc.seis.TauP.*;
 import edu.sc.seis.TauP.BuildVersion;
 import edu.sc.seis.seisFile.sac.*;
 import edu.sc.seis.seisFile.mseed3.*;
-import org.json.JSONObject;
-import org.json.JSONTokener;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import picocli.CommandLine;
@@ -230,6 +228,56 @@ public class CmdLineOutputTest {
         }
         out.close();
         usageToDocSrc();
+        regenSavedJsonOutput();
+    }
+
+    public List<String> allCmdsAsJson() {
+        List<String> outList = new ArrayList<String>();
+        List<String> allList = new ArrayList<String>();
+        allList.addAll(Arrays.asList(timeTestCmds));
+        allList.addAll(Arrays.asList(pierceTestCmds));
+        allList.addAll(Arrays.asList(pathTestCmds));
+        allList.addAll(Arrays.asList(curveTestCmds));
+        allList.addAll(Arrays.asList(wavefrontTestCmds));
+        allList.addAll(Arrays.asList(velplotTestCmds));
+        allList.addAll(Arrays.asList(reflTransPlotTestCmds));
+        allList.addAll(Arrays.asList(findTestCmds));
+        allList.addAll(Arrays.asList(distazTestCmds));
+        allList.addAll(Arrays.asList(phaseDescribeTestCmds));
+        allList.addAll(Arrays.asList(JsonOutputTest.jsonTestCmds));
+        for (String cmd : allList) {
+            String jsonCmd = cmd;
+            if ( ! jsonCmd.contains("--json")) {
+                jsonCmd = jsonCmd.replaceAll("--csv", "");
+                jsonCmd = jsonCmd.replaceAll("--nameddiscon", "");
+                jsonCmd = jsonCmd.replaceAll("--svg", "");
+                jsonCmd = jsonCmd.replaceAll("--text", "");
+                jsonCmd = jsonCmd.replaceAll("--gmt", "");
+                if (!jsonCmd.contains("--json")) {
+                    jsonCmd = jsonCmd + " --json";
+                }
+            }
+            if (! outList.contains(jsonCmd)) {
+                outList.add(jsonCmd);
+            }
+        }
+        return outList;
+    }
+    /**
+     * regenerating json of the cmd line output test resources.
+     * new text files will be in cmdLineJson in build
+     *
+     * @throws Exception
+     */
+    public void regenSavedJsonOutput() throws Exception {
+        List<String> allList = allCmdsAsJson();
+        for (String jsonCmd : allList) {
+            if (jsonCmd.contains("--json")) {
+                System.err.println(jsonCmd);
+                String filename = fileizeCmd(jsonCmd);
+                saveTestOutputToFile( jsonCmd, testJsonOutputDir, filename);
+            }
+        }
     }
 
     public void viewSavedOutputAsHTML(List<String> allList, File outputDir, String title) throws FileNotFoundException {
@@ -661,6 +709,7 @@ public class CmdLineOutputTest {
 
     File docOutputDir = new File("src/doc/sphinx/source/examples");
     File testOutputDir = new File("build/cmdLineTest");
+    File testJsonOutputDir = new File("build/cmdLineTestJson");
     File helpOutputDir = new File("build/cmdLineHelp");
 
     public void saveTestOutputToFile(String cmd) throws Exception {

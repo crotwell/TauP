@@ -10,6 +10,8 @@ import java.io.BufferedReader;
 import java.io.StringReader;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -37,12 +39,31 @@ public class JsonOutputTest {
 
     @Test
     public void testTauPJSON() throws Exception {
-        runJsonTests(jsonTestCmds);
+        runJsonTests(Arrays.asList(jsonTestCmds));
     }
 
-    public void runJsonTests(String[] cmds) throws Exception {
-        for (int i = 0; i < cmds.length; i++) {
-            testJsonCmd(cmds[i]);
+    /**
+     * Probably would be good to check the output, but at least verify command runs and that output
+     * is parsable json.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testOtherCmds() throws Exception {
+        List<String> othercmds = new CmdLineOutputTest().allCmdsAsJson();
+        for (String cmd : othercmds) {
+            String outContent = CmdLineOutputTest.runCmd(cmd);
+            assertNotNull(outContent);
+            assertNotEquals(0, outContent.length());
+            BufferedReader current = new BufferedReader(new StringReader(outContent));
+            JsonObject currentJson = JsonParser.parseReader(current).getAsJsonObject();
+            assertNotNull(currentJson);
+        }
+    }
+
+    public void runJsonTests(List<String> cmdList) throws Exception {
+        for (String cmd : cmdList) {
+            testJsonCmd(cmd);
         }
     }
 
