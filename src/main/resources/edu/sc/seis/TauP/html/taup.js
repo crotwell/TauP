@@ -259,9 +259,11 @@ export async function display_results(taup_url) {
         let seisConfig = new sp.seismographconfig.SeismographConfig();
         //seisConfig.isRelativeTime = true;
         seisConfig.amplitudeMode = sp.scale.AMPLITUDE_MODE.Raw;
-        seisConfig.doMarkers = false;
+        seisConfig.ySublabel = "m";
+        seisConfig.markerFlagpoleBase = "short"; // "none";
 
         const seismograph = new sp.organizeddisplay.OrganizedDisplay(sddList, seisConfig);
+        seismograph.sortby = sp.sorting.SORT_DISTANCE;
         //const seismograph = new sp.seismograph.Seismograph(sddList, seisConfig);
         seismograph.addStyle(`
           sp-seismograph {
@@ -582,6 +584,8 @@ export function form_url() {
     if (isLegend) {
       url += `&legend=true`;
     }
+  }
+  if (toolname === 'curve' || toolname === 'spikes') {
     let mw = document.querySelector('input[name="mw"]').value;
     if (mw !== "4.0") {
       url += `&mw=${mw}`;
@@ -603,7 +607,13 @@ export function form_url() {
       let dip = document.querySelector('input[name="dip"]').value;
       let rake = document.querySelector('input[name="rake"]').value;
       let curveazimuth = document.querySelector('input[name="curveazimuth"]').value;
-      url += `&strikediprake=${strike},${dip},${rake}&az=${curveazimuth}`;
+      url += `&strikediprake=${strike},${dip},${rake}`;
+      if (toolname === 'curve') {
+        // spikes uses distance az field
+        let curveazimuth = document.querySelector('input[name="curveazimuth"]').value;
+        url += `&az=${curveazimuth}`;
+
+      }
     }
   }
   if (toolname === "velplot") {
@@ -862,6 +872,12 @@ export function enableParams(tool) {
       }
       fieldset.tool_${tool} {
         display: block;
+      }
+      span.for_tool {
+        display: none;
+      }
+      span.for_tool.tool_${tool} {
+        display: inline;
       }
   `;
   styleEl.textContent = styleStr;

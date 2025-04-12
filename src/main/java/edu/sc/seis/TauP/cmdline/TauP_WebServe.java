@@ -429,9 +429,9 @@ public class TauP_WebServe extends TauP_Tool {
                 cmd.printVersionHelp(cmd.getOut());
             } else if (tool instanceof TauP_Spikes) {
                 // special because output is not text
-                TauP_Spikes wkbj = (TauP_Spikes) tool;
+                TauP_Spikes taup_spikes = (TauP_Spikes) tool;
                 try {
-                    wkbj.validateArguments();
+                    taup_spikes.validateArguments();
                 } catch (Exception e) {
                     if(exchange.isResponseChannelAvailable()) {
                         exchange.setStatusCode(500);
@@ -443,7 +443,7 @@ public class TauP_WebServe extends TauP_Tool {
                 List<MSeed3Record> allRecords = new ArrayList<>();
                 //List<MSeed3Record> wkbjRecords = wkbj.calcWKBJ(wkbj.getDistances());
                 //allRecords.addAll(wkbjRecords);
-                List<MSeed3Record> spikeRecords = wkbj.calcSpikes(wkbj.getDistances());
+                List<MSeed3Record> spikeRecords = taup_spikes.calcSpikes(taup_spikes.getRayCalcs());
                 allRecords.addAll(spikeRecords);
 
                 List<ByteBuffer> bufList = new ArrayList<>();

@@ -2178,9 +2178,9 @@ var require_kotlin_kotlin_stdlib_js_ir = __commonJS({
           } else {
             var v;
             do {
-              var bits2 = this.nextInt_ujorgc_k$() >>> 1 | 0;
-              v = bits2 % n2 | 0;
-            } while (((bits2 - v | 0) + (n2 - 1 | 0) | 0) < 0);
+              var bits = this.nextInt_ujorgc_k$() >>> 1 | 0;
+              v = bits % n2 | 0;
+            } while (((bits - v | 0) + (n2 - 1 | 0) | 0) < 0);
             tmp = v;
           }
           var rnd = tmp;
@@ -2226,10 +2226,10 @@ var require_kotlin_kotlin_stdlib_js_ir = __commonJS({
             var v;
             $l$1: do {
               $l$0: do {
-                var bits2 = this.nextLong_njwv0v_k$().ushr_rr8rvr_k$(1);
-                v = bits2.rem_9rbcjo_k$(n2);
+                var bits = this.nextLong_njwv0v_k$().ushr_rr8rvr_k$(1);
+                v = bits.rem_9rbcjo_k$(n2);
               } while (false);
-              var tmp_0 = bits2.minus_llf5ei_k$(v);
+              var tmp_0 = bits.minus_llf5ei_k$(v);
               var tmp$ret$0;
               tmp$ret$0 = n2.minus_llf5ei_k$(new Long(1, 0));
             } while (tmp_0.plus_u6jwas_k$(tmp$ret$0).compareTo_n4fqi2_k$(new Long(0, 0)) < 0);
@@ -13348,8 +13348,8 @@ var require_kotlin_kotlin_stdlib_js_ir = __commonJS({
         tmp$ret$0 = tmp0_unsafeCast;
         return tmp$ret$0;
       }
-      function fromBits(_this__u8e3s4, bits2) {
-        return doubleFromBits(bits2);
+      function fromBits(_this__u8e3s4, bits) {
+        return doubleFromBits(bits);
       }
       function toRawBits(_this__u8e3s4) {
         return doubleToRawBits(_this__u8e3s4);
@@ -36622,6 +36622,7 @@ var require_jszip_min = __commonJS({
 var animatedseismograph_exports = {};
 __export(animatedseismograph_exports, {
   AnimatedTimeScaler: () => AnimatedTimeScaler,
+  RTDisplayContainer: () => RTDisplayContainer,
   calcOnePixelDuration: () => calcOnePixelDuration,
   createRealtimeDisplay: () => createRealtimeDisplay,
   internalCreateRealtimeDisplay: () => internalCreateRealtimeDisplay,
@@ -36848,6 +36849,12 @@ var Zone = class {
   get name() {
     throw new ZoneIsAbstractError();
   }
+  /**
+   * The IANA name of this zone.
+   * Defaults to `name` if not overwritten by a subclass.
+   * @abstract
+   * @type {string}
+   */
   get ianaName() {
     return this.name;
   }
@@ -37027,7 +37034,7 @@ var IANAZone = class _IANAZone extends Zone {
    * @param {string} s - The string to check validity on
    * @example IANAZone.isValidSpecifier("America/New_York") //=> true
    * @example IANAZone.isValidSpecifier("Sport~~blorp") //=> false
-   * @deprecated This method returns false for some valid IANA names. Use isValidZone instead.
+   * @deprecated For backward compatibility, this forwards to isValidZone, better use `isValidZone()` directly instead.
    * @return {boolean}
    */
   static isValidSpecifier(s2) {
@@ -37057,27 +37064,60 @@ var IANAZone = class _IANAZone extends Zone {
     this.zoneName = name;
     this.valid = _IANAZone.isValidZone(name);
   }
-  /** @override **/
+  /**
+   * The type of zone. `iana` for all instances of `IANAZone`.
+   * @override
+   * @type {string}
+   */
   get type() {
     return "iana";
   }
-  /** @override **/
+  /**
+   * The name of this zone (i.e. the IANA zone name).
+   * @override
+   * @type {string}
+   */
   get name() {
     return this.zoneName;
   }
-  /** @override **/
+  /**
+   * Returns whether the offset is known to be fixed for the whole year:
+   * Always returns false for all IANA zones.
+   * @override
+   * @type {boolean}
+   */
   get isUniversal() {
     return false;
   }
-  /** @override **/
+  /**
+   * Returns the offset's common name (such as EST) at the specified timestamp
+   * @override
+   * @param {number} ts - Epoch milliseconds for which to get the name
+   * @param {Object} opts - Options to affect the format
+   * @param {string} opts.format - What style of offset to return. Accepts 'long' or 'short'.
+   * @param {string} opts.locale - What locale to return the offset name in.
+   * @return {string}
+   */
   offsetName(ts, { format: format2, locale: locale3 }) {
     return parseZoneInfo(ts, format2, locale3, this.name);
   }
-  /** @override **/
+  /**
+   * Returns the offset's value as a string
+   * @override
+   * @param {number} ts - Epoch milliseconds for which to get the offset
+   * @param {string} format - What style of offset to return.
+   *                          Accepts 'narrow', 'short', or 'techie'. Returning '+6', '+06:00', or '+0600' respectively
+   * @return {string}
+   */
   formatOffset(ts, format2) {
     return formatOffset(this.offset(ts), format2);
   }
-  /** @override **/
+  /**
+   * Return the offset in minutes for this zone at the specified timestamp.
+   * @override
+   * @param {number} ts - Epoch milliseconds for which to compute the offset
+   * @return {number}
+   */
   offset(ts) {
     const date2 = new Date(ts);
     if (isNaN(date2)) return NaN;
@@ -37101,11 +37141,20 @@ var IANAZone = class _IANAZone extends Zone {
     asTS -= over >= 0 ? over : 1e3 + over;
     return (asUTC - asTS) / (60 * 1e3);
   }
-  /** @override **/
+  /**
+   * Return whether this Zone is equal to another zone
+   * @override
+   * @param {Zone} otherZone - the zone to compare
+   * @return {boolean}
+   */
   equals(otherZone) {
     return otherZone.type === "iana" && otherZone.name === this.name;
   }
-  /** @override **/
+  /**
+   * Return whether this Zone is valid.
+   * @override
+   * @type {boolean}
+   */
   get isValid() {
     return this.valid;
   }
@@ -37161,6 +37210,13 @@ function systemLocale() {
     sysLocaleCache = new Intl.DateTimeFormat().resolvedOptions().locale;
     return sysLocaleCache;
   }
+}
+var intlResolvedOptionsCache = {};
+function getCachedIntResolvedOptions(locString) {
+  if (!intlResolvedOptionsCache[locString]) {
+    intlResolvedOptionsCache[locString] = new Intl.DateTimeFormat(locString).resolvedOptions();
+  }
+  return intlResolvedOptionsCache[locString];
 }
 var weekInfoCache = {};
 function getCachedWeekInfo(locString) {
@@ -37241,7 +37297,7 @@ function supportsFastNumbers(loc) {
   if (loc.numberingSystem && loc.numberingSystem !== "latn") {
     return false;
   } else {
-    return loc.numberingSystem === "latn" || !loc.locale || loc.locale.startsWith("en") || new Intl.DateTimeFormat(loc.intl).resolvedOptions().numberingSystem === "latn";
+    return loc.numberingSystem === "latn" || !loc.locale || loc.locale.startsWith("en") || getCachedIntResolvedOptions(loc.locale).numberingSystem === "latn";
   }
 }
 var PolyNumberFormatter = class {
@@ -37377,6 +37433,7 @@ var Locale = class _Locale {
     intlDTCache = {};
     intlNumCache = {};
     intlRelCache = {};
+    intlResolvedOptionsCache = {};
   }
   static fromObject({ locale: locale3, numberingSystem, outputCalendar, weekSettings } = {}) {
     return _Locale.create(locale3, numberingSystem, outputCalendar, weekSettings);
@@ -37489,7 +37546,7 @@ var Locale = class _Locale {
     return getCachedLF(this.intl, opts);
   }
   isEnglish() {
-    return this.locale === "en" || this.locale.toLowerCase() === "en-us" || new Intl.DateTimeFormat(this.intl).resolvedOptions().locale.startsWith("en-us");
+    return this.locale === "en" || this.locale.toLowerCase() === "en-us" || getCachedIntResolvedOptions(this.intl).locale.startsWith("en-us");
   }
   getWeekSettings() {
     if (this.weekSettings) {
@@ -37511,6 +37568,9 @@ var Locale = class _Locale {
   }
   equals(other) {
     return this.locale === other.locale && this.numberingSystem === other.numberingSystem && this.outputCalendar === other.outputCalendar;
+  }
+  toString() {
+    return `Locale(${this.locale}, ${this.numberingSystem}, ${this.outputCalendar})`;
   }
 };
 
@@ -37556,14 +37616,29 @@ var FixedOffsetZone = class _FixedOffsetZone extends Zone {
     super();
     this.fixed = offset2;
   }
-  /** @override **/
+  /**
+   * The type of zone. `fixed` for all instances of `FixedOffsetZone`.
+   * @override
+   * @type {string}
+   */
   get type() {
     return "fixed";
   }
-  /** @override **/
+  /**
+   * The name of this zone.
+   * All fixed zones' names always start with "UTC" (plus optional offset)
+   * @override
+   * @type {string}
+   */
   get name() {
     return this.fixed === 0 ? "UTC" : `UTC${formatOffset(this.fixed, "narrow")}`;
   }
+  /**
+   * The IANA name of this zone, i.e. `Etc/UTC` or `Etc/GMT+/-nn`
+   *
+   * @override
+   * @type {string}
+   */
   get ianaName() {
     if (this.fixed === 0) {
       return "Etc/UTC";
@@ -37571,27 +37646,60 @@ var FixedOffsetZone = class _FixedOffsetZone extends Zone {
       return `Etc/GMT${formatOffset(-this.fixed, "narrow")}`;
     }
   }
-  /** @override **/
+  /**
+   * Returns the offset's common name at the specified timestamp.
+   *
+   * For fixed offset zones this equals to the zone name.
+   * @override
+   */
   offsetName() {
     return this.name;
   }
-  /** @override **/
+  /**
+   * Returns the offset's value as a string
+   * @override
+   * @param {number} ts - Epoch milliseconds for which to get the offset
+   * @param {string} format - What style of offset to return.
+   *                          Accepts 'narrow', 'short', or 'techie'. Returning '+6', '+06:00', or '+0600' respectively
+   * @return {string}
+   */
   formatOffset(ts, format2) {
     return formatOffset(this.fixed, format2);
   }
-  /** @override **/
+  /**
+   * Returns whether the offset is known to be fixed for the whole year:
+   * Always returns true for all fixed offset zones.
+   * @override
+   * @type {boolean}
+   */
   get isUniversal() {
     return true;
   }
-  /** @override **/
+  /**
+   * Return the offset in minutes for this zone at the specified timestamp.
+   *
+   * For fixed offset zones, this is constant and does not depend on a timestamp.
+   * @override
+   * @return {number}
+   */
   offset() {
     return this.fixed;
   }
-  /** @override **/
+  /**
+   * Return whether this Zone is equal to another zone (i.e. also fixed and same offset)
+   * @override
+   * @param {Zone} otherZone - the zone to compare
+   * @return {boolean}
+   */
   equals(otherZone) {
     return otherZone.type === "fixed" && otherZone.fixed === this.fixed;
   }
-  /** @override **/
+  /**
+   * Return whether this Zone is valid:
+   * All fixed offset zones are valid.
+   * @override
+   * @type {boolean}
+   */
   get isValid() {
     return true;
   }
@@ -37657,6 +37765,89 @@ function normalizeZone(input, defaultZone2) {
   } else {
     return new InvalidZone(input);
   }
+}
+
+// node_modules/luxon/src/impl/digits.js
+var numberingSystems = {
+  arab: "[\u0660-\u0669]",
+  arabext: "[\u06F0-\u06F9]",
+  bali: "[\u1B50-\u1B59]",
+  beng: "[\u09E6-\u09EF]",
+  deva: "[\u0966-\u096F]",
+  fullwide: "[\uFF10-\uFF19]",
+  gujr: "[\u0AE6-\u0AEF]",
+  hanidec: "[\u3007|\u4E00|\u4E8C|\u4E09|\u56DB|\u4E94|\u516D|\u4E03|\u516B|\u4E5D]",
+  khmr: "[\u17E0-\u17E9]",
+  knda: "[\u0CE6-\u0CEF]",
+  laoo: "[\u0ED0-\u0ED9]",
+  limb: "[\u1946-\u194F]",
+  mlym: "[\u0D66-\u0D6F]",
+  mong: "[\u1810-\u1819]",
+  mymr: "[\u1040-\u1049]",
+  orya: "[\u0B66-\u0B6F]",
+  tamldec: "[\u0BE6-\u0BEF]",
+  telu: "[\u0C66-\u0C6F]",
+  thai: "[\u0E50-\u0E59]",
+  tibt: "[\u0F20-\u0F29]",
+  latn: "\\d"
+};
+var numberingSystemsUTF16 = {
+  arab: [1632, 1641],
+  arabext: [1776, 1785],
+  bali: [6992, 7001],
+  beng: [2534, 2543],
+  deva: [2406, 2415],
+  fullwide: [65296, 65303],
+  gujr: [2790, 2799],
+  khmr: [6112, 6121],
+  knda: [3302, 3311],
+  laoo: [3792, 3801],
+  limb: [6470, 6479],
+  mlym: [3430, 3439],
+  mong: [6160, 6169],
+  mymr: [4160, 4169],
+  orya: [2918, 2927],
+  tamldec: [3046, 3055],
+  telu: [3174, 3183],
+  thai: [3664, 3673],
+  tibt: [3872, 3881]
+};
+var hanidecChars = numberingSystems.hanidec.replace(/[\[|\]]/g, "").split("");
+function parseDigits(str) {
+  let value = parseInt(str, 10);
+  if (isNaN(value)) {
+    value = "";
+    for (let i = 0; i < str.length; i++) {
+      const code = str.charCodeAt(i);
+      if (str[i].search(numberingSystems.hanidec) !== -1) {
+        value += hanidecChars.indexOf(str[i]);
+      } else {
+        for (const key in numberingSystemsUTF16) {
+          const [min, max] = numberingSystemsUTF16[key];
+          if (code >= min && code <= max) {
+            value += code - min;
+          }
+        }
+      }
+    }
+    return parseInt(value, 10);
+  } else {
+    return value;
+  }
+}
+var digitRegexCache = {};
+function resetDigitRegexCache() {
+  digitRegexCache = {};
+}
+function digitRegex({ numberingSystem }, append2 = "") {
+  const ns = numberingSystem || "latn";
+  if (!digitRegexCache[ns]) {
+    digitRegexCache[ns] = {};
+  }
+  if (!digitRegexCache[ns][append2]) {
+    digitRegexCache[ns][append2] = new RegExp(`${numberingSystems[ns]}${append2}`);
+  }
+  return digitRegexCache[ns][append2];
 }
 
 // node_modules/luxon/src/settings.js
@@ -37767,17 +37958,18 @@ var Settings = class {
     defaultWeekSettings = validateWeekSettings(weekSettings);
   }
   /**
-   * Get the cutoff year after which a string encoding a year as two digits is interpreted to occur in the current century.
+   * Get the cutoff year for whether a 2-digit year string is interpreted in the current or previous century. Numbers higher than the cutoff will be considered to mean 19xx and numbers lower or equal to the cutoff will be considered 20xx.
    * @type {number}
    */
   static get twoDigitCutoffYear() {
     return twoDigitCutoffYear;
   }
   /**
-   * Set the cutoff year after which a string encoding a year as two digits is interpreted to occur in the current century.
+   * Set the cutoff year for whether a 2-digit year string is interpreted in the current or previous century. Numbers higher than the cutoff will be considered to mean 19xx and numbers lower or equal to the cutoff will be considered 20xx.
    * @type {number}
-   * @example Settings.twoDigitCutoffYear = 0 // cut-off year is 0, so all 'yy' are interpreted as current century
-   * @example Settings.twoDigitCutoffYear = 50 // '49' -> 1949; '50' -> 2050
+   * @example Settings.twoDigitCutoffYear = 0 // all 'yy' are interpreted as 20th century
+   * @example Settings.twoDigitCutoffYear = 99 // all 'yy' are interpreted as 21st century
+   * @example Settings.twoDigitCutoffYear = 50 // '49' -> 2049; '50' -> 1950
    * @example Settings.twoDigitCutoffYear = 1950 // interpreted as 50
    * @example Settings.twoDigitCutoffYear = 2050 // ALSO interpreted as 50
    */
@@ -37805,6 +37997,8 @@ var Settings = class {
   static resetCaches() {
     Locale.resetCache();
     IANAZone.resetCache();
+    DateTime.resetCache();
+    resetDigitRegexCache();
   }
 };
 
@@ -38428,23 +38622,29 @@ var Formatter = class _Formatter {
       }
     }, era = (length) => knownEnglish ? eraForDateTime(dt, length) : string({ era: length }, "era"), tokenToString = (token) => {
       switch (token) {
+        // ms
         case "S":
           return this.num(dt.millisecond);
         case "u":
+        // falls through
         case "SSS":
           return this.num(dt.millisecond, 3);
+        // seconds
         case "s":
           return this.num(dt.second);
         case "ss":
           return this.num(dt.second, 2);
+        // fractional seconds
         case "uu":
           return this.num(Math.floor(dt.millisecond / 10), 2);
         case "uuu":
           return this.num(Math.floor(dt.millisecond / 100));
+        // minutes
         case "m":
           return this.num(dt.minute);
         case "mm":
           return this.num(dt.minute, 2);
+        // hours
         case "h":
           return this.num(dt.hour % 12 === 0 ? 12 : dt.hour % 12);
         case "hh":
@@ -38453,6 +38653,7 @@ var Formatter = class _Formatter {
           return this.num(dt.hour);
         case "HH":
           return this.num(dt.hour, 2);
+        // offset
         case "Z":
           return formatOffset2({ format: "narrow", allowZ: this.opts.allowZ });
         case "ZZ":
@@ -38463,14 +38664,18 @@ var Formatter = class _Formatter {
           return dt.zone.offsetName(dt.ts, { format: "short", locale: this.loc.locale });
         case "ZZZZZ":
           return dt.zone.offsetName(dt.ts, { format: "long", locale: this.loc.locale });
+        // zone
         case "z":
           return dt.zoneName;
+        // meridiems
         case "a":
           return meridiem();
+        // dates
         case "d":
           return useDateTimeFormatter ? string({ day: "numeric" }, "day") : this.num(dt.day);
         case "dd":
           return useDateTimeFormatter ? string({ day: "2-digit" }, "day") : this.num(dt.day, 2);
+        // weekdays - standalone
         case "c":
           return this.num(dt.weekday);
         case "ccc":
@@ -38479,6 +38684,7 @@ var Formatter = class _Formatter {
           return weekday("long", true);
         case "ccccc":
           return weekday("narrow", true);
+        // weekdays - format
         case "E":
           return this.num(dt.weekday);
         case "EEE":
@@ -38487,6 +38693,7 @@ var Formatter = class _Formatter {
           return weekday("long", false);
         case "EEEEE":
           return weekday("narrow", false);
+        // months - standalone
         case "L":
           return useDateTimeFormatter ? string({ month: "numeric", day: "numeric" }, "month") : this.num(dt.month);
         case "LL":
@@ -38497,6 +38704,7 @@ var Formatter = class _Formatter {
           return month("long", true);
         case "LLLLL":
           return month("narrow", true);
+        // months - format
         case "M":
           return useDateTimeFormatter ? string({ month: "numeric" }, "month") : this.num(dt.month);
         case "MM":
@@ -38507,6 +38715,7 @@ var Formatter = class _Formatter {
           return month("long", false);
         case "MMMMM":
           return month("narrow", false);
+        // years
         case "y":
           return useDateTimeFormatter ? string({ year: "numeric" }, "year") : this.num(dt.year);
         case "yy":
@@ -38515,6 +38724,7 @@ var Formatter = class _Formatter {
           return useDateTimeFormatter ? string({ year: "numeric" }, "year") : this.num(dt.year, 4);
         case "yyyyyy":
           return useDateTimeFormatter ? string({ year: "numeric" }, "year") : this.num(dt.year, 6);
+        // eras
         case "G":
           return era("short");
         case "GG":
@@ -39777,6 +39987,13 @@ var Interval = class _Interval {
     return this.isValid ? this.e : null;
   }
   /**
+   * Returns the last DateTime included in the interval (since end is not part of the interval)
+   * @type {DateTime}
+   */
+  get lastDateTime() {
+    return this.isValid ? this.e ? this.e.minus(1) : null : null;
+  }
+  /**
    * Returns whether this Interval's end is at least its start, meaning that the Interval isn't 'backwards'.
    * @type {boolean}
    */
@@ -39954,7 +40171,7 @@ var Interval = class _Interval {
     return +other.e === +this.s;
   }
   /**
-   * Return whether this Interval engulfs the start and end of the specified Interval.
+   * Returns true if this Interval fully contains the specified Interval, specifically if the intersect (of this Interval and the other Interval) is equal to the other Interval; false otherwise.
    * @param {Interval} other
    * @return {boolean}
    */
@@ -40409,78 +40626,6 @@ function diff_default(earlier, later, units, opts) {
   }
 }
 
-// node_modules/luxon/src/impl/digits.js
-var numberingSystems = {
-  arab: "[\u0660-\u0669]",
-  arabext: "[\u06F0-\u06F9]",
-  bali: "[\u1B50-\u1B59]",
-  beng: "[\u09E6-\u09EF]",
-  deva: "[\u0966-\u096F]",
-  fullwide: "[\uFF10-\uFF19]",
-  gujr: "[\u0AE6-\u0AEF]",
-  hanidec: "[\u3007|\u4E00|\u4E8C|\u4E09|\u56DB|\u4E94|\u516D|\u4E03|\u516B|\u4E5D]",
-  khmr: "[\u17E0-\u17E9]",
-  knda: "[\u0CE6-\u0CEF]",
-  laoo: "[\u0ED0-\u0ED9]",
-  limb: "[\u1946-\u194F]",
-  mlym: "[\u0D66-\u0D6F]",
-  mong: "[\u1810-\u1819]",
-  mymr: "[\u1040-\u1049]",
-  orya: "[\u0B66-\u0B6F]",
-  tamldec: "[\u0BE6-\u0BEF]",
-  telu: "[\u0C66-\u0C6F]",
-  thai: "[\u0E50-\u0E59]",
-  tibt: "[\u0F20-\u0F29]",
-  latn: "\\d"
-};
-var numberingSystemsUTF16 = {
-  arab: [1632, 1641],
-  arabext: [1776, 1785],
-  bali: [6992, 7001],
-  beng: [2534, 2543],
-  deva: [2406, 2415],
-  fullwide: [65296, 65303],
-  gujr: [2790, 2799],
-  khmr: [6112, 6121],
-  knda: [3302, 3311],
-  laoo: [3792, 3801],
-  limb: [6470, 6479],
-  mlym: [3430, 3439],
-  mong: [6160, 6169],
-  mymr: [4160, 4169],
-  orya: [2918, 2927],
-  tamldec: [3046, 3055],
-  telu: [3174, 3183],
-  thai: [3664, 3673],
-  tibt: [3872, 3881]
-};
-var hanidecChars = numberingSystems.hanidec.replace(/[\[|\]]/g, "").split("");
-function parseDigits(str) {
-  let value = parseInt(str, 10);
-  if (isNaN(value)) {
-    value = "";
-    for (let i = 0; i < str.length; i++) {
-      const code = str.charCodeAt(i);
-      if (str[i].search(numberingSystems.hanidec) !== -1) {
-        value += hanidecChars.indexOf(str[i]);
-      } else {
-        for (const key in numberingSystemsUTF16) {
-          const [min, max] = numberingSystemsUTF16[key];
-          if (code >= min && code <= max) {
-            value += code - min;
-          }
-        }
-      }
-    }
-    return parseInt(value, 10);
-  } else {
-    return value;
-  }
-}
-function digitRegex({ numberingSystem }, append2 = "") {
-  return new RegExp(`${numberingSystems[numberingSystem || "latn"]}${append2}`);
-}
-
 // node_modules/luxon/src/impl/tokenParser.js
 var MISSING_FTP = "missing Intl.DateTimeFormat.formatToParts support";
 function intUnit(regex, post = (i) => i) {
@@ -40520,10 +40665,12 @@ function unitForToken(token, loc) {
       return literal(t);
     }
     switch (t.val) {
+      // era
       case "G":
         return oneOf(loc.eras("short"), 0);
       case "GG":
         return oneOf(loc.eras("long"), 0);
+      // years
       case "y":
         return intUnit(oneToSix);
       case "yy":
@@ -40534,6 +40681,7 @@ function unitForToken(token, loc) {
         return intUnit(fourToSix);
       case "yyyyyy":
         return intUnit(six);
+      // months
       case "M":
         return intUnit(oneOrTwo);
       case "MM":
@@ -40550,14 +40698,17 @@ function unitForToken(token, loc) {
         return oneOf(loc.months("short", false), 1);
       case "LLLL":
         return oneOf(loc.months("long", false), 1);
+      // dates
       case "d":
         return intUnit(oneOrTwo);
       case "dd":
         return intUnit(two);
+      // ordinals
       case "o":
         return intUnit(oneToThree);
       case "ooo":
         return intUnit(three);
+      // time
       case "HH":
         return intUnit(two);
       case "H":
@@ -40588,16 +40739,20 @@ function unitForToken(token, loc) {
         return simple(oneOrTwo);
       case "uuu":
         return intUnit(one2);
+      // meridiem
       case "a":
         return oneOf(loc.meridiems(), 0);
+      // weekYear (k)
       case "kkkk":
         return intUnit(four);
       case "kk":
         return intUnit(twoToFour, untruncateYear);
+      // weekNumber (W)
       case "W":
         return intUnit(oneOrTwo);
       case "WW":
         return intUnit(two);
+      // weekdays
       case "E":
       case "c":
         return intUnit(one2);
@@ -40609,13 +40764,18 @@ function unitForToken(token, loc) {
         return oneOf(loc.weekdays("short", true), 1);
       case "cccc":
         return oneOf(loc.weekdays("long", true), 1);
+      // offset/zone
       case "Z":
       case "ZZ":
         return offset(new RegExp(`([+-]${oneOrTwo.source})(?::(${two.source}))?`), 2);
       case "ZZZ":
         return offset(new RegExp(`([+-]${oneOrTwo.source})(${two.source})?`), 2);
+      // we don't support ZZZZ (PST) or ZZZZZ (Pacific Standard Time) in parsing
+      // because we don't have any way to figure out what they are
       case "z":
         return simple(/[a-z_+-/]{1,256}?/i);
+      // this special-case "token" represents a place where a macro-token expanded into a white-space literal
+      // in this case we accept any non-newline white-space
       case " ":
         return simple(/[^\S\n\r]/);
       default:
@@ -40820,19 +40980,51 @@ function maybeExpandMacroToken(token, locale3) {
 function expandMacroTokens(tokens, locale3) {
   return Array.prototype.concat(...tokens.map((t) => maybeExpandMacroToken(t, locale3)));
 }
-function explainFromTokens(locale3, input, format2) {
-  const tokens = expandMacroTokens(Formatter.parseFormat(format2), locale3), units = tokens.map((t) => unitForToken(t, locale3)), disqualifyingUnit = units.find((t) => t.invalidReason);
-  if (disqualifyingUnit) {
-    return { input, tokens, invalidReason: disqualifyingUnit.invalidReason };
-  } else {
-    const [regexString, handlers] = buildRegex(units), regex = RegExp(regexString, "i"), [rawMatches, matches] = match(input, regex, handlers), [result, zone, specificOffset] = matches ? dateTimeFromMatches(matches) : [null, null, void 0];
-    if (hasOwnProperty(matches, "a") && hasOwnProperty(matches, "H")) {
-      throw new ConflictingSpecificationError(
-        "Can't include meridiem when specifying 24-hour format"
-      );
+var TokenParser = class {
+  constructor(locale3, format2) {
+    this.locale = locale3;
+    this.format = format2;
+    this.tokens = expandMacroTokens(Formatter.parseFormat(format2), locale3);
+    this.units = this.tokens.map((t) => unitForToken(t, locale3));
+    this.disqualifyingUnit = this.units.find((t) => t.invalidReason);
+    if (!this.disqualifyingUnit) {
+      const [regexString, handlers] = buildRegex(this.units);
+      this.regex = RegExp(regexString, "i");
+      this.handlers = handlers;
     }
-    return { input, tokens, regex, rawMatches, matches, result, zone, specificOffset };
   }
+  explainFromTokens(input) {
+    if (!this.isValid) {
+      return { input, tokens: this.tokens, invalidReason: this.invalidReason };
+    } else {
+      const [rawMatches, matches] = match(input, this.regex, this.handlers), [result, zone, specificOffset] = matches ? dateTimeFromMatches(matches) : [null, null, void 0];
+      if (hasOwnProperty(matches, "a") && hasOwnProperty(matches, "H")) {
+        throw new ConflictingSpecificationError(
+          "Can't include meridiem when specifying 24-hour format"
+        );
+      }
+      return {
+        input,
+        tokens: this.tokens,
+        regex: this.regex,
+        rawMatches,
+        matches,
+        result,
+        zone,
+        specificOffset
+      };
+    }
+  }
+  get isValid() {
+    return !this.disqualifyingUnit;
+  }
+  get invalidReason() {
+    return this.disqualifyingUnit ? this.disqualifyingUnit.invalidReason : null;
+  }
+};
+function explainFromTokens(locale3, input, format2) {
+  const parser = new TokenParser(locale3, format2);
+  return parser.explainFromTokens(input);
 }
 function parseFromTokens(locale3, input, format2) {
   const { result, zone, specificOffset, invalidReason } = explainFromTokens(locale3, input, format2);
@@ -41089,8 +41281,25 @@ function normalizeUnitWithLocalWeeks(unit3) {
       return normalizeUnit(unit3);
   }
 }
+function guessOffsetForZone(zone) {
+  if (zoneOffsetTs === void 0) {
+    zoneOffsetTs = Settings.now();
+  }
+  if (zone.type !== "iana") {
+    return zone.offset(zoneOffsetTs);
+  }
+  const zoneName = zone.name;
+  if (!zoneOffsetGuessCache[zoneName]) {
+    zoneOffsetGuessCache[zoneName] = zone.offset(zoneOffsetTs);
+  }
+  return zoneOffsetGuessCache[zoneName];
+}
 function quickDT(obj, opts) {
-  const zone = normalizeZone(opts.zone, Settings.defaultZone), loc = Locale.fromObject(opts), tsNow = Settings.now();
+  const zone = normalizeZone(opts.zone, Settings.defaultZone);
+  if (!zone.isValid) {
+    return DateTime.invalid(unsupportedZone(zone));
+  }
+  const loc = Locale.fromObject(opts);
   let ts, o;
   if (!isUndefined(obj.year)) {
     for (const u of orderedUnits2) {
@@ -41102,10 +41311,10 @@ function quickDT(obj, opts) {
     if (invalid) {
       return DateTime.invalid(invalid);
     }
-    const offsetProvis = zone.offset(tsNow);
+    const offsetProvis = guessOffsetForZone(zone);
     [ts, o] = objToTS(obj, offsetProvis, zone);
   } else {
-    ts = tsNow;
+    ts = Settings.now();
   }
   return new DateTime({ ts, zone, loc, o });
 }
@@ -41144,6 +41353,8 @@ function lastOpts(argList) {
   }
   return [opts, args];
 }
+var zoneOffsetTs;
+var zoneOffsetGuessCache = {};
 var DateTime = class _DateTime {
   /**
    * @access private
@@ -41158,7 +41369,7 @@ var DateTime = class _DateTime {
       if (unchanged) {
         [c, o] = [config.old.c, config.old.o];
       } else {
-        const ot = zone.offset(this.ts);
+        const ot = isNumber(config.o) && !config.old ? config.o : zone.offset(this.ts);
         c = tsToObj(this.ts, ot);
         invalid = Number.isNaN(c.year) ? new Invalid("invalid input") : null;
         c = invalid ? null : c;
@@ -41223,6 +41434,7 @@ var DateTime = class _DateTime {
    * @param {string} [options.locale] - a locale to set on the resulting DateTime instance
    * @param {string} [options.outputCalendar] - the output calendar to set on the resulting DateTime instance
    * @param {string} [options.numberingSystem] - the numbering system to set on the resulting DateTime instance
+   * @param {string} [options.weekSettings] - the week settings to set on the resulting DateTime instance
    * @example DateTime.utc()                                              //~> now
    * @example DateTime.utc(2017)                                          //~> 2017-01-01T00:00:00Z
    * @example DateTime.utc(2017, 3)                                       //~> 2017-03-01T00:00:00Z
@@ -41269,6 +41481,7 @@ var DateTime = class _DateTime {
    * @param {string} [options.locale] - a locale to set on the resulting DateTime instance
    * @param {string} options.outputCalendar - the output calendar to set on the resulting DateTime instance
    * @param {string} options.numberingSystem - the numbering system to set on the resulting DateTime instance
+   * @param {string} options.weekSettings - the week settings to set on the resulting DateTime instance
    * @return {DateTime}
    */
   static fromMillis(milliseconds2, options = {}) {
@@ -41294,6 +41507,7 @@ var DateTime = class _DateTime {
    * @param {string} [options.locale] - a locale to set on the resulting DateTime instance
    * @param {string} options.outputCalendar - the output calendar to set on the resulting DateTime instance
    * @param {string} options.numberingSystem - the numbering system to set on the resulting DateTime instance
+   * @param {string} options.weekSettings - the week settings to set on the resulting DateTime instance
    * @return {DateTime}
    */
   static fromSeconds(seconds2, options = {}) {
@@ -41329,6 +41543,7 @@ var DateTime = class _DateTime {
    * @param {string} [opts.locale='system\'s locale'] - a locale to set on the resulting DateTime instance
    * @param {string} opts.outputCalendar - the output calendar to set on the resulting DateTime instance
    * @param {string} opts.numberingSystem - the numbering system to set on the resulting DateTime instance
+   * @param {string} opts.weekSettings - the week settings to set on the resulting DateTime instance
    * @example DateTime.fromObject({ year: 1982, month: 5, day: 25}).toISODate() //=> '1982-05-25'
    * @example DateTime.fromObject({ year: 1982 }).toISODate() //=> '1982-01-01'
    * @example DateTime.fromObject({ hour: 10, minute: 26, second: 6 }) //~> today at 10:26:06
@@ -41398,6 +41613,9 @@ var DateTime = class _DateTime {
         `you can't specify both a weekday of ${normalized.weekday} and a date of ${inst.toISO()}`
       );
     }
+    if (!inst.isValid) {
+      return _DateTime.invalid(inst.invalid);
+    }
     return inst;
   }
   /**
@@ -41409,6 +41627,7 @@ var DateTime = class _DateTime {
    * @param {string} [opts.locale='system's locale'] - a locale to set on the resulting DateTime instance
    * @param {string} [opts.outputCalendar] - the output calendar to set on the resulting DateTime instance
    * @param {string} [opts.numberingSystem] - the numbering system to set on the resulting DateTime instance
+   * @param {string} [opts.weekSettings] - the week settings to set on the resulting DateTime instance
    * @example DateTime.fromISO('2016-05-25T09:08:34.123')
    * @example DateTime.fromISO('2016-05-25T09:08:34.123+06:00')
    * @example DateTime.fromISO('2016-05-25T09:08:34.123+06:00', {setZone: true})
@@ -41429,6 +41648,7 @@ var DateTime = class _DateTime {
    * @param {string} [opts.locale='system's locale'] - a locale to set on the resulting DateTime instance
    * @param {string} opts.outputCalendar - the output calendar to set on the resulting DateTime instance
    * @param {string} opts.numberingSystem - the numbering system to set on the resulting DateTime instance
+   * @param {string} opts.weekSettings - the week settings to set on the resulting DateTime instance
    * @example DateTime.fromRFC2822('25 Nov 2016 13:23:12 GMT')
    * @example DateTime.fromRFC2822('Fri, 25 Nov 2016 13:23:12 +0600')
    * @example DateTime.fromRFC2822('25 Nov 2016 13:23 Z')
@@ -41448,6 +41668,7 @@ var DateTime = class _DateTime {
    * @param {string} [opts.locale='system's locale'] - a locale to set on the resulting DateTime instance
    * @param {string} opts.outputCalendar - the output calendar to set on the resulting DateTime instance
    * @param {string} opts.numberingSystem - the numbering system to set on the resulting DateTime instance
+   * @param {string} opts.weekSettings - the week settings to set on the resulting DateTime instance
    * @example DateTime.fromHTTP('Sun, 06 Nov 1994 08:49:37 GMT')
    * @example DateTime.fromHTTP('Sunday, 06-Nov-94 08:49:37 GMT')
    * @example DateTime.fromHTTP('Sun Nov  6 08:49:37 1994')
@@ -41467,6 +41688,7 @@ var DateTime = class _DateTime {
    * @param {boolean} [opts.setZone=false] - override the zone with a zone specified in the string itself, if it specifies one
    * @param {string} [opts.locale='en-US'] - a locale string to use when parsing. Will also set the DateTime to this locale
    * @param {string} opts.numberingSystem - the numbering system to use when parsing. Will also set the resulting DateTime to this numbering system
+   * @param {string} opts.weekSettings - the week settings to set on the resulting DateTime instance
    * @param {string} opts.outputCalendar - the output calendar to set on the resulting DateTime instance
    * @return {DateTime}
    */
@@ -41500,6 +41722,7 @@ var DateTime = class _DateTime {
    * @param {boolean} [opts.setZone=false] - override the zone with a zone specified in the string itself, if it specifies one
    * @param {string} [opts.locale='en-US'] - a locale string to use when parsing. Will also set the DateTime to this locale
    * @param {string} opts.numberingSystem - the numbering system to use when parsing. Will also set the resulting DateTime to this numbering system
+   * @param {string} opts.weekSettings - the week settings to set on the resulting DateTime instance
    * @param {string} opts.outputCalendar - the output calendar to set on the resulting DateTime instance
    * @example DateTime.fromSQL('2017-05-15')
    * @example DateTime.fromSQL('2017-05-15 09:12:34')
@@ -41560,6 +41783,10 @@ var DateTime = class _DateTime {
   static expandFormat(fmt, localeOpts = {}) {
     const expanded = expandMacroTokens(Formatter.parseFormat(fmt), Locale.fromObject(localeOpts));
     return expanded.map((t) => t.val).join("");
+  }
+  static resetCache() {
+    zoneOffsetTs = void 0;
+    zoneOffsetGuessCache = {};
   }
   // INFO
   /**
@@ -42108,16 +42335,21 @@ var DateTime = class _DateTime {
     switch (normalizedUnit) {
       case "years":
         o.month = 1;
+      // falls through
       case "quarters":
       case "months":
         o.day = 1;
+      // falls through
       case "weeks":
       case "days":
         o.hour = 0;
+      // falls through
       case "hours":
         o.minute = 0;
+      // falls through
       case "minutes":
         o.second = 0;
+      // falls through
       case "seconds":
         o.millisecond = 0;
         break;
@@ -42223,7 +42455,7 @@ var DateTime = class _DateTime {
    * @example DateTime.now().toISO() //=> '2017-04-22T20:47:05.335-04:00'
    * @example DateTime.now().toISO({ includeOffset: false }) //=> '2017-04-22T20:47:05.335'
    * @example DateTime.now().toISO({ format: 'basic' }) //=> '20170422T204705.335-0400'
-   * @return {string}
+   * @return {string|null}
    */
   toISO({
     format: format2 = "extended",
@@ -42247,7 +42479,7 @@ var DateTime = class _DateTime {
    * @param {string} [opts.format='extended'] - choose between the basic and extended format
    * @example DateTime.utc(1982, 5, 25).toISODate() //=> '1982-05-25'
    * @example DateTime.utc(1982, 5, 25).toISODate({ format: 'basic' }) //=> '19820525'
-   * @return {string}
+   * @return {string|null}
    */
   toISODate({ format: format2 = "extended" } = {}) {
     if (!this.isValid) {
@@ -42322,7 +42554,7 @@ var DateTime = class _DateTime {
   /**
    * Returns a string representation of this DateTime appropriate for use in SQL Date
    * @example DateTime.utc(2014, 7, 13).toSQLDate() //=> '2014-07-13'
-   * @return {string}
+   * @return {string|null}
    */
   toSQLDate() {
     if (!this.isValid) {
@@ -42407,7 +42639,7 @@ var DateTime = class _DateTime {
     return this.isValid ? this.ts : NaN;
   }
   /**
-   * Returns the epoch seconds of this DateTime.
+   * Returns the epoch seconds (including milliseconds in the fractional part) of this DateTime.
    * @return {number}
    */
   toSeconds() {
@@ -42496,7 +42728,7 @@ var DateTime = class _DateTime {
   /**
    * Return an Interval spanning between this DateTime and another DateTime
    * @param {DateTime} otherDateTime - the other end point of the Interval
-   * @return {Interval}
+   * @return {Interval|DateTime}
    */
   until(otherDateTime) {
     return this.isValid ? Interval.fromDateTimes(this, otherDateTime) : this;
@@ -42627,6 +42859,66 @@ var DateTime = class _DateTime {
    */
   static fromStringExplain(text, fmt, options = {}) {
     return _DateTime.fromFormatExplain(text, fmt, options);
+  }
+  /**
+   * Build a parser for `fmt` using the given locale. This parser can be passed
+   * to {@link DateTime.fromFormatParser} to a parse a date in this format. This
+   * can be used to optimize cases where many dates need to be parsed in a
+   * specific format.
+   *
+   * @param {String} fmt - the format the string is expected to be in (see
+   * description)
+   * @param {Object} options - options used to set locale and numberingSystem
+   * for parser
+   * @returns {TokenParser} - opaque object to be used
+   */
+  static buildFormatParser(fmt, options = {}) {
+    const { locale: locale3 = null, numberingSystem = null } = options, localeToUse = Locale.fromOpts({
+      locale: locale3,
+      numberingSystem,
+      defaultToEN: true
+    });
+    return new TokenParser(localeToUse, fmt);
+  }
+  /**
+   * Create a DateTime from an input string and format parser.
+   *
+   * The format parser must have been created with the same locale as this call.
+   *
+   * @param {String} text - the string to parse
+   * @param {TokenParser} formatParser - parser from {@link DateTime.buildFormatParser}
+   * @param {Object} opts - options taken by fromFormat()
+   * @returns {DateTime}
+   */
+  static fromFormatParser(text, formatParser, opts = {}) {
+    if (isUndefined(text) || isUndefined(formatParser)) {
+      throw new InvalidArgumentError(
+        "fromFormatParser requires an input string and a format parser"
+      );
+    }
+    const { locale: locale3 = null, numberingSystem = null } = opts, localeToUse = Locale.fromOpts({
+      locale: locale3,
+      numberingSystem,
+      defaultToEN: true
+    });
+    if (!localeToUse.equals(formatParser.locale)) {
+      throw new InvalidArgumentError(
+        `fromFormatParser called with a locale of ${localeToUse}, but the format parser was created for ${formatParser.locale}`
+      );
+    }
+    const { result, zone, specificOffset, invalidReason } = formatParser.explainFromTokens(text);
+    if (invalidReason) {
+      return _DateTime.invalid(invalidReason);
+    } else {
+      return parseDataToDateTime(
+        result,
+        zone,
+        opts,
+        `format ${formatParser.format}`,
+        text,
+        specificOffset
+      );
+    }
   }
   // FORMAT PRESETS
   /**
@@ -42799,7 +43091,634 @@ function friendlyDateTime(dateTimeish) {
 }
 
 // node_modules/luxon/src/luxon.js
-var VERSION = "3.4.4";
+var VERSION = "3.6.0";
+
+// src/datalink.ts
+var datalink_exports = {};
+__export(datalink_exports, {
+  ConnectionsResponse: () => ConnectionsResponse,
+  DATALINK_PROTOCOL: () => DATALINK_PROTOCOL,
+  DEFAULT_ARCH: () => DEFAULT_ARCH,
+  DEFAULT_PROGRAM: () => DEFAULT_PROGRAM,
+  DataLinkConnection: () => DataLinkConnection,
+  DataLinkIdStats: () => DataLinkIdStats,
+  DataLinkPacket: () => DataLinkPacket,
+  DataLinkResponse: () => DataLinkResponse,
+  DataLinkStats: () => DataLinkStats,
+  ENDSTREAM: () => ENDSTREAM,
+  ERROR: () => ERROR,
+  ID: () => ID,
+  INFO: () => INFO,
+  IRIS_RINGSERVER_URL: () => IRIS_RINGSERVER_URL,
+  MAX_PROC_NUM: () => MAX_PROC_NUM,
+  MODE: () => MODE,
+  MSEED3_TYPE: () => MSEED3_TYPE,
+  MSEED_TYPE: () => MSEED_TYPE,
+  OK: () => OK,
+  PACKET: () => PACKET,
+  QUERY_MODE: () => QUERY_MODE,
+  STREAM: () => STREAM,
+  STREAM_MODE: () => STREAM_MODE,
+  StatusResponse: () => StatusResponse,
+  StreamStat: () => StreamStat,
+  StreamsResponse: () => StreamsResponse,
+  ThreadStat: () => ThreadStat,
+  USER_BROWSER: () => USER_BROWSER,
+  daliDateTime: () => daliDateTime,
+  dateTimeToHPTime: () => dateTimeToHPTime,
+  hpTimeToDateTime: () => hpTimeToDateTime,
+  stringToUint8Array: () => stringToUint8Array
+});
+
+// src/util.ts
+var util_exports = {};
+__export(util_exports, {
+  BINARY_MIME: () => BINARY_MIME,
+  JSONAPI_MIME: () => JSONAPI_MIME,
+  JSON_MIME: () => JSON_MIME,
+  SVG_MIME: () => SVG_MIME,
+  SVG_NS: () => SVG_NS,
+  TEXT_MIME: () => TEXT_MIME,
+  UTC_OPTIONS: () => UTC_OPTIONS,
+  WAY_FUTURE: () => WAY_FUTURE,
+  WAY_PAST: () => WAY_PAST,
+  XHTML_NS: () => XHTML_NS,
+  XML_MIME: () => XML_MIME,
+  asStringDictionary: () => asStringDictionary,
+  calcClockOffset: () => calcClockOffset,
+  checkLuxonValid: () => checkLuxonValid,
+  checkProtocol: () => checkProtocol,
+  checkStringOrDate: () => checkStringOrDate,
+  cloneFetchInitObj: () => cloneFetchInitObj,
+  createSVGElement: () => createSVGElement,
+  dataViewToString: () => dataViewToString,
+  defaultFetchInitObj: () => defaultFetchInitObj,
+  default_fetch: () => default_fetch,
+  doBoolGetterSetter: () => doBoolGetterSetter,
+  doFetchWithTimeout: () => doFetchWithTimeout,
+  doFloatGetterSetter: () => doFloatGetterSetter,
+  doIntGetterSetter: () => doIntGetterSetter,
+  doMomentGetterSetter: () => doMomentGetterSetter,
+  doStringGetterSetter: () => doStringGetterSetter,
+  downloadBlobAsFile: () => downloadBlobAsFile,
+  durationEnd: () => durationEnd,
+  errorFetch: () => errorFetch,
+  getFetch: () => getFetch,
+  hasArgs: () => hasArgs,
+  hasNoArgs: () => hasNoArgs,
+  isDef: () => isDef,
+  isError: () => isError,
+  isNonEmptyStringArg: () => isNonEmptyStringArg,
+  isNumArg: () => isNumArg,
+  isObject: () => isObject,
+  isStringArg: () => isStringArg,
+  isoToDateTime: () => isoToDateTime,
+  log: () => log,
+  makeParam: () => makeParam,
+  makePostParam: () => makePostParam,
+  meanOfSlice: () => meanOfSlice,
+  mightBeXml: () => mightBeXml,
+  nameForTimeZone: () => nameForTimeZone,
+  reErrorWithMessage: () => reErrorWithMessage,
+  setDefaultFetch: () => setDefaultFetch,
+  startDuration: () => startDuration,
+  startEnd: () => startEnd,
+  stringify: () => stringify,
+  toError: () => toError,
+  toIsoWoZ: () => toIsoWoZ,
+  toJSDate: () => toJSDate,
+  updateVersionText: () => updateVersionText,
+  validEndTime: () => validEndTime,
+  validStartTime: () => validStartTime,
+  warn: () => warn
+});
+
+// src/version.ts
+var version = "3.1.5-SNAPSHOT";
+
+// src/util.ts
+var XML_MIME = "application/xml";
+var JSON_MIME = "application/json";
+var JSONAPI_MIME = "application/vnd.api+json";
+var SVG_MIME = "image/svg+xml";
+var TEXT_MIME = "text/plain";
+var BINARY_MIME = "application/octet-stream";
+var UTC_OPTIONS = { zone: FixedOffsetZone.utcInstance };
+function hasArgs(value) {
+  return arguments.length !== 0 && typeof value !== "undefined";
+}
+function hasNoArgs(value) {
+  return arguments.length === 0 || typeof value === "undefined";
+}
+function isStringArg(value) {
+  return arguments.length !== 0 && (typeof value === "string" || isObject(value) && value instanceof String);
+}
+function isNumArg(value) {
+  return arguments.length !== 0 && (typeof value === "number" || isObject(value) && value instanceof Number);
+}
+function isNonEmptyStringArg(value) {
+  return arguments.length !== 0 && isStringArg(value) && value.length !== 0;
+}
+function isObject(obj) {
+  return obj !== null && typeof obj === "object";
+}
+function isDef(value) {
+  return value !== null && value !== void 0;
+}
+function reErrorWithMessage(err, message) {
+  let out;
+  if (!isDef(err)) {
+    out = new Error(`${message}`);
+  } else if (typeof err === "string") {
+    out = new Error(`${message} ${err}`);
+  } else if (err instanceof Error) {
+    err.message = `${message} ${err.message}`;
+    out = err;
+  } else {
+    out = new Error(`${message} ${stringify(err)}`);
+  }
+  return out;
+}
+function asStringDictionary(inobj) {
+  if (typeof inobj !== "object") {
+    throw new Error(`Expect obj to be object, but was ${stringify(inobj)}`);
+  }
+  const obj = inobj;
+  return obj;
+}
+function doStringGetterSetter(inobj, field, value) {
+  const hiddenField = `_${field}`;
+  const obj = asStringDictionary(inobj);
+  if (hasNoArgs(value) || value === null) {
+    obj[hiddenField] = void 0;
+  } else if (isStringArg(value)) {
+    obj[hiddenField] = value;
+  } else {
+    throw new Error(
+      `${field} value argument is optional or string, but was type ${typeof value}, '${value}' `
+    );
+  }
+  return inobj;
+}
+function doBoolGetterSetter(inobj, field, value) {
+  const hiddenField = `_${field}`;
+  const obj = asStringDictionary(inobj);
+  if (hasNoArgs(value) || value === null) {
+    obj[hiddenField] = void 0;
+  } else if (value === true || value === false) {
+    obj[hiddenField] = value;
+  } else {
+    throw new Error(
+      `${field} value argument is optional or boolean, but was type ${typeof value}, '${value}' `
+    );
+  }
+  return inobj;
+}
+function doIntGetterSetter(inobj, field, value) {
+  const hiddenField = `_${field}`;
+  const obj = asStringDictionary(inobj);
+  if (hasNoArgs(value) || value === null) {
+    obj[hiddenField] = void 0;
+  } else if (isNumArg(value)) {
+    obj[hiddenField] = value;
+  } else if (isStringArg(value) && Number.isFinite(Number(value))) {
+    obj[hiddenField] = parseInt(value);
+  } else {
+    throw new Error(
+      `${field} value argument is optional or number, but was type ${typeof value}, '${value}' `
+    );
+  }
+  return inobj;
+}
+function doFloatGetterSetter(inobj, field, value) {
+  const hiddenField = `_${field}`;
+  const obj = asStringDictionary(inobj);
+  if (hasNoArgs(value) || value === null) {
+    obj[hiddenField] = void 0;
+  } else if (isNumArg(value)) {
+    obj[hiddenField] = value;
+  } else if (isStringArg(value) && Number.isFinite(Number(value))) {
+    obj[hiddenField] = parseFloat(value);
+  } else {
+    throw new Error(
+      `value argument is optional or number, but was type ${typeof value}, '${value}' `
+    );
+  }
+  return obj;
+}
+function doMomentGetterSetter(inobj, field, value) {
+  const hiddenField = `_${field}`;
+  const obj = asStringDictionary(inobj);
+  if (hasNoArgs(value) || value === null) {
+    obj[hiddenField] = void 0;
+  } else if (isDef(value) && isObject(value) && DateTime.isDateTime(value)) {
+    obj[hiddenField] = value;
+  } else if (isDef(value) && DateTime.isDateTime(checkStringOrDate(value))) {
+    obj[hiddenField] = checkStringOrDate(value);
+  } else {
+    throw new Error(
+      `${field} value argument is optional, DateTime, date or date string, but was type ${typeof value}, '${stringify(
+        value
+      )}' `
+    );
+  }
+  return obj;
+}
+function dataViewToString(dataView) {
+  let out = "";
+  for (let i = 0; i < dataView.byteLength; i++) {
+    out += String.fromCharCode(dataView.getUint8(i));
+  }
+  return out;
+}
+function log(msg) {
+  if (console) {
+    console.log(`${stringify(msg)}`);
+  }
+  if (typeof document !== "undefined" && document !== null) {
+    const p = document.createElement("p");
+    p.textContent = `${stringify(msg)}`;
+    const divDebug = document.querySelector("div#debug");
+    if (isDef(divDebug)) {
+      divDebug.appendChild(p);
+    }
+  }
+}
+function isError(error) {
+  return typeof error === "object" && error !== null && error instanceof Error;
+}
+function toError(maybeError) {
+  if (isError(maybeError)) return maybeError;
+  try {
+    return new Error(JSON.stringify(maybeError));
+  } catch {
+    return new Error(String(maybeError));
+  }
+}
+function warn(msg) {
+  if (console) {
+    console.assert(false, `${stringify(msg)}`);
+  }
+  if (typeof document !== "undefined" && document !== null) {
+    const p = document.createElement("p");
+    p.textContent = `${stringify(msg)}`;
+    document.querySelector("div#debug").appendChild(p);
+  }
+}
+function stringify(value) {
+  if (typeof value === "string") {
+    return value;
+  } else if (typeof value === "number") {
+    return value.toString();
+  } else if (typeof value === "boolean") {
+    return value ? "true" : "false";
+  } else if (typeof value === "undefined") {
+    return "undefined";
+  } else if (typeof value === "function") {
+    return "function " + value.name;
+  } else if (typeof value === "object") {
+    if (value) {
+      if (DateTime.isDateTime(value)) {
+        const dateTimeValue = value;
+        const s2 = dateTimeValue.toISO();
+        return dateTimeValue.isValid && s2 ? s2 : `Invalid DateTime: ${dateTimeValue.invalidReason}: ${dateTimeValue.invalidExplanation}`;
+      } else {
+        return `${value?.constructor?.name} ${String(value)}`;
+      }
+    } else {
+      return `${value}`;
+    }
+  } else {
+    return "<unknown" + typeof value + "???>";
+  }
+}
+function isoToDateTime(val) {
+  if (val.toLowerCase() === "now") {
+    return DateTime.utc();
+  }
+  return DateTime.fromISO(val, UTC_OPTIONS);
+}
+function startEnd(start2, end) {
+  if (isStringArg(start2)) {
+    start2 = isoToDateTime(start2);
+  }
+  if (isStringArg(end)) {
+    end = isoToDateTime(end);
+  }
+  return Interval.fromDateTimes(start2, end);
+}
+function startDuration(start2, duration) {
+  if (isStringArg(start2)) {
+    start2 = isoToDateTime(start2);
+  }
+  if (isStringArg(duration)) {
+    duration = Duration.fromISO(duration);
+  } else if (isNumArg(duration)) {
+    duration = Duration.fromMillis(1e3 * duration);
+  }
+  if (duration.valueOf() < 0) {
+    return Interval.before(start2, duration.negate());
+  } else {
+    return Interval.after(start2, duration);
+  }
+}
+function durationEnd(duration, end) {
+  if (isStringArg(end)) {
+    end = isoToDateTime(end);
+  }
+  if (isStringArg(duration)) {
+    duration = Duration.fromISO(duration);
+  } else if (isNumArg(duration)) {
+    duration = Duration.fromMillis(1e3 * duration);
+  }
+  if (duration.valueOf() < 0) {
+    return Interval.after(end, duration.negate());
+  } else {
+    return Interval.before(end, duration);
+  }
+}
+function calcClockOffset(serverTimeUTC) {
+  return DateTime.utc().diff(serverTimeUTC).toMillis() * 1e3;
+}
+var WAY_FUTURE = DateTime.fromISO("2500-01-01T00:00:00Z");
+var WAY_PAST = DateTime.fromISO("1900-01-01T00:00:00Z");
+function checkStringOrDate(d) {
+  if (DateTime.isDateTime(d)) {
+    return d;
+  } else if (d instanceof Date) {
+    return DateTime.fromJSDate(d, UTC_OPTIONS);
+  } else if (isNumArg(d)) {
+    return DateTime.fromMillis(d, UTC_OPTIONS);
+  } else if (isNonEmptyStringArg(d)) {
+    const lc = d.toLowerCase();
+    if (d.length === 0 || lc === "now") {
+      return DateTime.utc();
+    } else {
+      return isoToDateTime(d);
+    }
+  }
+  throw new Error(`unknown date type: ${stringify(d)} ${typeof d}`);
+}
+function makeParam(name, val) {
+  return `${name}=${encodeURIComponent(stringify(val))}&`;
+}
+function makePostParam(name, val) {
+  return name + "=" + stringify(val) + "\n";
+}
+function toIsoWoZ(date2) {
+  if (date2.isValid) {
+    let out = date2.toISO();
+    if (out == null) {
+      throw new Error(`Bad date: ${stringify(date2)}`);
+    }
+    if (out.endsWith("Z")) {
+      out = out.substring(0, out.length - 1);
+    }
+    return out;
+  } else {
+    throw new Error(`${date2.invalidReason}: ${date2.invalidExplanation}`);
+  }
+}
+function validStartTime(interval2) {
+  const d = interval2.start;
+  if (d == null) {
+    throw new Error(`Bad interval: ${stringify(interval2)}`);
+  }
+  return d;
+}
+function validEndTime(interval2) {
+  const d = interval2.end;
+  if (d == null) {
+    throw new Error(`Bad interval: ${stringify(interval2)}`);
+  }
+  return d;
+}
+function toJSDate(d) {
+  if (!d) {
+    throw new Error(`Null/undef DateTime: ${d}`);
+  }
+  if (!d.isValid) {
+    throw new Error(`${d.invalidReason}: ${d.invalidExplanation}`);
+  }
+  return d.toJSDate();
+}
+function checkLuxonValid(d, msg) {
+  if (d == null) {
+    const m = msg ? msg : "";
+    throw new Error(`Null luxon value: ${d} ${m}`);
+  }
+  if (!d.isValid) {
+    const m = msg ? msg : "";
+    throw new Error(
+      `Invalid Luxon: ${typeof d} ${d?.constructor?.name} ${d.invalidReason}: ${d.invalidExplanation} ${m}`
+    );
+  }
+  return d;
+}
+function nameForTimeZone(zone, atTime) {
+  if (zone == null || zone instanceof Zone && FixedOffsetZone.utcInstance.equals(zone)) {
+    return "UTC";
+  } else if (typeof zone === "string") {
+    return zone;
+  } else if (zone instanceof Zone) {
+    if (atTime != null) {
+      const ofName = zone.offsetName(atTime.toMillis(), { format: "short" });
+      return ofName != null ? ofName : zone.name;
+    }
+    return zone.name;
+  }
+  return "unknown";
+}
+function checkProtocol(defaultProtocol = "http:") {
+  let _protocol = "http:";
+  if (defaultProtocol.startsWith("https")) {
+    _protocol = "https:";
+  }
+  if (typeof document !== "undefined" && document !== null && "location" in document && "protocol" in document.location && "https:" === document.location.protocol) {
+    _protocol = "https:";
+  }
+  return _protocol;
+}
+function defaultFetchInitObj(mimeType) {
+  const headers = {};
+  if (isStringArg(mimeType)) {
+    headers.Accept = mimeType;
+  }
+  return {
+    cache: "no-cache",
+    redirect: "follow",
+    mode: "cors",
+    referrer: "seisplotjs",
+    headers
+  };
+}
+function cloneFetchInitObj(fetchInit) {
+  const out = {};
+  if (fetchInit) {
+    for (const [key, value] of Object.entries(fetchInit)) {
+      if (Array.isArray(value)) {
+        out[key] = value.slice();
+      } else {
+        out[key] = value;
+      }
+    }
+  }
+  return out;
+}
+function errorFetch(_url, _init) {
+  throw new Error("There is no fetch!?!?!");
+}
+var default_fetch = null;
+function setDefaultFetch(fetcher) {
+  if (fetcher != null) {
+    default_fetch = fetcher;
+  }
+}
+function getFetch() {
+  if (default_fetch != null) {
+    return default_fetch;
+  } else if (window != null) {
+    return window.fetch;
+  } else if (global != null) {
+    return global.fetch;
+  } else {
+    return errorFetch;
+  }
+}
+function doFetchWithTimeout(url, fetchInit, timeoutSec2, fetcher) {
+  const controller = new AbortController();
+  const signal = controller.signal;
+  if (!fetcher) {
+    fetcher = getFetch();
+  }
+  if (!fetcher) {
+    fetcher = window.fetch;
+  }
+  let internalFetchInit = isDef(fetchInit) ? fetchInit : defaultFetchInitObj();
+  internalFetchInit = cloneFetchInitObj(internalFetchInit);
+  if (internalFetchInit.redirect === "follow" && internalFetchInit.method === "POST") {
+    internalFetchInit.redirect = "manual";
+  }
+  if (!isDef(timeoutSec2)) {
+    timeoutSec2 = 30;
+  }
+  setTimeout(() => controller.abort(), timeoutSec2 * 1e3);
+  internalFetchInit.signal = signal;
+  let absoluteUrl;
+  if (url instanceof URL) {
+    absoluteUrl = url;
+  } else if (isStringArg(url)) {
+    if (url.startsWith("http://") || url.startsWith("https://")) {
+      absoluteUrl = new URL(url);
+    } else {
+      absoluteUrl = new URL(url, document.URL);
+    }
+  } else {
+    throw new Error(`url must be string or URL, ${stringify(url)}`);
+  }
+  log(
+    `attempt to fetch ${internalFetchInit.method ? internalFetchInit.method : ""} ${stringify(
+      absoluteUrl
+    )}`
+  );
+  const fetchForRedirect = fetcher;
+  return fetcher(absoluteUrl.href, internalFetchInit).catch((err) => {
+    log("fetch failed, possible CORS or PrivacyBadger or NoScript?");
+    throw err;
+  }).then(function(response) {
+    if (response.ok || response.status === 404) {
+      return response;
+    } else if (response.status >= 300 && response.status <= 399) {
+      if (checkProtocol() === "http:" && absoluteUrl.href.startsWith("http://")) {
+        const httpsUrl = new URL(`https://${absoluteUrl.href.slice(7)}`);
+        const method = internalFetchInit.method ? internalFetchInit.method : "";
+        log(
+          `attempt fetch redirect ${response.status} ${method} to ${stringify(httpsUrl)}`
+        );
+        return fetchForRedirect(httpsUrl.href, internalFetchInit).then(
+          (httpsResponse) => {
+            if (httpsResponse.ok || httpsResponse.status === 404) {
+              return httpsResponse;
+            } else {
+              return response.text().then((text) => {
+                throw new Error(
+                  `fetch response was redirect for http and failed for https. ${response.ok} ${response.status}, ${httpsResponse.ok} ${httpsResponse.status} 
+${text}`
+                );
+              });
+            }
+          }
+        );
+      }
+    }
+    return response.text().then((text) => {
+      throw new Error(
+        `fetch response was not ok. ${response.ok} ${response.status}
+${text}`
+      );
+    });
+  });
+}
+function downloadBlobAsFile(data, filename, mimeType = "application/octet-stream") {
+  if (!data) {
+    throw new Error("data is empty");
+  }
+  if (!filename) filename = "filetodownload.txt";
+  const blob = new Blob([data], { type: mimeType });
+  const e = document.createEvent("MouseEvents");
+  const a = document.createElement("a");
+  a.download = filename;
+  a.href = window.URL.createObjectURL(blob);
+  a.dataset.downloadurl = [mimeType, a.download, a.href].join(":");
+  e.initMouseEvent(
+    "click",
+    true,
+    false,
+    window,
+    0,
+    0,
+    0,
+    0,
+    0,
+    false,
+    false,
+    false,
+    false,
+    0,
+    null
+  );
+  a.dispatchEvent(e);
+}
+function meanOfSlice(dataSlice, totalPts) {
+  if (dataSlice.length < 8) {
+    return (
+      // @ts-expect-error different array types confuses typescript
+      dataSlice.reduce(function(acc, val) {
+        return acc + val;
+      }, 0) / totalPts
+    );
+  } else {
+    const byTwo = Math.floor(dataSlice.length / 2);
+    return meanOfSlice(dataSlice.slice(0, byTwo), totalPts) + meanOfSlice(dataSlice.slice(byTwo, dataSlice.length), totalPts);
+  }
+}
+var SVG_NS = "http://www.w3.org/2000/svg";
+var XHTML_NS = "http://www.w3.org/1999/xhtml";
+function createSVGElement(name) {
+  return document.createElementNS(SVG_NS, name);
+}
+function mightBeXml(buf) {
+  const initialChars = dataViewToString(new DataView(buf.slice(0, 100))).trimStart();
+  if (!initialChars.startsWith("<?xml ")) {
+    return false;
+  }
+  return true;
+}
+function updateVersionText(selector = "#sp-version") {
+  document.querySelectorAll(selector).forEach((el) => {
+    el.textContent = version;
+  });
+}
 
 // src/miniseed.ts
 var miniseed_exports = {};
@@ -43120,11 +44039,17 @@ var NslcId = class _NslcId {
     this.locationCode = loc;
     this.channelCode = chan;
   }
+  /**
+   * Parse NSLC string like CO.JSC.00.HHZ into parts.
+   * @param  nslc     string to parse
+   * @param  sep="."  seperator, default is '.'
+   * @returns NslcId by splitting the string.
+   */
   static parse(nslc, sep = ".") {
-    const items = nslc.split(SEP);
+    const items = nslc.split(sep);
     if (items.length !== 4) {
       throw new Error(
-        `NSLC id must have 4 items; separated by '${sep}': ${nslc}`
+        `NSLC id must have 4 items but was ${items.length}; separated by '${sep}': ${nslc}`
       );
     }
     return new _NslcId(items[0], items[1], items[2], items[3]);
@@ -43198,568 +44123,6 @@ __export(seismogramsegment_exports, {
   COUNT_UNIT: () => COUNT_UNIT,
   SeismogramSegment: () => SeismogramSegment
 });
-
-// src/util.ts
-var util_exports = {};
-__export(util_exports, {
-  BINARY_MIME: () => BINARY_MIME,
-  JSONAPI_MIME: () => JSONAPI_MIME,
-  JSON_MIME: () => JSON_MIME,
-  SVG_MIME: () => SVG_MIME,
-  SVG_NS: () => SVG_NS,
-  TEXT_MIME: () => TEXT_MIME,
-  UTC_OPTIONS: () => UTC_OPTIONS,
-  WAY_FUTURE: () => WAY_FUTURE,
-  XHTML_NS: () => XHTML_NS,
-  XML_MIME: () => XML_MIME,
-  asStringDictionary: () => asStringDictionary,
-  calcClockOffset: () => calcClockOffset,
-  checkLuxonValid: () => checkLuxonValid,
-  checkProtocol: () => checkProtocol,
-  checkStringOrDate: () => checkStringOrDate,
-  cloneFetchInitObj: () => cloneFetchInitObj,
-  createSVGElement: () => createSVGElement,
-  dataViewToString: () => dataViewToString,
-  defaultFetchInitObj: () => defaultFetchInitObj,
-  default_fetch: () => default_fetch,
-  doBoolGetterSetter: () => doBoolGetterSetter,
-  doFetchWithTimeout: () => doFetchWithTimeout,
-  doFloatGetterSetter: () => doFloatGetterSetter,
-  doIntGetterSetter: () => doIntGetterSetter,
-  doMomentGetterSetter: () => doMomentGetterSetter,
-  doStringGetterSetter: () => doStringGetterSetter,
-  downloadBlobAsFile: () => downloadBlobAsFile,
-  durationEnd: () => durationEnd,
-  errorFetch: () => errorFetch,
-  getFetch: () => getFetch,
-  hasArgs: () => hasArgs,
-  hasNoArgs: () => hasNoArgs,
-  isDef: () => isDef,
-  isError: () => isError,
-  isNonEmptyStringArg: () => isNonEmptyStringArg,
-  isNumArg: () => isNumArg,
-  isObject: () => isObject,
-  isStringArg: () => isStringArg,
-  isoToDateTime: () => isoToDateTime,
-  log: () => log,
-  makeParam: () => makeParam,
-  makePostParam: () => makePostParam,
-  meanOfSlice: () => meanOfSlice,
-  reErrorWithMessage: () => reErrorWithMessage,
-  setDefaultFetch: () => setDefaultFetch,
-  startDuration: () => startDuration,
-  startEnd: () => startEnd,
-  stringify: () => stringify,
-  toError: () => toError,
-  toIsoWoZ: () => toIsoWoZ,
-  toJSDate: () => toJSDate,
-  updateVersionText: () => updateVersionText,
-  validEndTime: () => validEndTime,
-  validStartTime: () => validStartTime,
-  warn: () => warn
-});
-
-// src/version.ts
-var version = "3.1.5-SNAPSHOT";
-
-// src/util.ts
-var XML_MIME = "application/xml";
-var JSON_MIME = "application/json";
-var JSONAPI_MIME = "application/vnd.api+json";
-var SVG_MIME = "image/svg+xml";
-var TEXT_MIME = "text/plain";
-var BINARY_MIME = "application/octet-stream";
-var UTC_OPTIONS = { zone: FixedOffsetZone.utcInstance };
-function hasArgs(value) {
-  return arguments.length !== 0 && typeof value !== "undefined";
-}
-function hasNoArgs(value) {
-  return arguments.length === 0 || typeof value === "undefined";
-}
-function isStringArg(value) {
-  return arguments.length !== 0 && (typeof value === "string" || isObject(value) && value instanceof String);
-}
-function isNumArg(value) {
-  return arguments.length !== 0 && (typeof value === "number" || isObject(value) && value instanceof Number);
-}
-function isNonEmptyStringArg(value) {
-  return arguments.length !== 0 && isStringArg(value) && value.length !== 0;
-}
-function isObject(obj) {
-  return obj !== null && typeof obj === "object";
-}
-function isDef(value) {
-  return value !== null && value !== void 0;
-}
-function reErrorWithMessage(err, message) {
-  let out;
-  if (!isDef(err)) {
-    out = new Error(`${message}`);
-  } else if (typeof err === "string") {
-    out = new Error(`${message} ${err}`);
-  } else if (err instanceof Error) {
-    err.message = `${message} ${err.message}`;
-    out = err;
-  } else {
-    out = new Error(`${message} ${stringify(err)}`);
-  }
-  return out;
-}
-function asStringDictionary(inobj) {
-  if (typeof inobj !== "object") {
-    throw new Error(`Expect obj to be object, but was ${stringify(inobj)}`);
-  }
-  const obj = inobj;
-  return obj;
-}
-function doStringGetterSetter(inobj, field, value) {
-  const hiddenField = `_${field}`;
-  const obj = asStringDictionary(inobj);
-  if (hasNoArgs(value) || value === null) {
-    obj[hiddenField] = void 0;
-  } else if (isStringArg(value)) {
-    obj[hiddenField] = value;
-  } else {
-    throw new Error(
-      `${field} value argument is optional or string, but was type ${typeof value}, '${value}' `
-    );
-  }
-  return inobj;
-}
-function doBoolGetterSetter(inobj, field, value) {
-  const hiddenField = `_${field}`;
-  const obj = asStringDictionary(inobj);
-  if (hasNoArgs(value) || value === null) {
-    obj[hiddenField] = void 0;
-  } else if (value === true || value === false) {
-    obj[hiddenField] = value;
-  } else {
-    throw new Error(
-      `${field} value argument is optional or boolean, but was type ${typeof value}, '${value}' `
-    );
-  }
-  return inobj;
-}
-function doIntGetterSetter(inobj, field, value) {
-  const hiddenField = `_${field}`;
-  const obj = asStringDictionary(inobj);
-  if (hasNoArgs(value) || value === null) {
-    obj[hiddenField] = void 0;
-  } else if (isNumArg(value)) {
-    obj[hiddenField] = value;
-  } else if (isStringArg(value) && Number.isFinite(Number(value))) {
-    obj[hiddenField] = parseInt(value);
-  } else {
-    throw new Error(
-      `${field} value argument is optional or number, but was type ${typeof value}, '${value}' `
-    );
-  }
-  return inobj;
-}
-function doFloatGetterSetter(inobj, field, value) {
-  const hiddenField = `_${field}`;
-  const obj = asStringDictionary(inobj);
-  if (hasNoArgs(value) || value === null) {
-    obj[hiddenField] = void 0;
-  } else if (isNumArg(value)) {
-    obj[hiddenField] = value;
-  } else if (isStringArg(value) && Number.isFinite(Number(value))) {
-    obj[hiddenField] = parseFloat(value);
-  } else {
-    throw new Error(
-      `value argument is optional or number, but was type ${typeof value}, '${value}' `
-    );
-  }
-  return obj;
-}
-function doMomentGetterSetter(inobj, field, value) {
-  const hiddenField = `_${field}`;
-  const obj = asStringDictionary(inobj);
-  if (hasNoArgs(value) || value === null) {
-    obj[hiddenField] = void 0;
-  } else if (isDef(value) && isObject(value) && DateTime.isDateTime(value)) {
-    obj[hiddenField] = value;
-  } else if (isDef(value) && DateTime.isDateTime(checkStringOrDate(value))) {
-    obj[hiddenField] = checkStringOrDate(value);
-  } else {
-    throw new Error(
-      `${field} value argument is optional, DateTime, date or date string, but was type ${typeof value}, '${stringify(
-        value
-      )}' `
-    );
-  }
-  return obj;
-}
-function dataViewToString(dataView) {
-  let out = "";
-  for (let i = 0; i < dataView.byteLength; i++) {
-    out += String.fromCharCode(dataView.getUint8(i));
-  }
-  return out;
-}
-function log(msg) {
-  if (console) {
-    console.log(`${stringify(msg)}`);
-  }
-  if (typeof document !== "undefined" && document !== null) {
-    const p = document.createElement("p");
-    p.textContent = `${stringify(msg)}`;
-    const divDebug = document.querySelector("div#debug");
-    if (isDef(divDebug)) {
-      divDebug.appendChild(p);
-    }
-  }
-}
-function isError(error) {
-  return typeof error === "object" && error !== null && error instanceof Error;
-}
-function toError(maybeError) {
-  if (isError(maybeError)) return maybeError;
-  try {
-    return new Error(JSON.stringify(maybeError));
-  } catch {
-    return new Error(String(maybeError));
-  }
-}
-function warn(msg) {
-  if (console) {
-    console.assert(false, `${stringify(msg)}`);
-  }
-  if (typeof document !== "undefined" && document !== null) {
-    const p = document.createElement("p");
-    p.textContent = `${stringify(msg)}`;
-    document.querySelector("div#debug").appendChild(p);
-  }
-}
-function stringify(value) {
-  if (typeof value === "string") {
-    return value;
-  } else if (typeof value === "number") {
-    return value.toString();
-  } else if (typeof value === "boolean") {
-    return value ? "true" : "false";
-  } else if (typeof value === "undefined") {
-    return "undefined";
-  } else if (typeof value === "function") {
-    return "function " + value.name;
-  } else if (typeof value === "object") {
-    if (value) {
-      if (DateTime.isDateTime(value)) {
-        const dateTimeValue = value;
-        const s2 = dateTimeValue.toISO();
-        return dateTimeValue.isValid && s2 ? s2 : `Invalid DateTime: ${dateTimeValue.invalidReason}: ${dateTimeValue.invalidExplanation}`;
-      } else {
-        return `${value?.constructor?.name} ${String(value)}`;
-      }
-    } else {
-      return `${value}`;
-    }
-  } else {
-    return "<unknown" + typeof value + "???>";
-  }
-}
-function isoToDateTime(val) {
-  if (val.toLowerCase() === "now") {
-    return DateTime.utc();
-  }
-  return DateTime.fromISO(val, UTC_OPTIONS);
-}
-function startEnd(start2, end) {
-  if (isStringArg(start2)) {
-    start2 = isoToDateTime(start2);
-  }
-  if (isStringArg(end)) {
-    end = isoToDateTime(end);
-  }
-  return Interval.fromDateTimes(start2, end);
-}
-function startDuration(start2, duration) {
-  if (isStringArg(start2)) {
-    start2 = isoToDateTime(start2);
-  }
-  if (isStringArg(duration)) {
-    duration = Duration.fromISO(duration);
-  } else if (isNumArg(duration)) {
-    duration = Duration.fromMillis(1e3 * duration);
-  }
-  if (duration.valueOf() < 0) {
-    return Interval.before(start2, duration.negate());
-  } else {
-    return Interval.after(start2, duration);
-  }
-}
-function durationEnd(duration, end) {
-  if (isStringArg(end)) {
-    end = isoToDateTime(end);
-  }
-  if (isStringArg(duration)) {
-    duration = Duration.fromISO(duration);
-  } else if (isNumArg(duration)) {
-    duration = Duration.fromMillis(1e3 * duration);
-  }
-  if (duration.valueOf() < 0) {
-    return Interval.after(end, duration.negate());
-  } else {
-    return Interval.before(end, duration);
-  }
-}
-function calcClockOffset(serverTimeUTC) {
-  return DateTime.utc().diff(serverTimeUTC).toMillis() * 1e3;
-}
-var WAY_FUTURE = DateTime.fromISO("2500-01-01T00:00:00Z");
-function checkStringOrDate(d) {
-  if (DateTime.isDateTime(d)) {
-    return d;
-  } else if (d instanceof Date) {
-    return DateTime.fromJSDate(d, UTC_OPTIONS);
-  } else if (isNumArg(d)) {
-    return DateTime.fromMillis(d, UTC_OPTIONS);
-  } else if (isNonEmptyStringArg(d)) {
-    const lc = d.toLowerCase();
-    if (d.length === 0 || lc === "now") {
-      return DateTime.utc();
-    } else {
-      return isoToDateTime(d);
-    }
-  }
-  throw new Error(`unknown date type: ${stringify(d)} ${typeof d}`);
-}
-function makeParam(name, val) {
-  return `${name}=${encodeURIComponent(stringify(val))}&`;
-}
-function makePostParam(name, val) {
-  return name + "=" + stringify(val) + "\n";
-}
-function toIsoWoZ(date2) {
-  if (date2.isValid) {
-    let out = date2.toISO();
-    if (out == null) {
-      throw new Error(`Bad date: ${stringify(date2)}`);
-    }
-    if (out.endsWith("Z")) {
-      out = out.substring(0, out.length - 1);
-    }
-    return out;
-  } else {
-    throw new Error(`${date2.invalidReason}: ${date2.invalidExplanation}`);
-  }
-}
-function validStartTime(interval2) {
-  const d = interval2.start;
-  if (d == null) {
-    throw new Error(`Bad interval: ${stringify(interval2)}`);
-  }
-  return d;
-}
-function validEndTime(interval2) {
-  const d = interval2.end;
-  if (d == null) {
-    throw new Error(`Bad interval: ${stringify(interval2)}`);
-  }
-  return d;
-}
-function toJSDate(d) {
-  if (!d) {
-    throw new Error(`Null/undef DateTime: ${d}`);
-  }
-  if (!d.isValid) {
-    throw new Error(`${d.invalidReason}: ${d.invalidExplanation}`);
-  }
-  return d.toJSDate();
-}
-function checkLuxonValid(d, msg) {
-  if (d == null) {
-    const m = msg ? msg : "";
-    throw new Error(`Null luxon value: ${d} ${m}`);
-  }
-  if (!d.isValid) {
-    const m = msg ? msg : "";
-    throw new Error(
-      `Invalid Luxon: ${typeof d} ${d?.constructor?.name} ${d.invalidReason}: ${d.invalidExplanation} ${m}`
-    );
-  }
-  return d;
-}
-function checkProtocol() {
-  let _protocol = "http:";
-  if (typeof document !== "undefined" && document !== null && "location" in document && "protocol" in document.location && "https:" === document.location.protocol) {
-    _protocol = "https:";
-  }
-  return _protocol;
-}
-function defaultFetchInitObj(mimeType) {
-  const headers = {};
-  if (isStringArg(mimeType)) {
-    headers.Accept = mimeType;
-  }
-  return {
-    cache: "no-cache",
-    redirect: "follow",
-    mode: "cors",
-    referrer: "seisplotjs",
-    headers
-  };
-}
-function cloneFetchInitObj(fetchInit) {
-  const out = {};
-  if (fetchInit) {
-    for (const [key, value] of Object.entries(fetchInit)) {
-      if (Array.isArray(value)) {
-        out[key] = value.slice();
-      } else {
-        out[key] = value;
-      }
-    }
-  }
-  return out;
-}
-function errorFetch(_url, _init) {
-  throw new Error("There is no fetch!?!?!");
-}
-var default_fetch = null;
-function setDefaultFetch(fetcher) {
-  if (fetcher != null) {
-    default_fetch = fetcher;
-  }
-}
-function getFetch() {
-  if (default_fetch != null) {
-    return default_fetch;
-  } else if (window != null) {
-    return window.fetch;
-  } else if (global != null) {
-    return global.fetch;
-  } else {
-    return errorFetch;
-  }
-}
-function doFetchWithTimeout(url, fetchInit, timeoutSec2, fetcher) {
-  const controller = new AbortController();
-  const signal = controller.signal;
-  if (!fetcher) {
-    fetcher = getFetch();
-  }
-  if (!fetcher) {
-    fetcher = window.fetch;
-  }
-  let internalFetchInit = isDef(fetchInit) ? fetchInit : defaultFetchInitObj();
-  internalFetchInit = cloneFetchInitObj(internalFetchInit);
-  if (internalFetchInit.redirect === "follow" && internalFetchInit.method === "POST") {
-    internalFetchInit.redirect = "manual";
-  }
-  if (!isDef(timeoutSec2)) {
-    timeoutSec2 = 30;
-  }
-  setTimeout(() => controller.abort(), timeoutSec2 * 1e3);
-  internalFetchInit.signal = signal;
-  let absoluteUrl;
-  if (url instanceof URL) {
-    absoluteUrl = url;
-  } else if (isStringArg(url)) {
-    if (url.startsWith("http://") || url.startsWith("https://")) {
-      absoluteUrl = new URL(url);
-    } else {
-      absoluteUrl = new URL(url, document.URL);
-    }
-  } else {
-    throw new Error(`url must be string or URL, ${stringify(url)}`);
-  }
-  log(
-    `attempt to fetch ${internalFetchInit.method ? internalFetchInit.method : ""} ${stringify(
-      absoluteUrl
-    )}`
-  );
-  const fetchForRedirect = fetcher;
-  return fetcher(absoluteUrl.href, internalFetchInit).catch((err) => {
-    log("fetch failed, possible CORS or PrivacyBadger or NoScript?");
-    throw err;
-  }).then(function(response) {
-    if (response.ok || response.status === 404) {
-      return response;
-    } else if (response.status >= 300 && response.status <= 399) {
-      if (checkProtocol() === "http:" && absoluteUrl.href.startsWith("http://")) {
-        const httpsUrl = new URL(`https://${absoluteUrl.href.slice(7)}`);
-        const method = internalFetchInit.method ? internalFetchInit.method : "";
-        log(
-          `attempt fetch redirect ${response.status} ${method} to ${stringify(httpsUrl)}`
-        );
-        return fetchForRedirect(httpsUrl.href, internalFetchInit).then(
-          (httpsResponse) => {
-            if (httpsResponse.ok || httpsResponse.status === 404) {
-              return httpsResponse;
-            } else {
-              return response.text().then((text) => {
-                throw new Error(
-                  `fetch response was redirect for http and failed for https. ${response.ok} ${response.status}, ${httpsResponse.ok} ${httpsResponse.status} 
-${text}`
-                );
-              });
-            }
-          }
-        );
-      }
-    }
-    return response.text().then((text) => {
-      throw new Error(
-        `fetch response was not ok. ${response.ok} ${response.status}
-${text}`
-      );
-    });
-  });
-}
-function downloadBlobAsFile(data, filename, mimeType = "application/octet-stream") {
-  if (!data) {
-    throw new Error("data is empty");
-  }
-  if (!filename) filename = "filetodownload.txt";
-  const blob = new Blob([data], { type: mimeType });
-  const e = document.createEvent("MouseEvents");
-  const a = document.createElement("a");
-  a.download = filename;
-  a.href = window.URL.createObjectURL(blob);
-  a.dataset.downloadurl = [mimeType, a.download, a.href].join(":");
-  e.initMouseEvent(
-    "click",
-    true,
-    false,
-    window,
-    0,
-    0,
-    0,
-    0,
-    0,
-    false,
-    false,
-    false,
-    false,
-    0,
-    null
-  );
-  a.dispatchEvent(e);
-}
-function meanOfSlice(dataSlice, totalPts) {
-  if (dataSlice.length < 8) {
-    return (
-      // @ts-expect-error different array types confuses typescript
-      dataSlice.reduce(function(acc, val) {
-        return acc + val;
-      }, 0) / totalPts
-    );
-  } else {
-    const byTwo = Math.floor(dataSlice.length / 2);
-    return meanOfSlice(dataSlice.slice(0, byTwo), totalPts) + meanOfSlice(dataSlice.slice(byTwo, dataSlice.length), totalPts);
-  }
-}
-var SVG_NS = "http://www.w3.org/2000/svg";
-var XHTML_NS = "http://www.w3.org/1999/xhtml";
-function createSVGElement(name) {
-  return document.createElementNS(SVG_NS, name);
-}
-function updateVersionText(selector = "#sp-version") {
-  document.querySelectorAll(selector).forEach((el) => {
-    el.textContent = version;
-  });
-}
 
 // src/scale.ts
 var scale_exports = {};
@@ -43850,7 +44213,6 @@ var AmplitudeScalable = class {
       this.minMax = new MinMaxable(0, 0);
     }
   }
-  // eslint-disable-next-line no-unused-vars
   notifyAmplitudeChange(_middle, _halfWidth) {
   }
   get middle() {
@@ -43879,7 +44241,6 @@ var TimeScalable = class {
     this.alignmentTimeOffset = alignmentTimeOffset;
     this.duration = duration;
   }
-  // eslint-disable-next-line no-unused-vars
   notifyTimeRangeChange(_alignmentTimeOffset, _duration) {
   }
 };
@@ -45045,6 +45406,8 @@ __export(stationxml_exports, {
   extractComplex: () => extractComplex,
   fetchStationXml: () => fetchStationXml,
   findChannels: () => findChannels,
+  findChannelsForSourceId: () => findChannelsForSourceId,
+  mightBeStatonXml: () => mightBeStatonXml,
   parseStationXml: () => parseStationXml,
   parseUtil: () => parseUtil,
   uniqueNetworks: () => uniqueNetworks,
@@ -45166,14 +45529,30 @@ function createChannelClickEvent(sta, mouseclick) {
     mouseevent: mouseclick,
     channel: sta
   };
-  return new CustomEvent(CHANNEL_CLICK_EVENT, { detail });
+  return new CustomEvent(
+    CHANNEL_CLICK_EVENT,
+    {
+      detail,
+      bubbles: true,
+      cancelable: false,
+      composed: true
+    }
+  );
 }
 function createStationClickEvent(sta, mouseclick) {
   const detail = {
     mouseevent: mouseclick,
     station: sta
   };
-  return new CustomEvent(STATION_CLICK_EVENT, { detail });
+  return new CustomEvent(
+    STATION_CLICK_EVENT,
+    {
+      detail,
+      bubbles: true,
+      cancelable: false,
+      composed: true
+    }
+  );
 }
 var Network = class {
   constructor(networkCode) {
@@ -45354,8 +45733,8 @@ var Channel = class {
     this.depth = 0;
     this.elevation = 0;
     this.sampleRate = 0;
-    if (channelCode.length !== 3) {
-      throw new Error(`Channel code must be 3 chars: ${channelCode}`);
+    if (channelCode.length !== 3 && channelCode.split("_").length !== 3) {
+      throw new Error(`Channel code must be 3 chars or of form b_s_s: "${channelCode} ${channelCode.split("_").length}"`);
     }
     this.channelCode = channelCode;
     this._locationCode = locationCode;
@@ -45378,6 +45757,9 @@ var Channel = class {
       this.locationCode,
       this.channelCode
     );
+  }
+  set sourceId(sid) {
+    this._sourceId = sid;
   }
   get nslcId() {
     return new NslcId(
@@ -46061,11 +46443,11 @@ function convertToStage(stageXml) {
   } else if (stageXml.childElementCount === 1 && subEl.localName === "StageGain") {
   } else {
     const inputUnits = _grabFirstElText(
-      _grabFirstEl(stageXml, "InputUnits"),
+      _grabFirstEl(subEl, "InputUnits"),
       "Name"
     );
     const outputUnits = _grabFirstElText(
-      _grabFirstEl(stageXml, "OutputUnits"),
+      _grabFirstEl(subEl, "OutputUnits"),
       "Name"
     );
     if (!isNonEmptyStringArg(inputUnits)) {
@@ -46242,6 +46624,26 @@ function* findChannels(networks, netCode, staCode, locCode, chanCode) {
     }
   }
 }
+function* findChannelsForSourceId(networks, sid) {
+  const netRE = new RegExp(`^${sid.networkCode}$`);
+  const staRE = new RegExp(`^${sid.stationCode}$`);
+  const locRE = new RegExp(`^${sid.locationCode}$`);
+  const bandRE = new RegExp(`^${sid.bandCode}$`);
+  const sourceRE = new RegExp(`^${sid.sourceCode}$`);
+  const subsourceRE = new RegExp(`^${sid.subsourceCode}$`);
+  for (const n2 of networks.filter((n3) => netRE.test(n3.networkCode))) {
+    for (const s2 of n2.stations.filter((s3) => staRE.test(s3.stationCode))) {
+      for (const c of s2.channels.filter(
+        (c2) => locRE.test(c2.locationCode)
+      )) {
+        const chanSid = c.sourceId;
+        if (bandRE.test(chanSid.bandCode) && sourceRE.test(chanSid.sourceCode) && subsourceRE.test(chanSid.subsourceCode)) {
+          yield c;
+        }
+      }
+    }
+  }
+}
 function uniqueSourceIds(channelList) {
   const out = /* @__PURE__ */ new Map();
   for (const c of channelList) {
@@ -46264,7 +46666,14 @@ function uniqueNetworks(channelList) {
   const out = /* @__PURE__ */ new Set();
   for (const c of channelList) {
     if (c) {
-      out.add(c.station.network);
+      console.log(`uniqueNet ${c.constructor.name}`);
+      if (c instanceof Station) {
+        out.add(c.network);
+      } else if (c instanceof Channel) {
+        out.add(c.station.network);
+      } else {
+        throw new Error(`unknown type for uniqueNetworks: ${c}`);
+      }
     }
   }
   return Array.from(out.values());
@@ -46285,14 +46694,26 @@ function fetchStationXml(url, timeoutSec2 = 10, nodata = 204) {
     return parseStationXml(rawXml);
   });
 }
+function mightBeStatonXml(buf) {
+  if (!mightBeXml(buf)) {
+    return false;
+  }
+  const initialChars = dataViewToString(new DataView(buf.slice(0, 100))).trimStart();
+  if (!initialChars.includes("FDSNStationXML")) {
+    return false;
+  }
+  return true;
+}
 var _grabFirstEl = function(xml, tagName) {
   let out = null;
   if (xml instanceof Element) {
-    const el = xml.getElementsByTagName(tagName);
-    if (isObject(el) && el.length > 0) {
-      const e = el.item(0);
+    const elList = Array.from(xml.children).filter(
+      (e) => e.tagName === tagName
+    );
+    if (elList.length > 0) {
+      const e = elList[0];
       if (e) {
-        out = e;
+        return e;
       }
     }
   }
@@ -46830,7 +47251,11 @@ var SeismogramDisplayData = class _SeismogramDisplayData {
     this.quakeReferenceList.push(publicId);
   }
   addMarker(marker2) {
-    this.addMarkers([marker2]);
+    let mlist = [marker2];
+    if (Array.isArray(marker2)) {
+      mlist = marker2;
+    }
+    this.addMarkers(mlist);
   }
   addMarkers(markers) {
     if (Array.isArray(markers)) {
@@ -46841,6 +47266,9 @@ var SeismogramDisplayData = class _SeismogramDisplayData {
   }
   getMarkers() {
     return this.markerList;
+  }
+  clearMarkers() {
+    this.markerList = [];
   }
   addTravelTimes(ttimes) {
     if (Array.isArray(ttimes)) {
@@ -46930,12 +47358,12 @@ var SeismogramDisplayData = class _SeismogramDisplayData {
   }
   /**
    * return location code a a string.
-   * Uses this.channel if it exists, this.seismogram if not.
+   * Uses this.sourceId if it exists, this.seismogram if not.
    *
    * @returns location code
    */
   get locationCode() {
-    let out = this.sourceId.locationCode;
+    let out = this?.sourceId.locationCode;
     if (!isDef(out)) {
       out = "unknown";
     }
@@ -46943,12 +47371,12 @@ var SeismogramDisplayData = class _SeismogramDisplayData {
   }
   /**
    * return channels code as a string.
-   * Uses this.channel if it exists, this.seismogram if not.
+   * Uses this.sourceId if it exists, this.seismogram if not.
    *
    * @returns channel code
    */
   get channelCode() {
-    let out = this.sourceId.formChannelCode();
+    let out = this?.sourceId.formChannelCode();
     if (!isDef(out)) {
       out = "unknown";
     }
@@ -47945,13 +48373,5152 @@ function seismogramPerChannel(drList) {
   return out;
 }
 
+// src/mseed3.ts
+var mseed3_exports = {};
+__export(mseed3_exports, {
+  BIG_ENDIAN: () => BIG_ENDIAN,
+  CRC_OFFSET: () => CRC_OFFSET,
+  FDSN_PREFIX: () => FDSN_PREFIX2,
+  FIXED_HEADER_SIZE: () => FIXED_HEADER_SIZE,
+  LITTLE_ENDIAN: () => LITTLE_ENDIAN,
+  MINISEED_THREE_MIME: () => MINISEED_THREE_MIME,
+  MSeed3Header: () => MSeed3Header,
+  MSeed3Record: () => MSeed3Record,
+  UNKNOWN_DATA_VERSION: () => UNKNOWN_DATA_VERSION,
+  areContiguous: () => areContiguous2,
+  byChannel: () => byChannel2,
+  calculateCRC32C: () => calculateCRC32C,
+  convertMS2Record: () => convertMS2Record,
+  convertMS2toMSeed3: () => convertMS2toMSeed3,
+  crcToHexString: () => crcToHexString,
+  createSeismogramSegment: () => createSeismogramSegment2,
+  makeString: () => makeString2,
+  merge: () => merge2,
+  mergeSegments: () => mergeSegments2,
+  mightBeMSeed3Records: () => mightBeMSeed3Records,
+  padZeros: () => padZeros,
+  parseExtraHeaders: () => parseExtraHeaders,
+  parseMSeed3Records: () => parseMSeed3Records,
+  sddPerChannel: () => sddPerChannel,
+  seismogramPerChannel: () => seismogramPerChannel2,
+  seismogramSegmentPerChannel: () => seismogramSegmentPerChannel2,
+  toMSeed3: () => toMSeed3
+});
+
+// src/mseed3eh.ts
+var mseed3eh_exports = {};
+__export(mseed3eh_exports, {
+  STD_EH: () => STD_EH,
+  channelToEH: () => channelToEH,
+  createBagEH: () => createBagEH,
+  ehToChannel: () => ehToChannel,
+  ehToMarkers: () => ehToMarkers,
+  ehToQuake: () => ehToQuake,
+  extractBagEH: () => extractBagEH,
+  isValidBagChannelJsonEHType: () => isValidBagChannelJsonEHType,
+  isValidBagEventJsonEHType: () => isValidBagEventJsonEHType,
+  isValidBagJsonEHType: () => isValidBagJsonEHType,
+  isValidBagMagJsonEHType: () => isValidBagMagJsonEHType,
+  isValidBagMarkJsonEHType: () => isValidBagMarkJsonEHType,
+  isValidBagOriginJsonEHType: () => isValidBagOriginJsonEHType,
+  isValidBagPathJsonEHType: () => isValidBagPathJsonEHType,
+  isValidBagTimeseriesJsonEHType: () => isValidBagTimeseriesJsonEHType,
+  markerToEH: () => markerToEH,
+  markerTypeFromEH: () => markerTypeFromEH,
+  quakeToEH: () => quakeToEH
+});
+
+// src/quakeml.ts
+var quakeml_exports = {};
+__export(quakeml_exports, {
+  ANSS_CATALOG_NS: () => ANSS_CATALOG_NS,
+  ANSS_NS: () => ANSS_NS,
+  Amplitude: () => Amplitude,
+  Arrival: () => Arrival,
+  Axis: () => Axis,
+  BED_NS: () => BED_NS,
+  Comment: () => Comment2,
+  CompositeTime: () => CompositeTime,
+  ConfidenceEllipsoid: () => ConfidenceEllipsoid,
+  CreationInfo: () => CreationInfo,
+  DataUsed: () => DataUsed,
+  EventDescription: () => EventDescription,
+  EventParameters: () => EventParameters,
+  FAKE_EMPTY_XML: () => FAKE_EMPTY_XML2,
+  FAKE_ORIGIN_TIME: () => FAKE_ORIGIN_TIME,
+  FocalMechanism: () => FocalMechanism,
+  IRIS_NS: () => IRIS_NS,
+  Magnitude: () => Magnitude,
+  MomentTensor: () => MomentTensor,
+  NodalPlane: () => NodalPlane,
+  NodalPlanes: () => NodalPlanes,
+  Origin: () => Origin,
+  OriginQuality: () => OriginQuality,
+  OriginUncertainty: () => OriginUncertainty,
+  Pick: () => Pick,
+  PrincipalAxes: () => PrincipalAxes,
+  QML_NS: () => QML_NS,
+  QUAKE_CLICK_EVENT: () => QUAKE_CLICK_EVENT,
+  Quake: () => Quake,
+  Quantity: () => Quantity,
+  SourceTimeFunction: () => SourceTimeFunction,
+  StationMagnitude: () => StationMagnitude,
+  StationMagnitudeContribution: () => StationMagnitudeContribution,
+  Tensor: () => Tensor,
+  TimeWindow: () => TimeWindow,
+  UNKNOWN_MAG_TYPE: () => UNKNOWN_MAG_TYPE,
+  UNKNOWN_PUBLIC_ID: () => UNKNOWN_PUBLIC_ID,
+  USGS_HOST: () => USGS_HOST,
+  WaveformID: () => WaveformID,
+  createQuakeClickEvent: () => createQuakeClickEvent,
+  createQuakeFromValues: () => createQuakeFromValues,
+  fetchQuakeML: () => fetchQuakeML,
+  mightBeQuakeML: () => mightBeQuakeML,
+  parseQuakeML: () => parseQuakeML,
+  parseUtil: () => parseUtil2
+});
+
+// src/textformat.ts
+var lang = typeof navigator !== "undefined" && navigator?.language ? navigator?.language : "en-US";
+var latlonFormat = new Intl.NumberFormat(lang, {
+  style: "unit",
+  unit: "degree",
+  unitDisplay: "narrow",
+  maximumFractionDigits: 2
+});
+var magFormat = new Intl.NumberFormat(lang, {
+  style: "decimal",
+  maximumFractionDigits: 2
+});
+var depthNoUnitFormat = new Intl.NumberFormat(lang, {
+  style: "decimal",
+  maximumFractionDigits: 2
+});
+var depthFormat = new Intl.NumberFormat(lang, {
+  style: "unit",
+  unit: "kilometer",
+  unitDisplay: "narrow",
+  maximumFractionDigits: 2,
+  minimumFractionDigits: 2
+});
+var depthMeterFormat = new Intl.NumberFormat(lang, {
+  style: "unit",
+  unit: "meter",
+  unitDisplay: "narrow",
+  maximumFractionDigits: 1,
+  minimumFractionDigits: 1
+});
+
+// src/quakeml.ts
+var QML_NS = "http://quakeml.org/xmlns/quakeml/1.2";
+var BED_NS = "http://quakeml.org/xmlns/bed/1.2";
+var IRIS_NS = "http://service.iris.edu/fdsnws/event/1/";
+var ANSS_NS = "http://anss.org/xmlns/event/0.1";
+var ANSS_CATALOG_NS = "http://anss.org/xmlns/catalog/0.1";
+var USGS_HOST = "earthquake.usgs.gov";
+var UNKNOWN_MAG_TYPE = "unknown";
+var UNKNOWN_PUBLIC_ID = "unknownId";
+var FAKE_ORIGIN_TIME = DateTime.fromISO("1900-01-01T00:00:00Z");
+var FAKE_EMPTY_XML2 = '<?xml version="1.0"?><q:quakeml xmlns="http://quakeml.org/xmlns/bed/1.2" xmlns:q="http://quakeml.org/xmlns/quakeml/1.2"><eventParameters publicID="quakeml:fake/empty"></eventParameters></q:quakeml>';
+var QUAKE_CLICK_EVENT = "quakeclick";
+function createQuakeClickEvent(q, mouseclick) {
+  const detail = {
+    mouseevent: mouseclick,
+    quake: q
+  };
+  return new CustomEvent(
+    QUAKE_CLICK_EVENT,
+    {
+      detail,
+      bubbles: true,
+      cancelable: false,
+      composed: true
+    }
+  );
+}
+var BaseElement = class {
+  constructor() {
+    __publicField(this, "publicId", UNKNOWN_PUBLIC_ID);
+    __publicField(this, "comments", []);
+    __publicField(this, "creationInfo");
+  }
+  populate(qml) {
+    const pid = _grabAttribute3(qml, "publicID");
+    if (!isNonEmptyStringArg(pid)) {
+      throw new Error("missing publicID");
+    }
+    this.publicId = pid;
+    this.comments = _grabAllElComment(qml, "comment");
+    this.creationInfo = _grabFirstElCreationInfo(qml, "creationInfo");
+  }
+};
+var EventParameters = class _EventParameters extends BaseElement {
+  constructor() {
+    super(...arguments);
+    __publicField(this, "eventList", []);
+    __publicField(this, "description");
+  }
+  /**
+   * Parses a QuakeML event parameters xml element into an EventParameters object.
+   *
+   * @param eventParametersQML the event parameters xml Element
+   * @param host optional source of the xml, helpful for parsing the eventid
+   * @returns EventParameters instance
+   */
+  static createFromXml(eventParametersQML, host) {
+    if (eventParametersQML.localName !== "eventParameters") {
+      throw new Error(
+        `Cannot extract, not a QuakeML event parameters: ${eventParametersQML.localName}`
+      );
+    }
+    const eventEls = Array.from(
+      eventParametersQML.getElementsByTagNameNS(BED_NS, "event")
+    );
+    const events = eventEls.map((e) => Quake.createFromXml(e, host));
+    const description = _grabFirstElText3(eventParametersQML, "description");
+    const out = new _EventParameters();
+    out.populate(eventParametersQML);
+    out.eventList = events;
+    out.description = description;
+    return out;
+  }
+};
+var Quake = class _Quake extends BaseElement {
+  constructor() {
+    super(...arguments);
+    __publicField(this, "eventId");
+    __publicField(this, "descriptionList", []);
+    __publicField(this, "amplitudeList", []);
+    __publicField(this, "stationMagnitudeList", []);
+    __publicField(this, "magnitudeList", []);
+    __publicField(this, "originList", []);
+    __publicField(this, "pickList", []);
+    __publicField(this, "focalMechanismList", []);
+    __publicField(this, "preferredOrigin");
+    __publicField(this, "preferredMagnitude");
+    __publicField(this, "preferredFocalMechanism");
+    __publicField(this, "type");
+    __publicField(this, "typeCertainty");
+  }
+  /**
+   * Parses a QuakeML event xml element into a Quake object. Pass in
+   * host=seisplotjs.fdsnevent.USGS_HOST for xml from the USGS service
+   * in order to parse the eventid, otherwise this can be left out
+   *
+   * @param qml the event xml Element
+   * @param host optional source of the xml, helpful for parsing the eventid
+   * @returns QuakeML Quake(Event) object
+   */
+  static createFromXml(qml, host) {
+    if (qml.localName !== "event") {
+      throw new Error(`Cannot extract, not a QuakeML Event: ${qml.localName}`);
+    }
+    const out = new _Quake();
+    out.populate(qml);
+    const descriptionEls = Array.from(qml.children).filter(
+      (e) => e.tagName === "description"
+    );
+    out.descriptionList = descriptionEls.map(
+      (d) => EventDescription.createFromXml(d)
+    );
+    const allPickEls = Array.from(qml.getElementsByTagNameNS(BED_NS, "pick"));
+    const allPicks = [];
+    for (const pickEl of allPickEls) {
+      allPicks.push(Pick.createFromXml(pickEl));
+    }
+    const allAmplitudeEls = Array.from(
+      qml.getElementsByTagNameNS(BED_NS, "amplitude")
+    );
+    const allAmplitudes = [];
+    for (const amplitudeEl of allAmplitudeEls) {
+      allAmplitudes.push(Amplitude.createFromXml(amplitudeEl, allPicks));
+    }
+    const allOriginEls = Array.from(
+      qml.getElementsByTagNameNS(BED_NS, "origin")
+    );
+    const allOrigins = [];
+    for (const originEl of allOriginEls) {
+      allOrigins.push(Origin.createFromXml(originEl, allPicks));
+    }
+    const allStationMagEls = Array.from(
+      qml.getElementsByTagNameNS(BED_NS, "stationMagnitude")
+    );
+    const allStationMags = [];
+    for (const stationMagEl of allStationMagEls) {
+      allStationMags.push(
+        StationMagnitude.createFromXml(stationMagEl, allOrigins, allAmplitudes)
+      );
+    }
+    const allMagEls = Array.from(
+      qml.getElementsByTagNameNS(BED_NS, "magnitude")
+    );
+    const allMags = [];
+    for (const magEl of allMagEls) {
+      allMags.push(Magnitude.createFromXml(magEl, allOrigins, allStationMags));
+    }
+    const allFocalMechEls = Array.from(
+      qml.getElementsByTagNameNS(BED_NS, "focalMechanism")
+    );
+    const allFocalMechs = [];
+    for (const focalMechEl of allFocalMechEls) {
+      allFocalMechs.push(
+        FocalMechanism.createFromXml(focalMechEl, allOrigins, allMags)
+      );
+    }
+    out.originList = allOrigins;
+    out.magnitudeList = allMags;
+    out.pickList = allPicks;
+    out.amplitudeList = allAmplitudes;
+    out.stationMagnitudeList = allStationMags;
+    out.focalMechanismList = allFocalMechs;
+    out.eventId = _Quake.extractEventId(qml, host);
+    const preferredOriginId = _grabFirstElText3(qml, "preferredOriginID");
+    const preferredMagnitudeId = _grabFirstElText3(qml, "preferredMagnitudeID");
+    const preferredFocalMechId = _grabFirstElText3(
+      qml,
+      "preferredFocalMechanismID"
+    );
+    if (isNonEmptyStringArg(preferredOriginId)) {
+      out.preferredOrigin = allOrigins.find(
+        (o) => o.publicId === preferredOriginId
+      );
+      if (!out.preferredOrigin) {
+        throw new Error(`no preferredOriginId match: ${preferredOriginId}`);
+      }
+    }
+    if (isNonEmptyStringArg(preferredMagnitudeId)) {
+      out.preferredMagnitude = allMags.find(
+        (m) => m.publicId === preferredMagnitudeId
+      );
+      if (!out.preferredMagnitude) {
+        throw new Error(`no match: ${preferredMagnitudeId}`);
+      }
+    }
+    if (isNonEmptyStringArg(preferredFocalMechId)) {
+      out.preferredFocalMechanism = allFocalMechs.find(
+        (m) => m.publicId === preferredFocalMechId
+      );
+      if (!out.preferredFocalMechanism) {
+        throw new Error(`no match: ${preferredFocalMechId}`);
+      }
+    }
+    out.type = _grabFirstElText3(qml, "type");
+    out.typeCertainty = _grabFirstElText3(qml, "typeCertainty");
+    return out;
+  }
+  /**
+   * Extracts the EventId from a QuakeML element, guessing from one of several
+   * incompatible (grumble grumble) formats.
+   *
+   * @param   qml Quake(Event) to extract from
+   * @param   host optional source of the xml to help determine the event id style
+   * @returns     Extracted Id, or "unknownEventId" if we can't figure it out
+   */
+  static extractEventId(qml, host) {
+    const eventId = _grabAttributeNS2(qml, ANSS_CATALOG_NS, "eventid");
+    const catalogEventSource = _grabAttributeNS2(
+      qml,
+      ANSS_CATALOG_NS,
+      "eventsource"
+    );
+    if (isNonEmptyStringArg(eventId)) {
+      if (host === USGS_HOST && isNonEmptyStringArg(catalogEventSource)) {
+        return catalogEventSource + eventId;
+      } else {
+        return eventId;
+      }
+    }
+    const publicid = _grabAttribute3(qml, "publicID");
+    if (isNonEmptyStringArg(publicid)) {
+      let re2 = /eventid=([\w\d]+)/;
+      let parsed = re2.exec(publicid);
+      if (parsed) {
+        return parsed[1];
+      }
+      re2 = /evid=([\w\d]+)/;
+      parsed = re2.exec(publicid);
+      if (parsed) {
+        return parsed[1];
+      }
+    }
+    return UNKNOWN_PUBLIC_ID;
+  }
+  hasPreferredOrigin() {
+    return isDef(this.preferredOrigin);
+  }
+  hasOrigin() {
+    return isDef(this.preferredOrigin) || this.originList.length > 1;
+  }
+  get origin() {
+    if (isDef(this.preferredOrigin)) {
+      return this.preferredOrigin;
+    } else if (this.originList.length > 0) {
+      return this.originList[0];
+    } else {
+      throw new Error("No origins in quake");
+    }
+  }
+  hasPreferredMagnitude() {
+    return isDef(this.preferredMagnitude);
+  }
+  hasMagnitude() {
+    return isDef(this.preferredMagnitude) || this.magnitudeList.length > 1;
+  }
+  get magnitude() {
+    if (isDef(this.preferredMagnitude)) {
+      return this.preferredMagnitude;
+    } else if (this.magnitudeList.length > 0) {
+      return this.magnitudeList[0];
+    } else {
+      throw new Error("No magnitudes in quake");
+    }
+  }
+  get time() {
+    return this.origin.time;
+  }
+  get latitude() {
+    return this.origin.latitude;
+  }
+  get longitude() {
+    return this.origin.longitude;
+  }
+  get depth() {
+    return this.origin.depth;
+  }
+  get depthKm() {
+    return this.depth / 1e3;
+  }
+  get description() {
+    return this.descriptionList.length > 0 ? this.descriptionList[0].text : "";
+  }
+  get arrivals() {
+    return this.origin.arrivalList;
+  }
+  get picks() {
+    return this.pickList;
+  }
+  toString() {
+    if (this.hasOrigin()) {
+      const magStr = this.hasMagnitude() ? this.magnitude.toString() : "";
+      const latlon = `(${latlonFormat.format(this.latitude)}/${latlonFormat.format(this.longitude)})`;
+      const depth = depthFormat.format(this.depth / 1e3);
+      return `${this.time.toISO()} ${latlon} ${depth} ${magStr}`;
+    } else if (this.eventId != null) {
+      return `Event: ${this.eventId}`;
+    } else {
+      return `Event: unknown`;
+    }
+  }
+};
+var EventDescription = class _EventDescription {
+  constructor(text) {
+    __publicField(this, "text");
+    __publicField(this, "type");
+    this.text = text;
+  }
+  /**
+   * Parses a QuakeML description xml element into a EventDescription object.
+   *
+   * @param descriptionQML the description xml Element
+   * @returns EventDescription instance
+   */
+  static createFromXml(descriptionQML) {
+    if (descriptionQML.localName !== "description") {
+      throw new Error(
+        `Cannot extract, not a QuakeML description ID: ${descriptionQML.localName}`
+      );
+    }
+    const text = _grabFirstElText3(descriptionQML, "text");
+    if (!isNonEmptyStringArg(text)) {
+      throw new Error("description missing text");
+    }
+    const out = new _EventDescription(text);
+    out.type = _grabFirstElText3(descriptionQML, "type");
+    return out;
+  }
+  toString() {
+    return this.text;
+  }
+};
+var Amplitude = class _Amplitude extends BaseElement {
+  constructor(genericAmplitude) {
+    super();
+    __publicField(this, "genericAmplitude");
+    __publicField(this, "type");
+    __publicField(this, "category");
+    __publicField(this, "unit");
+    __publicField(this, "methodID");
+    __publicField(this, "period");
+    __publicField(this, "snr");
+    __publicField(this, "timeWindow");
+    __publicField(this, "pick");
+    __publicField(this, "waveformID");
+    __publicField(this, "filterID");
+    __publicField(this, "scalingTime");
+    __publicField(this, "magnitudeHint");
+    __publicField(this, "evaluationMode");
+    __publicField(this, "evaluationStatus");
+    this.genericAmplitude = genericAmplitude;
+  }
+  /**
+   * Parses a QuakeML amplitude xml element into an Amplitude object.
+   *
+   * @param amplitudeQML the amplitude xml Element
+   * @param allPicks picks already extracted from the xml for linking arrivals with picks
+   * @returns Amplitude instance
+   */
+  static createFromXml(amplitudeQML, allPicks) {
+    if (amplitudeQML.localName !== "amplitude") {
+      throw new Error(
+        `Cannot extract, not a QuakeML amplitude: ${amplitudeQML.localName}`
+      );
+    }
+    const genericAmplitude = _grabFirstElRealQuantity(
+      amplitudeQML,
+      "genericAmplitude"
+    );
+    if (!isDef(genericAmplitude)) {
+      throw new Error("amplitude missing genericAmplitude");
+    }
+    const out = new _Amplitude(genericAmplitude);
+    out.populate(amplitudeQML);
+    out.type = _grabFirstElText3(amplitudeQML, "type");
+    out.category = _grabFirstElText3(amplitudeQML, "category");
+    out.unit = _grabFirstElText3(amplitudeQML, "unit");
+    out.methodID = _grabFirstElText3(amplitudeQML, "methodID");
+    out.period = _grabFirstElRealQuantity(amplitudeQML, "period");
+    out.snr = _grabFirstElFloat3(amplitudeQML, "snr");
+    out.timeWindow = _grabFirstElType(
+      TimeWindow.createFromXml.bind(TimeWindow)
+    )(amplitudeQML, "timeWindow");
+    const pickID = _grabFirstElText3(amplitudeQML, "pickID");
+    out.pick = allPicks.find((p) => p.publicId === pickID);
+    if (pickID && !out.pick) {
+      throw new Error("No pick with ID " + pickID);
+    }
+    out.waveformID = _grabFirstElType(
+      WaveformID.createFromXml.bind(WaveformID)
+    )(amplitudeQML, "waveformID");
+    out.filterID = _grabFirstElText3(amplitudeQML, "filterID");
+    out.scalingTime = _grabFirstElTimeQuantity(amplitudeQML, "scalingTime");
+    out.magnitudeHint = _grabFirstElText3(amplitudeQML, "magnitudeHint");
+    out.evaluationMode = _grabFirstElText3(amplitudeQML, "evaluationMode");
+    out.evaluationStatus = _grabFirstElText3(amplitudeQML, "evaluationStatus");
+    return out;
+  }
+};
+var StationMagnitude = class _StationMagnitude extends BaseElement {
+  constructor(origin, mag) {
+    super();
+    __publicField(this, "origin");
+    __publicField(this, "mag");
+    __publicField(this, "type");
+    __publicField(this, "amplitude");
+    __publicField(this, "methodID");
+    __publicField(this, "waveformID");
+    this.origin = origin;
+    this.mag = mag;
+  }
+  /**
+   * Parses a QuakeML station magnitude xml element into a StationMagnitude object.
+   *
+   * @param stationMagnitudeQML the station magnitude xml Element
+   * @param allOrigins origins already extracted from the xml for linking station magnitudes with origins
+   * @param allAmplitudes amplitudes already extracted from the xml for linking station magnitudes with amplitudes
+   * @returns StationMagnitude instance
+   */
+  static createFromXml(stationMagnitudeQML, allOrigins, allAmplitudes) {
+    if (stationMagnitudeQML.localName !== "stationMagnitude") {
+      throw new Error(
+        `Cannot extract, not a QuakeML station magnitude: ${stationMagnitudeQML.localName}`
+      );
+    }
+    const originID = _grabFirstElText3(stationMagnitudeQML, "originID");
+    if (!isNonEmptyStringArg(originID)) {
+      throw new Error("stationMagnitude missing origin ID");
+    }
+    const origin = allOrigins.find((o) => o.publicId === originID);
+    if (!isDef(origin)) {
+      throw new Error("No origin with ID " + originID);
+    }
+    const mag = _grabFirstElRealQuantity(stationMagnitudeQML, "mag");
+    if (!isDef(mag)) {
+      throw new Error("stationMagnitude missing mag");
+    }
+    const out = new _StationMagnitude(origin, mag);
+    out.populate(stationMagnitudeQML);
+    out.type = _grabFirstElText3(stationMagnitudeQML, "type");
+    const amplitudeID = _grabFirstElText3(stationMagnitudeQML, "amplitudeID");
+    out.amplitude = allAmplitudes.find((a) => a.publicId === amplitudeID);
+    if (amplitudeID && !out.amplitude) {
+      throw new Error("No amplitude with ID " + amplitudeID);
+    }
+    out.methodID = _grabFirstElText3(stationMagnitudeQML, "methodID");
+    out.waveformID = _grabFirstElType(
+      WaveformID.createFromXml.bind(WaveformID)
+    )(stationMagnitudeQML, "waveformID");
+    return out;
+  }
+};
+var TimeWindow = class _TimeWindow {
+  constructor(begin, end, reference) {
+    __publicField(this, "begin");
+    __publicField(this, "end");
+    __publicField(this, "reference");
+    this.begin = begin;
+    this.end = end;
+    this.reference = reference;
+  }
+  /**
+   * Parses a QuakeML time window xml element into a TimeWindow object.
+   *
+   * @param timeWindowQML the time window xml Element
+   * @returns TimeWindow instance
+   */
+  static createFromXml(timeWindowQML) {
+    if (timeWindowQML.localName !== "timeWindow") {
+      throw new Error(
+        `Cannot extract, not a QuakeML time window: ${timeWindowQML.localName}`
+      );
+    }
+    const begin = _grabFirstElFloat3(timeWindowQML, "begin");
+    if (!isDef(begin)) {
+      throw new Error("timeWindow missing begin");
+    }
+    const end = _grabFirstElFloat3(timeWindowQML, "end");
+    if (!isDef(end)) {
+      throw new Error("timeWindow missing end");
+    }
+    const reference = _grabFirstElDateTime(timeWindowQML, "reference");
+    if (!isDef(reference)) {
+      throw new Error("timeWindow missing reference");
+    }
+    const out = new _TimeWindow(begin, end, reference);
+    return out;
+  }
+};
+var Origin = class _Origin extends BaseElement {
+  constructor(time, latitude, longitude) {
+    super();
+    __publicField(this, "compositeTimes");
+    __publicField(this, "originUncertainty");
+    __publicField(this, "arrivalList");
+    __publicField(this, "timeQuantity");
+    __publicField(this, "latitudeQuantity");
+    __publicField(this, "longitudeQuantity");
+    __publicField(this, "depthQuantity");
+    __publicField(this, "depthType");
+    __publicField(this, "timeFixed");
+    __publicField(this, "epicenterFixed");
+    __publicField(this, "referenceSystemID");
+    __publicField(this, "methodID");
+    __publicField(this, "earthModelID");
+    __publicField(this, "quality");
+    __publicField(this, "type");
+    __publicField(this, "region");
+    __publicField(this, "evaluationMode");
+    __publicField(this, "evaluationStatus");
+    this.compositeTimes = [];
+    this.arrivalList = [];
+    if (time instanceof DateTime) {
+      this.timeQuantity = new Quantity(time);
+    } else {
+      this.timeQuantity = time;
+    }
+    if (typeof latitude == "number") {
+      this.latitudeQuantity = new Quantity(latitude);
+    } else {
+      this.latitudeQuantity = latitude;
+    }
+    if (typeof longitude == "number") {
+      this.longitudeQuantity = new Quantity(longitude);
+    } else {
+      this.longitudeQuantity = longitude;
+    }
+  }
+  /**
+   * Parses a QuakeML origin xml element into a Origin object.
+   *
+   * @param qml the origin xml Element
+   * @param allPicks picks already extracted from the xml for linking arrivals with picks
+   * @returns Origin instance
+   */
+  static createFromXml(qml, allPicks) {
+    if (qml.localName !== "origin") {
+      throw new Error(`Cannot extract, not a QuakeML Origin: ${qml.localName}`);
+    }
+    const time = _grabFirstElTimeQuantity(qml, "time");
+    if (!isObject(time)) {
+      throw new Error("origin missing time");
+    }
+    const lat = _grabFirstElRealQuantity(qml, "latitude");
+    if (!isObject(lat)) {
+      throw new Error("origin missing latitude");
+    }
+    const lon = _grabFirstElRealQuantity(qml, "longitude");
+    if (!isObject(lon)) {
+      throw new Error("origin missing longitude");
+    }
+    const out = new _Origin(time, lat, lon);
+    out.populate(qml);
+    out.originUncertainty = _grabFirstElType(
+      OriginUncertainty.createFromXml.bind(OriginUncertainty)
+    )(qml, "originUncertainty");
+    const allArrivalEls = Array.from(
+      qml.getElementsByTagNameNS(BED_NS, "arrival")
+    );
+    out.arrivalList = allArrivalEls.map(
+      (arrivalEl) => Arrival.createFromXml(arrivalEl, allPicks)
+    );
+    out.depthQuantity = _grabFirstElRealQuantity(qml, "depth");
+    out.depthType = _grabFirstElText3(qml, "depthType");
+    out.timeFixed = _grabFirstElBool(qml, "timeFixed");
+    out.epicenterFixed = _grabFirstElBool(qml, "epicenterFixed");
+    out.referenceSystemID = _grabFirstElText3(qml, "referenceSystemID");
+    out.methodID = _grabFirstElText3(qml, "methodID");
+    out.earthModelID = _grabFirstElText3(qml, "earthModelID");
+    out.quality = _grabFirstElType(
+      OriginQuality.createFromXml.bind(OriginQuality)
+    )(qml, "quality");
+    out.type = _grabFirstElText3(qml, "type");
+    out.region = _grabFirstElText3(qml, "region");
+    out.evaluationMode = _grabFirstElText3(qml, "evaluationMode");
+    out.evaluationStatus = _grabFirstElText3(qml, "evaluationStatus");
+    return out;
+  }
+  toString() {
+    const latlon = `(${latlonFormat.format(this.latitude)}/${latlonFormat.format(this.longitude)})`;
+    const depth = depthFormat.format(this.depth / 1e3);
+    return `${this.time.toISO()} ${latlon} ${depth} km`;
+  }
+  get time() {
+    return this.timeQuantity.value;
+  }
+  set time(t) {
+    if (t instanceof DateTime) {
+      this.timeQuantity.value = t;
+    } else {
+      this.timeQuantity = t;
+    }
+  }
+  get latitude() {
+    return this.latitudeQuantity.value;
+  }
+  set latitude(lat) {
+    if (typeof lat == "number") {
+      this.latitudeQuantity.value = lat;
+    } else {
+      this.latitudeQuantity = lat;
+    }
+  }
+  get longitude() {
+    return this.longitudeQuantity.value;
+  }
+  set longitude(lon) {
+    if (typeof lon == "number") {
+      this.longitudeQuantity.value = lon;
+    } else {
+      this.longitudeQuantity = lon;
+    }
+  }
+  get depthKm() {
+    return this.depth / 1e3;
+  }
+  get depth() {
+    return this.depthQuantity?.value ?? NaN;
+  }
+  set depth(depth) {
+    if (typeof depth == "number") {
+      if (!this.depthQuantity) {
+        this.depthQuantity = new Quantity(depth);
+      } else {
+        this.depthQuantity.value = depth;
+      }
+    } else {
+      this.depthQuantity = depth;
+    }
+  }
+  get arrivals() {
+    return this.arrivalList;
+  }
+};
+var CompositeTime = class _CompositeTime {
+  constructor() {
+    __publicField(this, "year");
+    __publicField(this, "month");
+    __publicField(this, "day");
+    __publicField(this, "hour");
+    __publicField(this, "minute");
+    __publicField(this, "second");
+  }
+  /**
+   * Parses a QuakeML composite time xml element into an CompositeTime object.
+   *
+   * @param qml the composite time xml Element
+   * @returns CompositeTime instance
+   */
+  static createFromXml(qml) {
+    if (qml.localName !== "compositeTime") {
+      throw new Error(
+        `Cannot extract, not a QuakeML Composite Time: ${qml.localName}`
+      );
+    }
+    const out = new _CompositeTime();
+    out.year = _grabFirstElIntegerQuantity(qml, "year");
+    out.month = _grabFirstElIntegerQuantity(qml, "month");
+    out.day = _grabFirstElIntegerQuantity(qml, "day");
+    out.hour = _grabFirstElIntegerQuantity(qml, "hour");
+    out.minute = _grabFirstElIntegerQuantity(qml, "minute");
+    out.second = _grabFirstElIntegerQuantity(qml, "second");
+    return out;
+  }
+};
+var OriginUncertainty = class _OriginUncertainty {
+  constructor() {
+    __publicField(this, "horizontalUncertainty");
+    __publicField(this, "minHorizontalUncertainty");
+    __publicField(this, "maxHorizontalUncertainty");
+    __publicField(this, "azimuthMaxHorizontalUncertainty");
+    __publicField(this, "confidenceEllipsoid");
+    __publicField(this, "preferredDescription");
+    __publicField(this, "confidenceLevel");
+  }
+  /**
+   * Parses a QuakeML origin uncertainty xml element into an OriginUncertainty object.
+   *
+   * @param qml the origin uncertainty xml Element
+   * @returns OriginUncertainty instance
+   */
+  static createFromXml(qml) {
+    if (qml.localName !== "originUncertainty") {
+      throw new Error(
+        `Cannot extract, not a QuakeML Origin Uncertainty: ${qml.localName}`
+      );
+    }
+    const out = new _OriginUncertainty();
+    out.horizontalUncertainty = _grabFirstElFloat3(qml, "horizontalUncertainty");
+    out.minHorizontalUncertainty = _grabFirstElFloat3(
+      qml,
+      "minHorizontalUncertainty"
+    );
+    out.maxHorizontalUncertainty = _grabFirstElFloat3(
+      qml,
+      "maxHorizontalUncertainty"
+    );
+    out.azimuthMaxHorizontalUncertainty = _grabFirstElFloat3(
+      qml,
+      "azimuthMaxHorizontalUncertainty"
+    );
+    out.confidenceEllipsoid = _grabFirstElType(
+      ConfidenceEllipsoid.createFromXml.bind(ConfidenceEllipsoid)
+    )(qml, "confidenceEllipsoid");
+    out.preferredDescription = _grabFirstElText3(qml, "preferredDescription");
+    out.confidenceLevel = _grabFirstElFloat3(qml, "confidenceLevel");
+    return out;
+  }
+};
+var ConfidenceEllipsoid = class _ConfidenceEllipsoid {
+  constructor(semiMajorAxisLength, semiMinorAxisLength, semiIntermediateAxisLength, majorAxisPlunge, majorAxisAzimuth, majorAxisRotation) {
+    __publicField(this, "semiMajorAxisLength");
+    __publicField(this, "semiMinorAxisLength");
+    __publicField(this, "semiIntermediateAxisLength");
+    __publicField(this, "majorAxisPlunge");
+    __publicField(this, "majorAxisAzimuth");
+    __publicField(this, "majorAxisRotation");
+    this.semiMajorAxisLength = semiMajorAxisLength;
+    this.semiMinorAxisLength = semiMinorAxisLength;
+    this.semiIntermediateAxisLength = semiIntermediateAxisLength;
+    this.majorAxisPlunge = majorAxisPlunge;
+    this.majorAxisAzimuth = majorAxisAzimuth;
+    this.majorAxisRotation = majorAxisRotation;
+  }
+  /**
+   * Parses a QuakeML confidence ellipsoid xml element into an ConfidenceEllipsoid object.
+   *
+   * @param qml the confidence ellipsoid xml Element
+   * @returns ConfidenceEllipsoid instance
+   */
+  static createFromXml(qml) {
+    if (qml.localName !== "confidenceEllipsoid") {
+      throw new Error(
+        `Cannot extract, not a QuakeML Confidence Ellipsoid: ${qml.localName}`
+      );
+    }
+    const semiMajorAxisLength = _grabFirstElFloat3(qml, "semiMajorAxisLength");
+    if (semiMajorAxisLength === void 0) {
+      throw new Error("confidenceEllipsoid missing semiMajorAxisLength");
+    }
+    const semiMinorAxisLength = _grabFirstElFloat3(qml, "semiMinorAxisLength");
+    if (semiMinorAxisLength === void 0) {
+      throw new Error("confidenceEllipsoid missing semiMinorAxisLength");
+    }
+    const semiIntermediateAxisLength = _grabFirstElFloat3(
+      qml,
+      "semiIntermediateAxisLength"
+    );
+    if (semiIntermediateAxisLength === void 0) {
+      throw new Error("confidenceEllipsoid missing semiIntermediateAxisLength");
+    }
+    const majorAxisPlunge = _grabFirstElFloat3(qml, "majorAxisPlunge");
+    if (majorAxisPlunge === void 0) {
+      throw new Error("confidenceEllipsoid missing majorAxisPlunge");
+    }
+    const majorAxisAzimuth = _grabFirstElFloat3(qml, "majorAxisAzimuth");
+    if (majorAxisAzimuth === void 0) {
+      throw new Error("confidenceEllipsoid missing majorAxisAzimuth");
+    }
+    const majorAxisRotation = _grabFirstElFloat3(qml, "majorAxisRotation");
+    if (majorAxisRotation === void 0) {
+      throw new Error("confidenceEllipsoid missing majorAxisRotation");
+    }
+    const out = new _ConfidenceEllipsoid(
+      semiMajorAxisLength,
+      semiMinorAxisLength,
+      semiIntermediateAxisLength,
+      majorAxisPlunge,
+      majorAxisAzimuth,
+      majorAxisRotation
+    );
+    return out;
+  }
+};
+var OriginQuality = class _OriginQuality {
+  constructor() {
+    __publicField(this, "associatedPhaseCount");
+    __publicField(this, "usedPhaseCount");
+    __publicField(this, "associatedStationCount");
+    __publicField(this, "usedStationCount");
+    __publicField(this, "depthPhaseCount");
+    __publicField(this, "standardError");
+    __publicField(this, "azimuthalGap");
+    __publicField(this, "secondaryAzimuthalGap");
+    __publicField(this, "groundTruthLevel");
+    __publicField(this, "maximumDistance");
+    __publicField(this, "minimumDistance");
+    __publicField(this, "medianDistance");
+  }
+  /**
+   * Parses a QuakeML origin quality xml element into an OriginQuality object.
+   *
+   * @param qml the origin quality xml Element
+   * @returns OriginQuality instance
+   */
+  static createFromXml(qml) {
+    if (qml.localName !== "quality") {
+      throw new Error(
+        `Cannot extract, not a QuakeML Origin Quality: ${qml.localName}`
+      );
+    }
+    const out = new _OriginQuality();
+    out.associatedPhaseCount = _grabFirstElInt3(qml, "associatedPhaseCount");
+    out.usedPhaseCount = _grabFirstElInt3(qml, "usedPhaseCount");
+    out.associatedStationCount = _grabFirstElInt3(qml, "associatedStationCount");
+    out.usedStationCount = _grabFirstElInt3(qml, "usedStationCount");
+    out.standardError = _grabFirstElFloat3(qml, "standardError");
+    out.azimuthalGap = _grabFirstElFloat3(qml, "azimuthalGap");
+    out.secondaryAzimuthalGap = _grabFirstElFloat3(qml, "secondaryAzimuthalGap");
+    out.groundTruthLevel = _grabFirstElText3(qml, "groundTruthLevel");
+    out.maximumDistance = _grabFirstElFloat3(qml, "maximumDistance");
+    out.minimumDistance = _grabFirstElFloat3(qml, "minimumDistance");
+    out.medianDistance = _grabFirstElFloat3(qml, "medianDistance");
+    return out;
+  }
+};
+var Magnitude = class _Magnitude extends BaseElement {
+  constructor(mag, type) {
+    super();
+    __publicField(this, "stationMagnitudeContributions", []);
+    __publicField(this, "magQuantity");
+    __publicField(this, "type");
+    __publicField(this, "origin");
+    __publicField(this, "methodID");
+    __publicField(this, "stationCount");
+    __publicField(this, "azimuthalGap");
+    __publicField(this, "evaluationMode");
+    __publicField(this, "evaluationStatus");
+    if (typeof mag === "number") {
+      this.magQuantity = new Quantity(mag);
+    } else {
+      this.magQuantity = mag;
+    }
+    if (type) {
+      this.type = type;
+    }
+  }
+  /**
+   * Parses a QuakeML magnitude xml element into a Magnitude object.
+   *
+   * @param qml the magnitude xml Element
+   * @param allOrigins origins already extracted from the xml for linking magnitudes with origins
+   * @param allStationMagnitudes station magnitudes already extracted from the xml
+   * @returns Magnitude instance
+   */
+  static createFromXml(qml, allOrigins, allStationMagnitudes) {
+    if (qml.localName !== "magnitude") {
+      throw new Error(
+        `Cannot extract, not a QuakeML Magnitude: ${qml.localName}`
+      );
+    }
+    const mag = _grabFirstElRealQuantity(qml, "mag");
+    if (!mag) {
+      throw new Error("magnitude missing mag");
+    }
+    const out = new _Magnitude(mag);
+    out.populate(qml);
+    const stationMagnitudeContributionEls = Array.from(
+      qml.getElementsByTagNameNS(BED_NS, "stationMagnitudeContribution")
+    );
+    out.stationMagnitudeContributions = stationMagnitudeContributionEls.map(
+      (smc) => StationMagnitudeContribution.createFromXml(smc, allStationMagnitudes)
+    );
+    out.type = _grabFirstElText3(qml, "type");
+    const originID = _grabFirstElText3(qml, "originID");
+    out.origin = allOrigins.find((o) => o.publicId === originID);
+    if (originID && !out.origin) {
+      throw new Error("No origin with ID " + originID);
+    }
+    out.methodID = _grabFirstElText3(qml, "methodID");
+    out.stationCount = _grabFirstElInt3(qml, "stationCount");
+    out.azimuthalGap = _grabFirstElFloat3(qml, "azimuthalGap");
+    out.evaluationMode = _grabFirstElText3(qml, "evaluationMode");
+    out.evaluationStatus = _grabFirstElText3(qml, "evaluationStatus");
+    return out;
+  }
+  toString() {
+    return `${magFormat.format(this.mag)} ${this.type ? this.type : ""}`;
+  }
+  get mag() {
+    return this.magQuantity.value;
+  }
+  set mag(value) {
+    if (typeof value === "number") {
+      this.magQuantity.value = value;
+    } else {
+      this.magQuantity = value;
+    }
+  }
+};
+var StationMagnitudeContribution = class _StationMagnitudeContribution {
+  constructor(stationMagnitude) {
+    __publicField(this, "stationMagnitude");
+    __publicField(this, "residual");
+    __publicField(this, "weight");
+    this.stationMagnitude = stationMagnitude;
+  }
+  /**
+   * Parses a QuakeML station magnitude contribution xml element into a StationMagnitudeContribution object.
+   *
+   * @param qml the station magnitude contribution xml Element
+   * @param allStationMagnitudes station magnitudes already extracted from the xml for linking station magnitudes with station magnitude contributions
+   * @returns StationMagnitudeContribution instance
+   */
+  static createFromXml(qml, allStationMagnitudes) {
+    if (qml.localName !== "stationMagnitudeContribution") {
+      throw new Error(
+        `Cannot extract, not a QuakeML StationMagnitudeContribution: ${qml.localName}`
+      );
+    }
+    const stationMagnitudeID = _grabFirstElText3(qml, "stationMagnitudeID");
+    if (!isNonEmptyStringArg(stationMagnitudeID)) {
+      throw new Error("stationMagnitudeContribution missing stationMagnitude");
+    }
+    const stationMagnitude = allStationMagnitudes.find(
+      (sm) => sm.publicId === stationMagnitudeID
+    );
+    if (!isDef(stationMagnitude)) {
+      throw new Error("No stationMagnitude with ID " + stationMagnitudeID);
+    }
+    const out = new _StationMagnitudeContribution(stationMagnitude);
+    out.residual = _grabFirstElFloat3(qml, "residual");
+    out.weight = _grabFirstElFloat3(qml, "weight");
+    return out;
+  }
+};
+var Arrival = class _Arrival extends BaseElement {
+  constructor(phase, pick2) {
+    super();
+    __publicField(this, "phase");
+    __publicField(this, "pick");
+    __publicField(this, "timeCorrection");
+    __publicField(this, "azimuth");
+    __publicField(this, "distance");
+    __publicField(this, "takeoffAngle");
+    __publicField(this, "timeResidual");
+    __publicField(this, "horizontalSlownessResidual");
+    __publicField(this, "backazimuthResidual");
+    __publicField(this, "timeWeight");
+    __publicField(this, "horizontalSlownessWeight");
+    __publicField(this, "backazimuthWeight");
+    __publicField(this, "earthModelID");
+    this.phase = phase;
+    this.pick = pick2;
+  }
+  /**
+   * Parses a QuakeML arrival xml element into a Arrival object.
+   *
+   * @param arrivalQML the arrival xml Element
+   * @param allPicks picks already extracted from the xml for linking arrivals with picks
+   * @returns Arrival instance
+   */
+  static createFromXml(arrivalQML, allPicks) {
+    if (arrivalQML.localName !== "arrival") {
+      throw new Error(
+        `Cannot extract, not a QuakeML Arrival: ${arrivalQML.localName}`
+      );
+    }
+    const pickId = _grabFirstElText3(arrivalQML, "pickID");
+    const phase = _grabFirstElText3(arrivalQML, "phase");
+    if (isNonEmptyStringArg(phase) && isNonEmptyStringArg(pickId)) {
+      const myPick = allPicks.find(function(p) {
+        return p.publicId === pickId;
+      });
+      if (!myPick) {
+        throw new Error("Can't find pick with Id=" + pickId + " for Arrival");
+      }
+      const out = new _Arrival(phase, myPick);
+      out.populate(arrivalQML);
+      out.timeCorrection = _grabFirstElFloat3(arrivalQML, "timeCorrection");
+      out.azimuth = _grabFirstElFloat3(arrivalQML, "azimuth");
+      out.distance = _grabFirstElFloat3(arrivalQML, "distance");
+      out.takeoffAngle = _grabFirstElRealQuantity(arrivalQML, "takeoffAngle");
+      out.timeResidual = _grabFirstElFloat3(arrivalQML, "timeResidual");
+      out.horizontalSlownessResidual = _grabFirstElFloat3(
+        arrivalQML,
+        "horizontalSlownessResidual"
+      );
+      out.backazimuthResidual = _grabFirstElFloat3(
+        arrivalQML,
+        "backazimuthResidual"
+      );
+      out.timeWeight = _grabFirstElFloat3(arrivalQML, "timeWeight");
+      out.horizontalSlownessWeight = _grabFirstElFloat3(
+        arrivalQML,
+        "horizontalSlownessWeight"
+      );
+      out.backazimuthWeight = _grabFirstElFloat3(
+        arrivalQML,
+        "backazimuthWeight"
+      );
+      out.earthModelID = _grabFirstElText3(arrivalQML, "earthModelID");
+      return out;
+    } else {
+      throw new Error(
+        "Arrival does not have phase or pickId: " + stringify(phase) + " " + stringify(pickId)
+      );
+    }
+  }
+};
+var Pick = class _Pick extends BaseElement {
+  constructor(time, waveformID) {
+    super();
+    __publicField(this, "timeQuantity");
+    __publicField(this, "waveformID");
+    __publicField(this, "filterID");
+    __publicField(this, "methodID");
+    __publicField(this, "horizontalSlowness");
+    __publicField(this, "backazimuth");
+    __publicField(this, "slownessMethodID");
+    __publicField(this, "onset");
+    __publicField(this, "phaseHint");
+    __publicField(this, "polarity");
+    __publicField(this, "evaluationMode");
+    __publicField(this, "evaluationStatus");
+    if (time instanceof DateTime) {
+      this.timeQuantity = new Quantity(time);
+    } else {
+      this.timeQuantity = time;
+    }
+    this.waveformID = waveformID;
+  }
+  get time() {
+    return this.timeQuantity.value;
+  }
+  set time(t) {
+    if (t instanceof DateTime) {
+      this.timeQuantity.value = t;
+    } else {
+      this.timeQuantity = t;
+    }
+  }
+  /**
+   * Parses a QuakeML pick xml element into a Pick object.
+   *
+   * @param pickQML the pick xml Element
+   * @returns Pick instance
+   */
+  static createFromXml(pickQML) {
+    if (pickQML.localName !== "pick") {
+      throw new Error(
+        `Cannot extract, not a QuakeML Pick: ${pickQML.localName}`
+      );
+    }
+    const time = _grabFirstElTimeQuantity(pickQML, "time");
+    if (!isDef(time)) {
+      throw new Error("Missing time");
+    }
+    const waveformId = _grabFirstElType(
+      WaveformID.createFromXml.bind(WaveformID)
+    )(pickQML, "waveformID");
+    if (!isObject(waveformId)) {
+      throw new Error("pick missing waveformID");
+    }
+    const out = new _Pick(time, waveformId);
+    out.populate(pickQML);
+    out.filterID = _grabFirstElText3(pickQML, "filterID");
+    out.methodID = _grabFirstElText3(pickQML, "methodID");
+    out.horizontalSlowness = _grabFirstElRealQuantity(
+      pickQML,
+      "horizontalSlowness"
+    );
+    out.backazimuth = _grabFirstElRealQuantity(pickQML, "backazimuth");
+    out.slownessMethodID = _grabFirstElText3(pickQML, "slownessMethodID");
+    out.onset = _grabFirstElText3(pickQML, "onset");
+    out.phaseHint = _grabFirstElText3(pickQML, "phaseHint");
+    out.polarity = _grabFirstElText3(pickQML, "polarity");
+    out.evaluationMode = _grabFirstElText3(pickQML, "evaluationMode");
+    out.evaluationStatus = _grabFirstElText3(pickQML, "evaluationStatus");
+    return out;
+  }
+  get networkCode() {
+    return this.waveformID.networkCode;
+  }
+  get stationCode() {
+    return this.waveformID.stationCode;
+  }
+  get locationCode() {
+    return this.waveformID.locationCode || "--";
+  }
+  get channelCode() {
+    return this.waveformID.channelCode || "---";
+  }
+  isAtStation(station) {
+    return this.networkCode === station.networkCode && this.stationCode === station.stationCode;
+  }
+  isOnChannel(channel) {
+    return this.networkCode === channel.station.networkCode && this.stationCode === channel.station.stationCode && this.locationCode === channel.locationCode && this.channelCode === channel.channelCode;
+  }
+  toString() {
+    return stringify(this.time) + ` ${this.networkCode}.${this.stationCode}.${this.locationCode}.${this.channelCode}`;
+  }
+};
+var FocalMechanism = class _FocalMechanism extends BaseElement {
+  constructor() {
+    super(...arguments);
+    __publicField(this, "waveformIDList", []);
+    __publicField(this, "momentTensorList", []);
+    __publicField(this, "triggeringOrigin");
+    __publicField(this, "nodalPlanes");
+    __publicField(this, "principalAxes");
+    __publicField(this, "azimuthalGap");
+    __publicField(this, "stationPolarityCount");
+    __publicField(this, "misfit");
+    __publicField(this, "stationDistributionRatio");
+    __publicField(this, "methodID");
+    __publicField(this, "evaluationMode");
+    __publicField(this, "evaluationStatus");
+  }
+  /**
+   * Parses a QuakeML focal mechanism xml element into a FocalMechanism object.
+   *
+   * @param focalMechQML the focal mechanism xml Element
+   * @param allOrigins origins already extracted from the xml for linking focal mechanisms with origins
+   * @param allMagnitudes magnitudes already extracted from the xml for linking moment tensors with magnitudes
+   * @returns FocalMechanism instance
+   */
+  static createFromXml(focalMechQML, allOrigins, allMagnitudes) {
+    if (focalMechQML.localName !== "focalMechanism") {
+      throw new Error(
+        `Cannot extract, not a QuakeML focalMechanism: ${focalMechQML.localName}`
+      );
+    }
+    const out = new _FocalMechanism();
+    out.populate(focalMechQML);
+    const waveformIDEls = Array.from(
+      focalMechQML.getElementsByTagNameNS(BED_NS, "waveformID")
+    );
+    out.waveformIDList = waveformIDEls.map(
+      (wid) => WaveformID.createFromXml(wid)
+    );
+    const momentTensorEls = Array.from(
+      focalMechQML.getElementsByTagNameNS(BED_NS, "momentTensor")
+    );
+    out.momentTensorList = momentTensorEls.map(
+      (mt) => MomentTensor.createFromXml(mt, allOrigins, allMagnitudes)
+    );
+    const triggeringOriginID = _grabFirstElText3(
+      focalMechQML,
+      "triggeringOriginID"
+    );
+    out.triggeringOrigin = allOrigins.find(
+      (o) => o.publicId === triggeringOriginID
+    );
+    if (triggeringOriginID && !out.triggeringOrigin) {
+      throw new Error("No origin with ID " + triggeringOriginID);
+    }
+    out.nodalPlanes = _grabFirstElType(
+      NodalPlanes.createFromXml.bind(NodalPlanes)
+    )(focalMechQML, "nodalPlanes");
+    out.principalAxes = _grabFirstElType(
+      PrincipalAxes.createFromXml.bind(PrincipalAxes)
+    )(focalMechQML, "principalAxes");
+    out.azimuthalGap = _grabFirstElFloat3(focalMechQML, "azimuthalGap");
+    out.stationPolarityCount = _grabFirstElInt3(
+      focalMechQML,
+      "stationPolarityCount"
+    );
+    out.misfit = _grabFirstElFloat3(focalMechQML, "misfit");
+    out.stationDistributionRatio = _grabFirstElFloat3(
+      focalMechQML,
+      "stationDistributionRatio"
+    );
+    out.methodID = _grabFirstElText3(focalMechQML, "methodID");
+    out.evaluationMode = _grabFirstElText3(focalMechQML, "evaluationMode");
+    out.evaluationStatus = _grabFirstElText3(focalMechQML, "evaluationStatus");
+    return out;
+  }
+};
+var NodalPlanes = class _NodalPlanes {
+  constructor() {
+    __publicField(this, "nodalPlane1");
+    __publicField(this, "nodalPlane2");
+    __publicField(this, "preferredPlane");
+  }
+  /**
+   * Parses a QuakeML nodal planes xml element into a NodalPlanes object.
+   *
+   * @param nodalPlanesQML the nodal planes xml Element
+   * @returns NodalPlanes instance
+   */
+  static createFromXml(nodalPlanesQML) {
+    const out = new _NodalPlanes();
+    out.nodalPlane1 = _grabFirstElType(
+      NodalPlane.createFromXml.bind(NodalPlane)
+    )(nodalPlanesQML, "nodalPlane1");
+    out.nodalPlane2 = _grabFirstElType(
+      NodalPlane.createFromXml.bind(NodalPlane)
+    )(nodalPlanesQML, "nodalPlane2");
+    const preferredPlaneString = _grabAttribute3(
+      nodalPlanesQML,
+      "preferredPlane"
+    );
+    out.preferredPlane = isNonEmptyStringArg(preferredPlaneString) ? parseInt(preferredPlaneString) : void 0;
+    return out;
+  }
+};
+var NodalPlane = class _NodalPlane {
+  constructor(strike, dip, rake) {
+    __publicField(this, "strike");
+    __publicField(this, "dip");
+    __publicField(this, "rake");
+    this.strike = strike;
+    this.dip = dip;
+    this.rake = rake;
+  }
+  /**
+   * Parses a QuakeML nodal plane xml element into a NodalPlane object.
+   *
+   * @param nodalPlaneQML the nodal plane xml Element
+   * @returns NodalPlane instance
+   */
+  static createFromXml(nodalPlaneQML) {
+    const strike = _grabFirstElRealQuantity(nodalPlaneQML, "strike");
+    if (!isObject(strike)) {
+      throw new Error("nodal plane missing strike");
+    }
+    const dip = _grabFirstElRealQuantity(nodalPlaneQML, "dip");
+    if (!isObject(dip)) {
+      throw new Error("nodal plane missing dip");
+    }
+    const rake = _grabFirstElRealQuantity(nodalPlaneQML, "rake");
+    if (!isObject(rake)) {
+      throw new Error("nodal plane missing rake");
+    }
+    const out = new _NodalPlane(strike, dip, rake);
+    return out;
+  }
+};
+var PrincipalAxes = class _PrincipalAxes {
+  constructor(tAxis, pAxis) {
+    __publicField(this, "tAxis");
+    __publicField(this, "pAxis");
+    __publicField(this, "nAxis");
+    this.tAxis = tAxis;
+    this.pAxis = pAxis;
+  }
+  /**
+   * Parses a QuakeML princpalAxes element into a PrincipalAxes object.
+   *
+   * @param princpalAxesQML the princpalAxes xml Element
+   * @returns PrincipalAxes instance
+   */
+  static createFromXml(princpalAxesQML) {
+    if (princpalAxesQML.localName !== "principalAxes") {
+      throw new Error(
+        `Cannot extract, not a QuakeML princpalAxes: ${princpalAxesQML.localName}`
+      );
+    }
+    const tAxis = _grabFirstElType(Axis.createFromXml.bind(Axis))(
+      princpalAxesQML,
+      "tAxis"
+    );
+    if (!isObject(tAxis)) {
+      throw new Error("nodal plane missing tAxis");
+    }
+    const pAxis = _grabFirstElType(Axis.createFromXml.bind(Axis))(
+      princpalAxesQML,
+      "pAxis"
+    );
+    if (!isObject(pAxis)) {
+      throw new Error("nodal plane missing pAxis");
+    }
+    const out = new _PrincipalAxes(tAxis, pAxis);
+    out.nAxis = _grabFirstElType(Axis.createFromXml.bind(Axis))(
+      princpalAxesQML,
+      "nAxis"
+    );
+    return out;
+  }
+};
+var Axis = class _Axis {
+  constructor(azimuth, plunge, length) {
+    __publicField(this, "azimuth");
+    __publicField(this, "plunge");
+    __publicField(this, "length");
+    this.azimuth = azimuth;
+    this.plunge = plunge;
+    this.length = length;
+  }
+  /**
+   * Parses a QuakeML axis xml element into a Axis object.
+   *
+   * @param axisQML the axis xml Element
+   * @returns Axis instance
+   */
+  static createFromXml(axisQML) {
+    const azimuth = _grabFirstElRealQuantity(axisQML, "azimuth");
+    if (!isObject(azimuth)) {
+      throw new Error("nodal plane missing azimuth");
+    }
+    const plunge = _grabFirstElRealQuantity(axisQML, "plunge");
+    if (!isObject(plunge)) {
+      throw new Error("nodal plane missing plunge");
+    }
+    const length = _grabFirstElRealQuantity(axisQML, "length");
+    if (!isObject(length)) {
+      throw new Error("nodal plane missing length");
+    }
+    const out = new _Axis(azimuth, plunge, length);
+    return out;
+  }
+};
+var MomentTensor = class _MomentTensor extends BaseElement {
+  constructor(derivedOrigin) {
+    super();
+    __publicField(this, "dataUsedList", []);
+    __publicField(this, "derivedOrigin");
+    __publicField(this, "momentMagnitude");
+    __publicField(this, "scalarMoment");
+    __publicField(this, "tensor");
+    __publicField(this, "variance");
+    __publicField(this, "varianceReduction");
+    __publicField(this, "doubleCouple");
+    __publicField(this, "clvd");
+    __publicField(this, "iso");
+    __publicField(this, "greensFunctionID");
+    __publicField(this, "filterID");
+    __publicField(this, "sourceTimeFunction");
+    __publicField(this, "methodID");
+    __publicField(this, "category");
+    __publicField(this, "inversionType");
+    this.derivedOrigin = derivedOrigin;
+  }
+  /**
+   * Parses a QuakeML momentTensor xml element into a MomentTensor object.
+   *
+   * @param momentTensorQML the momentTensor xml Element
+   * @param allOrigins origins already extracted from the xml for linking moment tensors with origins
+   * @param allMagnitudes magnitudes already extracted from the xml for linking moment tensors with magnitudes
+   * @returns MomentTensor instance
+   */
+  static createFromXml(momentTensorQML, allOrigins, allMagnitudes) {
+    if (momentTensorQML.localName !== "momentTensor") {
+      throw new Error(
+        `Cannot extract, not a QuakeML momentTensor: ${momentTensorQML.localName}`
+      );
+    }
+    const derivedOriginID = _grabFirstElText3(
+      momentTensorQML,
+      "derivedOriginID"
+    );
+    if (!isNonEmptyStringArg(derivedOriginID)) {
+      throw new Error("momentTensor missing derivedOriginID");
+    }
+    const derivedOrigin = allOrigins.find(
+      (o) => o.publicId === derivedOriginID
+    );
+    if (!isDef(derivedOrigin)) {
+      throw new Error("No origin with ID " + derivedOriginID);
+    }
+    const out = new _MomentTensor(derivedOrigin);
+    out.populate(momentTensorQML);
+    const dataUsedEls = Array.from(
+      momentTensorQML.getElementsByTagNameNS(BED_NS, "dataUsed")
+    );
+    out.dataUsedList = dataUsedEls.map(DataUsed.createFromXml.bind(DataUsed));
+    const momentMagnitudeID = _grabFirstElText3(
+      momentTensorQML,
+      "momentMagnitudeID"
+    );
+    out.momentMagnitude = allMagnitudes.find(
+      (o) => o.publicId === momentMagnitudeID
+    );
+    if (momentMagnitudeID && !out.momentMagnitude) {
+      throw new Error("No magnitude with ID " + momentMagnitudeID);
+    }
+    out.scalarMoment = _grabFirstElRealQuantity(
+      momentTensorQML,
+      "scalarMoment"
+    );
+    out.tensor = _grabFirstElType(Tensor.createFromXml.bind(Tensor))(
+      momentTensorQML,
+      "tensor"
+    );
+    out.variance = _grabFirstElFloat3(momentTensorQML, "variance");
+    out.varianceReduction = _grabFirstElFloat3(
+      momentTensorQML,
+      "varianceReduction"
+    );
+    out.doubleCouple = _grabFirstElFloat3(momentTensorQML, "doubleCouple");
+    out.clvd = _grabFirstElFloat3(momentTensorQML, "clvd");
+    out.iso = _grabFirstElFloat3(momentTensorQML, "iso");
+    out.greensFunctionID = _grabFirstElText3(
+      momentTensorQML,
+      "greensFunctionID"
+    );
+    out.filterID = _grabFirstElText3(momentTensorQML, "filterID");
+    out.sourceTimeFunction = _grabFirstElType(
+      SourceTimeFunction.createFromXml.bind(SourceTimeFunction)
+    )(momentTensorQML, "sourceTimeFunction");
+    out.methodID = _grabFirstElText3(momentTensorQML, "methodID");
+    out.category = _grabFirstElText3(momentTensorQML, "category");
+    out.inversionType = _grabFirstElText3(momentTensorQML, "inversionType");
+    return out;
+  }
+};
+var Tensor = class _Tensor {
+  constructor(Mrr, Mtt, Mpp, Mrt, Mrp, Mtp) {
+    __publicField(this, "Mrr");
+    __publicField(this, "Mtt");
+    __publicField(this, "Mpp");
+    __publicField(this, "Mrt");
+    __publicField(this, "Mrp");
+    __publicField(this, "Mtp");
+    this.Mrr = Mrr;
+    this.Mtt = Mtt;
+    this.Mpp = Mpp;
+    this.Mrt = Mrt;
+    this.Mrp = Mrp;
+    this.Mtp = Mtp;
+  }
+  /**
+   * Parses a QuakeML tensor xml element into a Tensor object.
+   *
+   * @param tensorQML the tensor xml Element
+   * @returns Tensor instance
+   */
+  static createFromXml(tensorQML) {
+    if (tensorQML.localName !== "tensor") {
+      throw new Error(
+        `Cannot extract, not a QuakeML tensor: ${tensorQML.localName}`
+      );
+    }
+    const Mrr = _grabFirstElRealQuantity(tensorQML, "Mrr");
+    if (!isObject(Mrr)) {
+      throw new Error("tensor missing Mrr");
+    }
+    const Mtt = _grabFirstElRealQuantity(tensorQML, "Mtt");
+    if (!isObject(Mtt)) {
+      throw new Error("tensor missing Mtt");
+    }
+    const Mpp = _grabFirstElRealQuantity(tensorQML, "Mpp");
+    if (!isObject(Mpp)) {
+      throw new Error("tensor missing Mpp");
+    }
+    const Mrt = _grabFirstElRealQuantity(tensorQML, "Mrt");
+    if (!isObject(Mrt)) {
+      throw new Error("tensor missing Mrt");
+    }
+    const Mrp = _grabFirstElRealQuantity(tensorQML, "Mrp");
+    if (!isObject(Mrp)) {
+      throw new Error("tensor missing Mrp");
+    }
+    const Mtp = _grabFirstElRealQuantity(tensorQML, "Mtp");
+    if (!isObject(Mtp)) {
+      throw new Error("tensor missing Mtp");
+    }
+    const out = new _Tensor(Mrr, Mtt, Mpp, Mrt, Mrp, Mtp);
+    return out;
+  }
+};
+var SourceTimeFunction = class _SourceTimeFunction {
+  constructor(type, duration) {
+    __publicField(this, "type");
+    __publicField(this, "duration");
+    __publicField(this, "riseTime");
+    __publicField(this, "decayTime");
+    this.type = type;
+    this.duration = duration;
+  }
+  /**
+   * Parses a QuakeML sourceTimeFunction xml element into a SourceTimeFunction object.
+   *
+   * @param sourceTimeFunctionQML the sourceTimeFunction xml Element
+   * @returns SourceTimeFunction instance
+   */
+  static createFromXml(sourceTimeFunctionQML) {
+    if (sourceTimeFunctionQML.localName !== "sourceTimeFunction") {
+      throw new Error(
+        `Cannot extract, not a QuakeML sourceTimeFunction: ${sourceTimeFunctionQML.localName}`
+      );
+    }
+    const type = _grabFirstElText3(sourceTimeFunctionQML, "type");
+    if (!isNonEmptyStringArg(type)) {
+      throw new Error("sourceTimeFunction missing type");
+    }
+    const duration = _grabFirstElFloat3(sourceTimeFunctionQML, "duration");
+    if (!isDef(duration)) {
+      throw new Error("sourceTimeFunction missing duration");
+    }
+    const out = new _SourceTimeFunction(type, duration);
+    out.riseTime = _grabFirstElFloat3(sourceTimeFunctionQML, "riseTime");
+    out.decayTime = _grabFirstElFloat3(sourceTimeFunctionQML, "decayTime");
+    return out;
+  }
+};
+var DataUsed = class _DataUsed {
+  constructor(waveType) {
+    __publicField(this, "waveType");
+    __publicField(this, "stationCount");
+    __publicField(this, "componentCount");
+    __publicField(this, "shortestPeriod");
+    __publicField(this, "longestPeriod");
+    this.waveType = waveType;
+  }
+  /**
+   * Parses a QuakeML dataUsed xml element into a DataUsed object.
+   *
+   * @param dataUsedQML the dataUsed xml Element
+   * @returns SourceTimeFunction instance
+   */
+  static createFromXml(dataUsedQML) {
+    if (dataUsedQML.localName !== "dataUsed") {
+      throw new Error(
+        `Cannot extract, not a QuakeML dataUsed: ${dataUsedQML.localName}`
+      );
+    }
+    const waveType = _grabFirstElText3(dataUsedQML, "waveType");
+    if (!isNonEmptyStringArg(waveType)) {
+      throw new Error("dataUsed missing waveType");
+    }
+    const out = new _DataUsed(waveType);
+    out.stationCount = _grabFirstElInt3(dataUsedQML, "stationCount");
+    out.componentCount = _grabFirstElInt3(dataUsedQML, "componentCount");
+    out.shortestPeriod = _grabFirstElFloat3(dataUsedQML, "shortestPeriod");
+    out.longestPeriod = _grabFirstElFloat3(dataUsedQML, "longestPeriod");
+    return out;
+  }
+};
+var WaveformID = class _WaveformID {
+  constructor(networkCode, stationCode) {
+    __publicField(this, "networkCode");
+    __publicField(this, "stationCode");
+    __publicField(this, "channelCode");
+    __publicField(this, "locationCode");
+    this.networkCode = networkCode;
+    this.stationCode = stationCode;
+  }
+  /**
+   * Parses a QuakeML waveform ID xml element into a WaveformID object.
+   *
+   * @param waveformQML the waveform ID xml Element
+   * @returns WaveformID instance
+   */
+  static createFromXml(waveformQML) {
+    if (waveformQML.localName !== "waveformID") {
+      throw new Error(
+        `Cannot extract, not a QuakeML waveform ID: ${waveformQML.localName}`
+      );
+    }
+    const networkCode = _grabAttribute3(waveformQML, "networkCode");
+    if (!isNonEmptyStringArg(networkCode)) {
+      throw new Error("waveformID missing networkCode");
+    }
+    const stationCode = _grabAttribute3(waveformQML, "stationCode");
+    if (!isNonEmptyStringArg(stationCode)) {
+      throw new Error("waveformID missing stationCode");
+    }
+    const out = new _WaveformID(networkCode, stationCode);
+    out.channelCode = _grabAttribute3(waveformQML, "channelCode");
+    out.locationCode = _grabAttribute3(waveformQML, "locationCode");
+    return out;
+  }
+  toString() {
+    return `${this.networkCode}.${this.stationCode}.${this.locationCode || "--"}.${this.channelCode || "---"}`;
+  }
+};
+var Quantity = class _Quantity {
+  constructor(value) {
+    __publicField(this, "value");
+    __publicField(this, "uncertainty");
+    __publicField(this, "lowerUncertainty");
+    __publicField(this, "upperUncertainty");
+    __publicField(this, "confidenceLevel");
+    this.value = value;
+  }
+  /**
+   * Parses a QuakeML quantity xml element into a Quantity object.
+   *
+   * @param quantityQML the quantity xml Element
+   * @param grab a callback to obtain the value
+   * @param grabUncertainty a callback to obtain the uncertainties
+   * @returns Quantity instance
+   */
+  static _createFromXml(quantityQML, grab, grabUncertainty) {
+    const value = grab(quantityQML, "value");
+    if (value === void 0) {
+      throw new Error("missing value");
+    }
+    const out = new _Quantity(value);
+    out.uncertainty = grabUncertainty(quantityQML, "uncertainty");
+    out.lowerUncertainty = grabUncertainty(quantityQML, "lowerUncertainty");
+    out.upperUncertainty = grabUncertainty(quantityQML, "upperUncertainty");
+    out.confidenceLevel = _grabFirstElFloat3(quantityQML, "confidenceLevel");
+    return out;
+  }
+  /**
+   * Parses a QuakeML real quantity xml element into a RealQuantity object.
+   *
+   * @param realQuantityQML the real quantity xml Element
+   * @returns RealQuantity instance
+   */
+  static createRealQuantityFromXml(realQuantityQML) {
+    return _Quantity._createFromXml(
+      realQuantityQML,
+      _grabFirstElFloat3,
+      _grabFirstElFloat3
+    );
+  }
+  /**
+   * Parses a QuakeML integer quantity xml element into a RealQuantity object.
+   *
+   * @param integerQuantityQML the integer quantity xml Element
+   * @returns IntegerQuantity instance
+   */
+  static createIntegerQuantityFromXml(integerQuantityQML) {
+    return _Quantity._createFromXml(
+      integerQuantityQML,
+      _grabFirstElFloat3,
+      _grabFirstElInt3
+    );
+  }
+  /**
+   * Parses a QuakeML time quantity xml element into a TimeQuantity object.
+   *
+   * @param timeQuantityQML the time quantity xml Element
+   * @returns TimeQuantity instance
+   */
+  static createTimeQuantityFromXml(timeQuantityQML) {
+    return _Quantity._createFromXml(
+      timeQuantityQML,
+      _grabFirstElDateTime,
+      _grabFirstElFloat3
+    );
+  }
+};
+var Comment2 = class _Comment {
+  constructor(text) {
+    __publicField(this, "text");
+    __publicField(this, "creationInfo");
+    this.text = text;
+  }
+  /**
+   * Parses a QuakeML comment xml element into a Comment object.
+   *
+   * @param commentQML the comment xml Element
+   * @returns Comment instance
+   */
+  static createFromXml(commentQML) {
+    const text = _grabFirstElText3(commentQML, "text");
+    if (text === void 0) {
+      throw new Error("missing value");
+    }
+    const out = new _Comment(text);
+    out.creationInfo = _grabFirstElCreationInfo(commentQML, "creationInfo");
+    return out;
+  }
+};
+var CreationInfo = class _CreationInfo {
+  constructor() {
+    __publicField(this, "agencyID");
+    __publicField(this, "agencyURI");
+    __publicField(this, "author");
+    __publicField(this, "authorURI");
+    __publicField(this, "creationTime");
+    __publicField(this, "version");
+  }
+  /**
+   * Parses a QuakeML creation info xml element into a CreationInfo object.
+   *
+   * @param creationInfoQML the creation info xml Element
+   * @returns CreationInfo instance
+   */
+  static createFromXml(creationInfoQML) {
+    const out = new _CreationInfo();
+    out.agencyID = _grabFirstElText3(creationInfoQML, "agencyID");
+    out.agencyURI = _grabFirstElText3(creationInfoQML, "agencyURI");
+    out.author = _grabFirstElText3(creationInfoQML, "author");
+    out.authorURI = _grabFirstElText3(creationInfoQML, "authorURI");
+    out.creationTime = _grabFirstElDateTime(creationInfoQML, "creationTime");
+    out.version = _grabFirstElText3(creationInfoQML, "version");
+    return out;
+  }
+};
+function parseQuakeML(rawXml, host) {
+  const top2 = rawXml.documentElement;
+  if (!top2) {
+    throw new Error("Can't get documentElement");
+  }
+  const eventParametersArray = Array.from(
+    top2.getElementsByTagName("eventParameters")
+  );
+  if (eventParametersArray.length !== 1) {
+    throw new Error(
+      `Document has ${eventParametersArray.length} eventParameters elements`
+    );
+  }
+  return EventParameters.createFromXml(eventParametersArray[0], host);
+}
+function createQuakeFromValues(publicId, time, latitude, longitude, depth_meter) {
+  const origin = new Origin(
+    new Quantity(time),
+    new Quantity(latitude),
+    new Quantity(longitude)
+  );
+  origin.depth = new Quantity(depth_meter);
+  const quake = new Quake();
+  quake.publicId = publicId;
+  quake.originList.push(origin);
+  quake.preferredOrigin = origin;
+  return quake;
+}
+function fetchQuakeML(url, timeoutSec2 = 10, nodata = 204) {
+  const fetchInit = defaultFetchInitObj(XML_MIME);
+  const host = new URL(url).hostname;
+  return doFetchWithTimeout(url, fetchInit, timeoutSec2 * 1e3).then((response) => {
+    if (response.status === 200) {
+      return response.text();
+    } else if (response.status === 204 || isDef(nodata) && response.status === nodata) {
+      return FAKE_EMPTY_XML2;
+    } else {
+      throw new Error(`Status not successful: ${response.status}`);
+    }
+  }).then(function(rawXmlText) {
+    return new DOMParser().parseFromString(rawXmlText, XML_MIME);
+  }).then((rawXml) => {
+    return parseQuakeML(rawXml, host);
+  });
+}
+function mightBeQuakeML(buf) {
+  if (!mightBeXml(buf)) {
+    return false;
+  }
+  const initialChars = dataViewToString(new DataView(buf.slice(0, 100))).trimStart();
+  if (!initialChars.includes("quakeml")) {
+    return false;
+  }
+  return true;
+}
+var _grabAllElComment = function(xml, tagName) {
+  const out = [];
+  if (isObject(xml)) {
+    const elList = Array.from(xml.children).filter(
+      (e) => e.tagName === tagName
+    );
+    for (const el of elList) {
+      if (isObject(el)) {
+        out.push(Comment2.createFromXml(el));
+      }
+    }
+  }
+  return out;
+};
+var _grabFirstElNS = function(xml, namespace, tagName) {
+  let out = null;
+  if (isObject(xml)) {
+    const elList = xml.getElementsByTagNameNS(namespace, tagName);
+    for (let idx = 0; idx < elList.length; idx++) {
+      const e = elList.item(idx);
+      if (e != null && e.parentElement === xml) {
+        if (e) {
+          out = e;
+          break;
+        }
+      }
+    }
+  }
+  return out;
+};
+var _grabFirstEl2 = function(xml, tagName) {
+  if (isObject(xml)) {
+    const elList = Array.from(xml.children).filter(
+      (e) => e.tagName === tagName
+    );
+    if (elList.length > 0) {
+      const e = elList[0];
+      if (e) {
+        return e;
+      }
+    }
+  }
+  return void 0;
+};
+var _grabFirstElText3 = function(xml, tagName) {
+  let out = void 0;
+  const el = _grabFirstEl2(xml, tagName);
+  if (isObject(el)) {
+    out = el.textContent;
+    if (out === null) {
+      out = void 0;
+    }
+  }
+  return out;
+};
+var _grabFirstElBool = function(xml, tagName) {
+  const el = _grabFirstElText3(xml, tagName);
+  if (!isStringArg(el)) {
+    return void 0;
+  }
+  switch (el) {
+    case "true":
+    case "1":
+      return true;
+    case "false":
+    case "0":
+      return false;
+  }
+  throw new Error("Invalid boolean: " + el);
+};
+var _grabFirstElInt3 = function(xml, tagName) {
+  let out = void 0;
+  const el = _grabFirstElText3(xml, tagName);
+  if (isStringArg(el)) {
+    out = parseInt(el);
+  }
+  return out;
+};
+var _grabFirstElFloat3 = function(xml, tagName) {
+  let out = void 0;
+  const el = _grabFirstElText3(xml, tagName);
+  if (isStringArg(el)) {
+    out = parseFloat(el);
+  }
+  return out;
+};
+var _grabFirstElDateTime = function(xml, tagName) {
+  let out = void 0;
+  const el = _grabFirstElText3(xml, tagName);
+  if (isStringArg(el)) {
+    out = isoToDateTime(el);
+  }
+  return out;
+};
+var _grabFirstElType = function(createFromXml) {
+  return function(xml, tagName) {
+    let out = void 0;
+    const el = _grabFirstEl2(xml, tagName);
+    if (isObject(el)) {
+      out = createFromXml(el);
+    }
+    return out;
+  };
+};
+var _grabFirstElRealQuantity = _grabFirstElType(
+  Quantity.createRealQuantityFromXml.bind(Quantity)
+);
+var _grabFirstElIntegerQuantity = _grabFirstElType(
+  Quantity.createIntegerQuantityFromXml.bind(Quantity)
+);
+var _grabFirstElTimeQuantity = _grabFirstElType(
+  Quantity.createTimeQuantityFromXml.bind(Quantity)
+);
+var _grabFirstElCreationInfo = _grabFirstElType(
+  CreationInfo.createFromXml.bind(CreationInfo)
+);
+var _grabAttribute3 = function(xml, tagName) {
+  let out = void 0;
+  if (isObject(xml)) {
+    const a = xml.getAttribute(tagName);
+    if (isStringArg(a)) {
+      out = a;
+    }
+  }
+  return out;
+};
+var _requireAttribute3 = function _requireAttribute4(xml, tagName) {
+  const out = _grabAttribute3(xml, tagName);
+  if (typeof out !== "string") {
+    throw new Error(`Attribute ${tagName} not found.`);
+  }
+  return out;
+};
+var _grabAttributeNS2 = function(xml, namespace, tagName) {
+  let out = void 0;
+  if (isObject(xml)) {
+    const a = xml.getAttributeNS(namespace, tagName);
+    if (isStringArg(a)) {
+      out = a;
+    }
+  }
+  return out;
+};
+var parseUtil2 = {
+  _grabFirstEl: _grabFirstEl2,
+  _grabFirstElNS,
+  _grabFirstElText: _grabFirstElText3,
+  _grabFirstElFloat: _grabFirstElFloat3,
+  _grabFirstElInt: _grabFirstElInt3,
+  _grabAttribute: _grabAttribute3,
+  _requireAttribute: _requireAttribute3,
+  _grabAttributeNS: _grabAttributeNS2
+};
+
+// src/mseed3eh.ts
+var STD_EH = "bag";
+function ehToQuake(exHead) {
+  const bag = extractBagEH(exHead);
+  const origin = bag?.ev?.or;
+  let q = null;
+  if (origin != null) {
+    const time = isoToDateTime(origin.tm);
+    q = createQuakeFromValues("extraheader", time, origin.la, origin.lo, origin.dp * 1e3);
+    if (bag?.ev?.mag?.v != null) {
+      const magtype = bag.ev.mag.t == null ? "" : bag.ev.mag.t;
+      const mag = new Magnitude(bag.ev.mag.v, magtype);
+      q.preferredMagnitude = mag;
+    }
+  }
+  return q;
+}
+function quakeToEH(quake) {
+  const ehEvent = {};
+  if (quake.publicId != null) {
+    ehEvent.id = quake.publicId;
+  }
+  if (quake.preferredOrigin != null) {
+    const or = quake.origin;
+    const isoTime = or.time.toISO();
+    if (isoTime == null) {
+      throw new Error(`Bad origin time: ${stringify(or.time)}`);
+    }
+    ehEvent.or = {
+      tm: isoTime,
+      la: or.latitude,
+      lo: or.longitude,
+      dp: or.depthKm
+    };
+  }
+  if (quake.preferredMagnitude != null) {
+    ehEvent.mag = {
+      v: quake.preferredMagnitude.mag,
+      t: quake.preferredMagnitude.type
+    };
+  }
+  return ehEvent;
+}
+function channelToEH(channel) {
+  return {
+    la: channel.latitude,
+    lo: channel.longitude,
+    el: channel.elevation,
+    dp: channel.depth,
+    az: channel.azimuth,
+    dip: channel.dip
+  };
+}
+function ehToChannel(exHead, sid) {
+  const bag = extractBagEH(exHead);
+  const ch = bag?.ch;
+  let channel = null;
+  if (ch != null) {
+    const net = new Network(sid.networkCode);
+    const sta = new Station(net, sid.stationCode);
+    console.log(`eh ch: ${JSON.stringify(ch)}`);
+    sta.latitude = ch.la;
+    sta.longitude = ch.lo;
+    if (ch.el != null) {
+      sta.elevation = ch.el;
+    }
+    channel = new Channel(sta, sid.formChannelCode(), sid.locationCode);
+    channel.latitude = ch.la;
+    channel.longitude = ch.lo;
+    if (ch.dp != null) {
+      channel.depth = ch.dp;
+    }
+    if (ch.el != null) {
+      channel.elevation = ch.el;
+    }
+    if (ch.az != null) {
+      channel.azimuth = ch.az;
+    }
+    if (ch.dip != null) {
+      channel.dip = ch.dip;
+    }
+    console.log(`chan: ${channel.latitude} ${channel.longitude}`);
+  } else {
+    console.log("no ch in bag");
+  }
+  return channel;
+}
+function markerToEH(mark) {
+  let tm = mark.time.toISO();
+  tm = tm ? tm : "error";
+  const out = {
+    tm,
+    n: mark.name,
+    mtype: mark.markertype,
+    desc: mark.description
+  };
+  return out;
+}
+function markerTypeFromEH(mtype) {
+  if (mtype === "pk" || mtype === "pick") {
+    return "pick";
+  }
+  if (mtype === "md" || mtype === "predicted") {
+    return "predicted";
+  }
+  return mtype;
+}
+function ehToMarkers(exHead) {
+  const bag = extractBagEH(exHead);
+  const markList = bag?.mark;
+  if (markList != null) {
+    return markList.map((m) => {
+      return {
+        time: isoToDateTime(m.tm),
+        name: m.n,
+        markertype: m.mtype == null ? "unknown" : markerTypeFromEH(m.mtype),
+        description: m.desc == null ? "" : m.desc
+      };
+    });
+  }
+  return [];
+}
+function extractBagEH(jsonEH) {
+  if (!jsonEH || typeof jsonEH !== "object") {
+    return null;
+  }
+  const eh = jsonEH;
+  if (typeof eh.bag != "object") {
+    return null;
+  }
+  const object = eh.bag;
+  if (isValidBagJsonEHType(object)) {
+    return object;
+  } else {
+    throw new TypeError(`Oops, we did not get Bag extra header JSON!`);
+  }
+}
+function createBagEH() {
+  const object = {};
+  if (isValidBagJsonEHType(object)) {
+    return object;
+  } else {
+    throw new TypeError(`Oops, we did not get Bag extra header JSON!`);
+  }
+}
+function isValidBagChannelJsonEHType(v) {
+  if (!v || typeof v !== "object") {
+    return false;
+  }
+  const object = v;
+  const answer = typeof object.la === "number" && typeof object.lo === "number" && (typeof object.code === "undefined" || typeof object.code === "string") && (typeof object.el === "undefined" || typeof object.el === "number") && (typeof object.dp === "undefined" || typeof object.dp === "number");
+  return answer;
+}
+function isValidBagEventJsonEHType(v) {
+  if (!v || typeof v !== "object") {
+    return false;
+  }
+  const object = v;
+  return (typeof object.id === "undefined" || typeof object.id === "string") && (typeof object.or === "undefined" || isValidBagOriginJsonEHType(object.or)) && (typeof object.mag === "undefined" || isValidBagMagJsonEHType(object.mag)) && (typeof object.mt === "undefined" || typeof object.mt === "object");
+}
+function isValidBagOriginJsonEHType(v) {
+  if (!v || typeof v !== "object") {
+    return false;
+  }
+  const object = v;
+  return typeof object.la === "number" && typeof object.lo === "number" && typeof object.dp === "number" && typeof object.tm === "string";
+}
+function isValidBagMagJsonEHType(v) {
+  if (!v || typeof v !== "object") {
+    return false;
+  }
+  const object = v;
+  return (typeof object.v === "undefined" || typeof object.v === "number") && (typeof object.t === "undefined" || typeof object.t === "string");
+}
+function isValidBagPathJsonEHType(v) {
+  if (!v || typeof v !== "object") {
+    return false;
+  }
+  const object = v;
+  return (typeof object.gcarc === "undefined" || typeof object.gcarc === "number") && (typeof object.az === "undefined" || typeof object.az === "number") && (typeof object.baz === "undefined" || typeof object.baz === "number");
+}
+function isValidBagMarkJsonEHType(v) {
+  if (!v || typeof v !== "object") {
+    return false;
+  }
+  const object = v;
+  return typeof object.n === "string" && typeof object.tm === "string" && (typeof object.mtype === "undefined" || typeof object.mtype === "string") && (typeof object.desc === "undefined" || typeof object.desc === "string");
+}
+function isValidBagTimeseriesJsonEHType(v) {
+  if (!v || typeof v !== "object") {
+    return false;
+  }
+  const object = v;
+  return typeof object.si === "string" && (typeof object.proc === "undefined" || typeof object.proc === "string");
+}
+function isValidBagJsonEHType(v) {
+  if (!v || typeof v !== "object") {
+    return false;
+  }
+  const object = v;
+  if (!((typeof object.st === "undefined" || isValidBagChannelJsonEHType(object.st)) && (typeof object.ev === "undefined" || isValidBagEventJsonEHType(object.ev)) && (typeof object.path === "undefined" || isValidBagPathJsonEHType(object.path)) && (typeof object.y === "undefined" || typeof object.y === "object") && (typeof object.mark === "undefined" || Array.isArray(object.mark)))) {
+    return false;
+  }
+  const markerList = object.mark;
+  if (!(typeof markerList === "undefined" || Array.isArray(markerList))) {
+    return false;
+  } else {
+    if (markerList != null) {
+      for (const m of markerList) {
+        if (!isValidBagMarkJsonEHType(m)) {
+          return false;
+        }
+      }
+    }
+  }
+  return true;
+}
+
+// src/mseed3.ts
+var MINISEED_THREE_MIME = "application/vnd.fdsn.mseed3";
+var UNKNOWN_DATA_VERSION = 0;
+var CRC_OFFSET = 28;
+var FIXED_HEADER_SIZE = 40;
+var FDSN_PREFIX2 = "FDSN";
+var LITTLE_ENDIAN = true;
+var BIG_ENDIAN = false;
+function toMSeed3(seis, extraHeaders) {
+  const out = new Array(0);
+  if (!isDef(extraHeaders)) {
+    extraHeaders = {};
+  }
+  for (const seg of seis.segments) {
+    const header = new MSeed3Header();
+    let rawData;
+    let encoding = 0;
+    if (seg.isEncoded()) {
+      const encoded = seg.getEncoded();
+      if (encoded.length === 1) {
+        rawData = encoded[0].dataView;
+        encoding = encoded[0].compressionType;
+      } else {
+        const encodeTypeSet = /* @__PURE__ */ new Set();
+        encoded.forEach((cur) => {
+          encodeTypeSet.add(cur.compressionType);
+        });
+        const encodeTypes = Array.from(encodeTypeSet.values());
+        if (encodeTypes.length > 1) {
+          throw new Error(
+            `more than one encoding type in seis segment: ${encodeTypes.length}`
+          );
+        } else if (encodeTypes.length === 0) {
+          throw new Error(`zero encoding type in seis segment`);
+        } else if (!encodeTypes[0]) {
+          throw new Error(`only encoding type is undef`);
+        }
+        encoding = encodeTypes[0];
+        if (!encoding) {
+          throw new Error(`encoding is undefined`);
+        }
+        if (INTEGER || FLOAT || DOUBLE) {
+          const totSize = encoded.reduce(
+            (acc, cur) => acc + cur.dataView.byteLength,
+            0
+          );
+          const combined = new Uint8Array(totSize);
+          encoded.reduce((offset2, cur) => {
+            combined.set(
+              new Uint8Array(
+                cur.dataView.buffer,
+                cur.dataView.byteOffset,
+                cur.dataView.byteLength
+              ),
+              offset2
+            );
+            return offset2 + cur.dataView.byteLength;
+          }, 0);
+          rawData = new DataView(combined.buffer);
+          if (encoding === STEIM1 || encoding === STEIM2) {
+            rawData.setUint32(
+              8,
+              encoded[encoded.length - 1].dataView.getUint32(8)
+            );
+          }
+        } else {
+          throw new Error(
+            `Encoding type not steim 1 or 2 or primitive in seis segment: ${encoding}`
+          );
+        }
+      }
+    } else {
+      rawData = new DataView(seg.y.buffer);
+      if (seg.y instanceof Float32Array) {
+        encoding = FLOAT;
+      } else if (seg.y instanceof Int32Array) {
+        encoding = INTEGER;
+      } else if (seg.y instanceof Float64Array) {
+        encoding = DOUBLE;
+      } else {
+        throw new Error("unable to save data of encoding: ");
+      }
+    }
+    header.setStart(seg.startTime);
+    header.encoding = encoding;
+    if (seg.sampleRate > 1e-3) {
+      header.sampleRateOrPeriod = seg.sampleRate;
+    } else {
+      header.sampleRateOrPeriod = -1 * seg.samplePeriod;
+    }
+    header.numSamples = seg.numPoints;
+    header.publicationVersion = UNKNOWN_DATA_VERSION;
+    const sid = seg.sourceId ? seg.sourceId : FDSNSourceId.createUnknown(seg.sampleRate);
+    header.identifier = sid.toString();
+    header.identifierLength = header.identifier.length;
+    header.extraHeaders = extraHeaders;
+    header.dataLength = rawData.byteLength;
+    const record = new MSeed3Record(header, extraHeaders, rawData);
+    record.calcSize();
+    out.push(record);
+  }
+  return out;
+}
+function parseMSeed3Records(arrayBuffer) {
+  const dataRecords = [];
+  let offset2 = 0;
+  while (offset2 < arrayBuffer.byteLength) {
+    if (offset2 > arrayBuffer.byteLength - FIXED_HEADER_SIZE) {
+      throw new Error(
+        `Not enough bytes left for header, ${arrayBuffer.byteLength - offset2} at offset=${offset2}`
+      );
+    }
+    const dataView = new DataView(arrayBuffer, offset2);
+    if (!(dataView.getUint8(0) === 77 && dataView.getUint8(1) === 83)) {
+      throw new Error(
+        `First byte must be M=77 S=83 at offset=${offset2}, but was ${dataView.getUint8(
+          0
+        )} ${dataView.getUint8(1)}`
+      );
+    }
+    const dr = MSeed3Record.parseSingleDataRecord(dataView);
+    dataRecords.push(dr);
+    offset2 += dr.getSize();
+  }
+  return dataRecords;
+}
+function mightBeMSeed3Records(arrayBuffer) {
+  const dataView = new DataView(arrayBuffer);
+  if (!(dataView.getUint8(0) === 77 && dataView.getUint8(1) === 83)) {
+    return false;
+  }
+  const header = MSeed3Header.createFromDataView(dataView);
+  if (header.formatVersion !== 3) {
+    return false;
+  }
+  if (header.year < 1900 || header.year > 2500) {
+    return false;
+  }
+  if (header.dayOfYear <= 0 || header.dayOfYear > 366) {
+    return false;
+  }
+  if (header.hour <= 0 || header.hour > 24) {
+    return false;
+  }
+  return true;
+}
+var MSeed3Record = class _MSeed3Record {
+  constructor(header, extraHeaders, rawData) {
+    __publicField(this, "header");
+    __publicField(this, "extraHeaders");
+    __publicField(this, "rawData");
+    this.header = header;
+    this.rawData = rawData;
+    this.extraHeaders = extraHeaders;
+  }
+  /**
+   * Parses an miniseed3 data record from a DataView.
+   *
+   * @param   dataView bytes to parse
+   * @returns parsed record
+   */
+  static parseSingleDataRecord(dataView) {
+    const header = MSeed3Header.createFromDataView(dataView);
+    const ehoffset = header.getSize();
+    const dataoffset = header.getSize() + header.extraHeadersLength;
+    const extraDataView = new DataView(
+      dataView.buffer,
+      dataView.byteOffset + ehoffset,
+      header.extraHeadersLength
+    );
+    const extraHeaders = parseExtraHeaders(extraDataView);
+    const sliceStart = dataView.byteOffset + dataoffset;
+    const rawData = new DataView(
+      dataView.buffer.slice(sliceStart, sliceStart + header.dataLength)
+    );
+    const xr = new _MSeed3Record(header, extraHeaders, rawData);
+    return xr;
+  }
+  /**
+   * Calculates the byte size of the miniseed3 record to hold this data.
+   * This should be called if the size is needed after modification
+   * of the extraHeaders.
+   *
+   * @returns size in bytes
+   */
+  calcSize() {
+    const json = JSON.stringify(this.extraHeaders);
+    if (json.length > 2) {
+      this.header.extraHeadersLength = json.length;
+    } else {
+      this.header.extraHeadersLength = 0;
+    }
+    return this.getSize();
+  }
+  /**
+   * Gets the byte size of the miniseed3 record to hold this data.
+   * Note that unless calcSize() has been called, this may not
+   * take into account modifications to the extra headers.
+   *
+   * @returns size in bytes
+   */
+  getSize() {
+    return this.header.getSize() + this.header.extraHeadersLength + this.header.dataLength;
+  }
+  /**
+   * Decompresses the data , if the compression
+   *  type is known
+   *
+   * @returns decompressed data as a typed array, usually Int32Array or Float32Array
+   */
+  decompress() {
+    return this.asEncodedDataSegment().decode();
+  }
+  /**
+   * Wraps data in an EncodedDataSegment for future decompression.
+   *
+   * @returns waveform data
+   */
+  asEncodedDataSegment() {
+    let swapBytes = LITTLE_ENDIAN;
+    if (this.header.encoding === 10 || this.header.encoding === 11 || this.header.encoding === 19) {
+      swapBytes = BIG_ENDIAN;
+    }
+    return new EncodedDataSegment(
+      this.header.encoding,
+      this.rawData,
+      this.header.numSamples,
+      swapBytes
+    );
+  }
+  /**
+   * Just the header.identifier, included as codes() for compatiblility
+   * with parsed miniseed2 data records.
+   *
+   * @returns string identifier
+   */
+  codes() {
+    return this.header.identifier;
+  }
+  /**
+   * Parses the identifier into an FDSNSourceId.
+   *
+   * @returns header identifier as source id
+   */
+  getSourceId() {
+    return FDSNSourceId.parse(this.header.identifier);
+  }
+  /**
+   * Saves miniseed3 record into a DataView, recalculating crc.
+   *
+   * @param   dataView DataView to save into, must be large enough to hold the record.
+   * @returns the number of bytes written to the DataView, can be used as offset
+   * for writting the next record.
+   */
+  save(dataView) {
+    const json = JSON.stringify(this.extraHeaders);
+    if (json.length > 2) {
+      this.header.extraHeadersLength = json.length;
+    } else {
+      this.header.extraHeadersLength = 0;
+    }
+    let offset2 = this.header.save(dataView, 0, true);
+    if (json.length > 2) {
+      for (let i = 0; i < json.length; i++) {
+        dataView.setInt8(offset2, json.charCodeAt(i));
+        offset2++;
+      }
+    }
+    if (this.rawData !== null) {
+      for (let i = 0; i < this.rawData.byteLength; i++) {
+        dataView.setUint8(offset2 + i, this.rawData.getUint8(i));
+      }
+      offset2 += this.rawData.byteLength;
+    } else {
+      throw new Error("rawData is null");
+    }
+    const dvcrc = dataView.getUint32(CRC_OFFSET, true);
+    if (dvcrc !== 0) {
+      throw new Error(`CRC is not zero before calculate! ${dvcrc}`);
+    }
+    const crc = calculateCRC32C(dataView.buffer);
+    dataView.setUint32(CRC_OFFSET, crc, true);
+    return offset2;
+  }
+  /**
+   * Calculates crc by saving to a DataView, which sets the crc header to zero
+   * and then calculates it based on the rest of the record.
+   *
+   * @returns         crc pulled from saved miniseed3 record
+   */
+  calcCrc() {
+    const size = this.calcSize();
+    const buff = new ArrayBuffer(size);
+    const dataView = new DataView(buff);
+    const offset2 = this.save(dataView);
+    if (offset2 !== size) {
+      throw new Error(`expect to write ${size} bytes but only ${offset2}`);
+    }
+    const crc = dataView.getUint32(CRC_OFFSET, true);
+    return crc;
+  }
+  toString() {
+    const ehLines = JSON.stringify(this.extraHeaders, null, 2).split("\n");
+    const indentLines = ehLines.join("\n          ");
+    return `${this.header.toString()}
+          extra headers: ${indentLines}`;
+  }
+};
+var MSeed3Header = class _MSeed3Header {
+  constructor() {
+    __publicField(this, "recordIndicator");
+    __publicField(this, "formatVersion");
+    __publicField(this, "flags");
+    __publicField(this, "nanosecond");
+    __publicField(this, "year");
+    __publicField(this, "dayOfYear");
+    __publicField(this, "hour");
+    __publicField(this, "minute");
+    __publicField(this, "second");
+    __publicField(this, "encoding");
+    __publicField(this, "sampleRateOrPeriod");
+    __publicField(this, "numSamples");
+    __publicField(this, "crc");
+    __publicField(this, "publicationVersion");
+    __publicField(this, "identifierLength");
+    __publicField(this, "extraHeadersLength");
+    __publicField(this, "identifier");
+    __publicField(this, "extraHeaders");
+    __publicField(this, "dataLength");
+    this.recordIndicator = "MS";
+    this.formatVersion = 3;
+    this.flags = 0;
+    this.nanosecond = 0;
+    this.year = 1970;
+    this.dayOfYear = 1;
+    this.hour = 0;
+    this.minute = 0;
+    this.second = 0;
+    this.encoding = 3;
+    this.sampleRateOrPeriod = 1;
+    this.numSamples = 0;
+    this.crc = 0;
+    this.publicationVersion = UNKNOWN_DATA_VERSION;
+    this.identifierLength = 0;
+    this.extraHeadersLength = 2;
+    this.identifier = "";
+    this.extraHeaders = {};
+    this.dataLength = 0;
+  }
+  /**
+   * Parses an miniseed3 fixed header from a DataView.
+   *
+   * @param   dataView bytes to parse
+   * @returns parsed header object
+   */
+  static createFromDataView(dataView) {
+    const header = new _MSeed3Header();
+    header.recordIndicator = makeString2(dataView, 0, 2);
+    if (header.recordIndicator !== "MS") {
+      throw new Error(
+        "First 2 bytes of record should be MS but found " + header.recordIndicator
+      );
+    }
+    header.formatVersion = dataView.getUint8(2);
+    if (header.formatVersion !== 3) {
+      throw new Error("Format Version should be 3, " + header.formatVersion);
+    }
+    header.flags = dataView.getUint8(3);
+    const headerLittleEndian = true;
+    header.nanosecond = dataView.getInt32(4, headerLittleEndian);
+    header.year = dataView.getInt16(8, headerLittleEndian);
+    if (checkByteSwap2(header.year)) {
+      throw new Error("Looks like wrong byte order, year=" + header.year);
+    }
+    header.dayOfYear = dataView.getInt16(10, headerLittleEndian);
+    header.hour = dataView.getUint8(12);
+    header.minute = dataView.getUint8(13);
+    header.second = dataView.getUint8(14);
+    header.encoding = dataView.getUint8(15);
+    header.sampleRateOrPeriod = dataView.getFloat64(16, headerLittleEndian);
+    header.numSamples = dataView.getUint32(24, headerLittleEndian);
+    header.crc = dataView.getUint32(28, headerLittleEndian);
+    header.publicationVersion = dataView.getUint8(32);
+    header.identifierLength = dataView.getUint8(33);
+    header.extraHeadersLength = dataView.getUint16(34, headerLittleEndian);
+    header.dataLength = dataView.getUint32(36, headerLittleEndian);
+    header.identifier = makeString2(dataView, 40, header.identifierLength);
+    return header;
+  }
+  get start() {
+    return this.startAsDateTime();
+  }
+  get end() {
+    return this.timeOfSample(this.numSamples - 1);
+  }
+  get sampleRate() {
+    if (this.sampleRateOrPeriod < 0) {
+      return -1 / this.sampleRateOrPeriod;
+    } else {
+      return this.sampleRateOrPeriod;
+    }
+  }
+  get samplePeriod() {
+    if (this.sampleRateOrPeriod <= 0) {
+      return -1 * this.sampleRateOrPeriod;
+    } else {
+      return 1 / this.sampleRateOrPeriod;
+    }
+  }
+  /**
+   * Calculates size of the fixed header including the variable
+   * length identifier, but without the extra headers.
+   *
+   * @returns size in bytes of fixed header
+   */
+  getSize() {
+    return FIXED_HEADER_SIZE + this.identifier.length;
+  }
+  encodingName() {
+    let encode_name = "unknown";
+    if (this.encoding === 0) {
+      encode_name = "Text";
+    } else if (this.encoding === 1) {
+      encode_name = "16-bit integer";
+    } else if (this.encoding === 3) {
+      encode_name = "32-bit integer";
+    } else if (this.encoding === 4) {
+      encode_name = "32-bit float";
+    } else if (this.encoding === 5) {
+      encode_name = "64-bit float";
+    } else if (this.encoding === 11) {
+      encode_name = "STEIM-2 integer compression";
+    } else if (this.encoding === 10) {
+      encode_name = "STEIM-1 integer compression";
+    } else if (this.encoding === 19) {
+      encode_name = "STEIM-3 integer compression";
+    } else if (this.encoding === 100) {
+      encode_name = "Opaque data";
+    }
+    return encode_name;
+  }
+  /**
+   * Text representation of the miniseed3 header. This is modeled after
+   * the output of mseed3-text from the mseed3-utils package from IRIS.
+   *
+   * @returns textual repersentation
+   */
+  toString() {
+    const encode_name = this.encodingName();
+    let bitFlagStr = "";
+    if (this.flags & 1) {
+      bitFlagStr = `${bitFlagStr}
+                         [Bit 0] Calibration signals present`;
+    }
+    if (this.flags & 2) {
+      bitFlagStr = `${bitFlagStr}
+                         [Bit 1] Time tag is questionable`;
+    }
+    if (this.flags & 4) {
+      bitFlagStr = `${bitFlagStr}
+                         [Bit 2] Clock locked`;
+    }
+    if (this.flags & 8) {
+      bitFlagStr = `${bitFlagStr}
+                         [Bit 3] Undefined bit set`;
+    }
+    if (this.flags & 16) {
+      bitFlagStr = `${bitFlagStr}
+                         [Bit 4] Undefined bit set`;
+    }
+    if (this.flags & 32) {
+      bitFlagStr = `${bitFlagStr}
+                         [Bit 5] Undefined bit set`;
+    }
+    if (this.flags & 64) {
+      bitFlagStr = `${bitFlagStr}
+                         [Bit 6] Undefined bit set`;
+    }
+    if (this.flags & 128) {
+      bitFlagStr = `${bitFlagStr}
+                         [Bit 7] Undefined bit set`;
+    }
+    return `${this.identifier}, version ${this.publicationVersion}, ${this.getSize() + this.dataLength + this.extraHeadersLength} bytes (format: ${this.formatVersion})
+             start time: ${this.getStartFieldsAsISO()} (${padZeros(this.dayOfYear, 3)})
+      number of samples: ${this.numSamples}
+       sample rate (Hz): ${this.sampleRate}
+                  flags: [${(this.flags >>> 0).toString(2).padStart(8, "0")}] 8 bits${bitFlagStr}
+                    CRC: ${crcToHexString(this.crc)}
+    extra header length: ${this.extraHeadersLength} bytes
+    data payload length: ${this.dataLength} bytes
+       payload encoding: ${encode_name} (val: ${this.encoding})`;
+  }
+  /**
+   * Start time in the format output by mseed3-utils from IRIS. Format is
+   * yyyy,ooo,HH:mm:ss.SSSSSS
+   *
+   * @returns start time
+   */
+  startFieldsInUtilFormat() {
+    return `${this.year},${padZeros(this.dayOfYear, 3)},${padZeros(this.hour, 2)}:${padZeros(this.minute, 2)}:${padZeros(this.second, 2)}.${padZeros(Math.floor(this.nanosecond / 1e3), 6)}`;
+  }
+  /**
+   * Converts start time header fields to ISO8601 time string. This will include
+   * factional seconds to nanosecond precision.
+   *
+   * @param trimMicroNano trim to microsecond precision if nanos are 000
+   * @returns iso start time
+   */
+  getStartFieldsAsISO(trimMicroNano = true) {
+    const d = this.startAsDateTime().set({ millisecond: 0 }).toISO({ includeOffset: false, suppressMilliseconds: true });
+    let fracSec = "";
+    if (trimMicroNano && this.nanosecond % 1e3 === 0) {
+      fracSec = padZeros(this.nanosecond / 1e3, 6);
+    } else {
+      fracSec = padZeros(this.nanosecond, 9);
+    }
+    return `${d}.${fracSec}Z`;
+  }
+  /**
+   * sets start time headers.
+   *
+   * @param starttime start as DateTime
+   */
+  setStart(starttime) {
+    this.nanosecond = starttime.millisecond * 1e6;
+    this.year = starttime.year;
+    this.dayOfYear = starttime.ordinal;
+    this.hour = starttime.hour;
+    this.minute = starttime.minute;
+    this.second = starttime.second;
+  }
+  /**
+   * Calculates time of the ith sample.
+   *
+   * @param   i sample number
+   * @returns the time
+   */
+  timeOfSample(i) {
+    return this.start.plus(Duration.fromMillis(1e3 * i / this.sampleRate));
+  }
+  /**
+   * Writes to the given dataview.
+   *
+   * @param   dataView write buffer
+   * @param   offset   offset within the buffer
+   * @param   zeroCrc  optionally zero out the crc field in order to recalculate
+   * @returns          new offset after this record
+   */
+  save(dataView, offset2 = 0, zeroCrc = false) {
+    dataView.setUint8(offset2, this.recordIndicator.charCodeAt(0));
+    offset2++;
+    dataView.setUint8(offset2, this.recordIndicator.charCodeAt(1));
+    offset2++;
+    dataView.setUint8(offset2, this.formatVersion);
+    offset2++;
+    dataView.setUint8(offset2, this.flags);
+    offset2++;
+    dataView.setUint32(offset2, this.nanosecond, true);
+    offset2 += 4;
+    dataView.setUint16(offset2, this.year, true);
+    offset2 += 2;
+    dataView.setUint16(offset2, this.dayOfYear, true);
+    offset2 += 2;
+    dataView.setUint8(offset2, this.hour);
+    offset2++;
+    dataView.setUint8(offset2, this.minute);
+    offset2++;
+    dataView.setUint8(offset2, this.second);
+    offset2++;
+    dataView.setUint8(offset2, this.encoding);
+    offset2++;
+    dataView.setFloat64(offset2, this.sampleRateOrPeriod, true);
+    offset2 += 8;
+    dataView.setUint32(offset2, this.numSamples, true);
+    offset2 += 4;
+    if (zeroCrc) {
+      dataView.setUint32(offset2, 0, true);
+    } else {
+      dataView.setUint32(offset2, this.crc, true);
+    }
+    offset2 += 4;
+    dataView.setUint8(offset2, this.publicationVersion);
+    offset2++;
+    dataView.setUint8(offset2, this.identifier.length);
+    offset2++;
+    dataView.setUint16(offset2, this.extraHeadersLength, true);
+    offset2 += 2;
+    dataView.setUint32(offset2, this.dataLength, true);
+    offset2 += 4;
+    for (let i = 0; i < this.identifier.length; i++) {
+      dataView.setUint8(offset2, this.identifier.charCodeAt(i));
+      offset2++;
+    }
+    return offset2;
+  }
+  /**
+   * Converts header start time to DateTime
+   *
+   * @returns         start time as DateTime
+   */
+  startAsDateTime() {
+    const millis = Math.round(this.nanosecond / 1e6);
+    const d = DateTime.fromObject(
+      {
+        year: this.year,
+        ordinal: this.dayOfYear,
+        hour: this.hour,
+        minute: this.minute,
+        second: this.second,
+        millisecond: 0
+      },
+      UTC_OPTIONS
+    );
+    return d.plus(millis);
+    if (!d.isValid) {
+      throw new Error(`Start is invalid: ${this.startFieldsInUtilFormat()} ${d.invalidReason} ${d.invalidExplanation}`);
+    }
+    return d;
+  }
+};
+function parseExtraHeaders(dataView) {
+  if (dataView.byteLength === 0) {
+    return {};
+  }
+  const firstChar = dataView.getUint8(0);
+  if (firstChar === 123) {
+    const jsonStr = makeString2(dataView, 0, dataView.byteLength);
+    const v = JSON.parse(jsonStr);
+    if (typeof v === "object") {
+      return v;
+    } else {
+      throw new Error(
+        `extra headers does not look like JSON object: ${jsonStr}"`
+      );
+    }
+  } else {
+    throw new Error(
+      "do not understand extras with first char val: " + firstChar + " " + (firstChar === 123)
+    );
+  }
+}
+function padZeros(val, len) {
+  let out = "" + val;
+  while (out.length < len) {
+    out = "0" + out;
+  }
+  return out;
+}
+function makeString2(dataView, offset2, length) {
+  const utf8decoder = new TextDecoder("utf-8");
+  const u8arr = new Uint8Array(
+    dataView.buffer,
+    dataView.byteOffset + offset2,
+    length
+  );
+  return utf8decoder.decode(u8arr).trim();
+}
+function checkByteSwap2(year) {
+  return year < 1960 || year > 2055;
+}
+function areContiguous2(dr1, dr2, sampRatio = 1.5) {
+  const h1 = dr1.header;
+  const h2 = dr2.header;
+  return h1.end < h2.start && h1.end.plus(Duration.fromMillis(1e3 * sampRatio / h1.sampleRate)) >= h2.start;
+}
+function createSeismogramSegment2(contig) {
+  if (!Array.isArray(contig)) {
+    contig = [contig];
+  }
+  const contigData = contig.map((dr) => dr.asEncodedDataSegment());
+  const out = new SeismogramSegment(
+    contigData,
+    contig[0].header.sampleRate,
+    contig[0].header.start,
+    contig[0].getSourceId()
+  );
+  const bag = extractBagEH(contig[0].extraHeaders);
+  if (bag?.y?.si) {
+    out.yUnit = bag?.y?.si;
+  }
+  return out;
+}
+function merge2(drList) {
+  return new Seismogram(mergeSegments2(drList));
+}
+function mergeSegments2(drList) {
+  const out = [];
+  let currDR;
+  drList.sort(function(a, b) {
+    return a.header.start.valueOf() - b.header.start.valueOf();
+  });
+  let contig = [];
+  for (let i = 0; i < drList.length; i++) {
+    currDR = drList[i];
+    if (contig.length === 0) {
+      contig.push(currDR);
+    } else if (areContiguous2(contig[contig.length - 1], currDR)) {
+      contig.push(currDR);
+    } else {
+      out.push(createSeismogramSegment2(contig));
+      contig = [currDR];
+    }
+  }
+  if (contig.length > 0) {
+    out.push(createSeismogramSegment2(contig));
+    contig = [];
+  }
+  return out;
+}
+function byChannel2(drList) {
+  const out = /* @__PURE__ */ new Map();
+  let key;
+  for (let i = 0; i < drList.length; i++) {
+    const currDR = drList[i];
+    key = currDR.codes();
+    let drArray = out.get(key);
+    if (!drArray) {
+      drArray = [currDR];
+      out.set(key, drArray);
+    } else {
+      drArray.push(currDR);
+    }
+  }
+  return out;
+}
+function seismogramSegmentPerChannel2(drList) {
+  let out = new Array(0);
+  const byChannelMap = byChannel2(drList);
+  byChannelMap.forEach(
+    (segments) => out = out.concat(mergeSegments2(segments))
+  );
+  return out;
+}
+function seismogramPerChannel2(drList) {
+  const out = [];
+  const byChannelMap = byChannel2(drList);
+  byChannelMap.forEach((segments) => out.push(merge2(segments)));
+  return out;
+}
+function sddPerChannel(drList) {
+  const out = [];
+  const byChannelMap = byChannel2(drList);
+  byChannelMap.forEach((segments) => {
+    const sdd = SeismogramDisplayData.fromSeismogram(merge2(segments));
+    out.push(sdd);
+    segments.forEach((seg) => {
+      const q = ehToQuake(seg.extraHeaders);
+      if (q != null) {
+        sdd.addQuake(q);
+      }
+      const c = ehToChannel(seg.extraHeaders, seg.getSourceId());
+      if (c != null) {
+        sdd.channel = c;
+      } else {
+        console.log(`Chan is null: ${seg.extraHeaders}`);
+      }
+      const marks = ehToMarkers(seg.extraHeaders);
+      marks.forEach((mark) => sdd.addMarker(mark));
+    });
+  });
+  return out;
+}
+function convertMS2toMSeed3(mseed2) {
+  const out = [];
+  for (let i = 0; i < mseed2.length; i++) {
+    out.push(convertMS2Record(mseed2[i]));
+  }
+  return out;
+}
+function convertMS2Record(ms2record) {
+  const xHeader = new MSeed3Header();
+  const xExtras = {};
+  const ms2H = ms2record.header;
+  xHeader.flags = (ms2H.activityFlags & 1) * 2 + (ms2H.ioClockFlags & 64) * 4 + (ms2H.dataQualityFlags & 16) * 8;
+  xHeader.year = ms2H.startBTime.year;
+  xHeader.dayOfYear = ms2H.startBTime.jday;
+  xHeader.hour = ms2H.startBTime.hour;
+  xHeader.minute = ms2H.startBTime.min;
+  xHeader.second = ms2H.startBTime.sec;
+  xHeader.nanosecond = ms2H.startBTime.tenthMilli * 1e5 + ms2H.startBTime.microsecond * 1e3;
+  xHeader.sampleRateOrPeriod = ms2H.sampleRate >= 1 ? ms2H.sampleRate : -1 / ms2H.sampleRate;
+  xHeader.encoding = ms2record.header.encoding;
+  xHeader.publicationVersion = UNKNOWN_DATA_VERSION;
+  xHeader.dataLength = ms2record.data.byteLength;
+  xHeader.identifier = FDSN_PREFIX2 + ":" + ms2H.netCode + SEP2 + ms2H.staCode + SEP2 + (ms2H.locCode ? ms2H.locCode : "") + SEP2 + ms2H.chanCode;
+  xHeader.identifierLength = xHeader.identifier.length;
+  xHeader.numSamples = ms2H.numSamples;
+  xHeader.crc = 0;
+  if (ms2H.typeCode) {
+    if (ms2H.typeCode === R_TYPECODE) {
+      xHeader.publicationVersion = 1;
+    } else if (ms2H.typeCode === D_TYPECODE) {
+      xHeader.publicationVersion = 2;
+    } else if (ms2H.typeCode === Q_TYPECODE) {
+      xHeader.publicationVersion = 3;
+    } else if (ms2H.typeCode === M_TYPECODE) {
+      xHeader.publicationVersion = 4;
+    }
+    if (ms2H.typeCode !== D_TYPECODE) {
+      xExtras.DataQuality = ms2H.typeCode;
+    }
+  }
+  if (xHeader.nanosecond < 0) {
+    xHeader.second -= 1;
+    xHeader.nanosecond += 1e9;
+    if (xHeader.second < 0) {
+      xHeader.second += 60;
+      xHeader.minute -= 1;
+      if (xHeader.minute < 0) {
+        xHeader.minute += 60;
+        xHeader.hour -= 1;
+        if (xHeader.hour < 0) {
+          xHeader.hour += 24;
+          xHeader.dayOfYear = -1;
+          if (xHeader.dayOfYear < 0) {
+            xHeader.dayOfYear += 365;
+            xHeader.year -= 1;
+          }
+        }
+      }
+    }
+  }
+  xHeader.extraHeadersLength = JSON.stringify(xExtras).length;
+  const out = new MSeed3Record(xHeader, xExtras, ms2record.data);
+  return out;
+}
+var SEP2 = "_";
+var kCRCTable = new Int32Array([
+  0,
+  4067132163,
+  3778769143,
+  324072436,
+  3348797215,
+  904991772,
+  648144872,
+  3570033899,
+  2329499855,
+  2024987596,
+  1809983544,
+  2575936315,
+  1296289744,
+  3207089363,
+  2893594407,
+  1578318884,
+  274646895,
+  3795141740,
+  4049975192,
+  51262619,
+  3619967088,
+  632279923,
+  922689671,
+  3298075524,
+  2592579488,
+  1760304291,
+  2075979607,
+  2312596564,
+  1562183871,
+  2943781820,
+  3156637768,
+  1313733451,
+  549293790,
+  3537243613,
+  3246849577,
+  871202090,
+  3878099393,
+  357341890,
+  102525238,
+  4101499445,
+  2858735121,
+  1477399826,
+  1264559846,
+  3107202533,
+  1845379342,
+  2677391885,
+  2361733625,
+  2125378298,
+  820201905,
+  3263744690,
+  3520608582,
+  598981189,
+  4151959214,
+  85089709,
+  373468761,
+  3827903834,
+  3124367742,
+  1213305469,
+  1526817161,
+  2842354314,
+  2107672161,
+  2412447074,
+  2627466902,
+  1861252501,
+  1098587580,
+  3004210879,
+  2688576843,
+  1378610760,
+  2262928035,
+  1955203488,
+  1742404180,
+  2511436119,
+  3416409459,
+  969524848,
+  714683780,
+  3639785095,
+  205050476,
+  4266873199,
+  3976438427,
+  526918040,
+  1361435347,
+  2739821008,
+  2954799652,
+  1114974503,
+  2529119692,
+  1691668175,
+  2005155131,
+  2247081528,
+  3690758684,
+  697762079,
+  986182379,
+  3366744552,
+  476452099,
+  3993867776,
+  4250756596,
+  255256311,
+  1640403810,
+  2477592673,
+  2164122517,
+  1922457750,
+  2791048317,
+  1412925310,
+  1197962378,
+  3037525897,
+  3944729517,
+  427051182,
+  170179418,
+  4165941337,
+  746937522,
+  3740196785,
+  3451792453,
+  1070968646,
+  1905808397,
+  2213795598,
+  2426610938,
+  1657317369,
+  3053634322,
+  1147748369,
+  1463399397,
+  2773627110,
+  4215344322,
+  153784257,
+  444234805,
+  3893493558,
+  1021025245,
+  3467647198,
+  3722505002,
+  797665321,
+  2197175160,
+  1889384571,
+  1674398607,
+  2443626636,
+  1164749927,
+  3070701412,
+  2757221520,
+  1446797203,
+  137323447,
+  4198817972,
+  3910406976,
+  461344835,
+  3484808360,
+  1037989803,
+  781091935,
+  3705997148,
+  2460548119,
+  1623424788,
+  1939049696,
+  2180517859,
+  1429367560,
+  2807687179,
+  3020495871,
+  1180866812,
+  410100952,
+  3927582683,
+  4182430767,
+  186734380,
+  3756733383,
+  763408580,
+  1053836080,
+  3434856499,
+  2722870694,
+  1344288421,
+  1131464017,
+  2971354706,
+  1708204729,
+  2545590714,
+  2229949006,
+  1988219213,
+  680717673,
+  3673779818,
+  3383336350,
+  1002577565,
+  4010310262,
+  493091189,
+  238226049,
+  4233660802,
+  2987750089,
+  1082061258,
+  1395524158,
+  2705686845,
+  1972364758,
+  2279892693,
+  2494862625,
+  1725896226,
+  952904198,
+  3399985413,
+  3656866545,
+  731699698,
+  4283874585,
+  222117402,
+  510512622,
+  3959836397,
+  3280807620,
+  837199303,
+  582374963,
+  3504198960,
+  68661723,
+  4135334616,
+  3844915500,
+  390545967,
+  1230274059,
+  3141532936,
+  2825850620,
+  1510247935,
+  2395924756,
+  2091215383,
+  1878366691,
+  2644384480,
+  3553878443,
+  565732008,
+  854102364,
+  3229815391,
+  340358836,
+  3861050807,
+  4117890627,
+  119113024,
+  1493875044,
+  2875275879,
+  3090270611,
+  1247431312,
+  2660249211,
+  1828433272,
+  2141937292,
+  2378227087,
+  3811616794,
+  291187481,
+  34330861,
+  4032846830,
+  615137029,
+  3603020806,
+  3314634738,
+  939183345,
+  1776939221,
+  2609017814,
+  2295496738,
+  2058945313,
+  2926798794,
+  1545135305,
+  1330124605,
+  3173225534,
+  4084100981,
+  17165430,
+  307568514,
+  3762199681,
+  888469610,
+  3332340585,
+  3587147933,
+  665062302,
+  2042050490,
+  2346497209,
+  2559330125,
+  1793573966,
+  3190661285,
+  1279665062,
+  1595330642,
+  2910671697
+]);
+function calculateCRC32C(buf, initial = 0) {
+  let ubuf;
+  if (buf instanceof ArrayBuffer || buf instanceof SharedArrayBuffer) {
+    ubuf = new Uint8Array(buf);
+  } else if (buf instanceof Uint8Array) {
+    ubuf = buf;
+  } else {
+    throw new Error("arg must be ArrayBufferLike or Uint8Array");
+  }
+  let crc = (initial | 0) ^ -1;
+  for (let i = 0; i < ubuf.length; i++) {
+    crc = kCRCTable[(crc ^ ubuf[i]) & 255] ^ crc >>> 8;
+    let tmp = crc;
+    tmp = (tmp ^ -1) >>> 0;
+    if (tmp < 0) {
+      tmp = 4294967295 + tmp + 1;
+    }
+  }
+  return (crc ^ -1) >>> 0;
+}
+function crcToHexString(crc) {
+  if (crc < 0) {
+    crc = 4294967295 + crc + 1;
+  }
+  const s2 = crc.toString(16).toUpperCase();
+  return "0x" + s2;
+}
+
+// src/datalink.ts
+var DATALINK_PROTOCOL = "DataLink1.0";
+var MODE = /* @__PURE__ */ ((MODE2) => {
+  MODE2["Query"] = "QUERY";
+  MODE2["Stream"] = "STREAM";
+  return MODE2;
+})(MODE || {});
+var QUERY_MODE = "QUERY" /* Query */;
+var STREAM_MODE = "STREAM" /* Stream */;
+var MAX_PROC_NUM = Math.pow(2, 16) - 2;
+var USER_BROWSER = "browser";
+var DEFAULT_PROGRAM = "seisplotjs";
+var DEFAULT_ARCH = "javascript";
+var ERROR = "ERROR";
+var OK = "OK";
+var INFO = "INFO";
+var ID = "ID";
+var PACKET = "PACKET";
+var STREAM = "STREAM";
+var ENDSTREAM = "ENDSTREAM";
+var MSEED_TYPE = "/MSEED";
+var MSEED3_TYPE = "/MSEED3";
+var IRIS_RINGSERVER_URL = "ws://rtserve.iris.washington.edu/datalink";
+var defaultHandleResponse = function(dlResponse) {
+  log(`Unhandled datalink response: ${dlResponse.toString()}`);
+};
+var DataLinkConnection = class _DataLinkConnection {
+  constructor(url, packetHandler, errorHandler) {
+    __publicField(this, "url");
+    /** @private */
+    __publicField(this, "_mode");
+    __publicField(this, "packetHandler");
+    __publicField(this, "errorHandler");
+    __publicField(this, "closeHandler");
+    __publicField(this, "serverId");
+    __publicField(this, "clientIdNum");
+    __publicField(this, "programname");
+    __publicField(this, "username");
+    __publicField(this, "architecture");
+    /** @private */
+    __publicField(this, "_responseResolve");
+    /** @private */
+    __publicField(this, "_responseReject");
+    __publicField(this, "webSocket");
+    this.webSocket = null;
+    this.url = url ? url : IRIS_RINGSERVER_URL;
+    this._mode = "QUERY" /* Query */;
+    this.packetHandler = packetHandler;
+    this.errorHandler = errorHandler;
+    this.closeHandler = null;
+    this.serverId = null;
+    this.clientIdNum = Math.floor(Math.random() * MAX_PROC_NUM) + 1;
+    this.programname = DEFAULT_PROGRAM;
+    this.username = USER_BROWSER;
+    this.architecture = DEFAULT_ARCH;
+    this._responseResolve = null;
+    this._responseReject = null;
+  }
+  /**
+   * Set a callback function called when the connection is closed.
+   *
+   * @param  closeHandler callback function
+   */
+  setOnClose(closeHandler) {
+    this.closeHandler = closeHandler;
+  }
+  /**
+   * creates the websocket connection and sends the client ID.
+   *
+   *  @returns a Promise that resolves to the server's ID.
+   */
+  connect() {
+    if (this.webSocket) {
+      this.webSocket.close();
+      this.webSocket = null;
+    }
+    return new Promise((resolve, reject) => {
+      if (this.webSocket) {
+        this.webSocket.close();
+      }
+      const webSocket = new WebSocket(this.url, DATALINK_PROTOCOL);
+      this.webSocket = webSocket;
+      webSocket.binaryType = "arraybuffer";
+      webSocket.onmessage = (event) => {
+        this.handle(event);
+      };
+      webSocket.onerror = (event) => {
+        const evtError = toError(event);
+        this.handleError(evtError);
+        reject(evtError);
+      };
+      webSocket.onclose = (closeEvent) => {
+        this.webSocket = null;
+        this._mode = "QUERY" /* Query */;
+        if (this.closeHandler) {
+          this.closeHandler(closeEvent);
+        }
+      };
+      webSocket.onopen = () => {
+        resolve(this);
+      };
+    }).then((datalink) => {
+      return datalink.sendId();
+    }).then((idmsg) => {
+      this.serverId = idmsg;
+      return idmsg;
+    });
+  }
+  /**
+   * @returns true if the websocket is connected (non-null)
+   */
+  isConnected() {
+    return this.webSocket !== null;
+  }
+  /**
+   * @returns the current mode, QUERY_MODE or STREAM_MODE
+   */
+  get mode() {
+    return this._mode;
+  }
+  /**
+   * Switches to streaming mode to receive data packets from the ringserver.
+   *
+   * @returns promise to the response
+   */
+  stream() {
+    this._mode = "STREAM" /* Stream */;
+    return this.awaitDLCommand(STREAM, "").then(
+      (dlResponse) => _DataLinkConnection.ensureDataLinkResponse(dlResponse)
+    );
+  }
+  /**
+   * Switches back to query mode to enable commands to be sent to the ringserver.
+   */
+  endStream() {
+    if (this.webSocket === null || this._mode === null || this._mode === "QUERY" /* Query */) {
+      return;
+    }
+    this._mode = "QUERY" /* Query */;
+    this.sendDLCommand(ENDSTREAM, "");
+  }
+  /**
+   * Closes the connection and the underlying websocket. No communication
+   * is possible until connect() is called again.
+   */
+  close() {
+    if (this.webSocket) {
+      this.endStream();
+      if (this.webSocket) {
+        this.webSocket.close();
+      }
+      this.webSocket = null;
+      this._mode = "QUERY" /* Query */;
+    }
+  }
+  /**
+   * Send a ID Command. Command is a string.
+   *
+   * @returns a Promise that resolves to the response from the ringserver.
+   */
+  sendId() {
+    return this.id(
+      this.programname,
+      this.username,
+      stringify(this.clientIdNum),
+      this.architecture
+    ).then(
+      (dlResponse) => _DataLinkConnection.ensureDataLinkResponse(dlResponse)
+    ).then((dlResponse) => {
+      if (dlResponse.type === "ID") {
+        this.serverId = "" + dlResponse.message;
+        return this.serverId;
+      } else {
+        throw new Error("not ID response: " + stringify(dlResponse.type));
+      }
+    });
+  }
+  /**
+   * encodes as a Datalink packet, header with optional data section as
+   * binary Uint8Array. Size of the binary data is appended
+   * to the header if present.
+   *
+   * @param header the command/header string
+   * @param data optional data portion
+   * @returns datalink packet as an ArrayBufferLike
+   */
+  encodeDL(header, data) {
+    let cmdLen = header.length;
+    let len = 3 + header.length;
+    let lenStr = "";
+    if (data && data.length > 0) {
+      lenStr = String(data.length);
+      len += lenStr.length + 1;
+      cmdLen += lenStr.length + 1;
+      len += data.length;
+    }
+    const rawPacket = new ArrayBuffer(len);
+    const binaryPacket = new Uint8Array(rawPacket);
+    const packet = new DataView(rawPacket);
+    packet.setUint8(0, 68);
+    packet.setUint8(1, 76);
+    packet.setUint8(2, cmdLen);
+    let i = 3;
+    for (const c of header) {
+      packet.setUint8(i, c.charCodeAt(0));
+      i++;
+    }
+    const SPACE = " ";
+    if (data && data.length > 0) {
+      packet.setUint8(i, SPACE.charCodeAt(0));
+      i++;
+      for (const c of lenStr) {
+        packet.setUint8(i, c.charCodeAt(0));
+        i++;
+      }
+      binaryPacket.set(data, i);
+    }
+    return rawPacket;
+  }
+  /**
+   * sends the header with optional binary data
+   * as the data section. Size of the data is appended
+   * to the header before sending if present.
+   *
+   * @param header header to send
+   * @param data optional data to send
+   */
+  sendDLBinary(header, data) {
+    const rawPacket = this.encodeDL(header, data);
+    if (this.webSocket) {
+      this.webSocket.send(rawPacket);
+    } else {
+      throw new Error("WebSocket has been closed.");
+    }
+  }
+  /**
+   * sends the command as header with optional dataString
+   * as the data section. Size of the dataString is appended
+   * to the header before sending.
+   *
+   * @param command the command/header string
+   * @param dataString optional data portion of packet
+   */
+  sendDLCommand(command, dataString) {
+    this.sendDLBinary(command, stringToUint8Array(dataString));
+  }
+  /**
+   * Send a DataLink Command and await the response. Command is a string.
+   *
+   * @param header packet header
+   * @param data optional data portion of packet
+   * @returns a Promise that resolves with the webSocket MessageEvent.
+   */
+  awaitDLBinary(header, data) {
+    const promise = new Promise(
+      (resolve, reject) => {
+        this._responseResolve = resolve;
+        this._responseReject = reject;
+        this.sendDLBinary(header, data);
+      }
+    ).then((response) => {
+      this._responseResolve = null;
+      this._responseReject = null;
+      return response;
+    }).catch((error) => {
+      this._responseResolve = null;
+      this._responseReject = null;
+      throw error;
+    });
+    return promise;
+  }
+  /**
+   * Send a DataLink Command and await the response. Command is a string.
+   * Returns a Promise that resolves with the webSocket MessageEvent.
+   *
+   * @param command the command/header string
+   * @param dataString optional data portion of packet
+   * @returns promise to server's response
+   */
+  awaitDLCommand(command, dataString) {
+    return this.awaitDLBinary(command, stringToUint8Array(dataString));
+  }
+  /**
+   * Writes data to the ringserver and awaits a acknowledgement.
+   *
+   * @param   streamid    stream id for packet header
+   * @param   hpdatastart start of timewindow the packet covers
+   * @param   hpdataend   end of timewindow the packet covers
+   * @param   data        optional data to send
+   * @returns             promise to server's response
+   */
+  writeAck(streamid, hpdatastart, hpdataend, data) {
+    const header = `WRITE ${streamid} ${dateTimeToHPTime(
+      hpdatastart
+    )} ${dateTimeToHPTime(hpdataend)} A`;
+    return this.awaitDLBinary(header, data);
+  }
+  /**
+   * Makes sure a response actually is a DataLinkResponse
+   *
+   * @param   dl datalink packet/response
+   * @returns DataLinkResponse after checking instanceof
+   * @throws Error if not a DataLinkResponse
+   */
+  static ensureDataLinkResponse(dl) {
+    if (dl instanceof DataLinkResponse) {
+      return dl;
+    }
+    throw new Error(`Expected DataLinkResponse but got ${dl.header}`);
+  }
+  /**
+   * Makes sure a response actually is a DataLinkPacket
+   *
+   * @param   dl datalink packet/response
+   * @returns DataLinkPacket after checking instanceof
+   * @throws Error if not a DataLinkPacket
+   */
+  static ensureDataLinkPacket(dl) {
+    if (dl instanceof DataLinkPacket) {
+      return dl;
+    }
+    throw new Error(`Expected DataLinkPacket but got ${dl.type}`);
+  }
+  /**
+   * Send id and await server's response. All of these are can more or less
+   * be filled with dummy values. They are mostly used for logging and debugging
+   * on the server side.
+   *
+   * @param programname name of program, ex seisplotjs
+   * @param username name of user, ex browser
+   * @param processid process number, used to differentiate between multiple running instances
+   * @param architecture cpu architecture, ex javascript
+   * @returns promise to servers response
+   */
+  id(programname, username, processid, architecture) {
+    const command = `ID ${programname}:${username}:${processid}:${architecture}`;
+    return this.awaitDLCommand(command).then(
+      (dlResponse) => _DataLinkConnection.ensureDataLinkResponse(dlResponse)
+    );
+  }
+  /**
+   * Send info command for infoType.
+   *
+   * @param infoType type to get info for
+   * @returns promise to server's response
+   */
+  info(infoType) {
+    const command = `INFO ${infoType}`;
+    return this.awaitDLCommand(command).then(
+      (dlResponse) => _DataLinkConnection.ensureDataLinkResponse(dlResponse)
+    );
+  }
+  infoStatus() {
+    return this.info("STATUS").then((daResp) => {
+      return StatusResponse.fromDatalinkResponse(daResp);
+    });
+  }
+  infoStreams() {
+    return this.info("STREAMS").then((daResp) => {
+      return StreamsResponse.fromDatalinkResponse(daResp);
+    });
+  }
+  infoConnections() {
+    return this.info("CONNECTIONS").then((daResp) => {
+      return ConnectionsResponse.fromDatalinkResponse(daResp);
+    });
+  }
+  /**
+   * Send position after command.
+   *
+   * @param time time to position after
+   * @returns promise to server's response
+   */
+  positionAfter(time) {
+    return this.positionAfterHPTime(dateTimeToHPTime(time)).then(
+      (dlResponse) => _DataLinkConnection.ensureDataLinkResponse(dlResponse)
+    );
+  }
+  /**
+   * Send position after command.
+   *
+   * @param hpTime time to position after
+   * @returns promise to server's response
+   */
+  positionAfterHPTime(hpTime) {
+    const command = `POSITION AFTER ${hpTime}`;
+    return this.awaitDLCommand(command).then(
+      (dlResponse) => _DataLinkConnection.ensureDataLinkResponse(dlResponse)
+    );
+  }
+  /**
+   * Send match command.
+   *
+   * @param pattern regular expression to match streams
+   * @returns promise to server's response
+   */
+  match(pattern) {
+    const command = `MATCH`;
+    return this.awaitDLCommand(command, pattern).then(
+      (dlResponse) => _DataLinkConnection.ensureDataLinkResponse(dlResponse)
+    );
+  }
+  /**
+   * Send reject command.
+   *
+   * @param pattern regular expression to reject streams
+   * @returns promise to server's response
+   */
+  reject(pattern) {
+    const command = `REJECT ${pattern}`;
+    return this.awaitDLCommand(command).then(
+      (dlResponse) => _DataLinkConnection.ensureDataLinkResponse(dlResponse)
+    );
+  }
+  /**
+   * Read a single packet for the given id.
+   *
+   * @param packetId id of the packet of interest
+   * @returns promise to server's response
+   */
+  read(packetId) {
+    const command = `READ ${packetId}`;
+    return this.awaitDLBinary(command).then(
+      (dlResponse) => _DataLinkConnection.ensureDataLinkPacket(dlResponse)
+    );
+  }
+  /**
+   * Handles a web socket message from the data link connection.
+   *
+   * @private
+   * @param wsEvent web socket event to handle
+   */
+  handle(wsEvent) {
+    const rawData = wsEvent.data;
+    if (rawData instanceof ArrayBuffer || rawData instanceof SharedArrayBuffer) {
+      this.handleArrayBuffer(rawData);
+    }
+  }
+  handleArrayBuffer(rawData) {
+    const dlPreHeader = new DataView(rawData, 0, 3);
+    if ("D" === String.fromCharCode(dlPreHeader.getUint8(0)) && "L" === String.fromCharCode(dlPreHeader.getUint8(1))) {
+      const headerLen = dlPreHeader.getUint8(2);
+      const header = dataViewToString(new DataView(rawData, 3, headerLen));
+      if (header.startsWith(PACKET)) {
+        const packet = new DataLinkPacket(
+          header,
+          new DataView(rawData, 3 + headerLen)
+        );
+        if (this.packetHandler) {
+          try {
+            this.packetHandler(packet);
+          } catch (e) {
+            this.handleError(toError(e));
+          }
+        } else {
+          this.handleError(new Error("packetHandler not defined"));
+        }
+      } else {
+        let dv;
+        if (rawData.byteLength > 3 + headerLen) {
+          dv = new DataView(rawData, 3 + headerLen);
+        }
+        const dlResponse = DataLinkResponse.parse(header, dv);
+        if (dlResponse.type === "ENDSTREAM") {
+          this._mode = "QUERY" /* Query */;
+        } else {
+          if (this._responseResolve) {
+            this._responseResolve(dlResponse);
+          } else {
+            defaultHandleResponse(dlResponse);
+          }
+        }
+      }
+    } else {
+      throw new Error("DataLink Packet did not start with DL");
+    }
+  }
+  /**
+   * handle errors that arise
+   *
+   * @private
+   * @param   error the error
+   */
+  handleError(error) {
+    if (this._responseReject) {
+      this._responseReject(error);
+    }
+    if (this.errorHandler) {
+      this.errorHandler(error);
+    } else {
+      log("datalink handleError: " + error.message);
+    }
+  }
+};
+var DataLinkResponse = class _DataLinkResponse {
+  constructor(type, value, message) {
+    __publicField(this, "type");
+    __publicField(this, "value");
+    __publicField(this, "message");
+    this.type = type;
+    this.value = value;
+    this.message = message;
+  }
+  isError() {
+    return this.type === ERROR;
+  }
+  toString() {
+    return `${this.type} ${this.value} | ${this.message}`;
+  }
+  static parse(header, data) {
+    let value = "";
+    const s2 = header.split(" ");
+    const type = s2[0];
+    let message = "";
+    if (type === ID) {
+      message = "" + header.substring(3);
+    } else if (type === ENDSTREAM || type === INFO || type === OK || type === ERROR) {
+      value = s2[1];
+      if (data) {
+        message = dataViewToString(
+          new DataView(data.buffer, 3 + header.length)
+        );
+      }
+    } else {
+      log(`unknown DataLink response type: ${type}  ${header}`);
+      message = header.substring(type.length + 1);
+    }
+    return new _DataLinkResponse(type, value, message);
+  }
+};
+var DataLinkPacket = class {
+  constructor(header, dataview) {
+    __publicField(this, "header");
+    __publicField(this, "data");
+    __publicField(this, "streamId");
+    __publicField(this, "pktid");
+    __publicField(this, "hppackettime");
+    __publicField(this, "hppacketstart");
+    __publicField(this, "hppacketend");
+    __publicField(this, "dataSize");
+    __publicField(this, "_miniseed");
+    __publicField(this, "_mseed3");
+    this._miniseed = null;
+    this._mseed3 = null;
+    this.header = header;
+    this.data = dataview;
+    const split = this.header.split(" ");
+    this.streamId = split[1];
+    this.pktid = split[2];
+    this.hppackettime = split[3];
+    this.hppacketstart = split[4];
+    this.hppacketend = split[5];
+    this.dataSize = Number.parseInt(split[6]);
+    if (dataview.byteLength < this.dataSize) {
+      throw new Error(
+        `not enough bytes in dataview for packet:  ${this.dataSize}`
+      );
+    }
+  }
+  /**
+   * Packet start time as a DateTime.
+   *
+   * @returns start time
+   */
+  get packetStart() {
+    return hpTimeToDateTime(parseInt(this.hppacketstart));
+  }
+  /**
+   * Packet end time as a DateTime.
+   *
+   * @returns end time
+   */
+  get packetEnd() {
+    return hpTimeToDateTime(parseInt(this.hppacketend));
+  }
+  /**
+   * Packet time as a DateTime.
+   *
+   * @returns packet time
+   */
+  get packetTime() {
+    return hpTimeToDateTime(parseInt(this.hppackettime));
+  }
+  /**
+   * is this packet a miniseed packet
+   *
+   * @returns          true if it is miniseed
+   */
+  isMiniseed() {
+    return isDef(this._miniseed) || this.streamId.endsWith(MSEED_TYPE);
+  }
+  /**
+   * Parsed payload as a miniseed data record, if the streamid
+   * ends with '/MSEED', null otherwise.
+   *
+   * @returns miniseed DataRecord or null
+   */
+  asMiniseed() {
+    if (!isDef(this._miniseed)) {
+      if (this.streamId.endsWith(MSEED_TYPE)) {
+        this._miniseed = parseSingleDataRecord(this.data);
+      } else {
+        this._miniseed = null;
+      }
+    }
+    return this._miniseed;
+  }
+  /**
+   * is this packet a miniseed3 packet
+   *
+   * @returns          true if it is miniseed3
+   */
+  isMiniseed3() {
+    return isDef(this._mseed3) || this.streamId.endsWith(MSEED3_TYPE);
+  }
+  /**
+   * Parsed payload as a miniseed3 data record, if the data format is 3, null otherwise.
+   *
+   * @returns miniseed3 DataRecord or null
+   */
+  asMiniseed3() {
+    if (!isDef(this._mseed3)) {
+      if (this.streamId.endsWith(MSEED3_TYPE)) {
+        this._mseed3 = MSeed3Record.parseSingleDataRecord(this.data);
+      } else if (this.streamId.endsWith(MSEED_TYPE)) {
+        const ms2 = this.asMiniseed();
+        if (ms2) {
+          this._mseed3 = convertMS2Record(ms2);
+        }
+      } else {
+        this._mseed3 = null;
+      }
+    }
+    return this._mseed3;
+  }
+};
+var DataLinkIdStats = class _DataLinkIdStats {
+  constructor(version2, serverId, capabilities) {
+    __publicField(this, "version");
+    __publicField(this, "serverId");
+    __publicField(this, "capabilities");
+    this.version = version2;
+    this.serverId = serverId;
+    this.capabilities = capabilities;
+  }
+  /**
+   * Parses the attributes of a <DataLink> xml element.
+   *
+   * @param  statusEl               DataLink XML element
+   * @returns  the id stats
+   */
+  static parseXMLAttributes(statusEl) {
+    const dlIdStats = new _DataLinkIdStats(
+      parseUtil._requireAttribute(statusEl, "Version"),
+      parseUtil._requireAttribute(statusEl, "ServerID"),
+      parseUtil._requireAttribute(statusEl, "Capabilities").split(" ")
+    );
+    return dlIdStats;
+  }
+  toString() {
+    return `
+DataLink:
+Version="${this.version}"
+Id="${this.serverId}"
+Capabilities="${this.capabilities.join(" ")}"`;
+  }
+};
+var DataLinkStats = class _DataLinkStats {
+  constructor(startTime, ringVersion, ringSize, packetSize, maximumPacketID, maximumPackets, memoryMappedRing, volatileRing, totalConnections, totalStreams, txPacketRate, txByteRate, rxPacketRate, rxByteRate, earliestPacketID, earliestPacketCreationTime, earliestPacketDataStartTime, earliestPacketDataEndTime, latestPacketID, latestPacketCreationTime, latestPacketDataStartTime, latestPacketDataEndTime) {
+    __publicField(this, "startTime");
+    __publicField(this, "ringVersion");
+    __publicField(this, "ringSize");
+    __publicField(this, "packetSize");
+    __publicField(this, "maximumPacketID");
+    __publicField(this, "maximumPackets");
+    __publicField(this, "memoryMappedRing");
+    __publicField(this, "volatileRing");
+    __publicField(this, "totalConnections");
+    __publicField(this, "totalStreams");
+    __publicField(this, "txPacketRate");
+    __publicField(this, "txByteRate");
+    __publicField(this, "rxPacketRate");
+    __publicField(this, "rxByteRate");
+    __publicField(this, "earliestPacketID");
+    __publicField(this, "earliestPacketCreationTime");
+    __publicField(this, "earliestPacketDataStartTime");
+    __publicField(this, "earliestPacketDataEndTime");
+    __publicField(this, "latestPacketID");
+    __publicField(this, "latestPacketCreationTime");
+    __publicField(this, "latestPacketDataStartTime");
+    __publicField(this, "latestPacketDataEndTime");
+    this.startTime = startTime;
+    this.ringVersion = ringVersion;
+    this.ringSize = ringSize;
+    this.packetSize = packetSize;
+    this.maximumPacketID = maximumPacketID;
+    this.maximumPackets = maximumPackets;
+    this.memoryMappedRing = memoryMappedRing;
+    this.volatileRing = volatileRing;
+    this.totalConnections = totalConnections;
+    this.totalStreams = totalStreams;
+    this.txPacketRate = txPacketRate;
+    this.txByteRate = txByteRate;
+    this.rxPacketRate = rxPacketRate;
+    this.rxByteRate = rxByteRate;
+    this.earliestPacketID = earliestPacketID;
+    this.earliestPacketCreationTime = earliestPacketCreationTime;
+    this.earliestPacketDataStartTime = earliestPacketDataStartTime;
+    this.earliestPacketDataEndTime = earliestPacketDataEndTime;
+    this.latestPacketID = latestPacketID;
+    this.latestPacketCreationTime = latestPacketCreationTime;
+    this.latestPacketDataStartTime = latestPacketDataStartTime;
+    this.latestPacketDataEndTime = latestPacketDataEndTime;
+  }
+  /**
+   * Parses the attributes of a <Status> xml element.
+   *
+   * @param  statusEl   DataLink <Status> XML element
+   * @returns  the stats
+   */
+  static parseXMLAttributes(statusEl) {
+    const dlStats = new _DataLinkStats(
+      daliDateTime(parseUtil._requireAttribute(statusEl, "StartTime")),
+      parseUtil._requireAttribute(statusEl, "RingVersion"),
+      parseInt(parseUtil._requireAttribute(statusEl, "RingSize")),
+      parseInt(parseUtil._requireAttribute(statusEl, "PacketSize")),
+      parseInt(parseUtil._requireAttribute(statusEl, "MaximumPacketID")),
+      parseInt(parseUtil._requireAttribute(statusEl, "MaximumPackets")),
+      parseUtil._requireAttribute(statusEl, "MemoryMappedRing") === "TRUE",
+      parseUtil._requireAttribute(statusEl, "VolatileRing") === "TRUE",
+      parseInt(parseUtil._requireAttribute(statusEl, "TotalConnections")),
+      parseInt(parseUtil._requireAttribute(statusEl, "TotalStreams")),
+      parseFloat(parseUtil._requireAttribute(statusEl, "TXPacketRate")),
+      parseFloat(parseUtil._requireAttribute(statusEl, "TXByteRate")),
+      parseFloat(parseUtil._requireAttribute(statusEl, "RXPacketRate")),
+      parseFloat(parseUtil._requireAttribute(statusEl, "RXByteRate")),
+      parseInt(parseUtil._requireAttribute(statusEl, "EarliestPacketID")),
+      daliDateTime(
+        parseUtil._requireAttribute(statusEl, "EarliestPacketCreationTime")
+      ),
+      daliDateTime(
+        parseUtil._requireAttribute(statusEl, "EarliestPacketDataStartTime")
+      ),
+      daliDateTime(
+        parseUtil._requireAttribute(statusEl, "EarliestPacketDataEndTime")
+      ),
+      parseInt(parseUtil._requireAttribute(statusEl, "LatestPacketID")),
+      daliDateTime(
+        parseUtil._requireAttribute(statusEl, "LatestPacketCreationTime")
+      ),
+      daliDateTime(
+        parseUtil._requireAttribute(statusEl, "LatestPacketDataStartTime")
+      ),
+      daliDateTime(
+        parseUtil._requireAttribute(statusEl, "LatestPacketDataEndTime")
+      )
+    );
+    return dlStats;
+  }
+  toString() {
+    return `
+Status:
+StartTime="${this.startTime.toISO()}"
+RingVersion="${this.ringVersion}"
+RingSize="${this.ringSize}"
+PacketSize="${this.packetSize}"
+MaximumPacketID="${this.maximumPacketID}"
+MaximumPackets="${this.maximumPackets}"
+MemoryMappedRing="${this.memoryMappedRing}"
+VolatileRing="${this.volatileRing}"
+TotalConnections="${this.totalConnections}"
+TotalStreams="${this.totalStreams}"
+TXPacketRate="${this.txPacketRate}"
+TXByteRate="${this.txByteRate}"
+RXPacketRate="${this.rxPacketRate}"
+RXByteRate="${this.rxByteRate}"
+EarliestPacketID="${this.earliestPacketID}"
+EarliestPacketCreationTime="${this.earliestPacketCreationTime.toISO()}"
+EarliestPacketDataStartTime="${this.earliestPacketDataStartTime.toISO()}"
+EarliestPacketDataEndTime="${this.earliestPacketDataEndTime.toISO()}"
+LatestPacketID="${this.latestPacketID}"
+LatestPacketCreationTime="${this.latestPacketCreationTime.toISO()}"
+LatestPacketDataStartTime="${this.latestPacketDataStartTime.toISO()}"
+LatestPacketDataEndTime="${this.latestPacketDataEndTime.toISO()}"
+    `;
+  }
+};
+var ThreadStat = class _ThreadStat {
+  constructor(flags, type, port) {
+    __publicField(this, "flags");
+    __publicField(this, "type");
+    __publicField(this, "port");
+    this.flags = flags;
+    this.type = type;
+    this.port = port;
+  }
+  /**
+   * Parses the attributes of a <Status> xml element.
+   *
+   * @param  statusEl   DataLink <Status> XML element
+   * @returns  the stats
+   */
+  static parseXMLAttributes(statusEl) {
+    const threadStats = new _ThreadStat(
+      parseUtil._requireAttribute(statusEl, "Flags").split(" "),
+      parseUtil._requireAttribute(statusEl, "Type").split(" "),
+      parseInt(parseUtil._requireAttribute(statusEl, "Port"))
+    );
+    return threadStats;
+  }
+  toString() {
+    return `Thread  Port: ${this.port} Flags: ${this.flags.join(" ")} Type: ${this.type.join(" ")}`;
+  }
+};
+var StatusResponse = class _StatusResponse {
+  constructor(idStats, datalinkStats, threadStats) {
+    __publicField(this, "idStats");
+    __publicField(this, "datalinkStats");
+    __publicField(this, "threadStats");
+    __publicField(this, "rawXml", "");
+    this.idStats = idStats;
+    this.datalinkStats = datalinkStats;
+    this.threadStats = threadStats;
+  }
+  static fromDatalinkResponse(daliResp) {
+    if (daliResp.type === INFO) {
+      const daliXml = new DOMParser().parseFromString(
+        daliResp.message,
+        "text/xml"
+      );
+      const sResp = _StatusResponse.fromXML(daliXml.documentElement);
+      sResp.rawXml = daliResp.message;
+      return sResp;
+    } else {
+      throw new Error("Datalink Response not OK", { cause: daliResp });
+    }
+  }
+  static fromXML(daliXML) {
+    const idStats = DataLinkIdStats.parseXMLAttributes(daliXML);
+    const dlStats = DataLinkStats.parseXMLAttributes(
+      daliXML.getElementsByTagName("Status")[0]
+    );
+    const threadListEl = daliXML.getElementsByTagName("ServerThreads")[0];
+    let threads = [];
+    if (threadListEl) {
+      threads = Array.from(threadListEl.getElementsByTagName("Thread")).map(
+        (threadEl) => ThreadStat.parseXMLAttributes(threadEl)
+      );
+    }
+    return new _StatusResponse(idStats, dlStats, threads);
+  }
+  toString() {
+    return `
+${this.idStats.toString()}
+${this.datalinkStats.toString()}
+${this.threadStats.join("\n")}`;
+  }
+};
+var StreamStat = class _StreamStat {
+  constructor(name, earliestPacketID, earliestPacketDataStartTime, earliestPacketDataEndTime, latestPacketID, latestPacketDataStartTime, latestPacketDataEndTime, dataLatency) {
+    __publicField(this, "name");
+    __publicField(this, "earliestPacketID");
+    __publicField(this, "earliestPacketDataStartTime");
+    __publicField(this, "earliestPacketDataEndTime");
+    __publicField(this, "latestPacketID");
+    __publicField(this, "latestPacketDataStartTime");
+    __publicField(this, "latestPacketDataEndTime");
+    __publicField(this, "dataLatency");
+    this.name = name;
+    this.earliestPacketID = earliestPacketID;
+    this.earliestPacketDataStartTime = earliestPacketDataStartTime;
+    this.earliestPacketDataEndTime = earliestPacketDataEndTime;
+    this.latestPacketID = latestPacketID;
+    this.latestPacketDataStartTime = latestPacketDataStartTime;
+    this.latestPacketDataEndTime = latestPacketDataEndTime;
+    this.dataLatency = dataLatency;
+  }
+  static parseXMLAttributes(statusEl) {
+    const sStat = new _StreamStat(
+      parseUtil._requireAttribute(statusEl, "Name"),
+      parseInt(parseUtil._requireAttribute(statusEl, "EarliestPacketID")),
+      daliDateTime(
+        parseUtil._requireAttribute(statusEl, "EarliestPacketDataStartTime")
+      ),
+      daliDateTime(
+        parseUtil._requireAttribute(statusEl, "EarliestPacketDataEndTime")
+      ),
+      parseInt(parseUtil._requireAttribute(statusEl, "LatestPacketID")),
+      daliDateTime(
+        parseUtil._requireAttribute(statusEl, "LatestPacketDataStartTime")
+      ),
+      daliDateTime(
+        parseUtil._requireAttribute(statusEl, "LatestPacketDataEndTime")
+      ),
+      parseFloat(parseUtil._requireAttribute(statusEl, "DataLatency"))
+    );
+    return sStat;
+  }
+  toString() {
+    return `
+    Name: ${this.name}
+    EarliestPacketID="${this.earliestPacketID}"
+    EarliestPacketDataStartTime="${this.earliestPacketDataStartTime.toISO()}"
+    EarliestPacketDataEndTime="${this.earliestPacketDataEndTime.toISO()}"
+    LatestPacketID="${this.latestPacketID}"
+    LatestPacketDataStartTime="${this.latestPacketDataStartTime.toISO()}"
+    LatestPacketDataEndTime="${this.latestPacketDataEndTime.toISO()}"
+    DataLatency=${this.dataLatency}
+    `;
+  }
+};
+var StreamsResponse = class _StreamsResponse {
+  constructor(datalinkStats, streams) {
+    __publicField(this, "datalinkStats");
+    __publicField(this, "streams");
+    this.datalinkStats = datalinkStats;
+    this.streams = streams;
+  }
+  static fromDatalinkResponse(daliResp) {
+    if (daliResp.type === INFO) {
+      const daliXml = new DOMParser().parseFromString(
+        daliResp.message,
+        "text/xml"
+      );
+      return _StreamsResponse.fromXML(daliXml.documentElement);
+    } else {
+      throw new Error("Datalink Response not OK", { cause: daliResp });
+    }
+  }
+  /*
+  <DataLink Version="2018.078"
+  ServerID="South Carolina Seismic Network"
+  Capabilities="DLPROTO:1.0 PACKETSIZE:512 WRITE">
+  <Status
+    StartTime="2022-09-21 12:13:29"
+    RingVersion="1"
+    RingSize="1073741824"
+    PacketSize="512"
+    MaximumPacketID="16777215"
+    MaximumPackets="1698952"
+    MemoryMappedRing="TRUE"
+    VolatileRing="FALSE"
+    TotalConnections="9"
+    TotalStreams="90"
+    TXPacketRate="57.0"
+    TXByteRate="29167.9"
+    RXPacketRate="18.0"
+    RXByteRate="9210.9"
+    EarliestPacketID="11763348"
+    EarliestPacketCreationTime="2022-10-03 12:56:43.520738"
+    EarliestPacketDataStartTime="2022-10-03 12:56:40.860000"
+    EarliestPacketDataEndTime="2022-10-03 12:56:42.875000"
+    LatestPacketID="13462299"
+    LatestPacketCreationTime="2022-10-04 15:11:24.786990"
+    LatestPacketDataStartTime="2022-10-04 15:11:19.580000"
+    LatestPacketDataEndTime="2022-10-04 15:11:22.785000" />
+    <StreamList TotalStreams="90" SelectedStreams="3">
+      <Stream Name="CO_JSC_00_HHE/MSEED" EarliestPacketID="11763363" EarliestPacketDataStartTime="2022-10-03 12:56:37.178392" EarliestPacketDataEndTime="2022-10-03 12:56:40.808392" LatestPacketID="13462285" LatestPacketDataStartTime="2022-10-04 15:11:15.808392" LatestPacketDataEndTime="2022-10-04 15:11:18.788392" DataLatency="6.0" />
+      <Stream Name="CO_JSC_00_HHN/MSEED" EarliestPacketID="11763389" EarliestPacketDataStartTime="2022-10-03 12:56:38.108392" EarliestPacketDataEndTime="2022-10-03 12:56:41.398392" LatestPacketID="13462284" LatestPacketDataStartTime="2022-10-04 15:11:15.668392" LatestPacketDataEndTime="2022-10-04 15:11:18.408392" DataLatency="6.4" />
+      <Stream Name="CO_JSC_00_HHZ/MSEED" EarliestPacketID="11763402" EarliestPacketDataStartTime="2022-10-03 12:56:38.908392" EarliestPacketDataEndTime="2022-10-03 12:56:42.688392" LatestPacketID="13462252" LatestPacketDataStartTime="2022-10-04 15:11:14.428392" LatestPacketDataEndTime="2022-10-04 15:11:17.858392" DataLatency="6.9" />
+    </StreamList>
+  </DataLink>
+     */
+  static fromXML(daliXML) {
+    const statusEl = daliXML.getElementsByTagName("Status")[0];
+    const dlStats = DataLinkStats.parseXMLAttributes(statusEl);
+    const streamListEl = daliXML.getElementsByTagName("StreamList")[0];
+    const streamElList = streamListEl.getElementsByTagName("Stream");
+    const streams = Array.from(streamElList).map(
+      (streamEl) => StreamStat.parseXMLAttributes(streamEl)
+    );
+    const streamResp = new _StreamsResponse(dlStats, streams);
+    return streamResp;
+  }
+  toString() {
+    return `${this.datalinkStats.toString()}
+    ${this.streams.map((s2) => s2.toString()).join("\n")}
+    `;
+  }
+};
+var ConnectionsResponse = class _ConnectionsResponse {
+  constructor(daliXML) {
+    __publicField(this, "daliXML");
+    this.daliXML = daliXML;
+  }
+  static fromDatalinkResponse(daliResp) {
+    if (daliResp.type === INFO) {
+      return new _ConnectionsResponse(daliResp.message);
+    } else {
+      throw new Error("Datalink Response not OK", { cause: daliResp });
+    }
+  }
+  static fromXML(daliXML) {
+    const xmlString = new XMLSerializer().serializeToString(daliXML);
+    return new _ConnectionsResponse(xmlString);
+  }
+  toString() {
+    return `${this.daliXML.toString()}`;
+  }
+};
+function daliDateTime(dalitime) {
+  const iso = dalitime.replace(" ", "T");
+  return isoToDateTime(iso);
+}
+function dateTimeToHPTime(m) {
+  return m.valueOf() * 1e3;
+}
+function hpTimeToDateTime(hptime) {
+  return DateTime.fromMillis(hptime / 1e3, UTC_OPTIONS);
+}
+function stringToUint8Array(dataString) {
+  let binaryData;
+  if (isNonEmptyStringArg(dataString)) {
+    binaryData = new Uint8Array(dataString.length);
+    for (let i = 0; i < dataString.length; i++) {
+      binaryData[i] = dataString.charCodeAt(i);
+    }
+  } else {
+    binaryData = new Uint8Array(0);
+  }
+  return binaryData;
+}
+
+// src/seedlink4.ts
+var seedlink4_exports = {};
+__export(seedlink4_exports, {
+  AUTH_COMMAND: () => AUTH_COMMAND,
+  BYE_COMMAND: () => BYE_COMMAND,
+  DATA_COMMAND: () => DATA_COMMAND,
+  ENDFETCH_COMMAND: () => ENDFETCH_COMMAND,
+  END_COMMAND: () => END_COMMAND,
+  HELLO_COMMAND: () => HELLO_COMMAND,
+  INFO_COMMAND: () => INFO_COMMAND,
+  MINISEED_2_FORMAT: () => MINISEED_2_FORMAT,
+  MINISEED_3_FORMAT: () => MINISEED_3_FORMAT,
+  SEEDLINK4_PROTOCOL: () => SEEDLINK4_PROTOCOL,
+  SEEDLINK4_SLPROTO: () => SEEDLINK4_SLPROTO,
+  SELECT_COMMAND: () => SELECT_COMMAND,
+  SEPacket: () => SEPacket,
+  SE_PACKET_SIGNATURE: () => SE_PACKET_SIGNATURE,
+  SLPROTO_COMMAND: () => SLPROTO_COMMAND,
+  SL_OK: () => SL_OK,
+  STATION_COMMAND: () => STATION_COMMAND,
+  SeedlinkConnection: () => SeedlinkConnection,
+  USERAGENT_COMMAND: () => USERAGENT_COMMAND,
+  WS_SEEDLINK4_PROTOCOL: () => WS_SEEDLINK4_PROTOCOL,
+  createDataTimeCommand: () => createDataTimeCommand
+});
+var SEEDLINK4_SLPROTO = "SLPROTO";
+var SEEDLINK4_PROTOCOL = `${SEEDLINK4_SLPROTO}:4.0`;
+var WS_SEEDLINK4_PROTOCOL = `${SEEDLINK4_SLPROTO}4.0`;
+var MINISEED_2_FORMAT = "2";
+var MINISEED_3_FORMAT = "3";
+var SE_PACKET_SIGNATURE = "SE";
+var END_COMMAND = "END";
+var ENDFETCH_COMMAND = "ENDFETCH";
+var AUTH_COMMAND = "AUTH";
+var BYE_COMMAND = "BYE";
+var DATA_COMMAND = "DATA";
+var HELLO_COMMAND = "HELLO";
+var INFO_COMMAND = "INFO";
+var SELECT_COMMAND = "SELECT";
+var SLPROTO_COMMAND = "SLPROTO";
+var STATION_COMMAND = "STATION";
+var USERAGENT_COMMAND = "USERAGENT";
+var SL_OK = "OK";
+var useLittleEndian = true;
+var SEPacket = class _SEPacket {
+  constructor(dataFormat, dataSubformat, payloadLength, sequence, stationId) {
+    __publicField(this, "dataFormat");
+    __publicField(this, "dataSubformat");
+    __publicField(this, "payloadLength");
+    __publicField(this, "sequence");
+    __publicField(this, "stationId");
+    __publicField(this, "_miniseed");
+    __publicField(this, "_mseed3");
+    __publicField(this, "_json");
+    __publicField(this, "_rawPayload");
+    this.dataFormat = dataFormat;
+    this.dataSubformat = dataSubformat;
+    this.payloadLength = payloadLength;
+    this.sequence = sequence;
+    this.stationId = stationId;
+    this._miniseed = null;
+    this._mseed3 = null;
+    this._json = null;
+    this._rawPayload = null;
+  }
+  static parse(data) {
+    let sePacket;
+    if (data.byteLength < 17) {
+      throw new Error(
+        "message too small to be SE packet: " + data.byteLength + " " + dataViewToString(new DataView(data))
+      );
+    }
+    const slHeader = new DataView(data, 0, 17);
+    const sig = String.fromCharCode(slHeader.getUint8(0), slHeader.getUint8(1));
+    if (sig === SE_PACKET_SIGNATURE) {
+      const dataFormat = slHeader.getUint8(2);
+      const dataSubformat = slHeader.getUint8(3);
+      const payloadLength = slHeader.getUint32(4, useLittleEndian);
+      const sequenceNum = slHeader.getBigUint64(8, useLittleEndian);
+      const stationIdLength = slHeader.getUint8(16);
+      const stationIdDV = new DataView(data, 17, stationIdLength);
+      const stationId = dataViewToString(stationIdDV);
+      const dataView = new DataView(
+        data,
+        17 + stationIdLength,
+        data.byteLength - (17 + stationIdLength)
+      );
+      sePacket = new _SEPacket(
+        String.fromCharCode(dataFormat),
+        String.fromCharCode(dataSubformat),
+        payloadLength,
+        sequenceNum,
+        stationId
+      );
+      sePacket._rawPayload = dataView;
+      if (dataFormat === 50) {
+        sePacket._miniseed = parseSingleDataRecord(dataView);
+      } else if (dataFormat === 51) {
+        sePacket._mseed3 = MSeed3Record.parseSingleDataRecord(dataView);
+      } else if (dataFormat === 74) {
+        const jsonData = JSON.parse(dataViewToString(dataView));
+        sePacket._json = jsonData;
+      }
+    } else {
+      throw new Error(
+        "Not a seedlink4 packet, no starting SE: " + slHeader.getInt8(0) + " " + slHeader.getInt8(1)
+      );
+    }
+    return sePacket;
+  }
+  /**
+   * is this packet a miniseed packet
+   *
+   * @returns          true if it is miniseed
+   */
+  isMiniseed() {
+    return isDef(this._miniseed) || this.dataFormat === MINISEED_2_FORMAT;
+  }
+  /**
+   * Parsed payload as a miniseed data record, if the streamid
+   * ends with '/MSEED', null otherwise.
+   *
+   * @returns miniseed DataRecord or null
+   */
+  asMiniseed() {
+    if (!isDef(this._rawPayload)) {
+      throw new Error(
+        `payload is missing in packet from ${this.stationId}, seq: ${this.sequence}`
+      );
+    }
+    if (!isDef(this._miniseed)) {
+      if (this.dataFormat === MINISEED_2_FORMAT && isDef(this._rawPayload)) {
+        this._miniseed = parseSingleDataRecord(this._rawPayload);
+      } else {
+        this._miniseed = null;
+      }
+    }
+    return this._miniseed;
+  }
+  /**
+   * is this packet a miniseed3 packet
+   *
+   * @returns          true if it is miniseed3
+   */
+  isMiniseed3() {
+    return isDef(this._mseed3) || this.dataFormat === MINISEED_3_FORMAT;
+  }
+  /**
+   * Parsed payload as a miniseed3 data record, if the data format is 3, null otherwise.
+   *
+   * @returns miniseed3 DataRecord or null
+   */
+  asMiniseed3() {
+    if (!isDef(this._rawPayload)) {
+      throw new Error(
+        `payload is missing in packet from ${this.stationId}, seq: ${this.sequence}`
+      );
+    }
+    if (!isDef(this._mseed3)) {
+      if (this.dataFormat === MINISEED_3_FORMAT && isDef(this._rawPayload)) {
+        this._mseed3 = MSeed3Record.parseSingleDataRecord(
+          this._rawPayload
+        );
+      } else if (this.isMiniseed()) {
+        const ms2 = this.asMiniseed();
+        if (ms2) {
+          this._mseed3 = convertMS2Record(ms2);
+        }
+      } else {
+        this._mseed3 = null;
+      }
+    }
+    return this._mseed3;
+  }
+};
+function createDataTimeCommand(startTime, endTime) {
+  const endTimeStr = isDef(endTime) ? endTime.toISO() : "";
+  return `DATA ALL ${startTime.toISO()} ${endTimeStr}`;
+}
+var SeedlinkConnection = class {
+  constructor(url, requestConfig, receivePacketFn, errorHandler) {
+    __publicField(this, "url");
+    __publicField(this, "requestConfig");
+    __publicField(this, "receivePacketFn");
+    __publicField(this, "errorHandler");
+    __publicField(this, "closeFn");
+    __publicField(this, "webSocket");
+    __publicField(this, "endCommand");
+    __publicField(this, "agent");
+    __publicField(this, "agentVersion");
+    this.webSocket = null;
+    this.url = url;
+    this.requestConfig = requestConfig;
+    this.receivePacketFn = receivePacketFn;
+    this.errorHandler = errorHandler;
+    this.closeFn = null;
+    this.endCommand = END_COMMAND;
+    this.agent = "seisplotjs";
+    this.agentVersion = version;
+  }
+  setAgent(agent) {
+    this.agent = agent.trim().replaceAll(/\w+/g, "_");
+  }
+  createDataTimeCommand(startTime, endTime) {
+    const endTimeStr = isDef(endTime) ? endTime.toISO() : "";
+    return `DATA ALL ${startTime.toISO()} ${endTimeStr}`;
+  }
+  setOnError(errorHandler) {
+    this.errorHandler = errorHandler;
+  }
+  setOnClose(closeFn) {
+    this.closeFn = closeFn;
+  }
+  connect() {
+    return this.interactiveConnect().then(() => {
+      return this.sendHello();
+    }).then((lines) => {
+      if (this.checkProto(lines)) {
+        return true;
+      } else {
+        throw new Error(`${SEEDLINK4_PROTOCOL} not found in HELLO response`);
+      }
+    }).then(() => {
+      return this.sendSLProto("4.0");
+    }).then(() => {
+      return this.sendCmdArray([
+        `${USERAGENT_COMMAND} ${this.agent}/${this.agentVersion} (seisplotjs/${version})`
+      ]);
+    }).then(() => {
+      return this.sendCmdArray(this.requestConfig);
+    }).then((val) => {
+      if (this.webSocket === null) {
+        throw new Error("websocket is null");
+      }
+      this.webSocket.onmessage = (event) => {
+        this.handle(event);
+      };
+      this.webSocket.send(`${this.endCommand}\r
+`);
+      return val;
+    }).catch((err) => {
+      this.close();
+      const insureErr = err instanceof Error ? err : new Error(stringify(err));
+      if (this.errorHandler) {
+        this.errorHandler(insureErr);
+      } else {
+        throw insureErr;
+      }
+    });
+  }
+  interactiveConnect() {
+    if (this.webSocket) {
+      this.webSocket.close();
+      this.webSocket = null;
+    }
+    return new Promise((resolve, reject) => {
+      try {
+        const webSocket = new WebSocket(this.url, WS_SEEDLINK4_PROTOCOL);
+        this.webSocket = webSocket;
+        webSocket.binaryType = "arraybuffer";
+        webSocket.onopen = () => {
+          resolve(this);
+        };
+        webSocket.onerror = (event) => {
+          const evtError = toError(event);
+          this.handleError(evtError);
+          reject(evtError);
+        };
+        webSocket.onclose = (closeEvent) => {
+          if (this.closeFn) {
+            this.closeFn(closeEvent);
+          }
+          if (this.webSocket) {
+            this.webSocket = null;
+          }
+        };
+      } catch (err) {
+        this.close();
+        const evtError = toError(err);
+        if (this.errorHandler) {
+          this.errorHandler(evtError);
+        }
+        reject(evtError);
+      }
+    }).then(function(sl4) {
+      return sl4;
+    });
+  }
+  checkProto(lines) {
+    const sl = lines[0].split("::");
+    const caps = sl[1].trim().split(" ");
+    for (const c of caps) {
+      if (c === SEEDLINK4_PROTOCOL) {
+        return true;
+      }
+    }
+    return false;
+  }
+  close() {
+    if (this.webSocket) {
+      this.webSocket.close();
+    }
+    this.webSocket = null;
+  }
+  handle(event) {
+    if (event.data instanceof ArrayBuffer || event.data instanceof SharedArrayBuffer) {
+      const rawdata = event.data;
+      const data = new Uint8Array(rawdata);
+      if (data[0] === 83 && data[1] === 69) {
+        this.handleSEPacket(event);
+      } else {
+        this.close();
+        this.handleError(
+          new Error(
+            `Packet does not look like SE packet: ${data[0]} ${data[1]}`
+          )
+        );
+      }
+    } else {
+      this.close();
+      this.handleError(new Error("event.data is not ArrayBufferLike"));
+    }
+  }
+  handleSEPacket(event) {
+    if (event.data instanceof ArrayBuffer || event.data instanceof SharedArrayBuffer) {
+      const data = event.data;
+      try {
+        const out = SEPacket.parse(data);
+        this.receivePacketFn(out);
+      } catch (e) {
+        this.close();
+        this.handleError(toError(e));
+      }
+    } else {
+      this.close();
+      this.handleError(new Error("event.data is not ArrayBufferLike"));
+    }
+  }
+  isConnected() {
+    return this.webSocket !== null;
+  }
+  /**
+   * Sends initial HELLO to server and waits for response.
+   *
+   * @returns            Promise that resolves to the response from the server.
+   */
+  sendHello() {
+    const webSocket = this.webSocket;
+    const promise = new Promise((resolve, reject) => {
+      if (webSocket) {
+        webSocket.onmessage = (event) => {
+          if (event.data instanceof ArrayBuffer || event.data instanceof SharedArrayBuffer) {
+            const data = event.data;
+            const replyMsg = dataViewToString(new DataView(data));
+            const lines = replyMsg.trim().split("\r");
+            if (lines.length === 2) {
+              resolve(lines);
+            } else {
+              reject(new Error("not 2 lines: " + replyMsg));
+            }
+          } else {
+            this.close();
+            this.errorHandler(new Error("event.data is not ArrayBufferLike"));
+          }
+        };
+        webSocket.send(`${HELLO_COMMAND}\r`);
+      } else {
+        reject(new Error("webSocket has been closed"));
+      }
+    });
+    return promise;
+  }
+  sendSLProto(version2) {
+    return this.createCmdPromise(`${SEEDLINK4_SLPROTO} ${version2}`);
+  }
+  /**
+   * Sends an array of commands, each as a Promise waiting for the 'OK' response
+   * before sending the next.
+   *
+   * @param   cmd array of commands to send
+   * @returns      Promise that resolves to the 'OK' returned by the last
+   *   command if successful, or rejects on the first failure.
+   */
+  sendCmdArray(cmd) {
+    return cmd.reduce((accum, next) => {
+      return accum.then(() => {
+        return this.createCmdPromise(next);
+      });
+    }, Promise.resolve(SL_OK));
+  }
+  /**
+   * creates a Promise that sends a command and waits resolved with the result.
+   *
+   * @param   mycmd command string to send.
+   * @returns        Promise that resolves to the reply from the server.
+   */
+  createCmdPromise(mycmd) {
+    const mythis = this;
+    const webSocket = this.webSocket;
+    const promise = new Promise(function(resolve, reject) {
+      if (webSocket) {
+        webSocket.onmessage = (event) => {
+          if (event.data instanceof ArrayBuffer || event.data instanceof SharedArrayBuffer) {
+            const data = event.data;
+            const replyMsg = dataViewToString(new DataView(data)).trim();
+            if (replyMsg === SL_OK) {
+              resolve(replyMsg);
+            } else {
+              reject(new Error("msg not OK: " + replyMsg));
+            }
+          } else {
+            mythis.close();
+            mythis.errorHandler(new Error("event.data is not ArrayBufferLike"));
+          }
+        };
+        webSocket.send(mycmd + "\r\n");
+      } else {
+        reject(new Error("webSocket has been closed"));
+      }
+    });
+    return promise;
+  }
+  /**
+   * handle errors that arise
+   *
+   * @private
+   * @param   error the error
+   */
+  handleError(error) {
+    if (this.errorHandler) {
+      this.errorHandler(error);
+    } else {
+      log("seedlink4 handleError: " + error.message);
+    }
+  }
+};
+
+// src/filter.ts
+var filter_exports = {};
+__export(filter_exports, {
+  BAND_PASS: () => BAND_PASS,
+  HIGH_PASS: () => HIGH_PASS,
+  LOW_PASS: () => LOW_PASS,
+  add: () => add,
+  amplitude: () => amplitude,
+  applyFilter: () => applyFilter,
+  createButterworth: () => createButterworth,
+  createChebyshevI: () => createChebyshevI,
+  createChebyshevII: () => createChebyshevII,
+  differentiate: () => differentiate,
+  envelope: () => envelope,
+  gainCorrect: () => gainCorrect,
+  getPassband: () => getPassband,
+  hilbert: () => hilbert,
+  integrate: () => integrate,
+  lineFit: () => lineFit,
+  mul: () => mul,
+  rMean: () => rMean,
+  removeTrend: () => removeTrend
+});
+var BAND_PASS = "BANDPASS";
+var LOW_PASS = "LOWPASS";
+var HIGH_PASS = "HIGHPASS";
+function amplitude(real, imag) {
+  return Math.hypot(real, imag);
+}
+function rMean(seis) {
+  if (seis instanceof Seismogram) {
+    const meanVal = seis.mean();
+    const rmeanSeismogram = new Seismogram(
+      seis.segments.map((s2) => {
+        const demeanY = s2.y.map(function(d) {
+          return d - meanVal;
+        });
+        const out = s2.cloneWithNewData(demeanY);
+        return out;
+      })
+    );
+    return rmeanSeismogram;
+  } else {
+    throw new Error("rMean arg not a Seismogram");
+  }
+}
+function lineFit(seis, referenceTime) {
+  if (seis.numPoints === 0) {
+    throw new Error(`cannot lineFit a seismogram with no points`);
+  }
+  const rn = seis.numPoints;
+  let sumx = 0;
+  let sumy = 0;
+  let sumxy = 0;
+  let sumx2 = 0;
+  let sumy2 = 0;
+  referenceTime = referenceTime ? referenceTime : seis.start;
+  const x1 = referenceTime.toMillis() / 1e3;
+  seis.segments.forEach((seg) => {
+    const seg_start_x = seg.start.toMillis() / 1e3 - x1;
+    const dx = 1 / seg.sampleRate;
+    const Y = seg.y;
+    for (let i = 0; i < Y.length; i++) {
+      const yi = Y[i];
+      const xi = seg_start_x + dx * i;
+      sumx = sumx + xi;
+      sumy = sumy + yi;
+      sumxy = sumxy + xi * yi;
+      sumx2 = sumx2 + xi * xi;
+      sumy2 = sumy2 + yi * yi;
+    }
+  });
+  const d = rn * sumx2 - sumx * sumx;
+  const b = d !== 0 ? (sumx2 * sumy - sumx * sumxy) / d : 0;
+  const a = d !== 0 ? (rn * sumxy - sumx * sumy) / d : 0;
+  const sig2 = (sumy2 + rn * b * b + a * a * sumx2 - 2 * b * sumy - 2 * a * sumxy + 2 * b * a * sumx) / (seis.numPoints - 1);
+  const sig = Math.sqrt(sig2);
+  const siga2 = rn * sig2 / d;
+  const sigb2 = sig2 * sumx2 / d;
+  const siga = Math.sqrt(siga2);
+  const sigb = Math.sqrt(sigb2);
+  let cc = (rn * sumxy - sumx * sumy) / Math.sqrt(d * (rn * sumy2 - sumy * sumy));
+  cc = Math.abs(cc);
+  return {
+    slope: a,
+    intercept: b,
+    reference_time: referenceTime,
+    sigma: sig,
+    sigma_a: siga,
+    sigma_b: sigb,
+    correlation: cc
+  };
+}
+function removeTrend(seis, fitLine) {
+  if (seis instanceof Seismogram) {
+    const linfit = fitLine ? fitLine : lineFit(seis);
+    if (Number.isNaN(linfit.slope) || Number.isNaN(linfit.intercept)) {
+      throw new Error(
+        `Can't remove trend with NaN, slope: ${linfit.slope} int: ${linfit.intercept}`
+      );
+    }
+    const ref_secs = linfit.reference_time.toMillis() / 1e3;
+    const rtr_segments = seis.segments.map((seg) => {
+      const start_secs = seg.start.toMillis() / 1e3;
+      const start_offset = start_secs - ref_secs;
+      const dx = 1 / seg.sampleRate;
+      const rtr_y = seg.y.map((y2, idx) => {
+        const out = y2 - (start_offset + dx * idx) * linfit.slope - linfit.intercept;
+        return out;
+      });
+      const rtr_seg = seg.cloneWithNewData(rtr_y);
+      return rtr_seg;
+    });
+    return new Seismogram(rtr_segments);
+  } else {
+    throw new Error("removeTrend arg not a Seismogram");
+  }
+}
+function gainCorrect(seis, instrumentSensitivity) {
+  const gain = instrumentSensitivity.sensitivity;
+  const out = mul(seis, 1 / gain);
+  out.segments.forEach((s2) => s2.yUnit = instrumentSensitivity.inputUnits);
+  return out;
+}
+function mul(seis, factor) {
+  if (seis instanceof Seismogram) {
+    const gainSeismogram = new Seismogram(
+      seis.segments.map((s2) => {
+        let gainY;
+        if (s2.y instanceof Int32Array || s2.y instanceof Float32Array) {
+          gainY = Float32Array.from(s2.y);
+        } else {
+          gainY = Float64Array.from(s2.y);
+        }
+        gainY = gainY.map(function(d) {
+          return d * factor;
+        });
+        const outS = s2.cloneWithNewData(gainY);
+        return outS;
+      })
+    );
+    return gainSeismogram;
+  } else {
+    throw new Error(`Expected Seismogram but was ${typeof seis}`);
+  }
+}
+function add(seis, factor) {
+  if (seis instanceof Seismogram) {
+    const gainSeismogram = new Seismogram(
+      seis.segments.map((s2) => {
+        let gainY;
+        if (s2.y instanceof Int32Array || s2.y instanceof Float32Array) {
+          gainY = Float32Array.from(s2.y);
+        } else {
+          gainY = Float64Array.from(s2.y);
+        }
+        gainY = gainY.map(function(d) {
+          return d + factor;
+        });
+        const outS = s2.cloneWithNewData(gainY);
+        return outS;
+      })
+    );
+    return gainSeismogram;
+  } else {
+    throw new Error(`Expected Seismogram but was ${typeof seis}`);
+  }
+}
+function getPassband(type) {
+  if (type === LOW_PASS) {
+    return LOWPASS;
+  } else if (type === BAND_PASS) {
+    return PassbandType.BANDPASS;
+  } else if (type === HIGH_PASS) {
+    return PassbandType.HIGHPASS;
+  } else {
+    throw new Error(`unknown pass band: ${type}`);
+  }
+}
+function createButterworth(numPoles, passband, lowFreqCorner, highFreqCorner, delta) {
+  const passbandtype = getPassband(passband);
+  return new Butterworth(
+    numPoles,
+    passbandtype,
+    lowFreqCorner,
+    highFreqCorner,
+    delta
+  );
+}
+function createChebyshevI(numPoles, epsilon4, passband, lowFreqCorner, highFreqCorner, delta) {
+  const passbandtype = getPassband(passband);
+  return new ChebyshevI(
+    numPoles,
+    epsilon4,
+    passbandtype,
+    lowFreqCorner,
+    highFreqCorner,
+    delta
+  );
+}
+function createChebyshevII(numPoles, epsilon4, passband, lowFreqCorner, highFreqCorner, delta) {
+  const passbandtype = getPassband(passband);
+  return new ChebyshevII(
+    numPoles,
+    epsilon4,
+    passbandtype,
+    lowFreqCorner,
+    highFreqCorner,
+    delta
+  );
+}
+function applyFilter(iirFilter, seis) {
+  if (Math.abs(iirFilter.getDelta() - seis.samplePeriod) / seis.samplePeriod > 1e-3) {
+    throw new Error(
+      `Filter, delta=${iirFilter.getDelta()}, has different delta from seis, ${1 / seis.sampleRate}`
+    );
+  }
+  const filteredSegments = [];
+  for (let i = 0; i < seis.segments.length; i++) {
+    const outData = Float32Array.from(seis.segments[i].y);
+    iirFilter.filterInPlace(outData);
+    filteredSegments.push(seis.segments[i].cloneWithNewData(outData));
+  }
+  return new Seismogram(filteredSegments);
+}
+function envelope(seis) {
+  if (seis.isContiguous()) {
+    const seisY = seis.y;
+    const s2 = hilbert(seis);
+    const hilbertY = s2.y;
+    let outY;
+    if (seis.y instanceof Int32Array || seis.y instanceof Float32Array) {
+      outY = new Float32Array(seisY.length);
+    } else {
+      outY = new Float64Array(seisY.length);
+    }
+    for (let n2 = 0; n2 < seisY.length; n2++) {
+      outY[n2] = Math.sqrt(hilbertY[n2] * hilbertY[n2] + seisY[n2] * seisY[n2]);
+    }
+    return seis.cloneWithNewData(outY);
+  } else {
+    throw new Error("Cannot take envelope of non-contiguous seismogram");
+  }
+}
+function hilbert(seis, n2, lowEdge, highEdge) {
+  if (seis.isContiguous()) {
+    let seisY;
+    if (seis.y instanceof Float32Array) {
+      seisY = seis.y;
+    } else {
+      seisY = Float32Array.from(seis.y);
+    }
+    if (!isDef(n2)) {
+      n2 = 10;
+    }
+    if (!isDef(lowEdge)) {
+      lowEdge = 0.05;
+    }
+    if (!isDef(highEdge)) {
+      highEdge = 0.95;
+    }
+    const hilbert2 = new CenteredHilbertTransform(n2, lowEdge, highEdge);
+    const coeff = hilbert2.getCoefficients();
+    for (const c of coeff) {
+      if (Number.isNaN(c)) {
+        throw new Error(`Hilbert FIR coeff includes NaN: ${coeff.join()}`);
+      }
+    }
+    const hilbertY = hilbert2.filter(seisY);
+    const s2 = seis.cloneWithNewData(hilbertY);
+    return s2;
+  } else {
+    throw new Error("Cannot take hilbert of non-contiguous seismogram");
+  }
+}
+function differentiate(seis) {
+  if (seis instanceof Seismogram) {
+    const diffSeismogram = new Seismogram(
+      seis.segments.map((s2) => {
+        const origY = s2.y;
+        const sampRate = 1 * s2.sampleRate;
+        const diffY = new Float32Array(origY.length - 1);
+        for (let i = 0; i < diffY.length; i++) {
+          diffY[i] = (origY[i + 1] - origY[i]) * sampRate;
+        }
+        const out = s2.cloneWithNewData(diffY);
+        out.startTime = out.startTime.plus(
+          Duration.fromMillis(1e3 / out.sampleRate / 2)
+        );
+        out.yUnit = out.yUnit + "/s";
+        return out;
+      })
+    );
+    return diffSeismogram;
+  } else {
+    throw new Error("diff arg not a Seismogram");
+  }
+}
+function integrate(seis, integrationConst = 0) {
+  let prior = integrationConst;
+  if (seis instanceof Seismogram) {
+    const intSeismogram = new Seismogram(
+      seis.segments.map((s2) => {
+        const origY = s2.y;
+        const sampPeriod = s2.samplePeriod;
+        const intY = new Float32Array(origY.length + 1);
+        intY[0] = prior;
+        for (let i = 1; i < intY.length; i++) {
+          prior += sampPeriod * origY[i - 1];
+          intY[i] = prior;
+        }
+        const out = s2.cloneWithNewData(intY);
+        out.startTime = out.startTime.minus(
+          Duration.fromMillis(1e3 / out.sampleRate / 2)
+        );
+        if (out.yUnit.endsWith("/s")) {
+          out.yUnit = out.yUnit.slice(0, out.yUnit.length - 2);
+        } else {
+          out.yUnit += "s";
+        }
+        return out;
+      })
+    );
+    return intSeismogram;
+  } else {
+    throw new Error("integrate arg not a Seismogram");
+  }
+}
+
 // src/organizeddisplay.ts
 var organizeddisplay_exports = {};
 __export(organizeddisplay_exports, {
   DEFAULT_WITH_INFO: () => DEFAULT_WITH_INFO,
   DEFAULT_WITH_MAP: () => DEFAULT_WITH_MAP,
   DEFAULT_WITH_TOOLS: () => DEFAULT_WITH_TOOLS,
-  INFO: () => INFO,
+  INFO: () => INFO2,
   MAP: () => MAP,
   ORG_DISPLAY: () => ORG_DISPLAY,
   ORG_DISP_ITEM: () => ORG_DISP_ITEM,
@@ -48253,6 +53820,8 @@ var seismograph_exports = {};
 __export(seismograph_exports, {
   COLOR_CSS_ID: () => COLOR_CSS_ID,
   SEISMOGRAPH_ELEMENT: () => SEISMOGRAPH_ELEMENT,
+  SEIS_CLICK_EVENT: () => SEIS_CLICK_EVENT,
+  SEIS_MOVE_EVENT: () => SEIS_MOVE_EVENT,
   Seismograph: () => Seismograph,
   SeismographAmplitudeScalable: () => SeismographAmplitudeScalable,
   SeismographTimeScalable: () => SeismographTimeScalable,
@@ -51713,7 +57282,7 @@ function formatLocale(locale3) {
     "a": formatShortWeekday,
     "A": formatWeekday,
     "b": formatShortMonth,
-    "B": formatMonth2,
+    "B": formatMonth,
     "c": null,
     "d": formatDayOfMonth,
     "e": formatDayOfMonth,
@@ -51929,7 +57498,7 @@ function formatLocale(locale3) {
   function formatShortMonth(d) {
     return locale_shortMonths[d.getMonth()];
   }
-  function formatMonth2(d) {
+  function formatMonth(d) {
     return locale_months[d.getMonth()];
   }
   function formatPeriod(d) {
@@ -52261,9 +57830,9 @@ function number3(t) {
 }
 function calendar(ticks2, tickInterval, year, month, week, day, hour, minute, second2, format2) {
   var scale = continuous(), invert = scale.invert, domain = scale.domain;
-  var formatMillisecond2 = format2(".%L"), formatSecond2 = format2(":%S"), formatMinute2 = format2("%I:%M"), formatHour2 = format2("%I %p"), formatDay2 = format2("%a %d"), formatWeek = format2("%b %d"), formatMonth2 = format2("%B"), formatYear3 = format2("%Y");
+  var formatMillisecond = format2(".%L"), formatSecond = format2(":%S"), formatMinute = format2("%I:%M"), formatHour = format2("%I %p"), formatDay = format2("%a %d"), formatWeek = format2("%b %d"), formatMonth = format2("%B"), formatYear2 = format2("%Y");
   function tickFormat2(date2) {
-    return (second2(date2) < date2 ? formatMillisecond2 : minute(date2) < date2 ? formatSecond2 : hour(date2) < date2 ? formatMinute2 : day(date2) < date2 ? formatHour2 : month(date2) < date2 ? week(date2) < date2 ? formatDay2 : formatWeek : year(date2) < date2 ? formatMonth2 : formatYear3)(date2);
+    return (second2(date2) < date2 ? formatMillisecond : minute(date2) < date2 ? formatSecond : hour(date2) < date2 ? formatMinute : day(date2) < date2 ? formatHour : month(date2) < date2 ? week(date2) < date2 ? formatDay : formatWeek : year(date2) < date2 ? formatMonth : formatYear2)(date2);
   }
   scale.invert = function(y2) {
     return new Date(invert(y2));
@@ -52885,17 +58454,10 @@ __export(seismographconfig_exports, {
   DEFAULT_TITLE: () => DEFAULT_TITLE,
   SeismographConfig: () => SeismographConfig,
   SeismographConfigCache: () => SeismographConfigCache,
+  createTimeFormatterForZone: () => createTimeFormatterForZone,
   formatCount: () => formatCount,
   formatCountOrAmp: () => formatCountOrAmp,
-  formatDay: () => formatDay,
   formatExp: () => formatExp,
-  formatHour: () => formatHour,
-  formatMillisecond: () => formatMillisecond,
-  formatMinute: () => formatMinute,
-  formatMonth: () => formatMonth,
-  formatSecond: () => formatSecond,
-  formatYear: () => formatYear2,
-  multiFormatHour: () => multiFormatHour,
   numberFormatWrapper: () => numberFormatWrapper
 });
 
@@ -52923,7 +58485,10 @@ __export(axisutil_exports, {
   drawXLabel: () => drawXLabel,
   drawXSublabel: () => drawXSublabel,
   drawYLabel: () => drawYLabel,
-  drawYSublabel: () => drawYSublabel
+  drawYSublabel: () => drawYSublabel,
+  removeTitle: () => removeTitle,
+  removeYLabel: () => removeYLabel,
+  removeYSublabel: () => removeYSublabel
 });
 var LuxonTimeScale = class {
   constructor(interval2, range) {
@@ -52983,6 +58548,10 @@ function drawXSublabel(svgEl, seismographConfig, height, width, handlebarsInput 
   });
   svgText.html(handlebarOut);
 }
+function removeYLabel(svgEl) {
+  const svg = select_default2(svgEl);
+  svg.selectAll("g.yLabel").remove();
+}
 function drawYLabel(svgEl, seismographConfig, height, width, handlebarsInput = {}) {
   const svg = select_default2(svgEl);
   svg.selectAll("g.yLabel").remove();
@@ -53021,6 +58590,10 @@ function drawYLabel(svgEl, seismographConfig, height, width, handlebarsInput = {
     }
   }
 }
+function removeYSublabel(svgEl) {
+  const svg = select_default2(svgEl);
+  svg.selectAll("g.ySublabel").remove();
+}
 function drawYSublabel(svgEl, seismographConfig, height, width, handlebarsInput = {}, unitsLabel = "") {
   const svg = select_default2(svgEl);
   svg.selectAll("g.ySublabel").remove();
@@ -53052,6 +58625,10 @@ function drawYSublabel(svgEl, seismographConfig, height, width, handlebarsInput 
       svgText.html(handlebarOut);
     }
   }
+}
+function removeTitle(svgEl) {
+  const svg = select_default2(svgEl);
+  svg.selectAll("g.title").remove();
 }
 function drawTitle(svgEl, seismographConfig, height, width, handlebarsInput = {}) {
   if (!svgEl) {
@@ -53313,11 +58890,14 @@ function seismogramSegmentAsLine(segment, width, xScale, yScale, maxSamplePerPix
           inHorizontalLine = true;
           continue;
         } else {
+          if (inHorizontalLine) {
+            pushPoint(out, curPixel - 1, prevLastYPixel);
+          }
           pushPoint(out, curPixel, firstYPixel);
           inHorizontalLine = false;
         }
       } else {
-        if (inHorizontalLine && prevLastYPixel !== firstYPixel) {
+        if (inHorizontalLine) {
           pushPoint(out, curPixel - 1, prevLastYPixel);
         }
         inHorizontalLine = false;
@@ -53488,7 +59068,7 @@ var _SeismographConfig = class _SeismographConfig {
     __publicField(this, "configId");
     /** @private */
     __publicField(this, "__cache__");
-    __publicField(this, "timeFormat");
+    __publicField(this, "_timeFormat");
     __publicField(this, "relativeTimeFormat");
     __publicField(this, "amplitudeFormat");
     __publicField(this, "showTitle");
@@ -53496,6 +59076,7 @@ var _SeismographConfig = class _SeismographConfig {
     __publicField(this, "_title");
     /** @private */
     __publicField(this, "isXAxis");
+    __publicField(this, "xAxisTimeZone");
     __publicField(this, "isXAxisTop");
     /** @private */
     __publicField(this, "_xLabel");
@@ -53555,13 +59136,14 @@ var _SeismographConfig = class _SeismographConfig {
     this.__cache__ = new SeismographConfigCache();
     this.isXAxis = true;
     this.isXAxisTop = false;
+    this.xAxisTimeZone = null;
     this.isYAxisNice = true;
     this.isYAxis = true;
     this.isYAxisRight = false;
     this.xGridLines = false;
     this.yGridLines = false;
     this.gridLineColor = DEFAULT_GRID_LINE_COLOR;
-    this.timeFormat = multiFormatHour;
+    this._timeFormat = null;
     this.relativeTimeFormat = formatCountOrAmp;
     this.amplitudeFormat = formatCountOrAmp;
     this._title = [DEFAULT_TITLE];
@@ -53646,6 +59228,9 @@ var _SeismographConfig = class _SeismographConfig {
     if (Object.hasOwn(tempJson, "isLinkedAmplitudeScale")) {
       delete tempJson.isLinkedAmplitudeScale;
     }
+    if (Object.hasOwn(tempJson, "xAxisTimeZone")) {
+      delete tempJson.xAxisTimeZone;
+    }
     if (Object.hasOwn(tempJson, "ySublabel") && // @ts-expect-error ok as we just check hasOwn
     tempJson.ySublabel.length === 0) {
       delete tempJson.ySublabel;
@@ -53663,12 +59248,16 @@ var _SeismographConfig = class _SeismographConfig {
     } else {
       seisConfig.linkedAmplitudeScale = new IndividualAmplitudeScale();
     }
+    if (json.xAxisTimeZone) {
+      seisConfig.xAxisTimeZone = new IANAZone(json.xAxisTimeZone);
+    }
     return seisConfig;
   }
   asJSON() {
     const out = JSON.parse(JSON.stringify(this));
     out.title = out._title;
     delete out._title;
+    out.xAxisTimeZone = isDef(this.xAxisTimeZone) ? isStringArg(this.xAxisTimeZone) ? this.xAxisTimeZone : this.xAxisTimeZone.name : null;
     out.fixedAmplitudeScale = out._fixedAmplitudeScale;
     delete out._fixedAmplitudeScale;
     out.fixedTimeScale = out._fixedTimeScale;
@@ -53779,6 +59368,51 @@ var _SeismographConfig = class _SeismographConfig {
     }
     this._linkedTimeScale = ts;
     this._fixedTimeScale = null;
+  }
+  /**
+   * Configures the time axis to show times in the given time zone. This
+   * replaces timeFormat with createTimeFormatterForZone() and
+   * sets xSublabel to be the zone name. If zone is null, uses UTC.
+   *
+   * @param  zone string like "US/Eastern" or luxon Zone
+   */
+  enableXAxisTimeZone(zone) {
+    let zoneName;
+    let tz;
+    if (isStringArg(zone)) {
+      zoneName = zone;
+      tz = new IANAZone(zone);
+    } else if (zone instanceof Zone) {
+      tz = zone;
+      zoneName = nameForTimeZone(tz.name);
+    } else {
+      tz = FixedOffsetZone.utcInstance;
+      zoneName = "UTC";
+    }
+    this.timeFormat = createTimeFormatterForZone(tz);
+    this.xSublabel = zoneName;
+  }
+  /**
+   * Time formatter used by the x axis. Defaults to UTC via
+   * createTimeFormatterForZone(zone).
+   * Set xAxisTimeZone to change the time zone.
+   * @return formatter for x axis time labels
+   */
+  get timeFormat() {
+    let tz;
+    if (this._timeFormat != null) {
+      return this._timeFormat;
+    } else if (isStringArg(this.xAxisTimeZone)) {
+      tz = new IANAZone(this.xAxisTimeZone);
+    } else if (this.xAxisTimeZone instanceof Zone) {
+      tz = this.xAxisTimeZone;
+    } else {
+      tz = FixedOffsetZone.utcInstance;
+    }
+    return createTimeFormatterForZone(tz);
+  }
+  set timeFormat(formatter) {
+    this._timeFormat = formatter;
   }
   /**
    * gets the current title
@@ -54144,16 +59778,29 @@ var formatExp = format(".2e");
 var formatCountOrAmp = function(v) {
   return -1 < v && v < 1 && v !== 0 ? formatExp(v) : formatCount(v);
 };
-var formatMillisecond = utcFormat(".%L");
-var formatSecond = utcFormat(":%S");
-var formatMinute = utcFormat("%H:%M");
-var formatHour = utcFormat("%H:%M");
-var formatDay = utcFormat("%m/%d");
-var formatMonth = utcFormat("%Y/%m");
-var formatYear2 = utcFormat("%Y");
-var multiFormatHour = function(date2) {
-  return (second(date2) < date2 ? formatMillisecond : utcMinute(date2) < date2 ? formatSecond : utcHour(date2) < date2 ? formatMinute : utcDay(date2) < date2 ? formatHour : utcMonth(date2) < date2 ? formatDay : utcYear(date2) < date2 ? formatMonth : formatYear2)(date2);
-};
+function createTimeFormatterForZone(timezone) {
+  return (date2) => {
+    if (timezone == null) {
+      timezone = FixedOffsetZone.utcInstance;
+    }
+    const dt = DateTime.fromJSDate(date2, { zone: timezone });
+    if (dt.millisecond !== 0) {
+      return dt.toFormat(".SSS");
+    } else if (dt.second !== 0) {
+      return dt.toFormat(":ss");
+    } else if (dt.minute !== 0) {
+      return dt.toFormat("HH:mm");
+    } else if (dt.hour !== 0) {
+      return dt.toFormat("HH:mm");
+    } else if (dt.day !== 0) {
+      return dt.toFormat("LL/dd");
+    } else if (dt.month !== 0) {
+      return dt.toFormat("yyyy/LL");
+    } else {
+      return dt.toFormat("yyyy");
+    }
+  };
+}
 SeismographConfig._lastID = 0;
 
 // src/seismographmarker.ts
@@ -54388,6 +60035,8 @@ function addStyleToElement(element, css, id2) {
 // src/seismograph.ts
 registerHelpers();
 var CLIP_PREFIX = "seismographclip";
+var SEIS_CLICK_EVENT = "seisclick";
+var SEIS_MOVE_EVENT = "seismousemove";
 var SEISMOGRAPH_ELEMENT = "sp-seismograph";
 var seismograph_css = `
 
@@ -54400,6 +60049,22 @@ var seismograph_css = `
 div.wrapper {
   min-height: 50px;
   height: 100%;
+}
+
+@property --sp-seismograph-is-ylabel {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 1;
+}
+@property --sp-seismograph-is-ysublabel {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 1;
+}
+@property --sp-seismograph-display-title {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 1;
 }
 
 .marker .markerpath {
@@ -54474,6 +60139,7 @@ svg.seismograph text a {
   fill: #0000EE;
   text-decoration: underline;
 }
+
 
 `;
 var COLOR_CSS_ID = "seismographcolors";
@@ -54577,12 +60243,28 @@ var _Seismograph = class _Seismograph extends SeisPlotElement {
     this._resizeObserver.observe(this);
     this.addEventListener("click", (evt) => {
       const detail = this.calcDetailForEvent(evt, "click");
-      const event = new CustomEvent("seisclick", { detail });
+      const event = new CustomEvent(
+        SEIS_CLICK_EVENT,
+        {
+          detail,
+          bubbles: true,
+          cancelable: false,
+          composed: true
+        }
+      );
       this.dispatchEvent(event);
     });
     this.addEventListener("mousemove", (evt) => {
       const detail = this.calcDetailForEvent(evt, "mousemove");
-      const event = new CustomEvent("seismousemove", { detail });
+      const event = new CustomEvent(
+        SEIS_MOVE_EVENT,
+        {
+          detail,
+          bubbles: true,
+          cancelable: false,
+          composed: true
+        }
+      );
       this.dispatchEvent(event);
     });
   }
@@ -55139,7 +60821,7 @@ var _Seismograph = class _Seismograph extends SeisPlotElement {
         const xpixel = mh.xscale.for(mh.marker.time);
         return xpixel >= mh.xscale.range[0] && xpixel <= mh.xscale.range[1];
       });
-      if (undrawnMarkers.length !== 0) {
+      if (this.seismographConfig.doMarkers && undrawnMarkers.length !== 0) {
         this.drawMarkers();
       }
       this.drawTopBottomAxis();
@@ -55228,7 +60910,11 @@ var _Seismograph = class _Seismograph extends SeisPlotElement {
         return "0,0 " + -1 * bboxH * Math.tan(radianTextAngle) + ",-" + bboxH + " " + bboxW + ",-" + bboxH + " " + bboxW + ",0";
       });
       let markerPoleY = 0;
-      if (mythis.seismographConfig.markerFlagpoleBase === "center") {
+      if (mythis.seismographConfig.markerFlagpoleBase === "none") {
+        markerPoleY = 0;
+      } else if (mythis.seismographConfig.markerFlagpoleBase === "short") {
+        markerPoleY = (axisScale.range()[0] + axisScale.range()[1]) / 4;
+      } else if (mythis.seismographConfig.markerFlagpoleBase === "center") {
         markerPoleY = (axisScale.range()[0] + axisScale.range()[1]) / 2;
       } else {
         markerPoleY = axisScale.range()[0];
@@ -55295,27 +60981,38 @@ var _Seismograph = class _Seismograph extends SeisPlotElement {
   }
   drawYLabel() {
     const wrapper = this.getShadowRoot().querySelector("div");
+    const isYLabelCSS = getComputedStyle(wrapper).getPropertyValue("--sp-seismograph-is-ylabel");
     const svgEl = wrapper.querySelector("svg");
-    drawYLabel(
-      svgEl,
-      this.seismographConfig,
-      this.height,
-      this.width,
-      this.createHandlebarsInput()
-    );
+    if (isYLabelCSS === "0") {
+      removeYLabel(svgEl);
+    } else {
+      drawYLabel(
+        svgEl,
+        this.seismographConfig,
+        this.height,
+        this.width,
+        this.createHandlebarsInput()
+      );
+    }
   }
   drawYSublabel() {
     const wrapper = this.getShadowRoot().querySelector("div");
+    const isYSublabelCSS = getComputedStyle(wrapper).getPropertyValue("--sp-seismograph-is-ysublabel");
     const svgEl = wrapper.querySelector("svg");
-    const unitsLabel = this.seismographConfig.ySublabelIsUnits ? this.createUnitsLabel() : "";
-    drawYSublabel(
-      svgEl,
-      this.seismographConfig,
-      this.height,
-      this.width,
-      this.createHandlebarsInput(),
-      unitsLabel
-    );
+    console.log(`drawYSublabel "${isYSublabelCSS}"`);
+    if (isYSublabelCSS === "0") {
+      removeYSublabel(svgEl);
+    } else {
+      const unitsLabel = this.seismographConfig.ySublabelIsUnits ? this.createUnitsLabel() : "";
+      drawYSublabel(
+        svgEl,
+        this.seismographConfig,
+        this.height,
+        this.width,
+        this.createHandlebarsInput(),
+        unitsLabel
+      );
+    }
   }
   /**
    * Update the duration if not already set. This only matters for
@@ -55751,6 +61448,7 @@ Linear.prototype = {
         break;
       case 1:
         this._point = 2;
+      // falls through
       default:
         this._context.lineTo(x2, y2);
         break;
@@ -56166,1959 +61864,17 @@ __export(infotable_exports, {
   TABLE_CSS: () => TABLE_CSS,
   depthFormat: () => depthFormat2,
   depthMeterFormat: () => depthMeterFormat2,
+  depthNoUnitFormat: () => depthNoUnitFormat2,
   latlonFormat: () => latlonFormat2,
   magFormat: () => magFormat2
 });
-
-// src/quakeml.ts
-var quakeml_exports = {};
-__export(quakeml_exports, {
-  ANSS_CATALOG_NS: () => ANSS_CATALOG_NS,
-  ANSS_NS: () => ANSS_NS,
-  Amplitude: () => Amplitude,
-  Arrival: () => Arrival,
-  Axis: () => Axis,
-  BED_NS: () => BED_NS,
-  Comment: () => Comment2,
-  CompositeTime: () => CompositeTime,
-  ConfidenceEllipsoid: () => ConfidenceEllipsoid,
-  CreationInfo: () => CreationInfo,
-  DataUsed: () => DataUsed,
-  EventDescription: () => EventDescription,
-  EventParameters: () => EventParameters,
-  FAKE_EMPTY_XML: () => FAKE_EMPTY_XML2,
-  FAKE_ORIGIN_TIME: () => FAKE_ORIGIN_TIME,
-  FocalMechanism: () => FocalMechanism,
-  IRIS_NS: () => IRIS_NS,
-  Magnitude: () => Magnitude,
-  MomentTensor: () => MomentTensor,
-  NodalPlane: () => NodalPlane,
-  NodalPlanes: () => NodalPlanes,
-  Origin: () => Origin,
-  OriginQuality: () => OriginQuality,
-  OriginUncertainty: () => OriginUncertainty,
-  Pick: () => Pick,
-  PrincipalAxes: () => PrincipalAxes,
-  QML_NS: () => QML_NS,
-  QUAKE_CLICK_EVENT: () => QUAKE_CLICK_EVENT,
-  Quake: () => Quake,
-  Quantity: () => Quantity,
-  SourceTimeFunction: () => SourceTimeFunction,
-  StationMagnitude: () => StationMagnitude,
-  StationMagnitudeContribution: () => StationMagnitudeContribution,
-  Tensor: () => Tensor,
-  TimeWindow: () => TimeWindow,
-  UNKNOWN_MAG_TYPE: () => UNKNOWN_MAG_TYPE,
-  UNKNOWN_PUBLIC_ID: () => UNKNOWN_PUBLIC_ID,
-  USGS_HOST: () => USGS_HOST,
-  WaveformID: () => WaveformID,
-  createQuakeClickEvent: () => createQuakeClickEvent,
-  createQuakeFromValues: () => createQuakeFromValues,
-  fetchQuakeML: () => fetchQuakeML,
-  parseQuakeML: () => parseQuakeML,
-  parseUtil: () => parseUtil2
-});
-
-// src/textformat.ts
-var lang = typeof navigator !== "undefined" && navigator?.language ? navigator?.language : "en-US";
-var latlonFormat = new Intl.NumberFormat(lang, {
-  style: "unit",
-  unit: "degree",
-  unitDisplay: "narrow",
-  maximumFractionDigits: 2
-});
-var magFormat = new Intl.NumberFormat(lang, {
-  style: "decimal",
-  maximumFractionDigits: 2
-});
-var depthNoUnitFormat = new Intl.NumberFormat(lang, {
-  style: "decimal",
-  maximumFractionDigits: 2
-});
-var depthFormat = new Intl.NumberFormat(lang, {
-  style: "unit",
-  unit: "kilometer",
-  unitDisplay: "narrow",
-  maximumFractionDigits: 2,
-  minimumFractionDigits: 2
-});
-var depthMeterFormat = new Intl.NumberFormat(lang, {
-  style: "unit",
-  unit: "meter",
-  unitDisplay: "narrow",
-  maximumFractionDigits: 1,
-  minimumFractionDigits: 1
-});
-
-// src/quakeml.ts
-var QML_NS = "http://quakeml.org/xmlns/quakeml/1.2";
-var BED_NS = "http://quakeml.org/xmlns/bed/1.2";
-var IRIS_NS = "http://service.iris.edu/fdsnws/event/1/";
-var ANSS_NS = "http://anss.org/xmlns/event/0.1";
-var ANSS_CATALOG_NS = "http://anss.org/xmlns/catalog/0.1";
-var USGS_HOST = "earthquake.usgs.gov";
-var UNKNOWN_MAG_TYPE = "unknown";
-var UNKNOWN_PUBLIC_ID = "unknownId";
-var FAKE_ORIGIN_TIME = DateTime.fromISO("1900-01-01T00:00:00Z");
-var FAKE_EMPTY_XML2 = '<?xml version="1.0"?><q:quakeml xmlns="http://quakeml.org/xmlns/bed/1.2" xmlns:q="http://quakeml.org/xmlns/quakeml/1.2"><eventParameters publicID="quakeml:fake/empty"></eventParameters></q:quakeml>';
-var QUAKE_CLICK_EVENT = "quakeclick";
-function createQuakeClickEvent(q, mouseclick) {
-  const detail = {
-    mouseevent: mouseclick,
-    quake: q
-  };
-  return new CustomEvent(QUAKE_CLICK_EVENT, { detail });
-}
-var BaseElement = class {
-  constructor() {
-    __publicField(this, "publicId", UNKNOWN_PUBLIC_ID);
-    __publicField(this, "comments", []);
-    __publicField(this, "creationInfo");
-  }
-  populate(qml) {
-    const pid = _grabAttribute3(qml, "publicID");
-    if (!isNonEmptyStringArg(pid)) {
-      throw new Error("missing publicID");
-    }
-    this.publicId = pid;
-    this.comments = _grabAllElComment(qml, "comment");
-    this.creationInfo = _grabFirstElCreationInfo(qml, "creationInfo");
-  }
-};
-var EventParameters = class _EventParameters extends BaseElement {
-  constructor() {
-    super(...arguments);
-    __publicField(this, "eventList", []);
-    __publicField(this, "description");
-  }
-  /**
-   * Parses a QuakeML event parameters xml element into an EventParameters object.
-   *
-   * @param eventParametersQML the event parameters xml Element
-   * @param host optional source of the xml, helpful for parsing the eventid
-   * @returns EventParameters instance
-   */
-  static createFromXml(eventParametersQML, host) {
-    if (eventParametersQML.localName !== "eventParameters") {
-      throw new Error(
-        `Cannot extract, not a QuakeML event parameters: ${eventParametersQML.localName}`
-      );
-    }
-    const eventEls = Array.from(
-      eventParametersQML.getElementsByTagNameNS(BED_NS, "event")
-    );
-    const events = eventEls.map((e) => Quake.createFromXml(e, host));
-    const description = _grabFirstElText3(eventParametersQML, "description");
-    const out = new _EventParameters();
-    out.populate(eventParametersQML);
-    out.eventList = events;
-    out.description = description;
-    return out;
-  }
-};
-var Quake = class _Quake extends BaseElement {
-  constructor() {
-    super(...arguments);
-    __publicField(this, "eventId");
-    __publicField(this, "descriptionList", []);
-    __publicField(this, "amplitudeList", []);
-    __publicField(this, "stationMagnitudeList", []);
-    __publicField(this, "magnitudeList", []);
-    __publicField(this, "originList", []);
-    __publicField(this, "pickList", []);
-    __publicField(this, "focalMechanismList", []);
-    __publicField(this, "preferredOrigin");
-    __publicField(this, "preferredMagnitude");
-    __publicField(this, "preferredFocalMechanism");
-    __publicField(this, "type");
-    __publicField(this, "typeCertainty");
-  }
-  /**
-   * Parses a QuakeML event xml element into a Quake object. Pass in
-   * host=seisplotjs.fdsnevent.USGS_HOST for xml from the USGS service
-   * in order to parse the eventid, otherwise this can be left out
-   *
-   * @param qml the event xml Element
-   * @param host optional source of the xml, helpful for parsing the eventid
-   * @returns QuakeML Quake(Event) object
-   */
-  static createFromXml(qml, host) {
-    if (qml.localName !== "event") {
-      throw new Error(`Cannot extract, not a QuakeML Event: ${qml.localName}`);
-    }
-    const out = new _Quake();
-    out.populate(qml);
-    const descriptionEls = Array.from(qml.children).filter(
-      (e) => e.tagName === "description"
-    );
-    out.descriptionList = descriptionEls.map(
-      (d) => EventDescription.createFromXml(d)
-    );
-    const allPickEls = Array.from(qml.getElementsByTagNameNS(BED_NS, "pick"));
-    const allPicks = [];
-    for (const pickEl of allPickEls) {
-      allPicks.push(Pick.createFromXml(pickEl));
-    }
-    const allAmplitudeEls = Array.from(
-      qml.getElementsByTagNameNS(BED_NS, "amplitude")
-    );
-    const allAmplitudes = [];
-    for (const amplitudeEl of allAmplitudeEls) {
-      allAmplitudes.push(Amplitude.createFromXml(amplitudeEl, allPicks));
-    }
-    const allOriginEls = Array.from(
-      qml.getElementsByTagNameNS(BED_NS, "origin")
-    );
-    const allOrigins = [];
-    for (const originEl of allOriginEls) {
-      allOrigins.push(Origin.createFromXml(originEl, allPicks));
-    }
-    const allStationMagEls = Array.from(
-      qml.getElementsByTagNameNS(BED_NS, "stationMagnitude")
-    );
-    const allStationMags = [];
-    for (const stationMagEl of allStationMagEls) {
-      allStationMags.push(
-        StationMagnitude.createFromXml(stationMagEl, allOrigins, allAmplitudes)
-      );
-    }
-    const allMagEls = Array.from(
-      qml.getElementsByTagNameNS(BED_NS, "magnitude")
-    );
-    const allMags = [];
-    for (const magEl of allMagEls) {
-      allMags.push(Magnitude.createFromXml(magEl, allOrigins, allStationMags));
-    }
-    const allFocalMechEls = Array.from(
-      qml.getElementsByTagNameNS(BED_NS, "focalMechanism")
-    );
-    const allFocalMechs = [];
-    for (const focalMechEl of allFocalMechEls) {
-      allFocalMechs.push(
-        FocalMechanism.createFromXml(focalMechEl, allOrigins, allMags)
-      );
-    }
-    out.originList = allOrigins;
-    out.magnitudeList = allMags;
-    out.pickList = allPicks;
-    out.amplitudeList = allAmplitudes;
-    out.stationMagnitudeList = allStationMags;
-    out.focalMechanismList = allFocalMechs;
-    out.eventId = _Quake.extractEventId(qml, host);
-    const preferredOriginId = _grabFirstElText3(qml, "preferredOriginID");
-    const preferredMagnitudeId = _grabFirstElText3(qml, "preferredMagnitudeID");
-    const preferredFocalMechId = _grabFirstElText3(
-      qml,
-      "preferredFocalMechanismID"
-    );
-    if (isNonEmptyStringArg(preferredOriginId)) {
-      out.preferredOrigin = allOrigins.find(
-        (o) => o.publicId === preferredOriginId
-      );
-      if (!out.preferredOrigin) {
-        throw new Error(`no preferredOriginId match: ${preferredOriginId}`);
-      }
-    }
-    if (isNonEmptyStringArg(preferredMagnitudeId)) {
-      out.preferredMagnitude = allMags.find(
-        (m) => m.publicId === preferredMagnitudeId
-      );
-      if (!out.preferredMagnitude) {
-        throw new Error(`no match: ${preferredMagnitudeId}`);
-      }
-    }
-    if (isNonEmptyStringArg(preferredFocalMechId)) {
-      out.preferredFocalMechanism = allFocalMechs.find(
-        (m) => m.publicId === preferredFocalMechId
-      );
-      if (!out.preferredFocalMechanism) {
-        throw new Error(`no match: ${preferredFocalMechId}`);
-      }
-    }
-    out.type = _grabFirstElText3(qml, "type");
-    out.typeCertainty = _grabFirstElText3(qml, "typeCertainty");
-    return out;
-  }
-  /**
-   * Extracts the EventId from a QuakeML element, guessing from one of several
-   * incompatible (grumble grumble) formats.
-   *
-   * @param   qml Quake(Event) to extract from
-   * @param   host optional source of the xml to help determine the event id style
-   * @returns     Extracted Id, or "unknownEventId" if we can't figure it out
-   */
-  static extractEventId(qml, host) {
-    const eventId = _grabAttributeNS2(qml, ANSS_CATALOG_NS, "eventid");
-    const catalogEventSource = _grabAttributeNS2(
-      qml,
-      ANSS_CATALOG_NS,
-      "eventsource"
-    );
-    if (isNonEmptyStringArg(eventId)) {
-      if (host === USGS_HOST && isNonEmptyStringArg(catalogEventSource)) {
-        return catalogEventSource + eventId;
-      } else {
-        return eventId;
-      }
-    }
-    const publicid = _grabAttribute3(qml, "publicID");
-    if (isNonEmptyStringArg(publicid)) {
-      let re2 = /eventid=([\w\d]+)/;
-      let parsed = re2.exec(publicid);
-      if (parsed) {
-        return parsed[1];
-      }
-      re2 = /evid=([\w\d]+)/;
-      parsed = re2.exec(publicid);
-      if (parsed) {
-        return parsed[1];
-      }
-    }
-    return UNKNOWN_PUBLIC_ID;
-  }
-  hasPreferredOrigin() {
-    return isDef(this.preferredOrigin);
-  }
-  hasOrigin() {
-    return isDef(this.preferredOrigin) || this.originList.length > 1;
-  }
-  get origin() {
-    if (isDef(this.preferredOrigin)) {
-      return this.preferredOrigin;
-    } else if (this.originList.length > 0) {
-      return this.originList[0];
-    } else {
-      throw new Error("No origins in quake");
-    }
-  }
-  hasPreferredMagnitude() {
-    return isDef(this.preferredMagnitude);
-  }
-  hasMagnitude() {
-    return isDef(this.preferredMagnitude) || this.magnitudeList.length > 1;
-  }
-  get magnitude() {
-    if (isDef(this.preferredMagnitude)) {
-      return this.preferredMagnitude;
-    } else if (this.magnitudeList.length > 0) {
-      return this.magnitudeList[0];
-    } else {
-      throw new Error("No magnitudes in quake");
-    }
-  }
-  get time() {
-    return this.origin.time;
-  }
-  get latitude() {
-    return this.origin.latitude;
-  }
-  get longitude() {
-    return this.origin.longitude;
-  }
-  get depth() {
-    return this.origin.depth;
-  }
-  get depthKm() {
-    return this.depth / 1e3;
-  }
-  get description() {
-    return this.descriptionList.length > 0 ? this.descriptionList[0].text : "";
-  }
-  get arrivals() {
-    return this.origin.arrivalList;
-  }
-  get picks() {
-    return this.pickList;
-  }
-  toString() {
-    if (this.hasOrigin()) {
-      const magStr = this.hasMagnitude() ? this.magnitude.toString() : "";
-      const latlon = `(${latlonFormat.format(this.latitude)}/${latlonFormat.format(this.longitude)})`;
-      const depth = depthFormat.format(this.depth / 1e3);
-      return `${this.time.toISO()} ${latlon} ${depth} ${magStr}`;
-    } else if (this.eventId != null) {
-      return `Event: ${this.eventId}`;
-    } else {
-      return `Event: unknown`;
-    }
-  }
-};
-var EventDescription = class _EventDescription {
-  constructor(text) {
-    __publicField(this, "text");
-    __publicField(this, "type");
-    this.text = text;
-  }
-  /**
-   * Parses a QuakeML description xml element into a EventDescription object.
-   *
-   * @param descriptionQML the description xml Element
-   * @returns EventDescription instance
-   */
-  static createFromXml(descriptionQML) {
-    if (descriptionQML.localName !== "description") {
-      throw new Error(
-        `Cannot extract, not a QuakeML description ID: ${descriptionQML.localName}`
-      );
-    }
-    const text = _grabFirstElText3(descriptionQML, "text");
-    if (!isNonEmptyStringArg(text)) {
-      throw new Error("description missing text");
-    }
-    const out = new _EventDescription(text);
-    out.type = _grabFirstElText3(descriptionQML, "type");
-    return out;
-  }
-  toString() {
-    return this.text;
-  }
-};
-var Amplitude = class _Amplitude extends BaseElement {
-  constructor(genericAmplitude) {
-    super();
-    __publicField(this, "genericAmplitude");
-    __publicField(this, "type");
-    __publicField(this, "category");
-    __publicField(this, "unit");
-    __publicField(this, "methodID");
-    __publicField(this, "period");
-    __publicField(this, "snr");
-    __publicField(this, "timeWindow");
-    __publicField(this, "pick");
-    __publicField(this, "waveformID");
-    __publicField(this, "filterID");
-    __publicField(this, "scalingTime");
-    __publicField(this, "magnitudeHint");
-    __publicField(this, "evaluationMode");
-    __publicField(this, "evaluationStatus");
-    this.genericAmplitude = genericAmplitude;
-  }
-  /**
-   * Parses a QuakeML amplitude xml element into an Amplitude object.
-   *
-   * @param amplitudeQML the amplitude xml Element
-   * @param allPicks picks already extracted from the xml for linking arrivals with picks
-   * @returns Amplitude instance
-   */
-  static createFromXml(amplitudeQML, allPicks) {
-    if (amplitudeQML.localName !== "amplitude") {
-      throw new Error(
-        `Cannot extract, not a QuakeML amplitude: ${amplitudeQML.localName}`
-      );
-    }
-    const genericAmplitude = _grabFirstElRealQuantity(
-      amplitudeQML,
-      "genericAmplitude"
-    );
-    if (!isDef(genericAmplitude)) {
-      throw new Error("amplitude missing genericAmplitude");
-    }
-    const out = new _Amplitude(genericAmplitude);
-    out.populate(amplitudeQML);
-    out.type = _grabFirstElText3(amplitudeQML, "type");
-    out.category = _grabFirstElText3(amplitudeQML, "category");
-    out.unit = _grabFirstElText3(amplitudeQML, "unit");
-    out.methodID = _grabFirstElText3(amplitudeQML, "methodID");
-    out.period = _grabFirstElRealQuantity(amplitudeQML, "period");
-    out.snr = _grabFirstElFloat3(amplitudeQML, "snr");
-    out.timeWindow = _grabFirstElType(
-      TimeWindow.createFromXml.bind(TimeWindow)
-    )(amplitudeQML, "timeWindow");
-    const pickID = _grabFirstElText3(amplitudeQML, "pickID");
-    out.pick = allPicks.find((p) => p.publicId === pickID);
-    if (pickID && !out.pick) {
-      throw new Error("No pick with ID " + pickID);
-    }
-    out.waveformID = _grabFirstElType(
-      WaveformID.createFromXml.bind(WaveformID)
-    )(amplitudeQML, "waveformID");
-    out.filterID = _grabFirstElText3(amplitudeQML, "filterID");
-    out.scalingTime = _grabFirstElTimeQuantity(amplitudeQML, "scalingTime");
-    out.magnitudeHint = _grabFirstElText3(amplitudeQML, "magnitudeHint");
-    out.evaluationMode = _grabFirstElText3(amplitudeQML, "evaluationMode");
-    out.evaluationStatus = _grabFirstElText3(amplitudeQML, "evaluationStatus");
-    return out;
-  }
-};
-var StationMagnitude = class _StationMagnitude extends BaseElement {
-  constructor(origin, mag) {
-    super();
-    __publicField(this, "origin");
-    __publicField(this, "mag");
-    __publicField(this, "type");
-    __publicField(this, "amplitude");
-    __publicField(this, "methodID");
-    __publicField(this, "waveformID");
-    this.origin = origin;
-    this.mag = mag;
-  }
-  /**
-   * Parses a QuakeML station magnitude xml element into a StationMagnitude object.
-   *
-   * @param stationMagnitudeQML the station magnitude xml Element
-   * @param allOrigins origins already extracted from the xml for linking station magnitudes with origins
-   * @param allAmplitudes amplitudes already extracted from the xml for linking station magnitudes with amplitudes
-   * @returns StationMagnitude instance
-   */
-  static createFromXml(stationMagnitudeQML, allOrigins, allAmplitudes) {
-    if (stationMagnitudeQML.localName !== "stationMagnitude") {
-      throw new Error(
-        `Cannot extract, not a QuakeML station magnitude: ${stationMagnitudeQML.localName}`
-      );
-    }
-    const originID = _grabFirstElText3(stationMagnitudeQML, "originID");
-    if (!isNonEmptyStringArg(originID)) {
-      throw new Error("stationMagnitude missing origin ID");
-    }
-    const origin = allOrigins.find((o) => o.publicId === originID);
-    if (!isDef(origin)) {
-      throw new Error("No origin with ID " + originID);
-    }
-    const mag = _grabFirstElRealQuantity(stationMagnitudeQML, "mag");
-    if (!isDef(mag)) {
-      throw new Error("stationMagnitude missing mag");
-    }
-    const out = new _StationMagnitude(origin, mag);
-    out.populate(stationMagnitudeQML);
-    out.type = _grabFirstElText3(stationMagnitudeQML, "type");
-    const amplitudeID = _grabFirstElText3(stationMagnitudeQML, "amplitudeID");
-    out.amplitude = allAmplitudes.find((a) => a.publicId === amplitudeID);
-    if (amplitudeID && !out.amplitude) {
-      throw new Error("No amplitude with ID " + amplitudeID);
-    }
-    out.methodID = _grabFirstElText3(stationMagnitudeQML, "methodID");
-    out.waveformID = _grabFirstElType(
-      WaveformID.createFromXml.bind(WaveformID)
-    )(stationMagnitudeQML, "waveformID");
-    return out;
-  }
-};
-var TimeWindow = class _TimeWindow {
-  constructor(begin, end, reference) {
-    __publicField(this, "begin");
-    __publicField(this, "end");
-    __publicField(this, "reference");
-    this.begin = begin;
-    this.end = end;
-    this.reference = reference;
-  }
-  /**
-   * Parses a QuakeML time window xml element into a TimeWindow object.
-   *
-   * @param timeWindowQML the time window xml Element
-   * @returns TimeWindow instance
-   */
-  static createFromXml(timeWindowQML) {
-    if (timeWindowQML.localName !== "timeWindow") {
-      throw new Error(
-        `Cannot extract, not a QuakeML time window: ${timeWindowQML.localName}`
-      );
-    }
-    const begin = _grabFirstElFloat3(timeWindowQML, "begin");
-    if (!isDef(begin)) {
-      throw new Error("timeWindow missing begin");
-    }
-    const end = _grabFirstElFloat3(timeWindowQML, "end");
-    if (!isDef(end)) {
-      throw new Error("timeWindow missing end");
-    }
-    const reference = _grabFirstElDateTime(timeWindowQML, "reference");
-    if (!isDef(reference)) {
-      throw new Error("timeWindow missing reference");
-    }
-    const out = new _TimeWindow(begin, end, reference);
-    return out;
-  }
-};
-var Origin = class _Origin extends BaseElement {
-  constructor(time, latitude, longitude) {
-    super();
-    __publicField(this, "compositeTimes");
-    __publicField(this, "originUncertainty");
-    __publicField(this, "arrivalList");
-    __publicField(this, "timeQuantity");
-    __publicField(this, "latitudeQuantity");
-    __publicField(this, "longitudeQuantity");
-    __publicField(this, "depthQuantity");
-    __publicField(this, "depthType");
-    __publicField(this, "timeFixed");
-    __publicField(this, "epicenterFixed");
-    __publicField(this, "referenceSystemID");
-    __publicField(this, "methodID");
-    __publicField(this, "earthModelID");
-    __publicField(this, "quality");
-    __publicField(this, "type");
-    __publicField(this, "region");
-    __publicField(this, "evaluationMode");
-    __publicField(this, "evaluationStatus");
-    this.compositeTimes = [];
-    this.arrivalList = [];
-    if (time instanceof DateTime) {
-      this.timeQuantity = new Quantity(time);
-    } else {
-      this.timeQuantity = time;
-    }
-    if (typeof latitude == "number") {
-      this.latitudeQuantity = new Quantity(latitude);
-    } else {
-      this.latitudeQuantity = latitude;
-    }
-    if (typeof longitude == "number") {
-      this.longitudeQuantity = new Quantity(longitude);
-    } else {
-      this.longitudeQuantity = longitude;
-    }
-  }
-  /**
-   * Parses a QuakeML origin xml element into a Origin object.
-   *
-   * @param qml the origin xml Element
-   * @param allPicks picks already extracted from the xml for linking arrivals with picks
-   * @returns Origin instance
-   */
-  static createFromXml(qml, allPicks) {
-    if (qml.localName !== "origin") {
-      throw new Error(`Cannot extract, not a QuakeML Origin: ${qml.localName}`);
-    }
-    const time = _grabFirstElTimeQuantity(qml, "time");
-    if (!isObject(time)) {
-      throw new Error("origin missing time");
-    }
-    const lat = _grabFirstElRealQuantity(qml, "latitude");
-    if (!isObject(lat)) {
-      throw new Error("origin missing latitude");
-    }
-    const lon = _grabFirstElRealQuantity(qml, "longitude");
-    if (!isObject(lon)) {
-      throw new Error("origin missing longitude");
-    }
-    const out = new _Origin(time, lat, lon);
-    out.populate(qml);
-    out.originUncertainty = _grabFirstElType(
-      OriginUncertainty.createFromXml.bind(OriginUncertainty)
-    )(qml, "originUncertainty");
-    const allArrivalEls = Array.from(
-      qml.getElementsByTagNameNS(BED_NS, "arrival")
-    );
-    out.arrivalList = allArrivalEls.map(
-      (arrivalEl) => Arrival.createFromXml(arrivalEl, allPicks)
-    );
-    out.depthQuantity = _grabFirstElRealQuantity(qml, "depth");
-    out.depthType = _grabFirstElText3(qml, "depthType");
-    out.timeFixed = _grabFirstElBool(qml, "timeFixed");
-    out.epicenterFixed = _grabFirstElBool(qml, "epicenterFixed");
-    out.referenceSystemID = _grabFirstElText3(qml, "referenceSystemID");
-    out.methodID = _grabFirstElText3(qml, "methodID");
-    out.earthModelID = _grabFirstElText3(qml, "earthModelID");
-    out.quality = _grabFirstElType(
-      OriginQuality.createFromXml.bind(OriginQuality)
-    )(qml, "quality");
-    out.type = _grabFirstElText3(qml, "type");
-    out.region = _grabFirstElText3(qml, "region");
-    out.evaluationMode = _grabFirstElText3(qml, "evaluationMode");
-    out.evaluationStatus = _grabFirstElText3(qml, "evaluationStatus");
-    return out;
-  }
-  toString() {
-    const latlon = `(${latlonFormat.format(this.latitude)}/${latlonFormat.format(this.longitude)})`;
-    const depth = depthFormat.format(this.depth / 1e3);
-    return `${this.time.toISO()} ${latlon} ${depth} km`;
-  }
-  get time() {
-    return this.timeQuantity.value;
-  }
-  set time(t) {
-    if (t instanceof DateTime) {
-      this.timeQuantity.value = t;
-    } else {
-      this.timeQuantity = t;
-    }
-  }
-  get latitude() {
-    return this.latitudeQuantity.value;
-  }
-  set latitude(lat) {
-    if (typeof lat == "number") {
-      this.latitudeQuantity.value = lat;
-    } else {
-      this.latitudeQuantity = lat;
-    }
-  }
-  get longitude() {
-    return this.longitudeQuantity.value;
-  }
-  set longitude(lon) {
-    if (typeof lon == "number") {
-      this.longitudeQuantity.value = lon;
-    } else {
-      this.longitudeQuantity = lon;
-    }
-  }
-  get depthKm() {
-    return this.depth / 1e3;
-  }
-  get depth() {
-    return this.depthQuantity?.value ?? NaN;
-  }
-  set depth(depth) {
-    if (typeof depth == "number") {
-      if (!this.depthQuantity) {
-        this.depthQuantity = new Quantity(depth);
-      } else {
-        this.depthQuantity.value = depth;
-      }
-    } else {
-      this.depthQuantity = depth;
-    }
-  }
-  get arrivals() {
-    return this.arrivalList;
-  }
-};
-var CompositeTime = class _CompositeTime {
-  constructor() {
-    __publicField(this, "year");
-    __publicField(this, "month");
-    __publicField(this, "day");
-    __publicField(this, "hour");
-    __publicField(this, "minute");
-    __publicField(this, "second");
-  }
-  /**
-   * Parses a QuakeML composite time xml element into an CompositeTime object.
-   *
-   * @param qml the composite time xml Element
-   * @returns CompositeTime instance
-   */
-  static createFromXml(qml) {
-    if (qml.localName !== "compositeTime") {
-      throw new Error(
-        `Cannot extract, not a QuakeML Composite Time: ${qml.localName}`
-      );
-    }
-    const out = new _CompositeTime();
-    out.year = _grabFirstElIntegerQuantity(qml, "year");
-    out.month = _grabFirstElIntegerQuantity(qml, "month");
-    out.day = _grabFirstElIntegerQuantity(qml, "day");
-    out.hour = _grabFirstElIntegerQuantity(qml, "hour");
-    out.minute = _grabFirstElIntegerQuantity(qml, "minute");
-    out.second = _grabFirstElIntegerQuantity(qml, "second");
-    return out;
-  }
-};
-var OriginUncertainty = class _OriginUncertainty {
-  constructor() {
-    __publicField(this, "horizontalUncertainty");
-    __publicField(this, "minHorizontalUncertainty");
-    __publicField(this, "maxHorizontalUncertainty");
-    __publicField(this, "azimuthMaxHorizontalUncertainty");
-    __publicField(this, "confidenceEllipsoid");
-    __publicField(this, "preferredDescription");
-    __publicField(this, "confidenceLevel");
-  }
-  /**
-   * Parses a QuakeML origin uncertainty xml element into an OriginUncertainty object.
-   *
-   * @param qml the origin uncertainty xml Element
-   * @returns OriginUncertainty instance
-   */
-  static createFromXml(qml) {
-    if (qml.localName !== "originUncertainty") {
-      throw new Error(
-        `Cannot extract, not a QuakeML Origin Uncertainty: ${qml.localName}`
-      );
-    }
-    const out = new _OriginUncertainty();
-    out.horizontalUncertainty = _grabFirstElFloat3(qml, "horizontalUncertainty");
-    out.minHorizontalUncertainty = _grabFirstElFloat3(
-      qml,
-      "minHorizontalUncertainty"
-    );
-    out.maxHorizontalUncertainty = _grabFirstElFloat3(
-      qml,
-      "maxHorizontalUncertainty"
-    );
-    out.azimuthMaxHorizontalUncertainty = _grabFirstElFloat3(
-      qml,
-      "azimuthMaxHorizontalUncertainty"
-    );
-    out.confidenceEllipsoid = _grabFirstElType(
-      ConfidenceEllipsoid.createFromXml.bind(ConfidenceEllipsoid)
-    )(qml, "confidenceEllipsoid");
-    out.preferredDescription = _grabFirstElText3(qml, "preferredDescription");
-    out.confidenceLevel = _grabFirstElFloat3(qml, "confidenceLevel");
-    return out;
-  }
-};
-var ConfidenceEllipsoid = class _ConfidenceEllipsoid {
-  constructor(semiMajorAxisLength, semiMinorAxisLength, semiIntermediateAxisLength, majorAxisPlunge, majorAxisAzimuth, majorAxisRotation) {
-    __publicField(this, "semiMajorAxisLength");
-    __publicField(this, "semiMinorAxisLength");
-    __publicField(this, "semiIntermediateAxisLength");
-    __publicField(this, "majorAxisPlunge");
-    __publicField(this, "majorAxisAzimuth");
-    __publicField(this, "majorAxisRotation");
-    this.semiMajorAxisLength = semiMajorAxisLength;
-    this.semiMinorAxisLength = semiMinorAxisLength;
-    this.semiIntermediateAxisLength = semiIntermediateAxisLength;
-    this.majorAxisPlunge = majorAxisPlunge;
-    this.majorAxisAzimuth = majorAxisAzimuth;
-    this.majorAxisRotation = majorAxisRotation;
-  }
-  /**
-   * Parses a QuakeML confidence ellipsoid xml element into an ConfidenceEllipsoid object.
-   *
-   * @param qml the confidence ellipsoid xml Element
-   * @returns ConfidenceEllipsoid instance
-   */
-  static createFromXml(qml) {
-    if (qml.localName !== "confidenceEllipsoid") {
-      throw new Error(
-        `Cannot extract, not a QuakeML Confidence Ellipsoid: ${qml.localName}`
-      );
-    }
-    const semiMajorAxisLength = _grabFirstElFloat3(qml, "semiMajorAxisLength");
-    if (semiMajorAxisLength === void 0) {
-      throw new Error("confidenceEllipsoid missing semiMajorAxisLength");
-    }
-    const semiMinorAxisLength = _grabFirstElFloat3(qml, "semiMinorAxisLength");
-    if (semiMinorAxisLength === void 0) {
-      throw new Error("confidenceEllipsoid missing semiMinorAxisLength");
-    }
-    const semiIntermediateAxisLength = _grabFirstElFloat3(
-      qml,
-      "semiIntermediateAxisLength"
-    );
-    if (semiIntermediateAxisLength === void 0) {
-      throw new Error("confidenceEllipsoid missing semiIntermediateAxisLength");
-    }
-    const majorAxisPlunge = _grabFirstElFloat3(qml, "majorAxisPlunge");
-    if (majorAxisPlunge === void 0) {
-      throw new Error("confidenceEllipsoid missing majorAxisPlunge");
-    }
-    const majorAxisAzimuth = _grabFirstElFloat3(qml, "majorAxisAzimuth");
-    if (majorAxisAzimuth === void 0) {
-      throw new Error("confidenceEllipsoid missing majorAxisAzimuth");
-    }
-    const majorAxisRotation = _grabFirstElFloat3(qml, "majorAxisRotation");
-    if (majorAxisRotation === void 0) {
-      throw new Error("confidenceEllipsoid missing majorAxisRotation");
-    }
-    const out = new _ConfidenceEllipsoid(
-      semiMajorAxisLength,
-      semiMinorAxisLength,
-      semiIntermediateAxisLength,
-      majorAxisPlunge,
-      majorAxisAzimuth,
-      majorAxisRotation
-    );
-    return out;
-  }
-};
-var OriginQuality = class _OriginQuality {
-  constructor() {
-    __publicField(this, "associatedPhaseCount");
-    __publicField(this, "usedPhaseCount");
-    __publicField(this, "associatedStationCount");
-    __publicField(this, "usedStationCount");
-    __publicField(this, "depthPhaseCount");
-    __publicField(this, "standardError");
-    __publicField(this, "azimuthalGap");
-    __publicField(this, "secondaryAzimuthalGap");
-    __publicField(this, "groundTruthLevel");
-    __publicField(this, "maximumDistance");
-    __publicField(this, "minimumDistance");
-    __publicField(this, "medianDistance");
-  }
-  /**
-   * Parses a QuakeML origin quality xml element into an OriginQuality object.
-   *
-   * @param qml the origin quality xml Element
-   * @returns OriginQuality instance
-   */
-  static createFromXml(qml) {
-    if (qml.localName !== "quality") {
-      throw new Error(
-        `Cannot extract, not a QuakeML Origin Quality: ${qml.localName}`
-      );
-    }
-    const out = new _OriginQuality();
-    out.associatedPhaseCount = _grabFirstElInt3(qml, "associatedPhaseCount");
-    out.usedPhaseCount = _grabFirstElInt3(qml, "usedPhaseCount");
-    out.associatedStationCount = _grabFirstElInt3(qml, "associatedStationCount");
-    out.usedStationCount = _grabFirstElInt3(qml, "usedStationCount");
-    out.standardError = _grabFirstElFloat3(qml, "standardError");
-    out.azimuthalGap = _grabFirstElFloat3(qml, "azimuthalGap");
-    out.secondaryAzimuthalGap = _grabFirstElFloat3(qml, "secondaryAzimuthalGap");
-    out.groundTruthLevel = _grabFirstElText3(qml, "groundTruthLevel");
-    out.maximumDistance = _grabFirstElFloat3(qml, "maximumDistance");
-    out.minimumDistance = _grabFirstElFloat3(qml, "minimumDistance");
-    out.medianDistance = _grabFirstElFloat3(qml, "medianDistance");
-    return out;
-  }
-};
-var Magnitude = class _Magnitude extends BaseElement {
-  constructor(mag, type) {
-    super();
-    __publicField(this, "stationMagnitudeContributions", []);
-    __publicField(this, "magQuantity");
-    __publicField(this, "type");
-    __publicField(this, "origin");
-    __publicField(this, "methodID");
-    __publicField(this, "stationCount");
-    __publicField(this, "azimuthalGap");
-    __publicField(this, "evaluationMode");
-    __publicField(this, "evaluationStatus");
-    if (typeof mag === "number") {
-      this.magQuantity = new Quantity(mag);
-    } else {
-      this.magQuantity = mag;
-    }
-    if (type) {
-      this.type = type;
-    }
-  }
-  /**
-   * Parses a QuakeML magnitude xml element into a Magnitude object.
-   *
-   * @param qml the magnitude xml Element
-   * @param allOrigins origins already extracted from the xml for linking magnitudes with origins
-   * @param allStationMagnitudes station magnitudes already extracted from the xml
-   * @returns Magnitude instance
-   */
-  static createFromXml(qml, allOrigins, allStationMagnitudes) {
-    if (qml.localName !== "magnitude") {
-      throw new Error(
-        `Cannot extract, not a QuakeML Magnitude: ${qml.localName}`
-      );
-    }
-    const mag = _grabFirstElRealQuantity(qml, "mag");
-    if (!mag) {
-      throw new Error("magnitude missing mag");
-    }
-    const out = new _Magnitude(mag);
-    out.populate(qml);
-    const stationMagnitudeContributionEls = Array.from(
-      qml.getElementsByTagNameNS(BED_NS, "stationMagnitudeContribution")
-    );
-    out.stationMagnitudeContributions = stationMagnitudeContributionEls.map(
-      (smc) => StationMagnitudeContribution.createFromXml(smc, allStationMagnitudes)
-    );
-    out.type = _grabFirstElText3(qml, "type");
-    const originID = _grabFirstElText3(qml, "originID");
-    out.origin = allOrigins.find((o) => o.publicId === originID);
-    if (originID && !out.origin) {
-      throw new Error("No origin with ID " + originID);
-    }
-    out.methodID = _grabFirstElText3(qml, "methodID");
-    out.stationCount = _grabFirstElInt3(qml, "stationCount");
-    out.azimuthalGap = _grabFirstElFloat3(qml, "azimuthalGap");
-    out.evaluationMode = _grabFirstElText3(qml, "evaluationMode");
-    out.evaluationStatus = _grabFirstElText3(qml, "evaluationStatus");
-    return out;
-  }
-  toString() {
-    return `${magFormat.format(this.mag)} ${this.type ? this.type : ""}`;
-  }
-  get mag() {
-    return this.magQuantity.value;
-  }
-  set mag(value) {
-    if (typeof value === "number") {
-      this.magQuantity.value = value;
-    } else {
-      this.magQuantity = value;
-    }
-  }
-};
-var StationMagnitudeContribution = class _StationMagnitudeContribution {
-  constructor(stationMagnitude) {
-    __publicField(this, "stationMagnitude");
-    __publicField(this, "residual");
-    __publicField(this, "weight");
-    this.stationMagnitude = stationMagnitude;
-  }
-  /**
-   * Parses a QuakeML station magnitude contribution xml element into a StationMagnitudeContribution object.
-   *
-   * @param qml the station magnitude contribution xml Element
-   * @param allStationMagnitudes station magnitudes already extracted from the xml for linking station magnitudes with station magnitude contributions
-   * @returns StationMagnitudeContribution instance
-   */
-  static createFromXml(qml, allStationMagnitudes) {
-    if (qml.localName !== "stationMagnitudeContribution") {
-      throw new Error(
-        `Cannot extract, not a QuakeML StationMagnitudeContribution: ${qml.localName}`
-      );
-    }
-    const stationMagnitudeID = _grabFirstElText3(qml, "stationMagnitudeID");
-    if (!isNonEmptyStringArg(stationMagnitudeID)) {
-      throw new Error("stationMagnitudeContribution missing stationMagnitude");
-    }
-    const stationMagnitude = allStationMagnitudes.find(
-      (sm) => sm.publicId === stationMagnitudeID
-    );
-    if (!isDef(stationMagnitude)) {
-      throw new Error("No stationMagnitude with ID " + stationMagnitudeID);
-    }
-    const out = new _StationMagnitudeContribution(stationMagnitude);
-    out.residual = _grabFirstElFloat3(qml, "residual");
-    out.weight = _grabFirstElFloat3(qml, "weight");
-    return out;
-  }
-};
-var Arrival = class _Arrival extends BaseElement {
-  constructor(phase, pick2) {
-    super();
-    __publicField(this, "phase");
-    __publicField(this, "pick");
-    __publicField(this, "timeCorrection");
-    __publicField(this, "azimuth");
-    __publicField(this, "distance");
-    __publicField(this, "takeoffAngle");
-    __publicField(this, "timeResidual");
-    __publicField(this, "horizontalSlownessResidual");
-    __publicField(this, "backazimuthResidual");
-    __publicField(this, "timeWeight");
-    __publicField(this, "horizontalSlownessWeight");
-    __publicField(this, "backazimuthWeight");
-    __publicField(this, "earthModelID");
-    this.phase = phase;
-    this.pick = pick2;
-  }
-  /**
-   * Parses a QuakeML arrival xml element into a Arrival object.
-   *
-   * @param arrivalQML the arrival xml Element
-   * @param allPicks picks already extracted from the xml for linking arrivals with picks
-   * @returns Arrival instance
-   */
-  static createFromXml(arrivalQML, allPicks) {
-    if (arrivalQML.localName !== "arrival") {
-      throw new Error(
-        `Cannot extract, not a QuakeML Arrival: ${arrivalQML.localName}`
-      );
-    }
-    const pickId = _grabFirstElText3(arrivalQML, "pickID");
-    const phase = _grabFirstElText3(arrivalQML, "phase");
-    if (isNonEmptyStringArg(phase) && isNonEmptyStringArg(pickId)) {
-      const myPick = allPicks.find(function(p) {
-        return p.publicId === pickId;
-      });
-      if (!myPick) {
-        throw new Error("Can't find pick with Id=" + pickId + " for Arrival");
-      }
-      const out = new _Arrival(phase, myPick);
-      out.populate(arrivalQML);
-      out.timeCorrection = _grabFirstElFloat3(arrivalQML, "timeCorrection");
-      out.azimuth = _grabFirstElFloat3(arrivalQML, "azimuth");
-      out.distance = _grabFirstElFloat3(arrivalQML, "distance");
-      out.takeoffAngle = _grabFirstElRealQuantity(arrivalQML, "takeoffAngle");
-      out.timeResidual = _grabFirstElFloat3(arrivalQML, "timeResidual");
-      out.horizontalSlownessResidual = _grabFirstElFloat3(
-        arrivalQML,
-        "horizontalSlownessResidual"
-      );
-      out.backazimuthResidual = _grabFirstElFloat3(
-        arrivalQML,
-        "backazimuthResidual"
-      );
-      out.timeWeight = _grabFirstElFloat3(arrivalQML, "timeWeight");
-      out.horizontalSlownessWeight = _grabFirstElFloat3(
-        arrivalQML,
-        "horizontalSlownessWeight"
-      );
-      out.backazimuthWeight = _grabFirstElFloat3(
-        arrivalQML,
-        "backazimuthWeight"
-      );
-      out.earthModelID = _grabFirstElText3(arrivalQML, "earthModelID");
-      return out;
-    } else {
-      throw new Error(
-        "Arrival does not have phase or pickId: " + stringify(phase) + " " + stringify(pickId)
-      );
-    }
-  }
-};
-var Pick = class _Pick extends BaseElement {
-  constructor(time, waveformID) {
-    super();
-    __publicField(this, "timeQuantity");
-    __publicField(this, "waveformID");
-    __publicField(this, "filterID");
-    __publicField(this, "methodID");
-    __publicField(this, "horizontalSlowness");
-    __publicField(this, "backazimuth");
-    __publicField(this, "slownessMethodID");
-    __publicField(this, "onset");
-    __publicField(this, "phaseHint");
-    __publicField(this, "polarity");
-    __publicField(this, "evaluationMode");
-    __publicField(this, "evaluationStatus");
-    if (time instanceof DateTime) {
-      this.timeQuantity = new Quantity(time);
-    } else {
-      this.timeQuantity = time;
-    }
-    this.waveformID = waveformID;
-  }
-  get time() {
-    return this.timeQuantity.value;
-  }
-  set time(t) {
-    if (t instanceof DateTime) {
-      this.timeQuantity.value = t;
-    } else {
-      this.timeQuantity = t;
-    }
-  }
-  /**
-   * Parses a QuakeML pick xml element into a Pick object.
-   *
-   * @param pickQML the pick xml Element
-   * @returns Pick instance
-   */
-  static createFromXml(pickQML) {
-    if (pickQML.localName !== "pick") {
-      throw new Error(
-        `Cannot extract, not a QuakeML Pick: ${pickQML.localName}`
-      );
-    }
-    const time = _grabFirstElTimeQuantity(pickQML, "time");
-    if (!isDef(time)) {
-      throw new Error("Missing time");
-    }
-    const waveformId = _grabFirstElType(
-      WaveformID.createFromXml.bind(WaveformID)
-    )(pickQML, "waveformID");
-    if (!isObject(waveformId)) {
-      throw new Error("pick missing waveformID");
-    }
-    const out = new _Pick(time, waveformId);
-    out.populate(pickQML);
-    out.filterID = _grabFirstElText3(pickQML, "filterID");
-    out.methodID = _grabFirstElText3(pickQML, "methodID");
-    out.horizontalSlowness = _grabFirstElRealQuantity(
-      pickQML,
-      "horizontalSlowness"
-    );
-    out.backazimuth = _grabFirstElRealQuantity(pickQML, "backazimuth");
-    out.slownessMethodID = _grabFirstElText3(pickQML, "slownessMethodID");
-    out.onset = _grabFirstElText3(pickQML, "onset");
-    out.phaseHint = _grabFirstElText3(pickQML, "phaseHint");
-    out.polarity = _grabFirstElText3(pickQML, "polarity");
-    out.evaluationMode = _grabFirstElText3(pickQML, "evaluationMode");
-    out.evaluationStatus = _grabFirstElText3(pickQML, "evaluationStatus");
-    return out;
-  }
-  get networkCode() {
-    return this.waveformID.networkCode;
-  }
-  get stationCode() {
-    return this.waveformID.stationCode;
-  }
-  get locationCode() {
-    return this.waveformID.locationCode || "--";
-  }
-  get channelCode() {
-    return this.waveformID.channelCode || "---";
-  }
-  isAtStation(station) {
-    return this.networkCode === station.networkCode && this.stationCode === station.stationCode;
-  }
-  isOnChannel(channel) {
-    return this.networkCode === channel.station.networkCode && this.stationCode === channel.station.stationCode && this.locationCode === channel.locationCode && this.channelCode === channel.channelCode;
-  }
-  toString() {
-    return stringify(this.time) + ` ${this.networkCode}.${this.stationCode}.${this.locationCode}.${this.channelCode}`;
-  }
-};
-var FocalMechanism = class _FocalMechanism extends BaseElement {
-  constructor() {
-    super(...arguments);
-    __publicField(this, "waveformIDList", []);
-    __publicField(this, "momentTensorList", []);
-    __publicField(this, "triggeringOrigin");
-    __publicField(this, "nodalPlanes");
-    __publicField(this, "principalAxes");
-    __publicField(this, "azimuthalGap");
-    __publicField(this, "stationPolarityCount");
-    __publicField(this, "misfit");
-    __publicField(this, "stationDistributionRatio");
-    __publicField(this, "methodID");
-    __publicField(this, "evaluationMode");
-    __publicField(this, "evaluationStatus");
-  }
-  /**
-   * Parses a QuakeML focal mechanism xml element into a FocalMechanism object.
-   *
-   * @param focalMechQML the focal mechanism xml Element
-   * @param allOrigins origins already extracted from the xml for linking focal mechanisms with origins
-   * @param allMagnitudes magnitudes already extracted from the xml for linking moment tensors with magnitudes
-   * @returns FocalMechanism instance
-   */
-  static createFromXml(focalMechQML, allOrigins, allMagnitudes) {
-    if (focalMechQML.localName !== "focalMechanism") {
-      throw new Error(
-        `Cannot extract, not a QuakeML focalMechanism: ${focalMechQML.localName}`
-      );
-    }
-    const out = new _FocalMechanism();
-    out.populate(focalMechQML);
-    const waveformIDEls = Array.from(
-      focalMechQML.getElementsByTagNameNS(BED_NS, "waveformID")
-    );
-    out.waveformIDList = waveformIDEls.map(
-      (wid) => WaveformID.createFromXml(wid)
-    );
-    const momentTensorEls = Array.from(
-      focalMechQML.getElementsByTagNameNS(BED_NS, "momentTensor")
-    );
-    out.momentTensorList = momentTensorEls.map(
-      (mt) => MomentTensor.createFromXml(mt, allOrigins, allMagnitudes)
-    );
-    const triggeringOriginID = _grabFirstElText3(
-      focalMechQML,
-      "triggeringOriginID"
-    );
-    out.triggeringOrigin = allOrigins.find(
-      (o) => o.publicId === triggeringOriginID
-    );
-    if (triggeringOriginID && !out.triggeringOrigin) {
-      throw new Error("No origin with ID " + triggeringOriginID);
-    }
-    out.nodalPlanes = _grabFirstElType(
-      NodalPlanes.createFromXml.bind(NodalPlanes)
-    )(focalMechQML, "nodalPlanes");
-    out.principalAxes = _grabFirstElType(
-      PrincipalAxes.createFromXml.bind(PrincipalAxes)
-    )(focalMechQML, "principalAxes");
-    out.azimuthalGap = _grabFirstElFloat3(focalMechQML, "azimuthalGap");
-    out.stationPolarityCount = _grabFirstElInt3(
-      focalMechQML,
-      "stationPolarityCount"
-    );
-    out.misfit = _grabFirstElFloat3(focalMechQML, "misfit");
-    out.stationDistributionRatio = _grabFirstElFloat3(
-      focalMechQML,
-      "stationDistributionRatio"
-    );
-    out.methodID = _grabFirstElText3(focalMechQML, "methodID");
-    out.evaluationMode = _grabFirstElText3(focalMechQML, "evaluationMode");
-    out.evaluationStatus = _grabFirstElText3(focalMechQML, "evaluationStatus");
-    return out;
-  }
-};
-var NodalPlanes = class _NodalPlanes {
-  constructor() {
-    __publicField(this, "nodalPlane1");
-    __publicField(this, "nodalPlane2");
-    __publicField(this, "preferredPlane");
-  }
-  /**
-   * Parses a QuakeML nodal planes xml element into a NodalPlanes object.
-   *
-   * @param nodalPlanesQML the nodal planes xml Element
-   * @returns NodalPlanes instance
-   */
-  static createFromXml(nodalPlanesQML) {
-    const out = new _NodalPlanes();
-    out.nodalPlane1 = _grabFirstElType(
-      NodalPlane.createFromXml.bind(NodalPlane)
-    )(nodalPlanesQML, "nodalPlane1");
-    out.nodalPlane2 = _grabFirstElType(
-      NodalPlane.createFromXml.bind(NodalPlane)
-    )(nodalPlanesQML, "nodalPlane2");
-    const preferredPlaneString = _grabAttribute3(
-      nodalPlanesQML,
-      "preferredPlane"
-    );
-    out.preferredPlane = isNonEmptyStringArg(preferredPlaneString) ? parseInt(preferredPlaneString) : void 0;
-    return out;
-  }
-};
-var NodalPlane = class _NodalPlane {
-  constructor(strike, dip, rake) {
-    __publicField(this, "strike");
-    __publicField(this, "dip");
-    __publicField(this, "rake");
-    this.strike = strike;
-    this.dip = dip;
-    this.rake = rake;
-  }
-  /**
-   * Parses a QuakeML nodal plane xml element into a NodalPlane object.
-   *
-   * @param nodalPlaneQML the nodal plane xml Element
-   * @returns NodalPlane instance
-   */
-  static createFromXml(nodalPlaneQML) {
-    const strike = _grabFirstElRealQuantity(nodalPlaneQML, "strike");
-    if (!isObject(strike)) {
-      throw new Error("nodal plane missing strike");
-    }
-    const dip = _grabFirstElRealQuantity(nodalPlaneQML, "dip");
-    if (!isObject(dip)) {
-      throw new Error("nodal plane missing dip");
-    }
-    const rake = _grabFirstElRealQuantity(nodalPlaneQML, "rake");
-    if (!isObject(rake)) {
-      throw new Error("nodal plane missing rake");
-    }
-    const out = new _NodalPlane(strike, dip, rake);
-    return out;
-  }
-};
-var PrincipalAxes = class _PrincipalAxes {
-  constructor(tAxis, pAxis) {
-    __publicField(this, "tAxis");
-    __publicField(this, "pAxis");
-    __publicField(this, "nAxis");
-    this.tAxis = tAxis;
-    this.pAxis = pAxis;
-  }
-  /**
-   * Parses a QuakeML princpalAxes element into a PrincipalAxes object.
-   *
-   * @param princpalAxesQML the princpalAxes xml Element
-   * @returns PrincipalAxes instance
-   */
-  static createFromXml(princpalAxesQML) {
-    if (princpalAxesQML.localName !== "principalAxes") {
-      throw new Error(
-        `Cannot extract, not a QuakeML princpalAxes: ${princpalAxesQML.localName}`
-      );
-    }
-    const tAxis = _grabFirstElType(Axis.createFromXml.bind(Axis))(
-      princpalAxesQML,
-      "tAxis"
-    );
-    if (!isObject(tAxis)) {
-      throw new Error("nodal plane missing tAxis");
-    }
-    const pAxis = _grabFirstElType(Axis.createFromXml.bind(Axis))(
-      princpalAxesQML,
-      "pAxis"
-    );
-    if (!isObject(pAxis)) {
-      throw new Error("nodal plane missing pAxis");
-    }
-    const out = new _PrincipalAxes(tAxis, pAxis);
-    out.nAxis = _grabFirstElType(Axis.createFromXml.bind(Axis))(
-      princpalAxesQML,
-      "nAxis"
-    );
-    return out;
-  }
-};
-var Axis = class _Axis {
-  constructor(azimuth, plunge, length) {
-    __publicField(this, "azimuth");
-    __publicField(this, "plunge");
-    __publicField(this, "length");
-    this.azimuth = azimuth;
-    this.plunge = plunge;
-    this.length = length;
-  }
-  /**
-   * Parses a QuakeML axis xml element into a Axis object.
-   *
-   * @param axisQML the axis xml Element
-   * @returns Axis instance
-   */
-  static createFromXml(axisQML) {
-    const azimuth = _grabFirstElRealQuantity(axisQML, "azimuth");
-    if (!isObject(azimuth)) {
-      throw new Error("nodal plane missing azimuth");
-    }
-    const plunge = _grabFirstElRealQuantity(axisQML, "plunge");
-    if (!isObject(plunge)) {
-      throw new Error("nodal plane missing plunge");
-    }
-    const length = _grabFirstElRealQuantity(axisQML, "length");
-    if (!isObject(length)) {
-      throw new Error("nodal plane missing length");
-    }
-    const out = new _Axis(azimuth, plunge, length);
-    return out;
-  }
-};
-var MomentTensor = class _MomentTensor extends BaseElement {
-  constructor(derivedOrigin) {
-    super();
-    __publicField(this, "dataUsedList", []);
-    __publicField(this, "derivedOrigin");
-    __publicField(this, "momentMagnitude");
-    __publicField(this, "scalarMoment");
-    __publicField(this, "tensor");
-    __publicField(this, "variance");
-    __publicField(this, "varianceReduction");
-    __publicField(this, "doubleCouple");
-    __publicField(this, "clvd");
-    __publicField(this, "iso");
-    __publicField(this, "greensFunctionID");
-    __publicField(this, "filterID");
-    __publicField(this, "sourceTimeFunction");
-    __publicField(this, "methodID");
-    __publicField(this, "category");
-    __publicField(this, "inversionType");
-    this.derivedOrigin = derivedOrigin;
-  }
-  /**
-   * Parses a QuakeML momentTensor xml element into a MomentTensor object.
-   *
-   * @param momentTensorQML the momentTensor xml Element
-   * @param allOrigins origins already extracted from the xml for linking moment tensors with origins
-   * @param allMagnitudes magnitudes already extracted from the xml for linking moment tensors with magnitudes
-   * @returns MomentTensor instance
-   */
-  static createFromXml(momentTensorQML, allOrigins, allMagnitudes) {
-    if (momentTensorQML.localName !== "momentTensor") {
-      throw new Error(
-        `Cannot extract, not a QuakeML momentTensor: ${momentTensorQML.localName}`
-      );
-    }
-    const derivedOriginID = _grabFirstElText3(
-      momentTensorQML,
-      "derivedOriginID"
-    );
-    if (!isNonEmptyStringArg(derivedOriginID)) {
-      throw new Error("momentTensor missing derivedOriginID");
-    }
-    const derivedOrigin = allOrigins.find(
-      (o) => o.publicId === derivedOriginID
-    );
-    if (!isDef(derivedOrigin)) {
-      throw new Error("No origin with ID " + derivedOriginID);
-    }
-    const out = new _MomentTensor(derivedOrigin);
-    out.populate(momentTensorQML);
-    const dataUsedEls = Array.from(
-      momentTensorQML.getElementsByTagNameNS(BED_NS, "dataUsed")
-    );
-    out.dataUsedList = dataUsedEls.map(DataUsed.createFromXml.bind(DataUsed));
-    const momentMagnitudeID = _grabFirstElText3(
-      momentTensorQML,
-      "momentMagnitudeID"
-    );
-    out.momentMagnitude = allMagnitudes.find(
-      (o) => o.publicId === momentMagnitudeID
-    );
-    if (momentMagnitudeID && !out.momentMagnitude) {
-      throw new Error("No magnitude with ID " + momentMagnitudeID);
-    }
-    out.scalarMoment = _grabFirstElRealQuantity(
-      momentTensorQML,
-      "scalarMoment"
-    );
-    out.tensor = _grabFirstElType(Tensor.createFromXml.bind(Tensor))(
-      momentTensorQML,
-      "tensor"
-    );
-    out.variance = _grabFirstElFloat3(momentTensorQML, "variance");
-    out.varianceReduction = _grabFirstElFloat3(
-      momentTensorQML,
-      "varianceReduction"
-    );
-    out.doubleCouple = _grabFirstElFloat3(momentTensorQML, "doubleCouple");
-    out.clvd = _grabFirstElFloat3(momentTensorQML, "clvd");
-    out.iso = _grabFirstElFloat3(momentTensorQML, "iso");
-    out.greensFunctionID = _grabFirstElText3(
-      momentTensorQML,
-      "greensFunctionID"
-    );
-    out.filterID = _grabFirstElText3(momentTensorQML, "filterID");
-    out.sourceTimeFunction = _grabFirstElType(
-      SourceTimeFunction.createFromXml.bind(SourceTimeFunction)
-    )(momentTensorQML, "sourceTimeFunction");
-    out.methodID = _grabFirstElText3(momentTensorQML, "methodID");
-    out.category = _grabFirstElText3(momentTensorQML, "category");
-    out.inversionType = _grabFirstElText3(momentTensorQML, "inversionType");
-    return out;
-  }
-};
-var Tensor = class _Tensor {
-  constructor(Mrr, Mtt, Mpp, Mrt, Mrp, Mtp) {
-    __publicField(this, "Mrr");
-    __publicField(this, "Mtt");
-    __publicField(this, "Mpp");
-    __publicField(this, "Mrt");
-    __publicField(this, "Mrp");
-    __publicField(this, "Mtp");
-    this.Mrr = Mrr;
-    this.Mtt = Mtt;
-    this.Mpp = Mpp;
-    this.Mrt = Mrt;
-    this.Mrp = Mrp;
-    this.Mtp = Mtp;
-  }
-  /**
-   * Parses a QuakeML tensor xml element into a Tensor object.
-   *
-   * @param tensorQML the tensor xml Element
-   * @returns Tensor instance
-   */
-  static createFromXml(tensorQML) {
-    if (tensorQML.localName !== "tensor") {
-      throw new Error(
-        `Cannot extract, not a QuakeML tensor: ${tensorQML.localName}`
-      );
-    }
-    const Mrr = _grabFirstElRealQuantity(tensorQML, "Mrr");
-    if (!isObject(Mrr)) {
-      throw new Error("tensor missing Mrr");
-    }
-    const Mtt = _grabFirstElRealQuantity(tensorQML, "Mtt");
-    if (!isObject(Mtt)) {
-      throw new Error("tensor missing Mtt");
-    }
-    const Mpp = _grabFirstElRealQuantity(tensorQML, "Mpp");
-    if (!isObject(Mpp)) {
-      throw new Error("tensor missing Mpp");
-    }
-    const Mrt = _grabFirstElRealQuantity(tensorQML, "Mrt");
-    if (!isObject(Mrt)) {
-      throw new Error("tensor missing Mrt");
-    }
-    const Mrp = _grabFirstElRealQuantity(tensorQML, "Mrp");
-    if (!isObject(Mrp)) {
-      throw new Error("tensor missing Mrp");
-    }
-    const Mtp = _grabFirstElRealQuantity(tensorQML, "Mtp");
-    if (!isObject(Mtp)) {
-      throw new Error("tensor missing Mtp");
-    }
-    const out = new _Tensor(Mrr, Mtt, Mpp, Mrt, Mrp, Mtp);
-    return out;
-  }
-};
-var SourceTimeFunction = class _SourceTimeFunction {
-  constructor(type, duration) {
-    __publicField(this, "type");
-    __publicField(this, "duration");
-    __publicField(this, "riseTime");
-    __publicField(this, "decayTime");
-    this.type = type;
-    this.duration = duration;
-  }
-  /**
-   * Parses a QuakeML sourceTimeFunction xml element into a SourceTimeFunction object.
-   *
-   * @param sourceTimeFunctionQML the sourceTimeFunction xml Element
-   * @returns SourceTimeFunction instance
-   */
-  static createFromXml(sourceTimeFunctionQML) {
-    if (sourceTimeFunctionQML.localName !== "sourceTimeFunction") {
-      throw new Error(
-        `Cannot extract, not a QuakeML sourceTimeFunction: ${sourceTimeFunctionQML.localName}`
-      );
-    }
-    const type = _grabFirstElText3(sourceTimeFunctionQML, "type");
-    if (!isNonEmptyStringArg(type)) {
-      throw new Error("sourceTimeFunction missing type");
-    }
-    const duration = _grabFirstElFloat3(sourceTimeFunctionQML, "duration");
-    if (!isDef(duration)) {
-      throw new Error("sourceTimeFunction missing duration");
-    }
-    const out = new _SourceTimeFunction(type, duration);
-    out.riseTime = _grabFirstElFloat3(sourceTimeFunctionQML, "riseTime");
-    out.decayTime = _grabFirstElFloat3(sourceTimeFunctionQML, "decayTime");
-    return out;
-  }
-};
-var DataUsed = class _DataUsed {
-  constructor(waveType) {
-    __publicField(this, "waveType");
-    __publicField(this, "stationCount");
-    __publicField(this, "componentCount");
-    __publicField(this, "shortestPeriod");
-    __publicField(this, "longestPeriod");
-    this.waveType = waveType;
-  }
-  /**
-   * Parses a QuakeML dataUsed xml element into a DataUsed object.
-   *
-   * @param dataUsedQML the dataUsed xml Element
-   * @returns SourceTimeFunction instance
-   */
-  static createFromXml(dataUsedQML) {
-    if (dataUsedQML.localName !== "dataUsed") {
-      throw new Error(
-        `Cannot extract, not a QuakeML dataUsed: ${dataUsedQML.localName}`
-      );
-    }
-    const waveType = _grabFirstElText3(dataUsedQML, "waveType");
-    if (!isNonEmptyStringArg(waveType)) {
-      throw new Error("dataUsed missing waveType");
-    }
-    const out = new _DataUsed(waveType);
-    out.stationCount = _grabFirstElInt3(dataUsedQML, "stationCount");
-    out.componentCount = _grabFirstElInt3(dataUsedQML, "componentCount");
-    out.shortestPeriod = _grabFirstElFloat3(dataUsedQML, "shortestPeriod");
-    out.longestPeriod = _grabFirstElFloat3(dataUsedQML, "longestPeriod");
-    return out;
-  }
-};
-var WaveformID = class _WaveformID {
-  constructor(networkCode, stationCode) {
-    __publicField(this, "networkCode");
-    __publicField(this, "stationCode");
-    __publicField(this, "channelCode");
-    __publicField(this, "locationCode");
-    this.networkCode = networkCode;
-    this.stationCode = stationCode;
-  }
-  /**
-   * Parses a QuakeML waveform ID xml element into a WaveformID object.
-   *
-   * @param waveformQML the waveform ID xml Element
-   * @returns WaveformID instance
-   */
-  static createFromXml(waveformQML) {
-    if (waveformQML.localName !== "waveformID") {
-      throw new Error(
-        `Cannot extract, not a QuakeML waveform ID: ${waveformQML.localName}`
-      );
-    }
-    const networkCode = _grabAttribute3(waveformQML, "networkCode");
-    if (!isNonEmptyStringArg(networkCode)) {
-      throw new Error("waveformID missing networkCode");
-    }
-    const stationCode = _grabAttribute3(waveformQML, "stationCode");
-    if (!isNonEmptyStringArg(stationCode)) {
-      throw new Error("waveformID missing stationCode");
-    }
-    const out = new _WaveformID(networkCode, stationCode);
-    out.channelCode = _grabAttribute3(waveformQML, "channelCode");
-    out.locationCode = _grabAttribute3(waveformQML, "locationCode");
-    return out;
-  }
-  toString() {
-    return `${this.networkCode}.${this.stationCode}.${this.locationCode || "--"}.${this.channelCode || "---"}`;
-  }
-};
-var Quantity = class _Quantity {
-  constructor(value) {
-    __publicField(this, "value");
-    __publicField(this, "uncertainty");
-    __publicField(this, "lowerUncertainty");
-    __publicField(this, "upperUncertainty");
-    __publicField(this, "confidenceLevel");
-    this.value = value;
-  }
-  /**
-   * Parses a QuakeML quantity xml element into a Quantity object.
-   *
-   * @param quantityQML the quantity xml Element
-   * @param grab a callback to obtain the value
-   * @param grabUncertainty a callback to obtain the uncertainties
-   * @returns Quantity instance
-   */
-  static _createFromXml(quantityQML, grab, grabUncertainty) {
-    const value = grab(quantityQML, "value");
-    if (value === void 0) {
-      throw new Error("missing value");
-    }
-    const out = new _Quantity(value);
-    out.uncertainty = grabUncertainty(quantityQML, "uncertainty");
-    out.lowerUncertainty = grabUncertainty(quantityQML, "lowerUncertainty");
-    out.upperUncertainty = grabUncertainty(quantityQML, "upperUncertainty");
-    out.confidenceLevel = _grabFirstElFloat3(quantityQML, "confidenceLevel");
-    return out;
-  }
-  /**
-   * Parses a QuakeML real quantity xml element into a RealQuantity object.
-   *
-   * @param realQuantityQML the real quantity xml Element
-   * @returns RealQuantity instance
-   */
-  static createRealQuantityFromXml(realQuantityQML) {
-    return _Quantity._createFromXml(
-      realQuantityQML,
-      _grabFirstElFloat3,
-      _grabFirstElFloat3
-    );
-  }
-  /**
-   * Parses a QuakeML integer quantity xml element into a RealQuantity object.
-   *
-   * @param integerQuantityQML the integer quantity xml Element
-   * @returns IntegerQuantity instance
-   */
-  static createIntegerQuantityFromXml(integerQuantityQML) {
-    return _Quantity._createFromXml(
-      integerQuantityQML,
-      _grabFirstElFloat3,
-      _grabFirstElInt3
-    );
-  }
-  /**
-   * Parses a QuakeML time quantity xml element into a TimeQuantity object.
-   *
-   * @param timeQuantityQML the time quantity xml Element
-   * @returns TimeQuantity instance
-   */
-  static createTimeQuantityFromXml(timeQuantityQML) {
-    return _Quantity._createFromXml(
-      timeQuantityQML,
-      _grabFirstElDateTime,
-      _grabFirstElFloat3
-    );
-  }
-};
-var Comment2 = class _Comment {
-  constructor(text) {
-    __publicField(this, "text");
-    __publicField(this, "creationInfo");
-    this.text = text;
-  }
-  /**
-   * Parses a QuakeML comment xml element into a Comment object.
-   *
-   * @param commentQML the comment xml Element
-   * @returns Comment instance
-   */
-  static createFromXml(commentQML) {
-    const text = _grabFirstElText3(commentQML, "text");
-    if (text === void 0) {
-      throw new Error("missing value");
-    }
-    const out = new _Comment(text);
-    out.creationInfo = _grabFirstElCreationInfo(commentQML, "creationInfo");
-    return out;
-  }
-};
-var CreationInfo = class _CreationInfo {
-  constructor() {
-    __publicField(this, "agencyID");
-    __publicField(this, "agencyURI");
-    __publicField(this, "author");
-    __publicField(this, "authorURI");
-    __publicField(this, "creationTime");
-    __publicField(this, "version");
-  }
-  /**
-   * Parses a QuakeML creation info xml element into a CreationInfo object.
-   *
-   * @param creationInfoQML the creation info xml Element
-   * @returns CreationInfo instance
-   */
-  static createFromXml(creationInfoQML) {
-    const out = new _CreationInfo();
-    out.agencyID = _grabFirstElText3(creationInfoQML, "agencyID");
-    out.agencyURI = _grabFirstElText3(creationInfoQML, "agencyURI");
-    out.author = _grabFirstElText3(creationInfoQML, "author");
-    out.authorURI = _grabFirstElText3(creationInfoQML, "authorURI");
-    out.creationTime = _grabFirstElDateTime(creationInfoQML, "creationTime");
-    out.version = _grabFirstElText3(creationInfoQML, "version");
-    return out;
-  }
-};
-function parseQuakeML(rawXml, host) {
-  const top2 = rawXml.documentElement;
-  if (!top2) {
-    throw new Error("Can't get documentElement");
-  }
-  const eventParametersArray = Array.from(
-    top2.getElementsByTagName("eventParameters")
-  );
-  if (eventParametersArray.length !== 1) {
-    throw new Error(
-      `Document has ${eventParametersArray.length} eventParameters elements`
-    );
-  }
-  return EventParameters.createFromXml(eventParametersArray[0], host);
-}
-function createQuakeFromValues(publicId, time, latitude, longitude, depth_meter) {
-  const origin = new Origin(
-    new Quantity(time),
-    new Quantity(latitude),
-    new Quantity(longitude)
-  );
-  origin.depth = new Quantity(depth_meter);
-  const quake = new Quake();
-  quake.publicId = publicId;
-  quake.originList.push(origin);
-  quake.preferredOrigin = origin;
-  return quake;
-}
-function fetchQuakeML(url, timeoutSec2 = 10, nodata = 204) {
-  const fetchInit = defaultFetchInitObj(XML_MIME);
-  const host = new URL(url).hostname;
-  return doFetchWithTimeout(url, fetchInit, timeoutSec2 * 1e3).then((response) => {
-    if (response.status === 200) {
-      return response.text();
-    } else if (response.status === 204 || isDef(nodata) && response.status === nodata) {
-      return FAKE_EMPTY_XML2;
-    } else {
-      throw new Error(`Status not successful: ${response.status}`);
-    }
-  }).then(function(rawXmlText) {
-    return new DOMParser().parseFromString(rawXmlText, XML_MIME);
-  }).then((rawXml) => {
-    return parseQuakeML(rawXml, host);
-  });
-}
-var _grabAllElComment = function(xml, tagName) {
-  const out = [];
-  if (isObject(xml)) {
-    const elList = Array.from(xml.children).filter(
-      (e) => e.tagName === tagName
-    );
-    for (const el of elList) {
-      if (isObject(el)) {
-        out.push(Comment2.createFromXml(el));
-      }
-    }
-  }
-  return out;
-};
-var _grabFirstElNS = function(xml, namespace, tagName) {
-  let out = void 0;
-  if (isObject(xml)) {
-    const elList = xml.getElementsByTagNameNS(namespace, tagName);
-    if (isObject(elList) && elList.length > 0) {
-      const e = elList.item(0);
-      if (e) {
-        out = e;
-      }
-    }
-  }
-  return out;
-};
-var _grabFirstEl2 = function(xml, tagName) {
-  if (isObject(xml)) {
-    const elList = Array.from(xml.children).filter(
-      (e) => e.tagName === tagName
-    );
-    if (elList.length > 0) {
-      const e = elList[0];
-      if (e) {
-        return e;
-      }
-    }
-  }
-  return void 0;
-};
-var _grabFirstElText3 = function(xml, tagName) {
-  let out = void 0;
-  const el = _grabFirstEl2(xml, tagName);
-  if (isObject(el)) {
-    out = el.textContent;
-    if (out === null) {
-      out = void 0;
-    }
-  }
-  return out;
-};
-var _grabFirstElBool = function(xml, tagName) {
-  const el = _grabFirstElText3(xml, tagName);
-  if (!isStringArg(el)) {
-    return void 0;
-  }
-  switch (el) {
-    case "true":
-    case "1":
-      return true;
-    case "false":
-    case "0":
-      return false;
-  }
-  throw new Error("Invalid boolean: " + el);
-};
-var _grabFirstElInt3 = function(xml, tagName) {
-  let out = void 0;
-  const el = _grabFirstElText3(xml, tagName);
-  if (isStringArg(el)) {
-    out = parseInt(el);
-  }
-  return out;
-};
-var _grabFirstElFloat3 = function(xml, tagName) {
-  let out = void 0;
-  const el = _grabFirstElText3(xml, tagName);
-  if (isStringArg(el)) {
-    out = parseFloat(el);
-  }
-  return out;
-};
-var _grabFirstElDateTime = function(xml, tagName) {
-  let out = void 0;
-  const el = _grabFirstElText3(xml, tagName);
-  if (isStringArg(el)) {
-    out = isoToDateTime(el);
-  }
-  return out;
-};
-var _grabFirstElType = function(createFromXml) {
-  return function(xml, tagName) {
-    let out = void 0;
-    const el = _grabFirstEl2(xml, tagName);
-    if (isObject(el)) {
-      out = createFromXml(el);
-    }
-    return out;
-  };
-};
-var _grabFirstElRealQuantity = _grabFirstElType(
-  Quantity.createRealQuantityFromXml.bind(Quantity)
-);
-var _grabFirstElIntegerQuantity = _grabFirstElType(
-  Quantity.createIntegerQuantityFromXml.bind(Quantity)
-);
-var _grabFirstElTimeQuantity = _grabFirstElType(
-  Quantity.createTimeQuantityFromXml.bind(Quantity)
-);
-var _grabFirstElCreationInfo = _grabFirstElType(
-  CreationInfo.createFromXml.bind(CreationInfo)
-);
-var _grabAttribute3 = function(xml, tagName) {
-  let out = void 0;
-  if (isObject(xml)) {
-    const a = xml.getAttribute(tagName);
-    if (isStringArg(a)) {
-      out = a;
-    }
-  }
-  return out;
-};
-var _requireAttribute3 = function _requireAttribute4(xml, tagName) {
-  const out = _grabAttribute3(xml, tagName);
-  if (typeof out !== "string") {
-    throw new Error(`Attribute ${tagName} not found.`);
-  }
-  return out;
-};
-var _grabAttributeNS2 = function(xml, namespace, tagName) {
-  let out = void 0;
-  if (isObject(xml)) {
-    const a = xml.getAttributeNS(namespace, tagName);
-    if (isStringArg(a)) {
-      out = a;
-    }
-  }
-  return out;
-};
-var parseUtil2 = {
-  _grabFirstEl: _grabFirstEl2,
-  _grabFirstElNS,
-  _grabFirstElText: _grabFirstElText3,
-  _grabFirstElFloat: _grabFirstElFloat3,
-  _grabFirstElInt: _grabFirstElInt3,
-  _grabAttribute: _grabAttribute3,
-  _requireAttribute: _requireAttribute3,
-  _grabAttributeNS: _grabAttributeNS2
-};
-
-// src/infotable.ts
 var INFO_ELEMENT = "sp-station-quake-table";
 var QUAKE_INFO_ELEMENT = "sp-quake-table";
 var QUAKE_COLUMN = /* @__PURE__ */ ((QUAKE_COLUMN2) => {
   QUAKE_COLUMN2["LAT"] = "Lat";
   QUAKE_COLUMN2["LON"] = "Lon";
   QUAKE_COLUMN2["TIME"] = "Time";
+  QUAKE_COLUMN2["LOCALTIME"] = "Local Time";
   QUAKE_COLUMN2["MAG"] = "Mag";
   QUAKE_COLUMN2["MAGTYPE"] = "MagType";
   QUAKE_COLUMN2["DEPTH"] = "Depth";
@@ -58315,28 +62071,40 @@ var QuakeStationTable = class extends SeisPlotElement {
 };
 customElements.define(INFO_ELEMENT, QuakeStationTable);
 var QuakeTable = class _QuakeTable extends HTMLElement {
-  constructor(quakeList, columnLabels) {
+  constructor(quakeList, columnLabels, columnValues) {
     super();
     __publicField(this, "_columnLabels");
     __publicField(this, "_quakeList");
     __publicField(this, "_rowToQuake");
+    __publicField(this, "_timezone");
     __publicField(this, "lastSortAsc", true);
     __publicField(this, "lastSortCol");
+    __publicField(this, "_columnValues");
     if (!quakeList) {
       quakeList = [];
     }
     if (!columnLabels) {
-      columnLabels = /* @__PURE__ */ new Map();
-      columnLabels.set("Time" /* TIME */, "Time");
-      columnLabels.set("Lat" /* LAT */, "Lat");
-      columnLabels.set("Lon" /* LON */, "Lon");
-      columnLabels.set("Mag" /* MAG */, "Mag");
-      columnLabels.set("MagType" /* MAGTYPE */, "Type");
-      columnLabels.set("Depth" /* DEPTH */, "Depth");
-      columnLabels.set("Description" /* DESC */, "Description");
+      columnLabels = _QuakeTable.createDefaultColumnLabels();
+    }
+    if (!columnValues) {
+      columnValues = /* @__PURE__ */ new Map();
+      let defColumnValues = _QuakeTable.createDefaultColumnValues();
+      for (const key of columnLabels.keys()) {
+        if (defColumnValues.has(key)) {
+          const fn = defColumnValues.get(key);
+          if (fn != null) {
+            columnValues.set(key, fn);
+          } else {
+            throw new Error(`QuakeTable function for key is missing: ${key}`);
+          }
+        } else {
+          throw new Error(`Unknown QuakeTable key: ${key}`);
+        }
+      }
     }
     this._quakeList = quakeList;
     this._columnLabels = columnLabels;
+    this._columnValues = columnValues;
     this._rowToQuake = /* @__PURE__ */ new Map();
     const shadow = this.attachShadow({ mode: "open" });
     const table = document.createElement("table");
@@ -58357,6 +62125,54 @@ var QuakeTable = class _QuakeTable extends HTMLElement {
   set columnLabels(cols) {
     this._columnLabels = cols;
     this.draw();
+  }
+  get columnValues() {
+    return this._columnValues;
+  }
+  set columnValues(cols) {
+    this._columnValues = cols;
+    this.draw();
+  }
+  get timeZone() {
+    return this._timezone;
+  }
+  set timeZone(timezone) {
+    this._timezone = timezone;
+    this.draw();
+  }
+  static createDefaultColumnLabels() {
+    let columnLabels = /* @__PURE__ */ new Map();
+    columnLabels.set("Time" /* TIME */, "Time");
+    columnLabels.set("Lat" /* LAT */, "Lat");
+    columnLabels.set("Lon" /* LON */, "Lon");
+    columnLabels.set("Mag" /* MAG */, "Mag");
+    columnLabels.set("MagType" /* MAGTYPE */, "Type");
+    columnLabels.set("Depth" /* DEPTH */, "Depth");
+    columnLabels.set("Description" /* DESC */, "Description");
+    return columnLabels;
+  }
+  static createDefaultColumnValues() {
+    let columnValues = /* @__PURE__ */ new Map();
+    columnValues.set("Time" /* TIME */, (q) => stringify(q.time.toISO()));
+    columnValues.set("Local Time" /* LOCALTIME */, (q) => stringify(q.time.setZone("local").toISO()));
+    columnValues.set("Lat" /* LAT */, (q) => latlonFormat2.format(q.latitude));
+    columnValues.set("Lon" /* LON */, (q) => latlonFormat2.format(q.longitude));
+    columnValues.set("Mag" /* MAG */, (q) => magFormat2.format(q.magnitude.mag));
+    columnValues.set("MagType" /* MAGTYPE */, (q) => q.magnitude.type ? q.magnitude.type : "");
+    columnValues.set("Depth" /* DEPTH */, (q) => depthFormat2.format(q.depthKm));
+    columnValues.set("EventId" /* EVENTID */, (q) => stringify(q.eventId));
+    columnValues.set(
+      "Description" /* DESC */,
+      (q) => {
+        const desc = q.description;
+        if (desc && desc.length > 0) {
+          return desc;
+        } else {
+          return stringify(q.time.toISO());
+        }
+      }
+    );
+    return columnValues;
   }
   addStyle(css, id2) {
     return addStyleToElement(this, css, id2);
@@ -58379,7 +62195,15 @@ var QuakeTable = class _QuakeTable extends HTMLElement {
     const theader = table.createTHead().insertRow();
     this.headers().forEach((h) => {
       const cell = theader.appendChild(document.createElement("th"));
-      cell.textContent = h;
+      let label = this._columnLabels.has(h) ? this._columnLabels.get(h) : h;
+      cell.textContent = `${label}`;
+      if (h === "Local Time" /* LOCALTIME */) {
+        if (this.timeZone) {
+          cell.textContent = `${this._columnLabels.get(h)} ${nameForTimeZone(this.timeZone, DateTime.now())}`;
+        } else {
+          cell.textContent = `${this._columnLabels.get(h)} ${nameForTimeZone("local", DateTime.now())}`;
+        }
+      }
       cell.addEventListener("click", () => {
         this.sort(h, cell);
       });
@@ -58397,40 +62221,26 @@ var QuakeTable = class _QuakeTable extends HTMLElement {
     });
   }
   headers() {
-    return Array.from(this._columnLabels.keys());
+    return Array.from(this._columnValues.keys());
   }
   populateRow(q, row, index) {
     this._rowToQuake.set(row, q);
     this.headers().forEach((h) => {
       const cell = row.insertCell(index);
-      cell.textContent = _QuakeTable.getQuakeValue(q, h);
+      if (h === "Local Time" /* LOCALTIME */ && this.timeZone) {
+        cell.textContent = q.time.setZone(this.timeZone).toISO();
+      } else {
+        cell.textContent = this.getQuakeValue(q, h);
+      }
       if (index !== -1) {
         index++;
       }
     });
   }
-  static getQuakeValue(q, h) {
-    if (h === "Time" /* TIME */) {
-      return stringify(q.time.toISO());
-    } else if (h === "Lat" /* LAT */) {
-      return latlonFormat2.format(q.latitude);
-    } else if (h === "Lon" /* LON */) {
-      return latlonFormat2.format(q.longitude);
-    } else if (h === "Depth" /* DEPTH */) {
-      return depthFormat2.format(q.depthKm);
-    } else if (h === "Mag" /* MAG */) {
-      return magFormat2.format(q.magnitude.mag);
-    } else if (h === "MagType" /* MAGTYPE */) {
-      return q.magnitude.type ? q.magnitude.type : "";
-    } else if (h === "Description" /* DESC */) {
-      const desc = q.description;
-      if (desc && desc.length > 0) {
-        return desc;
-      } else {
-        return stringify(q.time.toISO());
-      }
-    } else if (h === "EventId" /* EVENTID */) {
-      return `${q.eventId}`;
+  getQuakeValue(q, h) {
+    let fn = this._columnValues.has(h) ? this._columnValues.get(h) : null;
+    if (fn != null) {
+      return fn(q);
     } else {
       return `unknown: ${String(h)}`;
     }
@@ -58445,7 +62255,7 @@ var QuakeTable = class _QuakeTable extends HTMLElement {
         const qa = this._rowToQuake.get(rowa);
         const qb = this._rowToQuake.get(rowb);
         if (qa && qb) {
-          if (h === "Time" /* TIME */) {
+          if (h === "Time" /* TIME */ || h === "Local Time" /* LOCALTIME */) {
             out = qa.time.toMillis() - qb.time.toMillis();
           } else if (h === "Lat" /* LAT */) {
             out = qa.latitude - qb.latitude;
@@ -58456,8 +62266,8 @@ var QuakeTable = class _QuakeTable extends HTMLElement {
           } else if (h === "Depth" /* DEPTH */) {
             out = qa.depthKm - qb.depthKm;
           } else {
-            const ta = _QuakeTable.getQuakeValue(qa, h);
-            const tb = _QuakeTable.getQuakeValue(qb, h);
+            const ta = this.getQuakeValue(qa, h);
+            const tb = this.getQuakeValue(qb, h);
             if (ta < tb) {
               out = -1;
             } else if (ta > tb) {
@@ -58675,28 +62485,39 @@ var ChannelTable = class _ChannelTable extends HTMLElement {
 var CHANNEL_INFO_ELEMENT = "sp-channel-table";
 customElements.define(CHANNEL_INFO_ELEMENT, ChannelTable);
 var StationTable = class _StationTable extends HTMLElement {
-  constructor(stationList, columnLabels) {
+  constructor(stationList, columnLabels, columnValues) {
     super();
-    __publicField(this, "_columnLabels");
+    __publicField(this, "_columnLabels", /* @__PURE__ */ new Map());
     __publicField(this, "_stationList");
     __publicField(this, "_rowToStation");
     __publicField(this, "lastSortAsc", true);
     __publicField(this, "lastSortCol");
+    __publicField(this, "_columnValues");
     if (!stationList) {
       stationList = [];
     }
     if (!columnLabels) {
-      columnLabels = /* @__PURE__ */ new Map();
-      columnLabels.set("Code" /* CODE */, "Code");
-      columnLabels.set("Start" /* START */, "Start");
-      columnLabels.set("End" /* END */, "End");
-      columnLabels.set("Lat" /* LAT */, "Lat");
-      columnLabels.set("Lon" /* LON */, "Lon");
-      columnLabels.set("Elev" /* ELEVATION */, "Evel");
-      columnLabels.set("SourceId" /* SOURCEID */, "SourceId");
+      columnLabels = _StationTable.createDefaultColumnLabels();
     }
-    this._stationList = stationList;
     this._columnLabels = columnLabels;
+    if (!columnValues) {
+      columnValues = /* @__PURE__ */ new Map();
+      let defColumnValues = _StationTable.createDefaultColumnValues();
+      for (const key of columnLabels.keys()) {
+        if (defColumnValues.has(key)) {
+          const fn = defColumnValues.get(key);
+          if (fn != null) {
+            columnValues.set(key, fn);
+          } else {
+            throw new Error(`StationTable function for key is missing: ${key}`);
+          }
+        } else {
+          throw new Error(`Unknown StationTable key: ${key}`);
+        }
+      }
+    }
+    this._columnValues = columnValues;
+    this._stationList = stationList;
     this._rowToStation = /* @__PURE__ */ new Map();
     const shadow = this.attachShadow({ mode: "open" });
     const table = document.createElement("table");
@@ -58716,6 +62537,13 @@ var StationTable = class _StationTable extends HTMLElement {
   }
   set columnLabels(cols) {
     this._columnLabels = cols;
+    this.draw();
+  }
+  get columnValues() {
+    return this._columnValues;
+  }
+  set columnValues(cols) {
+    this._columnValues = cols;
     this.draw();
   }
   addStyle(css, id2) {
@@ -58748,19 +62576,50 @@ var StationTable = class _StationTable extends HTMLElement {
     });
   }
   headers() {
-    return Array.from(this._columnLabels.keys());
+    return Array.from(this._columnValues.keys());
   }
   populateRow(q, row, index) {
     this._rowToStation.set(row, q);
     this.headers().forEach((h) => {
       const cell = row.insertCell(index);
-      cell.textContent = _StationTable.getStationValue(q, h);
+      cell.textContent = this.getStationValue(q, h);
       if (index !== -1) {
         index++;
       }
     });
   }
-  static getStationValue(q, h) {
+  static createDefaultColumnLabels() {
+    const columnLabels = /* @__PURE__ */ new Map();
+    columnLabels.set("Code" /* CODE */, "Code");
+    columnLabels.set("Start" /* START */, "Start");
+    columnLabels.set("End" /* END */, "End");
+    columnLabels.set("Lat" /* LAT */, "Lat");
+    columnLabels.set("Lon" /* LON */, "Lon");
+    columnLabels.set("Elev" /* ELEVATION */, "Evel");
+    columnLabels.set("SourceId" /* SOURCEID */, "SourceId");
+    return columnLabels;
+  }
+  static createDefaultColumnValues() {
+    const columnValues = /* @__PURE__ */ new Map();
+    columnValues.set("Start" /* START */, (sta) => stringify(sta.startDate.toISO()));
+    columnValues.set("End" /* END */, (sta) => sta.endDate ? stringify(sta.endDate.toISO()) : "");
+    columnValues.set("Lat" /* LAT */, (sta) => latlonFormat2.format(sta.latitude));
+    columnValues.set("Lon" /* LON */, (sta) => latlonFormat2.format(sta.longitude));
+    columnValues.set("Elev" /* ELEVATION */, (sta) => depthMeterFormat2.format(sta.elevation));
+    columnValues.set("SourceId" /* SOURCEID */, (sta) => `${sta.sourceId.toString()}`);
+    columnValues.set("Code" /* CODE */, (sta) => `${sta.codes()}`);
+    columnValues.set("NetworkCode" /* NETWORK_CODE */, (sta) => `${sta.networkCode}`);
+    columnValues.set("StationCode" /* STATION_CODE */, (sta) => `${sta.stationCode}`);
+    columnValues.set("Description" /* DESCRIPTION */, (sta) => `${sta.description}`);
+    return columnValues;
+  }
+  getStationValue(q, h) {
+    if (this._columnValues.has(h)) {
+      const fn = this._columnValues.get(h);
+      if (fn != null) {
+        return fn(q);
+      }
+    }
     if (h === "Start" /* START */) {
       return stringify(q.startDate.toISO());
     } else if (h === "End" /* END */) {
@@ -58812,8 +62671,8 @@ var StationTable = class _StationTable extends HTMLElement {
           } else if (h === "Elev" /* ELEVATION */) {
             out = qa.elevation - qb.elevation;
           } else {
-            const ta = _StationTable.getStationValue(qa, h);
-            const tb = _StationTable.getStationValue(qb, h);
+            const ta = this.getStationValue(qa, h);
+            const tb = this.getStationValue(qb, h);
             if (ta < tb) {
               out = -1;
             } else if (ta > tb) {
@@ -59016,6 +62875,7 @@ customElements.define(SDD_INFO_ELEMENT, SeismogramTable);
 var latlonFormat2 = latlonFormat;
 var magFormat2 = magFormat;
 var depthFormat2 = depthFormat;
+var depthNoUnitFormat2 = depthNoUnitFormat;
 var depthMeterFormat2 = depthMeterFormat;
 
 // src/leafletutil.ts
@@ -59046,6 +62906,7 @@ __export(leafletutil_exports, {
   createQuakeMarker: () => createQuakeMarker,
   createStationMarker: () => createStationMarker,
   cssClassForQuake: () => cssClassForQuake,
+  cssClassForStationCodes: () => cssClassForStationCodes,
   inactiveStationIcon: () => inactiveStationIcon,
   leaflet_css: () => leaflet_css2,
   stationIcon: () => stationIcon,
@@ -59842,12 +63703,15 @@ div.wrapper {
   fill-opacity: 0.15;
 }
 `;
+function cssClassForStationCodes(station) {
+  return `sta_${station.codes(STATION_CODE_SEP)}`;
+}
 function createStationMarker(station, classList2, isactive = true, centerLon = 0) {
   const allClassList = classList2 ? classList2.slice() : [];
   allClassList.push(
     isactive ? StationMarkerClassName : InactiveStationMarkerClassName
   );
-  allClassList.push(station.codes(STATION_CODE_SEP));
+  allClassList.push(cssClassForStationCodes(station));
   const icon = L2.divIcon({
     className: allClassList.join(" ")
   });
@@ -60015,7 +63879,7 @@ var QuakeStationMap = class extends SeisPlotElement {
       this.stationClassMap.set(station.codes(STATION_CODE_SEP), [classname]);
     }
     const markerList = this.getShadowRoot().querySelectorAll(
-      `div.${station.codes(STATION_CODE_SEP)}`
+      `div.${cssClassForStationCodes(station)}`
     );
     markerList.forEach((c) => {
       c.classList.add(classname);
@@ -60281,7 +64145,7 @@ path.${classname} {
     return style;
   }
   attributeChangedCallback(_name, _oldValue, _newValue) {
-    this.draw();
+    this.redraw();
   }
   static get observedAttributes() {
     return [
@@ -60808,7 +64672,7 @@ var SEISMOGRAPH = "seismograph";
 var SPECTRA = "amp_spectra";
 var PARTICLE_MOTION = "particlemotion";
 var MAP = "map";
-var INFO = "info";
+var INFO2 = "info";
 var QUAKE_TABLE = "quake_table";
 var STATION_TABLE = "station_table";
 var OrganizedDisplayItem = class extends SeisPlotElement {
@@ -60823,13 +64687,13 @@ var OrganizedDisplayItem = class extends SeisPlotElement {
     :host {
       display: block;
       min-height: 50px;
-      height: 100%;
+
     }
     sp-station-quake-map {
       height: 400px;
     }
     sp-seismograph {
-      min-height: 200px;
+      height: var(--sp-seismograph-height, 200px);
     }
     div.wrapper {
       height: 100%;
@@ -60897,16 +64761,6 @@ var OrganizedDisplayItem = class extends SeisPlotElement {
         this._seismographConfig
       );
       wrapper.appendChild(seismograph);
-      seismograph.addEventListener("seismousemove", (sEvt) => {
-        const seisDetail = sEvt.detail;
-        const event = new CustomEvent("seismousemove", { detail: seisDetail });
-        this.dispatchEvent(event);
-      });
-      seismograph.addEventListener("seisclick", (sEvt) => {
-        const seisDetail = sEvt.detail;
-        const event = new CustomEvent("seisclick", { detail: seisDetail });
-        this.dispatchEvent(event);
-      });
     } else if (this.plottype.startsWith(SPECTRA)) {
       const loglog = getFromQueryParams(queryParams, "loglog", "true");
       const nonContigList = this.seisData.filter(
@@ -60958,12 +64812,16 @@ var OrganizedDisplayItem = class extends SeisPlotElement {
         getFromQueryParams(queryParams, "zoom", "1")
       );
       seismap.setAttribute(ZOOM_LEVEL, `${mapZoomLevel}`);
+      const tileUrl = getFromQueryParams(queryParams, TILE_TEMPLATE, DEFAULT_TILE_TEMPLATE);
+      seismap.setAttribute(TILE_TEMPLATE, `${tileUrl}`);
+      const tileAttr = getFromQueryParams(queryParams, TILE_ATTRIBUTION, "");
+      seismap.setAttribute(TILE_ATTRIBUTION, `${tileAttr}`);
       const magScale = parseFloat(
         getFromQueryParams(queryParams, "magScale", "5.0")
       );
       seismap.setAttribute(MAG_SCALE, `${magScale}`);
       wrapper.appendChild(seismap);
-    } else if (this.plottype.startsWith(INFO)) {
+    } else if (this.plottype.startsWith(INFO2)) {
       const infotable = new QuakeStationTable(
         this.seisData,
         this._seismographConfig
@@ -61153,6 +65011,10 @@ customElements.define(ORG_DISP_TOOLS_ELEMENT, OrganizedDisplayTools);
 var OrganizedDisplay = class extends SeisPlotElement {
   constructor(seisData, seisConfig) {
     super(seisData, seisConfig);
+    __publicField(this, "bottomSeismographConfig");
+    __publicField(this, "topSeismographConfig");
+    this.bottomSeismographConfig = null;
+    this.topSeismographConfig = null;
     const wrapper = document.createElement("div");
     wrapper.setAttribute("class", "wrapper");
     this.addStyle(`
@@ -61161,14 +65023,16 @@ var OrganizedDisplay = class extends SeisPlotElement {
       min-height: 50px;
       height: 100%;
     }
+    @property --sp-seismograph-height {
+      syntax: "<length>";
+      inherits: true;
+      initial-value: 200px;
+    }
     sp-station-quake-map {
       height: var(--map-height, 400px);
     }
     sp-organized-display-item {
-      min-height: 200px;
-    }
-    sp-seismograph {
-      min-height: 200px;
+      min-height: var(--sp-seismograph-height, 200px);
     }
     div.wrapper {
       height: 100%;
@@ -61258,7 +65122,10 @@ var OrganizedDisplay = class extends SeisPlotElement {
   set sortby(val) {
     this.setAttribute(SORT_BY, val);
   }
+  //draw(): Promise<Array<Promise<Array<TimeScalable>> | Promise<Array<AmplitudeScalable>>>> {
   draw() {
+    let timePromise = Promise.resolve([]);
+    let ampPromise = Promise.resolve([]);
     if (!this.isConnected) {
       return;
     }
@@ -61266,6 +65133,7 @@ var OrganizedDisplay = class extends SeisPlotElement {
     wrapper.querySelectorAll(ORG_DISP_ITEM).forEach((item) => wrapper.removeChild(item));
     const sortedData = sort(this.seisData, this.sortby);
     let allOrgDispItems = new Array();
+    let seisDispItems = new Array();
     this.drawTools(sortedData);
     this.drawMap(sortedData);
     this.drawInfo(sortedData);
@@ -61273,54 +65141,54 @@ var OrganizedDisplay = class extends SeisPlotElement {
       sortedData.forEach((sdd) => {
         const oi = new OrganizedDisplayItem([sdd], this.seismographConfig);
         oi.plottype = SEISMOGRAPH;
-        allOrgDispItems.push(oi);
+        seisDispItems.push(oi);
       });
     } else if (this.overlayby === OVERLAY_VECTOR) {
       const groupedSDD = groupComponentOfMotion(sortedData);
       groupedSDD.forEach((gsdd) => {
         const oi = new OrganizedDisplayItem(gsdd, this.seismographConfig);
-        allOrgDispItems.push(oi);
+        seisDispItems.push(oi);
       });
     } else if (this.overlayby === OVERLAY_COMPONENT) {
       const oitems = overlayByComponent(sortedData, this.seismographConfig);
-      allOrgDispItems = allOrgDispItems.concat(oitems);
+      seisDispItems = allOrgDispItems.concat(oitems);
     } else if (this.overlayby === OVERLAY_STATION) {
       const oitems = overlayByStation(sortedData, this.seismographConfig);
-      allOrgDispItems = allOrgDispItems.concat(oitems);
+      seisDispItems = allOrgDispItems.concat(oitems);
     } else if (this.overlayby === OVERLAY_ALL) {
       const oi = new OrganizedDisplayItem(sortedData, this.seismographConfig);
-      allOrgDispItems.push(oi);
+      seisDispItems.push(oi);
     } else if (this.overlayby === OVERLAY_NONE) {
     } else {
       throw new Error(`Unknown overlay: ${this.overlayby}`);
     }
+    if (this.topSeismographConfig != null && seisDispItems.length > 0) {
+      seisDispItems[0].seismographConfig = this.topSeismographConfig;
+      if (this.topSeismographConfig.margin.top > this.seismographConfig.margin.top) {
+        let sp_height = getComputedStyle(seisDispItems[0]).getPropertyValue("--sp-seismograph-height");
+        if (sp_height !== "") {
+          seisDispItems[0].addStyle(`sp-seismograph {
+            height: ${sp_height};
+          }`);
+        }
+      }
+    }
+    if (this.bottomSeismographConfig != null && seisDispItems.length > 1) {
+      seisDispItems[seisDispItems.length - 1].seismographConfig = this.bottomSeismographConfig;
+    }
+    allOrgDispItems = allOrgDispItems.concat(seisDispItems);
     allOrgDispItems.forEach((oi) => {
       wrapper.appendChild(oi);
       oi.draw();
-      if (oi.plottype === SEISMOGRAPH) {
-        oi.addEventListener("seismousemove", (sEvt) => {
-          const seisDetail = sEvt.detail;
-          const event = new CustomEvent("seismousemove", {
-            detail: seisDetail
-          });
-          this.dispatchEvent(event);
-        });
-        oi.addEventListener("seisclick", (sEvt) => {
-          const seisDetail = sEvt.detail;
-          const event = new CustomEvent("seisclick", { detail: seisDetail });
-          this.dispatchEvent(event);
-        });
-      }
     });
-    let timePromise = Promise.resolve([]);
-    let ampPromise = Promise.resolve([]);
     if (this.seismographConfig.linkedTimeScale) {
       timePromise = this.seismographConfig.linkedTimeScale.notifyAll();
     }
     if (this.seismographConfig.linkedAmplitudeScale) {
       ampPromise = this.seismographConfig.linkedAmplitudeScale.notifyAll();
     }
-    return Promise.all([timePromise, ampPromise]);
+    Promise.all([timePromise, ampPromise]);
+    return;
   }
   drawTools(sortedData) {
     if (!this.isConnected) {
@@ -61564,16 +65432,19 @@ function createPlots(organized, divElement) {
 
 // src/animatedseismograph.ts
 var AnimatedTimeScaler = class {
-  constructor(timeScale, alignmentTime, minRedrawMillis = 100) {
+  constructor(timeScale, alignmentTime, minRedrawMillis) {
     __publicField(this, "alignmentTime");
     __publicField(this, "timeScale");
-    __publicField(this, "minRedrawMillis", 100);
+    __publicField(this, "minRedrawMillis");
+    __publicField(this, "_calcRedrawMillis");
     __publicField(this, "goAnimation", true);
     __publicField(this, "previousStep", Number.NEGATIVE_INFINITY);
     __publicField(this, "_animationId", 0);
     this.timeScale = timeScale;
     this.alignmentTime = alignmentTime ? alignmentTime : DateTime.utc();
-    this.minRedrawMillis = minRedrawMillis;
+    if (minRedrawMillis) {
+      this.minRedrawMillis = minRedrawMillis;
+    }
   }
   animate() {
     this.goAnimation = true;
@@ -61592,7 +65463,8 @@ var AnimatedTimeScaler = class {
   stepper(timestamp) {
     this._animationId = 0;
     const elapsed = timestamp - this.previousStep;
-    if (elapsed > this.minRedrawMillis) {
+    const redrawMillis = this._calcRedrawMillis ? this._calcRedrawMillis : 100;
+    if (elapsed > redrawMillis) {
       this.previousStep = timestamp;
       this.step();
     }
@@ -61607,7 +65479,7 @@ var AnimatedTimeScaler = class {
             (timestamp2) => this.stepper(timestamp2)
           );
         },
-        this.minRedrawMillis - (now3 - timestamp)
+        redrawMillis - (now3 - timestamp)
       );
     }
   }
@@ -61615,6 +65487,43 @@ var AnimatedTimeScaler = class {
     const now3 = DateTime.utc();
     const calcOffset = now3.diff(this.alignmentTime);
     this.timeScale.offset = calcOffset;
+  }
+};
+var RTDisplayContainer = class {
+  constructor(rawSeisData, organizedDisplay, animationScaler, packetHandler, config) {
+    __publicField(this, "rawSeisData");
+    __publicField(this, "organizedDisplay");
+    __publicField(this, "animationScaler");
+    __publicField(this, "packetHandler");
+    __publicField(this, "config");
+    __publicField(this, "resizeObserver");
+    this.rawSeisData = rawSeisData;
+    this.organizedDisplay = organizedDisplay;
+    this.animationScaler = animationScaler;
+    this.packetHandler = packetHandler;
+    this.config = config;
+    this.resizeObserver = new ResizeObserver((entries) => {
+      if (!config.minRedrawMillis) {
+        this.recalculateRedrawTime().then((rt) => {
+          console.log(`resize an org disp: ${rt.animationScaler.minRedrawMillis}`);
+        });
+      }
+    });
+    this.resizeObserver.observe(this.organizedDisplay);
+  }
+  recalculateRedrawTime() {
+    const that = this;
+    const p = new Promise((resolve) => {
+      setTimeout(() => {
+        let calcRedraw = calcOnePixelDuration(this.organizedDisplay).toMillis();
+        while (this.config.minRedrawMillis && this.config.minRedrawMillis > calcRedraw) {
+          calcRedraw = 2 * calcRedraw;
+        }
+        that.animationScaler._calcRedrawMillis = calcRedraw;
+        resolve(that);
+      }, 1e3);
+    });
+    return p;
   }
 };
 function isValidRTConfig(configObj) {
@@ -61632,10 +65541,13 @@ function isValidRTConfig(configObj) {
     config.offset = Duration.fromMillis(0);
   }
   if (typeof config.minRedrawMillis === "undefined") {
-    config.minRedrawMillis = 100;
+    config.minRedrawMillis = null;
   }
   if (typeof config.networkList === "undefined") {
     config.networkList = [];
+  }
+  if (typeof config.removeTrend === "undefined") {
+    config.removeTrend = false;
   }
   return true;
 }
@@ -61650,9 +65562,10 @@ function createRealtimeDisplay(config) {
   }
 }
 function internalCreateRealtimeDisplay(config) {
+  const negDuration = config.duration.negate();
   const timeScale = new AlignmentLinkedTimeScale(
     [],
-    config.duration.negate(),
+    negDuration,
     config.offset
   );
   const seisPlotConfig = new SeismographConfig();
@@ -61665,39 +65578,88 @@ function internalCreateRealtimeDisplay(config) {
     config.alignmentTime,
     config.minRedrawMillis
   );
+  const rawSeisData = new Array();
   const orgDisp = new OrganizedDisplay([], seisPlotConfig);
+  orgDisp.sortby = SORT_ALPHABETICAL;
   const packetHandler = (packet) => {
     if (!packet) {
       return;
     }
-    if (packet.isMiniseed()) {
-      const msr = packet.asMiniseed();
-      if (msr) {
-        const seisSegment = createSeismogramSegment(msr);
-        const codes = seisSegment.codes();
-        const matchSDD = orgDisp.seisData.find(
-          (sdd) => sdd.codes() === codes
-        );
-        if (matchSDD) {
-          matchSDD.append(seisSegment);
-        } else {
-          const sdd = SeismogramDisplayData.fromSeismogramSegment(seisSegment);
-          if (config.networkList) {
-            sdd.associateChannel(config.networkList);
-          }
-          sdd.alignmentTime = animationScaler.alignmentTime;
-          orgDisp.seisData.push(sdd);
-          orgDisp.seisDataUpdated();
-        }
+    let msr = null;
+    let ms3 = null;
+    if (packet instanceof DataLinkPacket) {
+      if (packet.isMiniseed()) {
+        msr = packet.asMiniseed();
+      } else if (packet.isMiniseed3()) {
+        ms3 = packet.asMiniseed3();
       }
+    } else if (packet instanceof SEPacket) {
+      if (packet.isMiniseed()) {
+        msr = packet.asMiniseed();
+      } else if (packet.isMiniseed3()) {
+        ms3 = packet.asMiniseed3();
+      }
+    } else {
+      msr = packet.miniseed;
+    }
+    let seisSegment = null;
+    if (msr) {
+      seisSegment = createSeismogramSegment(msr);
+    } else if (ms3) {
+      seisSegment = createSeismogramSegment2([ms3]);
+    } else {
+      return;
+    }
+    const codes = seisSegment.codes();
+    const matchSDD = rawSeisData.find(
+      (sdd) => sdd.codes() === codes
+    );
+    if (matchSDD) {
+      matchSDD.append(seisSegment);
+      if (matchSDD.timeRange.toDuration().toMillis() > config.duration.toMillis() * 1.5) {
+        const trimInterval = Interval.fromDateTimes(
+          DateTime.utc().minus(config.duration),
+          DateTime.utc()
+        );
+        matchSDD.trimInPlace(trimInterval);
+      }
+      const dispMatchSDD = orgDisp.seisData.find(
+        (sdd) => sdd.codes() === codes
+      );
+      if (dispMatchSDD) {
+        if (config.removeTrend && matchSDD.seismogram) {
+          const dtSeis = removeTrend(matchSDD.seismogram);
+          if (dtSeis) {
+            dispMatchSDD.seismogram = dtSeis;
+          }
+        } else {
+          dispMatchSDD.seismogram = matchSDD.seismogram;
+        }
+      } else {
+      }
+    } else {
+      const sdd = SeismogramDisplayData.fromSeismogramSegment(seisSegment);
+      rawSeisData.push(sdd);
+      if (config.networkList) {
+        sdd.associateChannel(config.networkList);
+      }
+      sdd.alignmentTime = animationScaler.alignmentTime;
+      if (config.removeTrend && sdd.seismogram) {
+        const dispSDD = sdd.cloneWithNewSeismogram(removeTrend(sdd.seismogram));
+        orgDisp.seisData.push(dispSDD);
+      } else {
+        orgDisp.seisData.push(sdd);
+      }
+      orgDisp.seisDataUpdated();
     }
   };
-  return {
-    organizedDisplay: orgDisp,
+  return new RTDisplayContainer(
+    rawSeisData,
+    orgDisp,
     animationScaler,
     packetHandler,
     config
-  };
+  );
 }
 function trim(orgDisplay, timeRange) {
   orgDisplay.seisData.forEach((sdd) => {
@@ -62769,2386 +66731,6 @@ var LatLonChoice = class extends HTMLElement {
 };
 customElements.define(LATLON_CHOICE_ELEMENT, LatLonChoice);
 
-// src/datalink.ts
-var datalink_exports = {};
-__export(datalink_exports, {
-  ConnectionsResponse: () => ConnectionsResponse,
-  DATALINK_PROTOCOL: () => DATALINK_PROTOCOL,
-  DEFAULT_ARCH: () => DEFAULT_ARCH,
-  DEFAULT_PROGRAM: () => DEFAULT_PROGRAM,
-  DataLinkConnection: () => DataLinkConnection,
-  DataLinkIdStats: () => DataLinkIdStats,
-  DataLinkPacket: () => DataLinkPacket,
-  DataLinkResponse: () => DataLinkResponse,
-  DataLinkStats: () => DataLinkStats,
-  ENDSTREAM: () => ENDSTREAM,
-  ERROR: () => ERROR,
-  ID: () => ID,
-  INFO: () => INFO2,
-  IRIS_RINGSERVER_URL: () => IRIS_RINGSERVER_URL,
-  MAX_PROC_NUM: () => MAX_PROC_NUM,
-  MODE: () => MODE,
-  MSEED3_TYPE: () => MSEED3_TYPE,
-  MSEED_TYPE: () => MSEED_TYPE,
-  OK: () => OK,
-  PACKET: () => PACKET,
-  QUERY_MODE: () => QUERY_MODE,
-  STREAM: () => STREAM,
-  STREAM_MODE: () => STREAM_MODE,
-  StatusResponse: () => StatusResponse,
-  StreamStat: () => StreamStat,
-  StreamsResponse: () => StreamsResponse,
-  ThreadStat: () => ThreadStat,
-  USER_BROWSER: () => USER_BROWSER,
-  daliDateTime: () => daliDateTime,
-  dateTimeToHPTime: () => dateTimeToHPTime,
-  hpTimeToDateTime: () => hpTimeToDateTime,
-  stringToUint8Array: () => stringToUint8Array
-});
-
-// src/mseed3.ts
-var mseed3_exports = {};
-__export(mseed3_exports, {
-  BIG_ENDIAN: () => BIG_ENDIAN,
-  CRC_OFFSET: () => CRC_OFFSET,
-  FDSN_PREFIX: () => FDSN_PREFIX2,
-  FIXED_HEADER_SIZE: () => FIXED_HEADER_SIZE,
-  LITTLE_ENDIAN: () => LITTLE_ENDIAN,
-  MINISEED_THREE_MIME: () => MINISEED_THREE_MIME,
-  MSeed3Header: () => MSeed3Header,
-  MSeed3Record: () => MSeed3Record,
-  UNKNOWN_DATA_VERSION: () => UNKNOWN_DATA_VERSION,
-  areContiguous: () => areContiguous2,
-  byChannel: () => byChannel2,
-  calculateCRC32C: () => calculateCRC32C,
-  convertMS2Record: () => convertMS2Record,
-  convertMS2toMSeed3: () => convertMS2toMSeed3,
-  crcToHexString: () => crcToHexString,
-  createSeismogramSegment: () => createSeismogramSegment2,
-  makeString: () => makeString2,
-  merge: () => merge2,
-  mergeSegments: () => mergeSegments2,
-  padZeros: () => padZeros,
-  parseExtraHeaders: () => parseExtraHeaders,
-  parseMSeed3Records: () => parseMSeed3Records,
-  sddPerChannel: () => sddPerChannel,
-  seismogramPerChannel: () => seismogramPerChannel2,
-  seismogramSegmentPerChannel: () => seismogramSegmentPerChannel2,
-  toMSeed3: () => toMSeed3
-});
-
-// src/mseed3eh.ts
-var mseed3eh_exports = {};
-__export(mseed3eh_exports, {
-  STD_EH: () => STD_EH,
-  channelToEH: () => channelToEH,
-  ehToChannel: () => ehToChannel,
-  ehToMarkers: () => ehToMarkers,
-  ehToQuake: () => ehToQuake,
-  extractBagEH: () => extractBagEH,
-  isValidBagChannelJsonEHType: () => isValidBagChannelJsonEHType,
-  isValidBagEventJsonEHType: () => isValidBagEventJsonEHType,
-  isValidBagJsonEHType: () => isValidBagJsonEHType,
-  isValidBagMagJsonEHType: () => isValidBagMagJsonEHType,
-  isValidBagMarkJsonEHType: () => isValidBagMarkJsonEHType,
-  isValidBagOriginJsonEHType: () => isValidBagOriginJsonEHType,
-  isValidBagPathJsonEHType: () => isValidBagPathJsonEHType,
-  isValidBagTimeseriesJsonEHType: () => isValidBagTimeseriesJsonEHType,
-  markerTypeFromEH: () => markerTypeFromEH,
-  quakeToEH: () => quakeToEH
-});
-var STD_EH = "bag";
-function ehToQuake(exHead) {
-  const bag = extractBagEH(exHead);
-  const origin = bag?.ev?.or;
-  let q = null;
-  if (origin != null) {
-    const time = isoToDateTime(origin.tm);
-    q = createQuakeFromValues("extraheader", time, origin.la, origin.lo, origin.dp * 1e3);
-    if (bag?.ev?.mag?.v != null) {
-      const magtype = bag.ev.mag.t == null ? "" : bag.ev.mag.t;
-      const mag = new Magnitude(bag.ev.mag.v, magtype);
-      q.preferredMagnitude = mag;
-    }
-  }
-  return q;
-}
-function quakeToEH(quake) {
-  const ehEvent = {};
-  if (quake.publicId != null) {
-    ehEvent.id = quake.publicId;
-  }
-  if (quake.preferredOrigin != null) {
-    const or = quake.origin;
-    const isoTime = or.time.toISO();
-    if (isoTime == null) {
-      throw new Error(`Bad origin time: ${stringify(or.time)}`);
-    }
-    ehEvent.or = {
-      tm: isoTime,
-      la: or.latitude,
-      lo: or.longitude,
-      dp: or.depthKm
-    };
-  }
-  if (quake.preferredMagnitude != null) {
-    ehEvent.mag = {
-      v: quake.preferredMagnitude.mag,
-      t: quake.preferredMagnitude.type
-    };
-  }
-  return ehEvent;
-}
-function channelToEH(channel) {
-  return {
-    la: channel.latitude,
-    lo: channel.longitude,
-    el: channel.elevation,
-    dp: channel.depth,
-    az: channel.azimuth,
-    dip: channel.dip
-  };
-}
-function ehToChannel(exHead, sid) {
-  const bag = extractBagEH(exHead);
-  const ch = bag?.ch;
-  const channel = null;
-  if (ch != null) {
-    const net = new Network(sid.networkCode);
-    const sta = new Station(net, sid.stationCode);
-    sta.latitude = ch.la;
-    sta.longitude = ch.lo;
-    if (ch.el != null) {
-      sta.elevation = ch.el;
-    }
-    const channel2 = new Channel(sta, sid.locationCode, sid.formChannelCode());
-    channel2.latitude = ch.la;
-    channel2.longitude = ch.lo;
-    if (ch.dp != null) {
-      channel2.depth = ch.dp;
-    }
-    if (ch.el != null) {
-      channel2.elevation = ch.el;
-    }
-    if (ch.az != null) {
-      channel2.azimuth = ch.az;
-    }
-    if (ch.dip != null) {
-      channel2.dip = ch.dip;
-    }
-  }
-  return channel;
-}
-function markerTypeFromEH(mtype) {
-  if (mtype === "pk" || mtype === "pick") {
-    return "pick";
-  }
-  if (mtype === "md" || mtype === "predicted") {
-    return "predicted";
-  }
-  return mtype;
-}
-function ehToMarkers(exHead) {
-  const bag = extractBagEH(exHead);
-  const markList = bag?.mark;
-  if (markList != null) {
-    return markList.map((m) => {
-      return {
-        time: isoToDateTime(m.tm),
-        name: m.n,
-        markertype: m.mtype == null ? "unknown" : markerTypeFromEH(m.mtype),
-        description: m.desc == null ? "" : m.desc
-      };
-    });
-  }
-  return [];
-}
-function extractBagEH(jsonEH) {
-  if (!jsonEH || typeof jsonEH !== "object") {
-    return null;
-  }
-  const eh = jsonEH;
-  if (typeof eh.bag != "object") {
-    return null;
-  }
-  const object = eh.bag;
-  if (isValidBagJsonEHType(object)) {
-    return object;
-  } else {
-    throw new TypeError(`Oops, we did not get Bag extra header JSON!`);
-  }
-}
-function isValidBagChannelJsonEHType(v) {
-  if (!v || typeof v !== "object") {
-    return false;
-  }
-  const object = v;
-  const answer = typeof object.la === "number" && typeof object.lo === "number" && (typeof object.code === "undefined" || typeof object.code === "string") && (typeof object.el === "undefined" || typeof object.el === "number") && (typeof object.dp === "undefined" || typeof object.dp === "number");
-  return answer;
-}
-function isValidBagEventJsonEHType(v) {
-  if (!v || typeof v !== "object") {
-    return false;
-  }
-  const object = v;
-  return (typeof object.id === "undefined" || typeof object.id === "string") && (typeof object.or === "undefined" || isValidBagOriginJsonEHType(object.or)) && (typeof object.mag === "undefined" || isValidBagMagJsonEHType(object.mag)) && (typeof object.mt === "undefined" || typeof object.mt === "object");
-}
-function isValidBagOriginJsonEHType(v) {
-  if (!v || typeof v !== "object") {
-    return false;
-  }
-  const object = v;
-  return typeof object.la === "number" && typeof object.lo === "number" && typeof object.dp === "number" && typeof object.tm === "string";
-}
-function isValidBagMagJsonEHType(v) {
-  if (!v || typeof v !== "object") {
-    return false;
-  }
-  const object = v;
-  return (typeof object.v === "undefined" || typeof object.v === "number") && (typeof object.t === "undefined" || typeof object.t === "string");
-}
-function isValidBagPathJsonEHType(v) {
-  if (!v || typeof v !== "object") {
-    return false;
-  }
-  const object = v;
-  return (typeof object.gcarc === "undefined" || typeof object.gcarc === "number") && (typeof object.az === "undefined" || typeof object.az === "number") && (typeof object.baz === "undefined" || typeof object.baz === "number");
-}
-function isValidBagMarkJsonEHType(v) {
-  if (!v || typeof v !== "object") {
-    return false;
-  }
-  const object = v;
-  return typeof object.n === "string" && typeof object.tm === "string" && (typeof object.mtype === "undefined" || typeof object.mtype === "string") && (typeof object.desc === "undefined" || typeof object.desc === "string");
-}
-function isValidBagTimeseriesJsonEHType(v) {
-  if (!v || typeof v !== "object") {
-    return false;
-  }
-  const object = v;
-  return typeof object.si === "string" && (typeof object.proc === "undefined" || typeof object.proc === "string");
-}
-function isValidBagJsonEHType(v) {
-  if (!v || typeof v !== "object") {
-    return false;
-  }
-  const object = v;
-  if (!((typeof object.st === "undefined" || isValidBagChannelJsonEHType(object.st)) && (typeof object.ev === "undefined" || isValidBagEventJsonEHType(object.ev)) && (typeof object.path === "undefined" || isValidBagPathJsonEHType(object.path)) && (typeof object.y === "undefined" || typeof object.y === "object") && (typeof object.mark === "undefined" || Array.isArray(object.mark)))) {
-    return false;
-  }
-  const markerList = object.mark;
-  if (!(typeof markerList === "undefined" || Array.isArray(markerList))) {
-    return false;
-  } else {
-    if (markerList != null) {
-      for (const m of markerList) {
-        if (!isValidBagMarkJsonEHType(m)) {
-          return false;
-        }
-      }
-    }
-  }
-  return true;
-}
-
-// src/mseed3.ts
-var MINISEED_THREE_MIME = "application/vnd.fdsn.mseed3";
-var UNKNOWN_DATA_VERSION = 0;
-var CRC_OFFSET = 28;
-var FIXED_HEADER_SIZE = 40;
-var FDSN_PREFIX2 = "FDSN";
-var LITTLE_ENDIAN = true;
-var BIG_ENDIAN = false;
-function toMSeed3(seis, extraHeaders) {
-  const out = new Array(0);
-  if (!isDef(extraHeaders)) {
-    extraHeaders = {};
-  }
-  for (const seg of seis.segments) {
-    const header = new MSeed3Header();
-    let rawData;
-    let encoding = 0;
-    if (seg.isEncoded()) {
-      const encoded = seg.getEncoded();
-      if (encoded.length === 1) {
-        rawData = encoded[0].dataView;
-        encoding = encoded[0].compressionType;
-      } else {
-        const encodeTypeSet = /* @__PURE__ */ new Set();
-        encoded.forEach((cur) => {
-          encodeTypeSet.add(cur.compressionType);
-        });
-        const encodeTypes = Array.from(encodeTypeSet.values());
-        if (encodeTypes.length > 1) {
-          throw new Error(
-            `more than one encoding type in seis segment: ${encodeTypes.length}`
-          );
-        } else if (encodeTypes.length === 0) {
-          throw new Error(`zero encoding type in seis segment`);
-        } else if (!encodeTypes[0]) {
-          throw new Error(`only encoding type is undef`);
-        }
-        encoding = encodeTypes[0];
-        if (!encoding) {
-          throw new Error(`encoding is undefined`);
-        }
-        if (INTEGER || FLOAT || DOUBLE) {
-          const totSize = encoded.reduce(
-            (acc, cur) => acc + cur.dataView.byteLength,
-            0
-          );
-          const combined = new Uint8Array(totSize);
-          encoded.reduce((offset2, cur) => {
-            combined.set(
-              new Uint8Array(
-                cur.dataView.buffer,
-                cur.dataView.byteOffset,
-                cur.dataView.byteLength
-              ),
-              offset2
-            );
-            return offset2 + cur.dataView.byteLength;
-          }, 0);
-          rawData = new DataView(combined.buffer);
-          if (encoding === STEIM1 || encoding === STEIM2) {
-            rawData.setUint32(
-              8,
-              encoded[encoded.length - 1].dataView.getUint32(8)
-            );
-          }
-        } else {
-          throw new Error(
-            `Encoding type not steim 1 or 2 or primitive in seis segment: ${encoding}`
-          );
-        }
-      }
-    } else {
-      rawData = new DataView(seg.y.buffer);
-      if (seg.y instanceof Float32Array) {
-        encoding = FLOAT;
-      } else if (seg.y instanceof Int32Array) {
-        encoding = INTEGER;
-      } else if (seg.y instanceof Float64Array) {
-        encoding = DOUBLE;
-      } else {
-        throw new Error("unable to save data of encoding: ");
-      }
-    }
-    header.setStart(seg.startTime);
-    header.encoding = encoding;
-    if (seg.sampleRate > 1e-3) {
-      header.sampleRateOrPeriod = seg.sampleRate;
-    } else {
-      header.sampleRateOrPeriod = -1 * seg.samplePeriod;
-    }
-    header.numSamples = seg.numPoints;
-    header.publicationVersion = UNKNOWN_DATA_VERSION;
-    const sid = seg.sourceId ? seg.sourceId : FDSNSourceId.createUnknown(seg.sampleRate);
-    header.identifier = sid.toString();
-    header.identifierLength = header.identifier.length;
-    header.extraHeaders = extraHeaders;
-    header.dataLength = rawData.byteLength;
-    const record = new MSeed3Record(header, extraHeaders, rawData);
-    record.calcSize();
-    out.push(record);
-  }
-  return out;
-}
-function parseMSeed3Records(arrayBuffer) {
-  const dataRecords = [];
-  let offset2 = 0;
-  while (offset2 < arrayBuffer.byteLength) {
-    if (offset2 > arrayBuffer.byteLength - FIXED_HEADER_SIZE) {
-      throw new Error(
-        `Not enough bytes left for header, ${arrayBuffer.byteLength - offset2} at offset=${offset2}`
-      );
-    }
-    const dataView = new DataView(arrayBuffer, offset2);
-    if (!(dataView.getUint8(0) === 77 && dataView.getUint8(1) === 83)) {
-      throw new Error(
-        `First byte must be M=77 S=83 at offset=${offset2}, but was ${dataView.getUint8(
-          0
-        )} ${dataView.getUint8(1)}`
-      );
-    }
-    const dr = MSeed3Record.parseSingleDataRecord(dataView);
-    dataRecords.push(dr);
-    offset2 += dr.getSize();
-  }
-  return dataRecords;
-}
-var MSeed3Record = class _MSeed3Record {
-  constructor(header, extraHeaders, rawData) {
-    __publicField(this, "header");
-    __publicField(this, "extraHeaders");
-    __publicField(this, "rawData");
-    this.header = header;
-    this.rawData = rawData;
-    this.extraHeaders = extraHeaders;
-  }
-  /**
-   * Parses an miniseed3 data record from a DataView.
-   *
-   * @param   dataView bytes to parse
-   * @returns parsed record
-   */
-  static parseSingleDataRecord(dataView) {
-    const header = MSeed3Header.createFromDataView(dataView);
-    const ehoffset = header.getSize();
-    const dataoffset = header.getSize() + header.extraHeadersLength;
-    const extraDataView = new DataView(
-      dataView.buffer,
-      dataView.byteOffset + ehoffset,
-      header.extraHeadersLength
-    );
-    const extraHeaders = parseExtraHeaders(extraDataView);
-    const sliceStart = dataView.byteOffset + dataoffset;
-    const rawData = new DataView(
-      dataView.buffer.slice(sliceStart, sliceStart + header.dataLength)
-    );
-    const xr = new _MSeed3Record(header, extraHeaders, rawData);
-    return xr;
-  }
-  /**
-   * Calculates the byte size of the miniseed3 record to hold this data.
-   * This should be called if the size is needed after modification
-   * of the extraHeaders.
-   *
-   * @returns size in bytes
-   */
-  calcSize() {
-    const json = JSON.stringify(this.extraHeaders);
-    if (json.length > 2) {
-      this.header.extraHeadersLength = json.length;
-    } else {
-      this.header.extraHeadersLength = 0;
-    }
-    return this.getSize();
-  }
-  /**
-   * Gets the byte size of the miniseed3 record to hold this data.
-   * Note that unless calcSize() has been called, this may not
-   * take into account modifications to the extra headers.
-   *
-   * @returns size in bytes
-   */
-  getSize() {
-    return this.header.getSize() + this.header.extraHeadersLength + this.header.dataLength;
-  }
-  /**
-   * Decompresses the data , if the compression
-   *  type is known
-   *
-   * @returns decompressed data as a typed array, usually Int32Array or Float32Array
-   */
-  decompress() {
-    return this.asEncodedDataSegment().decode();
-  }
-  /**
-   * Wraps data in an EncodedDataSegment for future decompression.
-   *
-   * @returns waveform data
-   */
-  asEncodedDataSegment() {
-    let swapBytes = LITTLE_ENDIAN;
-    if (this.header.encoding === 10 || this.header.encoding === 11 || this.header.encoding === 19) {
-      swapBytes = BIG_ENDIAN;
-    }
-    return new EncodedDataSegment(
-      this.header.encoding,
-      this.rawData,
-      this.header.numSamples,
-      swapBytes
-    );
-  }
-  /**
-   * Just the header.identifier, included as codes() for compatiblility
-   * with parsed miniseed2 data records.
-   *
-   * @returns string identifier
-   */
-  codes() {
-    return this.header.identifier;
-  }
-  /**
-   * Saves miniseed3 record into a DataView, recalculating crc.
-   *
-   * @param   dataView DataView to save into, must be large enough to hold the record.
-   * @returns the number of bytes written to the DataView, can be used as offset
-   * for writting the next record.
-   */
-  save(dataView) {
-    const json = JSON.stringify(this.extraHeaders);
-    if (json.length > 2) {
-      this.header.extraHeadersLength = json.length;
-    } else {
-      this.header.extraHeadersLength = 0;
-    }
-    let offset2 = this.header.save(dataView, 0, true);
-    if (json.length > 2) {
-      for (let i = 0; i < json.length; i++) {
-        dataView.setInt8(offset2, json.charCodeAt(i));
-        offset2++;
-      }
-    }
-    if (this.rawData !== null) {
-      for (let i = 0; i < this.rawData.byteLength; i++) {
-        dataView.setUint8(offset2 + i, this.rawData.getUint8(i));
-      }
-      offset2 += this.rawData.byteLength;
-    } else {
-      throw new Error("rawData is null");
-    }
-    const dvcrc = dataView.getUint32(CRC_OFFSET, true);
-    if (dvcrc !== 0) {
-      throw new Error(`CRC is not zero before calculate! ${dvcrc}`);
-    }
-    const crc = calculateCRC32C(dataView.buffer);
-    dataView.setUint32(CRC_OFFSET, crc, true);
-    return offset2;
-  }
-  /**
-   * Calculates crc by saving to a DataView, which sets the crc header to zero
-   * and then calculates it based on the rest of the record.
-   *
-   * @returns         crc pulled from saved miniseed3 record
-   */
-  calcCrc() {
-    const size = this.calcSize();
-    const buff = new ArrayBuffer(size);
-    const dataView = new DataView(buff);
-    const offset2 = this.save(dataView);
-    if (offset2 !== size) {
-      throw new Error(`expect to write ${size} bytes but only ${offset2}`);
-    }
-    const crc = dataView.getUint32(CRC_OFFSET, true);
-    return crc;
-  }
-  toString() {
-    const ehLines = JSON.stringify(this.extraHeaders, null, 2).split("\n");
-    const indentLines = ehLines.join("\n          ");
-    return `${this.header.toString()}
-          extra headers: ${indentLines}`;
-  }
-};
-var MSeed3Header = class _MSeed3Header {
-  constructor() {
-    __publicField(this, "recordIndicator");
-    __publicField(this, "formatVersion");
-    __publicField(this, "flags");
-    __publicField(this, "nanosecond");
-    __publicField(this, "year");
-    __publicField(this, "dayOfYear");
-    __publicField(this, "hour");
-    __publicField(this, "minute");
-    __publicField(this, "second");
-    __publicField(this, "encoding");
-    __publicField(this, "sampleRateOrPeriod");
-    __publicField(this, "numSamples");
-    __publicField(this, "crc");
-    __publicField(this, "publicationVersion");
-    __publicField(this, "identifierLength");
-    __publicField(this, "extraHeadersLength");
-    __publicField(this, "identifier");
-    __publicField(this, "extraHeaders");
-    __publicField(this, "dataLength");
-    this.recordIndicator = "MS";
-    this.formatVersion = 3;
-    this.flags = 0;
-    this.nanosecond = 0;
-    this.year = 1970;
-    this.dayOfYear = 1;
-    this.hour = 0;
-    this.minute = 0;
-    this.second = 0;
-    this.encoding = 3;
-    this.sampleRateOrPeriod = 1;
-    this.numSamples = 0;
-    this.crc = 0;
-    this.publicationVersion = UNKNOWN_DATA_VERSION;
-    this.identifierLength = 0;
-    this.extraHeadersLength = 2;
-    this.identifier = "";
-    this.extraHeaders = {};
-    this.dataLength = 0;
-  }
-  /**
-   * Parses an miniseed3 fixed header from a DataView.
-   *
-   * @param   dataView bytes to parse
-   * @returns parsed header object
-   */
-  static createFromDataView(dataView) {
-    const header = new _MSeed3Header();
-    header.recordIndicator = makeString2(dataView, 0, 2);
-    if (header.recordIndicator !== "MS") {
-      throw new Error(
-        "First 2 bytes of record should be MS but found " + header.recordIndicator
-      );
-    }
-    header.formatVersion = dataView.getUint8(2);
-    if (header.formatVersion !== 3) {
-      throw new Error("Format Version should be 3, " + header.formatVersion);
-    }
-    header.flags = dataView.getUint8(3);
-    const headerLittleEndian = true;
-    header.nanosecond = dataView.getInt32(4, headerLittleEndian);
-    header.year = dataView.getInt16(8, headerLittleEndian);
-    if (checkByteSwap2(header.year)) {
-      throw new Error("Looks like wrong byte order, year=" + header.year);
-    }
-    header.dayOfYear = dataView.getInt16(10, headerLittleEndian);
-    header.hour = dataView.getUint8(12);
-    header.minute = dataView.getUint8(13);
-    header.second = dataView.getUint8(14);
-    header.encoding = dataView.getUint8(15);
-    header.sampleRateOrPeriod = dataView.getFloat64(16, headerLittleEndian);
-    header.numSamples = dataView.getUint32(24, headerLittleEndian);
-    header.crc = dataView.getUint32(28, headerLittleEndian);
-    header.publicationVersion = dataView.getUint8(32);
-    header.identifierLength = dataView.getUint8(33);
-    header.extraHeadersLength = dataView.getUint16(34, headerLittleEndian);
-    header.dataLength = dataView.getUint32(36, headerLittleEndian);
-    header.identifier = makeString2(dataView, 40, header.identifierLength);
-    return header;
-  }
-  get start() {
-    return this.startAsDateTime();
-  }
-  get end() {
-    return this.timeOfSample(this.numSamples - 1);
-  }
-  get sampleRate() {
-    if (this.sampleRateOrPeriod < 0) {
-      return -1 / this.sampleRateOrPeriod;
-    } else {
-      return this.sampleRateOrPeriod;
-    }
-  }
-  get samplePeriod() {
-    if (this.sampleRateOrPeriod <= 0) {
-      return -1 * this.sampleRateOrPeriod;
-    } else {
-      return 1 / this.sampleRateOrPeriod;
-    }
-  }
-  /**
-   * Calculates size of the fixed header including the variable
-   * length identifier, but without the extra headers.
-   *
-   * @returns size in bytes of fixed header
-   */
-  getSize() {
-    return FIXED_HEADER_SIZE + this.identifier.length;
-  }
-  encodingName() {
-    let encode_name = "unknown";
-    if (this.encoding === 0) {
-      encode_name = "Text";
-    } else if (this.encoding === 1) {
-      encode_name = "16-bit integer";
-    } else if (this.encoding === 3) {
-      encode_name = "32-bit integer";
-    } else if (this.encoding === 4) {
-      encode_name = "32-bit float";
-    } else if (this.encoding === 5) {
-      encode_name = "64-bit float";
-    } else if (this.encoding === 11) {
-      encode_name = "STEIM-2 integer compression";
-    } else if (this.encoding === 10) {
-      encode_name = "STEIM-1 integer compression";
-    } else if (this.encoding === 19) {
-      encode_name = "STEIM-3 integer compression";
-    } else if (this.encoding === 100) {
-      encode_name = "Opaque data";
-    }
-    return encode_name;
-  }
-  /**
-   * Text representation of the miniseed3 header. This is modeled after
-   * the output of mseed3-text from the mseed3-utils package from IRIS.
-   *
-   * @returns textual repersentation
-   */
-  toString() {
-    const encode_name = this.encodingName();
-    let bitFlagStr = "";
-    if (this.flags & 1) {
-      bitFlagStr = `${bitFlagStr}
-                         [Bit 0] Calibration signals present`;
-    }
-    if (this.flags & 2) {
-      bitFlagStr = `${bitFlagStr}
-                         [Bit 1] Time tag is questionable`;
-    }
-    if (this.flags & 4) {
-      bitFlagStr = `${bitFlagStr}
-                         [Bit 2] Clock locked`;
-    }
-    if (this.flags & 8) {
-      bitFlagStr = `${bitFlagStr}
-                         [Bit 3] Undefined bit set`;
-    }
-    if (this.flags & 16) {
-      bitFlagStr = `${bitFlagStr}
-                         [Bit 4] Undefined bit set`;
-    }
-    if (this.flags & 32) {
-      bitFlagStr = `${bitFlagStr}
-                         [Bit 5] Undefined bit set`;
-    }
-    if (this.flags & 64) {
-      bitFlagStr = `${bitFlagStr}
-                         [Bit 6] Undefined bit set`;
-    }
-    if (this.flags & 128) {
-      bitFlagStr = `${bitFlagStr}
-                         [Bit 7] Undefined bit set`;
-    }
-    return `${this.identifier}, version ${this.publicationVersion}, ${this.getSize() + this.dataLength + this.extraHeadersLength} bytes (format: ${this.formatVersion})
-             start time: ${this.getStartFieldsAsISO()} (${padZeros(this.dayOfYear, 3)})
-      number of samples: ${this.numSamples}
-       sample rate (Hz): ${this.sampleRate}
-                  flags: [${(this.flags >>> 0).toString(2).padStart(8, "0")}] 8 bits${bitFlagStr}
-                    CRC: ${crcToHexString(this.crc)}
-    extra header length: ${this.extraHeadersLength} bytes
-    data payload length: ${this.dataLength} bytes
-       payload encoding: ${encode_name} (val: ${this.encoding})`;
-  }
-  /**
-   * Start time in the format output by mseed3-utils from IRIS. Format is
-   * yyyy,ooo,HH:mm:ss.SSSSSS
-   *
-   * @returns start time
-   */
-  startFieldsInUtilFormat() {
-    return `${this.year},${padZeros(this.dayOfYear, 3)},${padZeros(this.hour, 2)}:${padZeros(this.minute, 2)}:${padZeros(this.second, 2)}.${padZeros(Math.floor(this.nanosecond / 1e3), 6)}`;
-  }
-  /**
-   * Converts start time header fields to ISO8601 time string. This will include
-   * factional seconds to nanosecond precision.
-   *
-   * @param trimMicroNano trim to microsecond precision if nanos are 000
-   * @returns iso start time
-   */
-  getStartFieldsAsISO(trimMicroNano = true) {
-    const d = this.startAsDateTime().set({ millisecond: 0 }).toISO({ includeOffset: false, suppressMilliseconds: true });
-    let fracSec = "";
-    if (trimMicroNano && this.nanosecond % 1e3 === 0) {
-      fracSec = padZeros(this.nanosecond / 1e3, 6);
-    } else {
-      fracSec = padZeros(this.nanosecond, 9);
-    }
-    return `${d}.${fracSec}Z`;
-  }
-  /**
-   * sets start time headers.
-   *
-   * @param starttime start as DateTime
-   */
-  setStart(starttime) {
-    this.nanosecond = starttime.millisecond * 1e6;
-    this.year = starttime.year;
-    this.dayOfYear = starttime.ordinal;
-    this.hour = starttime.hour;
-    this.minute = starttime.minute;
-    this.second = starttime.second;
-  }
-  /**
-   * Calculates time of the ith sample.
-   *
-   * @param   i sample number
-   * @returns the time
-   */
-  timeOfSample(i) {
-    return this.start.plus(Duration.fromMillis(1e3 * i / this.sampleRate));
-  }
-  /**
-   * Writes to the given dataview.
-   *
-   * @param   dataView write buffer
-   * @param   offset   offset within the buffer
-   * @param   zeroCrc  optionally zero out the crc field in order to recalculate
-   * @returns          new offset after this record
-   */
-  save(dataView, offset2 = 0, zeroCrc = false) {
-    dataView.setUint8(offset2, this.recordIndicator.charCodeAt(0));
-    offset2++;
-    dataView.setUint8(offset2, this.recordIndicator.charCodeAt(1));
-    offset2++;
-    dataView.setUint8(offset2, this.formatVersion);
-    offset2++;
-    dataView.setUint8(offset2, this.flags);
-    offset2++;
-    dataView.setUint32(offset2, this.nanosecond, true);
-    offset2 += 4;
-    dataView.setUint16(offset2, this.year, true);
-    offset2 += 2;
-    dataView.setUint16(offset2, this.dayOfYear, true);
-    offset2 += 2;
-    dataView.setUint8(offset2, this.hour);
-    offset2++;
-    dataView.setUint8(offset2, this.minute);
-    offset2++;
-    dataView.setUint8(offset2, this.second);
-    offset2++;
-    dataView.setUint8(offset2, this.encoding);
-    offset2++;
-    dataView.setFloat64(offset2, this.sampleRateOrPeriod, true);
-    offset2 += 8;
-    dataView.setUint32(offset2, this.numSamples, true);
-    offset2 += 4;
-    if (zeroCrc) {
-      dataView.setUint32(offset2, 0, true);
-    } else {
-      dataView.setUint32(offset2, this.crc, true);
-    }
-    offset2 += 4;
-    dataView.setUint8(offset2, this.publicationVersion);
-    offset2++;
-    dataView.setUint8(offset2, this.identifier.length);
-    offset2++;
-    dataView.setUint16(offset2, this.extraHeadersLength, true);
-    offset2 += 2;
-    dataView.setUint32(offset2, this.dataLength, true);
-    offset2 += 4;
-    for (let i = 0; i < this.identifier.length; i++) {
-      dataView.setUint8(offset2, this.identifier.charCodeAt(i));
-      offset2++;
-    }
-    return offset2;
-  }
-  /**
-   * Converts header start time to DateTime
-   *
-   * @returns         start time as DateTime
-   */
-  startAsDateTime() {
-    let millis = Math.round(this.nanosecond / 1e6);
-    const d = DateTime.fromObject(
-      {
-        year: this.year,
-        ordinal: this.dayOfYear,
-        hour: this.hour,
-        minute: this.minute,
-        second: this.second,
-        millisecond: 0
-      },
-      UTC_OPTIONS
-    );
-    return d.plus(millis);
-    if (!d.isValid) {
-      throw new Error(`Start is invalid: ${this.startFieldsInUtilFormat()} ${d.invalidReason} ${d.invalidExplanation}`);
-    }
-    return d;
-  }
-};
-function parseExtraHeaders(dataView) {
-  if (dataView.byteLength === 0) {
-    return {};
-  }
-  const firstChar = dataView.getUint8(0);
-  if (firstChar === 123) {
-    const jsonStr = makeString2(dataView, 0, dataView.byteLength);
-    const v = JSON.parse(jsonStr);
-    if (typeof v === "object") {
-      return v;
-    } else {
-      throw new Error(
-        `extra headers does not look like JSON object: ${jsonStr}"`
-      );
-    }
-  } else {
-    throw new Error(
-      "do not understand extras with first char val: " + firstChar + " " + (firstChar === 123)
-    );
-  }
-}
-function padZeros(val, len) {
-  let out = "" + val;
-  while (out.length < len) {
-    out = "0" + out;
-  }
-  return out;
-}
-function makeString2(dataView, offset2, length) {
-  const utf8decoder = new TextDecoder("utf-8");
-  const u8arr = new Uint8Array(
-    dataView.buffer,
-    dataView.byteOffset + offset2,
-    length
-  );
-  return utf8decoder.decode(u8arr).trim();
-}
-function checkByteSwap2(year) {
-  return year < 1960 || year > 2055;
-}
-function areContiguous2(dr1, dr2, sampRatio = 1.5) {
-  const h1 = dr1.header;
-  const h2 = dr2.header;
-  return h1.end < h2.start && h1.end.plus(Duration.fromMillis(1e3 * sampRatio / h1.sampleRate)) >= h2.start;
-}
-function createSeismogramSegment2(contig) {
-  const contigData = contig.map((dr) => dr.asEncodedDataSegment());
-  const out = new SeismogramSegment(
-    contigData,
-    contig[0].header.sampleRate,
-    contig[0].header.start,
-    FDSNSourceId.parse(contig[0].header.identifier)
-  );
-  const bag = extractBagEH(contig[0].extraHeaders);
-  if (bag?.y?.si) {
-    out.yUnit = bag?.y?.si;
-  }
-  return out;
-}
-function merge2(drList) {
-  return new Seismogram(mergeSegments2(drList));
-}
-function mergeSegments2(drList) {
-  const out = [];
-  let currDR;
-  drList.sort(function(a, b) {
-    return a.header.start.valueOf() - b.header.start.valueOf();
-  });
-  let contig = [];
-  for (let i = 0; i < drList.length; i++) {
-    currDR = drList[i];
-    if (contig.length === 0) {
-      contig.push(currDR);
-    } else if (areContiguous2(contig[contig.length - 1], currDR)) {
-      contig.push(currDR);
-    } else {
-      out.push(createSeismogramSegment2(contig));
-      contig = [currDR];
-    }
-  }
-  if (contig.length > 0) {
-    out.push(createSeismogramSegment2(contig));
-    contig = [];
-  }
-  return out;
-}
-function byChannel2(drList) {
-  const out = /* @__PURE__ */ new Map();
-  let key;
-  for (let i = 0; i < drList.length; i++) {
-    const currDR = drList[i];
-    key = currDR.codes();
-    let drArray = out.get(key);
-    if (!drArray) {
-      drArray = [currDR];
-      out.set(key, drArray);
-    } else {
-      drArray.push(currDR);
-    }
-  }
-  return out;
-}
-function seismogramSegmentPerChannel2(drList) {
-  let out = new Array(0);
-  const byChannelMap = byChannel2(drList);
-  byChannelMap.forEach(
-    (segments) => out = out.concat(mergeSegments2(segments))
-  );
-  return out;
-}
-function seismogramPerChannel2(drList) {
-  const out = [];
-  const byChannelMap = byChannel2(drList);
-  byChannelMap.forEach((segments) => out.push(merge2(segments)));
-  return out;
-}
-function sddPerChannel(drList) {
-  const out = [];
-  const byChannelMap = byChannel2(drList);
-  byChannelMap.forEach((segments) => {
-    const sdd = SeismogramDisplayData.fromSeismogram(merge2(segments));
-    out.push(sdd);
-    segments.forEach((seg) => {
-      const q = ehToQuake(seg.extraHeaders);
-      if (q != null) {
-        sdd.addQuake(q);
-      }
-      const marks = ehToMarkers(seg.extraHeaders);
-      marks.forEach((mark) => sdd.addMarker(mark));
-    });
-  });
-  return out;
-}
-function convertMS2toMSeed3(mseed2) {
-  const out = [];
-  for (let i = 0; i < mseed2.length; i++) {
-    out.push(convertMS2Record(mseed2[i]));
-  }
-  return out;
-}
-function convertMS2Record(ms2record) {
-  const xHeader = new MSeed3Header();
-  const xExtras = {};
-  const ms2H = ms2record.header;
-  xHeader.flags = (ms2H.activityFlags & 1) * 2 + (ms2H.ioClockFlags & 64) * 4 + (ms2H.dataQualityFlags & 16) * 8;
-  xHeader.year = ms2H.startBTime.year;
-  xHeader.dayOfYear = ms2H.startBTime.jday;
-  xHeader.hour = ms2H.startBTime.hour;
-  xHeader.minute = ms2H.startBTime.min;
-  xHeader.second = ms2H.startBTime.sec;
-  xHeader.nanosecond = ms2H.startBTime.tenthMilli * 1e5 + ms2H.startBTime.microsecond * 1e3;
-  xHeader.sampleRateOrPeriod = ms2H.sampleRate >= 1 ? ms2H.sampleRate : -1 / ms2H.sampleRate;
-  xHeader.encoding = ms2record.header.encoding;
-  xHeader.publicationVersion = UNKNOWN_DATA_VERSION;
-  xHeader.dataLength = ms2record.data.byteLength;
-  xHeader.identifier = FDSN_PREFIX2 + ":" + ms2H.netCode + SEP2 + ms2H.staCode + SEP2 + (ms2H.locCode ? ms2H.locCode : "") + SEP2 + ms2H.chanCode;
-  xHeader.identifierLength = xHeader.identifier.length;
-  xHeader.numSamples = ms2H.numSamples;
-  xHeader.crc = 0;
-  if (ms2H.typeCode) {
-    if (ms2H.typeCode === R_TYPECODE) {
-      xHeader.publicationVersion = 1;
-    } else if (ms2H.typeCode === D_TYPECODE) {
-      xHeader.publicationVersion = 2;
-    } else if (ms2H.typeCode === Q_TYPECODE) {
-      xHeader.publicationVersion = 3;
-    } else if (ms2H.typeCode === M_TYPECODE) {
-      xHeader.publicationVersion = 4;
-    }
-    if (ms2H.typeCode !== D_TYPECODE) {
-      xExtras.DataQuality = ms2H.typeCode;
-    }
-  }
-  if (xHeader.nanosecond < 0) {
-    xHeader.second -= 1;
-    xHeader.nanosecond += 1e9;
-    if (xHeader.second < 0) {
-      xHeader.second += 60;
-      xHeader.minute -= 1;
-      if (xHeader.minute < 0) {
-        xHeader.minute += 60;
-        xHeader.hour -= 1;
-        if (xHeader.hour < 0) {
-          xHeader.hour += 24;
-          xHeader.dayOfYear = -1;
-          if (xHeader.dayOfYear < 0) {
-            xHeader.dayOfYear += 365;
-            xHeader.year -= 1;
-          }
-        }
-      }
-    }
-  }
-  xHeader.extraHeadersLength = JSON.stringify(xExtras).length;
-  const out = new MSeed3Record(xHeader, xExtras, ms2record.data);
-  return out;
-}
-var SEP2 = "_";
-var kCRCTable = new Int32Array([
-  0,
-  4067132163,
-  3778769143,
-  324072436,
-  3348797215,
-  904991772,
-  648144872,
-  3570033899,
-  2329499855,
-  2024987596,
-  1809983544,
-  2575936315,
-  1296289744,
-  3207089363,
-  2893594407,
-  1578318884,
-  274646895,
-  3795141740,
-  4049975192,
-  51262619,
-  3619967088,
-  632279923,
-  922689671,
-  3298075524,
-  2592579488,
-  1760304291,
-  2075979607,
-  2312596564,
-  1562183871,
-  2943781820,
-  3156637768,
-  1313733451,
-  549293790,
-  3537243613,
-  3246849577,
-  871202090,
-  3878099393,
-  357341890,
-  102525238,
-  4101499445,
-  2858735121,
-  1477399826,
-  1264559846,
-  3107202533,
-  1845379342,
-  2677391885,
-  2361733625,
-  2125378298,
-  820201905,
-  3263744690,
-  3520608582,
-  598981189,
-  4151959214,
-  85089709,
-  373468761,
-  3827903834,
-  3124367742,
-  1213305469,
-  1526817161,
-  2842354314,
-  2107672161,
-  2412447074,
-  2627466902,
-  1861252501,
-  1098587580,
-  3004210879,
-  2688576843,
-  1378610760,
-  2262928035,
-  1955203488,
-  1742404180,
-  2511436119,
-  3416409459,
-  969524848,
-  714683780,
-  3639785095,
-  205050476,
-  4266873199,
-  3976438427,
-  526918040,
-  1361435347,
-  2739821008,
-  2954799652,
-  1114974503,
-  2529119692,
-  1691668175,
-  2005155131,
-  2247081528,
-  3690758684,
-  697762079,
-  986182379,
-  3366744552,
-  476452099,
-  3993867776,
-  4250756596,
-  255256311,
-  1640403810,
-  2477592673,
-  2164122517,
-  1922457750,
-  2791048317,
-  1412925310,
-  1197962378,
-  3037525897,
-  3944729517,
-  427051182,
-  170179418,
-  4165941337,
-  746937522,
-  3740196785,
-  3451792453,
-  1070968646,
-  1905808397,
-  2213795598,
-  2426610938,
-  1657317369,
-  3053634322,
-  1147748369,
-  1463399397,
-  2773627110,
-  4215344322,
-  153784257,
-  444234805,
-  3893493558,
-  1021025245,
-  3467647198,
-  3722505002,
-  797665321,
-  2197175160,
-  1889384571,
-  1674398607,
-  2443626636,
-  1164749927,
-  3070701412,
-  2757221520,
-  1446797203,
-  137323447,
-  4198817972,
-  3910406976,
-  461344835,
-  3484808360,
-  1037989803,
-  781091935,
-  3705997148,
-  2460548119,
-  1623424788,
-  1939049696,
-  2180517859,
-  1429367560,
-  2807687179,
-  3020495871,
-  1180866812,
-  410100952,
-  3927582683,
-  4182430767,
-  186734380,
-  3756733383,
-  763408580,
-  1053836080,
-  3434856499,
-  2722870694,
-  1344288421,
-  1131464017,
-  2971354706,
-  1708204729,
-  2545590714,
-  2229949006,
-  1988219213,
-  680717673,
-  3673779818,
-  3383336350,
-  1002577565,
-  4010310262,
-  493091189,
-  238226049,
-  4233660802,
-  2987750089,
-  1082061258,
-  1395524158,
-  2705686845,
-  1972364758,
-  2279892693,
-  2494862625,
-  1725896226,
-  952904198,
-  3399985413,
-  3656866545,
-  731699698,
-  4283874585,
-  222117402,
-  510512622,
-  3959836397,
-  3280807620,
-  837199303,
-  582374963,
-  3504198960,
-  68661723,
-  4135334616,
-  3844915500,
-  390545967,
-  1230274059,
-  3141532936,
-  2825850620,
-  1510247935,
-  2395924756,
-  2091215383,
-  1878366691,
-  2644384480,
-  3553878443,
-  565732008,
-  854102364,
-  3229815391,
-  340358836,
-  3861050807,
-  4117890627,
-  119113024,
-  1493875044,
-  2875275879,
-  3090270611,
-  1247431312,
-  2660249211,
-  1828433272,
-  2141937292,
-  2378227087,
-  3811616794,
-  291187481,
-  34330861,
-  4032846830,
-  615137029,
-  3603020806,
-  3314634738,
-  939183345,
-  1776939221,
-  2609017814,
-  2295496738,
-  2058945313,
-  2926798794,
-  1545135305,
-  1330124605,
-  3173225534,
-  4084100981,
-  17165430,
-  307568514,
-  3762199681,
-  888469610,
-  3332340585,
-  3587147933,
-  665062302,
-  2042050490,
-  2346497209,
-  2559330125,
-  1793573966,
-  3190661285,
-  1279665062,
-  1595330642,
-  2910671697
-]);
-function calculateCRC32C(buf, initial = 0) {
-  let ubuf;
-  if (buf instanceof ArrayBuffer) {
-    ubuf = new Uint8Array(buf);
-  } else if (buf instanceof Uint8Array) {
-    ubuf = buf;
-  } else {
-    throw new Error("arg must be ArrayBuffer or Uint8Array");
-  }
-  let crc = (initial | 0) ^ -1;
-  for (let i = 0; i < ubuf.length; i++) {
-    crc = kCRCTable[(crc ^ ubuf[i]) & 255] ^ crc >>> 8;
-    let tmp = crc;
-    tmp = (tmp ^ -1) >>> 0;
-    if (tmp < 0) {
-      tmp = 4294967295 + tmp + 1;
-    }
-  }
-  return (crc ^ -1) >>> 0;
-}
-function crcToHexString(crc) {
-  if (crc < 0) {
-    crc = 4294967295 + crc + 1;
-  }
-  const s2 = crc.toString(16).toUpperCase();
-  return "0x" + s2;
-}
-
-// src/datalink.ts
-var DATALINK_PROTOCOL = "DataLink1.0";
-var MODE = /* @__PURE__ */ ((MODE2) => {
-  MODE2["Query"] = "QUERY";
-  MODE2["Stream"] = "STREAM";
-  return MODE2;
-})(MODE || {});
-var QUERY_MODE = "QUERY" /* Query */;
-var STREAM_MODE = "STREAM" /* Stream */;
-var MAX_PROC_NUM = Math.pow(2, 16) - 2;
-var USER_BROWSER = "browser";
-var DEFAULT_PROGRAM = "seisplotjs";
-var DEFAULT_ARCH = "javascript";
-var ERROR = "ERROR";
-var OK = "OK";
-var INFO2 = "INFO";
-var ID = "ID";
-var PACKET = "PACKET";
-var STREAM = "STREAM";
-var ENDSTREAM = "ENDSTREAM";
-var MSEED_TYPE = "/MSEED";
-var MSEED3_TYPE = "/MSEED3";
-var IRIS_RINGSERVER_URL = "ws://rtserve.iris.washington.edu/datalink";
-var defaultHandleResponse = function(dlResponse) {
-  log(`Unhandled datalink response: ${dlResponse.toString()}`);
-};
-var DataLinkConnection = class _DataLinkConnection {
-  constructor(url, packetHandler, errorHandler) {
-    __publicField(this, "url");
-    /** @private */
-    __publicField(this, "_mode");
-    __publicField(this, "packetHandler");
-    __publicField(this, "errorHandler");
-    __publicField(this, "closeHandler");
-    __publicField(this, "serverId");
-    __publicField(this, "clientIdNum");
-    __publicField(this, "programname");
-    __publicField(this, "username");
-    __publicField(this, "architecture");
-    /** @private */
-    __publicField(this, "_responseResolve");
-    /** @private */
-    __publicField(this, "_responseReject");
-    __publicField(this, "webSocket");
-    this.webSocket = null;
-    this.url = url ? url : IRIS_RINGSERVER_URL;
-    this._mode = "QUERY" /* Query */;
-    this.packetHandler = packetHandler;
-    this.errorHandler = errorHandler;
-    this.closeHandler = null;
-    this.serverId = null;
-    this.clientIdNum = Math.floor(Math.random() * MAX_PROC_NUM) + 1;
-    this.programname = DEFAULT_PROGRAM;
-    this.username = USER_BROWSER;
-    this.architecture = DEFAULT_ARCH;
-    this._responseResolve = null;
-    this._responseReject = null;
-  }
-  /**
-   * Set a callback function called when the connection is closed.
-   *
-   * @param  closeHandler callback function
-   */
-  setOnClose(closeHandler) {
-    this.closeHandler = closeHandler;
-  }
-  /**
-   * creates the websocket connection and sends the client ID.
-   *
-   *  @returns a Promise that resolves to the server's ID.
-   */
-  connect() {
-    if (this.webSocket) {
-      this.webSocket.close();
-      this.webSocket = null;
-    }
-    return new Promise((resolve, reject) => {
-      if (this.webSocket) {
-        this.webSocket.close();
-      }
-      const webSocket = new WebSocket(this.url, DATALINK_PROTOCOL);
-      this.webSocket = webSocket;
-      webSocket.binaryType = "arraybuffer";
-      webSocket.onmessage = (event) => {
-        this.handle(event);
-      };
-      webSocket.onerror = (event) => {
-        this.handleError(new Error("" + stringify(event)));
-        reject(event);
-      };
-      webSocket.onclose = (closeEvent) => {
-        this.webSocket = null;
-        this._mode = "QUERY" /* Query */;
-        if (this.closeHandler) {
-          this.closeHandler(closeEvent);
-        }
-      };
-      webSocket.onopen = () => {
-        resolve(this);
-      };
-    }).then((datalink) => {
-      return datalink.sendId();
-    }).then((idmsg) => {
-      this.serverId = idmsg;
-      return idmsg;
-    });
-  }
-  /**
-   * @returns true if the websocket is connected (non-null)
-   */
-  isConnected() {
-    return this.webSocket !== null;
-  }
-  /**
-   * @returns the current mode, QUERY_MODE or STREAM_MODE
-   */
-  get mode() {
-    return this._mode;
-  }
-  /**
-   * Switches to streaming mode to receive data packets from the ringserver.
-   *
-   * @returns promise to the response
-   */
-  stream() {
-    this._mode = "STREAM" /* Stream */;
-    return this.awaitDLCommand(STREAM, "").then(
-      (dlResponse) => _DataLinkConnection.ensureDataLinkResponse(dlResponse)
-    );
-  }
-  /**
-   * Switches back to query mode to enable commands to be sent to the ringserver.
-   */
-  endStream() {
-    if (this.webSocket === null || this._mode === null || this._mode === "QUERY" /* Query */) {
-      return;
-    }
-    this._mode = "QUERY" /* Query */;
-    this.sendDLCommand(ENDSTREAM, "");
-  }
-  /**
-   * Closes the connection and the underlying websocket. No communication
-   * is possible until connect() is called again.
-   */
-  close() {
-    if (this.webSocket) {
-      this.endStream();
-      if (this.webSocket) {
-        this.webSocket.close();
-      }
-      this.webSocket = null;
-      this._mode = "QUERY" /* Query */;
-    }
-  }
-  /**
-   * Send a ID Command. Command is a string.
-   *
-   * @returns a Promise that resolves to the response from the ringserver.
-   */
-  sendId() {
-    return this.id(
-      this.programname,
-      this.username,
-      stringify(this.clientIdNum),
-      this.architecture
-    ).then(
-      (dlResponse) => _DataLinkConnection.ensureDataLinkResponse(dlResponse)
-    ).then((dlResponse) => {
-      if (dlResponse.type === "ID") {
-        this.serverId = "" + dlResponse.message;
-        return this.serverId;
-      } else {
-        throw new Error("not ID response: " + stringify(dlResponse.type));
-      }
-    });
-  }
-  /**
-   * encodes as a Datalink packet, header with optional data section as
-   * binary Uint8Array. Size of the binary data is appended
-   * to the header if present.
-   *
-   * @param header the command/header string
-   * @param data optional data portion
-   * @returns datalink packet as an ArrayBuffer
-   */
-  encodeDL(header, data) {
-    let cmdLen = header.length;
-    let len = 3 + header.length;
-    let lenStr = "";
-    if (data && data.length > 0) {
-      lenStr = String(data.length);
-      len += lenStr.length + 1;
-      cmdLen += lenStr.length + 1;
-      len += data.length;
-    }
-    const rawPacket = new ArrayBuffer(len);
-    const binaryPacket = new Uint8Array(rawPacket);
-    const packet = new DataView(rawPacket);
-    packet.setUint8(0, 68);
-    packet.setUint8(1, 76);
-    packet.setUint8(2, cmdLen);
-    let i = 3;
-    for (const c of header) {
-      packet.setUint8(i, c.charCodeAt(0));
-      i++;
-    }
-    const SPACE = " ";
-    if (data && data.length > 0) {
-      packet.setUint8(i, SPACE.charCodeAt(0));
-      i++;
-      for (const c of lenStr) {
-        packet.setUint8(i, c.charCodeAt(0));
-        i++;
-      }
-      binaryPacket.set(data, i);
-    }
-    return rawPacket;
-  }
-  /**
-   * sends the header with optional binary data
-   * as the data section. Size of the data is appended
-   * to the header before sending if present.
-   *
-   * @param header header to send
-   * @param data optional data to send
-   */
-  sendDLBinary(header, data) {
-    const rawPacket = this.encodeDL(header, data);
-    if (this.webSocket) {
-      this.webSocket.send(rawPacket);
-    } else {
-      throw new Error("WebSocket has been closed.");
-    }
-  }
-  /**
-   * sends the command as header with optional dataString
-   * as the data section. Size of the dataString is appended
-   * to the header before sending.
-   *
-   * @param command the command/header string
-   * @param dataString optional data portion of packet
-   */
-  sendDLCommand(command, dataString) {
-    this.sendDLBinary(command, stringToUint8Array(dataString));
-  }
-  /**
-   * Send a DataLink Command and await the response. Command is a string.
-   *
-   * @param header packet header
-   * @param data optional data portion of packet
-   * @returns a Promise that resolves with the webSocket MessageEvent.
-   */
-  awaitDLBinary(header, data) {
-    const promise = new Promise(
-      (resolve, reject) => {
-        this._responseResolve = resolve;
-        this._responseReject = reject;
-        this.sendDLBinary(header, data);
-      }
-    ).then((response) => {
-      this._responseResolve = null;
-      this._responseReject = null;
-      return response;
-    }).catch((error) => {
-      this._responseResolve = null;
-      this._responseReject = null;
-      throw error;
-    });
-    return promise;
-  }
-  /**
-   * Send a DataLink Command and await the response. Command is a string.
-   * Returns a Promise that resolves with the webSocket MessageEvent.
-   *
-   * @param command the command/header string
-   * @param dataString optional data portion of packet
-   * @returns promise to server's response
-   */
-  awaitDLCommand(command, dataString) {
-    return this.awaitDLBinary(command, stringToUint8Array(dataString));
-  }
-  /**
-   * Writes data to the ringserver and awaits a acknowledgement.
-   *
-   * @param   streamid    stream id for packet header
-   * @param   hpdatastart start of timewindow the packet covers
-   * @param   hpdataend   end of timewindow the packet covers
-   * @param   data        optional data to send
-   * @returns             promise to server's response
-   */
-  writeAck(streamid, hpdatastart, hpdataend, data) {
-    const header = `WRITE ${streamid} ${dateTimeToHPTime(
-      hpdatastart
-    )} ${dateTimeToHPTime(hpdataend)} A`;
-    return this.awaitDLBinary(header, data);
-  }
-  /**
-   * Makes sure a response actually is a DataLinkResponse
-   *
-   * @param   dl datalink packet/response
-   * @returns DataLinkResponse after checking instanceof
-   * @throws Error if not a DataLinkResponse
-   */
-  static ensureDataLinkResponse(dl) {
-    if (dl instanceof DataLinkResponse) {
-      return dl;
-    }
-    throw new Error(`Expected DataLinkResponse but got ${dl.header}`);
-  }
-  /**
-   * Makes sure a response actually is a DataLinkPacket
-   *
-   * @param   dl datalink packet/response
-   * @returns DataLinkPacket after checking instanceof
-   * @throws Error if not a DataLinkPacket
-   */
-  static ensureDataLinkPacket(dl) {
-    if (dl instanceof DataLinkPacket) {
-      return dl;
-    }
-    throw new Error(`Expected DataLinkPacket but got ${dl.type}`);
-  }
-  /**
-   * Send id and await server's response. All of these are can more or less
-   * be filled with dummy values. They are mostly used for logging and debugging
-   * on the server side.
-   *
-   * @param programname name of program, ex seisplotjs
-   * @param username name of user, ex browser
-   * @param processid process number, used to differentiate between multiple running instances
-   * @param architecture cpu architecture, ex javascript
-   * @returns promise to servers response
-   */
-  id(programname, username, processid, architecture) {
-    const command = `ID ${programname}:${username}:${processid}:${architecture}`;
-    return this.awaitDLCommand(command).then(
-      (dlResponse) => _DataLinkConnection.ensureDataLinkResponse(dlResponse)
-    );
-  }
-  /**
-   * Send info command for infoType.
-   *
-   * @param infoType type to get info for
-   * @returns promise to server's response
-   */
-  info(infoType) {
-    const command = `INFO ${infoType}`;
-    return this.awaitDLCommand(command).then(
-      (dlResponse) => _DataLinkConnection.ensureDataLinkResponse(dlResponse)
-    );
-  }
-  infoStatus() {
-    return this.info("STATUS").then((daResp) => {
-      return StatusResponse.fromDatalinkResponse(daResp);
-    });
-  }
-  infoStreams() {
-    return this.info("STREAMS").then((daResp) => {
-      return StreamsResponse.fromDatalinkResponse(daResp);
-    });
-  }
-  infoConnections() {
-    return this.info("CONNECTIONS").then((daResp) => {
-      return ConnectionsResponse.fromDatalinkResponse(daResp);
-    });
-  }
-  /**
-   * Send position after command.
-   *
-   * @param time time to position after
-   * @returns promise to server's response
-   */
-  positionAfter(time) {
-    return this.positionAfterHPTime(dateTimeToHPTime(time)).then(
-      (dlResponse) => _DataLinkConnection.ensureDataLinkResponse(dlResponse)
-    );
-  }
-  /**
-   * Send position after command.
-   *
-   * @param hpTime time to position after
-   * @returns promise to server's response
-   */
-  positionAfterHPTime(hpTime) {
-    const command = `POSITION AFTER ${hpTime}`;
-    return this.awaitDLCommand(command).then(
-      (dlResponse) => _DataLinkConnection.ensureDataLinkResponse(dlResponse)
-    );
-  }
-  /**
-   * Send match command.
-   *
-   * @param pattern regular expression to match streams
-   * @returns promise to server's response
-   */
-  match(pattern) {
-    const command = `MATCH`;
-    return this.awaitDLCommand(command, pattern).then(
-      (dlResponse) => _DataLinkConnection.ensureDataLinkResponse(dlResponse)
-    );
-  }
-  /**
-   * Send reject command.
-   *
-   * @param pattern regular expression to reject streams
-   * @returns promise to server's response
-   */
-  reject(pattern) {
-    const command = `REJECT ${pattern}`;
-    return this.awaitDLCommand(command).then(
-      (dlResponse) => _DataLinkConnection.ensureDataLinkResponse(dlResponse)
-    );
-  }
-  /**
-   * Read a single packet for the given id.
-   *
-   * @param packetId id of the packet of interest
-   * @returns promise to server's response
-   */
-  read(packetId) {
-    const command = `READ ${packetId}`;
-    return this.awaitDLBinary(command).then(
-      (dlResponse) => _DataLinkConnection.ensureDataLinkPacket(dlResponse)
-    );
-  }
-  /**
-   * Handles a web socket message from the data link connection.
-   *
-   * @private
-   * @param wsEvent web socket event to handle
-   */
-  handle(wsEvent) {
-    const rawData = wsEvent.data;
-    if (rawData instanceof ArrayBuffer) {
-      this.handleArrayBuffer(rawData);
-    }
-  }
-  handleArrayBuffer(rawData) {
-    const dlPreHeader = new DataView(rawData, 0, 3);
-    if ("D" === String.fromCharCode(dlPreHeader.getUint8(0)) && "L" === String.fromCharCode(dlPreHeader.getUint8(1))) {
-      const headerLen = dlPreHeader.getUint8(2);
-      const header = dataViewToString(new DataView(rawData, 3, headerLen));
-      if (header.startsWith(PACKET)) {
-        const packet = new DataLinkPacket(
-          header,
-          new DataView(rawData, 3 + headerLen)
-        );
-        if (this.packetHandler) {
-          try {
-            this.packetHandler(packet);
-          } catch (e) {
-            this.handleError(toError(e));
-          }
-        } else {
-          this.handleError(new Error("packetHandler not defined"));
-        }
-      } else {
-        let dv;
-        if (rawData.byteLength > 3 + headerLen) {
-          dv = new DataView(rawData, 3 + headerLen);
-        }
-        const dlResponse = DataLinkResponse.parse(header, dv);
-        if (dlResponse.type === "ENDSTREAM") {
-          this._mode = "QUERY" /* Query */;
-        } else {
-          if (this._responseResolve) {
-            this._responseResolve(dlResponse);
-          } else {
-            defaultHandleResponse(dlResponse);
-          }
-        }
-      }
-    } else {
-      throw new Error("DataLink Packet did not start with DL");
-    }
-  }
-  /**
-   * handle errors that arise
-   *
-   * @private
-   * @param   error the error
-   */
-  handleError(error) {
-    if (this._responseReject) {
-      this._responseReject(error);
-    }
-    if (this.errorHandler) {
-      this.errorHandler(error);
-    } else {
-      log("datalink handleError: " + error.message);
-    }
-  }
-};
-var DataLinkResponse = class _DataLinkResponse {
-  constructor(type, value, message) {
-    __publicField(this, "type");
-    __publicField(this, "value");
-    __publicField(this, "message");
-    this.type = type;
-    this.value = value;
-    this.message = message;
-  }
-  isError() {
-    return this.type === ERROR;
-  }
-  toString() {
-    return `${this.type} ${this.value} | ${this.message}`;
-  }
-  static parse(header, data) {
-    let value = "";
-    const s2 = header.split(" ");
-    const type = s2[0];
-    let message = "";
-    if (type === ID) {
-      message = "" + header.substring(3);
-    } else if (type === ENDSTREAM || type === INFO2 || type === OK || type === ERROR) {
-      value = s2[1];
-      if (data) {
-        message = dataViewToString(
-          new DataView(data.buffer, 3 + header.length)
-        );
-      }
-    } else {
-      log(`unknown DataLink response type: ${type}  ${header}`);
-      message = header.substring(type.length + 1);
-    }
-    return new _DataLinkResponse(type, value, message);
-  }
-};
-var DataLinkPacket = class {
-  constructor(header, dataview) {
-    __publicField(this, "header");
-    __publicField(this, "data");
-    __publicField(this, "streamId");
-    __publicField(this, "pktid");
-    __publicField(this, "hppackettime");
-    __publicField(this, "hppacketstart");
-    __publicField(this, "hppacketend");
-    __publicField(this, "dataSize");
-    __publicField(this, "_miniseed");
-    __publicField(this, "_mseed3");
-    this._miniseed = null;
-    this._mseed3 = null;
-    this.header = header;
-    this.data = dataview;
-    const split = this.header.split(" ");
-    this.streamId = split[1];
-    this.pktid = split[2];
-    this.hppackettime = split[3];
-    this.hppacketstart = split[4];
-    this.hppacketend = split[5];
-    this.dataSize = Number.parseInt(split[6]);
-    if (dataview.byteLength < this.dataSize) {
-      throw new Error(
-        `not enough bytes in dataview for packet:  ${this.dataSize}`
-      );
-    }
-  }
-  /**
-   * Packet start time as a DateTime.
-   *
-   * @returns start time
-   */
-  get packetStart() {
-    return hpTimeToDateTime(parseInt(this.hppacketstart));
-  }
-  /**
-   * Packet end time as a DateTime.
-   *
-   * @returns end time
-   */
-  get packetEnd() {
-    return hpTimeToDateTime(parseInt(this.hppacketend));
-  }
-  /**
-   * Packet time as a DateTime.
-   *
-   * @returns packet time
-   */
-  get packetTime() {
-    return hpTimeToDateTime(parseInt(this.hppackettime));
-  }
-  /**
-   * is this packet a miniseed packet
-   *
-   * @returns          true if it is miniseed
-   */
-  isMiniseed() {
-    return isDef(this._miniseed) || this.streamId.endsWith(MSEED_TYPE);
-  }
-  /**
-   * Parsed payload as a miniseed data record, if the streamid
-   * ends with '/MSEED', null otherwise.
-   *
-   * @returns miniseed DataRecord or null
-   */
-  asMiniseed() {
-    if (!isDef(this._miniseed)) {
-      if (this.streamId.endsWith(MSEED_TYPE)) {
-        this._miniseed = parseSingleDataRecord(this.data);
-      } else {
-        this._miniseed = null;
-      }
-    }
-    return this._miniseed;
-  }
-  /**
-   * is this packet a miniseed3 packet
-   *
-   * @returns          true if it is miniseed3
-   */
-  isMiniseed3() {
-    return isDef(this._mseed3) || this.streamId.endsWith(MSEED3_TYPE);
-  }
-  /**
-   * Parsed payload as a miniseed3 data record, if the data format is 3, null otherwise.
-   *
-   * @returns miniseed3 DataRecord or null
-   */
-  asMiniseed3() {
-    if (!isDef(this._mseed3)) {
-      if (this.streamId.endsWith(MSEED3_TYPE)) {
-        this._mseed3 = MSeed3Record.parseSingleDataRecord(this.data);
-      } else if (this.streamId.endsWith(MSEED_TYPE)) {
-        const ms2 = this.asMiniseed();
-        if (ms2) {
-          this._mseed3 = convertMS2Record(ms2);
-        }
-      } else {
-        this._mseed3 = null;
-      }
-    }
-    return this._mseed3;
-  }
-};
-var DataLinkIdStats = class _DataLinkIdStats {
-  constructor(version2, serverId, capabilities) {
-    __publicField(this, "version");
-    __publicField(this, "serverId");
-    __publicField(this, "capabilities");
-    this.version = version2;
-    this.serverId = serverId;
-    this.capabilities = capabilities;
-  }
-  /**
-   * Parses the attributes of a <DataLink> xml element.
-   *
-   * @param  statusEl               DataLink XML element
-   * @returns  the id stats
-   */
-  static parseXMLAttributes(statusEl) {
-    const dlIdStats = new _DataLinkIdStats(
-      parseUtil._requireAttribute(statusEl, "Version"),
-      parseUtil._requireAttribute(statusEl, "ServerID"),
-      parseUtil._requireAttribute(statusEl, "Capabilities").split(" ")
-    );
-    return dlIdStats;
-  }
-  toString() {
-    return `
-DataLink:
-Version="${this.version}"
-Id="${this.serverId}"
-Capabilities="${this.capabilities.join(" ")}"`;
-  }
-};
-var DataLinkStats = class _DataLinkStats {
-  constructor(startTime, ringVersion, ringSize, packetSize, maximumPacketID, maximumPackets, memoryMappedRing, volatileRing, totalConnections, totalStreams, txPacketRate, txByteRate, rxPacketRate, rxByteRate, earliestPacketID, earliestPacketCreationTime, earliestPacketDataStartTime, earliestPacketDataEndTime, latestPacketID, latestPacketCreationTime, latestPacketDataStartTime, latestPacketDataEndTime) {
-    __publicField(this, "startTime");
-    __publicField(this, "ringVersion");
-    __publicField(this, "ringSize");
-    __publicField(this, "packetSize");
-    __publicField(this, "maximumPacketID");
-    __publicField(this, "maximumPackets");
-    __publicField(this, "memoryMappedRing");
-    __publicField(this, "volatileRing");
-    __publicField(this, "totalConnections");
-    __publicField(this, "totalStreams");
-    __publicField(this, "txPacketRate");
-    __publicField(this, "txByteRate");
-    __publicField(this, "rxPacketRate");
-    __publicField(this, "rxByteRate");
-    __publicField(this, "earliestPacketID");
-    __publicField(this, "earliestPacketCreationTime");
-    __publicField(this, "earliestPacketDataStartTime");
-    __publicField(this, "earliestPacketDataEndTime");
-    __publicField(this, "latestPacketID");
-    __publicField(this, "latestPacketCreationTime");
-    __publicField(this, "latestPacketDataStartTime");
-    __publicField(this, "latestPacketDataEndTime");
-    this.startTime = startTime;
-    this.ringVersion = ringVersion;
-    this.ringSize = ringSize;
-    this.packetSize = packetSize;
-    this.maximumPacketID = maximumPacketID;
-    this.maximumPackets = maximumPackets;
-    this.memoryMappedRing = memoryMappedRing;
-    this.volatileRing = volatileRing;
-    this.totalConnections = totalConnections;
-    this.totalStreams = totalStreams;
-    this.txPacketRate = txPacketRate;
-    this.txByteRate = txByteRate;
-    this.rxPacketRate = rxPacketRate;
-    this.rxByteRate = rxByteRate;
-    this.earliestPacketID = earliestPacketID;
-    this.earliestPacketCreationTime = earliestPacketCreationTime;
-    this.earliestPacketDataStartTime = earliestPacketDataStartTime;
-    this.earliestPacketDataEndTime = earliestPacketDataEndTime;
-    this.latestPacketID = latestPacketID;
-    this.latestPacketCreationTime = latestPacketCreationTime;
-    this.latestPacketDataStartTime = latestPacketDataStartTime;
-    this.latestPacketDataEndTime = latestPacketDataEndTime;
-  }
-  /**
-   * Parses the attributes of a <Status> xml element.
-   *
-   * @param  statusEl   DataLink <Status> XML element
-   * @returns  the stats
-   */
-  static parseXMLAttributes(statusEl) {
-    const dlStats = new _DataLinkStats(
-      daliDateTime(parseUtil._requireAttribute(statusEl, "StartTime")),
-      parseUtil._requireAttribute(statusEl, "RingVersion"),
-      parseInt(parseUtil._requireAttribute(statusEl, "RingSize")),
-      parseInt(parseUtil._requireAttribute(statusEl, "PacketSize")),
-      parseInt(parseUtil._requireAttribute(statusEl, "MaximumPacketID")),
-      parseInt(parseUtil._requireAttribute(statusEl, "MaximumPackets")),
-      parseUtil._requireAttribute(statusEl, "MemoryMappedRing") === "TRUE",
-      parseUtil._requireAttribute(statusEl, "VolatileRing") === "TRUE",
-      parseInt(parseUtil._requireAttribute(statusEl, "TotalConnections")),
-      parseInt(parseUtil._requireAttribute(statusEl, "TotalStreams")),
-      parseFloat(parseUtil._requireAttribute(statusEl, "TXPacketRate")),
-      parseFloat(parseUtil._requireAttribute(statusEl, "TXByteRate")),
-      parseFloat(parseUtil._requireAttribute(statusEl, "RXPacketRate")),
-      parseFloat(parseUtil._requireAttribute(statusEl, "RXByteRate")),
-      parseInt(parseUtil._requireAttribute(statusEl, "EarliestPacketID")),
-      daliDateTime(
-        parseUtil._requireAttribute(statusEl, "EarliestPacketCreationTime")
-      ),
-      daliDateTime(
-        parseUtil._requireAttribute(statusEl, "EarliestPacketDataStartTime")
-      ),
-      daliDateTime(
-        parseUtil._requireAttribute(statusEl, "EarliestPacketDataEndTime")
-      ),
-      parseInt(parseUtil._requireAttribute(statusEl, "LatestPacketID")),
-      daliDateTime(
-        parseUtil._requireAttribute(statusEl, "LatestPacketCreationTime")
-      ),
-      daliDateTime(
-        parseUtil._requireAttribute(statusEl, "LatestPacketDataStartTime")
-      ),
-      daliDateTime(
-        parseUtil._requireAttribute(statusEl, "LatestPacketDataEndTime")
-      )
-    );
-    return dlStats;
-  }
-  toString() {
-    return `
-Status:
-StartTime="${this.startTime.toISO()}"
-RingVersion="${this.ringVersion}"
-RingSize="${this.ringSize}"
-PacketSize="${this.packetSize}"
-MaximumPacketID="${this.maximumPacketID}"
-MaximumPackets="${this.maximumPackets}"
-MemoryMappedRing="${this.memoryMappedRing}"
-VolatileRing="${this.volatileRing}"
-TotalConnections="${this.totalConnections}"
-TotalStreams="${this.totalStreams}"
-TXPacketRate="${this.txPacketRate}"
-TXByteRate="${this.txByteRate}"
-RXPacketRate="${this.rxPacketRate}"
-RXByteRate="${this.rxByteRate}"
-EarliestPacketID="${this.earliestPacketID}"
-EarliestPacketCreationTime="${this.earliestPacketCreationTime.toISO()}"
-EarliestPacketDataStartTime="${this.earliestPacketDataStartTime.toISO()}"
-EarliestPacketDataEndTime="${this.earliestPacketDataEndTime.toISO()}"
-LatestPacketID="${this.latestPacketID}"
-LatestPacketCreationTime="${this.latestPacketCreationTime.toISO()}"
-LatestPacketDataStartTime="${this.latestPacketDataStartTime.toISO()}"
-LatestPacketDataEndTime="${this.latestPacketDataEndTime.toISO()}"
-    `;
-  }
-};
-var ThreadStat = class _ThreadStat {
-  constructor(flags, type, port) {
-    __publicField(this, "flags");
-    __publicField(this, "type");
-    __publicField(this, "port");
-    this.flags = flags;
-    this.type = type;
-    this.port = port;
-  }
-  /**
-   * Parses the attributes of a <Status> xml element.
-   *
-   * @param  statusEl   DataLink <Status> XML element
-   * @returns  the stats
-   */
-  static parseXMLAttributes(statusEl) {
-    const threadStats = new _ThreadStat(
-      parseUtil._requireAttribute(statusEl, "Flags").split(" "),
-      parseUtil._requireAttribute(statusEl, "Type").split(" "),
-      parseInt(parseUtil._requireAttribute(statusEl, "Port"))
-    );
-    return threadStats;
-  }
-  toString() {
-    return `Thread  Port: ${this.port} Flags: ${this.flags.join(" ")} Type: ${this.type.join(" ")}`;
-  }
-};
-var StatusResponse = class _StatusResponse {
-  constructor(idStats, datalinkStats, threadStats) {
-    __publicField(this, "idStats");
-    __publicField(this, "datalinkStats");
-    __publicField(this, "threadStats");
-    __publicField(this, "rawXml", "");
-    this.idStats = idStats;
-    this.datalinkStats = datalinkStats;
-    this.threadStats = threadStats;
-  }
-  static fromDatalinkResponse(daliResp) {
-    if (daliResp.type === INFO2) {
-      const daliXml = new DOMParser().parseFromString(
-        daliResp.message,
-        "text/xml"
-      );
-      const sResp = _StatusResponse.fromXML(daliXml.documentElement);
-      sResp.rawXml = daliResp.message;
-      return sResp;
-    } else {
-      throw new Error("Datalink Response not OK", { cause: daliResp });
-    }
-  }
-  static fromXML(daliXML) {
-    const idStats = DataLinkIdStats.parseXMLAttributes(daliXML);
-    const dlStats = DataLinkStats.parseXMLAttributes(
-      daliXML.getElementsByTagName("Status")[0]
-    );
-    const threadListEl = daliXML.getElementsByTagName("ServerThreads")[0];
-    let threads = [];
-    if (threadListEl) {
-      threads = Array.from(threadListEl.getElementsByTagName("Thread")).map(
-        (threadEl) => ThreadStat.parseXMLAttributes(threadEl)
-      );
-    }
-    return new _StatusResponse(idStats, dlStats, threads);
-  }
-  toString() {
-    return `
-${this.idStats.toString()}
-${this.datalinkStats.toString()}
-${this.threadStats.join("\n")}`;
-  }
-};
-var StreamStat = class _StreamStat {
-  constructor(name, earliestPacketID, earliestPacketDataStartTime, earliestPacketDataEndTime, latestPacketID, latestPacketDataStartTime, latestPacketDataEndTime, dataLatency) {
-    __publicField(this, "name");
-    __publicField(this, "earliestPacketID");
-    __publicField(this, "earliestPacketDataStartTime");
-    __publicField(this, "earliestPacketDataEndTime");
-    __publicField(this, "latestPacketID");
-    __publicField(this, "latestPacketDataStartTime");
-    __publicField(this, "latestPacketDataEndTime");
-    __publicField(this, "dataLatency");
-    this.name = name;
-    this.earliestPacketID = earliestPacketID;
-    this.earliestPacketDataStartTime = earliestPacketDataStartTime;
-    this.earliestPacketDataEndTime = earliestPacketDataEndTime;
-    this.latestPacketID = latestPacketID;
-    this.latestPacketDataStartTime = latestPacketDataStartTime;
-    this.latestPacketDataEndTime = latestPacketDataEndTime;
-    this.dataLatency = dataLatency;
-  }
-  static parseXMLAttributes(statusEl) {
-    const sStat = new _StreamStat(
-      parseUtil._requireAttribute(statusEl, "Name"),
-      parseInt(parseUtil._requireAttribute(statusEl, "EarliestPacketID")),
-      daliDateTime(
-        parseUtil._requireAttribute(statusEl, "EarliestPacketDataStartTime")
-      ),
-      daliDateTime(
-        parseUtil._requireAttribute(statusEl, "EarliestPacketDataEndTime")
-      ),
-      parseInt(parseUtil._requireAttribute(statusEl, "LatestPacketID")),
-      daliDateTime(
-        parseUtil._requireAttribute(statusEl, "LatestPacketDataStartTime")
-      ),
-      daliDateTime(
-        parseUtil._requireAttribute(statusEl, "LatestPacketDataEndTime")
-      ),
-      parseFloat(parseUtil._requireAttribute(statusEl, "DataLatency"))
-    );
-    return sStat;
-  }
-  toString() {
-    return `
-    Name: ${this.name}
-    EarliestPacketID="${this.earliestPacketID}"
-    EarliestPacketDataStartTime="${this.earliestPacketDataStartTime.toISO()}"
-    EarliestPacketDataEndTime="${this.earliestPacketDataEndTime.toISO()}"
-    LatestPacketID="${this.latestPacketID}"
-    LatestPacketDataStartTime="${this.latestPacketDataStartTime.toISO()}"
-    LatestPacketDataEndTime="${this.latestPacketDataEndTime.toISO()}"
-    DataLatency=${this.dataLatency}
-    `;
-  }
-};
-var StreamsResponse = class _StreamsResponse {
-  constructor(datalinkStats, streams) {
-    __publicField(this, "datalinkStats");
-    __publicField(this, "streams");
-    this.datalinkStats = datalinkStats;
-    this.streams = streams;
-  }
-  static fromDatalinkResponse(daliResp) {
-    if (daliResp.type === INFO2) {
-      const daliXml = new DOMParser().parseFromString(
-        daliResp.message,
-        "text/xml"
-      );
-      return _StreamsResponse.fromXML(daliXml.documentElement);
-    } else {
-      throw new Error("Datalink Response not OK", { cause: daliResp });
-    }
-  }
-  /*
-  <DataLink Version="2018.078"
-  ServerID="South Carolina Seismic Network"
-  Capabilities="DLPROTO:1.0 PACKETSIZE:512 WRITE">
-  <Status
-    StartTime="2022-09-21 12:13:29"
-    RingVersion="1"
-    RingSize="1073741824"
-    PacketSize="512"
-    MaximumPacketID="16777215"
-    MaximumPackets="1698952"
-    MemoryMappedRing="TRUE"
-    VolatileRing="FALSE"
-    TotalConnections="9"
-    TotalStreams="90"
-    TXPacketRate="57.0"
-    TXByteRate="29167.9"
-    RXPacketRate="18.0"
-    RXByteRate="9210.9"
-    EarliestPacketID="11763348"
-    EarliestPacketCreationTime="2022-10-03 12:56:43.520738"
-    EarliestPacketDataStartTime="2022-10-03 12:56:40.860000"
-    EarliestPacketDataEndTime="2022-10-03 12:56:42.875000"
-    LatestPacketID="13462299"
-    LatestPacketCreationTime="2022-10-04 15:11:24.786990"
-    LatestPacketDataStartTime="2022-10-04 15:11:19.580000"
-    LatestPacketDataEndTime="2022-10-04 15:11:22.785000" />
-    <StreamList TotalStreams="90" SelectedStreams="3">
-      <Stream Name="CO_JSC_00_HHE/MSEED" EarliestPacketID="11763363" EarliestPacketDataStartTime="2022-10-03 12:56:37.178392" EarliestPacketDataEndTime="2022-10-03 12:56:40.808392" LatestPacketID="13462285" LatestPacketDataStartTime="2022-10-04 15:11:15.808392" LatestPacketDataEndTime="2022-10-04 15:11:18.788392" DataLatency="6.0" />
-      <Stream Name="CO_JSC_00_HHN/MSEED" EarliestPacketID="11763389" EarliestPacketDataStartTime="2022-10-03 12:56:38.108392" EarliestPacketDataEndTime="2022-10-03 12:56:41.398392" LatestPacketID="13462284" LatestPacketDataStartTime="2022-10-04 15:11:15.668392" LatestPacketDataEndTime="2022-10-04 15:11:18.408392" DataLatency="6.4" />
-      <Stream Name="CO_JSC_00_HHZ/MSEED" EarliestPacketID="11763402" EarliestPacketDataStartTime="2022-10-03 12:56:38.908392" EarliestPacketDataEndTime="2022-10-03 12:56:42.688392" LatestPacketID="13462252" LatestPacketDataStartTime="2022-10-04 15:11:14.428392" LatestPacketDataEndTime="2022-10-04 15:11:17.858392" DataLatency="6.9" />
-    </StreamList>
-  </DataLink>
-     */
-  static fromXML(daliXML) {
-    const statusEl = daliXML.getElementsByTagName("Status")[0];
-    const dlStats = DataLinkStats.parseXMLAttributes(statusEl);
-    const streamListEl = daliXML.getElementsByTagName("StreamList")[0];
-    const streamElList = streamListEl.getElementsByTagName("Stream");
-    const streams = Array.from(streamElList).map(
-      (streamEl) => StreamStat.parseXMLAttributes(streamEl)
-    );
-    const streamResp = new _StreamsResponse(dlStats, streams);
-    return streamResp;
-  }
-  toString() {
-    return `${this.datalinkStats.toString()}
-    ${this.streams.map((s2) => s2.toString()).join("\n")}
-    `;
-  }
-};
-var ConnectionsResponse = class _ConnectionsResponse {
-  constructor(daliXML) {
-    __publicField(this, "daliXML");
-    this.daliXML = daliXML;
-  }
-  static fromDatalinkResponse(daliResp) {
-    if (daliResp.type === INFO2) {
-      return new _ConnectionsResponse(daliResp.message);
-    } else {
-      throw new Error("Datalink Response not OK", { cause: daliResp });
-    }
-  }
-  static fromXML(daliXML) {
-    const xmlString = new XMLSerializer().serializeToString(daliXML);
-    return new _ConnectionsResponse(xmlString);
-  }
-  toString() {
-    return `${this.daliXML.toString()}`;
-  }
-};
-function daliDateTime(dalitime) {
-  const iso = dalitime.replace(" ", "T");
-  return isoToDateTime(iso);
-}
-function dateTimeToHPTime(m) {
-  return m.valueOf() * 1e3;
-}
-function hpTimeToDateTime(hptime) {
-  return DateTime.fromMillis(hptime / 1e3, UTC_OPTIONS);
-}
-function stringToUint8Array(dataString) {
-  let binaryData;
-  if (isNonEmptyStringArg(dataString)) {
-    binaryData = new Uint8Array(dataString.length);
-    for (let i = 0; i < dataString.length; i++) {
-      binaryData[i] = dataString.charCodeAt(i);
-    }
-  } else {
-    binaryData = new Uint8Array(0);
-  }
-  return binaryData;
-}
-
 // src/dataset.ts
 var dataset_exports = {};
 __export(dataset_exports, {
@@ -65159,11 +66741,13 @@ __export(dataset_exports, {
   INVENTORY_FILE: () => INVENTORY_FILE,
   SEISMOGRAM_DIR: () => SEISMOGRAM_DIR,
   ZIP_FILENAME: () => ZIP_FILENAME,
+  createBagExtraHeaders: () => createBagExtraHeaders,
   createExtraHeaders: () => createExtraHeaders,
   insertExtraHeaders: () => insertExtraHeaders,
   load: () => load,
   loadFromFile: () => loadFromFile,
   loadFromZip: () => loadFromZip,
+  mightBeZipFile: () => mightBeZipFile,
   sddFromMSeed3: () => sddFromMSeed3
 });
 
@@ -65699,7 +67283,7 @@ var Dataset = class _Dataset {
       if (sdd.seismogram) {
         const mseed3Records = toMSeed3(
           sdd.seismogram,
-          createExtraHeaders("spjs", sdd)
+          createBagExtraHeaders(sdd)
         );
         const byteSize = mseed3Records.reduce(
           (acc, cur) => acc + cur.calcSize(),
@@ -65869,10 +67453,11 @@ function insertExtraHeaders(eh, sdd, key, ds) {
   if (!myEH) {
     return;
   }
-  let quake = ehToQuake(myEH);
+  const quake = ehToQuake(myEH);
   if (quake) {
     sdd.addQuake(quake);
   }
+  sdd.addMarkers(ehToMarkers(myEH));
   if (typeof myEH === "object") {
     if ("quake" in myEH) {
       const qList = myEH["quake"];
@@ -65890,6 +67475,8 @@ function insertExtraHeaders(eh, sdd, key, ds) {
         }
       }
     }
+    if ("taup" in eh) {
+    }
     if ("traveltimes" in myEH && Array.isArray(myEH["traveltimes"])) {
       for (const tt of myEH["traveltimes"]) {
         if (isValidTraveltimeArrivalType(tt)) {
@@ -65897,7 +67484,6 @@ function insertExtraHeaders(eh, sdd, key, ds) {
         }
       }
     }
-    ehToMarkers;
     if ("markers" in myEH && Array.isArray(myEH["markers"])) {
       const markers = myEH["markers"];
       markers.forEach((m) => {
@@ -65912,6 +67498,21 @@ function insertExtraHeaders(eh, sdd, key, ds) {
       });
     }
   }
+}
+function createBagExtraHeaders(sdd) {
+  const out = {};
+  const bag = createBagEH();
+  if (sdd.quakeList && sdd.quakeList.length > 0) {
+    bag.ev = quakeToEH(sdd.quakeList[0]);
+  }
+  if (sdd.traveltimeList && sdd.traveltimeList.length > 0) {
+    out["traveltimes"] = sdd.traveltimeList;
+  }
+  if (sdd.markerList && sdd.markerList.length > 0) {
+    bag.mark = sdd.markerList.map(markerToEH);
+  }
+  out.bag = bag;
+  return out;
 }
 function createExtraHeaders(key, sdd) {
   const h = {};
@@ -65928,10 +67529,19 @@ function createExtraHeaders(key, sdd) {
   }
   return out;
 }
+function mightBeZipFile(buf) {
+  const dataView = new DataView(buf);
+  if (!(dataView.getUint8(0) === 80 && dataView.getUint8(1) === 75 && dataView.getUint8(2) === 3 && dataView.getUint8(3) === 4)) {
+    return false;
+  }
+  return true;
+}
 
 // src/datechooser.ts
 var datechooser_exports = {};
 __export(datechooser_exports, {
+  CLOCK_ELEMENT: () => CLOCK_ELEMENT,
+  Clock: () => Clock,
   DATETIME_ELEMENT: () => DATETIME_ELEMENT,
   DEFAULT_DUR_LABEL: () => DEFAULT_DUR_LABEL,
   DEFAULT_END_LABEL: () => DEFAULT_END_LABEL,
@@ -65944,6 +67554,7 @@ __export(datechooser_exports, {
   HOURMIN_ELEMENT: () => HOURMIN_ELEMENT,
   HOUR_MIN_24: () => HOUR_MIN_24,
   HourMinChooser: () => HourMinChooser,
+  PREV_NEXT: () => PREV_NEXT,
   START_CHANGED: () => START_CHANGED,
   START_LABEL: () => START_LABEL,
   TIMERANGE_ELEMENT: () => TIMERANGE_ELEMENT,
@@ -65951,6 +67562,7 @@ __export(datechooser_exports, {
   extractDuration: () => extractDuration,
   hourMinRegEx: () => hourMinRegEx
 });
+var CLOCK_ELEMENT = "sp-clock";
 var HOURMIN_ELEMENT = "sp-hourmin";
 var DATETIME_ELEMENT = "sp-datetime";
 var TIMERANGE_ELEMENT = "sp-timerange";
@@ -65962,6 +67574,35 @@ var END_LABEL = "endlabel";
 var DEFAULT_END_LABEL = "End:";
 var DUR_LABEL = "durLabel";
 var DEFAULT_DUR_LABEL = "Dur:";
+var PREV_NEXT = "prev-next";
+var Clock = class extends HTMLElement {
+  constructor() {
+    super();
+    __publicField(this, "_time");
+    __publicField(this, "dateFormat", "yyyy-MM-dd HH:mm:ss");
+    __publicField(this, "updateMillis", 500);
+    __publicField(this, "_updater");
+    this._time = DateTime.utc().set({ millisecond: 0 });
+    const shadow = this.attachShadow({ mode: "open" });
+    const wrapper = document.createElement("span");
+    shadow.appendChild(wrapper);
+    wrapper.textContent = this._time.toFormat(this.dateFormat);
+    this._updater = setInterval(() => {
+      this.updateNow();
+    }, this.updateMillis);
+  }
+  updateNow() {
+    this._time = DateTime.utc().set({ millisecond: 0 });
+    const el = this.shadowRoot?.querySelector("span");
+    if (el) {
+      const date2 = this._time.toFormat(this.dateFormat);
+      if (el.textContent !== date2) {
+        el.textContent = date2;
+      }
+    }
+  }
+};
+customElements.define(CLOCK_ELEMENT, Clock);
 var HourMinChooser = class extends HTMLElement {
   constructor() {
     super();
@@ -66360,35 +68001,8 @@ var TimeRangeChooser = class extends HTMLElement {
     });
     this.startChooser.updateTime(startTime);
     this.endChooser.updateTime(endTime);
-    if (this.getAttribute("prev-next")) {
-      const pastBtn = wrapper.insertBefore(
-        document.createElement("button"),
-        startLabel
-      );
-      pastBtn.setAttribute("id", "pastButton");
-      pastBtn.textContent = "<";
-      pastBtn.addEventListener("click", () => {
-        this._mostRecentChanged = DURATION_CHANGED;
-        this.startChooser.time = this.startChooser.time.minus(
-          extractDuration(durationInput.value)
-        );
-      });
-      const futureBtn = wrapper.appendChild(document.createElement("button"));
-      futureBtn.setAttribute("id", "futureButton");
-      futureBtn.textContent = ">";
-      futureBtn.addEventListener("click", () => {
-        this._mostRecentChanged = DURATION_CHANGED;
-        this.endChooser.time = this.endChooser.time.plus(
-          extractDuration(durationInput.value)
-        );
-      });
-      const nowBtn = wrapper.appendChild(document.createElement("button"));
-      nowBtn.setAttribute("id", "nowButton");
-      nowBtn.textContent = "Now";
-      nowBtn.addEventListener("click", () => {
-        this._mostRecentChanged = DURATION_CHANGED;
-        this.endChooser.time = DateTime.utc();
-      });
+    if (this.getAttribute(PREV_NEXT)) {
+      this.createPrevNext();
     }
     shadow.appendChild(wrapper);
   }
@@ -66520,25 +68134,86 @@ var TimeRangeChooser = class extends HTMLElement {
     this.dispatchEvent(new Event("change"));
     this.updateCallback(this.getTimeRange());
   }
+  createPrevNext() {
+    if (this.shadowRoot?.querySelector("#pastButton") != null) {
+      return;
+    }
+    const wrapper = this.shadowRoot?.querySelector(".wrapper");
+    if (wrapper == null) {
+      return;
+    }
+    const startLabel = wrapper.querySelector("label");
+    const durationInput = this.shadowRoot?.querySelector(
+      "input.duration"
+    );
+    if (startLabel == null) {
+      return;
+    }
+    const pastBtn = wrapper.insertBefore(
+      document.createElement("button"),
+      startLabel
+    );
+    pastBtn.setAttribute("id", "pastButton");
+    pastBtn.textContent = "<";
+    pastBtn.addEventListener("click", () => {
+      this._mostRecentChanged = DURATION_CHANGED;
+      this.startChooser.time = this.startChooser.time.minus(
+        extractDuration(durationInput.value)
+      );
+    });
+    const futureBtn = wrapper.appendChild(document.createElement("button"));
+    futureBtn.setAttribute("id", "futureButton");
+    futureBtn.textContent = ">";
+    futureBtn.addEventListener("click", () => {
+      this._mostRecentChanged = DURATION_CHANGED;
+      this.endChooser.time = this.endChooser.time.plus(
+        extractDuration(durationInput.value)
+      );
+    });
+    const nowBtn = wrapper.appendChild(document.createElement("button"));
+    nowBtn.setAttribute("id", "nowButton");
+    nowBtn.textContent = "Now";
+    nowBtn.addEventListener("click", () => {
+      this._mostRecentChanged = DURATION_CHANGED;
+      this.endChooser.time = DateTime.utc();
+    });
+  }
   attributeChangedCallback(name, oldValue, newValue) {
     if (name === "start") {
       this.start = isoToDateTime(newValue);
     } else if (name === "end") {
       this.end = isoToDateTime(newValue);
     } else if (name === "duration") {
-      this.duration = Duration.fromISO(newValue);
+      console.log(`attr changed: ${name}  ${newValue}`);
+      this.duration = extractDuration(newValue);
     } else if (name === START_LABEL) {
       (this.shadowRoot?.querySelector(".startlabel")).textContent = newValue;
     } else if (name === END_LABEL) {
       (this.shadowRoot?.querySelector(".endlabel")).textContent = newValue;
     } else if (name === DUR_LABEL) {
       (this.shadowRoot?.querySelector(".durationLabel")).textContent = newValue;
+    } else if (name === PREV_NEXT) {
+      if (this.getAttribute(PREV_NEXT) === "true") {
+        this.createPrevNext();
+      } else {
+        this.shadowRoot?.querySelector("#pastButton")?.remove();
+        this.shadowRoot?.querySelector("#futureButton")?.remove();
+        this.shadowRoot?.querySelector("#nowButton")?.remove();
+      }
     } else {
       throw new Error(`set unknown attribute: "${name}"`);
     }
   }
   static get observedAttributes() {
-    return ["start", "duration", "end", START_LABEL, END_LABEL, DUR_LABEL];
+    return [
+      "start",
+      "duration",
+      "end",
+      START_LABEL,
+      END_LABEL,
+      DUR_LABEL,
+      PREV_NEXT
+    ];
   }
 };
 customElements.define(TIMERANGE_ELEMENT, TimeRangeChooser);
@@ -66547,7 +68222,7 @@ function extractDuration(value) {
   if (value.startsWith("P")) {
     dur = Duration.fromISO(value);
   } else {
-    const nDur = +Number.parseInt(value);
+    const nDur = +Number.parseFloat(value);
     dur = Duration.fromMillis(nDur * 1e3);
   }
   return dur;
@@ -70429,348 +72104,22 @@ var ChannelSearch = class extends HTMLElement {
 var CHANNEL_SEARCH_ELEMENT = "sp-channel-search";
 customElements.define(CHANNEL_SEARCH_ELEMENT, ChannelSearch);
 
-// src/filter.ts
-var filter_exports = {};
-__export(filter_exports, {
-  BAND_PASS: () => BAND_PASS,
-  HIGH_PASS: () => HIGH_PASS,
-  LOW_PASS: () => LOW_PASS,
-  add: () => add,
-  amplitude: () => amplitude,
-  applyFilter: () => applyFilter,
-  createButterworth: () => createButterworth,
-  createChebyshevI: () => createChebyshevI,
-  createChebyshevII: () => createChebyshevII,
-  differentiate: () => differentiate,
-  envelope: () => envelope,
-  gainCorrect: () => gainCorrect,
-  getPassband: () => getPassband,
-  hilbert: () => hilbert,
-  integrate: () => integrate,
-  lineFit: () => lineFit,
-  mul: () => mul,
-  rMean: () => rMean,
-  removeTrend: () => removeTrend
-});
-var BAND_PASS = "BANDPASS";
-var LOW_PASS = "LOWPASS";
-var HIGH_PASS = "HIGHPASS";
-function amplitude(real, imag) {
-  return Math.hypot(real, imag);
-}
-function rMean(seis) {
-  if (seis instanceof Seismogram) {
-    const meanVal = seis.mean();
-    const rmeanSeismogram = new Seismogram(
-      seis.segments.map((s2) => {
-        const demeanY = s2.y.map(function(d) {
-          return d - meanVal;
-        });
-        const out = s2.cloneWithNewData(demeanY);
-        return out;
-      })
-    );
-    return rmeanSeismogram;
-  } else {
-    throw new Error("rMean arg not a Seismogram");
-  }
-}
-function lineFit(seis, referenceTime) {
-  if (seis.numPoints === 0) {
-    throw new Error(`cannot lineFit a seismogram with no points`);
-  }
-  const rn = seis.numPoints;
-  let sumx = 0;
-  let sumy = 0;
-  let sumxy = 0;
-  let sumx2 = 0;
-  let sumy2 = 0;
-  referenceTime = referenceTime ? referenceTime : seis.start;
-  const x1 = referenceTime.toMillis() / 1e3;
-  seis.segments.forEach((seg) => {
-    const seg_start_x = seg.start.toMillis() / 1e3 - x1;
-    const dx = 1 / seg.sampleRate;
-    const Y = seg.y;
-    for (let i = 0; i < Y.length; i++) {
-      const yi = Y[i];
-      const xi = seg_start_x + dx * i;
-      sumx = sumx + xi;
-      sumy = sumy + yi;
-      sumxy = sumxy + xi * yi;
-      sumx2 = sumx2 + xi * xi;
-      sumy2 = sumy2 + yi * yi;
-    }
-  });
-  const d = rn * sumx2 - sumx * sumx;
-  const b = d !== 0 ? (sumx2 * sumy - sumx * sumxy) / d : 0;
-  const a = d !== 0 ? (rn * sumxy - sumx * sumy) / d : 0;
-  const sig2 = (sumy2 + rn * b * b + a * a * sumx2 - 2 * b * sumy - 2 * a * sumxy + 2 * b * a * sumx) / (seis.numPoints - 1);
-  const sig = Math.sqrt(sig2);
-  const siga2 = rn * sig2 / d;
-  const sigb2 = sig2 * sumx2 / d;
-  const siga = Math.sqrt(siga2);
-  const sigb = Math.sqrt(sigb2);
-  let cc = (rn * sumxy - sumx * sumy) / Math.sqrt(d * (rn * sumy2 - sumy * sumy));
-  cc = Math.abs(cc);
-  return {
-    slope: a,
-    intercept: b,
-    reference_time: referenceTime,
-    sigma: sig,
-    sigma_a: siga,
-    sigma_b: sigb,
-    correlation: cc
-  };
-}
-function removeTrend(seis, fitLine) {
-  if (seis instanceof Seismogram) {
-    const linfit = fitLine ? fitLine : lineFit(seis);
-    if (Number.isNaN(linfit.slope) || Number.isNaN(linfit.intercept)) {
-      throw new Error(
-        `Can't remove trend with NaN, slope: ${linfit.slope} int: ${linfit.intercept}`
-      );
-    }
-    const ref_secs = linfit.reference_time.toMillis() / 1e3;
-    const rtr_segments = seis.segments.map((seg) => {
-      const start_secs = seg.start.toMillis() / 1e3;
-      const start_offset = start_secs - ref_secs;
-      const dx = 1 / seg.sampleRate;
-      const rtr_y = seg.y.map((y2, idx) => {
-        const out = y2 - (start_offset + dx * idx) * linfit.slope - linfit.intercept;
-        return out;
-      });
-      const rtr_seg = seg.cloneWithNewData(rtr_y);
-      return rtr_seg;
-    });
-    return new Seismogram(rtr_segments);
-  } else {
-    throw new Error("removeTrend arg not a Seismogram");
-  }
-}
-function gainCorrect(seis, instrumentSensitivity) {
-  const gain = instrumentSensitivity.sensitivity;
-  const out = mul(seis, 1 / gain);
-  out.segments.forEach((s2) => s2.yUnit = instrumentSensitivity.inputUnits);
-  return out;
-}
-function mul(seis, factor) {
-  if (seis instanceof Seismogram) {
-    const gainSeismogram = new Seismogram(
-      seis.segments.map((s2) => {
-        let gainY;
-        if (s2.y instanceof Int32Array || s2.y instanceof Float32Array) {
-          gainY = Float32Array.from(s2.y);
-        } else {
-          gainY = Float64Array.from(s2.y);
-        }
-        gainY = gainY.map(function(d) {
-          return d * factor;
-        });
-        const outS = s2.cloneWithNewData(gainY);
-        return outS;
-      })
-    );
-    return gainSeismogram;
-  } else {
-    throw new Error(`Expected Seismogram but was ${typeof seis}`);
-  }
-}
-function add(seis, factor) {
-  if (seis instanceof Seismogram) {
-    const gainSeismogram = new Seismogram(
-      seis.segments.map((s2) => {
-        let gainY;
-        if (s2.y instanceof Int32Array || s2.y instanceof Float32Array) {
-          gainY = Float32Array.from(s2.y);
-        } else {
-          gainY = Float64Array.from(s2.y);
-        }
-        gainY = gainY.map(function(d) {
-          return d + factor;
-        });
-        const outS = s2.cloneWithNewData(gainY);
-        return outS;
-      })
-    );
-    return gainSeismogram;
-  } else {
-    throw new Error(`Expected Seismogram but was ${typeof seis}`);
-  }
-}
-function getPassband(type) {
-  if (type === LOW_PASS) {
-    return LOWPASS;
-  } else if (type === BAND_PASS) {
-    return PassbandType.BANDPASS;
-  } else if (type === HIGH_PASS) {
-    return PassbandType.HIGHPASS;
-  } else {
-    throw new Error(`unknown pass band: ${type}`);
-  }
-}
-function createButterworth(numPoles, passband, lowFreqCorner, highFreqCorner, delta) {
-  const passbandtype = getPassband(passband);
-  return new Butterworth(
-    numPoles,
-    passbandtype,
-    lowFreqCorner,
-    highFreqCorner,
-    delta
-  );
-}
-function createChebyshevI(numPoles, epsilon4, passband, lowFreqCorner, highFreqCorner, delta) {
-  const passbandtype = getPassband(passband);
-  return new ChebyshevI(
-    numPoles,
-    epsilon4,
-    passbandtype,
-    lowFreqCorner,
-    highFreqCorner,
-    delta
-  );
-}
-function createChebyshevII(numPoles, epsilon4, passband, lowFreqCorner, highFreqCorner, delta) {
-  const passbandtype = getPassband(passband);
-  return new ChebyshevII(
-    numPoles,
-    epsilon4,
-    passbandtype,
-    lowFreqCorner,
-    highFreqCorner,
-    delta
-  );
-}
-function applyFilter(iirFilter, seis) {
-  if (Math.abs(iirFilter.getDelta() - seis.samplePeriod) / seis.samplePeriod > 1e-3) {
-    throw new Error(
-      `Filter, delta=${iirFilter.getDelta()}, has different delta from seis, ${1 / seis.sampleRate}`
-    );
-  }
-  const filteredSegments = [];
-  for (let i = 0; i < seis.segments.length; i++) {
-    const outData = Float32Array.from(seis.segments[i].y);
-    iirFilter.filterInPlace(outData);
-    filteredSegments.push(seis.segments[i].cloneWithNewData(outData));
-  }
-  return new Seismogram(filteredSegments);
-}
-function envelope(seis) {
-  if (seis.isContiguous()) {
-    const seisY = seis.y;
-    const s2 = hilbert(seis);
-    const hilbertY = s2.y;
-    let outY;
-    if (seis.y instanceof Int32Array || seis.y instanceof Float32Array) {
-      outY = new Float32Array(seisY.length);
-    } else {
-      outY = new Float64Array(seisY.length);
-    }
-    for (let n2 = 0; n2 < seisY.length; n2++) {
-      outY[n2] = Math.sqrt(hilbertY[n2] * hilbertY[n2] + seisY[n2] * seisY[n2]);
-    }
-    return seis.cloneWithNewData(outY);
-  } else {
-    throw new Error("Cannot take envelope of non-contiguous seismogram");
-  }
-}
-function hilbert(seis, n2, lowEdge, highEdge) {
-  if (seis.isContiguous()) {
-    let seisY;
-    if (seis.y instanceof Float32Array) {
-      seisY = seis.y;
-    } else {
-      seisY = Float32Array.from(seis.y);
-    }
-    if (!isDef(n2)) {
-      n2 = 10;
-    }
-    if (!isDef(lowEdge)) {
-      lowEdge = 0.05;
-    }
-    if (!isDef(highEdge)) {
-      highEdge = 0.95;
-    }
-    const hilbert2 = new CenteredHilbertTransform(n2, lowEdge, highEdge);
-    const coeff = hilbert2.getCoefficients();
-    for (const c of coeff) {
-      if (Number.isNaN(c)) {
-        throw new Error(`Hilbert FIR coeff includes NaN: ${coeff.join()}`);
-      }
-    }
-    const hilbertY = hilbert2.filter(seisY);
-    const s2 = seis.cloneWithNewData(hilbertY);
-    return s2;
-  } else {
-    throw new Error("Cannot take hilbert of non-contiguous seismogram");
-  }
-}
-function differentiate(seis) {
-  if (seis instanceof Seismogram) {
-    const diffSeismogram = new Seismogram(
-      seis.segments.map((s2) => {
-        const origY = s2.y;
-        const sampRate = 1 * s2.sampleRate;
-        const diffY = new Float32Array(origY.length - 1);
-        for (let i = 0; i < diffY.length; i++) {
-          diffY[i] = (origY[i + 1] - origY[i]) * sampRate;
-        }
-        const out = s2.cloneWithNewData(diffY);
-        out.startTime = out.startTime.plus(
-          Duration.fromMillis(1e3 / out.sampleRate / 2)
-        );
-        out.yUnit = out.yUnit + "/s";
-        return out;
-      })
-    );
-    return diffSeismogram;
-  } else {
-    throw new Error("diff arg not a Seismogram");
-  }
-}
-function integrate(seis, integrationConst = 0) {
-  let prior = integrationConst;
-  if (seis instanceof Seismogram) {
-    const intSeismogram = new Seismogram(
-      seis.segments.map((s2) => {
-        const origY = s2.y;
-        const sampPeriod = s2.samplePeriod;
-        const intY = new Float32Array(origY.length + 1);
-        intY[0] = prior;
-        for (let i = 1; i < intY.length; i++) {
-          prior += sampPeriod * origY[i - 1];
-          intY[i] = prior;
-        }
-        const out = s2.cloneWithNewData(intY);
-        out.startTime = out.startTime.minus(
-          Duration.fromMillis(1e3 / out.sampleRate / 2)
-        );
-        if (out.yUnit.endsWith("/s")) {
-          out.yUnit = out.yUnit.slice(0, out.yUnit.length - 2);
-        } else {
-          out.yUnit += "s";
-        }
-        return out;
-      })
-    );
-    return intSeismogram;
-  } else {
-    throw new Error("integrate arg not a Seismogram");
-  }
-}
-
 // src/helicorder.ts
 var helicorder_exports = {};
 __export(helicorder_exports, {
   DEFAULT_MAX_HEIGHT: () => DEFAULT_MAX_HEIGHT,
   HELICORDER_ELEMENT: () => HELICORDER_ELEMENT,
   HELICORDER_SELECTOR: () => HELICORDER_SELECTOR,
+  HELI_CLICK_EVENT: () => HELI_CLICK_EVENT,
   HELI_COLOR_CSS_ID: () => HELI_COLOR_CSS_ID,
+  HELI_MOUSE_MOVE_EVENT: () => HELI_MOUSE_MOVE_EVENT,
   HeliTimeRange: () => HeliTimeRange,
   Helicorder: () => Helicorder,
   HelicorderConfig: () => HelicorderConfig,
-  helicorder_css: () => helicorder_css,
-  nameForTimeZone: () => nameForTimeZone
+  helicorder_css: () => helicorder_css
 });
+var HELI_CLICK_EVENT = "heliclick";
+var HELI_MOUSE_MOVE_EVENT = "helimousemove";
 var HELICORDER_ELEMENT = "sp-helicorder";
 var Helicorder = class extends SeisPlotElement {
   constructor(seisData, seisConfig) {
@@ -70798,15 +72147,31 @@ var Helicorder = class extends SeisPlotElement {
     this.getShadowRoot().appendChild(wrapper);
     this.addEventListener("click", (evt) => {
       const detail = this.calcDetailForEvent(evt);
-      const event = new CustomEvent("heliclick", { detail });
+      const event = new CustomEvent(
+        HELI_CLICK_EVENT,
+        {
+          detail,
+          bubbles: true,
+          cancelable: false,
+          composed: true
+        }
+      );
       this.dispatchEvent(event);
     });
     this.addEventListener("mousemove", (evt) => {
       const detail = this.calcDetailForEvent(evt);
-      const event = new CustomEvent("helimousemove", { detail });
+      const event = new CustomEvent(
+        HELI_MOUSE_MOVE_EVENT,
+        {
+          detail,
+          bubbles: true,
+          cancelable: false,
+          composed: true
+        }
+      );
       this.dispatchEvent(event);
     });
-    this.addEventListener("helimousemove", (hEvent) => {
+    this.addEventListener(HELI_MOUSE_MOVE_EVENT, (hEvent) => {
       const detail = hEvent.detail;
       wrapper.querySelectorAll(`sp-seismograph`).forEach((seismograph, idx) => {
         if (idx === detail.lineNum) {
@@ -70967,8 +72332,11 @@ var Helicorder = class extends SeisPlotElement {
       } else if (lineNumber === nl - 1) {
         lineSeisConfig.isXAxis = this.heliConfig.isXAxis;
         lineSeisConfig.margin.bottom += this.heliConfig.margin.bottom;
+        lineSeisConfig.xLabel = this.heliConfig.xLabel;
+        lineSeisConfig.xSublabel = this.heliConfig.xSublabel;
         height += this.heliConfig.margin.bottom;
       }
+      lineSeisConfig.xAxisTimeZone = this.heliConfig.xAxisTimeZone;
       lineSeisConfig.fixedTimeScale = lineInterval;
       lineSeisConfig.yLabel = `${startTime2?.setZone(this.heliConfig.yLabelTimeZone).toFormat("HH:mm")}`;
       lineSeisConfig.yLabelRight = `${endTime?.setZone(this.heliConfig.yLabelRightTimeZone).toFormat("HH:mm")}`;
@@ -71023,11 +72391,11 @@ var Helicorder = class extends SeisPlotElement {
         const innerDiv = utcDiv.appendChild(document.createElement("div"));
         innerDiv.setAttribute("style", `top: ${lineSeisConfig.margin.top}px;`);
         const textEl = innerDiv.appendChild(document.createElement("text"));
-        textEl.textContent = nameForTimeZone(this.heliConfig.yLabelTimeZone);
+        textEl.textContent = nameForTimeZone(this.heliConfig.yLabelTimeZone, startTime2);
         const rightTextEl = innerDiv.appendChild(
           document.createElement("text")
         );
-        rightTextEl.textContent = nameForTimeZone(this.heliConfig.yLabelRightTimeZone);
+        rightTextEl.textContent = nameForTimeZone(this.heliConfig.yLabelRightTimeZone, startTime2);
         seismographWrapper.insertBefore(utcDiv, seismographWrapper.firstChild);
       }
       startTime2 = endTime;
@@ -71168,15 +72536,6 @@ var HeliTimeRange = class {
     this.lineNumber = lineNumber;
   }
 };
-function nameForTimeZone(zone) {
-  if (zone == null || zone instanceof Zone && FixedOffsetZone.utcInstance.equals(zone)) {
-    return "UTC";
-  } else if (typeof zone === "string") {
-    return zone;
-  } else {
-    return zone.name;
-  }
-}
 var helicorder_css = `
 :host {
   display: block;
@@ -71221,7 +72580,6 @@ var MSeedArchive = class {
   get recordSize() {
     return this._recordSize;
   }
-  /* eslint-disable jsdoc/no-multi-asterisks */
   /**
    * checks pattern for allowed flags as not all that are supported
    * by ringserver are supported here. Must only include:
@@ -71250,7 +72608,6 @@ var MSeedArchive = class {
     }
     return true;
   }
-  /* eslint-enable jsdoc/no-multi-asterisks */
   /**
    * Loads seismograms from the remote miniseed archive via
    * http(s). Files downloaded include all that might overlap
@@ -71485,10 +72842,13 @@ function minSampleRate(chan) {
       return 1;
     case "L":
       return 1;
+    // maybe wrong, seed manual not clear
     case "V":
       return 0.1;
+    // maybe wrong, seed manual not clear
     case "U":
       return 0.01;
+    // maybe wrong, seed manual not clear
     case "R":
       return 1e-4;
     case "P":
@@ -71513,7 +72873,9 @@ __export(ringserverweb_exports, {
   SEEDLINK_PATH: () => SEEDLINK_PATH,
   StreamStat: () => StreamStat2,
   nslcSplit: () => nslcSplit,
-  stationsFromStreams: () => stationsFromStreams
+  sidForId: () => sidForId,
+  stationsFromStreams: () => stationsFromStreams,
+  typeForId: () => typeForId
 });
 var SEEDLINK_PATH = "/seedlink";
 var DATALINK_PATH = "/datalink";
@@ -71522,6 +72884,8 @@ var ORG = "Organization: ";
 var RingserverConnection = class {
   constructor(host, port) {
     /** @private */
+    __publicField(this, "_protocol");
+    /** @private */
     __publicField(this, "_host");
     /** @private */
     __publicField(this, "_port");
@@ -71529,16 +72893,19 @@ var RingserverConnection = class {
     __publicField(this, "_prefix");
     /** @private */
     __publicField(this, "_timeoutSec");
+    __publicField(this, "isFDSNSourceId", false);
     const hostStr = isNonEmptyStringArg(host) ? host : IRIS_HOST3;
     if (hostStr.startsWith("http")) {
       const rs_url = new URL(hostStr);
       this._host = rs_url.hostname;
       this._port = parseInt(rs_url.port);
+      this._protocol = rs_url.protocol;
       if (!Number.isInteger(this._port)) {
         this._port = 80;
       }
       this._prefix = rs_url.pathname;
     } else {
+      this._protocol = "http:";
       this._host = hostStr;
       this._port = 80;
       this._prefix = "";
@@ -71589,16 +72956,23 @@ var RingserverConnection = class {
   }
   /**
    * Pulls id result from ringserver /id parsed into an object with
-   * 'ringserverVersion' and 'serverId' fields.
+   * 'ringserverVersion' and 'serverId' fields. Also sets the
+   * isFDSNSourceId value as ringserver v4 uses new FDSN style ids
+   * while
    *
    * @returns Result as a Promise.
    */
   pullId() {
     return this.pullRaw(this.formIdURL()).then((raw) => {
       const lines = raw.split("\n");
+      const ringserver_v4 = "ringserver/4";
+      const version2 = lines[0];
       let organization = lines[1];
       if (organization.startsWith(ORG)) {
         organization = organization.substring(ORG.length);
+      }
+      if (version2.startsWith(ringserver_v4)) {
+        this.isFDSNSourceId = true;
       }
       return {
         ringserverVersion: lines[0],
@@ -71693,14 +73067,14 @@ var RingserverConnection = class {
   }
   getDataLinkURL() {
     let proto = "ws:";
-    if (checkProtocol() === "https:") {
+    if (checkProtocol(this._protocol) === "https:") {
       proto = "wss:";
     }
     return proto + "//" + this._host + (this._port === 80 ? "" : ":" + this._port) + this._prefix + DATALINK_PATH;
   }
   getSeedLinkURL() {
     let proto = "ws:";
-    if (checkProtocol() === "https:") {
+    if (checkProtocol(this._protocol) === "https:") {
       proto = "wss:";
     }
     return proto + "//" + this._host + (this._port === 80 ? "" : ":" + this._port) + this._prefix + SEEDLINK_PATH;
@@ -71714,7 +73088,7 @@ var RingserverConnection = class {
     if (this._port === 0) {
       this._port = 80;
     }
-    return checkProtocol() + "//" + this._host + (this._port === 80 ? "" : ":" + this._port) + this._prefix;
+    return checkProtocol(this._protocol) + "//" + this._host + (this._port === 80 ? "" : ":" + this._port) + this._prefix;
   }
   /**
    * Forms the ringserver id url.
@@ -71746,9 +73120,12 @@ var RingserverConnection = class {
 function stationsFromStreams(streams) {
   const out = /* @__PURE__ */ new Map();
   for (const s2 of streams) {
-    const nslc_type = nslcSplit(s2.key);
-    const nslc = nslc_type.nslc;
-    const staKey = nslc.networkCode + "." + nslc.stationCode;
+    const sid = sidForId(s2.key);
+    if (sid == null || sid instanceof NetworkSourceId) {
+      continue;
+    }
+    const staSid = sid instanceof StationSourceId ? sid : sid.stationSourceId();
+    const staKey = staSid.networkCode + "_" + staSid.stationCode;
     let stat = out.get(staKey);
     if (!isDef(stat)) {
       stat = new StreamStat2(staKey, s2.startRaw, s2.endRaw);
@@ -71774,8 +73151,33 @@ var NslcWithType = class {
     this.nslc = nslc;
   }
 };
+function typeForId(id2) {
+  const split = id2.split("/");
+  if (split.length >= 2) {
+    return split[split.length - 1];
+  }
+  return null;
+}
+function sidForId(id2) {
+  const split = id2.split("/");
+  if (split.length >= 1) {
+    const sidStr = split[0];
+    if (sidStr.startsWith(FDSN_PREFIX)) {
+      return parseSourceId(split[0]);
+    } else {
+      const items = split[0].split("_");
+      if (items.length == 4) {
+        const nslc = NslcId.parse(split[0], "_");
+        return FDSNSourceId.fromNslcId(nslc);
+      }
+    }
+  }
+  return null;
+}
 function nslcSplit(id2) {
   const split = id2.split("/");
+  if (split[0].startsWith(FDSN_PREFIX)) {
+  }
   const nslc = split[0].split("_");
   if (nslc.length === 4) {
     return new NslcWithType(
@@ -72036,10 +73438,10 @@ function linspace(start2, stop, num) {
 var seedlink_exports = {};
 __export(seedlink_exports, {
   SEEDLINK_PROTOCOL: () => SEEDLINK_PROTOCOL,
-  SeedlinkConnection: () => SeedlinkConnection
+  SeedlinkConnection: () => SeedlinkConnection2
 });
 var SEEDLINK_PROTOCOL = "SeedLink3.1";
-var SeedlinkConnection = class {
+var SeedlinkConnection2 = class {
   constructor(url, requestConfig, receiveMiniseedFn, errorHandler) {
     __publicField(this, "url");
     __publicField(this, "requestConfig");
@@ -72048,6 +73450,7 @@ var SeedlinkConnection = class {
     __publicField(this, "closeFn");
     __publicField(this, "webSocket");
     __publicField(this, "command");
+    __publicField(this, "helloLines", []);
     this.url = url;
     this.requestConfig = requestConfig;
     this.receiveMiniseedFn = receiveMiniseedFn;
@@ -72066,54 +73469,69 @@ var SeedlinkConnection = class {
     this.closeFn = closeFn;
   }
   connect() {
+    return this.interactiveConnect().then(() => {
+      return this.sendHello();
+    }).then((lines) => {
+      this.helloLines = lines;
+      return this.sendCmdArray(this.requestConfig);
+    }).then(() => {
+      return this.sendCmdArray([this.command]);
+    }).then((val) => {
+      if (this.webSocket === null) {
+        throw new Error("websocket is null");
+      }
+      this.webSocket.onmessage = (event) => {
+        this.handle(event);
+      };
+      this.webSocket.send("END\r");
+      return val;
+    }).catch((err) => {
+      this.close();
+      const insureErr = err instanceof Error ? err : new Error(stringify(err));
+      if (this.errorHandler) {
+        this.errorHandler(insureErr);
+      } else {
+        throw insureErr;
+      }
+    });
+  }
+  interactiveConnect() {
     if (this.webSocket) {
       this.webSocket.close();
       this.webSocket = null;
     }
-    try {
-      const webSocket = new WebSocket(this.url, SEEDLINK_PROTOCOL);
-      this.webSocket = webSocket;
-      webSocket.binaryType = "arraybuffer";
-      webSocket.onopen = () => {
-        this.sendHello().then(() => {
-          return this.sendCmdArray(this.requestConfig);
-        }).then(() => {
-          return this.sendCmdArray([this.command]);
-        }).then((val) => {
-          webSocket.onmessage = (event) => {
-            this.handle(event);
-          };
-          webSocket.send("END\r");
-          return val;
-        }).catch((err) => {
-          this.close();
-          const insureErr = err instanceof Error ? err : new Error(stringify(err));
-          if (this.errorHandler) {
-            this.errorHandler(insureErr);
-          } else {
-            throw insureErr;
+    return new Promise((resolve, reject) => {
+      try {
+        const webSocket = new WebSocket(this.url, SEEDLINK_PROTOCOL);
+        this.webSocket = webSocket;
+        webSocket.binaryType = "arraybuffer";
+        webSocket.onopen = () => {
+          resolve(this);
+        };
+        webSocket.onerror = (event) => {
+          const evtError = toError(event);
+          this.handleError(evtError);
+          reject(evtError);
+        };
+        webSocket.onclose = (closeEvent) => {
+          if (this.closeFn) {
+            this.closeFn(closeEvent);
           }
-        });
-      };
-      webSocket.onerror = (event) => {
-        this.handleError(new Error("" + stringify(event)));
+          if (this.webSocket) {
+            this.webSocket = null;
+          }
+        };
+      } catch (err) {
         this.close();
-      };
-      webSocket.onclose = (closeEvent) => {
-        if (this.closeFn) {
-          this.closeFn(closeEvent);
+        const evtError = toError(err);
+        if (this.errorHandler) {
+          this.errorHandler(evtError);
         }
-        if (this.webSocket) {
-          this.webSocket = null;
-        }
-      };
-    } catch (err) {
-      if (this.errorHandler) {
-        this.errorHandler(toError(err));
-      } else {
-        throw err;
+        reject(evtError);
       }
-    }
+    }).then(function(sl3) {
+      return sl3;
+    });
   }
   close() {
     if (this.webSocket) {
@@ -72121,7 +73539,7 @@ var SeedlinkConnection = class {
     }
   }
   handle(event) {
-    if (event.data instanceof ArrayBuffer) {
+    if (event.data instanceof ArrayBuffer || event.data instanceof SharedArrayBuffer) {
       const data = event.data;
       if (data.byteLength < 64) {
       } else {
@@ -72177,22 +73595,22 @@ var SeedlinkConnection = class {
     const promise = new Promise(function(resolve, reject) {
       if (webSocket) {
         webSocket.onmessage = function(event) {
-          if (event.data instanceof ArrayBuffer) {
+          if (event.data instanceof ArrayBuffer || event.data instanceof SharedArrayBuffer) {
             const data = event.data;
             const replyMsg = dataViewToString(new DataView(data));
             const lines = replyMsg.trim().split("\r");
             if (lines.length === 2) {
               resolve([lines[0], lines[1]]);
             } else {
-              reject("not 2 lines: " + replyMsg);
+              reject(new Error("not 2 lines: " + replyMsg));
             }
           } else {
-            reject("event.data not ArrayBuffer?");
+            reject(new Error("event.data not ArrayBufferLike?"));
           }
         };
         webSocket.send("HELLO\r");
       } else {
-        reject("webSocket has been closed");
+        reject(new Error("webSocket has been closed"));
       }
     });
     return promise;
@@ -72223,21 +73641,21 @@ var SeedlinkConnection = class {
     const promise = new Promise(function(resolve, reject) {
       if (webSocket) {
         webSocket.onmessage = function(event) {
-          if (event.data instanceof ArrayBuffer) {
+          if (event.data instanceof ArrayBuffer || event.data instanceof SharedArrayBuffer) {
             const data = event.data;
             const replyMsg = dataViewToString(new DataView(data)).trim();
             if (replyMsg === "OK") {
               resolve(replyMsg);
             } else {
-              reject("msg not OK: " + replyMsg);
+              reject(new Error("msg not OK: " + replyMsg));
             }
           } else {
-            reject("event.data not ArrayBuffer?");
+            reject(new Error("event.data not ArrayBufferLike?"));
           }
         };
         webSocket.send(mycmd + "\r\n");
       } else {
-        reject("webSocket has been closed");
+        reject(new Error("webSocket has been closed"));
       }
     });
     return promise;
@@ -72253,426 +73671,6 @@ var SeedlinkConnection = class {
       this.errorHandler(error);
     } else {
       log("seedlink handleError: " + error.message);
-    }
-  }
-};
-
-// src/seedlink4.ts
-var seedlink4_exports = {};
-__export(seedlink4_exports, {
-  AUTH_COMMAND: () => AUTH_COMMAND,
-  BYE_COMMAND: () => BYE_COMMAND,
-  DATA_COMMAND: () => DATA_COMMAND,
-  ENDFETCH_COMMAND: () => ENDFETCH_COMMAND,
-  END_COMMAND: () => END_COMMAND,
-  HELLO_COMMAND: () => HELLO_COMMAND,
-  INFO_COMMAND: () => INFO_COMMAND,
-  MINISEED_2_FORMAT: () => MINISEED_2_FORMAT,
-  MINISEED_3_FORMAT: () => MINISEED_3_FORMAT,
-  SEEDLINK4_PROTOCOL: () => SEEDLINK4_PROTOCOL,
-  SELECT_COMMAND: () => SELECT_COMMAND,
-  SEPacket: () => SEPacket,
-  SE_PACKET_SIGNATURE: () => SE_PACKET_SIGNATURE,
-  SLPROTO_COMMAND: () => SLPROTO_COMMAND,
-  STATION_COMMAND: () => STATION_COMMAND,
-  SeedlinkConnection: () => SeedlinkConnection2,
-  USERAGENT_COMMAND: () => USERAGENT_COMMAND
-});
-var SEEDLINK4_PROTOCOL = "SLPROTO4.0";
-var MINISEED_2_FORMAT = "2";
-var MINISEED_3_FORMAT = "3";
-var SE_PACKET_SIGNATURE = "SE";
-var END_COMMAND = "END";
-var ENDFETCH_COMMAND = "ENDFETCH";
-var AUTH_COMMAND = "AUTH";
-var BYE_COMMAND = "BYE";
-var DATA_COMMAND = "DATA";
-var HELLO_COMMAND = "HELLO";
-var INFO_COMMAND = "INFO";
-var SELECT_COMMAND = "SELECT";
-var SLPROTO_COMMAND = "SLPROTO";
-var STATION_COMMAND = "STATION";
-var USERAGENT_COMMAND = "USERAGENT";
-var useLittleEndian = true;
-var SEPacket = class _SEPacket {
-  constructor(dataFormat, dataSubformat, payloadLength, sequence, stationId) {
-    __publicField(this, "dataFormat");
-    __publicField(this, "dataSubformat");
-    __publicField(this, "payloadLength");
-    __publicField(this, "sequence");
-    __publicField(this, "stationId");
-    __publicField(this, "_miniseed");
-    __publicField(this, "_mseed3");
-    __publicField(this, "_json");
-    __publicField(this, "_rawPayload");
-    this.dataFormat = dataFormat;
-    this.dataSubformat = dataSubformat;
-    this.payloadLength = payloadLength;
-    this.sequence = sequence;
-    this.stationId = stationId;
-    this._miniseed = null;
-    this._mseed3 = null;
-    this._json = null;
-    this._rawPayload = null;
-  }
-  static parse(data) {
-    let sePacket;
-    if (data.byteLength < 16) {
-      throw new Error(
-        "message too small to be SE packet: " + data.byteLength + " " + dataViewToString(new DataView(data))
-      );
-    }
-    const slHeader = new DataView(data, 0, 16);
-    const sig = String.fromCharCode(slHeader.getUint8(0), slHeader.getUint8(1));
-    if (sig === SE_PACKET_SIGNATURE) {
-      const dataFormat = slHeader.getUint8(2);
-      const dataSubformat = slHeader.getUint8(3);
-      const payloadLength = slHeader.getUint32(4, useLittleEndian);
-      const sequenceNum = slHeader.getBigUint64(8, useLittleEndian);
-      const stationIdLength = slHeader.getUint8(16);
-      const stationIdDV = new DataView(data, 17, stationIdLength);
-      const stationId = dataViewToString(stationIdDV);
-      const dataView = new DataView(
-        data,
-        17 + stationIdLength,
-        data.byteLength - 16
-      );
-      sePacket = new _SEPacket(
-        String.fromCharCode(dataFormat),
-        String.fromCharCode(dataSubformat),
-        payloadLength,
-        sequenceNum,
-        stationId
-      );
-      sePacket._rawPayload = dataView;
-      if (dataFormat === 50) {
-        sePacket._miniseed = parseSingleDataRecord(dataView);
-      } else if (dataFormat === 51) {
-        sePacket._mseed3 = MSeed3Record.parseSingleDataRecord(dataView);
-      } else if (dataFormat === 74) {
-        const jsonData = JSON.parse(dataViewToString(dataView));
-        sePacket._json = jsonData;
-      }
-    } else {
-      throw new Error(
-        "Not a seedlink4 packet, no starting SE: " + slHeader.getInt8(0) + " " + slHeader.getInt8(1)
-      );
-    }
-    return sePacket;
-  }
-  /**
-   * is this packet a miniseed packet
-   *
-   * @returns          true if it is miniseed
-   */
-  isMiniseed() {
-    return isDef(this._miniseed) || this.dataFormat === MINISEED_2_FORMAT;
-  }
-  /**
-   * Parsed payload as a miniseed data record, if the streamid
-   * ends with '/MSEED', null otherwise.
-   *
-   * @returns miniseed DataRecord or null
-   */
-  asMiniseed() {
-    if (!isDef(this._rawPayload)) {
-      throw new Error(
-        `payload is missing in packet from ${this.stationId}, seq: ${this.sequence}`
-      );
-    }
-    if (!isDef(this._miniseed)) {
-      if (this.dataFormat === MINISEED_2_FORMAT && isDef(this._rawPayload)) {
-        this._miniseed = parseSingleDataRecord(this._rawPayload);
-      } else {
-        this._miniseed = null;
-      }
-    }
-    return this._miniseed;
-  }
-  /**
-   * is this packet a miniseed3 packet
-   *
-   * @returns          true if it is miniseed3
-   */
-  isMiniseed3() {
-    return isDef(this._mseed3) || this.dataFormat === MINISEED_3_FORMAT;
-  }
-  /**
-   * Parsed payload as a miniseed3 data record, if the data format is 3, null otherwise.
-   *
-   * @returns miniseed3 DataRecord or null
-   */
-  asMiniseed3() {
-    if (!isDef(this._rawPayload)) {
-      throw new Error(
-        `payload is missing in packet from ${this.stationId}, seq: ${this.sequence}`
-      );
-    }
-    if (!isDef(this._mseed3)) {
-      if (this.dataFormat === MINISEED_3_FORMAT && isDef(this._rawPayload)) {
-        this._mseed3 = MSeed3Record.parseSingleDataRecord(
-          this._rawPayload
-        );
-      } else if (this.isMiniseed()) {
-        const ms2 = this.asMiniseed();
-        if (ms2) {
-          this._mseed3 = convertMS2Record(ms2);
-        }
-      } else {
-        this._mseed3 = null;
-      }
-    }
-    return this._mseed3;
-  }
-};
-var SeedlinkConnection2 = class {
-  constructor(url, requestConfig, receivePacketFn, errorHandler) {
-    __publicField(this, "url");
-    __publicField(this, "requestConfig");
-    __publicField(this, "receivePacketFn");
-    __publicField(this, "errorHandler");
-    __publicField(this, "closeFn");
-    __publicField(this, "webSocket");
-    __publicField(this, "endCommand");
-    __publicField(this, "agent");
-    __publicField(this, "agentVersion");
-    this.webSocket = null;
-    this.url = url;
-    this.requestConfig = requestConfig;
-    this.receivePacketFn = receivePacketFn;
-    this.errorHandler = errorHandler;
-    this.closeFn = null;
-    this.endCommand = END_COMMAND;
-    this.agent = "seisplotjs";
-    this.agentVersion = version;
-  }
-  setAgent(agent) {
-    this.agent = agent.trim().replaceAll(/\w+/g, "_");
-  }
-  createDataTimeCommand(startTime, endTime) {
-    const endTimeStr = isDef(endTime) ? endTime.toISO() : "";
-    return `DATA ALL ${startTime.toISO()} ${endTimeStr}`;
-  }
-  setOnError(errorHandler) {
-    this.errorHandler = errorHandler;
-  }
-  setOnClose(closeFn) {
-    this.closeFn = closeFn;
-  }
-  connect() {
-    this.interactiveConnect().then(() => {
-      return this.sendHello();
-    }).then((lines) => {
-      if (this.checkProto(lines)) {
-        return true;
-      } else {
-        throw new Error(`${SEEDLINK4_PROTOCOL} not found in HELLO response`);
-      }
-    }).then(() => {
-      return this.sendCmdArray([
-        `${USERAGENT_COMMAND} ${this.agent}/${this.agentVersion} (seisplotjs/${version})`
-      ]);
-    }).then(() => {
-      return this.sendCmdArray(this.requestConfig);
-    }).then(() => {
-      return this.sendCmdArray([this.endCommand]);
-    }).then((val) => {
-      if (this.webSocket === null) {
-        throw new Error("websocket is null");
-      }
-      this.webSocket.onmessage = (event) => {
-        this.handle(event);
-      };
-      this.webSocket.send(`${this.endCommand}\r`);
-      return val;
-    }).catch((err) => {
-      this.close();
-      const insureErr = err instanceof Error ? err : new Error(stringify(err));
-      if (this.errorHandler) {
-        this.errorHandler(insureErr);
-      } else {
-        throw insureErr;
-      }
-    });
-  }
-  interactiveConnect() {
-    if (this.webSocket) {
-      this.webSocket.close();
-      this.webSocket = null;
-    }
-    return new Promise((resolve, reject) => {
-      try {
-        const webSocket = new WebSocket(this.url, SEEDLINK4_PROTOCOL);
-        this.webSocket = webSocket;
-        webSocket.binaryType = "arraybuffer";
-        webSocket.onopen = () => {
-          resolve(this);
-        };
-        webSocket.onerror = (event) => {
-          this.handleError(new Error("" + stringify(event)));
-          reject(event);
-        };
-        webSocket.onclose = (closeEvent) => {
-          if (this.closeFn) {
-            this.closeFn(closeEvent);
-          }
-          if (this.webSocket) {
-            this.webSocket = null;
-          }
-        };
-      } catch (err) {
-        this.close();
-        if (this.errorHandler) {
-          this.errorHandler(toError(err));
-        }
-        reject(err);
-      }
-    }).then(function(sl4) {
-      return sl4;
-    });
-  }
-  checkProto(lines) {
-    const sl = lines[0].split("::");
-    const caps = sl[1].trim().split(" ");
-    for (const c of caps) {
-      if (c === SEEDLINK4_PROTOCOL) {
-        return true;
-      }
-    }
-    return false;
-  }
-  close() {
-    if (this.webSocket) {
-      this.webSocket.close();
-    }
-    this.webSocket = null;
-  }
-  handle(event) {
-    if (event.data instanceof ArrayBuffer) {
-      const rawdata = event.data;
-      const data = new Uint8Array(rawdata);
-      if (data[0] === 83 && data[1] === 69) {
-        this.handleSEPacket(event);
-      } else {
-        this.close();
-        this.errorHandler(
-          new Error(
-            `Packet does not look like SE packet: ${data[0]} ${data[1]}`
-          )
-        );
-      }
-    } else {
-      this.close();
-      this.errorHandler(new Error("event.data is not ArrayBuffer"));
-    }
-  }
-  handleSEPacket(event) {
-    if (event.data instanceof ArrayBuffer) {
-      const data = event.data;
-      try {
-        const out = SEPacket.parse(data);
-        this.receivePacketFn(out);
-      } catch (e) {
-        this.close();
-        this.errorHandler(toError(e));
-      }
-    } else {
-      this.close();
-      this.errorHandler(new Error("event.data is not ArrayBuffer"));
-    }
-  }
-  isConnected() {
-    return this.webSocket !== null;
-  }
-  /**
-   * Sends initial HELLO to server and waits for response.
-   *
-   * @returns            Promise that resolves to the response from the server.
-   */
-  sendHello() {
-    const webSocket = this.webSocket;
-    const promise = new Promise((resolve, reject) => {
-      if (webSocket) {
-        webSocket.onmessage = (event) => {
-          if (event.data instanceof ArrayBuffer) {
-            const data = event.data;
-            const replyMsg = dataViewToString(new DataView(data));
-            const lines = replyMsg.trim().split("\r");
-            if (lines.length === 2) {
-              resolve(lines);
-            } else {
-              reject("not 2 lines: " + replyMsg);
-            }
-          } else {
-            this.close();
-            this.errorHandler(new Error("event.data is not ArrayBuffer"));
-          }
-        };
-        webSocket.send(`${HELLO_COMMAND}\r`);
-      } else {
-        reject("webSocket has been closed");
-      }
-    });
-    return promise;
-  }
-  /**
-   * Sends an array of commands, each as a Promise waiting for the 'OK' response
-   * before sending the next.
-   *
-   * @param   cmd array of commands to send
-   * @returns      Promise that resolves to the 'OK' returned by the last
-   *   command if successful, or rejects on the first failure.
-   */
-  sendCmdArray(cmd) {
-    return cmd.reduce((accum, next) => {
-      return accum.then(() => {
-        return this.createCmdPromise(next);
-      });
-    }, Promise.resolve("OK"));
-  }
-  /**
-   * creates a Promise that sends a command and waits resolved with the result.
-   *
-   * @param   mycmd command string to send.
-   * @returns        Promise that resolves to the reply from the server.
-   */
-  createCmdPromise(mycmd) {
-    const mythis = this;
-    const webSocket = this.webSocket;
-    const promise = new Promise(function(resolve, reject) {
-      if (webSocket) {
-        webSocket.onmessage = (event) => {
-          if (event.data instanceof ArrayBuffer) {
-            const data = event.data;
-            const replyMsg = dataViewToString(new DataView(data)).trim();
-            if (replyMsg === "OK") {
-              resolve(replyMsg);
-            } else {
-              reject("msg not OK: " + replyMsg);
-            }
-          } else {
-            mythis.close();
-            mythis.errorHandler(new Error("event.data is not ArrayBuffer"));
-          }
-        };
-        webSocket.send(mycmd + "\r\n");
-      } else {
-        reject("webSocket has been closed");
-      }
-    });
-    return promise;
-  }
-  /**
-   * handle errors that arise
-   *
-   * @private
-   * @param   error the error
-   */
-  handleError(error) {
-    if (this.errorHandler) {
-      this.errorHandler(error);
-    } else {
-      log("seedlink4 handleError: " + error.message);
     }
   }
 };
@@ -74416,25 +75414,35 @@ __export(transfer_exports, {
 });
 
 // node_modules/convert-units/lib/esm/convert.js
+var UnknownUnitError = class extends Error {
+};
+var OperationOrderError = class extends Error {
+};
+var IncompatibleUnitError = class extends Error {
+};
+var MeasureStructureError = class extends Error {
+};
+var UnknownMeasureError = class extends Error {
+};
 var Converter = class {
-  constructor(measures, value) {
+  constructor(measures, unitCache, value) {
     this.val = 0;
     this.destination = null;
     this.origin = null;
     if (typeof value === "number") {
       this.val = value;
     }
-    if (typeof measures !== "object") {
-      throw new Error("Measures cannot be blank");
-    }
     this.measureData = measures;
+    this.unitCache = unitCache;
   }
   /**
    * Lets the converter know the source unit abbreviation
+   *
+   * @throws OperationOrderError, UnknownUnitError
    */
   from(from) {
     if (this.destination != null)
-      throw new Error(".from must be called before .to");
+      throw new OperationOrderError(".from must be called before .to");
     this.origin = this.getUnit(from);
     if (this.origin == null) {
       this.throwUnsupportedUnitError(from);
@@ -74443,6 +75451,8 @@ var Converter = class {
   }
   /**
    * Converts the unit and returns the value
+   *
+   * @throws OperationOrderError, UnknownUnitError, IncompatibleUnitError, MeasureStructureError
    */
   to(to) {
     var _a, _b;
@@ -74458,7 +75468,7 @@ var Converter = class {
       return this.val;
     }
     if (destination.measure != origin.measure) {
-      throw new Error(`Cannot convert incompatible measures of ${destination.measure} and ${origin.measure}`);
+      throw new IncompatibleUnitError(`Cannot convert incompatible measures of ${destination.measure} and ${origin.measure}`);
     }
     let result = this.val * origin.unit.to_anchor;
     if (origin.unit.anchor_shift) {
@@ -74468,11 +75478,11 @@ var Converter = class {
       const measure30 = this.measureData[origin.measure];
       const anchors = measure30.anchors;
       if (anchors == null) {
-        throw new Error(`Unable to convert units. Anchors are missing for "${origin.measure}" and "${destination.measure}" measures.`);
+        throw new MeasureStructureError(`Unable to convert units. Anchors are missing for "${origin.measure}" and "${destination.measure}" measures.`);
       }
       const anchor = anchors[origin.system];
       if (anchor == null) {
-        throw new Error(`Unable to find anchor for "${origin.measure}" to "${destination.measure}". Please make sure it is defined.`);
+        throw new MeasureStructureError(`Unable to find anchor for "${origin.measure}" to "${destination.measure}". Please make sure it is defined.`);
       }
       const transform2 = (_a = anchor[destination.system]) === null || _a === void 0 ? void 0 : _a.transform;
       const ratio = (_b = anchor[destination.system]) === null || _b === void 0 ? void 0 : _b.ratio;
@@ -74481,7 +75491,7 @@ var Converter = class {
       } else if (typeof ratio === "number") {
         result *= ratio;
       } else {
-        throw new Error("A system anchor needs to either have a defined ratio number or a transform function.");
+        throw new MeasureStructureError("A system anchor needs to either have a defined ratio number or a transform function.");
       }
     }
     if (destination.unit.anchor_shift) {
@@ -74491,11 +75501,13 @@ var Converter = class {
   }
   /**
    * Converts the unit to the best available unit.
+   *
+   * @throws OperationOrderError
    */
   toBest(options) {
     var _a, _b, _c;
     if (this.origin == null)
-      throw new Error(".toBest must be called after .from");
+      throw new OperationOrderError(".toBest must be called after .from");
     const isNegative = this.val < 0;
     let exclude = [];
     let cutOffNumber = isNegative ? -1 : 1;
@@ -74524,31 +75536,27 @@ var Converter = class {
         }
       }
     }
+    if (best == null) {
+      return {
+        val: this.val,
+        unit: this.origin.abbr,
+        singular: this.origin.unit.name.singular,
+        plural: this.origin.unit.name.plural
+      };
+    }
     return best;
   }
   /**
    * Finds the unit
    */
   getUnit(abbr) {
-    const found = null;
-    for (const [measureName, measure30] of Object.entries(this.measureData)) {
-      for (const [systemName, system] of Object.entries(measure30.systems)) {
-        for (const [testAbbr, unit3] of Object.entries(system)) {
-          if (testAbbr == abbr) {
-            return {
-              abbr,
-              measure: measureName,
-              system: systemName,
-              unit: unit3
-            };
-          }
-        }
-      }
-    }
-    return found;
+    var _a;
+    return (_a = this.unitCache.get(abbr)) !== null && _a !== void 0 ? _a : null;
   }
   /**
-   * An alias for getUnit
+   * Provides additional information about the unit
+   *
+   * @throws UnknownUnitError
    */
   describe(abbr) {
     const result = this.getUnit(abbr);
@@ -74576,6 +75584,7 @@ var Converter = class {
    * However, if the measure doesn't exist, an empty array will be
    * returned
    *
+   *
    */
   list(measureName) {
     const list = [];
@@ -74592,9 +75601,9 @@ var Converter = class {
           }
         }
       }
-    } else if (!(measureName in this.measureData)) {
-      throw new Error(`Meausre "${measureName}" not found.`);
     } else {
+      if (!this.isMeasure(measureName))
+        throw new UnknownMeasureError(`Meausure "${measureName}" not found.`);
       const measure30 = this.measureData[measureName];
       for (const [systemName, units] of Object.entries(measure30.systems)) {
         for (const [abbr, unit3] of Object.entries(units)) {
@@ -74609,6 +75618,9 @@ var Converter = class {
     }
     return list;
   }
+  isMeasure(measureName) {
+    return measureName in this.measureData;
+  }
   throwUnsupportedUnitError(what) {
     let validUnits = [];
     for (const measure30 of Object.values(this.measureData)) {
@@ -74616,7 +75628,7 @@ var Converter = class {
         validUnits = validUnits.concat(Object.keys(systems));
       }
     }
-    throw new Error(`Unsupported unit ${what}, use one of: ${validUnits.join(", ")}`);
+    throw new UnknownUnitError(`Unsupported unit ${what}, use one of: ${validUnits.join(", ")}`);
   }
   /**
    * Returns the abbreviated measures that the value can be
@@ -74625,7 +75637,7 @@ var Converter = class {
   possibilities(forMeasure) {
     let possibilities = [];
     let list_measures = [];
-    if (typeof forMeasure == "string") {
+    if (typeof forMeasure == "string" && this.isMeasure(forMeasure)) {
       list_measures.push(forMeasure);
     } else if (this.origin != null) {
       list_measures.push(this.origin.measure);
@@ -74651,12 +75663,29 @@ var Converter = class {
     return Object.keys(this.measureData);
   }
 };
-function convert_default(measures) {
-  return (value) => new Converter(measures, value);
+function buildUnitCache(measures) {
+  const unitCache = /* @__PURE__ */ new Map();
+  for (const [measureName, measure30] of Object.entries(measures)) {
+    for (const [systemName, system] of Object.entries(measure30.systems)) {
+      for (const [testAbbr, unit3] of Object.entries(system)) {
+        unitCache.set(testAbbr, {
+          measure: measureName,
+          system: systemName,
+          abbr: testAbbr,
+          unit: unit3
+        });
+      }
+    }
+  }
+  return unitCache;
 }
-
-// node_modules/convert-units/lib/esm/index.js
-var esm_default = convert_default;
+function configureMeasurements(measures) {
+  if (typeof measures !== "object") {
+    throw new TypeError("The measures argument needs to be an object");
+  }
+  const unitCache = buildUnitCache(measures);
+  return (value) => new Converter(measures, unitCache, value);
+}
 
 // node_modules/convert-units/lib/esm/definitions/acceleration.js
 var metric = {
@@ -74802,12 +75831,26 @@ var metric2 = {
     },
     to_anchor: 1 / 1e4
   },
+  dm2: {
+    name: {
+      singular: "Square Decimeter",
+      plural: "Square Decimeters"
+    },
+    to_anchor: 1 / 100
+  },
   m2: {
     name: {
       singular: "Square Meter",
       plural: "Square Meters"
     },
     to_anchor: 1
+  },
+  a: {
+    name: {
+      singular: "Are",
+      plural: "Ares"
+    },
+    to_anchor: 100
   },
   ha: {
     name: {
@@ -74935,6 +75978,13 @@ var SI4 = {
     },
     to_anchor: 1
   },
+  \u03BCA: {
+    name: {
+      singular: "Microampere",
+      plural: "Microamperes"
+    },
+    to_anchor: 1e-6
+  },
   mA: {
     name: {
       singular: "Milliampere",
@@ -74948,6 +75998,13 @@ var SI4 = {
       plural: "Kiloamperes"
     },
     to_anchor: 1e3
+  },
+  MA: {
+    name: {
+      singular: "Megaampere",
+      plural: "Megaamperes"
+    },
+    to_anchor: 1e6
   }
 };
 var measure6 = {
@@ -74958,36 +76015,47 @@ var measure6 = {
 var current_default = measure6;
 
 // node_modules/convert-units/lib/esm/definitions/digital.js
-var bits = {
-  b: {
+var bit = {
+  bit: {
     name: {
       singular: "Bit",
       plural: "Bits"
     },
     to_anchor: 1
-  },
-  Kb: {
+  }
+};
+var byte = {
+  byte: {
+    name: {
+      singular: "Byte",
+      plural: "Bytes"
+    },
+    to_anchor: 1
+  }
+};
+var SI5 = {
+  kB: {
     name: {
       singular: "Kilobit",
       plural: "Kilobits"
     },
     to_anchor: 1e3
   },
-  Mb: {
+  MB: {
     name: {
       singular: "Megabit",
       plural: "Megabits"
     },
     to_anchor: 1e6
   },
-  Gb: {
+  GB: {
     name: {
       singular: "Gigabit",
       plural: "Gigabits"
     },
     to_anchor: 1e9
   },
-  Tb: {
+  TB: {
     name: {
       singular: "Terabit",
       plural: "Terabits"
@@ -74995,57 +76063,86 @@ var bits = {
     to_anchor: 1e12
   }
 };
-var bytes = {
-  B: {
+var IEC = {
+  KiB: {
     name: {
-      singular: "Byte",
-      plural: "Bytes"
+      singular: "Kilibyte",
+      plural: "Kilibytes"
     },
-    to_anchor: 1
+    to_anchor: 1024
   },
-  KB: {
+  MiB: {
     name: {
-      singular: "Kilobyte",
-      plural: "Kilobytes"
+      singular: "Megibyte",
+      plural: "Megibytes"
     },
-    to_anchor: 1e3
+    to_anchor: 1048576
   },
-  MB: {
+  GiB: {
     name: {
-      singular: "Megabyte",
-      plural: "Megabytes"
+      singular: "Gigibyte",
+      plural: "Gigibytes"
     },
-    to_anchor: 1e6
+    to_anchor: 1073741824
   },
-  GB: {
+  TiB: {
     name: {
-      singular: "Gigabyte",
-      plural: "Gigabytes"
+      singular: "Teribyte",
+      plural: "Teribytes"
     },
-    to_anchor: 1e9
-  },
-  TB: {
-    name: {
-      singular: "Terabyte",
-      plural: "Terabytes"
-    },
-    to_anchor: 1e12
+    to_anchor: 1099511627780
   }
 };
 var measure7 = {
   systems: {
-    bits,
-    bytes
+    bit,
+    byte,
+    SI: SI5,
+    IEC
   },
   anchors: {
-    bits: {
-      bytes: {
-        ratio: 1 / 8
+    SI: {
+      IEC: {
+        ratio: 1
+      },
+      bit: {
+        ratio: 8
+      },
+      byte: {
+        ratio: 1
       }
     },
-    bytes: {
-      bits: {
+    IEC: {
+      SI: {
+        ratio: 1
+      },
+      bit: {
         ratio: 8
+      },
+      byte: {
+        ratio: 1
+      }
+    },
+    bit: {
+      SI: {
+        ratio: 0.125
+      },
+      IEC: {
+        ratio: 0.125
+      },
+      byte: {
+        ratio: 0.125
+      }
+    },
+    byte: {
+      SI: {
+        ratio: 1
+      },
+      bit: {
+        ratio: 8
+      },
+      IEC: {
+        ratio: 1
       }
     }
   }
@@ -75077,7 +76174,7 @@ var measure8 = {
 var each_default2 = measure8;
 
 // node_modules/convert-units/lib/esm/definitions/energy.js
-var SI5 = {
+var SI6 = {
   Ws: {
     name: {
       singular: "Watt-second",
@@ -75174,7 +76271,7 @@ var nutrition = {
 };
 var measure9 = {
   systems: {
-    SI: SI5,
+    SI: SI6,
     nutrition
   },
   anchors: {
@@ -75193,7 +76290,7 @@ var measure9 = {
 var energy_default = measure9;
 
 // node_modules/convert-units/lib/esm/definitions/force.js
-var SI6 = {
+var SI7 = {
   N: {
     name: {
       singular: "Newton",
@@ -75225,13 +76322,13 @@ var SI6 = {
 };
 var measure10 = {
   systems: {
-    SI: SI6
+    SI: SI7
   }
 };
 var force_default = measure10;
 
 // node_modules/convert-units/lib/esm/definitions/frequency.js
-var SI7 = {
+var SI8 = {
   mHz: {
     name: {
       singular: "millihertz",
@@ -75298,7 +76395,7 @@ var SI7 = {
 };
 var measure11 = {
   systems: {
-    SI: SI7
+    SI: SI8
   }
 };
 var frequency_default = measure11;
@@ -75371,6 +76468,13 @@ var metric5 = {
       plural: "Centimeters"
     },
     to_anchor: 0.01
+  },
+  dm: {
+    name: {
+      singular: "Decimeter",
+      plural: "Decimeters"
+    },
+    to_anchor: 0.1
   },
   m: {
     name: {
@@ -75541,12 +76645,12 @@ var measure14 = {
   anchors: {
     metric: {
       imperial: {
-        ratio: 1 / 453.592
+        ratio: 1 / 453.59237
       }
     },
     imperial: {
       metric: {
-        ratio: 453.592
+        ratio: 453.59237
       }
     }
   }
@@ -75561,6 +76665,13 @@ var metric7 = {
       plural: "Kilograms per second"
     },
     to_anchor: 1
+  },
+  "kg/min": {
+    name: {
+      singular: "Kilogram per minute",
+      plural: "Kilograms per minute"
+    },
+    to_anchor: 1 / 60
   },
   "kg/h": {
     name: {
@@ -75667,7 +76778,7 @@ var measure16 = {
 var pace_default = measure16;
 
 // node_modules/convert-units/lib/esm/definitions/partsPer.js
-var SI8 = {
+var SI9 = {
   ppm: {
     name: {
       singular: "Part-per Million",
@@ -75699,7 +76810,7 @@ var SI8 = {
 };
 var measure17 = {
   systems: {
-    SI: SI8
+    SI: SI9
   }
 };
 var partsPer_default = measure17;
@@ -75923,6 +77034,13 @@ var metric10 = {
     },
     to_anchor: 1 / 10
   },
+  mbar: {
+    name: {
+      singular: "millibar",
+      plural: "millibar"
+    },
+    to_anchor: 0.1
+  },
   bar: {
     name: {
       singular: "bar",
@@ -75996,7 +77114,7 @@ var measure20 = {
 var pressure_default = measure20;
 
 // node_modules/convert-units/lib/esm/definitions/reactiveEnergy.js
-var SI9 = {
+var SI10 = {
   VARh: {
     name: {
       singular: "Volt-Ampere Reactive Hour",
@@ -76035,13 +77153,13 @@ var SI9 = {
 };
 var measure21 = {
   systems: {
-    SI: SI9
+    SI: SI10
   }
 };
 var reactiveEnergy_default = measure21;
 
 // node_modules/convert-units/lib/esm/definitions/reactivePower.js
-var SI10 = {
+var SI11 = {
   VAR: {
     name: {
       singular: "Volt-Ampere Reactive",
@@ -76080,7 +77198,7 @@ var SI10 = {
 };
 var measure22 = {
   systems: {
-    SI: SI10
+    SI: SI11
   }
 };
 var reactivePower_default = measure22;
@@ -76228,7 +77346,7 @@ var temperature_default = measure24;
 
 // node_modules/convert-units/lib/esm/definitions/time.js
 var daysInYear2 = 365.25;
-var SI11 = {
+var SI12 = {
   ns: {
     name: {
       singular: "Nanosecond",
@@ -76302,7 +77420,7 @@ var SI11 = {
 };
 var measure25 = {
   systems: {
-    SI: SI11
+    SI: SI12
   }
 };
 var time_default = measure25;
@@ -76347,13 +77465,20 @@ var measure26 = {
 var torque_default = measure26;
 
 // node_modules/convert-units/lib/esm/definitions/voltage.js
-var SI12 = {
+var SI13 = {
   V: {
     name: {
       singular: "Volt",
       plural: "Volts"
     },
     to_anchor: 1
+  },
+  \u03BCV: {
+    name: {
+      singular: "Microvolt",
+      plural: "Microvolts"
+    },
+    to_anchor: 1e-6
   },
   mV: {
     name: {
@@ -76368,11 +77493,18 @@ var SI12 = {
       plural: "Kilovolts"
     },
     to_anchor: 1e3
+  },
+  MV: {
+    name: {
+      singular: "Megavolt",
+      plural: "Megavolts"
+    },
+    to_anchor: 1e6
   }
 };
 var measure27 = {
   systems: {
-    SI: SI12
+    SI: SI13
   }
 };
 var voltage_default = measure27;
@@ -76392,6 +77524,13 @@ var metric14 = {
       plural: "Cubic Centimeters"
     },
     to_anchor: 1 / 1e3
+  },
+  dm3: {
+    name: {
+      singular: "Cubic Decimeter",
+      plural: "Cubic Decimeters"
+    },
+    to_anchor: 1
   },
   ml: {
     name: {
@@ -76608,6 +77747,41 @@ var metric15 = {
     },
     to_anchor: 1 / 1e3
   },
+  "dm3/s": {
+    name: {
+      singular: "Cubic Decimeter per second",
+      plural: "Cubic Decimeters per second"
+    },
+    to_anchor: 1
+  },
+  "dm3/min": {
+    name: {
+      singular: "Cubic Decimeter per minute",
+      plural: "Cubic Decimeters per minute"
+    },
+    to_anchor: 1 / 60
+  },
+  "dm3/h": {
+    name: {
+      singular: "Cubic Decimeter per hour",
+      plural: "Cubic Decimeters per hour"
+    },
+    to_anchor: 1 / 3600
+  },
+  "dm3/d": {
+    name: {
+      singular: "Cubic Decimeter per day",
+      plural: "Cubic Decimeters per day"
+    },
+    to_anchor: 1 / 86400
+  },
+  "dm3/a": {
+    name: {
+      singular: "Cubic Decimeter per year",
+      plural: "Cubic Decimeters per year"
+    },
+    to_anchor: 1 / 31557600
+  },
   "ml/s": {
     name: {
       singular: "Millilitre per second",
@@ -76650,6 +77824,20 @@ var metric15 = {
     },
     to_anchor: 1 / 3600
   },
+  "l/d": {
+    name: {
+      singular: "Litre per day",
+      plural: "Litres per day"
+    },
+    to_anchor: 1 / 86400
+  },
+  "l/a": {
+    name: {
+      singular: "Litre per year",
+      plural: "Litres per year"
+    },
+    to_anchor: 1 / 31557600
+  },
   "kl/s": {
     name: {
       singular: "Kilolitre per second",
@@ -76691,6 +77879,20 @@ var metric15 = {
       plural: "Cubic meters per hour"
     },
     to_anchor: 5 / 18
+  },
+  "m3/d": {
+    name: {
+      singular: "Cubic meter per day",
+      plural: "Cubic meters per day"
+    },
+    to_anchor: 5 / 432
+  },
+  "m3/a": {
+    name: {
+      singular: "Cubic meter per year",
+      plural: "Cubic meters per year"
+    },
+    to_anchor: 5 / 157788
   },
   "km3/s": {
     name: {
@@ -76911,7 +78113,7 @@ var allMeasures = {
 var all_default = allMeasures;
 
 // src/transfer.ts
-var convert = esm_default(all_default);
+var convert = configureMeasurements(all_default);
 function transfer(seis, response, lowCut, lowPass, highPass, highCut) {
   if (!response) {
     throw new Error("Response not exist???");
@@ -77366,11 +78568,12 @@ function parseGeoJSON(geojson) {
 }
 function parseFeatureAsQuake(feature) {
   const quake = new Quake();
-  quake.publicId = `quakeml:earthquake.usgs.gov/fdsnws/event/1/query?eventid={feature.id}`;
+  quake.publicId = `quakeml:earthquake.usgs.gov/fdsnws/event/1/query?eventid=${feature.id}`;
   const p = feature.properties;
   if (p == null) {
     throw new Error("Geojson missing properties");
   }
+  quake.eventId = stringify(feature.id);
   quake.descriptionList.push(new EventDescription(p.title));
   const origin = new Origin(
     DateTime.fromMillis(p.time),

@@ -426,8 +426,8 @@ public class Arrival {
         }
 
         double ampFactor = getAmplitudeFactorPSV(sourceArgs.getMoment(), sourceArgs.getAttenuationFrequency(), sourceArgs.getNumFrequencies());
-        if (sourceArgs.hasStrikeDipRake() && searchCalc.azimuth != null ) {
-            double[] radiationPattern = sourceArgs.calcRadiationPat( searchCalc.azimuth, getTakeoffAngleDegree());
+        if (sourceArgs.hasStrikeDipRake() && searchCalc.hasAzimuth() ) {
+            double[] radiationPattern = sourceArgs.calcRadiationPat( searchCalc.getAzimuth(), getTakeoffAngleDegree());
             double radTerm = 1;
             if (getPhase().getInitialPhaseSegment().isPWave) {
                 radTerm = radiationPattern[0];
@@ -435,7 +435,7 @@ public class Arrival {
                 radTerm = radiationPattern[1];
             }
             ampFactor *= radTerm;
-        } else if (sourceArgs.getStrikeDipRake() != null && searchCalc.azimuth == null ) {
+        } else if (sourceArgs.getStrikeDipRake() != null && (searchCalc.hasAzimuth()) ) {
             // change to TauPException
             throw new TauModelException("Amplitude with Strike-dip-rake requires azimuth");
         }
@@ -490,12 +490,12 @@ public class Arrival {
     public double getAmplitudeFactorSH() throws TauModelException, VelocityModelException, SlownessModelException {
         SeismicSourceArgs sourceArgs = getRayCalculateable().getSourceArgs();
         double ampFactor = getAmplitudeFactorSH(sourceArgs.getMoment(), sourceArgs.getAttenuationFrequency(), sourceArgs.getNumFrequencies());
-        if (sourceArgs.hasStrikeDipRake() && searchCalc.azimuth != null ) {
-            double[] radiationPattern = sourceArgs.calcRadiationPat( searchCalc.azimuth, getTakeoffAngleDegree());
+        if (sourceArgs.hasStrikeDipRake() && searchCalc.hasAzimuth() ) {
+            double[] radiationPattern = sourceArgs.calcRadiationPat( searchCalc.getAzimuth(), getTakeoffAngleDegree());
             ampFactor *= radiationPattern[2];
-        } else if (sourceArgs.hasStrikeDipRake() && searchCalc.azimuth == null ) {
+        } else if (sourceArgs.hasStrikeDipRake() && !searchCalc.hasAzimuth() ) {
             // change to TauPException
-            throw new TauModelException("Amplitude with Strike-dip-rake requires azimuth");
+            throw new TauModelException("Amplitude with Strike-dip-rake requires azimuth: "+searchCalc);
         }
         return ampFactor;
     }
@@ -537,8 +537,8 @@ public class Arrival {
     public double getRadiationPatternPSV() {
         SeismicSourceArgs sourceArgs = getRayCalculateable().getSourceArgs();
         double radTerm = 1;
-        if (sourceArgs != null && sourceArgs.hasStrikeDipRake() && searchCalc.azimuth != null ) {
-            double[] radiationPattern = sourceArgs.calcRadiationPat( searchCalc.azimuth, getTakeoffAngleDegree());
+        if (sourceArgs != null && sourceArgs.hasStrikeDipRake() && searchCalc.hasAzimuth() ) {
+            double[] radiationPattern = sourceArgs.calcRadiationPat( searchCalc.getAzimuth(), getTakeoffAngleDegree());
             if (getPhase().getInitialPhaseSegment().isPWave) {
                 radTerm = radiationPattern[0];
             } else {
@@ -551,8 +551,8 @@ public class Arrival {
     public double getRadiationPatternSH() {
         SeismicSourceArgs sourceArgs = getRayCalculateable().getSourceArgs();
         double radTerm = 1;
-        if (sourceArgs != null && sourceArgs.hasStrikeDipRake() && searchCalc.azimuth != null ) {
-            double[] radiationPattern = sourceArgs.calcRadiationPat( searchCalc.azimuth, getTakeoffAngleDegree());
+        if (sourceArgs != null && sourceArgs.hasStrikeDipRake() && searchCalc.hasAzimuth() ) {
+            double[] radiationPattern = sourceArgs.calcRadiationPat( searchCalc.getAzimuth(), getTakeoffAngleDegree());
             if (getPhase().getInitialPhaseSegment().isPWave) {
                 radTerm = 0;
             } else {
@@ -756,8 +756,8 @@ public class Arrival {
         SeismicSourceArgs sourceArgs = getRayCalculateable().getSourceArgs();
 
         double[] radiationPattern = new double[] {1,1,1};
-        if (sourceArgs!=null && searchCalc.azimuth != null) {
-            radiationPattern = sourceArgs.calcRadiationPat( searchCalc.azimuth, getTakeoffAngleDegree());
+        if (sourceArgs!=null && searchCalc.hasAzimuth()) {
+            radiationPattern = sourceArgs.calcRadiationPat( searchCalc.getAzimuth(), getTakeoffAngleDegree());
         }
         return radiationPattern;
     }

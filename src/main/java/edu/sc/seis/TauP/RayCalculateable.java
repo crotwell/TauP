@@ -59,6 +59,8 @@ public abstract class RayCalculateable {
         return azimuth != null || (this.staLatLon!=null && this.evtLatLon!=null);
     }
 
+    public boolean isGeodetic() { return geodetic;}
+
     /**
      * Returns azimuth, if available, in the range -180&lt;baz&lt;=180.
      * @return azimuth

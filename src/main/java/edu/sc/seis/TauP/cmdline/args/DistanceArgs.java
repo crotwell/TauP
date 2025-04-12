@@ -37,6 +37,19 @@ public class DistanceArgs {
                 simpleDistanceList.add(DistanceRay.ofKilometers(d));
             }
         }
+        if (getAzimuth() != null) {
+            for (DistanceRay dr : simpleDistanceList) {
+                if (!dr.hasAzimuth()) {
+                    dr.setAzimuth(getAzimuth());
+                }
+            }
+        } else if (getBackAzimuth() != null) {
+            for (DistanceRay dr : simpleDistanceList) {
+                if (!dr.hasBackAzimuth()) {
+                    dr.setBackAzimuth(getBackAzimuth());
+                }
+            }
+        }
 
         boolean hasEvent = hasEventLatLon();
         List<Location> quakes = new ArrayList<>();
