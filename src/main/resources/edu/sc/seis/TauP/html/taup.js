@@ -706,8 +706,12 @@ export function form_url() {
       let botvp = document.querySelector('input[name="botvp"]').value;
       let botvs = document.querySelector('input[name="botvs"]').value;
       let botden = document.querySelector('input[name="botden"]').value;
-      url += `&layer=${topvp},${topvs},${topden}`;
-      url += `,${botvp},${botvs},${botden}`;
+      if (fsrf) {
+        url += `&layer=0,0,0,${topvp},${topvs},${topden}`;
+      } else {
+        url += `&layer=${topvp},${topvs},${topden}`;
+        url += `,${botvp},${botvs},${botden}`;
+      }
     }
     let anglestep = document.querySelector('input[name="anglestep"]').value;
     if (anglestep > 0) {
