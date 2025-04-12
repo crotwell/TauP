@@ -79,7 +79,7 @@ export function createModelDisconRadio() {
     }
   }).then(json => {
     const m = json.models[0];
-    m.discon.forEach( dobj => {
+    m.discontinuities.forEach( dobj => {
       const depthName = dobj?.name!=null?dobj.name:dobj.depth;
       const input = document.createElement("input");
       input.setAttribute("type", "checkbox");
@@ -168,7 +168,7 @@ export async function display_cmdline(taup_url) {
     console.log(`cmdline response: ${response.ok} ${response.ok === true}`)
     if (!response.ok) {
       return response.text().then( errMsg => {
-        let message = "Command line server response not ok";
+        let message = `Command line server response not ok: ${response.statusText}`;
         displayErrorMessage(message, cmdline_url, new Error(errMsg));
       });
     } else {
@@ -203,7 +203,7 @@ export async function display_results(taup_url) {
     }
     if (!response.ok) {
       return response.text().then( errMsg => {
-        let message = "TauP server response not ok";
+        let message = `TauP server response not ok: ${response.statusText}`;
         displayErrorMessage(message, taup_url, new Error(errMsg));
       });
     } else if (format === "text" || format === "gmt"
@@ -301,15 +301,21 @@ export function displayErrorMessage(title, the_url, exception) {
   link.textContent = the_url;
   const exceptDiv = document.createElement("div");
   msgDiv.appendChild(exceptDiv);
-  if (exception.message && exception.message.startsWith("<html>")) {
-    const exHTML = Document.parseHTMLUnsafe(exception.message);
-    const body = exHTML.body;
-    for (const exEl of body.children) {
-      exceptDiv.appendChild(exEl);
+  if (exception.message) {
+    if (exception.message.startsWith("<html>")) {
+      const exHTML = Document.parseHTMLUnsafe(exception.message);
+      const body = exHTML.body;
+      for (const exEl of body.children) {
+        exceptDiv.appendChild(exEl);
+      }
+    } else {
+      const pre_el = document.createElement("pre");
+      pre_el.textContent = `${exception.message}`;
+      exceptDiv.appendChild(pre_el);
     }
   } else {
     const pre_el = document.createElement("pre");
-    pre_el.textContent = ""+exception;
+    pre_el.textContent = `${exception}`;
     exceptDiv.appendChild(pre_el);
   }
 }
@@ -877,7 +883,7 @@ export function loadParamHelp(toolname) {
   }).then( response => {
     if (!response.ok) {
       return response.text().then( errMsg => {
-        let message = "Parameter help response not ok";
+        let message = `Parameter help response not ok: ${response.statusText}`;
         displayErrorMessage(message, taup_url, new Error(errMsg));
       });
       return {};

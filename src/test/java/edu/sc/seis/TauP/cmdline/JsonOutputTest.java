@@ -45,7 +45,7 @@ public class JsonOutputTest {
     /**
      * Probably would be good to check the output, but at least verify command runs and that output
      * is parsable json.
-     * 
+     *
      * @throws Exception
      */
     @Test

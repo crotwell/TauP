@@ -13,15 +13,15 @@ public class ModelDiscontinuites {
                 continue;
             }
             if (vMod.isNamedDisconDepth(d)) {
-                disconList.add(vMod.getNamedDisconForDepth(d));
+                discontinuities.add(vMod.getNamedDisconForDepth(d));
             } else {
-                disconList.add(new NamedVelocityDiscon(d));
+                discontinuities.add(new NamedVelocityDiscon(d));
             }
         }
     }
 
     String modelname;
-    List<NamedVelocityDiscon> disconList = new ArrayList<>();
+    List<NamedVelocityDiscon> discontinuities = new ArrayList<>();
 
 
 }
