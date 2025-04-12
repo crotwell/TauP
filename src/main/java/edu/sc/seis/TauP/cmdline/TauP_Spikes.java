@@ -62,11 +62,6 @@ import static edu.sc.seis.TauP.cmdline.args.OutputTypes.MS3;
         usageHelpAutoWidth = true)
 public class TauP_Spikes extends TauP_AbstractRayTool {
 
-    /**
-     * deltaT of the seismogram, default is .05 which gives 20 sps.
-     */
-    protected double deltaT = .05;
-
     public TauP_Spikes() {
         super(new SeismogramOutputTypeArgs(MS3, "taup_spikes"));
         outputTypeArgs = (SeismogramOutputTypeArgs) abstractOutputTypeArgs;
@@ -78,7 +73,7 @@ public class TauP_Spikes extends TauP_AbstractRayTool {
      * @return Value of deltaT.
      */
     public double getDeltaT() {
-        return deltaT;
+        return 1.0/sps;
     }
 
     /**
@@ -87,7 +82,7 @@ public class TauP_Spikes extends TauP_AbstractRayTool {
      * @param v Value to assign to deltaT.
      */
     public void setDeltaT(double v) {
-        this.deltaT = v;
+        this.sps = 1/v;
     }
 
     @Override
@@ -203,15 +198,16 @@ public class TauP_Spikes extends TauP_AbstractRayTool {
                     rotateAngle = 90;
                 }
                 incidentAngle += rotateAngle;
-                int width = 2;
-                if (deltaT < 1) {
-                    width = (int) Math.round(1/deltaT) + 1;
-                }
-                for (int w = 0; w < width; w++) {
+                int width = (int) Math.round(pulseWidth*sps) + 1;
+                if (width < 2) {width=2;}
 
-                transverse[timeIdx+w] += shAmpFactor;
-                radial[timeIdx+w] += psvAmpFactor * Math.cos(incidentAngle*Math.PI/180);
-                vertical[timeIdx+w] += psvAmpFactor * Math.sin(incidentAngle*Math.PI/180);
+                float t = (float) shAmpFactor;
+                float r = (float) (psvAmpFactor * Math.cos(incidentAngle*Math.PI/180));
+                float v = (float) (psvAmpFactor * Math.sin(incidentAngle*Math.PI/180));
+                for (int w = 0; w < width; w++) {
+                    transverse[timeIdx+w] += t;
+                    radial[timeIdx+w] += r;
+                    vertical[timeIdx+w] += v;
                 }
             }
 
@@ -353,7 +349,7 @@ public class TauP_Spikes extends TauP_AbstractRayTool {
         validateArguments();
         List<SeismicPhase> phaseList = getSeismicPhases();
         List<MSeed3Record> spikeRecords = new ArrayList<>();
-        float[][] sourceTerm = effectiveSourceTerm( sourceArgs.getMw(), (float) deltaT,  1000);
+        float[][] sourceTerm = effectiveSourceTerm( sourceArgs.getMw(), (float)( 1/sps),  1000);
         Instant sourceTime = new MSeed3Record().getStartInstant();
         for (DistanceRay distVal : degreesList) {
             double degrees = distVal.getDegrees(getRadiusOfEarth());
@@ -653,4 +649,20 @@ public class TauP_Spikes extends TauP_AbstractRayTool {
 
     @CommandLine.Mixin
     SeismogramOutputTypeArgs outputTypeArgs;
+
+
+    /**
+     * deltaT of the seismogram, default is .05 which gives 20 sps.
+     */
+    @CommandLine.Option(names = "sps",
+            defaultValue = "20",
+            description = "Samples per second for the output seismogram, defaults to $DEFAULT_VALUE"
+    )
+    protected double sps = 20;
+
+    @CommandLine.Option(names = "--pulsewidth",
+            defaultValue = "1.0",
+            description = "Width in seconds of the spike pulse for each arrival")
+    double pulseWidth = 1.0;
+
 }
