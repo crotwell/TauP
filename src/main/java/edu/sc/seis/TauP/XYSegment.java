@@ -363,8 +363,9 @@ public class XYSegment {
      * @param css_class optional class to add to css class attribute
      */
     public void asSVG(PrintWriter writer, String css_class) {
-        asSVG(writer, css_class, "%3g", "%3g");
+        asSVG(writer, css_class, "%f", "%f");
     }
+
     public void asSVG(PrintWriter writer, String css_class, String xFormat, String yFormat) {
 
         String cssClassParam = ""+css_class;
@@ -386,7 +387,8 @@ public class XYSegment {
             float xf = (float)x[i];
             float yf = (float)y[i];
             if (Float.isFinite(xf) && Float.isFinite(yf)) {
-                writer.println(String.format(xFormat + " " + yFormat, xf, yf));
+                //writer.println(String.format(xFormat + " " + yFormat, xf, yf));
+                writer.println(xf+"  "+ yf);
                 priorIsFinite = true;
             } else if (i != 0 && i != x.length && priorIsFinite) {
                 writer.println("  \"  /> <!-- " + css_class + "-->");
