@@ -1564,21 +1564,30 @@ public class VelocityModel implements Cloneable, Serializable {
                                  spherical,
                                  layers);
     }
-    
+
+    public ReflTrans calcReflTransCoefFreeSurface() throws VelocityModelException {
+        double pVel = getVelocityLayer(0).getTopPVelocity();
+        double sVel = getVelocityLayer(0).getTopSVelocity();
+        double rho = getVelocityLayer(0).getTopDensity();
+        return calcReflTransCoef(0, 0, 0, pVel, sVel, rho, false);
+    }
+
     public ReflTrans calcReflTransCoef(double depth, boolean downgoing) throws VelocityModelException {
         if (!isDisconDepth(depth)) {
             throw new VelocityModelException("depth " + depth + " is not a discontinuity in the model");
         }
-        double abovePVel = evaluateAbove(depth, VelocityModelMaterial.P_VELOCITY);
-        double aboveSVel = evaluateAbove(depth, VelocityModelMaterial.S_VELOCITY);
-        double aboveRho = evaluateAbove(depth, VelocityModelMaterial.DENSITY);
+        double abovePVel = 0;
+        double aboveSVel = 0;
+        double aboveRho = 0;
         double belowPVel = evaluateBelow(depth, VelocityModelMaterial.P_VELOCITY);
         double belowSVel = evaluateBelow(depth, VelocityModelMaterial.S_VELOCITY);
         double belowRho = evaluateBelow(depth, VelocityModelMaterial.DENSITY);
-        if (depth == 0) {
-            abovePVel = 0.0;
-            aboveSVel = 0.0;
-            aboveRho = 0.0;
+        if (depth != 0) {
+            abovePVel = evaluateAbove(depth, VelocityModelMaterial.P_VELOCITY);
+            aboveSVel = evaluateAbove(depth, VelocityModelMaterial.S_VELOCITY);
+            aboveRho = evaluateAbove(depth, VelocityModelMaterial.DENSITY);
+        } else {
+            abovePVel = belowPVel;
         }
         return calcReflTransCoef(abovePVel, aboveSVel, aboveRho, belowPVel, belowSVel, belowRho, downgoing);
     }

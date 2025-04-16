@@ -38,7 +38,6 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
 
     @Override
     public void start() throws IOException, TauPException {
-
         double step;
         if (isLinearRayParam()) {
             step = rayparamStep;
@@ -46,39 +45,48 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
             step = angleStep;
         }
         List<XYPlottingData> xypList;
+
+        VelocityModel vMod = null;
         if (layerParams == null) {
-            VelocityModel vMod = TauModelLoader.loadVelocityModel(modelArgs.getModelName(), modelType);
+            vMod = TauModelLoader.loadVelocityModel(modelArgs.getModelName(), modelType);
             if (vMod == null) {
                 throw new TauPException("Unable to find model " + modelArgs.getModelName());
             }
-
-            if (isEnergyFlux()) {
-                yAxisType.addAll(ReflTransAxisType.allEnergy);
-            } else {
-                yAxisType.addAll(ReflTransAxisType.allDisplacement);
-            }
-            if (fsrf) {
+        }
+        if (fsrf) {
+            // special case for free surface as which is above/below can be confusing, fix by using the non-zero layer
+            yAxisType.addAll(ReflTransAxisType.allFreeRF);
+            if (layerParams == null) {
                 xypList = calculateFSRF(vMod, inpwave, inswave, inshwave, isLinearRayParam(), step);
             } else {
-                xypList = calculate(vMod, depth, isIncidentDown(), inpwave, inswave, inshwave, isLinearRayParam(), step);
+                modelArgs.setModelName(layerParams.asName());
+                if (layerParams.inVp == 0 && layerParams.trVp != 0) {
+                    // use lower layer
+                    xypList = calculateFSRF(layerParams.trVp, layerParams.trVs, layerParams.trRho,
+                            inpwave, inswave, inshwave, isLinearRayParam(), step);
+                } else if (layerParams.trVp == 0 && layerParams.inVp != 0) {
+                    xypList = calculateFSRF(layerParams.inVp, layerParams.inVs, layerParams.inRho,
+                            inpwave, inswave, inshwave, isLinearRayParam(), step);
+                } else {
+                    throw new TauPException("Both above and below Vp are zero, cannot calculate free surface receiver function");
+                }
             }
         } else {
-            if (fsrf) {
-                yAxisType.addAll(ReflTransAxisType.allFreeRF);
-            }
             if (isEnergyFlux()) {
                 yAxisType.addAll(ReflTransAxisType.allEnergy);
             } else {
                 yAxisType.addAll(ReflTransAxisType.allDisplacement);
             }
-            xypList = calculate(
-                    layerParams.inVp, layerParams.inVs, layerParams.inRho,
-                    layerParams.trVp, layerParams.trVs, layerParams.trRho,
-                    isIncidentDown(), inpwave, inswave, inshwave, isLinearRayParam(), step);
-
-            modelArgs.setModelName(layerParams.asName());
+            if (layerParams == null) {
+                xypList = calculate(vMod, depth, isIncidentDown(), inpwave, inswave, inshwave, isLinearRayParam(), step);
+            } else {
+                xypList = calculate(
+                        layerParams.inVp, layerParams.inVs, layerParams.inRho,
+                        layerParams.trVp, layerParams.trVs, layerParams.trRho,
+                        isIncidentDown(), inpwave, inswave, inshwave, isLinearRayParam(), step);
+                modelArgs.setModelName(layerParams.asName());
+            }
         }
-
         if (xAxisMinMax.length == 2 || yAxisMinMax.length == 2) {
             xypList = trimAllToMinMax(xypList, xAxisMinMax, yAxisMinMax);
         }
@@ -166,10 +174,32 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
         if (fsrf && depth > 0.0) {
             throw new CommandLine.ParameterException(spec.commandLine(), "depth must be zero for free surface receiver function, --fsfr");
         }
-        if (fsrf && isIncidentDown()) {
-            throw new CommandLine.ParameterException(spec.commandLine(), "incident must not be down for --fsfr");
+        if (fsrf && (indown != null && indown )) {
+            throw new CommandLine.ParameterException(spec.commandLine(), "incident must not be down for --fsfr "+indown);
 
         }
+    }
+
+
+    public List<XYPlottingData> calculateFSRF(
+            double pVel, double sVel, double rho,
+            boolean inpwave,
+            boolean inswave,
+            boolean inshwave,
+            boolean linearRayParam,
+            double angleStep) throws VelocityModelException {
+        ReflTrans reflTranCoef = VelocityModel.calcReflTransCoef(0, 0, 0,
+                pVel, sVel, rho, false);
+        if (sVel == 0.0) {
+            // ocean at free surface
+            yAxisType = List.of(ReflTransAxisType.FreeRecFuncPr,
+                    ReflTransAxisType.FreeRecFuncPz);
+        } else {
+            yAxisType = List.of(ReflTransAxisType.FreeRecFuncPr, ReflTransAxisType.FreeRecFuncSvr,
+                    ReflTransAxisType.FreeRecFuncPz, ReflTransAxisType.FreeRecFuncSvz, ReflTransAxisType.FreeRecFuncSh);
+
+        }
+        return calculate(reflTranCoef, inpwave, inswave, inshwave, linearRayParam, angleStep);
     }
 
     public List<XYPlottingData> calculateFSRF(
@@ -180,11 +210,10 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
             boolean linearRayParam,
             double angleStep) throws VelocityModelException {
         double depth = 0.0;
-        boolean downgoing = false;
         if (!vMod.isDisconDepth(depth)) {
             throw new CommandLine.ParameterException(spec.commandLine(), "Depth is not a discontinuity in " + vMod.getModelName() + ": " + depth);
         }
-        ReflTrans reflTranCoef = vMod.calcReflTransCoef(depth, downgoing);
+        ReflTrans reflTranCoef = vMod.calcReflTransCoefFreeSurface();
 
         if (vMod.getVelocityLayer(0).getTopSVelocity() == 0.0) {
             // ocean at free surface
@@ -927,6 +956,7 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
     ModelArgs modelArgs = new ModelArgs();
 
     public ModelArgs getModelArgs() { return modelArgs;}
+
 }
 
 @FunctionalInterface
