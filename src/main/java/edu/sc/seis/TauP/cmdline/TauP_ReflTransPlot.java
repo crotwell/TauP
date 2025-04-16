@@ -174,10 +174,6 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
         if (fsrf && depth > 0.0) {
             throw new CommandLine.ParameterException(spec.commandLine(), "depth must be zero for free surface receiver function, --fsfr");
         }
-        if (fsrf && (indown != null && indown )) {
-            throw new CommandLine.ParameterException(spec.commandLine(), "incident must not be down for --fsfr "+indown);
-
-        }
     }
 
 

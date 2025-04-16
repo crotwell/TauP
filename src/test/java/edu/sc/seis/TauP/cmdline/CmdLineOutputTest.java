@@ -482,7 +482,7 @@ public class CmdLineOutputTest {
         figureCompare.put("Shearer_fig_6_5.svg", "Shearer_fig_6_5.pdf");
 
         fmgsFigureTestCmds.put("FMGS_13_16.svg",
-                "taup refltrans --abs --anglestep 1 --down --svg --fsrf --layer 5.8 3.35 2.9 0 0 0 --legend --pwave --swave -x rayparam -o stdout");
+                "taup refltrans --abs --anglestep 1 --svg --fsrf --layer 5.8 3.35 2.9 0 0 0 --legend --pwave --swave -x rayparam -o stdout");
         figureTitles.put("FMGS_13_16.svg", "FMGS, fig 13.16, free surface RF");
         figureCompare.put("FMGS_13_16.svg", "FMGS_fig_13_16.png");
 
