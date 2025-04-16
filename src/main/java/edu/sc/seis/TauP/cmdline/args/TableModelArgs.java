@@ -49,7 +49,8 @@ public class TableModelArgs {
 
     @CommandLine.Option(names = {"--scat", "--scatter"},
             arity = "2",
-            paramLabel = "s",
+            paramLabel = "depth deg",
+            hideParamSyntax = true,
             description = "scattering depth and distance in degrees, which may be negative. "+
                     "Only effects phases with 'o' or 'O' in the phase name."
     )

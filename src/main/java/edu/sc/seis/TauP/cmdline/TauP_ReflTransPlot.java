@@ -793,7 +793,8 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
 
     @CommandLine.Option(names = "--layer",
             arity="6",
-            paramLabel = "v",
+            paramLabel =  "vp vs rho vp vs rho",
+            hideParamSyntax = true,
             description = "inbound and transmitted layer parameters, vp, vs, rho, vp, vs, rho"
     )
     public void setLayerParams(double[] params) {

@@ -10,7 +10,8 @@ public class LatLonArgs {
 
     @CommandLine.Option(names = {"--sta", "--station"},
             arity = "2",
-            paramLabel = "l",
+            paramLabel = "lat lon",
+            hideParamSyntax = true,
             description = "station latitude and longitude. Creates a distance if event is also given."
     )
     protected List<Double> stationLatLonList = new ArrayList<>();
@@ -32,8 +33,9 @@ public class LatLonArgs {
     }
 
     @CommandLine.Option(names = {"--evt", "--event"},
-            paramLabel = "l",
             arity = "2",
+            paramLabel = "lat lon",
+            hideParamSyntax = true,
             description = "event latitude and longitude.  Creates a distance if station is also given.")
     protected List<Double> eventLatLonList = new ArrayList<>();
 

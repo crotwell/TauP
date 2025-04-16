@@ -62,7 +62,8 @@ public class DistDepthRange {
 
     @CommandLine.Option(names = "--degminmax",
             arity = "2",
-            paramLabel = "deg",
+            paramLabel = "min max",
+            hideParamSyntax = true,
             description = "min and max distance in degrees for plotting")
     public void setDegreeMinMax(double[] minMax) {
         if (minMax.length == 2) {
@@ -82,7 +83,8 @@ public class DistDepthRange {
 
     @CommandLine.Option(names = "--depthminmax",
             arity = "2",
-            paramLabel = "km",
+            paramLabel = "min max",
+            hideParamSyntax = true,
             description = "min and max depth, km,  for plotting")
     public void setDepthMinMax(double[] minMax) {
         if (minMax.length == 2) {
