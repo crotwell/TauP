@@ -1,6 +1,5 @@
 package edu.sc.seis.TauP;
 
-import com.google.gson.Gson;
 import edu.sc.seis.TauP.cmdline.args.ColorType;
 import edu.sc.seis.TauP.cmdline.args.ColoringArgs;
 import edu.sc.seis.TauP.cmdline.args.GraphicOutputTypeArgs;

@@ -3,6 +3,7 @@ package edu.sc.seis.TauP;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * Segment of a XYPlottineData line in an xy plot.
@@ -41,49 +42,156 @@ public class XYSegment {
         return segmentList;
     }
 
-    public XYSegment trimToMinMax(double[] xAxisMinMax, double[] yAxisMinMax) {
-        double[] outX = new double[x.length];
-        double[] outY = new double[y.length];
-        int numKept = 0;
+    public List<XYSegment> trimToMinMax(double[] xAxisMinMax, double[] yAxisMinMax) {
+        List<XYSegment> outList = new ArrayList<>();
+        List<Double> outX = new ArrayList<>();
+        List<Double> outY = new ArrayList<>();
         if (xAxisMinMax.length == 2 && yAxisMinMax.length == 0) {
             for (int i = 0; i < x.length; i++) {
                 if (xAxisMinMax[0] <= x[i] && x[i] < xAxisMinMax[1] ) {
-                    outX[numKept] = x[i];
-                    outY[numKept] = y[i];
-                    numKept++;
+                    if (i>0) {
+                        if ( x[i-1] < xAxisMinMax[0] && xAxisMinMax[0] < x[i]) {
+                            outX.add(xAxisMinMax[0]);
+                            double yInterp = LinearInterpolation.linearInterp(x[i -1], y[i -1], x[i], y[i], xAxisMinMax[0]);
+                            outY.add(yInterp);
+                        } else if (x[i-1] > xAxisMinMax[1] && xAxisMinMax[1] > x[i]) {
+                            double yInterp = LinearInterpolation.linearInterp(x[i-1], y[i-1], x[i], y[i], xAxisMinMax[1]);
+                            outX.add(xAxisMinMax[1]);
+                            outY.add(yInterp);
+                        }
+                    }
+                    outX.add( x[i]);
+                    outY.add( y[i]);
+                } else if (outX.size()>0) {
+                    if (i>0) {
+                        if ( x[i-1] > xAxisMinMax[0] && xAxisMinMax[0] > x[i]) {
+                            outX.add(xAxisMinMax[0]);
+                            double yInterp = LinearInterpolation.linearInterp(x[i - 1], y[i - 1], x[i], y[i], xAxisMinMax[0]);
+                            outY.add(yInterp);
+                        } else if (x[i-i] < xAxisMinMax[1] && xAxisMinMax[1] < x[i]) {
+                            double yInterp = LinearInterpolation.linearInterp(x[i - 1], y[i - 1], x[i], y[i], xAxisMinMax[1]);
+                            outX.add(xAxisMinMax[1]);
+                            outY.add(yInterp);
+                        }
+                    }
+                    double[] xarr = Stream.of(outX.toArray(new Double[0])).mapToDouble(Double::doubleValue).toArray();
+                    double[] yarr = Stream.of(outY.toArray(new Double[0])).mapToDouble(Double::doubleValue).toArray();
+                    XYSegment trimSeg = new XYSegment(xarr, yarr);
+                    trimSeg.cssClasses = cssClasses;
+                    trimSeg.description = description;
+                    outList.add(trimSeg);
+                    outX = new ArrayList<>();
+                    outY = new ArrayList<>();
+
                 }
             }
         } else if (xAxisMinMax.length == 0 && yAxisMinMax.length == 2) {
             for (int i = 0; i < x.length; i++) {
                 if (yAxisMinMax[0] <= y[i] && y[i] <= yAxisMinMax[1]) {
-                    outX[numKept] = x[i];
-                    outY[numKept] = y[i];
-                    numKept++;
+                    if (i>0) {
+                        if ( y[i-1] < yAxisMinMax[0] && yAxisMinMax[0] < y[i]) {
+                            outY.add(yAxisMinMax[0]);
+                            double xInterp = LinearInterpolation.linearInterp(y[i-1 ], x[i -1], y[i], x[i], yAxisMinMax[0]);
+                            outX.add(xInterp);
+                        } else if (y[i-1] > yAxisMinMax[1] && yAxisMinMax[1] > y[i]) {
+                            double xInterp = LinearInterpolation.linearInterp(y[i -1], x[i -1], y[i], x[i], yAxisMinMax[1]);
+                            outY.add(yAxisMinMax[1]);
+                            outX.add(xInterp);
+                        }
+                    }
+                    outX.add( x[i]);
+                    outY.add( y[i]);
+                } else if (outX.size()>0) {
+                    if (i>0) {
+                        if ( y[i-1] > yAxisMinMax[0] && yAxisMinMax[0] > y[i]) {
+                            outY.add(yAxisMinMax[0]);
+                            double xInterp = LinearInterpolation.linearInterp(y[i - 1], x[i - 1], y[i], x[i], yAxisMinMax[0]);
+                            outX.add(xInterp);
+                        } else if (y[i-i] < yAxisMinMax[1] && yAxisMinMax[1] < y[i]) {
+                            double xInterp = LinearInterpolation.linearInterp(y[i - 1], x[i - 1], y[i], x[i], yAxisMinMax[1]);
+                            outY.add(yAxisMinMax[1]);
+                            outX.add(xInterp);
+                        }
+                    }
+                    double[] xarr = Stream.of(outX.toArray(new Double[0])).mapToDouble(Double::doubleValue).toArray();
+                    double[] yarr = Stream.of(outY.toArray(new Double[0])).mapToDouble(Double::doubleValue).toArray();
+                    XYSegment trimSeg = new XYSegment(xarr, yarr);
+                    trimSeg.cssClasses = cssClasses;
+                    trimSeg.description = description;
+                    outList.add(trimSeg);
+                    outX = new ArrayList<>();
+                    outY = new ArrayList<>();
+
                 }
             }
         } else if (xAxisMinMax.length == 2 && yAxisMinMax.length == 2) {
             for (int i = 0; i < x.length; i++) {
                 if (xAxisMinMax[0] <= x[i] && x[i] < xAxisMinMax[1] && yAxisMinMax[0] <= y[i] && y[i] <= yAxisMinMax[1]) {
-                    outX[numKept] = x[i];
-                    outY[numKept] = y[i];
-                    numKept++;
+                    if (i>0) {
+                        if ( x[i-1] < xAxisMinMax[0] && xAxisMinMax[0] < x[i]) {
+                            outX.add(xAxisMinMax[0]);
+                            double yInterp = LinearInterpolation.linearInterp(x[i-1], y[i-1 ], x[i], y[i], xAxisMinMax[0]);
+                            outY.add(yInterp);
+                        } else if (x[i-1] > xAxisMinMax[1] && xAxisMinMax[1] > x[i]) {
+                            double yInterp = LinearInterpolation.linearInterp(x[i-1], y[i-1], x[i], y[i], xAxisMinMax[1]);
+                            outX.add(xAxisMinMax[1]);
+                            outY.add(yInterp);
+                        } else if ( y[i-1] < yAxisMinMax[0] && yAxisMinMax[0] < y[i]) {
+                            outY.add(yAxisMinMax[0]);
+                            double xInterp = LinearInterpolation.linearInterp(y[i-1 ], x[i-1 ], y[i], x[i], yAxisMinMax[0]);
+                            outX.add(xInterp);
+                        } else if (y[i-1] > yAxisMinMax[1] && yAxisMinMax[1] > y[i]) {
+                            double xInterp = LinearInterpolation.linearInterp(y[i-1 ], x[i -1], y[i], x[i], yAxisMinMax[1]);
+                            outY.add(yAxisMinMax[1]);
+                            outX.add(xInterp);
+                        }
+                    }
+                    outX.add( x[i]);
+                    outY.add( y[i]);
+                } else if (outX.size()>0) {
+                    if (i>0) {
+                        if ( x[i-1] > xAxisMinMax[0] && xAxisMinMax[0] > x[i]) {
+                            outX.add(xAxisMinMax[0]);
+                            double yInterp = LinearInterpolation.linearInterp(x[i - 1], y[i - 1], x[i], y[i], xAxisMinMax[0]);
+                            outY.add(yInterp);
+                        } else if (x[i-i] < xAxisMinMax[1] && xAxisMinMax[1] < x[i]) {
+                            double yInterp = LinearInterpolation.linearInterp(x[i - 1], y[i - 1], x[i], y[i], xAxisMinMax[1]);
+                            outX.add(xAxisMinMax[1]);
+                            outY.add(yInterp);
+                        } else if ( y[i-1] > yAxisMinMax[0] && yAxisMinMax[0] > y[i]) {
+                            outY.add(yAxisMinMax[0]);
+                            double xInterp = LinearInterpolation.linearInterp(y[i - 1], x[i - 1], y[i], x[i], yAxisMinMax[0]);
+                            outX.add(xInterp);
+                        } else if (y[i-i] < yAxisMinMax[1] && yAxisMinMax[1] < y[i]) {
+                            double xInterp = LinearInterpolation.linearInterp(y[i - 1], x[i - 1], y[i], x[i], yAxisMinMax[1]);
+                            outY.add(yAxisMinMax[1]);
+                            outX.add(xInterp);
+                        }
+                    }
+                    double[] xarr = Stream.of(outX.toArray(new Double[0])).mapToDouble(Double::doubleValue).toArray();
+                    double[] yarr = Stream.of(outY.toArray(new Double[0])).mapToDouble(Double::doubleValue).toArray();
+                    XYSegment trimSeg = new XYSegment(xarr, yarr);
+                    trimSeg.cssClasses = cssClasses;
+                    trimSeg.description = description;
+                    outList.add(trimSeg);
+                    outX = new ArrayList<>();
+                    outY = new ArrayList<>();
+
                 }
             }
         } else {
             // no trim, both zero length
-            return this;
+            return List.of(this);
         }
-        double[] tmp = new double[numKept];
-        System.arraycopy(outX, 0, tmp, 0, numKept);
-        outX = tmp;
-        tmp = new double[numKept];
-        System.arraycopy(outY, 0, tmp, 0, numKept);
-        outY = tmp;
-
-        XYSegment out = new XYSegment(outX, outY);
-        out.description = description;
-        out.cssClasses = cssClasses;
-        return out;
+        if (outX.size()>0) {
+            double[] xarr = Stream.of(outX.toArray(new Double[0])).mapToDouble(Double::doubleValue).toArray();
+            double[] yarr = Stream.of(outY.toArray(new Double[0])).mapToDouble(Double::doubleValue).toArray();
+            XYSegment trimSeg = new XYSegment(xarr, yarr);
+            trimSeg.cssClasses = cssClasses;
+            trimSeg.description = description;
+            outList.add(trimSeg);
+        }
+        return outList;
     }
 
     public double[] minMax(double[] priorMinMax) {

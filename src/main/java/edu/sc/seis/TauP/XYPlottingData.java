@@ -56,9 +56,9 @@ public class XYPlottingData {
     public XYPlottingData trimToMinMax(double[] xAxisMinMax, double[] yAxisMinMax) {
         List<XYSegment> outSeg = new ArrayList<>();
         for (XYSegment seg : segmentList) {
-            XYSegment trimmed = seg.trimToMinMax(xAxisMinMax, yAxisMinMax);
+            List<XYSegment> trimmed = seg.trimToMinMax(xAxisMinMax, yAxisMinMax);
             if (trimmed != null) {
-                outSeg.add(trimmed);
+                outSeg.addAll(trimmed);
             }
         }
         XYPlottingData out = new XYPlottingData(outSeg, xAxisType, yAxisType, label, description, cssClasses);
