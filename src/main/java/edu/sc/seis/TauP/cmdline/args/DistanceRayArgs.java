@@ -30,7 +30,7 @@ public class DistanceRayArgs extends DistanceLengthArgs {
 
     @CommandLine.Option(names = {"--takeoffrange"},
             arity = "1..3",
-            paramLabel =  "step; min,max or min,max,step",
+            paramLabel =  "[step][min max][min max step]",
             hideParamSyntax = true,
             description = "regular range in takeoff angle in degrees, one of step; min,max or min,max,step. "
                     + "Default min is 0 and step is 10.",
@@ -46,7 +46,7 @@ public class DistanceRayArgs extends DistanceLengthArgs {
 
     @CommandLine.Option(names = {"--incidentrange"},
             arity = "1..3",
-            paramLabel =  "step; min,max or min,max,step",
+            paramLabel =  "[step][min max][min max step]",
             hideParamSyntax = true,
             description = "regular range in incident angle in degrees, one of step; min,max or min,max,step. "
                     + "Default min is 0 and step is 10.",
