@@ -213,7 +213,7 @@ public class QmlStaxmlArgs {
     @CommandLine.Option(names = {"--eid"},
             paramLabel = "evt",
             split = ",",
-            description = "event id, like  \tus7000pn9s, for lookup via USGS fdsn event web service. Creates a distance if event is also given."
+            description = "event id, like us7000pn9s, for lookup via USGS fdsn event web service. Creates a distance if station is also given."
     )
     public List<String> eidList = new ArrayList<>();
 

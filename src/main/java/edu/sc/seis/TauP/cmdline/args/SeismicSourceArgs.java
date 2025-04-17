@@ -46,7 +46,7 @@ public class SeismicSourceArgs {
 
     @CommandLine.Option(names="--numattenuationfreq",
             defaultValue=""+DEFAULT_NUM_FREQUENCIES,
-            description = " number attenuations frequency for amplitude calculations, default is ${DEFAULT-VALUE}")
+            description = " number attenuation frequencies for amplitude calculations, default is ${DEFAULT-VALUE}")
     int numFrequencies = DEFAULT_NUM_FREQUENCIES;
 
     public int getNumFrequencies() {
@@ -56,9 +56,10 @@ public class SeismicSourceArgs {
     List<Float> strikeDipRake = null;
 
     @CommandLine.Option(names="--strikediprake",
-            paramLabel="s",
+            paramLabel =  "strike,dip,rake",
+            hideParamSyntax = true,
             split=",",
-            description = "fault strike, dip, rake for amplitude calculations. If not given radiation pattern is unity.")
+            description = "fault strike, dip, rake for amplitude calculations. If not given radiation pattern is unity in all directions.")
     public void setStrikeDipRake(List<Float> sdr) {
         if (sdr.size() == 0) {
             // unset by picocli, as no default value
