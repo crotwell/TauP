@@ -180,19 +180,21 @@ Distance   Depth   Phase   Travel    Ray Param  Takeoff  Incident Station   Puri
                  [--prop=&lt;toolPropsFilename&gt;] [--qml=&lt;quakemlFilename&gt;]
                  [--staxml=&lt;stationxmlFilename&gt;] [--eid=evt[,evt...]]...
                  [--rel=phase[,phase...]]... [--sid=sta[,sta...]]...
-                 [--strikediprake=s[,s...]]... [--evt=l l]... [--evt=l l]...
-                 [--sta=l l]... [--sta=l l]... [[--mod=&lt;modelName&gt;] [-h=depth[,
-                 depth...]]... [--stadepth=depth[,depth...]]... [--scat=s
-                 s]...] [[-p=phase[,phase...]]...
-                 [--phasefile=&lt;phaseFiles&gt;]...] [[--allindex] [--deg=d[,
-                 d...]]... [--exactdegree=d[,d...]]... [--exactkilometer=km[,
-                 km...]]... [--incident=deg[,deg...]]... [--km=km[,km...]]...
-                 [--rayparamdeg=s/deg[,s/deg...]]... [--rayparamidx=i[,
-                 i...]]... [--rayparamkm=s/km[,s/km...]]... [--rayparamrad=s/rad
-                 [,s/rad...]]... [--takeoff=deg[,deg...]]... [--degreerange=d[,
-                 d...] [d [d]]]... [--incidentrange=k[,k...] [k [k]]]...
-                 [--kilometerrange=k[,k...] [k [k]]]... [--takeoffrange=k[,
-                 k...] [k [k]]]...]... [--json | --text]
+                 [--strikediprake=strike dip rake]... [--evt=lat lon]...
+                 [--evt=lat lon]... [--sta=lat lon]... [--sta=lat lon]...
+                 [[--mod=&lt;modelName&gt;] [-h=depth[,depth...]]... [--stadepth=depth
+                 [,depth...]]... [--scat=depth deg]...] [[-p=phase[,
+                 phase...]]... [--phasefile=&lt;phaseFiles&gt;]...] [[--allindex]
+                 [--deg=d[,d...]]... [--exactdegree=d[,d...]]...
+                 [--exactkilometer=km[,km...]]... [--incident=deg[,deg...]]...
+                 [--km=km[,km...]]... [--rayparamdeg=s/deg[,s/deg...]]...
+                 [--rayparamidx=i[,i...]]... [--rayparamkm=s/km[,s/km...]]...
+                 [--rayparamrad=s/rad[,s/rad...]]... [--takeoff=deg[,
+                 deg...]]... [--degreerange=[step][min max][min max step]]...
+                 [--incidentrange=[step][min max][min max step]]...
+                 [--kilometerrange=[step][min max][min max step]]...
+                 [--takeoffrange=[step][min max][min max step]]...]... [--json
+                 | --text]
 Calculate travel times for seismic phases in an earth model.
 
 Options:
@@ -202,9 +204,9 @@ Options:
                              attenuation frequency for amplitude calculations,
                                default is 1.0
       --debug                enable debugging output
-      --eid=evt[,evt...]     event id, like  	us7000pn9s, for lookup via USGS
+      --eid=evt[,evt...]     event id, like us7000pn9s, for lookup via USGS
                                fdsn event web service. Creates a distance if
-                               event is also given.
+                               station is also given.
       --first, --onlyfirst   only output the first arrival for each phase, no
                                triplications
       --geodetic             use geodetic latitude for distance calculations,
@@ -220,7 +222,7 @@ Options:
       --mw=&lt;mw&gt;              scale amplitude by source moment magnitude,
                                default is 4.0
       --numattenuationfreq=&lt;numFrequencies&gt;
-                              number attenuations frequency for amplitude
+                              number attenuation frequencies for amplitude
                                calculations, default is 64
   -o, --output=&lt;outFile&gt;     output to file, default is stdout.
       --prop=&lt;toolPropsFilename&gt;
@@ -235,10 +237,10 @@ Options:
       --staxml=&lt;stationxmlFilename&gt;
                              StationXML file to extract station latitudes and
                                longitudes from
-      --strikediprake=s[,s...]
-                             fault strike, dip, rake for amplitude
+      --strikediprake=strike dip rake
+                             fault strike, dip and rake for amplitude
                                calculations. If not given radiation pattern is
-                               unity.
+                               unity in all directions.
       --time, --onlytime     only output travel time
       --verbose              enable verbose output
 Model Args
@@ -248,7 +250,8 @@ Model Args
                              use velocity model &quot;modelName&quot; for calculations.
                              Default is iasp91. Other builtin models include
                                prem, ak135, ak135fcont, and ak135favg.
-      --scat, --scatter=s s  scattering depth and distance in degrees, which
+      --scat, --scatter=depth deg
+                             scattering depth and distance in degrees, which
                                may be negative. Only effects phases with &#39;o&#39; or
                                &#39;O&#39; in the phase name.
       --stadepth, --receiverdepth=depth[,depth...]
@@ -263,9 +266,9 @@ Distance is given by:
       --allindex             all arrivals at sampling of model
       --deg, --degree=d[,d...]
                              distance in degrees
-      --degreerange=d[,d...] [d [d]]
+      --degreerange=[step][min max][min max step]
                              regular distance range in degrees, one of step;
-                               min,max or min,max,step. Default min is 0, max
+                               min max or min max step. Default min is 0, max
                                is 180 and step is 10.
       --exactdegree=d[,d...] exact distance traveled in degrees, not 360-d
       --exactkilometer=km[,km...]
@@ -273,13 +276,13 @@ Distance is given by:
       --incident=deg[,deg...]
                              incident angle in degrees at the receiver, zero is
                                down, 90 horizontal, 180 is up.
-      --incidentrange=k[,k...] [k [k]]
+      --incidentrange=[step][min max][min max step]
                              regular range in incident angle in degrees, one of
-                               step; min,max or min,max,step. Default min is 0
+                               step; min max or min max step. Default min is 0
                                and step is 10.
-      --kilometerrange=k[,k...] [k [k]]
+      --kilometerrange=[step][min max][min max step]
                              regular distance range in kilometers, one of step;
-                               min,max or min,max,step. Default min is 0, max
+                               min max or min max step. Default min is 0, max
                                is 1000 and step is 100.
       --km, --kilometer=km[,km...]
                              distance in kilometers along surface.
@@ -296,16 +299,17 @@ Distance is given by:
                                is determined by the phase
       --takeoff=deg[,deg...] takeoff angle in degrees from the source, zero is
                                down, 90 horizontal, 180 is up.
-      --takeoffrange=k[,k...] [k [k]]
+      --takeoffrange=[step][min max][min max step]
                              regular range in takeoff angle in degrees, one of
                                step; min,max or min,max,step. Default min is 0
                                and step is 10.
 Lat,Lon influenced by:
       --az=&lt;azimuth&gt;         azimuth in degrees, source to receiver
       --baz=&lt;backAzimuth&gt;    backazimuth in degrees, receiver to source
-      --evt, --event=l l     event latitude and longitude.  Creates a distance
+      --evt, --event=lat lon event latitude and longitude.  Creates a distance
                                if station is also given.
-      --sta, --station=l l   station latitude and longitude. Creates a distance
+      --sta, --station=lat lon
+                             station latitude and longitude. Creates a distance
                                if event is also given.
 Output Type:
       --json                 outputs as JSON

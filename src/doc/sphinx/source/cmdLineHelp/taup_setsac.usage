@@ -1,8 +1,9 @@
 Usage: taup setsac [--debug] [--evdpkm] [--geodetic] [--help] [--verbose]
                    [--geodeticflattening=f] [--prop=<toolPropsFilename>]
                    [[--mod=<modelName>] [-h=depth[,depth...]]...
-                   [--stadepth=depth[,depth...]]... [--scat=s s]...] [[-p=phase
-                   [,phase...]]... [--phasefile=<phaseFiles>]...] [sacfile...]
+                   [--stadepth=depth[,depth...]]... [--scat=depth deg]...]
+                   [[-p=phase[,phase...]]... [--phasefile=<phaseFiles>]...]
+                   [sacfile...]
 Set headers to travel times of phases using depth and distance from SAC files.
       [sacfile...]   SAC files to process
 
@@ -30,7 +31,7 @@ Model Args
                      use velocity model "modelName" for calculations.
                      Default is iasp91. Other builtin models include prem,
                        ak135, ak135fcont, and ak135favg.
-      --scat, --scatter=s s
+      --scat, --scatter=depth deg
                      scattering depth and distance in degrees, which may be
                        negative. Only effects phases with 'o' or 'O' in the
                        phase name.

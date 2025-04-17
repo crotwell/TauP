@@ -831,7 +831,8 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
 
     @CommandLine.Option(names = "-x",
             paramLabel = "type",
-            description = "X axis data type, one of ${COMPLETION-CANDIDATES}, default is degree", defaultValue = "degree")
+            description = "X axis data type, one of ${COMPLETION-CANDIDATES}, default is ${DEFAULT-VALUE}",
+            defaultValue = "degree")
     public void setxAxisType(DegRayParam xAxisType) {
         this.xAxisType = xAxisType;
     }
@@ -842,7 +843,8 @@ public class TauP_ReflTransPlot extends  TauP_Tool {
 
     @CommandLine.Option(names = "-y",
             paramLabel = "type",
-            description = "Y axis data type, one or more of ${COMPLETION-CANDIDATES}, default is all displacement coef.", arity = "1..*")
+            description = "Y axis data type, one or more of ${COMPLETION-CANDIDATES}, default is all displacement coef.",
+            arity = "1..*")
     public void setyAxisType(List<ReflTransAxisType> yAxisType) {
         this.yAxisType.addAll(yAxisType);
     }

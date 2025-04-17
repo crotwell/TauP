@@ -16,9 +16,8 @@ public class DistanceLengthArgs {
             arity = "1..3",
             paramLabel =  "[step][min max][min max step]",
             hideParamSyntax = true,
-            description = "regular distance range in degrees, one of step; min,max or min,max,step. "
-                    + "Default min is 0, max is 180 and step is 10.",
-            split = ",")
+            description = "regular distance range in degrees, one of step; min max or min max step. "
+                    + "Default min is 0, max is 180 and step is 10.")
     public List<Double> degreeRange = new ArrayList<>();
 
     /**
@@ -34,9 +33,8 @@ public class DistanceLengthArgs {
             arity = "1..3",
             paramLabel =  "[step][min max][min max step]",
             hideParamSyntax = true,
-            description = "regular distance range in kilometers, one of step; min,max or min,max,step. "
-                    + "Default min is 0, max is 1000 and step is 100.",
-            split = ",")
+            description = "regular distance range in kilometers, one of step; min max or min max step. "
+                    + "Default min is 0, max is 1000 and step is 100.")
     public List<Double> kilometerRange = new ArrayList<>();
 
     public boolean allEmpty() {

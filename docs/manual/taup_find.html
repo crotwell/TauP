@@ -188,11 +188,11 @@ that may explain it.</p>
                  [--deltatime=dt] --max=&lt;maxActions&gt; [--mw=&lt;mw&gt;]
                  [--numattenuationfreq=&lt;numFrequencies&gt;] [-o=&lt;outFile&gt;]
                  [--prop=&lt;toolPropsFilename&gt;] [--deg=d[,d...]]...
-                 [--strikediprake=s[,s...]]... [--rayparamdeg=s/deg [s/deg]]...
-                 [--rayparamkm=s/km [s/km]]... [--time=t [t]]...
+                 [--strikediprake=strike dip rake]... [--rayparamdeg=s/deg
+                 [s/deg]]... [--rayparamkm=s/km [s/km]]... [--time=t [t]]...
                  [--exclude=depth[,depth...]...]... [[--mod=&lt;modelName&gt;]
                  [-h=depth[,depth...]]... [--stadepth=depth[,depth...]]...
-                 [--scat=s s]...] [[-p=phase[,phase...]]...
+                 [--scat=depth deg]...] [[-p=phase[,phase...]]...
                  [--phasefile=&lt;phaseFiles&gt;]...] [--json | --text]
 Find seismic phases in an earth model.
 
@@ -218,7 +218,7 @@ Options:
       --mw=&lt;mw&gt;            scale amplitude by source moment magnitude, default
                              is 4.0
       --numattenuationfreq=&lt;numFrequencies&gt;
-                            number attenuations frequency for amplitude
+                            number attenuation frequencies for amplitude
                              calculations, default is 64
   -o, --output=&lt;outFile&gt;   output to file, default is stdout.
       --onlynameddiscon    only interact with named discontinuities like moho,
@@ -233,9 +233,10 @@ Options:
                            only keep phases that overlap the given ray
                              parameter range in s/km
       --showrayparam       show min and max ray parameter for each phase name
-      --strikediprake=s[,s...]
-                           fault strike, dip, rake for amplitude calculations.
-                             If not given radiation pattern is unity.
+      --strikediprake=strike dip rake
+                           fault strike, dip and rake for amplitude
+                             calculations. If not given radiation pattern is
+                             unity in all directions.
       --time=t [t]         find arrivals within the given range
       --verbose            enable verbose output
 Model Args
@@ -245,7 +246,7 @@ Model Args
                            use velocity model &quot;modelName&quot; for calculations.
                            Default is iasp91. Other builtin models include
                              prem, ak135, ak135fcont, and ak135favg.
-      --scat, --scatter=s s
+      --scat, --scatter=depth deg
                            scattering depth and distance in degrees, which may
                              be negative. Only effects phases with &#39;o&#39; or &#39;O&#39;
                              in the phase name.

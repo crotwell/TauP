@@ -152,9 +152,9 @@ headers, then this will add markers to the extra headers for P and S:</p>
                    [--prop=&lt;toolPropsFilename&gt;] [--qml=&lt;quakemlFilename&gt;]
                    [--qmltol=&lt;quakeOTimeTol&gt;] [--staxml=&lt;stationxmlFilename&gt;]
                    [--eid=evt[,evt...]]... [--sid=sta[,sta...]]...
-                   [--strikediprake=s[,s...]]... [[--mod=&lt;modelName&gt;] [-h=depth
-                   [,depth...]]... [--stadepth=depth[,depth...]]... [--scat=s
-                   s]...] [[-p=phase[,phase...]]...
+                   [--strikediprake=strike dip rake]... [[--mod=&lt;modelName&gt;]
+                   [-h=depth[,depth...]]... [--stadepth=depth[,depth...]]...
+                   [--scat=depth deg]...] [[-p=phase[,phase...]]...
                    [--phasefile=&lt;phaseFiles&gt;]...] [mseed3file...]
 Save travel times in the extra header of miniseed3 files.
     https://crotwell.github.io/ms3eh/
@@ -169,9 +169,9 @@ Options:
                            attenuation frequency for amplitude calculations,
                              default is 1.0
       --debug              enable debugging output
-      --eid=evt[,evt...]   event id, like  	us7000pn9s, for lookup via USGS
-                             fdsn event web service. Creates a distance if
-                             event is also given.
+      --eid=evt[,evt...]   event id, like us7000pn9s, for lookup via USGS fdsn
+                             event web service. Creates a distance if station
+                             is also given.
       --geodetic           use geodetic latitude for distance calculations,
                              which implies an ellipticity. Default is
                              spherical. Note this only affects calculation of
@@ -185,7 +185,7 @@ Options:
       --mw=&lt;mw&gt;            scale amplitude by source moment magnitude, default
                              is 4.0
       --numattenuationfreq=&lt;numFrequencies&gt;
-                            number attenuations frequency for amplitude
+                            number attenuation frequencies for amplitude
                              calculations, default is 64
       --prop=&lt;toolPropsFilename&gt;
                            load defaults from properties file
@@ -200,9 +200,10 @@ Options:
       --staxml=&lt;stationxmlFilename&gt;
                            StationXML file to extract station latitudes and
                              longitudes from
-      --strikediprake=s[,s...]
-                           fault strike, dip, rake for amplitude calculations.
-                             If not given radiation pattern is unity.
+      --strikediprake=strike dip rake
+                           fault strike, dip and rake for amplitude
+                             calculations. If not given radiation pattern is
+                             unity in all directions.
       --taupeh[=&lt;ehKey&gt;]   key to store full TauP JSON output within extra
                              headers within, otherwise use abbreviated &#39;bag&#39;
                              style markers.If specified without parameter,
@@ -215,7 +216,7 @@ Model Args
                            use velocity model &quot;modelName&quot; for calculations.
                            Default is iasp91. Other builtin models include
                              prem, ak135, ak135fcont, and ak135favg.
-      --scat, --scatter=s s
+      --scat, --scatter=depth deg
                            scattering depth and distance in degrees, which may
                              be negative. Only effects phases with &#39;o&#39; or &#39;O&#39;
                              in the phase name.

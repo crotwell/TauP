@@ -56,10 +56,9 @@ public class SeismicSourceArgs {
     List<Float> strikeDipRake = null;
 
     @CommandLine.Option(names="--strikediprake",
-            paramLabel =  "strike,dip,rake",
+            paramLabel =  "strike dip rake",
             hideParamSyntax = true,
-            split=",",
-            description = "fault strike, dip, rake for amplitude calculations. If not given radiation pattern is unity in all directions.")
+            description = "fault strike, dip and rake for amplitude calculations. If not given radiation pattern is unity in all directions.")
     public void setStrikeDipRake(List<Float> sdr) {
         if (sdr.size() == 0) {
             // unset by picocli, as no default value

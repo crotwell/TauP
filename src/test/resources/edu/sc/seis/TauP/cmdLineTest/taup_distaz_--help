@@ -3,62 +3,64 @@ Usage: taup distaz [--debug] [--geodetic] [--help] [--verbose] [--az=<azimuth>]
                    [-o=<outFile>] [--prop=<toolPropsFilename>]
                    [--qml=<quakemlFilename>] [--radius=<radiusOfEarth>]
                    [--staxml=<stationxmlFilename>] [--eid=evt[,evt...]]...
-                   [--sid=sta[,sta...]]... [--evt=l l]... [--sta=l l]...
-                   [--json | --text] [[--deg=d[,d...]]... [--km=km[,km...]]...
-                   [--degreerange=d[,d...] [d [d]]]... [--kilometerrange=k[,
-                   k...] [k [k]]]...]...
+                   [--sid=sta[,sta...]]... [--evt=lat lon]... [--sta=lat
+                   lon]... [--json | --text] [[--deg=d[,d...]]... [--km=km[,
+                   km...]]... [--degreerange=[step][min max][min max step]]...
+                   [--kilometerrange=[step][min max][min max step]]...]...
 Calc distance, az and baz for event lat,lon and station lat,lon pairs.
 
 Options:
 
-      --az=<azimuth>         azimuth in degrees, source to receiver
-      --baz=<backAzimuth>    backazimuth in degrees, receiver to source
-      --debug                enable debugging output
-      --eid=evt[,evt...]     event id, like  	us7000pn9s, for lookup via USGS
-                               fdsn event web service. Creates a distance if
-                               event is also given.
-      --evt, --event=l l     event latitude and longitude.  Creates a distance
-                               if station is also given.
-      --geodetic             use geodetic latitude for distance calculations,
-                               which implies an ellipticity. Default is
-                               spherical. Note this only affects calculation of
-                               distance from lat/lon pairs, all travel time
-                               calculations are done in a purely spherical
-                               model.
-      --geodeticflattening=f Inverse Elliptical flattening for distance
-                               calculations when --geodetic, defaults to WGS84
-                               ~ 298.257. The distance calculation uses 1/x.
-      --help                 display this help message
-  -o, --output=<outFile>     output to file, default is stdout.
+      --az=<azimuth>        azimuth in degrees, source to receiver
+      --baz=<backAzimuth>   backazimuth in degrees, receiver to source
+      --debug               enable debugging output
+      --eid=evt[,evt...]    event id, like us7000pn9s, for lookup via USGS fdsn
+                              event web service. Creates a distance if station
+                              is also given.
+      --evt, --event=lat lon
+                            event latitude and longitude.  Creates a distance
+                              if station is also given.
+      --geodetic            use geodetic latitude for distance calculations,
+                              which implies an ellipticity. Default is
+                              spherical. Note this only affects calculation of
+                              distance from lat/lon pairs, all travel time
+                              calculations are done in a purely spherical model.
+      --geodeticflattening=f
+                            Inverse Elliptical flattening for distance
+                              calculations when --geodetic, defaults to WGS84 ~
+                              298.257. The distance calculation uses 1/x.
+      --help                display this help message
+  -o, --output=<outFile>    output to file, default is stdout.
       --prop=<toolPropsFilename>
-                             load defaults from properties file
+                            load defaults from properties file
       --qml, --quakeml=<quakemlFilename>
-                             QuakeML file to load for earthquake origins to use
+                            QuakeML file to load for earthquake origins to use
       --radius=<radiusOfEarth>
-                             radius of earth in km, used when distance given in
-                               km
-      --sid=sta[,sta...]     station id, like CO.HAW or FDSN:CO_HAW, for lookup
-                               via fedcat web service. Creates a distance if
-                               event is also given.
-      --sta, --station=l l   station latitude and longitude. Creates a distance
-                               if event is also given.
+                            radius of earth in km, used when distance given in
+                              km
+      --sid=sta[,sta...]    station id, like CO.HAW or FDSN:CO_HAW, for lookup
+                              via fedcat web service. Creates a distance if
+                              event is also given.
+      --sta, --station=lat lon
+                            station latitude and longitude. Creates a distance
+                              if event is also given.
       --staxml=<stationxmlFilename>
-                             StationXML file to extract station latitudes and
-                               longitudes from
-      --verbose              enable verbose output
+                            StationXML file to extract station latitudes and
+                              longitudes from
+      --verbose             enable verbose output
 Output Type:
-      --json                 outputs as JSON
-      --text                 outputs as Text
+      --json                outputs as JSON
+      --text                outputs as Text
 Optional distance is given by:
       --deg, --degree=d[,d...]
-                             distance in degrees
-      --degreerange=d[,d...] [d [d]]
-                             regular distance range in degrees, one of step;
-                               min,max or min,max,step. Default min is 0, max
-                               is 180 and step is 10.
-      --kilometerrange=k[,k...] [k [k]]
-                             regular distance range in kilometers, one of step;
-                               min,max or min,max,step. Default min is 0, max
-                               is 1000 and step is 100.
+                            distance in degrees
+      --degreerange=[step][min max][min max step]
+                            regular distance range in degrees, one of step; min
+                              max or min max step. Default min is 0, max is 180
+                              and step is 10.
+      --kilometerrange=[step][min max][min max step]
+                            regular distance range in kilometers, one of step;
+                              min max or min max step. Default min is 0, max is
+                              1000 and step is 100.
       --km, --kilometer=km[,km...]
-                             distance in kilometers along surface.
+                            distance in kilometers along surface.

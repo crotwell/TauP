@@ -8905,10 +8905,10 @@ more pleasing display.</p>
                       [--color=&lt;coloring&gt;] [--mapwidth=&lt;mapwidth&gt;]
                       [--mapwidthunit=&lt;mapWidthUnit&gt;] [-o=&lt;outFile&gt;]
                       [--prop=&lt;toolPropsFilename&gt;] [--timestep=&lt;timeStep&gt;]
-                      [--xaxis=type] [--yaxis=type] [--degminmax=deg deg]...
-                      [--depthminmax=km km]... [[--mod=&lt;modelName&gt;] [-h=depth[,
-                      depth...]]... [--stadepth=depth[,depth...]]... [--scat=s
-                      s]...] [[-p=phase[,phase...]]...
+                      [--xaxis=type] [--yaxis=type] [--degminmax=min max]...
+                      [--depthminmax=min max]... [[--mod=&lt;modelName&gt;] [-h=depth
+                      [,depth...]]... [--stadepth=depth[,depth...]]...
+                      [--scat=depth deg]...] [[-p=phase[,phase...]]...
                       [--phasefile=&lt;phaseFiles&gt;]...] [--gmt | --json | --svg |
                       --text]
 Plot wavefronts of seismic phases at steps in time.
@@ -8918,8 +8918,8 @@ Options:
       --color=&lt;coloring&gt;    style of coloring for paths and wavefronts, one of:
                               auto, wavetype, phase, none
       --debug               enable debugging output
-      --degminmax=deg deg   min and max distance in degrees for plotting
-      --depthminmax=km km   min and max depth, km,  for plotting
+      --degminmax=min max   min and max distance in degrees for plotting
+      --depthminmax=min max min and max depth, km,  for plotting
       --help                display this help message
       --legend              create a legend
       --mapwidth=&lt;mapwidth&gt; plot width in units from --mapwidthunit.
@@ -8949,7 +8949,8 @@ Model Args
                             use velocity model &quot;modelName&quot; for calculations.
                             Default is iasp91. Other builtin models include
                               prem, ak135, ak135fcont, and ak135favg.
-      --scat, --scatter=s s scattering depth and distance in degrees, which may
+      --scat, --scatter=depth deg
+                            scattering depth and distance in degrees, which may
                               be negative. Only effects phases with &#39;o&#39; or &#39;O&#39;
                               in the phase name.
       --stadepth, --receiverdepth=depth[,depth...]

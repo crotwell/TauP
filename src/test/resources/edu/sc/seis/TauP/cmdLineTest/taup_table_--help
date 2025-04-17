@@ -1,8 +1,8 @@
 Usage: taup table [--debug] [--help] [--verbose] [--header=<headerFile>]
                   [-o=<outFile>] [--prop=<toolPropsFilename>] [--csv | --json |
                   --locsat | --text] [[--mod=<modelName>] [--stadepth=depth[,
-                  depth...]]... [--scat=s s]...] [[-p=phase[,phase...]]...
-                  [--phasefile=<phaseFiles>]...]
+                  depth...]]... [--scat=depth deg]...] [[-p=phase[,
+                  phase...]]... [--phasefile=<phaseFiles>]...]
 Create a table of travel times for a range of depths and distances.
 
 Options:
@@ -26,7 +26,7 @@ Model Args
                            use velocity model "modelName" for calculations.
                            Default is iasp91. Other builtin models include
                              prem, ak135, ak135fcont, and ak135favg.
-      --scat, --scatter=s s
+      --scat, --scatter=depth deg
                            scattering depth and distance in degrees, which may
                              be negative. Only effects phases with 'o' or 'O'
                              in the phase name.

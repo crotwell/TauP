@@ -4,12 +4,12 @@ Usage: taup curve [--debug] [--help] [--legend] [--verbose] [--xabs] [--xlog]
                   [--mapwidthunit=<mapWidthUnit>] [--mw=<mw>]
                   [--numattenuationfreq=<numFrequencies>] [-o=<outFile>]
                   [--prop=<toolPropsFilename>] [--reddeg=deg/s] [--redkm=km/s]
-                  [--rel=phase] [-x=type] [-y=type] [--strikediprake=s[,
-                  s...]]... [--xminmax=x x]... [--yminmax=y y]...
+                  [--rel=phase] [-x=type] [-y=type] [--strikediprake=strike dip
+                  rake]... [--xminmax=x x]... [--yminmax=y y]...
                   [[--mod=<modelName>] [-h=depth[,depth...]]...
-                  [--stadepth=depth[,depth...]]... [--scat=s s]...] [[-p=phase[,
-                  phase...]]... [--phasefile=<phaseFiles>]...] [--gmt | --json
-                  | --svg | --text]
+                  [--stadepth=depth[,depth...]]... [--scat=depth deg]...]
+                  [[-p=phase[,phase...]]... [--phasefile=<phaseFiles>]...]
+                  [--gmt | --json | --svg | --text]
 Plot travel time vs. distance and other curves for seismic phases.
 
 Options:
@@ -30,7 +30,7 @@ Options:
       --mw=<mw>            scale amplitude by source moment magnitude, default
                              is 4.0
       --numattenuationfreq=<numFrequencies>
-                            number attenuations frequency for amplitude
+                            number attenuation frequencies for amplitude
                              calculations, default is 64
   -o, --output=<outFile>   output to file, default is stdout.
       --prop=<toolPropsFilename>
@@ -41,9 +41,10 @@ Options:
                              effect if axis is not distance-like/time
       --rel=phase          plot relative to the given phase, no effect unless
                              distance/time
-      --strikediprake=s[,s...]
-                           fault strike, dip, rake for amplitude calculations.
-                             If not given radiation pattern is unity.
+      --strikediprake=strike dip rake
+                           fault strike, dip and rake for amplitude
+                             calculations. If not given radiation pattern is
+                             unity in all directions.
       --verbose            enable verbose output
   -x, --xaxis=type         X axis data type, default is degree180, one of
                              radian, radian180, degree, degree180, kilometer,
@@ -74,7 +75,7 @@ Model Args
                            use velocity model "modelName" for calculations.
                            Default is iasp91. Other builtin models include
                              prem, ak135, ak135fcont, and ak135favg.
-      --scat, --scatter=s s
+      --scat, --scatter=depth deg
                            scattering depth and distance in degrees, which may
                              be negative. Only effects phases with 'o' or 'O'
                              in the phase name.
