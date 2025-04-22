@@ -531,16 +531,6 @@ export function form_url() {
     }
     url += distparam;
   }
-  if (toolname === "time" || toolname === "find") {
-    let isAmplitude = document.querySelector('input[name="amplitude"]').checked;
-    if (isAmplitude) {
-      url += `&amp=true`;
-      let mw = document.querySelector('input[name="mw"]').value;
-      if (mw !== 4.0) {
-        url += `&mw=${mw}`;
-      }
-    }
-  }
   if (toolname !== "velplot" && toolname !== "refltrans"){
     if (stadepth !== "0") {
       url += `&stadepth=${stadepth}`;
@@ -585,7 +575,12 @@ export function form_url() {
       url += `&legend=true`;
     }
   }
-  if (toolname === 'curve' || toolname === 'spikes') {
+  let isAmplitude = document.querySelector('input[name="amplitude"]').checked;
+  if ((isAmplitude && (toolname === "time" || toolname === "find"))
+      || toolname === 'curve' || toolname === 'spikes') {
+    if (toolname === "time" || toolname === "find") {
+      url += `&amp=true`;
+    }
     let mw = document.querySelector('input[name="mw"]').value;
     if (mw !== "4.0") {
       url += `&mw=${mw}`;
@@ -608,7 +603,7 @@ export function form_url() {
       let rake = document.querySelector('input[name="rake"]').value;
       let curveazimuth = document.querySelector('input[name="curveazimuth"]').value;
       url += `&strikediprake=${strike},${dip},${rake}`;
-      if (toolname === 'curve') {
+      if (toolname === 'curve' || toolname === 'find') {
         // spikes uses distance az field
         let curveazimuth = document.querySelector('input[name="curveazimuth"]').value;
         url += `&az=${curveazimuth}`;
