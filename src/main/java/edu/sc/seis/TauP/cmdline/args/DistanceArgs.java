@@ -83,7 +83,7 @@ public class DistanceArgs {
                             desc = Outputs.formatLatLon(evtLoc.getLatitude()).trim()
                                     + "/" + Outputs.formatLatLon(evtLoc.getLongitude()).trim();
                         }
-                        dr.setDescription(desc+" to az "+Outputs.formatDistance(getAzimuth()));
+                        evtDr.setDescription(desc+" to az "+Outputs.formatDistance(getAzimuth()).trim());
                         evtOut.add(evtDr);
                     }
                 }
