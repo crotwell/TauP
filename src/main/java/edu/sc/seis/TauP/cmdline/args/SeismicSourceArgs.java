@@ -58,15 +58,20 @@ public class SeismicSourceArgs {
     @CommandLine.Option(names="--strikediprake",
             paramLabel =  "strike dip rake",
             hideParamSyntax = true,
+            arity = "3",
             description = "fault strike, dip and rake for amplitude calculations. If not given radiation pattern is unity in all directions.")
     public void setStrikeDipRake(List<Float> sdr) {
         if (sdr.size() == 0) {
             // unset by picocli, as no default value
             this.strikeDipRake = null;
         } else if (sdr.size() != 3) {
+            String valStr="";
+            for (Float f : sdr) {
+                valStr+=" "+f;
+            }
             throw new IllegalArgumentException(
-                    String.format("Invalid value '%d' for option '--strikediprake': " +
-                            "must give 3 values.", sdr.size()));
+                    String.format("Invalid number of params '%d' for option '--strikediprake': " +
+                            "must give 3 values: %s", sdr.size(), valStr));
         }
         this.strikeDipRake = sdr;
     }
