@@ -1397,7 +1397,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                     } else if (botDepth == tMod.iocbDepth) {
                         name += "i";
                     } else if (botDepth == tMod.mohoDepth) {
-                        name += "m";
+                        name += m;
                     } else {
                         name += (int) (botDepth);
                     }
@@ -1420,7 +1420,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                         // flat no char as already at depth
                         // no char as P,S -> K -> I,J
                     } else if (botDepth == tMod.mohoDepth) {
-                        name += "m";
+                        name += m;
                     } else {
                         name += (int)(botDepth);
                     }
@@ -1434,7 +1434,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                     ) {
                         // no char finish at surface
                     } else if (topDepth == tMod.mohoDepth ) {
-                        name += "m";
+                        name += m;
                     } else {
                         name += (int) (topDepth);
                     }

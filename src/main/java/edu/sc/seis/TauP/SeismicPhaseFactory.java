@@ -432,17 +432,17 @@ public class SeismicPhaseFactory {
          */
         if(isDowngoingSymbol(currLeg)) {
             // Downgoing from source
-            if ((currLeg.startsWith("P") || currLeg.startsWith("S")) && tMod.getSourceDepth() > tMod.getCmbDepth()  ) {
+            if ((startsWith(currLeg, P) || startsWith(currLeg, S)) && tMod.getSourceDepth() > tMod.getCmbDepth()  ) {
                 // not possible
                 String reason = "Source must be in crust/mantle for "+ currLeg;
                 return failNewPhase(tMod, isCompressionalWaveSymbol(legs.get(0)), isDowngoingSymbol(legs.get(0)),
                         receiverDepth, name, reason);
-            } else if ((currLeg.startsWith("K")) && (tMod.getSourceDepth() < tMod.getCmbDepth() || tMod.getSourceDepth() > tMod.getIocbDepth() )) {
+            } else if ((startsWith(currLeg, K)) && (tMod.getSourceDepth() < tMod.getCmbDepth() || tMod.getSourceDepth() > tMod.getIocbDepth() )) {
                 // not possible
                 String reason = "Source must be in outer core for "+ currLeg;
                 return failNewPhase(tMod, isCompressionalWaveSymbol(legs.get(0)), isDowngoingSymbol(legs.get(0)),
                         receiverDepth, name, reason);
-            } else if ((currLeg.startsWith("I") || currLeg.startsWith("J")) && (tMod.getSourceDepth() < tMod.getIocbDepth() )) {
+            } else if ((startsWith(currLeg, I) || startsWith(currLeg, J)) && (tMod.getSourceDepth() < tMod.getIocbDepth() )) {
                 // not possible
                 String reason = "Source must be in inner core for "+currLeg;
                 return failNewPhase(tMod, isCompressionalWaveSymbol(legs.get(0)), isDowngoingSymbol(legs.get(0)),

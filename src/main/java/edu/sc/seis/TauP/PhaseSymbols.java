@@ -230,4 +230,20 @@ public class PhaseSymbols {
     public static boolean isCustomBoundarySymbol(String name, int offset) {
         return Objects.equals(NAMED_DISCON_START, name.charAt(offset));
     }
+
+    public static final boolean is(String leg, char symbol) {
+        return leg.charAt(0) == symbol && leg.length()==1;
+    }
+
+    public static final boolean is(String leg, String symbol) {
+        return Objects.equals(leg, symbol);
+    }
+
+    public static final boolean startsWith(String leg, char symbol) {
+        return leg.charAt(0) == symbol;
+    }
+
+    public static final boolean startsWith(String leg, String symbol) {
+        return leg.startsWith(symbol);
+    }
 }

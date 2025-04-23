@@ -534,19 +534,17 @@ public class LegPuller {
         }
 
         Pattern headDiffRegEx =
-                Pattern.compile("[PSKIJ]?"+headDiffRE);
+                Pattern.compile(headDiffRE);
         /* Check first leg. */
-        if(!(currToken.equals("Pg") || currToken.equals("Pb")
-                || currToken.equals("Pn") || currToken.equals("Pdiff")
-                || currToken.equals("Sg") || currToken.equals("Sb")
-                || currToken.equals("Sn") || currToken.equals("Sdiff")
-                || currToken.equals("P"+ PhaseSymbols.EX_DOWN_CODE) || currToken.equals("S"+ PhaseSymbols.EX_DOWN_CODE)
-                || currToken.equals("P") || currToken.equals("S")
-                || currToken.equals("p") || currToken.equals("s")
-                || currToken.equals("K") || currToken.equals("Ked")
-                || currToken.equals("k")
-                || currToken.equals("I") || currToken.equals("J")
-                || currToken.equals("y") || currToken.equals("j")
+        if(!(is(currToken, "Pg") || is(currToken, "Pb")
+                || is(currToken, "Sg") || is(currToken, "Sb")
+                || is(currToken, P+ EX_DOWN_CODE) || is(currToken, S+ EX_DOWN_CODE)
+                || is(currToken, P) || is(currToken, S)
+                || is(currToken, p) || is(currToken, s)
+                || is(currToken, K) || is(currToken, K+EX_DOWN_CODE)
+                || is(currToken, k)
+                || is(currToken, I) || is(currToken, J)
+                || is(currToken, y) || is(currToken, j)
                 || headDiffRegEx.matcher(currToken).matches()
         )) {
             return "First leg ("+ currToken
@@ -565,15 +563,15 @@ public class LegPuller {
                 nextToken = "";
             }
             // repeated scatter code
-            if ((prevToken.equals(""+SCATTER_CODE) || prevToken.equals(""+BACKSCATTER_CODE))
-                    && (currToken.equals(""+SCATTER_CODE) || currToken.equals(""+BACKSCATTER_CODE))
+            if ((is(prevToken, SCATTER_CODE) || is(prevToken, BACKSCATTER_CODE))
+                    && (is(currToken, SCATTER_CODE) || is(currToken, BACKSCATTER_CODE))
             ) {
                 return "Repeated scattering code no allowed.";
             }
             /* Check for 2 reflections/depths with no leg between them. */
             if(isReflectSymbol(currToken, 0)
-                    || currToken.equals("m") || currToken.equals("c")
-                    || currToken.equals("i")) {
+                    || is(currToken, m) || is(currToken, c)
+                    || is(currToken, PhaseSymbols.i)) {
                 if(prevIsReflect) {
                     return "Two reflections or depths with no leg in between: "
                             + prevToken + ", " + currToken;
@@ -584,7 +582,7 @@ public class LegPuller {
                 prevIsReflect = false;
             }
             /* Check for "END" before the end. */
-            if(prevToken.equals(PhaseSymbols.END_CODE)) {
+            if(is(prevToken, PhaseSymbols.END_CODE)) {
                 return "Legs ended but more tokens exist: " + currToken;
             }
             /* two upgoing crust/mantle legs in a row */
@@ -600,65 +598,65 @@ public class LegPuller {
                 }
             }
             /* Check for ed not second to last token */
-            if ((prevToken.startsWith("Ped") || prevToken.startsWith("Sed"))
-                    && ! ( currToken.equals(PhaseSymbols.END_CODE)
-                    || currToken.equals("Pdiff") || currToken.equals("Sdiff")
-                    || currToken.equals("P") || currToken.equals("S")
-                    || currToken.equals("K") || currToken.equals("Ked")
-                    || (currToken.startsWith("K") &&
+            if ((startsWith(prevToken, P+EX_DOWN_CODE) || startsWith(prevToken, S+EX_DOWN_CODE))
+                    && ! ( is(currToken, PhaseSymbols.END_CODE)
+                    || is(currToken, P+DIFF) || is(currToken, S+DIFF)
+                    || is(currToken, P) || is(currToken, S)
+                    || is(currToken, K) || is(currToken, K+EX_DOWN_CODE)
+                    || (startsWith(currToken, K) &&
                         (currToken.endsWith(DIFF) ||currToken.endsWith(PhaseSymbols.DIFFDOWN) ||currToken.endsWith(HEAD_CODE) ))
-                    || currToken.startsWith("v") || currToken.startsWith("V")
-                    || currToken.equals("c") || currToken.equals("m")
-                    || currToken.equals(""+ PhaseSymbols.SCATTER_CODE)
-                    || currToken.equals(""+ PhaseSymbols.BACKSCATTER_CODE)
+                    || startsWith(currToken, TOPSIDE_REFLECTION) || startsWith(currToken, TOPSIDE_CRITICAL_REFLECTION)
+                    || is(currToken, c) || is(currToken, m)
+                    || is(currToken, PhaseSymbols.SCATTER_CODE)
+                    || is(currToken, PhaseSymbols.BACKSCATTER_CODE)
                     || isBoundary(currToken)
             )) {
                 return "'Ped' or 'Sed' can only be before Pdiff,P,S,Sdiff,K,c,v,V,m or token immediately before END:  "+prevToken+" "+currToken;
             }
 
             // Cannot have K before P,S and followed by another K as P,S leg must turn to get back to CMB
-            if((prevToken.startsWith("k") || prevToken.startsWith("K"))
-                    && (currToken.startsWith("P") || currToken.startsWith("S") || currToken.startsWith("p") || currToken.startsWith("s"))
-                    && (nextToken.startsWith("k") || nextToken.startsWith("K"))) {
+            if((startsWith(prevToken, k) || startsWith(prevToken, K))
+                    && (startsWith(currToken, P) || startsWith(currToken, S) || startsWith(currToken, p) || startsWith(currToken, s))
+                    && (startsWith(nextToken, k) || startsWith(nextToken, K))) {
 
                 return "Cannot have P,S,p,s preceeded and followed by K,k:  "
                         + prevToken + ", " + currToken +", "+nextToken;
             }
             // Cannot have I,J before K and followed by another I,J as K leg must turn to get back to IOCB
-            if((prevToken.startsWith("I") || prevToken.startsWith("J") )
-                    && (currToken.startsWith("K") || currToken.startsWith("k"))
-                    && (nextToken.startsWith("I") || nextToken.startsWith("J"))) {
+            if((startsWith(prevToken, I) || startsWith(prevToken, J) )
+                    && (startsWith(currToken, K) || startsWith(currToken, k))
+                    && (startsWith(nextToken, I) || startsWith(nextToken, J))) {
                 return "Cannot have K,k preceeded and followed by I,J:  "
                         + prevToken + ", " + currToken +", "+nextToken;
             }
             // Cannot have p,s before I, i, or J
-            if((prevToken.startsWith("p") || prevToken.startsWith("s")
-                    || prevToken.equals("m") || prevToken.equals("c"))
-                    && (currToken.equals("I") || currToken.equals("J") || currToken.equals("i"))) {
+            if((startsWith(prevToken, p) || startsWith(prevToken, s)
+                    || is(prevToken, m) || is(prevToken, c))
+                    && (is(currToken, I) || is(currToken, J) || is(currToken, PhaseSymbols.i))) {
                 return "Cannot have P,S,p,s,m,c followed by I,J,i: "
                         + prevToken + ", " + currToken;
             }
             // Cannot have m,c after I, i, or J
-            if((prevToken.equals("I") || prevToken.equals("J") || prevToken.equals("i"))
-                    && (currToken.equals("m") || currToken.equals("c"))) {
+            if((is(prevToken, I) || is(prevToken, J) || is(prevToken, PhaseSymbols.i))
+                    && (is(currToken, m) || is(currToken, c))) {
                 return "Cannot have I,J,i followed by  m,c: "
                         + prevToken + ", " + currToken;
             }
             /* Check for m, c before K. */
-            if((prevToken.equals("m") || prevToken.equals("c") )
-                    && (currToken.equals("K"))) {
+            if((is(prevToken, m) || is(prevToken, c) )
+                    && (is(currToken, K))) {
                 return "Cannot have m,c followed by K,I,i,J";
             }
-            if((currToken.equals("c") || currToken.equals("i"))
-                    && (prevToken.equals("p") || prevToken.equals("s"))) {
+            if((is(currToken, c) || is(currToken, PhaseSymbols.i))
+                    && (is(prevToken, p) || is(prevToken, s))) {
                 return "Cannot have p,s followed by c,i "+prevToken+" "+currToken;
             }
-            if(currToken.equals("i") && prevToken.equals("k")) {
+            if(is(currToken, PhaseSymbols.i) && is(prevToken, k)) {
                 return "Cannot have i followed by k";
             }
         }
         /* Make sure legs end in "END". */
-        if(!currToken.equals(PhaseSymbols.END_CODE)) {
+        if(!is(currToken, PhaseSymbols.END_CODE)) {
             return "Last token must be "+ PhaseSymbols.END_CODE;
         }
         return null;

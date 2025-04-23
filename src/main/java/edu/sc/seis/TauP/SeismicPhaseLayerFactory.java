@@ -122,7 +122,7 @@ public class SeismicPhaseLayerFactory {
         } else if (isUpgoingSymbol(currLeg)) {
             /* Deal with p and s case . */
             proto = currLegIsUpLeg(proto, prevLeg, currLeg, nextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
-        } else if (currLeg.equals(""+p_leg) || currLeg.equals(""+s_leg)) {
+        } else if (is(currLeg, p_leg) || is(currLeg, s_leg)) {
             /* Now deal with plain P and S case. */
             //special, need nextnextleg too
             proto = currLegIsDownLeg(proto, prevLeg, currLeg, nextLeg, nextNextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
@@ -130,7 +130,7 @@ public class SeismicPhaseLayerFactory {
             proto = currLegIsDiffracted(proto, prevLeg, currLeg, nextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
         } else if (isHead(currLeg)) {
             currLegIsHead(proto, prevLeg, currLeg, nextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
-        } else if ((currLeg.equals("Pg") || currLeg.equals("Sg"))) {
+        } else if ((is(currLeg, "Pg") || is(currLeg, "Sg"))) {
             // dumb special case crustal P and S
             proto = currLegIs_Pg_Sg(proto, prevLeg, currLeg, nextLeg, prevIsPWave, isPWave, nextIsPWave, legNum);
         } else {
@@ -147,7 +147,7 @@ public class SeismicPhaseLayerFactory {
             throws TauModelException {
         PhaseInteraction endAction;
         int currBranch = baseFactory.calcStartBranch(proto, currLeg);
-        if(nextLeg.equals(END_CODE)) {
+        if(is(nextLeg, END_CODE)) {
             if (baseFactory.receiverDepth > 0) {
                 endAction = END_DOWN;
                 proto.addToBranch(baseFactory.downgoingRecBranch, isPWave, nextIsPWave, endAction, currLeg);
@@ -204,7 +204,7 @@ public class SeismicPhaseLayerFactory {
                     nextIsPWave,
                     endAction,
                     currLeg);
-        } else if(nextLeg.equals("m")) {
+        } else if(is(nextLeg, m)) {
             endAction = TRANSDOWN;
             proto.addToBranch(
                     tMod.getMohoBranch() - 1,
@@ -212,7 +212,7 @@ public class SeismicPhaseLayerFactory {
                     nextIsPWave,
                     endAction,
                     currLeg);
-        } else if(nextLeg.equals("c") || nextLeg.equals("i")) {
+        } else if(is(nextLeg, "c") || is(nextLeg, "i")) {
             int disconBranch = LegPuller.closestDisconBranchToDepth(tMod, nextLeg, depthTolerance);
             if (!validateDisconWithinLayers(proto, disconBranch-1, nextLeg)) {
                 return proto;
@@ -280,7 +280,7 @@ public class SeismicPhaseLayerFactory {
             return baseFactory.failWithMessage(proto," p and s and k must always be up going "
                     + " and cannot come immediately before a top-side reflection."
                     + " currLeg=" + currLeg + " nextLeg=" + nextLeg);
-        } else if(nextLeg.equals(up_p_leg) || nextLeg.equals(up_s_leg)) {
+        } else if(is(nextLeg, up_p_leg) || is(nextLeg, up_s_leg)) {
             return baseFactory.failWithMessage(proto, " Phase not recognized (2): "
                     + currLeg + " followed by " + nextLeg);
         } else if (isUpDiffracted(currLeg, 0)){
@@ -301,7 +301,7 @@ public class SeismicPhaseLayerFactory {
             proto.addFlatBranch(isPWave, TRANSUPDIFFRACT, TRANSUP, currLeg);
 
             // diff acts kind of like turn, so may need to add more
-            if(nextLeg.equals(END_CODE)) {
+            if(is(nextLeg, END_CODE)) {
                 endAction = END;
                 proto.addToBranch(
                         baseFactory.upgoingRecBranch,
@@ -309,7 +309,7 @@ public class SeismicPhaseLayerFactory {
                         nextIsPWave,
                         endAction,
                         currLeg);
-            } else if (nextLeg.startsWith("^")) {
+            } else if (startsWith(nextLeg, UNDERSIDE_REFLECTION)) {
                 String nextdepthString;
                 nextdepthString = nextLeg.substring(1);
                 endAction = REFLECT_UNDERSIDE;
@@ -343,7 +343,7 @@ public class SeismicPhaseLayerFactory {
                         + currLeg + " followed by " + nextLeg
                         + " when currBranch=" + currBranch);
             }
-        } else if(nextLeg.startsWith("^")) {
+        } else if(startsWith(nextLeg, UNDERSIDE_REFLECTION)) {
             String depthString;
             depthString = nextLeg.substring(1);
             endAction = REFLECT_UNDERSIDE;
@@ -364,7 +364,7 @@ public class SeismicPhaseLayerFactory {
                         + " when currBranch=" + currBranch
                         + " > disconBranch=" + disconBranch);
             }
-        } else if(nextLeg.equals("m")
+        } else if(is (nextLeg, m)
                 && currBranch >= tMod.getMohoBranch()) {
             endAction = TRANSUP;
             proto.addToBranch(
@@ -374,9 +374,9 @@ public class SeismicPhaseLayerFactory {
                     endAction,
                     currLeg);
         } else if(nextLeg.charAt(0) == p_leg || nextLeg.charAt(0) == s_leg
-                || nextLeg.equals(END_CODE)) {
+                || is(nextLeg, END_CODE)) {
             int disconBranch;
-            if (nextLeg.equals(END_CODE)) {
+            if (is(nextLeg, END_CODE)) {
                 disconBranch = baseFactory.upgoingRecBranch;
                 if (currBranch < baseFactory.upgoingRecBranch) {
                     String reason = " (currBranch "+currBranch+" < receiverBranch() "
@@ -389,7 +389,7 @@ public class SeismicPhaseLayerFactory {
             } else {
                 disconBranch = topBranchNum;
             }
-            if (nextLeg.equals(END_CODE)) {
+            if (is(nextLeg, END_CODE)) {
                 endAction = END;
             } else {
                 endAction = REFLECT_UNDERSIDE;
@@ -474,9 +474,9 @@ public class SeismicPhaseLayerFactory {
                 endAction = REFLECT_TOPSIDE;
             }
             int disconBranch;
-            if (nextLeg.equals(""+i)) {
+            if (is(nextLeg, i)) {
                 disconBranch = tMod.getIocbBranch();
-            } else if (nextLeg.equals(""+c)) {
+            } else if (is(nextLeg, c)) {
                 disconBranch = tMod.getCmbBranch();
             } else {
                 disconBranch = LegPuller.closestDisconBranchToDepth(tMod,
@@ -520,7 +520,7 @@ public class SeismicPhaseLayerFactory {
                     || isLayerLeg(prevLeg)
                     || isDowngoingActionAfter(prevEndAction)
                     || isBoundary(prevLeg)
-                    || prevLeg.equals(PhaseSymbols.START_CODE)) {
+                    || is(prevLeg, PhaseSymbols.START_CODE)) {
                 proto.addToBranch(
                         botBranchNum,
                         isPWave,
@@ -535,8 +535,8 @@ public class SeismicPhaseLayerFactory {
                         currLeg);
             } else if((isTopsideReflectSymbol(prevLeg, 0)
                     && disconBranch < LegPuller.closestDisconBranchToDepth(tMod, prevLeg.substring(1), depthTolerance))
-                    || (prevLeg.equals("m") && disconBranch < tMod.getMohoBranch())
-                    || (prevLeg.equals("c") && disconBranch < tMod.getCmbBranch())) {
+                    || (is(prevLeg, m) && disconBranch < tMod.getMohoBranch())
+                    || (is(prevLeg, "c") && disconBranch < tMod.getCmbBranch())) {
                 if (disconBranch == tMod.getNumBranches()) {
                     String reason = "Attempt to reflect from center of earth: "+nextLeg;
                     return baseFactory.failWithMessage(proto, reason);
@@ -553,7 +553,7 @@ public class SeismicPhaseLayerFactory {
                         + " when currBranch=" + currBranch
                         + " > disconBranch=" + disconBranch+" , prev="+prevLeg);
             }
-        } else if(nextLeg.equals("c")) {
+        } else if(is(nextLeg, "c")) {
             if (tMod.getCmbBranch() == tMod.getNumBranches()) {
                 String reason = "Attempt to reflect from center of earth: "+nextLeg;
                 return baseFactory.failWithMessage(proto, reason);
@@ -600,7 +600,7 @@ public class SeismicPhaseLayerFactory {
                     nextIsPWave,
                     endAction,
                     currLeg);
-        } else if( LegPuller.isBoundary(nextLeg) && ( nextLeg.equals("m")
+        } else if( LegPuller.isBoundary(nextLeg) && ( is(nextLeg, m)
                 || (topDepth < LegPuller.legAsDepthBoundary(tMod, nextLeg) && LegPuller.legAsDepthBoundary(tMod, nextLeg) < botDepth))) {
             // treat the moho in the same wasy as 410 type discontinuities
 
@@ -656,8 +656,8 @@ public class SeismicPhaseLayerFactory {
                             nextIsPWave,
                             endAction,
                             currLeg);
-                } else if (nextNextLeg.equals(""+p_leg)
-                        || nextNextLeg.equals(""+s_leg)) {
+                } else if (is(nextNextLeg, p_leg)
+                        || is(nextNextLeg, s_leg)) {
                     if (disconBranch > currBranch) {
                         // discon is below current loc
                         endAction = TRANSDOWN;
@@ -756,7 +756,7 @@ public class SeismicPhaseLayerFactory {
         int prevEndBranch = proto.isEmpty() ? -1 : proto.endSegment().endBranch;
         int currBranch = baseFactory.calcStartBranch(proto, currLeg);
         int depthIdx = 0;
-        if (currLeg.startsWith(""+p_leg) || currLeg.startsWith(""+s_leg)) {
+        if (startsWith(currLeg, p_leg) || startsWith(currLeg, s_leg)) {
             depthIdx = 1;
         }
         String numString="";
@@ -811,7 +811,7 @@ public class SeismicPhaseLayerFactory {
             proto.addFlatBranch(isPWave, endAction, DIFFRACTTURN, currLeg);
 
             // diff acts kind of like turn, so may need to add more
-            if(nextLeg.equals(END_CODE)) {
+            if(is(nextLeg, END_CODE)) {
                 endAction = END;
                 proto.addToBranch(
                         baseFactory.upgoingRecBranch,
@@ -819,7 +819,7 @@ public class SeismicPhaseLayerFactory {
                         nextIsPWave,
                         endAction,
                         currLeg);
-            } else if (nextLeg.startsWith("^")) {
+            } else if (startsWith(nextLeg, UNDERSIDE_REFLECTION)) {
                 String depthString;
                 depthString = nextLeg.substring(1);
                 endAction = REFLECT_UNDERSIDE;
@@ -838,7 +838,7 @@ public class SeismicPhaseLayerFactory {
                         nextIsPWave,
                         endAction,
                         currLeg);
-            } else if (nextLeg.startsWith(""+p_leg) || nextLeg.startsWith(""+s_leg)) {
+            } else if (startsWith(nextLeg, p_leg) || startsWith(nextLeg, s_leg)) {
                 endAction = REFLECT_UNDERSIDE;
                 proto.addToBranch(
                         topBranchNum,
@@ -872,7 +872,7 @@ public class SeismicPhaseLayerFactory {
             throws TauModelException {
         PhaseInteraction endAction;
         int currBranch = baseFactory.calcStartBranch(proto, currLeg);
-        if(currLeg.equals(p_leg+"g") || currLeg.equals(s_leg+"g")) {
+        if(is(currLeg, p_leg+"g") || is(currLeg, s_leg+"g")) {
             if(currBranch >= tMod.getMohoBranch()) {
                 /*
                  * Pg, Pn, Sg and Sn must be above the moho and so is
@@ -896,13 +896,13 @@ public class SeismicPhaseLayerFactory {
                     isPWave,
                     endAction,
                     currLeg);
-            if(nextLeg.equals(END_CODE)) {
+            if(is(nextLeg, END_CODE)) {
                 endAction = END;
                 proto.addToBranch(baseFactory.upgoingRecBranch, isPWave, nextIsPWave, endAction, currLeg);
-            } else if(nextLeg.startsWith("P") || nextLeg.startsWith("S")) {
+            } else if(startsWith(nextLeg, P) || startsWith(nextLeg, S)) {
                 endAction = REFLECT_UNDERSIDE;
                 proto.addToBranch(0, isPWave, nextIsPWave, endAction, currLeg);
-            } else if(nextLeg.startsWith("^")) {
+            } else if(startsWith(nextLeg, UNDERSIDE_REFLECTION)) {
                 String depthString;
                 depthString = nextLeg.substring(1);
                 endAction = REFLECT_UNDERSIDE;
@@ -945,12 +945,12 @@ public class SeismicPhaseLayerFactory {
         if (currLeg.endsWith(HEAD_CODE) && currLeg.length() >= 2) {
             if (currLeg.length() == 2 && ( currLeg.charAt(0)==P || currLeg.charAt(0)==S)) {
                 // special case, Pn or Sn, use moho
-                numString = "m";
+                numString = ""+m;
                 disconBranch = tMod.getMohoBranch();
             } else {
                 int depthIdx = 0;
-                if (currLeg.startsWith("P") || currLeg.startsWith("S") || currLeg.startsWith("K")
-                        || currLeg.startsWith("I") || currLeg.startsWith("J")) {
+                if (startsWith(currLeg, P) || startsWith(currLeg, S) || startsWith(currLeg, K)
+                        || startsWith(currLeg, I) || startsWith(currLeg, J)) {
                     depthIdx = 1;
                 }
                 numString = extractBoundaryId(currLeg, depthIdx, false);
@@ -970,7 +970,7 @@ public class SeismicPhaseLayerFactory {
                     nextIsPWave,
                     endAction,
                     currLeg);
-            if (nextLeg.startsWith(""+getBelowPLegSymbol()) || nextLeg.startsWith(""+getBelowSLegSymbol()) ) {
+            if (startsWith(nextLeg, getBelowPLegSymbol()) || startsWith(nextLeg, getBelowSLegSymbol()) ) {
                 // down into  below layers, like core
                 proto.addFlatBranch(isPWave, endAction, TRANSDOWN, currLeg);
             } else {
@@ -978,7 +978,7 @@ public class SeismicPhaseLayerFactory {
                 proto.addFlatBranch(isPWave, endAction, TRANSUP, currLeg);
             }
             currBranch=disconBranch;
-            if(nextLeg.equals(END_CODE)) {
+            if(is(nextLeg, END_CODE)) {
                 endAction = END;
                 proto.addToBranch(
                         baseFactory.upgoingRecBranch,
