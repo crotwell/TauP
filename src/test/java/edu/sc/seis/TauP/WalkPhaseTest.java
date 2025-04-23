@@ -11,6 +11,36 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class WalkPhaseTest {
 
+
+    @Test
+    public void phasePturn() throws TauModelException {
+        TauModel tMod = TauModelLoader.load("iasp91").depthCorrect(5);
+        SeismicPhaseWalk walker = new SeismicPhaseWalk(tMod);
+        List<ProtoSeismicPhase> outTree = new ArrayList<>();
+        double receiverDepth = 0.0;
+        boolean isPWave = true;
+        int startBranch = tMod.getSourceBranch();
+        assertEquals(1, startBranch);
+        TauBranch sourceBranchP = tMod.getTauBranch(tMod.getSourceBranch(), isPWave);
+        ProtoSeismicPhase transDProto = ProtoSeismicPhase.start( new SeismicPhaseSegment(tMod,
+                startBranch, startBranch,
+                isPWave, TURN, true,
+                walker.legNameForTauBranch(tMod, tMod.getSourceBranch(), isPWave, true, false),
+                0, sourceBranchP.getMaxRayParam()), receiverDepth);
+
+        assertEquals(1, transDProto.endSegment().endBranch);
+        assertEquals(TURN, transDProto.endSegment().endAction);
+        outTree = walker.nextLegs(tMod, transDProto, true);
+        ProtoSeismicPhase Pedp = null;
+        for (ProtoSeismicPhase p : outTree) {
+            // only keep transup after turn
+            if (p.endSegment().endAction == TRANSUP) {
+                Pedp = p;
+            }
+        }
+        assertNull(Pedp); // cannot transup at surface
+    }
+
     @Test
     public void phasePedvmp() throws TauModelException {
         TauModel tMod = TauModelLoader.load("iasp91");

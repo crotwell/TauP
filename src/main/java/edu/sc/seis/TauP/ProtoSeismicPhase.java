@@ -166,7 +166,7 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                 failProto.isFail = true;
                 return failProto;
             case START:
-                throw new IllegalArgumentException("End action cannot be FAIL or START: "+endAction);
+                throw new IllegalArgumentException("End action cannot be START: "+endAction);
             default:
                 throw new IllegalArgumentException("End action case not yet impl: "+endAction);
         }
@@ -190,7 +190,16 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
                 // some reversal of direction
                 startBranchNum = priorEndBranchNum;
         }
-        int endBranchNum = findEndDiscon(tMod, startBranchNum, isPWave, isDowngoing); // usually same as start
+        // usually same as start unless cross source depth that is not a discon
+        int endBranchNum = findEndDiscon(tMod, startBranchNum, isPWave, isDowngoing);
+        if (endBranchNum == 0 && endAction == TRANSUP) {
+            SeismicPhaseSegment nextSeg = SeismicPhaseSegment.failSegment(tMod, startBranchNum, endBranchNum, isPWave, false, "");
+            isFail = true;
+            failReason = "phase transup at surface";
+            out.add(nextSeg);
+            nextSeg.prevEndAction = endSeg.endAction;
+            return new ProtoSeismicPhase(out, receiverDepth);
+        }
         boolean isFlat = false;
         String nextLegName = SeismicPhaseWalk.legNameForTauBranch(tMod, startBranchNum, isPWave, isFlat, isDowngoing);
         TauBranch nextBranch = tMod.getTauBranch(startBranchNum, isPWave);
@@ -261,79 +270,113 @@ public class ProtoSeismicPhase implements Comparable<ProtoSeismicPhase> {
         SeismicPhaseSegment prev = null;
         for (SeismicPhaseSegment seg : segmentList) {
             if (seg.maxRayParam < 0) {
-                throw new RuntimeException("maxRayParam is zero: "+phaseNameForSegments());
+                throw new TauModelException("maxRayParam is zero: "+phaseNameForSegments());
             }
             if (seg.endBranch == seg.tMod.getNumBranches()-1 && seg.isDownGoing && seg.endAction != TURN) {
-                throw new RuntimeException("down not turn in innermost core layer: "
+                throw new TauModelException("down not turn in innermost core layer: "
                         +phaseNameForSegments()+" "+seg.endBranch+" "+ seg.tMod.getNumBranches()+" "+seg.endAction);
             }
             if (prev != null) {
                 String currLeg = seg.legName;
                 if (seg.prevEndAction != prev.endAction) {
-                    throw new RuntimeException("segment prevEndAction is not prev segment endAction: "+seg.prevEndAction+" "+prev.endAction);
+                    throw new TauModelException("segment prevEndAction is not prev segment endAction: "
+                            +phaseNameForSegments()+" "+seg.prevEndAction+" "+prev.endAction);
                 }
                 if (prev.endAction == TRANSDOWN && prev.endBranch != seg.startBranch-1) {
-                    throw new RuntimeException("prev is TRANSDOWN, but seg is not +1\n"+prev.endAction+"  "+seg.startBranch+"\n"+phaseNameForSegments());
+                    throw new TauModelException("prev is TRANSDOWN, but seg is not +1\n"
+                            +phaseNameForSegments()+" "
+                            +prev.endAction+"  "+seg.startBranch+"\n"+phaseNameForSegments());
                 }
                 if (prev.endAction == TURN &&
                         ( seg.endAction == TURN || seg.endAction == TRANSDOWN || seg.endAction == DIFFRACTTURN
                                 || seg.endAction == END_DOWN || seg.endAction == REFLECT_TOPSIDE)) {
-                    throw new RuntimeException("prev is TURN, but seg is "+seg.endAction);
+                    throw new TauModelException("prev is TURN, but seg is "+phaseNameForSegments()+" "+seg.endAction);
                 }
                 if (prev.isDownGoing && seg.isDownGoing && prev.endBranch +1 != seg.startBranch) {
                     throw new TauModelException("Prev and Curr both downgoing but prev.endBranch+1 != seg.startBranch"
-                    +" pdown: "+prev.isDownGoing+" currdown "+seg.isDownGoing+" && "+prev.endBranch+" +1 != "+seg.startBranch);
+                            +phaseNameForSegments()+" "
+                            +" pdown: "+prev.isDownGoing+" currdown "+seg.isDownGoing
+                            +" && "+prev.endBranch+" +1 != "+seg.startBranch);
                 }
                 if (prev.isFlat) {
                     if (seg.isDownGoing) {
                         if (prev.endsAtTop() && prev.endBranch != seg.startBranch) {
-                            throw new TauModelException(getName() + ": Flat Segment is ends at top, but start is not current branch: " + currLeg);
+                            throw new TauModelException(getName()
+                                    + ": Flat Segment is ends at top, but start is not current branch: " + currLeg);
                         } else if (!prev.endsAtTop() && prev.endBranch != seg.startBranch - 1) {
-                            throw new TauModelException(getName() + ": Flat Segment is ends at bottom, but start is not next deeper branch: " + currLeg);
+                            throw new TauModelException(getName()
+                                    + ": Flat Segment is ends at bottom, but start is not next deeper branch: " + currLeg);
                         }
                     } else {
                         if (prev.endsAtTop() && prev.endBranch != seg.startBranch +1) {
-                            throw new TauModelException(getName() + ": Flat Segment is ends at top, but upgoing start is not next shallower branch: " + currLeg+" "+prev.endBranch +"!= "+seg.startBranch+"+1");
+                            throw new TauModelException(getName()
+                                    + ": Flat Segment is ends at top, but upgoing start is not next shallower branch: " + currLeg+" "+prev.endBranch +"!= "+seg.startBranch+"+1");
                         } else if (!prev.endsAtTop() && prev.endBranch != seg.startBranch) {
-                            throw new TauModelException(getName() + ": Flat Segment is ends at bottom, but upgoing start is not current branch: " + currLeg+" "+prev.endBranch +"!= "+seg.startBranch);
+                            throw new TauModelException(getName()
+                                    + ": Flat Segment is ends at bottom, but upgoing start is not current branch: " + currLeg+" "+prev.endBranch +"!= "+seg.startBranch);
                         }
                     }
                 } else if (seg.isDownGoing) {
                     if (prev.endBranch > seg.startBranch) {
-                        throw new TauModelException(getName()+": Segment is downgoing, but we are already below the start: "+currLeg);
+                        throw new TauModelException(getName()
+                                +": Segment is downgoing, but we are already below the start: "+currLeg);
                     }
                     if (prev.endAction == REFLECT_TOPSIDE || prev.endAction == REFLECT_TOPSIDE_CRITICAL) {
-                        throw new TauModelException(getName()+": Segment is downgoing, but previous action was to reflect up: "+currLeg+" "+prev.endAction+" "+seg);
+                        throw new TauModelException(getName()
+                                +": Segment is downgoing, but previous action was to reflect up: "+currLeg+" "+prev.endAction+" "+seg);
                     }
                     if (prev.endAction == TURN) {
-                        throw new TauModelException(getName()+": Segment is downgoing, but previous action was to turn: "+currLeg);
+                        throw new TauModelException(getName()
+                                +": Segment is downgoing, but previous action was to turn: "+currLeg);
                     }
                     if (prev.endAction == DIFFRACTTURN) {
-                        throw new TauModelException(getName()+": Segment is downgoing, but previous action was to diff turn: "+currLeg);
+                        throw new TauModelException(getName()
+                                +": Segment is downgoing, but previous action was to diff turn: "+currLeg);
                     }
                     if (prev.endAction == TRANSUP) {
-                        throw new TauModelException(getName()+": Segment is downgoing, but previous action was to transmit up: "+currLeg);
+                        throw new TauModelException(getName()
+                                +": Segment is downgoing, but previous action was to transmit up: "+currLeg);
                     }
                     if (prev.endBranch == seg.startBranch && prev.isDownGoing == false &&
                             ! (prev.endAction == REFLECT_UNDERSIDE || prev.endAction == REFLECT_UNDERSIDE_CRITICAL)) {
-                        throw new TauModelException(getName()+": Segment "+currLeg+" is downgoing, but previous action was not to reflect underside: "+currLeg+" "+endActionString(prev.endAction));
+                        throw new TauModelException(getName()
+                                +": Segment "+currLeg
+                                +" is downgoing, but previous action was not to reflect underside: "
+                                +currLeg+" "+endActionString(prev.endAction));
                     }
                 } else {
                     if (prev.endAction == REFLECT_UNDERSIDE || prev.endAction == REFLECT_UNDERSIDE_CRITICAL) {
-                        throw new TauModelException(getName()+": Segment is upgoing, but previous action was to underside reflect down: "+currLeg);
+                        throw new TauModelException(getName()
+                                +": Segment is upgoing, but previous action was to underside reflect down: "+currLeg);
                     }
                     if (prev.endAction == TRANSDOWN) {
-                        throw new TauModelException(getName()+": Segment is upgoing, but previous action was  to trans down: "+currLeg);
+                        throw new TauModelException(getName()
+                                +": Segment is upgoing, but previous action was  to trans down: "+currLeg);
                     }
                     if (prev.endBranch == seg.startBranch && prev.isDownGoing == true
                             && ! ( prev.endAction == TURN || prev.endAction == DIFFRACTTURN
                             || prev.endAction == DIFFRACT || prev.endAction == HEAD
                             || prev.endAction == REFLECT_TOPSIDE || prev.endAction == REFLECT_TOPSIDE_CRITICAL)) {
-                        throw new TauModelException(getName()+": Segment is upgoing, but previous action was not to reflect topside: "+currLeg+" "+endActionString(prev.endAction));
+                        throw new TauModelException(getName()
+                                +": Segment is upgoing, but previous action was not to reflect topside: "
+                                +currLeg+" "+endActionString(prev.endAction));
                     }
                 }
             }
             prev = seg;
+        }
+        SeismicPhaseSegment endSeg = endSegment();
+        int receiverBranch = tMod.findBranch(receiverDepth);
+        if (endSeg.prevEndAction != KMPS) {
+            if (endSeg.endAction == END && endSeg.endBranch != receiverBranch) {
+                throw new TauModelException(getName()
+                        + " End is upgoing, but last branch num is not receiver branch: "
+                        + endSeg.endBranch + " != " + receiverBranch + " rec depth: " + receiverDepth);
+            } else if (endSeg.endAction == END_DOWN && endSeg.endBranch != receiverBranch - 1) {
+                throw new TauModelException(getName()
+                        + " End is downgoing, but last branch num is not receiver branch-1: "
+                        + endSeg.endBranch + " != " + receiverBranch + " rec depth: " + receiverDepth);
+            }
         }
         if (TauPConfig.VERBOSE) {
             Alert.debug("#### VALIDATE OK " + getName());

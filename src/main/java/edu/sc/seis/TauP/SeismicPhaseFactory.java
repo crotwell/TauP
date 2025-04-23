@@ -511,7 +511,11 @@ public class SeismicPhaseFactory {
             }
             if (currLeg.contentEquals(END_CODE)) {
                 if (!proto.segmentList.isEmpty()) {
-                    proto.endSegment().endAction = END;
+                    if (proto.endSegment().isDownGoing && ! proto.endSegment().isFlat) {
+                        proto.endSegment().endAction = END_DOWN;
+                    } else {
+                        proto.endSegment().endAction = END;
+                    }
                     continue;
                 }
             }

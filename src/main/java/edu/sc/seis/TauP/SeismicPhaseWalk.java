@@ -97,7 +97,8 @@ public class SeismicPhaseWalk {
     public List<ProtoSeismicPhase> createSourceSegments(TauModel tMod, boolean isPWave, double receiverDepth) {
         List<ProtoSeismicPhase> segmentTree =  new ArrayList<>();
         if (tMod.getSourceBranch() > 0) {
-            int aboveStartBranch = tMod.getSourceBranch()-1;
+            int aboveStartBranch =  ProtoSeismicPhase.findEndDiscon(tMod, tMod.getSourceBranch()-1, isPWave,
+                    false);
             TauBranch aboveSourceBranchP = tMod.getTauBranch(tMod.getSourceBranch()-1, isPWave);
             if (receiverBranch == tMod.sourceBranch-1) {
                 // one branch away from receiver, so can just go direct and END
@@ -129,16 +130,19 @@ public class SeismicPhaseWalk {
         int startBranch = tMod.getSourceBranch();
 
         TauBranch sourceBranchP = tMod.getTauBranch(tMod.getSourceBranch(), isPWave);
+        int endBranchNum = ProtoSeismicPhase.findEndDiscon(tMod, tMod.getSourceBranch(), isPWave,
+                true);
+
 
         // downgoing options are END, TURN, REFLECT_TOPSIDE or TRANSDOWN
         ProtoSeismicPhase turnProto = ProtoSeismicPhase.start( new SeismicPhaseSegment(tMod,
-                startBranch, startBranch,
+                startBranch, endBranchNum,
                 isPWave, TURN, true,
                 legNameForTauBranch(tMod, tMod.getSourceBranch(), isPWave, true, false),
                 sourceBranchP.getMinRayParam(),
                 sourceBranchP.getMaxRayParam()), receiverDepth);
         segmentTree.add(turnProto);
-        if (receiverBranch == startBranch+1) {
+        if (receiverBranch == endBranchNum+1) {
             ProtoSeismicPhase endProto = ProtoSeismicPhase.start( new SeismicPhaseSegment(tMod,
                     startBranch, startBranch,
                     isPWave, END, true,
@@ -148,16 +152,16 @@ public class SeismicPhaseWalk {
             segmentTree.add(endProto);
         }
         if (tMod.getSourceBranch() < tMod.getNumBranches() - 1) {
-            if ( ! excludeBranch.contains(startBranch+1) ) {
+            if ( ! excludeBranch.contains(endBranchNum+1) ) {
                 ProtoSeismicPhase reflProto = ProtoSeismicPhase.start(new SeismicPhaseSegment(tMod,
-                        startBranch, startBranch,
+                        startBranch, endBranchNum,
                         isPWave, REFLECT_TOPSIDE, true,
                         legNameForTauBranch(tMod, tMod.getSourceBranch(), isPWave, true, false),
                         0, sourceBranchP.getMinTurnRayParam()), receiverDepth);
                 segmentTree.add(reflProto);
             }
             ProtoSeismicPhase transDProto = ProtoSeismicPhase.start( new SeismicPhaseSegment(tMod,
-                    startBranch, startBranch,
+                    startBranch, endBranchNum,
                     isPWave, TRANSDOWN, true,
                     legNameForTauBranch(tMod, tMod.getSourceBranch(), isPWave, true, false),
                     0, sourceBranchP.getMinRayParam()), receiverDepth);
@@ -378,34 +382,38 @@ public class SeismicPhaseWalk {
             return outTree;
         }
 
-
+        int endBranchNum = ProtoSeismicPhase.findEndDiscon(tMod, startBranchNum, isPWave,
+                isDowngoingActionAfter(prevEndSeg.endAction));
+        // check if endBranchNum is past receiver, in which case ending is possible
         switch (prevEndSeg.endAction) {
             case TRANSUP:
-                if (receiverBranch == prevEndSeg.endBranch-1) {
+                if (receiverBranch < prevEndSeg.endBranch && receiverBranch >= endBranchNum) {
                     outTreeAdd(outTree, proto.nextSegment(isPWave, END));
                 }
                 break;
             case TURN:
-                if (receiverBranch == prevEndSeg.endBranch && isPWave == prevEndSeg.isPWave) {
+                if (receiverBranch <= prevEndSeg.endBranch && receiverBranch >= endBranchNum && isPWave == prevEndSeg.isPWave) {
                     // turn cannot phase convert
                     outTreeAdd(outTree, proto.nextSegment( prevEndSeg.isPWave, END));
                 }
                 break;
             case DIFFRACTTURN:
-                outTreeAdd(outTree, proto.nextSegment( prevEndSeg.isPWave, END));
+                if (receiverBranch <= prevEndSeg.endBranch && receiverBranch >= endBranchNum) {
+                    outTreeAdd(outTree, proto.nextSegment(prevEndSeg.isPWave, END));
+                }
                 break;
             case REFLECT_TOPSIDE:
-                if (receiverBranch == prevEndSeg.endBranch ) {
+                if (receiverBranch <= prevEndSeg.endBranch && receiverBranch >= endBranchNum ) {
                     outTreeAdd(outTree, proto.nextSegment( isPWave, END));
                 }
                 break;
             case REFLECT_UNDERSIDE:
-                if (receiverBranch == prevEndSeg.endBranch+1) {
+                if (receiverBranch > prevEndSeg.endBranch && receiverBranch <= endBranchNum+1) {
                     outTreeAdd(outTree, proto.nextSegment( isPWave, END));
                 }
                 break;
             case TRANSDOWN:
-                if (receiverBranch == prevEndSeg.endBranch+2) {  // maybe +1???
+                if (receiverBranch > prevEndSeg.endBranch && receiverBranch <= endBranchNum+2) {  // maybe +1???
                     outTreeAdd(outTree, proto.nextSegment( isPWave, END));
                 }
                 break;
@@ -447,7 +455,8 @@ public class SeismicPhaseWalk {
                         }
 
                     }
-                    if ( ! excludeBranch.contains(ProtoSeismicPhase.findEndDiscon(tMod, startBranchNum, isPWave, false)) ) {
+                    int endDiscon = ProtoSeismicPhase.findEndDiscon(tMod, startBranchNum, isPWave, false);
+                    if ( ! excludeBranch.contains(endDiscon) ) {
                         outTreeAdd(outTree, proto.nextSegment(prevEndSeg.isPWave, REFLECT_UNDERSIDE));
                     }
                 }
