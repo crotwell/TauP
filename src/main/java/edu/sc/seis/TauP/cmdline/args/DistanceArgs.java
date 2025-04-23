@@ -37,6 +37,16 @@ public class DistanceArgs {
                 simpleDistanceList.add(DistanceRay.ofKilometers(d));
             }
         }
+        if (!distArgs.exactDegreeRange.isEmpty()) {
+            for (Double d : createListFromRangeDeg(distArgs.exactDegreeRange)) {
+                simpleDistanceList.add(DistanceRay.ofExactDegrees(d));
+            }
+        }
+        if (!distArgs.exactKilometerRange.isEmpty()) {
+            for (Double d : createListFromRangeKm(distArgs.exactKilometerRange)) {
+                simpleDistanceList.add(DistanceRay.ofExactKilometers(d));
+            }
+        }
         if (getAzimuth() != null) {
             for (DistanceRay dr : simpleDistanceList) {
                 if (!dr.hasAzimuth()) {

@@ -12,6 +12,15 @@ public class DistanceRayArgs extends DistanceLengthArgs {
             description = "exact distance traveled in degrees, not 360-d", split = ",")
     public List<Double> exactDegreesList = new ArrayList<>();
 
+
+    @CommandLine.Option(names = {"--exactdegreerange"},
+            arity = "1..3",
+            paramLabel =  "[step][min max][min max step]",
+            hideParamSyntax = true,
+            description = "regular distance range in exact degrees, not 360-deg, one of step; min max or min max step. "
+                    + "Default min is 0, max is 180 and step is 10.")
+    public List<Double> exactDegreeRange = new ArrayList<>();
+
     /**
      * Exact km, no mod 360
      */
@@ -19,6 +28,15 @@ public class DistanceRayArgs extends DistanceLengthArgs {
             paramLabel = "km",
             description = "exact distance traveled in kilometers, not 360-k", split = ",")
     public List<Double> exactDistKilometersList = new ArrayList<>();
+
+    @CommandLine.Option(names = {"--exactkilometerrange"},
+            arity = "1..3",
+            paramLabel =  "[step][min max][min max step]",
+            hideParamSyntax = true,
+
+            description = "regular distance range in kilometers, not 360-k, one of step; min max or min max step. "
+                    + "Default min is 0, max is 1000 and step is 100.")
+    public List<Double> exactKilometerRange = new ArrayList<>();
 
 
     @CommandLine.Option(names = "--takeoff",
@@ -85,7 +103,9 @@ public class DistanceRayArgs extends DistanceLengthArgs {
     public boolean allEmpty() {
         return super.allEmpty()
                 && exactDegreesList.isEmpty()
+                && exactDegreeRange.isEmpty()
                 && exactDistKilometersList.isEmpty()
+                && exactKilometerRange.isEmpty()
                 && shootIndexRaypList.isEmpty()
                 && shootKmRaypList.isEmpty()
                 && shootRadianRaypList.isEmpty()
