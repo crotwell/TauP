@@ -1039,6 +1039,23 @@ public class TauModel implements Serializable {
     }
 
     public String toString() {
+        return branchesToString().toString();
+    }
+
+    public StringBuilder branchesToString() {
+        StringBuilder sb = new StringBuilder(getModelName()).append("\n");
+        for(int i = 0; i < tauBranches[0].length; i++) {
+            TauBranch pBranch = tauBranches[0][i];
+            TauBranch sBranch = tauBranches[1][i];
+            sb.append(i).append(" P ").append(pBranch.getTopDepth()).append(" ").append(pBranch.getBotDepth());
+            sb.append(" ").append(pBranch.getTopRayParam()).append(" ").append(pBranch.getBotRayParam()).append("\n");
+            sb.append(i).append(" S ").append(sBranch.getTopDepth()).append(" ").append(sBranch.getBotDepth());
+            sb.append(" ").append(sBranch.getTopRayParam()).append(" ").append(sBranch.getBotRayParam()).append("\n");
+        }
+        return sb;
+    }
+
+    public String dumpToString() {
         if(DEBUG)
             Alert.debug("Starting toString() in TauModel");
         String desc = "Delta tau for each slowness sample and layer.\n";
