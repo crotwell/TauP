@@ -1,0 +1,61 @@
+{
+  "model": "ak135",
+  "sourcedepthlist": [
+    10.0
+  ],
+  "receiverdepthlist": [
+    0.0
+  ],
+  "phases": [
+    "P",
+    "S",
+    "PedoP"
+  ],
+  "scatter": {
+    "depth": 200.0,
+    "distdeg": 5.0
+  },
+  "arrivals": [
+    {
+      "sourcedepth": 10.0,
+      "receiverdepth": 0.0,
+      "distdeg": 40.0,
+      "phase": "P",
+      "time": 454.8581,
+      "rayparam": 8.305154,
+      "takeoff": 25.714254,
+      "incident": 25.670954,
+      "puristdist": 40.0,
+      "puristname": "P"
+    },
+    {
+      "sourcedepth": 10.0,
+      "receiverdepth": 0.0,
+      "distdeg": 40.0,
+      "phase": "PedoP",
+      "time": 466.3464,
+      "rayparam": 8.543503,
+      "takeoff": 41.88207,
+      "incident": 26.463953,
+      "puristdist": 40.0,
+      "puristname": "PedoP",
+      "scatter": {
+        "depth": 200.0,
+        "distdeg": 5.0
+      },
+      "isbackscatter": false
+    },
+    {
+      "sourcedepth": 10.0,
+      "receiverdepth": 0.0,
+      "distdeg": 40.0,
+      "phase": "S",
+      "time": 820.35944,
+      "rayparam": 14.969871,
+      "takeoff": 27.810106,
+      "incident": 27.762682,
+      "puristdist": 40.0,
+      "puristname": "S"
+    }
+  ]
+}

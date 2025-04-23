@@ -26,6 +26,7 @@ public class JsonOutputTest {
             "taup curve -o stdout -h 10 -p P,2kmps --mod prem --json",
             "taup time -h 10 -p P --deg 35 --json",
             "taup time --mod ak135 -h 10 -p P,S,PedOP --scatter 200 -5 --deg 40 --json",
+            "taup time --mod ak135 -h 10 -p P,S,PedoP --scatter 200 5 --deg 40, --json",
             "taup time -h 10 -p ttall --deg 35 --mod ak135 --json",
             "taup pierce -o stdout -h 10 -p P,pP,S,ScS --deg 15 --json",
             "taup pierce --mod ak135 -h 10 -p P,S,PedOP --scatter 200 -5 --deg 40 --json",
